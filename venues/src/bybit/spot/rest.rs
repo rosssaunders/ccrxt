@@ -24,8 +24,8 @@ impl BybitSpotPublicRest {
         let response = self.client.get(&url).send().await?;
         let snapshot: OrderBookSnapshot = response.json().await?;
         
-        if snapshot.retCode != 0 {
-            return Err(format!("Bybit API error: {}", snapshot.retMsg).into());
+        if snapshot.ret_code != 0 {
+            return Err(format!("Bybit API error: {}", snapshot.ret_msg).into());
         }
         
         Ok(snapshot)

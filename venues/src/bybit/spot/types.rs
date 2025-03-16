@@ -17,10 +17,13 @@ pub struct OrderBookSnapshotData {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct OrderBookSnapshot {
-    pub retCode: i32,
-    pub retMsg: String,
+    #[serde(rename = "retCode")]
+    pub ret_code: i32,
+    #[serde(rename = "retMsg")]
+    pub ret_msg: String,
+    #[serde(rename = "retExtInfo")]
+    pub ret_ext_info: Value,
     pub result: OrderBookSnapshotData,
-    pub retExtInfo: Value,
     pub time: u64,
 }
 

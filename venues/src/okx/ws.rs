@@ -121,7 +121,7 @@ impl WebSocketConnection<WebSocketMessage> for OkxPublicWebSocket {
                 Ok(Message::Text(text)) => {
                     match serde_json::from_str(&text) {
                         Ok(msg) => Some(Ok(msg)),
-                        Err(e) => {
+                        Err(_e) => {
                             // Try to deserialize as raw Value as fallback
                             match serde_json::from_str(&text) {
                                 Ok(raw_value) => Some(Ok(WebSocketMessage::Raw(raw_value))),

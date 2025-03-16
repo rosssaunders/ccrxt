@@ -23,12 +23,28 @@ const MAX_BACKOFF_MS: u64 = 30000;
 const RATE_STALE_AFTER: Duration = Duration::from_secs(60);
 
 // Performance metrics for each venue
-#[derive(Default)]
 struct VenueMetrics {
     updates_processed: u64,
     reconnects: u64,
     last_update_latency_ms: u64,
     avg_update_latency_ms: f64,
+    best_bid: f64,
+    best_ask: f64,
+    last_update_time: std::time::SystemTime,
+}
+
+impl Default for VenueMetrics {
+    fn default() -> Self {
+        Self {
+            updates_processed: 0,
+            reconnects: 0,
+            last_update_latency_ms: 0,
+            avg_update_latency_ms: 0.0,
+            best_bid: 0.0,
+            best_ask: 0.0,
+            last_update_time: std::time::SystemTime::now(),
+        }
+    }
 }
 
 impl VenueMetrics {
@@ -37,6 +53,12 @@ impl VenueMetrics {
         self.avg_update_latency_ms = (self.avg_update_latency_ms * self.updates_processed as f64 + latency_ms as f64) / 
                                    (self.updates_processed as f64 + 1.0);
         self.updates_processed += 1;
+        self.last_update_time = std::time::SystemTime::now();
+    }
+
+    fn update_prices(&mut self, best_bid: f64, best_ask: f64) {
+        self.best_bid = best_bid;
+        self.best_ask = best_ask;
     }
 }
 
@@ -44,11 +66,15 @@ impl VenueMetrics {
 fn print_metrics_table(metrics: &[(&str, &VenueMetrics)]) {
     // Calculate column widths
     let venue_width = 15;
-    let updates_width = 15;
-    let reconnects_width = 12;
-    let last_latency_width = 15;
-    let avg_latency_width = 15;
-    let total_width = venue_width + updates_width + reconnects_width + last_latency_width + avg_latency_width + 8; // +8 for separators
+    let updates_width = 12;
+    let reconnects_width = 10;
+    let last_latency_width = 12;
+    let avg_latency_width = 12;
+    let best_bid_width = 12;
+    let best_ask_width = 12;
+    let last_update_width = 15;
+    let total_width = venue_width + updates_width + reconnects_width + last_latency_width + 
+                     avg_latency_width + best_bid_width + best_ask_width + last_update_width + 16; // +16 for separators
 
     // Print header
     println!("\n{}", "=".repeat(total_width));
@@ -56,18 +82,38 @@ fn print_metrics_table(metrics: &[(&str, &VenueMetrics)]) {
     println!("{}", "=".repeat(total_width));
     
     // Print column headers
-    println!("{:<venue_width$} | {:>updates_width$} | {:>reconnects_width$} | {:>last_latency_width$} | {:>avg_latency_width$}",
-        "Venue", "Updates", "Reconnects", "Last Latency", "Avg Latency");
+    println!("{:<venue_width$} | {:>updates_width$} | {:>reconnects_width$} | {:>last_latency_width$} | {:>avg_latency_width$} | {:>best_bid_width$} | {:>best_ask_width$} | {:>last_update_width$}",
+        "Venue", "Updates", "Reconnects", "Last Lat", "Avg Lat", "Best Bid", "Best Ask", "Age");
     println!("{}", "-".repeat(total_width));
 
     // Print each venue's metrics
+    let now = std::time::SystemTime::now();
     for (venue, metric) in metrics {
-        println!("{:<venue_width$} | {:>updates_width$} | {:>reconnects_width$} | {:>last_latency_width$} | {:>avg_latency_width$}",
+        let age = now.duration_since(metric.last_update_time)
+            .map(|d| {
+                if d.as_secs() >= 60 {
+                    format!("{:.1}m", d.as_secs_f64() / 60.0)
+                } else if d.as_secs() > 0 {
+                    format!("{:.1}s", d.as_secs_f64())
+                } else {
+                    format!("{}ms", d.as_millis())
+                }
+            })
+            .unwrap_or_else(|_| "N/A".to_string());
+
+        // Format the bid and ask with colors
+        let colored_bid = format!("\x1b[32m{:.2}\x1b[0m", metric.best_bid);  // Green for bids
+        let colored_ask = format!("\x1b[31m{:.2}\x1b[0m", metric.best_ask);  // Red for asks
+
+        println!("{:<venue_width$} | {:>updates_width$} | {:>reconnects_width$} | {:>last_latency_width$} | {:>avg_latency_width$} | {:>best_bid_width$} | {:>best_ask_width$} | {:>last_update_width$}",
             venue,
             metric.updates_processed,
             metric.reconnects,
             format!("{}ms", metric.last_update_latency_ms),
-            format!("{:.2}ms", metric.avg_update_latency_ms));
+            format!("{:.2}ms", metric.avg_update_latency_ms),
+            colored_bid,
+            colored_ask,
+            age);
     }
 
     println!("{}", "=".repeat(total_width));
@@ -419,6 +465,9 @@ async fn maintain_aggregated_orderbook(
                         // Update metrics
                         let latency = start_time.elapsed().as_millis() as u64;
                         coinm_metrics.update_latency(latency);
+                        if let Some((best_bid, best_ask)) = coinm_ob.best_bid_ask_prices() {
+                            coinm_metrics.update_prices(best_bid, best_ask);
+                        }
                     },
                     Ok(_) => {},
                     Err(e) => {
@@ -449,6 +498,9 @@ async fn maintain_aggregated_orderbook(
                         // Update metrics
                         let latency = start_time.elapsed().as_millis() as u64;
                         usdm_metrics.update_latency(latency);
+                        if let Some((best_bid, best_ask)) = usdm_ob.best_bid_ask_prices() {
+                            usdm_metrics.update_prices(best_bid, best_ask);
+                        }
                     },
                     Ok(_) => {},
                     Err(e) => {
@@ -479,6 +531,9 @@ async fn maintain_aggregated_orderbook(
                         // Update metrics
                         let latency = start_time.elapsed().as_millis() as u64;
                         spot_metrics.update_latency(latency);
+                        if let Some((best_bid, best_ask)) = spot_ob.best_bid_ask_prices() {
+                            spot_metrics.update_prices(best_bid, best_ask);
+                        }
                     },
                     Ok(_) => {},
                     Err(e) => {
@@ -511,6 +566,9 @@ async fn maintain_aggregated_orderbook(
                         // Update metrics
                         let latency = start_time.elapsed().as_millis() as u64;
                         okx_metrics.update_latency(latency);
+                        if let Some((best_bid, best_ask)) = okx_ob.best_bid_ask_prices() {
+                            okx_metrics.update_prices(best_bid, best_ask);
+                        }
                     },
                     Ok(OkxWebSocketMessage::Response(response)) => {
                         println!("Received OKX response: {:?}", response);
@@ -546,6 +604,9 @@ async fn maintain_aggregated_orderbook(
                         // Update metrics
                         let latency = start_time.elapsed().as_millis() as u64;
                         bybit_spot_metrics.update_latency(latency);
+                        if let Some((best_bid, best_ask)) = bybit_spot_ob.best_bid_ask_prices() {
+                            bybit_spot_metrics.update_prices(best_bid, best_ask);
+                        }
                     },
                     Ok(_) => {},
                     Err(e) => {
@@ -576,6 +637,9 @@ async fn maintain_aggregated_orderbook(
                         // Update metrics
                         let latency = start_time.elapsed().as_millis() as u64;
                         bybit_perp_metrics.update_latency(latency);
+                        if let Some((best_bid, best_ask)) = bybit_perp_ob.best_bid_ask_prices() {
+                            bybit_perp_metrics.update_prices(best_bid, best_ask);
+                        }
                     },
                     Ok(_) => {},
                     Err(e) => {

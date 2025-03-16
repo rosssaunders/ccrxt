@@ -6,7 +6,6 @@ use std::error::Error;
 use std::pin::Pin;
 use std::time::{Duration, Instant};
 use serde_json::json;
-use tokio::time::interval;
 
 use super::types::WebSocketMessage;
 use crate::websockets::WebSocketConnection;
@@ -94,7 +93,6 @@ impl WebSocketConnection<WebSocketMessage> for BybitPerpPublicWebSocket {
 
     fn message_stream(&mut self) -> Pin<Box<dyn Stream<Item = Result<WebSocketMessage, Box<dyn Error + Send + Sync>>> + Send>> {
         let stream = self.ws_stream.take().expect("WebSocket not connected");
-        let mut heartbeat_interval = interval(HEARTBEAT_INTERVAL);
         let mut last_heartbeat = self.last_heartbeat;
         
         Box::pin(stream.filter_map(move |message| {
