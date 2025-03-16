@@ -1,0 +1,15 @@
+[package]
+name = "websockets"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+description.workspace = true
+
+[dependencies]
+async-trait.workspace = true
+futures.workspace = true
+
+[lints]
+workspace = true

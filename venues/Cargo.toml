@@ -1,0 +1,58 @@
+[package]
+name = "venues"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+description.workspace = true
+
+[dependencies]
+# Internal dependencies
+orderbook = { path = "../orderbook" }
+websockets = { path = "../websockets" }
+
+# External dependencies
+tokio.workspace = true
+tokio-tungstenite.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+serde_urlencoded.workspace = true
+reqwest.workspace = true
+hmac.workspace = true
+sha2.workspace = true
+hex.workspace = true
+chrono.workspace = true
+url.workspace = true
+futures.workspace = true
+async-trait.workspace = true
+parking_lot.workspace = true
+tracing.workspace = true
+ratatui = { workspace = true }
+crossterm = { workspace = true }
+
+[lints]
+workspace = true
+
+[[example]]
+name = "binance_coinm_orderbook"
+path = "examples/binance_coinm_orderbook.rs"
+
+[[example]]
+name = "binance_usdm_orderbook"
+path = "examples/binance_usdm_orderbook.rs"
+
+[[example]]
+name = "okx_orderbook"
+path = "examples/okx_orderbook.rs"
+
+[[example]]
+name = "tui_orderbook"
+path = "examples/tui_orderbook.rs"
+
+[[example]]
+name = "multi_exchange_tui"
+path = "examples/multi_exchange_tui.rs"
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["full", "macros"] }

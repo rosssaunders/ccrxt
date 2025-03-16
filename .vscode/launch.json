@@ -1,0 +1,38 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug Binance CoinM Orderbook",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--example=binance_coinm_orderbook",
+                    "--package=venues"
+                ]
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "program": "${workspaceFolder}/target/debug/examples/binance_coinm_orderbook",
+            "sourceLanguages": ["rust"]
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Release Binance CoinM Orderbook",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--release",
+                    "--example=binance_coinm_orderbook",
+                    "--package=ccrxt"
+                ]
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "program": "${workspaceFolder}/target/release/examples/binance_coinm_orderbook",
+            "sourceLanguages": ["rust"]
+        }
+    ]
+} 
