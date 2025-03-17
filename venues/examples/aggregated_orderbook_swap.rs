@@ -1,6 +1,6 @@
 use futures::StreamExt;
-use orderbook::{OrderBook, Level};
-use orderbook::aggregated::{AggregatedOrderBook, AggregatedLevel, VenueSource};
+use orderbook::OrderBook;
+use orderbook::aggregated::{AggregatedOrderBook, VenueSource};
 use std::time::{Duration, Instant};
 use venues::binance::{
     coinm::{BinanceCoinMPublicWebSocket, BinanceCoinMPublicRest, WebSocketMessage as CoinMWebSocketMessage},

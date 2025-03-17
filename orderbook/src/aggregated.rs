@@ -1,26 +1,38 @@
 use std::collections::BTreeMap;
 use crate::OrderBook;
+use std::fmt::Display;
+
+/// Trait that all venues must implement
+pub trait Venue: Display + Clone + Copy + PartialEq + Eq {
+    /// Whether this venue's prices are denominated in USD
+    fn is_usd_denominated(&self) -> bool;
+}
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum VenueSource {
-    CoinM,  // USD denominated
-    UsdM,   // USDT denominated
-    Spot,   // USDT denominated
-    OKX,    // USDT denominated
-    BybitSpot,  // USDT denominated
-    BybitPerp,  // USDT denominated
+    USD,    // USD denominated
+    USDT,   // USDT denominated
 }
 
 impl VenueSource {
     pub fn is_usd_denominated(&self) -> bool {
-        matches!(self, VenueSource::CoinM)
+        matches!(self, VenueSource::USD)
+    }
+}
+
+impl Display for VenueSource {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            VenueSource::USD => write!(f, "USD"),
+            VenueSource::USDT => write!(f, "USDT"),
+        }
     }
 }
 
 #[derive(Debug, Clone)]
 pub struct AggregatedLevel {
     pub size: f64,
-    pub sources: Vec<(VenueSource, f64)>, // Vector of (venue, size) pairs
+    pub sources: Vec<(String, f64)>, // Vector of (venue_name, size) pairs
 }
 
 impl AggregatedLevel {
@@ -31,16 +43,16 @@ impl AggregatedLevel {
         }
     }
 
-    fn update_source(&mut self, source: VenueSource, size: f64) {
+    fn update_source(&mut self, source: &str, size: f64) {
         // Update or remove the source
-        if let Some(pos) = self.sources.iter().position(|(src, _)| *src == source) {
+        if let Some(pos) = self.sources.iter().position(|(src, _)| src == source) {
             if size > 0.0 {
                 self.sources[pos].1 = size;
             } else {
                 self.sources.remove(pos);
             }
         } else if size > 0.0 {
-            self.sources.push((source, size));
+            self.sources.push((source.to_string(), size));
         }
 
         // Recalculate total size
@@ -76,18 +88,18 @@ impl AggregatedOrderBook {
     }
 
     #[inline(always)]
-    fn price_to_fixed(&self, mut price: f64, source: VenueSource) -> i64 {
+    fn price_to_fixed(&self, mut price: f64, is_usd: bool) -> i64 {
         // Convert USD prices to USDT equivalent
-        if source.is_usd_denominated() {
+        if is_usd {
             price *= self.usdt_rate;
         }
         (price * (10_f64.powi(self.price_precision as i32))) as i64
     }
 
     #[inline(always)]
-    fn fixed_to_price(&self, fixed: i64, source: VenueSource) -> f64 {
+    fn fixed_to_price(&self, fixed: i64, is_usd: bool) -> f64 {
         let price = fixed as f64 / (10_f64.powi(self.price_precision as i32));
-        if source.is_usd_denominated() {
+        if is_usd {
             price / self.usdt_rate
         } else {
             price
@@ -96,13 +108,13 @@ impl AggregatedOrderBook {
 
     // Update a single price level from a specific venue
     #[inline(always)]
-    pub fn update(&mut self, price: f64, size: f64, is_bid: bool, source: VenueSource) {
-        let fixed_price = self.price_to_fixed(price, source);
+    pub fn update<T: Venue>(&mut self, price: f64, size: f64, is_bid: bool, venue: &T) {
+        let fixed_price = self.price_to_fixed(price, venue.is_usd_denominated());
         let side = if is_bid { &mut self.bids } else { &mut self.asks };
 
         side.entry(fixed_price)
             .or_insert_with(AggregatedLevel::new)
-            .update_source(source, size);
+            .update_source(&venue.to_string(), size);
 
         // Remove the price level if there's no liquidity left
         if side.get(&fixed_price).map_or(false, |level| level.size <= 0.0) {
@@ -111,31 +123,31 @@ impl AggregatedOrderBook {
     }
 
     // Update from a venue's order book
-    pub fn update_from_venue(&mut self, orderbook: &OrderBook, source: VenueSource) {
-        // First, clear all entries from this source
-        self.clear_venue(source);
+    pub fn update_from_venue<T: Venue>(&mut self, orderbook: &OrderBook, venue: &T) {
+        // First, clear all entries from this venue
+        self.clear_venue(&venue.to_string());
 
-        // Then apply all levels from the source orderbook
+        // Then apply all levels from the venue orderbook
         let (bids, asks) = orderbook.get_depth_with_prices(usize::MAX);
         
         // Process bids and asks
         for (price, level) in bids {
-            self.update(price, level.size, true, source);
+            self.update(price, level.size, true, venue);
         }
         
         for (price, level) in asks {
-            self.update(price, level.size, false, source);
+            self.update(price, level.size, false, venue);
         }
     }
 
     // Clear all entries from a specific venue
-    pub fn clear_venue(&mut self, source: VenueSource) {
+    pub fn clear_venue(&mut self, venue_name: &str) {
         // Helper closure to clear a side
         let clear_side = |side: &mut BTreeMap<i64, AggregatedLevel>| {
             let mut to_remove = Vec::new();
             
             for (price, level) in side.iter_mut() {
-                level.update_source(source, 0.0);
+                level.update_source(venue_name, 0.0);
                 if level.size <= 0.0 {
                     to_remove.push(*price);
                 }
@@ -179,9 +191,9 @@ impl AggregatedOrderBook {
 
     // Get best bid and ask prices in source currency (USD for CoinM, USDT for others)
     #[inline(always)]
-    pub fn best_bid_ask_prices_by_source(&self, source: VenueSource) -> Option<(f64, f64)> {
-        let best_bid = self.bids.iter().next_back().map(|(&price, _)| self.fixed_to_price(price, source));
-        let best_ask = self.asks.iter().next().map(|(&price, _)| self.fixed_to_price(price, source));
+    pub fn best_bid_ask_prices_by_venue<T: Venue>(&self, venue: &T) -> Option<(f64, f64)> {
+        let best_bid = self.bids.iter().next_back().map(|(&price, _)| self.fixed_to_price(price, venue.is_usd_denominated()));
+        let best_ask = self.asks.iter().next().map(|(&price, _)| self.fixed_to_price(price, venue.is_usd_denominated()));
         
         match (best_bid, best_ask) {
             (Some(bid), Some(ask)) => Some((bid, ask)),
@@ -216,12 +228,12 @@ impl AggregatedOrderBook {
 
     // Get volume available from a specific venue at a price level
     #[inline(always)]
-    pub fn volume_from_venue(&self, price: f64, is_bid: bool, source: VenueSource) -> f64 {
-        let fixed_price = self.price_to_fixed(price, source);
+    pub fn volume_from_venue<T: Venue>(&self, price: f64, is_bid: bool, venue: &T) -> f64 {
+        let fixed_price = self.price_to_fixed(price, venue.is_usd_denominated());
         let side = if is_bid { &self.bids } else { &self.asks };
 
         side.get(&fixed_price)
-            .and_then(|level| level.sources.iter().find(|(src, _)| *src == source))
+            .and_then(|level| level.sources.iter().find(|(src, _)| src == &venue.to_string()))
             .map(|(_, size)| *size)
             .unwrap_or(0.0)
     }
@@ -236,23 +248,23 @@ mod tests {
         let mut aob = AggregatedOrderBook::new(8);
         
         // Test updates from different venues
-        aob.update(100.0, 1.0, true, VenueSource::CoinM);
-        aob.update(100.0, 2.0, true, VenueSource::UsdM);
+        aob.update(100.0, 1.0, true, VenueSource::USD);
+        aob.update(100.0, 2.0, true, VenueSource::USDT);
         
         // Check aggregated size
         if let Some((bid, _)) = aob.best_bid_ask() {
             assert_eq!(bid.size, 3.0);
             assert_eq!(bid.sources.len(), 2);
             
-            let coinm_size = bid.sources.iter()
-                .find(|(src, _)| *src == VenueSource::CoinM)
+            let usd_size = bid.sources.iter()
+                .find(|(src, _)| *src == "USD")
                 .map(|(_, size)| *size)
                 .unwrap();
-            assert_eq!(coinm_size, 1.0);
+            assert_eq!(usd_size, 1.0);
         }
 
         // Test clearing venue
-        aob.clear_venue(VenueSource::CoinM);
+        aob.clear_venue("USD");
         
         if let Some((bid, _)) = aob.best_bid_ask() {
             assert_eq!(bid.size, 2.0);
@@ -261,8 +273,8 @@ mod tests {
 
         // Test USD/USDT conversion
         aob.update_usdt_rate(0.99); // USDT is trading at $0.99
-        aob.update(100.0, 1.0, true, VenueSource::CoinM); // $100 USD
-        aob.update(99.0, 1.0, true, VenueSource::UsdM);  // 99 USDT
+        aob.update(100.0, 1.0, true, VenueSource::USD); // $100 USD
+        aob.update(99.0, 1.0, true, VenueSource::USDT);  // 99 USDT
 
         // Both orders should now be at the same price level in USDT terms
         if let Some((bid, _)) = aob.best_bid_ask() {
