@@ -1,8 +1,10 @@
 [workspace]
 resolver = "2"
 members = [ "orderbook",
-    "venues"
-, "websockets"]
+    "venues",
+    "websockets",
+    "venues/examples/aggregated_orderbook"
+]
 
 [workspace.package]
 version = "0.1.0"

@@ -1,0 +1,10 @@
+[package]
+name = "aggregated_orderbook"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+futures.workspace = true
+tokio.workspace = true
+orderbook = { path = "../../../orderbook" }
+venues = { path = "../../" } 
