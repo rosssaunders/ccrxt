@@ -1,0 +1,19 @@
+[package]
+name = "multi_exchange_tui"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "multi_exchange_tui"
+path = "src/multi_exchange_tui.rs"
+
+[dependencies]
+futures.workspace = true
+tokio.workspace = true
+orderbook = { path = "../../orderbook" }
+venues = { path = "../../venues" }
+mapper = { path = "../../mapper" }
+
+ratatui = "0.29.0"
+crossterm = "0.28.1"
+parking_lot = "0.12"

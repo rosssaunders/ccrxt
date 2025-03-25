@@ -5,7 +5,9 @@ members = [
     "venues",
     "websockets",
     "mapper",
-    "examples/aggregated_orderbook"
+    "examples/aggregated_orderbook",
+    "examples/tui_orderbook",
+    "examples/multi_exchange_tui"
 ]
 
 [workspace.package]
