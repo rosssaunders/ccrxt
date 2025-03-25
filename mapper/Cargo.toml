@@ -1,0 +1,11 @@
+[package]
+name = "mapper"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Order book update mappers for cryptocurrency exchanges"
+
+[dependencies]
+venues = { path = "../venues" } 

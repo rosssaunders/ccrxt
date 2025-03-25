@@ -143,12 +143,10 @@ impl OrderBookManager {
         
         // Update aggregated orderbook with each venue's data
         for (venue, orderbook) in &self.orderbooks {
-            let (bids, asks) = orderbook.get_depth(50);
-            let (bid_price, ask_price) = orderbook.best_bid_ask_prices().unwrap_or((0.0, 0.0));
+            let (bids, asks) = orderbook.get_depth_with_prices(50);
             
             // Add bids
-            for (i, bid) in bids.iter().enumerate() {
-                let price = bid_price - (i as f64 * 0.5);
+            for (price, bid) in bids {
                 match venue {
                     VenueType::BinanceSpot => self.aggregated_ob.update(price, bid.size, true, &BinanceSpot::Spot),
                     VenueType::OKX => self.aggregated_ob.update(price, bid.size, true, &Okx::Spot),
@@ -157,8 +155,7 @@ impl OrderBookManager {
             }
             
             // Add asks
-            for (i, ask) in asks.iter().enumerate() {
-                let price = ask_price + (i as f64 * 0.5);
+            for (price, ask) in asks {
                 match venue {
                     VenueType::BinanceSpot => self.aggregated_ob.update(price, ask.size, false, &BinanceSpot::Spot),
                     VenueType::OKX => self.aggregated_ob.update(price, ask.size, false, &Okx::Spot),
@@ -173,6 +170,13 @@ impl OrderBookManager {
     pub fn update_orderbook(&mut self, venue: &VenueType, price: f64, size: f64, is_bid: bool) {
         if let Some(orderbook) = self.orderbooks.get_mut(venue) {
             orderbook.update(price, size, is_bid);
+            
+            // Update aggregated orderbook immediately
+            match venue {
+                VenueType::BinanceSpot => self.aggregated_ob.update(price, size, is_bid, &BinanceSpot::Spot),
+                VenueType::OKX => self.aggregated_ob.update(price, size, is_bid, &Okx::Spot),
+                VenueType::BybitSpot => self.aggregated_ob.update(price, size, is_bid, &BybitSpot::Spot),
+            }
         }
     }
 

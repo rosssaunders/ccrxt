@@ -9,11 +9,11 @@ pub fn print_metrics_table(metrics: &[(&str, &VenueMetrics)]) {
     let reconnects_width = 10;
     let last_latency_width = 12;
     let avg_latency_width = 12;
-    let best_bid_width = 12;
-    let best_ask_width = 12;
-    let last_update_width = 15;
+    let best_bid_width = 7;
+    let best_ask_width = 7;
+    let last_update_width = 8;
     let total_width = venue_width + updates_width + reconnects_width + last_latency_width + 
-                     avg_latency_width + best_bid_width + best_ask_width + last_update_width + 16; // +16 for separators
+                     avg_latency_width + best_bid_width + best_ask_width + last_update_width + 23;
 
     // Print header
     println!("\n{}", "=".repeat(total_width));
@@ -64,7 +64,7 @@ pub fn print_aggregated_orderbook(orderbook: &AggregatedOrderBook, depth: usize)
     let (bids, asks) = orderbook.get_depth(depth);
     
     // Calculate column widths
-    let price_width = 12;
+    let price_width = 15;
     let size_width = 12;
     let sources_width = 40;
     let total_width = price_width + size_width + sources_width + 4; // +4 for separators

@@ -6,5 +6,6 @@ edition = "2021"
 [dependencies]
 futures.workspace = true
 tokio.workspace = true
-orderbook = { path = "../../../orderbook" }
-venues = { path = "../../" } 
+orderbook = { path = "../../orderbook" }
+venues = { path = "../../venues" }
+mapper = { path = "../../mapper" }

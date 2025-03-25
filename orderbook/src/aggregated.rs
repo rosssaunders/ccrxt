@@ -14,6 +14,12 @@ pub enum VenueSource {
     USDT,   // USDT denominated
 }
 
+impl Venue for VenueSource {
+    fn is_usd_denominated(&self) -> bool {
+        matches!(self, VenueSource::USD)
+    }
+}
+
 impl VenueSource {
     pub fn is_usd_denominated(&self) -> bool {
         matches!(self, VenueSource::USD)
@@ -248,8 +254,8 @@ mod tests {
         let mut aob = AggregatedOrderBook::new(8);
         
         // Test updates from different venues
-        aob.update(100.0, 1.0, true, VenueSource::USD);
-        aob.update(100.0, 2.0, true, VenueSource::USDT);
+        aob.update(100.0, 1.0, true, &VenueSource::USD);
+        aob.update(100.0, 2.0, true, &VenueSource::USDT);
         
         // Check aggregated size
         if let Some((bid, _)) = aob.best_bid_ask() {
@@ -273,8 +279,8 @@ mod tests {
 
         // Test USD/USDT conversion
         aob.update_usdt_rate(0.99); // USDT is trading at $0.99
-        aob.update(100.0, 1.0, true, VenueSource::USD); // $100 USD
-        aob.update(99.0, 1.0, true, VenueSource::USDT);  // 99 USDT
+        aob.update(100.0, 1.0, true, &VenueSource::USD); // $100 USD
+        aob.update(99.0, 1.0, true, &VenueSource::USDT);  // 99 USDT
 
         // Both orders should now be at the same price level in USDT terms
         if let Some((bid, _)) = aob.best_bid_ask() {

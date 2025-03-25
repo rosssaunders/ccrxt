@@ -11,6 +11,8 @@ use venues::bybit::{
 use venues::websockets::WebSocketConnection;
 use aggregated_orderbook::orderbook_manager::{OrderBookManager, VenueType};
 use aggregated_orderbook::display::{print_metrics_table, print_aggregated_orderbook};
+use aggregated_orderbook::metrics::VenueMetrics;
+use mapper::{OrderBookDecoder, BinanceSpotDecoder, OkxDecoder, BybitSpotDecoder};
 
 const PRICE_PRECISION: u32 = 8;
 const INITIAL_BACKOFF_MS: u64 = 1000;
@@ -38,12 +40,12 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
     ).await?;
     
     // Initialize WebSocket clients
-    let mut spot_ws = BinanceSpotPublicWebSocket::new();
+    let mut binance_spot_ws = BinanceSpotPublicWebSocket::new();
     let mut okx_ws = OkxPublicWebSocket::new();
     let mut bybit_spot_ws = BybitSpotPublicWebSocket::new();
     
     // Connect to WebSockets
-    spot_ws.connect().await?;
+    binance_spot_ws.connect().await?;
     okx_ws.connect().await?;
     bybit_spot_ws.connect().await?;
     
@@ -52,14 +54,19 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
     let okx_channel = format!("books:{}", okx_symbol);
     let bybit_spot_channel = format!("orderbook.50.{}", bybit_spot_symbol);
     
-    spot_ws.subscribe(vec![spot_channel.clone()]).await?;
+    binance_spot_ws.subscribe(vec![spot_channel.clone()]).await?;
     okx_ws.subscribe(vec![okx_channel.clone()]).await?;
     bybit_spot_ws.subscribe(vec![bybit_spot_channel.clone()]).await?;
     
     // Get message streams
-    let mut spot_stream = spot_ws.message_stream();
+    let mut spot_stream = binance_spot_ws.message_stream();
     let mut okx_stream = okx_ws.message_stream();
     let mut bybit_spot_stream = bybit_spot_ws.message_stream();
+    
+    // Initialize decoders
+    let binance_decoder = BinanceSpotDecoder;
+    let okx_decoder = OkxDecoder;
+    let bybit_decoder = BybitSpotDecoder;
     
     // Process updates
     let mut last_print_time = Instant::now();
@@ -71,18 +78,9 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
                     Ok(SpotWebSocketMessage::OrderBook(update)) => {
                         let start_time = Instant::now();
                         
-                        // Process bids
-                        for bid in &update.bids {
-                            if let (Ok(price), Ok(size)) = (bid.0.parse::<f64>(), bid.1.parse::<f64>()) {
-                                orderbook_manager.update_orderbook(&VenueType::BinanceSpot, price, size, true);
-                            }
-                        }
-                        
-                        // Process asks
-                        for ask in &update.asks {
-                            if let (Ok(price), Ok(size)) = (ask.0.parse::<f64>(), ask.1.parse::<f64>()) {
-                                orderbook_manager.update_orderbook(&VenueType::BinanceSpot, price, size, false);
-                            }
+                        // Process updates using decoder
+                        for (price, size, is_bid) in binance_decoder.decode_update(&update) {
+                            orderbook_manager.update_orderbook(&VenueType::BinanceSpot, price, size, is_bid);
                         }
                         
                         // Update metrics
@@ -104,20 +102,9 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
                     Ok(OkxWebSocketMessage::OrderBook(update)) => {
                         let start_time = Instant::now();
                         
-                        for data in &update.data {
-                            // Process bids
-                            for bid in &data.bids {
-                                if let (Ok(price), Ok(size)) = (bid.0.parse::<f64>(), bid.1.parse::<f64>()) {
-                                    orderbook_manager.update_orderbook(&VenueType::OKX, price, size, true);
-                                }
-                            }
-                            
-                            // Process asks
-                            for ask in &data.asks {
-                                if let (Ok(price), Ok(size)) = (ask.0.parse::<f64>(), ask.1.parse::<f64>()) {
-                                    orderbook_manager.update_orderbook(&VenueType::OKX, price, size, false);
-                                }
-                            }
+                        // Process updates using decoder
+                        for (price, size, is_bid) in okx_decoder.decode_update(&update) {
+                            orderbook_manager.update_orderbook(&VenueType::OKX, price, size, is_bid);
                         }
                         
                         // Update metrics
@@ -144,18 +131,9 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
                     Ok(BybitSpotMessage::OrderBook(update)) => {
                         let start_time = Instant::now();
                         
-                        // Process bids
-                        for bid in &update.data.b {
-                            if let (Ok(price), Ok(size)) = (bid.0.parse::<f64>(), bid.1.parse::<f64>()) {
-                                orderbook_manager.update_orderbook(&VenueType::BybitSpot, price, size, true);
-                            }
-                        }
-                        
-                        // Process asks
-                        for ask in &update.data.a {
-                            if let (Ok(price), Ok(size)) = (ask.0.parse::<f64>(), ask.1.parse::<f64>()) {
-                                orderbook_manager.update_orderbook(&VenueType::BybitSpot, price, size, false);
-                            }
+                        // Process updates using decoder
+                        for (price, size, is_bid) in bybit_decoder.decode_update(&update) {
+                            orderbook_manager.update_orderbook(&VenueType::BybitSpot, price, size, is_bid);
                         }
                         
                         // Update metrics
@@ -177,15 +155,29 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
         
         // Update aggregated orderbook and print stats every second
         if last_print_time.elapsed() >= Duration::from_secs(1) {
-            orderbook_manager.update_aggregated_orderbook().await?;
-            
             // Clear screen
             print!("\x1B[2J\x1B[1;1H");
             
             // Print metrics and orderbook
-            let metrics_data: Vec<_> = orderbook_manager.get_metrics().iter()
+            let mut metrics_data: Vec<_> = orderbook_manager.get_metrics().iter()
                 .map(|(venue, metrics)| (venue.to_string(), metrics))
                 .collect();
+            
+            // Add aggregated metrics
+            let mut aggregated_metrics = Vec::new();
+            if let Some((best_bid, best_ask)) = orderbook_manager.get_aggregated_orderbook().best_bid_ask_prices() {
+                aggregated_metrics.push(VenueMetrics {
+                    updates_processed: 0,
+                    reconnects: 0,
+                    last_update_latency_ms: 0,
+                    avg_update_latency_ms: 0.0,
+                    best_bid,
+                    best_ask,
+                    last_update_time: std::time::SystemTime::now(),
+                });
+                metrics_data.push(("Aggregated".to_string(), &aggregated_metrics[0]));
+            }
+            
             let metrics_refs: Vec<_> = metrics_data.iter()
                 .map(|(s, m)| (s.as_str(), *m))
                 .collect();
