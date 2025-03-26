@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use crate::websockets::BoxResult;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct VenueConfig {
@@ -15,7 +16,7 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn from_file(path: &str) -> Result<Self, Box<dyn std::error::Error + Send + Sync>> {
+    pub fn from_file(path: &str) -> BoxResult<Self> {
         let contents = std::fs::read_to_string(path)?;
         let config: Config = serde_json::from_str(&contents)?;
         Ok(config)

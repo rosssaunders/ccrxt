@@ -4,6 +4,7 @@ use std::collections::VecDeque;
 use std::time::{Duration, Instant};
 use venues::binance::coinm::{BinanceCoinMPublicWebSocket, BinanceCoinMPublicRest, WebSocketMessage, OrderBookUpdate};
 use venues::websockets::WebSocketConnection;
+use mapper::{BinanceCoinMDecoder, OrderBookDecoder};
 
 const MAX_RECONNECT_ATTEMPTS: u32 = 5;
 const INITIAL_BACKOFF_MS: u64 = 1000;
@@ -107,14 +108,14 @@ async fn maintain_orderbook(
 ) -> Result<(), Box<dyn std::error::Error>> {
     let mut ws = BinanceCoinMPublicWebSocket::new();
     let start_time = Instant::now();
+    let decoder = BinanceCoinMDecoder;
     
     // 1. Connect and subscribe
     println!("Connecting to WebSocket...");
     ws.connect().await.map_err(|e| OrderBookError::WebSocketError(e.to_string()))?;
     
     println!("Subscribing to depth stream...");
-    ws.subscribe(vec![format!("{}@depth", symbol.to_lowercase())])
-        .await
+    ws.subscribe_depth(symbol).await
         .map_err(|e| OrderBookError::WebSocketError(e.to_string()))?;
     
     let mut stream = ws.message_stream();
@@ -244,7 +245,7 @@ async fn maintain_orderbook(
             }
         }
 
-        apply_update(&mut orderbook, update, &mut last_update_id)?;
+        apply_update(&mut orderbook, &update, &decoder, &mut last_update_id)?;
         metrics.update_latency(update_time.elapsed().as_millis() as u64);
         
         if metrics.updates_processed % 100 == 0 {
@@ -270,7 +271,7 @@ async fn maintain_orderbook(
                     ))));
                 }
 
-                apply_update(&mut orderbook, update, &mut last_update_id)?;
+                apply_update(&mut orderbook, &update, &decoder, &mut last_update_id)?;
                 metrics.update_latency(update_time.elapsed().as_millis() as u64);
 
                 // Log status every 5 seconds
@@ -309,27 +310,13 @@ fn log_orderbook_state(orderbook: &OrderBook, context: &str) {
     }
 }
 
-fn apply_update(orderbook: &mut OrderBook, update: OrderBookUpdate, last_update_id: &mut u64) -> Result<(), Box<dyn std::error::Error>> {
-    let mut updates = Vec::with_capacity(update.bids.len() + update.asks.len());
-    
-    // Process bids
-    for bid in update.bids {
-        let price = bid.0.parse()
-            .map_err(|e| OrderBookError::ParseError(format!("Failed to parse bid price: {}", e)))?;
-        let quantity = bid.1.parse()
-            .map_err(|e| OrderBookError::ParseError(format!("Failed to parse bid quantity: {}", e)))?;
-        updates.push((price, quantity, true));
-    }
-    
-    // Process asks
-    for ask in update.asks {
-        let price = ask.0.parse()
-            .map_err(|e| OrderBookError::ParseError(format!("Failed to parse ask price: {}", e)))?;
-        let quantity = ask.1.parse()
-            .map_err(|e| OrderBookError::ParseError(format!("Failed to parse ask quantity: {}", e)))?;
-        updates.push((price, quantity, false));
-    }
-
+fn apply_update(
+    orderbook: &mut OrderBook, 
+    update: &OrderBookUpdate, 
+    decoder: &BinanceCoinMDecoder,
+    last_update_id: &mut u64
+) -> Result<(), Box<dyn std::error::Error>> {
+    let updates = decoder.decode_update(update);
     orderbook.batch_update(&updates);
     *last_update_id = update.final_update_id;
     Ok(())

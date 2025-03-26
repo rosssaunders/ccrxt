@@ -9,7 +9,6 @@ description.workspace = true
 
 [dependencies]
 # Internal dependencies
-orderbook = { path = "../orderbook" }
 websockets = { path = "../websockets" }
 
 # External dependencies
@@ -30,29 +29,22 @@ parking_lot.workspace = true
 tracing.workspace = true
 ratatui = { workspace = true }
 crossterm = { workspace = true }
+rust_decimal.workspace = true
+dotenv = "0.15"
+thiserror.workspace = true
+clap.workspace = true
 
 [lints]
 workspace = true
 
 [[example]]
-name = "binance_coinm_orderbook"
-path = "examples/binance_coinm_orderbook.rs"
+name = "coinbase_market_data"
+path = "examples/coinbase_market_data/coinbase_market_data.rs"
 
 [[example]]
-name = "binance_usdm_orderbook"
-path = "examples/binance_usdm_orderbook.rs"
-
-[[example]]
-name = "okx_orderbook"
-path = "examples/okx_orderbook.rs"
-
-[[example]]
-name = "tui_orderbook"
-path = "examples/tui_orderbook.rs"
-
-[[example]]
-name = "multi_exchange_tui"
-path = "examples/multi_exchange_tui.rs"
+name = "authenticated_websocket"
+path = "examples/authenticated_websocket/authenticated_websocket.rs"
 
 [dev-dependencies]
 tokio = { workspace = true, features = ["full", "macros"] }
+tracing-subscriber = { workspace = true }

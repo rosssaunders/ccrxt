@@ -2,8 +2,8 @@ use futures::StreamExt;
 use orderbook::OrderBook;
 use std::time::{Duration, Instant};
 use venues::okx::{OkxPublicWebSocket, OkxPublicRest, WebSocketMessage};
-use venues::websockets::WebSocketConnection;
-use std::error::Error;
+use venues::websockets::{WebSocketConnection, BoxError};
+use mapper::{OkxDecoder, OrderBookDecoder};
 
 const PRICE_PRECISION: u32 = 8;
 const MAX_RECONNECT_ATTEMPTS: u32 = 5;
@@ -11,7 +11,7 @@ const INITIAL_BACKOFF_MS: u64 = 1000;
 const MAX_BACKOFF_MS: u64 = 30000;
 
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
+async fn main() -> Result<(), BoxError> {
     let rest_client = OkxPublicRest::new();
     let mut ws_client = OkxPublicWebSocket::new();
     
@@ -56,24 +56,25 @@ async fn maintain_orderbook(
     orderbook: &mut OrderBook,
     inst_id: &str,
     channel: &str,
-) -> Result<(), Box<dyn Error + Send + Sync>> {
+) -> Result<(), BoxError> {
     println!("Initializing orderbook for {}", inst_id);
+    let decoder = OkxDecoder;
     
     // Connect to WebSocket
     if !ws_client.is_connected() {
         ws_client.connect().await
-            .map_err(|e| Box::<dyn Error + Send + Sync>::from(e.to_string()))?;
+            .map_err(|e| BoxError::from(e.to_string()))?;
         println!("Connected to OKX WebSocket");
     }
     
     // Subscribe to orderbook channel
     ws_client.subscribe(vec![channel.to_string()]).await
-        .map_err(|e| Box::<dyn Error + Send + Sync>::from(e.to_string()))?;
+        .map_err(|e| BoxError::from(e.to_string()))?;
     println!("Subscribed to channel: {}", channel);
     
     // Get initial snapshot
     let snapshot = rest_client.get_orderbook_snapshot(inst_id, Some(400)).await
-        .map_err(|e| Box::<dyn Error + Send + Sync>::from(e.to_string()))?;
+        .map_err(|e| BoxError::from(e.to_string()))?;
     println!("Received initial snapshot with {} bids and {} asks", 
              snapshot.bids.len(), snapshot.asks.len());
     
@@ -109,20 +110,12 @@ async fn maintain_orderbook(
     while let Some(message_result) = message_stream.next().await {
         match message_result {
             Ok(WebSocketMessage::OrderBook(update)) => {
-                for data in &update.data {
-                    // Process bids
-                    for bid in &data.bids {
-                        if let (Ok(price), Ok(size)) = (bid.0.parse::<f64>(), bid.1.parse::<f64>()) {
-                            orderbook.update(price, size, true);
-                        }
-                    }
-                    
-                    // Process asks
-                    for ask in &data.asks {
-                        if let (Ok(price), Ok(size)) = (ask.0.parse::<f64>(), ask.1.parse::<f64>()) {
-                            orderbook.update(price, size, false);
-                        }
-                    }
+                // Process update data using the decoder
+                let updates = decoder.decode_update(&update);
+                
+                // Apply updates to orderbook
+                for (price, size, is_bid) in updates {
+                    orderbook.update(price, size, is_bid);
                 }
                 
                 updates_count += 1;

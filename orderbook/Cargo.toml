@@ -5,11 +5,37 @@ edition.workspace = true
 authors.workspace = true
 license.workspace = true
 repository.workspace = true
-description.workspace = true
+description = "Order book implementation for cryptocurrency exchanges"
 
 [dependencies]
+venues = { path = "../venues" }
+mapper = { path = "../mapper" }
 serde = { workspace = true, features = ["derive"] }
 serde_json.workspace = true
+tokio = { workspace = true, features = ["full"] }
+futures = { workspace = true }
+crossterm = { workspace = true }
+ratatui = { workspace = true }
+
+[[example]]
+name = "binance_usdm_orderbook"
+path = "examples/binance_usdm_orderbook.rs"
+
+[[example]]
+name = "okx_orderbook"
+path = "examples/okx_orderbook.rs"
+
+[[example]]
+name = "binance_coinm_orderbook"
+path = "examples/binance_coinm_orderbook.rs"
+
+[[example]]
+name = "bybit_orderbook"
+path = "examples/bybit_orderbook.rs"
+
+[[example]]
+name = "binance_spot_orderbook"
+path = "examples/binance_spot_orderbook.rs"
 
 [lints]
 workspace = true

@@ -4,9 +4,10 @@ use tokio_tungstenite::{connect_async, tungstenite::Message};
 use futures::stream::Stream;
 use std::error::Error;
 use std::pin::Pin;
+use serde_json::json;
 
 use super::types::{WebSocketMessage, WebSocketRequest, WebSocketChannel};
-use crate::websockets::WebSocketConnection;
+use crate::websockets::{WebSocketConnection, BoxResult};
 
 const OKX_WS_URL: &str = "wss://ws.okx.com:8443/ws/v5/public";
 
@@ -24,17 +25,39 @@ impl OkxPublicWebSocket {
             subscribed_channels: Vec::new(),
         }
     }
+
+    pub async fn subscribe(&mut self, channels: Vec<String>) -> BoxResult<()> {
+        if let Some(ws) = self.ws_stream.as_mut() {
+            let ws_channels: Vec<WebSocketChannel> = channels.iter()
+                .map(|channel| {
+                    let parts: Vec<&str> = channel.split(':').collect();
+                    WebSocketChannel {
+                        channel: parts[0].to_string(),
+                        inst_id: parts[1].to_string(),
+                    }
+                })
+                .collect();
+
+            let subscribe_msg = json!({
+                "op": "subscribe",
+                "args": ws_channels
+            });
+            ws.send(Message::Text(subscribe_msg.to_string().into())).await?;
+            self.subscribed_channels.extend(ws_channels);
+        }
+        Ok(())
+    }
 }
 
 #[async_trait]
 impl WebSocketConnection<WebSocketMessage> for OkxPublicWebSocket {
-    async fn connect(&mut self) -> Result<(), Box<dyn Error + Send + Sync>> {
+    async fn connect(&mut self) -> BoxResult<()> {
         let (ws_stream, _) = connect_async(&self.url).await?;
         self.ws_stream = Some(ws_stream);
         Ok(())
     }
 
-    async fn disconnect(&mut self) -> Result<(), Box<dyn Error + Send + Sync>> {
+    async fn disconnect(&mut self) -> BoxResult<()> {
         if let Some(ws) = self.ws_stream.as_mut() {
             ws.close(None).await?;
         }
@@ -46,74 +69,7 @@ impl WebSocketConnection<WebSocketMessage> for OkxPublicWebSocket {
         self.ws_stream.is_some()
     }
 
-    async fn subscribe(&mut self, channels: Vec<String>) -> Result<(), Box<dyn Error + Send + Sync>> {
-        if let Some(ws) = self.ws_stream.as_mut() {
-            // OKX requires both channel and instrument ID
-            // Format expected: "channel:instId"
-            let ws_channels: Vec<WebSocketChannel> = channels.iter()
-                .filter_map(|channel| {
-                    let parts: Vec<&str> = channel.split(':').collect();
-                    if parts.len() == 2 {
-                        Some(WebSocketChannel {
-                            channel: parts[0].to_string(),
-                            inst_id: parts[1].to_string(),
-                        })
-                    } else {
-                        None
-                    }
-                })
-                .collect();
-
-            if !ws_channels.is_empty() {
-                let subscribe_msg = WebSocketRequest {
-                    op: "subscribe".to_string(),
-                    args: ws_channels.clone(),
-                };
-                
-                ws.send(Message::Text(serde_json::to_string(&subscribe_msg)?.into())).await?;
-                self.subscribed_channels.extend(ws_channels);
-            }
-        }
-        Ok(())
-    }
-
-    async fn unsubscribe(&mut self, channels: Vec<String>) -> Result<(), Box<dyn Error + Send + Sync>> {
-        if let Some(ws) = self.ws_stream.as_mut() {
-            // Parse channels to unsubscribe
-            let channels_to_remove: Vec<WebSocketChannel> = channels.iter()
-                .filter_map(|channel| {
-                    let parts: Vec<&str> = channel.split(':').collect();
-                    if parts.len() == 2 {
-                        Some(WebSocketChannel {
-                            channel: parts[0].to_string(),
-                            inst_id: parts[1].to_string(),
-                        })
-                    } else {
-                        None
-                    }
-                })
-                .collect();
-
-            if !channels_to_remove.is_empty() {
-                let unsubscribe_msg = WebSocketRequest {
-                    op: "unsubscribe".to_string(),
-                    args: channels_to_remove.clone(),
-                };
-                
-                ws.send(Message::Text(serde_json::to_string(&unsubscribe_msg)?.into())).await?;
-                
-                // Remove unsubscribed channels
-                self.subscribed_channels.retain(|c| {
-                    !channels_to_remove.iter().any(|rc| 
-                        rc.channel == c.channel && rc.inst_id == c.inst_id
-                    )
-                });
-            }
-        }
-        Ok(())
-    }
-
-    fn message_stream(&mut self) -> Pin<Box<dyn Stream<Item = Result<WebSocketMessage, Box<dyn Error + Send + Sync>>> + Send>> {
+    fn message_stream(&mut self) -> Pin<Box<dyn Stream<Item = BoxResult<WebSocketMessage>> + Send>> {
         let stream = self.ws_stream.take().expect("WebSocket not connected");
         
         Box::pin(stream.filter_map(|message| async move {

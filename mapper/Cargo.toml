@@ -8,4 +8,5 @@ repository.workspace = true
 description = "Order book update mappers for cryptocurrency exchanges"
 
 [dependencies]
-venues = { path = "../venues" } 
+venues = { path = "../venues" }
+rust_decimal = { workspace = true } 

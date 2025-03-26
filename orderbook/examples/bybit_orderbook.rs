@@ -6,8 +6,8 @@ use venues::bybit::{
     spot::{BybitSpotPublicWebSocket, BybitSpotPublicRest, WebSocketMessage as BybitSpotMessage},
     perp::{BybitPerpPublicWebSocket, BybitPerpPublicRest, WebSocketMessage as BybitPerpMessage},
 };
-use venues::websockets::WebSocketConnection;
-use serde_json::Value;
+use venues::websockets::{WebSocketConnection, BoxError};
+use mapper::{BybitSpotDecoder, BybitPerpDecoder, OrderBookDecoder};
 
 #[derive(Default)]
 struct Metrics {
@@ -28,7 +28,7 @@ impl Metrics {
 }
 
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
+async fn main() -> Result<(), BoxError> {
     println!("Bybit Spot and Perp Orderbook Example");
     println!("=====================================");
     
@@ -53,11 +53,12 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
     Ok(())
 }
 
-async fn run_spot_example() -> Result<(), Box<dyn Error + Send + Sync>> {
+async fn run_spot_example() -> Result<(), BoxError> {
     println!("\nStarting Bybit Spot example...");
     
     let symbol = "BTCUSDT";
     let mut metrics = Metrics::default();
+    let decoder = BybitSpotDecoder;
     
     // Initialize REST client and WebSocket
     let rest_client = BybitSpotPublicRest::new();
@@ -126,26 +127,12 @@ async fn run_spot_example() -> Result<(), Box<dyn Error + Send + Sync>> {
                     println!("Received orderbook update for {}: {} bids, {} asks", 
                              update.data.s, update.data.b.len(), update.data.a.len());
                     
-                    // Process update data
-                    let bids: Vec<(f64, f64, bool)> = update.data.b.iter()
-                        .filter_map(|bid| {
-                            let price = bid.0.parse::<f64>().ok()?;
-                            let size = bid.1.parse::<f64>().ok()?;
-                            Some((price, size, true)) // true for bids
-                        })
-                        .collect();
-                    
-                    let asks: Vec<(f64, f64, bool)> = update.data.a.iter()
-                        .filter_map(|ask| {
-                            let price = ask.0.parse::<f64>().ok()?;
-                            let size = ask.1.parse::<f64>().ok()?;
-                            Some((price, size, false)) // false for asks
-                        })
-                        .collect();
+                    // Process update data using the decoder
+                    let updates = decoder.decode_update(&update);
                     
                     // Apply updates to orderbook
-                    for (price, size, is_bid) in bids.iter().chain(asks.iter()) {
-                        orderbook.update(*price, *size, *is_bid);
+                    for (price, size, is_bid) in updates {
+                        orderbook.update(price, size, is_bid);
                     }
                     
                     // Update metrics
@@ -183,11 +170,12 @@ async fn run_spot_example() -> Result<(), Box<dyn Error + Send + Sync>> {
     Ok(())
 }
 
-async fn run_perp_example() -> Result<(), Box<dyn Error + Send + Sync>> {
+async fn run_perp_example() -> Result<(), BoxError> {
     println!("\nStarting Bybit Perp example...");
     
     let symbol = "BTCUSDT";
     let mut metrics = Metrics::default();
+    let decoder = BybitPerpDecoder;
     
     // Initialize REST client and WebSocket
     let rest_client = BybitPerpPublicRest::new();
@@ -256,26 +244,12 @@ async fn run_perp_example() -> Result<(), Box<dyn Error + Send + Sync>> {
                     println!("Received orderbook update for {}: {} bids, {} asks", 
                              update.data.s, update.data.b.len(), update.data.a.len());
                     
-                    // Process update data
-                    let bids: Vec<(f64, f64, bool)> = update.data.b.iter()
-                        .filter_map(|bid| {
-                            let price = bid.0.parse::<f64>().ok()?;
-                            let size = bid.1.parse::<f64>().ok()?;
-                            Some((price, size, true)) // true for bids
-                        })
-                        .collect();
-                    
-                    let asks: Vec<(f64, f64, bool)> = update.data.a.iter()
-                        .filter_map(|ask| {
-                            let price = ask.0.parse::<f64>().ok()?;
-                            let size = ask.1.parse::<f64>().ok()?;
-                            Some((price, size, false)) // false for asks
-                        })
-                        .collect();
+                    // Process update data using the decoder
+                    let updates = decoder.decode_update(&update);
                     
                     // Apply updates to orderbook
-                    for (price, size, is_bid) in bids.iter().chain(asks.iter()) {
-                        orderbook.update(*price, *size, *is_bid);
+                    for (price, size, is_bid) in updates {
+                        orderbook.update(price, size, is_bid);
                     }
                     
                     // Update metrics

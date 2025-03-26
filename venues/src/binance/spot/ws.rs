@@ -5,9 +5,10 @@ use futures::stream::Stream;
 use std::error::Error;
 use std::pin::Pin;
 use serde_json::json;
+use websockets::BoxError;
 
 use super::types::WebSocketMessage;
-use crate::websockets::WebSocketConnection;
+use crate::websockets::{WebSocketConnection, BoxResult};
 
 const BINANCE_SPOT_WS_URL: &str = "wss://stream.binance.com:9443/ws";
 
@@ -25,29 +26,13 @@ impl BinanceSpotPublicWebSocket {
             subscribed_channels: Vec::new(),
         }
     }
-}
 
-#[async_trait]
-impl WebSocketConnection<WebSocketMessage> for BinanceSpotPublicWebSocket {
-    async fn connect(&mut self) -> Result<(), Box<dyn Error + Send + Sync>> {
-        let (ws_stream, _) = connect_async(&self.url).await?;
-        self.ws_stream = Some(ws_stream);
-        Ok(())
+    pub async fn subscribe_depth(&mut self, symbol: &str) -> BoxResult<()> {
+        let channel = format!("{}@depth", symbol.to_lowercase());
+        self.subscribe(vec![channel]).await
     }
 
-    async fn disconnect(&mut self) -> Result<(), Box<dyn Error + Send + Sync>> {
-        if let Some(ws) = self.ws_stream.as_mut() {
-            ws.close(None).await?;
-        }
-        self.ws_stream = None;
-        Ok(())
-    }
-
-    fn is_connected(&self) -> bool {
-        self.ws_stream.is_some()
-    }
-
-    async fn subscribe(&mut self, channels: Vec<String>) -> Result<(), Box<dyn Error + Send + Sync>> {
+    pub async fn subscribe(&mut self, channels: Vec<String>) -> BoxResult<()> {
         if let Some(ws) = self.ws_stream.as_mut() {
             let subscribe_msg = json!({
                 "method": "SUBSCRIBE",
@@ -59,21 +44,29 @@ impl WebSocketConnection<WebSocketMessage> for BinanceSpotPublicWebSocket {
         }
         Ok(())
     }
+}
 
-    async fn unsubscribe(&mut self, channels: Vec<String>) -> Result<(), Box<dyn Error + Send + Sync>> {
-        if let Some(ws) = self.ws_stream.as_mut() {
-            let unsubscribe_msg = json!({
-                "method": "UNSUBSCRIBE",
-                "params": channels,
-                "id": 1
-            });
-            ws.send(Message::Text(unsubscribe_msg.to_string().into())).await?;
-            self.subscribed_channels.retain(|c| !channels.contains(c));
-        }
+#[async_trait]
+impl WebSocketConnection<WebSocketMessage> for BinanceSpotPublicWebSocket {
+    async fn connect(&mut self) -> BoxResult<()> {
+        let (ws_stream, _) = connect_async(&self.url).await?;
+        self.ws_stream = Some(ws_stream);
         Ok(())
     }
 
-    fn message_stream(&mut self) -> Pin<Box<dyn Stream<Item = Result<WebSocketMessage, Box<dyn Error + Send + Sync>>> + Send>> {
+    async fn disconnect(&mut self) -> BoxResult<()> {
+        if let Some(ws) = self.ws_stream.as_mut() {
+            ws.close(None).await?;
+        }
+        self.ws_stream = None;
+        Ok(())
+    }
+
+    fn is_connected(&self) -> bool {
+        self.ws_stream.is_some()
+    }
+
+    fn message_stream(&mut self) -> Pin<Box<dyn Stream<Item = BoxResult<WebSocketMessage>> + Send>> {
         let stream = self.ws_stream.take().expect("WebSocket not connected");
         
         Box::pin(stream.filter_map(|message| async move {
@@ -81,12 +74,12 @@ impl WebSocketConnection<WebSocketMessage> for BinanceSpotPublicWebSocket {
                 Ok(Message::Text(text)) => {
                     match serde_json::from_str(&text) {
                         Ok(msg) => Some(Ok(msg)),
-                        Err(e) => Some(Err(Box::new(e) as Box<dyn Error + Send + Sync>)),
+                        Err(e) => Some(Err(BoxError::from(e))),
                     }
                 }
                 Ok(Message::Close(_)) => None,
                 Ok(_) => None,
-                Err(e) => Some(Err(Box::new(e) as Box<dyn Error + Send + Sync>)),
+                Err(e) => Some(Err(BoxError::from(e))),
             }
         }))
     }

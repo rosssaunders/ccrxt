@@ -8,7 +8,7 @@ use std::time::{Duration, Instant};
 use serde_json::json;
 
 use super::types::WebSocketMessage;
-use crate::websockets::WebSocketConnection;
+use crate::websockets::{WebSocketConnection, BoxResult};
 
 const BYBIT_SPOT_WS_URL: &str = "wss://stream.bybit.com/v5/public/spot";
 const HEARTBEAT_INTERVAL: Duration = Duration::from_secs(20);
@@ -30,7 +30,7 @@ impl BybitSpotPublicWebSocket {
         }
     }
     
-    async fn send_heartbeat(&mut self) -> Result<(), Box<dyn Error + Send + Sync>> {
+    async fn send_heartbeat(&mut self) -> BoxResult<()> {
         if let Some(ws) = self.ws_stream.as_mut() {
             let ping_msg = json!({
                 "req_id": "heartbeat",
@@ -41,18 +41,31 @@ impl BybitSpotPublicWebSocket {
         }
         Ok(())
     }
+
+    pub async fn subscribe(&mut self, channels: Vec<String>) -> BoxResult<()> {
+        if let Some(ws) = self.ws_stream.as_mut() {
+            let subscribe_msg = json!({
+                "req_id": "subscribe",
+                "op": "subscribe",
+                "args": channels
+            });
+            ws.send(Message::Text(subscribe_msg.to_string().into())).await?;
+            self.subscribed_channels.extend(channels);
+        }
+        Ok(())
+    }
 }
 
 #[async_trait]
 impl WebSocketConnection<WebSocketMessage> for BybitSpotPublicWebSocket {
-    async fn connect(&mut self) -> Result<(), Box<dyn Error + Send + Sync>> {
+    async fn connect(&mut self) -> BoxResult<()> {
         let (ws_stream, _) = connect_async(&self.url).await?;
         self.ws_stream = Some(ws_stream);
         self.last_heartbeat = Instant::now();
         Ok(())
     }
 
-    async fn disconnect(&mut self) -> Result<(), Box<dyn Error + Send + Sync>> {
+    async fn disconnect(&mut self) -> BoxResult<()> {
         if let Some(ws) = self.ws_stream.as_mut() {
             ws.close(None).await?;
         }
@@ -64,34 +77,7 @@ impl WebSocketConnection<WebSocketMessage> for BybitSpotPublicWebSocket {
         self.ws_stream.is_some()
     }
 
-    async fn subscribe(&mut self, channels: Vec<String>) -> Result<(), Box<dyn Error + Send + Sync>> {
-        if let Some(ws) = self.ws_stream.as_mut() {
-            let subscribe_msg = json!({
-                "op": "subscribe",
-                "args": channels
-            });
-            ws.send(Message::Text(subscribe_msg.to_string().into())).await?;
-            self.subscribed_channels.extend(channels);
-            
-            // Send initial heartbeat
-            self.send_heartbeat().await?;
-        }
-        Ok(())
-    }
-
-    async fn unsubscribe(&mut self, channels: Vec<String>) -> Result<(), Box<dyn Error + Send + Sync>> {
-        if let Some(ws) = self.ws_stream.as_mut() {
-            let unsubscribe_msg = json!({
-                "op": "unsubscribe",
-                "args": channels
-            });
-            ws.send(Message::Text(unsubscribe_msg.to_string().into())).await?;
-            self.subscribed_channels.retain(|c| !channels.contains(c));
-        }
-        Ok(())
-    }
-
-    fn message_stream(&mut self) -> Pin<Box<dyn Stream<Item = Result<WebSocketMessage, Box<dyn Error + Send + Sync>>> + Send>> {
+    fn message_stream(&mut self) -> Pin<Box<dyn Stream<Item = BoxResult<WebSocketMessage>> + Send>> {
         let stream = self.ws_stream.take().expect("WebSocket not connected");
         let mut last_heartbeat = self.last_heartbeat;
         
