@@ -1,27 +1,282 @@
 rustlang wrappers around crypto exchanges
 
-Background
+# Background
 
 There wrappers are going to be used in a High Frequency trading system so low latency is paramount. Code that is complex but fast (whilst still correct) is preferred over cleaner yet slower code.
 
-Common supporting code
+# Common supporting code
 
 For code in crates that support each venue, such as websockets, no venue specific code or knowledge of the venues is allowed. The code must be clean.
 
-Rules
+# File Structure Rules
 
-1. All venues to implement the low latency APIs. If Websocket available, use that over REST calls.
-2. All venue rate limiting to be implemented exactly.
-3. All wrappers around the endpoints should be pure. Not fixes and helper functions.
-4. All websockets to implement the common websocket trait.
+1. All endpoint files MUST be directly under the venue directory (e.g. venues/src/binance/coinm/)
+2. NO subdirectories for endpoints are allowed
+3. File naming convention:
+   - Private REST endpoints: private_*.rs
+   - Public REST endpoints: public_*.rs
+   - Private WebSocket endpoints: ws_private_*.rs
+   - Public WebSocket endpoints: ws_public_*.rs
+4. Each endpoint should be in its own file
+5. All wrappers around the endpoints should be pure. No fixes and helper functions.
+5. Common code (like websockets, rate limiting) can be in subdirectories
 
-HOW TO: To implement a new exchange
+# Struct Implementation Rules
 
-1. Create a directory under venues/src for the venue
-2. Create all enums
-3. Create all error codes as rust errors
-4. Implement the auth
-5. Implement rate limiting
-6. Implement the endpoints
-7. If the exchange rests an error via a HTTP code OR a 200 with an error payload, this 
-needs to be converted to rust native errors.
+1. The struct definition MUST be in a single file (e.g. private_rest.rs for the client struct)
+2. Additional implementations (impl blocks) for the struct can be spread across multiple files
+3. Each endpoint file should contain:
+   - The endpoints types (Request/Response structs)
+   - An impl block for the client struct with the endpoints implementation
+4. The client structs fields should remain private, with implementations accessing them through self
+
+# Struct Documentation Rules
+
+1. All structs MUST have a doc comment explaining their purpose and usage
+2. All struct fields MUST have doc comments that include:
+   - A clear description of the field's purpose
+   - Valid values or ranges where applicable
+   - Any constraints or requirements
+   - Relationships with other fields
+   - Units or formats where relevant
+3. Field documentation MUST be consistent with the venue's API documentation
+4. Documentation MUST be clear and concise, avoiding unnecessary verbosity
+5. Documentation MUST use proper Rust doc comment format (///)
+6. Documentation MUST be kept up to date with any changes to the struct or its fields
+
+# Struct Field Naming Rules
+
+1. All struct fields MUST use Rust naming conventions (snake_case)
+2. When the API uses different naming conventions (e.g., camelCase), use serde attributes to map the fields:
+   ```rust
+   #[serde(rename = "apiFieldName")]
+   pub rust_field_name: Type
+   ```
+3. Avoid using raw identifiers (r#) for reserved keywords - use descriptive names instead
+4. Keep field names consistent across related structs
+
+# Enum Usage Rules
+
+1. All response structs MUST use enums for fields that represent fixed sets of values:
+   - Fields that have a predefined set of possible values
+   - Fields that represent states or types
+   - Fields that represent categories or classifications
+   - Fields that represent modes or configurations
+   - Fields that represent directions or sides
+   - Fields that represent statuses or conditions
+
+2. Enums MUST be defined in the venues enums.rs file
+3. Enums MUST implement:
+   - Debug
+   - Clone
+   - Copy
+   - PartialEq
+   - Eq
+   - Serialize
+   - Deserialize
+
+4. Enum variants MUST use the venues API naming convention (typically SCREAMING_SNAKE_CASE) for compatibility:
+   ```rust
+   #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+   #[serde(rename_all = "SCREAMING_SNAKE_CASE")] // or whatever the venue uses
+   pub enum SomeEnum {
+       Variant1,
+       Variant2,
+   }
+   ```
+
+5. DO NOT use String types for fields that should be enums
+6. DO NOT use raw strings for fields that represent fixed sets of values
+
+# File Structure Example
+
+venues/src/binance/coinm/
+├── private_order.rs        # ✓ Correct
+├── private_account.rs      # ✓ Correct
+├── public_ticker.rs        # ✓ Correct
+├── ws_private_trades.rs    # ✓ Correct
+├── ws_public_depth.rs      # ✓ Correct
+├── common/                 # ✓ Allowed for common code
+│   ├── websocket.rs
+│   └── rate_limit.rs
+└── private_rest/          # ✗ Wrong - no subdirectories for endpoints
+    ├── order.rs
+    └── account.rs
+
+# DO NOT
+- Put endpoint files in subdirectories
+- Use different naming conventions
+- Combine multiple endpoints in one file
+- Use String types for fields that should be enums
+- Create enums in endpoint files
+- Use raw strings for fields with fixed sets of values
+
+# Error Handling Rules
+
+1. Error Enum Structure:
+   - Each venue MUST define an error enum with:
+     - Error code as a field
+     - Descriptive message field
+     - Any other fields that are relevant to the venue
+     - Proper error variants for all possible API errors
+   ```rust
+   #[derive(Error, Debug)]
+   pub enum VenueError {
+       #[error("Error {code}: {message}")]
+       SpecificError {
+           code: i32,
+           message: String,
+       },
+       // ... other variants
+   }
+   ```
+
+2. Error Response Structure:
+   - Each venue MUST define an error response struct:
+   - Additional fields can be added to the error response struct to include more information per venue
+   ```rust
+   #[derive(Debug, Serialize, Deserialize)]
+   pub struct VenueErrorResponse {
+       pub code: i32,
+       pub msg: String,
+   }
+   ```
+
+3. Error Mapping Implementation:
+   - Each venue MUST implement From<VenueErrorResponse> for VenueError
+   - Map all known error codes to specific error variants
+   - Include an Unknown variant for unmapped codes
+   ```rust
+   impl From<VenueErrorResponse> for VenueError {
+       fn from(err: VenueErrorResponse) -> Self {
+           match err.code {
+               -1000 => VenueError::SpecificError {
+                   code: err.code,
+                   message: err.msg,
+               },
+               // ... other mappings
+               _ => VenueError::Unknown {
+                   code: err.code,
+                   message: err.msg,
+               },
+           }
+       }
+   }
+   ```
+
+4. HTTP Status Code Mapping:
+   - Each HTTP status code MUST map to a specific error code
+   - The mapping MUST be documented in the error enum
+   - Example:
+     ```rust
+     match status {
+         StatusCode::UNAUTHORIZED => VenueError::AuthenticationError {
+             code: -2015,
+             message: "Invalid API key".to_string(),
+         },
+         // ... other mappings
+     }
+     ```
+
+5. Error Documentation:
+   - Each error variant MUST have a doc comment explaining:
+     - The error code
+     - When it occurs
+     - How to handle it
+   - Example:
+     ```rust
+     /// Error -2015: Invalid API key
+     /// Occurs when the API key is invalid or has insufficient permissions
+     /// Handle by checking API key validity and permissions
+     #[error("Authentication error: {message} (code: {code})")]
+     AuthenticationError {
+         code: i32,
+         message: String,
+     }
+     ```
+
+6. Error Type Alias:
+   - Each venue MUST define a Result type alias:
+     ```rust
+     pub type VenueResult<T> = Result<T, VenueError>;
+     ```
+
+7. Error Handling in Functions:
+   - All functions MUST return the venues Result type
+   - Error handling MUST use the ? operator to propagate errors
+   - Error messages MUST be preserved from the API when available
+
+8. Common Error Categories:
+   - Authentication errors (e.g., invalid API key)
+   - Rate limiting errors
+   - Validation errors (e.g., invalid parameters)
+   - Server errors
+   - Network errors
+   - Unknown errors
+
+9. Error Code Ranges:
+   - Each venue SHOULD document their error code ranges
+   - Example:
+     ```rust
+     /// Error code ranges:
+     /// -1000 to -1999: General errors
+     /// -2000 to -2999: Authentication errors
+     /// -3000 to -3999: Rate limiting errors
+     /// -4000 to -4999: Validation errors
+     /// -5000 to -5999: Server errors
+     ```
+
+10. Error Handling Best Practices:
+    - NEVER use regex for parsing error messages
+    - Keep error handling simple and direct
+    - Preserve original error codes and messages
+    - Use direct string matching or simple string operations
+    - Avoid complex parsing of error messages
+    - When in doubt, pass through the original error message
+
+# Common Mistakes to Avoid
+1. Using regex for error message parsing
+2. Over-complicating error handling logic
+3. Trying to extract structured data from error messages
+4. Adding unnecessary dependencies for error handling
+5. Creating complex error message parsing logic
+6. Not preserving original error codes and messages
+7. Not documenting error variants
+8. Not implementing proper error mapping
+9. Not handling all possible error cases
+10. Not using the venues Result type alias
+11. Creating subdirectories for endpoints (e.g. private_rest/, public_rest/)
+12. Using incorrect prefixes (e.g. rest_private_*.rs instead of private_*.rs)
+13. Combining multiple endpoints in one file
+14. Making struct fields public to access them from other files
+15. Moving endpoint implementations to the struct definition file
+16. Using String types for fields that should be enums
+17. Creating enums in endpoint files instead of enums.rs
+18. Using raw strings for fields with fixed sets of values
+
+# Rate Limiting Implementations
+
+1. Use existing rate limiter creates.
+
+# Websockets
+
+1. All websockets to implement the common websocket trait. (websockets in the root)
+
+# Client Base URL Rules
+
+1. All client structs MUST take base URLs as constructor parameters
+2. Base URLs MUST NOT be hardcoded in the code
+3. Each client struct MUST have a base_url field
+4. The base_url field MUST be used for all API endpoint construction
+5. Default base URLs can be provided as constants but MUST be passed through the constructor
+6. The base_url field MUST be private (pub(crate)) to prevent external modification
+7. All endpoint implementations MUST use the clients base_url field for URL construction
+
+# Error Handling Rules
+
+1. NEVER use regex for parsing error messages or response data
+2. Keep error handling simple and direct
+3. Preserve original error codes and messages
+4. Use direct string matching or simple string operations if needed
+5. Avoid complex parsing of error messages
+6. When in doubt, pass through the original error message

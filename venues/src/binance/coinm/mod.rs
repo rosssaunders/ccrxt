@@ -1,7 +1,24 @@
+pub mod common;
+pub mod errors;
+pub mod rate_limit;
 pub mod types;
+pub mod public_rest;
+pub mod private_rest;
+pub mod enums;
+pub mod public_ticker;
+pub mod public_orderbook;
+pub mod public_exchange_info;
+pub mod private_account;
+pub mod private_order_cancel;
+pub mod private_order_create;
+pub mod ws_public;
+pub mod ws_private;
+pub mod ws_private_user_data;
 pub mod ws;
 pub mod rest;
 
 pub use types::*;
 pub use ws::*;
-pub use rest::*; 
+pub use rest::*;
+pub use client::BinanceCoinMClient;
+pub use errors::{BinanceCoinMError, BinanceCoinMResult}; 

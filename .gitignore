@@ -1,2 +1,15 @@
 /target
 .DS_Store
+.idea
+
+# Rust specific
+**/*.rs.bk
+Cargo.lock
+debug/
+release/
+*.pdb
+*.rls/
+*.rustfmt
+*.rustc_info.json
+.cargo/config.toml
+.cargo-ok
