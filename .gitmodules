@@ -1,0 +1,3 @@
+[submodule "coincise"]
+	path = coincise
+	url = https://github.com/rosssaunders/coincise
