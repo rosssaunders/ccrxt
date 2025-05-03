@@ -1,6 +1,7 @@
 use thiserror::Error;
 use serde::{Deserialize, Serialize};
 use reqwest::StatusCode;
+use reqwest::Response;
 
 /// Error code ranges:
 /// -1000 to -1999: General Server or Network issues
@@ -10,9 +11,30 @@ use reqwest::StatusCode;
 /// -5000 to -5999: System errors
 #[derive(Error, Debug)]
 pub enum BinanceCoinMError {
-    #[error("HTTP error: {0}")]
-    HttpError(#[from] reqwest::Error),
-    
+    #[error("HTTP request error: {0}")]
+    RequestError(#[from] reqwest::Error),
+
+    #[error("API error: {code} - {message}")]
+    ApiError {
+        code: i32,
+        message: String,
+    },
+
+    #[error("Invalid response: {0}")]
+    InvalidResponse(String),
+
+    #[error("Rate limit exceeded")]
+    RateLimitExceeded,
+
+    #[error("Authentication error: {0}")]
+    AuthenticationError(String),
+
+    #[error("Validation error: {0}")]
+    ValidationError(String),
+
+    #[error("Unknown error: {0}")]
+    Unknown(String),
+
     #[error("WebSocket error: {0}")]
     WebSocketError(#[from] tokio_tungstenite::tungstenite::Error),
     
@@ -504,7 +526,7 @@ impl From<BinanceErrorResponse> for BinanceCoinMError {
     fn from(err: BinanceErrorResponse) -> Self {
         match err.code {
             // 10xx - General Server or Network issues
-            -1000 => BinanceCoinMError::Unknown(err.code),
+            -1000 => BinanceCoinMError::Unknown(err.code.to_string()),
             -1001 => BinanceCoinMError::Disconnected(err.code),
             -1002 => BinanceCoinMError::Unauthorized(err.code),
             -1003 => BinanceCoinMError::TooManyRequests(err.code, err.msg),
@@ -663,7 +685,7 @@ impl From<BinanceErrorResponse> for BinanceCoinMError {
             -4188 => BinanceCoinMError::MeInvalidTimestamp(err.code),
 
             // Unknown error code
-            _ => BinanceCoinMError::Unknown(err.code),
+            _ => BinanceCoinMError::Unknown(err.code.to_string()),
         }
     }
 }
@@ -683,4 +705,39 @@ impl From<StatusCode> for BinanceCoinMError {
     }
 }
 
-pub type BinanceCoinMResult<T> = Result<T, BinanceCoinMError>; 
+pub type BinanceCoinMResult<T> = Result<T, BinanceCoinMError>;
+
+impl BinanceCoinMError {
+    pub async fn from_response(response: Response) -> Self {
+        match response.status().as_u16() {
+            429 => BinanceCoinMError::RateLimitExceeded,
+            401 | 403 => BinanceCoinMError::AuthenticationError("Invalid API key or signature".to_string()),
+            400 => {
+                if let Ok(error) = response.json::<serde_json::Value>().await {
+                    if let Some(code) = error.get("code").and_then(|c| c.as_i64()) {
+                        if let Some(msg) = error.get("msg").and_then(|m| m.as_str()) {
+                            return BinanceCoinMError::ApiError {
+                                code: code as i32,
+                                message: msg.to_string(),
+                            };
+                        }
+                    }
+                }
+                BinanceCoinMError::ValidationError("Invalid request parameters".to_string())
+            },
+            _ => {
+                if let Ok(error) = response.json::<serde_json::Value>().await {
+                    if let Some(code) = error.get("code").and_then(|c| c.as_i64()) {
+                        if let Some(msg) = error.get("msg").and_then(|m| m.as_str()) {
+                            return BinanceCoinMError::ApiError {
+                                code: code as i32,
+                                message: msg.to_string(),
+                            };
+                        }
+                    }
+                }
+                BinanceCoinMError::Unknown("Unknown error occurred".to_string())
+            }
+        }
+    }
+} 

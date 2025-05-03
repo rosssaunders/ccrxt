@@ -2,6 +2,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use super::enums::WebSocketEventType;
 use std::time::Duration;
+use super::errors::BinanceCoinMError;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -64,4 +65,7 @@ pub struct BinanceResponse<T> {
     pub rate_limit_duration: Duration,
     pub request_duration: Duration,
     pub headers: BinanceHeaders,
-} 
+}
+
+/// Result type for Binance COIN-M Futures API operations
+pub type BinanceCoinMResult<T> = Result<T, BinanceCoinMError>; 
