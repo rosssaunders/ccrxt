@@ -6,7 +6,7 @@ use serde_json::json;
 use std::error::Error;
 use super::{
     types::WebSocketMessage,
-    errors::{BinanceCoinMError, BinanceCoinMResult},
+    api_errors::{BinanceCoinMError, BinanceCoinMResult},
 };
 
 const BINANCE_COINM_WS_URL: &str = "wss://dstream.binance.com/ws";

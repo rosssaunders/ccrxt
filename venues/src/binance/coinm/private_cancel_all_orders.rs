@@ -1,7 +1,8 @@
 use serde::{Deserialize, Serialize};
 use super::private_rest::BinanceCoinMPrivateRest;
-use super::errors::BinanceCoinMError;
+use super::api_errors::BinanceCoinMError;
 use super::types::BinanceCoinMResult;
+use super::common::request::send_request;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct CancelAllOrdersResponse {
@@ -30,19 +31,15 @@ impl BinanceCoinMPrivateRest {
         let signature = self.sign_request(&query_str);
         query_str.push_str(&format!("&signature={}", signature));
 
-        let url = format!("{}/dapi/v1/allOpenOrders?{}", self.base_url, query_str);
-
-        let response = self.client
-            .delete(&url)
-            .header("X-MBX-APIKEY", &self.api_key)
-            .send()
-            .await?;
-
-        if !response.status().is_success() {
-            return Err(BinanceCoinMError::from_response(response).await);
-        }
-
-        let result: CancelAllOrdersResponse = response.json().await?;
-        Ok(result)
+        let response = send_request::<CancelAllOrdersResponse, _, _>(
+            &self.client,
+            &self.base_url,
+            "/dapi/v1/allOpenOrders",
+            reqwest::Method::DELETE,
+            Some(&query_str),
+            Some(self.api_key.expose_secret()),
+            || async { Ok(()) }, // TODO: Replace with actual rate limit check
+        ).await?;
+        Ok(response.data)
     }
 } 

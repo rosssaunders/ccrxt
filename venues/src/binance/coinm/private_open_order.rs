@@ -2,6 +2,7 @@ use serde::{Deserialize, Serialize};
 use super::private_rest::BinanceCoinMPrivateRest;
 use super::errors::BinanceCoinMError;
 use super::types::BinanceCoinMResult;
+use super::utils::send_request;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct OpenOrderQuery {
@@ -46,34 +47,29 @@ impl BinanceCoinMPrivateRest {
     /// 
     /// Open order details
     pub async fn get_open_order(&self, query: OpenOrderQuery) -> BinanceCoinMResult<OpenOrder> {
-        let mut query_str = format!("symbol={}", query.symbol);
-
+        let mut params = Vec::with_capacity(3);
+        params.push(format!("symbol={}", query.symbol));
         if let Some(id) = query.order_id {
-            query_str.push_str(&format!("&orderId={}", id));
+            params.push(format!("orderId={}", id));
         }
         if let Some(id) = query.client_order_id {
-            query_str.push_str(&format!("&origClientOrderId={}", id));
+            params.push(format!("origClientOrderId={}", id));
         }
-
         let timestamp = chrono::Utc::now().timestamp_millis();
-        query_str.push_str(&format!("&timestamp={}", timestamp));
-
+        params.push(format!("timestamp={}", timestamp));
+        let mut query_str = params.join("&");
         let signature = self.sign_request(&query_str);
         query_str.push_str(&format!("&signature={}", signature));
-
-        let url = format!("{}/dapi/v1/openOrder?{}", self.base_url, query_str);
-
-        let response = self.client
-            .get(&url)
-            .header("X-MBX-APIKEY", &self.api_key)
-            .send()
-            .await?;
-
-        if !response.status().is_success() {
-            return Err(BinanceCoinMError::from_response(response).await);
-        }
-
-        let order: OpenOrder = response.json().await?;
-        Ok(order)
+        let endpoint = "/dapi/v1/openOrder";
+        let response = send_request(
+            &self.client,
+            &self.base_url,
+            endpoint,
+            reqwest::Method::GET,
+            Some(&query_str),
+            Some(self.api_key.expose_secret()),
+            || self.rate_limiter.check_weight_limit("openOrder", 1)
+        ).await?;
+        Ok(response.data)
     }
 } 

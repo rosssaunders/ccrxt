@@ -1,7 +1,10 @@
 use serde::{Deserialize, Serialize};
 use super::private_rest::BinanceCoinMPrivateRest;
-use super::errors::BinanceCoinMError;
+use super::api_errors::BinanceCoinMError;
 use super::types::BinanceCoinMResult;
+use std::collections::BTreeMap;
+use serde_urlencoded;
+use super::request::append_timestamp_and_signature;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct TradeAsynQuery {
@@ -10,6 +13,16 @@ pub struct TradeAsynQuery {
     pub end_time: Option<i64>,
     pub from_id: Option<i64>,
     pub limit: Option<i32>,
+}
+
+impl TradeAsynQuery {
+    /// Serializes the struct to a URL query string using serde_urlencoded.
+    ///
+    /// The order of parameters in the output string matches the order of fields in the struct.
+    /// Fields with None values are omitted.
+    pub fn to_query_string(&self) -> Result<String, serde_urlencoded::ser::Error> {
+        serde_urlencoded::to_string(self)
+    }
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -27,33 +40,19 @@ impl BinanceCoinMPrivateRest {
     /// # Returns
     /// 
     /// Download ID for retrieving the results
-    pub async fn get_trade_asyn(&self, query: TradeAsynQuery) -> BinanceCoinMResult<TradeAsynResponse> {
-        let mut query_str = format!("symbol={}", query.symbol);
-
-        if let Some(time) = query.start_time {
-            query_str.push_str(&format!("&startTime={}", time));
-        }
-        if let Some(time) = query.end_time {
-            query_str.push_str(&format!("&endTime={}", time));
-        }
-        if let Some(id) = query.from_id {
-            query_str.push_str(&format!("&fromId={}", id));
-        }
-        if let Some(limit) = query.limit {
-            query_str.push_str(&format!("&limit={}", limit));
-        }
-
+    pub async fn get_trade_asyn(&self, mut query: TradeAsynQuery) -> BinanceCoinMResult<TradeAsynResponse> {
         let timestamp = chrono::Utc::now().timestamp_millis();
-        query_str.push_str(&format!("&timestamp={}", timestamp));
+        // Serialize the struct to a query string
+        let query_str = query.to_query_string()
+            .expect("Failed to serialize query params");
+        let query_str = append_timestamp_and_signature(query_str, |qs| self.sign_request(qs))?;
 
-        let signature = self.sign_request(&query_str);
-        query_str.push_str(&format!("&signature={}", signature));
-
+        let api_key = self.get_api_key()?;
         let url = format!("{}/dapi/v1/trade/asyn?{}", self.base_url, query_str);
 
         let response = self.client
             .get(&url)
-            .header("X-MBX-APIKEY", &self.api_key)
+            .header("X-MBX-APIKEY", api_key.expose_secret())
             .send()
             .await?;
 

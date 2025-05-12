@@ -1,5 +1,4 @@
-pub mod common;
-pub mod errors;
+pub mod api_errors;
 pub mod types;
 pub mod enums;
 pub mod rate_limit;
@@ -42,8 +41,9 @@ pub mod private_order_asyn;
 pub mod private_order_asyn_id;
 pub mod private_trade_asyn;
 pub mod private_trade_asyn_id;
+pub mod http_errors;
 
 pub use types::*;
 pub use ws::*;
-pub use errors::{BinanceCoinMError, BinanceCoinMResult};
+pub use api_errors::{BinanceCoinMError, BinanceCoinMResult};
 pub use private_rest::BinanceCoinMPrivateRest; 

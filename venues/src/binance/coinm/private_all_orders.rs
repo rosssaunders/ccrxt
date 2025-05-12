@@ -1,7 +1,10 @@
 use serde::{Deserialize, Serialize};
 use super::private_rest::BinanceCoinMPrivateRest;
-use super::errors::BinanceCoinMError;
+use super::api_errors::BinanceCoinMError;
 use super::types::BinanceCoinMResult;
+use super::common::request::send_request;
+use std::collections::BTreeMap;
+use serde_urlencoded;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct AllOrdersQuery {
@@ -49,40 +52,38 @@ impl BinanceCoinMPrivateRest {
     /// 
     /// List of orders matching the query criteria
     pub async fn get_all_orders(&self, query: AllOrdersQuery) -> BinanceCoinMResult<Vec<Order>> {
-        let mut query_str = format!("symbol={}", query.symbol);
-
+        let mut params = BTreeMap::new();
+        params.insert("symbol", query.symbol.clone());
         if let Some(id) = query.order_id {
-            query_str.push_str(&format!("&orderId={}", id));
+            params.insert("orderId", id.to_string());
         }
         if let Some(time) = query.start_time {
-            query_str.push_str(&format!("&startTime={}", time));
+            params.insert("startTime", time.to_string());
         }
         if let Some(time) = query.end_time {
-            query_str.push_str(&format!("&endTime={}", time));
+            params.insert("endTime", time.to_string());
         }
         if let Some(limit) = query.limit {
-            query_str.push_str(&format!("&limit={}", limit));
+            params.insert("limit", limit.to_string());
         }
-
         let timestamp = chrono::Utc::now().timestamp_millis();
-        query_str.push_str(&format!("&timestamp={}", timestamp));
+        params.insert("timestamp", timestamp.to_string());
 
+        let mut query_str = serde_urlencoded::to_string(&params)
+            .expect("Failed to serialize query params");
         let signature = self.sign_request(&query_str);
         query_str.push_str(&format!("&signature={}", signature));
 
-        let url = format!("{}/dapi/v1/allOrders?{}", self.base_url, query_str);
+        let response = send_request::<Vec<Order>, _, _>(
+            &self.client,
+            &self.base_url,
+            "/dapi/v1/allOrders",
+            reqwest::Method::GET,
+            Some(&query_str),
+            Some(self.api_key.expose_secret()),
+            || async { Ok(()) }, // TODO: Replace with actual rate limit check
+        ).await?;
 
-        let response = self.client
-            .get(&url)
-            .header("X-MBX-APIKEY", &self.api_key)
-            .send()
-            .await?;
-
-        if !response.status().is_success() {
-            return Err(BinanceCoinMError::from_response(response).await);
-        }
-
-        let orders: Vec<Order> = response.json().await?;
-        Ok(orders)
+        Ok(response.data)
     }
 } 

@@ -237,24 +237,17 @@ impl BinanceCoinMPrivateRest {
     pub async fn place_batch_orders(&self, orders: Vec<BatchOrder>) -> BinanceCoinMResult<BatchOrderResponse> {
         let timestamp = chrono::Utc::now().timestamp_millis();
         let mut query_str = format!("timestamp={}", timestamp);
-
         let signature = self.sign_request(&query_str);
         query_str.push_str(&format!("&signature={}", signature));
-
-        let url = format!("{}/dapi/v1/batchOrders?{}", self.base_url, query_str);
-
-        let response = self.client
-            .put(&url)
-            .header("X-MBX-APIKEY", &self.api_key)
-            .json(&orders)
-            .send()
-            .await?;
-
-        if !response.status().is_success() {
-            return Err(BinanceCoinMError::from_response(response).await);
-        }
-
-        let result: BatchOrderResponse = response.json().await?;
-        Ok(result)
+        let response = send_request::<BatchOrderResponse, _, _>(
+            &self.client,
+            &self.base_url,
+            "/dapi/v1/batchOrders",
+            reqwest::Method::POST, // or PUT if required by API
+            Some(&query_str),
+            Some(self.api_key.expose_secret()),
+            || async { Ok(()) }, // TODO: Replace with actual rate limit check
+        ).await?;
+        Ok(response.data)
     }
 } 

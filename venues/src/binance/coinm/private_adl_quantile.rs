@@ -2,6 +2,7 @@ use serde::{Deserialize, Serialize};
 use super::private_rest::BinanceCoinMPrivateRest;
 use super::errors::BinanceCoinMError;
 use super::types::BinanceCoinMResult;
+use super::common::request::send_request;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ADLQuantile {
@@ -27,33 +28,24 @@ impl BinanceCoinMPrivateRest {
     /// 
     /// Vector of ADL quantile information
     pub async fn get_adl_quantile(&self, symbol: Option<&str>) -> BinanceCoinMResult<Vec<ADLQuantile>> {
-        let mut query = String::new();
+        let mut params = Vec::with_capacity(2);
         if let Some(s) = symbol {
-            query.push_str(&format!("symbol={}", s));
+            params.push(format!("symbol={}", s));
         }
-
         let timestamp = chrono::Utc::now().timestamp_millis();
-        if !query.is_empty() {
-            query.push('&');
-        }
-        query.push_str(&format!("timestamp={}", timestamp));
-
+        params.push(format!("timestamp={}", timestamp));
+        let mut query = params.join("&");
         let signature = self.sign_request(&query);
         query.push_str(&format!("&signature={}", signature));
-
-        let url = format!("{}/dapi/v1/adlQuantile?{}", self.base_url, query);
-
-        let response = self.client
-            .get(&url)
-            .header("X-MBX-APIKEY", &self.api_key)
-            .send()
-            .await?;
-
-        if !response.status().is_success() {
-            return Err(BinanceCoinMError::from_response(response).await);
-        }
-
-        let adl_quantiles: Vec<ADLQuantile> = response.json().await?;
-        Ok(adl_quantiles)
+        let response = send_request::<Vec<ADLQuantile>, _, _>(
+            &self.client,
+            &self.base_url,
+            "/dapi/v1/adlQuantile",
+            reqwest::Method::GET,
+            Some(&query),
+            Some(self.api_key.expose_secret()),
+            || async { Ok(()) }, // TODO: Replace with actual rate limit check
+        ).await?;
+        Ok(response.data)
     }
 } 

@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 use super::private_rest::BinanceCoinMPrivateRest;
-use super::errors::BinanceCoinMError;
+use super::api_errors::BinanceCoinMError;
 use super::types::BinanceCoinMResult;
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -47,18 +47,17 @@ impl BinanceCoinMPrivateRest {
     /// 
     /// Order information
     pub async fn query_order(&self, query: OrderQuery) -> BinanceCoinMResult<OrderQueryResponse> {
-        let mut query_str = format!("symbol={}", query.symbol);
-
+        let mut params = Vec::with_capacity(3);
+        params.push(format!("symbol={}", query.symbol));
         if let Some(id) = query.order_id {
-            query_str.push_str(&format!("&orderId={}", id));
+            params.push(format!("orderId={}", id));
         }
         if let Some(id) = query.client_order_id {
-            query_str.push_str(&format!("&origClientOrderId={}", id));
+            params.push(format!("origClientOrderId={}", id));
         }
-
         let timestamp = chrono::Utc::now().timestamp_millis();
-        query_str.push_str(&format!("&timestamp={}", timestamp));
-
+        params.push(format!("timestamp={}", timestamp));
+        let mut query_str = params.join("&");
         let signature = self.sign_request(&query_str);
         query_str.push_str(&format!("&signature={}", signature));
 

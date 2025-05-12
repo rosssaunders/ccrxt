@@ -33,6 +33,9 @@ rust_decimal.workspace = true
 dotenv = "0.15"
 thiserror.workspace = true
 clap.workspace = true
+aes-gcm = "0.10.3"
+base64 = "0.22.1"
+rand = "0.9.1"
 
 [lints]
 workspace = true

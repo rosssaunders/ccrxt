@@ -1,6 +1,6 @@
 use reqwest::Client;
 use super::{
-    errors::BinanceCoinMResult,
+    api_errors::BinanceCoinMResult,
     rate_limit::BinanceCoinMRateLimiter,
     types::BinanceResponse,
     common::request::send_request,

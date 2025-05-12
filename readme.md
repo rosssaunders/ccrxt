@@ -1,5 +1,3 @@
-rustlang wrappers around crypto exchanges
-
 Rules
 
 1. All venues to implement the low latency APIs. If Websocket available, use that over REST calls.

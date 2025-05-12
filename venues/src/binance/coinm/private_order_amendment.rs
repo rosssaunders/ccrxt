@@ -2,6 +2,7 @@ use serde::{Deserialize, Serialize};
 use super::private_rest::BinanceCoinMPrivateRest;
 use super::errors::BinanceCoinMError;
 use super::types::BinanceCoinMResult;
+use super::utils::send_request;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct OrderAmendmentQuery {
@@ -48,33 +49,26 @@ impl BinanceCoinMPrivateRest {
     /// Order amendment details
     pub async fn get_order_amendment(&self, query: OrderAmendmentQuery) -> BinanceCoinMResult<OrderAmendmentResponse> {
         let mut query_str = format!("symbol={}", query.symbol);
-
         if let Some(id) = query.order_id {
             query_str.push_str(&format!("&orderId={}", id));
         }
         if let Some(id) = query.client_order_id {
             query_str.push_str(&format!("&origClientOrderId={}", id));
         }
-
         let timestamp = chrono::Utc::now().timestamp_millis();
         query_str.push_str(&format!("&timestamp={}", timestamp));
-
         let signature = self.sign_request(&query_str);
         query_str.push_str(&format!("&signature={}", signature));
-
-        let url = format!("{}/dapi/v1/orderAmendment?{}", self.base_url, query_str);
-
-        let response = self.client
-            .get(&url)
-            .header("X-MBX-APIKEY", &self.api_key)
-            .send()
-            .await?;
-
-        if !response.status().is_success() {
-            return Err(BinanceCoinMError::from_response(response).await);
-        }
-
-        let amendment: OrderAmendmentResponse = response.json().await?;
-        Ok(amendment)
+        let endpoint = "/dapi/v1/orderAmendment";
+        let response = send_request(
+            &self.client,
+            &self.base_url,
+            endpoint,
+            reqwest::Method::GET,
+            Some(&query_str),
+            Some(self.api_key.expose_secret()),
+            || self.rate_limiter.check_weight_limit("orderAmendment", 1)
+        ).await?;
+        Ok(response.data)
     }
 } 

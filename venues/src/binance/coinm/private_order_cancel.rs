@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use super::errors::BinanceCoinMResult;
+use super::api_errors::BinanceCoinMResult;
 use super::private_rest::BinanceCoinMPrivateRest;
 use super::types::BinanceResponse;
 use super::common::request::send_request;

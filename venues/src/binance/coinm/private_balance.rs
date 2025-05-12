@@ -1,7 +1,8 @@
 use serde::{Deserialize, Serialize};
 use super::private_rest::BinanceCoinMPrivateRest;
-use super::errors::BinanceCoinMError;
+use super::api_errors::BinanceCoinMError;
 use super::types::BinanceCoinMResult;
+use super::common::request::send_request;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Balance {
@@ -26,20 +27,17 @@ impl BinanceCoinMPrivateRest {
         let timestamp = chrono::Utc::now().timestamp_millis();
         let query = format!("timestamp={}", timestamp);
         let signature = self.sign_request(&query);
-        let url = format!("{}/dapi/v1/balance?{}&signature={}", 
-            self.base_url, query, signature);
-
-        let response = self.client
-            .get(&url)
-            .header("X-MBX-APIKEY", &self.api_key)
-            .send()
-            .await?;
-
-        if !response.status().is_success() {
-            return Err(BinanceCoinMError::from_response(response).await);
-        }
-
-        let balances: Vec<Balance> = response.json().await?;
-        Ok(balances)
+        let mut query_with_sig = query.clone();
+        query_with_sig.push_str(&format!("&signature={}", signature));
+        let response = send_request::<Vec<Balance>, _, _>(
+            &self.client,
+            &self.base_url,
+            "/dapi/v1/balance",
+            reqwest::Method::GET,
+            Some(&query_with_sig),
+            Some(self.api_key.expose_secret()),
+            || async { Ok(()) }, // TODO: Replace with actual rate limit check
+        ).await?;
+        Ok(response.data)
     }
 } 

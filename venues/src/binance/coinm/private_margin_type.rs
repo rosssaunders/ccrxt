@@ -1,7 +1,8 @@
 use serde::{Deserialize, Serialize};
 use super::private_rest::BinanceCoinMPrivateRest;
-use super::errors::BinanceCoinMError;
+use super::api_errors::BinanceCoinMError;
 use super::types::BinanceCoinMResult;
+use super::send_request;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub enum MarginType {
@@ -31,19 +32,18 @@ impl BinanceCoinMPrivateRest {
             timestamp
         );
         let signature = self.sign_request(&query);
-        let url = format!("{}/dapi/v1/marginType?{}&signature={}", 
-            self.base_url, query, signature);
-
-        let response = self.client
-            .post(&url)
-            .header("X-MBX-APIKEY", &self.api_key)
-            .send()
-            .await?;
-
-        if !response.status().is_success() {
-            return Err(BinanceCoinMError::from_response(response).await);
-        }
-
+        let mut query_with_sig = query.clone();
+        query_with_sig.push_str(&format!("&signature={}", signature));
+        let endpoint = "/dapi/v1/marginType";
+        let _response = send_request::<serde_json::Value, _, _>(
+            &self.client,
+            &self.base_url,
+            endpoint,
+            reqwest::Method::POST,
+            Some(&query_with_sig),
+            Some(self.api_key.expose_secret()),
+            || self.rate_limiter.check_weight_limit("marginType", 1)
+        ).await?;
         Ok(())
     }
 } 

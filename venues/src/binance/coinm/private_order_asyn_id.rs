@@ -2,6 +2,7 @@ use serde::{Deserialize, Serialize};
 use super::private_rest::BinanceCoinMPrivateRest;
 use super::errors::BinanceCoinMError;
 use super::types::BinanceCoinMResult;
+use super::utils::send_request;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct OrderAsynIdQuery {
@@ -52,26 +53,20 @@ impl BinanceCoinMPrivateRest {
     /// Status and data of the asynchronous order request
     pub async fn get_order_asyn_id(&self, query: OrderAsynIdQuery) -> BinanceCoinMResult<OrderAsynIdResponse> {
         let mut query_str = format!("downloadId={}", query.download_id);
-
         let timestamp = chrono::Utc::now().timestamp_millis();
         query_str.push_str(&format!("&timestamp={}", timestamp));
-
         let signature = self.sign_request(&query_str);
         query_str.push_str(&format!("&signature={}", signature));
-
-        let url = format!("{}/dapi/v1/order/asyn/id?{}", self.base_url, query_str);
-
-        let response = self.client
-            .get(&url)
-            .header("X-MBX-APIKEY", &self.api_key)
-            .send()
-            .await?;
-
-        if !response.status().is_success() {
-            return Err(BinanceCoinMError::from_response(response).await);
-        }
-
-        let result: OrderAsynIdResponse = response.json().await?;
-        Ok(result)
+        let endpoint = "/dapi/v1/order/asyn/id";
+        let response = send_request(
+            &self.client,
+            &self.base_url,
+            endpoint,
+            reqwest::Method::GET,
+            Some(&query_str),
+            Some(self.api_key.expose_secret()),
+            || self.rate_limiter.check_weight_limit("orderAsynId", 1)
+        ).await?;
+        Ok(response.data)
     }
 } 

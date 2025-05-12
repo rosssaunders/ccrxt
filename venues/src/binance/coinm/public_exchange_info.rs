@@ -1,6 +1,6 @@
 use serde::{Serialize, Deserialize};
 use super::{
-    errors::BinanceCoinMResult,
+    api_errors::BinanceCoinMResult,
     public_rest::BinanceCoinMPublicRest,
     types::BinanceResponse,
     common::request::send_request,
@@ -135,14 +135,16 @@ impl BinanceCoinMPublicRest {
     /// # Returns
     /// * `BinanceCoinMResult<BinanceResponse<ExchangeInfoResponse>>` - Exchange information response
     pub async fn get_exchange_info(&self) -> BinanceCoinMResult<BinanceResponse<ExchangeInfoResponse>> {
-        send_request(
+        let endpoint = "/dapi/v1/exchangeInfo";
+        let response = send_request(
             &self.client,
             &self.base_url,
-            "/dapi/v1/exchangeInfo",
+            endpoint,
             reqwest::Method::GET,
             None,
             None,
             || self.rate_limiter.check_weight_limit("exchangeInfo", 1)
-        ).await
+        ).await?;
+        Ok(response.data)
     }
 }

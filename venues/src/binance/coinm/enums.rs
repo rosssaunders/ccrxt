@@ -217,14 +217,6 @@ impl fmt::Display for WebSocketEventType {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(untagged)]
-pub enum WebSocketMessage {
-    OrderBook(OrderBookUpdate),
-}
-
-impl crate::websockets::VenueMessage for WebSocketMessage {}
-
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum RateLimitType {

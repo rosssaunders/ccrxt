@@ -2,6 +2,7 @@ use serde::{Deserialize, Serialize};
 use super::private_rest::BinanceCoinMPrivateRest;
 use super::errors::BinanceCoinMError;
 use super::types::BinanceCoinMResult;
+use super::utils::send_request;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct CountdownCancelAllRequest {
@@ -28,24 +29,18 @@ impl BinanceCoinMPrivateRest {
     pub async fn countdown_cancel_all(&self, request: CountdownCancelAllRequest) -> BinanceCoinMResult<CountdownCancelAllResponse> {
         let timestamp = chrono::Utc::now().timestamp_millis();
         let mut query_str = format!("timestamp={}", timestamp);
-
         let signature = self.sign_request(&query_str);
         query_str.push_str(&format!("&signature={}", signature));
-
-        let url = format!("{}/dapi/v1/countdownCancelAll?{}", self.base_url, query_str);
-
-        let response = self.client
-            .post(&url)
-            .header("X-MBX-APIKEY", &self.api_key)
-            .json(&request)
-            .send()
-            .await?;
-
-        if !response.status().is_success() {
-            return Err(BinanceCoinMError::from_response(response).await);
-        }
-
-        let result: CountdownCancelAllResponse = response.json().await?;
-        Ok(result)
+        let endpoint = "/dapi/v1/countdownCancelAll";
+        let response = send_request(
+            &self.client,
+            &self.base_url,
+            endpoint,
+            reqwest::Method::POST,
+            Some(&query_str),
+            Some(self.api_key.expose_secret()),
+            || self.rate_limiter.check_weight_limit("countdownCancelAll", 1)
+        ).await?;
+        Ok(response.data)
     }
 } 

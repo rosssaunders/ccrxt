@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 use super::{
-    errors::BinanceCoinMResult,
+    api_errors::BinanceCoinMResult,
     private_rest::BinanceCoinMPrivateRest,
     types::BinanceResponse,
     common::request::send_request,

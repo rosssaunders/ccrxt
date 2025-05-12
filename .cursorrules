@@ -1,12 +1,16 @@
-rustlang wrappers around crypto exchanges
-
 # Background
 
-There wrappers are going to be used in a High Frequency trading system so low latency is paramount. Code that is complex but fast (whilst still correct) is preferred over cleaner yet slower code.
+Client libraries for use in a High Frequency trading systems. 
+They aim to be as high performant and low latency as possible in rust. 
+Code that is complex but fast (whilst still correct) is preferred over cleaner yet slower code.
 
 # Common supporting code
 
 For code in crates that support each venue, such as websockets, no venue specific code or knowledge of the venues is allowed. The code must be clean.
+
+# URL Encoding Rules
+
+- When encoding URL query strings (e.g., for REST API requests), always use the `serde_urlencoded` crate to serialize parameters. Do not manually build or concatenate query strings, and do not use hand-rolled solutions for URL encoding.
 
 # File Structure Rules
 
@@ -29,6 +33,7 @@ For code in crates that support each venue, such as websockets, no venue specifi
    - The endpoints types (Request/Response structs)
    - An impl block for the client struct with the endpoints implementation
 4. The client structs fields should remain private, with implementations accessing them through self
+5. Any fields for API keys, secrets, or passphrases MUST use `SecretString` as their type and be documented accordingly
 
 # Struct Documentation Rules
 
@@ -280,3 +285,11 @@ venues/src/binance/coinm/
 4. Use direct string matching or simple string operations if needed
 5. Avoid complex parsing of error messages
 6. When in doubt, pass through the original error message
+
+# API Credential Handling Rules
+
+1. All API keys, secrets, and passphrases MUST be passed as parameters of type `impl Into<SecretString>` in constructors and functions, instead of `String` or any other data types.
+2. All struct fields that store API keys, secrets, or passphrases MUST use `SecretString` as their type.
+3. Do NOT use `String`, `&str`, or any other type for storing or passing API credentials.
+4. This applies to all venues and all client structs, request structs, and any other relevant types.
+5. Documentation for these fields MUST clearly state that the value is stored securely and is expected to be provided as a `SecretString`.
