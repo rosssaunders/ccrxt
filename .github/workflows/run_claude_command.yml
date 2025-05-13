@@ -27,6 +27,7 @@ jobs:
         id: claude_run
         run: |
           set -x
+          export CLAUDE_ANTHROPIC_API_KEY=${{ secrets.CLAUDE_ANTHROPIC_API_KEY }}
           claude -p "add a new api error to binance coinm: -5000 Invalid Margin Parameter" --allowedTools "Bash(git:*),Edit" --output-format json > claude_output.json
           # If claude_output.json is empty or not created, create a dummy file with an error message
           if [ ! -s claude_output.json ]; then
