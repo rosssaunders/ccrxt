@@ -67,7 +67,7 @@ jobs:
           # assignees: ${{ github.actor }}
 
       - name: Upload Claude output artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always() # Run even if previous steps fail
         with:
           name: claude-output
