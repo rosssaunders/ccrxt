@@ -18,7 +18,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18' # claude-code requires Node.js 18+
+          node-version: '22'
 
       - name: Install Claude Code CLI
         run: npm install -g @anthropic-ai/claude-code
@@ -26,6 +26,7 @@ jobs:
       - name: Run Claude command and capture output
         id: claude_run
         run: |
+          set -x
           claude -p "add a new api error to binance coinm: -5000 Invalid Margin Parameter" --allowedTools "Bash(git:*),Edit" --output-format json > claude_output.json
           # If claude_output.json is empty or not created, create a dummy file with an error message
           if [ ! -s claude_output.json ]; then
