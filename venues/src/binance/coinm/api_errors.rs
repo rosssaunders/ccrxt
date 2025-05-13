@@ -491,7 +491,13 @@ pub enum BinanceCoinMError {
     AdjustLeverageAccountSymbolFailed(i32),
     
     #[error("Timestamp for this request is outside of the ME recvWindow (code: {0})")]
-    MeInvalidTimestamp(i32)
+    MeInvalidTimestamp(i32),
+    
+    // 50xx - System errors
+    /// Error -5000: Invalid Margin Parameter
+    /// Occurs when an invalid margin parameter is provided
+    #[error("Invalid Margin Parameter (code: {0})")]
+    InvalidMarginParameter(i32)
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -661,6 +667,9 @@ impl From<BinanceErrorResponse> for BinanceCoinMError {
             -4201 => BinanceCoinMError::AdjustLeverageKycLimit(err.code, err.msg),
             -4202 => BinanceCoinMError::AdjustLeverageAccountSymbolFailed(err.code),
             -4188 => BinanceCoinMError::MeInvalidTimestamp(err.code),
+            
+            // 50xx - System errors
+            -5000 => BinanceCoinMError::InvalidMarginParameter(err.code),
 
             // Unknown error code
             _ => BinanceCoinMError::UnknownApiError(err.code),

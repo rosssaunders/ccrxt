@@ -1,0 +1,1 @@
+I've successfully added the new API error with code -5000 for "Invalid Margin Parameter" to the Binance COIN-M error handling system. The error is now properly defined in the `BinanceCoinMError` enum and mapped in the `From<BinanceErrorResponse>` implementation for proper error handling.
