@@ -1,4 +1,5 @@
 pub mod binance;
+pub mod bitmart;
 pub mod bybit;
 pub mod okx;
 pub mod price_feed;
