@@ -3,6 +3,8 @@
 use std::{env};
 use dotenv::dotenv;
 use venues::binance::coinm::{BinanceCoinMPrivateRest, BinanceCoinMError, BinanceCoinMAPIError};
+use venues::binance::coinm::{OrderRequest, OrderSide, OrderType, TimeInForce};
+use rust_decimal::Decimal;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -19,6 +21,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         base_url
     );
 
+    // Fetch account information
     let result = client.get_account().await;
 
     match result {
@@ -41,10 +44,89 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             } else {
                 println!("No assets found in account");
             }
+
+            // Example: Place a market order
+            // Note: Uncomment to place an actual order - will use real funds on mainnet!
+            /*
+            let market_order = OrderRequest {
+                symbol: "BTCUSD_PERP".to_string(),
+                side: OrderSide::Buy,
+                order_type: OrderType::Market,
+                quantity: Some(Decimal::from(1)), // 1 contract
+                positionSide: None, // Default BOTH for One-way Mode
+                timeInForce: None, // Not required for MARKET orders
+                reduceOnly: Some("false".to_string()),
+                price: None, // Not required for MARKET orders
+                newClientOrderId: Some("my_order_123".to_string()),
+                stopPrice: None,
+                closePosition: None,
+                activationPrice: None,
+                callbackRate: None,
+                workingType: None,
+                priceProtect: None,
+                newOrderRespType: None,
+                priceMatch: None,
+                selfTradePreventionMode: None,
+                recvWindow: None,
+                timestamp: None,
+            };
+
+            match client.place_order(market_order).await {
+                Ok(order_result) => {
+                    println!("Order placed successfully!");
+                    println!("Order ID: {}", order_result.data.orderId);
+                    println!("Symbol: {}", order_result.data.symbol);
+                    println!("Status: {:?}", order_result.data.status);
+                },
+                Err(err) => handle_error(err),
+            }
+
+            // Example: Place a limit order
+            let limit_order = OrderRequest {
+                symbol: "BTCUSD_PERP".to_string(),
+                side: OrderSide::Sell,
+                order_type: OrderType::Limit,
+                quantity: Some(Decimal::from(1)),
+                positionSide: None,
+                timeInForce: Some(TimeInForce::GTC), // Good Till Cancelled
+                reduceOnly: None,
+                price: Some(Decimal::from(50000)), // Sell at $50,000
+                newClientOrderId: None,
+                stopPrice: None,
+                closePosition: None,
+                activationPrice: None,
+                callbackRate: None,
+                workingType: None,
+                priceProtect: None,
+                newOrderRespType: None,
+                priceMatch: None,
+                selfTradePreventionMode: None,
+                recvWindow: None,
+                timestamp: None,
+            };
+
+            match client.place_order(limit_order).await {
+                Ok(order_result) => {
+                    println!("Limit order placed successfully!");
+                    println!("Order ID: {}", order_result.data.orderId);
+                    println!("Symbol: {}", order_result.data.symbol);
+                    println!("Status: {:?}", order_result.data.status);
+                },
+                Err(err) => handle_error(err),
+            }
+            */
         },
-        Err(BinanceCoinMError::ApiError(err)) => {
+        Err(err) => handle_error(err),
+    }
+
+    Ok(())
+}
+
+fn handle_error(err: BinanceCoinMError) {
+    match err {
+        BinanceCoinMError::ApiError(err) => {
             // Convert to typed error for better handling
-            let typed_error: BinanceCoinMAPIError = err.into();
+            let typed_error: BinanceCoinMAPIError = err;
             
             // Handle all error types with detailed messages
             match &typed_error {
@@ -100,13 +182,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 }
             }
         },
-        Err(BinanceCoinMError::HttpError(err)) => {
+        BinanceCoinMError::HttpError(err) => {
             eprintln!("HTTP/Network error: {}", err);
         },
-        Err(BinanceCoinMError::Error(msg)) => {
+        BinanceCoinMError::Error(msg) => {
             eprintln!("General error: {}", msg);
         },
     }
-
-    Ok(())
 }
