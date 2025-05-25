@@ -301,3 +301,33 @@ pub enum SymbolFilterType {
     MaxPositionFilter,
     TrailingDataFilter,
 }
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum PriceMatch {
+    None,
+    Opponent,
+    Opponent5,
+    Opponent10,
+    Opponent20,
+    Queue,
+    Queue5,
+    Queue10,
+    Queue20,
+}
+
+impl fmt::Display for PriceMatch {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            PriceMatch::None => write!(f, "NONE"),
+            PriceMatch::Opponent => write!(f, "OPPONENT"),
+            PriceMatch::Opponent5 => write!(f, "OPPONENT_5"),
+            PriceMatch::Opponent10 => write!(f, "OPPONENT_10"),
+            PriceMatch::Opponent20 => write!(f, "OPPONENT_20"),
+            PriceMatch::Queue => write!(f, "QUEUE"),
+            PriceMatch::Queue5 => write!(f, "QUEUE_5"),
+            PriceMatch::Queue10 => write!(f, "QUEUE_10"),
+            PriceMatch::Queue20 => write!(f, "QUEUE_20"),
+        }
+    }
+}

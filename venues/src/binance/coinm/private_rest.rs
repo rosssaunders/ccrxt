@@ -29,7 +29,8 @@ use hmac::{Hmac, Mac};
 use sha2::Sha256;
 use hex;
 use secrecy::{ExposeSecret, SecretString};
-use super::types::{BinanceCoinMResponse, BinanceHeaders, BinanceCoinMError, BinanceCoinMResult, ErrorResponse};
+use serde::Serialize;
+use super::types::{BinanceCoinMResponse, BinanceHeaders, BinanceCoinMError, BinanceCoinMResult, ErrorResponse, OrderRequest, OrderResponse};
 use super::api_errors::BinanceCoinMAPIError;
 use std::time::Instant;
 use reqwest::StatusCode;
@@ -207,5 +208,96 @@ impl BinanceCoinMPrivateRest {
         let signed_query = append_timestamp_and_signature(query_string, |qs| self.sign_request(qs))?;
         
         self.send_request(endpoint, method, Some(&signed_query)).await
+    }
+
+    /// Places a new order on Binance COIN-M futures
+    /// 
+    /// # Arguments
+    /// * `order` - The order parameters
+    /// 
+    /// # Returns
+    /// A result containing the order response, or an error
+    /// 
+    /// # API Documentation
+    /// See: https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api
+    /// 
+    /// # Endpoint Weight
+    /// 1 on 1min order rate limit(X-MBX-ORDER-COUNT-1M)
+    /// 0 on IP rate limit(x-mbx-used-weight-1m)
+    /// 
+    /// # Examples
+    /// ```
+    /// use venues::binance::coinm::{BinanceCoinMPrivateRest, OrderRequest, OrderSide, OrderType};
+    /// use rust_decimal::Decimal;
+    /// 
+    /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
+    /// let client = BinanceCoinMPrivateRest::new(
+    ///     "your-api-key",
+    ///     "your-api-secret",
+    ///     "https://dapi.binance.com".to_string()
+    /// );
+    /// 
+    /// let mut order = OrderRequest {
+    ///     symbol: "BTCUSD_PERP".to_string(),
+    ///     side: OrderSide::Buy,
+    ///     order_type: OrderType::Market,
+    ///     quantity: Some(Decimal::from(1)),
+    ///     positionSide: None,
+    ///     timeInForce: None,
+    ///     reduceOnly: None,
+    ///     price: None,
+    ///     newClientOrderId: None,
+    ///     stopPrice: None,
+    ///     closePosition: None,
+    ///     activationPrice: None,
+    ///     callbackRate: None,
+    ///     workingType: None,
+    ///     priceProtect: None,
+    ///     newOrderRespType: None,
+    ///     priceMatch: None,
+    ///     selfTradePreventionMode: None,
+    ///     recvWindow: None,
+    ///     timestamp: None,
+    /// };
+    /// 
+    /// let result = client.place_order(order).await?;
+    /// println!("Order placed: {:?}", result.data);
+    /// # Ok(())
+    /// # }
+    /// ```
+    pub async fn place_order(&self, mut order: OrderRequest) -> BinanceCoinMResult<OrderResponse> {
+        use serde_urlencoded::to_string;
+
+        // Ensure order has a timestamp if not already set
+        if order.timestamp.is_none() {
+            order.timestamp = Some(std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap_or_default()
+                .as_millis() as u64);
+        }
+
+        // Convert the order into a serializable form
+        #[derive(Serialize)]
+        struct OrderParams {
+            #[serde(flatten)]
+            params: OrderRequest,
+            timestamp: Option<u64>,
+        }
+
+        let params = OrderParams {
+            params: order,
+            timestamp: None, // Will be added by send_signed_request
+        };
+
+        // Convert struct to URL-encoded query string
+        let query = to_string(&params)
+            .map_err(|e| BinanceCoinMError::Error(format!("Failed to encode order parameters: {}", e)))?;
+
+        // Send the request
+        self.send_signed_request(
+            "/dapi/v1/order", 
+            reqwest::Method::POST,
+            Some(query),
+        ).await
     }
 }
