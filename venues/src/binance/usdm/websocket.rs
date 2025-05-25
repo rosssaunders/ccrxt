@@ -3,7 +3,6 @@ use serde_json::{Value, json};
 use futures::{SinkExt, StreamExt, stream::Stream};
 use tokio_tungstenite::{connect_async, tungstenite::Message, WebSocketStream, MaybeTlsStream};
 use tokio::net::TcpStream;
-use std::error::Error;
 use std::pin::Pin;
 use async_trait::async_trait;
 use websockets::BoxError;

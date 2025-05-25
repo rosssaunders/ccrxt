@@ -36,6 +36,7 @@ clap.workspace = true
 aes-gcm = "0.10.3"
 base64 = "0.22.1"
 rand = "0.9.1"
+secrecy = "0.10.3"
 
 [lints]
 workspace = true

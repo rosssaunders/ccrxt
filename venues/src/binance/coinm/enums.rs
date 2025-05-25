@@ -204,6 +204,22 @@ impl fmt::Display for IncomeType {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub enum MarginType {
+    Cross,
+    Isolated,
+}
+
+impl fmt::Display for MarginType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            MarginType::Cross => write!(f, "cross"),
+            MarginType::Isolated => write!(f, "isolated"),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum WebSocketEventType {
     DepthUpdate,

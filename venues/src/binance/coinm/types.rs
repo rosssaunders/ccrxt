@@ -1,71 +1,60 @@
-use serde::{Deserialize, Serialize};
-use serde_json::Value;
-use super::enums::WebSocketEventType;
 use std::time::Duration;
-use super::errors::BinanceCoinMError;
+use std::fmt;
+use super::api_errors::BinanceCoinMAPIError;
+use serde::{Deserialize};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct OrderBookEntry(pub String, pub String);
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct OrderBookSnapshot {
-    pub last_update_id: u64,
-    pub bids: Vec<OrderBookEntry>,
-    pub asks: Vec<OrderBookEntry>,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct OrderBookUpdate {
-    #[serde(rename = "e")]
-    pub event_type: WebSocketEventType,
-    #[serde(rename = "E")]
-    pub event_time: u64,
-    #[serde(rename = "T")]
-    pub transaction_time: u64,
-    #[serde(rename = "s")]
-    pub symbol: String,
-    #[serde(rename = "U")]
-    pub first_update_id: u64,
-    #[serde(rename = "u")]
-    pub final_update_id: u64,
-    #[serde(rename = "pu")]
-    pub previous_final_update_id: u64,
-    #[serde(rename = "b")]
-    pub bids: Vec<OrderBookEntry>,
-    #[serde(rename = "a")]
-    pub asks: Vec<OrderBookEntry>,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(untagged)]
-pub enum WebSocketMessage {
-    OrderBook(OrderBookUpdate),
-    Raw(Value),
-}
-
-impl crate::websockets::VenueMessage for WebSocketMessage {}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone)]
 pub struct BinanceHeaders {
-    #[serde(rename = "X-MBX-USED-WEIGHT-1M")]
     pub used_weight_1m: Option<u32>,
-    #[serde(rename = "X-MBX-ORDER-COUNT-1M")]
     pub order_count_1m: Option<u32>,
-    #[serde(rename = "X-MBX-ORDER-COUNT-1D")]
     pub order_count_1d: Option<u32>,
-    #[serde(rename = "X-MBX-ORDER-COUNT-1S")]
     pub order_count_1s: Option<u32>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct BinanceResponse<T> {
+#[derive(Debug, Clone)]
+pub struct BinanceCoinMResponse<T> {
     pub data: T,
     pub rate_limit_duration: Duration,
     pub request_duration: Duration,
     pub headers: BinanceHeaders,
 }
 
-/// Result type for Binance COIN-M Futures API operations
-pub type BinanceCoinMResult<T> = Result<T, BinanceCoinMError>; 
+/// Represents all possible errors that can occur when interacting with the Binance API
+#[derive(Debug)]
+pub enum BinanceCoinMError {
+    /// An error returned by the Binance API
+    ApiError(BinanceCoinMAPIError),
+    /// An HTTP-level error (network, timeout, etc.)
+    HttpError(reqwest::Error),
+    /// A general error with a descriptive message
+    Error(String),
+}
+
+impl fmt::Display for BinanceCoinMError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            BinanceCoinMError::ApiError(err) => write!(f, "API error: {}", err),
+            BinanceCoinMError::HttpError(err) => write!(f, "HTTP error: {}", err),
+            BinanceCoinMError::Error(msg) => write!(f, "Error: {}", msg),
+        }
+    }
+}
+
+impl std::error::Error for BinanceCoinMError {
+    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
+        match self {
+            BinanceCoinMError::HttpError(err) => Some(err),
+            _ => None,
+        }
+    }
+}
+
+/// Type alias for results returned by Binance API operations
+pub type BinanceCoinMResult<T> = Result<BinanceCoinMResponse<T>, BinanceCoinMError>; 
+
+/// Represents an error response from the Binance API.
+#[derive(Debug, Deserialize)]
+pub(crate) struct ErrorResponse {
+    pub code: i32,
+    pub msg: String,
+}

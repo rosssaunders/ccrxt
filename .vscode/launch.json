@@ -1,6 +1,7 @@
 {
     "version": "0.2.0",
     "configurations": [
+
         {
             "type": "lldb",
             "request": "launch",
@@ -33,6 +34,23 @@
             "cwd": "${workspaceFolder}",
             "program": "${workspaceFolder}/target/release/examples/binance_coinm_orderbook",
             "sourceLanguages": ["rust"]
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug BinanceCoinM Example",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--example=binancecoinm",
+                    "--package=venues"
+                ]
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "program": "${workspaceFolder}/target/debug/examples/binancecoinm",
+            "sourceLanguages": ["rust"],
+            "envFile": "${workspaceFolder}/venues/examples/binancecoinm/.env"// VS Code will load vars from here
         }
     ]
-} 
+}

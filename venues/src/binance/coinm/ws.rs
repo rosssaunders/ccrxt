@@ -1,86 +1,48 @@
-use async_trait::async_trait;
-use futures::{SinkExt, StreamExt};
-use tokio_tungstenite::{connect_async, tungstenite::Message};
-use futures::stream::Stream;
-use std::error::Error;
-use std::pin::Pin;
-use serde_json::json;
-use websockets::BoxError;
+use serde::{Deserialize, Serialize};
+use serde_json::Value;
+use super::enums::WebSocketEventType;
+use std::time::Duration;
+use super::api_errors::BinanceCoinMAPIError;
 
-use super::types::WebSocketMessage;
-use crate::websockets::{WebSocketConnection, BoxResult};
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct OrderBookEntry(pub String, pub String);
 
-const BINANCE_COINM_WS_URL: &str = "wss://dstream.binance.com/ws";
-
-pub struct BinanceCoinMPublicWebSocket {
-    url: String,
-    ws_stream: Option<tokio_tungstenite::WebSocketStream<tokio_tungstenite::MaybeTlsStream<tokio::net::TcpStream>>>,
-    subscribed_channels: Vec<String>,
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct OrderBookSnapshot {
+    pub last_update_id: u64,
+    pub bids: Vec<OrderBookEntry>,
+    pub asks: Vec<OrderBookEntry>,
 }
 
-impl BinanceCoinMPublicWebSocket {
-    pub fn new() -> Self {
-        Self {
-            url: BINANCE_COINM_WS_URL.to_string(),
-            ws_stream: None,
-            subscribed_channels: Vec::new(),
-        }
-    }
-
-    pub async fn subscribe_depth(&mut self, symbol: &str) -> BoxResult<()> {
-        let channel = format!("{}@depth", symbol.to_lowercase());
-        self.subscribe(vec![channel]).await
-    }
-
-    pub async fn subscribe(&mut self, channels: Vec<String>) -> BoxResult<()> {
-        if let Some(ws) = self.ws_stream.as_mut() {
-            let subscribe_msg = json!({
-                "method": "SUBSCRIBE",
-                "params": channels,
-                "id": 1
-            });
-            ws.send(Message::Text(subscribe_msg.to_string().into())).await?;
-            self.subscribed_channels.extend(channels);
-        }
-        Ok(())
-    }
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct OrderBookUpdate {
+    #[serde(rename = "e")]
+    pub event_type: WebSocketEventType,
+    #[serde(rename = "E")]
+    pub event_time: u64,
+    #[serde(rename = "T")]
+    pub transaction_time: u64,
+    #[serde(rename = "s")]
+    pub symbol: String,
+    #[serde(rename = "U")]
+    pub first_update_id: u64,
+    #[serde(rename = "u")]
+    pub final_update_id: u64,
+    #[serde(rename = "pu")]
+    pub previous_final_update_id: u64,
+    #[serde(rename = "b")]
+    pub bids: Vec<OrderBookEntry>,
+    #[serde(rename = "a")]
+    pub asks: Vec<OrderBookEntry>,
 }
 
-#[async_trait]
-impl WebSocketConnection<WebSocketMessage> for BinanceCoinMPublicWebSocket {
-    async fn connect(&mut self) -> BoxResult<()> {
-        let (ws_stream, _) = connect_async(&self.url).await?;
-        self.ws_stream = Some(ws_stream);
-        Ok(())
-    }
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum WebSocketMessage {
+    OrderBook(OrderBookUpdate),
+    Raw(Value),
+}
 
-    async fn disconnect(&mut self) -> BoxResult<()> {
-        if let Some(ws) = self.ws_stream.as_mut() {
-            ws.close(None).await?;
-        }
-        self.ws_stream = None;
-        Ok(())
-    }
-
-    fn is_connected(&self) -> bool {
-        self.ws_stream.is_some()
-    }
-
-    fn message_stream(&mut self) -> Pin<Box<dyn Stream<Item = BoxResult<WebSocketMessage>> + Send>> {
-        let stream = self.ws_stream.take().expect("WebSocket not connected");
-        
-        Box::pin(stream.filter_map(|message| async move {
-            match message {
-                Ok(Message::Text(text)) => {
-                    match serde_json::from_str(&text) {
-                        Ok(msg) => Some(Ok(msg)),
-                        Err(e) => Some(Err(BoxError::from(e))),
-                    }
-                }
-                Ok(Message::Close(_)) => None,
-                Ok(_) => None,
-                Err(e) => Some(Err(BoxError::from(e))),
-            }
-        }))
-    }
-} 
+impl crate::websockets::VenueMessage for WebSocketMessage {}
