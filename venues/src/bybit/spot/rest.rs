@@ -1,6 +1,6 @@
+use super::types::OrderBookSnapshot;
 use reqwest::Client;
 use std::error::Error;
-use super::types::OrderBookSnapshot;
 
 const BYBIT_SPOT_REST_URL: &str = "https://api.bybit.com";
 
@@ -17,17 +17,24 @@ impl BybitSpotPublicRest {
         }
     }
 
-    pub async fn get_orderbook_snapshot(&self, symbol: &str, limit: Option<u32>) -> Result<OrderBookSnapshot, Box<dyn Error>> {
+    pub async fn get_orderbook_snapshot(
+        &self,
+        symbol: &str,
+        limit: Option<u32>,
+    ) -> Result<OrderBookSnapshot, Box<dyn Error>> {
         let limit = limit.unwrap_or(100);
-        let url = format!("{}/v5/market/orderbook?category=spot&symbol={}&limit={}", self.base_url, symbol, limit);
-        
+        let url = format!(
+            "{}/v5/market/orderbook?category=spot&symbol={}&limit={}",
+            self.base_url, symbol, limit
+        );
+
         let response = self.client.get(&url).send().await?;
         let snapshot: OrderBookSnapshot = response.json().await?;
-        
+
         if snapshot.ret_code != 0 {
             return Err(format!("Bybit API error: {}", snapshot.ret_msg).into());
         }
-        
+
         Ok(snapshot)
     }
 }
@@ -36,4 +43,4 @@ impl Default for BybitSpotPublicRest {
     fn default() -> Self {
         Self::new()
     }
-} 
+}

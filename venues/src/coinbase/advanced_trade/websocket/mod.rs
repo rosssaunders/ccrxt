@@ -1,10 +1,10 @@
-mod base;
-mod public;
 mod authenticated;
-mod types;
+mod base;
 pub mod error;
+mod public;
+mod types;
 
-pub use public::CoinbaseAdvancedTradeWebSocket;
 pub use authenticated::CoinbaseAdvancedTradeWebSocketAuthenticated;
-pub use types::*;
 pub use error::CoinbaseAdvancedTradeError;
+pub use public::CoinbaseAdvancedTradeWebSocket;
+pub use types::*;

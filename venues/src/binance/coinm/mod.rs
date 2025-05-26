@@ -1,12 +1,22 @@
 pub mod api_errors;
-pub mod types;
 pub mod enums;
-pub mod private_rest;
 pub mod private_account;
+pub mod private_account_trades;
+pub mod private_batch_order;
+pub mod private_rest_client;
+pub mod rate_limit;
+pub mod types;
 pub mod utils;
+pub mod ws;
 
-pub use types::*;
 pub use enums::*;
-pub use types::{BinanceCoinMResult, BinanceCoinMError};
+pub use private_account::*;
+pub use private_account_trades::{AccountTrade, AccountTradeListRequest};
+pub use private_batch_order::*;
+pub use private_rest_client::BinanceCoinMPrivateRest;
+pub use rate_limit::*;
+pub use types::*;
+pub use types::{BinanceCoinMError, BinanceCoinMResult};
+pub use utils::*;
+pub use ws::*;
 pub use api_errors::BinanceCoinMAPIError;
-pub use private_rest::BinanceCoinMPrivateRest;

@@ -1,7 +1,7 @@
-use std::time::Duration;
-use std::fmt;
 use super::api_errors::BinanceCoinMAPIError;
-use serde::{Deserialize};
+use serde::{Deserialize, Serialize};
+use std::fmt;
+use std::time::Duration;
 
 #[derive(Debug, Clone)]
 pub struct BinanceHeaders {
@@ -50,11 +50,19 @@ impl std::error::Error for BinanceCoinMError {
 }
 
 /// Type alias for results returned by Binance API operations
-pub type BinanceCoinMResult<T> = Result<BinanceCoinMResponse<T>, BinanceCoinMError>; 
+pub type BinanceCoinMResult<T> = Result<BinanceCoinMResponse<T>, BinanceCoinMError>;
 
 /// Represents an error response from the Binance API.
-#[derive(Debug, Deserialize)]
-pub(crate) struct ErrorResponse {
+#[derive(Debug, Clone, Deserialize)]
+pub struct ErrorResponse {
     pub code: i32,
     pub msg: String,
+}
+
+/// Trait for private API requests that require authentication.
+/// All private request structs must implement this trait.
+pub trait PrivateRequest: Serialize {
+    /// Returns the timestamp for the request in milliseconds since epoch.
+    /// This is used for request signing and validation.
+    fn timestamp(&self) -> u64;
 }

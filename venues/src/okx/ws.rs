@@ -1,19 +1,23 @@
 use async_trait::async_trait;
-use futures::{SinkExt, StreamExt};
-use tokio_tungstenite::{connect_async, tungstenite::Message};
 use futures::stream::Stream;
+use futures::{SinkExt, StreamExt};
+use serde_json::json;
 use std::error::Error;
 use std::pin::Pin;
-use serde_json::json;
+use tokio_tungstenite::{connect_async, tungstenite::Message};
 
-use super::types::{WebSocketMessage, WebSocketRequest, WebSocketChannel};
-use crate::websockets::{WebSocketConnection, BoxResult};
+use super::types::{WebSocketChannel, WebSocketMessage, WebSocketRequest};
+use crate::websockets::{BoxResult, WebSocketConnection};
 
 const OKX_WS_URL: &str = "wss://ws.okx.com:8443/ws/v5/public";
 
 pub struct OkxPublicWebSocket {
     url: String,
-    ws_stream: Option<tokio_tungstenite::WebSocketStream<tokio_tungstenite::MaybeTlsStream<tokio::net::TcpStream>>>,
+    ws_stream: Option<
+        tokio_tungstenite::WebSocketStream<
+            tokio_tungstenite::MaybeTlsStream<tokio::net::TcpStream>,
+        >,
+    >,
     subscribed_channels: Vec<WebSocketChannel>,
 }
 
@@ -28,7 +32,8 @@ impl OkxPublicWebSocket {
 
     pub async fn subscribe(&mut self, channels: Vec<String>) -> BoxResult<()> {
         if let Some(ws) = self.ws_stream.as_mut() {
-            let ws_channels: Vec<WebSocketChannel> = channels.iter()
+            let ws_channels: Vec<WebSocketChannel> = channels
+                .iter()
                 .map(|channel| {
                     let parts: Vec<&str> = channel.split(':').collect();
                     WebSocketChannel {
@@ -42,7 +47,8 @@ impl OkxPublicWebSocket {
                 "op": "subscribe",
                 "args": ws_channels
             });
-            ws.send(Message::Text(subscribe_msg.to_string().into())).await?;
+            ws.send(Message::Text(subscribe_msg.to_string().into()))
+                .await?;
             self.subscribed_channels.extend(ws_channels);
         }
         Ok(())
@@ -69,9 +75,11 @@ impl WebSocketConnection<WebSocketMessage> for OkxPublicWebSocket {
         self.ws_stream.is_some()
     }
 
-    fn message_stream(&mut self) -> Pin<Box<dyn Stream<Item = BoxResult<WebSocketMessage>> + Send>> {
+    fn message_stream(
+        &mut self,
+    ) -> Pin<Box<dyn Stream<Item = BoxResult<WebSocketMessage>> + Send>> {
         let stream = self.ws_stream.take().expect("WebSocket not connected");
-        
+
         Box::pin(stream.filter_map(|message| async move {
             match message {
                 Ok(Message::Text(text)) => {
@@ -83,7 +91,7 @@ impl WebSocketConnection<WebSocketMessage> for OkxPublicWebSocket {
                                 Ok(raw_value) => Some(Ok(WebSocketMessage::Raw(raw_value))),
                                 Err(e2) => Some(Err(Box::new(e2) as Box<dyn Error + Send + Sync>)),
                             }
-                        },
+                        }
                     }
                 }
                 Ok(Message::Close(_)) => None,
@@ -92,4 +100,4 @@ impl WebSocketConnection<WebSocketMessage> for OkxPublicWebSocket {
             }
         }))
     }
-} 
+}

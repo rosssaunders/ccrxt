@@ -1,6 +1,6 @@
 use std::sync::Arc;
-use tokio::sync::RwLock;
 use std::time::{Duration, Instant};
+use tokio::sync::RwLock;
 
 #[derive(Debug, Clone)]
 pub struct PriceFeed {
@@ -57,14 +57,20 @@ impl UsdConverter {
     }
 
     pub async fn convert_usd_to_usdt(&self, usd_amount: f64) -> Option<f64> {
-        self.usdc_usdt_feed.get_rate().await.map(|rate| usd_amount * rate)
+        self.usdc_usdt_feed
+            .get_rate()
+            .await
+            .map(|rate| usd_amount * rate)
     }
 
     pub async fn convert_usdt_to_usd(&self, usdt_amount: f64) -> Option<f64> {
-        self.usdc_usdt_feed.get_rate().await.map(|rate| usdt_amount / rate)
+        self.usdc_usdt_feed
+            .get_rate()
+            .await
+            .map(|rate| usdt_amount / rate)
     }
 
     pub async fn is_stale(&self) -> bool {
         self.usdc_usdt_feed.is_stale().await
     }
-} 
+}

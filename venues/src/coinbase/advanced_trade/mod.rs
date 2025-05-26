@@ -1,2 +1,5 @@
 pub mod websocket;
-pub use websocket::{CoinbaseAdvancedTradeWebSocket, CoinbaseAdvancedTradeWebSocketAuthenticated, CoinbaseAdvancedTradeError};
+pub use websocket::{
+    CoinbaseAdvancedTradeError, CoinbaseAdvancedTradeWebSocket,
+    CoinbaseAdvancedTradeWebSocketAuthenticated,
+};

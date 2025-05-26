@@ -1,20 +1,24 @@
 use async_trait::async_trait;
-use futures::{SinkExt, StreamExt};
-use tokio_tungstenite::{connect_async, tungstenite::Message};
 use futures::stream::Stream;
+use futures::{SinkExt, StreamExt};
+use serde_json::json;
 use std::error::Error;
 use std::pin::Pin;
-use serde_json::json;
+use tokio_tungstenite::{connect_async, tungstenite::Message};
 use websockets::BoxError;
 
 use super::types::WebSocketMessage;
-use crate::websockets::{WebSocketConnection, BoxResult};
+use crate::websockets::{BoxResult, WebSocketConnection};
 
 const BINANCE_SPOT_WS_URL: &str = "wss://stream.binance.com:9443/ws";
 
 pub struct BinanceSpotPublicWebSocket {
     url: String,
-    ws_stream: Option<tokio_tungstenite::WebSocketStream<tokio_tungstenite::MaybeTlsStream<tokio::net::TcpStream>>>,
+    ws_stream: Option<
+        tokio_tungstenite::WebSocketStream<
+            tokio_tungstenite::MaybeTlsStream<tokio::net::TcpStream>,
+        >,
+    >,
     subscribed_channels: Vec<String>,
 }
 
@@ -39,7 +43,8 @@ impl BinanceSpotPublicWebSocket {
                 "params": channels,
                 "id": 1
             });
-            ws.send(Message::Text(subscribe_msg.to_string().into())).await?;
+            ws.send(Message::Text(subscribe_msg.to_string().into()))
+                .await?;
             self.subscribed_channels.extend(channels);
         }
         Ok(())
@@ -66,21 +71,21 @@ impl WebSocketConnection<WebSocketMessage> for BinanceSpotPublicWebSocket {
         self.ws_stream.is_some()
     }
 
-    fn message_stream(&mut self) -> Pin<Box<dyn Stream<Item = BoxResult<WebSocketMessage>> + Send>> {
+    fn message_stream(
+        &mut self,
+    ) -> Pin<Box<dyn Stream<Item = BoxResult<WebSocketMessage>> + Send>> {
         let stream = self.ws_stream.take().expect("WebSocket not connected");
-        
+
         Box::pin(stream.filter_map(|message| async move {
             match message {
-                Ok(Message::Text(text)) => {
-                    match serde_json::from_str(&text) {
-                        Ok(msg) => Some(Ok(msg)),
-                        Err(e) => Some(Err(BoxError::from(e))),
-                    }
-                }
+                Ok(Message::Text(text)) => match serde_json::from_str(&text) {
+                    Ok(msg) => Some(Ok(msg)),
+                    Err(e) => Some(Err(BoxError::from(e))),
+                },
                 Ok(Message::Close(_)) => None,
                 Ok(_) => None,
                 Err(e) => Some(Err(BoxError::from(e))),
             }
         }))
     }
-} 
+}

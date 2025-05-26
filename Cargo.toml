@@ -3,7 +3,10 @@ resolver = "2"
 members = [
     "venues",
     "websockets",
-    "rest"
+    "rest",
+    "pagination",
+    "venues/examples/binancecoinm",
+    "binance_macros"
 ]
 
 [workspace.package]
@@ -16,7 +19,7 @@ description = "Rust wrappers around crypto exchanges"
 
 [workspace.dependencies]
 # Async runtime
-tokio = { version = "1.44.2", features = ["full"] }
+tokio = { version = "1.45.1", features = ["full"] }
 tokio-tungstenite = { version = "0.26.2", features = ["native-tls"] }
 
 # Serialization
@@ -33,17 +36,17 @@ reqwest = { version = "0.12.15", features = ["json", "native-tls"] }
 
 # Crypto and auth
 hmac = "0.12"
-sha2 = "0.10"
+sha2 = "0.10.9"
 hex = "0.4"
 
 # Utilities
-chrono = { version = "0.4", features = ["serde"] }
+chrono = { version = "0.4.41", features = ["serde"] }
 url = "2.4"
 futures = "0.3"
 async-trait = "0.1"
 parking_lot = "0.12"
 rust_decimal = { version = "1.34", features = ["serde"] }
-clap = { version = "4.5.37", features = ["derive"] }
+clap = { version = "4.5.38", features = ["derive"] }
 
 # Logging
 tracing = "0.1"

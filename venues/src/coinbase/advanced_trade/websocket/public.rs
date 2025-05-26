@@ -1,14 +1,14 @@
 use async_trait::async_trait;
-use futures::{StreamExt, stream::Stream};
+use futures::{stream::Stream, StreamExt};
+use serde_json::json;
 use std::error::Error;
 use std::pin::Pin;
-use serde_json::json;
 use tokio_tungstenite::{connect_async, tungstenite::Message};
 
-use crate::websockets::{WebSocketConnection, BoxResult};
 use super::base::BaseWebSocket;
-use super::types::WebSocketMessage;
 use super::error::CoinbaseAdvancedTradeError;
+use super::types::WebSocketMessage;
+use crate::websockets::{BoxResult, WebSocketConnection};
 
 const COINBASE_ADVANCED_TRADE_WS_URL: &str = "wss://ws-feed.exchange.coinbase.com";
 
@@ -209,20 +209,24 @@ impl WebSocketConnection<WebSocketMessage> for CoinbaseAdvancedTradeWebSocket {
         self.base.ws_stream.is_some()
     }
 
-    fn message_stream(&mut self) -> Pin<Box<dyn Stream<Item = BoxResult<WebSocketMessage>> + Send>> {
+    fn message_stream(
+        &mut self,
+    ) -> Pin<Box<dyn Stream<Item = BoxResult<WebSocketMessage>> + Send>> {
         let stream = self.base.ws_stream.take().expect("WebSocket not connected");
-        
+
         Box::pin(stream.filter_map(|message| async move {
             match message {
-                Ok(Message::Text(text)) => {
-                    match serde_json::from_str(&text) {
-                        Ok(msg) => Some(Ok(msg)),
-                        Err(e) => Some(Err(Box::new(CoinbaseAdvancedTradeError::ParseError(e.to_string())) as Box<dyn Error + Send + Sync>)),
-                    }
-                }
+                Ok(Message::Text(text)) => match serde_json::from_str(&text) {
+                    Ok(msg) => Some(Ok(msg)),
+                    Err(e) => Some(Err(Box::new(CoinbaseAdvancedTradeError::ParseError(
+                        e.to_string(),
+                    )) as Box<dyn Error + Send + Sync>)),
+                },
                 Ok(Message::Close(_)) => None,
                 Ok(_) => None,
-                Err(e) => Some(Err(Box::new(CoinbaseAdvancedTradeError::WebSocketError(e.to_string())) as Box<dyn Error + Send + Sync>)),
+                Err(e) => Some(Err(Box::new(CoinbaseAdvancedTradeError::WebSocketError(
+                    e.to_string(),
+                )) as Box<dyn Error + Send + Sync>)),
             }
         }))
     }

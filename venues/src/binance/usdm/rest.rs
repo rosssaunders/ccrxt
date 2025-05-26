@@ -45,4 +45,4 @@ impl Default for BinanceUsdMPublicRest {
     fn default() -> Self {
         Self::new()
     }
-} 
+}

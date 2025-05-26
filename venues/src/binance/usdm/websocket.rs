@@ -1,13 +1,13 @@
-use serde::{Deserialize};
-use serde_json::{Value, json};
-use futures::{SinkExt, StreamExt, stream::Stream};
-use tokio_tungstenite::{connect_async, tungstenite::Message, WebSocketStream, MaybeTlsStream};
-use tokio::net::TcpStream;
-use std::pin::Pin;
 use async_trait::async_trait;
+use futures::{stream::Stream, SinkExt, StreamExt};
+use serde::Deserialize;
+use serde_json::{json, Value};
+use std::pin::Pin;
+use tokio::net::TcpStream;
+use tokio_tungstenite::{connect_async, tungstenite::Message, MaybeTlsStream, WebSocketStream};
 use websockets::BoxError;
 
-use crate::websockets::{WebSocketConnection, BoxResult};
+use crate::websockets::{BoxResult, WebSocketConnection};
 
 const WEBSOCKET_BASE_URL: &str = "wss://fstream.binance.com/ws";
 
@@ -63,7 +63,8 @@ impl BinanceUsdMPublicWebSocket {
                 "params": channels,
                 "id": 1
             });
-            ws.send(Message::Text(subscribe_msg.to_string().into())).await?;
+            ws.send(Message::Text(subscribe_msg.to_string().into()))
+                .await?;
             self.subscribed_channels.extend(channels);
         }
         Ok(())
@@ -90,17 +91,17 @@ impl WebSocketConnection<WebSocketMessage> for BinanceUsdMPublicWebSocket {
         self.ws_stream.is_some()
     }
 
-    fn message_stream(&mut self) -> Pin<Box<dyn Stream<Item = BoxResult<WebSocketMessage>> + Send>> {
+    fn message_stream(
+        &mut self,
+    ) -> Pin<Box<dyn Stream<Item = BoxResult<WebSocketMessage>> + Send>> {
         let stream = self.ws_stream.take().expect("WebSocket not connected");
-        
+
         Box::pin(stream.filter_map(|message| async move {
             match message {
-                Ok(Message::Text(text)) => {
-                    match serde_json::from_str(&text) {
-                        Ok(msg) => Some(Ok(msg)),
-                        Err(e) => Some(Err(BoxError::from(e))),
-                    }
-                }
+                Ok(Message::Text(text)) => match serde_json::from_str(&text) {
+                    Ok(msg) => Some(Ok(msg)),
+                    Err(e) => Some(Err(BoxError::from(e))),
+                },
                 Ok(Message::Close(_)) => None,
                 Ok(_) => None,
                 Err(e) => Some(Err(BoxError::from(e))),
@@ -113,4 +114,4 @@ impl Default for BinanceUsdMPublicWebSocket {
     fn default() -> Self {
         Self::new()
     }
-} 
+}

@@ -66,4 +66,4 @@ pub enum WebSocketMessage {
     Raw(Value),
 }
 
-impl crate::websockets::VenueMessage for WebSocketMessage {} 
+impl crate::websockets::VenueMessage for WebSocketMessage {}

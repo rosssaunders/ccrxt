@@ -1,9 +1,9 @@
+use super::error;
+use chrono::{DateTime, Utc};
+use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use websockets::VenueMessage;
-use rust_decimal::Decimal;
-use chrono::{DateTime, Utc};
-use super::error;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct OrderBookLevel(pub Decimal, pub Decimal);

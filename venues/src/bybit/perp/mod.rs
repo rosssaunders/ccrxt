@@ -3,5 +3,5 @@ mod types;
 mod ws;
 
 pub use rest::BybitPerpPublicRest;
-pub use types::{OrderBookSnapshot, WebSocketMessage, OrderBookUpdate};
-pub use ws::BybitPerpPublicWebSocket; 
+pub use types::{OrderBookSnapshot, OrderBookUpdate, WebSocketMessage};
+pub use ws::BybitPerpPublicWebSocket;

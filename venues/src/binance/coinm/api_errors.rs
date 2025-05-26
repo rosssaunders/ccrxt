@@ -1,5 +1,6 @@
-use thiserror::Error;
 use super::types::ErrorResponse;
+use thiserror::Error;
+use serde::Deserialize;
 
 /// Error code ranges:
 /// -1000 to -1999: General Server or Network issues
@@ -7,7 +8,7 @@ use super::types::ErrorResponse;
 /// -3000 to -3999: Rate limiting errors
 /// -4000 to -4999: Validation and Processing errors
 /// -5000 to -5999: System errors
-#[derive(Error, Debug)]
+#[derive(Error, Debug, Clone, Deserialize)]
 pub enum BinanceCoinMAPIError {
     #[error("{msg}")]
     UnknownApiError { msg: String },
@@ -628,7 +629,10 @@ impl From<ErrorResponse> for BinanceCoinMAPIError {
             -4200 => BinanceCoinMAPIError::AdjustLeverageXDaysFailed { msg: err.msg },
             -4201 => BinanceCoinMAPIError::AdjustLeverageKycLimit { msg: err.msg },
             -4202 => BinanceCoinMAPIError::AdjustLeverageAccountSymbolFailed { msg: err.msg },
-            _ => BinanceCoinMAPIError::UnmappedApiError { code: err.code, msg: err.msg },
+            _ => BinanceCoinMAPIError::UnmappedApiError {
+                code: err.code,
+                msg: err.msg,
+            },
         }
     }
 }

@@ -62,7 +62,7 @@ impl fmt::Display for OrderType {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+#[serde(rename_all = "UPPERCASE")]
 pub enum TimeInForce {
     GTC, // Good Till Cancel
     IOC, // Immediate or Cancel
@@ -125,6 +125,10 @@ impl fmt::Display for OrderStatus {
     }
 }
 
+/// Represents the response type for new order requests.
+///
+/// Can be set to ACK or RESULT. Default is ACK.
+/// Used in the newOrderRespType field.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum OrderResponseType {
@@ -141,6 +145,10 @@ impl fmt::Display for OrderResponseType {
     }
 }
 
+/// Represents the self-trade prevention mode for orders.
+///
+/// Can be set to NONE, EXPIRE_TAKER, EXPIRE_MAKER, or EXPIRE_BOTH.
+/// Used in the selfTradePreventionMode field.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum SelfTradePreventionMode {
@@ -178,7 +186,7 @@ pub enum IncomeType {
     FeeReward,
     TokenReward,
     TransferIn,
-    TransferOut
+    TransferOut,
 }
 
 impl fmt::Display for IncomeType {
@@ -300,4 +308,38 @@ pub enum SymbolFilterType {
     PercentPriceFilter,
     MaxPositionFilter,
     TrailingDataFilter,
+}
+
+/// Represents the price match mode for orders.
+///
+/// Can be set to OPPONENT, OPPONENT_5, OPPONENT_10, OPPONENT_20, QUEUE, QUEUE_5, QUEUE_10, QUEUE_20, or NONE.
+/// See: https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Place-Multiple-Orders
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum PriceMatch {
+    None,
+    Opponent,
+    Opponent5,
+    Opponent10,
+    Opponent20,
+    Queue,
+    Queue5,
+    Queue10,
+    Queue20,
+}
+
+impl fmt::Display for PriceMatch {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            PriceMatch::None => write!(f, "NONE"),
+            PriceMatch::Opponent => write!(f, "OPPONENT"),
+            PriceMatch::Opponent5 => write!(f, "OPPONENT_5"),
+            PriceMatch::Opponent10 => write!(f, "OPPONENT_10"),
+            PriceMatch::Opponent20 => write!(f, "OPPONENT_20"),
+            PriceMatch::Queue => write!(f, "QUEUE"),
+            PriceMatch::Queue5 => write!(f, "QUEUE_5"),
+            PriceMatch::Queue10 => write!(f, "QUEUE_10"),
+            PriceMatch::Queue20 => write!(f, "QUEUE_20"),
+        }
+    }
 }

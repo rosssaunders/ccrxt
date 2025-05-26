@@ -1,7 +1,7 @@
 pub mod coinm;
-pub mod usdm;
 pub mod spot;
+pub mod usdm;
 
 pub use coinm::*;
+pub use spot::*;
 pub use usdm::*;
-pub use spot::*; 

@@ -1,21 +1,25 @@
 use async_trait::async_trait;
-use futures::{SinkExt, StreamExt};
-use tokio_tungstenite::{connect_async, tungstenite::Message};
 use futures::stream::Stream;
+use futures::{SinkExt, StreamExt};
+use serde_json::json;
 use std::error::Error;
 use std::pin::Pin;
 use std::time::{Duration, Instant};
-use serde_json::json;
+use tokio_tungstenite::{connect_async, tungstenite::Message};
 
 use super::types::WebSocketMessage;
-use crate::websockets::{WebSocketConnection, BoxResult};
+use crate::websockets::{BoxResult, WebSocketConnection};
 
 const BYBIT_PERP_WS_URL: &str = "wss://stream.bybit.com/v5/public/linear";
 const HEARTBEAT_INTERVAL: Duration = Duration::from_secs(20);
 
 pub struct BybitPerpPublicWebSocket {
     url: String,
-    ws_stream: Option<tokio_tungstenite::WebSocketStream<tokio_tungstenite::MaybeTlsStream<tokio::net::TcpStream>>>,
+    ws_stream: Option<
+        tokio_tungstenite::WebSocketStream<
+            tokio_tungstenite::MaybeTlsStream<tokio::net::TcpStream>,
+        >,
+    >,
     subscribed_channels: Vec<String>,
     last_heartbeat: Instant,
 }
@@ -29,7 +33,7 @@ impl BybitPerpPublicWebSocket {
             last_heartbeat: Instant::now(),
         }
     }
-    
+
     async fn send_heartbeat(&mut self) -> BoxResult<()> {
         if let Some(ws) = self.ws_stream.as_mut() {
             let ping_msg = json!({
@@ -49,7 +53,8 @@ impl BybitPerpPublicWebSocket {
                 "op": "subscribe",
                 "args": channels
             });
-            ws.send(Message::Text(subscribe_msg.to_string().into())).await?;
+            ws.send(Message::Text(subscribe_msg.to_string().into()))
+                .await?;
             self.subscribed_channels.extend(channels);
         }
         Ok(())
@@ -77,18 +82,20 @@ impl WebSocketConnection<WebSocketMessage> for BybitPerpPublicWebSocket {
         self.ws_stream.is_some()
     }
 
-    fn message_stream(&mut self) -> Pin<Box<dyn Stream<Item = BoxResult<WebSocketMessage>> + Send>> {
+    fn message_stream(
+        &mut self,
+    ) -> Pin<Box<dyn Stream<Item = BoxResult<WebSocketMessage>> + Send>> {
         let stream = self.ws_stream.take().expect("WebSocket not connected");
         let mut last_heartbeat = self.last_heartbeat;
-        
+
         Box::pin(stream.filter_map(move |message| {
             let now = Instant::now();
-            
+
             // Check if we need to send a heartbeat
             if now.duration_since(last_heartbeat) >= HEARTBEAT_INTERVAL {
                 last_heartbeat = now;
             }
-            
+
             async move {
                 match message {
                     Ok(Message::Text(text)) => {
@@ -98,9 +105,11 @@ impl WebSocketConnection<WebSocketMessage> for BybitPerpPublicWebSocket {
                                 // Try to deserialize as raw Value as fallback
                                 match serde_json::from_str(&text) {
                                     Ok(raw_value) => Some(Ok(WebSocketMessage::Raw(raw_value))),
-                                    Err(e) => Some(Err(Box::new(e) as Box<dyn Error + Send + Sync>)),
+                                    Err(e) => {
+                                        Some(Err(Box::new(e) as Box<dyn Error + Send + Sync>))
+                                    }
                                 }
-                            },
+                            }
                         }
                     }
                     Ok(Message::Close(_)) => None,
@@ -118,4 +127,4 @@ impl Default for BybitPerpPublicWebSocket {
     fn default() -> Self {
         Self::new()
     }
-} 
+}

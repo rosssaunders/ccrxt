@@ -1,8 +1,8 @@
-use futures::StreamExt;
-use venues::coinbase::advanced_trade::websocket::CoinbaseAdvancedTradeWebSocket;
-use tracing::{info, Level};
-use websockets::{WebSocketConnection, BoxResult};
 use clap::Parser;
+use futures::StreamExt;
+use tracing::{info, Level};
+use venues::coinbase::advanced_trade::websocket::CoinbaseAdvancedTradeWebSocket;
+use websockets::{BoxResult, WebSocketConnection};
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
@@ -31,15 +31,14 @@ struct Args {
 #[tokio::main]
 async fn main() -> BoxResult<()> {
     // Initialize logging
-    tracing_subscriber::fmt()
-        .with_max_level(Level::INFO)
-        .init();
+    tracing_subscriber::fmt().with_max_level(Level::INFO).init();
 
     // Parse command line arguments
     let args = Args::parse();
-    
+
     // Convert comma-separated products string to Vec<String>
-    let products: Vec<String> = args.products
+    let products: Vec<String> = args
+        .products
         .split(',')
         .map(|s| s.trim().to_string())
         .collect();
@@ -49,7 +48,7 @@ async fn main() -> BoxResult<()> {
 
     // Create a new websocket instance
     let mut ws = CoinbaseAdvancedTradeWebSocket::new();
-    
+
     // Connect to the websocket
     ws.connect().await?;
     info!("Connected to Coinbase Advanced Trade WebSocket");
@@ -71,12 +70,12 @@ async fn main() -> BoxResult<()> {
         ws.subscribe_heartbeats().await?;
         info!("Subscribed to heartbeats");
     }
-    
+
     info!("Processing market data...");
 
     // Get the message stream
     let mut stream = ws.message_stream();
-    
+
     // Process incoming messages
     while let Some(message) = stream.next().await {
         match message {
@@ -88,6 +87,6 @@ async fn main() -> BoxResult<()> {
             }
         }
     }
-    
+
     Ok(())
-} 
+}

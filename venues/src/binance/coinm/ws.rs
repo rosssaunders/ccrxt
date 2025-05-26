@@ -1,8 +1,8 @@
+use super::api_errors::BinanceCoinMAPIError;
+use super::enums::WebSocketEventType;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use super::enums::WebSocketEventType;
 use std::time::Duration;
-use super::api_errors::BinanceCoinMAPIError;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]

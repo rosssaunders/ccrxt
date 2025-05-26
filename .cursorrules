@@ -48,6 +48,28 @@ For code in crates that support each venue, such as websockets, no venue specifi
 4. Documentation MUST be clear and concise, avoiding unnecessary verbosity
 5. Documentation MUST use proper Rust doc comment format (///)
 6. Documentation MUST be kept up to date with any changes to the struct or its fields
+7. Request and Response structs MUST have a blank line between each field for improved readability
+8. Field names in serde attributes MUST exactly match the venue's API documentation:
+   - Carefully verify the exact casing (camelCase, snake_case, SCREAMING_SNAKE_CASE, etc.)
+   - Double-check field names against the official API documentation
+   - Use serde attributes to map between Rust's snake_case and the venue's naming convention
+   - Example:
+     ```rust
+     #[derive(Debug, Serialize, Deserialize)]
+     pub struct SomeRequest {
+         /// The trading pair (e.g., "BTCUSD").
+         #[serde(rename = "tradingPair")] // Exact match to API docs
+         pub trading_pair: String,
+
+         /// The order type (e.g., "LIMIT").
+         #[serde(rename = "orderType")] // Exact match to API docs
+         pub order_type: OrderType,
+
+         /// The price of the order.
+         #[serde(rename = "price")] // Exact match to API docs
+         pub price: String,
+     }
+     ```
 
 # Struct Field Naming Rules
 
