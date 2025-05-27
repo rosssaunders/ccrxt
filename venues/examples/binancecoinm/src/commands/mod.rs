@@ -1,10 +1,12 @@
 pub mod account;
 pub mod trades;
 pub mod batch_order;
+pub mod exchange_info;
 
 pub use account::handle_account_command;
 pub use trades::handle_trades_command;
 pub use batch_order::handle_batch_order_command;
+pub use exchange_info::handle_exchange_info_command;
 
 use clap::Subcommand;
 
@@ -50,4 +52,7 @@ pub enum Commands {
         #[arg(long)]
         client_order_id: Option<String>,
     },
+
+    /// Get exchange information (trading rules, symbols, rate limits)
+    ExchangeInfo,
 } 

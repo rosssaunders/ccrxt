@@ -67,6 +67,19 @@ cargo run --bin binancecoinm -- trades BTCUSD_PERP --limit 50
 cargo run --bin binancecoinm -- --testnet trades BTCUSD_PERP
 ```
 
+### Get Exchange Information
+
+Fetches current exchange trading rules, symbol information, and rate limits. This is a public endpoint and does not require API credentials.
+
+```sh
+cargo run --bin binancecoinm -- exchange-info
+```
+
+**Testnet:**
+```sh
+cargo run --bin binancecoinm -- --testnet exchange-info
+```
+
 ### Place a Batch Order
 
 Places a single order (or batch, if extended) for a symbol. For LIMIT orders, the `--price` argument is required.

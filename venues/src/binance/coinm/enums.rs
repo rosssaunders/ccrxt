@@ -64,10 +64,14 @@ impl fmt::Display for OrderType {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "UPPERCASE")]
 pub enum TimeInForce {
-    GTC, // Good Till Cancel
-    IOC, // Immediate or Cancel
-    FOK, // Fill or Kill
-    PostOnly,
+    /// Good Till Cancel
+    GTC,
+    /// Immediate or Cancel
+    IOC,
+    /// Fill or Kill
+    FOK,
+    /// Good Till Crossing (Post Only)
+    GTX,
 }
 
 impl fmt::Display for TimeInForce {
@@ -76,7 +80,7 @@ impl fmt::Display for TimeInForce {
             TimeInForce::GTC => write!(f, "GTC"),
             TimeInForce::IOC => write!(f, "IOC"),
             TimeInForce::FOK => write!(f, "FOK"),
-            TimeInForce::PostOnly => write!(f, "POST_ONLY"),
+            TimeInForce::GTX => write!(f, "GTX"),
         }
     }
 }
@@ -100,14 +104,16 @@ impl fmt::Display for WorkingType {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum OrderStatus {
+    /// The order has been accepted by the system but not yet filled.
     New,
+    /// The order has been partially filled.
     PartiallyFilled,
+    /// The order has been completely filled.
     Filled,
+    /// The order has been canceled by the user.
     Canceled,
-    Rejected,
+    /// The order has expired.
     Expired,
-    NewInsurance,
-    NewAdl,
 }
 
 impl fmt::Display for OrderStatus {
@@ -117,10 +123,7 @@ impl fmt::Display for OrderStatus {
             OrderStatus::PartiallyFilled => write!(f, "PARTIALLY_FILLED"),
             OrderStatus::Filled => write!(f, "FILLED"),
             OrderStatus::Canceled => write!(f, "CANCELED"),
-            OrderStatus::Rejected => write!(f, "REJECTED"),
             OrderStatus::Expired => write!(f, "EXPIRED"),
-            OrderStatus::NewInsurance => write!(f, "NEW_INSURANCE"),
-            OrderStatus::NewAdl => write!(f, "NEW_ADL"),
         }
     }
 }
@@ -280,14 +283,53 @@ pub enum SymbolStatus {
     Break,
 }
 
+/// Represents the type of a symbol (contract).
+///
+/// - DELIVERY_CONTRACT: Delivery contract
+/// - PERPETUAL_CONTRACT: Perpetual contract
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum SymbolType {
+    DeliveryContract,
+    PerpetualContract,
+}
+
+/// Represents the contract type for a symbol.
+///
+/// - PERPETUAL
+/// - CURRENT_QUARTER
+/// - NEXT_QUARTER
+/// - CURRENT_QUARTER_DELIVERING (invalid, only for DELIVERING status)
+/// - NEXT_QUARTER_DELIVERING (invalid, only for DELIVERING status)
+/// - PERPETUAL_DELIVERING
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum ContractType {
     Perpetual,
-    CurrentMonth,
-    NextMonth,
     CurrentQuarter,
     NextQuarter,
+    CurrentQuarterDelivering,
+    NextQuarterDelivering,
+
+    #[serde(rename = "PERPETUAL DELIVERING")]
+    PerpetualDelivering,
+}
+
+/// Represents the contract status (contractStatus, status).
+///
+/// - PENDING_TRADING
+/// - TRADING
+/// - PRE_DELIVERING
+/// - DELIVERING
+/// - DELIVERED
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum ContractStatus {
+    PendingTrading,
+    Trading,
+    PreDelivering,
+    Delivering,
+    Delivered,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -342,4 +384,27 @@ impl fmt::Display for PriceMatch {
             PriceMatch::Queue20 => write!(f, "QUEUE_20"),
         }
     }
+}
+
+/// Represents the kline/candlestick chart intervals.
+///
+/// m -> minutes; h -> hours; d -> days; w -> weeks; M -> months
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum KlineInterval {
+    #[serde(rename = "1m")] I1m,
+    #[serde(rename = "3m")] I3m,
+    #[serde(rename = "5m")] I5m,
+    #[serde(rename = "15m")] I15m,
+    #[serde(rename = "30m")] I30m,
+    #[serde(rename = "1h")] I1h,
+    #[serde(rename = "2h")] I2h,
+    #[serde(rename = "4h")] I4h,
+    #[serde(rename = "6h")] I6h,
+    #[serde(rename = "8h")] I8h,
+    #[serde(rename = "12h")] I12h,
+    #[serde(rename = "1d")] I1d,
+    #[serde(rename = "3d")] I3d,
+    #[serde(rename = "1w")] I1w,
+    #[serde(rename = "1M")] I1M,
 }

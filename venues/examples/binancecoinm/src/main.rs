@@ -61,6 +61,9 @@ enum Commands {
         #[arg(short, long)]
         price: Option<f64>,
     },
+
+    /// Get exchange information
+    ExchangeInfo,
 }
 
 fn handle_api_error(err: &BinanceCoinMAPIError) -> ! {
@@ -557,7 +560,7 @@ async fn main() -> Result<()> {
 
     match cli.command {
         Commands::Account => {
-            if let Err(e) = handle_account_command(client).await {
+            if let Err(e) = handle_account_command(client.clone()).await {
                 if let Some(api_err) = e.downcast_ref::<BinanceCoinMAPIError>() {
                     handle_api_error(api_err);
                 }
@@ -565,7 +568,7 @@ async fn main() -> Result<()> {
             }
         }
         Commands::Trades { symbol, limit } => {
-            if let Err(e) = handle_trades_command(client, symbol, limit).await {
+            if let Err(e) = handle_trades_command(client.clone(), symbol, limit).await {
                 if let Some(api_err) = e.downcast_ref::<BinanceCoinMAPIError>() {
                     handle_api_error(api_err);
                 }
@@ -573,7 +576,15 @@ async fn main() -> Result<()> {
             }
         }
         Commands::BatchOrder { symbol, side, order_type, quantity, price } => {
-            if let Err(e) = handle_batch_order_command(client, symbol, side, order_type, quantity, price).await {
+            if let Err(e) = handle_batch_order_command(client.clone(), symbol, side, order_type, quantity, price).await {
+                if let Some(api_err) = e.downcast_ref::<BinanceCoinMAPIError>() {
+                    handle_api_error(api_err);
+                }
+                return Err(e);
+            }
+        }
+        Commands::ExchangeInfo => {
+            if let Err(e) = commands::handle_exchange_info_command(client.clone()).await {
                 if let Some(api_err) = e.downcast_ref::<BinanceCoinMAPIError>() {
                     handle_api_error(api_err);
                 }

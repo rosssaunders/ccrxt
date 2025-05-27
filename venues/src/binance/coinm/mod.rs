@@ -8,6 +8,7 @@ pub mod rate_limit;
 pub mod types;
 pub mod utils;
 pub mod ws;
+pub mod public_exchange_info;
 
 pub use enums::*;
 pub use private_account::*;
@@ -20,3 +21,4 @@ pub use types::{BinanceCoinMError, BinanceCoinMResult};
 pub use utils::*;
 pub use ws::*;
 pub use api_errors::BinanceCoinMAPIError;
+pub use public_exchange_info::*;
