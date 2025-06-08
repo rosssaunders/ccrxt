@@ -2,7 +2,6 @@ use serde::{Deserialize, Serialize};
 use serde::ser::Serializer;
 use serde::Serialize as SerdeSerialize;
 
-use binance_macros::PrivateRequest;
 use crate::binance::coinm::enums::{
     OrderResponseType, OrderSide, OrderType, PositionSide, PriceMatch, SelfTradePreventionMode,
     TimeInForce, WorkingType, OrderStatus
@@ -116,7 +115,7 @@ pub struct BatchOrderRequest {
 }
 
 /// Request type for placing multiple orders (batch).
-#[derive(Debug, Clone, Serialize, PrivateRequest)]
+#[derive(Debug, Clone, Serialize)]
 pub struct PlaceBatchOrdersRequest {
     /// List of orders to place (max 5).
     /// Each order must be a valid BatchOrderRequest.

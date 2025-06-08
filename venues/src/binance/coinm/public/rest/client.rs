@@ -2,10 +2,6 @@
 //
 // Provides access to all public REST API endpoints for Binance Coin-M Futures.
 // All requests are unauthenticated and do not require API credentials.
-//
-// See: https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Exchange-Information
-
-use std::time::Duration;
 use reqwest::Client;
 
 use crate::binance::coinm::{execute_request, Errors, RateLimiter, RestResult, RestResponse};
@@ -53,20 +49,13 @@ impl RestClient {
         T: serde::de::DeserializeOwned,
     {
         // Check rate limits before sending
-        //self.rate_limiter.check_limits(weight, is_order).await?;
-
-        // Increment raw request counter
-        // self.rate_limiter.increment_raw_request().await;
-        // if is_order {
-        //     self.rate_limiter.increment_order().await;
-        // }
-        // let rate_limit_start = Instant::now();
+        self.rate_limiter.check_limits(weight, false).await?;
 
         let url = match query_string {
             Some(qs) if method == reqwest::Method::GET => format!("{}{}?{}", self.base_url, endpoint, qs),
             _ => format!("{}{}", self.base_url, endpoint),
         };
-        let mut headers = vec![];
+        let headers = vec![];
 
         let rest_response = execute_request(&self.client, &url, method, Some(headers.clone()), body)
             .await
@@ -75,7 +64,7 @@ impl RestClient {
         // At this point, rest_response is the parsed response from execute_request.
         // If execute_request returns a type that is not already a RestResponse<T>, convert it here.
         // Assuming execute_request returns a type that can be converted into RestResponse<T>:
-
+        // 
         // Manually build the RestResponse object from the raw response.
         // Assume rest_response is a tuple or struct with (body, headers, status) or similar.
         // If execute_request returns the raw response body as bytes or string, parse here.
@@ -88,11 +77,8 @@ impl RestClient {
         };
 
         // Optionally update rate limiter from headers if needed
-        // self.rate_limiter.update_from_headers(&rest_response.headers).await;
+        self.rate_limiter.update_from_headers(&rest_response.headers).await;
 
         Ok(rest_response)
-
-        // Update rate limiter from headers
-        // self.rate_limiter.update_from_headers(&headers).await;
     }
 }

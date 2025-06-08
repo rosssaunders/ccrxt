@@ -29,10 +29,10 @@ use hmac::{Hmac, Mac};
 use reqwest::Client;
 use rest::secrets::ExposableSecret;
 use serde::de::DeserializeOwned;
+use serde::Serialize;
 use sha2::Sha256;
 
 use crate::binance::coinm::{RestResult, RestResponse, Errors, RateLimiter, execute_request};
-use crate::binance::coinm::private::rest::PrivateRequest;
 
 /// Represents a successful or error response from the Binance API.
 /// This enum is used to handle both successful responses and error responses
@@ -147,7 +147,7 @@ impl RestClient {
         if !self.api_key.expose_secret().is_empty() {
             headers.push(("X-MBX-APIKEY", self.api_key.expose_secret()));
         }
-        
+
         // Add Content-Type header for form-encoded body
         if body.is_some() {
             headers.push(("Content-Type", "application/x-www-form-urlencoded".to_string()));
@@ -166,7 +166,7 @@ impl RestClient {
         };
 
         // Update rate limiter from headers
-        //self.rate_limiter.update_from_headers(&headers).await;
+        self.rate_limiter.update_from_headers(&rest_response.headers).await;
 
         Ok(rest_response)
     }
@@ -195,7 +195,7 @@ impl RestClient {
     ) -> RestResult<T>
     where
         T: DeserializeOwned,
-        R: PrivateRequest,
+        R: Serialize,
     {
         let serialized = serde_urlencoded::to_string(&request)
             .map_err(|e| Errors::Error(format!("Failed to encode params: {}\nBacktrace:\n{}", e, std::backtrace::Backtrace::capture())))?;

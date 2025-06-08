@@ -1,5 +1,4 @@
 use serde::{Deserialize, Serialize};
-use binance_macros::PrivateRequest;
 
 use crate::binance::coinm::enums::{OrderSide, PositionSide};
 use crate::binance::coinm::private::rest::client::RestClient;
@@ -8,7 +7,7 @@ use crate::binance::coinm::RestResult;
 /// Request parameters for the Account Trade List endpoint (GET /dapi/v1/userTrades).
 ///
 /// See: https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Account-Trade-List
-#[derive(Debug, Clone, Serialize, Default, PrivateRequest)]
+#[derive(Debug, Clone, Serialize, Default)]
 pub struct AccountTradeListRequest {
     /// The trading symbol (e.g., "BTCUSD_PERP").
     /// Either `symbol` or `pair` must be sent, but not both.

@@ -1,5 +1,4 @@
 use std::collections::VecDeque;
-use std::num::NonZeroU32;
 use std::sync::Arc;
 use std::time::{Duration, Instant};
 use serde::Deserialize;
@@ -134,19 +133,6 @@ impl RateLimitHeader {
         };
         format!("{}{}{}", prefix, self.interval_value, self.interval_unit.as_str())
     }
-}
-
-/// Configuration for a rate limit
-#[derive(Debug, Clone)]
-pub struct RateLimitConfig {
-    /// The type of rate limit (e.g., RequestWeight, Orders, RawRequests)
-    pub limit_type: RateLimitType,
-
-    /// The interval for the rate limit (e.g., Second, Minute, Day)
-    pub interval: RateLimitInterval,
-
-    /// The maximum number of requests allowed in the interval
-    pub limit: NonZeroU32,
 }
 
 /// Tracks the current usage of rate limits (rolling windows)
