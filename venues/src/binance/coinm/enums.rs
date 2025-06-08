@@ -246,26 +246,6 @@ impl fmt::Display for WebSocketEventType {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
-pub enum RateLimitType {
-    RequestWeight,
-    Orders,
-    RawRequests,
-    RequestSize,
-    OrdersPerSecond,
-    OrdersPerDay,
-    OrdersPerCountdown,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
-pub enum RateLimitInterval {
-    Second,
-    Minute,
-    Day,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum ExchangeFilterType {
     ExchangeMaxNumOrders,
     ExchangeMaxNumAlgoOrders,
@@ -315,13 +295,16 @@ pub enum ContractType {
     PerpetualDelivering,
 }
 
-/// Represents the contract status (contractStatus, status).
+/// Represents the contract status (`contractStatus`, `status`).
 ///
-/// - PENDING_TRADING
-/// - TRADING
-/// - PRE_DELIVERING
-/// - DELIVERING
-/// - DELIVERED
+/// [Binance API Enum Definitions](https://developers.binance.com/docs/derivatives/coin-margined-futures/common-definition#enum-definitions)
+///
+/// Variants:
+/// - `PendingTrading`
+/// - `Trading`
+/// - `PreDelivering`
+/// - `Delivering`
+/// - `Delivered`
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum ContractStatus {

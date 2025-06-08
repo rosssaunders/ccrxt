@@ -29,7 +29,6 @@ pub struct SecretValue {
     /// The secret value, stored securely using SecretString
     secret: SecretString,
 }
-
 impl ExposableSecret for SecretValue {
     fn expose_secret(&self) -> String {
         self.secret.expose_secret().to_string()

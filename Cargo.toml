@@ -4,7 +4,6 @@ members = [
     "venues",
     "websockets",
     "rest",
-    "pagination",
     "venues/examples/binancecoinm",
     "binance_macros"
 ]

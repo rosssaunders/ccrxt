@@ -8,7 +8,7 @@ pub fn derive_private_request(input: TokenStream) -> TokenStream {
     let name = &input.ident;
     // This will later check for a timestamp field and generate the impl
     let expanded = quote! {
-        impl crate::binance::coinm::types::PrivateRequest for #name {
+        impl crate::binance::coinm::private::rest::PrivateRequest for #name {
             fn timestamp(&self) -> u64 {
                 self.timestamp
             }

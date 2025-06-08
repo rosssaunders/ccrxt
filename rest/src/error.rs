@@ -15,12 +15,6 @@ pub enum RestError {
     #[error("Validation error: {0}")]
     ValidationError(String),
     
-    #[error("API error: {code} - {message}")]
-    ApiError {
-        code: i32,
-        message: String,
-    },
-    
     #[error("Unknown error: {0}")]
     Unknown(String),
 } 

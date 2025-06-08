@@ -1,22 +1,25 @@
 use anyhow::Result;
 use std::sync::Arc;
 use tabled::{Table, Tabled, settings::Style};
-use venues::binance::coinm::BinanceCoinMPrivateRest;
+use venues::binance::coinm::{PrivateRestClient, AccountRequest};
 
 #[derive(Tabled)]
 pub struct AssetRow {
     #[tabled(rename = "Asset")]
     pub asset: String,
+    
     #[tabled(rename = "Wallet Balance")]
     pub wallet_balance: String,
+    
     #[tabled(rename = "Unrealized PNL")]
     pub unrealized_profit: String,
+    
     #[tabled(rename = "Margin Balance")]
     pub margin_balance: String,
 }
 
-pub async fn handle_account_command(client: Arc<BinanceCoinMPrivateRest>) -> Result<()> {
-    let request = venues::binance::coinm::AccountRequest {
+pub async fn handle_account_command(client: Arc<PrivateRestClient>) -> Result<()> {
+    let request = AccountRequest {
         timestamp: chrono::Utc::now().timestamp_millis() as u64,
         recv_window: None,
     };
@@ -42,4 +45,4 @@ pub async fn handle_account_command(client: Arc<BinanceCoinMPrivateRest>) -> Res
     println!("{}", table);
     
     Ok(())
-} 
+}

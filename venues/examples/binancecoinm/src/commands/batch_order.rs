@@ -1,15 +1,16 @@
 use anyhow::{Result, anyhow};
 use std::sync::Arc;
+
+use venues::binance::coinm::PrivateRestClient;
+use venues::binance::coinm::{BatchOrderRequest, PlaceBatchOrdersRequest, BatchOrderResult};
 use venues::binance::coinm::{
-    BinanceCoinMPrivateRest,
-    private_batch_order::{BatchOrderRequest, BatchOrderResult},
     OrderSide,
     OrderType,
     TimeInForce,
 };
 
 pub async fn handle_batch_order_command(
-    client: Arc<BinanceCoinMPrivateRest>,
+    client: Arc<PrivateRestClient>,
     symbol: String,
     side: String,
     order_type: String,
@@ -51,11 +52,32 @@ pub async fn handle_batch_order_command(
         self_trade_prevention_mode: None,
     };
 
-    let request = venues::binance::coinm::private_batch_order::PlaceBatchOrdersRequest {
-        batch_orders: vec![batch_req],
+    let batch_req2 = BatchOrderRequest {
+        symbol: symbol.clone(),
+        side,
+        position_side: None,
+        order_type,
+        time_in_force: Some(TimeInForce::GTC),
+        quantity: "200".to_string(),
+        reduce_only: None,
+        price: price.map(|p| p.to_string()),
+        new_client_order_id: None,
+        stop_price: None,
+        activation_price: None,
+        callback_rate: None,
+        working_type: None,
+        price_protect: None,
+        new_order_resp_type: None,
+        price_match: None,
+        self_trade_prevention_mode: None,
+    };
+
+    let request = PlaceBatchOrdersRequest {
+        batch_orders: vec![batch_req, batch_req2],
         recv_window: None,
         timestamp: now,
     };
+
     let response = client.place_batch_orders(request).await?;
     
     // Print the results
@@ -73,7 +95,8 @@ pub async fn handle_batch_order_command(
                 println!("  Average Price: {}", order.avg_price);
             }
             BatchOrderResult::Err(err) => {
-                println!("Error: {:?}", err);
+                println!("\nOrder {}:", i + 1);
+                println!("  Error: {:?}", err);
             }
         }
     }

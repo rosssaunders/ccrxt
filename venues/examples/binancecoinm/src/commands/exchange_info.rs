@@ -1,11 +1,11 @@
 use anyhow::Result;
 use std::sync::Arc;
-use venues::binance::coinm::{BinanceCoinMPrivateRest, ExchangeInfoResponse, RateLimit, SymbolFilterType, FilterType};
-use venues::binance::coinm::public_exchange_info::Filter;
+use venues::binance::coinm::{Filter, ExchangeInfoResponse};
+use venues::binance::coinm::PublicRestClient;
 use tabled::{Table, Tabled, settings::Style};
 
 /// Handles the `exchange-info` command: fetches and prints exchange information.
-pub async fn handle_exchange_info_command(client: Arc<BinanceCoinMPrivateRest>) -> Result<()> {
+pub async fn handle_exchange_info_command(client: Arc<PublicRestClient>) -> Result<()> {
     let response = client.get_exchange_info().await?;
     print_exchange_info(&response.data);
     Ok(())
@@ -33,10 +33,6 @@ struct SymbolRow {
     status: String,
     #[tabled(rename = "Contract Type")]
     contract_type: String,
-}
-
-fn option_string<T: std::fmt::Display>(v: &Option<T>) -> String {
-    v.as_ref().map(|x| x.to_string()).unwrap_or_default()
 }
 
 fn print_exchange_info(info: &ExchangeInfoResponse) {
@@ -231,4 +227,3 @@ fn print_exchange_info(info: &ExchangeInfoResponse) {
         println!("{}", table);
     }
 } 
-

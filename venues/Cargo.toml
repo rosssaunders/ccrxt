@@ -6,7 +6,6 @@ edition = "2021"
 [dependencies]
 # Internal dependencies
 websockets = { path = "../websockets" }
-pagination = { path = "../pagination" }
 rest = { path = "../rest" }
 
 # External dependencies
