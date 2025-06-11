@@ -1,3 +1,42 @@
+//! Binance USD-M Futures (USDM) API client
+//!
+//! This module provides access to the Binance USD-M Futures API, including:
+//!
+//! - **Rate Limiting**: Automatic rate limiting for RAW_REQUEST, REQUEST_WEIGHT, and ORDER limits
+//! - **Public Endpoints**: Market data, exchange info, etc. via `/fapi/v1/` endpoints  
+//! - **Private Endpoints**: Account data, trading, etc. (basic structure provided)
+//! - **Error Handling**: Comprehensive error types for API responses
+//!
+//! # Rate Limiting
+//!
+//! The USDM API enforces strict rate limits:
+//! - Raw requests: 1,200 per minute
+//! - Request weight: 2,400 per minute
+//! - Orders: 100 per 10s, 1,200 per minute
+//!
+//! The rate limiter automatically tracks these limits and returns errors when they would be exceeded.
+//!
+//! # Example
+//!
+//! ```rust
+//! use venues::binance::usdm::{PublicRestClient, RateLimiter};
+//! use reqwest::Client;
+//!
+//! #[tokio::main]
+//! async fn main() -> Result<(), Box<dyn std::error::Error>> {
+//!     let client = PublicRestClient::new(
+//!         "https://fapi.binance.com",
+//!         Client::new(),
+//!     );
+//!     
+//!     // The client automatically handles rate limiting
+//!     let exchange_info = client.exchange_info().await?;
+//!     println!("Got {} symbols", exchange_info.data.symbols.len());
+//!     
+//!     Ok(())
+//! }
+//! ```
+
 use std::time::Duration;
 
 mod enums;

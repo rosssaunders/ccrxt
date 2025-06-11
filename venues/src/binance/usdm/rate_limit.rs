@@ -135,6 +135,53 @@ pub struct RateLimitUsage {
 }
 
 /// Manages rate limiting for Binance USD-M Futures API
+///
+/// This rate limiter implements the rate limiting requirements for Binance USD-M Futures (USDM) API
+/// as described in the official documentation. It tracks three types of limits:
+///
+/// 1. **Raw Requests**: Total number of API calls regardless of weight (1,200 per minute)
+/// 2. **Request Weight**: Weighted requests based on endpoint complexity (2,400 per minute)  
+/// 3. **Orders**: Order-related operations (100 per 10s, 1,200 per minute)
+///
+/// # Usage
+///
+/// ```rust
+/// use venues::binance::usdm::RateLimiter;
+///
+/// #[tokio::main]
+/// async fn main() -> Result<(), Box<dyn std::error::Error>> {
+///     let rate_limiter = RateLimiter::new();
+///     
+///     // Check if we can make a request with weight 10
+///     rate_limiter.check_limits(10, false).await?;
+///     
+///     // Increment counters after making the request
+///     rate_limiter.increment_raw_request().await;
+///     
+///     // For order endpoints, also increment order counter
+///     if is_order_endpoint {
+///         rate_limiter.increment_order().await;
+///     }
+///     
+///     Ok(())
+/// }
+/// ```
+///
+/// # Rate Limits (USDM)
+///
+/// - **Raw Requests**: 1,200 requests per minute
+/// - **Request Weight**: 2,400 weight units per minute  
+/// - **Orders**: 100 orders per 10 seconds, 1,200 orders per minute
+///
+/// These limits are based on IP address and are enforced by Binance. When limits are exceeded,
+/// the API returns HTTP 429 (Too Many Requests) or HTTP 418 (IP banned for repeated violations).
+///
+/// # Headers
+///
+/// The rate limiter automatically parses response headers:
+/// - `X-MBX-USED-WEIGHT-1M`: Current weight usage in the last minute
+/// - `X-MBX-ORDER-COUNT-10S`: Order count in the last 10 seconds
+/// - `X-MBX-ORDER-COUNT-1M`: Order count in the last minute
 #[derive(Debug, Clone, Default)]
 pub struct RateLimiter {
     usage: Arc<RwLock<RateLimitUsage>>,

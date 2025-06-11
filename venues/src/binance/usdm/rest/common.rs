@@ -4,7 +4,6 @@
 use reqwest::{Client, Method};
 use url::Url;
 use crate::binance::usdm::{execute_request, Errors, RateLimiter, ResponseHeaders};
-use std::collections::HashMap;
 
 /// Helper to build a URL with optional query parameters using `url::Url`.
 pub(crate) fn build_url(base_url: &str, endpoint: &str, query: Option<&str>) -> Result<String, Errors> {
