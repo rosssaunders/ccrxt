@@ -5,6 +5,7 @@ members = [
     "websockets",
     "rest",
     "venues/examples/binancecoinm",
+    "venues/examples/binanceoption",
     "binance_macros"
 ]
 
