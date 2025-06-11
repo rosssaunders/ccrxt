@@ -80,9 +80,33 @@ cargo run --bin binancecoinm -- exchange-info
 cargo run --bin binancecoinm -- --testnet exchange-info
 ```
 
+### Place a Single Order
+
+Places a single order for a symbol. For LIMIT orders, the `--price` argument is required.
+
+```sh
+cargo run --bin binancecoinm -- order BTCUSD BUY LIMIT 0.01 --price 60000
+```
+
+- `<SYMBOL>`: Trading pair symbol (e.g., BTCUSD)
+- `<SIDE>`: BUY or SELL
+- `<ORDER_TYPE>`: LIMIT or MARKET
+- `<QUANTITY>`: Order quantity (e.g., 0.01)
+- `--price <PRICE>`: Required for LIMIT orders
+
+**Market order example:**
+```sh
+cargo run --bin binancecoinm -- order BTCUSD BUY MARKET 0.01
+```
+
+**Testnet:**
+```sh
+cargo run --bin binancecoinm --testnet order BTCUSD_PERP SELL LIMIT 1 --price 100000
+```
+
 ### Place a Batch Order
 
-Places a single order (or batch, if extended) for a symbol. For LIMIT orders, the `--price` argument is required.
+Places a batch order for a symbol. For LIMIT orders, the `--price` argument is required.
 
 ```sh
 cargo run --bin binancecoinm -- batch-order BTCUSD BUY LIMIT 0.01 --price 60000
@@ -101,7 +125,7 @@ cargo run --bin binancecoinm -- batch-order BTCUSD BUY MARKET 0.01
 
 **Testnet:**
 ```sh
-cargo run --bin binancecoinm -- --testnet batch-order BTCUSD_PERP SELL LIMIT 1 --price 100000
+cargo run --bin binancecoinm --testnet batch-order BTCUSD_PERP SELL LIMIT 1 --price 100000
 ```
 
 ## Help

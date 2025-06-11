@@ -13,4 +13,5 @@ applyTo: "venues/src/**"
   - WebSocket endpoints: ws_<endpoint>.rs (e.g., ws_trades.rs, ws_depth.rs)
 - Each endpoint in its own file.
 - Common code (websockets, rate limiting) can be in subdirectories at the venue level.
-- All internal module references MUST use `crate::` paths instead of `super::` or relative paths. This improves clarity, robustness, and maintainability in large or deeply nested projects.
+- For imports of modules in the same crate, use `crate::…` absolute paths instead of `super::…` or relative paths. Do **not** apply this rule to external crates—continue using their crate name (e.g., `rest::…`).
+- Shared logic (e.g., client request helpers, rate limiter helpers) MUST be factored into private modules or helpers and reused, not duplicated across public/private or similar modules.

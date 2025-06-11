@@ -35,6 +35,8 @@ rand = "0.9.1"
 governor = "0.10.0"
 nonzero_ext = "0.3"
 binance_macros = { path = "../binance_macros" }
+url.workspace = true
+num_enum = "0.7.3"
 
 [lints]
 workspace = true

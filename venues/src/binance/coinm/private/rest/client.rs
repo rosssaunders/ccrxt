@@ -32,7 +32,9 @@ use serde::de::DeserializeOwned;
 use serde::Serialize;
 use sha2::Sha256;
 
-use crate::binance::coinm::{RestResult, RestResponse, Errors, RateLimiter, execute_request};
+use crate::binance::coinm::rest::common::{build_url, send_rest_request};
+use crate::binance::coinm::{RestResult, RestResponse, Errors, RateLimiter};
+use std::borrow::Cow;
 
 /// Represents a successful or error response from the Binance API.
 /// This enum is used to handle both successful responses and error responses
@@ -67,12 +69,18 @@ fn sign_request(
 ///
 /// This client handles encrypted API keys and secrets for enhanced security.
 /// The API key and secret are stored in encrypted form and only decrypted when needed.
+#[non_exhaustive]
 pub struct RestClient {
+    /// The underlying HTTP client used for making requests.
     pub(crate) client: Client,
+    /// The rate limiter for this client.
     pub(crate) rate_limiter: RateLimiter,
+    /// The encrypted API key.
     pub(crate) api_key: Box<dyn ExposableSecret>,
+    /// The encrypted API secret.
     pub(crate) api_secret: Box<dyn ExposableSecret>,
-    pub(crate) base_url: String,
+    /// The base URL for the API.
+    pub(crate) base_url: Cow<'static, str>,
 }
 
 impl RestClient {
@@ -89,16 +97,16 @@ impl RestClient {
     pub fn new(
         api_key: Box<dyn ExposableSecret>,
         api_secret: Box<dyn ExposableSecret>,
-        base_url: String,
+        base_url: impl Into<Cow<'static, str>>,
         rate_limiter: RateLimiter,
         client: Client,
     ) -> Self {
         Self {
-            client: client,
-            rate_limiter: rate_limiter,
+            client,
+            rate_limiter,
             api_key,
             api_secret,
-            base_url,
+            base_url: base_url.into(),
         }
     }
 
@@ -122,53 +130,37 @@ impl RestClient {
         endpoint: &str,
         method: reqwest::Method,
         query_string: Option<&str>,
-        body: Option<&str>,
+        body: Option<&[(&str, &str)]>,
         weight: u32,
         is_order: bool,
     ) -> RestResult<T>
     where
         T: serde::de::DeserializeOwned,
     {
-        // Check rate limits before sending
-        self.rate_limiter.check_limits(weight, is_order).await?;
-        
-        // Increment raw request counter
-        self.rate_limiter.increment_raw_request().await;
-        if is_order {
-            self.rate_limiter.increment_order().await;
-        }
-
-        let url = match query_string {
-            Some(qs) if method == reqwest::Method::GET => format!("{}{}?{}", self.base_url, endpoint, qs),
-            _ => format!("{}{}", self.base_url, endpoint),
-        };
+        let url = crate::binance::coinm::rest::common::build_url(&self.base_url, endpoint, query_string)?;
         let mut headers = vec![];
-        // Only add API key header for private endpoints
         if !self.api_key.expose_secret().is_empty() {
             headers.push(("X-MBX-APIKEY", self.api_key.expose_secret()));
         }
-
-        // Add Content-Type header for form-encoded body
-        if body.is_some() {
+        let body_data = body.map(|b| serde_urlencoded::to_string(b).unwrap());
+        if body_data.is_some() {
             headers.push(("Content-Type", "application/x-www-form-urlencoded".to_string()));
         }
-
-        let response = execute_request(&self.client, &url, method, Some(headers), body).await.map_err(Errors::from)?;
-
-        let headers = response.headers.clone();
-        
-        let request_duration = response.duration;
-
-        let rest_response = RestResponse {
-            data: response.data,
-            request_duration: request_duration,
-            headers: headers,
-        };
-
-        // Update rate limiter from headers
-        self.rate_limiter.update_from_headers(&rest_response.headers).await;
-
-        Ok(rest_response)
+        let rest_response = crate::binance::coinm::rest::common::send_rest_request(
+            &self.client,
+            &url,
+            method,
+            headers,
+            body_data.as_deref(),
+            &self.rate_limiter,
+            weight,
+            is_order,
+        ).await?;
+        Ok(crate::binance::coinm::RestResponse {
+            data: rest_response.data,
+            request_duration: rest_response.request_duration,
+            headers: rest_response.headers,
+        })
     }
 
     /// Sends a signed request to the Binance API
@@ -194,20 +186,17 @@ impl RestClient {
         is_order: bool,
     ) -> RestResult<T>
     where
-        T: DeserializeOwned,
-        R: Serialize,
+        T: serde::de::DeserializeOwned,
+        R: serde::Serialize,
     {
         let serialized = serde_urlencoded::to_string(&request)
-            .map_err(|e| Errors::Error(format!("Failed to encode params: {}\nBacktrace:\n{}", e, std::backtrace::Backtrace::capture())))?;
-        
-        print!("Sending request to Binance API: {} {} with params: {}\n", method, endpoint, serialized);
-        
+            .map_err(|e| crate::binance::coinm::Errors::Error(format!("Failed to encode params: {}\nBacktrace:\n{}", e, std::backtrace::Backtrace::capture())))?;
         let signature = sign_request(self.api_secret.as_ref(), &serialized)?;
         let signed = format!("{}&signature={}", serialized, signature);
         if method == reqwest::Method::GET {
             self.send_request(endpoint, method, Some(&signed), None, weight, is_order).await
         } else {
-            self.send_request(endpoint, method, None, Some(&signed), weight, is_order).await
+            self.send_request(endpoint, method, None, Some(&[ ("signed", signed.as_str()) ]), weight, is_order).await
         }
     }
 }

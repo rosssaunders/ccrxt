@@ -27,30 +27,13 @@ pub enum RateLimitInterval {
     Day,
 }
 
-#[derive(Copy, PartialEq, Eq, Hash)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
 /// Represents the interval unit for Binance rate limit headers (e.g., '1m', '1h').
 pub enum IntervalUnit {
     Second,
     Minute,
     Hour,
     Day,
-}
-
-impl std::fmt::Debug for IntervalUnit {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            IntervalUnit::Second => write!(f, "Second"),
-            IntervalUnit::Minute => write!(f, "Minute"),
-            IntervalUnit::Hour => write!(f, "Hour"),
-            IntervalUnit::Day => write!(f, "Day"),
-        }
-    }
-}
-
-impl Clone for IntervalUnit {
-    fn clone(&self) -> Self {
-        *self
-    }
 }
 
 impl IntervalUnit {
@@ -100,38 +83,37 @@ impl RateLimitHeader {
     /// Attempt to parse a Binance rate limit/order count header name into a RateLimitHeader struct.
     /// E.g., "x-mbx-used-weight-1m" or "x-mbx-order-count-1d".
     pub fn parse(header: &str) -> Option<Self> {
-        let header = header.to_ascii_lowercase();
-        if let Some(rest) = header.strip_prefix("x-mbx-used-weight-") {
-            if let Some((num, unit)) = rest.split_at(rest.len().saturating_sub(1)).into() {
-                if let (Ok(interval_value), Some(interval_unit)) = (num.parse::<u32>(), IntervalUnit::from_char(unit.chars().next()?)) {
-                    return Some(RateLimitHeader {
-                        kind: RateLimitHeaderKind::UsedWeight,
-                        interval_value,
-                        interval_unit,
-                    });
-                }
-            }
-        } else if let Some(rest) = header.strip_prefix("x-mbx-order-count-") {
-            if let Some((num, unit)) = rest.split_at(rest.len().saturating_sub(1)).into() {
-                if let (Ok(interval_value), Some(interval_unit)) = (num.parse::<u32>(), IntervalUnit::from_char(unit.chars().next()?)) {
-                    return Some(RateLimitHeader {
-                        kind: RateLimitHeaderKind::OrderCount,
-                        interval_value,
-                        interval_unit,
-                    });
-                }
-            }
+        fn ascii_starts_with(haystack: &str, needle: &str) -> bool {
+            haystack.len() >= needle.len() && haystack.chars().zip(needle.chars()).all(|(a, b)| a.eq_ignore_ascii_case(&b))
         }
-        None
+        let (kind, rest) = if ascii_starts_with(header, "x-mbx-used-weight-") {
+            (RateLimitHeaderKind::UsedWeight, &header["x-mbx-used-weight-".len()..])
+        } else if ascii_starts_with(header, "x-mbx-order-count-") {
+            (RateLimitHeaderKind::OrderCount, &header["x-mbx-order-count-".len()..])
+        } else {
+            return None;
+        };
+        if rest.len() < 2 { return None; }
+        let (num, unit) = rest.split_at(rest.len() - 1);
+        let interval_value = num.parse::<u32>().ok()?;
+        let interval_unit = IntervalUnit::from_char(unit.chars().next()?)?;
+        Some(RateLimitHeader { kind, interval_value, interval_unit })
     }
+}
 
-    /// Convert the RateLimitHeader back to its string representation (e.g., "x-mbx-used-weight-1m").
-    pub fn to_string(&self) -> String {
+impl std::fmt::Display for IntervalUnit {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.as_str())
+    }
+}
+
+impl std::fmt::Display for RateLimitHeader {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let prefix = match self.kind {
             RateLimitHeaderKind::UsedWeight => "x-mbx-used-weight-",
             RateLimitHeaderKind::OrderCount => "x-mbx-order-count-",
         };
-        format!("{}{}{}", prefix, self.interval_value, self.interval_unit.as_str())
+        write!(f, "{}{}{}", prefix, self.interval_value, self.interval_unit)
     }
 }
 
@@ -153,20 +135,21 @@ pub struct RateLimitUsage {
 }
 
 /// Manages rate limiting for Binance Coin-M Futures API
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct RateLimiter {
     usage: Arc<RwLock<RateLimitUsage>>,
 }
 
 impl RateLimiter {
     pub fn new() -> Self {
-        Self {
-            usage: Arc::new(RwLock::new(RateLimitUsage::default())),
-        }
+        Self::default()
     }
 
-    pub fn default() -> Self {
-        Self::new()
+    /// Helper to trim timestamps older than a cutoff from a VecDeque
+    fn trim_older_than(buf: &mut VecDeque<Instant>, cutoff: Instant) {
+        while buf.front().map_or(false, |&ts| ts < cutoff) {
+            buf.pop_front();
+        }
     }
 
     /// Call this after every REST call to increment raw_request (5min window, 61,000 cap)
@@ -175,14 +158,7 @@ impl RateLimiter {
         let now = Instant::now();
         usage.raw_request_timestamps.push_back(now);
         // Remove timestamps older than 5 minutes
-        let five_min_ago = now - Duration::from_secs(300);
-        while let Some(&front) = usage.raw_request_timestamps.front() {
-            if front < five_min_ago {
-                usage.raw_request_timestamps.pop_front();
-            } else {
-                break;
-            }
-        }
+        Self::trim_older_than(&mut usage.raw_request_timestamps, now - Duration::from_secs(300));
     }
 
     /// Call this after every order-related REST call to increment order counters
@@ -193,30 +169,9 @@ impl RateLimiter {
         usage.order_timestamps_1m.push_back(now);
         usage.order_timestamps_1d.push_back(now);
         // Remove timestamps older than 10s, 1m, 1d
-        let ten_sec_ago = now - Duration::from_secs(10);
-        let one_min_ago = now - Duration::from_secs(60);
-        let one_day_ago = now - Duration::from_secs(86400);
-        while let Some(&front) = usage.order_timestamps_10s.front() {
-            if front < ten_sec_ago {
-                usage.order_timestamps_10s.pop_front();
-            } else {
-                break;
-            }
-        }
-        while let Some(&front) = usage.order_timestamps_1m.front() {
-            if front < one_min_ago {
-                usage.order_timestamps_1m.pop_front();
-            } else {
-                break;
-            }
-        }
-        while let Some(&front) = usage.order_timestamps_1d.front() {
-            if front < one_day_ago {
-                usage.order_timestamps_1d.pop_front();
-            } else {
-                break;
-            }
-        }
+        Self::trim_older_than(&mut usage.order_timestamps_10s, now - Duration::from_secs(10));
+        Self::trim_older_than(&mut usage.order_timestamps_1m, now - Duration::from_secs(60));
+        Self::trim_older_than(&mut usage.order_timestamps_1d, now - Duration::from_secs(86400));
     }
 
     /// Call this after every response to update counters from headers (authoritative)
@@ -277,11 +232,5 @@ impl RateLimiter {
             }
         }
         Ok(())
-    }
-}
-
-impl Default for RateLimiter {
-    fn default() -> Self {
-        Self::default()
     }
 }

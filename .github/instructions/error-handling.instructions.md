@@ -13,3 +13,5 @@ applyTo: "venues/src/**"
 - All functions MUST return the venue's Result type and use the ? operator.
 - Error messages MUST be preserved from the API.
 - NEVER use regex for parsing error messages.
+- Prefer derive-based error mapping (e.g., using `num_enum` or `strum`) for error enums with many codes, or only match on codes you explicitly care about and use a catch-all for others.
+- Use `thiserror` for error enums and automatic `#[from]` conversions where possible.

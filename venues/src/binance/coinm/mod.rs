@@ -19,6 +19,11 @@ mod private {
     pub use self::rest::account::*;
     pub use self::rest::account_trades::*;
     pub use self::rest::batch_order::*;
+    pub use self::rest::order::*;
+    pub use self::rest::open_orders::*;
+    pub use self::rest::position_risk::*;
+    pub use self::rest::query_order::*;
+    pub use self::rest::all_orders::*;
 }
 
 // Only expose RestClient at the coinm level, not via private::rest
@@ -57,3 +62,7 @@ pub struct RestResponse<T> {
 
 /// Type alias for results returned by Binance API operations
 pub type RestResult<T> = Result<RestResponse<T>, Errors>;
+
+pub mod rest {
+    pub mod common;
+}

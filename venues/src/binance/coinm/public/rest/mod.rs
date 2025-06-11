@@ -3,4 +3,4 @@
 pub mod exchange_info;
 pub mod client;
 
-pub use client::{RestClient};
+pub use client::RestClient;

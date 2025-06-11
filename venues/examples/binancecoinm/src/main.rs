@@ -11,7 +11,7 @@ use venues::binance::coinm::{ApiError, RateLimiter, Errors};
 use rest::secrets::{SecretValue};
 
 mod commands;
-use commands::{handle_account_command, handle_trades_command, handle_batch_order_command};
+use commands::{handle_account_command, handle_trades_command, handle_batch_order_command, handle_order_command, handle_all_orders_command, handle_position_risk_command};
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
@@ -64,6 +64,38 @@ enum Commands {
 
     /// Get exchange information
     ExchangeInfo,
+
+    /// Place a new order
+    Order {
+        /// Trading pair symbol (e.g., BTCUSD)
+        #[arg(required = true)]
+        symbol: String,
+        /// Order side (BUY or SELL)
+        #[arg(required = true)]
+        side: String,
+        /// Order type (LIMIT or MARKET)
+        #[arg(required = true)]
+        order_type: String,
+        /// Order quantity
+        #[arg(short, long)]
+        quantity: Option<f64>,
+        /// Order price (required for LIMIT orders)
+        #[arg(short, long)]
+        price: Option<f64>,
+    },
+
+    /// Get all orders for a symbol
+    AllOrders {
+        /// Trading pair symbol (e.g., BTCUSD)
+        #[arg(required = true)]
+        symbol: String,
+        /// Maximum number of orders to fetch
+        #[arg(short, long, default_value = "100")]
+        limit: u32,
+    },
+
+    /// Get position risk information
+    PositionRisk,
 }
 
 // fn handle_api_error(err: &BinanceCoinMAPIError) -> ! {
@@ -598,6 +630,26 @@ async fn main() -> Result<()> {
                 return Err(e);
             }
         }
+        Commands::Order { symbol, side, order_type, quantity, price } => {
+            if let Err(e) = handle_order_command(client.clone(), symbol, side, order_type, quantity, price).await {
+                if let Some(api_err) = e.downcast_ref::<ApiError>() {
+                    //handle_api_error(api_err);
+                }
+                return Err(e);
+            }
+        }
+        Commands::AllOrders { symbol, limit } => {
+            if let Err(e) = handle_all_orders_command(client.clone(), symbol, limit).await {
+                eprintln!("Error fetching all orders: {e}");
+                return Err(e);
+            }
+        }
+        Commands::PositionRisk => {
+            if let Err(e) = handle_position_risk_command(client.clone()).await {
+                eprintln!("Error fetching position risk: {e}");
+                return Err(e);
+            }
+        }
         Commands::ExchangeInfo => {
             let public_client = PublicRestClient::new(
                 "https://dapi.binance.com".to_string(),
@@ -615,4 +667,4 @@ async fn main() -> Result<()> {
     }
 
     Ok(())
-} 
+}
