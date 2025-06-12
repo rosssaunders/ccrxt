@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod integration_tests {
-    use crate::cryptocom::{ApiError, ErrorResponse, Errors, RestClient};
+    use crate::cryptocom::{ApiError, ErrorResponse, Errors, RestClient, PublicRestClient};
 
     #[test]
     fn test_crypto_com_module_exports() {
@@ -17,10 +17,11 @@ mod integration_tests {
         let _http_error = Errors::Error("Test error".to_string());
         let _invalid_key = Errors::InvalidApiKey();
         
-        // Test that we can access the RestClient type
-        // We can't easily construct it in test without proper dependencies,
-        // but we can verify the type is accessible
-        let _client_type_check = std::marker::PhantomData::<RestClient>;
+        // Test that we can access both the private and public RestClient types
+        // We can't easily construct them in test without proper dependencies,
+        // but we can verify the types are accessible
+        let _private_client_type_check = std::marker::PhantomData::<RestClient>;
+        let _public_client_type_check = std::marker::PhantomData::<PublicRestClient>;
     }
 
     #[test]
