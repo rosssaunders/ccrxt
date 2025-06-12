@@ -37,17 +37,10 @@ nonzero_ext = "0.3"
 binance_macros = { path = "../binance_macros" }
 url.workspace = true
 num_enum = "0.7.3"
+secrecy = "0.10.3"
 
 [lints]
 workspace = true
-
-[[example]]
-name = "coinbaseadvanced_market_data"
-path = "examples/coinbaseadvanced/coinbase_market_data.rs"
-
-[[example]]
-name = "coinbaseadvanced_authenticated_websocket"
-path = "examples/coinbaseadvanced/authenticated_websocket.rs"
 
 [[example]]
 name = "cryptocom_rate_limit"

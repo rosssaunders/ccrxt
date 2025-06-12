@@ -6,7 +6,8 @@
 
 #[cfg(test)]
 mod example {
-    use crate::cryptocom::{ApiError, ErrorResponse, Errors, RestResult};
+    use crate::cryptocom::{ApiError, ErrorResponse, Errors, RestResult, RestClient};
+    use serde_json::json;
 
     /// Simulates processing an API response from Crypto.com
     fn process_api_response(response_code: i32, message: String) -> RestResult<String> {
@@ -94,5 +95,75 @@ mod example {
             assert!(!error_message.is_empty());
             println!("Code {}: {}", code, error_message);
         }
+    }
+
+    #[test]
+    fn example_private_endpoint_signing() {
+        // Example demonstrating how to use the private endpoint signing
+        // Note: This is a demonstration only - you would not use PlainTextSecret in production
+        use rest::secrets::SecretValue;
+        use secrecy::SecretString;
+
+        // Create a RestClient with proper secrets (this example uses test secrets)
+        let api_key = Box::new(SecretValue::new(SecretString::new("your_api_key".into())));
+        let api_secret = Box::new(SecretValue::new(SecretString::new("your_api_secret".into())));
+        let client = reqwest::Client::new();
+        
+        let rest_client = RestClient::new(
+            api_key,
+            api_secret,
+            "https://api.crypto.com",
+            client,
+        );
+        
+        // Example 1: Sign a get-order-detail request
+        let params = json!({
+            "order_id": "53287421324"  // Note: Using string format as recommended
+        });
+        
+        let signature = rest_client.sign_request(
+            "private/get-order-detail",
+            11,                    // request ID
+            &params,
+            1587846358253,        // nonce (timestamp in milliseconds)
+        );
+        
+        match signature {
+            Ok(sig) => {
+                println!("Generated signature: {}", sig);
+                assert_eq!(sig.len(), 64); // HMAC-SHA256 produces 64 hex chars
+            }
+            Err(e) => panic!("Failed to sign request: {}", e),
+        }
+        
+        // Example 2: Sign a create-order request
+        let order_params = json!({
+            "instrument_name": "BTC_USDT",
+            "side": "BUY",
+            "type": "LIMIT",
+            "quantity": "1.5",
+            "price": "50000.00"
+        });
+        
+        let signature = rest_client.sign_request(
+            "private/create-order",
+            42,
+            &order_params,
+            chrono::Utc::now().timestamp_millis() as u64,
+        );
+        
+        assert!(signature.is_ok());
+        println!("Create order signature: {}", signature.unwrap());
+        
+        // Example 3: Sign a request with empty parameters
+        let signature = rest_client.sign_request(
+            "private/get-account-summary",
+            1,
+            &json!({}),
+            chrono::Utc::now().timestamp_millis() as u64,
+        );
+        
+        assert!(signature.is_ok());
+        println!("Account summary signature: {}", signature.unwrap());
     }
 }

@@ -2828,6 +2828,7 @@ dependencies = [
  "reqwest",
  "rest",
  "rust_decimal",
+ "secrecy",
  "serde",
  "serde_json",
  "serde_urlencoded",
