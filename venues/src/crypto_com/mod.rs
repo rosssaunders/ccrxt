@@ -1,4 +1,6 @@
 mod errors;
+mod integration_tests;
+mod examples;
 
 // Re-export errors module
 pub use errors::{Errors, ApiError, ErrorResponse};
