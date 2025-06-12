@@ -6,7 +6,7 @@
 
 #[cfg(test)]
 mod example {
-    use crate::crypto_com::{ApiError, ErrorResponse, Errors, RestResult};
+    use crate::cryptocom::{ApiError, ErrorResponse, Errors, RestResult};
 
     /// Simulates processing an API response from Crypto.com
     fn process_api_response(response_code: i32, message: String) -> RestResult<String> {
