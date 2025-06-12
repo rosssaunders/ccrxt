@@ -143,7 +143,7 @@ impl RestClient {
             "public/get-instruments",
             reqwest::Method::GET,
             None,
-            EndpointType::PublicGetTicker, // Using a similar endpoint type
+            EndpointType::PublicGetInstruments,
         ).await
     }
 
@@ -183,10 +183,10 @@ impl RestClient {
         };
 
         self.send_request(
-            "public/get-ticker",
+            "public/get-tickers",
             reqwest::Method::GET,
             params.as_ref(),
-            EndpointType::PublicGetTicker,
+            EndpointType::PublicGetTickers,
         ).await
     }
 
@@ -194,14 +194,30 @@ impl RestClient {
     /// 
     /// # Arguments
     /// * `instrument_name` - The trading pair (e.g., "BTC_USDT")
-    /// * `count` - Optional number of trades to return (default: 10, max: 200)
-    pub async fn get_trades(&self, instrument_name: &str, count: Option<u32>) -> RestResult<Value> {
+    /// * `count` - Optional number of trades to return (default: 25, max: 150)
+    /// * `start_ts` - Optional start timestamp (Unix timestamp or nanoseconds, default: end_time - 1 day)
+    /// * `end_ts` - Optional end timestamp (Unix timestamp or nanoseconds, default: current system timestamp)
+    pub async fn get_trades(
+        &self, 
+        instrument_name: &str, 
+        count: Option<u32>,
+        start_ts: Option<&str>,
+        end_ts: Option<&str>
+    ) -> RestResult<Value> {
         let mut params = serde_json::json!({
             "instrument_name": instrument_name
         });
 
         if let Some(c) = count {
             params["count"] = Value::Number(c.into());
+        }
+        
+        if let Some(start) = start_ts {
+            params["start_ts"] = Value::String(start.to_string());
+        }
+        
+        if let Some(end) = end_ts {
+            params["end_ts"] = Value::String(end.to_string());
         }
 
         self.send_request(
@@ -217,8 +233,17 @@ impl RestClient {
     /// # Arguments
     /// * `instrument_name` - The trading pair (e.g., "BTC_USDT")
     /// * `timeframe` - The timeframe (e.g., "1m", "5m", "1h", "1D")
-    /// * `count` - Optional number of data points to return (default: 10, max: 300)
-    pub async fn get_candlestick(&self, instrument_name: &str, timeframe: &str, count: Option<u32>) -> RestResult<Value> {
+    /// * `count` - Optional number of data points to return (default: 25, max: 300)
+    /// * `start_ts` - Optional start timestamp (Unix timestamp, default: 1 day ago)
+    /// * `end_ts` - Optional end timestamp (Unix timestamp, default: current time)
+    pub async fn get_candlestick(
+        &self, 
+        instrument_name: &str, 
+        timeframe: &str, 
+        count: Option<u32>,
+        start_ts: Option<u64>,
+        end_ts: Option<u64>
+    ) -> RestResult<Value> {
         let mut params = serde_json::json!({
             "instrument_name": instrument_name,
             "timeframe": timeframe
@@ -227,12 +252,184 @@ impl RestClient {
         if let Some(c) = count {
             params["count"] = Value::Number(c.into());
         }
+        
+        if let Some(start) = start_ts {
+            params["start_ts"] = Value::Number(start.into());
+        }
+        
+        if let Some(end) = end_ts {
+            params["end_ts"] = Value::Number(end.into());
+        }
 
         self.send_request(
             "public/get-candlestick",
             reqwest::Method::GET,
             Some(&params),
             EndpointType::PublicGetCandlestick,
+        ).await
+    }
+
+    /// Get announcements from Crypto.com Exchange
+    /// 
+    /// # Arguments
+    /// * `category` - Optional filter by category: list, delist, event, product, system
+    /// * `product_type` - Optional filter by product type. e.g. Spot, Derivative, OTC, Staking, TradingArena etc
+    pub async fn get_announcements(&self, category: Option<&str>, product_type: Option<&str>) -> RestResult<Value> {
+        let mut params = serde_json::json!({});
+        
+        if let Some(cat) = category {
+            params["category"] = Value::String(cat.to_string());
+        }
+        
+        if let Some(product) = product_type {
+            params["product_type"] = Value::String(product.to_string());
+        }
+        
+        let params = if params.as_object().unwrap().is_empty() {
+            None
+        } else {
+            Some(params)
+        };
+
+        self.send_request(
+            "public/get-announcements",
+            reqwest::Method::GET,
+            params.as_ref(),
+            EndpointType::PublicGetAnnouncements,
+        ).await
+    }
+
+    /// Get risk parameter settings for Smart Cross Margin
+    /// 
+    /// Provides information on risk parameter settings for Smart Cross Margin.
+    pub async fn get_risk_parameters(&self) -> RestResult<Value> {
+        self.send_request(
+            "public/get-risk-parameters",
+            reqwest::Method::GET,
+            None,
+            EndpointType::PublicGetRiskParameters,
+        ).await
+    }
+
+    /// Get ticker information for one or all instruments
+    /// 
+    /// # Arguments
+    /// * `instrument_name` - Optional specific instrument name. If None, returns all tickers.
+    pub async fn get_tickers(&self, instrument_name: Option<&str>) -> RestResult<Value> {
+        let params = if let Some(instrument) = instrument_name {
+            Some(serde_json::json!({
+                "instrument_name": instrument
+            }))
+        } else {
+            None
+        };
+
+        self.send_request(
+            "public/get-tickers",
+            reqwest::Method::GET,
+            params.as_ref(),
+            EndpointType::PublicGetTickers,
+        ).await
+    }
+
+    /// Get valuation data for a particular instrument
+    /// 
+    /// # Arguments
+    /// * `instrument_name` - The instrument name (e.g., "BTCUSD-INDEX")
+    /// * `valuation_type` - The valuation type: index_price, mark_price, funding_hist, funding_rate, estimated_funding_rate
+    /// * `count` - Optional number of data points to return (default: 25)
+    /// * `start_ts` - Optional start timestamp (Unix timestamp)
+    /// * `end_ts` - Optional end timestamp (Unix timestamp)
+    pub async fn get_valuations(
+        &self, 
+        instrument_name: &str, 
+        valuation_type: &str,
+        count: Option<u32>,
+        start_ts: Option<u64>,
+        end_ts: Option<u64>
+    ) -> RestResult<Value> {
+        let mut params = serde_json::json!({
+            "instrument_name": instrument_name,
+            "valuation_type": valuation_type
+        });
+
+        if let Some(c) = count {
+            params["count"] = Value::Number(c.into());
+        }
+        
+        if let Some(start) = start_ts {
+            params["start_ts"] = Value::Number(start.into());
+        }
+        
+        if let Some(end) = end_ts {
+            params["end_ts"] = Value::Number(end.into());
+        }
+
+        self.send_request(
+            "public/get-valuations",
+            reqwest::Method::GET,
+            Some(&params),
+            EndpointType::PublicGetValuations,
+        ).await
+    }
+
+    /// Get settlement price of expired instruments
+    /// 
+    /// # Arguments
+    /// * `instrument_type` - The instrument type (e.g., "FUTURE")
+    /// * `page` - Optional page number (default: 1)
+    pub async fn get_expired_settlement_price(&self, instrument_type: &str, page: Option<u32>) -> RestResult<Value> {
+        let mut params = serde_json::json!({
+            "instrument_type": instrument_type
+        });
+
+        if let Some(p) = page {
+            params["page"] = Value::Number(p.into());
+        }
+
+        self.send_request(
+            "public/get-expired-settlement-price",
+            reqwest::Method::GET,
+            Some(&params),
+            EndpointType::PublicGetExpiredSettlementPrice,
+        ).await
+    }
+
+    /// Get balance of Insurance Fund for a particular currency
+    /// 
+    /// # Arguments
+    /// * `instrument_name` - The currency (e.g., "USD")
+    /// * `count` - Optional number of data points to return (default: 25)
+    /// * `start_ts` - Optional start timestamp (Unix timestamp) 
+    /// * `end_ts` - Optional end timestamp (Unix timestamp)
+    pub async fn get_insurance(
+        &self, 
+        instrument_name: &str,
+        count: Option<u32>,
+        start_ts: Option<u64>,
+        end_ts: Option<u64>
+    ) -> RestResult<Value> {
+        let mut params = serde_json::json!({
+            "instrument_name": instrument_name
+        });
+
+        if let Some(c) = count {
+            params["count"] = Value::Number(c.into());
+        }
+        
+        if let Some(start) = start_ts {
+            params["start_ts"] = Value::Number(start.into());
+        }
+        
+        if let Some(end) = end_ts {
+            params["end_ts"] = Value::Number(end.into());
+        }
+
+        self.send_request(
+            "public/get-insurance",
+            reqwest::Method::GET,
+            Some(&params),
+            EndpointType::PublicGetInsurance,
         ).await
     }
 }
@@ -305,15 +502,58 @@ mod tests {
     #[test]
     fn test_endpoint_type_mapping() {
         // Test that endpoint types are properly defined for public endpoints
+        let announcements_endpoint = EndpointType::PublicGetAnnouncements;
+        let risk_parameters_endpoint = EndpointType::PublicGetRiskParameters;
+        let instruments_endpoint = EndpointType::PublicGetInstruments;
         let book_endpoint = EndpointType::PublicGetBook;
         let ticker_endpoint = EndpointType::PublicGetTicker;
+        let tickers_endpoint = EndpointType::PublicGetTickers;
         let trades_endpoint = EndpointType::PublicGetTrades;
+        let valuations_endpoint = EndpointType::PublicGetValuations;
         let candlestick_endpoint = EndpointType::PublicGetCandlestick;
+        let expired_settlement_endpoint = EndpointType::PublicGetExpiredSettlementPrice;
+        let insurance_endpoint = EndpointType::PublicGetInsurance;
 
         // Test that rate limits are defined
+        assert!(announcements_endpoint.rate_limit().max_requests > 0);
+        assert!(risk_parameters_endpoint.rate_limit().max_requests > 0);
+        assert!(instruments_endpoint.rate_limit().max_requests > 0);
         assert!(book_endpoint.rate_limit().max_requests > 0);
         assert!(ticker_endpoint.rate_limit().max_requests > 0);
+        assert!(tickers_endpoint.rate_limit().max_requests > 0);
         assert!(trades_endpoint.rate_limit().max_requests > 0);
+        assert!(valuations_endpoint.rate_limit().max_requests > 0);
         assert!(candlestick_endpoint.rate_limit().max_requests > 0);
+        assert!(expired_settlement_endpoint.rate_limit().max_requests > 0);
+        assert!(insurance_endpoint.rate_limit().max_requests > 0);
+    }
+
+    #[test]
+    fn test_new_method_parameter_building() {
+        // Test parameter building for announcements
+        let params = json!({
+            "category": "system",
+            "product_type": "Spot"
+        });
+        assert_eq!(params["category"], "system");
+        assert_eq!(params["product_type"], "Spot");
+
+        // Test parameter building for valuations
+        let params = json!({
+            "instrument_name": "BTCUSD-INDEX",
+            "valuation_type": "index_price",
+            "count": 10
+        });
+        assert_eq!(params["instrument_name"], "BTCUSD-INDEX");
+        assert_eq!(params["valuation_type"], "index_price");
+        assert_eq!(params["count"], 10);
+
+        // Test parameter building for insurance
+        let params = json!({
+            "instrument_name": "USD",
+            "count": 25
+        });
+        assert_eq!(params["instrument_name"], "USD");
+        assert_eq!(params["count"], 25);
     }
 }
