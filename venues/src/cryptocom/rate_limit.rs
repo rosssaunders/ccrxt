@@ -16,11 +16,16 @@ pub enum EndpointType {
     PrivateOther,
     
     // Public REST endpoints
+    PublicGetAnnouncements,
+    PublicGetRiskParameters,
+    PublicGetInstruments,
     PublicGetBook,
     PublicGetTicker,
+    PublicGetTickers,
     PublicGetTrades,
     PublicGetValuations,
     PublicGetCandlestick,
+    PublicGetExpiredSettlementPrice,
     PublicGetInsurance,
     
     // Staking endpoints
@@ -54,11 +59,16 @@ impl EndpointType {
             },
             
             // Public REST endpoints (per IP)
-            EndpointType::PublicGetBook
+            EndpointType::PublicGetAnnouncements
+            | EndpointType::PublicGetRiskParameters
+            | EndpointType::PublicGetInstruments
+            | EndpointType::PublicGetBook
             | EndpointType::PublicGetTicker
+            | EndpointType::PublicGetTickers
             | EndpointType::PublicGetTrades
             | EndpointType::PublicGetValuations
             | EndpointType::PublicGetCandlestick
+            | EndpointType::PublicGetExpiredSettlementPrice
             | EndpointType::PublicGetInsurance => {
                 RateLimit::new(100, Duration::from_secs(1))
             },
@@ -92,11 +102,16 @@ impl EndpointType {
             "private/get-order-history" => EndpointType::PrivateGetOrderHistory,
             
             // Public REST endpoints
+            "public/get-announcements" => EndpointType::PublicGetAnnouncements,
+            "public/get-risk-parameters" => EndpointType::PublicGetRiskParameters,
+            "public/get-instruments" => EndpointType::PublicGetInstruments,
             "public/get-book" => EndpointType::PublicGetBook,
             "public/get-ticker" => EndpointType::PublicGetTicker,
+            "public/get-tickers" => EndpointType::PublicGetTickers,
             "public/get-trades" => EndpointType::PublicGetTrades,
             "public/get-valuations" => EndpointType::PublicGetValuations,
             "public/get-candlestick" => EndpointType::PublicGetCandlestick,
+            "public/get-expired-settlement-price" => EndpointType::PublicGetExpiredSettlementPrice,
             "public/get-insurance" => EndpointType::PublicGetInsurance,
             
             // Staking endpoints
@@ -403,11 +418,16 @@ mod tests {
         assert_eq!(EndpointType::from_path("private/get-order-history"), EndpointType::PrivateGetOrderHistory);
 
         // Test public endpoints
+        assert_eq!(EndpointType::from_path("public/get-announcements"), EndpointType::PublicGetAnnouncements);
+        assert_eq!(EndpointType::from_path("public/get-risk-parameters"), EndpointType::PublicGetRiskParameters);
+        assert_eq!(EndpointType::from_path("public/get-instruments"), EndpointType::PublicGetInstruments);
         assert_eq!(EndpointType::from_path("public/get-book"), EndpointType::PublicGetBook);
         assert_eq!(EndpointType::from_path("public/get-ticker"), EndpointType::PublicGetTicker);
+        assert_eq!(EndpointType::from_path("public/get-tickers"), EndpointType::PublicGetTickers);
         assert_eq!(EndpointType::from_path("public/get-trades"), EndpointType::PublicGetTrades);
         assert_eq!(EndpointType::from_path("public/get-valuations"), EndpointType::PublicGetValuations);
         assert_eq!(EndpointType::from_path("public/get-candlestick"), EndpointType::PublicGetCandlestick);
+        assert_eq!(EndpointType::from_path("public/get-expired-settlement-price"), EndpointType::PublicGetExpiredSettlementPrice);
         assert_eq!(EndpointType::from_path("public/get-insurance"), EndpointType::PublicGetInsurance);
 
         // Test staking endpoints

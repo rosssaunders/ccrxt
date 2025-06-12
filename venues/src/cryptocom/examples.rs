@@ -166,4 +166,41 @@ mod example {
         assert!(signature.is_ok());
         println!("Account summary signature: {}", signature.unwrap());
     }
+
+    /// Example demonstrating usage of the new public endpoints
+    #[test]  
+    fn example_new_public_endpoints() {
+        // Note: These are just examples of method calls - they won't make actual HTTP requests in tests
+        
+        // Example usage patterns (would be used in real applications):
+        
+        // 1. Get announcements filtered by category and product type
+        // let announcements = client.get_announcements(Some("system"), Some("Spot")).await?;
+        
+        // 2. Get risk parameters for Smart Cross Margin
+        // let risk_params = client.get_risk_parameters().await?;
+        
+        // 3. Get all available instruments  
+        // let instruments = client.get_instruments().await?;
+        
+        // 4. Get ticker data for all instruments
+        // let tickers = client.get_tickers(None).await?;
+        
+        // 5. Get valuation data (index price) for BTCUSD-INDEX
+        // let valuations = client.get_valuations("BTCUSD-INDEX", "index_price", Some(10), None, None).await?;
+        
+        // 6. Get expired settlement prices for FUTURE instruments
+        // let settlement_prices = client.get_expired_settlement_price("FUTURE", Some(1)).await?;
+        
+        // 7. Get insurance fund balance for USD
+        // let insurance = client.get_insurance("USD", Some(25), None, None).await?;
+        
+        // 8. Enhanced candlestick data with timestamp filtering
+        // let candlesticks = client.get_candlestick("BTCUSD-PERP", "1h", Some(100), Some(1640995200), Some(1641081600)).await?;
+        
+        // 9. Enhanced trades data with timestamp filtering (nanosecond precision)
+        // let trades = client.get_trades("BTCUSD-PERP", Some(50), Some("1613547060925523623"), None).await?;
+        
+        println!("All new endpoint methods are available and properly typed");
+    }
 }

@@ -134,113 +134,12 @@ impl RestClient {
         Ok(parsed_response)
     }
 
-    /// Get the list of available trading instruments
-    /// 
-    /// This method calls the public/get-instruments endpoint to retrieve
-    /// information about all available trading pairs.
-    pub async fn get_instruments(&self) -> RestResult<Value> {
-        self.send_request(
-            "public/get-instruments",
-            reqwest::Method::GET,
-            None,
-            EndpointType::PublicGetTicker, // Using a similar endpoint type
-        ).await
-    }
 
-    /// Get the order book for a specific instrument
-    /// 
-    /// # Arguments
-    /// * `instrument_name` - The trading pair (e.g., "BTC_USDT")
-    /// * `depth` - Optional depth of the order book (default: 10)
-    pub async fn get_book(&self, instrument_name: &str, depth: Option<u32>) -> RestResult<Value> {
-        let mut params = serde_json::json!({
-            "instrument_name": instrument_name
-        });
-
-        if let Some(d) = depth {
-            params["depth"] = Value::Number(d.into());
-        }
-
-        self.send_request(
-            "public/get-book",
-            reqwest::Method::GET,
-            Some(&params),
-            EndpointType::PublicGetBook,
-        ).await
-    }
-
-    /// Get ticker information for one or all instruments
-    /// 
-    /// # Arguments
-    /// * `instrument_name` - Optional specific instrument name. If None, returns all tickers.
-    pub async fn get_ticker(&self, instrument_name: Option<&str>) -> RestResult<Value> {
-        let params = if let Some(instrument) = instrument_name {
-            Some(serde_json::json!({
-                "instrument_name": instrument
-            }))
-        } else {
-            None
-        };
-
-        self.send_request(
-            "public/get-ticker",
-            reqwest::Method::GET,
-            params.as_ref(),
-            EndpointType::PublicGetTicker,
-        ).await
-    }
-
-    /// Get recent trades for a specific instrument
-    /// 
-    /// # Arguments
-    /// * `instrument_name` - The trading pair (e.g., "BTC_USDT")
-    /// * `count` - Optional number of trades to return (default: 10, max: 200)
-    pub async fn get_trades(&self, instrument_name: &str, count: Option<u32>) -> RestResult<Value> {
-        let mut params = serde_json::json!({
-            "instrument_name": instrument_name
-        });
-
-        if let Some(c) = count {
-            params["count"] = Value::Number(c.into());
-        }
-
-        self.send_request(
-            "public/get-trades",
-            reqwest::Method::GET,
-            Some(&params),
-            EndpointType::PublicGetTrades,
-        ).await
-    }
-
-    /// Get candlestick data for a specific instrument
-    /// 
-    /// # Arguments
-    /// * `instrument_name` - The trading pair (e.g., "BTC_USDT")
-    /// * `timeframe` - The timeframe (e.g., "1m", "5m", "1h", "1D")
-    /// * `count` - Optional number of data points to return (default: 10, max: 300)
-    pub async fn get_candlestick(&self, instrument_name: &str, timeframe: &str, count: Option<u32>) -> RestResult<Value> {
-        let mut params = serde_json::json!({
-            "instrument_name": instrument_name,
-            "timeframe": timeframe
-        });
-
-        if let Some(c) = count {
-            params["count"] = Value::Number(c.into());
-        }
-
-        self.send_request(
-            "public/get-candlestick",
-            reqwest::Method::GET,
-            Some(&params),
-            EndpointType::PublicGetCandlestick,
-        ).await
-    }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use serde_json::json;
 
     #[test]
     fn test_public_client_creation() {
@@ -285,35 +184,5 @@ mod tests {
         // Test that rate limiting works (this shouldn't fail since we're not actually hitting limits)
         let result = rest_client.rate_limiter.check_limits(EndpointType::PublicGetTicker).await;
         assert!(result.is_ok());
-    }
-
-    #[test]
-    fn test_parameter_building() {
-        // Test parameter serialization logic
-        let params = json!({
-            "instrument_name": "BTC_USDT",
-            "depth": 10,
-            "count": 100
-        });
-
-        // Verify the structure exists
-        assert_eq!(params["instrument_name"], "BTC_USDT");
-        assert_eq!(params["depth"], 10);
-        assert_eq!(params["count"], 100);
-    }
-
-    #[test]
-    fn test_endpoint_type_mapping() {
-        // Test that endpoint types are properly defined for public endpoints
-        let book_endpoint = EndpointType::PublicGetBook;
-        let ticker_endpoint = EndpointType::PublicGetTicker;
-        let trades_endpoint = EndpointType::PublicGetTrades;
-        let candlestick_endpoint = EndpointType::PublicGetCandlestick;
-
-        // Test that rate limits are defined
-        assert!(book_endpoint.rate_limit().max_requests > 0);
-        assert!(ticker_endpoint.rate_limit().max_requests > 0);
-        assert!(trades_endpoint.rate_limit().max_requests > 0);
-        assert!(candlestick_endpoint.rate_limit().max_requests > 0);
     }
 }
