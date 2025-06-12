@@ -29,6 +29,7 @@ pub struct SecretValue {
     /// The secret value, stored securely using SecretString
     secret: SecretString,
 }
+
 impl ExposableSecret for SecretValue {
     fn expose_secret(&self) -> String {
         self.secret.expose_secret().to_string()
@@ -41,6 +42,36 @@ impl SecretValue {
     /// # Arguments
     /// * `secret` - The secret value to store
     pub fn new(secret: SecretString) -> Self {
+        Self { secret }
+    }
+}
+
+/// A plain text implementation of ExposableSecret for testing purposes.
+/// 
+/// **WARNING**: This implementation stores the secret in plain text and should
+/// only be used for testing. Never use this in production code.
+#[cfg(test)]
+#[derive(Clone)]
+pub struct PlainTextSecret {
+    secret: String,
+}
+
+#[cfg(test)]
+impl ExposableSecret for PlainTextSecret {
+    fn expose_secret(&self) -> String {
+        self.secret.clone()
+    }
+}
+
+#[cfg(test)]
+impl PlainTextSecret {
+    /// Creates a new PlainTextSecret with the given secret.
+    /// 
+    /// **WARNING**: This implementation should only be used for testing.
+    /// 
+    /// # Arguments
+    /// * `secret` - The secret value to store in plain text
+    pub fn new(secret: String) -> Self {
         Self { secret }
     }
 } 
