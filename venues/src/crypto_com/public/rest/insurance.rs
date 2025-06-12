@@ -1,5 +1,5 @@
 use serde_json::Value;
-use crate::cryptocom::{RestResult, EndpointType};
+use crate::crypto_com::{RestResult, EndpointType};
 use super::client::RestClient;
 
 impl RestClient {
