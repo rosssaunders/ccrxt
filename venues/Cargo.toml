@@ -49,6 +49,10 @@ path = "examples/coinbaseadvanced/coinbase_market_data.rs"
 name = "coinbaseadvanced_authenticated_websocket"
 path = "examples/coinbaseadvanced/authenticated_websocket.rs"
 
+[[example]]
+name = "cryptocom_rate_limit"
+path = "examples/cryptocom/rate_limit_example.rs"
+
 [dev-dependencies]
 tokio-test = "0.4"
 tracing-subscriber = { workspace = true }
