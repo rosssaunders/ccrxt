@@ -35,6 +35,12 @@ impl fmt::Display for Errors {
 
 impl std::error::Error for Errors {}
 
+impl From<reqwest::Error> for Errors {
+    fn from(err: reqwest::Error) -> Self {
+        Errors::HttpError(err)
+    }
+}
+
 /// Represents an error response from the Crypto.com API.
 /// 
 /// This is public as it is used by API responses.
