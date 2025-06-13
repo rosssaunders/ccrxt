@@ -41,6 +41,12 @@ impl From<reqwest::Error> for Errors {
     }
 }
 
+impl From<serde_json::Error> for Errors {
+    fn from(err: serde_json::Error) -> Self {
+        Errors::Error(format!("JSON serialization error: {}", err))
+    }
+}
+
 /// Represents an error response from the Crypto.com API.
 /// 
 /// This is public as it is used by API responses.
