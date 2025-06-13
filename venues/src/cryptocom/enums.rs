@@ -103,16 +103,16 @@ pub enum OrderSide {
     SELL,
 }
 
-/// Order type
+/// Order type for trading
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "UPPERCASE")]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum OrderType {
-    LIMIT,
-    MARKET,
-    STOP_LOSS,
-    STOP_LIMIT,
-    TAKE_PROFIT,
-    TAKE_PROFIT_LIMIT,
+    Limit,
+    Market,
+    StopLoss,
+    StopLimit,
+    TakeProfit,
+    TakeProfitLimit,
 }
 
 /// Time in force for orders

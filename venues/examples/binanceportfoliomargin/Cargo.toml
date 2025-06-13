@@ -1,0 +1,28 @@
+[package]
+name = "binanceportfoliomargin-example"
+version = "0.1.0"
+edition = "2021"
+authors = ["Ross Saunders"]
+license = "MIT"
+
+[[bin]]
+name = "binanceportfoliomargin"
+path = "src/main.rs"
+
+[dependencies]
+# Local dependencies
+venues = { path = "../../", features = [] }
+rest = { path = "../../../rest", features = [] }
+
+# Workspace dependencies 
+tokio = { workspace = true }
+anyhow = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+clap = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+chrono = { workspace = true }
+reqwest = { workspace = true }
+secrecy = "0.10"
+dotenv = "0.15"
