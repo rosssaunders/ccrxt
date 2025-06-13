@@ -1,4 +1,4 @@
-use venues::cryptocom::{RateLimiter, EndpointType, RateLimitError};
+use venues::crypto_com::{RateLimiter, EndpointType, RateLimitError};
 use std::time::Duration;
 use tokio::time::sleep;
 

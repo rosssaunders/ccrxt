@@ -7,7 +7,7 @@ use std::borrow::Cow;
 use serde_json::Value;
 use serde::de::DeserializeOwned;
 
-use crate::cryptocom::{RateLimiter, RestResult, Errors, EndpointType};
+use crate::crypto_com::{RateLimiter, RestResult, Errors, EndpointType};
 
 /// Public REST client for Crypto.com exchange
 /// 

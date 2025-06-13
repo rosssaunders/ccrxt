@@ -4,7 +4,7 @@ use hmac::{Hmac, Mac};
 use sha2::Sha256;
 use serde_json::Value;
 use rest::secrets::ExposableSecret;
-use crate::cryptocom::Errors;
+use crate::crypto_com::Errors;
 
 /// Signs a request using the Crypto.com signing algorithm
 /// 

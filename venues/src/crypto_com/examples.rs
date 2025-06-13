@@ -6,7 +6,7 @@
 
 #[cfg(test)]
 mod example {
-    use crate::cryptocom::{ApiError, ErrorResponse, Errors, RestResult, RestClient};
+    use crate::crypto_com::{ApiError, ErrorResponse, Errors, RestResult, PrivateRestClient};
     use serde_json::json;
 
     /// Simulates processing an API response from Crypto.com
@@ -109,7 +109,7 @@ mod example {
         let api_secret = Box::new(SecretValue::new(SecretString::new("your_api_secret".into())));
         let client = reqwest::Client::new();
         
-        let rest_client = RestClient::new(
+        let rest_client = PrivateRestClient::new(
             api_key,
             api_secret,
             "https://api.crypto.com",

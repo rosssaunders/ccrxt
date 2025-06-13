@@ -1,4 +1,2 @@
 pub mod binance;
-pub mod cryptocom;
-
-pub use websockets;
+pub mod crypto_com;

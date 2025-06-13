@@ -13,3 +13,5 @@ release/
 *.rustc_info.json
 .cargo/config.toml
 .cargo-ok
+
+.env
