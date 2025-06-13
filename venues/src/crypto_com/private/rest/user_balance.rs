@@ -1,7 +1,7 @@
+use super::client::RestClient;
+use crate::crypto_com::RestResult;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
-use crate::crypto_com::RestResult;
-use super::client::RestClient;
 
 /// Position balance information
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -85,9 +85,9 @@ impl RestClient {
         let nonce = chrono::Utc::now().timestamp_millis() as u64;
         let id = 1;
         let params = json!({});
-        
+
         let signature = self.sign_request("private/user-balance", id, &params, nonce)?;
-        
+
         let request_body = json!({
             "id": id,
             "method": "private/user-balance",
@@ -97,7 +97,8 @@ impl RestClient {
             "api_key": self.api_key.expose_secret()
         });
 
-        let response = self.client
+        let response = self
+            .client
             .post(&format!("{}/v1/private/user-balance", self.base_url))
             .json(&request_body)
             .send()
@@ -119,13 +120,13 @@ mod tests {
     struct PlainTextSecret {
         secret: String,
     }
-    
+
     impl ExposableSecret for PlainTextSecret {
         fn expose_secret(&self) -> String {
             self.secret.clone()
         }
     }
-    
+
     impl PlainTextSecret {
         fn new(secret: String) -> Self {
             Self { secret }
@@ -145,7 +146,8 @@ mod tests {
             "reserved_qty": "0.00000000"
         });
 
-        let position_balance: PositionBalance = serde_json::from_value(position_balance_json).unwrap();
+        let position_balance: PositionBalance =
+            serde_json::from_value(position_balance_json).unwrap();
         assert_eq!(position_balance.instrument_name, "CRO");
         assert_eq!(position_balance.collateral_eligible, "true");
         assert_eq!(position_balance.quantity, "24422.72427884");

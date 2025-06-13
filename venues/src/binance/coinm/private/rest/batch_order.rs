@@ -1,13 +1,13 @@
-use serde::{Deserialize, Serialize};
 use serde::ser::Serializer;
 use serde::Serialize as SerdeSerialize;
+use serde::{Deserialize, Serialize};
 
 use crate::binance::coinm::enums::{
-    OrderResponseType, OrderSide, OrderType, PositionSide, PriceMatch, SelfTradePreventionMode,
-    TimeInForce, WorkingType, OrderStatus
+    OrderResponseType, OrderSide, OrderStatus, OrderType, PositionSide, PriceMatch,
+    SelfTradePreventionMode, TimeInForce, WorkingType,
 };
-use crate::binance::coinm::ErrorResponse;
 use crate::binance::coinm::private::rest::client::RestClient;
+use crate::binance::coinm::ErrorResponse;
 use crate::binance::RestResult;
 
 /// Serializes a value as a JSON string for use in URL-encoded form bodies (Binance batch orders)

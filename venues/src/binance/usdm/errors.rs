@@ -1,13 +1,13 @@
-use thiserror::Error;
 use serde::Deserialize;
 use std::fmt;
+use thiserror::Error;
 
 /// Represents all possible errors that can occur when interacting with the Binance API
 #[derive(Debug)]
 pub enum Errors {
     /// Invalid API key or signature
     InvalidApiKey(),
-    
+
     /// Http error occurred while making a request
     /// This variant is used to represent errors that are not specific to the Binance API,
     /// such as network issues or HTTP errors.
@@ -17,7 +17,7 @@ pub enum Errors {
 
     /// An error returned by the Binance API
     ApiError(ApiError),
-    
+
     /// A general error with a descriptive message
     Error(String),
 }
@@ -36,7 +36,7 @@ impl fmt::Display for Errors {
 impl std::error::Error for Errors {}
 
 /// Represents an error response from the Binance API.
-/// 
+///
 /// This is public as it is used by Batch responses.
 #[derive(Debug, Clone, Deserialize)]
 pub struct ErrorResponse {

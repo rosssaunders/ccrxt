@@ -1,11 +1,11 @@
+use serde::Deserialize;
 use std::collections::VecDeque;
 use std::sync::Arc;
 use std::time::{Duration, Instant};
-use serde::Deserialize;
 use tokio::sync::RwLock;
 
 use crate::binance::usdm::errors::ApiError;
-use crate::binance::usdm::{ResponseHeaders, Errors};
+use crate::binance::usdm::{Errors, ResponseHeaders};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
@@ -84,20 +84,36 @@ impl RateLimitHeader {
     /// E.g., "x-mbx-used-weight-1m" or "x-mbx-order-count-1d".
     pub fn parse(header: &str) -> Option<Self> {
         fn ascii_starts_with(haystack: &str, needle: &str) -> bool {
-            haystack.len() >= needle.len() && haystack.chars().zip(needle.chars()).all(|(a, b)| a.eq_ignore_ascii_case(&b))
+            haystack.len() >= needle.len()
+                && haystack
+                    .chars()
+                    .zip(needle.chars())
+                    .all(|(a, b)| a.eq_ignore_ascii_case(&b))
         }
         let (kind, rest) = if ascii_starts_with(header, "x-mbx-used-weight-") {
-            (RateLimitHeaderKind::UsedWeight, &header["x-mbx-used-weight-".len()..])
+            (
+                RateLimitHeaderKind::UsedWeight,
+                &header["x-mbx-used-weight-".len()..],
+            )
         } else if ascii_starts_with(header, "x-mbx-order-count-") {
-            (RateLimitHeaderKind::OrderCount, &header["x-mbx-order-count-".len()..])
+            (
+                RateLimitHeaderKind::OrderCount,
+                &header["x-mbx-order-count-".len()..],
+            )
         } else {
             return None;
         };
-        if rest.len() < 2 { return None; }
+        if rest.len() < 2 {
+            return None;
+        }
         let (num, unit) = rest.split_at(rest.len() - 1);
         let interval_value = num.parse::<u32>().ok()?;
         let interval_unit = IntervalUnit::from_char(unit.chars().next()?)?;
-        Some(RateLimitHeader { kind, interval_value, interval_unit })
+        Some(RateLimitHeader {
+            kind,
+            interval_value,
+            interval_unit,
+        })
     }
 }
 
@@ -122,14 +138,14 @@ impl std::fmt::Display for RateLimitHeader {
 pub struct RateLimitUsage {
     /// Timestamps of raw requests in the last 1 minute (for USDM)
     pub raw_request_timestamps: VecDeque<Instant>,
-    
+
     /// Timestamps of order requests in the last 10s, 1m, 1d
     pub order_timestamps_10s: VecDeque<Instant>,
-    
+
     pub order_timestamps_1m: VecDeque<Instant>,
-    
+
     pub order_timestamps_1d: VecDeque<Instant>,
-    
+
     /// Last known request weight (from header)
     pub used_weight_1m: u32,
 }
@@ -205,7 +221,10 @@ impl RateLimiter {
         let now = Instant::now();
         usage.raw_request_timestamps.push_back(now);
         // Remove timestamps older than 1 minute for USDM
-        Self::trim_older_than(&mut usage.raw_request_timestamps, now - Duration::from_secs(60));
+        Self::trim_older_than(
+            &mut usage.raw_request_timestamps,
+            now - Duration::from_secs(60),
+        );
     }
 
     /// Call this after every order-related REST call to increment order counters
@@ -216,16 +235,27 @@ impl RateLimiter {
         usage.order_timestamps_1m.push_back(now);
         usage.order_timestamps_1d.push_back(now);
         // Remove timestamps older than 10s, 1m, 1d
-        Self::trim_older_than(&mut usage.order_timestamps_10s, now - Duration::from_secs(10));
-        Self::trim_older_than(&mut usage.order_timestamps_1m, now - Duration::from_secs(60));
-        Self::trim_older_than(&mut usage.order_timestamps_1d, now - Duration::from_secs(86400));
+        Self::trim_older_than(
+            &mut usage.order_timestamps_10s,
+            now - Duration::from_secs(10),
+        );
+        Self::trim_older_than(
+            &mut usage.order_timestamps_1m,
+            now - Duration::from_secs(60),
+        );
+        Self::trim_older_than(
+            &mut usage.order_timestamps_1d,
+            now - Duration::from_secs(86400),
+        );
     }
 
     /// Call this after every response to update counters from headers (authoritative)
     pub async fn update_from_headers(&self, headers: &ResponseHeaders) {
         let mut usage = self.usage.write().await;
         // Use a strongly-typed RateLimitHeader as the key
-        use crate::binance::usdm::rate_limit::{RateLimitHeader, RateLimitHeaderKind, IntervalUnit};
+        use crate::binance::usdm::rate_limit::{
+            IntervalUnit, RateLimitHeader, RateLimitHeaderKind,
+        };
         let key = RateLimitHeader {
             kind: RateLimitHeaderKind::UsedWeight,
             interval_value: 1,
@@ -242,43 +272,35 @@ impl RateLimiter {
     /// - is_order: whether this is an order-related endpoint
     pub async fn check_limits(&self, weight: u32, is_order: bool) -> Result<(), Errors> {
         let usage = self.usage.read().await;
-        
+
         // Raw requests: 1,200 per 1 min for USDM (different from COINM)
         if usage.raw_request_timestamps.len() >= 1200 {
-            return Err(Errors::ApiError(
-                ApiError::TooManyRequests {
-                    msg: "Raw request cap (1,200/1min) exceeded".to_string(),
-                },
-            ));
+            return Err(Errors::ApiError(ApiError::TooManyRequests {
+                msg: "Raw request cap (1,200/1min) exceeded".to_string(),
+            }));
         }
-        
+
         // Request weight: 2,400 per 1 min for USDM (different from COINM)
         if usage.used_weight_1m + weight > 2400 {
-            return Err(Errors::ApiError(
-                ApiError::TooManyRequests {
-                    msg: format!(
-                        "Request weight {} would exceed limit of 2,400",
-                        usage.used_weight_1m + weight
-                    ),
-                },
-            ));
+            return Err(Errors::ApiError(ApiError::TooManyRequests {
+                msg: format!(
+                    "Request weight {} would exceed limit of 2,400",
+                    usage.used_weight_1m + weight
+                ),
+            }));
         }
-        
+
         // Orders: 100 per 10s, 1,200 per 1m (same as COINM)
         if is_order {
             if usage.order_timestamps_10s.len() >= 100 {
-                return Err(Errors::ApiError(
-                    ApiError::TooManyOrders {
-                        msg: "Order cap (100/10s) exceeded".to_string(),
-                    },
-                ));
+                return Err(Errors::ApiError(ApiError::TooManyOrders {
+                    msg: "Order cap (100/10s) exceeded".to_string(),
+                }));
             }
             if usage.order_timestamps_1m.len() >= 1200 {
-                return Err(Errors::ApiError(
-                    ApiError::TooManyOrders {
-                        msg: "Order cap (1,200/1min) exceeded".to_string(),
-                    },
-                ));
+                return Err(Errors::ApiError(ApiError::TooManyOrders {
+                    msg: "Order cap (1,200/1min) exceeded".to_string(),
+                }));
             }
         }
         Ok(())
@@ -292,7 +314,7 @@ mod tests {
     #[tokio::test]
     async fn test_rate_limiter_raw_requests() {
         let rate_limiter = RateLimiter::new();
-        
+
         // Test that we can make requests up to the limit
         for _ in 0..10 {
             rate_limiter.increment_raw_request().await;
@@ -303,11 +325,11 @@ mod tests {
     #[tokio::test]
     async fn test_rate_limiter_request_weight() {
         let rate_limiter = RateLimiter::new();
-        
+
         // Test request weight limits
         assert!(rate_limiter.check_limits(1000, false).await.is_ok());
         assert!(rate_limiter.check_limits(2400, false).await.is_ok());
-        
+
         // This should fail as it exceeds the 2400 limit
         assert!(rate_limiter.check_limits(2401, false).await.is_err());
     }
@@ -315,7 +337,7 @@ mod tests {
     #[tokio::test]
     async fn test_rate_limiter_orders() {
         let rate_limiter = RateLimiter::new();
-        
+
         // Test order limits - should be able to place some orders
         for _ in 0..10 {
             rate_limiter.increment_order().await;

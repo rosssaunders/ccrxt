@@ -1,10 +1,10 @@
-use serde_json::Value;
-use crate::crypto_com::{RestResult, EndpointType};
 use super::client::RestClient;
+use crate::crypto_com::{EndpointType, RestResult};
+use serde_json::Value;
 
 impl RestClient {
     /// Get candlestick data for a specific instrument
-    /// 
+    ///
     /// # Arguments
     /// * `instrument_name` - The trading pair (e.g., "BTC_USDT")
     /// * `timeframe` - The timeframe (e.g., "1m", "5m", "1h", "1D")
@@ -12,12 +12,12 @@ impl RestClient {
     /// * `start_ts` - Optional start timestamp (Unix timestamp, default: 1 day ago)
     /// * `end_ts` - Optional end timestamp (Unix timestamp, default: current time)
     pub async fn get_candlestick(
-        &self, 
-        instrument_name: &str, 
-        timeframe: &str, 
+        &self,
+        instrument_name: &str,
+        timeframe: &str,
         count: Option<u32>,
         start_ts: Option<u64>,
-        end_ts: Option<u64>
+        end_ts: Option<u64>,
     ) -> RestResult<Value> {
         let mut params = serde_json::json!({
             "instrument_name": instrument_name,
@@ -27,11 +27,11 @@ impl RestClient {
         if let Some(c) = count {
             params["count"] = Value::Number(c.into());
         }
-        
+
         if let Some(start) = start_ts {
             params["start_ts"] = Value::Number(start.into());
         }
-        
+
         if let Some(end) = end_ts {
             params["end_ts"] = Value::Number(end.into());
         }
@@ -41,7 +41,8 @@ impl RestClient {
             reqwest::Method::GET,
             Some(&params),
             EndpointType::PublicGetCandlestick,
-        ).await
+        )
+        .await
     }
 }
 

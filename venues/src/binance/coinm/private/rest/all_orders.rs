@@ -1,9 +1,9 @@
 // All Orders endpoint implementation for GET /dapi/v1/allOrders
 // See: https://binance-docs.github.io/apidocs/delivery/en/#all-orders-user_data
 
-use serde::{Deserialize, Serialize};
 use crate::binance::coinm::private::rest::client::RestClient;
 use crate::binance::coinm::RestResult;
+use serde::{Deserialize, Serialize};
 
 /// Request parameters for all orders (GET /dapi/v1/allOrders).
 #[derive(Debug, Clone, Serialize, Default)]
@@ -99,10 +99,7 @@ impl RestClient {
     /// GET /dapi/v1/allOrders
     /// Weight: 20 with symbol, 40 with pair
     /// Requires API key and signature.
-    pub async fn get_all_orders(
-        &self,
-        params: AllOrdersRequest,
-    ) -> RestResult<Vec<AllOrder>> {
+    pub async fn get_all_orders(&self, params: AllOrdersRequest) -> RestResult<Vec<AllOrder>> {
         let weight = if params.pair.is_some() { 40 } else { 20 };
         self.send_signed_request(
             "/dapi/v1/allOrders",

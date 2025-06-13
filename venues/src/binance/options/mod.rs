@@ -4,9 +4,4 @@ mod enums;
 pub use enums::*;
 
 // Re-export compatible enums from coinm where appropriate
-pub use crate::binance::coinm::{
-    OrderSide, 
-    TimeInForce, 
-    OrderResponseType, 
-    KlineInterval
-};
+pub use crate::binance::coinm::{KlineInterval, OrderResponseType, OrderSide, TimeInForce};

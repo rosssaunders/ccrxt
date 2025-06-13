@@ -3,14 +3,14 @@
 // Provides access to all public REST API endpoints for Crypto.com Exchange.
 // All requests are unauthenticated and do not require API credentials.
 use reqwest::Client;
-use std::borrow::Cow;
-use serde_json::Value;
 use serde::de::DeserializeOwned;
+use serde_json::Value;
+use std::borrow::Cow;
 
-use crate::crypto_com::{RateLimiter, RestResult, Errors, EndpointType};
+use crate::crypto_com::{EndpointType, Errors, RateLimiter, RestResult};
 
 /// Public REST client for Crypto.com exchange
-/// 
+///
 /// This client handles all public API endpoints that don't require authentication.
 /// It provides automatic rate limiting and error handling.
 #[non_exhaustive]
@@ -52,13 +52,13 @@ impl RestClient {
     }
 
     /// Send a request to a public endpoint
-    /// 
+    ///
     /// # Arguments
     /// * `endpoint` - The API endpoint path (e.g., "public/get-instruments")
     /// * `method` - The HTTP method to use
     /// * `params` - Optional query parameters for GET requests or body parameters for POST requests
     /// * `endpoint_type` - The endpoint type for rate limiting
-    /// 
+    ///
     /// # Returns
     /// A result containing the response data or an error
     pub async fn send_request<T>(
@@ -72,7 +72,9 @@ impl RestClient {
         T: DeserializeOwned,
     {
         // Check rate limits before making the request
-        self.rate_limiter.check_limits(endpoint_type).await
+        self.rate_limiter
+            .check_limits(endpoint_type)
+            .await
             .map_err(|e| Errors::Error(e.to_string()))?;
 
         // Build the URL
@@ -110,8 +112,7 @@ impl RestClient {
         request_builder = request_builder.header("Content-Type", "application/json");
 
         // Send the request
-        let response = request_builder.send().await
-            .map_err(Errors::HttpError)?;
+        let response = request_builder.send().await.map_err(Errors::HttpError)?;
 
         // Increment rate limiter counter after successful request
         self.rate_limiter.increment_request(endpoint_type).await;
@@ -119,22 +120,18 @@ impl RestClient {
         // Check if the response was successful
         if !response.status().is_success() {
             let status = response.status();
-            let error_text = response.text().await
-                .map_err(Errors::HttpError)?;
+            let error_text = response.text().await.map_err(Errors::HttpError)?;
             return Err(Errors::Error(format!("HTTP {}: {}", status, error_text)));
         }
 
         // Parse the response
-        let response_text = response.text().await
-            .map_err(Errors::HttpError)?;
+        let response_text = response.text().await.map_err(Errors::HttpError)?;
 
         let parsed_response: T = serde_json::from_str(&response_text)
             .map_err(|e| Errors::Error(format!("Failed to parse response: {}", e)))?;
 
         Ok(parsed_response)
     }
-
-
 }
 
 #[cfg(test)]
@@ -145,13 +142,9 @@ mod tests {
     fn test_public_client_creation() {
         let client = reqwest::Client::new();
         let rate_limiter = RateLimiter::new();
-        
-        let rest_client = RestClient::new(
-            "https://api.crypto.com",
-            client,
-            rate_limiter,
-        );
-        
+
+        let rest_client = RestClient::new("https://api.crypto.com", client, rate_limiter);
+
         assert_eq!(rest_client.base_url, "https://api.crypto.com");
     }
 
@@ -159,13 +152,9 @@ mod tests {
     fn test_url_building() {
         let client = reqwest::Client::new();
         let rate_limiter = RateLimiter::new();
-        
-        let rest_client = RestClient::new(
-            "https://api.crypto.com",
-            client,
-            rate_limiter,
-        );
-        
+
+        let rest_client = RestClient::new("https://api.crypto.com", client, rate_limiter);
+
         // Test that the client is properly initialized
         assert_eq!(rest_client.base_url, "https://api.crypto.com");
     }
@@ -174,15 +163,14 @@ mod tests {
     async fn test_rate_limiting_integration() {
         let client = reqwest::Client::new();
         let rate_limiter = RateLimiter::new();
-        
-        let rest_client = RestClient::new(
-            "https://api.crypto.com",
-            client,
-            rate_limiter,
-        );
-        
+
+        let rest_client = RestClient::new("https://api.crypto.com", client, rate_limiter);
+
         // Test that rate limiting works (this shouldn't fail since we're not actually hitting limits)
-        let result = rest_client.rate_limiter.check_limits(EndpointType::PublicGetTicker).await;
+        let result = rest_client
+            .rate_limiter
+            .check_limits(EndpointType::PublicGetTicker)
+            .await;
         assert!(result.is_ok());
     }
 }

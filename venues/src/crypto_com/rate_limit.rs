@@ -14,7 +14,7 @@ pub enum EndpointType {
     PrivateGetTrades,
     PrivateGetOrderHistory,
     PrivateOther,
-    
+
     // Public REST endpoints
     PublicGetAnnouncements,
     PublicGetRiskParameters,
@@ -27,11 +27,11 @@ pub enum EndpointType {
     PublicGetCandlestick,
     PublicGetExpiredSettlementPrice,
     PublicGetInsurance,
-    
+
     // Staking endpoints
     PublicStaking,
     PrivateStaking,
-    
+
     // WebSocket
     UserApi,
     MarketData,
@@ -42,22 +42,17 @@ impl EndpointType {
     pub fn rate_limit(&self) -> RateLimit {
         match self {
             // Private REST endpoints (per API key)
-            EndpointType::PrivateCreateOrder 
-            | EndpointType::PrivateCancelOrder 
+            EndpointType::PrivateCreateOrder
+            | EndpointType::PrivateCancelOrder
             | EndpointType::PrivateCancelAllOrders => {
                 RateLimit::new(15, Duration::from_millis(100))
-            },
-            EndpointType::PrivateGetOrderDetail => {
-                RateLimit::new(30, Duration::from_millis(100))
-            },
-            EndpointType::PrivateGetTrades 
-            | EndpointType::PrivateGetOrderHistory => {
+            }
+            EndpointType::PrivateGetOrderDetail => RateLimit::new(30, Duration::from_millis(100)),
+            EndpointType::PrivateGetTrades | EndpointType::PrivateGetOrderHistory => {
                 RateLimit::new(1, Duration::from_secs(1))
-            },
-            EndpointType::PrivateOther => {
-                RateLimit::new(3, Duration::from_millis(100))
-            },
-            
+            }
+            EndpointType::PrivateOther => RateLimit::new(3, Duration::from_millis(100)),
+
             // Public REST endpoints (per IP)
             EndpointType::PublicGetAnnouncements
             | EndpointType::PublicGetRiskParameters
@@ -69,23 +64,16 @@ impl EndpointType {
             | EndpointType::PublicGetValuations
             | EndpointType::PublicGetCandlestick
             | EndpointType::PublicGetExpiredSettlementPrice
-            | EndpointType::PublicGetInsurance => {
-                RateLimit::new(100, Duration::from_secs(1))
-            },
-            
+            | EndpointType::PublicGetInsurance => RateLimit::new(100, Duration::from_secs(1)),
+
             // Staking endpoints
-            EndpointType::PublicStaking 
-            | EndpointType::PrivateStaking => {
+            EndpointType::PublicStaking | EndpointType::PrivateStaking => {
                 RateLimit::new(50, Duration::from_secs(1))
-            },
-            
+            }
+
             // WebSocket
-            EndpointType::UserApi => {
-                RateLimit::new(150, Duration::from_secs(1))
-            },
-            EndpointType::MarketData => {
-                RateLimit::new(100, Duration::from_secs(1))
-            },
+            EndpointType::UserApi => RateLimit::new(150, Duration::from_secs(1)),
+            EndpointType::MarketData => RateLimit::new(100, Duration::from_secs(1)),
         }
     }
 
@@ -100,7 +88,7 @@ impl EndpointType {
             "private/get-order-detail" => EndpointType::PrivateGetOrderDetail,
             "private/get-trades" => EndpointType::PrivateGetTrades,
             "private/get-order-history" => EndpointType::PrivateGetOrderHistory,
-            
+
             // Public REST endpoints
             "public/get-announcements" => EndpointType::PublicGetAnnouncements,
             "public/get-risk-parameters" => EndpointType::PublicGetRiskParameters,
@@ -113,11 +101,11 @@ impl EndpointType {
             "public/get-candlestick" => EndpointType::PublicGetCandlestick,
             "public/get-expired-settlement-price" => EndpointType::PublicGetExpiredSettlementPrice,
             "public/get-insurance" => EndpointType::PublicGetInsurance,
-            
+
             // Staking endpoints
             path if path.starts_with("public/staking/") => EndpointType::PublicStaking,
             path if path.starts_with("private/staking/") => EndpointType::PrivateStaking,
-            
+
             // Default cases
             path if path.starts_with("private/") => EndpointType::PrivateOther,
             _ => EndpointType::PrivateOther, // Conservative default
@@ -134,7 +122,10 @@ pub struct RateLimit {
 
 impl RateLimit {
     pub fn new(max_requests: u32, window: Duration) -> Self {
-        Self { max_requests, window }
+        Self {
+            max_requests,
+            window,
+        }
     }
 }
 
@@ -150,14 +141,14 @@ impl EndpointUsage {
         self.timestamps.push_back(now);
         self.trim_older_than(now - window);
     }
-    
+
     /// Remove timestamps older than the cutoff
     fn trim_older_than(&mut self, cutoff: Instant) {
         while self.timestamps.front().is_some_and(|&ts| ts < cutoff) {
             self.timestamps.pop_front();
         }
     }
-    
+
     /// Get current request count in the window
     fn current_count(&self) -> usize {
         self.timestamps.len()
@@ -201,16 +192,16 @@ impl RateLimiter {
     pub fn new() -> Self {
         Self::default()
     }
-    
+
     /// Check if a request can be made for the given endpoint type
     pub async fn check_limits(&self, endpoint_type: EndpointType) -> Result<(), RateLimitError> {
         let rate_limit = endpoint_type.rate_limit();
         let usage = self.usage.read().await;
-        
+
         // Check if this endpoint type has usage tracking
         if let Some(endpoint_usage) = usage.endpoints.get(&endpoint_type) {
             let current_count = endpoint_usage.current_count() as u32;
-            
+
             if current_count >= rate_limit.max_requests {
                 return Err(RateLimitError::RateLimitExceeded {
                     endpoint: endpoint_type,
@@ -220,37 +211,40 @@ impl RateLimiter {
                 });
             }
         }
-        
+
         Ok(())
     }
-    
+
     /// Increment the request counter for the given endpoint type
     pub async fn increment_request(&self, endpoint_type: EndpointType) {
         let rate_limit = endpoint_type.rate_limit();
         let mut usage = self.usage.write().await;
         let now = Instant::now();
-        
+
         let endpoint_usage = usage.get_or_create_endpoint(endpoint_type);
         endpoint_usage.add_request(now, rate_limit.window);
     }
-    
+
     /// Get current usage statistics for an endpoint type
     pub async fn get_usage(&self, endpoint_type: EndpointType) -> (u32, u32) {
         let rate_limit = endpoint_type.rate_limit();
         let usage = self.usage.read().await;
-        
+
         if let Some(endpoint_usage) = usage.endpoints.get(&endpoint_type) {
-            (endpoint_usage.current_count() as u32, rate_limit.max_requests)
+            (
+                endpoint_usage.current_count() as u32,
+                rate_limit.max_requests,
+            )
         } else {
             (0, rate_limit.max_requests)
         }
     }
-    
+
     /// Clean up old timestamps for all endpoints
     pub async fn cleanup_old_timestamps(&self) {
         let mut usage = self.usage.write().await;
         let now = Instant::now();
-        
+
         for (endpoint_type, endpoint_usage) in usage.endpoints.iter_mut() {
             let rate_limit = endpoint_type.rate_limit();
             endpoint_usage.trim_older_than(now - rate_limit.window);
@@ -266,7 +260,7 @@ mod tests {
     #[tokio::test]
     async fn test_rate_limiter_creation() {
         let limiter = RateLimiter::new();
-        
+
         // Should be able to check limits for any endpoint initially
         let result = limiter.check_limits(EndpointType::PrivateCreateOrder).await;
         assert!(result.is_ok());
@@ -326,7 +320,7 @@ mod tests {
 
         // Make a request
         limiter.increment_request(endpoint).await;
-        
+
         // Second request should fail
         limiter.increment_request(endpoint).await;
         let result = limiter.check_limits(endpoint).await;
@@ -365,7 +359,7 @@ mod tests {
     #[tokio::test]
     async fn test_multiple_endpoint_types() {
         let limiter = RateLimiter::new();
-        
+
         // Different endpoints should have independent rate limits
         let endpoint1 = EndpointType::PrivateCreateOrder; // 15 per 100ms
         let endpoint2 = EndpointType::PublicGetBook; // 100 per second
@@ -375,7 +369,7 @@ mod tests {
             limiter.increment_request(endpoint1).await;
         }
         limiter.increment_request(endpoint1).await;
-        
+
         // endpoint1 should be rate limited
         let result1 = limiter.check_limits(endpoint1).await;
         assert!(result1.is_err());
@@ -410,32 +404,95 @@ mod tests {
     #[tokio::test]
     async fn test_endpoint_from_path() {
         // Test private endpoints
-        assert_eq!(EndpointType::from_path("private/create-order"), EndpointType::PrivateCreateOrder);
-        assert_eq!(EndpointType::from_path("private/cancel-order"), EndpointType::PrivateCancelOrder);
-        assert_eq!(EndpointType::from_path("private/cancel-all-orders"), EndpointType::PrivateCancelAllOrders);
-        assert_eq!(EndpointType::from_path("private/get-order-detail"), EndpointType::PrivateGetOrderDetail);
-        assert_eq!(EndpointType::from_path("private/get-trades"), EndpointType::PrivateGetTrades);
-        assert_eq!(EndpointType::from_path("private/get-order-history"), EndpointType::PrivateGetOrderHistory);
+        assert_eq!(
+            EndpointType::from_path("private/create-order"),
+            EndpointType::PrivateCreateOrder
+        );
+        assert_eq!(
+            EndpointType::from_path("private/cancel-order"),
+            EndpointType::PrivateCancelOrder
+        );
+        assert_eq!(
+            EndpointType::from_path("private/cancel-all-orders"),
+            EndpointType::PrivateCancelAllOrders
+        );
+        assert_eq!(
+            EndpointType::from_path("private/get-order-detail"),
+            EndpointType::PrivateGetOrderDetail
+        );
+        assert_eq!(
+            EndpointType::from_path("private/get-trades"),
+            EndpointType::PrivateGetTrades
+        );
+        assert_eq!(
+            EndpointType::from_path("private/get-order-history"),
+            EndpointType::PrivateGetOrderHistory
+        );
 
         // Test public endpoints
-        assert_eq!(EndpointType::from_path("public/get-announcements"), EndpointType::PublicGetAnnouncements);
-        assert_eq!(EndpointType::from_path("public/get-risk-parameters"), EndpointType::PublicGetRiskParameters);
-        assert_eq!(EndpointType::from_path("public/get-instruments"), EndpointType::PublicGetInstruments);
-        assert_eq!(EndpointType::from_path("public/get-book"), EndpointType::PublicGetBook);
-        assert_eq!(EndpointType::from_path("public/get-ticker"), EndpointType::PublicGetTicker);
-        assert_eq!(EndpointType::from_path("public/get-tickers"), EndpointType::PublicGetTickers);
-        assert_eq!(EndpointType::from_path("public/get-trades"), EndpointType::PublicGetTrades);
-        assert_eq!(EndpointType::from_path("public/get-valuations"), EndpointType::PublicGetValuations);
-        assert_eq!(EndpointType::from_path("public/get-candlestick"), EndpointType::PublicGetCandlestick);
-        assert_eq!(EndpointType::from_path("public/get-expired-settlement-price"), EndpointType::PublicGetExpiredSettlementPrice);
-        assert_eq!(EndpointType::from_path("public/get-insurance"), EndpointType::PublicGetInsurance);
+        assert_eq!(
+            EndpointType::from_path("public/get-announcements"),
+            EndpointType::PublicGetAnnouncements
+        );
+        assert_eq!(
+            EndpointType::from_path("public/get-risk-parameters"),
+            EndpointType::PublicGetRiskParameters
+        );
+        assert_eq!(
+            EndpointType::from_path("public/get-instruments"),
+            EndpointType::PublicGetInstruments
+        );
+        assert_eq!(
+            EndpointType::from_path("public/get-book"),
+            EndpointType::PublicGetBook
+        );
+        assert_eq!(
+            EndpointType::from_path("public/get-ticker"),
+            EndpointType::PublicGetTicker
+        );
+        assert_eq!(
+            EndpointType::from_path("public/get-tickers"),
+            EndpointType::PublicGetTickers
+        );
+        assert_eq!(
+            EndpointType::from_path("public/get-trades"),
+            EndpointType::PublicGetTrades
+        );
+        assert_eq!(
+            EndpointType::from_path("public/get-valuations"),
+            EndpointType::PublicGetValuations
+        );
+        assert_eq!(
+            EndpointType::from_path("public/get-candlestick"),
+            EndpointType::PublicGetCandlestick
+        );
+        assert_eq!(
+            EndpointType::from_path("public/get-expired-settlement-price"),
+            EndpointType::PublicGetExpiredSettlementPrice
+        );
+        assert_eq!(
+            EndpointType::from_path("public/get-insurance"),
+            EndpointType::PublicGetInsurance
+        );
 
         // Test staking endpoints
-        assert_eq!(EndpointType::from_path("public/staking/get-products"), EndpointType::PublicStaking);
-        assert_eq!(EndpointType::from_path("private/staking/get-stakes"), EndpointType::PrivateStaking);
+        assert_eq!(
+            EndpointType::from_path("public/staking/get-products"),
+            EndpointType::PublicStaking
+        );
+        assert_eq!(
+            EndpointType::from_path("private/staking/get-stakes"),
+            EndpointType::PrivateStaking
+        );
 
         // Test default cases
-        assert_eq!(EndpointType::from_path("private/some-other-endpoint"), EndpointType::PrivateOther);
-        assert_eq!(EndpointType::from_path("unknown/endpoint"), EndpointType::PrivateOther);
+        assert_eq!(
+            EndpointType::from_path("private/some-other-endpoint"),
+            EndpointType::PrivateOther
+        );
+        assert_eq!(
+            EndpointType::from_path("unknown/endpoint"),
+            EndpointType::PrivateOther
+        );
     }
 }

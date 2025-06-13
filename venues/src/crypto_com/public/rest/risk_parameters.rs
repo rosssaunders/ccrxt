@@ -1,10 +1,10 @@
-use serde_json::Value;
-use crate::crypto_com::{RestResult, EndpointType};
 use super::client::RestClient;
+use crate::crypto_com::{EndpointType, RestResult};
+use serde_json::Value;
 
 impl RestClient {
     /// Get risk parameter settings for Smart Cross Margin
-    /// 
+    ///
     /// Provides information on risk parameter settings for Smart Cross Margin.
     pub async fn get_risk_parameters(&self) -> RestResult<Value> {
         self.send_request(
@@ -12,7 +12,8 @@ impl RestClient {
             reqwest::Method::GET,
             None,
             EndpointType::PublicGetRiskParameters,
-        ).await
+        )
+        .await
     }
 }
 

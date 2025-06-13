@@ -2,7 +2,7 @@
 use reqwest::Client;
 use std::borrow::Cow;
 
-use crate::binance::usdm::{RateLimiter};
+use crate::binance::usdm::RateLimiter;
 
 #[non_exhaustive]
 #[derive(Debug, Clone)]

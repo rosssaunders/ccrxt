@@ -1,7 +1,7 @@
+use super::client::RestClient;
+use crate::crypto_com::RestResult;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
-use crate::crypto_com::RestResult;
-use super::client::RestClient;
 
 /// Account information
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -86,11 +86,11 @@ impl RestClient {
     pub async fn get_accounts(
         &self,
         page_size: Option<u32>,
-        page: Option<u32>
+        page: Option<u32>,
     ) -> RestResult<Value> {
         let nonce = chrono::Utc::now().timestamp_millis() as u64;
         let id = 1;
-        
+
         let mut params = json!({});
         if let Some(ps) = page_size {
             params["page_size"] = Value::Number(ps.into());
@@ -98,9 +98,9 @@ impl RestClient {
         if let Some(p) = page {
             params["page"] = Value::Number(p.into());
         }
-        
+
         let signature = self.sign_request("private/get-accounts", id, &params, nonce)?;
-        
+
         let request_body = json!({
             "id": id,
             "method": "private/get-accounts",
@@ -110,7 +110,8 @@ impl RestClient {
             "api_key": self.api_key.expose_secret()
         });
 
-        let response = self.client
+        let response = self
+            .client
             .post(&format!("{}/v1/private/get-accounts", self.base_url))
             .json(&request_body)
             .send()
@@ -132,13 +133,13 @@ mod tests {
     struct PlainTextSecret {
         secret: String,
     }
-    
+
     impl ExposableSecret for PlainTextSecret {
         fn expose_secret(&self) -> String {
             self.secret.clone()
         }
     }
-    
+
     impl PlainTextSecret {
         fn new(secret: String) -> Self {
             Self { secret }
@@ -254,7 +255,10 @@ mod tests {
         });
 
         let response: GetAccountsResponse = serde_json::from_value(response_json).unwrap();
-        assert_eq!(response.master_account.uuid, "243d3f39-b193-4eb9-1d60-e98f2fc17707");
+        assert_eq!(
+            response.master_account.uuid,
+            "243d3f39-b193-4eb9-1d60-e98f2fc17707"
+        );
         assert_eq!(response.sub_account_list.len(), 1);
         assert_eq!(response.sub_account_list[0].uuid, "sub-account-uuid");
         assert_eq!(response.sub_account_list[0].tradable, false);

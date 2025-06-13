@@ -1,6 +1,6 @@
-use serde_json::json;
-use rest::secrets::ExposableSecret;
 use crate::crypto_com::private::RestClient;
+use rest::secrets::ExposableSecret;
+use serde_json::json;
 
 /// A plain text implementation of ExposableSecret for testing purposes.
 #[derive(Clone)]
@@ -23,17 +23,14 @@ impl PlainTextSecret {
 #[tokio::test]
 async fn test_private_endpoints_compile() {
     // Test that all the new private endpoints compile and are accessible
-    let api_key = Box::new(PlainTextSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-    let api_secret = Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+    let api_key =
+        Box::new(PlainTextSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
+    let api_secret =
+        Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
     let client = reqwest::Client::new();
-    
-    let rest_client = RestClient::new(
-        api_key,
-        api_secret,
-        "https://api.crypto.com",
-        client,
-    );
-    
+
+    let rest_client = RestClient::new(api_key, api_secret, "https://api.crypto.com", client);
+
     // Test that methods exist by verifying we can get function references to them
     // This proves they compile and are accessible without needing to call them
     let _ = RestClient::get_user_balance;
@@ -42,21 +39,21 @@ async fn test_private_endpoints_compile() {
     let _ = RestClient::create_subaccount_transfer;
     let _ = RestClient::get_subaccount_balances;
     let _ = RestClient::get_positions;
-    
+
     // Verify RestClient itself compiles
     let _ = &rest_client;
-    
+
     println!("All private endpoint methods are accessible and properly typed");
 }
 
-#[test] 
+#[test]
 fn test_request_parameters_serialization() {
     // Test that all parameter structures serialize correctly
-    use crate::crypto_com::private::rest::user_balance_history::UserBalanceHistoryRequest;
-    use crate::crypto_com::private::rest::get_accounts::GetAccountsRequest;
     use crate::crypto_com::private::rest::create_subaccount_transfer::CreateSubaccountTransferRequest;
+    use crate::crypto_com::private::rest::get_accounts::GetAccountsRequest;
     use crate::crypto_com::private::rest::get_positions::GetPositionsRequest;
-    
+    use crate::crypto_com::private::rest::user_balance_history::UserBalanceHistoryRequest;
+
     // Balance history params
     let balance_params = UserBalanceHistoryRequest {
         timeframe: Some("H1".to_string()),
@@ -65,25 +62,25 @@ fn test_request_parameters_serialization() {
     };
     let json_value = serde_json::to_value(balance_params).unwrap();
     assert_eq!(json_value["timeframe"], "H1");
-    
-    // Get accounts params  
+
+    // Get accounts params
     let accounts_params = GetAccountsRequest {
         page_size: Some(30),
         page: Some(2),
     };
     let json_value = serde_json::to_value(accounts_params).unwrap();
     assert_eq!(json_value["page_size"], 30);
-    
+
     // Create subaccount transfer params
     let transfer_params = CreateSubaccountTransferRequest {
         from: "uuid1".to_string(),
-        to: "uuid2".to_string(), 
+        to: "uuid2".to_string(),
         currency: "USD".to_string(),
         amount: "100.00".to_string(),
     };
     let json_value = serde_json::to_value(transfer_params).unwrap();
     assert_eq!(json_value["currency"], "USD");
-    
+
     // Get positions params
     let position_params = GetPositionsRequest {
         instrument_name: Some("BTCUSD-PERP".to_string()),
@@ -95,14 +92,14 @@ fn test_request_parameters_serialization() {
 #[test]
 fn test_response_structures_deserialization() {
     // Test that all response structures deserialize correctly from JSON
-    use crate::crypto_com::private::rest::user_balance::UserBalance;
     use crate::crypto_com::private::rest::get_accounts::Account;
     use crate::crypto_com::private::rest::get_positions::Position;
-    
+    use crate::crypto_com::private::rest::user_balance::UserBalance;
+
     // Test UserBalance deserialization
     let balance_json = json!({
         "total_available_balance": "4721.05898582",
-        "total_margin_balance": "7595.42571782", 
+        "total_margin_balance": "7595.42571782",
         "total_initial_margin": "2874.36673202",
         "total_position_im": "486.31273202",
         "total_haircut": "2388.054",
@@ -120,7 +117,7 @@ fn test_response_structures_deserialization() {
         "position_balances": []
     });
     let _balance: UserBalance = serde_json::from_value(balance_json).unwrap();
-    
+
     // Test Account deserialization
     let account_json = json!({
         "uuid": "243d3f39-b193-4eb9-1d60-e98f2fc17707",
@@ -130,7 +127,7 @@ fn test_response_structures_deserialization() {
         "name": "Test Account",
         "email": "test@crypto.com",
         "mobile_number": "",
-        "country_code": "US", 
+        "country_code": "US",
         "address": "",
         "margin_access": "DEFAULT",
         "derivatives_access": "DISABLED",
@@ -142,7 +139,7 @@ fn test_response_structures_deserialization() {
         "terminated": false
     });
     let _account: Account = serde_json::from_value(account_json).unwrap();
-    
+
     // Test Position deserialization
     let position_json = json!({
         "account_id": "858dbc8b-22fd-49fa-bff4-d342d98a8acb",

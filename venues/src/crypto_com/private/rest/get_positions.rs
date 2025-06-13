@@ -1,7 +1,7 @@
+use super::client::RestClient;
+use crate::crypto_com::RestResult;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
-use crate::crypto_com::RestResult;
-use super::client::RestClient;
 
 /// Position information
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -59,14 +59,14 @@ impl RestClient {
     pub async fn get_positions(&self, instrument_name: Option<&str>) -> RestResult<Value> {
         let nonce = chrono::Utc::now().timestamp_millis() as u64;
         let id = 1;
-        
+
         let mut params = json!({});
         if let Some(instrument) = instrument_name {
             params["instrument_name"] = Value::String(instrument.to_string());
         }
-        
+
         let signature = self.sign_request("private/get-positions", id, &params, nonce)?;
-        
+
         let request_body = json!({
             "id": id,
             "method": "private/get-positions",
@@ -76,7 +76,8 @@ impl RestClient {
             "api_key": self.api_key.expose_secret()
         });
 
-        let response = self.client
+        let response = self
+            .client
             .post(&format!("{}/v1/private/get-positions", self.base_url))
             .json(&request_body)
             .send()
@@ -98,13 +99,13 @@ mod tests {
     struct PlainTextSecret {
         secret: String,
     }
-    
+
     impl ExposableSecret for PlainTextSecret {
         fn expose_secret(&self) -> String {
             self.secret.clone()
         }
     }
-    
+
     impl PlainTextSecret {
         fn new(secret: String) -> Self {
             Self { secret }
@@ -253,6 +254,9 @@ mod tests {
         // Test serialization preserves the rename
         let serialized = serde_json::to_value(&position).unwrap();
         assert_eq!(serialized["type"], "FUTURES");
-        assert!(!serialized.as_object().unwrap().contains_key("position_type"));
+        assert!(!serialized
+            .as_object()
+            .unwrap()
+            .contains_key("position_type"));
     }
 }

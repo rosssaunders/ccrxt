@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use crate::binance::coinm::{RestResult, OrderSide, PositionSide};
 use crate::binance::coinm::private::rest::client::RestClient;
+use crate::binance::coinm::{OrderSide, PositionSide, RestResult};
 
 /// Request parameters for the Account Trade List endpoint (GET /dapi/v1/userTrades).
 ///

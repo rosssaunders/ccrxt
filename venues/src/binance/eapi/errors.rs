@@ -1,19 +1,19 @@
-use thiserror::Error;
 use serde::Deserialize;
 use std::fmt;
+use thiserror::Error;
 
 /// Represents all possible errors that can occur when interacting with the Binance Options API (EAPI)
 #[derive(Debug)]
 pub enum Errors {
     /// Invalid API key or signature
     InvalidApiKey(),
-    
+
     /// Http error occurred while making a request
     HttpError(reqwest::Error),
 
     /// An error returned by the Binance Options API
     ApiError(ApiError),
-    
+
     /// A general error with a descriptive message
     Error(String),
 }

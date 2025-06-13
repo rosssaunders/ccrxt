@@ -1,13 +1,13 @@
-use thiserror::Error;
 use serde::Deserialize;
 use std::fmt;
+use thiserror::Error;
 
 /// Represents all possible errors that can occur when interacting with the Crypto.com API
 #[derive(Debug)]
 pub enum Errors {
     /// Invalid API key or signature
     InvalidApiKey(),
-    
+
     /// Http error occurred while making a request
     /// This variant is used to represent errors that are not specific to the Crypto.com API,
     /// such as network issues or HTTP errors.
@@ -17,7 +17,7 @@ pub enum Errors {
 
     /// An error returned by the Crypto.com API
     ApiError(ApiError),
-    
+
     /// A general error with a descriptive message
     Error(String),
 }
@@ -42,7 +42,7 @@ impl From<reqwest::Error> for Errors {
 }
 
 /// Represents an error response from the Crypto.com API.
-/// 
+///
 /// This is public as it is used by API responses.
 #[derive(Debug, Clone, Deserialize)]
 pub struct ErrorResponse {
@@ -149,7 +149,7 @@ pub enum ApiError {
     #[error("Invalid ref price type")]
     InvalidTriggerType,
 
-    // 3xx - Risk and Margin Related Errors  
+    // 3xx - Risk and Margin Related Errors
     #[error("Account is in margin call")]
     AccountIsInMarginCall,
 
@@ -412,11 +412,19 @@ impl From<ErrorResponse> for ApiError {
             43005 => ApiError::PostOnlyRej,
             43012 => ApiError::SelfTradePrevention,
             50001 => match err.message.as_str() {
-                "If create-withdrawal call breaching credit line check" => ApiError::DwCreditLineNotMaintained,
+                "If create-withdrawal call breaching credit line check" => {
+                    ApiError::DwCreditLineNotMaintained
+                }
                 "Internal error" => ApiError::ErrInternal,
-                _ => ApiError::UnmappedApiError { code: err.code, message: err.message },
+                _ => ApiError::UnmappedApiError {
+                    code: err.code,
+                    message: err.message,
+                },
             },
-            _ => ApiError::UnmappedApiError { code: err.code, message: err.message },
+            _ => ApiError::UnmappedApiError {
+                code: err.code,
+                message: err.message,
+            },
         }
     }
 }
@@ -431,10 +439,10 @@ mod tests {
             code: 0,
             message: "Success".to_string(),
         };
-        
+
         let api_error: ApiError = error_response.into();
         match api_error {
-            ApiError::Success => {},
+            ApiError::Success => {}
             _ => panic!("Expected Success variant"),
         }
     }
@@ -453,13 +461,17 @@ mod tests {
                 code,
                 message: message.to_string(),
             };
-            
+
             let api_error: ApiError = error_response.into();
-            
+
             // Test that the error message contains expected content
             let error_string = format!("{}", api_error);
-            assert!(error_string.len() > 0, "Error message should not be empty for code {}", code);
-            
+            assert!(
+                error_string.len() > 0,
+                "Error message should not be empty for code {}",
+                code
+            );
+
             // Test specific known cases
             match code {
                 201 => {
@@ -468,14 +480,17 @@ mod tests {
                     } else {
                         panic!("Expected NoPosition for code 201, got {:?}", api_error);
                     }
-                },
+                }
                 202 => {
                     if let ApiError::AccountIsSuspended = api_error {
-                        // Expected  
+                        // Expected
                     } else {
-                        panic!("Expected AccountIsSuspended for code 202, got {:?}", api_error);
+                        panic!(
+                            "Expected AccountIsSuspended for code 202, got {:?}",
+                            api_error
+                        );
                     }
-                },
+                }
                 _ => {} // Other cases are tested by building without panics
             }
         }
@@ -495,10 +510,14 @@ mod tests {
                 code,
                 message: message.to_string(),
             };
-            
+
             let api_error: ApiError = error_response.into();
             let error_string = format!("{}", api_error);
-            assert!(error_string.len() > 0, "Error message should not be empty for code {}", code);
+            assert!(
+                error_string.len() > 0,
+                "Error message should not be empty for code {}",
+                code
+            );
         }
     }
 
@@ -516,10 +535,14 @@ mod tests {
                 code,
                 message: message.to_string(),
             };
-            
+
             let api_error: ApiError = error_response.into();
             let error_string = format!("{}", api_error);
-            assert!(error_string.len() > 0, "Error message should not be empty for code {}", code);
+            assert!(
+                error_string.len() > 0,
+                "Error message should not be empty for code {}",
+                code
+            );
         }
     }
 
@@ -530,24 +553,30 @@ mod tests {
             code: 50001,
             message: "If create-withdrawal call breaching credit line check".to_string(),
         };
-        
+
         let api_error_1: ApiError = error_response_1.into();
         if let ApiError::DwCreditLineNotMaintained = api_error_1 {
             // Expected
         } else {
-            panic!("Expected DwCreditLineNotMaintained for specific message, got {:?}", api_error_1);
+            panic!(
+                "Expected DwCreditLineNotMaintained for specific message, got {:?}",
+                api_error_1
+            );
         }
 
         let error_response_2 = ErrorResponse {
             code: 50001,
             message: "Internal error".to_string(),
         };
-        
+
         let api_error_2: ApiError = error_response_2.into();
         if let ApiError::ErrInternal = api_error_2 {
             // Expected
         } else {
-            panic!("Expected ErrInternal for specific message, got {:?}", api_error_2);
+            panic!(
+                "Expected ErrInternal for specific message, got {:?}",
+                api_error_2
+            );
         }
 
         // Test unknown message for 50001
@@ -555,13 +584,16 @@ mod tests {
             code: 50001,
             message: "Some unknown error".to_string(),
         };
-        
+
         let api_error_3: ApiError = error_response_3.into();
         if let ApiError::UnmappedApiError { code, message } = api_error_3 {
             assert_eq!(code, 50001);
             assert_eq!(message, "Some unknown error");
         } else {
-            panic!("Expected UnmappedApiError for unknown message, got {:?}", api_error_3);
+            panic!(
+                "Expected UnmappedApiError for unknown message, got {:?}",
+                api_error_3
+            );
         }
     }
 
@@ -571,13 +603,16 @@ mod tests {
             code: 99999,
             message: "Unknown error".to_string(),
         };
-        
+
         let api_error: ApiError = error_response.into();
         if let ApiError::UnmappedApiError { code, message } = api_error {
             assert_eq!(code, 99999);
             assert_eq!(message, "Unknown error");
         } else {
-            panic!("Expected UnmappedApiError for unknown code, got {:?}", api_error);
+            panic!(
+                "Expected UnmappedApiError for unknown code, got {:?}",
+                api_error
+            );
         }
     }
 
@@ -597,16 +632,11 @@ mod tests {
         // Test a selection of error codes from each category to ensure they're all mapped
         let test_codes = vec![
             // Success
-            0,
-            // 2xx series
-            201, 205, 213, 220, 225, 230,
-            // 3xx series  
-            301, 308, 315, 321,
-            // 4xx series
-            401, 409, 415,
-            // 5xx series
-            501, 604, 606,
-            // Special codes
+            0, // 2xx series
+            201, 205, 213, 220, 225, 230, // 3xx series
+            301, 308, 315, 321, // 4xx series
+            401, 409, 415, // 5xx series
+            501, 604, 606, // Special codes
             30024, 40001, 40101, 42901, 43003, 43012,
         ];
 
@@ -615,17 +645,21 @@ mod tests {
                 code,
                 message: format!("Test message for code {}", code),
             };
-            
+
             let api_error: ApiError = error_response.into();
-            
+
             // Ensure we don't get UnmappedApiError for known codes
             if let ApiError::UnmappedApiError { .. } = api_error {
                 panic!("Code {} should be mapped but got UnmappedApiError", code);
             }
-            
+
             // Ensure error message is not empty
             let error_string = format!("{}", api_error);
-            assert!(error_string.len() > 0, "Error message should not be empty for code {}", code);
+            assert!(
+                error_string.len() > 0,
+                "Error message should not be empty for code {}",
+                code
+            );
         }
     }
 }
