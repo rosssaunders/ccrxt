@@ -29,6 +29,18 @@ pub mod get_account_settings;
 pub mod get_fee_rate;
 pub mod get_instrument_fee_rate;
 
+// Staking endpoints
+pub mod get_staking_instruments;
+pub mod get_staking_position;
+pub mod stake;
+pub mod unstake;
+pub mod get_open_stake;
+pub mod get_stake_history;
+pub mod get_reward_history;
+pub mod convert;
+pub mod get_open_convert;
+pub mod get_convert_history;
+
 #[cfg(test)]
 mod integration_tests;
 
