@@ -46,10 +46,17 @@ async fn test_private_endpoints_compile() {
     let _ = RestClient::get_trades;
     let _ = RestClient::get_transactions;
     
+    // Wallet API methods
+    let _ = RestClient::create_withdrawal;
+    let _ = RestClient::get_currency_networks;
+    let _ = RestClient::get_deposit_address;
+    let _ = RestClient::get_deposit_history;
+    let _ = RestClient::get_withdrawal_history;
+    
     // Verify RestClient itself compiles
     let _ = &rest_client;
     
-    println!("All private endpoint methods are accessible and properly typed");
+    println!("All private endpoint methods including Wallet API are accessible and properly typed");
 }
 
 #[test] 
