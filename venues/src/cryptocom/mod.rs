@@ -1,6 +1,7 @@
 mod errors;
 mod integration_tests;
 mod examples;
+mod enums;
 
 pub mod rate_limit;
 pub mod private {
@@ -17,6 +18,7 @@ pub use rate_limit::{RateLimiter, EndpointType, RateLimitError, RateLimit};
 pub use errors::{Errors, ApiError, ErrorResponse};
 pub use private::RestClient as PrivateRestClient;
 pub use public::RestClient as PublicRestClient;
+pub use enums::*;
 
 /// Type alias for results returned by Crypto.com API operations
 pub type RestResult<T> = Result<T, Errors>;
