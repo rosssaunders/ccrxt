@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
-use crate::cryptocom::RestResult;
+use crate::crypto_com::RestResult;
 use super::client::RestClient;
 
 /// Account information
@@ -57,9 +57,9 @@ pub struct GetAccountsResponse {
     pub sub_account_list: Vec<Account>,
 }
 
-/// Parameters for get accounts request
+/// Request parameters for get accounts endpoint
 #[derive(Debug, Clone, Serialize)]
-pub struct GetAccountsParams {
+pub struct GetAccountsRequest {
     /// Page size (default: 20)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub page_size: Option<u32>,
@@ -68,33 +68,19 @@ pub struct GetAccountsParams {
     pub page: Option<u32>,
 }
 
-/// Parameters for create subaccount transfer request
-#[derive(Debug, Clone, Serialize)]
-pub struct CreateSubaccountTransferParams {
-    /// Account UUID to be debited
-    pub from: String,
-    /// Account UUID to be credit
-    pub to: String,
-    /// Currency symbol
-    pub currency: String,
-    /// Amount to transfer - must a be positive number
-    pub amount: String,
-}
-
-/// Response for create subaccount transfer endpoint
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct CreateSubaccountTransferResponse {
-    /// 0 for successful transfer (NO_ERROR) else the error code
-    pub code: i32,
-}
-
 impl RestClient {
-    /// Get Account and its Sub Accounts
-    /// 
+    /// Get master account and sub-accounts with pagination support
+    ///
+    /// Returns master account and its sub-accounts information.
+    ///
+    /// See: <https://exchange-docs.crypto.com/derivatives/index.html#private-get-accounts>
+    ///
+    /// Rate limit: No rate limit
+    ///
     /// # Arguments
     /// * `page_size` - Optional page size (default: 20)
     /// * `page` - Optional page number (default: 0)
-    /// 
+    ///
     /// # Returns
     /// Master account and sub accounts information
     pub async fn get_accounts(
@@ -126,54 +112,6 @@ impl RestClient {
 
         let response = self.client
             .post(&format!("{}/v1/private/get-accounts", self.base_url))
-            .json(&request_body)
-            .send()
-            .await?;
-
-        let result: Value = response.json().await?;
-        Ok(result)
-    }
-
-    /// Transfer between subaccounts (and master account)
-    /// 
-    /// # Arguments
-    /// * `from` - Account UUID to be debited
-    /// * `to` - Account UUID to be credit
-    /// * `currency` - Currency symbol
-    /// * `amount` - Amount to transfer - must a be positive number
-    /// 
-    /// # Returns
-    /// Transfer result with status code
-    pub async fn create_subaccount_transfer(
-        &self,
-        from: &str,
-        to: &str,
-        currency: &str,
-        amount: &str
-    ) -> RestResult<Value> {
-        let nonce = chrono::Utc::now().timestamp_millis() as u64;
-        let id = 1;
-        
-        let params = json!({
-            "from": from,
-            "to": to,
-            "currency": currency,
-            "amount": amount
-        });
-        
-        let signature = self.sign_request("private/create-subaccount-transfer", id, &params, nonce)?;
-        
-        let request_body = json!({
-            "id": id,
-            "method": "private/create-subaccount-transfer",
-            "params": params,
-            "nonce": nonce,
-            "sig": signature,
-            "api_key": self.api_key.expose_secret()
-        });
-
-        let response = self.client
-            .post(&format!("{}/v1/private/create-subaccount-transfer", self.base_url))
             .json(&request_body)
             .send()
             .await?;
@@ -236,6 +174,37 @@ mod tests {
         assert_eq!(account.enabled, true);
         assert_eq!(account.email, "user@crypto.com");
         assert_eq!(account.margin_access, "DEFAULT");
+        assert_eq!(account.derivatives_access, "DISABLED");
+        assert_eq!(account.two_fa_enabled, true);
+        assert_eq!(account.kyc_level, "ADVANCED");
+    }
+
+    #[test]
+    fn test_account_with_optional_fields() {
+        let account_json = json!({
+            "uuid": "243d3f39-b193-4eb9-1d60-e98f2fc17707",
+            "master_account_uuid": "291879ae-b769-4eb3-4d75-3366ebee7dd6",
+            "enabled": true,
+            "tradable": true,
+            "name": "",
+            "email": "user@crypto.com",
+            "mobile_number": "",
+            "country_code": "",
+            "address": "",
+            "margin_access": "DEFAULT",
+            "derivatives_access": "DISABLED",
+            "create_time": 1620962543792_u64,
+            "update_time": 1622019525960_u64,
+            "two_fa_enabled": true,
+            "kyc_level": "ADVANCED",
+            "suspended": false,
+            "terminated": false
+        });
+
+        let account: Account = serde_json::from_value(account_json).unwrap();
+        assert_eq!(account.uuid, "243d3f39-b193-4eb9-1d60-e98f2fc17707");
+        assert_eq!(account.margin_account_uuid, None);
+        assert_eq!(account.label, None);
     }
 
     #[test]
@@ -261,50 +230,68 @@ mod tests {
                 "suspended": false,
                 "terminated": false
             },
-            "sub_account_list": []
+            "sub_account_list": [
+                {
+                    "uuid": "sub-account-uuid",
+                    "master_account_uuid": "291879ae-b769-4eb3-4d75-3366ebee7dd6",
+                    "enabled": true,
+                    "tradable": false,
+                    "name": "Sub Account 1",
+                    "email": "sub@crypto.com",
+                    "mobile_number": "",
+                    "country_code": "",
+                    "address": "",
+                    "margin_access": "DISABLED",
+                    "derivatives_access": "DISABLED",
+                    "create_time": 1620962543792_u64,
+                    "update_time": 1622019525960_u64,
+                    "two_fa_enabled": false,
+                    "kyc_level": "BASIC",
+                    "suspended": false,
+                    "terminated": false
+                }
+            ]
         });
 
         let response: GetAccountsResponse = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.master_account.uuid, "243d3f39-b193-4eb9-1d60-e98f2fc17707");
-        assert_eq!(response.sub_account_list.len(), 0);
+        assert_eq!(response.sub_account_list.len(), 1);
+        assert_eq!(response.sub_account_list[0].uuid, "sub-account-uuid");
+        assert_eq!(response.sub_account_list[0].tradable, false);
     }
 
     #[test]
-    fn test_get_accounts_params_serialization() {
-        let params = GetAccountsParams {
+    fn test_get_accounts_request_serialization() {
+        let request = GetAccountsRequest {
             page_size: Some(30),
             page: Some(2),
         };
 
-        let json_value = serde_json::to_value(params).unwrap();
+        let json_value = serde_json::to_value(request).unwrap();
         assert_eq!(json_value["page_size"], 30);
         assert_eq!(json_value["page"], 2);
     }
 
     #[test]
-    fn test_get_accounts_params_optional() {
-        let params = GetAccountsParams {
+    fn test_get_accounts_request_optional_fields() {
+        let request = GetAccountsRequest {
             page_size: None,
             page: None,
         };
 
-        let json_value = serde_json::to_value(params).unwrap();
+        let json_value = serde_json::to_value(request).unwrap();
         assert_eq!(json_value, json!({}));
     }
 
     #[test]
-    fn test_create_subaccount_transfer_params() {
-        let params = CreateSubaccountTransferParams {
-            from: "12345678-0000-0000-0000-000000000001".to_string(),
-            to: "12345678-0000-0000-0000-000000000002".to_string(),
-            currency: "CRO".to_string(),
-            amount: "500".to_string(),
+    fn test_get_accounts_request_partial_fields() {
+        let request = GetAccountsRequest {
+            page_size: Some(50),
+            page: None,
         };
 
-        let json_value = serde_json::to_value(params).unwrap();
-        assert_eq!(json_value["from"], "12345678-0000-0000-0000-000000000001");
-        assert_eq!(json_value["to"], "12345678-0000-0000-0000-000000000002");
-        assert_eq!(json_value["currency"], "CRO");
-        assert_eq!(json_value["amount"], "500");
+        let json_value = serde_json::to_value(request).unwrap();
+        assert_eq!(json_value["page_size"], 50);
+        assert!(!json_value.as_object().unwrap().contains_key("page"));
     }
 }

@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
-use crate::cryptocom::RestResult;
+use crate::crypto_com::RestResult;
 use super::client::RestClient;
 
 /// Position balance information
@@ -70,43 +70,15 @@ pub struct UserBalanceResponse {
     pub data: Vec<UserBalance>,
 }
 
-/// Balance history entry
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct BalanceHistoryEntry {
-    /// timestamp
-    pub t: u64,
-    /// total cash balance
-    pub c: String,
-}
-
-/// Response for user balance history endpoint
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct UserBalanceHistoryResponse {
-    /// instrument name of the balance e.g. USD
-    pub instrument_name: String,
-    /// Array of balance history data
-    pub data: Vec<BalanceHistoryEntry>,
-}
-
-/// Parameters for user balance history request
-#[derive(Debug, Clone, Serialize)]
-pub struct UserBalanceHistoryParams {
-    /// H1 means every hour, D1 means every day. Omit for 'D1'
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub timeframe: Option<String>,
-    /// Can be millisecond or nanosecond. Exclusive. If not provided, will be current time.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub end_time: Option<u64>,
-    /// If timeframe is D1, max limit will be 30 (days). If timeframe is H1, max limit will be 120 (hours).
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub limit: Option<i32>,
-}
-
 impl RestClient {
     /// Get user balance
-    /// 
-    /// Returns the user's wallet balance.
-    /// 
+    ///
+    /// Returns the user's wallet balance with margin details and position balances.
+    ///
+    /// See: <https://exchange-docs.crypto.com/derivatives/index.html#private-user-balance>
+    ///
+    /// Rate limit: No rate limit
+    ///
     /// # Returns
     /// User balance information including position balances and margin details
     pub async fn get_user_balance(&self) -> RestResult<Value> {
@@ -127,58 +99,6 @@ impl RestClient {
 
         let response = self.client
             .post(&format!("{}/v1/private/user-balance", self.base_url))
-            .json(&request_body)
-            .send()
-            .await?;
-
-        let result: Value = response.json().await?;
-        Ok(result)
-    }
-
-    /// Get user balance history
-    /// 
-    /// Returns the user's balance history. This call may temporarily have discrepancies with that shown on the GUI.
-    /// 
-    /// # Arguments
-    /// * `timeframe` - H1 means every hour, D1 means every day. Omit for 'D1'
-    /// * `end_time` - Can be millisecond or nanosecond. Exclusive. If not provided, will be current time.
-    /// * `limit` - If timeframe is D1, max limit will be 30 (days). If timeframe is H1, max limit will be 120 (hours).
-    /// 
-    /// # Returns
-    /// User balance history information
-    pub async fn get_user_balance_history(
-        &self,
-        timeframe: Option<String>,
-        end_time: Option<u64>,
-        limit: Option<i32>
-    ) -> RestResult<Value> {
-        let nonce = chrono::Utc::now().timestamp_millis() as u64;
-        let id = 1;
-        
-        let mut params = json!({});
-        if let Some(tf) = timeframe {
-            params["timeframe"] = Value::String(tf);
-        }
-        if let Some(et) = end_time {
-            params["end_time"] = Value::Number(et.into());
-        }
-        if let Some(l) = limit {
-            params["limit"] = Value::Number(l.into());
-        }
-        
-        let signature = self.sign_request("private/user-balance-history", id, &params, nonce)?;
-        
-        let request_body = json!({
-            "id": id,
-            "method": "private/user-balance-history",
-            "params": params,
-            "nonce": nonce,
-            "sig": signature,
-            "api_key": self.api_key.expose_secret()
-        });
-
-        let response = self.client
-            .post(&format!("{}/v1/private/user-balance-history", self.base_url))
             .json(&request_body)
             .send()
             .await?;
@@ -213,7 +133,26 @@ mod tests {
     }
 
     #[test]
-    fn test_user_balance_structures() {
+    fn test_position_balance_structure() {
+        let position_balance_json = json!({
+            "instrument_name": "CRO",
+            "quantity": "24422.72427884",
+            "market_value": "4776.107959969951",
+            "collateral_eligible": "true",
+            "haircut": "0.5",
+            "collateral_amount": "4537.302561971453",
+            "max_withdrawal_balance": "24422.72427884",
+            "reserved_qty": "0.00000000"
+        });
+
+        let position_balance: PositionBalance = serde_json::from_value(position_balance_json).unwrap();
+        assert_eq!(position_balance.instrument_name, "CRO");
+        assert_eq!(position_balance.collateral_eligible, "true");
+        assert_eq!(position_balance.quantity, "24422.72427884");
+    }
+
+    #[test]
+    fn test_user_balance_structure() {
         let balance_json = json!({
             "total_available_balance": "4721.05898582",
             "total_margin_balance": "7595.42571782",
@@ -253,47 +192,34 @@ mod tests {
     }
 
     #[test]
-    fn test_balance_history_structures() {
-        let history_json = json!({
-            "instrument_name": "USD",
+    fn test_user_balance_response_structure() {
+        let response_json = json!({
             "data": [
                 {
-                    "t": 1629478800000_u64,
-                    "c": "811.621851"
+                    "total_available_balance": "4721.05898582",
+                    "total_margin_balance": "7595.42571782",
+                    "total_initial_margin": "2874.36673202",
+                    "total_position_im": "486.31273202",
+                    "total_haircut": "2388.054",
+                    "total_maintenance_margin": "1437.18336601",
+                    "total_position_cost": "14517.54641301",
+                    "total_cash_balance": "7890.00320721",
+                    "total_collateral_value": "7651.18811483",
+                    "total_session_unrealized_pnl": "-55.76239701",
+                    "instrument_name": "USD",
+                    "total_session_realized_pnl": "0.00000000",
+                    "is_liquidating": false,
+                    "total_effective_leverage": "1.90401230",
+                    "position_limit": "3000000.00000000",
+                    "used_position_limit": "40674.69622001",
+                    "position_balances": []
                 }
             ]
         });
 
-        let history: UserBalanceHistoryResponse = serde_json::from_value(history_json).unwrap();
-        assert_eq!(history.instrument_name, "USD");
-        assert_eq!(history.data.len(), 1);
-        assert_eq!(history.data[0].t, 1629478800000_u64);
-        assert_eq!(history.data[0].c, "811.621851");
-    }
-
-    #[test]
-    fn test_balance_history_params_serialization() {
-        let params = UserBalanceHistoryParams {
-            timeframe: Some("H1".to_string()),
-            end_time: Some(1629478800000_u64),
-            limit: Some(10),
-        };
-
-        let json_value = serde_json::to_value(params).unwrap();
-        assert_eq!(json_value["timeframe"], "H1");
-        assert_eq!(json_value["end_time"], 1629478800000_u64);
-        assert_eq!(json_value["limit"], 10);
-    }
-
-    #[test]
-    fn test_balance_history_params_optional_fields() {
-        let params = UserBalanceHistoryParams {
-            timeframe: None,
-            end_time: None,
-            limit: None,
-        };
-
-        let json_value = serde_json::to_value(params).unwrap();
-        assert_eq!(json_value, json!({}));
+        let response: UserBalanceResponse = serde_json::from_value(response_json).unwrap();
+        assert_eq!(response.data.len(), 1);
+        assert_eq!(response.data[0].instrument_name, "USD");
+        assert_eq!(response.data[0].is_liquidating, false);
     }
 }

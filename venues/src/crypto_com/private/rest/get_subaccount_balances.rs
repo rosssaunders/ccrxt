@@ -1,8 +1,8 @@
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
-use crate::cryptocom::RestResult;
+use crate::crypto_com::RestResult;
 use super::client::RestClient;
-use super::balance::PositionBalance;
+use super::user_balance::PositionBalance;
 
 /// Subaccount balance information
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -49,50 +49,15 @@ pub struct GetSubaccountBalancesResponse {
     pub data: Vec<SubaccountBalance>,
 }
 
-/// Position information
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Position {
-    /// Account ID
-    pub account_id: String,
-    /// Position quantity
-    pub quantity: String,
-    /// Position cost or value in USD
-    pub cost: String,
-    /// Profit and loss for the open position
-    pub open_position_pnl: String,
-    /// Open position cost
-    pub open_pos_cost: String,
-    /// Profit and loss in the current trading session
-    pub session_pnl: String,
-    /// Updated time (Unix timestamp)
-    pub update_timestamp_ms: u64,
-    /// e.g. BTCUSD-PERP
-    pub instrument_name: String,
-    /// e.g. Perpetual Swap
-    #[serde(rename = "type")]
-    pub position_type: String,
-}
-
-/// Response for get positions endpoint
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetPositionsResponse {
-    /// Array of position data
-    pub data: Vec<Position>,
-}
-
-/// Parameters for get positions request
-#[derive(Debug, Clone, Serialize)]
-pub struct GetPositionsParams {
-    /// e.g. BTCUSD-PERP
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub instrument_name: Option<String>,
-}
-
 impl RestClient {
-    /// Get user's wallet balances of all sub-accounts
-    /// 
-    /// Returns the user's wallet balances of all sub-accounts.
-    /// 
+    /// Get wallet balances for all sub-accounts
+    ///
+    /// Returns the user's wallet balances for all sub-accounts.
+    ///
+    /// See: <https://exchange-docs.crypto.com/derivatives/index.html#private-get-subaccount-balances>
+    ///
+    /// Rate limit: No rate limit
+    ///
     /// # Returns
     /// Subaccount balance information for all sub-accounts
     pub async fn get_subaccount_balances(&self) -> RestResult<Value> {
@@ -113,45 +78,6 @@ impl RestClient {
 
         let response = self.client
             .post(&format!("{}/v1/private/get-subaccount-balances", self.base_url))
-            .json(&request_body)
-            .send()
-            .await?;
-
-        let result: Value = response.json().await?;
-        Ok(result)
-    }
-
-    /// Get user's positions
-    /// 
-    /// Returns the user's position.
-    /// 
-    /// # Arguments
-    /// * `instrument_name` - Optional instrument name filter (e.g. BTCUSD-PERP)
-    /// 
-    /// # Returns
-    /// Position information for all or specified instruments
-    pub async fn get_positions(&self, instrument_name: Option<&str>) -> RestResult<Value> {
-        let nonce = chrono::Utc::now().timestamp_millis() as u64;
-        let id = 1;
-        
-        let mut params = json!({});
-        if let Some(instrument) = instrument_name {
-            params["instrument_name"] = Value::String(instrument.to_string());
-        }
-        
-        let signature = self.sign_request("private/get-positions", id, &params, nonce)?;
-        
-        let request_body = json!({
-            "id": id,
-            "method": "private/get-positions",
-            "params": params,
-            "nonce": nonce,
-            "sig": signature,
-            "api_key": self.api_key.expose_secret()
-        });
-
-        let response = self.client
-            .post(&format!("{}/v1/private/get-positions", self.base_url))
             .json(&request_body)
             .send()
             .await?;
@@ -211,6 +137,7 @@ mod tests {
         assert_eq!(balance.instrument_name, Some("USD".to_string()));
         assert_eq!(balance.is_liquidating, false);
         assert_eq!(balance.position_balances.len(), 0);
+        assert_eq!(balance.total_available_balance, "0.00000000");
     }
 
     #[test]
@@ -249,46 +176,83 @@ mod tests {
         assert_eq!(balance.account, "49786818-6ead-40c4-a008-ea6b0fa5cf96");
         assert_eq!(balance.position_balances.len(), 1);
         assert_eq!(balance.position_balances[0].instrument_name, "BTC");
+        assert_eq!(balance.position_balances[0].quantity, "1.0000000000");
+        assert_eq!(balance.total_available_balance, "20823.62250000");
     }
 
     #[test]
-    fn test_position_structure() {
-        let position_json = json!({
-            "account_id": "858dbc8b-22fd-49fa-bff4-d342d98a8acb",
-            "quantity": "-0.1984",
-            "cost": "-10159.573500",
-            "open_position_pnl": "-497.743736",
-            "open_pos_cost": "-10159.352200",
-            "session_pnl": "2.236145",
-            "update_timestamp_ms": 1613552240770_u64,
-            "instrument_name": "BTCUSD-PERP",
-            "type": "PERPETUAL_SWAP"
+    fn test_subaccount_balance_without_instrument_name() {
+        let balance_json = json!({
+            "account": "test-account-uuid",
+            "total_available_balance": "1000.00000000",
+            "total_margin_balance": "1000.00000000",
+            "total_initial_margin": "0.00000000",
+            "total_maintenance_margin": "0.00000000",
+            "total_position_cost": "0.00000000",
+            "total_cash_balance": "1000.00000000",
+            "total_collateral_value": "1000.00000000",
+            "total_session_unrealized_pnl": "0.00000000",
+            "total_session_realized_pnl": "0.00000000",
+            "total_effective_leverage": "0.00000000",
+            "position_limit": "3000000.00000000",
+            "used_position_limit": "0.00000000",
+            "is_liquidating": false,
+            "position_balances": []
         });
 
-        let position: Position = serde_json::from_value(position_json).unwrap();
-        assert_eq!(position.account_id, "858dbc8b-22fd-49fa-bff4-d342d98a8acb");
-        assert_eq!(position.instrument_name, "BTCUSD-PERP");
-        assert_eq!(position.position_type, "PERPETUAL_SWAP");
-        assert_eq!(position.quantity, "-0.1984");
+        let balance: SubaccountBalance = serde_json::from_value(balance_json).unwrap();
+        assert_eq!(balance.account, "test-account-uuid");
+        assert_eq!(balance.instrument_name, None);
+        assert_eq!(balance.total_available_balance, "1000.00000000");
     }
 
     #[test]
-    fn test_get_positions_params_serialization() {
-        let params = GetPositionsParams {
-            instrument_name: Some("BTCUSD-PERP".to_string()),
-        };
+    fn test_get_subaccount_balances_response_structure() {
+        let response_json = json!({
+            "data": [
+                {
+                    "account": "account-1",
+                    "instrument_name": "USD",
+                    "total_available_balance": "100.00000000",
+                    "total_margin_balance": "100.00000000",
+                    "total_initial_margin": "0.00000000",
+                    "total_maintenance_margin": "0.00000000",
+                    "total_position_cost": "0.00000000",
+                    "total_cash_balance": "100.00000000",
+                    "total_collateral_value": "100.00000000",
+                    "total_session_unrealized_pnl": "0.00000000",
+                    "total_session_realized_pnl": "0.00000000",
+                    "total_effective_leverage": "0.00000000",
+                    "position_limit": "3000000.00000000",
+                    "used_position_limit": "0.00000000",
+                    "is_liquidating": false,
+                    "position_balances": []
+                },
+                {
+                    "account": "account-2",
+                    "total_available_balance": "200.00000000",
+                    "total_margin_balance": "200.00000000",
+                    "total_initial_margin": "0.00000000",
+                    "total_maintenance_margin": "0.00000000",
+                    "total_position_cost": "0.00000000",
+                    "total_cash_balance": "200.00000000",
+                    "total_collateral_value": "200.00000000",
+                    "total_session_unrealized_pnl": "0.00000000",
+                    "total_session_realized_pnl": "0.00000000",
+                    "total_effective_leverage": "0.00000000",
+                    "position_limit": "3000000.00000000",
+                    "used_position_limit": "0.00000000",
+                    "is_liquidating": false,
+                    "position_balances": []
+                }
+            ]
+        });
 
-        let json_value = serde_json::to_value(params).unwrap();
-        assert_eq!(json_value["instrument_name"], "BTCUSD-PERP");
-    }
-
-    #[test]
-    fn test_get_positions_params_optional() {
-        let params = GetPositionsParams {
-            instrument_name: None,
-        };
-
-        let json_value = serde_json::to_value(params).unwrap();
-        assert_eq!(json_value, json!({}));
+        let response: GetSubaccountBalancesResponse = serde_json::from_value(response_json).unwrap();
+        assert_eq!(response.data.len(), 2);
+        assert_eq!(response.data[0].account, "account-1");
+        assert_eq!(response.data[0].instrument_name, Some("USD".to_string()));
+        assert_eq!(response.data[1].account, "account-2");
+        assert_eq!(response.data[1].instrument_name, None);
     }
 }

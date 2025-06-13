@@ -1,6 +1,6 @@
 use serde_json::json;
 use rest::secrets::ExposableSecret;
-use crate::cryptocom::private::RestClient;
+use crate::crypto_com::private::RestClient;
 
 /// A plain text implementation of ExposableSecret for testing purposes.
 #[derive(Clone)]
@@ -52,12 +52,13 @@ async fn test_private_endpoints_compile() {
 #[test] 
 fn test_request_parameters_serialization() {
     // Test that all parameter structures serialize correctly
-    use crate::cryptocom::private::rest::balance::UserBalanceHistoryParams;
-    use crate::cryptocom::private::rest::accounts::{GetAccountsParams, CreateSubaccountTransferParams};
-    use crate::cryptocom::private::rest::subaccounts::GetPositionsParams;
+    use crate::crypto_com::private::rest::user_balance_history::UserBalanceHistoryRequest;
+    use crate::crypto_com::private::rest::get_accounts::GetAccountsRequest;
+    use crate::crypto_com::private::rest::create_subaccount_transfer::CreateSubaccountTransferRequest;
+    use crate::crypto_com::private::rest::get_positions::GetPositionsRequest;
     
     // Balance history params
-    let balance_params = UserBalanceHistoryParams {
+    let balance_params = UserBalanceHistoryRequest {
         timeframe: Some("H1".to_string()),
         end_time: Some(1629478800000),
         limit: Some(10),
@@ -66,7 +67,7 @@ fn test_request_parameters_serialization() {
     assert_eq!(json_value["timeframe"], "H1");
     
     // Get accounts params  
-    let accounts_params = GetAccountsParams {
+    let accounts_params = GetAccountsRequest {
         page_size: Some(30),
         page: Some(2),
     };
@@ -74,7 +75,7 @@ fn test_request_parameters_serialization() {
     assert_eq!(json_value["page_size"], 30);
     
     // Create subaccount transfer params
-    let transfer_params = CreateSubaccountTransferParams {
+    let transfer_params = CreateSubaccountTransferRequest {
         from: "uuid1".to_string(),
         to: "uuid2".to_string(), 
         currency: "USD".to_string(),
@@ -84,7 +85,7 @@ fn test_request_parameters_serialization() {
     assert_eq!(json_value["currency"], "USD");
     
     // Get positions params
-    let position_params = GetPositionsParams {
+    let position_params = GetPositionsRequest {
         instrument_name: Some("BTCUSD-PERP".to_string()),
     };
     let json_value = serde_json::to_value(position_params).unwrap();
@@ -94,9 +95,9 @@ fn test_request_parameters_serialization() {
 #[test]
 fn test_response_structures_deserialization() {
     // Test that all response structures deserialize correctly from JSON
-    use crate::cryptocom::private::rest::balance::UserBalance;
-    use crate::cryptocom::private::rest::accounts::Account;
-    use crate::cryptocom::private::rest::subaccounts::Position;
+    use crate::crypto_com::private::rest::user_balance::UserBalance;
+    use crate::crypto_com::private::rest::get_accounts::Account;
+    use crate::crypto_com::private::rest::get_positions::Position;
     
     // Test UserBalance deserialization
     let balance_json = json!({
