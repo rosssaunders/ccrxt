@@ -10,4 +10,7 @@ pub mod valuations;
 pub mod expired_settlement_price;
 pub mod insurance;
 
+// Staking endpoints
+pub mod get_conversion_rate;
+
 pub use client::RestClient;
