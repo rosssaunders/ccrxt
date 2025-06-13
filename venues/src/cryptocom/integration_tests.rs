@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod integration_tests {
-    use crate::crypto_com::{ApiError, ErrorResponse, Errors, PublicRestClient, PrivateRestClient};
+    use crate::cryptocom::{ApiError, ErrorResponse, Errors, PublicRestClient, PrivateRestClient};
 
     #[test]
     fn test_crypto_com_module_exports() {

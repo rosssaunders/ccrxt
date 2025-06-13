@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
-use crate::crypto_com::RestResult;
+use crate::cryptocom::RestResult;
 use super::client::RestClient;
 
 /// Request parameters for create subaccount transfer

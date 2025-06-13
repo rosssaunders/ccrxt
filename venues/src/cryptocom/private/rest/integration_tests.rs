@@ -1,6 +1,6 @@
 use serde_json::json;
 use rest::secrets::ExposableSecret;
-use crate::crypto_com::private::RestClient;
+use crate::cryptocom::private::RestClient;
 
 /// A plain text implementation of ExposableSecret for testing purposes.
 #[derive(Clone)]
@@ -52,10 +52,10 @@ async fn test_private_endpoints_compile() {
 #[test] 
 fn test_request_parameters_serialization() {
     // Test that all parameter structures serialize correctly
-    use crate::crypto_com::private::rest::user_balance_history::UserBalanceHistoryRequest;
-    use crate::crypto_com::private::rest::get_accounts::GetAccountsRequest;
-    use crate::crypto_com::private::rest::create_subaccount_transfer::CreateSubaccountTransferRequest;
-    use crate::crypto_com::private::rest::get_positions::GetPositionsRequest;
+    use crate::cryptocom::private::rest::user_balance_history::UserBalanceHistoryRequest;
+    use crate::cryptocom::private::rest::get_accounts::GetAccountsRequest;
+    use crate::cryptocom::private::rest::create_subaccount_transfer::CreateSubaccountTransferRequest;
+    use crate::cryptocom::private::rest::get_positions::GetPositionsRequest;
     
     // Balance history params
     let balance_params = UserBalanceHistoryRequest {
@@ -95,9 +95,9 @@ fn test_request_parameters_serialization() {
 #[test]
 fn test_response_structures_deserialization() {
     // Test that all response structures deserialize correctly from JSON
-    use crate::crypto_com::private::rest::user_balance::UserBalance;
-    use crate::crypto_com::private::rest::get_accounts::Account;
-    use crate::crypto_com::private::rest::get_positions::Position;
+    use crate::cryptocom::private::rest::user_balance::UserBalance;
+    use crate::cryptocom::private::rest::get_accounts::Account;
+    use crate::cryptocom::private::rest::get_positions::Position;
     
     // Test UserBalance deserialization
     let balance_json = json!({
