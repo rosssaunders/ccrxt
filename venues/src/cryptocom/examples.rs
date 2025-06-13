@@ -6,7 +6,7 @@
 
 #[cfg(test)]
 mod example {
-    use crate::crypto_com::{ApiError, ErrorResponse, Errors, RestResult, PrivateRestClient};
+    use crate::cryptocom::{ApiError, ErrorResponse, Errors, RestResult, PrivateRestClient};
     use serde_json::json;
 
     /// Simulates processing an API response from Crypto.com
