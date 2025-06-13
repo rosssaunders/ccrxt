@@ -13,6 +13,7 @@ pub enum EndpointType {
     PrivateGetOrderDetail,
     PrivateGetTrades,
     PrivateGetOrderHistory,
+    PrivateGetTransactions,
     PrivateOther,
     
     // Public REST endpoints
@@ -51,7 +52,8 @@ impl EndpointType {
                 RateLimit::new(30, Duration::from_millis(100))
             },
             EndpointType::PrivateGetTrades 
-            | EndpointType::PrivateGetOrderHistory => {
+            | EndpointType::PrivateGetOrderHistory
+            | EndpointType::PrivateGetTransactions => {
                 RateLimit::new(1, Duration::from_secs(1))
             },
             EndpointType::PrivateOther => {
@@ -100,6 +102,7 @@ impl EndpointType {
             "private/get-order-detail" => EndpointType::PrivateGetOrderDetail,
             "private/get-trades" => EndpointType::PrivateGetTrades,
             "private/get-order-history" => EndpointType::PrivateGetOrderHistory,
+            "private/get-transactions" => EndpointType::PrivateGetTransactions,
             
             // Public REST endpoints
             "public/get-announcements" => EndpointType::PublicGetAnnouncements,
