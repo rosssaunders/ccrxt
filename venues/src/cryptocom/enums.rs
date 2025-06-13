@@ -94,3 +94,81 @@ pub enum ValuationType {
     FundingRate,
     EstimatedFundingRate,
 }
+
+/// Order type for trading
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum OrderType {
+    Limit,
+    Market,
+    StopLoss,
+    StopLimit,
+    TakeProfit,
+    TakeProfitLimit,
+}
+
+/// Time in force for orders
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum TimeInForce {
+    GoodTillCancel,
+    ImmediateOrCancel,
+    FillOrKill,
+}
+
+/// Execution instruction
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum ExecInst {
+    PostOnly,
+}
+
+/// Reference price type for conditional orders
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum RefPriceType {
+    MarkPrice,
+    IndexPrice,
+    LastPrice,
+}
+
+/// Spot margin type
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum SpotMargin {
+    Spot,
+    Margin,
+}
+
+/// Self-trade prevention scope
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum StpScope {
+    #[serde(rename = "M")]
+    Master,
+    #[serde(rename = "S")]
+    Sub,
+}
+
+/// Self-trade prevention instruction
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum StpInst {
+    #[serde(rename = "M")]
+    CancelMaker,
+    #[serde(rename = "T")]
+    CancelTaker,
+    #[serde(rename = "B")]
+    CancelBoth,
+}
+
+/// Order status
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum OrderStatus {
+    New,
+    Pending,
+    Active,
+    Rejected,
+    Canceled,
+    Filled,
+    Expired,
+}
