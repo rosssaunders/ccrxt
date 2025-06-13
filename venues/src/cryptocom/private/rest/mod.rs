@@ -13,3 +13,6 @@ pub mod get_order_list;
 mod integration_tests;
 
 pub use client::RestClient;
+pub use create_order_list::{CreateOrderListRequest, OrderListItem, CreateOrderListResponse, CreateOcoOrderResponse, OrderCreationResult};
+pub use cancel_order_list::{CancelOrderListRequest, CancelOcoOrderRequest, CancelOrderListItem, CancelOrderListResponse, OrderCancellationResult};
+pub use get_order_list::{GetOrderListRequest, GetOrderListResponse, OrderDetails};
