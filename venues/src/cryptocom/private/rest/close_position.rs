@@ -1,0 +1,149 @@
+use serde::{Deserialize, Serialize};
+use serde_json::{json, Value};
+use crate::cryptocom::{RestResult, OrderType};
+use super::client::RestClient;
+
+/// Position close order type
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum ClosePositionType {
+    Limit,
+    Market,
+}
+
+/// Request parameters for closing a position
+#[derive(Debug, Clone, Serialize)]
+pub struct ClosePositionRequest {
+    /// Instrument name e.g. BTCUSD-PERP
+    pub instrument_name: String,
+    /// Order type: LIMIT or MARKET
+    #[serde(rename = "type")]
+    pub order_type: ClosePositionType,
+    /// Price (required for LIMIT orders only)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub price: Option<String>,
+}
+
+/// Response for closing a position
+#[derive(Debug, Clone, Deserialize)]
+pub struct ClosePositionResponse {
+    /// Order ID
+    pub order_id: String,
+    /// Client Order ID
+    pub client_oid: String,
+}
+
+impl RestClient {
+    /// Closes position for a particular instrument/pair (asynchronous)
+    ///
+    /// This call is asynchronous, so the response is simply a confirmation of the request.
+    /// The user.order subscription can be used to check when the order is successfully created.
+    ///
+    /// See: <https://exchange-docs.crypto.com/derivatives/index.html#private-close-position>
+    ///
+    /// Rate limit: 100 requests per second
+    ///
+    /// # Arguments
+    /// * `request` - The close position parameters
+    ///
+    /// # Returns
+    /// Order ID and client order ID
+    pub async fn close_position(&self, request: ClosePositionRequest) -> RestResult<Value> {
+        let nonce = chrono::Utc::now().timestamp_millis() as u64;
+        let id = 1;
+        let params = serde_json::to_value(&request).map_err(|e| {
+            crate::cryptocom::Errors::Error(format!("Serialization error: {}", e))
+        })?;
+        
+        let signature = self.sign_request("private/close-position", id, &params, nonce)?;
+        
+        let request_body = json!({
+            "id": id,
+            "method": "private/close-position",
+            "params": params,
+            "nonce": nonce,
+            "sig": signature,
+            "api_key": self.api_key.expose_secret()
+        });
+
+        let response = self.client
+            .post(&format!("{}/v1/private/close-position", self.base_url))
+            .json(&request_body)
+            .send()
+            .await?;
+
+        let result: Value = response.json().await?;
+        Ok(result)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use rest::secrets::ExposableSecret;
+    use serde_json::json;
+
+    /// A plain text implementation of ExposableSecret for testing purposes.
+    #[derive(Clone)]
+    struct PlainTextSecret {
+        secret: String,
+    }
+    
+    impl ExposableSecret for PlainTextSecret {
+        fn expose_secret(&self) -> String {
+            self.secret.clone()
+        }
+    }
+    
+    impl PlainTextSecret {
+        fn new(secret: String) -> Self {
+            Self { secret }
+        }
+    }
+
+    #[test]
+    fn test_close_position_request_limit_order() {
+        let request = ClosePositionRequest {
+            instrument_name: "BTCUSD-PERP".to_string(),
+            order_type: ClosePositionType::Limit,
+            price: Some("30000.0".to_string()),
+        };
+
+        let serialized = serde_json::to_value(&request).unwrap();
+        assert_eq!(serialized["instrument_name"], "BTCUSD-PERP");
+        assert_eq!(serialized["type"], "LIMIT");
+        assert_eq!(serialized["price"], "30000.0");
+    }
+
+    #[test]
+    fn test_close_position_request_market_order() {
+        let request = ClosePositionRequest {
+            instrument_name: "BTCUSD-PERP".to_string(),
+            order_type: ClosePositionType::Market,
+            price: None,
+        };
+
+        let serialized = serde_json::to_value(&request).unwrap();
+        assert_eq!(serialized["instrument_name"], "BTCUSD-PERP");
+        assert_eq!(serialized["type"], "MARKET");
+        assert!(!serialized.as_object().unwrap().contains_key("price"));
+    }
+
+    #[test]
+    fn test_close_position_type_serialization() {
+        assert_eq!(serde_json::to_value(ClosePositionType::Limit).unwrap(), "LIMIT");
+        assert_eq!(serde_json::to_value(ClosePositionType::Market).unwrap(), "MARKET");
+    }
+
+    #[test]
+    fn test_close_position_response_structure() {
+        let response_json = json!({
+            "order_id": "15744",
+            "client_oid": "1684d6e4-2c55-64e1-52c3-3aa9febc3a23"
+        });
+
+        let response: ClosePositionResponse = serde_json::from_value(response_json).unwrap();
+        assert_eq!(response.order_id, "15744");
+        assert_eq!(response.client_oid, "1684d6e4-2c55-64e1-52c3-3aa9febc3a23");
+    }
+}

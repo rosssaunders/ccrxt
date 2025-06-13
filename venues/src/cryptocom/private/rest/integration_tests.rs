@@ -42,6 +42,9 @@ async fn test_private_endpoints_compile() {
     let _ = RestClient::create_subaccount_transfer;
     let _ = RestClient::get_subaccount_balances;
     let _ = RestClient::get_positions;
+    let _ = RestClient::get_order_history;
+    let _ = RestClient::get_trades;
+    let _ = RestClient::get_transactions;
     
     // Wallet API methods
     let _ = RestClient::create_withdrawal;
@@ -63,6 +66,9 @@ fn test_request_parameters_serialization() {
     use crate::cryptocom::private::rest::get_accounts::GetAccountsRequest;
     use crate::cryptocom::private::rest::create_subaccount_transfer::CreateSubaccountTransferRequest;
     use crate::cryptocom::private::rest::get_positions::GetPositionsRequest;
+    use crate::cryptocom::private::rest::get_order_history::GetOrderHistoryRequest;
+    use crate::cryptocom::private::rest::get_trades::GetTradesRequest;
+    use crate::cryptocom::private::rest::get_transactions::GetTransactionsRequest;
     
     // Balance history params
     let balance_params = UserBalanceHistoryRequest {
@@ -97,6 +103,41 @@ fn test_request_parameters_serialization() {
     };
     let json_value = serde_json::to_value(position_params).unwrap();
     assert_eq!(json_value["instrument_name"], "BTCUSD-PERP");
+    
+    // Get order history params
+    let order_history_params = GetOrderHistoryRequest {
+        instrument_name: Some("BTCUSD-PERP".to_string()),
+        start_time: Some("1610905028000081486".to_string()),
+        end_time: Some("1613570791058211357".to_string()),
+        limit: Some(20),
+    };
+    let json_value = serde_json::to_value(order_history_params).unwrap();
+    assert_eq!(json_value["instrument_name"], "BTCUSD-PERP");
+    assert_eq!(json_value["limit"], 20);
+    
+    // Get trades params
+    let trades_params = GetTradesRequest {
+        instrument_name: Some("BTCUSD-PERP".to_string()),
+        start_time: Some("1619089031996081486".to_string()),
+        end_time: Some("1619200052124211357".to_string()),
+        limit: Some(20),
+    };
+    let json_value = serde_json::to_value(trades_params).unwrap();
+    assert_eq!(json_value["instrument_name"], "BTCUSD-PERP");
+    assert_eq!(json_value["limit"], 20);
+    
+    // Get transactions params
+    let transactions_params = GetTransactionsRequest {
+        instrument_name: Some("BTCUSD-PERP".to_string()),
+        journal_type: Some("TRADING".to_string()),
+        start_time: Some("1619089031996081486".to_string()),
+        end_time: Some("1619200052124211357".to_string()),
+        limit: Some(20),
+    };
+    let json_value = serde_json::to_value(transactions_params).unwrap();
+    assert_eq!(json_value["instrument_name"], "BTCUSD-PERP");
+    assert_eq!(json_value["journal_type"], "TRADING");
+    assert_eq!(json_value["limit"], 20);
 }
 
 #[test]
