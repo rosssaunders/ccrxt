@@ -7,6 +7,24 @@ Rules
 
 ## Examples
 
+### Binance Portfolio Margin
+
+The `binanceportfoliomargin` example demonstrates how to create a Binance Portfolio Margin API client for authenticated requests.
+
+```bash
+# Run the Portfolio Margin example
+cargo run -p binanceportfoliomargin-example
+
+# With API credentials from environment variables
+BINANCE_API_KEY=your_key BINANCE_API_SECRET=your_secret cargo run -p binanceportfoliomargin-example
+```
+
+This example shows:
+- Creating a Portfolio Margin private REST client
+- Using the https://papi.binance.com base URL
+- Proper credential handling with encryption
+- Rate limiting and error handling
+
 ### Coinbase Market Data
 
 The `coinbase_market_data` example demonstrates how to subscribe to various market data streams from Coinbase Advanced Trade. You can customize which products and data types you want to receive.
