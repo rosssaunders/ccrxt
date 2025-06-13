@@ -94,3 +94,64 @@ pub enum ValuationType {
     FundingRate,
     EstimatedFundingRate,
 }
+
+/// Order side for trading
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "UPPERCASE")]
+pub enum OrderSide {
+    BUY,
+    SELL,
+}
+
+/// Order type
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "UPPERCASE")]
+pub enum OrderType {
+    LIMIT,
+    MARKET,
+    STOP_LOSS,
+    STOP_LIMIT,
+    TAKE_PROFIT,
+    TAKE_PROFIT_LIMIT,
+}
+
+/// Time in force for orders
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum TimeInForce {
+    GoodTillCancel,
+    FillOrKill,
+    ImmediateOrCancel,
+}
+
+/// Execution instruction for orders
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum ExecInst {
+    PostOnly,
+}
+
+/// Contingency type for order lists
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "UPPERCASE")]
+pub enum ContingencyType {
+    LIST,
+    OCO,
+}
+
+/// STP (Self-Trade Prevention) scope
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "UPPERCASE")]
+pub enum StpScope {
+    M, // Matches Master or Sub a/c
+    S, // Matches Sub a/c only
+}
+
+/// STP (Self-Trade Prevention) instruction
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "UPPERCASE")]
+pub enum StpInst {
+    M, // Cancel Maker
+    T, // Cancel Taker
+    B, // Cancel Both Maker and Taker
+}

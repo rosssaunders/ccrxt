@@ -1,6 +1,7 @@
 mod errors;
 mod integration_tests;
 mod examples;
+pub mod enums;
 
 pub mod rate_limit;
 pub mod private {
@@ -15,6 +16,7 @@ pub mod public {
 
 pub use rate_limit::{RateLimiter, EndpointType, RateLimitError, RateLimit};
 pub use errors::{Errors, ApiError, ErrorResponse};
+pub use enums::*;
 pub use private::RestClient as PrivateRestClient;
 pub use public::RestClient as PublicRestClient;
 
