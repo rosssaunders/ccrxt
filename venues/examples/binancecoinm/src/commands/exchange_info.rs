@@ -1,8 +1,8 @@
 use anyhow::Result;
 use std::sync::Arc;
-use venues::binance::coinm::{Filter, ExchangeInfoResponse};
+use tabled::{settings::Style, Table, Tabled};
 use venues::binance::coinm::PublicRestClient;
-use tabled::{Table, Tabled, settings::Style};
+use venues::binance::coinm::{ExchangeInfoResponse, Filter};
 
 /// Handles the `exchange-info` command: fetches and prints exchange information.
 pub async fn handle_exchange_info_command(client: Arc<PublicRestClient>) -> Result<()> {
@@ -39,21 +39,20 @@ fn print_exchange_info(info: &ExchangeInfoResponse) {
     println!("Exchange Timezone: {}", info.timezone);
     println!("Symbols:");
 
-    let mut symbol_rows: Vec<SymbolRow> = info.symbols.iter().map(|symbol| SymbolRow {
-        symbol: symbol.symbol.clone(),
-        pair: symbol.pair.clone(),
-        status: format!("{:?}", symbol.contract_status),
-        contract_type: format!("{:?}", symbol.contract_type),
-    }).collect();
+    let mut symbol_rows: Vec<SymbolRow> = info
+        .symbols
+        .iter()
+        .map(|symbol| SymbolRow {
+            symbol: symbol.symbol.clone(),
+            pair: symbol.pair.clone(),
+            status: format!("{:?}", symbol.contract_status),
+            contract_type: format!("{:?}", symbol.contract_type),
+        })
+        .collect();
 
     //sort symbol_rows by contract type and then pair and then symbol
     symbol_rows.sort_by(|a, b| {
-        (
-            a.contract_type.as_str(),
-            a.pair.as_str(),
-            a.symbol.as_str(),
-        )
-        .cmp(&(
+        (a.contract_type.as_str(), a.pair.as_str(), a.symbol.as_str()).cmp(&(
             b.contract_type.as_str(),
             b.pair.as_str(),
             b.symbol.as_str(),
@@ -62,17 +61,21 @@ fn print_exchange_info(info: &ExchangeInfoResponse) {
 
     let mut symbol_table = Table::new(symbol_rows);
     symbol_table.with(Style::rounded());
-    
+
     println!("{}", symbol_table);
     println!("\nRate Limits:");
-    
-    let rows: Vec<RateLimitRow> = info.rate_limits.iter().map(|rl| RateLimitRow {
-        rate_limit_type: format!("{:?}", rl.rate_limit_type),
-        interval: format!("{:?}", rl.interval),
-        interval_num: rl.interval_num,
-        limit: rl.limit,
-    }).collect();
-    
+
+    let rows: Vec<RateLimitRow> = info
+        .rate_limits
+        .iter()
+        .map(|rl| RateLimitRow {
+            rate_limit_type: format!("{:?}", rl.rate_limit_type),
+            interval: format!("{:?}", rl.interval),
+            interval_num: rl.interval_num,
+            limit: rl.limit,
+        })
+        .collect();
+
     let mut table = Table::new(rows);
     table.with(Style::rounded());
     println!("{}", table);
@@ -183,7 +186,11 @@ fn print_exchange_info(info: &ExchangeInfoResponse) {
                         symbol: symbol.symbol.clone(),
                         multiplier_down: f.multiplier_down.clone().unwrap_or_default(),
                         multiplier_up: f.multiplier_up.clone().unwrap_or_default(),
-                        multiplier_decimal: f.multiplier_decimal.as_ref().map(|v| v.to_string()).unwrap_or_default(),
+                        multiplier_decimal: f
+                            .multiplier_decimal
+                            .as_ref()
+                            .map(|v| v.to_string())
+                            .unwrap_or_default(),
                     });
                 }
                 Filter::MaxNumAlgoOrdersFilter(_) => {
@@ -226,4 +233,4 @@ fn print_exchange_info(info: &ExchangeInfoResponse) {
         table.with(Style::rounded());
         println!("{}", table);
     }
-} 
+}

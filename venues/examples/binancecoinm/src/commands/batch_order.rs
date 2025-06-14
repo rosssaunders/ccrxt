@@ -1,13 +1,9 @@
-use anyhow::{Result, anyhow};
+use anyhow::{anyhow, Result};
 use std::sync::Arc;
 
 use venues::binance::coinm::PrivateRestClient;
-use venues::binance::coinm::{BatchOrderRequest, PlaceBatchOrdersRequest, BatchOrderResult};
-use venues::binance::coinm::{
-    OrderSide,
-    OrderType,
-    TimeInForce,
-};
+use venues::binance::coinm::{BatchOrderRequest, BatchOrderResult, PlaceBatchOrdersRequest};
+use venues::binance::coinm::{OrderSide, OrderType, TimeInForce};
 
 pub async fn handle_batch_order_command(
     client: Arc<PrivateRestClient>,
@@ -79,7 +75,7 @@ pub async fn handle_batch_order_command(
     };
 
     let response = client.place_batch_orders(request).await?;
-    
+
     // Print the results
     println!("Batch order placed for {}:", symbol);
     for (i, order) in response.data.iter().enumerate() {

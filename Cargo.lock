@@ -240,6 +240,25 @@ dependencies = [
 ]
 
 [[package]]
+name = "binanceportfoliomargin-example"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "chrono",
+ "clap",
+ "dotenv",
+ "reqwest",
+ "rest",
+ "secrecy",
+ "serde",
+ "serde_json",
+ "tokio",
+ "tracing",
+ "tracing-subscriber",
+ "venues",
+]
+
+[[package]]
 name = "bitflags"
 version = "2.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2828,6 +2847,7 @@ dependencies = [
  "reqwest",
  "rest",
  "rust_decimal",
+ "secrecy",
  "serde",
  "serde_json",
  "serde_urlencoded",

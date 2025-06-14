@@ -225,14 +225,11 @@ pub struct Position {
 
 impl RestClient {
     /// Fetches the user's account information, including assets and positions.
-    /// See: https://developers.binance.com/docs/derivatives/coin-margined-futures/account/rest-api/Account-Information
+    /// See: <https://developers.binance.com/docs/derivatives/coin-margined-futures/account/rest-api/Account-Information>
     /// Corresponds to endpoint GET /dapi/v1/account.
     /// Requires API key authentication.
     /// Weight: 5
-    pub async fn get_account(
-        &self,
-        request: AccountRequest,
-    ) -> RestResult<AccountResponse> {
+    pub async fn get_account(&self, request: AccountRequest) -> RestResult<AccountResponse> {
         self.send_signed_request("/dapi/v1/account", reqwest::Method::GET, request, 5, false)
             .await
     }

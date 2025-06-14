@@ -28,12 +28,9 @@ use hex;
 use hmac::{Hmac, Mac};
 use reqwest::Client;
 use rest::secrets::ExposableSecret;
-use serde::de::DeserializeOwned;
-use serde::Serialize;
 use sha2::Sha256;
 
-use crate::binance::coinm::rest::common::{build_url, send_rest_request};
-use crate::binance::coinm::{RestResult, RestResponse, Errors, RateLimiter};
+use crate::binance::coinm::{Errors, RateLimiter, RestResult};
 use std::borrow::Cow;
 
 /// Represents a successful or error response from the Binance API.
@@ -45,7 +42,6 @@ use std::borrow::Cow;
 //     Ok(T),
 //     Err(ErrorResponse),
 // }
-
 /// Signs a request using the decrypted API secret
 /// Signs a query string using the decrypted API secret and returns the signature as a hex string.
 ///
@@ -54,10 +50,7 @@ use std::borrow::Cow;
 ///
 /// # Returns
 /// A result containing the signature as a hex string or a Hmac error if signing fails.
-fn sign_request(
-    api_secret: &dyn ExposableSecret,
-    query_string: &str,
-) -> Result<String, Errors> {
+fn sign_request(api_secret: &dyn ExposableSecret, query_string: &str) -> Result<String, Errors> {
     let api_secret = api_secret.expose_secret();
     let mut mac = Hmac::<Sha256>::new_from_slice(api_secret.as_bytes())
         .map_err(|_| Errors::InvalidApiKey())?;
@@ -137,14 +130,23 @@ impl RestClient {
     where
         T: serde::de::DeserializeOwned,
     {
-        let url = crate::binance::coinm::rest::common::build_url(&self.base_url, endpoint, query_string)?;
+        let url =
+            crate::binance::coinm::rest::common::build_url(&self.base_url, endpoint, query_string)?;
         let mut headers = vec![];
         if !self.api_key.expose_secret().is_empty() {
             headers.push(("X-MBX-APIKEY", self.api_key.expose_secret()));
         }
-        let body_data = body.map(|b| serde_urlencoded::to_string(b).unwrap());
+        let body_data = match body {
+            Some(b) => Some(serde_urlencoded::to_string(b).map_err(|e| {
+                crate::binance::coinm::Errors::Error(format!("URL encoding error: {}", e))
+            })?),
+            None => None,
+        };
         if body_data.is_some() {
-            headers.push(("Content-Type", "application/x-www-form-urlencoded".to_string()));
+            headers.push((
+                "Content-Type",
+                "application/x-www-form-urlencoded".to_string(),
+            ));
         }
         let rest_response = crate::binance::coinm::rest::common::send_rest_request(
             &self.client,
@@ -155,7 +157,8 @@ impl RestClient {
             &self.rate_limiter,
             weight,
             is_order,
-        ).await?;
+        )
+        .await?;
         Ok(crate::binance::coinm::RestResponse {
             data: rest_response.data,
             request_duration: rest_response.request_duration,
@@ -189,14 +192,28 @@ impl RestClient {
         T: serde::de::DeserializeOwned,
         R: serde::Serialize,
     {
-        let serialized = serde_urlencoded::to_string(&request)
-            .map_err(|e| crate::binance::coinm::Errors::Error(format!("Failed to encode params: {}\nBacktrace:\n{}", e, std::backtrace::Backtrace::capture())))?;
+        let serialized = serde_urlencoded::to_string(&request).map_err(|e| {
+            crate::binance::coinm::Errors::Error(format!(
+                "Failed to encode params: {}\nBacktrace:\n{}",
+                e,
+                std::backtrace::Backtrace::capture()
+            ))
+        })?;
         let signature = sign_request(self.api_secret.as_ref(), &serialized)?;
         let signed = format!("{}&signature={}", serialized, signature);
         if method == reqwest::Method::GET {
-            self.send_request(endpoint, method, Some(&signed), None, weight, is_order).await
+            self.send_request(endpoint, method, Some(&signed), None, weight, is_order)
+                .await
         } else {
-            self.send_request(endpoint, method, None, Some(&[ ("signed", signed.as_str()) ]), weight, is_order).await
+            self.send_request(
+                endpoint,
+                method,
+                None,
+                Some(&[("signed", signed.as_str())]),
+                weight,
+                is_order,
+            )
+            .await
         }
     }
 }

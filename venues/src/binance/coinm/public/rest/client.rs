@@ -5,13 +5,12 @@
 use reqwest::Client;
 use std::borrow::Cow;
 
-use crate::binance::coinm::rest::common::{build_url, send_rest_request};
-use crate::binance::coinm::{RateLimiter, RestResult, RestResponse};
+use crate::binance::coinm::{RateLimiter, RestResult};
 
 #[non_exhaustive]
 #[derive(Debug, Clone)]
 pub struct RestClient {
-    /// The base URL for the Binance Coin-M public REST API (e.g., "https://dapi.binance.com").
+    /// The base URL for the Binance Coin-M public REST API (e.g., "<https://dapi.binance.com>").
     ///
     /// This is used as the prefix for all endpoint requests.
     pub base_url: Cow<'static, str>,
@@ -31,7 +30,7 @@ impl RestClient {
     /// Creates a new Binance Coin-M public REST client.
     ///
     /// # Arguments
-    /// * `base_url` - The base URL for the Binance Coin-M public REST API (e.g., "https://dapi.binance.com").
+    /// * `base_url` - The base URL for the Binance Coin-M public REST API (e.g., "<https://dapi.binance.com>").
     pub fn new(
         base_url: impl Into<Cow<'static, str>>,
         client: Client,
@@ -56,9 +55,15 @@ impl RestClient {
     where
         T: serde::de::DeserializeOwned,
     {
-        let url = crate::binance::coinm::rest::common::build_url(&self.base_url, endpoint, query_string)?;
+        let url =
+            crate::binance::coinm::rest::common::build_url(&self.base_url, endpoint, query_string)?;
         let headers = vec![];
-        let body_data = body.map(|b| serde_urlencoded::to_string(b).unwrap());
+        let body_data = match body {
+            Some(b) => Some(serde_urlencoded::to_string(b).map_err(|e| {
+                crate::binance::coinm::Errors::Error(format!("URL encoding error: {}", e))
+            })?),
+            None => None,
+        };
         let rest_response = crate::binance::coinm::rest::common::send_rest_request(
             &self.client,
             &url,
@@ -68,7 +73,8 @@ impl RestClient {
             &self.rate_limiter,
             weight,
             false,
-        ).await?;
+        )
+        .await?;
         Ok(crate::binance::coinm::RestResponse {
             data: rest_response.data,
             request_duration: rest_response.request_duration,

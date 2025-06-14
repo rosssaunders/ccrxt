@@ -8,31 +8,31 @@ mod request;
 // Re-export modules for new structure
 mod public {
     mod rest;
-    pub use self::rest::RestClient as PublicRestClient;
     pub use self::rest::exchange_info::*;
+    pub use self::rest::RestClient as PublicRestClient;
 }
 
 mod private {
     mod rest;
     // Re-export RestClient so it can be re-exported by the parent
-    pub use self::rest::RestClient as PrivateRestClient;
     pub use self::rest::account::*;
     pub use self::rest::account_trades::*;
+    pub use self::rest::all_orders::*;
     pub use self::rest::batch_order::*;
-    pub use self::rest::order::*;
     pub use self::rest::open_orders::*;
+    pub use self::rest::order::*;
     pub use self::rest::position_risk::*;
     pub use self::rest::query_order::*;
-    pub use self::rest::all_orders::*;
+    pub use self::rest::RestClient as PrivateRestClient;
 }
 
 // Only expose RestClient at the coinm level, not via private::rest
 pub use private::*;
 pub use public::*;
 
-pub use errors::{Errors, ApiError};
-pub use rate_limit::{RateLimiter, RateLimitHeader};
 pub use enums::*;
+pub use errors::{ApiError, Errors};
+pub use rate_limit::{RateLimitHeader, RateLimiter};
 
 pub use crate::binance::coinm::errors::ErrorResponse;
 pub(crate) use crate::binance::coinm::request::execute_request;

@@ -1,12 +1,10 @@
-use serde::{Deserialize};
 use crate::binance::coinm::enums::{
-    ContractType, OrderType, TimeInForce, UnderlyingType, ContractStatus,
+    ContractStatus, ContractType, OrderType, TimeInForce, UnderlyingType,
 };
-use crate::binance::coinm::rate_limit::{
-    RateLimitInterval, RateLimitType,
-};
-use crate::binance::coinm::RestResult;
 use crate::binance::coinm::public::rest::RestClient;
+use crate::binance::coinm::rate_limit::{RateLimitInterval, RateLimitType};
+use crate::binance::coinm::RestResult;
+use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -113,22 +111,22 @@ pub struct PercentPriceFilter {
 pub enum Filter {
     #[serde(rename = "PRICE_FILTER")]
     PriceFilter(PriceFilter),
-    
+
     #[serde(rename = "LOT_SIZE")]
     LotSizeFilter(LotSizeFilter),
-    
+
     #[serde(rename = "MARKET_LOT_SIZE")]
     MarketLotSizeFilter(MarketLotSizeFilter),
-    
+
     #[serde(rename = "MAX_NUM_ORDERS")]
     MaxNumOrdersFilter(MaxNumOrdersFilter),
-    
+
     #[serde(rename = "MAX_NUM_ALGO_ORDERS")]
     MaxNumAlgoOrdersFilter(MaxNumAlgoOrdersFilter),
-    
+
     #[serde(rename = "PERCENT_PRICE")]
     PercentPriceFilter(PercentPriceFilter),
-    
+
     #[serde(other)]
     Unknown,
 }
@@ -155,7 +153,6 @@ pub enum FilterType {
     PriceFilter,
 }
 
-
 #[derive(Debug, Deserialize)]
 pub enum QuoteAsset {
     #[serde(rename = "USD")]
@@ -164,7 +161,7 @@ pub enum QuoteAsset {
 
 /// Represents the response from the Binance Coin-M Futures Exchange Information endpoint.
 ///
-/// See: https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Exchange-Information
+/// See: <https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Exchange-Information>
 #[derive(Debug, Deserialize)]
 pub struct ExchangeInfoResponse {
     /// The timezone of the exchange (e.g., "UTC").
@@ -203,7 +200,7 @@ pub struct RateLimit {
 impl RestClient {
     /// Fetches current exchange trading rules and symbol information.
     ///
-    /// See: https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Exchange-Information
+    /// See: <https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Exchange-Information>
     /// Corresponds to endpoint GET /dapi/v1/exchangeInfo.
     /// Weight: 1
     pub async fn get_exchange_info(&self) -> RestResult<ExchangeInfoResponse> {
@@ -216,4 +213,4 @@ impl RestClient {
         )
         .await
     }
-} 
+}

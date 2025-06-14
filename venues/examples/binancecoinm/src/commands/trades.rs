@@ -1,25 +1,25 @@
-use std::sync::Arc;
-use tabled::{Table, Tabled, settings::Style};
 use chrono::Utc;
+use std::sync::Arc;
+use tabled::{settings::Style, Table, Tabled};
 
-use venues::binance::coinm::PrivateRestClient;
 use venues::binance::coinm::AccountTradeListRequest;
 use venues::binance::coinm::Errors;
+use venues::binance::coinm::PrivateRestClient;
 
 #[derive(Tabled)]
 pub struct TradeRow {
     #[tabled(rename = "Trade ID")]
     pub id: u64,
-    
+
     #[tabled(rename = "Side")]
     pub side: String,
-    
+
     #[tabled(rename = "Price")]
     pub price: String,
-    
+
     #[tabled(rename = "Quantity")]
     pub quantity: String,
-    
+
     #[tabled(rename = "Time")]
     pub time: String,
 }
@@ -30,7 +30,7 @@ pub async fn handle_trades_command(
     limit: u32,
 ) -> Result<(), Errors> {
     let mut trades = Vec::new();
-    let mut from_id = 0 as u64;
+    let mut from_id = 0_u64;
     let mut page_count = 0;
     const MAX_PAGES: u32 = 1000;
 
@@ -64,7 +64,8 @@ pub async fn handle_trades_command(
         page_count += 1;
     }
 
-    let mut rows: Vec<TradeRow> = trades.iter()
+    let mut rows: Vec<TradeRow> = trades
+        .iter()
         .map(|trade| TradeRow {
             id: trade.id,
             side: format!("{:?}", trade.side),
@@ -82,4 +83,4 @@ pub async fn handle_trades_command(
     println!("{}", table);
 
     Ok(())
-} 
+}

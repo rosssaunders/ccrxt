@@ -1,9 +1,9 @@
 // Query Order endpoint implementation for GET /dapi/v1/order
-// See: https://binance-docs.github.io/apidocs/delivery/en/#query-order-user_data
+// See: https://binance-docs.github.io/apidocs/delivery/en/>
 
-use serde::{Deserialize, Serialize};
 use crate::binance::coinm::private::rest::client::RestClient;
 use crate::binance::coinm::RestResult;
+use serde::{Deserialize, Serialize};
 
 /// Request parameters for querying an order (GET /dapi/v1/order).
 #[derive(Debug, Clone, Serialize, Default)]
@@ -81,7 +81,7 @@ pub struct QueryOrderResponse {
 impl RestClient {
     /// Query an order's status on Binance Coin-M Futures.
     ///
-    /// See: https://binance-docs.github.io/apidocs/delivery/en/#query-order-user_data
+    /// See: <https://binance-docs.github.io/apidocs/delivery/en/>
     /// GET /dapi/v1/order
     /// Weight: 1
     /// Requires API key and signature.

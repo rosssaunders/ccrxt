@@ -37,11 +37,18 @@ nonzero_ext = "0.3"
 binance_macros = { path = "../binance_macros" }
 url.workspace = true
 num_enum = "0.7.3"
+secrecy = "0.10.3"
 
 [lints]
 workspace = true
 
+[[example]]
+name = "cryptocom_rate_limit"
+path = "examples/cryptocom/rate_limit_example.rs"
 
+[[example]]
+name = "okx_get_underlying"
+path = "examples/okx/get_underlying.rs"
 
 [dev-dependencies]
 tokio-test = "0.4"
