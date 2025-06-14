@@ -132,6 +132,7 @@ mod tests {
 
     /// A plain text implementation of ExposableSecret for testing purposes.
     #[derive(Clone)]
+    #[allow(dead_code)]
     struct PlainTextSecret {
         secret: String,
     }
@@ -143,6 +144,7 @@ mod tests {
     }
 
     impl PlainTextSecret {
+        #[allow(dead_code)]
         fn new(secret: String) -> Self {
             Self { secret }
         }
@@ -284,8 +286,8 @@ mod tests {
 
         let response: GetOrderListResponse = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.data.len(), 1);
-        assert_eq!(response.data[0].order_id, "4611686018427387905");
-        assert_eq!(response.data[0].contingency_type, ContingencyType::Oco);
+        assert_eq!(response.data.first().unwrap().order_id, "4611686018427387905");
+        assert_eq!(response.data.first().unwrap().contingency_type, ContingencyType::Oco);
     }
 
     #[test]

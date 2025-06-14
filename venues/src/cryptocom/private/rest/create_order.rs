@@ -59,6 +59,7 @@ pub struct CreateOrderRequest {
 
 /// Response for creating a new order
 #[derive(Debug, Clone, Deserialize)]
+#[allow(dead_code)]
 pub struct CreateOrderResponse {
     /// Newly created order ID
     pub order_id: String,
@@ -118,6 +119,7 @@ mod tests {
 
     /// A plain text implementation of ExposableSecret for testing purposes.
     #[derive(Clone)]
+    #[allow(dead_code)]
     struct PlainTextSecret {
         secret: String,
     }
@@ -129,6 +131,7 @@ mod tests {
     }
 
     impl PlainTextSecret {
+        #[allow(dead_code)]
         fn new(secret: String) -> Self {
             Self { secret }
         }

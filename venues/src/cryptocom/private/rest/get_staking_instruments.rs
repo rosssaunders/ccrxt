@@ -108,6 +108,7 @@ mod tests {
 
     /// A plain text implementation of ExposableSecret for testing purposes.
     #[derive(Clone)]
+    #[allow(dead_code)]
     struct PlainTextSecret {
         secret: String,
     }
@@ -119,6 +120,7 @@ mod tests {
     }
 
     impl PlainTextSecret {
+        #[allow(dead_code)]
         fn new(secret: String) -> Self {
             Self { secret }
         }
@@ -193,7 +195,7 @@ mod tests {
         assert!(!instrument.is_compound_reward);
         assert_eq!(instrument.additional_rewards.len(), 1);
         assert_eq!(
-            instrument.additional_rewards[0].reward_inst_name,
+            instrument.additional_rewards.first().unwrap().reward_inst_name,
             "USD_Stable_Coin"
         );
     }
@@ -246,8 +248,8 @@ mod tests {
         let response: GetStakingInstrumentsResponse =
             serde_json::from_value(response_json).unwrap();
         assert_eq!(response.data.len(), 2);
-        assert_eq!(response.data[0].instrument_name, "SOL.staked");
-        assert_eq!(response.data[1].instrument_name, "DYDX.staked");
-        assert_eq!(response.data[1].additional_rewards.len(), 1);
+        assert_eq!(response.data.first().unwrap().instrument_name, "SOL.staked");
+        assert_eq!(response.data.get(1).unwrap().instrument_name, "DYDX.staked");
+        assert_eq!(response.data.get(1).unwrap().additional_rewards.len(), 1);
     }
 }

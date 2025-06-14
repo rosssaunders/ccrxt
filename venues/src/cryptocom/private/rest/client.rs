@@ -160,6 +160,7 @@ mod tests {
     /// **WARNING**: This implementation stores the secret in plain text and should
     /// only be used for testing. Never use this in production code.
     #[derive(Clone)]
+    #[allow(dead_code)]
     struct PlainTextSecret {
         secret: String,
     }
@@ -177,6 +178,7 @@ mod tests {
         ///
         /// # Arguments
         /// * `secret` - The secret value to store in plain text
+        #[allow(dead_code)]
         fn new(secret: String) -> Self {
             Self { secret }
         }
@@ -202,8 +204,8 @@ mod tests {
         let value = json!(42);
         assert_eq!(params_to_string(&value), "42");
 
-        let value = json!(3.14);
-        assert_eq!(params_to_string(&value), "3.14");
+        let value = json!(3.15);
+        assert_eq!(params_to_string(&value), "3.15");
     }
 
     #[test]
@@ -264,7 +266,7 @@ mod tests {
 
     #[test]
     fn test_sign_request() {
-        let api_key =
+        let _api_key =
             Box::new(PlainTextSecret::new("test_api_key".to_string())) as Box<dyn ExposableSecret>;
         let api_secret =
             Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;

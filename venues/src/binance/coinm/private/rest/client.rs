@@ -42,7 +42,6 @@ use std::borrow::Cow;
 //     Ok(T),
 //     Err(ErrorResponse),
 // }
-
 /// Signs a request using the decrypted API secret
 /// Signs a query string using the decrypted API secret and returns the signature as a hex string.
 ///

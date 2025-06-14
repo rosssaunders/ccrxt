@@ -122,6 +122,7 @@ mod tests {
 
     /// A plain text implementation of ExposableSecret for testing purposes.
     #[derive(Clone)]
+    #[allow(dead_code)]
     struct PlainTextSecret {
         secret: String,
     }
@@ -133,6 +134,7 @@ mod tests {
     }
 
     impl PlainTextSecret {
+        #[allow(dead_code)]
         fn new(secret: String) -> Self {
             Self { secret }
         }
@@ -204,8 +206,8 @@ mod tests {
 
         let response: GetRewardHistoryResponse = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.data.len(), 1);
-        assert_eq!(response.data[0].staking_inst_name, "SOL.staked");
-        assert_eq!(response.data[0].reward_quantity, "123.4567");
+        assert_eq!(response.data.first().unwrap().staking_inst_name, "SOL.staked");
+        assert_eq!(response.data.first().unwrap().reward_quantity, "123.4567");
     }
 
     #[test]
@@ -233,10 +235,10 @@ mod tests {
 
         let response: GetRewardHistoryResponse = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.data.len(), 2);
-        assert_eq!(response.data[0].staking_inst_name, "SOL.staked");
-        assert_eq!(response.data[1].staking_inst_name, "ETH.staked");
-        assert_eq!(response.data[0].reward_quantity, "50.0");
-        assert_eq!(response.data[1].reward_quantity, "0.125");
+        assert_eq!(response.data.first().unwrap().staking_inst_name, "SOL.staked");
+        assert_eq!(response.data.get(1).unwrap().staking_inst_name, "ETH.staked");
+        assert_eq!(response.data.first().unwrap().reward_quantity, "50.0");
+        assert_eq!(response.data.get(1).unwrap().reward_quantity, "0.125");
     }
 
     #[test]

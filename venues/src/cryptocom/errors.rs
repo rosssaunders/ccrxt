@@ -436,6 +436,7 @@ impl From<ErrorResponse> for ApiError {
 }
 
 #[cfg(test)]
+#[allow(clippy::assertions_on_constants)]
 mod tests {
     use super::*;
 
@@ -449,7 +450,7 @@ mod tests {
         let api_error: ApiError = error_response.into();
         match api_error {
             ApiError::Success => {}
-            _ => panic!("Expected Success variant"),
+            _ => assert!(false, "Expected Success variant"),
         }
     }
 
@@ -484,14 +485,15 @@ mod tests {
                     if let ApiError::NoPosition = api_error {
                         // Expected
                     } else {
-                        panic!("Expected NoPosition for code 201, got {:?}", api_error);
+                        assert!(false, "Expected NoPosition for code 201, got {:?}", api_error);
                     }
                 }
                 202 => {
                     if let ApiError::AccountIsSuspended = api_error {
                         // Expected
                     } else {
-                        panic!(
+                        assert!(
+                            false,
                             "Expected AccountIsSuspended for code 202, got {:?}",
                             api_error
                         );
@@ -564,7 +566,8 @@ mod tests {
         if let ApiError::DwCreditLineNotMaintained = api_error_1 {
             // Expected
         } else {
-            panic!(
+            assert!(
+                false,
                 "Expected DwCreditLineNotMaintained for specific message, got {:?}",
                 api_error_1
             );
@@ -579,7 +582,8 @@ mod tests {
         if let ApiError::ErrInternal = api_error_2 {
             // Expected
         } else {
-            panic!(
+            assert!(
+                false,
                 "Expected ErrInternal for specific message, got {:?}",
                 api_error_2
             );
@@ -596,7 +600,8 @@ mod tests {
             assert_eq!(code, 50001);
             assert_eq!(message, "Some unknown error");
         } else {
-            panic!(
+            assert!(
+                false,
                 "Expected UnmappedApiError for unknown message, got {:?}",
                 api_error_3
             );
@@ -615,7 +620,8 @@ mod tests {
             assert_eq!(code, 99999);
             assert_eq!(message, "Unknown error");
         } else {
-            panic!(
+            assert!(
+                false,
                 "Expected UnmappedApiError for unknown code, got {:?}",
                 api_error
             );
@@ -656,7 +662,7 @@ mod tests {
 
             // Ensure we don't get UnmappedApiError for known codes
             if let ApiError::UnmappedApiError { .. } = api_error {
-                panic!("Code {} should be mapped but got UnmappedApiError", code);
+                assert!(false, "Code {} should be mapped but got UnmappedApiError", code);
             }
 
             // Ensure error message is not empty

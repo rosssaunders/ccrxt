@@ -122,6 +122,7 @@ mod tests {
 
     /// A plain text implementation of ExposableSecret for testing purposes.
     #[derive(Clone)]
+    #[allow(dead_code)]
     struct PlainTextSecret {
         secret: String,
     }
@@ -133,6 +134,7 @@ mod tests {
     }
 
     impl PlainTextSecret {
+        #[allow(dead_code)]
         fn new(secret: String) -> Self {
             Self { secret }
         }
@@ -249,8 +251,8 @@ mod tests {
 
         let response: GetOpenConvertResponse = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.data.len(), 1);
-        assert_eq!(response.data[0].from_instrument_name, "ETH.staked");
-        assert_eq!(response.data[0].status, "COMPLETED");
+        assert_eq!(response.data.first().unwrap().from_instrument_name, "ETH.staked");
+        assert_eq!(response.data.first().unwrap().status, "COMPLETED");
     }
 
     #[test]
@@ -286,10 +288,10 @@ mod tests {
 
         let response: GetOpenConvertResponse = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.data.len(), 2);
-        assert_eq!(response.data[0].status, "COMPLETED");
-        assert_eq!(response.data[1].status, "NEW");
-        assert_eq!(response.data[0].convert_id, 1);
-        assert_eq!(response.data[1].convert_id, 2);
+        assert_eq!(response.data.first().unwrap().status, "COMPLETED");
+        assert_eq!(response.data.get(1).unwrap().status, "NEW");
+        assert_eq!(response.data.first().unwrap().convert_id, 1);
+        assert_eq!(response.data.get(1).unwrap().convert_id, 2);
     }
 
     #[test]

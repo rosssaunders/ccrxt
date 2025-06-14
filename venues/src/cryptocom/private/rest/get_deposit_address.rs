@@ -87,6 +87,7 @@ mod tests {
 
     /// A plain text implementation of ExposableSecret for testing purposes.
     #[derive(Clone)]
+    #[allow(dead_code)]
     struct PlainTextSecret {
         secret: String,
     }
@@ -98,6 +99,7 @@ mod tests {
     }
 
     impl PlainTextSecret {
+        #[allow(dead_code)]
         fn new(secret: String) -> Self {
             Self { secret }
         }
@@ -185,12 +187,12 @@ mod tests {
         let response: GetDepositAddressResponse = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.deposit_address_list.len(), 2);
 
-        let cro_address = &response.deposit_address_list[0];
+        let cro_address = &response.deposit_address_list.first().unwrap();
         assert_eq!(cro_address.currency, "CRO");
         assert_eq!(cro_address.network, "CRO");
         assert_eq!(cro_address.status, "1");
 
-        let eth_address = &response.deposit_address_list[1];
+        let eth_address = &response.deposit_address_list.get(1).unwrap();
         assert_eq!(eth_address.currency, "CRO");
         assert_eq!(eth_address.network, "ETH");
         assert_eq!(eth_address.status, "1");

@@ -145,6 +145,7 @@ mod tests {
 
     /// A plain text implementation of ExposableSecret for testing purposes.
     #[derive(Clone)]
+    #[allow(dead_code)]
     struct PlainTextSecret {
         secret: String,
     }
@@ -156,6 +157,7 @@ mod tests {
     }
 
     impl PlainTextSecret {
+        #[allow(dead_code)]
         fn new(secret: String) -> Self {
             Self { secret }
         }
@@ -217,9 +219,9 @@ mod tests {
         let request: CreateOrderListRequest = serde_json::from_value(request_json).unwrap();
         assert_eq!(request.contingency_type, ContingencyType::List);
         assert_eq!(request.order_list.len(), 2);
-        assert_eq!(request.order_list[0].instrument_name, "ETH_CRO");
+        assert_eq!(request.order_list.first().unwrap().instrument_name, "ETH_CRO");
         assert_eq!(
-            request.order_list[1].client_oid,
+            request.order_list.get(1).unwrap().client_oid,
             Some("my_order_0002".to_string())
         );
     }
@@ -245,14 +247,14 @@ mod tests {
 
         let response: CreateOrderListResponse = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.result_list.len(), 2);
-        assert_eq!(response.result_list[0].index, 0);
-        assert_eq!(response.result_list[0].code, 0);
+        assert_eq!(response.result_list.first().unwrap().index, 0);
+        assert_eq!(response.result_list.first().unwrap().code, 0);
         assert_eq!(
-            response.result_list[0].order_id,
+            response.result_list.first().unwrap().order_id,
             Some("2015106383706015873".to_string())
         );
         assert_eq!(
-            response.result_list[1].client_oid,
+            response.result_list.get(1).unwrap().client_oid,
             Some("my_order_0002".to_string())
         );
     }
@@ -278,13 +280,13 @@ mod tests {
 
         let response: CreateOrderListResponse = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.result_list.len(), 2);
-        assert_eq!(response.result_list[0].code, 0);
-        assert_eq!(response.result_list[1].code, 20007);
+        assert_eq!(response.result_list.first().unwrap().code, 0);
+        assert_eq!(response.result_list.get(1).unwrap().code, 20007);
         assert_eq!(
-            response.result_list[1].message,
+            response.result_list.get(1).unwrap().message,
             Some("INVALID_REQUEST".to_string())
         );
-        assert!(response.result_list[1].order_id.is_none());
+        assert!(response.result_list.get(1).unwrap().order_id.is_none());
     }
 
     #[test]
@@ -312,9 +314,9 @@ mod tests {
         let request: CreateOrderListRequest = serde_json::from_value(request_json).unwrap();
         assert_eq!(request.contingency_type, ContingencyType::Oco);
         assert_eq!(request.order_list.len(), 2);
-        assert_eq!(request.order_list[0].order_type, OrderType::Limit);
-        assert_eq!(request.order_list[1].order_type, OrderType::StopLoss);
-        assert_eq!(request.order_list[1].ref_price, Some("19000".to_string()));
+        assert_eq!(request.order_list.first().unwrap().order_type, OrderType::Limit);
+        assert_eq!(request.order_list.get(1).unwrap().order_type, OrderType::StopLoss);
+        assert_eq!(request.order_list.get(1).unwrap().ref_price, Some("19000".to_string()));
     }
 
     #[test]

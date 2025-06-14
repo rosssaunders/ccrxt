@@ -5,7 +5,7 @@
 use reqwest::Client;
 use std::borrow::Cow;
 
-use crate::binance::usdm::{RateLimiter, RestResult};
+use crate::binance::usdm::{Errors, RateLimiter, RestResult};
 
 #[non_exhaustive]
 #[derive(Debug, Clone)]
@@ -58,7 +58,7 @@ impl RestClient {
         let url =
             crate::binance::usdm::rest::common::build_url(&self.base_url, endpoint, query_string)?;
         let headers = vec![];
-        let body_data = body.map(|b| serde_urlencoded::to_string(b).unwrap());
+        let body_data = body.map(|b| serde_urlencoded::to_string(b).map_err(|e| Errors::Error(format!("Failed to serialize body: {}", e)))).transpose()?;
         let rest_response = crate::binance::usdm::rest::common::send_rest_request(
             &self.client,
             &url,

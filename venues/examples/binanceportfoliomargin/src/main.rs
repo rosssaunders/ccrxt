@@ -25,7 +25,7 @@ async fn main() -> Result<()> {
     let api_secret =
         std::env::var("BINANCE_API_SECRET").unwrap_or_else(|_| "your_api_secret".to_string());
 
-    let portfolio_margin_client = PrivateRestClient::new(
+    let _portfolio_margin_client = PrivateRestClient::new(
         Box::new(SecretValue::new(SecretString::from(api_key))),
         Box::new(SecretValue::new(SecretString::from(api_secret))),
         "https://papi.binance.com",

@@ -4,6 +4,7 @@
 /// The error types can be used to handle API responses and provide meaningful
 /// error messages to users or for logging purposes.
 #[cfg(test)]
+#[allow(clippy::assertions_on_constants)]
 mod example {
     use crate::cryptocom::{ApiError, ErrorResponse, Errors, PrivateRestClient, RestResult};
     use serde_json::json;
@@ -39,7 +40,7 @@ mod example {
                 // Handle authentication error
                 println!("Authentication failed - check API credentials");
             }
-            _ => panic!("Expected authentication error"),
+            _ => assert!(false, "Expected authentication error"),
         }
 
         // Example 3: Rate limit error
@@ -49,7 +50,7 @@ mod example {
                 // Handle rate limit error
                 println!("Rate limit exceeded - implement backoff strategy");
             }
-            _ => panic!("Expected rate limit error"),
+            _ => assert!(false, "Expected rate limit error"),
         }
 
         // Example 4: Invalid order error
@@ -59,7 +60,7 @@ mod example {
                 // Handle validation error
                 println!("Order validation failed - check order parameters");
             }
-            _ => panic!("Expected order validation error"),
+            _ => assert!(false, "Expected order validation error"),
         }
 
         // Example 5: Unknown error code (falls back to UnmappedApiError)
@@ -70,7 +71,7 @@ mod example {
                 assert_eq!(code, 99999);
                 assert_eq!(message, "Unknown error");
             }
-            _ => panic!("Expected unmapped error"),
+            _ => assert!(false, "Expected unmapped error"),
         }
     }
 
@@ -133,7 +134,7 @@ mod example {
                 println!("Generated signature: {}", sig);
                 assert_eq!(sig.len(), 64); // HMAC-SHA256 produces 64 hex chars
             }
-            Err(e) => panic!("Failed to sign request: {}", e),
+            Err(e) => assert!(false, "Failed to sign request: {}", e),
         }
 
         // Example 2: Sign a create-order request

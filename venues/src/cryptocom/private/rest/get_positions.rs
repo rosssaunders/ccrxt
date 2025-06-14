@@ -97,6 +97,7 @@ mod tests {
 
     /// A plain text implementation of ExposableSecret for testing purposes.
     #[derive(Clone)]
+    #[allow(dead_code)]
     struct PlainTextSecret {
         secret: String,
     }
@@ -108,6 +109,7 @@ mod tests {
     }
 
     impl PlainTextSecret {
+        #[allow(dead_code)]
         fn new(secret: String) -> Self {
             Self { secret }
         }
@@ -189,12 +191,12 @@ mod tests {
 
         let response: GetPositionsResponse = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.data.len(), 2);
-        assert_eq!(response.data[0].account_id, "account-1");
-        assert_eq!(response.data[0].instrument_name, "BTCUSD-PERP");
-        assert_eq!(response.data[0].quantity, "0.5000");
-        assert_eq!(response.data[1].account_id, "account-2");
-        assert_eq!(response.data[1].instrument_name, "ETHUSD-PERP");
-        assert_eq!(response.data[1].quantity, "-1.0000");
+        assert_eq!(response.data.first().unwrap().account_id, "account-1");
+        assert_eq!(response.data.first().unwrap().instrument_name, "BTCUSD-PERP");
+        assert_eq!(response.data.first().unwrap().quantity, "0.5000");
+        assert_eq!(response.data.get(1).unwrap().account_id, "account-2");
+        assert_eq!(response.data.get(1).unwrap().instrument_name, "ETHUSD-PERP");
+        assert_eq!(response.data.get(1).unwrap().quantity, "-1.0000");
     }
 
     #[test]

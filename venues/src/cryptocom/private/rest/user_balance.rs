@@ -117,6 +117,7 @@ mod tests {
 
     /// A plain text implementation of ExposableSecret for testing purposes.
     #[derive(Clone)]
+    #[allow(dead_code)]
     struct PlainTextSecret {
         secret: String,
     }
@@ -128,6 +129,7 @@ mod tests {
     }
 
     impl PlainTextSecret {
+        #[allow(dead_code)]
         fn new(secret: String) -> Self {
             Self { secret }
         }
@@ -190,7 +192,7 @@ mod tests {
         assert_eq!(balance.instrument_name, "USD");
         assert!(!balance.is_liquidating);
         assert_eq!(balance.position_balances.len(), 1);
-        assert_eq!(balance.position_balances[0].instrument_name, "CRO");
+        assert_eq!(balance.position_balances.first().unwrap().instrument_name, "CRO");
     }
 
     #[test]
@@ -221,7 +223,7 @@ mod tests {
 
         let response: UserBalanceResponse = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.data.len(), 1);
-        assert_eq!(response.data[0].instrument_name, "USD");
-        assert!(!response.data[0].is_liquidating);
+        assert_eq!(response.data.first().unwrap().instrument_name, "USD");
+        assert!(!response.data.first().unwrap().is_liquidating);
     }
 }

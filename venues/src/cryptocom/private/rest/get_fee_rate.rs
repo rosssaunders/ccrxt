@@ -5,6 +5,7 @@ use serde_json::{json, Value};
 
 /// Fee rate information for user's account
 #[derive(Debug, Clone, Deserialize)]
+#[allow(dead_code)]
 pub struct FeeRate {
     /// 30-day spot trading volume tier
     pub spot_tier: String,
@@ -66,6 +67,7 @@ mod tests {
 
     /// A plain text implementation of ExposableSecret for testing purposes.
     #[derive(Clone)]
+    #[allow(dead_code)]
     struct PlainTextSecret {
         secret: String,
     }
@@ -77,6 +79,7 @@ mod tests {
     }
 
     impl PlainTextSecret {
+        #[allow(dead_code)]
         fn new(secret: String) -> Self {
             Self { secret }
         }
