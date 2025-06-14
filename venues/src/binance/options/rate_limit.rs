@@ -165,7 +165,7 @@ impl RateLimiter {
 
     /// Helper to trim timestamps older than a cutoff from a VecDeque
     fn trim_older_than(buf: &mut VecDeque<Instant>, cutoff: Instant) {
-        while buf.front().map_or(false, |&ts| ts < cutoff) {
+        while buf.front().is_some_and(|&ts| ts < cutoff) {
             buf.pop_front();
         }
     }

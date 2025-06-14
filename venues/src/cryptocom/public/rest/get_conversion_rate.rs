@@ -61,7 +61,7 @@ mod tests {
         };
 
         let json_value = serde_json::to_value(request).unwrap();
-        assert_eq!(json_value["instrument_name"], "CDCETH");
+        assert_eq!(json_value.get("instrument_name").unwrap(), "CDCETH");
     }
 
     #[test]

@@ -71,7 +71,7 @@ impl RestClient {
 
         let response = self
             .client
-            .post(&format!(
+            .post(format!(
                 "{}/v1/private/create-subaccount-transfer",
                 self.base_url
             ))
@@ -118,10 +118,10 @@ mod tests {
         };
 
         let json_value = serde_json::to_value(request).unwrap();
-        assert_eq!(json_value["from"], "12345678-0000-0000-0000-000000000001");
-        assert_eq!(json_value["to"], "12345678-0000-0000-0000-000000000002");
-        assert_eq!(json_value["currency"], "CRO");
-        assert_eq!(json_value["amount"], "500.00");
+        assert_eq!(json_value.get("from").unwrap(), "12345678-0000-0000-0000-000000000001");
+        assert_eq!(json_value.get("to").unwrap(), "12345678-0000-0000-0000-000000000002");
+        assert_eq!(json_value.get("currency").unwrap(), "CRO");
+        assert_eq!(json_value.get("amount").unwrap(), "500.00");
     }
 
     #[test]
@@ -176,8 +176,8 @@ mod tests {
         };
 
         let json_value = serde_json::to_value(btc_request).unwrap();
-        assert_eq!(json_value["currency"], "BTC");
-        assert_eq!(json_value["amount"], "0.00123456");
+        assert_eq!(json_value.get("currency").unwrap(), "BTC");
+        assert_eq!(json_value.get("amount").unwrap(), "0.00123456");
 
         let usdt_request = CreateSubaccountTransferRequest {
             from: "sub-account".to_string(),
@@ -187,8 +187,8 @@ mod tests {
         };
 
         let json_value = serde_json::to_value(usdt_request).unwrap();
-        assert_eq!(json_value["currency"], "USDT");
-        assert_eq!(json_value["amount"], "250.5");
+        assert_eq!(json_value.get("currency").unwrap(), "USDT");
+        assert_eq!(json_value.get("amount").unwrap(), "250.5");
     }
 
     #[test]
@@ -202,6 +202,6 @@ mod tests {
 
         // Should serialize even with empty from field
         let json_value = serde_json::to_value(request).unwrap();
-        assert_eq!(json_value["from"], "");
+        assert_eq!(json_value.get("from").unwrap(), "");
     }
 }

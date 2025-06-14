@@ -473,7 +473,7 @@ mod tests {
             // Test that the error message contains expected content
             let error_string = format!("{}", api_error);
             assert!(
-                error_string.len() > 0,
+                !error_string.is_empty(),
                 "Error message should not be empty for code {}",
                 code
             );
@@ -520,7 +520,7 @@ mod tests {
             let api_error: ApiError = error_response.into();
             let error_string = format!("{}", api_error);
             assert!(
-                error_string.len() > 0,
+                !error_string.is_empty(),
                 "Error message should not be empty for code {}",
                 code
             );
@@ -545,7 +545,7 @@ mod tests {
             let api_error: ApiError = error_response.into();
             let error_string = format!("{}", api_error);
             assert!(
-                error_string.len() > 0,
+                !error_string.is_empty(),
                 "Error message should not be empty for code {}",
                 code
             );
@@ -662,7 +662,7 @@ mod tests {
             // Ensure error message is not empty
             let error_string = format!("{}", api_error);
             assert!(
-                error_string.len() > 0,
+                !error_string.is_empty(),
                 "Error message should not be empty for code {}",
                 code
             );

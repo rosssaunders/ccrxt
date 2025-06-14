@@ -113,8 +113,8 @@ mod tests {
             "valuation_type": "index_price",
             "count": 10
         });
-        assert_eq!(params["instrument_name"], "BTCUSD-INDEX");
-        assert_eq!(params["valuation_type"], "index_price");
-        assert_eq!(params["count"], 10);
+        assert_eq!(params.get("instrument_name").unwrap(), "BTCUSD-INDEX");
+        assert_eq!(params.get("valuation_type").unwrap(), "index_price");
+        assert_eq!(params.get("count").unwrap(), 10);
     }
 }

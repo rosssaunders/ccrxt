@@ -60,6 +60,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Subaccount balance information for all sub-accounts
+    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
     pub async fn get_subaccount_balances(&self) -> RestResult<Value> {
         let nonce = chrono::Utc::now().timestamp_millis() as u64;
         let id = 1;
@@ -78,7 +79,7 @@ impl RestClient {
 
         let response = self
             .client
-            .post(&format!(
+            .post(format!(
                 "{}/v1/private/get-subaccount-balances",
                 self.base_url
             ))
@@ -139,7 +140,7 @@ mod tests {
         let balance: SubaccountBalance = serde_json::from_value(balance_json).unwrap();
         assert_eq!(balance.account, "a0d206a1-6b06-47c5-9cd3-8bc6ef0915c5");
         assert_eq!(balance.instrument_name, Some("USD".to_string()));
-        assert_eq!(balance.is_liquidating, false);
+        assert!(!balance.is_liquidating);
         assert_eq!(balance.position_balances.len(), 0);
         assert_eq!(balance.total_available_balance, "0.00000000");
     }

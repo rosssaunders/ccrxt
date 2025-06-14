@@ -3,7 +3,6 @@
 /// This example shows how to use the Crypto.com error codes in real applications.
 /// The error types can be used to handle API responses and provide meaningful
 /// error messages to users or for logging purposes.
-
 #[cfg(test)]
 mod example {
     use crate::cryptocom::{ApiError, ErrorResponse, Errors, PrivateRestClient, RestResult};

@@ -28,12 +28,9 @@ use hex;
 use hmac::{Hmac, Mac};
 use reqwest::Client;
 use rest::secrets::ExposableSecret;
-use serde::de::DeserializeOwned;
-use serde::Serialize;
 use sha2::Sha256;
 
-use crate::binance::portfolio::rest::common::{build_url, send_rest_request};
-use crate::binance::portfolio::{Errors, RateLimiter, RestResponse, RestResult};
+use crate::binance::portfolio::{Errors, RateLimiter, RestResult};
 use std::borrow::Cow;
 
 /// Signs a request using the decrypted API secret

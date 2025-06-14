@@ -92,6 +92,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Trade history information
+    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
     pub async fn get_trades(
         &self,
         instrument_name: Option<String>,
@@ -129,7 +130,7 @@ impl RestClient {
 
         let response = self
             .client
-            .post(&format!("{}/v1/private/get-trades", self.base_url))
+            .post(format!("{}/v1/private/get-trades", self.base_url))
             .json(&request_body)
             .send()
             .await?;
@@ -206,10 +207,10 @@ mod tests {
         };
 
         let json_value = serde_json::to_value(request).unwrap();
-        assert_eq!(json_value["instrument_name"], "BTCUSD-PERP");
-        assert_eq!(json_value["start_time"], "1619089031996081486");
-        assert_eq!(json_value["end_time"], "1619200052124211357");
-        assert_eq!(json_value["limit"], 20);
+        assert_eq!(json_value.get("instrument_name").unwrap(), "BTCUSD-PERP");
+        assert_eq!(json_value.get("start_time").unwrap(), "1619089031996081486");
+        assert_eq!(json_value.get("end_time").unwrap(), "1619200052124211357");
+        assert_eq!(json_value.get("limit").unwrap(), 20);
     }
 
     #[test]
@@ -235,8 +236,8 @@ mod tests {
         };
 
         let json_value = serde_json::to_value(request).unwrap();
-        assert_eq!(json_value["instrument_name"], "BTCUSD-PERP");
-        assert_eq!(json_value["end_time"], "1619200052124211357");
+        assert_eq!(json_value.get("instrument_name").unwrap(), "BTCUSD-PERP");
+        assert_eq!(json_value.get("end_time").unwrap(), "1619200052124211357");
         assert!(!json_value.as_object().unwrap().contains_key("start_time"));
         assert!(!json_value.as_object().unwrap().contains_key("limit"));
     }

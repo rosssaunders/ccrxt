@@ -1,6 +1,6 @@
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 use serde_json::{json, Value};
 
 /// Account settings information
@@ -33,6 +33,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Account settings information
+    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
     pub async fn get_account_settings(&self) -> RestResult<Value> {
         let nonce = chrono::Utc::now().timestamp_millis() as u64;
         let id = 1;
@@ -51,7 +52,7 @@ impl RestClient {
 
         let response = self
             .client
-            .post(&format!(
+            .post(format!(
                 "{}/v1/private/get-account-settings",
                 self.base_url
             ))

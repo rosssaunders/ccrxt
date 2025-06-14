@@ -65,6 +65,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Open convert requests with status, rates, and timestamps
+    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
     pub async fn get_open_convert(
         &self,
         start_time: Option<u64>,
@@ -100,7 +101,7 @@ impl RestClient {
 
         let response = self
             .client
-            .post(&format!(
+            .post(format!(
                 "{}/v1/private/staking/get-open-convert",
                 self.base_url
             ))
@@ -158,9 +159,9 @@ mod tests {
         };
 
         let json_value = serde_json::to_value(request).unwrap();
-        assert_eq!(json_value["start_time"], 1691455454495_u64);
-        assert_eq!(json_value["end_time"], 1691545277000_u64);
-        assert_eq!(json_value["limit"], "10");
+        assert_eq!(json_value.get("start_time").unwrap(), 1691455454495_u64);
+        assert_eq!(json_value.get("end_time").unwrap(), 1691545277000_u64);
+        assert_eq!(json_value.get("limit").unwrap(), "10");
     }
 
     #[test]
@@ -172,9 +173,9 @@ mod tests {
         };
 
         let json_value = serde_json::to_value(request).unwrap();
-        assert_eq!(json_value["start_time"], 1691455454495_u64);
+        assert_eq!(json_value.get("start_time").unwrap(), 1691455454495_u64);
         assert!(json_value.get("end_time").is_none());
-        assert_eq!(json_value["limit"], "50");
+        assert_eq!(json_value.get("limit").unwrap(), "50");
     }
 
     #[test]

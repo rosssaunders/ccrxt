@@ -127,7 +127,7 @@ impl RestClient {
 
         let response = self
             .client
-            .post(&format!("{}/v1/private/create-order-list", self.base_url))
+            .post(format!("{}/v1/private/create-order-list", self.base_url))
             .json(&request_body)
             .send()
             .await?;
@@ -367,9 +367,9 @@ mod tests {
         };
 
         let serialized = serde_json::to_value(&order).unwrap();
-        assert_eq!(serialized["instrument_name"], "BTC_USDT");
-        assert_eq!(serialized["side"], "BUY");
-        assert_eq!(serialized["type"], "LIMIT");
+        assert_eq!(serialized.get("instrument_name").unwrap(), "BTC_USDT");
+        assert_eq!(serialized.get("side").unwrap(), "BUY");
+        assert_eq!(serialized.get("type").unwrap(), "LIMIT");
         assert!(!serialized.as_object().unwrap().contains_key("notional"));
         assert!(!serialized
             .as_object()

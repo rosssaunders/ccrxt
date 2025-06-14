@@ -63,6 +63,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Staking instruments information including estimated rewards, minimum amounts, and other details
+    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
     pub async fn get_staking_instruments(&self) -> RestResult<Value> {
         let nonce = chrono::Utc::now().timestamp_millis() as u64;
         let id = 1;
@@ -86,7 +87,7 @@ impl RestClient {
 
         let response = self
             .client
-            .post(&format!(
+            .post(format!(
                 "{}/v1/private/staking/get-staking-instruments",
                 self.base_url
             ))
@@ -157,8 +158,8 @@ mod tests {
         let instrument: StakingInstrument = serde_json::from_value(instrument_json).unwrap();
         assert_eq!(instrument.instrument_name, "SOL.staked");
         assert_eq!(instrument.underlying_inst_name, "SOL");
-        assert_eq!(instrument.out_of_stock, false);
-        assert_eq!(instrument.is_compound_reward, true);
+        assert!(!instrument.out_of_stock);
+        assert!(instrument.is_compound_reward);
         assert_eq!(instrument.additional_rewards.len(), 0);
     }
 
@@ -189,7 +190,7 @@ mod tests {
         let instrument: StakingInstrument = serde_json::from_value(instrument_json).unwrap();
         assert_eq!(instrument.instrument_name, "DYDX.staked");
         assert_eq!(instrument.underlying_inst_name, "DYDX");
-        assert_eq!(instrument.is_compound_reward, false);
+        assert!(!instrument.is_compound_reward);
         assert_eq!(instrument.additional_rewards.len(), 1);
         assert_eq!(
             instrument.additional_rewards[0].reward_inst_name,

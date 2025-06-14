@@ -159,7 +159,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::cryptocom::{AnnouncementCategory, ImpactedStatus, ProductType};
+    use crate::cryptocom::{AnnouncementCategory, ProductType};
 
     #[test]
     fn test_announcements_request_building() {

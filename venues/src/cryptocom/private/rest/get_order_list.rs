@@ -95,6 +95,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing the order details for the OCO order
+    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
     pub async fn get_order_list(&self, request: GetOrderListRequest) -> RestResult<Value> {
         let nonce = chrono::Utc::now().timestamp_millis() as u64;
         let id = 1;
@@ -113,7 +114,7 @@ impl RestClient {
 
         let response = self
             .client
-            .post(&format!("{}/v1/private/get-order-list", self.base_url))
+            .post(format!("{}/v1/private/get-order-list", self.base_url))
             .json(&request_body)
             .send()
             .await?;
@@ -296,9 +297,9 @@ mod tests {
         };
 
         let serialized = serde_json::to_value(&request).unwrap();
-        assert_eq!(serialized["contingency_type"], "OCO");
-        assert_eq!(serialized["list_id"], "6498090546073120100");
-        assert_eq!(serialized["instrument_name"], "BTCUSD-PERP");
+        assert_eq!(serialized.get("contingency_type").unwrap(), "OCO");
+        assert_eq!(serialized.get("list_id").unwrap(), "6498090546073120100");
+        assert_eq!(serialized.get("instrument_name").unwrap(), "BTCUSD-PERP");
     }
 
     #[test]

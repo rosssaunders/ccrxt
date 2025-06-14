@@ -5,8 +5,7 @@
 use reqwest::Client;
 use std::borrow::Cow;
 
-use crate::binance::portfolio::rest::common::{build_url, send_rest_request};
-use crate::binance::portfolio::{RateLimiter, RestResponse, RestResult};
+use crate::binance::portfolio::{RateLimiter, RestResult};
 
 #[non_exhaustive]
 #[derive(Debug, Clone)]
@@ -62,7 +61,11 @@ impl RestClient {
             query_string,
         )?;
         let headers = vec![];
-        let body_data = body.map(|b| serde_urlencoded::to_string(b).unwrap());
+        let body_data = match body {
+            Some(b) => Some(serde_urlencoded::to_string(b)
+                .map_err(|e| crate::binance::portfolio::Errors::Error(format!("URL encoding error: {}", e)))?),
+            None => None,
+        };
         let rest_response = crate::binance::portfolio::rest::common::send_rest_request(
             &self.client,
             &url,

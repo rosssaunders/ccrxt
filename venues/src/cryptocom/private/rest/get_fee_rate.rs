@@ -1,6 +1,6 @@
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 use serde_json::{json, Value};
 
 /// Fee rate information for user's account
@@ -29,6 +29,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Fee rate information
+    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
     pub async fn get_fee_rate(&self) -> RestResult<Value> {
         let nonce = chrono::Utc::now().timestamp_millis() as u64;
         let id = 1;
@@ -47,7 +48,7 @@ impl RestClient {
 
         let response = self
             .client
-            .post(&format!("{}/v1/private/get-fee-rate", self.base_url))
+            .post(format!("{}/v1/private/get-fee-rate", self.base_url))
             .json(&request_body)
             .send()
             .await?;

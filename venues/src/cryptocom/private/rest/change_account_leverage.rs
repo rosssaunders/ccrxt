@@ -1,6 +1,6 @@
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 use serde_json::{json, Value};
 
 /// Request parameters for changing account leverage
@@ -49,7 +49,7 @@ impl RestClient {
 
         let response = self
             .client
-            .post(&format!(
+            .post(format!(
                 "{}/v1/private/change-account-leverage",
                 self.base_url
             ))
@@ -66,7 +66,7 @@ impl RestClient {
 mod tests {
     use super::*;
     use rest::secrets::ExposableSecret;
-    use serde_json::json;
+    
 
     /// A plain text implementation of ExposableSecret for testing purposes.
     #[derive(Clone)]
@@ -95,10 +95,10 @@ mod tests {
 
         let serialized = serde_json::to_value(&request).unwrap();
         assert_eq!(
-            serialized["account_id"],
+            serialized.get("account_id").unwrap(),
             "52e7c00f-1324-5a6z-bfgt-de445bde21a5"
         );
-        assert_eq!(serialized["leverage"], 10);
+        assert_eq!(serialized.get("leverage").unwrap(), 10);
     }
 
     #[test]
@@ -109,7 +109,7 @@ mod tests {
         };
 
         let serialized = serde_json::to_value(&request).unwrap();
-        assert_eq!(serialized["leverage"], 1);
+        assert_eq!(serialized.get("leverage").unwrap(), 1);
     }
 
     #[test]
@@ -120,6 +120,6 @@ mod tests {
         };
 
         let serialized = serde_json::to_value(&request).unwrap();
-        assert_eq!(serialized["leverage"], 100);
+        assert_eq!(serialized.get("leverage").unwrap(), 100);
     }
 }

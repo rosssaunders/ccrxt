@@ -47,6 +47,7 @@ impl RestClient {
     ///
     /// # Returns
     /// List of deposit addresses for the specified currency
+    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
     pub async fn get_deposit_address(&self, currency: &str) -> RestResult<Value> {
         let nonce = chrono::Utc::now().timestamp_millis() as u64;
         let id = 1;
@@ -68,7 +69,7 @@ impl RestClient {
 
         let response = self
             .client
-            .post(&format!("{}/v1/private/get-deposit-address", self.base_url))
+            .post(format!("{}/v1/private/get-deposit-address", self.base_url))
             .json(&request_body)
             .send()
             .await?;
@@ -109,7 +110,7 @@ mod tests {
         };
 
         let json_value = serde_json::to_value(&request).unwrap();
-        assert_eq!(json_value["currency"], "CRO");
+        assert_eq!(json_value.get("currency").unwrap(), "CRO");
     }
 
     #[test]

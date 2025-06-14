@@ -57,7 +57,7 @@ impl RestClient {
 
         let response = self
             .client
-            .post(&format!("{}/v1/private/cancel-all-orders", self.base_url))
+            .post(format!("{}/v1/private/cancel-all-orders", self.base_url))
             .json(&request_body)
             .send()
             .await?;
@@ -71,7 +71,7 @@ impl RestClient {
 mod tests {
     use super::*;
     use rest::secrets::ExposableSecret;
-    use serde_json::json;
+    
 
     /// A plain text implementation of ExposableSecret for testing purposes.
     #[derive(Clone)]
@@ -99,7 +99,7 @@ mod tests {
         };
 
         let serialized = serde_json::to_value(&request).unwrap();
-        assert_eq!(serialized["instrument_name"], "BTCUSD-PERP");
+        assert_eq!(serialized.get("instrument_name").unwrap(), "BTCUSD-PERP");
         assert!(!serialized.as_object().unwrap().contains_key("type"));
     }
 
@@ -111,8 +111,8 @@ mod tests {
         };
 
         let serialized = serde_json::to_value(&request).unwrap();
-        assert_eq!(serialized["instrument_name"], "BTCUSD-PERP");
-        assert_eq!(serialized["type"], "LIMIT");
+        assert_eq!(serialized.get("instrument_name").unwrap(), "BTCUSD-PERP");
+        assert_eq!(serialized.get("type").unwrap(), "LIMIT");
     }
 
     #[test]
@@ -123,7 +123,7 @@ mod tests {
         };
 
         let serialized = serde_json::to_value(&request).unwrap();
-        assert_eq!(serialized["type"], "ALL");
+        assert_eq!(serialized.get("type").unwrap(), "ALL");
         assert!(!serialized
             .as_object()
             .unwrap()

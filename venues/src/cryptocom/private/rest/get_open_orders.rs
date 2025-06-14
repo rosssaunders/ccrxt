@@ -1,5 +1,5 @@
 use super::client::RestClient;
-use crate::cryptocom::{ExecInst, OrderType, RestResult, TimeInForce, TradeSide};
+use crate::cryptocom::RestResult;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 
@@ -92,6 +92,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Array of open orders
+    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
     pub async fn get_open_orders(&self, request: GetOpenOrdersRequest) -> RestResult<Value> {
         let nonce = chrono::Utc::now().timestamp_millis() as u64;
         let id = 1;
@@ -111,7 +112,7 @@ impl RestClient {
 
         let response = self
             .client
-            .post(&format!("{}/v1/private/get-open-orders", self.base_url))
+            .post(format!("{}/v1/private/get-open-orders", self.base_url))
             .json(&request_body)
             .send()
             .await?;
@@ -152,7 +153,7 @@ mod tests {
         };
 
         let serialized = serde_json::to_value(&request).unwrap();
-        assert_eq!(serialized["instrument_name"], "BTCUSD-PERP");
+        assert_eq!(serialized.get("instrument_name").unwrap(), "BTCUSD-PERP");
     }
 
     #[test]

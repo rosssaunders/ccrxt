@@ -100,7 +100,7 @@ impl RestClient {
 
         let response = self
             .client
-            .post(&format!("{}/v1/private/create-order", self.base_url))
+            .post(format!("{}/v1/private/create-order", self.base_url))
             .json(&request_body)
             .send()
             .await?;
@@ -156,17 +156,17 @@ mod tests {
         };
 
         let serialized = serde_json::to_value(&request).unwrap();
-        assert_eq!(serialized["instrument_name"], "BTCUSD-PERP");
-        assert_eq!(serialized["side"], "SELL");
-        assert_eq!(serialized["type"], "LIMIT");
-        assert_eq!(serialized["price"], "50000.5");
-        assert_eq!(serialized["quantity"], "1");
+        assert_eq!(serialized.get("instrument_name").unwrap(), "BTCUSD-PERP");
+        assert_eq!(serialized.get("side").unwrap(), "SELL");
+        assert_eq!(serialized.get("type").unwrap(), "LIMIT");
+        assert_eq!(serialized.get("price").unwrap(), "50000.5");
+        assert_eq!(serialized.get("quantity").unwrap(), "1");
         assert_eq!(
-            serialized["client_oid"],
+            serialized.get("client_oid").unwrap(),
             "c5f682ed-7108-4f1c-b755-972fcdca0f02"
         );
-        assert_eq!(serialized["exec_inst"][0], "POST_ONLY");
-        assert_eq!(serialized["time_in_force"], "FILL_OR_KILL");
+        assert_eq!(serialized.get("exec_inst").unwrap()[0], "POST_ONLY");
+        assert_eq!(serialized.get("time_in_force").unwrap(), "FILL_OR_KILL");
     }
 
     #[test]
@@ -191,10 +191,10 @@ mod tests {
         };
 
         let serialized = serde_json::to_value(&request).unwrap();
-        assert_eq!(serialized["instrument_name"], "BTCUSD-PERP");
-        assert_eq!(serialized["side"], "BUY");
-        assert_eq!(serialized["type"], "MARKET");
-        assert_eq!(serialized["notional"], 1000.0);
+        assert_eq!(serialized.get("instrument_name").unwrap(), "BTCUSD-PERP");
+        assert_eq!(serialized.get("side").unwrap(), "BUY");
+        assert_eq!(serialized.get("type").unwrap(), "MARKET");
+        assert_eq!(serialized.get("notional").unwrap(), 1000.0);
         assert!(!serialized.as_object().unwrap().contains_key("price"));
         assert!(!serialized.as_object().unwrap().contains_key("quantity"));
     }
@@ -221,9 +221,9 @@ mod tests {
         };
 
         let serialized = serde_json::to_value(&request).unwrap();
-        assert_eq!(serialized["type"], "STOP_LOSS");
-        assert_eq!(serialized["ref_price"], "50000.0");
-        assert_eq!(serialized["ref_price_type"], "MARK_PRICE");
+        assert_eq!(serialized.get("type").unwrap(), "STOP_LOSS");
+        assert_eq!(serialized.get("ref_price").unwrap(), "50000.0");
+        assert_eq!(serialized.get("ref_price_type").unwrap(), "MARK_PRICE");
     }
 
     #[test]
@@ -248,9 +248,9 @@ mod tests {
         };
 
         let serialized = serde_json::to_value(&request).unwrap();
-        assert_eq!(serialized["stp_scope"], "M");
-        assert_eq!(serialized["stp_inst"], "M");
-        assert_eq!(serialized["stp_id"], 100);
+        assert_eq!(serialized.get("stp_scope").unwrap(), "M");
+        assert_eq!(serialized.get("stp_inst").unwrap(), "M");
+        assert_eq!(serialized.get("stp_id").unwrap(), 100);
     }
 
     #[test]

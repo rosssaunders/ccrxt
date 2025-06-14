@@ -49,6 +49,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Staking position information including quantities and underlying instrument details
+    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
     pub async fn get_staking_position(&self, instrument_name: Option<&str>) -> RestResult<Value> {
         let nonce = chrono::Utc::now().timestamp_millis() as u64;
         let id = 1;
@@ -75,7 +76,7 @@ impl RestClient {
 
         let response = self
             .client
-            .post(&format!(
+            .post(format!(
                 "{}/v1/private/staking/get-staking-position",
                 self.base_url
             ))
@@ -129,7 +130,7 @@ mod tests {
         };
 
         let json_value = serde_json::to_value(request).unwrap();
-        assert_eq!(json_value["instrument_name"], "SOL.staked");
+        assert_eq!(json_value.get("instrument_name").unwrap(), "SOL.staked");
     }
 
     #[test]

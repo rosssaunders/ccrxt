@@ -3,7 +3,6 @@
 
 use crate::binance::portfolio::{execute_request, Errors, RateLimiter, ResponseHeaders};
 use reqwest::{Client, Method};
-use std::collections::HashMap;
 use url::Url;
 
 /// Helper to build a URL with optional query parameters using `url::Url`.

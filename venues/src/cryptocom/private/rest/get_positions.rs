@@ -56,6 +56,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Position information for all or specified instruments
+    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
     pub async fn get_positions(&self, instrument_name: Option<&str>) -> RestResult<Value> {
         let nonce = chrono::Utc::now().timestamp_millis() as u64;
         let id = 1;
@@ -78,7 +79,7 @@ impl RestClient {
 
         let response = self
             .client
-            .post(&format!("{}/v1/private/get-positions", self.base_url))
+            .post(format!("{}/v1/private/get-positions", self.base_url))
             .json(&request_body)
             .send()
             .await?;
@@ -203,7 +204,7 @@ mod tests {
         };
 
         let json_value = serde_json::to_value(request).unwrap();
-        assert_eq!(json_value["instrument_name"], "BTCUSD-PERP");
+        assert_eq!(json_value.get("instrument_name").unwrap(), "BTCUSD-PERP");
     }
 
     #[test]
@@ -223,14 +224,14 @@ mod tests {
         };
 
         let json_value = serde_json::to_value(btc_request).unwrap();
-        assert_eq!(json_value["instrument_name"], "BTCUSD-PERP");
+        assert_eq!(json_value.get("instrument_name").unwrap(), "BTCUSD-PERP");
 
         let eth_request = GetPositionsRequest {
             instrument_name: Some("ETHUSD-PERP".to_string()),
         };
 
         let json_value = serde_json::to_value(eth_request).unwrap();
-        assert_eq!(json_value["instrument_name"], "ETHUSD-PERP");
+        assert_eq!(json_value.get("instrument_name").unwrap(), "ETHUSD-PERP");
     }
 
     #[test]
@@ -253,7 +254,7 @@ mod tests {
 
         // Test serialization preserves the rename
         let serialized = serde_json::to_value(&position).unwrap();
-        assert_eq!(serialized["type"], "FUTURES");
+        assert_eq!(serialized.get("type").unwrap(), "FUTURES");
         assert!(!serialized
             .as_object()
             .unwrap()

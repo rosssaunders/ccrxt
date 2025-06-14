@@ -43,7 +43,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n2. Rate limit enforcement example:");
     let endpoint = EndpointType::PrivateGetTrades; // 1 request per second
 
-    println!("   Testing {} (1 request per second):", "PrivateGetTrades");
+    println!("   Testing PrivateGetTrades (1 request per second):");
 
     // First request should succeed
     match limiter.check_limits(endpoint).await {

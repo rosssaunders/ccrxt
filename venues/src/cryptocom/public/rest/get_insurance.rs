@@ -77,7 +77,7 @@ impl RestClient {
 mod tests {
     use crate::cryptocom::EndpointType;
 
-    use super::*;
+    
     use serde_json::json;
 
     #[test]
@@ -91,6 +91,6 @@ mod tests {
         let params = json!({
             "currency": "USD",
         });
-        assert_eq!(params["currency"], "USD");
+        assert_eq!(params.get("currency").unwrap(), "USD");
     }
 }

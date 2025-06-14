@@ -74,7 +74,7 @@ fn test_request_parameters_serialization() {
         limit: Some(10),
     };
     let json_value = serde_json::to_value(balance_params).unwrap();
-    assert_eq!(json_value["timeframe"], "H1");
+    assert_eq!(json_value.get("timeframe").unwrap(), "H1");
 
     // Get accounts params
     let accounts_params = GetAccountsRequest {
@@ -82,7 +82,7 @@ fn test_request_parameters_serialization() {
         page: Some(2),
     };
     let json_value = serde_json::to_value(accounts_params).unwrap();
-    assert_eq!(json_value["page_size"], 30);
+    assert_eq!(json_value.get("page_size").unwrap(), 30);
 
     // Create subaccount transfer params
     let transfer_params = CreateSubaccountTransferRequest {
@@ -92,14 +92,14 @@ fn test_request_parameters_serialization() {
         amount: "100.00".to_string(),
     };
     let json_value = serde_json::to_value(transfer_params).unwrap();
-    assert_eq!(json_value["currency"], "USD");
+    assert_eq!(json_value.get("currency").unwrap(), "USD");
 
     // Get positions params
     let position_params = GetPositionsRequest {
         instrument_name: Some("BTCUSD-PERP".to_string()),
     };
     let json_value = serde_json::to_value(position_params).unwrap();
-    assert_eq!(json_value["instrument_name"], "BTCUSD-PERP");
+    assert_eq!(json_value.get("instrument_name").unwrap(), "BTCUSD-PERP");
 
     // Get order history params
     let order_history_params = GetOrderHistoryRequest {
@@ -109,8 +109,8 @@ fn test_request_parameters_serialization() {
         limit: Some(20),
     };
     let json_value = serde_json::to_value(order_history_params).unwrap();
-    assert_eq!(json_value["instrument_name"], "BTCUSD-PERP");
-    assert_eq!(json_value["limit"], 20);
+    assert_eq!(json_value.get("instrument_name").unwrap(), "BTCUSD-PERP");
+    assert_eq!(json_value.get("limit").unwrap(), 20);
 
     // Get trades params
     let trades_params = GetTradesRequest {
@@ -120,8 +120,8 @@ fn test_request_parameters_serialization() {
         limit: Some(20),
     };
     let json_value = serde_json::to_value(trades_params).unwrap();
-    assert_eq!(json_value["instrument_name"], "BTCUSD-PERP");
-    assert_eq!(json_value["limit"], 20);
+    assert_eq!(json_value.get("instrument_name").unwrap(), "BTCUSD-PERP");
+    assert_eq!(json_value.get("limit").unwrap(), 20);
 
     // Get transactions params
     let transactions_params = GetTransactionsRequest {
@@ -132,9 +132,9 @@ fn test_request_parameters_serialization() {
         limit: Some(20),
     };
     let json_value = serde_json::to_value(transactions_params).unwrap();
-    assert_eq!(json_value["instrument_name"], "BTCUSD-PERP");
-    assert_eq!(json_value["journal_type"], "TRADING");
-    assert_eq!(json_value["limit"], 20);
+    assert_eq!(json_value.get("instrument_name").unwrap(), "BTCUSD-PERP");
+    assert_eq!(json_value.get("journal_type").unwrap(), "TRADING");
+    assert_eq!(json_value.get("limit").unwrap(), 20);
 }
 
 #[test]

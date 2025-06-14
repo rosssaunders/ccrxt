@@ -33,6 +33,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Instrument fee rate information
+    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
     pub async fn get_instrument_fee_rate(
         &self,
         request: GetInstrumentFeeRateRequest,
@@ -55,7 +56,7 @@ impl RestClient {
 
         let response = self
             .client
-            .post(&format!(
+            .post(format!(
                 "{}/v1/private/get-instrument-fee-rate",
                 self.base_url
             ))
@@ -99,7 +100,7 @@ mod tests {
         };
 
         let serialized = serde_json::to_value(&request).unwrap();
-        assert_eq!(serialized["instrument_name"], "BTC_USD");
+        assert_eq!(serialized.get("instrument_name").unwrap(), "BTC_USD");
     }
 
     #[test]
@@ -109,7 +110,7 @@ mod tests {
         };
 
         let serialized = serde_json::to_value(&request).unwrap();
-        assert_eq!(serialized["instrument_name"], "BTCUSD-PERP");
+        assert_eq!(serialized.get("instrument_name").unwrap(), "BTCUSD-PERP");
     }
 
     #[test]

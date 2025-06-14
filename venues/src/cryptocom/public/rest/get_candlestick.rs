@@ -103,10 +103,10 @@ mod tests {
             "start_ts": 1234567890,
             "end_ts": 1234567900
         });
-        assert_eq!(params["instrument_name"], "BTC_USDT");
-        assert_eq!(params["timeframe"], "1h");
-        assert_eq!(params["count"], 25);
-        assert_eq!(params["start_ts"], 1234567890);
-        assert_eq!(params["end_ts"], 1234567900);
+        assert_eq!(params.get("instrument_name").unwrap(), "BTC_USDT");
+        assert_eq!(params.get("timeframe").unwrap(), "1h");
+        assert_eq!(params.get("count").unwrap(), 25);
+        assert_eq!(params.get("start_ts").unwrap(), 1234567890);
+        assert_eq!(params.get("end_ts").unwrap(), 1234567900);
     }
 }

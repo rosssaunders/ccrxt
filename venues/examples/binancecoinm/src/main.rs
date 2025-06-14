@@ -607,7 +607,7 @@ async fn main() -> Result<()> {
                         _ => eprintln!("API Error: {}", api_err),
                     }
                 }
-                return Err(e.into());
+                return Err(e);
             }
         }
         Commands::Trades { symbol, limit } => {

@@ -66,7 +66,7 @@ impl RestClient {
 
         let response = self
             .client
-            .post(&format!("{}/v1/private/staking/unstake", self.base_url))
+            .post(format!("{}/v1/private/staking/unstake", self.base_url))
             .json(&request_body)
             .send()
             .await?;
@@ -108,8 +108,8 @@ mod tests {
         };
 
         let json_value = serde_json::to_value(request).unwrap();
-        assert_eq!(json_value["instrument_name"], "SOL.staked");
-        assert_eq!(json_value["quantity"], "1");
+        assert_eq!(json_value.get("instrument_name").unwrap(), "SOL.staked");
+        assert_eq!(json_value.get("quantity").unwrap(), "1");
     }
 
     #[test]
@@ -188,8 +188,8 @@ mod tests {
             };
 
             let json_value = serde_json::to_value(request).unwrap();
-            assert_eq!(json_value["instrument_name"], instrument);
-            assert_eq!(json_value["quantity"], qty);
+            assert_eq!(json_value.get("instrument_name").unwrap(), instrument);
+            assert_eq!(json_value.get("quantity").unwrap(), qty);
         }
     }
 

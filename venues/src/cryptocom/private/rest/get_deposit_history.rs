@@ -76,6 +76,7 @@ impl RestClient {
     ///
     /// # Returns
     /// List of deposit history entries matching the criteria
+    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
     pub async fn get_deposit_history(
         &self,
         currency: Option<&str>,
@@ -122,7 +123,7 @@ impl RestClient {
 
         let response = self
             .client
-            .post(&format!("{}/v1/private/get-deposit-history", self.base_url))
+            .post(format!("{}/v1/private/get-deposit-history", self.base_url))
             .json(&request_body)
             .send()
             .await?;
@@ -168,12 +169,12 @@ mod tests {
         };
 
         let json_value = serde_json::to_value(&request).unwrap();
-        assert_eq!(json_value["currency"], "XRP");
-        assert_eq!(json_value["start_ts"], 1587846300000_u64);
-        assert_eq!(json_value["end_ts"], 1587846358253_u64);
-        assert_eq!(json_value["page_size"], 2);
-        assert_eq!(json_value["page"], 0);
-        assert_eq!(json_value["status"], "1");
+        assert_eq!(json_value.get("currency").unwrap(), "XRP");
+        assert_eq!(json_value.get("start_ts").unwrap(), 1587846300000_u64);
+        assert_eq!(json_value.get("end_ts").unwrap(), 1587846358253_u64);
+        assert_eq!(json_value.get("page_size").unwrap(), 2);
+        assert_eq!(json_value.get("page").unwrap(), 0);
+        assert_eq!(json_value.get("status").unwrap(), "1");
     }
 
     #[test]
