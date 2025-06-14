@@ -1,6 +1,23 @@
 use super::client::RestClient;
-use crate::okx::{AdlType, EndpointType, InstrumentType, InsuranceFundType, RestResult};
+use crate::okx::{AdlType, EndpointType, InstrumentType, RestResult};
+
 use serde::{Deserialize, Serialize};
+
+/// Insurance fund type for filtering insurance fund data
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum InsuranceFundType {
+    /// Regular update
+    RegularUpdate,
+    /// Liquidation balance deposit
+    LiquidationBalanceDeposit,
+    /// Bankruptcy loss
+    BankruptcyLoss,
+    /// Platform revenue
+    PlatformRevenue,
+    /// ADL historical data
+    Adl,
+}
 
 /// Request parameters for getting insurance fund
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -95,7 +112,7 @@ impl RestClient {
     ///
     /// Retrieve insurance fund balance information for different instrument types.
     ///
-    /// See: https://www.okx.com/docs-v5/en/#rest-api-public-data-get-insurance-fund
+    /// See: https://www.okx.com/docs-v5/en/#public-data-rest-api-get-insurance-fund
     ///
     /// Rate limit: 10 requests per 2 seconds
     ///

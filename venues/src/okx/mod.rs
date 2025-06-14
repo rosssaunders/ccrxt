@@ -9,22 +9,16 @@ pub mod public {
     pub use self::rest::RestClient;
     pub use self::rest::{GetFundingRateRequest, GetFundingRateResponse, FundingRate};
     pub use self::rest::{GetFundingRateHistoryRequest, GetFundingRateHistoryResponse, FundingRateHistory};
-    pub use self::rest::{
-        BarSize, GetHistoryMarkPriceCandlesRequest, GetHistoryMarkPriceCandlesResponse, MarkPriceCandle,
-    };
+    pub use self::rest::{BarSize, GetHistoryMarkPriceCandlesRequest, GetHistoryMarkPriceCandlesResponse, MarkPriceCandle};
     pub use self::rest::{ConvertContractCoinRequest, ConvertContractCoinResponse, ConvertContractCoinData};
-    pub use self::rest::{
-        GetIndexComponentsRequest, GetIndexComponentsResponse, IndexComponent, IndexComponentData,
-    };
+    pub use self::rest::{GetIndexComponentsRequest, GetIndexComponentsResponse, IndexComponent, IndexComponentData};
     pub use self::rest::{GetInstrumentTickBandsRequest, GetInstrumentTickBandsResponse, InstrumentTickBandData, TickBand};
     pub use self::rest::{EconomicEvent, GetEconomicCalendarRequest, GetEconomicCalendarResponse};
     pub use self::rest::{ExchangeRate, ExchangeRateResponse};
     pub use self::rest::{GetHistoryIndexCandlesRequest, GetHistoryIndexCandlesResponse, IndexCandle};
     pub use self::rest::{GetInstrumentsRequest, GetInstrumentsResponse, Instrument};
     pub use self::rest::{GetOptSummaryRequest, GetOptSummaryResponse, OptSummary};
-    pub use self::rest::{
-        GetInsuranceFundRequest, GetInsuranceFundResponse, InsuranceFundData, InsuranceFundDetail,
-    };
+    pub use self::rest::{GetInsuranceFundRequest, GetInsuranceFundResponse, InsuranceFundData, InsuranceFundDetail};
     pub use self::rest::{GetOpenInterestRequest, GetOpenInterestResponse, OpenInterest};
     pub use self::rest::{GetIndexTickersRequest, GetIndexTickersResponse, IndexTicker};
     pub use self::rest::{GetMarkPriceCandlesRequest, GetMarkPriceCandlesResponse};
@@ -34,6 +28,10 @@ pub mod public {
     pub use self::rest::{GetTimeResponse, TimeData};
     pub use self::rest::{GetUnderlyingRequest, GetUnderlyingResponse, UnderlyingData};
     pub use self::rest::{GetPriceLimitRequest, GetPriceLimitResponse, PriceLimit};
+    pub use self::rest::{GetDiscountRateInterestFreeQuotaRequest, GetDiscountRateInterestFreeQuotaResponse, DiscountRateInterestFreeQuota, DiscountDetail};
+    pub use self::rest::{GetInterestRateLoanQuotaRequest, GetInterestRateLoanQuotaResponse, InterestRateLoanQuotaData, BasicInterestRate, RegularInterestRate, VipInterestRate};
+    pub use self::rest::{GetPositionTiersRequest, GetPositionTiersResponse, PositionTier};
+    pub use self::rest::{GetSettlementHistoryRequest, GetSettlementHistoryResponse, SettlementHistory, SettlementDetail};
 }
 
 pub mod private {

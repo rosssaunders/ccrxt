@@ -124,3 +124,18 @@ pub enum Bar {
     #[serde(rename = "3Mutc")]
     Month3Utc,
 }
+
+/// ADL related events
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum AdlType {
+    /// ADL begins due to high insurance fund decline rate
+    RateAdlStart,
+    /// ADL begins due to insurance fund balance falling
+    BalAdlStart,
+    /// ADL begins due to the volume of liquidation orders falls to a certain level (only applicable to premarket symbols)
+    PosAdlStart,
+    /// ADL ends
+    AdlEnd,
+}
+
