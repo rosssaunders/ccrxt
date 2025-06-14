@@ -1,16 +1,14 @@
 pub mod client;
-pub mod instruments;
-pub mod book;
-pub mod ticker;
-pub mod trades;
-pub mod candlestick;
-pub mod announcements;
-pub mod risk_parameters;
-pub mod valuations;
-pub mod expired_settlement_price;
-pub mod insurance;
-
-// Staking endpoints
+pub mod get_instruments;
+pub mod get_book;
+pub mod get_tickers;
+pub mod get_trades;
+pub mod get_candlestick;
+pub mod get_announcements;
+pub mod get_risk_parameters;
+pub mod get_valuations;
+pub mod get_expired_settlement_price;
+pub mod get_insurance;
 pub mod get_conversion_rate;
 
 pub use client::RestClient;

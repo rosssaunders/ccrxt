@@ -59,9 +59,10 @@ pub enum InstrumentType {
 }
 
 /// Timeframe for candlesticks
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
 #[serde(rename_all = "UPPERCASE")]
 pub enum Timeframe {
+    #[default]
     M1,
     M5,
     M15,
@@ -85,9 +86,10 @@ pub enum TradeSide {
 }
 
 /// Valuation type
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
 #[serde(rename_all = "snake_case")]
 pub enum ValuationType {
+    #[default]
     IndexPrice,
     MarkPrice,
     FundingHist,

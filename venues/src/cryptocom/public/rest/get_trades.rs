@@ -4,74 +4,115 @@
 
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
-use crate::crypto_com::enums::TradeSide;
+use crate::cryptocom::EndpointType;
+use crate::cryptocom::TradeSide;
+use crate::cryptocom::RestResult;
+use super::client::RestClient;
 
-/// Request for public/get-trades
-#[derive(Debug, Clone, Serialize, Deserialize)]
+/// Request parameters for the public/get-trades endpoint.
+///
+/// Fetches the public trades for a particular instrument.
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct GetTradesRequest {
-    /// Instrument name, e.g. BTCUSD-PERP
+    /// Instrument name (e.g., "BTCUSD-PERP"). Required.
+    #[serde(rename = "instrument_name")]
     pub instrument_name: Cow<'static, str>,
 
-    /// The maximum number of trades to be retrieved. Default: 25, Max: 150
-    #[serde(skip_serializing_if = "Option::is_none")]
+    /// Number of trades to return. Optional. Max: 1000.
+    #[serde(rename = "count", skip_serializing_if = "Option::is_none")]
     pub count: Option<u32>,
-
-    /// Start time in Unix time format (inclusive)
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub start_ts: Option<i64>,
-
-    /// End time in Unix time format (exclusive)
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub end_ts: Option<i64>,
 }
 
-/// Response for public/get-trades
-#[derive(Debug, Clone, Serialize, Deserialize)]
+/// Response for public/get-trades endpoint.
+#[derive(Debug, Clone, Deserialize)]
 pub struct GetTradesResponse {
-    /// Response id
-    pub id: i64,
-
-    /// Method name
-    pub method: Cow<'static, str>,
-
-    /// Response code
-    pub code: i32,
-
-    /// Result data
+    /// Result data for trades.
+    #[serde(rename = "result")]
     pub result: TradesResult,
+
+    /// Success status.
+    #[serde(rename = "success")]
+    pub success: bool,
+
+    /// Response ID.
+    #[serde(rename = "id")]
+    pub id: u64,
 }
 
-/// Result data for trades
-#[derive(Debug, Clone, Serialize, Deserialize)]
+/// Result data for trades.
+#[derive(Debug, Clone, Deserialize)]
 pub struct TradesResult {
-    /// List of trades
+    /// List of trade data.
+    #[serde(rename = "data")]
     pub data: Vec<Trade>,
 }
 
-/// Trade data
-#[derive(Debug, Clone, Serialize, Deserialize)]
+/// Trade data for a single trade.
+#[derive(Debug, Clone, Deserialize)]
 pub struct Trade {
-    /// Trade ID
-    pub d: Cow<'static, str>,
+    /// Trade ID.
+    #[serde(rename = "trade_id")]
+    pub trade_id: u64,
 
-    /// Trade timestamp milliseconds
-    pub t: i64,
+    /// Price.
+    #[serde(rename = "price")]
+    pub price: f64,
 
-    /// Trade timestamp nanoseconds
-    pub tn: Cow<'static, str>,
+    /// Quantity.
+    #[serde(rename = "quantity")]
+    pub quantity: f64,
 
-    /// Quantity
-    pub q: Cow<'static, str>,
+    /// Trade side (buy/sell).
+    #[serde(rename = "side")]
+    pub side: TradeSide,
 
-    /// Price
-    pub p: Cow<'static, str>,
+    /// Timestamp (milliseconds since epoch).
+    #[serde(rename = "timestamp")]
+    pub timestamp: u64,
+}
 
-    /// Side (BUY or SELL)
-    pub s: TradeSide,
+impl RestClient {
+    /// Calls the public/get-trades endpoint.
+    ///
+    /// Fetches the public trades for a particular instrument.
+    ///
+    /// [Official API docs](https://exchange-docs.crypto.com/spot/index.html#public-get-trades)
+    pub async fn get_trades(
+        &self,
+        params: GetTradesRequest,
+    ) -> RestResult<GetTradesResponse> {
+        self.send_request(
+            "public/get-trades",
+            reqwest::Method::GET,
+            Some(&params),
+            EndpointType::PublicGetTrades,
+        )
+        .await
+    }
+}
 
-    /// Instrument name
-    pub i: Cow<'static, str>,
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json::json;
 
-    /// Trade match ID
-    pub m: Cow<'static, str>,
+    #[test]
+    fn test_trades_endpoint_type() {
+        let trades_endpoint = EndpointType::PublicGetTrades;
+        assert!(trades_endpoint.rate_limit().max_requests > 0);
+    }
+
+    #[test]
+    fn test_trades_parameter_building() {
+        let params = json!({
+            "instrument_name": "BTC_USDT",
+            "count": 100,
+            "start_ts": "1234567890",
+            "end_ts": "1234567900"
+        });
+        assert_eq!(params["instrument_name"], "BTC_USDT");
+        assert_eq!(params["count"], 100);
+        assert_eq!(params["start_ts"], "1234567890");
+        assert_eq!(params["end_ts"], "1234567900");
+    }
 }

@@ -4,7 +4,6 @@
 // All requests are unauthenticated and do not require API credentials.
 use reqwest::Client;
 use std::borrow::Cow;
-use serde_json::Value;
 use serde::de::DeserializeOwned;
 
 use crate::cryptocom::{RateLimiter, RestResult, Errors, EndpointType};
@@ -56,20 +55,21 @@ impl RestClient {
     /// # Arguments
     /// * `endpoint` - The API endpoint path (e.g., "public/get-instruments")
     /// * `method` - The HTTP method to use
-    /// * `params` - Optional query parameters for GET requests or body parameters for POST requests
+    /// * `params` - Optional struct of query/body parameters (must implement Serialize)
     /// * `endpoint_type` - The endpoint type for rate limiting
     /// 
     /// # Returns
     /// A result containing the response data or an error
-    pub async fn send_request<T>(
+    pub async fn send_request<T, P>(
         &self,
         endpoint: &str,
         method: reqwest::Method,
-        params: Option<&Value>,
+        params: Option<&P>,
         endpoint_type: EndpointType,
     ) -> RestResult<T>
     where
         T: DeserializeOwned,
+        P: serde::Serialize + ?Sized,
     {
         // Check rate limits before making the request
         self.rate_limiter.check_limits(endpoint_type).await
@@ -87,14 +87,16 @@ impl RestClient {
 
         // Add parameters based on method
         if let Some(params) = params {
+            let params_value = serde_json::to_value(params)
+                .map_err(|e| Errors::Error(format!("Failed to serialize params: {}", e)))?;
             if method == reqwest::Method::GET {
                 // For GET requests, add parameters as query string
-                if let Some(params_obj) = params.as_object() {
+                if let Some(params_obj) = params_value.as_object() {
                     for (key, value) in params_obj {
                         let value_str = match value {
-                            Value::String(s) => s.clone(),
-                            Value::Number(n) => n.to_string(),
-                            Value::Bool(b) => b.to_string(),
+                            serde_json::Value::String(s) => s.clone(),
+                            serde_json::Value::Number(n) => n.to_string(),
+                            serde_json::Value::Bool(b) => b.to_string(),
                             _ => value.to_string(),
                         };
                         request_builder = request_builder.query(&[(key, value_str)]);
@@ -102,7 +104,7 @@ impl RestClient {
                 }
             } else {
                 // For POST requests, add parameters as JSON body
-                request_builder = request_builder.json(params);
+                request_builder = request_builder.json(&params_value);
             }
         }
 

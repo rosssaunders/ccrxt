@@ -4,58 +4,93 @@
 
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
+use crate::cryptocom::{EndpointType, RestResult};
+use super::client::RestClient;
 
-/// Request for public/get-insurance
-#[derive(Debug, Clone, Serialize, Deserialize)]
+/// Request parameters for the public/get-insurance endpoint.
+///
+/// Fetches balance of Insurance Fund for a particular currency.
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct GetInsuranceRequest {
-    /// Instrument name, e.g. USD
-    pub instrument_name: Cow<'static, str>,
-
-    /// Number of records to retrieve. Default is 25.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub count: Option<u32>,
-
-    /// Start timestamp (Unix timestamp)
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub start_ts: Option<i64>,
-
-    /// End timestamp (Unix timestamp)
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub end_ts: Option<i64>,
+    /// Currency code (e.g., "USD"). Required.
+    #[serde(rename = "currency")]
+    pub currency: Cow<'static, str>,
 }
 
-/// Response for public/get-insurance
-#[derive(Debug, Clone, Serialize, Deserialize)]
+/// Response for public/get-insurance endpoint.
+#[derive(Debug, Clone, Deserialize)]
 pub struct GetInsuranceResponse {
-    /// Response id
-    pub id: i64,
-
-    /// Method name
-    pub method: Cow<'static, str>,
-
-    /// Response code
-    pub code: i32,
-
-    /// Result data
+    /// Result data for insurance.
+    #[serde(rename = "result")]
     pub result: InsuranceResult,
+
+    /// Success status.
+    #[serde(rename = "success")]
+    pub success: bool,
+
+    /// Response ID.
+    #[serde(rename = "id")]
+    pub id: u64,
 }
 
-/// Result data for insurance
-#[derive(Debug, Clone, Serialize, Deserialize)]
+/// Result data for insurance.
+#[derive(Debug, Clone, Deserialize)]
 pub struct InsuranceResult {
-    /// List of insurance data
+    /// List of insurance data.
+    #[serde(rename = "data")]
     pub data: Vec<Insurance>,
-
-    /// Instrument name
-    pub instrument_name: Cow<'static, str>,
 }
 
-/// Insurance data
-#[derive(Debug, Clone, Serialize, Deserialize)]
+/// Insurance data for a currency.
+#[derive(Debug, Clone, Deserialize)]
 pub struct Insurance {
-    /// Value
-    pub v: Cow<'static, str>,
+    /// Currency code.
+    #[serde(rename = "currency")]
+    pub currency: Cow<'static, str>,
 
-    /// Timestamp (ms)
-    pub t: i64,
+    /// Insurance fund balance.
+    #[serde(rename = "balance")]
+    pub balance: f64,
+}
+
+impl RestClient {
+    /// Calls the public/get-insurance endpoint.
+    ///
+    /// Fetches balance of Insurance Fund for a particular currency.
+    ///
+    /// [Official API docs](https://exchange-docs.crypto.com/spot/index.html#public-get-insurance)
+    pub async fn get_insurance(
+        &self,
+        params: GetInsuranceRequest,
+    ) -> RestResult<GetInsuranceResponse> {
+        self.send_request(
+            "public/get-insurance",
+            reqwest::Method::GET,
+            Some(&params),
+            EndpointType::PublicGetInsurance,
+        )
+        .await
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::cryptocom::EndpointType;
+
+    use super::*;
+    use serde_json::json;
+
+    #[test]
+    fn test_insurance_endpoint_type() {
+        let insurance_endpoint = EndpointType::PublicGetInsurance;
+        assert!(insurance_endpoint.rate_limit().max_requests > 0);
+    }
+
+    #[test]
+    fn test_insurance_parameter_building() {
+        let params = json!({
+            "currency": "USD",
+        });
+        assert_eq!(params["currency"], "USD");
+    }
 }

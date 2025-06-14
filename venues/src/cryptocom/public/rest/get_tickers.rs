@@ -4,71 +4,83 @@
 
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
+use crate::cryptocom::{EndpointType, RestResult};
+use super::client::RestClient;
 
-/// Request for public/get-tickers
-#[derive(Debug, Clone, Serialize, Deserialize)]
+/// Request parameters for the public/get-tickers endpoint.
+///
+/// Fetches the public tickers for all or a particular instrument.
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct GetTickersRequest {
-    /// Instrument name, e.g. BTCUSD-PERP
-    #[serde(skip_serializing_if = "Option::is_none")]
+    /// Instrument name. Optional.
+    #[serde(rename = "instrument_name", skip_serializing_if = "Option::is_none")]
     pub instrument_name: Option<Cow<'static, str>>,
 }
 
-/// Response for public/get-tickers
-#[derive(Debug, Clone, Serialize, Deserialize)]
+/// Response for public/get-tickers endpoint.
+#[derive(Debug, Clone, Deserialize)]
 pub struct GetTickersResponse {
-    /// Response id
-    pub id: i64,
-
-    /// Method name
-    pub method: Cow<'static, str>,
-
-    /// Response code
-    pub code: i32,
-
-    /// Result data
+    /// Result data for tickers.
+    #[serde(rename = "result")]
     pub result: TickersResult,
+
+    /// Success status.
+    #[serde(rename = "success")]
+    pub success: bool,
+
+    /// Response ID.
+    #[serde(rename = "id")]
+    pub id: u64,
 }
 
-/// Result data for tickers
-#[derive(Debug, Clone, Serialize, Deserialize)]
+/// Result data for tickers.
+#[derive(Debug, Clone, Deserialize)]
 pub struct TickersResult {
-    /// List of tickers
+    /// List of ticker data.
+    #[serde(rename = "data")]
     pub data: Vec<Ticker>,
 }
 
-/// Ticker data
-#[derive(Debug, Clone, Serialize, Deserialize)]
+/// Ticker data for an instrument.
+#[derive(Debug, Clone, Deserialize)]
 pub struct Ticker {
-    /// Price of the 24h highest trade
-    pub h: Option<Cow<'static, str>>,
+    /// Instrument name.
+    #[serde(rename = "instrument_name")]
+    pub instrument_name: Cow<'static, str>,
 
-    /// Price of the 24h lowest trade, null if there weren't any trades
-    pub l: Option<Cow<'static, str>>,
+    /// Last traded price.
+    #[serde(rename = "last_trade_price")]
+    pub last_trade_price: f64,
 
-    /// The price of the latest trade, null if there weren't any trades
-    pub a: Option<Cow<'static, str>>,
+    /// 24h high price.
+    #[serde(rename = "high_price_24h")]
+    pub high_price_24h: f64,
 
-    /// Instrument name
-    pub i: Cow<'static, str>,
+    /// 24h low price.
+    #[serde(rename = "low_price_24h")]
+    pub low_price_24h: f64,
 
-    /// The total 24h traded volume
-    pub v: Option<Cow<'static, str>>,
+    /// 24h volume.
+    #[serde(rename = "volume_24h")]
+    pub volume_24h: f64,
+}
 
-    /// The total 24h traded volume value (in USD)
-    pub vv: Option<Cow<'static, str>>,
-
-    /// The open interest
-    pub oi: Option<Cow<'static, str>>,
-
-    /// 24-hour price change, null if there weren't any trades
-    pub c: Option<Cow<'static, str>>,
-
-    /// The current best bid price, null if there aren't any bids
-    pub b: Option<Cow<'static, str>>,
-
-    /// The current best ask price, null if there aren't any asks
-    pub k: Option<Cow<'static, str>>,
-
-    /// The published timestamp in ms
-    pub t: i64,
+impl RestClient {
+    /// Calls the public/get-tickers endpoint.
+    ///
+    /// Fetches the public tickers for all or a particular instrument.
+    ///
+    /// [Official API docs](https://exchange-docs.crypto.com/spot/index.html#public-get-tickers)
+    pub async fn get_tickers(
+        &self,
+        params: GetTickersRequest,
+    ) -> RestResult<GetTickersResponse> {
+        self.send_request(
+            "public/get-tickers",
+            reqwest::Method::GET,
+            Some(&params),
+            EndpointType::PublicGetTickers,
+        )
+        .await
+    }
 }

@@ -4,78 +4,109 @@
 
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
-use crate::crypto_com::enums::Timeframe;
+use crate::cryptocom::EndpointType;
+use crate::cryptocom::Timeframe;
+use crate::cryptocom::RestResult;
+use super::client::RestClient;
 
-/// Request for public/get-candlestick
-#[derive(Debug, Clone, Serialize, Deserialize)]
+/// Request parameters for the public/get-candlestick endpoint.
+///
+/// Retrieves candlestick (k-line) data for a given instrument and timeframe.
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct GetCandlestickRequest {
-    /// Instrument name, e.g. BTCUSD-PERP
+    /// Instrument name (e.g., "BTCUSD-PERP"). Required.
+    #[serde(rename = "instrument_name")]
     pub instrument_name: Cow<'static, str>,
 
-    /// The period value (e.g. M5). Default is M1.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub timeframe: Option<Timeframe>,
+    /// Timeframe for candlesticks (e.g., "1m", "5m", "1h"). Required.
+    #[serde(rename = "timeframe")]
+    pub timeframe: Timeframe,
 
-    /// Number of candlesticks to retrieve. Default is 25.
-    #[serde(skip_serializing_if = "Option::is_none")]
+    /// Number of candlesticks to return. Optional. Max: 1500.
+    #[serde(rename = "count", skip_serializing_if = "Option::is_none")]
     pub count: Option<u32>,
 
-    /// Start timestamp (Unix timestamp)
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub start_ts: Option<i64>,
+    /// Start timestamp (milliseconds since epoch). Optional.
+    #[serde(rename = "start_ts", skip_serializing_if = "Option::is_none")]
+    pub start_ts: Option<u64>,
 
-    /// End timestamp (Unix timestamp)
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub end_ts: Option<i64>,
+    /// End timestamp (milliseconds since epoch). Optional.
+    #[serde(rename = "end_ts", skip_serializing_if = "Option::is_none")]
+    pub end_ts: Option<u64>,
 }
 
-/// Response for public/get-candlestick
-#[derive(Debug, Clone, Serialize, Deserialize)]
+/// Response for public/get-candlestick endpoint.
+#[derive(Debug, Clone, Deserialize)]
 pub struct GetCandlestickResponse {
-    /// Response id
-    pub id: i64,
-
-    /// Method name
-    pub method: Cow<'static, str>,
-
-    /// Response code
-    pub code: i32,
-
-    /// Result data
+    /// Result data for candlesticks.
+    #[serde(rename = "result")]
     pub result: CandlestickResult,
+
+    /// Success status.
+    #[serde(rename = "success")]
+    pub success: bool,
+
+    /// Response ID.
+    #[serde(rename = "id")]
+    pub id: u64,
 }
 
-/// Result data for candlesticks
-#[derive(Debug, Clone, Serialize, Deserialize)]
+/// Result data for candlesticks.
+#[derive(Debug, Clone, Deserialize)]
 pub struct CandlestickResult {
-    /// The period (e.g. M5)
-    pub interval: Cow<'static, str>,
-
-    /// List of candlesticks
-    pub data: Vec<Candlestick>,
-
-    /// Instrument name
+    /// Instrument name.
+    #[serde(rename = "instrument_name")]
     pub instrument_name: Cow<'static, str>,
+
+    /// List of candlestick data arrays: [timestamp, open, high, low, close, volume].
+    #[serde(rename = "data")]
+    pub data: Vec<[f64; 6]>,
 }
 
-/// Candlestick data
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Candlestick {
-    /// Start time of candlestick (Unix timestamp)
-    pub t: i64,
+impl RestClient {
+    /// Calls the public/get-candlestick endpoint.
+    ///
+    /// Retrieves candlestick (k-line) data for a given instrument and timeframe.
+    ///
+    /// [Official API docs](https://exchange-docs.crypto.com/spot/index.html#public-get-candlestick)
+    pub async fn get_candlestick(
+        &self,
+        params: GetCandlestickRequest,
+    ) -> RestResult<GetCandlestickResponse> {
+        self.send_request(
+            "public/get-candlestick",
+            reqwest::Method::GET,
+            Some(&params),
+            EndpointType::PublicGetCandlestick,
+        )
+        .await
+    }
+}
 
-    /// Open price
-    pub o: Cow<'static, str>,
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json::json;
 
-    /// High price
-    pub h: Cow<'static, str>,
+    #[test]
+    fn test_candlestick_endpoint_type() {
+        let candlestick_endpoint = EndpointType::PublicGetCandlestick;
+        assert!(candlestick_endpoint.rate_limit().max_requests > 0);
+    }
 
-    /// Low price
-    pub l: Cow<'static, str>,
-
-    /// Close price
-    pub c: Cow<'static, str>,
-
-    /// Volume
-    pub v: Cow<'static, str>,
+    #[test]
+    fn test_candlestick_parameter_building() {
+        let params = json!({
+            "instrument_name": "BTC_USDT",
+            "timeframe": "1h",
+            "count": 25,
+            "start_ts": 1234567890,
+            "end_ts": 1234567900
+        });
+        assert_eq!(params["instrument_name"], "BTC_USDT");
+        assert_eq!(params["timeframe"], "1h");
+        assert_eq!(params["count"], 25);
+        assert_eq!(params["start_ts"], 1234567890);
+        assert_eq!(params["end_ts"], 1234567900);
+    }
 }

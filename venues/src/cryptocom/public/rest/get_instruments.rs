@@ -4,70 +4,108 @@
 
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
-use crate::crypto_com::enums::InstrumentType;
+use crate::cryptocom::EndpointType;
+use crate::cryptocom::InstrumentType;
+use crate::cryptocom::RestResult;
+use super::client::RestClient;
 
-/// Response for public/get-instruments
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetInstrumentsResponse {
-    /// Response id
-    pub id: i64,
+/// Request parameters for the public/get-instruments endpoint.
+///
+/// Provides information on all supported instruments.
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+pub struct GetInstrumentsRequest {
+    /// Instrument type (e.g., "PERPETUAL", "FUTURE"). Optional.
+    #[serde(rename = "instrument_type", skip_serializing_if = "Option::is_none")]
+    pub instrument_type: Option<InstrumentType>,
 
-    /// Method name
-    pub method: Cow<'static, str>,
-
-    /// Response code
-    pub code: i32,
-
-    /// Result data
-    pub result: InstrumentsResult,
+    /// Instrument name. Optional.
+    #[serde(rename = "instrument_name", skip_serializing_if = "Option::is_none")]
+    pub instrument_name: Option<Cow<'static, str>>,
 }
 
-/// Result data for instruments
-#[derive(Debug, Clone, Serialize, Deserialize)]
+/// Response for public/get-instruments endpoint.
+#[derive(Debug, Clone, Deserialize)]
+pub struct GetInstrumentsResponse {
+    /// Result data for instruments.
+    #[serde(rename = "result")]
+    pub result: InstrumentsResult,
+
+    /// Success status.
+    #[serde(rename = "success")]
+    pub success: bool,
+
+    /// Response ID.
+    #[serde(rename = "id")]
+    pub id: u64,
+}
+
+/// Result data for instruments.
+#[derive(Debug, Clone, Deserialize)]
 pub struct InstrumentsResult {
-    /// List of instruments
+    /// List of instrument objects.
+    #[serde(rename = "data")]
     pub data: Vec<Instrument>,
 }
 
-/// Instrument object
-#[derive(Debug, Clone, Serialize, Deserialize)]
+/// Instrument object.
+#[derive(Debug, Clone, Deserialize)]
 pub struct Instrument {
-    /// Symbol, e.g. BTCUSD-PERP
-    pub symbol: Cow<'static, str>,
+    /// Instrument name.
+    #[serde(rename = "instrument_name")]
+    pub instrument_name: Cow<'static, str>,
 
-    /// Instrument type, e.g. PERPETUAL_SWAP
-    pub inst_type: Cow<'static, str>,
+    /// Instrument type.
+    #[serde(rename = "instrument_type")]
+    pub instrument_type: InstrumentType,
 
-    /// Display name, e.g. BTCUSD Perpetual
-    pub display_name: Cow<'static, str>,
+    /// Quote currency.
+    #[serde(rename = "quote_currency")]
+    pub quote_currency: Cow<'static, str>,
 
-    /// Base currency, e.g. BTC
-    pub base_ccy: Cow<'static, str>,
+    /// Base currency.
+    #[serde(rename = "base_currency")]
+    pub base_currency: Cow<'static, str>,
 
-    /// Quote currency, e.g. USD
-    pub quote_ccy: Cow<'static, str>,
+    /// Price decimal places.
+    #[serde(rename = "price_decimals")]
+    pub price_decimals: u32,
 
-    /// Minimum decimal place for price field
-    pub quote_decimals: u32,
-
-    /// Minimum decimal place for qty field
+    /// Quantity decimal places.
+    #[serde(rename = "quantity_decimals")]
     pub quantity_decimals: u32,
 
-    /// Minimum price tick size
-    pub price_tick_size: Cow<'static, str>,
+    /// Maximum leverage allowed.
+    #[serde(rename = "max_leverage")]
+    pub max_leverage: f64,
+}
 
-    /// Minimum trading quantity / tick size
-    pub qty_tick_size: Cow<'static, str>,
+impl RestClient {
+    /// Calls the public/get-instruments endpoint.
+    ///
+    /// Provides information on all supported instruments.
+    ///
+    /// [Official API docs](https://exchange-docs.crypto.com/spot/index.html#public-get-instruments)
+    pub async fn get_instruments(
+        &self,
+        params: GetInstrumentsRequest,
+    ) -> RestResult<GetInstrumentsResponse> {
+        self.send_request(
+            "public/get-instruments",
+            reqwest::Method::GET,
+            Some(&params),
+            EndpointType::PublicGetInstruments,
+        )
+        .await
+    }
+}
 
-    /// Max leverage of the product
-    pub max_leverage: Cow<'static, str>,
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-    /// True if tradable
-    pub tradable: bool,
-
-    /// Expiry timestamp in millisecond
-    pub expiry_timestamp_ms: Option<i64>,
-
-    /// Underlying symbol
-    pub underlying_symbol: Option<Cow<'static, str>>,
+    #[test]
+    fn test_instruments_endpoint_type() {
+        let instruments_endpoint = EndpointType::PublicGetInstruments;
+        assert!(instruments_endpoint.rate_limit().max_requests > 0);
+    }
 }
