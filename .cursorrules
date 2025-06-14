@@ -23,7 +23,7 @@ For code in crates that support each venue, such as websockets, no venue specifi
    - Public WebSocket endpoints: ws_public_*.rs
 4. Each endpoint should be in its own file
 5. All wrappers around the endpoints should be pure. No fixes and helper functions.
-5. Common code (like websockets, rate limiting) can be in subdirectories
+6. Common code (like websockets, rate limiting) can be in subdirectories
 
 # Struct Implementation Rules
 
@@ -48,6 +48,28 @@ For code in crates that support each venue, such as websockets, no venue specifi
 4. Documentation MUST be clear and concise, avoiding unnecessary verbosity
 5. Documentation MUST use proper Rust doc comment format (///)
 6. Documentation MUST be kept up to date with any changes to the struct or its fields
+7. Request and Response structs MUST have a blank line between each field for improved readability
+8. Field names in serde attributes MUST exactly match the venue's API documentation:
+   - Carefully verify the exact casing (camelCase, snake_case, SCREAMING_SNAKE_CASE, etc.)
+   - Double-check field names against the official API documentation
+   - Use serde attributes to map between Rust's snake_case and the venue's naming convention
+   - Example:
+     ```rust
+     #[derive(Debug, Serialize, Deserialize)]
+     pub struct SomeRequest {
+         /// The trading pair (e.g., "BTCUSD").
+         #[serde(rename = "tradingPair")] // Exact match to API docs
+         pub trading_pair: String,
+
+         /// The order type (e.g., "LIMIT").
+         #[serde(rename = "orderType")] // Exact match to API docs
+         pub order_type: OrderType,
+
+         /// The price of the order.
+         #[serde(rename = "price")] // Exact match to API docs
+         pub price: String,
+     }
+     ```
 
 # Struct Field Naming Rules
 
@@ -59,6 +81,26 @@ For code in crates that support each venue, such as websockets, no venue specifi
    ```
 3. Avoid using raw identifiers (r#) for reserved keywords - use descriptive names instead
 4. Keep field names consistent across related structs
+
+# Endpoint Function Documentation Rules
+
+1. All endpoint function wrappers MUST include a link to the official API documentation
+2. The documentation link MUST be included in the function's doc comment
+3. The link should be placed after the function description and before other details
+4. Use the format: `/// See: <URL>` or `/// Documentation: <URL>`
+5. Example:
+   ```rust
+   /// Fetches the user's account information, including assets and positions.
+   /// See: https://binance-docs.github.io/apidocs/delivery/en/#account-information-user_data
+   /// Corresponds to endpoint GET /dapi/v1/account.
+   /// Requires API key authentication.
+   /// Weight: 5
+   pub async fn get_account(&self) -> BinanceCoinMResult<AccountResponse> {
+       // implementation
+   }
+   ```
+6. The documentation link MUST point to the official venue API documentation
+7. Links MUST be kept up to date with any changes to the venue's documentation structure
 
 # Enum Usage Rules
 
@@ -239,6 +281,39 @@ venues/src/binance/coinm/
     - Avoid complex parsing of error messages
     - When in doubt, pass through the original error message
 
+# Error Modelling Rules for All Exchanges
+
+1. All exchange errors MUST be modelled as Rust structs.
+   - The error struct must include a dynamic error message field (e.g., `msg: String`).
+   - The struct should represent all relevant fields returned by the exchange for error responses.
+   - Example:
+     ```rust
+     #[derive(Debug, Serialize, Deserialize)]
+     pub struct ExchangeErrorResponse {
+         pub code: i32,
+         pub msg: String, // dynamic error message
+         // ... other fields as needed
+     }
+     ```
+
+2. All API function return types MUST be an enum covering:
+   - Rust native errors (e.g., std::io::Error, serde_json::Error, etc.)
+   - HTTP errors (e.g., reqwest::Error)
+   - API errors (modelled as above, e.g., ExchangeAPIError)
+   - Example:
+     ```rust
+     pub enum ExchangeError {
+         ApiError(ExchangeAPIError),
+         HttpError(reqwest::Error),
+         NativeError(Box<dyn std::error::Error + Send + Sync>),
+     }
+     pub type ExchangeResult<T> = Result<T, ExchangeError>;
+     ```
+
+3. The error enum should implement `std::error::Error` and `Display` for proper error propagation and formatting.
+4. All error messages returned from the exchange MUST be preserved and passed through to the user.
+5. This pattern MUST be applied consistently across all exchanges in the codebase.
+
 # Common Mistakes to Avoid
 1. Using regex for error message parsing
 2. Over-complicating error handling logic
@@ -261,30 +336,17 @@ venues/src/binance/coinm/
 
 # Rate Limiting Implementations
 
-1. Use existing rate limiter creates.
+1. Use existing rate limiter crates for implementing rate limiting functionality
+2. Rate limiting logic MUST be separated from endpoint implementations
+3. Each venue SHOULD define its own rate limiting configuration based on API documentation
 
 # Websockets
 
-1. All websockets to implement the common websocket trait. (websockets in the root)
-
-# Client Base URL Rules
-
-1. All client structs MUST take base URLs as constructor parameters
-2. Base URLs MUST NOT be hardcoded in the code
-3. Each client struct MUST have a base_url field
-4. The base_url field MUST be used for all API endpoint construction
-5. Default base URLs can be provided as constants but MUST be passed through the constructor
-6. The base_url field MUST be private (pub(crate)) to prevent external modification
-7. All endpoint implementations MUST use the clients base_url field for URL construction
-
-# Error Handling Rules
-
-1. NEVER use regex for parsing error messages or response data
-2. Keep error handling simple and direct
-3. Preserve original error codes and messages
-4. Use direct string matching or simple string operations if needed
-5. Avoid complex parsing of error messages
-6. When in doubt, pass through the original error message
+1. All websocket implementations MUST implement the common websocket trait defined in the websockets crate at the root level
+2. Websocket implementations MUST be venue-agnostic in the common websockets crate
+3. Venue-specific websocket logic MUST be implemented in the venue's specific module
+4. Websocket connections MUST handle reconnection and error recovery automatically
+5. All websocket messages MUST be properly typed with request/response structs
 
 # API Credential Handling Rules
 

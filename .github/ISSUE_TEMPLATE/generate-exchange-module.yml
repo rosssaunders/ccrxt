@@ -1,0 +1,58 @@
+name: Generate Exchange Module (Rust)
+description: Generate a new Rust exchange module implementation for a given exchange.
+title: "[Exchange Module]: Generate integration for {{Exchange Name}}"
+labels: ["exchange-module", "ai-generation", "copilot-plus"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Generate Exchange Module (Rust)
+
+        This issue is designed to request Copilot Plus or an AI assistant to generate a new Rust exchange integration module following repository standards.
+
+        Please fill in the required fields below.
+
+  - type: input
+    id: exchange_name
+    attributes:
+      label: Exchange Name
+      description: The name of the exchange to implement.
+      placeholder: e.g. Binance, Coinbase, Kraken
+    validations:
+      required: true
+
+  - type: input
+    id: docs_url
+    attributes:
+      label: API Documentation URL
+      description: Link to the official API documentation for the exchange.
+      placeholder: e.g. https://api.exchange.com/docs
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Prompt for Copilot Plus / GitHub AI / Assignee
+
+        Please generate a new Rust module implementing an exchange integration for **{{ exchange_name }}**.
+
+        The exchange's API documentation can be found here: **{{ docs_url }}**.
+
+        ### Requirements:
+        - Follow all repository conventions and rules as specified in the `.cursorrules` and `.CLAUDE.md` files.
+        - Implement **all available endpoints** as described in the API documentation.
+        - Follow established module structure, error handling, type safety, and idiomatic Rust practices as seen in existing exchange modules.
+        - Use proper HTTP clients, authentication mechanisms, rate limiting, and response parsing based on the exchange's API specification.
+        - Include unit tests, mock clients where applicable, and example code.
+        - Ensure code compiles, passes linter checks, and passes existing repository CI pipelines.
+        - Document any API ambiguities via inline code comments.
+
+        ### Inputs:
+        - Exchange Name: **{{ exchange_name }}**
+        - Documentation URL: **{{ docs_url }}**
+
+        If any ambiguities arise, make reasonable assumptions and document them.
+        
+        Once generated, the resulting code should be submitted as a Pull Request for review.

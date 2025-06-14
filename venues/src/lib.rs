@@ -1,9 +1,6 @@
 pub mod binance;
 pub mod bitmart;
 pub mod bybit;
+pub mod cryptocom;
+pub mod deribit;
 pub mod okx;
-pub mod price_feed;
-pub mod venue;
-pub mod coinbase;
-
-pub use websockets; 

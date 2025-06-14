@@ -5,22 +5,16 @@ use thiserror::Error;
 pub enum RestError {
     #[error("HTTP request error: {0}")]
     RequestError(#[from] reqwest::Error),
-    
+
     #[error("Rate limit exceeded")]
     RateLimitExceeded,
-    
+
     #[error("Authentication error: {0}")]
     AuthenticationError(String),
-    
+
     #[error("Validation error: {0}")]
     ValidationError(String),
-    
-    #[error("API error: {code} - {message}")]
-    ApiError {
-        code: i32,
-        message: String,
-    },
-    
+
     #[error("Unknown error: {0}")]
     Unknown(String),
-} 
+}

@@ -3,7 +3,10 @@ resolver = "2"
 members = [
     "venues",
     "websockets",
-    "rest"
+    "rest",
+    "venues/examples/binancecoinm",
+    "venues/examples/binanceportfoliomargin",
+    "binance_macros"
 ]
 
 [workspace.package]
@@ -16,7 +19,7 @@ description = "Rust wrappers around crypto exchanges"
 
 [workspace.dependencies]
 # Async runtime
-tokio = { version = "1.44.2", features = ["full"] }
+tokio = { version = "1.45.1", features = ["full"] }
 tokio-tungstenite = { version = "0.26.2", features = ["native-tls"] }
 
 # Serialization
@@ -33,17 +36,17 @@ reqwest = { version = "0.12.15", features = ["json", "native-tls"] }
 
 # Crypto and auth
 hmac = "0.12"
-sha2 = "0.10"
+sha2 = "0.10.9"
 hex = "0.4"
 
 # Utilities
-chrono = { version = "0.4", features = ["serde"] }
+chrono = { version = "0.4.41", features = ["serde"] }
 url = "2.4"
 futures = "0.3"
 async-trait = "0.1"
 parking_lot = "0.12"
 rust_decimal = { version = "1.34", features = ["serde"] }
-clap = { version = "4.5.37", features = ["derive"] }
+clap = { version = "4.5.38", features = ["derive"] }
 
 # Logging
 tracing = "0.1"
@@ -55,3 +58,14 @@ crossterm = "0.29.0"
 
 [workspace.lints.rust]
 unsafe_code = "forbid"
+
+[workspace.lints.clippy]
+# Critical lints for financial applications - these break builds
+unwrap_used = "deny"                    # No unwrap() - could panic in production
+expect_used = "warn"                    # Discourage expect() - prefer proper error handling
+panic = "deny"                          # No panic!() - crashes are unacceptable
+todo = "deny"                           # No TODO in production code
+unimplemented = "deny"                  # No unimplemented!() in production
+indexing_slicing = "deny"               # No direct indexing - could panic
+integer_arithmetic = "warn"             # Be careful with integer overflow in financial calculations
+float_arithmetic = "warn"               # Be careful with float precision in financial calculations
