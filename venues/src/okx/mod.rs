@@ -6,6 +6,8 @@ pub mod public {
     mod rest;
     pub use self::rest::RestClient;
     pub use self::rest::{GetInstrumentsRequest, GetInstrumentsResponse, Instrument};
+    pub use self::rest::{GetMarkPriceCandlesRequest, GetMarkPriceCandlesResponse};
+    pub use self::rest::{GetMarkPriceCandlesHistoryRequest, GetMarkPriceCandlesHistoryResponse};
 }
 
 pub mod private {
@@ -22,6 +24,8 @@ pub mod private {
     };
 }
 
+mod integration_test;
+
 pub use enums::*;
 pub use errors::{ApiError, ErrorResponse, Errors};
 pub use private::RestClient as PrivateRestClient;
@@ -36,6 +40,8 @@ pub use private::{
 };
 pub use public::RestClient as PublicRestClient;
 pub use public::{GetInstrumentsRequest, GetInstrumentsResponse, Instrument};
+pub use public::{GetMarkPriceCandlesRequest, GetMarkPriceCandlesResponse};
+pub use public::{GetMarkPriceCandlesHistoryRequest, GetMarkPriceCandlesHistoryResponse};
 pub use rate_limit::{EndpointType, RateLimit, RateLimitError, RateLimiter};
 
 /// Type alias for results returned by OKX API operations
