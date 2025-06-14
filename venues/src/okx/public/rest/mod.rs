@@ -1,4 +1,5 @@
 mod client;
+mod get_funding_rate_history;
 mod convert_contract_coin;
 mod get_index_components;
 mod get_economic_calendar;
@@ -20,6 +21,7 @@ mod get_underlying;
 mod get_price_limit;
 
 pub use client::RestClient;
+pub use get_funding_rate_history::{GetFundingRateHistoryRequest, GetFundingRateHistoryResponse, FundingRateHistory};
 pub use convert_contract_coin::{ConvertContractCoinRequest, ConvertContractCoinResponse, ConvertContractCoinData};
 
 #[allow(unused_imports)]
