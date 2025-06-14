@@ -46,6 +46,10 @@ workspace = true
 name = "cryptocom_rate_limit"
 path = "examples/cryptocom/rate_limit_example.rs"
 
+[[example]]
+name = "okx_get_underlying"
+path = "examples/okx/get_underlying.rs"
+
 [dev-dependencies]
 tokio-test = "0.4"
 tracing-subscriber = { workspace = true }
