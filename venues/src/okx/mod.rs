@@ -25,6 +25,7 @@ pub mod private {
 }
 
 mod integration_test;
+mod usage_examples;
 
 pub use enums::*;
 pub use errors::{ApiError, ErrorResponse, Errors};
