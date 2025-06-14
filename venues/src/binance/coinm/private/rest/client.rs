@@ -137,7 +137,11 @@ impl RestClient {
         if !self.api_key.expose_secret().is_empty() {
             headers.push(("X-MBX-APIKEY", self.api_key.expose_secret()));
         }
-        let body_data = body.map(|b| serde_urlencoded::to_string(b).unwrap());
+        let body_data = match body {
+            Some(b) => Some(serde_urlencoded::to_string(b)
+                .map_err(|e| crate::binance::coinm::Errors::Error(format!("URL encoding error: {}", e)))?),
+            None => None,
+        };
         if body_data.is_some() {
             headers.push((
                 "Content-Type",
