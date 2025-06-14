@@ -15,9 +15,11 @@ pub mod private {
         OkxApiResponse, PlaceOrderRequest, PlaceOrderResponse, AttachedAlgoOrder,
         CancelOrderRequest, CancelOrderResponse, GetOrderRequest, OrderDetails,
         GetPendingOrdersRequest, GetOrderHistoryRequest, PlaceBatchOrdersRequest,
-        PlaceBatchOrdersResponse, CancelBatchOrdersResponse, GetAccountBalanceRequest,
-        AccountBalance, BalanceDetail, GetPositionsRequest, Position, CloseOrderAlgo,
-        GetFillsRequest, Fill,
+        PlaceBatchOrdersResponse, CancelBatchOrdersResponse, AmendOrderRequest,
+        AmendOrderResponse, ClosePositionRequest, ClosePositionResponse,
+        GetAccountBalanceRequest, AccountBalance, BalanceDetail, GetPositionsRequest,
+        Position, CloseOrderAlgo, GetFillsRequest, Fill, GetAccountConfigRequest,
+        AccountConfig, IpRestriction,
     };
 }
 
@@ -30,9 +32,11 @@ pub use private::{
     OkxApiResponse, PlaceOrderRequest, PlaceOrderResponse, AttachedAlgoOrder,
     CancelOrderRequest, CancelOrderResponse, GetOrderRequest, OrderDetails,
     GetPendingOrdersRequest, GetOrderHistoryRequest, PlaceBatchOrdersRequest,
-    PlaceBatchOrdersResponse, CancelBatchOrdersResponse, GetAccountBalanceRequest,
-    AccountBalance, BalanceDetail, GetPositionsRequest, Position, CloseOrderAlgo,
-    GetFillsRequest, Fill,
+    PlaceBatchOrdersResponse, CancelBatchOrdersResponse, AmendOrderRequest,
+    AmendOrderResponse, ClosePositionRequest, ClosePositionResponse,
+    GetAccountBalanceRequest, AccountBalance, BalanceDetail, GetPositionsRequest,
+    Position, CloseOrderAlgo, GetFillsRequest, Fill, GetAccountConfigRequest,
+    AccountConfig, IpRestriction,
 };
 pub use rate_limit::{EndpointType, RateLimit, RateLimitError, RateLimiter};
 
