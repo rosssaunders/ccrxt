@@ -139,3 +139,16 @@ pub enum AdlType {
     AdlEnd,
 }
 
+/// Delivery/exercise type for futures and options
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum DeliveryExerciseType {
+    /// Delivery (for futures)
+    Delivery,
+    /// Exercised (for options)
+    Exercised,
+    /// Expired out of the money
+    #[serde(rename = "expired_otm")]
+    ExpiredOtm,
+}
+
