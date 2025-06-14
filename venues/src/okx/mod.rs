@@ -20,6 +20,7 @@ pub mod public {
     pub use self::rest::{GetMarkPriceCandlesHistoryRequest, GetMarkPriceCandlesHistoryResponse};
     pub use self::rest::{GetIndexCandlesRequest, GetIndexCandlesResponse};
     pub use self::rest::{GetPremiumHistoryRequest, GetPremiumHistoryResponse, PremiumHistory};
+    pub use self::rest::{GetPriceLimitRequest, GetPriceLimitResponse, PriceLimit};
 }
 
 pub mod private {
@@ -66,7 +67,7 @@ pub use public::{GetMarkPriceCandlesRequest, GetMarkPriceCandlesResponse};
 pub use public::{GetMarkPriceCandlesHistoryRequest, GetMarkPriceCandlesHistoryResponse};
 pub use public::{GetIndexCandlesRequest, GetIndexCandlesResponse};
 pub use public::{GetPremiumHistoryRequest, GetPremiumHistoryResponse, PremiumHistory};
-
+pub use public::{GetPriceLimitRequest, GetPriceLimitResponse, PriceLimit};
 pub use rate_limit::{EndpointType, RateLimit, RateLimitError, RateLimiter};
 
 /// Type alias for results returned by OKX API operations
