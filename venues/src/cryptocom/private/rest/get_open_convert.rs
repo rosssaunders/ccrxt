@@ -251,7 +251,10 @@ mod tests {
 
         let response: GetOpenConvertResponse = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.data.len(), 1);
-        assert_eq!(response.data.first().unwrap().from_instrument_name, "ETH.staked");
+        assert_eq!(
+            response.data.first().unwrap().from_instrument_name,
+            "ETH.staked"
+        );
         assert_eq!(response.data.first().unwrap().status, "COMPLETED");
     }
 

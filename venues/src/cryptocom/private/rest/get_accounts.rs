@@ -264,7 +264,10 @@ mod tests {
             "243d3f39-b193-4eb9-1d60-e98f2fc17707"
         );
         assert_eq!(response.sub_account_list.len(), 1);
-        assert_eq!(response.sub_account_list.first().unwrap().uuid, "sub-account-uuid");
+        assert_eq!(
+            response.sub_account_list.first().unwrap().uuid,
+            "sub-account-uuid"
+        );
         assert!(!response.sub_account_list.first().unwrap().tradable);
     }
 

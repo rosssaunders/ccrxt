@@ -219,7 +219,10 @@ mod tests {
         let request: CreateOrderListRequest = serde_json::from_value(request_json).unwrap();
         assert_eq!(request.contingency_type, ContingencyType::List);
         assert_eq!(request.order_list.len(), 2);
-        assert_eq!(request.order_list.first().unwrap().instrument_name, "ETH_CRO");
+        assert_eq!(
+            request.order_list.first().unwrap().instrument_name,
+            "ETH_CRO"
+        );
         assert_eq!(
             request.order_list.get(1).unwrap().client_oid,
             Some("my_order_0002".to_string())
@@ -314,9 +317,18 @@ mod tests {
         let request: CreateOrderListRequest = serde_json::from_value(request_json).unwrap();
         assert_eq!(request.contingency_type, ContingencyType::Oco);
         assert_eq!(request.order_list.len(), 2);
-        assert_eq!(request.order_list.first().unwrap().order_type, OrderType::Limit);
-        assert_eq!(request.order_list.get(1).unwrap().order_type, OrderType::StopLoss);
-        assert_eq!(request.order_list.get(1).unwrap().ref_price, Some("19000".to_string()));
+        assert_eq!(
+            request.order_list.first().unwrap().order_type,
+            OrderType::Limit
+        );
+        assert_eq!(
+            request.order_list.get(1).unwrap().order_type,
+            OrderType::StopLoss
+        );
+        assert_eq!(
+            request.order_list.get(1).unwrap().ref_price,
+            Some("19000".to_string())
+        );
     }
 
     #[test]

@@ -1,6 +1,6 @@
-use serde::{Deserialize, Serialize};
 use super::client::RestClient;
-use crate::okx::{EndpointType, InstrumentType, InstrumentState, RestResult};
+use crate::okx::{EndpointType, InstrumentState, InstrumentType, RestResult};
+use serde::{Deserialize, Serialize};
 
 /// Request parameters for getting instruments
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -181,8 +181,14 @@ mod tests {
         };
 
         let serialized = serde_json::to_value(&request).unwrap();
-        assert_eq!(serialized.get("instType").and_then(|v| v.as_str()), Some("SPOT"));
-        assert_eq!(serialized.get("instId").and_then(|v| v.as_str()), Some("BTC-USDT"));
+        assert_eq!(
+            serialized.get("instType").and_then(|v| v.as_str()),
+            Some("SPOT")
+        );
+        assert_eq!(
+            serialized.get("instId").and_then(|v| v.as_str()),
+            Some("BTC-USDT")
+        );
     }
 
     #[test]
@@ -247,7 +253,7 @@ mod tests {
             "instFamily": "BTC-USD",
             "category": "1",
             "baseCcy": "BTC",
-            "quoteCcy": "USD", 
+            "quoteCcy": "USD",
             "settleCcy": "BTC",
             "ctVal": "100",
             "ctMult": "1",
@@ -268,7 +274,7 @@ mod tests {
             "state": "live",
             "ruleType": "normal",
             "maxLmtSz": "10000",
-            "maxMktSz": "1000", 
+            "maxMktSz": "1000",
             "maxLmtAmt": "1000000",
             "maxMktAmt": "100000",
             "maxTwapSz": "10000",
@@ -313,7 +319,7 @@ mod tests {
 
         let serialized = serde_json::to_value(&original).unwrap();
         let deserialized: GetInstrumentsRequest = serde_json::from_value(serialized).unwrap();
-        
+
         assert_eq!(original.inst_type, deserialized.inst_type);
         assert_eq!(original.underlying, deserialized.underlying);
         assert_eq!(original.inst_family, deserialized.inst_family);

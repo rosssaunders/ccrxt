@@ -2,15 +2,15 @@
 //
 // Provides access to all private REST API endpoints for OKX Exchange.
 // All requests are authenticated and require API credentials.
-use reqwest::Client;
-use serde::de::DeserializeOwned;
-use serde::Serialize;
-use std::borrow::Cow;
+use base64::{engine::general_purpose, Engine as _};
 use chrono::Utc;
 use hmac::{Hmac, Mac};
-use sha2::Sha256;
-use base64::{Engine as _, engine::general_purpose};
+use reqwest::Client;
 use rest::secrets::ExposableSecret;
+use serde::de::DeserializeOwned;
+use serde::Serialize;
+use sha2::Sha256;
+use std::borrow::Cow;
 
 use crate::okx::{EndpointType, Errors, RateLimiter, RestResult};
 
@@ -129,7 +129,9 @@ impl RestClient {
         P: Serialize + ?Sized,
     {
         // Check rate limits
-        self.rate_limiter.check_limits(endpoint_type.clone()).await?;
+        self.rate_limiter
+            .check_limits(endpoint_type.clone())
+            .await?;
 
         // Build URL
         let url = format!("{}/{}", self.base_url.trim_end_matches('/'), endpoint);
@@ -143,8 +145,9 @@ impl RestClient {
         // Handle query parameters for GET requests or body for POST/PUT/DELETE
         let (request_path, body) = if method == reqwest::Method::GET {
             if let Some(params) = params {
-                let query_string = serde_urlencoded::to_string(params)
-                    .map_err(|e| Errors::Error(format!("Failed to serialize query parameters: {}", e)))?;
+                let query_string = serde_urlencoded::to_string(params).map_err(|e| {
+                    Errors::Error(format!("Failed to serialize query parameters: {}", e))
+                })?;
                 if !query_string.is_empty() {
                     request_builder = request_builder.query(&query_string);
                     (format!("/{}?{}", endpoint, query_string), String::new())
@@ -156,17 +159,18 @@ impl RestClient {
             }
         } else {
             let body = if let Some(params) = params {
-                serde_json::to_string(params)
-                    .map_err(|e| Errors::Error(format!("Failed to serialize request body: {}", e)))?
+                serde_json::to_string(params).map_err(|e| {
+                    Errors::Error(format!("Failed to serialize request body: {}", e))
+                })?
             } else {
                 String::new()
             };
-            
+
             if !body.is_empty() {
                 request_builder = request_builder.body(body.clone());
                 request_builder = request_builder.header("Content-Type", "application/json");
             }
-            
+
             (format!("/{}", endpoint), body)
         };
 
@@ -176,7 +180,7 @@ impl RestClient {
         // Add required headers
         let api_key = self.api_key.expose_secret();
         let api_passphrase = self.api_passphrase.expose_secret();
-        
+
         request_builder = request_builder
             .header("OK-ACCESS-KEY", api_key.as_str())
             .header("OK-ACCESS-SIGN", &signature)
@@ -192,11 +196,11 @@ impl RestClient {
         // Handle response
         if response.status().is_success() {
             let response_text = response.text().await?;
-            
+
             // Parse the response
             let parsed: T = serde_json::from_str(&response_text)
                 .map_err(|e| Errors::Error(format!("Failed to parse response: {}", e)))?;
-                
+
             Ok(parsed)
         } else {
             let status = response.status();
@@ -230,11 +234,13 @@ mod tests {
     #[test]
     fn test_private_client_creation() {
         let api_key = Box::new(TestSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret = Box::new(TestSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
-        let api_passphrase = Box::new(TestSecret::new("test_passphrase".to_string())) as Box<dyn ExposableSecret>;
+        let api_secret =
+            Box::new(TestSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let api_passphrase =
+            Box::new(TestSecret::new("test_passphrase".to_string())) as Box<dyn ExposableSecret>;
         let client = Client::new();
         let rate_limiter = RateLimiter::new();
-        
+
         let rest_client = RestClient::new(
             api_key,
             api_secret,
@@ -243,18 +249,20 @@ mod tests {
             client,
             rate_limiter,
         );
-        
+
         assert_eq!(rest_client.base_url, "https://www.okx.com");
     }
 
     #[test]
     fn test_signature_generation() {
         let api_key = Box::new(TestSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret = Box::new(TestSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
-        let api_passphrase = Box::new(TestSecret::new("test_passphrase".to_string())) as Box<dyn ExposableSecret>;
+        let api_secret =
+            Box::new(TestSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let api_passphrase =
+            Box::new(TestSecret::new("test_passphrase".to_string())) as Box<dyn ExposableSecret>;
         let client = Client::new();
         let rate_limiter = RateLimiter::new();
-        
+
         let rest_client = RestClient::new(
             api_key,
             api_secret,
@@ -269,8 +277,10 @@ mod tests {
         let request_path = "/api/v5/account/balance?ccy=BTC";
         let body = "";
 
-        let signature = rest_client.sign_request(timestamp, method, request_path, body).unwrap();
-        
+        let signature = rest_client
+            .sign_request(timestamp, method, request_path, body)
+            .unwrap();
+
         // Verify the signature is a valid base64 string
         assert!(general_purpose::STANDARD.decode(&signature).is_ok());
     }
@@ -278,11 +288,13 @@ mod tests {
     #[tokio::test]
     async fn test_rate_limiting_integration() {
         let api_key = Box::new(TestSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret = Box::new(TestSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
-        let api_passphrase = Box::new(TestSecret::new("test_passphrase".to_string())) as Box<dyn ExposableSecret>;
+        let api_secret =
+            Box::new(TestSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let api_passphrase =
+            Box::new(TestSecret::new("test_passphrase".to_string())) as Box<dyn ExposableSecret>;
         let client = Client::new();
         let rate_limiter = RateLimiter::new();
-        
+
         let rest_client = RestClient::new(
             api_key,
             api_secret,
@@ -293,7 +305,10 @@ mod tests {
         );
 
         // Verify rate limiting works
-        let result = rest_client.rate_limiter.check_limits(EndpointType::PrivateTrading).await;
+        let result = rest_client
+            .rate_limiter
+            .check_limits(EndpointType::PrivateTrading)
+            .await;
         assert!(result.is_ok());
     }
 }

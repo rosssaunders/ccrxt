@@ -195,7 +195,11 @@ mod tests {
         assert!(!instrument.is_compound_reward);
         assert_eq!(instrument.additional_rewards.len(), 1);
         assert_eq!(
-            instrument.additional_rewards.first().unwrap().reward_inst_name,
+            instrument
+                .additional_rewards
+                .first()
+                .unwrap()
+                .reward_inst_name,
             "USD_Stable_Coin"
         );
     }

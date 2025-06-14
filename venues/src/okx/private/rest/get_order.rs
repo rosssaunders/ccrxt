@@ -1,6 +1,6 @@
-use serde::{Deserialize, Serialize};
+use super::{common::OkxApiResponse, RestClient};
 use crate::okx::{EndpointType, OrderSide, OrderType, RestResult};
-use super::{RestClient, common::OkxApiResponse};
+use serde::{Deserialize, Serialize};
 
 /// Request to get order details
 #[derive(Debug, Clone, Serialize)]
@@ -8,12 +8,12 @@ use super::{RestClient, common::OkxApiResponse};
 pub struct GetOrderRequest {
     /// Instrument ID, e.g. "BTC-USDT"
     pub inst_id: String,
-    
+
     /// Order ID
     /// Either ordId or clOrdId is required. If both are passed, ordId will be used.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub ord_id: Option<String>,
-    
+
     /// Client Order ID as assigned by the client
     #[serde(skip_serializing_if = "Option::is_none")]
     pub cl_ord_id: Option<String>,
@@ -25,110 +25,110 @@ pub struct GetOrderRequest {
 pub struct OrderDetails {
     /// Instrument type
     pub inst_type: String,
-    
+
     /// Instrument ID
     pub inst_id: String,
-    
+
     /// Margin currency
     pub ccy: Option<String>,
-    
+
     /// Order ID
     pub ord_id: String,
-    
+
     /// Client Order ID as assigned by the client
     pub cl_ord_id: Option<String>,
-    
+
     /// Order tag
     pub tag: Option<String>,
-    
+
     /// Order price
     pub px: String,
-    
+
     /// Quantity to buy or sell
     pub sz: String,
-    
+
     /// Order type
     pub ord_type: OrderType,
-    
+
     /// Order side
     pub side: OrderSide,
-    
+
     /// Position side
     pub pos_side: Option<String>,
-    
+
     /// Trade mode
     pub td_mode: String,
-    
+
     /// Accumulated fill quantity
     pub acc_fill_sz: String,
-    
+
     /// Last filled price
     pub fill_px: Option<String>,
-    
+
     /// Last trade ID
     pub trade_id: Option<String>,
-    
+
     /// Last filled quantity
     pub fill_sz: Option<String>,
-    
+
     /// Last filled time
     pub fill_time: Option<String>,
-    
+
     /// Average filled price
     pub avg_px: Option<String>,
-    
+
     /// Order state
     /// "canceled", "live", "partially_filled", "filled"
     pub state: String,
-    
+
     /// Leverage
     pub lever: Option<String>,
-    
+
     /// Take-profit trigger price
     pub tp_trigger_px: Option<String>,
-    
+
     /// Take-profit order price
     pub tp_ord_px: Option<String>,
-    
+
     /// Stop-loss trigger price
     pub sl_trigger_px: Option<String>,
-    
+
     /// Stop-loss order price
     pub sl_ord_px: Option<String>,
-    
+
     /// Fee currency
     pub fee_ccy: Option<String>,
-    
+
     /// Fee
     pub fee: Option<String>,
-    
+
     /// Rebate currency
     pub rebate_ccy: Option<String>,
-    
+
     /// Rebate amount
     pub rebate: Option<String>,
-    
+
     /// Whether the order can only reduce in position size
     pub reduce_only: Option<bool>,
-    
+
     /// Category
     pub category: Option<String>,
-    
+
     /// Creation time
     pub c_time: String,
-    
+
     /// Update time
     pub u_time: String,
-    
+
     /// Request ID
     pub req_id: Option<String>,
-    
+
     /// Amend result
     pub amend_result: Option<String>,
-    
+
     /// Code
     pub code: Option<String>,
-    
+
     /// Message
     pub msg: Option<String>,
 }
@@ -238,7 +238,7 @@ mod tests {
         let response: OkxApiResponse<OrderDetails> = serde_json::from_str(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 1);
-        
+
         let order = &response.data[0];
         assert_eq!(order.inst_id, "BTC-USDT");
         assert_eq!(order.ord_id, "312269865356374016");

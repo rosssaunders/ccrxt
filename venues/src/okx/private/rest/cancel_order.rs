@@ -1,6 +1,6 @@
-use serde::{Deserialize, Serialize};
+use super::{common::OkxApiResponse, RestClient};
 use crate::okx::{EndpointType, RestResult};
-use super::{RestClient, common::OkxApiResponse};
+use serde::{Deserialize, Serialize};
 
 /// Request to cancel an existing order
 #[derive(Debug, Clone, Serialize)]
@@ -8,12 +8,12 @@ use super::{RestClient, common::OkxApiResponse};
 pub struct CancelOrderRequest {
     /// Instrument ID, e.g. "BTC-USDT"
     pub inst_id: String,
-    
+
     /// Order ID
     /// Either ordId or clOrdId is required. If both are passed, ordId will be used.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub ord_id: Option<String>,
-    
+
     /// Client Order ID as assigned by the client
     #[serde(skip_serializing_if = "Option::is_none")]
     pub cl_ord_id: Option<String>,
@@ -25,13 +25,13 @@ pub struct CancelOrderRequest {
 pub struct CancelOrderResponse {
     /// Client Order ID as assigned by the client
     pub cl_ord_id: Option<String>,
-    
+
     /// Order ID
     pub ord_id: String,
-    
+
     /// Response code for individual order: "0" means success
     pub s_code: String,
-    
+
     /// Response message for individual order
     pub s_msg: String,
 }
@@ -106,7 +106,8 @@ mod tests {
             ]
         }"#;
 
-        let response: OkxApiResponse<CancelOrderResponse> = serde_json::from_str(response_json).unwrap();
+        let response: OkxApiResponse<CancelOrderResponse> =
+            serde_json::from_str(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 1);
         assert_eq!(response.data[0].cl_ord_id, Some("my_order_123".to_string()));

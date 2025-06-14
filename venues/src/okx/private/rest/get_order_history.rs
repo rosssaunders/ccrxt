@@ -1,6 +1,6 @@
-use serde::Serialize;
+use super::{common::OkxApiResponse, get_order::OrderDetails, RestClient};
 use crate::okx::{EndpointType, InstrumentType, RestResult};
-use super::{RestClient, common::OkxApiResponse, get_order::OrderDetails};
+use serde::Serialize;
 
 /// Request to get order history
 #[derive(Debug, Clone, Serialize)]
@@ -9,47 +9,47 @@ pub struct GetOrderHistoryRequest {
     /// Instrument type
     #[serde(skip_serializing_if = "Option::is_none")]
     pub inst_type: Option<InstrumentType>,
-    
+
     /// Underlying
     #[serde(skip_serializing_if = "Option::is_none")]
     pub uly: Option<String>,
-    
+
     /// Instrument family
     #[serde(skip_serializing_if = "Option::is_none")]
     pub inst_family: Option<String>,
-    
+
     /// Instrument ID, e.g. "BTC-USDT"
     #[serde(skip_serializing_if = "Option::is_none")]
     pub inst_id: Option<String>,
-    
+
     /// Order type
     #[serde(skip_serializing_if = "Option::is_none")]
     pub ord_type: Option<String>,
-    
+
     /// Order state
     #[serde(skip_serializing_if = "Option::is_none")]
     pub state: Option<String>,
-    
+
     /// Category
     #[serde(skip_serializing_if = "Option::is_none")]
     pub category: Option<String>,
-    
+
     /// Pagination of data to return records earlier than the requested ordId
     #[serde(skip_serializing_if = "Option::is_none")]
     pub after: Option<String>,
-    
+
     /// Pagination of data to return records newer than the requested ordId
     #[serde(skip_serializing_if = "Option::is_none")]
     pub before: Option<String>,
-    
+
     /// Number of results per request. The maximum is 100; the default is 100.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<String>,
-    
+
     /// Filter with a begin timestamp. Unix timestamp format in milliseconds.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub begin: Option<String>,
-    
+
     /// Filter with an end timestamp. Unix timestamp format in milliseconds.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub end: Option<String>,

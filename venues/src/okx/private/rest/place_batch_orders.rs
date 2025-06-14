@@ -1,6 +1,6 @@
-use serde::{Deserialize, Serialize};
+use super::{common::OkxApiResponse, place_order::PlaceOrderRequest, RestClient};
 use crate::okx::{EndpointType, RestResult};
-use super::{RestClient, common::OkxApiResponse, place_order::PlaceOrderRequest};
+use serde::{Deserialize, Serialize};
 
 /// Request to place multiple orders at once
 #[derive(Debug, Clone, Serialize)]
@@ -16,16 +16,16 @@ pub struct PlaceBatchOrdersRequest {
 pub struct PlaceBatchOrdersResponse {
     /// Client Order ID as assigned by the client
     pub cl_ord_id: Option<String>,
-    
+
     /// Order ID assigned by the system
     pub ord_id: String,
-    
+
     /// Order tag
     pub tag: Option<String>,
-    
+
     /// Response code for individual order: "0" means success
     pub s_code: String,
-    
+
     /// Response message for individual order
     pub s_msg: String,
 }
@@ -123,7 +123,8 @@ mod tests {
             ]
         }"#;
 
-        let response: OkxApiResponse<PlaceBatchOrdersResponse> = serde_json::from_str(response_json).unwrap();
+        let response: OkxApiResponse<PlaceBatchOrdersResponse> =
+            serde_json::from_str(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 2);
         assert_eq!(response.data[0].cl_ord_id, Some("order_1".to_string()));

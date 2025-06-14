@@ -1,6 +1,6 @@
 use std::time::{Duration, Instant};
-use tokio::sync::RwLock;
 use thiserror::Error;
+use tokio::sync::RwLock;
 
 /// Types of endpoints for rate limiting
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -108,10 +108,15 @@ mod tests {
     #[tokio::test]
     async fn test_rate_limiter_basic() {
         let limiter = RateLimiter::new();
-        
+
         // First request should succeed
-        assert!(limiter.check_limits(EndpointType::PublicMarketData).await.is_ok());
-        limiter.increment_request(EndpointType::PublicMarketData).await;
+        assert!(limiter
+            .check_limits(EndpointType::PublicMarketData)
+            .await
+            .is_ok());
+        limiter
+            .increment_request(EndpointType::PublicMarketData)
+            .await;
     }
 
     #[tokio::test]
@@ -125,7 +130,7 @@ mod tests {
     fn test_endpoint_types() {
         let public_data = EndpointType::PublicMarketData;
         let private_trading = EndpointType::PrivateTrading;
-        
+
         assert_ne!(public_data, private_trading);
         assert_eq!(public_data.clone(), EndpointType::PublicMarketData);
     }

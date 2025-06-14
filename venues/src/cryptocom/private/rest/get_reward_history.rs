@@ -206,7 +206,10 @@ mod tests {
 
         let response: GetRewardHistoryResponse = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.data.len(), 1);
-        assert_eq!(response.data.first().unwrap().staking_inst_name, "SOL.staked");
+        assert_eq!(
+            response.data.first().unwrap().staking_inst_name,
+            "SOL.staked"
+        );
         assert_eq!(response.data.first().unwrap().reward_quantity, "123.4567");
     }
 
@@ -235,8 +238,14 @@ mod tests {
 
         let response: GetRewardHistoryResponse = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.data.len(), 2);
-        assert_eq!(response.data.first().unwrap().staking_inst_name, "SOL.staked");
-        assert_eq!(response.data.get(1).unwrap().staking_inst_name, "ETH.staked");
+        assert_eq!(
+            response.data.first().unwrap().staking_inst_name,
+            "SOL.staked"
+        );
+        assert_eq!(
+            response.data.get(1).unwrap().staking_inst_name,
+            "ETH.staked"
+        );
         assert_eq!(response.data.first().unwrap().reward_quantity, "50.0");
         assert_eq!(response.data.get(1).unwrap().reward_quantity, "0.125");
     }

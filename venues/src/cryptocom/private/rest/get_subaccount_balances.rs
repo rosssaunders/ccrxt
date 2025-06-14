@@ -182,8 +182,14 @@ mod tests {
         let balance: SubaccountBalance = serde_json::from_value(balance_json).unwrap();
         assert_eq!(balance.account, "49786818-6ead-40c4-a008-ea6b0fa5cf96");
         assert_eq!(balance.position_balances.len(), 1);
-        assert_eq!(balance.position_balances.first().unwrap().instrument_name, "BTC");
-        assert_eq!(balance.position_balances.first().unwrap().quantity, "1.0000000000");
+        assert_eq!(
+            balance.position_balances.first().unwrap().instrument_name,
+            "BTC"
+        );
+        assert_eq!(
+            balance.position_balances.first().unwrap().quantity,
+            "1.0000000000"
+        );
         assert_eq!(balance.total_available_balance, "20823.62250000");
     }
 
@@ -259,7 +265,10 @@ mod tests {
             serde_json::from_value(response_json).unwrap();
         assert_eq!(response.data.len(), 2);
         assert_eq!(response.data.first().unwrap().account, "account-1");
-        assert_eq!(response.data.first().unwrap().instrument_name, Some("USD".to_string()));
+        assert_eq!(
+            response.data.first().unwrap().instrument_name,
+            Some("USD".to_string())
+        );
         assert_eq!(response.data.get(1).unwrap().account, "account-2");
         assert_eq!(response.data.get(1).unwrap().instrument_name, None);
     }
