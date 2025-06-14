@@ -19,6 +19,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - run: cargo install cargo-deadlinks
       - run: cargo doc --no-deps
       - run: cargo deadlinks --check-http
 
@@ -26,5 +28,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
       - uses: actions-rs/audit-check@v1
       - uses: EmbarkStudios/cargo-deny-action@v1
