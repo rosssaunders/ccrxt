@@ -5,7 +5,13 @@ pub mod rate_limit;
 pub mod public {
     mod rest;
     pub use self::rest::RestClient;
+    pub use self::rest::{
+        GetHistoryMarkPriceCandlesRequest, GetHistoryMarkPriceCandlesResponse,
+        HistoryMarkPriceCandle,
+    };
     pub use self::rest::{GetInstrumentsRequest, GetInstrumentsResponse, Instrument};
+    pub use self::rest::{GetMarkPriceCandlesRequest, GetMarkPriceCandlesResponse, MarkPriceCandle};
+    pub use self::rest::{GetMarkPriceRequest, GetMarkPriceResponse, MarkPrice};
     pub use self::rest::{GetPremiumHistoryRequest, GetPremiumHistoryResponse, PremiumHistory};
 }
 
@@ -36,7 +42,12 @@ pub use private::{
     Position,
 };
 pub use public::RestClient as PublicRestClient;
+pub use public::{
+    GetHistoryMarkPriceCandlesRequest, GetHistoryMarkPriceCandlesResponse, HistoryMarkPriceCandle,
+};
 pub use public::{GetInstrumentsRequest, GetInstrumentsResponse, Instrument};
+pub use public::{GetMarkPriceCandlesRequest, GetMarkPriceCandlesResponse, MarkPriceCandle};
+pub use public::{GetMarkPriceRequest, GetMarkPriceResponse, MarkPrice};
 pub use public::{GetPremiumHistoryRequest, GetPremiumHistoryResponse, PremiumHistory};
 pub use rate_limit::{EndpointType, RateLimit, RateLimitError, RateLimiter};
 
