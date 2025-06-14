@@ -110,9 +110,9 @@ mod tests {
         };
 
         let serialized = serde_json::to_value(&request).unwrap();
-        assert_eq!(serialized["instrument_name"], "BTCUSD-PERP");
-        assert_eq!(serialized["type"], "LIMIT");
-        assert_eq!(serialized["price"], "30000.0");
+        assert_eq!(serialized.get("instrument_name").unwrap(), "BTCUSD-PERP");
+        assert_eq!(serialized.get("type").unwrap(), "LIMIT");
+        assert_eq!(serialized.get("price").unwrap(), "30000.0");
     }
 
     #[test]
@@ -124,8 +124,8 @@ mod tests {
         };
 
         let serialized = serde_json::to_value(&request).unwrap();
-        assert_eq!(serialized["instrument_name"], "BTCUSD-PERP");
-        assert_eq!(serialized["type"], "MARKET");
+        assert_eq!(serialized.get("instrument_name").unwrap(), "BTCUSD-PERP");
+        assert_eq!(serialized.get("type").unwrap(), "MARKET");
         assert!(!serialized.as_object().unwrap().contains_key("price"));
     }
 

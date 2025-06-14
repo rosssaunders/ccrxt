@@ -109,7 +109,7 @@ mod tests {
         };
 
         let json_value = serde_json::to_value(&request).unwrap();
-        assert_eq!(json_value["currency"], "CRO");
+        assert_eq!(json_value.get("currency").unwrap(), "CRO");
     }
 
     #[test]

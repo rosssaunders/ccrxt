@@ -82,12 +82,15 @@ impl RestClient {
             "address": address
         });
 
+        #[allow(clippy::indexing_slicing)] // Safe: adding new keys to JSON object
         if let Some(cw) = client_wid {
             params["client_wid"] = Value::String(cw.to_string());
         }
+        #[allow(clippy::indexing_slicing)] // Safe: adding new keys to JSON object  
         if let Some(at) = address_tag {
             params["address_tag"] = Value::String(at.to_string());
         }
+        #[allow(clippy::indexing_slicing)] // Safe: adding new keys to JSON object
         if let Some(nid) = network_id {
             params["network_id"] = Value::String(nid.to_string());
         }
@@ -151,10 +154,10 @@ mod tests {
         };
 
         let json_value = serde_json::to_value(&request).unwrap();
-        assert_eq!(json_value["currency"], "BTC");
-        assert_eq!(json_value["amount"], "1");
-        assert_eq!(json_value["address"], "2NBqqD5GRJ8wHy1PYyCXTe9ke5226FhavBf");
-        assert_eq!(json_value["client_wid"], "my_withdrawal_002");
+        assert_eq!(json_value.get("currency").unwrap(), "BTC");
+        assert_eq!(json_value.get("amount").unwrap(), "1");
+        assert_eq!(json_value.get("address").unwrap(), "2NBqqD5GRJ8wHy1PYyCXTe9ke5226FhavBf");
+        assert_eq!(json_value.get("client_wid").unwrap(), "my_withdrawal_002");
     }
 
     #[test]
@@ -169,9 +172,9 @@ mod tests {
         };
 
         let json_value = serde_json::to_value(&request).unwrap();
-        assert_eq!(json_value["currency"], "CRO");
-        assert_eq!(json_value["amount"], "100");
-        assert_eq!(json_value["address"], "address123");
+        assert_eq!(json_value.get("currency").unwrap(), "CRO");
+        assert_eq!(json_value.get("amount").unwrap(), "100");
+        assert_eq!(json_value.get("address").unwrap(), "address123");
         assert!(!json_value.as_object().unwrap().contains_key("client_wid"));
         assert!(!json_value.as_object().unwrap().contains_key("address_tag"));
         assert!(!json_value.as_object().unwrap().contains_key("network_id"));

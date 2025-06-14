@@ -92,9 +92,11 @@ impl RestClient {
         let id = 1;
 
         let mut params = json!({});
+        #[allow(clippy::indexing_slicing)] // Safe: adding new keys to JSON object
         if let Some(ps) = page_size {
             params["page_size"] = Value::Number(ps.into());
         }
+        #[allow(clippy::indexing_slicing)] // Safe: adding new keys to JSON object
         if let Some(p) = page {
             params["page"] = Value::Number(p.into());
         }
@@ -272,8 +274,8 @@ mod tests {
         };
 
         let json_value = serde_json::to_value(request).unwrap();
-        assert_eq!(json_value["page_size"], 30);
-        assert_eq!(json_value["page"], 2);
+        assert_eq!(json_value.get("page_size").unwrap(), 30);
+        assert_eq!(json_value.get("page").unwrap(), 2);
     }
 
     #[test]
@@ -295,7 +297,7 @@ mod tests {
         };
 
         let json_value = serde_json::to_value(request).unwrap();
-        assert_eq!(json_value["page_size"], 50);
+        assert_eq!(json_value.get("page_size").unwrap(), 50);
         assert!(!json_value.as_object().unwrap().contains_key("page"));
     }
 }

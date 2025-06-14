@@ -265,8 +265,8 @@ mod tests {
         };
 
         let serialized = serde_json::to_value(&result).unwrap();
-        assert_eq!(serialized["index"], 0);
-        assert_eq!(serialized["code"], 0);
+        assert_eq!(serialized.get("index").unwrap(), 0);
+        assert_eq!(serialized.get("code").unwrap(), 0);
         assert!(!serialized.as_object().unwrap().contains_key("message"));
     }
 
@@ -281,9 +281,9 @@ mod tests {
         };
 
         let serialized = serde_json::to_value(&request).unwrap();
-        assert_eq!(serialized["contingency_type"], "LIST");
-        assert_eq!(serialized["order_list"][0]["instrument_name"], "BTC_USDT");
-        assert_eq!(serialized["order_list"][0]["order_id"], "123456789");
+        assert_eq!(serialized.get("contingency_type").unwrap(), "LIST");
+        assert_eq!(serialized.get("order_list").unwrap()[0].get("instrument_name").unwrap(), "BTC_USDT");
+        assert_eq!(serialized.get("order_list").unwrap()[0].get("order_id").unwrap(), "123456789");
     }
 
     #[test]
@@ -295,8 +295,8 @@ mod tests {
         };
 
         let serialized = serde_json::to_value(&request).unwrap();
-        assert_eq!(serialized["contingency_type"], "OCO");
-        assert_eq!(serialized["list_id"], "6498090546073120100");
-        assert_eq!(serialized["instrument_name"], "BTCUSD-PERP");
+        assert_eq!(serialized.get("contingency_type").unwrap(), "OCO");
+        assert_eq!(serialized.get("list_id").unwrap(), "6498090546073120100");
+        assert_eq!(serialized.get("instrument_name").unwrap(), "BTCUSD-PERP");
     }
 }

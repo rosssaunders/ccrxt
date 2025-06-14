@@ -222,10 +222,10 @@ mod tests {
         };
 
         let json_value = serde_json::to_value(request).unwrap();
-        assert_eq!(json_value["instrument_name"], "BTCUSD-PERP");
-        assert_eq!(json_value["start_time"], "1610905028000081486");
-        assert_eq!(json_value["end_time"], "1613570791058211357");
-        assert_eq!(json_value["limit"], 20);
+        assert_eq!(json_value.get("instrument_name").unwrap(), "BTCUSD-PERP");
+        assert_eq!(json_value.get("start_time").unwrap(), "1610905028000081486");
+        assert_eq!(json_value.get("end_time").unwrap(), "1613570791058211357");
+        assert_eq!(json_value.get("limit").unwrap(), 20);
     }
 
     #[test]
@@ -251,8 +251,8 @@ mod tests {
         };
 
         let json_value = serde_json::to_value(request).unwrap();
-        assert_eq!(json_value["instrument_name"], "BTCUSD-PERP");
-        assert_eq!(json_value["limit"], 50);
+        assert_eq!(json_value.get("instrument_name").unwrap(), "BTCUSD-PERP");
+        assert_eq!(json_value.get("limit").unwrap(), 50);
         assert!(!json_value.as_object().unwrap().contains_key("start_time"));
         assert!(!json_value.as_object().unwrap().contains_key("end_time"));
     }

@@ -91,7 +91,7 @@ mod tests {
             "instrument_name": "BTC_USDT",
             "depth": 10
         });
-        assert_eq!(params["instrument_name"], "BTC_USDT");
-        assert_eq!(params["depth"], 10);
+        assert_eq!(params.get("instrument_name").unwrap(), "BTC_USDT");
+        assert_eq!(params.get("depth").unwrap(), 10);
     }
 }

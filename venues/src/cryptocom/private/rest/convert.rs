@@ -132,11 +132,11 @@ mod tests {
         };
 
         let json_value = serde_json::to_value(request).unwrap();
-        assert_eq!(json_value["from_instrument_name"], "ETH.staked");
-        assert_eq!(json_value["to_instrument_name"], "CDCETH");
-        assert_eq!(json_value["expected_rate"], "1.0203");
-        assert_eq!(json_value["from_quantity"], "3.14159265");
-        assert_eq!(json_value["slippage_tolerance_bps"], "3");
+        assert_eq!(json_value.get("from_instrument_name").unwrap(), "ETH.staked");
+        assert_eq!(json_value.get("to_instrument_name").unwrap(), "CDCETH");
+        assert_eq!(json_value.get("expected_rate").unwrap(), "1.0203");
+        assert_eq!(json_value.get("from_quantity").unwrap(), "3.14159265");
+        assert_eq!(json_value.get("slippage_tolerance_bps").unwrap(), "3");
     }
 
     #[test]
@@ -150,11 +150,11 @@ mod tests {
         };
 
         let json_value = serde_json::to_value(request).unwrap();
-        assert_eq!(json_value["from_instrument_name"], "CDCETH");
-        assert_eq!(json_value["to_instrument_name"], "ETH.staked");
-        assert_eq!(json_value["expected_rate"], "0.9801");
-        assert_eq!(json_value["from_quantity"], "2.0");
-        assert_eq!(json_value["slippage_tolerance_bps"], "5");
+        assert_eq!(json_value.get("from_instrument_name").unwrap(), "CDCETH");
+        assert_eq!(json_value.get("to_instrument_name").unwrap(), "ETH.staked");
+        assert_eq!(json_value.get("expected_rate").unwrap(), "0.9801");
+        assert_eq!(json_value.get("from_quantity").unwrap(), "2.0");
+        assert_eq!(json_value.get("slippage_tolerance_bps").unwrap(), "5");
     }
 
     #[test]
@@ -233,7 +233,7 @@ mod tests {
             };
 
             let json_value = serde_json::to_value(request).unwrap();
-            assert_eq!(json_value["slippage_tolerance_bps"], slippage);
+            assert_eq!(json_value.get("slippage_tolerance_bps").unwrap(), slippage);
         }
     }
 }

@@ -101,10 +101,10 @@ mod tests {
         };
 
         let serialized = serde_json::to_value(&request).unwrap();
-        assert_eq!(serialized["stp_scope"], "S");
-        assert_eq!(serialized["stp_inst"], "M");
-        assert_eq!(serialized["stp_id"], "100");
-        assert_eq!(serialized["leverage"], 20);
+        assert_eq!(serialized.get("stp_scope").unwrap(), "S");
+        assert_eq!(serialized.get("stp_inst").unwrap(), "M");
+        assert_eq!(serialized.get("stp_id").unwrap(), "100");
+        assert_eq!(serialized.get("leverage").unwrap(), 20);
     }
 
     #[test]
@@ -117,9 +117,9 @@ mod tests {
         };
 
         let serialized = serde_json::to_value(&request).unwrap();
-        assert_eq!(serialized["stp_scope"], "M");
-        assert_eq!(serialized["stp_inst"], "B");
-        assert_eq!(serialized["stp_id"], "0");
+        assert_eq!(serialized.get("stp_scope").unwrap(), "M");
+        assert_eq!(serialized.get("stp_inst").unwrap(), "B");
+        assert_eq!(serialized.get("stp_id").unwrap(), "0");
         assert!(!serialized.as_object().unwrap().contains_key("leverage"));
     }
 
@@ -133,7 +133,7 @@ mod tests {
         };
 
         let serialized = serde_json::to_value(&request).unwrap();
-        assert_eq!(serialized["leverage"], 50);
+        assert_eq!(serialized.get("leverage").unwrap(), 50);
         assert!(!serialized.as_object().unwrap().contains_key("stp_scope"));
         assert!(!serialized.as_object().unwrap().contains_key("stp_inst"));
         assert!(!serialized.as_object().unwrap().contains_key("stp_id"));

@@ -99,7 +99,7 @@ mod tests {
         };
 
         let serialized = serde_json::to_value(&request).unwrap();
-        assert_eq!(serialized["instrument_name"], "BTC_USD");
+        assert_eq!(serialized.get("instrument_name").unwrap(), "BTC_USD");
     }
 
     #[test]
@@ -109,7 +109,7 @@ mod tests {
         };
 
         let serialized = serde_json::to_value(&request).unwrap();
-        assert_eq!(serialized["instrument_name"], "BTCUSD-PERP");
+        assert_eq!(serialized.get("instrument_name").unwrap(), "BTCUSD-PERP");
     }
 
     #[test]

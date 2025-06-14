@@ -182,12 +182,12 @@ mod tests {
         };
 
         let json_value = serde_json::to_value(&request).unwrap();
-        assert_eq!(json_value["currency"], "XRP");
-        assert_eq!(json_value["start_ts"], 1587846300000_u64);
-        assert_eq!(json_value["end_ts"], 1587846358253_u64);
-        assert_eq!(json_value["page_size"], 2);
-        assert_eq!(json_value["page"], 0);
-        assert_eq!(json_value["status"], "1");
+        assert_eq!(json_value.get("currency").unwrap(), "XRP");
+        assert_eq!(json_value.get("start_ts").unwrap(), 1587846300000_u64);
+        assert_eq!(json_value.get("end_ts").unwrap(), 1587846358253_u64);
+        assert_eq!(json_value.get("page_size").unwrap(), 2);
+        assert_eq!(json_value.get("page").unwrap(), 0);
+        assert_eq!(json_value.get("status").unwrap(), "1");
     }
 
     #[test]

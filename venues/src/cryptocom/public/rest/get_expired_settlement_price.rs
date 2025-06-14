@@ -100,7 +100,7 @@ mod tests {
             "instrument_type": "FUTURE",
             "page": 1
         });
-        assert_eq!(params["instrument_type"], "FUTURE");
-        assert_eq!(params["page"], 1);
+        assert_eq!(params.get("instrument_type").unwrap(), "FUTURE");
+        assert_eq!(params.get("page").unwrap(), 1);
     }
 }

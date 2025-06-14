@@ -143,7 +143,7 @@ mod tests {
         };
 
         let serialized = serde_json::to_value(&request).unwrap();
-        assert_eq!(serialized["order_id"], "19848525");
+        assert_eq!(serialized.get("order_id").unwrap(), "19848525");
         assert!(!serialized.as_object().unwrap().contains_key("client_oid"));
     }
 
@@ -155,7 +155,7 @@ mod tests {
         };
 
         let serialized = serde_json::to_value(&request).unwrap();
-        assert_eq!(serialized["client_oid"], "1613571154900");
+        assert_eq!(serialized.get("client_oid").unwrap(), "1613571154900");
         assert!(!serialized.as_object().unwrap().contains_key("order_id"));
     }
 

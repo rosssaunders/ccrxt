@@ -168,9 +168,9 @@ mod tests {
         };
 
         let json_value = serde_json::to_value(request).unwrap();
-        assert_eq!(json_value["timeframe"], "H1");
-        assert_eq!(json_value["end_time"], 1629478800000_u64);
-        assert_eq!(json_value["limit"], 10);
+        assert_eq!(json_value.get("timeframe").unwrap(), "H1");
+        assert_eq!(json_value.get("end_time").unwrap(), 1629478800000_u64);
+        assert_eq!(json_value.get("limit").unwrap(), 10);
     }
 
     #[test]
@@ -194,8 +194,8 @@ mod tests {
         };
 
         let json_value = serde_json::to_value(request).unwrap();
-        assert_eq!(json_value["timeframe"], "D1");
-        assert_eq!(json_value["limit"], 30);
+        assert_eq!(json_value.get("timeframe").unwrap(), "D1");
+        assert_eq!(json_value.get("limit").unwrap(), 30);
         assert!(!json_value.as_object().unwrap().contains_key("end_time"));
     }
 }

@@ -109,9 +109,9 @@ mod tests {
         };
 
         let serialized = serde_json::to_value(&request).unwrap();
-        assert_eq!(serialized["order_id"], "6530219466236720401");
-        assert_eq!(serialized["new_price"], "82000");
-        assert_eq!(serialized["new_quantity"], "0.0002");
+        assert_eq!(serialized.get("order_id").unwrap(), "6530219466236720401");
+        assert_eq!(serialized.get("new_price").unwrap(), "82000");
+        assert_eq!(serialized.get("new_quantity").unwrap(), "0.0002");
         assert!(!serialized
             .as_object()
             .unwrap()
@@ -128,9 +128,9 @@ mod tests {
         };
 
         let serialized = serde_json::to_value(&request).unwrap();
-        assert_eq!(serialized["orig_client_oid"], "53");
-        assert_eq!(serialized["new_price"], "83000");
-        assert_eq!(serialized["new_quantity"], "0.0001");
+        assert_eq!(serialized.get("orig_client_oid").unwrap(), "53");
+        assert_eq!(serialized.get("new_price").unwrap(), "83000");
+        assert_eq!(serialized.get("new_quantity").unwrap(), "0.0001");
         assert!(!serialized.as_object().unwrap().contains_key("order_id"));
     }
 
@@ -144,10 +144,10 @@ mod tests {
         };
 
         let serialized = serde_json::to_value(&request).unwrap();
-        assert_eq!(serialized["order_id"], "6530219466236720401");
-        assert_eq!(serialized["orig_client_oid"], "53");
-        assert_eq!(serialized["new_price"], "84000");
-        assert_eq!(serialized["new_quantity"], "0.0003");
+        assert_eq!(serialized.get("order_id").unwrap(), "6530219466236720401");
+        assert_eq!(serialized.get("orig_client_oid").unwrap(), "53");
+        assert_eq!(serialized.get("new_price").unwrap(), "84000");
+        assert_eq!(serialized.get("new_quantity").unwrap(), "0.0003");
     }
 
     #[test]
