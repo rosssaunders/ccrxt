@@ -15,6 +15,8 @@ pub enum EndpointType {
     PrivateAccount,
     /// Public insurance fund endpoint
     PublicInsuranceFund,
+    /// Public market data history endpoints (lower rate limit)
+    PublicMarketDataHistory,
 }
 
 /// Rate limit configuration for different endpoint types
@@ -66,6 +68,7 @@ impl RateLimiter {
             EndpointType::PrivateTrading => RateLimit::new(60, Duration::from_secs(2)),
             EndpointType::PrivateAccount => RateLimit::new(10, Duration::from_secs(2)),
             EndpointType::PublicInsuranceFund => RateLimit::new(10, Duration::from_secs(2)),
+            EndpointType::PublicMarketDataHistory => RateLimit::new(10, Duration::from_secs(2)),
         }
     }
 
