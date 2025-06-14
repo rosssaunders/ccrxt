@@ -6,6 +6,7 @@ pub mod public {
     mod rest;
     pub use self::rest::RestClient;
     pub use self::rest::{GetInstrumentsRequest, GetInstrumentsResponse, Instrument};
+    pub use self::rest::{GetOptSummaryRequest, GetOptSummaryResponse, OptSummary};
     pub use self::rest::{GetPremiumHistoryRequest, GetPremiumHistoryResponse, PremiumHistory};
 }
 
@@ -37,6 +38,7 @@ pub use private::{
 };
 pub use public::RestClient as PublicRestClient;
 pub use public::{GetInstrumentsRequest, GetInstrumentsResponse, Instrument};
+pub use public::{GetOptSummaryRequest, GetOptSummaryResponse, OptSummary};
 pub use public::{GetPremiumHistoryRequest, GetPremiumHistoryResponse, PremiumHistory};
 pub use rate_limit::{EndpointType, RateLimit, RateLimitError, RateLimiter};
 
