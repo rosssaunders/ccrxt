@@ -547,4 +547,26 @@ mod tests {
         assert_eq!(status.available_credits, 50_000 - (10 * 500)); // 10 non-matching requests used
         assert_eq!(status.matching_engine_requests_in_window, 10);
     }
+
+    #[tokio::test]
+    async fn test_credit_refill_over_time() {
+        // Test that credits refill correctly over time
+        let limiter = RateLimiter::with_custom_credits(AccountTier::Tier4, 1000, 100); // 100 credits/sec
+        
+        // Consume all credits
+        for _ in 0..2 {
+            assert!(limiter.check_limits(EndpointType::NonMatchingEngine).await.is_ok());
+            limiter.record_request(EndpointType::NonMatchingEngine).await;
+        }
+        
+        let status = limiter.get_status().await;
+        assert_eq!(status.available_credits, 0); // All credits consumed
+        
+        // Wait for some credits to refill
+        tokio::time::sleep(Duration::from_millis(50)).await; // 0.05 seconds should give us ~5 credits
+        
+        let status = limiter.get_status().await;
+        assert!(status.available_credits > 0, "Credits should have refilled");
+        assert!(status.available_credits < 100, "Should not have refilled completely yet");
+    }
 }
