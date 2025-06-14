@@ -1,4 +1,5 @@
 mod client;
+mod get_discount_rate_interest_free_quota;
 mod get_funding_rate;
 mod get_funding_rate_history;
 mod convert_contract_coin;
@@ -24,6 +25,11 @@ mod get_underlying;
 mod get_price_limit;
 
 pub use client::RestClient;
+#[allow(unused_imports)]
+pub use get_discount_rate_interest_free_quota::{
+    DiscountDetail, DiscountRateInterestFreeQuota, GetDiscountRateInterestFreeQuotaRequest,
+    GetDiscountRateInterestFreeQuotaResponse,
+};
 pub use get_funding_rate::{GetFundingRateRequest, GetFundingRateResponse, FundingRate};
 pub use get_funding_rate_history::{GetFundingRateHistoryRequest, GetFundingRateHistoryResponse, FundingRateHistory};
 pub use convert_contract_coin::{ConvertContractCoinRequest, ConvertContractCoinResponse, ConvertContractCoinData};
