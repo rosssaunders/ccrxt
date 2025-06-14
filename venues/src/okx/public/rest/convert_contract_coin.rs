@@ -278,4 +278,46 @@ mod tests {
             Some("2")
         );
     }
+
+    // Integration test to verify all exports are accessible
+    #[test]
+    fn test_integration_exports_available() {
+        use crate::okx::{
+            ConvertContractCoinRequest, ConvertContractCoinResponse, ConvertContractCoinData,
+            PublicRestClient, RateLimiter,
+        };
+
+        // Test that we can create the request struct
+        let _request = ConvertContractCoinRequest {
+            convert_type: Some("1".to_string()),
+            inst_id: "BTC-USD-SWAP".to_string(),
+            sz: "100".to_string(),
+            px: Some("50000".to_string()),
+            unit: Some("coin".to_string()),
+            op_type: Some("close".to_string()),
+        };
+
+        // Test that we can create the response struct
+        let _data = ConvertContractCoinData {
+            convert_type: "1".to_string(),
+            inst_id: "BTC-USD-SWAP".to_string(),
+            px: "50000".to_string(),
+            sz: "2".to_string(),
+            unit: "coin".to_string(),
+        };
+
+        let _response = ConvertContractCoinResponse {
+            code: "0".to_string(),
+            msg: "".to_string(),
+            data: vec![_data],
+        };
+
+        // Test that we can create the client
+        let client = reqwest::Client::new();
+        let rate_limiter = RateLimiter::new();
+        let _okx_client = PublicRestClient::new("https://www.okx.com", client, rate_limiter);
+
+        // All types are accessible
+        assert!(true);
+    }
 }
