@@ -7,6 +7,8 @@ pub mod rate_limit;
 pub mod public {
     mod rest;
     pub use self::rest::RestClient;
+    pub use self::rest::{GetFundingRateRequest, GetFundingRateResponse, FundingRate};
+    pub use self::rest::{GetFundingRateHistoryRequest, GetFundingRateHistoryResponse, FundingRateHistory};
     pub use self::rest::{
         BarSize, GetHistoryMarkPriceCandlesRequest, GetHistoryMarkPriceCandlesResponse, MarkPriceCandle,
     };
@@ -65,6 +67,8 @@ pub use private::{
 };
 
 pub use public::RestClient as PublicRestClient;
+pub use public::{GetFundingRateRequest, GetFundingRateResponse, FundingRate};
+pub use public::{GetFundingRateHistoryRequest, GetFundingRateHistoryResponse, FundingRateHistory};
 pub use public::{
     BarSize, GetHistoryMarkPriceCandlesRequest, GetHistoryMarkPriceCandlesResponse, MarkPriceCandle,
 };

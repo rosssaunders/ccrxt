@@ -24,6 +24,7 @@ pub struct GetFundingRateHistoryRequest {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct FundingRateHistory {
+    /// Instrument type (SWAP)
     /// Instrument type, should be "SWAP"
     #[serde(rename = "instType")]
     pub inst_type: String,
@@ -42,7 +43,7 @@ pub struct FundingRateHistory {
     /// Settlement time, Unix timestamp format in milliseconds, e.g. "1597026383085"
     #[serde(rename = "fundingTime")]
     pub funding_time: String,
-    /// Funding rate mechanism: "current_period" or "next_period"
+    /// Funding rate mechanism (current_period, next_period)
     pub method: String,
 }
 
@@ -95,8 +96,8 @@ mod tests {
     fn test_get_funding_rate_history_request_structure() {
         let request = GetFundingRateHistoryRequest {
             inst_id: "BTC-USD-SWAP".to_string(),
-            after: None,
             before: None,
+            after: None,
             limit: Some("50".to_string()),
         };
 
@@ -109,16 +110,16 @@ mod tests {
             serialized.get("limit").and_then(|v| v.as_str()),
             Some("50")
         );
-        assert!(serialized.get("after").is_none());
         assert!(serialized.get("before").is_none());
+        assert!(serialized.get("after").is_none());
     }
 
     #[test]
     fn test_get_funding_rate_history_request_with_pagination() {
         let request = GetFundingRateHistoryRequest {
             inst_id: "ETH-USD-SWAP".to_string(),
-            after: Some("1597026383085".to_string()),
-            before: Some("1597026483085".to_string()),
+            before: Some("1597026383085".to_string()),
+            after: Some("1597026283085".to_string()),
             limit: Some("100".to_string()),
         };
 
@@ -128,12 +129,12 @@ mod tests {
             Some("ETH-USD-SWAP")
         );
         assert_eq!(
-            serialized.get("after").and_then(|v| v.as_str()),
+            serialized.get("before").and_then(|v| v.as_str()),
             Some("1597026383085")
         );
         assert_eq!(
-            serialized.get("before").and_then(|v| v.as_str()),
-            Some("1597026483085")
+            serialized.get("after").and_then(|v| v.as_str()),
+            Some("1597026283085")
         );
         assert_eq!(
             serialized.get("limit").and_then(|v| v.as_str()),
@@ -147,8 +148,8 @@ mod tests {
             "instType": "SWAP",
             "instId": "BTC-USD-SWAP",
             "formulaType": "withRate",
+            "realizedRate": "0.00009",
             "fundingRate": "0.000123",
-            "realizedRate": "0.000456",
             "fundingTime": "1597026383085",
             "method": "current_period"
         });
@@ -157,8 +158,8 @@ mod tests {
         assert_eq!(funding_rate_history.inst_type, "SWAP");
         assert_eq!(funding_rate_history.inst_id, "BTC-USD-SWAP");
         assert_eq!(funding_rate_history.formula_type, "withRate");
-        assert_eq!(funding_rate_history.funding_rate, "0.000123");
-        assert_eq!(funding_rate_history.realized_rate, "0.000456");
+        assert_eq!(funding_rate_history.funding_rate, "0.0001");
+        assert_eq!(funding_rate_history.realized_rate, "0.00009");
         assert_eq!(funding_rate_history.funding_time, "1597026383085");
         assert_eq!(funding_rate_history.method, "current_period");
     }
@@ -173,8 +174,8 @@ mod tests {
                     "instType": "SWAP",
                     "instId": "BTC-USD-SWAP",
                     "formulaType": "withRate",
+                    "realizedRate": "0.00009",
                     "fundingRate": "0.000123",
-                    "realizedRate": "0.000456",
                     "fundingTime": "1597026383085",
                     "method": "current_period"
                 },
