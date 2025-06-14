@@ -21,6 +21,7 @@ pub mod public {
     pub use self::rest::{GetInsuranceFundRequest, GetInsuranceFundResponse, InsuranceFundData, InsuranceFundDetail};
     pub use self::rest::{GetOpenInterestRequest, GetOpenInterestResponse, OpenInterest};
     pub use self::rest::{GetIndexTickersRequest, GetIndexTickersResponse, IndexTicker};
+    pub use self::rest::{GetMarkPriceRequest, GetMarkPriceResponse, MarkPrice};
     pub use self::rest::{GetMarkPriceCandlesRequest, GetMarkPriceCandlesResponse};
     pub use self::rest::{GetMarkPriceCandlesHistoryRequest, GetMarkPriceCandlesHistoryResponse};
     pub use self::rest::{GetIndexCandlesRequest, GetIndexCandlesResponse};
@@ -85,6 +86,7 @@ pub use public::{
 };
 pub use public::{GetOpenInterestRequest, GetOpenInterestResponse, OpenInterest};
 pub use public::{GetIndexTickersRequest, GetIndexTickersResponse, IndexTicker};
+pub use public::{GetMarkPriceRequest, GetMarkPriceResponse, MarkPrice};
 pub use public::{GetMarkPriceCandlesRequest, GetMarkPriceCandlesResponse};
 pub use public::{GetMarkPriceCandlesHistoryRequest, GetMarkPriceCandlesHistoryResponse};
 pub use public::{GetIndexCandlesRequest, GetIndexCandlesResponse};
