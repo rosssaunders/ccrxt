@@ -47,6 +47,12 @@ impl From<serde_json::Error> for Errors {
     }
 }
 
+impl From<crate::okx::rate_limit::RateLimitError> for Errors {
+    fn from(err: crate::okx::rate_limit::RateLimitError) -> Self {
+        Errors::Error(format!("Rate limit error: {}", err))
+    }
+}
+
 /// Represents an error response from the OKX API.
 ///
 /// This is public as it is used by API responses.
