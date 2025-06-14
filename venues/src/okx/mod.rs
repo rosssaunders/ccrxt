@@ -7,6 +7,9 @@ pub mod rate_limit;
 pub mod public {
     mod rest;
     pub use self::rest::RestClient;
+    pub use self::rest::{
+        GetIndexComponentsRequest, GetIndexComponentsResponse, IndexComponent, IndexComponentData,
+    };
     pub use self::rest::{GetInstrumentTickBandsRequest, GetInstrumentTickBandsResponse, InstrumentTickBandData, TickBand};
     pub use self::rest::{EconomicEvent, GetEconomicCalendarRequest, GetEconomicCalendarResponse};
     pub use self::rest::{ExchangeRate, ExchangeRateResponse};
@@ -50,6 +53,9 @@ pub use private::{
 };
 
 pub use public::RestClient as PublicRestClient;
+pub use public::{
+    GetIndexComponentsRequest, GetIndexComponentsResponse, IndexComponent, IndexComponentData
+};
 pub use public::{GetInstrumentTickBandsRequest, GetInstrumentTickBandsResponse, InstrumentTickBandData, TickBand};
 pub use public::{EconomicEvent, GetEconomicCalendarRequest, GetEconomicCalendarResponse};
 pub use public::{ExchangeRate, ExchangeRateResponse};

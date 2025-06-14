@@ -1,4 +1,5 @@
 mod client;
+mod get_index_components;
 mod get_economic_calendar;
 mod exchange_rate;
 mod get_instruments;
@@ -11,6 +12,10 @@ mod get_history_index_candles;
 mod get_premium_history;
 
 pub use client::RestClient;
+#[allow(unused_imports)]
+pub use get_index_components::{
+    GetIndexComponentsRequest, GetIndexComponentsResponse, IndexComponent, IndexComponentData,
+};
 
 #[allow(unused_imports)]
 pub use get_economic_calendar::{EconomicEvent, GetEconomicCalendarRequest, GetEconomicCalendarResponse};
