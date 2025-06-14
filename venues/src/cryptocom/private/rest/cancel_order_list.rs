@@ -190,8 +190,14 @@ mod tests {
         let request: CancelOrderListRequest = serde_json::from_value(request_json).unwrap();
         assert_eq!(request.contingency_type, ContingencyType::List);
         assert_eq!(request.order_list.len(), 2);
-        assert_eq!(request.order_list.first().unwrap().instrument_name, "ETH_CRO");
-        assert_eq!(request.order_list.get(1).unwrap().order_id, "2015119459882149857");
+        assert_eq!(
+            request.order_list.first().unwrap().instrument_name,
+            "ETH_CRO"
+        );
+        assert_eq!(
+            request.order_list.get(1).unwrap().order_id,
+            "2015119459882149857"
+        );
     }
 
     #[test]

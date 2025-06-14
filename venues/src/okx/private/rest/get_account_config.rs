@@ -1,6 +1,6 @@
-use serde::{Deserialize, Serialize};
+use super::{common::OkxApiResponse, RestClient};
 use crate::okx::{EndpointType, RestResult};
-use super::{RestClient, common::OkxApiResponse};
+use serde::{Deserialize, Serialize};
 
 /// Request to get account configuration
 #[derive(Debug, Clone, Serialize)]
@@ -14,84 +14,84 @@ pub struct GetAccountConfigRequest {
 pub struct AccountConfig {
     /// Account ID
     pub uid: String,
-    
+
     /// Account level
     /// 1: Simple, 2: Single-currency margin, 3: Multi-currency margin, 4: Portfolio margin
     pub acct_lv: String,
-    
+
     /// Position mode
     /// long_short_mode: long/short, net_mode: net
     pub pos_mode: String,
-    
+
     /// Whether the account enables auto margin or not
     pub auto_loan: bool,
-    
+
     /// The user level for Greeks PA/BS mode
     pub greeks_type: String,
-    
+
     /// Current account level
     pub level: String,
-    
+
     /// Temporary experience user level
     pub level_tmp: String,
-    
+
     /// Whether the account can cross borrow and repay
     pub ct_iso_mode: String,
-    
+
     /// Margin mode
     pub mgn_iso_mode: String,
-    
+
     /// Risk offset type
     pub spot_offset_type: String,
-    
+
     /// Role type. 0: General user, 1: Leading trader, 2: Copy trader
     pub role_type: String,
-    
+
     /// Trade role
     pub trade_role: String,
-    
+
     /// Maximum available size between 1 and 500
     pub max_size: Option<String>,
-    
+
     /// Whether to enable quick margin mode for Multi-currency margin
     pub quick_mgn_type: Option<String>,
-    
+
     /// IP restriction details
     pub ip: Vec<IpRestriction>,
-    
+
     /// Permission details
     pub perm: Vec<String>,
-    
+
     /// Label of the account. Only applicable to broker accounts
     pub label: Option<String>,
-    
+
     /// Main UID. Only applicable to broker accounts
     pub main_uid: Option<String>,
-    
+
     /// API key permission
     pub op_auth: String,
-    
+
     /// Kyc level of the account. 0: no kyc, 1: level 1, 2: level 2, 3: level 3
     pub kyc_lv: Option<String>,
-    
+
     /// KYC level for the account
     pub kyc_lv_new: Option<String>,
-    
+
     /// KYC level for the account
     pub api_kyc_lv: Option<String>,
-    
+
     /// Whether the position risk offset is enabled or not
     pub spot_role_type: Option<String>,
-    
+
     /// Whether the account enables spot trading
     pub spot_trading: Option<bool>,
-    
+
     /// Whether the account enables futures trading
     pub future_trading: Option<bool>,
-    
+
     /// Whether the account enables options trading
     pub option_trading: Option<bool>,
-    
+
     /// The feature enabled for the account. 0: Normal mode, 1: Buy first mode
     pub kmp: Option<String>,
 }
@@ -102,7 +102,7 @@ pub struct AccountConfig {
 pub struct IpRestriction {
     /// IP address
     pub ip: String,
-    
+
     /// TS
     pub ts: String,
 }
@@ -177,7 +177,7 @@ mod tests {
         let response: OkxApiResponse<AccountConfig> = serde_json::from_str(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 1);
-        
+
         let config = &response.data[0];
         assert_eq!(config.uid, "123456789");
         assert_eq!(config.acct_lv, "2");

@@ -286,8 +286,14 @@ mod tests {
 
         let response: GetOrderListResponse = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.data.len(), 1);
-        assert_eq!(response.data.first().unwrap().order_id, "4611686018427387905");
-        assert_eq!(response.data.first().unwrap().contingency_type, ContingencyType::Oco);
+        assert_eq!(
+            response.data.first().unwrap().order_id,
+            "4611686018427387905"
+        );
+        assert_eq!(
+            response.data.first().unwrap().contingency_type,
+            ContingencyType::Oco
+        );
     }
 
     #[test]

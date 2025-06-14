@@ -1,6 +1,6 @@
-use serde::{Deserialize, Serialize};
+use super::{common::OkxApiResponse, RestClient};
 use crate::okx::{EndpointType, OrderSide, OrderType, RestResult};
-use super::{RestClient, common::OkxApiResponse};
+use serde::{Deserialize, Serialize};
 
 /// Request to place a new order
 #[derive(Debug, Clone, Serialize)]
@@ -8,54 +8,54 @@ use super::{RestClient, common::OkxApiResponse};
 pub struct PlaceOrderRequest {
     /// Instrument ID, e.g. "BTC-USDT"
     pub inst_id: String,
-    
+
     /// Trade mode
     /// Margin mode: "cross", "isolated"
     /// Non-Margin mode: "cash"
     /// "spot_isolated" (only applicable to SPOT lead trading)
     pub td_mode: String,
-    
+
     /// Margin currency
     /// Applicable to all isolated MARGIN orders and cross MARGIN orders in Futures mode.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub ccy: Option<String>,
-    
+
     /// Client Order ID as assigned by the client
     /// A combination of case-sensitive alphanumerics, all numbers, or all letters of up to 32 characters.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub cl_ord_id: Option<String>,
-    
+
     /// Order tag
     /// A combination of case-sensitive alphanumerics, all numbers, or all letters of up to 16 characters.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub tag: Option<String>,
-    
+
     /// Order side: "buy" or "sell"
     pub side: OrderSide,
-    
+
     /// Order type
     pub ord_type: OrderType,
-    
+
     /// Quantity to buy or sell
     pub sz: String,
-    
+
     /// Order price. Only applicable to limit, post_only, fok, ioc, mmp, mmp_and_post_only order.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub px: Option<String>,
-    
+
     /// Whether orders can only reduce in position size.
     /// Valid options: true or false. The default value is false.
     /// Only applicable to MARGIN orders, and FUTURES/SWAP orders in net mode
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reduce_only: Option<bool>,
-    
+
     /// Whether the target currency uses the quote or base currency.
     /// "base_ccy": Base currency, "quote_ccy": Quote currency
     /// Only applicable to SPOT Market Orders
     /// Default is "quote_ccy" for buy, "base_ccy" for sell
     #[serde(skip_serializing_if = "Option::is_none")]
     pub tgt_ccy: Option<String>,
-    
+
     /// TP/SL information attached when placing order
     #[serde(skip_serializing_if = "Option::is_none")]
     pub attach_algo_ords: Option<Vec<AttachedAlgoOrder>>,
@@ -68,28 +68,28 @@ pub struct AttachedAlgoOrder {
     /// Client-supplied Algo ID when placing order attaching TP/SL
     #[serde(skip_serializing_if = "Option::is_none")]
     pub attach_algo_cl_ord_id: Option<String>,
-    
+
     /// Take-profit trigger price
     #[serde(skip_serializing_if = "Option::is_none")]
     pub tp_trigger_px: Option<String>,
-    
+
     /// Take-profit order price
     #[serde(skip_serializing_if = "Option::is_none")]
     pub tp_ord_px: Option<String>,
-    
+
     /// TP order kind: "condition" or "limit"
     /// The default is "condition"
     #[serde(skip_serializing_if = "Option::is_none")]
     pub tp_ord_kind: Option<String>,
-    
+
     /// Stop-loss trigger price
     #[serde(skip_serializing_if = "Option::is_none")]
     pub sl_trigger_px: Option<String>,
-    
+
     /// Stop-loss order price
     #[serde(skip_serializing_if = "Option::is_none")]
     pub sl_ord_px: Option<String>,
-    
+
     /// SL order kind: "condition" or "limit"
     /// The default is "condition"
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -102,16 +102,16 @@ pub struct AttachedAlgoOrder {
 pub struct PlaceOrderResponse {
     /// Client Order ID as assigned by the client
     pub cl_ord_id: Option<String>,
-    
+
     /// Order ID assigned by the system
     pub ord_id: String,
-    
+
     /// Order tag
     pub tag: Option<String>,
-    
+
     /// Response code for individual order: "0" means success
     pub s_code: String,
-    
+
     /// Response message for individual order
     pub s_msg: String,
 }
@@ -186,7 +186,8 @@ mod tests {
             ]
         }"#;
 
-        let response: OkxApiResponse<PlaceOrderResponse> = serde_json::from_str(response_json).unwrap();
+        let response: OkxApiResponse<PlaceOrderResponse> =
+            serde_json::from_str(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 1);
         assert_eq!(response.data[0].cl_ord_id, Some("my_order_123".to_string()));

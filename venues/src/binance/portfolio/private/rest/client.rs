@@ -133,7 +133,12 @@ impl RestClient {
         if !self.api_key.expose_secret().is_empty() {
             headers.push(("X-MBX-APIKEY", self.api_key.expose_secret()));
         }
-        let body_data = body.map(|b| serde_urlencoded::to_string(b).map_err(|e| Errors::Error(format!("Failed to serialize body: {}", e)))).transpose()?;
+        let body_data = body
+            .map(|b| {
+                serde_urlencoded::to_string(b)
+                    .map_err(|e| Errors::Error(format!("Failed to serialize body: {}", e)))
+            })
+            .transpose()?;
         if body_data.is_some() {
             headers.push((
                 "Content-Type",

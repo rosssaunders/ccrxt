@@ -192,7 +192,10 @@ mod tests {
         assert_eq!(balance.instrument_name, "USD");
         assert!(!balance.is_liquidating);
         assert_eq!(balance.position_balances.len(), 1);
-        assert_eq!(balance.position_balances.first().unwrap().instrument_name, "CRO");
+        assert_eq!(
+            balance.position_balances.first().unwrap().instrument_name,
+            "CRO"
+        );
     }
 
     #[test]

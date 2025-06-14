@@ -1,6 +1,6 @@
-use serde::{Deserialize, Serialize};
+use super::{common::OkxApiResponse, RestClient};
 use crate::okx::{EndpointType, RestResult};
-use super::{RestClient, common::OkxApiResponse};
+use serde::{Deserialize, Serialize};
 
 /// Request to amend an existing order
 #[derive(Debug, Clone, Serialize)]
@@ -8,48 +8,48 @@ use super::{RestClient, common::OkxApiResponse};
 pub struct AmendOrderRequest {
     /// Instrument ID, e.g. "BTC-USDT"
     pub inst_id: String,
-    
+
     /// Order ID
     /// Either ordId or clOrdId is required. If both are passed, ordId will be used.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub ord_id: Option<String>,
-    
+
     /// Client Order ID as assigned by the client
     #[serde(skip_serializing_if = "Option::is_none")]
     pub cl_ord_id: Option<String>,
-    
+
     /// Client Request ID as assigned by the client for order amendment
     #[serde(skip_serializing_if = "Option::is_none")]
     pub req_id: Option<String>,
-    
+
     /// New quantity to buy or sell. When amending the quantity, only one order can be amended at a time.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub new_sz: Option<String>,
-    
+
     /// New order price. Only applicable to limit orders.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub new_px: Option<String>,
-    
+
     /// New take-profit trigger price
     #[serde(skip_serializing_if = "Option::is_none")]
     pub new_tp_trigger_px: Option<String>,
-    
+
     /// New take-profit order price
     #[serde(skip_serializing_if = "Option::is_none")]
     pub new_tp_ord_px: Option<String>,
-    
+
     /// New stop-loss trigger price
     #[serde(skip_serializing_if = "Option::is_none")]
     pub new_sl_trigger_px: Option<String>,
-    
+
     /// New stop-loss order price
     #[serde(skip_serializing_if = "Option::is_none")]
     pub new_sl_ord_px: Option<String>,
-    
+
     /// New take-profit trigger price type
     #[serde(skip_serializing_if = "Option::is_none")]
     pub new_tp_trigger_px_type: Option<String>,
-    
+
     /// New stop-loss trigger price type
     #[serde(skip_serializing_if = "Option::is_none")]
     pub new_sl_trigger_px_type: Option<String>,
@@ -61,16 +61,16 @@ pub struct AmendOrderRequest {
 pub struct AmendOrderResponse {
     /// Client Order ID as assigned by the client
     pub cl_ord_id: Option<String>,
-    
+
     /// Order ID
     pub ord_id: String,
-    
+
     /// Client Request ID as assigned by the client for order amendment
     pub req_id: Option<String>,
-    
+
     /// Response code for individual order: "0" means success
     pub s_code: String,
-    
+
     /// Response message for individual order
     pub s_msg: String,
 }
@@ -170,7 +170,8 @@ mod tests {
             ]
         }"#;
 
-        let response: OkxApiResponse<AmendOrderResponse> = serde_json::from_str(response_json).unwrap();
+        let response: OkxApiResponse<AmendOrderResponse> =
+            serde_json::from_str(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 1);
         assert_eq!(response.data[0].cl_ord_id, Some("my_order_123".to_string()));

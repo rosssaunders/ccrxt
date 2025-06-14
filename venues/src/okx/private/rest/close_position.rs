@@ -1,6 +1,6 @@
-use serde::{Deserialize, Serialize};
+use super::{common::OkxApiResponse, RestClient};
 use crate::okx::{EndpointType, RestResult};
-use super::{RestClient, common::OkxApiResponse};
+use serde::{Deserialize, Serialize};
 
 /// Request to close a position
 #[derive(Debug, Clone, Serialize)]
@@ -8,31 +8,31 @@ use super::{RestClient, common::OkxApiResponse};
 pub struct ClosePositionRequest {
     /// Instrument ID, e.g. "BTC-USDT-SWAP"
     pub inst_id: String,
-    
+
     /// Position side
     /// The value can only be `long` or `short`.
     /// Only applicable to FUTURES/SWAP in the `long/short` mode. Required in the `long/short` mode.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub pos_side: Option<String>,
-    
+
     /// Margin mode
     /// `cross`: cross, `isolated`: isolated
     pub mgn_mode: String,
-    
+
     /// Currency, only applicable to `MARGIN` orders in `Single-currency margin`
     #[serde(skip_serializing_if = "Option::is_none")]
     pub ccy: Option<String>,
-    
+
     /// Whether the order is auto-margin decrease only
     /// `true` or `false`, the default is `false`.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub auto_ccy: Option<bool>,
-    
+
     /// Client Order ID as assigned by the client
     /// A combination of case-sensitive alphanumerics, all numbers, or all letters of up to 32 characters.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub cl_ord_id: Option<String>,
-    
+
     /// Order tag
     /// A combination of case-sensitive alphanumerics, all numbers, or all letters of up to 16 characters.
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -45,13 +45,13 @@ pub struct ClosePositionRequest {
 pub struct ClosePositionResponse {
     /// Instrument ID
     pub inst_id: String,
-    
+
     /// Position side
     pub pos_side: Option<String>,
-    
+
     /// Client Order ID as assigned by the client
     pub cl_ord_id: Option<String>,
-    
+
     /// Order tag
     pub tag: Option<String>,
 }
@@ -140,12 +140,16 @@ mod tests {
             ]
         }"#;
 
-        let response: OkxApiResponse<ClosePositionResponse> = serde_json::from_str(response_json).unwrap();
+        let response: OkxApiResponse<ClosePositionResponse> =
+            serde_json::from_str(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 1);
         assert_eq!(response.data[0].inst_id, "BTC-USDT-SWAP");
         assert_eq!(response.data[0].pos_side, Some("long".to_string()));
-        assert_eq!(response.data[0].cl_ord_id, Some("close_pos_123".to_string()));
+        assert_eq!(
+            response.data[0].cl_ord_id,
+            Some("close_pos_123".to_string())
+        );
         assert_eq!(response.data[0].tag, Some("my_tag".to_string()));
     }
 }

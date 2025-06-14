@@ -1,6 +1,6 @@
-use serde::Deserialize;
+use super::{cancel_order::CancelOrderRequest, common::OkxApiResponse, RestClient};
 use crate::okx::{EndpointType, RestResult};
-use super::{RestClient, common::OkxApiResponse, cancel_order::CancelOrderRequest};
+use serde::Deserialize;
 
 /// Response from canceling multiple orders
 #[derive(Debug, Clone, Deserialize)]
@@ -8,13 +8,13 @@ use super::{RestClient, common::OkxApiResponse, cancel_order::CancelOrderRequest
 pub struct CancelBatchOrdersResponse {
     /// Client Order ID as assigned by the client
     pub cl_ord_id: Option<String>,
-    
+
     /// Order ID
     pub ord_id: String,
-    
+
     /// Response code for individual order: "0" means success
     pub s_code: String,
-    
+
     /// Response message for individual order
     pub s_msg: String,
 }
@@ -89,7 +89,8 @@ mod tests {
             ]
         }"#;
 
-        let response: OkxApiResponse<CancelBatchOrdersResponse> = serde_json::from_str(response_json).unwrap();
+        let response: OkxApiResponse<CancelBatchOrdersResponse> =
+            serde_json::from_str(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 2);
         assert_eq!(response.data[0].ord_id, "312269865356374016");
