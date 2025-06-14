@@ -5,10 +5,9 @@ pub mod rate_limit;
 pub mod public {
     mod rest;
     pub use self::rest::RestClient;
-    pub use self::rest::{
-        GetHistoryIndexCandlesRequest, GetHistoryIndexCandlesResponse, GetInstrumentsRequest,
-        GetInstrumentsResponse, IndexCandle, Instrument,
-    };
+    pub use self::rest::{GetHistoryIndexCandlesRequest, GetHistoryIndexCandlesResponse, IndexCandle};
+    pub use self::rest::{GetInstrumentsRequest, GetInstrumentsResponse, Instrument};
+    pub use self::rest::{GetPremiumHistoryRequest, GetPremiumHistoryResponse, PremiumHistory};
 }
 
 pub mod private {
@@ -38,10 +37,9 @@ pub use private::{
     Position,
 };
 pub use public::RestClient as PublicRestClient;
-pub use public::{
-    GetHistoryIndexCandlesRequest, GetHistoryIndexCandlesResponse, GetInstrumentsRequest,
-    GetInstrumentsResponse, IndexCandle, Instrument,
-};
+pub use public::{GetHistoryIndexCandlesRequest, GetHistoryIndexCandlesResponse, IndexCandle};
+pub use public::{GetInstrumentsRequest, GetInstrumentsResponse, Instrument};
+pub use public::{GetPremiumHistoryRequest, GetPremiumHistoryResponse, PremiumHistory};
 pub use rate_limit::{EndpointType, RateLimit, RateLimitError, RateLimiter};
 
 /// Type alias for results returned by OKX API operations
