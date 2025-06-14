@@ -91,10 +91,7 @@ mod tests {
             serialized.get("instId").and_then(|v| v.as_str()),
             Some("BTC-USDT-SWAP")
         );
-        assert_eq!(
-            serialized.get("limit").and_then(|v| v.as_str()),
-            Some("50")
-        );
+        assert_eq!(serialized.get("limit").and_then(|v| v.as_str()), Some("50"));
         assert!(serialized.get("after").is_none());
         assert!(serialized.get("before").is_none());
     }

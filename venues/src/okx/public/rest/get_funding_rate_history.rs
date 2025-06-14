@@ -15,7 +15,7 @@ pub struct GetFundingRateHistoryRequest {
     /// Pagination of data to return records earlier than the requested fundingTime
     #[serde(skip_serializing_if = "Option::is_none")]
     pub after: Option<String>,
-    /// Number of results per request. The maximum is 100; The default is 100
+    /// Number of results per request. The maximum is 100. The default is 100.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<String>,
 }
@@ -25,12 +25,13 @@ pub struct GetFundingRateHistoryRequest {
 #[serde(rename_all = "camelCase")]
 pub struct FundingRateHistory {
     /// Instrument type (SWAP)
+    /// Instrument type, should be "SWAP"
     #[serde(rename = "instType")]
     pub inst_type: String,
     /// Instrument ID, e.g. "BTC-USD-SWAP"
     #[serde(rename = "instId")]
     pub inst_id: String,
-    /// Formula type (noRate: old funding rate formula, withRate: new funding rate formula)
+    /// Formula type: "noRate" (old funding rate formula) or "withRate" (new funding rate formula)
     #[serde(rename = "formulaType")]
     pub formula_type: String,
     /// Predicted funding rate
@@ -65,6 +66,7 @@ impl RestClient {
     /// See: https://www.okx.com/docs-v5/en/#rest-api-public-data-get-funding-rate-history
     ///
     /// Rate limit: 10 requests per 2 seconds
+    /// Rate limit rule: IP + Instrument ID
     ///
     /// # Arguments
     /// * `request` - The funding rate history request parameters
@@ -146,8 +148,8 @@ mod tests {
             "instType": "SWAP",
             "instId": "BTC-USD-SWAP",
             "formulaType": "withRate",
-            "fundingRate": "0.0001",
             "realizedRate": "0.00009",
+            "fundingRate": "0.000123",
             "fundingTime": "1597026383085",
             "method": "current_period"
         });
@@ -172,19 +174,19 @@ mod tests {
                     "instType": "SWAP",
                     "instId": "BTC-USD-SWAP",
                     "formulaType": "withRate",
-                    "fundingRate": "0.0001",
                     "realizedRate": "0.00009",
+                    "fundingRate": "0.000123",
                     "fundingTime": "1597026383085",
                     "method": "current_period"
                 },
                 {
                     "instType": "SWAP",
                     "instId": "BTC-USD-SWAP",
-                    "formulaType": "withRate",
-                    "fundingRate": "0.00012",
-                    "realizedRate": "0.00011",
-                    "fundingTime": "1597026283085",
-                    "method": "current_period"
+                    "formulaType": "noRate",
+                    "fundingRate": "0.000789",
+                    "realizedRate": "0.000012",
+                    "fundingTime": "1597026383086",
+                    "method": "next_period"
                 }
             ]
         });
@@ -193,19 +195,30 @@ mod tests {
         assert_eq!(response.code, "0");
         assert_eq!(response.msg, "");
         assert_eq!(response.data.len(), 2);
-        assert_eq!(response.data.first().unwrap().inst_id, "BTC-USD-SWAP");
-        assert_eq!(response.data.first().unwrap().funding_rate, "0.0001");
-        assert_eq!(response.data.first().unwrap().realized_rate, "0.00009");
-        assert_eq!(response.data.get(1).unwrap().funding_rate, "0.00012");
-        assert_eq!(response.data.get(1).unwrap().funding_time, "1597026283085");
+        
+        let first_entry = response.data.first().unwrap();
+        assert_eq!(first_entry.inst_type, "SWAP");
+        assert_eq!(first_entry.inst_id, "BTC-USD-SWAP");
+        assert_eq!(first_entry.formula_type, "withRate");
+        assert_eq!(first_entry.funding_rate, "0.000123");
+        assert_eq!(first_entry.realized_rate, "0.000456");
+        assert_eq!(first_entry.funding_time, "1597026383085");
+        assert_eq!(first_entry.method, "current_period");
+        
+        let second_entry = response.data.get(1).unwrap();
+        assert_eq!(second_entry.formula_type, "noRate");
+        assert_eq!(second_entry.funding_rate, "0.000789");
+        assert_eq!(second_entry.realized_rate, "0.000012");
+        assert_eq!(second_entry.funding_time, "1597026383086");
+        assert_eq!(second_entry.method, "next_period");
     }
 
     #[test]
     fn test_funding_rate_history_serialization_roundtrip() {
         let original = GetFundingRateHistoryRequest {
             inst_id: "SOL-USD-SWAP".to_string(),
-            before: Some("1597026383085".to_string()),
-            after: None,
+            after: Some("1597026383085".to_string()),
+            before: None,
             limit: Some("25".to_string()),
         };
 
@@ -213,8 +226,8 @@ mod tests {
         let deserialized: GetFundingRateHistoryRequest = serde_json::from_value(serialized).unwrap();
 
         assert_eq!(original.inst_id, deserialized.inst_id);
-        assert_eq!(original.before, deserialized.before);
         assert_eq!(original.after, deserialized.after);
+        assert_eq!(original.before, deserialized.before);
         assert_eq!(original.limit, deserialized.limit);
     }
 
@@ -222,8 +235,8 @@ mod tests {
     fn test_funding_rate_history_minimal_request() {
         let request = GetFundingRateHistoryRequest {
             inst_id: "BTC-USD-SWAP".to_string(),
-            before: None,
             after: None,
+            before: None,
             limit: None,
         };
 
@@ -233,20 +246,20 @@ mod tests {
             Some("BTC-USD-SWAP")
         );
         // Optional fields should not be present when None
-        assert!(serialized.get("before").is_none());
         assert!(serialized.get("after").is_none());
+        assert!(serialized.get("before").is_none());
         assert!(serialized.get("limit").is_none());
     }
 
     #[test]
-    fn test_funding_rate_history_different_formula_types() {
+    fn test_funding_rate_history_structure_with_different_formula_types() {
         let old_formula_json = json!({
             "instType": "SWAP",
-            "instId": "BTC-USD-SWAP",
+            "instId": "ETH-USD-SWAP",
             "formulaType": "noRate",
-            "fundingRate": "0.0001",
-            "realizedRate": "0.00009",
-            "fundingTime": "1597026383085",
+            "fundingRate": "0.001000",
+            "realizedRate": "0.001100",
+            "fundingTime": "1597026383000",
             "method": "current_period"
         });
 
@@ -254,9 +267,9 @@ mod tests {
             "instType": "SWAP",
             "instId": "ETH-USD-SWAP",
             "formulaType": "withRate",
-            "fundingRate": "0.0002",
-            "realizedRate": "0.00018",
-            "fundingTime": "1597026383085",
+            "fundingRate": "0.002000",
+            "realizedRate": "0.002100",
+            "fundingTime": "1597026383000",
             "method": "next_period"
         });
 
