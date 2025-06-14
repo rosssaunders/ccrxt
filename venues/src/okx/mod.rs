@@ -5,7 +5,18 @@ pub mod rate_limit;
 pub mod public {
     mod rest;
     pub use self::rest::RestClient;
-    pub use self::rest::{GetInstrumentsRequest, GetInstrumentsResponse, Instrument};
+    pub use self::rest::{
+        GetInstrumentsRequest, GetInstrumentsResponse, Instrument,
+        GetTimeResponse, TimeData,
+        GetMarkPriceRequest, GetMarkPriceResponse, MarkPriceData,
+        GetFundingRateRequest, GetFundingRateResponse, FundingRateData,
+        GetOpenInterestRequest, GetOpenInterestResponse, OpenInterestData,
+        GetPriceLimitRequest, GetPriceLimitResponse, PriceLimitData,
+        GetFundingRateHistoryRequest, GetFundingRateHistoryResponse, FundingRateHistoryData,
+        GetPositionTiersRequest, GetPositionTiersResponse, PositionTierData,
+        GetUnderlyingRequest, GetUnderlyingResponse,
+        GetEstimatedPriceRequest, GetEstimatedPriceResponse, EstimatedPriceData,
+    };
 }
 
 pub mod private {
@@ -26,7 +37,18 @@ pub mod private {
 pub use enums::*;
 pub use errors::{ApiError, ErrorResponse, Errors};
 pub use public::RestClient as PublicRestClient;
-pub use public::{GetInstrumentsRequest, GetInstrumentsResponse, Instrument};
+pub use public::{
+    GetInstrumentsRequest, GetInstrumentsResponse, Instrument,
+    GetTimeResponse, TimeData,
+    GetMarkPriceRequest, GetMarkPriceResponse, MarkPriceData,
+    GetFundingRateRequest, GetFundingRateResponse, FundingRateData,
+    GetOpenInterestRequest, GetOpenInterestResponse, OpenInterestData,
+    GetPriceLimitRequest, GetPriceLimitResponse, PriceLimitData,
+    GetFundingRateHistoryRequest, GetFundingRateHistoryResponse, FundingRateHistoryData,
+    GetPositionTiersRequest, GetPositionTiersResponse, PositionTierData,
+    GetUnderlyingRequest, GetUnderlyingResponse,
+    GetEstimatedPriceRequest, GetEstimatedPriceResponse, EstimatedPriceData,
+};
 pub use private::RestClient as PrivateRestClient;
 pub use private::{
     OkxApiResponse, PlaceOrderRequest, PlaceOrderResponse, AttachedAlgoOrder,

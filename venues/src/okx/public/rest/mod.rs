@@ -1,5 +1,23 @@
 mod client;
 mod get_instruments;
+mod get_time;
+mod get_mark_price;
+mod get_funding_rate;
+mod get_open_interest;
+mod get_price_limit;
+mod get_funding_rate_history;
+mod get_position_tiers;
+mod get_underlying;
+mod get_estimated_price;
 
 pub use client::RestClient;
 pub use get_instruments::{GetInstrumentsRequest, GetInstrumentsResponse, Instrument};
+pub use get_time::{GetTimeResponse, TimeData};
+pub use get_mark_price::{GetMarkPriceRequest, GetMarkPriceResponse, MarkPriceData};
+pub use get_funding_rate::{GetFundingRateRequest, GetFundingRateResponse, FundingRateData};
+pub use get_open_interest::{GetOpenInterestRequest, GetOpenInterestResponse, OpenInterestData};
+pub use get_price_limit::{GetPriceLimitRequest, GetPriceLimitResponse, PriceLimitData};
+pub use get_funding_rate_history::{GetFundingRateHistoryRequest, GetFundingRateHistoryResponse, FundingRateHistoryData};
+pub use get_position_tiers::{GetPositionTiersRequest, GetPositionTiersResponse, PositionTierData};
+pub use get_underlying::{GetUnderlyingRequest, GetUnderlyingResponse};
+pub use get_estimated_price::{GetEstimatedPriceRequest, GetEstimatedPriceResponse, EstimatedPriceData};
