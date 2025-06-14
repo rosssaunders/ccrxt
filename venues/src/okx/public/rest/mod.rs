@@ -3,6 +3,7 @@ mod get_index_components;
 mod get_economic_calendar;
 mod exchange_rate;
 mod get_instruments;
+mod get_open_interest;
 mod get_instrument_tick_bands;
 mod get_index_tickers;
 mod get_mark_price_candles;
@@ -22,6 +23,7 @@ pub use get_index_components::{
 pub use get_economic_calendar::{EconomicEvent, GetEconomicCalendarRequest, GetEconomicCalendarResponse};
 pub use exchange_rate::{ExchangeRate, ExchangeRateResponse};
 pub use get_instruments::{GetInstrumentsRequest, GetInstrumentsResponse, Instrument};
+pub use get_open_interest::{GetOpenInterestRequest, GetOpenInterestResponse, OpenInterest};
 pub use get_instrument_tick_bands::{GetInstrumentTickBandsRequest, GetInstrumentTickBandsResponse, InstrumentTickBandData, TickBand};
 pub use get_index_tickers::{GetIndexTickersRequest, GetIndexTickersResponse, IndexTicker};
 pub use get_mark_price_candles::{GetMarkPriceCandlesRequest, GetMarkPriceCandlesResponse};
