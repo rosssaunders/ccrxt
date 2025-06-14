@@ -14,6 +14,7 @@ mod get_mark_price_candles_history;
 mod get_index_candles;
 mod get_history_index_candles;
 mod get_premium_history;
+mod get_time;
 mod get_underlying;
 mod get_price_limit;
 
@@ -29,14 +30,13 @@ pub use get_index_components::{
 pub use get_economic_calendar::{EconomicEvent, GetEconomicCalendarRequest, GetEconomicCalendarResponse};
 pub use exchange_rate::{ExchangeRate, ExchangeRateResponse};
 pub use get_instruments::{GetInstrumentsRequest, GetInstrumentsResponse, Instrument};
+pub use get_premium_history::{GetPremiumHistoryRequest, GetPremiumHistoryResponse, PremiumHistory};
+pub use get_time::{GetTimeResponse, TimeData};
 pub use get_history_mark_price_candles::{
     BarSize, GetHistoryMarkPriceCandlesRequest, GetHistoryMarkPriceCandlesResponse, MarkPriceCandle,
 };
 pub use get_insurance_fund::{
     GetInsuranceFundRequest, GetInsuranceFundResponse, InsuranceFundData, InsuranceFundDetail,
-};
-pub use get_premium_history::{
-    GetPremiumHistoryRequest, GetPremiumHistoryResponse, PremiumHistory,
 };
 pub use get_open_interest::{GetOpenInterestRequest, GetOpenInterestResponse, OpenInterest};
 pub use get_instrument_tick_bands::{GetInstrumentTickBandsRequest, GetInstrumentTickBandsResponse, InstrumentTickBandData, TickBand};
