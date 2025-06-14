@@ -175,8 +175,8 @@ mod tests {
 
         let order: OrderListItem = serde_json::from_value(order_json).unwrap();
         assert_eq!(order.instrument_name, "ETH_CRO");
-        assert_eq!(order.side, OrderSide::BUY);
-        assert_eq!(order.order_type, OrderType::LIMIT);
+        assert_eq!(order.side, OrderSide::Buy);
+        assert_eq!(order.order_type, OrderType::Limit);
         assert_eq!(order.price, Some("5799".to_string()));
         assert_eq!(order.quantity, Some("1".to_string()));
         assert_eq!(order.client_oid, Some("my_order_0001".to_string()));
@@ -214,7 +214,7 @@ mod tests {
         });
 
         let request: CreateOrderListRequest = serde_json::from_value(request_json).unwrap();
-        assert_eq!(request.contingency_type, ContingencyType::LIST);
+        assert_eq!(request.contingency_type, ContingencyType::List);
         assert_eq!(request.order_list.len(), 2);
         assert_eq!(request.order_list[0].instrument_name, "ETH_CRO");
         assert_eq!(request.order_list[1].client_oid, Some("my_order_0002".to_string()));
@@ -297,10 +297,10 @@ mod tests {
         });
 
         let request: CreateOrderListRequest = serde_json::from_value(request_json).unwrap();
-        assert_eq!(request.contingency_type, ContingencyType::OCO);
+        assert_eq!(request.contingency_type, ContingencyType::Oco);
         assert_eq!(request.order_list.len(), 2);
-        assert_eq!(request.order_list[0].order_type, OrderType::LIMIT);
-        assert_eq!(request.order_list[1].order_type, OrderType::STOP_LOSS);
+        assert_eq!(request.order_list[0].order_type, OrderType::Limit);
+        assert_eq!(request.order_list[1].order_type, OrderType::StopLoss);
         assert_eq!(request.order_list[1].ref_price, Some("19000".to_string()));
     }
 
@@ -328,8 +328,8 @@ mod tests {
         });
 
         let order: OrderListItem = serde_json::from_value(order_json).unwrap();
-        assert_eq!(order.stp_scope, Some(StpScope::M));
-        assert_eq!(order.stp_inst, Some(StpInst::B));
+        assert_eq!(order.stp_scope, Some(StpScope::MasterOrSubAccount));
+        assert_eq!(order.stp_inst, Some(StpInst::CancelBoth));
         assert_eq!(order.stp_id, Some(100));
     }
 
@@ -337,8 +337,8 @@ mod tests {
     fn test_order_serialization() {
         let order = OrderListItem {
             instrument_name: "BTC_USDT".to_string(),
-            side: OrderSide::BUY,
-            order_type: OrderType::LIMIT,
+            side: OrderSide::Buy,
+            order_type: OrderType::Limit,
             price: Some("50000".to_string()),
             quantity: Some("0.1".to_string()),
             notional: None,

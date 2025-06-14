@@ -184,7 +184,7 @@ mod tests {
         });
 
         let request: CancelOrderListRequest = serde_json::from_value(request_json).unwrap();
-        assert_eq!(request.contingency_type, ContingencyType::LIST);
+        assert_eq!(request.contingency_type, ContingencyType::List);
         assert_eq!(request.order_list.len(), 2);
         assert_eq!(request.order_list[0].instrument_name, "ETH_CRO");
         assert_eq!(request.order_list[1].order_id, "2015119459882149857");
@@ -199,7 +199,7 @@ mod tests {
         });
 
         let request: CancelOcoOrderRequest = serde_json::from_value(request_json).unwrap();
-        assert_eq!(request.contingency_type, ContingencyType::OCO);
+        assert_eq!(request.contingency_type, ContingencyType::Oco);
         assert_eq!(request.list_id, "4421958062479290999");
         assert_eq!(request.instrument_name, "BTCUSD-PERP");
     }
@@ -268,7 +268,7 @@ mod tests {
     #[test]
     fn test_cancel_order_list_request_serialization() {
         let request = CancelOrderListRequest {
-            contingency_type: ContingencyType::LIST,
+            contingency_type: ContingencyType::List,
             order_list: vec![
                 CancelOrderListItem {
                     instrument_name: "BTC_USDT".to_string(),
@@ -286,7 +286,7 @@ mod tests {
     #[test]
     fn test_cancel_oco_order_request_serialization() {
         let request = CancelOcoOrderRequest {
-            contingency_type: ContingencyType::OCO,
+            contingency_type: ContingencyType::Oco,
             list_id: "6498090546073120100".to_string(),
             instrument_name: "BTCUSD-PERP".to_string(),
         };

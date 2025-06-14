@@ -1,7 +1,7 @@
 //! Enums for Crypto.com Exchange API (public endpoints)
 //
 // All enums implement Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize.
-// Variants use API naming conventions.
+// Variants use API naming conventions, but enum names and variants follow idiomatic Rust conventions (PascalCase for types and variants).
 
 use serde::{Deserialize, Serialize};
 
@@ -9,11 +9,11 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum AnnouncementCategory {
-    #[serde(rename = "system")] System,
-    #[serde(rename = "list")] List,
-    #[serde(rename = "delist")] Delist,
-    #[serde(rename = "event")] Event,
-    #[serde(rename = "product")] Product,
+    System,
+    List,
+    Delist,
+    Event,
+    Product,
 }
 
 /// Product type for announcements
@@ -24,8 +24,8 @@ pub enum ProductType {
     Margin,
     Derivative,
     TradingArena,
-    VIPProgramme,
-    MMProgramme,
+    VipProgramme,
+    MmProgramme,
     Supercharger,
     TradingBot,
     Documents,
@@ -34,7 +34,7 @@ pub enum ProductType {
     LiquidStaking,
     Affiliate,
     Referral,
-    CROLockup,
+    CroLockup,
     AccountManagement,
     OtcConvert,
     Transfer,
@@ -45,17 +45,17 @@ pub enum ProductType {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "UPPERCASE")]
 pub enum ImpactedStatus {
-    PARTIAL,
-    BAU,
+    Partial,
+    Bau,
 }
 
 /// Instrument type
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum InstrumentType {
-    PERPETUAL_SWAP,
-    FUTURE,
-    SPOT,
+    PerpetualSwap,
+    Future,
+    Spot,
 }
 
 /// Timeframe for candlesticks
@@ -73,15 +73,15 @@ pub enum Timeframe {
     D1,
     D7,
     D14,
-    M1M,
+    M1m,
 }
 
 /// Trade side
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "UPPERCASE")]
 pub enum TradeSide {
-    BUY,
-    SELL,
+    Buy,
+    Sell,
 }
 
 /// Valuation type
@@ -99,8 +99,8 @@ pub enum ValuationType {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "UPPERCASE")]
 pub enum OrderSide {
-    BUY,
-    SELL,
+    Buy,
+    Sell,
 }
 
 /// Order type for trading
@@ -135,23 +135,46 @@ pub enum ExecInst {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "UPPERCASE")]
 pub enum ContingencyType {
-    LIST,
-    OCO,
+    List,
+    Oco,
 }
 
 /// STP (Self-Trade Prevention) scope
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "UPPERCASE")]
 pub enum StpScope {
-    M, // Matches Master or Sub a/c
-    S, // Matches Sub a/c only
+    #[serde(rename = "M")]
+    MasterOrSubAccount, // Matches Master or Sub a/c
+    #[serde(rename = "S")]
+    SubAccountOnly, // Matches Sub a/c only
 }
 
 /// STP (Self-Trade Prevention) instruction
+/// https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#private-create-order
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "UPPERCASE")]
 pub enum StpInst {
-    M, // Cancel Maker
-    T, // Cancel Taker
-    B, // Cancel Both Maker and Taker
+    #[serde(rename = "M")]
+    CancelMaker, // Cancel Maker
+    #[serde(rename = "T")]
+    CancelTaker, // Cancel Taker
+    #[serde(rename = "B")]
+    CancelBoth, // Cancel Both Maker and Taker
+}
+
+/// Reference price type for ref_price
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum RefPriceType {
+    MarkPrice,
+    IndexPrice,
+    LastPrice,
+}
+
+/// Order category
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "UPPERCASE")]
+pub enum SpotMarginType {
+    Spot,   // Non-margin order
+    Margin, // Margin order
 }

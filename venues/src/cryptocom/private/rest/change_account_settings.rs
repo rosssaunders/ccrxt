@@ -88,7 +88,7 @@ mod tests {
     #[test]
     fn test_change_account_settings_request_full() {
         let request = ChangeAccountSettingsRequest {
-            stp_scope: Some(StpScope::Sub),
+            stp_scope: Some(StpScope::SubAccountOnly),
             stp_inst: Some(StpInst::CancelMaker),
             stp_id: Some("100".to_string()),
             leverage: Some(20),
@@ -104,7 +104,7 @@ mod tests {
     #[test]
     fn test_change_account_settings_request_stp_only() {
         let request = ChangeAccountSettingsRequest {
-            stp_scope: Some(StpScope::Master),
+            stp_scope: Some(StpScope::MasterOrSubAccount),
             stp_inst: Some(StpInst::CancelBoth),
             stp_id: Some("0".to_string()),
             leverage: None,

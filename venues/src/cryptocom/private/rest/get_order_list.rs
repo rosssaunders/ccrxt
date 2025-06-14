@@ -155,7 +155,7 @@ mod tests {
         });
 
         let request: GetOrderListRequest = serde_json::from_value(request_json).unwrap();
-        assert_eq!(request.contingency_type, ContingencyType::OCO);
+        assert_eq!(request.contingency_type, ContingencyType::Oco);
         assert_eq!(request.list_id, "6498090546073120100");
         assert_eq!(request.instrument_name, "BTCUSD-PERP");
     }
@@ -195,15 +195,15 @@ mod tests {
         assert_eq!(order.account_id, "88888888-8888-8888-8888-000000000001");
         assert_eq!(order.order_id, "4611686018427387905");
         assert_eq!(order.client_oid, Some("1661331443".to_string()));
-        assert_eq!(order.order_type, OrderType::LIMIT);
+        assert_eq!(order.order_type, OrderType::Limit);
         assert_eq!(order.time_in_force, TimeInForce::GoodTillCancel);
-        assert_eq!(order.side, OrderSide::SELL);
+        assert_eq!(order.side, OrderSide::Sell);
         assert_eq!(order.quantity, "0.1000");
         assert_eq!(order.price, Some("23000.0".to_string()));
         assert_eq!(order.status, "ACTIVE");
         assert_eq!(order.instrument_name, "BTCUSD-PERP");
         assert_eq!(order.list_id, "6498090546073120100");
-        assert_eq!(order.contingency_type, ContingencyType::OCO);
+        assert_eq!(order.contingency_type, ContingencyType::Oco);
         assert_eq!(order.create_time, 1661331445398);
         assert_eq!(order.update_time, 1661331445482);
     }
@@ -239,7 +239,7 @@ mod tests {
         });
 
         let order: OrderDetails = serde_json::from_value(order_json).unwrap();
-        assert_eq!(order.order_type, OrderType::STOP_LOSS);
+        assert_eq!(order.order_type, OrderType::StopLoss);
         assert_eq!(order.status, "PENDING");
         assert_eq!(order.update_time, 0);
         assert!(order.price.is_none()); // STOP_LOSS orders don't have price field
@@ -283,13 +283,13 @@ mod tests {
         let response: GetOrderListResponse = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.data.len(), 1);
         assert_eq!(response.data[0].order_id, "4611686018427387905");
-        assert_eq!(response.data[0].contingency_type, ContingencyType::OCO);
+        assert_eq!(response.data[0].contingency_type, ContingencyType::Oco);
     }
 
     #[test]
     fn test_get_order_list_request_serialization() {
         let request = GetOrderListRequest {
-            contingency_type: ContingencyType::OCO,
+            contingency_type: ContingencyType::Oco,
             list_id: "6498090546073120100".to_string(),
             instrument_name: "BTCUSD-PERP".to_string(),
         };
@@ -332,7 +332,7 @@ mod tests {
 
         let order: OrderDetails = serde_json::from_value(order_json).unwrap();
         assert_eq!(order.exec_inst.len(), 0);
-        assert_eq!(order.order_type, OrderType::LIMIT);
-        assert_eq!(order.side, OrderSide::BUY);
+        assert_eq!(order.order_type, OrderType::Limit);
+        assert_eq!(order.side, OrderSide::Buy);
     }
 }

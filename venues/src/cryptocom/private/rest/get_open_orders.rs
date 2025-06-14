@@ -1,7 +1,16 @@
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
-use crate::cryptocom::{RestResult, OrderType, TimeInForce, TradeSide, ExecInst, OrderStatus};
+use crate::cryptocom::{RestResult, OrderType, TimeInForce, TradeSide, ExecInst};
 use super::client::RestClient;
+
+/// Enum representing the status of an order
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum OrderStatus {
+    New,
+    Pending,
+    Active,
+}
 
 /// Request parameters for getting open orders
 #[derive(Debug, Clone, Serialize)]

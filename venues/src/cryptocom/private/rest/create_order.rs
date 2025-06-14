@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
-use crate::cryptocom::{RestResult, TradeSide, OrderType, TimeInForce, ExecInst, RefPriceType, SpotMargin, StpScope, StpInst};
+use crate::cryptocom::{RestResult, TradeSide, OrderType, TimeInForce, ExecInst, RefPriceType, SpotMarginType, StpScope, StpInst};
 use super::client::RestClient;
 
 /// Request parameters for creating a new order
@@ -39,7 +39,7 @@ pub struct CreateOrderRequest {
     pub ref_price_type: Option<RefPriceType>,
     /// Spot margin: SPOT (non-margin order), MARGIN (margin order)
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub spot_margin: Option<SpotMargin>,
+    pub spot_margin: Option<SpotMarginType>,
     /// Self-trade prevention scope: M (Matches Master or Sub a/c), S (Matches Sub a/c only)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub stp_scope: Option<StpScope>,
@@ -135,7 +135,7 @@ mod tests {
     fn test_create_order_request_serialization() {
         let request = CreateOrderRequest {
             instrument_name: "BTCUSD-PERP".to_string(),
-            side: TradeSide::SELL,
+            side: TradeSide::Sell,
             order_type: OrderType::Limit,
             price: Some("50000.5".to_string()),
             quantity: Some("1".to_string()),
@@ -167,7 +167,7 @@ mod tests {
     fn test_create_order_request_market_buy_with_notional() {
         let request = CreateOrderRequest {
             instrument_name: "BTCUSD-PERP".to_string(),
-            side: TradeSide::BUY,
+            side: TradeSide::Buy,
             order_type: OrderType::Market,
             price: None,
             quantity: None,
@@ -197,7 +197,7 @@ mod tests {
     fn test_create_order_request_conditional_order() {
         let request = CreateOrderRequest {
             instrument_name: "BTCUSD-PERP".to_string(),
-            side: TradeSide::SELL,
+            side: TradeSide::Sell,
             order_type: OrderType::StopLoss,
             price: Some("49000.0".to_string()),
             quantity: Some("0.5".to_string()),
@@ -224,7 +224,7 @@ mod tests {
     fn test_create_order_request_with_stp_settings() {
         let request = CreateOrderRequest {
             instrument_name: "BTCUSD-PERP".to_string(),
-            side: TradeSide::BUY,
+            side: TradeSide::Buy,
             order_type: OrderType::Limit,
             price: Some("50000.0".to_string()),
             quantity: Some("1".to_string()),
@@ -235,7 +235,7 @@ mod tests {
             ref_price: None,
             ref_price_type: None,
             spot_margin: None,
-            stp_scope: Some(StpScope::Master),
+            stp_scope: Some(StpScope::MasterOrSubAccount),
             stp_inst: Some(StpInst::CancelMaker),
             stp_id: Some(100),
             fee_instrument_name: None,
