@@ -16,6 +16,7 @@ mod get_mark_price_candles_history;
 mod get_index_candles;
 mod get_history_index_candles;
 mod get_premium_history;
+mod get_settlement_history;
 mod get_time;
 mod get_underlying;
 mod get_price_limit;
@@ -35,6 +36,7 @@ pub use exchange_rate::{ExchangeRate, ExchangeRateResponse};
 pub use get_instruments::{GetInstrumentsRequest, GetInstrumentsResponse, Instrument};
 pub use get_opt_summary::{GetOptSummaryRequest, GetOptSummaryResponse, OptSummary};
 pub use get_premium_history::{GetPremiumHistoryRequest, GetPremiumHistoryResponse, PremiumHistory};
+pub use get_settlement_history::{GetSettlementHistoryRequest, GetSettlementHistoryResponse, SettlementHistory, SettlementDetail};
 pub use get_time::{GetTimeResponse, TimeData};
 pub use get_history_mark_price_candles::{
     BarSize, GetHistoryMarkPriceCandlesRequest, GetHistoryMarkPriceCandlesResponse, MarkPriceCandle,
