@@ -2,8 +2,6 @@ use std::fmt;
 
 use serde::{Deserialize, Serialize};
 
-
-
 /// Order side (side)
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]

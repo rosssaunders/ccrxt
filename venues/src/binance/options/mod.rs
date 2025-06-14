@@ -17,7 +17,6 @@ pub use enums::*;
 // Re-export compatible enums from coinm where appropriate
 pub use crate::binance::coinm::{KlineInterval, OrderResponseType, OrderSide, TimeInForce};
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
