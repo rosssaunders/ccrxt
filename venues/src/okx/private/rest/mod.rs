@@ -7,6 +7,9 @@ mod get_pending_orders;
 mod get_order_history;
 mod place_batch_orders;
 mod cancel_batch_orders;
+mod get_account_balance;
+mod get_positions;
+mod get_fills;
 
 pub use client::RestClient;
 pub use common::OkxApiResponse;
@@ -17,3 +20,6 @@ pub use get_pending_orders::GetPendingOrdersRequest;
 pub use get_order_history::GetOrderHistoryRequest;
 pub use place_batch_orders::{PlaceBatchOrdersRequest, PlaceBatchOrdersResponse};
 pub use cancel_batch_orders::CancelBatchOrdersResponse;
+pub use get_account_balance::{GetAccountBalanceRequest, AccountBalance, BalanceDetail};
+pub use get_positions::{GetPositionsRequest, Position, CloseOrderAlgo};
+pub use get_fills::{GetFillsRequest, Fill};
