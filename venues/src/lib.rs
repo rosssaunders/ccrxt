@@ -1,4 +1,5 @@
 pub mod binance;
+pub mod bybit;
 pub mod bullish;
 pub mod bitmart;
 pub mod bitget;
