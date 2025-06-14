@@ -56,7 +56,7 @@ impl RestClient {
     ///
     /// Cancels multiple orders in a single request using the LIST contingency type.
     ///
-    /// See: <https://exchange-docs.crypto.com/derivatives/index.html#private-cancel-order-list>
+    /// See: <https://exchange-docs.crypto.com/derivatives/index.html>
     ///
     /// Rate limit: 10 requests per second per user
     ///
@@ -96,7 +96,7 @@ impl RestClient {
     ///
     /// Cancels a contingency order (OCO) using the list ID.
     ///
-    /// See: <https://exchange-docs.crypto.com/derivatives/index.html#private-cancel-order-list>
+    /// See: <https://exchange-docs.crypto.com/derivatives/index.html>
     ///
     /// Rate limit: 10 requests per second per user
     ///

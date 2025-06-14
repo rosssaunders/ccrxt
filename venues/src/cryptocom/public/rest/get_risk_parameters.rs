@@ -52,7 +52,7 @@ impl RestClient {
     ///
     /// Provides information on risk parameter settings for Smart Cross Margin.
     ///
-    /// [Official API docs](https://exchange-docs.crypto.com/spot/index.html#public-get-risk-parameters)
+    /// [Official API docs](https://exchange-docs.crypto.com/spot/index.html)
     pub async fn get_risk_parameters(&self) -> RestResult<GetRiskParametersResponse> {
         self.send_request(
             "public/get-risk-parameters",

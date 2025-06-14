@@ -80,7 +80,7 @@ impl RestClient {
     /// and private/get-trades should primarily be used for recovery;
     /// typically when the websocket is disconnected.
     ///
-    /// See: <https://exchange-docs.crypto.com/derivatives/index.html#private-get-trades>
+    /// See: <https://exchange-docs.crypto.com/derivatives/index.html>
     ///
     /// Rate limit: 1 request per second
     ///

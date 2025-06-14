@@ -47,7 +47,7 @@ impl RestClient {
     /// Returns the symbol network mapping for all supported currencies.
     /// Works for master account only, not for sub-accounts.
     ///
-    /// See: <https://exchange-docs.crypto.com/exchange/v1/private/get-currency-networks>
+    /// See: <>
     ///
     /// # Returns
     /// Currency network mapping information for all supported currencies

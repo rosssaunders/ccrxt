@@ -1,5 +1,5 @@
 // Position Risk endpoint implementation for GET /dapi/v1/positionRisk
-// See: https://binance-docs.github.io/apidocs/delivery/en/#position-information-user_data>
+// See: https://binance-docs.github.io/apidocs/delivery/en/>
 
 use crate::binance::coinm::private::rest::client::RestClient;
 use crate::binance::coinm::RestResult;
@@ -73,7 +73,7 @@ pub struct PositionRisk {
 impl RestClient {
     /// Get current account position risk information on Binance Coin-M Futures.
     ///
-    /// See: <https://binance-docs.github.io/apidocs/delivery/en/#position-information-user_data>>
+    /// See: <https://binance-docs.github.io/apidocs/delivery/en/>
     /// GET /dapi/v1/positionRisk
     /// Weight: 1
     /// Requires API key and signature.

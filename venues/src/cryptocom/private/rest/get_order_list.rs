@@ -86,7 +86,7 @@ impl RestClient {
     ///
     /// Gets the details of an outstanding (not executed) contingency order on Exchange.
     ///
-    /// See: <https://exchange-docs.crypto.com/derivatives/index.html#private-get-order-list>
+    /// See: <https://exchange-docs.crypto.com/derivatives/index.html>
     ///
     /// Rate limit: 10 requests per second per user
     ///

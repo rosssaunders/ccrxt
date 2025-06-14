@@ -68,7 +68,7 @@ impl RestClient {
     ///
     /// Fetches settlement price of expired instruments.
     ///
-    /// [Official API docs](https://exchange-docs.crypto.com/spot/index.html#public-get-expired-settlement-price)
+    /// [Official API docs](https://exchange-docs.crypto.com/spot/index.html)
     pub async fn get_expired_settlement_price(
         &self,
         params: GetExpiredSettlementPriceRequest,

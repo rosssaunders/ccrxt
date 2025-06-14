@@ -137,7 +137,7 @@ pub struct AccountTrade {
 impl RestClient {
     /// Fetches trades for a specific account and symbol or pair.
     ///
-    /// See: <https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Account-Trade-List>>
+    /// See: <https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Account-Trade-List>
     ///
     /// GET /dapi/v1/userTrades
     /// Weight: 20 with symbol, 40 with pair

@@ -34,7 +34,7 @@ impl RestClient {
     ///
     /// Creates an unstaking request for the specified instrument and quantity.
     ///
-    /// See: <https://exchange-docs.crypto.com/exchange/index.html#private-staking-unstake>
+    /// See: <https://exchange-docs.crypto.com/exchange/index.html>
     ///
     /// Rate limit: 50 requests per second
     ///

@@ -73,7 +73,7 @@ impl RestClient {
     ///
     /// Returns master account and its sub-accounts information.
     ///
-    /// See: <https://exchange-docs.crypto.com/derivatives/index.html#private-get-accounts>
+    /// See: <https://exchange-docs.crypto.com/derivatives/index.html>
     ///
     /// Rate limit: No rate limit
     ///

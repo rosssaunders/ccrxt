@@ -75,7 +75,7 @@ impl RestClient {
     ///
     /// Returns the user's wallet balance with margin details and position balances.
     ///
-    /// See: <https://exchange-docs.crypto.com/derivatives/index.html#private-user-balance>
+    /// See: <https://exchange-docs.crypto.com/derivatives/index.html>
     ///
     /// Rate limit: No rate limit
     ///

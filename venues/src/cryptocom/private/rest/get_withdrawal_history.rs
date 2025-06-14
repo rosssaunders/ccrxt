@@ -75,7 +75,7 @@ impl RestClient {
     /// If you do not see the option when viewing your API Keys, this feature is not yet available for you.
     /// Note: It works for master account only, not for sub-accounts.
     ///
-    /// See: <https://exchange-docs.crypto.com/exchange/v1/private/get-withdrawal-history>
+    /// See: <>
     ///
     /// # Arguments
     /// * `currency` - Optional currency filter e.g. BTC, CRO

@@ -42,7 +42,7 @@ impl RestClient {
     ///
     /// Creates a conversion request between staked tokens and liquid staking tokens.
     ///
-    /// See: <https://exchange-docs.crypto.com/exchange/index.html#private-staking-convert>
+    /// See: <https://exchange-docs.crypto.com/exchange/index.html>
     ///
     /// Rate limit: 50 requests per second
     ///

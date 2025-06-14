@@ -47,7 +47,7 @@ impl RestClient {
     ///
     /// Returns the user's positions with optional filtering by instrument.
     ///
-    /// See: <https://exchange-docs.crypto.com/derivatives/index.html#private-get-positions>
+    /// See: <https://exchange-docs.crypto.com/derivatives/index.html>
     ///
     /// Rate limit: No rate limit
     ///

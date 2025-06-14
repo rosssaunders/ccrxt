@@ -29,7 +29,7 @@ pub struct GetAccountSettingsResponse {
 impl RestClient {
     /// Get the STP account settings
     ///
-    /// See: <https://exchange-docs.crypto.com/derivatives/index.html#private-get-account-settings>
+    /// See: <https://exchange-docs.crypto.com/derivatives/index.html>
     ///
     /// Rate limit: 10 requests per second
     ///

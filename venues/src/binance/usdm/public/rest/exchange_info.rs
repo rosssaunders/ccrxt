@@ -161,7 +161,7 @@ pub enum QuoteAsset {
 
 /// Represents the response from the Binance USD-M Futures Exchange Information endpoint.
 ///
-/// See: <https://developers.binance.com/docs/derivatives/usdt-margined-futures/market-data/rest-api/Exchange-Information>
+/// See: <https://developers.binance.com/docs/derivatives/>
 #[derive(Debug, Deserialize)]
 pub struct ExchangeInfoResponse {
     /// The timezone of the exchange (e.g., "UTC").

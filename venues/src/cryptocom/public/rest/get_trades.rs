@@ -76,7 +76,7 @@ impl RestClient {
     ///
     /// Fetches the public trades for a particular instrument.
     ///
-    /// [Official API docs](https://exchange-docs.crypto.com/spot/index.html#public-get-trades)
+    /// [Official API docs](https://exchange-docs.crypto.com/spot/index.html)
     pub async fn get_trades(&self, params: GetTradesRequest) -> RestResult<GetTradesResponse> {
         self.send_request(
             "public/get-trades",
