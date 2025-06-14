@@ -1,5 +1,5 @@
 #[cfg(test)]
-mod integration_tests {
+mod tests {
     use crate::cryptocom::{ApiError, ErrorResponse, Errors, PrivateRestClient, PublicRestClient};
 
     #[test]

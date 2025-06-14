@@ -12,6 +12,7 @@ pub struct GetInstrumentFeeRateRequest {
 
 /// Instrument fee rate information
 #[derive(Debug, Clone, Deserialize)]
+#[allow(dead_code)]
 pub struct InstrumentFeeRate {
     /// Instrument name e.g. BTC_USD
     pub instrument_name: String,
@@ -77,6 +78,7 @@ mod tests {
 
     /// A plain text implementation of ExposableSecret for testing purposes.
     #[derive(Clone)]
+    #[allow(dead_code)]
     struct PlainTextSecret {
         secret: String,
     }
@@ -88,6 +90,7 @@ mod tests {
     }
 
     impl PlainTextSecret {
+        #[allow(dead_code)]
         fn new(secret: String) -> Self {
             Self { secret }
         }

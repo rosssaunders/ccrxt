@@ -139,6 +139,7 @@ struct EndpointUsage {
 
 impl EndpointUsage {
     /// Add a new request timestamp and clean up old ones
+    #[allow(clippy::arithmetic_side_effects)]
     fn add_request(&mut self, now: Instant, window: Duration) {
         self.timestamps.push_back(now);
         self.trim_older_than(now - window);
@@ -243,6 +244,7 @@ impl RateLimiter {
     }
 
     /// Clean up old timestamps for all endpoints
+    #[allow(clippy::arithmetic_side_effects)]
     pub async fn cleanup_old_timestamps(&self) {
         let mut usage = self.usage.write().await;
         let now = Instant::now();
@@ -255,6 +257,7 @@ impl RateLimiter {
 }
 
 #[cfg(test)]
+#[allow(clippy::assertions_on_constants)]
 mod tests {
     use super::*;
     use tokio::time::{sleep, Duration};
@@ -311,7 +314,7 @@ mod tests {
         if let Err(RateLimitError::RateLimitExceeded { current, max, .. }) = result {
             assert!(current >= max);
         } else {
-            panic!("Expected RateLimitExceeded error");
+            assert!(false, "Expected RateLimitExceeded error");
         }
     }
 

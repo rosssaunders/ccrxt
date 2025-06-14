@@ -128,6 +128,7 @@ mod tests {
 
     /// A plain text implementation of ExposableSecret for testing purposes.
     #[derive(Clone)]
+    #[allow(dead_code)]
     struct PlainTextSecret {
         secret: String,
     }
@@ -139,6 +140,7 @@ mod tests {
     }
 
     impl PlainTextSecret {
+        #[allow(dead_code)]
         fn new(secret: String) -> Self {
             Self { secret }
         }
@@ -250,10 +252,10 @@ mod tests {
 
         let response: GetStakeHistoryResponse = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.data.len(), 2);
-        assert_eq!(response.data[0].status, "COMPLETED");
-        assert_eq!(response.data[1].status, "REJECTED");
-        assert_eq!(response.data[0].side, "STAKE");
-        assert_eq!(response.data[1].side, "UNSTAKE");
+        assert_eq!(response.data.first().unwrap().status, "COMPLETED");
+        assert_eq!(response.data.get(1).unwrap().status, "REJECTED");
+        assert_eq!(response.data.first().unwrap().side, "STAKE");
+        assert_eq!(response.data.get(1).unwrap().side, "UNSTAKE");
     }
 
     #[test]

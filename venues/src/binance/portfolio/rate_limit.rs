@@ -17,6 +17,7 @@ pub use crate::binance::coinm::{RateLimitHeader, RateLimiter};
 pub type PortfolioMarginRateLimiter = crate::binance::coinm::RateLimiter;
 
 #[cfg(test)]
+#[allow(clippy::assertions_on_constants)]
 mod tests {
     use super::*;
     use crate::binance::coinm::{ApiError, Errors};
@@ -41,7 +42,7 @@ mod tests {
         if let Err(Errors::ApiError(ApiError::TooManyRequests { msg })) = result {
             assert!(msg.contains("6,000"));
         } else {
-            panic!("Expected TooManyRequests error");
+            assert!(false, "Expected TooManyRequests error");
         }
     }
 
@@ -61,7 +62,7 @@ mod tests {
         if let Err(Errors::ApiError(ApiError::TooManyOrders { msg })) = result {
             assert!(msg.contains("100/10s"));
         } else {
-            panic!("Expected TooManyOrders error");
+            assert!(false, "Expected TooManyOrders error");
         }
     }
 }

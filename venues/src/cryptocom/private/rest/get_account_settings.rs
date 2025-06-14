@@ -5,6 +5,7 @@ use serde_json::{json, Value};
 
 /// Account settings information
 #[derive(Debug, Clone, Deserialize)]
+#[allow(dead_code)]
 pub struct AccountSettings {
     /// Maximum leverage user set on the account
     pub leverage: u8,
@@ -18,6 +19,7 @@ pub struct AccountSettings {
 
 /// Response for getting account settings
 #[derive(Debug, Clone, Deserialize)]
+#[allow(dead_code)]
 pub struct GetAccountSettingsResponse {
     /// Array of account settings (typically one element)
     #[serde(rename = "result")]
@@ -70,6 +72,7 @@ mod tests {
 
     /// A plain text implementation of ExposableSecret for testing purposes.
     #[derive(Clone)]
+    #[allow(dead_code)]
     struct PlainTextSecret {
         secret: String,
     }
@@ -81,6 +84,7 @@ mod tests {
     }
 
     impl PlainTextSecret {
+        #[allow(dead_code)]
         fn new(secret: String) -> Self {
             Self { secret }
         }
@@ -117,10 +121,10 @@ mod tests {
 
         let response: GetAccountSettingsResponse = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.data.len(), 1);
-        assert_eq!(response.data[0].leverage, 20);
-        assert_eq!(response.data[0].stp_id, 100);
-        assert_eq!(response.data[0].stp_scope, "S");
-        assert_eq!(response.data[0].stp_inst, "M");
+        assert_eq!(response.data.first().unwrap().leverage, 20);
+        assert_eq!(response.data.first().unwrap().stp_id, 100);
+        assert_eq!(response.data.first().unwrap().stp_scope, "S");
+        assert_eq!(response.data.first().unwrap().stp_inst, "M");
     }
 
     #[test]

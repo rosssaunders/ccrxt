@@ -91,6 +91,7 @@ mod tests {
 
     /// A plain text implementation of ExposableSecret for testing purposes.
     #[derive(Clone)]
+    #[allow(dead_code)]
     struct PlainTextSecret {
         secret: String,
     }
@@ -102,6 +103,7 @@ mod tests {
     }
 
     impl PlainTextSecret {
+        #[allow(dead_code)]
         fn new(secret: String) -> Self {
             Self { secret }
         }
@@ -176,8 +178,8 @@ mod tests {
         assert_eq!(currency.full_name, "Polygon");
         assert_eq!(currency.default_network, Some("ETH".to_string()));
         assert_eq!(currency.network_list.len(), 2);
-        assert_eq!(currency.network_list[0].network_id, "ETH");
-        assert_eq!(currency.network_list[1].network_id, "MATIC");
+        assert_eq!(currency.network_list.first().unwrap().network_id, "ETH");
+        assert_eq!(currency.network_list.get(1).unwrap().network_id, "MATIC");
     }
 
     #[test]
@@ -201,8 +203,8 @@ mod tests {
         assert_eq!(currency.full_name, "Adventure Gold");
         assert_eq!(currency.default_network, None);
         assert_eq!(currency.network_list.len(), 1);
-        assert_eq!(currency.network_list[0].network_id, "ETH");
-        assert_eq!(currency.network_list[0].withdrawal_fee, None);
+        assert_eq!(currency.network_list.first().unwrap().network_id, "ETH");
+        assert_eq!(currency.network_list.first().unwrap().withdrawal_fee, None);
     }
 
     #[test]

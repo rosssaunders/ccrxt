@@ -1,5 +1,5 @@
 #[cfg(test)]
-mod integration_tests {
+mod tests {
     use crate::binance::portfolio::{
         Errors, OrderSide, OrderType, PortfolioMarginRateLimiter, RateLimiter,
     };

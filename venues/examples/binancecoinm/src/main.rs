@@ -101,7 +101,7 @@ enum Commands {
     PositionRisk,
 }
 
-// fn handle_api_error(err: &BinanceCoinMAPIError) -> ! {
+// fn handle__api_error(err: &BinanceCoinMAPIError) -> ! {
 //     match err {
 //         BinanceCoinMAPIError::UnknownApiError { msg } => {
 //             eprintln!("API Error: {}", msg);
@@ -600,11 +600,11 @@ async fn main() -> Result<()> {
     match cli.command {
         Commands::Account => {
             if let Err(e) = handle_account_command(client.clone()).await {
-                if let Some(api_err) = e.downcast_ref::<ApiError>() {
-                    match api_err {
-                        // handle_api_error(api_err);
+                if let Some(_api_err) = e.downcast_ref::<ApiError>() {
+                    match _api_err {
+                        // handle__api_error(_api_err);
                         ApiError::RateLimitExceeded { .. } => eprintln!("Rate limit exceeded"),
-                        _ => eprintln!("API Error: {}", api_err),
+                        _ => eprintln!("API Error: {}", _api_err),
                     }
                 }
                 return Err(e);
@@ -613,10 +613,10 @@ async fn main() -> Result<()> {
         Commands::Trades { symbol, limit } => {
             if let Err(e) = handle_trades_command(client.clone(), symbol, limit).await {
                 match &e {
-                    Errors::ApiError(api_err) => match api_err {
+                    Errors::ApiError(_api_err) => match _api_err {
                         ApiError::RateLimitExceeded { .. } => eprintln!("Rate limit exceeded"),
                         ApiError::BadSymbol { msg } => eprintln!("Bad symbol dsfsffdf: {}", msg),
-                        _ => eprintln!("API Error: {}", api_err),
+                        _ => eprintln!("API Error: {}", _api_err),
                     },
                     _ => eprintln!("Unexpected error: {}", e),
                 }
@@ -640,8 +640,8 @@ async fn main() -> Result<()> {
             )
             .await
             {
-                if let Some(api_err) = e.downcast_ref::<ApiError>() {
-                    //handle_api_error(api_err);
+                if let Some(_api_err) = e.downcast_ref::<ApiError>() {
+                    //handle__api_error(_api_err);
                 }
                 return Err(e);
             }
@@ -657,8 +657,8 @@ async fn main() -> Result<()> {
                 handle_order_command(client.clone(), symbol, side, order_type, quantity, price)
                     .await
             {
-                if let Some(api_err) = e.downcast_ref::<ApiError>() {
-                    //handle_api_error(api_err);
+                if let Some(_api_err) = e.downcast_ref::<ApiError>() {
+                    //handle__api_error(_api_err);
                 }
                 return Err(e);
             }
@@ -683,8 +683,8 @@ async fn main() -> Result<()> {
             );
             let public_client = Arc::new(public_client);
             if let Err(e) = commands::handle_exchange_info_command(public_client.clone()).await {
-                if let Some(api_err) = e.downcast_ref::<ApiError>() {
-                    //handle_api_error(api_err);
+                if let Some(_api_err) = e.downcast_ref::<ApiError>() {
+                    //handle__api_error(_api_err);
                 }
                 return Err(e);
             }

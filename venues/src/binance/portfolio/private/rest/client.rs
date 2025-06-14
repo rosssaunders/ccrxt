@@ -41,6 +41,7 @@ use std::borrow::Cow;
 ///
 /// # Returns
 /// A result containing the signature as a hex string or a Hmac error if signing fails.
+#[allow(dead_code)]
 fn sign_request(api_secret: &dyn ExposableSecret, query_string: &str) -> Result<String, Errors> {
     let api_secret = api_secret.expose_secret();
     let mut mac = Hmac::<Sha256>::new_from_slice(api_secret.as_bytes())
@@ -54,6 +55,7 @@ fn sign_request(api_secret: &dyn ExposableSecret, query_string: &str) -> Result<
 /// This client handles encrypted API keys and secrets for enhanced security.
 /// The API key and secret are stored in encrypted form and only decrypted when needed.
 #[non_exhaustive]
+#[allow(dead_code)]
 pub struct RestClient {
     /// The underlying HTTP client used for making requests.
     pub(crate) client: Client,
@@ -109,6 +111,7 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the parsed response data and metadata, or an error
+    #[allow(dead_code)]
     pub(super) async fn send_request<T>(
         &self,
         endpoint: &str,
@@ -130,7 +133,7 @@ impl RestClient {
         if !self.api_key.expose_secret().is_empty() {
             headers.push(("X-MBX-APIKEY", self.api_key.expose_secret()));
         }
-        let body_data = body.map(|b| serde_urlencoded::to_string(b).unwrap());
+        let body_data = body.map(|b| serde_urlencoded::to_string(b).map_err(|e| Errors::Error(format!("Failed to serialize body: {}", e)))).transpose()?;
         if body_data.is_some() {
             headers.push((
                 "Content-Type",
@@ -169,6 +172,7 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the parsed response data and metadata, or an error
+    #[allow(dead_code)]
     pub(super) async fn send_signed_request<T, R>(
         &self,
         endpoint: &str,

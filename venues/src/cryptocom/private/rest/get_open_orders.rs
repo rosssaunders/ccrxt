@@ -22,6 +22,7 @@ pub struct GetOpenOrdersRequest {
 
 /// Open order information
 #[derive(Debug, Clone, Deserialize)]
+#[allow(dead_code)]
 pub struct OpenOrder {
     /// Account ID
     pub account_id: String,
@@ -75,6 +76,7 @@ pub struct OpenOrder {
 
 /// Response for getting open orders
 #[derive(Debug, Clone, Deserialize)]
+#[allow(dead_code)]
 pub struct GetOpenOrdersResponse {
     /// Array of open orders
     pub data: Vec<OpenOrder>,
@@ -130,6 +132,7 @@ mod tests {
 
     /// A plain text implementation of ExposableSecret for testing purposes.
     #[derive(Clone)]
+    #[allow(dead_code)]
     struct PlainTextSecret {
         secret: String,
     }
@@ -141,6 +144,7 @@ mod tests {
     }
 
     impl PlainTextSecret {
+        #[allow(dead_code)]
         fn new(secret: String) -> Self {
             Self { secret }
         }
@@ -242,7 +246,7 @@ mod tests {
 
         let response: GetOpenOrdersResponse = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.data.len(), 1);
-        assert_eq!(response.data[0].order_id, "19848525");
-        assert_eq!(response.data[0].status, "ACTIVE");
+        assert_eq!(response.data.first().unwrap().order_id, "19848525");
+        assert_eq!(response.data.first().unwrap().status, "ACTIVE");
     }
 }

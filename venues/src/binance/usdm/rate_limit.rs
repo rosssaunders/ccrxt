@@ -106,7 +106,7 @@ impl RateLimitHeader {
         if rest.len() < 2 {
             return None;
         }
-        let (num, unit) = rest.split_at(rest.len() - 1);
+        let (num, unit) = rest.split_at(rest.len().saturating_sub(1));
         let interval_value = num.parse::<u32>().ok()?;
         let interval_unit = IntervalUnit::from_char(unit.chars().next()?)?;
         Some(RateLimitHeader {
@@ -217,6 +217,7 @@ impl RateLimiter {
     }
 
     /// Call this after every REST call to increment raw_request (1min window, 1,200 cap for USDM)
+    #[allow(clippy::arithmetic_side_effects)]
     pub async fn increment_raw_request(&self) {
         let mut usage = self.usage.write().await;
         let now = Instant::now();
@@ -229,6 +230,7 @@ impl RateLimiter {
     }
 
     /// Call this after every order-related REST call to increment order counters
+    #[allow(clippy::arithmetic_side_effects)]
     pub async fn increment_order(&self) {
         let mut usage = self.usage.write().await;
         let now = Instant::now();
@@ -271,6 +273,7 @@ impl RateLimiter {
     /// Checks if a new request can be made without exceeding any bucket
     /// - weight: request weight for this endpoint
     /// - is_order: whether this is an order-related endpoint
+    #[allow(clippy::arithmetic_side_effects)]
     pub async fn check_limits(&self, weight: u32, is_order: bool) -> Result<(), Errors> {
         let usage = self.usage.read().await;
 

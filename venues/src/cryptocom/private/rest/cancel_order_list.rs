@@ -141,6 +141,7 @@ mod tests {
 
     /// A plain text implementation of ExposableSecret for testing purposes.
     #[derive(Clone)]
+    #[allow(dead_code)]
     struct PlainTextSecret {
         secret: String,
     }
@@ -152,6 +153,7 @@ mod tests {
     }
 
     impl PlainTextSecret {
+        #[allow(dead_code)]
         fn new(secret: String) -> Self {
             Self { secret }
         }
@@ -188,8 +190,8 @@ mod tests {
         let request: CancelOrderListRequest = serde_json::from_value(request_json).unwrap();
         assert_eq!(request.contingency_type, ContingencyType::List);
         assert_eq!(request.order_list.len(), 2);
-        assert_eq!(request.order_list[0].instrument_name, "ETH_CRO");
-        assert_eq!(request.order_list[1].order_id, "2015119459882149857");
+        assert_eq!(request.order_list.first().unwrap().instrument_name, "ETH_CRO");
+        assert_eq!(request.order_list.get(1).unwrap().order_id, "2015119459882149857");
     }
 
     #[test]
@@ -223,11 +225,11 @@ mod tests {
 
         let response: CancelOrderListResponse = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.result_list.len(), 2);
-        assert_eq!(response.result_list[0].index, 0);
-        assert_eq!(response.result_list[0].code, 0);
-        assert_eq!(response.result_list[1].index, 1);
-        assert_eq!(response.result_list[1].code, 0);
-        assert!(response.result_list[0].message.is_none());
+        assert_eq!(response.result_list.first().unwrap().index, 0);
+        assert_eq!(response.result_list.first().unwrap().code, 0);
+        assert_eq!(response.result_list.get(1).unwrap().index, 1);
+        assert_eq!(response.result_list.get(1).unwrap().code, 0);
+        assert!(response.result_list.first().unwrap().message.is_none());
     }
 
     #[test]
@@ -248,10 +250,10 @@ mod tests {
 
         let response: CancelOrderListResponse = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.result_list.len(), 2);
-        assert_eq!(response.result_list[0].code, 0);
-        assert_eq!(response.result_list[1].code, 20007);
+        assert_eq!(response.result_list.first().unwrap().code, 0);
+        assert_eq!(response.result_list.get(1).unwrap().code, 20007);
         assert_eq!(
-            response.result_list[1].message,
+            response.result_list.get(1).unwrap().message,
             Some("INVALID_REQUEST".to_string())
         );
     }

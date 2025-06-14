@@ -97,6 +97,7 @@ mod tests {
 
     /// A plain text implementation of ExposableSecret for testing purposes.
     #[derive(Clone)]
+    #[allow(dead_code)]
     struct PlainTextSecret {
         secret: String,
     }
@@ -108,6 +109,7 @@ mod tests {
     }
 
     impl PlainTextSecret {
+        #[allow(dead_code)]
         fn new(secret: String) -> Self {
             Self { secret }
         }
@@ -170,8 +172,8 @@ mod tests {
 
         let response: GetStakingPositionResponse = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.data.len(), 1);
-        assert_eq!(response.data[0].instrument_name, "SOL.staked");
-        assert_eq!(response.data[0].underlying_inst_name, "SOL");
+        assert_eq!(response.data.first().unwrap().instrument_name, "SOL.staked");
+        assert_eq!(response.data.first().unwrap().underlying_inst_name, "SOL");
     }
 
     #[test]
@@ -199,7 +201,7 @@ mod tests {
 
         let response: GetStakingPositionResponse = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.data.len(), 2);
-        assert_eq!(response.data[0].instrument_name, "SOL.staked");
-        assert_eq!(response.data[1].instrument_name, "ETH.staked");
+        assert_eq!(response.data.first().unwrap().instrument_name, "SOL.staked");
+        assert_eq!(response.data.get(1).unwrap().instrument_name, "ETH.staked");
     }
 }
