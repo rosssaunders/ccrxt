@@ -33,6 +33,9 @@ pub struct Instrument {
     /// Underlying (e.g., "BTC-USD")
     #[serde(rename = "uly")]
     pub underlying: Option<String>,
+    /// Instrument family (e.g., "BTC-USD")
+    #[serde(rename = "instFamily")]
+    pub inst_family: Option<String>,
     /// Category (e.g., "1")
     pub category: String,
     /// Base currency (e.g., "BTC")
@@ -62,6 +65,15 @@ pub struct Instrument {
     /// Listing time (Unix timestamp in milliseconds)
     #[serde(rename = "listTime")]
     pub list_time: String,
+    /// End time of call auction (Unix timestamp in milliseconds)
+    #[serde(rename = "auctionEndTime")]
+    pub auction_end_time: Option<String>,
+    /// Continuous trading switch time (Unix timestamp in milliseconds)
+    #[serde(rename = "contTdSwTime")]
+    pub cont_td_sw_time: Option<String>,
+    /// Open type ("fix_price", "pre_quote", "call_auction")
+    #[serde(rename = "openType")]
+    pub open_type: Option<String>,
     /// Expiry time (Unix timestamp in milliseconds)
     #[serde(rename = "expTime")]
     pub exp_time: Option<String>,
@@ -83,18 +95,36 @@ pub struct Instrument {
     pub alias: Option<String>,
     /// Instrument state
     pub state: InstrumentState,
-    /// Maximum order quantity for buy orders
-    #[serde(rename = "maxBuyQty")]
-    pub max_buy_qty: Option<String>,
-    /// Maximum order quantity for sell orders
-    #[serde(rename = "maxSellQty")]
-    pub max_sell_qty: Option<String>,
-    /// Maximum order amount for buy orders
-    #[serde(rename = "maxBuyAmt")]
-    pub max_buy_amt: Option<String>,
-    /// Maximum order amount for sell orders
-    #[serde(rename = "maxSellAmt")]
-    pub max_sell_amt: Option<String>,
+    /// Trading rule types ("normal", "pre_market")
+    #[serde(rename = "ruleType")]
+    pub rule_type: Option<String>,
+    /// Maximum order quantity of a single limit order
+    #[serde(rename = "maxLmtSz")]
+    pub max_lmt_sz: Option<String>,
+    /// Maximum order quantity of a single market order
+    #[serde(rename = "maxMktSz")]
+    pub max_mkt_sz: Option<String>,
+    /// Max USD amount for a single limit order
+    #[serde(rename = "maxLmtAmt")]
+    pub max_lmt_amt: Option<String>,
+    /// Max USD amount for a single market order
+    #[serde(rename = "maxMktAmt")]
+    pub max_mkt_amt: Option<String>,
+    /// Maximum order quantity of a single TWAP order
+    #[serde(rename = "maxTwapSz")]
+    pub max_twap_sz: Option<String>,
+    /// Maximum order quantity of a single iceberg order
+    #[serde(rename = "maxIcebergSz")]
+    pub max_iceberg_sz: Option<String>,
+    /// Maximum order quantity of a single trigger order
+    #[serde(rename = "maxTriggerSz")]
+    pub max_trigger_sz: Option<String>,
+    /// Maximum order quantity of a single stop market order
+    #[serde(rename = "maxStopSz")]
+    pub max_stop_sz: Option<String>,
+    /// Whether daily settlement for expiry feature is enabled
+    #[serde(rename = "futureSettlement")]
+    pub future_settlement: Option<bool>,
 }
 
 /// Response for getting instruments
@@ -177,6 +207,7 @@ mod tests {
         assert_eq!(instrument.base_ccy, "BTC");
         assert_eq!(instrument.quote_ccy, "USDT");
         assert_eq!(instrument.state, InstrumentState::Live);
+        assert_eq!(instrument.inst_family, None);
     }
 
     #[test]
@@ -205,5 +236,87 @@ mod tests {
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 1);
         assert_eq!(response.data.first().unwrap().inst_id, "BTC-USDT");
+    }
+
+    #[test]
+    fn test_instrument_structure_with_all_fields() {
+        let instrument_json = json!({
+            "instType": "FUTURES",
+            "instId": "BTC-USD-240329",
+            "uly": "BTC-USD",
+            "instFamily": "BTC-USD",
+            "category": "1",
+            "baseCcy": "BTC",
+            "quoteCcy": "USD", 
+            "settleCcy": "BTC",
+            "ctVal": "100",
+            "ctMult": "1",
+            "ctValCcy": "USD",
+            "optType": "",
+            "stk": "",
+            "listTime": "1606276800000",
+            "auctionEndTime": "",
+            "contTdSwTime": "",
+            "openType": "",
+            "expTime": "1711699200000",
+            "lever": "125",
+            "tickSz": "0.1",
+            "lotSz": "1",
+            "minSz": "1",
+            "ctType": "linear",
+            "alias": "quarter",
+            "state": "live",
+            "ruleType": "normal",
+            "maxLmtSz": "10000",
+            "maxMktSz": "1000", 
+            "maxLmtAmt": "1000000",
+            "maxMktAmt": "100000",
+            "maxTwapSz": "10000",
+            "maxIcebergSz": "10000",
+            "maxTriggerSz": "10000",
+            "maxStopSz": "1000",
+            "futureSettlement": true
+        });
+
+        let instrument: Instrument = serde_json::from_value(instrument_json).unwrap();
+        assert_eq!(instrument.inst_type, InstrumentType::Futures);
+        assert_eq!(instrument.inst_id, "BTC-USD-240329");
+        assert_eq!(instrument.underlying, Some("BTC-USD".to_string()));
+        assert_eq!(instrument.inst_family, Some("BTC-USD".to_string()));
+        assert_eq!(instrument.settle_ccy, "BTC");
+        assert_eq!(instrument.ct_val, Some("100".to_string()));
+        assert_eq!(instrument.ct_mult, Some("1".to_string()));
+        assert_eq!(instrument.ct_val_ccy, Some("USD".to_string()));
+        assert_eq!(instrument.ct_type, Some("linear".to_string()));
+        assert_eq!(instrument.alias, Some("quarter".to_string()));
+        assert_eq!(instrument.state, InstrumentState::Live);
+        assert_eq!(instrument.rule_type, Some("normal".to_string()));
+        assert_eq!(instrument.max_lmt_sz, Some("10000".to_string()));
+        assert_eq!(instrument.max_mkt_sz, Some("1000".to_string()));
+        assert_eq!(instrument.max_lmt_amt, Some("1000000".to_string()));
+        assert_eq!(instrument.max_mkt_amt, Some("100000".to_string()));
+        assert_eq!(instrument.max_twap_sz, Some("10000".to_string()));
+        assert_eq!(instrument.max_iceberg_sz, Some("10000".to_string()));
+        assert_eq!(instrument.max_trigger_sz, Some("10000".to_string()));
+        assert_eq!(instrument.max_stop_sz, Some("1000".to_string()));
+        assert_eq!(instrument.future_settlement, Some(true));
+    }
+
+    #[test]
+    fn test_instrument_serialization_roundtrip() {
+        let original = GetInstrumentsRequest {
+            inst_type: Some(InstrumentType::Swap),
+            underlying: Some("BTC-USD".to_string()),
+            inst_family: Some("BTC-USD".to_string()),
+            inst_id: None,
+        };
+
+        let serialized = serde_json::to_value(&original).unwrap();
+        let deserialized: GetInstrumentsRequest = serde_json::from_value(serialized).unwrap();
+        
+        assert_eq!(original.inst_type, deserialized.inst_type);
+        assert_eq!(original.underlying, deserialized.underlying);
+        assert_eq!(original.inst_family, deserialized.inst_family);
+        assert_eq!(original.inst_id, deserialized.inst_id);
     }
 }
