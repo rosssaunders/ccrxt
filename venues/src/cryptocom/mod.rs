@@ -1,34 +1,36 @@
-mod errors;
-mod integration_tests;
-mod examples;
 pub mod enums;
+mod errors;
+mod examples;
+mod integration_tests;
 
 pub mod rate_limit;
 pub mod private {
     mod rest;
-    pub use self::rest::RestClient as RestClient;
+    pub use self::rest::RestClient;
     pub use self::rest::{
-        CreateOrderListRequest, OrderListItem, CreateOrderListResponse, CreateOcoOrderResponse, OrderCreationResult,
-        CancelOrderListRequest, CancelOcoOrderRequest, CancelOrderListItem, CancelOrderListResponse, OrderCancellationResult,
-        GetOrderListRequest, GetOrderListResponse, OrderDetails
+        CancelOcoOrderRequest, CancelOrderListItem, CancelOrderListRequest,
+        CancelOrderListResponse, CreateOcoOrderResponse, CreateOrderListRequest,
+        CreateOrderListResponse, GetOrderListRequest, GetOrderListResponse,
+        OrderCancellationResult, OrderCreationResult, OrderDetails, OrderListItem,
     };
 }
 
 pub mod public {
     mod rest;
-    pub use self::rest::RestClient as RestClient;
+    pub use self::rest::RestClient;
 }
 
-pub use rate_limit::{RateLimiter, EndpointType, RateLimitError, RateLimit};
-pub use errors::{Errors, ApiError, ErrorResponse};
 pub use enums::*;
+pub use errors::{ApiError, ErrorResponse, Errors};
 pub use private::RestClient as PrivateRestClient;
 pub use public::RestClient as PublicRestClient;
+pub use rate_limit::{EndpointType, RateLimit, RateLimitError, RateLimiter};
 // Re-export the advanced order trading types
 pub use private::{
-    CreateOrderListRequest, OrderListItem, CreateOrderListResponse, CreateOcoOrderResponse, OrderCreationResult,
-    CancelOrderListRequest, CancelOcoOrderRequest, CancelOrderListItem, CancelOrderListResponse, OrderCancellationResult,
-    GetOrderListRequest, GetOrderListResponse, OrderDetails
+    CancelOcoOrderRequest, CancelOrderListItem, CancelOrderListRequest, CancelOrderListResponse,
+    CreateOcoOrderResponse, CreateOrderListRequest, CreateOrderListResponse, GetOrderListRequest,
+    GetOrderListResponse, OrderCancellationResult, OrderCreationResult, OrderDetails,
+    OrderListItem,
 };
 
 /// Type alias for results returned by Crypto.com API operations

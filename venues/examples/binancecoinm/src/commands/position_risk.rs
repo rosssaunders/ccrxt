@@ -1,5 +1,5 @@
+use venues::binance::coinm::PositionRiskRequest;
 use venues::binance::coinm::PrivateRestClient;
-use venues::binance::coinm::{PositionRiskRequest};
 
 pub async fn run_position_risk(client: &PrivateRestClient) {
     // Example: fetch all positions

@@ -1,7 +1,7 @@
+use super::client::RestClient;
+use crate::cryptocom::RestResult;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
-use crate::cryptocom::RestResult;
-use super::client::RestClient;
 
 /// Parameters for get order history request
 #[derive(Debug, Clone, Serialize)]
@@ -87,8 +87,8 @@ impl RestClient {
     /// Get order history
     ///
     /// Gets the order history for a particular instrument.
-    /// Users should use user.order to keep track of real-time order updates, 
-    /// and private/get-order-history should primarily be used for recovery; 
+    /// Users should use user.order to keep track of real-time order updates,
+    /// and private/get-order-history should primarily be used for recovery;
     /// typically when the websocket is disconnected.
     ///
     /// See: <https://exchange-docs.crypto.com/derivatives/index.html#private-get-order-history>
@@ -108,11 +108,11 @@ impl RestClient {
         instrument_name: Option<String>,
         start_time: Option<String>,
         end_time: Option<String>,
-        limit: Option<i32>
+        limit: Option<i32>,
     ) -> RestResult<Value> {
         let nonce = chrono::Utc::now().timestamp_millis() as u64;
         let id = 1;
-        
+
         let mut params = json!({});
         if let Some(in_name) = instrument_name {
             params["instrument_name"] = Value::String(in_name);
@@ -126,9 +126,9 @@ impl RestClient {
         if let Some(l) = limit {
             params["limit"] = Value::Number(l.into());
         }
-        
+
         let signature = self.sign_request("private/get-order-history", id, &params, nonce)?;
-        
+
         let request_body = json!({
             "id": id,
             "method": "private/get-order-history",
@@ -138,7 +138,8 @@ impl RestClient {
             "api_key": self.api_key.expose_secret()
         });
 
-        let response = self.client
+        let response = self
+            .client
             .post(&format!("{}/v1/private/get-order-history", self.base_url))
             .json(&request_body)
             .send()
@@ -160,13 +161,13 @@ mod tests {
     struct PlainTextSecret {
         secret: String,
     }
-    
+
     impl ExposableSecret for PlainTextSecret {
         fn expose_secret(&self) -> String {
             self.secret.clone()
         }
     }
-    
+
     impl PlainTextSecret {
         fn new(secret: String) -> Self {
             Self { secret }

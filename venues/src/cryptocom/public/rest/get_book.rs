@@ -2,10 +2,10 @@
 //!
 //! Fetches the public order book for a particular instrument and depth.
 
+use super::client::RestClient;
+use crate::cryptocom::{EndpointType, RestResult};
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
-use crate::cryptocom::{EndpointType, RestResult};
-use super::client::RestClient;
 
 /// Request parameters for the public/get-book endpoint.
 ///
@@ -63,10 +63,7 @@ impl RestClient {
     /// Fetches the public order book for a particular instrument and depth.
     ///
     /// [Official API docs](https://exchange-docs.crypto.com/spot/index.html#public-get-book)
-    pub async fn get_book(
-        &self,
-        params: GetBookRequest,
-    ) -> RestResult<GetBookResponse> {
+    pub async fn get_book(&self, params: GetBookRequest) -> RestResult<GetBookResponse> {
         self.send_request(
             "public/get-book",
             reqwest::Method::GET,

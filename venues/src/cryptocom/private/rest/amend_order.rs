@@ -1,7 +1,7 @@
+use super::client::RestClient;
+use crate::cryptocom::RestResult;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
-use crate::cryptocom::RestResult;
-use super::client::RestClient;
 
 /// Request parameters for amending an existing order
 #[derive(Debug, Clone, Serialize)]
@@ -33,8 +33,8 @@ impl RestClient {
     /// This call is asynchronous, so the response is simply a confirmation of the request.
     /// The user.order subscription can be used to check when the order is successfully amended.
     ///
-    /// Please note that amend order is designed as a convenience function such that it performs 
-    /// cancel and then create behind the scene. The new order will lose queue priority, except 
+    /// Please note that amend order is designed as a convenience function such that it performs
+    /// cancel and then create behind the scene. The new order will lose queue priority, except
     /// if the amend is only to amend down order quantity.
     ///
     /// See: <https://exchange-docs.crypto.com/derivatives/index.html#private-amend-order>
@@ -49,12 +49,11 @@ impl RestClient {
     pub async fn amend_order(&self, request: AmendOrderRequest) -> RestResult<Value> {
         let nonce = chrono::Utc::now().timestamp_millis() as u64;
         let id = 1;
-        let params = serde_json::to_value(&request).map_err(|e| {
-            crate::cryptocom::Errors::Error(format!("Serialization error: {}", e))
-        })?;
-        
+        let params = serde_json::to_value(&request)
+            .map_err(|e| crate::cryptocom::Errors::Error(format!("Serialization error: {}", e)))?;
+
         let signature = self.sign_request("private/amend-order", id, &params, nonce)?;
-        
+
         let request_body = json!({
             "id": id,
             "method": "private/amend-order",
@@ -64,7 +63,8 @@ impl RestClient {
             "api_key": self.api_key.expose_secret()
         });
 
-        let response = self.client
+        let response = self
+            .client
             .post(&format!("{}/v1/private/amend-order", self.base_url))
             .json(&request_body)
             .send()
@@ -86,13 +86,13 @@ mod tests {
     struct PlainTextSecret {
         secret: String,
     }
-    
+
     impl ExposableSecret for PlainTextSecret {
         fn expose_secret(&self) -> String {
             self.secret.clone()
         }
     }
-    
+
     impl PlainTextSecret {
         fn new(secret: String) -> Self {
             Self { secret }
@@ -112,7 +112,10 @@ mod tests {
         assert_eq!(serialized["order_id"], "6530219466236720401");
         assert_eq!(serialized["new_price"], "82000");
         assert_eq!(serialized["new_quantity"], "0.0002");
-        assert!(!serialized.as_object().unwrap().contains_key("orig_client_oid"));
+        assert!(!serialized
+            .as_object()
+            .unwrap()
+            .contains_key("orig_client_oid"));
     }
 
     #[test]

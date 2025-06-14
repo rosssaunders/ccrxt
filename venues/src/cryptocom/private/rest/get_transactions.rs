@@ -1,7 +1,7 @@
+use super::client::RestClient;
+use crate::cryptocom::RestResult;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
-use crate::cryptocom::RestResult;
-use super::client::RestClient;
 
 /// Parameters for get transactions request
 #[derive(Debug, Clone, Serialize)]
@@ -94,11 +94,11 @@ impl RestClient {
         journal_type: Option<String>,
         start_time: Option<String>,
         end_time: Option<String>,
-        limit: Option<i32>
+        limit: Option<i32>,
     ) -> RestResult<Value> {
         let nonce = chrono::Utc::now().timestamp_millis() as u64;
         let id = 1;
-        
+
         let mut params = json!({});
         if let Some(in_name) = instrument_name {
             params["instrument_name"] = Value::String(in_name);
@@ -115,9 +115,9 @@ impl RestClient {
         if let Some(l) = limit {
             params["limit"] = Value::Number(l.into());
         }
-        
+
         let signature = self.sign_request("private/get-transactions", id, &params, nonce)?;
-        
+
         let request_body = json!({
             "id": id,
             "method": "private/get-transactions",
@@ -127,7 +127,8 @@ impl RestClient {
             "api_key": self.api_key.expose_secret()
         });
 
-        let response = self.client
+        let response = self
+            .client
             .post(&format!("{}/v1/private/get-transactions", self.base_url))
             .json(&request_body)
             .send()
@@ -149,13 +150,13 @@ mod tests {
     struct PlainTextSecret {
         secret: String,
     }
-    
+
     impl ExposableSecret for PlainTextSecret {
         fn expose_secret(&self) -> String {
             self.secret.clone()
         }
     }
-    
+
     impl PlainTextSecret {
         fn new(secret: String) -> Self {
             Self { secret }

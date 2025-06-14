@@ -1,11 +1,11 @@
 //! Request and response structs for public/get-announcements endpoint
 //!
 //! Fetches all announcements in Crypto.com Exchange.
+use super::client::RestClient;
+use crate::cryptocom::RestResult;
+use crate::cryptocom::{AnnouncementCategory, ImpactedStatus, ProductType};
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
-use crate::cryptocom::{AnnouncementCategory, ProductType, ImpactedStatus};
-use crate::cryptocom::RestResult;
-use super::client::RestClient;
 
 /// Request parameters for the public/get-announcements endpoint.
 #[derive(Debug, Clone, Serialize, Default)]
@@ -151,14 +151,15 @@ impl RestClient {
             reqwest::Method::GET,
             Some(&params),
             crate::cryptocom::EndpointType::PublicGetAnnouncements,
-        ).await
+        )
+        .await
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::cryptocom::{AnnouncementCategory, ProductType, ImpactedStatus};
+    use crate::cryptocom::{AnnouncementCategory, ImpactedStatus, ProductType};
 
     #[test]
     fn test_announcements_request_building() {

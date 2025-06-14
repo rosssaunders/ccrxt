@@ -10,13 +10,13 @@ mod tests {
     fn test_order_side_serialization() {
         let buy = OrderSide::Buy;
         let sell = OrderSide::Sell;
-        
+
         assert_eq!(serde_json::to_string(&buy).unwrap(), "\"BUY\"");
         assert_eq!(serde_json::to_string(&sell).unwrap(), "\"SELL\"");
-        
+
         let buy_from_json: OrderSide = serde_json::from_str("\"BUY\"").unwrap();
         let sell_from_json: OrderSide = serde_json::from_str("\"SELL\"").unwrap();
-        
+
         assert_eq!(buy_from_json, OrderSide::Buy);
         assert_eq!(sell_from_json, OrderSide::Sell);
     }
@@ -25,7 +25,10 @@ mod tests {
     fn test_enum_display() {
         assert_eq!(format!("{}", OrderSide::Buy), "BUY");
         assert_eq!(format!("{}", TimeInForce::GTX), "GTX");
-        assert_eq!(format!("{}", SideEffectType::NoSideEffect), "NO_SIDE_EFFECT");
+        assert_eq!(
+            format!("{}", SideEffectType::NoSideEffect),
+            "NO_SIDE_EFFECT"
+        );
         assert_eq!(format!("{}", PriceMatch::Opponent5), "OPPONENT_5");
         assert_eq!(format!("{}", StrategyType::TakeProfit), "TAKE_PROFIT");
         assert_eq!(format!("{}", ContractStatus::PreSettle), "PRE_SETTLE");

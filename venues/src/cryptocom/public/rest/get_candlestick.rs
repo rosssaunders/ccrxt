@@ -2,12 +2,12 @@
 //!
 //! Retrieves candlesticks (k-line data history) over a given period for an instrument.
 
+use super::client::RestClient;
+use crate::cryptocom::EndpointType;
+use crate::cryptocom::RestResult;
+use crate::cryptocom::Timeframe;
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
-use crate::cryptocom::EndpointType;
-use crate::cryptocom::Timeframe;
-use crate::cryptocom::RestResult;
-use super::client::RestClient;
 
 /// Request parameters for the public/get-candlestick endpoint.
 ///

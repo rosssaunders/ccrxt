@@ -1,7 +1,7 @@
+use super::client::RestClient;
+use crate::cryptocom::RestResult;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
-use crate::cryptocom::RestResult;
-use super::client::RestClient;
 
 /// Request parameters for changing account leverage
 #[derive(Debug, Clone, Serialize)]
@@ -15,7 +15,7 @@ pub struct ChangeAccountLeverageRequest {
 impl RestClient {
     /// Changes the maximum leverage used by the account
     ///
-    /// Please note, each instrument has its own maximum leverage. Whichever leverage 
+    /// Please note, each instrument has its own maximum leverage. Whichever leverage
     /// (account or instrument) is lower will be used.
     ///
     /// See: <https://exchange-docs.crypto.com/derivatives/index.html#private-change-account-leverage>
@@ -27,15 +27,17 @@ impl RestClient {
     ///
     /// # Returns
     /// Success confirmation (code 0)
-    pub async fn change_account_leverage(&self, request: ChangeAccountLeverageRequest) -> RestResult<Value> {
+    pub async fn change_account_leverage(
+        &self,
+        request: ChangeAccountLeverageRequest,
+    ) -> RestResult<Value> {
         let nonce = chrono::Utc::now().timestamp_millis() as u64;
         let id = 1;
-        let params = serde_json::to_value(&request).map_err(|e| {
-            crate::cryptocom::Errors::Error(format!("Serialization error: {}", e))
-        })?;
-        
+        let params = serde_json::to_value(&request)
+            .map_err(|e| crate::cryptocom::Errors::Error(format!("Serialization error: {}", e)))?;
+
         let signature = self.sign_request("private/change-account-leverage", id, &params, nonce)?;
-        
+
         let request_body = json!({
             "id": id,
             "method": "private/change-account-leverage",
@@ -45,8 +47,12 @@ impl RestClient {
             "api_key": self.api_key.expose_secret()
         });
 
-        let response = self.client
-            .post(&format!("{}/v1/private/change-account-leverage", self.base_url))
+        let response = self
+            .client
+            .post(&format!(
+                "{}/v1/private/change-account-leverage",
+                self.base_url
+            ))
             .json(&request_body)
             .send()
             .await?;
@@ -67,13 +73,13 @@ mod tests {
     struct PlainTextSecret {
         secret: String,
     }
-    
+
     impl ExposableSecret for PlainTextSecret {
         fn expose_secret(&self) -> String {
             self.secret.clone()
         }
     }
-    
+
     impl PlainTextSecret {
         fn new(secret: String) -> Self {
             Self { secret }
@@ -88,7 +94,10 @@ mod tests {
         };
 
         let serialized = serde_json::to_value(&request).unwrap();
-        assert_eq!(serialized["account_id"], "52e7c00f-1324-5a6z-bfgt-de445bde21a5");
+        assert_eq!(
+            serialized["account_id"],
+            "52e7c00f-1324-5a6z-bfgt-de445bde21a5"
+        );
         assert_eq!(serialized["leverage"], 10);
     }
 

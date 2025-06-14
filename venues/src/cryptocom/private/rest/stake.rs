@@ -1,7 +1,7 @@
+use super::client::RestClient;
+use crate::cryptocom::RestResult;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
-use crate::cryptocom::RestResult;
-use super::client::RestClient;
 
 /// Request parameters for stake
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -51,14 +51,14 @@ impl RestClient {
     pub async fn stake(&self, instrument_name: &str, quantity: &str) -> RestResult<Value> {
         let nonce = chrono::Utc::now().timestamp_millis() as u64;
         let id = 1;
-        
+
         let params = json!({
             "instrument_name": instrument_name,
             "quantity": quantity
         });
-        
+
         let signature = self.sign_request("private/staking/stake", id, &params, nonce)?;
-        
+
         let request_body = json!({
             "id": id,
             "method": "private/staking/stake",
@@ -68,7 +68,8 @@ impl RestClient {
             "api_key": self.api_key.expose_secret()
         });
 
-        let response = self.client
+        let response = self
+            .client
             .post(&format!("{}/v1/private/staking/stake", self.base_url))
             .json(&request_body)
             .send()
@@ -90,13 +91,13 @@ mod tests {
     struct PlainTextSecret {
         secret: String,
     }
-    
+
     impl ExposableSecret for PlainTextSecret {
         fn expose_secret(&self) -> String {
             self.secret.clone()
         }
     }
-    
+
     impl PlainTextSecret {
         fn new(secret: String) -> Self {
             Self { secret }
@@ -124,7 +125,7 @@ mod tests {
 
         let serialized = serde_json::to_string(&request).unwrap();
         let deserialized: StakeRequest = serde_json::from_str(&serialized).unwrap();
-        
+
         assert_eq!(deserialized.instrument_name, "ETH.staked");
         assert_eq!(deserialized.quantity, "0.5");
     }
@@ -156,7 +157,7 @@ mod tests {
     #[test]
     fn test_stake_response_different_statuses() {
         let statuses = vec!["NEW", "PENDING", "STAKED", "COMPLETED", "REJECTED"];
-        
+
         for status in statuses {
             let response_json = json!({
                 "staking_id": "123",

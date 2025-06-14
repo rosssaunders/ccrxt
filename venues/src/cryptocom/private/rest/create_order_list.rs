@@ -1,7 +1,7 @@
+use super::client::RestClient;
+use crate::cryptocom::{enums::*, RestResult};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
-use crate::cryptocom::{RestResult, enums::*};
-use super::client::RestClient;
 
 /// Individual order in an order list
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -113,9 +113,9 @@ impl RestClient {
         let nonce = chrono::Utc::now().timestamp_millis() as u64;
         let id = 1;
         let params = serde_json::to_value(&request)?;
-        
+
         let signature = self.sign_request("private/create-order-list", id, &params, nonce)?;
-        
+
         let request_body = json!({
             "id": id,
             "method": "private/create-order-list",
@@ -125,7 +125,8 @@ impl RestClient {
             "api_key": self.api_key.expose_secret()
         });
 
-        let response = self.client
+        let response = self
+            .client
             .post(&format!("{}/v1/private/create-order-list", self.base_url))
             .json(&request_body)
             .send()
@@ -147,13 +148,13 @@ mod tests {
     struct PlainTextSecret {
         secret: String,
     }
-    
+
     impl ExposableSecret for PlainTextSecret {
         fn expose_secret(&self) -> String {
             self.secret.clone()
         }
     }
-    
+
     impl PlainTextSecret {
         fn new(secret: String) -> Self {
             Self { secret }
@@ -217,7 +218,10 @@ mod tests {
         assert_eq!(request.contingency_type, ContingencyType::List);
         assert_eq!(request.order_list.len(), 2);
         assert_eq!(request.order_list[0].instrument_name, "ETH_CRO");
-        assert_eq!(request.order_list[1].client_oid, Some("my_order_0002".to_string()));
+        assert_eq!(
+            request.order_list[1].client_oid,
+            Some("my_order_0002".to_string())
+        );
     }
 
     #[test]
@@ -243,8 +247,14 @@ mod tests {
         assert_eq!(response.result_list.len(), 2);
         assert_eq!(response.result_list[0].index, 0);
         assert_eq!(response.result_list[0].code, 0);
-        assert_eq!(response.result_list[0].order_id, Some("2015106383706015873".to_string()));
-        assert_eq!(response.result_list[1].client_oid, Some("my_order_0002".to_string()));
+        assert_eq!(
+            response.result_list[0].order_id,
+            Some("2015106383706015873".to_string())
+        );
+        assert_eq!(
+            response.result_list[1].client_oid,
+            Some("my_order_0002".to_string())
+        );
     }
 
     #[test]
@@ -270,7 +280,10 @@ mod tests {
         assert_eq!(response.result_list.len(), 2);
         assert_eq!(response.result_list[0].code, 0);
         assert_eq!(response.result_list[1].code, 20007);
-        assert_eq!(response.result_list[1].message, Some("INVALID_REQUEST".to_string()));
+        assert_eq!(
+            response.result_list[1].message,
+            Some("INVALID_REQUEST".to_string())
+        );
         assert!(response.result_list[1].order_id.is_none());
     }
 
@@ -358,6 +371,9 @@ mod tests {
         assert_eq!(serialized["side"], "BUY");
         assert_eq!(serialized["type"], "LIMIT");
         assert!(!serialized.as_object().unwrap().contains_key("notional"));
-        assert!(!serialized.as_object().unwrap().contains_key("trigger_price"));
+        assert!(!serialized
+            .as_object()
+            .unwrap()
+            .contains_key("trigger_price"));
     }
 }

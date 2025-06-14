@@ -2,10 +2,10 @@
 //!
 //! Provides information on risk parameter settings for Smart Cross Margin.
 
+use super::client::RestClient;
+use crate::cryptocom::{EndpointType, RestResult};
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
-use crate::cryptocom::{EndpointType, RestResult};
-use super::client::RestClient;
 
 /// Response for public/get-risk-parameters endpoint.
 #[derive(Debug, Clone, Deserialize)]
@@ -53,9 +53,7 @@ impl RestClient {
     /// Provides information on risk parameter settings for Smart Cross Margin.
     ///
     /// [Official API docs](https://exchange-docs.crypto.com/spot/index.html#public-get-risk-parameters)
-    pub async fn get_risk_parameters(
-        &self,
-    ) -> RestResult<GetRiskParametersResponse> {
+    pub async fn get_risk_parameters(&self) -> RestResult<GetRiskParametersResponse> {
         self.send_request(
             "public/get-risk-parameters",
             reqwest::Method::GET,

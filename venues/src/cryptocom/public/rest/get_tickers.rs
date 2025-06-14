@@ -2,10 +2,10 @@
 //!
 //! Fetches the public tickers for all or a particular instrument.
 
+use super::client::RestClient;
+use crate::cryptocom::{EndpointType, RestResult};
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
-use crate::cryptocom::{EndpointType, RestResult};
-use super::client::RestClient;
 
 /// Request parameters for the public/get-tickers endpoint.
 ///
@@ -71,10 +71,7 @@ impl RestClient {
     /// Fetches the public tickers for all or a particular instrument.
     ///
     /// [Official API docs](https://exchange-docs.crypto.com/spot/index.html#public-get-tickers)
-    pub async fn get_tickers(
-        &self,
-        params: GetTickersRequest,
-    ) -> RestResult<GetTickersResponse> {
+    pub async fn get_tickers(&self, params: GetTickersRequest) -> RestResult<GetTickersResponse> {
         self.send_request(
             "public/get-tickers",
             reqwest::Method::GET,

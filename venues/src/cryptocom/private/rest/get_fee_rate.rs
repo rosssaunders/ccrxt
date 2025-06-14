@@ -1,7 +1,7 @@
+use super::client::RestClient;
+use crate::cryptocom::RestResult;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
-use crate::cryptocom::RestResult;
-use super::client::RestClient;
 
 /// Fee rate information for user's account
 #[derive(Debug, Clone, Deserialize)]
@@ -33,9 +33,9 @@ impl RestClient {
         let nonce = chrono::Utc::now().timestamp_millis() as u64;
         let id = 1;
         let params = json!({});
-        
+
         let signature = self.sign_request("private/get-fee-rate", id, &params, nonce)?;
-        
+
         let request_body = json!({
             "id": id,
             "method": "private/get-fee-rate",
@@ -45,7 +45,8 @@ impl RestClient {
             "api_key": self.api_key.expose_secret()
         });
 
-        let response = self.client
+        let response = self
+            .client
             .post(&format!("{}/v1/private/get-fee-rate", self.base_url))
             .json(&request_body)
             .send()
@@ -67,13 +68,13 @@ mod tests {
     struct PlainTextSecret {
         secret: String,
     }
-    
+
     impl ExposableSecret for PlainTextSecret {
         fn expose_secret(&self) -> String {
             self.secret.clone()
         }
     }
-    
+
     impl PlainTextSecret {
         fn new(secret: String) -> Self {
             Self { secret }

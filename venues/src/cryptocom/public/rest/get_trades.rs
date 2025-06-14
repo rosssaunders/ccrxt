@@ -2,12 +2,12 @@
 //!
 //! Fetches the public trades for a particular instrument.
 
+use super::client::RestClient;
+use crate::cryptocom::EndpointType;
+use crate::cryptocom::RestResult;
+use crate::cryptocom::TradeSide;
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
-use crate::cryptocom::EndpointType;
-use crate::cryptocom::TradeSide;
-use crate::cryptocom::RestResult;
-use super::client::RestClient;
 
 /// Request parameters for the public/get-trades endpoint.
 ///
@@ -77,10 +77,7 @@ impl RestClient {
     /// Fetches the public trades for a particular instrument.
     ///
     /// [Official API docs](https://exchange-docs.crypto.com/spot/index.html#public-get-trades)
-    pub async fn get_trades(
-        &self,
-        params: GetTradesRequest,
-    ) -> RestResult<GetTradesResponse> {
+    pub async fn get_trades(&self, params: GetTradesRequest) -> RestResult<GetTradesResponse> {
         self.send_request(
             "public/get-trades",
             reqwest::Method::GET,

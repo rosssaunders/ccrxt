@@ -1,8 +1,8 @@
+use super::client::RestClient;
+use crate::cryptocom::RestResult;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use std::collections::HashMap;
-use crate::cryptocom::RestResult;
-use super::client::RestClient;
 
 /// Network information for a currency
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -55,9 +55,9 @@ impl RestClient {
         let nonce = chrono::Utc::now().timestamp_millis() as u64;
         let id = 1;
         let params = json!({});
-        
+
         let signature = self.sign_request("private/get-currency-networks", id, &params, nonce)?;
-        
+
         let request_body = json!({
             "id": id,
             "method": "private/get-currency-networks",
@@ -67,8 +67,12 @@ impl RestClient {
             "api_key": self.api_key.expose_secret()
         });
 
-        let response = self.client
-            .post(&format!("{}/v1/private/get-currency-networks", self.base_url))
+        let response = self
+            .client
+            .post(&format!(
+                "{}/v1/private/get-currency-networks",
+                self.base_url
+            ))
             .json(&request_body)
             .send()
             .await?;
@@ -89,13 +93,13 @@ mod tests {
     struct PlainTextSecret {
         secret: String,
     }
-    
+
     impl ExposableSecret for PlainTextSecret {
         fn expose_secret(&self) -> String {
             self.secret.clone()
         }
     }
-    
+
     impl PlainTextSecret {
         fn new(secret: String) -> Self {
             Self { secret }
@@ -247,12 +251,12 @@ mod tests {
         let response: GetCurrencyNetworksResponse = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.update_time, 1641151604000);
         assert_eq!(response.currency_map.len(), 2);
-        
+
         let agld = response.currency_map.get("AGLD").unwrap();
         assert_eq!(agld.full_name, "Adventure Gold");
         assert_eq!(agld.default_network, None);
         assert_eq!(agld.network_list.len(), 1);
-        
+
         let matic = response.currency_map.get("MATIC").unwrap();
         assert_eq!(matic.full_name, "Polygon");
         assert_eq!(matic.default_network, Some("ETH".to_string()));

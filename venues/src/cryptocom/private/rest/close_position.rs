@@ -1,7 +1,7 @@
+use super::client::RestClient;
+use crate::cryptocom::{OrderType, RestResult};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
-use crate::cryptocom::{RestResult, OrderType};
-use super::client::RestClient;
 
 /// Position close order type
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -51,12 +51,11 @@ impl RestClient {
     pub async fn close_position(&self, request: ClosePositionRequest) -> RestResult<Value> {
         let nonce = chrono::Utc::now().timestamp_millis() as u64;
         let id = 1;
-        let params = serde_json::to_value(&request).map_err(|e| {
-            crate::cryptocom::Errors::Error(format!("Serialization error: {}", e))
-        })?;
-        
+        let params = serde_json::to_value(&request)
+            .map_err(|e| crate::cryptocom::Errors::Error(format!("Serialization error: {}", e)))?;
+
         let signature = self.sign_request("private/close-position", id, &params, nonce)?;
-        
+
         let request_body = json!({
             "id": id,
             "method": "private/close-position",
@@ -66,7 +65,8 @@ impl RestClient {
             "api_key": self.api_key.expose_secret()
         });
 
-        let response = self.client
+        let response = self
+            .client
             .post(&format!("{}/v1/private/close-position", self.base_url))
             .json(&request_body)
             .send()
@@ -88,13 +88,13 @@ mod tests {
     struct PlainTextSecret {
         secret: String,
     }
-    
+
     impl ExposableSecret for PlainTextSecret {
         fn expose_secret(&self) -> String {
             self.secret.clone()
         }
     }
-    
+
     impl PlainTextSecret {
         fn new(secret: String) -> Self {
             Self { secret }
@@ -131,8 +131,14 @@ mod tests {
 
     #[test]
     fn test_close_position_type_serialization() {
-        assert_eq!(serde_json::to_value(ClosePositionType::Limit).unwrap(), "LIMIT");
-        assert_eq!(serde_json::to_value(ClosePositionType::Market).unwrap(), "MARKET");
+        assert_eq!(
+            serde_json::to_value(ClosePositionType::Limit).unwrap(),
+            "LIMIT"
+        );
+        assert_eq!(
+            serde_json::to_value(ClosePositionType::Market).unwrap(),
+            "MARKET"
+        );
     }
 
     #[test]

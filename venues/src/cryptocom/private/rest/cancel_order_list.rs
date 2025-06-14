@@ -1,7 +1,7 @@
+use super::client::RestClient;
+use crate::cryptocom::{enums::ContingencyType, RestResult};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
-use crate::cryptocom::{RestResult, enums::ContingencyType};
-use super::client::RestClient;
 
 /// Individual order to cancel in a list
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -69,9 +69,9 @@ impl RestClient {
         let nonce = chrono::Utc::now().timestamp_millis() as u64;
         let id = 1;
         let params = serde_json::to_value(&request)?;
-        
+
         let signature = self.sign_request("private/cancel-order-list", id, &params, nonce)?;
-        
+
         let request_body = json!({
             "id": id,
             "method": "private/cancel-order-list",
@@ -81,7 +81,8 @@ impl RestClient {
             "api_key": self.api_key.expose_secret()
         });
 
-        let response = self.client
+        let response = self
+            .client
             .post(&format!("{}/v1/private/cancel-order-list", self.base_url))
             .json(&request_body)
             .send()
@@ -108,9 +109,9 @@ impl RestClient {
         let nonce = chrono::Utc::now().timestamp_millis() as u64;
         let id = 1;
         let params = serde_json::to_value(&request)?;
-        
+
         let signature = self.sign_request("private/cancel-order-list", id, &params, nonce)?;
-        
+
         let request_body = json!({
             "id": id,
             "method": "private/cancel-order-list",
@@ -120,7 +121,8 @@ impl RestClient {
             "api_key": self.api_key.expose_secret()
         });
 
-        let response = self.client
+        let response = self
+            .client
             .post(&format!("{}/v1/private/cancel-order-list", self.base_url))
             .json(&request_body)
             .send()
@@ -142,13 +144,13 @@ mod tests {
     struct PlainTextSecret {
         secret: String,
     }
-    
+
     impl ExposableSecret for PlainTextSecret {
         fn expose_secret(&self) -> String {
             self.secret.clone()
         }
     }
-    
+
     impl PlainTextSecret {
         fn new(secret: String) -> Self {
             Self { secret }
@@ -248,7 +250,10 @@ mod tests {
         assert_eq!(response.result_list.len(), 2);
         assert_eq!(response.result_list[0].code, 0);
         assert_eq!(response.result_list[1].code, 20007);
-        assert_eq!(response.result_list[1].message, Some("INVALID_REQUEST".to_string()));
+        assert_eq!(
+            response.result_list[1].message,
+            Some("INVALID_REQUEST".to_string())
+        );
     }
 
     #[test]
@@ -269,12 +274,10 @@ mod tests {
     fn test_cancel_order_list_request_serialization() {
         let request = CancelOrderListRequest {
             contingency_type: ContingencyType::List,
-            order_list: vec![
-                CancelOrderListItem {
-                    instrument_name: "BTC_USDT".to_string(),
-                    order_id: "123456789".to_string(),
-                },
-            ],
+            order_list: vec![CancelOrderListItem {
+                instrument_name: "BTC_USDT".to_string(),
+                order_id: "123456789".to_string(),
+            }],
         };
 
         let serialized = serde_json::to_value(&request).unwrap();

@@ -1,7 +1,7 @@
+use super::client::RestClient;
+use crate::cryptocom::RestResult;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
-use crate::cryptocom::RestResult;
-use super::client::RestClient;
 
 /// Request parameters for get withdrawal history
 #[derive(Debug, Clone, Serialize)]
@@ -98,9 +98,9 @@ impl RestClient {
     ) -> RestResult<Value> {
         let nonce = chrono::Utc::now().timestamp_millis() as u64;
         let id = 1;
-        
+
         let mut params = json!({});
-        
+
         if let Some(c) = currency {
             params["currency"] = Value::String(c.to_string());
         }
@@ -119,9 +119,9 @@ impl RestClient {
         if let Some(s) = status {
             params["status"] = Value::String(s.to_string());
         }
-        
+
         let signature = self.sign_request("private/get-withdrawal-history", id, &params, nonce)?;
-        
+
         let request_body = json!({
             "id": id,
             "method": "private/get-withdrawal-history",
@@ -131,8 +131,12 @@ impl RestClient {
             "api_key": self.api_key.expose_secret()
         });
 
-        let response = self.client
-            .post(&format!("{}/v1/private/get-withdrawal-history", self.base_url))
+        let response = self
+            .client
+            .post(&format!(
+                "{}/v1/private/get-withdrawal-history",
+                self.base_url
+            ))
             .json(&request_body)
             .send()
             .await?;
@@ -153,13 +157,13 @@ mod tests {
     struct PlainTextSecret {
         secret: String,
     }
-    
+
     impl ExposableSecret for PlainTextSecret {
         fn expose_secret(&self) -> String {
             self.secret.clone()
         }
     }
-    
+
     impl PlainTextSecret {
         fn new(secret: String) -> Self {
             Self { secret }
@@ -231,7 +235,10 @@ mod tests {
         assert_eq!(entry.id, "2220");
         assert_eq!(entry.update_time, Some(1607063460000));
         assert_eq!(entry.amount, 100.0);
-        assert_eq!(entry.address, "2NBqqD5GRJ8wHy1PYyCXTe9ke5226FhavBf?1234567890");
+        assert_eq!(
+            entry.address,
+            "2NBqqD5GRJ8wHy1PYyCXTe9ke5226FhavBf?1234567890"
+        );
         assert_eq!(entry.status, "1");
         assert_eq!(entry.txid, Some("".to_string()));
         assert_eq!(entry.network_id, None);
@@ -285,7 +292,7 @@ mod tests {
 
         let response: GetWithdrawalHistoryResponse = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.withdrawal_list.len(), 1);
-        
+
         let entry = &response.withdrawal_list[0];
         assert_eq!(entry.currency, "XRP");
         assert_eq!(entry.status, "1");
@@ -339,7 +346,10 @@ mod tests {
         let entry: WithdrawalHistoryEntry = serde_json::from_value(entry_json).unwrap();
         assert_eq!(entry.currency, "ETH");
         assert_eq!(entry.status, "5");
-        assert_eq!(entry.txid, Some("0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890".to_string()));
+        assert_eq!(
+            entry.txid,
+            Some("0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890".to_string())
+        );
         assert_eq!(entry.network_id, Some("ETH".to_string()));
     }
 }

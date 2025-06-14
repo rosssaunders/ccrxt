@@ -1,18 +1,18 @@
 pub mod account;
-pub mod trades;
+pub mod all_orders;
 pub mod batch_order;
 pub mod exchange_info;
 pub mod order;
 pub mod position_risk;
-pub mod all_orders;
+pub mod trades;
 
 pub use account::handle_account_command;
-pub use trades::handle_trades_command;
+pub use all_orders::run_all_orders;
 pub use batch_order::handle_batch_order_command;
 pub use exchange_info::handle_exchange_info_command;
 pub use order::handle_order_command;
-pub use all_orders::run_all_orders;
 pub use position_risk::run_position_risk;
+pub use trades::handle_trades_command;
 
 use clap::Subcommand;
 
@@ -20,7 +20,7 @@ use clap::Subcommand;
 pub enum Commands {
     /// Get account information including balances and positions
     Account,
-    
+
     /// Get recent trades for a symbol
     Trades {
         /// Trading symbol (e.g., BTCUSD_PERP)
@@ -95,12 +95,18 @@ pub enum Commands {
     PositionRisk,
 }
 
-pub async fn handle_all_orders_command(client: std::sync::Arc<venues::binance::coinm::PrivateRestClient>, symbol: String, limit: u32) -> anyhow::Result<()> {
+pub async fn handle_all_orders_command(
+    client: std::sync::Arc<venues::binance::coinm::PrivateRestClient>,
+    symbol: String,
+    limit: u32,
+) -> anyhow::Result<()> {
     crate::commands::all_orders::run_all_orders(&client, symbol, limit).await;
     Ok(())
 }
 
-pub async fn handle_position_risk_command(client: std::sync::Arc<venues::binance::coinm::PrivateRestClient>) -> anyhow::Result<()> {
+pub async fn handle_position_risk_command(
+    client: std::sync::Arc<venues::binance::coinm::PrivateRestClient>,
+) -> anyhow::Result<()> {
     crate::commands::position_risk::run_position_risk(&client).await;
     Ok(())
 }

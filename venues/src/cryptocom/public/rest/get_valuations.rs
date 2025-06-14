@@ -2,12 +2,12 @@
 //!
 //! Fetches certain valuation type data for a particular instrument.
 
+use super::client::RestClient;
+use crate::cryptocom::EndpointType;
+use crate::cryptocom::RestResult;
+use crate::cryptocom::ValuationType;
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
-use crate::cryptocom::EndpointType;
-use crate::cryptocom::ValuationType;
-use crate::cryptocom::RestResult;
-use super::client::RestClient;
 
 /// Request parameters for the public/get-valuations endpoint.
 ///

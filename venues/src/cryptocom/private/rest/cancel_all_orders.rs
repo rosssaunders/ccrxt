@@ -1,7 +1,7 @@
+use super::client::RestClient;
+use crate::cryptocom::RestResult;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
-use crate::cryptocom::RestResult;
-use super::client::RestClient;
 
 /// Order type filter for cancel all orders
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -41,12 +41,11 @@ impl RestClient {
     pub async fn cancel_all_orders(&self, request: CancelAllOrdersRequest) -> RestResult<Value> {
         let nonce = chrono::Utc::now().timestamp_millis() as u64;
         let id = 1;
-        let params = serde_json::to_value(&request).map_err(|e| {
-            crate::cryptocom::Errors::Error(format!("Serialization error: {}", e))
-        })?;
-        
+        let params = serde_json::to_value(&request)
+            .map_err(|e| crate::cryptocom::Errors::Error(format!("Serialization error: {}", e)))?;
+
         let signature = self.sign_request("private/cancel-all-orders", id, &params, nonce)?;
-        
+
         let request_body = json!({
             "id": id,
             "method": "private/cancel-all-orders",
@@ -56,7 +55,8 @@ impl RestClient {
             "api_key": self.api_key.expose_secret()
         });
 
-        let response = self.client
+        let response = self
+            .client
             .post(&format!("{}/v1/private/cancel-all-orders", self.base_url))
             .json(&request_body)
             .send()
@@ -78,13 +78,13 @@ mod tests {
     struct PlainTextSecret {
         secret: String,
     }
-    
+
     impl ExposableSecret for PlainTextSecret {
         fn expose_secret(&self) -> String {
             self.secret.clone()
         }
     }
-    
+
     impl PlainTextSecret {
         fn new(secret: String) -> Self {
             Self { secret }
@@ -124,7 +124,10 @@ mod tests {
 
         let serialized = serde_json::to_value(&request).unwrap();
         assert_eq!(serialized["type"], "ALL");
-        assert!(!serialized.as_object().unwrap().contains_key("instrument_name"));
+        assert!(!serialized
+            .as_object()
+            .unwrap()
+            .contains_key("instrument_name"));
     }
 
     #[test]
@@ -135,14 +138,23 @@ mod tests {
         };
 
         let serialized = serde_json::to_value(&request).unwrap();
-        assert!(!serialized.as_object().unwrap().contains_key("instrument_name"));
+        assert!(!serialized
+            .as_object()
+            .unwrap()
+            .contains_key("instrument_name"));
         assert!(!serialized.as_object().unwrap().contains_key("type"));
     }
 
     #[test]
     fn test_cancel_order_type_serialization() {
-        assert_eq!(serde_json::to_value(CancelOrderType::Limit).unwrap(), "LIMIT");
-        assert_eq!(serde_json::to_value(CancelOrderType::Trigger).unwrap(), "TRIGGER");
+        assert_eq!(
+            serde_json::to_value(CancelOrderType::Limit).unwrap(),
+            "LIMIT"
+        );
+        assert_eq!(
+            serde_json::to_value(CancelOrderType::Trigger).unwrap(),
+            "TRIGGER"
+        );
         assert_eq!(serde_json::to_value(CancelOrderType::All).unwrap(), "ALL");
     }
 }

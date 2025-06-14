@@ -1,7 +1,7 @@
+use super::client::RestClient;
+use crate::cryptocom::RestResult;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
-use crate::cryptocom::RestResult;
-use super::client::RestClient;
 
 /// Request parameters for get stake history
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -76,9 +76,9 @@ impl RestClient {
     ) -> RestResult<Value> {
         let nonce = chrono::Utc::now().timestamp_millis() as u64;
         let id = 1;
-        
+
         let mut params = json!({});
-        
+
         if let Some(instrument) = instrument_name {
             params["instrument_name"] = json!(instrument);
         }
@@ -91,9 +91,10 @@ impl RestClient {
         if let Some(lmt) = limit {
             params["limit"] = json!(lmt);
         }
-        
-        let signature = self.sign_request("private/staking/get-stake-history", id, &params, nonce)?;
-        
+
+        let signature =
+            self.sign_request("private/staking/get-stake-history", id, &params, nonce)?;
+
         let request_body = json!({
             "id": id,
             "method": "private/staking/get-stake-history",
@@ -103,8 +104,12 @@ impl RestClient {
             "api_key": self.api_key.expose_secret()
         });
 
-        let response = self.client
-            .post(&format!("{}/v1/private/staking/get-stake-history", self.base_url))
+        let response = self
+            .client
+            .post(&format!(
+                "{}/v1/private/staking/get-stake-history",
+                self.base_url
+            ))
             .json(&request_body)
             .send()
             .await?;
@@ -125,13 +130,13 @@ mod tests {
     struct PlainTextSecret {
         secret: String,
     }
-    
+
     impl ExposableSecret for PlainTextSecret {
         fn expose_secret(&self) -> String {
             self.secret.clone()
         }
     }
-    
+
     impl PlainTextSecret {
         fn new(secret: String) -> Self {
             Self { secret }
@@ -253,7 +258,7 @@ mod tests {
     #[test]
     fn test_stake_history_final_statuses() {
         let statuses = vec!["COMPLETED", "REJECTED"];
-        
+
         for status in statuses {
             let entry_json = json!({
                 "instrument_name": "DYDX.staked",

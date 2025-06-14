@@ -1,7 +1,7 @@
+use super::client::RestClient;
+use crate::cryptocom::RestResult;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
-use crate::cryptocom::RestResult;
-use super::client::RestClient;
 
 /// Request parameters for get deposit address
 #[derive(Debug, Clone, Serialize)]
@@ -50,13 +50,13 @@ impl RestClient {
     pub async fn get_deposit_address(&self, currency: &str) -> RestResult<Value> {
         let nonce = chrono::Utc::now().timestamp_millis() as u64;
         let id = 1;
-        
+
         let params = json!({
             "currency": currency
         });
-        
+
         let signature = self.sign_request("private/get-deposit-address", id, &params, nonce)?;
-        
+
         let request_body = json!({
             "id": id,
             "method": "private/get-deposit-address",
@@ -66,7 +66,8 @@ impl RestClient {
             "api_key": self.api_key.expose_secret()
         });
 
-        let response = self.client
+        let response = self
+            .client
             .post(&format!("{}/v1/private/get-deposit-address", self.base_url))
             .json(&request_body)
             .send()
@@ -88,13 +89,13 @@ mod tests {
     struct PlainTextSecret {
         secret: String,
     }
-    
+
     impl ExposableSecret for PlainTextSecret {
         fn expose_secret(&self) -> String {
             self.secret.clone()
         }
     }
-    
+
     impl PlainTextSecret {
         fn new(secret: String) -> Self {
             Self { secret }
@@ -126,7 +127,10 @@ mod tests {
         assert_eq!(address.currency, "CRO");
         assert_eq!(address.create_time, 1615886328000);
         assert_eq!(address.id, "12345");
-        assert_eq!(address.address, "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+        assert_eq!(
+            address.address,
+            "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+        );
         assert_eq!(address.status, "1");
         assert_eq!(address.network, "CRO");
     }
@@ -146,7 +150,10 @@ mod tests {
         assert_eq!(address.currency, "CRO");
         assert_eq!(address.create_time, 1615886332000);
         assert_eq!(address.id, "12346");
-        assert_eq!(address.address, "yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy");
+        assert_eq!(
+            address.address,
+            "yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy"
+        );
         assert_eq!(address.status, "1");
         assert_eq!(address.network, "ETH");
     }
@@ -176,12 +183,12 @@ mod tests {
 
         let response: GetDepositAddressResponse = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.deposit_address_list.len(), 2);
-        
+
         let cro_address = &response.deposit_address_list[0];
         assert_eq!(cro_address.currency, "CRO");
         assert_eq!(cro_address.network, "CRO");
         assert_eq!(cro_address.status, "1");
-        
+
         let eth_address = &response.deposit_address_list[1];
         assert_eq!(eth_address.currency, "CRO");
         assert_eq!(eth_address.network, "ETH");

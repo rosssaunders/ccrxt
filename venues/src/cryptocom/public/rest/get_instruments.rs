@@ -2,12 +2,12 @@
 //!
 //! Provides information on all supported instruments (e.g. BTCUSD-PERP).
 
-use serde::{Deserialize, Serialize};
-use std::borrow::Cow;
+use super::client::RestClient;
 use crate::cryptocom::EndpointType;
 use crate::cryptocom::InstrumentType;
 use crate::cryptocom::RestResult;
-use super::client::RestClient;
+use serde::{Deserialize, Serialize};
+use std::borrow::Cow;
 
 /// Request parameters for the public/get-instruments endpoint.
 ///
