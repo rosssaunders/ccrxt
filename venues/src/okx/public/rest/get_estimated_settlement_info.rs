@@ -7,7 +7,6 @@ use serde::{Deserialize, Serialize};
 #[serde(rename_all = "camelCase")]
 pub struct GetEstimatedSettlementInfoRequest {
     /// Instrument ID, e.g. "XRP-USDT-250307", only applicable to FUTURES
-    #[serde(rename = "instId")]
     pub inst_id: String,
 }
 
