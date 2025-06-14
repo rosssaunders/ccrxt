@@ -6,6 +6,7 @@ pub mod public {
     mod rest;
     pub use self::rest::RestClient;
     pub use self::rest::{GetInstrumentsRequest, GetInstrumentsResponse, Instrument};
+    pub use self::rest::{GetIndexTickersRequest, GetIndexTickersResponse, IndexTicker};
 }
 
 pub mod private {
@@ -36,6 +37,7 @@ pub use private::{
 };
 pub use public::RestClient as PublicRestClient;
 pub use public::{GetInstrumentsRequest, GetInstrumentsResponse, Instrument};
+pub use public::{GetIndexTickersRequest, GetIndexTickersResponse, IndexTicker};
 pub use rate_limit::{EndpointType, RateLimit, RateLimitError, RateLimiter};
 
 /// Type alias for results returned by OKX API operations
