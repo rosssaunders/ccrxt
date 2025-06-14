@@ -5,7 +5,16 @@ pub mod rate_limit;
 pub mod public {
     mod rest;
     pub use self::rest::RestClient;
-    pub use self::rest::{GetInstrumentsRequest, GetInstrumentsResponse, Instrument};
+    pub use self::rest::{
+        GetInstrumentsRequest, GetInstrumentsResponse, Instrument,
+        GetSystemTimeResponse, SystemTime,
+        GetFundingRateRequest, GetFundingRateResponse, FundingRate,
+        GetMarkPriceRequest, GetMarkPriceResponse, MarkPrice,
+        GetOpenInterestRequest, GetOpenInterestResponse, OpenInterest,
+        GetLimitPriceRequest, GetLimitPriceResponse, LimitPrice,
+        GetIndexTickersRequest, GetIndexTickersResponse, IndexTicker,
+        GetExchangeRateResponse, ExchangeRate,
+    };
 }
 
 pub mod private {
@@ -26,7 +35,16 @@ pub mod private {
 pub use enums::*;
 pub use errors::{ApiError, ErrorResponse, Errors};
 pub use public::RestClient as PublicRestClient;
-pub use public::{GetInstrumentsRequest, GetInstrumentsResponse, Instrument};
+pub use public::{
+    GetInstrumentsRequest, GetInstrumentsResponse, Instrument,
+    GetSystemTimeResponse, SystemTime,
+    GetFundingRateRequest, GetFundingRateResponse, FundingRate,
+    GetMarkPriceRequest, GetMarkPriceResponse, MarkPrice,
+    GetOpenInterestRequest, GetOpenInterestResponse, OpenInterest,
+    GetLimitPriceRequest, GetLimitPriceResponse, LimitPrice,
+    GetIndexTickersRequest, GetIndexTickersResponse, IndexTicker,
+    GetExchangeRateResponse, ExchangeRate,
+};
 pub use private::RestClient as PrivateRestClient;
 pub use private::{
     OkxApiResponse, PlaceOrderRequest, PlaceOrderResponse, AttachedAlgoOrder,
