@@ -28,12 +28,9 @@ use hex;
 use hmac::{Hmac, Mac};
 use reqwest::Client;
 use rest::secrets::ExposableSecret;
-use serde::de::DeserializeOwned;
-use serde::Serialize;
 use sha2::Sha256;
 
-use crate::binance::coinm::rest::common::{build_url, send_rest_request};
-use crate::binance::coinm::{Errors, RateLimiter, RestResponse, RestResult};
+use crate::binance::coinm::{Errors, RateLimiter, RestResult};
 use std::borrow::Cow;
 
 /// Represents a successful or error response from the Binance API.

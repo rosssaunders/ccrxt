@@ -5,8 +5,7 @@
 use reqwest::Client;
 use std::borrow::Cow;
 
-use crate::binance::portfolio::rest::common::{build_url, send_rest_request};
-use crate::binance::portfolio::{RateLimiter, RestResponse, RestResult};
+use crate::binance::portfolio::{RateLimiter, RestResult};
 
 #[non_exhaustive]
 #[derive(Debug, Clone)]
