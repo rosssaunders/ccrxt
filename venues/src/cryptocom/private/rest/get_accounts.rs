@@ -83,6 +83,8 @@ impl RestClient {
     ///
     /// # Returns
     /// Master account and sub accounts information
+    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
+    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
     pub async fn get_accounts(
         &self,
         page_size: Option<u32>,
@@ -92,11 +94,9 @@ impl RestClient {
         let id = 1;
 
         let mut params = json!({});
-        #[allow(clippy::indexing_slicing)] // Safe: adding new keys to JSON object
         if let Some(ps) = page_size {
             params["page_size"] = Value::Number(ps.into());
         }
-        #[allow(clippy::indexing_slicing)] // Safe: adding new keys to JSON object
         if let Some(p) = page {
             params["page"] = Value::Number(p.into());
         }

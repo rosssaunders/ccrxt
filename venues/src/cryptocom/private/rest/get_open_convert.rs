@@ -65,6 +65,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Open convert requests with status, rates, and timestamps
+    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
     pub async fn get_open_convert(
         &self,
         start_time: Option<u64>,

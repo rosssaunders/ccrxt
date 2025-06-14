@@ -67,6 +67,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Open stake/unstake requests with status, timestamps, and other details
+    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
     pub async fn get_open_stake(
         &self,
         instrument_name: Option<&str>,

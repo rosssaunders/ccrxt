@@ -103,6 +103,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Order history information
+    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
     pub async fn get_order_history(
         &self,
         instrument_name: Option<String>,

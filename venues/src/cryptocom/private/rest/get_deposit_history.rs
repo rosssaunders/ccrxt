@@ -76,6 +76,7 @@ impl RestClient {
     ///
     /// # Returns
     /// List of deposit history entries matching the criteria
+    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
     pub async fn get_deposit_history(
         &self,
         currency: Option<&str>,

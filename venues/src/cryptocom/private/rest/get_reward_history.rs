@@ -61,6 +61,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Historical staking rewards with quantities, balances, and timestamps
+    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
     pub async fn get_reward_history(
         &self,
         instrument_name: Option<&str>,

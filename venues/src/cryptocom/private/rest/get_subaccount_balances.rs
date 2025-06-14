@@ -60,6 +60,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Subaccount balance information for all sub-accounts
+    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
     pub async fn get_subaccount_balances(&self) -> RestResult<Value> {
         let nonce = chrono::Utc::now().timestamp_millis() as u64;
         let id = 1;

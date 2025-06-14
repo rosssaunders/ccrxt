@@ -33,6 +33,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Instrument fee rate information
+    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
     pub async fn get_instrument_fee_rate(
         &self,
         request: GetInstrumentFeeRateRequest,

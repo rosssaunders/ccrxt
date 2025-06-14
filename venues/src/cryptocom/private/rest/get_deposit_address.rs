@@ -47,6 +47,7 @@ impl RestClient {
     ///
     /// # Returns
     /// List of deposit addresses for the specified currency
+    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
     pub async fn get_deposit_address(&self, currency: &str) -> RestResult<Value> {
         let nonce = chrono::Utc::now().timestamp_millis() as u64;
         let id = 1;

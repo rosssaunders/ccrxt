@@ -87,6 +87,7 @@ impl RestClient {
     ///
     /// # Returns
     /// List of withdrawal history entries matching the criteria
+    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
     pub async fn get_withdrawal_history(
         &self,
         currency: Option<&str>,

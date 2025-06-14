@@ -88,6 +88,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Transaction history information
+    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
     pub async fn get_transactions(
         &self,
         instrument_name: Option<String>,

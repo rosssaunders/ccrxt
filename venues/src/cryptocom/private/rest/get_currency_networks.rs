@@ -51,6 +51,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Currency network mapping information for all supported currencies
+    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
     pub async fn get_currency_networks(&self) -> RestResult<Value> {
         let nonce = chrono::Utc::now().timestamp_millis() as u64;
         let id = 1;

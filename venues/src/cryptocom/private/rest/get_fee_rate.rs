@@ -29,6 +29,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Fee rate information
+    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
     pub async fn get_fee_rate(&self) -> RestResult<Value> {
         let nonce = chrono::Utc::now().timestamp_millis() as u64;
         let id = 1;

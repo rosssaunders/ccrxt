@@ -82,6 +82,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Order detail information
+    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
     pub async fn get_order_detail(&self, request: GetOrderDetailRequest) -> RestResult<Value> {
         let nonce = chrono::Utc::now().timestamp_millis() as u64;
         let id = 1;

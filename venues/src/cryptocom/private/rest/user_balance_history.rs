@@ -52,6 +52,7 @@ impl RestClient {
     ///
     /// # Returns
     /// User balance history information
+    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
     pub async fn get_user_balance_history(
         &self,
         timeframe: Option<String>,

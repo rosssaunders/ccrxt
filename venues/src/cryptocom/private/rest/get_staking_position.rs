@@ -49,6 +49,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Staking position information including quantities and underlying instrument details
+    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
     pub async fn get_staking_position(&self, instrument_name: Option<&str>) -> RestResult<Value> {
         let nonce = chrono::Utc::now().timestamp_millis() as u64;
         let id = 1;

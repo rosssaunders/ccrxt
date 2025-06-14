@@ -92,6 +92,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Trade history information
+    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
     pub async fn get_trades(
         &self,
         instrument_name: Option<String>,

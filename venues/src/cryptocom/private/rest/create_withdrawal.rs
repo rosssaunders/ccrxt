@@ -64,6 +64,8 @@ impl RestClient {
     ///
     /// # Returns
     /// Withdrawal creation result with newly created withdrawal details
+    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
+    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
     pub async fn create_withdrawal(
         &self,
         currency: &str,
@@ -82,15 +84,12 @@ impl RestClient {
             "address": address
         });
 
-        #[allow(clippy::indexing_slicing)] // Safe: adding new keys to JSON object
         if let Some(cw) = client_wid {
             params["client_wid"] = Value::String(cw.to_string());
         }
-        #[allow(clippy::indexing_slicing)] // Safe: adding new keys to JSON object  
         if let Some(at) = address_tag {
             params["address_tag"] = Value::String(at.to_string());
         }
-        #[allow(clippy::indexing_slicing)] // Safe: adding new keys to JSON object
         if let Some(nid) = network_id {
             params["network_id"] = Value::String(nid.to_string());
         }

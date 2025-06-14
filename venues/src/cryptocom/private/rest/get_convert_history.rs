@@ -65,6 +65,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Historical convert requests with final status, rates, and timestamps
+    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
     pub async fn get_convert_history(
         &self,
         start_time: Option<u64>,
