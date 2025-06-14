@@ -1,4 +1,16 @@
-Rules
+# CCRXT
+
+[![CI](https://github.com/rosssaunders/ccrxt/actions/workflows/ci.yml/badge.svg)](https://github.com/rosssaunders/ccrxt/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Rust](https://img.shields.io/badge/rust-stable-brightgreen.svg)](https://www.rust-lang.org)
+[![Crates.io](https://img.shields.io/crates/v/ccrxt.svg)](https://crates.io/crates/ccrxt)
+[![Documentation](https://docs.rs/ccrxt/badge.svg)](https://docs.rs/ccrxt)
+
+Rust wrappers around cryptocurrency exchange APIs with a focus on low-latency, high-frequency trading applications.
+
+> **Note:** This library is currently in development. The Crates.io and Documentation badges will become functional when the library is published.
+
+## Design Principles
 
 1. All venues to implement the low latency APIs. If Websocket available, use that over REST calls.
 2. All venue rate limiting to be implemented exactly.
