@@ -1,7 +1,7 @@
+use super::client::RestClient;
+use crate::cryptocom::RestResult;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
-use crate::cryptocom::RestResult;
-use super::client::RestClient;
 
 /// Request parameters for create withdrawal
 #[derive(Debug, Clone, Serialize)]
@@ -75,13 +75,13 @@ impl RestClient {
     ) -> RestResult<Value> {
         let nonce = chrono::Utc::now().timestamp_millis() as u64;
         let id = 1;
-        
+
         let mut params = json!({
             "currency": currency,
             "amount": amount,
             "address": address
         });
-        
+
         if let Some(cw) = client_wid {
             params["client_wid"] = Value::String(cw.to_string());
         }
@@ -91,9 +91,9 @@ impl RestClient {
         if let Some(nid) = network_id {
             params["network_id"] = Value::String(nid.to_string());
         }
-        
+
         let signature = self.sign_request("private/create-withdrawal", id, &params, nonce)?;
-        
+
         let request_body = json!({
             "id": id,
             "method": "private/create-withdrawal",
@@ -103,7 +103,8 @@ impl RestClient {
             "api_key": self.api_key.expose_secret()
         });
 
-        let response = self.client
+        let response = self
+            .client
             .post(&format!("{}/v1/private/create-withdrawal", self.base_url))
             .json(&request_body)
             .send()
@@ -125,13 +126,13 @@ mod tests {
     struct PlainTextSecret {
         secret: String,
     }
-    
+
     impl ExposableSecret for PlainTextSecret {
         fn expose_secret(&self) -> String {
             self.secret.clone()
         }
     }
-    
+
     impl PlainTextSecret {
         fn new(secret: String) -> Self {
             Self { secret }
@@ -156,7 +157,7 @@ mod tests {
         assert_eq!(json_value["client_wid"], "my_withdrawal_002");
     }
 
-    #[test] 
+    #[test]
     fn test_create_withdrawal_request_minimal() {
         let request = CreateWithdrawalRequest {
             client_wid: None,

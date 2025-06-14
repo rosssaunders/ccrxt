@@ -1,7 +1,7 @@
+use super::client::RestClient;
+use crate::cryptocom::RestResult;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
-use crate::cryptocom::RestResult;
-use super::client::RestClient;
 
 /// Request parameters for canceling an order
 #[derive(Debug, Clone, Serialize)]
@@ -41,12 +41,11 @@ impl RestClient {
     pub async fn cancel_order(&self, request: CancelOrderRequest) -> RestResult<Value> {
         let nonce = chrono::Utc::now().timestamp_millis() as u64;
         let id = 1;
-        let params = serde_json::to_value(&request).map_err(|e| {
-            crate::cryptocom::Errors::Error(format!("Serialization error: {}", e))
-        })?;
-        
+        let params = serde_json::to_value(&request)
+            .map_err(|e| crate::cryptocom::Errors::Error(format!("Serialization error: {}", e)))?;
+
         let signature = self.sign_request("private/cancel-order", id, &params, nonce)?;
-        
+
         let request_body = json!({
             "id": id,
             "method": "private/cancel-order",
@@ -56,7 +55,8 @@ impl RestClient {
             "api_key": self.api_key.expose_secret()
         });
 
-        let response = self.client
+        let response = self
+            .client
             .post(&format!("{}/v1/private/cancel-order", self.base_url))
             .json(&request_body)
             .send()
@@ -78,13 +78,13 @@ mod tests {
     struct PlainTextSecret {
         secret: String,
     }
-    
+
     impl ExposableSecret for PlainTextSecret {
         fn expose_secret(&self) -> String {
             self.secret.clone()
         }
     }
-    
+
     impl PlainTextSecret {
         fn new(secret: String) -> Self {
             Self { secret }
@@ -111,7 +111,10 @@ mod tests {
         };
 
         let serialized = serde_json::to_value(&request).unwrap();
-        assert_eq!(serialized["client_oid"], "c5f682ed-7108-4f1c-b755-972fcdca0f02");
+        assert_eq!(
+            serialized["client_oid"],
+            "c5f682ed-7108-4f1c-b755-972fcdca0f02"
+        );
         assert!(!serialized.as_object().unwrap().contains_key("order_id"));
     }
 
@@ -124,7 +127,10 @@ mod tests {
 
         let serialized = serde_json::to_value(&request).unwrap();
         assert_eq!(serialized["order_id"], "18342311");
-        assert_eq!(serialized["client_oid"], "c5f682ed-7108-4f1c-b755-972fcdca0f02");
+        assert_eq!(
+            serialized["client_oid"],
+            "c5f682ed-7108-4f1c-b755-972fcdca0f02"
+        );
     }
 
     #[test]

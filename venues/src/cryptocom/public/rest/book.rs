@@ -1,10 +1,10 @@
-use serde_json::Value;
-use crate::cryptocom::{RestResult, EndpointType};
 use super::client::RestClient;
+use crate::cryptocom::{EndpointType, RestResult};
+use serde_json::Value;
 
 impl RestClient {
     /// Get the order book for a specific instrument
-    /// 
+    ///
     /// # Arguments
     /// * `instrument_name` - The trading pair (e.g., "BTC_USDT")
     /// * `depth` - Optional depth of the order book (default: 10)
@@ -22,7 +22,8 @@ impl RestClient {
             reqwest::Method::GET,
             Some(&params),
             EndpointType::PublicGetBook,
-        ).await
+        )
+        .await
     }
 }
 

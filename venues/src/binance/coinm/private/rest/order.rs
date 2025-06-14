@@ -1,10 +1,13 @@
 // New Order (TRADE) endpoint implementation for POST /dapi/v1/order
 // See: https://binance-docs.github.io/apidocs/delivery/en/#new-order-trade
 
-use serde::{Deserialize, Serialize};
-use crate::binance::coinm::{OrderSide, PositionSide, OrderType, TimeInForce, WorkingType, OrderResponseType, PriceMatch, SelfTradePreventionMode};
 use crate::binance::coinm::private::rest::client::RestClient;
 use crate::binance::coinm::RestResult;
+use crate::binance::coinm::{
+    OrderResponseType, OrderSide, OrderType, PositionSide, PriceMatch, SelfTradePreventionMode,
+    TimeInForce, WorkingType,
+};
+use serde::{Deserialize, Serialize};
 
 /// Request parameters for placing a new order (POST /dapi/v1/order).
 #[derive(Debug, Clone, Serialize)]
@@ -76,7 +79,10 @@ pub struct NewOrderRequest {
     pub price_match: Option<PriceMatch>,
 
     /// Self-trade prevention mode. Optional.
-    #[serde(rename = "selfTradePreventionMode", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "selfTradePreventionMode",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub self_trade_prevention_mode: Option<SelfTradePreventionMode>,
 
     /// Receive window. Optional.
@@ -176,10 +182,7 @@ impl RestClient {
     ///
     /// # Returns
     /// A [`NewOrderResponse`] object with order details.
-    pub async fn post_order(
-        &self,
-        params: NewOrderRequest,
-    ) -> RestResult<NewOrderResponse> {
+    pub async fn post_order(&self, params: NewOrderRequest) -> RestResult<NewOrderResponse> {
         let weight = 1;
         self.send_signed_request(
             "/dapi/v1/order",

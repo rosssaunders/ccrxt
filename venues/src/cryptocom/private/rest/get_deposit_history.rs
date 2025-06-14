@@ -1,7 +1,7 @@
+use super::client::RestClient;
+use crate::cryptocom::RestResult;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
-use crate::cryptocom::RestResult;
-use super::client::RestClient;
 
 /// Request parameters for get deposit history
 #[derive(Debug, Clone, Serialize)]
@@ -87,9 +87,9 @@ impl RestClient {
     ) -> RestResult<Value> {
         let nonce = chrono::Utc::now().timestamp_millis() as u64;
         let id = 1;
-        
+
         let mut params = json!({});
-        
+
         if let Some(c) = currency {
             params["currency"] = Value::String(c.to_string());
         }
@@ -108,9 +108,9 @@ impl RestClient {
         if let Some(s) = status {
             params["status"] = Value::String(s.to_string());
         }
-        
+
         let signature = self.sign_request("private/get-deposit-history", id, &params, nonce)?;
-        
+
         let request_body = json!({
             "id": id,
             "method": "private/get-deposit-history",
@@ -120,7 +120,8 @@ impl RestClient {
             "api_key": self.api_key.expose_secret()
         });
 
-        let response = self.client
+        let response = self
+            .client
             .post(&format!("{}/v1/private/get-deposit-history", self.base_url))
             .json(&request_body)
             .send()
@@ -142,13 +143,13 @@ mod tests {
     struct PlainTextSecret {
         secret: String,
     }
-    
+
     impl ExposableSecret for PlainTextSecret {
         fn expose_secret(&self) -> String {
             self.secret.clone()
         }
     }
-    
+
     impl PlainTextSecret {
         fn new(secret: String) -> Self {
             Self { secret }
@@ -216,7 +217,10 @@ mod tests {
         assert_eq!(entry.id, "2220");
         assert_eq!(entry.update_time, Some(1607063460000));
         assert_eq!(entry.amount, 100.0);
-        assert_eq!(entry.address, "2NBqqD5GRJ8wHy1PYyCXTe9ke5226FhavBf?1234567890");
+        assert_eq!(
+            entry.address,
+            "2NBqqD5GRJ8wHy1PYyCXTe9ke5226FhavBf?1234567890"
+        );
         assert_eq!(entry.status, "1");
     }
 
@@ -262,7 +266,7 @@ mod tests {
 
         let response: GetDepositHistoryResponse = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.deposit_list.len(), 1);
-        
+
         let entry = &response.deposit_list[0];
         assert_eq!(entry.currency, "XRP");
         assert_eq!(entry.status, "1");
@@ -274,7 +278,7 @@ mod tests {
         // Test different status values
         let statuses = vec![
             ("0", "Not Arrived"),
-            ("1", "Arrived"), 
+            ("1", "Arrived"),
             ("2", "Failed"),
             ("3", "Pending"),
         ];

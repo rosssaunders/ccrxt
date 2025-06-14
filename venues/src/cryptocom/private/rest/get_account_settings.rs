@@ -1,7 +1,7 @@
+use super::client::RestClient;
+use crate::cryptocom::RestResult;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
-use crate::cryptocom::RestResult;
-use super::client::RestClient;
 
 /// Account settings information
 #[derive(Debug, Clone, Deserialize)]
@@ -37,9 +37,9 @@ impl RestClient {
         let nonce = chrono::Utc::now().timestamp_millis() as u64;
         let id = 1;
         let params = json!({});
-        
+
         let signature = self.sign_request("private/get-account-settings", id, &params, nonce)?;
-        
+
         let request_body = json!({
             "id": id,
             "method": "private/get-account-settings",
@@ -49,8 +49,12 @@ impl RestClient {
             "api_key": self.api_key.expose_secret()
         });
 
-        let response = self.client
-            .post(&format!("{}/v1/private/get-account-settings", self.base_url))
+        let response = self
+            .client
+            .post(&format!(
+                "{}/v1/private/get-account-settings",
+                self.base_url
+            ))
             .json(&request_body)
             .send()
             .await?;
@@ -71,13 +75,13 @@ mod tests {
     struct PlainTextSecret {
         secret: String,
     }
-    
+
     impl ExposableSecret for PlainTextSecret {
         fn expose_secret(&self) -> String {
             self.secret.clone()
         }
     }
-    
+
     impl PlainTextSecret {
         fn new(secret: String) -> Self {
             Self { secret }
@@ -107,7 +111,7 @@ mod tests {
                 {
                     "leverage": 20,
                     "stp_id": 100,
-                    "stp_scope": "S", 
+                    "stp_scope": "S",
                     "stp_inst": "M"
                 }
             ]

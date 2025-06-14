@@ -1,7 +1,10 @@
+use super::client::RestClient;
+use crate::cryptocom::{
+    ExecInst, OrderType, RefPriceType, RestResult, SpotMarginType, StpInst, StpScope, TimeInForce,
+    TradeSide,
+};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
-use crate::cryptocom::{RestResult, TradeSide, OrderType, TimeInForce, ExecInst, RefPriceType, SpotMarginType, StpScope, StpInst};
-use super::client::RestClient;
 
 /// Request parameters for creating a new order
 #[derive(Debug, Clone, Serialize)]
@@ -81,12 +84,11 @@ impl RestClient {
     pub async fn create_order(&self, request: CreateOrderRequest) -> RestResult<Value> {
         let nonce = chrono::Utc::now().timestamp_millis() as u64;
         let id = 1;
-        let params = serde_json::to_value(&request).map_err(|e| {
-            crate::cryptocom::Errors::Error(format!("Serialization error: {}", e))
-        })?;
-        
+        let params = serde_json::to_value(&request)
+            .map_err(|e| crate::cryptocom::Errors::Error(format!("Serialization error: {}", e)))?;
+
         let signature = self.sign_request("private/create-order", id, &params, nonce)?;
-        
+
         let request_body = json!({
             "id": id,
             "method": "private/create-order",
@@ -96,7 +98,8 @@ impl RestClient {
             "api_key": self.api_key.expose_secret()
         });
 
-        let response = self.client
+        let response = self
+            .client
             .post(&format!("{}/v1/private/create-order", self.base_url))
             .json(&request_body)
             .send()
@@ -118,13 +121,13 @@ mod tests {
     struct PlainTextSecret {
         secret: String,
     }
-    
+
     impl ExposableSecret for PlainTextSecret {
         fn expose_secret(&self) -> String {
             self.secret.clone()
         }
     }
-    
+
     impl PlainTextSecret {
         fn new(secret: String) -> Self {
             Self { secret }
@@ -158,7 +161,10 @@ mod tests {
         assert_eq!(serialized["type"], "LIMIT");
         assert_eq!(serialized["price"], "50000.5");
         assert_eq!(serialized["quantity"], "1");
-        assert_eq!(serialized["client_oid"], "c5f682ed-7108-4f1c-b755-972fcdca0f02");
+        assert_eq!(
+            serialized["client_oid"],
+            "c5f682ed-7108-4f1c-b755-972fcdca0f02"
+        );
         assert_eq!(serialized["exec_inst"][0], "POST_ONLY");
         assert_eq!(serialized["time_in_force"], "FILL_OR_KILL");
     }

@@ -1,7 +1,7 @@
+use super::client::RestClient;
+use crate::cryptocom::RestResult;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
-use crate::cryptocom::RestResult;
-use super::client::RestClient;
 
 /// Request parameters for get staking position
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -52,7 +52,7 @@ impl RestClient {
     pub async fn get_staking_position(&self, instrument_name: Option<&str>) -> RestResult<Value> {
         let nonce = chrono::Utc::now().timestamp_millis() as u64;
         let id = 1;
-        
+
         let params = if let Some(instrument) = instrument_name {
             json!({
                 "instrument_name": instrument
@@ -60,9 +60,10 @@ impl RestClient {
         } else {
             json!({})
         };
-        
-        let signature = self.sign_request("private/staking/get-staking-position", id, &params, nonce)?;
-        
+
+        let signature =
+            self.sign_request("private/staking/get-staking-position", id, &params, nonce)?;
+
         let request_body = json!({
             "id": id,
             "method": "private/staking/get-staking-position",
@@ -72,8 +73,12 @@ impl RestClient {
             "api_key": self.api_key.expose_secret()
         });
 
-        let response = self.client
-            .post(&format!("{}/v1/private/staking/get-staking-position", self.base_url))
+        let response = self
+            .client
+            .post(&format!(
+                "{}/v1/private/staking/get-staking-position",
+                self.base_url
+            ))
             .json(&request_body)
             .send()
             .await?;
@@ -94,13 +99,13 @@ mod tests {
     struct PlainTextSecret {
         secret: String,
     }
-    
+
     impl ExposableSecret for PlainTextSecret {
         fn expose_secret(&self) -> String {
             self.secret.clone()
         }
     }
-    
+
     impl PlainTextSecret {
         fn new(secret: String) -> Self {
             Self { secret }

@@ -1,21 +1,21 @@
-use serde_json::Value;
-use crate::cryptocom::{RestResult, EndpointType};
 use super::client::RestClient;
+use crate::cryptocom::{EndpointType, RestResult};
+use serde_json::Value;
 
 impl RestClient {
     /// Get balance of Insurance Fund for a particular currency
-    /// 
+    ///
     /// # Arguments
     /// * `instrument_name` - The currency (e.g., "USD")
     /// * `count` - Optional number of data points to return (default: 25)
-    /// * `start_ts` - Optional start timestamp (Unix timestamp) 
+    /// * `start_ts` - Optional start timestamp (Unix timestamp)
     /// * `end_ts` - Optional end timestamp (Unix timestamp)
     pub async fn get_insurance(
-        &self, 
+        &self,
         instrument_name: &str,
         count: Option<u32>,
         start_ts: Option<u64>,
-        end_ts: Option<u64>
+        end_ts: Option<u64>,
     ) -> RestResult<Value> {
         let mut params = serde_json::json!({
             "instrument_name": instrument_name
@@ -24,11 +24,11 @@ impl RestClient {
         if let Some(c) = count {
             params["count"] = Value::Number(c.into());
         }
-        
+
         if let Some(start) = start_ts {
             params["start_ts"] = Value::Number(start.into());
         }
-        
+
         if let Some(end) = end_ts {
             params["end_ts"] = Value::Number(end.into());
         }
@@ -38,7 +38,8 @@ impl RestClient {
             reqwest::Method::GET,
             Some(&params),
             EndpointType::PublicGetInsurance,
-        ).await
+        )
+        .await
     }
 }
 

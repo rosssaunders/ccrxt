@@ -375,19 +375,34 @@ impl fmt::Display for PriceMatch {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
 pub enum KlineInterval {
-    #[serde(rename = "1m")] I1m,
-    #[serde(rename = "3m")] I3m,
-    #[serde(rename = "5m")] I5m,
-    #[serde(rename = "15m")] I15m,
-    #[serde(rename = "30m")] I30m,
-    #[serde(rename = "1h")] I1h,
-    #[serde(rename = "2h")] I2h,
-    #[serde(rename = "4h")] I4h,
-    #[serde(rename = "6h")] I6h,
-    #[serde(rename = "8h")] I8h,
-    #[serde(rename = "12h")] I12h,
-    #[serde(rename = "1d")] I1d,
-    #[serde(rename = "3d")] I3d,
-    #[serde(rename = "1w")] I1w,
-    #[serde(rename = "1M")] I1M,
+    #[serde(rename = "1m")]
+    I1m,
+    #[serde(rename = "3m")]
+    I3m,
+    #[serde(rename = "5m")]
+    I5m,
+    #[serde(rename = "15m")]
+    I15m,
+    #[serde(rename = "30m")]
+    I30m,
+    #[serde(rename = "1h")]
+    I1h,
+    #[serde(rename = "2h")]
+    I2h,
+    #[serde(rename = "4h")]
+    I4h,
+    #[serde(rename = "6h")]
+    I6h,
+    #[serde(rename = "8h")]
+    I8h,
+    #[serde(rename = "12h")]
+    I12h,
+    #[serde(rename = "1d")]
+    I1d,
+    #[serde(rename = "3d")]
+    I3d,
+    #[serde(rename = "1w")]
+    I1w,
+    #[serde(rename = "1M")]
+    I1M,
 }

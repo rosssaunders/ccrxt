@@ -1,8 +1,8 @@
-use serde::{Deserialize, Serialize};
-use serde_json::{json, Value};
-use crate::cryptocom::RestResult;
 use super::client::RestClient;
 use super::user_balance::PositionBalance;
+use crate::cryptocom::RestResult;
+use serde::{Deserialize, Serialize};
+use serde_json::{json, Value};
 
 /// Subaccount balance information
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -64,9 +64,9 @@ impl RestClient {
         let nonce = chrono::Utc::now().timestamp_millis() as u64;
         let id = 1;
         let params = json!({});
-        
+
         let signature = self.sign_request("private/get-subaccount-balances", id, &params, nonce)?;
-        
+
         let request_body = json!({
             "id": id,
             "method": "private/get-subaccount-balances",
@@ -76,8 +76,12 @@ impl RestClient {
             "api_key": self.api_key.expose_secret()
         });
 
-        let response = self.client
-            .post(&format!("{}/v1/private/get-subaccount-balances", self.base_url))
+        let response = self
+            .client
+            .post(&format!(
+                "{}/v1/private/get-subaccount-balances",
+                self.base_url
+            ))
             .json(&request_body)
             .send()
             .await?;
@@ -98,13 +102,13 @@ mod tests {
     struct PlainTextSecret {
         secret: String,
     }
-    
+
     impl ExposableSecret for PlainTextSecret {
         fn expose_secret(&self) -> String {
             self.secret.clone()
         }
     }
-    
+
     impl PlainTextSecret {
         fn new(secret: String) -> Self {
             Self { secret }
@@ -248,7 +252,8 @@ mod tests {
             ]
         });
 
-        let response: GetSubaccountBalancesResponse = serde_json::from_value(response_json).unwrap();
+        let response: GetSubaccountBalancesResponse =
+            serde_json::from_value(response_json).unwrap();
         assert_eq!(response.data.len(), 2);
         assert_eq!(response.data[0].account, "account-1");
         assert_eq!(response.data[0].instrument_name, Some("USD".to_string()));

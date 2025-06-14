@@ -47,8 +47,8 @@ mod request;
 // Re-export modules for new structure
 mod public {
     mod rest;
-    pub use self::rest::RestClient as PublicRestClient;
     pub use self::rest::exchange_info::*;
+    pub use self::rest::RestClient as PublicRestClient;
 }
 
 mod private {
@@ -61,9 +61,9 @@ mod private {
 pub use private::*;
 pub use public::*;
 
-pub use errors::{Errors, ApiError};
-pub use rate_limit::{RateLimiter, RateLimitHeader};
 pub use enums::*;
+pub use errors::{ApiError, Errors};
+pub use rate_limit::{RateLimitHeader, RateLimiter};
 
 pub use crate::binance::usdm::errors::ErrorResponse;
 pub(crate) use crate::binance::usdm::request::execute_request;

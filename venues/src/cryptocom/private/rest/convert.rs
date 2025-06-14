@@ -1,7 +1,7 @@
+use super::client::RestClient;
+use crate::cryptocom::RestResult;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
-use crate::cryptocom::RestResult;
-use super::client::RestClient;
 
 /// Request parameters for convert
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -65,7 +65,7 @@ impl RestClient {
     ) -> RestResult<Value> {
         let nonce = chrono::Utc::now().timestamp_millis() as u64;
         let id = 1;
-        
+
         let params = json!({
             "from_instrument_name": from_instrument_name,
             "to_instrument_name": to_instrument_name,
@@ -73,9 +73,9 @@ impl RestClient {
             "from_quantity": from_quantity,
             "slippage_tolerance_bps": slippage_tolerance_bps
         });
-        
+
         let signature = self.sign_request("private/staking/convert", id, &params, nonce)?;
-        
+
         let request_body = json!({
             "id": id,
             "method": "private/staking/convert",
@@ -85,7 +85,8 @@ impl RestClient {
             "api_key": self.api_key.expose_secret()
         });
 
-        let response = self.client
+        let response = self
+            .client
             .post(&format!("{}/v1/private/staking/convert", self.base_url))
             .json(&request_body)
             .send()
@@ -107,13 +108,13 @@ mod tests {
     struct PlainTextSecret {
         secret: String,
     }
-    
+
     impl ExposableSecret for PlainTextSecret {
         fn expose_secret(&self) -> String {
             self.secret.clone()
         }
     }
-    
+
     impl PlainTextSecret {
         fn new(secret: String) -> Self {
             Self { secret }
@@ -168,7 +169,7 @@ mod tests {
 
         let serialized = serde_json::to_string(&request).unwrap();
         let deserialized: ConvertRequest = serde_json::from_str(&serialized).unwrap();
-        
+
         assert_eq!(deserialized.from_instrument_name, "ETH.staked");
         assert_eq!(deserialized.to_instrument_name, "CDCETH");
         assert_eq!(deserialized.expected_rate, "1.0203");
@@ -201,7 +202,7 @@ mod tests {
     #[test]
     fn test_convert_response_different_convert_ids() {
         let convert_ids = vec!["1", "123", "456789"];
-        
+
         for convert_id in convert_ids {
             let response_json = json!({
                 "from_instrument_name": "CDCETH",
@@ -221,7 +222,7 @@ mod tests {
     #[test]
     fn test_convert_different_slippage_tolerances() {
         let slippages = vec!["1", "3", "5", "10", "50"];
-        
+
         for slippage in slippages {
             let request = ConvertRequest {
                 from_instrument_name: "ETH.staked".to_string(),

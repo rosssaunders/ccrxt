@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod integration_tests {
-    use crate::cryptocom::{ApiError, ErrorResponse, Errors, PublicRestClient, PrivateRestClient};
+    use crate::cryptocom::{ApiError, ErrorResponse, Errors, PrivateRestClient, PublicRestClient};
 
     #[test]
     fn test_crypto_com_module_exports() {
@@ -9,14 +9,14 @@ mod integration_tests {
             code: 201,
             message: "No position".to_string(),
         };
-        
+
         let api_error: ApiError = error_response.into();
         let _errors = Errors::ApiError(api_error);
-        
+
         // Test that we can construct various error types
         let _http_error = Errors::Error("Test error".to_string());
         let _invalid_key = Errors::InvalidApiKey();
-        
+
         // Test that we can access both the private and public RestClient types
         // We can't easily construct them in test without proper dependencies,
         // but we can verify the types are accessible
@@ -40,14 +40,17 @@ mod integration_tests {
                 code,
                 message: message.to_string(),
             };
-            
+
             let api_error: ApiError = error_response.into();
             let error_string = format!("{}", api_error);
-            
+
             // Verify that error messages are meaningful
             assert!(error_string.len() > 0);
-            assert!(!error_string.contains("UnmappedApiError"), 
-                   "Error code {} should be properly mapped", code);
+            assert!(
+                !error_string.contains("UnmappedApiError"),
+                "Error code {} should be properly mapped",
+                code
+            );
         }
     }
 }

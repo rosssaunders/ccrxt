@@ -1,10 +1,10 @@
-use serde_json::Value;
-use crate::cryptocom::{RestResult, EndpointType};
 use super::client::RestClient;
+use crate::cryptocom::{EndpointType, RestResult};
+use serde_json::Value;
 
 impl RestClient {
     /// Get the list of available trading instruments
-    /// 
+    ///
     /// This method calls the public/get-instruments endpoint to retrieve
     /// information about all available trading pairs.
     pub async fn get_instruments(&self) -> RestResult<Value> {
@@ -13,7 +13,8 @@ impl RestClient {
             reqwest::Method::GET,
             None,
             EndpointType::PublicGetInstruments,
-        ).await
+        )
+        .await
     }
 }
 

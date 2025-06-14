@@ -33,7 +33,7 @@ use serde::Serialize;
 use sha2::Sha256;
 
 use crate::binance::portfolio_margin::rest::common::{build_url, send_rest_request};
-use crate::binance::portfolio_margin::{RestResult, RestResponse, Errors, RateLimiter};
+use crate::binance::portfolio_margin::{Errors, RateLimiter, RestResponse, RestResult};
 use std::borrow::Cow;
 
 /// Signs a request using the decrypted API secret
@@ -44,10 +44,7 @@ use std::borrow::Cow;
 ///
 /// # Returns
 /// A result containing the signature as a hex string or a Hmac error if signing fails.
-fn sign_request(
-    api_secret: &dyn ExposableSecret,
-    query_string: &str,
-) -> Result<String, Errors> {
+fn sign_request(api_secret: &dyn ExposableSecret, query_string: &str) -> Result<String, Errors> {
     let api_secret = api_secret.expose_secret();
     let mut mac = Hmac::<Sha256>::new_from_slice(api_secret.as_bytes())
         .map_err(|_| Errors::InvalidApiKey())?;
@@ -127,14 +124,21 @@ impl RestClient {
     where
         T: serde::de::DeserializeOwned,
     {
-        let url = crate::binance::portfolio_margin::rest::common::build_url(&self.base_url, endpoint, query_string)?;
+        let url = crate::binance::portfolio_margin::rest::common::build_url(
+            &self.base_url,
+            endpoint,
+            query_string,
+        )?;
         let mut headers = vec![];
         if !self.api_key.expose_secret().is_empty() {
             headers.push(("X-MBX-APIKEY", self.api_key.expose_secret()));
         }
         let body_data = body.map(|b| serde_urlencoded::to_string(b).unwrap());
         if body_data.is_some() {
-            headers.push(("Content-Type", "application/x-www-form-urlencoded".to_string()));
+            headers.push((
+                "Content-Type",
+                "application/x-www-form-urlencoded".to_string(),
+            ));
         }
         let rest_response = crate::binance::portfolio_margin::rest::common::send_rest_request(
             &self.client,
@@ -145,7 +149,8 @@ impl RestClient {
             &self.rate_limiter,
             weight,
             is_order,
-        ).await?;
+        )
+        .await?;
         Ok(crate::binance::portfolio_margin::RestResponse {
             data: rest_response.data,
             request_duration: rest_response.request_duration,
@@ -179,14 +184,28 @@ impl RestClient {
         T: serde::de::DeserializeOwned,
         R: serde::Serialize,
     {
-        let serialized = serde_urlencoded::to_string(&request)
-            .map_err(|e| crate::binance::portfolio_margin::Errors::Error(format!("Failed to encode params: {}\nBacktrace:\n{}", e, std::backtrace::Backtrace::capture())))?;
+        let serialized = serde_urlencoded::to_string(&request).map_err(|e| {
+            crate::binance::portfolio_margin::Errors::Error(format!(
+                "Failed to encode params: {}\nBacktrace:\n{}",
+                e,
+                std::backtrace::Backtrace::capture()
+            ))
+        })?;
         let signature = sign_request(self.api_secret.as_ref(), &serialized)?;
         let signed = format!("{}&signature={}", serialized, signature);
         if method == reqwest::Method::GET {
-            self.send_request(endpoint, method, Some(&signed), None, weight, is_order).await
+            self.send_request(endpoint, method, Some(&signed), None, weight, is_order)
+                .await
         } else {
-            self.send_request(endpoint, method, None, Some(&[ ("signed", signed.as_str()) ]), weight, is_order).await
+            self.send_request(
+                endpoint,
+                method,
+                None,
+                Some(&[("signed", signed.as_str())]),
+                weight,
+                is_order,
+            )
+            .await
         }
     }
 }

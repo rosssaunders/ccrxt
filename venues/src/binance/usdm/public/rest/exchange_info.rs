@@ -1,12 +1,10 @@
-use serde::{Deserialize};
 use crate::binance::usdm::enums::{
-    ContractType, OrderType, TimeInForce, UnderlyingType, ContractStatus,
+    ContractStatus, ContractType, OrderType, TimeInForce, UnderlyingType,
 };
-use crate::binance::usdm::rate_limit::{
-    RateLimitInterval, RateLimitType,
-};
-use crate::binance::usdm::RestResult;
 use crate::binance::usdm::public::rest::RestClient;
+use crate::binance::usdm::rate_limit::{RateLimitInterval, RateLimitType};
+use crate::binance::usdm::RestResult;
+use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -113,22 +111,22 @@ pub struct PercentPriceFilter {
 pub enum Filter {
     #[serde(rename = "PRICE_FILTER")]
     PriceFilter(PriceFilter),
-    
+
     #[serde(rename = "LOT_SIZE")]
     LotSizeFilter(LotSizeFilter),
-    
+
     #[serde(rename = "MARKET_LOT_SIZE")]
     MarketLotSizeFilter(MarketLotSizeFilter),
-    
+
     #[serde(rename = "MAX_NUM_ORDERS")]
     MaxNumOrdersFilter(MaxNumOrdersFilter),
-    
+
     #[serde(rename = "MAX_NUM_ALGO_ORDERS")]
     MaxNumAlgoOrdersFilter(MaxNumAlgoOrdersFilter),
-    
+
     #[serde(rename = "PERCENT_PRICE")]
     PercentPriceFilter(PercentPriceFilter),
-    
+
     #[serde(other)]
     Unknown,
 }
@@ -154,7 +152,6 @@ pub enum FilterType {
     #[serde(rename = "PRICE_FILTER")]
     PriceFilter,
 }
-
 
 #[derive(Debug, Deserialize)]
 pub enum QuoteAsset {
@@ -216,4 +213,4 @@ impl RestClient {
         )
         .await
     }
-} 
+}

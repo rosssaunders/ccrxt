@@ -1,8 +1,8 @@
-use serde::{Deserialize, Serialize};
-use serde_json::{json, Value};
+use super::client::RestClient;
 use crate::cryptocom::rate_limit::EndpointType;
 use crate::cryptocom::RestResult;
-use super::client::RestClient;
+use serde::{Deserialize, Serialize};
+use serde_json::{json, Value};
 
 /// Request parameters for get conversion rate
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -72,7 +72,7 @@ mod tests {
 
         let serialized = serde_json::to_string(&request).unwrap();
         let deserialized: GetConversionRateRequest = serde_json::from_str(&serialized).unwrap();
-        
+
         assert_eq!(deserialized.instrument_name, "CDCETH");
     }
 
@@ -91,7 +91,7 @@ mod tests {
     #[test]
     fn test_conversion_rate_response_different_rates() {
         let rates = vec!["1.0000", "1.0203", "1.0500", "0.9800", "0.9999"];
-        
+
         for rate in rates {
             let response_json = json!({
                 "instrument_name": "CDCETH",
@@ -113,7 +113,7 @@ mod tests {
 
         let serialized = serde_json::to_string(&response).unwrap();
         let deserialized: ConversionRateResponse = serde_json::from_str(&serialized).unwrap();
-        
+
         assert_eq!(deserialized.instrument_name, "CDCETH");
         assert_eq!(deserialized.conversion_rate, "1.0203");
     }
@@ -126,9 +126,9 @@ mod tests {
             "1.0203",
             "1.020300000000",
             "0.98010000",
-            "1.0000000000"
+            "1.0000000000",
         ];
-        
+
         for rate in precise_rates {
             let response_json = json!({
                 "instrument_name": "CDCETH",

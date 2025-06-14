@@ -1,10 +1,10 @@
-use serde_json::Value;
-use crate::cryptocom::{RestResult, EndpointType};
 use super::client::RestClient;
+use crate::cryptocom::{EndpointType, RestResult};
+use serde_json::Value;
 
 impl RestClient {
     /// Get ticker information for one or all instruments
-    /// 
+    ///
     /// # Arguments
     /// * `instrument_name` - Optional specific instrument name. If None, returns all tickers.
     pub async fn get_ticker(&self, instrument_name: Option<&str>) -> RestResult<Value> {
@@ -21,11 +21,12 @@ impl RestClient {
             reqwest::Method::GET,
             params.as_ref(),
             EndpointType::PublicGetTickers,
-        ).await
+        )
+        .await
     }
 
     /// Get ticker information for one or all instruments
-    /// 
+    ///
     /// # Arguments
     /// * `instrument_name` - Optional specific instrument name. If None, returns all tickers.
     pub async fn get_tickers(&self, instrument_name: Option<&str>) -> RestResult<Value> {
@@ -42,7 +43,8 @@ impl RestClient {
             reqwest::Method::GET,
             params.as_ref(),
             EndpointType::PublicGetTickers,
-        ).await
+        )
+        .await
     }
 }
 
@@ -55,7 +57,7 @@ mod tests {
     fn test_ticker_endpoint_types() {
         let ticker_endpoint = EndpointType::PublicGetTicker;
         let tickers_endpoint = EndpointType::PublicGetTickers;
-        
+
         assert!(ticker_endpoint.rate_limit().max_requests > 0);
         assert!(tickers_endpoint.rate_limit().max_requests > 0);
     }

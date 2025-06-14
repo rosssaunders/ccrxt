@@ -1,11 +1,11 @@
+use serde::Deserialize;
 use std::collections::VecDeque;
 use std::sync::Arc;
 use std::time::{Duration, Instant};
-use serde::Deserialize;
 use tokio::sync::RwLock;
 
 use crate::binance::coinm::errors::ApiError;
-use crate::binance::coinm::{ResponseHeaders, Errors};
+use crate::binance::coinm::{Errors, ResponseHeaders};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
@@ -84,20 +84,36 @@ impl RateLimitHeader {
     /// E.g., "x-mbx-used-weight-1m" or "x-mbx-order-count-1d".
     pub fn parse(header: &str) -> Option<Self> {
         fn ascii_starts_with(haystack: &str, needle: &str) -> bool {
-            haystack.len() >= needle.len() && haystack.chars().zip(needle.chars()).all(|(a, b)| a.eq_ignore_ascii_case(&b))
+            haystack.len() >= needle.len()
+                && haystack
+                    .chars()
+                    .zip(needle.chars())
+                    .all(|(a, b)| a.eq_ignore_ascii_case(&b))
         }
         let (kind, rest) = if ascii_starts_with(header, "x-mbx-used-weight-") {
-            (RateLimitHeaderKind::UsedWeight, &header["x-mbx-used-weight-".len()..])
+            (
+                RateLimitHeaderKind::UsedWeight,
+                &header["x-mbx-used-weight-".len()..],
+            )
         } else if ascii_starts_with(header, "x-mbx-order-count-") {
-            (RateLimitHeaderKind::OrderCount, &header["x-mbx-order-count-".len()..])
+            (
+                RateLimitHeaderKind::OrderCount,
+                &header["x-mbx-order-count-".len()..],
+            )
         } else {
             return None;
         };
-        if rest.len() < 2 { return None; }
+        if rest.len() < 2 {
+            return None;
+        }
         let (num, unit) = rest.split_at(rest.len() - 1);
         let interval_value = num.parse::<u32>().ok()?;
         let interval_unit = IntervalUnit::from_char(unit.chars().next()?)?;
-        Some(RateLimitHeader { kind, interval_value, interval_unit })
+        Some(RateLimitHeader {
+            kind,
+            interval_value,
+            interval_unit,
+        })
     }
 }
 
@@ -122,14 +138,14 @@ impl std::fmt::Display for RateLimitHeader {
 pub struct RateLimitUsage {
     /// Timestamps of raw requests in the last 5 minutes
     pub raw_request_timestamps: VecDeque<Instant>,
-    
+
     /// Timestamps of order requests in the last 10s, 1m, 1d
     pub order_timestamps_10s: VecDeque<Instant>,
-    
+
     pub order_timestamps_1m: VecDeque<Instant>,
-    
+
     pub order_timestamps_1d: VecDeque<Instant>,
-    
+
     /// Last known request weight (from header)
     pub used_weight_1m: u32,
 }
@@ -158,7 +174,10 @@ impl RateLimiter {
         let now = Instant::now();
         usage.raw_request_timestamps.push_back(now);
         // Remove timestamps older than 5 minutes
-        Self::trim_older_than(&mut usage.raw_request_timestamps, now - Duration::from_secs(300));
+        Self::trim_older_than(
+            &mut usage.raw_request_timestamps,
+            now - Duration::from_secs(300),
+        );
     }
 
     /// Call this after every order-related REST call to increment order counters
@@ -169,16 +188,27 @@ impl RateLimiter {
         usage.order_timestamps_1m.push_back(now);
         usage.order_timestamps_1d.push_back(now);
         // Remove timestamps older than 10s, 1m, 1d
-        Self::trim_older_than(&mut usage.order_timestamps_10s, now - Duration::from_secs(10));
-        Self::trim_older_than(&mut usage.order_timestamps_1m, now - Duration::from_secs(60));
-        Self::trim_older_than(&mut usage.order_timestamps_1d, now - Duration::from_secs(86400));
+        Self::trim_older_than(
+            &mut usage.order_timestamps_10s,
+            now - Duration::from_secs(10),
+        );
+        Self::trim_older_than(
+            &mut usage.order_timestamps_1m,
+            now - Duration::from_secs(60),
+        );
+        Self::trim_older_than(
+            &mut usage.order_timestamps_1d,
+            now - Duration::from_secs(86400),
+        );
     }
 
     /// Call this after every response to update counters from headers (authoritative)
     pub async fn update_from_headers(&self, headers: &ResponseHeaders) {
         let mut usage = self.usage.write().await;
         // Use a strongly-typed RateLimitHeader as the key
-        use crate::binance::coinm::rate_limit::{RateLimitHeader, RateLimitHeaderKind, IntervalUnit};
+        use crate::binance::coinm::rate_limit::{
+            IntervalUnit, RateLimitHeader, RateLimitHeaderKind,
+        };
         let key = RateLimitHeader {
             kind: RateLimitHeaderKind::UsedWeight,
             interval_value: 1,
@@ -197,38 +227,30 @@ impl RateLimiter {
         let usage = self.usage.read().await;
         // Raw requests: 61,000 per 5 min
         if usage.raw_request_timestamps.len() >= 61000 {
-            return Err(Errors::ApiError(
-                ApiError::TooManyRequests {
-                    msg: "Raw request cap (61,000/5min) exceeded".to_string(),
-                },
-            ));
+            return Err(Errors::ApiError(ApiError::TooManyRequests {
+                msg: "Raw request cap (61,000/5min) exceeded".to_string(),
+            }));
         }
         // Request weight: 6,000 per 1 min
         if usage.used_weight_1m + weight > 6000 {
-            return Err(Errors::ApiError(
-                ApiError::TooManyRequests {
-                    msg: format!(
-                        "Request weight {} would exceed limit of 6,000",
-                        usage.used_weight_1m + weight
-                    ),
-                },
-            ));
+            return Err(Errors::ApiError(ApiError::TooManyRequests {
+                msg: format!(
+                    "Request weight {} would exceed limit of 6,000",
+                    usage.used_weight_1m + weight
+                ),
+            }));
         }
         // Orders: 100 per 10s, 1,200 per 1m
         if is_order {
             if usage.order_timestamps_10s.len() >= 100 {
-                return Err(Errors::ApiError(
-                    ApiError::TooManyOrders {
-                        msg: "Order cap (100/10s) exceeded".to_string(),
-                    },
-                ));
+                return Err(Errors::ApiError(ApiError::TooManyOrders {
+                    msg: "Order cap (100/10s) exceeded".to_string(),
+                }));
             }
             if usage.order_timestamps_1m.len() >= 1200 {
-                return Err(Errors::ApiError(
-                    ApiError::TooManyOrders {
-                        msg: "Order cap (1,200/1min) exceeded".to_string(),
-                    },
-                ));
+                return Err(Errors::ApiError(ApiError::TooManyOrders {
+                    msg: "Order cap (1,200/1min) exceeded".to_string(),
+                }));
             }
         }
         Ok(())

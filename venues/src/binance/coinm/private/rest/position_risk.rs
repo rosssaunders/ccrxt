@@ -1,9 +1,9 @@
 // Position Risk endpoint implementation for GET /dapi/v1/positionRisk
 // See: https://binance-docs.github.io/apidocs/delivery/en/#position-information-user_data
 
-use serde::{Deserialize, Serialize};
 use crate::binance::coinm::private::rest::client::RestClient;
 use crate::binance::coinm::RestResult;
+use serde::{Deserialize, Serialize};
 
 /// Request parameters for position risk (GET /dapi/v1/positionRisk).
 #[derive(Debug, Clone, Serialize, Default)]

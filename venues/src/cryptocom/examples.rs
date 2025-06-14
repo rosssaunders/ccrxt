@@ -1,12 +1,12 @@
 /// Example demonstrating Crypto.com error code usage
-/// 
+///
 /// This example shows how to use the Crypto.com error codes in real applications.
 /// The error types can be used to handle API responses and provide meaningful
 /// error messages to users or for logging purposes.
 
 #[cfg(test)]
 mod example {
-    use crate::cryptocom::{ApiError, ErrorResponse, Errors, RestResult, PrivateRestClient};
+    use crate::cryptocom::{ApiError, ErrorResponse, Errors, PrivateRestClient, RestResult};
     use serde_json::json;
 
     /// Simulates processing an API response from Crypto.com
@@ -31,7 +31,10 @@ mod example {
         assert!(result.is_ok());
 
         // Example 2: Authentication error
-        let result = process_api_response(40101, "Not authenticated, or key/signature incorrect".to_string());
+        let result = process_api_response(
+            40101,
+            "Not authenticated, or key/signature incorrect".to_string(),
+        );
         match result {
             Err(Errors::ApiError(ApiError::Unauthorized)) => {
                 // Handle authentication error
@@ -87,10 +90,10 @@ mod example {
                 code,
                 message: message.to_string(),
             };
-            
+
             let api_error: ApiError = error_response.into();
             let error_message = format!("{}", api_error);
-            
+
             // Verify that error messages are meaningful and not empty
             assert!(!error_message.is_empty());
             println!("Code {}: {}", code, error_message);
@@ -106,28 +109,26 @@ mod example {
 
         // Create a RestClient with proper secrets (this example uses test secrets)
         let api_key = Box::new(SecretValue::new(SecretString::new("your_api_key".into())));
-        let api_secret = Box::new(SecretValue::new(SecretString::new("your_api_secret".into())));
+        let api_secret = Box::new(SecretValue::new(SecretString::new(
+            "your_api_secret".into(),
+        )));
         let client = reqwest::Client::new();
-        
-        let rest_client = PrivateRestClient::new(
-            api_key,
-            api_secret,
-            "https://api.crypto.com",
-            client,
-        );
-        
+
+        let rest_client =
+            PrivateRestClient::new(api_key, api_secret, "https://api.crypto.com", client);
+
         // Example 1: Sign a get-order-detail request
         let params = json!({
             "order_id": "53287421324"  // Note: Using string format as recommended
         });
-        
+
         let signature = rest_client.sign_request(
             "private/get-order-detail",
-            11,                    // request ID
+            11, // request ID
             &params,
-            1587846358253,        // nonce (timestamp in milliseconds)
+            1587846358253, // nonce (timestamp in milliseconds)
         );
-        
+
         match signature {
             Ok(sig) => {
                 println!("Generated signature: {}", sig);
@@ -135,7 +136,7 @@ mod example {
             }
             Err(e) => panic!("Failed to sign request: {}", e),
         }
-        
+
         // Example 2: Sign a create-order request
         let order_params = json!({
             "instrument_name": "BTC_USDT",
@@ -144,17 +145,17 @@ mod example {
             "quantity": "1.5",
             "price": "50000.00"
         });
-        
+
         let signature = rest_client.sign_request(
             "private/create-order",
             42,
             &order_params,
             chrono::Utc::now().timestamp_millis() as u64,
         );
-        
+
         assert!(signature.is_ok());
         println!("Create order signature: {}", signature.unwrap());
-        
+
         // Example 3: Sign a request with empty parameters
         let signature = rest_client.sign_request(
             "private/get-account-summary",
@@ -162,45 +163,45 @@ mod example {
             &json!({}),
             chrono::Utc::now().timestamp_millis() as u64,
         );
-        
+
         assert!(signature.is_ok());
         println!("Account summary signature: {}", signature.unwrap());
     }
 
     /// Example demonstrating usage of the new public endpoints
-    #[test]  
+    #[test]
     fn example_new_public_endpoints() {
         // Note: These are just examples of method calls - they won't make actual HTTP requests in tests
-        
+
         // Example usage patterns (would be used in real applications):
-        
+
         // 1. Get announcements filtered by category and product type
         // let announcements = client.get_announcements(Some("system"), Some("Spot")).await?;
-        
+
         // 2. Get risk parameters for Smart Cross Margin
         // let risk_params = client.get_risk_parameters().await?;
-        
-        // 3. Get all available instruments  
+
+        // 3. Get all available instruments
         // let instruments = client.get_instruments().await?;
-        
+
         // 4. Get ticker data for all instruments
         // let tickers = client.get_tickers(None).await?;
-        
+
         // 5. Get valuation data (index price) for BTCUSD-INDEX
         // let valuations = client.get_valuations("BTCUSD-INDEX", "index_price", Some(10), None, None).await?;
-        
+
         // 6. Get expired settlement prices for FUTURE instruments
         // let settlement_prices = client.get_expired_settlement_price("FUTURE", Some(1)).await?;
-        
+
         // 7. Get insurance fund balance for USD
         // let insurance = client.get_insurance("USD", Some(25), None, None).await?;
-        
+
         // 8. Enhanced candlestick data with timestamp filtering
         // let candlesticks = client.get_candlestick("BTCUSD-PERP", "1h", Some(100), Some(1640995200), Some(1641081600)).await?;
-        
+
         // 9. Enhanced trades data with timestamp filtering (nanosecond precision)
         // let trades = client.get_trades("BTCUSD-PERP", Some(50), Some("1613547060925523623"), None).await?;
-        
+
         println!("All new endpoint methods are available and properly typed");
     }
 }

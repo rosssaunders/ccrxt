@@ -3,8 +3,8 @@ use tracing::debug;
 
 use reqwest::StatusCode;
 
-use crate::binance::portfolio_margin::{ResponseHeaders, Errors, ApiError};
 use crate::binance::portfolio_margin::errors::ErrorResponse;
+use crate::binance::portfolio_margin::{ApiError, Errors, ResponseHeaders};
 
 // Helper to extract error message from JSON or fallback to raw text
 async fn extract_msg(text: &str) -> String {
@@ -14,7 +14,7 @@ async fn extract_msg(text: &str) -> String {
 }
 
 // https://developers.binance.com/docs/derivatives/coin-margined-futures/general-info#http-return-codes
-/* 
+/*
 HTTP Return Codes
 HTTP 4XX return codes are used for malformed requests; the issue is on the sender's side.
 HTTP 403 return code is used when the WAF Limit (Web Application Firewall) has been violated.
@@ -74,7 +74,8 @@ where
     let headers = response.headers().clone();
     let text = response.text().await.map_err(Errors::HttpError)?;
     // Parse relevant headers into ResponseHeaders
-    let values = headers.iter()
+    let values = headers
+        .iter()
         .filter_map(|(name, val)| {
             crate::binance::portfolio_margin::RateLimitHeader::parse(name.as_str())
                 .and_then(|hdr| val.to_str().ok()?.parse::<u32>().ok().map(|v| (hdr, v)))
@@ -94,16 +95,28 @@ where
                 }
             }
             // Otherwise, parse as the expected type
-            let data: T = serde_json::from_str(&text).map_err(|e| {
-                Errors::Error(format!("JSON decode error: {} | body: {}", e, text))
-            })?;
-            Ok(ParsedResponse { data, headers: response_headers, duration })
+            let data: T = serde_json::from_str(&text)
+                .map_err(|e| Errors::Error(format!("JSON decode error: {} | body: {}", e, text)))?;
+            Ok(ParsedResponse {
+                data,
+                headers: response_headers,
+                duration,
+            })
         }
         StatusCode::TOO_MANY_REQUESTS => {
             // Extract relevant headers for rate limit info
-            let used_weight_1m = headers.get("x-mbx-used-weight-1m").and_then(|v| v.to_str().ok()).and_then(|s| s.parse::<u32>().ok());
-            let order_count_1m = headers.get("x-mbx-order-count-1m").and_then(|v| v.to_str().ok()).and_then(|s| s.parse::<u32>().ok());
-            let retry_after = headers.get("retry-after").and_then(|v| v.to_str().ok()).and_then(|s| s.parse::<u64>().ok());
+            let used_weight_1m = headers
+                .get("x-mbx-used-weight-1m")
+                .and_then(|v| v.to_str().ok())
+                .and_then(|s| s.parse::<u32>().ok());
+            let order_count_1m = headers
+                .get("x-mbx-order-count-1m")
+                .and_then(|v| v.to_str().ok())
+                .and_then(|s| s.parse::<u32>().ok());
+            let retry_after = headers
+                .get("retry-after")
+                .and_then(|v| v.to_str().ok())
+                .and_then(|s| s.parse::<u64>().ok());
             let msg = extract_msg(&text).await;
             Err(Errors::ApiError(ApiError::RateLimitExceeded {
                 msg,
@@ -139,9 +152,8 @@ where
         _ => {
             // HTTP 4XX return codes are used for for malformed requests; the issue is on the sender's side.
             print!("ERROR: {:?}\n", text);
-            let err: ErrorResponse = serde_json::from_str(&text).map_err(|e| {
-                Errors::Error(format!("JSON decode error: {} | body: {}", e, text))
-            })?;
+            let err: ErrorResponse = serde_json::from_str(&text)
+                .map_err(|e| Errors::Error(format!("JSON decode error: {} | body: {}", e, text)))?;
             Err(Errors::ApiError(ApiError::from(err)))
         }
     }

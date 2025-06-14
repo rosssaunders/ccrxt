@@ -1,7 +1,7 @@
+use super::client::RestClient;
+use crate::cryptocom::{ExecInst, OrderType, RestResult, TimeInForce, TradeSide};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
-use crate::cryptocom::{RestResult, OrderType, TimeInForce, TradeSide, ExecInst};
-use super::client::RestClient;
 
 /// Enum representing the status of an order
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -95,12 +95,11 @@ impl RestClient {
     pub async fn get_open_orders(&self, request: GetOpenOrdersRequest) -> RestResult<Value> {
         let nonce = chrono::Utc::now().timestamp_millis() as u64;
         let id = 1;
-        let params = serde_json::to_value(&request).map_err(|e| {
-            crate::cryptocom::Errors::Error(format!("Serialization error: {}", e))
-        })?;
-        
+        let params = serde_json::to_value(&request)
+            .map_err(|e| crate::cryptocom::Errors::Error(format!("Serialization error: {}", e)))?;
+
         let signature = self.sign_request("private/get-open-orders", id, &params, nonce)?;
-        
+
         let request_body = json!({
             "id": id,
             "method": "private/get-open-orders",
@@ -110,7 +109,8 @@ impl RestClient {
             "api_key": self.api_key.expose_secret()
         });
 
-        let response = self.client
+        let response = self
+            .client
             .post(&format!("{}/v1/private/get-open-orders", self.base_url))
             .json(&request_body)
             .send()
@@ -132,13 +132,13 @@ mod tests {
     struct PlainTextSecret {
         secret: String,
     }
-    
+
     impl ExposableSecret for PlainTextSecret {
         fn expose_secret(&self) -> String {
             self.secret.clone()
         }
     }
-    
+
     impl PlainTextSecret {
         fn new(secret: String) -> Self {
             Self { secret }
@@ -162,7 +162,10 @@ mod tests {
         };
 
         let serialized = serde_json::to_value(&request).unwrap();
-        assert!(!serialized.as_object().unwrap().contains_key("instrument_name"));
+        assert!(!serialized
+            .as_object()
+            .unwrap()
+            .contains_key("instrument_name"));
     }
 
     #[test]

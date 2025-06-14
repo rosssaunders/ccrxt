@@ -56,7 +56,8 @@ impl RestClient {
     where
         T: serde::de::DeserializeOwned,
     {
-        let url = crate::binance::usdm::rest::common::build_url(&self.base_url, endpoint, query_string)?;
+        let url =
+            crate::binance::usdm::rest::common::build_url(&self.base_url, endpoint, query_string)?;
         let headers = vec![];
         let body_data = body.map(|b| serde_urlencoded::to_string(b).unwrap());
         let rest_response = crate::binance::usdm::rest::common::send_rest_request(
@@ -68,7 +69,8 @@ impl RestClient {
             &self.rate_limiter,
             weight,
             false,
-        ).await?;
+        )
+        .await?;
         Ok(crate::binance::usdm::RestResponse {
             data: rest_response.data,
             request_duration: rest_response.request_duration,

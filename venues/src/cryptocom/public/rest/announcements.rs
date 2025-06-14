@@ -1,24 +1,28 @@
-use serde_json::Value;
-use crate::cryptocom::{RestResult, EndpointType};
 use super::client::RestClient;
+use crate::cryptocom::{EndpointType, RestResult};
+use serde_json::Value;
 
 impl RestClient {
     /// Get announcements from Crypto.com Exchange
-    /// 
+    ///
     /// # Arguments
     /// * `category` - Optional filter by category: list, delist, event, product, system
     /// * `product_type` - Optional filter by product type. e.g. Spot, Derivative, OTC, Staking, TradingArena etc
-    pub async fn get_announcements(&self, category: Option<&str>, product_type: Option<&str>) -> RestResult<Value> {
+    pub async fn get_announcements(
+        &self,
+        category: Option<&str>,
+        product_type: Option<&str>,
+    ) -> RestResult<Value> {
         let mut params = serde_json::json!({});
-        
+
         if let Some(cat) = category {
             params["category"] = Value::String(cat.to_string());
         }
-        
+
         if let Some(product) = product_type {
             params["product_type"] = Value::String(product.to_string());
         }
-        
+
         let params = if params.as_object().unwrap().is_empty() {
             None
         } else {
@@ -30,7 +34,8 @@ impl RestClient {
             reqwest::Method::GET,
             params.as_ref(),
             EndpointType::PublicGetAnnouncements,
-        ).await
+        )
+        .await
     }
 }
 

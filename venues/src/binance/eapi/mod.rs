@@ -1,5 +1,5 @@
 //! Binance Options API (EAPI) module
-//! 
+//!
 //! This module provides rate limiting and error handling for Binance Options API endpoints.
 //! The Options API uses /eapi/v1/ endpoints and has its own rate limiting rules.
 
@@ -22,13 +22,13 @@ mod tests {
     #[tokio::test]
     async fn test_raw_request_limit() {
         let limiter = RateLimiter::new();
-        
+
         // Should be fine under limit
         assert!(limiter.check_limits(1, false).await.is_ok());
-        
+
         // Simulate hitting the raw request limit
         limiter.test_set_raw_requests(61000).await;
-        
+
         // Should now fail
         assert!(limiter.check_limits(1, false).await.is_err());
     }
@@ -36,16 +36,16 @@ mod tests {
     #[tokio::test]
     async fn test_request_weight_limit() {
         let limiter = RateLimiter::new();
-        
+
         // Should be fine under limit
         assert!(limiter.check_limits(1000, false).await.is_ok());
-        
+
         // Simulate approaching the weight limit
         limiter.test_set_weight(5500).await; // Set close to 6000 limit
-        
+
         // Should still be ok with small weight
         assert!(limiter.check_limits(400, false).await.is_ok());
-        
+
         // Should fail with weight that would exceed limit
         assert!(limiter.check_limits(600, false).await.is_err());
     }
@@ -53,16 +53,16 @@ mod tests {
     #[tokio::test]
     async fn test_order_limit_10s() {
         let limiter = RateLimiter::new();
-        
+
         // Should be fine under limit
         assert!(limiter.check_limits(1, true).await.is_ok());
-        
+
         // Simulate hitting the 10s order limit
         limiter.test_set_orders_10s(100).await;
-        
+
         // Should now fail for order requests
         assert!(limiter.check_limits(1, true).await.is_err());
-        
+
         // Should still be ok for non-order requests
         assert!(limiter.check_limits(1, false).await.is_ok());
     }
@@ -70,16 +70,16 @@ mod tests {
     #[tokio::test]
     async fn test_order_limit_1m() {
         let limiter = RateLimiter::new();
-        
+
         // Should be fine under limit
         assert!(limiter.check_limits(1, true).await.is_ok());
-        
+
         // Simulate hitting the 1m order limit
         limiter.test_set_orders_1m(1200).await;
-        
+
         // Should now fail for order requests
         assert!(limiter.check_limits(1, true).await.is_err());
-        
+
         // Should still be ok for non-order requests
         assert!(limiter.check_limits(1, false).await.is_ok());
     }
@@ -90,7 +90,7 @@ mod tests {
         assert!(RateLimitHeader::parse("x-mbx-used-weight-1m").is_some());
         assert!(RateLimitHeader::parse("x-mbx-order-count-10s").is_some());
         assert!(RateLimitHeader::parse("X-MBX-USED-WEIGHT-1H").is_some());
-        
+
         // Test invalid headers
         assert!(RateLimitHeader::parse("invalid-header").is_none());
         assert!(RateLimitHeader::parse("x-mbx-used-weight-").is_none());
@@ -100,12 +100,12 @@ mod tests {
     #[tokio::test]
     async fn test_increment_operations() {
         let limiter = RateLimiter::new();
-        
+
         // Test increment_raw_request
         limiter.increment_raw_request().await;
         let (raw_count, _, _, _) = limiter.test_get_stats().await;
         assert_eq!(raw_count, 1);
-        
+
         // Test increment_order
         limiter.increment_order().await;
         let (_, orders_10s, orders_1m, _) = limiter.test_get_stats().await;
@@ -117,7 +117,7 @@ mod tests {
     async fn test_update_from_headers() {
         let limiter = RateLimiter::new();
         let mut headers = ResponseHeaders::default();
-        
+
         // Create a header for 1-minute weight
         let header = RateLimitHeader {
             kind: RateLimitHeaderKind::UsedWeight,
@@ -125,10 +125,10 @@ mod tests {
             interval_unit: IntervalUnit::Minute,
         };
         headers.values.insert(header, 2500);
-        
+
         // Update from headers
         limiter.update_from_headers(&headers).await;
-        
+
         // Check that the weight was updated
         let (_, _, _, weight) = limiter.test_get_stats().await;
         assert_eq!(weight, 2500);

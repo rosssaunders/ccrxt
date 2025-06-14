@@ -1,7 +1,7 @@
 mod enums;
 mod errors;
-mod rate_limit;
 mod integration_tests;
+mod rate_limit;
 mod request;
 
 // Re-export modules for client structure
@@ -17,9 +17,9 @@ mod private {
 }
 
 // Re-export public modules
-pub use errors::{Errors, ApiError};
-pub use rate_limit::{RateLimiter, RateLimitHeader, PortfolioMarginRateLimiter};
 pub use enums::*;
+pub use errors::{ApiError, Errors};
+pub use rate_limit::{PortfolioMarginRateLimiter, RateLimitHeader, RateLimiter};
 
 // Export clients
 pub use private::PrivateRestClient;

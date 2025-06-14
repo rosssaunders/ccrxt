@@ -1,14 +1,18 @@
-use serde_json::Value;
-use crate::cryptocom::{RestResult, EndpointType};
 use super::client::RestClient;
+use crate::cryptocom::{EndpointType, RestResult};
+use serde_json::Value;
 
 impl RestClient {
     /// Get settlement price of expired instruments
-    /// 
+    ///
     /// # Arguments
     /// * `instrument_type` - The instrument type (e.g., "FUTURE")
     /// * `page` - Optional page number (default: 1)
-    pub async fn get_expired_settlement_price(&self, instrument_type: &str, page: Option<u32>) -> RestResult<Value> {
+    pub async fn get_expired_settlement_price(
+        &self,
+        instrument_type: &str,
+        page: Option<u32>,
+    ) -> RestResult<Value> {
         let mut params = serde_json::json!({
             "instrument_type": instrument_type
         });
@@ -22,7 +26,8 @@ impl RestClient {
             reqwest::Method::GET,
             Some(&params),
             EndpointType::PublicGetExpiredSettlementPrice,
-        ).await
+        )
+        .await
     }
 }
 
