@@ -5,7 +5,7 @@ use crate::binance::coinm::{OrderSide, PositionSide, RestResult};
 
 /// Request parameters for the Account Trade List endpoint (GET /dapi/v1/userTrades).
 ///
-/// See: https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Account-Trade-List
+/// See: <https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Account-Trade-List>
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct AccountTradeListRequest {
     /// The trading symbol (e.g., "BTCUSD_PERP").
@@ -137,7 +137,7 @@ pub struct AccountTrade {
 impl RestClient {
     /// Fetches trades for a specific account and symbol or pair.
     ///
-    /// See: <https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Account-Trade-List>
+    /// See: <https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Account-Trade-List>>
     ///
     /// GET /dapi/v1/userTrades
     /// Weight: 20 with symbol, 40 with pair

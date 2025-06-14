@@ -161,7 +161,7 @@ pub enum QuoteAsset {
 
 /// Represents the response from the Binance Coin-M Futures Exchange Information endpoint.
 ///
-/// See: https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Exchange-Information
+/// See: <https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Exchange-Information>
 #[derive(Debug, Deserialize)]
 pub struct ExchangeInfoResponse {
     /// The timezone of the exchange (e.g., "UTC").
@@ -200,7 +200,7 @@ pub struct RateLimit {
 impl RestClient {
     /// Fetches current exchange trading rules and symbol information.
     ///
-    /// See: https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Exchange-Information
+    /// See: <https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Exchange-Information>
     /// Corresponds to endpoint GET /dapi/v1/exchangeInfo.
     /// Weight: 1
     pub async fn get_exchange_info(&self) -> RestResult<ExchangeInfoResponse> {

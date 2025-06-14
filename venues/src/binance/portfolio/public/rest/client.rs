@@ -10,7 +10,7 @@ use crate::binance::portfolio::{RateLimiter, RestResult};
 #[non_exhaustive]
 #[derive(Debug, Clone)]
 pub struct RestClient {
-    /// The base URL for the Binance Portfolio Margin public REST API (e.g., "https://papi.binance.com").
+    /// The base URL for the Binance Portfolio Margin public REST API (e.g., "<https://papi.binance.com>").
     ///
     /// This is used as the prefix for all endpoint requests.
     pub base_url: Cow<'static, str>,
@@ -30,7 +30,7 @@ impl RestClient {
     /// Creates a new Binance Portfolio Margin public REST client.
     ///
     /// # Arguments
-    /// * `base_url` - The base URL for the Binance Portfolio Margin public REST API (e.g., "https://papi.binance.com").
+    /// * `base_url` - The base URL for the Binance Portfolio Margin public REST API (e.g., "<https://papi.binance.com>").
     pub fn new(
         base_url: impl Into<Cow<'static, str>>,
         client: Client,

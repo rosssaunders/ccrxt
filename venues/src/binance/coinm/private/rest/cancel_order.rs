@@ -1,5 +1,5 @@
 // Cancel Order (TRADE) endpoint implementation for DELETE /dapi/v1/order
-// See: https://binance-docs.github.io/apidocs/delivery/en/#cancel-order-trade
+// See: <https://binance-docs.github.io/apidocs/delivery/en/#cancel-order-trade>
 
 use serde::{Deserialize, Serialize};
 use crate::binance::coinm::{OrderSide, PositionSide, OrderType, TimeInForce, WorkingType, PriceMatch, SelfTradePreventionMode};
@@ -110,7 +110,7 @@ pub struct CancelOrderResponse {
 impl RestClient {
     /// Cancels an active order on Binance Coin-M Futures.
     ///
-    /// See: https://binance-docs.github.io/apidocs/delivery/en/#cancel-order-trade
+    /// See: <https://binance-docs.github.io/apidocs/delivery/en/#cancel-order-trade>
     /// DELETE /dapi/v1/order
     /// Weight: 1 (order rate limit)
     /// Requires API key and signature.
