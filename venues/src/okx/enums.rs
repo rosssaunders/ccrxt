@@ -59,3 +59,33 @@ pub enum InstrumentState {
     /// Testing phase
     Test,
 }
+
+/// Insurance fund type enum for OKX
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum InsuranceFundType {
+    /// Regular update
+    RegularUpdate,
+    /// Liquidation balance deposit
+    LiquidationBalanceDeposit,
+    /// Bankruptcy loss
+    BankruptcyLoss,
+    /// Platform revenue
+    PlatformRevenue,
+    /// ADL historical data
+    Adl,
+}
+
+/// ADL type enum for insurance fund
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum AdlType {
+    /// ADL begins due to high insurance fund decline rate
+    RateAdlStart,
+    /// ADL begins due to insurance fund balance falling
+    BalAdlStart,
+    /// ADL begins due to volume of liquidation orders falls to certain level
+    PosAdlStart,
+    /// ADL ends
+    AdlEnd,
+}
