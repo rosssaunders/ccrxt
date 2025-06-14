@@ -2,10 +2,10 @@ use super::client::RestClient;
 use crate::okx::{Bar, EndpointType, RestResult};
 use serde::{Deserialize, Serialize};
 
-/// Request parameters for getting index candlesticks history
+/// Request parameters for getting index candlesticks
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct GetHistoryIndexCandlesRequest {
+pub struct GetIndexCandlesRequest {
     /// Index instrument ID (e.g., "BTC-USD")
     #[serde(rename = "instId")]
     pub inst_id: String,
@@ -27,9 +27,27 @@ pub struct GetHistoryIndexCandlesRequest {
     pub limit: Option<String>,
 }
 
-/// Response for getting index candlesticks history
+/// Individual candlestick data point
+/// Data is returned as array: [ts, o, h, l, c, confirm]
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetHistoryIndexCandlesResponse {
+pub struct IndexCandle {
+    /// Opening time of the candlestick, Unix timestamp format in milliseconds
+    pub ts: String,
+    /// Open price
+    pub o: String,
+    /// Highest price
+    pub h: String,
+    /// Lowest price
+    pub l: String,
+    /// Close price
+    pub c: String,
+    /// The state of candlesticks. 0: uncompleted, 1: completed
+    pub confirm: String,
+}
+
+/// Response for getting index candlesticks
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct GetIndexCandlesResponse {
     /// Response code ("0" for success)
     pub code: String,
     /// Response message
@@ -39,28 +57,29 @@ pub struct GetHistoryIndexCandlesResponse {
 }
 
 impl RestClient {
-    /// Get index candlesticks history
+    /// Get index candlesticks
     ///
-    /// Retrieve the candlestick charts of the index from recent years.
+    /// Retrieve the candlestick charts of the index. This endpoint can retrieve the
+    /// latest 1,440 data entries. Charts are returned in groups based on the requested bar.
     ///
-    /// See: https://www.okx.com/docs-v5/en/#rest-api-market-data-get-index-candlesticks-history
+    /// See: https://www.okx.com/docs-v5/en/#rest-api-market-data-get-index-candlesticks
     ///
-    /// Rate limit: 10 requests per 2 seconds
+    /// Rate limit: 20 requests per 2 seconds
     ///
     /// # Arguments
-    /// * `request` - The index candlesticks history request parameters
+    /// * `request` - The index candlesticks request parameters
     ///
     /// # Returns
-    /// Response containing the historical candlestick data
-    pub async fn get_history_index_candles(
+    /// Response containing the candlestick data
+    pub async fn get_index_candles(
         &self,
-        request: GetHistoryIndexCandlesRequest,
-    ) -> RestResult<GetHistoryIndexCandlesResponse> {
+        request: GetIndexCandlesRequest,
+    ) -> RestResult<GetIndexCandlesResponse> {
         self.send_request(
-            "api/v5/market/history-index-candles",
+            "api/v5/market/index-candles",
             reqwest::Method::GET,
             Some(&request),
-            EndpointType::PublicMarketDataHistory,
+            EndpointType::PublicMarketData,
         )
         .await
     }
@@ -72,8 +91,8 @@ mod tests {
     use serde_json::json;
 
     #[test]
-    fn test_get_history_index_candles_request_structure() {
-        let request = GetHistoryIndexCandlesRequest {
+    fn test_get_index_candles_request_structure() {
+        let request = GetIndexCandlesRequest {
             inst_id: "BTC-USD".to_string(),
             after: None,
             before: None,
@@ -97,8 +116,8 @@ mod tests {
     }
 
     #[test]
-    fn test_get_history_index_candles_request_minimal() {
-        let request = GetHistoryIndexCandlesRequest {
+    fn test_get_index_candles_request_minimal() {
+        let request = GetIndexCandlesRequest {
             inst_id: "BTC-USD".to_string(),
             after: None,
             before: None,
@@ -119,7 +138,7 @@ mod tests {
     }
 
     #[test]
-    fn test_get_history_index_candles_response_structure() {
+    fn test_get_index_candles_response_structure() {
         let response_json = json!({
             "code": "0",
             "msg": "",
@@ -129,7 +148,7 @@ mod tests {
             ]
         });
 
-        let response: GetHistoryIndexCandlesResponse = serde_json::from_value(response_json).unwrap();
+        let response: GetIndexCandlesResponse = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 2);
         assert_eq!(response.data[0].len(), 6); // [ts,o,h,l,c,confirm]
@@ -139,8 +158,16 @@ mod tests {
     }
 
     #[test]
-    fn test_get_history_index_candles_with_pagination() {
-        let request = GetHistoryIndexCandlesRequest {
+    fn test_bar_enum_serialization() {
+        assert_eq!(serde_json::to_value(Bar::M1).unwrap(), "1m");
+        assert_eq!(serde_json::to_value(Bar::H1).unwrap(), "1H");
+        assert_eq!(serde_json::to_value(Bar::D1).unwrap(), "1D");
+        assert_eq!(serde_json::to_value(Bar::Month1Utc).unwrap(), "1Mutc");
+    }
+
+    #[test]
+    fn test_get_index_candles_with_pagination() {
+        let request = GetIndexCandlesRequest {
             inst_id: "BTC-USD".to_string(),
             after: Some("1597026383085".to_string()),
             before: Some("1597026440000".to_string()),
@@ -165,25 +192,5 @@ mod tests {
             serialized.get("limit").and_then(|v| v.as_str()),
             Some("50")
         );
-    }
-
-    #[test]
-    fn test_request_serialization_roundtrip() {
-        let original = GetHistoryIndexCandlesRequest {
-            inst_id: "ETH-USD".to_string(),
-            after: Some("1597026383085".to_string()),
-            before: None,
-            bar: Some(Bar::D1),
-            limit: Some("25".to_string()),
-        };
-
-        let serialized = serde_json::to_value(&original).unwrap();
-        let deserialized: GetHistoryIndexCandlesRequest = serde_json::from_value(serialized).unwrap();
-
-        assert_eq!(original.inst_id, deserialized.inst_id);
-        assert_eq!(original.after, deserialized.after);
-        assert_eq!(original.before, deserialized.before);
-        assert_eq!(original.bar, deserialized.bar);
-        assert_eq!(original.limit, deserialized.limit);
     }
 }

@@ -11,6 +11,7 @@ pub mod public {
     pub use self::rest::{ExchangeRate, ExchangeRateResponse};
     pub use self::rest::{GetHistoryIndexCandlesRequest, GetHistoryIndexCandlesResponse, IndexCandle};
     pub use self::rest::{GetInstrumentsRequest, GetInstrumentsResponse, Instrument};
+    pub use self::rest::{GetIndexCandlesRequest, GetIndexCandlesResponse};
     pub use self::rest::{GetPremiumHistoryRequest, GetPremiumHistoryResponse, PremiumHistory};
 }
 
@@ -45,6 +46,7 @@ pub use public::{EconomicEvent, GetEconomicCalendarRequest, GetEconomicCalendarR
 pub use public::{ExchangeRate, ExchangeRateResponse};
 pub use public::{GetHistoryIndexCandlesRequest, GetHistoryIndexCandlesResponse, IndexCandle};
 pub use public::{GetInstrumentsRequest, GetInstrumentsResponse, Instrument};
+pub use public::{GetIndexCandlesRequest, GetIndexCandlesResponse};
 pub use public::{GetPremiumHistoryRequest, GetPremiumHistoryResponse, PremiumHistory};
 pub use rate_limit::{EndpointType, RateLimit, RateLimitError, RateLimiter};
 
