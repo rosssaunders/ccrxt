@@ -11,6 +11,10 @@ pub mod public {
 pub mod private {
     mod rest;
     pub use self::rest::RestClient;
+    pub use self::rest::{
+        OkxApiResponse, PlaceOrderRequest, PlaceOrderResponse, AttachedAlgoOrder,
+        CancelOrderRequest, CancelOrderResponse, GetOrderRequest, OrderDetails,
+    };
 }
 
 pub use enums::*;
@@ -18,6 +22,10 @@ pub use errors::{ApiError, ErrorResponse, Errors};
 pub use public::RestClient as PublicRestClient;
 pub use public::{GetInstrumentsRequest, GetInstrumentsResponse, Instrument};
 pub use private::RestClient as PrivateRestClient;
+pub use private::{
+    OkxApiResponse, PlaceOrderRequest, PlaceOrderResponse, AttachedAlgoOrder,
+    CancelOrderRequest, CancelOrderResponse, GetOrderRequest, OrderDetails,
+};
 pub use rate_limit::{EndpointType, RateLimit, RateLimitError, RateLimiter};
 
 /// Type alias for results returned by OKX API operations
