@@ -112,14 +112,29 @@ It also details documentation and code style requirements for all structs and fi
 
 ---
 
-## 6. Testing and Example Usage
+## 6. Update `mod.rs` File
+
+- After creating a new endpoint file, add a corresponding `mod` declaration to the appropriate `mod.rs` file (e.g., `venues/src/binance/coinm/private/rest/mod.rs`).
+- **Each endpoint import (`mod`) and each `pub use` MUST be on its own line.**  
+  This reduces the risk of merge conflicts when multiple endpoints are added concurrently.
+- Example:
+  ```rust
+  pub mod account_trades;
+  pub mod position_risk;
+  pub mod new_endpoint; // Add your endpoint here, on its own line
+
+  // If you need to re-export specific items from a module, each `pub use` must also be on its own line:
+  pub use self::rest::{GetHistoryIndexCandlesRequest, GetHistoryIndexCandlesResponse, IndexCandle};
+  ```
+
+## 7. Testing and Example Usage
 
 - Optionally, add or update an example command in the CLI (e.g., in `venues/examples/binancecoinm/src/commands/`).
 - Provide a sample usage snippet.
 
 ---
 
-## 7. Additional Requirements
+## 8. Additional Requirements
 
 - For all struct fields representing headers or similar, implement `Display` for the type rather than custom `to_string` methods.
 - Follow Rust idioms and the code style of the `venues` crate.
