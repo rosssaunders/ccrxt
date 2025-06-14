@@ -11,6 +11,7 @@ pub mod public {
     pub use self::rest::{ExchangeRate, ExchangeRateResponse};
     pub use self::rest::{GetHistoryIndexCandlesRequest, GetHistoryIndexCandlesResponse, IndexCandle};
     pub use self::rest::{GetInstrumentsRequest, GetInstrumentsResponse, Instrument};
+    pub use self::rest::{GetIndexTickersRequest, GetIndexTickersResponse, IndexTicker};
     pub use self::rest::{GetMarkPriceCandlesRequest, GetMarkPriceCandlesResponse};
     pub use self::rest::{GetMarkPriceCandlesHistoryRequest, GetMarkPriceCandlesHistoryResponse};
     pub use self::rest::{GetIndexCandlesRequest, GetIndexCandlesResponse};
@@ -52,6 +53,7 @@ pub use public::{EconomicEvent, GetEconomicCalendarRequest, GetEconomicCalendarR
 pub use public::{ExchangeRate, ExchangeRateResponse};
 pub use public::{GetHistoryIndexCandlesRequest, GetHistoryIndexCandlesResponse, IndexCandle};
 pub use public::{GetInstrumentsRequest, GetInstrumentsResponse, Instrument};
+pub use public::{GetIndexTickersRequest, GetIndexTickersResponse, IndexTicker};
 pub use public::{GetMarkPriceCandlesRequest, GetMarkPriceCandlesResponse};
 pub use public::{GetMarkPriceCandlesHistoryRequest, GetMarkPriceCandlesHistoryResponse};
 pub use public::{GetIndexCandlesRequest, GetIndexCandlesResponse};
