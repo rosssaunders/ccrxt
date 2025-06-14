@@ -7,6 +7,7 @@ mod get_index_components;
 mod get_economic_calendar;
 mod exchange_rate;
 mod get_instruments;
+mod get_position_tiers;
 mod get_interest_rate_loan_quota;
 mod get_opt_summary;
 mod get_history_mark_price_candles;
@@ -43,6 +44,7 @@ pub use get_index_components::{
 pub use get_economic_calendar::{EconomicEvent, GetEconomicCalendarRequest, GetEconomicCalendarResponse};
 pub use exchange_rate::{ExchangeRate, ExchangeRateResponse};
 pub use get_instruments::{GetInstrumentsRequest, GetInstrumentsResponse, Instrument};
+pub use get_position_tiers::{GetPositionTiersRequest, GetPositionTiersResponse, PositionTier};
 pub use get_interest_rate_loan_quota::{
     BasicInterestRate, GetInterestRateLoanQuotaRequest, GetInterestRateLoanQuotaResponse,
     InterestRateLoanQuotaData, RegularInterestRate, VipInterestRate,
