@@ -126,7 +126,7 @@ impl RestClient {
     ) -> RestResult<T>
     where
         T: DeserializeOwned,
-        P: Serialize,
+        P: Serialize + ?Sized,
     {
         // Check rate limits
         self.rate_limiter.check_limits(endpoint_type.clone()).await?;

@@ -14,6 +14,8 @@ pub mod private {
     pub use self::rest::{
         OkxApiResponse, PlaceOrderRequest, PlaceOrderResponse, AttachedAlgoOrder,
         CancelOrderRequest, CancelOrderResponse, GetOrderRequest, OrderDetails,
+        GetPendingOrdersRequest, GetOrderHistoryRequest, PlaceBatchOrdersRequest,
+        PlaceBatchOrdersResponse, CancelBatchOrdersResponse,
     };
 }
 
@@ -25,6 +27,8 @@ pub use private::RestClient as PrivateRestClient;
 pub use private::{
     OkxApiResponse, PlaceOrderRequest, PlaceOrderResponse, AttachedAlgoOrder,
     CancelOrderRequest, CancelOrderResponse, GetOrderRequest, OrderDetails,
+    GetPendingOrdersRequest, GetOrderHistoryRequest, PlaceBatchOrdersRequest,
+    PlaceBatchOrdersResponse, CancelBatchOrdersResponse,
 };
 pub use rate_limit::{EndpointType, RateLimit, RateLimitError, RateLimiter};
 
