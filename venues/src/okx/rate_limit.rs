@@ -13,6 +13,8 @@ pub enum EndpointType {
     PrivateTrading,
     /// Private account endpoints
     PrivateAccount,
+    /// Public insurance fund endpoint
+    PublicInsuranceFund,
     /// Public market data history endpoints (lower rate limit)
     PublicMarketDataHistory,
 }
@@ -65,6 +67,7 @@ impl RateLimiter {
             EndpointType::PublicTradingData => RateLimit::new(20, Duration::from_secs(2)),
             EndpointType::PrivateTrading => RateLimit::new(60, Duration::from_secs(2)),
             EndpointType::PrivateAccount => RateLimit::new(10, Duration::from_secs(2)),
+            EndpointType::PublicInsuranceFund => RateLimit::new(10, Duration::from_secs(2)),
             EndpointType::PublicMarketDataHistory => RateLimit::new(10, Duration::from_secs(2)),
         }
     }
@@ -123,6 +126,20 @@ mod tests {
     }
 
     #[tokio::test]
+    async fn test_insurance_fund_rate_limit() {
+        let limiter = RateLimiter::new();
+
+        // Test insurance fund endpoint rate limiting
+        assert!(limiter
+            .check_limits(EndpointType::PublicInsuranceFund)
+            .await
+            .is_ok());
+        limiter
+            .increment_request(EndpointType::PublicInsuranceFund)
+            .await;
+    }
+
+    #[tokio::test]
     async fn test_rate_limit_config() {
         let config = RateLimit::new(100, Duration::from_secs(60));
         assert_eq!(config.max_requests, 100);
@@ -133,8 +150,11 @@ mod tests {
     fn test_endpoint_types() {
         let public_data = EndpointType::PublicMarketData;
         let private_trading = EndpointType::PrivateTrading;
+        let insurance_fund = EndpointType::PublicInsuranceFund;
 
         assert_ne!(public_data, private_trading);
+        assert_ne!(public_data, insurance_fund);
         assert_eq!(public_data.clone(), EndpointType::PublicMarketData);
+        assert_eq!(insurance_fund.clone(), EndpointType::PublicInsuranceFund);
     }
 }
