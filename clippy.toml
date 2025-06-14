@@ -1,0 +1,24 @@
+# Clippy configuration for the project
+# This file should be placed in the root of your workspace
+
+# Increase the allowed number of arguments for functions
+# (useful for API methods that take many parameters)
+too-many-arguments-threshold = 10
+
+# Allow longer function names (common in API client libraries)
+type-complexity-threshold = 250
+
+# Set a higher threshold for large enum variants
+# (useful when dealing with API response enums)
+enum-variant-size-threshold = 512
+
+# Allow more lines in functions
+too-many-lines-threshold = 150
+
+# Configuration for specific lints
+avoid-breaking-exported-api = true
+
+# Allow certain patterns in tests
+allow-dbg-in-tests = true
+allow-print-in-tests = true
+allow-unwrap-in-tests = true
