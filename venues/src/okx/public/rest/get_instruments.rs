@@ -6,9 +6,9 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct GetInstrumentsRequest {
-    /// Instrument type filter
+    /// Instrument type (required)
     #[serde(rename = "instType")]
-    pub inst_type: Option<InstrumentType>,
+    pub inst_type: InstrumentType,
     /// Underlying (for SWAP/FUTURES/OPTION)
     #[serde(rename = "uly")]
     pub underlying: Option<String>,
@@ -154,12 +154,12 @@ impl RestClient {
     /// Response containing the list of available instruments
     pub async fn get_instruments(
         &self,
-        request: Option<GetInstrumentsRequest>,
+        request: GetInstrumentsRequest,
     ) -> RestResult<GetInstrumentsResponse> {
         self.send_request(
             "api/v5/public/instruments",
             reqwest::Method::GET,
-            request.as_ref(),
+            Some(&request),
             EndpointType::PublicMarketData,
         )
         .await
@@ -174,7 +174,7 @@ mod tests {
     #[test]
     fn test_get_instruments_request_structure() {
         let request = GetInstrumentsRequest {
-            inst_type: Some(InstrumentType::Spot),
+            inst_type: InstrumentType::Spot,
             underlying: None,
             inst_family: None,
             inst_id: Some("BTC-USDT".to_string()),
@@ -311,7 +311,7 @@ mod tests {
     #[test]
     fn test_instrument_serialization_roundtrip() {
         let original = GetInstrumentsRequest {
-            inst_type: Some(InstrumentType::Swap),
+            inst_type: InstrumentType::Swap,
             underlying: Some("BTC-USD".to_string()),
             inst_family: Some("BTC-USD".to_string()),
             inst_id: None,
