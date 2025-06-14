@@ -57,7 +57,7 @@ impl RestClient {
     ///
     /// Returns information about available staking instruments including rates, limits, and conditions.
     ///
-    /// See: <https://exchange-docs.crypto.com/exchange/index.html#private-staking-get-staking-instruments>
+    /// See: <https://exchange-docs.crypto.com/exchange/index.html>
     ///
     /// Rate limit: 50 requests per second
     ///

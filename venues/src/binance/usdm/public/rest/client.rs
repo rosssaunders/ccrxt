@@ -10,7 +10,7 @@ use crate::binance::usdm::{Errors, RateLimiter, RestResult};
 #[non_exhaustive]
 #[derive(Debug, Clone)]
 pub struct RestClient {
-    /// The base URL for the Binance USD-M public REST API (e.g., "https://fapi.binance.com").
+    /// The base URL for the Binance USD-M public REST API (e.g., "<https://fapi.binance.com>").
     ///
     /// This is used as the prefix for all endpoint requests.
     pub base_url: Cow<'static, str>,
@@ -30,7 +30,7 @@ impl RestClient {
     /// Creates a new Binance Coin-M public REST client.
     ///
     /// # Arguments
-    /// * `base_url` - The base URL for the Binance USD-M public REST API (e.g., "https://fapi.binance.com").
+    /// * `base_url` - The base URL for the Binance USD-M public REST API (e.g., "<https://fapi.binance.com>").
     pub fn new(
         base_url: impl Into<Cow<'static, str>>,
         client: Client,

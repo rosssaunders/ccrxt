@@ -40,7 +40,7 @@ impl RestClient {
     ///
     /// Returns the user's staking positions including staked, pending, and reward eligible quantities.
     ///
-    /// See: <https://exchange-docs.crypto.com/exchange/index.html#private-staking-get-staking-position>
+    /// See: <https://exchange-docs.crypto.com/exchange/index.html>
     ///
     /// Rate limit: 50 requests per second
     ///

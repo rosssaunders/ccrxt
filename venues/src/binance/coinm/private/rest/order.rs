@@ -1,5 +1,5 @@
 // New Order (TRADE) endpoint implementation for POST /dapi/v1/order
-// See: https://binance-docs.github.io/apidocs/delivery/en/#new-order-trade
+// See: <https://binance-docs.github.io/apidocs/delivery/en/>
 
 use crate::binance::coinm::private::rest::client::RestClient;
 use crate::binance::coinm::RestResult;
@@ -172,7 +172,7 @@ pub struct NewOrderResponse {
 impl RestClient {
     /// Places a new order (TRADE) on Binance Coin-M Futures.
     ///
-    /// See: https://binance-docs.github.io/apidocs/delivery/en/#new-order-trade
+    /// See: <https://binance-docs.github.io/apidocs/delivery/en/>
     /// POST /dapi/v1/order
     /// Weight: 1 (order rate limit)
     /// Requires API key and signature.

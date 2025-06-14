@@ -1,5 +1,5 @@
 // Request and response structs, and RestClient method for GET /dapi/v1/openOrders
-// See: https://binance-docs.github.io/apidocs/delivery/en/#current-all-open-orders-user_data
+// See: <https://binance-docs.github.io/apidocs/delivery/en/>
 
 use crate::binance::coinm::private::rest::client::RestClient;
 use crate::binance::coinm::RestResult;
@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 
 /// Request parameters for the Current All Open Orders endpoint (GET /dapi/v1/openOrders).
 ///
-/// See: https://binance-docs.github.io/apidocs/delivery/en/#current-all-open-orders-user_data
+/// See: <https://binance-docs.github.io/apidocs/delivery/en/>
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct OpenOrdersRequest {
     /// The trading symbol (e.g., "BTCUSD_200925").
@@ -111,7 +111,7 @@ pub struct OpenOrder {
 impl RestClient {
     /// Fetches all open orders for a symbol or all symbols.
     ///
-    /// See: https://binance-docs.github.io/apidocs/delivery/en/#current-all-open-orders-user_data
+    /// See: <https://binance-docs.github.io/apidocs/delivery/en/>
     ///
     /// GET /dapi/v1/openOrders
     /// Weight: 1 for single symbol, 40 for multiple symbols

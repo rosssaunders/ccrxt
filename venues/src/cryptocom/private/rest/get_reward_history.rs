@@ -49,7 +49,7 @@ impl RestClient {
     ///
     /// Returns historical staking rewards earned over time.
     ///
-    /// See: <https://exchange-docs.crypto.com/exchange/index.html#private-staking-get-reward-history>
+    /// See: <https://exchange-docs.crypto.com/exchange/index.html>
     ///
     /// Rate limit: 50 requests per second
     ///

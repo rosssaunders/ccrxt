@@ -98,7 +98,7 @@ impl RestClient {
     /// Creates multiple orders in a single request. Supports both LIST (1-10 orders)
     /// and OCO (exactly 2 orders) contingency types.
     ///
-    /// See: <https://exchange-docs.crypto.com/derivatives/index.html#private-create-order-list>
+    /// See: <https://exchange-docs.crypto.com/derivatives/index.html>
     ///
     /// Rate limit: 10 requests per second per user (if more than 1 order)
     ///

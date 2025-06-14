@@ -54,7 +54,7 @@ impl RestClient {
     ///
     /// Returns convert requests that are still pending or in progress.
     ///
-    /// See: <https://exchange-docs.crypto.com/exchange/index.html#private-staking-get-open-convert>
+    /// See: <https://exchange-docs.crypto.com/exchange/index.html>
     ///
     /// Rate limit: 50 requests per second
     ///

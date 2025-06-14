@@ -74,7 +74,7 @@ pub struct OrderDetail {
 impl RestClient {
     /// Gets order detail for a specific order
     ///
-    /// See: <https://exchange-docs.crypto.com/derivatives/index.html#private-get-order-detail>
+    /// See: <https://exchange-docs.crypto.com/derivatives/index.html>
     ///
     /// Rate limit: 10 requests per second
     ///

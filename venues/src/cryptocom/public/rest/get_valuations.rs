@@ -80,7 +80,7 @@ impl RestClient {
     ///
     /// Fetches certain valuation type data for a particular instrument.
     ///
-    /// [Official API docs](https://exchange-docs.crypto.com/spot/index.html#public-get-valuations)
+    /// [Official API docs](https://exchange-docs.crypto.com/spot/index.html)
     pub async fn get_valuations(
         &self,
         params: GetValuationsRequest,

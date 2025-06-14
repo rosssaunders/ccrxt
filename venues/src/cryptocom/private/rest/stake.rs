@@ -38,7 +38,7 @@ impl RestClient {
     ///
     /// Creates a staking request for the specified instrument and quantity.
     ///
-    /// See: <https://exchange-docs.crypto.com/exchange/index.html#private-staking-stake>
+    /// See: <https://exchange-docs.crypto.com/exchange/index.html>
     ///
     /// Rate limit: 50 requests per second
     ///

@@ -152,7 +152,7 @@ pub enum StpScope {
 }
 
 /// STP (Self-Trade Prevention) instruction
-/// https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#private-create-order
+/// <https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#private-create-order>
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "UPPERCASE")]
 pub enum StpInst {

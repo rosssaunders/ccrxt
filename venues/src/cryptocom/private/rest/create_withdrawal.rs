@@ -52,7 +52,7 @@ impl RestClient {
     /// Creates a withdrawal request. Withdrawal setting must be enabled for your API Key.
     /// If you do not see the option when viewing your API Key, this feature is not yet available for you.
     ///
-    /// See: <https://exchange-docs.crypto.com/exchange/v1/private/create-withdrawal>
+    /// See: <>
     ///
     /// # Arguments
     /// * `currency` - Currency symbol e.g. BTC, CRO

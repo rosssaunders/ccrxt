@@ -57,7 +57,7 @@ pub struct ErrorResponse {
 }
 
 /// Crypto.com API error codes as documented in their REST API specification
-/// https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#response-and-reason-codes
+/// <https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#response-and-reason-codes>
 #[derive(Error, Debug, Clone, Deserialize)]
 pub enum ApiError {
     // Success

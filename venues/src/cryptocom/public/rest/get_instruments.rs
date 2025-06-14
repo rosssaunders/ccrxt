@@ -84,7 +84,7 @@ impl RestClient {
     ///
     /// Provides information on all supported instruments.
     ///
-    /// [Official API docs](https://exchange-docs.crypto.com/spot/index.html#public-get-instruments)
+    /// [Official API docs](https://exchange-docs.crypto.com/spot/index.html)
     pub async fn get_instruments(
         &self,
         params: GetInstrumentsRequest,

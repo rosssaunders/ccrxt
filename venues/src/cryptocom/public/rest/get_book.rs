@@ -62,7 +62,7 @@ impl RestClient {
     ///
     /// Fetches the public order book for a particular instrument and depth.
     ///
-    /// [Official API docs](https://exchange-docs.crypto.com/spot/index.html#public-get-book)
+    /// [Official API docs](https://exchange-docs.crypto.com/spot/index.html)
     pub async fn get_book(&self, params: GetBookRequest) -> RestResult<GetBookResponse> {
         self.send_request(
             "public/get-book",

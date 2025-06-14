@@ -25,7 +25,7 @@ impl RestClient {
     ///
     /// Returns the current conversion rate for liquid staking tokens.
     ///
-    /// See: <https://exchange-docs.crypto.com/exchange/index.html#public-staking-get-conversion-rate>
+    /// See: <https://exchange-docs.crypto.com/exchange/index.html>
     ///
     /// Rate limit: 50 requests per second
     ///

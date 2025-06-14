@@ -24,7 +24,7 @@ pub struct FeeRate {
 impl RestClient {
     /// Get fee rates for user's account
     ///
-    /// See: <https://exchange-docs.crypto.com/derivatives/index.html#private-get-fee-rate>
+    /// See: <https://exchange-docs.crypto.com/derivatives/index.html>
     ///
     /// Rate limit: 2 requests per second
     ///

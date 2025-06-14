@@ -15,7 +15,7 @@ use crate::cryptocom::{EndpointType, Errors, RateLimiter, RestResult};
 #[non_exhaustive]
 #[derive(Debug, Clone)]
 pub struct RestClient {
-    /// The base URL for the Crypto.com public REST API (e.g., "https://api.crypto.com")
+    /// The base URL for the Crypto.com public REST API (e.g., "<https://api.crypto.com>")
     ///
     /// This is used as the prefix for all endpoint requests.
     pub base_url: Cow<'static, str>,
@@ -35,7 +35,7 @@ impl RestClient {
     /// Creates a new Crypto.com public REST client.
     ///
     /// # Arguments
-    /// * `base_url` - The base URL for the Crypto.com public REST API (e.g., "https://api.crypto.com")
+    /// * `base_url` - The base URL for the Crypto.com public REST API (e.g., "<https://api.crypto.com>")
     /// * `client` - The HTTP client to use for requests
     /// * `rate_limiter` - The rate limiter for managing API limits
     pub fn new(

@@ -1,5 +1,5 @@
 // All Orders endpoint implementation for GET /dapi/v1/allOrders
-// See: https://binance-docs.github.io/apidocs/delivery/en/#all-orders-user_data
+// See: <https://binance-docs.github.io/apidocs/delivery/en/>
 
 use crate::binance::coinm::private::rest::client::RestClient;
 use crate::binance::coinm::RestResult;
@@ -95,7 +95,7 @@ pub struct AllOrder {
 impl RestClient {
     /// Get all account orders (active, canceled, or filled) on Binance Coin-M Futures.
     ///
-    /// See: https://binance-docs.github.io/apidocs/delivery/en/#all-orders-user_data
+    /// See: <https://binance-docs.github.io/apidocs/delivery/en/>
     /// GET /dapi/v1/allOrders
     /// Weight: 20 with symbol, 40 with pair
     /// Requires API key and signature.
