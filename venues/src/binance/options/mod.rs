@@ -8,7 +8,8 @@ pub mod rate_limit;
 
 pub use errors::*;
 pub use rate_limit::{
-    IntervalUnit, RateLimitHeader, RateLimitHeaderKind, RateLimiter, RateLimitUsage, ResponseHeaders,
+    IntervalUnit, RateLimitHeader, RateLimitHeaderKind, RateLimitUsage, RateLimiter,
+    ResponseHeaders,
 };
 
 mod enums;

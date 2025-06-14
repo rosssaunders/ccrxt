@@ -132,7 +132,10 @@ mod tests {
         };
 
         let json_value = serde_json::to_value(request).unwrap();
-        assert_eq!(json_value.get("from_instrument_name").unwrap(), "ETH.staked");
+        assert_eq!(
+            json_value.get("from_instrument_name").unwrap(),
+            "ETH.staked"
+        );
         assert_eq!(json_value.get("to_instrument_name").unwrap(), "CDCETH");
         assert_eq!(json_value.get("expected_rate").unwrap(), "1.0203");
         assert_eq!(json_value.get("from_quantity").unwrap(), "3.14159265");

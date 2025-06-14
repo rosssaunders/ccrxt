@@ -282,8 +282,18 @@ mod tests {
 
         let serialized = serde_json::to_value(&request).unwrap();
         assert_eq!(serialized.get("contingency_type").unwrap(), "LIST");
-        assert_eq!(serialized.get("order_list").unwrap()[0].get("instrument_name").unwrap(), "BTC_USDT");
-        assert_eq!(serialized.get("order_list").unwrap()[0].get("order_id").unwrap(), "123456789");
+        assert_eq!(
+            serialized.get("order_list").unwrap()[0]
+                .get("instrument_name")
+                .unwrap(),
+            "BTC_USDT"
+        );
+        assert_eq!(
+            serialized.get("order_list").unwrap()[0]
+                .get("order_id")
+                .unwrap(),
+            "123456789"
+        );
     }
 
     #[test]

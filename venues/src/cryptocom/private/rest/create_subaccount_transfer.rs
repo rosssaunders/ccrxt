@@ -118,8 +118,14 @@ mod tests {
         };
 
         let json_value = serde_json::to_value(request).unwrap();
-        assert_eq!(json_value.get("from").unwrap(), "12345678-0000-0000-0000-000000000001");
-        assert_eq!(json_value.get("to").unwrap(), "12345678-0000-0000-0000-000000000002");
+        assert_eq!(
+            json_value.get("from").unwrap(),
+            "12345678-0000-0000-0000-000000000001"
+        );
+        assert_eq!(
+            json_value.get("to").unwrap(),
+            "12345678-0000-0000-0000-000000000002"
+        );
         assert_eq!(json_value.get("currency").unwrap(), "CRO");
         assert_eq!(json_value.get("amount").unwrap(), "500.00");
     }

@@ -155,7 +155,10 @@ mod tests {
         let json_value = serde_json::to_value(&request).unwrap();
         assert_eq!(json_value.get("currency").unwrap(), "BTC");
         assert_eq!(json_value.get("amount").unwrap(), "1");
-        assert_eq!(json_value.get("address").unwrap(), "2NBqqD5GRJ8wHy1PYyCXTe9ke5226FhavBf");
+        assert_eq!(
+            json_value.get("address").unwrap(),
+            "2NBqqD5GRJ8wHy1PYyCXTe9ke5226FhavBf"
+        );
         assert_eq!(json_value.get("client_wid").unwrap(), "my_withdrawal_002");
     }
 

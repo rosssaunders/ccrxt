@@ -71,7 +71,6 @@ impl RestClient {
 mod tests {
     use super::*;
     use rest::secrets::ExposableSecret;
-    
 
     /// A plain text implementation of ExposableSecret for testing purposes.
     #[derive(Clone)]
