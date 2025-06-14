@@ -1,4 +1,5 @@
 mod client;
+mod convert_contract_coin;
 mod get_index_components;
 mod get_economic_calendar;
 mod exchange_rate;
@@ -14,6 +15,8 @@ mod get_premium_history;
 mod get_price_limit;
 
 pub use client::RestClient;
+pub use convert_contract_coin::{ConvertContractCoinRequest, ConvertContractCoinResponse, ConvertContractCoinData};
+
 #[allow(unused_imports)]
 pub use get_index_components::{
     GetIndexComponentsRequest, GetIndexComponentsResponse, IndexComponent, IndexComponentData,
