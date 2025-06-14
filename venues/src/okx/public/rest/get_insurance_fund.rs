@@ -1,5 +1,5 @@
 use super::client::RestClient;
-use crate::okx::{AdlType, EndpointType, InsuranceFundType, InstrumentType, RestResult};
+use crate::okx::{AdlType, EndpointType, InstrumentType, InsuranceFundType, RestResult};
 use serde::{Deserialize, Serialize};
 
 /// Request parameters for getting insurance fund
@@ -141,10 +141,7 @@ mod tests {
             serialized.get("instType").and_then(|v| v.as_str()),
             Some("MARGIN")
         );
-        assert_eq!(
-            serialized.get("ccy").and_then(|v| v.as_str()),
-            Some("USD")
-        );
+        assert_eq!(serialized.get("ccy").and_then(|v| v.as_str()), Some("USD"));
         // Optional fields should not be present when None
         assert!(serialized.get("type").is_none());
         assert!(serialized.get("uly").is_none());
@@ -189,10 +186,7 @@ mod tests {
             serialized.get("after").and_then(|v| v.as_str()),
             Some("1597026383000")
         );
-        assert_eq!(
-            serialized.get("limit").and_then(|v| v.as_str()),
-            Some("50")
-        );
+        assert_eq!(serialized.get("limit").and_then(|v| v.as_str()), Some("50"));
     }
 
     #[test]
@@ -237,7 +231,10 @@ mod tests {
         assert_eq!(detail.ccy, "USDT");
         assert_eq!(detail.fund_type, "adl");
         assert_eq!(detail.max_balance, Some("12000.0".to_string()));
-        assert_eq!(detail.max_balance_timestamp, Some("1597026383085".to_string()));
+        assert_eq!(
+            detail.max_balance_timestamp,
+            Some("1597026383085".to_string())
+        );
         assert_eq!(detail.decline_rate, Some("0.15".to_string()));
         assert_eq!(detail.adl_type, Some(AdlType::RateAdlStart));
         assert_eq!(detail.ts, "1597026383085");

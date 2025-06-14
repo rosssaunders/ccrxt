@@ -8,4 +8,6 @@ pub use get_instruments::{GetInstrumentsRequest, GetInstrumentsResponse, Instrum
 pub use get_insurance_fund::{
     GetInsuranceFundRequest, GetInsuranceFundResponse, InsuranceFundData, InsuranceFundDetail,
 };
-pub use get_premium_history::{GetPremiumHistoryRequest, GetPremiumHistoryResponse, PremiumHistory};
+pub use get_premium_history::{
+    GetPremiumHistoryRequest, GetPremiumHistoryResponse, PremiumHistory,
+};
