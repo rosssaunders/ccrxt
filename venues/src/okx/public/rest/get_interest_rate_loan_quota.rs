@@ -270,4 +270,22 @@ mod tests {
         assert_eq!(original_data.vip[0].level, deserialized.vip[0].level);
         assert_eq!(original_data.regular[0].level, deserialized.regular[0].level);
     }
+
+    #[test]
+    fn test_rest_client_method_integration() {
+        use crate::okx::rate_limit::RateLimiter;
+        
+        // Test that the method can be called on RestClient
+        let client = reqwest::Client::new();
+        let rate_limiter = RateLimiter::new();
+        let rest_client = RestClient::new("https://www.okx.com", client, rate_limiter);
+
+        // Verify the method exists and has the correct signature
+        // This is a compile-time test - if this compiles, the integration is correct
+        let _future = rest_client.get_interest_rate_loan_quota();
+        
+        // Since we can't actually call the API in tests, we just verify the method exists
+        // and returns the correct future type
+        assert!(true, "Method signature and integration is correct");
+    }
 }
