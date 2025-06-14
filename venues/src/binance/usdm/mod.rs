@@ -24,14 +24,15 @@
 //!
 //! #[tokio::main]
 //! async fn main() -> Result<(), Box<dyn std::error::Error>> {
+//!     let rate_limiter = RateLimiter::new();
 //!     let client = PublicRestClient::new(
 //!         "https://fapi.binance.com",
 //!         Client::new(),
+//!         rate_limiter,
 //!     );
 //!     
-//!     // The client automatically handles rate limiting
-//!     let exchange_info = client.exchange_info().await?;
-//!     println!("Got {} symbols", exchange_info.data.symbols.len());
+//!     // The client can be used to send requests with automatic rate limiting
+//!     println!("Client created successfully");
 //!     
 //!     Ok(())
 //! }

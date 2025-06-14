@@ -175,6 +175,7 @@ pub struct RateLimitUsage {
 ///     rate_limiter.increment_raw_request().await;
 ///     
 ///     // For order endpoints, also increment order counter
+///     let is_order_endpoint = true; // This would be determined by your endpoint logic
 ///     if is_order_endpoint {
 ///         rate_limiter.increment_order().await;
 ///     }
