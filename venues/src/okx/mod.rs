@@ -7,6 +7,7 @@ pub mod public {
     pub use self::rest::RestClient;
     pub use self::rest::{GetInstrumentsRequest, GetInstrumentsResponse, Instrument};
     pub use self::rest::{GetPremiumHistoryRequest, GetPremiumHistoryResponse, PremiumHistory};
+    pub use self::rest::{GetTimeResponse, TimeData};
 }
 
 pub mod private {
@@ -38,6 +39,7 @@ pub use private::{
 pub use public::RestClient as PublicRestClient;
 pub use public::{GetInstrumentsRequest, GetInstrumentsResponse, Instrument};
 pub use public::{GetPremiumHistoryRequest, GetPremiumHistoryResponse, PremiumHistory};
+pub use public::{GetTimeResponse, TimeData};
 pub use rate_limit::{EndpointType, RateLimit, RateLimitError, RateLimiter};
 
 /// Type alias for results returned by OKX API operations
