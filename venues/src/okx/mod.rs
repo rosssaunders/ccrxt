@@ -8,7 +8,10 @@ pub mod public {
     mod rest;
     pub use self::rest::RestClient;
     pub use self::rest::{EconomicEvent, GetEconomicCalendarRequest, GetEconomicCalendarResponse};
+    pub use self::rest::{ExchangeRate, ExchangeRateResponse};
+    pub use self::rest::{GetHistoryIndexCandlesRequest, GetHistoryIndexCandlesResponse, IndexCandle};
     pub use self::rest::{GetInstrumentsRequest, GetInstrumentsResponse, Instrument};
+    pub use self::rest::{GetPremiumHistoryRequest, GetPremiumHistoryResponse, PremiumHistory};
 }
 
 pub mod private {
@@ -39,7 +42,10 @@ pub use private::{
 };
 pub use public::RestClient as PublicRestClient;
 pub use public::{EconomicEvent, GetEconomicCalendarRequest, GetEconomicCalendarResponse};
+pub use public::{ExchangeRate, ExchangeRateResponse};
+pub use public::{GetHistoryIndexCandlesRequest, GetHistoryIndexCandlesResponse, IndexCandle};
 pub use public::{GetInstrumentsRequest, GetInstrumentsResponse, Instrument};
+pub use public::{GetPremiumHistoryRequest, GetPremiumHistoryResponse, PremiumHistory};
 pub use rate_limit::{EndpointType, RateLimit, RateLimitError, RateLimiter};
 
 /// Type alias for results returned by OKX API operations
