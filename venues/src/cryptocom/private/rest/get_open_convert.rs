@@ -101,7 +101,7 @@ impl RestClient {
 
         let response = self
             .client
-            .post(&format!(
+            .post(format!(
                 "{}/v1/private/staking/get-open-convert",
                 self.base_url
             ))

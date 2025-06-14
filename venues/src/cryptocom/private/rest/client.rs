@@ -62,7 +62,7 @@ fn params_to_string(value: &Value) -> String {
         Value::String(s) => s.clone(),
         Value::Array(arr) => arr
             .iter()
-            .map(|v| params_to_string(v))
+            .map(params_to_string)
             .collect::<Vec<_>>()
             .join(""),
         Value::Object(obj) => {

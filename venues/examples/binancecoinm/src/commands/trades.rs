@@ -30,7 +30,7 @@ pub async fn handle_trades_command(
     limit: u32,
 ) -> Result<(), Errors> {
     let mut trades = Vec::new();
-    let mut from_id = 0 as u64;
+    let mut from_id = 0_u64;
     let mut page_count = 0;
     const MAX_PAGES: u32 = 1000;
 

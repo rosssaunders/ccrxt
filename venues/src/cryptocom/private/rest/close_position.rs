@@ -1,5 +1,5 @@
 use super::client::RestClient;
-use crate::cryptocom::{OrderType, RestResult};
+use crate::cryptocom::RestResult;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 
@@ -67,7 +67,7 @@ impl RestClient {
 
         let response = self
             .client
-            .post(&format!("{}/v1/private/close-position", self.base_url))
+            .post(format!("{}/v1/private/close-position", self.base_url))
             .json(&request_body)
             .send()
             .await?;

@@ -127,7 +127,7 @@ impl RestClient {
 
         let response = self
             .client
-            .post(&format!("{}/v1/private/create-order-list", self.base_url))
+            .post(format!("{}/v1/private/create-order-list", self.base_url))
             .json(&request_body)
             .send()
             .await?;

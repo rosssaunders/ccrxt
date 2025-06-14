@@ -56,7 +56,7 @@ impl RestClient {
 
         let response = self
             .client
-            .post(&format!(
+            .post(format!(
                 "{}/v1/private/get-instrument-fee-rate",
                 self.base_url
             ))

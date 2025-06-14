@@ -86,7 +86,7 @@ impl RestClient {
 
         let response = self
             .client
-            .post(&format!(
+            .post(format!(
                 "{}/v1/private/user-balance-history",
                 self.base_url
             ))

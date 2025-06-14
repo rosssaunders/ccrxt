@@ -134,7 +134,7 @@ impl RestClient {
 
         let response = self
             .client
-            .post(&format!(
+            .post(format!(
                 "{}/v1/private/get-withdrawal-history",
                 self.base_url
             ))

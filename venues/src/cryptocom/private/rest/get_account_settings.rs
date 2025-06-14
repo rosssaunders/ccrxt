@@ -1,6 +1,6 @@
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 use serde_json::{json, Value};
 
 /// Account settings information
@@ -52,7 +52,7 @@ impl RestClient {
 
         let response = self
             .client
-            .post(&format!(
+            .post(format!(
                 "{}/v1/private/get-account-settings",
                 self.base_url
             ))

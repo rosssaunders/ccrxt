@@ -45,7 +45,7 @@ mod integration_tests {
             let error_string = format!("{}", api_error);
 
             // Verify that error messages are meaningful
-            assert!(error_string.len() > 0);
+            assert!(!error_string.is_empty());
             assert!(
                 !error_string.contains("UnmappedApiError"),
                 "Error code {} should be properly mapped",

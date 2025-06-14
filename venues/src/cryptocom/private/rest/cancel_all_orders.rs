@@ -57,7 +57,7 @@ impl RestClient {
 
         let response = self
             .client
-            .post(&format!("{}/v1/private/cancel-all-orders", self.base_url))
+            .post(format!("{}/v1/private/cancel-all-orders", self.base_url))
             .json(&request_body)
             .send()
             .await?;
@@ -71,7 +71,7 @@ impl RestClient {
 mod tests {
     use super::*;
     use rest::secrets::ExposableSecret;
-    use serde_json::json;
+    
 
     /// A plain text implementation of ExposableSecret for testing purposes.
     #[derive(Clone)]

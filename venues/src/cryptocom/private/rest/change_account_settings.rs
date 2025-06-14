@@ -1,6 +1,6 @@
 use super::client::RestClient;
 use crate::cryptocom::{RestResult, StpInst, StpScope};
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 use serde_json::{json, Value};
 
 /// Request parameters for changing account settings
@@ -54,7 +54,7 @@ impl RestClient {
 
         let response = self
             .client
-            .post(&format!(
+            .post(format!(
                 "{}/v1/private/change-account-settings",
                 self.base_url
             ))
@@ -71,7 +71,7 @@ impl RestClient {
 mod tests {
     use super::*;
     use rest::secrets::ExposableSecret;
-    use serde_json::json;
+    
 
     /// A plain text implementation of ExposableSecret for testing purposes.
     #[derive(Clone)]

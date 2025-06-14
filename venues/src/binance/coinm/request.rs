@@ -151,7 +151,7 @@ where
         }
         _ => {
             // HTTP 4XX return codes are used for for malformed requests; the issue is on the sender's side.
-            print!("ERROR: {:?}\n", text);
+            println!("ERROR: {:?}", text);
             let err: ErrorResponse = serde_json::from_str(&text)
                 .map_err(|e| Errors::Error(format!("JSON decode error: {} | body: {}", e, text)))?;
             Err(Errors::ApiError(ApiError::from(err)))

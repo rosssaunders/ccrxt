@@ -114,7 +114,7 @@ impl RestClient {
 
         let response = self
             .client
-            .post(&format!("{}/v1/private/get-accounts", self.base_url))
+            .post(format!("{}/v1/private/get-accounts", self.base_url))
             .json(&request_body)
             .send()
             .await?;
@@ -174,11 +174,11 @@ mod tests {
 
         let account: Account = serde_json::from_value(account_json).unwrap();
         assert_eq!(account.uuid, "243d3f39-b193-4eb9-1d60-e98f2fc17707");
-        assert_eq!(account.enabled, true);
+        assert!(account.enabled);
         assert_eq!(account.email, "user@crypto.com");
         assert_eq!(account.margin_access, "DEFAULT");
         assert_eq!(account.derivatives_access, "DISABLED");
-        assert_eq!(account.two_fa_enabled, true);
+        assert!(account.two_fa_enabled);
         assert_eq!(account.kyc_level, "ADVANCED");
     }
 
@@ -263,7 +263,7 @@ mod tests {
         );
         assert_eq!(response.sub_account_list.len(), 1);
         assert_eq!(response.sub_account_list[0].uuid, "sub-account-uuid");
-        assert_eq!(response.sub_account_list[0].tradable, false);
+        assert!(!response.sub_account_list[0].tradable);
     }
 
     #[test]

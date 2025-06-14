@@ -4,7 +4,7 @@
 
 use super::client::RestClient;
 use crate::cryptocom::{EndpointType, RestResult};
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 use std::borrow::Cow;
 
 /// Response for public/get-risk-parameters endpoint.

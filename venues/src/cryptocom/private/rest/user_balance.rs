@@ -99,7 +99,7 @@ impl RestClient {
 
         let response = self
             .client
-            .post(&format!("{}/v1/private/user-balance", self.base_url))
+            .post(format!("{}/v1/private/user-balance", self.base_url))
             .json(&request_body)
             .send()
             .await?;
@@ -188,7 +188,7 @@ mod tests {
 
         let balance: UserBalance = serde_json::from_value(balance_json).unwrap();
         assert_eq!(balance.instrument_name, "USD");
-        assert_eq!(balance.is_liquidating, false);
+        assert!(!balance.is_liquidating);
         assert_eq!(balance.position_balances.len(), 1);
         assert_eq!(balance.position_balances[0].instrument_name, "CRO");
     }
@@ -222,6 +222,6 @@ mod tests {
         let response: UserBalanceResponse = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.data.len(), 1);
         assert_eq!(response.data[0].instrument_name, "USD");
-        assert_eq!(response.data[0].is_liquidating, false);
+        assert!(!response.data[0].is_liquidating);
     }
 }

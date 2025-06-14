@@ -65,7 +65,7 @@ impl RestClient {
 
         let response = self
             .client
-            .post(&format!("{}/v1/private/amend-order", self.base_url))
+            .post(format!("{}/v1/private/amend-order", self.base_url))
             .json(&request_body)
             .send()
             .await?;

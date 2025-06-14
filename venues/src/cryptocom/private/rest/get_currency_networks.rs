@@ -70,7 +70,7 @@ impl RestClient {
 
         let response = self
             .client
-            .post(&format!(
+            .post(format!(
                 "{}/v1/private/get-currency-networks",
                 self.base_url
             ))
@@ -121,9 +121,9 @@ mod tests {
         let network: NetworkInfo = serde_json::from_value(network_json).unwrap();
         assert_eq!(network.network_id, "ETH");
         assert_eq!(network.withdrawal_fee, Some(20.0));
-        assert_eq!(network.withdraw_enabled, true);
+        assert!(network.withdraw_enabled);
         assert_eq!(network.min_withdrawal_amount, 40.0);
-        assert_eq!(network.deposit_enabled, true);
+        assert!(network.deposit_enabled);
         assert_eq!(network.confirmation_required, 12);
     }
 
@@ -141,9 +141,9 @@ mod tests {
         let network: NetworkInfo = serde_json::from_value(network_json).unwrap();
         assert_eq!(network.network_id, "ETH");
         assert_eq!(network.withdrawal_fee, None);
-        assert_eq!(network.withdraw_enabled, true);
+        assert!(network.withdraw_enabled);
         assert_eq!(network.min_withdrawal_amount, 10.0);
-        assert_eq!(network.deposit_enabled, true);
+        assert!(network.deposit_enabled);
         assert_eq!(network.confirmation_required, 12);
     }
 

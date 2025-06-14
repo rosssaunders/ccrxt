@@ -71,7 +71,7 @@ impl RestClient {
 
         let response = self
             .client
-            .post(&format!(
+            .post(format!(
                 "{}/v1/private/create-subaccount-transfer",
                 self.base_url
             ))

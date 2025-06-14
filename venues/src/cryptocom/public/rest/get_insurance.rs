@@ -77,7 +77,7 @@ impl RestClient {
 mod tests {
     use crate::cryptocom::EndpointType;
 
-    use super::*;
+    
     use serde_json::json;
 
     #[test]
