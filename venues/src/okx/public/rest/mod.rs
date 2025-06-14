@@ -24,6 +24,7 @@ mod get_settlement_history;
 mod get_time;
 mod get_underlying;
 mod get_price_limit;
+mod get_estimated_price;
 
 pub use client::RestClient;
 
@@ -52,3 +53,4 @@ pub use get_index_candles::{GetIndexCandlesRequest, GetIndexCandlesResponse, Ind
 pub use get_history_index_candles::{GetHistoryIndexCandlesRequest, GetHistoryIndexCandlesResponse};
 pub use get_underlying::{GetUnderlyingRequest, GetUnderlyingResponse, UnderlyingData};
 pub use get_price_limit::{GetPriceLimitRequest, GetPriceLimitResponse, PriceLimit};
+pub use get_estimated_price::{GetEstimatedPriceRequest, GetEstimatedPriceResponse, EstimatedPriceData};
