@@ -19,6 +19,7 @@ pub mod public {
     pub use self::rest::{ExchangeRate, ExchangeRateResponse};
     pub use self::rest::{GetHistoryIndexCandlesRequest, GetHistoryIndexCandlesResponse, IndexCandle};
     pub use self::rest::{GetInstrumentsRequest, GetInstrumentsResponse, Instrument};
+    pub use self::rest::{GetOptSummaryRequest, GetOptSummaryResponse, OptSummary};
     pub use self::rest::{
         GetInsuranceFundRequest, GetInsuranceFundResponse, InsuranceFundData, InsuranceFundDetail,
     };
@@ -76,6 +77,7 @@ pub use public::{EconomicEvent, GetEconomicCalendarRequest, GetEconomicCalendarR
 pub use public::{ExchangeRate, ExchangeRateResponse};
 pub use public::{GetHistoryIndexCandlesRequest, GetHistoryIndexCandlesResponse, IndexCandle};
 pub use public::{GetInstrumentsRequest, GetInstrumentsResponse, Instrument};
+pub use public::{GetOptSummaryRequest, GetOptSummaryResponse, OptSummary};
 pub use public::{
     GetInsuranceFundRequest, GetInsuranceFundResponse, InsuranceFundData, InsuranceFundDetail,
 };

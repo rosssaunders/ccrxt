@@ -4,6 +4,7 @@ mod get_index_components;
 mod get_economic_calendar;
 mod exchange_rate;
 mod get_instruments;
+mod get_opt_summary;
 mod get_history_mark_price_candles;
 mod get_insurance_fund;
 mod get_open_interest;
@@ -30,6 +31,7 @@ pub use get_index_components::{
 pub use get_economic_calendar::{EconomicEvent, GetEconomicCalendarRequest, GetEconomicCalendarResponse};
 pub use exchange_rate::{ExchangeRate, ExchangeRateResponse};
 pub use get_instruments::{GetInstrumentsRequest, GetInstrumentsResponse, Instrument};
+pub use get_opt_summary::{GetOptSummaryRequest, GetOptSummaryResponse, OptSummary};
 pub use get_premium_history::{GetPremiumHistoryRequest, GetPremiumHistoryResponse, PremiumHistory};
 pub use get_time::{GetTimeResponse, TimeData};
 pub use get_history_mark_price_candles::{
