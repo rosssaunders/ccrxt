@@ -5,8 +5,8 @@
 use reqwest::Client;
 use std::borrow::Cow;
 
-use crate::binance::portfolio_margin::rest::common::{build_url, send_rest_request};
-use crate::binance::portfolio_margin::{RateLimiter, RestResponse, RestResult};
+use crate::binance::portfolio::rest::common::{build_url, send_rest_request};
+use crate::binance::portfolio::{RateLimiter, RestResponse, RestResult};
 
 #[non_exhaustive]
 #[derive(Debug, Clone)]
@@ -56,14 +56,14 @@ impl RestClient {
     where
         T: serde::de::DeserializeOwned,
     {
-        let url = crate::binance::portfolio_margin::rest::common::build_url(
+        let url = crate::binance::portfolio::rest::common::build_url(
             &self.base_url,
             endpoint,
             query_string,
         )?;
         let headers = vec![];
         let body_data = body.map(|b| serde_urlencoded::to_string(b).unwrap());
-        let rest_response = crate::binance::portfolio_margin::rest::common::send_rest_request(
+        let rest_response = crate::binance::portfolio::rest::common::send_rest_request(
             &self.client,
             &url,
             method,
@@ -74,7 +74,7 @@ impl RestClient {
             false,
         )
         .await?;
-        Ok(crate::binance::portfolio_margin::RestResponse {
+        Ok(crate::binance::portfolio::RestResponse {
             data: rest_response.data,
             request_duration: rest_response.request_duration,
             headers: rest_response.headers,

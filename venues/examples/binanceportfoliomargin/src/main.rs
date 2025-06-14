@@ -2,7 +2,7 @@ use anyhow::Result;
 use rest::secrets::SecretValue;
 use secrecy::SecretString;
 use tracing::info;
-use venues::binance::portfolio_margin::{PrivateRestClient, RateLimiter};
+use venues::binance::portfolio::{PrivateRestClient, RateLimiter};
 
 #[tokio::main]
 async fn main() -> Result<()> {

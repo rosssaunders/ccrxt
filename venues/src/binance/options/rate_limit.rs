@@ -4,8 +4,8 @@ use std::sync::Arc;
 use std::time::{Duration, Instant};
 use tokio::sync::RwLock;
 
-use crate::binance::eapi::errors::ApiError;
-use crate::binance::eapi::Errors;
+use crate::binance::options::errors::ApiError;
+use crate::binance::options::Errors;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]

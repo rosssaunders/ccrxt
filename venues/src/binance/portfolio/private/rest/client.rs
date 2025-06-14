@@ -32,8 +32,8 @@ use serde::de::DeserializeOwned;
 use serde::Serialize;
 use sha2::Sha256;
 
-use crate::binance::portfolio_margin::rest::common::{build_url, send_rest_request};
-use crate::binance::portfolio_margin::{Errors, RateLimiter, RestResponse, RestResult};
+use crate::binance::portfolio::rest::common::{build_url, send_rest_request};
+use crate::binance::portfolio::{Errors, RateLimiter, RestResponse, RestResult};
 use std::borrow::Cow;
 
 /// Signs a request using the decrypted API secret
@@ -124,7 +124,7 @@ impl RestClient {
     where
         T: serde::de::DeserializeOwned,
     {
-        let url = crate::binance::portfolio_margin::rest::common::build_url(
+        let url = crate::binance::portfolio::rest::common::build_url(
             &self.base_url,
             endpoint,
             query_string,
@@ -140,7 +140,7 @@ impl RestClient {
                 "application/x-www-form-urlencoded".to_string(),
             ));
         }
-        let rest_response = crate::binance::portfolio_margin::rest::common::send_rest_request(
+        let rest_response = crate::binance::portfolio::rest::common::send_rest_request(
             &self.client,
             &url,
             method,
@@ -151,7 +151,7 @@ impl RestClient {
             is_order,
         )
         .await?;
-        Ok(crate::binance::portfolio_margin::RestResponse {
+        Ok(crate::binance::portfolio::RestResponse {
             data: rest_response.data,
             request_duration: rest_response.request_duration,
             headers: rest_response.headers,
@@ -185,7 +185,7 @@ impl RestClient {
         R: serde::Serialize,
     {
         let serialized = serde_urlencoded::to_string(&request).map_err(|e| {
-            crate::binance::portfolio_margin::Errors::Error(format!(
+            crate::binance::portfolio::Errors::Error(format!(
                 "Failed to encode params: {}\nBacktrace:\n{}",
                 e,
                 std::backtrace::Backtrace::capture()

@@ -3,8 +3,8 @@ use tracing::debug;
 
 use reqwest::StatusCode;
 
-use crate::binance::portfolio_margin::errors::ErrorResponse;
-use crate::binance::portfolio_margin::{ApiError, Errors, ResponseHeaders};
+use crate::binance::portfolio::errors::ErrorResponse;
+use crate::binance::portfolio::{ApiError, Errors, ResponseHeaders};
 
 // Helper to extract error message from JSON or fallback to raw text
 async fn extract_msg(text: &str) -> String {
@@ -77,7 +77,7 @@ where
     let values = headers
         .iter()
         .filter_map(|(name, val)| {
-            crate::binance::portfolio_margin::RateLimitHeader::parse(name.as_str())
+            crate::binance::portfolio::RateLimitHeader::parse(name.as_str())
                 .and_then(|hdr| val.to_str().ok()?.parse::<u32>().ok().map(|v| (hdr, v)))
         })
         .collect();
