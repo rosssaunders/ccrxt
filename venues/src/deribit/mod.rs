@@ -53,8 +53,8 @@ pub mod private {
 
     // Specific request/response structs from private::rest
     pub use self::rest::{
-        DepositId, Originator, SendRfqRequest, SendRfqResponse, SetClearanceOriginatorRequest, SetClearanceOriginatorResponse, SetClearanceOriginatorResult,
-        Side, SubmitTransferToUserRequest, SubmitTransferToUserResponse, TransferData, WithdrawRequest, WithdrawResponse, WithdrawalData,
+        DepositId, IndexName, MmpConfig, Originator, SendRfqRequest, SendRfqResponse, SetClearanceOriginatorRequest, SetClearanceOriginatorResponse, SetClearanceOriginatorResult,
+        SetMmpConfigRequest, SetMmpConfigResponse, Side, SubmitTransferToUserRequest, SubmitTransferToUserResponse, TransferData, WithdrawRequest, WithdrawResponse, WithdrawalData,
     };
 }
 
@@ -74,8 +74,8 @@ pub use public::websocket::client::DeribitWebSocketError;
 
 pub use private::RestClient as PrivateRestClient;
 pub use private::{
-    DepositId, Originator, SendRfqRequest, SendRfqResponse, SetClearanceOriginatorRequest, SetClearanceOriginatorResponse, SetClearanceOriginatorResult,
-    Side, SubmitTransferToUserRequest, SubmitTransferToUserResponse, TransferData, WithdrawRequest, WithdrawResponse, WithdrawalData,
+    DepositId, IndexName, MmpConfig, Originator, SendRfqRequest, SendRfqResponse, SetClearanceOriginatorRequest, SetClearanceOriginatorResponse, SetClearanceOriginatorResult,
+    SetMmpConfigRequest, SetMmpConfigResponse, Side, SubmitTransferToUserRequest, SubmitTransferToUserResponse, TransferData, WithdrawRequest, WithdrawResponse, WithdrawalData,
 };
 
 /// Type alias for results returned by Deribit API operations
