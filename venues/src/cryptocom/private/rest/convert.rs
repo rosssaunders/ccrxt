@@ -74,26 +74,7 @@ impl RestClient {
             "slippage_tolerance_bps": slippage_tolerance_bps
         });
 
-        let signature = self.sign_request("private/staking/convert", id, &params, nonce)?;
-
-        let request_body = json!({
-            "id": id,
-            "method": "private/staking/convert",
-            "params": params,
-            "nonce": nonce,
-            "sig": signature,
-            "api_key": self.api_key.expose_secret()
-        });
-
-        let response = self
-            .client
-            .post(format!("{}/v1/private/staking/convert", self.base_url))
-            .json(&request_body)
-            .send()
-            .await?;
-
-        let result: Value = response.json().await?;
-        Ok(result)
+        self.send_signed_request("private/staking/convert", params).await
     }
 }
 

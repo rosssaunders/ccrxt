@@ -56,26 +56,7 @@ impl RestClient {
             "currency": currency
         });
 
-        let signature = self.sign_request("private/get-deposit-address", id, &params, nonce)?;
-
-        let request_body = json!({
-            "id": id,
-            "method": "private/get-deposit-address",
-            "params": params,
-            "nonce": nonce,
-            "sig": signature,
-            "api_key": self.api_key.expose_secret()
-        });
-
-        let response = self
-            .client
-            .post(format!("{}/v1/private/get-deposit-address", self.base_url))
-            .json(&request_body)
-            .send()
-            .await?;
-
-        let result: Value = response.json().await?;
-        Ok(result)
+        self.send_signed_request("private/get-deposit-address", params).await
     }
 }
 

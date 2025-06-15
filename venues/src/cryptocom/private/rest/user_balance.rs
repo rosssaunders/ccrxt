@@ -86,26 +86,7 @@ impl RestClient {
         let id = 1;
         let params = json!({});
 
-        let signature = self.sign_request("private/user-balance", id, &params, nonce)?;
-
-        let request_body = json!({
-            "id": id,
-            "method": "private/user-balance",
-            "params": params,
-            "nonce": nonce,
-            "sig": signature,
-            "api_key": self.api_key.expose_secret()
-        });
-
-        let response = self
-            .client
-            .post(format!("{}/v1/private/user-balance", self.base_url))
-            .json(&request_body)
-            .send()
-            .await?;
-
-        let result: Value = response.json().await?;
-        Ok(result)
+        self.send_signed_request("private/user-balance", params).await
     }
 }
 

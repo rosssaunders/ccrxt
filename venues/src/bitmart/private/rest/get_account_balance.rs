@@ -55,28 +55,10 @@ impl RestClient {
     /// # Returns
     /// Account balance information
     pub async fn get_account_balance(&self, request: GetAccountBalanceRequest) -> RestResult<GetAccountBalanceResponse> {
-        // Build query parameters
-        let mut query_params = Vec::new();
-        
-        if let Some(currency) = &request.currency {
-            query_params.push(format!("currency={}", currency));
-        }
-        
-        if let Some(need_usd) = request.need_usd_valuation {
-            query_params.push(format!("needUsdValuation={}", need_usd));
-        }
-
-        let query_string = if query_params.is_empty() {
-            None
-        } else {
-            Some(query_params.join("&"))
-        };
-
         self.send_request(
             "/account/v1/wallet",
             reqwest::Method::GET,
-            query_string.as_deref(),
-            None,
+            Some(&request),
             EndpointType::FundingAccount,
         ).await
     }

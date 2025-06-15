@@ -1,6 +1,5 @@
 pub mod enums;
 mod errors;
-mod integration_tests;
 mod rate_limit;
 
 pub mod private {

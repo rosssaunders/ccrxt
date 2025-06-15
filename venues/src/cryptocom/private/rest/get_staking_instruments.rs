@@ -65,38 +65,9 @@ impl RestClient {
     /// Staking instruments information including estimated rewards, minimum amounts, and other details
     #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
     pub async fn get_staking_instruments(&self) -> RestResult<Value> {
-        let nonce = chrono::Utc::now().timestamp_millis() as u64;
-        let id = 1;
         let params = json!({});
 
-        let signature = self.sign_request(
-            "private/staking/get-staking-instruments",
-            id,
-            &params,
-            nonce,
-        )?;
-
-        let request_body = json!({
-            "id": id,
-            "method": "private/staking/get-staking-instruments",
-            "params": params,
-            "nonce": nonce,
-            "sig": signature,
-            "api_key": self.api_key.expose_secret()
-        });
-
-        let response = self
-            .client
-            .post(format!(
-                "{}/v1/private/staking/get-staking-instruments",
-                self.base_url
-            ))
-            .json(&request_body)
-            .send()
-            .await?;
-
-        let result: Value = response.json().await?;
-        Ok(result)
+        self.send_signed_request("private/staking/get-staking-instruments", params).await
     }
 }
 

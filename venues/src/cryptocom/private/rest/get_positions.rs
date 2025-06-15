@@ -66,26 +66,7 @@ impl RestClient {
             params["instrument_name"] = Value::String(instrument.to_string());
         }
 
-        let signature = self.sign_request("private/get-positions", id, &params, nonce)?;
-
-        let request_body = json!({
-            "id": id,
-            "method": "private/get-positions",
-            "params": params,
-            "nonce": nonce,
-            "sig": signature,
-            "api_key": self.api_key.expose_secret()
-        });
-
-        let response = self
-            .client
-            .post(format!("{}/v1/private/get-positions", self.base_url))
-            .json(&request_body)
-            .send()
-            .await?;
-
-        let result: Value = response.json().await?;
-        Ok(result)
+        self.send_signed_request("private/get-positions", params).await
     }
 }
 
