@@ -33,6 +33,12 @@ pub mod jsonrpc;
 pub mod public;
 pub mod rate_limit;
 
+#[cfg(test)]
+mod integration_tests;
+
+#[cfg(test)]
+mod usage_examples;
+
 // Re-export commonly used types
 pub use errors::{DeribitError, DeribitResult};
 pub use jsonrpc::{JsonRpcRequest, JsonRpcResponse, JsonRpcError};
