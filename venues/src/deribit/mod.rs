@@ -1,38 +1,38 @@
 //! Deribit trading platform implementation
 //! 
-//! This module provides rate limiting and other utilities for the Deribit API.
+//! This module provides rate limiting, REST API clients, and other utilities for the Deribit API.
 //! Deribit uses a credit-based rate limiting system with different tiers based
-//! on trading volume.
+//! on trading volume and supports JSON-RPC 2.0 protocol.
 //!
 //! # Example Usage
 //!
 //! ```rust
-//! use venues::deribit::{RateLimiter, AccountTier, EndpointType};
+//! use venues::deribit::{RateLimiter, AccountTier, EndpointType, PublicRestClient};
+//! use reqwest::Client;
 //!
 //! #[tokio::main]
 //! async fn main() -> Result<(), Box<dyn std::error::Error>> {
 //!     // Create a rate limiter for a Tier 3 account (1-25M USD trading volume)
-//!     let limiter = RateLimiter::new(AccountTier::Tier3);
+//!     let rate_limiter = RateLimiter::new(AccountTier::Tier3);
 //!     
-//!     // Check if we can make a non-matching engine request (consumes 500 credits)
-//!     limiter.check_limits(EndpointType::NonMatchingEngine).await?;
+//!     // Create a public REST client
+//!     let client = Client::new();
+//!     let rest_client = PublicRestClient::new("https://www.deribit.com", client, rate_limiter);
 //!     
-//!     // Record the request after making it
-//!     limiter.record_request(EndpointType::NonMatchingEngine).await;
-//!     
-//!     // Check if we can make a matching engine request (limited by tier)
-//!     limiter.check_limits(EndpointType::MatchingEngine).await?;
-//!     limiter.record_request(EndpointType::MatchingEngine).await;
-//!     
-//!     // Check rate limit status
-//!     let status = limiter.get_status().await;
-//!     println!("Available credits: {}", status.available_credits);
-//!     println!("Account tier: {:?}", status.account_tier);
+//!     // Get current server time
+//!     let current_time = rest_client.get_time().await?;
+//!     println!("Current server time: {} ms", current_time);
 //!     
 //!     Ok(())
 //! }
 //! ```
 
+pub mod enums;
+pub mod errors;
+pub mod public;
 pub mod rate_limit;
 
+pub use enums::{JsonRpcRequest, JsonRpcResponse};
+pub use errors::{ApiError, Errors, JsonRpcError};
+pub use public::{RestClient as PublicRestClient, RestResult};
 pub use rate_limit::*;

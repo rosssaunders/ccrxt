@@ -46,6 +46,8 @@ pub enum EndpointType {
     MatchingEngine,
     /// Special case: public/get_instruments (1 req per 10s, burst of 5)
     PublicGetInstruments,
+    /// Public/get_time endpoint (no specific limits mentioned)
+    PublicGetTime,
 }
 
 impl EndpointType {
@@ -55,26 +57,30 @@ impl EndpointType {
             EndpointType::NonMatchingEngine => 500,
             EndpointType::MatchingEngine => 0, // Uses tier-based limits, not credits
             EndpointType::PublicGetInstruments => 0, // Special time-based limit
+            EndpointType::PublicGetTime => 0, // Public endpoint, minimal rate limiting
         }
     }
 
     /// Determine endpoint type from API path
     pub fn from_path(path: &str) -> Self {
-        if path == "public/get_instruments" {
-            return EndpointType::PublicGetInstruments;
-        }
-
-        // Matching engine endpoints as per Deribit documentation
         match path {
-            "private/buy" | "private/sell" | "private/edit" | "private/edit_by_label"
-            | "private/cancel" | "private/cancel_by_label" | "private/cancel_all"
-            | "private/cancel_all_by_instrument" | "private/cancel_all_by_currency"
-            | "private/cancel_all_by_kind_or_type" | "private/close_position"
-            | "private/verify_block_trade" | "private/execute_block_trade"
-            | "private/move_positions" | "private/mass_quote" | "private/cancel_quotes"
-            | "private/add_block_rfq_quote" | "private/edit_block_rfq_quote"
-            | "private/cancel_block_rfq_quote" | "private/cancel_all_block_rfq_quotes" => {
-                EndpointType::MatchingEngine
+            "public/get_instruments" => EndpointType::PublicGetInstruments,
+            "public/get_time" => EndpointType::PublicGetTime,
+            path if path.starts_with("private/") => {
+                // Check if it's a matching engine endpoint
+                match path {
+                    "private/buy" | "private/sell" | "private/edit" | "private/edit_by_label"
+                    | "private/cancel" | "private/cancel_by_label" | "private/cancel_all"
+                    | "private/cancel_all_by_instrument" | "private/cancel_all_by_currency"
+                    | "private/cancel_all_by_kind_or_type" | "private/close_position"
+                    | "private/verify_block_trade" | "private/execute_block_trade"
+                    | "private/move_positions" | "private/mass_quote" | "private/cancel_quotes"
+                    | "private/add_block_rfq_quote" | "private/edit_block_rfq_quote"
+                    | "private/cancel_block_rfq_quote" | "private/cancel_all_block_rfq_quotes" => {
+                        EndpointType::MatchingEngine
+                    }
+                    _ => EndpointType::NonMatchingEngine,
+                }
             }
             _ => EndpointType::NonMatchingEngine,
         }
@@ -287,6 +293,11 @@ impl RateLimiter {
                     }
                 })
             }
+            EndpointType::PublicGetTime => {
+                // Public get_time endpoint has no specific rate limits documented
+                // It's a low-impact public endpoint, so we allow it
+                Ok(())
+            }
         }
     }
 
@@ -303,6 +314,9 @@ impl RateLimiter {
             EndpointType::PublicGetInstruments => {
                 let mut history = self.get_instruments_history.write().await;
                 history.record_request();
+            }
+            EndpointType::PublicGetTime => {
+                // No recording needed for public get_time endpoint
             }
         }
     }
