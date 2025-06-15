@@ -1,8 +1,8 @@
 //! Deribit trading platform implementation
 //! 
-//! This module provides rate limiting and other utilities for the Deribit API.
-//! Deribit uses a credit-based rate limiting system with different tiers based
-//! on trading volume.
+//! This module provides rate limiting, WebSocket connectivity, and other utilities 
+//! for the Deribit API. Deribit uses a credit-based rate limiting system with 
+//! different tiers based on trading volume.
 //!
 //! # Example Usage
 //!
@@ -34,5 +34,7 @@
 //! ```
 
 pub mod rate_limit;
+pub mod websocket;
 
 pub use rate_limit::*;
+pub use websocket::*;
