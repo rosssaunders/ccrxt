@@ -7,6 +7,7 @@ mod usage_examples {
     use crate::okx::{
         GetMarkPriceCandlesRequest,
         GetMarkPriceCandlesHistoryRequest,
+        GetEstimatedPriceRequest,
         PublicRestClient,
         RateLimiter
     };
@@ -123,5 +124,49 @@ mod usage_examples {
         
         assert_eq!(history_response.code, "0");
         assert_eq!(history_response.data.len(), 2);
+    }
+
+    #[test]
+    fn test_estimated_price_request_usage() {
+        // Example of how users would create an estimated price request
+        let request = GetEstimatedPriceRequest {
+            inst_id: "BTC-USD-200214".to_string(),
+        };
+
+        // Verify the request can be serialized for the API
+        let json = serde_json::to_value(&request).unwrap();
+        assert!(json.is_object());
+        assert_eq!(json["instId"], "BTC-USD-200214");
+    }
+
+    #[test]
+    fn test_estimated_price_response_format() {
+        // Test that we can parse the expected response format
+        use crate::okx::GetEstimatedPriceResponse;
+        use serde_json::json;
+
+        let sample_response = json!({
+            "code": "0",
+            "msg": "",
+            "data": [
+                {
+                    "instType": "FUTURES",
+                    "instId": "BTC-USD-200214",
+                    "settlePx": "50000.5",
+                    "ts": "1597026383085"
+                }
+            ]
+        });
+
+        let response: GetEstimatedPriceResponse = 
+            serde_json::from_value(sample_response).unwrap();
+        
+        assert_eq!(response.code, "0");
+        assert_eq!(response.data.len(), 1);
+        
+        let estimated_price = &response.data[0];
+        assert_eq!(estimated_price.inst_id, "BTC-USD-200214");
+        assert_eq!(estimated_price.settle_px, "50000.5");
+        assert_eq!(estimated_price.ts, "1597026383085");
     }
 }
