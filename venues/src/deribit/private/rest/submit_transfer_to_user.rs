@@ -1,7 +1,6 @@
 use super::client::RestClient;
 use crate::deribit::{EndpointType, RestResult};
 use serde::{Deserialize, Serialize};
-use serde_json::json;
 
 /// Request parameters for submit transfer to user
 #[derive(Debug, Clone, Serialize)]
@@ -60,68 +59,20 @@ impl RestClient {
     /// Scope: wallet:read_write and mainaccount
     ///
     /// # Arguments
-    /// * `currency` - The currency symbol (BTC, ETH, USDC, USDT, EURR)
-    /// * `amount` - Amount of funds to be transferred
-    /// * `destination` - Destination wallet's address taken from address book
+    /// * `params` - Parameters for the transfer (currency, amount, destination)
     ///
     /// # Returns
     /// Transfer result with complete transfer information
     pub async fn submit_transfer_to_user(
         &self,
-        currency: &str,
-        amount: f64,
-        destination: &str,
+        params: SubmitTransferToUserRequest,
     ) -> RestResult<SubmitTransferToUserResponse> {
-        // Check rate limits before making the request
-        self.rate_limiter.check_limits(EndpointType::NonMatchingEngine).await?;
-
-        let nonce = chrono::Utc::now().timestamp_millis() as u64;
-        let request_id = 1;
-
-        // Create request parameters
-        let params = json!({
-            "currency": currency,
-            "amount": amount,
-            "destination": destination
-        });
-
-        // Create the full request data
-        let request_data = json!({
-            "jsonrpc": "2.0",
-            "id": request_id,
-            "method": "private/submit_transfer_to_user",
-            "params": params
-        });
-
-        // Sign the request
-        let request_data_str = serde_json::to_string(&request_data)?;
-        let signature = self.sign_request(&request_data_str, nonce, request_id)?;
-
-        // Create the final request with authentication
-        let authenticated_request = json!({
-            "jsonrpc": "2.0",
-            "id": request_id,
-            "method": "private/submit_transfer_to_user",
-            "params": params,
-            "sig": signature,
-            "nonce": nonce,
-            "api_key": self.api_key.expose_secret()
-        });
-
-        // Make the request
-        let response = self
-            .client
-            .post(format!("{}/api/v2/private/submit_transfer_to_user", self.base_url))
-            .json(&authenticated_request)
-            .send()
-            .await?;
-
-        // Record the request for rate limiting
-        self.rate_limiter.record_request(EndpointType::NonMatchingEngine).await;
-
-        // Parse the response
-        let result: SubmitTransferToUserResponse = response.json().await?;
-        Ok(result)
+        self.send_signed_request(
+            "private/submit_transfer_to_user",
+            &params,
+            EndpointType::NonMatchingEngine,
+        )
+        .await
     }
 }
 

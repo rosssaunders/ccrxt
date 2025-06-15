@@ -1,7 +1,6 @@
 use super::client::RestClient;
 use crate::deribit::{EndpointType, RestResult};
 use serde::{Deserialize, Serialize};
-use serde_json::json;
 
 /// Deposit ID parameters for set clearance originator request
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -79,76 +78,25 @@ pub struct SetClearanceOriginatorResponse {
 }
 
 impl RestClient {
-    /// Sets originator of the deposit
-    ///
-    /// This endpoint sets the originator information for a specific deposit.
-    /// It requires wallet:read_write scope and proper authentication.
+    /// Sets the clearance originator for a deposit.
     ///
     /// See: <https://docs.deribit.com/v2/#private-set_clearance_originator>
     ///
-    /// Rate limit: 500 credits per request (non-matching engine)
-    /// Scope: wallet:read_write
-    ///
     /// # Arguments
-    /// * `deposit_id` - The deposit identification information
-    /// * `originator` - The originator information
+    /// * `params` - Parameters for the request (deposit_id, originator)
     ///
     /// # Returns
-    /// Result with deposit information including clearance state
+    /// Clearance originator response
     pub async fn set_clearance_originator(
         &self,
-        deposit_id: DepositId,
-        originator: Originator,
+        params: SetClearanceOriginatorRequest,
     ) -> RestResult<SetClearanceOriginatorResponse> {
-        // Check rate limits before making the request
-        self.rate_limiter.check_limits(EndpointType::NonMatchingEngine).await?;
-
-        let nonce = chrono::Utc::now().timestamp_millis() as u64;
-        let request_id = 1;
-
-        // Create request parameters
-        let params = json!({
-            "deposit_id": deposit_id,
-            "originator": originator
-        });
-
-        // Create the full request data
-        let request_data = json!({
-            "jsonrpc": "2.0",
-            "id": request_id,
-            "method": "private/set_clearance_originator",
-            "params": params
-        });
-
-        // Sign the request
-        let request_data_str = serde_json::to_string(&request_data)?;
-        let signature = self.sign_request(&request_data_str, nonce, request_id)?;
-
-        // Create the final request with authentication
-        let authenticated_request = json!({
-            "jsonrpc": "2.0",
-            "id": request_id,
-            "method": "private/set_clearance_originator",
-            "params": params,
-            "sig": signature,
-            "nonce": nonce,
-            "api_key": self.api_key.expose_secret()
-        });
-
-        // Make the request
-        let response = self
-            .client
-            .post(format!("{}/api/v2/private/set_clearance_originator", self.base_url))
-            .json(&authenticated_request)
-            .send()
-            .await?;
-
-        // Record the request for rate limiting
-        self.rate_limiter.record_request(EndpointType::NonMatchingEngine).await;
-
-        // Parse the response
-        let result: SetClearanceOriginatorResponse = response.json().await?;
-        Ok(result)
+        self.send_signed_request(
+            "private/set_clearance_originator",
+            &params,
+            EndpointType::NonMatchingEngine,
+        )
+        .await
     }
 }
 
