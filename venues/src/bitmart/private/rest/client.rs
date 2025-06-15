@@ -118,72 +118,85 @@ impl RestClient {
     /// # Arguments
     /// * `endpoint` - The API endpoint path
     /// * `method` - The HTTP method to use
-    /// * `query_params` - Optional query parameters
-    /// * `body` - Optional request body
+    /// * `request` - The request object (parameters/body), must implement Serialize
     /// * `endpoint_type` - The endpoint type for rate limiting
     ///
     /// # Returns
     /// A result containing the parsed response data or an error
-    pub async fn send_request<T>(
+    pub async fn send_request<R, T>(
         &self,
         endpoint: &str,
         method: Method,
-        query_params: Option<&str>,
-        body: Option<&str>,
+        request: Option<&R>,
         endpoint_type: EndpointType,
     ) -> RestResult<T>
     where
+        R: serde::Serialize + ?Sized,
         T: DeserializeOwned,
     {
         // Check rate limits before making the request
         self.rate_limiter.check_limits(endpoint_type.clone()).await?;
 
-        // Build URL
-        let url = if let Some(params) = query_params {
-            format!("{}{}{}{}", self.base_url, endpoint, "?", params)
-        } else {
-            format!("{}{}", self.base_url, endpoint)
+        // Serialize request to query params or JSON body
+        let (url, body_str, request_path) = match method {
+            Method::GET | Method::DELETE => {
+                let query = if let Some(req) = request {
+                    let s = serde_urlencoded::to_string(req).unwrap_or_default();
+                    if s.is_empty() { None } else { Some(s) }
+                } else {
+                    None
+                };
+                let url = if let Some(params) = &query {
+                    format!("{}{}?{}", self.base_url, endpoint, params)
+                } else {
+                    format!("{}{}", self.base_url, endpoint)
+                };
+                let request_path = if let Some(params) = &query {
+                    format!("{}?{}", endpoint, params)
+                } else {
+                    endpoint.to_string()
+                };
+                (url, String::new(), request_path)
+            }
+            _ => {
+                let body = if let Some(req) = request {
+                    serde_json::to_string(req).unwrap_or_default()
+                } else {
+                    String::new()
+                };
+                let url = format!("{}{}", self.base_url, endpoint);
+                (url, body, endpoint.to_string())
+            }
         };
 
         // Create timestamp
         let timestamp = chrono::Utc::now().timestamp_millis().to_string();
 
-        // Create request path for signing (includes query params if present)
-        let request_path = if let Some(params) = query_params {
-            format!("{}{}{}", endpoint, "?", params)
-        } else {
-            endpoint.to_string()
-        };
-
         // Create signature
-        let body_str = body.unwrap_or("");
-        let signature = self.sign_request(&timestamp, method.as_str(), &request_path, body_str)?;
+        let signature = self.sign_request(&timestamp, method.as_str(), &request_path, &body_str)?;
 
         // Build request
-        let mut request = self
+        let mut request_builder = self
             .client
-            .request(method, &url)
+            .request(method.clone(), &url)
             .header("X-BM-KEY", self.api_key.expose_secret())
             .header("X-BM-SIGN", signature)
             .header("X-BM-TIMESTAMP", timestamp)
             .header("Content-Type", "application/json");
 
-        // Add body if present
-        if let Some(body_content) = body {
-            request = request.body(body_content.to_string());
+        // Add body if present and not GET/DELETE
+        if !body_str.is_empty() && !(method == Method::GET || method == Method::DELETE) {
+            request_builder = request_builder.body(body_str.clone());
         }
 
         // Send request
-        let response = request.send().await?;
+        let response = request_builder.send().await?;
 
         // Record the request for rate limiting
         self.rate_limiter.increment_request(endpoint_type).await;
 
         // Parse response
-        let _status = response.status();
         let response_text = response.text().await?;
-
-        // Try to parse as BitMart response
         let bitmart_response: BitMartResponse<T> = serde_json::from_str(&response_text)
             .map_err(|e| Errors::Error(format!("Failed to parse response: {} - Response: {}", e, response_text)))?;
 
