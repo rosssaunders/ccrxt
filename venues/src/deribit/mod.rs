@@ -1,6 +1,6 @@
 //! Deribit trading platform implementation
 //! 
-//! This module provides rate limiting and other utilities for the Deribit API.
+//! This module provides JSON-RPC clients, rate limiting, and other utilities for the Deribit API.
 //! Deribit uses a credit-based rate limiting system with different tiers based
 //! on trading volume.
 //!
@@ -8,31 +8,32 @@
 //!
 //! ```rust
 //! use venues::deribit::{RateLimiter, AccountTier, EndpointType};
+//! use venues::deribit::public::JsonRpcClient;
 //!
 //! #[tokio::main]
 //! async fn main() -> Result<(), Box<dyn std::error::Error>> {
 //!     // Create a rate limiter for a Tier 3 account (1-25M USD trading volume)
 //!     let limiter = RateLimiter::new(AccountTier::Tier3);
 //!     
-//!     // Check if we can make a non-matching engine request (consumes 500 credits)
-//!     limiter.check_limits(EndpointType::NonMatchingEngine).await?;
+//!     // Create a public client for JSON-RPC requests
+//!     let client = reqwest::Client::new();
+//!     let public_client = JsonRpcClient::new("https://www.deribit.com/api/v2", client, limiter);
 //!     
-//!     // Record the request after making it
-//!     limiter.record_request(EndpointType::NonMatchingEngine).await;
-//!     
-//!     // Check if we can make a matching engine request (limited by tier)
-//!     limiter.check_limits(EndpointType::MatchingEngine).await?;
-//!     limiter.record_request(EndpointType::MatchingEngine).await;
-//!     
-//!     // Check rate limit status
-//!     let status = limiter.get_status().await;
-//!     println!("Available credits: {}", status.available_credits);
-//!     println!("Account tier: {:?}", status.account_tier);
+//!     // Get platform status
+//!     let status = public_client.get_status().await?;
+//!     println!("Platform locked: {}", status.locked);
+//!     println!("Locked indices: {:?}", status.locked_indices);
 //!     
 //!     Ok(())
 //! }
 //! ```
 
+pub mod errors;
+pub mod jsonrpc;
+pub mod public;
 pub mod rate_limit;
 
+// Re-export commonly used types
+pub use errors::{DeribitError, DeribitResult};
+pub use jsonrpc::{JsonRpcRequest, JsonRpcResponse, JsonRpcError};
 pub use rate_limit::*;

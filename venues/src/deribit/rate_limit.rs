@@ -46,6 +46,8 @@ pub enum EndpointType {
     MatchingEngine,
     /// Special case: public/get_instruments (1 req per 10s, burst of 5)
     PublicGetInstruments,
+    /// Public status endpoint (non-matching engine, 500 credits)
+    PublicStatus,
 }
 
 impl EndpointType {
@@ -55,6 +57,7 @@ impl EndpointType {
             EndpointType::NonMatchingEngine => 500,
             EndpointType::MatchingEngine => 0, // Uses tier-based limits, not credits
             EndpointType::PublicGetInstruments => 0, // Special time-based limit
+            EndpointType::PublicStatus => 500, // Non-matching engine endpoint
         }
     }
 
@@ -62,6 +65,10 @@ impl EndpointType {
     pub fn from_path(path: &str) -> Self {
         if path == "public/get_instruments" {
             return EndpointType::PublicGetInstruments;
+        }
+
+        if path == "public/status" {
+            return EndpointType::PublicStatus;
         }
 
         // Matching engine endpoints as per Deribit documentation
@@ -265,7 +272,7 @@ impl RateLimiter {
     /// Check if a request can be made for the given endpoint type
     pub async fn check_limits(&self, endpoint_type: EndpointType) -> Result<(), RateLimitError> {
         match endpoint_type {
-            EndpointType::NonMatchingEngine => {
+            EndpointType::NonMatchingEngine | EndpointType::PublicStatus => {
                 let mut pool = self.credit_pool.write().await;
                 pool.consume_credits(endpoint_type.credit_cost())
             }
@@ -293,7 +300,7 @@ impl RateLimiter {
     /// Record a successful request for the given endpoint type
     pub async fn record_request(&self, endpoint_type: EndpointType) {
         match endpoint_type {
-            EndpointType::NonMatchingEngine => {
+            EndpointType::NonMatchingEngine | EndpointType::PublicStatus => {
                 // Credits are already consumed in check_limits
             }
             EndpointType::MatchingEngine => {
@@ -377,6 +384,11 @@ mod tests {
         );
         
         assert_eq!(
+            EndpointType::from_path("public/status"),
+            EndpointType::PublicStatus
+        );
+        
+        assert_eq!(
             EndpointType::from_path("private/buy"),
             EndpointType::MatchingEngine
         );
@@ -417,6 +429,18 @@ mod tests {
         // Should fail - not enough credits
         assert!(pool.consume_credits(600).is_err());
         assert_eq!(pool.available_credits, 500); // Unchanged after failure
+    }
+
+    #[tokio::test]
+    async fn test_rate_limiter_public_status_endpoint() {
+        let limiter = RateLimiter::new(AccountTier::Tier4);
+        
+        // Should be able to make requests within credit limit (uses 500 credits)
+        assert!(limiter.check_limits(EndpointType::PublicStatus).await.is_ok());
+        limiter.record_request(EndpointType::PublicStatus).await;
+        
+        let status = limiter.get_status().await;
+        assert_eq!(status.available_credits, 50_000 - 500); // 500 credits consumed
     }
 
     #[tokio::test]
