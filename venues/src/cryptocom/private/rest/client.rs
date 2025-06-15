@@ -1,7 +1,8 @@
 use crate::cryptocom::Errors;
 use hmac::{Hmac, Mac};
 use rest::secrets::ExposableSecret;
-use serde_json::Value;
+use serde_json::{Value, json};
+use chrono::Utc;
 use sha2::Sha256;
 use std::borrow::Cow;
 use std::collections::BTreeMap;
@@ -147,6 +148,45 @@ impl RestClient {
             params,
             nonce,
         )
+    }
+
+    /// Sends a signed request to the Crypto.com private REST API
+    ///
+    /// Builds, signs, and sends the request, returning the parsed JSON value.
+    ///
+    /// # Arguments
+    /// * `method` - The API method name (e.g., "private/amend-order")
+    /// * `params` - The request parameters as JSON Value
+    ///
+    /// # Returns
+    /// Parsed JSON value of the response.
+    pub async fn send_signed_request(
+        &self,
+        method: &str,
+        mut params: Value,
+    ) -> crate::cryptocom::RestResult<Value> {
+        let nonce = Utc::now().timestamp_millis() as u64;
+        let id = 1;
+        let signature = self.sign_request(method, id, &params, nonce)?;
+
+        let request_body = json!({
+            "id": id,
+            "method": method,
+            "params": params,
+            "nonce": nonce,
+            "sig": signature,
+            "api_key": self.api_key.expose_secret(),
+        });
+
+        let response = self
+            .client
+            .post(format!("{}/v1/{}", self.base_url, method))
+            .json(&request_body)
+            .send()
+            .await?;
+
+        let result: Value = response.json().await?;
+        Ok(result)
     }
 }
 

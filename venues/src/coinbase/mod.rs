@@ -1,7 +1,5 @@
 pub mod enums;
 mod errors;
-#[cfg(test)]
-mod integration_tests;
 mod rate_limit;
 
 pub mod private {

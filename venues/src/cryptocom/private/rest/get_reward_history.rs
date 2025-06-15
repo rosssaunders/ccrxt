@@ -69,9 +69,6 @@ impl RestClient {
         end_time: Option<u64>,
         limit: Option<&str>,
     ) -> RestResult<Value> {
-        let nonce = chrono::Utc::now().timestamp_millis() as u64;
-        let id = 1;
-
         let mut params = json!({});
 
         if let Some(instrument) = instrument_name {
@@ -87,30 +84,7 @@ impl RestClient {
             params["limit"] = json!(lmt);
         }
 
-        let signature =
-            self.sign_request("private/staking/get-reward-history", id, &params, nonce)?;
-
-        let request_body = json!({
-            "id": id,
-            "method": "private/staking/get-reward-history",
-            "params": params,
-            "nonce": nonce,
-            "sig": signature,
-            "api_key": self.api_key.expose_secret()
-        });
-
-        let response = self
-            .client
-            .post(format!(
-                "{}/v1/private/staking/get-reward-history",
-                self.base_url
-            ))
-            .json(&request_body)
-            .send()
-            .await?;
-
-        let result: Value = response.json().await?;
-        Ok(result)
+        self.send_signed_request("private/staking/get-reward-history", params).await
     }
 }
 
