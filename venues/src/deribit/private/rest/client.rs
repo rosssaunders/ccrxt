@@ -23,7 +23,9 @@ struct JsonRpcRequest {
 /// JSON-RPC 2.0 response structure for Deribit API
 #[derive(Debug, Clone, Deserialize)]
 struct JsonRpcResponse<T> {
+    #[allow(dead_code)]
     jsonrpc: String,
+    #[allow(dead_code)]
     id: u64,
     #[serde(flatten)]
     result_or_error: JsonRpcResultOrError<T>,
@@ -40,9 +42,13 @@ enum JsonRpcResultOrError<T> {
 #[derive(Debug, Clone, Deserialize)]
 struct AuthResponse {
     access_token: String,
+    #[allow(dead_code)]
     expires_in: u64,
+    #[allow(dead_code)]
     refresh_token: String,
+    #[allow(dead_code)]
     scope: String,
+    #[allow(dead_code)]
     token_type: String,
 }
 

@@ -36,6 +36,7 @@
 mod errors;
 pub mod rate_limit;
 pub mod private;
+mod examples;
 
 pub use errors::{Errors, ErrorResponse, ApiError, RestResult};
 pub use rate_limit::*;

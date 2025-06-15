@@ -66,7 +66,7 @@ impl RestClient {
     /// * `address` - Address in currency format, it must be in address book
     /// * `amount` - Amount of funds to be withdrawn
     /// * `priority` - Withdrawal priority (optional for BTC, default: high)
-    ///               Valid values: insane, extreme_high, very_high, high, mid, low, very_low
+    ///   Valid values: insane, extreme_high, very_high, high, mid, low, very_low
     ///
     /// # Returns
     /// A result containing the withdrawal response or an error
@@ -84,7 +84,9 @@ impl RestClient {
         });
 
         if let Some(p) = priority {
-            params["priority"] = Value::String(p.to_string());
+            if let Some(params_obj) = params.as_object_mut() {
+                params_obj.insert("priority".to_string(), Value::String(p.to_string()));
+            }
         }
 
         self.send_private_request("private/withdraw", params).await
