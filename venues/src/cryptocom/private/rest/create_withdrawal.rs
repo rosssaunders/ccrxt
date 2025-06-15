@@ -94,26 +94,7 @@ impl RestClient {
             params["network_id"] = Value::String(nid.to_string());
         }
 
-        let signature = self.sign_request("private/create-withdrawal", id, &params, nonce)?;
-
-        let request_body = json!({
-            "id": id,
-            "method": "private/create-withdrawal",
-            "params": params,
-            "nonce": nonce,
-            "sig": signature,
-            "api_key": self.api_key.expose_secret()
-        });
-
-        let response = self
-            .client
-            .post(format!("{}/v1/private/create-withdrawal", self.base_url))
-            .json(&request_body)
-            .send()
-            .await?;
-
-        let result: Value = response.json().await?;
-        Ok(result)
+        self.send_signed_request("private/create-withdrawal", params).await
     }
 }
 

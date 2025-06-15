@@ -41,29 +41,7 @@ impl RestClient {
         let params = serde_json::to_value(&request)
             .map_err(|e| crate::cryptocom::Errors::Error(format!("Serialization error: {}", e)))?;
 
-        let signature = self.sign_request("private/change-account-settings", id, &params, nonce)?;
-
-        let request_body = json!({
-            "id": id,
-            "method": "private/change-account-settings",
-            "params": params,
-            "nonce": nonce,
-            "sig": signature,
-            "api_key": self.api_key.expose_secret()
-        });
-
-        let response = self
-            .client
-            .post(format!(
-                "{}/v1/private/change-account-settings",
-                self.base_url
-            ))
-            .json(&request_body)
-            .send()
-            .await?;
-
-        let result: Value = response.json().await?;
-        Ok(result)
+        self.send_signed_request("private/change-account-settings", params).await
     }
 }
 
