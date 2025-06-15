@@ -33,6 +33,13 @@
 //! }
 //! ```
 
+pub mod public;
 pub mod rate_limit;
+mod usage_example;
+
+pub use public::{DeribitMessage, DeribitWebSocketClient, HelloRequest, HelloResponse, HelloResult, JsonRpcRequest};
+pub use rate_limit::*;
+pub mod websocket;
 
 pub use rate_limit::*;
+pub use websocket::*;
