@@ -7,7 +7,7 @@
 
 use rest::secrets::SecretValue;
 use secrecy::SecretString;
-use crate::coinbase::{
+use venues::coinbase::{
     GetAccountBalancesRequest, PrivateRestClient, RateLimiter,
 };
 
