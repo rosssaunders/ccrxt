@@ -34,5 +34,9 @@
 //! ```
 
 pub mod rate_limit;
+pub mod errors;
+pub mod public;
 
 pub use rate_limit::*;
+pub use errors::*;
+pub use public::RestClient as PublicRestClient;
