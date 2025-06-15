@@ -21,6 +21,7 @@ mod get_index_candles;
 mod get_history_index_candles;
 mod get_premium_history;
 mod get_settlement_history;
+mod get_estimated_settlement_info;
 mod get_delivery_exercise_history;
 mod get_time;
 mod get_underlying;
@@ -42,6 +43,7 @@ pub use get_interest_rate_loan_quota::{BasicInterestRate, GetInterestRateLoanQuo
 pub use get_opt_summary::{GetOptSummaryRequest, GetOptSummaryResponse, OptSummary};
 pub use get_premium_history::{GetPremiumHistoryRequest, GetPremiumHistoryResponse, PremiumHistory};
 pub use get_settlement_history::{GetSettlementHistoryRequest, GetSettlementHistoryResponse, SettlementHistory, SettlementDetail};
+pub use get_estimated_settlement_info::{GetEstimatedSettlementInfoRequest, GetEstimatedSettlementInfoResponse, EstimatedSettlementInfo};
 pub use get_delivery_exercise_history::{GetDeliveryExerciseHistoryRequest, GetDeliveryExerciseHistoryResponse, DeliveryExerciseHistory, DeliveryExerciseDetail};
 pub use get_time::{GetTimeResponse, TimeData};
 pub use get_history_mark_price_candles::{BarSize, GetHistoryMarkPriceCandlesRequest, GetHistoryMarkPriceCandlesResponse, MarkPriceCandle};
