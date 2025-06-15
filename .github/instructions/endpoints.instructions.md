@@ -109,6 +109,9 @@ It also details documentation and code style requirements for all structs and fi
   ```
 - Document the method with endpoint details and a link to the official API docs.
 - Ensure the endpoint is rate-limited and authenticated as required.
+- Do NOT add "helper" functions for venue REST endpoints. Endpoint functions must match the venue API exactly, without additional abstraction or helpers.
+- Endpoint functions must take a struct for parameters, except for parameters that appear in the URL path, which may be individual arguments.
+
 
 ---
 
