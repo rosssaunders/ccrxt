@@ -34,5 +34,9 @@
 //! ```
 
 pub mod rate_limit;
+pub mod private;
+mod errors;
 
 pub use rate_limit::*;
+pub use errors::{Errors, ApiError, ErrorResponse, ErrorDetail, RestResult};
+pub use private::RestClient as PrivateRestClient;

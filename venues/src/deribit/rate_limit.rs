@@ -38,7 +38,7 @@ impl AccountTier {
 }
 
 /// Types of endpoints for Deribit rate limiting
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum EndpointType {
     /// Non-matching engine requests (500 credits each)
     NonMatchingEngine,
