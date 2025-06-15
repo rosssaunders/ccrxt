@@ -29,6 +29,8 @@
 
 pub mod enums;
 pub mod errors;
+#[cfg(test)]
+mod integration_tests;
 pub mod public;
 pub mod rate_limit;
 
