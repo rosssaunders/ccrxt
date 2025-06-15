@@ -1,4 +1,7 @@
-//! Deribit public API endpoints
+pub mod rest;
+
+pub use rest::RestClient;
+pub use rest::{GetComboIdsRequest, GetComboIdsResponse};
 
 pub mod websocket;
 

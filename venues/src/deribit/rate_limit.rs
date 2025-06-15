@@ -38,7 +38,7 @@ impl AccountTier {
 }
 
 /// Types of endpoints for Deribit rate limiting
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum EndpointType {
     /// Non-matching engine requests (500 credits each)
     NonMatchingEngine,
@@ -46,6 +46,8 @@ pub enum EndpointType {
     MatchingEngine,
     /// Special case: public/get_instruments (1 req per 10s, burst of 5)
     PublicGetInstruments,
+    /// Public combo endpoints (non-matching engine, 500 credits each)
+    PublicGetComboIds,
     /// WebSocket only: public/hello (no specific rate limit documented)
     PublicHello,
 }
@@ -57,12 +59,22 @@ impl EndpointType {
             EndpointType::NonMatchingEngine => 500,
             EndpointType::MatchingEngine => 0, // Uses tier-based limits, not credits
             EndpointType::PublicGetInstruments => 0, // Special time-based limit
+            EndpointType::PublicGetComboIds => 500, // Non-matching engine endpoint
             EndpointType::PublicHello => 0, // WebSocket only, no specific credit cost
         }
     }
 
     /// Determine endpoint type from API path
     pub fn from_path(path: &str) -> Self {
+        if path == "public/get_instruments" {
+            return EndpointType::PublicGetInstruments;
+        }
+
+        if path == "public/get_combo_ids" {
+            return EndpointType::PublicGetComboIds;
+        }
+
+        // Matching engine endpoints as per Deribit documentation
         match path {
             "public/get_instruments" => EndpointType::PublicGetInstruments,
             "public/hello" => EndpointType::PublicHello,
@@ -209,6 +221,12 @@ pub struct RateLimiter {
     get_instruments_history: RwLock<RequestHistory>,
 }
 
+impl Clone for RateLimiter {
+    fn clone(&self) -> Self {
+        Self::new(self.account_tier)
+    }
+}
+
 impl RateLimiter {
     /// Create a new rate limiter with default settings for non-matching engine requests
     /// and specified account tier for matching engine requests
@@ -265,7 +283,7 @@ impl RateLimiter {
     /// Check if a request can be made for the given endpoint type
     pub async fn check_limits(&self, endpoint_type: EndpointType) -> Result<(), RateLimitError> {
         match endpoint_type {
-            EndpointType::NonMatchingEngine => {
+            EndpointType::NonMatchingEngine | EndpointType::PublicGetComboIds => {
                 let mut pool = self.credit_pool.write().await;
                 pool.consume_credits(endpoint_type.credit_cost())
             }
@@ -297,7 +315,7 @@ impl RateLimiter {
     /// Record a successful request for the given endpoint type
     pub async fn record_request(&self, endpoint_type: EndpointType) {
         match endpoint_type {
-            EndpointType::NonMatchingEngine => {
+            EndpointType::NonMatchingEngine | EndpointType::PublicGetComboIds => {
                 // Credits are already consumed in check_limits
             }
             EndpointType::MatchingEngine => {
@@ -383,6 +401,11 @@ mod tests {
             EndpointType::PublicGetInstruments
         );
         
+        assert_eq!(
+            EndpointType::from_path("public/get_combo_ids"),
+            EndpointType::PublicGetComboIds
+        );
+
         assert_eq!(
             EndpointType::from_path("public/hello"),
             EndpointType::PublicHello
