@@ -1,10 +1,10 @@
 //! Deribit trading platform implementation
 //! 
-//! This module provides rate limiting and other utilities for the Deribit API.
+//! This module provides rate limiting, WebSocket connectivity, and other utilities for the Deribit API.
 //! Deribit uses a credit-based rate limiting system with different tiers based
 //! on trading volume.
 //!
-//! # Example Usage
+//! # Rate Limiting Example
 //!
 //! ```rust
 //! use venues::deribit::{RateLimiter, AccountTier, EndpointType};
@@ -32,7 +32,33 @@
 //!     Ok(())
 //! }
 //! ```
+//!
+//! # WebSocket Example
+//!
+//! ```rust
+//! use venues::deribit::websocket::{DeribitWebSocketClient, WebSocketConnection};
+//!
+//! #[tokio::main]
+//! async fn main() -> Result<(), Box<dyn std::error::Error>> {
+//!     let mut client = DeribitWebSocketClient::new();
+//!     
+//!     // Connect to Deribit WebSocket API
+//!     client.connect().await?;
+//!     
+//!     // Subscribe to public channels
+//!     let channels = vec!["book.BTC-PERPETUAL.100ms".to_string()];
+//!     let subscribed = client.public_subscribe(channels).await?;
+//!     println!("Subscribed to: {:?}", subscribed);
+//!     
+//!     // Disconnect when done
+//!     client.disconnect().await?;
+//!     
+//!     Ok(())
+//! }
+//! ```
 
 pub mod rate_limit;
+pub mod websocket;
 
 pub use rate_limit::*;
+pub use websocket::*;
