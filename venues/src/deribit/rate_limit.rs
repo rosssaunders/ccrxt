@@ -385,6 +385,12 @@ mod tests {
             EndpointType::from_path("private/get_account_summary"),
             EndpointType::NonMatchingEngine
         );
+        
+        // Test that public/exchange_token is classified as NonMatchingEngine (500 credits)
+        assert_eq!(
+            EndpointType::from_path("public/exchange_token"),
+            EndpointType::NonMatchingEngine
+        );
     }
 
     #[tokio::test]
