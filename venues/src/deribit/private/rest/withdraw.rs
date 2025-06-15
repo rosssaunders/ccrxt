@@ -1,7 +1,6 @@
 use super::client::RestClient;
 use crate::deribit::{Currency, EndpointType, RestResult, WithdrawalPriority, WithdrawalState};
 use serde::{Deserialize, Serialize};
-use serde_json::json;
 
 /// Request parameters for withdrawal
 #[derive(Debug, Clone, Serialize)]
@@ -81,61 +80,14 @@ impl RestClient {
         amount: f64,
         priority: Option<WithdrawalPriority>,
     ) -> RestResult<WithdrawResponse> {
-        // Check rate limits before making the request
-        self.rate_limiter.check_limits(EndpointType::NonMatchingEngine).await?;
-
-        let nonce = chrono::Utc::now().timestamp_millis() as u64;
-        let request_id = 1;
-
-        // Create request parameters
-        let mut params = json!({
-            "currency": currency.to_string(),
-            "address": address,
-            "amount": amount
-        });
-
-        // Add priority if specified
-        if let Some(p) = priority {
-            params["priority"] = json!(p.to_string());
-        }
-
-        // Create the full request data
-        let request_data = json!({
-            "jsonrpc": "2.0",
-            "id": request_id,
-            "method": "private/withdraw",
-            "params": params
-        });
-
-        // Sign the request
-        let request_data_str = serde_json::to_string(&request_data)?;
-        let signature = self.sign_request(&request_data_str, nonce, request_id)?;
-
-        // Create the final request with authentication
-        let authenticated_request = json!({
-            "jsonrpc": "2.0",
-            "id": request_id,
-            "method": "private/withdraw",
-            "params": params,
-            "sig": signature,
-            "nonce": nonce,
-            "api_key": self.api_key.expose_secret()
-        });
-
-        // Make the request
-        let response = self
-            .client
-            .post(format!("{}/api/v2/private/withdraw", self.base_url))
-            .json(&authenticated_request)
-            .send()
-            .await?;
-
-        // Record the request for rate limiting
-        self.rate_limiter.record_request(EndpointType::NonMatchingEngine).await;
-
-        // Parse the response
-        let result: WithdrawResponse = response.json().await?;
-        Ok(result)
+        let request = WithdrawRequest {
+            currency,
+            address: address.to_string(),
+            amount,
+            priority,
+        };
+        self.send_signed_request("private/withdraw", &request, EndpointType::NonMatchingEngine)
+            .await
     }
 }
 

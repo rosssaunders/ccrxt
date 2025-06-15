@@ -1,7 +1,6 @@
 use super::client::RestClient;
 use crate::deribit::{EndpointType, RestResult};
 use serde::{Deserialize, Serialize};
-use serde_json::json;
 
 /// Request parameters for submit transfer to user
 #[derive(Debug, Clone, Serialize)]
@@ -72,56 +71,17 @@ impl RestClient {
         amount: f64,
         destination: &str,
     ) -> RestResult<SubmitTransferToUserResponse> {
-        // Check rate limits before making the request
-        self.rate_limiter.check_limits(EndpointType::NonMatchingEngine).await?;
-
-        let nonce = chrono::Utc::now().timestamp_millis() as u64;
-        let request_id = 1;
-
-        // Create request parameters
-        let params = json!({
-            "currency": currency,
-            "amount": amount,
-            "destination": destination
-        });
-
-        // Create the full request data
-        let request_data = json!({
-            "jsonrpc": "2.0",
-            "id": request_id,
-            "method": "private/submit_transfer_to_user",
-            "params": params
-        });
-
-        // Sign the request
-        let request_data_str = serde_json::to_string(&request_data)?;
-        let signature = self.sign_request(&request_data_str, nonce, request_id)?;
-
-        // Create the final request with authentication
-        let authenticated_request = json!({
-            "jsonrpc": "2.0",
-            "id": request_id,
-            "method": "private/submit_transfer_to_user",
-            "params": params,
-            "sig": signature,
-            "nonce": nonce,
-            "api_key": self.api_key.expose_secret()
-        });
-
-        // Make the request
-        let response = self
-            .client
-            .post(format!("{}/api/v2/private/submit_transfer_to_user", self.base_url))
-            .json(&authenticated_request)
-            .send()
-            .await?;
-
-        // Record the request for rate limiting
-        self.rate_limiter.record_request(EndpointType::NonMatchingEngine).await;
-
-        // Parse the response
-        let result: SubmitTransferToUserResponse = response.json().await?;
-        Ok(result)
+        let request = SubmitTransferToUserRequest {
+            currency: currency.to_string(),
+            amount,
+            destination: destination.to_string(),
+        };
+        self.send_signed_request(
+            "private/submit_transfer_to_user",
+            &request,
+            EndpointType::NonMatchingEngine,
+        )
+        .await
     }
 }
 

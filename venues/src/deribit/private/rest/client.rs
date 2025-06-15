@@ -1,9 +1,13 @@
-use crate::deribit::{Errors, RateLimiter};
+use crate::deribit::{Errors, RateLimiter, EndpointType, RestResult};
 use hmac::{Hmac, Mac};
 use reqwest::Client;
 use rest::secrets::ExposableSecret;
 use sha2::Sha256;
 use std::borrow::Cow;
+use serde::de::DeserializeOwned;
+use serde::Serialize;
+use serde_json::json;
+use chrono::Utc;
 
 /// Private REST client for Deribit exchange
 ///
@@ -84,6 +88,63 @@ impl RestClient {
         mac.update(sig_payload.as_bytes());
 
         Ok(hex::encode(mac.finalize().into_bytes()))
+    }
+
+    /// Send a signed private request to Deribit API, handling serialization and rate limiting.
+    pub async fn send_signed_request<T, P>(
+        &self,
+        method: &str,
+        params: &P,
+        endpoint_type: EndpointType,
+    ) -> RestResult<T>
+    where
+        T: DeserializeOwned,
+        P: Serialize + ?Sized,
+    {
+        // Rate limiting
+        self.rate_limiter
+            .check_limits(endpoint_type)
+            .await?;
+
+        let nonce = Utc::now().timestamp_millis() as u64;
+        let request_id = 1;
+
+        // Prepare the JSON-RPC request body for signing
+        let request_data = json!({
+            "jsonrpc": "2.0",
+            "id": request_id,
+            "method": method,
+            "params": params,
+        });
+        let request_data_str =
+            serde_json::to_string(&request_data).map_err(Errors::SerdeJsonError)?;
+        let signature = self.sign_request(&request_data_str, nonce, request_id)?;
+
+        // Prepare authenticated request
+        let authenticated_request = json!({
+            "jsonrpc": "2.0",
+            "id": request_id,
+            "method": method,
+            "params": params,
+            "sig": signature,
+            "nonce": nonce,
+            "api_key": self.api_key.expose_secret(),
+        });
+
+        // Send HTTP request
+        let resp = self
+            .client
+            .post(format!("{}/api/v2/{}", self.base_url, method))
+            .json(&authenticated_request)
+            .send()
+            .await?;
+
+        // Record request for rate limiting
+        self.rate_limiter.record_request(endpoint_type).await;
+
+        // Deserialize response
+        let result = resp.json::<T>().await?;
+        Ok(result)
     }
 }
 
