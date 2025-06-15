@@ -36,6 +36,7 @@ mod enums;
 mod integration_tests;
 pub mod rate_limit;
 mod usage_example; // Assuming this is a valid module, if not, it might need removal or fixing.
+pub mod websocket;
 
 pub mod public {
     pub mod rest;
@@ -62,6 +63,7 @@ pub mod private {
 pub use enums::*;
 pub use errors::{ApiError, ErrorResponse, Errors};
 pub use rate_limit::*;
+pub use websocket::{WebSocketClient, DeribitWebSocketError};
 
 pub use public::RestClient as PublicRestClient;
 pub use public::{

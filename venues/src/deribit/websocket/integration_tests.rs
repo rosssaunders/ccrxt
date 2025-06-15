@@ -39,6 +39,20 @@ mod tests {
         println!("unsubscribe_all method can be called and returns appropriate error when not connected");
     }
 
+    #[tokio::test]
+    async fn test_disable_heartbeat_method_signature() {
+        let mut client = create_test_client();
+        
+        // This test verifies that the disable_heartbeat method has the correct signature
+        // and can be called (even though it will fail without a connection)
+        let result = client.disable_heartbeat().await;
+        
+        // Should fail because we're not connected
+        assert!(result.is_err());
+        
+        println!("disable_heartbeat method can be called and returns appropriate error when not connected");
+    }
+
     #[test]
     fn test_websocket_trait_implementation() {
         let mut client = create_test_client();

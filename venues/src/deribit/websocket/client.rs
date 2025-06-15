@@ -150,6 +150,97 @@ impl WebSocketClient {
             }
         }
     }
+
+    /// Send a disable_heartbeat request and wait for the response
+    pub async fn disable_heartbeat(&mut self) -> Result<String, DeribitWebSocketError> {
+        // Check rate limits for public endpoints (using NonMatchingEngine type)
+        self.rate_limiter
+            .check_limits(EndpointType::NonMatchingEngine)
+            .await?;
+
+        let request_id = self.next_request_id.fetch_add(1, Ordering::SeqCst);
+        let request = JsonRpcRequest::disable_heartbeat(request_id);
+
+        // Create a channel for the response (not used in this simplified implementation)
+        let (_response_sender, _response_receiver) = tokio::sync::oneshot::channel::<JsonRpcResponse>();
+
+        // Send the request
+        if let Some(ref mut ws) = self.websocket {
+            let message_text = serde_json::to_string(&request)?;
+            ws.send(Message::Text(message_text.into())).await
+                .map_err(|e| DeribitWebSocketError::Connection(e.to_string()))?;
+        } else {
+            return Err(DeribitWebSocketError::Connection("Not connected".to_string()));
+        }
+
+        // Record the request for rate limiting
+        self.rate_limiter
+            .record_request(EndpointType::NonMatchingEngine)
+            .await;
+
+        // Process messages until we get our response
+        let mut response_result = None;
+        let timeout = tokio::time::timeout(
+            std::time::Duration::from_secs(30),
+            async {
+                loop {
+                    if let Some(ref mut ws) = self.websocket {
+                        if let Some(msg) = ws.next().await {
+                            match msg {
+                                Ok(Message::Text(text)) => {
+                                    if let Ok(deribit_msg) = serde_json::from_str::<DeribitMessage>(&text) {
+                                        if let DeribitMessage::Response(response) = deribit_msg {
+                                            if response.id == request_id {
+                                                response_result = Some(response);
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                                Ok(Message::Close(_)) => {
+                                    self.is_connected.store(false, Ordering::SeqCst);
+                                    break;
+                                }
+                                Err(e) => {
+                                    return Err(DeribitWebSocketError::Connection(e.to_string()));
+                                }
+                                _ => {} // Ignore other message types
+                            }
+                        }
+                    }
+                }
+                Ok(())
+            }
+        ).await;
+
+        // Clean up pending request
+        {
+            let mut pending = self.pending_requests.lock().await;
+            pending.remove(&request_id);
+        }
+
+        match timeout {
+            Err(_) => Err(DeribitWebSocketError::Timeout { id: request_id }),
+            Ok(Err(e)) => Err(e),
+            Ok(Ok(_)) => {
+                if let Some(response) = response_result {
+                    // Check for JSON-RPC errors
+                    if let Some(error) = response.error {
+                        return Err(DeribitWebSocketError::JsonRpc {
+                            code: error.code,
+                            message: error.message,
+                        });
+                    }
+
+                    // Return the result
+                    response.result_as_string()
+                        .ok_or(DeribitWebSocketError::InvalidResponse { id: request_id })
+                } else {
+                    Err(DeribitWebSocketError::InvalidResponse { id: request_id })
+                }
+            }
+        }
+    }
 }
 
 #[async_trait]
@@ -235,6 +326,16 @@ mod tests {
         let mut client = WebSocketClient::new(rate_limiter);
         
         let result = client.unsubscribe_all().await;
+        assert!(result.is_err());
+        assert!(matches!(result.unwrap_err(), DeribitWebSocketError::Connection(_)));
+    }
+
+    #[tokio::test]
+    async fn test_disable_heartbeat_without_connection() {
+        let rate_limiter = RateLimiter::new(AccountTier::Tier4);
+        let mut client = WebSocketClient::new(rate_limiter);
+        
+        let result = client.disable_heartbeat().await;
         assert!(result.is_err());
         assert!(matches!(result.unwrap_err(), DeribitWebSocketError::Connection(_)));
     }

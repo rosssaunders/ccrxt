@@ -97,6 +97,16 @@ impl JsonRpcRequest {
             params: None,
         }
     }
+
+    /// Create a new disable_heartbeat request
+    pub fn disable_heartbeat(id: u64) -> Self {
+        Self {
+            jsonrpc: "2.0".to_string(),
+            id,
+            method: "public/disable_heartbeat".to_string(),
+            params: None,
+        }
+    }
 }
 
 impl JsonRpcResponse {
@@ -133,6 +143,16 @@ mod tests {
         assert_eq!(request.jsonrpc, "2.0");
         assert_eq!(request.id, 456);
         assert_eq!(request.method, "public/unsubscribe_all");
+        assert!(request.params.is_none());
+    }
+
+    #[test]
+    fn test_json_rpc_request_disable_heartbeat() {
+        let request = JsonRpcRequest::disable_heartbeat(789);
+        
+        assert_eq!(request.jsonrpc, "2.0");
+        assert_eq!(request.id, 789);
+        assert_eq!(request.method, "public/disable_heartbeat");
         assert!(request.params.is_none());
     }
 
