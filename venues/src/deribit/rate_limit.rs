@@ -385,6 +385,12 @@ mod tests {
             EndpointType::from_path("private/get_account_summary"),
             EndpointType::NonMatchingEngine
         );
+        
+        // Test the new endpoint
+        assert_eq!(
+            EndpointType::from_path("private/submit_transfer_to_subaccount"),
+            EndpointType::NonMatchingEngine
+        );
     }
 
     #[tokio::test]

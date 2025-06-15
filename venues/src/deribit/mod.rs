@@ -33,6 +33,13 @@
 //! }
 //! ```
 
+mod errors;
 pub mod rate_limit;
+pub mod private;
 
+pub use errors::{ApiError, ErrorResponse, Errors};
+pub use private::RestClient as PrivateRestClient;
 pub use rate_limit::*;
+
+/// Type alias for results returned by Deribit API operations
+pub type RestResult<T> = Result<T, Errors>;
