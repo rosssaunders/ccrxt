@@ -8,7 +8,7 @@ This module provides a comprehensive implementation of the Coinbase Exchange pri
 - **Shared Enums**: Common trading enums (OrderSide, OrderType, TimeInForce, etc.)
 - **Error Modeling**: Comprehensive error handling with Coinbase-specific error mapping
 - **Private REST Client**: Full authentication with HMAC SHA256 signatures
-- **Get Balances Endpoint**: Implementation of the account balances endpoint
+- **Get Balances Endpoint**: Implementation of the account balances endpoint with cursor pagination support
 
 ## Quick Start
 
@@ -81,7 +81,7 @@ cargo test coinbase
 
 ### Endpoints
 
-- `get_account_balances()`: Get all account balances with optional pagination
+- `get_account_balances()`: Get all account balances with cursor pagination support (before/after cursors)
 
 ### Rate Limiter
 

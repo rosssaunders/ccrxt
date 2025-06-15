@@ -107,6 +107,122 @@ impl RestClient {
         Ok(general_purpose::STANDARD.encode(mac.finalize().into_bytes()))
     }
 
+    /// Send a request to a private endpoint and return both data and headers
+    ///
+    /// # Arguments
+    /// * `endpoint` - The API endpoint path (without leading slash)
+    /// * `method` - The HTTP method to use
+    /// * `params` - Optional query parameters or request body
+    /// * `endpoint_type` - The type of endpoint for rate limiting
+    ///
+    /// # Returns
+    /// A result containing the deserialized response and headers or an error
+    pub async fn send_request_with_headers<T, P>(
+        &self,
+        endpoint: &str,
+        method: reqwest::Method,
+        params: Option<&P>,
+        endpoint_type: EndpointType,
+    ) -> RestResult<(T, reqwest::header::HeaderMap)>
+    where
+        T: DeserializeOwned,
+        P: Serialize + ?Sized,
+    {
+        // Check rate limit before making request
+        self.rate_limiter.check_limit(endpoint_type).await?;
+
+        // Create timestamp
+        let timestamp = Utc::now().timestamp().to_string();
+
+        // Build URL and request
+        let url = format!("{}/{}", self.base_url, endpoint);
+        let mut request_builder = self.client.request(method.clone(), &url);
+
+        // Handle request body and path
+        let (request_path, body) = if method == reqwest::Method::GET {
+            // For GET requests, add query parameters
+            if let Some(params) = params {
+                let query_string = serde_urlencoded::to_string(params)
+                    .map_err(|e| Errors::Error(format!("Failed to serialize query parameters: {}", e)))?;
+                if !query_string.is_empty() {
+                    // Parse the query string and add individual parameters
+                    let parsed_params: Vec<(String, String)> = serde_urlencoded::from_str(&query_string)
+                        .map_err(|e| Errors::Error(format!("Failed to parse query parameters: {}", e)))?;
+                    for (key, value) in &parsed_params {
+                        request_builder = request_builder.query(&[(key, value)]);
+                    }
+                    (format!("/{}?{}", endpoint, query_string), String::new())
+                } else {
+                    (format!("/{}", endpoint), String::new())
+                }
+            } else {
+                (format!("/{}", endpoint), String::new())
+            }
+        } else {
+            // For POST/PUT/DELETE requests, add JSON body
+            let body = if let Some(params) = params {
+                serde_json::to_string(params)
+                    .map_err(|e| Errors::Error(format!("Failed to serialize request body: {}", e)))?
+            } else {
+                String::new()
+            };
+
+            if !body.is_empty() {
+                request_builder = request_builder.body(body.clone());
+                request_builder = request_builder.header("Content-Type", "application/json");
+            }
+
+            (format!("/{}", endpoint), body)
+        };
+
+        // Create signature
+        let signature = self.sign_request(&timestamp, method.as_str(), &request_path, &body)?;
+
+        // Add required headers
+        let api_key = self.api_key.expose_secret();
+        let api_passphrase = self.api_passphrase.expose_secret();
+
+        request_builder = request_builder
+            .header("CB-ACCESS-KEY", api_key)
+            .header("CB-ACCESS-SIGN", signature)
+            .header("CB-ACCESS-TIMESTAMP", timestamp)
+            .header("CB-ACCESS-PASSPHRASE", api_passphrase)
+            .header("User-Agent", "ccrxt/0.1.0");
+
+        // Send request
+        let response = request_builder.send().await?;
+
+        // Check response status and capture headers
+        let status = response.status();
+        let headers = response.headers().clone();
+        let response_text = response.text().await?;
+
+        if status.is_success() {
+            // Parse successful response
+            let data = serde_json::from_str::<T>(&response_text)
+                .map_err(|e| Errors::Error(format!("Failed to parse response: {}", e)))?;
+            Ok((data, headers))
+        } else {
+            // Parse error response
+            if let Ok(error_response) = serde_json::from_str::<crate::coinbase::ErrorResponse>(&response_text) {
+                match status.as_u16() {
+                    400 => Err(Errors::ApiError(crate::coinbase::ApiError::BadRequest { msg: error_response.message })),
+                    401 => Err(Errors::ApiError(crate::coinbase::ApiError::Unauthorized { msg: error_response.message })),
+                    403 => Err(Errors::ApiError(crate::coinbase::ApiError::Forbidden { msg: error_response.message })),
+                    404 => Err(Errors::ApiError(crate::coinbase::ApiError::NotFound { msg: error_response.message })),
+                    429 => Err(Errors::ApiError(crate::coinbase::ApiError::TooManyRequests { msg: error_response.message })),
+                    500 => Err(Errors::ApiError(crate::coinbase::ApiError::InternalServerError { msg: error_response.message })),
+                    _ => Err(Errors::ApiError(crate::coinbase::ApiError::UnknownApiError { 
+                        code: Some(status.as_u16() as i32), 
+                        msg: error_response.message 
+                    })),
+                }
+            } else {
+                Err(Errors::Error(format!("HTTP {}: {}", status, response_text)))
+            }
+        }
+    }
+
     /// Send a request to a private endpoint
     ///
     /// # Arguments
