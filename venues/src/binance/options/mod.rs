@@ -3,8 +3,14 @@
 //! This module provides rate limiting and error handling for Binance Options API endpoints.
 //! The Options API uses /eapi/v1/ endpoints and has its own rate limiting rules.
 
+use std::time::Duration;
+
 pub mod errors;
 pub mod rate_limit;
+
+// Private API module
+mod private;
+pub use private::RestClient as PrivateRestClient;
 
 pub use errors::*;
 pub use rate_limit::{
@@ -19,6 +25,17 @@ pub use enums::*;
 
 // Re-export compatible enums from coinm where appropriate
 pub use crate::binance::coinm::{KlineInterval, OrderResponseType, OrderSide, TimeInForce};
+
+/// Response structure for Binance Options API requests
+#[derive(Debug, Clone)]
+pub struct RestResponse<T> {
+    pub data: T,
+    pub request_duration: Duration,
+    pub headers: ResponseHeaders,
+}
+
+/// Type alias for results returned by Binance Options API operations
+pub type RestResult<T> = Result<RestResponse<T>, Errors>;
 
 #[cfg(test)]
 mod tests {
