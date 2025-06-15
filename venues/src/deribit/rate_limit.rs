@@ -88,7 +88,7 @@ impl EndpointType {
             | "private/cancel" | "private/cancel_by_label" | "private/cancel_all"
             | "private/cancel_all_by_instrument" | "private/cancel_all_by_currency"
             | "private/cancel_all_by_kind_or_type" | "private/close_position"
-            | "private/verify_block_trade" | "private/execute_block_trade"
+            | "private/verify_block_trade" | "private/execute_block_trade" | "private/simulate_block_trade"
             | "private/move_positions" | "private/mass_quote" | "private/cancel_quotes"
             | "private/add_block_rfq_quote" | "private/edit_block_rfq_quote"
             | "private/cancel_block_rfq_quote" | "private/cancel_all_block_rfq_quotes" => {
