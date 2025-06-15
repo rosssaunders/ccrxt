@@ -1,34 +1,29 @@
-use rest::secrets::ExposableSecret;
+use crate::deribit::{Errors, RateLimiter};
+use hmac::{Hmac, Mac};
 use reqwest::Client;
-use serde_json::Value;
+use rest::secrets::ExposableSecret;
+use sha2::Sha256;
 use std::borrow::Cow;
 
-use crate::deribit::{RateLimiter, Errors};
-
-/// REST client for Deribit private endpoints
+/// Private REST client for Deribit exchange
+///
+/// This client handles all private API endpoints that require authentication.
+/// It provides automatic rate limiting, error handling, and request signing.
 pub struct RestClient {
-    /// HTTP client for making requests
-    pub client: Client,
-    /// API key for authentication
-    pub api_key: Box<dyn ExposableSecret>,
-    /// API secret for signing requests
-    pub api_secret: Box<dyn ExposableSecret>,
-    /// Base URL for the API
+    /// The base URL for the Deribit private REST API
     pub base_url: Cow<'static, str>,
-    /// Rate limiter to respect API limits
+    
+    /// The underlying HTTP client used for making requests
+    pub client: Client,
+    
+    /// The rate limiter used to manage request rates
     pub rate_limiter: RateLimiter,
-}
-
-impl std::fmt::Debug for RestClient {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("RestClient")
-            .field("client", &self.client)
-            .field("api_key", &"[REDACTED]")
-            .field("api_secret", &"[REDACTED]")
-            .field("base_url", &self.base_url)
-            .field("rate_limiter", &self.rate_limiter)
-            .finish()
-    }
+    
+    /// The encrypted API key
+    pub(crate) api_key: Box<dyn ExposableSecret>,
+    
+    /// The encrypted API secret
+    pub(crate) api_secret: Box<dyn ExposableSecret>,
 }
 
 impl RestClient {
@@ -37,9 +32,9 @@ impl RestClient {
     /// # Arguments
     /// * `api_key` - The encrypted API key
     /// * `api_secret` - The encrypted API secret
-    /// * `base_url` - The base URL for the API (e.g., "https://www.deribit.com/api/v2")
-    /// * `client` - The HTTP client to use
-    /// * `rate_limiter` - Rate limiter for respecting API limits
+    /// * `base_url` - The base URL for the API
+    /// * `rate_limiter` - The rate limiter instance
+    /// * `client` - The HTTP client instance
     ///
     /// # Returns
     /// A new RestClient instance
@@ -47,38 +42,48 @@ impl RestClient {
         api_key: Box<dyn ExposableSecret>,
         api_secret: Box<dyn ExposableSecret>,
         base_url: impl Into<Cow<'static, str>>,
-        client: Client,
         rate_limiter: RateLimiter,
+        client: Client,
     ) -> Self {
         Self {
+            base_url: base_url.into(),
             client,
+            rate_limiter,
             api_key,
             api_secret,
-            base_url: base_url.into(),
-            rate_limiter,
         }
     }
 
-    /// Creates authentication headers for Deribit API requests
+    /// Signs a request for Deribit private endpoints
     ///
-    /// For Deribit, we'll use basic API key authentication
-    /// This is a simplified implementation - in a real scenario, you might need
-    /// more sophisticated authentication like OAuth or HMAC signing
+    /// The Deribit signing algorithm:
+    /// 1. Create a message string: request_data + nonce + request_id
+    /// 2. Use HMAC-SHA256 to hash using API Secret as cryptographic key
+    /// 3. Encode output as hex string
     ///
     /// # Arguments
-    /// * `method` - The API method name
-    /// * `params` - The request parameters as JSON Value
+    /// * `request_data` - The request data as JSON string
+    /// * `nonce` - The nonce value
+    /// * `request_id` - The request ID
     ///
     /// # Returns
-    /// A result containing the authentication token or an error
-    pub fn create_auth_token(
+    /// A result containing the signature as a hex string or an error
+    pub fn sign_request(
         &self,
-        _method: &str,
-        _params: &Value,
+        request_data: &str,
+        nonce: u64,
+        request_id: u64,
     ) -> Result<String, Errors> {
-        // For this implementation, we'll use the API key directly
-        // In a real implementation, this might involve creating a JWT or similar
-        Ok(self.api_key.expose_secret())
+        // Create the signature payload: request_data + nonce + request_id
+        let sig_payload = format!("{}{}{}", request_data, nonce, request_id);
+
+        // Sign with HMAC-SHA256
+        let api_secret = self.api_secret.expose_secret();
+        let mut mac = Hmac::<Sha256>::new_from_slice(api_secret.as_bytes())
+            .map_err(|_| Errors::InvalidApiKey())?;
+        mac.update(sig_payload.as_bytes());
+
+        Ok(hex::encode(mac.finalize().into_bytes()))
     }
 }
 
@@ -86,73 +91,66 @@ impl RestClient {
 mod tests {
     use super::*;
     use crate::deribit::AccountTier;
-    use serde_json::json;
 
-    /// A plain text implementation of ExposableSecret for testing purposes.
-    ///
-    /// **WARNING**: This implementation stores the secret in plain text and should
-    /// only be used for testing. Never use this in production code.
+    // Test secret implementation
     #[derive(Clone)]
-    struct PlainTextSecret {
+    struct TestSecret {
         secret: String,
     }
 
-    impl ExposableSecret for PlainTextSecret {
-        fn expose_secret(&self) -> String {
-            self.secret.clone()
-        }
-    }
-
-    impl PlainTextSecret {
-        /// Creates a new PlainTextSecret with the given secret.
-        ///
-        /// **WARNING**: This implementation should only be used for testing.
+    impl TestSecret {
         fn new(secret: String) -> Self {
             Self { secret }
         }
     }
 
-    #[test]
-    fn test_rest_client_creation() {
-        let api_key = Box::new(PlainTextSecret::new("test_key".to_string()));
-        let api_secret = Box::new(PlainTextSecret::new("test_secret".to_string()));
-        let client = Client::new();
-        let rate_limiter = RateLimiter::new(AccountTier::Tier3);
-
-        let rest_client = RestClient::new(
-            api_key,
-            api_secret,
-            "https://www.deribit.com/api/v2",
-            client,
-            rate_limiter,
-        );
-
-        assert_eq!(rest_client.base_url, "https://www.deribit.com/api/v2");
+    impl ExposableSecret for TestSecret {
+        fn expose_secret(&self) -> String {
+            self.secret.clone()
+        }
     }
 
     #[test]
-    fn test_auth_token_creation() {
-        let api_key = Box::new(PlainTextSecret::new("test_key".to_string()));
-        let api_secret = Box::new(PlainTextSecret::new("test_secret".to_string()));
+    fn test_private_client_creation() {
+        let api_key = Box::new(TestSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
+        let api_secret = Box::new(TestSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
         let client = Client::new();
-        let rate_limiter = RateLimiter::new(AccountTier::Tier3);
+        let rate_limiter = RateLimiter::new(AccountTier::Tier4);
 
         let rest_client = RestClient::new(
             api_key,
             api_secret,
-            "https://www.deribit.com/api/v2",
-            client,
+            "https://test.deribit.com",
             rate_limiter,
+            client,
         );
 
-        let params = json!({
-            "currency": "BTC",
-            "amount": 100,
-            "destination": 12345
-        });
+        assert_eq!(rest_client.base_url, "https://test.deribit.com");
+    }
 
-        let result = rest_client.create_auth_token("private/submit_transfer_to_subaccount", &params);
+    #[test]
+    fn test_signature_generation() {
+        let api_key = Box::new(TestSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
+        let api_secret = Box::new(TestSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let client = Client::new();
+        let rate_limiter = RateLimiter::new(AccountTier::Tier4);
+
+        let rest_client = RestClient::new(
+            api_key,
+            api_secret,
+            "https://test.deribit.com",
+            rate_limiter,
+            client,
+        );
+
+        let result = rest_client.sign_request(
+            "test_data",
+            1234567890,
+            1,
+        );
+
         assert!(result.is_ok());
-        assert_eq!(result.unwrap(), "test_key");
+        let signature = result.unwrap();
+        assert!(!signature.is_empty());
     }
 }

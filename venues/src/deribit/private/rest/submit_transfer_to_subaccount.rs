@@ -127,39 +127,54 @@ impl RestClient {
         amount: f64,
         destination: i32,
     ) -> RestResult<TransferResult> {
-        let method = "private/submit_transfer_to_subaccount";
-        
         // Check rate limits before making the request
-        self.rate_limiter.check_limits(EndpointType::from_path(method)).await?;
+        self.rate_limiter.check_limits(EndpointType::from_path("private/submit_transfer_to_subaccount")).await?;
 
+        let nonce = chrono::Utc::now().timestamp_millis() as u64;
+        let request_id = 1;
+
+        // Create request parameters
         let params = json!({
             "currency": currency.as_str(),
             "amount": amount,
             "destination": destination
         });
 
-        let auth_token = self.create_auth_token(method, &params)?;
-
-        // Create JSON-RPC request
-        let request_body = json!({
+        // Create the full request data
+        let request_data = json!({
             "jsonrpc": "2.0",
-            "id": 1,
-            "method": method,
+            "id": request_id,
+            "method": "private/submit_transfer_to_subaccount",
             "params": params
         });
 
+        // Sign the request
+        let request_data_str = serde_json::to_string(&request_data)?;
+        let signature = self.sign_request(&request_data_str, nonce, request_id)?;
+
+        // Create the final request with authentication
+        let authenticated_request = json!({
+            "jsonrpc": "2.0",
+            "id": request_id,
+            "method": "private/submit_transfer_to_subaccount",
+            "params": params,
+            "sig": signature,
+            "nonce": nonce,
+            "api_key": self.api_key.expose_secret()
+        });
+
+        // Make the request
         let response = self
             .client
-            .post(self.base_url.as_ref())
-            .header("Authorization", format!("Bearer {}", auth_token))
-            .header("Content-Type", "application/json")
-            .json(&request_body)
+            .post(format!("{}/api/v2/private/submit_transfer_to_subaccount", self.base_url))
+            .json(&authenticated_request)
             .send()
             .await?;
 
-        // Record the request after making it
-        self.rate_limiter.record_request(EndpointType::from_path(method)).await;
+        // Record the request for rate limiting
+        self.rate_limiter.record_request(EndpointType::from_path("private/submit_transfer_to_subaccount")).await;
 
+        // Parse the response
         let result: SubmitTransferToSubaccountResponse = response.json().await?;
         Ok(result.result)
     }
