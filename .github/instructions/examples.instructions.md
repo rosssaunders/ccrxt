@@ -12,6 +12,6 @@ applyTo: "**"
   - Use only public APIs from the venue crate.
   - Include comments explaining each major step.
 - Unit tests for example code may be included in the same file, but should not require network access or credentials.
-- Integration tests must NOT be placed here; they belong in the `tests/` directory at the repo root.
+- Integration tests must NOT be placed here; they belong in the `tests/` directory at the repo root. Integration tests must only be in the `tests/` directory, never in examples or source files.
 - If the example demonstrates a public endpoint, it should not require credentials. If credentials are required, document how to provide them securely (never hard-code secrets).
 - Follow the project's general coding and documentation standards.

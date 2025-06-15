@@ -114,26 +114,7 @@ impl RestClient {
         let id = 1;
         let params = serde_json::to_value(&request)?;
 
-        let signature = self.sign_request("private/create-order-list", id, &params, nonce)?;
-
-        let request_body = json!({
-            "id": id,
-            "method": "private/create-order-list",
-            "params": params,
-            "nonce": nonce,
-            "sig": signature,
-            "api_key": self.api_key.expose_secret()
-        });
-
-        let response = self
-            .client
-            .post(format!("{}/v1/private/create-order-list", self.base_url))
-            .json(&request_body)
-            .send()
-            .await?;
-
-        let result: Value = response.json().await?;
-        Ok(result)
+        self.send_signed_request("private/create-order-list", params).await
     }
 }
 

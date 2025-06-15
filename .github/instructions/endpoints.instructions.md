@@ -109,6 +109,51 @@ It also details documentation and code style requirements for all structs and fi
   ```
 - Document the method with endpoint details and a link to the official API docs.
 - Ensure the endpoint is rate-limited and authenticated as required.
+- Do NOT add "helper" functions for venue REST endpoints. Endpoint functions must match the venue API exactly, without additional abstraction or helpers.
+- Endpoint functions must take a struct for parameters, except for parameters that appear in the URL path, which may be individual arguments.
+
+
+---
+
+## **Parameter Struct Rule (MANDATORY)**
+
+- **All endpoint functions MUST take a single struct for parameters.**
+- **Do NOT use individual function arguments for endpoint parameters (except for URL path parameters).**
+- The ONLY exception is for parameters that are part of the URL path (not query/body), which may be passed as individual arguments.
+- This rule is mandatory for all new and existing endpoints.
+
+### Common Mistakes to Avoid
+- ❌ `pub async fn foo(&self, a: String, b: u64)`
+- ✅ `pub async fn foo(&self, params: FooRequest)`
+- Do not split parameters into multiple arguments unless they are part of the URL path.
+
+### Parameter Struct Checklist
+| Rule | Allowed | Not Allowed |
+|------|---------|-------------|
+| Endpoint params as struct | ✅ | ❌ |
+| Multiple params (not in path) | ❌ | ✅ |
+
+### Example (Correct)
+```rust
+pub async fn submit_transfer_to_user(
+    &self,
+    params: SubmitTransferToUserRequest,
+) -> RestResult<SubmitTransferToUserResponse> {
+    // ...
+}
+```
+
+### Example (Incorrect)
+```rust
+pub async fn submit_transfer_to_user(
+    &self,
+    currency: String,
+    amount: f64,
+    destination: String,
+) -> RestResult<SubmitTransferToUserResponse> {
+    // ...
+}
+```
 
 ---
 

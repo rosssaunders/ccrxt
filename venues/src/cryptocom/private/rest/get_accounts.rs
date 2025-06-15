@@ -101,26 +101,7 @@ impl RestClient {
             params["page"] = Value::Number(p.into());
         }
 
-        let signature = self.sign_request("private/get-accounts", id, &params, nonce)?;
-
-        let request_body = json!({
-            "id": id,
-            "method": "private/get-accounts",
-            "params": params,
-            "nonce": nonce,
-            "sig": signature,
-            "api_key": self.api_key.expose_secret()
-        });
-
-        let response = self
-            .client
-            .post(format!("{}/v1/private/get-accounts", self.base_url))
-            .json(&request_body)
-            .send()
-            .await?;
-
-        let result: Value = response.json().await?;
-        Ok(result)
+        self.send_signed_request("private/get-accounts", params).await
     }
 }
 
