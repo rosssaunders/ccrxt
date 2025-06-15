@@ -48,6 +48,8 @@ pub enum EndpointType {
     PublicGetInstruments,
     /// Public combo endpoints (non-matching engine, 500 credits each)
     PublicGetComboIds,
+    /// WebSocket only: public/hello (no specific rate limit documented)
+    PublicHello,
 }
 
 impl EndpointType {
@@ -58,6 +60,7 @@ impl EndpointType {
             EndpointType::MatchingEngine => 0, // Uses tier-based limits, not credits
             EndpointType::PublicGetInstruments => 0, // Special time-based limit
             EndpointType::PublicGetComboIds => 500, // Non-matching engine endpoint
+            EndpointType::PublicHello => 0, // WebSocket only, no specific credit cost
         }
     }
 
@@ -73,6 +76,8 @@ impl EndpointType {
 
         // Matching engine endpoints as per Deribit documentation
         match path {
+            "public/get_instruments" => EndpointType::PublicGetInstruments,
+            "public/hello" => EndpointType::PublicHello,
             "private/buy" | "private/sell" | "private/edit" | "private/edit_by_label"
             | "private/cancel" | "private/cancel_by_label" | "private/cancel_all"
             | "private/cancel_all_by_instrument" | "private/cancel_all_by_currency"
@@ -300,6 +305,10 @@ impl RateLimiter {
                     }
                 })
             }
+            EndpointType::PublicHello => {
+                // public/hello is WebSocket only with no documented rate limits
+                Ok(())
+            }
         }
     }
 
@@ -316,6 +325,9 @@ impl RateLimiter {
             EndpointType::PublicGetInstruments => {
                 let mut history = self.get_instruments_history.write().await;
                 history.record_request();
+            }
+            EndpointType::PublicHello => {
+                // No rate limit tracking needed for public/hello
             }
         }
     }
@@ -392,6 +404,11 @@ mod tests {
         assert_eq!(
             EndpointType::from_path("public/get_combo_ids"),
             EndpointType::PublicGetComboIds
+        );
+
+        assert_eq!(
+            EndpointType::from_path("public/hello"),
+            EndpointType::PublicHello
         );
         
         assert_eq!(
@@ -475,6 +492,20 @@ mod tests {
         
         // 6th request should fail
         assert!(limiter.check_limits(EndpointType::PublicGetInstruments).await.is_err());
+    }
+
+    #[tokio::test]
+    async fn test_rate_limiter_public_hello() {
+        let limiter = RateLimiter::new(AccountTier::Tier4);
+        
+        // public/hello should always succeed as it has no rate limits
+        for _ in 0..100 {
+            assert!(limiter.check_limits(EndpointType::PublicHello).await.is_ok());
+            limiter.record_request(EndpointType::PublicHello).await;
+        }
+        
+        // Should still work after many requests
+        assert!(limiter.check_limits(EndpointType::PublicHello).await.is_ok());
     }
 
     #[tokio::test]

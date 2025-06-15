@@ -34,7 +34,9 @@ mod enums;
 mod errors;
 #[cfg(test)]
 mod integration_tests;
+pub mod public;
 pub mod rate_limit;
+mod usage_example;
 
 pub mod public {
     pub mod rest;
@@ -50,3 +52,9 @@ pub use rate_limit::*;
 
 /// Type alias for results returned by Deribit API operations
 pub type RestResult<T> = Result<T, Errors>;
+pub use public::{DeribitMessage, DeribitWebSocketClient, HelloRequest, HelloResponse, HelloResult, JsonRpcRequest};
+pub use rate_limit::*;
+pub mod websocket;
+
+pub use rate_limit::*;
+pub use websocket::*;
