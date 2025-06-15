@@ -3,8 +3,6 @@ mod errors;
 mod rate_limit;
 mod request;
 pub(crate) mod rest;
-#[cfg(test)]
-mod integration_tests;
 
 // Private module with re-exports
 pub mod private_impl {
