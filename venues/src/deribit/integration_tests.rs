@@ -200,4 +200,129 @@ mod usage_examples {
         assert_eq!(corporate_json["originator"]["is_personal"], false);
         assert_eq!(corporate_json["originator"]["company_name"], "Acme Corp");
     }
+
+    #[test]
+    fn test_withdraw_endpoint_integration() {
+        // Test that all withdraw-related types are accessible and properly structured
+        use crate::deribit::{
+            Currency, WithdrawalPriority, WithdrawalState,
+            WithdrawRequest, WithdrawResponse, WithdrawalData
+        };
+
+        // Test creating a withdraw request
+        let request = WithdrawRequest {
+            currency: Currency::BTC,
+            address: "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh".to_string(),
+            amount: 0.001,
+            priority: Some(WithdrawalPriority::High),
+        };
+
+        // Test enum values and serialization
+        assert_eq!(WithdrawalPriority::default(), WithdrawalPriority::High);
+        assert_eq!(format!("{}", WithdrawalPriority::VeryHigh), "very_high");
+        assert_eq!(format!("{}", WithdrawalState::Unconfirmed), "unconfirmed");
+        
+        // Test request serialization
+        let json_value = serde_json::to_value(&request).unwrap();
+        assert_eq!(json_value["currency"], "BTC");
+        assert_eq!(json_value["priority"], "high");
+        assert_eq!(json_value["amount"], 0.001);
+
+        // Test request without priority (should not include priority field)
+        let minimal_request = WithdrawRequest {
+            currency: Currency::ETH,
+            address: "0x742d35Cc6634C0532925a3b8D05c4ae5e34D7b1c".to_string(),
+            amount: 0.5,
+            priority: None,
+        };
+
+        let minimal_json = serde_json::to_value(&minimal_request).unwrap();
+        assert_eq!(minimal_json["currency"], "ETH");
+        assert!(!minimal_json.as_object().unwrap().contains_key("priority"));
+
+        // Test all withdrawal priorities
+        let priorities = [
+            WithdrawalPriority::Insane,
+            WithdrawalPriority::ExtremeHigh,
+            WithdrawalPriority::VeryHigh,
+            WithdrawalPriority::High,
+            WithdrawalPriority::Mid,
+            WithdrawalPriority::Low,
+            WithdrawalPriority::VeryLow,
+        ];
+
+        for priority in priorities {
+            let priority_json = serde_json::to_value(&priority).unwrap();
+            assert!(priority_json.is_string());
+            
+            // Test deserialization round-trip
+            let deserialized: WithdrawalPriority = serde_json::from_value(priority_json).unwrap();
+            assert_eq!(deserialized, priority);
+        }
+
+        // Test all withdrawal states
+        let states = [
+            WithdrawalState::Unconfirmed,
+            WithdrawalState::Confirmed,
+            WithdrawalState::Cancelled,
+            WithdrawalState::Completed,
+            WithdrawalState::Interrupted,
+            WithdrawalState::Rejected,
+        ];
+
+        for state in states {
+            let state_json = serde_json::to_value(&state).unwrap();
+            assert!(state_json.is_string());
+            
+            // Test deserialization round-trip
+            let deserialized: WithdrawalState = serde_json::from_value(state_json).unwrap();
+            assert_eq!(deserialized, state);
+        }
+    }
+
+    #[tokio::test]
+    async fn test_private_rest_client_withdraw_method() {
+        // Test that the withdraw method is accessible via PrivateRestClient
+        use crate::deribit::{PrivateRestClient, AccountTier, RateLimiter};
+        use rest::secrets::ExposableSecret;
+
+        // Test secret implementation
+        #[derive(Clone)]
+        struct PlainTextSecret {
+            secret: String,
+        }
+
+        impl PlainTextSecret {
+            fn new(secret: String) -> Self {
+                Self { secret }
+            }
+        }
+
+        impl ExposableSecret for PlainTextSecret {
+            fn expose_secret(&self) -> String {
+                self.secret.clone()
+            }
+        }
+
+        let api_key = Box::new(PlainTextSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
+        let api_secret = Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let client = reqwest::Client::new();
+        let rate_limiter = RateLimiter::new(AccountTier::Tier4);
+
+        let rest_client = PrivateRestClient::new(
+            api_key,
+            api_secret,
+            "https://test.deribit.com",
+            rate_limiter,
+            client,
+        );
+
+        // Test that we can get a function reference to the method
+        let _ = PrivateRestClient::withdraw;
+        
+        // Verify the client exists and has the withdraw method
+        let _ = &rest_client;
+        
+        println!("PrivateRestClient::withdraw method is accessible and properly typed");
+    }
 }
