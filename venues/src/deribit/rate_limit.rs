@@ -37,6 +37,12 @@ impl AccountTier {
     }
 }
 
+impl Default for AccountTier {
+    fn default() -> Self {
+        AccountTier::Tier1
+    }
+}
+
 /// Types of endpoints for Deribit rate limiting
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum EndpointType {

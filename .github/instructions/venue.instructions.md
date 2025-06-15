@@ -1,5 +1,5 @@
 ---
-applyTo: "venues/src/**"
+applyTo: "venues/**"
 ---
 
 # File Structure and Naming
@@ -15,3 +15,11 @@ applyTo: "venues/src/**"
 - Common code (websockets, rate limiting) can be in subdirectories at the venue level.
 - For imports of modules in the same crate, use `crate::…` absolute paths instead of `super::…` or relative paths. Do **not** apply this rule to external crates—continue using their crate name (e.g., `rest::…`).
 - Shared logic (e.g., client request helpers, rate limiter helpers) MUST be factored into private modules or helpers and reused, not duplicated across public/private or similar modules.
+
+# Venue README Requirements
+
+Each venue MUST include a README file that provides:
+
+1. Links to the source documentation
+2. The authentication type (e.g., API Key + Secret)
+3. A list of endpoints implemented

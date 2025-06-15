@@ -1,4 +1,7 @@
 //! Example usage of Deribit WebSocket public/hello endpoint
+//! 
+//! **Deprecated**: This example has been moved to `venues/examples/deribit/ws_hello_example.rs`. 
+//! Please refer to that file for the updated example.
 
 use crate::deribit::{AccountTier, DeribitWebSocketClient, RateLimiter};
 use websockets::WebSocketConnection;

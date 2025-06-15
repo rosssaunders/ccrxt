@@ -131,7 +131,7 @@ impl RestClient {
     ///
     /// # Example
     /// ```rust,no_run
-    /// use bitget::{PrivateRestClient, GetAccountAssetsRequest};
+    /// use venues::bitget::{PrivateRestClient, GetAccountAssetsRequest};
     /// 
     /// async fn example(client: &PrivateRestClient) -> Result<(), Box<dyn std::error::Error>> {
     ///     // Get all assets with holdings

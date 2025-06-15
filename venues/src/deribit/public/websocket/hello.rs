@@ -18,18 +18,19 @@ pub struct HelloRequest {
 }
 
 /// Response for public/hello endpoint.
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Default)]
 pub struct HelloResponse {
     /// The id that was sent in the request
     pub id: i32,
+
     /// The JSON-RPC version (2.0)
     pub jsonrpc: String,
+
     /// Result object containing API version information
     pub result: HelloResult,
 }
 
-/// Result data for hello response.
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Default)]
 pub struct HelloResult {
     /// The API version
     pub version: String,
@@ -55,10 +56,19 @@ impl JsonRpcRequest<HelloRequest> {
             jsonrpc: "2.0".to_string(),
             id,
             method: "public/hello".to_string(),
-            params: HelloRequest {
-                client_name,
-                client_version,
-            },
+            params: HelloRequest { client_name, client_version },
+        }
+    }
+}
+
+impl<T> JsonRpcRequest<T> {
+    /// Create a new JSON-RPC request with arbitrary method and params
+    pub fn new(id: i32, method: String, params: T) -> Self {
+        Self {
+            jsonrpc: "2.0".to_string(),
+            id,
+            method,
+            params,
         }
     }
 }

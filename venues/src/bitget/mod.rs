@@ -10,8 +10,9 @@ pub use enums::*;
 pub use errors::{ApiError, Errors};
 pub use rate_limit::{RateLimiter, RateLimitHeader};
 
-// Export clients
+// Export clients and endpoint types
 pub use private::PrivateRestClient;
+pub use private::{GetAccountAssetsRequest, GetAccountAssetsResponse, AssetInfo};
 
 pub use crate::bitget::errors::ErrorResponse;
 

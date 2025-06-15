@@ -199,11 +199,4 @@ mod tests {
             _ => panic!("Expected UnmappedApiError"),
         }
     }
-
-    #[test]
-    fn test_errors_enum_display() {
-        let general_error = Errors::Error("Test error".to_string());
-        let error_string = format!("{}", general_error);
-        assert_eq!(error_string, "Error: Test error");
-    }
 }

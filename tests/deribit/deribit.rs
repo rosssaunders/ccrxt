@@ -1,6 +1,9 @@
 //! Integration test example for Deribit public/get_combo_ids endpoint
 //! 
 //! This test shows how users can use the new endpoint to fetch combo IDs.
+//! 
+//! Integration tests for Deribit have been moved to `tests/deribit.rs` as per project testing instructions.
+//! This file is now deprecated and should not contain integration tests.
 
 #[cfg(test)]
 mod usage_examples {

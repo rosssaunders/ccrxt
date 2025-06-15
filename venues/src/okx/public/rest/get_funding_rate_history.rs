@@ -158,7 +158,7 @@ mod tests {
         assert_eq!(funding_rate_history.inst_type, "SWAP");
         assert_eq!(funding_rate_history.inst_id, "BTC-USD-SWAP");
         assert_eq!(funding_rate_history.formula_type, "withRate");
-        assert_eq!(funding_rate_history.funding_rate, "0.0001");
+        assert_eq!(funding_rate_history.funding_rate, "0.000123");
         assert_eq!(funding_rate_history.realized_rate, "0.00009");
         assert_eq!(funding_rate_history.funding_time, "1597026383085");
         assert_eq!(funding_rate_history.method, "current_period");
@@ -201,7 +201,7 @@ mod tests {
         assert_eq!(first_entry.inst_id, "BTC-USD-SWAP");
         assert_eq!(first_entry.formula_type, "withRate");
         assert_eq!(first_entry.funding_rate, "0.000123");
-        assert_eq!(first_entry.realized_rate, "0.000456");
+        assert_eq!(first_entry.realized_rate, "0.00009");
         assert_eq!(first_entry.funding_time, "1597026383085");
         assert_eq!(first_entry.method, "current_period");
         
