@@ -59,26 +59,17 @@ impl RestClient {
     /// Scope: wallet:read_write and mainaccount
     ///
     /// # Arguments
-    /// * `currency` - The currency symbol (BTC, ETH, USDC, USDT, EURR)
-    /// * `amount` - Amount of funds to be transferred
-    /// * `destination` - Destination wallet's address taken from address book
+    /// * `params` - Parameters for the transfer (currency, amount, destination)
     ///
     /// # Returns
     /// Transfer result with complete transfer information
     pub async fn submit_transfer_to_user(
         &self,
-        currency: &str,
-        amount: f64,
-        destination: &str,
+        params: SubmitTransferToUserRequest,
     ) -> RestResult<SubmitTransferToUserResponse> {
-        let request = SubmitTransferToUserRequest {
-            currency: currency.to_string(),
-            amount,
-            destination: destination.to_string(),
-        };
         self.send_signed_request(
             "private/submit_transfer_to_user",
-            &request,
+            &params,
             EndpointType::NonMatchingEngine,
         )
         .await

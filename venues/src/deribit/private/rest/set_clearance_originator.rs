@@ -78,31 +78,22 @@ pub struct SetClearanceOriginatorResponse {
 }
 
 impl RestClient {
-    /// Sets originator of the deposit
-    ///
-    /// This endpoint sets the originator information for a specific deposit.
-    /// It requires wallet:read_write scope and proper authentication.
+    /// Sets the clearance originator for a deposit.
     ///
     /// See: <https://docs.deribit.com/v2/#private-set_clearance_originator>
     ///
-    /// Rate limit: 500 credits per request (non-matching engine)
-    /// Scope: wallet:read_write
-    ///
     /// # Arguments
-    /// * `deposit_id` - The deposit identification information
-    /// * `originator` - The originator information
+    /// * `params` - Parameters for the request (deposit_id, originator)
     ///
     /// # Returns
-    /// Result with deposit information including clearance state
+    /// Clearance originator response
     pub async fn set_clearance_originator(
         &self,
-        deposit_id: DepositId,
-        originator: Originator,
+        params: SetClearanceOriginatorRequest,
     ) -> RestResult<SetClearanceOriginatorResponse> {
-        let request = SetClearanceOriginatorRequest { deposit_id, originator };
         self.send_signed_request(
             "private/set_clearance_originator",
-            &request,
+            &params,
             EndpointType::NonMatchingEngine,
         )
         .await
