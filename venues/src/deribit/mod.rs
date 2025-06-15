@@ -1,13 +1,14 @@
 //! Deribit trading platform implementation
 //! 
-//! This module provides rate limiting and other utilities for the Deribit API.
-//! Deribit uses a credit-based rate limiting system with different tiers based
-//! on trading volume.
+//! This module provides rate limiting, WebSocket connectivity, and other utilities 
+//! for the Deribit API. Deribit uses a credit-based rate limiting system with 
+//! different tiers based on trading volume.
 //!
 //! # Example Usage
 //!
 //! ```rust
 //! use venues::deribit::{RateLimiter, AccountTier, EndpointType};
+//! use venues::deribit::websocket::WebSocketClient;
 //!
 //! #[tokio::main]
 //! async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -20,19 +21,23 @@
 //!     // Record the request after making it
 //!     limiter.record_request(EndpointType::NonMatchingEngine).await;
 //!     
-//!     // Check if we can make a matching engine request (limited by tier)
-//!     limiter.check_limits(EndpointType::MatchingEngine).await?;
-//!     limiter.record_request(EndpointType::MatchingEngine).await;
+//!     // Create and connect WebSocket client
+//!     let mut ws_client = WebSocketClient::new();
+//!     ws_client.connect().await?;
 //!     
-//!     // Check rate limit status
-//!     let status = limiter.get_status().await;
-//!     println!("Available credits: {}", status.available_credits);
-//!     println!("Account tier: {:?}", status.account_tier);
+//!     // Disable heartbeat messages
+//!     let response = ws_client.disable_heartbeat().await?;
+//!     println!("Heartbeat disabled: {}", response.is_success());
+//!     
+//!     // Disconnect
+//!     ws_client.disconnect().await?;
 //!     
 //!     Ok(())
 //! }
 //! ```
 
 pub mod rate_limit;
+pub mod websocket;
 
 pub use rate_limit::*;
+pub use websocket::*;

@@ -21,6 +21,7 @@ hex = "0.4"
 chrono = { version = "0.4", features = ["serde"] }
 futures = "0.3"
 async-trait = "0.1"
+async-stream = "0.3"
 thiserror = "2.0.12"
 parking_lot.workspace = true
 tracing.workspace = true
