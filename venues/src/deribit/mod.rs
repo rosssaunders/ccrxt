@@ -53,7 +53,10 @@ pub mod private {
     pub mod rest;
     pub use self::rest::RestClient;
     // Specific request/response structs from private::rest
-    pub use self::rest::{SubmitTransferToUserRequest, SubmitTransferToUserResponse, TransferData};
+    pub use self::rest::{
+        DepositId, Originator, SetClearanceOriginatorRequest, SetClearanceOriginatorResponse, SetClearanceOriginatorResult,
+        SubmitTransferToUserRequest, SubmitTransferToUserResponse, TransferData,
+    };
 }
 
 pub use enums::*;
@@ -67,7 +70,10 @@ pub use public::{
 };
 
 pub use private::RestClient as PrivateRestClient;
-pub use private::{SubmitTransferToUserRequest, SubmitTransferToUserResponse, TransferData};
+pub use private::{
+    DepositId, Originator, SetClearanceOriginatorRequest, SetClearanceOriginatorResponse, SetClearanceOriginatorResult,
+    SubmitTransferToUserRequest, SubmitTransferToUserResponse, TransferData,
+};
 
 
 /// Type alias for results returned by Deribit API operations
