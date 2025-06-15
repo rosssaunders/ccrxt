@@ -1,8 +1,12 @@
 pub mod client;
+pub mod send_rfq;
 pub mod set_clearance_originator;
 pub mod submit_transfer_to_user;
 
 pub use client::RestClient;
+pub use send_rfq::{
+    SendRfqRequest, SendRfqResponse, Side,
+};
 pub use set_clearance_originator::{
     DepositId, Originator, SetClearanceOriginatorRequest, SetClearanceOriginatorResponse, SetClearanceOriginatorResult,
 };

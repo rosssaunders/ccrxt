@@ -54,8 +54,8 @@ pub mod private {
     pub use self::rest::RestClient;
     // Specific request/response structs from private::rest
     pub use self::rest::{
-        DepositId, Originator, SetClearanceOriginatorRequest, SetClearanceOriginatorResponse, SetClearanceOriginatorResult,
-        SubmitTransferToUserRequest, SubmitTransferToUserResponse, TransferData,
+        DepositId, Originator, SendRfqRequest, SendRfqResponse, SetClearanceOriginatorRequest, SetClearanceOriginatorResponse, SetClearanceOriginatorResult,
+        Side, SubmitTransferToUserRequest, SubmitTransferToUserResponse, TransferData,
     };
 }
 
@@ -71,8 +71,8 @@ pub use public::{
 
 pub use private::RestClient as PrivateRestClient;
 pub use private::{
-    DepositId, Originator, SetClearanceOriginatorRequest, SetClearanceOriginatorResponse, SetClearanceOriginatorResult,
-    SubmitTransferToUserRequest, SubmitTransferToUserResponse, TransferData,
+    DepositId, Originator, SendRfqRequest, SendRfqResponse, SetClearanceOriginatorRequest, SetClearanceOriginatorResponse, SetClearanceOriginatorResult,
+    Side, SubmitTransferToUserRequest, SubmitTransferToUserResponse, TransferData,
 };
 
 
