@@ -149,4 +149,55 @@ mod usage_examples {
             }
         }
     }
+
+    #[test]
+    fn test_set_clearance_originator_usage_example() {
+        // Test creating a set clearance originator request
+        use crate::deribit::{DepositId, Originator, SetClearanceOriginatorRequest};
+
+        let deposit_id = DepositId {
+            currency: "BTC".to_string(),
+            user_id: 12345,
+            address: "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh".to_string(),
+            tx_hash: "1a2b3c4d5e6f7890abcdef1234567890abcdef1234567890abcdef1234567890".to_string(),
+        };
+
+        // Example: Personal originator
+        let personal_originator = Originator {
+            is_personal: true,
+            company_name: "".to_string(),
+            first_name: "John".to_string(),
+            last_name: "Doe".to_string(),
+            address: "123 Main St, New York, NY 10001".to_string(),
+        };
+
+        let personal_request = SetClearanceOriginatorRequest {
+            deposit_id: deposit_id.clone(),
+            originator: personal_originator,
+        };
+
+        // Example: Corporate originator
+        let corporate_originator = Originator {
+            is_personal: false,
+            company_name: "Acme Corp".to_string(),
+            first_name: "".to_string(),
+            last_name: "".to_string(),
+            address: "456 Business Ave, San Francisco, CA 94105".to_string(),
+        };
+
+        let corporate_request = SetClearanceOriginatorRequest {
+            deposit_id,
+            originator: corporate_originator,
+        };
+
+        // Verify serialization works correctly for both types
+        let personal_json = serde_json::to_value(&personal_request).unwrap();
+        assert_eq!(personal_json["originator"]["is_personal"], true);
+        assert_eq!(personal_json["originator"]["first_name"], "John");
+        assert_eq!(personal_json["originator"]["last_name"], "Doe");
+
+        let corporate_json = serde_json::to_value(&corporate_request).unwrap();
+        assert_eq!(corporate_json["originator"]["is_personal"], false);
+        assert_eq!(corporate_json["originator"]["company_name"], "Acme Corp");
+    }
 }
