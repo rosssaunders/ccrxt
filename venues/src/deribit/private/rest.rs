@@ -305,4 +305,44 @@ mod tests {
 
         assert_eq!(sig1, sig2); // Same inputs should produce same signature
     }
+
+    #[test]
+    fn test_integration_request_structure() {
+        // Test complete integration with a realistic verify_block_trade request
+        use crate::deribit::{VerifyBlockTradeRequest, Trade, TradeRole, TradeDirection};
+        
+        let request = VerifyBlockTradeRequest {
+            timestamp: 1672534800000,
+            nonce: "integration_test_nonce".to_string(),
+            role: TradeRole::Maker,
+            trades: vec![
+                Trade {
+                    instrument_name: "BTC-PERPETUAL".to_string(),
+                    price: 50000.0,
+                    amount: Some(0.1),
+                    direction: TradeDirection::Buy,
+                },
+                Trade {
+                    instrument_name: "ETH-PERPETUAL".to_string(),
+                    price: 3000.0,
+                    amount: None,
+                    direction: TradeDirection::Sell,
+                },
+            ],
+        };
+
+        // Verify complete request serialization
+        let serialized = serde_json::to_value(&request).unwrap();
+        assert_eq!(serialized["timestamp"], 1672534800000_i64);
+        assert_eq!(serialized["role"], "maker");
+        
+        let trades = serialized["trades"].as_array().unwrap();
+        assert_eq!(trades.len(), 2);
+        assert_eq!(trades[0]["instrument_name"], "BTC-PERPETUAL");
+        assert_eq!(trades[1]["instrument_name"], "ETH-PERPETUAL");
+        
+        // Verify amount handling
+        assert!(trades[0].as_object().unwrap().contains_key("amount"));
+        assert!(!trades[1].as_object().unwrap().contains_key("amount"));
+    }
 }
