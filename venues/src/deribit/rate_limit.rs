@@ -46,6 +46,8 @@ pub enum EndpointType {
     MatchingEngine,
     /// Special case: public/get_instruments (1 req per 10s, burst of 5)
     PublicGetInstruments,
+    /// WebSocket management endpoints (no credit cost, no rate limit)
+    WebSocketManagement,
 }
 
 impl EndpointType {
@@ -55,6 +57,7 @@ impl EndpointType {
             EndpointType::NonMatchingEngine => 500,
             EndpointType::MatchingEngine => 0, // Uses tier-based limits, not credits
             EndpointType::PublicGetInstruments => 0, // Special time-based limit
+            EndpointType::WebSocketManagement => 0, // No credit cost for WebSocket management
         }
     }
 
@@ -62,6 +65,11 @@ impl EndpointType {
     pub fn from_path(path: &str) -> Self {
         if path == "public/get_instruments" {
             return EndpointType::PublicGetInstruments;
+        }
+
+        // WebSocket management endpoints
+        if path == "public/set_heartbeat" {
+            return EndpointType::WebSocketManagement;
         }
 
         // Matching engine endpoints as per Deribit documentation
@@ -287,6 +295,10 @@ impl RateLimiter {
                     }
                 })
             }
+            EndpointType::WebSocketManagement => {
+                // WebSocket management endpoints have no rate limits
+                Ok(())
+            }
         }
     }
 
@@ -303,6 +315,9 @@ impl RateLimiter {
             EndpointType::PublicGetInstruments => {
                 let mut history = self.get_instruments_history.write().await;
                 history.record_request();
+            }
+            EndpointType::WebSocketManagement => {
+                // No recording needed for WebSocket management endpoints
             }
         }
     }
@@ -374,6 +389,11 @@ mod tests {
         assert_eq!(
             EndpointType::from_path("public/get_instruments"),
             EndpointType::PublicGetInstruments
+        );
+        
+        assert_eq!(
+            EndpointType::from_path("public/set_heartbeat"),
+            EndpointType::WebSocketManagement
         );
         
         assert_eq!(
@@ -568,5 +588,20 @@ mod tests {
         let status = limiter.get_status().await;
         assert!(status.available_credits > 0, "Credits should have refilled");
         assert!(status.available_credits < 100, "Should not have refilled completely yet");
+    }
+
+    #[tokio::test]
+    async fn test_websocket_management_endpoints() {
+        let limiter = RateLimiter::new(AccountTier::Tier4);
+        
+        // WebSocket management endpoints should have no rate limits
+        for _ in 0..100 {
+            assert!(limiter.check_limits(EndpointType::WebSocketManagement).await.is_ok());
+            limiter.record_request(EndpointType::WebSocketManagement).await;
+        }
+        
+        // Credits should be unaffected
+        let status = limiter.get_status().await;
+        assert_eq!(status.available_credits, 50_000); // No credits consumed
     }
 }
