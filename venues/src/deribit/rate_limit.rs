@@ -1,3 +1,4 @@
+use std::sync::Arc;
 use std::time::{Duration, Instant};
 use thiserror::Error;
 use tokio::sync::RwLock;
@@ -38,7 +39,7 @@ impl AccountTier {
 }
 
 /// Types of endpoints for Deribit rate limiting
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum EndpointType {
     /// Non-matching engine requests (500 credits each)
     NonMatchingEngine,
@@ -46,6 +47,8 @@ pub enum EndpointType {
     MatchingEngine,
     /// Special case: public/get_instruments (1 req per 10s, burst of 5)
     PublicGetInstruments,
+    /// Public combos endpoint (same as other public endpoints)
+    PublicGetCombos,
 }
 
 impl EndpointType {
@@ -55,6 +58,7 @@ impl EndpointType {
             EndpointType::NonMatchingEngine => 500,
             EndpointType::MatchingEngine => 0, // Uses tier-based limits, not credits
             EndpointType::PublicGetInstruments => 0, // Special time-based limit
+            EndpointType::PublicGetCombos => 500, // Standard non-matching engine cost
         }
     }
 
@@ -62,6 +66,10 @@ impl EndpointType {
     pub fn from_path(path: &str) -> Self {
         if path == "public/get_instruments" {
             return EndpointType::PublicGetInstruments;
+        }
+        
+        if path == "public/get_combos" {
+            return EndpointType::PublicGetCombos;
         }
 
         // Matching engine endpoints as per Deribit documentation
@@ -197,16 +205,16 @@ impl RequestHistory {
 }
 
 /// Deribit rate limiter implementing credit-based system
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct RateLimiter {
     /// Credit pool for non-matching engine requests
-    credit_pool: RwLock<CreditPool>,
+    credit_pool: Arc<RwLock<CreditPool>>,
     /// Account tier for matching engine limits
     account_tier: AccountTier,
     /// Request history for matching engine endpoints
-    matching_engine_history: RwLock<RequestHistory>,
+    matching_engine_history: Arc<RwLock<RequestHistory>>,
     /// Request history for public/get_instruments endpoint
-    get_instruments_history: RwLock<RequestHistory>,
+    get_instruments_history: Arc<RwLock<RequestHistory>>,
 }
 
 impl RateLimiter {
@@ -229,10 +237,10 @@ impl RateLimiter {
         );
 
         Self {
-            credit_pool: RwLock::new(credit_pool),
+            credit_pool: Arc::new(RwLock::new(credit_pool)),
             account_tier,
-            matching_engine_history: RwLock::new(matching_engine_history),
-            get_instruments_history: RwLock::new(get_instruments_history),
+            matching_engine_history: Arc::new(RwLock::new(matching_engine_history)),
+            get_instruments_history: Arc::new(RwLock::new(get_instruments_history)),
         }
     }
 
@@ -255,17 +263,17 @@ impl RateLimiter {
         );
 
         Self {
-            credit_pool: RwLock::new(credit_pool),
+            credit_pool: Arc::new(RwLock::new(credit_pool)),
             account_tier,
-            matching_engine_history: RwLock::new(matching_engine_history),
-            get_instruments_history: RwLock::new(get_instruments_history),
+            matching_engine_history: Arc::new(RwLock::new(matching_engine_history)),
+            get_instruments_history: Arc::new(RwLock::new(get_instruments_history)),
         }
     }
 
     /// Check if a request can be made for the given endpoint type
     pub async fn check_limits(&self, endpoint_type: EndpointType) -> Result<(), RateLimitError> {
         match endpoint_type {
-            EndpointType::NonMatchingEngine => {
+            EndpointType::NonMatchingEngine | EndpointType::PublicGetCombos => {
                 let mut pool = self.credit_pool.write().await;
                 pool.consume_credits(endpoint_type.credit_cost())
             }
@@ -293,7 +301,7 @@ impl RateLimiter {
     /// Record a successful request for the given endpoint type
     pub async fn record_request(&self, endpoint_type: EndpointType) {
         match endpoint_type {
-            EndpointType::NonMatchingEngine => {
+            EndpointType::NonMatchingEngine | EndpointType::PublicGetCombos => {
                 // Credits are already consumed in check_limits
             }
             EndpointType::MatchingEngine => {
