@@ -38,7 +38,7 @@ impl AccountTier {
 }
 
 /// Types of endpoints for Deribit rate limiting
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum EndpointType {
     /// Non-matching engine requests (500 credits each)
     NonMatchingEngine,
@@ -46,6 +46,8 @@ pub enum EndpointType {
     MatchingEngine,
     /// Special case: public/get_instruments (1 req per 10s, burst of 5)
     PublicGetInstruments,
+    /// Public fork_token endpoint (session scoped token generation)
+    PublicForkToken,
 }
 
 impl EndpointType {
@@ -55,28 +57,31 @@ impl EndpointType {
             EndpointType::NonMatchingEngine => 500,
             EndpointType::MatchingEngine => 0, // Uses tier-based limits, not credits
             EndpointType::PublicGetInstruments => 0, // Special time-based limit
+            EndpointType::PublicForkToken => 500, // Non-matching engine request
         }
     }
 
     /// Determine endpoint type from API path
     pub fn from_path(path: &str) -> Self {
-        if path == "public/get_instruments" {
-            return EndpointType::PublicGetInstruments;
-        }
-
-        // Matching engine endpoints as per Deribit documentation
         match path {
-            "private/buy" | "private/sell" | "private/edit" | "private/edit_by_label"
-            | "private/cancel" | "private/cancel_by_label" | "private/cancel_all"
-            | "private/cancel_all_by_instrument" | "private/cancel_all_by_currency"
-            | "private/cancel_all_by_kind_or_type" | "private/close_position"
-            | "private/verify_block_trade" | "private/execute_block_trade"
-            | "private/move_positions" | "private/mass_quote" | "private/cancel_quotes"
-            | "private/add_block_rfq_quote" | "private/edit_block_rfq_quote"
-            | "private/cancel_block_rfq_quote" | "private/cancel_all_block_rfq_quotes" => {
-                EndpointType::MatchingEngine
+            "public/get_instruments" => EndpointType::PublicGetInstruments,
+            "public/fork_token" => EndpointType::PublicForkToken,
+            _ => {
+                // Matching engine endpoints as per Deribit documentation
+                match path {
+                    "private/buy" | "private/sell" | "private/edit" | "private/edit_by_label"
+                    | "private/cancel" | "private/cancel_by_label" | "private/cancel_all"
+                    | "private/cancel_all_by_instrument" | "private/cancel_all_by_currency"
+                    | "private/cancel_all_by_kind_or_type" | "private/close_position"
+                    | "private/verify_block_trade" | "private/execute_block_trade"
+                    | "private/move_positions" | "private/mass_quote" | "private/cancel_quotes"
+                    | "private/add_block_rfq_quote" | "private/edit_block_rfq_quote"
+                    | "private/cancel_block_rfq_quote" | "private/cancel_all_block_rfq_quotes" => {
+                        EndpointType::MatchingEngine
+                    }
+                    _ => EndpointType::NonMatchingEngine,
+                }
             }
-            _ => EndpointType::NonMatchingEngine,
         }
     }
 }
@@ -265,7 +270,7 @@ impl RateLimiter {
     /// Check if a request can be made for the given endpoint type
     pub async fn check_limits(&self, endpoint_type: EndpointType) -> Result<(), RateLimitError> {
         match endpoint_type {
-            EndpointType::NonMatchingEngine => {
+            EndpointType::NonMatchingEngine | EndpointType::PublicForkToken => {
                 let mut pool = self.credit_pool.write().await;
                 pool.consume_credits(endpoint_type.credit_cost())
             }
@@ -293,7 +298,7 @@ impl RateLimiter {
     /// Record a successful request for the given endpoint type
     pub async fn record_request(&self, endpoint_type: EndpointType) {
         match endpoint_type {
-            EndpointType::NonMatchingEngine => {
+            EndpointType::NonMatchingEngine | EndpointType::PublicForkToken => {
                 // Credits are already consumed in check_limits
             }
             EndpointType::MatchingEngine => {
@@ -374,6 +379,11 @@ mod tests {
         assert_eq!(
             EndpointType::from_path("public/get_instruments"),
             EndpointType::PublicGetInstruments
+        );
+        
+        assert_eq!(
+            EndpointType::from_path("public/fork_token"),
+            EndpointType::PublicForkToken
         );
         
         assert_eq!(
