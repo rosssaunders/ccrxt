@@ -9,22 +9,7 @@ pub struct AccountRequest {
     pub recv_window: Option<u64>,
 }
 
-impl AccountRequest {
-    pub fn new() -> Self {
-        Self { recv_window: None }
-    }
 
-    pub fn recv_window(mut self, recv_window: u64) -> Self {
-        self.recv_window = Some(recv_window);
-        self
-    }
-}
-
-impl Default for AccountRequest {
-    fn default() -> Self {
-        Self::new()
-    }
-}
 
 /// Asset information in account response
 #[derive(Debug, Clone, Deserialize)]
@@ -98,5 +83,22 @@ impl PrivateRestClient {
         .await
     }
 
+}
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_account_request_creation() {
+        let request = AccountRequest {
+            recv_window: None,
+        };
+        assert!(request.recv_window.is_none());
+
+        let request_with_window = AccountRequest {
+            recv_window: Some(5000),
+        };
+        assert_eq!(request_with_window.recv_window, Some(5000));
+    }
 }

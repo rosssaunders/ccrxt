@@ -24,54 +24,7 @@ pub struct UserTradesRequest {
     pub recv_window: Option<u64>,
 }
 
-impl UserTradesRequest {
-    pub fn new() -> Self {
-        Self {
-            symbol: None,
-            from_id: None,
-            start_time: None,
-            end_time: None,
-            limit: None,
-            recv_window: None,
-        }
-    }
 
-    pub fn symbol(mut self, symbol: String) -> Self {
-        self.symbol = Some(symbol);
-        self
-    }
-
-    pub fn from_id(mut self, from_id: u64) -> Self {
-        self.from_id = Some(from_id);
-        self
-    }
-
-    pub fn start_time(mut self, start_time: u64) -> Self {
-        self.start_time = Some(start_time);
-        self
-    }
-
-    pub fn end_time(mut self, end_time: u64) -> Self {
-        self.end_time = Some(end_time);
-        self
-    }
-
-    pub fn limit(mut self, limit: u32) -> Self {
-        self.limit = Some(limit);
-        self
-    }
-
-    pub fn recv_window(mut self, recv_window: u64) -> Self {
-        self.recv_window = Some(recv_window);
-        self
-    }
-}
-
-impl Default for UserTradesRequest {
-    fn default() -> Self {
-        Self::new()
-    }
-}
 
 /// User trade response
 #[derive(Debug, Clone, Deserialize)]
@@ -139,5 +92,39 @@ impl PrivateRestClient {
             false, // not an order
         )
         .await
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_user_trades_request_creation() {
+        let request = UserTradesRequest {
+            symbol: None,
+            from_id: None,
+            start_time: None,
+            end_time: None,
+            limit: None,
+            recv_window: None,
+        };
+        assert!(request.symbol.is_none());
+        assert!(request.from_id.is_none());
+
+        let request_with_params = UserTradesRequest {
+            symbol: Some("BTC-200730-9000-C".to_string()),
+            from_id: Some(12345),
+            start_time: None,
+            end_time: None,
+            limit: Some(100),
+            recv_window: None,
+        };
+        assert_eq!(
+            request_with_params.symbol,
+            Some("BTC-200730-9000-C".to_string())
+        );
+        assert_eq!(request_with_params.from_id, Some(12345));
+        assert_eq!(request_with_params.limit, Some(100));
     }
 }

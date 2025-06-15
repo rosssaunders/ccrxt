@@ -39,69 +39,7 @@ pub struct NewOrderRequest {
     pub recv_window: Option<u64>,
 }
 
-impl NewOrderRequest {
-    pub fn new(
-        symbol: String,
-        side: crate::binance::options::OrderSide,
-        order_type: crate::binance::options::OptionsOrderType,
-        quantity: String,
-    ) -> Self {
-        Self {
-            symbol,
-            side,
-            order_type,
-            quantity,
-            price: None,
-            time_in_force: None,
-            reduce_only: None,
-            post_only: None,
-            new_order_resp_type: None,
-            client_order_id: None,
-            is_mmp: None,
-            recv_window: None,
-        }
-    }
 
-    pub fn price(mut self, price: String) -> Self {
-        self.price = Some(price);
-        self
-    }
-
-    pub fn time_in_force(mut self, time_in_force: crate::binance::options::TimeInForce) -> Self {
-        self.time_in_force = Some(time_in_force);
-        self
-    }
-
-    pub fn reduce_only(mut self, reduce_only: bool) -> Self {
-        self.reduce_only = Some(reduce_only);
-        self
-    }
-
-    pub fn post_only(mut self, post_only: bool) -> Self {
-        self.post_only = Some(post_only);
-        self
-    }
-
-    pub fn new_order_resp_type(mut self, resp_type: crate::binance::options::OrderResponseType) -> Self {
-        self.new_order_resp_type = Some(resp_type);
-        self
-    }
-
-    pub fn client_order_id(mut self, client_order_id: String) -> Self {
-        self.client_order_id = Some(client_order_id);
-        self
-    }
-
-    pub fn is_mmp(mut self, is_mmp: bool) -> Self {
-        self.is_mmp = Some(is_mmp);
-        self
-    }
-
-    pub fn recv_window(mut self, recv_window: u64) -> Self {
-        self.recv_window = Some(recv_window);
-        self
-    }
-}
 
 /// Response for new order (ACK type)
 #[derive(Debug, Clone, Deserialize)]
@@ -222,5 +160,51 @@ impl PrivateRestClient {
             true, // is order
         )
         .await
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::binance::options::{OptionsOrderType, OrderSide};
+
+    #[test]
+    fn test_new_order_request_creation() {
+        let request = NewOrderRequest {
+            symbol: "BTC-200730-9000-C".to_string(),
+            side: OrderSide::Buy,
+            order_type: OptionsOrderType::Limit,
+            quantity: "1.0".to_string(),
+            price: None,
+            time_in_force: None,
+            reduce_only: None,
+            post_only: None,
+            new_order_resp_type: None,
+            client_order_id: None,
+            is_mmp: None,
+            recv_window: None,
+        };
+
+        assert_eq!(request.symbol, "BTC-200730-9000-C");
+        assert_eq!(request.side, OrderSide::Buy);
+        assert_eq!(request.order_type, OptionsOrderType::Limit);
+        assert_eq!(request.quantity, "1.0");
+        assert!(request.price.is_none());
+
+        let request_with_price = NewOrderRequest {
+            symbol: "BTC-200730-9000-C".to_string(),
+            side: OrderSide::Buy,
+            order_type: OptionsOrderType::Limit,
+            quantity: "1.0".to_string(),
+            price: Some("2000.0".to_string()),
+            time_in_force: None,
+            reduce_only: None,
+            post_only: None,
+            new_order_resp_type: None,
+            client_order_id: None,
+            is_mmp: None,
+            recv_window: None,
+        };
+        assert_eq!(request_with_price.price, Some("2000.0".to_string()));
     }
 }

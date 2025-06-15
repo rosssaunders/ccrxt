@@ -207,3 +207,36 @@ impl RestClient {
         headers
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use reqwest::Client;
+    use std::borrow::Cow;
+
+    // Create a simple test secret implementation
+    struct TestSecret(String);
+
+    impl rest::secrets::ExposableSecret for TestSecret {
+        fn expose_secret(&self) -> String {
+            self.0.clone()
+        }
+    }
+
+    fn create_test_client() -> RestClient {
+        let api_key = Box::new(TestSecret("test_api_key".to_string()));
+        let api_secret = Box::new(TestSecret("test_api_secret".to_string()));
+        let base_url: Cow<'static, str> = "https://eapi.binance.com".into();
+        let rate_limiter = crate::binance::options::RateLimiter::new();
+        let client = Client::new();
+
+        RestClient::new(api_key, api_secret, base_url, rate_limiter, client)
+    }
+
+    #[test]
+    fn test_client_creation() {
+        let client = create_test_client();
+        // Just verify that the client can be created without panicking
+        assert_eq!(client.base_url, "https://eapi.binance.com");
+    }
+}

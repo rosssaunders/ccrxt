@@ -17,31 +17,7 @@ pub struct CancelOrderRequest {
     pub recv_window: Option<u64>,
 }
 
-impl CancelOrderRequest {
-    pub fn new(symbol: String) -> Self {
-        Self {
-            symbol,
-            order_id: None,
-            client_order_id: None,
-            recv_window: None,
-        }
-    }
 
-    pub fn order_id(mut self, order_id: u64) -> Self {
-        self.order_id = Some(order_id);
-        self
-    }
-
-    pub fn client_order_id(mut self, client_order_id: String) -> Self {
-        self.client_order_id = Some(client_order_id);
-        self
-    }
-
-    pub fn recv_window(mut self, recv_window: u64) -> Self {
-        self.recv_window = Some(recv_window);
-        self
-    }
-}
 
 /// Response for cancel order
 #[derive(Debug, Clone, Deserialize)]
@@ -121,5 +97,31 @@ impl PrivateRestClient {
             true, // is order
         )
         .await
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_cancel_order_request_creation() {
+        let request = CancelOrderRequest {
+            symbol: "BTC-200730-9000-C".to_string(),
+            order_id: None,
+            client_order_id: None,
+            recv_window: None,
+        };
+        assert_eq!(request.symbol, "BTC-200730-9000-C");
+        assert!(request.order_id.is_none());
+        assert!(request.client_order_id.is_none());
+
+        let request_with_order_id = CancelOrderRequest {
+            symbol: "BTC-200730-9000-C".to_string(),
+            order_id: Some(12345),
+            client_order_id: None,
+            recv_window: None,
+        };
+        assert_eq!(request_with_order_id.order_id, Some(12345));
     }
 }

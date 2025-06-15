@@ -12,30 +12,7 @@ pub struct PositionRequest {
     pub recv_window: Option<u64>,
 }
 
-impl PositionRequest {
-    pub fn new() -> Self {
-        Self {
-            symbol: None,
-            recv_window: None,
-        }
-    }
 
-    pub fn symbol(mut self, symbol: String) -> Self {
-        self.symbol = Some(symbol);
-        self
-    }
-
-    pub fn recv_window(mut self, recv_window: u64) -> Self {
-        self.recv_window = Some(recv_window);
-        self
-    }
-}
-
-impl Default for PositionRequest {
-    fn default() -> Self {
-        Self::new()
-    }
-}
 
 /// Position information response
 #[derive(Debug, Clone, Deserialize)]
@@ -104,5 +81,28 @@ impl PrivateRestClient {
             false, // not an order
         )
         .await
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_position_request_creation() {
+        let request = PositionRequest {
+            symbol: None,
+            recv_window: None,
+        };
+        assert!(request.symbol.is_none());
+
+        let request_with_symbol = PositionRequest {
+            symbol: Some("BTC-200730-9000-C".to_string()),
+            recv_window: None,
+        };
+        assert_eq!(
+            request_with_symbol.symbol,
+            Some("BTC-200730-9000-C".to_string())
+        );
     }
 }
