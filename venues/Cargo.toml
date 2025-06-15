@@ -38,6 +38,7 @@ binance_macros = { path = "../binance_macros" }
 url.workspace = true
 num_enum = "0.7.3"
 secrecy = "0.10.3"
+async-stream = "0.3"
 
 [lints]
 workspace = true

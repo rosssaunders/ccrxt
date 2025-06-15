@@ -2828,6 +2828,7 @@ name = "venues"
 version = "0.1.0"
 dependencies = [
  "aes-gcm",
+ "async-stream",
  "async-trait",
  "base64",
  "binance_macros",

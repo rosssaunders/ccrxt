@@ -34,5 +34,7 @@
 //! ```
 
 pub mod rate_limit;
+pub mod private;
 
 pub use rate_limit::*;
+pub use private::{WebSocketClient, SubscribeRequest, SubscribeResponse};
