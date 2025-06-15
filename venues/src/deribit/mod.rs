@@ -1,11 +1,13 @@
 //! Deribit trading platform implementation
 //! 
-//! This module provides rate limiting and other utilities for the Deribit API.
+//! This module provides rate limiting and WebSocket functionality for the Deribit API.
 //! Deribit uses a credit-based rate limiting system with different tiers based
-//! on trading volume.
+//! on trading volume and also supports private WebSocket operations using JSON-RPC 2.0.
 //!
 //! # Example Usage
 //!
+//! ## Rate Limiting
+//! 
 //! ```rust
 //! use venues::deribit::{RateLimiter, AccountTier, EndpointType};
 //!
@@ -31,6 +33,33 @@
 //!     
 //!     Ok(())
 //! }
+//! ```
+//! 
+//! ## Private WebSocket Operations
+//! 
+//! ```rust
+//! use venues::deribit::private::PrivateWebSocketClient;
+//! use rest::secrets::ExposableSecret;
+//! use websockets::WebSocketConnection;
+//! 
+//! # struct ExampleSecret { secret: String }
+//! # impl ExampleSecret { fn new(s: String) -> Self { Self { secret: s } } }
+//! # impl ExposableSecret for ExampleSecret { fn expose_secret(&self) -> String { self.secret.clone() } }
+//! # 
+//! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
+//! let api_key = Box::new(ExampleSecret::new("your_api_key".to_string()));
+//! let api_secret = Box::new(ExampleSecret::new("your_api_secret".to_string()));
+//! 
+//! let mut client = PrivateWebSocketClient::new(api_key, api_secret, None);
+//! client.connect().await?;
+//! 
+//! // Unsubscribe from private channels
+//! let channels = vec!["user.orders.BTC-PERPETUAL.raw".to_string()];
+//! let remaining = client.unsubscribe(channels).await?;
+//! 
+//! println!("Remaining subscribed channels: {:?}", remaining);
+//! # Ok(())
+//! # }
 //! ```
 
 pub mod rate_limit;
