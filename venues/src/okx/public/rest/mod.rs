@@ -15,6 +15,7 @@ mod get_insurance_fund;
 mod get_open_interest;
 mod get_instrument_tick_bands;
 mod get_index_tickers;
+mod get_mark_price;
 mod get_mark_price_candles;
 mod get_mark_price_candles_history;
 mod get_index_candles;
@@ -51,6 +52,7 @@ pub use get_insurance_fund::{GetInsuranceFundRequest, GetInsuranceFundResponse, 
 pub use get_open_interest::{GetOpenInterestRequest, GetOpenInterestResponse, OpenInterest};
 pub use get_instrument_tick_bands::{GetInstrumentTickBandsRequest, GetInstrumentTickBandsResponse, InstrumentTickBandData, TickBand};
 pub use get_index_tickers::{GetIndexTickersRequest, GetIndexTickersResponse, IndexTicker};
+pub use get_mark_price::{GetMarkPriceRequest, GetMarkPriceResponse, MarkPrice};
 pub use get_mark_price_candles::{GetMarkPriceCandlesRequest, GetMarkPriceCandlesResponse};
 pub use get_mark_price_candles_history::{GetMarkPriceCandlesHistoryRequest, GetMarkPriceCandlesHistoryResponse};
 pub use get_index_candles::{GetIndexCandlesRequest, GetIndexCandlesResponse, IndexCandle};
