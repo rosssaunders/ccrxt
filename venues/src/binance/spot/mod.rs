@@ -1,6 +1,17 @@
 mod enums;
 mod errors;
 mod rate_limit;
+mod request;
+
+// Re-export modules for new structure
+mod public {
+    mod rest;
+    pub use self::rest::exchange_info::*;
+    pub use self::rest::RestClient as PublicRestClient;
+}
+
+// Only expose public REST at the spot level
+pub use public::*;
 
 // Re-export key components
 pub use errors::{Errors, ApiError};
@@ -8,6 +19,7 @@ pub use rate_limit::{RateLimiter, RateLimitHeader};
 pub use enums::*;
 
 pub use crate::binance::spot::errors::ErrorResponse;
+pub(crate) use crate::binance::spot::request::execute_request;
 
 /// Represents the relevant response headers returned by the Binance Spot API for rate limiting and order tracking.
 ///
@@ -26,3 +38,7 @@ pub struct RestResponse<T> {
 
 /// Type alias for results returned by Binance Spot API operations
 pub type RestResult<T> = Result<RestResponse<T>, Errors>;
+
+pub mod rest {
+    pub mod common;
+}
