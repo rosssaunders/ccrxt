@@ -7,7 +7,10 @@
 pub mod client;
 pub mod messages;
 pub mod public;
+pub mod integration_tests;
+pub mod usage_examples;
 
 // Re-export main types
 pub use client::DeribitWebSocketClient;
-pub use messages::{DeribitMessage, JsonRpcRequest, JsonRpcResponse, JsonRpcError};
+pub use messages::{DeribitMessage, JsonRpcRequest, JsonRpcResponse, JsonRpcError, JsonRpcErrorResponse};
+pub use public::{UnsubscribeRequest, UnsubscribeResponse, UnsubscribeError};
