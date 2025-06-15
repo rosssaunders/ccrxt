@@ -1,6 +1,6 @@
 //! Deribit trading platform implementation
 //! 
-//! This module provides rate limiting and other utilities for the Deribit API.
+//! This module provides rate limiting and private REST API endpoints for the Deribit API.
 //! Deribit uses a credit-based rate limiting system with different tiers based
 //! on trading volume.
 //!
@@ -33,6 +33,15 @@
 //! }
 //! ```
 
+mod errors;
 pub mod rate_limit;
 
+pub mod private {
+    mod rest;
+    pub use self::rest::RestClient;
+    pub use self::rest::{SubmitTransferToUserRequest, SubmitTransferToUserResponse, TransferData};
+}
+
+pub use errors::{ApiError, ErrorResponse, Errors, RestResult};
 pub use rate_limit::*;
+pub use private::RestClient as PrivateRestClient;
