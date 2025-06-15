@@ -12,8 +12,6 @@ pub struct GetBalancesRequest {
     pub recv_window: Option<i64>,
 }
 
-
-
 /// Response from the get balances endpoint
 #[derive(Debug, Clone, Deserialize)]
 pub struct GetBalancesResponse {

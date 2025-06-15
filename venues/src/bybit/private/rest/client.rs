@@ -13,11 +13,6 @@ use std::borrow::Cow;
 
 use crate::bybit::{EndpointType, Errors, RateLimiter, RestResult};
 
-mod get_wallet_balance;
-pub use get_wallet_balance::{
-    GetWalletBalanceRequest, GetWalletBalanceResponse, WalletBalance, BalanceData,
-};
-
 /// Private REST client for ByBit V5 exchange
 ///
 /// This client handles all private API endpoints that require authentication.
