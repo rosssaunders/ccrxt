@@ -3,7 +3,6 @@ mod errors;
 #[cfg(test)]
 mod integration_tests;
 mod rate_limit;
-mod usage_example;
 
 pub mod private {
     mod rest;
