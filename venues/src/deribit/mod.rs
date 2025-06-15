@@ -34,5 +34,7 @@
 //! ```
 
 pub mod rate_limit;
+pub mod websocket;
 
 pub use rate_limit::*;
+pub use websocket::*;
