@@ -51,7 +51,7 @@ let client = PrivateRestClient::new(
 );
 
 // Get account information
-let account_info = client.get_account_simple().await?;
+let account_info = client.get_account(AccountRequest::default()).await?;
 println!("Account: {:?}", account_info);
 
 // Place a new order

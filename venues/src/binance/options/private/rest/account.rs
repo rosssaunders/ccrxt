@@ -98,8 +98,5 @@ impl PrivateRestClient {
         .await
     }
 
-    /// Get account information with default parameters
-    pub async fn get_account_simple(&self) -> RestResult<AccountResponse> {
-        self.get_account(AccountRequest::default()).await
-    }
+
 }
