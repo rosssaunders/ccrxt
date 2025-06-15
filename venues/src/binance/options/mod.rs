@@ -3,6 +3,8 @@
 //! This module provides rate limiting and error handling for Binance Options API endpoints.
 //! The Options API uses /eapi/v1/ endpoints and has its own rate limiting rules.
 
+use std::time::Duration;
+
 pub mod errors;
 pub mod rate_limit;
 
@@ -20,6 +22,25 @@ pub use enums::*;
 // Re-export compatible enums from coinm where appropriate
 pub use crate::binance::coinm::{KlineInterval, OrderResponseType, OrderSide, TimeInForce};
 
+// REST module
+pub mod rest;
+
+// Public module
+pub mod public;
+
+pub use public::PublicRestClient;
+
+/// REST response structure for Options API
+#[derive(Debug, Clone)]
+pub struct RestResponse<T> {
+    pub data: T,
+    pub request_duration: Duration,
+    pub headers: ResponseHeaders,
+}
+
+/// Type alias for results returned by Binance Options API operations
+pub type RestResult<T> = Result<RestResponse<T>, Errors>;
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -28,6 +49,19 @@ mod tests {
     async fn test_rate_limiter_creation() {
         let limiter = RateLimiter::new();
         assert!(limiter.check_limits(1, false).await.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_public_client_creation() {
+        let client = reqwest::Client::new();
+        let rate_limiter = RateLimiter::new();
+        let public_client = PublicRestClient::new(
+            "https://eapi.binance.com",
+            client,
+            rate_limiter,
+        );
+        
+        assert_eq!(public_client.base_url, "https://eapi.binance.com");
     }
 
     #[tokio::test]
@@ -143,5 +177,26 @@ mod tests {
         // Check that the weight was updated
         let (_, _, _, weight) = limiter.test_get_stats().await;
         assert_eq!(weight, 2500);
+    }
+
+    #[tokio::test]
+    async fn test_response_headers_from_reqwest() {
+        let mut headers = reqwest::header::HeaderMap::new();
+        headers.insert("x-mbx-used-weight-1m", "2500".parse().unwrap());
+        headers.insert("x-mbx-order-count-10s", "5".parse().unwrap());
+        
+        let response_headers = ResponseHeaders::from_reqwest_headers(&headers);
+        
+        // Check that we have parsed values
+        assert!(!response_headers.values.is_empty());
+        
+        // Find the weight header
+        let weight_header = RateLimitHeader {
+            kind: RateLimitHeaderKind::UsedWeight,
+            interval_value: 1,
+            interval_unit: IntervalUnit::Minute,
+        };
+        
+        assert_eq!(response_headers.values.get(&weight_header), Some(&2500));
     }
 }
