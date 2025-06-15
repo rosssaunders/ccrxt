@@ -24,9 +24,14 @@ pub struct AccountBalance {
 /// Request parameters for getting account balances
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct GetAccountBalancesRequest {
-    /// Optional cursor for pagination
-    pub cursor: Option<String>,
-    /// Number of results per page (default 100, max 250)
+    /// Request page before (newer) this pagination id
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub before: Option<String>,
+    /// Request page after (older) this pagination id
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub after: Option<String>,
+    /// Number of results per request. Maximum 1000 (default 1000)
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<u32>,
 }
 
@@ -42,10 +47,10 @@ pub struct GetAccountBalancesResponse {
 /// Pagination information for responses
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PaginationInfo {
-    /// Cursor for the next page
+    /// Cursor for the page before (newer page)
+    pub before: Option<String>,
+    /// Cursor for the page after (older page)
     pub after: Option<String>,
-    /// Whether there are more results
-    pub has_next: bool,
 }
 
 impl RestClient {
@@ -62,13 +67,13 @@ impl RestClient {
     /// * `request` - Request parameters including optional pagination
     ///
     /// # Returns
-    /// Account balance information for all accounts
+    /// Account balance information for all accounts with pagination info
     pub async fn get_account_balances(
         &self,
         request: &GetAccountBalancesRequest,
     ) -> RestResult<GetAccountBalancesResponse> {
-        let accounts: Vec<AccountBalance> = self
-            .send_request(
+        let (accounts, headers): (Vec<AccountBalance>, reqwest::header::HeaderMap) = self
+            .send_request_with_headers(
                 "accounts",
                 reqwest::Method::GET,
                 Some(request),
@@ -76,12 +81,26 @@ impl RestClient {
             )
             .await?;
 
-        // Note: The actual Coinbase API returns an array directly,
-        // but we wrap it in a response structure for consistency
-        // In a real implementation, you'd need to handle pagination headers
+        // Extract pagination headers
+        let before = headers
+            .get("CB-BEFORE")
+            .and_then(|value| value.to_str().ok())
+            .map(|s| s.to_string());
+
+        let after = headers
+            .get("CB-AFTER")
+            .and_then(|value| value.to_str().ok())
+            .map(|s| s.to_string());
+
+        let pagination = if before.is_some() || after.is_some() {
+            Some(PaginationInfo { before, after })
+        } else {
+            None
+        };
+
         Ok(GetAccountBalancesResponse {
             accounts,
-            pagination: None, // TODO: Extract from response headers
+            pagination,
         })
     }
 }
@@ -117,12 +136,14 @@ mod tests {
     #[test]
     fn test_get_account_balances_request_serialization() {
         let request = GetAccountBalancesRequest {
-            cursor: Some("cursor123".to_string()),
+            before: Some("before123".to_string()),
+            after: Some("after123".to_string()),
             limit: Some(50),
         };
 
         let query_string = serde_urlencoded::to_string(&request).unwrap();
-        assert!(query_string.contains("cursor=cursor123"));
+        assert!(query_string.contains("before=before123"));
+        assert!(query_string.contains("after=after123"));
         assert!(query_string.contains("limit=50"));
     }
 
@@ -131,5 +152,43 @@ mod tests {
         let request = GetAccountBalancesRequest::default();
         let query_string = serde_urlencoded::to_string(&request).unwrap();
         assert!(query_string.is_empty());
+    }
+
+    #[test]
+    fn test_pagination_info_structure() {
+        let pagination = PaginationInfo {
+            before: Some("before_cursor".to_string()),
+            after: Some("after_cursor".to_string()),
+        };
+
+        assert_eq!(pagination.before, Some("before_cursor".to_string()));
+        assert_eq!(pagination.after, Some("after_cursor".to_string()));
+    }
+
+    #[test]
+    fn test_partial_pagination_params() {
+        // Test request with only 'before' parameter
+        let before_only_request = GetAccountBalancesRequest {
+            before: Some("before123".to_string()),
+            after: None,
+            limit: None,
+        };
+
+        let query_string = serde_urlencoded::to_string(&before_only_request).unwrap();
+        assert!(query_string.contains("before=before123"));
+        assert!(!query_string.contains("after="));
+        assert!(!query_string.contains("limit="));
+
+        // Test request with only 'after' parameter
+        let after_only_request = GetAccountBalancesRequest {
+            before: None,
+            after: Some("after456".to_string()),
+            limit: Some(100),
+        };
+
+        let query_string = serde_urlencoded::to_string(&after_only_request).unwrap();
+        assert!(!query_string.contains("before="));
+        assert!(query_string.contains("after=after456"));
+        assert!(query_string.contains("limit=100"));
     }
 }

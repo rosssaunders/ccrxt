@@ -71,7 +71,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Example 2: Get account balances with pagination
     println!("\nFetching account balances with pagination...");
     let balances_request = GetAccountBalancesRequest {
-        cursor: None,
+        before: None,
+        after: None,
         limit: Some(10), // Limit to 10 results per page
     };
     
@@ -83,6 +84,16 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     "  ID: {}, Currency: {}, Balance: {}",
                     account.id, account.currency, account.balance
                 );
+            }
+            
+            // Display pagination info if available
+            if let Some(pagination) = response.pagination {
+                if let Some(before) = pagination.before {
+                    println!("  Before cursor: {}", before);
+                }
+                if let Some(after) = pagination.after {
+                    println!("  After cursor: {}", after);
+                }
             }
         }
         Err(e) => {
