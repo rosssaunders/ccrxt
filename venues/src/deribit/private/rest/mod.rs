@@ -1,9 +1,11 @@
+pub mod cancel_all;
 pub mod client;
 pub mod send_rfq;
 pub mod set_clearance_originator;
 pub mod submit_transfer_to_user;
 pub mod withdraw;
 
+pub use cancel_all::{CancelAllRequest, CancelAllResponse};
 pub use client::RestClient;
 pub use send_rfq::{
     SendRfqRequest, SendRfqResponse, Side,
