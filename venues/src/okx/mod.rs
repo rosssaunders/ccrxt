@@ -29,10 +29,12 @@ pub mod public {
     pub use self::rest::{GetTimeResponse, TimeData};
     pub use self::rest::{GetUnderlyingRequest, GetUnderlyingResponse, UnderlyingData};
     pub use self::rest::{GetPriceLimitRequest, GetPriceLimitResponse, PriceLimit};
+    pub use self::rest::{GetEstimatedPriceRequest, GetEstimatedPriceResponse, EstimatedPriceData};
     pub use self::rest::{GetDiscountRateInterestFreeQuotaRequest, GetDiscountRateInterestFreeQuotaResponse, DiscountRateInterestFreeQuota, DiscountDetail};
     pub use self::rest::{GetInterestRateLoanQuotaRequest, GetInterestRateLoanQuotaResponse, InterestRateLoanQuotaData, BasicInterestRate, RegularInterestRate, VipInterestRate};
     pub use self::rest::{GetPositionTiersRequest, GetPositionTiersResponse, PositionTier};
     pub use self::rest::{GetSettlementHistoryRequest, GetSettlementHistoryResponse, SettlementHistory, SettlementDetail};
+    pub use self::rest::{GetDeliveryExerciseHistoryRequest, GetDeliveryExerciseHistoryResponse, DeliveryExerciseHistory, DeliveryExerciseDetail};
 }
 
 pub mod private {
@@ -94,6 +96,8 @@ pub use public::{GetPremiumHistoryRequest, GetPremiumHistoryResponse, PremiumHis
 pub use public::{GetTimeResponse, TimeData};
 pub use public::{GetUnderlyingRequest, GetUnderlyingResponse, UnderlyingData};
 pub use public::{GetPriceLimitRequest, GetPriceLimitResponse, PriceLimit};
+pub use public::{GetDeliveryExerciseHistoryRequest, GetDeliveryExerciseHistoryResponse, DeliveryExerciseHistory, DeliveryExerciseDetail};
+pub use public::{GetEstimatedPriceRequest, GetEstimatedPriceResponse, EstimatedPriceData};
 pub use rate_limit::{EndpointType, RateLimit, RateLimitError, RateLimiter};
 
 /// Type alias for results returned by OKX API operations

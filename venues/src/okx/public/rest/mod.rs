@@ -22,9 +22,12 @@ mod get_index_candles;
 mod get_history_index_candles;
 mod get_premium_history;
 mod get_settlement_history;
+mod get_estimated_settlement_info;
+mod get_delivery_exercise_history;
 mod get_time;
 mod get_underlying;
 mod get_price_limit;
+mod get_estimated_price;
 
 pub use client::RestClient;
 
@@ -41,6 +44,8 @@ pub use get_interest_rate_loan_quota::{BasicInterestRate, GetInterestRateLoanQuo
 pub use get_opt_summary::{GetOptSummaryRequest, GetOptSummaryResponse, OptSummary};
 pub use get_premium_history::{GetPremiumHistoryRequest, GetPremiumHistoryResponse, PremiumHistory};
 pub use get_settlement_history::{GetSettlementHistoryRequest, GetSettlementHistoryResponse, SettlementHistory, SettlementDetail};
+pub use get_estimated_settlement_info::{GetEstimatedSettlementInfoRequest, GetEstimatedSettlementInfoResponse, EstimatedSettlementInfo};
+pub use get_delivery_exercise_history::{GetDeliveryExerciseHistoryRequest, GetDeliveryExerciseHistoryResponse, DeliveryExerciseHistory, DeliveryExerciseDetail};
 pub use get_time::{GetTimeResponse, TimeData};
 pub use get_history_mark_price_candles::{BarSize, GetHistoryMarkPriceCandlesRequest, GetHistoryMarkPriceCandlesResponse, MarkPriceCandle};
 pub use get_insurance_fund::{GetInsuranceFundRequest, GetInsuranceFundResponse, InsuranceFundData, InsuranceFundDetail};
@@ -54,3 +59,4 @@ pub use get_index_candles::{GetIndexCandlesRequest, GetIndexCandlesResponse, Ind
 pub use get_history_index_candles::{GetHistoryIndexCandlesRequest, GetHistoryIndexCandlesResponse};
 pub use get_underlying::{GetUnderlyingRequest, GetUnderlyingResponse, UnderlyingData};
 pub use get_price_limit::{GetPriceLimitRequest, GetPriceLimitResponse, PriceLimit};
+pub use get_estimated_price::{GetEstimatedPriceRequest, GetEstimatedPriceResponse, EstimatedPriceData};
