@@ -115,6 +115,48 @@ It also details documentation and code style requirements for all structs and fi
 
 ---
 
+## **Parameter Struct Rule (MANDATORY)**
+
+- **All endpoint functions MUST take a single struct for parameters.**
+- **Do NOT use individual function arguments for endpoint parameters (except for URL path parameters).**
+- The ONLY exception is for parameters that are part of the URL path (not query/body), which may be passed as individual arguments.
+- This rule is mandatory for all new and existing endpoints.
+
+### Common Mistakes to Avoid
+- ❌ `pub async fn foo(&self, a: String, b: u64)`
+- ✅ `pub async fn foo(&self, params: FooRequest)`
+- Do not split parameters into multiple arguments unless they are part of the URL path.
+
+### Parameter Struct Checklist
+| Rule | Allowed | Not Allowed |
+|------|---------|-------------|
+| Endpoint params as struct | ✅ | ❌ |
+| Multiple params (not in path) | ❌ | ✅ |
+
+### Example (Correct)
+```rust
+pub async fn submit_transfer_to_user(
+    &self,
+    params: SubmitTransferToUserRequest,
+) -> RestResult<SubmitTransferToUserResponse> {
+    // ...
+}
+```
+
+### Example (Incorrect)
+```rust
+pub async fn submit_transfer_to_user(
+    &self,
+    currency: String,
+    amount: f64,
+    destination: String,
+) -> RestResult<SubmitTransferToUserResponse> {
+    // ...
+}
+```
+
+---
+
 ## 6. Update `mod.rs` File
 
 - After creating a new endpoint file, add a corresponding `mod` declaration to the appropriate `mod.rs` file (e.g., `venues/src/binance/coinm/private/rest/mod.rs`).
