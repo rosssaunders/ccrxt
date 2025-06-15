@@ -50,6 +50,10 @@ path = "examples/cryptocom/rate_limit_example.rs"
 name = "okx_get_underlying"
 path = "examples/okx/get_underlying.rs"
 
+[[example]]
+name = "deribit_websocket_subscribe"
+path = "examples/deribit/websocket_subscribe.rs"
+
 [dev-dependencies]
 tokio-test = "0.4"
 tracing-subscriber = { workspace = true }
