@@ -53,7 +53,7 @@ pub mod private {
 
     // Specific request/response structs from private::rest
     pub use self::rest::{
-        DepositId, Originator, SendRfqRequest, SendRfqResponse, SetClearanceOriginatorRequest, SetClearanceOriginatorResponse, SetClearanceOriginatorResult,
+        DepositId, IndexName, Originator, ResetMmpRequest, ResetMmpResponse, SendRfqRequest, SendRfqResponse, SetClearanceOriginatorRequest, SetClearanceOriginatorResponse, SetClearanceOriginatorResult,
         Side, SubmitTransferToUserRequest, SubmitTransferToUserResponse, TransferData, WithdrawRequest, WithdrawResponse, WithdrawalData,
     };
 }
@@ -74,7 +74,7 @@ pub use public::websocket::client::DeribitWebSocketError;
 
 pub use private::RestClient as PrivateRestClient;
 pub use private::{
-    DepositId, Originator, SendRfqRequest, SendRfqResponse, SetClearanceOriginatorRequest, SetClearanceOriginatorResponse, SetClearanceOriginatorResult,
+    DepositId, IndexName, Originator, ResetMmpRequest, ResetMmpResponse, SendRfqRequest, SendRfqResponse, SetClearanceOriginatorRequest, SetClearanceOriginatorResponse, SetClearanceOriginatorResult,
     Side, SubmitTransferToUserRequest, SubmitTransferToUserResponse, TransferData, WithdrawRequest, WithdrawResponse, WithdrawalData,
 };
 

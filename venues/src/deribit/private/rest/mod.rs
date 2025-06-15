@@ -1,10 +1,14 @@
 pub mod client;
+pub mod reset_mmp;
 pub mod send_rfq;
 pub mod set_clearance_originator;
 pub mod submit_transfer_to_user;
 pub mod withdraw;
 
 pub use client::RestClient;
+pub use reset_mmp::{
+    IndexName, ResetMmpRequest, ResetMmpResponse,
+};
 pub use send_rfq::{
     SendRfqRequest, SendRfqResponse, Side,
 };
