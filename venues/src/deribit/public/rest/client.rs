@@ -41,18 +41,18 @@ impl RestClient {
         }
     }
 
-    /// Send a JSON-RPC request to a public endpoint
+    /// Send a request to a public endpoint
     ///
-    /// # Arguments
-    /// * `method` - The JSON-RPC method name (e.g., "public/auth")
+    /// # Arguments  
+    /// * `endpoint` - The API endpoint path (e.g., "public/auth")
     /// * `params` - The request parameters
     /// * `endpoint_type` - The endpoint type for rate limiting
     ///
     /// # Returns
     /// A result containing the response data or an error
-    pub async fn send_jsonrpc_request<T, P>(
+    pub async fn send_request<T, P>(
         &self,
-        method: &str,
+        endpoint: &str,
         params: P,
         endpoint_type: EndpointType,
     ) -> RestResult<T>
@@ -66,23 +66,19 @@ impl RestClient {
             .await
             .map_err(|e| Errors::Error(e.to_string()))?;
 
-        // Build the JSON-RPC request
-        let jsonrpc_request = serde_json::json!({
-            "jsonrpc": "2.0",
-            "method": method,
-            "params": params,
-            "id": 1
-        });
-
         // Build the URL
-        let url = format!("{}/{}", self.base_url, method);
+        let url = format!("{}/{}", self.base_url, endpoint);
+
+        // Convert params to form data
+        let form_data = serde_urlencoded::to_string(&params)
+            .map_err(|e| Errors::Error(format!("Failed to serialize params: {}", e)))?;
 
         // Send the request
         let response = self
             .client
             .post(&url)
-            .header("Content-Type", "application/json")
-            .json(&jsonrpc_request)
+            .header("Content-Type", "application/x-www-form-urlencoded")
+            .body(form_data)
             .send()
             .await?;
 
@@ -102,23 +98,6 @@ impl RestClient {
         // Parse the response
         let response_text = response.text().await?;
         
-        // Try to parse as JSON-RPC response first
-        if let Ok(jsonrpc_response) = serde_json::from_str::<serde_json::Value>(&response_text) {
-            // Check for JSON-RPC error
-            if let Some(error) = jsonrpc_response.get("error") {
-                let error_code = error.get("code").and_then(|v| v.as_i64()).unwrap_or(-1);
-                let error_message = error.get("message").and_then(|v| v.as_str()).unwrap_or("Unknown error");
-                return Err(Errors::Error(format!("JSON-RPC error {}: {}", error_code, error_message)));
-            }
-            
-            // Extract the result field
-            if let Some(result) = jsonrpc_response.get("result") {
-                return serde_json::from_value(result.clone())
-                    .map_err(|e| Errors::Error(format!("Failed to parse result: {}", e)));
-            }
-        }
-        
-        // Fall back to parsing the entire response
         serde_json::from_str(&response_text)
             .map_err(|e| Errors::Error(format!("Failed to parse response: {}", e)))
     }
@@ -131,7 +110,7 @@ impl RestClient {
     /// # Returns
     /// A result containing the authentication response with access token
     pub async fn auth(&self, request: &AuthRequest) -> RestResult<AuthJsonRpcResponse> {
-        self.send_jsonrpc_request(
+        self.send_request(
             "public/auth",
             request,
             EndpointType::NonMatchingEngine,
@@ -198,5 +177,48 @@ mod tests {
         assert_eq!(request.signature, Some("test_signature".to_string()));
         assert_eq!(request.nonce, Some("test_nonce".to_string()));
         assert_eq!(request.state, Some("test_state".to_string()));
+    }
+
+    #[test]
+    fn test_auth_request_serialization() {
+        let request = AuthRequest::client_credentials(
+            "test_client_id".to_string(),
+            "test_client_secret".to_string(),
+        ).with_scope("session:test".to_string());
+
+        // Test that it can be serialized to form data
+        let form_data = serde_urlencoded::to_string(&request).unwrap();
+        assert!(form_data.contains("grant_type=client_credentials"));
+        assert!(form_data.contains("client_id=test_client_id"));
+        assert!(form_data.contains("client_secret=test_client_secret"));
+        assert!(form_data.contains("scope=session%3Atest"));
+    }
+
+    #[test]
+    fn test_auth_response_deserialization() {
+        let json_response = r#"{
+            "id": 1,
+            "jsonrpc": "2.0",
+            "result": {
+                "access_token": "test_token_123",
+                "enabled_features": ["restricted_block_trades"],
+                "expires_in": 3600,
+                "google_login": false,
+                "mandatory_tfa_status": "none",
+                "refresh_token": "test_refresh_123",
+                "scope": "session:test",
+                "state": "test_state",
+                "token_type": "bearer"
+            }
+        }"#;
+
+        let response: super::AuthJsonRpcResponse = serde_json::from_str(json_response).unwrap();
+        assert_eq!(response.jsonrpc, "2.0");
+        assert_eq!(response.result.access_token, "test_token_123");
+        assert_eq!(response.result.expires_in, 3600);
+        assert_eq!(response.result.token_type, "bearer");
+        assert_eq!(response.result.scope, "session:test");
+        assert_eq!(response.result.state, Some("test_state".to_string()));
+        assert!(!response.result.google_login);
     }
 }

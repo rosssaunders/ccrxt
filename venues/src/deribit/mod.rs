@@ -37,6 +37,9 @@ pub mod rate_limit;
 pub mod errors;
 pub mod public;
 
+#[allow(dead_code)]
+mod usage_example;
+
 pub use rate_limit::*;
 pub use errors::*;
 pub use public::RestClient as PublicRestClient;
