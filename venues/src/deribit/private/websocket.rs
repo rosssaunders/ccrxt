@@ -2,6 +2,38 @@
 //!
 //! This module provides WebSocket connectivity for Deribit's private API endpoints.
 //! All private methods require authentication and use JSON-RPC 2.0 protocol.
+//!
+//! # Authentication
+//!
+//! Before calling private methods, you must authenticate using your API credentials.
+//! The client supports client credentials authentication which is suitable for
+//! automated trading applications.
+//!
+//! # Example Usage
+//!
+//! ```rust,no_run
+//! use venues::deribit::{WebSocketClient, SubscribeRequest};
+//! use websockets::WebSocketConnection;
+//!
+//! #[tokio::main]
+//! async fn main() -> Result<(), Box<dyn std::error::Error>> {
+//!     let mut client = WebSocketClient::new();
+//!     
+//!     // Connect to WebSocket
+//!     client.connect().await?;
+//!     
+//!     // Authenticate with API credentials
+//!     client.authenticate("your_client_id", "your_client_secret").await?;
+//!     
+//!     // Subscribe to private channels
+//!     let channels = vec!["user.portfolio.btc".to_string()];
+//!     let response = client.subscribe(channels, Some("trading".to_string())).await?;
+//!     
+//!     println!("Subscribed to channels: {:?}", response.channels);
+//!     
+//!     Ok(())
+//! }
+//! ```
 
 use async_trait::async_trait;
 use futures::{SinkExt, StreamExt};
@@ -38,6 +70,32 @@ pub struct JsonRpcError {
     pub message: String,
 }
 
+/// Request parameters for the /public/auth method
+#[derive(Debug, Clone, Serialize)]
+pub struct AuthRequest {
+    /// The grant type, must be "client_credentials"
+    pub grant_type: String,
+    /// Your application's client ID
+    pub client_id: String,
+    /// Your application's client secret 
+    pub client_secret: String,
+}
+
+/// Response for the /public/auth method
+#[derive(Debug, Clone, Deserialize)]
+pub struct AuthResponse {
+    /// Access token for authenticated requests
+    pub access_token: String,
+    /// Token type, typically "bearer"
+    pub token_type: String,
+    /// Token expiration time in seconds
+    pub expires_in: u64,
+    /// Refresh token for getting new access tokens
+    pub refresh_token: String,
+    /// Scope of the token
+    pub scope: String,
+}
+
 /// Request parameters for the /private/subscribe method
 #[derive(Debug, Clone, Serialize)]
 pub struct SubscribeRequest {
@@ -46,6 +104,8 @@ pub struct SubscribeRequest {
     /// Optional label which will be added to notifications of private channels (max 16 characters)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub label: Option<String>,
+    /// Access token for authentication (required for private methods)
+    pub access_token: String,
 }
 
 /// Response for the /private/subscribe method
