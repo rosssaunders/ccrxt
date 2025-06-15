@@ -76,6 +76,7 @@ impl EndpointType {
             | "private/cancel_block_rfq_quote" | "private/cancel_all_block_rfq_quotes" => {
                 EndpointType::MatchingEngine
             }
+            // private/unsubscribe_all is a non-matching engine endpoint
             _ => EndpointType::NonMatchingEngine,
         }
     }
@@ -383,6 +384,12 @@ mod tests {
         
         assert_eq!(
             EndpointType::from_path("private/get_account_summary"),
+            EndpointType::NonMatchingEngine
+        );
+        
+        // Test that private/unsubscribe_all is classified as non-matching engine
+        assert_eq!(
+            EndpointType::from_path("private/unsubscribe_all"),
             EndpointType::NonMatchingEngine
         );
     }
