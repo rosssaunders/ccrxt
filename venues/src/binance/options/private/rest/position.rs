@@ -105,14 +105,4 @@ impl PrivateRestClient {
         )
         .await
     }
-
-    /// Get all position information
-    pub async fn get_all_positions(&self) -> RestResult<Vec<PositionResponse>> {
-        self.get_position(PositionRequest::default()).await
-    }
-
-    /// Get position information for a specific symbol
-    pub async fn get_position_for_symbol(&self, symbol: String) -> RestResult<Vec<PositionResponse>> {
-        self.get_position(PositionRequest::new().symbol(symbol)).await
-    }
 }

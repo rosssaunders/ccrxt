@@ -140,28 +140,4 @@ impl PrivateRestClient {
         )
         .await
     }
-
-    /// Get recent trades for all symbols
-    pub async fn get_recent_trades(&self) -> RestResult<Vec<UserTradeResponse>> {
-        self.get_user_trades(UserTradesRequest::default()).await
-    }
-
-    /// Get trades for a specific symbol
-    pub async fn get_trades_for_symbol(&self, symbol: String) -> RestResult<Vec<UserTradeResponse>> {
-        self.get_user_trades(UserTradesRequest::new().symbol(symbol)).await
-    }
-
-    /// Get trades within a time range
-    pub async fn get_trades_in_range(
-        &self,
-        start_time: u64,
-        end_time: u64,
-    ) -> RestResult<Vec<UserTradeResponse>> {
-        self.get_user_trades(
-            UserTradesRequest::new()
-                .start_time(start_time)
-                .end_time(end_time),
-        )
-        .await
-    }
 }
