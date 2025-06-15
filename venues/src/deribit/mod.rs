@@ -35,6 +35,7 @@
 
 pub mod enums;
 pub mod errors;
+pub mod examples;
 pub mod rate_limit;
 
 pub mod public {
