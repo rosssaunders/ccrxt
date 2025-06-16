@@ -8,7 +8,7 @@
 #[cfg(test)]
 mod usage_examples {
     use crate::deribit::{
-        AccountTier, Currency, ComboState, GetComboIdsRequest, PublicRestClient, RateLimiter,
+        AccountTier, Currency, ComboState, GetComboIdsRequest, GetCombosRequest, PublicRestClient, RateLimiter,
     };
     use reqwest::Client;
 
@@ -45,6 +45,32 @@ mod usage_examples {
     }
 
     #[test]
+    fn test_get_combos_request_usage() {
+        // Test creating requests for the new get_combos endpoint
+        let btc_request = GetCombosRequest {
+            currency: Currency::BTC,
+        };
+
+        let eth_request = GetCombosRequest {
+            currency: Currency::ETH,
+        };
+
+        let any_request = GetCombosRequest {
+            currency: Currency::Any, // Get combos for all currencies
+        };
+
+        // Verify serialization works correctly
+        let btc_json = serde_json::to_value(&btc_request).unwrap();
+        assert_eq!(btc_json["currency"], "BTC");
+
+        let eth_json = serde_json::to_value(&eth_request).unwrap();
+        assert_eq!(eth_json["currency"], "ETH");
+
+        let any_json = serde_json::to_value(&any_request).unwrap();
+        assert_eq!(any_json["currency"], "any");
+    }
+
+    #[test]
     fn test_client_creation_and_usage() {
         // Verify that the PublicRestClient can be created and has the expected methods
         let client = Client::new();
@@ -57,15 +83,20 @@ mod usage_examples {
 
         // We can't make actual API calls in tests, but we can verify the method exists
         // and has the correct signature by attempting to create a future with test data
-        let request = GetComboIdsRequest {
+        let combo_ids_request = GetComboIdsRequest {
             currency: Currency::BTC,
             state: Some(ComboState::Active),
         };
 
-        // This creates the future but doesn't execute it - just verifies the method signature
-        let _future = rest_client.get_combo_ids(request);
+        let get_combos_request = GetCombosRequest {
+            currency: Currency::BTC,
+        };
 
-        // If we reach this point, the method exists and has correct signatures
+        // This creates the future but doesn't execute it - just verifies the method signature
+        let _combo_ids_future = rest_client.get_combo_ids(combo_ids_request);
+        let _get_combos_future = rest_client.get_combos(get_combos_request);
+
+        // If we reach this point, the methods exist and have correct signatures
         assert!(true);
     }
 
@@ -92,6 +123,70 @@ mod usage_examples {
         assert!(response.result[2].contains("ETH-28JUN24"));
     }
 
+    #[test]
+    fn test_get_combos_response_structure_parsing() {
+        // Test parsing a realistic get_combos response structure
+        let response_json = serde_json::json!({
+            "id": 123,
+            "jsonrpc": "2.0",
+            "result": [
+                {
+                    "creation_timestamp": 1640995200000i64,
+                    "id": "BTC-28JUN24-65000-C_BTC-28JUN24-70000-P",
+                    "instrument_id": 123456,
+                    "legs": [
+                        {
+                            "amount": 1,
+                            "instrument_name": "BTC-28JUN24-65000-C"
+                        },
+                        {
+                            "amount": -1,
+                            "instrument_name": "BTC-28JUN24-70000-P"
+                        }
+                    ],
+                    "state": "active",
+                    "state_timestamp": 1640995200000i64
+                },
+                {
+                    "creation_timestamp": 1640995300000i64,
+                    "id": "ETH-28JUN24-3000-C_ETH-28JUN24-3500-P",
+                    "instrument_id": 789012,
+                    "legs": [
+                        {
+                            "amount": 1,
+                            "instrument_name": "ETH-28JUN24-3000-C"
+                        },
+                        {
+                            "amount": -1,
+                            "instrument_name": "ETH-28JUN24-3500-P"
+                        }
+                    ],
+                    "state": "rfq",
+                    "state_timestamp": 1640995300000i64
+                }
+            ]
+        });
+
+        let response: crate::deribit::GetCombosResponse = 
+            serde_json::from_value(response_json).unwrap();
+
+        assert_eq!(response.id, 123);
+        assert_eq!(response.jsonrpc, "2.0");
+        assert_eq!(response.result.len(), 2);
+        
+        let first_combo = &response.result[0];
+        assert_eq!(first_combo.id, "BTC-28JUN24-65000-C_BTC-28JUN24-70000-P");
+        assert_eq!(first_combo.instrument_id, 123456);
+        assert_eq!(first_combo.state, "active");
+        assert_eq!(first_combo.legs.len(), 2);
+        assert_eq!(first_combo.legs[0].amount, 1);
+        assert_eq!(first_combo.legs[1].amount, -1);
+        
+        let second_combo = &response.result[1];
+        assert_eq!(second_combo.id, "ETH-28JUN24-3000-C_ETH-28JUN24-3500-P");
+        assert_eq!(second_combo.state, "rfq");
+    }
+
     #[tokio::test]
     async fn test_rate_limiting_for_combo_ids() {
         // Test that the rate limiting system correctly handles the new endpoint
@@ -115,6 +210,29 @@ mod usage_examples {
         assert_eq!(status.available_credits, 50_000 - 500);
     }
 
+    #[tokio::test]
+    async fn test_rate_limiting_for_get_combos() {
+        // Test that the rate limiting system correctly handles the new get_combos endpoint
+        let rate_limiter = RateLimiter::new(AccountTier::Tier3);
+
+        // The endpoint should use the PublicGetCombos endpoint type,
+        // which consumes 500 credits (same as other non-matching engine endpoints)
+        let result = rate_limiter
+            .check_limits(crate::deribit::EndpointType::PublicGetCombos)
+            .await;
+        assert!(result.is_ok());
+
+        // Record the request
+        rate_limiter
+            .record_request(crate::deribit::EndpointType::PublicGetCombos)
+            .await;
+
+        // Check that the credit system is working
+        let status = rate_limiter.get_status().await;
+        // After one request, we should have consumed 500 credits from the default 50,000
+        assert_eq!(status.available_credits, 50_000 - 500);
+    }
+
     #[test]
     fn test_all_supported_currencies_and_states() {
         // Verify all combinations work
@@ -124,6 +242,7 @@ mod usage_examples {
             Currency::USDC,
             Currency::USDT,
             Currency::EURR,
+            Currency::Any,
         ];
 
         let states = [
@@ -150,6 +269,13 @@ mod usage_examples {
                     assert!(!json.as_object().unwrap().contains_key("state"));
                 }
             }
+        }
+
+        // Test get_combos with all currencies
+        for currency in currencies {
+            let request = GetCombosRequest { currency };
+            let json = serde_json::to_value(&request).unwrap();
+            assert!(json["currency"].is_string());
         }
     }
 
