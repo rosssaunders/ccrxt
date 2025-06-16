@@ -53,6 +53,8 @@ pub mod private {
 
     // Specific request/response structs from private::rest
     pub use self::rest::{
+        AddToAddressBookRequest, AddToAddressBookResponse, AddressBookEntry,
+        DepositId, Originator, SendRfqRequest, SendRfqResponse, SetClearanceOriginatorRequest, SetClearanceOriginatorResponse, SetClearanceOriginatorResult,
         CancelAllRequest, CancelAllResponse, DepositId, Originator, SendRfqRequest, SendRfqResponse, SetClearanceOriginatorRequest, SetClearanceOriginatorResponse, SetClearanceOriginatorResult,
         CancelOrderRequest, CancelOrderResponse, CancelledOrder, DepositId, Originator, SendRfqRequest, SendRfqResponse, SetClearanceOriginatorRequest, SetClearanceOriginatorResponse, SetClearanceOriginatorResult,
         Side, SubmitTransferToUserRequest, SubmitTransferToUserResponse, TransferData, WithdrawRequest, WithdrawResponse, WithdrawalData,
@@ -75,6 +77,8 @@ pub use public::websocket::client::DeribitWebSocketError;
 
 pub use private::RestClient as PrivateRestClient;
 pub use private::{
+    AddToAddressBookRequest, AddToAddressBookResponse, AddressBookEntry,
+    DepositId, Originator, SendRfqRequest, SendRfqResponse, SetClearanceOriginatorRequest, SetClearanceOriginatorResponse, SetClearanceOriginatorResult,
     CancelAllRequest, CancelAllResponse, DepositId, Originator, SendRfqRequest, SendRfqResponse, SetClearanceOriginatorRequest, SetClearanceOriginatorResponse, SetClearanceOriginatorResult,
     CancelOrderRequest, CancelOrderResponse, CancelledOrder,
     Side, SubmitTransferToUserRequest, SubmitTransferToUserResponse, TransferData, WithdrawRequest, WithdrawResponse, WithdrawalData,

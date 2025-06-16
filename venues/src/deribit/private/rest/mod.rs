@@ -1,3 +1,4 @@
+pub mod add_to_address_book;
 pub mod cancel_all;
 pub mod cancel_order;
 pub mod approve_block_trade;
@@ -7,6 +8,9 @@ pub mod set_clearance_originator;
 pub mod submit_transfer_to_user;
 pub mod withdraw;
 
+pub use add_to_address_book::{
+    AddToAddressBookRequest, AddToAddressBookResponse, AddressBookEntry,
+};
 pub use cancel_all::{CancelAllRequest, CancelAllResponse};
 pub use client::RestClient;
 
