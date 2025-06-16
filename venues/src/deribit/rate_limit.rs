@@ -91,7 +91,8 @@ impl EndpointType {
             | "private/verify_block_trade" | "private/execute_block_trade" | "private/simulate_block_trade"
             | "private/move_positions" | "private/mass_quote" | "private/cancel_quotes"
             | "private/add_block_rfq_quote" | "private/edit_block_rfq_quote"
-            | "private/cancel_block_rfq_quote" | "private/cancel_all_block_rfq_quotes" => {
+            | "private/cancel_block_rfq_quote" | "private/cancel_all_block_rfq_quotes"
+            | "private/reset_mmp" => {
                 EndpointType::MatchingEngine
             }
             _ => EndpointType::NonMatchingEngine,
@@ -419,6 +420,11 @@ mod tests {
         
         assert_eq!(
             EndpointType::from_path("private/buy"),
+            EndpointType::MatchingEngine
+        );
+        
+        assert_eq!(
+            EndpointType::from_path("private/reset_mmp"),
             EndpointType::MatchingEngine
         );
         
