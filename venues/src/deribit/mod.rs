@@ -39,14 +39,14 @@ pub mod public {
     pub mod websocket;
 
     pub use self::rest::RestClient;
-    pub use self::rest::{GetComboIdsRequest};
-    pub use self::rest::{GetComboIdsResponse};
-    pub use self::websocket::{DeribitMessage};
-    pub use self::websocket::{DeribitWebSocketClient};
-    pub use self::websocket::{HelloRequest};
-    pub use self::websocket::{HelloResponse};
-    pub use self::websocket::{HelloResult};
-    pub use self::websocket::{JsonRpcRequest};
+    pub use self::rest::GetComboIdsRequest;
+    pub use self::rest::GetComboIdsResponse;
+    pub use self::websocket::DeribitMessage;
+    pub use self::websocket::DeribitWebSocketClient;
+    pub use self::websocket::HelloRequest;
+    pub use self::websocket::HelloResponse;
+    pub use self::websocket::HelloResult;
+    pub use self::websocket::JsonRpcRequest;
     pub use self::websocket::client::DeribitWebSocketError;
 }
 
@@ -54,28 +54,30 @@ pub mod private {
     pub mod rest;
 
     pub use self::rest::RestClient;
-    pub use self::rest::{AddToAddressBookRequest};
-    pub use self::rest::{AddToAddressBookResponse};
-    pub use self::rest::{AddressBookEntry};
-    pub use self::rest::{DepositId};
-    pub use self::rest::{Originator};
-    pub use self::rest::{SendRfqRequest};
-    pub use self::rest::{SendRfqResponse};
-    pub use self::rest::{SetClearanceOriginatorRequest};
-    pub use self::rest::{SetClearanceOriginatorResponse};
-    pub use self::rest::{SetClearanceOriginatorResult};
-    pub use self::rest::{CancelAllRequest};
-    pub use self::rest::{CancelAllResponse};
-    pub use self::rest::{CancelOrderRequest};
-    pub use self::rest::{CancelOrderResponse};
-    pub use self::rest::{CancelledOrder};
-    pub use self::rest::{Side};
-    pub use self::rest::{SubmitTransferToUserRequest};
-    pub use self::rest::{SubmitTransferToUserResponse};
-    pub use self::rest::{TransferData};
-    pub use self::rest::{WithdrawRequest};
-    pub use self::rest::{WithdrawResponse};
-    pub use self::rest::{WithdrawalData};
+    pub use self::rest::AddToAddressBookRequest;
+    pub use self::rest::AddToAddressBookResponse;
+    pub use self::rest::AddressBookEntry;
+    pub use self::rest::DepositId;
+    pub use self::rest::Originator;
+    pub use self::rest::SendRfqRequest;
+    pub use self::rest::SendRfqResponse;
+    pub use self::rest::SetClearanceOriginatorRequest;
+    pub use self::rest::SetClearanceOriginatorResponse;
+    pub use self::rest::SetClearanceOriginatorResult;
+    pub use self::rest::CancelAllRequest;
+    pub use self::rest::CancelAllResponse;
+    pub use self::rest::CancelOrderRequest;
+    pub use self::rest::CancelOrderResponse;
+    pub use self::rest::CancelledOrder;
+    pub use self::rest::Side;
+    pub use self::rest::SubmitTransferBetweenSubaccountsRequest;
+    pub use self::rest::SubmitTransferBetweenSubaccountsResponse;
+    pub use self::rest::SubmitTransferToUserRequest;
+    pub use self::rest::SubmitTransferToUserResponse;
+    pub use self::rest::TransferData;
+    pub use self::rest::WithdrawRequest;
+    pub use self::rest::WithdrawResponse;
+    pub use self::rest::WithdrawalData;
 }
 
 pub mod message;
@@ -113,6 +115,8 @@ pub use private::CancelOrderRequest;
 pub use private::CancelOrderResponse;
 pub use private::CancelledOrder;
 pub use private::Side;
+pub use private::SubmitTransferBetweenSubaccountsRequest;
+pub use private::SubmitTransferBetweenSubaccountsResponse;
 pub use private::SubmitTransferToUserRequest;
 pub use private::SubmitTransferToUserResponse;
 pub use private::TransferData;

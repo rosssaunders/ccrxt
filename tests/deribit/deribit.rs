@@ -328,4 +328,64 @@ mod usage_examples {
         
         println!("PrivateRestClient::withdraw method is accessible and properly typed");
     }
+
+    #[tokio::test]
+    async fn test_private_rest_client_submit_transfer_between_subaccounts_method() {
+        // Test that the submit_transfer_between_subaccounts method is accessible via PrivateRestClient
+        use crate::deribit::{PrivateRestClient, AccountTier, RateLimiter, SubmitTransferBetweenSubaccountsRequest};
+        use rest::secrets::ExposableSecret;
+
+        // Test secret implementation
+        #[derive(Clone)]
+        struct PlainTextSecret {
+            secret: String,
+        }
+
+        impl PlainTextSecret {
+            fn new(secret: String) -> Self {
+                Self { secret }
+            }
+        }
+
+        impl ExposableSecret for PlainTextSecret {
+            fn expose_secret(&self) -> String {
+                self.secret.clone()
+            }
+        }
+
+        let api_key = Box::new(PlainTextSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
+        let api_secret = Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let client = reqwest::Client::new();
+        let rate_limiter = RateLimiter::new(AccountTier::Tier4);
+
+        let rest_client = PrivateRestClient::new(
+            api_key,
+            api_secret,
+            "https://test.deribit.com",
+            rate_limiter,
+            client,
+        );
+
+        // Test that we can get a function reference to the method
+        let _ = PrivateRestClient::submit_transfer_between_subaccounts;
+        
+        // Test creating a request for transfer between subaccounts
+        let request = SubmitTransferBetweenSubaccountsRequest {
+            currency: "BTC".to_string(),
+            amount: 0.001,
+            destination: 12345,
+            source: Some(67890),
+        };
+
+        // Verify request can be serialized
+        let json_str = serde_json::to_string(&request).unwrap();
+        assert!(json_str.contains("BTC"));
+        assert!(json_str.contains("12345"));
+        assert!(json_str.contains("67890"));
+        
+        // Verify the client exists and has the method
+        let _ = &rest_client;
+        
+        println!("PrivateRestClient::submit_transfer_between_subaccounts method is accessible and properly typed");
+    }
 }
