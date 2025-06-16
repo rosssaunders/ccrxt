@@ -58,10 +58,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing the price limit information
-    pub async fn get_price_limit(
-        &self,
-        request: GetPriceLimitRequest,
-    ) -> RestResult<GetPriceLimitResponse> {
+    pub async fn get_price_limit(&self, request: GetPriceLimitRequest) -> RestResult<GetPriceLimitResponse> {
         self.send_request(
             "api/v5/public/price-limit",
             reqwest::Method::GET,

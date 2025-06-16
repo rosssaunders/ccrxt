@@ -1,4 +1,4 @@
-use super::{common::OkxApiResponse, RestClient};
+use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, InstrumentType, OrderSide, RestResult};
 use serde::{Deserialize, Serialize};
 

@@ -418,9 +418,7 @@ impl From<ErrorResponse> for ApiError {
             43005 => ApiError::PostOnlyRej,
             43012 => ApiError::SelfTradePrevention,
             50001 => match err.message.as_str() {
-                "If create-withdrawal call breaching credit line check" => {
-                    ApiError::DwCreditLineNotMaintained
-                }
+                "If create-withdrawal call breaching credit line check" => ApiError::DwCreditLineNotMaintained,
                 "Internal error" => ApiError::ErrInternal,
                 _ => ApiError::UnmappedApiError {
                     code: err.code,

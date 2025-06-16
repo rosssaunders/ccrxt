@@ -12,8 +12,8 @@ pub enum OptionsContractType {
 impl fmt::Display for OptionsContractType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            | OptionsContractType::Call => write!(f, "CALL"),
-            | OptionsContractType::Put => write!(f, "PUT"),
+            OptionsContractType::Call => write!(f, "CALL"),
+            OptionsContractType::Put => write!(f, "PUT"),
         }
     }
 }
@@ -30,8 +30,8 @@ pub enum OptionsPositionSide {
 impl fmt::Display for OptionsPositionSide {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            | OptionsPositionSide::Long => write!(f, "LONG"),
-            | OptionsPositionSide::Short => write!(f, "SHORT"),
+            OptionsPositionSide::Long => write!(f, "LONG"),
+            OptionsPositionSide::Short => write!(f, "SHORT"),
         }
     }
 }
@@ -47,7 +47,7 @@ pub enum OptionsOrderType {
 impl fmt::Display for OptionsOrderType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            | OptionsOrderType::Limit => write!(f, "LIMIT"),
+            OptionsOrderType::Limit => write!(f, "LIMIT"),
         }
     }
 }
@@ -67,11 +67,11 @@ pub enum OptionsOrderStatus {
 impl fmt::Display for OptionsOrderStatus {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            | OptionsOrderStatus::Accepted => write!(f, "ACCEPTED"),
-            | OptionsOrderStatus::Rejected => write!(f, "REJECTED"),
-            | OptionsOrderStatus::PartiallyFilled => write!(f, "PARTIALLY_FILLED"),
-            | OptionsOrderStatus::Filled => write!(f, "FILLED"),
-            | OptionsOrderStatus::Cancelled => write!(f, "CANCELLED"),
+            OptionsOrderStatus::Accepted => write!(f, "ACCEPTED"),
+            OptionsOrderStatus::Rejected => write!(f, "REJECTED"),
+            OptionsOrderStatus::PartiallyFilled => write!(f, "PARTIALLY_FILLED"),
+            OptionsOrderStatus::Filled => write!(f, "FILLED"),
+            OptionsOrderStatus::Cancelled => write!(f, "CANCELLED"),
         }
     }
 }
@@ -87,8 +87,8 @@ pub enum RateLimitType {
 impl fmt::Display for RateLimitType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            | RateLimitType::RequestWeight => write!(f, "REQUEST_WEIGHT"),
-            | RateLimitType::Orders => write!(f, "ORDERS"),
+            RateLimitType::RequestWeight => write!(f, "REQUEST_WEIGHT"),
+            RateLimitType::Orders => write!(f, "ORDERS"),
         }
     }
 }
@@ -103,7 +103,7 @@ pub enum RateLimitInterval {
 impl fmt::Display for RateLimitInterval {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            | RateLimitInterval::Minute => write!(f, "MINUTE"),
+            RateLimitInterval::Minute => write!(f, "MINUTE"),
         }
     }
 }

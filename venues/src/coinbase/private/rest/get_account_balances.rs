@@ -68,10 +68,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Account balance information for all accounts with pagination info
-    pub async fn get_account_balances(
-        &self,
-        request: &GetAccountBalancesRequest,
-    ) -> RestResult<GetAccountBalancesResponse> {
+    pub async fn get_account_balances(&self, request: &GetAccountBalancesRequest) -> RestResult<GetAccountBalancesResponse> {
         let (accounts, headers): (Vec<AccountBalance>, reqwest::header::HeaderMap) = self
             .send_request_with_headers(
                 "accounts",

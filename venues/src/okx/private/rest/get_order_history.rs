@@ -1,4 +1,4 @@
-use super::{common::OkxApiResponse, get_order::OrderDetails, RestClient};
+use super::{RestClient, common::OkxApiResponse, get_order::OrderDetails};
 use crate::okx::{EndpointType, InstrumentType, RestResult};
 use serde::Serialize;
 
@@ -63,10 +63,7 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the order history or an error
-    pub async fn get_order_history(
-        &self,
-        request: &GetOrderHistoryRequest,
-    ) -> RestResult<OkxApiResponse<OrderDetails>> {
+    pub async fn get_order_history(&self, request: &GetOrderHistoryRequest) -> RestResult<OkxApiResponse<OrderDetails>> {
         self.send_request(
             "api/v5/trade/orders-history",
             reqwest::Method::GET,

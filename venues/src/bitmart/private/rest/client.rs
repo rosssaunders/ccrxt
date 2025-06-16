@@ -18,13 +18,13 @@ use std::borrow::Cow;
 
 use crate::bitmart::rate_limit::{EndpointType, RateLimiter};
 use crate::bitmart::{Errors, RestResult};
+use base64::{Engine as _, engine::general_purpose};
+use hmac::{Hmac, Mac};
 use reqwest::{Client, Method};
 use rest::secrets::ExposableSecret;
-use serde::de::DeserializeOwned;
 use serde::Deserialize;
-use hmac::{Hmac, Mac};
+use serde::de::DeserializeOwned;
 use sha2::Sha256;
-use base64::{engine::general_purpose, Engine as _};
 
 /// BitMart private REST client
 pub struct RestClient {
@@ -93,20 +93,13 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the signature as a base64 string or an error
-    pub fn sign_request(
-        &self,
-        timestamp: &str,
-        method: &str,
-        request_path: &str,
-        body: &str,
-    ) -> Result<String, Errors> {
+    pub fn sign_request(&self, timestamp: &str, method: &str, request_path: &str, body: &str) -> Result<String, Errors> {
         // Create the message string: timestamp + method + requestPath + body
         let message = format!("{}{}{}{}", timestamp, method, request_path, body);
 
         // Sign with HMAC SHA256
         let api_secret = self.api_secret.expose_secret();
-        let mut mac = Hmac::<Sha256>::new_from_slice(api_secret.as_bytes())
-            .map_err(|_| Errors::InvalidApiKey())?;
+        let mut mac = Hmac::<Sha256>::new_from_slice(api_secret.as_bytes()).map_err(|_| Errors::InvalidApiKey())?;
         mac.update(message.as_bytes());
 
         // Encode as Base64
@@ -123,19 +116,15 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the parsed response data or an error
-    pub async fn send_request<R, T>(
-        &self,
-        endpoint: &str,
-        method: Method,
-        request: Option<&R>,
-        endpoint_type: EndpointType,
-    ) -> RestResult<T>
+    pub async fn send_request<R, T>(&self, endpoint: &str, method: Method, request: Option<&R>, endpoint_type: EndpointType) -> RestResult<T>
     where
         R: serde::Serialize + ?Sized,
         T: DeserializeOwned,
     {
         // Check rate limits before making the request
-        self.rate_limiter.check_limits(endpoint_type.clone()).await?;
+        self.rate_limiter
+            .check_limits(endpoint_type.clone())
+            .await?;
 
         // Serialize request to query params or JSON body
         let (url, body_str, request_path) = match method {
@@ -197,8 +186,12 @@ impl RestClient {
 
         // Parse response
         let response_text = response.text().await?;
-        let bitmart_response: BitMartResponse<T> = serde_json::from_str(&response_text)
-            .map_err(|e| Errors::Error(format!("Failed to parse response: {} - Response: {}", e, response_text)))?;
+        let bitmart_response: BitMartResponse<T> = serde_json::from_str(&response_text).map_err(|e| {
+            Errors::Error(format!(
+                "Failed to parse response: {} - Response: {}",
+                e, response_text
+            ))
+        })?;
 
         // Check for API errors
         if bitmart_response.code != 1000 {
@@ -211,9 +204,9 @@ impl RestClient {
         }
 
         // Return data or error if no data
-        bitmart_response.data.ok_or_else(|| {
-            Errors::Error("API response missing data field".to_string())
-        })
+        bitmart_response
+            .data
+            .ok_or_else(|| Errors::Error("API response missing data field".to_string()))
     }
 }
 

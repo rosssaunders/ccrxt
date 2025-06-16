@@ -1,4 +1,4 @@
-use super::{common::OkxApiResponse, RestClient};
+use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 use serde::{Deserialize, Serialize};
 
@@ -83,10 +83,7 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the order amendment response or an error
-    pub async fn amend_order(
-        &self,
-        request: &AmendOrderRequest,
-    ) -> RestResult<OkxApiResponse<AmendOrderResponse>> {
+    pub async fn amend_order(&self, request: &AmendOrderRequest) -> RestResult<OkxApiResponse<AmendOrderResponse>> {
         self.send_request(
             "api/v5/trade/amend-order",
             reqwest::Method::POST,
@@ -170,8 +167,7 @@ mod tests {
             ]
         }"#;
 
-        let response: OkxApiResponse<AmendOrderResponse> =
-            serde_json::from_str(response_json).unwrap();
+        let response: OkxApiResponse<AmendOrderResponse> = serde_json::from_str(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 1);
         assert_eq!(response.data[0].cl_ord_id, Some("my_order_123".to_string()));

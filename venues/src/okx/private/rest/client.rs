@@ -2,13 +2,13 @@
 //
 // Provides access to all private REST API endpoints for OKX Exchange.
 // All requests are authenticated and require API credentials.
-use base64::{engine::general_purpose, Engine as _};
+use base64::{Engine as _, engine::general_purpose};
 use chrono::Utc;
 use hmac::{Hmac, Mac};
 use reqwest::Client;
 use rest::secrets::ExposableSecret;
-use serde::de::DeserializeOwned;
 use serde::Serialize;
+use serde::de::DeserializeOwned;
 use sha2::Sha256;
 use std::borrow::Cow;
 
@@ -87,20 +87,13 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the signature as a base64 string or an error
-    pub fn sign_request(
-        &self,
-        timestamp: &str,
-        method: &str,
-        request_path: &str,
-        body: &str,
-    ) -> Result<String, Errors> {
+    pub fn sign_request(&self, timestamp: &str, method: &str, request_path: &str, body: &str) -> Result<String, Errors> {
         // Create the pre-hash string: timestamp + method + requestPath + body
         let pre_hash = format!("{}{}{}{}", timestamp, method, request_path, body);
 
         // Sign with HMAC SHA256
         let api_secret = self.api_secret.expose_secret();
-        let mut mac = Hmac::<Sha256>::new_from_slice(api_secret.as_bytes())
-            .map_err(|_| Errors::InvalidApiKey())?;
+        let mut mac = Hmac::<Sha256>::new_from_slice(api_secret.as_bytes()).map_err(|_| Errors::InvalidApiKey())?;
         mac.update(pre_hash.as_bytes());
 
         // Encode as Base64
@@ -117,13 +110,7 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the deserialized response or an error
-    pub async fn send_request<T, P>(
-        &self,
-        endpoint: &str,
-        method: reqwest::Method,
-        params: Option<&P>,
-        endpoint_type: EndpointType,
-    ) -> RestResult<T>
+    pub async fn send_request<T, P>(&self, endpoint: &str, method: reqwest::Method, params: Option<&P>, endpoint_type: EndpointType) -> RestResult<T>
     where
         T: DeserializeOwned,
         P: Serialize + ?Sized,
@@ -145,9 +132,7 @@ impl RestClient {
         // Handle query parameters for GET requests or body for POST/PUT/DELETE
         let (request_path, body) = if method == reqwest::Method::GET {
             if let Some(params) = params {
-                let query_string = serde_urlencoded::to_string(params).map_err(|e| {
-                    Errors::Error(format!("Failed to serialize query parameters: {}", e))
-                })?;
+                let query_string = serde_urlencoded::to_string(params).map_err(|e| Errors::Error(format!("Failed to serialize query parameters: {}", e)))?;
                 if !query_string.is_empty() {
                     request_builder = request_builder.query(&query_string);
                     (format!("/{}?{}", endpoint, query_string), String::new())
@@ -159,9 +144,7 @@ impl RestClient {
             }
         } else {
             let body = if let Some(params) = params {
-                serde_json::to_string(params).map_err(|e| {
-                    Errors::Error(format!("Failed to serialize request body: {}", e))
-                })?
+                serde_json::to_string(params).map_err(|e| Errors::Error(format!("Failed to serialize request body: {}", e)))?
             } else {
                 String::new()
             };
@@ -198,8 +181,7 @@ impl RestClient {
             let response_text = response.text().await?;
 
             // Parse the response
-            let parsed: T = serde_json::from_str(&response_text)
-                .map_err(|e| Errors::Error(format!("Failed to parse response: {}", e)))?;
+            let parsed: T = serde_json::from_str(&response_text).map_err(|e| Errors::Error(format!("Failed to parse response: {}", e)))?;
 
             Ok(parsed)
         } else {
@@ -234,10 +216,8 @@ mod tests {
     #[test]
     fn test_private_client_creation() {
         let api_key = Box::new(TestSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret =
-            Box::new(TestSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
-        let api_passphrase =
-            Box::new(TestSecret::new("test_passphrase".to_string())) as Box<dyn ExposableSecret>;
+        let api_secret = Box::new(TestSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let api_passphrase = Box::new(TestSecret::new("test_passphrase".to_string())) as Box<dyn ExposableSecret>;
         let client = Client::new();
         let rate_limiter = RateLimiter::new();
 
@@ -256,10 +236,8 @@ mod tests {
     #[test]
     fn test_signature_generation() {
         let api_key = Box::new(TestSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret =
-            Box::new(TestSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
-        let api_passphrase =
-            Box::new(TestSecret::new("test_passphrase".to_string())) as Box<dyn ExposableSecret>;
+        let api_secret = Box::new(TestSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let api_passphrase = Box::new(TestSecret::new("test_passphrase".to_string())) as Box<dyn ExposableSecret>;
         let client = Client::new();
         let rate_limiter = RateLimiter::new();
 
@@ -288,10 +266,8 @@ mod tests {
     #[tokio::test]
     async fn test_rate_limiting_integration() {
         let api_key = Box::new(TestSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret =
-            Box::new(TestSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
-        let api_passphrase =
-            Box::new(TestSecret::new("test_passphrase".to_string())) as Box<dyn ExposableSecret>;
+        let api_secret = Box::new(TestSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let api_passphrase = Box::new(TestSecret::new("test_passphrase".to_string())) as Box<dyn ExposableSecret>;
         let client = Client::new();
         let rate_limiter = RateLimiter::new();
 

@@ -1,8 +1,8 @@
 use super::client::RestClient;
-use crate::cryptocom::rate_limit::EndpointType;
 use crate::cryptocom::RestResult;
+use crate::cryptocom::rate_limit::EndpointType;
 use serde::{Deserialize, Serialize};
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 
 /// Request parameters for get conversion rate
 #[derive(Debug, Clone, Serialize, Deserialize)]

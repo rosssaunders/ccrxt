@@ -54,10 +54,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing the estimated settlement info
-    pub async fn get_estimated_settlement_info(
-        &self,
-        request: &GetEstimatedSettlementInfoRequest,
-    ) -> RestResult<GetEstimatedSettlementInfoResponse> {
+    pub async fn get_estimated_settlement_info(&self, request: &GetEstimatedSettlementInfoRequest) -> RestResult<GetEstimatedSettlementInfoResponse> {
         self.send_request(
             "api/v5/public/estimated-settlement-info",
             reqwest::Method::GET,
@@ -122,7 +119,10 @@ mod tests {
         assert_eq!(response.msg, "");
         assert_eq!(response.data.len(), 1);
         assert_eq!(response.data.first().unwrap().inst_id, "XRP-USDT-250307");
-        assert_eq!(response.data.first().unwrap().next_settle_time, "1597026383085");
+        assert_eq!(
+            response.data.first().unwrap().next_settle_time,
+            "1597026383085"
+        );
         assert_eq!(response.data.first().unwrap().est_settle_px, "0.5234");
         assert_eq!(response.data.first().unwrap().ts, "1597026383085");
     }

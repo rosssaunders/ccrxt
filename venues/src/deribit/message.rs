@@ -114,10 +114,13 @@ impl JsonRpcResponse {
     pub fn is_success(&self) -> bool {
         self.error.is_none()
     }
-    
+
     /// Get the result as a string (typically "ok" for unsubscribe_all)
     pub fn result_as_string(&self) -> Option<String> {
-        self.result.as_ref().and_then(|v| v.as_str()).map(|s| s.to_string())
+        self.result
+            .as_ref()
+            .and_then(|v| v.as_str())
+            .map(|s| s.to_string())
     }
 }
 
@@ -130,7 +133,7 @@ mod tests {
     fn test_unsubscribe_all_request_serialization() {
         let request = UnsubscribeAllRequest::new(123);
         let json = serde_json::to_string(&request).unwrap();
-        
+
         assert!(json.contains("\"jsonrpc\":\"2.0\""));
         assert!(json.contains("\"id\":123"));
         assert!(json.contains("\"method\":\"public/unsubscribe_all\""));
@@ -139,7 +142,7 @@ mod tests {
     #[test]
     fn test_json_rpc_request_unsubscribe_all() {
         let request = JsonRpcRequest::unsubscribe_all(456);
-        
+
         assert_eq!(request.jsonrpc, "2.0");
         assert_eq!(request.id, 456);
         assert_eq!(request.method, "public/unsubscribe_all");
@@ -149,7 +152,7 @@ mod tests {
     #[test]
     fn test_json_rpc_request_disable_heartbeat() {
         let request = JsonRpcRequest::disable_heartbeat(789);
-        
+
         assert_eq!(request.jsonrpc, "2.0");
         assert_eq!(request.id, 789);
         assert_eq!(request.method, "public/disable_heartbeat");
@@ -160,7 +163,7 @@ mod tests {
     fn test_json_rpc_response_deserialization() {
         let json = r#"{"jsonrpc":"2.0","id":123,"result":"ok"}"#;
         let response: JsonRpcResponse = serde_json::from_str(json).unwrap();
-        
+
         assert_eq!(response.jsonrpc, "2.0");
         assert_eq!(response.id, 123);
         assert!(response.is_success());
@@ -171,12 +174,12 @@ mod tests {
     fn test_json_rpc_error_response() {
         let json = r#"{"jsonrpc":"2.0","id":123,"error":{"code":-32601,"message":"Method not found"}}"#;
         let response: JsonRpcResponse = serde_json::from_str(json).unwrap();
-        
+
         assert_eq!(response.jsonrpc, "2.0");
         assert_eq!(response.id, 123);
         assert!(!response.is_success());
         assert!(response.error.is_some());
-        
+
         let error = response.error.unwrap();
         assert_eq!(error.code, -32601);
         assert_eq!(error.message, "Method not found");
@@ -186,10 +189,10 @@ mod tests {
     fn test_deribit_message_enum() {
         let request = JsonRpcRequest::unsubscribe_all(789);
         let message = DeribitMessage::Request(request);
-        
+
         let json = serde_json::to_string(&message).unwrap();
         let parsed: DeribitMessage = serde_json::from_str(&json).unwrap();
-        
+
         match parsed {
             DeribitMessage::Request(req) => {
                 assert_eq!(req.method, "public/unsubscribe_all");

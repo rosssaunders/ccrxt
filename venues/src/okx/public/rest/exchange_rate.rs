@@ -120,13 +120,13 @@ mod integration_tests {
         let _exchange_rate = ExchangeRate {
             usd_cny: "7.1234".to_string(),
         };
-        
+
         let _response = ExchangeRateResponse {
             code: "0".to_string(),
             msg: "".to_string(),
             data: vec![_exchange_rate],
         };
-        
+
         // This test passes if the types exist and can be constructed
         assert!(true);
     }

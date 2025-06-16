@@ -22,8 +22,7 @@ async fn main() -> Result<()> {
 
     // Create Portfolio Margin private client with placeholder credentials
     let api_key = std::env::var("BINANCE_API_KEY").unwrap_or_else(|_| "your_api_key".to_string());
-    let api_secret =
-        std::env::var("BINANCE_API_SECRET").unwrap_or_else(|_| "your_api_secret".to_string());
+    let api_secret = std::env::var("BINANCE_API_SECRET").unwrap_or_else(|_| "your_api_secret".to_string());
 
     let _portfolio_margin_client = PrivateRestClient::new(
         Box::new(SecretValue::new(SecretString::from(api_key))),

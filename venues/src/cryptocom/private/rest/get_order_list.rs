@@ -1,7 +1,7 @@
 use super::client::RestClient;
-use crate::cryptocom::{enums::*, RestResult};
+use crate::cryptocom::{RestResult, enums::*};
 use serde::{Deserialize, Serialize};
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 
 /// Request for getting OCO order details
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -101,7 +101,8 @@ impl RestClient {
         let id = 1;
         let params = serde_json::to_value(&request)?;
 
-        self.send_signed_request("private/get-order-list", params).await
+        self.send_signed_request("private/get-order-list", params)
+            .await
     }
 }
 

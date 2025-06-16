@@ -1,11 +1,11 @@
+use serde::Deserialize;
 use std::collections::VecDeque;
 use std::sync::Arc;
 use std::time::{Duration, Instant};
-use serde::Deserialize;
 use tokio::sync::RwLock;
 
 use crate::bitget::errors::ApiError;
-use crate::bitget::{ResponseHeaders, Errors};
+use crate::bitget::{Errors, ResponseHeaders};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
@@ -117,16 +117,16 @@ impl std::fmt::Display for RateLimitHeader {
 pub struct RateLimitUsage {
     /// Timestamps of requests in the last second for endpoint-specific limits
     pub request_timestamps_1s: VecDeque<Instant>,
-    
+
     /// Timestamps of requests in the last minute for overall IP limit (6000/IP/Min)
     pub request_timestamps_1m: VecDeque<Instant>,
-    
+
     /// Timestamps of order requests for UID-specific limits
     pub order_timestamps_1s: VecDeque<Instant>,
 }
 
 /// Manages rate limiting for Bitget API
-/// 
+///
 /// Bitget API has the following rate limits:
 /// - Overall limit: 6000 requests per IP per minute
 /// - Endpoint-specific limits: varies per endpoint (e.g., 3 times/1s, 10 times/1s, 20 times/1s)
@@ -152,14 +152,20 @@ impl RateLimiter {
     pub async fn increment_request(&self) {
         let mut usage = self.usage.write().await;
         let now = Instant::now();
-        
+
         // Track for 1-second window (endpoint-specific limits)
         usage.request_timestamps_1s.push_back(now);
-        Self::trim_older_than(&mut usage.request_timestamps_1s, now - Duration::from_secs(1));
-        
+        Self::trim_older_than(
+            &mut usage.request_timestamps_1s,
+            now - Duration::from_secs(1),
+        );
+
         // Track for 1-minute window (overall IP limit)
         usage.request_timestamps_1m.push_back(now);
-        Self::trim_older_than(&mut usage.request_timestamps_1m, now - Duration::from_secs(60));
+        Self::trim_older_than(
+            &mut usage.request_timestamps_1m,
+            now - Duration::from_secs(60),
+        );
     }
 
     /// Call this after every order-related REST call to increment order counters
@@ -181,51 +187,37 @@ impl RateLimiter {
     /// - endpoint_limit_per_second: the specific limit for this endpoint (e.g., 3, 10, 20)
     /// - is_order: whether this is an order-related endpoint
     /// - order_limit_per_second: the specific order limit for this endpoint if applicable
-    pub async fn check_limits(
-        &self, 
-        endpoint_limit_per_second: u32, 
-        is_order: bool,
-        order_limit_per_second: Option<u32>
-    ) -> Result<(), Errors> {
+    pub async fn check_limits(&self, endpoint_limit_per_second: u32, is_order: bool, order_limit_per_second: Option<u32>) -> Result<(), Errors> {
         let usage = self.usage.read().await;
-        
+
         // Overall IP limit: 6,000 per minute
         if usage.request_timestamps_1m.len() >= 6000 {
-            return Err(Errors::ApiError(
-                ApiError::TooManyRequests {
-                    msg: "Overall IP rate limit (6,000/min) exceeded".to_string(),
-                },
-            ));
+            return Err(Errors::ApiError(ApiError::TooManyRequests {
+                msg: "Overall IP rate limit (6,000/min) exceeded".to_string(),
+            }));
         }
-        
+
         // Endpoint-specific limit per second
         if usage.request_timestamps_1s.len() >= endpoint_limit_per_second as usize {
-            return Err(Errors::ApiError(
-                ApiError::TooManyRequests {
-                    msg: format!(
-                        "Endpoint rate limit ({}/1s) exceeded",
-                        endpoint_limit_per_second
-                    ),
-                },
-            ));
+            return Err(Errors::ApiError(ApiError::TooManyRequests {
+                msg: format!(
+                    "Endpoint rate limit ({}/1s) exceeded",
+                    endpoint_limit_per_second
+                ),
+            }));
         }
-        
+
         // Order-specific limits (UID-based)
         if is_order {
             if let Some(order_limit) = order_limit_per_second {
                 if usage.order_timestamps_1s.len() >= order_limit as usize {
-                    return Err(Errors::ApiError(
-                        ApiError::TooManyRequests {
-                            msg: format!(
-                                "Order rate limit ({}/1s) exceeded",
-                                order_limit
-                            ),
-                        },
-                    ));
+                    return Err(Errors::ApiError(ApiError::TooManyRequests {
+                        msg: format!("Order rate limit ({}/1s) exceeded", order_limit),
+                    }));
                 }
             }
         }
-        
+
         Ok(())
     }
 }
@@ -244,16 +236,16 @@ mod tests {
     #[tokio::test]
     async fn test_overall_ip_limit() {
         let limiter = RateLimiter::new();
-        
+
         // Add requests up to the overall IP limit
         for _ in 0..6000 {
             limiter.increment_request().await;
         }
-        
+
         // Should reject additional request
         let result = limiter.check_limits(10, false, None).await;
         assert!(result.is_err());
-        
+
         if let Err(Errors::ApiError(ApiError::TooManyRequests { msg })) = result {
             assert!(msg.contains("6,000/min"));
         } else {
@@ -264,16 +256,16 @@ mod tests {
     #[tokio::test]
     async fn test_endpoint_specific_limit() {
         let limiter = RateLimiter::new();
-        
+
         // Add requests up to the endpoint limit (e.g., 3/s)
         for _ in 0..3 {
             limiter.increment_request().await;
         }
-        
+
         // Should reject additional request for this endpoint
         let result = limiter.check_limits(3, false, None).await;
         assert!(result.is_err());
-        
+
         if let Err(Errors::ApiError(ApiError::TooManyRequests { msg })) = result {
             assert!(msg.contains("3/1s"));
         } else {
@@ -284,16 +276,16 @@ mod tests {
     #[tokio::test]
     async fn test_order_rate_limit() {
         let limiter = RateLimiter::new();
-        
+
         // Add order requests up to the limit (e.g., 5/s)
         for _ in 0..5 {
             limiter.increment_order().await;
         }
-        
+
         // Should reject additional order request
         let result = limiter.check_limits(10, true, Some(5)).await;
         assert!(result.is_err());
-        
+
         if let Err(Errors::ApiError(ApiError::TooManyRequests { msg })) = result {
             assert!(msg.contains("5/1s"));
         } else {
@@ -307,12 +299,12 @@ mod tests {
         assert_eq!(freq_1s.kind, RateLimitHeaderKind::RequestFrequency);
         assert_eq!(freq_1s.interval_value, 1);
         assert_eq!(freq_1s.interval_unit, IntervalUnit::Second);
-        
+
         let freq_1m = RateLimitHeader::request_frequency_1m();
         assert_eq!(freq_1m.kind, RateLimitHeaderKind::RequestFrequency);
         assert_eq!(freq_1m.interval_value, 1);
         assert_eq!(freq_1m.interval_unit, IntervalUnit::Minute);
-        
+
         let order_1s = RateLimitHeader::order_count_1s();
         assert_eq!(order_1s.kind, RateLimitHeaderKind::OrderCount);
         assert_eq!(order_1s.interval_value, 1);

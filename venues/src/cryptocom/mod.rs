@@ -8,10 +8,8 @@ pub mod private {
     mod rest;
     pub use self::rest::RestClient;
     pub use self::rest::{
-        CancelOcoOrderRequest, CancelOrderListItem, CancelOrderListRequest,
-        CancelOrderListResponse, CreateOcoOrderResponse, CreateOrderListRequest,
-        CreateOrderListResponse, GetOrderListRequest, GetOrderListResponse,
-        OrderCancellationResult, OrderCreationResult, OrderDetails, OrderListItem,
+        CancelOcoOrderRequest, CancelOrderListItem, CancelOrderListRequest, CancelOrderListResponse, CreateOcoOrderResponse, CreateOrderListRequest,
+        CreateOrderListResponse, GetOrderListRequest, GetOrderListResponse, OrderCancellationResult, OrderCreationResult, OrderDetails, OrderListItem,
     };
 }
 
@@ -27,10 +25,8 @@ pub use public::RestClient as PublicRestClient;
 pub use rate_limit::{EndpointType, RateLimit, RateLimitError, RateLimiter};
 // Re-export the advanced order trading types
 pub use private::{
-    CancelOcoOrderRequest, CancelOrderListItem, CancelOrderListRequest, CancelOrderListResponse,
-    CreateOcoOrderResponse, CreateOrderListRequest, CreateOrderListResponse, GetOrderListRequest,
-    GetOrderListResponse, OrderCancellationResult, OrderCreationResult, OrderDetails,
-    OrderListItem,
+    CancelOcoOrderRequest, CancelOrderListItem, CancelOrderListRequest, CancelOrderListResponse, CreateOcoOrderResponse, CreateOrderListRequest,
+    CreateOrderListResponse, GetOrderListRequest, GetOrderListResponse, OrderCancellationResult, OrderCreationResult, OrderDetails, OrderListItem,
 };
 
 /// Type alias for results returned by Crypto.com API operations

@@ -200,8 +200,12 @@ impl RestClient {
             price,
             expires_at,
         };
-        self.send_signed_request("private/add_block_rfq_quote", &request, EndpointType::MatchingEngine)
-            .await
+        self.send_signed_request(
+            "private/add_block_rfq_quote",
+            &request,
+            EndpointType::MatchingEngine,
+        )
+        .await
     }
 }
 
@@ -210,7 +214,7 @@ mod tests {
     use super::*;
     use crate::deribit::AccountTier;
     use rest::secrets::ExposableSecret;
-    use serde_json::{json, Value};
+    use serde_json::{Value, json};
 
     // Test secret implementation
     #[derive(Clone)]
@@ -367,7 +371,10 @@ mod tests {
         assert_eq!(json_value.get("direction").unwrap(), "sell");
         assert_eq!(json_value.get("legs").unwrap().as_array().unwrap().len(), 2);
         assert!(json_value.get("hedge").is_some());
-        assert_eq!(json_value.get("execution_instruction").unwrap(), "all_or_none");
+        assert_eq!(
+            json_value.get("execution_instruction").unwrap(),
+            "all_or_none"
+        );
         assert_eq!(json_value.get("price").unwrap(), 47500.0);
         assert_eq!(json_value.get("expires_at").unwrap(), 1640995200000i64);
     }
@@ -405,7 +412,7 @@ mod tests {
         });
 
         let response: AddBlockRfqQuoteResponse = serde_json::from_value(response_json).unwrap();
-        
+
         assert_eq!(response.id, 1);
         assert_eq!(response.jsonrpc, "2.0");
         assert_eq!(response.result.amount, 1.0);
@@ -434,10 +441,10 @@ mod tests {
 
         // Test that we can get a function reference to the method
         let _ = RestClient::add_block_rfq_quote;
-        
+
         // Verify the client exists
         let _ = &rest_client;
-        
+
         println!("add_block_rfq_quote method is accessible and properly typed");
     }
 }

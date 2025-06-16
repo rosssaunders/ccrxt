@@ -1,13 +1,13 @@
-use crate::deribit::{Errors, RateLimiter, EndpointType, RestResult};
+use crate::deribit::{EndpointType, Errors, RateLimiter, RestResult};
+use chrono::Utc;
 use hmac::{Hmac, Mac};
 use reqwest::Client;
 use rest::secrets::ExposableSecret;
+use serde::Serialize;
+use serde::de::DeserializeOwned;
+use serde_json::json;
 use sha2::Sha256;
 use std::borrow::Cow;
-use serde::de::DeserializeOwned;
-use serde::Serialize;
-use serde_json::json;
-use chrono::Utc;
 
 /// Private REST client for Deribit exchange
 ///
@@ -16,16 +16,16 @@ use chrono::Utc;
 pub struct RestClient {
     /// The base URL for the Deribit private REST API
     pub base_url: Cow<'static, str>,
-    
+
     /// The underlying HTTP client used for making requests
     pub client: Client,
-    
+
     /// The rate limiter used to manage request rates
     pub rate_limiter: RateLimiter,
-    
+
     /// The encrypted API key
     pub(crate) api_key: Box<dyn ExposableSecret>,
-    
+
     /// The encrypted API secret
     pub(crate) api_secret: Box<dyn ExposableSecret>,
 }
@@ -72,39 +72,26 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the signature as a hex string or an error
-    pub fn sign_request(
-        &self,
-        request_data: &str,
-        nonce: u64,
-        request_id: u64,
-    ) -> Result<String, Errors> {
+    pub fn sign_request(&self, request_data: &str, nonce: u64, request_id: u64) -> Result<String, Errors> {
         // Create the signature payload: request_data + nonce + request_id
         let sig_payload = format!("{}{}{}", request_data, nonce, request_id);
 
         // Sign with HMAC-SHA256
         let api_secret = self.api_secret.expose_secret();
-        let mut mac = Hmac::<Sha256>::new_from_slice(api_secret.as_bytes())
-            .map_err(|_| Errors::InvalidApiKey())?;
+        let mut mac = Hmac::<Sha256>::new_from_slice(api_secret.as_bytes()).map_err(|_| Errors::InvalidApiKey())?;
         mac.update(sig_payload.as_bytes());
 
         Ok(hex::encode(mac.finalize().into_bytes()))
     }
 
     /// Send a signed private request to Deribit API, handling serialization and rate limiting.
-    pub async fn send_signed_request<T, P>(
-        &self,
-        method: &str,
-        params: &P,
-        endpoint_type: EndpointType,
-    ) -> RestResult<T>
+    pub async fn send_signed_request<T, P>(&self, method: &str, params: &P, endpoint_type: EndpointType) -> RestResult<T>
     where
         T: DeserializeOwned,
         P: Serialize + ?Sized,
     {
         // Rate limiting
-        self.rate_limiter
-            .check_limits(endpoint_type)
-            .await?;
+        self.rate_limiter.check_limits(endpoint_type).await?;
 
         let nonce = Utc::now().timestamp_millis() as u64;
         let request_id = 1;
@@ -116,8 +103,7 @@ impl RestClient {
             "method": method,
             "params": params,
         });
-        let request_data_str =
-            serde_json::to_string(&request_data).map_err(Errors::SerdeJsonError)?;
+        let request_data_str = serde_json::to_string(&request_data).map_err(Errors::SerdeJsonError)?;
         let signature = self.sign_request(&request_data_str, nonce, request_id)?;
 
         // Prepare authenticated request
@@ -204,11 +190,7 @@ mod tests {
             client,
         );
 
-        let result = rest_client.sign_request(
-            "test_data",
-            1234567890,
-            1,
-        );
+        let result = rest_client.sign_request("test_data", 1234567890, 1);
 
         assert!(result.is_ok());
         let signature = result.unwrap();

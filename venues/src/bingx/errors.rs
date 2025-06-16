@@ -59,7 +59,10 @@ impl From<ErrorResponse> for Errors {
             100410 => Errors::RateLimitExceeded(err.msg),
             80014 => Errors::InvalidTimestamp(err.msg),
             100421 => Errors::InvalidTimestamp(err.msg),
-            _ => Errors::ApiError { code: err.code, msg: err.msg },
+            _ => Errors::ApiError {
+                code: err.code,
+                msg: err.msg,
+            },
         }
     }
 }

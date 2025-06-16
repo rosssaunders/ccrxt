@@ -66,61 +66,61 @@ pub struct ErrorResponse {
 pub enum ApiError {
     /// Bad Request - Invalid request format
     BadRequest { msg: String },
-    
+
     /// Unauthorized - Invalid API Key
     Unauthorized { msg: String },
-    
+
     /// Forbidden - You do not have access to the requested resource
     Forbidden { msg: String },
-    
+
     /// Not Found
     NotFound { msg: String },
-    
+
     /// Too Many Requests - Rate limit exceeded
     TooManyRequests { msg: String },
-    
+
     /// Internal Server Error
     InternalServerError { msg: String },
-    
+
     /// Invalid Price
     InvalidPrice { msg: String },
-    
+
     /// Insufficient Funds
     InsufficientFunds { msg: String },
-    
+
     /// Invalid Order Size
     InvalidOrderSize { msg: String },
-    
+
     /// Invalid Product
     InvalidProduct { msg: String },
-    
+
     /// Order Not Found
     OrderNotFound { msg: String },
-    
+
     /// Order Already Cancelled
     OrderAlreadyCancelled { msg: String },
-    
+
     /// Order Already Filled
     OrderAlreadyFilled { msg: String },
-    
+
     /// Post Only Order Would Trade
     PostOnlyOrderWouldTrade { msg: String },
-    
+
     /// Timestamp Invalid
     TimestampInvalid { msg: String },
-    
+
     /// Signature Invalid
     SignatureInvalid { msg: String },
-    
+
     /// Passphrase Invalid
     PassphraseInvalid { msg: String },
-    
+
     /// Profile Not Found
     ProfileNotFound { msg: String },
-    
+
     /// Account Not Found
     AccountNotFound { msg: String },
-    
+
     /// Unknown API error with code and message
     UnknownApiError { code: Option<i32>, msg: String },
 }
@@ -139,9 +139,13 @@ impl fmt::Display for ApiError {
             ApiError::InvalidOrderSize { msg } => write!(f, "Invalid Order Size: {}", msg),
             ApiError::InvalidProduct { msg } => write!(f, "Invalid Product: {}", msg),
             ApiError::OrderNotFound { msg } => write!(f, "Order Not Found: {}", msg),
-            ApiError::OrderAlreadyCancelled { msg } => write!(f, "Order Already Cancelled: {}", msg),
+            ApiError::OrderAlreadyCancelled { msg } => {
+                write!(f, "Order Already Cancelled: {}", msg)
+            }
             ApiError::OrderAlreadyFilled { msg } => write!(f, "Order Already Filled: {}", msg),
-            ApiError::PostOnlyOrderWouldTrade { msg } => write!(f, "Post Only Order Would Trade: {}", msg),
+            ApiError::PostOnlyOrderWouldTrade { msg } => {
+                write!(f, "Post Only Order Would Trade: {}", msg)
+            }
             ApiError::TimestampInvalid { msg } => write!(f, "Timestamp Invalid: {}", msg),
             ApiError::SignatureInvalid { msg } => write!(f, "Signature Invalid: {}", msg),
             ApiError::PassphraseInvalid { msg } => write!(f, "Passphrase Invalid: {}", msg),
@@ -177,7 +181,10 @@ impl From<ErrorResponse> for ApiError {
             msg if msg.contains("Passphrase") => ApiError::PassphraseInvalid { msg: err.message },
             msg if msg.contains("Profile") => ApiError::ProfileNotFound { msg: err.message },
             msg if msg.contains("Account") => ApiError::AccountNotFound { msg: err.message },
-            _ => ApiError::UnknownApiError { code: None, msg: err.message },
+            _ => ApiError::UnknownApiError {
+                code: None,
+                msg: err.message,
+            },
         }
     }
 }

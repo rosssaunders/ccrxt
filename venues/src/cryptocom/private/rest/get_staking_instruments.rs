@@ -1,7 +1,7 @@
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
 use serde::{Deserialize, Serialize};
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 
 /// Additional reward information
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -67,7 +67,8 @@ impl RestClient {
     pub async fn get_staking_instruments(&self) -> RestResult<Value> {
         let params = json!({});
 
-        self.send_signed_request("private/staking/get-staking-instruments", params).await
+        self.send_signed_request("private/staking/get-staking-instruments", params)
+            .await
     }
 }
 
@@ -103,8 +104,7 @@ mod tests {
             "reward_inst_name": "USD_Stable_Coin"
         });
 
-        let additional_reward: AdditionalReward =
-            serde_json::from_value(additional_reward_json).unwrap();
+        let additional_reward: AdditionalReward = serde_json::from_value(additional_reward_json).unwrap();
         assert_eq!(additional_reward.reward_inst_name, "USD_Stable_Coin");
     }
 
@@ -220,8 +220,7 @@ mod tests {
             ]
         });
 
-        let response: GetStakingInstrumentsResponse =
-            serde_json::from_value(response_json).unwrap();
+        let response: GetStakingInstrumentsResponse = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.data.len(), 2);
         assert_eq!(response.data.first().unwrap().instrument_name, "SOL.staked");
         assert_eq!(response.data.get(1).unwrap().instrument_name, "DYDX.staked");

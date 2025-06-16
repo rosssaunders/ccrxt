@@ -40,21 +40,21 @@ impl IntervalUnit {
     /// Parse a single character unit (e.g., 's', 'm', 'h', 'd') into IntervalUnit.
     pub fn from_char(c: char) -> Option<Self> {
         match c {
-            | 's' | 'S' => Some(IntervalUnit::Second),
-            | 'm' | 'M' => Some(IntervalUnit::Minute),
-            | 'h' | 'H' => Some(IntervalUnit::Hour),
-            | 'd' | 'D' => Some(IntervalUnit::Day),
-            | _ => None,
+            's' | 'S' => Some(IntervalUnit::Second),
+            'm' | 'M' => Some(IntervalUnit::Minute),
+            'h' | 'H' => Some(IntervalUnit::Hour),
+            'd' | 'D' => Some(IntervalUnit::Day),
+            _ => None,
         }
     }
 
     /// Convert IntervalUnit to its string representation (e.g., 'm').
     pub fn as_str(&self) -> &'static str {
         match self {
-            | IntervalUnit::Second => "s",
-            | IntervalUnit::Minute => "m",
-            | IntervalUnit::Hour => "h",
-            | IntervalUnit::Day => "d",
+            IntervalUnit::Second => "s",
+            IntervalUnit::Minute => "m",
+            IntervalUnit::Hour => "h",
+            IntervalUnit::Day => "d",
         }
     }
 }
@@ -126,8 +126,8 @@ impl std::fmt::Display for IntervalUnit {
 impl std::fmt::Display for RateLimitHeader {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let prefix = match self.kind {
-            | RateLimitHeaderKind::UsedWeight => "x-mbx-used-weight-",
-            | RateLimitHeaderKind::OrderCount => "x-mbx-order-count-",
+            RateLimitHeaderKind::UsedWeight => "x-mbx-used-weight-",
+            RateLimitHeaderKind::OrderCount => "x-mbx-order-count-",
         };
         write!(f, "{}{}{}", prefix, self.interval_value, self.interval_unit)
     }
@@ -256,9 +256,7 @@ impl RateLimiter {
     pub async fn update_from_headers(&self, headers: &ResponseHeaders) {
         let mut usage = self.usage.write().await;
         // Use a strongly-typed RateLimitHeader as the key
-        use crate::binance::usdm::rate_limit::{
-            IntervalUnit, RateLimitHeader, RateLimitHeaderKind,
-        };
+        use crate::binance::usdm::rate_limit::{IntervalUnit, RateLimitHeader, RateLimitHeaderKind};
         let key = RateLimitHeader {
             kind: RateLimitHeaderKind::UsedWeight,
             interval_value: 1,

@@ -1,7 +1,7 @@
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
 use serde::{Deserialize, Serialize};
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 use std::collections::HashMap;
 
 /// Network information for a currency
@@ -57,7 +57,8 @@ impl RestClient {
         let id = 1;
         let params = json!({});
 
-        self.send_signed_request("private/get-currency-networks", params).await
+        self.send_signed_request("private/get-currency-networks", params)
+            .await
     }
 }
 

@@ -85,10 +85,7 @@ impl RestClient {
     /// GET /dapi/v1/order
     /// Weight: 1
     /// Requires API key and signature.
-    pub async fn get_query_order(
-        &self,
-        params: QueryOrderRequest,
-    ) -> RestResult<QueryOrderResponse> {
+    pub async fn get_query_order(&self, params: QueryOrderRequest) -> RestResult<QueryOrderResponse> {
         let weight = 1;
         self.send_signed_request(
             "/dapi/v1/order",

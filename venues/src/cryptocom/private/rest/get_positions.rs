@@ -1,7 +1,7 @@
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
 use serde::{Deserialize, Serialize};
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 
 /// Position information
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -66,7 +66,8 @@ impl RestClient {
             params["instrument_name"] = Value::String(instrument.to_string());
         }
 
-        self.send_signed_request("private/get-positions", params).await
+        self.send_signed_request("private/get-positions", params)
+            .await
     }
 }
 
@@ -241,9 +242,11 @@ mod tests {
         // Test serialization preserves the rename
         let serialized = serde_json::to_value(&position).unwrap();
         assert_eq!(serialized.get("type").unwrap(), "FUTURES");
-        assert!(!serialized
-            .as_object()
-            .unwrap()
-            .contains_key("position_type"));
+        assert!(
+            !serialized
+                .as_object()
+                .unwrap()
+                .contains_key("position_type")
+        );
     }
 }

@@ -105,12 +105,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Result containing "ok" string on success
-    pub async fn reset_mmp(
-        &self,
-        index_name: IndexName,
-        mmp_group: Option<String>,
-        block_rfq: Option<bool>,
-    ) -> RestResult<ResetMmpResponse> {
+    pub async fn reset_mmp(&self, index_name: IndexName, mmp_group: Option<String>, block_rfq: Option<bool>) -> RestResult<ResetMmpResponse> {
         let request = ResetMmpRequest {
             index_name,
             mmp_group,
@@ -126,7 +121,7 @@ mod tests {
     use super::*;
     use crate::deribit::AccountTier;
     use rest::secrets::ExposableSecret;
-    use serde_json::{json, Value};
+    use serde_json::{Value, json};
 
     // Test secret implementation
     #[derive(Clone)]
@@ -148,21 +143,33 @@ mod tests {
 
     #[test]
     fn test_index_name_serialization() {
-        assert_eq!(serde_json::to_string(&IndexName::BtcUsd).unwrap(), "\"btc_usd\"");
-        assert_eq!(serde_json::to_string(&IndexName::EthUsd).unwrap(), "\"eth_usd\"");
+        assert_eq!(
+            serde_json::to_string(&IndexName::BtcUsd).unwrap(),
+            "\"btc_usd\""
+        );
+        assert_eq!(
+            serde_json::to_string(&IndexName::EthUsd).unwrap(),
+            "\"eth_usd\""
+        );
         assert_eq!(serde_json::to_string(&IndexName::All).unwrap(), "\"all\"");
-        assert_eq!(serde_json::to_string(&IndexName::BtcUsdc).unwrap(), "\"btc_usdc\"");
-        assert_eq!(serde_json::to_string(&IndexName::TrumpUsdc).unwrap(), "\"trump_usdc\"");
+        assert_eq!(
+            serde_json::to_string(&IndexName::BtcUsdc).unwrap(),
+            "\"btc_usdc\""
+        );
+        assert_eq!(
+            serde_json::to_string(&IndexName::TrumpUsdc).unwrap(),
+            "\"trump_usdc\""
+        );
     }
 
     #[test]
     fn test_index_name_deserialization() {
         let btc_usd: IndexName = serde_json::from_str("\"btc_usd\"").unwrap();
         assert_eq!(btc_usd, IndexName::BtcUsd);
-        
+
         let eth_usd: IndexName = serde_json::from_str("\"eth_usd\"").unwrap();
         assert_eq!(eth_usd, IndexName::EthUsd);
-        
+
         let all: IndexName = serde_json::from_str("\"all\"").unwrap();
         assert_eq!(all, IndexName::All);
     }
@@ -224,7 +231,7 @@ mod tests {
         });
 
         let response: ResetMmpResponse = serde_json::from_value(response_json).unwrap();
-        
+
         assert_eq!(response.id, 1);
         assert_eq!(response.jsonrpc, "2.0");
         assert_eq!(response.result, "ok");
@@ -248,10 +255,10 @@ mod tests {
 
         // Test that we can get a function reference to the method
         let _ = RestClient::reset_mmp;
-        
+
         // Verify the client exists
         let _ = &rest_client;
-        
+
         println!("reset_mmp method is accessible and properly typed");
     }
 
@@ -288,14 +295,14 @@ mod tests {
             IndexName::EthUsdt,
             IndexName::All,
         ];
-        
+
         // Test serialization/deserialization for all variants
         for index_name in index_names {
             let serialized = serde_json::to_string(&index_name).unwrap();
             let deserialized: IndexName = serde_json::from_str(&serialized).unwrap();
             assert_eq!(index_name, deserialized);
         }
-        
+
         println!("All {} index names are properly supported", 28);
     }
 
@@ -303,7 +310,7 @@ mod tests {
     async fn test_reset_mmp_endpoint_integration() {
         // This test demonstrates that the endpoint is properly integrated
         // and all types are accessible from the top-level module
-        
+
         let api_key = Box::new(PlainTextSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
         let api_secret = Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
         let client = reqwest::Client::new();
@@ -321,23 +328,23 @@ mod tests {
         let _index_name = IndexName::BtcUsd;
         let _index_name_all = IndexName::All;
         let _index_name_eth = IndexName::EthUsdc;
-        
+
         // Test that we can create request structures
         let _request = ResetMmpRequest {
             index_name: IndexName::BtcUsd,
             mmp_group: Some("test_group".to_string()),
             block_rfq: Some(true),
         };
-        
+
         // Test that response type is accessible
         let _response_type = std::marker::PhantomData::<ResetMmpResponse>;
-        
+
         // Test that the method exists and is accessible
         let _method_ref = RestClient::reset_mmp;
-        
+
         // Verify the client exists
         let _ = &rest_client;
-        
+
         println!("All reset_mmp types and methods are properly integrated and accessible");
     }
 }

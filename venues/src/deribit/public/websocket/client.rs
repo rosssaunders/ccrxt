@@ -1,7 +1,7 @@
 //! Deribit WebSocket client implementation
 
-use crate::deribit::rate_limit::{EndpointType, RateLimiter};
 use crate::deribit::public::websocket::hello::{HelloResponse, JsonRpcRequest};
+use crate::deribit::rate_limit::{EndpointType, RateLimiter};
 use async_trait::async_trait;
 use futures::{SinkExt, Stream, StreamExt};
 use serde_json;
@@ -12,7 +12,7 @@ use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
 use thiserror::Error;
 use tokio::net::TcpStream;
 use tokio::sync::Mutex;
-use tokio_tungstenite::{connect_async, tungstenite::Message, MaybeTlsStream, WebSocketStream};
+use tokio_tungstenite::{MaybeTlsStream, WebSocketStream, connect_async, tungstenite::Message};
 use websockets::{BoxError, BoxResult, VenueMessage, WebSocketConnection};
 
 /// Deribit WebSocket message types
@@ -78,54 +78,72 @@ impl DeribitWebSocketClient {
     }
 
     /// Send a hello message to introduce the client
-    pub async fn send_hello(
-        &self,
-        client_version: String,
-    ) -> BoxResult<HelloResponse> {
+    pub async fn send_hello(&self, client_version: String) -> BoxResult<HelloResponse> {
         let req_id = self.request_id.fetch_add(1, Ordering::SeqCst) as i32;
-        let hello_req = JsonRpcRequest::new_hello(
-            req_id,
-            "ccrxt".to_string(),
-            client_version,
-        );
+        let hello_req = JsonRpcRequest::new_hello(req_id, "ccrxt".to_string(), client_version);
         let req_json = serde_json::to_string(&hello_req)?;
-        let ws = self.websocket.as_ref().ok_or_else(|| DeribitWebSocketError::Connection("WebSocket not connected".to_string()))?;
+        let ws = self
+            .websocket
+            .as_ref()
+            .ok_or_else(|| DeribitWebSocketError::Connection("WebSocket not connected".to_string()))?;
         // This is a placeholder for sending and receiving the message. Actual implementation will depend on the async context and message handling.
         // For now, just return an error to satisfy the type.
-        Err(Box::new(DeribitWebSocketError::Connection("Not implemented".to_string())))
+        Err(Box::new(DeribitWebSocketError::Connection(
+            "Not implemented".to_string(),
+        )))
     }
 
     /// Send an unsubscribe_all request and wait for the response
     pub async fn unsubscribe_all(&mut self) -> Result<String, DeribitWebSocketError> {
         if !self.is_connected() {
-            return Err(DeribitWebSocketError::Connection("Not connected".to_string()));
+            return Err(DeribitWebSocketError::Connection(
+                "Not connected".to_string(),
+            ));
         }
-        let req = JsonRpcRequest::new(self.next_request_id().try_into().unwrap(), "unsubscribe_all".to_string(), ());
+        let req = JsonRpcRequest::new(
+            self.next_request_id().try_into().unwrap(),
+            "unsubscribe_all".to_string(),
+            (),
+        );
         let msg = serde_json::to_string(&req)?;
         if let Some(ws) = &mut self.websocket {
-            ws.send(Message::Text(msg.into())).await.map_err(|e| DeribitWebSocketError::Connection(e.to_string()))?;
+            ws.send(Message::Text(msg.into()))
+                .await
+                .map_err(|e| DeribitWebSocketError::Connection(e.to_string()))?;
             // Wait for the response
             let response = self.receive_response().await?;
             Ok(response)
         } else {
-            Err(DeribitWebSocketError::Connection("WebSocket not connected".to_string()))
+            Err(DeribitWebSocketError::Connection(
+                "WebSocket not connected".to_string(),
+            ))
         }
     }
 
     /// Send a disable_heartbeat request and wait for the response
     pub async fn disable_heartbeat(&mut self) -> Result<String, DeribitWebSocketError> {
         if !self.is_connected() {
-            return Err(DeribitWebSocketError::Connection("Not connected".to_string()));
+            return Err(DeribitWebSocketError::Connection(
+                "Not connected".to_string(),
+            ));
         }
-        let req = JsonRpcRequest::new(self.next_request_id().try_into().unwrap(), "disable_heartbeat".to_string(), ());
+        let req = JsonRpcRequest::new(
+            self.next_request_id().try_into().unwrap(),
+            "disable_heartbeat".to_string(),
+            (),
+        );
         let msg = serde_json::to_string(&req)?;
         if let Some(ws) = &mut self.websocket {
-            ws.send(Message::Text(msg.into())).await.map_err(|e| DeribitWebSocketError::Connection(e.to_string()))?;
+            ws.send(Message::Text(msg.into()))
+                .await
+                .map_err(|e| DeribitWebSocketError::Connection(e.to_string()))?;
             // Wait for the response
             let response = self.receive_response().await?;
             Ok(response)
         } else {
-            Err(DeribitWebSocketError::Connection("WebSocket not connected".to_string()))
+            Err(DeribitWebSocketError::Connection(
+                "WebSocket not connected".to_string(),
+            ))
         }
     }
 
@@ -148,8 +166,7 @@ impl DeribitWebSocketClient {
                 return Err(DeribitWebSocketError::Timeout { id });
             }
         };
-        let response_str = serde_json::to_string(&response)
-            .map_err(DeribitWebSocketError::Serialization)?;
+        let response_str = serde_json::to_string(&response).map_err(DeribitWebSocketError::Serialization)?;
         Ok(response_str)
     }
 }
@@ -175,9 +192,7 @@ impl WebSocketConnection<DeribitMessage> for DeribitWebSocketClient {
         self.connected.load(Ordering::SeqCst)
     }
 
-    fn message_stream(
-        &mut self,
-    ) -> Pin<Box<dyn futures::Stream<Item = BoxResult<DeribitMessage>> + Send>> {
+    fn message_stream(&mut self) -> Pin<Box<dyn futures::Stream<Item = BoxResult<DeribitMessage>> + Send>> {
         // ...implementation for message stream...
         Box::pin(futures::stream::empty())
     }

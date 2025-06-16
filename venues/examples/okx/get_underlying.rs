@@ -20,7 +20,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     };
 
     match client.get_underlying(swap_request).await {
-        | Ok(response) => {
+        Ok(response) => {
             println!("Response code: {}", response.code);
             if let Some(data) = response.data.first() {
                 println!(
@@ -37,8 +37,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     println!("  ... and {} more", data.uly.len() - 10);
                 }
             }
-        },
-        | Err(e) => eprintln!("Error getting SWAP underlying assets: {:?}", e),
+        }
+        Err(e) => eprintln!("Error getting SWAP underlying assets: {:?}", e),
     }
 
     // Example 2: Get underlying assets for FUTURES instruments
@@ -48,7 +48,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     };
 
     match client.get_underlying(futures_request).await {
-        | Ok(response) => {
+        Ok(response) => {
             if let Some(data) = response.data.first() {
                 println!(
                     "Found {} underlying assets for FUTURES instruments:",
@@ -56,8 +56,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 );
 
                 // Show BTC-related underlying assets
-                let btc_underlying: Vec<_> =
-                    data.uly.iter().filter(|u| u.contains("BTC")).collect();
+                let btc_underlying: Vec<_> = data.uly.iter().filter(|u| u.contains("BTC")).collect();
 
                 if !btc_underlying.is_empty() {
                     println!("BTC-related underlying assets:");
@@ -81,8 +80,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     }
                 }
             }
-        },
-        | Err(e) => eprintln!("Error getting FUTURES underlying assets: {:?}", e),
+        }
+        Err(e) => eprintln!("Error getting FUTURES underlying assets: {:?}", e),
     }
 
     // Example 3: Get underlying assets for OPTION instruments
@@ -92,7 +91,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     };
 
     match client.get_underlying(option_request).await {
-        | Ok(response) => {
+        Ok(response) => {
             if let Some(data) = response.data.first() {
                 println!(
                     "Found {} underlying assets for OPTION instruments:",
@@ -104,8 +103,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     println!("  {}. {}", i + 1, underlying);
                 }
             }
-        },
-        | Err(e) => eprintln!("Error getting OPTION underlying assets: {:?}", e),
+        }
+        Err(e) => eprintln!("Error getting OPTION underlying assets: {:?}", e),
     }
 
     Ok(())

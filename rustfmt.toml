@@ -1,52 +1,79 @@
 # rustfmt.toml
 
 # Maximum width of each line
-max_width = 100
+max_width = 160  # Maximum width of each line
 
 # Use spaces instead of tabs
-hard_tabs = false
+hard_tabs = false  # Use spaces instead of tabs
 
 # Indent with 4 spaces
-tab_spaces = 4
+tab_spaces = 4  # Number of spaces per tab
 
-# Group imports into one block and sort them
-group_imports = "StdExternalCrate"
+# Edition to use
+edition = "2024"  # Rust edition to use
+
+# Max width of array literals before vertical formatting
+array_width = 60
+
+# Max width of function-like attribute args before vertical formatting
+attr_fn_like_width = 70
+
+# Max width of a method/field chain to fit on one line
+chain_width = 60
+
+# Disable all formatting if true
+disable_all_formatting = false  
+
+# Max width of function call args before vertical formatting
+fn_call_width = 60
+
+# Layout for function parameters in signatures
+fn_params_layout = "Tall"
+
+# Always print ABI for extern items
+force_explicit_abi = true
+
+# Leading pipes on match arms: Always, Never, Preserve
+match_arm_leading_pipes = "Never"
+
+# Trailing comma after block-based match arms
+match_block_trailing_comma = false
+
+# Merge multiple derives into a single one
+merge_derives = true
+
+# Line ending style: Auto, Native, Unix, Windows
+newline_style = "Auto"
+
+# Remove nested parentheses
+remove_nested_parens = true
+
+# Reorder import and extern crate statements alphabetically
 reorder_imports = true
 
-# Remove redundant `pub(crate)` if it's unnecessary
-pub_crate_visibility = "normal"
+# Reorder mod declarations alphabetically
+reorder_modules = true
 
-# Format documentation comments
-format_docs = true
+# Max width for array elements to be considered short
+short_array_element_width_threshold = 10
 
-# Keep empty lines between functions and module items
-blank_lines_upper_bound = 2
-blank_lines_lower_bound = 0
+# Max width for single-line if-else expressions
+single_line_if_else_max_width = 50
 
-# Align function parameters and struct fields
-align_args = true
-align_fields = true
-struct_field_align_threshold = 20
+# Max width for single-line let-else statements
+single_line_let_else_max_width = 50
 
-# Control how where clauses are wrapped
-where_single_line = false
+# Max width in struct literal body before vertical formatting
+struct_lit_width = 18
 
-# Don't merge imports like `use std::{fmt, io};`
-imports_granularity = "Crate"
+# Max width in struct variant body before vertical formatting
+struct_variant_width = 35
 
-# Reorder impl items for consistency
-reorder_impl_items = true
+# Use field init shorthand if possible
+use_field_init_shorthand = false
 
-# Allow small functions to stay on a single line
-fn_single_line = true
-fn_single_line_threshold = 50
+# Heuristic for width-based formatting: Default, Off, Max
+use_small_heuristics = "Default"
 
-# Control use of trailing commas
-trailing_comma = "Vertical"
-
-# Control match arm indentation
-match_block_trailing_comma = true
-match_arm_leading_pipes = "Always"
-
-# Use modern Rust idioms
-edition = "2024"
+# Replace try! macro with ? shorthand if possible
+use_try_shorthand = false

@@ -105,39 +105,69 @@ mod tests {
     #[tokio::test]
     async fn test_rate_limiter_allows_requests_within_limit() {
         let rate_limiter = RateLimiter::new();
-        
+
         // Should allow first request
-        assert!(rate_limiter.check_limits(EndpointType::Account).await.is_ok());
+        assert!(
+            rate_limiter
+                .check_limits(EndpointType::Account)
+                .await
+                .is_ok()
+        );
         rate_limiter.increment_request(EndpointType::Account).await;
-        
+
         // Should allow second request
-        assert!(rate_limiter.check_limits(EndpointType::Account).await.is_ok());
+        assert!(
+            rate_limiter
+                .check_limits(EndpointType::Account)
+                .await
+                .is_ok()
+        );
         rate_limiter.increment_request(EndpointType::Account).await;
     }
 
     #[tokio::test]
     async fn test_rate_limiter_blocks_requests_over_limit() {
         let rate_limiter = RateLimiter::new();
-        
+
         // Make 5 requests (the limit for Account endpoints)
         for _ in 0..5 {
-            assert!(rate_limiter.check_limits(EndpointType::Account).await.is_ok());
+            assert!(
+                rate_limiter
+                    .check_limits(EndpointType::Account)
+                    .await
+                    .is_ok()
+            );
             rate_limiter.increment_request(EndpointType::Account).await;
         }
-        
+
         // The 6th request should be blocked
-        assert!(rate_limiter.check_limits(EndpointType::Account).await.is_err());
+        assert!(
+            rate_limiter
+                .check_limits(EndpointType::Account)
+                .await
+                .is_err()
+        );
     }
 
     #[tokio::test]
     async fn test_rate_limiter_different_endpoint_types() {
         let rate_limiter = RateLimiter::new();
-        
+
         // Account and Trading endpoints have different limits
-        assert!(rate_limiter.check_limits(EndpointType::Account).await.is_ok());
+        assert!(
+            rate_limiter
+                .check_limits(EndpointType::Account)
+                .await
+                .is_ok()
+        );
         rate_limiter.increment_request(EndpointType::Account).await;
-        
-        assert!(rate_limiter.check_limits(EndpointType::Trading).await.is_ok());
+
+        assert!(
+            rate_limiter
+                .check_limits(EndpointType::Trading)
+                .await
+                .is_ok()
+        );
         rate_limiter.increment_request(EndpointType::Trading).await;
     }
 }

@@ -73,10 +73,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing the list of funding rate history entries
-    pub async fn get_funding_rate_history(
-        &self,
-        request: &GetFundingRateHistoryRequest,
-    ) -> RestResult<GetFundingRateHistoryResponse> {
+    pub async fn get_funding_rate_history(&self, request: &GetFundingRateHistoryRequest) -> RestResult<GetFundingRateHistoryResponse> {
         self.send_request(
             "api/v5/public/funding-rate-history",
             reqwest::Method::GET,
@@ -106,10 +103,7 @@ mod tests {
             serialized.get("instId").and_then(|v| v.as_str()),
             Some("BTC-USD-SWAP")
         );
-        assert_eq!(
-            serialized.get("limit").and_then(|v| v.as_str()),
-            Some("50")
-        );
+        assert_eq!(serialized.get("limit").and_then(|v| v.as_str()), Some("50"));
         assert!(serialized.get("before").is_none());
         assert!(serialized.get("after").is_none());
     }
@@ -195,7 +189,7 @@ mod tests {
         assert_eq!(response.code, "0");
         assert_eq!(response.msg, "");
         assert_eq!(response.data.len(), 2);
-        
+
         let first_entry = response.data.first().unwrap();
         assert_eq!(first_entry.inst_type, "SWAP");
         assert_eq!(first_entry.inst_id, "BTC-USD-SWAP");
@@ -204,7 +198,7 @@ mod tests {
         assert_eq!(first_entry.realized_rate, "0.00009");
         assert_eq!(first_entry.funding_time, "1597026383085");
         assert_eq!(first_entry.method, "current_period");
-        
+
         let second_entry = response.data.get(1).unwrap();
         assert_eq!(second_entry.formula_type, "noRate");
         assert_eq!(second_entry.funding_rate, "0.000789");

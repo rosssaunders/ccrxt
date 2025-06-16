@@ -1,7 +1,7 @@
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
 use serde::{Deserialize, Serialize};
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 
 /// Account information
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -85,11 +85,7 @@ impl RestClient {
     /// Master account and sub accounts information
     #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
     #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
-    pub async fn get_accounts(
-        &self,
-        page_size: Option<u32>,
-        page: Option<u32>,
-    ) -> RestResult<Value> {
+    pub async fn get_accounts(&self, page_size: Option<u32>, page: Option<u32>) -> RestResult<Value> {
         let nonce = chrono::Utc::now().timestamp_millis() as u64;
         let id = 1;
 
@@ -101,7 +97,8 @@ impl RestClient {
             params["page"] = Value::Number(p.into());
         }
 
-        self.send_signed_request("private/get-accounts", params).await
+        self.send_signed_request("private/get-accounts", params)
+            .await
     }
 }
 

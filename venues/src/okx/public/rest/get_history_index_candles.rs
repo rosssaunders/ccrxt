@@ -9,19 +9,19 @@ pub struct GetHistoryIndexCandlesRequest {
     /// Index instrument ID (e.g., "BTC-USD")
     #[serde(rename = "instId")]
     pub inst_id: String,
-    
+
     /// Pagination of data to return records earlier than the requested ts
     #[serde(skip_serializing_if = "Option::is_none")]
     pub after: Option<String>,
-    
+
     /// Pagination of data to return records newer than the requested ts
     #[serde(skip_serializing_if = "Option::is_none")]
     pub before: Option<String>,
-    
+
     /// Bar size, default is 1m
     #[serde(skip_serializing_if = "Option::is_none")]
     pub bar: Option<Bar>,
-    
+
     /// Number of results per request. Maximum is 100, default is 100
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<String>,
@@ -52,10 +52,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing the historical candlestick data
-    pub async fn get_history_index_candles(
-        &self,
-        request: GetHistoryIndexCandlesRequest,
-    ) -> RestResult<GetHistoryIndexCandlesResponse> {
+    pub async fn get_history_index_candles(&self, request: GetHistoryIndexCandlesRequest) -> RestResult<GetHistoryIndexCandlesResponse> {
         self.send_request(
             "api/v5/market/history-index-candles",
             reqwest::Method::GET,
@@ -86,10 +83,7 @@ mod tests {
             serialized.get("instId").and_then(|v| v.as_str()),
             Some("BTC-USD")
         );
-        assert_eq!(
-            serialized.get("bar").and_then(|v| v.as_str()),
-            Some("1m")
-        );
+        assert_eq!(serialized.get("bar").and_then(|v| v.as_str()), Some("1m"));
         assert_eq!(
             serialized.get("limit").and_then(|v| v.as_str()),
             Some("100")
@@ -157,14 +151,8 @@ mod tests {
             serialized.get("before").and_then(|v| v.as_str()),
             Some("1597026440000")
         );
-        assert_eq!(
-            serialized.get("bar").and_then(|v| v.as_str()),
-            Some("1H")
-        );
-        assert_eq!(
-            serialized.get("limit").and_then(|v| v.as_str()),
-            Some("50")
-        );
+        assert_eq!(serialized.get("bar").and_then(|v| v.as_str()), Some("1H"));
+        assert_eq!(serialized.get("limit").and_then(|v| v.as_str()), Some("50"));
     }
 
     #[test]

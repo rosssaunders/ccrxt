@@ -9,39 +9,39 @@ pub struct GetPositionTiersRequest {
     /// Instrument type (required)
     #[serde(rename = "instType")]
     pub inst_type: InstrumentType,
-    
+
     /// Trade mode (required)
     /// Margin mode: "cross", "isolated"
     #[serde(rename = "tdMode")]
     pub td_mode: String,
-    
+
     /// Single underlying or multiple underlyings (no more than 3) separated with comma
     /// If instType is SWAP/FUTURES/OPTION, either uly or instFamily is required
     /// If both are passed, instFamily will be used
     #[serde(rename = "uly")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub underlying: Option<String>,
-    
+
     /// Single instrument family or multiple instrument families (no more than 5) separated with comma
     /// If instType is SWAP/FUTURES/OPTION, either uly or instFamily is required
     /// If both are passed, instFamily will be used
     #[serde(rename = "instFamily")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub inst_family: Option<String>,
-    
+
     /// Single instrument or multiple instruments (no more than 5) separated with comma
     /// Either instId or ccy is required, if both are passed, instId will be used
     /// Ignore when instType is one of SWAP, FUTURES, OPTION
     #[serde(rename = "instId")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub inst_id: Option<String>,
-    
+
     /// Margin currency
-    /// Only applicable to cross MARGIN. It will return borrowing amount for 
+    /// Only applicable to cross MARGIN. It will return borrowing amount for
     /// Multi-currency margin and Portfolio margin when ccy takes effect
     #[serde(skip_serializing_if = "Option::is_none")]
     pub ccy: Option<String>,
-    
+
     /// Tiers
     #[serde(skip_serializing_if = "Option::is_none")]
     pub tier: Option<String>,
@@ -55,49 +55,49 @@ pub struct PositionTier {
     /// Applicable to FUTURES/SWAP/OPTION
     #[serde(rename = "uly")]
     pub underlying: Option<String>,
-    
+
     /// Instrument family
     /// Applicable to FUTURES/SWAP/OPTION
     #[serde(rename = "instFamily")]
     pub inst_family: Option<String>,
-    
+
     /// Instrument ID
     #[serde(rename = "instId")]
     pub inst_id: String,
-    
+
     /// Tiers
     pub tier: String,
-    
+
     /// The minimum borrowing amount or position of this gear
     /// Only applicable to margin/options/perpetual/delivery, the minimum position is 0 by default
     /// It will return the minimum borrowing amount when ccy takes effect
     #[serde(rename = "minSz")]
     pub min_sz: String,
-    
+
     /// The maximum borrowing amount or number of positions held in this position
     /// Only applicable to margin/options/perpetual/delivery
     /// It will return the maximum borrowing amount when ccy takes effect
     #[serde(rename = "maxSz")]
     pub max_sz: String,
-    
+
     /// Position maintenance margin requirement rate
     pub mmr: String,
-    
+
     /// Initial margin requirement rate
     pub imr: String,
-    
+
     /// Maximum available leverage
     #[serde(rename = "maxLever")]
     pub max_lever: String,
-    
+
     /// Option Margin Coefficient (only applicable to options)
     #[serde(rename = "optMgnFactor")]
     pub opt_mgn_factor: Option<String>,
-    
+
     /// Quote currency borrowing amount (only applicable to leverage and the case when instId takes effect)
     #[serde(rename = "quoteMaxLoan")]
     pub quote_max_loan: Option<String>,
-    
+
     /// Base currency borrowing amount (only applicable to leverage and the case when instId takes effect)
     #[serde(rename = "baseMaxLoan")]
     pub base_max_loan: Option<String>,
@@ -129,10 +129,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing the position tiers information
-    pub async fn get_position_tiers(
-        &self,
-        request: GetPositionTiersRequest,
-    ) -> RestResult<GetPositionTiersResponse> {
+    pub async fn get_position_tiers(&self, request: GetPositionTiersRequest) -> RestResult<GetPositionTiersResponse> {
         self.send_request(
             "api/v5/public/position-tiers",
             reqwest::Method::GET,
@@ -361,10 +358,7 @@ mod tests {
             serialized.get("instId").and_then(|v| v.as_str()),
             Some("BTC-USDT,ETH-USDT")
         );
-        assert_eq!(
-            serialized.get("ccy").and_then(|v| v.as_str()),
-            Some("USDT")
-        );
+        assert_eq!(serialized.get("ccy").and_then(|v| v.as_str()), Some("USDT"));
         assert_eq!(
             serialized.get("tier").and_then(|v| v.as_str()),
             Some("1,2,3")

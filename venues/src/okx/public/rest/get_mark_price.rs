@@ -68,10 +68,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing mark price data
-    pub async fn get_mark_price(
-        &self,
-        request: &GetMarkPriceRequest,
-    ) -> RestResult<GetMarkPriceResponse> {
+    pub async fn get_mark_price(&self, request: &GetMarkPriceRequest) -> RestResult<GetMarkPriceResponse> {
         self.send_request(
             "api/v5/public/mark-price",
             reqwest::Method::GET,
@@ -238,13 +235,13 @@ mod tests {
         let response: GetMarkPriceResponse = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 4);
-        
+
         // Check different instrument types
         assert_eq!(response.data[0].inst_type, "MARGIN");
         assert_eq!(response.data[1].inst_type, "SWAP");
         assert_eq!(response.data[2].inst_type, "FUTURES");
         assert_eq!(response.data[3].inst_type, "OPTION");
-        
+
         // Check mark prices
         assert_eq!(response.data[0].mark_px, "50000.5");
         assert_eq!(response.data[1].mark_px, "50001.2");

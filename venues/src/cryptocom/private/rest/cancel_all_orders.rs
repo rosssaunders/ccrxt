@@ -1,7 +1,7 @@
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
 use serde::{Deserialize, Serialize};
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 
 /// Order type filter for cancel all orders
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -41,10 +41,10 @@ impl RestClient {
     pub async fn cancel_all_orders(&self, request: CancelAllOrdersRequest) -> RestResult<Value> {
         let nonce = chrono::Utc::now().timestamp_millis() as u64;
         let id = 1;
-        let params = serde_json::to_value(&request)
-            .map_err(|e| crate::cryptocom::Errors::Error(format!("Serialization error: {}", e)))?;
+        let params = serde_json::to_value(&request).map_err(|e| crate::cryptocom::Errors::Error(format!("Serialization error: {}", e)))?;
 
-        self.send_signed_request("private/cancel-all-orders", params).await
+        self.send_signed_request("private/cancel-all-orders", params)
+            .await
     }
 }
 
@@ -106,10 +106,12 @@ mod tests {
 
         let serialized = serde_json::to_value(&request).unwrap();
         assert_eq!(serialized.get("type").unwrap(), "ALL");
-        assert!(!serialized
-            .as_object()
-            .unwrap()
-            .contains_key("instrument_name"));
+        assert!(
+            !serialized
+                .as_object()
+                .unwrap()
+                .contains_key("instrument_name")
+        );
     }
 
     #[test]
@@ -120,10 +122,12 @@ mod tests {
         };
 
         let serialized = serde_json::to_value(&request).unwrap();
-        assert!(!serialized
-            .as_object()
-            .unwrap()
-            .contains_key("instrument_name"));
+        assert!(
+            !serialized
+                .as_object()
+                .unwrap()
+                .contains_key("instrument_name")
+        );
         assert!(!serialized.as_object().unwrap().contains_key("type"));
     }
 

@@ -67,10 +67,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing the list of settlement history entries
-    pub async fn get_settlement_history(
-        &self,
-        request: &GetSettlementHistoryRequest,
-    ) -> RestResult<GetSettlementHistoryResponse> {
+    pub async fn get_settlement_history(&self, request: &GetSettlementHistoryRequest) -> RestResult<GetSettlementHistoryResponse> {
         self.send_request(
             "api/v5/public/settlement-history",
             reqwest::Method::GET,
@@ -100,10 +97,7 @@ mod tests {
             serialized.get("instFamily").and_then(|v| v.as_str()),
             Some("BTC-USD")
         );
-        assert_eq!(
-            serialized.get("limit").and_then(|v| v.as_str()),
-            Some("50")
-        );
+        assert_eq!(serialized.get("limit").and_then(|v| v.as_str()), Some("50"));
         assert!(serialized.get("after").is_none());
         assert!(serialized.get("before").is_none());
     }
@@ -167,10 +161,22 @@ mod tests {
         let settlement_history: SettlementHistory = serde_json::from_value(settlement_history_json).unwrap();
         assert_eq!(settlement_history.ts, "1597026383085");
         assert_eq!(settlement_history.details.len(), 2);
-        assert_eq!(settlement_history.details.first().unwrap().inst_id, "BTC-USD-230630");
-        assert_eq!(settlement_history.details.first().unwrap().settle_px, "30250.5");
-        assert_eq!(settlement_history.details.get(1).unwrap().inst_id, "BTC-USD-230929");
-        assert_eq!(settlement_history.details.get(1).unwrap().settle_px, "30255.0");
+        assert_eq!(
+            settlement_history.details.first().unwrap().inst_id,
+            "BTC-USD-230630"
+        );
+        assert_eq!(
+            settlement_history.details.first().unwrap().settle_px,
+            "30250.5"
+        );
+        assert_eq!(
+            settlement_history.details.get(1).unwrap().inst_id,
+            "BTC-USD-230929"
+        );
+        assert_eq!(
+            settlement_history.details.get(1).unwrap().settle_px,
+            "30255.0"
+        );
     }
 
     #[test]
@@ -206,11 +212,51 @@ mod tests {
         assert_eq!(response.data.len(), 2);
         assert_eq!(response.data.first().unwrap().ts, "1597026383085");
         assert_eq!(response.data.first().unwrap().details.len(), 1);
-        assert_eq!(response.data.first().unwrap().details.first().unwrap().inst_id, "BTC-USD-230630");
-        assert_eq!(response.data.first().unwrap().details.first().unwrap().settle_px, "30250.5");
+        assert_eq!(
+            response
+                .data
+                .first()
+                .unwrap()
+                .details
+                .first()
+                .unwrap()
+                .inst_id,
+            "BTC-USD-230630"
+        );
+        assert_eq!(
+            response
+                .data
+                .first()
+                .unwrap()
+                .details
+                .first()
+                .unwrap()
+                .settle_px,
+            "30250.5"
+        );
         assert_eq!(response.data.get(1).unwrap().ts, "1597026483085");
-        assert_eq!(response.data.get(1).unwrap().details.first().unwrap().inst_id, "ETH-USD-230630");
-        assert_eq!(response.data.get(1).unwrap().details.first().unwrap().settle_px, "1890.75");
+        assert_eq!(
+            response
+                .data
+                .get(1)
+                .unwrap()
+                .details
+                .first()
+                .unwrap()
+                .inst_id,
+            "ETH-USD-230630"
+        );
+        assert_eq!(
+            response
+                .data
+                .get(1)
+                .unwrap()
+                .details
+                .first()
+                .unwrap()
+                .settle_px,
+            "1890.75"
+        );
     }
 
     #[test]

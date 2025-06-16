@@ -7,13 +7,8 @@ use std::time::Duration;
 use url::Url;
 
 /// Helper to build a URL with optional query parameters using `url::Url`.
-pub(crate) fn build_url(
-    base_url: &str,
-    endpoint: &str,
-    query: Option<&str>,
-) -> Result<String, Errors> {
-    let mut url =
-        Url::parse(base_url).map_err(|e| Errors::Error(format!("Invalid base_url: {e}")))?;
+pub(crate) fn build_url(base_url: &str, endpoint: &str, query: Option<&str>) -> Result<String, Errors> {
+    let mut url = Url::parse(base_url).map_err(|e| Errors::Error(format!("Invalid base_url: {e}")))?;
     url.set_path(endpoint);
     if let Some(qs) = query {
         url.set_query(Some(qs));
@@ -102,37 +97,36 @@ where
 
     // Handle non-success status codes
     match status {
-        | StatusCode::OK => {
+        StatusCode::OK => {
             // Parse the JSON response
-            let data: T = serde_json::from_str(&response_text)
-                .map_err(|e| Errors::Error(format!("JSON parsing error: {}", e)))?;
+            let data: T = serde_json::from_str(&response_text).map_err(|e| Errors::Error(format!("JSON parsing error: {}", e)))?;
             Ok(ParsedResponse {
                 data,
                 headers,
                 duration,
             })
-        },
-        | StatusCode::TOO_MANY_REQUESTS => {
+        }
+        StatusCode::TOO_MANY_REQUESTS => {
             let error_msg = extract_msg(&response_text).await;
             Err(Errors::ApiError(ApiError::TooManyRequests {
                 msg: error_msg,
             }))
-        },
-        | StatusCode::IM_A_TEAPOT => {
+        }
+        StatusCode::IM_A_TEAPOT => {
             let error_msg = extract_msg(&response_text).await;
             Err(Errors::ApiError(ApiError::IpAutoBanned { msg: error_msg }))
-        },
-        | StatusCode::UNAUTHORIZED => {
+        }
+        StatusCode::UNAUTHORIZED => {
             let error_msg = extract_msg(&response_text).await;
             Err(Errors::ApiError(ApiError::Unauthorized { msg: error_msg }))
-        },
-        | _ => {
+        }
+        _ => {
             // Try to parse as ErrorResponse first
             match serde_json::from_str::<ErrorResponse>(&response_text) {
-                | Ok(error_response) => Err(Errors::ApiError(error_response.into())),
-                | Err(_) => Err(Errors::Error(format!("HTTP {}: {}", status, response_text))),
+                Ok(error_response) => Err(Errors::ApiError(error_response.into())),
+                Err(_) => Err(Errors::Error(format!("HTTP {}: {}", status, response_text))),
             }
-        },
+        }
     }
 }
 

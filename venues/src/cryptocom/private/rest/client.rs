@@ -1,8 +1,8 @@
 use crate::cryptocom::Errors;
+use chrono::Utc;
 use hmac::{Hmac, Mac};
 use rest::secrets::ExposableSecret;
 use serde_json::{Value, json};
-use chrono::Utc;
 use sha2::Sha256;
 use std::borrow::Cow;
 use std::collections::BTreeMap;
@@ -26,14 +26,7 @@ use std::collections::BTreeMap;
 ///
 /// # Returns
 /// A result containing the signature as a hex string or an error if signing fails.
-fn sign_request(
-    api_secret: &dyn ExposableSecret,
-    method: &str,
-    id: u64,
-    api_key: &str,
-    params: &Value,
-    nonce: u64,
-) -> Result<String, Errors> {
+fn sign_request(api_secret: &dyn ExposableSecret, method: &str, id: u64, api_key: &str, params: &Value, nonce: u64) -> Result<String, Errors> {
     // Convert params to string using the Crypto.com algorithm
     let params_string = params_to_string(params);
 
@@ -42,8 +35,7 @@ fn sign_request(
 
     // Sign with HMAC-SHA256
     let api_secret = api_secret.expose_secret();
-    let mut mac = Hmac::<Sha256>::new_from_slice(api_secret.as_bytes())
-        .map_err(|_| Errors::InvalidApiKey())?;
+    let mut mac = Hmac::<Sha256>::new_from_slice(api_secret.as_bytes()).map_err(|_| Errors::InvalidApiKey())?;
     mac.update(sig_payload.as_bytes());
 
     Ok(hex::encode(mac.finalize().into_bytes()))
@@ -132,13 +124,7 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the signature as a hex string or an error
-    pub fn sign_request(
-        &self,
-        method: &str,
-        id: u64,
-        params: &Value,
-        nonce: u64,
-    ) -> Result<String, Errors> {
+    pub fn sign_request(&self, method: &str, id: u64, params: &Value, nonce: u64) -> Result<String, Errors> {
         let api_key = self.api_key.expose_secret();
         sign_request(
             self.api_secret.as_ref(),
@@ -160,11 +146,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Parsed JSON value of the response.
-    pub async fn send_signed_request(
-        &self,
-        method: &str,
-        mut params: Value,
-    ) -> crate::cryptocom::RestResult<Value> {
+    pub async fn send_signed_request(&self, method: &str, mut params: Value) -> crate::cryptocom::RestResult<Value> {
         let nonce = Utc::now().timestamp_millis() as u64;
         let id = 1;
         let signature = self.sign_request(method, id, &params, nonce)?;
@@ -306,10 +288,8 @@ mod tests {
 
     #[test]
     fn test_sign_request() {
-        let _api_key =
-            Box::new(PlainTextSecret::new("test_api_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret =
-            Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let _api_key = Box::new(PlainTextSecret::new("test_api_key".to_string())) as Box<dyn ExposableSecret>;
+        let api_secret = Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
 
         let method = "private/get-order-detail";
         let id = 11;
@@ -335,10 +315,8 @@ mod tests {
 
     #[test]
     fn test_client_creation() {
-        let api_key =
-            Box::new(PlainTextSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret =
-            Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let api_key = Box::new(PlainTextSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
+        let api_secret = Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
         let client = reqwest::Client::new();
 
         let rest_client = RestClient::new(api_key, api_secret, "https://api.crypto.com", client);
@@ -348,10 +326,8 @@ mod tests {
 
     #[test]
     fn test_client_sign_request() {
-        let api_key =
-            Box::new(PlainTextSecret::new("test_api_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret =
-            Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let api_key = Box::new(PlainTextSecret::new("test_api_key".to_string())) as Box<dyn ExposableSecret>;
+        let api_secret = Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
         let client = reqwest::Client::new();
 
         let rest_client = RestClient::new(api_key, api_secret, "https://api.crypto.com", client);
@@ -372,8 +348,7 @@ mod tests {
     fn test_crypto_com_example_signing() {
         // Test the exact example from the Crypto.com documentation
         let api_key = "test_api_key";
-        let api_secret =
-            Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let api_secret = Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
 
         let method = "private/get-order-detail";
         let id = 11;
@@ -382,8 +357,7 @@ mod tests {
         });
         let nonce = 1587846358253_u64;
 
-        let signature =
-            sign_request(api_secret.as_ref(), method, id, api_key, &params, nonce).unwrap();
+        let signature = sign_request(api_secret.as_ref(), method, id, api_key, &params, nonce).unwrap();
 
         // Verify the signature is a valid hex string
         assert_eq!(signature.len(), 64);
@@ -402,8 +376,7 @@ mod tests {
 
     #[test]
     fn test_empty_params_signing() {
-        let api_secret =
-            Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let api_secret = Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
 
         let signature = sign_request(
             api_secret.as_ref(),
@@ -421,8 +394,7 @@ mod tests {
 
     #[test]
     fn test_complex_params_signing() {
-        let api_secret =
-            Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let api_secret = Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
 
         let params = json!({
             "instrument_name": "BTC_USDT",

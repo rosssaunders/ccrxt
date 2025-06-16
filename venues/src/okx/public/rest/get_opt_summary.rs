@@ -101,10 +101,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing option market data
-    pub async fn get_opt_summary(
-        &self,
-        request: GetOptSummaryRequest,
-    ) -> RestResult<GetOptSummaryResponse> {
+    pub async fn get_opt_summary(&self, request: GetOptSummaryRequest) -> RestResult<GetOptSummaryResponse> {
         self.send_request(
             "api/v5/public/opt-summary",
             reqwest::Method::GET,
@@ -257,7 +254,10 @@ mod tests {
         assert_eq!(response.code, "0");
         assert_eq!(response.msg, "");
         assert_eq!(response.data.len(), 1);
-        assert_eq!(response.data.first().unwrap().inst_id, "BTC-USD-200103-5500-C");
+        assert_eq!(
+            response.data.first().unwrap().inst_id,
+            "BTC-USD-200103-5500-C"
+        );
     }
 
     #[test]
@@ -329,8 +329,14 @@ mod tests {
 
         let response: GetOptSummaryResponse = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.data.len(), 2);
-        assert_eq!(response.data.first().unwrap().inst_id, "BTC-USD-200103-5500-C");
-        assert_eq!(response.data.get(1).unwrap().inst_id, "BTC-USD-200103-6000-P");
+        assert_eq!(
+            response.data.first().unwrap().inst_id,
+            "BTC-USD-200103-5500-C"
+        );
+        assert_eq!(
+            response.data.get(1).unwrap().inst_id,
+            "BTC-USD-200103-6000-P"
+        );
         assert_eq!(response.data.first().unwrap().delta, "0.7551");
         assert_eq!(response.data.get(1).unwrap().delta, "-0.2449");
     }

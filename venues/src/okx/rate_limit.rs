@@ -116,10 +116,12 @@ mod tests {
         let limiter = RateLimiter::new();
 
         // First request should succeed
-        assert!(limiter
-            .check_limits(EndpointType::PublicMarketData)
-            .await
-            .is_ok());
+        assert!(
+            limiter
+                .check_limits(EndpointType::PublicMarketData)
+                .await
+                .is_ok()
+        );
         limiter
             .increment_request(EndpointType::PublicMarketData)
             .await;
@@ -130,10 +132,12 @@ mod tests {
         let limiter = RateLimiter::new();
 
         // Test insurance fund endpoint rate limiting
-        assert!(limiter
-            .check_limits(EndpointType::PublicInsuranceFund)
-            .await
-            .is_ok());
+        assert!(
+            limiter
+                .check_limits(EndpointType::PublicInsuranceFund)
+                .await
+                .is_ok()
+        );
         limiter
             .increment_request(EndpointType::PublicInsuranceFund)
             .await;

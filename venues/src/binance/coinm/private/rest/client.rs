@@ -52,8 +52,7 @@ use std::borrow::Cow;
 /// A result containing the signature as a hex string or a Hmac error if signing fails.
 fn sign_request(api_secret: &dyn ExposableSecret, query_string: &str) -> Result<String, Errors> {
     let api_secret = api_secret.expose_secret();
-    let mut mac = Hmac::<Sha256>::new_from_slice(api_secret.as_bytes())
-        .map_err(|_| Errors::InvalidApiKey())?;
+    let mut mac = Hmac::<Sha256>::new_from_slice(api_secret.as_bytes()).map_err(|_| Errors::InvalidApiKey())?;
     mac.update(query_string.as_bytes());
     Ok(hex::encode(mac.finalize().into_bytes()))
 }
@@ -130,17 +129,14 @@ impl RestClient {
     where
         T: serde::de::DeserializeOwned,
     {
-        let url =
-            crate::binance::coinm::rest::common::build_url(&self.base_url, endpoint, query_string)?;
+        let url = crate::binance::coinm::rest::common::build_url(&self.base_url, endpoint, query_string)?;
         let mut headers = vec![];
         if !self.api_key.expose_secret().is_empty() {
             headers.push(("X-MBX-APIKEY", self.api_key.expose_secret()));
         }
         let body_data = match body {
-            | Some(b) => Some(serde_urlencoded::to_string(b).map_err(|e| {
-                crate::binance::coinm::Errors::Error(format!("URL encoding error: {}", e))
-            })?),
-            | None => None,
+            Some(b) => Some(serde_urlencoded::to_string(b).map_err(|e| crate::binance::coinm::Errors::Error(format!("URL encoding error: {}", e)))?),
+            None => None,
         };
         if body_data.is_some() {
             headers.push((
@@ -180,14 +176,7 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the parsed response data and metadata, or an error
-    pub(super) async fn send_signed_request<T, R>(
-        &self,
-        endpoint: &str,
-        method: reqwest::Method,
-        request: R,
-        weight: u32,
-        is_order: bool,
-    ) -> RestResult<T>
+    pub(super) async fn send_signed_request<T, R>(&self, endpoint: &str, method: reqwest::Method, request: R, weight: u32, is_order: bool) -> RestResult<T>
     where
         T: serde::de::DeserializeOwned,
         R: serde::Serialize,

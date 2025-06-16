@@ -1,8 +1,8 @@
 use hmac::{Hmac, Mac};
 use reqwest::Client;
 use rest::secrets::ExposableSecret;
-use serde::de::DeserializeOwned;
 use serde::Serialize;
+use serde::de::DeserializeOwned;
 use sha2::Sha256;
 use std::borrow::Cow;
 
@@ -47,13 +47,7 @@ impl RestClient {
     ///
     /// # Returns
     /// A new RestClient instance
-    pub fn new(
-        api_key: Box<dyn ExposableSecret>,
-        api_secret: Box<dyn ExposableSecret>,
-        base_url: &str,
-        client: Client,
-        rate_limiter: RateLimiter,
-    ) -> Self {
+    pub fn new(api_key: Box<dyn ExposableSecret>, api_secret: Box<dyn ExposableSecret>, base_url: &str, client: Client, rate_limiter: RateLimiter) -> Self {
         Self {
             api_key,
             api_secret,
@@ -78,8 +72,7 @@ impl RestClient {
     pub fn sign_request(&self, query_string: &str) -> Result<String, Errors> {
         // Sign with HMAC SHA256
         let api_secret = self.api_secret.expose_secret();
-        let mut mac = Hmac::<Sha256>::new_from_slice(api_secret.as_bytes())
-            .map_err(|_| Errors::InvalidApiKey)?;
+        let mut mac = Hmac::<Sha256>::new_from_slice(api_secret.as_bytes()).map_err(|_| Errors::InvalidApiKey)?;
         mac.update(query_string.as_bytes());
 
         // Return as hex string
@@ -96,35 +89,29 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the parsed response data or an error
-    pub async fn send_request<T, P>(
-        &self,
-        endpoint: &str,
-        method: reqwest::Method,
-        params: Option<&P>,
-        endpoint_type: EndpointType,
-    ) -> RestResult<T>
+    pub async fn send_request<T, P>(&self, endpoint: &str, method: reqwest::Method, params: Option<&P>, endpoint_type: EndpointType) -> RestResult<T>
     where
         T: DeserializeOwned,
         P: Serialize + ?Sized,
     {
         // Check rate limits
-        self.rate_limiter.check_limits(endpoint_type.clone()).await
+        self.rate_limiter
+            .check_limits(endpoint_type.clone())
+            .await
             .map_err(|e| Errors::RateLimitExceeded(e.to_string()))?;
 
         // Build query string with required parameters
         let timestamp = chrono::Utc::now().timestamp_millis();
-        let mut query_params = vec![
-            ("timestamp".to_string(), timestamp.to_string()),
-        ];
+        let mut query_params = vec![("timestamp".to_string(), timestamp.to_string())];
 
         // Add optional parameters
         if let Some(params) = params {
-            let params_str = serde_urlencoded::to_string(params)
-                .map_err(|e| Errors::Error(format!("Failed to serialize parameters: {}", e)))?;
-            
+            let params_str = serde_urlencoded::to_string(params).map_err(|e| Errors::Error(format!("Failed to serialize parameters: {}", e)))?;
+
             if !params_str.is_empty() {
-                for (key, value) in serde_urlencoded::from_str::<Vec<(String, String)>>(&params_str)
-                    .map_err(|e| Errors::Error(format!("Failed to parse parameters: {}", e)))? {
+                for (key, value) in
+                    serde_urlencoded::from_str::<Vec<(String, String)>>(&params_str).map_err(|e| Errors::Error(format!("Failed to parse parameters: {}", e)))?
+                {
                     query_params.push((key, value));
                 }
             }
@@ -173,8 +160,11 @@ impl RestClient {
             Ok(parsed_response)
         } else {
             let status = response.status();
-            let error_text = response.text().await.unwrap_or_else(|_| "Unknown error".to_string());
-            
+            let error_text = response
+                .text()
+                .await
+                .unwrap_or_else(|_| "Unknown error".to_string());
+
             // Try to parse as BingX error response
             if let Ok(error_response) = serde_json::from_str::<crate::bingx::ErrorResponse>(&error_text) {
                 Err(Errors::from(error_response))
@@ -242,7 +232,7 @@ mod tests {
 
         let query_string = "timestamp=1234567890";
         let signature = rest_client.sign_request(query_string).unwrap();
-        
+
         // Signature should be a valid hex string
         assert!(signature.chars().all(|c| c.is_ascii_hexdigit()));
         assert!(!signature.is_empty());

@@ -28,11 +28,7 @@ impl RestClient {
     ///
     /// # Returns
     /// A new RestClient instance
-    pub fn new(
-        base_url: impl Into<Cow<'static, str>>,
-        client: Client,
-        rate_limiter: RateLimiter,
-    ) -> Self {
+    pub fn new(base_url: impl Into<Cow<'static, str>>, client: Client, rate_limiter: RateLimiter) -> Self {
         Self {
             client,
             base_url: base_url.into(),
@@ -50,31 +46,28 @@ impl RestClient {
     ///
     /// # Returns
     /// The deserialized response or an error
-    pub async fn send_request<T>(
-        &self,
-        endpoint: &str,
-        endpoint_type: EndpointType,
-    ) -> RestResult<T>
+    pub async fn send_request<T>(&self, endpoint: &str, endpoint_type: EndpointType) -> RestResult<T>
     where
         T: DeserializeOwned,
     {
         // Check rate limits
-        self.rate_limiter.check_limits(endpoint_type).await
+        self.rate_limiter
+            .check_limits(endpoint_type)
+            .await
             .map_err(|e| crate::bullish::Errors::RateLimitError(e.to_string()))?;
 
         let url = format!("{}{}", self.base_url, endpoint);
-        
-        let response = self
-            .client
-            .get(&url)
-            .send()
-            .await?;
+
+        let response = self.client.get(&url).send().await?;
 
         self.rate_limiter.increment_request(endpoint_type).await;
 
         if !response.status().is_success() {
             let error_text = response.text().await?;
-            return Err(crate::bullish::Errors::Error(format!("Request failed: {}", error_text)));
+            return Err(crate::bullish::Errors::Error(format!(
+                "Request failed: {}",
+                error_text
+            )));
         }
 
         let result: T = response.json().await?;
@@ -91,11 +84,7 @@ mod tests {
         let client = Client::new();
         let rate_limiter = RateLimiter::new();
 
-        let rest_client = RestClient::new(
-            "https://api.exchange.bullish.com",
-            client,
-            rate_limiter,
-        );
+        let rest_client = RestClient::new("https://api.exchange.bullish.com", client, rate_limiter);
 
         assert_eq!(rest_client.base_url, "https://api.exchange.bullish.com");
     }
@@ -105,11 +94,7 @@ mod tests {
         let client = Client::new();
         let rate_limiter = RateLimiter::new();
 
-        let _rest_client = RestClient::new(
-            "https://api.exchange.bullish.com",
-            client,
-            rate_limiter,
-        );
+        let _rest_client = RestClient::new("https://api.exchange.bullish.com", client, rate_limiter);
 
         // Test that rate limiter integration works
         // This is a basic structure test since we can't make real API calls in unit tests

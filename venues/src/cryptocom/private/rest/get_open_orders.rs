@@ -1,7 +1,7 @@
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
 use serde::{Deserialize, Serialize};
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 
 /// Enum representing the status of an order
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -98,10 +98,10 @@ impl RestClient {
     pub async fn get_open_orders(&self, request: GetOpenOrdersRequest) -> RestResult<Value> {
         let nonce = chrono::Utc::now().timestamp_millis() as u64;
         let id = 1;
-        let params = serde_json::to_value(&request)
-            .map_err(|e| crate::cryptocom::Errors::Error(format!("Serialization error: {}", e)))?;
+        let params = serde_json::to_value(&request).map_err(|e| crate::cryptocom::Errors::Error(format!("Serialization error: {}", e)))?;
 
-        self.send_signed_request("private/get-open-orders", params).await
+        self.send_signed_request("private/get-open-orders", params)
+            .await
     }
 }
 
@@ -148,10 +148,12 @@ mod tests {
         };
 
         let serialized = serde_json::to_value(&request).unwrap();
-        assert!(!serialized
-            .as_object()
-            .unwrap()
-            .contains_key("instrument_name"));
+        assert!(
+            !serialized
+                .as_object()
+                .unwrap()
+                .contains_key("instrument_name")
+        );
     }
 
     #[test]

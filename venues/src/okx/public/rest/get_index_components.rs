@@ -67,10 +67,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing the index component information
-    pub async fn get_index_components(
-        &self,
-        request: &GetIndexComponentsRequest,
-    ) -> RestResult<GetIndexComponentsResponse> {
+    pub async fn get_index_components(&self, request: &GetIndexComponentsRequest) -> RestResult<GetIndexComponentsResponse> {
         self.send_request(
             "api/v5/market/index-components",
             reqwest::Method::GET,

@@ -76,10 +76,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing the economic calendar events
-    pub async fn get_economic_calendar(
-        &self,
-        request: Option<GetEconomicCalendarRequest>,
-    ) -> RestResult<GetEconomicCalendarResponse> {
+    pub async fn get_economic_calendar(&self, request: Option<GetEconomicCalendarRequest>) -> RestResult<GetEconomicCalendarResponse> {
         self.send_request(
             "api/v5/public/economic-calendar",
             reqwest::Method::GET,
@@ -196,7 +193,7 @@ mod tests {
     #[test]
     fn test_request_default() {
         let request = GetEconomicCalendarRequest::default();
-        
+
         let serialized = serde_json::to_value(&request).unwrap();
         // All fields should be omitted when they are None
         assert!(serialized.as_object().unwrap().is_empty());

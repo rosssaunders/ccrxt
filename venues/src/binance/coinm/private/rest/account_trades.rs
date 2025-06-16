@@ -147,10 +147,7 @@ impl RestClient {
     ///
     /// # Returns
     /// A vector of [`AccountTrade`] objects.
-    pub async fn get_account_trades(
-        &self,
-        params: AccountTradeListRequest,
-    ) -> RestResult<Vec<AccountTrade>> {
+    pub async fn get_account_trades(&self, params: AccountTradeListRequest) -> RestResult<Vec<AccountTrade>> {
         let weight = if params.pair.is_some() { 40 } else { 20 };
         self.send_signed_request(
             "/dapi/v1/userTrades",

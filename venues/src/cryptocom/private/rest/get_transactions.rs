@@ -1,7 +1,7 @@
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
 use serde::{Deserialize, Serialize};
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 
 /// Parameters for get transactions request
 #[derive(Debug, Clone, Serialize)]
@@ -117,7 +117,8 @@ impl RestClient {
             params["limit"] = Value::Number(l.into());
         }
 
-        self.send_signed_request("private/get-transactions", params).await
+        self.send_signed_request("private/get-transactions", params)
+            .await
     }
 }
 

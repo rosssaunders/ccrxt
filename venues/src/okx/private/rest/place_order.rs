@@ -1,4 +1,4 @@
-use super::{common::OkxApiResponse, RestClient};
+use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, OrderSide, OrderType, RestResult};
 use serde::{Deserialize, Serialize};
 
@@ -124,10 +124,7 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the order placement response or an error
-    pub async fn place_order(
-        &self,
-        request: &PlaceOrderRequest,
-    ) -> RestResult<OkxApiResponse<PlaceOrderResponse>> {
+    pub async fn place_order(&self, request: &PlaceOrderRequest) -> RestResult<OkxApiResponse<PlaceOrderResponse>> {
         self.send_request(
             "api/v5/trade/order",
             reqwest::Method::POST,
@@ -186,8 +183,7 @@ mod tests {
             ]
         }"#;
 
-        let response: OkxApiResponse<PlaceOrderResponse> =
-            serde_json::from_str(response_json).unwrap();
+        let response: OkxApiResponse<PlaceOrderResponse> = serde_json::from_str(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 1);
         assert_eq!(response.data[0].cl_ord_id, Some("my_order_123".to_string()));

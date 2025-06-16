@@ -1,7 +1,7 @@
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
 use serde::{Deserialize, Serialize};
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 
 /// Request parameters for amending an existing order
 #[derive(Debug, Clone, Serialize)]
@@ -50,10 +50,10 @@ impl RestClient {
     pub async fn amend_order(&self, request: AmendOrderRequest) -> RestResult<Value> {
         let nonce = chrono::Utc::now().timestamp_millis() as u64;
         let id = 1;
-        let params = serde_json::to_value(&request)
-            .map_err(|e| crate::cryptocom::Errors::Error(format!("Serialization error: {}", e)))?;
+        let params = serde_json::to_value(&request).map_err(|e| crate::cryptocom::Errors::Error(format!("Serialization error: {}", e)))?;
 
-        self.send_signed_request("private/amend-order", params).await
+        self.send_signed_request("private/amend-order", params)
+            .await
     }
 }
 
@@ -96,10 +96,12 @@ mod tests {
         assert_eq!(serialized.get("order_id").unwrap(), "6530219466236720401");
         assert_eq!(serialized.get("new_price").unwrap(), "82000");
         assert_eq!(serialized.get("new_quantity").unwrap(), "0.0002");
-        assert!(!serialized
-            .as_object()
-            .unwrap()
-            .contains_key("orig_client_oid"));
+        assert!(
+            !serialized
+                .as_object()
+                .unwrap()
+                .contains_key("orig_client_oid")
+        );
     }
 
     #[test]

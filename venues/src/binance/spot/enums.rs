@@ -11,8 +11,8 @@ pub enum OrderSide {
 impl fmt::Display for OrderSide {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            | OrderSide::Buy => write!(f, "BUY"),
-            | OrderSide::Sell => write!(f, "SELL"),
+            OrderSide::Buy => write!(f, "BUY"),
+            OrderSide::Sell => write!(f, "SELL"),
         }
     }
 }
@@ -32,13 +32,13 @@ pub enum OrderType {
 impl fmt::Display for OrderType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            | OrderType::Limit => write!(f, "LIMIT"),
-            | OrderType::Market => write!(f, "MARKET"),
-            | OrderType::StopLoss => write!(f, "STOP_LOSS"),
-            | OrderType::StopLossLimit => write!(f, "STOP_LOSS_LIMIT"),
-            | OrderType::TakeProfit => write!(f, "TAKE_PROFIT"),
-            | OrderType::TakeProfitLimit => write!(f, "TAKE_PROFIT_LIMIT"),
-            | OrderType::LimitMaker => write!(f, "LIMIT_MAKER"),
+            OrderType::Limit => write!(f, "LIMIT"),
+            OrderType::Market => write!(f, "MARKET"),
+            OrderType::StopLoss => write!(f, "STOP_LOSS"),
+            OrderType::StopLossLimit => write!(f, "STOP_LOSS_LIMIT"),
+            OrderType::TakeProfit => write!(f, "TAKE_PROFIT"),
+            OrderType::TakeProfitLimit => write!(f, "TAKE_PROFIT_LIMIT"),
+            OrderType::LimitMaker => write!(f, "LIMIT_MAKER"),
         }
     }
 }
@@ -57,9 +57,9 @@ pub enum TimeInForce {
 impl fmt::Display for TimeInForce {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            | TimeInForce::GTC => write!(f, "GTC"),
-            | TimeInForce::IOC => write!(f, "IOC"),
-            | TimeInForce::FOK => write!(f, "FOK"),
+            TimeInForce::GTC => write!(f, "GTC"),
+            TimeInForce::IOC => write!(f, "IOC"),
+            TimeInForce::FOK => write!(f, "FOK"),
         }
     }
 }
@@ -88,14 +88,14 @@ pub enum OrderStatus {
 impl fmt::Display for OrderStatus {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            | OrderStatus::New => write!(f, "NEW"),
-            | OrderStatus::PartiallyFilled => write!(f, "PARTIALLY_FILLED"),
-            | OrderStatus::Filled => write!(f, "FILLED"),
-            | OrderStatus::Canceled => write!(f, "CANCELED"),
-            | OrderStatus::PendingCancel => write!(f, "PENDING_CANCEL"),
-            | OrderStatus::Rejected => write!(f, "REJECTED"),
-            | OrderStatus::Expired => write!(f, "EXPIRED"),
-            | OrderStatus::ExpiredInMatch => write!(f, "EXPIRED_IN_MATCH"),
+            OrderStatus::New => write!(f, "NEW"),
+            OrderStatus::PartiallyFilled => write!(f, "PARTIALLY_FILLED"),
+            OrderStatus::Filled => write!(f, "FILLED"),
+            OrderStatus::Canceled => write!(f, "CANCELED"),
+            OrderStatus::PendingCancel => write!(f, "PENDING_CANCEL"),
+            OrderStatus::Rejected => write!(f, "REJECTED"),
+            OrderStatus::Expired => write!(f, "EXPIRED"),
+            OrderStatus::ExpiredInMatch => write!(f, "EXPIRED_IN_MATCH"),
         }
     }
 }
@@ -112,9 +112,9 @@ pub enum OrderResponseType {
 impl fmt::Display for OrderResponseType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            | OrderResponseType::Ack => write!(f, "ACK"),
-            | OrderResponseType::Result => write!(f, "RESULT"),
-            | OrderResponseType::Full => write!(f, "FULL"),
+            OrderResponseType::Ack => write!(f, "ACK"),
+            OrderResponseType::Result => write!(f, "RESULT"),
+            OrderResponseType::Full => write!(f, "FULL"),
         }
     }
 }
@@ -132,10 +132,10 @@ pub enum SelfTradePreventionMode {
 impl fmt::Display for SelfTradePreventionMode {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            | SelfTradePreventionMode::None => write!(f, "NONE"),
-            | SelfTradePreventionMode::ExpireTaker => write!(f, "EXPIRE_TAKER"),
-            | SelfTradePreventionMode::ExpireMaker => write!(f, "EXPIRE_MAKER"),
-            | SelfTradePreventionMode::ExpireBoth => write!(f, "EXPIRE_BOTH"),
+            SelfTradePreventionMode::None => write!(f, "NONE"),
+            SelfTradePreventionMode::ExpireTaker => write!(f, "EXPIRE_TAKER"),
+            SelfTradePreventionMode::ExpireMaker => write!(f, "EXPIRE_MAKER"),
+            SelfTradePreventionMode::ExpireBoth => write!(f, "EXPIRE_BOTH"),
         }
     }
 }

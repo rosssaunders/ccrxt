@@ -41,11 +41,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Result with total number of successfully cancelled orders
-    pub async fn cancel_all(
-        &self,
-        detailed: Option<bool>,
-        freeze_quotes: Option<bool>,
-    ) -> RestResult<CancelAllResponse> {
+    pub async fn cancel_all(&self, detailed: Option<bool>, freeze_quotes: Option<bool>) -> RestResult<CancelAllResponse> {
         let request = CancelAllRequest {
             detailed,
             freeze_quotes,
@@ -60,7 +56,7 @@ mod tests {
     use super::*;
     use crate::deribit::AccountTier;
     use rest::secrets::ExposableSecret;
-    use serde_json::{json, Value};
+    use serde_json::{Value, json};
 
     // Test secret implementation
     #[derive(Clone)]
@@ -146,7 +142,7 @@ mod tests {
         });
 
         let response: CancelAllResponse = serde_json::from_value(response_json).unwrap();
-        
+
         assert_eq!(response.id, 1);
         assert_eq!(response.jsonrpc, "2.0");
         assert_eq!(response.result, 5);
@@ -161,7 +157,7 @@ mod tests {
         });
 
         let response: CancelAllResponse = serde_json::from_value(response_json).unwrap();
-        
+
         assert_eq!(response.id, 42);
         assert_eq!(response.jsonrpc, "2.0");
         assert_eq!(response.result, 0);
@@ -185,10 +181,10 @@ mod tests {
 
         // Test that we can get a function reference to the method
         let _ = RestClient::cancel_all;
-        
+
         // Verify the client exists
         let _ = &rest_client;
-        
+
         println!("cancel_all method is accessible and properly typed");
     }
 }

@@ -6,13 +6,8 @@ use reqwest::{Client, Method};
 use url::Url;
 
 /// Helper to build a URL with optional query parameters using `url::Url`.
-pub(crate) fn build_url(
-    base_url: &str,
-    endpoint: &str,
-    query: Option<&str>,
-) -> Result<String, Errors> {
-    let mut url =
-        Url::parse(base_url).map_err(|e| Errors::Error(format!("Invalid base_url: {e}")))?;
+pub(crate) fn build_url(base_url: &str, endpoint: &str, query: Option<&str>) -> Result<String, Errors> {
+    let mut url = Url::parse(base_url).map_err(|e| Errors::Error(format!("Invalid base_url: {e}")))?;
     url.set_path(endpoint);
     if let Some(qs) = query {
         url.set_query(Some(qs));

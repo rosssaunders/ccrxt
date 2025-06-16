@@ -52,10 +52,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing mark price candlestick data
-    pub async fn get_mark_price_candles(
-        &self,
-        request: GetMarkPriceCandlesRequest,
-    ) -> RestResult<GetMarkPriceCandlesResponse> {
+    pub async fn get_mark_price_candles(&self, request: GetMarkPriceCandlesRequest) -> RestResult<GetMarkPriceCandlesResponse> {
         self.send_request(
             "api/v5/market/mark-price-candles",
             reqwest::Method::GET,
@@ -86,10 +83,7 @@ mod tests {
             serialized.get("instId").and_then(|v| v.as_str()),
             Some("BTC-USD-SWAP")
         );
-        assert_eq!(
-            serialized.get("bar").and_then(|v| v.as_str()),
-            Some("1H")
-        );
+        assert_eq!(serialized.get("bar").and_then(|v| v.as_str()), Some("1H"));
         assert_eq!(
             serialized.get("limit").and_then(|v| v.as_str()),
             Some("100")

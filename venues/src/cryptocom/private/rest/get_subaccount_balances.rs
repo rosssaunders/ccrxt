@@ -2,7 +2,7 @@ use super::client::RestClient;
 use super::user_balance::PositionBalance;
 use crate::cryptocom::RestResult;
 use serde::{Deserialize, Serialize};
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 
 /// Subaccount balance information
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -66,7 +66,8 @@ impl RestClient {
         let id = 1;
         let params = json!({});
 
-        self.send_signed_request("private/get-subaccount-balances", params).await
+        self.send_signed_request("private/get-subaccount-balances", params)
+            .await
     }
 }
 
@@ -239,8 +240,7 @@ mod tests {
             ]
         });
 
-        let response: GetSubaccountBalancesResponse =
-            serde_json::from_value(response_json).unwrap();
+        let response: GetSubaccountBalancesResponse = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.data.len(), 2);
         assert_eq!(response.data.first().unwrap().account, "account-1");
         assert_eq!(

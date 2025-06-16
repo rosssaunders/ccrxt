@@ -77,10 +77,7 @@ impl RestClient {
     /// GET /dapi/v1/positionRisk
     /// Weight: 1
     /// Requires API key and signature.
-    pub async fn get_position_risk(
-        &self,
-        params: PositionRiskRequest,
-    ) -> RestResult<Vec<PositionRisk>> {
+    pub async fn get_position_risk(&self, params: PositionRiskRequest) -> RestResult<Vec<PositionRisk>> {
         let weight = 1;
         self.send_signed_request(
             "/dapi/v1/positionRisk",

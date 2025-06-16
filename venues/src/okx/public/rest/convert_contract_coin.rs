@@ -89,10 +89,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing the converted values
-    pub async fn convert_contract_coin(
-        &self,
-        request: ConvertContractCoinRequest,
-    ) -> RestResult<ConvertContractCoinResponse> {
+    pub async fn convert_contract_coin(&self, request: ConvertContractCoinRequest) -> RestResult<ConvertContractCoinResponse> {
         self.send_request(
             "api/v5/public/convert-contract-coin",
             reqwest::Method::GET,
@@ -115,7 +112,7 @@ mod tests {
             inst_id: "BTC-USD-SWAP".to_string(),
             sz: "100".to_string(),
             px: None,
-            unit: None, // defaults to "coin"
+            unit: None,    // defaults to "coin"
             op_type: None, // defaults to "close"
         };
 
@@ -143,10 +140,7 @@ mod tests {
         };
 
         let serialized = serde_json::to_value(&request).unwrap();
-        assert_eq!(
-            serialized.get("type").and_then(|v| v.as_str()),
-            Some("2")
-        );
+        assert_eq!(serialized.get("type").and_then(|v| v.as_str()), Some("2"));
         assert_eq!(
             serialized.get("instId").and_then(|v| v.as_str()),
             Some("BTC-USD-SWAP")
@@ -204,7 +198,7 @@ mod tests {
         assert_eq!(response.code, "0");
         assert_eq!(response.msg, "");
         assert_eq!(response.data.len(), 1);
-        
+
         let data = &response.data[0];
         assert_eq!(data.convert_type, "1");
         assert_eq!(data.inst_id, "BTC-USD-SWAP");
@@ -238,10 +232,10 @@ mod tests {
     #[test]
     fn test_convert_contract_coin_futures_example() {
         let request = ConvertContractCoinRequest {
-            convert_type: Some("1".to_string()), // currency to contract
+            convert_type: Some("1".to_string()),   // currency to contract
             inst_id: "BTC-USD-240329".to_string(), // futures contract
-            sz: "100".to_string(), // 100 USD
-            px: Some("50000".to_string()), // price
+            sz: "100".to_string(),                 // 100 USD
+            px: Some("50000".to_string()),         // price
             unit: Some("coin".to_string()),
             op_type: Some("open".to_string()),
         };
@@ -251,10 +245,7 @@ mod tests {
             serialized.get("instId").and_then(|v| v.as_str()),
             Some("BTC-USD-240329")
         );
-        assert_eq!(
-            serialized.get("type").and_then(|v| v.as_str()),
-            Some("1")
-        );
+        assert_eq!(serialized.get("type").and_then(|v| v.as_str()), Some("1"));
     }
 
     #[test]
@@ -273,19 +264,13 @@ mod tests {
             serialized.get("unit").and_then(|v| v.as_str()),
             Some("usds")
         );
-        assert_eq!(
-            serialized.get("type").and_then(|v| v.as_str()),
-            Some("2")
-        );
+        assert_eq!(serialized.get("type").and_then(|v| v.as_str()), Some("2"));
     }
 
     // Integration test to verify all exports are accessible
     #[test]
     fn test_integration_exports_available() {
-        use crate::okx::{
-            ConvertContractCoinRequest, ConvertContractCoinResponse, ConvertContractCoinData,
-            PublicRestClient, RateLimiter,
-        };
+        use crate::okx::{ConvertContractCoinData, ConvertContractCoinRequest, ConvertContractCoinResponse, PublicRestClient, RateLimiter};
 
         // Test that we can create the request struct
         let _request = ConvertContractCoinRequest {

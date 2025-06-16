@@ -144,12 +144,13 @@ impl RestClient {
     ///
     /// # Returns
     /// Result with array of MMP configuration objects
-    pub async fn set_mmp_config(
-        &self,
-        request: SetMmpConfigRequest,
-    ) -> RestResult<SetMmpConfigResponse> {
-        self.send_signed_request("private/set_mmp_config", &request, EndpointType::MatchingEngine)
-            .await
+    pub async fn set_mmp_config(&self, request: SetMmpConfigRequest) -> RestResult<SetMmpConfigResponse> {
+        self.send_signed_request(
+            "private/set_mmp_config",
+            &request,
+            EndpointType::MatchingEngine,
+        )
+        .await
     }
 }
 
@@ -158,7 +159,7 @@ mod tests {
     use super::*;
     use crate::deribit::AccountTier;
     use rest::secrets::ExposableSecret;
-    use serde_json::{json, Value};
+    use serde_json::{Value, json};
 
     // Test secret implementation
     #[derive(Clone)]
@@ -264,7 +265,7 @@ mod tests {
     fn test_request_parameters_serialization_block_rfq() {
         let request = SetMmpConfigRequest {
             index_name: IndexName::All,
-            interval: 0, // MMP disabled
+            interval: 0,    // MMP disabled
             frozen_time: 0, // Manual reset required
             mmp_group: None,
             quantity_limit: None,
@@ -305,11 +306,11 @@ mod tests {
         });
 
         let response: SetMmpConfigResponse = serde_json::from_value(response_json).unwrap();
-        
+
         assert_eq!(response.id, 1);
         assert_eq!(response.jsonrpc, "2.0");
         assert_eq!(response.result.len(), 1);
-        
+
         let config = &response.result[0];
         assert_eq!(config.block_rfq, false);
         assert_eq!(config.delta_limit, 100.0);
@@ -354,16 +355,16 @@ mod tests {
         });
 
         let response: SetMmpConfigResponse = serde_json::from_value(response_json).unwrap();
-        
+
         assert_eq!(response.id, 2);
         assert_eq!(response.jsonrpc, "2.0");
         assert_eq!(response.result.len(), 2);
-        
+
         let normal_config = &response.result[0];
         assert_eq!(normal_config.block_rfq, false);
         assert_eq!(normal_config.index_name, "btc_usd");
         assert_eq!(normal_config.mmp_group, "group1");
-        
+
         let block_rfq_config = &response.result[1];
         assert_eq!(block_rfq_config.block_rfq, true);
         assert_eq!(block_rfq_config.index_name, "all");
@@ -407,7 +408,7 @@ mod tests {
         for (index_name, expected_str) in index_names {
             let serialized = serde_json::to_string(&index_name).unwrap();
             assert_eq!(serialized, format!("\"{}\"", expected_str));
-            
+
             let deserialized: IndexName = serde_json::from_str(&serialized).unwrap();
             assert_eq!(deserialized, index_name);
         }
@@ -431,10 +432,10 @@ mod tests {
 
         // Test that we can get a function reference to the method
         let _ = RestClient::set_mmp_config;
-        
+
         // Verify the client exists
         let _ = &rest_client;
-        
+
         println!("set_mmp_config method is accessible and properly typed");
     }
 }

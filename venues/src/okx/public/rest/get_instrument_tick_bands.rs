@@ -69,10 +69,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing the tick band information
-    pub async fn get_instrument_tick_bands(
-        &self,
-        request: GetInstrumentTickBandsRequest,
-    ) -> RestResult<GetInstrumentTickBandsResponse> {
+    pub async fn get_instrument_tick_bands(&self, request: GetInstrumentTickBandsRequest) -> RestResult<GetInstrumentTickBandsResponse> {
         self.send_request(
             "api/v5/public/instrument-tick-bands",
             reqwest::Method::GET,
@@ -163,7 +160,7 @@ mod tests {
         let response: GetInstrumentTickBandsResponse = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 1);
-        
+
         let data = response.data.first().unwrap();
         assert_eq!(data.inst_type, "OPTION");
         assert_eq!(data.inst_family, "BTC-USD");

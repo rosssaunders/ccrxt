@@ -24,14 +24,14 @@ pub struct GetBalancesResponse {
 pub struct Balance {
     /// Asset name (e.g., "BTC", "USDT")
     pub asset: String,
-    
+
     /// Display name for the asset
     #[serde(rename = "displayName")]
     pub display_name: String,
-    
+
     /// Available asset amount
     pub free: String,
-    
+
     /// Frozen/locked asset amount
     pub locked: String,
 }
@@ -51,7 +51,7 @@ impl RestClient {
     /// # Example
     /// ```rust,no_run
     /// use venues::bingx::{PrivateRestClient, GetBalancesRequest};
-    /// 
+    ///
     /// async fn example() -> Result<(), Box<dyn std::error::Error>> {
     ///     let client: PrivateRestClient = unimplemented!();
     ///     let request = GetBalancesRequest::default();
@@ -60,10 +60,7 @@ impl RestClient {
     ///     Ok(())
     /// }
     /// ```
-    pub async fn get_balances(
-        &self,
-        request: &GetBalancesRequest,
-    ) -> RestResult<GetBalancesResponse> {
+    pub async fn get_balances(&self, request: &GetBalancesRequest) -> RestResult<GetBalancesResponse> {
         self.send_request(
             "/openApi/spot/v1/account/balance",
             reqwest::Method::GET,
@@ -115,7 +112,7 @@ mod tests {
 
         let response: GetBalancesResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.balances.len(), 2);
-        
+
         let btc_balance = &response.balances[0];
         assert_eq!(btc_balance.asset, "BTC");
         assert_eq!(btc_balance.display_name, "Bitcoin");

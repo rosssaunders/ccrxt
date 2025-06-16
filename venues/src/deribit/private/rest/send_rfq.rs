@@ -54,19 +54,18 @@ impl RestClient {
     ///
     /// # Returns
     /// Result with "ok" string in case of success
-    pub async fn send_rfq(
-        &self,
-        instrument_name: &str,
-        amount: Option<f64>,
-        side: Option<Side>,
-    ) -> RestResult<SendRfqResponse> {
+    pub async fn send_rfq(&self, instrument_name: &str, amount: Option<f64>, side: Option<Side>) -> RestResult<SendRfqResponse> {
         let request = SendRfqRequest {
             instrument_name: instrument_name.to_string(),
             amount,
             side,
         };
-        self.send_signed_request("private/send_rfq", &request, EndpointType::NonMatchingEngine)
-            .await
+        self.send_signed_request(
+            "private/send_rfq",
+            &request,
+            EndpointType::NonMatchingEngine,
+        )
+        .await
     }
 }
 
@@ -75,7 +74,7 @@ mod tests {
     use super::*;
     use crate::deribit::AccountTier;
     use rest::secrets::ExposableSecret;
-    use serde_json::{json, Value};
+    use serde_json::{Value, json};
 
     // Test secret implementation
     #[derive(Clone)]
@@ -157,7 +156,7 @@ mod tests {
         });
 
         let response: SendRfqResponse = serde_json::from_value(response_json).unwrap();
-        
+
         assert_eq!(response.id, 1);
         assert_eq!(response.jsonrpc, "2.0");
         assert_eq!(response.result, "ok");
@@ -181,10 +180,10 @@ mod tests {
 
         // Test that we can get a function reference to the method
         let _ = RestClient::send_rfq;
-        
+
         // Verify the client exists
         let _ = &rest_client;
-        
+
         println!("send_rfq method is accessible and properly typed");
     }
 }

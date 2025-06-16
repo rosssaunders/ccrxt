@@ -1,7 +1,7 @@
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
 use serde::{Deserialize, Serialize};
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 
 /// Position balance information
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -86,7 +86,8 @@ impl RestClient {
         let id = 1;
         let params = json!({});
 
-        self.send_signed_request("private/user-balance", params).await
+        self.send_signed_request("private/user-balance", params)
+            .await
     }
 }
 
@@ -129,8 +130,7 @@ mod tests {
             "reserved_qty": "0.00000000"
         });
 
-        let position_balance: PositionBalance =
-            serde_json::from_value(position_balance_json).unwrap();
+        let position_balance: PositionBalance = serde_json::from_value(position_balance_json).unwrap();
         assert_eq!(position_balance.instrument_name, "CRO");
         assert_eq!(position_balance.collateral_eligible, "true");
         assert_eq!(position_balance.quantity, "24422.72427884");

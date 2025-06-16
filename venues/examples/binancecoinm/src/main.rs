@@ -12,8 +12,7 @@ use venues::binance::coinm::{ApiError, Errors, RateLimiter};
 
 mod commands;
 use commands::{
-    handle_account_command, handle_all_orders_command, handle_batch_order_command,
-    handle_order_command, handle_position_risk_command, handle_trades_command,
+    handle_account_command, handle_all_orders_command, handle_batch_order_command, handle_order_command, handle_position_risk_command, handle_trades_command,
 };
 
 #[derive(Parser)]
@@ -598,84 +597,72 @@ async fn main() -> Result<()> {
     let client = create_client(cli.prod)?;
 
     match cli.command {
-        | Commands::Account => {
+        Commands::Account => {
             if let Err(e) = handle_account_command(client.clone()).await {
                 if let Some(_api_err) = e.downcast_ref::<ApiError>() {
                     match _api_err {
                         // handle__api_error(_api_err);
-                        | ApiError::RateLimitExceeded { .. } => eprintln!("Rate limit exceeded"),
-                        | _ => eprintln!("API Error: {}", _api_err),
+                        ApiError::RateLimitExceeded { .. } => eprintln!("Rate limit exceeded"),
+                        _ => eprintln!("API Error: {}", _api_err),
                     }
                 }
                 return Err(e);
             }
-        },
-        | Commands::Trades { symbol, limit } => {
+        }
+        Commands::Trades { symbol, limit } => {
             if let Err(e) = handle_trades_command(client.clone(), symbol, limit).await {
                 match &e {
-                    | Errors::ApiError(_api_err) => match _api_err {
-                        | ApiError::RateLimitExceeded { .. } => eprintln!("Rate limit exceeded"),
-                        | ApiError::BadSymbol { msg } => eprintln!("Bad symbol dsfsffdf: {}", msg),
-                        | _ => eprintln!("API Error: {}", _api_err),
+                    Errors::ApiError(_api_err) => match _api_err {
+                        ApiError::RateLimitExceeded { .. } => eprintln!("Rate limit exceeded"),
+                        ApiError::BadSymbol { msg } => eprintln!("Bad symbol dsfsffdf: {}", msg),
+                        _ => eprintln!("API Error: {}", _api_err),
                     },
-                    | _ => eprintln!("Unexpected error: {}", e),
+                    _ => eprintln!("Unexpected error: {}", e),
                 }
                 return Err(e.into());
             }
-        },
-        | Commands::BatchOrder {
+        }
+        Commands::BatchOrder {
             symbol,
             side,
             order_type,
             quantity,
             price,
         } => {
-            if let Err(e) = handle_batch_order_command(
-                client.clone(),
-                symbol,
-                side,
-                order_type,
-                quantity,
-                price,
-            )
-            .await
-            {
+            if let Err(e) = handle_batch_order_command(client.clone(), symbol, side, order_type, quantity, price).await {
                 if let Some(_api_err) = e.downcast_ref::<ApiError>() {
                     //handle__api_error(_api_err);
                 }
                 return Err(e);
             }
-        },
-        | Commands::Order {
+        }
+        Commands::Order {
             symbol,
             side,
             order_type,
             quantity,
             price,
         } => {
-            if let Err(e) =
-                handle_order_command(client.clone(), symbol, side, order_type, quantity, price)
-                    .await
-            {
+            if let Err(e) = handle_order_command(client.clone(), symbol, side, order_type, quantity, price).await {
                 if let Some(_api_err) = e.downcast_ref::<ApiError>() {
                     //handle__api_error(_api_err);
                 }
                 return Err(e);
             }
-        },
-        | Commands::AllOrders { symbol, limit } => {
+        }
+        Commands::AllOrders { symbol, limit } => {
             if let Err(e) = handle_all_orders_command(client.clone(), symbol, limit).await {
                 eprintln!("Error fetching all orders: {e}");
                 return Err(e);
             }
-        },
-        | Commands::PositionRisk => {
+        }
+        Commands::PositionRisk => {
             if let Err(e) = handle_position_risk_command(client.clone()).await {
                 eprintln!("Error fetching position risk: {e}");
                 return Err(e);
             }
-        },
-        | Commands::ExchangeInfo => {
+        }
+        Commands::ExchangeInfo => {
             let public_client = PublicRestClient::new(
                 "https://dapi.binance.com".to_string(),
                 reqwest::Client::new(),
@@ -688,7 +675,7 @@ async fn main() -> Result<()> {
                 }
                 return Err(e);
             }
-        },
+        }
     }
 
     Ok(())

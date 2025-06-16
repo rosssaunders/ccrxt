@@ -157,10 +157,7 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the wallet balance response or an error
-    pub async fn get_wallet_balance(
-        &self,
-        request: GetWalletBalanceRequest,
-    ) -> RestResult<GetWalletBalanceResponse> {
+    pub async fn get_wallet_balance(&self, request: GetWalletBalanceRequest) -> RestResult<GetWalletBalanceResponse> {
         self.send_signed_request(
             "/v5/account/wallet-balance",
             reqwest::Method::GET,
@@ -184,8 +181,7 @@ mod tests {
 
     #[test]
     fn test_get_wallet_balance_request_with_coin() {
-        let request = GetWalletBalanceRequest::new(AccountType::Unified)
-            .with_coin("BTC".to_string());
+        let request = GetWalletBalanceRequest::new(AccountType::Unified).with_coin("BTC".to_string());
         assert_eq!(request.account_type, AccountType::Unified);
         assert_eq!(request.coin, Some("BTC".to_string()));
     }
@@ -281,12 +277,11 @@ mod tests {
 
     #[test]
     fn test_serialization_roundtrip() {
-        let request = GetWalletBalanceRequest::new(AccountType::Spot)
-            .with_coin("USDT".to_string());
-        
+        let request = GetWalletBalanceRequest::new(AccountType::Spot).with_coin("USDT".to_string());
+
         let serialized = serde_json::to_string(&request).unwrap();
         let deserialized: GetWalletBalanceRequest = serde_json::from_str(&serialized).unwrap();
-        
+
         assert_eq!(request.account_type, deserialized.account_type);
         assert_eq!(request.coin, deserialized.coin);
     }

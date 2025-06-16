@@ -114,8 +114,7 @@ mod example {
         )));
         let client = reqwest::Client::new();
 
-        let rest_client =
-            PrivateRestClient::new(api_key, api_secret, "https://api.crypto.com", client);
+        let rest_client = PrivateRestClient::new(api_key, api_secret, "https://api.crypto.com", client);
 
         // Example 1: Sign a get-order-detail request
         let params = json!({

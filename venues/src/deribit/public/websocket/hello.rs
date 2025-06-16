@@ -56,7 +56,10 @@ impl JsonRpcRequest<HelloRequest> {
             jsonrpc: "2.0".to_string(),
             id,
             method: "public/hello".to_string(),
-            params: HelloRequest { client_name, client_version },
+            params: HelloRequest {
+                client_name,
+                client_version,
+            },
         }
     }
 }
@@ -80,24 +83,20 @@ mod tests {
 
     #[test]
     fn test_hello_request_serialization() {
-        let request = JsonRpcRequest::new_hello(
-            1,
-            "test_client".to_string(),
-            "1.0.0".to_string(),
-        );
+        let request = JsonRpcRequest::new_hello(1, "test_client".to_string(), "1.0.0".to_string());
 
         let json = serde_json::to_string(&request).unwrap();
         let expected = r#"{"jsonrpc":"2.0","id":1,"method":"public/hello","params":{"client_name":"test_client","client_version":"1.0.0"}}"#;
-        
+
         assert_eq!(json, expected);
     }
 
     #[test]
     fn test_hello_response_deserialization() {
         let response_json = r#"{"id":1,"jsonrpc":"2.0","result":{"version":"1.2.26"}}"#;
-        
+
         let response: HelloResponse = serde_json::from_str(response_json).unwrap();
-        
+
         assert_eq!(response.id, 1);
         assert_eq!(response.jsonrpc, "2.0");
         assert_eq!(response.result.version, "1.2.26");
@@ -116,11 +115,7 @@ mod tests {
 
     #[test]
     fn test_json_rpc_request_structure() {
-        let request = JsonRpcRequest::new_hello(
-            42,
-            "rust_client".to_string(),
-            "0.1.0".to_string(),
-        );
+        let request = JsonRpcRequest::new_hello(42, "rust_client".to_string(), "0.1.0".to_string());
 
         assert_eq!(request.id, 42);
         assert_eq!(request.jsonrpc, "2.0");

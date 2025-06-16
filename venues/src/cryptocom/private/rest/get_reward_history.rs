@@ -1,7 +1,7 @@
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
 use serde::{Deserialize, Serialize};
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 
 /// Request parameters for get reward history
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -84,7 +84,8 @@ impl RestClient {
             params["limit"] = json!(lmt);
         }
 
-        self.send_signed_request("private/staking/get-reward-history", params).await
+        self.send_signed_request("private/staking/get-reward-history", params)
+            .await
     }
 }
 

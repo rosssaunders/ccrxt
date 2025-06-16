@@ -3,10 +3,7 @@
 
 use crate::binance::coinm::RestResult;
 use crate::binance::coinm::private::rest::client::RestClient;
-use crate::binance::coinm::{
-    OrderResponseType, OrderSide, OrderType, PositionSide, PriceMatch, SelfTradePreventionMode,
-    TimeInForce, WorkingType,
-};
+use crate::binance::coinm::{OrderResponseType, OrderSide, OrderType, PositionSide, PriceMatch, SelfTradePreventionMode, TimeInForce, WorkingType};
 use serde::{Deserialize, Serialize};
 
 /// Request parameters for placing a new order (POST /dapi/v1/order).

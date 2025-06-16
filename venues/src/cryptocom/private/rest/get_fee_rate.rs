@@ -1,7 +1,7 @@
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
 use serde::Deserialize;
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 
 /// Fee rate information for user's account
 #[derive(Debug, Clone, Deserialize)]
@@ -36,7 +36,8 @@ impl RestClient {
         let id = 1;
         let params = json!({});
 
-        self.send_signed_request("private/get-fee-rate", params).await
+        self.send_signed_request("private/get-fee-rate", params)
+            .await
     }
 }
 

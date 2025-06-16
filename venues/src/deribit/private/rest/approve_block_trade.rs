@@ -59,19 +59,18 @@ impl RestClient {
     ///
     /// # Returns
     /// Result with "ok" string in case of success
-    pub async fn approve_block_trade(
-        &self,
-        timestamp: i64,
-        nonce: &str,
-        role: Role,
-    ) -> RestResult<ApproveBlockTradeResponse> {
+    pub async fn approve_block_trade(&self, timestamp: i64, nonce: &str, role: Role) -> RestResult<ApproveBlockTradeResponse> {
         let request = ApproveBlockTradeRequest {
             timestamp,
             nonce: nonce.to_string(),
             role,
         };
-        self.send_signed_request("private/approve_block_trade", &request, EndpointType::NonMatchingEngine)
-            .await
+        self.send_signed_request(
+            "private/approve_block_trade",
+            &request,
+            EndpointType::NonMatchingEngine,
+        )
+        .await
     }
 }
 
@@ -80,7 +79,7 @@ mod tests {
     use super::*;
     use crate::deribit::AccountTier;
     use rest::secrets::ExposableSecret;
-    use serde_json::{json, Value};
+    use serde_json::{Value, json};
 
     // Test secret implementation
     #[derive(Clone)]
@@ -162,7 +161,7 @@ mod tests {
         });
 
         let response: ApproveBlockTradeResponse = serde_json::from_value(response_json).unwrap();
-        
+
         assert_eq!(response.id, 1);
         assert_eq!(response.jsonrpc, "2.0");
         assert_eq!(response.result, "ok");
@@ -186,10 +185,10 @@ mod tests {
 
         // Test that we can get a function reference to the method
         let _ = RestClient::approve_block_trade;
-        
+
         // Verify the client exists
         let _ = &rest_client;
-        
+
         println!("approve_block_trade method is accessible and properly typed");
     }
 }

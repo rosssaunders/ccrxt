@@ -66,7 +66,7 @@ impl RequestTracker {
     fn cleanup(&mut self, window: Duration) {
         let now = Instant::now();
         let cutoff = now - window;
-        
+
         self.request_times.retain(|&time| time > cutoff);
         self.last_cleanup = now;
     }
@@ -74,7 +74,7 @@ impl RequestTracker {
     /// Check if we can make a new request without exceeding limits
     fn can_make_request(&mut self, rate_limit: &RateLimit) -> bool {
         let now = Instant::now();
-        
+
         // Cleanup old requests if needed (every 10 seconds)
         if now.duration_since(self.last_cleanup) > Duration::from_secs(10) {
             self.cleanup(rate_limit.window);
@@ -87,7 +87,9 @@ impl RequestTracker {
 
         // Check rate limit (requests per second)
         let one_second_ago = now - Duration::from_secs(1);
-        let recent_requests = self.request_times.iter()
+        let recent_requests = self
+            .request_times
+            .iter()
             .filter(|&&time| time > one_second_ago)
             .count();
 
@@ -119,23 +121,23 @@ impl RateLimiter {
     /// Create a new rate limiter with Coinbase-specific limits
     pub fn new() -> Self {
         let mut rate_limits = HashMap::new();
-        
+
         // Configure rate limits based on Coinbase documentation
         rate_limits.insert(
             EndpointType::Public,
-            RateLimit::new(10, 15, Duration::from_secs(60))
+            RateLimit::new(10, 15, Duration::from_secs(60)),
         );
         rate_limits.insert(
             EndpointType::Private,
-            RateLimit::new(15, 30, Duration::from_secs(60))
+            RateLimit::new(15, 30, Duration::from_secs(60)),
         );
         rate_limits.insert(
             EndpointType::PrivateFills,
-            RateLimit::new(10, 20, Duration::from_secs(60))
+            RateLimit::new(10, 20, Duration::from_secs(60)),
         );
         rate_limits.insert(
             EndpointType::PrivateLoans,
-            RateLimit::new(10, 10, Duration::from_secs(60))
+            RateLimit::new(10, 10, Duration::from_secs(60)),
         );
 
         Self {
@@ -146,11 +148,16 @@ impl RateLimiter {
 
     /// Check if a request can be made for the given endpoint type
     pub async fn check_limit(&self, endpoint_type: EndpointType) -> Result<(), RateLimitError> {
-        let rate_limit = self.rate_limits.get(&endpoint_type)
-            .ok_or_else(|| RateLimitError::Exceeded { endpoint_type: endpoint_type.clone() })?;
+        let rate_limit = self
+            .rate_limits
+            .get(&endpoint_type)
+            .ok_or_else(|| RateLimitError::Exceeded {
+                endpoint_type: endpoint_type.clone(),
+            })?;
 
         let mut trackers = self.trackers.write().await;
-        let tracker = trackers.entry(endpoint_type.clone())
+        let tracker = trackers
+            .entry(endpoint_type.clone())
             .or_insert_with(RequestTracker::new);
 
         if !tracker.can_make_request(rate_limit) {

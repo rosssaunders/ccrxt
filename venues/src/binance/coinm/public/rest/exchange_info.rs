@@ -1,7 +1,5 @@
 use crate::binance::coinm::RestResult;
-use crate::binance::coinm::enums::{
-    ContractStatus, ContractType, OrderType, TimeInForce, UnderlyingType,
-};
+use crate::binance::coinm::enums::{ContractStatus, ContractType, OrderType, TimeInForce, UnderlyingType};
 use crate::binance::coinm::public::rest::RestClient;
 use crate::binance::coinm::rate_limit::{RateLimitInterval, RateLimitType};
 use serde::Deserialize;

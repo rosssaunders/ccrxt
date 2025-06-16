@@ -1,7 +1,7 @@
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
 use serde::Serialize;
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 
 /// Request parameters for changing account leverage
 #[derive(Debug, Clone, Serialize)]
@@ -27,16 +27,13 @@ impl RestClient {
     ///
     /// # Returns
     /// Success confirmation (code 0)
-    pub async fn change_account_leverage(
-        &self,
-        request: ChangeAccountLeverageRequest,
-    ) -> RestResult<Value> {
+    pub async fn change_account_leverage(&self, request: ChangeAccountLeverageRequest) -> RestResult<Value> {
         let nonce = chrono::Utc::now().timestamp_millis() as u64;
         let id = 1;
-        let params = serde_json::to_value(&request)
-            .map_err(|e| crate::cryptocom::Errors::Error(format!("Serialization error: {}", e)))?;
+        let params = serde_json::to_value(&request).map_err(|e| crate::cryptocom::Errors::Error(format!("Serialization error: {}", e)))?;
 
-        self.send_signed_request("private/change-account-leverage", params).await
+        self.send_signed_request("private/change-account-leverage", params)
+            .await
     }
 }
 

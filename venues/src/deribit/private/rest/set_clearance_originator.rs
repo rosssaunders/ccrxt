@@ -87,10 +87,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Clearance originator response
-    pub async fn set_clearance_originator(
-        &self,
-        params: SetClearanceOriginatorRequest,
-    ) -> RestResult<SetClearanceOriginatorResponse> {
+    pub async fn set_clearance_originator(&self, params: SetClearanceOriginatorRequest) -> RestResult<SetClearanceOriginatorResponse> {
         self.send_signed_request(
             "private/set_clearance_originator",
             &params,
@@ -105,7 +102,7 @@ mod tests {
     use super::*;
     use crate::deribit::AccountTier;
     use rest::secrets::ExposableSecret;
-    use serde_json::{json, Value};
+    use serde_json::{Value, json};
 
     // Test secret implementation
     #[derive(Clone)]
@@ -139,8 +136,14 @@ mod tests {
 
         assert_eq!(json_value.get("currency").unwrap(), "BTC");
         assert_eq!(json_value.get("user_id").unwrap(), 12345);
-        assert_eq!(json_value.get("address").unwrap(), "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh");
-        assert_eq!(json_value.get("tx_hash").unwrap(), "1a2b3c4d5e6f7890abcdef1234567890abcdef1234567890abcdef1234567890");
+        assert_eq!(
+            json_value.get("address").unwrap(),
+            "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh"
+        );
+        assert_eq!(
+            json_value.get("tx_hash").unwrap(),
+            "1a2b3c4d5e6f7890abcdef1234567890abcdef1234567890abcdef1234567890"
+        );
     }
 
     #[test]
@@ -160,7 +163,10 @@ mod tests {
         assert_eq!(json_value.get("company_name").unwrap(), "");
         assert_eq!(json_value.get("first_name").unwrap(), "John");
         assert_eq!(json_value.get("last_name").unwrap(), "Doe");
-        assert_eq!(json_value.get("address").unwrap(), "123 Main St, New York, NY 10001");
+        assert_eq!(
+            json_value.get("address").unwrap(),
+            "123 Main St, New York, NY 10001"
+        );
     }
 
     #[test]
@@ -221,19 +227,28 @@ mod tests {
         });
 
         let response: SetClearanceOriginatorResponse = serde_json::from_value(response_json).unwrap();
-        
+
         assert_eq!(response.id, 1);
         assert_eq!(response.jsonrpc, "2.0");
-        assert_eq!(response.result.address, "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh");
+        assert_eq!(
+            response.result.address,
+            "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh"
+        );
         assert_eq!(response.result.amount, 0.001);
         assert_eq!(response.result.clearance_state, "success");
         assert_eq!(response.result.currency, "BTC");
         assert_eq!(response.result.note, "Deposit cleared successfully");
         assert_eq!(response.result.received_timestamp, 1640995200000);
         assert_eq!(response.result.refund_transaction_id, None);
-        assert_eq!(response.result.source_address, "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa");
+        assert_eq!(
+            response.result.source_address,
+            "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"
+        );
         assert_eq!(response.result.state, "completed");
-        assert_eq!(response.result.transaction_id, Some("1a2b3c4d5e6f7890abcdef1234567890abcdef1234567890abcdef1234567890".to_string()));
+        assert_eq!(
+            response.result.transaction_id,
+            Some("1a2b3c4d5e6f7890abcdef1234567890abcdef1234567890abcdef1234567890".to_string())
+        );
         assert_eq!(response.result.updated_timestamp, 1640995210000);
     }
 
@@ -255,10 +270,10 @@ mod tests {
 
         // Test that we can get a function reference to the method
         let _ = RestClient::set_clearance_originator;
-        
+
         // Verify the client exists
         let _ = &rest_client;
-        
+
         println!("set_clearance_originator method is accessible and properly typed");
     }
 }

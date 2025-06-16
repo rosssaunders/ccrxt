@@ -6,8 +6,8 @@
 use hmac::{Hmac, Mac};
 use reqwest::Client;
 use rest::secrets::ExposableSecret;
-use serde::de::DeserializeOwned;
 use serde::Serialize;
+use serde::de::DeserializeOwned;
 use sha2::Sha256;
 use std::borrow::Cow;
 
@@ -81,19 +81,15 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the parsed response data, or an error
-    pub(super) async fn send_signed_request<T, R>(
-        &self,
-        endpoint: &str,
-        method: reqwest::Method,
-        request: R,
-        endpoint_type: EndpointType,
-    ) -> RestResult<T>
+    pub(super) async fn send_signed_request<T, R>(&self, endpoint: &str, method: reqwest::Method, request: R, endpoint_type: EndpointType) -> RestResult<T>
     where
         T: DeserializeOwned,
         R: Serialize,
     {
         // Check rate limits before making request
-        self.rate_limiter.check_limits(endpoint_type.clone()).await?;
+        self.rate_limiter
+            .check_limits(endpoint_type.clone())
+            .await?;
 
         let timestamp = chrono::Utc::now().timestamp_millis().to_string();
         let recv_window = "5000"; // 5 seconds receive window
@@ -106,8 +102,13 @@ impl RestClient {
         };
 
         // Create signature payload: timestamp + api_key + recv_window + query_string (+ body for POST)
-        let mut payload = format!("{}{}{}", timestamp, self.api_key.expose_secret(), recv_window);
-        
+        let mut payload = format!(
+            "{}{}{}",
+            timestamp,
+            self.api_key.expose_secret(),
+            recv_window
+        );
+
         if method == reqwest::Method::GET && !query_string.is_empty() {
             payload.push_str(&query_string);
         } else if method == reqwest::Method::POST {
@@ -146,12 +147,11 @@ impl RestClient {
         // Check for HTTP errors
         if !response.status().is_success() {
             let status = response.status();
-            let error_text = response.text().await.unwrap_or_else(|_| "Unknown error".to_string());
-            return Err(Errors::ApiError(format!(
-                "HTTP {}: {}",
-                status,
-                error_text
-            )));
+            let error_text = response
+                .text()
+                .await
+                .unwrap_or_else(|_| "Unknown error".to_string());
+            return Err(Errors::ApiError(format!("HTTP {}: {}", status, error_text)));
         }
 
         // Parse the response
@@ -164,8 +164,7 @@ impl RestClient {
     /// Generate HMAC-SHA256 signature for ByBit V5 API
     fn sign_payload(&self, payload: &str) -> Result<String, Errors> {
         let secret_key = self.api_secret.expose_secret();
-        let mut mac = Hmac::<Sha256>::new_from_slice(secret_key.as_bytes())
-            .map_err(|e| Errors::AuthError(format!("Invalid secret key: {}", e)))?;
+        let mut mac = Hmac::<Sha256>::new_from_slice(secret_key.as_bytes()).map_err(|e| Errors::AuthError(format!("Invalid secret key: {}", e)))?;
 
         mac.update(payload.as_bytes());
         let result = mac.finalize();

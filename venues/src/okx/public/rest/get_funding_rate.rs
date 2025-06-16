@@ -89,10 +89,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing the funding rate information
-    pub async fn get_funding_rate(
-        &self,
-        request: &GetFundingRateRequest,
-    ) -> RestResult<GetFundingRateResponse> {
+    pub async fn get_funding_rate(&self, request: &GetFundingRateRequest) -> RestResult<GetFundingRateResponse> {
         self.send_request(
             "api/v5/public/funding-rate",
             reqwest::Method::GET,

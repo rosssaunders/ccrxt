@@ -50,10 +50,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing historical mark price candlestick data
-    pub async fn get_mark_price_candles_history(
-        &self,
-        request: GetMarkPriceCandlesHistoryRequest,
-    ) -> RestResult<GetMarkPriceCandlesHistoryResponse> {
+    pub async fn get_mark_price_candles_history(&self, request: GetMarkPriceCandlesHistoryRequest) -> RestResult<GetMarkPriceCandlesHistoryResponse> {
         self.send_request(
             "api/v5/market/history-mark-price-candles",
             reqwest::Method::GET,
@@ -84,14 +81,8 @@ mod tests {
             serialized.get("instId").and_then(|v| v.as_str()),
             Some("BTC-USD-SWAP")
         );
-        assert_eq!(
-            serialized.get("bar").and_then(|v| v.as_str()),
-            Some("1D")
-        );
-        assert_eq!(
-            serialized.get("limit").and_then(|v| v.as_str()),
-            Some("50")
-        );
+        assert_eq!(serialized.get("bar").and_then(|v| v.as_str()), Some("1D"));
+        assert_eq!(serialized.get("limit").and_then(|v| v.as_str()), Some("50"));
         // Optional fields should not be present when None
         assert!(serialized.get("after").is_none());
         assert!(serialized.get("before").is_none());
@@ -161,8 +152,10 @@ mod tests {
 
     #[test]
     fn test_different_bar_sizes() {
-        let bar_sizes = vec!["1m", "3m", "5m", "15m", "30m", "1H", "2H", "4H", "6H", "12H", "1D", "1W", "1M"];
-        
+        let bar_sizes = vec![
+            "1m", "3m", "5m", "15m", "30m", "1H", "2H", "4H", "6H", "12H", "1D", "1W", "1M",
+        ];
+
         for bar_size in bar_sizes {
             let request = GetMarkPriceCandlesHistoryRequest {
                 inst_id: "BTC-USD-SWAP".to_string(),

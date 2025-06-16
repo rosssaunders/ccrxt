@@ -1,7 +1,7 @@
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
 use serde::{Deserialize, Serialize};
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 
 /// Request parameters for stake
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -57,7 +57,8 @@ impl RestClient {
             "quantity": quantity
         });
 
-        self.send_signed_request("private/staking/stake", params).await
+        self.send_signed_request("private/staking/stake", params)
+            .await
     }
 }
 

@@ -1,14 +1,14 @@
 //! Get Account Assets endpoint for Bitget Spot API
 //!
 //! This endpoint allows retrieving account balance information for spot trading.
-//! 
+//!
 //! Reference: https://raw.githubusercontent.com/rosssaunders/coincise/refs/heads/main/docs/bitget/spot_api.md
 //! Endpoint: GET /api/v2/spot/account/assets
 //! Rate limit: 10 times/1s (User ID)
 
-use serde::{Deserialize, Serialize};
-use crate::bitget::{RestResult, AssetType};
 use super::RestClient;
+use crate::bitget::{AssetType, RestResult};
+use serde::{Deserialize, Serialize};
 
 /// Request parameters for getting account assets
 #[derive(Debug, Clone, Serialize)]
@@ -16,7 +16,7 @@ pub struct GetAccountAssetsRequest {
     /// Token name, e.g. USDT. Used for querying positions of a single coin.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub coin: Option<String>,
-    
+
     /// Asset type filter
     /// - `hold_only`: Position coin (assets that have holdings)
     /// - `all`: All coins including zero balances
@@ -74,23 +74,23 @@ impl Default for GetAccountAssetsRequest {
 pub struct AssetInfo {
     /// Token name
     pub coin: String,
-    
+
     /// Available assets
     pub available: String,
-    
+
     /// Amount of frozen assets
     /// Usually frozen when the limit order is placed or join the Launchpad
     pub frozen: String,
-    
+
     /// Amount of locked assets
     /// Locked assets required to become a fiat merchants, etc.
     pub locked: String,
-    
+
     /// Restricted availability
     /// For spot copy trading
     #[serde(rename = "limitAvailable")]
     pub limit_available: String,
-    
+
     /// Update time (milliseconds)
     #[serde(rename = "uTime")]
     pub update_time: String,
@@ -132,7 +132,7 @@ impl RestClient {
     /// # Example
     /// ```rust,no_run
     /// use venues::bitget::{PrivateRestClient, GetAccountAssetsRequest};
-    /// 
+    ///
     /// async fn example(client: &PrivateRestClient) -> Result<(), Box<dyn std::error::Error>> {
     ///     // Get all assets with holdings
     ///     let assets = client.get_account_assets(GetAccountAssetsRequest::new()).await?;
@@ -150,13 +150,9 @@ impl RestClient {
     ///     Ok(())
     /// }
     /// ```
-    pub async fn get_account_assets(
-        &self,
-        request: GetAccountAssetsRequest,
-    ) -> RestResult<GetAccountAssetsResponse> {
+    pub async fn get_account_assets(&self, request: GetAccountAssetsRequest) -> RestResult<GetAccountAssetsResponse> {
         let query_string = if request.coin.is_some() || request.asset_type.is_some() {
-            Some(serde_urlencoded::to_string(&request)
-                .map_err(|e| crate::bitget::Errors::Error(format!("Failed to encode query: {}", e)))?)
+            Some(serde_urlencoded::to_string(&request).map_err(|e| crate::bitget::Errors::Error(format!("Failed to encode query: {}", e)))?)
         } else {
             None
         };
@@ -165,11 +161,12 @@ impl RestClient {
             "/api/v2/spot/account/assets",
             reqwest::Method::GET,
             query_string.as_deref(),
-            None, // No body for GET request
-            10,   // 10 requests per second rate limit
+            None,  // No body for GET request
+            10,    // 10 requests per second rate limit
             false, // Not an order endpoint
             None,  // No order-specific rate limit
-        ).await
+        )
+        .await
     }
 }
 
@@ -203,7 +200,7 @@ mod tests {
         let request = GetAccountAssetsRequest::new()
             .coin("BTC")
             .asset_type(AssetType::All);
-        
+
         assert_eq!(request.coin, Some("BTC".to_string()));
         assert_eq!(request.asset_type, Some(AssetType::All));
     }
@@ -213,9 +210,9 @@ mod tests {
         let request = GetAccountAssetsRequest::new()
             .coin("USDT")
             .asset_type(AssetType::All);
-        
+
         let serialized = serde_urlencoded::to_string(&request).unwrap();
-        
+
         // Should contain both parameters
         assert!(serialized.contains("coin=USDT"));
         assert!(serialized.contains("assetType=all"));
@@ -225,7 +222,7 @@ mod tests {
     fn test_get_account_assets_request_serialization_empty() {
         let request = GetAccountAssetsRequest::new();
         let serialized = serde_urlencoded::to_string(&request).unwrap();
-        
+
         // Should be empty since both fields are None and skipped
         assert_eq!(serialized, "");
     }
@@ -240,9 +237,9 @@ mod tests {
             "limitAvailable": "1000.50",
             "uTime": "1622697148000"
         }"#;
-        
+
         let asset: AssetInfo = serde_json::from_str(json).unwrap();
-        
+
         assert_eq!(asset.coin, "USDT");
         assert_eq!(asset.available, "1000.50");
         assert_eq!(asset.frozen, "0");
@@ -271,9 +268,9 @@ mod tests {
                 "uTime": "1622697148000"
             }
         ]"#;
-        
+
         let response: GetAccountAssetsResponse = serde_json::from_str(json).unwrap();
-        
+
         assert_eq!(response.assets.len(), 2);
         assert_eq!(response.assets[0].coin, "USDT");
         assert_eq!(response.assets[1].coin, "BTC");

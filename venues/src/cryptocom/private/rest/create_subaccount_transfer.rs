@@ -1,7 +1,7 @@
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
 use serde::{Deserialize, Serialize};
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 
 /// Request parameters for create subaccount transfer
 #[derive(Debug, Clone, Serialize)]
@@ -40,13 +40,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Transfer result with status code
-    pub async fn create_subaccount_transfer(
-        &self,
-        from: &str,
-        to: &str,
-        currency: &str,
-        amount: &str,
-    ) -> RestResult<Value> {
+    pub async fn create_subaccount_transfer(&self, from: &str, to: &str, currency: &str, amount: &str) -> RestResult<Value> {
         let nonce = chrono::Utc::now().timestamp_millis() as u64;
         let id = 1;
 
@@ -57,8 +51,7 @@ impl RestClient {
             "amount": amount
         });
 
-        let signature =
-            self.sign_request("private/create-subaccount-transfer", id, &params, nonce)?;
+        let signature = self.sign_request("private/create-subaccount-transfer", id, &params, nonce)?;
 
         let request_body = json!({
             "id": id,
@@ -158,8 +151,7 @@ mod tests {
             "code": 0
         });
 
-        let response: CreateSubaccountTransferResponse =
-            serde_json::from_value(response_json).unwrap();
+        let response: CreateSubaccountTransferResponse = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, 0);
     }
 
@@ -169,8 +161,7 @@ mod tests {
             "code": 10002
         });
 
-        let response: CreateSubaccountTransferResponse =
-            serde_json::from_value(response_json).unwrap();
+        let response: CreateSubaccountTransferResponse = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, 10002);
     }
 

@@ -43,15 +43,13 @@ impl EndpointType {
     pub fn rate_limit(&self) -> RateLimit {
         match self {
             // Private REST endpoints (per API key)
-            EndpointType::PrivateCreateOrder
-            | EndpointType::PrivateCancelOrder
-            | EndpointType::PrivateCancelAllOrders => {
+            EndpointType::PrivateCreateOrder | EndpointType::PrivateCancelOrder | EndpointType::PrivateCancelAllOrders => {
                 RateLimit::new(15, Duration::from_millis(100))
             }
             EndpointType::PrivateGetOrderDetail => RateLimit::new(30, Duration::from_millis(100)),
-            EndpointType::PrivateGetTrades
-            | EndpointType::PrivateGetOrderHistory
-            | EndpointType::PrivateGetTransactions => RateLimit::new(1, Duration::from_secs(1)),
+            EndpointType::PrivateGetTrades | EndpointType::PrivateGetOrderHistory | EndpointType::PrivateGetTransactions => {
+                RateLimit::new(1, Duration::from_secs(1))
+            }
             EndpointType::PrivateOther => RateLimit::new(3, Duration::from_millis(100)),
 
             // Public REST endpoints (per IP)
@@ -68,9 +66,7 @@ impl EndpointType {
             | EndpointType::PublicGetInsurance => RateLimit::new(100, Duration::from_secs(1)),
 
             // Staking endpoints
-            EndpointType::PublicStaking | EndpointType::PrivateStaking => {
-                RateLimit::new(50, Duration::from_secs(1))
-            }
+            EndpointType::PublicStaking | EndpointType::PrivateStaking => RateLimit::new(50, Duration::from_secs(1)),
 
             // WebSocket
             EndpointType::UserApi => RateLimit::new(150, Duration::from_secs(1)),
@@ -260,7 +256,7 @@ impl RateLimiter {
 #[allow(clippy::assertions_on_constants)]
 mod tests {
     use super::*;
-    use tokio::time::{sleep, Duration};
+    use tokio::time::{Duration, sleep};
 
     #[tokio::test]
     async fn test_rate_limiter_creation() {

@@ -162,8 +162,12 @@ impl RestClient {
             personal,
             extra_currencies,
         };
-        self.send_signed_request("private/add_to_address_book", &request, EndpointType::NonMatchingEngine)
-            .await
+        self.send_signed_request(
+            "private/add_to_address_book",
+            &request,
+            EndpointType::NonMatchingEngine,
+        )
+        .await
     }
 }
 
@@ -172,7 +176,7 @@ mod tests {
     use super::*;
     use crate::deribit::AccountTier;
     use rest::secrets::ExposableSecret;
-    use serde_json::{json, Value};
+    use serde_json::{Value, json};
 
     // Test secret implementation
     #[derive(Clone)]
@@ -216,19 +220,38 @@ mod tests {
 
         assert_eq!(json_value.get("currency").unwrap(), "BTC");
         assert_eq!(json_value.get("type").unwrap(), "withdrawal");
-        assert_eq!(json_value.get("address").unwrap(), "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh");
+        assert_eq!(
+            json_value.get("address").unwrap(),
+            "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh"
+        );
         assert_eq!(json_value.get("label").unwrap(), "My BTC Wallet");
-        assert_eq!(json_value.get("beneficiary_vasp_name").unwrap(), "Example VASP");
-        assert_eq!(json_value.get("beneficiary_vasp_did").unwrap(), "did:example:123456");
-        assert_eq!(json_value.get("beneficiary_vasp_website").unwrap(), "https://example.com");
+        assert_eq!(
+            json_value.get("beneficiary_vasp_name").unwrap(),
+            "Example VASP"
+        );
+        assert_eq!(
+            json_value.get("beneficiary_vasp_did").unwrap(),
+            "did:example:123456"
+        );
+        assert_eq!(
+            json_value.get("beneficiary_vasp_website").unwrap(),
+            "https://example.com"
+        );
         assert_eq!(json_value.get("beneficiary_first_name").unwrap(), "John");
         assert_eq!(json_value.get("beneficiary_last_name").unwrap(), "Doe");
-        assert_eq!(json_value.get("beneficiary_address").unwrap(), "123 Main St, Anytown, USA");
+        assert_eq!(
+            json_value.get("beneficiary_address").unwrap(),
+            "123 Main St, Anytown, USA"
+        );
         assert_eq!(json_value.get("agreed").unwrap(), true);
         assert_eq!(json_value.get("personal").unwrap(), true);
         assert!(json_value.get("beneficiary_company_name").is_none());
-        
-        let extra_currencies = json_value.get("extra_currencies").unwrap().as_array().unwrap();
+
+        let extra_currencies = json_value
+            .get("extra_currencies")
+            .unwrap()
+            .as_array()
+            .unwrap();
         assert_eq!(extra_currencies.len(), 2);
         assert_eq!(extra_currencies[0], "ETH");
         assert_eq!(extra_currencies[1], "USDC");
@@ -258,7 +281,10 @@ mod tests {
 
         assert_eq!(json_value.get("currency").unwrap(), "ETH");
         assert_eq!(json_value.get("type").unwrap(), "transfer");
-        assert_eq!(json_value.get("beneficiary_company_name").unwrap(), "ACME Corp");
+        assert_eq!(
+            json_value.get("beneficiary_company_name").unwrap(),
+            "ACME Corp"
+        );
         assert_eq!(json_value.get("personal").unwrap(), false);
         assert!(json_value.get("beneficiary_vasp_website").is_none());
         assert!(json_value.get("beneficiary_first_name").is_none());
@@ -295,18 +321,33 @@ mod tests {
         });
 
         let response: AddToAddressBookResponse = serde_json::from_value(response_json).unwrap();
-        
+
         assert_eq!(response.id, 1);
         assert_eq!(response.jsonrpc, "2.0");
-        assert_eq!(response.result.address, "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh");
+        assert_eq!(
+            response.result.address,
+            "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh"
+        );
         assert_eq!(response.result.agreed, true);
-        assert_eq!(response.result.beneficiary_address, "123 Main St, Anytown, USA");
-        assert_eq!(response.result.beneficiary_first_name, Some("John".to_string()));
-        assert_eq!(response.result.beneficiary_last_name, Some("Doe".to_string()));
+        assert_eq!(
+            response.result.beneficiary_address,
+            "123 Main St, Anytown, USA"
+        );
+        assert_eq!(
+            response.result.beneficiary_first_name,
+            Some("John".to_string())
+        );
+        assert_eq!(
+            response.result.beneficiary_last_name,
+            Some("Doe".to_string())
+        );
         assert_eq!(response.result.beneficiary_company_name, None);
         assert_eq!(response.result.beneficiary_vasp_did, "did:example:123456");
         assert_eq!(response.result.beneficiary_vasp_name, "Example VASP");
-        assert_eq!(response.result.beneficiary_vasp_website, Some("https://example.com".to_string()));
+        assert_eq!(
+            response.result.beneficiary_vasp_website,
+            Some("https://example.com".to_string())
+        );
         assert_eq!(response.result.currency, "BTC");
         assert_eq!(response.result.label, "My BTC Wallet");
         assert_eq!(response.result.personal, true);
@@ -344,9 +385,12 @@ mod tests {
         });
 
         let response: AddToAddressBookResponse = serde_json::from_value(response_json).unwrap();
-        
+
         assert_eq!(response.result.currency, "ETH");
-        assert_eq!(response.result.beneficiary_company_name, Some("ACME Corp".to_string()));
+        assert_eq!(
+            response.result.beneficiary_company_name,
+            Some("ACME Corp".to_string())
+        );
         assert_eq!(response.result.beneficiary_first_name, None);
         assert_eq!(response.result.beneficiary_last_name, None);
         assert_eq!(response.result.beneficiary_vasp_website, None);
@@ -376,10 +420,10 @@ mod tests {
 
         // Test that we can get a function reference to the method
         let _ = RestClient::add_to_address_book;
-        
+
         // Verify the client exists
         let _ = &rest_client;
-        
+
         println!("add_to_address_book method is accessible and properly typed");
     }
 }

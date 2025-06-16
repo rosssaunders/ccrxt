@@ -63,10 +63,10 @@ impl EndpointType {
     pub fn credit_cost(&self) -> u32 {
         match self {
             EndpointType::NonMatchingEngine => 500,
-            EndpointType::MatchingEngine => 0, // Uses tier-based limits, not credits
+            EndpointType::MatchingEngine => 0,       // Uses tier-based limits, not credits
             EndpointType::PublicGetInstruments => 0, // Special time-based limit
-            EndpointType::PublicGetComboIds => 500, // Non-matching engine endpoint
-            EndpointType::PublicHello => 0,    // WebSocket only, no specific credit cost
+            EndpointType::PublicGetComboIds => 500,  // Non-matching engine endpoint
+            EndpointType::PublicHello => 0,          // WebSocket only, no specific credit cost
         }
     }
 
@@ -162,8 +162,7 @@ impl CreditPool {
         let credits_to_add = (elapsed.as_secs_f64() * self.refill_rate as f64) as u32;
 
         if credits_to_add > 0 {
-            self.available_credits =
-                (self.available_credits + credits_to_add).min(self.max_credits);
+            self.available_credits = (self.available_credits + credits_to_add).min(self.max_credits);
             self.last_refill = now;
         }
     }
@@ -255,8 +254,7 @@ impl RateLimiter {
         let credit_pool = CreditPool::new(50_000, 10_000); // 50k max credits, 10k credits/sec refill
 
         // Matching engine limits based on account tier
-        let matching_engine_history =
-            RequestHistory::new(Duration::from_secs(1), account_tier.sustained_rate());
+        let matching_engine_history = RequestHistory::new(Duration::from_secs(1), account_tier.sustained_rate());
 
         // Special limit for public/get_instruments: 1 req per 10s, burst of 5
         let get_instruments_history = RequestHistory::new(
@@ -273,15 +271,10 @@ impl RateLimiter {
     }
 
     /// Create a rate limiter with custom credit pool settings
-    pub fn with_custom_credits(
-        account_tier: AccountTier,
-        max_credits: u32,
-        refill_rate: u32,
-    ) -> Self {
+    pub fn with_custom_credits(account_tier: AccountTier, max_credits: u32, refill_rate: u32) -> Self {
         let credit_pool = CreditPool::new(max_credits, refill_rate);
 
-        let matching_engine_history =
-            RequestHistory::new(Duration::from_secs(1), account_tier.sustained_rate());
+        let matching_engine_history = RequestHistory::new(Duration::from_secs(1), account_tier.sustained_rate());
 
         let get_instruments_history = RequestHistory::new(Duration::from_secs(10), 5);
 
@@ -302,21 +295,21 @@ impl RateLimiter {
             }
             EndpointType::MatchingEngine => {
                 let mut history = self.matching_engine_history.write().await;
-                history.check_limit().map_err(|requests_in_window| {
-                    RateLimitError::MatchingEngineRateExceeded {
+                history.check_limit().map_err(
+                    |requests_in_window| RateLimitError::MatchingEngineRateExceeded {
                         tier: self.account_tier,
                         requests_in_window,
-                    }
-                })
+                    },
+                )
             }
             EndpointType::PublicGetInstruments => {
                 let mut history = self.get_instruments_history.write().await;
-                history.check_limit().map_err(|requests_in_window| {
-                    RateLimitError::SpecialEndpointRateExceeded {
+                history.check_limit().map_err(
+                    |requests_in_window| RateLimitError::SpecialEndpointRateExceeded {
                         endpoint: "public/get_instruments".to_string(),
                         requests_in_window,
-                    }
-                })
+                    },
+                )
             }
             EndpointType::PublicHello => {
                 // public/hello is WebSocket only with no documented rate limits
@@ -393,7 +386,7 @@ pub struct RateLimitStatus {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use tokio::time::{sleep, Duration};
+    use tokio::time::{Duration, sleep};
 
     #[tokio::test]
     async fn test_account_tier_limits() {
@@ -479,10 +472,12 @@ mod tests {
         let limiter = RateLimiter::new(AccountTier::Tier4);
 
         // Should be able to make requests within credit limit
-        assert!(limiter
-            .check_limits(EndpointType::NonMatchingEngine)
-            .await
-            .is_ok());
+        assert!(
+            limiter
+                .check_limits(EndpointType::NonMatchingEngine)
+                .await
+                .is_ok()
+        );
         limiter
             .record_request(EndpointType::NonMatchingEngine)
             .await;
@@ -497,18 +492,22 @@ mod tests {
 
         // Should be able to make requests within tier limit (5 per second)
         for _ in 0..5 {
-            assert!(limiter
-                .check_limits(EndpointType::MatchingEngine)
-                .await
-                .is_ok());
+            assert!(
+                limiter
+                    .check_limits(EndpointType::MatchingEngine)
+                    .await
+                    .is_ok()
+            );
             limiter.record_request(EndpointType::MatchingEngine).await;
         }
 
         // 6th request should fail
-        assert!(limiter
-            .check_limits(EndpointType::MatchingEngine)
-            .await
-            .is_err());
+        assert!(
+            limiter
+                .check_limits(EndpointType::MatchingEngine)
+                .await
+                .is_err()
+        );
     }
 
     #[tokio::test]
@@ -517,20 +516,24 @@ mod tests {
 
         // Should be able to make up to 5 requests (burst limit)
         for _ in 0..5 {
-            assert!(limiter
-                .check_limits(EndpointType::PublicGetInstruments)
-                .await
-                .is_ok());
+            assert!(
+                limiter
+                    .check_limits(EndpointType::PublicGetInstruments)
+                    .await
+                    .is_ok()
+            );
             limiter
                 .record_request(EndpointType::PublicGetInstruments)
                 .await;
         }
 
         // 6th request should fail
-        assert!(limiter
-            .check_limits(EndpointType::PublicGetInstruments)
-            .await
-            .is_err());
+        assert!(
+            limiter
+                .check_limits(EndpointType::PublicGetInstruments)
+                .await
+                .is_err()
+        );
     }
 
     #[tokio::test]
@@ -539,18 +542,22 @@ mod tests {
 
         // public/hello should always succeed as it has no rate limits
         for _ in 0..100 {
-            assert!(limiter
-                .check_limits(EndpointType::PublicHello)
-                .await
-                .is_ok());
+            assert!(
+                limiter
+                    .check_limits(EndpointType::PublicHello)
+                    .await
+                    .is_ok()
+            );
             limiter.record_request(EndpointType::PublicHello).await;
         }
 
         // Should still work after many requests
-        assert!(limiter
-            .check_limits(EndpointType::PublicHello)
-            .await
-            .is_ok());
+        assert!(
+            limiter
+                .check_limits(EndpointType::PublicHello)
+                .await
+                .is_ok()
+        );
     }
 
     #[tokio::test]
@@ -589,27 +596,33 @@ mod tests {
 
         // Make some requests at Tier4 (5 per second limit)
         for _ in 0..5 {
-            assert!(limiter
-                .check_limits(EndpointType::MatchingEngine)
-                .await
-                .is_ok());
+            assert!(
+                limiter
+                    .check_limits(EndpointType::MatchingEngine)
+                    .await
+                    .is_ok()
+            );
             limiter.record_request(EndpointType::MatchingEngine).await;
         }
 
         // Should be at limit
-        assert!(limiter
-            .check_limits(EndpointType::MatchingEngine)
-            .await
-            .is_err());
+        assert!(
+            limiter
+                .check_limits(EndpointType::MatchingEngine)
+                .await
+                .is_err()
+        );
 
         // Update to Tier1 (30 per second limit)
         limiter.update_account_tier(AccountTier::Tier1).await;
 
         // Should be able to make more requests now
-        assert!(limiter
-            .check_limits(EndpointType::MatchingEngine)
-            .await
-            .is_ok());
+        assert!(
+            limiter
+                .check_limits(EndpointType::MatchingEngine)
+                .await
+                .is_ok()
+        );
     }
 
     #[test]
@@ -656,10 +669,12 @@ mod tests {
         }
 
         // This should fail as we're at the tier limit
-        assert!(limiter
-            .check_limits(EndpointType::MatchingEngine)
-            .await
-            .is_err());
+        assert!(
+            limiter
+                .check_limits(EndpointType::MatchingEngine)
+                .await
+                .is_err()
+        );
 
         // Check status
         let status = limiter.get_status().await;
@@ -675,10 +690,12 @@ mod tests {
 
         // Consume all credits
         for _ in 0..2 {
-            assert!(limiter
-                .check_limits(EndpointType::NonMatchingEngine)
-                .await
-                .is_ok());
+            assert!(
+                limiter
+                    .check_limits(EndpointType::NonMatchingEngine)
+                    .await
+                    .is_ok()
+            );
             limiter
                 .record_request(EndpointType::NonMatchingEngine)
                 .await;

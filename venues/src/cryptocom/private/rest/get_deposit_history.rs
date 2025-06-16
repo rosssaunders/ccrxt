@@ -1,7 +1,7 @@
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
 use serde::{Deserialize, Serialize};
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 
 /// Request parameters for get deposit history
 #[derive(Debug, Clone, Serialize)]
@@ -110,7 +110,8 @@ impl RestClient {
             params["status"] = Value::String(s.to_string());
         }
 
-        self.send_signed_request("private/get-deposit-history", params).await
+        self.send_signed_request("private/get-deposit-history", params)
+            .await
     }
 }
 

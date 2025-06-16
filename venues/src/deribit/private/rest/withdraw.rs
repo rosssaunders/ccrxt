@@ -73,21 +73,19 @@ impl RestClient {
     ///
     /// # Returns
     /// Withdrawal result with complete withdrawal information
-    pub async fn withdraw(
-        &self,
-        currency: Currency,
-        address: &str,
-        amount: f64,
-        priority: Option<WithdrawalPriority>,
-    ) -> RestResult<WithdrawResponse> {
+    pub async fn withdraw(&self, currency: Currency, address: &str, amount: f64, priority: Option<WithdrawalPriority>) -> RestResult<WithdrawResponse> {
         let request = WithdrawRequest {
             currency,
             address: address.to_string(),
             amount,
             priority,
         };
-        self.send_signed_request("private/withdraw", &request, EndpointType::NonMatchingEngine)
-            .await
+        self.send_signed_request(
+            "private/withdraw",
+            &request,
+            EndpointType::NonMatchingEngine,
+        )
+        .await
     }
 }
 
@@ -96,7 +94,7 @@ mod tests {
     use super::*;
     use crate::deribit::AccountTier;
     use rest::secrets::ExposableSecret;
-    use serde_json::{json, Value};
+    use serde_json::{Value, json};
 
     // Test secret implementation
     #[derive(Clone)]
@@ -129,7 +127,10 @@ mod tests {
         let json_value: Value = serde_json::from_str(&json_str).unwrap();
 
         assert_eq!(json_value.get("currency").unwrap(), "BTC");
-        assert_eq!(json_value.get("address").unwrap(), "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh");
+        assert_eq!(
+            json_value.get("address").unwrap(),
+            "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh"
+        );
         assert_eq!(json_value.get("amount").unwrap(), 0.001);
         assert_eq!(json_value.get("priority").unwrap(), "high");
     }
@@ -147,7 +148,10 @@ mod tests {
         let json_value: Value = serde_json::from_str(&json_str).unwrap();
 
         assert_eq!(json_value.get("currency").unwrap(), "ETH");
-        assert_eq!(json_value.get("address").unwrap(), "0x742d35Cc6634C0532925a3b8D05c4ae5e34D7b1c");
+        assert_eq!(
+            json_value.get("address").unwrap(),
+            "0x742d35Cc6634C0532925a3b8D05c4ae5e34D7b1c"
+        );
         assert_eq!(json_value.get("amount").unwrap(), 0.5);
         assert!(json_value.get("priority").is_none());
     }
@@ -173,10 +177,13 @@ mod tests {
         });
 
         let response: WithdrawResponse = serde_json::from_value(response_json).unwrap();
-        
+
         assert_eq!(response.id, 1);
         assert_eq!(response.jsonrpc, "2.0");
-        assert_eq!(response.result.address, "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh");
+        assert_eq!(
+            response.result.address,
+            "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh"
+        );
         assert_eq!(response.result.amount, 0.001);
         assert_eq!(response.result.currency, "BTC");
         assert_eq!(response.result.fee, 0.0001);
@@ -206,11 +213,14 @@ mod tests {
         });
 
         let response: WithdrawResponse = serde_json::from_value(response_json).unwrap();
-        
+
         assert_eq!(response.result.currency, "ETH");
         assert_eq!(response.result.state, WithdrawalState::Completed);
         assert_eq!(response.result.confirmed_timestamp, Some(1640995300000i64));
-        assert_eq!(response.result.transaction_id, Some("0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef".to_string()));
+        assert_eq!(
+            response.result.transaction_id,
+            Some("0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef".to_string())
+        );
     }
 
     #[tokio::test]
@@ -231,10 +241,10 @@ mod tests {
 
         // Test that we can get a function reference to the method
         let _ = RestClient::withdraw;
-        
+
         // Verify the client exists
         let _ = &rest_client;
-        
+
         println!("withdraw method is accessible and properly typed");
     }
 }

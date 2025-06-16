@@ -249,7 +249,7 @@ mod tests {
     use super::*;
     use crate::deribit::AccountTier;
     use rest::secrets::ExposableSecret;
-    use serde_json::{json, Value};
+    use serde_json::{Value, json};
 
     // Test secret implementation
     #[derive(Clone)]
@@ -301,7 +301,7 @@ mod tests {
         });
 
         let response: CancelOrderResponse = serde_json::from_value(response_json).unwrap();
-        
+
         assert_eq!(response.id, 1);
         assert_eq!(response.jsonrpc, "2.0");
         assert_eq!(response.result.order_id, "ETH-29MAR19-200-C");
@@ -311,7 +311,10 @@ mod tests {
         assert_eq!(response.result.filled_amount, 0.0);
         assert_eq!(response.result.price, 50.0);
         assert_eq!(response.result.instrument_name, "ETH-29MAR19-200-C");
-        assert_eq!(response.result.cancel_reason, Some(CancelReason::UserRequest));
+        assert_eq!(
+            response.result.cancel_reason,
+            Some(CancelReason::UserRequest)
+        );
     }
 
     #[test]
@@ -343,10 +346,13 @@ mod tests {
         });
 
         let response: CancelOrderResponse = serde_json::from_value(response_json).unwrap();
-        
+
         assert_eq!(response.result.order_state, OrderState::Cancelled);
         assert_eq!(response.result.direction, OrderDirection::Sell);
-        assert_eq!(response.result.cancel_reason, Some(CancelReason::MmpTrigger));
+        assert_eq!(
+            response.result.cancel_reason,
+            Some(CancelReason::MmpTrigger)
+        );
         assert_eq!(response.result.average_price, Some(102.5));
         assert_eq!(response.result.api, Some(true));
         assert_eq!(response.result.post_only, Some(false));
@@ -383,10 +389,13 @@ mod tests {
         });
 
         let response: CancelOrderResponse = serde_json::from_value(response_json).unwrap();
-        
+
         assert_eq!(response.result.triggered, Some(false));
         assert_eq!(response.result.trigger, Some(TriggerType::MarkPrice));
-        assert_eq!(response.result.trigger_order_id, Some("ETH-123456".to_string()));
+        assert_eq!(
+            response.result.trigger_order_id,
+            Some("ETH-123456".to_string())
+        );
         assert_eq!(response.result.stop_price, Some(44000.0));
         assert_eq!(response.result.trigger_offset, Some(100.0));
     }
@@ -409,10 +418,10 @@ mod tests {
 
         // Test that we can get a function reference to the method
         let _ = RestClient::cancel_order;
-        
+
         // Verify the client exists
         let _ = &rest_client;
-        
+
         println!("cancel_order method is accessible and properly typed");
     }
 }

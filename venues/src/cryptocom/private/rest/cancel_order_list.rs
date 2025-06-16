@@ -1,7 +1,7 @@
 use super::client::RestClient;
-use crate::cryptocom::{enums::ContingencyType, RestResult};
+use crate::cryptocom::{RestResult, enums::ContingencyType};
 use serde::{Deserialize, Serialize};
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 
 /// Individual order to cancel in a list
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -70,7 +70,8 @@ impl RestClient {
         let id = 1;
         let params = serde_json::to_value(&request)?;
 
-        self.send_signed_request("private/cancel-order-list", params).await
+        self.send_signed_request("private/cancel-order-list", params)
+            .await
     }
 
     /// Cancel OCO orders
@@ -91,7 +92,8 @@ impl RestClient {
         let id = 1;
         let params = serde_json::to_value(&request)?;
 
-        self.send_signed_request("private/cancel-order-list", params).await
+        self.send_signed_request("private/cancel-order-list", params)
+            .await
     }
 }
 

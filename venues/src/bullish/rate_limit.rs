@@ -3,8 +3,8 @@
 use std::collections::HashMap;
 use std::sync::Arc;
 use std::time::{Duration, Instant};
-use tokio::sync::RwLock;
 use thiserror::Error;
+use tokio::sync::RwLock;
 
 /// Rate limit error
 #[derive(Error, Debug)]
@@ -28,7 +28,7 @@ pub enum EndpointType {
     PublicOrderbook,
     PublicTrades,
     PublicCandles,
-    
+
     // Private endpoints
     PrivateLogin,
     PrivateTradingAccounts,
@@ -49,7 +49,7 @@ impl EndpointType {
             EndpointType::PublicOrderbook => RateLimit::new(50, Duration::from_secs(1)),
             EndpointType::PublicTrades => RateLimit::new(50, Duration::from_secs(1)),
             EndpointType::PublicCandles => RateLimit::new(50, Duration::from_secs(1)),
-            
+
             // Private endpoints - 50 requests per second with higher limits for order endpoints
             EndpointType::PrivateLogin => RateLimit::new(10, Duration::from_secs(1)),
             EndpointType::PrivateTradingAccounts => RateLimit::new(50, Duration::from_secs(1)),
@@ -70,14 +70,14 @@ impl EndpointType {
             path if path.contains("/v1/orderbook") => EndpointType::PublicOrderbook,
             path if path.contains("/v1/trades") => EndpointType::PublicTrades,
             path if path.contains("/v1/candles") => EndpointType::PublicCandles,
-            
+
             // Private endpoints
             path if path.contains("/v1/users/login") || path.contains("/v1/users/hmac/login") => EndpointType::PrivateLogin,
             path if path.contains("/v1/accounts/trading-accounts") => EndpointType::PrivateTradingAccounts,
             path if path.contains("/v2/orders") => EndpointType::PrivateOrders,
             path if path.contains("/v1/trades") && path.contains("trading") => EndpointType::PrivateTrades,
             path if path.contains("/v1/positions") => EndpointType::PrivatePositions,
-            
+
             // Default to other for unrecognized private endpoints
             _ => EndpointType::PrivateOther,
         }
@@ -120,13 +120,13 @@ impl RateLimiter {
     pub async fn check_limits(&self, endpoint_type: EndpointType) -> Result<(), RateLimitError> {
         let rate_limit = endpoint_type.rate_limit();
         let mut history = self.request_history.write().await;
-        
+
         let timestamps = history.entry(endpoint_type).or_default();
         let now = Instant::now();
-        
+
         // Remove old timestamps outside the window
         timestamps.retain(|&timestamp| now.duration_since(timestamp) < rate_limit.window);
-        
+
         // Check if adding this request would exceed the limit
         if timestamps.len() as u32 >= rate_limit.max_requests {
             return Err(RateLimitError::RateLimitExceeded {
@@ -136,7 +136,7 @@ impl RateLimiter {
                 window: rate_limit.window,
             });
         }
-        
+
         Ok(())
     }
 
@@ -151,7 +151,7 @@ impl RateLimiter {
     pub async fn get_usage(&self, endpoint_type: EndpointType) -> (u32, u32) {
         let rate_limit = endpoint_type.rate_limit();
         let history = self.request_history.read().await;
-        
+
         if let Some(timestamps) = history.get(&endpoint_type) {
             let now = Instant::now();
             let recent_count = timestamps
@@ -168,7 +168,7 @@ impl RateLimiter {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use tokio::time::{sleep, Duration};
+    use tokio::time::{Duration, sleep};
 
     #[test]
     fn test_rate_limit_config() {
@@ -179,11 +179,26 @@ mod tests {
 
     #[test]
     fn test_endpoint_type_from_path() {
-        assert_eq!(EndpointType::from_path("/v1/markets"), EndpointType::PublicMarkets);
-        assert_eq!(EndpointType::from_path("/v1/assets/BTC"), EndpointType::PublicAssets);
-        assert_eq!(EndpointType::from_path("/v1/accounts/trading-accounts"), EndpointType::PrivateTradingAccounts);
-        assert_eq!(EndpointType::from_path("/v2/orders"), EndpointType::PrivateOrders);
-        assert_eq!(EndpointType::from_path("/v1/users/login"), EndpointType::PrivateLogin);
+        assert_eq!(
+            EndpointType::from_path("/v1/markets"),
+            EndpointType::PublicMarkets
+        );
+        assert_eq!(
+            EndpointType::from_path("/v1/assets/BTC"),
+            EndpointType::PublicAssets
+        );
+        assert_eq!(
+            EndpointType::from_path("/v1/accounts/trading-accounts"),
+            EndpointType::PrivateTradingAccounts
+        );
+        assert_eq!(
+            EndpointType::from_path("/v2/orders"),
+            EndpointType::PrivateOrders
+        );
+        assert_eq!(
+            EndpointType::from_path("/v1/users/login"),
+            EndpointType::PrivateLogin
+        );
     }
 
     #[test]
@@ -204,11 +219,18 @@ mod tests {
     #[tokio::test]
     async fn test_rate_limiter_basic() {
         let rate_limiter = RateLimiter::new();
-        
+
         // Should allow first request
-        assert!(rate_limiter.check_limits(EndpointType::PublicMarkets).await.is_ok());
-        rate_limiter.increment_request(EndpointType::PublicMarkets).await;
-        
+        assert!(
+            rate_limiter
+                .check_limits(EndpointType::PublicMarkets)
+                .await
+                .is_ok()
+        );
+        rate_limiter
+            .increment_request(EndpointType::PublicMarkets)
+            .await;
+
         let (current, max) = rate_limiter.get_usage(EndpointType::PublicMarkets).await;
         assert_eq!(current, 1);
         assert_eq!(max, 50);
@@ -218,13 +240,13 @@ mod tests {
     async fn test_rate_limiter_limit_exceeded() {
         let rate_limiter = RateLimiter::new();
         let endpoint = EndpointType::PrivateLogin; // Has limit of 10 per second
-        
+
         // Make 10 requests (at the limit)
         for _ in 0..10 {
             assert!(rate_limiter.check_limits(endpoint).await.is_ok());
             rate_limiter.increment_request(endpoint).await;
         }
-        
+
         // 11th request should fail
         assert!(rate_limiter.check_limits(endpoint).await.is_err());
     }
@@ -233,18 +255,18 @@ mod tests {
     async fn test_rate_limiter_window_expiry() {
         let rate_limiter = RateLimiter::new();
         let endpoint = EndpointType::PrivateLogin;
-        
+
         // Fill up the rate limit
         for _ in 0..10 {
             rate_limiter.increment_request(endpoint).await;
         }
-        
+
         // Should be at limit
         assert!(rate_limiter.check_limits(endpoint).await.is_err());
-        
+
         // Wait for window to expire (1 second + buffer)
         sleep(Duration::from_millis(1100)).await;
-        
+
         // Should be able to make requests again
         assert!(rate_limiter.check_limits(endpoint).await.is_ok());
     }

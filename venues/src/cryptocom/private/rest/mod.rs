@@ -44,13 +44,7 @@ pub mod unstake;
 #[cfg(test)]
 mod integration_tests;
 
-pub use cancel_order_list::{
-    CancelOcoOrderRequest, CancelOrderListItem, CancelOrderListRequest, CancelOrderListResponse,
-    OrderCancellationResult,
-};
+pub use cancel_order_list::{CancelOcoOrderRequest, CancelOrderListItem, CancelOrderListRequest, CancelOrderListResponse, OrderCancellationResult};
 pub use client::RestClient;
-pub use create_order_list::{
-    CreateOcoOrderResponse, CreateOrderListRequest, CreateOrderListResponse, OrderCreationResult,
-    OrderListItem,
-};
+pub use create_order_list::{CreateOcoOrderResponse, CreateOrderListRequest, CreateOrderListResponse, OrderCreationResult, OrderListItem};
 pub use get_order_list::{GetOrderListRequest, GetOrderListResponse, OrderDetails};

@@ -1,16 +1,10 @@
 //! Integration test to demonstrate usage of the new OKX mark price candles endpoints
-//! 
+//!
 //! This test shows how users can use the new endpoints to fetch mark price candlestick data.
 
 #[cfg(test)]
 mod usage_examples {
-    use crate::okx::{
-        GetMarkPriceCandlesRequest,
-        GetMarkPriceCandlesHistoryRequest,
-        GetEstimatedPriceRequest,
-        PublicRestClient,
-        RateLimiter
-    };
+    use crate::okx::{GetEstimatedPriceRequest, GetMarkPriceCandlesHistoryRequest, GetMarkPriceCandlesRequest, PublicRestClient, RateLimiter};
     use reqwest::Client;
 
     #[test]
@@ -55,11 +49,7 @@ mod usage_examples {
     #[test]
     fn test_client_has_new_methods() {
         // Verify that the RestClient has the new methods available
-        let client = PublicRestClient::new(
-            "https://www.okx.com",
-            Client::new(),
-            RateLimiter::new(),
-        );
+        let client = PublicRestClient::new("https://www.okx.com", Client::new(), RateLimiter::new());
 
         // We can't make actual API calls in tests, but we can verify the methods exist
         // and have the correct signatures by attempting to call them with test data
@@ -82,7 +72,7 @@ mod usage_examples {
         // These would normally be async calls, but we're just checking method signatures
         let _future1 = client.get_mark_price_candles(mark_price_request);
         let _future2 = client.get_mark_price_candles_history(history_request);
-        
+
         // If we reach this point, the methods exist and have correct signatures
         assert!(true);
     }
@@ -90,7 +80,7 @@ mod usage_examples {
     #[test]
     fn test_candlestick_data_format() {
         // Test that we can parse the expected response format
-        use crate::okx::{GetMarkPriceCandlesResponse, GetMarkPriceCandlesHistoryResponse};
+        use crate::okx::{GetMarkPriceCandlesHistoryResponse, GetMarkPriceCandlesResponse};
         use serde_json::json;
 
         let sample_response = json!({
@@ -103,25 +93,23 @@ mod usage_examples {
         });
 
         // Test mark price candles response
-        let mark_response: GetMarkPriceCandlesResponse = 
-            serde_json::from_value(sample_response.clone()).unwrap();
-        
+        let mark_response: GetMarkPriceCandlesResponse = serde_json::from_value(sample_response.clone()).unwrap();
+
         assert_eq!(mark_response.code, "0");
         assert_eq!(mark_response.data.len(), 2);
-        
+
         // Verify data format: [ts, o, h, l, c, confirm]
         let first_candle = &mark_response.data[0];
         assert_eq!(first_candle[0], "1597026383085"); // timestamp
-        assert_eq!(first_candle[1], "11432.1");       // open
-        assert_eq!(first_candle[2], "11446.3");       // high
-        assert_eq!(first_candle[3], "11430.2");       // low
-        assert_eq!(first_candle[4], "11435.7");       // close
-        assert_eq!(first_candle[5], "1");             // confirm
+        assert_eq!(first_candle[1], "11432.1"); // open
+        assert_eq!(first_candle[2], "11446.3"); // high
+        assert_eq!(first_candle[3], "11430.2"); // low
+        assert_eq!(first_candle[4], "11435.7"); // close
+        assert_eq!(first_candle[5], "1"); // confirm
 
         // Test mark price candles history response
-        let history_response: GetMarkPriceCandlesHistoryResponse = 
-            serde_json::from_value(sample_response).unwrap();
-        
+        let history_response: GetMarkPriceCandlesHistoryResponse = serde_json::from_value(sample_response).unwrap();
+
         assert_eq!(history_response.code, "0");
         assert_eq!(history_response.data.len(), 2);
     }
@@ -158,12 +146,11 @@ mod usage_examples {
             ]
         });
 
-        let response: GetEstimatedPriceResponse = 
-            serde_json::from_value(sample_response).unwrap();
-        
+        let response: GetEstimatedPriceResponse = serde_json::from_value(sample_response).unwrap();
+
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 1);
-        
+
         let estimated_price = &response.data[0];
         assert_eq!(estimated_price.inst_id, "BTC-USD-200214");
         assert_eq!(estimated_price.settle_px, "50000.5");

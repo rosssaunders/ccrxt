@@ -77,10 +77,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing the list of delivery/exercise history entries
-    pub async fn get_delivery_exercise_history(
-        &self,
-        request: &GetDeliveryExerciseHistoryRequest,
-    ) -> RestResult<GetDeliveryExerciseHistoryResponse> {
+    pub async fn get_delivery_exercise_history(&self, request: &GetDeliveryExerciseHistoryRequest) -> RestResult<GetDeliveryExerciseHistoryResponse> {
         self.send_request(
             "api/v5/public/delivery-exercise-history",
             reqwest::Method::GET,
@@ -116,10 +113,7 @@ mod tests {
             serialized.get("uly").and_then(|v| v.as_str()),
             Some("BTC-USD")
         );
-        assert_eq!(
-            serialized.get("limit").and_then(|v| v.as_str()),
-            Some("50")
-        );
+        assert_eq!(serialized.get("limit").and_then(|v| v.as_str()), Some("50"));
         assert!(serialized.get("instFamily").is_none());
         assert!(serialized.get("after").is_none());
         assert!(serialized.get("before").is_none());
@@ -254,10 +248,16 @@ mod tests {
         assert_eq!(history.details.len(), 2);
         assert_eq!(history.details.first().unwrap().ins_id, "BTC-USD-230630");
         assert_eq!(history.details.first().unwrap().px, "30250.5");
-        assert_eq!(history.details.first().unwrap().delivery_type, DeliveryExerciseType::Delivery);
+        assert_eq!(
+            history.details.first().unwrap().delivery_type,
+            DeliveryExerciseType::Delivery
+        );
         assert_eq!(history.details.get(1).unwrap().ins_id, "ETH-USD-230630");
         assert_eq!(history.details.get(1).unwrap().px, "1890.75");
-        assert_eq!(history.details.get(1).unwrap().delivery_type, DeliveryExerciseType::Delivery);
+        assert_eq!(
+            history.details.get(1).unwrap().delivery_type,
+            DeliveryExerciseType::Delivery
+        );
     }
 
     #[test]
@@ -295,13 +295,59 @@ mod tests {
         assert_eq!(response.data.len(), 2);
         assert_eq!(response.data.first().unwrap().ts, "1597026383085");
         assert_eq!(response.data.first().unwrap().details.len(), 1);
-        assert_eq!(response.data.first().unwrap().details.first().unwrap().ins_id, "BTC-USD-230630");
-        assert_eq!(response.data.first().unwrap().details.first().unwrap().px, "30250.5");
-        assert_eq!(response.data.first().unwrap().details.first().unwrap().delivery_type, DeliveryExerciseType::Delivery);
+        assert_eq!(
+            response
+                .data
+                .first()
+                .unwrap()
+                .details
+                .first()
+                .unwrap()
+                .ins_id,
+            "BTC-USD-230630"
+        );
+        assert_eq!(
+            response.data.first().unwrap().details.first().unwrap().px,
+            "30250.5"
+        );
+        assert_eq!(
+            response
+                .data
+                .first()
+                .unwrap()
+                .details
+                .first()
+                .unwrap()
+                .delivery_type,
+            DeliveryExerciseType::Delivery
+        );
         assert_eq!(response.data.get(1).unwrap().ts, "1597026483085");
-        assert_eq!(response.data.get(1).unwrap().details.first().unwrap().ins_id, "ETH-USD-230630-C-2000");
-        assert_eq!(response.data.get(1).unwrap().details.first().unwrap().px, "1890.75");
-        assert_eq!(response.data.get(1).unwrap().details.first().unwrap().delivery_type, DeliveryExerciseType::Exercised);
+        assert_eq!(
+            response
+                .data
+                .get(1)
+                .unwrap()
+                .details
+                .first()
+                .unwrap()
+                .ins_id,
+            "ETH-USD-230630-C-2000"
+        );
+        assert_eq!(
+            response.data.get(1).unwrap().details.first().unwrap().px,
+            "1890.75"
+        );
+        assert_eq!(
+            response
+                .data
+                .get(1)
+                .unwrap()
+                .details
+                .first()
+                .unwrap()
+                .delivery_type,
+            DeliveryExerciseType::Exercised
+        );
     }
 
     #[test]

@@ -1,7 +1,7 @@
 use super::client::RestClient;
-use crate::cryptocom::{enums::*, RestResult};
+use crate::cryptocom::{RestResult, enums::*};
 use serde::{Deserialize, Serialize};
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 
 /// Individual order in an order list
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -114,7 +114,8 @@ impl RestClient {
         let id = 1;
         let params = serde_json::to_value(&request)?;
 
-        self.send_signed_request("private/create-order-list", params).await
+        self.send_signed_request("private/create-order-list", params)
+            .await
     }
 }
 
@@ -366,9 +367,11 @@ mod tests {
         assert_eq!(serialized.get("side").unwrap(), "BUY");
         assert_eq!(serialized.get("type").unwrap(), "LIMIT");
         assert!(!serialized.as_object().unwrap().contains_key("notional"));
-        assert!(!serialized
-            .as_object()
-            .unwrap()
-            .contains_key("trigger_price"));
+        assert!(
+            !serialized
+                .as_object()
+                .unwrap()
+                .contains_key("trigger_price")
+        );
     }
 }

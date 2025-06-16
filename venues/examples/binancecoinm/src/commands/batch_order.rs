@@ -14,15 +14,15 @@ pub async fn handle_batch_order_command(
     price: Option<f64>,
 ) -> Result<()> {
     let side = match side.to_uppercase().as_str() {
-        | "BUY" => OrderSide::Buy,
-        | "SELL" => OrderSide::Sell,
-        | _ => return Err(anyhow!("Invalid side. Must be 'BUY' or 'SELL'")),
+        "BUY" => OrderSide::Buy,
+        "SELL" => OrderSide::Sell,
+        _ => return Err(anyhow!("Invalid side. Must be 'BUY' or 'SELL'")),
     };
 
     let order_type = match order_type.to_uppercase().as_str() {
-        | "LIMIT" => OrderType::Limit,
-        | "MARKET" => OrderType::Market,
-        | _ => return Err(anyhow!("Invalid order type. Must be 'LIMIT' or 'MARKET'")),
+        "LIMIT" => OrderType::Limit,
+        "MARKET" => OrderType::Market,
+        _ => return Err(anyhow!("Invalid order type. Must be 'LIMIT' or 'MARKET'")),
     };
 
     let now = chrono::Utc::now().timestamp_millis() as u64;
@@ -80,7 +80,7 @@ pub async fn handle_batch_order_command(
     println!("Batch order placed for {}:", symbol);
     for (i, order) in response.data.iter().enumerate() {
         match order {
-            | BatchOrderResult::Ok(order) => {
+            BatchOrderResult::Ok(order) => {
                 println!("\nOrder {}:", i + 1);
                 println!("  Order ID: {}", order.order_id);
                 println!("  Client Order ID: {}", order.client_order_id);
@@ -89,11 +89,11 @@ pub async fn handle_batch_order_command(
                 println!("  Quantity: {}", order.orig_qty);
                 println!("  Executed Quantity: {}", order.executed_qty);
                 println!("  Average Price: {}", order.avg_price);
-            },
-            | BatchOrderResult::Err(err) => {
+            }
+            BatchOrderResult::Err(err) => {
                 println!("\nOrder {}:", i + 1);
                 println!("  Error: {:?}", err);
-            },
+            }
         }
     }
 

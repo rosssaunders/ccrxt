@@ -9,22 +9,22 @@ use thiserror::Error;
 pub enum Errors {
     #[error("API Error: {0}")]
     ApiError(#[from] ApiError),
-    
+
     #[error("HTTP Error: {0}")]
     HttpError(#[from] reqwest::Error),
-    
+
     #[error("JSON Parsing Error: {0}")]
     JsonError(#[from] serde_json::Error),
-    
+
     #[error("Rate Limit Error: {0}")]
     RateLimitError(String),
-    
+
     #[error("Authentication Error: {0}")]
     AuthenticationError(String),
-    
+
     #[error("Invalid API Key")]
     InvalidApiKey(),
-    
+
     #[error("Generic Error: {0}")]
     Error(String),
 }
@@ -56,8 +56,6 @@ pub struct ErrorResponse {
     pub error: ApiError,
 }
 
-
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -74,7 +72,10 @@ mod tests {
         let api_error: ApiError = serde_json::from_value(error_json).unwrap();
         assert_eq!(api_error.code, "INVALID_SYMBOL");
         assert_eq!(api_error.message, "Invalid symbol");
-        assert_eq!(api_error.details, Some("Symbol 'INVALID' is not supported".to_string()));
+        assert_eq!(
+            api_error.details,
+            Some("Symbol 'INVALID' is not supported".to_string())
+        );
     }
 
     #[test]
@@ -88,7 +89,10 @@ mod tests {
 
         let error_response: ErrorResponse = serde_json::from_value(response_json).unwrap();
         assert_eq!(error_response.error.code, "INSUFFICIENT_BALANCE");
-        assert_eq!(error_response.error.message, "Insufficient balance for trade");
+        assert_eq!(
+            error_response.error.message,
+            "Insufficient balance for trade"
+        );
         assert_eq!(error_response.error.details, None);
     }
 

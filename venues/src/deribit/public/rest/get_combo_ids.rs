@@ -4,7 +4,7 @@
 //! combos, or only the list of combos in the given state.
 
 use super::client::RestClient;
-use crate::deribit::{Currency, ComboState, EndpointType, RestResult};
+use crate::deribit::{ComboState, Currency, EndpointType, RestResult};
 use serde::{Deserialize, Serialize};
 
 /// Request parameters for the public/get_combo_ids endpoint.
@@ -47,10 +47,7 @@ impl RestClient {
     /// A result containing the response with combo IDs or an error
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_combo_ids)
-    pub async fn get_combo_ids(
-        &self,
-        params: GetComboIdsRequest,
-    ) -> RestResult<GetComboIdsResponse> {
+    pub async fn get_combo_ids(&self, params: GetComboIdsRequest) -> RestResult<GetComboIdsResponse> {
         self.send_request(
             "public/get_combo_ids",
             reqwest::Method::GET,
@@ -103,13 +100,22 @@ mod tests {
         assert_eq!(response.id, 123);
         assert_eq!(response.jsonrpc, "2.0");
         assert_eq!(response.result.len(), 2);
-        assert_eq!(response.result[0], "BTC-28JUN24-65000-C_BTC-28JUN24-70000-P");
+        assert_eq!(
+            response.result[0],
+            "BTC-28JUN24-65000-C_BTC-28JUN24-70000-P"
+        );
         assert_eq!(response.result[1], "ETH-28JUN24-3000-C_ETH-28JUN24-3500-P");
     }
 
     #[test]
     fn test_all_currencies() {
-        for currency in [Currency::BTC, Currency::ETH, Currency::USDC, Currency::USDT, Currency::EURR] {
+        for currency in [
+            Currency::BTC,
+            Currency::ETH,
+            Currency::USDC,
+            Currency::USDT,
+            Currency::EURR,
+        ] {
             let request = GetComboIdsRequest {
                 currency,
                 state: None,

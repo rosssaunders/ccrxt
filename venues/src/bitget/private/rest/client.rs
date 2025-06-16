@@ -20,16 +20,16 @@
 //! - Endpoint-specific limits: varies (3-20 requests per second)
 //! - UID-based limits for private endpoints
 
-use std::borrow::Cow;
-use reqwest::Client;
-use rest::secrets::ExposableSecret;
+use base64::{Engine, engine::general_purpose::STANDARD as BASE64};
 use chrono::Utc;
 use hmac::{Hmac, Mac};
+use reqwest::Client;
+use rest::secrets::ExposableSecret;
 use sha2::Sha256;
-use base64::{Engine, engine::general_purpose::STANDARD as BASE64};
+use std::borrow::Cow;
 
 use crate::bitget::rate_limit::RateLimiter;
-use crate::bitget::{RestResult, Errors};
+use crate::bitget::{Errors, RestResult};
 
 /// A client for interacting with the Bitget private REST API
 ///
@@ -88,21 +88,14 @@ impl RestClient {
     /// 1. Creating the string: timestamp + method + requestPath + queryString + body
     /// 2. HMAC SHA256 with the API secret
     /// 3. Base64 encoding the result
-    fn generate_signature(
-        &self,
-        timestamp: i64,
-        method: &str,
-        request_path: &str,
-        query_string: Option<&str>,
-        body: Option<&str>,
-    ) -> Result<String, Errors> {
+    fn generate_signature(&self, timestamp: i64, method: &str, request_path: &str, query_string: Option<&str>, body: Option<&str>) -> Result<String, Errors> {
         let query_part = match query_string {
             Some(q) if !q.is_empty() => format!("?{}", q),
             _ => String::new(),
         };
-        
+
         let body_part = body.unwrap_or("");
-        
+
         let sign_string = format!(
             "{}{}{}{}{}",
             timestamp,
@@ -112,13 +105,13 @@ impl RestClient {
             body_part
         );
 
-        let mut mac = Hmac::<Sha256>::new_from_slice(self.api_secret.expose_secret().as_bytes())
-            .map_err(|e| Errors::Error(format!("Failed to create HMAC: {}", e)))?;
-        
+        let mut mac =
+            Hmac::<Sha256>::new_from_slice(self.api_secret.expose_secret().as_bytes()).map_err(|e| Errors::Error(format!("Failed to create HMAC: {}", e)))?;
+
         mac.update(sign_string.as_bytes());
         let result = mac.finalize();
         let signature = BASE64.encode(result.into_bytes());
-        
+
         Ok(signature)
     }
 
@@ -151,23 +144,15 @@ impl RestClient {
         T: serde::de::DeserializeOwned,
     {
         // Check rate limits before making the request
-        self.rate_limiter.check_limits(
-            endpoint_limit_per_second,
-            is_order,
-            order_limit_per_second,
-        ).await?;
+        self.rate_limiter
+            .check_limits(endpoint_limit_per_second, is_order, order_limit_per_second)
+            .await?;
 
         // Generate timestamp
         let timestamp = Utc::now().timestamp_millis();
-        
+
         // Generate signature
-        let signature = self.generate_signature(
-            timestamp,
-            method.as_str(),
-            endpoint,
-            query_string,
-            body,
-        )?;
+        let signature = self.generate_signature(timestamp, method.as_str(), endpoint, query_string, body)?;
 
         // Build URL
         let url = match query_string {
@@ -176,7 +161,8 @@ impl RestClient {
         };
 
         // Build request
-        let mut request_builder = self.client
+        let mut request_builder = self
+            .client
             .request(method, &url)
             .header("ACCESS-KEY", self.api_key.expose_secret())
             .header("ACCESS-SIGN", signature)
@@ -193,7 +179,9 @@ impl RestClient {
 
         // Execute request
         let start_time = std::time::Instant::now();
-        let response = request_builder.send().await
+        let response = request_builder
+            .send()
+            .await
             .map_err(|e| Errors::HttpError(e))?;
         let _request_duration = start_time.elapsed();
 
@@ -205,8 +193,7 @@ impl RestClient {
 
         // Handle HTTP status codes
         let status = response.status();
-        let response_text = response.text().await
-            .map_err(|e| Errors::HttpError(e))?;
+        let response_text = response.text().await.map_err(|e| Errors::HttpError(e))?;
 
         // Parse response
         if status.is_success() {
@@ -226,49 +213,50 @@ impl RestClient {
                         };
                         Err(Errors::ApiError(error_response.into()))
                     }
-                },
+                }
                 Err(_) => {
                     // Failed to parse as success, treat as error
-                    Err(Errors::Error(format!("Failed to parse response: {}", response_text)))
+                    Err(Errors::Error(format!(
+                        "Failed to parse response: {}",
+                        response_text
+                    )))
                 }
             }
         } else {
             // Handle HTTP error status codes
             match status.as_u16() {
                 429 => {
-                    Err(Errors::ApiError(crate::bitget::errors::ApiError::RateLimitExceeded {
-                        msg: format!("Rate limit exceeded: {}", response_text),
-                        retry_after: None, // Bitget doesn't provide Retry-After header
-                    }))
-                },
-                403 => {
-                    Err(Errors::ApiError(crate::bitget::errors::ApiError::Forbidden {
+                    Err(Errors::ApiError(
+                        crate::bitget::errors::ApiError::RateLimitExceeded {
+                            msg: format!("Rate limit exceeded: {}", response_text),
+                            retry_after: None, // Bitget doesn't provide Retry-After header
+                        },
+                    ))
+                }
+                403 => Err(Errors::ApiError(
+                    crate::bitget::errors::ApiError::Forbidden {
                         msg: format!("Forbidden: {}", response_text),
-                    }))
-                },
-                408 => {
-                    Err(Errors::ApiError(crate::bitget::errors::ApiError::RequestTimeout {
+                    },
+                )),
+                408 => Err(Errors::ApiError(
+                    crate::bitget::errors::ApiError::RequestTimeout {
                         msg: format!("Request timeout: {}", response_text),
-                    }))
-                },
-                500..=599 => {
-                    Err(Errors::ApiError(crate::bitget::errors::ApiError::InternalServerError {
+                    },
+                )),
+                500..=599 => Err(Errors::ApiError(
+                    crate::bitget::errors::ApiError::InternalServerError {
                         msg: format!("Server error: {}", response_text),
-                    }))
-                },
+                    },
+                )),
                 _ => {
                     // Try to parse as error response
                     match serde_json::from_str::<crate::bitget::ErrorResponse>(&response_text) {
-                        Ok(error_response) => {
-                            Err(Errors::ApiError(error_response.into()))
-                        },
-                        Err(_) => {
-                            Err(Errors::Error(format!(
-                                "HTTP {} error: {}", 
-                                status.as_u16(), 
-                                response_text
-                            )))
-                        }
+                        Ok(error_response) => Err(Errors::ApiError(error_response.into())),
+                        Err(_) => Err(Errors::Error(format!(
+                            "HTTP {} error: {}",
+                            status.as_u16(),
+                            response_text
+                        ))),
                     }
                 }
             }

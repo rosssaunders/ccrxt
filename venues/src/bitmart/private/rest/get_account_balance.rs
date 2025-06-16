@@ -1,6 +1,6 @@
 use super::client::RestClient;
-use crate::bitmart::rate_limit::EndpointType;
 use crate::bitmart::RestResult;
+use crate::bitmart::rate_limit::EndpointType;
 use serde::{Deserialize, Serialize};
 
 /// Request parameters for getting account balance
@@ -60,7 +60,8 @@ impl RestClient {
             reqwest::Method::GET,
             Some(&request),
             EndpointType::FundingAccount,
-        ).await
+        )
+        .await
     }
 }
 
@@ -109,7 +110,10 @@ mod tests {
         assert_eq!(balance.currency, "USDT");
         assert_eq!(balance.name, "Tether USD");
         assert_eq!(balance.available, "1000.00000000");
-        assert_eq!(balance.available_usd_valuation, Some("1002.00000000".to_string()));
+        assert_eq!(
+            balance.available_usd_valuation,
+            Some("1002.00000000".to_string())
+        );
         assert_eq!(balance.frozen, "0.00000000");
         assert_eq!(balance.unavailable, "0.00000000");
     }
@@ -131,7 +135,10 @@ mod tests {
         assert_eq!(balance.currency, deserialized.currency);
         assert_eq!(balance.name, deserialized.name);
         assert_eq!(balance.available, deserialized.available);
-        assert_eq!(balance.available_usd_valuation, deserialized.available_usd_valuation);
+        assert_eq!(
+            balance.available_usd_valuation,
+            deserialized.available_usd_valuation
+        );
         assert_eq!(balance.frozen, deserialized.frozen);
         assert_eq!(balance.unavailable, deserialized.unavailable);
     }
@@ -182,6 +189,9 @@ mod tests {
         let response: GetAccountBalanceResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.wallet.len(), 1);
         assert_eq!(response.wallet[0].currency, "USDT");
-        assert_eq!(response.wallet[0].available_usd_valuation, Some("1002.00000000".to_string()));
+        assert_eq!(
+            response.wallet[0].available_usd_valuation,
+            Some("1002.00000000".to_string())
+        );
     }
 }

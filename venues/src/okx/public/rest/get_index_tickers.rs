@@ -68,10 +68,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing the list of index tickers
-    pub async fn get_index_tickers(
-        &self,
-        request: Option<GetIndexTickersRequest>,
-    ) -> RestResult<GetIndexTickersResponse> {
+    pub async fn get_index_tickers(&self, request: Option<GetIndexTickersRequest>) -> RestResult<GetIndexTickersResponse> {
         self.send_request(
             "api/v5/market/index-tickers",
             reqwest::Method::GET,
@@ -213,11 +210,11 @@ mod tests {
         let response: GetIndexTickersResponse = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 2);
-        
+
         let btc_ticker = &response.data[0];
         assert_eq!(btc_ticker.inst_id, "BTC-USD");
         assert_eq!(btc_ticker.idx_px, "43250.23");
-        
+
         let eth_ticker = &response.data[1];
         assert_eq!(eth_ticker.inst_id, "ETH-USD");
         assert_eq!(eth_ticker.idx_px, "2650.45");

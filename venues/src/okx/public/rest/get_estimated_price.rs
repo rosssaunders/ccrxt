@@ -54,10 +54,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing the estimated delivery/exercise price
-    pub async fn get_estimated_price(
-        &self,
-        request: GetEstimatedPriceRequest,
-    ) -> RestResult<GetEstimatedPriceResponse> {
+    pub async fn get_estimated_price(&self, request: GetEstimatedPriceRequest) -> RestResult<GetEstimatedPriceResponse> {
         self.send_request(
             "api/v5/public/estimated-price",
             reqwest::Method::GET,

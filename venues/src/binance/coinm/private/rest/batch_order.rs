@@ -5,8 +5,7 @@ use serde::{Deserialize, Serialize};
 use crate::binance::RestResult;
 use crate::binance::coinm::ErrorResponse;
 use crate::binance::coinm::enums::{
-    OrderResponseType, OrderSide, OrderStatus, OrderType, PositionSide, PriceMatch,
-    SelfTradePreventionMode, TimeInForce, WorkingType,
+    OrderResponseType, OrderSide, OrderStatus, OrderType, PositionSide, PriceMatch, SelfTradePreventionMode, TimeInForce, WorkingType,
 };
 use crate::binance::coinm::private::rest::client::RestClient;
 
@@ -282,10 +281,7 @@ impl RestClient {
     ///
     /// # Returns
     /// A vector of BatchOrderResult, each representing either a successful order or an error for that order.
-    pub async fn place_batch_orders(
-        &self,
-        request: PlaceBatchOrdersRequest,
-    ) -> RestResult<Vec<BatchOrderResult>> {
+    pub async fn place_batch_orders(&self, request: PlaceBatchOrdersRequest) -> RestResult<Vec<BatchOrderResult>> {
         self.send_signed_request(
             "/dapi/v1/batchOrders",
             reqwest::Method::POST,

@@ -68,10 +68,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing the open interest data
-    pub async fn get_open_interest(
-        &self,
-        request: GetOpenInterestRequest,
-    ) -> RestResult<GetOpenInterestResponse> {
+    pub async fn get_open_interest(&self, request: GetOpenInterestRequest) -> RestResult<GetOpenInterestResponse> {
         self.send_request(
             "api/v5/public/open-interest",
             reqwest::Method::GET,
@@ -177,7 +174,7 @@ mod tests {
         assert_eq!(response.code, "0");
         assert_eq!(response.msg, "");
         assert_eq!(response.data.len(), 1);
-        
+
         let open_interest = &response.data[0];
         assert_eq!(open_interest.inst_type, "SWAP");
         assert_eq!(open_interest.inst_id, "BTC-USDT-SWAP");
@@ -253,10 +250,10 @@ mod tests {
         let response: GetOpenInterestResponse = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 2);
-        
+
         assert_eq!(response.data[0].inst_type, "SWAP");
         assert_eq!(response.data[0].inst_id, "BTC-USDT-SWAP");
-        
+
         assert_eq!(response.data[1].inst_type, "FUTURES");
         assert_eq!(response.data[1].inst_id, "ETH-USD-240329");
     }

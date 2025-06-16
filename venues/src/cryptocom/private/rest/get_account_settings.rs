@@ -1,7 +1,7 @@
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
 use serde::Deserialize;
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 
 /// Account settings information
 #[derive(Debug, Clone, Deserialize)]
@@ -41,7 +41,8 @@ impl RestClient {
         let id = 1;
         let params = json!({});
 
-        self.send_signed_request("private/get-account-settings", params).await
+        self.send_signed_request("private/get-account-settings", params)
+            .await
     }
 }
 

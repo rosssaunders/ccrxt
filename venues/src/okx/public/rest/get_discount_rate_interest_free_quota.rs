@@ -110,10 +110,7 @@ mod tests {
         };
 
         let serialized = serde_json::to_value(&request).unwrap();
-        assert_eq!(
-            serialized.get("ccy").and_then(|v| v.as_str()),
-            Some("BTC")
-        );
+        assert_eq!(serialized.get("ccy").and_then(|v| v.as_str()), Some("BTC"));
         assert!(serialized.get("discountLv").is_none());
     }
 
@@ -138,10 +135,7 @@ mod tests {
         };
 
         let serialized = serde_json::to_value(&request).unwrap();
-        assert_eq!(
-            serialized.get("ccy").and_then(|v| v.as_str()),
-            Some("USDT")
-        );
+        assert_eq!(serialized.get("ccy").and_then(|v| v.as_str()), Some("USDT"));
         assert_eq!(
             serialized.get("discountLv").and_then(|v| v.as_str()),
             Some("1")
@@ -272,13 +266,13 @@ mod tests {
         let response: GetDiscountRateInterestFreeQuotaResponse = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 2);
-        
+
         // First currency
         assert_eq!(response.data[0].ccy, "BTC");
         assert_eq!(response.data[0].collateral_restrict, true);
         assert_eq!(response.data[0].details.len(), 0);
-        
-        // Second currency  
+
+        // Second currency
         assert_eq!(response.data[1].ccy, "ETH");
         assert_eq!(response.data[1].collateral_restrict, false);
         assert_eq!(response.data[1].details.len(), 1);

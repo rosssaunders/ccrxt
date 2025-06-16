@@ -42,8 +42,7 @@ impl ResponseHeaders {
         let values = headers
             .iter()
             .filter_map(|(name, val)| {
-                rate_limit::RateLimitHeader::parse(name.as_str())
-                    .and_then(|hdr| val.to_str().ok()?.parse::<u32>().ok().map(|v| (hdr, v)))
+                rate_limit::RateLimitHeader::parse(name.as_str()).and_then(|hdr| val.to_str().ok()?.parse::<u32>().ok().map(|v| (hdr, v)))
             })
             .collect();
         Self { values }

@@ -89,9 +89,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing interest rate and loan quota information
-    pub async fn get_interest_rate_loan_quota(
-        &self,
-    ) -> RestResult<GetInterestRateLoanQuotaResponse> {
+    pub async fn get_interest_rate_loan_quota(&self) -> RestResult<GetInterestRateLoanQuotaResponse> {
         self.send_request(
             "api/v5/public/interest-rate-loan-quota",
             reqwest::Method::GET,
@@ -111,7 +109,7 @@ mod tests {
     fn test_get_interest_rate_loan_quota_request_structure() {
         let request = GetInterestRateLoanQuotaRequest::default();
         let serialized = serde_json::to_value(&request).unwrap();
-        
+
         // Since this endpoint doesn't require parameters, the serialized value should be an empty object
         assert_eq!(serialized, json!({}));
     }
@@ -193,7 +191,7 @@ mod tests {
         assert_eq!(data.basic.len(), 2);
         assert_eq!(data.vip.len(), 1);
         assert_eq!(data.regular.len(), 1);
-        
+
         assert_eq!(data.basic[0].ccy, "BTC");
         assert_eq!(data.basic[1].ccy, "ETH");
         assert_eq!(data.vip[0].level, "VIP1");
@@ -236,7 +234,7 @@ mod tests {
         assert_eq!(response.code, "0");
         assert_eq!(response.msg, "");
         assert_eq!(response.data.len(), 1);
-        
+
         let data = &response.data[0];
         assert_eq!(data.basic.len(), 1);
         assert_eq!(data.vip.len(), 1);
@@ -268,13 +266,16 @@ mod tests {
 
         assert_eq!(original_data.basic[0].ccy, deserialized.basic[0].ccy);
         assert_eq!(original_data.vip[0].level, deserialized.vip[0].level);
-        assert_eq!(original_data.regular[0].level, deserialized.regular[0].level);
+        assert_eq!(
+            original_data.regular[0].level,
+            deserialized.regular[0].level
+        );
     }
 
     #[test]
     fn test_rest_client_method_integration() {
         use crate::okx::rate_limit::RateLimiter;
-        
+
         // Test that the method can be called on RestClient
         let client = reqwest::Client::new();
         let rate_limiter = RateLimiter::new();
@@ -283,7 +284,7 @@ mod tests {
         // Verify the method exists and has the correct signature
         // This is a compile-time test - if this compiles, the integration is correct
         let _future = rest_client.get_interest_rate_loan_quota();
-        
+
         // Since we can't actually call the API in tests, we just verify the method exists
         // and returns the correct future type
         assert!(true, "Method signature and integration is correct");

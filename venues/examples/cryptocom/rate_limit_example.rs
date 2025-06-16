@@ -29,13 +29,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
         // Check if we can make a request
         match limiter.check_limits(endpoint).await {
-            | Ok(()) => {
+            Ok(()) => {
                 println!("   ✓ Request allowed");
                 limiter.increment_request(endpoint).await;
-            },
-            | Err(e) => {
+            }
+            Err(e) => {
                 println!("   ✗ Request denied: {}", e);
-            },
+            }
         }
     }
 
@@ -47,19 +47,19 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // First request should succeed
     match limiter.check_limits(endpoint).await {
-        | Ok(()) => {
+        Ok(()) => {
             println!("   ✓ First request allowed");
             limiter.increment_request(endpoint).await;
-        },
-        | Err(e) => println!("   ✗ First request denied: {}", e),
+        }
+        Err(e) => println!("   ✗ First request denied: {}", e),
     }
 
     // Second request should fail
     match limiter.check_limits(endpoint).await {
-        | Ok(()) => {
+        Ok(()) => {
             println!("   ✗ Second request unexpectedly allowed");
-        },
-        | Err(e) => println!("   ✓ Second request correctly denied: {}", e),
+        }
+        Err(e) => println!("   ✓ Second request correctly denied: {}", e),
     }
 
     // Example 3: Using path-based endpoint detection
@@ -98,8 +98,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // This should fail since we made a request earlier
     match limiter.check_limits(endpoint).await {
-        | Ok(()) => println!("   ✗ Request unexpectedly allowed"),
-        | Err(e) => println!("   ✓ Request correctly denied: {}", e),
+        Ok(()) => println!("   ✗ Request unexpectedly allowed"),
+        Err(e) => println!("   ✓ Request correctly denied: {}", e),
     }
 
     println!("   Waiting 1.1 seconds for rate limit to reset...");
@@ -110,11 +110,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Should work now
     match limiter.check_limits(endpoint).await {
-        | Ok(()) => {
+        Ok(()) => {
             println!("   ✓ Request allowed after waiting");
             limiter.increment_request(endpoint).await;
-        },
-        | Err(e) => println!("   ✗ Request still denied: {}", e),
+        }
+        Err(e) => println!("   ✗ Request still denied: {}", e),
     }
 
     // Example 6: Error handling patterns
@@ -128,10 +128,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Try one more request that should fail
     match limiter.check_limits(endpoint).await {
-        | Ok(()) => {
+        Ok(()) => {
             println!("   Making API call...");
-        },
-        | Err(RateLimitError::RateLimitExceeded {
+        }
+        Err(RateLimitError::RateLimitExceeded {
             endpoint,
             current,
             max,
@@ -141,7 +141,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             println!("   Current usage: {}/{} requests", current, max);
             println!("   Window: {:?}", window);
             println!("   Recommended action: Wait and retry with exponential backoff");
-        },
+        }
     }
 
     println!("\nExample completed successfully!");

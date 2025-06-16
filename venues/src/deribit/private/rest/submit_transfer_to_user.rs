@@ -63,10 +63,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Transfer result with complete transfer information
-    pub async fn submit_transfer_to_user(
-        &self,
-        params: SubmitTransferToUserRequest,
-    ) -> RestResult<SubmitTransferToUserResponse> {
+    pub async fn submit_transfer_to_user(&self, params: SubmitTransferToUserRequest) -> RestResult<SubmitTransferToUserResponse> {
         self.send_signed_request(
             "private/submit_transfer_to_user",
             &params,
@@ -81,7 +78,7 @@ mod tests {
     use super::*;
     use crate::deribit::AccountTier;
     use rest::secrets::ExposableSecret;
-    use serde_json::{json, Value};
+    use serde_json::{Value, json};
 
     // Test secret implementation
     #[derive(Clone)]
@@ -136,7 +133,7 @@ mod tests {
         });
 
         let response: SubmitTransferToUserResponse = serde_json::from_value(response_json).unwrap();
-        
+
         assert_eq!(response.id, 1);
         assert_eq!(response.jsonrpc, "2.0");
         assert_eq!(response.result.amount, 0.001);
@@ -164,10 +161,10 @@ mod tests {
 
         // Test that we can get a function reference to the method
         let _ = RestClient::submit_transfer_to_user;
-        
+
         // Verify the client exists
         let _ = &rest_client;
-        
+
         println!("submit_transfer_to_user method is accessible and properly typed");
     }
 }

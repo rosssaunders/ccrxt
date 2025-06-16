@@ -31,11 +31,7 @@ impl RestClient {
     ///
     /// # Arguments
     /// * `base_url` - The base URL for the Binance Options public REST API (e.g., "https://eapi.binance.com").
-    pub fn new(
-        base_url: impl Into<Cow<'static, str>>,
-        client: Client,
-        rate_limiter: RateLimiter,
-    ) -> Self {
+    pub fn new(base_url: impl Into<Cow<'static, str>>, client: Client, rate_limiter: RateLimiter) -> Self {
         Self {
             base_url: base_url.into(),
             client,
@@ -55,17 +51,11 @@ impl RestClient {
     where
         T: serde::de::DeserializeOwned,
     {
-        let url = crate::binance::options::rest::common::build_url(
-            &self.base_url,
-            endpoint,
-            query_string,
-        )?;
+        let url = crate::binance::options::rest::common::build_url(&self.base_url, endpoint, query_string)?;
         let headers = vec![];
         let body_data = match body {
-            | Some(b) => Some(serde_urlencoded::to_string(b).map_err(|e| {
-                crate::binance::options::Errors::Error(format!("URL encoding error: {}", e))
-            })?),
-            | None => None,
+            Some(b) => Some(serde_urlencoded::to_string(b).map_err(|e| crate::binance::options::Errors::Error(format!("URL encoding error: {}", e)))?),
+            None => None,
         };
         let rest_response = crate::binance::options::rest::common::send_rest_request(
             &self.client,

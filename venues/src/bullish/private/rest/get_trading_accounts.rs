@@ -10,47 +10,47 @@ pub struct TradingAccount {
     /// Unique trading account identifier
     #[serde(rename = "tradingAccountId")]
     pub trading_account_id: String,
-    
+
     /// Total collateral across all assets in USD
     #[serde(rename = "totalCollateralUSD")]
     pub total_collateral_usd: String,
-    
+
     /// Total borrowed across all assets in USD
     #[serde(rename = "totalBorrowedUSD")]
     pub total_borrowed_usd: String,
-    
+
     /// The value of margin when this account will be moved into defaulted state
     #[serde(rename = "defaultedMarginUSD")]
     pub defaulted_margin_usd: String,
-    
+
     /// Maximum allowed borrowing for this account in USD
     #[serde(rename = "riskLimitUSD")]
     pub risk_limit_usd: String,
-    
+
     /// Total liabilities for this account in USD
     #[serde(rename = "totalLiabilitiesUSD")]
     pub total_liabilities_usd: String,
-    
+
     /// Whether this is the primary trading account
     #[serde(rename = "isPrimaryAccount")]
     pub is_primary_account: bool,
-    
+
     /// Whether this account is borrowing any asset
     #[serde(rename = "isBorrowing")]
     pub is_borrowing: bool,
-    
+
     /// Whether this account has any open loan offers
     #[serde(rename = "isLending")]
     pub is_lending: bool,
-    
+
     /// Whether this account is in a defaulted state
     #[serde(rename = "isDefaulted")]
     pub is_defaulted: bool,
-    
+
     /// Rate limit token for higher rate limits
     #[serde(rename = "rateLimitToken")]
     pub rate_limit_token: Option<String>,
-    
+
     /// Trading fee rates for this account
     #[serde(rename = "tradeFeeRate")]
     pub trade_fee_rate: Option<TradeFeeRate>,
@@ -62,7 +62,7 @@ pub struct TradeFeeRate {
     /// Maker fee rate
     #[serde(rename = "makerFeeRate")]
     pub maker_fee_rate: String,
-    
+
     /// Taker fee rate
     #[serde(rename = "takerFeeRate")]
     pub taker_fee_rate: String,
@@ -79,7 +79,7 @@ impl RestClient {
     /// Get all trading accounts
     ///
     /// Gets details for all trading accounts accessible by the API key used in the request.
-    /// This endpoint provides balance and account status information equivalent to a 
+    /// This endpoint provides balance and account status information equivalent to a
     /// "get balances" endpoint.
     ///
     /// See: Bullish API documentation for /v1/accounts/trading-accounts
@@ -107,7 +107,7 @@ impl RestClient {
     /// Trading account information for the specified account
     pub async fn get_trading_account(&mut self, trading_account_id: &str) -> RestResult<TradingAccount> {
         let endpoint = format!("/v1/accounts/trading-accounts/{}", trading_account_id);
-        
+
         self.send_authenticated_request(
             &endpoint,
             reqwest::Method::GET,
@@ -144,7 +144,7 @@ mod tests {
         });
 
         let account: TradingAccount = serde_json::from_value(account_json).unwrap();
-        
+
         assert_eq!(account.trading_account_id, "111234567890");
         assert_eq!(account.total_collateral_usd, "10000.50");
         assert_eq!(account.total_borrowed_usd, "5000.25");
@@ -152,8 +152,11 @@ mod tests {
         assert!(account.is_borrowing);
         assert!(!account.is_lending);
         assert!(!account.is_defaulted);
-        assert_eq!(account.rate_limit_token, Some("abcd1234efgh5678".to_string()));
-        
+        assert_eq!(
+            account.rate_limit_token,
+            Some("abcd1234efgh5678".to_string())
+        );
+
         let fee_rate = account.trade_fee_rate.unwrap();
         assert_eq!(fee_rate.maker_fee_rate, "0.001");
         assert_eq!(fee_rate.taker_fee_rate, "0.002");
@@ -175,7 +178,7 @@ mod tests {
         });
 
         let account: TradingAccount = serde_json::from_value(account_json).unwrap();
-        
+
         assert_eq!(account.trading_account_id, "111234567890");
         assert!(!account.is_primary_account);
         assert!(!account.is_borrowing);
@@ -217,14 +220,14 @@ mod tests {
         });
 
         let response: TradingAccountsResponse = serde_json::from_value(response_json).unwrap();
-        
+
         assert_eq!(response.data.len(), 2);
-        
+
         let first_account = &response.data[0];
         assert_eq!(first_account.trading_account_id, "111234567890");
         assert!(first_account.is_primary_account);
         assert!(!first_account.is_borrowing);
-        
+
         let second_account = &response.data[1];
         assert_eq!(second_account.trading_account_id, "111234567891");
         assert!(!second_account.is_primary_account);
@@ -239,7 +242,7 @@ mod tests {
         });
 
         let fee_rate: TradeFeeRate = serde_json::from_value(fee_rate_json).unwrap();
-        
+
         assert_eq!(fee_rate.maker_fee_rate, "0.0015");
         assert_eq!(fee_rate.taker_fee_rate, "0.0025");
     }
@@ -267,8 +270,17 @@ mod tests {
         let json_str = serde_json::to_string(&original_account).unwrap();
         let deserialized_account: TradingAccount = serde_json::from_str(&json_str).unwrap();
 
-        assert_eq!(original_account.trading_account_id, deserialized_account.trading_account_id);
-        assert_eq!(original_account.is_primary_account, deserialized_account.is_primary_account);
-        assert_eq!(original_account.rate_limit_token, deserialized_account.rate_limit_token);
+        assert_eq!(
+            original_account.trading_account_id,
+            deserialized_account.trading_account_id
+        );
+        assert_eq!(
+            original_account.is_primary_account,
+            deserialized_account.is_primary_account
+        );
+        assert_eq!(
+            original_account.rate_limit_token,
+            deserialized_account.rate_limit_token
+        );
     }
 }

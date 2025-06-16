@@ -130,10 +130,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing the mark price candlestick data
-    pub async fn get_history_mark_price_candles(
-        &self,
-        request: GetHistoryMarkPriceCandlesRequest,
-    ) -> RestResult<GetHistoryMarkPriceCandlesResponse> {
+    pub async fn get_history_mark_price_candles(&self, request: GetHistoryMarkPriceCandlesRequest) -> RestResult<GetHistoryMarkPriceCandlesResponse> {
         self.send_request(
             "api/v5/market/history-mark-price-candles",
             reqwest::Method::GET,
@@ -159,14 +156,8 @@ mod tests {
             serde_json::to_value(BarSize::FifteenMinutes).unwrap(),
             json!("15m")
         );
-        assert_eq!(
-            serde_json::to_value(BarSize::OneHour).unwrap(),
-            json!("1H")
-        );
-        assert_eq!(
-            serde_json::to_value(BarSize::OneDay).unwrap(),
-            json!("1D")
-        );
+        assert_eq!(serde_json::to_value(BarSize::OneHour).unwrap(), json!("1H"));
+        assert_eq!(serde_json::to_value(BarSize::OneDay).unwrap(), json!("1D"));
         assert_eq!(
             serde_json::to_value(BarSize::OneDayUtc).unwrap(),
             json!("1Dutc")
@@ -237,10 +228,7 @@ mod tests {
             serialized.get("before").and_then(|v| v.as_str()),
             Some("1597026383000")
         );
-        assert_eq!(
-            serialized.get("bar").and_then(|v| v.as_str()),
-            Some("15m")
-        );
+        assert_eq!(serialized.get("bar").and_then(|v| v.as_str()), Some("15m"));
         assert_eq!(
             serialized.get("limit").and_then(|v| v.as_str()),
             Some("100")
@@ -258,13 +246,12 @@ mod tests {
             ]
         });
 
-        let response: GetHistoryMarkPriceCandlesResponse = 
-            serde_json::from_value(response_json).unwrap();
-        
+        let response: GetHistoryMarkPriceCandlesResponse = serde_json::from_value(response_json).unwrap();
+
         assert_eq!(response.code, "0");
         assert_eq!(response.msg, "");
         assert_eq!(response.data.len(), 2);
-        
+
         let first_candle = &response.data[0];
         assert_eq!(first_candle[0], "1597026383085"); // ts
         assert_eq!(first_candle[1], "3811.24"); // o
@@ -304,8 +291,7 @@ mod tests {
         };
 
         let serialized = serde_json::to_value(&original).unwrap();
-        let deserialized: GetHistoryMarkPriceCandlesRequest = 
-            serde_json::from_value(serialized).unwrap();
+        let deserialized: GetHistoryMarkPriceCandlesRequest = serde_json::from_value(serialized).unwrap();
 
         assert_eq!(original.inst_id, deserialized.inst_id);
         assert_eq!(original.after, deserialized.after);
@@ -320,13 +306,9 @@ mod tests {
         use super::super::client::RestClient;
         use crate::okx::RateLimiter;
         use reqwest::Client;
-        
-        let _client = RestClient::new(
-            "https://www.okx.com",
-            Client::new(),
-            RateLimiter::new(),
-        );
-        
+
+        let _client = RestClient::new("https://www.okx.com", Client::new(), RateLimiter::new());
+
         let request = GetHistoryMarkPriceCandlesRequest {
             inst_id: "BTC-USD-SWAP".to_string(),
             after: None,

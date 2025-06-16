@@ -28,9 +28,18 @@ mod tests {
 
     #[test]
     fn test_account_type_serialization() {
-        assert_eq!(serde_json::to_string(&AccountType::Spot).unwrap(), "\"SPOT\"");
-        assert_eq!(serde_json::to_string(&AccountType::Contract).unwrap(), "\"CONTRACT\"");
-        assert_eq!(serde_json::to_string(&AccountType::Unified).unwrap(), "\"UNIFIED\"");
+        assert_eq!(
+            serde_json::to_string(&AccountType::Spot).unwrap(),
+            "\"SPOT\""
+        );
+        assert_eq!(
+            serde_json::to_string(&AccountType::Contract).unwrap(),
+            "\"CONTRACT\""
+        );
+        assert_eq!(
+            serde_json::to_string(&AccountType::Unified).unwrap(),
+            "\"UNIFIED\""
+        );
     }
 
     #[test]

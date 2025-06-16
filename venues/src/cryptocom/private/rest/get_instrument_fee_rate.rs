@@ -1,7 +1,7 @@
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
 use serde::{Deserialize, Serialize};
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 
 /// Request parameters for getting instrument fee rate
 #[derive(Debug, Clone, Serialize)]
@@ -35,16 +35,13 @@ impl RestClient {
     /// # Returns
     /// Instrument fee rate information
     #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
-    pub async fn get_instrument_fee_rate(
-        &self,
-        request: GetInstrumentFeeRateRequest,
-    ) -> RestResult<Value> {
+    pub async fn get_instrument_fee_rate(&self, request: GetInstrumentFeeRateRequest) -> RestResult<Value> {
         let nonce = chrono::Utc::now().timestamp_millis() as u64;
         let id = 1;
-        let params = serde_json::to_value(&request)
-            .map_err(|e| crate::cryptocom::Errors::Error(format!("Serialization error: {}", e)))?;
+        let params = serde_json::to_value(&request).map_err(|e| crate::cryptocom::Errors::Error(format!("Serialization error: {}", e)))?;
 
-        self.send_signed_request("private/get-instrument-fee-rate", params).await
+        self.send_signed_request("private/get-instrument-fee-rate", params)
+            .await
     }
 }
 

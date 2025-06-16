@@ -4,6 +4,4 @@ pub mod rest;
 pub use rest::RestClient as PrivateRestClient;
 
 // Re-export endpoints
-pub use rest::{
-    GetAccountAssetsRequest, GetAccountAssetsResponse, AssetInfo,
-};
+pub use rest::{AssetInfo, GetAccountAssetsRequest, GetAccountAssetsResponse};

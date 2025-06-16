@@ -25,10 +25,8 @@ impl PlainTextSecret {
 #[tokio::test]
 async fn test_private_endpoints_compile() {
     // Test that all the new private endpoints compile and are accessible
-    let api_key =
-        Box::new(PlainTextSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-    let api_secret =
-        Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+    let api_key = Box::new(PlainTextSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
+    let api_secret = Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
     let client = reqwest::Client::new();
 
     let rest_client = RestClient::new(api_key, api_secret, "https://api.crypto.com", client);

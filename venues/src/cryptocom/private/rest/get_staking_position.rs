@@ -1,7 +1,7 @@
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
 use serde::{Deserialize, Serialize};
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 
 /// Request parameters for get staking position
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -59,7 +59,8 @@ impl RestClient {
             json!({})
         };
 
-        self.send_signed_request("private/staking/get-staking-position", params).await
+        self.send_signed_request("private/staking/get-staking-position", params)
+            .await
     }
 }
 

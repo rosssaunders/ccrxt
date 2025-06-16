@@ -151,4 +151,3 @@ pub enum DeliveryExerciseType {
     #[serde(rename = "expired_otm")]
     ExpiredOtm,
 }
-

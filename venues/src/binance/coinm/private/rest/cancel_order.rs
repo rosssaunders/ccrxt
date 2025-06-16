@@ -3,10 +3,7 @@
 
 use crate::binance::coinm::RestResult;
 use crate::binance::coinm::private::rest::client::RestClient;
-use crate::binance::coinm::{
-    OrderSide, OrderType, PositionSide, PriceMatch, SelfTradePreventionMode, TimeInForce,
-    WorkingType,
-};
+use crate::binance::coinm::{OrderSide, OrderType, PositionSide, PriceMatch, SelfTradePreventionMode, TimeInForce, WorkingType};
 use serde::{Deserialize, Serialize};
 
 /// Request parameters for canceling an active order (DELETE /dapi/v1/order).
@@ -123,10 +120,7 @@ impl RestClient {
     ///
     /// # Returns
     /// A [`CancelOrderResponse`] object with order details.
-    pub async fn delete_order(
-        &self,
-        params: CancelOrderRequest,
-    ) -> RestResult<CancelOrderResponse> {
+    pub async fn delete_order(&self, params: CancelOrderRequest) -> RestResult<CancelOrderResponse> {
         let weight = 1;
         self.send_signed_request(
             "/dapi/v1/order",

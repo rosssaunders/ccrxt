@@ -163,7 +163,7 @@ impl Display for AddressBookType {
             AddressBookType::Withdrawal => write!(f, "withdrawal"),
             AddressBookType::DepositSource => write!(f, "deposit_source"),
         }
-    }                        
+    }
 }
 
 /// Order state for Deribit orders
@@ -402,7 +402,10 @@ mod tests {
     #[test]
     fn test_withdrawal_priority_display() {
         assert_eq!(format!("{}", WithdrawalPriority::Insane), "insane");
-        assert_eq!(format!("{}", WithdrawalPriority::ExtremeHigh), "extreme_high");
+        assert_eq!(
+            format!("{}", WithdrawalPriority::ExtremeHigh),
+            "extreme_high"
+        );
         assert_eq!(format!("{}", WithdrawalPriority::VeryHigh), "very_high");
         assert_eq!(format!("{}", WithdrawalPriority::High), "high");
         assert_eq!(format!("{}", WithdrawalPriority::Mid), "mid");
@@ -420,7 +423,10 @@ mod tests {
         let unconfirmed = WithdrawalState::Unconfirmed;
         let completed = WithdrawalState::Completed;
 
-        assert_eq!(serde_json::to_string(&unconfirmed).unwrap(), "\"unconfirmed\"");
+        assert_eq!(
+            serde_json::to_string(&unconfirmed).unwrap(),
+            "\"unconfirmed\""
+        );
         assert_eq!(serde_json::to_string(&completed).unwrap(), "\"completed\"");
 
         let unconfirmed_from_json: WithdrawalState = serde_json::from_str("\"unconfirmed\"").unwrap();
@@ -447,8 +453,14 @@ mod tests {
         let deposit_source = AddressBookType::DepositSource;
 
         assert_eq!(serde_json::to_string(&transfer).unwrap(), "\"transfer\"");
-        assert_eq!(serde_json::to_string(&withdrawal).unwrap(), "\"withdrawal\"");
-        assert_eq!(serde_json::to_string(&deposit_source).unwrap(), "\"deposit_source\"");
+        assert_eq!(
+            serde_json::to_string(&withdrawal).unwrap(),
+            "\"withdrawal\""
+        );
+        assert_eq!(
+            serde_json::to_string(&deposit_source).unwrap(),
+            "\"deposit_source\""
+        );
 
         let transfer_from_json: AddressBookType = serde_json::from_str("\"transfer\"").unwrap();
         let withdrawal_from_json: AddressBookType = serde_json::from_str("\"withdrawal\"").unwrap();
@@ -463,7 +475,10 @@ mod tests {
     fn test_address_book_type_display() {
         assert_eq!(format!("{}", AddressBookType::Transfer), "transfer");
         assert_eq!(format!("{}", AddressBookType::Withdrawal), "withdrawal");
-        assert_eq!(format!("{}", AddressBookType::DepositSource), "deposit_source");
+        assert_eq!(
+            format!("{}", AddressBookType::DepositSource),
+            "deposit_source"
+        );
     }
 
     #[test]
@@ -473,7 +488,10 @@ mod tests {
         let confirmed = AddressStatus::Confirmed;
         let ready = AddressStatus::Ready;
 
-        assert_eq!(serde_json::to_string(&admin_locked).unwrap(), "\"admin_locked\"");
+        assert_eq!(
+            serde_json::to_string(&admin_locked).unwrap(),
+            "\"admin_locked\""
+        );
         assert_eq!(serde_json::to_string(&waiting).unwrap(), "\"waiting\"");
         assert_eq!(serde_json::to_string(&confirmed).unwrap(), "\"confirmed\"");
         assert_eq!(serde_json::to_string(&ready).unwrap(), "\"ready\"");
@@ -551,8 +569,14 @@ mod tests {
         let user_request = CancelReason::UserRequest;
         let autoliquidation = CancelReason::Autoliquidation;
 
-        assert_eq!(serde_json::to_string(&user_request).unwrap(), "\"user_request\"");
-        assert_eq!(serde_json::to_string(&autoliquidation).unwrap(), "\"autoliquidation\"");
+        assert_eq!(
+            serde_json::to_string(&user_request).unwrap(),
+            "\"user_request\""
+        );
+        assert_eq!(
+            serde_json::to_string(&autoliquidation).unwrap(),
+            "\"autoliquidation\""
+        );
 
         let user_request_from_json: CancelReason = serde_json::from_str("\"user_request\"").unwrap();
         let autoliquidation_from_json: CancelReason = serde_json::from_str("\"autoliquidation\"").unwrap();
@@ -581,8 +605,14 @@ mod tests {
         let index_price = TriggerType::IndexPrice;
         let mark_price = TriggerType::MarkPrice;
 
-        assert_eq!(serde_json::to_string(&index_price).unwrap(), "\"index_price\"");
-        assert_eq!(serde_json::to_string(&mark_price).unwrap(), "\"mark_price\"");
+        assert_eq!(
+            serde_json::to_string(&index_price).unwrap(),
+            "\"index_price\""
+        );
+        assert_eq!(
+            serde_json::to_string(&mark_price).unwrap(),
+            "\"mark_price\""
+        );
 
         let index_price_from_json: TriggerType = serde_json::from_str("\"index_price\"").unwrap();
         let mark_price_from_json: TriggerType = serde_json::from_str("\"mark_price\"").unwrap();

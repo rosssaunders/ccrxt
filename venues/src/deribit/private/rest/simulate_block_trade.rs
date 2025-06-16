@@ -74,14 +74,14 @@ impl RestClient {
     ///
     /// # Returns
     /// Result with boolean indicating if block trade can be executed
-    pub async fn simulate_block_trade(
-        &self,
-        role: Option<Role>,
-        trades: Vec<Trade>,
-    ) -> RestResult<SimulateBlockTradeResponse> {
+    pub async fn simulate_block_trade(&self, role: Option<Role>, trades: Vec<Trade>) -> RestResult<SimulateBlockTradeResponse> {
         let request = SimulateBlockTradeRequest { role, trades };
-        self.send_signed_request("private/simulate_block_trade", &request, EndpointType::MatchingEngine)
-            .await
+        self.send_signed_request(
+            "private/simulate_block_trade",
+            &request,
+            EndpointType::MatchingEngine,
+        )
+        .await
     }
 }
 
@@ -90,7 +90,7 @@ mod tests {
     use super::*;
     use crate::deribit::AccountTier;
     use rest::secrets::ExposableSecret;
-    use serde_json::{json, Value};
+    use serde_json::{Value, json};
 
     // Test secret implementation
     #[derive(Clone)]
@@ -197,17 +197,17 @@ mod tests {
             direction: Direction::Buy,
         }];
 
-        let request = SimulateBlockTradeRequest {
-            role: None,
-            trades,
-        };
+        let request = SimulateBlockTradeRequest { role: None, trades };
 
         let json_str = serde_json::to_string(&request).unwrap();
         let json_value: Value = serde_json::from_str(&json_str).unwrap();
 
         assert!(json_value.get("role").is_none());
         assert!(json_value.get("trades").unwrap().is_array());
-        assert_eq!(json_value.get("trades").unwrap().as_array().unwrap().len(), 1);
+        assert_eq!(
+            json_value.get("trades").unwrap().as_array().unwrap().len(),
+            1
+        );
     }
 
     #[test]
@@ -237,7 +237,10 @@ mod tests {
 
         assert_eq!(json_value.get("role").unwrap(), "maker");
         assert!(json_value.get("trades").unwrap().is_array());
-        assert_eq!(json_value.get("trades").unwrap().as_array().unwrap().len(), 2);
+        assert_eq!(
+            json_value.get("trades").unwrap().as_array().unwrap().len(),
+            2
+        );
     }
 
     #[test]
@@ -249,7 +252,7 @@ mod tests {
         });
 
         let response: SimulateBlockTradeResponse = serde_json::from_value(response_json).unwrap();
-        
+
         assert_eq!(response.id, 1);
         assert_eq!(response.jsonrpc, "2.0");
         assert_eq!(response.result, true);
@@ -264,7 +267,7 @@ mod tests {
         });
 
         let response: SimulateBlockTradeResponse = serde_json::from_value(response_json).unwrap();
-        
+
         assert_eq!(response.id, 2);
         assert_eq!(response.jsonrpc, "2.0");
         assert_eq!(response.result, false);
@@ -288,10 +291,10 @@ mod tests {
 
         // Test that we can get a function reference to the method
         let _ = RestClient::simulate_block_trade;
-        
+
         // Verify the client exists
         let _ = &rest_client;
-        
+
         println!("simulate_block_trade method is accessible and properly typed");
     }
 }

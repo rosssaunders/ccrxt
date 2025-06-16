@@ -1,7 +1,7 @@
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
 use serde::{Deserialize, Serialize};
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 
 /// Balance history entry
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -53,12 +53,7 @@ impl RestClient {
     /// # Returns
     /// User balance history information
     #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
-    pub async fn get_user_balance_history(
-        &self,
-        timeframe: Option<String>,
-        end_time: Option<u64>,
-        limit: Option<i32>,
-    ) -> RestResult<Value> {
+    pub async fn get_user_balance_history(&self, timeframe: Option<String>, end_time: Option<u64>, limit: Option<i32>) -> RestResult<Value> {
         let nonce = chrono::Utc::now().timestamp_millis() as u64;
         let id = 1;
 
@@ -73,7 +68,8 @@ impl RestClient {
             params["limit"] = Value::Number(l.into());
         }
 
-        self.send_signed_request("private/user-balance-history", params).await
+        self.send_signed_request("private/user-balance-history", params)
+            .await
     }
 }
 

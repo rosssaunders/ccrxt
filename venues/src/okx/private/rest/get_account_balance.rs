@@ -1,4 +1,4 @@
-use super::{common::OkxApiResponse, RestClient};
+use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 use serde::{Deserialize, Serialize};
 
@@ -151,10 +151,7 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the account balance or an error
-    pub async fn get_account_balance(
-        &self,
-        request: &GetAccountBalanceRequest,
-    ) -> RestResult<OkxApiResponse<AccountBalance>> {
+    pub async fn get_account_balance(&self, request: &GetAccountBalanceRequest) -> RestResult<OkxApiResponse<AccountBalance>> {
         self.send_request(
             "api/v5/account/balance",
             reqwest::Method::GET,

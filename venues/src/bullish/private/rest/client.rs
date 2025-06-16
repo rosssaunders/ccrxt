@@ -1,12 +1,12 @@
 //! Bullish Private REST API client
 
 use crate::bullish::{EndpointType, Errors, RateLimiter, RestResult};
-use base64::{engine::general_purpose, Engine as _};
+use base64::{Engine as _, engine::general_purpose};
 use hmac::{Hmac, Mac};
 use reqwest::Client;
 use rest::secrets::ExposableSecret;
-use serde::de::DeserializeOwned;
 use serde::Serialize;
+use serde::de::DeserializeOwned;
 use serde_json::Value;
 use sha2::Sha256;
 use std::borrow::Cow;
@@ -68,20 +68,21 @@ impl RestClient {
     /// A JWT token valid for 24 hours
     pub async fn get_jwt_token(&mut self) -> RestResult<String> {
         // Check rate limits
-        self.rate_limiter.check_limits(EndpointType::PrivateLogin).await
+        self.rate_limiter
+            .check_limits(EndpointType::PrivateLogin)
+            .await
             .map_err(|e| Errors::RateLimitError(e.to_string()))?;
 
         let nonce = chrono::Utc::now().timestamp();
         let message = format!("GET/trading-api/v1/users/hmac/login{}", nonce);
-        
+
         // Sign the message with HMAC-SHA256
-        let mut mac = Hmac::<Sha256>::new_from_slice(self.api_secret.expose_secret().as_bytes())
-            .map_err(|_| Errors::InvalidApiKey())?;
+        let mut mac = Hmac::<Sha256>::new_from_slice(self.api_secret.expose_secret().as_bytes()).map_err(|_| Errors::InvalidApiKey())?;
         mac.update(message.as_bytes());
         let signature = general_purpose::STANDARD.encode(mac.finalize().into_bytes());
 
         let url = format!("{}/trading-api/v1/users/hmac/login", self.base_url);
-        
+
         let response = self
             .client
             .get(&url)
@@ -91,20 +92,27 @@ impl RestClient {
             .send()
             .await?;
 
-        self.rate_limiter.increment_request(EndpointType::PrivateLogin).await;
+        self.rate_limiter
+            .increment_request(EndpointType::PrivateLogin)
+            .await;
 
         if !response.status().is_success() {
             let error_text = response.text().await?;
-            return Err(Errors::AuthenticationError(format!("Login failed: {}", error_text)));
+            return Err(Errors::AuthenticationError(format!(
+                "Login failed: {}",
+                error_text
+            )));
         }
 
         let result: Value = response.json().await?;
-        
+
         if let Some(token) = result.get("token").and_then(|t| t.as_str()) {
             self.jwt_token = Some(token.to_string());
             Ok(token.to_string())
         } else {
-            Err(Errors::AuthenticationError("No token in response".to_string()))
+            Err(Errors::AuthenticationError(
+                "No token in response".to_string(),
+            ))
         }
     }
 
@@ -132,7 +140,9 @@ impl RestClient {
         B: Serialize,
     {
         // Check rate limits
-        self.rate_limiter.check_limits(endpoint_type).await
+        self.rate_limiter
+            .check_limits(endpoint_type)
+            .await
             .map_err(|e| Errors::RateLimitError(e.to_string()))?;
 
         // Ensure we have a valid JWT token
@@ -154,7 +164,7 @@ impl RestClient {
         }
 
         let response = request.send().await?;
-        
+
         self.rate_limiter.increment_request(endpoint_type).await;
 
         // Handle 401 Unauthorized - token might be expired
@@ -162,7 +172,7 @@ impl RestClient {
             // Try to refresh token once
             self.jwt_token = None;
             self.get_jwt_token().await?;
-            
+
             // Retry the request with new token
             let token = self.jwt_token.as_ref().unwrap();
             let mut retry_request = self
@@ -177,10 +187,13 @@ impl RestClient {
 
             let retry_response = retry_request.send().await?;
             self.rate_limiter.increment_request(endpoint_type).await;
-            
+
             if !retry_response.status().is_success() {
                 let error_text = retry_response.text().await?;
-                return Err(Errors::Error(format!("Request failed after token refresh: {}", error_text)));
+                return Err(Errors::Error(format!(
+                    "Request failed after token refresh: {}",
+                    error_text
+                )));
             }
 
             let result: T = retry_response.json().await?;
