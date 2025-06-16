@@ -59,8 +59,7 @@ impl RestClient {
     /// Position information for all or specified instruments
     #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
     pub async fn get_positions(&self, instrument_name: Option<&str>) -> RestResult<Value> {
-        let nonce = chrono::Utc::now().timestamp_millis() as u64;
-        let id = 1;
+        
 
         let mut params = json!({});
         if let Some(instrument) = instrument_name {

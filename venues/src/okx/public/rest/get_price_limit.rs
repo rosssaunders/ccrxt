@@ -106,7 +106,7 @@ mod tests {
         assert_eq!(price_limit.buy_lmt, "35000.0");
         assert_eq!(price_limit.sell_lmt, "25000.0");
         assert_eq!(price_limit.ts, "1597026383085");
-        assert_eq!(price_limit.enabled, true);
+        assert!(price_limit.enabled);
     }
 
     #[test]
@@ -126,7 +126,7 @@ mod tests {
         assert_eq!(price_limit.buy_lmt, "");
         assert_eq!(price_limit.sell_lmt, "");
         assert_eq!(price_limit.ts, "1597026383085");
-        assert_eq!(price_limit.enabled, false);
+        assert!(!price_limit.enabled);
     }
 
     #[test]
@@ -151,7 +151,7 @@ mod tests {
         assert_eq!(response.msg, "");
         assert_eq!(response.data.len(), 1);
         assert_eq!(response.data.first().unwrap().inst_id, "BTC-USDT-SWAP");
-        assert_eq!(response.data.first().unwrap().enabled, true);
+        assert!(response.data.first().unwrap().enabled);
     }
 
     #[test]

@@ -79,6 +79,7 @@ impl Display for ComboState {
 
 /// Withdrawal priority levels for Bitcoin withdrawals
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Default)]
 pub enum WithdrawalPriority {
     #[serde(rename = "insane")]
     Insane,
@@ -87,6 +88,7 @@ pub enum WithdrawalPriority {
     #[serde(rename = "very_high")]
     VeryHigh,
     #[serde(rename = "high")]
+    #[default]
     High,
     #[serde(rename = "mid")]
     Mid,
@@ -110,11 +112,6 @@ impl Display for WithdrawalPriority {
     }
 }
 
-impl Default for WithdrawalPriority {
-    fn default() -> Self {
-        WithdrawalPriority::High
-    }
-}
 
 /// Withdrawal state
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]

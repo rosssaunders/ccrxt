@@ -6,15 +6,11 @@ use crate::okx::{EndpointType, RestResult};
 /// Request parameters for getting interest rate and loan quota
 /// This endpoint does not require any parameters
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Default)]
 pub struct GetInterestRateLoanQuotaRequest {
     // This endpoint appears to not require any parameters based on the documentation
 }
 
-impl Default for GetInterestRateLoanQuotaRequest {
-    fn default() -> Self {
-        Self {}
-    }
-}
 
 /// Basic interest rate information
 #[derive(Debug, Clone, Serialize, Deserialize)]

@@ -314,7 +314,7 @@ mod tests {
         assert_eq!(response.result.len(), 1);
 
         let config = &response.result[0];
-        assert_eq!(config.block_rfq, false);
+        assert!(!config.block_rfq);
         assert_eq!(config.delta_limit, 100.0);
         assert_eq!(config.frozen_time, 30);
         assert_eq!(config.index_name, "btc_usd");
@@ -363,12 +363,12 @@ mod tests {
         assert_eq!(response.result.len(), 2);
 
         let normal_config = &response.result[0];
-        assert_eq!(normal_config.block_rfq, false);
+        assert!(!normal_config.block_rfq);
         assert_eq!(normal_config.index_name, "btc_usd");
         assert_eq!(normal_config.mmp_group, "group1");
 
         let block_rfq_config = &response.result[1];
-        assert_eq!(block_rfq_config.block_rfq, true);
+        assert!(block_rfq_config.block_rfq);
         assert_eq!(block_rfq_config.index_name, "all");
         assert_eq!(block_rfq_config.trade_count_limit, 10);
     }

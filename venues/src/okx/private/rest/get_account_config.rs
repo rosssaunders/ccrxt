@@ -183,7 +183,7 @@ mod tests {
         assert_eq!(config.uid, "123456789");
         assert_eq!(config.acct_lv, "2");
         assert_eq!(config.pos_mode, "long_short_mode");
-        assert_eq!(config.auto_loan, false);
+        assert!(!config.auto_loan);
         assert_eq!(config.level, "Lv1");
         assert_eq!(config.perm.len(), 3);
         assert!(config.perm.contains(&"trade".to_string()));

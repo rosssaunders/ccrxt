@@ -50,8 +50,8 @@ impl RestClient {
     /// # Returns
     /// Stake request information including staking ID, status, and charge details
     pub async fn stake(&self, instrument_name: &str, quantity: &str) -> RestResult<Value> {
-        let nonce = chrono::Utc::now().timestamp_millis() as u64;
-        let id = 1;
+        
+        
 
         let params = json!({
             "instrument_name": instrument_name,

@@ -76,8 +76,8 @@ impl RestClient {
         end_time: Option<u64>,
         limit: Option<&str>,
     ) -> RestResult<Value> {
-        let nonce = chrono::Utc::now().timestamp_millis() as u64;
-        let id = 1;
+        
+        
 
         let mut params = json!({});
 

@@ -183,7 +183,7 @@ impl RestClient {
         let response = request_builder
             .send()
             .await
-            .map_err(|e| Errors::HttpError(e))?;
+            .map_err(Errors::HttpError)?;
         let _request_duration = start_time.elapsed();
 
         // Update rate limiter counters
@@ -194,7 +194,7 @@ impl RestClient {
 
         // Handle HTTP status codes
         let status = response.status();
-        let response_text = response.text().await.map_err(|e| Errors::HttpError(e))?;
+        let response_text = response.text().await.map_err(Errors::HttpError)?;
 
         // Parse response
         if status.is_success() {

@@ -46,8 +46,8 @@ impl RestClient {
     /// # Returns
     /// Unstake request information including staking ID, status, and reason
     pub async fn unstake(&self, instrument_name: &str, quantity: &str) -> RestResult<Value> {
-        let nonce = chrono::Utc::now().timestamp_millis() as u64;
-        let id = 1;
+        
+        
 
         let params = json!({
             "instrument_name": instrument_name,

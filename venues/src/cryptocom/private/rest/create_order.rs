@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use serde_json::{Value, json};
+use serde_json::Value;
 
 use super::client::RestClient;
 use crate::cryptocom::{ExecInst, OrderType, RefPriceType, RestResult, SpotMarginType, StpInst, StpScope, TimeInForce, TradeSide};

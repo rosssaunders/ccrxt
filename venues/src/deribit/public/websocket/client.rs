@@ -6,16 +6,16 @@ use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
 
 use async_trait::async_trait;
-use futures::{SinkExt, Stream, StreamExt};
+use futures::{SinkExt, StreamExt};
 use serde_json;
 use thiserror::Error;
 use tokio::net::TcpStream;
 use tokio::sync::Mutex;
 use tokio_tungstenite::{MaybeTlsStream, WebSocketStream, connect_async, tungstenite::Message};
-use websockets::{BoxError, BoxResult, VenueMessage, WebSocketConnection};
+use websockets::{BoxResult, VenueMessage, WebSocketConnection};
 
 use crate::deribit::public::websocket::hello::{HelloResponse, JsonRpcRequest};
-use crate::deribit::rate_limit::{EndpointType, RateLimiter};
+use crate::deribit::rate_limit::RateLimiter;
 
 /// Deribit WebSocket message types
 #[derive(Debug, Clone)]

@@ -330,7 +330,7 @@ mod tests {
             response.result.address,
             "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh"
         );
-        assert_eq!(response.result.agreed, true);
+        assert!(response.result.agreed);
         assert_eq!(
             response.result.beneficiary_address,
             "123 Main St, Anytown, USA"
@@ -352,7 +352,7 @@ mod tests {
         );
         assert_eq!(response.result.currency, "BTC");
         assert_eq!(response.result.label, "My BTC Wallet");
-        assert_eq!(response.result.personal, true);
+        assert!(response.result.personal);
         assert_eq!(response.result.status, AddressStatus::Confirmed);
         assert_eq!(response.result.address_type, AddressBookType::Withdrawal);
         assert_eq!(response.result.waiting_timestamp, None);
@@ -396,9 +396,9 @@ mod tests {
         assert_eq!(response.result.beneficiary_first_name, None);
         assert_eq!(response.result.beneficiary_last_name, None);
         assert_eq!(response.result.beneficiary_vasp_website, None);
-        assert_eq!(response.result.personal, false);
-        assert_eq!(response.result.info_required, true);
-        assert_eq!(response.result.requires_confirmation, true);
+        assert!(!response.result.personal);
+        assert!(response.result.info_required);
+        assert!(response.result.requires_confirmation);
         assert_eq!(response.result.status, AddressStatus::Waiting);
         assert_eq!(response.result.address_type, AddressBookType::Transfer);
         assert_eq!(response.result.waiting_timestamp, Some(1640995400000i64));

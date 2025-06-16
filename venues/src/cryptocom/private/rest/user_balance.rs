@@ -83,8 +83,8 @@ impl RestClient {
     /// # Returns
     /// User balance information including position balances and margin details
     pub async fn get_user_balance(&self) -> RestResult<Value> {
-        let nonce = chrono::Utc::now().timestamp_millis() as u64;
-        let id = 1;
+        
+        
         let params = json!({});
 
         self.send_signed_request("private/user-balance", params)

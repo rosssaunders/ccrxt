@@ -257,7 +257,7 @@ mod tests {
 
         assert_eq!(response.id, 1);
         assert_eq!(response.jsonrpc, "2.0");
-        assert_eq!(response.result, true);
+        assert!(response.result);
     }
 
     #[test]
@@ -272,7 +272,7 @@ mod tests {
 
         assert_eq!(response.id, 2);
         assert_eq!(response.jsonrpc, "2.0");
-        assert_eq!(response.result, false);
+        assert!(!response.result);
     }
 
     #[tokio::test]

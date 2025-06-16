@@ -87,9 +87,6 @@ impl RestClient {
     #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
     #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
     pub async fn get_accounts(&self, page_size: Option<u32>, page: Option<u32>) -> RestResult<Value> {
-        let nonce = chrono::Utc::now().timestamp_millis() as u64;
-        let id = 1;
-
         let mut params = json!({});
         if let Some(ps) = page_size {
             params["page_size"] = Value::Number(ps.into());

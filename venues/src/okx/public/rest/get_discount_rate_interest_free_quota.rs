@@ -186,7 +186,7 @@ mod tests {
 
         let quota: DiscountRateInterestFreeQuota = serde_json::from_value(quota_json).unwrap();
         assert_eq!(quota.ccy, "BTC");
-        assert_eq!(quota.collateral_restrict, true);
+        assert!(quota.collateral_restrict);
         assert_eq!(quota.amt, "10");
         assert_eq!(quota.discount_lv, "1");
         assert_eq!(quota.min_discount_rate, "0.9");
@@ -226,7 +226,7 @@ mod tests {
         assert_eq!(response.msg, "");
         assert_eq!(response.data.len(), 1);
         assert_eq!(response.data[0].ccy, "BTC");
-        assert_eq!(response.data[0].collateral_restrict, true);
+        assert!(response.data[0].collateral_restrict);
         assert_eq!(response.data[0].amt, "10");
         assert_eq!(response.data[0].details.len(), 1);
     }
@@ -271,12 +271,12 @@ mod tests {
 
         // First currency
         assert_eq!(response.data[0].ccy, "BTC");
-        assert_eq!(response.data[0].collateral_restrict, true);
+        assert!(response.data[0].collateral_restrict);
         assert_eq!(response.data[0].details.len(), 0);
 
         // Second currency
         assert_eq!(response.data[1].ccy, "ETH");
-        assert_eq!(response.data[1].collateral_restrict, false);
+        assert!(!response.data[1].collateral_restrict);
         assert_eq!(response.data[1].details.len(), 1);
         assert_eq!(response.data[1].details[0].max_amt, ""); // Empty string for positive infinity
         assert_eq!(response.data[1].details[0].min_amt, "1000");

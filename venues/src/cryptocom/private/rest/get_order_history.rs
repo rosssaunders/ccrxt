@@ -112,8 +112,8 @@ impl RestClient {
         end_time: Option<String>,
         limit: Option<i32>,
     ) -> RestResult<Value> {
-        let nonce = chrono::Utc::now().timestamp_millis() as u64;
-        let id = 1;
+        
+        
 
         let mut params = json!({});
         if let Some(in_name) = instrument_name {

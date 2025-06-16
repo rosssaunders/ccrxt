@@ -64,8 +64,8 @@ impl RestClient {
         from_quantity: &str,
         slippage_tolerance_bps: &str,
     ) -> RestResult<Value> {
-        let nonce = chrono::Utc::now().timestamp_millis() as u64;
-        let id = 1;
+        
+        
 
         let params = json!({
             "from_instrument_name": from_instrument_name,

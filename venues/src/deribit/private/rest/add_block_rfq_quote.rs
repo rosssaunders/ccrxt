@@ -8,18 +8,15 @@ use crate::deribit::{EndpointType, RestResult};
 /// Execution instruction for Block RFQ quotes
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
+#[derive(Default)]
 pub enum ExecutionInstruction {
     /// All or none - quote can only be filled entirely or not at all
     AllOrNone,
     /// Any part of - quote can be filled partially or fully (default)
+    #[default]
     AnyPartOf,
 }
 
-impl Default for ExecutionInstruction {
-    fn default() -> Self {
-        ExecutionInstruction::AnyPartOf
-    }
-}
 
 /// A leg in the Block RFQ quote
 #[derive(Debug, Clone, Serialize, Deserialize)]

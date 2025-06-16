@@ -5,8 +5,10 @@ use tokio::sync::RwLock;
 
 /// Account tiers for Deribit matching engine rate limits based on 7-day trading volume
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Default)]
 pub enum AccountTier {
     /// Tier 1: Over USD 25 million - 30 req/sec sustained, 100 burst
+    #[default]
     Tier1,
     /// Tier 2: Over USD 5 million - 20 req/sec sustained, 50 burst
     Tier2,
@@ -38,11 +40,6 @@ impl AccountTier {
     }
 }
 
-impl Default for AccountTier {
-    fn default() -> Self {
-        AccountTier::Tier1
-    }
-}
 
 /// Types of endpoints for Deribit rate limiting
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]

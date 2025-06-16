@@ -1,8 +1,6 @@
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
 
 use super::client::RestClient;
-use crate::cryptocom::RestResult;
 
 /// Request for canceling OCO orders
 #[derive(Debug, Clone, Serialize, Deserialize)]

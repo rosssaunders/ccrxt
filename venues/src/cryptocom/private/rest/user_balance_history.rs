@@ -55,8 +55,8 @@ impl RestClient {
     /// User balance history information
     #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
     pub async fn get_user_balance_history(&self, timeframe: Option<String>, end_time: Option<u64>, limit: Option<i32>) -> RestResult<Value> {
-        let nonce = chrono::Utc::now().timestamp_millis() as u64;
-        let id = 1;
+        
+        
 
         let mut params = json!({});
         if let Some(tf) = timeframe {

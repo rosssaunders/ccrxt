@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::cryptocom::RestResult;
 
 /// Individual order to cancel in a list
 #[derive(Debug, Clone, Serialize, Deserialize)]
