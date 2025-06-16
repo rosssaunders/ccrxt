@@ -57,17 +57,19 @@ where
 
     debug!("Sending {} request to {}", method, url);
 
-    let response = request_builder.send().await.map_err(|e| {
-        Errors::Error(format!("Failed to send HTTP request: {}", e))
-    })?;
+    let response = request_builder
+        .send()
+        .await
+        .map_err(|e| Errors::Error(format!("Failed to send HTTP request: {}", e)))?;
 
     let duration = start.elapsed();
     let status = response.status();
     let response_headers = ResponseHeaders::from_reqwest_headers(response.headers());
 
-    let response_text = response.text().await.map_err(|e| {
-        Errors::Error(format!("Failed to read response body: {}", e))
-    })?;
+    let response_text = response
+        .text()
+        .await
+        .map_err(|e| Errors::Error(format!("Failed to read response body: {}", e)))?;
 
     debug!("Response status: {}, body: {}", status, response_text);
 
@@ -75,13 +77,21 @@ where
     if !status.is_success() {
         let error_msg = extract_msg(&response_text).await;
         let error = match status {
-            StatusCode::TOO_MANY_REQUESTS => {
+            | StatusCode::TOO_MANY_REQUESTS => {
                 // Extract rate limit headers for detailed error info
-                let used_weight_1m = response_headers.values.iter()
-                    .find(|(k, _)| k.to_string().contains("used-weight") && k.to_string().contains("1m"))
+                let used_weight_1m = response_headers
+                    .values
+                    .iter()
+                    .find(|(k, _)| {
+                        k.to_string().contains("used-weight") && k.to_string().contains("1m")
+                    })
                     .map(|(_, v)| *v);
-                let order_count_1m = response_headers.values.iter()
-                    .find(|(k, _)| k.to_string().contains("order-count") && k.to_string().contains("1m"))
+                let order_count_1m = response_headers
+                    .values
+                    .iter()
+                    .find(|(k, _)| {
+                        k.to_string().contains("order-count") && k.to_string().contains("1m")
+                    })
                     .map(|(_, v)| *v);
                 Errors::ApiError(ApiError::RateLimitExceeded {
                     msg: error_msg,
@@ -90,18 +100,24 @@ where
                     retry_after: None, // Could be extracted from Retry-After header
                 })
             },
-            StatusCode::IM_A_TEAPOT => Errors::ApiError(ApiError::IpAutoBanned { msg: error_msg }),
-            StatusCode::FORBIDDEN => Errors::ApiError(ApiError::WafLimitViolated { msg: error_msg }),
-            StatusCode::UNAUTHORIZED => Errors::ApiError(ApiError::Unauthorized { msg: error_msg }),
-            StatusCode::BAD_REQUEST => {
+            | StatusCode::IM_A_TEAPOT => {
+                Errors::ApiError(ApiError::IpAutoBanned { msg: error_msg })
+            },
+            | StatusCode::FORBIDDEN => {
+                Errors::ApiError(ApiError::WafLimitViolated { msg: error_msg })
+            },
+            | StatusCode::UNAUTHORIZED => {
+                Errors::ApiError(ApiError::Unauthorized { msg: error_msg })
+            },
+            | StatusCode::BAD_REQUEST => {
                 // Try to parse as structured error
                 if let Ok(error_response) = serde_json::from_str::<ErrorResponse>(&response_text) {
                     Errors::ApiError(ApiError::from(error_response))
                 } else {
                     Errors::Error(format!("Bad Request: {}", error_msg))
                 }
-            }
-            _ => Errors::Error(format!("HTTP {}: {}", status, error_msg)),
+            },
+            | _ => Errors::Error(format!("HTTP {}: {}", status, error_msg)),
         };
         return Err(error);
     }

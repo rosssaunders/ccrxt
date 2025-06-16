@@ -1,8 +1,8 @@
 // New Order (TRADE) endpoint implementation for POST /dapi/v1/order
 // See: <https://binance-docs.github.io/apidocs/delivery/en/>
 
-use crate::binance::coinm::private::rest::client::RestClient;
 use crate::binance::coinm::RestResult;
+use crate::binance::coinm::private::rest::client::RestClient;
 use crate::binance::coinm::{
     OrderResponseType, OrderSide, OrderType, PositionSide, PriceMatch, SelfTradePreventionMode,
     TimeInForce, WorkingType,

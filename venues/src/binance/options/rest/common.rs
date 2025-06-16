@@ -1,7 +1,7 @@
 // Shared REST client logic for Binance Options public and private clients.
 // Handles URL construction, header assembly, request execution, and rate limiter update.
 
-use crate::binance::options::{Errors, RateLimiter, ResponseHeaders, ErrorResponse};
+use crate::binance::options::{ErrorResponse, Errors, RateLimiter, ResponseHeaders};
 use reqwest::{Client, Method};
 use std::time::Duration;
 use url::Url;
@@ -69,9 +69,9 @@ async fn execute_request<T>(
 where
     T: serde::de::DeserializeOwned,
 {
-    use tracing::debug;
-    use reqwest::StatusCode;
     use crate::binance::options::ApiError;
+    use reqwest::StatusCode;
+    use tracing::debug;
 
     let start = std::time::Instant::now();
     let mut request = client.request(method, url);
@@ -95,11 +95,14 @@ where
     let status = response.status();
     let response_text = response.text().await.map_err(Errors::HttpError)?;
 
-    debug!("Options API response: status={}, body={}", status, response_text);
+    debug!(
+        "Options API response: status={}, body={}",
+        status, response_text
+    );
 
     // Handle non-success status codes
     match status {
-        StatusCode::OK => {
+        | StatusCode::OK => {
             // Parse the JSON response
             let data: T = serde_json::from_str(&response_text)
                 .map_err(|e| Errors::Error(format!("JSON parsing error: {}", e)))?;
@@ -108,30 +111,28 @@ where
                 headers,
                 duration,
             })
-        }
-        StatusCode::TOO_MANY_REQUESTS => {
+        },
+        | StatusCode::TOO_MANY_REQUESTS => {
             let error_msg = extract_msg(&response_text).await;
-            Err(Errors::ApiError(ApiError::TooManyRequests { msg: error_msg }))
-        }
-        StatusCode::IM_A_TEAPOT => {
+            Err(Errors::ApiError(ApiError::TooManyRequests {
+                msg: error_msg,
+            }))
+        },
+        | StatusCode::IM_A_TEAPOT => {
             let error_msg = extract_msg(&response_text).await;
             Err(Errors::ApiError(ApiError::IpAutoBanned { msg: error_msg }))
-        }
-        StatusCode::UNAUTHORIZED => {
+        },
+        | StatusCode::UNAUTHORIZED => {
             let error_msg = extract_msg(&response_text).await;
             Err(Errors::ApiError(ApiError::Unauthorized { msg: error_msg }))
-        }
-        _ => {
+        },
+        | _ => {
             // Try to parse as ErrorResponse first
             match serde_json::from_str::<ErrorResponse>(&response_text) {
-                Ok(error_response) => Err(Errors::ApiError(error_response.into())),
-                Err(_) => Err(Errors::Error(format!(
-                    "HTTP {}: {}",
-                    status,
-                    response_text
-                ))),
+                | Ok(error_response) => Err(Errors::ApiError(error_response.into())),
+                | Err(_) => Err(Errors::Error(format!("HTTP {}: {}", status, response_text))),
             }
-        }
+        },
     }
 }
 

@@ -5,11 +5,13 @@ Portfolio Margin trading uses **identical rate limits** to COIN-M Futures:
 ## Rate Limits
 
 ### IP Limits
+
 - **Portfolio Margin IP Limit**: 6000/min (same as COIN-M)
 - **Raw requests**: 61,000 per 5 min
 - **Request weight**: 6,000 per 1 min per-IP
 
-### Order Limits  
+### Order Limits
+
 - **Portfolio Margin Order Limits**: 1200/min (same as COIN-M)
 - **Orders**: 100 per 10s, 1,200 per 1m
 
@@ -50,13 +52,13 @@ Portfolio Margin rate limiting returns the same error types as COIN-M:
 Portfolio Margin uses the same rate limiting headers as COIN-M:
 
 - `X-MBX-USED-WEIGHT-1M`: Current used weight for 1 minute window
-- `X-MBX-ORDER-COUNT-10S`: Order count for 10 second window  
+- `X-MBX-ORDER-COUNT-10S`: Order count for 10 second window
 - `X-MBX-ORDER-COUNT-1M`: Order count for 1 minute window
 
 ## Best Practices
 
 1. **Pre-check limits**: Always call `check_limits()` before making requests
-2. **Track usage**: Increment counters after each request  
+2. **Track usage**: Increment counters after each request
 3. **Respect headers**: Update counters from response headers (authoritative)
 4. **Use WebSockets**: For market data to avoid REST rate limits
 5. **Implement backoff**: When receiving 429 errors

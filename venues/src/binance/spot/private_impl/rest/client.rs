@@ -124,7 +124,7 @@ impl RestClient {
         // Add timestamp to query params for signing
         let timestamp = chrono::Utc::now().timestamp_millis().to_string();
         let mut query_params = vec![("timestamp".to_string(), timestamp)];
-        
+
         // Add any additional query parameters
         if let Some(qs) = query_string {
             // Parse existing query string and add to params
@@ -132,52 +132,53 @@ impl RestClient {
                 .map_err(|e| Errors::Error(format!("Invalid query string: {}", e)))?;
             query_params.extend(parsed);
         }
-        
+
         // Add body parameters to query params for signing
         if let Some(body_params) = body {
             for (k, v) in body_params {
                 query_params.push((k.to_string(), v.to_string()));
             }
         }
-        
+
         // Build query string for signing
         let query_for_signing = serde_urlencoded::to_string(&query_params)
             .map_err(|e| Errors::Error(format!("Failed to encode query string: {}", e)))?;
-        
+
         // Sign the request
         let signature = sign_request(self.api_secret.as_ref(), &query_for_signing)?;
         query_params.push(("signature".to_string(), signature));
-        
+
         // Final query string with signature
         let final_query_string = serde_urlencoded::to_string(&query_params)
             .map_err(|e| Errors::Error(format!("Failed to encode final query string: {}", e)))?;
 
         let url = crate::binance::spot::rest::common::build_url(
-            &self.base_url, 
-            endpoint, 
-            Some(&final_query_string)
+            &self.base_url,
+            endpoint,
+            Some(&final_query_string),
         )?;
-        
+
         let mut headers = vec![];
         let api_key = self.api_key.expose_secret();
         if !api_key.is_empty() {
             headers.push(("X-MBX-APIKEY", api_key));
         }
-        
+
         let body_data = match body {
-            Some(b) => Some(serde_urlencoded::to_string(b).map_err(|e| {
-                Errors::Error(format!("URL encoding error: {}", e))
-            })?),
-            None => None,
+            | Some(b) => Some(
+                serde_urlencoded::to_string(b)
+                    .map_err(|e| Errors::Error(format!("URL encoding error: {}", e)))?,
+            ),
+            | None => None,
         };
-        
+
         if body_data.is_some() {
             headers.push((
                 "Content-Type",
                 "application/x-www-form-urlencoded".to_string(),
             ));
         }
-        
+
         let rest_response = crate::binance::spot::rest::common::send_rest_request(
             &self.client,
             &url,
@@ -189,7 +190,7 @@ impl RestClient {
             is_order,
         )
         .await?;
-        
+
         Ok(crate::binance::spot::RestResponse {
             data: rest_response.data,
             headers: rest_response.headers,
@@ -241,14 +242,19 @@ mod tests {
 
     #[test]
     fn test_request_signing() {
-        let secret = TestSecret::new("NhqPtmdSJYdKjVHjA7PZj4Mge3R5YNiP1e3UZjInClVN65XAbvqqM6A7H5fATj0j".to_string());
+        let secret = TestSecret::new(
+            "NhqPtmdSJYdKjVHjA7PZj4Mge3R5YNiP1e3UZjInClVN65XAbvqqM6A7H5fATj0j".to_string(),
+        );
         let query_string = "symbol=LTCBTC&side=BUY&type=LIMIT&timeInForce=GTC&quantity=1&price=0.1&recvWindow=5000&timestamp=1499827319559";
-        
+
         let result = sign_request(&secret, query_string);
         assert!(result.is_ok());
-        
+
         let signature = result.unwrap();
         // This is the expected signature from Binance API documentation
-        assert_eq!(signature, "c8db56825ae71d6d79447849e617115f4a920fa2acdcab2b053c4b2838bd6b71");
+        assert_eq!(
+            signature,
+            "c8db56825ae71d6d79447849e617115f4a920fa2acdcab2b053c4b2838bd6b71"
+        );
     }
 }

@@ -13,12 +13,12 @@ pub async fn run_all_orders(client: &PrivateRestClient, symbol: String, limit: u
         timestamp: chrono::Utc::now().timestamp_millis() as u64,
     };
     match client.get_all_orders(params).await {
-        Ok(orders) => {
+        | Ok(orders) => {
             println!("All Orders:");
             for order in orders.data {
                 println!("{:#?}", order);
             }
-        }
-        Err(e) => eprintln!("Error fetching all orders: {e:?}"),
+        },
+        | Err(e) => eprintln!("Error fetching all orders: {e:?}"),
     }
 }

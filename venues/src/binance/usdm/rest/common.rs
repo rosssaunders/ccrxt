@@ -1,7 +1,7 @@
 // Shared REST client logic for Binance USD-M public and private clients.
 // Handles URL construction, header assembly, request execution, and rate limiter update.
 
-use crate::binance::usdm::{execute_request, Errors, RateLimiter, ResponseHeaders};
+use crate::binance::usdm::{Errors, RateLimiter, ResponseHeaders, execute_request};
 use reqwest::{Client, Method};
 use url::Url;
 

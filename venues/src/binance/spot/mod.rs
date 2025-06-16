@@ -18,9 +18,9 @@ pub use private_impl::PrivateRestClient;
 pub use private_impl as private;
 
 // Re-export key components
-pub use errors::{Errors, ApiError};
-pub use rate_limit::{RateLimiter, RateLimitHeader};
 pub use enums::*;
+pub use errors::{ApiError, Errors};
+pub use rate_limit::{RateLimitHeader, RateLimiter};
 
 pub use crate::binance::spot::errors::ErrorResponse;
 

@@ -74,8 +74,9 @@ The Portfolio Margin API uses `https://papi.binance.com` as the base URL, as spe
 ## Rate Limiting
 
 The client includes the same rate limiting mechanisms as the Coin-M client:
+
 - Raw requests: 61,000 per 5 minutes
-- Request weight: 6,000 per minute  
+- Request weight: 6,000 per minute
 - Order limits: 100 per 10 seconds, 1,200 per minute
 
 ## Error Handling

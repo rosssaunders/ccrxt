@@ -1,0 +1,52 @@
+# rustfmt.toml
+
+# Maximum width of each line
+max_width = 100
+
+# Use spaces instead of tabs
+hard_tabs = false
+
+# Indent with 4 spaces
+tab_spaces = 4
+
+# Group imports into one block and sort them
+group_imports = "StdExternalCrate"
+reorder_imports = true
+
+# Remove redundant `pub(crate)` if it's unnecessary
+pub_crate_visibility = "normal"
+
+# Format documentation comments
+format_docs = true
+
+# Keep empty lines between functions and module items
+blank_lines_upper_bound = 2
+blank_lines_lower_bound = 0
+
+# Align function parameters and struct fields
+align_args = true
+align_fields = true
+struct_field_align_threshold = 20
+
+# Control how where clauses are wrapped
+where_single_line = false
+
+# Don't merge imports like `use std::{fmt, io};`
+imports_granularity = "Crate"
+
+# Reorder impl items for consistency
+reorder_impl_items = true
+
+# Allow small functions to stay on a single line
+fn_single_line = true
+fn_single_line_threshold = 50
+
+# Control use of trailing commas
+trailing_comma = "Vertical"
+
+# Control match arm indentation
+match_block_trailing_comma = true
+match_arm_leading_pipes = "Always"
+
+# Use modern Rust idioms
+edition = "2024"

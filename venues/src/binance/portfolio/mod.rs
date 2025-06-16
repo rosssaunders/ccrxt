@@ -1,6 +1,5 @@
 mod enums;
 mod errors;
-mod integration_tests;
 mod rate_limit;
 mod request;
 

@@ -11,12 +11,12 @@ pub async fn run_position_risk(client: &PrivateRestClient) {
     };
 
     match client.get_position_risk(params).await {
-        Ok(positions) => {
+        | Ok(positions) => {
             println!("Position Risk:");
             for pos in positions.data {
                 println!("{:#?}", pos);
             }
-        }
-        Err(e) => eprintln!("Error fetching position risk: {e:?}"),
+        },
+        | Err(e) => eprintln!("Error fetching position risk: {e:?}"),
     }
 }

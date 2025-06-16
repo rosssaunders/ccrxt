@@ -1,8 +1,8 @@
 // Query Order endpoint implementation for GET /dapi/v1/order
 // See: https://binance-docs.github.io/apidocs/delivery/en/>
 
-use crate::binance::coinm::private::rest::client::RestClient;
 use crate::binance::coinm::RestResult;
+use crate::binance::coinm::private::rest::client::RestClient;
 use serde::{Deserialize, Serialize};
 
 /// Request parameters for querying an order (GET /dapi/v1/order).

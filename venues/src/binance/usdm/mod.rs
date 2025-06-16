@@ -48,8 +48,8 @@ mod request;
 // Re-export modules for new structure
 mod public {
     mod rest;
-    pub use self::rest::exchange_info::*;
     pub use self::rest::RestClient as PublicRestClient;
+    pub use self::rest::exchange_info::*;
 }
 
 mod private {

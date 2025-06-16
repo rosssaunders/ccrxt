@@ -151,37 +151,37 @@ fn print_exchange_info(info: &ExchangeInfoResponse) {
     for symbol in &info.symbols {
         for filter in &symbol.filters {
             match filter {
-                Filter::PriceFilter(f) => {
+                | Filter::PriceFilter(f) => {
                     price_filter_rows.push(PriceFilterRow {
                         symbol: symbol.symbol.clone(),
                         min_price: f.min_price.clone().unwrap_or_default(),
                         max_price: f.max_price.clone().unwrap_or_default(),
                         tick_size: f.tick_size.clone().unwrap_or_default(),
                     });
-                }
-                Filter::LotSizeFilter(f) => {
+                },
+                | Filter::LotSizeFilter(f) => {
                     lot_size_filter_rows.push(LotSizeFilterRow {
                         symbol: symbol.symbol.clone(),
                         min_qty: f.min_qty.clone().unwrap_or_default(),
                         max_qty: f.max_qty.clone().unwrap_or_default(),
                         step_size: f.step_size.clone().unwrap_or_default(),
                     });
-                }
-                Filter::MarketLotSizeFilter(f) => {
+                },
+                | Filter::MarketLotSizeFilter(f) => {
                     market_lot_size_filter_rows.push(MarketLotSizeFilterRow {
                         symbol: symbol.symbol.clone(),
                         min_qty: f.min_qty.clone().unwrap_or_default(),
                         max_qty: f.max_qty.clone().unwrap_or_default(),
                         step_size: f.step_size.clone().unwrap_or_default(),
                     });
-                }
-                Filter::MaxNumOrdersFilter(f) => {
+                },
+                | Filter::MaxNumOrdersFilter(f) => {
                     max_num_orders_filter_rows.push(MaxNumOrdersFilterRow {
                         symbol: symbol.symbol.clone(),
                         limit: f.limit.map(|v| v.to_string()).unwrap_or_default(),
                     });
-                }
-                Filter::PercentPriceFilter(f) => {
+                },
+                | Filter::PercentPriceFilter(f) => {
                     percent_price_filter_rows.push(PercentPriceFilterRow {
                         symbol: symbol.symbol.clone(),
                         multiplier_down: f.multiplier_down.clone().unwrap_or_default(),
@@ -192,13 +192,13 @@ fn print_exchange_info(info: &ExchangeInfoResponse) {
                             .map(|v| v.to_string())
                             .unwrap_or_default(),
                     });
-                }
-                Filter::MaxNumAlgoOrdersFilter(_) => {
+                },
+                | Filter::MaxNumAlgoOrdersFilter(_) => {
                     // Not displayed in table
-                }
-                Filter::Unknown => {
+                },
+                | Filter::Unknown => {
                     // Not displayed in table
-                }
+                },
             }
         }
     }

@@ -1,7 +1,7 @@
 // Shared REST client logic for Binance Spot public and private clients.
 // Handles URL construction, header assembly, request execution, and rate limiter update.
 
-use crate::binance::spot::{execute_request, Errors, RateLimiter, ResponseHeaders};
+use crate::binance::spot::{Errors, RateLimiter, ResponseHeaders, execute_request};
 use reqwest::{Client, Method};
 use url::Url;
 

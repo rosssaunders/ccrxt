@@ -14,14 +14,14 @@ pub async fn handle_order_command(
     price: Option<f64>,
 ) -> Result<()> {
     let side = match side.to_uppercase().as_str() {
-        "BUY" => OrderSide::Buy,
-        "SELL" => OrderSide::Sell,
-        _ => return Err(anyhow!("Invalid side. Must be 'BUY' or 'SELL'")),
+        | "BUY" => OrderSide::Buy,
+        | "SELL" => OrderSide::Sell,
+        | _ => return Err(anyhow!("Invalid side. Must be 'BUY' or 'SELL'")),
     };
     let order_type = match order_type.to_uppercase().as_str() {
-        "LIMIT" => OrderType::Limit,
-        "MARKET" => OrderType::Market,
-        _ => return Err(anyhow!("Invalid order type. Must be 'LIMIT' or 'MARKET'")),
+        | "LIMIT" => OrderType::Limit,
+        | "MARKET" => OrderType::Market,
+        | _ => return Err(anyhow!("Invalid order type. Must be 'LIMIT' or 'MARKET'")),
     };
     let now = chrono::Utc::now().timestamp_millis() as u64;
     let req = NewOrderRequest {

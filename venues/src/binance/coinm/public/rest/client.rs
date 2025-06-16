@@ -59,10 +59,10 @@ impl RestClient {
             crate::binance::coinm::rest::common::build_url(&self.base_url, endpoint, query_string)?;
         let headers = vec![];
         let body_data = match body {
-            Some(b) => Some(serde_urlencoded::to_string(b).map_err(|e| {
+            | Some(b) => Some(serde_urlencoded::to_string(b).map_err(|e| {
                 crate::binance::coinm::Errors::Error(format!("URL encoding error: {}", e))
             })?),
-            None => None,
+            | None => None,
         };
         let rest_response = crate::binance::coinm::rest::common::send_rest_request(
             &self.client,

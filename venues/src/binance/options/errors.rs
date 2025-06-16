@@ -21,10 +21,10 @@ pub enum Errors {
 impl fmt::Display for Errors {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Errors::InvalidApiKey() => write!(f, "Invalid API key or signature"),
-            Errors::HttpError(err) => write!(f, "HTTP error: {}", err),
-            Errors::ApiError(err) => write!(f, "API error: {}", err),
-            Errors::Error(msg) => write!(f, "Error: {}", msg),
+            | Errors::InvalidApiKey() => write!(f, "Invalid API key or signature"),
+            | Errors::HttpError(err) => write!(f, "HTTP error: {}", err),
+            | Errors::ApiError(err) => write!(f, "API error: {}", err),
+            | Errors::Error(msg) => write!(f, "Error: {}", msg),
         }
     }
 }
@@ -61,7 +61,9 @@ pub enum ApiError {
 
     /// Returned when the API responds with HTTP 429 (Too Many Requests).
     /// This error includes the original error message and relevant Binance rate limit headers.
-    #[error("429 Too Many Requests: {msg} (used_weight_1m={used_weight_1m:?}, order_count_1m={order_count_1m:?}, retry_after={retry_after:?})")]
+    #[error(
+        "429 Too Many Requests: {msg} (used_weight_1m={used_weight_1m:?}, order_count_1m={order_count_1m:?}, retry_after={retry_after:?})"
+    )]
     RateLimitExceeded {
         msg: String,
         used_weight_1m: Option<u32>,
@@ -82,13 +84,13 @@ pub enum ApiError {
 impl From<ErrorResponse> for ApiError {
     fn from(err: ErrorResponse) -> Self {
         match err.code {
-            -1000 => ApiError::UnknownApiError { msg: err.msg },
-            -1003 => ApiError::TooManyRequests { msg: err.msg },
-            -1015 => ApiError::TooManyOrders { msg: err.msg },
-            -1002 => ApiError::Unauthorized { msg: err.msg },
-            -1021 => ApiError::InvalidTimestamp { msg: err.msg },
-            -1022 => ApiError::InvalidSignature { msg: err.msg },
-            _ => ApiError::UnmappedApiError {
+            | -1000 => ApiError::UnknownApiError { msg: err.msg },
+            | -1003 => ApiError::TooManyRequests { msg: err.msg },
+            | -1015 => ApiError::TooManyOrders { msg: err.msg },
+            | -1002 => ApiError::Unauthorized { msg: err.msg },
+            | -1021 => ApiError::InvalidTimestamp { msg: err.msg },
+            | -1022 => ApiError::InvalidSignature { msg: err.msg },
+            | _ => ApiError::UnmappedApiError {
                 code: err.code,
                 msg: err.msg,
             },

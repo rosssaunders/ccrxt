@@ -86,7 +86,7 @@ where
     debug!("HTTP response status = {:?}", status);
 
     match status {
-        StatusCode::OK => {
+        | StatusCode::OK => {
             // Try to parse as ErrorResponse first
             if let Ok(err) = serde_json::from_str::<ErrorResponse>(&text) {
                 // Binance error payloads have a nonzero or negative code
@@ -102,8 +102,8 @@ where
                 headers: response_headers,
                 duration,
             })
-        }
-        StatusCode::TOO_MANY_REQUESTS => {
+        },
+        | StatusCode::TOO_MANY_REQUESTS => {
             // Extract relevant headers for rate limit info
             let used_weight_1m = headers
                 .get("x-mbx-used-weight-1m")
@@ -124,23 +124,23 @@ where
                 order_count_1m,
                 retry_after,
             }))
-        }
-        StatusCode::FORBIDDEN => {
+        },
+        | StatusCode::FORBIDDEN => {
             // 403 WAF Limit Violation
             let msg = extract_msg(&text).await;
             Err(Errors::ApiError(ApiError::WafLimitViolated { msg }))
-        }
-        StatusCode::REQUEST_TIMEOUT => {
+        },
+        | StatusCode::REQUEST_TIMEOUT => {
             // 408 Request Timeout
             let msg = extract_msg(&text).await;
             Err(Errors::ApiError(ApiError::RequestTimeout { msg }))
-        }
-        StatusCode::IM_A_TEAPOT => {
+        },
+        | StatusCode::IM_A_TEAPOT => {
             // 418 IP Auto-Banned
             let msg = extract_msg(&text).await;
             Err(Errors::ApiError(ApiError::IpAutoBanned { msg }))
-        }
-        s if s.is_server_error() => {
+        },
+        | s if s.is_server_error() => {
             // 5XX Internal Server Error, including 503 Service Unavailable
             let msg = extract_msg(&text).await;
             if s == StatusCode::SERVICE_UNAVAILABLE {
@@ -148,13 +148,13 @@ where
             } else {
                 Err(Errors::ApiError(ApiError::InternalServerError { msg }))
             }
-        }
-        _ => {
+        },
+        | _ => {
             // HTTP 4XX return codes are used for for malformed requests; the issue is on the sender's side.
             println!("ERROR: {:?}", text);
             let err: ErrorResponse = serde_json::from_str(&text)
                 .map_err(|e| Errors::Error(format!("JSON decode error: {} | body: {}", e, text)))?;
             Err(Errors::ApiError(ApiError::from(err)))
-        }
+        },
     }
 }

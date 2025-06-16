@@ -13,8 +13,8 @@ pub enum OrderSide {
 impl fmt::Display for OrderSide {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            OrderSide::Buy => write!(f, "BUY"),
-            OrderSide::Sell => write!(f, "SELL"),
+            | OrderSide::Buy => write!(f, "BUY"),
+            | OrderSide::Sell => write!(f, "SELL"),
         }
     }
 }
@@ -31,9 +31,9 @@ pub enum PositionSide {
 impl fmt::Display for PositionSide {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            PositionSide::Both => write!(f, "BOTH"),
-            PositionSide::Long => write!(f, "LONG"),
-            PositionSide::Short => write!(f, "SHORT"),
+            | PositionSide::Both => write!(f, "BOTH"),
+            | PositionSide::Long => write!(f, "LONG"),
+            | PositionSide::Short => write!(f, "SHORT"),
         }
     }
 }
@@ -55,10 +55,10 @@ pub enum TimeInForce {
 impl fmt::Display for TimeInForce {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            TimeInForce::GTC => write!(f, "GTC"),
-            TimeInForce::IOC => write!(f, "IOC"),
-            TimeInForce::FOK => write!(f, "FOK"),
-            TimeInForce::GTX => write!(f, "GTX"),
+            | TimeInForce::GTC => write!(f, "GTC"),
+            | TimeInForce::IOC => write!(f, "IOC"),
+            | TimeInForce::FOK => write!(f, "FOK"),
+            | TimeInForce::GTX => write!(f, "GTX"),
         }
     }
 }
@@ -78,9 +78,9 @@ pub enum StopLimitTimeInForce {
 impl fmt::Display for StopLimitTimeInForce {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            StopLimitTimeInForce::GTC => write!(f, "GTC"),
-            StopLimitTimeInForce::IOC => write!(f, "IOC"),
-            StopLimitTimeInForce::FOK => write!(f, "FOK"),
+            | StopLimitTimeInForce::GTC => write!(f, "GTC"),
+            | StopLimitTimeInForce::IOC => write!(f, "IOC"),
+            | StopLimitTimeInForce::FOK => write!(f, "FOK"),
         }
     }
 }
@@ -97,9 +97,9 @@ pub enum SideEffectType {
 impl fmt::Display for SideEffectType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            SideEffectType::NoSideEffect => write!(f, "NO_SIDE_EFFECT"),
-            SideEffectType::MarginBuy => write!(f, "MARGIN_BUY"),
-            SideEffectType::AutoRepay => write!(f, "AUTO_REPAY"),
+            | SideEffectType::NoSideEffect => write!(f, "NO_SIDE_EFFECT"),
+            | SideEffectType::MarginBuy => write!(f, "MARGIN_BUY"),
+            | SideEffectType::AutoRepay => write!(f, "AUTO_REPAY"),
         }
     }
 }
@@ -131,15 +131,15 @@ pub enum PriceMatch {
 impl fmt::Display for PriceMatch {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            PriceMatch::None => write!(f, "NONE"),
-            PriceMatch::Opponent => write!(f, "OPPONENT"),
-            PriceMatch::Opponent5 => write!(f, "OPPONENT_5"),
-            PriceMatch::Opponent10 => write!(f, "OPPONENT_10"),
-            PriceMatch::Opponent20 => write!(f, "OPPONENT_20"),
-            PriceMatch::Queue => write!(f, "QUEUE"),
-            PriceMatch::Queue5 => write!(f, "QUEUE_5"),
-            PriceMatch::Queue10 => write!(f, "QUEUE_10"),
-            PriceMatch::Queue20 => write!(f, "QUEUE_20"),
+            | PriceMatch::None => write!(f, "NONE"),
+            | PriceMatch::Opponent => write!(f, "OPPONENT"),
+            | PriceMatch::Opponent5 => write!(f, "OPPONENT_5"),
+            | PriceMatch::Opponent10 => write!(f, "OPPONENT_10"),
+            | PriceMatch::Opponent20 => write!(f, "OPPONENT_20"),
+            | PriceMatch::Queue => write!(f, "QUEUE"),
+            | PriceMatch::Queue5 => write!(f, "QUEUE_5"),
+            | PriceMatch::Queue10 => write!(f, "QUEUE_10"),
+            | PriceMatch::Queue20 => write!(f, "QUEUE_20"),
         }
     }
 }
@@ -161,10 +161,10 @@ pub enum SelfTradePreventionMode {
 impl fmt::Display for SelfTradePreventionMode {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            SelfTradePreventionMode::None => write!(f, "NONE"),
-            SelfTradePreventionMode::ExpireTaker => write!(f, "EXPIRE_TAKER"),
-            SelfTradePreventionMode::ExpireBoth => write!(f, "EXPIRE_BOTH"),
-            SelfTradePreventionMode::ExpireMaker => write!(f, "EXPIRE_MAKER"),
+            | SelfTradePreventionMode::None => write!(f, "NONE"),
+            | SelfTradePreventionMode::ExpireTaker => write!(f, "EXPIRE_TAKER"),
+            | SelfTradePreventionMode::ExpireBoth => write!(f, "EXPIRE_BOTH"),
+            | SelfTradePreventionMode::ExpireMaker => write!(f, "EXPIRE_MAKER"),
         }
     }
 }
@@ -180,8 +180,8 @@ pub enum OrderResponseType {
 impl fmt::Display for OrderResponseType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            OrderResponseType::Ack => write!(f, "ACK"),
-            OrderResponseType::Result => write!(f, "RESULT"),
+            | OrderResponseType::Ack => write!(f, "ACK"),
+            | OrderResponseType::Result => write!(f, "RESULT"),
         }
     }
 }
@@ -197,8 +197,8 @@ pub enum OrderType {
 impl fmt::Display for OrderType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            OrderType::Limit => write!(f, "LIMIT"),
-            OrderType::Market => write!(f, "MARKET"),
+            | OrderType::Limit => write!(f, "LIMIT"),
+            | OrderType::Market => write!(f, "MARKET"),
         }
     }
 }
@@ -217,11 +217,11 @@ pub enum StrategyType {
 impl fmt::Display for StrategyType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            StrategyType::Stop => write!(f, "STOP"),
-            StrategyType::StopMarket => write!(f, "STOP_MARKET"),
-            StrategyType::TakeProfit => write!(f, "TAKE_PROFIT"),
-            StrategyType::TakeProfitMarket => write!(f, "TAKE_PROFIT_MARKET"),
-            StrategyType::TrailingStopMarket => write!(f, "TRAILING_STOP_MARKET"),
+            | StrategyType::Stop => write!(f, "STOP"),
+            | StrategyType::StopMarket => write!(f, "STOP_MARKET"),
+            | StrategyType::TakeProfit => write!(f, "TAKE_PROFIT"),
+            | StrategyType::TakeProfitMarket => write!(f, "TAKE_PROFIT_MARKET"),
+            | StrategyType::TrailingStopMarket => write!(f, "TRAILING_STOP_MARKET"),
         }
     }
 }
@@ -236,7 +236,7 @@ pub enum WorkingType {
 impl fmt::Display for WorkingType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            WorkingType::MarkPrice => write!(f, "MARK_PRICE"),
+            | WorkingType::MarkPrice => write!(f, "MARK_PRICE"),
         }
     }
 }
@@ -256,12 +256,12 @@ pub enum OrderStatus {
 impl fmt::Display for OrderStatus {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            OrderStatus::New => write!(f, "NEW"),
-            OrderStatus::Canceled => write!(f, "CANCELED"),
-            OrderStatus::Rejected => write!(f, "REJECTED"),
-            OrderStatus::PartiallyFilled => write!(f, "PARTIALLY_FILLED"),
-            OrderStatus::Filled => write!(f, "FILLED"),
-            OrderStatus::Expired => write!(f, "EXPIRED"),
+            | OrderStatus::New => write!(f, "NEW"),
+            | OrderStatus::Canceled => write!(f, "CANCELED"),
+            | OrderStatus::Rejected => write!(f, "REJECTED"),
+            | OrderStatus::PartiallyFilled => write!(f, "PARTIALLY_FILLED"),
+            | OrderStatus::Filled => write!(f, "FILLED"),
+            | OrderStatus::Expired => write!(f, "EXPIRED"),
         }
     }
 }
@@ -282,11 +282,11 @@ pub enum StrategyStatus {
 impl fmt::Display for StrategyStatus {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            StrategyStatus::New => write!(f, "NEW"),
-            StrategyStatus::Canceled => write!(f, "CANCELED"),
-            StrategyStatus::Triggered => write!(f, "TRIGGERED"),
-            StrategyStatus::Finished => write!(f, "FINISHED"),
-            StrategyStatus::Expired => write!(f, "EXPIRED"),
+            | StrategyStatus::New => write!(f, "NEW"),
+            | StrategyStatus::Canceled => write!(f, "CANCELED"),
+            | StrategyStatus::Triggered => write!(f, "TRIGGERED"),
+            | StrategyStatus::Finished => write!(f, "FINISHED"),
+            | StrategyStatus::Expired => write!(f, "EXPIRED"),
         }
     }
 }
@@ -306,12 +306,12 @@ pub enum ContractType {
 impl fmt::Display for ContractType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            ContractType::Perpetual => write!(f, "PERPETUAL"),
-            ContractType::CurrentMonth => write!(f, "CURRENT_MONTH"),
-            ContractType::NextMonth => write!(f, "NEXT_MONTH"),
-            ContractType::CurrentQuarter => write!(f, "CURRENT_QUARTER"),
-            ContractType::NextQuarter => write!(f, "NEXT_QUARTER"),
-            ContractType::PerpetualDelivering => write!(f, "PERPETUAL_DELIVERING"),
+            | ContractType::Perpetual => write!(f, "PERPETUAL"),
+            | ContractType::CurrentMonth => write!(f, "CURRENT_MONTH"),
+            | ContractType::NextMonth => write!(f, "NEXT_MONTH"),
+            | ContractType::CurrentQuarter => write!(f, "CURRENT_QUARTER"),
+            | ContractType::NextQuarter => write!(f, "NEXT_QUARTER"),
+            | ContractType::PerpetualDelivering => write!(f, "PERPETUAL_DELIVERING"),
         }
     }
 }
@@ -333,14 +333,14 @@ pub enum ContractStatus {
 impl fmt::Display for ContractStatus {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            ContractStatus::PendingTrading => write!(f, "PENDING_TRADING"),
-            ContractStatus::Trading => write!(f, "TRADING"),
-            ContractStatus::PreDelivering => write!(f, "PRE_DELIVERING"),
-            ContractStatus::Delivering => write!(f, "DELIVERING"),
-            ContractStatus::Delivered => write!(f, "DELIVERED"),
-            ContractStatus::PreSettle => write!(f, "PRE_SETTLE"),
-            ContractStatus::Settling => write!(f, "SETTLING"),
-            ContractStatus::Close => write!(f, "CLOSE"),
+            | ContractStatus::PendingTrading => write!(f, "PENDING_TRADING"),
+            | ContractStatus::Trading => write!(f, "TRADING"),
+            | ContractStatus::PreDelivering => write!(f, "PRE_DELIVERING"),
+            | ContractStatus::Delivering => write!(f, "DELIVERING"),
+            | ContractStatus::Delivered => write!(f, "DELIVERED"),
+            | ContractStatus::PreSettle => write!(f, "PRE_SETTLE"),
+            | ContractStatus::Settling => write!(f, "SETTLING"),
+            | ContractStatus::Close => write!(f, "CLOSE"),
         }
     }
 }
@@ -356,8 +356,8 @@ pub enum RateLimitType {
 impl fmt::Display for RateLimitType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            RateLimitType::RequestWeight => write!(f, "REQUEST_WEIGHT"),
-            RateLimitType::Orders => write!(f, "ORDERS"),
+            | RateLimitType::RequestWeight => write!(f, "REQUEST_WEIGHT"),
+            | RateLimitType::Orders => write!(f, "ORDERS"),
         }
     }
 }
@@ -372,7 +372,7 @@ pub enum RateLimitInterval {
 impl fmt::Display for RateLimitInterval {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            RateLimitInterval::Minute => write!(f, "MINUTE"),
+            | RateLimitInterval::Minute => write!(f, "MINUTE"),
         }
     }
 }

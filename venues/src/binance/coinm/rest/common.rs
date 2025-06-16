@@ -1,7 +1,7 @@
 // Shared REST client logic for Binance Coin-M public and private clients.
 // Handles URL construction, header assembly, request execution, and rate limiter update.
 
-use crate::binance::coinm::{execute_request, Errors, RateLimiter, ResponseHeaders};
+use crate::binance::coinm::{Errors, RateLimiter, ResponseHeaders, execute_request};
 use reqwest::{Client, Method};
 use url::Url;
 
