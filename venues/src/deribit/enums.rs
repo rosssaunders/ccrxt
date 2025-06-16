@@ -118,6 +118,141 @@ impl Display for WithdrawalState {
     }
 }
 
+/// Order state for Deribit orders
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub enum OrderState {
+    #[serde(rename = "open")]
+    Open,
+    #[serde(rename = "filled")]
+    Filled,
+    #[serde(rename = "rejected")]
+    Rejected,
+    #[serde(rename = "cancelled")]
+    Cancelled,
+    #[serde(rename = "untriggered")]
+    Untriggered,
+}
+
+impl Display for OrderState {
+    fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
+        match self {
+            OrderState::Open => write!(f, "open"),
+            OrderState::Filled => write!(f, "filled"),
+            OrderState::Rejected => write!(f, "rejected"),
+            OrderState::Cancelled => write!(f, "cancelled"),
+            OrderState::Untriggered => write!(f, "untriggered"),
+        }
+    }
+}
+
+/// Order direction for Deribit orders
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub enum OrderDirection {
+    #[serde(rename = "buy")]
+    Buy,
+    #[serde(rename = "sell")]
+    Sell,
+}
+
+impl Display for OrderDirection {
+    fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
+        match self {
+            OrderDirection::Buy => write!(f, "buy"),
+            OrderDirection::Sell => write!(f, "sell"),
+        }
+    }
+}
+
+/// Cancel reason for Deribit orders
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub enum CancelReason {
+    #[serde(rename = "user_request")]
+    UserRequest,
+    #[serde(rename = "autoliquidation")]
+    Autoliquidation,
+    #[serde(rename = "cancel_on_disconnect")]
+    CancelOnDisconnect,
+    #[serde(rename = "risk_mitigation")]
+    RiskMitigation,
+    #[serde(rename = "pme_risk_reduction")]
+    PmeRiskReduction,
+    #[serde(rename = "pme_account_locked")]
+    PmeAccountLocked,
+    #[serde(rename = "position_locked")]
+    PositionLocked,
+    #[serde(rename = "mmp_trigger")]
+    MmpTrigger,
+    #[serde(rename = "mmp_config_curtailment")]
+    MmpConfigCurtailment,
+    #[serde(rename = "edit_post_only_reject")]
+    EditPostOnlyReject,
+    #[serde(rename = "oco_other_closed")]
+    OcoOtherClosed,
+    #[serde(rename = "oto_primary_closed")]
+    OtoPrimaryClosed,
+    #[serde(rename = "settlement")]
+    Settlement,
+}
+
+impl Display for CancelReason {
+    fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
+        match self {
+            CancelReason::UserRequest => write!(f, "user_request"),
+            CancelReason::Autoliquidation => write!(f, "autoliquidation"),
+            CancelReason::CancelOnDisconnect => write!(f, "cancel_on_disconnect"),
+            CancelReason::RiskMitigation => write!(f, "risk_mitigation"),
+            CancelReason::PmeRiskReduction => write!(f, "pme_risk_reduction"),
+            CancelReason::PmeAccountLocked => write!(f, "pme_account_locked"),
+            CancelReason::PositionLocked => write!(f, "position_locked"),
+            CancelReason::MmpTrigger => write!(f, "mmp_trigger"),
+            CancelReason::MmpConfigCurtailment => write!(f, "mmp_config_curtailment"),
+            CancelReason::EditPostOnlyReject => write!(f, "edit_post_only_reject"),
+            CancelReason::OcoOtherClosed => write!(f, "oco_other_closed"),
+            CancelReason::OtoPrimaryClosed => write!(f, "oto_primary_closed"),
+            CancelReason::Settlement => write!(f, "settlement"),
+        }
+    }
+}
+
+/// Advanced order type for options
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub enum AdvancedType {
+    #[serde(rename = "usd")]
+    Usd,
+    #[serde(rename = "implv")]
+    Implv,
+}
+
+impl Display for AdvancedType {
+    fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
+        match self {
+            AdvancedType::Usd => write!(f, "usd"),
+            AdvancedType::Implv => write!(f, "implv"),
+        }
+    }
+}
+
+/// Trigger type for trigger orders
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub enum TriggerType {
+    #[serde(rename = "index_price")]
+    IndexPrice,
+    #[serde(rename = "mark_price")]
+    MarkPrice,
+    #[serde(rename = "last_price")]
+    LastPrice,
+}
+
+impl Display for TriggerType {
+    fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
+        match self {
+            TriggerType::IndexPrice => write!(f, "index_price"),
+            TriggerType::MarkPrice => write!(f, "mark_price"),
+            TriggerType::LastPrice => write!(f, "last_price"),
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -222,5 +357,80 @@ mod tests {
         assert_eq!(format!("{}", WithdrawalState::Completed), "completed");
         assert_eq!(format!("{}", WithdrawalState::Interrupted), "interrupted");
         assert_eq!(format!("{}", WithdrawalState::Rejected), "rejected");
+    }
+
+    #[test]
+    fn test_order_state_serialization() {
+        let open = OrderState::Open;
+        let cancelled = OrderState::Cancelled;
+
+        assert_eq!(serde_json::to_string(&open).unwrap(), "\"open\"");
+        assert_eq!(serde_json::to_string(&cancelled).unwrap(), "\"cancelled\"");
+
+        let open_from_json: OrderState = serde_json::from_str("\"open\"").unwrap();
+        let cancelled_from_json: OrderState = serde_json::from_str("\"cancelled\"").unwrap();
+
+        assert_eq!(open_from_json, OrderState::Open);
+        assert_eq!(cancelled_from_json, OrderState::Cancelled);
+    }
+
+    #[test]
+    fn test_order_direction_serialization() {
+        let buy = OrderDirection::Buy;
+        let sell = OrderDirection::Sell;
+
+        assert_eq!(serde_json::to_string(&buy).unwrap(), "\"buy\"");
+        assert_eq!(serde_json::to_string(&sell).unwrap(), "\"sell\"");
+
+        let buy_from_json: OrderDirection = serde_json::from_str("\"buy\"").unwrap();
+        let sell_from_json: OrderDirection = serde_json::from_str("\"sell\"").unwrap();
+
+        assert_eq!(buy_from_json, OrderDirection::Buy);
+        assert_eq!(sell_from_json, OrderDirection::Sell);
+    }
+
+    #[test]
+    fn test_cancel_reason_serialization() {
+        let user_request = CancelReason::UserRequest;
+        let autoliquidation = CancelReason::Autoliquidation;
+
+        assert_eq!(serde_json::to_string(&user_request).unwrap(), "\"user_request\"");
+        assert_eq!(serde_json::to_string(&autoliquidation).unwrap(), "\"autoliquidation\"");
+
+        let user_request_from_json: CancelReason = serde_json::from_str("\"user_request\"").unwrap();
+        let autoliquidation_from_json: CancelReason = serde_json::from_str("\"autoliquidation\"").unwrap();
+
+        assert_eq!(user_request_from_json, CancelReason::UserRequest);
+        assert_eq!(autoliquidation_from_json, CancelReason::Autoliquidation);
+    }
+
+    #[test]
+    fn test_advanced_type_serialization() {
+        let usd = AdvancedType::Usd;
+        let implv = AdvancedType::Implv;
+
+        assert_eq!(serde_json::to_string(&usd).unwrap(), "\"usd\"");
+        assert_eq!(serde_json::to_string(&implv).unwrap(), "\"implv\"");
+
+        let usd_from_json: AdvancedType = serde_json::from_str("\"usd\"").unwrap();
+        let implv_from_json: AdvancedType = serde_json::from_str("\"implv\"").unwrap();
+
+        assert_eq!(usd_from_json, AdvancedType::Usd);
+        assert_eq!(implv_from_json, AdvancedType::Implv);
+    }
+
+    #[test]
+    fn test_trigger_type_serialization() {
+        let index_price = TriggerType::IndexPrice;
+        let mark_price = TriggerType::MarkPrice;
+
+        assert_eq!(serde_json::to_string(&index_price).unwrap(), "\"index_price\"");
+        assert_eq!(serde_json::to_string(&mark_price).unwrap(), "\"mark_price\"");
+
+        let index_price_from_json: TriggerType = serde_json::from_str("\"index_price\"").unwrap();
+        let mark_price_from_json: TriggerType = serde_json::from_str("\"mark_price\"").unwrap();
+
+        assert_eq!(index_price_from_json, TriggerType::IndexPrice);
+        assert_eq!(mark_price_from_json, TriggerType::MarkPrice);
     }
 }
