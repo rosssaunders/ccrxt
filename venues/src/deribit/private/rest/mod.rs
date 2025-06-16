@@ -1,3 +1,4 @@
+pub mod cancel_all;
 pub mod cancel_order;
 pub mod approve_block_trade;
 pub mod client;
@@ -6,6 +7,7 @@ pub mod set_clearance_originator;
 pub mod submit_transfer_to_user;
 pub mod withdraw;
 
+pub use cancel_all::{CancelAllRequest, CancelAllResponse};
 pub use client::RestClient;
 
 pub use cancel_order::{
