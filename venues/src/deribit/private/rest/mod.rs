@@ -7,9 +7,12 @@ pub mod client;
 pub mod reset_mmp;
 pub mod send_rfq;
 pub mod set_clearance_originator;
+pub mod simulate_block_trade;
 pub mod submit_transfer_between_subaccounts;
 pub mod submit_transfer_to_user;
 pub mod withdraw;
+
+pub use client::RestClient;
 
 pub use add_block_rfq_quote::{
     AddBlockRfqQuoteRequest, AddBlockRfqQuoteResponse, AddBlockRfqQuoteResult, BlockRfqHedge, BlockRfqLeg, ExecutionInstruction, ResponseHedge, ResponseLeg,
@@ -18,7 +21,7 @@ pub use add_to_address_book::{
     AddToAddressBookRequest, AddToAddressBookResponse, AddressBookEntry,
 };
 pub use cancel_all::{CancelAllRequest, CancelAllResponse};
-pub use client::RestClient;
+
 pub use reset_mmp::{
     IndexName, ResetMmpRequest, ResetMmpResponse,
 };
@@ -37,6 +40,10 @@ pub use send_rfq::{
 pub use set_clearance_originator::{
     DepositId, Originator, SetClearanceOriginatorRequest, SetClearanceOriginatorResponse, SetClearanceOriginatorResult,
 };
+pub use simulate_block_trade::{
+    Direction, SimulateBlockTradeRequest, SimulateBlockTradeResponse, Trade,
+};
+
 pub use submit_transfer_between_subaccounts::{
     SubmitTransferBetweenSubaccountsRequest, SubmitTransferBetweenSubaccountsResponse,
 };
