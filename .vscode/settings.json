@@ -1,3 +1,4 @@
 {
     "github.copilot.chat.codeGeneration.useInstructionFiles": true,
+    "rust-analyzer.checkOnSave": true,
 }
