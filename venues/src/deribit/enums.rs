@@ -33,6 +33,8 @@ pub enum Currency {
     BNB,
     #[serde(rename = "USDE")]
     USDE,
+    #[serde(rename = "any")]
+    Any,
 }
 
 impl Display for Currency {
@@ -52,6 +54,7 @@ impl Display for Currency {
             Currency::PAXG => write!(f, "PAXG"),
             Currency::BNB => write!(f, "BNB"),
             Currency::USDE => write!(f, "USDE"),
+            Currency::Any => write!(f, "any"),
         }
     }
 }
@@ -373,6 +376,7 @@ mod tests {
         assert_eq!(format!("{}", Currency::PAXG), "PAXG");
         assert_eq!(format!("{}", Currency::BNB), "BNB");
         assert_eq!(format!("{}", Currency::USDE), "USDE");
+        assert_eq!(format!("{}", Currency::Any), "any");
     }
 
     #[test]
@@ -518,18 +522,22 @@ mod tests {
         let steth = Currency::STETH;
         let matic = Currency::MATIC;
         let sol = Currency::SOL;
+        let any = Currency::Any;
 
         assert_eq!(serde_json::to_string(&steth).unwrap(), "\"STETH\"");
         assert_eq!(serde_json::to_string(&matic).unwrap(), "\"MATIC\"");
         assert_eq!(serde_json::to_string(&sol).unwrap(), "\"SOL\"");
+        assert_eq!(serde_json::to_string(&any).unwrap(), "\"any\"");
 
         let steth_from_json: Currency = serde_json::from_str("\"STETH\"").unwrap();
         let matic_from_json: Currency = serde_json::from_str("\"MATIC\"").unwrap();
         let sol_from_json: Currency = serde_json::from_str("\"SOL\"").unwrap();
+        let any_from_json: Currency = serde_json::from_str("\"any\"").unwrap();
 
         assert_eq!(steth_from_json, Currency::STETH);
         assert_eq!(matic_from_json, Currency::MATIC);
         assert_eq!(sol_from_json, Currency::SOL);
+        assert_eq!(any_from_json, Currency::Any);
     }
 
     #[test]
