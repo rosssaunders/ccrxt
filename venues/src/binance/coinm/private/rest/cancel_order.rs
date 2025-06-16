@@ -1,10 +1,11 @@
 // Cancel Order (TRADE) endpoint implementation for DELETE /dapi/v1/order
 // See: <https://binance-docs.github.io/apidocs/delivery/en/>
 
+use serde::{Deserialize, Serialize};
+
 use crate::binance::coinm::RestResult;
 use crate::binance::coinm::private::rest::client::RestClient;
 use crate::binance::coinm::{OrderSide, OrderType, PositionSide, PriceMatch, SelfTradePreventionMode, TimeInForce, WorkingType};
-use serde::{Deserialize, Serialize};
 
 /// Request parameters for canceling an active order (DELETE /dapi/v1/order).
 #[derive(Debug, Clone, Serialize, Default)]

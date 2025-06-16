@@ -1,6 +1,7 @@
 // Basic placeholder client for USDM private endpoints
-use reqwest::Client;
 use std::borrow::Cow;
+
+use reqwest::Client;
 
 use crate::binance::usdm::RateLimiter;
 

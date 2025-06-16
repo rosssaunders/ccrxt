@@ -1,7 +1,8 @@
+use serde::{Deserialize, Serialize};
+
 use super::client::RestClient;
 use crate::bitmart::RestResult;
 use crate::bitmart::rate_limit::EndpointType;
-use serde::{Deserialize, Serialize};
 
 /// Request parameters for getting account balance
 #[derive(Debug, Serialize, Default)]

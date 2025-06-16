@@ -1,7 +1,8 @@
-use super::client::RestClient;
-use crate::cryptocom::{ExecInst, OrderType, RefPriceType, RestResult, SpotMarginType, StpInst, StpScope, TimeInForce, TradeSide};
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
+
+use super::client::RestClient;
+use crate::cryptocom::{ExecInst, OrderType, RefPriceType, RestResult, SpotMarginType, StpInst, StpScope, TimeInForce, TradeSide};
 
 /// Request parameters for creating a new order
 #[derive(Debug, Clone, Serialize)]
@@ -91,9 +92,10 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use rest::secrets::ExposableSecret;
     use serde_json::json;
+
+    use super::*;
 
     /// A plain text implementation of ExposableSecret for testing purposes.
     #[derive(Clone)]

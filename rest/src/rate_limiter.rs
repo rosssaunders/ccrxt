@@ -1,6 +1,8 @@
-use crate::error::RestError;
-use async_trait::async_trait;
 use std::time::Duration;
+
+use async_trait::async_trait;
+
+use crate::error::RestError;
 
 /// Common trait for rate limiters
 #[async_trait]

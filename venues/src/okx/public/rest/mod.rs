@@ -30,7 +30,6 @@ mod get_time;
 mod get_underlying;
 
 pub use client::RestClient;
-
 pub use convert_contract_coin::{ConvertContractCoinData, ConvertContractCoinRequest, ConvertContractCoinResponse};
 pub use exchange_rate::{ExchangeRate, ExchangeRateResponse};
 pub use get_delivery_exercise_history::{

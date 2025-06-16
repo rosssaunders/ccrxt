@@ -3,6 +3,7 @@
 use std::collections::HashMap;
 use std::sync::Arc;
 use std::time::{Duration, Instant};
+
 use thiserror::Error;
 use tokio::sync::RwLock;
 
@@ -167,8 +168,9 @@ impl RateLimiter {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use tokio::time::{Duration, sleep};
+
+    use super::*;
 
     #[test]
     fn test_rate_limit_config() {

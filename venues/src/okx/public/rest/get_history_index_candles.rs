@@ -1,6 +1,7 @@
+use serde::{Deserialize, Serialize};
+
 use super::client::RestClient;
 use crate::okx::{Bar, EndpointType, RestResult};
-use serde::{Deserialize, Serialize};
 
 /// Request parameters for getting index candlesticks history
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -65,8 +66,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use serde_json::json;
+
+    use super::*;
 
     #[test]
     fn test_get_history_index_candles_request_structure() {

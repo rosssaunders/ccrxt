@@ -1,5 +1,6 @@
-use anyhow::{anyhow, Result};
 use std::sync::Arc;
+
+use anyhow::{anyhow, Result};
 use venues::binance::coinm::NewOrderRequest;
 use venues::binance::coinm::PrivateRestClient;
 use venues::binance::coinm::{OrderSide, OrderType};

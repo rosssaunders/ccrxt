@@ -1,7 +1,8 @@
-use async_trait::async_trait;
-use futures::Stream;
 use std::error::Error;
 use std::pin::Pin;
+
+use async_trait::async_trait;
+use futures::Stream;
 
 /// Type alias for boxed errors
 pub type BoxError = Box<dyn Error + Send + Sync>;

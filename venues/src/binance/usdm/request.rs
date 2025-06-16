@@ -1,7 +1,7 @@
 use std::time::Duration;
-use tracing::debug;
 
 use reqwest::StatusCode;
+use tracing::debug;
 
 use crate::binance::usdm::errors::ErrorResponse;
 use crate::binance::usdm::{ApiError, Errors, ResponseHeaders};

@@ -59,11 +59,10 @@ mod private {
 }
 
 // Only expose RestClient at the usdm level, not via private::rest
-pub use private::*;
-pub use public::*;
-
 pub use enums::*;
 pub use errors::{ApiError, Errors};
+pub use private::*;
+pub use public::*;
 pub use rate_limit::{RateLimitHeader, RateLimiter};
 
 pub use crate::binance::usdm::errors::ErrorResponse;

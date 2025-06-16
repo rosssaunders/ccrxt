@@ -47,8 +47,9 @@ pub enum OrderStatus {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use serde_json;
+
+    use super::*;
 
     #[test]
     fn test_order_side_serialization() {

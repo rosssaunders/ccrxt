@@ -1,6 +1,7 @@
+use serde::{Deserialize, Serialize};
+
 use super::client::RestClient;
 use crate::okx::{EndpointType, RestResult};
-use serde::{Deserialize, Serialize};
 
 /// Bar size/timeframe for candlesticks
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -143,8 +144,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use serde_json::json;
+
+    use super::*;
 
     #[test]
     fn test_bar_size_serialization() {
@@ -303,9 +305,10 @@ mod tests {
     #[test]
     fn test_public_api_integration() {
         // Test that the endpoint method exists on RestClient
+        use reqwest::Client;
+
         use super::super::client::RestClient;
         use crate::okx::RateLimiter;
-        use reqwest::Client;
 
         let _client = RestClient::new("https://www.okx.com", Client::new(), RateLimiter::new());
 

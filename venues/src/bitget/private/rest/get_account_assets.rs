@@ -6,9 +6,10 @@
 //! Endpoint: GET /api/v2/spot/account/assets
 //! Rate limit: 10 times/1s (User ID)
 
+use serde::{Deserialize, Serialize};
+
 use super::RestClient;
 use crate::bitget::{AssetType, RestResult};
-use serde::{Deserialize, Serialize};
 
 /// Request parameters for getting account assets
 #[derive(Debug, Clone, Serialize)]

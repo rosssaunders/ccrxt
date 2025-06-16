@@ -53,8 +53,6 @@ pub mod public {
 pub mod private {
     pub mod rest;
 
-    pub use self::rest::RestClient;
-
     pub use self::rest::AddToAddressBookRequest;
     pub use self::rest::AddToAddressBookResponse;
     pub use self::rest::AddressBookEntry;
@@ -65,6 +63,7 @@ pub mod private {
     pub use self::rest::CancelledOrder;
     pub use self::rest::DepositId;
     pub use self::rest::Originator;
+    pub use self::rest::RestClient;
     pub use self::rest::SendRfqRequest;
     pub use self::rest::SendRfqResponse;
     pub use self::rest::SetClearanceOriginatorRequest;
@@ -87,21 +86,6 @@ pub mod message;
 pub use enums::*;
 pub use errors::{ApiError, ErrorResponse, Errors};
 pub use message::*;
-pub use rate_limit::*;
-
-pub use public::DeribitMessage;
-pub use public::DeribitWebSocketClient;
-pub use public::GetComboIdsRequest;
-pub use public::GetComboIdsResponse;
-pub use public::HelloRequest;
-pub use public::HelloResponse;
-pub use public::HelloResult;
-pub use public::JsonRpcRequest;
-pub use public::RestClient as PublicRestClient;
-pub use public::websocket::client::DeribitWebSocketError;
-
-pub use private::RestClient as PrivateRestClient;
-
 pub use private::AddToAddressBookRequest;
 pub use private::AddToAddressBookResponse;
 pub use private::AddressBookEntry;
@@ -115,6 +99,7 @@ pub use private::IndexName;
 pub use private::Originator;
 pub use private::ResetMmpRequest;
 pub use private::ResetMmpResponse;
+pub use private::RestClient as PrivateRestClient;
 pub use private::SendRfqRequest;
 pub use private::SendRfqResponse;
 pub use private::SetClearanceOriginatorRequest;
@@ -129,6 +114,17 @@ pub use private::TransferData;
 pub use private::WithdrawRequest;
 pub use private::WithdrawResponse;
 pub use private::WithdrawalData;
+pub use public::DeribitMessage;
+pub use public::DeribitWebSocketClient;
+pub use public::GetComboIdsRequest;
+pub use public::GetComboIdsResponse;
+pub use public::HelloRequest;
+pub use public::HelloResponse;
+pub use public::HelloResult;
+pub use public::JsonRpcRequest;
+pub use public::RestClient as PublicRestClient;
+pub use public::websocket::client::DeribitWebSocketError;
+pub use rate_limit::*;
 
 /// Type alias for results returned by Deribit API operations
 pub type RestResult<T> = Result<T, Errors>;

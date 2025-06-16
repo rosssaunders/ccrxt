@@ -6,8 +6,9 @@
 #[cfg(test)]
 #[allow(clippy::assertions_on_constants)]
 mod example {
-    use crate::cryptocom::{ApiError, ErrorResponse, Errors, PrivateRestClient, RestResult};
     use serde_json::json;
+
+    use crate::cryptocom::{ApiError, ErrorResponse, Errors, PrivateRestClient, RestResult};
 
     /// Simulates processing an API response from Crypto.com
     fn process_api_response(response_code: i32, message: String) -> RestResult<String> {

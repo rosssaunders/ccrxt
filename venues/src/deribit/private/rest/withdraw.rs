@@ -1,6 +1,7 @@
+use serde::{Deserialize, Serialize};
+
 use super::client::RestClient;
 use crate::deribit::{Currency, EndpointType, RestResult, WithdrawalPriority, WithdrawalState};
-use serde::{Deserialize, Serialize};
 
 /// Request parameters for withdrawal
 #[derive(Debug, Clone, Serialize)]
@@ -91,10 +92,11 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use crate::deribit::AccountTier;
     use rest::secrets::ExposableSecret;
     use serde_json::{Value, json};
+
+    use super::*;
+    use crate::deribit::AccountTier;
 
     // Test secret implementation
     #[derive(Clone)]

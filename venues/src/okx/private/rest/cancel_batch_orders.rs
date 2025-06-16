@@ -1,6 +1,7 @@
+use serde::Deserialize;
+
 use super::{RestClient, cancel_order::CancelOrderRequest, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
-use serde::Deserialize;
 
 /// Response from canceling multiple orders
 #[derive(Debug, Clone, Deserialize)]

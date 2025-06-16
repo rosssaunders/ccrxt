@@ -1,6 +1,7 @@
+use serde::{Deserialize, Serialize};
+
 use super::client::RestClient;
 use crate::okx::{EndpointType, RestResult};
-use serde::{Deserialize, Serialize};
 
 /// Exchange rate information
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -46,8 +47,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use serde_json::json;
+
+    use super::*;
 
     #[test]
     fn test_exchange_rate_structure() {

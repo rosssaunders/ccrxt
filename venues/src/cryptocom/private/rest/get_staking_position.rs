@@ -1,7 +1,8 @@
-use super::client::RestClient;
-use crate::cryptocom::RestResult;
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
+
+use super::client::RestClient;
+use crate::cryptocom::RestResult;
 
 /// Request parameters for get staking position
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -66,9 +67,10 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use rest::secrets::ExposableSecret;
     use serde_json::json;
+
+    use super::*;
 
     /// A plain text implementation of ExposableSecret for testing purposes.
     #[derive(Clone)]

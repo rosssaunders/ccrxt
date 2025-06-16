@@ -1,6 +1,7 @@
+use serde::{Deserialize, Serialize};
+
 use super::client::RestClient;
 use crate::okx::{EndpointType, RestResult};
-use serde::{Deserialize, Serialize};
 
 /// Time data structure
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -44,8 +45,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use serde_json::json;
+
+    use super::*;
 
     #[test]
     fn test_time_data_structure() {

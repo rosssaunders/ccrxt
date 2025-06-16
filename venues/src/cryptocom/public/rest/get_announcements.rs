@@ -1,11 +1,13 @@
 //! Request and response structs for public/get-announcements endpoint
 //!
 //! Fetches all announcements in Crypto.com Exchange.
+use std::borrow::Cow;
+
+use serde::{Deserialize, Serialize};
+
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
 use crate::cryptocom::{AnnouncementCategory, ImpactedStatus, ProductType};
-use serde::{Deserialize, Serialize};
-use std::borrow::Cow;
 
 /// Request parameters for the public/get-announcements endpoint.
 #[derive(Debug, Clone, Serialize, Default)]

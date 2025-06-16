@@ -1,6 +1,7 @@
+use serde::Serialize;
+
 use super::{RestClient, common::OkxApiResponse, get_order::OrderDetails};
 use crate::okx::{EndpointType, InstrumentType, RestResult};
-use serde::Serialize;
 
 /// Request to get pending orders
 #[derive(Debug, Clone, Serialize)]

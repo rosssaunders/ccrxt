@@ -1,4 +1,5 @@
 use std::time::{Duration, Instant};
+
 use thiserror::Error;
 use tokio::sync::RwLock;
 
@@ -385,8 +386,9 @@ pub struct RateLimitStatus {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use tokio::time::{Duration, sleep};
+
+    use super::*;
 
     #[tokio::test]
     async fn test_account_tier_limits() {

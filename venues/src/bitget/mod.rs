@@ -8,11 +8,10 @@ mod private;
 // Re-export key components
 pub use enums::*;
 pub use errors::{ApiError, Errors};
-pub use rate_limit::{RateLimitHeader, RateLimiter};
-
 // Export clients and endpoint types
 pub use private::PrivateRestClient;
 pub use private::{AssetInfo, GetAccountAssetsRequest, GetAccountAssetsResponse};
+pub use rate_limit::{RateLimitHeader, RateLimiter};
 
 pub use crate::bitget::errors::ErrorResponse;
 

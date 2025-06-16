@@ -15,10 +15,10 @@ pub mod public {
 pub use enums::*;
 pub use errors::{ApiError, ErrorResponse, Errors};
 pub use private::RestClient as PrivateRestClient;
-pub use public::RestClient as PublicRestClient;
-pub use rate_limit::{EndpointType, RateLimit, RateLimitError, RateLimiter};
 // Re-export trading account types for convenience
 pub use private::rest::{TradingAccount, TradingAccountsResponse};
+pub use public::RestClient as PublicRestClient;
+pub use rate_limit::{EndpointType, RateLimit, RateLimitError, RateLimiter};
 
 /// Type alias for results returned by Bullish API operations
 pub type RestResult<T> = Result<T, Errors>;

@@ -1,7 +1,7 @@
-use chrono::Utc;
 use std::sync::Arc;
-use tabled::{settings::Style, Table, Tabled};
 
+use chrono::Utc;
+use tabled::{settings::Style, Table, Tabled};
 use venues::binance::coinm::AccountTradeListRequest;
 use venues::binance::coinm::Errors;
 use venues::binance::coinm::PrivateRestClient;

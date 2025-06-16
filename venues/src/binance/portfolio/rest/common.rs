@@ -1,9 +1,10 @@
 // Shared REST client logic for Binance Portfolio Margin public and private clients.
 // Handles URL construction, header assembly, request execution, and rate limiter update.
 
-use crate::binance::portfolio::{Errors, RateLimiter, ResponseHeaders, execute_request};
 use reqwest::{Client, Method};
 use url::Url;
+
+use crate::binance::portfolio::{Errors, RateLimiter, ResponseHeaders, execute_request};
 
 /// Helper to build a URL with optional query parameters using `url::Url`.
 pub(crate) fn build_url(base_url: &str, endpoint: &str, query: Option<&str>) -> Result<String, Errors> {

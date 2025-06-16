@@ -1,6 +1,7 @@
+use serde::{Deserialize, Serialize};
+
 use super::client::RestClient;
 use crate::okx::{EndpointType, InstrumentState, InstrumentType, RestResult};
-use serde::{Deserialize, Serialize};
 
 /// Request parameters for getting instruments
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -165,8 +166,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use serde_json::json;
+
+    use super::*;
 
     #[test]
     fn test_get_instruments_request_structure() {

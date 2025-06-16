@@ -1,11 +1,12 @@
 // Example: Place a trade on Binance COIN-M using the coinm Rust module
 // Loads API credentials from .env
+use std::{env, sync::Arc};
+
 use anyhow::Result;
 use clap::{Parser, Subcommand};
 use dotenv::dotenv;
 use rest::secrets::SecretValue;
 use secrecy::SecretString;
-use std::{env, sync::Arc};
 use venues::binance::coinm::PrivateRestClient;
 use venues::binance::coinm::PublicRestClient;
 use venues::binance::coinm::{ApiError, Errors, RateLimiter};

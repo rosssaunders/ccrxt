@@ -1,5 +1,6 @@
-use serde::Deserialize;
 use std::fmt;
+
+use serde::Deserialize;
 use thiserror::Error;
 
 /// Represents all possible errors that can occur when interacting with the Binance API

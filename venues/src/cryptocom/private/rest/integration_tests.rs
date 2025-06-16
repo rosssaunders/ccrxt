@@ -1,6 +1,7 @@
-use crate::cryptocom::private::RestClient;
 use rest::secrets::ExposableSecret;
 use serde_json::json;
+
+use crate::cryptocom::private::RestClient;
 
 /// A plain text implementation of ExposableSecret for testing purposes.
 #[derive(Clone)]

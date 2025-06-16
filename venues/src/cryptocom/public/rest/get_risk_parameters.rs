@@ -2,10 +2,12 @@
 //!
 //! Provides information on risk parameter settings for Smart Cross Margin.
 
+use std::borrow::Cow;
+
+use serde::Deserialize;
+
 use super::client::RestClient;
 use crate::cryptocom::{EndpointType, RestResult};
-use serde::Deserialize;
-use std::borrow::Cow;
 
 /// Response for public/get-risk-parameters endpoint.
 #[derive(Debug, Clone, Deserialize)]

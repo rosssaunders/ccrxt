@@ -1,7 +1,8 @@
-use super::client::RestClient;
-use crate::cryptocom::RestResult;
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
+
+use super::client::RestClient;
+use crate::cryptocom::RestResult;
 
 /// Order type filter for cancel all orders
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -50,8 +51,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use rest::secrets::ExposableSecret;
+
+    use super::*;
 
     /// A plain text implementation of ExposableSecret for testing purposes.
     #[derive(Clone)]

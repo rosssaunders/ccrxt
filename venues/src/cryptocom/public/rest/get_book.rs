@@ -2,10 +2,12 @@
 //!
 //! Fetches the public order book for a particular instrument and depth.
 
+use std::borrow::Cow;
+
+use serde::{Deserialize, Serialize};
+
 use super::client::RestClient;
 use crate::cryptocom::{EndpointType, RestResult};
-use serde::{Deserialize, Serialize};
-use std::borrow::Cow;
 
 /// Request parameters for the public/get-book endpoint.
 ///
@@ -76,8 +78,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use serde_json::json;
+
+    use super::*;
 
     #[test]
     fn test_book_endpoint_type() {

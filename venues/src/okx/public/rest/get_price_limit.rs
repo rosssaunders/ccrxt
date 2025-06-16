@@ -1,6 +1,7 @@
+use serde::{Deserialize, Serialize};
+
 use super::client::RestClient;
 use crate::okx::{EndpointType, InstrumentType, RestResult};
-use serde::{Deserialize, Serialize};
 
 /// Request parameters for getting price limit
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -71,8 +72,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use serde_json::json;
+
+    use super::*;
 
     #[test]
     fn test_get_price_limit_request_structure() {

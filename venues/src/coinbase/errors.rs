@@ -1,5 +1,6 @@
-use serde::Deserialize;
 use std::fmt;
+
+use serde::Deserialize;
 
 /// Represents all possible errors that can occur when interacting with the Coinbase API
 #[derive(Debug)]

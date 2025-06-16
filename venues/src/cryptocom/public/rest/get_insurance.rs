@@ -2,10 +2,12 @@
 //!
 //! Fetches balance of Insurance Fund for a particular currency.
 
+use std::borrow::Cow;
+
+use serde::{Deserialize, Serialize};
+
 use super::client::RestClient;
 use crate::cryptocom::{EndpointType, RestResult};
-use serde::{Deserialize, Serialize};
-use std::borrow::Cow;
 
 /// Request parameters for the public/get-insurance endpoint.
 ///
@@ -72,9 +74,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use crate::cryptocom::EndpointType;
-
     use serde_json::json;
+
+    use crate::cryptocom::EndpointType;
 
     #[test]
     fn test_insurance_endpoint_type() {

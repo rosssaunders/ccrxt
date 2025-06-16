@@ -1,10 +1,11 @@
+use std::borrow::Cow;
+
 use hmac::{Hmac, Mac};
 use reqwest::Client;
 use rest::secrets::ExposableSecret;
 use serde::Serialize;
 use serde::de::DeserializeOwned;
 use sha2::Sha256;
-use std::borrow::Cow;
 
 use crate::bingx::{EndpointType, Errors, RateLimiter, RestResult};
 
@@ -177,8 +178,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use rest::secrets::ExposableSecret;
+
+    use super::*;
 
     #[derive(Debug)]
     struct TestSecret {

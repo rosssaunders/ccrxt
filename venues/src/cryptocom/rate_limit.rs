@@ -1,6 +1,7 @@
 use std::collections::{HashMap, VecDeque};
 use std::sync::Arc;
 use std::time::{Duration, Instant};
+
 use tokio::sync::RwLock;
 
 /// Represents different types of crypto.com API endpoints for rate limiting
@@ -255,8 +256,9 @@ impl RateLimiter {
 #[cfg(test)]
 #[allow(clippy::assertions_on_constants)]
 mod tests {
-    use super::*;
     use tokio::time::{Duration, sleep};
+
+    use super::*;
 
     #[tokio::test]
     async fn test_rate_limiter_creation() {

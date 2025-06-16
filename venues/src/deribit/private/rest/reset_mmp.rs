@@ -1,6 +1,7 @@
+use serde::{Deserialize, Serialize};
+
 use super::client::RestClient;
 use crate::deribit::{EndpointType, RestResult};
-use serde::{Deserialize, Serialize};
 
 /// Index names supported by Deribit for MMP operations
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -118,10 +119,11 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use crate::deribit::AccountTier;
     use rest::secrets::ExposableSecret;
     use serde_json::{Value, json};
+
+    use super::*;
+    use crate::deribit::AccountTier;
 
     // Test secret implementation
     #[derive(Clone)]

@@ -1,4 +1,5 @@
 use std::time::{Duration, Instant};
+
 use thiserror::Error;
 use tokio::sync::RwLock;
 
@@ -108,8 +109,9 @@ impl Default for RateLimiter {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use tokio::time::Duration;
+
+    use super::*;
 
     #[tokio::test]
     async fn test_rate_limiter_basic() {

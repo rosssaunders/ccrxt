@@ -1,5 +1,6 @@
-use serde::{Deserialize, Serialize};
 use std::fmt;
+
+use serde::{Deserialize, Serialize};
 
 /// Options contract type
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]

@@ -1,6 +1,7 @@
+use serde::{Deserialize, Serialize};
+
 use super::client::RestClient;
 use crate::deribit::{EndpointType, RestResult};
-use serde::{Deserialize, Serialize};
 
 /// Deposit ID parameters for set clearance originator request
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -99,10 +100,11 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use crate::deribit::AccountTier;
     use rest::secrets::ExposableSecret;
     use serde_json::{Value, json};
+
+    use super::*;
+    use crate::deribit::AccountTier;
 
     // Test secret implementation
     #[derive(Clone)]

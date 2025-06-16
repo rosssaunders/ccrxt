@@ -1,6 +1,7 @@
+use serde::{Deserialize, Serialize};
+
 use super::client::RestClient;
 use crate::deribit::{AdvancedType, CancelReason, EndpointType, OrderDirection, OrderState, RestResult, TriggerType};
-use serde::{Deserialize, Serialize};
 
 /// Request parameters for canceling an order
 #[derive(Debug, Clone, Serialize)]
@@ -246,10 +247,11 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use crate::deribit::AccountTier;
     use rest::secrets::ExposableSecret;
     use serde_json::{Value, json};
+
+    use super::*;
+    use crate::deribit::AccountTier;
 
     // Test secret implementation
     #[derive(Clone)]

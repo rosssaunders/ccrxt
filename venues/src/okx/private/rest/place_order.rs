@@ -1,6 +1,7 @@
+use serde::{Deserialize, Serialize};
+
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, OrderSide, OrderType, RestResult};
-use serde::{Deserialize, Serialize};
 
 /// Request to place a new order
 #[derive(Debug, Clone, Serialize)]

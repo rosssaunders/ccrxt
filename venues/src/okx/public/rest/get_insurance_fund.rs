@@ -1,7 +1,7 @@
+use serde::{Deserialize, Serialize};
+
 use super::client::RestClient;
 use crate::okx::{AdlType, EndpointType, InstrumentType, RestResult};
-
-use serde::{Deserialize, Serialize};
 
 /// Insurance fund type for filtering insurance fund data
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -134,8 +134,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use serde_json::json;
+
+    use super::*;
 
     #[test]
     fn test_get_insurance_fund_request_minimal() {

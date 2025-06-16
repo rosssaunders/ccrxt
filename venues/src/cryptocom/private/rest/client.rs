@@ -1,11 +1,13 @@
-use crate::cryptocom::Errors;
+use std::borrow::Cow;
+use std::collections::BTreeMap;
+
 use chrono::Utc;
 use hmac::{Hmac, Mac};
 use rest::secrets::ExposableSecret;
 use serde_json::{Value, json};
 use sha2::Sha256;
-use std::borrow::Cow;
-use std::collections::BTreeMap;
+
+use crate::cryptocom::Errors;
 
 /// Signs a request using the Crypto.com signing algorithm
 ///
@@ -174,8 +176,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use serde_json::json;
+
+    use super::*;
 
     /// A plain text implementation of ExposableSecret for testing purposes.
     ///

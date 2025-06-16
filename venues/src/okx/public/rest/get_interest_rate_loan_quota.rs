@@ -1,6 +1,7 @@
+use serde::{Deserialize, Serialize};
+
 use super::client::RestClient;
 use crate::okx::{EndpointType, RestResult};
-use serde::{Deserialize, Serialize};
 
 /// Request parameters for getting interest rate and loan quota
 /// This endpoint does not require any parameters
@@ -102,8 +103,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use serde_json::json;
+
+    use super::*;
 
     #[test]
     fn test_get_interest_rate_loan_quota_request_structure() {

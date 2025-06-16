@@ -16,8 +16,6 @@
 
 use std::borrow::Cow;
 
-use crate::bitmart::rate_limit::{EndpointType, RateLimiter};
-use crate::bitmart::{Errors, RestResult};
 use base64::{Engine as _, engine::general_purpose};
 use hmac::{Hmac, Mac};
 use reqwest::{Client, Method};
@@ -25,6 +23,9 @@ use rest::secrets::ExposableSecret;
 use serde::Deserialize;
 use serde::de::DeserializeOwned;
 use sha2::Sha256;
+
+use crate::bitmart::rate_limit::{EndpointType, RateLimiter};
+use crate::bitmart::{Errors, RestResult};
 
 /// BitMart private REST client
 pub struct RestClient {
@@ -212,9 +213,10 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
+    use rest::secrets::ExposableSecret;
+
     use super::*;
     use crate::bitmart::rate_limit::RateLimiter;
-    use rest::secrets::ExposableSecret;
 
     #[derive(Clone)]
     struct TestSecret {

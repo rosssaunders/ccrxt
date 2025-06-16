@@ -1,10 +1,12 @@
 // Shared REST client logic for Binance Options public and private clients.
 // Handles URL construction, header assembly, request execution, and rate limiter update.
 
-use crate::binance::options::{ErrorResponse, Errors, RateLimiter, ResponseHeaders};
-use reqwest::{Client, Method};
 use std::time::Duration;
+
+use reqwest::{Client, Method};
 use url::Url;
+
+use crate::binance::options::{ErrorResponse, Errors, RateLimiter, ResponseHeaders};
 
 /// Helper to build a URL with optional query parameters using `url::Url`.
 pub(crate) fn build_url(base_url: &str, endpoint: &str, query: Option<&str>) -> Result<String, Errors> {
@@ -64,9 +66,10 @@ async fn execute_request<T>(
 where
     T: serde::de::DeserializeOwned,
 {
-    use crate::binance::options::ApiError;
     use reqwest::StatusCode;
     use tracing::debug;
+
+    use crate::binance::options::ApiError;
 
     let start = std::time::Instant::now();
     let mut request = client.request(method, url);

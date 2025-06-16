@@ -1,6 +1,7 @@
 //! Bullish Private REST API client
 
-use crate::bullish::{EndpointType, Errors, RateLimiter, RestResult};
+use std::borrow::Cow;
+
 use base64::{Engine as _, engine::general_purpose};
 use hmac::{Hmac, Mac};
 use reqwest::Client;
@@ -9,7 +10,8 @@ use serde::Serialize;
 use serde::de::DeserializeOwned;
 use serde_json::Value;
 use sha2::Sha256;
-use std::borrow::Cow;
+
+use crate::bullish::{EndpointType, Errors, RateLimiter, RestResult};
 
 /// Private REST client for Bullish exchange
 ///

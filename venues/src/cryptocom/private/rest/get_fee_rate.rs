@@ -1,7 +1,8 @@
-use super::client::RestClient;
-use crate::cryptocom::RestResult;
 use serde::Deserialize;
 use serde_json::{Value, json};
+
+use super::client::RestClient;
+use crate::cryptocom::RestResult;
 
 /// Fee rate information for user's account
 #[derive(Debug, Clone, Deserialize)]
@@ -43,9 +44,10 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use rest::secrets::ExposableSecret;
     use serde_json::json;
+
+    use super::*;
 
     /// A plain text implementation of ExposableSecret for testing purposes.
     #[derive(Clone)]

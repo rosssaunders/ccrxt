@@ -3,9 +3,10 @@
 //! Retrieves available combos. This method can be used to get the list of all
 //! combos, or only the list of combos in the given state.
 
+use serde::{Deserialize, Serialize};
+
 use super::client::RestClient;
 use crate::deribit::{ComboState, Currency, EndpointType, RestResult};
-use serde::{Deserialize, Serialize};
 
 /// Request parameters for the public/get_combo_ids endpoint.
 ///
@@ -60,9 +61,10 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
+    use serde_json::json;
+
     use super::*;
     use crate::deribit::{AccountTier, RateLimiter};
-    use serde_json::json;
 
     #[test]
     fn test_get_combo_ids_request_serialization() {

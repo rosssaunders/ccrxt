@@ -1,6 +1,7 @@
+use serde::{Deserialize, Serialize};
+
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
-use serde::{Deserialize, Serialize};
 
 /// Request to close a position
 #[derive(Debug, Clone, Serialize)]

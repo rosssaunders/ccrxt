@@ -1,8 +1,9 @@
 //! Get trading accounts endpoint for Bullish Exchange API
 
+use serde::{Deserialize, Serialize};
+
 use super::client::RestClient;
 use crate::bullish::{EndpointType, RestResult};
-use serde::{Deserialize, Serialize};
 
 /// Trading account information
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -120,8 +121,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use serde_json::json;
+
+    use super::*;
 
     #[test]
     fn test_trading_account_structure() {

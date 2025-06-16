@@ -18,16 +18,14 @@ mod private {
 // Re-export public modules
 pub use enums::*;
 pub use errors::{ApiError, Errors};
-pub use rate_limit::{PortfolioMarginRateLimiter, RateLimitHeader, RateLimiter};
-
 // Export clients
 pub use private::PrivateRestClient;
 pub use public::PublicRestClient;
+pub use rate_limit::{PortfolioMarginRateLimiter, RateLimitHeader, RateLimiter};
 
 /// Portfolio Margin specific response headers
 /// Uses the same structure as COIN-M since rate limiting works identically
 pub use crate::binance::coinm::{ResponseHeaders, RestResponse, RestResult};
-
 pub use crate::binance::portfolio::errors::ErrorResponse;
 pub(crate) use crate::binance::portfolio::request::execute_request;
 

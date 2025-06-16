@@ -4,8 +4,9 @@
 
 #[cfg(test)]
 mod usage_examples {
-    use crate::okx::{GetEstimatedPriceRequest, GetMarkPriceCandlesHistoryRequest, GetMarkPriceCandlesRequest, PublicRestClient, RateLimiter};
     use reqwest::Client;
+
+    use crate::okx::{GetEstimatedPriceRequest, GetMarkPriceCandlesHistoryRequest, GetMarkPriceCandlesRequest, PublicRestClient, RateLimiter};
 
     #[test]
     fn test_mark_price_candles_request_usage() {
@@ -80,8 +81,9 @@ mod usage_examples {
     #[test]
     fn test_candlestick_data_format() {
         // Test that we can parse the expected response format
-        use crate::okx::{GetMarkPriceCandlesHistoryResponse, GetMarkPriceCandlesResponse};
         use serde_json::json;
+
+        use crate::okx::{GetMarkPriceCandlesHistoryResponse, GetMarkPriceCandlesResponse};
 
         let sample_response = json!({
             "code": "0",
@@ -130,8 +132,9 @@ mod usage_examples {
     #[test]
     fn test_estimated_price_response_format() {
         // Test that we can parse the expected response format
-        use crate::okx::GetEstimatedPriceResponse;
         use serde_json::json;
+
+        use crate::okx::GetEstimatedPriceResponse;
 
         let sample_response = json!({
             "code": "0",

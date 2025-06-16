@@ -1,5 +1,6 @@
-use serde::{Deserialize, Serialize};
 use std::fmt::{Display, Formatter, Result as FmtResult};
+
+use serde::{Deserialize, Serialize};
 
 /// Currency types supported by Deribit
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]

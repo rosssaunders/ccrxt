@@ -1,6 +1,7 @@
+use serde::{Deserialize, Serialize};
+
 use super::client::RestClient;
 use crate::coinbase::{EndpointType, RestResult};
-use serde::{Deserialize, Serialize};
 
 /// Account balance information from Coinbase Exchange
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -104,8 +105,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use serde_json;
+
+    use super::*;
 
     #[test]
     fn test_account_balance_deserialization() {

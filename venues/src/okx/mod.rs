@@ -62,7 +62,6 @@ pub use private::{
     GetOrderHistoryRequest, GetOrderRequest, GetPendingOrdersRequest, GetPositionsRequest, IpRestriction, OkxApiResponse, OrderDetails,
     PlaceBatchOrdersRequest, PlaceBatchOrdersResponse, PlaceOrderRequest, PlaceOrderResponse, Position,
 };
-
 pub use public::RestClient as PublicRestClient;
 pub use public::{BarSize, GetHistoryMarkPriceCandlesRequest, GetHistoryMarkPriceCandlesResponse, MarkPriceCandle};
 pub use public::{ConvertContractCoinData, ConvertContractCoinRequest, ConvertContractCoinResponse};

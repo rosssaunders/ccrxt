@@ -1,6 +1,7 @@
+use serde::{Deserialize, Serialize};
+
 use super::client::RestClient;
 use crate::deribit::{AddressBookType, AddressStatus, Currency, EndpointType, RestResult};
-use serde::{Deserialize, Serialize};
 
 /// Request parameters for adding to address book
 #[derive(Debug, Clone, Serialize)]
@@ -173,10 +174,11 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use crate::deribit::AccountTier;
     use rest::secrets::ExposableSecret;
     use serde_json::{Value, json};
+
+    use super::*;
+    use crate::deribit::AccountTier;
 
     // Test secret implementation
     #[derive(Clone)]

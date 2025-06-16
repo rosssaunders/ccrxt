@@ -1,7 +1,8 @@
-use serde::Deserialize;
 use std::collections::VecDeque;
 use std::sync::Arc;
 use std::time::{Duration, Instant};
+
+use serde::Deserialize;
 use tokio::sync::RwLock;
 
 use crate::binance::coinm::errors::ApiError;

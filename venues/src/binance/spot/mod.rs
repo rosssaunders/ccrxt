@@ -12,18 +12,15 @@ pub mod private_impl {
 }
 
 // Re-export the PrivateRestClient at the spot level
-pub use private_impl::PrivateRestClient;
-
-// Re-export for backward compatibility
-pub use private_impl as private;
-
 // Re-export key components
 pub use enums::*;
 pub use errors::{ApiError, Errors};
+// Re-export for backward compatibility
+pub use private_impl as private;
+pub use private_impl::PrivateRestClient;
 pub use rate_limit::{RateLimitHeader, RateLimiter};
 
 pub use crate::binance::spot::errors::ErrorResponse;
-
 // Internal re-export for private client usage
 pub(crate) use crate::binance::spot::request::execute_request;
 

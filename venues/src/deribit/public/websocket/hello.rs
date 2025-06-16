@@ -78,8 +78,9 @@ impl<T> JsonRpcRequest<T> {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use serde_json;
+
+    use super::*;
 
     #[test]
     fn test_hello_request_serialization() {

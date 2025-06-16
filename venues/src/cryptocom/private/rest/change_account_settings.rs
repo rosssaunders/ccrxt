@@ -1,7 +1,8 @@
-use super::client::RestClient;
-use crate::cryptocom::{RestResult, StpInst, StpScope};
 use serde::Serialize;
 use serde_json::{Value, json};
+
+use super::client::RestClient;
+use crate::cryptocom::{RestResult, StpInst, StpScope};
 
 /// Request parameters for changing account settings
 #[derive(Debug, Clone, Serialize)]
@@ -44,8 +45,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use rest::secrets::ExposableSecret;
+
+    use super::*;
 
     /// A plain text implementation of ExposableSecret for testing purposes.
     #[derive(Clone)]

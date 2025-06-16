@@ -2,12 +2,14 @@
 //!
 //! Fetches settlement price of expired instruments.
 
+use std::borrow::Cow;
+
+use serde::{Deserialize, Serialize};
+
 use super::client::RestClient;
 use crate::cryptocom::EndpointType;
 use crate::cryptocom::InstrumentType;
 use crate::cryptocom::RestResult;
-use serde::{Deserialize, Serialize};
-use std::borrow::Cow;
 
 /// Request parameters for the public/get-expired-settlement-price endpoint.
 ///
@@ -82,8 +84,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use serde_json::json;
+
+    use super::*;
 
     #[test]
     fn test_expired_settlement_price_endpoint_type() {

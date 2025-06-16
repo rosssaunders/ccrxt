@@ -1,9 +1,10 @@
 // Request and response structs, and RestClient method for GET /dapi/v1/openOrders
 // See: <https://binance-docs.github.io/apidocs/delivery/en/>
 
+use serde::{Deserialize, Serialize};
+
 use crate::binance::coinm::RestResult;
 use crate::binance::coinm::private::rest::client::RestClient;
-use serde::{Deserialize, Serialize};
 
 /// Request parameters for the Current All Open Orders endpoint (GET /dapi/v1/openOrders).
 ///

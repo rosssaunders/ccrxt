@@ -1,8 +1,9 @@
+use serde::{Deserialize, Serialize};
+use serde_json::{Value, json};
+
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
 use crate::cryptocom::rate_limit::EndpointType;
-use serde::{Deserialize, Serialize};
-use serde_json::{Value, json};
 
 /// Request parameters for get conversion rate
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -51,8 +52,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use serde_json::json;
+
+    use super::*;
 
     #[test]
     fn test_get_conversion_rate_request_structure() {

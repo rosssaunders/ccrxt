@@ -1,7 +1,9 @@
+use std::time::Duration;
+
+use async_trait::async_trait;
+
 use crate::error::RestError;
 use crate::rate_limiter::RateLimiter;
-use async_trait::async_trait;
-use std::time::Duration;
 
 /// Common trait for venue-specific HTTP headers
 pub trait VenueHeaders: Send + Sync + std::fmt::Debug {}

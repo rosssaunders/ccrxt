@@ -1,6 +1,7 @@
+use serde::{Deserialize, Serialize};
+
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, InstrumentType, OrderSide, RestResult};
-use serde::{Deserialize, Serialize};
 
 /// Request to get recent fills
 #[derive(Debug, Clone, Serialize)]

@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 use std::fmt;
 use std::time::{Duration, Instant};
+
 use tokio::sync::RwLock;
 
 /// Represents different types of BitMart API endpoints for rate limiting
@@ -123,8 +124,9 @@ impl Default for RateLimiter {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use tokio::time::sleep;
+
+    use super::*;
 
     #[test]
     fn test_endpoint_types() {

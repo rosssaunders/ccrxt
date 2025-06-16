@@ -1,8 +1,9 @@
+use serde::Deserialize;
+
 use crate::binance::usdm::RestResult;
 use crate::binance::usdm::enums::{ContractStatus, ContractType, OrderType, TimeInForce, UnderlyingType};
 use crate::binance::usdm::public::rest::RestClient;
 use crate::binance::usdm::rate_limit::{RateLimitInterval, RateLimitType};
-use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]

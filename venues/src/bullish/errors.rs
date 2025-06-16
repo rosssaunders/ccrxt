@@ -1,7 +1,8 @@
 //! Error types for Bullish Exchange API
 
-use serde::{Deserialize, Serialize};
 use std::fmt;
+
+use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
 /// Comprehensive error type for Bullish API operations
@@ -58,8 +59,9 @@ pub struct ErrorResponse {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use serde_json::json;
+
+    use super::*;
 
     #[test]
     fn test_api_error_structure() {

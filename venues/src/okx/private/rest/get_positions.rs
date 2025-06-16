@@ -1,6 +1,7 @@
+use serde::{Deserialize, Serialize};
+
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, InstrumentType, RestResult};
-use serde::{Deserialize, Serialize};
 
 /// Request to get account positions
 #[derive(Debug, Clone, Serialize)]

@@ -24,6 +24,8 @@
 //!
 //! - **Request Signing**: For private endpoints, query parameters (including timestamp) must be
 //!   signed using HMAC-SHA256 with the API secret
+use std::borrow::Cow;
+
 use hex;
 use hmac::{Hmac, Mac};
 use reqwest::Client;
@@ -31,7 +33,6 @@ use rest::secrets::ExposableSecret;
 use sha2::Sha256;
 
 use crate::binance::portfolio::{Errors, RateLimiter, RestResult};
-use std::borrow::Cow;
 
 /// Signs a request using the decrypted API secret
 /// Signs a query string using the decrypted API secret and returns the signature as a hex string.

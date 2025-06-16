@@ -1,4 +1,5 @@
-use crate::deribit::{EndpointType, Errors, RateLimiter, RestResult};
+use std::borrow::Cow;
+
 use chrono::Utc;
 use hmac::{Hmac, Mac};
 use reqwest::Client;
@@ -7,7 +8,8 @@ use serde::Serialize;
 use serde::de::DeserializeOwned;
 use serde_json::json;
 use sha2::Sha256;
-use std::borrow::Cow;
+
+use crate::deribit::{EndpointType, Errors, RateLimiter, RestResult};
 
 /// Private REST client for Deribit exchange
 ///

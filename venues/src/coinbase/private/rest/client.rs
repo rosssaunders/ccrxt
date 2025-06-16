@@ -3,6 +3,8 @@
 //! Provides access to all private REST API endpoints for Coinbase Exchange.
 //! All requests are authenticated and require API credentials.
 
+use std::borrow::Cow;
+
 use base64::{Engine as _, engine::general_purpose};
 use chrono::Utc;
 use hmac::{Hmac, Mac};
@@ -11,7 +13,6 @@ use rest::secrets::ExposableSecret;
 use serde::Serialize;
 use serde::de::DeserializeOwned;
 use sha2::Sha256;
-use std::borrow::Cow;
 
 use crate::coinbase::{EndpointType, Errors, RateLimiter, RestResult};
 

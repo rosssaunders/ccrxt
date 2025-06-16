@@ -1,5 +1,6 @@
-use anyhow::Result;
 use std::sync::Arc;
+
+use anyhow::Result;
 use tabled::{settings::Style, Table, Tabled};
 use venues::binance::coinm::PublicRestClient;
 use venues::binance::coinm::{ExchangeInfoResponse, Filter};

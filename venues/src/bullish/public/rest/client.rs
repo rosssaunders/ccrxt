@@ -1,9 +1,11 @@
 //! Bullish Public REST API client
 
-use crate::bullish::{EndpointType, RateLimiter, RestResult};
+use std::borrow::Cow;
+
 use reqwest::Client;
 use serde::de::DeserializeOwned;
-use std::borrow::Cow;
+
+use crate::bullish::{EndpointType, RateLimiter, RestResult};
 
 /// Public REST client for Bullish exchange
 ///

@@ -2,8 +2,9 @@
 //
 // Provides access to all public REST API endpoints for Binance Portfolio Margin.
 // All requests are unauthenticated and do not require API credentials.
-use reqwest::Client;
 use std::borrow::Cow;
+
+use reqwest::Client;
 
 use crate::binance::portfolio::{RateLimiter, RestResult};
 

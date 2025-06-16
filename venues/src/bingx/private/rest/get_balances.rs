@@ -1,6 +1,7 @@
+use serde::{Deserialize, Serialize};
+
 use super::RestClient;
 use crate::bingx::{EndpointType, RestResult};
-use serde::{Deserialize, Serialize};
 
 /// Request to get account balances
 #[derive(Debug, Clone, Default, Serialize)]

@@ -2,9 +2,10 @@
 //
 // Provides access to all public REST API endpoints for OKX Exchange.
 // All requests are unauthenticated and do not require API credentials.
+use std::borrow::Cow;
+
 use reqwest::Client;
 use serde::de::DeserializeOwned;
-use std::borrow::Cow;
 
 use crate::okx::{EndpointType, Errors, RateLimiter, RestResult};
 

@@ -2,10 +2,12 @@
 //!
 //! Fetches the public tickers for all or a particular instrument.
 
+use std::borrow::Cow;
+
+use serde::{Deserialize, Serialize};
+
 use super::client::RestClient;
 use crate::cryptocom::{EndpointType, RestResult};
-use serde::{Deserialize, Serialize};
-use std::borrow::Cow;
 
 /// Request parameters for the public/get-tickers endpoint.
 ///

@@ -1,6 +1,7 @@
+use serde::{Deserialize, Serialize};
+
 use super::RestClient;
 use crate::bybit::{AccountType, EndpointType, RestResult};
-use serde::{Deserialize, Serialize};
 
 /// Request for getting wallet balance from ByBit V5 API
 #[derive(Debug, Clone, Serialize, Deserialize)]
