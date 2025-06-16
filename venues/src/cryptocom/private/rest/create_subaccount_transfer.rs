@@ -1,31 +1,34 @@
 use serde::{Deserialize, Serialize};
-use serde_json::{Value, json};
 
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
+use crate::cryptocom::enums::ResponseCode;
 
-/// Request parameters for create subaccount transfer
+/// Request parameters for creating a subaccount transfer.
 #[derive(Debug, Clone, Serialize)]
 pub struct CreateSubaccountTransferRequest {
-    /// Account UUID to be debited
+    /// Account UUID to be debited.
     pub from: String,
-    /// Account UUID to be credit
+
+    /// Account UUID to be credited.
     pub to: String,
-    /// Currency symbol
+
+    /// Currency symbol.
     pub currency: String,
-    /// Amount to transfer - must a be positive number
+
+    /// Amount to transfer - must be a positive number.
     pub amount: String,
 }
 
-/// Response for create subaccount transfer endpoint
-#[derive(Debug, Clone, Serialize, Deserialize)]
+/// Response for creating a subaccount transfer.
+#[derive(Debug, Clone, Deserialize)]
 pub struct CreateSubaccountTransferResponse {
-    /// 0 for successful transfer (NO_ERROR) else the error code
-    pub code: i32,
+    /// Status code: 0 for successful transfer (NO_ERROR), else the error code.
+    pub code: ResponseCode,
 }
 
 impl RestClient {
-    /// Transfer funds between master and sub-accounts
+    /// Transfer funds between master and sub-accounts.
     ///
     /// Transfers funds between master account and sub-accounts.
     ///
@@ -34,52 +37,21 @@ impl RestClient {
     /// Rate limit: No rate limit
     ///
     /// # Arguments
-    /// * `from` - Account UUID to be debited
-    /// * `to` - Account UUID to be credited
-    /// * `currency` - Currency symbol
-    /// * `amount` - Amount to transfer - must be a positive number
+    /// * `params` - Parameters for the subaccount transfer.
     ///
     /// # Returns
-    /// Transfer result with status code
-    pub async fn create_subaccount_transfer(&self, from: &str, to: &str, currency: &str, amount: &str) -> RestResult<Value> {
-        let nonce = chrono::Utc::now().timestamp_millis() as u64;
-        let id = 1;
+    /// Transfer result with status code.
+    pub async fn create_subaccount_transfer(&self, params: CreateSubaccountTransferRequest) -> RestResult<CreateSubaccountTransferResponse> {
+        let params = serde_json::to_value(&params).map_err(|e| crate::cryptocom::Errors::Error(format!("Serialization error: {}", e)))?;
 
-        let params = json!({
-            "from": from,
-            "to": to,
-            "currency": currency,
-            "amount": amount
-        });
-
-        let signature = self.sign_request("private/create-subaccount-transfer", id, &params, nonce)?;
-
-        let request_body = json!({
-            "id": id,
-            "method": "private/create-subaccount-transfer",
-            "params": params,
-            "nonce": nonce,
-            "sig": signature,
-            "api_key": self.api_key.expose_secret()
-        });
-
-        let response = self
-            .client
-            .post(format!(
-                "{}/v1/private/create-subaccount-transfer",
-                self.base_url
-            ))
-            .json(&request_body)
-            .send()
-            .await?;
-
-        let result: Value = response.json().await?;
-        Ok(result)
+        self.send_signed_request("private/create-subaccount-transfer", params)
+            .await
     }
 }
 
 #[cfg(test)]
 mod tests {
+    use crate::cryptocom::enums::ResponseCode;
     use rest::secrets::ExposableSecret;
     use serde_json::json;
 
@@ -154,7 +126,7 @@ mod tests {
         });
 
         let response: CreateSubaccountTransferResponse = serde_json::from_value(response_json).unwrap();
-        assert_eq!(response.code, 0);
+        assert_eq!(response.code, ResponseCode::NoError);
     }
 
     #[test]
@@ -164,7 +136,11 @@ mod tests {
         });
 
         let response: CreateSubaccountTransferResponse = serde_json::from_value(response_json).unwrap();
-        assert_eq!(response.code, 10002);
+        if let ResponseCode::Error(code) = response.code {
+            assert_eq!(code, 10002);
+        } else {
+            panic!("Expected Error variant");
+        }
     }
 
     #[test]

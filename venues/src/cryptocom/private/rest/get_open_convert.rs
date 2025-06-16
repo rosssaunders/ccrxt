@@ -1,5 +1,4 @@
 use serde::{Deserialize, Serialize};
-use serde_json::{Value, json};
 
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
@@ -60,27 +59,12 @@ impl RestClient {
     /// Rate limit: 50 requests per second
     ///
     /// # Arguments
-    /// * `start_time` - Optional start time in Unix time format (inclusive)
-    /// * `end_time` - Optional end time in Unix time format (inclusive)
-    /// * `limit` - Optional maximum number of requests returned (Default: 20, Max: 500)
+    /// * `params` - Request parameters including optional start_time, end_time, and limit
     ///
     /// # Returns
     /// Open convert requests with status, rates, and timestamps
-    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
-    pub async fn get_open_convert(&self, start_time: Option<u64>, end_time: Option<u64>, limit: Option<&str>) -> RestResult<Value> {
-        let mut params = json!({});
-
-        if let Some(start) = start_time {
-            params["start_time"] = json!(start);
-        }
-        if let Some(end) = end_time {
-            params["end_time"] = json!(end);
-        }
-        if let Some(lmt) = limit {
-            params["limit"] = json!(lmt);
-        }
-
-        self.send_signed_request("private/staking/get-open-convert", params)
+    pub async fn get_open_convert(&self, params: GetOpenConvertRequest) -> RestResult<GetOpenConvertResponse> {
+        self.send_signed_request("private/get-open-convert", params)
             .await
     }
 }

@@ -1,5 +1,4 @@
 use serde::{Deserialize, Serialize};
-use serde_json::{Value, json};
 
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
@@ -44,19 +43,11 @@ impl RestClient {
     /// See: <>
     ///
     /// # Arguments
-    /// * `currency` - Currency symbol e.g. BTC, CRO
+    /// * `params` - Request parameters including currency
     ///
     /// # Returns
     /// List of deposit addresses for the specified currency
-    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
-    pub async fn get_deposit_address(&self, currency: &str) -> RestResult<Value> {
-        
-        
-
-        let params = json!({
-            "currency": currency
-        });
-
+    pub async fn get_deposit_address(&self, params: GetDepositAddressRequest) -> RestResult<GetDepositAddressResponse> {
         self.send_signed_request("private/get-deposit-address", params)
             .await
     }

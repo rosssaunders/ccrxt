@@ -1,5 +1,4 @@
-use serde::Deserialize;
-use serde_json::{Value, json};
+use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
@@ -31,13 +30,12 @@ impl RestClient {
     ///
     /// # Returns
     /// Fee rate information
-    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
-    pub async fn get_fee_rate(&self) -> RestResult<Value> {
+    pub async fn get_fee_rate(&self) -> RestResult<FeeRate> {
+        // Empty struct to represent request with no parameters
+        #[derive(Debug, Clone, Serialize)]
+        struct EmptyRequest {}
         
-        
-        let params = json!({});
-
-        self.send_signed_request("private/get-fee-rate", params)
+        self.send_signed_request("private/get-fee-rate", EmptyRequest{})
             .await
     }
 }

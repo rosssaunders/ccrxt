@@ -1,5 +1,4 @@
 use serde::{Deserialize, Serialize};
-use serde_json::{Value, json};
 
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
@@ -79,23 +78,12 @@ impl RestClient {
     /// Rate limit: No rate limit
     ///
     /// # Arguments
-    /// * `page_size` - Optional page size (default: 20)
-    /// * `page` - Optional page number (default: 0)
+    /// * `request` - Parameters for the get accounts call
     ///
     /// # Returns
     /// Master account and sub accounts information
-    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
-    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
-    pub async fn get_accounts(&self, page_size: Option<u32>, page: Option<u32>) -> RestResult<Value> {
-        let mut params = json!({});
-        if let Some(ps) = page_size {
-            params["page_size"] = Value::Number(ps.into());
-        }
-        if let Some(p) = page {
-            params["page"] = Value::Number(p.into());
-        }
-
-        self.send_signed_request("private/get-accounts", params)
+    pub async fn get_accounts(&self, request: GetAccountsRequest) -> RestResult<GetAccountsResponse> {
+        self.send_signed_request("private/get-accounts", request)
             .await
     }
 }

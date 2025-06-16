@@ -1,5 +1,4 @@
 use serde::{Deserialize, Serialize};
-use serde_json::{Value, json};
 
 use super::client::RestClient;
 use super::user_balance::PositionBalance;
@@ -61,13 +60,12 @@ impl RestClient {
     ///
     /// # Returns
     /// Subaccount balance information for all sub-accounts
-    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
-    pub async fn get_subaccount_balances(&self) -> RestResult<Value> {
-        
-        
-        let params = json!({});
+    pub async fn get_subaccount_balances(&self) -> RestResult<GetSubaccountBalancesResponse> {
+        // Empty struct to represent request with no parameters
+        #[derive(Debug, Clone, Serialize)]
+        struct EmptyRequest {}
 
-        self.send_signed_request("private/get-subaccount-balances", params)
+        self.send_signed_request("private/get-subaccount-balances", EmptyRequest {})
             .await
     }
 }

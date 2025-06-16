@@ -53,10 +53,8 @@ impl RestClient {
     ///
     /// # Returns
     /// Response with cancellation results for each order
-    pub async fn cancel_order_list(&self, request: CancelOrderListRequest) -> crate::cryptocom::RestResult<serde_json::Value> {
-        let params = serde_json::to_value(&request)?;
-        self.send_signed_request("private/cancel-order-list", params)
-            .await
+    pub async fn cancel_order_list(&self, request: CancelOrderListRequest) -> crate::cryptocom::RestResult<CancelOrderListResponse> {
+        self.send_signed_request("private/cancel-order-list", request).await
     }
 }
 

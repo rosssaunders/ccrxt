@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use serde_json::{Value, json};
+use serde_json;
 
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
@@ -82,10 +82,8 @@ impl RestClient {
     ///
     /// # Returns
     /// User balance information including position balances and margin details
-    pub async fn get_user_balance(&self) -> RestResult<Value> {
-        
-        
-        let params = json!({});
+    pub async fn get_user_balance(&self) -> RestResult<UserBalanceResponse> {
+        let params = serde_json::json!({});
 
         self.send_signed_request("private/user-balance", params)
             .await

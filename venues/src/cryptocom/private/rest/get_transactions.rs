@@ -1,5 +1,4 @@
 use serde::{Deserialize, Serialize};
-use serde_json::{Value, json};
 
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
@@ -81,44 +80,18 @@ impl RestClient {
     /// Rate limit: 1 request per second
     ///
     /// # Arguments
-    /// * `instrument_name` - e.g. BTCUSD-PERP. Omit for 'all'
-    /// * `journal_type` - Refer to the journal_type in Response Attributes
-    /// * `start_time` - Start time in Unix time format (inclusive). Default: end_time - 1 day. Nanosecond is recommended for accurate pagination
-    /// * `end_time` - End time in Unix time format (exclusive). Default: current system timestamp. Nanosecond is recommended for accurate pagination
-    /// * `limit` - The maximum number of transactions to be retrieved before the end_time. Default: 100. Max: 100.
+    /// * `request` - Parameters for retrieving transactions
     ///
     /// # Returns
     /// Transaction history information
-    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
     pub async fn get_transactions(
         &self,
-        instrument_name: Option<String>,
-        journal_type: Option<String>,
-        start_time: Option<String>,
-        end_time: Option<String>,
-        limit: Option<i32>,
-    ) -> RestResult<Value> {
+        request: GetTransactionsRequest
+    ) -> RestResult<GetTransactionsResponse> {
         
         
 
-        let mut params = json!({});
-        if let Some(in_name) = instrument_name {
-            params["instrument_name"] = Value::String(in_name);
-        }
-        if let Some(jt) = journal_type {
-            params["journal_type"] = Value::String(jt);
-        }
-        if let Some(st) = start_time {
-            params["start_time"] = Value::String(st);
-        }
-        if let Some(et) = end_time {
-            params["end_time"] = Value::String(et);
-        }
-        if let Some(l) = limit {
-            params["limit"] = Value::Number(l.into());
-        }
-
-        self.send_signed_request("private/get-transactions", params)
+        self.send_signed_request("private/get-transactions", request)
             .await
     }
 }

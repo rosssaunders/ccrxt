@@ -1,5 +1,4 @@
 use serde::{Deserialize, Serialize};
-use serde_json::{Value, json};
 
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
@@ -40,20 +39,11 @@ impl RestClient {
     /// Rate limit: 50 requests per second
     ///
     /// # Arguments
-    /// * `instrument_name` - Staking instrument name, e.g. "SOL.staked"
-    /// * `quantity` - Unstake quantity
+    /// * `params` - Request parameters including instrument_name and quantity
     ///
     /// # Returns
     /// Unstake request information including staking ID, status, and reason
-    pub async fn unstake(&self, instrument_name: &str, quantity: &str) -> RestResult<Value> {
-        
-        
-
-        let params = json!({
-            "instrument_name": instrument_name,
-            "quantity": quantity
-        });
-
+    pub async fn unstake(&self, params: UnstakeRequest) -> RestResult<UnstakeResponse> {
         self.send_signed_request("private/staking/unstake", params)
             .await
     }

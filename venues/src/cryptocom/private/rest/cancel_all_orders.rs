@@ -1,5 +1,4 @@
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
 
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
@@ -24,6 +23,13 @@ pub struct CancelAllOrdersRequest {
     pub order_type: Option<CancelOrderType>,
 }
 
+/// Response for canceling all orders
+#[derive(Debug, Clone, Deserialize)]
+pub struct CancelAllOrdersResponse {
+    /// Result code (0 for success)
+    pub code: i32,
+}
+
 impl RestClient {
     /// Cancels all orders for a particular instrument/pair (asynchronous)
     ///
@@ -39,10 +45,8 @@ impl RestClient {
     ///
     /// # Returns
     /// Success confirmation (code 0)
-    pub async fn cancel_all_orders(&self, request: CancelAllOrdersRequest) -> RestResult<Value> {
-        let params = serde_json::to_value(&request).map_err(|e| crate::cryptocom::Errors::Error(format!("Serialization error: {}", e)))?;
-
-        self.send_signed_request("private/cancel-all-orders", params)
+    pub async fn cancel_all_orders(&self, request: CancelAllOrdersRequest) -> RestResult<CancelAllOrdersResponse> {
+        self.send_signed_request("private/cancel-all-orders", request)
             .await
     }
 }

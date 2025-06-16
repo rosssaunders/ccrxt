@@ -65,9 +65,8 @@ impl RestClient {
     /// # Returns
     /// The response contains the OCO list ID.
     pub async fn create_oco_order_list(&self, request: CreateOcoOrderRequest) -> RestResult<CreateOcoOrderResponse> {
-        let params = serde_json::to_value(&request)?;
-        // ...existing code for sending the request and handling the response...
-        unimplemented!("Implement the HTTP request/response logic here");
+        self.send_signed_request("private/create-order-list", request)
+            .await
     }
 }
 

@@ -1,5 +1,4 @@
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
 
 use super::client::RestClient;
 use crate::cryptocom::{ExecInst, OrderType, RefPriceType, RestResult, SpotMarginType, StpInst, StpScope, TimeInForce, TradeSide};
@@ -80,11 +79,8 @@ impl RestClient {
     ///
     /// # Returns
     /// Order ID and client order ID
-    pub async fn create_order(&self, request: CreateOrderRequest) -> RestResult<Value> {
-        let params = serde_json::to_value(&request).map_err(|e| crate::cryptocom::Errors::Error(format!("Serialization error: {}", e)))?;
-
-        self.send_signed_request("private/create-order", params)
-            .await
+    pub async fn create_order(&self, request: CreateOrderRequest) -> RestResult<CreateOrderResponse> {
+        self.send_signed_request("private/create-order", request).await
     }
 }
 

@@ -1,5 +1,4 @@
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
 
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
@@ -48,10 +47,8 @@ impl RestClient {
     ///
     /// # Returns
     /// Client order ID and order ID
-    pub async fn amend_order(&self, request: AmendOrderRequest) -> RestResult<Value> {
-        let params = serde_json::to_value(&request).map_err(|e| crate::cryptocom::Errors::Error(format!("Serialization error: {}", e)))?;
-
-        self.send_signed_request("private/amend-order", params)
+    pub async fn amend_order(&self, request: AmendOrderRequest) -> RestResult<AmendOrderResponse> {
+        self.send_signed_request("private/amend-order", request)
             .await
     }
 }

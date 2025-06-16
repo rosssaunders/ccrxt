@@ -1,5 +1,4 @@
 use serde::{Deserialize, Serialize};
-use serde_json::{Value, json};
 
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
@@ -53,20 +52,12 @@ impl RestClient {
     /// Rate limit: No rate limit
     ///
     /// # Arguments
-    /// * `instrument_name` - Optional instrument name filter (e.g. BTCUSD-PERP)
+    /// * `request` - Parameters for filtering positions
     ///
     /// # Returns
     /// Position information for all or specified instruments
-    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
-    pub async fn get_positions(&self, instrument_name: Option<&str>) -> RestResult<Value> {
-        
-
-        let mut params = json!({});
-        if let Some(instrument) = instrument_name {
-            params["instrument_name"] = Value::String(instrument.to_string());
-        }
-
-        self.send_signed_request("private/get-positions", params)
+    pub async fn get_positions(&self, request: GetPositionsRequest) -> RestResult<GetPositionsResponse> {
+        self.send_signed_request("private/get-positions", request)
             .await
     }
 }

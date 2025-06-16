@@ -1,5 +1,4 @@
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
 
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
@@ -95,8 +94,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Array of open orders
-    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
-    pub async fn get_open_orders(&self, request: GetOpenOrdersRequest) -> RestResult<Value> {
+    pub async fn get_open_orders(&self, request: GetOpenOrdersRequest) -> RestResult<GetOpenOrdersResponse> {
         
         
         let params = serde_json::to_value(&request).map_err(|e| crate::cryptocom::Errors::Error(format!("Serialization error: {}", e)))?;

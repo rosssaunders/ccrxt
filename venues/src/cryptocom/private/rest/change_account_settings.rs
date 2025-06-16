@@ -1,5 +1,4 @@
-use serde::Serialize;
-use serde_json::Value;
+use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
 use crate::cryptocom::{RestResult, StpInst, StpScope};
@@ -21,6 +20,14 @@ pub struct ChangeAccountSettingsRequest {
     pub leverage: Option<u8>,
 }
 
+/// Response for change account settings endpoint
+#[derive(Debug, Clone, Deserialize)]
+pub struct ChangeAccountSettingsResponse {
+    /// Success code (typically 0)
+    #[serde(default)]
+    pub code: i32,
+}
+
 impl RestClient {
     /// Change the account STP settings
     ///
@@ -33,11 +40,8 @@ impl RestClient {
     ///
     /// # Returns
     /// Success confirmation (code 0)
-    pub async fn change_account_settings(&self, request: ChangeAccountSettingsRequest) -> RestResult<Value> {
-        let params = serde_json::to_value(&request).map_err(|e| crate::cryptocom::Errors::Error(format!("Serialization error: {}", e)))?;
-
-        self.send_signed_request("private/change-account-settings", params)
-            .await
+    pub async fn change_account_settings(&self, request: ChangeAccountSettingsRequest) -> RestResult<ChangeAccountSettingsResponse> {
+        self.send_signed_request("private/change-account-settings", request).await
     }
 }
 

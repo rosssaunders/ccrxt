@@ -1,8 +1,7 @@
 use serde::{Deserialize, Serialize};
-use serde_json::{Value, json};
 
 use super::client::RestClient;
-use crate::cryptocom::RestResult;
+use crate::cryptocom::{RestResult, enums::WithdrawalStatus};
 
 /// Request parameters for get withdrawal history
 #[derive(Debug, Clone, Serialize)]
@@ -23,10 +22,8 @@ pub struct GetWithdrawalHistoryRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub page: Option<u32>,
     /// Withdrawal status filter (optional)
-    /// "0" - Pending, "1" - Processing, "2" - Rejected, "3" - Payment In-progress,
-    /// "4" - Payment Failed, "5" - Completed, "6" - Cancelled
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub status: Option<String>,
+    pub status: Option<WithdrawalStatus>,
 }
 
 /// Withdrawal history entry
@@ -48,9 +45,7 @@ pub struct WithdrawalHistoryEntry {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub update_time: Option<u64>,
     /// Withdrawal status
-    /// "0" - Pending, "1" - Processing, "2" - Rejected, "3" - Payment In-progress,
-    /// "4" - Payment Failed, "5" - Completed, "6" - Cancelled
-    pub status: String,
+    pub status: WithdrawalStatus,
     /// Optional Client withdrawal ID if provided in request
     #[serde(skip_serializing_if = "Option::is_none")]
     pub client_wid: Option<String>,
@@ -76,52 +71,14 @@ impl RestClient {
     /// If you do not see the option when viewing your API Keys, this feature is not yet available for you.
     /// Note: It works for master account only, not for sub-accounts.
     ///
-    /// See: <>
+    /// See: <https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#private-get-withdrawal-history>
     ///
     /// # Arguments
-    /// * `currency` - Optional currency filter e.g. BTC, CRO
-    /// * `start_ts` - Optional start timestamp (default is 90 days from current timestamp)
-    /// * `end_ts` - Optional end timestamp (default is current timestamp)
-    /// * `page_size` - Optional page size (default: 20, max: 200)
-    /// * `page` - Optional page number, 0-based
-    /// * `status` - Optional status filter ("0"-"6")
+    /// * `params` - Request parameters including optional currency, start_ts, end_ts, page_size, page, and status
     ///
     /// # Returns
     /// List of withdrawal history entries matching the criteria
-    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
-    pub async fn get_withdrawal_history(
-        &self,
-        currency: Option<&str>,
-        start_ts: Option<u64>,
-        end_ts: Option<u64>,
-        page_size: Option<u32>,
-        page: Option<u32>,
-        status: Option<&str>,
-    ) -> RestResult<Value> {
-        
-        
-
-        let mut params = json!({});
-
-        if let Some(c) = currency {
-            params["currency"] = Value::String(c.to_string());
-        }
-        if let Some(st) = start_ts {
-            params["start_ts"] = Value::Number(st.into());
-        }
-        if let Some(et) = end_ts {
-            params["end_ts"] = Value::Number(et.into());
-        }
-        if let Some(ps) = page_size {
-            params["page_size"] = Value::Number(ps.into());
-        }
-        if let Some(p) = page {
-            params["page"] = Value::Number(p.into());
-        }
-        if let Some(s) = status {
-            params["status"] = Value::String(s.to_string());
-        }
-
+    pub async fn get_withdrawal_history(&self, params: GetWithdrawalHistoryRequest) -> RestResult<GetWithdrawalHistoryResponse> {
         self.send_signed_request("private/get-withdrawal-history", params)
             .await
     }
@@ -162,7 +119,7 @@ mod tests {
             end_ts: Some(1587846358253),
             page_size: Some(2),
             page: Some(0),
-            status: Some("1".to_string()),
+            status: Some(WithdrawalStatus::Processing),
         };
 
         let json_value = serde_json::to_value(&request).unwrap();
@@ -171,7 +128,7 @@ mod tests {
         assert_eq!(json_value.get("end_ts").unwrap(), 1587846358253_u64);
         assert_eq!(json_value.get("page_size").unwrap(), 2);
         assert_eq!(json_value.get("page").unwrap(), 0);
-        assert_eq!(json_value.get("status").unwrap(), "1");
+        assert_eq!(json_value.get("status").unwrap().as_str().unwrap(), "1");
     }
 
     #[test]
@@ -223,7 +180,7 @@ mod tests {
             entry.address,
             "2NBqqD5GRJ8wHy1PYyCXTe9ke5226FhavBf?1234567890"
         );
-        assert_eq!(entry.status, "1");
+        assert_eq!(entry.status, WithdrawalStatus::Processing);
         assert_eq!(entry.txid, Some("".to_string()));
         assert_eq!(entry.network_id, None);
     }
@@ -249,7 +206,7 @@ mod tests {
         assert_eq!(entry.update_time, None);
         assert_eq!(entry.amount, 0.1);
         assert_eq!(entry.address, "bc1qxyz123");
-        assert_eq!(entry.status, "5");
+        assert_eq!(entry.status, WithdrawalStatus::Completed);
         assert_eq!(entry.txid, None);
         assert_eq!(entry.network_id, None);
     }
@@ -279,7 +236,7 @@ mod tests {
 
         let entry = &response.withdrawal_list.first().unwrap();
         assert_eq!(entry.currency, "XRP");
-        assert_eq!(entry.status, "1");
+        assert_eq!(entry.status, WithdrawalStatus::Processing);
         assert_eq!(entry.amount, 100.0);
         assert_eq!(entry.client_wid, Some("my_withdrawal_002".to_string()));
     }
@@ -288,16 +245,16 @@ mod tests {
     fn test_withdrawal_status_meanings() {
         // Test different status values
         let statuses = vec![
-            ("0", "Pending"),
-            ("1", "Processing"),
-            ("2", "Rejected"),
-            ("3", "Payment In-progress"),
-            ("4", "Payment Failed"),
-            ("5", "Completed"),
-            ("6", "Cancelled"),
+            ("0", WithdrawalStatus::Pending),
+            ("1", WithdrawalStatus::Processing),
+            ("2", WithdrawalStatus::Rejected),
+            ("3", WithdrawalStatus::PaymentInProgress),
+            ("4", WithdrawalStatus::PaymentFailed),
+            ("5", WithdrawalStatus::Completed),
+            ("6", WithdrawalStatus::Cancelled),
         ];
 
-        for (status_code, _description) in statuses {
+        for (status_code, expected_enum) in statuses {
             let entry_json = json!({
                 "currency": "BTC",
                 "fee": 0.0,
@@ -309,7 +266,7 @@ mod tests {
             });
 
             let entry: WithdrawalHistoryEntry = serde_json::from_value(entry_json).unwrap();
-            assert_eq!(entry.status, status_code);
+            assert_eq!(entry.status, expected_enum);
         }
     }
 
@@ -329,7 +286,7 @@ mod tests {
 
         let entry: WithdrawalHistoryEntry = serde_json::from_value(entry_json).unwrap();
         assert_eq!(entry.currency, "ETH");
-        assert_eq!(entry.status, "5");
+        assert_eq!(entry.status, WithdrawalStatus::Completed);
         assert_eq!(
             entry.txid,
             Some("0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890".to_string())

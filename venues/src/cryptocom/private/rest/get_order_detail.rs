@@ -1,5 +1,4 @@
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
 
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
@@ -84,11 +83,8 @@ impl RestClient {
     ///
     /// # Returns
     /// Order detail information
-    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
-    pub async fn get_order_detail(&self, request: GetOrderDetailRequest) -> RestResult<Value> {
-        let params = serde_json::to_value(&request).map_err(|e| crate::cryptocom::Errors::Error(format!("Serialization error: {}", e)))?;
-
-        self.send_signed_request("private/get-order-detail", params)
+    pub async fn get_order_detail(&self, request: GetOrderDetailRequest) -> RestResult<OrderDetail> {
+        self.send_signed_request("private/get-order-detail", request)
             .await
     }
 }

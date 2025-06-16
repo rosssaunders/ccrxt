@@ -1,5 +1,4 @@
 use serde::{Deserialize, Serialize};
-use serde_json::{Value, json};
 
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
@@ -64,11 +63,12 @@ impl RestClient {
     ///
     /// # Returns
     /// Staking instruments information including estimated rewards, minimum amounts, and other details
-    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
-    pub async fn get_staking_instruments(&self) -> RestResult<Value> {
-        let params = json!({});
-
-        self.send_signed_request("private/staking/get-staking-instruments", params)
+    pub async fn get_staking_instruments(&self) -> RestResult<GetStakingInstrumentsResponse> {
+        // Empty struct to represent request with no parameters
+        #[derive(Debug, Clone, Serialize)]
+        struct EmptyRequest {}
+        
+        self.send_signed_request("private/staking/get-staking-instruments", EmptyRequest{})
             .await
     }
 }

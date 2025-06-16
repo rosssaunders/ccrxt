@@ -1,5 +1,4 @@
 use serde::{Deserialize, Serialize};
-use serde_json::{Value, json};
 
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
@@ -56,43 +55,15 @@ impl RestClient {
     /// See: <>
     ///
     /// # Arguments
-    /// * `currency` - Currency symbol e.g. BTC, CRO
-    /// * `amount` - Amount to withdraw
-    /// * `address` - Withdrawal address (must be whitelisted)
-    /// * `client_wid` - Optional Client withdrawal ID
-    /// * `address_tag` - Optional secondary address identifier for coins like XRP, XLM etc
-    /// * `network_id` - Optional network ID (must be whitelisted first)
+    /// * `request` - Parameters for creating a withdrawal
     ///
     /// # Returns
     /// Withdrawal creation result with newly created withdrawal details
-    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
-    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
     pub async fn create_withdrawal(
         &self,
-        currency: &str,
-        amount: &str,
-        address: &str,
-        client_wid: Option<&str>,
-        address_tag: Option<&str>,
-        network_id: Option<&str>,
-    ) -> RestResult<Value> {
-        let mut params = json!({
-            "currency": currency,
-            "amount": amount,
-            "address": address
-        });
-
-        if let Some(cw) = client_wid {
-            params["client_wid"] = Value::String(cw.to_string());
-        }
-        if let Some(at) = address_tag {
-            params["address_tag"] = Value::String(at.to_string());
-        }
-        if let Some(nid) = network_id {
-            params["network_id"] = Value::String(nid.to_string());
-        }
-
-        self.send_signed_request("private/create-withdrawal", params)
+        request: CreateWithdrawalRequest
+    ) -> RestResult<CreateWithdrawalResponse> {
+        self.send_signed_request("private/create-withdrawal", request)
             .await
     }
 }

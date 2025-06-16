@@ -1,5 +1,4 @@
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
 
 use super::client::RestClient;
 use crate::cryptocom::{RestResult, enums::*};
@@ -92,15 +91,11 @@ impl RestClient {
     /// Rate limit: 10 requests per second per user
     ///
     /// # Arguments
-    /// * `request` - The OCO order details request
+    /// * `params` - The OCO order details request
     ///
     /// # Returns
     /// Response containing the order details for the OCO order
-    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
-    pub async fn get_order_list(&self, request: GetOrderListRequest) -> RestResult<Value> {
-        
-        let params = serde_json::to_value(&request)?;
-
+    pub async fn get_order_list(&self, params: GetOrderListRequest) -> RestResult<GetOrderListResponse> {
         self.send_signed_request("private/get-order-list", params)
             .await
     }

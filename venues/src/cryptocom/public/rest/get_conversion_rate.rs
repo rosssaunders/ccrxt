@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use serde_json::{Value, json};
+use serde_json;
 
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
@@ -31,14 +31,12 @@ impl RestClient {
     /// Rate limit: 50 requests per second
     ///
     /// # Arguments
-    /// * `instrument_name` - Liquid staking token instrument name: "CDCETH"
+    /// * `params` - Request parameters including instrument_name
     ///
     /// # Returns
     /// Conversion rate information between staked and liquid staking tokens
-    pub async fn get_conversion_rate(&self, instrument_name: &str) -> RestResult<Value> {
-        let params_value = json!({
-            "instrument_name": instrument_name
-        });
+    pub async fn get_conversion_rate(&self, params: GetConversionRateRequest) -> RestResult<ConversionRateResponse> {
+        let params_value = serde_json::to_value(&params).map_err(|e| crate::cryptocom::Errors::Error(format!("Serialization error: {}", e)))?;
 
         self.send_request(
             "public/staking/get-conversion-rate",

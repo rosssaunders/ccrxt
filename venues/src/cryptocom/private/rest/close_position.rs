@@ -1,5 +1,4 @@
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
 
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
@@ -50,11 +49,8 @@ impl RestClient {
     ///
     /// # Returns
     /// Order ID and client order ID
-    pub async fn close_position(&self, request: ClosePositionRequest) -> RestResult<Value> {
-        let params = serde_json::to_value(&request).map_err(|e| crate::cryptocom::Errors::Error(format!("Serialization error: {}", e)))?;
-
-        self.send_signed_request("private/close-position", params)
-            .await
+    pub async fn close_position(&self, request: ClosePositionRequest) -> RestResult<ClosePositionResponse> {
+        self.send_signed_request("private/close-position", request).await
     }
 }
 

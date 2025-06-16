@@ -1,5 +1,4 @@
-use serde::Serialize;
-use serde_json::Value;
+use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
@@ -11,6 +10,14 @@ pub struct ChangeAccountLeverageRequest {
     pub account_id: String,
     /// Maximum leverage to be used for the account. Valid values are between 1-100 (inclusive)
     pub leverage: u8,
+}
+
+/// Response for change account leverage endpoint
+#[derive(Debug, Clone, Deserialize)]
+pub struct ChangeAccountLeverageResponse {
+    /// Success code (typically 0)
+    #[serde(default)]
+    pub code: i32,
 }
 
 impl RestClient {
@@ -28,11 +35,8 @@ impl RestClient {
     ///
     /// # Returns
     /// Success confirmation (code 0)
-    pub async fn change_account_leverage(&self, request: ChangeAccountLeverageRequest) -> RestResult<Value> {
-        let params = serde_json::to_value(&request).map_err(|e| crate::cryptocom::Errors::Error(format!("Serialization error: {}", e)))?;
-
-        self.send_signed_request("private/change-account-leverage", params)
-            .await
+    pub async fn change_account_leverage(&self, request: ChangeAccountLeverageRequest) -> RestResult<ChangeAccountLeverageResponse> {
+        self.send_signed_request("private/change-account-leverage", request).await
     }
 }
 

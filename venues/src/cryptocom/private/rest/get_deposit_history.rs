@@ -1,5 +1,4 @@
 use serde::{Deserialize, Serialize};
-use serde_json::{Value, json};
 
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
@@ -68,50 +67,15 @@ impl RestClient {
     /// See: <>
     ///
     /// # Arguments
-    /// * `currency` - Optional currency filter e.g. BTC, CRO
-    /// * `start_ts` - Optional start timestamp (default is 90 days from current timestamp)
-    /// * `end_ts` - Optional end timestamp (default is current timestamp)
-    /// * `page_size` - Optional page size (default: 20, max: 200)
-    /// * `page` - Optional page number, 0-based
-    /// * `status` - Optional status filter ("0", "1", "2", "3")
+    /// * `request` - Parameters for retrieving deposit history
     ///
     /// # Returns
     /// List of deposit history entries matching the criteria
-    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
     pub async fn get_deposit_history(
         &self,
-        currency: Option<&str>,
-        start_ts: Option<u64>,
-        end_ts: Option<u64>,
-        page_size: Option<u32>,
-        page: Option<u32>,
-        status: Option<&str>,
-    ) -> RestResult<Value> {
-        
-        
-
-        let mut params = json!({});
-
-        if let Some(c) = currency {
-            params["currency"] = Value::String(c.to_string());
-        }
-        if let Some(st) = start_ts {
-            params["start_ts"] = Value::Number(st.into());
-        }
-        if let Some(et) = end_ts {
-            params["end_ts"] = Value::Number(et.into());
-        }
-        if let Some(ps) = page_size {
-            params["page_size"] = Value::Number(ps.into());
-        }
-        if let Some(p) = page {
-            params["page"] = Value::Number(p.into());
-        }
-        if let Some(s) = status {
-            params["status"] = Value::String(s.to_string());
-        }
-
-        self.send_signed_request("private/get-deposit-history", params)
+        request: GetDepositHistoryRequest
+    ) -> RestResult<GetDepositHistoryResponse> {
+        self.send_signed_request("private/get-deposit-history", request)
             .await
     }
 }

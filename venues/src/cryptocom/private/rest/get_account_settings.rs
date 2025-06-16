@@ -1,5 +1,4 @@
-use serde::Deserialize;
-use serde_json::{Value, json};
+use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
@@ -27,6 +26,10 @@ pub struct GetAccountSettingsResponse {
     pub data: Vec<AccountSettings>,
 }
 
+/// Empty request struct for get account settings endpoint
+#[derive(Debug, Clone, Default, Serialize)]
+pub struct GetAccountSettingsRequest {}
+
 impl RestClient {
     /// Get the STP account settings
     ///
@@ -36,14 +39,8 @@ impl RestClient {
     ///
     /// # Returns
     /// Account settings information
-    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
-    pub async fn get_account_settings(&self) -> RestResult<Value> {
-        
-        
-        let params = json!({});
-
-        self.send_signed_request("private/get-account-settings", params)
-            .await
+    pub async fn get_account_settings(&self) -> RestResult<GetAccountSettingsResponse> {
+        self.send_signed_request("private/get-account-settings", GetAccountSettingsRequest::default()).await
     }
 }
 

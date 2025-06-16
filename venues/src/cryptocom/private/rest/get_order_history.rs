@@ -1,5 +1,4 @@
 use serde::{Deserialize, Serialize};
-use serde_json::{Value, json};
 
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
@@ -97,38 +96,11 @@ impl RestClient {
     /// Rate limit: 1 request per second
     ///
     /// # Arguments
-    /// * `instrument_name` - e.g. BTCUSD-PERP. Omit for 'all'
-    /// * `start_time` - Start time in Unix time format (inclusive). Default: end_time - 1 day. Nanosecond is recommended for accurate pagination
-    /// * `end_time` - End time in Unix time format (exclusive). Default: current system timestamp. Nanosecond is recommended for accurate pagination
-    /// * `limit` - The maximum number of orders to be retrieved before the end_time. Default: 100. Max: 100.
+    /// * `params` - Request parameters including optional instrument_name, start_time, end_time, and limit
     ///
     /// # Returns
     /// Order history information
-    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
-    pub async fn get_order_history(
-        &self,
-        instrument_name: Option<String>,
-        start_time: Option<String>,
-        end_time: Option<String>,
-        limit: Option<i32>,
-    ) -> RestResult<Value> {
-        
-        
-
-        let mut params = json!({});
-        if let Some(in_name) = instrument_name {
-            params["instrument_name"] = Value::String(in_name);
-        }
-        if let Some(st) = start_time {
-            params["start_time"] = Value::String(st);
-        }
-        if let Some(et) = end_time {
-            params["end_time"] = Value::String(et);
-        }
-        if let Some(l) = limit {
-            params["limit"] = Value::Number(l.into());
-        }
-
+    pub async fn get_order_history(&self, params: GetOrderHistoryRequest) -> RestResult<GetOrderHistoryResponse> {
         self.send_signed_request("private/get-order-history", params)
             .await
     }

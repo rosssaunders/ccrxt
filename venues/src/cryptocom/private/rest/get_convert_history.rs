@@ -1,5 +1,4 @@
 use serde::{Deserialize, Serialize};
-use serde_json::{Value, json};
 
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
@@ -60,27 +59,12 @@ impl RestClient {
     /// Rate limit: 50 requests per second
     ///
     /// # Arguments
-    /// * `start_time` - Optional start time in Unix time format (inclusive)
-    /// * `end_time` - Optional end time in Unix time format (inclusive)
-    /// * `limit` - Optional maximum number of requests returned (Default: 20, Max: 500)
+    /// * `request` - Parameters for retrieving convert history
     ///
     /// # Returns
     /// Historical convert requests with final status, rates, and timestamps
-    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
-    pub async fn get_convert_history(&self, start_time: Option<u64>, end_time: Option<u64>, limit: Option<&str>) -> RestResult<Value> {
-        let mut params = json!({});
-
-        if let Some(start) = start_time {
-            params["start_time"] = json!(start);
-        }
-        if let Some(end) = end_time {
-            params["end_time"] = json!(end);
-        }
-        if let Some(lmt) = limit {
-            params["limit"] = json!(lmt);
-        }
-
-        self.send_signed_request("private/staking/get-convert-history", params)
+    pub async fn get_convert_history(&self, request: GetConvertHistoryRequest) -> RestResult<GetConvertHistoryResponse> {
+        self.send_signed_request("private/staking/get-convert-history", request)
             .await
     }
 }

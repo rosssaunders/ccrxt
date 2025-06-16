@@ -1,5 +1,4 @@
 use serde::{Deserialize, Serialize};
-use serde_json::{Value, json};
 
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
@@ -61,40 +60,15 @@ impl RestClient {
     /// Rate limit: 50 requests per second
     ///
     /// # Arguments
-    /// * `instrument_name` - Optional staking instrument name to filter results, e.g. "SOL.staked"
-    /// * `start_time` - Optional start time in Unix time format (inclusive)
-    /// * `end_time` - Optional end time in Unix time format (inclusive)
-    /// * `limit` - Optional maximum number of requests returned (Default: 20, Max: 500)
+    /// * `request` - Parameters for retrieving open stakes
     ///
     /// # Returns
     /// Open stake/unstake requests with status, timestamps, and other details
-    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
     pub async fn get_open_stake(
         &self,
-        instrument_name: Option<&str>,
-        start_time: Option<u64>,
-        end_time: Option<u64>,
-        limit: Option<&str>,
-    ) -> RestResult<Value> {
-        
-        
-
-        let mut params = json!({});
-
-        if let Some(instrument) = instrument_name {
-            params["instrument_name"] = json!(instrument);
-        }
-        if let Some(start) = start_time {
-            params["start_time"] = json!(start);
-        }
-        if let Some(end) = end_time {
-            params["end_time"] = json!(end);
-        }
-        if let Some(lmt) = limit {
-            params["limit"] = json!(lmt);
-        }
-
-        self.send_signed_request("private/staking/get-open-stake", params)
+        request: GetOpenStakeRequest
+    ) -> RestResult<GetOpenStakeResponse> {
+        self.send_signed_request("private/staking/get-open-stake", request)
             .await
     }
 }

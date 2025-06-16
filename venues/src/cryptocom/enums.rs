@@ -141,6 +141,38 @@ pub enum ContingencyType {
     Oco,
 }
 
+/// Response code for API responses
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
+#[serde(from = "i32")]
+#[repr(i32)]
+pub enum ResponseCode {
+    /// Success (No error)
+    NoError = 0,
+    /// Other error codes
+    Error(i32),
+}
+
+impl From<i32> for ResponseCode {
+    fn from(code: i32) -> Self {
+        match code {
+            0 => ResponseCode::NoError,
+            other => ResponseCode::Error(other),
+        }
+    }
+}
+
+impl Serialize for ResponseCode {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        match self {
+            ResponseCode::NoError => serializer.serialize_i32(0),
+            ResponseCode::Error(code) => serializer.serialize_i32(*code),
+        }
+    }
+}
+
 /// STP (Self-Trade Prevention) scope
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "UPPERCASE")]
@@ -179,4 +211,30 @@ pub enum RefPriceType {
 pub enum SpotMarginType {
     Spot,   // Non-margin order
     Margin, // Margin order
+}
+
+/// Withdrawal status
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum WithdrawalStatus {
+    /// Pending
+    #[serde(rename = "0")]
+    Pending,
+    /// Processing
+    #[serde(rename = "1")]
+    Processing,
+    /// Rejected
+    #[serde(rename = "2")]
+    Rejected,
+    /// Payment In-progress
+    #[serde(rename = "3")]
+    PaymentInProgress,
+    /// Payment Failed
+    #[serde(rename = "4")]
+    PaymentFailed,
+    /// Completed
+    #[serde(rename = "5")]
+    Completed,
+    /// Cancelled
+    #[serde(rename = "6")]
+    Cancelled,
 }

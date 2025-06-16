@@ -1,5 +1,4 @@
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
 
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
@@ -13,7 +12,6 @@ pub struct GetInstrumentFeeRateRequest {
 
 /// Instrument fee rate information
 #[derive(Debug, Clone, Deserialize)]
-#[allow(dead_code)]
 pub struct InstrumentFeeRate {
     /// Instrument name e.g. BTC_USD
     pub instrument_name: String,
@@ -21,6 +19,13 @@ pub struct InstrumentFeeRate {
     pub effective_maker_rate_bps: String,
     /// Taker rate in basis points
     pub effective_taker_rate_bps: String,
+}
+
+/// Response for get instrument fee rate endpoint
+#[derive(Debug, Clone, Deserialize)]
+pub struct GetInstrumentFeeRateResponse {
+    /// Fee rate information
+    pub result: InstrumentFeeRate,
 }
 
 impl RestClient {
@@ -35,13 +40,8 @@ impl RestClient {
     ///
     /// # Returns
     /// Instrument fee rate information
-    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
-    pub async fn get_instrument_fee_rate(&self, request: GetInstrumentFeeRateRequest) -> RestResult<Value> {
-        
-        
-        let params = serde_json::to_value(&request).map_err(|e| crate::cryptocom::Errors::Error(format!("Serialization error: {}", e)))?;
-
-        self.send_signed_request("private/get-instrument-fee-rate", params)
+    pub async fn get_instrument_fee_rate(&self, request: GetInstrumentFeeRateRequest) -> RestResult<GetInstrumentFeeRateResponse> {
+        self.send_signed_request("private/get-instrument-fee-rate", request)
             .await
     }
 }

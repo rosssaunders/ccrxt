@@ -1,7 +1,6 @@
 use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
-use serde_json::{Value, json};
 
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
@@ -53,13 +52,12 @@ impl RestClient {
     ///
     /// # Returns
     /// Currency network mapping information for all supported currencies
-    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
-    pub async fn get_currency_networks(&self) -> RestResult<Value> {
-        
-        
-        let params = json!({});
+    pub async fn get_currency_networks(&self) -> RestResult<GetCurrencyNetworksResponse> {
+        // Empty struct to represent request with no parameters
+        #[derive(Debug, Clone, Serialize)]
+        struct EmptyRequest {}
 
-        self.send_signed_request("private/get-currency-networks", params)
+        self.send_signed_request("private/get-currency-networks", EmptyRequest {})
             .await
     }
 }

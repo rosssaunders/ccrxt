@@ -43,9 +43,6 @@ pub mod get_staking_position;
 pub mod stake;
 pub mod unstake;
 
-#[cfg(test)]
-mod integration_tests;
-
 pub use client::RestClient;
 
 pub use cancel_oco_order::CancelOcoOrderRequest;

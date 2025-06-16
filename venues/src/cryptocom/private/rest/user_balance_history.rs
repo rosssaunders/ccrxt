@@ -1,5 +1,4 @@
 use serde::{Deserialize, Serialize};
-use serde_json::{Value, json};
 
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
@@ -13,27 +12,29 @@ pub struct BalanceHistoryEntry {
     pub c: String,
 }
 
-/// Response for user balance history endpoint
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct UserBalanceHistoryResponse {
-    /// instrument name of the balance e.g. USD
-    pub instrument_name: String,
-    /// Array of balance history data
-    pub data: Vec<BalanceHistoryEntry>,
-}
-
-/// Parameters for user balance history request
-#[derive(Debug, Clone, Serialize)]
-pub struct UserBalanceHistoryRequest {
-    /// H1 means every hour, D1 means every day. Omit for 'D1'
+/// Request parameters for user balance history
+#[derive(Debug, Clone, Serialize, Default)]
+pub struct GetUserBalanceHistoryRequest {
+    /// Optional timeframe filter (1H, 4H, 12H, 1D, 1W, 1M, 3M, 6M, 1Y)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub timeframe: Option<String>,
-    /// Can be millisecond or nanosecond. Exclusive. If not provided, will be current time.
+
+    /// Optional end time filter in Unix time format (inclusive)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub end_time: Option<u64>,
-    /// If timeframe is D1, max limit will be 30 (days). If timeframe is H1, max limit will be 120 (hours).
+
+    /// Optional maximum number of entries to return
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i32>,
+}
+
+/// Response for get user balance history endpoint
+#[derive(Debug, Clone, Deserialize)]
+pub struct GetUserBalanceHistoryResponse {
+    /// Instrument name (typically "USD")
+    pub instrument_name: String,
+    /// Array of balance history entries
+    pub data: Vec<BalanceHistoryEntry>,
 }
 
 impl RestClient {
@@ -47,30 +48,18 @@ impl RestClient {
     /// Rate limit: No rate limit
     ///
     /// # Arguments
-    /// * `timeframe` - H1 means every hour, D1 means every day. Omit for 'D1'
-    /// * `end_time` - Can be millisecond or nanosecond. Exclusive. If not provided, will be current time.
-    /// * `limit` - If timeframe is D1, max limit will be 30 (days). If timeframe is H1, max limit will be 120 (hours).
+    /// * `request` - GetUserBalanceHistoryRequest containing optional parameters:
+    ///   * `timeframe` - H1 means every hour, D1 means every day. Omit for 'D1'
+    ///   * `end_time` - Can be millisecond or nanosecond. Exclusive. If not provided, will be current time.
+    ///   * `limit` - If timeframe is D1, max limit will be 30 (days). If timeframe is H1, max limit will be 120 (hours).
     ///
     /// # Returns
     /// User balance history information
-    #[allow(clippy::indexing_slicing)] // Safe: adding optional keys to JSON object
-    pub async fn get_user_balance_history(&self, timeframe: Option<String>, end_time: Option<u64>, limit: Option<i32>) -> RestResult<Value> {
-        
-        
-
-        let mut params = json!({});
-        if let Some(tf) = timeframe {
-            params["timeframe"] = Value::String(tf);
-        }
-        if let Some(et) = end_time {
-            params["end_time"] = Value::Number(et.into());
-        }
-        if let Some(l) = limit {
-            params["limit"] = Value::Number(l.into());
-        }
-
-        self.send_signed_request("private/user-balance-history", params)
-            .await
+    pub async fn get_user_balance_history(
+        &self,
+        request: GetUserBalanceHistoryRequest,
+    ) -> RestResult<GetUserBalanceHistoryResponse> {
+        self.send_signed_request("private/user-balance-history", request).await
     }
 }
 
@@ -129,7 +118,7 @@ mod tests {
             ]
         });
 
-        let history: UserBalanceHistoryResponse = serde_json::from_value(history_json).unwrap();
+        let history: GetUserBalanceHistoryResponse = serde_json::from_value(history_json).unwrap();
         assert_eq!(history.instrument_name, "USD");
         assert_eq!(history.data.len(), 2);
         assert_eq!(history.data.first().unwrap().t, 1629478800000_u64);
@@ -140,7 +129,7 @@ mod tests {
 
     #[test]
     fn test_balance_history_request_serialization() {
-        let request = UserBalanceHistoryRequest {
+        let request = GetUserBalanceHistoryRequest {
             timeframe: Some("H1".to_string()),
             end_time: Some(1629478800000_u64),
             limit: Some(10),
@@ -154,7 +143,7 @@ mod tests {
 
     #[test]
     fn test_balance_history_request_optional_fields() {
-        let request = UserBalanceHistoryRequest {
+        let request = GetUserBalanceHistoryRequest {
             timeframe: None,
             end_time: None,
             limit: None,
@@ -166,7 +155,7 @@ mod tests {
 
     #[test]
     fn test_balance_history_request_partial_fields() {
-        let request = UserBalanceHistoryRequest {
+        let request = GetUserBalanceHistoryRequest {
             timeframe: Some("D1".to_string()),
             end_time: None,
             limit: Some(30),

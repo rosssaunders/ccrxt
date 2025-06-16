@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
+use crate::cryptocom::RestResult;
 
 /// Request for canceling OCO orders
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -11,6 +12,13 @@ pub struct CancelOcoOrderRequest {
     pub list_id: String,
     /// Instrument name
     pub instrument_name: String,
+}
+
+/// Response for canceling OCO orders
+#[derive(Debug, Clone, Deserialize)]
+pub struct CancelOcoOrderResponse {
+    /// The list ID of the canceled OCO order
+    pub list_id: String,
 }
 
 impl RestClient {
@@ -27,9 +35,8 @@ impl RestClient {
     ///
     /// # Returns
     /// Response confirming the cancellation request
-    pub async fn cancel_oco_order(&self, request: CancelOcoOrderRequest) -> crate::cryptocom::RestResult<serde_json::Value> {
-        let params = serde_json::to_value(&request)?;
-        self.send_signed_request("private/cancel-order-list", params)
+    pub async fn cancel_oco_order(&self, request: CancelOcoOrderRequest) -> RestResult<CancelOcoOrderResponse> {
+        self.send_signed_request("private/cancel-order-list", request)
             .await
     }
 }

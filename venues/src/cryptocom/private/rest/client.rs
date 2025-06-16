@@ -140,6 +140,29 @@ impl RestClient {
 
     /// Sends a signed request to the Crypto.com private REST API
     ///
+    /// Builds, signs, and sends the request, returning the parsed response as the specified type.
+    ///
+    /// # Type Parameters
+    /// * `Req` - The request type, must implement `Serialize`.
+    /// * `Resp` - The response type, must implement `DeserializeOwned`.
+    ///
+    /// # Arguments
+    /// * `method` - The API method name (e.g., "private/amend-order")
+    /// * `request` - The request parameters as a struct
+    ///
+    /// # Returns
+    /// Parsed response of type `Resp`.
+    pub async fn send_signed_request<Req, Resp>(&self, method: &str, request: Req) -> crate::cryptocom::RestResult<Resp>
+    where
+        Req: serde::Serialize,
+        Resp: serde::de::DeserializeOwned,
+    {
+        let params = serde_json::to_value(&request).map_err(|e| crate::cryptocom::Errors::Error(format!("Serialization error: {}", e)))?;
+        self.send_signed_request_int::<Resp>(method, params).await
+    }
+
+    /// Sends a signed request to the Crypto.com private REST API
+    ///
     /// Builds, signs, and sends the request, returning the parsed JSON value.
     ///
     /// # Arguments
@@ -148,7 +171,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Parsed JSON value of the response.
-    pub async fn send_signed_request(&self, method: &str, params: Value) -> crate::cryptocom::RestResult<Value> {
+    pub async fn send_signed_request_int<T>(&self, method: &str, params: Value) -> crate::cryptocom::RestResult<T>
+    where
+        T: serde::de::DeserializeOwned,
+    {
         let nonce = Utc::now().timestamp_millis() as u64;
         let id = 1;
         let signature = self.sign_request(method, id, &params, nonce)?;
@@ -169,7 +195,7 @@ impl RestClient {
             .send()
             .await?;
 
-        let result: Value = response.json().await?;
+        let result = response.json().await?;
         Ok(result)
     }
 }
