@@ -66,7 +66,7 @@ impl EndpointType {
             EndpointType::MatchingEngine => 0, // Uses tier-based limits, not credits
             EndpointType::PublicGetInstruments => 0, // Special time-based limit
             EndpointType::PublicGetComboIds => 500, // Non-matching engine endpoint
-            EndpointType::PublicHello => 0, // WebSocket only, no specific credit cost
+            EndpointType::PublicHello => 0,    // WebSocket only, no specific credit cost
         }
     }
 
@@ -84,17 +84,29 @@ impl EndpointType {
         match path {
             "public/get_instruments" => EndpointType::PublicGetInstruments,
             "public/hello" => EndpointType::PublicHello,
-            "private/buy" | "private/sell" | "private/edit" | "private/edit_by_label"
-            | "private/cancel" | "private/cancel_by_label" | "private/cancel_all"
-            | "private/cancel_all_by_instrument" | "private/cancel_all_by_currency"
-            | "private/cancel_all_by_kind_or_type" | "private/close_position"
-            | "private/verify_block_trade" | "private/execute_block_trade"
-            | "private/move_positions" | "private/mass_quote" | "private/cancel_quotes"
-            | "private/add_block_rfq_quote" | "private/edit_block_rfq_quote"
-            | "private/cancel_block_rfq_quote" | "private/cancel_all_block_rfq_quotes"
-            | "private/set_mmp_config" => {
-                EndpointType::MatchingEngine
-            }
+            "private/buy"
+            | "private/sell"
+            | "private/edit"
+            | "private/edit_by_label"
+            | "private/cancel"
+            | "private/cancel_by_label"
+            | "private/cancel_all"
+            | "private/cancel_all_by_instrument"
+            | "private/cancel_all_by_currency"
+            | "private/cancel_all_by_kind_or_type"
+            | "private/close_position"
+            | "private/verify_block_trade"
+            | "private/execute_block_trade"
+            | "private/simulate_block_trade"
+            | "private/move_positions"
+            | "private/mass_quote"
+            | "private/cancel_quotes"
+            | "private/add_block_rfq_quote"
+            | "private/edit_block_rfq_quote"
+            | "private/cancel_block_rfq_quote"
+            | "private/cancel_all_block_rfq_quotes"
+            | "private/set_mmp_config"
+            | "private/reset_mmp" => EndpointType::MatchingEngine,
             _ => EndpointType::NonMatchingEngine,
         }
     }
@@ -105,13 +117,13 @@ impl EndpointType {
 pub enum RateLimitError {
     #[error("Credit limit exceeded: {available} credits available, {required} credits required")]
     CreditLimitExceeded { available: u32, required: u32 },
-    
+
     #[error("Matching engine rate limit exceeded for tier {tier:?}: {requests_in_window} requests in current window")]
     MatchingEngineRateExceeded {
         tier: AccountTier,
         requests_in_window: usize,
     },
-    
+
     #[error("Special endpoint rate limit exceeded for {endpoint}: {requests_in_window} requests in current window")]
     SpecialEndpointRateExceeded {
         endpoint: String,
@@ -148,9 +160,10 @@ impl CreditPool {
         let now = Instant::now();
         let elapsed = now.duration_since(self.last_refill);
         let credits_to_add = (elapsed.as_secs_f64() * self.refill_rate as f64) as u32;
-        
+
         if credits_to_add > 0 {
-            self.available_credits = (self.available_credits + credits_to_add).min(self.max_credits);
+            self.available_credits =
+                (self.available_credits + credits_to_add).min(self.max_credits);
             self.last_refill = now;
         }
     }
@@ -158,14 +171,14 @@ impl CreditPool {
     /// Check if enough credits are available and consume them
     fn consume_credits(&mut self, required: u32) -> Result<(), RateLimitError> {
         self.refill();
-        
+
         if self.available_credits < required {
             return Err(RateLimitError::CreditLimitExceeded {
                 available: self.available_credits,
                 required,
             });
         }
-        
+
         self.available_credits = self.available_credits.saturating_sub(required);
         Ok(())
     }
@@ -201,11 +214,11 @@ impl RequestHistory {
     /// Check if a new request can be made
     fn check_limit(&mut self) -> Result<(), usize> {
         self.clean_old_timestamps();
-        
+
         if self.timestamps.len() >= self.max_requests as usize {
             return Err(self.timestamps.len());
         }
-        
+
         Ok(())
     }
 
@@ -240,13 +253,11 @@ impl RateLimiter {
     pub fn new(account_tier: AccountTier) -> Self {
         // Default settings for non-matching engine requests
         let credit_pool = CreditPool::new(50_000, 10_000); // 50k max credits, 10k credits/sec refill
-        
+
         // Matching engine limits based on account tier
-        let matching_engine_history = RequestHistory::new(
-            Duration::from_secs(1),
-            account_tier.sustained_rate(),
-        );
-        
+        let matching_engine_history =
+            RequestHistory::new(Duration::from_secs(1), account_tier.sustained_rate());
+
         // Special limit for public/get_instruments: 1 req per 10s, burst of 5
         let get_instruments_history = RequestHistory::new(
             Duration::from_secs(10),
@@ -268,16 +279,11 @@ impl RateLimiter {
         refill_rate: u32,
     ) -> Self {
         let credit_pool = CreditPool::new(max_credits, refill_rate);
-        
-        let matching_engine_history = RequestHistory::new(
-            Duration::from_secs(1),
-            account_tier.sustained_rate(),
-        );
-        
-        let get_instruments_history = RequestHistory::new(
-            Duration::from_secs(10),
-            5,
-        );
+
+        let matching_engine_history =
+            RequestHistory::new(Duration::from_secs(1), account_tier.sustained_rate());
+
+        let get_instruments_history = RequestHistory::new(Duration::from_secs(10), 5);
 
         Self {
             credit_pool: RwLock::new(credit_pool),
@@ -344,7 +350,7 @@ impl RateLimiter {
         let pool = self.credit_pool.read().await;
         let mut pool_clone = pool.clone();
         pool_clone.refill(); // Get current state after refill
-        
+
         let matching_history = self.matching_engine_history.read().await;
         let instruments_history = self.get_instruments_history.read().await;
 
@@ -362,10 +368,7 @@ impl RateLimiter {
     pub async fn update_account_tier(&self, new_tier: AccountTier) {
         if new_tier != self.account_tier {
             let mut history = self.matching_engine_history.write().await;
-            *history = RequestHistory::new(
-                Duration::from_secs(1),
-                new_tier.sustained_rate(),
-            );
+            *history = RequestHistory::new(Duration::from_secs(1), new_tier.sustained_rate());
         }
     }
 }
@@ -396,7 +399,7 @@ mod tests {
     async fn test_account_tier_limits() {
         assert_eq!(AccountTier::Tier1.sustained_rate(), 30);
         assert_eq!(AccountTier::Tier1.burst_limit(), 100);
-        
+
         assert_eq!(AccountTier::Tier4.sustained_rate(), 5);
         assert_eq!(AccountTier::Tier4.burst_limit(), 20);
     }
@@ -407,7 +410,7 @@ mod tests {
             EndpointType::from_path("public/get_instruments"),
             EndpointType::PublicGetInstruments
         );
-        
+
         assert_eq!(
             EndpointType::from_path("public/get_combo_ids"),
             EndpointType::PublicGetComboIds
@@ -417,17 +420,22 @@ mod tests {
             EndpointType::from_path("public/hello"),
             EndpointType::PublicHello
         );
-        
+
         assert_eq!(
             EndpointType::from_path("private/buy"),
             EndpointType::MatchingEngine
         );
-        
+
+        assert_eq!(
+            EndpointType::from_path("private/reset_mmp"),
+            EndpointType::MatchingEngine
+        );
+
         assert_eq!(
             EndpointType::from_path("private/set_mmp_config"),
             EndpointType::MatchingEngine
         );
-        
+
         assert_eq!(
             EndpointType::from_path("private/get_account_summary"),
             EndpointType::NonMatchingEngine
@@ -438,29 +446,29 @@ mod tests {
     async fn test_credit_pool_refill() {
         let mut pool = CreditPool::new(1000, 100); // 1000 max, 100 per second
         pool.available_credits = 500;
-        
+
         // Simulate 1 second passing
         pool.last_refill = Instant::now() - Duration::from_secs(1);
         pool.refill();
-        
+
         assert_eq!(pool.available_credits, 600); // 500 + 100
-        
+
         // Test max limit
         pool.available_credits = 950;
         pool.last_refill = Instant::now() - Duration::from_secs(1);
         pool.refill();
-        
+
         assert_eq!(pool.available_credits, 1000); // Capped at max
     }
 
     #[tokio::test]
     async fn test_credit_consumption() {
         let mut pool = CreditPool::new(1000, 100);
-        
+
         // Should succeed
         assert!(pool.consume_credits(500).is_ok());
         assert_eq!(pool.available_credits, 500);
-        
+
         // Should fail - not enough credits
         assert!(pool.consume_credits(600).is_err());
         assert_eq!(pool.available_credits, 500); // Unchanged after failure
@@ -469,11 +477,16 @@ mod tests {
     #[tokio::test]
     async fn test_rate_limiter_non_matching_engine() {
         let limiter = RateLimiter::new(AccountTier::Tier4);
-        
+
         // Should be able to make requests within credit limit
-        assert!(limiter.check_limits(EndpointType::NonMatchingEngine).await.is_ok());
-        limiter.record_request(EndpointType::NonMatchingEngine).await;
-        
+        assert!(limiter
+            .check_limits(EndpointType::NonMatchingEngine)
+            .await
+            .is_ok());
+        limiter
+            .record_request(EndpointType::NonMatchingEngine)
+            .await;
+
         let status = limiter.get_status().await;
         assert_eq!(status.available_credits, 50_000 - 500); // 500 credits consumed
     }
@@ -481,59 +494,79 @@ mod tests {
     #[tokio::test]
     async fn test_rate_limiter_matching_engine() {
         let limiter = RateLimiter::new(AccountTier::Tier4);
-        
+
         // Should be able to make requests within tier limit (5 per second)
         for _ in 0..5 {
-            assert!(limiter.check_limits(EndpointType::MatchingEngine).await.is_ok());
+            assert!(limiter
+                .check_limits(EndpointType::MatchingEngine)
+                .await
+                .is_ok());
             limiter.record_request(EndpointType::MatchingEngine).await;
         }
-        
+
         // 6th request should fail
-        assert!(limiter.check_limits(EndpointType::MatchingEngine).await.is_err());
+        assert!(limiter
+            .check_limits(EndpointType::MatchingEngine)
+            .await
+            .is_err());
     }
 
     #[tokio::test]
     async fn test_rate_limiter_special_endpoint() {
         let limiter = RateLimiter::new(AccountTier::Tier4);
-        
+
         // Should be able to make up to 5 requests (burst limit)
         for _ in 0..5 {
-            assert!(limiter.check_limits(EndpointType::PublicGetInstruments).await.is_ok());
-            limiter.record_request(EndpointType::PublicGetInstruments).await;
+            assert!(limiter
+                .check_limits(EndpointType::PublicGetInstruments)
+                .await
+                .is_ok());
+            limiter
+                .record_request(EndpointType::PublicGetInstruments)
+                .await;
         }
-        
+
         // 6th request should fail
-        assert!(limiter.check_limits(EndpointType::PublicGetInstruments).await.is_err());
+        assert!(limiter
+            .check_limits(EndpointType::PublicGetInstruments)
+            .await
+            .is_err());
     }
 
     #[tokio::test]
     async fn test_rate_limiter_public_hello() {
         let limiter = RateLimiter::new(AccountTier::Tier4);
-        
+
         // public/hello should always succeed as it has no rate limits
         for _ in 0..100 {
-            assert!(limiter.check_limits(EndpointType::PublicHello).await.is_ok());
+            assert!(limiter
+                .check_limits(EndpointType::PublicHello)
+                .await
+                .is_ok());
             limiter.record_request(EndpointType::PublicHello).await;
         }
-        
+
         // Should still work after many requests
-        assert!(limiter.check_limits(EndpointType::PublicHello).await.is_ok());
+        assert!(limiter
+            .check_limits(EndpointType::PublicHello)
+            .await
+            .is_ok());
     }
 
     #[tokio::test]
     async fn test_request_history_cleanup() {
         let mut history = RequestHistory::new(Duration::from_millis(100), 2);
-        
+
         // Add some requests
         history.record_request();
         assert!(history.check_limit().is_ok());
-        
+
         history.record_request();
         assert!(history.check_limit().is_err()); // At limit
-        
+
         // Wait for window to expire
         sleep(Duration::from_millis(150)).await;
-        
+
         // Should be able to make requests again
         assert!(history.check_limit().is_ok());
     }
@@ -541,7 +574,7 @@ mod tests {
     #[tokio::test]
     async fn test_rate_limit_status() {
         let limiter = RateLimiter::new(AccountTier::Tier2);
-        
+
         let status = limiter.get_status().await;
         assert_eq!(status.max_credits, 50_000);
         assert_eq!(status.credit_refill_rate, 10_000);
@@ -553,21 +586,30 @@ mod tests {
     #[tokio::test]
     async fn test_update_account_tier() {
         let limiter = RateLimiter::new(AccountTier::Tier4);
-        
+
         // Make some requests at Tier4 (5 per second limit)
         for _ in 0..5 {
-            assert!(limiter.check_limits(EndpointType::MatchingEngine).await.is_ok());
+            assert!(limiter
+                .check_limits(EndpointType::MatchingEngine)
+                .await
+                .is_ok());
             limiter.record_request(EndpointType::MatchingEngine).await;
         }
-        
+
         // Should be at limit
-        assert!(limiter.check_limits(EndpointType::MatchingEngine).await.is_err());
-        
+        assert!(limiter
+            .check_limits(EndpointType::MatchingEngine)
+            .await
+            .is_err());
+
         // Update to Tier1 (30 per second limit)
         limiter.update_account_tier(AccountTier::Tier1).await;
-        
+
         // Should be able to make more requests now
-        assert!(limiter.check_limits(EndpointType::MatchingEngine).await.is_ok());
+        assert!(limiter
+            .check_limits(EndpointType::MatchingEngine)
+            .await
+            .is_ok());
     }
 
     #[test]
@@ -584,24 +626,41 @@ mod tests {
     async fn test_realistic_usage_scenario() {
         // Test a realistic scenario with mixed endpoint types
         let limiter = RateLimiter::new(AccountTier::Tier3);
-        
+
         // Make some non-matching engine requests
         for i in 0..10 {
-            assert!(limiter.check_limits(EndpointType::NonMatchingEngine).await.is_ok(),
-                "Non-matching engine request {} should succeed", i);
-            limiter.record_request(EndpointType::NonMatchingEngine).await;
+            assert!(
+                limiter
+                    .check_limits(EndpointType::NonMatchingEngine)
+                    .await
+                    .is_ok(),
+                "Non-matching engine request {} should succeed",
+                i
+            );
+            limiter
+                .record_request(EndpointType::NonMatchingEngine)
+                .await;
         }
-        
+
         // Make some matching engine requests (Tier3 allows 10 per second)
         for i in 0..10 {
-            assert!(limiter.check_limits(EndpointType::MatchingEngine).await.is_ok(),
-                "Matching engine request {} should succeed", i);
+            assert!(
+                limiter
+                    .check_limits(EndpointType::MatchingEngine)
+                    .await
+                    .is_ok(),
+                "Matching engine request {} should succeed",
+                i
+            );
             limiter.record_request(EndpointType::MatchingEngine).await;
         }
-        
+
         // This should fail as we're at the tier limit
-        assert!(limiter.check_limits(EndpointType::MatchingEngine).await.is_err());
-        
+        assert!(limiter
+            .check_limits(EndpointType::MatchingEngine)
+            .await
+            .is_err());
+
         // Check status
         let status = limiter.get_status().await;
         assert_eq!(status.account_tier, AccountTier::Tier3);
@@ -613,21 +672,29 @@ mod tests {
     async fn test_credit_refill_over_time() {
         // Test that credits refill correctly over time
         let limiter = RateLimiter::with_custom_credits(AccountTier::Tier4, 1000, 100); // 100 credits/sec
-        
+
         // Consume all credits
         for _ in 0..2 {
-            assert!(limiter.check_limits(EndpointType::NonMatchingEngine).await.is_ok());
-            limiter.record_request(EndpointType::NonMatchingEngine).await;
+            assert!(limiter
+                .check_limits(EndpointType::NonMatchingEngine)
+                .await
+                .is_ok());
+            limiter
+                .record_request(EndpointType::NonMatchingEngine)
+                .await;
         }
-        
+
         let status = limiter.get_status().await;
         assert_eq!(status.available_credits, 0); // All credits consumed
-        
+
         // Wait for some credits to refill
         tokio::time::sleep(Duration::from_millis(50)).await; // 0.05 seconds should give us ~5 credits
-        
+
         let status = limiter.get_status().await;
         assert!(status.available_credits > 0, "Credits should have refilled");
-        assert!(status.available_credits < 100, "Should not have refilled completely yet");
+        assert!(
+            status.available_credits < 100,
+            "Should not have refilled completely yet"
+        );
     }
 }
