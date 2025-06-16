@@ -1,3 +1,4 @@
+pub mod add_block_rfq_quote;
 pub mod add_to_address_book;
 pub mod cancel_all;
 pub mod cancel_order;
@@ -8,6 +9,9 @@ pub mod set_clearance_originator;
 pub mod submit_transfer_to_user;
 pub mod withdraw;
 
+pub use add_block_rfq_quote::{
+    AddBlockRfqQuoteRequest, AddBlockRfqQuoteResponse, AddBlockRfqQuoteResult, BlockRfqHedge, BlockRfqLeg, ExecutionInstruction, ResponseHedge, ResponseLeg,
+};
 pub use add_to_address_book::{
     AddToAddressBookRequest, AddToAddressBookResponse, AddressBookEntry,
 };
