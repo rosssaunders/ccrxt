@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use serde_json::{Value, json};
+use serde_json::Value;
 
 use super::client::RestClient;
 use crate::cryptocom::{RestResult, enums::*};
@@ -86,13 +86,6 @@ pub struct CreateOrderListResponse {
     pub result_list: Vec<OrderCreationResult>,
 }
 
-/// Response for creating OCO orders
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct CreateOcoOrderResponse {
-    /// List ID for the OCO order
-    pub list_id: String,
-}
-
 impl RestClient {
     /// Create a list of orders
     ///
@@ -111,8 +104,6 @@ impl RestClient {
     /// - LIST: CreateOrderListResponse with individual order results
     /// - OCO: CreateOcoOrderResponse with list_id
     pub async fn create_order_list(&self, request: CreateOrderListRequest) -> RestResult<Value> {
-        let nonce = chrono::Utc::now().timestamp_millis() as u64;
-        let id = 1;
         let params = serde_json::to_value(&request)?;
 
         self.send_signed_request("private/create-order-list", params)
@@ -313,16 +304,6 @@ mod tests {
             request.order_list.get(1).unwrap().ref_price,
             Some("19000".to_string())
         );
-    }
-
-    #[test]
-    fn test_create_oco_order_response_structure() {
-        let response_json = json!({
-            "list_id": "6498090546073120100"
-        });
-
-        let response: CreateOcoOrderResponse = serde_json::from_value(response_json).unwrap();
-        assert_eq!(response.list_id, "6498090546073120100");
     }
 
     #[test]

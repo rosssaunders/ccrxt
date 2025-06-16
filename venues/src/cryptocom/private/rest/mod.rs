@@ -1,11 +1,13 @@
 pub mod amend_order;
 pub mod cancel_all_orders;
+pub mod cancel_oco_order;
 pub mod cancel_order;
 pub mod cancel_order_list;
 pub mod change_account_leverage;
 pub mod change_account_settings;
 pub mod client;
 pub mod close_position;
+pub mod create_oco_order;
 pub mod create_order;
 pub mod create_order_list;
 pub mod create_subaccount_transfer;
@@ -44,7 +46,11 @@ pub mod unstake;
 #[cfg(test)]
 mod integration_tests;
 
-pub use cancel_order_list::{CancelOcoOrderRequest, CancelOrderListItem, CancelOrderListRequest, CancelOrderListResponse, OrderCancellationResult};
 pub use client::RestClient;
-pub use create_order_list::{CreateOcoOrderResponse, CreateOrderListRequest, CreateOrderListResponse, OrderCreationResult, OrderListItem};
+
+pub use cancel_oco_order::CancelOcoOrderRequest;
+pub use create_oco_order::CreateOcoOrderResponse;
+
+pub use cancel_order_list::{CancelOrderListItem, CancelOrderListRequest, CancelOrderListResponse, OrderCancellationResult};
+pub use create_order_list::{CreateOrderListRequest, CreateOrderListResponse, OrderCreationResult, OrderListItem};
 pub use get_order_list::{GetOrderListRequest, GetOrderListResponse, OrderDetails};

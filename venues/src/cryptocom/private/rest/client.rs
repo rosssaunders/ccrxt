@@ -148,7 +148,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Parsed JSON value of the response.
-    pub async fn send_signed_request(&self, method: &str, mut params: Value) -> crate::cryptocom::RestResult<Value> {
+    pub async fn send_signed_request(&self, method: &str, params: Value) -> crate::cryptocom::RestResult<Value> {
         let nonce = Utc::now().timestamp_millis() as u64;
         let id = 1;
         let signature = self.sign_request(method, id, &params, nonce)?;

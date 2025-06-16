@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use serde_json::{Value, json};
+use serde_json::Value;
 
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
@@ -40,8 +40,6 @@ impl RestClient {
     /// # Returns
     /// Success confirmation (code 0)
     pub async fn cancel_all_orders(&self, request: CancelAllOrdersRequest) -> RestResult<Value> {
-        let nonce = chrono::Utc::now().timestamp_millis() as u64;
-        let id = 1;
         let params = serde_json::to_value(&request).map_err(|e| crate::cryptocom::Errors::Error(format!("Serialization error: {}", e)))?;
 
         self.send_signed_request("private/cancel-all-orders", params)
