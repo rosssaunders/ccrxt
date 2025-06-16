@@ -4,6 +4,7 @@ pub mod cancel_all;
 pub mod cancel_order;
 pub mod approve_block_trade;
 pub mod client;
+pub mod reset_mmp;
 pub mod send_rfq;
 pub mod set_clearance_originator;
 pub mod submit_transfer_between_subaccounts;
@@ -18,6 +19,9 @@ pub use add_to_address_book::{
 };
 pub use cancel_all::{CancelAllRequest, CancelAllResponse};
 pub use client::RestClient;
+pub use reset_mmp::{
+    IndexName, ResetMmpRequest, ResetMmpResponse,
+};
 
 pub use cancel_order::{
     CancelOrderRequest, CancelOrderResponse, CancelledOrder,

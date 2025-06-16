@@ -54,6 +54,7 @@ pub mod private {
     pub mod rest;
 
     pub use self::rest::RestClient;
+
     pub use self::rest::AddToAddressBookRequest;
     pub use self::rest::AddToAddressBookResponse;
     pub use self::rest::AddressBookEntry;
@@ -78,6 +79,9 @@ pub mod private {
     pub use self::rest::WithdrawRequest;
     pub use self::rest::WithdrawResponse;
     pub use self::rest::WithdrawalData;
+    pub use self::rest::{
+        IndexName, ResetMmpRequest, ResetMmpResponse
+    };
 }
 
 pub mod message;
@@ -103,7 +107,10 @@ pub use private::AddToAddressBookRequest;
 pub use private::AddToAddressBookResponse;
 pub use private::AddressBookEntry;
 pub use private::DepositId;
+pub use private::IndexName;
 pub use private::Originator;
+pub use private::ResetMmpRequest;
+pub use private::ResetMmpResponse;
 pub use private::SendRfqRequest;
 pub use private::SendRfqResponse;
 pub use private::SetClearanceOriginatorRequest;
