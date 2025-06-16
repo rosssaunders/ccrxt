@@ -83,16 +83,16 @@ mod tests {
             order_list: vec![
                 OcoOrderItem {
                     instrument_name: "BTCUSD-PERP".to_string(),
-                    side: OrderSide::SELL,
-                    order_type: OrderType::LIMIT,
+                    side: OrderSide::Sell,
+                    order_type: OrderType::Limit,
                     price: Some("23000".to_string()),
                     quantity: "0.1".to_string(),
                     ref_price: None,
                 },
                 OcoOrderItem {
                     instrument_name: "BTCUSD-PERP".to_string(),
-                    side: OrderSide::SELL,
-                    order_type: OrderType::STOP_LOSS,
+                    side: OrderSide::Sell,
+                    order_type: OrderType::StopLoss,
                     price: None,
                     quantity: "0.1".to_string(),
                     ref_price: Some("19000".to_string()),
