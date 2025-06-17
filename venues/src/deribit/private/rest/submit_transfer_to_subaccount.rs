@@ -61,23 +61,14 @@ impl RestClient {
     /// Scope: wallets:read_write
     ///
     /// # Arguments
-    /// * `currency` - The currency symbol
-    /// * `amount` - Amount of funds to be transferred
-    /// * `destination` - Id of destination subaccount
+    /// * `request` - Request parameters containing currency, amount, and destination subaccount
     ///
     /// # Returns
     /// Result containing transfer data
     pub async fn submit_transfer_to_subaccount(
         &self,
-        currency: Currency,
-        amount: f64,
-        destination: i64,
+        request: SubmitTransferToSubaccountRequest,
     ) -> RestResult<SubmitTransferToSubaccountResponse> {
-        let request = SubmitTransferToSubaccountRequest {
-            currency,
-            amount,
-            destination,
-        };
         self.send_signed_request(
             "private/submit_transfer_to_subaccount",
             &request,

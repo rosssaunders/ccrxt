@@ -47,15 +47,14 @@ impl RestClient {
     /// Scope: wallet:read
     ///
     /// # Arguments
-    /// * `currency` - The currency symbol
+    /// * `request` - Request parameters containing the currency symbol
     ///
     /// # Returns
     /// Result containing optional deposit address information
     pub async fn get_current_deposit_address(
         &self,
-        currency: Currency,
+        request: GetCurrentDepositAddressRequest,
     ) -> RestResult<GetCurrentDepositAddressResponse> {
-        let request = GetCurrentDepositAddressRequest { currency };
         self.send_signed_request(
             "private/get_current_deposit_address",
             &request,

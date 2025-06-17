@@ -62,53 +62,14 @@ impl RestClient {
     /// Scope: wallet:read_write
     ///
     /// # Arguments
-    /// * `currency` - The currency symbol
-    /// * `address_type` - Address book type (transfer, withdrawal, or deposit_source)
-    /// * `address` - Address in currency format, it must be in address book
-    /// * `beneficiary_vasp_name` - Name of beneficiary VASP
-    /// * `beneficiary_vasp_did` - DID of beneficiary VASP
-    /// * `beneficiary_vasp_website` - Website of the beneficiary VASP (optional)
-    /// * `beneficiary_first_name` - First name of beneficiary (optional)
-    /// * `beneficiary_last_name` - Last name of beneficiary (optional)
-    /// * `beneficiary_company_name` - Beneficiary company name (optional)
-    /// * `beneficiary_address` - Geographical address of the beneficiary
-    /// * `agreed` - User agreed to share information with 3rd parties
-    /// * `personal` - User confirms address belongs to them
-    /// * `label` - Label of the address book entry
+    /// * `request` - Request parameters containing all required beneficiary information
     ///
     /// # Returns
     /// Result containing "ok" string on success
     pub async fn update_in_address_book(
         &self,
-        currency: Currency,
-        address_type: AddressBookType,
-        address: &str,
-        beneficiary_vasp_name: &str,
-        beneficiary_vasp_did: &str,
-        beneficiary_vasp_website: Option<&str>,
-        beneficiary_first_name: Option<&str>,
-        beneficiary_last_name: Option<&str>,
-        beneficiary_company_name: Option<&str>,
-        beneficiary_address: &str,
-        agreed: bool,
-        personal: bool,
-        label: &str,
+        request: UpdateInAddressBookRequest,
     ) -> RestResult<UpdateInAddressBookResponse> {
-        let request = UpdateInAddressBookRequest {
-            currency,
-            address_type,
-            address: address.to_string(),
-            beneficiary_vasp_name: beneficiary_vasp_name.to_string(),
-            beneficiary_vasp_did: beneficiary_vasp_did.to_string(),
-            beneficiary_vasp_website: beneficiary_vasp_website.map(|s| s.to_string()),
-            beneficiary_first_name: beneficiary_first_name.map(|s| s.to_string()),
-            beneficiary_last_name: beneficiary_last_name.map(|s| s.to_string()),
-            beneficiary_company_name: beneficiary_company_name.map(|s| s.to_string()),
-            beneficiary_address: beneficiary_address.to_string(),
-            agreed,
-            personal,
-            label: label.to_string(),
-        };
         self.send_signed_request(
             "private/update_in_address_book",
             &request,

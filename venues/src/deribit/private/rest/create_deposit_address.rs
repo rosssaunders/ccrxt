@@ -35,15 +35,14 @@ impl RestClient {
     /// Scope: wallet:read_write
     ///
     /// # Arguments
-    /// * `currency` - The currency symbol
+    /// * `request` - Request parameters containing the currency symbol
     ///
     /// # Returns
     /// Result containing optional deposit address information
     pub async fn create_deposit_address(
         &self,
-        currency: Currency,
+        request: CreateDepositAddressRequest,
     ) -> RestResult<CreateDepositAddressResponse> {
-        let request = CreateDepositAddressRequest { currency };
         self.send_signed_request(
             "private/create_deposit_address",
             &request,

@@ -38,23 +38,14 @@ impl RestClient {
     /// Scope: wallet:read_write
     ///
     /// # Arguments
-    /// * `currency` - The currency symbol
-    /// * `address_type` - Address book type (transfer, withdrawal, or deposit_source)
-    /// * `address` - Address in currency format, it must be in address book
+    /// * `request` - Request parameters containing currency, address type, and address
     ///
     /// # Returns
     /// Result containing "ok" string on success
     pub async fn remove_from_address_book(
         &self,
-        currency: Currency,
-        address_type: AddressBookType,
-        address: &str,
+        request: RemoveFromAddressBookRequest,
     ) -> RestResult<RemoveFromAddressBookResponse> {
-        let request = RemoveFromAddressBookRequest {
-            currency,
-            address_type,
-            address: address.to_string(),
-        };
         self.send_signed_request(
             "private/remove_from_address_book",
             &request,
