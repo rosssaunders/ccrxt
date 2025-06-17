@@ -11,6 +11,13 @@ pub mod private {
     pub use self::rest::{GetDepositAddressRequest, GetDepositAddressResponse};
     pub use self::rest::{GetWithdrawQuotaRequest, GetWithdrawQuotaResponse};
     pub use self::rest::{WithdrawRequest, WithdrawResponse};
+    pub use self::rest::{GetWithdrawAddressListRequest, GetWithdrawAddressListResponse, WithdrawAddress};
+    pub use self::rest::{GetDepositWithdrawHistoryRequest, GetDepositWithdrawHistoryResponse, DepositWithdrawRecord};
+    pub use self::rest::{GetDepositWithdrawDetailRequest, GetDepositWithdrawDetailResponse, DepositWithdrawDetail};
+    pub use self::rest::{GetMarginIsolatedAccountRequest, GetMarginIsolatedAccountResponse, MarginIsolatedSymbol, MarginAssetBase, MarginAssetQuote};
+    pub use self::rest::{MarginAssetTransferRequest, MarginAssetTransferResponse};
+    pub use self::rest::{GetBasicFeeRateRequest, GetBasicFeeRateResponse};
+    pub use self::rest::{GetActualTradeFeeRateRequest, GetActualTradeFeeRateResponse};
     pub use self::rest::{
         CancelOrderRequest, CancelOrderResponse, OrderDetails, QueryOrderRequest, QueryOrderResponse,
         QueryOrderTradesRequest, QueryOrderTradesResponse, QueryOrdersRequest, QueryOrdersResponse,
@@ -27,6 +34,13 @@ pub use private::{GetSpotWalletBalanceRequest, GetSpotWalletBalanceResponse, Spo
 pub use private::{GetDepositAddressRequest, GetDepositAddressResponse};
 pub use private::{GetWithdrawQuotaRequest, GetWithdrawQuotaResponse};
 pub use private::{WithdrawRequest, WithdrawResponse};
+pub use private::{GetWithdrawAddressListRequest, GetWithdrawAddressListResponse, WithdrawAddress};
+pub use private::{GetDepositWithdrawHistoryRequest, GetDepositWithdrawHistoryResponse, DepositWithdrawRecord};
+pub use private::{GetDepositWithdrawDetailRequest, GetDepositWithdrawDetailResponse, DepositWithdrawDetail};
+pub use private::{GetMarginIsolatedAccountRequest, GetMarginIsolatedAccountResponse, MarginIsolatedSymbol, MarginAssetBase, MarginAssetQuote};
+pub use private::{MarginAssetTransferRequest, MarginAssetTransferResponse};
+pub use private::{GetBasicFeeRateRequest, GetBasicFeeRateResponse};
+pub use private::{GetActualTradeFeeRateRequest, GetActualTradeFeeRateResponse};
 pub use private::{
     CancelOrderRequest, CancelOrderResponse, OrderDetails, QueryOrderRequest, QueryOrderResponse,
     QueryOrderTradesRequest, QueryOrderTradesResponse, QueryOrdersRequest, QueryOrdersResponse,
