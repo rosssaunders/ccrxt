@@ -70,31 +70,14 @@ impl RestClient {
     /// # Returns
     /// Account balance information for all accounts with pagination info
     pub async fn get_account_balances(&self, request: &GetAccountBalancesRequest) -> RestResult<GetAccountBalancesResponse> {
-        let (accounts, headers): (Vec<AccountBalance>, reqwest::header::HeaderMap) = self
-            .send_request_with_headers(
+        let (accounts, pagination) = self
+            .send_request_with_pagination(
                 "accounts",
                 reqwest::Method::GET,
                 Some(request),
                 EndpointType::Private,
             )
             .await?;
-
-        // Extract pagination headers
-        let before = headers
-            .get("CB-BEFORE")
-            .and_then(|value| value.to_str().ok())
-            .map(|s| s.to_string());
-
-        let after = headers
-            .get("CB-AFTER")
-            .and_then(|value| value.to_str().ok())
-            .map(|s| s.to_string());
-
-        let pagination = if before.is_some() || after.is_some() {
-            Some(PaginationInfo { before, after })
-        } else {
-            None
-        };
 
         Ok(GetAccountBalancesResponse {
             accounts,
