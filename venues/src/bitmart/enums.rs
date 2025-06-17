@@ -19,6 +19,10 @@ pub enum OrderSide {
 pub enum OrderType {
     Limit,
     Market,
+    #[serde(rename = "limit_maker")]
+    LimitMaker,
+    #[serde(rename = "ioc")]
+    Ioc,
     #[serde(rename = "stop_limit")]
     StopLimit,
 }
@@ -50,4 +54,37 @@ pub enum Network {
     Arbitrum,
     #[serde(rename = "OPTIMISM")]
     Optimism,
+}
+
+/// Order mode for trading
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum OrderMode {
+    Spot,
+    #[serde(rename = "iso_margin")]
+    IsoMargin,
+}
+
+/// Trade role for transactions
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum TradeRole {
+    Taker,
+    Maker,
+}
+
+/// Order status for trading
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum OrderStatus {
+    #[serde(rename = "new")]
+    New,
+    #[serde(rename = "partially_filled")]
+    PartiallyFilled,
+    #[serde(rename = "filled")]
+    Filled,
+    #[serde(rename = "canceled")]
+    Canceled,
+    #[serde(rename = "pending_cancel")]
+    PendingCancel,
 }
