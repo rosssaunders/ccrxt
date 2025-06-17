@@ -2,6 +2,19 @@ pub mod enums;
 mod errors;
 
 pub mod rate_limit;
+pub mod public {
+    mod rest;
+    pub use self::rest::RestClient;
+    pub use self::rest::{GetCurrencyListRequest, GetCurrencyListResponse, Currency};
+    pub use self::rest::{GetTradingPairsListRequest, GetTradingPairsListResponse};
+    pub use self::rest::{GetTradingPairDetailsRequest, GetTradingPairDetailsResponse, TradingPairDetail};
+    pub use self::rest::{GetTickerAllPairsRequest, GetTickerAllPairsResponse, TickerArrayData};
+    pub use self::rest::{GetTickerRequest, GetTickerResponse, TickerData};
+    pub use self::rest::{GetLatestKlineRequest, GetLatestKlineResponse, LatestKlineData};
+    pub use self::rest::{GetHistoryKlineRequest, GetHistoryKlineResponse, HistoryKlineData};
+    pub use self::rest::{GetDepthRequest, GetDepthResponse, DepthData, OrderBookEntry};
+    pub use self::rest::{GetRecentTradesRequest, GetRecentTradesResponse, TradeData};
+}
 pub mod private {
     mod rest;
     pub use self::rest::RestClient;
@@ -27,6 +40,16 @@ pub mod private {
 
 pub use enums::*;
 pub use errors::{ApiError, ErrorResponse, Errors};
+pub use public::RestClient as PublicRestClient;
+pub use public::{GetCurrencyListRequest, GetCurrencyListResponse, Currency as PublicCurrency};
+pub use public::{GetTradingPairsListRequest, GetTradingPairsListResponse};
+pub use public::{GetTradingPairDetailsRequest, GetTradingPairDetailsResponse, TradingPairDetail};
+pub use public::{GetTickerAllPairsRequest, GetTickerAllPairsResponse, TickerArrayData};
+pub use public::{GetTickerRequest, GetTickerResponse, TickerData as PublicTickerData};
+pub use public::{GetLatestKlineRequest, GetLatestKlineResponse, LatestKlineData};
+pub use public::{GetHistoryKlineRequest, GetHistoryKlineResponse, HistoryKlineData};
+pub use public::{GetDepthRequest, GetDepthResponse, DepthData, OrderBookEntry};
+pub use public::{GetRecentTradesRequest, GetRecentTradesResponse, TradeData};
 pub use private::RestClient as PrivateRestClient;
 pub use private::{GetAccountBalanceRequest, GetAccountBalanceResponse, WalletBalance};
 pub use private::{GetCurrenciesRequest, GetCurrenciesResponse, Currency};
