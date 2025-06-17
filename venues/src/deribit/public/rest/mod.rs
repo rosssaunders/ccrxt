@@ -3,7 +3,6 @@ pub mod get_combo_ids;
 pub mod get_combos;
 pub mod get_status;
 pub mod get_time;
-pub mod integration_tests;
 pub mod test;
 
 pub use client::RestClient;

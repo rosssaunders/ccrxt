@@ -1,6 +1,6 @@
 #[cfg(test)]
-mod integration_tests {
-    use crate::deribit::{
+mod rest_api_tests {
+    use venues::deribit::{
         public::rest::{GetTimeRequest, TestRequest, RestClient},
         AccountTier, RateLimiter, EndpointType
     };
@@ -57,7 +57,7 @@ mod integration_tests {
     #[test]
     fn test_endpoint_exports() {
         // Verify that the new types are properly exported
-        use crate::deribit::public::rest::{GetTimeRequest, GetTimeResponse, TestRequest, TestResponse, TestResult};
+        use venues::deribit::public::rest::{GetTimeRequest, GetTimeResponse, TestRequest, TestResponse, TestResult};
         
         // Create instances to verify they're accessible
         let _get_time_req = GetTimeRequest {};
