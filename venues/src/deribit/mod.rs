@@ -7,7 +7,7 @@
 //! # Example Usage
 //!
 //! ```rust,no_run
-//! use venues::deribit::{RateLimiter, AccountTier, EndpointType, PublicRestClient, GetComboIdsRequest, Currency};
+//! use venues::deribit::{RateLimiter, AccountTier, EndpointType, PublicRestClient, GetComboIdsRequest, GetStatusRequest, Currency};
 //!
 //! #[tokio::main]
 //! async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -26,6 +26,11 @@
 //!     let response = rest_client.get_combo_ids(request).await?;
 //!     println!("Found {} combo IDs", response.result.len());
 //!    
+//!     // Get platform status
+//!     let status_request = GetStatusRequest {};
+//!     let status_response = rest_client.get_status(status_request).await?;
+//!     println!("Platform locked status: {}", status_response.result.locked);
+//!    
 //!     Ok(())
 //! }
 //! ```
@@ -40,6 +45,9 @@ pub mod public {
 
     pub use self::rest::GetComboIdsRequest;
     pub use self::rest::GetComboIdsResponse;
+    pub use self::rest::GetStatusRequest;
+    pub use self::rest::GetStatusResponse;
+    pub use self::rest::GetStatusResult;
     pub use self::rest::RestClient;
     pub use self::websocket::DeribitMessage;
     pub use self::websocket::DeribitWebSocketClient;
@@ -128,6 +136,9 @@ pub use public::DeribitMessage;
 pub use public::DeribitWebSocketClient;
 pub use public::GetComboIdsRequest;
 pub use public::GetComboIdsResponse;
+pub use public::GetStatusRequest;
+pub use public::GetStatusResponse;
+pub use public::GetStatusResult;
 pub use public::HelloRequest;
 pub use public::HelloResponse;
 pub use public::HelloResult;

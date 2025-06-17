@@ -54,6 +54,8 @@ pub enum EndpointType {
     PublicGetComboIds,
     /// Public combo details endpoint (non-matching engine, 500 credits each)
     PublicGetCombos,
+    /// Public status endpoint (non-matching engine, 500 credits each)
+    PublicGetStatus,
     /// WebSocket only: public/hello (no specific rate limit documented)
     PublicHello,
 }
@@ -67,6 +69,7 @@ impl EndpointType {
             EndpointType::PublicGetInstruments => 0, // Special time-based limit
             EndpointType::PublicGetComboIds => 500,  // Non-matching engine endpoint
             EndpointType::PublicGetCombos => 500,    // Non-matching engine endpoint
+            EndpointType::PublicGetStatus => 500,    // Non-matching engine endpoint
             EndpointType::PublicHello => 0,          // WebSocket only, no specific credit cost
         }
     }
@@ -83,6 +86,10 @@ impl EndpointType {
 
         if path == "public/get_combos" {
             return EndpointType::PublicGetCombos;
+        }
+
+        if path == "public/status" {
+            return EndpointType::PublicGetStatus;
         }
 
         // Matching engine endpoints as per Deribit documentation
@@ -294,7 +301,7 @@ impl RateLimiter {
     /// Check if a request can be made for the given endpoint type
     pub async fn check_limits(&self, endpoint_type: EndpointType) -> Result<(), RateLimitError> {
         match endpoint_type {
-            EndpointType::NonMatchingEngine | EndpointType::PublicGetComboIds | EndpointType::PublicGetCombos => {
+            EndpointType::NonMatchingEngine | EndpointType::PublicGetComboIds | EndpointType::PublicGetCombos | EndpointType::PublicGetStatus => {
                 let mut pool = self.credit_pool.write().await;
                 pool.consume_credits(endpoint_type.credit_cost())
             }
@@ -326,7 +333,7 @@ impl RateLimiter {
     /// Record a successful request for the given endpoint type
     pub async fn record_request(&self, endpoint_type: EndpointType) {
         match endpoint_type {
-            EndpointType::NonMatchingEngine | EndpointType::PublicGetComboIds | EndpointType::PublicGetCombos => {
+            EndpointType::NonMatchingEngine | EndpointType::PublicGetComboIds | EndpointType::PublicGetCombos | EndpointType::PublicGetStatus => {
                 // Credits are already consumed in check_limits
             }
             EndpointType::MatchingEngine => {
@@ -418,6 +425,11 @@ mod tests {
         assert_eq!(
             EndpointType::from_path("public/get_combos"),
             EndpointType::PublicGetCombos
+        );
+
+        assert_eq!(
+            EndpointType::from_path("public/status"),
+            EndpointType::PublicGetStatus
         );
 
         assert_eq!(
