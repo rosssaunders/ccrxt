@@ -1,5 +1,10 @@
 mod client;
 mod get_account_balance;
+mod get_currencies;
+mod get_spot_wallet_balance;
+mod get_deposit_address;
+mod get_withdraw_quota;
+mod withdraw;
 mod submit_order;
 mod cancel_order;
 mod query_order;
@@ -9,6 +14,11 @@ mod query_order_trades;
 
 pub use client::RestClient;
 pub use get_account_balance::{GetAccountBalanceRequest, GetAccountBalanceResponse, WalletBalance};
+pub use get_currencies::{GetCurrenciesRequest, GetCurrenciesResponse, Currency};
+pub use get_spot_wallet_balance::{GetSpotWalletBalanceRequest, GetSpotWalletBalanceResponse, SpotWalletBalance};
+pub use get_deposit_address::{GetDepositAddressRequest, GetDepositAddressResponse};
+pub use get_withdraw_quota::{GetWithdrawQuotaRequest, GetWithdrawQuotaResponse};
+pub use withdraw::{WithdrawRequest, WithdrawResponse};
 pub use submit_order::{SubmitOrderRequest, SubmitOrderResponse};
 pub use cancel_order::{CancelOrderRequest, CancelOrderResponse};
 pub use query_order::{OrderDetails, QueryOrderRequest, QueryOrderResponse};
