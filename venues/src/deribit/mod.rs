@@ -48,6 +48,8 @@ pub mod public {
     pub use self::rest::GetStatusRequest;
     pub use self::rest::GetStatusResponse;
     pub use self::rest::GetStatusResult;
+    pub use self::rest::GetTimeRequest;
+    pub use self::rest::GetTimeResponse;
     pub use self::rest::RestClient;
     pub use self::websocket::DeribitMessage;
     pub use self::websocket::DeribitWebSocketClient;
@@ -183,6 +185,8 @@ pub use public::GetComboIdsResponse;
 pub use public::GetStatusRequest;
 pub use public::GetStatusResponse;
 pub use public::GetStatusResult;
+pub use public::GetTimeRequest;
+pub use public::GetTimeResponse;
 pub use public::HelloRequest;
 pub use public::HelloResponse;
 pub use public::HelloResult;
