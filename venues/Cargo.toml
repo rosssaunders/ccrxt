@@ -50,6 +50,10 @@ path = "examples/cryptocom/rate_limit_example.rs"
 name = "okx_get_underlying"
 path = "examples/okx/get_underlying.rs"
 
+[[example]]
+name = "deribit_get_block_rfq_trades"
+path = "examples/deribit/get_block_rfq_trades.rs"
+
 [dev-dependencies]
 tokio-test = "0.4"
 tracing-subscriber = { workspace = true }
