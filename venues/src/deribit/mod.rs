@@ -54,7 +54,8 @@ pub mod public {
     pub use self::websocket::HelloRequest;
     pub use self::websocket::HelloResponse;
     pub use self::websocket::HelloResult;
-    pub use self::websocket::JsonRpcRequest;
+    pub use self::websocket::SubscribeRequest;
+    pub use self::websocket::SubscribeResponse;
     pub use self::websocket::client::DeribitWebSocketError;
 }
 
@@ -186,7 +187,8 @@ pub use public::GetStatusResult;
 pub use public::HelloRequest;
 pub use public::HelloResponse;
 pub use public::HelloResult;
-pub use public::JsonRpcRequest;
+pub use public::SubscribeRequest;
+pub use public::SubscribeResponse;
 pub use public::RestClient as PublicRestClient;
 pub use public::websocket::client::DeribitWebSocketError;
 pub use rate_limit::*;

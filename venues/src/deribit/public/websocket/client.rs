@@ -15,6 +15,7 @@ use tokio_tungstenite::{MaybeTlsStream, WebSocketStream, connect_async, tungsten
 use websockets::{BoxResult, VenueMessage, WebSocketConnection};
 
 use crate::deribit::public::websocket::hello::{HelloResponse, JsonRpcRequest};
+use crate::deribit::public::websocket::subscribe::SubscribeResponse;
 use crate::deribit::rate_limit::RateLimiter;
 
 /// Deribit WebSocket message types
@@ -22,6 +23,8 @@ use crate::deribit::rate_limit::RateLimiter;
 pub enum DeribitMessage {
     /// Hello response message
     Hello(HelloResponse),
+    /// Subscribe response message
+    Subscribe(SubscribeResponse),
     /// Raw message for debugging/other purposes
     Raw(String),
 }
@@ -149,6 +152,33 @@ impl DeribitWebSocketClient {
         }
     }
 
+    /// Send a subscribe request and wait for the response
+    pub async fn subscribe(&mut self, channels: Vec<String>) -> Result<Vec<String>, DeribitWebSocketError> {
+        if !self.is_connected() {
+            return Err(DeribitWebSocketError::Connection(
+                "Not connected".to_string(),
+            ));
+        }
+        let req = crate::deribit::public::websocket::subscribe::JsonRpcRequest::new_subscribe(
+            self.next_request_id().try_into().unwrap(),
+            channels,
+        );
+        let msg = serde_json::to_string(&req)?;
+        if let Some(ws) = &mut self.websocket {
+            ws.send(Message::Text(msg.into()))
+                .await
+                .map_err(|e| DeribitWebSocketError::Connection(e.to_string()))?;
+            // Wait for the response
+            let response_str = self.receive_response().await?;
+            let response: SubscribeResponse = serde_json::from_str(&response_str)?;
+            Ok(response.result)
+        } else {
+            Err(DeribitWebSocketError::Connection(
+                "WebSocket not connected".to_string(),
+            ))
+        }
+    }
+
     /// Get the next request ID
     pub fn next_request_id(&self) -> u64 {
         self.request_id.fetch_add(1, Ordering::SeqCst)
@@ -236,6 +266,35 @@ mod tests {
         match msg {
             DeribitMessage::Hello(_) => (),
             _ => panic!("Expected Hello variant"),
+        }
+
+        let subscribe = SubscribeResponse::default();
+        let msg = DeribitMessage::Subscribe(subscribe);
+        match msg {
+            DeribitMessage::Subscribe(_) => (),
+            _ => panic!("Expected Subscribe variant"),
+        }
+    }
+
+    #[test]
+    fn test_subscribe_message_type() {
+        use crate::deribit::public::websocket::subscribe::SubscribeResponse;
+        
+        let subscribe_response = SubscribeResponse {
+            id: 1,
+            jsonrpc: "2.0".to_string(),
+            result: vec!["book.BTC-PERPETUAL.100ms".to_string()],
+        };
+        
+        let msg = DeribitMessage::Subscribe(subscribe_response.clone());
+        match msg {
+            DeribitMessage::Subscribe(response) => {
+                assert_eq!(response.id, 1);
+                assert_eq!(response.jsonrpc, "2.0");
+                assert_eq!(response.result.len(), 1);
+                assert_eq!(response.result[0], "book.BTC-PERPETUAL.100ms");
+            }
+            _ => panic!("Expected Subscribe variant"),
         }
     }
 }
