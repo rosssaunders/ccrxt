@@ -53,6 +53,20 @@ mod tests {
         println!("disable_heartbeat method can be called and returns appropriate error when not connected");
     }
 
+    #[tokio::test]
+    async fn test_set_heartbeat_method_signature() {
+        let mut client = create_test_client();
+        
+        // This test verifies that the set_heartbeat method has the correct signature
+        // and can be called (even though it will fail without a connection)
+        let result = client.set_heartbeat(30).await;
+        
+        // Should fail because we're not connected
+        assert!(result.is_err());
+        
+        println!("set_heartbeat method can be called and returns appropriate error when not connected");
+    }
+
     #[test]
     fn test_websocket_trait_implementation() {
         let mut client = create_test_client();

@@ -107,6 +107,19 @@ impl JsonRpcRequest {
             params: None,
         }
     }
+
+    /// Create a new set_heartbeat request
+    pub fn set_heartbeat(id: u64, interval: u32) -> Self {
+        let mut params = serde_json::Map::new();
+        params.insert("interval".to_string(), serde_json::Value::Number(serde_json::Number::from(interval)));
+        
+        Self {
+            jsonrpc: "2.0".to_string(),
+            id,
+            method: "public/set_heartbeat".to_string(),
+            params: Some(serde_json::Value::Object(params)),
+        }
+    }
 }
 
 impl JsonRpcResponse {
@@ -158,6 +171,36 @@ mod tests {
         assert_eq!(request.id, 789);
         assert_eq!(request.method, "public/disable_heartbeat");
         assert!(request.params.is_none());
+    }
+
+    #[test]
+    fn test_json_rpc_request_set_heartbeat() {
+        let request = JsonRpcRequest::set_heartbeat(123, 30);
+
+        assert_eq!(request.jsonrpc, "2.0");
+        assert_eq!(request.id, 123);
+        assert_eq!(request.method, "public/set_heartbeat");
+        assert!(request.params.is_some());
+        
+        let params = request.params.unwrap();
+        assert!(params.is_object());
+        let obj = params.as_object().unwrap();
+        assert_eq!(obj.get("interval").unwrap().as_u64().unwrap(), 30);
+    }
+
+    #[test]
+    fn test_json_rpc_request_set_heartbeat_with_minimum_interval() {
+        let request = JsonRpcRequest::set_heartbeat(456, 10);
+
+        assert_eq!(request.jsonrpc, "2.0");
+        assert_eq!(request.id, 456);
+        assert_eq!(request.method, "public/set_heartbeat");
+        assert!(request.params.is_some());
+        
+        let params = request.params.unwrap();
+        assert!(params.is_object());
+        let obj = params.as_object().unwrap();
+        assert_eq!(obj.get("interval").unwrap().as_u64().unwrap(), 10);
     }
 
     #[test]

@@ -149,6 +149,38 @@ impl DeribitWebSocketClient {
         }
     }
 
+    /// Send a set_heartbeat request and wait for the response
+    pub async fn set_heartbeat(&mut self, interval: u32) -> Result<String, DeribitWebSocketError> {
+        if !self.is_connected() {
+            return Err(DeribitWebSocketError::Connection(
+                "Not connected".to_string(),
+            ));
+        }
+        
+        // Create params for the heartbeat interval
+        let mut params = serde_json::Map::new();
+        params.insert("interval".to_string(), serde_json::Value::Number(serde_json::Number::from(interval)));
+        
+        let req = JsonRpcRequest::new(
+            self.next_request_id().try_into().unwrap(),
+            "public/set_heartbeat".to_string(),
+            serde_json::Value::Object(params),
+        );
+        let msg = serde_json::to_string(&req)?;
+        if let Some(ws) = &mut self.websocket {
+            ws.send(Message::Text(msg.into()))
+                .await
+                .map_err(|e| DeribitWebSocketError::Connection(e.to_string()))?;
+            // Wait for the response
+            let response = self.receive_response().await?;
+            Ok(response)
+        } else {
+            Err(DeribitWebSocketError::Connection(
+                "WebSocket not connected".to_string(),
+            ))
+        }
+    }
+
     /// Get the next request ID
     pub fn next_request_id(&self) -> u64 {
         self.request_id.fetch_add(1, Ordering::SeqCst)
@@ -236,6 +268,27 @@ mod tests {
         match msg {
             DeribitMessage::Hello(_) => (),
             _ => panic!("Expected Hello variant"),
+        }
+    }
+
+    #[tokio::test]
+    async fn test_set_heartbeat_method_signature() {
+        let rl = RateLimiter::new(AccountTier::default());
+        let mut client = DeribitWebSocketClient::new(None, rl);
+        
+        // This test verifies that the set_heartbeat method has the correct signature
+        // and can be called (even though it will fail without a connection)
+        let result = client.set_heartbeat(30).await;
+        
+        // Should fail because we're not connected
+        assert!(result.is_err());
+        
+        // Verify error message indicates connection issue
+        match result {
+            Err(DeribitWebSocketError::Connection(msg)) => {
+                assert_eq!(msg, "Not connected");
+            }
+            _ => panic!("Expected connection error"),
         }
     }
 }
