@@ -257,6 +257,61 @@ mod tests {
         }
     }
 
+    #[test] 
+    fn test_unsubscribe_end_to_end_serialization() {
+        // Test full round-trip serialization for unsubscribe request
+        let channels = vec![
+            "ticker.BTC-PERPETUAL".to_string(), 
+            "trades.ETH-PERPETUAL".to_string(),
+            "book.SOL-PERPETUAL.100ms".to_string()
+        ];
+        let request = JsonRpcRequest::unsubscribe(789, channels.clone());
+        
+        // Serialize to JSON
+        let json = serde_json::to_string(&request).unwrap();
+        
+        // Verify JSON contains expected content
+        assert!(json.contains("\"jsonrpc\":\"2.0\""));
+        assert!(json.contains("\"id\":789"));
+        assert!(json.contains("\"method\":\"public/unsubscribe\""));
+        assert!(json.contains("ticker.BTC-PERPETUAL"));
+        assert!(json.contains("trades.ETH-PERPETUAL"));
+        assert!(json.contains("book.SOL-PERPETUAL.100ms"));
+        
+        // Deserialize back and verify
+        let parsed: JsonRpcRequest = serde_json::from_str(&json).unwrap();
+        assert_eq!(parsed.jsonrpc, "2.0");
+        assert_eq!(parsed.id, 789);
+        assert_eq!(parsed.method, "public/unsubscribe");
+        
+        // Extract and verify params
+        if let Some(params) = parsed.params {
+            let params_obj: UnsubscribeParams = serde_json::from_value(params).unwrap();
+            assert_eq!(params_obj.channels.len(), 3);
+            assert!(params_obj.channels.contains(&"ticker.BTC-PERPETUAL".to_string()));
+            assert!(params_obj.channels.contains(&"trades.ETH-PERPETUAL".to_string()));
+            assert!(params_obj.channels.contains(&"book.SOL-PERPETUAL.100ms".to_string()));
+        }
+    }
+
+    #[test]
+    fn test_unsubscribe_empty_channels() {
+        // Test unsubscribe with empty channels list
+        let channels = vec![];
+        let request = JsonRpcRequest::unsubscribe(100, channels);
+        
+        assert_eq!(request.jsonrpc, "2.0");
+        assert_eq!(request.id, 100);
+        assert_eq!(request.method, "public/unsubscribe");
+        assert!(request.params.is_some());
+        
+        // Verify params contain empty channels array
+        if let Some(params) = request.params {
+            let params_obj: UnsubscribeParams = serde_json::from_value(params).unwrap();
+            assert_eq!(params_obj.channels.len(), 0);
+        }
+    }
+
     #[test]
     fn test_json_rpc_response_deserialization() {
         let json = r#"{"jsonrpc":"2.0","id":123,"result":"ok"}"#;
