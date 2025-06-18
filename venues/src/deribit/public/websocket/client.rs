@@ -14,7 +14,8 @@ use tokio::sync::Mutex;
 use tokio_tungstenite::{MaybeTlsStream, WebSocketStream, connect_async, tungstenite::Message};
 use websockets::{BoxResult, VenueMessage, WebSocketConnection};
 
-use crate::deribit::public::websocket::hello::{HelloResponse, JsonRpcRequest};
+use crate::deribit::public::websocket::hello::{HelloResponse, JsonRpcRequest as HelloJsonRpcRequest};
+use crate::deribit::message::JsonRpcRequest;
 use crate::deribit::rate_limit::RateLimiter;
 
 /// Deribit WebSocket message types
@@ -82,7 +83,7 @@ impl DeribitWebSocketClient {
     /// Send a hello message to introduce the client
     pub async fn send_hello(&self, client_version: String) -> BoxResult<HelloResponse> {
         let req_id = self.request_id.fetch_add(1, Ordering::SeqCst) as i32;
-        let hello_req = JsonRpcRequest::new_hello(req_id, "ccrxt".to_string(), client_version);
+        let hello_req = HelloJsonRpcRequest::new_hello(req_id, "ccrxt".to_string(), client_version);
         let req_json = serde_json::to_string(&hello_req)?;
         let ws = self
             .websocket
@@ -102,10 +103,34 @@ impl DeribitWebSocketClient {
                 "Not connected".to_string(),
             ));
         }
-        let req = JsonRpcRequest::new(
-            self.next_request_id().try_into().unwrap(),
-            "unsubscribe_all".to_string(),
-            (),
+        let req = JsonRpcRequest::unsubscribe_all(
+            self.next_request_id()
+        );
+        let msg = serde_json::to_string(&req)?;
+        if let Some(ws) = &mut self.websocket {
+            ws.send(Message::Text(msg.into()))
+                .await
+                .map_err(|e| DeribitWebSocketError::Connection(e.to_string()))?;
+            // Wait for the response
+            let response = self.receive_response().await?;
+            Ok(response)
+        } else {
+            Err(DeribitWebSocketError::Connection(
+                "WebSocket not connected".to_string(),
+            ))
+        }
+    }
+
+    /// Send an unsubscribe request with specific channels and wait for the response
+    pub async fn unsubscribe(&mut self, channels: Vec<String>) -> Result<String, DeribitWebSocketError> {
+        if !self.is_connected() {
+            return Err(DeribitWebSocketError::Connection(
+                "Not connected".to_string(),
+            ));
+        }
+        let req = JsonRpcRequest::unsubscribe(
+            self.next_request_id(),
+            channels
         );
         let msg = serde_json::to_string(&req)?;
         if let Some(ws) = &mut self.websocket {
@@ -129,10 +154,8 @@ impl DeribitWebSocketClient {
                 "Not connected".to_string(),
             ));
         }
-        let req = JsonRpcRequest::new(
-            self.next_request_id().try_into().unwrap(),
-            "disable_heartbeat".to_string(),
-            (),
+        let req = JsonRpcRequest::disable_heartbeat(
+            self.next_request_id()
         );
         let msg = serde_json::to_string(&req)?;
         if let Some(ws) = &mut self.websocket {
@@ -237,5 +260,19 @@ mod tests {
             DeribitMessage::Hello(_) => (),
             _ => panic!("Expected Hello variant"),
         }
+    }
+
+    #[test]
+    fn test_unsubscribe_method_signature() {
+        // Test that the unsubscribe method has the correct signature
+        // This is a compile-time test to ensure the method signature is correct
+        let rl = RateLimiter::new(AccountTier::default());
+        let mut client = DeribitWebSocketClient::new(None, rl);
+        
+        // This is a compile test - we don't actually call the async method
+        // Just verify the signature exists
+        let channels = vec!["ticker.BTC-PERPETUAL".to_string()];
+        let _future = client.unsubscribe(channels);
+        // Don't await the future since we're not connected
     }
 }
