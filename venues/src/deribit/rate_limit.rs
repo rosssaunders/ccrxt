@@ -96,6 +96,8 @@ impl EndpointType {
         match path {
             "public/get_instruments" => EndpointType::PublicGetInstruments,
             "public/hello" => EndpointType::PublicHello,
+            "public/get_time" => EndpointType::NonMatchingEngine,
+            "public/test" => EndpointType::NonMatchingEngine,
             "private/buy"
             | "private/sell"
             | "private/edit"
@@ -435,6 +437,16 @@ mod tests {
         assert_eq!(
             EndpointType::from_path("public/hello"),
             EndpointType::PublicHello
+        );
+
+        assert_eq!(
+            EndpointType::from_path("public/get_time"),
+            EndpointType::NonMatchingEngine
+        );
+
+        assert_eq!(
+            EndpointType::from_path("public/test"),
+            EndpointType::NonMatchingEngine
         );
 
         assert_eq!(
