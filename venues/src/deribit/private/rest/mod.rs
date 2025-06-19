@@ -20,6 +20,7 @@ pub mod get_transfers;
 pub mod get_trigger_order_history;
 pub mod get_user_trades_by_currency;
 pub mod get_user_trades_by_instrument;
+pub mod get_user_trades_by_instrument_and_time;
 pub mod get_withdrawals;
 pub mod invalidate_block_trade_signature;
 pub mod move_positions;
@@ -62,6 +63,7 @@ pub use get_transfers::{GetTransfersRequest, GetTransfersResponse, GetTransfersR
 pub use get_trigger_order_history::{GetTriggerOrderHistoryRequest, GetTriggerOrderHistoryResponse, GetTriggerOrderHistoryResult, TriggerOrderEntry};
 pub use get_user_trades_by_currency::{GetUserTradesByCurrencyRequest, GetUserTradesByCurrencyResponse, GetUserTradesByCurrencyResult, Trade};
 pub use get_user_trades_by_instrument::{GetUserTradesByInstrumentRequest, GetUserTradesByInstrumentResponse, GetUserTradesByInstrumentResult};
+pub use get_user_trades_by_instrument_and_time::{GetUserTradesByInstrumentAndTimeRequest, GetUserTradesByInstrumentAndTimeResponse, GetUserTradesByInstrumentAndTimeResult};
 pub use get_withdrawals::{GetWithdrawalsRequest, GetWithdrawalsResponse, GetWithdrawalsResult};
 pub use invalidate_block_trade_signature::{InvalidateBlockTradeSignatureRequest, InvalidateBlockTradeSignatureResponse};
 pub use move_positions::{MovePositionTrade, MovePositionTradeResult, MovePositionsRequest, MovePositionsResponse, MovePositionsResult};
