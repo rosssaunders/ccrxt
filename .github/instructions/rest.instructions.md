@@ -1,12 +1,12 @@
 ---
-applyTo: "venues/src/**"
+applyTo: "venues/src/**/rest/**"
 ---
 
 # Adding a New REST API Endpoint for an Existing Venue (Rust, venues crate)
 
 ## Overview
 
-This guide describes how to add a new REST API endpoint for an existing venue in the `venues` crate, following the conventions and structure of the `account_trades` implementation. 
+This guide describes how to add a new REST API endpoint for an existing venue in the `venues` crate, following the conventions and structure of the `account_trades` implementation.
 It also details documentation and code style requirements for all structs and fields.
 
 ---
@@ -39,6 +39,7 @@ It also details documentation and code style requirements for all structs and fi
   - Field names in serde attributes MUST exactly match the venue's API docs.
   - There MUST be a blank line between each field.
 - Example:
+
   ```rust
   /// Request parameters for the account trade list endpoint.
   #[derive(Debug, Clone, Serialize, Default)]
@@ -64,6 +65,7 @@ It also details documentation and code style requirements for all structs and fi
   - All structs and fields must be documented as above.
   - Use serde attributes for all fields.
 - Example:
+
   ```rust
   /// Represents a single account trade.
   #[derive(Debug, Clone, Deserialize)]
@@ -112,7 +114,6 @@ It also details documentation and code style requirements for all structs and fi
 - Do NOT add "helper" functions for venue REST endpoints. Endpoint functions must match the venue API exactly, without additional abstraction or helpers.
 - Endpoint functions must take a struct for parameters, except for parameters that appear in the URL path, which may be individual arguments.
 
-
 ---
 
 ## **Parameter Struct Rule (MANDATORY)**
@@ -123,17 +124,20 @@ It also details documentation and code style requirements for all structs and fi
 - This rule is mandatory for all new and existing endpoints.
 
 ### Common Mistakes to Avoid
+
 - ❌ `pub async fn foo(&self, a: String, b: u64)`
 - ✅ `pub async fn foo(&self, params: FooRequest)`
 - Do not split parameters into multiple arguments unless they are part of the URL path.
 
 ### Parameter Struct Checklist
-| Rule | Allowed | Not Allowed |
-|------|---------|-------------|
-| Endpoint params as struct | ✅ | ❌ |
-| Multiple params (not in path) | ❌ | ✅ |
+
+| Rule                          | Allowed | Not Allowed |
+| ----------------------------- | ------- | ----------- |
+| Endpoint params as struct     | ✅      | ❌          |
+| Multiple params (not in path) | ❌      | ✅          |
 
 ### Example (Correct)
+
 ```rust
 pub async fn submit_transfer_to_user(
     &self,
@@ -144,6 +148,7 @@ pub async fn submit_transfer_to_user(
 ```
 
 ### Example (Incorrect)
+
 ```rust
 pub async fn submit_transfer_to_user(
     &self,
@@ -163,6 +168,7 @@ pub async fn submit_transfer_to_user(
 - **Each endpoint import (`mod`) and each `pub use` MUST be on its own line.**  
   This reduces the risk of merge conflicts when multiple endpoints are added concurrently.
 - Example:
+
   ```rust
   pub mod account_trades;
   pub mod position_risk;
