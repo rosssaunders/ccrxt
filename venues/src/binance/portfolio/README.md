@@ -1,25 +1,82 @@
 # Binance Portfolio Margin API Client
 
-This module provides a client implementation for the Binance Portfolio Margin API, following the same patterns and structure as the existing Coin-M Futures client.
+This module provides a high-performance, idiomatic Rust client for the [Binance Portfolio Margin API](https://developers.binance.com/docs/derivatives/portfolio-margin/general-info), following the same structure and conventions as the Coin-M Futures client.
 
-## Overview
+---
 
-The Portfolio Margin API allows access to Binance's portfolio margin trading features through REST endpoints at `https://papi.binance.com/`.
+## 📚 Source Documentation
 
-## Features
+- [Binance Portfolio Margin API Docs](https://developers.binance.com/docs/derivatives/portfolio-margin/general-info)
+- [Binance Portfolio Margin REST Endpoints](https://developers.binance.com/docs/derivatives/portfolio-margin/portfolio-margin-rest-api)
+- [Binance Portfolio Margin Rate Limits](https://developers.binance.com/docs/derivatives/portfolio-margin/general-info#rate-limits)
 
-- **Private REST Client**: Authenticated client for Portfolio Margin API endpoints
-- **Public REST Client**: Unauthenticated client for public data
-- **Rate Limiting**: Built-in rate limiting following Binance's guidelines
-- **Error Handling**: Comprehensive error handling for API responses
-- **Request Signing**: HMAC-SHA256 request signing for authenticated endpoints
+---
 
-## Usage
+## 🔐 Authentication
+
+- **Type:** API Key + Secret (passed as `SecretString`, securely stored)
+- **Required for:** All private endpoints (see below)
+- **How:** Credentials must be provided as `impl Into<SecretString>` and are never stored as plain strings.
+
+---
+
+## 🏗️ Structure
+
+- **Public endpoints:** `public/rest/` (unauthenticated)
+- **Private endpoints:** `private/rest/` (API Key + Secret required)
+- **REST client struct:** `RestClient` (in both public and private modules)
+- **Rate limiting:** Shared, venue-specific, and separated from endpoint logic
+- **Enums:** All fixed-value fields use enums defined in [`enums.rs`](enums.rs)
+
+---
+
+## 🚀 Features
+
+- **Private REST Client:** Authenticated access to all Portfolio Margin endpoints
+- **Public REST Client:** Unauthenticated access to public endpoints
+- **Rate Limiting:** Built-in, identical to COIN-M, see [`specs/rate_limiting.md`](specs/rate_limiting.md)
+- **Error Handling:** Comprehensive, with venue-specific error enums and response structs
+- **Request Signing:** HMAC-SHA256 for all signed endpoints
+- **Idiomatic Rust:** Uses enums, `Cow<'static, str>`, and structured logging (`tracing`)
+
+---
+
+## ✅ Implemented Endpoints
+
+| Endpoint Type | Path/Module     | REST Client Method | Auth Required |
+| ------------- | --------------- | ------------------ | ------------- |
+| Public        | `public/rest/`  | `RestClient`       | No            |
+| Private       | `private/rest/` | `RestClient`       | Yes           |
+
+> **Note:** To add new endpoints, create a new file in the appropriate `public/rest/` or `private/rest/` directory, define request/response structs and enums, and implement the method on the `RestClient` in that file.
+
+---
+
+## 🛡️ Rate Limiting
+
+- **Raw requests:** 61,000 per 5 minutes
+- **Request weight:** 6,000 per minute
+- **Order limits:** 100 per 10 seconds, 1,200 per minute
+- **Headers:** `X-MBX-USED-WEIGHT-1M`, `X-MBX-ORDER-COUNT-10S`, `X-MBX-ORDER-COUNT-1M`
+- **See:** [`specs/rate_limiting.md`](specs/rate_limiting.md) for details
+
+---
+
+## ⚠️ Error Handling
+
+- All errors are mapped to venue-specific enums and structs in [`errors.rs`](errors.rs)
+- Each HTTP status code and API error code is mapped to a specific error variant
+- Error messages are preserved from the API
+- See [`errors.rs`](errors.rs) for details
+
+---
+
+## 📝 Usage
 
 ### Creating a Private Client
 
 ```rust
-use venues::binance::portfolio_margin::{PrivateRestClient, RateLimiter};
+use venues::binance::portfolio::{PrivateRestClient, RateLimiter};
 use rest::secrets::SecretValue;
 use secrecy::SecretString;
 
@@ -42,7 +99,7 @@ let client = PrivateRestClient::new(
 ### Creating a Public Client
 
 ```rust
-use venues::binance::portfolio_margin::{PublicRestClient, RateLimiter};
+use venues::binance::portfolio::{PublicRestClient, RateLimiter};
 
 // Create rate limiter
 let rate_limiter = RateLimiter::new();
