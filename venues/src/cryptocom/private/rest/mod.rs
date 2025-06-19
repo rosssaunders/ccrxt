@@ -52,6 +52,7 @@ pub use create_oco_order::CreateOcoOrderResponse;
 
 pub use cancel_order_list::{CancelOrderListItem, CancelOrderListRequest, CancelOrderListResponse, OrderCancellationResult};
 pub use create_order_list::{CreateOrderListRequest, CreateOrderListResponse, OrderCreationResult, OrderListItem};
-pub use get_order_history_by_currency::{GetOrderHistoryByCurrencyRequest, GetOrderHistoryByCurrencyResponse, GetOrderHistoryByCurrencyWithContinuationResponse};
-pub use get_order_history_by_instrument::{GetOrderHistoryByInstrumentRequest, GetOrderHistoryByInstrumentResponse, GetOrderHistoryByInstrumentWithContinuationResponse, OrderHistoryByInstrumentEntry};
+pub use get_order_history_by_currency::{
+    GetOrderHistoryByCurrencyRequest, GetOrderHistoryByCurrencyResponse, GetOrderHistoryByCurrencyWithContinuationResponse,
+};
 pub use get_order_list::{GetOrderListRequest, GetOrderListResponse, OrderDetails};

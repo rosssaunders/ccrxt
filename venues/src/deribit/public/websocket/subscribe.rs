@@ -3,6 +3,8 @@
 //! This method is used to subscribe to one or more public channels.
 //! This is the same method as /private/subscribe, but it can only be used for 'public' channels.
 
+use crate::deribit::public::websocket::client::{DeribitWebSocketClient, DeribitWebSocketError};
+use futures::SinkExt;
 use serde::{Deserialize, Serialize};
 
 /// Request parameters for the public/subscribe endpoint.
@@ -64,6 +66,33 @@ impl<T> JsonRpcRequest<T> {
     }
 }
 
+impl DeribitWebSocketClient {
+    /// Send a subscribe request and wait for the response
+    pub async fn subscribe(&mut self, channels: Vec<String>) -> Result<SubscribeResponse, DeribitWebSocketError> {
+        if !self.is_connected() {
+            return Err(DeribitWebSocketError::Connection(
+                "Not connected".to_string(),
+            ));
+        }
+        let req_id = self.next_request_id() as i32;
+        let req = JsonRpcRequest::new_subscribe(req_id, channels);
+        let msg = serde_json::to_string(&req)?;
+        if let Some(ws) = &mut self.websocket {
+            ws.send(tokio_tungstenite::tungstenite::Message::Text(msg.into()))
+                .await
+                .map_err(|e| DeribitWebSocketError::Connection(e.to_string()))?;
+            // Wait for the response
+            let response_str = self.receive_response().await?;
+            let response: SubscribeResponse = serde_json::from_str(&response_str)?;
+            Ok(response)
+        } else {
+            Err(DeribitWebSocketError::Connection(
+                "WebSocket not connected".to_string(),
+            ))
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use serde_json;
@@ -72,7 +101,10 @@ mod tests {
 
     #[test]
     fn test_subscribe_request_serialization() {
-        let channels = vec!["book.BTC-PERPETUAL.100ms".to_string(), "trades.BTC-PERPETUAL".to_string()];
+        let channels = vec![
+            "book.BTC-PERPETUAL.100ms".to_string(),
+            "trades.BTC-PERPETUAL".to_string(),
+        ];
         let request = JsonRpcRequest::new_subscribe(1, channels);
 
         let json = serde_json::to_string(&request).unwrap();

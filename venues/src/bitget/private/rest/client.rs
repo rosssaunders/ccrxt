@@ -180,10 +180,7 @@ impl RestClient {
 
         // Execute request
         let start_time = std::time::Instant::now();
-        let response = request_builder
-            .send()
-            .await
-            .map_err(Errors::HttpError)?;
+        let response = request_builder.send().await.map_err(Errors::HttpError)?;
         let _request_duration = start_time.elapsed();
 
         // Update rate limiter counters

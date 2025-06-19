@@ -164,9 +164,6 @@ impl From<ErrorResponse> for ApiError {
     }
 }
 
-/// Type alias for results returned by Deribit API operations
-pub type RestResult<T> = Result<T, Errors>;
-
 #[cfg(test)]
 mod tests {
     use super::*;
