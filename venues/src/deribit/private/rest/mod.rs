@@ -8,15 +8,23 @@ pub mod cancel_all_by_currency_pair;
 pub mod cancel_all_by_instrument;
 pub mod cancel_all_by_kind_or_type;
 pub mod cancel_block_rfq;
+pub mod cancel_by_label;
+pub mod cancel_block_rfq_quote;
 pub mod cancel_order;
+pub mod cancel_quotes;
 pub mod cancel_withdrawal;
 pub mod client;
 pub mod create_block_rfq;
+pub mod create_combo;
 pub mod create_deposit_address;
 pub mod disable_cancel_on_disconnect;
+pub mod edit_block_rfq_quote;
 pub mod enable_cancel_on_disconnect;
+pub mod execute_block_trade;
 pub mod get_address_book;
 pub mod get_block_rfq_makers;
+pub mod get_block_rfq_quotes;
+pub mod get_block_rfq_user_info;
 pub mod get_cancel_on_disconnect;
 pub mod get_current_deposit_address;
 pub mod get_deposits;
@@ -55,18 +63,28 @@ pub use cancel_all_by_currency_pair::{CancelAllByCurrencyPairRequest, CancelAllB
 pub use cancel_all_by_instrument::{CancelAllByInstrumentRequest, CancelAllByInstrumentResponse};
 pub use cancel_all_by_kind_or_type::{CancelAllByKindOrTypeRequest, CancelAllByKindOrTypeResponse, CurrencySelection};
 pub use cancel_block_rfq::{CancelBlockRfqRequest, CancelBlockRfqResponse};
+pub use cancel_by_label::{CancelByLabelRequest, CancelByLabelResponse};
+pub use cancel_block_rfq_quote::{CancelBlockRfqQuoteRequest, CancelBlockRfqQuoteResponse};
 pub use cancel_order::{CancelOrderRequest, CancelOrderResponse, CancelledOrder};
+pub use cancel_quotes::{CancelQuotesRequest, CancelQuotesResponse, CancelType};
 pub use cancel_withdrawal::{CancelWithdrawalRequest, CancelWithdrawalResponse};
 pub use client::RestClient;
 pub use create_block_rfq::{
     CreateBlockRfqLeg, CreateBlockRfqRequest, CreateBlockRfqResponse, CreateBlockRfqResult, Quote, ResponseHedge as CreateBlockRfqResponseHedge,
     ResponseLeg as CreateBlockRfqResponseLeg,
 };
+pub use create_combo::{CreateComboTrade, CreateComboRequest, CreateComboResponse, CreateComboResult, CreateComboLeg};
 pub use create_deposit_address::{CreateDepositAddressRequest, CreateDepositAddressResponse};
 pub use disable_cancel_on_disconnect::{DisableCancelOnDisconnectRequest, DisableCancelOnDisconnectResponse};
+pub use edit_block_rfq_quote::{EditBlockRfqQuoteRequest, EditBlockRfqQuoteResponse};
 pub use enable_cancel_on_disconnect::{CancelOnDisconnectScope, EnableCancelOnDisconnectRequest, EnableCancelOnDisconnectResponse};
+pub use execute_block_trade::{
+    Direction as ExecuteBlockTradeDirection, ExecuteBlockTradeRequest, ExecuteBlockTradeResponse, ExecuteBlockTradeResult, 
+    ExecutedTrade, Role as ExecuteBlockTradeRole, Trade as ExecuteBlockTrade,
+};
 pub use get_address_book::{GetAddressBookRequest, GetAddressBookResponse};
 pub use get_block_rfq_makers::{GetBlockRfqMakersRequest, GetBlockRfqMakersResponse};
+pub use get_block_rfq_user_info::{GetBlockRfqUserInfoRequest, GetBlockRfqUserInfoResponse, GetBlockRfqUserInfoResult, ParentIdentity, UserInfo};
 pub use get_cancel_on_disconnect::{CancelOnDisconnectResult, GetCancelOnDisconnectRequest, GetCancelOnDisconnectResponse};
 pub use get_current_deposit_address::{DepositAddress, GetCurrentDepositAddressRequest, GetCurrentDepositAddressResponse};
 pub use get_deposits::{DepositData, GetDepositsRequest, GetDepositsResponse, GetDepositsResult};
