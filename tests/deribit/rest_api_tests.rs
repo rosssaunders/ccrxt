@@ -177,4 +177,51 @@ mod rest_api_tests {
         println!("✓ CancelAllByCurrencyPairRequest serialization: {}", json);
         println!("✓ CancelAllByCurrencyPairResponse deserialization successful");
     }
+
+    #[test]
+    fn test_get_user_trades_by_currency_and_time_integration() {
+        // Test new get_user_trades_by_currency_and_time endpoint structures
+        use venues::deribit::{
+            GetUserTradesByCurrencyAndTimeRequest, 
+            GetUserTradesByCurrencyAndTimeResponse,
+            Currency, InstrumentKind, Sorting
+        };
+
+        let request = GetUserTradesByCurrencyAndTimeRequest {
+            currency: Currency::BTC,
+            kind: Some(InstrumentKind::Future),
+            start_timestamp: 1640995200000,
+            end_timestamp: 1640995260000,
+            count: Some(10),
+            sorting: Some(Sorting::Desc),
+            historical: Some(false),
+        };
+
+        // Test serialization
+        let json = serde_json::to_string(&request).unwrap();
+        assert!(json.contains("BTC"));
+        assert!(json.contains("future"));
+        assert!(json.contains("1640995200000"));
+        assert!(json.contains("1640995260000"));
+        assert!(json.contains("desc"));
+
+        // Test response deserialization
+        let response_json = serde_json::json!({
+            "id": 1,
+            "jsonrpc": "2.0",
+            "result": {
+                "has_more": false,
+                "trades": []
+            }
+        });
+
+        let response: GetUserTradesByCurrencyAndTimeResponse = serde_json::from_value(response_json).unwrap();
+        assert_eq!(response.id, 1);
+        assert_eq!(response.jsonrpc, "2.0");
+        assert_eq!(response.result.has_more, false);
+        assert_eq!(response.result.trades.len(), 0);
+
+        println!("✓ GetUserTradesByCurrencyAndTimeRequest serialization: {}", json);
+        println!("✓ GetUserTradesByCurrencyAndTimeResponse deserialization successful");
+    }
 }
