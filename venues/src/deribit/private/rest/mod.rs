@@ -13,6 +13,7 @@ pub mod enable_cancel_on_disconnect;
 pub mod get_address_book;
 pub mod get_cancel_on_disconnect;
 pub mod get_current_deposit_address;
+pub mod get_deposits;
 pub mod get_user_trades_by_currency;
 pub mod get_withdrawals;
 pub mod move_positions;
@@ -45,6 +46,7 @@ pub use enable_cancel_on_disconnect::{CancelOnDisconnectScope, EnableCancelOnDis
 pub use get_address_book::{GetAddressBookRequest, GetAddressBookResponse};
 pub use get_cancel_on_disconnect::{CancelOnDisconnectResult, GetCancelOnDisconnectRequest, GetCancelOnDisconnectResponse};
 pub use get_current_deposit_address::{DepositAddress, GetCurrentDepositAddressRequest, GetCurrentDepositAddressResponse};
+pub use get_deposits::{DepositData, GetDepositsRequest, GetDepositsResponse, GetDepositsResult};
 pub use get_user_trades_by_currency::{GetUserTradesByCurrencyRequest, GetUserTradesByCurrencyResponse, GetUserTradesByCurrencyResult, Trade};
 pub use get_withdrawals::{GetWithdrawalsRequest, GetWithdrawalsResponse, GetWithdrawalsResult};
 pub use move_positions::{MovePositionTrade, MovePositionTradeResult, MovePositionsRequest, MovePositionsResponse, MovePositionsResult};
