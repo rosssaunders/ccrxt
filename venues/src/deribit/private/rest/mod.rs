@@ -13,6 +13,7 @@ pub mod create_deposit_address;
 pub mod disable_cancel_on_disconnect;
 pub mod enable_cancel_on_disconnect;
 pub mod get_address_book;
+pub mod get_block_rfq_makers;
 pub mod get_cancel_on_disconnect;
 pub mod get_current_deposit_address;
 pub mod get_deposits;
@@ -57,6 +58,7 @@ pub use create_deposit_address::{CreateDepositAddressRequest, CreateDepositAddre
 pub use disable_cancel_on_disconnect::{DisableCancelOnDisconnectRequest, DisableCancelOnDisconnectResponse};
 pub use enable_cancel_on_disconnect::{CancelOnDisconnectScope, EnableCancelOnDisconnectRequest, EnableCancelOnDisconnectResponse};
 pub use get_address_book::{GetAddressBookRequest, GetAddressBookResponse};
+pub use get_block_rfq_makers::{GetBlockRfqMakersRequest, GetBlockRfqMakersResponse};
 pub use get_cancel_on_disconnect::{CancelOnDisconnectResult, GetCancelOnDisconnectRequest, GetCancelOnDisconnectResponse};
 pub use get_current_deposit_address::{DepositAddress, GetCurrentDepositAddressRequest, GetCurrentDepositAddressResponse};
 pub use get_deposits::{DepositData, GetDepositsRequest, GetDepositsResponse, GetDepositsResult};
