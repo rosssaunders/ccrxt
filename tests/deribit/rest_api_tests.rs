@@ -224,4 +224,74 @@ mod rest_api_tests {
         println!("✓ GetUserTradesByCurrencyAndTimeRequest serialization: {}", json);
         println!("✓ GetUserTradesByCurrencyAndTimeResponse deserialization successful");
     }
+
+    #[test]
+    fn test_cancel_all_by_kind_or_type_integration() {
+        // Test new cancel_all_by_kind_or_type endpoint structures
+        use venues::deribit::{
+            CancelAllByKindOrTypeRequest,
+            CancelAllByKindOrTypeResponse,
+            CurrencySelection,
+            Currency, InstrumentKind, OrderType
+        };
+
+        // Test single currency
+        let request_single = CancelAllByKindOrTypeRequest {
+            currency: CurrencySelection::single(Currency::BTC),
+            kind: Some(InstrumentKind::Future),
+            order_type: Some(OrderType::Limit),
+            detailed: Some(false),
+            freeze_quotes: Some(true),
+        };
+
+        let json_single = serde_json::to_string(&request_single).unwrap();
+        assert!(json_single.contains("\"BTC\""));
+        assert!(json_single.contains("future"));
+        assert!(json_single.contains("limit"));
+
+        // Test multiple currencies
+        let request_multiple = CancelAllByKindOrTypeRequest {
+            currency: CurrencySelection::multiple(vec![Currency::BTC, Currency::ETH, Currency::USDC]),
+            kind: Some(InstrumentKind::Option),
+            order_type: None,
+            detailed: None,
+            freeze_quotes: None,
+        };
+
+        let json_multiple = serde_json::to_string(&request_multiple).unwrap();
+        assert!(json_multiple.contains("[\"BTC\",\"ETH\",\"USDC\"]"));
+        assert!(json_multiple.contains("option"));
+
+        // Test "any" currency
+        let request_any = CancelAllByKindOrTypeRequest {
+            currency: CurrencySelection::any(),
+            kind: None,
+            order_type: Some(OrderType::Stop),
+            detailed: Some(true),
+            freeze_quotes: Some(false),
+        };
+
+        let json_any = serde_json::to_string(&request_any).unwrap();
+        assert!(json_any.contains("\"any\""));
+        assert!(json_any.contains("stop"));
+
+        // Test response deserialization
+        let response_json = serde_json::json!({
+            "id": 42,
+            "jsonrpc": "2.0",
+            "result": 7
+        });
+
+        let response: CancelAllByKindOrTypeResponse = serde_json::from_value(response_json).unwrap();
+        assert_eq!(response.id, 42);
+        assert_eq!(response.jsonrpc, "2.0");
+        assert_eq!(response.result, 7);
+
+        println!("✓ CancelAllByKindOrTypeRequest (single) serialization: {}", json_single);
+        println!("✓ CancelAllByKindOrTypeRequest (multiple) serialization: {}", json_multiple);
+        println!("✓ CancelAllByKindOrTypeRequest (any) serialization: {}", json_any);
+        println!("✓ CancelAllByKindOrTypeResponse deserialization successful");
+
+        assert!(true, "Cancel all by kind or type endpoint types are properly exported");
+    }
 }
