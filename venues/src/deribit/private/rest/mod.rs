@@ -4,6 +4,7 @@ pub mod approve_block_trade;
 pub mod cancel_all;
 pub mod cancel_all_block_rfq_quotes;
 pub mod cancel_all_by_currency;
+pub mod cancel_all_by_currency_pair;
 pub mod cancel_order;
 pub mod client;
 pub mod create_block_rfq;
@@ -41,6 +42,7 @@ pub use approve_block_trade::{ApproveBlockTradeRequest, ApproveBlockTradeRespons
 pub use cancel_all::{CancelAllRequest, CancelAllResponse};
 pub use cancel_all_block_rfq_quotes::{CancelAllBlockRfqQuotesRequest, CancelAllBlockRfqQuotesResponse};
 pub use cancel_all_by_currency::{CancelAllByCurrencyRequest, CancelAllByCurrencyResponse};
+pub use cancel_all_by_currency_pair::{CancelAllByCurrencyPairRequest, CancelAllByCurrencyPairResponse};
 pub use cancel_order::{CancelOrderRequest, CancelOrderResponse, CancelledOrder};
 pub use client::RestClient;
 pub use create_block_rfq::{
