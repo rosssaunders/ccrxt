@@ -1,8 +1,10 @@
 mod rest;
+pub mod websocket;
 
 pub use rest::RestClient;
 pub use rest::{
     AddToAddressBookRequest, AddToAddressBookResponse, AddressBookEntry,
+    CancelByLabelRequest, CancelByLabelResponse,
     CancelOnDisconnectResult, CancelOnDisconnectScope,
     CreateDepositAddressRequest, CreateDepositAddressResponse,
     DepositAddress, DisableCancelOnDisconnectRequest, DisableCancelOnDisconnectResponse,
