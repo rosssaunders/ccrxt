@@ -73,6 +73,8 @@ pub mod private {
     pub use self::rest::CancelAllByCurrencyPairResponse;
     pub use self::rest::CancelAllRequest;
     pub use self::rest::CancelAllResponse;
+    pub use self::rest::CancelBlockRfqRequest;
+    pub use self::rest::CancelBlockRfqResponse;
     pub use self::rest::CancelOnDisconnectResult;
     pub use self::rest::CancelOnDisconnectScope;
     pub use self::rest::CancelOrderRequest;
@@ -152,6 +154,8 @@ pub use private::CancelAllByCurrencyPairRequest;
 pub use private::CancelAllByCurrencyPairResponse;
 pub use private::CancelAllRequest;
 pub use private::CancelAllResponse;
+pub use private::CancelBlockRfqRequest;
+pub use private::CancelBlockRfqResponse;
 pub use private::CancelOnDisconnectResult;
 pub use private::CancelOnDisconnectScope;
 pub use private::CancelOrderRequest;

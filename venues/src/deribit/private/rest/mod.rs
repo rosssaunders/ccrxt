@@ -6,6 +6,8 @@ pub mod cancel_all_block_rfq_quotes;
 pub mod cancel_all_by_currency;
 pub mod cancel_all_by_currency_pair;
 pub mod cancel_all_by_instrument;
+pub mod cancel_all_by_kind_or_type;
+pub mod cancel_block_rfq;
 pub mod cancel_order;
 pub mod cancel_withdrawal;
 pub mod client;
@@ -51,6 +53,8 @@ pub use cancel_all_block_rfq_quotes::{CancelAllBlockRfqQuotesRequest, CancelAllB
 pub use cancel_all_by_currency::{CancelAllByCurrencyRequest, CancelAllByCurrencyResponse};
 pub use cancel_all_by_currency_pair::{CancelAllByCurrencyPairRequest, CancelAllByCurrencyPairResponse};
 pub use cancel_all_by_instrument::{CancelAllByInstrumentRequest, CancelAllByInstrumentResponse};
+pub use cancel_all_by_kind_or_type::{CancelAllByKindOrTypeRequest, CancelAllByKindOrTypeResponse, CurrencySelection};
+pub use cancel_block_rfq::{CancelBlockRfqRequest, CancelBlockRfqResponse};
 pub use cancel_order::{CancelOrderRequest, CancelOrderResponse, CancelledOrder};
 pub use cancel_withdrawal::{CancelWithdrawalRequest, CancelWithdrawalResponse};
 pub use client::RestClient;
