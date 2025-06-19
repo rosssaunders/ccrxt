@@ -188,7 +188,7 @@ impl DeribitWebSocketClient {
             Ok(response)
         } else {
             Err(DeribitWebSocketError::Connection(
-                "WebSocket not connected".to_string(),
+                "Connection error: WebSocket not connected".to_string(),
             ))
         }
     }
