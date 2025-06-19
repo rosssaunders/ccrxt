@@ -83,10 +83,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Move positions result with trade details
-    pub async fn move_positions(
-        &self,
-        params: MovePositionsRequest,
-    ) -> RestResult<MovePositionsResponse> {
+    pub async fn move_positions(&self, params: MovePositionsRequest) -> RestResult<MovePositionsResponse> {
         self.send_signed_request(
             "private/move_positions",
             &params,
@@ -180,7 +177,7 @@ mod tests {
         assert_eq!(json_value.get("currency").unwrap(), "BTC");
         assert_eq!(json_value.get("source_uid").unwrap(), 12345);
         assert_eq!(json_value.get("target_uid").unwrap(), 67890);
-        
+
         let trades = json_value.get("trades").unwrap().as_array().unwrap();
         assert_eq!(trades.len(), 2);
         assert_eq!(trades[0].get("instrument_name").unwrap(), "BTC-PERPETUAL");
@@ -193,13 +190,11 @@ mod tests {
             currency: None,
             source_uid: 12345,
             target_uid: 67890,
-            trades: vec![
-                MovePositionTrade {
-                    instrument_name: "BTC-PERPETUAL".to_string(),
-                    price: Some(50000.0),
-                    amount: 100.0,
-                },
-            ],
+            trades: vec![MovePositionTrade {
+                instrument_name: "BTC-PERPETUAL".to_string(),
+                price: Some(50000.0),
+                amount: 100.0,
+            }],
         };
 
         let json_str = serde_json::to_string(&request).unwrap();
@@ -242,7 +237,7 @@ mod tests {
         assert_eq!(response.id, 1);
         assert_eq!(response.jsonrpc, "2.0");
         assert_eq!(response.result.trades.len(), 2);
-        
+
         let first_trade = &response.result.trades[0];
         assert_eq!(first_trade.amount, 100.0);
         assert_eq!(first_trade.direction, "buy");
@@ -292,13 +287,11 @@ mod tests {
                 currency: Some(currency.to_string()),
                 source_uid: 12345,
                 target_uid: 67890,
-                trades: vec![
-                    MovePositionTrade {
-                        instrument_name: format!("{}-PERPETUAL", currency),
-                        price: Some(1000.0),
-                        amount: 100.0,
-                    },
-                ],
+                trades: vec![MovePositionTrade {
+                    instrument_name: format!("{}-PERPETUAL", currency),
+                    price: Some(1000.0),
+                    amount: 100.0,
+                }],
             };
 
             let json_str = serde_json::to_string(&request).unwrap();

@@ -18,6 +18,7 @@ pub mod get_transfers;
 pub mod get_trigger_order_history;
 pub mod get_user_trades_by_currency;
 pub mod get_withdrawals;
+pub mod invalidate_block_trade_signature;
 pub mod move_positions;
 pub mod remove_from_address_book;
 pub mod reset_mmp;
@@ -41,7 +42,10 @@ pub use cancel_all_block_rfq_quotes::{CancelAllBlockRfqQuotesRequest, CancelAllB
 pub use cancel_all_by_currency::{CancelAllByCurrencyRequest, CancelAllByCurrencyResponse};
 pub use cancel_order::{CancelOrderRequest, CancelOrderResponse, CancelledOrder};
 pub use client::RestClient;
-pub use create_block_rfq::{CreateBlockRfqLeg, CreateBlockRfqRequest, CreateBlockRfqResponse, CreateBlockRfqResult, Quote, ResponseHedge as CreateBlockRfqResponseHedge, ResponseLeg as CreateBlockRfqResponseLeg};
+pub use create_block_rfq::{
+    CreateBlockRfqLeg, CreateBlockRfqRequest, CreateBlockRfqResponse, CreateBlockRfqResult, Quote, ResponseHedge as CreateBlockRfqResponseHedge,
+    ResponseLeg as CreateBlockRfqResponseLeg,
+};
 pub use create_deposit_address::{CreateDepositAddressRequest, CreateDepositAddressResponse};
 pub use disable_cancel_on_disconnect::{DisableCancelOnDisconnectRequest, DisableCancelOnDisconnectResponse};
 pub use enable_cancel_on_disconnect::{CancelOnDisconnectScope, EnableCancelOnDisconnectRequest, EnableCancelOnDisconnectResponse};
@@ -53,6 +57,7 @@ pub use get_transfers::{GetTransfersRequest, GetTransfersResponse, GetTransfersR
 pub use get_trigger_order_history::{GetTriggerOrderHistoryRequest, GetTriggerOrderHistoryResponse, GetTriggerOrderHistoryResult, TriggerOrderEntry};
 pub use get_user_trades_by_currency::{GetUserTradesByCurrencyRequest, GetUserTradesByCurrencyResponse, GetUserTradesByCurrencyResult, Trade};
 pub use get_withdrawals::{GetWithdrawalsRequest, GetWithdrawalsResponse, GetWithdrawalsResult};
+pub use invalidate_block_trade_signature::{InvalidateBlockTradeSignatureRequest, InvalidateBlockTradeSignatureResponse};
 pub use move_positions::{MovePositionTrade, MovePositionTradeResult, MovePositionsRequest, MovePositionsResponse, MovePositionsResult};
 pub use remove_from_address_book::{RemoveFromAddressBookRequest, RemoveFromAddressBookResponse};
 pub use reset_mmp::{IndexName, ResetMmpRequest, ResetMmpResponse};
