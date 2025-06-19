@@ -494,6 +494,66 @@ impl Display for LiquidationSide {
     }
 }
 
+/// Deposit state
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub enum DepositState {
+    #[serde(rename = "pending")]
+    Pending,
+    #[serde(rename = "completed")]
+    Completed,
+    #[serde(rename = "rejected")]
+    Rejected,
+    #[serde(rename = "replaced")]
+    Replaced,
+}
+
+impl Display for DepositState {
+    fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
+        match self {
+            DepositState::Pending => write!(f, "pending"),
+            DepositState::Completed => write!(f, "completed"),
+            DepositState::Rejected => write!(f, "rejected"),
+            DepositState::Replaced => write!(f, "replaced"),
+        }
+    }
+}
+
+/// Clearance state for deposits
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub enum ClearanceState {
+    #[serde(rename = "in_progress")]
+    InProgress,
+    #[serde(rename = "pending_admin_decision")]
+    PendingAdminDecision,
+    #[serde(rename = "pending_user_input")]
+    PendingUserInput,
+    #[serde(rename = "success")]
+    Success,
+    #[serde(rename = "failed")]
+    Failed,
+    #[serde(rename = "cancelled")]
+    Cancelled,
+    #[serde(rename = "refund_initiated")]
+    RefundInitiated,
+    #[serde(rename = "refunded")]
+    Refunded,
+}
+
+impl Display for ClearanceState {
+    fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
+        match self {
+            ClearanceState::InProgress => write!(f, "in_progress"),
+            ClearanceState::PendingAdminDecision => write!(f, "pending_admin_decision"),
+            ClearanceState::PendingUserInput => write!(f, "pending_user_input"),
+            ClearanceState::Success => write!(f, "success"),
+            ClearanceState::Failed => write!(f, "failed"),
+            ClearanceState::Cancelled => write!(f, "cancelled"),
+            ClearanceState::RefundInitiated => write!(f, "refund_initiated"),
+            ClearanceState::Refunded => write!(f, "refunded"),
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -978,5 +1038,71 @@ mod tests {
         assert_eq!(format!("{}", LiquidationSide::Maker), "M");
         assert_eq!(format!("{}", LiquidationSide::Taker), "T");
         assert_eq!(format!("{}", LiquidationSide::Both), "MT");
+    }
+
+    #[test]
+    fn test_deposit_state_serialization() {
+        let pending = DepositState::Pending;
+        let completed = DepositState::Completed;
+        let rejected = DepositState::Rejected;
+        let replaced = DepositState::Replaced;
+
+        assert_eq!(serde_json::to_string(&pending).unwrap(), "\"pending\"");
+        assert_eq!(serde_json::to_string(&completed).unwrap(), "\"completed\"");
+        assert_eq!(serde_json::to_string(&rejected).unwrap(), "\"rejected\"");
+        assert_eq!(serde_json::to_string(&replaced).unwrap(), "\"replaced\"");
+
+        let pending_from_json: DepositState = serde_json::from_str("\"pending\"").unwrap();
+        let completed_from_json: DepositState = serde_json::from_str("\"completed\"").unwrap();
+        let rejected_from_json: DepositState = serde_json::from_str("\"rejected\"").unwrap();
+        let replaced_from_json: DepositState = serde_json::from_str("\"replaced\"").unwrap();
+
+        assert_eq!(pending_from_json, DepositState::Pending);
+        assert_eq!(completed_from_json, DepositState::Completed);
+        assert_eq!(rejected_from_json, DepositState::Rejected);
+        assert_eq!(replaced_from_json, DepositState::Replaced);
+    }
+
+    #[test]
+    fn test_deposit_state_display() {
+        assert_eq!(format!("{}", DepositState::Pending), "pending");
+        assert_eq!(format!("{}", DepositState::Completed), "completed");
+        assert_eq!(format!("{}", DepositState::Rejected), "rejected");
+        assert_eq!(format!("{}", DepositState::Replaced), "replaced");
+    }
+
+    #[test]
+    fn test_clearance_state_serialization() {
+        let in_progress = ClearanceState::InProgress;
+        let success = ClearanceState::Success;
+        let failed = ClearanceState::Failed;
+        let refunded = ClearanceState::Refunded;
+
+        assert_eq!(serde_json::to_string(&in_progress).unwrap(), "\"in_progress\"");
+        assert_eq!(serde_json::to_string(&success).unwrap(), "\"success\"");
+        assert_eq!(serde_json::to_string(&failed).unwrap(), "\"failed\"");
+        assert_eq!(serde_json::to_string(&refunded).unwrap(), "\"refunded\"");
+
+        let in_progress_from_json: ClearanceState = serde_json::from_str("\"in_progress\"").unwrap();
+        let success_from_json: ClearanceState = serde_json::from_str("\"success\"").unwrap();
+        let failed_from_json: ClearanceState = serde_json::from_str("\"failed\"").unwrap();
+        let refunded_from_json: ClearanceState = serde_json::from_str("\"refunded\"").unwrap();
+
+        assert_eq!(in_progress_from_json, ClearanceState::InProgress);
+        assert_eq!(success_from_json, ClearanceState::Success);
+        assert_eq!(failed_from_json, ClearanceState::Failed);
+        assert_eq!(refunded_from_json, ClearanceState::Refunded);
+    }
+
+    #[test]
+    fn test_clearance_state_display() {
+        assert_eq!(format!("{}", ClearanceState::InProgress), "in_progress");
+        assert_eq!(format!("{}", ClearanceState::PendingAdminDecision), "pending_admin_decision");
+        assert_eq!(format!("{}", ClearanceState::PendingUserInput), "pending_user_input");
+        assert_eq!(format!("{}", ClearanceState::Success), "success");
+        assert_eq!(format!("{}", ClearanceState::Failed), "failed");
+        assert_eq!(format!("{}", ClearanceState::Cancelled), "cancelled");
+        assert_eq!(format!("{}", ClearanceState::RefundInitiated), "refund_initiated");
+        assert_eq!(format!("{}", ClearanceState::Refunded), "refunded");
     }
 }
