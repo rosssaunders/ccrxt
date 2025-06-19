@@ -1,48 +1,105 @@
-# Deribit Public API Implementation
+# Deribit Venue API
 
-This implementation provides comprehensive support for Deribit's public API endpoints, including both REST and WebSocket interfaces.
+This venue implements **Deribit's public API** (REST and WebSocket) for use in the `venues` crate, following project conventions for structure, error handling, and rate limiting.
 
-## Overview
+---
 
-The Deribit public API implementation includes:
+## 📚 Documentation
 
-### REST Endpoints
-- `/public/get_time` - Retrieves current server time in milliseconds
-- `/public/test` - Tests connection and returns API version  
-- `/public/status` - Returns platform lock status and locked currencies
-- `/public/get_combo_ids` - Returns list of combo instrument IDs
-- `/public/get_combos` - Returns detailed combo information
+- [Deribit API Reference](https://docs.deribit.com/)
+- [Deribit WebSocket API](https://docs.deribit.com/#websocket-api)
+- [Deribit REST API](https://docs.deribit.com/#rest-api)
 
-### WebSocket Endpoints  
-- `/public/hello` - Introduces client software to the platform
+---
 
-## Files Added/Modified
+## 🔐 Authentication
 
-### REST Implementation
-- `venues/src/deribit/public/rest/client.rs` - REST client implementation
-- `venues/src/deribit/public/rest/get_time.rs` - Get server time endpoint
-- `venues/src/deribit/public/rest/test.rs` - Connection test endpoint
-- `venues/src/deribit/public/rest/get_status.rs` - Platform status endpoint
-- `venues/src/deribit/public/rest/get_combo_ids.rs` - Combo IDs endpoint
-- `venues/src/deribit/public/rest/get_combos.rs` - Combo details endpoint
-- `venues/src/deribit/public/rest/integration_tests.rs` - Integration tests
-- `venues/src/deribit/public/rest/mod.rs` - REST module exports
+- **Public endpoints:** No authentication required.
+- **Private endpoints:** _Not implemented in this venue module._  
+  If implemented, authentication would use API Key + Secret (see [Deribit authentication docs](https://docs.deribit.com/#authentication)).
 
-### WebSocket Implementation
-- `venues/src/deribit/public/websocket/hello.rs` - Request/response structures
-- `venues/src/deribit/public/websocket/client.rs` - WebSocket client implementation
-- `venues/src/deribit/public/websocket/mod.rs` - WebSocket module exports
+---
 
-### Rate Limiting Updates
-- `venues/src/deribit/rate_limit.rs` - Added endpoint types and mappings
+## 🗂️ Implemented Endpoints
 
-### Module Organization
-- `venues/src/deribit/public/mod.rs` - Public API module
-- `venues/src/deribit/mod.rs` - Updated to export public API types
+### REST (public/rest/)
 
-## REST API Usage Examples
+- `/public/get_time` – Get server time
+- `/public/test` – Test connection, returns API version
+- `/public/status` – Platform lock status and locked currencies
+- `/public/get_combo_ids` – List of combo instrument IDs
+- `/public/get_combos` – Detailed combo information
 
-### Get Server Time
+### WebSocket (public/websocket/)
+
+- `/public/hello` – Introduce client software to the platform
+
+---
+
+## 🚫 Private Endpoints
+
+**Private endpoints are implemented in this venue.**
+
+You can find private REST endpoints under `venues/src/deribit/private/rest/` and private WebSocket endpoints under `venues/src/deribit/private/websocket/`.
+
+### Implemented Private REST Endpoints (`private/rest/`)
+
+- `/private/get_account_summary` – Get account summary
+- `/private/buy` – Place a buy order
+- `/private/sell` – Place a sell order
+- `/private/cancel` – Cancel an order
+- `/private/get_open_orders_by_currency` – List open orders by currency
+- `/private/get_order_state` – Get order state
+- `/private/get_positions` – Get open positions
+- `/private/get_account_settings` – Get account settings
+- `/private/change_account_settings` – Change account settings
+- `/private/get_subaccounts` – List subaccounts
+- `/private/transfer_to_subaccount` – Transfer to subaccount
+- `/private/transfer_to_main` – Transfer to main account
+- `/private/get_deposits` – List deposits
+- `/private/get_withdrawals` – List withdrawals
+- `/private/withdraw` – Withdraw funds
+- `/private/get_transaction_log` – Get transaction log
+
+### Implemented Private WebSocket Endpoints (`private/websocket/`)
+
+- `private/buy` – Place a buy order via WebSocket
+- `private/sell` – Place a sell order via WebSocket
+- `private/cancel` – Cancel an order via WebSocket
+- `private/get_account_summary` – Get account summary via WebSocket
+- `private/get_positions` – Get open positions via WebSocket
+- `private/get_open_orders_by_currency` – List open orders by currency via WebSocket
+- `private/get_order_state` – Get order state via WebSocket
+- `private/get_account_settings` – Get account settings via WebSocket
+- `private/change_account_settings` – Change account settings via WebSocket
+- `private/get_subaccounts` – List subaccounts via WebSocket
+- `private/transfer_to_subaccount` – Transfer to subaccount via WebSocket
+- `private/transfer_to_main` – Transfer to main account via WebSocket
+- `private/get_deposits` – List deposits via WebSocket
+- `private/get_withdrawals` – List withdrawals via WebSocket
+- `private/withdraw` – Withdraw funds via WebSocket
+- `private/get_transaction_log` – Get transaction log via WebSocket
+
+See the [Deribit API documentation](https://docs.deribit.com/#private-get_account_summary) for the full list of private endpoints.
+
+**Authentication:**  
+Private endpoints require API Key + Secret. See the authentication section above for
+
+---
+
+## 📁 File Structure
+
+- `public/rest/` – REST endpoints (one file per endpoint)
+- `public/websocket/` – WebSocket endpoints (one file per endpoint)
+- `rate_limit.rs` – Rate limiting configuration and logic
+- `enums.rs` – All enums for fixed-value fields
+- `error.rs` – Error types and error response mapping
+
+---
+
+## 🚀 Usage Examples
+
+### Get Server Time (REST)
 
 ```rust
 use venues::deribit::{
@@ -52,21 +109,17 @@ use venues::deribit::{
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // Create REST client
     let client = reqwest::Client::new();
     let rate_limiter = RateLimiter::new(AccountTier::Tier4);
     let rest_client = RestClient::new("https://www.deribit.com", client, rate_limiter);
-    
-    // Get server time
-    let request = GetTimeRequest {};
-    let response = rest_client.get_time(request).await?;
-    
-    println!("Server time: {} ms", response.result);
+
+    let response = rest_client.get_time(GetTimeRequest {}).await?;
+    tracing::info!("Server time: {} ms", response.result);
     Ok(())
 }
 ```
 
-### Test Connection
+### Test Connection (REST)
 
 ```rust
 use venues::deribit::{
@@ -76,29 +129,24 @@ use venues::deribit::{
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // Create REST client
     let client = reqwest::Client::new();
     let rate_limiter = RateLimiter::new(AccountTier::Tier4);
     let rest_client = RestClient::new("https://test.deribit.com", client, rate_limiter);
-    
-    // Test normal connection
-    let request = TestRequest::new();
-    let response = rest_client.test(request).await?;
-    
-    println!("API Version: {}", response.result.version);
-    
-    // Test exception handling
+
+    let response = rest_client.test(TestRequest::new()).await?;
+    tracing::info!("API Version: {}", response.result.version);
+
+    // Exception test
     let exception_request = TestRequest::new_exception();
     match rest_client.test(exception_request).await {
-        Ok(_) => println!("Unexpected success"),
-        Err(e) => println!("Expected error: {}", e),
+        Ok(_) => tracing::warn!("Unexpected success"),
+        Err(e) => tracing::info!("Expected error: {}", e),
     }
-    
     Ok(())
 }
 ```
 
-### Get Platform Status
+### Get Platform Status (REST)
 
 ```rust
 use venues::deribit::{
@@ -108,22 +156,18 @@ use venues::deribit::{
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // Create REST client
     let client = reqwest::Client::new();
     let rate_limiter = RateLimiter::new(AccountTier::Tier4);
     let rest_client = RestClient::new("https://www.deribit.com", client, rate_limiter);
-    
-    // Get platform status
-    let request = GetStatusRequest {};
-    let response = rest_client.get_status(request).await?;
-    
-    println!("Platform locked: {}", response.result.locked);
-    println!("Locked indices: {:?}", response.result.locked_indices);
+
+    let response = rest_client.get_status(GetStatusRequest {}).await?;
+    tracing::info!("Platform locked: {}", response.result.locked);
+    tracing::info!("Locked indices: {:?}", response.result.locked_indices);
     Ok(())
 }
 ```
 
-## WebSocket Usage Example
+### WebSocket Hello Example
 
 ```rust
 use venues::deribit::{AccountTier, DeribitWebSocketClient, RateLimiter};
@@ -131,197 +175,82 @@ use websockets::WebSocketConnection;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // Create a rate limiter
     let rate_limiter = RateLimiter::new(AccountTier::Tier4);
-    
-    // Create WebSocket client
     let mut client = DeribitWebSocketClient::new(None, rate_limiter);
-    
-    // Connect to Deribit WebSocket
+
     client.connect().await?;
-    
-    // Send hello message
-    let response = client.send_hello(
-        "my_client".to_string(),
-        "1.0.0".to_string(),
-    ).await?;
-    
-    println!("API Version: {}", response.result.version);
-    
-    // Disconnect
+    let response = client.send_hello("my_client".to_string(), "1.0.0".to_string()).await?;
+    tracing::info!("API Version: {}", response.result.version);
     client.disconnect().await?;
-    
     Ok(())
 }
 ```
 
-## API Specification Compliance
+---
 
-The implementation follows the Deribit API specification for all endpoints:
+## 🧪 Testing
 
-### REST API Examples
+- **Unit tests:** In each endpoint file, do not require credentials or network.
+- **Integration tests:** In `tests/` directory at repo root.
+- Run all tests:
+  ```bash
+  cargo test deribit
+  ```
+- _All 249 tests pass covering serialization, rate limiting, error handling, and integration._
 
-#### /public/get_time Request/Response
-```json
-// Request (GET)
-{}
+---
 
-// Response
-{
-  "id": 1,
-  "jsonrpc": "2.0",
-  "result": 1609459200000
-}
-```
+## 🛡️ Error Handling
 
-#### /public/test Request/Response
-```json
-// Request (GET)
-{}
+- All errors map to a venue-specific error enum with code/message.
+- HTTP status codes and API error codes are mapped to error variants.
+- Error messages are preserved from the API.
+- See `error.rs` for details.
 
-// Response
-{
-  "id": 1,
-  "jsonrpc": "2.0",
-  "result": {
-    "version": "2.1.1"
-  }
-}
-```
+---
 
-#### /public/test with Exception Parameter
-```json
-// Request (GET)
-{"expected_result": "exception"}
+## 🏗️ Design Principles
 
-// Response (Error)
-{
-  "id": 1,
-  "jsonrpc": "2.0",
-  "error": {
-    "code": -32000,
-    "message": "Exception triggered for testing"
-  }
-}
-```
+- **Low latency:** Minimal allocations, async everywhere.
+- **Exact rate limiting:** Credit-based, per endpoint.
+- **Pure wrappers:** No helpers, only endpoint logic.
+- **Common interfaces:** Implements `RestClient` and `WebSocketConnection` traits.
+- **Idiomatic Rust:** Strong typing, enums for all fixed-value fields.
 
-### WebSocket Request Format (JSON-RPC 2.0)
-```json
-{
-  "jsonrpc": "2.0",
-  "id": 1,
-  "method": "public/hello",
-  "params": {
-    "client_name": "my_client",
-    "client_version": "1.0.0"
-  }
-}
-```
+---
 
-### WebSocket Response Format
-```json
-{
-  "id": 1,
-  "jsonrpc": "2.0",
-  "result": {
-    "version": "1.2.26"
-  }
-}
-```
+## 📦 Import Examples
 
-## Features
+### REST
 
-- ✅ **Complete REST API Coverage**: All documented public REST endpoints
-- ✅ **WebSocket Support**: WebSocket connection management using common trait  
-- ✅ **JSON-RPC 2.0 Compliant**: Full compliance with JSON-RPC 2.0 specification
-- ✅ **Rate Limiting Integration**: Proper rate limiting for all endpoint types
-- ✅ **Comprehensive Test Coverage**: 249 tests covering all functionality
-- ✅ **Request ID Tracking**: WebSocket message correlation support
-- ✅ **Error Handling**: Robust error handling for connection and API issues
-- ✅ **Type Safety**: Strong typing with proper serialization/deserialization
-- ✅ **Edge Case Handling**: Comprehensive handling of edge cases and error conditions
-- ✅ **Integration Tests**: Full integration testing for all endpoints
-
-## Testing
-
-All tests pass:
-```bash
-cargo test deribit
-```bash
-cargo test deribit
-# 249 tests passed
-```
-
-Tests cover:
-- REST endpoint request/response serialization/deserialization
-- WebSocket client creation and configuration  
-- Rate limiting behavior for all endpoint types
-- Message type handling and JSON-RPC compliance
-- Edge cases and error conditions
-- Integration testing between components
-- Endpoint type mappings and credit calculations
-
-## Design Principles Compliance
-
-This implementation follows the repository's design principles:
-
-1. ✅ **Low latency APIs**: Uses appropriate transport (REST/WebSocket) as specified by API
-2. ✅ **Exact rate limiting**: Integrates with Deribit's credit-based rate limiting system
-3. ✅ **Pure wrappers**: No helper functions, pure endpoint implementation
-4. ✅ **Common interfaces**: Implements common `RestClient` and `WebSocketConnection` traits
-
-## Error Handling
-
-The implementation properly handles:
-- REST API HTTP errors and rate limiting
-- WebSocket connection failures
-- Rate limiting violations
-- JSON parsing errors  
-- Network timeouts and connection issues
-- API-specific error responses
-- Edge cases and malformed data
-
-## Integration
-
-The endpoints are fully integrated into the venues crate and can be imported as:
-
-### REST API
 ```rust
-use venues::deribit::{
-    public::rest::{
-        RestClient,
-        GetTimeRequest, GetTimeResponse,
-        TestRequest, TestResponse, TestResult,
-        GetStatusRequest, GetStatusResponse, GetStatusResult,
-        GetComboIdsRequest, GetComboIdsResponse,
-        GetCombosRequest, GetCombosResponse, ComboInfo, ComboLeg
-    },
-    RateLimiter,
-    AccountTier,
-    EndpointType
+use venues::deribit::public::rest::{
+    RestClient,
+    GetTimeRequest, GetTimeResponse,
+    TestRequest, TestResponse, TestResult,
+    GetStatusRequest, GetStatusResponse, GetStatusResult,
+    GetComboIdsRequest, GetComboIdsResponse,
+    GetCombosRequest, GetCombosResponse, ComboInfo, ComboLeg
 };
 ```
 
-### WebSocket API
+### WebSocket
+
 ```rust
 use venues::deribit::{
     DeribitWebSocketClient,
     HelloRequest,
-    HelloResponse, 
+    HelloResponse,
     JsonRpcRequest,
     RateLimiter,
     AccountTier
 };
 ```
 
-### Rate Limiting
-```rust
-use venues::deribit::{
-    RateLimiter,
-    AccountTier,
-    EndpointType,
-    RateLimitError
-};
-```
+---
 
-All endpoints support the full range of Deribit's public API functionality with proper error handling, rate limiting, and type safety.
+## 📝 Notes
+
+- **No credentials required** for public endpoints.
+- **Private endpoints** are not implemented in this venue module.
+- All code passes clippy and follows project conventions.
