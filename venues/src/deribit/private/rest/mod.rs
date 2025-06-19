@@ -9,6 +9,7 @@ pub mod cancel_all_by_instrument;
 pub mod cancel_all_by_kind_or_type;
 pub mod cancel_block_rfq;
 pub mod cancel_order;
+pub mod cancel_transfer_by_id;
 pub mod cancel_withdrawal;
 pub mod client;
 pub mod create_block_rfq;
@@ -56,6 +57,7 @@ pub use cancel_all_by_instrument::{CancelAllByInstrumentRequest, CancelAllByInst
 pub use cancel_all_by_kind_or_type::{CancelAllByKindOrTypeRequest, CancelAllByKindOrTypeResponse, CurrencySelection};
 pub use cancel_block_rfq::{CancelBlockRfqRequest, CancelBlockRfqResponse};
 pub use cancel_order::{CancelOrderRequest, CancelOrderResponse, CancelledOrder};
+pub use cancel_transfer_by_id::{CancelTransferByIdRequest, CancelTransferByIdResponse};
 pub use cancel_withdrawal::{CancelWithdrawalRequest, CancelWithdrawalResponse};
 pub use client::RestClient;
 pub use create_block_rfq::{

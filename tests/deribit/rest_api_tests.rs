@@ -294,4 +294,48 @@ mod rest_api_tests {
 
         assert!(true, "Cancel all by kind or type endpoint types are properly exported");
     }
+
+    #[test]
+    fn test_cancel_transfer_by_id_integration() {
+        // Test cancel transfer by id endpoint structures
+        use venues::deribit::private::rest::{CancelTransferByIdRequest, CancelTransferByIdResponse};
+        use venues::deribit::Currency;
+        use serde_json::json;
+
+        // Test request serialization
+        let request = CancelTransferByIdRequest {
+            currency: Currency::BTC,
+            id: 12345,
+        };
+        let json_str = serde_json::to_string(&request).unwrap();
+        assert!(json_str.contains("BTC"));
+        assert!(json_str.contains("12345"));
+
+        // Test response deserialization
+        let response_json = json!({
+            "id": 1,
+            "jsonrpc": "2.0",
+            "result": {
+                "amount": 0.001,
+                "created_timestamp": 1640995200000i64,
+                "currency": "BTC",
+                "direction": "payment",
+                "id": 12345,
+                "other_side": "subaccount_01",
+                "state": "cancelled",
+                "type": "subaccount",
+                "updated_timestamp": 1640995300000i64
+            }
+        });
+
+        let response: CancelTransferByIdResponse = serde_json::from_value(response_json).unwrap();
+        assert_eq!(response.jsonrpc, "2.0");
+        assert_eq!(response.result.state, "cancelled");
+        assert_eq!(response.result.currency, "BTC");
+
+        println!("✓ CancelTransferByIdRequest serialization: {}", json_str);
+        println!("✓ CancelTransferByIdResponse deserialization successful");
+
+        assert!(true, "Cancel transfer by id endpoint types are properly exported");
+    }
 }
