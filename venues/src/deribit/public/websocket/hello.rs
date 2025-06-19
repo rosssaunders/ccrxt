@@ -7,8 +7,6 @@ use crate::deribit::public::websocket::client::{DeribitWebSocketClient, DeribitW
 
 use futures::SinkExt;
 use serde::{Deserialize, Serialize};
-use std::sync::atomic::Ordering;
-use websockets::BoxResult;
 
 /// Request parameters for the public/hello endpoint.
 ///

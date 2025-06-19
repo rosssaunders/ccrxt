@@ -54,15 +54,7 @@ mod set_mmp_config;
 mod set_position_mode;
 mod spot_manual_borrow_repay;
 
-pub use activate_option::{ActivateOptionRequest, ActivateOptionResponse};
-pub use adjust_position_margin_balance::{
-    AdjustPositionMarginBalanceRequest, AdjustPositionMarginBalanceResponse,
-};
 pub use amend_order::{AmendOrderRequest, AmendOrderResponse};
-pub use bills_history_archive::{
-    GetBillsHistoryArchiveRequest, GetBillsHistoryArchiveResponse,
-    PostBillsHistoryArchiveRequest, PostBillsHistoryArchiveResponse,
-};
 pub use cancel_batch_orders::CancelBatchOrdersResponse;
 pub use cancel_order::{CancelOrderRequest, CancelOrderResponse};
 pub use client::RestClient;
@@ -70,53 +62,10 @@ pub use close_position::{ClosePositionRequest, ClosePositionResponse};
 pub use common::OkxApiResponse;
 pub use get_account_balance::{AccountBalance, BalanceDetail, GetAccountBalanceRequest};
 pub use get_account_config::{AccountConfig, GetAccountConfigRequest, IpRestriction};
-pub use get_account_instruments::{AccountInstrument, GetAccountInstrumentsRequest};
-pub use get_account_position_risk::{
-    AccountPositionRisk, BalanceRiskData, GetAccountPositionRiskRequest, PositionRiskData,
-};
-pub use get_account_switch_precheck::{AccountSwitchPrecheck, GetAccountSwitchPrecheckRequest};
-pub use get_adjust_leverage_info::{AdjustLeverageInfo, GetAdjustLeverageInfoRequest};
-pub use get_bills::{Bill, GetBillsRequest};
-pub use get_bills_archive::{BillArchive, GetBillsArchiveRequest};
-pub use get_collateral_assets::{CollateralAsset, GetCollateralAssetsRequest};
 pub use get_fills::{Fill, GetFillsRequest};
-pub use get_greeks::{GetGreeksRequest, Greeks};
-pub use get_interest_accrued::{GetInterestAccruedRequest, InterestAccrued};
-pub use get_interest_limits::{GetInterestLimitsRequest, InterestLimits};
-pub use get_interest_rate::{GetInterestRateRequest, InterestRate};
-pub use get_leverage_info::{GetLeverageInfoRequest, LeverageInfo};
-pub use get_max_avail_size::{GetMaxAvailSizeRequest, MaxAvailSize};
-pub use get_max_loan::{GetMaxLoanRequest, MaxLoan};
-pub use get_max_size::{GetMaxSizeRequest, MaxSize};
-pub use get_max_withdrawal::{GetMaxWithdrawalRequest, MaxWithdrawal};
-pub use get_mmp_config::{GetMmpConfigRequest, MmpConfig};
-pub use get_move_positions_history::{GetMovePositionsHistoryRequest, MovePositionsHistory};
 pub use get_order::{GetOrderRequest, OrderDetails};
 pub use get_order_history::GetOrderHistoryRequest;
 pub use get_pending_orders::GetPendingOrdersRequest;
-pub use get_position_tiers::{GetPositionTiersRequest, PositionTier};
 pub use get_positions::{CloseOrderAlgo, GetPositionsRequest, Position};
-pub use get_positions_history::{GetPositionsHistoryRequest, PositionHistory};
-pub use get_quick_margin_borrow_repay_history::{
-    GetQuickMarginBorrowRepayHistoryRequest, QuickMarginBorrowRepayHistory,
-};
-pub use get_risk_state::{GetRiskStateRequest, RiskState};
-pub use get_spot_borrow_repay_history::{
-    GetSpotBorrowRepayHistoryRequest, SpotBorrowRepayHistory,
-};
-pub use get_trade_fee::{GetTradeFeeRequest, TradeFee};
-pub use mmp_reset::{MmpResetRequest, MmpResetResponse};
-pub use move_positions::{MovePositionsRequest, MovePositionsResponse};
 pub use place_batch_orders::{PlaceBatchOrdersRequest, PlaceBatchOrdersResponse};
 pub use place_order::{AttachedAlgoOrder, PlaceOrderRequest, PlaceOrderResponse};
-pub use quick_margin_borrow_repay::{QuickMarginBorrowRepayRequest, QuickMarginBorrowRepayResponse};
-pub use set_account_level::{SetAccountLevelRequest, SetAccountLevelResponse};
-pub use set_auto_loan::{SetAutoLoanRequest, SetAutoLoanResponse};
-pub use set_auto_repay::{SetAutoRepayRequest, SetAutoRepayResponse};
-pub use set_collateral_assets::{SetCollateralAssetsRequest, SetCollateralAssetsResponse};
-pub use set_greeks::{SetGreeksRequest, SetGreeksResponse};
-pub use set_isolated_mode::{SetIsolatedModeRequest, SetIsolatedModeResponse};
-pub use set_leverage::{SetLeverageRequest, SetLeverageResponse};
-pub use set_mmp_config::{SetMmpConfigRequest, SetMmpConfigResponse};
-pub use set_position_mode::{SetPositionModeRequest, SetPositionModeResponse};
-pub use spot_manual_borrow_repay::{SpotManualBorrowRepayRequest, SpotManualBorrowRepayResponse};
