@@ -1,4 +1,5 @@
 mod amend_order;
+mod bills_history_archive;
 mod cancel_batch_orders;
 mod cancel_order;
 mod client;
@@ -7,8 +8,14 @@ mod common;
 mod get_account_balance;
 mod get_account_config;
 mod get_account_instruments;
+mod get_account_position_risk;
 mod get_bills;
+mod get_bills_archive;
 mod get_fills;
+mod get_interest_accrued;
+mod get_interest_rate;
+mod get_max_avail_size;
+mod get_max_loan;
 mod get_max_size;
 mod get_order;
 mod get_order_history;
@@ -19,8 +26,13 @@ mod get_trade_fee;
 mod place_batch_orders;
 mod place_order;
 mod set_leverage;
+mod set_position_mode;
 
 pub use amend_order::{AmendOrderRequest, AmendOrderResponse};
+pub use bills_history_archive::{
+    GetBillsHistoryArchiveRequest, GetBillsHistoryArchiveResponse,
+    PostBillsHistoryArchiveRequest, PostBillsHistoryArchiveResponse,
+};
 pub use cancel_batch_orders::CancelBatchOrdersResponse;
 pub use cancel_order::{CancelOrderRequest, CancelOrderResponse};
 pub use client::RestClient;
@@ -29,8 +41,16 @@ pub use common::OkxApiResponse;
 pub use get_account_balance::{AccountBalance, BalanceDetail, GetAccountBalanceRequest};
 pub use get_account_config::{AccountConfig, GetAccountConfigRequest, IpRestriction};
 pub use get_account_instruments::{AccountInstrument, GetAccountInstrumentsRequest};
+pub use get_account_position_risk::{
+    AccountPositionRisk, BalanceRiskData, GetAccountPositionRiskRequest, PositionRiskData,
+};
 pub use get_bills::{Bill, GetBillsRequest};
+pub use get_bills_archive::{BillArchive, GetBillsArchiveRequest};
 pub use get_fills::{Fill, GetFillsRequest};
+pub use get_interest_accrued::{GetInterestAccruedRequest, InterestAccrued};
+pub use get_interest_rate::{GetInterestRateRequest, InterestRate};
+pub use get_max_avail_size::{GetMaxAvailSizeRequest, MaxAvailSize};
+pub use get_max_loan::{GetMaxLoanRequest, MaxLoan};
 pub use get_max_size::{GetMaxSizeRequest, MaxSize};
 pub use get_order::{GetOrderRequest, OrderDetails};
 pub use get_order_history::GetOrderHistoryRequest;
@@ -41,3 +61,4 @@ pub use get_trade_fee::{GetTradeFeeRequest, TradeFee};
 pub use place_batch_orders::{PlaceBatchOrdersRequest, PlaceBatchOrdersResponse};
 pub use place_order::{AttachedAlgoOrder, PlaceOrderRequest, PlaceOrderResponse};
 pub use set_leverage::{SetLeverageRequest, SetLeverageResponse};
+pub use set_position_mode::{SetPositionModeRequest, SetPositionModeResponse};
