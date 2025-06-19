@@ -167,7 +167,14 @@ impl DeribitWebSocketClient {
         params.insert("interval".to_string(), serde_json::Value::Number(serde_json::Number::from(interval)));
         
         let req = JsonRpcRequest::new(
-            self.next_request_id().try_into().unwrap(),
+            match self.next_request_id().try_into() {
+                Ok(id) => id,
+                Err(_) => {
+                    return Err(DeribitWebSocketError::Connection(
+                        "Failed to convert request ID".to_string(),
+                    ));
+                }
+            },
             "public/set_heartbeat".to_string(),
             serde_json::Value::Object(params),
         );
