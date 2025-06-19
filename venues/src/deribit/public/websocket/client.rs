@@ -56,13 +56,13 @@ pub enum DeribitWebSocketError {
 /// WebSocket client for Deribit
 pub struct DeribitWebSocketClient {
     /// WebSocket connection
-    websocket: Option<WebSocketStream<MaybeTlsStream<TcpStream>>>,
+    pub(crate) websocket: Option<WebSocketStream<MaybeTlsStream<TcpStream>>>,
     /// Connection status
     connected: Arc<AtomicBool>,
     /// Rate limiter for API calls
     rate_limiter: Arc<RateLimiter>,
     /// Request ID counter for JSON-RPC
-    request_id: Arc<AtomicU64>,
+    pub(crate) request_id: Arc<AtomicU64>,
     /// Pending requests awaiting responses
     pending_requests: Arc<Mutex<HashMap<u64, tokio::sync::oneshot::Sender<serde_json::Value>>>>,
     /// WebSocket URL
@@ -80,22 +80,6 @@ impl DeribitWebSocketClient {
             pending_requests: Arc::new(Mutex::new(HashMap::new())),
             url: url.unwrap_or_else(|| "wss://www.deribit.com/ws/api/v2".to_string()),
         }
-    }
-
-    /// Send a hello message to introduce the client
-    pub async fn send_hello(&self, client_version: String) -> BoxResult<HelloResponse> {
-        let req_id = self.request_id.fetch_add(1, Ordering::SeqCst) as i32;
-        let hello_req = JsonRpcRequest::new_hello(req_id, "ccrxt".to_string(), client_version);
-        let req_json = serde_json::to_string(&hello_req)?;
-        let ws = self
-            .websocket
-            .as_ref()
-            .ok_or_else(|| DeribitWebSocketError::Connection("WebSocket not connected".to_string()))?;
-        // This is a placeholder for sending and receiving the message. Actual implementation will depend on the async context and message handling.
-        // For now, just return an error to satisfy the type.
-        Err(Box::new(DeribitWebSocketError::Connection(
-            "Not implemented".to_string(),
-        )))
     }
 
     /// Send an unsubscribe_all request and wait for the response
@@ -159,10 +143,7 @@ impl DeribitWebSocketClient {
                 "Not connected".to_string(),
             ));
         }
-        let req = crate::deribit::public::websocket::subscribe::JsonRpcRequest::new_subscribe(
-            self.next_request_id().try_into().unwrap(),
-            channels,
-        );
+        let req = crate::deribit::public::websocket::subscribe::JsonRpcRequest::new_subscribe(self.next_request_id().try_into().unwrap(), channels);
         let msg = serde_json::to_string(&req)?;
         if let Some(ws) = &mut self.websocket {
             ws.send(Message::Text(msg.into()))
@@ -279,13 +260,13 @@ mod tests {
     #[test]
     fn test_subscribe_message_type() {
         use crate::deribit::public::websocket::subscribe::SubscribeResponse;
-        
+
         let subscribe_response = SubscribeResponse {
             id: 1,
             jsonrpc: "2.0".to_string(),
             result: vec!["book.BTC-PERPETUAL.100ms".to_string()],
         };
-        
+
         let msg = DeribitMessage::Subscribe(subscribe_response.clone());
         match msg {
             DeribitMessage::Subscribe(response) => {

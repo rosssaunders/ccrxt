@@ -5,6 +5,10 @@
 //! will be collected for internal statistical purposes.
 
 use serde::{Deserialize, Serialize};
+use std::sync::atomic::Ordering;
+use websockets::BoxResult;
+
+use crate::deribit::{DeribitWebSocketClient, DeribitWebSocketError};
 
 /// Request parameters for the public/hello endpoint.
 ///
@@ -73,6 +77,24 @@ impl<T> JsonRpcRequest<T> {
             method,
             params,
         }
+    }
+}
+
+impl DeribitWebSocketClient {
+    /// Send a hello message to introduce the client
+    pub async fn send_hello(&self, client_version: String) -> BoxResult<HelloResponse> {
+        let req_id = self.request_id.fetch_add(1, Ordering::SeqCst) as i32;
+        let hello_req = JsonRpcRequest::new_hello(req_id, "ccrxt".to_string(), client_version);
+        let req_json = serde_json::to_string(&hello_req)?;
+        let ws = self
+            .websocket
+            .as_ref()
+            .ok_or_else(|| DeribitWebSocketError::Connection("WebSocket not connected".to_string()))?;
+        // This is a placeholder for sending and receiving the message. Actual implementation will depend on the async context and message handling.
+        // For now, just return an error to satisfy the type.
+        Err(Box::new(DeribitWebSocketError::Connection(
+            "Not implemented".to_string(),
+        )))
     }
 }
 
