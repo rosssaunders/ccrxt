@@ -22,6 +22,7 @@ pub mod get_instrument_fee_rate;
 pub mod get_open_orders;
 pub mod get_order_detail;
 pub mod get_order_history;
+pub mod get_order_history_by_currency;
 pub mod get_order_history_by_instrument;
 pub mod get_order_list;
 pub mod get_positions;
@@ -51,5 +52,6 @@ pub use create_oco_order::CreateOcoOrderResponse;
 
 pub use cancel_order_list::{CancelOrderListItem, CancelOrderListRequest, CancelOrderListResponse, OrderCancellationResult};
 pub use create_order_list::{CreateOrderListRequest, CreateOrderListResponse, OrderCreationResult, OrderListItem};
+pub use get_order_history_by_currency::{GetOrderHistoryByCurrencyRequest, GetOrderHistoryByCurrencyResponse, GetOrderHistoryByCurrencyWithContinuationResponse};
 pub use get_order_history_by_instrument::{GetOrderHistoryByInstrumentRequest, GetOrderHistoryByInstrumentResponse, GetOrderHistoryByInstrumentWithContinuationResponse, OrderHistoryByInstrumentEntry};
 pub use get_order_list::{GetOrderListRequest, GetOrderListResponse, OrderDetails};
