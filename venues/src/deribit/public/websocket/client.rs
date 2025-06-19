@@ -6,7 +6,7 @@ use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
 
 use async_trait::async_trait;
-use futures::{SinkExt, StreamExt};
+use futures::SinkExt;
 use serde_json;
 use thiserror::Error;
 use tokio::net::TcpStream;
@@ -14,7 +14,9 @@ use tokio::sync::Mutex;
 use tokio_tungstenite::{MaybeTlsStream, WebSocketStream, connect_async, tungstenite::Message};
 use websockets::{BoxResult, VenueMessage, WebSocketConnection};
 
-use crate::deribit::public::websocket::hello::{HelloResponse, JsonRpcRequest};
+use crate::deribit::public::websocket::hello::HelloResponse;
+use crate::deribit::public::websocket::subscribe::SubscribeResponse;
+use crate::deribit::message::JsonRpcRequest;
 use crate::deribit::rate_limit::RateLimiter;
 
 /// Deribit WebSocket message types
@@ -22,6 +24,8 @@ use crate::deribit::rate_limit::RateLimiter;
 pub enum DeribitMessage {
     /// Hello response message
     Hello(HelloResponse),
+    /// Subscribe response message
+    Subscribe(SubscribeResponse),
     /// Raw message for debugging/other purposes
     Raw(String),
 }
@@ -53,13 +57,13 @@ pub enum DeribitWebSocketError {
 /// WebSocket client for Deribit
 pub struct DeribitWebSocketClient {
     /// WebSocket connection
-    websocket: Option<WebSocketStream<MaybeTlsStream<TcpStream>>>,
+    pub(crate) websocket: Option<WebSocketStream<MaybeTlsStream<TcpStream>>>,
     /// Connection status
     connected: Arc<AtomicBool>,
     /// Rate limiter for API calls
     rate_limiter: Arc<RateLimiter>,
     /// Request ID counter for JSON-RPC
-    request_id: Arc<AtomicU64>,
+    pub(crate) request_id: Arc<AtomicU64>,
     /// Pending requests awaiting responses
     pending_requests: Arc<Mutex<HashMap<u64, tokio::sync::oneshot::Sender<serde_json::Value>>>>,
     /// WebSocket URL
@@ -79,22 +83,6 @@ impl DeribitWebSocketClient {
         }
     }
 
-    /// Send a hello message to introduce the client
-    pub async fn send_hello(&self, client_version: String) -> BoxResult<HelloResponse> {
-        let req_id = self.request_id.fetch_add(1, Ordering::SeqCst) as i32;
-        let hello_req = JsonRpcRequest::new_hello(req_id, "ccrxt".to_string(), client_version);
-        let req_json = serde_json::to_string(&hello_req)?;
-        let ws = self
-            .websocket
-            .as_ref()
-            .ok_or_else(|| DeribitWebSocketError::Connection("WebSocket not connected".to_string()))?;
-        // This is a placeholder for sending and receiving the message. Actual implementation will depend on the async context and message handling.
-        // For now, just return an error to satisfy the type.
-        Err(Box::new(DeribitWebSocketError::Connection(
-            "Not implemented".to_string(),
-        )))
-    }
-
     /// Send an unsubscribe_all request and wait for the response
     pub async fn unsubscribe_all(&mut self) -> Result<String, DeribitWebSocketError> {
         if !self.is_connected() {
@@ -102,10 +90,34 @@ impl DeribitWebSocketClient {
                 "Not connected".to_string(),
             ));
         }
-        let req = JsonRpcRequest::new(
-            self.next_request_id().try_into().unwrap(),
-            "unsubscribe_all".to_string(),
-            (),
+        let req = JsonRpcRequest::unsubscribe_all(
+            self.next_request_id()
+        );
+        let msg = serde_json::to_string(&req)?;
+        if let Some(ws) = &mut self.websocket {
+            ws.send(Message::Text(msg.into()))
+                .await
+                .map_err(|e| DeribitWebSocketError::Connection(e.to_string()))?;
+            // Wait for the response
+            let response = self.receive_response().await?;
+            Ok(response)
+        } else {
+            Err(DeribitWebSocketError::Connection(
+                "WebSocket not connected".to_string(),
+            ))
+        }
+    }
+
+    /// Send an unsubscribe request with specific channels and wait for the response
+    pub async fn unsubscribe(&mut self, channels: Vec<String>) -> Result<String, DeribitWebSocketError> {
+        if !self.is_connected() {
+            return Err(DeribitWebSocketError::Connection(
+                "Not connected".to_string(),
+            ));
+        }
+        let req = JsonRpcRequest::unsubscribe(
+            self.next_request_id(),
+            channels
         );
         let msg = serde_json::to_string(&req)?;
         if let Some(ws) = &mut self.websocket {
@@ -129,10 +141,8 @@ impl DeribitWebSocketClient {
                 "Not connected".to_string(),
             ));
         }
-        let req = JsonRpcRequest::new(
-            self.next_request_id().try_into().unwrap(),
-            "disable_heartbeat".to_string(),
-            (),
+        let req = JsonRpcRequest::disable_heartbeat(
+            self.next_request_id()
         );
         let msg = serde_json::to_string(&req)?;
         if let Some(ws) = &mut self.websocket {
@@ -142,6 +152,30 @@ impl DeribitWebSocketClient {
             // Wait for the response
             let response = self.receive_response().await?;
             Ok(response)
+        } else {
+            Err(DeribitWebSocketError::Connection(
+                "WebSocket not connected".to_string(),
+            ))
+        }
+    }
+
+    /// Send a subscribe request and wait for the response
+    pub async fn subscribe(&mut self, channels: Vec<String>) -> Result<Vec<String>, DeribitWebSocketError> {
+        if !self.is_connected() {
+            return Err(DeribitWebSocketError::Connection(
+                "Not connected".to_string(),
+            ));
+        }
+        let req = crate::deribit::public::websocket::subscribe::JsonRpcRequest::new_subscribe(self.next_request_id().try_into().unwrap(), channels);
+        let msg = serde_json::to_string(&req)?;
+        if let Some(ws) = &mut self.websocket {
+            ws.send(Message::Text(msg.into()))
+                .await
+                .map_err(|e| DeribitWebSocketError::Connection(e.to_string()))?;
+            // Wait for the response
+            let response_str = self.receive_response().await?;
+            let response: SubscribeResponse = serde_json::from_str(&response_str)?;
+            Ok(response.result)
         } else {
             Err(DeribitWebSocketError::Connection(
                 "WebSocket not connected".to_string(),
@@ -237,5 +271,48 @@ mod tests {
             DeribitMessage::Hello(_) => (),
             _ => panic!("Expected Hello variant"),
         }
+
+        let subscribe = SubscribeResponse::default();
+        let msg = DeribitMessage::Subscribe(subscribe);
+        match msg {
+            DeribitMessage::Subscribe(_) => (),
+            _ => panic!("Expected Subscribe variant"),
+        }
+    }
+
+    #[test]
+    fn test_subscribe_message_type() {
+        use crate::deribit::public::websocket::subscribe::SubscribeResponse;
+
+        let subscribe_response = SubscribeResponse {
+            id: 1,
+            jsonrpc: "2.0".to_string(),
+            result: vec!["book.BTC-PERPETUAL.100ms".to_string()],
+        };
+
+        let msg = DeribitMessage::Subscribe(subscribe_response.clone());
+        match msg {
+            DeribitMessage::Subscribe(response) => {
+                assert_eq!(response.id, 1);
+                assert_eq!(response.jsonrpc, "2.0");
+                assert_eq!(response.result.len(), 1);
+                assert_eq!(response.result[0], "book.BTC-PERPETUAL.100ms");
+            }
+            _ => panic!("Expected Subscribe variant"),
+        }
+    }
+
+    #[test]
+    fn test_unsubscribe_method_signature() {
+        // Test that the unsubscribe method has the correct signature
+        // This is a compile-time test to ensure the method signature is correct
+        let rl = RateLimiter::new(AccountTier::default());
+        let mut client = DeribitWebSocketClient::new(None, rl);
+        
+        // This is a compile test - we don't actually call the async method
+        // Just verify the signature exists
+        let channels = vec!["ticker.BTC-PERPETUAL".to_string()];
+        let _future = client.unsubscribe(channels);
+        // Don't await the future since we're not connected
     }
 }

@@ -1,0 +1,21 @@
+mod client;
+mod get_currency_list;
+mod get_trading_pairs_list;
+mod get_trading_pair_details;
+mod get_ticker_all_pairs;
+mod get_ticker;
+mod get_latest_kline;
+mod get_history_kline;
+mod get_depth;
+mod get_recent_trades;
+
+pub use client::RestClient;
+pub use get_currency_list::{GetCurrencyListRequest, GetCurrencyListResponse, Currency};
+pub use get_trading_pairs_list::{GetTradingPairsListRequest, GetTradingPairsListResponse};
+pub use get_trading_pair_details::{GetTradingPairDetailsRequest, GetTradingPairDetailsResponse, TradingPairDetail};
+pub use get_ticker_all_pairs::{GetTickerAllPairsRequest, GetTickerAllPairsResponse, TickerData as TickerArrayData};
+pub use get_ticker::{GetTickerRequest, GetTickerResponse, TickerData};
+pub use get_latest_kline::{GetLatestKlineRequest, GetLatestKlineResponse, KlineData as LatestKlineData};
+pub use get_history_kline::{GetHistoryKlineRequest, GetHistoryKlineResponse, KlineData as HistoryKlineData};
+pub use get_depth::{GetDepthRequest, GetDepthResponse, DepthData, OrderBookEntry};
+pub use get_recent_trades::{GetRecentTradesRequest, GetRecentTradesResponse, TradeData};

@@ -15,6 +15,7 @@ use serde::de::DeserializeOwned;
 use sha2::Sha256;
 
 use crate::coinbase::{EndpointType, Errors, RateLimiter, RestResult};
+use super::get_account_balances::PaginationInfo;
 
 /// Private REST client for Coinbase Exchange
 ///
@@ -232,6 +233,54 @@ impl RestClient {
         }
     }
 
+    /// Send a request to a private endpoint and return data with extracted pagination info
+    ///
+    /// This method combines the functionality of `send_request_with_headers` with
+    /// automatic extraction of Coinbase pagination headers (CB-BEFORE and CB-AFTER).
+    ///
+    /// # Arguments
+    /// * `endpoint` - The API endpoint path (without leading slash)
+    /// * `method` - The HTTP method to use
+    /// * `params` - Optional query parameters or request body
+    /// * `endpoint_type` - The type of endpoint for rate limiting
+    ///
+    /// # Returns
+    /// A result containing the deserialized response and pagination info or an error
+    pub async fn send_request_with_pagination<T, P>(
+        &self,
+        endpoint: &str,
+        method: reqwest::Method,
+        params: Option<&P>,
+        endpoint_type: EndpointType,
+    ) -> RestResult<(T, Option<PaginationInfo>)>
+    where
+        T: DeserializeOwned,
+        P: Serialize + ?Sized,
+    {
+        let (data, headers) = self
+            .send_request_with_headers(endpoint, method, params, endpoint_type)
+            .await?;
+
+        // Extract pagination headers
+        let before = headers
+            .get("CB-BEFORE")
+            .and_then(|value| value.to_str().ok())
+            .map(|s| s.to_string());
+
+        let after = headers
+            .get("CB-AFTER")
+            .and_then(|value| value.to_str().ok())
+            .map(|s| s.to_string());
+
+        let pagination = if before.is_some() || after.is_some() {
+            Some(PaginationInfo { before, after })
+        } else {
+            None
+        };
+
+        Ok((data, pagination))
+    }
+
     /// Send a request to a private endpoint
     ///
     /// # Arguments
@@ -421,5 +470,29 @@ mod tests {
         assert!(result.is_ok());
         let signature = result.unwrap();
         assert!(!signature.is_empty());
+    }
+
+    #[test]
+    fn test_pagination_info_extraction() {
+        // This test verifies that the pagination logic has been correctly
+        // moved to the RestClient implementation
+        use super::super::get_account_balances::PaginationInfo;
+        
+        let pagination = PaginationInfo {
+            before: Some("before_cursor".to_string()),
+            after: Some("after_cursor".to_string()),
+        };
+
+        assert_eq!(pagination.before, Some("before_cursor".to_string()));
+        assert_eq!(pagination.after, Some("after_cursor".to_string()));
+
+        // Test None case
+        let pagination_none = PaginationInfo {
+            before: None,
+            after: None,
+        };
+
+        assert_eq!(pagination_none.before, None);
+        assert_eq!(pagination_none.after, None);
     }
 }

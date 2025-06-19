@@ -6,3 +6,6 @@ mod binancespot;
 
 #[cfg(test)]
 mod binanceportfolio;
+
+#[cfg(test)]
+mod deribit;
