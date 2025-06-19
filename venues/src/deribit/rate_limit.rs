@@ -54,6 +54,8 @@ pub enum EndpointType {
     PublicGetComboIds,
     /// Public combo details endpoint (non-matching engine, 500 credits each)
     PublicGetCombos,
+    /// Public combo details by ID endpoint (non-matching engine, 500 credits each)
+    PublicGetComboDetails,
     /// Public status endpoint (non-matching engine, 500 credits each)
     PublicGetStatus,
     /// WebSocket only: public/hello (no specific rate limit documented)
@@ -69,6 +71,7 @@ impl EndpointType {
             EndpointType::PublicGetInstruments => 0, // Special time-based limit
             EndpointType::PublicGetComboIds => 500,  // Non-matching engine endpoint
             EndpointType::PublicGetCombos => 500,    // Non-matching engine endpoint
+            EndpointType::PublicGetComboDetails => 500, // Non-matching engine endpoint
             EndpointType::PublicGetStatus => 500,    // Non-matching engine endpoint
             EndpointType::PublicHello => 0,          // WebSocket only, no specific credit cost
         }
@@ -86,6 +89,10 @@ impl EndpointType {
 
         if path == "public/get_combos" {
             return EndpointType::PublicGetCombos;
+        }
+
+        if path == "public/get_combo_details" {
+            return EndpointType::PublicGetComboDetails;
         }
 
         if path == "public/status" {
@@ -116,6 +123,7 @@ impl EndpointType {
             | "private/mass_quote"
             | "private/cancel_quotes"
             | "private/add_block_rfq_quote"
+            | "private/create_block_rfq"
             | "private/edit_block_rfq_quote"
             | "private/cancel_block_rfq_quote"
             | "private/cancel_all_block_rfq_quotes"
@@ -303,7 +311,7 @@ impl RateLimiter {
     /// Check if a request can be made for the given endpoint type
     pub async fn check_limits(&self, endpoint_type: EndpointType) -> Result<(), RateLimitError> {
         match endpoint_type {
-            EndpointType::NonMatchingEngine | EndpointType::PublicGetComboIds | EndpointType::PublicGetCombos | EndpointType::PublicGetStatus => {
+            EndpointType::NonMatchingEngine | EndpointType::PublicGetComboIds | EndpointType::PublicGetCombos | EndpointType::PublicGetComboDetails | EndpointType::PublicGetStatus => {
                 let mut pool = self.credit_pool.write().await;
                 pool.consume_credits(endpoint_type.credit_cost())
             }
@@ -335,7 +343,7 @@ impl RateLimiter {
     /// Record a successful request for the given endpoint type
     pub async fn record_request(&self, endpoint_type: EndpointType) {
         match endpoint_type {
-            EndpointType::NonMatchingEngine | EndpointType::PublicGetComboIds | EndpointType::PublicGetCombos | EndpointType::PublicGetStatus => {
+            EndpointType::NonMatchingEngine | EndpointType::PublicGetComboIds | EndpointType::PublicGetCombos | EndpointType::PublicGetComboDetails | EndpointType::PublicGetStatus => {
                 // Credits are already consumed in check_limits
             }
             EndpointType::MatchingEngine => {
@@ -427,6 +435,11 @@ mod tests {
         assert_eq!(
             EndpointType::from_path("public/get_combos"),
             EndpointType::PublicGetCombos
+        );
+
+        assert_eq!(
+            EndpointType::from_path("public/get_combo_details"),
+            EndpointType::PublicGetComboDetails
         );
 
         assert_eq!(

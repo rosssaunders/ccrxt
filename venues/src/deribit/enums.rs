@@ -326,6 +326,174 @@ impl Display for TriggerType {
     }
 }
 
+/// Instrument kind types for filtering
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum InstrumentKind {
+    #[serde(rename = "future")]
+    Future,
+    #[serde(rename = "option")]
+    Option,
+    #[serde(rename = "spot")]
+    Spot,
+    #[serde(rename = "future_combo")]
+    FutureCombo,
+    #[serde(rename = "option_combo")]
+    OptionCombo,
+    #[serde(rename = "combo")]
+    Combo,
+    #[serde(rename = "any")]
+    Any,
+}
+
+impl Display for InstrumentKind {
+    fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
+        match self {
+            InstrumentKind::Future => write!(f, "future"),
+            InstrumentKind::Option => write!(f, "option"),
+            InstrumentKind::Spot => write!(f, "spot"),
+            InstrumentKind::FutureCombo => write!(f, "future_combo"),
+            InstrumentKind::OptionCombo => write!(f, "option_combo"),
+            InstrumentKind::Combo => write!(f, "combo"),
+            InstrumentKind::Any => write!(f, "any"),
+        }
+    }
+}
+
+/// Order type for filtering cancel operations
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum OrderType {
+    #[serde(rename = "all")]
+    All,
+    #[serde(rename = "limit")]
+    Limit,
+    #[serde(rename = "trigger_all")]
+    TriggerAll,
+    #[serde(rename = "stop")]
+    Stop,
+    #[serde(rename = "take")]
+    Take,
+    #[serde(rename = "trailing_stop")]
+    TrailingStop,
+}
+
+impl Display for OrderType {
+    fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
+        match self {
+            OrderType::All => write!(f, "all"),
+            OrderType::Limit => write!(f, "limit"),
+            OrderType::TriggerAll => write!(f, "trigger_all"),
+            OrderType::Stop => write!(f, "stop"),
+            OrderType::Take => write!(f, "take"),
+            OrderType::TrailingStop => write!(f, "trailing_stop"),
+        }
+    }
+}
+
+/// Sorting direction for trade queries
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum Sorting {
+    #[serde(rename = "asc")]
+    Asc,
+    #[serde(rename = "desc")]
+    Desc,
+    #[serde(rename = "default")]
+    Default,
+}
+
+impl Display for Sorting {
+    fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
+        match self {
+            Sorting::Asc => write!(f, "asc"),
+            Sorting::Desc => write!(f, "desc"),
+            Sorting::Default => write!(f, "default"),
+        }
+    }
+}
+
+/// Tick direction for trades  
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum TickDirection {
+    #[serde(rename = "0")]
+    PlusTick,
+    #[serde(rename = "1")]
+    ZeroPlusTick,
+    #[serde(rename = "2")]
+    MinusTick,
+    #[serde(rename = "3")]
+    ZeroMinusTick,
+}
+
+impl Display for TickDirection {
+    fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
+        match self {
+            TickDirection::PlusTick => write!(f, "0"),
+            TickDirection::ZeroPlusTick => write!(f, "1"),
+            TickDirection::MinusTick => write!(f, "2"),
+            TickDirection::ZeroMinusTick => write!(f, "3"),
+        }
+    }
+}
+
+/// Liquidity role in trade (maker or taker)
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum Liquidity {
+    #[serde(rename = "M")]
+    Maker,
+    #[serde(rename = "T")]
+    Taker,
+}
+
+impl Display for Liquidity {
+    fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
+        match self {
+            Liquidity::Maker => write!(f, "M"),
+            Liquidity::Taker => write!(f, "T"),
+        }
+    }
+}
+
+/// Trade order type (different from general OrderType)
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum TradeOrderType {
+    #[serde(rename = "limit")]
+    Limit,
+    #[serde(rename = "market")]
+    Market,
+    #[serde(rename = "liquidation")]
+    Liquidation,
+}
+
+impl Display for TradeOrderType {
+    fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
+        match self {
+            TradeOrderType::Limit => write!(f, "limit"),
+            TradeOrderType::Market => write!(f, "market"),
+            TradeOrderType::Liquidation => write!(f, "liquidation"),
+        }
+    }
+}
+
+/// Liquidation side for trades
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum LiquidationSide {
+    #[serde(rename = "M")]
+    Maker,
+    #[serde(rename = "T")]
+    Taker,
+    #[serde(rename = "MT")]
+    Both,
+}
+
+impl Display for LiquidationSide {
+    fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
+        match self {
+            LiquidationSide::Maker => write!(f, "M"),
+            LiquidationSide::Taker => write!(f, "T"),
+            LiquidationSide::Both => write!(f, "MT"),
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -625,5 +793,190 @@ mod tests {
 
         assert_eq!(index_price_from_json, TriggerType::IndexPrice);
         assert_eq!(mark_price_from_json, TriggerType::MarkPrice);
+    }
+
+    #[test]
+    fn test_instrument_kind_serialization() {
+        let future = InstrumentKind::Future;
+        let option = InstrumentKind::Option;
+        let spot = InstrumentKind::Spot;
+        let combo = InstrumentKind::Combo;
+
+        assert_eq!(serde_json::to_string(&future).unwrap(), "\"future\"");
+        assert_eq!(serde_json::to_string(&option).unwrap(), "\"option\"");
+        assert_eq!(serde_json::to_string(&spot).unwrap(), "\"spot\"");
+        assert_eq!(serde_json::to_string(&combo).unwrap(), "\"combo\"");
+
+        let future_from_json: InstrumentKind = serde_json::from_str("\"future\"").unwrap();
+        let option_from_json: InstrumentKind = serde_json::from_str("\"option\"").unwrap();
+        let spot_from_json: InstrumentKind = serde_json::from_str("\"spot\"").unwrap();
+        let combo_from_json: InstrumentKind = serde_json::from_str("\"combo\"").unwrap();
+
+        assert_eq!(future_from_json, InstrumentKind::Future);
+        assert_eq!(option_from_json, InstrumentKind::Option);
+        assert_eq!(spot_from_json, InstrumentKind::Spot);
+        assert_eq!(combo_from_json, InstrumentKind::Combo);
+    }
+
+    #[test]
+    fn test_instrument_kind_display() {
+        assert_eq!(format!("{}", InstrumentKind::Future), "future");
+        assert_eq!(format!("{}", InstrumentKind::Option), "option");
+        assert_eq!(format!("{}", InstrumentKind::Spot), "spot");
+        assert_eq!(format!("{}", InstrumentKind::FutureCombo), "future_combo");
+        assert_eq!(format!("{}", InstrumentKind::OptionCombo), "option_combo");
+        assert_eq!(format!("{}", InstrumentKind::Combo), "combo");
+        assert_eq!(format!("{}", InstrumentKind::Any), "any");
+    }
+
+    #[test]
+    fn test_order_type_serialization() {
+        let all = OrderType::All;
+        let limit = OrderType::Limit;
+        let trigger_all = OrderType::TriggerAll;
+        let stop = OrderType::Stop;
+
+        assert_eq!(serde_json::to_string(&all).unwrap(), "\"all\"");
+        assert_eq!(serde_json::to_string(&limit).unwrap(), "\"limit\"");
+        assert_eq!(serde_json::to_string(&trigger_all).unwrap(), "\"trigger_all\"");
+        assert_eq!(serde_json::to_string(&stop).unwrap(), "\"stop\"");
+
+        let all_from_json: OrderType = serde_json::from_str("\"all\"").unwrap();
+        let limit_from_json: OrderType = serde_json::from_str("\"limit\"").unwrap();
+        let trigger_all_from_json: OrderType = serde_json::from_str("\"trigger_all\"").unwrap();
+        let stop_from_json: OrderType = serde_json::from_str("\"stop\"").unwrap();
+
+        assert_eq!(all_from_json, OrderType::All);
+        assert_eq!(limit_from_json, OrderType::Limit);
+        assert_eq!(trigger_all_from_json, OrderType::TriggerAll);
+        assert_eq!(stop_from_json, OrderType::Stop);
+    }
+
+    #[test]
+    fn test_order_type_display() {
+        assert_eq!(format!("{}", OrderType::All), "all");
+        assert_eq!(format!("{}", OrderType::Limit), "limit");
+        assert_eq!(format!("{}", OrderType::TriggerAll), "trigger_all");
+        assert_eq!(format!("{}", OrderType::Stop), "stop");
+        assert_eq!(format!("{}", OrderType::Take), "take");
+        assert_eq!(format!("{}", OrderType::TrailingStop), "trailing_stop");
+    }
+
+    #[test]
+    fn test_sorting_serialization() {
+        let asc = Sorting::Asc;
+        let desc = Sorting::Desc;
+        let default = Sorting::Default;
+
+        assert_eq!(serde_json::to_string(&asc).unwrap(), "\"asc\"");
+        assert_eq!(serde_json::to_string(&desc).unwrap(), "\"desc\"");
+        assert_eq!(serde_json::to_string(&default).unwrap(), "\"default\"");
+
+        let asc_from_json: Sorting = serde_json::from_str("\"asc\"").unwrap();
+        let desc_from_json: Sorting = serde_json::from_str("\"desc\"").unwrap();
+        let default_from_json: Sorting = serde_json::from_str("\"default\"").unwrap();
+
+        assert_eq!(asc_from_json, Sorting::Asc);
+        assert_eq!(desc_from_json, Sorting::Desc);
+        assert_eq!(default_from_json, Sorting::Default);
+    }
+
+    #[test]
+    fn test_tick_direction_serialization() {
+        let plus_tick = TickDirection::PlusTick;
+        let zero_plus_tick = TickDirection::ZeroPlusTick;
+        let minus_tick = TickDirection::MinusTick;
+        let zero_minus_tick = TickDirection::ZeroMinusTick;
+
+        assert_eq!(serde_json::to_string(&plus_tick).unwrap(), "\"0\"");
+        assert_eq!(serde_json::to_string(&zero_plus_tick).unwrap(), "\"1\"");
+        assert_eq!(serde_json::to_string(&minus_tick).unwrap(), "\"2\"");
+        assert_eq!(serde_json::to_string(&zero_minus_tick).unwrap(), "\"3\"");
+
+        let plus_tick_from_json: TickDirection = serde_json::from_str("\"0\"").unwrap();
+        let zero_plus_tick_from_json: TickDirection = serde_json::from_str("\"1\"").unwrap();
+        let minus_tick_from_json: TickDirection = serde_json::from_str("\"2\"").unwrap();
+        let zero_minus_tick_from_json: TickDirection = serde_json::from_str("\"3\"").unwrap();
+
+        assert_eq!(plus_tick_from_json, TickDirection::PlusTick);
+        assert_eq!(zero_plus_tick_from_json, TickDirection::ZeroPlusTick);
+        assert_eq!(minus_tick_from_json, TickDirection::MinusTick);
+        assert_eq!(zero_minus_tick_from_json, TickDirection::ZeroMinusTick);
+    }
+
+    #[test]
+    fn test_liquidity_serialization() {
+        let maker = Liquidity::Maker;
+        let taker = Liquidity::Taker;
+
+        assert_eq!(serde_json::to_string(&maker).unwrap(), "\"M\"");
+        assert_eq!(serde_json::to_string(&taker).unwrap(), "\"T\"");
+
+        let maker_from_json: Liquidity = serde_json::from_str("\"M\"").unwrap();
+        let taker_from_json: Liquidity = serde_json::from_str("\"T\"").unwrap();
+
+        assert_eq!(maker_from_json, Liquidity::Maker);
+        assert_eq!(taker_from_json, Liquidity::Taker);
+    }
+
+    #[test]
+    fn test_trade_order_type_serialization() {
+        let limit = TradeOrderType::Limit;
+        let market = TradeOrderType::Market;
+        let liquidation = TradeOrderType::Liquidation;
+
+        assert_eq!(serde_json::to_string(&limit).unwrap(), "\"limit\"");
+        assert_eq!(serde_json::to_string(&market).unwrap(), "\"market\"");
+        assert_eq!(serde_json::to_string(&liquidation).unwrap(), "\"liquidation\"");
+
+        let limit_from_json: TradeOrderType = serde_json::from_str("\"limit\"").unwrap();
+        let market_from_json: TradeOrderType = serde_json::from_str("\"market\"").unwrap();
+        let liquidation_from_json: TradeOrderType = serde_json::from_str("\"liquidation\"").unwrap();
+
+        assert_eq!(limit_from_json, TradeOrderType::Limit);
+        assert_eq!(market_from_json, TradeOrderType::Market);
+        assert_eq!(liquidation_from_json, TradeOrderType::Liquidation);
+    }
+
+    #[test]
+    fn test_liquidation_side_serialization() {
+        let maker = LiquidationSide::Maker;
+        let taker = LiquidationSide::Taker;
+        let both = LiquidationSide::Both;
+
+        assert_eq!(serde_json::to_string(&maker).unwrap(), "\"M\"");
+        assert_eq!(serde_json::to_string(&taker).unwrap(), "\"T\"");
+        assert_eq!(serde_json::to_string(&both).unwrap(), "\"MT\"");
+
+        let maker_from_json: LiquidationSide = serde_json::from_str("\"M\"").unwrap();
+        let taker_from_json: LiquidationSide = serde_json::from_str("\"T\"").unwrap();
+        let both_from_json: LiquidationSide = serde_json::from_str("\"MT\"").unwrap();
+
+        assert_eq!(maker_from_json, LiquidationSide::Maker);
+        assert_eq!(taker_from_json, LiquidationSide::Taker);
+        assert_eq!(both_from_json, LiquidationSide::Both);
+    }
+
+    #[test]
+    fn test_new_enums_display() {
+        assert_eq!(format!("{}", Sorting::Asc), "asc");
+        assert_eq!(format!("{}", Sorting::Desc), "desc");
+        assert_eq!(format!("{}", Sorting::Default), "default");
+
+        assert_eq!(format!("{}", TickDirection::PlusTick), "0");
+        assert_eq!(format!("{}", TickDirection::ZeroPlusTick), "1");
+        assert_eq!(format!("{}", TickDirection::MinusTick), "2");
+        assert_eq!(format!("{}", TickDirection::ZeroMinusTick), "3");
+
+        assert_eq!(format!("{}", Liquidity::Maker), "M");
+        assert_eq!(format!("{}", Liquidity::Taker), "T");
+
+        assert_eq!(format!("{}", TradeOrderType::Limit), "limit");
+        assert_eq!(format!("{}", TradeOrderType::Market), "market");
+        assert_eq!(format!("{}", TradeOrderType::Liquidation), "liquidation");
+
+        assert_eq!(format!("{}", LiquidationSide::Maker), "M");
+        assert_eq!(format!("{}", LiquidationSide::Taker), "T");
+        assert_eq!(format!("{}", LiquidationSide::Both), "MT");
     }
 }
