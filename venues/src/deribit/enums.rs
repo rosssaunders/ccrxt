@@ -59,6 +59,150 @@ impl Display for Currency {
     }
 }
 
+/// Currency pair types supported by Deribit
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub enum CurrencyPair {
+    #[serde(rename = "btc_usd")]
+    BtcUsd,
+    #[serde(rename = "eth_usd")]
+    EthUsd,
+    #[serde(rename = "ada_usdc")]
+    AdaUsdc,
+    #[serde(rename = "algo_usdc")]
+    AlgoUsdc,
+    #[serde(rename = "avax_usdc")]
+    AvaxUsdc,
+    #[serde(rename = "bch_usdc")]
+    BchUsdc,
+    #[serde(rename = "bnb_usdc")]
+    BnbUsdc,
+    #[serde(rename = "btc_usdc")]
+    BtcUsdc,
+    #[serde(rename = "btcdvol_usdc")]
+    BtcdvolUsdc,
+    #[serde(rename = "buidl_usdc")]
+    BuidlUsdc,
+    #[serde(rename = "doge_usdc")]
+    DogeUsdc,
+    #[serde(rename = "dot_usdc")]
+    DotUsdc,
+    #[serde(rename = "eurr_usdc")]
+    EurrUsdc,
+    #[serde(rename = "eth_usdc")]
+    EthUsdc,
+    #[serde(rename = "ethdvol_usdc")]
+    EthdvolUsdc,
+    #[serde(rename = "link_usdc")]
+    LinkUsdc,
+    #[serde(rename = "ltc_usdc")]
+    LtcUsdc,
+    #[serde(rename = "near_usdc")]
+    NearUsdc,
+    #[serde(rename = "paxg_usdc")]
+    PaxgUsdc,
+    #[serde(rename = "shib_usdc")]
+    ShibUsdc,
+    #[serde(rename = "sol_usdc")]
+    SolUsdc,
+    #[serde(rename = "steth_usdc")]
+    StethUsdc,
+    #[serde(rename = "trump_usdc")]
+    TrumpUsdc,
+    #[serde(rename = "trx_usdc")]
+    TrxUsdc,
+    #[serde(rename = "uni_usdc")]
+    UniUsdc,
+    #[serde(rename = "usde_usdc")]
+    UsdeUsdc,
+    #[serde(rename = "usyc_usdc")]
+    UsycUsdc,
+    #[serde(rename = "xrp_usdc")]
+    XrpUsdc,
+    #[serde(rename = "btc_usdt")]
+    BtcUsdt,
+    #[serde(rename = "eth_usdt")]
+    EthUsdt,
+    #[serde(rename = "eurr_usdt")]
+    EurrUsdt,
+    #[serde(rename = "sol_usdt")]
+    SolUsdt,
+    #[serde(rename = "steth_usdt")]
+    StethUsdt,
+    #[serde(rename = "usdc_usdt")]
+    UsdcUsdt,
+    #[serde(rename = "usde_usdt")]
+    UsdeUsdt,
+    #[serde(rename = "btc_eurr")]
+    BtcEurr,
+    #[serde(rename = "btc_usde")]
+    BtcUsde,
+    #[serde(rename = "btc_usyc")]
+    BtcUsyc,
+    #[serde(rename = "eth_btc")]
+    EthBtc,
+    #[serde(rename = "eth_eurr")]
+    EthEurr,
+    #[serde(rename = "eth_usde")]
+    EthUsde,
+    #[serde(rename = "eth_usyc")]
+    EthUsyc,
+    #[serde(rename = "steth_eth")]
+    StethEth,
+    #[serde(rename = "paxg_btc")]
+    PaxgBtc,
+}
+
+impl Display for CurrencyPair {
+    fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
+        match self {
+            CurrencyPair::BtcUsd => write!(f, "btc_usd"),
+            CurrencyPair::EthUsd => write!(f, "eth_usd"),
+            CurrencyPair::AdaUsdc => write!(f, "ada_usdc"),
+            CurrencyPair::AlgoUsdc => write!(f, "algo_usdc"),
+            CurrencyPair::AvaxUsdc => write!(f, "avax_usdc"),
+            CurrencyPair::BchUsdc => write!(f, "bch_usdc"),
+            CurrencyPair::BnbUsdc => write!(f, "bnb_usdc"),
+            CurrencyPair::BtcUsdc => write!(f, "btc_usdc"),
+            CurrencyPair::BtcdvolUsdc => write!(f, "btcdvol_usdc"),
+            CurrencyPair::BuidlUsdc => write!(f, "buidl_usdc"),
+            CurrencyPair::DogeUsdc => write!(f, "doge_usdc"),
+            CurrencyPair::DotUsdc => write!(f, "dot_usdc"),
+            CurrencyPair::EurrUsdc => write!(f, "eurr_usdc"),
+            CurrencyPair::EthUsdc => write!(f, "eth_usdc"),
+            CurrencyPair::EthdvolUsdc => write!(f, "ethdvol_usdc"),
+            CurrencyPair::LinkUsdc => write!(f, "link_usdc"),
+            CurrencyPair::LtcUsdc => write!(f, "ltc_usdc"),
+            CurrencyPair::NearUsdc => write!(f, "near_usdc"),
+            CurrencyPair::PaxgUsdc => write!(f, "paxg_usdc"),
+            CurrencyPair::ShibUsdc => write!(f, "shib_usdc"),
+            CurrencyPair::SolUsdc => write!(f, "sol_usdc"),
+            CurrencyPair::StethUsdc => write!(f, "steth_usdc"),
+            CurrencyPair::TrumpUsdc => write!(f, "trump_usdc"),
+            CurrencyPair::TrxUsdc => write!(f, "trx_usdc"),
+            CurrencyPair::UniUsdc => write!(f, "uni_usdc"),
+            CurrencyPair::UsdeUsdc => write!(f, "usde_usdc"),
+            CurrencyPair::UsycUsdc => write!(f, "usyc_usdc"),
+            CurrencyPair::XrpUsdc => write!(f, "xrp_usdc"),
+            CurrencyPair::BtcUsdt => write!(f, "btc_usdt"),
+            CurrencyPair::EthUsdt => write!(f, "eth_usdt"),
+            CurrencyPair::EurrUsdt => write!(f, "eurr_usdt"),
+            CurrencyPair::SolUsdt => write!(f, "sol_usdt"),
+            CurrencyPair::StethUsdt => write!(f, "steth_usdt"),
+            CurrencyPair::UsdcUsdt => write!(f, "usdc_usdt"),
+            CurrencyPair::UsdeUsdt => write!(f, "usde_usdt"),
+            CurrencyPair::BtcEurr => write!(f, "btc_eurr"),
+            CurrencyPair::BtcUsde => write!(f, "btc_usde"),
+            CurrencyPair::BtcUsyc => write!(f, "btc_usyc"),
+            CurrencyPair::EthBtc => write!(f, "eth_btc"),
+            CurrencyPair::EthEurr => write!(f, "eth_eurr"),
+            CurrencyPair::EthUsde => write!(f, "eth_usde"),
+            CurrencyPair::EthUsyc => write!(f, "eth_usyc"),
+            CurrencyPair::StethEth => write!(f, "steth_eth"),
+            CurrencyPair::PaxgBtc => write!(f, "paxg_btc"),
+        }
+    }
+}
+
 /// Combo state types for filtering
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub enum ComboState {
@@ -1111,5 +1255,35 @@ mod tests {
         assert_eq!(format!("{}", ClearanceState::Cancelled), "cancelled");
         assert_eq!(format!("{}", ClearanceState::RefundInitiated), "refund_initiated");
         assert_eq!(format!("{}", ClearanceState::Refunded), "refunded");
+    }
+
+    #[test]
+    fn test_currency_pair_serialization() {
+        let btc_usd = CurrencyPair::BtcUsd;
+        let eth_usdc = CurrencyPair::EthUsdc;
+        let paxg_btc = CurrencyPair::PaxgBtc;
+
+        assert_eq!(serde_json::to_string(&btc_usd).unwrap(), "\"btc_usd\"");
+        assert_eq!(serde_json::to_string(&eth_usdc).unwrap(), "\"eth_usdc\"");
+        assert_eq!(serde_json::to_string(&paxg_btc).unwrap(), "\"paxg_btc\"");
+
+        let btc_usd_from_json: CurrencyPair = serde_json::from_str("\"btc_usd\"").unwrap();
+        let eth_usdc_from_json: CurrencyPair = serde_json::from_str("\"eth_usdc\"").unwrap();
+        let paxg_btc_from_json: CurrencyPair = serde_json::from_str("\"paxg_btc\"").unwrap();
+
+        assert_eq!(btc_usd_from_json, CurrencyPair::BtcUsd);
+        assert_eq!(eth_usdc_from_json, CurrencyPair::EthUsdc);
+        assert_eq!(paxg_btc_from_json, CurrencyPair::PaxgBtc);
+    }
+
+    #[test]
+    fn test_currency_pair_display() {
+        assert_eq!(format!("{}", CurrencyPair::BtcUsd), "btc_usd");
+        assert_eq!(format!("{}", CurrencyPair::EthUsd), "eth_usd");
+        assert_eq!(format!("{}", CurrencyPair::AdaUsdc), "ada_usdc");
+        assert_eq!(format!("{}", CurrencyPair::BtcUsdc), "btc_usdc");
+        assert_eq!(format!("{}", CurrencyPair::EthBtc), "eth_btc");
+        assert_eq!(format!("{}", CurrencyPair::PaxgBtc), "paxg_btc");
+        assert_eq!(format!("{}", CurrencyPair::StethEth), "steth_eth");
     }
 }

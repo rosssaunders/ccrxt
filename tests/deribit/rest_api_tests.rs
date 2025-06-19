@@ -136,4 +136,45 @@ mod rest_api_tests {
         println!("✓ CancelAllByCurrencyRequest serialization: {}", json);
         println!("✓ CancelAllByCurrencyResponse deserialization successful");
     }
+
+    #[test]
+    fn test_cancel_all_by_currency_pair_integration() {
+        // Test that the new endpoint types are properly exported
+        use venues::deribit::{
+            CancelAllByCurrencyPairRequest, CancelAllByCurrencyPairResponse,
+            CurrencyPair, InstrumentKind, OrderType
+        };
+        
+        // Test request structure creation
+        let request = CancelAllByCurrencyPairRequest {
+            currency_pair: CurrencyPair::BtcUsd,
+            kind: Some(InstrumentKind::Future),
+            order_type: Some(OrderType::Limit),
+            detailed: Some(true),
+            freeze_quotes: Some(false),
+        };
+        
+        // Test serialization
+        let json = serde_json::to_string(&request).unwrap();
+        assert!(json.contains("\"currency_pair\":\"btc_usd\""));
+        assert!(json.contains("\"kind\":\"future\""));
+        assert!(json.contains("\"type\":\"limit\""));
+        assert!(json.contains("\"detailed\":true"));
+        assert!(json.contains("\"freeze_quotes\":false"));
+        
+        // Test response structure deserialization
+        let response_json = serde_json::json!({
+            "id": 456,
+            "jsonrpc": "2.0",
+            "result": 7
+        });
+        
+        let response: CancelAllByCurrencyPairResponse = serde_json::from_value(response_json).unwrap();
+        assert_eq!(response.id, 456);
+        assert_eq!(response.jsonrpc, "2.0");
+        assert_eq!(response.result, 7);
+        
+        println!("✓ CancelAllByCurrencyPairRequest serialization: {}", json);
+        println!("✓ CancelAllByCurrencyPairResponse deserialization successful");
+    }
 }
