@@ -514,4 +514,63 @@ mod usage_examples {
         
         println!("PrivateRestClient::submit_transfer_between_subaccounts method is accessible and properly typed");
     }
+
+    #[tokio::test]
+    async fn test_private_rest_client_get_user_trades_by_order_method() {
+        // Test that the get_user_trades_by_order method is accessible via PrivateRestClient
+        use crate::deribit::{PrivateRestClient, AccountTier, RateLimiter, GetUserTradesByOrderRequest, Sorting};
+        use rest::secrets::ExposableSecret;
+
+        // Test secret implementation
+        #[derive(Clone)]
+        struct PlainTextSecret {
+            secret: String,
+        }
+
+        impl PlainTextSecret {
+            fn new(secret: String) -> Self {
+                Self { secret }
+            }
+        }
+
+        impl ExposableSecret for PlainTextSecret {
+            fn expose_secret(&self) -> String {
+                self.secret.clone()
+            }
+        }
+
+        let api_key = Box::new(PlainTextSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
+        let api_secret = Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let client = reqwest::Client::new();
+        let rate_limiter = RateLimiter::new(AccountTier::Tier4);
+
+        let rest_client = PrivateRestClient::new(
+            api_key,
+            api_secret,
+            "https://test.deribit.com",
+            rate_limiter,
+            client,
+        );
+
+        // Test that we can get a function reference to the method
+        let _ = PrivateRestClient::get_user_trades_by_order;
+        
+        // Test creating a request for getting user trades by order
+        let request = GetUserTradesByOrderRequest {
+            order_id: "ETH-12345".to_string(),
+            sorting: Some(Sorting::Desc),
+            historical: Some(false),
+        };
+
+        // Verify request can be serialized
+        let json_str = serde_json::to_string(&request).unwrap();
+        assert!(json_str.contains("ETH-12345"));
+        assert!(json_str.contains("desc"));
+        assert!(json_str.contains("false"));
+        
+        // Verify the client exists and has the method
+        let _ = &rest_client;
+        
+        println!("PrivateRestClient::get_user_trades_by_order method is accessible and properly typed");
+    }
 }
