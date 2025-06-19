@@ -67,6 +67,8 @@ pub mod private {
     pub use self::rest::AddressBookEntry;
     pub use self::rest::CancelAllRequest;
     pub use self::rest::CancelAllResponse;
+    pub use self::rest::CancelAllByCurrencyRequest;
+    pub use self::rest::CancelAllByCurrencyResponse;
     pub use self::rest::CancelledOrder;
     pub use self::rest::CancelOnDisconnectResult;
     pub use self::rest::CancelOnDisconnectScope;
@@ -127,6 +129,8 @@ pub use private::AddToAddressBookResponse;
 pub use private::AddressBookEntry;
 pub use private::CancelAllRequest;
 pub use private::CancelAllResponse;
+pub use private::CancelAllByCurrencyRequest;
+pub use private::CancelAllByCurrencyResponse;
 pub use private::CancelledOrder;
 pub use private::CancelOnDisconnectResult;
 pub use private::CancelOnDisconnectScope;
