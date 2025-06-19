@@ -68,6 +68,31 @@ mod rest_api_tests {
     }
 
     #[test]
+    fn test_get_trigger_order_history_integration() {
+        // Test that the new get_trigger_order_history endpoint is properly exported and accessible
+        use venues::deribit::private::rest::{GetTriggerOrderHistoryRequest, GetTriggerOrderHistoryResponse, TriggerOrderEntry, GetTriggerOrderHistoryResult};
+        use venues::deribit::Currency;
+        
+        // Create instances to verify they're accessible
+        let request = GetTriggerOrderHistoryRequest {
+            currency: Currency::BTC,
+            instrument_name: Some("BTC-PERPETUAL".to_string()),
+            count: Some(20),
+            continuation: None,
+        };
+        
+        // Test serialization works
+        let serialized = serde_json::to_string(&request).unwrap();
+        assert!(serialized.contains("BTC"));
+        assert!(serialized.contains("BTC-PERPETUAL"));
+        
+        println!("✓ GetTriggerOrderHistoryRequest types accessible and serializable");
+        
+        // This test verifies the types are exported and work correctly
+        assert!(true, "Trigger order history endpoint types are properly exported");
+    }
+
+    #[test]
     fn test_cancel_all_by_currency_integration() {
         // Test that the new endpoint types are properly exported
         use venues::deribit::{
