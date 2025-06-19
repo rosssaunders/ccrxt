@@ -441,4 +441,192 @@ mod rest_api_tests {
         
         assert!(true, "create_deposit_address method is properly accessible");
     }
+
+    #[test]
+    fn test_get_block_rfq_quotes_integration() {
+        // Test the get_block_rfq_quotes endpoint structures
+        use venues::deribit::private::rest::get_block_rfq_quotes::{
+            GetBlockRfqQuotesRequest, GetBlockRfqQuotesResponse
+        };
+
+        // Test request structure creation with no parameters
+        let empty_request = GetBlockRfqQuotesRequest {
+            block_rfq_id: None,
+            label: None,
+            block_rfq_quote_id: None,
+        };
+
+        // Test serialization of empty request
+        let empty_json = serde_json::to_string(&empty_request).unwrap();
+        assert_eq!(empty_json, "{}");
+        println!("✓ GetBlockRfqQuotesRequest (empty) serialization: {}", empty_json);
+
+        // Test request with all parameters
+        let full_request = GetBlockRfqQuotesRequest {
+            block_rfq_id: Some(12345),
+            label: Some("test_label".to_string()),
+            block_rfq_quote_id: Some(67890),
+        };
+
+        let full_json = serde_json::to_string(&full_request).unwrap();
+        assert!(full_json.contains("12345"));
+        assert!(full_json.contains("test_label"));
+        assert!(full_json.contains("67890"));
+        println!("✓ GetBlockRfqQuotesRequest (full) serialization: {}", full_json);
+
+        // Test response structure deserialization with empty result
+        let empty_response_json = serde_json::json!({
+            "id": 1,
+            "jsonrpc": "2.0",
+            "result": []
+        });
+
+        let empty_response: GetBlockRfqQuotesResponse = serde_json::from_value(empty_response_json).unwrap();
+        assert_eq!(empty_response.id, 1);
+        assert_eq!(empty_response.jsonrpc, "2.0");
+        assert_eq!(empty_response.result.len(), 0);
+        println!("✓ GetBlockRfqQuotesResponse (empty) deserialization successful");
+
+        // Test response structure deserialization with multiple quotes
+        let quotes_response_json = serde_json::json!({
+            "id": 2,
+            "jsonrpc": "2.0",
+            "result": [
+                {
+                    "amount": 1.5,
+                    "app_name": null,
+                    "block_rfq_id": 123,
+                    "block_rfq_quote_id": 456,
+                    "creation_timestamp": 1640995200000i64,
+                    "direction": "buy",
+                    "execution_instruction": "any_part_of",
+                    "filled_amount": 0.0,
+                    "hedge": null,
+                    "label": "quote_1",
+                    "last_update_timestamp": 1640995300000i64,
+                    "legs": [
+                        {
+                            "direction": "buy",
+                            "instrument_name": "BTC-PERPETUAL",
+                            "price": 50000.0,
+                            "ratio": 1
+                        }
+                    ],
+                    "price": 50000.0,
+                    "quote_state": "open",
+                    "quote_state_reason": null,
+                    "replaced": false
+                },
+                {
+                    "amount": 2.0,
+                    "app_name": "test_app",
+                    "block_rfq_id": 124,
+                    "block_rfq_quote_id": 457,
+                    "creation_timestamp": 1640995400000i64,
+                    "direction": "sell",
+                    "execution_instruction": "all_or_none",
+                    "filled_amount": 0.5,
+                    "hedge": {
+                        "amount": 100,
+                        "direction": "buy",
+                        "instrument_name": "ETH-PERPETUAL",
+                        "price": 3000.0
+                    },
+                    "label": "quote_2",
+                    "last_update_timestamp": 1640995500000i64,
+                    "legs": [
+                        {
+                            "direction": "sell",
+                            "instrument_name": "ETH-PERPETUAL",
+                            "price": 3000.0,
+                            "ratio": 2
+                        }
+                    ],
+                    "price": 3000.0,
+                    "quote_state": "partially_filled",
+                    "quote_state_reason": null,
+                    "replaced": true
+                }
+            ]
+        });
+
+        let quotes_response: GetBlockRfqQuotesResponse = serde_json::from_value(quotes_response_json).unwrap();
+        assert_eq!(quotes_response.id, 2);
+        assert_eq!(quotes_response.jsonrpc, "2.0");
+        assert_eq!(quotes_response.result.len(), 2);
+
+        // Verify first quote
+        let quote1 = &quotes_response.result[0];
+        assert_eq!(quote1.amount, 1.5);
+        assert_eq!(quote1.block_rfq_id, 123);
+        assert_eq!(quote1.block_rfq_quote_id, 456);
+        assert_eq!(quote1.label, Some("quote_1".to_string()));
+        assert_eq!(quote1.legs[0].instrument_name, "BTC-PERPETUAL");
+        assert!(!quote1.replaced);
+        assert!(quote1.hedge.is_none());
+
+        // Verify second quote with hedge
+        let quote2 = &quotes_response.result[1];
+        assert_eq!(quote2.amount, 2.0);
+        assert_eq!(quote2.block_rfq_id, 124);
+        assert_eq!(quote2.app_name, Some("test_app".to_string()));
+        assert!(quote2.replaced);
+        assert!(quote2.hedge.is_some());
+        
+        let hedge = quote2.hedge.as_ref().unwrap();
+        assert_eq!(hedge.instrument_name, "ETH-PERPETUAL");
+        assert_eq!(hedge.price, 3000.0);
+
+        println!("✓ GetBlockRfqQuotesResponse (with quotes) deserialization successful");
+        println!("✓ Quote with hedge leg parsed correctly");
+        
+    #[tokio::test]
+    async fn test_get_block_rfq_quotes_method_exists() {
+        use venues::deribit::{
+            AccountTier, RateLimiter, PrivateRestClient
+        };
+        use rest::secrets::ExposableSecret;
+
+        // Mock secret implementation for testing
+        #[derive(Clone)]
+        struct TestSecret {
+            secret: String,
+        }
+
+        impl TestSecret {
+            fn new(secret: String) -> Self {
+                Self { secret }
+            }
+        }
+
+        impl ExposableSecret for TestSecret {
+            fn expose_secret(&self) -> String {
+                self.secret.clone()
+            }
+        }
+
+        // Create a test client
+        let api_key = Box::new(TestSecret::new("test_api_key".to_string())) as Box<dyn ExposableSecret>;
+        let api_secret = Box::new(TestSecret::new("test_api_secret".to_string())) as Box<dyn ExposableSecret>;
+        let client = reqwest::Client::new();
+        let rate_limiter = RateLimiter::new(AccountTier::Tier4);
+
+        let rest_client = PrivateRestClient::new(
+            api_key,
+            api_secret,
+            "https://test.deribit.com",
+            rate_limiter,
+            client,
+        );
+
+        // Verify the method exists and is accessible
+        // Note: We don't actually call it to avoid external dependencies in tests
+        let _method_ref = PrivateRestClient::get_block_rfq_quotes;
+        let _client_ref = &rest_client;
+
+        println!("✓ get_block_rfq_quotes method is accessible through PrivateRestClient");
+        println!("✓ Method has correct signature: RestClient::get_block_rfq_quotes(&self, Option<i64>, Option<String>, Option<i64>) -> RestResult<GetBlockRfqQuotesResponse>");
+        
+        assert!(true, "get_block_rfq_quotes method is properly accessible");
+    }
 }

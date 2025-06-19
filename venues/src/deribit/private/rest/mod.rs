@@ -23,6 +23,7 @@ pub mod enable_cancel_on_disconnect;
 pub mod execute_block_trade;
 pub mod get_address_book;
 pub mod get_block_rfq_makers;
+pub mod get_block_rfq_quotes;
 pub mod get_block_rfq_user_info;
 pub mod get_cancel_on_disconnect;
 pub mod get_current_deposit_address;
