@@ -11,6 +11,7 @@ pub mod cancel_block_rfq;
 pub mod cancel_by_label;
 pub mod cancel_block_rfq_quote;
 pub mod cancel_order;
+pub mod cancel_quotes;
 pub mod cancel_withdrawal;
 pub mod client;
 pub mod create_block_rfq;
@@ -61,6 +62,7 @@ pub use cancel_block_rfq::{CancelBlockRfqRequest, CancelBlockRfqResponse};
 pub use cancel_by_label::{CancelByLabelRequest, CancelByLabelResponse};
 pub use cancel_block_rfq_quote::{CancelBlockRfqQuoteRequest, CancelBlockRfqQuoteResponse};
 pub use cancel_order::{CancelOrderRequest, CancelOrderResponse, CancelledOrder};
+pub use cancel_quotes::{CancelQuotesRequest, CancelQuotesResponse, CancelType};
 pub use cancel_withdrawal::{CancelWithdrawalRequest, CancelWithdrawalResponse};
 pub use client::RestClient;
 pub use create_block_rfq::{
