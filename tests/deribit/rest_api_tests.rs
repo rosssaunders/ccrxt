@@ -56,15 +56,19 @@ mod rest_api_tests {
 
     #[test]
     fn test_endpoint_exports() {
-        // Verify that the new types are properly exported
+        // Verify that the new types are properly exported through the public module
         use venues::deribit::public::rest::{GetTimeRequest, GetTimeResponse, TestRequest, TestResponse, TestResult};
+        
+        // Verify that get_time types are also accessible directly from the deribit module
+        use venues::deribit::{GetTimeRequest as TopLevelGetTimeRequest, GetTimeResponse as TopLevelGetTimeResponse};
         
         // Create instances to verify they're accessible
         let _get_time_req = GetTimeRequest {};
         let _test_req = TestRequest::new();
+        let _top_level_req = TopLevelGetTimeRequest {};
         
-        // This test just verifies the types are exported and accessible
-        assert!(true, "All new types are properly exported");
+        // This test just verifies the types are exported and accessible at both levels
+        assert!(true, "All new types are properly exported at both module levels");
     }
 
     #[test]
