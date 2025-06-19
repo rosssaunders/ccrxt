@@ -13,6 +13,7 @@ pub mod enable_cancel_on_disconnect;
 pub mod get_address_book;
 pub mod get_cancel_on_disconnect;
 pub mod get_current_deposit_address;
+pub mod get_withdrawals;
 pub mod move_positions;
 pub mod remove_from_address_book;
 pub mod reset_mmp;
@@ -43,6 +44,7 @@ pub use enable_cancel_on_disconnect::{CancelOnDisconnectScope, EnableCancelOnDis
 pub use get_address_book::{GetAddressBookRequest, GetAddressBookResponse};
 pub use get_cancel_on_disconnect::{CancelOnDisconnectResult, GetCancelOnDisconnectRequest, GetCancelOnDisconnectResponse};
 pub use get_current_deposit_address::{DepositAddress, GetCurrentDepositAddressRequest, GetCurrentDepositAddressResponse};
+pub use get_withdrawals::{GetWithdrawalsRequest, GetWithdrawalsResponse, GetWithdrawalsResult};
 pub use move_positions::{MovePositionTrade, MovePositionTradeResult, MovePositionsRequest, MovePositionsResponse, MovePositionsResult};
 pub use remove_from_address_book::{RemoveFromAddressBookRequest, RemoveFromAddressBookResponse};
 pub use reset_mmp::{IndexName, ResetMmpRequest, ResetMmpResponse};
