@@ -325,6 +325,16 @@ mod tests {
         // Verify the client exists
         let _ = &rest_client;
 
+        // Test that we can verify types are properly exported through module system
+        use crate::deribit::private::rest::{GetMmpStatusRequest as ExportedRequest, GetMmpStatusResponse as ExportedResponse, MmpStatus as ExportedStatus};
+        let _exported_request = ExportedRequest {
+            index_name: Some(IndexName::EthUsd),
+            mmp_group: None,
+            block_rfq: None,
+        };
+        let _exported_response_type = std::marker::PhantomData::<ExportedResponse>;
+        let _exported_status_type = std::marker::PhantomData::<ExportedStatus>;
+
         println!("All get_mmp_status types and methods are properly integrated and accessible");
     }
 }
