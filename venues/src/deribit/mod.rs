@@ -51,7 +51,7 @@ pub mod public {
     pub use self::rest::GetTimeRequest;
     pub use self::rest::GetTimeResponse;
     pub use self::rest::RestClient;
-    pub use self::websocket::DeribitWebSocketClient;
+    pub use self::websocket::PrivateWebSocketClient;
     pub use self::websocket::HelloRequest;
     pub use self::websocket::HelloResponse;
     pub use self::websocket::HelloResult;
@@ -236,7 +236,7 @@ pub use private::UpdateInAddressBookResponse;
 pub use private::WithdrawRequest;
 pub use private::WithdrawResponse;
 pub use private::WithdrawalData;
-pub use public::DeribitWebSocketClient;
+pub use public::PrivateWebSocketClient;
 pub use public::GetComboIdsRequest;
 pub use public::GetComboIdsResponse;
 pub use public::GetStatusRequest;

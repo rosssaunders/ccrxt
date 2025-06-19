@@ -3,8 +3,7 @@
 //! This method is used to subscribe to one or more public channels.
 //! This is the same method as /private/subscribe, but it can only be used for 'public' channels.
 
-use crate::deribit::public::websocket::client::{DeribitWebSocketClient, DeribitWebSocketError};
-use futures::SinkExt;
+use crate::deribit::public::websocket::client::{DeribitWebSocketError, PrivateWebSocketClient};
 use serde::{Deserialize, Serialize};
 
 /// Request parameters for the public/subscribe endpoint.
@@ -29,67 +28,15 @@ pub struct SubscribeResponse {
     pub result: Vec<String>,
 }
 
-/// JSON-RPC 2.0 request structure for WebSocket communication
-#[derive(Debug, Clone, Serialize)]
-pub struct JsonRpcRequest<T> {
-    /// JSON-RPC version, always "2.0"
-    pub jsonrpc: String,
-    /// Request ID for tracking
-    pub id: i32,
-    /// Method name
-    pub method: String,
-    /// Parameters for the method
-    pub params: T,
-}
-
-impl JsonRpcRequest<SubscribeRequest> {
-    /// Create a new subscribe request with the given channels
-    pub fn new_subscribe(id: i32, channels: Vec<String>) -> Self {
-        Self {
-            jsonrpc: "2.0".to_string(),
-            id,
-            method: "public/subscribe".to_string(),
-            params: SubscribeRequest { channels },
-        }
-    }
-}
-
-impl<T> JsonRpcRequest<T> {
-    /// Create a new JSON-RPC request with arbitrary method and params
-    pub fn new(id: i32, method: String, params: T) -> Self {
-        Self {
-            jsonrpc: "2.0".to_string(),
-            id,
-            method,
-            params,
-        }
-    }
-}
-
-impl DeribitWebSocketClient {
+impl PrivateWebSocketClient {
     /// Send a subscribe request and wait for the response
-    pub async fn subscribe(&mut self, channels: Vec<String>) -> Result<SubscribeResponse, DeribitWebSocketError> {
-        if !self.is_connected() {
-            return Err(DeribitWebSocketError::Connection(
-                "Not connected".to_string(),
-            ));
-        }
-        let req_id = self.next_request_id() as i32;
-        let req = JsonRpcRequest::new_subscribe(req_id, channels);
-        let msg = serde_json::to_string(&req)?;
-        if let Some(ws) = &mut self.websocket {
-            ws.send(tokio_tungstenite::tungstenite::Message::Text(msg.into()))
-                .await
-                .map_err(|e| DeribitWebSocketError::Connection(e.to_string()))?;
-            // Wait for the response
-            let response_str = self.receive_response().await?;
-            let response: SubscribeResponse = serde_json::from_str(&response_str)?;
-            Ok(response)
-        } else {
-            Err(DeribitWebSocketError::Connection(
-                "WebSocket not connected".to_string(),
-            ))
-        }
+    pub async fn subscribe(&mut self, request: SubscribeRequest) -> Result<SubscribeResponse, DeribitWebSocketError> {
+        // Send the request
+        self.send_serializable(&request).await?;
+        // Wait for the response
+        let response_str = self.receive_response().await?;
+        let response: SubscribeResponse = serde_json::from_str(&response_str)?;
+        Ok(response)
     }
 }
 
@@ -105,25 +52,22 @@ mod tests {
             "book.BTC-PERPETUAL.100ms".to_string(),
             "trades.BTC-PERPETUAL".to_string(),
         ];
-        let request = JsonRpcRequest::new_subscribe(1, channels);
+        let request = SubscribeRequest { channels };
 
         let json = serde_json::to_string(&request).unwrap();
         let parsed: serde_json::Value = serde_json::from_str(&json).unwrap();
 
-        assert_eq!(parsed["jsonrpc"], "2.0");
-        assert_eq!(parsed["id"], 1);
-        assert_eq!(parsed["method"], "public/subscribe");
-        assert_eq!(parsed["params"]["channels"][0], "book.BTC-PERPETUAL.100ms");
-        assert_eq!(parsed["params"]["channels"][1], "trades.BTC-PERPETUAL");
+        assert_eq!(parsed["channels"][0], "book.BTC-PERPETUAL.100ms");
+        assert_eq!(parsed["channels"][1], "trades.BTC-PERPETUAL");
     }
 
     #[test]
     fn test_subscribe_request_single_channel() {
         let channels = vec!["ticker.BTC-PERPETUAL".to_string()];
-        let request = JsonRpcRequest::new_subscribe(42, channels);
+        let request = SubscribeRequest { channels };
 
         let json = serde_json::to_string(&request).unwrap();
-        let expected = r#"{"jsonrpc":"2.0","id":42,"method":"public/subscribe","params":{"channels":["ticker.BTC-PERPETUAL"]}}"#;
+        let expected = r#"{"channels":["ticker.BTC-PERPETUAL"]}"#;
 
         assert_eq!(json, expected);
     }
@@ -164,23 +108,12 @@ mod tests {
     }
 
     #[test]
-    fn test_json_rpc_request_structure() {
-        let channels = vec!["test.channel".to_string()];
-        let request = JsonRpcRequest::new_subscribe(99, channels.clone());
-
-        assert_eq!(request.id, 99);
-        assert_eq!(request.jsonrpc, "2.0");
-        assert_eq!(request.method, "public/subscribe");
-        assert_eq!(request.params.channels, channels);
-    }
-
-    #[test]
     fn test_subscribe_request_empty_channels() {
         let channels: Vec<String> = vec![];
-        let request = JsonRpcRequest::new_subscribe(1, channels);
+        let request = SubscribeRequest { channels };
 
         let json = serde_json::to_string(&request).unwrap();
-        let expected = r#"{"jsonrpc":"2.0","id":1,"method":"public/subscribe","params":{"channels":[]}}"#;
+        let expected = r#"{"channels":[]}"#;
 
         assert_eq!(json, expected);
     }

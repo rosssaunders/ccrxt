@@ -5,6 +5,7 @@
 //! All message construction, serialization, and endpoint logic must be in separate files.
 //! This file should not contain endpoint-specific logic or message types.
 
+use futures::SinkExt;
 use std::collections::HashMap;
 use std::pin::Pin;
 use std::sync::Arc;
@@ -45,7 +46,7 @@ pub enum DeribitWebSocketError {
 /// WebSocket client for Deribit public endpoints
 ///
 /// This struct manages the connection and delegates endpoint logic to endpoint modules.
-pub struct DeribitWebSocketClient {
+pub struct PrivateWebSocketClient {
     /// WebSocket connection
     pub(crate) websocket: Option<WebSocketStream<MaybeTlsStream<TcpStream>>>,
     /// Connection status
@@ -60,7 +61,7 @@ pub struct DeribitWebSocketClient {
     url: String,
 }
 
-impl DeribitWebSocketClient {
+impl PrivateWebSocketClient {
     /// Create a new Deribit WebSocket client
     pub fn new(url: Option<String>, rate_limiter: RateLimiter) -> Self {
         Self {
@@ -100,10 +101,29 @@ impl DeribitWebSocketClient {
     pub fn is_connected(&self) -> bool {
         self.connected.load(Ordering::SeqCst)
     }
+
+    /// Send any serializable request struct over the websocket
+    pub async fn send_serializable<T: serde::Serialize + ?Sized>(&mut self, req: &T) -> Result<(), DeribitWebSocketError> {
+        if !self.is_connected() {
+            return Err(DeribitWebSocketError::Connection(
+                "Not connected".to_string(),
+            ));
+        }
+        let req_json = serde_json::to_string(req)?;
+        self.websocket
+            .as_mut()
+            .ok_or_else(|| DeribitWebSocketError::Connection("WebSocket not connected".to_string()))?
+            .send(tokio_tungstenite::tungstenite::Message::Text(
+                req_json.into(),
+            ))
+            .await
+            .map_err(|e| DeribitWebSocketError::Connection(e.to_string()))?;
+        Ok(())
+    }
 }
 
 #[async_trait]
-impl WebSocketConnection<DeribitMessage> for DeribitWebSocketClient {
+impl WebSocketConnection<DeribitMessage> for PrivateWebSocketClient {
     async fn connect(&mut self) -> BoxResult<()> {
         let (ws_stream, _) = connect_async(&self.url).await?;
         self.websocket = Some(ws_stream);
@@ -128,5 +148,3 @@ impl WebSocketConnection<DeribitMessage> for DeribitWebSocketClient {
         unimplemented!("message_stream is not implemented for DeribitWebSocketClient public client")
     }
 }
-
-// No endpoint logic or tests here. All endpoint logic must be in endpoint files.
