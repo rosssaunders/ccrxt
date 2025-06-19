@@ -18,6 +18,7 @@ pub mod create_block_rfq;
 pub mod create_combo;
 pub mod create_deposit_address;
 pub mod disable_cancel_on_disconnect;
+pub mod edit_block_rfq_quote;
 pub mod enable_cancel_on_disconnect;
 pub mod get_address_book;
 pub mod get_block_rfq_makers;
@@ -72,6 +73,7 @@ pub use create_block_rfq::{
 pub use create_combo::{CreateComboTrade, CreateComboRequest, CreateComboResponse, CreateComboResult, CreateComboLeg};
 pub use create_deposit_address::{CreateDepositAddressRequest, CreateDepositAddressResponse};
 pub use disable_cancel_on_disconnect::{DisableCancelOnDisconnectRequest, DisableCancelOnDisconnectResponse};
+pub use edit_block_rfq_quote::{EditBlockRfqQuoteRequest, EditBlockRfqQuoteResponse};
 pub use enable_cancel_on_disconnect::{CancelOnDisconnectScope, EnableCancelOnDisconnectRequest, EnableCancelOnDisconnectResponse};
 pub use get_address_book::{GetAddressBookRequest, GetAddressBookResponse};
 pub use get_block_rfq_makers::{GetBlockRfqMakersRequest, GetBlockRfqMakersResponse};
