@@ -22,6 +22,7 @@ pub mod edit_block_rfq_quote;
 pub mod enable_cancel_on_disconnect;
 pub mod get_address_book;
 pub mod get_block_rfq_makers;
+pub mod get_block_rfq_quotes;
 pub mod get_cancel_on_disconnect;
 pub mod get_current_deposit_address;
 pub mod get_deposits;
