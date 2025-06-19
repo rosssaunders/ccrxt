@@ -20,7 +20,6 @@ pub mod get_user_trades_by_currency;
 pub mod get_withdrawals;
 pub mod invalidate_block_trade_signature;
 pub mod move_positions;
-pub mod move_positions;
 pub mod remove_from_address_book;
 pub mod reset_mmp;
 pub mod send_rfq;
@@ -59,7 +58,6 @@ pub use get_trigger_order_history::{GetTriggerOrderHistoryRequest, GetTriggerOrd
 pub use get_user_trades_by_currency::{GetUserTradesByCurrencyRequest, GetUserTradesByCurrencyResponse, GetUserTradesByCurrencyResult, Trade};
 pub use get_withdrawals::{GetWithdrawalsRequest, GetWithdrawalsResponse, GetWithdrawalsResult};
 pub use invalidate_block_trade_signature::{InvalidateBlockTradeSignatureRequest, InvalidateBlockTradeSignatureResponse};
-pub use move_positions::{MovePositionTrade, MovePositionTradeResult, MovePositionsRequest, MovePositionsResponse, MovePositionsResult};
 pub use move_positions::{MovePositionTrade, MovePositionTradeResult, MovePositionsRequest, MovePositionsResponse, MovePositionsResult};
 pub use remove_from_address_book::{RemoveFromAddressBookRequest, RemoveFromAddressBookResponse};
 pub use reset_mmp::{IndexName, ResetMmpRequest, ResetMmpResponse};
