@@ -22,10 +22,7 @@ pub struct UnsubscribeResponse {
 impl PrivateWebSocketClient {
     /// Unsubscribe from specific channels
     pub async fn unsubscribe(&mut self, request: UnsubscribeRequest) -> Result<UnsubscribeResponse, DeribitWebSocketError> {
-        self.send_serializable(&request).await?;
-        // Wait for the response
-        let response_str = self.receive_response().await?;
-        let response: UnsubscribeResponse = serde_json::from_str(&response_str)?;
-        Ok(response)
+        self.send_and_receive::<UnsubscribeRequest, UnsubscribeResponse>(&request)
+            .await
     }
 }

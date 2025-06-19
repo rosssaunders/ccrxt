@@ -32,13 +32,10 @@ pub struct HelloResult {
 }
 
 impl PrivateWebSocketClient {
-    /// Send a hello message to introduce the client
-    pub async fn send_hello(&mut self, hello_req: HelloRequest) -> Result<HelloResponse, DeribitWebSocketError> {
-        self.send_serializable(&hello_req).await?;
-        // Wait for the response
-        let response_str = self.receive_response().await?;
-        let response: HelloResponse = serde_json::from_str(&response_str)?;
-        Ok(response)
+    /// Send a hello request and wait for the response
+    pub async fn hello(&mut self, request: HelloRequest) -> Result<HelloResult, DeribitWebSocketError> {
+        self.send_and_receive::<HelloRequest, HelloResult>(&request)
+            .await
     }
 }
 

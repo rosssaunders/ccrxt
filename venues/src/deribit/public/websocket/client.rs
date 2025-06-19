@@ -6,6 +6,7 @@
 //! This file should not contain endpoint-specific logic or message types.
 
 use futures::SinkExt;
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::pin::Pin;
 use std::sync::Arc;
@@ -41,6 +42,13 @@ pub enum DeribitWebSocketError {
 
     #[error("Invalid response for request id {id}")]
     InvalidResponse { id: u64 },
+}
+
+#[derive(serde::Deserialize)]
+struct JsonRpcEnvelope<R> {
+    id: Option<i32>,
+    jsonrpc: Option<String>,
+    result: R,
 }
 
 /// WebSocket client for Deribit public endpoints
@@ -119,6 +127,15 @@ impl PrivateWebSocketClient {
             .await
             .map_err(|e| DeribitWebSocketError::Connection(e.to_string()))?;
         Ok(())
+    }
+
+    /// Generic send and receive for request/response types
+    /// Generic send and receive for request/response types, extracting the `result` field
+    pub async fn send_and_receive<T: Serialize, R: for<'de> Deserialize<'de>>(&mut self, request: &T) -> Result<R, DeribitWebSocketError> {
+        self.send_serializable(request).await?;
+        let response_str = self.receive_response().await?;
+        let envelope: JsonRpcEnvelope<R> = serde_json::from_str(&response_str)?;
+        Ok(envelope.result)
     }
 }
 

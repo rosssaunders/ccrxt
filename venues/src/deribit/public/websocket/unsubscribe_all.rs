@@ -20,10 +20,7 @@ impl PrivateWebSocketClient {
     /// Unsubscribes from all channels for this client instance.
     pub async fn unsubscribe_all(&mut self) -> Result<UnsubscribeAllResponse, DeribitWebSocketError> {
         let req = UnsubscribeAllRequest::default();
-        self.send_serializable(&req).await?;
-        // Wait for the response
-        let response_str = self.receive_response().await?;
-        let response: UnsubscribeAllResponse = serde_json::from_str(&response_str)?;
-        Ok(response)
+        self.send_and_receive::<UnsubscribeAllRequest, UnsubscribeAllResponse>(&req)
+            .await
     }
 }

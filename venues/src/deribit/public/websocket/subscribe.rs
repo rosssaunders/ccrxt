@@ -18,12 +18,6 @@ pub struct SubscribeRequest {
 /// Response for public/subscribe endpoint.
 #[derive(Debug, Clone, Deserialize, Default)]
 pub struct SubscribeResponse {
-    /// The id that was sent in the request
-    pub id: i32,
-
-    /// The JSON-RPC version (2.0)
-    pub jsonrpc: String,
-
     /// A list of subscribed channels
     pub result: Vec<String>,
 }
@@ -31,12 +25,8 @@ pub struct SubscribeResponse {
 impl PrivateWebSocketClient {
     /// Send a subscribe request and wait for the response
     pub async fn subscribe(&mut self, request: SubscribeRequest) -> Result<SubscribeResponse, DeribitWebSocketError> {
-        // Send the request
-        self.send_serializable(&request).await?;
-        // Wait for the response
-        let response_str = self.receive_response().await?;
-        let response: SubscribeResponse = serde_json::from_str(&response_str)?;
-        Ok(response)
+        self.send_and_receive::<SubscribeRequest, SubscribeResponse>(&request)
+            .await
     }
 }
 
@@ -78,8 +68,6 @@ mod tests {
 
         let response: SubscribeResponse = serde_json::from_str(response_json).unwrap();
 
-        assert_eq!(response.id, 1);
-        assert_eq!(response.jsonrpc, "2.0");
         assert_eq!(response.result.len(), 2);
         assert_eq!(response.result[0], "book.BTC-PERPETUAL.100ms");
         assert_eq!(response.result[1], "trades.BTC-PERPETUAL");
@@ -91,8 +79,6 @@ mod tests {
 
         let response: SubscribeResponse = serde_json::from_str(response_json).unwrap();
 
-        assert_eq!(response.id, 123);
-        assert_eq!(response.jsonrpc, "2.0");
         assert_eq!(response.result.len(), 1);
         assert_eq!(response.result[0], "ticker.ETH-PERPETUAL");
     }
@@ -124,8 +110,6 @@ mod tests {
 
         let response: SubscribeResponse = serde_json::from_str(response_json).unwrap();
 
-        assert_eq!(response.id, 1);
-        assert_eq!(response.jsonrpc, "2.0");
         assert_eq!(response.result.len(), 0);
     }
 }
