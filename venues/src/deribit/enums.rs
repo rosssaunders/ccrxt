@@ -180,6 +180,8 @@ pub enum OrderState {
     Cancelled,
     #[serde(rename = "untriggered")]
     Untriggered,
+    #[serde(rename = "triggered")]
+    Triggered,
 }
 
 impl Display for OrderState {
@@ -190,6 +192,7 @@ impl Display for OrderState {
             OrderState::Rejected => write!(f, "rejected"),
             OrderState::Cancelled => write!(f, "cancelled"),
             OrderState::Untriggered => write!(f, "untriggered"),
+            OrderState::Triggered => write!(f, "triggered"),
         }
     }
 }
@@ -772,15 +775,19 @@ mod tests {
     fn test_order_state_serialization() {
         let open = OrderState::Open;
         let cancelled = OrderState::Cancelled;
+        let triggered = OrderState::Triggered;
 
         assert_eq!(serde_json::to_string(&open).unwrap(), "\"open\"");
         assert_eq!(serde_json::to_string(&cancelled).unwrap(), "\"cancelled\"");
+        assert_eq!(serde_json::to_string(&triggered).unwrap(), "\"triggered\"");
 
         let open_from_json: OrderState = serde_json::from_str("\"open\"").unwrap();
         let cancelled_from_json: OrderState = serde_json::from_str("\"cancelled\"").unwrap();
+        let triggered_from_json: OrderState = serde_json::from_str("\"triggered\"").unwrap();
 
         assert_eq!(open_from_json, OrderState::Open);
         assert_eq!(cancelled_from_json, OrderState::Cancelled);
+        assert_eq!(triggered_from_json, OrderState::Triggered);
     }
 
     #[test]
