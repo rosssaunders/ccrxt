@@ -1,3 +1,4 @@
+mod activate_option;
 mod adjust_position_margin_balance;
 mod amend_order;
 mod bills_history_archive;
@@ -10,6 +11,7 @@ mod get_account_balance;
 mod get_account_config;
 mod get_account_instruments;
 mod get_account_position_risk;
+mod get_account_switch_precheck;
 mod get_adjust_leverage_info;
 mod get_bills;
 mod get_bills_archive;
@@ -25,6 +27,7 @@ mod get_max_loan;
 mod get_max_size;
 mod get_max_withdrawal;
 mod get_mmp_config;
+mod get_move_positions_history;
 mod get_order;
 mod get_order_history;
 mod get_pending_orders;
@@ -36,10 +39,14 @@ mod get_risk_state;
 mod get_spot_borrow_repay_history;
 mod get_trade_fee;
 mod mmp_reset;
+mod move_positions;
 mod place_batch_orders;
 mod place_order;
+mod quick_margin_borrow_repay;
 mod set_account_level;
+mod set_auto_loan;
 mod set_auto_repay;
+mod set_collateral_assets;
 mod set_greeks;
 mod set_isolated_mode;
 mod set_leverage;
@@ -47,6 +54,7 @@ mod set_mmp_config;
 mod set_position_mode;
 mod spot_manual_borrow_repay;
 
+pub use activate_option::{ActivateOptionRequest, ActivateOptionResponse};
 pub use adjust_position_margin_balance::{
     AdjustPositionMarginBalanceRequest, AdjustPositionMarginBalanceResponse,
 };
@@ -66,6 +74,7 @@ pub use get_account_instruments::{AccountInstrument, GetAccountInstrumentsReques
 pub use get_account_position_risk::{
     AccountPositionRisk, BalanceRiskData, GetAccountPositionRiskRequest, PositionRiskData,
 };
+pub use get_account_switch_precheck::{AccountSwitchPrecheck, GetAccountSwitchPrecheckRequest};
 pub use get_adjust_leverage_info::{AdjustLeverageInfo, GetAdjustLeverageInfoRequest};
 pub use get_bills::{Bill, GetBillsRequest};
 pub use get_bills_archive::{BillArchive, GetBillsArchiveRequest};
@@ -81,6 +90,7 @@ pub use get_max_loan::{GetMaxLoanRequest, MaxLoan};
 pub use get_max_size::{GetMaxSizeRequest, MaxSize};
 pub use get_max_withdrawal::{GetMaxWithdrawalRequest, MaxWithdrawal};
 pub use get_mmp_config::{GetMmpConfigRequest, MmpConfig};
+pub use get_move_positions_history::{GetMovePositionsHistoryRequest, MovePositionsHistory};
 pub use get_order::{GetOrderRequest, OrderDetails};
 pub use get_order_history::GetOrderHistoryRequest;
 pub use get_pending_orders::GetPendingOrdersRequest;
@@ -96,10 +106,14 @@ pub use get_spot_borrow_repay_history::{
 };
 pub use get_trade_fee::{GetTradeFeeRequest, TradeFee};
 pub use mmp_reset::{MmpResetRequest, MmpResetResponse};
+pub use move_positions::{MovePositionsRequest, MovePositionsResponse};
 pub use place_batch_orders::{PlaceBatchOrdersRequest, PlaceBatchOrdersResponse};
 pub use place_order::{AttachedAlgoOrder, PlaceOrderRequest, PlaceOrderResponse};
+pub use quick_margin_borrow_repay::{QuickMarginBorrowRepayRequest, QuickMarginBorrowRepayResponse};
 pub use set_account_level::{SetAccountLevelRequest, SetAccountLevelResponse};
+pub use set_auto_loan::{SetAutoLoanRequest, SetAutoLoanResponse};
 pub use set_auto_repay::{SetAutoRepayRequest, SetAutoRepayResponse};
+pub use set_collateral_assets::{SetCollateralAssetsRequest, SetCollateralAssetsResponse};
 pub use set_greeks::{SetGreeksRequest, SetGreeksResponse};
 pub use set_isolated_mode::{SetIsolatedModeRequest, SetIsolatedModeResponse};
 pub use set_leverage::{SetLeverageRequest, SetLeverageResponse};
