@@ -3,6 +3,7 @@ pub mod add_to_address_book;
 pub mod approve_block_trade;
 pub mod cancel_all;
 pub mod cancel_all_block_rfq_quotes;
+pub mod cancel_all_by_currency;
 pub mod cancel_order;
 pub mod client;
 pub mod create_block_rfq;
@@ -32,6 +33,7 @@ pub use add_to_address_book::{AddToAddressBookRequest, AddToAddressBookResponse,
 pub use approve_block_trade::{ApproveBlockTradeRequest, ApproveBlockTradeResponse, Role};
 pub use cancel_all::{CancelAllRequest, CancelAllResponse};
 pub use cancel_all_block_rfq_quotes::{CancelAllBlockRfqQuotesRequest, CancelAllBlockRfqQuotesResponse};
+pub use cancel_all_by_currency::{CancelAllByCurrencyRequest, CancelAllByCurrencyResponse};
 pub use cancel_order::{CancelOrderRequest, CancelOrderResponse, CancelledOrder};
 pub use client::RestClient;
 pub use create_block_rfq::{CreateBlockRfqLeg, CreateBlockRfqRequest, CreateBlockRfqResponse, CreateBlockRfqResult, Quote, ResponseHedge as CreateBlockRfqResponseHedge, ResponseLeg as CreateBlockRfqResponseLeg};

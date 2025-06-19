@@ -326,6 +326,69 @@ impl Display for TriggerType {
     }
 }
 
+/// Instrument kind types for filtering
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum InstrumentKind {
+    #[serde(rename = "future")]
+    Future,
+    #[serde(rename = "option")]
+    Option,
+    #[serde(rename = "spot")]
+    Spot,
+    #[serde(rename = "future_combo")]
+    FutureCombo,
+    #[serde(rename = "option_combo")]
+    OptionCombo,
+    #[serde(rename = "combo")]
+    Combo,
+    #[serde(rename = "any")]
+    Any,
+}
+
+impl Display for InstrumentKind {
+    fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
+        match self {
+            InstrumentKind::Future => write!(f, "future"),
+            InstrumentKind::Option => write!(f, "option"),
+            InstrumentKind::Spot => write!(f, "spot"),
+            InstrumentKind::FutureCombo => write!(f, "future_combo"),
+            InstrumentKind::OptionCombo => write!(f, "option_combo"),
+            InstrumentKind::Combo => write!(f, "combo"),
+            InstrumentKind::Any => write!(f, "any"),
+        }
+    }
+}
+
+/// Order type for filtering cancel operations
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum OrderType {
+    #[serde(rename = "all")]
+    All,
+    #[serde(rename = "limit")]
+    Limit,
+    #[serde(rename = "trigger_all")]
+    TriggerAll,
+    #[serde(rename = "stop")]
+    Stop,
+    #[serde(rename = "take")]
+    Take,
+    #[serde(rename = "trailing_stop")]
+    TrailingStop,
+}
+
+impl Display for OrderType {
+    fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
+        match self {
+            OrderType::All => write!(f, "all"),
+            OrderType::Limit => write!(f, "limit"),
+            OrderType::TriggerAll => write!(f, "trigger_all"),
+            OrderType::Stop => write!(f, "stop"),
+            OrderType::Take => write!(f, "take"),
+            OrderType::TrailingStop => write!(f, "trailing_stop"),
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -625,5 +688,72 @@ mod tests {
 
         assert_eq!(index_price_from_json, TriggerType::IndexPrice);
         assert_eq!(mark_price_from_json, TriggerType::MarkPrice);
+    }
+
+    #[test]
+    fn test_instrument_kind_serialization() {
+        let future = InstrumentKind::Future;
+        let option = InstrumentKind::Option;
+        let spot = InstrumentKind::Spot;
+        let combo = InstrumentKind::Combo;
+
+        assert_eq!(serde_json::to_string(&future).unwrap(), "\"future\"");
+        assert_eq!(serde_json::to_string(&option).unwrap(), "\"option\"");
+        assert_eq!(serde_json::to_string(&spot).unwrap(), "\"spot\"");
+        assert_eq!(serde_json::to_string(&combo).unwrap(), "\"combo\"");
+
+        let future_from_json: InstrumentKind = serde_json::from_str("\"future\"").unwrap();
+        let option_from_json: InstrumentKind = serde_json::from_str("\"option\"").unwrap();
+        let spot_from_json: InstrumentKind = serde_json::from_str("\"spot\"").unwrap();
+        let combo_from_json: InstrumentKind = serde_json::from_str("\"combo\"").unwrap();
+
+        assert_eq!(future_from_json, InstrumentKind::Future);
+        assert_eq!(option_from_json, InstrumentKind::Option);
+        assert_eq!(spot_from_json, InstrumentKind::Spot);
+        assert_eq!(combo_from_json, InstrumentKind::Combo);
+    }
+
+    #[test]
+    fn test_instrument_kind_display() {
+        assert_eq!(format!("{}", InstrumentKind::Future), "future");
+        assert_eq!(format!("{}", InstrumentKind::Option), "option");
+        assert_eq!(format!("{}", InstrumentKind::Spot), "spot");
+        assert_eq!(format!("{}", InstrumentKind::FutureCombo), "future_combo");
+        assert_eq!(format!("{}", InstrumentKind::OptionCombo), "option_combo");
+        assert_eq!(format!("{}", InstrumentKind::Combo), "combo");
+        assert_eq!(format!("{}", InstrumentKind::Any), "any");
+    }
+
+    #[test]
+    fn test_order_type_serialization() {
+        let all = OrderType::All;
+        let limit = OrderType::Limit;
+        let trigger_all = OrderType::TriggerAll;
+        let stop = OrderType::Stop;
+
+        assert_eq!(serde_json::to_string(&all).unwrap(), "\"all\"");
+        assert_eq!(serde_json::to_string(&limit).unwrap(), "\"limit\"");
+        assert_eq!(serde_json::to_string(&trigger_all).unwrap(), "\"trigger_all\"");
+        assert_eq!(serde_json::to_string(&stop).unwrap(), "\"stop\"");
+
+        let all_from_json: OrderType = serde_json::from_str("\"all\"").unwrap();
+        let limit_from_json: OrderType = serde_json::from_str("\"limit\"").unwrap();
+        let trigger_all_from_json: OrderType = serde_json::from_str("\"trigger_all\"").unwrap();
+        let stop_from_json: OrderType = serde_json::from_str("\"stop\"").unwrap();
+
+        assert_eq!(all_from_json, OrderType::All);
+        assert_eq!(limit_from_json, OrderType::Limit);
+        assert_eq!(trigger_all_from_json, OrderType::TriggerAll);
+        assert_eq!(stop_from_json, OrderType::Stop);
+    }
+
+    #[test]
+    fn test_order_type_display() {
+        assert_eq!(format!("{}", OrderType::All), "all");
+        assert_eq!(format!("{}", OrderType::Limit), "limit");
+        assert_eq!(format!("{}", OrderType::TriggerAll), "trigger_all");
+        assert_eq!(format!("{}", OrderType::Stop), "stop");
+        assert_eq!(format!("{}", OrderType::Take), "take");
+        assert_eq!(format!("{}", OrderType::TrailingStop), "trailing_stop");
     }
 }
