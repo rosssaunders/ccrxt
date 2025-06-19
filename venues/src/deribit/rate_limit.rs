@@ -124,6 +124,7 @@ impl EndpointType {
             | "private/cancel_quotes"
             | "private/add_block_rfq_quote"
             | "private/create_block_rfq"
+            | "private/create_combo"
             | "private/edit_block_rfq_quote"
             | "private/cancel_block_rfq_quote"
             | "private/cancel_all_block_rfq_quotes"
