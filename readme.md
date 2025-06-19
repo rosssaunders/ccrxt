@@ -12,14 +12,21 @@ Rust wrappers around cryptocurrency exchange APIs with a focus on low-latency, h
 
 ## Supported Exchanges
 
-| Exchange | Type | Status | Features |
-|----------|------|--------|----------|
-| **Binance** | COIN-M Futures | ✅ Complete | Public & Private REST, Rate Limiting, WebSocket Support |
-| **Binance** | USD-M Futures (USDT-M) | ✅ Complete | Public & Private REST, Rate Limiting, WebSocket Support |
-| **Binance** | Portfolio Margin | ✅ Complete | Public & Private REST, Rate Limiting |
-| **Binance** | Options (EAPI) | 🚧 In Progress | Rate Limiting Framework |
-| **Crypto.com** | Spot Trading | ✅ Complete | Public & Private REST, Rate Limiting, Advanced Orders |
-| **OKX** | Spot & Derivatives | ✅ Complete | Public & Private REST, Rate Limiting |
+| Exchange       | Type                   | Status         | Features                                                                                    |
+| -------------- | ---------------------- | -------------- | ------------------------------------------------------------------------------------------- |
+| **Binance**    | COIN-M Futures         | ✅ Complete    | Public & Private REST, Rate Limiting, WebSocket Support                                     |
+| **Binance**    | USD-M Futures (USDT-M) | ✅ Complete    | Public & Private REST, Rate Limiting, WebSocket Support                                     |
+| **Binance**    | Portfolio Margin       | ✅ Complete    | Public & Private REST, Rate Limiting, Error Handling, Request Signing                       |
+| **Binance**    | Options (EAPI)         | 🚧 In Progress | Rate Limiting Framework                                                                     |
+| **Crypto.com** | Spot Trading           | ✅ Complete    | Public & Private REST, Rate Limiting, Advanced Orders                                       |
+| **OKX**        | Spot & Derivatives     | ✅ Complete    | Public & Private REST, Rate Limiting, Integration Tests                                     |
+| **Deribit**    | Public API             | ✅ Complete    | Public REST & WebSocket, Rate Limiting, JSON-RPC 2.0, Full Test Coverage                    |
+| **Bitmart**    | Spot & Derivatives     | 🚧 In Progress | Error Handling, REST Integration                                                            |
+| **Coinbase**   | Exchange               | ✅ Complete    | Private REST, Rate Limiting, Cursor Pagination, Secure Auth, Error Mapping, Sandbox Support |
+| **BingX**      | Spot & Derivatives     | 🚧 In Progress | REST Integration                                                                            |
+| **Bitget**     | Spot & Derivatives     | 🚧 In Progress | REST Integration                                                                            |
+| **Bullish**    | Spot                   | 🚧 In Progress | REST Integration                                                                            |
+| **Bybit**      | Spot & Derivatives     | 🚧 In Progress | REST Integration                                                                            |
 
 ### Exchange Features
 
@@ -29,10 +36,33 @@ Rust wrappers around cryptocurrency exchange APIs with a focus on low-latency, h
 - **Private REST**: Account management, trading, order management
 - **Rate Limiting**: Exchange-specific rate limit enforcement
 - **WebSocket Support**: Real-time data feeds (where available)
+- **Error Handling**: Consistent and robust error mapping per venue
+- **Test Coverage**: Unit and integration tests for all stable venues
+
+## Venue Documentation
+
+Each venue includes a README with:
+
+- Links to the official API documentation
+- Authentication requirements
+- List of implemented endpoints
+
+See the [venues](venues/) directory for details.
 
 ## Design Principles
 
-1. All venues to implement the low latency APIs. If Websocket available, use that over REST calls.
-2. All venue rate limiting to be implemented exactly.
-3. All wrappers around the endpoints should be pure. Not fixes and helper functions.
-4. All websockets to implement the common websocket trait.
+1. All venues implement low latency APIs. If WebSocket is available, it is preferred over REST.
+2. Venue rate limiting is implemented exactly as specified by the exchange.
+3. Wrappers around endpoints are pure; no helper or fix-up logic is included.
+4. All WebSocket clients implement the common WebSocket trait.
+5. File and module structure follows strict conventions for maintainability and clarity.
+
+## Testing
+
+- Unit tests are colocated with the code they test and do not require credentials or network access.
+- Integration tests are in the [tests/](tests/) directory and cover real API interactions (where supported).
+
+## Examples
+
+- Example code for each venue is in [venues/examples/](venues/examples/).
+- Examples are self-contained and demonstrate usage of public APIs, with clear instructions for credentials if
