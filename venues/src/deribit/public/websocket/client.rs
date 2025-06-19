@@ -151,6 +151,11 @@ impl DeribitWebSocketClient {
 
     /// Send a set_heartbeat request and wait for the response
     pub async fn set_heartbeat(&mut self, interval: u32) -> Result<String, DeribitWebSocketError> {
+        if interval < 10 {
+            return Err(DeribitWebSocketError::InvalidParameter(
+                "Interval must be at least 10 seconds".to_string(),
+            ));
+        }
         if !self.is_connected() {
             return Err(DeribitWebSocketError::Connection(
                 "Not connected".to_string(),
