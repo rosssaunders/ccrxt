@@ -1,4 +1,5 @@
 mod rest;
+pub mod websocket;
 
 pub use rest::RestClient;
 pub use rest::{
