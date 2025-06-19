@@ -77,6 +77,8 @@ pub mod private {
     pub use self::rest::CancelOnDisconnectScope;
     pub use self::rest::CancelOrderRequest;
     pub use self::rest::CancelOrderResponse;
+    pub use self::rest::CancelWithdrawalRequest;
+    pub use self::rest::CancelWithdrawalResponse;
     pub use self::rest::CancelledOrder;
     pub use self::rest::CreateDepositAddressRequest;
     pub use self::rest::CreateDepositAddressResponse;
@@ -151,6 +153,8 @@ pub use private::CancelOnDisconnectResult;
 pub use private::CancelOnDisconnectScope;
 pub use private::CancelOrderRequest;
 pub use private::CancelOrderResponse;
+pub use private::CancelWithdrawalRequest;
+pub use private::CancelWithdrawalResponse;
 pub use private::CancelledOrder;
 pub use private::CreateDepositAddressRequest;
 pub use private::CreateDepositAddressResponse;

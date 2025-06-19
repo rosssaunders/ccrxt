@@ -6,6 +6,7 @@ pub mod cancel_all_block_rfq_quotes;
 pub mod cancel_all_by_currency;
 pub mod cancel_all_by_currency_pair;
 pub mod cancel_order;
+pub mod cancel_withdrawal;
 pub mod client;
 pub mod create_block_rfq;
 pub mod create_deposit_address;
@@ -44,6 +45,7 @@ pub use cancel_all_block_rfq_quotes::{CancelAllBlockRfqQuotesRequest, CancelAllB
 pub use cancel_all_by_currency::{CancelAllByCurrencyRequest, CancelAllByCurrencyResponse};
 pub use cancel_all_by_currency_pair::{CancelAllByCurrencyPairRequest, CancelAllByCurrencyPairResponse};
 pub use cancel_order::{CancelOrderRequest, CancelOrderResponse, CancelledOrder};
+pub use cancel_withdrawal::{CancelWithdrawalRequest, CancelWithdrawalResponse};
 pub use client::RestClient;
 pub use create_block_rfq::{
     CreateBlockRfqLeg, CreateBlockRfqRequest, CreateBlockRfqResponse, CreateBlockRfqResult, Quote, ResponseHedge as CreateBlockRfqResponseHedge,
