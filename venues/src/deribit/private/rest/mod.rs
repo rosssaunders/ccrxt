@@ -23,6 +23,7 @@ pub mod enable_cancel_on_disconnect;
 pub mod execute_block_trade;
 pub mod get_address_book;
 pub mod get_block_rfq_makers;
+pub mod get_block_rfq_user_info;
 pub mod get_cancel_on_disconnect;
 pub mod get_current_deposit_address;
 pub mod get_deposits;
@@ -82,6 +83,7 @@ pub use execute_block_trade::{
 };
 pub use get_address_book::{GetAddressBookRequest, GetAddressBookResponse};
 pub use get_block_rfq_makers::{GetBlockRfqMakersRequest, GetBlockRfqMakersResponse};
+pub use get_block_rfq_user_info::{GetBlockRfqUserInfoRequest, GetBlockRfqUserInfoResponse, GetBlockRfqUserInfoResult, ParentIdentity, UserInfo};
 pub use get_cancel_on_disconnect::{CancelOnDisconnectResult, GetCancelOnDisconnectRequest, GetCancelOnDisconnectResponse};
 pub use get_current_deposit_address::{DepositAddress, GetCurrentDepositAddressRequest, GetCurrentDepositAddressResponse};
 pub use get_deposits::{DepositData, GetDepositsRequest, GetDepositsResponse, GetDepositsResult};
