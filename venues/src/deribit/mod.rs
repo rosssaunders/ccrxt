@@ -109,8 +109,8 @@ pub mod private {
     pub use self::rest::GetDepositsResult;
     pub use self::rest::GetOpenOrdersByCurrencyRequest;
     pub use self::rest::GetOpenOrdersByCurrencyResponse;
-    pub use self::rest::OpenOrder;
-    pub use self::rest::OpenOrderType;
+    pub use self::rest::GetOrderMarginByIdsRequest;
+    pub use self::rest::GetOrderMarginByIdsResponse;
     pub use self::rest::GetUserTradesByCurrencyAndTimeRequest;
     pub use self::rest::GetUserTradesByCurrencyAndTimeResponse;
     pub use self::rest::GetUserTradesByCurrencyAndTimeResult;
@@ -124,6 +124,9 @@ pub mod private {
     pub use self::rest::MovePositionsRequest;
     pub use self::rest::MovePositionsResponse;
     pub use self::rest::MovePositionsResult;
+    pub use self::rest::OpenOrder;
+    pub use self::rest::OpenOrderType;
+    pub use self::rest::OrderMarginInfo;
     pub use self::rest::Originator;
     pub use self::rest::RemoveFromAddressBookRequest;
     pub use self::rest::RemoveFromAddressBookResponse;
@@ -149,9 +152,6 @@ pub mod private {
     pub use self::rest::WithdrawResponse;
     pub use self::rest::WithdrawalData;
     pub use self::rest::{IndexName, MmpConfig, ResetMmpRequest, ResetMmpResponse, SetMmpConfigRequest, SetMmpConfigResponse};
-    pub use self::rest::GetOrderMarginByIdsRequest;
-    pub use self::rest::GetOrderMarginByIdsResponse;
-    pub use self::rest::OrderMarginInfo;
 }
 
 pub mod message;
@@ -205,8 +205,6 @@ pub use private::GetDepositsResponse;
 pub use private::GetDepositsResult;
 pub use private::GetOpenOrdersByCurrencyRequest;
 pub use private::GetOpenOrdersByCurrencyResponse;
-pub use private::OpenOrder;
-pub use private::OpenOrderType;
 pub use private::GetUserTradesByCurrencyAndTimeRequest;
 pub use private::GetUserTradesByCurrencyAndTimeResponse;
 pub use private::GetUserTradesByCurrencyAndTimeResult;
@@ -221,6 +219,8 @@ pub use private::MovePositionTradeResult;
 pub use private::MovePositionsRequest;
 pub use private::MovePositionsResponse;
 pub use private::MovePositionsResult;
+pub use private::OpenOrder;
+pub use private::OpenOrderType;
 pub use private::Originator;
 pub use private::RemoveFromAddressBookRequest;
 pub use private::RemoveFromAddressBookResponse;

@@ -16,4 +16,5 @@ pub use rest::{
     SubaccountTransferData, SubmitTransferToSubaccountRequest, SubmitTransferToSubaccountResponse,
     SubmitTransferToUserRequest, SubmitTransferToUserResponse, TransferData,
     UpdateInAddressBookRequest, UpdateInAddressBookResponse,
+    GetSettlementHistoryByInstrumentRequest, GetSettlementHistoryByInstrumentResponse, GetSettlementHistoryByInstrumentRpcResponse, SettlementEvent,
 };
