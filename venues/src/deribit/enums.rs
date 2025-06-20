@@ -225,8 +225,7 @@ impl Display for ComboState {
 }
 
 /// Withdrawal priority levels for Bitcoin withdrawals
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-#[derive(Default)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
 pub enum WithdrawalPriority {
     #[serde(rename = "insane")]
     Insane,
@@ -258,7 +257,6 @@ impl Display for WithdrawalPriority {
         }
     }
 }
-
 
 /// Withdrawal state
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -701,6 +699,23 @@ impl Display for ClearanceState {
     }
 }
 
+/// Order type for filtering open orders by instrument.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum OpenOrdersOrderType {
+    All,
+    Limit,
+    TriggerAll,
+    StopAll,
+    StopLimit,
+    StopMarket,
+    TakeAll,
+    TakeLimit,
+    TakeMarket,
+    TrailingAll,
+    TrailingStop,
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -1049,7 +1064,10 @@ mod tests {
 
         assert_eq!(serde_json::to_string(&all).unwrap(), "\"all\"");
         assert_eq!(serde_json::to_string(&limit).unwrap(), "\"limit\"");
-        assert_eq!(serde_json::to_string(&trigger_all).unwrap(), "\"trigger_all\"");
+        assert_eq!(
+            serde_json::to_string(&trigger_all).unwrap(),
+            "\"trigger_all\""
+        );
         assert_eq!(serde_json::to_string(&stop).unwrap(), "\"stop\"");
 
         let all_from_json: OrderType = serde_json::from_str("\"all\"").unwrap();
@@ -1138,7 +1156,10 @@ mod tests {
 
         assert_eq!(serde_json::to_string(&limit).unwrap(), "\"limit\"");
         assert_eq!(serde_json::to_string(&market).unwrap(), "\"market\"");
-        assert_eq!(serde_json::to_string(&liquidation).unwrap(), "\"liquidation\"");
+        assert_eq!(
+            serde_json::to_string(&liquidation).unwrap(),
+            "\"liquidation\""
+        );
 
         let limit_from_json: TradeOrderType = serde_json::from_str("\"limit\"").unwrap();
         let market_from_json: TradeOrderType = serde_json::from_str("\"market\"").unwrap();
@@ -1229,7 +1250,10 @@ mod tests {
         let failed = ClearanceState::Failed;
         let refunded = ClearanceState::Refunded;
 
-        assert_eq!(serde_json::to_string(&in_progress).unwrap(), "\"in_progress\"");
+        assert_eq!(
+            serde_json::to_string(&in_progress).unwrap(),
+            "\"in_progress\""
+        );
         assert_eq!(serde_json::to_string(&success).unwrap(), "\"success\"");
         assert_eq!(serde_json::to_string(&failed).unwrap(), "\"failed\"");
         assert_eq!(serde_json::to_string(&refunded).unwrap(), "\"refunded\"");
@@ -1248,12 +1272,21 @@ mod tests {
     #[test]
     fn test_clearance_state_display() {
         assert_eq!(format!("{}", ClearanceState::InProgress), "in_progress");
-        assert_eq!(format!("{}", ClearanceState::PendingAdminDecision), "pending_admin_decision");
-        assert_eq!(format!("{}", ClearanceState::PendingUserInput), "pending_user_input");
+        assert_eq!(
+            format!("{}", ClearanceState::PendingAdminDecision),
+            "pending_admin_decision"
+        );
+        assert_eq!(
+            format!("{}", ClearanceState::PendingUserInput),
+            "pending_user_input"
+        );
         assert_eq!(format!("{}", ClearanceState::Success), "success");
         assert_eq!(format!("{}", ClearanceState::Failed), "failed");
         assert_eq!(format!("{}", ClearanceState::Cancelled), "cancelled");
-        assert_eq!(format!("{}", ClearanceState::RefundInitiated), "refund_initiated");
+        assert_eq!(
+            format!("{}", ClearanceState::RefundInitiated),
+            "refund_initiated"
+        );
         assert_eq!(format!("{}", ClearanceState::Refunded), "refunded");
     }
 
