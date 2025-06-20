@@ -1,9 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::deribit::{
-    Currency, EndpointType, OrderDirection, RestResult, TriggerType, TradeOrderType
-};
+use crate::deribit::{Currency, EndpointType, OrderDirection, RestResult, TradeOrderType, TriggerType};
 
 /// Request parameters for getting trigger order history
 #[derive(Debug, Clone, Serialize)]
@@ -24,7 +22,7 @@ pub struct GetTriggerOrderHistoryRequest {
 /// Individual trigger order entry
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TriggerOrderEntry {
-    /// It represents the requested order size. For perpetual and inverse futures the amount is in USD units. 
+    /// It represents the requested order size. For perpetual and inverse futures the amount is in USD units.
     /// For options and linear futures and it is the underlying base currency coin.
     pub amount: f64,
     /// Direction: buy, or sell
@@ -56,7 +54,7 @@ pub struct TriggerOrderEntry {
     /// Optional (not added for spot). 'true for reduce-only orders only'
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reduce_only: Option<bool>,
-    /// Type of last request performed on the trigger order by user or system. 
+    /// Type of last request performed on the trigger order by user or system.
     /// "cancel" - when order was cancelled, "trigger:order" - when trigger order spawned market or limit order after being triggered
     pub request: String,
     /// Source of the order that is linked to the trigger order
@@ -118,8 +116,12 @@ impl RestClient {
     /// # Returns
     /// Trigger order history information for the specified currency
     pub async fn get_trigger_order_history(&self, request: GetTriggerOrderHistoryRequest) -> RestResult<GetTriggerOrderHistoryResponse> {
-        self.send_signed_request("private/get_trigger_order_history", &request, EndpointType::NonMatchingEngine)
-            .await
+        self.send_signed_request(
+            "private/get_trigger_order_history",
+            &request,
+            EndpointType::NonMatchingEngine,
+        )
+        .await
     }
 }
 
@@ -164,7 +166,10 @@ mod tests {
         assert_eq!(json_value.get("currency").unwrap(), "BTC");
         assert_eq!(json_value.get("instrument_name").unwrap(), "BTC-PERPETUAL");
         assert_eq!(json_value.get("count").unwrap(), 50);
-        assert_eq!(json_value.get("continuation").unwrap(), "continuation_token_123");
+        assert_eq!(
+            json_value.get("continuation").unwrap(),
+            "continuation_token_123"
+        );
     }
 
     #[test]
@@ -180,9 +185,14 @@ mod tests {
         let json_value: Value = serde_json::from_str(&json_str).unwrap();
 
         assert_eq!(json_value.get("currency").unwrap(), "ETH");
-        
+
         // Optional fields should not be present when None
-        assert!(!json_value.as_object().unwrap().contains_key("instrument_name"));
+        assert!(
+            !json_value
+                .as_object()
+                .unwrap()
+                .contains_key("instrument_name")
+        );
         assert!(!json_value.as_object().unwrap().contains_key("count"));
         assert!(!json_value.as_object().unwrap().contains_key("continuation"));
     }
@@ -225,7 +235,10 @@ mod tests {
 
         assert_eq!(response.id, 1);
         assert_eq!(response.jsonrpc, "2.0");
-        assert_eq!(response.result.continuation, Some("next_token_456".to_string()));
+        assert_eq!(
+            response.result.continuation,
+            Some("next_token_456".to_string())
+        );
         assert_eq!(response.result.entries.len(), 1);
 
         let entry = &response.result.entries[0];

@@ -579,7 +579,8 @@ mod rest_api_tests {
 
         println!("✓ GetBlockRfqQuotesResponse (with quotes) deserialization successful");
         println!("✓ Quote with hedge leg parsed correctly");
-        
+    }
+
     #[tokio::test]
     async fn test_get_block_rfq_quotes_method_exists() {
         use venues::deribit::{
@@ -628,5 +629,23 @@ mod rest_api_tests {
         println!("✓ Method has correct signature: RestClient::get_block_rfq_quotes(&self, Option<i64>, Option<String>, Option<i64>) -> RestResult<GetBlockRfqQuotesResponse>");
         
         assert!(true, "get_block_rfq_quotes method is properly accessible");
+    }
+
+    #[test]
+    fn test_get_order_margin_by_ids_structs() {
+        use venues::deribit::private::rest::{GetOrderMarginByIdsRequest, GetOrderMarginByIdsResponse, OrderMarginInfo};
+        let req = GetOrderMarginByIdsRequest { ids: vec!["1".to_string(), "2".to_string()] };
+        let json = serde_json::to_string(&req).unwrap();
+        assert!(json.contains("ids"));
+
+        let resp_json = r#"{
+            "jsonrpc": "2.0",
+            "id": 1,
+            "result": [
+                {"initial_margin": 0.1, "initial_margin_currency": "USD", "order_id": "1"}
+            ]
+        }"#;
+        let resp: GetOrderMarginByIdsResponse = serde_json::from_str(resp_json).unwrap();
+        assert_eq!(resp.result[0].order_id, "1");
     }
 }

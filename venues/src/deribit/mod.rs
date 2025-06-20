@@ -145,6 +145,9 @@ pub mod private {
     pub use self::rest::WithdrawResponse;
     pub use self::rest::WithdrawalData;
     pub use self::rest::{IndexName, MmpConfig, ResetMmpRequest, ResetMmpResponse, SetMmpConfigRequest, SetMmpConfigResponse};
+    pub use self::rest::GetOrderMarginByIdsRequest;
+    pub use self::rest::GetOrderMarginByIdsResponse;
+    pub use self::rest::OrderMarginInfo;
 }
 
 pub mod message;

@@ -1320,3 +1320,45 @@ mod tests {
         assert_eq!(format!("{}", CurrencyPair::StethEth), "steth_eth");
     }
 }
+
+/// Order time in force options for Deribit.
+///
+/// Valid values: "good_til_cancelled", "good_til_day", "fill_or_kill", "immediate_or_cancel"
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum TimeInForce {
+    /// Good Til Cancelled
+    #[serde(rename = "good_til_cancelled")]
+    GoodTilCancelled,
+
+    /// Good Til Day
+    #[serde(rename = "good_til_day")]
+    GoodTilDay,
+
+    /// Fill Or Kill
+    #[serde(rename = "fill_or_kill")]
+    FillOrKill,
+
+    /// Immediate Or Cancel
+    #[serde(rename = "immediate_or_cancel")]
+    ImmediateOrCancel,
+}
+
+/// The fill condition of a linked order for Deribit.
+///
+/// - "first_hit": Any execution of the primary order will fully cancel/place all secondary orders.
+/// - "complete_fill": A complete execution (primary order no longer exists) will cancel/place the secondary orders.
+/// - "incremental": Any fill of the primary order will cause proportional partial cancellation/placement of the secondary order. The amount subtracted/added to the secondary order will be rounded down to the contract size.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum TriggerFillCondition {
+    /// Any execution of the primary order will fully cancel/place all secondary orders.
+    #[serde(rename = "first_hit")]
+    FirstHit,
+
+    /// A complete execution (primary order no longer exists) will cancel/place the secondary orders.
+    #[serde(rename = "complete_fill")]
+    CompleteFill,
+
+    /// Any fill of the primary order will cause proportional partial cancellation/placement of the secondary order.
+    #[serde(rename = "incremental")]
+    Incremental,
+}

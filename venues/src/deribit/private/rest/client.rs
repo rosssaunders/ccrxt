@@ -134,6 +134,18 @@ impl RestClient {
         let result = resp.json::<T>().await?;
         Ok(result)
     }
+
+    /// Retrieves initial margins of given orders
+    pub async fn get_order_margin_by_ids(&self, ids: Vec<String>) -> RestResult<super::get_order_margin_by_ids::GetOrderMarginByIdsResponse> {
+        use super::get_order_margin_by_ids::GetOrderMarginByIdsRequest;
+        let params = GetOrderMarginByIdsRequest { ids };
+        self.send_signed_request(
+            "private/get_order_margin_by_ids",
+            &params,
+            crate::deribit::EndpointType::MatchingEngine,
+        )
+        .await
+    }
 }
 
 #[cfg(test)]

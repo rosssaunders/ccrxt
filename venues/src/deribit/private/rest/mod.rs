@@ -30,6 +30,8 @@ pub mod get_current_deposit_address;
 pub mod get_deposits;
 pub mod get_mmp_status;
 pub mod get_open_orders_by_instrument;
+pub mod get_order_margin_by_ids;
+pub mod get_order_state_by_label;
 pub mod get_transfers;
 pub mod get_trigger_order_history;
 pub mod get_user_trades_by_currency;
@@ -91,6 +93,8 @@ pub use get_current_deposit_address::{DepositAddress, GetCurrentDepositAddressRe
 pub use get_deposits::{DepositData, GetDepositsRequest, GetDepositsResponse, GetDepositsResult};
 pub use get_mmp_status::{GetMmpStatusRequest, GetMmpStatusResponse, MmpStatus};
 pub use get_open_orders_by_instrument::{GetOpenOrdersByInstrumentRequest, GetOpenOrdersByInstrumentResponse, OpenOrder};
+pub use get_order_margin_by_ids::{GetOrderMarginByIdsRequest, GetOrderMarginByIdsResponse, OrderMarginInfo};
+pub use get_order_state_by_label::{GetOrderStateByLabelRequest, GetOrderStateByLabelResponse};
 pub use get_transfers::{GetTransfersRequest, GetTransfersResponse, GetTransfersResult};
 pub use get_trigger_order_history::{GetTriggerOrderHistoryRequest, GetTriggerOrderHistoryResponse, GetTriggerOrderHistoryResult, TriggerOrderEntry};
 pub use get_user_trades_by_currency::{GetUserTradesByCurrencyRequest, GetUserTradesByCurrencyResponse, GetUserTradesByCurrencyResult, Trade};
