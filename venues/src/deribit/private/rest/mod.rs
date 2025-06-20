@@ -31,6 +31,7 @@ pub mod get_deposits;
 pub mod get_mmp_status;
 pub mod get_transfers;
 pub mod get_trigger_order_history;
+pub mod get_open_orders_by_currency;
 pub mod get_user_trades_by_currency;
 pub mod get_user_trades_by_currency_and_time;
 pub mod get_user_trades_by_instrument;
@@ -91,6 +92,7 @@ pub use get_deposits::{DepositData, GetDepositsRequest, GetDepositsResponse, Get
 pub use get_mmp_status::{GetMmpStatusRequest, GetMmpStatusResponse, MmpStatus};
 pub use get_transfers::{GetTransfersRequest, GetTransfersResponse, GetTransfersResult};
 pub use get_trigger_order_history::{GetTriggerOrderHistoryRequest, GetTriggerOrderHistoryResponse, GetTriggerOrderHistoryResult, TriggerOrderEntry};
+pub use get_open_orders_by_currency::{GetOpenOrdersByCurrencyRequest, GetOpenOrdersByCurrencyResponse, OpenOrder, OpenOrderType};
 pub use get_user_trades_by_currency::{GetUserTradesByCurrencyRequest, GetUserTradesByCurrencyResponse, GetUserTradesByCurrencyResult, Trade};
 pub use get_user_trades_by_currency_and_time::{GetUserTradesByCurrencyAndTimeRequest, GetUserTradesByCurrencyAndTimeResponse, GetUserTradesByCurrencyAndTimeResult};
 pub use get_user_trades_by_instrument::{GetUserTradesByInstrumentRequest, GetUserTradesByInstrumentResponse, GetUserTradesByInstrumentResult};
