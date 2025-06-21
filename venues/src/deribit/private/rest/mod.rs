@@ -56,6 +56,7 @@ pub mod submit_transfer_to_subaccount;
 pub mod submit_transfer_to_user;
 pub mod update_in_address_book;
 pub mod withdraw;
+pub mod get_margins;
 
 pub use add_block_rfq_quote::{
     AddBlockRfqQuoteRequest, AddBlockRfqQuoteResponse, AddBlockRfqQuoteResult, BlockRfqHedge, BlockRfqLeg, ExecutionInstruction, ResponseHedge, ResponseLeg,
@@ -128,3 +129,4 @@ pub use submit_transfer_to_subaccount::{SubaccountTransferData, SubmitTransferTo
 pub use submit_transfer_to_user::{SubmitTransferToUserRequest, SubmitTransferToUserResponse, TransferData};
 pub use update_in_address_book::{UpdateInAddressBookRequest, UpdateInAddressBookResponse};
 pub use withdraw::{WithdrawRequest, WithdrawResponse, WithdrawalData};
+pub use get_margins::{GetMarginsRequest, GetMarginsResponse, GetMarginsResult};
