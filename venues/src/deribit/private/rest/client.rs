@@ -135,6 +135,8 @@ impl RestClient {
         Ok(result)
     }
 
+    // See venues/src/deribit/private/rest/get_margins.rs for get_margins implementation
+
     /// Retrieves initial margins of given orders
     pub async fn get_order_margin_by_ids(&self, ids: Vec<String>) -> RestResult<super::get_order_margin_by_ids::GetOrderMarginByIdsResponse> {
         use super::get_order_margin_by_ids::GetOrderMarginByIdsRequest;
