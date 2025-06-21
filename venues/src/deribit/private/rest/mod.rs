@@ -33,6 +33,7 @@ pub mod get_open_orders_by_currency;
 pub mod get_open_orders_by_instrument;
 pub mod get_order_margin_by_ids;
 pub mod get_order_state_by_label;
+pub mod get_pending_block_trades;
 pub mod get_settlement_history_by_instrument;
 pub mod get_transfers;
 pub mod get_trigger_order_history;
@@ -98,6 +99,9 @@ pub use get_open_orders_by_currency::{GetOpenOrdersByCurrencyRequest, GetOpenOrd
 pub use get_open_orders_by_instrument::{GetOpenOrdersByInstrumentRequest, GetOpenOrdersByInstrumentResponse};
 pub use get_order_margin_by_ids::{GetOrderMarginByIdsRequest, GetOrderMarginByIdsResponse, OrderMarginInfo};
 pub use get_order_state_by_label::{GetOrderStateByLabelRequest, GetOrderStateByLabelResponse};
+pub use get_pending_block_trades::{
+    GetPendingBlockTradesRequest, GetPendingBlockTradesResponse, PendingBlockTrade, PendingBlockTradeRole, PendingBlockTradeState, PendingBlockTradeTrade,
+};
 pub use get_settlement_history_by_instrument::{GetSettlementHistoryByInstrumentRequest, GetSettlementHistoryByInstrumentResponse, SettlementEvent};
 pub use get_transfers::{GetTransfersRequest, GetTransfersResponse, GetTransfersResult};
 pub use get_trigger_order_history::{GetTriggerOrderHistoryRequest, GetTriggerOrderHistoryResponse, GetTriggerOrderHistoryResult, TriggerOrderEntry};
