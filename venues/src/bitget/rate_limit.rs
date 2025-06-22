@@ -201,9 +201,7 @@ impl RateLimiter {
         // Endpoint-specific limit per second
         if usage.request_timestamps_1s.len() >= endpoint_limit_per_second as usize {
             return Err(Errors::ApiError(ApiError::TooManyRequests {
-                msg: format!(
-                    "Endpoint rate limit ({endpoint_limit_per_second}/1s) exceeded"
-                ),
+                msg: format!("Endpoint rate limit ({endpoint_limit_per_second}/1s) exceeded"),
             }));
         }
 

@@ -78,4 +78,5 @@ use_small_heuristics = "Default"
 # Replace try! macro with ? shorthand if possible
 use_try_shorthand = false
 
-group_imports = "StdExternalCrate"
+# Only available in nightly
+# group_imports = "StdExternalCrate"

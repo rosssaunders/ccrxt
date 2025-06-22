@@ -31,7 +31,10 @@ use reqwest::Client;
 use rest::secrets::ExposableSecret;
 use sha2::Sha256;
 
-use crate::binance::spot::{rest::common::{build_url, send_rest_request}, Errors, RateLimiter, RestResponse, RestResult};
+use crate::binance::spot::{
+    Errors, RateLimiter, RestResponse, RestResult,
+    rest::common::{build_url, send_rest_request},
+};
 
 /// Signs a request using the decrypted API secret
 /// Signs a query string using the decrypted API secret and returns the signature as a hex string.
@@ -147,8 +150,7 @@ impl RestClient {
         query_params.push(("signature".to_string(), signature));
 
         // Final query string with signature
-        let final_query_string =
-            serde_urlencoded::to_string(&query_params).map_err(|e| Errors::Error(format!("Failed to encode final query string: {e}")))?;
+        let final_query_string = serde_urlencoded::to_string(&query_params).map_err(|e| Errors::Error(format!("Failed to encode final query string: {e}")))?;
 
         let url = build_url(&self.base_url, endpoint, Some(&final_query_string))?;
 
