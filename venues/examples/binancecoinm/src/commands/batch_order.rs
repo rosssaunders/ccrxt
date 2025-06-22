@@ -77,7 +77,7 @@ pub async fn handle_batch_order_command(
     let response = client.place_batch_orders(request).await?;
 
     // Print the results
-    println!("Batch order placed for {}:", symbol);
+    println!("Batch order placed for {symbol}:");
     for (i, order) in response.data.iter().enumerate() {
         match order {
             BatchOrderResult::Ok(order) => {
@@ -92,7 +92,7 @@ pub async fn handle_batch_order_command(
             }
             BatchOrderResult::Err(err) => {
                 println!("\nOrder {}:", i + 1);
-                println!("  Error: {:?}", err);
+                println!("  Error: {err:?}");
             }
         }
     }

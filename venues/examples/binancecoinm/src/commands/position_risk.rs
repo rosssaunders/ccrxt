@@ -14,7 +14,7 @@ pub async fn run_position_risk(client: &PrivateRestClient) {
         Ok(positions) => {
             println!("Position Risk:");
             for pos in positions.data {
-                println!("{:#?}", pos);
+                println!("{pos:#?}");
             }
         }
         Err(e) => eprintln!("Error fetching position risk: {e:?}"),

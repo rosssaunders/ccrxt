@@ -23,9 +23,9 @@ impl fmt::Display for Errors {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Errors::InvalidApiKey() => write!(f, "Invalid API key or signature"),
-            Errors::HttpError(err) => write!(f, "HTTP error: {}", err),
-            Errors::ApiError(err) => write!(f, "API error: {}", err),
-            Errors::Error(msg) => write!(f, "Error: {}", msg),
+            Errors::HttpError(err) => write!(f, "HTTP error: {err}"),
+            Errors::ApiError(err) => write!(f, "API error: {err}"),
+            Errors::Error(msg) => write!(f, "Error: {msg}"),
         }
     }
 }

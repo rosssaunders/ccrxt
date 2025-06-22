@@ -202,22 +202,19 @@ impl RateLimiter {
         if usage.request_timestamps_1s.len() >= endpoint_limit_per_second as usize {
             return Err(Errors::ApiError(ApiError::TooManyRequests {
                 msg: format!(
-                    "Endpoint rate limit ({}/1s) exceeded",
-                    endpoint_limit_per_second
+                    "Endpoint rate limit ({endpoint_limit_per_second}/1s) exceeded"
                 ),
             }));
         }
 
         // Order-specific limits (UID-based)
-        if is_order {
-            if let Some(order_limit) = order_limit_per_second {
-                if usage.order_timestamps_1s.len() >= order_limit as usize {
+        if is_order
+            && let Some(order_limit) = order_limit_per_second
+                && usage.order_timestamps_1s.len() >= order_limit as usize {
                     return Err(Errors::ApiError(ApiError::TooManyRequests {
-                        msg: format!("Order rate limit ({}/1s) exceeded", order_limit),
+                        msg: format!("Order rate limit ({order_limit}/1s) exceeded"),
                     }));
                 }
-            }
-        }
 
         Ok(())
     }

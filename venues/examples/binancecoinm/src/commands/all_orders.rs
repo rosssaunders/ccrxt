@@ -16,7 +16,7 @@ pub async fn run_all_orders(client: &PrivateRestClient, symbol: String, limit: u
         Ok(orders) => {
             println!("All Orders:");
             for order in orders.data {
-                println!("{:#?}", order);
+                println!("{order:#?}");
             }
         }
         Err(e) => eprintln!("Error fetching all orders: {e:?}"),

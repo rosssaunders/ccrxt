@@ -99,7 +99,7 @@ impl RestClient {
             if let Ok(error_response) = serde_json::from_str::<crate::bingx::ErrorResponse>(&error_text) {
                 Err(Errors::from(error_response))
             } else {
-                Err(Errors::Error(format!("HTTP {}: {}", status, error_text)))
+                Err(Errors::Error(format!("HTTP {status}: {error_text}")))
             }
         }
     }

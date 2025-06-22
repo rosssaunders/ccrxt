@@ -152,7 +152,7 @@ impl RestClient {
                 .text()
                 .await
                 .unwrap_or_else(|_| "Unknown error".to_string());
-            return Err(Errors::ApiError(format!("HTTP {}: {}", status, error_text)));
+            return Err(Errors::ApiError(format!("HTTP {status}: {error_text}")));
         }
 
         // Parse the response
@@ -165,7 +165,7 @@ impl RestClient {
     /// Generate HMAC-SHA256 signature for ByBit V5 API
     fn sign_payload(&self, payload: &str) -> Result<String, Errors> {
         let secret_key = self.api_secret.expose_secret();
-        let mut mac = Hmac::<Sha256>::new_from_slice(secret_key.as_bytes()).map_err(|e| Errors::AuthError(format!("Invalid secret key: {}", e)))?;
+        let mut mac = Hmac::<Sha256>::new_from_slice(secret_key.as_bytes()).map_err(|e| Errors::AuthError(format!("Invalid secret key: {e}")))?;
 
         mac.update(payload.as_bytes());
         let result = mac.finalize();

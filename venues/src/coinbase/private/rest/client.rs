@@ -86,13 +86,13 @@ impl RestClient {
     /// A result containing the signature as a base64 string or an error
     pub fn sign_request(&self, timestamp: &str, method: &str, request_path: &str, body: &str) -> Result<String, Errors> {
         // Create the prehash string: timestamp + method + requestPath + body
-        let prehash = format!("{}{}{}{}", timestamp, method, request_path, body);
+        let prehash = format!("{timestamp}{method}{request_path}{body}");
 
         // Decode the base64 API secret
         let api_secret = self.api_secret.expose_secret();
         let secret_bytes = general_purpose::STANDARD
             .decode(&api_secret)
-            .map_err(|e| Errors::Error(format!("Failed to decode API secret: {}", e)))?;
+            .map_err(|e| Errors::Error(format!("Failed to decode API secret: {e}")))?;
 
         // Sign with HMAC SHA256
         let mut mac = Hmac::<Sha256>::new_from_slice(&secret_bytes).map_err(|_| Errors::InvalidApiKey())?;
@@ -137,25 +137,25 @@ impl RestClient {
         let (request_path, body) = if method == reqwest::Method::GET {
             // For GET requests, add query parameters
             if let Some(params) = params {
-                let query_string = serde_urlencoded::to_string(params).map_err(|e| Errors::Error(format!("Failed to serialize query parameters: {}", e)))?;
+                let query_string = serde_urlencoded::to_string(params).map_err(|e| Errors::Error(format!("Failed to serialize query parameters: {e}")))?;
                 if !query_string.is_empty() {
                     // Parse the query string and add individual parameters
                     let parsed_params: Vec<(String, String)> =
-                        serde_urlencoded::from_str(&query_string).map_err(|e| Errors::Error(format!("Failed to parse query parameters: {}", e)))?;
+                        serde_urlencoded::from_str(&query_string).map_err(|e| Errors::Error(format!("Failed to parse query parameters: {e}")))?;
                     for (key, value) in &parsed_params {
                         request_builder = request_builder.query(&[(key, value)]);
                     }
-                    (format!("/{}?{}", endpoint, query_string), String::new())
+                    (format!("/{endpoint}?{query_string}"), String::new())
                 } else {
-                    (format!("/{}", endpoint), String::new())
+                    (format!("/{endpoint}"), String::new())
                 }
             } else {
-                (format!("/{}", endpoint), String::new())
+                (format!("/{endpoint}"), String::new())
             }
         } else {
             // For POST/PUT/DELETE requests, add JSON body
             let body = if let Some(params) = params {
-                serde_json::to_string(params).map_err(|e| Errors::Error(format!("Failed to serialize request body: {}", e)))?
+                serde_json::to_string(params).map_err(|e| Errors::Error(format!("Failed to serialize request body: {e}")))?
             } else {
                 String::new()
             };
@@ -165,7 +165,7 @@ impl RestClient {
                 request_builder = request_builder.header("Content-Type", "application/json");
             }
 
-            (format!("/{}", endpoint), body)
+            (format!("/{endpoint}"), body)
         };
 
         // Create signature
@@ -192,7 +192,7 @@ impl RestClient {
 
         if status.is_success() {
             // Parse successful response
-            let data = serde_json::from_str::<T>(&response_text).map_err(|e| Errors::Error(format!("Failed to parse response: {}", e)))?;
+            let data = serde_json::from_str::<T>(&response_text).map_err(|e| Errors::Error(format!("Failed to parse response: {e}")))?;
             Ok((data, headers))
         } else {
             // Parse error response
@@ -228,7 +228,7 @@ impl RestClient {
                     )),
                 }
             } else {
-                Err(Errors::Error(format!("HTTP {}: {}", status, response_text)))
+                Err(Errors::Error(format!("HTTP {status}: {response_text}")))
             }
         }
     }
@@ -310,25 +310,25 @@ impl RestClient {
         let (request_path, body) = if method == reqwest::Method::GET {
             // For GET requests, add query parameters
             if let Some(params) = params {
-                let query_string = serde_urlencoded::to_string(params).map_err(|e| Errors::Error(format!("Failed to serialize query parameters: {}", e)))?;
+                let query_string = serde_urlencoded::to_string(params).map_err(|e| Errors::Error(format!("Failed to serialize query parameters: {e}")))?;
                 if !query_string.is_empty() {
                     // Parse the query string and add individual parameters
                     let parsed_params: Vec<(String, String)> =
-                        serde_urlencoded::from_str(&query_string).map_err(|e| Errors::Error(format!("Failed to parse query parameters: {}", e)))?;
+                        serde_urlencoded::from_str(&query_string).map_err(|e| Errors::Error(format!("Failed to parse query parameters: {e}")))?;
                     for (key, value) in &parsed_params {
                         request_builder = request_builder.query(&[(key, value)]);
                     }
-                    (format!("/{}?{}", endpoint, query_string), String::new())
+                    (format!("/{endpoint}?{query_string}"), String::new())
                 } else {
-                    (format!("/{}", endpoint), String::new())
+                    (format!("/{endpoint}"), String::new())
                 }
             } else {
-                (format!("/{}", endpoint), String::new())
+                (format!("/{endpoint}"), String::new())
             }
         } else {
             // For POST/PUT/DELETE requests, add JSON body
             let body = if let Some(params) = params {
-                serde_json::to_string(params).map_err(|e| Errors::Error(format!("Failed to serialize request body: {}", e)))?
+                serde_json::to_string(params).map_err(|e| Errors::Error(format!("Failed to serialize request body: {e}")))?
             } else {
                 String::new()
             };
@@ -338,7 +338,7 @@ impl RestClient {
                 request_builder = request_builder.header("Content-Type", "application/json");
             }
 
-            (format!("/{}", endpoint), body)
+            (format!("/{endpoint}"), body)
         };
 
         // Create signature
@@ -364,7 +364,7 @@ impl RestClient {
 
         if status.is_success() {
             // Parse successful response
-            serde_json::from_str::<T>(&response_text).map_err(|e| Errors::Error(format!("Failed to parse response: {}", e)))
+            serde_json::from_str::<T>(&response_text).map_err(|e| Errors::Error(format!("Failed to parse response: {e}")))
         } else {
             // Parse error response
             if let Ok(error_response) = serde_json::from_str::<crate::coinbase::ErrorResponse>(&response_text) {
@@ -399,7 +399,7 @@ impl RestClient {
                     )),
                 }
             } else {
-                Err(Errors::Error(format!("HTTP {}: {}", status, response_text)))
+                Err(Errors::Error(format!("HTTP {status}: {response_text}")))
             }
         }
     }

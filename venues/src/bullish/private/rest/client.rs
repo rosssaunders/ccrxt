@@ -76,7 +76,7 @@ impl RestClient {
             .map_err(|e| Errors::RateLimitError(e.to_string()))?;
 
         let nonce = chrono::Utc::now().timestamp();
-        let message = format!("GET/trading-api/v1/users/hmac/login{}", nonce);
+        let message = format!("GET/trading-api/v1/users/hmac/login{nonce}");
 
         // Sign the message with HMAC-SHA256
         let mut mac = Hmac::<Sha256>::new_from_slice(self.api_secret.expose_secret().as_bytes()).map_err(|_| Errors::InvalidApiKey())?;
@@ -101,8 +101,7 @@ impl RestClient {
         if !response.status().is_success() {
             let error_text = response.text().await?;
             return Err(Errors::AuthenticationError(format!(
-                "Login failed: {}",
-                error_text
+                "Login failed: {error_text}"
             )));
         }
 
@@ -158,7 +157,7 @@ impl RestClient {
         let mut request = self
             .client
             .request(method.clone(), &url)
-            .header("Authorization", format!("Bearer {}", token))
+            .header("Authorization", format!("Bearer {token}"))
             .header("Content-Type", "application/json");
 
         if let Some(body_data) = body {
@@ -180,7 +179,7 @@ impl RestClient {
             let mut retry_request = self
                 .client
                 .request(method, &url)
-                .header("Authorization", format!("Bearer {}", token))
+                .header("Authorization", format!("Bearer {token}"))
                 .header("Content-Type", "application/json");
 
             if let Some(body_data) = body {
@@ -193,8 +192,7 @@ impl RestClient {
             if !retry_response.status().is_success() {
                 let error_text = retry_response.text().await?;
                 return Err(Errors::Error(format!(
-                    "Request failed after token refresh: {}",
-                    error_text
+                    "Request failed after token refresh: {error_text}"
                 )));
             }
 
@@ -204,7 +202,7 @@ impl RestClient {
 
         if !response.status().is_success() {
             let error_text = response.text().await?;
-            return Err(Errors::Error(format!("Request failed: {}", error_text)));
+            return Err(Errors::Error(format!("Request failed: {error_text}")));
         }
 
         let result: T = response.json().await?;

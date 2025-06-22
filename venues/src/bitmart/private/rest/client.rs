@@ -96,7 +96,7 @@ impl RestClient {
     /// A result containing the signature as a base64 string or an error
     pub fn sign_request(&self, timestamp: &str, method: &str, request_path: &str, body: &str) -> Result<String, Errors> {
         // Create the message string: timestamp + method + requestPath + body
-        let message = format!("{}{}{}{}", timestamp, method, request_path, body);
+        let message = format!("{timestamp}{method}{request_path}{body}");
 
         // Sign with HMAC SHA256
         let api_secret = self.api_secret.expose_secret();
@@ -142,7 +142,7 @@ impl RestClient {
                     format!("{}{}", self.base_url, endpoint)
                 };
                 let request_path = if let Some(params) = &query {
-                    format!("{}?{}", endpoint, params)
+                    format!("{endpoint}?{params}")
                 } else {
                     endpoint.to_string()
                 };
@@ -189,8 +189,7 @@ impl RestClient {
         let response_text = response.text().await?;
         let bitmart_response: BitMartResponse<T> = serde_json::from_str(&response_text).map_err(|e| {
             Errors::Error(format!(
-                "Failed to parse response: {} - Response: {}",
-                e, response_text
+                "Failed to parse response: {e} - Response: {response_text}"
             ))
         })?;
 

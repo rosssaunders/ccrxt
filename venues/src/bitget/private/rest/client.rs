@@ -91,7 +91,7 @@ impl RestClient {
     /// 3. Base64 encoding the result
     fn generate_signature(&self, timestamp: i64, method: &str, request_path: &str, query_string: Option<&str>, body: Option<&str>) -> Result<String, Errors> {
         let query_part = match query_string {
-            Some(q) if !q.is_empty() => format!("?{}", q),
+            Some(q) if !q.is_empty() => format!("?{q}"),
             _ => String::new(),
         };
 
@@ -107,7 +107,7 @@ impl RestClient {
         );
 
         let mut mac =
-            Hmac::<Sha256>::new_from_slice(self.api_secret.expose_secret().as_bytes()).map_err(|e| Errors::Error(format!("Failed to create HMAC: {}", e)))?;
+            Hmac::<Sha256>::new_from_slice(self.api_secret.expose_secret().as_bytes()).map_err(|e| Errors::Error(format!("Failed to create HMAC: {e}")))?;
 
         mac.update(sign_string.as_bytes());
         let result = mac.finalize();
@@ -215,8 +215,7 @@ impl RestClient {
                 Err(_) => {
                     // Failed to parse as success, treat as error
                     Err(Errors::Error(format!(
-                        "Failed to parse response: {}",
-                        response_text
+                        "Failed to parse response: {response_text}"
                     )))
                 }
             }
@@ -226,24 +225,24 @@ impl RestClient {
                 429 => {
                     Err(Errors::ApiError(
                         crate::bitget::errors::ApiError::RateLimitExceeded {
-                            msg: format!("Rate limit exceeded: {}", response_text),
+                            msg: format!("Rate limit exceeded: {response_text}"),
                             retry_after: None, // Bitget doesn't provide Retry-After header
                         },
                     ))
                 }
                 403 => Err(Errors::ApiError(
                     crate::bitget::errors::ApiError::Forbidden {
-                        msg: format!("Forbidden: {}", response_text),
+                        msg: format!("Forbidden: {response_text}"),
                     },
                 )),
                 408 => Err(Errors::ApiError(
                     crate::bitget::errors::ApiError::RequestTimeout {
-                        msg: format!("Request timeout: {}", response_text),
+                        msg: format!("Request timeout: {response_text}"),
                     },
                 )),
                 500..=599 => Err(Errors::ApiError(
                     crate::bitget::errors::ApiError::InternalServerError {
-                        msg: format!("Server error: {}", response_text),
+                        msg: format!("Server error: {response_text}"),
                     },
                 )),
                 _ => {

@@ -107,7 +107,7 @@ impl RestClient {
     /// # Returns
     /// Trading account information for the specified account
     pub async fn get_trading_account(&mut self, trading_account_id: &str) -> RestResult<TradingAccount> {
-        let endpoint = format!("/v1/accounts/trading-accounts/{}", trading_account_id);
+        let endpoint = format!("/v1/accounts/trading-accounts/{trading_account_id}");
 
         self.send_authenticated_request(
             &endpoint,

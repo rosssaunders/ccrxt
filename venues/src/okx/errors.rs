@@ -27,9 +27,9 @@ impl fmt::Display for Errors {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Errors::InvalidApiKey() => write!(f, "Invalid API key or signature"),
-            Errors::HttpError(err) => write!(f, "HTTP error: {}", err),
-            Errors::ApiError(err) => write!(f, "API error: {}", err),
-            Errors::Error(msg) => write!(f, "Error: {}", msg),
+            Errors::HttpError(err) => write!(f, "HTTP error: {err}"),
+            Errors::ApiError(err) => write!(f, "API error: {err}"),
+            Errors::Error(msg) => write!(f, "Error: {msg}"),
         }
     }
 }
@@ -44,13 +44,13 @@ impl From<reqwest::Error> for Errors {
 
 impl From<serde_json::Error> for Errors {
     fn from(err: serde_json::Error) -> Self {
-        Errors::Error(format!("JSON serialization error: {}", err))
+        Errors::Error(format!("JSON serialization error: {err}"))
     }
 }
 
 impl From<crate::okx::rate_limit::RateLimitError> for Errors {
     fn from(err: crate::okx::rate_limit::RateLimitError) -> Self {
-        Errors::Error(format!("Rate limit error: {}", err))
+        Errors::Error(format!("Rate limit error: {err}"))
     }
 }
 

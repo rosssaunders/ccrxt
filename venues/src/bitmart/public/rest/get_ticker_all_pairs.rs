@@ -21,7 +21,7 @@ pub struct GetTickerAllPairsResponse(pub Vec<TickerData>);
 impl GetTickerAllPairsResponse {
     /// Get the symbol from ticker data
     pub fn symbol(ticker: &TickerData) -> Option<&str> {
-        ticker.get(0).map(|s| s.as_str())
+        ticker.first().map(|s| s.as_str())
     }
 
     /// Get the latest price from ticker data

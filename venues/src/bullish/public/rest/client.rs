@@ -67,8 +67,7 @@ impl RestClient {
         if !response.status().is_success() {
             let error_text = response.text().await?;
             return Err(crate::bullish::Errors::Error(format!(
-                "Request failed: {}",
-                error_text
+                "Request failed: {error_text}"
             )));
         }
 

@@ -102,7 +102,7 @@ where
     match status {
         StatusCode::OK => {
             // Parse the JSON response
-            let data: T = serde_json::from_str(&response_text).map_err(|e| Errors::Error(format!("JSON parsing error: {}", e)))?;
+            let data: T = serde_json::from_str(&response_text).map_err(|e| Errors::Error(format!("JSON parsing error: {e}")))?;
             Ok(ParsedResponse {
                 data,
                 headers,
@@ -127,7 +127,7 @@ where
             // Try to parse as ErrorResponse first
             match serde_json::from_str::<ErrorResponse>(&response_text) {
                 Ok(error_response) => Err(Errors::ApiError(error_response.into())),
-                Err(_) => Err(Errors::Error(format!("HTTP {}: {}", status, response_text))),
+                Err(_) => Err(Errors::Error(format!("HTTP {status}: {response_text}"))),
             }
         }
     }

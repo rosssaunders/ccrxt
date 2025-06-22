@@ -80,7 +80,7 @@ impl RestClient {
 
         // Add parameters based on method
         if let Some(params) = params {
-            let params_value = serde_json::to_value(params).map_err(|e| Errors::Error(format!("Failed to serialize params: {}", e)))?;
+            let params_value = serde_json::to_value(params).map_err(|e| Errors::Error(format!("Failed to serialize params: {e}")))?;
             if method == reqwest::Method::GET {
                 // For GET requests, add parameters as query string
                 if let Some(params_obj) = params_value.as_object() {
@@ -114,13 +114,13 @@ impl RestClient {
         if !response.status().is_success() {
             let status = response.status();
             let error_text = response.text().await.map_err(Errors::HttpError)?;
-            return Err(Errors::Error(format!("HTTP {}: {}", status, error_text)));
+            return Err(Errors::Error(format!("HTTP {status}: {error_text}")));
         }
 
         // Parse the response
         let response_text = response.text().await.map_err(Errors::HttpError)?;
 
-        let parsed_response: T = serde_json::from_str(&response_text).map_err(|e| Errors::Error(format!("Failed to parse response: {}", e)))?;
+        let parsed_response: T = serde_json::from_str(&response_text).map_err(|e| Errors::Error(format!("Failed to parse response: {e}")))?;
 
         Ok(parsed_response)
     }

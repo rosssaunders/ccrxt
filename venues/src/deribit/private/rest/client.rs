@@ -76,7 +76,7 @@ impl RestClient {
     /// A result containing the signature as a hex string or an error
     pub fn sign_request(&self, request_data: &str, nonce: u64, request_id: u64) -> Result<String, Errors> {
         // Create the signature payload: request_data + nonce + request_id
-        let sig_payload = format!("{}{}{}", request_data, nonce, request_id);
+        let sig_payload = format!("{request_data}{nonce}{request_id}");
 
         // Sign with HMAC-SHA256
         let api_secret = self.api_secret.expose_secret();

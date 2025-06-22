@@ -33,7 +33,7 @@ fn sign_request(api_secret: &dyn ExposableSecret, method: &str, id: u64, api_key
     let params_string = params_to_string(params);
 
     // Create the signature payload: method + id + api_key + params_string + nonce
-    let sig_payload = format!("{}{}{}{}{}", method, id, api_key, params_string, nonce);
+    let sig_payload = format!("{method}{id}{api_key}{params_string}{nonce}");
 
     // Sign with HMAC-SHA256
     let api_secret = api_secret.expose_secret();
@@ -157,7 +157,7 @@ impl RestClient {
         Req: serde::Serialize,
         Resp: serde::de::DeserializeOwned,
     {
-        let params = serde_json::to_value(&request).map_err(|e| crate::cryptocom::Errors::Error(format!("Serialization error: {}", e)))?;
+        let params = serde_json::to_value(&request).map_err(|e| crate::cryptocom::Errors::Error(format!("Serialization error: {e}")))?;
         self.send_signed_request_int::<Resp>(method, params).await
     }
 

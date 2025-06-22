@@ -136,7 +136,7 @@ impl RestClient {
             headers.push(("X-MBX-APIKEY", self.api_key.expose_secret()));
         }
         let body_data = match body {
-            Some(b) => Some(serde_urlencoded::to_string(b).map_err(|e| crate::binance::coinm::Errors::Error(format!("URL encoding error: {}", e)))?),
+            Some(b) => Some(serde_urlencoded::to_string(b).map_err(|e| crate::binance::coinm::Errors::Error(format!("URL encoding error: {e}")))?),
             None => None,
         };
         if body_data.is_some() {
@@ -190,7 +190,7 @@ impl RestClient {
             ))
         })?;
         let signature = sign_request(self.api_secret.as_ref(), &serialized)?;
-        let signed = format!("{}&signature={}", serialized, signature);
+        let signed = format!("{serialized}&signature={signature}");
         if method == reqwest::Method::GET {
             self.send_request(endpoint, method, Some(&signed), None, weight, is_order)
                 .await

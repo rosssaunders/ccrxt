@@ -90,7 +90,7 @@ impl RestClient {
     /// A result containing the signature as a base64 string or an error
     pub fn sign_request(&self, timestamp: &str, method: &str, request_path: &str, body: &str) -> Result<String, Errors> {
         // Create the pre-hash string: timestamp + method + requestPath + body
-        let pre_hash = format!("{}{}{}{}", timestamp, method, request_path, body);
+        let pre_hash = format!("{timestamp}{method}{request_path}{body}");
 
         // Sign with HMAC SHA256
         let api_secret = self.api_secret.expose_secret();
@@ -133,19 +133,19 @@ impl RestClient {
         // Handle query parameters for GET requests or body for POST/PUT/DELETE
         let (request_path, body) = if method == reqwest::Method::GET {
             if let Some(params) = params {
-                let query_string = serde_urlencoded::to_string(params).map_err(|e| Errors::Error(format!("Failed to serialize query parameters: {}", e)))?;
+                let query_string = serde_urlencoded::to_string(params).map_err(|e| Errors::Error(format!("Failed to serialize query parameters: {e}")))?;
                 if !query_string.is_empty() {
                     request_builder = request_builder.query(&query_string);
-                    (format!("/{}?{}", endpoint, query_string), String::new())
+                    (format!("/{endpoint}?{query_string}"), String::new())
                 } else {
-                    (format!("/{}", endpoint), String::new())
+                    (format!("/{endpoint}"), String::new())
                 }
             } else {
-                (format!("/{}", endpoint), String::new())
+                (format!("/{endpoint}"), String::new())
             }
         } else {
             let body = if let Some(params) = params {
-                serde_json::to_string(params).map_err(|e| Errors::Error(format!("Failed to serialize request body: {}", e)))?
+                serde_json::to_string(params).map_err(|e| Errors::Error(format!("Failed to serialize request body: {e}")))?
             } else {
                 String::new()
             };
@@ -155,7 +155,7 @@ impl RestClient {
                 request_builder = request_builder.header("Content-Type", "application/json");
             }
 
-            (format!("/{}", endpoint), body)
+            (format!("/{endpoint}"), body)
         };
 
         // Create signature
@@ -182,13 +182,13 @@ impl RestClient {
             let response_text = response.text().await?;
 
             // Parse the response
-            let parsed: T = serde_json::from_str(&response_text).map_err(|e| Errors::Error(format!("Failed to parse response: {}", e)))?;
+            let parsed: T = serde_json::from_str(&response_text).map_err(|e| Errors::Error(format!("Failed to parse response: {e}")))?;
 
             Ok(parsed)
         } else {
             let status = response.status();
             let error_text = response.text().await?;
-            Err(Errors::Error(format!("HTTP {}: {}", status, error_text)))
+            Err(Errors::Error(format!("HTTP {status}: {error_text}")))
         }
     }
 }

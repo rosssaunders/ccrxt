@@ -153,7 +153,7 @@ impl RestClient {
     /// ```
     pub async fn get_account_assets(&self, request: GetAccountAssetsRequest) -> RestResult<GetAccountAssetsResponse> {
         let query_string = if request.coin.is_some() || request.asset_type.is_some() {
-            Some(serde_urlencoded::to_string(&request).map_err(|e| crate::bitget::Errors::Error(format!("Failed to encode query: {}", e)))?)
+            Some(serde_urlencoded::to_string(&request).map_err(|e| crate::bitget::Errors::Error(format!("Failed to encode query: {e}")))?)
         } else {
             None
         };

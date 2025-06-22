@@ -128,7 +128,7 @@ impl RestClient {
         // Add any additional query parameters
         if let Some(qs) = query_string {
             // Parse existing query string and add to params
-            let parsed: Vec<(String, String)> = serde_urlencoded::from_str(qs).map_err(|e| Errors::Error(format!("Invalid query string: {}", e)))?;
+            let parsed: Vec<(String, String)> = serde_urlencoded::from_str(qs).map_err(|e| Errors::Error(format!("Invalid query string: {e}")))?;
             query_params.extend(parsed);
         }
 
@@ -140,7 +140,7 @@ impl RestClient {
         }
 
         // Build query string for signing
-        let query_for_signing = serde_urlencoded::to_string(&query_params).map_err(|e| Errors::Error(format!("Failed to encode query string: {}", e)))?;
+        let query_for_signing = serde_urlencoded::to_string(&query_params).map_err(|e| Errors::Error(format!("Failed to encode query string: {e}")))?;
 
         // Sign the request
         let signature = sign_request(self.api_secret.as_ref(), &query_for_signing)?;
@@ -148,7 +148,7 @@ impl RestClient {
 
         // Final query string with signature
         let final_query_string =
-            serde_urlencoded::to_string(&query_params).map_err(|e| Errors::Error(format!("Failed to encode final query string: {}", e)))?;
+            serde_urlencoded::to_string(&query_params).map_err(|e| Errors::Error(format!("Failed to encode final query string: {e}")))?;
 
         let url = crate::binance::spot::rest::common::build_url(&self.base_url, endpoint, Some(&final_query_string))?;
 
@@ -159,7 +159,7 @@ impl RestClient {
         }
 
         let body_data = match body {
-            Some(b) => Some(serde_urlencoded::to_string(b).map_err(|e| Errors::Error(format!("URL encoding error: {}", e)))?),
+            Some(b) => Some(serde_urlencoded::to_string(b).map_err(|e| Errors::Error(format!("URL encoding error: {e}")))?),
             None => None,
         };
 

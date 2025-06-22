@@ -60,7 +60,7 @@ where
     let response = request_builder
         .send()
         .await
-        .map_err(|e| Errors::Error(format!("Failed to send HTTP request: {}", e)))?;
+        .map_err(|e| Errors::Error(format!("Failed to send HTTP request: {e}")))?;
 
     let duration = start.elapsed();
     let status = response.status();
@@ -69,7 +69,7 @@ where
     let response_text = response
         .text()
         .await
-        .map_err(|e| Errors::Error(format!("Failed to read response body: {}", e)))?;
+        .map_err(|e| Errors::Error(format!("Failed to read response body: {e}")))?;
 
     debug!("Response status: {}, body: {}", status, response_text);
 
@@ -104,16 +104,16 @@ where
                 if let Ok(error_response) = serde_json::from_str::<ErrorResponse>(&response_text) {
                     Errors::ApiError(ApiError::from(error_response))
                 } else {
-                    Errors::Error(format!("Bad Request: {}", error_msg))
+                    Errors::Error(format!("Bad Request: {error_msg}"))
                 }
             }
-            _ => Errors::Error(format!("HTTP {}: {}", status, error_msg)),
+            _ => Errors::Error(format!("HTTP {status}: {error_msg}")),
         };
         return Err(error);
     }
 
     // Try to parse the response as the expected type
-    let data = serde_json::from_str::<T>(&response_text).map_err(|e| Errors::Error(format!("Failed to parse response: {}", e)))?;
+    let data = serde_json::from_str::<T>(&response_text).map_err(|e| Errors::Error(format!("Failed to parse response: {e}")))?;
 
     Ok(ParsedResponse {
         data,

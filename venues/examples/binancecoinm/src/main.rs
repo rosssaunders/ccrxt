@@ -604,7 +604,7 @@ async fn main() -> Result<()> {
                     match _api_err {
                         // handle__api_error(_api_err);
                         ApiError::RateLimitExceeded { .. } => eprintln!("Rate limit exceeded"),
-                        _ => eprintln!("API Error: {}", _api_err),
+                        _ => eprintln!("API Error: {_api_err}"),
                     }
                 }
                 return Err(e);
@@ -615,10 +615,10 @@ async fn main() -> Result<()> {
                 match &e {
                     Errors::ApiError(_api_err) => match _api_err {
                         ApiError::RateLimitExceeded { .. } => eprintln!("Rate limit exceeded"),
-                        ApiError::BadSymbol { msg } => eprintln!("Bad symbol dsfsffdf: {}", msg),
-                        _ => eprintln!("API Error: {}", _api_err),
+                        ApiError::BadSymbol { msg } => eprintln!("Bad symbol dsfsffdf: {msg}"),
+                        _ => eprintln!("API Error: {_api_err}"),
                     },
-                    _ => eprintln!("Unexpected error: {}", e),
+                    _ => eprintln!("Unexpected error: {e}"),
                 }
                 return Err(e.into());
             }

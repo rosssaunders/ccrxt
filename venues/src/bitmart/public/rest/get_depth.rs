@@ -34,7 +34,7 @@ pub struct DepthData {
 impl DepthData {
     /// Get the price from an order book entry
     pub fn entry_price(entry: &OrderBookEntry) -> Option<&str> {
-        entry.get(0).map(|s| s.as_str())
+        entry.first().map(|s| s.as_str())
     }
 
     /// Get the amount from an order book entry

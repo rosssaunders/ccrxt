@@ -107,11 +107,11 @@ impl RestClient {
 
         // Add optional parameters
         if let Some(params) = params {
-            let params_str = serde_urlencoded::to_string(params).map_err(|e| Errors::Error(format!("Failed to serialize parameters: {}", e)))?;
+            let params_str = serde_urlencoded::to_string(params).map_err(|e| Errors::Error(format!("Failed to serialize parameters: {e}")))?;
 
             if !params_str.is_empty() {
                 for (key, value) in
-                    serde_urlencoded::from_str::<Vec<(String, String)>>(&params_str).map_err(|e| Errors::Error(format!("Failed to parse parameters: {}", e)))?
+                    serde_urlencoded::from_str::<Vec<(String, String)>>(&params_str).map_err(|e| Errors::Error(format!("Failed to parse parameters: {e}")))?
                 {
                     query_params.push((key, value));
                 }
@@ -121,7 +121,7 @@ impl RestClient {
         // Build query string for signing
         let query_string = query_params
             .iter()
-            .map(|(k, v)| format!("{}={}", k, v))
+            .map(|(k, v)| format!("{k}={v}"))
             .collect::<Vec<_>>()
             .join("&");
 
@@ -132,7 +132,7 @@ impl RestClient {
         // Build final query string
         let final_query_string = query_params
             .iter()
-            .map(|(k, v)| format!("{}={}", k, v))
+            .map(|(k, v)| format!("{k}={v}"))
             .collect::<Vec<_>>()
             .join("&");
 
@@ -170,7 +170,7 @@ impl RestClient {
             if let Ok(error_response) = serde_json::from_str::<crate::bingx::ErrorResponse>(&error_text) {
                 Err(Errors::from(error_response))
             } else {
-                Err(Errors::Error(format!("HTTP {}: {}", status, error_text)))
+                Err(Errors::Error(format!("HTTP {status}: {error_text}")))
             }
         }
     }

@@ -27,10 +27,10 @@ impl fmt::Display for Errors {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Errors::InvalidApiKey() => write!(f, "Invalid API key or signature"),
-            Errors::HttpError(err) => write!(f, "HTTP error: {}", err),
-            Errors::ApiError(err) => write!(f, "API error: {}", err),
-            Errors::RateLimitError(err) => write!(f, "Rate limit error: {}", err),
-            Errors::Error(msg) => write!(f, "Error: {}", msg),
+            Errors::HttpError(err) => write!(f, "HTTP error: {err}"),
+            Errors::ApiError(err) => write!(f, "API error: {err}"),
+            Errors::RateLimitError(err) => write!(f, "Rate limit error: {err}"),
+            Errors::Error(msg) => write!(f, "Error: {msg}"),
         }
     }
 }
@@ -45,7 +45,7 @@ impl From<reqwest::Error> for Errors {
 
 impl From<serde_json::Error> for Errors {
     fn from(err: serde_json::Error) -> Self {
-        Errors::Error(format!("JSON serialization error: {}", err))
+        Errors::Error(format!("JSON serialization error: {err}"))
     }
 }
 
@@ -129,34 +129,34 @@ pub enum ApiError {
 impl fmt::Display for ApiError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            ApiError::BadRequest { msg } => write!(f, "Bad Request: {}", msg),
-            ApiError::Unauthorized { msg } => write!(f, "Unauthorized: {}", msg),
-            ApiError::Forbidden { msg } => write!(f, "Forbidden: {}", msg),
-            ApiError::NotFound { msg } => write!(f, "Not Found: {}", msg),
-            ApiError::TooManyRequests { msg } => write!(f, "Too Many Requests: {}", msg),
-            ApiError::InternalServerError { msg } => write!(f, "Internal Server Error: {}", msg),
-            ApiError::InvalidPrice { msg } => write!(f, "Invalid Price: {}", msg),
-            ApiError::InsufficientFunds { msg } => write!(f, "Insufficient Funds: {}", msg),
-            ApiError::InvalidOrderSize { msg } => write!(f, "Invalid Order Size: {}", msg),
-            ApiError::InvalidProduct { msg } => write!(f, "Invalid Product: {}", msg),
-            ApiError::OrderNotFound { msg } => write!(f, "Order Not Found: {}", msg),
+            ApiError::BadRequest { msg } => write!(f, "Bad Request: {msg}"),
+            ApiError::Unauthorized { msg } => write!(f, "Unauthorized: {msg}"),
+            ApiError::Forbidden { msg } => write!(f, "Forbidden: {msg}"),
+            ApiError::NotFound { msg } => write!(f, "Not Found: {msg}"),
+            ApiError::TooManyRequests { msg } => write!(f, "Too Many Requests: {msg}"),
+            ApiError::InternalServerError { msg } => write!(f, "Internal Server Error: {msg}"),
+            ApiError::InvalidPrice { msg } => write!(f, "Invalid Price: {msg}"),
+            ApiError::InsufficientFunds { msg } => write!(f, "Insufficient Funds: {msg}"),
+            ApiError::InvalidOrderSize { msg } => write!(f, "Invalid Order Size: {msg}"),
+            ApiError::InvalidProduct { msg } => write!(f, "Invalid Product: {msg}"),
+            ApiError::OrderNotFound { msg } => write!(f, "Order Not Found: {msg}"),
             ApiError::OrderAlreadyCancelled { msg } => {
-                write!(f, "Order Already Cancelled: {}", msg)
+                write!(f, "Order Already Cancelled: {msg}")
             }
-            ApiError::OrderAlreadyFilled { msg } => write!(f, "Order Already Filled: {}", msg),
+            ApiError::OrderAlreadyFilled { msg } => write!(f, "Order Already Filled: {msg}"),
             ApiError::PostOnlyOrderWouldTrade { msg } => {
-                write!(f, "Post Only Order Would Trade: {}", msg)
+                write!(f, "Post Only Order Would Trade: {msg}")
             }
-            ApiError::TimestampInvalid { msg } => write!(f, "Timestamp Invalid: {}", msg),
-            ApiError::SignatureInvalid { msg } => write!(f, "Signature Invalid: {}", msg),
-            ApiError::PassphraseInvalid { msg } => write!(f, "Passphrase Invalid: {}", msg),
-            ApiError::ProfileNotFound { msg } => write!(f, "Profile Not Found: {}", msg),
-            ApiError::AccountNotFound { msg } => write!(f, "Account Not Found: {}", msg),
+            ApiError::TimestampInvalid { msg } => write!(f, "Timestamp Invalid: {msg}"),
+            ApiError::SignatureInvalid { msg } => write!(f, "Signature Invalid: {msg}"),
+            ApiError::PassphraseInvalid { msg } => write!(f, "Passphrase Invalid: {msg}"),
+            ApiError::ProfileNotFound { msg } => write!(f, "Profile Not Found: {msg}"),
+            ApiError::AccountNotFound { msg } => write!(f, "Account Not Found: {msg}"),
             ApiError::UnknownApiError { code, msg } => {
                 if let Some(code) = code {
-                    write!(f, "Unknown API Error {}: {}", code, msg)
+                    write!(f, "Unknown API Error {code}: {msg}")
                 } else {
-                    write!(f, "Unknown API Error: {}", msg)
+                    write!(f, "Unknown API Error: {msg}")
                 }
             }
         }

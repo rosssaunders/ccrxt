@@ -31,11 +31,11 @@ impl fmt::Display for Errors {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Errors::InvalidApiKey() => write!(f, "Invalid API key or signature"),
-            Errors::HttpError(err) => write!(f, "Http error: {}", err),
-            Errors::ApiError(err) => write!(f, "Deribit API error: {}", err),
-            Errors::Error(msg) => write!(f, "General error: {}", msg),
-            Errors::RateLimitError(err) => write!(f, "Rate limit error: {}", err),
-            Errors::SerdeJsonError(err) => write!(f, "JSON error: {}", err),
+            Errors::HttpError(err) => write!(f, "Http error: {err}"),
+            Errors::ApiError(err) => write!(f, "Deribit API error: {err}"),
+            Errors::Error(msg) => write!(f, "General error: {msg}"),
+            Errors::RateLimitError(err) => write!(f, "Rate limit error: {err}"),
+            Errors::SerdeJsonError(err) => write!(f, "JSON error: {err}"),
         }
     }
 }

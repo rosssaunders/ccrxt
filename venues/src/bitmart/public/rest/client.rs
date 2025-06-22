@@ -85,12 +85,12 @@ impl RestClient {
         // Build URL with query parameters for GET requests
         let final_url = if method == Method::GET && request.is_some() {
             let query_params =
-                serde_urlencoded::to_string(request.unwrap()).map_err(|e| Errors::Error(format!("Failed to serialize query parameters: {}", e)))?;
+                serde_urlencoded::to_string(request.unwrap()).map_err(|e| Errors::Error(format!("Failed to serialize query parameters: {e}")))?;
 
             if query_params.is_empty() {
                 url
             } else {
-                format!("{}?{}", url, query_params)
+                format!("{url}?{query_params}")
             }
         } else {
             url
@@ -116,8 +116,7 @@ impl RestClient {
         let response_text = response.text().await?;
         let bitmart_response: BitMartResponse<T> = serde_json::from_str(&response_text).map_err(|e| {
             Errors::Error(format!(
-                "Failed to parse response: {} - Response: {}",
-                e, response_text
+                "Failed to parse response: {e} - Response: {response_text}"
             ))
         })?;
 

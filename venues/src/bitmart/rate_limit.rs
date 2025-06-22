@@ -52,8 +52,7 @@ impl fmt::Display for RateLimitError {
             RateLimitError::Exceeded { endpoint_type } => {
                 write!(
                     f,
-                    "Rate limit exceeded for endpoint type: {:?}",
-                    endpoint_type
+                    "Rate limit exceeded for endpoint type: {endpoint_type:?}"
                 )
             }
         }

@@ -130,7 +130,7 @@ impl RestClient {
             headers.push(("X-MBX-APIKEY", self.api_key.expose_secret()));
         }
         let body_data = body
-            .map(|b| serde_urlencoded::to_string(b).map_err(|e| Errors::Error(format!("Failed to serialize body: {}", e))))
+            .map(|b| serde_urlencoded::to_string(b).map_err(|e| Errors::Error(format!("Failed to serialize body: {e}"))))
             .transpose()?;
         if body_data.is_some() {
             headers.push((
@@ -184,7 +184,7 @@ impl RestClient {
             ))
         })?;
         let signature = sign_request(self.api_secret.as_ref(), &serialized)?;
-        let signed = format!("{}&signature={}", serialized, signature);
+        let signed = format!("{serialized}&signature={signature}");
         if method == reqwest::Method::GET {
             self.send_request(endpoint, method, Some(&signed), None, weight, is_order)
                 .await

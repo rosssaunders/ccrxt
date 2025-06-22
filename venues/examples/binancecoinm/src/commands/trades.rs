@@ -76,7 +76,7 @@ pub async fn handle_trades_command(client: Arc<PrivateRestClient>, symbol: Strin
     println!("Trades for {} ({} total):", symbol, rows.len());
     let mut table = Table::new(rows);
     table.with(Style::rounded());
-    println!("{}", table);
+    println!("{table}");
 
     Ok(())
 }

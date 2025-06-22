@@ -46,7 +46,7 @@ pub async fn handle_account_command(client: Arc<PrivateRestClient>) -> Result<()
 
     let mut table = Table::new(rows);
     table.with(Style::rounded());
-    println!("{}", table);
+    println!("{table}");
 
     Ok(())
 }

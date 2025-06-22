@@ -25,7 +25,7 @@ pub struct GetRecentTradesResponse(pub Vec<TradeData>);
 impl GetRecentTradesResponse {
     /// Get the trading pair from trade data
     pub fn symbol(trade: &TradeData) -> Option<&str> {
-        trade.get(0).map(|s| s.as_str())
+        trade.first().map(|s| s.as_str())
     }
 
     /// Get the trade time (in milliseconds) from trade data

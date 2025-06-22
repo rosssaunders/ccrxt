@@ -58,7 +58,7 @@ fn print_exchange_info(info: &ExchangeInfoResponse) {
     let mut symbol_table = Table::new(symbol_rows);
     symbol_table.with(Style::rounded());
 
-    println!("{}", symbol_table);
+    println!("{symbol_table}");
     println!("\nRate Limits:");
 
     let rows: Vec<RateLimitRow> = info
@@ -74,7 +74,7 @@ fn print_exchange_info(info: &ExchangeInfoResponse) {
 
     let mut table = Table::new(rows);
     table.with(Style::rounded());
-    println!("{}", table);
+    println!("{table}");
 
     println!("\nFilters:");
 
@@ -203,30 +203,30 @@ fn print_exchange_info(info: &ExchangeInfoResponse) {
         println!("\nPRICE_FILTER:");
         let mut table = Table::new(price_filter_rows);
         table.with(Style::rounded());
-        println!("{}", table);
+        println!("{table}");
     }
     if !lot_size_filter_rows.is_empty() {
         println!("\nLOT_SIZE:");
         let mut table = Table::new(lot_size_filter_rows);
         table.with(Style::rounded());
-        println!("{}", table);
+        println!("{table}");
     }
     if !market_lot_size_filter_rows.is_empty() {
         println!("\nMARKET_LOT_SIZE:");
         let mut table = Table::new(market_lot_size_filter_rows);
         table.with(Style::rounded());
-        println!("{}", table);
+        println!("{table}");
     }
     if !max_num_orders_filter_rows.is_empty() {
         println!("\nMAX_NUM_ORDERS:");
         let mut table = Table::new(max_num_orders_filter_rows);
         table.with(Style::rounded());
-        println!("{}", table);
+        println!("{table}");
     }
     if !percent_price_filter_rows.is_empty() {
         println!("\nPERCENT_PRICE:");
         let mut table = Table::new(percent_price_filter_rows);
         table.with(Style::rounded());
-        println!("{}", table);
+        println!("{table}");
     }
 }

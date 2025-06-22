@@ -35,7 +35,7 @@ impl GetHistoryKlineResponse {
     /// Get the create timestamp (in seconds) from K-line data
     /// It can be used as the unique identification of K line
     pub fn timestamp(kline: &KlineData) -> Option<&str> {
-        kline.get(0).map(|s| s.as_str())
+        kline.first().map(|s| s.as_str())
     }
 
     /// Get the open price from K-line data

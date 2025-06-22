@@ -42,7 +42,7 @@ impl RestClient {
     /// # Returns
     /// Transfer result with status code.
     pub async fn create_subaccount_transfer(&self, params: CreateSubaccountTransferRequest) -> RestResult<CreateSubaccountTransferResponse> {
-        let params = serde_json::to_value(&params).map_err(|e| crate::cryptocom::Errors::Error(format!("Serialization error: {}", e)))?;
+        let params = serde_json::to_value(&params).map_err(|e| crate::cryptocom::Errors::Error(format!("Serialization error: {e}")))?;
 
         self.send_signed_request("private/create-subaccount-transfer", params)
             .await
