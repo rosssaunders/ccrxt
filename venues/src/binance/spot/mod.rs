@@ -5,7 +5,7 @@ mod request;
 pub(crate) mod rest;
 
 // Private module with re-exports
-pub mod private_impl {
+pub mod private {
     pub mod rest;
     // Re-export RestClient so it can be re-exported by the parent
     pub use self::rest::RestClient as PrivateRestClient;
@@ -16,8 +16,7 @@ pub mod private_impl {
 pub use enums::*;
 pub use errors::{ApiError, Errors};
 // Re-export for backward compatibility
-pub use private_impl as private;
-pub use private_impl::PrivateRestClient;
+pub use private::PrivateRestClient;
 pub use rate_limit::{RateLimitHeader, RateLimiter};
 
 pub use crate::binance::spot::errors::ErrorResponse;

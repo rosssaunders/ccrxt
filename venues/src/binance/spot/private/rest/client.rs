@@ -31,7 +31,7 @@ use reqwest::Client;
 use rest::secrets::ExposableSecret;
 use sha2::Sha256;
 
-use crate::binance::spot::{Errors, RateLimiter, RestResult};
+use crate::binance::spot::{rest::common::{build_url, send_rest_request}, Errors, RateLimiter, RestResponse, RestResult};
 
 /// Signs a request using the decrypted API secret
 /// Signs a query string using the decrypted API secret and returns the signature as a hex string.
@@ -150,7 +150,7 @@ impl RestClient {
         let final_query_string =
             serde_urlencoded::to_string(&query_params).map_err(|e| Errors::Error(format!("Failed to encode final query string: {e}")))?;
 
-        let url = crate::binance::spot::rest::common::build_url(&self.base_url, endpoint, Some(&final_query_string))?;
+        let url = build_url(&self.base_url, endpoint, Some(&final_query_string))?;
 
         let mut headers = vec![];
         let api_key = self.api_key.expose_secret();
@@ -170,7 +170,7 @@ impl RestClient {
             ));
         }
 
-        let rest_response = crate::binance::spot::rest::common::send_rest_request(
+        let rest_response = send_rest_request(
             &self.client,
             &url,
             method,
@@ -182,7 +182,7 @@ impl RestClient {
         )
         .await?;
 
-        Ok(crate::binance::spot::RestResponse {
+        Ok(RestResponse {
             data: rest_response.data,
             headers: rest_response.headers,
         })
