@@ -97,25 +97,6 @@ impl RestClient {
     /// # Notes
     /// - Either orderId or clientOrderId must be provided
     /// - Only orders with status NEW, PENDING, or PARTIALLY_FILLED can be canceled
-    ///
-    /// # Example
-    /// ```rust,no_run
-    /// use venues::bingx::{PrivateRestClient, CancelOrderRequest};
-    ///
-    /// async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    ///     let client: PrivateRestClient = unimplemented!();
-    ///     let request = CancelOrderRequest {
-    ///         symbol: "BTC-USDT".to_string(),
-    ///         order_id: Some(123456789),
-    ///         client_order_id: None,
-    ///         cancel_restrictions: None,
-    ///         recv_window: None,
-    ///     };
-    ///     let cancel_response = client.cancel_order(&request).await?;
-    ///     println!("Order canceled: {:?}", cancel_response);
-    ///     Ok(())
-    /// }
-    /// ```
     pub async fn cancel_order(&self, request: &CancelOrderRequest) -> RestResult<CancelOrderResponse> {
         self.send_request(
             "/openApi/spot/v1/trade/cancel",

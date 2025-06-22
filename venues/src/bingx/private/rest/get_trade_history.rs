@@ -108,29 +108,6 @@ impl RestClient {
     /// - If start_time/end_time is not filled, data of the past 24 hours is returned by default
     /// - Maximum 1000 records can be returned
     /// - Results are sorted by time field, from smallest to largest
-    ///
-    /// # Example
-    /// ```rust,no_run
-    /// use venues::bingx::{PrivateRestClient, GetTradeHistoryRequest};
-    ///
-    /// async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    ///     let client: PrivateRestClient = unimplemented!();
-    ///     
-    ///     let request = GetTradeHistoryRequest {
-    ///         symbol: "BTC-USDT".to_string(),
-    ///         order_id: None,
-    ///         start_time: Some(1658748648000),
-    ///         end_time: Some(1658748648400),
-    ///         from_id: None,
-    ///         limit: Some(100),
-    ///         recv_window: None,
-    ///     };
-    ///     let trades = client.get_trade_history(&request).await?;
-    ///     println!("Trade history: {:?}", trades);
-    ///     
-    ///     Ok(())
-    /// }
-    /// ```
     pub async fn get_trade_history(&self, request: &GetTradeHistoryRequest) -> RestResult<GetTradeHistoryResponse> {
         self.send_request(
             "/openApi/spot/v1/trade/myTrades",

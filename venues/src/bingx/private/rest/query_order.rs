@@ -99,24 +99,6 @@ impl RestClient {
     /// # Notes
     /// - Either orderId or clientOrderId must be provided
     /// - Only supports a query range of 2 hours for client order IDs
-    ///
-    /// # Example
-    /// ```rust,no_run
-    /// use venues::bingx::{PrivateRestClient, QueryOrderRequest};
-    ///
-    /// async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    ///     let client: PrivateRestClient = unimplemented!();
-    ///     let request = QueryOrderRequest {
-    ///         symbol: "BTC-USDT".to_string(),
-    ///         order_id: Some(123456789),
-    ///         client_order_id: None,
-    ///         recv_window: None,
-    ///     };
-    ///     let order_details = client.query_order(&request).await?;
-    ///     println!("Order details: {:?}", order_details);
-    ///     Ok(())
-    /// }
-    /// ```
     pub async fn query_order(&self, request: &QueryOrderRequest) -> RestResult<OrderDetails> {
         self.send_request(
             "/openApi/spot/v1/trade/query",

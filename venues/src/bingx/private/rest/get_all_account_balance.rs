@@ -85,30 +85,6 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the account balance overview or an error
-    ///
-    /// # Example
-    /// ```rust,no_run
-    /// use venues::bingx::{PrivateRestClient, GetAllAccountBalanceRequest, AccountType};
-    ///
-    /// async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    ///     let client: PrivateRestClient = unimplemented!();
-    ///     
-    ///     // Get all account balances
-    ///     let request = GetAllAccountBalanceRequest::default();
-    ///     let all_balances = client.get_all_account_balance(&request).await?;
-    ///     println!("Total accounts: {}", all_balances.accounts.len());
-    ///     
-    ///     // Get specific account type balance
-    ///     let request = GetAllAccountBalanceRequest {
-    ///         account_type: Some(AccountType::Spot),
-    ///         recv_window: None,
-    ///     };
-    ///     let spot_balance = client.get_all_account_balance(&request).await?;
-    ///     println!("Spot balance overview: {:?}", spot_balance);
-    ///     
-    ///     Ok(())
-    /// }
-    /// ```
     pub async fn get_all_account_balance(&self, request: &GetAllAccountBalanceRequest) -> RestResult<GetAllAccountBalanceResponse> {
         self.send_request(
             "/openApi/account/v1/allAccountBalance",

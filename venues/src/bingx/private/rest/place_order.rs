@@ -163,30 +163,6 @@ impl RestClient {
     /// - For limit orders, either quantity or quoteOrderQty is required
     /// - For buy-side market orders, quoteOrderQty is required
     /// - For sell-side market orders, quantity is required
-    ///
-    /// # Example
-    /// ```rust,no_run
-    /// use venues::bingx::{PrivateRestClient, PlaceOrderRequest, OrderType, OrderSide};
-    ///
-    /// async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    ///     let client: PrivateRestClient = unimplemented!();
-    ///     let request = PlaceOrderRequest {
-    ///         symbol: "BTC-USDT".to_string(),
-    ///         side: OrderSide::Buy,
-    ///         order_type: OrderType::Limit,
-    ///         price: Some("50000.0".to_string()),
-    ///         quantity: Some("0.001".to_string()),
-    ///         stop_price: None,
-    ///         quote_order_qty: None,
-    ///         new_client_order_id: None,
-    ///         time_in_force: None,
-    ///         recv_window: None,
-    ///     };
-    ///     let order_response = client.place_order(&request).await?;
-    ///     println!("Order placed: {:?}", order_response);
-    ///     Ok(())
-    /// }
-    /// ```
     pub async fn place_order(&self, request: &PlaceOrderRequest) -> RestResult<PlaceOrderResponse> {
         self.send_request(
             "/openApi/spot/v1/trade/order",

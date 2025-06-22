@@ -105,25 +105,6 @@ impl RestClient {
     /// # Notes
     /// - Process mode controls error handling behavior
     /// - Either orderIds or clientOrderIds can be used to identify orders
-    ///
-    /// # Example
-    /// ```rust,no_run
-    /// use venues::bingx::{PrivateRestClient, CancelMultipleOrdersRequest};
-    ///
-    /// async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    ///     let client: PrivateRestClient = unimplemented!();
-    ///     let request = CancelMultipleOrdersRequest {
-    ///         symbol: "BTC-USDT".to_string(),
-    ///         process: Some(1), // Handle partial failures
-    ///         order_ids: "123456789,123456790,123456791".to_string(),
-    ///         client_order_ids: None,
-    ///         recv_window: None,
-    ///     };
-    ///     let canceled_orders = client.cancel_multiple_orders(&request).await?;
-    ///     println!("Canceled {} orders", canceled_orders.orders.len());
-    ///     Ok(())
-    /// }
-    /// ```
     pub async fn cancel_multiple_orders(&self, request: &CancelMultipleOrdersRequest) -> RestResult<CancelMultipleOrdersResponse> {
         self.send_request(
             "/openApi/spot/v1/trade/cancelOrders",

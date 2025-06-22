@@ -81,30 +81,6 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the open orders or an error
-    ///
-    /// # Example
-    /// ```rust,no_run
-    /// use venues::bingx::{PrivateRestClient, GetOpenOrdersRequest};
-    ///
-    /// async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    ///     let client: PrivateRestClient = unimplemented!();
-    ///     
-    ///     // Get all open orders
-    ///     let request = GetOpenOrdersRequest::default();
-    ///     let orders = client.get_open_orders(&request).await?;
-    ///     println!("All open orders: {:?}", orders);
-    ///     
-    ///     // Get open orders for specific symbol
-    ///     let request = GetOpenOrdersRequest {
-    ///         symbol: Some("BTC-USDT".to_string()),
-    ///         recv_window: None,
-    ///     };
-    ///     let btc_orders = client.get_open_orders(&request).await?;
-    ///     println!("BTC-USDT open orders: {:?}", btc_orders);
-    ///     
-    ///     Ok(())
-    /// }
-    /// ```
     pub async fn get_open_orders(&self, request: &GetOpenOrdersRequest) -> RestResult<GetOpenOrdersResponse> {
         self.send_request(
             "/openApi/spot/v1/trade/openOrders",

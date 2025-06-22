@@ -121,32 +121,6 @@ impl RestClient {
     /// - If orderId is set, orders >= orderId will be returned
     /// - If startTime and endTime are provided, orderId is not required
     /// - Max page size is 100, and pageIndex * pageSize <= 10,000
-    ///
-    /// # Example
-    /// ```rust,no_run
-    /// use venues::bingx::{PrivateRestClient, GetOrderHistoryRequest, OrderStatus};
-    ///
-    /// async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    ///     let client: PrivateRestClient = unimplemented!();
-    ///     
-    ///     // Get all order history
-    ///     let request = GetOrderHistoryRequest::default();
-    ///     let history = client.get_order_history(&request).await?;
-    ///     println!("Order history: {:?}", history);
-    ///     
-    ///     // Get filtered order history
-    ///     let request = GetOrderHistoryRequest {
-    ///         symbol: Some("BTC-USDT".to_string()),
-    ///         status: Some(OrderStatus::Filled),
-    ///         page_size: Some(50),
-    ///         ..Default::default()
-    ///     };
-    ///     let filtered_history = client.get_order_history(&request).await?;
-    ///     println!("Filtered history: {:?}", filtered_history);
-    ///     
-    ///     Ok(())
-    /// }
-    /// ```
     pub async fn get_order_history(&self, request: &GetOrderHistoryRequest) -> RestResult<GetOrderHistoryResponse> {
         self.send_request(
             "/openApi/spot/v1/trade/historyOrders",

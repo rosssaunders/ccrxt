@@ -48,19 +48,6 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the fund account balances or an error
-    ///
-    /// # Example
-    /// ```rust,no_run
-    /// use venues::bingx::{PrivateRestClient, GetFundBalanceRequest};
-    ///
-    /// async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    ///     let client: PrivateRestClient = unimplemented!();
-    ///     let request = GetFundBalanceRequest::default();
-    ///     let balances = client.get_fund_balance(&request).await?;
-    ///     println!("Fund Balances: {:?}", balances);
-    ///     Ok(())
-    /// }
-    /// ```
     pub async fn get_fund_balance(&self, request: &GetFundBalanceRequest) -> RestResult<GetFundBalanceResponse> {
         self.send_request(
             "/openApi/fund/v1/account/balance",

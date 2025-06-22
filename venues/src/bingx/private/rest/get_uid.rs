@@ -31,19 +31,6 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the account UID or an error
-    ///
-    /// # Example
-    /// ```rust,no_run
-    /// use venues::bingx::{PrivateRestClient, GetUidRequest};
-    ///
-    /// async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    ///     let client: PrivateRestClient = unimplemented!();
-    ///     let request = GetUidRequest::default();
-    ///     let uid_response = client.get_uid(&request).await?;
-    ///     println!("UID: {}", uid_response.uid);
-    ///     Ok(())
-    /// }
-    /// ```
     pub async fn get_uid(&self, request: &GetUidRequest) -> RestResult<GetUidResponse> {
         self.send_request(
             "/openApi/account/v1/uid",

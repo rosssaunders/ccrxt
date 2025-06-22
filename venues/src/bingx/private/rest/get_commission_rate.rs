@@ -37,24 +37,6 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the commission rates or an error
-    ///
-    /// # Example
-    /// ```rust,no_run
-    /// use venues::bingx::{PrivateRestClient, GetCommissionRateRequest};
-    ///
-    /// async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    ///     let client: PrivateRestClient = unimplemented!();
-    ///     let request = GetCommissionRateRequest {
-    ///         symbol: "BTC-USDT".to_string(),
-    ///         recv_window: None,
-    ///     };
-    ///     let commission_rate = client.get_commission_rate(&request).await?;
-    ///     println!("Taker rate: {}, Maker rate: {}",
-    ///         commission_rate.taker_commission_rate,
-    ///         commission_rate.maker_commission_rate);
-    ///     Ok(())
-    /// }
-    /// ```
     pub async fn get_commission_rate(&self, request: &GetCommissionRateRequest) -> RestResult<GetCommissionRateResponse> {
         self.send_request(
             "/openApi/spot/v1/user/commissionRate",
