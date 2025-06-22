@@ -211,8 +211,8 @@ mod tests {
         assert_eq!(first_trade.commission, 0.05);
         assert_eq!(first_trade.commission_asset, "USDT");
         assert_eq!(first_trade.time, 1658748648396);
-        assert_eq!(first_trade.is_buyer, true);
-        assert_eq!(first_trade.is_maker, false);
+        assert!(first_trade.is_buyer);
+        assert!(!first_trade.is_maker);
 
         let second_trade = &response.trades[1];
         assert_eq!(second_trade.symbol, "BTC-USDT");
@@ -224,8 +224,8 @@ mod tests {
         assert_eq!(second_trade.commission, 0.1002);
         assert_eq!(second_trade.commission_asset, "USDT");
         assert_eq!(second_trade.time, 1658748650000);
-        assert_eq!(second_trade.is_buyer, false);
-        assert_eq!(second_trade.is_maker, true);
+        assert!(!second_trade.is_buyer);
+        assert!(second_trade.is_maker);
     }
 
     #[test]
@@ -254,7 +254,7 @@ mod tests {
         assert_eq!(trade.commission, 0.05);
         assert_eq!(trade.commission_asset, "USDT");
         assert_eq!(trade.time, 1658748648396);
-        assert_eq!(trade.is_buyer, true);
-        assert_eq!(trade.is_maker, false);
+        assert!(trade.is_buyer);
+        assert!(!trade.is_maker);
     }
 }

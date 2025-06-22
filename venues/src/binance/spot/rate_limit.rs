@@ -314,10 +314,7 @@ mod tests {
         if let Err(Errors::ApiError(ApiError::TooManyRequests { msg })) = result {
             assert!(msg.contains("6,000/5min"));
         } else {
-            assert!(
-                false,
-                "Expected TooManyRequests error for raw request limit"
-            );
+            unreachable!("Expected TooManyRequests error for raw request limit");
         }
     }
 

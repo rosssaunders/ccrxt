@@ -87,7 +87,7 @@ mod tests {
     fn test_cancel_order_response_structure() {
         let json = r#"{"result": true}"#;
         let response: CancelOrderResponse = serde_json::from_str(json).unwrap();
-        assert_eq!(response.result, true);
+        assert!(response.result);
     }
 
     #[test]

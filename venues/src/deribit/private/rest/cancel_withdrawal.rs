@@ -253,9 +253,9 @@ mod tests {
         assert_eq!(response.id, 42);
 
         // Verify result structure
-        assert!(response.result.address.len() > 0);
+        assert!(!response.result.address.is_empty());
         assert!(response.result.amount > 0.0);
-        assert!(response.result.currency.len() > 0);
+        assert!(!response.result.currency.is_empty());
         assert!(response.result.id > 0);
     }
 }

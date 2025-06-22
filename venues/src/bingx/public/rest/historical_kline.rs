@@ -166,8 +166,14 @@ mod tests {
 
         let response: GetHistoricalKlineResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.klines.len(), 1);
-        let kline = response.klines.get(0).expect("Expected at least one kline entry");
-        assert_eq!(*kline.get(0).expect("Missing open_time in kline"), 1640995200000.0); // open_time
+        let kline = response
+            .klines
+            .get(0)
+            .expect("Expected at least one kline entry");
+        assert_eq!(
+            *kline.first().expect("Missing open_time in kline"),
+            1640995200000.0
+        ); // open_time
         assert_eq!(*kline.get(1).expect("Missing open in kline"), 45000.0); // open
         assert_eq!(*kline.get(2).expect("Missing high in kline"), 46000.0); // high
         assert_eq!(*kline.get(3).expect("Missing low in kline"), 44000.0); // low

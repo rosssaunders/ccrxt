@@ -142,7 +142,7 @@ mod tests {
 
         let serialized = serde_urlencoded::to_string(&request).unwrap();
         // Should be empty when default
-        assert!(serialized.is_empty() || serialized == "");
+        assert!(serialized.is_empty());
     }
 
     #[test]

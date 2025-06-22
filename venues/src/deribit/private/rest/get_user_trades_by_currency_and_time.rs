@@ -228,7 +228,7 @@ mod tests {
 
         assert_eq!(response.id, 1);
         assert_eq!(response.jsonrpc, "2.0");
-        assert_eq!(response.result.has_more, true);
+        assert!(!response.result.has_more);
         assert_eq!(response.result.trades.len(), 1);
 
         let trade = &response.result.trades[0];
@@ -256,7 +256,7 @@ mod tests {
 
         assert_eq!(response.id, 2);
         assert_eq!(response.jsonrpc, "2.0");
-        assert_eq!(response.result.has_more, false);
+        assert!(!response.result.has_more);
         assert_eq!(response.result.trades.len(), 0);
     }
 

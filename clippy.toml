@@ -22,13 +22,12 @@ avoid-breaking-exported-api = true
 allow-dbg-in-tests = true
 allow-print-in-tests = true
 allow-unwrap-in-tests = true
+allow-expect-in-tests = true
+allow-panic-in-tests = true
+allow-indexing-slicing-in-tests = true
 
 # Enable all default lints for further customization
-warn = [
-    "clippy::all",
-    "clippy::pedantic",
-    "clippy::nursery"
-]
+warn = ["clippy::all", "clippy::pedantic", "clippy::nursery"]
 
 # Uncomment and customize the following as needed:
 # allow = [

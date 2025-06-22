@@ -247,7 +247,10 @@ mod tests {
         if let Err(Errors::ApiError(ApiError::TooManyRequests { msg })) = result {
             assert!(msg.contains("6,000/min"));
         } else {
-            assert_eq!(true, false, "Expected TooManyRequests error for overall IP limit");
+            assert_eq!(
+                true, false,
+                "Expected TooManyRequests error for overall IP limit"
+            );
         }
     }
 
@@ -269,7 +272,10 @@ mod tests {
                 assert!(msg.contains("3/1s"));
             }
             other => {
-                assert!(false, "Expected TooManyRequests error for endpoint limit, got: {:?}", other);
+                unreachable!(
+                    "Expected TooManyRequests error for endpoint limit, got: {:?}",
+                    other
+                );
             }
         }
     }
@@ -290,7 +296,7 @@ mod tests {
         if let Err(Errors::ApiError(ApiError::TooManyRequests { msg })) = result {
             assert!(msg.contains("5/1s"));
         } else {
-            assert!(false, "Expected TooManyRequests error for order limit");
+            unreachable!("Expected TooManyRequests error for order limit");
         }
     }
 

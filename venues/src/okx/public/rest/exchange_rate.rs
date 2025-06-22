@@ -111,25 +111,3 @@ mod tests {
         assert_eq!(original.data[0].usd_cny, deserialized.data[0].usd_cny);
     }
 }
-
-#[cfg(test)]
-mod integration_tests {
-    use super::*;
-
-    #[test]
-    fn test_exchange_rate_endpoint_integration() {
-        // This test verifies that the endpoint types are properly accessible
-        let _exchange_rate = ExchangeRate {
-            usd_cny: "7.1234".to_string(),
-        };
-
-        let _response = ExchangeRateResponse {
-            code: "0".to_string(),
-            msg: "".to_string(),
-            data: vec![_exchange_rate],
-        };
-
-        // This test passes if the types exist and can be constructed
-        assert!(true);
-    }
-}

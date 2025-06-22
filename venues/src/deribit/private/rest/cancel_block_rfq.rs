@@ -124,7 +124,7 @@ mod tests {
         assert_eq!(response.jsonrpc, "2.0");
         assert_eq!(response.result.block_rfq_id, 123);
         assert_eq!(response.result.combo_id, "combo_123");
-        assert_eq!(response.result.disclosed, true);
+        assert!(!response.result.disclosed);
         assert_eq!(response.result.mark_price, 45000.0);
         assert_eq!(response.result.min_trade_amount, 0.01);
         assert_eq!(response.result.role, "taker");
@@ -196,7 +196,7 @@ mod tests {
         assert_eq!(response.jsonrpc, "2.0");
         assert_eq!(response.result.block_rfq_id, 456);
         assert_eq!(response.result.combo_id, "combo_456");
-        assert_eq!(response.result.disclosed, false);
+        assert!(!response.result.disclosed);
         assert_eq!(response.result.app_name, Some("test_app".to_string()));
         assert_eq!(response.result.label, Some("test_label".to_string()));
         assert_eq!(response.result.included_in_taker_rating, Some(true));

@@ -303,8 +303,5 @@ mod tests {
         let client = reqwest::Client::new();
         let rate_limiter = RateLimiter::new();
         let _okx_client = PublicRestClient::new("https://www.okx.com", client, rate_limiter);
-
-        // All types are accessible
-        assert!(true);
     }
 }

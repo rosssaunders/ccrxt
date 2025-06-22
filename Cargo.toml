@@ -67,5 +67,5 @@ panic = "deny"                          # No panic!() - crashes are unacceptable
 todo = "deny"                           # No TODO in production code
 unimplemented = "deny"                  # No unimplemented!() in production
 indexing_slicing = "deny"               # No direct indexing - could panic
-integer_arithmetic = "warn"             # Be careful with integer overflow in financial calculations
+arithmetic_side_effects = "warn"        # Be careful with integer overflow in financial calculations
 float_arithmetic = "warn"               # Be careful with float precision in financial calculations

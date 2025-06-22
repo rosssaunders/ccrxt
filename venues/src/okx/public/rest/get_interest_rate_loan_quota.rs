@@ -280,9 +280,5 @@ mod tests {
         // Verify the method exists and has the correct signature
         // This is a compile-time test - if this compiles, the integration is correct
         let _future = rest_client.get_interest_rate_loan_quota();
-
-        // Since we can't actually call the API in tests, we just verify the method exists
-        // and returns the correct future type
-        assert!(true, "Method signature and integration is correct");
     }
 }

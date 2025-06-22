@@ -187,10 +187,22 @@ mod tests {
         let response: OkxApiResponse<PlaceOrderResponse> = serde_json::from_str(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 1);
-        assert!(response.data.first().is_some(), "Expected at least one order in response");
-        assert_eq!(response.data.get(0).and_then(|d| d.cl_ord_id.as_ref()), Some(&"my_order_123".to_string()));
-        assert_eq!(response.data.get(0).map(|d| &d.ord_id), Some(&"312269865356374016".to_string()));
-        assert_eq!(response.data.get(0).map(|d| &d.s_code), Some(&"0".to_string()));
+        assert!(
+            !response.data.is_empty(),
+            "Expected at least one order in response"
+        );
+        assert_eq!(
+            response.data.first().and_then(|d| d.cl_ord_id.as_ref()),
+            Some(&"my_order_123".to_string())
+        );
+        assert_eq!(
+            response.data.first().map(|d| &d.ord_id),
+            Some(&"312269865356374016".to_string())
+        );
+        assert_eq!(
+            response.data.first().map(|d| &d.s_code),
+            Some(&"0".to_string())
+        );
     }
 
     #[test]
