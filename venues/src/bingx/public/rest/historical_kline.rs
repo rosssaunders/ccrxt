@@ -168,7 +168,7 @@ mod tests {
         assert_eq!(response.klines.len(), 1);
         let kline = response
             .klines
-            .get(0)
+            .first()
             .expect("Expected at least one kline entry");
         assert_eq!(
             *kline.first().expect("Missing open_time in kline"),

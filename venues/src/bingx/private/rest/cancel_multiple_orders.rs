@@ -243,7 +243,10 @@ mod tests {
         let response: CancelMultipleOrdersResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.orders.len(), 2);
 
-        let first_order = response.orders.get(0).expect("Expected at least one order");
+        let first_order = response
+            .orders
+            .first()
+            .expect("Expected at least one order");
         assert_eq!(first_order.symbol, "BTC-USDT");
         assert_eq!(first_order.order_id, 123456789);
         assert_eq!(first_order.price, "50000.0");
@@ -253,7 +256,10 @@ mod tests {
         assert_eq!(first_order.client_order_id, Some("order1".to_string()));
         assert_eq!(first_order.stop_price, Some(49000.0));
 
-        let second_order = response.orders.get(1).expect("Expected at least two orders");
+        let second_order = response
+            .orders
+            .get(1)
+            .expect("Expected at least two orders");
         assert_eq!(second_order.symbol, "BTC-USDT");
         assert_eq!(second_order.order_id, 123456790);
         assert!(matches!(second_order.status, OrderStatus::Canceled));
