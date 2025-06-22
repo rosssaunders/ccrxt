@@ -2,13 +2,14 @@
 //!
 //! Retrieves the most recent trades for a given currency and instrument kind.
 
-use crate::deribit::enums::{Currency, InstrumentKind, Sorting, TickDirection, Liquidity, TradeOrderType};
-use crate::deribit::public::rest::client::RestClient;
-use crate::deribit::errors::Result as DeribitResult;
+use super::RestClient;
+use crate::deribit::RestResult;
+use crate::deribit::enums::{Currency, InstrumentKind, Liquidity, Sorting, TickDirection, TradeOrderType};
+
 use serde::{Deserialize, Serialize};
 
 /// Request parameters for the get_last_trades_by_currency endpoint.
-#[derive(Debug, Clone, Serialize, Default)]
+#[derive(Debug, Clone, Serialize)]
 pub struct GetLastTradesByCurrencyRequest {
     /// Currency for which to retrieve trades.
     #[serde(rename = "currency")]
@@ -93,15 +94,16 @@ impl RestClient {
     /// Retrieves the most recent trades for a given currency and instrument kind.
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_last_trades_by_currency)
-    pub async fn get_last_trades_by_currency(&self, params: GetLastTradesByCurrencyRequest) -> DeribitResult<GetLastTradesByCurrencyResponse> {
-        self.call_public("get_last_trades_by_currency", &params).await
+    pub async fn get_last_trades_by_currency(&self, params: GetLastTradesByCurrencyRequest) -> RestResult<GetLastTradesByCurrencyResponse> {
+        self.call_public("get_last_trades_by_currency", &params)
+            .await
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::deribit::enums::{Currency, InstrumentKind, Sorting, TickDirection, Liquidity, TradeOrderType};
+    use crate::deribit::enums::{Currency, InstrumentKind, Liquidity, Sorting, TickDirection, TradeOrderType};
     use serde_json;
 
     #[test]

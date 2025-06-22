@@ -2,9 +2,12 @@
 //!
 //! Retrieves the summary information such as open interest, 24h volume, etc. for a specific instrument.
 
-use crate::deribit::public::rest::client::RestClient;
-use crate::deribit::errors::{Result as DeribitResult};
-use crate::deribit::enums::{Currency};
+use super::RestClient;
+use crate::deribit::EndpointType;
+use crate::deribit::RestResult;
+use crate::deribit::enums::Currency;
+
+use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
 /// Request parameters for the get_book_summary_by_instrument endpoint.
@@ -133,8 +136,14 @@ impl RestClient {
     /// Retrieves the summary information such as open interest, 24h volume, etc. for a specific instrument.
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_book_summary_by_instrument)
-    pub async fn get_book_summary_by_instrument(&self, params: GetBookSummaryByInstrumentRequest) -> DeribitResult<GetBookSummaryByInstrumentResponse> {
-        self.call_public("get_book_summary_by_instrument", &params).await
+    pub async fn get_book_summary_by_instrument(&self, params: GetBookSummaryByInstrumentRequest) -> RestResult<GetBookSummaryByInstrumentResponse> {
+        self.send_request(
+            "get_book_summary_by_instrument",
+            Method::POST,
+            Some(&params),
+            EndpointType::NonMatchingEngine,
+        )
+        .await
     }
 }
 

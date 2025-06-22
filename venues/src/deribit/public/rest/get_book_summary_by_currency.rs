@@ -2,13 +2,16 @@
 //!
 //! Retrieves the summary information such as open interest, 24h volume, etc. for all instruments for the currency (optionally filtered by kind).
 
+use super::RestClient;
+use crate::deribit::EndpointType;
+use crate::deribit::RestResult;
 use crate::deribit::enums::{Currency, InstrumentKind};
-use crate::deribit::errors::Result as DeribitResult;
-use crate::deribit::public::rest::client::RestClient;
+
+use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
 /// Request parameters for the get_book_summary_by_currency endpoint.
-#[derive(Debug, Clone, Serialize, Default)]
+#[derive(Debug, Clone, Serialize)]
 pub struct GetBookSummaryByCurrencyRequest {
     /// The currency symbol.
     #[serde(rename = "currency")]
@@ -137,9 +140,14 @@ impl RestClient {
     /// Retrieves the summary information such as open interest, 24h volume, etc. for all instruments for the currency (optionally filtered by kind).
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_book_summary_by_currency)
-    pub async fn get_book_summary_by_currency(&self, params: GetBookSummaryByCurrencyRequest) -> DeribitResult<GetBookSummaryByCurrencyResponse> {
-        self.call_public("get_book_summary_by_currency", &params)
-            .await
+    pub async fn get_book_summary_by_currency(&self, params: GetBookSummaryByCurrencyRequest) -> RestResult<GetBookSummaryByCurrencyResponse> {
+        self.send_request(
+            "get_book_summary_by_currency",
+            Method::POST,
+            Some(&params),
+            EndpointType::NonMatchingEngine,
+        )
+        .await
     }
 }
 

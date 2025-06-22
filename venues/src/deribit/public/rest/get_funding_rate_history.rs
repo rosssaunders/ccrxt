@@ -2,8 +2,9 @@
 //!
 //! Retrieves historical funding rates for a given instrument.
 
-use crate::deribit::public::rest::client::RestClient;
-use crate::deribit::errors::Result as DeribitResult;
+use super::RestClient;
+use crate::deribit::RestResult;
+
 use serde::{Deserialize, Serialize};
 
 /// Request parameters for the get_funding_rate_history endpoint.
@@ -64,7 +65,7 @@ impl RestClient {
     /// Retrieves historical funding rates for a given instrument.
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_funding_rate_history)
-    pub async fn get_funding_rate_history(&self, params: GetFundingRateHistoryRequest) -> DeribitResult<GetFundingRateHistoryResponse> {
+    pub async fn get_funding_rate_history(&self, params: GetFundingRateHistoryRequest) -> RestResult<GetFundingRateHistoryResponse> {
         self.call_public("get_funding_rate_history", &params).await
     }
 }

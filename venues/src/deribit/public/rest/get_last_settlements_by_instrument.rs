@@ -2,8 +2,10 @@
 //!
 //! Retrieves the most recent settlements for a given instrument.
 
-use crate::deribit::public::rest::client::RestClient;
-use crate::deribit::errors::Result as DeribitResult;
+use super::RestClient;
+use crate::deribit::{EndpointType, RestResult};
+
+use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
 /// Request parameters for the get_last_settlements_by_instrument endpoint.
@@ -64,8 +66,17 @@ impl RestClient {
     /// Retrieves the most recent settlements for a given instrument.
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_last_settlements_by_instrument)
-    pub async fn get_last_settlements_by_instrument(&self, params: GetLastSettlementsByInstrumentRequest) -> DeribitResult<GetLastSettlementsByInstrumentResponse> {
-        self.call_public("get_last_settlements_by_instrument", &params).await
+    pub async fn get_last_settlements_by_instrument(
+        &self,
+        params: GetLastSettlementsByInstrumentRequest,
+    ) -> RestResult<GetLastSettlementsByInstrumentResponse> {
+        self.send_request(
+            "get_last_settlements_by_instrument",
+            Method::POST,
+            Some(&params),
+            EndpointType::NonMatchingEngine,
+        )
+        .await
     }
 }
 

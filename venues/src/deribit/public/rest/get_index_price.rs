@@ -2,8 +2,10 @@
 //!
 //! Retrieves the current index price for a given index name (alias for get_index).
 
-use crate::deribit::public::rest::client::RestClient;
-use crate::deribit::errors::Result as DeribitResult;
+use super::RestClient;
+use crate::deribit::{EndpointType, RestResult};
+
+use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
 /// Request parameters for the get_index_price endpoint.
@@ -48,8 +50,14 @@ impl RestClient {
     /// Retrieves the current index price for a given index name (alias for get_index).
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_index_price)
-    pub async fn get_index_price(&self, params: GetIndexPriceRequest) -> DeribitResult<GetIndexPriceResponse> {
-        self.call_public("get_index_price", &params).await
+    pub async fn get_index_price(&self, params: GetIndexPriceRequest) -> RestResult<GetIndexPriceResponse> {
+        self.send_request(
+            "get_index_price",
+            Method::POST,
+            Some(&params),
+            EndpointType::NonMatchingEngine,
+        )
+        .await
     }
 }
 

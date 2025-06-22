@@ -2,9 +2,11 @@
 //!
 //! Retrieves the current order book for a given instrument.
 
-use crate::deribit::enums::{OrderType, OrderState, OrderDirection};
-use crate::deribit::public::rest::client::RestClient;
-use crate::deribit::errors::Result as DeribitResult;
+use crate::deribit::RestResult;
+use crate::deribit::enums::{OrderDirection, OrderState, OrderType};
+use crate::deribit::public::rest::client::{EndpointType, RestClient};
+
+use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
 /// Request parameters for the get_order_book endpoint.
@@ -77,8 +79,14 @@ impl RestClient {
     /// Retrieves the current order book for a given instrument.
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_order_book)
-    pub async fn get_order_book(&self, params: GetOrderBookRequest) -> DeribitResult<GetOrderBookResponse> {
-        self.call_public("get_order_book", &params).await
+    pub async fn get_order_book(&self, params: GetOrderBookRequest) -> RestResult<GetOrderBookResponse> {
+        self.send_request(
+            "get_order_book",
+            Method::POST,
+            Some(&params),
+            EndpointType::NonMatchingEngine,
+        )
+        .await
     }
 }
 

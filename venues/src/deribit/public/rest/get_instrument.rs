@@ -2,9 +2,11 @@
 //!
 //! Retrieves instrument data for a given instrument name.
 
+use super::RestClient;
 use crate::deribit::enums::{Currency, InstrumentKind};
-use crate::deribit::public::rest::client::RestClient;
-use crate::deribit::errors::Result as DeribitResult;
+use crate::deribit::{EndpointType, RestResult};
+
+use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
 /// Request parameters for the get_instrument endpoint.
@@ -47,7 +49,10 @@ pub struct InstrumentData {
     pub strike: Option<f64>,
 
     /// Optionally, the expiration timestamp (for expiring instruments).
-    #[serde(rename = "expiration_timestamp", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "expiration_timestamp",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub expiration_timestamp: Option<u64>,
 
     /// Optionally, the creation timestamp.
@@ -97,8 +102,14 @@ impl RestClient {
     /// Retrieves instrument data for a given instrument name.
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_instrument)
-    pub async fn get_instrument(&self, params: GetInstrumentRequest) -> DeribitResult<GetInstrumentResponse> {
-        self.call_public("get_instrument", &params).await
+    pub async fn get_instrument(&self, params: GetInstrumentRequest) -> RestResult<GetInstrumentResponse> {
+        self.send_request(
+            "get_instrument",
+            Method::POST,
+            Some(&params),
+            EndpointType::NonMatchingEngine,
+        )
+        .await
     }
 }
 

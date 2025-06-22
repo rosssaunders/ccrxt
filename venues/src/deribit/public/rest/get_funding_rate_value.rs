@@ -2,8 +2,10 @@
 //!
 //! Retrieves the current funding rate value for a given instrument.
 
-use crate::deribit::public::rest::client::RestClient;
-use crate::deribit::errors::Result as DeribitResult;
+use super::RestClient;
+use crate::deribit::{EndpointType, RestResult};
+
+use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
 /// Request parameters for the get_funding_rate_value endpoint.
@@ -48,8 +50,14 @@ impl RestClient {
     /// Retrieves the current funding rate value for a given instrument.
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_funding_rate_value)
-    pub async fn get_funding_rate_value(&self, params: GetFundingRateValueRequest) -> DeribitResult<GetFundingRateValueResponse> {
-        self.call_public("get_funding_rate_value", &params).await
+    pub async fn get_funding_rate_value(&self, params: GetFundingRateValueRequest) -> RestResult<GetFundingRateValueResponse> {
+        self.send_request(
+            "get_funding_rate_value",
+            Method::POST,
+            Some(&params),
+            EndpointType::NonMatchingEngine,
+        )
+        .await
     }
 }
 

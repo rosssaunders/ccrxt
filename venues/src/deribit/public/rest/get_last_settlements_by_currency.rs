@@ -2,13 +2,15 @@
 //!
 //! Retrieves the most recent settlements for a given currency and instrument kind.
 
+use super::RestClient;
 use crate::deribit::enums::{Currency, InstrumentKind};
-use crate::deribit::public::rest::client::RestClient;
-use crate::deribit::errors::Result as DeribitResult;
+use crate::deribit::{EndpointType, RestResult};
+
+use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
 /// Request parameters for the get_last_settlements_by_currency endpoint.
-#[derive(Debug, Clone, Serialize, Default)]
+#[derive(Debug, Clone, Serialize)]
 pub struct GetLastSettlementsByCurrencyRequest {
     /// Currency for which to retrieve settlements.
     #[serde(rename = "currency")]
@@ -69,8 +71,14 @@ impl RestClient {
     /// Retrieves the most recent settlements for a given currency and instrument kind.
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_last_settlements_by_currency)
-    pub async fn get_last_settlements_by_currency(&self, params: GetLastSettlementsByCurrencyRequest) -> DeribitResult<GetLastSettlementsByCurrencyResponse> {
-        self.call_public("get_last_settlements_by_currency", &params).await
+    pub async fn get_last_settlements_by_currency(&self, params: GetLastSettlementsByCurrencyRequest) -> RestResult<GetLastSettlementsByCurrencyResponse> {
+        self.send_request(
+            "get_last_settlements_by_currency",
+            Method::POST,
+            Some(&params),
+            EndpointType::NonMatchingEngine,
+        )
+        .await
     }
 }
 

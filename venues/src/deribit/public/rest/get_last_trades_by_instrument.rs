@@ -2,9 +2,10 @@
 //!
 //! Retrieves the most recent trades for a given instrument.
 
-use crate::deribit::enums::{Sorting, TickDirection, Liquidity, TradeOrderType};
-use crate::deribit::public::rest::client::RestClient;
-use crate::deribit::errors::Result as DeribitResult;
+use super::RestClient;
+use crate::deribit::RestResult;
+use crate::deribit::enums::{Liquidity, Sorting, TickDirection, TradeOrderType};
+
 use serde::{Deserialize, Serialize};
 
 /// Request parameters for the get_last_trades_by_instrument endpoint.
@@ -89,15 +90,16 @@ impl RestClient {
     /// Retrieves the most recent trades for a given instrument.
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_last_trades_by_instrument)
-    pub async fn get_last_trades_by_instrument(&self, params: GetLastTradesByInstrumentRequest) -> DeribitResult<GetLastTradesByInstrumentResponse> {
-        self.call_public("get_last_trades_by_instrument", &params).await
+    pub async fn get_last_trades_by_instrument(&self, params: GetLastTradesByInstrumentRequest) -> RestResult<GetLastTradesByInstrumentResponse> {
+        self.call_public("get_last_trades_by_instrument", &params)
+            .await
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::deribit::enums::{Sorting, TickDirection, Liquidity, TradeOrderType};
+    use crate::deribit::enums::{Liquidity, Sorting, TickDirection, TradeOrderType};
     use serde_json;
 
     #[test]

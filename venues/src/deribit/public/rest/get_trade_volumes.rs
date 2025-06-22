@@ -2,9 +2,10 @@
 //!
 //! Retrieves the trade volumes for all supported currencies.
 
+use super::RestClient;
+use crate::deribit::RestResult;
 use crate::deribit::enums::Currency;
-use crate::deribit::public::rest::client::RestClient;
-use crate::deribit::errors::Result as DeribitResult;
+
 use serde::{Deserialize, Serialize};
 
 /// Request parameters for the get_trade_volumes endpoint.
@@ -57,7 +58,7 @@ impl RestClient {
     /// Retrieves the trade volumes for all supported currencies.
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_trade_volumes)
-    pub async fn get_trade_volumes(&self, params: GetTradeVolumesRequest) -> DeribitResult<GetTradeVolumesResponse> {
+    pub async fn get_trade_volumes(&self, params: GetTradeVolumesRequest) -> RestResult<GetTradeVolumesResponse> {
         self.call_public("get_trade_volumes", &params).await
     }
 }

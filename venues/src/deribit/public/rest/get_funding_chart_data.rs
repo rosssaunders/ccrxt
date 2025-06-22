@@ -2,8 +2,9 @@
 //!
 //! Retrieves funding chart data for a given instrument name.
 
-use crate::deribit::public::rest::client::RestClient;
-use crate::deribit::errors::Result as DeribitResult;
+use super::RestClient;
+use crate::deribit::RestResult;
+
 use serde::{Deserialize, Serialize};
 
 /// Request parameters for the get_funding_chart_data endpoint.
@@ -56,7 +57,7 @@ impl RestClient {
     /// Retrieves funding chart data for a given instrument name.
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_funding_chart_data)
-    pub async fn get_funding_chart_data(&self, params: GetFundingChartDataRequest) -> DeribitResult<GetFundingChartDataResponse> {
+    pub async fn get_funding_chart_data(&self, params: GetFundingChartDataRequest) -> RestResult<GetFundingChartDataResponse> {
         self.call_public("get_funding_chart_data", &params).await
     }
 }

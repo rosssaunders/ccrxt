@@ -2,11 +2,11 @@
 //!
 //! Retrieves information about a combo
 
-use serde::{Deserialize, Serialize};
-
 use super::client::RestClient;
 use super::get_combos::ComboInfo;
 use crate::deribit::{EndpointType, RestResult};
+
+use serde::{Deserialize, Serialize};
 
 /// Request parameters for the public/get_combo_details endpoint.
 ///
@@ -47,7 +47,7 @@ impl RestClient {
             "public/get_combo_details",
             reqwest::Method::GET,
             Some(&params),
-            EndpointType::PublicGetComboDetails,
+            EndpointType::NonMatchingEngineGetComboDetails,
         )
         .await
     }
@@ -159,7 +159,7 @@ mod tests {
         // Test that rate limiting works for this endpoint type
         let result = rest_client
             .rate_limiter
-            .check_limits(EndpointType::PublicGetComboDetails)
+            .check_limits(EndpointType::NonMatchingEngineGetComboDetails)
             .await;
         assert!(result.is_ok());
     }

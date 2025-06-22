@@ -192,7 +192,7 @@ mod tests {
         // Test that rate limiting works for this endpoint type
         let result = rest_client
             .rate_limiter
-            .check_limits(EndpointType::PublicGetCombos)
+            .check_limits(EndpointType::NonMatchingEngineGetCombos)
             .await;
         assert!(result.is_ok());
     }

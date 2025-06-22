@@ -2,13 +2,15 @@
 //!
 //! Retrieves historical volatility data for a given currency.
 
+use super::RestClient;
 use crate::deribit::enums::Currency;
-use crate::deribit::public::rest::client::RestClient;
-use crate::deribit::errors::Result as DeribitResult;
+use crate::deribit::{EndpointType, RestResult};
+
+use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
 /// Request parameters for the get_historical_volatility endpoint.
-#[derive(Debug, Clone, Serialize, Default)]
+#[derive(Debug, Clone, Serialize)]
 pub struct GetHistoricalVolatilityRequest {
     /// Currency for which to retrieve historical volatility.
     #[serde(rename = "currency")]
@@ -65,8 +67,14 @@ impl RestClient {
     /// Retrieves historical volatility data for a given currency.
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_historical_volatility)
-    pub async fn get_historical_volatility(&self, params: GetHistoricalVolatilityRequest) -> DeribitResult<GetHistoricalVolatilityResponse> {
-        self.call_public("get_historical_volatility", &params).await
+    pub async fn get_historical_volatility(&self, params: GetHistoricalVolatilityRequest) -> RestResult<GetHistoricalVolatilityResponse> {
+        self.send_request(
+            "get_historical_volatility",
+            Method::POST,
+            Some(&params),
+            EndpointType::NonMatchingEngine,
+        )
+        .await
     }
 }
 

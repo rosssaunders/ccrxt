@@ -3,10 +3,10 @@
 //! Retrieves available combos. This method can be used to get the list of all
 //! combos, or only the list of combos in the given state.
 
-use serde::{Deserialize, Serialize};
-
-use super::client::RestClient;
+use super::RestClient;
 use crate::deribit::{ComboState, Currency, EndpointType, RestResult};
+
+use serde::{Deserialize, Serialize};
 
 /// Request parameters for the public/get_combo_ids endpoint.
 ///
@@ -53,7 +53,7 @@ impl RestClient {
             "public/get_combo_ids",
             reqwest::Method::GET,
             Some(&params),
-            EndpointType::PublicGetComboIds,
+            EndpointType::NonMatchingEngineGetComboIds,
         )
         .await
     }
@@ -157,7 +157,7 @@ mod tests {
         // Test that rate limiting works for this endpoint type
         let result = rest_client
             .rate_limiter
-            .check_limits(EndpointType::PublicGetComboIds)
+            .check_limits(EndpointType::NonMatchingEngineGetComboIds)
             .await;
         assert!(result.is_ok());
     }

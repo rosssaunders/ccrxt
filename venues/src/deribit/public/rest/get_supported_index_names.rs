@@ -2,8 +2,10 @@
 //!
 //! Retrieves the list of supported index names.
 
-use crate::deribit::public::rest::client::RestClient;
-use crate::deribit::errors::Result as DeribitResult;
+use super::RestClient;
+use crate::deribit::{EndpointType, RestResult};
+
+use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
 /// Request parameters for the get_supported_index_names endpoint.
@@ -40,8 +42,14 @@ impl RestClient {
     /// Retrieves the list of supported index names.
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_supported_index_names)
-    pub async fn get_supported_index_names(&self, params: GetSupportedIndexNamesRequest) -> DeribitResult<GetSupportedIndexNamesResponse> {
-        self.call_public("get_supported_index_names", &params).await
+    pub async fn get_supported_index_names(&self, params: GetSupportedIndexNamesRequest) -> RestResult<GetSupportedIndexNamesResponse> {
+        self.send_request(
+            "get_supported_index_names",
+            Method::POST,
+            Some(&params),
+            EndpointType::NonMatchingEngine,
+        )
+        .await
     }
 }
 

@@ -2,9 +2,11 @@
 //!
 //! Retrieves the list of current RFQs (Request For Quotes).
 
-use crate::deribit::enums::{ComboState};
-use crate::deribit::public::rest::client::RestClient;
-use crate::deribit::errors::Result as DeribitResult;
+use crate::deribit::RestResult;
+use crate::deribit::enums::ComboState;
+use crate::deribit::public::rest::client::{EndpointType, RestClient};
+
+use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
 /// Request parameters for the get_rfqs endpoint.
@@ -65,8 +67,14 @@ impl RestClient {
     /// Retrieves the list of current RFQs (Request For Quotes).
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_rfqs)
-    pub async fn get_rfqs(&self, params: GetRfqsRequest) -> DeribitResult<GetRfqsResponse> {
-        self.call_public("get_rfqs", &params).await
+    pub async fn get_rfqs(&self, params: GetRfqsRequest) -> RestResult<GetRfqsResponse> {
+        self.send_request(
+            "get_rfqs",
+            Method::POST,
+            Some(&params),
+            EndpointType::NonMatchingEngine,
+        )
+        .await
     }
 }
 

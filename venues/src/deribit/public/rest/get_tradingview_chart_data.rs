@@ -4,9 +4,10 @@
 //!
 //! [Official API docs](https://docs.deribit.com/#public-get_tradingview_chart_data)
 
-use crate::deribit::public::rest::client::RestClient;
+use super::RestClient;
 use crate::deribit::Errors as DeribitError;
 use serde::{Deserialize, Serialize};
+
 use std::borrow::Cow;
 
 /// Request parameters for the get_tradingview_chart_data endpoint.
@@ -79,15 +80,12 @@ impl RestClient {
     /// Retrieves TradingView-compatible OHLCV chart data for a given instrument and time range.
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_tradingview_chart_data)
-    pub async fn get_tradingview_chart_data(
-        &self,
-        params: &GetTradingviewChartDataRequest,
-    ) -> Result<GetTradingviewChartDataResponse, DeribitError> {
+    pub async fn get_tradingview_chart_data(&self, params: &GetTradingviewChartDataRequest) -> Result<GetTradingviewChartDataResponse, DeribitError> {
         self.send_request(
             "public/get_tradingview_chart_data",
             reqwest::Method::GET,
             Some(params),
-            crate::deribit::EndpointType::PublicGetTradingviewChartData,
+            crate::deribit::EndpointType::NonMatchingEngineGetTradingviewChartData,
         )
         .await
     }

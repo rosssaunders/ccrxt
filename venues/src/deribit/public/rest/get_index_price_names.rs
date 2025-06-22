@@ -2,8 +2,10 @@
 //!
 //! Retrieves the list of all supported index price names.
 
-use crate::deribit::public::rest::client::RestClient;
-use crate::deribit::errors::Result as DeribitResult;
+use super::RestClient;
+use crate::deribit::{EndpointType, RestResult};
+
+use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
 /// Request parameters for the get_index_price_names endpoint.
@@ -41,8 +43,14 @@ impl RestClient {
     /// Retrieves the list of all supported index price names.
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_index_price_names)
-    pub async fn get_index_price_names(&self, params: GetIndexPriceNamesRequest) -> DeribitResult<GetIndexPriceNamesResponse> {
-        self.call_public("get_index_price_names", &params).await
+    pub async fn get_index_price_names(&self, params: GetIndexPriceNamesRequest) -> RestResult<GetIndexPriceNamesResponse> {
+        self.send_request(
+            "get_index_price_names",
+            Method::POST,
+            Some(&params),
+            EndpointType::NonMatchingEngine,
+        )
+        .await
     }
 }
 

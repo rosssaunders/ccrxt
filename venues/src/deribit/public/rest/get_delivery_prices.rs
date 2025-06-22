@@ -2,13 +2,14 @@
 //!
 //! Retrieves delivery prices for the given index.
 
+use super::RestClient;
+use crate::deribit::RestResult;
 use crate::deribit::enums::CurrencyPair;
-use crate::deribit::public::rest::client::RestClient;
-use crate::deribit::errors::{Result as DeribitResult};
+
 use serde::{Deserialize, Serialize};
 
 /// Request parameters for the get_delivery_prices endpoint.
-#[derive(Debug, Clone, Serialize, Default)]
+#[derive(Debug, Clone, Serialize)]
 pub struct GetDeliveryPricesRequest {
     /// Index identifier, matches (base) cryptocurrency with quote currency.
     #[serde(rename = "index_name")]
@@ -69,7 +70,7 @@ impl RestClient {
     /// Retrieves delivery prices for the given index.
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_delivery_prices)
-    pub async fn get_delivery_prices(&self, params: GetDeliveryPricesRequest) -> DeribitResult<GetDeliveryPricesResponse> {
+    pub async fn get_delivery_prices(&self, params: GetDeliveryPricesRequest) -> RestResult<GetDeliveryPricesResponse> {
         self.call_public("get_delivery_prices", &params).await
     }
 }

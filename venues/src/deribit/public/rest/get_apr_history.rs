@@ -2,13 +2,15 @@
 //!
 //! Retrieves historical APR data for specified currency. Only applicable to yield-generating tokens (`USDE`, `STETH`).
 
+use super::RestClient;
 use crate::deribit::enums::Currency;
-use crate::deribit::errors::Result as DeribitResult;
-use crate::deribit::public::rest::client::RestClient;
+use crate::deribit::{EndpointType, RestResult};
+
+use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
 /// Request parameters for the get_apr_history endpoint.
-#[derive(Debug, Clone, Serialize, Default)]
+#[derive(Debug, Clone, Serialize)]
 pub struct GetAprHistoryRequest {
     /// Currency for which to retrieve APR history. Only `USDE` and `STETH` are supported.
     #[serde(rename = "currency")]
@@ -69,8 +71,14 @@ impl RestClient {
     /// Retrieves historical APR data for specified currency. Only applicable to yield-generating tokens (`USDE`, `STETH`).
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_apr_history)
-    pub async fn get_apr_history(&self, params: GetAprHistoryRequest) -> DeribitResult<GetAprHistoryResponse> {
-        self.call_public("get_apr_history", &params).await
+    pub async fn get_apr_history(&self, params: GetAprHistoryRequest) -> RestResult<GetAprHistoryResponse> {
+        self.send_request(
+            "get_apr_history",
+            Method::POST,
+            Some(&params),
+            EndpointType::NonMatchingEngine,
+        )
+        .await
     }
 }
 

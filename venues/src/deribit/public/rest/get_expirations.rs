@@ -2,9 +2,10 @@
 //!
 //! Retrieves available expiration timestamps for a given currency and instrument kind.
 
+use super::RestClient;
+use crate::deribit::RestResult;
 use crate::deribit::enums::Currency;
-use crate::deribit::public::rest::client::RestClient;
-use crate::deribit::errors::Result as DeribitResult;
+
 use serde::{Deserialize, Serialize};
 
 /// Instrument kind for get_expirations endpoint.
@@ -61,7 +62,7 @@ impl RestClient {
     /// Retrieves available expiration timestamps for a given currency and instrument kind.
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_expirations)
-    pub async fn get_expirations(&self, params: GetExpirationsRequest) -> DeribitResult<GetExpirationsResponse> {
+    pub async fn get_expirations(&self, params: GetExpirationsRequest) -> RestResult<GetExpirationsResponse> {
         self.call_public("get_expirations", &params).await
     }
 }

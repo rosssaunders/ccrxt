@@ -2,9 +2,11 @@
 //!
 //! Retrieves all cryptocurrencies supported by the API.
 
-use crate::deribit::public::rest::client::RestClient;
-use crate::deribit::errors::{Result as DeribitResult};
+use super::RestClient;
 use crate::deribit::enums::Currency;
+use crate::deribit::{EndpointType, RestResult};
+
+use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
 /// Represents a withdrawal priority for a currency.
@@ -85,8 +87,14 @@ impl RestClient {
     /// Retrieves all cryptocurrencies supported by the API.
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_currencies)
-    pub async fn get_currencies(&self) -> DeribitResult<GetCurrenciesResponse> {
-        self.call_public("get_currencies", &()).await
+    pub async fn get_currencies(&self) -> RestResult<GetCurrenciesResponse> {
+        self.send_request(
+            "get_currencies",
+            Method::POST,
+            None::<&()>,
+            EndpointType::NonMatchingEngine,
+        )
+        .await
     }
 }
 
