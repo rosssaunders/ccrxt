@@ -9,8 +9,6 @@ applyTo: "venues/src/**/rest/**"
 This guide describes how to add a new REST API endpoint for an existing venue in the `venues` crate, following the conventions and structure of the `account_trades` implementation.
 It also details documentation and code style requirements for all structs and fields.
 
----
-
 ## 1. Endpoint Selection
 
 - Obtain the endpoint path (e.g., `/dapi/v1/positionRisk`).
@@ -113,6 +111,7 @@ It also details documentation and code style requirements for all structs and fi
 - Ensure the endpoint is rate-limited and authenticated as required.
 - Do NOT add "helper" functions for venue REST endpoints. Endpoint functions must match the venue API exactly, without additional abstraction or helpers.
 - Endpoint functions must take a struct for parameters, except for parameters that appear in the URL path, which may be individual arguments.
+- Do NOT include example code snippets, usage examples, or sample invocations above or within endpoint wrapper functions. All example code must be placed in the appropriate `venues/examples/<venue>/` directory as per the example code instructions.**
 
 ---
 
