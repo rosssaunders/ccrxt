@@ -42,7 +42,7 @@ mod tests {
         if let Err(Errors::ApiError(ApiError::TooManyRequests { msg })) = result {
             assert!(msg.contains("6,000"));
         } else {
-            assert!(false, "Expected TooManyRequests error");
+            assert_eq!(true, false, "Expected TooManyRequests error");
         }
     }
 
@@ -62,7 +62,7 @@ mod tests {
         if let Err(Errors::ApiError(ApiError::TooManyOrders { msg })) = result {
             assert!(msg.contains("100/10s"));
         } else {
-            assert!(false, "Expected TooManyOrders error");
+            assert_eq!(true, false, "Expected TooManyOrders error");
         }
     }
 }

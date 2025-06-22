@@ -162,6 +162,6 @@ impl WebSocketConnection<DeribitMessage> for PrivateWebSocketClient {
 
     fn message_stream(&mut self) -> Pin<Box<dyn futures::Stream<Item = websockets::BoxResult<DeribitMessage>> + Send>> {
         // Not implemented for public client (not used in this context)
-        unimplemented!("message_stream is not implemented for DeribitWebSocketClient public client")
+        panic!("message_stream is not implemented for DeribitWebSocketClient public client");
     }
 }

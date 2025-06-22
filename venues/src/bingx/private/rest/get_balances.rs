@@ -54,7 +54,7 @@ impl RestClient {
     /// use venues::bingx::{PrivateRestClient, GetBalancesRequest};
     ///
     /// async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    ///     let client: PrivateRestClient = unimplemented!();
+    ///     let client: PrivateRestClient = todo!("Provide a real PrivateRestClient instance for this example");
     ///     let request = GetBalancesRequest::default();
     ///     let balances = client.get_balances(&request).await?;
     ///     println!("Balances: {:?}", balances);

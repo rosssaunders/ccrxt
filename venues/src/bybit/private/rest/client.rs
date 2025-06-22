@@ -231,6 +231,10 @@ mod tests {
         let payload = "test_payload";
         let signature = rest_client.sign_payload(payload);
         assert!(signature.is_ok());
-        assert!(!signature.unwrap().is_empty());
+        if let Ok(sig) = signature {
+            assert!(!sig.is_empty());
+        } else {
+            assert_eq!(true, false, "Signature should be Ok");
+        }
     }
 }

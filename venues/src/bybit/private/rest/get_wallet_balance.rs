@@ -190,7 +190,8 @@ mod tests {
     #[test]
     fn test_get_wallet_balance_request_serialization() {
         let request = GetWalletBalanceRequest::new(AccountType::Contract);
-        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        let serialized = serde_urlencoded::to_string(&request)
+            .expect("Failed to serialize GetWalletBalanceRequest");
         assert!(serialized.contains("accountType=CONTRACT"));
     }
 
@@ -267,21 +268,22 @@ mod tests {
         }
         "#;
 
-        let response: GetWalletBalanceResponse = serde_json::from_str(response_json).unwrap();
+        let response: GetWalletBalanceResponse = serde_json::from_str(response_json)
+            .expect("Failed to deserialize GetWalletBalanceResponse");
         assert_eq!(response.ret_code, 0);
         assert_eq!(response.ret_msg, "OK");
         assert_eq!(response.result.list.len(), 1);
-        assert_eq!(response.result.list[0].account_type, "UNIFIED");
-        assert_eq!(response.result.list[0].coin.len(), 1);
-        assert_eq!(response.result.list[0].coin[0].coin, "BTC");
+        assert_eq!(response.result.list.get(0).map(|a| &a.account_type), Some(&"UNIFIED".to_string()));
+        assert_eq!(response.result.list.get(0).map(|a| a.coin.len()), Some(1));
+        assert_eq!(response.result.list.get(0).and_then(|a| a.coin.get(0)).map(|c| &c.coin), Some(&"BTC".to_string()));
     }
 
     #[test]
     fn test_serialization_roundtrip() {
         let request = GetWalletBalanceRequest::new(AccountType::Spot).with_coin("USDT".to_string());
 
-        let serialized = serde_json::to_string(&request).unwrap();
-        let deserialized: GetWalletBalanceRequest = serde_json::from_str(&serialized).unwrap();
+        let serialized = serde_json::to_string(&request).expect("Serialization failed");
+        let deserialized: GetWalletBalanceRequest = serde_json::from_str(&serialized).expect("Deserialization failed");
 
         assert_eq!(request.account_type, deserialized.account_type);
         assert_eq!(request.coin, deserialized.coin);

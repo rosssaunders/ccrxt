@@ -212,7 +212,7 @@ mod tests {
             .coin("USDT")
             .asset_type(AssetType::All);
 
-        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        let serialized = serde_urlencoded::to_string(&request).expect("Serialization failed");
 
         // Should contain both parameters
         assert!(serialized.contains("coin=USDT"));
@@ -222,7 +222,7 @@ mod tests {
     #[test]
     fn test_get_account_assets_request_serialization_empty() {
         let request = GetAccountAssetsRequest::new();
-        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        let serialized = serde_urlencoded::to_string(&request).expect("Serialization failed");
 
         // Should be empty since both fields are None and skipped
         assert_eq!(serialized, "");
@@ -239,7 +239,7 @@ mod tests {
             "uTime": "1622697148000"
         }"#;
 
-        let asset: AssetInfo = serde_json::from_str(json).unwrap();
+        let asset: AssetInfo = serde_json::from_str(json).expect("Deserialization failed");
 
         assert_eq!(asset.coin, "USDT");
         assert_eq!(asset.available, "1000.50");
@@ -270,11 +270,11 @@ mod tests {
             }
         ]"#;
 
-        let response: GetAccountAssetsResponse = serde_json::from_str(json).unwrap();
+        let response: GetAccountAssetsResponse = serde_json::from_str(json).expect("Deserialization failed");
 
         assert_eq!(response.assets.len(), 2);
-        assert_eq!(response.assets[0].coin, "USDT");
-        assert_eq!(response.assets[1].coin, "BTC");
-        assert_eq!(response.assets[1].frozen, "0.1");
+        assert_eq!(response.assets.get(0).map(|a| &a.coin), Some(&"USDT".to_string()));
+        assert_eq!(response.assets.get(1).map(|a| &a.coin), Some(&"BTC".to_string()));
+        assert_eq!(response.assets.get(1).map(|a| &a.frozen), Some(&"0.1".to_string()));
     }
 }

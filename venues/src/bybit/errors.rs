@@ -81,7 +81,7 @@ mod tests {
         }
         "#;
 
-        let error: ErrorResponse = serde_json::from_str(error_json).unwrap();
+        let error: ErrorResponse = serde_json::from_str(error_json).expect("Deserialization failed");
         assert_eq!(error.ret_code, 10001);
         assert_eq!(error.ret_msg, "Invalid API key");
         assert_eq!(error.time, Some(1672738134824));
@@ -113,7 +113,7 @@ mod tests {
                 assert!(msg.contains("10001"));
                 assert!(msg.contains("Invalid API key"));
             }
-            _ => assert!(false, "Expected ApiError"),
+            _ => assert_eq!(true, false, "Expected ApiError"),
         }
     }
 }

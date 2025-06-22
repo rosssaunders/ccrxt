@@ -45,7 +45,8 @@ mod integration_test {
             ]
         });
 
-        let response: GetMarkPriceCandlesResponse = serde_json::from_value(response_json).unwrap();
+        let response: GetMarkPriceCandlesResponse = serde_json::from_value(response_json)
+            .expect("Failed to deserialize GetMarkPriceCandlesResponse");
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 1);
 
@@ -58,7 +59,8 @@ mod integration_test {
             ]
         });
 
-        let history_response: GetMarkPriceCandlesHistoryResponse = serde_json::from_value(history_response_json).unwrap();
+        let history_response: GetMarkPriceCandlesHistoryResponse = serde_json::from_value(history_response_json)
+            .expect("Failed to deserialize GetMarkPriceCandlesHistoryResponse");
         assert_eq!(history_response.code, "0");
         assert_eq!(history_response.data.len(), 1);
     }

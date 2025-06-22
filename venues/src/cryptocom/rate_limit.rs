@@ -312,7 +312,7 @@ mod tests {
         if let Err(RateLimitError::RateLimitExceeded { current, max, .. }) = result {
             assert!(current >= max);
         } else {
-            assert!(false, "Expected RateLimitExceeded error");
+            assert_eq!(true, false, "Expected RateLimitExceeded error");
         }
     }
 

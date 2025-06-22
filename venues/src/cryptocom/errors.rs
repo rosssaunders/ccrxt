@@ -449,7 +449,7 @@ mod tests {
         let api_error: ApiError = error_response.into();
         match api_error {
             ApiError::Success => {}
-            _ => assert!(false, "Expected Success variant"),
+            _ => assert_eq!(true, false, "Expected Success variant"),
         }
     }
 
