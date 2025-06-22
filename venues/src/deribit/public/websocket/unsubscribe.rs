@@ -1,9 +1,9 @@
 //! Unsubscribe from specific channels on Deribit WebSocket API.
 //!
 //! This file defines the request and response payloads for the `public/unsubscribe` RPC call.
-use crate::deribit::public::websocket::client::{DeribitWebSocketError, PrivateWebSocketClient};
-
 use serde::{Deserialize, Serialize};
+
+use crate::deribit::public::websocket::client::{DeribitWebSocketError, PrivateWebSocketClient};
 
 /// Parameters for the unsubscribe request.
 #[derive(Debug, Clone, Serialize, Deserialize)]

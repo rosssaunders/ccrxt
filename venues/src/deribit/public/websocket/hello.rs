@@ -3,9 +3,9 @@
 //! This method is used to introduce the client software connected to Deribit platform over
 //! websocket. Provided data may have an impact on the maintained connection and
 //! will be collected for internal statistical purposes.
-use crate::deribit::public::websocket::client::{DeribitWebSocketError, PrivateWebSocketClient};
-
 use serde::{Deserialize, Serialize};
+
+use crate::deribit::public::websocket::client::{DeribitWebSocketError, PrivateWebSocketClient};
 
 /// Request parameters for the public/hello endpoint.
 ///

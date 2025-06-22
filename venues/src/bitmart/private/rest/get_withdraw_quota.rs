@@ -125,11 +125,17 @@ mod tests {
         let serialized = serde_json::to_string(&response).unwrap();
         let deserialized: GetWithdrawQuotaResponse = serde_json::from_str(&serialized).unwrap();
 
-        assert_eq!(response.today_available_withdraw_btc, deserialized.today_available_withdraw_btc);
+        assert_eq!(
+            response.today_available_withdraw_btc,
+            deserialized.today_available_withdraw_btc
+        );
         assert_eq!(response.min_withdraw, deserialized.min_withdraw);
         assert_eq!(response.withdraw_precision, deserialized.withdraw_precision);
         assert_eq!(response.withdraw_fee, deserialized.withdraw_fee);
-        assert_eq!(response.withdraw_precision_ge_ten, deserialized.withdraw_precision_ge_ten);
+        assert_eq!(
+            response.withdraw_precision_ge_ten,
+            deserialized.withdraw_precision_ge_ten
+        );
     }
 
     #[test]

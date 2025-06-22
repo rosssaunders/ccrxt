@@ -57,10 +57,7 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the move positions response or an error
-    pub async fn move_positions(
-        &self,
-        request: &MovePositionsRequest,
-    ) -> RestResult<OkxApiResponse<MovePositionsResponse>> {
+    pub async fn move_positions(&self, request: &MovePositionsRequest) -> RestResult<OkxApiResponse<MovePositionsResponse>> {
         self.send_request(
             "api/v5/account/move-positions",
             reqwest::Method::POST,

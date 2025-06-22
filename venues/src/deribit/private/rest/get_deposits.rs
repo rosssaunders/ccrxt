@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::deribit::{Currency, EndpointType, RestResult, DepositState, ClearanceState};
+use crate::deribit::{ClearanceState, Currency, DepositState, EndpointType, RestResult};
 
 /// Deposit entry
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -81,12 +81,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Result containing deposit history with count and data array
-    pub async fn get_deposits(
-        &self,
-        currency: Currency,
-        count: Option<i32>,
-        offset: Option<i32>,
-    ) -> RestResult<GetDepositsResponse> {
+    pub async fn get_deposits(&self, currency: Currency, count: Option<i32>, offset: Option<i32>) -> RestResult<GetDepositsResponse> {
         let request = GetDepositsRequest {
             currency,
             count,
@@ -257,14 +252,20 @@ mod tests {
 
         // Check first deposit
         let first_deposit = &response.result.data[0];
-        assert_eq!(first_deposit.address, "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh");
+        assert_eq!(
+            first_deposit.address,
+            "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh"
+        );
         assert_eq!(first_deposit.amount, 0.001);
         assert_eq!(first_deposit.clearance_state, ClearanceState::Success);
         assert_eq!(first_deposit.currency, "BTC");
         assert_eq!(first_deposit.note, "Test deposit");
         assert_eq!(first_deposit.received_timestamp, 1640995200000);
         assert_eq!(first_deposit.refund_transaction_id, None);
-        assert_eq!(first_deposit.source_address, "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa");
+        assert_eq!(
+            first_deposit.source_address,
+            "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"
+        );
         assert_eq!(first_deposit.state, DepositState::Completed);
         assert_eq!(
             first_deposit.transaction_id,
@@ -274,14 +275,20 @@ mod tests {
 
         // Check second deposit
         let second_deposit = &response.result.data[1];
-        assert_eq!(second_deposit.address, "0x742d35Cc6634C0532925a3b8D05c4ae5e34D7b1c");
+        assert_eq!(
+            second_deposit.address,
+            "0x742d35Cc6634C0532925a3b8D05c4ae5e34D7b1c"
+        );
         assert_eq!(second_deposit.amount, 0.5);
         assert_eq!(second_deposit.clearance_state, ClearanceState::InProgress);
         assert_eq!(second_deposit.currency, "ETH");
         assert_eq!(second_deposit.note, "ETH deposit");
         assert_eq!(second_deposit.received_timestamp, 1640995200000);
         assert_eq!(second_deposit.refund_transaction_id, None);
-        assert_eq!(second_deposit.source_address, "0x1234567890abcdef1234567890abcdef12345678");
+        assert_eq!(
+            second_deposit.source_address,
+            "0x1234567890abcdef1234567890abcdef12345678"
+        );
         assert_eq!(second_deposit.state, DepositState::Pending);
         assert_eq!(second_deposit.transaction_id, None);
         assert_eq!(second_deposit.updated_timestamp, 1640995400000);
@@ -364,7 +371,10 @@ mod tests {
     fn test_response_with_all_clearance_states() {
         let states = vec![
             ("in_progress", ClearanceState::InProgress),
-            ("pending_admin_decision", ClearanceState::PendingAdminDecision),
+            (
+                "pending_admin_decision",
+                ClearanceState::PendingAdminDecision,
+            ),
             ("pending_user_input", ClearanceState::PendingUserInput),
             ("success", ClearanceState::Success),
             ("failed", ClearanceState::Failed),
@@ -480,11 +490,11 @@ mod tests {
         });
 
         let response: GetDepositsResponse = serde_json::from_value(response_json).unwrap();
-        
+
         // Verify JSON-RPC 2.0 compliance
         assert_eq!(response.jsonrpc, "2.0");
         assert_eq!(response.id, 789);
-        
+
         // Verify result is present and correct structure
         assert_eq!(response.result.count, 1);
         assert_eq!(response.result.data.len(), 1);

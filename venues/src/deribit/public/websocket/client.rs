@@ -5,14 +5,14 @@
 //! All message construction, serialization, and endpoint logic must be in separate files.
 //! This file should not contain endpoint-specific logic or message types.
 
-use futures::SinkExt;
-use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::pin::Pin;
 use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
 
 use async_trait::async_trait;
+use futures::SinkExt;
+use serde::{Deserialize, Serialize};
 use thiserror::Error;
 use tokio::net::TcpStream;
 use tokio::sync::Mutex;

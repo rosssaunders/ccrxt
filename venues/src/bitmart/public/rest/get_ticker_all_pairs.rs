@@ -126,34 +126,70 @@ mod tests {
     #[test]
     fn test_ticker_data_parsing() {
         let ticker_data = vec![
-            "BTC_USDT".to_string(),     // symbol
-            "30000.00".to_string(),     // last
-            "582.08066".to_string(),    // v_24h
-            "4793098.48".to_string(),   // qv_24h
-            "28596.30".to_string(),     // open_24h
-            "31012.44".to_string(),     // high_24h
-            "12.44".to_string(),        // low_24h
-            "0.04909".to_string(),      // fluctuation
-            "30000".to_string(),        // bid_px
-            "1".to_string(),            // bid_sz
-            "31012.44".to_string(),     // ask_px
-            "69994.75267".to_string(),  // ask_sz
+            "BTC_USDT".to_string(),      // symbol
+            "30000.00".to_string(),      // last
+            "582.08066".to_string(),     // v_24h
+            "4793098.48".to_string(),    // qv_24h
+            "28596.30".to_string(),      // open_24h
+            "31012.44".to_string(),      // high_24h
+            "12.44".to_string(),         // low_24h
+            "0.04909".to_string(),       // fluctuation
+            "30000".to_string(),         // bid_px
+            "1".to_string(),             // bid_sz
+            "31012.44".to_string(),      // ask_px
+            "69994.75267".to_string(),   // ask_sz
             "1691671091933".to_string(), // ts
         ];
 
-        assert_eq!(GetTickerAllPairsResponse::symbol(&ticker_data), Some("BTC_USDT"));
-        assert_eq!(GetTickerAllPairsResponse::last_price(&ticker_data), Some("30000.00"));
-        assert_eq!(GetTickerAllPairsResponse::volume_24h(&ticker_data), Some("582.08066"));
-        assert_eq!(GetTickerAllPairsResponse::quote_volume_24h(&ticker_data), Some("4793098.48"));
-        assert_eq!(GetTickerAllPairsResponse::open_24h(&ticker_data), Some("28596.30"));
-        assert_eq!(GetTickerAllPairsResponse::high_24h(&ticker_data), Some("31012.44"));
-        assert_eq!(GetTickerAllPairsResponse::low_24h(&ticker_data), Some("12.44"));
-        assert_eq!(GetTickerAllPairsResponse::fluctuation(&ticker_data), Some("0.04909"));
-        assert_eq!(GetTickerAllPairsResponse::bid_price(&ticker_data), Some("30000"));
+        assert_eq!(
+            GetTickerAllPairsResponse::symbol(&ticker_data),
+            Some("BTC_USDT")
+        );
+        assert_eq!(
+            GetTickerAllPairsResponse::last_price(&ticker_data),
+            Some("30000.00")
+        );
+        assert_eq!(
+            GetTickerAllPairsResponse::volume_24h(&ticker_data),
+            Some("582.08066")
+        );
+        assert_eq!(
+            GetTickerAllPairsResponse::quote_volume_24h(&ticker_data),
+            Some("4793098.48")
+        );
+        assert_eq!(
+            GetTickerAllPairsResponse::open_24h(&ticker_data),
+            Some("28596.30")
+        );
+        assert_eq!(
+            GetTickerAllPairsResponse::high_24h(&ticker_data),
+            Some("31012.44")
+        );
+        assert_eq!(
+            GetTickerAllPairsResponse::low_24h(&ticker_data),
+            Some("12.44")
+        );
+        assert_eq!(
+            GetTickerAllPairsResponse::fluctuation(&ticker_data),
+            Some("0.04909")
+        );
+        assert_eq!(
+            GetTickerAllPairsResponse::bid_price(&ticker_data),
+            Some("30000")
+        );
         assert_eq!(GetTickerAllPairsResponse::bid_size(&ticker_data), Some("1"));
-        assert_eq!(GetTickerAllPairsResponse::ask_price(&ticker_data), Some("31012.44"));
-        assert_eq!(GetTickerAllPairsResponse::ask_size(&ticker_data), Some("69994.75267"));
-        assert_eq!(GetTickerAllPairsResponse::timestamp(&ticker_data), Some("1691671091933"));
+        assert_eq!(
+            GetTickerAllPairsResponse::ask_price(&ticker_data),
+            Some("31012.44")
+        );
+        assert_eq!(
+            GetTickerAllPairsResponse::ask_size(&ticker_data),
+            Some("69994.75267")
+        );
+        assert_eq!(
+            GetTickerAllPairsResponse::timestamp(&ticker_data),
+            Some("1691671091933")
+        );
     }
 
     #[test]
@@ -164,10 +200,22 @@ mod tests {
             "582.08066".to_string(),
         ];
 
-        assert_eq!(GetTickerAllPairsResponse::symbol(&ticker_data), Some("BTC_USDT"));
-        assert_eq!(GetTickerAllPairsResponse::last_price(&ticker_data), Some("30000.00"));
-        assert_eq!(GetTickerAllPairsResponse::volume_24h(&ticker_data), Some("582.08066"));
-        assert_eq!(GetTickerAllPairsResponse::quote_volume_24h(&ticker_data), None);
+        assert_eq!(
+            GetTickerAllPairsResponse::symbol(&ticker_data),
+            Some("BTC_USDT")
+        );
+        assert_eq!(
+            GetTickerAllPairsResponse::last_price(&ticker_data),
+            Some("30000.00")
+        );
+        assert_eq!(
+            GetTickerAllPairsResponse::volume_24h(&ticker_data),
+            Some("582.08066")
+        );
+        assert_eq!(
+            GetTickerAllPairsResponse::quote_volume_24h(&ticker_data),
+            None
+        );
         assert_eq!(GetTickerAllPairsResponse::timestamp(&ticker_data), None);
     }
 
@@ -207,8 +255,14 @@ mod tests {
         ]);
 
         assert_eq!(response.0.len(), 2);
-        assert_eq!(GetTickerAllPairsResponse::symbol(&response.0[0]), Some("BTC_USDT"));
-        assert_eq!(GetTickerAllPairsResponse::symbol(&response.0[1]), Some("ETH_USDT"));
+        assert_eq!(
+            GetTickerAllPairsResponse::symbol(&response.0[0]),
+            Some("BTC_USDT")
+        );
+        assert_eq!(
+            GetTickerAllPairsResponse::symbol(&response.0[1]),
+            Some("ETH_USDT")
+        );
     }
 
     #[test]
@@ -248,10 +302,22 @@ mod tests {
 
         let response: GetTickerAllPairsResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.0.len(), 2);
-        assert_eq!(GetTickerAllPairsResponse::symbol(&response.0[0]), Some("BTC_USDT"));
-        assert_eq!(GetTickerAllPairsResponse::last_price(&response.0[0]), Some("30000.00"));
-        assert_eq!(GetTickerAllPairsResponse::symbol(&response.0[1]), Some("ETH_USDT"));
-        assert_eq!(GetTickerAllPairsResponse::last_price(&response.0[1]), Some("1840.00"));
+        assert_eq!(
+            GetTickerAllPairsResponse::symbol(&response.0[0]),
+            Some("BTC_USDT")
+        );
+        assert_eq!(
+            GetTickerAllPairsResponse::last_price(&response.0[0]),
+            Some("30000.00")
+        );
+        assert_eq!(
+            GetTickerAllPairsResponse::symbol(&response.0[1]),
+            Some("ETH_USDT")
+        );
+        assert_eq!(
+            GetTickerAllPairsResponse::last_price(&response.0[1]),
+            Some("1840.00")
+        );
     }
 
     #[test]

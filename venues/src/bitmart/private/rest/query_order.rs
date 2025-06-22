@@ -5,8 +5,8 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::bitmart::{OrderMode, OrderSide, OrderStatus, OrderType, RestResult};
 use crate::bitmart::rate_limit::EndpointType;
+use crate::bitmart::{OrderMode, OrderSide, OrderStatus, OrderType, RestResult};
 
 /// Request parameters for querying order details
 #[derive(Debug, Serialize)]
@@ -14,7 +14,7 @@ pub struct QueryOrderRequest {
     /// Order ID (required if client_order_id not provided)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub order_id: Option<String>,
-    /// Client-defined Order ID (required if order_id not provided) 
+    /// Client-defined Order ID (required if order_id not provided)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub client_order_id: Option<String>,
     /// Trading pair (e.g. BTC_USDT)

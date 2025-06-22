@@ -84,10 +84,7 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the position tiers or an error
-    pub async fn get_position_tiers(
-        &self,
-        request: &GetPositionTiersRequest,
-    ) -> RestResult<OkxApiResponse<PositionTier>> {
+    pub async fn get_position_tiers(&self, request: &GetPositionTiersRequest) -> RestResult<OkxApiResponse<PositionTier>> {
         self.send_request(
             "api/v5/account/position-tiers",
             reqwest::Method::GET,

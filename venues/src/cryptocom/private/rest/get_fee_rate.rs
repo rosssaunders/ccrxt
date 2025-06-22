@@ -34,8 +34,8 @@ impl RestClient {
         // Empty struct to represent request with no parameters
         #[derive(Debug, Clone, Serialize)]
         struct EmptyRequest {}
-        
-        self.send_signed_request("private/get-fee-rate", EmptyRequest{})
+
+        self.send_signed_request("private/get-fee-rate", EmptyRequest {})
             .await
     }
 }

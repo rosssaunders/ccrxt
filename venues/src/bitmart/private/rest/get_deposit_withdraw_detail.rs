@@ -143,7 +143,10 @@ mod tests {
         assert_eq!(detail.arrival_amount, "59.000000000000");
         assert_eq!(detail.fee, "1.000000000000");
         assert_eq!(detail.status, 0);
-        assert_eq!(detail.address, "0xe57b69a8776b378604079650B73cdFFBDFe668Bb5");
+        assert_eq!(
+            detail.address,
+            "0xe57b69a8776b378604079650B73cdFFBDFe668Bb5"
+        );
         assert_eq!(detail.address_memo, "");
         assert_eq!(detail.tx_id, "");
     }
@@ -253,7 +256,10 @@ mod tests {
         assert_eq!(response.record.arrival_amount, "59.000000000000");
         assert_eq!(response.record.fee, "1.000000000000");
         assert_eq!(response.record.status, 0);
-        assert_eq!(response.record.address, "0xe57b69a8776b378604079650B73cdFFBDFe668Bb5");
+        assert_eq!(
+            response.record.address,
+            "0xe57b69a8776b378604079650B73cdFFBDFe668Bb5"
+        );
         assert_eq!(response.record.address_memo, "");
         assert_eq!(response.record.tx_id, "");
     }

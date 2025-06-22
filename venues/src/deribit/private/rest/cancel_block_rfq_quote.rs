@@ -1,8 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
 // Reuse the result structure from add_block_rfq_quote since the API returns the same quote object
 use super::add_block_rfq_quote::AddBlockRfqQuoteResult;
+use super::client::RestClient;
 use crate::deribit::{EndpointType, RestResult};
 
 /// Request parameters for cancel block RFQ quote endpoint
@@ -74,7 +74,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use rest::secrets::ExposableSecret;
-    use serde_json::{json, Value};
+    use serde_json::{Value, json};
 
     use super::*;
     use crate::deribit::AccountTier;
@@ -199,8 +199,7 @@ mod tests {
             }
         });
 
-        let response: CancelBlockRfqQuoteResponse =
-            serde_json::from_value(response_json).unwrap();
+        let response: CancelBlockRfqQuoteResponse = serde_json::from_value(response_json).unwrap();
 
         assert_eq!(response.id, 1);
         assert_eq!(response.jsonrpc, "2.0");
@@ -208,7 +207,10 @@ mod tests {
         assert_eq!(response.result.block_rfq_id, 123);
         assert_eq!(response.result.block_rfq_quote_id, 456);
         assert_eq!(response.result.quote_state, "cancelled");
-        assert_eq!(response.result.quote_state_reason, Some("user_cancel".to_string()));
+        assert_eq!(
+            response.result.quote_state_reason,
+            Some("user_cancel".to_string())
+        );
         assert!(!response.result.replaced);
     }
 

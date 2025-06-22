@@ -224,7 +224,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use rest::secrets::ExposableSecret;
-    use serde_json::{json, Value};
+    use serde_json::{Value, json};
 
     use super::*;
     use crate::deribit::AccountTier;
@@ -356,7 +356,10 @@ mod tests {
         assert_eq!(json_value.get("timestamp").unwrap(), 1672738134824i64);
         assert_eq!(json_value.get("nonce").unwrap(), "test_nonce_123");
         assert_eq!(json_value.get("role").unwrap(), "maker");
-        assert_eq!(json_value.get("counterparty_signature").unwrap(), "test_signature_456");
+        assert_eq!(
+            json_value.get("counterparty_signature").unwrap(),
+            "test_signature_456"
+        );
         assert!(json_value.get("trades").unwrap().is_array());
         assert_eq!(
             json_value.get("trades").unwrap().as_array().unwrap().len(),
@@ -411,7 +414,7 @@ mod tests {
         assert_eq!(response.result.id, "block_trade_123");
         assert_eq!(response.result.timestamp, 1672738134824);
         assert_eq!(response.result.trades.len(), 1);
-        
+
         let trade = &response.result.trades[0];
         assert_eq!(trade.trade_id, "trade_001");
         assert_eq!(trade.instrument_name, "BTCUSD-PERP");

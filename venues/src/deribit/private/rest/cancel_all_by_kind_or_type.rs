@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::deribit::{Currency, InstrumentKind, OrderType, EndpointType, RestResult};
+use crate::deribit::{Currency, EndpointType, InstrumentKind, OrderType, RestResult};
 
 /// Currency selection for cancel all by kind or type endpoint
 /// Can be a single currency, array of currencies, or "any" for all currencies
@@ -38,7 +38,7 @@ impl<'de> Deserialize<'de> for CurrencySelection {
     {
         use serde_json::Value;
         let value = Value::deserialize(deserializer)?;
-        
+
         match value {
             Value::Array(arr) => {
                 let currencies: Result<Vec<Currency>, _> = arr
@@ -64,7 +64,7 @@ pub struct CancelAllByKindOrTypeRequest {
     /// Instrument kind filter (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub kind: Option<InstrumentKind>,
-    /// Order type filter (optional) 
+    /// Order type filter (optional)
     #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
     pub order_type: Option<OrderType>,
     /// When detailed is set to true output format is changed (optional)
@@ -181,7 +181,7 @@ mod tests {
                 assert_eq!(currencies.len(), 2);
                 assert_eq!(currencies[0], Currency::BTC);
                 assert_eq!(currencies[1], Currency::ETH);
-            },
+            }
             _ => panic!("Expected Multiple variant"),
         }
     }
@@ -240,7 +240,7 @@ mod tests {
         assert_eq!(currency_array[0], "BTC");
         assert_eq!(currency_array[1], "ETH");
         assert_eq!(currency_array[2], "USDC");
-        
+
         assert_eq!(json_value.get("kind").unwrap(), "future");
         assert!(json_value.get("type").is_none());
     }

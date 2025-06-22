@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use crate::bingx::{EndpointType, RestResult};
 use super::RestClient;
+use crate::bingx::{EndpointType, RestResult};
 
 /// Request for the symbol price ticker endpoint
 #[derive(Debug, Clone, Serialize)]
@@ -57,15 +57,16 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use reqwest::Client;
+
+    use super::*;
     use crate::bingx::RateLimiter;
 
     #[test]
     fn test_symbol_price_ticker_request_creation() {
         let symbol = "BTC_USDT".to_string();
         let request = GetSymbolPriceTickerRequest::new(symbol.clone());
-        
+
         assert_eq!(request.symbol, symbol);
     }
 
@@ -83,7 +84,7 @@ mod tests {
             "symbol": "BTC_USDT",
             "timestamp": 1640995200000
         }"#;
-        
+
         let response: GetSymbolPriceTickerResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.price, "45000.50");
         assert_eq!(response.symbol, "BTC_USDT");
@@ -99,7 +100,7 @@ mod tests {
         );
 
         let request = GetSymbolPriceTickerRequest::new("BTC_USDT".to_string());
-        
+
         // Test that the method exists and can be called
         // Note: This will fail with network error since we're not making real requests
         assert!(client.get_symbol_price_ticker(&request).await.is_err());

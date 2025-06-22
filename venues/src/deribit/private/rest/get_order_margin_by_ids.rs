@@ -28,8 +28,9 @@ pub struct OrderMarginInfo {
 // Unit tests for serialization/deserialization
 #[cfg(test)]
 mod tests {
-    use super::*;
     use serde_json;
+
+    use super::*;
 
     #[test]
     fn test_serialize_request() {

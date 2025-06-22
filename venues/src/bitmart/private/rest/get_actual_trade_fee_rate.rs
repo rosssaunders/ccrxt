@@ -128,9 +128,15 @@ mod tests {
 
         assert_eq!(response.symbol, deserialized.symbol);
         assert_eq!(response.buy_taker_fee_rate, deserialized.buy_taker_fee_rate);
-        assert_eq!(response.sell_taker_fee_rate, deserialized.sell_taker_fee_rate);
+        assert_eq!(
+            response.sell_taker_fee_rate,
+            deserialized.sell_taker_fee_rate
+        );
         assert_eq!(response.buy_maker_fee_rate, deserialized.buy_maker_fee_rate);
-        assert_eq!(response.sell_maker_fee_rate, deserialized.sell_maker_fee_rate);
+        assert_eq!(
+            response.sell_maker_fee_rate,
+            deserialized.sell_maker_fee_rate
+        );
     }
 
     #[test]

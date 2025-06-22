@@ -1,10 +1,9 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::deribit::{Currency, EndpointType, InstrumentKind, RestResult, Sorting};
-
 // Reuse the Trade struct from get_user_trades_by_currency since it's identical
 pub use super::get_user_trades_by_currency::Trade;
+use crate::deribit::{Currency, EndpointType, InstrumentKind, RestResult, Sorting};
 
 /// Request parameters for getting user trades by currency and time
 #[derive(Debug, Clone, Serialize)]
@@ -71,9 +70,16 @@ impl RestClient {
     ///
     /// # Returns
     /// Trade history information for the specified currency within the time range
-    pub async fn get_user_trades_by_currency_and_time(&self, request: GetUserTradesByCurrencyAndTimeRequest) -> RestResult<GetUserTradesByCurrencyAndTimeResponse> {
-        self.send_signed_request("private/get_user_trades_by_currency_and_time", &request, EndpointType::NonMatchingEngine)
-            .await
+    pub async fn get_user_trades_by_currency_and_time(
+        &self,
+        request: GetUserTradesByCurrencyAndTimeRequest,
+    ) -> RestResult<GetUserTradesByCurrencyAndTimeResponse> {
+        self.send_signed_request(
+            "private/get_user_trades_by_currency_and_time",
+            &request,
+            EndpointType::NonMatchingEngine,
+        )
+        .await
     }
 }
 
@@ -145,7 +151,7 @@ mod tests {
         assert_eq!(json_value.get("currency").unwrap(), "ETH");
         assert_eq!(json_value.get("start_timestamp").unwrap(), 1640995200000i64);
         assert_eq!(json_value.get("end_timestamp").unwrap(), 1640995260000i64);
-        
+
         // Optional fields should not be present when None
         assert!(!json_value.as_object().unwrap().contains_key("kind"));
         assert!(!json_value.as_object().unwrap().contains_key("count"));
@@ -159,7 +165,7 @@ mod tests {
         let request = GetUserTradesByCurrencyAndTimeRequest {
             currency: Currency::USDC,
             kind: None,
-            start_timestamp: 0, // Unix epoch
+            start_timestamp: 0,           // Unix epoch
             end_timestamp: 4102444800000, // Far future timestamp
             count: None,
             sorting: None,
@@ -170,8 +176,18 @@ mod tests {
         let json_value: Value = serde_json::from_str(&json_str).unwrap();
 
         // These fields must always be present
-        assert!(json_value.as_object().unwrap().contains_key("start_timestamp"));
-        assert!(json_value.as_object().unwrap().contains_key("end_timestamp"));
+        assert!(
+            json_value
+                .as_object()
+                .unwrap()
+                .contains_key("start_timestamp")
+        );
+        assert!(
+            json_value
+                .as_object()
+                .unwrap()
+                .contains_key("end_timestamp")
+        );
         assert_eq!(json_value.get("start_timestamp").unwrap(), 0);
         assert_eq!(json_value.get("end_timestamp").unwrap(), 4102444800000i64);
     }

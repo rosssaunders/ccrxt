@@ -30,10 +30,7 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the account switch precheck or an error
-    pub async fn get_account_switch_precheck(
-        &self,
-        request: &GetAccountSwitchPrecheckRequest,
-    ) -> RestResult<OkxApiResponse<AccountSwitchPrecheck>> {
+    pub async fn get_account_switch_precheck(&self, request: &GetAccountSwitchPrecheckRequest) -> RestResult<OkxApiResponse<AccountSwitchPrecheck>> {
         self.send_request(
             "api/v5/account/set-account-switch-precheck",
             reqwest::Method::GET,

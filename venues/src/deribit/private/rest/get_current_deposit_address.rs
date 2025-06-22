@@ -51,10 +51,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Result containing optional deposit address information
-    pub async fn get_current_deposit_address(
-        &self,
-        request: GetCurrentDepositAddressRequest,
-    ) -> RestResult<GetCurrentDepositAddressResponse> {
+    pub async fn get_current_deposit_address(&self, request: GetCurrentDepositAddressRequest) -> RestResult<GetCurrentDepositAddressResponse> {
         self.send_signed_request(
             "private/get_current_deposit_address",
             &request,
@@ -146,7 +143,10 @@ mod tests {
         assert!(response.result.is_some());
 
         let deposit_address = response.result.unwrap();
-        assert_eq!(deposit_address.address, "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh");
+        assert_eq!(
+            deposit_address.address,
+            "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh"
+        );
         assert_eq!(deposit_address.creation_timestamp, 1640995200000i64);
         assert_eq!(deposit_address.currency, "BTC");
         assert_eq!(deposit_address.address_type, "deposit");
@@ -187,7 +187,10 @@ mod tests {
         assert!(response.result.is_some());
 
         let deposit_address = response.result.unwrap();
-        assert_eq!(deposit_address.address, "0x742d35Cc6634C0532925a3b8D05c4ae5e34D7b1c");
+        assert_eq!(
+            deposit_address.address,
+            "0x742d35Cc6634C0532925a3b8D05c4ae5e34D7b1c"
+        );
         assert_eq!(deposit_address.creation_timestamp, 1640995300000i64);
         assert_eq!(deposit_address.currency, "ETH");
         assert_eq!(deposit_address.address_type, "deposit");
@@ -205,8 +208,14 @@ mod tests {
         let json_str = serde_json::to_string(&deposit_address).unwrap();
         let json_value: Value = serde_json::from_str(&json_str).unwrap();
 
-        assert_eq!(json_value.get("address").unwrap(), "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh");
-        assert_eq!(json_value.get("creation_timestamp").unwrap(), 1640995200000i64);
+        assert_eq!(
+            json_value.get("address").unwrap(),
+            "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh"
+        );
+        assert_eq!(
+            json_value.get("creation_timestamp").unwrap(),
+            1640995200000i64
+        );
         assert_eq!(json_value.get("currency").unwrap(), "BTC");
         assert_eq!(json_value.get("type").unwrap(), "deposit");
     }

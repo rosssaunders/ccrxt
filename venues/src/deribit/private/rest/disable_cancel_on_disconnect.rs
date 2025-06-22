@@ -1,9 +1,8 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::deribit::{EndpointType, RestResult};
-
 pub use super::enable_cancel_on_disconnect::CancelOnDisconnectScope;
+use crate::deribit::{EndpointType, RestResult};
 
 /// Request parameters for disable cancel on disconnect
 #[derive(Debug, Clone, Serialize)]
@@ -27,7 +26,7 @@ pub struct DisableCancelOnDisconnectResponse {
 impl RestClient {
     /// Disable Cancel On Disconnect for the connection
     ///
-    /// When change is applied for the account, every newly opened connection will start 
+    /// When change is applied for the account, every newly opened connection will start
     /// with inactive Cancel on Disconnect. This endpoint requires account:read_write scope.
     ///
     /// See: <https://docs.deribit.com/v2/#private-disable_cancel_on_disconnect>
@@ -40,10 +39,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Result containing "ok" string on success
-    pub async fn disable_cancel_on_disconnect(
-        &self,
-        scope: Option<CancelOnDisconnectScope>,
-    ) -> RestResult<DisableCancelOnDisconnectResponse> {
+    pub async fn disable_cancel_on_disconnect(&self, scope: Option<CancelOnDisconnectScope>) -> RestResult<DisableCancelOnDisconnectResponse> {
         let request = DisableCancelOnDisconnectRequest { scope };
         self.send_signed_request(
             "private/disable_cancel_on_disconnect",

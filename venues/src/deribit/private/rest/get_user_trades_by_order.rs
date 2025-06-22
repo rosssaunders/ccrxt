@@ -1,10 +1,9 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::deribit::{EndpointType, RestResult, Sorting};
-
 // Reuse the Trade struct from get_user_trades_by_currency since it's identical
 pub use super::get_user_trades_by_currency::Trade;
+use crate::deribit::{EndpointType, RestResult, Sorting};
 
 /// Request parameters for getting user trades by order
 #[derive(Debug, Clone, Serialize)]
@@ -57,8 +56,12 @@ impl RestClient {
     /// # Returns
     /// Trade history information for the specified order
     pub async fn get_user_trades_by_order(&self, request: GetUserTradesByOrderRequest) -> RestResult<GetUserTradesByOrderResponse> {
-        self.send_signed_request("private/get_user_trades_by_order", &request, EndpointType::NonMatchingEngine)
-            .await
+        self.send_signed_request(
+            "private/get_user_trades_by_order",
+            &request,
+            EndpointType::NonMatchingEngine,
+        )
+        .await
     }
 }
 
@@ -116,7 +119,7 @@ mod tests {
         let json_value: Value = serde_json::from_str(&json_str).unwrap();
 
         assert_eq!(json_value.get("order_id").unwrap(), "BTC-67890");
-        
+
         // Optional fields should not be present when None
         assert!(!json_value.as_object().unwrap().contains_key("sorting"));
         assert!(!json_value.as_object().unwrap().contains_key("historical"));

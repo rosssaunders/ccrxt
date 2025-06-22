@@ -52,10 +52,7 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the move positions history or an error
-    pub async fn get_move_positions_history(
-        &self,
-        request: &GetMovePositionsHistoryRequest,
-    ) -> RestResult<OkxApiResponse<MovePositionsHistory>> {
+    pub async fn get_move_positions_history(&self, request: &GetMovePositionsHistoryRequest) -> RestResult<OkxApiResponse<MovePositionsHistory>> {
         self.send_request(
             "api/v5/account/move-positions-history",
             reqwest::Method::GET,

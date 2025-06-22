@@ -66,10 +66,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Result containing "ok" string on success
-    pub async fn update_in_address_book(
-        &self,
-        request: UpdateInAddressBookRequest,
-    ) -> RestResult<UpdateInAddressBookResponse> {
+    pub async fn update_in_address_book(&self, request: UpdateInAddressBookRequest) -> RestResult<UpdateInAddressBookResponse> {
         self.send_signed_request(
             "private/update_in_address_book",
             &request,
@@ -132,12 +129,24 @@ mod tests {
             json_value.get("address").unwrap(),
             "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh"
         );
-        assert_eq!(json_value.get("beneficiary_vasp_name").unwrap(), "Example VASP");
-        assert_eq!(json_value.get("beneficiary_vasp_did").unwrap(), "did:example:123456");
-        assert_eq!(json_value.get("beneficiary_vasp_website").unwrap(), "https://example.com");
+        assert_eq!(
+            json_value.get("beneficiary_vasp_name").unwrap(),
+            "Example VASP"
+        );
+        assert_eq!(
+            json_value.get("beneficiary_vasp_did").unwrap(),
+            "did:example:123456"
+        );
+        assert_eq!(
+            json_value.get("beneficiary_vasp_website").unwrap(),
+            "https://example.com"
+        );
         assert_eq!(json_value.get("beneficiary_first_name").unwrap(), "John");
         assert_eq!(json_value.get("beneficiary_last_name").unwrap(), "Doe");
-        assert_eq!(json_value.get("beneficiary_address").unwrap(), "123 Main St, Anytown, USA");
+        assert_eq!(
+            json_value.get("beneficiary_address").unwrap(),
+            "123 Main St, Anytown, USA"
+        );
         assert_eq!(json_value.get("agreed").unwrap(), true);
         assert_eq!(json_value.get("personal").unwrap(), true);
         assert_eq!(json_value.get("label").unwrap(), "Updated BTC Wallet");
@@ -167,7 +176,10 @@ mod tests {
 
         assert_eq!(json_value.get("currency").unwrap(), "ETH");
         assert_eq!(json_value.get("type").unwrap(), "transfer");
-        assert_eq!(json_value.get("beneficiary_company_name").unwrap(), "ACME Corp");
+        assert_eq!(
+            json_value.get("beneficiary_company_name").unwrap(),
+            "ACME Corp"
+        );
         assert_eq!(json_value.get("agreed").unwrap(), false);
         assert_eq!(json_value.get("personal").unwrap(), false);
         assert!(json_value.get("beneficiary_vasp_website").is_none());
@@ -198,9 +210,18 @@ mod tests {
 
         assert_eq!(json_value.get("currency").unwrap(), "USDC");
         assert_eq!(json_value.get("type").unwrap(), "deposit_source");
-        assert_eq!(json_value.get("beneficiary_vasp_name").unwrap(), "Minimal VASP");
-        assert_eq!(json_value.get("beneficiary_vasp_did").unwrap(), "did:example:minimal");
-        assert_eq!(json_value.get("beneficiary_address").unwrap(), "Minimal Address");
+        assert_eq!(
+            json_value.get("beneficiary_vasp_name").unwrap(),
+            "Minimal VASP"
+        );
+        assert_eq!(
+            json_value.get("beneficiary_vasp_did").unwrap(),
+            "did:example:minimal"
+        );
+        assert_eq!(
+            json_value.get("beneficiary_address").unwrap(),
+            "Minimal Address"
+        );
         assert_eq!(json_value.get("agreed").unwrap(), true);
         assert_eq!(json_value.get("personal").unwrap(), false);
         assert_eq!(json_value.get("label").unwrap(), "Minimal Label");

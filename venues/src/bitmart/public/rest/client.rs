@@ -49,11 +49,7 @@ impl RestClient {
     /// * `base_url` - The base URL for the BitMart public API (e.g., "https://api-cloud.bitmart.com")
     /// * `client` - HTTP client for making requests
     /// * `rate_limiter` - Rate limiter for managing API limits
-    pub fn new(
-        base_url: impl Into<Cow<'static, str>>,
-        client: Client,
-        rate_limiter: RateLimiter,
-    ) -> Self {
+    pub fn new(base_url: impl Into<Cow<'static, str>>, client: Client, rate_limiter: RateLimiter) -> Self {
         Self {
             base_url: base_url.into(),
             client,
@@ -73,28 +69,24 @@ impl RestClient {
     /// # Returns
     ///
     /// The parsed response data
-    pub async fn send_request<R, T>(
-        &self,
-        endpoint: &str,
-        method: Method,
-        request: Option<&R>,
-        endpoint_type: EndpointType,
-    ) -> RestResult<T>
+    pub async fn send_request<R, T>(&self, endpoint: &str, method: Method, request: Option<&R>, endpoint_type: EndpointType) -> RestResult<T>
     where
         R: serde::Serialize + ?Sized,
         T: DeserializeOwned,
     {
         // Check rate limits
-        self.rate_limiter.check_limits(endpoint_type.clone()).await?;
+        self.rate_limiter
+            .check_limits(endpoint_type.clone())
+            .await?;
 
         // Build URL
         let url = format!("{}{}", self.base_url, endpoint);
 
         // Build URL with query parameters for GET requests
         let final_url = if method == Method::GET && request.is_some() {
-            let query_params = serde_urlencoded::to_string(request.unwrap())
-                .map_err(|e| Errors::Error(format!("Failed to serialize query parameters: {}", e)))?;
-            
+            let query_params =
+                serde_urlencoded::to_string(request.unwrap()).map_err(|e| Errors::Error(format!("Failed to serialize query parameters: {}", e)))?;
+
             if query_params.is_empty() {
                 url
             } else {
@@ -155,11 +147,7 @@ mod tests {
         let client = Client::new();
         let rate_limiter = RateLimiter::new();
 
-        let rest_client = RestClient::new(
-            "https://api-cloud.bitmart.com",
-            client,
-            rate_limiter,
-        );
+        let rest_client = RestClient::new("https://api-cloud.bitmart.com", client, rate_limiter);
 
         assert_eq!(rest_client.base_url, "https://api-cloud.bitmart.com");
     }

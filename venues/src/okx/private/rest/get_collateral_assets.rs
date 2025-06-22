@@ -31,10 +31,7 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the collateral assets or an error
-    pub async fn get_collateral_assets(
-        &self,
-        request: &GetCollateralAssetsRequest,
-    ) -> RestResult<OkxApiResponse<CollateralAsset>> {
+    pub async fn get_collateral_assets(&self, request: &GetCollateralAssetsRequest) -> RestResult<OkxApiResponse<CollateralAsset>> {
         self.send_request(
             "api/v5/account/collateral-assets",
             reqwest::Method::GET,

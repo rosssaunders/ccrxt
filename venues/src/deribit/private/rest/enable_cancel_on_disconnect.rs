@@ -35,7 +35,7 @@ pub struct EnableCancelOnDisconnectResponse {
 impl RestClient {
     /// Enable Cancel On Disconnect for the connection
     ///
-    /// After enabling Cancel On Disconnect all orders created by the connection will be removed 
+    /// After enabling Cancel On Disconnect all orders created by the connection will be removed
     /// when the connection is closed. This endpoint requires account:read_write scope.
     ///
     /// See: <https://docs.deribit.com/v2/#private-enable_cancel_on_disconnect>
@@ -48,10 +48,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Result containing "ok" string on success
-    pub async fn enable_cancel_on_disconnect(
-        &self,
-        scope: Option<CancelOnDisconnectScope>,
-    ) -> RestResult<EnableCancelOnDisconnectResponse> {
+    pub async fn enable_cancel_on_disconnect(&self, scope: Option<CancelOnDisconnectScope>) -> RestResult<EnableCancelOnDisconnectResponse> {
         let request = EnableCancelOnDisconnectRequest { scope };
         self.send_signed_request(
             "private/enable_cancel_on_disconnect",

@@ -1,9 +1,8 @@
 use serde::{Deserialize, Serialize};
 
+pub use super::add_to_address_book::AddressBookEntry;
 use super::client::RestClient;
 use crate::deribit::{AddressBookType, Currency, EndpointType, RestResult};
-
-pub use super::add_to_address_book::AddressBookEntry;
 
 /// Request parameters for get address book
 #[derive(Debug, Clone, Serialize)]
@@ -43,11 +42,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Result containing array of address book entries
-    pub async fn get_address_book(
-        &self,
-        currency: Currency,
-        address_type: AddressBookType,
-    ) -> RestResult<GetAddressBookResponse> {
+    pub async fn get_address_book(&self, currency: Currency, address_type: AddressBookType) -> RestResult<GetAddressBookResponse> {
         let request = GetAddressBookRequest {
             currency,
             address_type,
@@ -203,7 +198,10 @@ mod tests {
 
         // Check first entry
         let first_entry = &response.result[0];
-        assert_eq!(first_entry.address, "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh");
+        assert_eq!(
+            first_entry.address,
+            "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh"
+        );
         assert_eq!(first_entry.currency, "BTC");
         assert_eq!(first_entry.label, "My BTC Wallet");
         assert_eq!(first_entry.status, AddressStatus::Confirmed);
@@ -213,14 +211,20 @@ mod tests {
 
         // Check second entry
         let second_entry = &response.result[1];
-        assert_eq!(second_entry.address, "0x742d35Cc6634C0532925a3b8D05c4ae5e34D7b1c");
+        assert_eq!(
+            second_entry.address,
+            "0x742d35Cc6634C0532925a3b8D05c4ae5e34D7b1c"
+        );
         assert_eq!(second_entry.currency, "ETH");
         assert_eq!(second_entry.label, "ETH Transfer Address");
         assert_eq!(second_entry.status, AddressStatus::Waiting);
         assert_eq!(second_entry.address_type, AddressBookType::Transfer);
         assert!(!second_entry.agreed);
         assert!(!second_entry.personal);
-        assert_eq!(second_entry.beneficiary_company_name, Some("ACME Corp".to_string()));
+        assert_eq!(
+            second_entry.beneficiary_company_name,
+            Some("ACME Corp".to_string())
+        );
     }
 
     #[tokio::test]

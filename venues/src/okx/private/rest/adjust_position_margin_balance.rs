@@ -59,7 +59,10 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the response or an error
-    pub async fn adjust_position_margin_balance(&self, request: &AdjustPositionMarginBalanceRequest) -> RestResult<OkxApiResponse<AdjustPositionMarginBalanceResponse>> {
+    pub async fn adjust_position_margin_balance(
+        &self,
+        request: &AdjustPositionMarginBalanceRequest,
+    ) -> RestResult<OkxApiResponse<AdjustPositionMarginBalanceResponse>> {
         self.send_request(
             "api/v5/account/position/margin-balance",
             reqwest::Method::POST,

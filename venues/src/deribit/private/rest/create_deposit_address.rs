@@ -1,9 +1,8 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::deribit::{Currency, EndpointType, RestResult};
-
 pub use super::get_current_deposit_address::DepositAddress;
+use crate::deribit::{Currency, EndpointType, RestResult};
 
 /// Request parameters for create deposit address
 #[derive(Debug, Clone, Serialize)]
@@ -39,10 +38,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Result containing optional deposit address information
-    pub async fn create_deposit_address(
-        &self,
-        request: CreateDepositAddressRequest,
-    ) -> RestResult<CreateDepositAddressResponse> {
+    pub async fn create_deposit_address(&self, request: CreateDepositAddressRequest) -> RestResult<CreateDepositAddressResponse> {
         self.send_signed_request(
             "private/create_deposit_address",
             &request,
@@ -134,7 +130,10 @@ mod tests {
         assert!(response.result.is_some());
 
         let deposit_address = response.result.unwrap();
-        assert_eq!(deposit_address.address, "bc1qnew2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh");
+        assert_eq!(
+            deposit_address.address,
+            "bc1qnew2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh"
+        );
         assert_eq!(deposit_address.creation_timestamp, 1640995400000i64);
         assert_eq!(deposit_address.currency, "BTC");
         assert_eq!(deposit_address.address_type, "deposit");
@@ -175,7 +174,10 @@ mod tests {
         assert!(response.result.is_some());
 
         let deposit_address = response.result.unwrap();
-        assert_eq!(deposit_address.address, "0x8new35Cc6634C0532925a3b8D05c4ae5e34D7b1c");
+        assert_eq!(
+            deposit_address.address,
+            "0x8new35Cc6634C0532925a3b8D05c4ae5e34D7b1c"
+        );
         assert_eq!(deposit_address.creation_timestamp, 1640995500000i64);
         assert_eq!(deposit_address.currency, "ETH");
         assert_eq!(deposit_address.address_type, "deposit");

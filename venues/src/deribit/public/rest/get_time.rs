@@ -143,11 +143,11 @@ mod tests {
     fn test_timestamp_validation() {
         // Test that we can handle typical timestamp ranges
         let test_cases = vec![
-            0i64,                     // Unix epoch
-            1000000000000i64,         // September 9, 2001
-            1609459200000i64,         // January 1, 2021
+            0i64,                                  // Unix epoch
+            1000000000000i64,                      // September 9, 2001
+            1609459200000i64,                      // January 1, 2021
             chrono::Utc::now().timestamp_millis(), // Current time
-            4102444800000i64,         // January 1, 2100
+            4102444800000i64,                      // January 1, 2100
         ];
 
         for timestamp in test_cases {
@@ -172,11 +172,11 @@ mod tests {
         });
 
         let response: GetTimeResponse = serde_json::from_value(response_json).unwrap();
-        
+
         // Verify JSON-RPC 2.0 compliance
         assert_eq!(response.jsonrpc, "2.0");
         assert_eq!(response.id, 789);
-        
+
         // Verify result is present and correct type
         assert!(response.result > 0);
     }

@@ -155,15 +155,13 @@ mod tests {
 
     #[test]
     fn test_request_with_currency() {
-        let request = GetDepositWithdrawHistoryRequest::new_deposit_history(100)
-            .with_currency("BTC".to_string());
+        let request = GetDepositWithdrawHistoryRequest::new_deposit_history(100).with_currency("BTC".to_string());
         assert_eq!(request.currency, Some("BTC".to_string()));
     }
 
     #[test]
     fn test_request_with_time_range() {
-        let request = GetDepositWithdrawHistoryRequest::new_withdraw_history(100)
-            .with_time_range(1739499865000, 1739586265000);
+        let request = GetDepositWithdrawHistoryRequest::new_withdraw_history(100).with_time_range(1739499865000, 1739586265000);
         assert_eq!(request.start_time, Some(1739499865000));
         assert_eq!(request.end_time, Some(1739586265000));
     }
@@ -211,7 +209,10 @@ mod tests {
         assert_eq!(record.arrival_amount, "59.000000000000");
         assert_eq!(record.fee, "1.000000000000");
         assert_eq!(record.status, 0);
-        assert_eq!(record.address, "0xe57b69a8776b378604079650B73cdFFBDFe668Bb5");
+        assert_eq!(
+            record.address,
+            "0xe57b69a8776b378604079650B73cdFFBDFe668Bb5"
+        );
         assert_eq!(record.address_memo, "");
         assert_eq!(record.tx_id, "");
     }
@@ -273,21 +274,19 @@ mod tests {
     #[test]
     fn test_get_deposit_withdraw_history_response_structure() {
         let response = GetDepositWithdrawHistoryResponse {
-            records: vec![
-                DepositWithdrawRecord {
-                    withdraw_id: Some("1679952".to_string()),
-                    deposit_id: None,
-                    operation_type: "withdraw".to_string(),
-                    currency: "BMX".to_string(),
-                    apply_time: 1588867374000,
-                    arrival_amount: "59.000000000000".to_string(),
-                    fee: "1.000000000000".to_string(),
-                    status: 0,
-                    address: "0xe57b69a8776b378604079650B73cdFFBDFe668Bb5".to_string(),
-                    address_memo: "".to_string(),
-                    tx_id: "".to_string(),
-                },
-            ],
+            records: vec![DepositWithdrawRecord {
+                withdraw_id: Some("1679952".to_string()),
+                deposit_id: None,
+                operation_type: "withdraw".to_string(),
+                currency: "BMX".to_string(),
+                apply_time: 1588867374000,
+                arrival_amount: "59.000000000000".to_string(),
+                fee: "1.000000000000".to_string(),
+                status: 0,
+                address: "0xe57b69a8776b378604079650B73cdFFBDFe668Bb5".to_string(),
+                address_memo: "".to_string(),
+                tx_id: "".to_string(),
+            }],
         };
 
         assert_eq!(response.records.len(), 1);
@@ -325,7 +324,10 @@ mod tests {
         assert_eq!(response.records[0].arrival_amount, "59.000000000000");
         assert_eq!(response.records[0].fee, "1.000000000000");
         assert_eq!(response.records[0].status, 0);
-        assert_eq!(response.records[0].address, "0xe57b69a8776b378604079650B73cdFFBDFe668Bb5");
+        assert_eq!(
+            response.records[0].address,
+            "0xe57b69a8776b378604079650B73cdFFBDFe668Bb5"
+        );
         assert_eq!(response.records[0].address_memo, "");
         assert_eq!(response.records[0].tx_id, "");
     }

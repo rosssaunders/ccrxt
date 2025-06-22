@@ -84,13 +84,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Transaction history information
-    pub async fn get_transactions(
-        &self,
-        request: GetTransactionsRequest
-    ) -> RestResult<GetTransactionsResponse> {
-        
-        
-
+    pub async fn get_transactions(&self, request: GetTransactionsRequest) -> RestResult<GetTransactionsResponse> {
         self.send_signed_request("private/get-transactions", request)
             .await
     }

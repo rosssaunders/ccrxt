@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use crate::bingx::{EndpointType, RestResult};
 use super::RestClient;
+use crate::bingx::{EndpointType, RestResult};
 
 /// Request for the old trade lookup endpoint
 #[derive(Debug, Clone, Serialize)]
@@ -88,15 +88,16 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use reqwest::Client;
+
+    use super::*;
     use crate::bingx::RateLimiter;
 
     #[test]
     fn test_old_trade_request_creation() {
         let symbol = "BTC-USDT".to_string();
         let request = GetOldTradeRequest::new(symbol.clone());
-        
+
         assert_eq!(request.symbol, symbol);
         assert!(request.limit.is_none());
         assert!(request.from_id.is_none());
@@ -107,7 +108,7 @@ mod tests {
         let symbol = "BTC-USDT".to_string();
         let limit = 50;
         let request = GetOldTradeRequest::new(symbol.clone()).with_limit(limit);
-        
+
         assert_eq!(request.symbol, symbol);
         assert_eq!(request.limit, Some(limit));
     }
@@ -117,7 +118,7 @@ mod tests {
         let symbol = "BTC-USDT".to_string();
         let from_id = "12345".to_string();
         let request = GetOldTradeRequest::new(symbol.clone()).with_from_id(from_id.clone());
-        
+
         assert_eq!(request.symbol, symbol);
         assert_eq!(request.from_id, Some(from_id));
     }
@@ -138,7 +139,7 @@ mod tests {
             "time": 1640995200000,
             "buyerMaker": true
         }"#;
-        
+
         let trade: OldTrade = serde_json::from_str(json).unwrap();
         assert_eq!(trade.id, 123456);
         assert_eq!(trade.price, 45000.50);
@@ -156,7 +157,7 @@ mod tests {
         );
 
         let request = GetOldTradeRequest::new("BTC-USDT".to_string());
-        
+
         // Test that the method exists and can be called
         // Note: This will fail with network error since we're not making real requests
         assert!(client.get_old_trade(&request).await.is_err());

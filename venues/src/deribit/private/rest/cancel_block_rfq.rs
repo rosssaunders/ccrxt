@@ -41,10 +41,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Result containing the cancelled Block RFQ details
-    pub async fn cancel_block_rfq(
-        &self,
-        block_rfq_id: i64,
-    ) -> RestResult<CancelBlockRfqResponse> {
+    pub async fn cancel_block_rfq(&self, block_rfq_id: i64) -> RestResult<CancelBlockRfqResponse> {
         let request = CancelBlockRfqRequest { block_rfq_id };
         self.send_signed_request(
             "private/cancel_block_rfq",
@@ -58,7 +55,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use rest::secrets::ExposableSecret;
-    use serde_json::{json, Value};
+    use serde_json::{Value, json};
 
     use super::*;
     use crate::deribit::AccountTier;
@@ -208,7 +205,7 @@ mod tests {
         assert_eq!(response.result.legs.len(), 2);
         assert_eq!(response.result.makers, vec!["maker1", "maker2"]);
         assert_eq!(response.result.index_prices, vec![45000.0, 45050.0]);
-        
+
         // Test hedge information
         let hedge = response.result.hedge.unwrap();
         assert_eq!(hedge.amount, 100);

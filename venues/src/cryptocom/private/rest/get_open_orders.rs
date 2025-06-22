@@ -95,8 +95,6 @@ impl RestClient {
     /// # Returns
     /// Array of open orders
     pub async fn get_open_orders(&self, request: GetOpenOrdersRequest) -> RestResult<GetOpenOrdersResponse> {
-        
-        
         let params = serde_json::to_value(&request).map_err(|e| crate::cryptocom::Errors::Error(format!("Serialization error: {}", e)))?;
 
         self.send_signed_request("private/get-open-orders", params)

@@ -45,12 +45,10 @@ pub mod get_staking_position;
 pub mod stake;
 pub mod unstake;
 
-pub use client::RestClient;
-
 pub use cancel_oco_order::CancelOcoOrderRequest;
-pub use create_oco_order::CreateOcoOrderResponse;
-
 pub use cancel_order_list::{CancelOrderListItem, CancelOrderListRequest, CancelOrderListResponse, OrderCancellationResult};
+pub use client::RestClient;
+pub use create_oco_order::CreateOcoOrderResponse;
 pub use create_order_list::{CreateOrderListRequest, CreateOrderListResponse, OrderCreationResult, OrderListItem};
 pub use get_order_history_by_currency::{
     GetOrderHistoryByCurrencyRequest, GetOrderHistoryByCurrencyResponse, GetOrderHistoryByCurrencyWithContinuationResponse,

@@ -5,8 +5,8 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::bitmart::{OrderSide, OrderType, RestResult};
 use crate::bitmart::rate_limit::EndpointType;
+use crate::bitmart::{OrderSide, OrderType, RestResult};
 
 /// Request parameters for submitting a new order
 #[derive(Debug, Serialize)]

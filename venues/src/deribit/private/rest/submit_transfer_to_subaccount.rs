@@ -65,10 +65,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Result containing transfer data
-    pub async fn submit_transfer_to_subaccount(
-        &self,
-        request: SubmitTransferToSubaccountRequest,
-    ) -> RestResult<SubmitTransferToSubaccountResponse> {
+    pub async fn submit_transfer_to_subaccount(&self, request: SubmitTransferToSubaccountRequest) -> RestResult<SubmitTransferToSubaccountResponse> {
         self.send_signed_request(
             "private/submit_transfer_to_subaccount",
             &request,
@@ -232,14 +229,20 @@ mod tests {
         let json_value: Value = serde_json::from_str(&json_str).unwrap();
 
         assert_eq!(json_value.get("amount").unwrap(), 0.1);
-        assert_eq!(json_value.get("created_timestamp").unwrap(), 1640995200000i64);
+        assert_eq!(
+            json_value.get("created_timestamp").unwrap(),
+            1640995200000i64
+        );
         assert_eq!(json_value.get("currency").unwrap(), "BTC");
         assert_eq!(json_value.get("direction").unwrap(), "payment");
         assert_eq!(json_value.get("id").unwrap(), 9876543);
         assert_eq!(json_value.get("other_side").unwrap(), "subaccount_01");
         assert_eq!(json_value.get("state").unwrap(), "confirmed");
         assert_eq!(json_value.get("type").unwrap(), "subaccount");
-        assert_eq!(json_value.get("updated_timestamp").unwrap(), 1640995300000i64);
+        assert_eq!(
+            json_value.get("updated_timestamp").unwrap(),
+            1640995300000i64
+        );
     }
 
     #[tokio::test]

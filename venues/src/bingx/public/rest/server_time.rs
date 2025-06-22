@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use crate::bingx::{EndpointType, RestResult};
 use super::RestClient;
+use crate::bingx::{EndpointType, RestResult};
 
 /// Request for the server time endpoint
 #[derive(Debug, Clone, Serialize, Default)]
@@ -42,8 +42,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use reqwest::Client;
+
+    use super::*;
     use crate::bingx::RateLimiter;
 
     #[tokio::test]

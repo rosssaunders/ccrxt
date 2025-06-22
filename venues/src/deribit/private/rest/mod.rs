@@ -28,6 +28,7 @@ pub mod get_block_rfq_user_info;
 pub mod get_cancel_on_disconnect;
 pub mod get_current_deposit_address;
 pub mod get_deposits;
+pub mod get_margins;
 pub mod get_mmp_status;
 pub mod get_open_orders_by_currency;
 pub mod get_open_orders_by_instrument;
@@ -56,7 +57,6 @@ pub mod submit_transfer_to_subaccount;
 pub mod submit_transfer_to_user;
 pub mod update_in_address_book;
 pub mod withdraw;
-pub mod get_margins;
 
 pub use add_block_rfq_quote::{
     AddBlockRfqQuoteRequest, AddBlockRfqQuoteResponse, AddBlockRfqQuoteResult, BlockRfqHedge, BlockRfqLeg, ExecutionInstruction, ResponseHedge, ResponseLeg,
@@ -95,6 +95,7 @@ pub use get_block_rfq_user_info::{GetBlockRfqUserInfoRequest, GetBlockRfqUserInf
 pub use get_cancel_on_disconnect::{CancelOnDisconnectResult, GetCancelOnDisconnectRequest, GetCancelOnDisconnectResponse};
 pub use get_current_deposit_address::{DepositAddress, GetCurrentDepositAddressRequest, GetCurrentDepositAddressResponse};
 pub use get_deposits::{DepositData, GetDepositsRequest, GetDepositsResponse, GetDepositsResult};
+pub use get_margins::{GetMarginsRequest, GetMarginsResponse, GetMarginsResult};
 pub use get_mmp_status::{GetMmpStatusRequest, GetMmpStatusResponse, MmpStatus};
 pub use get_open_orders_by_currency::{GetOpenOrdersByCurrencyRequest, GetOpenOrdersByCurrencyResponse, OpenOrder, OpenOrderType};
 pub use get_open_orders_by_instrument::{GetOpenOrdersByInstrumentRequest, GetOpenOrdersByInstrumentResponse};
@@ -129,4 +130,3 @@ pub use submit_transfer_to_subaccount::{SubaccountTransferData, SubmitTransferTo
 pub use submit_transfer_to_user::{SubmitTransferToUserRequest, SubmitTransferToUserResponse, TransferData};
 pub use update_in_address_book::{UpdateInAddressBookRequest, UpdateInAddressBookResponse};
 pub use withdraw::{WithdrawRequest, WithdrawResponse, WithdrawalData};
-pub use get_margins::{GetMarginsRequest, GetMarginsResponse, GetMarginsResult};

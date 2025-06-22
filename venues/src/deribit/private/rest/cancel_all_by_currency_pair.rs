@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::deribit::{CurrencyPair, InstrumentKind, OrderType, EndpointType, RestResult};
+use crate::deribit::{CurrencyPair, EndpointType, InstrumentKind, OrderType, RestResult};
 
 /// Request parameters for cancel all by currency pair endpoint
 #[derive(Debug, Clone, Serialize)]
@@ -11,7 +11,7 @@ pub struct CancelAllByCurrencyPairRequest {
     /// Instrument kind filter (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub kind: Option<InstrumentKind>,
-    /// Order type filter (optional) 
+    /// Order type filter (optional)
     #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
     pub order_type: Option<OrderType>,
     /// When detailed is set to true output format is changed (optional)

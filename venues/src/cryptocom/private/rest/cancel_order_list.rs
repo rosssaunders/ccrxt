@@ -54,14 +54,16 @@ impl RestClient {
     /// # Returns
     /// Response with cancellation results for each order
     pub async fn cancel_order_list(&self, request: CancelOrderListRequest) -> crate::cryptocom::RestResult<CancelOrderListResponse> {
-        self.send_signed_request("private/cancel-order-list", request).await
+        self.send_signed_request("private/cancel-order-list", request)
+            .await
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use serde_json::json;
+
+    use super::*;
 
     #[test]
     fn test_cancel_order_list_item_structure() {

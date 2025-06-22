@@ -42,10 +42,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Result containing "ok" string on success
-    pub async fn remove_from_address_book(
-        &self,
-        request: RemoveFromAddressBookRequest,
-    ) -> RestResult<RemoveFromAddressBookResponse> {
+    pub async fn remove_from_address_book(&self, request: RemoveFromAddressBookRequest) -> RestResult<RemoveFromAddressBookResponse> {
         self.send_signed_request(
             "private/remove_from_address_book",
             &request,
@@ -181,9 +178,21 @@ mod tests {
     #[test]
     fn test_all_currency_and_type_combinations() {
         let test_cases = vec![
-            (Currency::BTC, AddressBookType::Withdrawal, "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh"),
-            (Currency::ETH, AddressBookType::Transfer, "0x742d35Cc6634C0532925a3b8D05c4ae5e34D7b1c"),
-            (Currency::USDC, AddressBookType::DepositSource, "0x1234567890abcdef1234567890abcdef12345678"),
+            (
+                Currency::BTC,
+                AddressBookType::Withdrawal,
+                "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
+            ),
+            (
+                Currency::ETH,
+                AddressBookType::Transfer,
+                "0x742d35Cc6634C0532925a3b8D05c4ae5e34D7b1c",
+            ),
+            (
+                Currency::USDC,
+                AddressBookType::DepositSource,
+                "0x1234567890abcdef1234567890abcdef12345678",
+            ),
         ];
 
         for (currency, address_type, address) in test_cases {

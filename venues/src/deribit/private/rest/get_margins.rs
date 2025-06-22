@@ -1,4 +1,3 @@
-
 //! Implements the /private/get_margins endpoint for Deribit's REST API.
 //!
 //! Fetches margin requirements for a given instrument, amount, and price.
@@ -7,7 +6,8 @@
 //! [Official Deribit Docs](https://docs.deribit.com/v2/#private-get_margins)
 
 use serde::{Deserialize, Serialize};
-use crate::deribit::{RestResult, EndpointType};
+
+use crate::deribit::{EndpointType, RestResult};
 
 /// Request parameters for the `/private/get_margins` endpoint.
 #[derive(Debug, Clone, Serialize, Default)]
@@ -67,19 +67,16 @@ impl super::client::RestClient {
     ///
     /// [Official Deribit Docs](https://docs.deribit.com/v2/#private-get_margins)
     pub async fn get_margins(&self, params: GetMarginsRequest) -> RestResult<GetMarginsResponse> {
-        self.send_signed_request(
-            "private/get_margins",
-            &params,
-            EndpointType::MatchingEngine,
-        )
-        .await
+        self.send_signed_request("private/get_margins", &params, EndpointType::MatchingEngine)
+            .await
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use serde_json;
+
+    use super::*;
 
     #[test]
     fn test_serialize_request() {

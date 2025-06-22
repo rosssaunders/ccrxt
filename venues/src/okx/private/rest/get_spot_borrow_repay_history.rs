@@ -52,10 +52,7 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the spot borrow repay history or an error
-    pub async fn get_spot_borrow_repay_history(
-        &self,
-        request: &GetSpotBorrowRepayHistoryRequest,
-    ) -> RestResult<OkxApiResponse<SpotBorrowRepayHistory>> {
+    pub async fn get_spot_borrow_repay_history(&self, request: &GetSpotBorrowRepayHistoryRequest) -> RestResult<OkxApiResponse<SpotBorrowRepayHistory>> {
         self.send_request(
             "api/v5/account/spot-borrow-repay-history",
             reqwest::Method::GET,

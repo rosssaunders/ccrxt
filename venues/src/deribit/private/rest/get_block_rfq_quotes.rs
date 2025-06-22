@@ -1,8 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
 // Reuse the result structure from add_block_rfq_quote since the API returns the same quote objects
 use super::add_block_rfq_quote::AddBlockRfqQuoteResult;
+use super::client::RestClient;
 use crate::deribit::{EndpointType, RestResult};
 
 /// Request parameters for get block RFQ quotes endpoint
@@ -72,8 +72,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
+    use serde_json::{Value, json};
+
     use super::*;
-    use serde_json::{json, Value};
 
     #[test]
     fn test_request_serialization_empty() {
@@ -210,7 +211,7 @@ mod tests {
         assert_eq!(response.id, 1);
         assert_eq!(response.jsonrpc, "2.0");
         assert_eq!(response.result.len(), 1);
-        
+
         let quote = &response.result[0];
         assert_eq!(quote.amount, 1.0);
         assert_eq!(quote.block_rfq_id, 123);

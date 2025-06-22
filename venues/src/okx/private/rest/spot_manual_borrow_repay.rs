@@ -42,10 +42,7 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the spot manual borrow repay response or an error
-    pub async fn spot_manual_borrow_repay(
-        &self,
-        request: &SpotManualBorrowRepayRequest,
-    ) -> RestResult<OkxApiResponse<SpotManualBorrowRepayResponse>> {
+    pub async fn spot_manual_borrow_repay(&self, request: &SpotManualBorrowRepayRequest) -> RestResult<OkxApiResponse<SpotManualBorrowRepayResponse>> {
         self.send_request(
             "api/v5/account/spot-manual-borrow-repay",
             reqwest::Method::POST,

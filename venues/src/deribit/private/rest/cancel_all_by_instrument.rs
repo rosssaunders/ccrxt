@@ -1,14 +1,14 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::deribit::{OrderType, EndpointType, RestResult};
+use crate::deribit::{EndpointType, OrderType, RestResult};
 
 /// Request parameters for cancel all by instrument endpoint
 #[derive(Debug, Clone, Serialize)]
 pub struct CancelAllByInstrumentRequest {
     /// Instrument name (required)
     pub instrument_name: String,
-    /// Order type filter (optional) 
+    /// Order type filter (optional)
     #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
     pub order_type: Option<OrderType>,
     /// When detailed is set to true output format is changed (optional)
@@ -117,7 +117,10 @@ mod tests {
         let json_value: Value = serde_json::from_str(&json_str).unwrap();
 
         // Should contain required instrument_name field
-        assert_eq!(json_value.get("instrument_name").unwrap(), "BTC-28JUN24-65000-C");
+        assert_eq!(
+            json_value.get("instrument_name").unwrap(),
+            "BTC-28JUN24-65000-C"
+        );
         // Should not contain optional fields when None
         assert!(json_value.get("type").is_none());
         assert!(json_value.get("detailed").is_none());
@@ -176,7 +179,10 @@ mod tests {
         let json_str = serde_json::to_string(&request).unwrap();
         let json_value: Value = serde_json::from_str(&json_str).unwrap();
 
-        assert_eq!(json_value.get("instrument_name").unwrap(), "SOL-29MAR24-180-P");
+        assert_eq!(
+            json_value.get("instrument_name").unwrap(),
+            "SOL-29MAR24-180-P"
+        );
         assert_eq!(json_value.get("type").unwrap(), "stop");
         assert_eq!(json_value.get("detailed").unwrap(), true);
         assert_eq!(json_value.get("include_combos").unwrap(), false);
@@ -196,7 +202,10 @@ mod tests {
         let json_str = serde_json::to_string(&request).unwrap();
         let json_value: Value = serde_json::from_str(&json_str).unwrap();
 
-        assert_eq!(json_value.get("instrument_name").unwrap(), "BTC-28JUN24-65000-P");
+        assert_eq!(
+            json_value.get("instrument_name").unwrap(),
+            "BTC-28JUN24-65000-P"
+        );
         assert_eq!(json_value.get("type").unwrap(), "trigger_all");
     }
 
@@ -213,7 +222,10 @@ mod tests {
         let json_str = serde_json::to_string(&request).unwrap();
         let json_value: Value = serde_json::from_str(&json_str).unwrap();
 
-        assert_eq!(json_value.get("instrument_name").unwrap(), "ETH-28JUN24-3500-C");
+        assert_eq!(
+            json_value.get("instrument_name").unwrap(),
+            "ETH-28JUN24-3500-C"
+        );
         assert_eq!(json_value.get("type").unwrap(), "trailing_stop");
         assert_eq!(json_value.get("detailed").unwrap(), false);
         assert_eq!(json_value.get("include_combos").unwrap(), true);

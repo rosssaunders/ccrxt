@@ -1,8 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
 // Reuse the types from add_block_rfq_quote since the API uses the same structures
 use super::add_block_rfq_quote::{AddBlockRfqQuoteResult, BlockRfqHedge, BlockRfqLeg};
+use super::client::RestClient;
 use crate::deribit::{EndpointType, RestResult};
 
 /// Request parameters for editing a Block RFQ quote
@@ -94,10 +94,10 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use rest::secrets::ExposableSecret;
-    use serde_json::{json, Value};
+    use serde_json::{Value, json};
 
-    use super::*;
     use super::super::add_block_rfq_quote::Side;
+    use super::*;
     use crate::deribit::AccountTier;
 
     // Test secret implementation

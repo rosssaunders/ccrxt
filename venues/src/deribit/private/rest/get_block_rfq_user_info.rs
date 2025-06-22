@@ -107,10 +107,10 @@ mod tests {
     #[test]
     fn test_request_serialization() {
         let request = GetBlockRfqUserInfoRequest {};
-        
+
         let json_str = serde_json::to_string(&request).unwrap();
         let json_value: Value = serde_json::from_str(&json_str).unwrap();
-        
+
         // Should serialize to an empty object since no parameters
         assert_eq!(json_value, json!({}));
     }
@@ -145,21 +145,21 @@ mod tests {
         let response: GetBlockRfqUserInfoResponse = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.id, 123);
         assert_eq!(response.jsonrpc, "2.0");
-        
+
         // Test parent identity
         assert_eq!(response.result.parent.identity, "group_alias_123");
         assert!(response.result.parent.is_maker);
-        
+
         // Test users array
         assert_eq!(response.result.users.len(), 2);
-        
+
         // Test first user
         let first_user = &response.result.users[0];
         assert_eq!(first_user.identity, "user_alias_456");
         assert!(first_user.is_maker);
         assert_eq!(first_user.taker_rating, 85.5);
         assert_eq!(first_user.user_id, 12345);
-        
+
         // Test second user
         let second_user = &response.result.users[1];
         assert_eq!(second_user.identity, "user_alias_789");
@@ -229,7 +229,7 @@ mod tests {
         });
 
         let response: GetBlockRfqUserInfoResponse = serde_json::from_value(response_json).unwrap();
-        
+
         // Verify JSON-RPC 2.0 compliance
         assert_eq!(response.jsonrpc, "2.0");
         assert_eq!(response.id, 999);
@@ -271,9 +271,12 @@ mod tests {
         });
 
         let response: GetBlockRfqUserInfoResponse = serde_json::from_value(response_json).unwrap();
-        assert_eq!(response.result.parent.identity, "PARENT-WITH_SPECIAL.CHARS123");
+        assert_eq!(
+            response.result.parent.identity,
+            "PARENT-WITH_SPECIAL.CHARS123"
+        );
         assert!(!response.result.parent.is_maker);
-        
+
         assert_eq!(response.result.users.len(), 3);
         assert_eq!(response.result.users[0].identity, "simple_user");
         assert_eq!(response.result.users[0].taker_rating, 0.0);

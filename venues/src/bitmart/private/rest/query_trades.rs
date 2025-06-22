@@ -5,8 +5,8 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::bitmart::{OrderMode, OrderSide, OrderType, RestResult, TradeRole};
 use crate::bitmart::rate_limit::EndpointType;
+use crate::bitmart::{OrderMode, OrderSide, OrderType, RestResult, TradeRole};
 
 /// Request parameters for querying account trades
 #[derive(Debug, Serialize)]

@@ -25,7 +25,7 @@ impl TestRequest {
     }
 
     /// Creates a new test request that will trigger an exception.
-    /// 
+    ///
     /// This is useful for testing error handling in wrapper libraries.
     pub fn new_exception() -> Self {
         Self {
@@ -213,11 +213,11 @@ mod tests {
         });
 
         let response: TestResponse = serde_json::from_value(response_json).unwrap();
-        
+
         // Verify JSON-RPC 2.0 compliance
         assert_eq!(response.jsonrpc, "2.0");
         assert_eq!(response.id, 789);
-        
+
         // Verify result is present and correct structure
         assert!(!response.result.version.is_empty());
     }
@@ -250,6 +250,9 @@ mod tests {
 
         // Test new_exception() constructor
         let exception_request = TestRequest::new_exception();
-        assert_eq!(exception_request.expected_result, Some("exception".to_string()));
+        assert_eq!(
+            exception_request.expected_result,
+            Some("exception".to_string())
+        );
     }
 }

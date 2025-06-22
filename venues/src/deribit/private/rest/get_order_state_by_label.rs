@@ -2,10 +2,11 @@
 //!
 //! This module defines the request/response types and logic for the Deribit private endpoint.
 
+use serde::{Deserialize, Serialize};
+
 use super::client::RestClient;
 use crate::deribit::enums::{CancelReason, Currency, OrderDirection, OrderState, OrderType, TriggerType};
 use crate::deribit::{EndpointType, RestResult as DeribitResult, TimeInForce, TriggerFillCondition};
-use serde::{Deserialize, Serialize};
 
 /// Request for /private/get_order_state_by_label
 #[derive(Debug, Clone, Serialize)]
@@ -266,9 +267,10 @@ impl RestClient {
 // Unit tests for serialization/deserialization
 #[cfg(test)]
 mod tests {
+    use serde_json;
+
     use super::*;
     use crate::deribit::enums::Currency;
-    use serde_json;
 
     #[test]
     fn test_serialize_request() {

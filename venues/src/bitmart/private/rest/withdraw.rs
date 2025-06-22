@@ -14,7 +14,7 @@ pub struct WithdrawRequest {
     /// Remark (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub destination: Option<String>,
-    
+
     // Parameters for withdraw to the blockchain
     /// Withdraw address (only the address added on the official website is supported)
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -22,7 +22,7 @@ pub struct WithdrawRequest {
     /// Address tag (tag Or payment_id Or memo)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub address_memo: Option<String>,
-    
+
     // Parameters for withdraw to BitMart account
     /// Account type
     /// - `1` = CID
@@ -47,13 +47,7 @@ pub struct WithdrawResponse {
 
 impl WithdrawRequest {
     /// Create a new blockchain withdraw request
-    pub fn new_blockchain_withdraw(
-        currency: String,
-        amount: String,
-        address: String,
-        address_memo: Option<String>,
-        destination: Option<String>,
-    ) -> Self {
+    pub fn new_blockchain_withdraw(currency: String, amount: String, address: String, address_memo: Option<String>, destination: Option<String>) -> Self {
         Self {
             currency,
             amount,
@@ -67,13 +61,7 @@ impl WithdrawRequest {
     }
 
     /// Create a new BitMart account withdraw request
-    pub fn new_bitmart_withdraw(
-        currency: String,
-        amount: String,
-        account_type: i32,
-        value: String,
-        area_code: Option<String>,
-    ) -> Self {
+    pub fn new_bitmart_withdraw(currency: String, amount: String, account_type: i32, value: String, area_code: Option<String>) -> Self {
         Self {
             currency,
             amount,
@@ -132,7 +120,10 @@ mod tests {
 
         assert_eq!(request.currency, "USDT-TRC20");
         assert_eq!(request.amount, "100.000");
-        assert_eq!(request.address, Some("0x1EE6FA5A380360**********".to_string()));
+        assert_eq!(
+            request.address,
+            Some("0x1EE6FA5A380360**********".to_string())
+        );
         assert_eq!(request.address_memo, Some("".to_string()));
         assert_eq!(request.destination, Some("To Digital Address".to_string()));
         assert_eq!(request.account_type, None);

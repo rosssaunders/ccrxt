@@ -5,9 +5,9 @@
 use serde::Serialize;
 
 use super::client::RestClient;
-use crate::bitmart::{OrderMode, RestResult};
-use crate::bitmart::rate_limit::EndpointType;
 use super::query_order::OrderDetails;
+use crate::bitmart::rate_limit::EndpointType;
+use crate::bitmart::{OrderMode, RestResult};
 
 /// Request parameters for querying order list
 #[derive(Debug, Serialize)]

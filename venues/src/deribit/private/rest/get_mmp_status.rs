@@ -1,8 +1,8 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::deribit::{EndpointType, RestResult};
 use super::reset_mmp::IndexName;
+use crate::deribit::{EndpointType, RestResult};
 
 /// Request parameters for get MMP status
 #[derive(Debug, Clone, Serialize)]
@@ -62,12 +62,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Result containing array of MMP status objects
-    pub async fn get_mmp_status(
-        &self,
-        index_name: Option<IndexName>,
-        mmp_group: Option<String>,
-        block_rfq: Option<bool>,
-    ) -> RestResult<GetMmpStatusResponse> {
+    pub async fn get_mmp_status(&self, index_name: Option<IndexName>, mmp_group: Option<String>, block_rfq: Option<bool>) -> RestResult<GetMmpStatusResponse> {
         let request = GetMmpStatusRequest {
             index_name,
             mmp_group,

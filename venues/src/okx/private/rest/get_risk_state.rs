@@ -14,7 +14,7 @@ pub struct GetRiskStateRequest {
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct RiskState {
-    /// State of auto-deleveraging 
+    /// State of auto-deleveraging
     /// "1": Auto-deleveraging enabled, "2": Auto-deleveraging disabled
     pub at_risk: String,
 

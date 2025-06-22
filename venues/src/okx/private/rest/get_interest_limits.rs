@@ -65,10 +65,7 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the interest limits or an error
-    pub async fn get_interest_limits(
-        &self,
-        request: &GetInterestLimitsRequest,
-    ) -> RestResult<OkxApiResponse<InterestLimits>> {
+    pub async fn get_interest_limits(&self, request: &GetInterestLimitsRequest) -> RestResult<OkxApiResponse<InterestLimits>> {
         self.send_request(
             "api/v5/account/interest-limits",
             reqwest::Method::GET,

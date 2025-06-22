@@ -40,7 +40,11 @@ impl RestClient {
     /// # Returns
     /// Account settings information
     pub async fn get_account_settings(&self) -> RestResult<GetAccountSettingsResponse> {
-        self.send_signed_request("private/get-account-settings", GetAccountSettingsRequest::default()).await
+        self.send_signed_request(
+            "private/get-account-settings",
+            GetAccountSettingsRequest::default(),
+        )
+        .await
     }
 }
 

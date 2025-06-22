@@ -41,7 +41,8 @@ impl RestClient {
     /// # Returns
     /// Success confirmation (code 0)
     pub async fn change_account_settings(&self, request: ChangeAccountSettingsRequest) -> RestResult<ChangeAccountSettingsResponse> {
-        self.send_signed_request("private/change-account-settings", request).await
+        self.send_signed_request("private/change-account-settings", request)
+            .await
     }
 }
 

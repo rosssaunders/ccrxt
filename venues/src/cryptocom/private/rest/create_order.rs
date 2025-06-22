@@ -80,7 +80,8 @@ impl RestClient {
     /// # Returns
     /// Order ID and client order ID
     pub async fn create_order(&self, request: CreateOrderRequest) -> RestResult<CreateOrderResponse> {
-        self.send_signed_request("private/create-order", request).await
+        self.send_signed_request("private/create-order", request)
+            .await
     }
 }
 

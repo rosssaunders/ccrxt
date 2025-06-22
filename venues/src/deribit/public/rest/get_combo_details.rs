@@ -67,7 +67,10 @@ mod tests {
         };
 
         let json_value = serde_json::to_value(&request).unwrap();
-        assert_eq!(json_value["combo_id"], "BTC-28JUN24-65000-C_BTC-28JUN24-70000-P");
+        assert_eq!(
+            json_value["combo_id"],
+            "BTC-28JUN24-65000-C_BTC-28JUN24-70000-P"
+        );
     }
 
     #[test]
@@ -97,7 +100,7 @@ mod tests {
         let response: GetComboDetailsResponse = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.id, 123);
         assert_eq!(response.jsonrpc, "2.0");
-        
+
         let combo = &response.result;
         assert_eq!(combo.creation_timestamp, 1640995200000);
         assert_eq!(combo.id, "BTC-28JUN24-65000-C_BTC-28JUN24-70000-P");
@@ -105,11 +108,11 @@ mod tests {
         assert_eq!(combo.state, "active");
         assert_eq!(combo.state_timestamp, 1640995200000);
         assert_eq!(combo.legs.len(), 2);
-        
+
         let leg1 = &combo.legs[0];
         assert_eq!(leg1.amount, 1);
         assert_eq!(leg1.instrument_name, "BTC-28JUN24-65000-C");
-        
+
         let leg2 = &combo.legs[1];
         assert_eq!(leg2.amount, -1);
         assert_eq!(leg2.instrument_name, "BTC-28JUN24-70000-P");

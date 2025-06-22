@@ -1,10 +1,9 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::deribit::{Currency, EndpointType, RestResult};
-
 // Re-export WithdrawalData from withdraw.rs to maintain consistency
 pub use super::withdraw::WithdrawalData;
+use crate::deribit::{Currency, EndpointType, RestResult};
 
 /// Request parameters for get withdrawals
 #[derive(Debug, Clone, Serialize)]
@@ -57,12 +56,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Result containing withdrawal history with count and data array
-    pub async fn get_withdrawals(
-        &self,
-        currency: Currency,
-        count: Option<i32>,
-        offset: Option<i32>,
-    ) -> RestResult<GetWithdrawalsResponse> {
+    pub async fn get_withdrawals(&self, currency: Currency, count: Option<i32>, offset: Option<i32>) -> RestResult<GetWithdrawalsResponse> {
         let request = GetWithdrawalsRequest {
             currency,
             count,
@@ -233,7 +227,10 @@ mod tests {
 
         // Check first withdrawal
         let first_withdrawal = &response.result.data[0];
-        assert_eq!(first_withdrawal.address, "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh");
+        assert_eq!(
+            first_withdrawal.address,
+            "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh"
+        );
         assert_eq!(first_withdrawal.amount, 0.001);
         assert_eq!(first_withdrawal.currency, "BTC");
         assert_eq!(first_withdrawal.fee, 0.0001);
@@ -245,14 +242,20 @@ mod tests {
 
         // Check second withdrawal
         let second_withdrawal = &response.result.data[1];
-        assert_eq!(second_withdrawal.address, "0x742d35Cc6634C0532925a3b8D05c4ae5e34D7b1c");
+        assert_eq!(
+            second_withdrawal.address,
+            "0x742d35Cc6634C0532925a3b8D05c4ae5e34D7b1c"
+        );
         assert_eq!(second_withdrawal.amount, 0.5);
         assert_eq!(second_withdrawal.currency, "ETH");
         assert_eq!(second_withdrawal.fee, 0.002);
         assert_eq!(second_withdrawal.id, 12346);
         assert_eq!(second_withdrawal.priority, 1.0);
         assert_eq!(second_withdrawal.state, WithdrawalState::Completed);
-        assert_eq!(second_withdrawal.confirmed_timestamp, Some(1640995300000i64));
+        assert_eq!(
+            second_withdrawal.confirmed_timestamp,
+            Some(1640995300000i64)
+        );
         assert_eq!(
             second_withdrawal.transaction_id,
             Some("0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef".to_string())
@@ -412,11 +415,11 @@ mod tests {
         });
 
         let response: GetWithdrawalsResponse = serde_json::from_value(response_json).unwrap();
-        
+
         // Verify JSON-RPC 2.0 compliance
         assert_eq!(response.jsonrpc, "2.0");
         assert_eq!(response.id, 789);
-        
+
         // Verify result is present and correct structure
         assert_eq!(response.result.count, 1);
         assert_eq!(response.result.data.len(), 1);

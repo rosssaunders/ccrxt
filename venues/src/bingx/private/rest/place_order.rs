@@ -260,9 +260,18 @@ mod tests {
 
     #[test]
     fn test_order_type_serialization() {
-        assert_eq!(serde_json::to_string(&OrderType::Market).unwrap(), "\"MARKET\"");
-        assert_eq!(serde_json::to_string(&OrderType::Limit).unwrap(), "\"LIMIT\"");
-        assert_eq!(serde_json::to_string(&OrderType::TakeStopLimit).unwrap(), "\"TAKE_STOP_LIMIT\"");
+        assert_eq!(
+            serde_json::to_string(&OrderType::Market).unwrap(),
+            "\"MARKET\""
+        );
+        assert_eq!(
+            serde_json::to_string(&OrderType::Limit).unwrap(),
+            "\"LIMIT\""
+        );
+        assert_eq!(
+            serde_json::to_string(&OrderType::TakeStopLimit).unwrap(),
+            "\"TAKE_STOP_LIMIT\""
+        );
     }
 
     #[test]
@@ -276,6 +285,9 @@ mod tests {
         assert_eq!(serde_json::to_string(&TimeInForce::Gtc).unwrap(), "\"GTC\"");
         assert_eq!(serde_json::to_string(&TimeInForce::Ioc).unwrap(), "\"IOC\"");
         assert_eq!(serde_json::to_string(&TimeInForce::Fok).unwrap(), "\"FOK\"");
-        assert_eq!(serde_json::to_string(&TimeInForce::PostOnly).unwrap(), "\"POST_ONLY\"");
+        assert_eq!(
+            serde_json::to_string(&TimeInForce::PostOnly).unwrap(),
+            "\"POST_ONLY\""
+        );
     }
 }

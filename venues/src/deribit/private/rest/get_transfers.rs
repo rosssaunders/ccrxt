@@ -1,8 +1,8 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::deribit::{Currency, EndpointType, RestResult};
 use super::submit_transfer_to_user::TransferData;
+use crate::deribit::{Currency, EndpointType, RestResult};
 
 /// Request parameters for get transfers
 #[derive(Debug, Clone, Serialize)]
@@ -55,12 +55,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Result containing transfer history with count and data array
-    pub async fn get_transfers(
-        &self,
-        currency: Currency,
-        count: Option<i32>,
-        offset: Option<i32>,
-    ) -> RestResult<GetTransfersResponse> {
+    pub async fn get_transfers(&self, currency: Currency, count: Option<i32>, offset: Option<i32>) -> RestResult<GetTransfersResponse> {
         let request = GetTransfersRequest {
             currency,
             count,
@@ -289,11 +284,11 @@ mod tests {
     fn test_transfer_states() {
         let states = vec![
             "prepared",
-            "confirmed", 
+            "confirmed",
             "cancelled",
             "waiting_for_admin",
             "insufficient_funds",
-            "withdrawal_limit"
+            "withdrawal_limit",
         ];
 
         for state in states {
@@ -325,10 +320,7 @@ mod tests {
 
     #[test]
     fn test_transfer_types() {
-        let types = vec![
-            ("user", "user"),
-            ("subaccount", "subaccount"),
-        ];
+        let types = vec![("user", "user"), ("subaccount", "subaccount")];
 
         for (type_value, expected) in types {
             let response_json = json!({
@@ -433,11 +425,11 @@ mod tests {
         });
 
         let response: GetTransfersResponse = serde_json::from_value(response_json).unwrap();
-        
+
         // Verify JSON-RPC 2.0 compliance
         assert_eq!(response.jsonrpc, "2.0");
         assert_eq!(response.id, 789);
-        
+
         // Verify result is present and correct structure
         assert_eq!(response.result.count, 1);
         assert_eq!(response.result.data.len(), 1);

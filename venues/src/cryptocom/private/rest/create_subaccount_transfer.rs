@@ -51,11 +51,11 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use crate::cryptocom::enums::ResponseCode;
     use rest::secrets::ExposableSecret;
     use serde_json::json;
 
     use super::*;
+    use crate::cryptocom::enums::ResponseCode;
 
     /// A plain text implementation of ExposableSecret for testing purposes.
     #[derive(Clone)]

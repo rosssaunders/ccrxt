@@ -116,7 +116,10 @@ mod tests {
 
         assert_eq!(currency.currency, "USDT-TRC20");
         assert_eq!(currency.name, "USDT-TRC20");
-        assert_eq!(currency.contract_address, Some("TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t".to_string()));
+        assert_eq!(
+            currency.contract_address,
+            Some("TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t".to_string())
+        );
         assert_eq!(currency.network, "TRC20");
         assert!(currency.withdraw_enabled);
         assert!(currency.deposit_enabled);
@@ -153,7 +156,10 @@ mod tests {
         assert_eq!(currency.withdraw_minsize, deserialized.withdraw_minsize);
         assert_eq!(currency.withdraw_minfee, deserialized.withdraw_minfee);
         assert_eq!(currency.withdraw_fee, deserialized.withdraw_fee);
-        assert_eq!(currency.withdraw_fee_estimate, deserialized.withdraw_fee_estimate);
+        assert_eq!(
+            currency.withdraw_fee_estimate,
+            deserialized.withdraw_fee_estimate
+        );
     }
 
     #[test]

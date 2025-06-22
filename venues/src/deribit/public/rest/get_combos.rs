@@ -19,10 +19,10 @@ pub struct GetCombosRequest {
 /// A leg in a combo
 #[derive(Debug, Clone, Deserialize)]
 pub struct ComboLeg {
-    /// Size multiplier of a leg. A negative value indicates that the trades on given leg 
+    /// Size multiplier of a leg. A negative value indicates that the trades on given leg
     /// are in opposite direction to the combo trades they originate from
     pub amount: i32,
-    
+
     /// Unique instrument identifier
     pub instrument_name: String,
 }
@@ -32,19 +32,19 @@ pub struct ComboLeg {
 pub struct ComboInfo {
     /// The timestamp (milliseconds since the Unix epoch)
     pub creation_timestamp: i64,
-    
+
     /// Unique combo identifier
     pub id: String,
-    
+
     /// Instrument ID
     pub instrument_id: i32,
-    
+
     /// Legs of the combo
     pub legs: Vec<ComboLeg>,
-    
+
     /// Combo state: "rfq", "active", "inactive"
     pub state: String,
-    
+
     /// The timestamp (milliseconds since the Unix epoch)
     pub state_timestamp: i64,
 }
@@ -142,7 +142,7 @@ mod tests {
         assert_eq!(response.id, 123);
         assert_eq!(response.jsonrpc, "2.0");
         assert_eq!(response.result.len(), 1);
-        
+
         let combo = &response.result[0];
         assert_eq!(combo.creation_timestamp, 1640995200000);
         assert_eq!(combo.id, "BTC-28JUN24-65000-C_BTC-28JUN24-70000-P");
@@ -150,11 +150,11 @@ mod tests {
         assert_eq!(combo.state, "active");
         assert_eq!(combo.state_timestamp, 1640995200000);
         assert_eq!(combo.legs.len(), 2);
-        
+
         let leg1 = &combo.legs[0];
         assert_eq!(leg1.amount, 1);
         assert_eq!(leg1.instrument_name, "BTC-28JUN24-65000-C");
-        
+
         let leg2 = &combo.legs[1];
         assert_eq!(leg2.amount, -1);
         assert_eq!(leg2.instrument_name, "BTC-28JUN24-70000-P");

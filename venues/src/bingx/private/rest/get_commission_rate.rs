@@ -49,8 +49,8 @@ impl RestClient {
     ///         recv_window: None,
     ///     };
     ///     let commission_rate = client.get_commission_rate(&request).await?;
-    ///     println!("Taker rate: {}, Maker rate: {}", 
-    ///         commission_rate.taker_commission_rate, 
+    ///     println!("Taker rate: {}, Maker rate: {}",
+    ///         commission_rate.taker_commission_rate,
     ///         commission_rate.maker_commission_rate);
     ///     Ok(())
     /// }

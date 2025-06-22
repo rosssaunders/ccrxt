@@ -102,8 +102,8 @@ mod tests {
     #[test]
     fn test_order_book_entry_parsing() {
         let entry = vec![
-            "31012.44".to_string(),     // price
-            "69994.75267".to_string(),  // amount
+            "31012.44".to_string(),    // price
+            "69994.75267".to_string(), // amount
         ];
 
         assert_eq!(DepthData::entry_price(&entry), Some("31012.44"));
@@ -123,12 +123,8 @@ mod tests {
         let depth = DepthData {
             ts: "1691672864874".to_string(),
             symbol: "BTC_USDT".to_string(),
-            asks: vec![
-                vec!["31012.44".to_string(), "69994.75267".to_string()],
-            ],
-            bids: vec![
-                vec!["30000.00".to_string(), "1.00000".to_string()],
-            ],
+            asks: vec![vec!["31012.44".to_string(), "69994.75267".to_string()]],
+            bids: vec![vec!["30000.00".to_string(), "1.00000".to_string()]],
         };
 
         assert_eq!(depth.ts, "1691672864874");
@@ -216,7 +212,10 @@ mod tests {
         assert_eq!(response.asks.len(), 1);
         assert_eq!(response.bids.len(), 1);
         assert_eq!(DepthData::entry_price(&response.asks[0]), Some("31012.44"));
-        assert_eq!(DepthData::entry_amount(&response.asks[0]), Some("69994.75267"));
+        assert_eq!(
+            DepthData::entry_amount(&response.asks[0]),
+            Some("69994.75267")
+        );
         assert_eq!(DepthData::entry_price(&response.bids[0]), Some("30000.00"));
         assert_eq!(DepthData::entry_amount(&response.bids[0]), Some("1.00000"));
     }
@@ -242,14 +241,12 @@ mod tests {
         let depth = DepthData {
             ts: "1691672864874".to_string(),
             symbol: "BTC_USDT".to_string(),
-            asks: (0..50).map(|i| vec![
-                format!("{}.00", 30000 + i),
-                format!("{}.0", i + 1),
-            ]).collect(),
-            bids: (0..50).map(|i| vec![
-                format!("{}.00", 29999 - i),
-                format!("{}.0", i + 1),
-            ]).collect(),
+            asks: (0..50)
+                .map(|i| vec![format!("{}.00", 30000 + i), format!("{}.0", i + 1)])
+                .collect(),
+            bids: (0..50)
+                .map(|i| vec![format!("{}.00", 29999 - i), format!("{}.0", i + 1)])
+                .collect(),
         };
 
         assert_eq!(depth.asks.len(), 50);

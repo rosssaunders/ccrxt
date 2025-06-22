@@ -5,9 +5,9 @@
 use serde::Serialize;
 
 use super::client::RestClient;
+use super::query_trades::TradeInfo;
 use crate::bitmart::RestResult;
 use crate::bitmart::rate_limit::EndpointType;
-use super::query_trades::TradeInfo;
 
 /// Request parameters for querying order trades
 #[derive(Debug, Serialize)]

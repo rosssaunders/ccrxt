@@ -75,10 +75,10 @@ mod tests {
     #[test]
     fn test_request_serialization() {
         let request = GetBlockRfqMakersRequest {};
-        
+
         let json_str = serde_json::to_string(&request).unwrap();
         let json_value: Value = serde_json::from_str(&json_str).unwrap();
-        
+
         // Should serialize to an empty object since no parameters
         assert_eq!(json_value, json!({}));
     }
@@ -140,7 +140,7 @@ mod tests {
         });
 
         let response: GetBlockRfqMakersResponse = serde_json::from_value(response_json).unwrap();
-        
+
         // Verify JSON-RPC 2.0 compliance
         assert_eq!(response.jsonrpc, "2.0");
         assert_eq!(response.id, 999);

@@ -1,11 +1,12 @@
 //! Retrieves user's open orders for a given instrument on Deribit.
 //! Endpoint: /private/get_open_orders_by_instrument
 
+use serde::{Deserialize, Serialize};
+
 use crate::deribit::EndpointType;
 use crate::deribit::RestResult;
 use crate::deribit::enums::{AdvancedType, CancelReason, OpenOrdersOrderType, OrderDirection, OrderState, OrderType, TriggerType};
 use crate::deribit::private::rest::RestClient;
-use serde::{Deserialize, Serialize};
 
 /// Request for /private/get_open_orders_by_instrument
 #[derive(Debug, Clone, Serialize)]
@@ -141,8 +142,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use serde_json::json;
+
+    use super::*;
 
     #[test]
     fn test_request_serialization() {

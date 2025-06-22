@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use crate::bingx::{EndpointType, RestResult};
 use super::RestClient;
+use crate::bingx::{EndpointType, RestResult};
 
 /// Request for the spot trading symbols endpoint
 #[derive(Debug, Clone, Serialize)]
@@ -111,15 +111,16 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use reqwest::Client;
+
+    use super::*;
     use crate::bingx::RateLimiter;
 
     #[test]
     fn test_symbols_request_creation() {
         let timestamp = 1640995200000;
         let request = GetSymbolsRequest::new(timestamp);
-        
+
         assert_eq!(request.timestamp, timestamp);
         assert!(request.symbol.is_none());
         assert!(request.recv_window.is_none());
@@ -130,7 +131,7 @@ mod tests {
         let timestamp = 1640995200000;
         let symbol = "BTC-USDT".to_string();
         let request = GetSymbolsRequest::for_symbol(symbol.clone(), timestamp);
-        
+
         assert_eq!(request.timestamp, timestamp);
         assert_eq!(request.symbol, Some(symbol));
         assert!(request.recv_window.is_none());
@@ -141,7 +142,7 @@ mod tests {
         let timestamp = 1640995200000;
         let recv_window = 5000;
         let request = GetSymbolsRequest::new(timestamp).with_recv_window(recv_window);
-        
+
         assert_eq!(request.timestamp, timestamp);
         assert_eq!(request.recv_window, Some(recv_window));
     }
@@ -162,7 +163,7 @@ mod tests {
         );
 
         let request = GetSymbolsRequest::new(1640995200000);
-        
+
         // Test that the method exists and can be called
         // Note: This will fail with network error since we're not making real requests
         assert!(client.get_symbols(&request).await.is_err());

@@ -1,8 +1,8 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
+use super::place_order::{OrderSide, OrderStatus, OrderType};
 use crate::bingx::{EndpointType, RestResult};
-use super::place_order::{OrderType, OrderSide, OrderStatus};
 
 /// Historical order information (similar to Order but with fee as f64)
 #[derive(Debug, Clone, Deserialize)]

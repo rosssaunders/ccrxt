@@ -1,8 +1,8 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
+use super::place_order::{OrderSide, OrderStatus, OrderType};
 use crate::bingx::{EndpointType, RestResult};
-use super::place_order::{OrderType, OrderSide, OrderStatus};
 
 /// Cancel multiple orders response item
 #[derive(Debug, Clone, Deserialize)]
@@ -212,13 +212,20 @@ mod tests {
     fn test_cancel_multiple_orders_by_client_order_ids() {
         let request = CancelMultipleOrdersRequest::by_client_order_ids(
             "BTC-USDT".to_string(),
-            vec!["order1".to_string(), "order2".to_string(), "order3".to_string()],
+            vec![
+                "order1".to_string(),
+                "order2".to_string(),
+                "order3".to_string(),
+            ],
             vec![123456789, 123456790, 123456791],
         );
 
         assert_eq!(request.symbol, "BTC-USDT");
         assert_eq!(request.order_ids, "123456789,123456790,123456791");
-        assert_eq!(request.client_order_ids, Some("order1,order2,order3".to_string()));
+        assert_eq!(
+            request.client_order_ids,
+            Some("order1,order2,order3".to_string())
+        );
         assert!(request.process.is_none());
     }
 

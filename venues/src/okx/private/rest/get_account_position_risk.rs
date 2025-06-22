@@ -149,9 +149,7 @@ mod tests {
 
     #[test]
     fn test_get_account_position_risk_minimal_request() {
-        let request = GetAccountPositionRiskRequest {
-            inst_type: None,
-        };
+        let request = GetAccountPositionRiskRequest { inst_type: None };
 
         let serialized = serde_urlencoded::to_string(&request).unwrap();
         assert_eq!(serialized, "");

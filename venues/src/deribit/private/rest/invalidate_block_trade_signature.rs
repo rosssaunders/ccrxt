@@ -97,7 +97,10 @@ mod tests {
         let json_str = serde_json::to_string(&request).unwrap();
         let json_value: Value = serde_json::from_str(&json_str).unwrap();
 
-        assert_eq!(json_value.get("signature").unwrap(), "very_long_signature_string_that_might_be_used_in_production_scenarios_456");
+        assert_eq!(
+            json_value.get("signature").unwrap(),
+            "very_long_signature_string_that_might_be_used_in_production_scenarios_456"
+        );
     }
 
     #[test]

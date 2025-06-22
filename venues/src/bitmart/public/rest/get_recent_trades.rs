@@ -107,16 +107,25 @@ mod tests {
     #[test]
     fn test_trade_data_parsing() {
         let trade_data = vec![
-            "BMX_ETH".to_string(),        // symbol
-            "1691743270994".to_string(),  // ts
-            "1.00000000".to_string(),     // price
-            "1.0".to_string(),            // size
-            "sell".to_string(),           // side
+            "BMX_ETH".to_string(),       // symbol
+            "1691743270994".to_string(), // ts
+            "1.00000000".to_string(),    // price
+            "1.0".to_string(),           // size
+            "sell".to_string(),          // side
         ];
 
-        assert_eq!(GetRecentTradesResponse::symbol(&trade_data), Some("BMX_ETH"));
-        assert_eq!(GetRecentTradesResponse::timestamp(&trade_data), Some("1691743270994"));
-        assert_eq!(GetRecentTradesResponse::price(&trade_data), Some("1.00000000"));
+        assert_eq!(
+            GetRecentTradesResponse::symbol(&trade_data),
+            Some("BMX_ETH")
+        );
+        assert_eq!(
+            GetRecentTradesResponse::timestamp(&trade_data),
+            Some("1691743270994")
+        );
+        assert_eq!(
+            GetRecentTradesResponse::price(&trade_data),
+            Some("1.00000000")
+        );
         assert_eq!(GetRecentTradesResponse::size(&trade_data), Some("1.0"));
         assert_eq!(GetRecentTradesResponse::side(&trade_data), Some("sell"));
     }
@@ -129,9 +138,18 @@ mod tests {
             "1.00000000".to_string(),
         ];
 
-        assert_eq!(GetRecentTradesResponse::symbol(&trade_data), Some("BMX_ETH"));
-        assert_eq!(GetRecentTradesResponse::timestamp(&trade_data), Some("1691743270994"));
-        assert_eq!(GetRecentTradesResponse::price(&trade_data), Some("1.00000000"));
+        assert_eq!(
+            GetRecentTradesResponse::symbol(&trade_data),
+            Some("BMX_ETH")
+        );
+        assert_eq!(
+            GetRecentTradesResponse::timestamp(&trade_data),
+            Some("1691743270994")
+        );
+        assert_eq!(
+            GetRecentTradesResponse::price(&trade_data),
+            Some("1.00000000")
+        );
         assert_eq!(GetRecentTradesResponse::size(&trade_data), None);
         assert_eq!(GetRecentTradesResponse::side(&trade_data), None);
     }
@@ -156,9 +174,15 @@ mod tests {
         ]);
 
         assert_eq!(response.0.len(), 2);
-        assert_eq!(GetRecentTradesResponse::symbol(&response.0[0]), Some("BMX_ETH"));
+        assert_eq!(
+            GetRecentTradesResponse::symbol(&response.0[0]),
+            Some("BMX_ETH")
+        );
         assert_eq!(GetRecentTradesResponse::side(&response.0[0]), Some("sell"));
-        assert_eq!(GetRecentTradesResponse::symbol(&response.0[1]), Some("BTC_USDT"));
+        assert_eq!(
+            GetRecentTradesResponse::symbol(&response.0[1]),
+            Some("BTC_USDT")
+        );
         assert_eq!(GetRecentTradesResponse::side(&response.0[1]), Some("buy"));
     }
 
@@ -200,9 +224,18 @@ mod tests {
 
         let response: GetRecentTradesResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.0.len(), 1);
-        assert_eq!(GetRecentTradesResponse::symbol(&response.0[0]), Some("BMX_ETH"));
-        assert_eq!(GetRecentTradesResponse::timestamp(&response.0[0]), Some("1691743270994"));
-        assert_eq!(GetRecentTradesResponse::price(&response.0[0]), Some("1.00000000"));
+        assert_eq!(
+            GetRecentTradesResponse::symbol(&response.0[0]),
+            Some("BMX_ETH")
+        );
+        assert_eq!(
+            GetRecentTradesResponse::timestamp(&response.0[0]),
+            Some("1691743270994")
+        );
+        assert_eq!(
+            GetRecentTradesResponse::price(&response.0[0]),
+            Some("1.00000000")
+        );
         assert_eq!(GetRecentTradesResponse::size(&response.0[0]), Some("1.0"));
         assert_eq!(GetRecentTradesResponse::side(&response.0[0]), Some("sell"));
     }
@@ -236,18 +269,36 @@ mod tests {
 
         let response: GetRecentTradesResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.0.len(), 2);
-        
+
         // First trade
-        assert_eq!(GetRecentTradesResponse::symbol(&response.0[0]), Some("BMX_ETH"));
-        assert_eq!(GetRecentTradesResponse::timestamp(&response.0[0]), Some("1691743270994"));
-        assert_eq!(GetRecentTradesResponse::price(&response.0[0]), Some("1.00000000"));
+        assert_eq!(
+            GetRecentTradesResponse::symbol(&response.0[0]),
+            Some("BMX_ETH")
+        );
+        assert_eq!(
+            GetRecentTradesResponse::timestamp(&response.0[0]),
+            Some("1691743270994")
+        );
+        assert_eq!(
+            GetRecentTradesResponse::price(&response.0[0]),
+            Some("1.00000000")
+        );
         assert_eq!(GetRecentTradesResponse::size(&response.0[0]), Some("1.0"));
         assert_eq!(GetRecentTradesResponse::side(&response.0[0]), Some("sell"));
-        
+
         // Second trade
-        assert_eq!(GetRecentTradesResponse::symbol(&response.0[1]), Some("BMX_ETH"));
-        assert_eq!(GetRecentTradesResponse::timestamp(&response.0[1]), Some("1691743271000"));
-        assert_eq!(GetRecentTradesResponse::price(&response.0[1]), Some("1.00000001"));
+        assert_eq!(
+            GetRecentTradesResponse::symbol(&response.0[1]),
+            Some("BMX_ETH")
+        );
+        assert_eq!(
+            GetRecentTradesResponse::timestamp(&response.0[1]),
+            Some("1691743271000")
+        );
+        assert_eq!(
+            GetRecentTradesResponse::price(&response.0[1]),
+            Some("1.00000001")
+        );
         assert_eq!(GetRecentTradesResponse::size(&response.0[1]), Some("2.5"));
         assert_eq!(GetRecentTradesResponse::side(&response.0[1]), Some("buy"));
     }

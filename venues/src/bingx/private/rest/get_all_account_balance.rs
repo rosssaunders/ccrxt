@@ -147,13 +147,34 @@ mod tests {
 
     #[test]
     fn test_account_type_serialization() {
-        assert_eq!(serde_json::to_string(&AccountType::Spot).unwrap(), "\"spot\"");
-        assert_eq!(serde_json::to_string(&AccountType::StdFutures).unwrap(), "\"stdFutures\"");
-        assert_eq!(serde_json::to_string(&AccountType::CoinMPerp).unwrap(), "\"coinMPerp\"");
-        assert_eq!(serde_json::to_string(&AccountType::UsdtmPerp).unwrap(), "\"USDTMPerp\"");
-        assert_eq!(serde_json::to_string(&AccountType::CopyTrading).unwrap(), "\"copyTrading\"");
-        assert_eq!(serde_json::to_string(&AccountType::Grid).unwrap(), "\"grid\"");
-        assert_eq!(serde_json::to_string(&AccountType::Eran).unwrap(), "\"eran\"");
+        assert_eq!(
+            serde_json::to_string(&AccountType::Spot).unwrap(),
+            "\"spot\""
+        );
+        assert_eq!(
+            serde_json::to_string(&AccountType::StdFutures).unwrap(),
+            "\"stdFutures\""
+        );
+        assert_eq!(
+            serde_json::to_string(&AccountType::CoinMPerp).unwrap(),
+            "\"coinMPerp\""
+        );
+        assert_eq!(
+            serde_json::to_string(&AccountType::UsdtmPerp).unwrap(),
+            "\"USDTMPerp\""
+        );
+        assert_eq!(
+            serde_json::to_string(&AccountType::CopyTrading).unwrap(),
+            "\"copyTrading\""
+        );
+        assert_eq!(
+            serde_json::to_string(&AccountType::Grid).unwrap(),
+            "\"grid\""
+        );
+        assert_eq!(
+            serde_json::to_string(&AccountType::Eran).unwrap(),
+            "\"eran\""
+        );
         assert_eq!(serde_json::to_string(&AccountType::C2c).unwrap(), "\"c2c\"");
     }
 
@@ -182,7 +203,10 @@ mod tests {
         assert_eq!(spot_account.usdt_balance, "1000.50");
 
         let futures_account = &response.accounts[1];
-        assert!(matches!(futures_account.account_type, AccountType::StdFutures));
+        assert!(matches!(
+            futures_account.account_type,
+            AccountType::StdFutures
+        ));
         assert_eq!(futures_account.usdt_balance, "500.25");
 
         let coinm_account = &response.accounts[2];

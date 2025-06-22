@@ -17,7 +17,6 @@ pub enum ExecutionInstruction {
     AnyPartOf,
 }
 
-
 /// A leg in the Block RFQ quote
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct BlockRfqLeg {

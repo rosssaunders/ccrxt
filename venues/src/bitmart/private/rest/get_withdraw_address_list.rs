@@ -125,8 +125,8 @@ mod tests {
             remark: "EVM Address".to_string(),
             verify_status: 1,
             address_type: 2, // EVM Address
-            network: None, // None for EVM addresses
-            currency: None, // None for EVM addresses
+            network: None,   // None for EVM addresses
+            currency: None,  // None for EVM addresses
         };
 
         assert_eq!(address.address, "0xEVMAddress");

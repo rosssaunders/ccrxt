@@ -14,8 +14,8 @@ use serde::Serialize;
 use serde::de::DeserializeOwned;
 use sha2::Sha256;
 
-use crate::coinbase::{EndpointType, Errors, RateLimiter, RestResult};
 use super::get_account_balances::PaginationInfo;
+use crate::coinbase::{EndpointType, Errors, RateLimiter, RestResult};
 
 /// Private REST client for Coinbase Exchange
 ///
@@ -477,7 +477,7 @@ mod tests {
         // This test verifies that the pagination logic has been correctly
         // moved to the RestClient implementation
         use super::super::get_account_balances::PaginationInfo;
-        
+
         let pagination = PaginationInfo {
             before: Some("before_cursor".to_string()),
             after: Some("after_cursor".to_string()),

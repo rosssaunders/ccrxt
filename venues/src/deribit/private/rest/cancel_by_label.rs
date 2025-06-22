@@ -42,15 +42,8 @@ impl RestClient {
     ///
     /// # Returns
     /// Result with total number of successfully cancelled orders
-    pub async fn cancel_by_label(
-        &self,
-        label: String,
-        currency: Option<Currency>,
-    ) -> RestResult<CancelByLabelResponse> {
-        let request = CancelByLabelRequest {
-            label,
-            currency,
-        };
+    pub async fn cancel_by_label(&self, label: String, currency: Option<Currency>) -> RestResult<CancelByLabelResponse> {
+        let request = CancelByLabelRequest { label, currency };
         self.send_signed_request(
             "private/cancel_by_label",
             &request,

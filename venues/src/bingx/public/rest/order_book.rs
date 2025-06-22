@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use crate::bingx::{EndpointType, RestResult};
 use super::RestClient;
+use crate::bingx::{EndpointType, RestResult};
 
 /// Request for the order book endpoint
 #[derive(Debug, Clone, Serialize)]
@@ -82,8 +82,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use reqwest::Client;
+
+    use super::*;
     use crate::bingx::RateLimiter;
 
     #[test]
@@ -91,7 +92,7 @@ mod tests {
         let symbol = "BTC-USDT".to_string();
         let timestamp = 1640995200000;
         let request = GetOrderBookRequest::new(symbol.clone(), timestamp);
-        
+
         assert_eq!(request.symbol, symbol);
         assert_eq!(request.timestamp, timestamp);
         assert!(request.limit.is_none());
@@ -104,7 +105,7 @@ mod tests {
         let timestamp = 1640995200000;
         let limit = 50;
         let request = GetOrderBookRequest::new(symbol.clone(), timestamp).with_limit(limit);
-        
+
         assert_eq!(request.symbol, symbol);
         assert_eq!(request.timestamp, timestamp);
         assert_eq!(request.limit, Some(limit));
@@ -116,7 +117,7 @@ mod tests {
         let timestamp = 1640995200000;
         let recv_window = 5000;
         let request = GetOrderBookRequest::new(symbol.clone(), timestamp).with_recv_window(recv_window);
-        
+
         assert_eq!(request.symbol, symbol);
         assert_eq!(request.timestamp, timestamp);
         assert_eq!(request.recv_window, Some(recv_window));
@@ -137,7 +138,7 @@ mod tests {
             "asks": [[45001.0, 1.2], [45002.0, 0.8]],
             "ts": 1640995200000
         }"#;
-        
+
         let response: GetOrderBookResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.bids.len(), 2);
         assert_eq!(response.asks.len(), 2);
@@ -157,7 +158,7 @@ mod tests {
         );
 
         let request = GetOrderBookRequest::new("BTC-USDT".to_string(), 1640995200000);
-        
+
         // Test that the method exists and can be called
         // Note: This will fail with network error since we're not making real requests
         assert!(client.get_order_book(&request).await.is_err());

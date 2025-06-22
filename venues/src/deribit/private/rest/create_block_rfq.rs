@@ -1,8 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
 // Reuse existing types from add_block_rfq_quote
 pub use super::add_block_rfq_quote::{BlockRfqHedge, Side};
+use super::client::RestClient;
 use crate::deribit::{EndpointType, RestResult};
 
 /// A leg in the Block RFQ for creation
@@ -233,7 +233,10 @@ mod tests {
 
         let legs_array = json_value.get("legs").unwrap().as_array().unwrap();
         assert_eq!(legs_array.len(), 1);
-        assert_eq!(legs_array[0].get("instrument_name").unwrap(), "BTC-PERPETUAL");
+        assert_eq!(
+            legs_array[0].get("instrument_name").unwrap(),
+            "BTC-PERPETUAL"
+        );
         assert_eq!(legs_array[0].get("amount").unwrap(), 10.0);
         assert_eq!(legs_array[0].get("direction").unwrap(), "buy");
     }

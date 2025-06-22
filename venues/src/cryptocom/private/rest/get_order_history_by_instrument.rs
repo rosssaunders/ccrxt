@@ -254,7 +254,7 @@ mod tests {
     #[test]
     fn test_request_creation_minimal() {
         let request = GetOrderHistoryByInstrumentRequest::new("BTCUSD-PERP".to_string());
-        
+
         assert_eq!(request.instrument_name, "BTCUSD-PERP");
         assert!(request.count.is_none());
         assert!(request.offset.is_none());
@@ -290,7 +290,7 @@ mod tests {
 
         let json_value = serde_json::to_value(request).unwrap();
         assert_eq!(json_value.get("instrument_name").unwrap(), "BTCUSD-PERP");
-        
+
         // Check that optional fields are not present when None
         assert!(!json_value.as_object().unwrap().contains_key("count"));
         assert!(!json_value.as_object().unwrap().contains_key("offset"));

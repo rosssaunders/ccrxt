@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use crate::bingx::{EndpointType, RestResult};
 use super::RestClient;
+use crate::bingx::{EndpointType, RestResult};
 
 /// Request for the historical K-line endpoint
 #[derive(Debug, Clone, Serialize)]
@@ -100,8 +100,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use reqwest::Client;
+
+    use super::*;
     use crate::bingx::RateLimiter;
 
     #[test]
@@ -109,7 +110,7 @@ mod tests {
         let symbol = "BTC-USDT".to_string();
         let interval = "1h".to_string();
         let request = GetHistoricalKlineRequest::new(symbol.clone(), interval.clone());
-        
+
         assert_eq!(request.symbol, symbol);
         assert_eq!(request.interval, interval);
         assert!(request.start_time.is_none());
@@ -123,11 +124,11 @@ mod tests {
         let interval = "1h".to_string();
         let start_time = 1640995200000;
         let end_time = 1641081600000;
-        
+
         let request = GetHistoricalKlineRequest::new(symbol.clone(), interval.clone())
             .with_start_time(start_time)
             .with_end_time(end_time);
-        
+
         assert_eq!(request.symbol, symbol);
         assert_eq!(request.interval, interval);
         assert_eq!(request.start_time, Some(start_time));
@@ -139,10 +140,9 @@ mod tests {
         let symbol = "BTC-USDT".to_string();
         let interval = "1h".to_string();
         let limit = 100;
-        
-        let request = GetHistoricalKlineRequest::new(symbol.clone(), interval.clone())
-            .with_limit(limit);
-        
+
+        let request = GetHistoricalKlineRequest::new(symbol.clone(), interval.clone()).with_limit(limit);
+
         assert_eq!(request.symbol, symbol);
         assert_eq!(request.interval, interval);
         assert_eq!(request.limit, Some(limit));
@@ -163,7 +163,7 @@ mod tests {
                 [1640995200000.0, 45000.0, 46000.0, 44000.0, 45500.0, 1000.0, 1640998799999.0, 45250000.0, 500.0, 600.0, 27150000.0, 0.0]
             ]
         }"#;
-        
+
         let response: GetHistoricalKlineResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.klines.len(), 1);
         assert_eq!(response.klines[0][0], 1640995200000.0); // open_time
@@ -183,7 +183,7 @@ mod tests {
         );
 
         let request = GetHistoricalKlineRequest::new("BTC-USDT".to_string(), "1h".to_string());
-        
+
         // Test that the method exists and can be called
         // Note: This will fail with network error since we're not making real requests
         assert!(client.get_historical_kline(&request).await.is_err());

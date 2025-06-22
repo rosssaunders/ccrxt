@@ -45,10 +45,7 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the set MMP config response or an error
-    pub async fn set_mmp_config(
-        &self,
-        request: &SetMmpConfigRequest,
-    ) -> RestResult<OkxApiResponse<SetMmpConfigResponse>> {
+    pub async fn set_mmp_config(&self, request: &SetMmpConfigRequest) -> RestResult<OkxApiResponse<SetMmpConfigResponse>> {
         self.send_request(
             "api/v5/account/mmp-config",
             reqwest::Method::POST,

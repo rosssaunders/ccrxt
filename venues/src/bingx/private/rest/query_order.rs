@@ -1,8 +1,8 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
+use super::place_order::{OrderSide, OrderStatus, OrderType};
 use crate::bingx::{EndpointType, RestResult};
-use super::place_order::{OrderType, OrderSide, OrderStatus};
 
 /// Request to query order details
 #[derive(Debug, Clone, Serialize)]
@@ -201,7 +201,10 @@ mod tests {
         assert_eq!(order_details.orig_quote_order_qty, "50.0");
         assert_eq!(order_details.fee, "0.05");
         assert_eq!(order_details.fee_asset, "USDT");
-        assert_eq!(order_details.client_order_id, Some("my_order_123".to_string()));
+        assert_eq!(
+            order_details.client_order_id,
+            Some("my_order_123".to_string())
+        );
         assert_eq!(order_details.stop_price, Some("49000.0".to_string()));
         assert_eq!(order_details.avg_price, "50000.0");
     }

@@ -3,8 +3,9 @@
 //! This method is used to subscribe to one or more public channels.
 //! This is the same method as /private/subscribe, but it can only be used for 'public' channels.
 
-use crate::deribit::public::websocket::client::{DeribitWebSocketError, PrivateWebSocketClient};
 use serde::{Deserialize, Serialize};
+
+use crate::deribit::public::websocket::client::{DeribitWebSocketError, PrivateWebSocketClient};
 
 /// Request parameters for the public/subscribe endpoint.
 ///

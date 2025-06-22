@@ -170,7 +170,7 @@ mod tests {
     #[test]
     fn test_request_creation_minimal() {
         let request = GetOrderHistoryByCurrencyRequest::new("BTC".to_string());
-        
+
         assert_eq!(request.currency, "BTC");
         assert!(request.kind.is_none());
         assert!(request.count.is_none());
@@ -209,7 +209,7 @@ mod tests {
 
         let json_value = serde_json::to_value(request).unwrap();
         assert_eq!(json_value.get("currency").unwrap(), "USDC");
-        
+
         // Check that optional fields are not present when None
         assert!(!json_value.as_object().unwrap().contains_key("kind"));
         assert!(!json_value.as_object().unwrap().contains_key("count"));
@@ -294,11 +294,11 @@ mod tests {
     fn test_supported_currencies() {
         // Test that all documented currencies work
         let currencies = vec!["BTC", "ETH", "USDC", "USDT", "EURR"];
-        
+
         for currency in currencies {
             let request = GetOrderHistoryByCurrencyRequest::new(currency.to_string());
             assert_eq!(request.currency, currency);
-            
+
             let json_value = serde_json::to_value(request).unwrap();
             assert_eq!(json_value.get("currency").unwrap(), currency);
         }
@@ -307,13 +307,20 @@ mod tests {
     #[test]
     fn test_supported_kinds() {
         // Test that all documented kinds work
-        let kinds = vec!["future", "option", "spot", "future_combo", "option_combo", "combo", "any"];
-        
+        let kinds = vec![
+            "future",
+            "option",
+            "spot",
+            "future_combo",
+            "option_combo",
+            "combo",
+            "any",
+        ];
+
         for kind in kinds {
-            let request = GetOrderHistoryByCurrencyRequest::new("BTC".to_string())
-                .with_kind(kind.to_string());
+            let request = GetOrderHistoryByCurrencyRequest::new("BTC".to_string()).with_kind(kind.to_string());
             assert_eq!(request.kind, Some(kind.to_string()));
-            
+
             let json_value = serde_json::to_value(request).unwrap();
             assert_eq!(json_value.get("kind").unwrap(), kind);
         }

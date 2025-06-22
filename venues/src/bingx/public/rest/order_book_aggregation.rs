@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use crate::bingx::{EndpointType, RestResult};
 use super::RestClient;
+use crate::bingx::{EndpointType, RestResult};
 
 /// Request for the order book aggregation endpoint
 #[derive(Debug, Clone, Serialize)]
@@ -67,8 +67,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use reqwest::Client;
+
+    use super::*;
     use crate::bingx::RateLimiter;
 
     #[test]
@@ -77,7 +78,7 @@ mod tests {
         let depth = 20;
         let type_ = "step0".to_string();
         let request = GetOrderBookAggregationRequest::new(symbol.clone(), depth, type_.clone());
-        
+
         assert_eq!(request.symbol, symbol);
         assert_eq!(request.depth, depth);
         assert_eq!(request.type_, type_);
@@ -99,7 +100,7 @@ mod tests {
             "asks": [[45001.0, 1.2], [45002.0, 0.8]],
             "ts": 1640995200000
         }"#;
-        
+
         let response: GetOrderBookAggregationResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.bids.len(), 2);
         assert_eq!(response.asks.len(), 2);
@@ -119,7 +120,7 @@ mod tests {
         );
 
         let request = GetOrderBookAggregationRequest::new("BTC_USDT".to_string(), 20, "step0".to_string());
-        
+
         // Test that the method exists and can be called
         // Note: This will fail with network error since we're not making real requests
         assert!(client.get_order_book_aggregation(&request).await.is_err());

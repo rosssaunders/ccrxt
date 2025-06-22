@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::deribit::{Currency, CurrencyPair, InstrumentKind, EndpointType, RestResult};
+use crate::deribit::{Currency, CurrencyPair, EndpointType, InstrumentKind, RestResult};
 
 /// Cancel type for cancel quotes endpoint
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -170,11 +170,23 @@ mod tests {
         let all = CancelType::All;
 
         assert_eq!(serde_json::to_string(&delta).unwrap(), "\"delta\"");
-        assert_eq!(serde_json::to_string(&quote_set_id).unwrap(), "\"quote_set_id\"");
-        assert_eq!(serde_json::to_string(&instrument).unwrap(), "\"instrument\"");
-        assert_eq!(serde_json::to_string(&instrument_kind).unwrap(), "\"instrument_kind\"");
+        assert_eq!(
+            serde_json::to_string(&quote_set_id).unwrap(),
+            "\"quote_set_id\""
+        );
+        assert_eq!(
+            serde_json::to_string(&instrument).unwrap(),
+            "\"instrument\""
+        );
+        assert_eq!(
+            serde_json::to_string(&instrument_kind).unwrap(),
+            "\"instrument_kind\""
+        );
         assert_eq!(serde_json::to_string(&currency).unwrap(), "\"currency\"");
-        assert_eq!(serde_json::to_string(&currency_pair).unwrap(), "\"currency_pair\"");
+        assert_eq!(
+            serde_json::to_string(&currency_pair).unwrap(),
+            "\"currency_pair\""
+        );
         assert_eq!(serde_json::to_string(&all).unwrap(), "\"all\"");
 
         let delta_from_json: CancelType = serde_json::from_str("\"delta\"").unwrap();
@@ -243,7 +255,10 @@ mod tests {
         let json_value: Value = serde_json::from_str(&json_str).unwrap();
 
         assert_eq!(json_value.get("cancel_type").unwrap(), "quote_set_id");
-        assert_eq!(json_value.get("quote_set_id").unwrap(), "test_quote_set_123");
+        assert_eq!(
+            json_value.get("quote_set_id").unwrap(),
+            "test_quote_set_123"
+        );
         assert!(json_value.get("detailed").is_none());
         assert!(json_value.get("freeze_quotes").is_none());
         assert!(json_value.get("min_delta").is_none());

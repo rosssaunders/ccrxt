@@ -92,9 +92,7 @@ mod tests {
 
     #[test]
     fn test_cancel_order_response_serialization() {
-        let response = CancelOrderResponse {
-            result: false,
-        };
+        let response = CancelOrderResponse { result: false };
 
         let json = serde_json::to_string(&response).unwrap();
         assert!(json.contains("\"result\":false"));

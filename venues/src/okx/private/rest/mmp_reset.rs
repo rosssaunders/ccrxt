@@ -30,10 +30,7 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the reset MMP response or an error
-    pub async fn mmp_reset(
-        &self,
-        request: &MmpResetRequest,
-    ) -> RestResult<OkxApiResponse<MmpResetResponse>> {
+    pub async fn mmp_reset(&self, request: &MmpResetRequest) -> RestResult<OkxApiResponse<MmpResetResponse>> {
         self.send_request(
             "api/v5/account/mmp-reset",
             reqwest::Method::POST,

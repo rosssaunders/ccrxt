@@ -1,8 +1,8 @@
 use std::borrow::Cow;
 
 use reqwest::Client;
-use serde::de::DeserializeOwned;
 use serde::Serialize;
+use serde::de::DeserializeOwned;
 
 use crate::bingx::{EndpointType, Errors, RateLimiter, RestResult};
 
@@ -38,11 +38,7 @@ impl RestClient {
     ///
     /// # Returns
     /// A new RestClient instance
-    pub fn new(
-        base_url: impl Into<Cow<'static, str>>,
-        client: Client,
-        rate_limiter: RateLimiter,
-    ) -> Self {
+    pub fn new(base_url: impl Into<Cow<'static, str>>, client: Client, rate_limiter: RateLimiter) -> Self {
         Self {
             base_url: base_url.into(),
             client,
@@ -59,12 +55,7 @@ impl RestClient {
     ///
     /// # Returns
     /// The deserialized response of type T
-    pub async fn send_request<T, P>(
-        &self,
-        endpoint: &str,
-        params: Option<&P>,
-        endpoint_type: EndpointType,
-    ) -> RestResult<T>
+    pub async fn send_request<T, P>(&self, endpoint: &str, params: Option<&P>, endpoint_type: EndpointType) -> RestResult<T>
     where
         T: DeserializeOwned,
         P: Serialize + ?Sized,
@@ -77,10 +68,10 @@ impl RestClient {
 
         // Build the full URL
         let url = format!("{}{}", self.base_url, endpoint);
-        
+
         // Build the request
         let mut request = self.client.get(&url);
-        
+
         // Add query parameters if provided
         if let Some(params) = params {
             request = request.query(params);
@@ -88,7 +79,7 @@ impl RestClient {
 
         // Send the request
         let response = request.send().await?;
-        
+
         // Record the request for rate limiting
         self.rate_limiter.increment_request(endpoint_type).await;
 
@@ -125,7 +116,7 @@ mod tests {
             Client::new(),
             RateLimiter::new(),
         );
-        
+
         assert_eq!(client.base_url, "https://open-api.bingx.com");
     }
 }

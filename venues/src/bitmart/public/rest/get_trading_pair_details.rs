@@ -149,22 +149,20 @@ mod tests {
     #[test]
     fn test_get_trading_pair_details_response_structure() {
         let response = GetTradingPairDetailsResponse {
-            symbols: vec![
-                TradingPairDetail {
-                    symbol: "GXC_BTC".to_string(),
-                    symbol_id: 1024,
-                    base_currency: "GXC".to_string(),
-                    quote_currency: "BTC".to_string(),
-                    quote_increment: "1.00000000".to_string(),
-                    base_min_size: "1.00000000".to_string(),
-                    price_min_precision: 6,
-                    price_max_precision: 8,
-                    expiration: "NA".to_string(),
-                    min_buy_amount: "0.00010000".to_string(),
-                    min_sell_amount: "0.00010000".to_string(),
-                    trade_status: "trading".to_string(),
-                },
-            ],
+            symbols: vec![TradingPairDetail {
+                symbol: "GXC_BTC".to_string(),
+                symbol_id: 1024,
+                base_currency: "GXC".to_string(),
+                quote_currency: "BTC".to_string(),
+                quote_increment: "1.00000000".to_string(),
+                base_min_size: "1.00000000".to_string(),
+                price_min_precision: 6,
+                price_max_precision: 8,
+                expiration: "NA".to_string(),
+                min_buy_amount: "0.00010000".to_string(),
+                min_sell_amount: "0.00010000".to_string(),
+                trade_status: "trading".to_string(),
+            }],
         };
 
         assert_eq!(response.symbols.len(), 1);

@@ -40,7 +40,8 @@ impl RestClient {
     /// # Returns
     /// Order ID and client order ID
     pub async fn cancel_order(&self, request: CancelOrderRequest) -> RestResult<CancelOrderResponse> {
-        self.send_signed_request("private/cancel-order", request).await
+        self.send_signed_request("private/cancel-order", request)
+            .await
     }
 }
 

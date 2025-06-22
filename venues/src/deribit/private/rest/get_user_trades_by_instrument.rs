@@ -1,10 +1,9 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::deribit::{EndpointType, RestResult, Sorting};
-
 // Reuse the Trade struct from get_user_trades_by_currency since it's identical
 pub use super::get_user_trades_by_currency::Trade;
+use crate::deribit::{EndpointType, RestResult, Sorting};
 
 /// Request parameters for getting user trades by instrument
 #[derive(Debug, Clone, Serialize)]
@@ -77,8 +76,12 @@ impl RestClient {
     /// # Returns
     /// Trade history information for the specified instrument
     pub async fn get_user_trades_by_instrument(&self, request: GetUserTradesByInstrumentRequest) -> RestResult<GetUserTradesByInstrumentResponse> {
-        self.send_signed_request("private/get_user_trades_by_instrument", &request, EndpointType::NonMatchingEngine)
-            .await
+        self.send_signed_request(
+            "private/get_user_trades_by_instrument",
+            &request,
+            EndpointType::NonMatchingEngine,
+        )
+        .await
     }
 }
 
@@ -150,14 +153,27 @@ mod tests {
         let json_str = serde_json::to_string(&request).unwrap();
         let json_value: Value = serde_json::from_str(&json_str).unwrap();
 
-        assert_eq!(json_value.get("instrument_name").unwrap(), "ETH-29MAR24-3000-C");
-        
+        assert_eq!(
+            json_value.get("instrument_name").unwrap(),
+            "ETH-29MAR24-3000-C"
+        );
+
         // Optional fields should not be present when None
         assert!(!json_value.as_object().unwrap().contains_key("start_seq"));
         assert!(!json_value.as_object().unwrap().contains_key("end_seq"));
         assert!(!json_value.as_object().unwrap().contains_key("count"));
-        assert!(!json_value.as_object().unwrap().contains_key("start_timestamp"));
-        assert!(!json_value.as_object().unwrap().contains_key("end_timestamp"));
+        assert!(
+            !json_value
+                .as_object()
+                .unwrap()
+                .contains_key("start_timestamp")
+        );
+        assert!(
+            !json_value
+                .as_object()
+                .unwrap()
+                .contains_key("end_timestamp")
+        );
         assert!(!json_value.as_object().unwrap().contains_key("historical"));
         assert!(!json_value.as_object().unwrap().contains_key("sorting"));
     }

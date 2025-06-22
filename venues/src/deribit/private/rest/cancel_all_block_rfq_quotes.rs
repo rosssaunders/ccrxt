@@ -44,11 +44,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Result with total number of successfully cancelled quotes
-    pub async fn cancel_all_block_rfq_quotes(
-        &self,
-        block_rfq_id: Option<i64>,
-        detailed: Option<bool>,
-    ) -> RestResult<CancelAllBlockRfqQuotesResponse> {
+    pub async fn cancel_all_block_rfq_quotes(&self, block_rfq_id: Option<i64>, detailed: Option<bool>) -> RestResult<CancelAllBlockRfqQuotesResponse> {
         let request = CancelAllBlockRfqQuotesRequest {
             block_rfq_id,
             detailed,
@@ -65,7 +61,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use rest::secrets::ExposableSecret;
-    use serde_json::{json, Value};
+    use serde_json::{Value, json};
 
     use super::*;
     use crate::deribit::AccountTier;
@@ -153,8 +149,7 @@ mod tests {
             "result": 3
         });
 
-        let response: CancelAllBlockRfqQuotesResponse =
-            serde_json::from_value(response_json).unwrap();
+        let response: CancelAllBlockRfqQuotesResponse = serde_json::from_value(response_json).unwrap();
 
         assert_eq!(response.id, 1);
         assert_eq!(response.jsonrpc, "2.0");
@@ -169,8 +164,7 @@ mod tests {
             "result": 0
         });
 
-        let response: CancelAllBlockRfqQuotesResponse =
-            serde_json::from_value(response_json).unwrap();
+        let response: CancelAllBlockRfqQuotesResponse = serde_json::from_value(response_json).unwrap();
 
         assert_eq!(response.id, 42);
         assert_eq!(response.jsonrpc, "2.0");

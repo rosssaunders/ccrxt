@@ -1,8 +1,8 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
+use super::place_order::{OrderSide, OrderStatus, OrderType};
 use crate::bingx::{EndpointType, RestResult};
-use super::place_order::{OrderType, OrderSide, OrderStatus};
 
 /// Cancel restrictions enumeration
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -199,8 +199,17 @@ mod tests {
 
     #[test]
     fn test_cancel_restrictions_serialization() {
-        assert_eq!(serde_json::to_string(&CancelRestrictions::New).unwrap(), "\"NEW\"");
-        assert_eq!(serde_json::to_string(&CancelRestrictions::Pending).unwrap(), "\"PENDING\"");
-        assert_eq!(serde_json::to_string(&CancelRestrictions::PartiallyFilled).unwrap(), "\"PARTIALLY_FILLED\"");
+        assert_eq!(
+            serde_json::to_string(&CancelRestrictions::New).unwrap(),
+            "\"NEW\""
+        );
+        assert_eq!(
+            serde_json::to_string(&CancelRestrictions::Pending).unwrap(),
+            "\"PENDING\""
+        );
+        assert_eq!(
+            serde_json::to_string(&CancelRestrictions::PartiallyFilled).unwrap(),
+            "\"PARTIALLY_FILLED\""
+        );
     }
 }
