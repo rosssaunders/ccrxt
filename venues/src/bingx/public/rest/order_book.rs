@@ -143,10 +143,12 @@ mod tests {
         assert_eq!(response.bids.len(), 2);
         assert_eq!(response.asks.len(), 2);
         assert_eq!(response.ts, 1640995200000);
-        assert_eq!(response.bids[0][0], 45000.0);
-        assert_eq!(response.bids[0][1], 1.5);
-        assert_eq!(response.asks[0][0], 45001.0);
-        assert_eq!(response.asks[0][1], 1.2);
+        let bid0 = response.bids.get(0).expect("Expected at least one bid");
+        assert_eq!(*bid0.get(0).expect("Missing price in bid0"), 45000.0);
+        assert_eq!(*bid0.get(1).expect("Missing amount in bid0"), 1.5);
+        let ask0 = response.asks.get(0).expect("Expected at least one ask");
+        assert_eq!(*ask0.get(0).expect("Missing price in ask0"), 45001.0);
+        assert_eq!(*ask0.get(1).expect("Missing amount in ask0"), 1.2);
     }
 
     #[tokio::test]

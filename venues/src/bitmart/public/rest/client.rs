@@ -85,7 +85,10 @@ impl RestClient {
         // Build URL with query parameters for GET requests
         let final_url = if method == Method::GET && request.is_some() {
             let query_params =
-                serde_urlencoded::to_string(request.unwrap()).map_err(|e| Errors::Error(format!("Failed to serialize query parameters: {e}")))?;
+                match request {
+                    Some(req) => serde_urlencoded::to_string(req).map_err(|e| Errors::Error(format!("Failed to serialize query parameters: {e}")))?,
+                    None => return Err(Errors::Error("Request parameters missing for GET method".to_string())),
+                };
 
             if query_params.is_empty() {
                 url
@@ -103,7 +106,7 @@ impl RestClient {
         if method != Method::GET && request.is_some() {
             request_builder = request_builder
                 .header("Content-Type", "application/json")
-                .json(request.unwrap());
+                .json(request.expect("Request body must be Some for non-GET methods"));
         }
 
         // Send request

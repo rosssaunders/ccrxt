@@ -147,8 +147,8 @@ mod tests {
             nonce: "test_nonce".to_string(),
         };
 
-        let json = serde_json::to_string(&auth_request).unwrap();
-        let deserialized: AuthRequest = serde_json::from_str(&json).unwrap();
+        let json = serde_json::to_string(&auth_request).expect("Failed to serialize auth request");
+        let deserialized: AuthRequest = serde_json::from_str(&json).expect("Failed to deserialize auth request");
 
         assert_eq!(auth_request.key, deserialized.key);
         assert_eq!(auth_request.signature, deserialized.signature);
@@ -167,7 +167,7 @@ mod tests {
             }
         }"#;
 
-        let auth_response: AuthResponse = serde_json::from_str(json).unwrap();
+        let auth_response: AuthResponse = serde_json::from_str(json).expect("Failed to deserialize auth response");
         assert_eq!(auth_response.jsonrpc, "2.0");
         assert_eq!(auth_response.id, 1);
         assert!(auth_response.result.success);
@@ -185,7 +185,7 @@ mod tests {
             }
         }"#;
 
-        let auth_response: AuthResponse = serde_json::from_str(json).unwrap();
+        let auth_response: AuthResponse = serde_json::from_str(json).expect("Failed to deserialize auth response");
         assert_eq!(auth_response.jsonrpc, "2.0");
         assert_eq!(auth_response.id, 2);
         assert!(!auth_response.result.success);

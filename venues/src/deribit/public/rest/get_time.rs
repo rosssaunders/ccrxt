@@ -62,10 +62,10 @@ mod tests {
     fn test_get_time_request_serialization() {
         let request = GetTimeRequest {};
 
-        let json_value = serde_json::to_value(&request).unwrap();
+        let json_value = serde_json::to_value(&request).expect("Failed to convert request to value");
         // Should serialize to an empty object
         assert!(json_value.is_object());
-        assert!(json_value.as_object().unwrap().is_empty());
+        assert!(json_value.as_object().expect("Expected object").is_empty());
     }
 
     #[test]
@@ -76,7 +76,7 @@ mod tests {
             "result": 1609459200000i64
         });
 
-        let response: GetTimeResponse = serde_json::from_value(response_json).unwrap();
+        let response: GetTimeResponse = serde_json::from_value(response_json).expect("Failed to deserialize response");
         assert_eq!(response.id, 123);
         assert_eq!(response.jsonrpc, "2.0");
         assert_eq!(response.result, 1609459200000i64); // January 1, 2021 00:00:00 UTC
@@ -92,7 +92,7 @@ mod tests {
             "result": current_time
         });
 
-        let response: GetTimeResponse = serde_json::from_value(response_json).unwrap();
+        let response: GetTimeResponse = serde_json::from_value(response_json).expect("Failed to deserialize response");
         assert_eq!(response.id, 456);
         assert_eq!(response.jsonrpc, "2.0");
         assert_eq!(response.result, current_time);
@@ -107,7 +107,7 @@ mod tests {
             "result": 0
         });
 
-        let response: GetTimeResponse = serde_json::from_value(response_json).unwrap();
+        let response: GetTimeResponse = serde_json::from_value(response_json).expect("Failed to deserialize response");
         assert_eq!(response.result, 0);
 
         // Test with very large timestamp (year 2050+)
@@ -117,7 +117,7 @@ mod tests {
             "result": 2524608000000i64
         });
 
-        let response: GetTimeResponse = serde_json::from_value(response_json).unwrap();
+        let response: GetTimeResponse = serde_json::from_value(response_json).expect("Failed to deserialize response");
         assert_eq!(response.result, 2524608000000i64);
     }
 
@@ -157,7 +157,7 @@ mod tests {
                 "result": timestamp
             });
 
-            let response: GetTimeResponse = serde_json::from_value(response_json).unwrap();
+            let response: GetTimeResponse = serde_json::from_value(response_json).expect("Failed to deserialize response");
             assert_eq!(response.result, timestamp);
         }
     }
@@ -171,7 +171,7 @@ mod tests {
             "result": 1609459200000i64
         });
 
-        let response: GetTimeResponse = serde_json::from_value(response_json).unwrap();
+        let response: GetTimeResponse = serde_json::from_value(response_json).expect("Failed to deserialize response");
 
         // Verify JSON-RPC 2.0 compliance
         assert_eq!(response.jsonrpc, "2.0");

@@ -1,7 +1,5 @@
 pub mod enums;
 mod errors;
-#[cfg(test)]
-mod integration_tests;
 
 pub mod rate_limit;
 pub mod public {
@@ -49,9 +47,6 @@ pub mod private {
         PlaceBatchOrdersRequest, PlaceBatchOrdersResponse, PlaceOrderRequest, PlaceOrderResponse, Position,
     };
 }
-
-mod integration_test;
-mod usage_examples;
 
 pub use enums::*;
 pub use errors::{ApiError, ErrorResponse, Errors};

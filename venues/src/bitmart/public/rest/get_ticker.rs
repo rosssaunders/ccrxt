@@ -142,8 +142,8 @@ mod tests {
             ts: "1691671094213".to_string(),
         };
 
-        let serialized = serde_json::to_string(&ticker).unwrap();
-        let deserialized: TickerData = serde_json::from_str(&serialized).unwrap();
+        let serialized = serde_json::to_string(&ticker).expect("Failed to serialize ticker");
+        let deserialized: TickerData = serde_json::from_str(&serialized).expect("Failed to deserialize ticker");
 
         assert_eq!(ticker.symbol, deserialized.symbol);
         assert_eq!(ticker.last, deserialized.last);
@@ -166,7 +166,7 @@ mod tests {
             symbol: "BMX_USDT".to_string(),
         };
 
-        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        let serialized = serde_urlencoded::to_string(&request).expect("Failed to serialize request");
         assert!(serialized.contains("symbol=BMX_USDT"));
     }
 
@@ -188,7 +188,7 @@ mod tests {
             "ts": "1691671061919"
         }"#;
 
-        let response: GetTickerResponse = serde_json::from_str(json).unwrap();
+        let response: GetTickerResponse = serde_json::from_str(json).expect("Failed to deserialize response");
         assert_eq!(response.symbol, "BTC_USDT");
         assert_eq!(response.last, "30000.00");
         assert_eq!(response.v_24h, "582.08066");

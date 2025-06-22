@@ -96,7 +96,9 @@ mod tests {
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 1);
 
-        let result = &response.data[0];
+        let result = response.data.first();
+        assert!(result.is_some(), "Expected at least one result in response");
+        let result = result.unwrap();
         assert_eq!(result.inst_family, "BTC-USD");
         assert_eq!(result.time_interval, "5000");
         assert_eq!(result.frozen_interval, "1000");

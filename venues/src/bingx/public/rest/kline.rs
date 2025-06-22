@@ -187,12 +187,13 @@ mod tests {
 
         let response: GetKlineResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.klines.len(), 1);
-        assert_eq!(response.klines[0][0], 1640995200000.0); // open_time
-        assert_eq!(response.klines[0][1], 45000.0); // open
-        assert_eq!(response.klines[0][2], 46000.0); // high
-        assert_eq!(response.klines[0][3], 44000.0); // low
-        assert_eq!(response.klines[0][4], 45500.0); // close
-        assert_eq!(response.klines[0][5], 1000.0); // volume
+        let kline = response.klines.get(0).expect("Expected at least one kline entry");
+        assert_eq!(*kline.get(0).expect("Missing open_time in kline"), 1640995200000.0); // open_time
+        assert_eq!(*kline.get(1).expect("Missing open in kline"), 45000.0); // open
+        assert_eq!(*kline.get(2).expect("Missing high in kline"), 46000.0); // high
+        assert_eq!(*kline.get(3).expect("Missing low in kline"), 44000.0); // low
+        assert_eq!(*kline.get(4).expect("Missing close in kline"), 45500.0); // close
+        assert_eq!(*kline.get(5).expect("Missing volume in kline"), 1000.0); // volume
     }
 
     #[tokio::test]

@@ -116,7 +116,9 @@ mod tests {
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 1);
 
-        let result = &response.data[0];
+        let result = response.data.first();
+        assert!(result.is_some(), "Expected at least one result in response");
+        let result = result.unwrap();
         assert_eq!(result.inst_id, "BTC-USDT-SWAP");
         assert_eq!(result.mgn_mode, "isolated");
         assert_eq!(result.lever, "10");

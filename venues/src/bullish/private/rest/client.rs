@@ -152,7 +152,7 @@ impl RestClient {
         }
 
         let url = format!("{}/trading-api{}", self.base_url, endpoint);
-        let token = self.jwt_token.as_ref().unwrap();
+        let token = self.jwt_token.as_ref().ok_or_else(|| Errors::AuthenticationError("JWT token missing after login attempt".to_owned()))?;
 
         let mut request = self
             .client
@@ -169,13 +169,12 @@ impl RestClient {
         self.rate_limiter.increment_request(endpoint_type).await;
 
         // Handle 401 Unauthorized - token might be expired
-        if response.status() == 401 {
+        if response.status() == reqwest::StatusCode::UNAUTHORIZED {
             // Try to refresh token once
             self.jwt_token = None;
             self.get_jwt_token().await?;
 
-            // Retry the request with new token
-            let token = self.jwt_token.as_ref().unwrap();
+            let token = self.jwt_token.as_ref().ok_or_else(|| Errors::AuthenticationError("JWT token missing after refresh attempt".to_owned()))?;
             let mut retry_request = self
                 .client
                 .request(method, &url)

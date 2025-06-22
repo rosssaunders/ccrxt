@@ -269,7 +269,7 @@ mod tests {
                 assert!(msg.contains("3/1s"));
             }
             other => {
-                assert_eq!(true, false, "Expected TooManyRequests error for endpoint limit, got: {:?}", other);
+                assert!(false, "Expected TooManyRequests error for endpoint limit, got: {:?}", other);
             }
         }
     }
@@ -290,7 +290,7 @@ mod tests {
         if let Err(Errors::ApiError(ApiError::TooManyRequests { msg })) = result {
             assert!(msg.contains("5/1s"));
         } else {
-            assert_eq!(true, false, "Expected TooManyRequests error for order limit");
+            assert!(false, "Expected TooManyRequests error for order limit");
         }
     }
 

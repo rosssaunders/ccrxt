@@ -52,7 +52,7 @@ mod tests {
             client_version: "1.0.0".to_string(),
         };
 
-        let json = serde_json::to_string(&request).unwrap();
+        let json = serde_json::to_string(&request).expect("Failed to serialize request");
         let expected = r#"{"client_name":"test_client","client_version":"1.0.0"}"#;
 
         assert_eq!(json, expected);
@@ -62,7 +62,7 @@ mod tests {
     fn test_hello_response_deserialization() {
         let response_json = r#"{"result":{"version":"1.2.26"}}"#;
 
-        let response: HelloResponse = serde_json::from_str(response_json).unwrap();
+        let response: HelloResponse = serde_json::from_str(response_json).expect("Failed to deserialize response");
 
         assert_eq!(response.result.version, "1.2.26");
     }

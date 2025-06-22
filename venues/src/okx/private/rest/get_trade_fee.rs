@@ -142,7 +142,9 @@ mod tests {
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 1);
 
-        let fee = &response.data[0];
+        let fee = response.data.first();
+        assert!(fee.is_some(), "Expected at least one fee in response");
+        let fee = fee.unwrap();
         assert_eq!(fee.inst_id, "BTC-USDT");
         assert_eq!(fee.inst_type, "SPOT");
         assert_eq!(fee.level, "Lv1");

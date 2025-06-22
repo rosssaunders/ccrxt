@@ -66,7 +66,7 @@ mod tests {
             combo_id: "BTC-28JUN24-65000-C_BTC-28JUN24-70000-P".to_string(),
         };
 
-        let json_value = serde_json::to_value(&request).unwrap();
+        let json_value = serde_json::to_value(&request).expect("Failed to convert request to value");
         assert_eq!(
             json_value["combo_id"],
             "BTC-28JUN24-65000-C_BTC-28JUN24-70000-P"
@@ -97,7 +97,7 @@ mod tests {
             }
         });
 
-        let response: GetComboDetailsResponse = serde_json::from_value(response_json).unwrap();
+        let response: GetComboDetailsResponse = serde_json::from_value(response_json).expect("Failed to deserialize response");
         assert_eq!(response.id, 123);
         assert_eq!(response.jsonrpc, "2.0");
 
@@ -139,7 +139,7 @@ mod tests {
                 }
             });
 
-            let response: GetComboDetailsResponse = serde_json::from_value(response_json).unwrap();
+            let response: GetComboDetailsResponse = serde_json::from_value(response_json).expect("Failed to deserialize response");
             assert_eq!(response.result.state, state);
         }
     }
@@ -177,7 +177,7 @@ mod tests {
                 combo_id: combo_id.to_string(),
             };
 
-            let json_value = serde_json::to_value(&request).unwrap();
+            let json_value = serde_json::to_value(&request).expect("Failed to convert request to value");
             assert_eq!(json_value["combo_id"], combo_id);
         }
     }

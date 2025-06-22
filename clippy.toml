@@ -22,3 +22,27 @@ avoid-breaking-exported-api = true
 allow-dbg-in-tests = true
 allow-print-in-tests = true
 allow-unwrap-in-tests = true
+
+# Enable all default lints for further customization
+warn = [
+    "clippy::all",
+    "clippy::pedantic",
+    "clippy::nursery"
+]
+
+# Uncomment and customize the following as needed:
+# allow = [
+#     "clippy::module_name_repetitions",
+#     "clippy::missing_errors_doc",
+#     "clippy::missing_panics_doc"
+# ]
+# deny = [
+#     "clippy::unwrap_used",
+#     "clippy::expect_used"
+# ]
+
+# You can also set lint levels for specific lints:
+# clippy::some_lint = "warn"
+# clippy::another_lint = "allow"
+
+# For project-specific rules, add them below.

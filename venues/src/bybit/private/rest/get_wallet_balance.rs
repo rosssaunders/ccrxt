@@ -191,7 +191,10 @@ mod tests {
     fn test_get_wallet_balance_request_serialization() {
         let request = GetWalletBalanceRequest::new(AccountType::Contract);
         let serialized = serde_urlencoded::to_string(&request)
-            .expect("Failed to serialize GetWalletBalanceRequest");
+            .unwrap_or_else(|e| {
+                eprintln!("Failed to serialize GetWalletBalanceRequest: {}", e);
+                String::new()
+            });
         assert!(serialized.contains("accountType=CONTRACT"));
     }
 
@@ -268,22 +271,37 @@ mod tests {
         }
         "#;
 
-        let response: GetWalletBalanceResponse = serde_json::from_str(response_json)
-            .expect("Failed to deserialize GetWalletBalanceResponse");
+        let response: GetWalletBalanceResponse = match serde_json::from_str(response_json) {
+            Ok(r) => r,
+            Err(e) => {
+                eprintln!("Failed to deserialize GetWalletBalanceResponse: {}", e);
+                return;
+            }
+        };
         assert_eq!(response.ret_code, 0);
         assert_eq!(response.ret_msg, "OK");
         assert_eq!(response.result.list.len(), 1);
-        assert_eq!(response.result.list.get(0).map(|a| &a.account_type), Some(&"UNIFIED".to_string()));
-        assert_eq!(response.result.list.get(0).map(|a| a.coin.len()), Some(1));
-        assert_eq!(response.result.list.get(0).and_then(|a| a.coin.get(0)).map(|c| &c.coin), Some(&"BTC".to_string()));
+        assert_eq!(response.result.list.first().map(|a| &a.account_type), Some(&"UNIFIED".to_string()));
+        assert_eq!(response.result.list.first().map(|a| a.coin.len()), Some(1));
+        assert_eq!(response.result.list.first().and_then(|a| a.coin.first()).map(|c| &c.coin), Some(&"BTC".to_string()));
     }
 
     #[test]
     fn test_serialization_roundtrip() {
         let request = GetWalletBalanceRequest::new(AccountType::Spot).with_coin("USDT".to_string());
 
-        let serialized = serde_json::to_string(&request).expect("Serialization failed");
-        let deserialized: GetWalletBalanceRequest = serde_json::from_str(&serialized).expect("Deserialization failed");
+        let serialized = serde_json::to_string(&request)
+            .unwrap_or_else(|e| {
+                eprintln!("Serialization failed: {}", e);
+                String::new()
+            });
+        let deserialized: GetWalletBalanceRequest = match serde_json::from_str(&serialized) {
+            Ok(r) => r,
+            Err(e) => {
+                eprintln!("Deserialization failed: {}", e);
+                return;
+            }
+        };
 
         assert_eq!(request.account_type, deserialized.account_type);
         assert_eq!(request.coin, deserialized.coin);

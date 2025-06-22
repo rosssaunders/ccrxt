@@ -124,9 +124,11 @@ mod tests {
         let response: OkxApiResponse<PlaceBatchOrdersResponse> = serde_json::from_str(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 2);
-        assert_eq!(response.data[0].cl_ord_id, Some("order_1".to_string()));
-        assert_eq!(response.data[0].ord_id, "312269865356374016");
-        assert_eq!(response.data[1].cl_ord_id, Some("order_2".to_string()));
-        assert_eq!(response.data[1].ord_id, "312269865356374017");
+        assert_eq!(response.data.get(0).and_then(|d| d.cl_ord_id.as_ref()), Some(&"order_1".to_string()));
+        assert_eq!(response.data.get(0).map(|d| &d.ord_id), Some(&"312269865356374016".to_string()));
+        assert_eq!(response.data.get(1).and_then(|d| d.cl_ord_id.as_ref()), Some(&"order_2".to_string()));
+        assert_eq!(response.data.get(1).map(|d| &d.ord_id), Some(&"312269865356374017".to_string()));
+        assert!(response.data.first().is_some(), "Expected at least one order in response");
+        assert!(response.data.get(1).is_some(), "Expected at least two orders in response");
     }
 }

@@ -91,8 +91,8 @@ mod tests {
             deposit_enabled: true,
         };
 
-        let serialized = serde_json::to_string(&currency).unwrap();
-        let deserialized: Currency = serde_json::from_str(&serialized).unwrap();
+        let serialized = serde_json::to_string(&currency).expect("Failed to serialize currency");
+        let deserialized: Currency = serde_json::from_str(&serialized).expect("Failed to deserialize currency");
 
         assert_eq!(currency.id, deserialized.id);
         assert_eq!(currency.name, deserialized.name);
@@ -143,7 +143,7 @@ mod tests {
             ]
         }"#;
 
-        let response: GetCurrencyListResponse = serde_json::from_str(json).unwrap();
+        let response: GetCurrencyListResponse = serde_json::from_str(json).expect("Failed to deserialize response");
         assert_eq!(response.currencies.len(), 2);
         assert_eq!(response.currencies[0].id, "BTC");
         assert_eq!(response.currencies[0].name, "Bitcoin");

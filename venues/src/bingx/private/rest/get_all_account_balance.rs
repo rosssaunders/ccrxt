@@ -174,18 +174,18 @@ mod tests {
         let response: GetAllAccountBalanceResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.accounts.len(), 3);
 
-        let spot_account = &response.accounts[0];
+        let spot_account = response.accounts.get(0).expect("Missing spot account in response");
         assert!(matches!(spot_account.account_type, AccountType::Spot));
         assert_eq!(spot_account.usdt_balance, "1000.50");
 
-        let futures_account = &response.accounts[1];
+        let futures_account = response.accounts.get(1).expect("Missing stdFutures account in response");
         assert!(matches!(
             futures_account.account_type,
             AccountType::StdFutures
         ));
         assert_eq!(futures_account.usdt_balance, "500.25");
 
-        let coinm_account = &response.accounts[2];
+        let coinm_account = response.accounts.get(2).expect("Missing coinMPerp account in response");
         assert!(matches!(coinm_account.account_type, AccountType::CoinMPerp));
         assert_eq!(coinm_account.usdt_balance, "750.75");
     }

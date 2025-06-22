@@ -45,8 +45,8 @@ mod tests {
         ];
         let request = SubscribeRequest { channels };
 
-        let json = serde_json::to_string(&request).unwrap();
-        let parsed: serde_json::Value = serde_json::from_str(&json).unwrap();
+        let json = serde_json::to_string(&request).expect("Failed to serialize request");
+        let parsed: serde_json::Value = serde_json::from_str(&json).expect("Failed to parse JSON");
 
         assert_eq!(parsed["channels"][0], "book.BTC-PERPETUAL.100ms");
         assert_eq!(parsed["channels"][1], "trades.BTC-PERPETUAL");
@@ -57,7 +57,7 @@ mod tests {
         let channels = vec!["ticker.BTC-PERPETUAL".to_string()];
         let request = SubscribeRequest { channels };
 
-        let json = serde_json::to_string(&request).unwrap();
+        let json = serde_json::to_string(&request).expect("Failed to serialize request");
         let expected = r#"{"channels":["ticker.BTC-PERPETUAL"]}"#;
 
         assert_eq!(json, expected);
@@ -99,7 +99,7 @@ mod tests {
         let channels: Vec<String> = vec![];
         let request = SubscribeRequest { channels };
 
-        let json = serde_json::to_string(&request).unwrap();
+        let json = serde_json::to_string(&request).expect("Failed to serialize request");
         let expected = r#"{"channels":[]}"#;
 
         assert_eq!(json, expected);
