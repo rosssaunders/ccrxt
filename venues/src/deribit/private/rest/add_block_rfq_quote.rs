@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
+use super::RestClient;
 // Reuse the Side enum from send_rfq for direction fields
 pub use super::send_rfq::Side;
 use crate::deribit::{EndpointType, RestResult};
@@ -173,29 +173,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Result containing the Block RFQ quote details
-    pub async fn add_block_rfq_quote(
-        &self,
-        label: Option<String>,
-        block_rfq_id: i64,
-        amount: f64,
-        direction: Side,
-        legs: Vec<BlockRfqLeg>,
-        hedge: Option<BlockRfqHedge>,
-        execution_instruction: Option<ExecutionInstruction>,
-        price: Option<f64>,
-        expires_at: Option<i64>,
-    ) -> RestResult<AddBlockRfqQuoteResponse> {
-        let request = AddBlockRfqQuoteRequest {
-            label,
-            block_rfq_id,
-            amount,
-            direction,
-            legs,
-            hedge,
-            execution_instruction,
-            price,
-            expires_at,
-        };
+    pub async fn add_block_rfq_quote(&self, request: AddBlockRfqQuoteRequest) -> RestResult<AddBlockRfqQuoteResponse> {
         self.send_signed_request(
             "private/add_block_rfq_quote",
             &request,

@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
+use super::RestClient;
 use crate::deribit::{ClearanceState, Currency, DepositState, EndpointType, RestResult};
 
 /// Deposit entry
@@ -81,16 +81,11 @@ impl RestClient {
     ///
     /// # Returns
     /// Result containing deposit history with count and data array
-    pub async fn get_deposits(&self, currency: Currency, count: Option<i32>, offset: Option<i32>) -> RestResult<GetDepositsResponse> {
-        let request = GetDepositsRequest {
-            currency,
-            count,
-            offset,
-        };
+    pub async fn get_deposits(&self, request: GetDepositsRequest) -> RestResult<GetDepositsResponse> {
         self.send_signed_request(
             "private/get_deposits",
             &request,
-            EndpointType::NonMatchingEngine,
+            EndpointType::MatchingEngine,
         )
         .await
     }

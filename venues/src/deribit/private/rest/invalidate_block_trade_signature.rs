@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
+use super::RestClient;
 use crate::deribit::{EndpointType, RestResult};
 
 /// Request parameters for invalidate block trade signature
@@ -37,14 +37,11 @@ impl RestClient {
     ///
     /// # Returns
     /// Result with "ok" string in case of success
-    pub async fn invalidate_block_trade_signature(&self, signature: &str) -> RestResult<InvalidateBlockTradeSignatureResponse> {
-        let request = InvalidateBlockTradeSignatureRequest {
-            signature: signature.to_string(),
-        };
+    pub async fn invalidate_block_trade_signature(&self, request: InvalidateBlockTradeSignatureRequest) -> RestResult<InvalidateBlockTradeSignatureResponse> {
         self.send_signed_request(
             "private/invalidate_block_trade_signature",
             &request,
-            EndpointType::NonMatchingEngine,
+            EndpointType::MatchingEngine,
         )
         .await
     }

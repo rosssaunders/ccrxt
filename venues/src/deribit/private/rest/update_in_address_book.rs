@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
+use super::RestClient;
 use crate::deribit::{AddressBookType, Currency, EndpointType, RestResult};
 
 /// Request parameters for update in address book
@@ -51,10 +51,7 @@ pub struct UpdateInAddressBookResponse {
 }
 
 impl RestClient {
-    /// Allows to provide beneficiary information for the address
-    ///
-    /// This endpoint requires wallet:read_write scope and updates beneficiary
-    /// information for an existing address book entry.
+    /// Update an entry in the address book.
     ///
     /// See: <https://docs.deribit.com/v2/#private-update_in_address_book>
     ///
@@ -62,14 +59,14 @@ impl RestClient {
     /// Scope: wallet:read_write
     ///
     /// # Arguments
-    /// * `request` - Request parameters containing all required beneficiary information
+    /// * `params` - Parameters for the update in address book request
     ///
     /// # Returns
-    /// Result containing "ok" string on success
-    pub async fn update_in_address_book(&self, request: UpdateInAddressBookRequest) -> RestResult<UpdateInAddressBookResponse> {
+    /// Response for update in address book endpoint
+    pub async fn update_in_address_book(&self, params: UpdateInAddressBookRequest) -> RestResult<UpdateInAddressBookResponse> {
         self.send_signed_request(
             "private/update_in_address_book",
-            &request,
+            &params,
             EndpointType::NonMatchingEngine,
         )
         .await

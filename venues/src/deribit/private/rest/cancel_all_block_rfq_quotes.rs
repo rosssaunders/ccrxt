@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
+use super::RestClient;
 use crate::deribit::{EndpointType, RestResult};
 
 /// Request parameters for cancel all block RFQ quotes endpoint
@@ -44,11 +44,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Result with total number of successfully cancelled quotes
-    pub async fn cancel_all_block_rfq_quotes(&self, block_rfq_id: Option<i64>, detailed: Option<bool>) -> RestResult<CancelAllBlockRfqQuotesResponse> {
-        let request = CancelAllBlockRfqQuotesRequest {
-            block_rfq_id,
-            detailed,
-        };
+    pub async fn cancel_all_block_rfq_quotes(&self, request: CancelAllBlockRfqQuotesRequest) -> RestResult<CancelAllBlockRfqQuotesResponse> {
         self.send_signed_request(
             "private/cancel_all_block_rfq_quotes",
             &request,

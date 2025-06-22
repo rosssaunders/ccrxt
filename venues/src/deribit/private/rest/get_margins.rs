@@ -66,9 +66,13 @@ impl super::client::RestClient {
     /// Fetches margin requirements for a given instrument, amount, and price.
     ///
     /// [Official Deribit Docs](https://docs.deribit.com/v2/#private-get_margins)
-    pub async fn get_margins(&self, params: GetMarginsRequest) -> RestResult<GetMarginsResponse> {
-        self.send_signed_request("private/get_margins", &params, EndpointType::MatchingEngine)
-            .await
+    pub async fn get_margins(&self, request: GetMarginsRequest) -> RestResult<GetMarginsResponse> {
+        self.send_signed_request(
+            "private/get_margins",
+            &request,
+            EndpointType::MatchingEngine,
+        )
+        .await
     }
 }
 

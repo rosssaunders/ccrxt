@@ -1,9 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-use crate::deribit::EndpointType;
-use crate::deribit::RestResult;
+use super::RestClient;
 use crate::deribit::enums::OrderDirection;
-use crate::deribit::private::rest::client::RestClient;
+use crate::deribit::{EndpointType, RestResult};
 
 /// Request parameters for the get_pending_block_trades endpoint.
 ///
@@ -110,11 +109,11 @@ impl RestClient {
     /// [Deribit API docs](https://docs.deribit.com/#private-get_pending_block_trades)
     ///
     /// This endpoint requires authentication and the `block_trade:read` scope.
-    pub async fn get_pending_block_trades(&self, _params: GetPendingBlockTradesRequest) -> RestResult<GetPendingBlockTradesResponse> {
+    pub async fn get_pending_block_trades(&self, request: GetPendingBlockTradesRequest) -> RestResult<GetPendingBlockTradesResponse> {
         self.send_signed_request(
             "private/get_pending_block_trades",
-            &_params,
-            EndpointType::NonMatchingEngine,
+            &request,
+            EndpointType::MatchingEngine,
         )
         .await
     }

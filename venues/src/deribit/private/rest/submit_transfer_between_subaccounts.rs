@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
+use super::RestClient;
 // Reuse the TransferData struct from submit_transfer_to_user
 use super::submit_transfer_to_user::TransferData;
 use crate::deribit::{EndpointType, RestResult};

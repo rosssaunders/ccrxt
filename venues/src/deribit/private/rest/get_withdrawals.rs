@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
+use super::RestClient;
 // Re-export WithdrawalData from withdraw.rs to maintain consistency
 pub use super::withdraw::WithdrawalData;
 use crate::deribit::{Currency, EndpointType, RestResult};
@@ -56,16 +56,11 @@ impl RestClient {
     ///
     /// # Returns
     /// Result containing withdrawal history with count and data array
-    pub async fn get_withdrawals(&self, currency: Currency, count: Option<i32>, offset: Option<i32>) -> RestResult<GetWithdrawalsResponse> {
-        let request = GetWithdrawalsRequest {
-            currency,
-            count,
-            offset,
-        };
+    pub async fn get_withdrawals(&self, request: GetWithdrawalsRequest) -> RestResult<GetWithdrawalsResponse> {
         self.send_signed_request(
             "private/get_withdrawals",
             &request,
-            EndpointType::NonMatchingEngine,
+            EndpointType::MatchingEngine,
         )
         .await
     }

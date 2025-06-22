@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use super::client::RestClient;
+use super::RestClient;
 // Reuse existing structures from withdraw.rs
 use super::withdraw::WithdrawResponse;
 use crate::deribit::{Currency, EndpointType, RestResult};
@@ -34,12 +34,14 @@ impl RestClient {
     ///
     /// # Returns
     /// Cancel result with complete withdrawal information
-    pub async fn cancel_withdrawal(&self, currency: Currency, id: i64) -> RestResult<CancelWithdrawalResponse> {
-        let request = CancelWithdrawalRequest { currency, id };
+    pub async fn cancel_withdrawal(
+        &self,
+        request: CancelWithdrawalRequest,
+    ) -> RestResult<CancelWithdrawalResponse> {
         self.send_signed_request(
             "private/cancel_withdrawal",
             &request,
-            EndpointType::NonMatchingEngine,
+            EndpointType::MatchingEngine,
         )
         .await
     }

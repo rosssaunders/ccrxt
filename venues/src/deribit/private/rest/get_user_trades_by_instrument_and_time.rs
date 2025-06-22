@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
+use super::RestClient;
 // Reuse the Trade struct from get_user_trades_by_currency since it's identical
 pub use super::get_user_trades_by_currency::Trade;
 use crate::deribit::{EndpointType, RestResult, Sorting};
@@ -73,7 +73,7 @@ impl RestClient {
         self.send_signed_request(
             "private/get_user_trades_by_instrument_and_time",
             &request,
-            EndpointType::NonMatchingEngine,
+            EndpointType::MatchingEngine,
         )
         .await
     }
@@ -222,7 +222,7 @@ mod tests {
 
         assert_eq!(response.id, 1);
         assert_eq!(response.jsonrpc, "2.0");
-        assert!(!response.result.has_more);
+        assert!(response.result.has_more);
         assert_eq!(response.result.trades.len(), 1);
 
         let trade = &response.result.trades[0];

@@ -4,6 +4,9 @@
 
 use serde::{Deserialize, Serialize};
 
+use super::RestClient;
+use crate::deribit::{EndpointType, RestResult};
+
 /// Request for /private/get_order_margin_by_ids
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GetOrderMarginByIdsRequest {
@@ -23,6 +26,17 @@ pub struct OrderMarginInfo {
     pub initial_margin: f64,
     pub initial_margin_currency: String,
     pub order_id: String,
+}
+
+impl RestClient {
+    pub async fn get_order_margin_by_ids(&self, request: GetOrderMarginByIdsRequest) -> RestResult<GetOrderMarginByIdsResponse> {
+        self.send_signed_request(
+            "private/get_order_margin_by_ids",
+            &request,
+            EndpointType::MatchingEngine,
+        )
+        .await
+    }
 }
 
 // Unit tests for serialization/deserialization

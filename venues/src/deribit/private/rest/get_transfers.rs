@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
+use super::RestClient;
 use super::submit_transfer_to_user::TransferData;
 use crate::deribit::{Currency, EndpointType, RestResult};
 
@@ -55,16 +55,11 @@ impl RestClient {
     ///
     /// # Returns
     /// Result containing transfer history with count and data array
-    pub async fn get_transfers(&self, currency: Currency, count: Option<i32>, offset: Option<i32>) -> RestResult<GetTransfersResponse> {
-        let request = GetTransfersRequest {
-            currency,
-            count,
-            offset,
-        };
+    pub async fn get_transfers(&self, request: GetTransfersRequest) -> RestResult<GetTransfersResponse> {
         self.send_signed_request(
             "private/get_transfers",
             &request,
-            EndpointType::NonMatchingEngine,
+            EndpointType::MatchingEngine,
         )
         .await
     }

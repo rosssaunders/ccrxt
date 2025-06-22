@@ -1,8 +1,8 @@
 use serde::{Deserialize, Serialize};
 
 // Reuse the types from add_block_rfq_quote since the API uses the same structures
+use super::RestClient;
 use super::add_block_rfq_quote::{AddBlockRfqQuoteResult, BlockRfqHedge, BlockRfqLeg};
-use super::client::RestClient;
 use crate::deribit::{EndpointType, RestResult};
 
 /// Request parameters for editing a Block RFQ quote
@@ -63,25 +63,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Result containing the edited Block RFQ quote details
-    pub async fn edit_block_rfq_quote(
-        &self,
-        legs: Vec<BlockRfqLeg>,
-        amount: f64,
-        block_rfq_quote_id: Option<i64>,
-        label: Option<String>,
-        hedge: Option<BlockRfqHedge>,
-        block_rfq_id: Option<i64>,
-        price: Option<f64>,
-    ) -> RestResult<EditBlockRfqQuoteResponse> {
-        let request = EditBlockRfqQuoteRequest {
-            legs,
-            amount,
-            block_rfq_quote_id,
-            label,
-            hedge,
-            block_rfq_id,
-            price,
-        };
+    pub async fn edit_block_rfq_quote(&self, request: EditBlockRfqQuoteRequest) -> RestResult<EditBlockRfqQuoteResponse> {
         self.send_signed_request(
             "private/edit_block_rfq_quote",
             &request,

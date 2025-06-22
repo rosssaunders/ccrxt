@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
+use super::RestClient;
 use crate::deribit::{EndpointType, RestResult};
 
 /// Request parameters for get Block RFQ makers
@@ -31,10 +31,12 @@ impl RestClient {
     /// Rate limit: Depends on endpoint type (matching engine)
     /// Scope: block_rfq:read
     ///
+    /// # Arguments
+    /// * `request` - GetBlockRfqMakersRequest struct (empty)
+    ///
     /// # Returns
     /// Result containing a list of available Block RFQ makers
-    pub async fn get_block_rfq_makers(&self) -> RestResult<GetBlockRfqMakersResponse> {
-        let request = GetBlockRfqMakersRequest {};
+    pub async fn get_block_rfq_makers(&self, request: GetBlockRfqMakersRequest) -> RestResult<GetBlockRfqMakersResponse> {
         self.send_signed_request(
             "private/get_block_rfq_makers",
             &request,
@@ -128,7 +130,7 @@ mod tests {
 
         // Test method signature - this ensures the method compiles correctly
         // We can't actually call it without a real connection, but we can verify the signature
-        let _future = client.get_block_rfq_makers();
+        let _future = client.get_block_rfq_makers(GetBlockRfqMakersRequest {});
     }
 
     #[test]

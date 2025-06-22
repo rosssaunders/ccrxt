@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
+use super::RestClient;
 use crate::deribit::{EndpointType, RestResult};
 
 /// Role enum for execute block trade requests
@@ -197,21 +197,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Result with executed block trade details
-    pub async fn execute_block_trade(
-        &self,
-        timestamp: i64,
-        nonce: &str,
-        role: Role,
-        trades: Vec<Trade>,
-        counterparty_signature: &str,
-    ) -> RestResult<ExecuteBlockTradeResponse> {
-        let request = ExecuteBlockTradeRequest {
-            timestamp,
-            nonce: nonce.to_string(),
-            role,
-            trades,
-            counterparty_signature: counterparty_signature.to_string(),
-        };
+    pub async fn execute_block_trade(&self, request: ExecuteBlockTradeRequest) -> RestResult<ExecuteBlockTradeResponse> {
         self.send_signed_request(
             "private/execute_block_trade",
             &request,

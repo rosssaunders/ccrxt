@@ -4,9 +4,9 @@
 
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
+use super::RestClient;
 use crate::deribit::enums::{CancelReason, Currency, OrderDirection, OrderState, OrderType, TriggerType};
-use crate::deribit::{EndpointType, RestResult as DeribitResult, TimeInForce, TriggerFillCondition};
+use crate::deribit::{EndpointType, RestResult, TimeInForce, TriggerFillCondition};
 
 /// Request for /private/get_order_state_by_label
 #[derive(Debug, Clone, Serialize)]
@@ -254,11 +254,11 @@ impl RestClient {
     ///
     /// # Returns
     /// * `GetOrderStateByLabelResponse` containing the order state(s)
-    pub async fn get_order_state_by_label(&self, params: GetOrderStateByLabelRequest) -> DeribitResult<GetOrderStateByLabelResponse> {
+    pub async fn get_order_state_by_label(&self, request: GetOrderStateByLabelRequest) -> RestResult<GetOrderStateByLabelResponse> {
         self.send_signed_request(
             "private/get_order_state_by_label",
-            &params,
-            EndpointType::NonMatchingEngine,
+            &request,
+            EndpointType::MatchingEngine,
         )
         .await
     }

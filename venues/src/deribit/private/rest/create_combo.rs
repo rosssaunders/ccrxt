@@ -4,7 +4,7 @@
 
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
+use super::RestClient;
 use crate::deribit::{EndpointType, RestResult};
 
 /// A trade used to create a combo
@@ -93,9 +93,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Result containing the created or existing combo details
-    pub async fn create_combo(&self, trades: Vec<CreateComboTrade>) -> RestResult<CreateComboResponse> {
-        let request = CreateComboRequest { trades };
-
+    pub async fn create_combo(&self, request: CreateComboRequest) -> RestResult<CreateComboResponse> {
         self.send_signed_request(
             "private/create_combo",
             &request,

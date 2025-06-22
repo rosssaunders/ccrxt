@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
+use super::RestClient;
 use crate::deribit::{EndpointType, RestResult};
 
 /// Request parameters for get Block RFQ user info
@@ -65,8 +65,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Result containing identity and rating information for the account and subaccounts
-    pub async fn get_block_rfq_user_info(&self) -> RestResult<GetBlockRfqUserInfoResponse> {
-        let request = GetBlockRfqUserInfoRequest {};
+    pub async fn get_block_rfq_user_info(&self, request: GetBlockRfqUserInfoRequest) -> RestResult<GetBlockRfqUserInfoResponse> {
         self.send_signed_request(
             "private/get_block_rfq_user_info",
             &request,
@@ -204,7 +203,7 @@ mod tests {
 
         // Test method signature - this ensures the method compiles correctly
         // We can't actually call it without a real connection, but we can verify the signature
-        let _future = client.get_block_rfq_user_info();
+        let _future = client.get_block_rfq_user_info(GetBlockRfqUserInfoRequest {});
     }
 
     #[test]

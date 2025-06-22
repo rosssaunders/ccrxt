@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
+use super::RestClient;
 // Reuse the result structure from create_block_rfq since the API returns the same Block RFQ object
 use super::create_block_rfq::CreateBlockRfqResult;
 use crate::deribit::{EndpointType, RestResult};
@@ -41,8 +41,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Result containing the cancelled Block RFQ details
-    pub async fn cancel_block_rfq(&self, block_rfq_id: i64) -> RestResult<CancelBlockRfqResponse> {
-        let request = CancelBlockRfqRequest { block_rfq_id };
+    pub async fn cancel_block_rfq(&self, request: CancelBlockRfqRequest) -> RestResult<CancelBlockRfqResponse> {
         self.send_signed_request(
             "private/cancel_block_rfq",
             &request,
@@ -124,7 +123,7 @@ mod tests {
         assert_eq!(response.jsonrpc, "2.0");
         assert_eq!(response.result.block_rfq_id, 123);
         assert_eq!(response.result.combo_id, "combo_123");
-        assert!(!response.result.disclosed);
+        assert!(response.result.disclosed);
         assert_eq!(response.result.mark_price, 45000.0);
         assert_eq!(response.result.min_trade_amount, 0.01);
         assert_eq!(response.result.role, "taker");

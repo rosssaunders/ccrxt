@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
+use super::RestClient;
 use crate::deribit::{Currency, CurrencyPair, EndpointType, InstrumentKind, RestResult};
 
 /// Cancel type for cancel quotes endpoint
@@ -99,31 +99,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Result with total number of successfully cancelled quotes
-    pub async fn cancel_quotes(
-        &self,
-        cancel_type: CancelType,
-        detailed: Option<bool>,
-        freeze_quotes: Option<bool>,
-        min_delta: Option<f64>,
-        max_delta: Option<f64>,
-        quote_set_id: Option<String>,
-        instrument_name: Option<String>,
-        kind: Option<InstrumentKind>,
-        currency: Option<Currency>,
-        currency_pair: Option<CurrencyPair>,
-    ) -> RestResult<CancelQuotesResponse> {
-        let request = CancelQuotesRequest {
-            cancel_type,
-            detailed,
-            freeze_quotes,
-            min_delta,
-            max_delta,
-            quote_set_id,
-            instrument_name,
-            kind,
-            currency,
-            currency_pair,
-        };
+    pub async fn cancel_quotes(&self, request: CancelQuotesRequest) -> RestResult<CancelQuotesResponse> {
         self.send_signed_request(
             "private/cancel_quotes",
             &request,

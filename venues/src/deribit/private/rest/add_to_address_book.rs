@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
+use super::RestClient;
 use crate::deribit::{AddressBookType, AddressStatus, Currency, EndpointType, RestResult};
 
 /// Request parameters for adding to address book
@@ -130,43 +130,11 @@ impl RestClient {
     ///
     /// # Returns
     /// Address book entry result with complete entry information
-    pub async fn add_to_address_book(
-        &self,
-        currency: Currency,
-        address_type: AddressBookType,
-        address: &str,
-        label: &str,
-        beneficiary_vasp_name: &str,
-        beneficiary_vasp_did: &str,
-        beneficiary_vasp_website: Option<&str>,
-        beneficiary_first_name: Option<&str>,
-        beneficiary_last_name: Option<&str>,
-        beneficiary_company_name: Option<&str>,
-        beneficiary_address: &str,
-        agreed: bool,
-        personal: bool,
-        extra_currencies: Option<Vec<Currency>>,
-    ) -> RestResult<AddToAddressBookResponse> {
-        let request = AddToAddressBookRequest {
-            currency,
-            address_type,
-            address: address.to_string(),
-            label: label.to_string(),
-            beneficiary_vasp_name: beneficiary_vasp_name.to_string(),
-            beneficiary_vasp_did: beneficiary_vasp_did.to_string(),
-            beneficiary_vasp_website: beneficiary_vasp_website.map(|s| s.to_string()),
-            beneficiary_first_name: beneficiary_first_name.map(|s| s.to_string()),
-            beneficiary_last_name: beneficiary_last_name.map(|s| s.to_string()),
-            beneficiary_company_name: beneficiary_company_name.map(|s| s.to_string()),
-            beneficiary_address: beneficiary_address.to_string(),
-            agreed,
-            personal,
-            extra_currencies,
-        };
+    pub async fn add_to_address_book(&self, request: AddToAddressBookRequest) -> RestResult<AddToAddressBookResponse> {
         self.send_signed_request(
             "private/add_to_address_book",
             &request,
-            EndpointType::NonMatchingEngine,
+            EndpointType::MatchingEngine,
         )
         .await
     }

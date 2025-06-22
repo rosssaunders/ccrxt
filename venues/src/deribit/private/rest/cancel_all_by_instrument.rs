@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
+use super::RestClient;
 use crate::deribit::{EndpointType, OrderType, RestResult};
 
 /// Request parameters for cancel all by instrument endpoint
@@ -55,19 +55,8 @@ impl RestClient {
     /// Result with total number of successfully cancelled orders
     pub async fn cancel_all_by_instrument(
         &self,
-        instrument_name: String,
-        order_type: Option<OrderType>,
-        detailed: Option<bool>,
-        include_combos: Option<bool>,
-        freeze_quotes: Option<bool>,
+        request: CancelAllByInstrumentRequest,
     ) -> RestResult<CancelAllByInstrumentResponse> {
-        let request = CancelAllByInstrumentRequest {
-            instrument_name,
-            order_type,
-            detailed,
-            include_combos,
-            freeze_quotes,
-        };
         self.send_signed_request(
             "private/cancel_all_by_instrument",
             &request,

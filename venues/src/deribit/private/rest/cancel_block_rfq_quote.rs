@@ -1,8 +1,8 @@
 use serde::{Deserialize, Serialize};
 
 // Reuse the result structure from add_block_rfq_quote since the API returns the same quote object
+use super::RestClient;
 use super::add_block_rfq_quote::AddBlockRfqQuoteResult;
-use super::client::RestClient;
 use crate::deribit::{EndpointType, RestResult};
 
 /// Request parameters for cancel block RFQ quote endpoint
@@ -51,17 +51,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Result containing the cancelled Block RFQ quote details
-    pub async fn cancel_block_rfq_quote(
-        &self,
-        block_rfq_quote_id: Option<i64>,
-        label: Option<String>,
-        block_rfq_id: Option<i64>,
-    ) -> RestResult<CancelBlockRfqQuoteResponse> {
-        let request = CancelBlockRfqQuoteRequest {
-            block_rfq_quote_id,
-            label,
-            block_rfq_id,
-        };
+    pub async fn cancel_block_rfq_quote(&self, request: CancelBlockRfqQuoteRequest) -> RestResult<CancelBlockRfqQuoteResponse> {
         self.send_signed_request(
             "private/cancel_block_rfq_quote",
             &request,

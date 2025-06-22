@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
+use super::RestClient;
 pub use super::add_to_address_book::AddressBookEntry;
-use super::client::RestClient;
 use crate::deribit::{AddressBookType, Currency, EndpointType, RestResult};
 
 /// Request parameters for get address book
@@ -42,15 +42,11 @@ impl RestClient {
     ///
     /// # Returns
     /// Result containing array of address book entries
-    pub async fn get_address_book(&self, currency: Currency, address_type: AddressBookType) -> RestResult<GetAddressBookResponse> {
-        let request = GetAddressBookRequest {
-            currency,
-            address_type,
-        };
+    pub async fn get_address_book(&self, request: GetAddressBookRequest) -> RestResult<GetAddressBookResponse> {
         self.send_signed_request(
             "private/get_address_book",
             &request,
-            EndpointType::NonMatchingEngine,
+            EndpointType::MatchingEngine,
         )
         .await
     }

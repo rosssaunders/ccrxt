@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
+use super::RestClient;
 use crate::deribit::{EndpointType, RestResult};
 
 /// Role enum for simulate block trade requests
@@ -59,10 +59,7 @@ pub struct SimulateBlockTradeResponse {
 }
 
 impl RestClient {
-    /// Simulate block trade execution
-    ///
-    /// Checks if a block trade can be executed with the given parameters.
-    /// This endpoint requires block_trade:read scope.
+    /// Simulate a block trade to check if it can be executed.
     ///
     /// See: <https://docs.deribit.com/v2/#private-simulate_block_trade>
     ///
@@ -70,16 +67,14 @@ impl RestClient {
     /// Scope: block_trade:read
     ///
     /// # Arguments
-    /// * `role` - Optional role (maker or taker)
-    /// * `trades` - List of trades for the block trade
+    /// * `params` - Parameters for the simulate block trade request
     ///
     /// # Returns
     /// Result with boolean indicating if block trade can be executed
-    pub async fn simulate_block_trade(&self, role: Option<Role>, trades: Vec<Trade>) -> RestResult<SimulateBlockTradeResponse> {
-        let request = SimulateBlockTradeRequest { role, trades };
+    pub async fn simulate_block_trade(&self, params: SimulateBlockTradeRequest) -> RestResult<SimulateBlockTradeResponse> {
         self.send_signed_request(
             "private/simulate_block_trade",
-            &request,
+            &params,
             EndpointType::MatchingEngine,
         )
         .await

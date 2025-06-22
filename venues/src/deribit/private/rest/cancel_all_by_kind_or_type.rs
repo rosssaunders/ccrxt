@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
+use super::RestClient;
 use crate::deribit::{Currency, EndpointType, InstrumentKind, OrderType, RestResult};
 
 /// Currency selection for cancel all by kind or type endpoint
@@ -106,21 +106,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Result with total number of successfully cancelled orders
-    pub async fn cancel_all_by_kind_or_type(
-        &self,
-        currency: CurrencySelection,
-        kind: Option<InstrumentKind>,
-        order_type: Option<OrderType>,
-        detailed: Option<bool>,
-        freeze_quotes: Option<bool>,
-    ) -> RestResult<CancelAllByKindOrTypeResponse> {
-        let request = CancelAllByKindOrTypeRequest {
-            currency,
-            kind,
-            order_type,
-            detailed,
-            freeze_quotes,
-        };
+    pub async fn cancel_all_by_kind_or_type(&self, request: CancelAllByKindOrTypeRequest) -> RestResult<CancelAllByKindOrTypeResponse> {
         self.send_signed_request(
             "private/cancel_all_by_kind_or_type",
             &request,

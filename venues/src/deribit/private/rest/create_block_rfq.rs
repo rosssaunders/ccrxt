@@ -1,8 +1,8 @@
 use serde::{Deserialize, Serialize};
 
 // Reuse existing types from add_block_rfq_quote
+use super::RestClient;
 pub use super::add_block_rfq_quote::{BlockRfqHedge, Side};
-use super::client::RestClient;
 use crate::deribit::{EndpointType, RestResult};
 
 /// A leg in the Block RFQ for creation
@@ -148,29 +148,11 @@ impl RestClient {
     /// Scope: block_rfq:read_write
     ///
     /// # Arguments
-    /// * `legs` - List of legs used to create Block RFQ
-    /// * `hedge` - Optional hedge leg of the Block RFQ
-    /// * `label` - Optional user defined label for the Block RFQ (maximum 64 characters)
-    /// * `makers` - Optional list of targeted Block RFQ makers. If empty, all available makers will be targeted
-    /// * `disclosed` - Optional flag determining whether the RFQ is non-anonymous (default: true)
+    /// * `request` - CreateBlockRfqRequest struct containing all parameters
     ///
     /// # Returns
     /// Result containing the created Block RFQ details
-    pub async fn create_block_rfq(
-        &self,
-        legs: Vec<CreateBlockRfqLeg>,
-        hedge: Option<BlockRfqHedge>,
-        label: Option<String>,
-        makers: Option<Vec<String>>,
-        disclosed: Option<bool>,
-    ) -> RestResult<CreateBlockRfqResponse> {
-        let request = CreateBlockRfqRequest {
-            legs,
-            hedge,
-            label,
-            makers,
-            disclosed,
-        };
+    pub async fn create_block_rfq(&self, request: CreateBlockRfqRequest) -> RestResult<CreateBlockRfqResponse> {
         self.send_signed_request(
             "private/create_block_rfq",
             &request,

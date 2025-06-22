@@ -118,7 +118,7 @@ pub use get_user_trades_by_instrument_and_time::{
 pub use get_user_trades_by_order::{GetUserTradesByOrderRequest, GetUserTradesByOrderResponse, GetUserTradesByOrderResult};
 pub use get_withdrawals::{GetWithdrawalsRequest, GetWithdrawalsResponse, GetWithdrawalsResult};
 pub use invalidate_block_trade_signature::{InvalidateBlockTradeSignatureRequest, InvalidateBlockTradeSignatureResponse};
-pub use move_positions::{MovePositionTrade, MovePositionTradeResult, MovePositionsRequest, MovePositionsResponse, MovePositionsResult};
+pub use move_positions::{MovePositionTrade, MovePositionTradeResult, MovePositionsRequest, MovePositionsResponse};
 pub use remove_from_address_book::{RemoveFromAddressBookRequest, RemoveFromAddressBookResponse};
 pub use reset_mmp::{IndexName, ResetMmpRequest, ResetMmpResponse};
 pub use send_rfq::{SendRfqRequest, SendRfqResponse, Side};

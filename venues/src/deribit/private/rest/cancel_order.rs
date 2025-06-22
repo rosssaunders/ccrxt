@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
+use super::RestClient;
 use crate::deribit::{AdvancedType, CancelReason, EndpointType, OrderDirection, OrderState, RestResult, TriggerType};
 
 /// Request parameters for canceling an order
@@ -236,12 +236,15 @@ impl RestClient {
     ///
     /// # Returns
     /// Cancel result with complete order information
-    pub async fn cancel_order(&self, order_id: &str) -> RestResult<CancelOrderResponse> {
-        let request = CancelOrderRequest {
-            order_id: order_id.to_string(),
-        };
-        self.send_signed_request("private/cancel", &request, EndpointType::MatchingEngine)
-            .await
+    pub async fn cancel_order(
+        &self,
+        request: CancelOrderRequest,
+    ) -> RestResult<CancelOrderResponse> {
+        self.send_signed_request(
+            "private/cancel_order",
+            &request,
+            EndpointType::MatchingEngine,
+        ).await
     }
 }
 

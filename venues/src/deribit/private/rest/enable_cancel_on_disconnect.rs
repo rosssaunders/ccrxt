@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
+use super::RestClient;
 use crate::deribit::{EndpointType, RestResult};
 
 /// Scope for Cancel On Disconnect operations
@@ -48,12 +48,11 @@ impl RestClient {
     ///
     /// # Returns
     /// Result containing "ok" string on success
-    pub async fn enable_cancel_on_disconnect(&self, scope: Option<CancelOnDisconnectScope>) -> RestResult<EnableCancelOnDisconnectResponse> {
-        let request = EnableCancelOnDisconnectRequest { scope };
+    pub async fn enable_cancel_on_disconnect(&self, request: EnableCancelOnDisconnectRequest) -> RestResult<EnableCancelOnDisconnectResponse> {
         self.send_signed_request(
             "private/enable_cancel_on_disconnect",
             &request,
-            EndpointType::NonMatchingEngine,
+            EndpointType::MatchingEngine,
         )
         .await
     }

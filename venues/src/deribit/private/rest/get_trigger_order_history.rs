@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
+use super::RestClient;
 use crate::deribit::{Currency, EndpointType, OrderDirection, RestResult, TradeOrderType, TriggerType};
 
 /// Request parameters for getting trigger order history
@@ -119,7 +119,7 @@ impl RestClient {
         self.send_signed_request(
             "private/get_trigger_order_history",
             &request,
-            EndpointType::NonMatchingEngine,
+            EndpointType::MatchingEngine,
         )
         .await
     }

@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
+use super::RestClient;
 use crate::deribit::{AddressBookType, Currency, EndpointType, RestResult};
 
 /// Request parameters for remove from address book

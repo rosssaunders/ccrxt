@@ -1,8 +1,8 @@
 use serde::{Deserialize, Serialize};
 
 // Reuse the result structure from add_block_rfq_quote since the API returns the same quote objects
+use super::RestClient;
 use super::add_block_rfq_quote::AddBlockRfqQuoteResult;
-use super::client::RestClient;
 use crate::deribit::{EndpointType, RestResult};
 
 /// Request parameters for get block RFQ quotes endpoint
@@ -50,17 +50,7 @@ impl RestClient {
     /// `block_rfq:read`
     ///
     /// [Official API docs](https://docs.deribit.com/#private-get_block_rfq_quotes)
-    pub async fn get_block_rfq_quotes(
-        &self,
-        block_rfq_id: Option<i64>,
-        label: Option<String>,
-        block_rfq_quote_id: Option<i64>,
-    ) -> RestResult<GetBlockRfqQuotesResponse> {
-        let request = GetBlockRfqQuotesRequest {
-            block_rfq_id,
-            label,
-            block_rfq_quote_id,
-        };
+    pub async fn get_block_rfq_quotes(&self, request: GetBlockRfqQuotesRequest) -> RestResult<GetBlockRfqQuotesResponse> {
         self.send_signed_request(
             "private/get_block_rfq_quotes",
             &request,

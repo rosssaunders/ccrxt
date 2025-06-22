@@ -3,10 +3,9 @@
 
 use serde::{Deserialize, Serialize};
 
-use crate::deribit::EndpointType;
-use crate::deribit::RestResult;
+use super::RestClient;
 use crate::deribit::enums::{AdvancedType, CancelReason, OpenOrdersOrderType, OrderDirection, OrderState, OrderType, TriggerType};
-use crate::deribit::private::rest::RestClient;
+use crate::deribit::{EndpointType, RestResult};
 
 /// Request for /private/get_open_orders_by_instrument
 #[derive(Debug, Clone, Serialize)]
@@ -127,14 +126,13 @@ pub struct OpenOrder {
 }
 
 impl RestClient {
-    /// Retrieves open orders for a given instrument.
-    ///
-    /// Scope: trade:read
+    /// Retrieves user's open orders for a given instrument on Deribit.
+    /// Endpoint: /private/get_open_orders_by_instrument
     pub async fn get_open_orders_by_instrument(&self, request: GetOpenOrdersByInstrumentRequest) -> RestResult<GetOpenOrdersByInstrumentResponse> {
         self.send_signed_request(
             "private/get_open_orders_by_instrument",
             &request,
-            EndpointType::NonMatchingEngine,
+            EndpointType::MatchingEngine,
         )
         .await
     }

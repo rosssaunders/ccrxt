@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
+use super::RestClient;
 pub use super::get_current_deposit_address::DepositAddress;
 use crate::deribit::{Currency, EndpointType, RestResult};
 
@@ -42,7 +42,7 @@ impl RestClient {
         self.send_signed_request(
             "private/create_deposit_address",
             &request,
-            EndpointType::NonMatchingEngine,
+            EndpointType::MatchingEngine,
         )
         .await
     }

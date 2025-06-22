@@ -123,7 +123,6 @@ pub mod private {
     pub use self::rest::MovePositionTradeResult;
     pub use self::rest::MovePositionsRequest;
     pub use self::rest::MovePositionsResponse;
-    pub use self::rest::MovePositionsResult;
     pub use self::rest::OpenOrder;
     pub use self::rest::OpenOrderType;
     pub use self::rest::OrderMarginInfo;
@@ -218,7 +217,6 @@ pub use private::MovePositionTrade;
 pub use private::MovePositionTradeResult;
 pub use private::MovePositionsRequest;
 pub use private::MovePositionsResponse;
-pub use private::MovePositionsResult;
 pub use private::OpenOrder;
 pub use private::OpenOrderType;
 pub use private::Originator;

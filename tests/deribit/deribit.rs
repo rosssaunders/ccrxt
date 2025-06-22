@@ -195,13 +195,13 @@ mod usage_examples {
         // The endpoint should use the PublicGetComboIds endpoint type,
         // which consumes 500 credits (same as other non-matching engine endpoints)
         let result = rate_limiter
-            .check_limits(crate::deribit::EndpointType::PublicGetComboIds)
+            .check_limits(EndpointType::PublicGetComboIds)
             .await;
         assert!(result.is_ok());
 
         // Record the request
         rate_limiter
-            .record_request(crate::deribit::EndpointType::PublicGetComboIds)
+            .record_request(EndpointType::PublicGetComboIds)
             .await;
 
         // Check that the credit system is working
@@ -218,13 +218,13 @@ mod usage_examples {
         // The endpoint should use the PublicGetCombos endpoint type,
         // which consumes 500 credits (same as other non-matching engine endpoints)
         let result = rate_limiter
-            .check_limits(crate::deribit::EndpointType::PublicGetCombos)
+            .check_limits(EndpointType::PublicGetCombos)
             .await;
         assert!(result.is_ok());
 
         // Record the request
         rate_limiter
-            .record_request(crate::deribit::EndpointType::PublicGetCombos)
+            .record_request(EndpointType::PublicGetCombos)
             .await;
 
         // Check that the credit system is working

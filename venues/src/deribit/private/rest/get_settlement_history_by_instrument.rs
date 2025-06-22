@@ -58,7 +58,7 @@ impl RestClient {
         self.send_signed_request(
             "private/get_settlement_history_by_instrument",
             &request,
-            EndpointType::NonMatchingEngine,
+            EndpointType::MatchingEngine,
         )
         .await
     }

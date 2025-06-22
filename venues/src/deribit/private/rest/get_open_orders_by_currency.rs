@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
+use super::RestClient;
 use crate::deribit::{AdvancedType, CancelReason, Currency, EndpointType, InstrumentKind, OrderDirection, OrderState, RestResult, TriggerType};
 
 /// Order type filter for get_open_orders_by_currency endpoint
@@ -243,7 +243,7 @@ impl RestClient {
         self.send_signed_request(
             "private/get_open_orders_by_currency",
             &request,
-            EndpointType::NonMatchingEngine,
+            EndpointType::MatchingEngine,
         )
         .await
     }

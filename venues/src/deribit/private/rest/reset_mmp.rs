@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
+use super::RestClient;
 use crate::deribit::{EndpointType, RestResult};
 
 /// Index names supported by Deribit for MMP operations
@@ -89,8 +89,6 @@ pub struct ResetMmpResponse {
 }
 
 impl RestClient {
-    /// Reset MMP
-    ///
     /// Reset MMP (Market Maker Protection) for the specified index and optional MMP group.
     /// This endpoint requires trade:read_write or block_rfq:read_write scope when block_rfq is true.
     ///
@@ -100,19 +98,12 @@ impl RestClient {
     /// Scope: trade:read_write or block_rfq:read_write (when block_rfq = true)
     ///
     /// # Arguments
-    /// * `index_name` - Index identifier of derivative instrument on the platform
-    /// * `mmp_group` - Optional MMP group for which limits are being reset
-    /// * `block_rfq` - Optional flag to reset MMP for Block RFQ
+    /// * `params` - Parameters for the reset MMP request
     ///
     /// # Returns
     /// Result containing "ok" string on success
-    pub async fn reset_mmp(&self, index_name: IndexName, mmp_group: Option<String>, block_rfq: Option<bool>) -> RestResult<ResetMmpResponse> {
-        let request = ResetMmpRequest {
-            index_name,
-            mmp_group,
-            block_rfq,
-        };
-        self.send_signed_request("private/reset_mmp", &request, EndpointType::MatchingEngine)
+    pub async fn reset_mmp(&self, params: ResetMmpRequest) -> RestResult<ResetMmpResponse> {
+        self.send_signed_request("private/reset_mmp", &params, EndpointType::MatchingEngine)
             .await
     }
 }
@@ -350,3 +341,6 @@ mod tests {
         println!("All reset_mmp types and methods are properly integrated and accessible");
     }
 }
+
+// The following endpoints will be refactored in their respective files to ensure all RestClient methods take a single request struct as parameter, and all send_signed_request calls include endpoint_type, per project conventions.
+// No further changes needed in this file for reset_mmp.

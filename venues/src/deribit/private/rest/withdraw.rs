@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
+use super::RestClient;
 use crate::deribit::{Currency, EndpointType, RestResult, WithdrawalPriority, WithdrawalState};
 
 /// Request parameters for withdrawal
@@ -56,37 +56,21 @@ pub struct WithdrawResponse {
 }
 
 impl RestClient {
-    /// Creates a new withdrawal request
-    ///
-    /// Creates a new withdrawal request for transferring funds to an external address.
-    /// The address must be in the address book and the request requires wallet:read_write scope.
+    /// Withdraw funds from your account to an address in your address book.
     ///
     /// See: <https://docs.deribit.com/v2/#private-withdraw>
     ///
     /// Rate limit: 500 credits per request (non-matching engine)
-    /// Scope: wallet:read_write and mainaccount
+    /// Scope: wallet:read_write
     ///
     /// # Arguments
-    /// * `currency` - The currency symbol (BTC, ETH, USDC, USDT, EURR)
-    /// * `address` - Address in currency format, must be in address book
-    /// * `amount` - Amount of funds to be withdrawn
-    /// * `priority` - Withdrawal priority (optional for BTC, default: high)
+    /// * `params` - Parameters for the withdrawal request
     ///
     /// # Returns
-    /// Withdrawal result with complete withdrawal information
-    pub async fn withdraw(&self, currency: Currency, address: &str, amount: f64, priority: Option<WithdrawalPriority>) -> RestResult<WithdrawResponse> {
-        let request = WithdrawRequest {
-            currency,
-            address: address.to_string(),
-            amount,
-            priority,
-        };
-        self.send_signed_request(
-            "private/withdraw",
-            &request,
-            EndpointType::NonMatchingEngine,
-        )
-        .await
+    /// Response for withdrawal endpoint
+    pub async fn withdraw(&self, params: WithdrawRequest) -> RestResult<WithdrawResponse> {
+        self.send_signed_request("private/withdraw", &params, EndpointType::NonMatchingEngine)
+            .await
     }
 }
 

@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
+use super::RestClient;
 use crate::deribit::{EndpointType, RestResult};
 
 /// Role enum for block trade approval
@@ -60,16 +60,11 @@ impl RestClient {
     ///
     /// # Returns
     /// Result with "ok" string in case of success
-    pub async fn approve_block_trade(&self, timestamp: i64, nonce: &str, role: Role) -> RestResult<ApproveBlockTradeResponse> {
-        let request = ApproveBlockTradeRequest {
-            timestamp,
-            nonce: nonce.to_string(),
-            role,
-        };
+    pub async fn approve_block_trade(&self, request: ApproveBlockTradeRequest) -> RestResult<ApproveBlockTradeResponse> {
         self.send_signed_request(
             "private/approve_block_trade",
             &request,
-            EndpointType::NonMatchingEngine,
+            EndpointType::MatchingEngine,
         )
         .await
     }

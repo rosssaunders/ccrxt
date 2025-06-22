@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
+use super::RestClient;
 use crate::deribit::{Currency, EndpointType, RestResult};
 
 /// Request parameters for get current deposit address
@@ -55,7 +55,7 @@ impl RestClient {
         self.send_signed_request(
             "private/get_current_deposit_address",
             &request,
-            EndpointType::NonMatchingEngine,
+            EndpointType::MatchingEngine,
         )
         .await
     }

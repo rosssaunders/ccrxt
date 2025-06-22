@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
+use super::RestClient;
 use crate::deribit::{EndpointType, RestResult};
 
 /// Side enum for RFQ requests
@@ -49,24 +49,13 @@ impl RestClient {
     /// Scope: trade:read_write
     ///
     /// # Arguments
-    /// * `instrument_name` - The instrument name
-    /// * `amount` - Optional amount
-    /// * `side` - Optional side (buy or sell)
+    /// * `params` - Parameters for the send RFQ request
     ///
     /// # Returns
     /// Result with "ok" string in case of success
-    pub async fn send_rfq(&self, instrument_name: &str, amount: Option<f64>, side: Option<Side>) -> RestResult<SendRfqResponse> {
-        let request = SendRfqRequest {
-            instrument_name: instrument_name.to_string(),
-            amount,
-            side,
-        };
-        self.send_signed_request(
-            "private/send_rfq",
-            &request,
-            EndpointType::NonMatchingEngine,
-        )
-        .await
+    pub async fn send_rfq(&self, params: SendRfqRequest) -> RestResult<SendRfqResponse> {
+        self.send_signed_request("private/send_rfq", &params, EndpointType::NonMatchingEngine)
+            .await
     }
 }
 

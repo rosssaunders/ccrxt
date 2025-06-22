@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
+use super::RestClient;
 use crate::deribit::{EndpointType, RestResult};
 
 /// Request parameters for cancel all endpoint
@@ -37,16 +37,11 @@ impl RestClient {
     /// Scope: trade:read_write
     ///
     /// # Arguments
-    /// * `detailed` - Optional flag for detailed output format
-    /// * `freeze_quotes` - Optional flag to reject incoming quotes for 1 second after cancelling
+    /// * `request` - CancelAllRequest struct containing optional flags for detailed output and freeze_quotes
     ///
     /// # Returns
     /// Result with total number of successfully cancelled orders
-    pub async fn cancel_all(&self, detailed: Option<bool>, freeze_quotes: Option<bool>) -> RestResult<CancelAllResponse> {
-        let request = CancelAllRequest {
-            detailed,
-            freeze_quotes,
-        };
+    pub async fn cancel_all(&self, request: CancelAllRequest) -> RestResult<CancelAllResponse> {
         self.send_signed_request("private/cancel_all", &request, EndpointType::MatchingEngine)
             .await
     }
