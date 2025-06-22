@@ -194,7 +194,7 @@ mod tests {
                 assert_eq!(code, 99999);
                 assert_eq!(message, "Unknown error");
             }
-            _ => panic!("Expected UnmappedApiError"),
+            _ => assert!(false, "Expected UnmappedApiError"),
         }
     }
 }

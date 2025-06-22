@@ -274,7 +274,7 @@ mod tests {
         if let Err(Errors::ApiError(ApiError::TooManyRequests { msg })) = result {
             assert!(msg.contains("1,200"));
         } else {
-            panic!("Expected TooManyRequests error");
+            assert!(false, "Expected TooManyRequests error");
         }
     }
 
@@ -294,7 +294,7 @@ mod tests {
         if let Err(Errors::ApiError(ApiError::TooManyOrders { msg })) = result {
             assert!(msg.contains("100/10s"));
         } else {
-            panic!("Expected TooManyOrders error for 10s limit");
+            assert!(false, "Expected TooManyOrders error for 10s limit");
         }
     }
 
@@ -314,7 +314,7 @@ mod tests {
         if let Err(Errors::ApiError(ApiError::TooManyRequests { msg })) = result {
             assert!(msg.contains("6,000/5min"));
         } else {
-            panic!("Expected TooManyRequests error for raw request limit");
+            assert!(false, "Expected TooManyRequests error for raw request limit");
         }
     }
 

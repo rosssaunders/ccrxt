@@ -165,7 +165,7 @@ mod tests {
         let deserialized: CurrencySelection = serde_json::from_str(&json_str).unwrap();
         match deserialized {
             CurrencySelection::Single(curr) => assert_eq!(curr, Currency::BTC),
-            _ => panic!("Expected Single variant"),
+            _ => assert!(false, "Expected Single variant"),
         }
     }
 
@@ -182,7 +182,7 @@ mod tests {
                 assert_eq!(currencies[0], Currency::BTC);
                 assert_eq!(currencies[1], Currency::ETH);
             }
-            _ => panic!("Expected Multiple variant"),
+            _ => assert!(false, "Expected Multiple variant"),
         }
     }
 
@@ -195,7 +195,7 @@ mod tests {
         let deserialized: CurrencySelection = serde_json::from_str(&json_str).unwrap();
         match deserialized {
             CurrencySelection::Single(Currency::Any) => (), // This is what we expect
-            _ => panic!("Expected Single(Currency::Any) variant"),
+            _ => assert!(false, "Expected Single(Currency::Any) variant"),
         }
     }
 

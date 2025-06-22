@@ -229,7 +229,6 @@ mod tests {
     }
 
     #[test]
-    #[allow(clippy::panic)]
     fn test_unmapped_error_code() {
         let error_response = ErrorResponse {
             code: 99999,
@@ -243,7 +242,7 @@ mod tests {
                 assert_eq!(code, 99999);
                 assert_eq!(message, "Unknown error");
             }
-            _ => panic!("Expected UnmappedApiError"),
+            _ => assert!(false, "Expected UnmappedApiError"),
         }
     }
 
