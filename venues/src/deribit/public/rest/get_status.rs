@@ -2,10 +2,10 @@
 //!
 //! Method used to get information about locked currencies
 
-use serde::{Deserialize, Serialize};
-
 use super::client::RestClient;
 use crate::deribit::{EndpointType, RestResult};
+
+use serde::{Deserialize, Serialize};
 
 /// Request parameters for the public/status endpoint.
 ///
@@ -56,7 +56,7 @@ impl RestClient {
             "public/status",
             reqwest::Method::GET,
             Some(&params),
-            EndpointType::PublicGetStatus,
+            EndpointType::NonMatchingEngine,
         )
         .await
     }
@@ -172,7 +172,7 @@ mod tests {
         // Test that rate limiting works for this endpoint type
         let result = rest_client
             .rate_limiter
-            .check_limits(EndpointType::PublicGetStatus)
+            .check_limits(EndpointType::NonMatchingEngine)
             .await;
         assert!(result.is_ok());
     }
