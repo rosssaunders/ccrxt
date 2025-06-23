@@ -53,7 +53,7 @@ impl RestClient {
             "public/get_combo_ids",
             reqwest::Method::GET,
             Some(&params),
-            EndpointType::NonMatchingEngineGetComboIds,
+            EndpointType::NonMatchingEngine,
         )
         .await
     }
@@ -157,7 +157,7 @@ mod tests {
         // Test that rate limiting works for this endpoint type
         let result = rest_client
             .rate_limiter
-            .check_limits(EndpointType::NonMatchingEngineGetComboIds)
+            .check_limits(EndpointType::NonMatchingEngine)
             .await;
         assert!(result.is_ok());
     }

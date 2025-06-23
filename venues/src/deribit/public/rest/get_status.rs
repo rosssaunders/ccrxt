@@ -172,7 +172,7 @@ mod tests {
         // Test that rate limiting works for this endpoint type
         let result = rest_client
             .rate_limiter
-            .check_limits(EndpointType::NonMatchingEngineGetStatus)
+            .check_limits(EndpointType::NonMatchingEngine)
             .await;
         assert!(result.is_ok());
     }

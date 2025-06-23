@@ -2,9 +2,10 @@
 //!
 //! Retrieves the list of current RFQs (Request For Quotes).
 
+use super::RestClient;
+use crate::deribit::EndpointType;
 use crate::deribit::RestResult;
 use crate::deribit::enums::ComboState;
-use crate::deribit::public::rest::client::{EndpointType, RestClient};
 
 use reqwest::Method;
 use serde::{Deserialize, Serialize};

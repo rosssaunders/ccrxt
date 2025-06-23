@@ -3,9 +3,10 @@
 //! Retrieves the most recent trades for a given currency and instrument kind.
 
 use super::RestClient;
-use crate::deribit::RestResult;
 use crate::deribit::enums::{Currency, InstrumentKind, Liquidity, Sorting, TickDirection, TradeOrderType};
+use crate::deribit::{EndpointType, RestResult};
 
+use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
 /// Request parameters for the get_last_trades_by_currency endpoint.
@@ -95,8 +96,13 @@ impl RestClient {
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_last_trades_by_currency)
     pub async fn get_last_trades_by_currency(&self, params: GetLastTradesByCurrencyRequest) -> RestResult<GetLastTradesByCurrencyResponse> {
-        self.call_public("get_last_trades_by_currency", &params)
-            .await
+        self.send_request(
+            "get_last_trades_by_currency",
+            Method::POST,
+            Some(&params),
+            EndpointType::NonMatchingEngine,
+        )
+        .await
     }
 }
 

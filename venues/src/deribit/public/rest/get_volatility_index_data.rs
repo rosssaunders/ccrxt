@@ -5,7 +5,9 @@
 //! [Official API docs](https://docs.deribit.com/#public-get_volatility_index_data)
 
 use super::RestClient;
-use crate::deribit::RestResult;
+use crate::deribit::{EndpointType, RestResult};
+
+use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
 use std::borrow::Cow;
@@ -53,7 +55,13 @@ impl RestClient {
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_volatility_index_data)
     pub async fn get_volatility_index_data(&self, params: GetVolatilityIndexDataRequest) -> RestResult<GetVolatilityIndexDataResponse> {
-        self.call_public("get_volatility_index_data", &params).await
+        self.send_request(
+            "get_volatility_index_data",
+            Method::POST,
+            Some(&params),
+            EndpointType::NonMatchingEngine,
+        )
+        .await
     }
 }
 

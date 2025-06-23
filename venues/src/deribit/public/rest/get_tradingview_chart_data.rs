@@ -5,7 +5,10 @@
 //! [Official API docs](https://docs.deribit.com/#public-get_tradingview_chart_data)
 
 use super::RestClient;
+use crate::deribit::EndpointType;
 use crate::deribit::Errors as DeribitError;
+
+use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
 use std::borrow::Cow;
@@ -83,9 +86,9 @@ impl RestClient {
     pub async fn get_tradingview_chart_data(&self, params: &GetTradingviewChartDataRequest) -> Result<GetTradingviewChartDataResponse, DeribitError> {
         self.send_request(
             "public/get_tradingview_chart_data",
-            reqwest::Method::GET,
+            Method::GET,
             Some(params),
-            crate::deribit::EndpointType::NonMatchingEngineGetTradingviewChartData,
+            EndpointType::NonMatchingEngine,
         )
         .await
     }

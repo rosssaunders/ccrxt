@@ -3,8 +3,9 @@
 //! Retrieves contract size of provided instrument.
 
 use super::RestClient;
-use crate::deribit::errors::RestResult;
+use crate::deribit::{EndpointType, RestResult};
 
+use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
 /// Request parameters for the get_contract_size endpoint.
@@ -46,7 +47,13 @@ impl RestClient {
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_contract_size)
     pub async fn get_contract_size(&self, params: GetContractSizeRequest) -> RestResult<GetContractSizeResponse> {
-        self.call_public("get_contract_size", &params).await
+        self.send_request(
+            "get_contract_size",
+            Method::POST,
+            Some(&params),
+            EndpointType::NonMatchingEngine,
+        )
+        .await
     }
 }
 

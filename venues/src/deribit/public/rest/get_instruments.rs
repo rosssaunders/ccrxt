@@ -10,7 +10,7 @@ use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
 /// Request parameters for the get_instruments endpoint.
-#[derive(Debug, Clone, Serialize, Default)]
+#[derive(Debug, Clone, Serialize)]
 pub struct GetInstrumentsRequest {
     /// Currency for which to retrieve instruments.
     #[serde(rename = "currency")]

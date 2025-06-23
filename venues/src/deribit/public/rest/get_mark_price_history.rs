@@ -3,8 +3,9 @@
 //! Retrieves historical mark prices for a given instrument.
 
 use super::RestClient;
-use crate::deribit::RestResult;
+use crate::deribit::{EndpointType, RestResult};
 
+use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
 /// Request parameters for the get_mark_price_history endpoint.
@@ -70,7 +71,13 @@ impl RestClient {
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_mark_price_history)
     pub async fn get_mark_price_history(&self, params: GetMarkPriceHistoryRequest) -> RestResult<GetMarkPriceHistoryResponse> {
-        self.call_public("get_mark_price_history", &params).await
+        self.send_request(
+            "get_mark_price_history",
+            Method::POST,
+            Some(&params),
+            EndpointType::NonMatchingEngine,
+        )
+        .await
     }
 }
 

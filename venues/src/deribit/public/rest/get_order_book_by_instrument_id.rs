@@ -3,8 +3,9 @@
 //! Retrieves the current order book for a given instrument by its ID.
 
 use super::RestClient;
-use crate::deribit::RestResult;
+use crate::deribit::{EndpointType, RestResult};
 
+use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
 /// Request parameters for the get_order_book_by_instrument_id endpoint.
@@ -78,8 +79,13 @@ impl RestClient {
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_order_book_by_instrument_id)
     pub async fn get_order_book_by_instrument_id(&self, params: GetOrderBookByInstrumentIdRequest) -> RestResult<GetOrderBookByInstrumentIdResponse> {
-        self.call_public("get_order_book_by_instrument_id", &params)
-            .await
+        self.send_request(
+            "get_order_book_by_instrument_id",
+            Method::POST,
+            Some(&params),
+            EndpointType::NonMatchingEngine,
+        )
+        .await
     }
 }
 

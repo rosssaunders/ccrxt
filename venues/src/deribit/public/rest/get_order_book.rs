@@ -2,9 +2,8 @@
 //!
 //! Retrieves the current order book for a given instrument.
 
-use crate::deribit::RestResult;
-use crate::deribit::enums::{OrderDirection, OrderState, OrderType};
-use crate::deribit::public::rest::client::{EndpointType, RestClient};
+use super::RestClient;
+use crate::deribit::{EndpointType, RestResult};
 
 use reqwest::Method;
 use serde::{Deserialize, Serialize};

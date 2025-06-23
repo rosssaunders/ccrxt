@@ -7,7 +7,7 @@ use crate::deribit::enums::Currency;
 use crate::deribit::{EndpointType, RestResult};
 
 use reqwest::Method;
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 
 /// Represents a withdrawal priority for a currency.
 #[derive(Debug, Clone, Deserialize)]

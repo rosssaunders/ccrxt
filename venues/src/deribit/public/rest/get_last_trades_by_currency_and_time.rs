@@ -10,7 +10,7 @@ use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
 /// Request parameters for the get_last_trades_by_currency_and_time endpoint.
-#[derive(Debug, Clone, Serialize, Default)]
+#[derive(Debug, Clone, Serialize)]
 pub struct GetLastTradesByCurrencyAndTimeRequest {
     /// Currency for which to retrieve trades.
     #[serde(rename = "currency")]

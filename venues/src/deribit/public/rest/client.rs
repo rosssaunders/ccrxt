@@ -162,7 +162,7 @@ mod tests {
         // Test that rate limiting works (this shouldn't fail since we're not actually hitting limits)
         let result = rest_client
             .rate_limiter
-            .check_limits(EndpointType::NonMatchingEngineGetComboIds)
+            .check_limits(EndpointType::NonMatchingEngine)
             .await;
         assert!(result.is_ok());
     }

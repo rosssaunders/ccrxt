@@ -3,9 +3,10 @@
 //! Retrieves delivery prices for the given index.
 
 use super::RestClient;
-use crate::deribit::RestResult;
 use crate::deribit::enums::CurrencyPair;
+use crate::deribit::{EndpointType, RestResult};
 
+use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
 /// Request parameters for the get_delivery_prices endpoint.
@@ -71,7 +72,13 @@ impl RestClient {
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_delivery_prices)
     pub async fn get_delivery_prices(&self, params: GetDeliveryPricesRequest) -> RestResult<GetDeliveryPricesResponse> {
-        self.call_public("get_delivery_prices", &params).await
+        self.send_request(
+            "get_delivery_prices",
+            Method::POST,
+            Some(&params),
+            EndpointType::NonMatchingEngine,
+        )
+        .await
     }
 }
 
