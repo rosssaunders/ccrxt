@@ -44,6 +44,7 @@ mod enums;
 mod errors;
 mod rate_limit;
 mod request;
+mod signing;
 
 // Re-export modules for new structure
 mod public {

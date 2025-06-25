@@ -5,6 +5,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::binance::coinm::RestResult;
 use crate::binance::coinm::private::rest::client::RestClient;
+use crate::binance::shared;
 
 /// Request parameters for all orders (GET /dapi/v1/allOrders).
 #[derive(Debug, Clone, Serialize, Default)]
@@ -102,13 +103,20 @@ impl RestClient {
     /// Requires API key and signature.
     pub async fn get_all_orders(&self, params: AllOrdersRequest) -> RestResult<Vec<AllOrder>> {
         let weight = if params.pair.is_some() { 40 } else { 20 };
-        self.send_signed_request(
+        let result = shared::send_signed_request(
+            self,
             "/dapi/v1/allOrders",
             reqwest::Method::GET,
             params,
             weight,
             false,
         )
-        .await
+        .await?;
+        
+        Ok(crate::binance::coinm::RestResponse {
+            data: result,
+            request_duration: std::time::Duration::ZERO,
+            headers: crate::binance::coinm::ResponseHeaders::default(),
+        })
     }
 }

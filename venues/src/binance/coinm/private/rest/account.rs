@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 use crate::binance::coinm::RestResult;
 use crate::binance::coinm::enums::{MarginType, PositionSide};
 use crate::binance::coinm::private::rest::client::RestClient;
+use crate::binance::shared;
 
 /// Request parameters for fetching account information.
 #[derive(Debug, Serialize)]
@@ -231,7 +232,21 @@ impl RestClient {
     /// Requires API key authentication.
     /// Weight: 5
     pub async fn get_account(&self, request: AccountRequest) -> RestResult<AccountResponse> {
-        self.send_signed_request("/dapi/v1/account", reqwest::Method::GET, request, 5, false)
-            .await
+        let result = shared::send_signed_request(
+            self,
+            "/dapi/v1/account",
+            reqwest::Method::GET,
+            request,
+            5,
+            false,
+        )
+        .await?;
+
+        // Wrap the result in RestResponse to match the expected return type
+        Ok(crate::binance::coinm::RestResponse {
+            data: result,
+            request_duration: std::time::Duration::ZERO, // Will be set by the actual implementation
+            headers: crate::binance::coinm::ResponseHeaders::default(),
+        })
     }
 }

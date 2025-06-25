@@ -5,6 +5,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::binance::coinm::RestResult;
 use crate::binance::coinm::private::rest::client::RestClient;
+use crate::binance::shared;
 
 /// Request parameters for querying an order (GET /dapi/v1/order).
 #[derive(Debug, Clone, Serialize, Default)]
@@ -88,13 +89,20 @@ impl RestClient {
     /// Requires API key and signature.
     pub async fn get_query_order(&self, params: QueryOrderRequest) -> RestResult<QueryOrderResponse> {
         let weight = 1;
-        self.send_signed_request(
+        let result = shared::send_signed_request(
+            self,
             "/dapi/v1/order",
             reqwest::Method::GET,
             params,
             weight,
             false,
         )
-        .await
+        .await?;
+        
+        Ok(crate::binance::coinm::RestResponse {
+            data: result,
+            request_duration: std::time::Duration::ZERO,
+            headers: crate::binance::coinm::ResponseHeaders::default(),
+        })
     }
 }

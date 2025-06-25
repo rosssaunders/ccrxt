@@ -8,6 +8,7 @@ use crate::binance::coinm::enums::{
     OrderResponseType, OrderSide, OrderStatus, OrderType, PositionSide, PriceMatch, SelfTradePreventionMode, TimeInForce, WorkingType,
 };
 use crate::binance::coinm::private::rest::client::RestClient;
+use crate::binance::shared;
 
 /// Serializes a value as a JSON string for use in URL-encoded form bodies (Binance batch orders)
 fn as_json_string<S, T>(value: &T, serializer: S) -> Result<S::Ok, S::Error>
@@ -282,13 +283,19 @@ impl RestClient {
     /// # Returns
     /// A vector of BatchOrderResult, each representing either a successful order or an error for that order.
     pub async fn place_batch_orders(&self, request: PlaceBatchOrdersRequest) -> RestResult<Vec<BatchOrderResult>> {
-        self.send_signed_request(
+        let result = shared::send_signed_request(
+            self,
             "/dapi/v1/batchOrders",
             reqwest::Method::POST,
             request,
             5,    // weight
             true, // is_order
-        )
-        .await
+        ).await?;
+        
+        Ok(crate::binance::coinm::RestResponse {
+            data: result,
+            request_duration: std::time::Duration::ZERO,
+            headers: crate::binance::coinm::ResponseHeaders::default(),
+        })
     }
 }

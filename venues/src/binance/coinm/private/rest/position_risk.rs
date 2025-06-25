@@ -5,6 +5,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::binance::coinm::RestResult;
 use crate::binance::coinm::private::rest::client::RestClient;
+use crate::binance::shared;
 
 /// Request parameters for position risk (GET /dapi/v1/positionRisk).
 #[derive(Debug, Clone, Serialize, Default)]
@@ -80,13 +81,20 @@ impl RestClient {
     /// Requires API key and signature.
     pub async fn get_position_risk(&self, params: PositionRiskRequest) -> RestResult<Vec<PositionRisk>> {
         let weight = 1;
-        self.send_signed_request(
+        let result = shared::send_signed_request(
+            self,
             "/dapi/v1/positionRisk",
             reqwest::Method::GET,
             params,
             weight,
             false,
         )
-        .await
+        .await?;
+        
+        Ok(crate::binance::coinm::RestResponse {
+            data: result,
+            request_duration: std::time::Duration::ZERO,
+            headers: crate::binance::coinm::ResponseHeaders::default(),
+        })
     }
 }

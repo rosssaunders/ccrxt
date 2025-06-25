@@ -296,6 +296,19 @@ pub enum ContractType {
     PerpetualDelivering,
 }
 
+impl ContractType {
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            ContractType::Perpetual => "PERPETUAL",
+            ContractType::CurrentQuarter => "CURRENT_QUARTER",
+            ContractType::NextQuarter => "NEXT_QUARTER",
+            ContractType::CurrentQuarterDelivering => "CURRENT_QUARTER_DELIVERING",
+            ContractType::NextQuarterDelivering => "NEXT_QUARTER_DELIVERING",
+            ContractType::PerpetualDelivering => "PERPETUAL DELIVERING",
+        }
+    }
+}
+
 /// Represents the contract status (`contractStatus`, `status`).
 ///
 /// [Binance API Enum Definitions](https://developers.binance.com/docs/derivatives/coin-margined-futures/common-definition#enum-definitions)
@@ -406,4 +419,65 @@ pub enum KlineInterval {
     I1w,
     #[serde(rename = "1M")]
     I1M,
+}
+
+impl KlineInterval {
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            KlineInterval::I1m => "1m",
+            KlineInterval::I3m => "3m",
+            KlineInterval::I5m => "5m",
+            KlineInterval::I15m => "15m",
+            KlineInterval::I30m => "30m",
+            KlineInterval::I1h => "1h",
+            KlineInterval::I2h => "2h",
+            KlineInterval::I4h => "4h",
+            KlineInterval::I6h => "6h",
+            KlineInterval::I8h => "8h",
+            KlineInterval::I12h => "12h",
+            KlineInterval::I1d => "1d",
+            KlineInterval::I3d => "3d",
+            KlineInterval::I1w => "1w",
+            KlineInterval::I1M => "1M",
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum Period {
+    #[serde(rename = "5m")]
+    I5m,
+    #[serde(rename = "15m")]
+    I15m,
+    #[serde(rename = "30m")]
+    I30m,
+    #[serde(rename = "1h")]
+    I1h,
+    #[serde(rename = "2h")]
+    I2h,
+    #[serde(rename = "4h")]
+    I4h,
+    #[serde(rename = "6h")]
+    I6h,
+    #[serde(rename = "12h")]
+    I12h,
+    #[serde(rename = "1d")]
+    I1d,
+}
+
+impl Period {
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            Period::I5m => "5m",
+            Period::I15m => "15m",
+            Period::I30m => "30m",
+            Period::I1h => "1h",
+            Period::I2h => "2h",
+            Period::I4h => "4h",
+            Period::I6h => "6h",
+            Period::I12h => "12h",
+            Period::I1d => "1d",
+        }
+    }
 }

@@ -33,6 +33,7 @@ use rest::secrets::ExposableSecret;
 use sha2::Sha256;
 
 use crate::binance::coinm::{Errors, RateLimiter, RestResult};
+use crate::binance::shared::BinanceRestClient;
 
 /// Represents a successful or error response from the Binance API.
 /// This enum is used to handle both successful responses and error responses
@@ -162,48 +163,49 @@ impl RestClient {
             headers: rest_response.headers,
         })
     }
+}
 
-    /// Sends a signed request to the Binance API
-    ///
-    /// This method automatically handles timestamp generation and request signing for private endpoints.
-    /// It appends the current timestamp and generates the required signature.
-    ///
-    /// # Arguments
-    /// * `endpoint` - The API endpoint path (e.g., "/fapi/v1/order")
-    /// * `method` - The HTTP method to use
-    /// * `request` - The request parameters implementing PrivateRequest
-    /// * `weight` - The request weight for this endpoint
-    /// * `is_order` - Whether this is an order-related endpoint
-    ///
-    /// # Returns
-    /// A result containing the parsed response data and metadata, or an error
-    pub(super) async fn send_signed_request<T, R>(&self, endpoint: &str, method: reqwest::Method, request: R, weight: u32, is_order: bool) -> RestResult<T>
+impl BinanceRestClient for RestClient {
+    type Error = Errors;
+    fn api_secret(&self) -> &dyn ExposableSecret {
+        self.api_secret.as_ref()
+    }
+    fn send_request<T>(
+        &self,
+        endpoint: &str,
+        method: reqwest::Method,
+        query_string: Option<&str>,
+        body: Option<&str>,
+        weight: u32,
+        is_order: bool,
+    ) -> std::pin::Pin<Box<dyn std::future::Future<Output = Result<T, Self::Error>> + Send + '_>>
     where
-        T: serde::de::DeserializeOwned,
-        R: serde::Serialize,
+        T: serde::de::DeserializeOwned + Send + 'static,
     {
-        let serialized = serde_urlencoded::to_string(&request).map_err(|e| {
-            crate::binance::coinm::Errors::Error(format!(
-                "Failed to encode params: {}\nBacktrace:\n{}",
-                e,
-                std::backtrace::Backtrace::capture()
-            ))
-        })?;
-        let signature = sign_request(self.api_secret.as_ref(), &serialized)?;
-        let signed = format!("{serialized}&signature={signature}");
-        if method == reqwest::Method::GET {
-            self.send_request(endpoint, method, Some(&signed), None, weight, is_order)
-                .await
-        } else {
-            self.send_request(
-                endpoint,
-                method,
-                None,
-                Some(&[("signed", signed.as_str())]),
-                weight,
-                is_order,
-            )
-            .await
-        }
+        let endpoint = endpoint.to_string();
+        let query_string = query_string.map(|s| s.to_string());
+        let body = body.map(|s| s.to_string());
+
+        Box::pin(async move {
+            let body_params: Option<Vec<(&str, &str)>> = body.as_ref().map(|b| vec![("body", b.as_str())]);
+            let result = self
+                .send_request(
+                    &endpoint,
+                    method,
+                    query_string.as_deref(),
+                    body_params.as_deref(),
+                    weight,
+                    is_order,
+                )
+                .await?;
+            Ok(result.data)
+        })
+    }
+    fn from_serialize(e: serde_urlencoded::ser::Error) -> Self::Error {
+        Errors::Error(format!("Failed to encode params: {}", e))
+    }
+
+    fn from_signature(e: String) -> Self::Error {
+        Errors::Error(format!("Signature error: {}", e))
     }
 }

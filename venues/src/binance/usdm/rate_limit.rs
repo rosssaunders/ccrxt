@@ -269,6 +269,20 @@ impl RateLimiter {
         // Orders are tracked by rolling window, but you could optionally sync to header counts if needed
     }
 
+    /// Convenience method for order endpoints: check limits and increment if successful
+    pub async fn acquire_order(&self) -> Result<(), Errors> {
+        self.check_limits(1, true).await?;
+        self.increment_order().await;
+        Ok(())
+    }
+
+    /// Convenience method for regular endpoints: check limits and increment if successful
+    pub async fn acquire_request(&self, weight: u32) -> Result<(), Errors> {
+        self.check_limits(weight, false).await?;
+        self.increment_raw_request().await;
+        Ok(())
+    }
+
     /// Checks if a new request can be made without exceeding any bucket
     /// - weight: request weight for this endpoint
     /// - is_order: whether this is an order-related endpoint
