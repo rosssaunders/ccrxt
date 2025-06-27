@@ -87,9 +87,12 @@ impl RestClient {
     /// GET /dapi/v1/order
     /// Weight: 1
     /// Requires API key and signature.
-    pub async fn get_query_order(&self, params: QueryOrderRequest) -> RestResult<QueryOrderResponse> {
+    pub async fn get_query_order(
+        &self,
+        params: QueryOrderRequest,
+    ) -> RestResult<QueryOrderResponse> {
         let weight = 1;
-        let result = shared::send_signed_request(
+        shared::send_signed_request(
             self,
             "/dapi/v1/order",
             reqwest::Method::GET,
@@ -97,12 +100,6 @@ impl RestClient {
             weight,
             false,
         )
-        .await?;
-        
-        Ok(crate::binance::coinm::RestResponse {
-            data: result,
-            request_duration: std::time::Duration::ZERO,
-            headers: crate::binance::coinm::ResponseHeaders::default(),
-        })
+        .await
     }
 }

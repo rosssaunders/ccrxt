@@ -6,7 +6,8 @@ use std::borrow::Cow;
 
 use reqwest::Client;
 
-use crate::binance::coinm::{RateLimiter, RestResult};
+use crate::binance::coinm::rest::common::{build_url, send_rest_request};
+use crate::binance::coinm::{RateLimiter, RestResult, RestResponse};
 
 #[non_exhaustive]
 #[derive(Debug, Clone)]
@@ -41,36 +42,32 @@ impl RestClient {
     }
 
     /// Send a request with form body as &[(&str, &str)]
-    pub async fn send_request<T>(
-        &self,
-        endpoint: &str,
-        method: reqwest::Method,
-        query_string: Option<&str>,
-        body: Option<&[(&str, &str)]>,
-        weight: u32,
-    ) -> RestResult<T>
+    pub async fn send_request<Req, Resp>(&self, endpoint: &str, method: reqwest::Method, params: Option<Req>, weight: u32) -> RestResult<Resp>
     where
-        T: serde::de::DeserializeOwned,
+        Req: serde::ser::Serialize,
+        Resp: serde::de::DeserializeOwned,
     {
-        let url = crate::binance::coinm::rest::common::build_url(&self.base_url, endpoint, query_string)?;
+        let query_string = serde_urlencoded::to_string(&params).map_err(|e| crate::binance::coinm::Errors::Error(format!("URL encoding error: {e}")))?;
+
+        let url = build_url(&self.base_url, endpoint, Some(&query_string))?;
         let headers = vec![];
-        let body_data = match body {
-            Some(b) => Some(serde_urlencoded::to_string(b).map_err(|e| crate::binance::coinm::Errors::Error(format!("URL encoding error: {e}")))?),
-            None => None,
-        };
-        let rest_response = crate::binance::coinm::rest::common::send_rest_request(
+        let rest_response: crate::binance::coinm::rest::common::RestResponse<String> = send_rest_request(
             &self.client,
             &url,
             method,
             headers,
-            body_data.as_deref(),
+            None,
             &self.rate_limiter,
             weight,
             false,
         )
         .await?;
-        Ok(crate::binance::coinm::RestResponse {
-            data: rest_response.data,
+
+        let parsed_data: Resp = serde_json::from_str(&rest_response.data)
+            .map_err(|e| crate::binance::coinm::Errors::Error(format!("JSON parse error: {e}")))?;
+
+        Ok(RestResponse {
+            data: parsed_data,
             request_duration: rest_response.request_duration,
             headers: rest_response.headers,
         })

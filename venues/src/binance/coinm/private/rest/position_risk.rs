@@ -79,9 +79,12 @@ impl RestClient {
     /// GET /dapi/v1/positionRisk
     /// Weight: 1
     /// Requires API key and signature.
-    pub async fn get_position_risk(&self, params: PositionRiskRequest) -> RestResult<Vec<PositionRisk>> {
+    pub async fn get_position_risk(
+        &self,
+        params: PositionRiskRequest,
+    ) -> RestResult<Vec<PositionRisk>> {
         let weight = 1;
-        let result = shared::send_signed_request(
+        shared::send_signed_request(
             self,
             "/dapi/v1/positionRisk",
             reqwest::Method::GET,
@@ -89,12 +92,6 @@ impl RestClient {
             weight,
             false,
         )
-        .await?;
-        
-        Ok(crate::binance::coinm::RestResponse {
-            data: result,
-            request_duration: std::time::Duration::ZERO,
-            headers: crate::binance::coinm::ResponseHeaders::default(),
-        })
+        .await
     }
 }

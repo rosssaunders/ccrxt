@@ -2,12 +2,12 @@ use serde::Serialize as SerdeSerialize;
 use serde::ser::Serializer;
 use serde::{Deserialize, Serialize};
 
-use crate::binance::RestResult;
-use crate::binance::coinm::ErrorResponse;
 use crate::binance::coinm::enums::{
-    OrderResponseType, OrderSide, OrderStatus, OrderType, PositionSide, PriceMatch, SelfTradePreventionMode, TimeInForce, WorkingType,
+    OrderResponseType, OrderSide, OrderStatus, OrderType, PositionSide, PriceMatch,
+    SelfTradePreventionMode, TimeInForce, WorkingType,
 };
 use crate::binance::coinm::private::rest::client::RestClient;
+use crate::binance::coinm::{ErrorResponse, RestResult};
 use crate::binance::shared;
 
 /// Serializes a value as a JSON string for use in URL-encoded form bodies (Binance batch orders)
@@ -35,6 +35,7 @@ pub struct BatchOrderRequest {
 
     /// Position side (BOTH, LONG, SHORT). Required for Hedge Mode.
     /// Only required when hedge mode is enabled.
+    #[serde(rename = "positionSide")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub position_side: Option<PositionSide>,
 
@@ -67,49 +68,58 @@ pub struct BatchOrderRequest {
     /// Unique client order ID.
     /// Must be unique across all orders for this account.
     /// Format: String, max length 36 characters.
+    #[serde(rename = "newClientOrderId")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub new_client_order_id: Option<String>,
 
     /// Stop price (for STOP/TAKE_PROFIT orders).
     /// Format: Decimal string with precision up to 8 decimal places.
     /// Required for STOP and TAKE_PROFIT orders.
+    #[serde(rename = "stopPrice")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub stop_price: Option<String>,
 
     /// Activation price (for TRAILING_STOP_MARKET orders).
     /// Format: Decimal string with precision up to 8 decimal places.
     /// Required for TRAILING_STOP_MARKET orders.
+    #[serde(rename = "activationPrice")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub activation_price: Option<String>,
 
     /// Callback rate (for TRAILING_STOP_MARKET orders).
     /// Format: Decimal string with precision up to 4 decimal places.
     /// Required for TRAILING_STOP_MARKET orders.
+    #[serde(rename = "callbackRate")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub callback_rate: Option<String>,
 
     /// Working type (MARK_PRICE or CONTRACT_PRICE).
     /// Determines which price is used for stop orders.
+    #[serde(rename = "workingType")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub working_type: Option<WorkingType>,
 
     /// Price protect flag ("TRUE" or "FALSE").
     /// If true, the order will be protected against adverse price movements.
+    #[serde(rename = "priceProtect")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub price_protect: Option<String>,
 
     /// Response type (ACK or RESULT).
     /// Determines the level of detail in the response.
+    #[serde(rename = "newOrderRespType")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub new_order_resp_type: Option<OrderResponseType>,
 
     /// Price match mode.
     /// Determines how the order price is matched.
+    #[serde(rename = "priceMatch")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub price_match: Option<PriceMatch>,
 
     /// Self-trade prevention mode.
     /// Determines how self-trades are handled.
+    #[serde(rename = "selfTradePreventionMode")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub self_trade_prevention_mode: Option<SelfTradePreventionMode>,
 }
@@ -124,6 +134,7 @@ pub struct PlaceBatchOrdersRequest {
 
     /// Optional recvWindow parameter.
     /// Range: 0 to 60000 milliseconds.
+    #[serde(rename = "recvWindow")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub recv_window: Option<u64>,
 
@@ -282,20 +293,18 @@ impl RestClient {
     ///
     /// # Returns
     /// A vector of BatchOrderResult, each representing either a successful order or an error for that order.
-    pub async fn place_batch_orders(&self, request: PlaceBatchOrdersRequest) -> RestResult<Vec<BatchOrderResult>> {
-        let result = shared::send_signed_request(
+    pub async fn place_batch_orders(
+        &self,
+        request: PlaceBatchOrdersRequest,
+    ) -> RestResult<Vec<BatchOrderResult>> {
+        shared::send_signed_request(
             self,
             "/dapi/v1/batchOrders",
             reqwest::Method::POST,
             request,
             5,    // weight
             true, // is_order
-        ).await?;
-        
-        Ok(crate::binance::coinm::RestResponse {
-            data: result,
-            request_duration: std::time::Duration::ZERO,
-            headers: crate::binance::coinm::ResponseHeaders::default(),
-        })
+        )
+        .await
     }
 }

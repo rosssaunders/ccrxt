@@ -129,7 +129,7 @@ impl RestClient {
         } else {
             40
         };
-        let result = shared::send_signed_request(
+        shared::send_signed_request(
             self,
             "/dapi/v1/openOrders",
             reqwest::Method::GET,
@@ -137,12 +137,6 @@ impl RestClient {
             weight,
             false,
         )
-        .await?;
-        
-        Ok(crate::binance::coinm::RestResponse {
-            data: result,
-            request_duration: std::time::Duration::ZERO,
-            headers: crate::binance::coinm::ResponseHeaders::default(),
-        })
+        .await
     }
 }

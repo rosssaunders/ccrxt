@@ -407,3 +407,261 @@ pub enum KlineInterval {
     #[serde(rename = "1M")]
     I1M,
 }
+
+impl fmt::Display for KlineInterval {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            KlineInterval::I1m => write!(f, "1m"),
+            KlineInterval::I3m => write!(f, "3m"),
+            KlineInterval::I5m => write!(f, "5m"),
+            KlineInterval::I15m => write!(f, "15m"),
+            KlineInterval::I30m => write!(f, "30m"),
+            KlineInterval::I1h => write!(f, "1h"),
+            KlineInterval::I2h => write!(f, "2h"),
+            KlineInterval::I4h => write!(f, "4h"),
+            KlineInterval::I6h => write!(f, "6h"),
+            KlineInterval::I8h => write!(f, "8h"),
+            KlineInterval::I12h => write!(f, "12h"),
+            KlineInterval::I1d => write!(f, "1d"),
+            KlineInterval::I3d => write!(f, "3d"),
+            KlineInterval::I1w => write!(f, "1w"),
+            KlineInterval::I1M => write!(f, "1M"),
+        }
+    }
+}
+
+/// Represents the contract type for continuous klines and statistics.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum ContractTypeFilter {
+    All,
+    Perpetual,
+    CurrentQuarter,
+    NextQuarter,
+}
+
+impl fmt::Display for ContractTypeFilter {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            ContractTypeFilter::All => write!(f, "ALL"),
+            ContractTypeFilter::Perpetual => write!(f, "PERPETUAL"),
+            ContractTypeFilter::CurrentQuarter => write!(f, "CURRENT_QUARTER"),
+            ContractTypeFilter::NextQuarter => write!(f, "NEXT_QUARTER"),
+        }
+    }
+}
+
+/// Represents the period for statistical endpoints.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum StatsPeriod {
+    #[serde(rename = "5m")]
+    I5m,
+    #[serde(rename = "15m")]
+    I15m,
+    #[serde(rename = "30m")]
+    I30m,
+    #[serde(rename = "1h")]
+    I1h,
+    #[serde(rename = "2h")]
+    I2h,
+    #[serde(rename = "4h")]
+    I4h,
+    #[serde(rename = "6h")]
+    I6h,
+    #[serde(rename = "12h")]
+    I12h,
+    #[serde(rename = "1d")]
+    I1d,
+}
+
+impl fmt::Display for StatsPeriod {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            StatsPeriod::I5m => write!(f, "5m"),
+            StatsPeriod::I15m => write!(f, "15m"),
+            StatsPeriod::I30m => write!(f, "30m"),
+            StatsPeriod::I1h => write!(f, "1h"),
+            StatsPeriod::I2h => write!(f, "2h"),
+            StatsPeriod::I4h => write!(f, "4h"),
+            StatsPeriod::I6h => write!(f, "6h"),
+            StatsPeriod::I12h => write!(f, "12h"),
+            StatsPeriod::I1d => write!(f, "1d"),
+        }
+    }
+}
+
+/// Represents the period for data endpoints.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum Period {
+    #[serde(rename = "5m")]
+    I5m,
+    #[serde(rename = "15m")]
+    I15m,
+    #[serde(rename = "30m")]
+    I30m,
+    #[serde(rename = "1h")]
+    I1h,
+    #[serde(rename = "2h")]
+    I2h,
+    #[serde(rename = "4h")]
+    I4h,
+    #[serde(rename = "6h")]
+    I6h,
+    #[serde(rename = "12h")]
+    I12h,
+    #[serde(rename = "1d")]
+    I1d,
+}
+
+impl Period {
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            Period::I5m => "5m",
+            Period::I15m => "15m",
+            Period::I30m => "30m",
+            Period::I1h => "1h",
+            Period::I2h => "2h",
+            Period::I4h => "4h",
+            Period::I6h => "6h",
+            Period::I12h => "12h",
+            Period::I1d => "1d",
+        }
+    }
+}
+
+impl fmt::Display for Period {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.as_str())
+    }
+}
+
+/// Represents the auto close type for force orders.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum AutoCloseType {
+    Liquidation,
+    Adl,
+}
+
+impl fmt::Display for AutoCloseType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            AutoCloseType::Liquidation => write!(f, "LIQUIDATION"),
+            AutoCloseType::Adl => write!(f, "ADL"),
+        }
+    }
+}
+
+/// Represents the transfer type for universal transfers.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum TransferType {
+    MainUmfuture,
+    MainCmfuture,
+    MainMargin,
+    UmfutureMain,
+    UmfutureMargin,
+    CmfutureMain,
+    CmfutureMargin,
+    MarginMain,
+    MarginUmfuture,
+    MarginCmfuture,
+    IsolatedmarginMargin,
+    MarginIsolatedmargin,
+    IsolatedmarginIsolatedmargin,
+    MainFunding,
+    FundingMain,
+    FundingUmfuture,
+    UmfutureFunding,
+    MarginFunding,
+    FundingMargin,
+    FundingCmfuture,
+    CmfutureFunding,
+    MainOption,
+    OptionMain,
+    UmfutureOption,
+    OptionUmfuture,
+    MarginOption,
+    OptionMargin,
+    FundingOption,
+    OptionFunding,
+    MainPortfolioMargin,
+    PortfolioMarginMain,
+}
+
+impl fmt::Display for TransferType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            TransferType::MainUmfuture => write!(f, "MAIN_UMFUTURE"),
+            TransferType::MainCmfuture => write!(f, "MAIN_CMFUTURE"),
+            TransferType::MainMargin => write!(f, "MAIN_MARGIN"),
+            TransferType::UmfutureMain => write!(f, "UMFUTURE_MAIN"),
+            TransferType::UmfutureMargin => write!(f, "UMFUTURE_MARGIN"),
+            TransferType::CmfutureMain => write!(f, "CMFUTURE_MAIN"),
+            TransferType::CmfutureMargin => write!(f, "CMFUTURE_MARGIN"),
+            TransferType::MarginMain => write!(f, "MARGIN_MAIN"),
+            TransferType::MarginUmfuture => write!(f, "MARGIN_UMFUTURE"),
+            TransferType::MarginCmfuture => write!(f, "MARGIN_CMFUTURE"),
+            TransferType::IsolatedmarginMargin => write!(f, "ISOLATEDMARGIN_MARGIN"),
+            TransferType::MarginIsolatedmargin => write!(f, "MARGIN_ISOLATEDMARGIN"),
+            TransferType::IsolatedmarginIsolatedmargin => write!(f, "ISOLATEDMARGIN_ISOLATEDMARGIN"),
+            TransferType::MainFunding => write!(f, "MAIN_FUNDING"),
+            TransferType::FundingMain => write!(f, "FUNDING_MAIN"),
+            TransferType::FundingUmfuture => write!(f, "FUNDING_UMFUTURE"),
+            TransferType::UmfutureFunding => write!(f, "UMFUTURE_FUNDING"),
+            TransferType::MarginFunding => write!(f, "MARGIN_FUNDING"),
+            TransferType::FundingMargin => write!(f, "FUNDING_MARGIN"),
+            TransferType::FundingCmfuture => write!(f, "FUNDING_CMFUTURE"),
+            TransferType::CmfutureFunding => write!(f, "CMFUTURE_FUNDING"),
+            TransferType::MainOption => write!(f, "MAIN_OPTION"),
+            TransferType::OptionMain => write!(f, "OPTION_MAIN"),
+            TransferType::UmfutureOption => write!(f, "UMFUTURE_OPTION"),
+            TransferType::OptionUmfuture => write!(f, "OPTION_UMFUTURE"),
+            TransferType::MarginOption => write!(f, "MARGIN_OPTION"),
+            TransferType::OptionMargin => write!(f, "OPTION_MARGIN"),
+            TransferType::FundingOption => write!(f, "FUNDING_OPTION"),
+            TransferType::OptionFunding => write!(f, "OPTION_FUNDING"),
+            TransferType::MainPortfolioMargin => write!(f, "MAIN_PORTFOLIO_MARGIN"),
+            TransferType::PortfolioMarginMain => write!(f, "PORTFOLIO_MARGIN_MAIN"),
+        }
+    }
+}
+
+/// Represents the download status for transaction history.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum DownloadStatus {
+    Completed,
+    Processing,
+}
+
+impl fmt::Display for DownloadStatus {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            DownloadStatus::Completed => write!(f, "completed"),
+            DownloadStatus::Processing => write!(f, "processing"),
+        }
+    }
+}
+
+/// Represents the margin modification type.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum MarginModificationType {
+    /// Add position margin
+    #[serde(rename = "1")]
+    Add = 1,
+    /// Reduce position margin
+    #[serde(rename = "2")]
+    Reduce = 2,
+}
+
+impl fmt::Display for MarginModificationType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            MarginModificationType::Add => write!(f, "1"),
+            MarginModificationType::Reduce => write!(f, "2"),
+        }
+    }
+}

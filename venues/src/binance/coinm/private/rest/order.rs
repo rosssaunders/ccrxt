@@ -5,7 +5,10 @@ use serde::{Deserialize, Serialize};
 
 use crate::binance::coinm::RestResult;
 use crate::binance::coinm::private::rest::client::RestClient;
-use crate::binance::coinm::{OrderResponseType, OrderSide, OrderType, PositionSide, PriceMatch, SelfTradePreventionMode, TimeInForce, WorkingType};
+use crate::binance::coinm::{
+    OrderResponseType, OrderSide, OrderType, PositionSide, PriceMatch, SelfTradePreventionMode,
+    TimeInForce, WorkingType,
+};
 use crate::binance::shared;
 
 /// Request parameters for placing a new order (POST /dapi/v1/order).
@@ -183,19 +186,14 @@ impl RestClient {
     /// A [`NewOrderResponse`] object with order details.
     pub async fn post_order(&self, params: NewOrderRequest) -> RestResult<NewOrderResponse> {
         let weight = 1;
-        let result = shared::send_signed_request(
+        shared::send_signed_request(
             self,
             "/dapi/v1/order",
             reqwest::Method::POST,
             params,
             weight,
             true,
-        ).await?;
-        
-        Ok(crate::binance::coinm::RestResponse {
-            data: result,
-            request_duration: std::time::Duration::ZERO,
-            headers: crate::binance::coinm::ResponseHeaders::default(),
-        })
+        )
+        .await
     }
 }

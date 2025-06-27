@@ -166,6 +166,10 @@ pub struct ExchangeInfoResponse {
     /// The timezone of the exchange (e.g., "UTC").
     pub timezone: String,
 
+    /// The server time in milliseconds.
+    #[serde(rename = "serverTime")]
+    pub server_time: u64,
+
     /// The list of rate limits applied to the account or exchange.
     #[serde(rename = "rateLimits")]
     pub rate_limits: Vec<RateLimit>,
@@ -203,13 +207,70 @@ impl RestClient {
     /// Corresponds to endpoint GET /dapi/v1/exchangeInfo.
     /// Weight: 1
     pub async fn get_exchange_info(&self) -> RestResult<ExchangeInfoResponse> {
-        self.send_request(
-            "/dapi/v1/exchangeInfo",
-            reqwest::Method::GET,
-            None,
-            None,
-            1, // weight
-        )
-        .await
+        self.send_request("/dapi/v1/exchangeInfo", reqwest::Method::GET, None::<()>, 1)
+            .await
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_exchange_info_response_deserialization() {
+        let json_data = r#"{"timezone":"UTC","serverTime":1750968011440,"rateLimits":[{"rateLimitType":"REQUEST_WEIGHT","interval":"MINUTE","intervalNum":1,"limit":2400},{"rateLimitType":"ORDERS","interval":"MINUTE","intervalNum":1,"limit":1200}],"exchangeFilters":[],"symbols":[{"symbol":"BTCUSD_PERP","pair":"BTCUSD","contractType":"PERPETUAL","deliveryDate":4133404800000,"onboardDate":1597042800000,"contractStatus":"TRADING","contractSize":100,"marginAsset":"BTC","maintMarginPercent":"2.5000","requiredMarginPercent":"5.0000","baseAsset":"BTC","quoteAsset":"USD","pricePrecision":1,"quantityPrecision":0,"baseAssetPrecision":8,"quotePrecision":8,"equalQtyPrecision":4,"maxMoveOrderLimit":10000,"triggerProtect":"0.0500","underlyingType":"COIN","underlyingSubType":["PoW"],"filters":[{"minPrice":"1000","maxPrice":"4520958","filterType":"PRICE_FILTER","tickSize":"0.1"},{"stepSize":"1","filterType":"LOT_SIZE","maxQty":"1000000","minQty":"1"},{"stepSize":"1","filterType":"MARKET_LOT_SIZE","maxQty":"60000","minQty":"1"},{"limit":200,"filterType":"MAX_NUM_ORDERS"},{"limit":20,"filterType":"MAX_NUM_ALGO_ORDERS"},{"multiplierDown":"0.9500","multiplierUp":"1.0500","multiplierDecimal":"4","filterType":"PERCENT_PRICE"}],"orderTypes":["LIMIT","MARKET","STOP","STOP_MARKET","TAKE_PROFIT","TAKE_PROFIT_MARKET","TRAILING_STOP_MARKET"],"timeInForce":["GTC","IOC","FOK","GTX"],"liquidationFee":"0.015000","marketTakeBound":"0.05"}]}"#;
+
+        let result: Result<ExchangeInfoResponse, _> = serde_json::from_str(json_data);
+
+        assert!(
+            result.is_ok(),
+            "Failed to deserialize ExchangeInfoResponse: {:?}",
+            result.err()
+        );
+
+        let response = result.unwrap();
+
+        // Validate basic fields
+        assert_eq!(response.timezone, "UTC");
+        assert_eq!(response.server_time, 1750968011440);
+        assert_eq!(response.rate_limits.len(), 2);
+        assert_eq!(response.symbols.len(), 1);
+        assert!(response.exchange_filters.is_empty());
+
+        // Validate rate limits
+        let request_weight_limit = &response.rate_limits[0];
+        assert_eq!(request_weight_limit.limit, 2400);
+        assert_eq!(request_weight_limit.interval_num, 1);
+
+        let orders_limit = &response.rate_limits[1];
+        assert_eq!(orders_limit.limit, 1200);
+        assert_eq!(orders_limit.interval_num, 1);
+
+        // Validate symbol
+        let symbol = &response.symbols[0];
+        assert_eq!(symbol.symbol, "BTCUSD_PERP");
+        assert_eq!(symbol.pair, "BTCUSD");
+        assert_eq!(symbol.contract_size, 100);
+        assert_eq!(symbol.margin_asset, "BTC");
+        assert_eq!(symbol.base_asset, "BTC");
+        assert_eq!(symbol.price_precision, 1);
+        assert_eq!(symbol.quantity_precision, 0);
+        assert_eq!(symbol.base_asset_precision, 8);
+        assert_eq!(symbol.quote_precision, 8);
+        assert_eq!(symbol.equal_qty_precision, 4);
+        assert_eq!(symbol.max_move_order_limit, 10000);
+        assert_eq!(symbol.trigger_protect, "0.0500");
+        assert_eq!(symbol.underlying_sub_type, vec!["PoW"]);
+        assert_eq!(symbol.liquidation_fee, "0.015000");
+        assert_eq!(symbol.market_take_bound, "0.05");
+
+        // Validate filters
+        assert_eq!(symbol.filters.len(), 6);
+
+        // Validate order types
+        assert_eq!(symbol.order_types.len(), 7);
+
+        // Validate time in force
+        assert_eq!(symbol.time_in_force.len(), 4);
     }
 }

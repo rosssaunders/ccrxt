@@ -1,16 +1,16 @@
 # rustfmt.toml
 
 # Maximum width of each line
-max_width = 160  # Maximum width of each line
+max_width = 100 # Maximum width of each line
 
 # Use spaces instead of tabs
-hard_tabs = false  # Use spaces instead of tabs
+hard_tabs = false # Use spaces instead of tabs
 
 # Indent with 4 spaces
-tab_spaces = 4  # Number of spaces per tab
+tab_spaces = 4 # Number of spaces per tab
 
 # Edition to use
-edition = "2024"  # Rust edition to use
+edition = "2024" # Rust edition to use
 
 # Max width of array literals before vertical formatting
 array_width = 60
@@ -22,7 +22,7 @@ attr_fn_like_width = 70
 chain_width = 60
 
 # Disable all formatting if true
-disable_all_formatting = false  
+disable_all_formatting = false
 
 # Max width of function call args before vertical formatting
 fn_call_width = 60

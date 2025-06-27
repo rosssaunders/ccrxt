@@ -24,40 +24,12 @@
 //!
 //! - **Request Signing**: For private endpoints, query parameters (including timestamp) must be
 //!   signed using HMAC-SHA256 with the API secret
-use std::borrow::Cow;
-
-use hex;
-use hmac::{Hmac, Mac};
 use reqwest::Client;
 use rest::secrets::ExposableSecret;
-use sha2::Sha256;
+use std::borrow::Cow;
 
 use crate::binance::coinm::{Errors, RateLimiter, RestResult};
 use crate::binance::shared::BinanceRestClient;
-
-/// Represents a successful or error response from the Binance API.
-/// This enum is used to handle both successful responses and error responses
-/// in a unified way, allowing for easier error handling and response parsing.
-// #[derive(Debug, Deserialize)]
-// #[serde(untagged)]
-// enum ApiResponse<T> {
-//     Ok(T),
-//     Err(ErrorResponse),
-// }
-/// Signs a request using the decrypted API secret
-/// Signs a query string using the decrypted API secret and returns the signature as a hex string.
-///
-/// # Arguments
-/// * `query_string` - The query string to sign
-///
-/// # Returns
-/// A result containing the signature as a hex string or a Hmac error if signing fails.
-fn sign_request(api_secret: &dyn ExposableSecret, query_string: &str) -> Result<String, Errors> {
-    let api_secret = api_secret.expose_secret();
-    let mut mac = Hmac::<Sha256>::new_from_slice(api_secret.as_bytes()).map_err(|_| Errors::InvalidApiKey())?;
-    mac.update(query_string.as_bytes());
-    Ok(hex::encode(mac.finalize().into_bytes()))
-}
 
 /// A client for interacting with the Binance Coin-M Futures private REST API
 ///
@@ -131,13 +103,16 @@ impl RestClient {
     where
         T: serde::de::DeserializeOwned,
     {
-        let url = crate::binance::coinm::rest::common::build_url(&self.base_url, endpoint, query_string)?;
+        let url =
+            crate::binance::coinm::rest::common::build_url(&self.base_url, endpoint, query_string)?;
         let mut headers = vec![];
         if !self.api_key.expose_secret().is_empty() {
             headers.push(("X-MBX-APIKEY", self.api_key.expose_secret()));
         }
         let body_data = match body {
-            Some(b) => Some(serde_urlencoded::to_string(b).map_err(|e| crate::binance::coinm::Errors::Error(format!("URL encoding error: {e}")))?),
+            Some(b) => Some(serde_urlencoded::to_string(b).map_err(|e| {
+                crate::binance::coinm::Errors::Error(format!("URL encoding error: {e}"))
+            })?),
             None => None,
         };
         if body_data.is_some() {
@@ -167,10 +142,13 @@ impl RestClient {
 
 impl BinanceRestClient for RestClient {
     type Error = Errors;
+    type RestResponse<T> = crate::binance::coinm::RestResponse<T>;
+
     fn api_secret(&self) -> &dyn ExposableSecret {
         self.api_secret.as_ref()
     }
-    fn send_request<T>(
+
+    async fn send_request<T>(
         &self,
         endpoint: &str,
         method: reqwest::Method,
@@ -178,29 +156,26 @@ impl BinanceRestClient for RestClient {
         body: Option<&str>,
         weight: u32,
         is_order: bool,
-    ) -> std::pin::Pin<Box<dyn std::future::Future<Output = Result<T, Self::Error>> + Send + '_>>
+    ) -> Result<Self::RestResponse<T>, Self::Error>
     where
         T: serde::de::DeserializeOwned + Send + 'static,
     {
-        let endpoint = endpoint.to_string();
-        let query_string = query_string.map(|s| s.to_string());
-        let body = body.map(|s| s.to_string());
-
-        Box::pin(async move {
-            let body_params: Option<Vec<(&str, &str)>> = body.as_ref().map(|b| vec![("body", b.as_str())]);
-            let result = self
-                .send_request(
-                    &endpoint,
-                    method,
-                    query_string.as_deref(),
-                    body_params.as_deref(),
-                    weight,
-                    is_order,
-                )
-                .await?;
-            Ok(result.data)
-        })
+        let body_params: Option<Vec<(&str, &str)>> = body.map(|b| vec![("body", b)]);
+        self.send_request(
+            endpoint,
+            method,
+            query_string,
+            body_params.as_deref(),
+            weight,
+            is_order,
+        )
+        .await
     }
+
+    fn extract_data<T>(response: Self::RestResponse<T>) -> T {
+        response.data
+    }
+
     fn from_serialize(e: serde_urlencoded::ser::Error) -> Self::Error {
         Errors::Error(format!("Failed to encode params: {}", e))
     }

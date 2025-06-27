@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use crate::binance::coinm::{OrderSide, PositionSide, RestResult};
 use crate::binance::coinm::private::rest::client::RestClient;
+use crate::binance::coinm::{OrderSide, PositionSide, RestResult};
 use crate::binance::shared;
 
 /// Request parameters for the Account Trade List endpoint (GET /dapi/v1/userTrades).
@@ -148,9 +148,12 @@ impl RestClient {
     ///
     /// # Returns
     /// A vector of [`AccountTrade`] objects.
-    pub async fn get_account_trades(&self, params: AccountTradeListRequest) -> RestResult<Vec<AccountTrade>> {
+    pub async fn get_account_trades(
+        &self,
+        params: AccountTradeListRequest,
+    ) -> RestResult<Vec<AccountTrade>> {
         let weight = if params.pair.is_some() { 40 } else { 20 };
-        let result = shared::send_signed_request(
+        shared::send_signed_request(
             self,
             "/dapi/v1/userTrades",
             reqwest::Method::GET,
@@ -158,12 +161,6 @@ impl RestClient {
             weight,
             false,
         )
-        .await?;
-        
-        Ok(crate::binance::coinm::RestResponse {
-            data: result,
-            request_duration: std::time::Duration::ZERO,
-            headers: crate::binance::coinm::ResponseHeaders::default(),
-        })
+        .await
     }
 }

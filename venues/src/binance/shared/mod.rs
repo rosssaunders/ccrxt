@@ -10,9 +10,13 @@ use sha2::Sha256;
 use rest::secrets::ExposableSecret;
 
 /// Signs a query string using the decrypted API secret and returns the signature as a hex string.
-pub fn sign_request(api_secret: &dyn ExposableSecret, query_string: &str) -> Result<String, String> {
+pub fn sign_request(
+    api_secret: &dyn ExposableSecret,
+    query_string: &str,
+) -> Result<String, String> {
     let api_secret = api_secret.expose_secret();
-    let mut mac = Hmac::<Sha256>::new_from_slice(api_secret.as_bytes()).map_err(|_| "Invalid API key/secret".to_string())?;
+    let mut mac = Hmac::<Sha256>::new_from_slice(api_secret.as_bytes())
+        .map_err(|_| "Invalid API key/secret".to_string())?;
     mac.update(query_string.as_bytes());
     Ok(hex::encode(mac.finalize().into_bytes()))
 }
@@ -32,16 +36,24 @@ pub fn sign_request(api_secret: &dyn ExposableSecret, query_string: &str) -> Res
 /// * `is_order` - Whether this is an order endpoint
 ///
 /// # Returns
-/// The parsed response or error.
-pub async fn send_signed_request<T, R, C>(client: &C, endpoint: &str, method: reqwest::Method, request: R, weight: u32, is_order: bool) -> Result<T, C::Error>
+/// The full RestResponse with data, headers, and metadata.
+pub async fn send_signed_request<T, R, C>(
+    client: &C,
+    endpoint: &str,
+    method: reqwest::Method,
+    request: R,
+    weight: u32,
+    is_order: bool,
+) -> Result<C::RestResponse<T>, C::Error>
 where
     T: serde::de::DeserializeOwned + Send + 'static,
     R: Serialize,
     C: BinanceRestClient,
 {
-    let serialized = serde_urlencoded::to_string(&request).map_err(|e| C::from_serialize(e))?;
-    let signature = sign_request(client.api_secret(), &serialized).map_err(|e| C::from_signature(e))?;
+    let serialized = serde_urlencoded::to_string(&request).map_err(C::from_serialize)?;
+    let signature = sign_request(client.api_secret(), &serialized).map_err(C::from_signature)?;
     let signed = format!("{serialized}&signature={signature}");
+
     if method == reqwest::Method::GET {
         client
             .send_request(endpoint, method, Some(&signed), None, weight, is_order)
@@ -53,13 +65,16 @@ where
     }
 }
 
-/// Trait to be implemented by all Binance RestClient types for shared logic.
+/// Simplified trait for Binance REST clients to share signing logic.
 pub trait BinanceRestClient {
     type Error;
-    
+    type RestResponse<T>;
+
+    /// Get the API secret for signing requests.
     fn api_secret(&self) -> &dyn ExposableSecret;
-    
-    fn send_request<T>(
+
+    /// Send an HTTP request with optional query string or body.
+    async fn send_request<T>(
         &self,
         endpoint: &str,
         method: reqwest::Method,
@@ -67,10 +82,16 @@ pub trait BinanceRestClient {
         body: Option<&str>,
         weight: u32,
         is_order: bool,
-    ) -> std::pin::Pin<Box<dyn std::future::Future<Output = Result<T, Self::Error>> + Send + '_>>
+    ) -> Result<Self::RestResponse<T>, Self::Error>
     where
         T: serde::de::DeserializeOwned + Send + 'static;
-        
+
+    /// Extract the data from the RestResponse.
+    fn extract_data<T>(response: Self::RestResponse<T>) -> T;
+
+    /// Convert serialization errors to the venue's error type.
     fn from_serialize(e: serde_urlencoded::ser::Error) -> Self::Error;
+
+    /// Convert signature errors to the venue's error type.
     fn from_signature(e: String) -> Self::Error;
 }
