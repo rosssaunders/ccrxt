@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use crate::binance::coinm::enums::KlineInterval;
 use crate::binance::coinm::RestResult;
+use crate::binance::coinm::enums::KlineInterval;
 use crate::binance::coinm::public::rest::RestClient;
 
 /// Request parameters for the premium index kline data endpoint.
@@ -29,23 +29,23 @@ pub struct PremiumIndexKlineRequest {
 }
 
 /// Represents a single premium index kline.
-/// 
+///
 /// Klines are arrays with the following structure:
 /// [Open time, Open, High, Low, Close, Ignore, Close time, Ignore, Ignore, Ignore, Ignore, Ignore]
 #[derive(Debug, Clone, Deserialize)]
 pub struct PremiumIndexKline(
-    pub u64,     // Open time
-    pub String,  // Open
-    pub String,  // High
-    pub String,  // Low
-    pub String,  // Close
-    pub String,  // Ignore
-    pub u64,     // Close time
-    pub String,  // Ignore
-    pub u64,     // Ignore
-    pub String,  // Ignore
-    pub String,  // Ignore
-    pub String,  // Ignore
+    pub u64,    // Open time
+    pub String, // Open
+    pub String, // High
+    pub String, // Low
+    pub String, // Close
+    pub String, // Ignore
+    pub u64,    // Close time
+    pub String, // Ignore
+    pub u64,    // Ignore
+    pub String, // Ignore
+    pub String, // Ignore
+    pub String, // Ignore
 );
 
 /// Response from the premium index kline data endpoint.
@@ -61,7 +61,10 @@ impl RestClient {
     /// - [100, 500): 2
     /// - [500, 1000]: 5
     /// - > 1000: 10
-    pub async fn get_premium_index_klines(&self, params: PremiumIndexKlineRequest) -> RestResult<PremiumIndexKlineResponse> {
+    pub async fn get_premium_index_klines(
+        &self,
+        params: PremiumIndexKlineRequest,
+    ) -> RestResult<PremiumIndexKlineResponse> {
         let weight = match params.limit.unwrap_or(500) {
             1..=99 => 1,
             100..=499 => 2,

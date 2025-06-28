@@ -48,7 +48,10 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the quick margin borrow repay response or an error
-    pub async fn quick_margin_borrow_repay(&self, request: &QuickMarginBorrowRepayRequest) -> RestResult<OkxApiResponse<QuickMarginBorrowRepayResponse>> {
+    pub async fn quick_margin_borrow_repay(
+        &self,
+        request: &QuickMarginBorrowRepayRequest,
+    ) -> RestResult<OkxApiResponse<QuickMarginBorrowRepayResponse>> {
         self.send_request(
             "api/v5/account/quick-margin-borrow-repay",
             reqwest::Method::POST,
@@ -96,7 +99,8 @@ mod tests {
             ]
         }"#;
 
-        let response: OkxApiResponse<QuickMarginBorrowRepayResponse> = serde_json::from_str(response_json).unwrap();
+        let response: OkxApiResponse<QuickMarginBorrowRepayResponse> =
+            serde_json::from_str(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 1);
 

@@ -66,7 +66,10 @@ impl RestClient {
     /// Retrieves historical funding rates for a given instrument.
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_funding_rate_history)
-    pub async fn get_funding_rate_history(&self, params: GetFundingRateHistoryRequest) -> RestResult<GetFundingRateHistoryResponse> {
+    pub async fn get_funding_rate_history(
+        &self,
+        params: GetFundingRateHistoryRequest,
+    ) -> RestResult<GetFundingRateHistoryResponse> {
         self.send_request(
             "get_funding_rate_history",
             Method::POST,
@@ -98,12 +101,12 @@ mod tests {
     #[test]
     fn test_deserialize_response() {
         let data = r#"{
-            \"id\": 8,
-            \"jsonrpc\": \"2.0\",
-            \"result\": {
-                \"data\": [
-                    { \"funding_rate\": 0.0001, \"timestamp\": 1680307200000 },
-                    { \"funding_rate\": 0.0002, \"timestamp\": 1680310800000 }
+            "id": 8,
+            "jsonrpc": "2.0",
+            "result": {
+                "data": [
+                    { "funding_rate": 0.0001, "timestamp": 1680307200000 },
+                    { "funding_rate": 0.0002, "timestamp": 1680310800000 }
                 ]
             }
         }"#;

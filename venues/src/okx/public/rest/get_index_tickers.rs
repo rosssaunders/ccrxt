@@ -69,7 +69,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing the list of index tickers
-    pub async fn get_index_tickers(&self, request: Option<GetIndexTickersRequest>) -> RestResult<GetIndexTickersResponse> {
+    pub async fn get_index_tickers(
+        &self,
+        request: Option<GetIndexTickersRequest>,
+    ) -> RestResult<GetIndexTickersResponse> {
         self.send_request(
             "api/v5/market/index-tickers",
             reqwest::Method::GET,

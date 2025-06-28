@@ -78,7 +78,10 @@ impl RestClient {
     ///
     /// # Returns
     /// List of withdrawal history entries matching the criteria
-    pub async fn get_withdrawal_history(&self, params: GetWithdrawalHistoryRequest) -> RestResult<GetWithdrawalHistoryResponse> {
+    pub async fn get_withdrawal_history(
+        &self,
+        params: GetWithdrawalHistoryRequest,
+    ) -> RestResult<GetWithdrawalHistoryResponse> {
         self.send_signed_request("private/get-withdrawal-history", params)
             .await
     }

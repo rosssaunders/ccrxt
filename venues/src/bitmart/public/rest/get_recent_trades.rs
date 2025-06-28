@@ -67,7 +67,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Latest trade records for the specified trading pair
-    pub async fn get_recent_trades(&self, request: GetRecentTradesRequest) -> RestResult<GetRecentTradesResponse> {
+    pub async fn get_recent_trades(
+        &self,
+        request: GetRecentTradesRequest,
+    ) -> RestResult<GetRecentTradesResponse> {
         self.send_request(
             "/spot/quotation/v3/trades",
             reqwest::Method::GET,

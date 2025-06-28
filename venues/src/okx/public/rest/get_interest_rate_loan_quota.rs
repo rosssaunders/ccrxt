@@ -84,7 +84,9 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing interest rate and loan quota information
-    pub async fn get_interest_rate_loan_quota(&self) -> RestResult<GetInterestRateLoanQuotaResponse> {
+    pub async fn get_interest_rate_loan_quota(
+        &self,
+    ) -> RestResult<GetInterestRateLoanQuotaResponse> {
         self.send_request(
             "api/v5/public/interest-rate-loan-quota",
             reqwest::Method::GET,
@@ -226,7 +228,8 @@ mod tests {
             ]
         });
 
-        let response: GetInterestRateLoanQuotaResponse = serde_json::from_value(response_json).unwrap();
+        let response: GetInterestRateLoanQuotaResponse =
+            serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.msg, "");
         assert_eq!(response.data.len(), 1);

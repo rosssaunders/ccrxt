@@ -67,7 +67,10 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the bills archive or an error
-    pub async fn get_bills_archive(&self, request: &GetBillsArchiveRequest) -> RestResult<OkxApiResponse<BillArchive>> {
+    pub async fn get_bills_archive(
+        &self,
+        request: &GetBillsArchiveRequest,
+    ) -> RestResult<OkxApiResponse<BillArchive>> {
         self.send_request(
             "api/v5/account/bills-archive",
             reqwest::Method::GET,

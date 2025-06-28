@@ -197,7 +197,10 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the positions or an error
-    pub async fn get_positions(&self, request: &GetPositionsRequest) -> RestResult<OkxApiResponse<Position>> {
+    pub async fn get_positions(
+        &self,
+        request: &GetPositionsRequest,
+    ) -> RestResult<OkxApiResponse<Position>> {
         self.send_request(
             "api/v5/account/positions",
             reqwest::Method::GET,

@@ -240,7 +240,8 @@ mod tests {
             ]
         });
 
-        let response: GetSubaccountBalancesResponse = serde_json::from_value(response_json).unwrap();
+        let response: GetSubaccountBalancesResponse =
+            serde_json::from_value(response_json).unwrap();
         assert_eq!(response.data.len(), 2);
         assert_eq!(response.data.first().unwrap().account, "account-1");
         assert_eq!(

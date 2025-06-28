@@ -81,7 +81,10 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the open orders or an error
-    pub async fn get_open_orders(&self, request: &GetOpenOrdersRequest) -> RestResult<GetOpenOrdersResponse> {
+    pub async fn get_open_orders(
+        &self,
+        request: &GetOpenOrdersRequest,
+    ) -> RestResult<GetOpenOrdersResponse> {
         self.send_request(
             "/openApi/spot/v1/trade/openOrders",
             reqwest::Method::GET,

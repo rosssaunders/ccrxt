@@ -71,7 +71,10 @@ impl RestClient {
     /// Retrieves historical APR data for specified currency. Only applicable to yield-generating tokens (`USDE`, `STETH`).
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_apr_history)
-    pub async fn get_apr_history(&self, params: GetAprHistoryRequest) -> RestResult<GetAprHistoryResponse> {
+    pub async fn get_apr_history(
+        &self,
+        params: GetAprHistoryRequest,
+    ) -> RestResult<GetAprHistoryResponse> {
         self.send_request(
             "get_apr_history",
             Method::POST,

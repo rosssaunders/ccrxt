@@ -130,7 +130,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing the position tiers information
-    pub async fn get_position_tiers(&self, request: GetPositionTiersRequest) -> RestResult<GetPositionTiersResponse> {
+    pub async fn get_position_tiers(
+        &self,
+        request: GetPositionTiersRequest,
+    ) -> RestResult<GetPositionTiersResponse> {
         self.send_request(
             "api/v5/public/position-tiers",
             reqwest::Method::GET,

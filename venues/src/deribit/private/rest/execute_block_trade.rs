@@ -197,7 +197,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Result with executed block trade details
-    pub async fn execute_block_trade(&self, request: ExecuteBlockTradeRequest) -> RestResult<ExecuteBlockTradeResponse> {
+    pub async fn execute_block_trade(
+        &self,
+        request: ExecuteBlockTradeRequest,
+    ) -> RestResult<ExecuteBlockTradeResponse> {
         self.send_signed_request(
             "private/execute_block_trade",
             &request,
@@ -411,8 +414,10 @@ mod tests {
     #[tokio::test]
     async fn test_execute_block_trade_method_exists() {
         // Test that the method exists and compiles without needing to call it
-        let api_key = Box::new(PlainTextSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret = Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let api_key =
+            Box::new(PlainTextSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
+        let api_secret =
+            Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
         let client = reqwest::Client::new();
         let rate_limiter = crate::deribit::RateLimiter::new(AccountTier::Tier4);
 

@@ -70,7 +70,10 @@ impl RestClient {
     /// Retrieves historical mark prices for a given instrument.
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_mark_price_history)
-    pub async fn get_mark_price_history(&self, params: GetMarkPriceHistoryRequest) -> RestResult<GetMarkPriceHistoryResponse> {
+    pub async fn get_mark_price_history(
+        &self,
+        params: GetMarkPriceHistoryRequest,
+    ) -> RestResult<GetMarkPriceHistoryResponse> {
         self.send_request(
             "get_mark_price_history",
             Method::POST,
@@ -104,13 +107,13 @@ mod tests {
     #[test]
     fn test_deserialize_response() {
         let data = r#"{
-            \"id\": 22,
-            \"jsonrpc\": \"2.0\",
-            \"result\": {
-                \"mark_prices\": [
+            "id": 22,
+            "jsonrpc": "2.0",
+            "result": {
+                "mark_prices": [
                     {
-                        \"mark_price\": 65000.0,
-                        \"timestamp\": 1680310800000
+                        "mark_price": 65000.0,
+                        "timestamp": 1680310800000
                     }
                 ]
             }

@@ -121,7 +121,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing insurance fund balance information
-    pub async fn get_insurance_fund(&self, request: GetInsuranceFundRequest) -> RestResult<GetInsuranceFundResponse> {
+    pub async fn get_insurance_fund(
+        &self,
+        request: GetInsuranceFundRequest,
+    ) -> RestResult<GetInsuranceFundResponse> {
         self.send_request(
             "api/v5/public/insurance-fund",
             reqwest::Method::GET,

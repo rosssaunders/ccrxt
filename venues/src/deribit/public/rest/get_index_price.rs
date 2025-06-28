@@ -50,7 +50,10 @@ impl RestClient {
     /// Retrieves the current index price for a given index name (alias for get_index).
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_index_price)
-    pub async fn get_index_price(&self, params: GetIndexPriceRequest) -> RestResult<GetIndexPriceResponse> {
+    pub async fn get_index_price(
+        &self,
+        params: GetIndexPriceRequest,
+    ) -> RestResult<GetIndexPriceResponse> {
         self.send_request(
             "get_index_price",
             Method::POST,
@@ -78,11 +81,11 @@ mod tests {
     #[test]
     fn test_deserialize_response() {
         let data = r#"{
-            \"id\": 12,
-            \"jsonrpc\": \"2.0\",
-            \"result\": {
-                \"index_price\": 65000.0,
-                \"timestamp\": 1680310800000
+            "id": 12,
+            "jsonrpc": "2.0",
+            "result": {
+                "index_price": 65000.0,
+                "timestamp": 1680310800000
             }
         }"#;
         let resp: GetIndexPriceResponse = serde_json::from_str(data).unwrap();

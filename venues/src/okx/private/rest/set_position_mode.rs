@@ -29,7 +29,10 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the position mode response or an error
-    pub async fn set_position_mode(&self, request: &SetPositionModeRequest) -> RestResult<OkxApiResponse<SetPositionModeResponse>> {
+    pub async fn set_position_mode(
+        &self,
+        request: &SetPositionModeRequest,
+    ) -> RestResult<OkxApiResponse<SetPositionModeResponse>> {
         self.send_request(
             "api/v5/account/set-position-mode",
             reqwest::Method::POST,
@@ -67,7 +70,8 @@ mod tests {
             ]
         }"#;
 
-        let response: OkxApiResponse<SetPositionModeResponse> = serde_json::from_str(response_json).unwrap();
+        let response: OkxApiResponse<SetPositionModeResponse> =
+            serde_json::from_str(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 1);
 

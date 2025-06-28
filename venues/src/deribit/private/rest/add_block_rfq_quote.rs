@@ -173,7 +173,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Result containing the Block RFQ quote details
-    pub async fn add_block_rfq_quote(&self, request: AddBlockRfqQuoteRequest) -> RestResult<AddBlockRfqQuoteResponse> {
+    pub async fn add_block_rfq_quote(
+        &self,
+        request: AddBlockRfqQuoteRequest,
+    ) -> RestResult<AddBlockRfqQuoteResponse> {
         self.send_signed_request(
             "private/add_block_rfq_quote",
             &request,
@@ -401,8 +404,10 @@ mod tests {
     #[tokio::test]
     async fn test_add_block_rfq_quote_method_exists() {
         // Test that the method exists and compiles without needing to call it
-        let api_key = Box::new(PlainTextSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret = Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let api_key =
+            Box::new(PlainTextSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
+        let api_secret =
+            Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
         let client = reqwest::Client::new();
         let rate_limiter = crate::deribit::RateLimiter::new(AccountTier::Tier4);
 

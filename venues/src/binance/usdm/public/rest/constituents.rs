@@ -38,7 +38,10 @@ impl RestClient {
     /// Query index price constituents (GET /fapi/v1/constituents)
     ///
     /// [API docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Index-Constituents)
-    pub async fn get_constituents(&self, params: ConstituentsRequest) -> RestResult<ConstituentsResponse> {
+    pub async fn get_constituents(
+        &self,
+        params: ConstituentsRequest,
+    ) -> RestResult<ConstituentsResponse> {
         let query = format!("symbol={}", params.symbol);
         self.send_request(
             "/fapi/v1/constituents",

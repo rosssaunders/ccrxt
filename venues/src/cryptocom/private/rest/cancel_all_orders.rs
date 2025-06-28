@@ -45,7 +45,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Success confirmation (code 0)
-    pub async fn cancel_all_orders(&self, request: CancelAllOrdersRequest) -> RestResult<CancelAllOrdersResponse> {
+    pub async fn cancel_all_orders(
+        &self,
+        request: CancelAllOrdersRequest,
+    ) -> RestResult<CancelAllOrdersResponse> {
         self.send_signed_request("private/cancel-all-orders", request)
             .await
     }

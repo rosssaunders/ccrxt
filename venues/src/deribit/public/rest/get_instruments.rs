@@ -110,7 +110,10 @@ impl RestClient {
     /// Retrieves a list of instruments for a given currency and kind.
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_instruments)
-    pub async fn get_instruments(&self, params: GetInstrumentsRequest) -> RestResult<GetInstrumentsResponse> {
+    pub async fn get_instruments(
+        &self,
+        params: GetInstrumentsRequest,
+    ) -> RestResult<GetInstrumentsResponse> {
         self.send_request(
             "get_instruments",
             Method::POST,
@@ -144,17 +147,17 @@ mod tests {
     #[test]
     fn test_deserialize_response() {
         let data = r#"{
-            \"id\": 15,
-            \"jsonrpc\": \"2.0\",
-            \"result\": {
-                \"instruments\": [
+            "id": 15,
+            "jsonrpc": "2.0",
+            "result": {
+                "instruments": [
                     {
-                        \"instrument_name\": \"BTC-PERPETUAL\",
-                        \"currency\": \"BTC\",
-                        \"kind\": \"future\",
-                        \"tick_size\": 0.5,
-                        \"contract_size\": 10.0,
-                        \"min_trade_amount\": 1.0
+                        "instrument_name": "BTC-PERPETUAL",
+                        "currency": "BTC",
+                        "kind": "future",
+                        "tick_size": 0.5,
+                        "contract_size": 10.0,
+                        "min_trade_amount": 1.0
                     }
                 ]
             }

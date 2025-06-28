@@ -63,7 +63,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Response for update in address book endpoint
-    pub async fn update_in_address_book(&self, params: UpdateInAddressBookRequest) -> RestResult<UpdateInAddressBookResponse> {
+    pub async fn update_in_address_book(
+        &self,
+        params: UpdateInAddressBookRequest,
+    ) -> RestResult<UpdateInAddressBookResponse> {
         self.send_signed_request(
             "private/update_in_address_book",
             &params,
@@ -246,8 +249,10 @@ mod tests {
     #[tokio::test]
     async fn test_update_in_address_book_method_exists() {
         // Test that the method exists and compiles without needing to call it
-        let api_key = Box::new(PlainTextSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret = Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let api_key =
+            Box::new(PlainTextSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
+        let api_secret =
+            Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
         let client = reqwest::Client::new();
         let rate_limiter = crate::deribit::RateLimiter::new(AccountTier::Tier4);
 

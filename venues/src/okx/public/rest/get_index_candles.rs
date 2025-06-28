@@ -72,7 +72,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing the candlestick data
-    pub async fn get_index_candles(&self, request: GetIndexCandlesRequest) -> RestResult<GetIndexCandlesResponse> {
+    pub async fn get_index_candles(
+        &self,
+        request: GetIndexCandlesRequest,
+    ) -> RestResult<GetIndexCandlesResponse> {
         self.send_request(
             "api/v5/market/index-candles",
             reqwest::Method::GET,

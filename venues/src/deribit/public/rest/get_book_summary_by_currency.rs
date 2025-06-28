@@ -140,7 +140,10 @@ impl RestClient {
     /// Retrieves the summary information such as open interest, 24h volume, etc. for all instruments for the currency (optionally filtered by kind).
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_book_summary_by_currency)
-    pub async fn get_book_summary_by_currency(&self, params: GetBookSummaryByCurrencyRequest) -> RestResult<GetBookSummaryByCurrencyResponse> {
+    pub async fn get_book_summary_by_currency(
+        &self,
+        params: GetBookSummaryByCurrencyRequest,
+    ) -> RestResult<GetBookSummaryByCurrencyResponse> {
         self.send_request(
             "get_book_summary_by_currency",
             Method::POST,
@@ -191,7 +194,7 @@ mod tests {
                     "mid_price": 99.5,
                     "open_interest": 10000.0,
                     "price_change": 0.01,
-                    "quote_currency": "USD",
+                    "quote_currency": "USDC",
                     "underlying_index": "BTC-USD",
                     "underlying_price": 100.0,
                     "volume": 500.0,

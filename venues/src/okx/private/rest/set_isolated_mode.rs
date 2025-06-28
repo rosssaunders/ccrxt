@@ -37,7 +37,10 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the set isolated mode response or an error
-    pub async fn set_isolated_mode(&self, request: &SetIsolatedModeRequest) -> RestResult<OkxApiResponse<SetIsolatedModeResponse>> {
+    pub async fn set_isolated_mode(
+        &self,
+        request: &SetIsolatedModeRequest,
+    ) -> RestResult<OkxApiResponse<SetIsolatedModeResponse>> {
         self.send_request(
             "api/v5/account/set-isolated-mode",
             reqwest::Method::POST,
@@ -80,7 +83,8 @@ mod tests {
             ]
         }"#;
 
-        let response: OkxApiResponse<SetIsolatedModeResponse> = serde_json::from_str(response_json).unwrap();
+        let response: OkxApiResponse<SetIsolatedModeResponse> =
+            serde_json::from_str(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 1);
 

@@ -36,7 +36,10 @@ impl RestClient {
     ///
     /// # Returns
     /// List of trade information for the specified order
-    pub async fn query_order_trades(&self, request: QueryOrderTradesRequest) -> RestResult<QueryOrderTradesResponse> {
+    pub async fn query_order_trades(
+        &self,
+        request: QueryOrderTradesRequest,
+    ) -> RestResult<QueryOrderTradesResponse> {
         self.send_request(
             "/spot/v4/query/order-trades",
             reqwest::Method::POST,

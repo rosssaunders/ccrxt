@@ -253,7 +253,9 @@ pub enum ApiError {
     /// - `used_weight_1m`: The value of the `x-mbx-used-weight-1m` header, if present.
     /// - `order_count_1m`: The value of the `x-mbx-order-count-1m` header, if present.
     /// - `retry_after`: The value of the `Retry-After` header, if present.
-    #[error("429 Too Many Requests: {msg} (used_weight_1m={used_weight_1m:?}, order_count_1m={order_count_1m:?}, retry_after={retry_after:?})")]
+    #[error(
+        "429 Too Many Requests: {msg} (used_weight_1m={used_weight_1m:?}, order_count_1m={order_count_1m:?}, retry_after={retry_after:?})"
+    )]
     RateLimitExceeded {
         msg: String,
         used_weight_1m: Option<u32>,

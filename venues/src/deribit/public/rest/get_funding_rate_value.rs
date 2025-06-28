@@ -50,7 +50,10 @@ impl RestClient {
     /// Retrieves the current funding rate value for a given instrument.
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_funding_rate_value)
-    pub async fn get_funding_rate_value(&self, params: GetFundingRateValueRequest) -> RestResult<GetFundingRateValueResponse> {
+    pub async fn get_funding_rate_value(
+        &self,
+        params: GetFundingRateValueRequest,
+    ) -> RestResult<GetFundingRateValueResponse> {
         self.send_request(
             "get_funding_rate_value",
             Method::POST,
@@ -78,11 +81,11 @@ mod tests {
     #[test]
     fn test_deserialize_response() {
         let data = r#"{
-            \"id\": 9,
-            \"jsonrpc\": \"2.0\",
-            \"result\": {
-                \"funding_rate\": 0.0001,
-                \"timestamp\": 1680310800000
+            "id": 9,
+            "jsonrpc": "2.0",
+            "result": {
+                "funding_rate": 0.0001,
+                "timestamp": 1680310800000
             }
         }"#;
         let resp: GetFundingRateValueResponse = serde_json::from_str(data).unwrap();

@@ -77,7 +77,8 @@ where
     let values = headers
         .iter()
         .filter_map(|(name, val)| {
-            crate::binance::usdm::RateLimitHeader::parse(name.as_str()).and_then(|hdr| val.to_str().ok()?.parse::<u32>().ok().map(|v| (hdr, v)))
+            crate::binance::usdm::RateLimitHeader::parse(name.as_str())
+                .and_then(|hdr| val.to_str().ok()?.parse::<u32>().ok().map(|v| (hdr, v)))
         })
         .collect();
     let response_headers = ResponseHeaders { values };
@@ -94,7 +95,8 @@ where
                 }
             }
             // Otherwise, parse as the expected type
-            let data: T = serde_json::from_str(&text).map_err(|e| Errors::Error(format!("JSON decode error: {e} | body: {text}")))?;
+            let data: T = serde_json::from_str(&text)
+                .map_err(|e| Errors::Error(format!("JSON decode error: {e} | body: {text}")))?;
             Ok(ParsedResponse {
                 data,
                 headers: response_headers,
@@ -150,7 +152,8 @@ where
         _ => {
             // HTTP 4XX return codes are used for for malformed requests; the issue is on the sender's side.
             println!("ERROR: {text:?}");
-            let err: ErrorResponse = serde_json::from_str(&text).map_err(|e| Errors::Error(format!("JSON decode error: {e} | body: {text}")))?;
+            let err: ErrorResponse = serde_json::from_str(&text)
+                .map_err(|e| Errors::Error(format!("JSON decode error: {e} | body: {text}")))?;
             Err(Errors::ApiError(ApiError::from(err)))
         }
     }

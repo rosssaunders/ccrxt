@@ -63,7 +63,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Historical convert requests with final status, rates, and timestamps
-    pub async fn get_convert_history(&self, request: GetConvertHistoryRequest) -> RestResult<GetConvertHistoryResponse> {
+    pub async fn get_convert_history(
+        &self,
+        request: GetConvertHistoryRequest,
+    ) -> RestResult<GetConvertHistoryResponse> {
         self.send_signed_request("private/staking/get-convert-history", request)
             .await
     }

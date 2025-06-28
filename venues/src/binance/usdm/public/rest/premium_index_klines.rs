@@ -49,7 +49,10 @@ impl RestClient {
     /// Get premium index kline bars (GET /fapi/v1/premiumIndexKlines)
     ///
     /// [API docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Premium-Index-Kline-Data)
-    pub async fn get_premium_index_klines(&self, params: PremiumIndexKlinesRequest) -> RestResult<Vec<PremiumIndexKline>> {
+    pub async fn get_premium_index_klines(
+        &self,
+        params: PremiumIndexKlinesRequest,
+    ) -> RestResult<Vec<PremiumIndexKline>> {
         let mut query = format!(
             "symbol={}&interval={}",
             params.symbol,

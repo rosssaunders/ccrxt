@@ -50,7 +50,10 @@ impl RestClient {
     /// Get long/short ratio
     ///
     /// Weight: 1
-    pub async fn get_global_long_short_account_ratio(&self, params: GlobalLongShortAccountRatioParams) -> RestResult<Vec<GlobalLongShortAccountRatio>> {
+    pub async fn get_global_long_short_account_ratio(
+        &self,
+        params: GlobalLongShortAccountRatioParams,
+    ) -> RestResult<Vec<GlobalLongShortAccountRatio>> {
         self.send_request(
             "/futures/data/globalLongShortAccountRatio",
             reqwest::Method::GET,

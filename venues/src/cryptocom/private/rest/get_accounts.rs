@@ -82,7 +82,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Master account and sub accounts information
-    pub async fn get_accounts(&self, request: GetAccountsRequest) -> RestResult<GetAccountsResponse> {
+    pub async fn get_accounts(
+        &self,
+        request: GetAccountsRequest,
+    ) -> RestResult<GetAccountsResponse> {
         self.send_signed_request("private/get-accounts", request)
             .await
     }

@@ -62,7 +62,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Margin asset transfer response with transfer ID
-    pub async fn margin_asset_transfer(&self, request: MarginAssetTransferRequest) -> RestResult<MarginAssetTransferResponse> {
+    pub async fn margin_asset_transfer(
+        &self,
+        request: MarginAssetTransferRequest,
+    ) -> RestResult<MarginAssetTransferResponse> {
         self.send_request(
             "/spot/v1/margin/isolated/transfer",
             reqwest::Method::POST,
@@ -79,7 +82,11 @@ mod tests {
 
     #[test]
     fn test_new_transfer_in_request() {
-        let request = MarginAssetTransferRequest::new_transfer_in("BTC_USDT".to_string(), "BTC".to_string(), "1".to_string());
+        let request = MarginAssetTransferRequest::new_transfer_in(
+            "BTC_USDT".to_string(),
+            "BTC".to_string(),
+            "1".to_string(),
+        );
 
         assert_eq!(request.symbol, "BTC_USDT");
         assert_eq!(request.currency, "BTC");
@@ -89,7 +96,11 @@ mod tests {
 
     #[test]
     fn test_new_transfer_out_request() {
-        let request = MarginAssetTransferRequest::new_transfer_out("ETH_USDT".to_string(), "ETH".to_string(), "0.5".to_string());
+        let request = MarginAssetTransferRequest::new_transfer_out(
+            "ETH_USDT".to_string(),
+            "ETH".to_string(),
+            "0.5".to_string(),
+        );
 
         assert_eq!(request.symbol, "ETH_USDT");
         assert_eq!(request.currency, "ETH");

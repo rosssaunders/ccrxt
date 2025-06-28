@@ -41,7 +41,10 @@ impl RestClient {
     /// Get taker buy/sell volume
     ///
     /// Weight: 1
-    pub async fn get_taker_buy_sell_vol(&self, params: TakerBuySellVolParams) -> RestResult<Vec<TakerBuySellVol>> {
+    pub async fn get_taker_buy_sell_vol(
+        &self,
+        params: TakerBuySellVolParams,
+    ) -> RestResult<Vec<TakerBuySellVol>> {
         self.send_request(
             "/futures/data/takerBuySellVol",
             reqwest::Method::GET,

@@ -6,7 +6,9 @@ pub mod private {
     mod rest;
 
     pub use self::rest::RestClient as PrivateRestClient;
-    pub use self::rest::{BalanceData, GetWalletBalanceRequest, GetWalletBalanceResponse, WalletBalance};
+    pub use self::rest::{
+        BalanceData, GetWalletBalanceRequest, GetWalletBalanceResponse, WalletBalance,
+    };
 }
 
 // Re-export public modules

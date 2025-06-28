@@ -99,7 +99,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Result with total number of successfully cancelled quotes
-    pub async fn cancel_quotes(&self, request: CancelQuotesRequest) -> RestResult<CancelQuotesResponse> {
+    pub async fn cancel_quotes(
+        &self,
+        request: CancelQuotesRequest,
+    ) -> RestResult<CancelQuotesResponse> {
         self.send_signed_request(
             "private/cancel_quotes",
             &request,
@@ -168,9 +171,11 @@ mod tests {
         let delta_from_json: CancelType = serde_json::from_str("\"delta\"").unwrap();
         let quote_set_id_from_json: CancelType = serde_json::from_str("\"quote_set_id\"").unwrap();
         let instrument_from_json: CancelType = serde_json::from_str("\"instrument\"").unwrap();
-        let instrument_kind_from_json: CancelType = serde_json::from_str("\"instrument_kind\"").unwrap();
+        let instrument_kind_from_json: CancelType =
+            serde_json::from_str("\"instrument_kind\"").unwrap();
         let currency_from_json: CancelType = serde_json::from_str("\"currency\"").unwrap();
-        let currency_pair_from_json: CancelType = serde_json::from_str("\"currency_pair\"").unwrap();
+        let currency_pair_from_json: CancelType =
+            serde_json::from_str("\"currency_pair\"").unwrap();
         let all_from_json: CancelType = serde_json::from_str("\"all\"").unwrap();
 
         assert_eq!(delta_from_json, CancelType::Delta);
@@ -385,8 +390,10 @@ mod tests {
     #[tokio::test]
     async fn test_cancel_quotes_method_exists() {
         // Test that the method exists and compiles without needing to call it
-        let api_key = Box::new(PlainTextSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret = Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let api_key =
+            Box::new(PlainTextSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
+        let api_secret =
+            Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
         let client = reqwest::Client::new();
         let rate_limiter = crate::deribit::RateLimiter::new(AccountTier::Tier4);
 

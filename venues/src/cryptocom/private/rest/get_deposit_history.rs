@@ -71,7 +71,10 @@ impl RestClient {
     ///
     /// # Returns
     /// List of deposit history entries matching the criteria
-    pub async fn get_deposit_history(&self, request: GetDepositHistoryRequest) -> RestResult<GetDepositHistoryResponse> {
+    pub async fn get_deposit_history(
+        &self,
+        request: GetDepositHistoryRequest,
+    ) -> RestResult<GetDepositHistoryResponse> {
         self.send_signed_request("private/get-deposit-history", request)
             .await
     }

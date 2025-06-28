@@ -144,7 +144,10 @@ impl RestClient {
     ///
     /// Fetches all announcements in Crypto.com Exchange.
     /// [Official API docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#public-get-announcements)
-    pub async fn get_announcements(&self, params: GetAnnouncementsRequest) -> RestResult<GetAnnouncementsResponse> {
+    pub async fn get_announcements(
+        &self,
+        params: GetAnnouncementsRequest,
+    ) -> RestResult<GetAnnouncementsResponse> {
         self.send_request(
             "public/get-announcements",
             reqwest::Method::GET,

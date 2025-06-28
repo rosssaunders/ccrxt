@@ -88,7 +88,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Clearance originator response
-    pub async fn set_clearance_originator(&self, params: SetClearanceOriginatorRequest) -> RestResult<SetClearanceOriginatorResponse> {
+    pub async fn set_clearance_originator(
+        &self,
+        params: SetClearanceOriginatorRequest,
+    ) -> RestResult<SetClearanceOriginatorResponse> {
         self.send_signed_request(
             "private/set_clearance_originator",
             &params,
@@ -177,7 +180,8 @@ mod tests {
             currency: "ETH".to_string(),
             user_id: 98765,
             address: "0x742d35Cc6634C0532925a3b8D2D1e6e4E7B5b7E4".to_string(),
-            tx_hash: "0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890".to_string(),
+            tx_hash: "0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890"
+                .to_string(),
         };
 
         let originator = Originator {
@@ -228,7 +232,8 @@ mod tests {
             }
         });
 
-        let response: SetClearanceOriginatorResponse = serde_json::from_value(response_json).unwrap();
+        let response: SetClearanceOriginatorResponse =
+            serde_json::from_value(response_json).unwrap();
 
         assert_eq!(response.id, 1);
         assert_eq!(response.jsonrpc, "2.0");
@@ -257,8 +262,10 @@ mod tests {
     #[tokio::test]
     async fn test_set_clearance_originator_method_exists() {
         // Test that the method exists and compiles without needing to call it
-        let api_key = Box::new(PlainTextSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret = Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let api_key =
+            Box::new(PlainTextSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
+        let api_secret =
+            Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
         let client = reqwest::Client::new();
         let rate_limiter = crate::deribit::RateLimiter::new(AccountTier::Tier4);
 

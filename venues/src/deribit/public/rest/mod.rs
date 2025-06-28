@@ -44,9 +44,7 @@ pub use get_combo_ids::{GetComboIdsRequest, GetComboIdsResponse};
 pub use get_combos::{ComboInfo, ComboLeg, GetCombosRequest, GetCombosResponse};
 pub use get_status::{GetStatusRequest, GetStatusResponse, GetStatusResult};
 pub use get_time::{GetTimeRequest, GetTimeResponse};
-pub use test::{TestRequest, TestResponse, TestResult};
 pub use get_tradingview_chart_data::{
-    GetTradingviewChartDataRequest,
-    GetTradingviewChartDataResponse,
-    GetTradingviewChartDataResult,
+    GetTradingviewChartDataRequest, GetTradingviewChartDataResponse, GetTradingviewChartDataResult,
 };
+pub use test::{TestRequest, TestResponse, TestResult};

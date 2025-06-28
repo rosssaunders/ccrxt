@@ -25,11 +25,21 @@ impl RestClient {
     /// Quarterly Contract Settlement Price (GET /futures/data/delivery-price)
     ///
     /// [API docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Delivery-Price)
-    pub async fn delivery_price<'a>(&self, params: DeliveryPriceRequest<'a>) -> RestResult<Vec<DeliveryPriceResponse>> {
+    pub async fn delivery_price<'a>(
+        &self,
+        params: DeliveryPriceRequest<'a>,
+    ) -> RestResult<Vec<DeliveryPriceResponse>> {
         let endpoint = "/futures/data/delivery-price";
-        let query = serde_urlencoded::to_string(&params).map_err(|e| Errors::Error(format!("Failed to serialize params: {e}")))?;
+        let query = serde_urlencoded::to_string(&params)
+            .map_err(|e| Errors::Error(format!("Failed to serialize params: {e}")))?;
         let resp = self
-            .send_request::<Vec<DeliveryPriceResponse>>(endpoint, reqwest::Method::GET, Some(&query), None, 0)
+            .send_request::<Vec<DeliveryPriceResponse>>(
+                endpoint,
+                reqwest::Method::GET,
+                Some(&query),
+                None,
+                0,
+            )
             .await?;
         Ok(resp)
     }

@@ -31,7 +31,10 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the interest rate or an error
-    pub async fn get_interest_rate(&self, request: &GetInterestRateRequest) -> RestResult<OkxApiResponse<InterestRate>> {
+    pub async fn get_interest_rate(
+        &self,
+        request: &GetInterestRateRequest,
+    ) -> RestResult<OkxApiResponse<InterestRate>> {
         self.send_request(
             "api/v5/account/interest-rate",
             reqwest::Method::GET,

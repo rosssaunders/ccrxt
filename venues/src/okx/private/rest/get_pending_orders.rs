@@ -52,7 +52,10 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the pending orders or an error
-    pub async fn get_pending_orders(&self, request: &GetPendingOrdersRequest) -> RestResult<OkxApiResponse<OrderDetails>> {
+    pub async fn get_pending_orders(
+        &self,
+        request: &GetPendingOrdersRequest,
+    ) -> RestResult<OkxApiResponse<OrderDetails>> {
         self.send_request(
             "api/v5/trade/orders-pending",
             reqwest::Method::GET,

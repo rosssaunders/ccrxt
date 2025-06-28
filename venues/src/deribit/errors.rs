@@ -136,12 +136,12 @@ impl From<ErrorResponse> for ApiError {
         match err.code {
             0 => ApiError::Success, // Assuming 0 is success, adjust if Deribit uses a different code
             // Specific business logic codes (examples, replace with actual Deribit codes)
-            1000 => ApiError::InsufficientFunds,     // Example code
-            1001 => ApiError::InvalidDestination,    // Example code
+            1000 => ApiError::InsufficientFunds,  // Example code
+            1001 => ApiError::InvalidDestination, // Example code
             1002 => ApiError::TransferLimitExceeded, // Example code
-            1003 => ApiError::InvalidCurrency,       // Example code
-            1004 => ApiError::InvalidAmount,         // Example code
-            1005 => ApiError::Unauthorized,          // Example code
+            1003 => ApiError::InvalidCurrency,    // Example code
+            1004 => ApiError::InvalidAmount,      // Example code
+            1005 => ApiError::Unauthorized,       // Example code
 
             // JSON-RPC Standard Error Codes
             -32700 => ApiError::ParseError,

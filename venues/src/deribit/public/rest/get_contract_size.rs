@@ -46,7 +46,10 @@ impl RestClient {
     /// Retrieves contract size of provided instrument.
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_contract_size)
-    pub async fn get_contract_size(&self, params: GetContractSizeRequest) -> RestResult<GetContractSizeResponse> {
+    pub async fn get_contract_size(
+        &self,
+        params: GetContractSizeRequest,
+    ) -> RestResult<GetContractSizeResponse> {
         self.send_request(
             "get_contract_size",
             Method::POST,

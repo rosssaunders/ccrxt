@@ -35,8 +35,12 @@ impl RestClient {
     ///
     /// # Returns
     /// Conversion rate information between staked and liquid staking tokens
-    pub async fn get_conversion_rate(&self, params: GetConversionRateRequest) -> RestResult<ConversionRateResponse> {
-        let params_value = serde_json::to_value(&params).map_err(|e| crate::cryptocom::Errors::Error(format!("Serialization error: {e}")))?;
+    pub async fn get_conversion_rate(
+        &self,
+        params: GetConversionRateRequest,
+    ) -> RestResult<ConversionRateResponse> {
+        let params_value = serde_json::to_value(&params)
+            .map_err(|e| crate::cryptocom::Errors::Error(format!("Serialization error: {e}")))?;
 
         self.send_request(
             "public/staking/get-conversion-rate",

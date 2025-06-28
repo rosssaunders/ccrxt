@@ -55,7 +55,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Account balance information
-    pub async fn get_account_balance(&self, request: GetAccountBalanceRequest) -> RestResult<GetAccountBalanceResponse> {
+    pub async fn get_account_balance(
+        &self,
+        request: GetAccountBalanceRequest,
+    ) -> RestResult<GetAccountBalanceResponse> {
         self.send_request(
             "/account/v1/wallet",
             reqwest::Method::GET,

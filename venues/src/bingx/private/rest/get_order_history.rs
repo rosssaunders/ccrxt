@@ -121,7 +121,10 @@ impl RestClient {
     /// - If orderId is set, orders >= orderId will be returned
     /// - If startTime and endTime are provided, orderId is not required
     /// - Max page size is 100, and pageIndex * pageSize <= 10,000
-    pub async fn get_order_history(&self, request: &GetOrderHistoryRequest) -> RestResult<GetOrderHistoryResponse> {
+    pub async fn get_order_history(
+        &self,
+        request: &GetOrderHistoryRequest,
+    ) -> RestResult<GetOrderHistoryResponse> {
         self.send_request(
             "/openApi/spot/v1/trade/historyOrders",
             reqwest::Method::GET,

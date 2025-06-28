@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use crate::binance::coinm::enums::KlineInterval;
 use crate::binance::coinm::RestResult;
+use crate::binance::coinm::enums::KlineInterval;
 use crate::binance::coinm::public::rest::RestClient;
 
 /// Request parameters for the index price kline/candlestick data endpoint.
@@ -29,23 +29,23 @@ pub struct IndexPriceKlineRequest {
 }
 
 /// Represents a single index price kline/candlestick.
-/// 
+///
 /// Klines are arrays with the following structure:
 /// [Open time, Open, High, Low, Close, Ignore, Close time, Ignore, Number of basic data, Ignore, Ignore, Ignore]
 #[derive(Debug, Clone, Deserialize)]
 pub struct IndexPriceKline(
-    pub u64,     // Open time
-    pub String,  // Open
-    pub String,  // High
-    pub String,  // Low
-    pub String,  // Close (or latest price)
-    pub String,  // Ignore
-    pub u64,     // Close time
-    pub String,  // Ignore
-    pub u64,     // Number of basic data
-    pub String,  // Ignore
-    pub String,  // Ignore
-    pub String,  // Ignore
+    pub u64,    // Open time
+    pub String, // Open
+    pub String, // High
+    pub String, // Low
+    pub String, // Close (or latest price)
+    pub String, // Ignore
+    pub u64,    // Close time
+    pub String, // Ignore
+    pub u64,    // Number of basic data
+    pub String, // Ignore
+    pub String, // Ignore
+    pub String, // Ignore
 );
 
 /// Response from the index price kline/candlestick data endpoint.
@@ -61,7 +61,10 @@ impl RestClient {
     /// - [100, 500): 2
     /// - [500, 1000]: 5
     /// - > 1000: 10
-    pub async fn get_index_price_klines(&self, params: IndexPriceKlineRequest) -> RestResult<IndexPriceKlineResponse> {
+    pub async fn get_index_price_klines(
+        &self,
+        params: IndexPriceKlineRequest,
+    ) -> RestResult<IndexPriceKlineResponse> {
         let weight = match params.limit.unwrap_or(500) {
             1..=99 => 1,
             100..=499 => 2,

@@ -109,7 +109,10 @@ impl RestClient {
     /// [Deribit API docs](https://docs.deribit.com/#private-get_pending_block_trades)
     ///
     /// This endpoint requires authentication and the `block_trade:read` scope.
-    pub async fn get_pending_block_trades(&self, request: GetPendingBlockTradesRequest) -> RestResult<GetPendingBlockTradesResponse> {
+    pub async fn get_pending_block_trades(
+        &self,
+        request: GetPendingBlockTradesRequest,
+    ) -> RestResult<GetPendingBlockTradesResponse> {
         self.send_signed_request(
             "private/get_pending_block_trades",
             &request,

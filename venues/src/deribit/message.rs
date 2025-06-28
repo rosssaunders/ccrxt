@@ -66,7 +66,11 @@ impl JsonRpcRequest {
     }
 
     /// Create a new private trading request (e.g., private/buy, private/sell, etc.)
-    pub fn private_trading<M: Into<String>, P: serde::Serialize>(id: u64, method: M, params: P) -> Self {
+    pub fn private_trading<M: Into<String>, P: serde::Serialize>(
+        id: u64,
+        method: M,
+        params: P,
+    ) -> Self {
         Self {
             jsonrpc: "2.0".to_string(),
             id,
@@ -120,7 +124,8 @@ mod tests {
 
     #[test]
     fn test_json_rpc_error_response() {
-        let json = r#"{"jsonrpc":"2.0","id":123,"error":{"code":-32601,"message":"Method not found"}}"#;
+        let json =
+            r#"{"jsonrpc":"2.0","id":123,"error":{"code":-32601,"message":"Method not found"}}"#;
         let response: JsonRpcResponse = serde_json::from_str(json).unwrap();
 
         assert_eq!(response.jsonrpc, "2.0");

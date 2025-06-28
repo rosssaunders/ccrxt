@@ -61,7 +61,10 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the response or an error
-    pub async fn post_bills_history_archive(&self, request: &PostBillsHistoryArchiveRequest) -> RestResult<OkxApiResponse<PostBillsHistoryArchiveResponse>> {
+    pub async fn post_bills_history_archive(
+        &self,
+        request: &PostBillsHistoryArchiveRequest,
+    ) -> RestResult<OkxApiResponse<PostBillsHistoryArchiveResponse>> {
         self.send_request(
             "api/v5/account/bills-history-archive",
             reqwest::Method::POST,
@@ -78,7 +81,10 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the response or an error
-    pub async fn get_bills_history_archive(&self, request: &GetBillsHistoryArchiveRequest) -> RestResult<OkxApiResponse<GetBillsHistoryArchiveResponse>> {
+    pub async fn get_bills_history_archive(
+        &self,
+        request: &GetBillsHistoryArchiveRequest,
+    ) -> RestResult<OkxApiResponse<GetBillsHistoryArchiveResponse>> {
         self.send_request(
             "api/v5/account/bills-history-archive",
             reqwest::Method::GET,
@@ -128,7 +134,8 @@ mod tests {
             ]
         }"#;
 
-        let response: OkxApiResponse<PostBillsHistoryArchiveResponse> = serde_json::from_str(response_json).unwrap();
+        let response: OkxApiResponse<PostBillsHistoryArchiveResponse> =
+            serde_json::from_str(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 1);
         assert_eq!(response.data[0].result, "true");
@@ -152,7 +159,8 @@ mod tests {
             ]
         }"#;
 
-        let response: OkxApiResponse<GetBillsHistoryArchiveResponse> = serde_json::from_str(response_json).unwrap();
+        let response: OkxApiResponse<GetBillsHistoryArchiveResponse> =
+            serde_json::from_str(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 1);
 

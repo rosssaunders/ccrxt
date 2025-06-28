@@ -49,7 +49,10 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the leverage response or an error
-    pub async fn set_leverage(&self, request: &SetLeverageRequest) -> RestResult<OkxApiResponse<SetLeverageResponse>> {
+    pub async fn set_leverage(
+        &self,
+        request: &SetLeverageRequest,
+    ) -> RestResult<OkxApiResponse<SetLeverageResponse>> {
         self.send_request(
             "api/v5/account/set-leverage",
             reqwest::Method::POST,
@@ -112,7 +115,8 @@ mod tests {
             ]
         }"#;
 
-        let response: OkxApiResponse<SetLeverageResponse> = serde_json::from_str(response_json).unwrap();
+        let response: OkxApiResponse<SetLeverageResponse> =
+            serde_json::from_str(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 1);
 

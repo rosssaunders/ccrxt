@@ -61,7 +61,10 @@ impl RestClient {
     /// - [100, 500): 2
     /// - [500, 1000]: 5
     /// - > 1000: 10
-    pub async fn get_mark_price_klines(&self, params: MarkPriceKlineRequest) -> RestResult<MarkPriceKlineResponse> {
+    pub async fn get_mark_price_klines(
+        &self,
+        params: MarkPriceKlineRequest,
+    ) -> RestResult<MarkPriceKlineResponse> {
         let weight = match params.limit.unwrap_or(500) {
             1..=99 => 1,
             100..=499 => 2,

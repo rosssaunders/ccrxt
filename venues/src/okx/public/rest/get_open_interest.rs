@@ -69,7 +69,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing the open interest data
-    pub async fn get_open_interest(&self, request: GetOpenInterestRequest) -> RestResult<GetOpenInterestResponse> {
+    pub async fn get_open_interest(
+        &self,
+        request: GetOpenInterestRequest,
+    ) -> RestResult<GetOpenInterestResponse> {
         self.send_request(
             "api/v5/public/open-interest",
             reqwest::Method::GET,

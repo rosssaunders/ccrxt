@@ -41,7 +41,10 @@ impl RestClient {
     /// Get recent market trades (GET /fapi/v1/trades)
     ///
     /// [API docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Recent-Trades-List)
-    pub async fn get_recent_trades(&self, params: RecentTradesRequest) -> RestResult<Vec<RecentTrade>> {
+    pub async fn get_recent_trades(
+        &self,
+        params: RecentTradesRequest,
+    ) -> RestResult<Vec<RecentTrade>> {
         let mut query = format!("symbol={}", params.symbol);
         if let Some(limit) = params.limit {
             query.push_str(&format!("&limit={}", limit));

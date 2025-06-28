@@ -106,7 +106,8 @@ mod tests {
             "reward_inst_name": "USD_Stable_Coin"
         });
 
-        let additional_reward: AdditionalReward = serde_json::from_value(additional_reward_json).unwrap();
+        let additional_reward: AdditionalReward =
+            serde_json::from_value(additional_reward_json).unwrap();
         assert_eq!(additional_reward.reward_inst_name, "USD_Stable_Coin");
     }
 
@@ -222,7 +223,8 @@ mod tests {
             ]
         });
 
-        let response: GetStakingInstrumentsResponse = serde_json::from_value(response_json).unwrap();
+        let response: GetStakingInstrumentsResponse =
+            serde_json::from_value(response_json).unwrap();
         assert_eq!(response.data.len(), 2);
         assert_eq!(response.data.first().unwrap().instrument_name, "SOL.staked");
         assert_eq!(response.data.get(1).unwrap().instrument_name, "DYDX.staked");

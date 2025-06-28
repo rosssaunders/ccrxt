@@ -37,7 +37,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Result with "ok" string in case of success
-    pub async fn invalidate_block_trade_signature(&self, request: InvalidateBlockTradeSignatureRequest) -> RestResult<InvalidateBlockTradeSignatureResponse> {
+    pub async fn invalidate_block_trade_signature(
+        &self,
+        request: InvalidateBlockTradeSignatureRequest,
+    ) -> RestResult<InvalidateBlockTradeSignatureResponse> {
         self.send_signed_request(
             "private/invalidate_block_trade_signature",
             &request,
@@ -88,7 +91,8 @@ mod tests {
     #[test]
     fn test_request_parameters_serialization_long_signature() {
         let request = InvalidateBlockTradeSignatureRequest {
-            signature: "very_long_signature_string_that_might_be_used_in_production_scenarios_456".to_string(),
+            signature: "very_long_signature_string_that_might_be_used_in_production_scenarios_456"
+                .to_string(),
         };
 
         let json_str = serde_json::to_string(&request).unwrap();
@@ -108,7 +112,8 @@ mod tests {
             "result": "ok"
         });
 
-        let response: InvalidateBlockTradeSignatureResponse = serde_json::from_value(response_json).unwrap();
+        let response: InvalidateBlockTradeSignatureResponse =
+            serde_json::from_value(response_json).unwrap();
 
         assert_eq!(response.id, 1);
         assert_eq!(response.jsonrpc, "2.0");
@@ -118,8 +123,10 @@ mod tests {
     #[tokio::test]
     async fn test_invalidate_block_trade_signature_method_exists() {
         // Test that the method exists and compiles without needing to call it
-        let api_key = Box::new(PlainTextSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret = Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let api_key =
+            Box::new(PlainTextSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
+        let api_secret =
+            Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
         let client = reqwest::Client::new();
         let rate_limiter = crate::deribit::RateLimiter::new(AccountTier::Tier4);
 

@@ -110,7 +110,10 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the positions history or an error
-    pub async fn get_positions_history(&self, request: &GetPositionsHistoryRequest) -> RestResult<OkxApiResponse<PositionHistory>> {
+    pub async fn get_positions_history(
+        &self,
+        request: &GetPositionsHistoryRequest,
+    ) -> RestResult<OkxApiResponse<PositionHistory>> {
         self.send_request(
             "api/v5/account/positions-history",
             reqwest::Method::GET,
@@ -192,7 +195,8 @@ mod tests {
             ]
         }"#;
 
-        let response: OkxApiResponse<PositionHistory> = serde_json::from_str(response_json).unwrap();
+        let response: OkxApiResponse<PositionHistory> =
+            serde_json::from_str(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 1);
 

@@ -78,11 +78,11 @@ mod tests {
     #[test]
     fn test_deserialize_response() {
         let data = r#"{
-            \"id\": 11,
-            \"jsonrpc\": \"2.0\",
-            \"result\": {
-                \"index_price\": 65000.0,
-                \"timestamp\": 1680310800000
+            "id": 11,
+            "jsonrpc": "2.0",
+            "result": {
+                "index_price": 65000.0,
+                "timestamp": 1680310800000
             }
         }"#;
         let resp: GetIndexResponse = serde_json::from_str(data).unwrap();

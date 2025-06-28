@@ -152,7 +152,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Result containing the created Block RFQ details
-    pub async fn create_block_rfq(&self, request: CreateBlockRfqRequest) -> RestResult<CreateBlockRfqResponse> {
+    pub async fn create_block_rfq(
+        &self,
+        request: CreateBlockRfqRequest,
+    ) -> RestResult<CreateBlockRfqResponse> {
         self.send_signed_request(
             "private/create_block_rfq",
             &request,
@@ -321,8 +324,10 @@ mod tests {
     #[tokio::test]
     async fn test_create_block_rfq_method_exists() {
         // Test that the method exists and compiles without needing to call it
-        let api_key = Box::new(PlainTextSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret = Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let api_key =
+            Box::new(PlainTextSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
+        let api_secret =
+            Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
         let client = reqwest::Client::new();
         let rate_limiter = crate::deribit::RateLimiter::new(AccountTier::Tier4);
 

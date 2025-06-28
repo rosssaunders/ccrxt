@@ -150,7 +150,10 @@ pub mod private {
     pub use self::rest::WithdrawRequest;
     pub use self::rest::WithdrawResponse;
     pub use self::rest::WithdrawalData;
-    pub use self::rest::{IndexName, MmpConfig, ResetMmpRequest, ResetMmpResponse, SetMmpConfigRequest, SetMmpConfigResponse};
+    pub use self::rest::{
+        IndexName, MmpConfig, ResetMmpRequest, ResetMmpResponse, SetMmpConfigRequest,
+        SetMmpConfigResponse,
+    };
 }
 
 pub mod message;

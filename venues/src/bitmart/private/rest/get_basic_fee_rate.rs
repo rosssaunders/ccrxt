@@ -50,7 +50,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Basic fee rate information
-    pub async fn get_basic_fee_rate(&self, request: GetBasicFeeRateRequest) -> RestResult<GetBasicFeeRateResponse> {
+    pub async fn get_basic_fee_rate(
+        &self,
+        request: GetBasicFeeRateRequest,
+    ) -> RestResult<GetBasicFeeRateResponse> {
         self.send_request(
             "/spot/v1/user_fee",
             reqwest::Method::GET,

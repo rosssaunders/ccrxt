@@ -218,7 +218,8 @@ mod tests {
             }
         });
 
-        let response: GetUserTradesByInstrumentAndTimeResponse = serde_json::from_value(response_json).unwrap();
+        let response: GetUserTradesByInstrumentAndTimeResponse =
+            serde_json::from_value(response_json).unwrap();
 
         assert_eq!(response.id, 1);
         assert_eq!(response.jsonrpc, "2.0");
@@ -246,7 +247,8 @@ mod tests {
             }
         });
 
-        let response: GetUserTradesByInstrumentAndTimeResponse = serde_json::from_value(response_json).unwrap();
+        let response: GetUserTradesByInstrumentAndTimeResponse =
+            serde_json::from_value(response_json).unwrap();
 
         assert_eq!(response.id, 2);
         assert_eq!(response.jsonrpc, "2.0");
@@ -257,8 +259,10 @@ mod tests {
     #[tokio::test]
     async fn test_get_user_trades_by_instrument_and_time_method_exists() {
         // Test that the method exists and compiles without needing to call it
-        let api_key = Box::new(PlainTextSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret = Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let api_key =
+            Box::new(PlainTextSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
+        let api_secret =
+            Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
         let client = reqwest::Client::new();
         let rate_limiter = crate::deribit::RateLimiter::new(AccountTier::Tier4);
 

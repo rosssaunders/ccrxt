@@ -49,7 +49,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Staking position information including quantities and underlying instrument details
-    pub async fn get_staking_position(&self, request: GetStakingPositionRequest) -> RestResult<GetStakingPositionResponse> {
+    pub async fn get_staking_position(
+        &self,
+        request: GetStakingPositionRequest,
+    ) -> RestResult<GetStakingPositionResponse> {
         self.send_signed_request("private/staking/get-staking-position", request)
             .await
     }

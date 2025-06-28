@@ -49,7 +49,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Order ID and client order ID
-    pub async fn close_position(&self, request: ClosePositionRequest) -> RestResult<ClosePositionResponse> {
+    pub async fn close_position(
+        &self,
+        request: ClosePositionRequest,
+    ) -> RestResult<ClosePositionResponse> {
         self.send_signed_request("private/close-position", request)
             .await
     }

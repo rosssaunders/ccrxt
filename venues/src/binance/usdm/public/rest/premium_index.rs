@@ -39,11 +39,21 @@ impl RestClient {
     /// Mark Price and Funding Rate (GET /fapi/v1/premiumIndex)
     ///
     /// [API docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Mark-Price)
-    pub async fn premium_index<'a>(&self, params: PremiumIndexRequest<'a>) -> RestResult<PremiumIndexResult<'a>> {
+    pub async fn premium_index<'a>(
+        &self,
+        params: PremiumIndexRequest<'a>,
+    ) -> RestResult<PremiumIndexResult<'a>> {
         let endpoint = "/fapi/v1/premiumIndex";
-        let query = serde_urlencoded::to_string(&params).map_err(|e| Errors::Error(format!("Failed to serialize params: {e}")))?;
+        let query = serde_urlencoded::to_string(&params)
+            .map_err(|e| Errors::Error(format!("Failed to serialize params: {e}")))?;
         let resp = self
-            .send_request::<PremiumIndexResult>(endpoint, reqwest::Method::GET, Some(&query), None, 1)
+            .send_request::<PremiumIndexResult>(
+                endpoint,
+                reqwest::Method::GET,
+                Some(&query),
+                None,
+                1,
+            )
             .await?;
         Ok(resp)
     }

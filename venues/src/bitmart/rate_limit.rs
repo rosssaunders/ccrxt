@@ -81,9 +81,9 @@ impl RateLimiter {
             EndpointType::System => RateLimit::new(10, Duration::from_secs(1)),
             EndpointType::FundingAccount => RateLimit::new(12, Duration::from_secs(2)), // Most common limit
             EndpointType::SpotPublicMarket => RateLimit::new(10, Duration::from_secs(2)), // Conservative
-            EndpointType::SpotTrading => RateLimit::new(12, Duration::from_secs(2)),    // Conservative for query endpoints
-            EndpointType::SubAccount => RateLimit::new(8, Duration::from_secs(2)),      // Conservative
-            EndpointType::MarginLoan => RateLimit::new(2, Duration::from_secs(2)),      // Most restrictive
+            EndpointType::SpotTrading => RateLimit::new(12, Duration::from_secs(2)), // Conservative for query endpoints
+            EndpointType::SubAccount => RateLimit::new(8, Duration::from_secs(2)),   // Conservative
+            EndpointType::MarginLoan => RateLimit::new(2, Duration::from_secs(2)), // Most restrictive
         }
     }
 

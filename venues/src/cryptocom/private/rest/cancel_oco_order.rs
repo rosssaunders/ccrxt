@@ -35,7 +35,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Response confirming the cancellation request
-    pub async fn cancel_oco_order(&self, request: CancelOcoOrderRequest) -> RestResult<CancelOcoOrderResponse> {
+    pub async fn cancel_oco_order(
+        &self,
+        request: CancelOcoOrderRequest,
+    ) -> RestResult<CancelOcoOrderResponse> {
         self.send_signed_request("private/cancel-order-list", request)
             .await
     }

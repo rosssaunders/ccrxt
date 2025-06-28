@@ -30,7 +30,10 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the account switch precheck or an error
-    pub async fn get_account_switch_precheck(&self, request: &GetAccountSwitchPrecheckRequest) -> RestResult<OkxApiResponse<AccountSwitchPrecheck>> {
+    pub async fn get_account_switch_precheck(
+        &self,
+        request: &GetAccountSwitchPrecheckRequest,
+    ) -> RestResult<OkxApiResponse<AccountSwitchPrecheck>> {
         self.send_request(
             "api/v5/account/set-account-switch-precheck",
             reqwest::Method::GET,
@@ -69,7 +72,8 @@ mod tests {
             ]
         }"#;
 
-        let response: OkxApiResponse<AccountSwitchPrecheck> = serde_json::from_str(response_json).unwrap();
+        let response: OkxApiResponse<AccountSwitchPrecheck> =
+            serde_json::from_str(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 1);
 

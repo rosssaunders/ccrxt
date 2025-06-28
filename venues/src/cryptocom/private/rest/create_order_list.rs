@@ -102,7 +102,10 @@ impl RestClient {
     /// The response depends on contingency type:
     /// - LIST: CreateOrderListResponse with individual order results
     /// - OCO: CreateOcoOrderResponse with list_id  
-    pub async fn create_order_list(&self, request: CreateOrderListRequest) -> RestResult<CreateOrderListResponse> {
+    pub async fn create_order_list(
+        &self,
+        request: CreateOrderListRequest,
+    ) -> RestResult<CreateOrderListResponse> {
         self.send_signed_request("private/create-order-list", request)
             .await
     }

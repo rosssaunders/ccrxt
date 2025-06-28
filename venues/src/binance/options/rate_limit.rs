@@ -141,7 +141,10 @@ impl ResponseHeaders {
     pub fn from_reqwest_headers(headers: &reqwest::header::HeaderMap) -> Self {
         let values: HashMap<RateLimitHeader, u32> = headers
             .iter()
-            .filter_map(|(name, val)| RateLimitHeader::parse(name.as_str()).and_then(|hdr| val.to_str().ok()?.parse::<u32>().ok().map(|v| (hdr, v))))
+            .filter_map(|(name, val)| {
+                RateLimitHeader::parse(name.as_str())
+                    .and_then(|hdr| val.to_str().ok()?.parse::<u32>().ok().map(|v| (hdr, v)))
+            })
             .collect();
         ResponseHeaders { values }
     }

@@ -41,11 +41,22 @@ impl RestClient {
     /// Open Interest Statistics (GET /futures/data/openInterestHist)
     ///
     /// [API docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Open-Interest-Statistics)
-    pub async fn open_interest_hist<'a>(&self, params: OpenInterestHistRequest<'a>) -> crate::binance::usdm::RestResult<Vec<OpenInterestHistResponse<'a>>> {
+    pub async fn open_interest_hist<'a>(
+        &self,
+        params: OpenInterestHistRequest<'a>,
+    ) -> crate::binance::usdm::RestResult<Vec<OpenInterestHistResponse<'a>>> {
         let endpoint = "/futures/data/openInterestHist";
-        let query = serde_urlencoded::to_string(&params).map_err(|e| crate::binance::usdm::Errors::Error(format!("Failed to serialize params: {e}")))?;
+        let query = serde_urlencoded::to_string(&params).map_err(|e| {
+            crate::binance::usdm::Errors::Error(format!("Failed to serialize params: {e}"))
+        })?;
         let resp = self
-            .send_request::<Vec<OpenInterestHistResponse>>(endpoint, reqwest::Method::GET, Some(&query), None, 0)
+            .send_request::<Vec<OpenInterestHistResponse>>(
+                endpoint,
+                reqwest::Method::GET,
+                Some(&query),
+                None,
+                0,
+            )
             .await?;
         Ok(resp)
     }

@@ -42,7 +42,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Result containing array of address book entries
-    pub async fn get_address_book(&self, request: GetAddressBookRequest) -> RestResult<GetAddressBookResponse> {
+    pub async fn get_address_book(
+        &self,
+        request: GetAddressBookRequest,
+    ) -> RestResult<GetAddressBookResponse> {
         self.send_signed_request(
             "private/get_address_book",
             &request,
@@ -226,8 +229,10 @@ mod tests {
     #[tokio::test]
     async fn test_get_address_book_method_exists() {
         // Test that the method exists and compiles without needing to call it
-        let api_key = Box::new(PlainTextSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret = Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let api_key =
+            Box::new(PlainTextSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
+        let api_secret =
+            Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
         let client = reqwest::Client::new();
         let rate_limiter = crate::deribit::RateLimiter::new(AccountTier::Tier4);
 
@@ -277,9 +282,15 @@ mod tests {
 
                 // Verify type serialization
                 match address_type {
-                    AddressBookType::Transfer => assert_eq!(json_value.get("type").unwrap(), "transfer"),
-                    AddressBookType::Withdrawal => assert_eq!(json_value.get("type").unwrap(), "withdrawal"),
-                    AddressBookType::DepositSource => assert_eq!(json_value.get("type").unwrap(), "deposit_source"),
+                    AddressBookType::Transfer => {
+                        assert_eq!(json_value.get("type").unwrap(), "transfer")
+                    }
+                    AddressBookType::Withdrawal => {
+                        assert_eq!(json_value.get("type").unwrap(), "withdrawal")
+                    }
+                    AddressBookType::DepositSource => {
+                        assert_eq!(json_value.get("type").unwrap(), "deposit_source")
+                    }
                 }
             }
         }

@@ -64,7 +64,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Open stake/unstake requests with status, timestamps, and other details
-    pub async fn get_open_stake(&self, request: GetOpenStakeRequest) -> RestResult<GetOpenStakeResponse> {
+    pub async fn get_open_stake(
+        &self,
+        request: GetOpenStakeRequest,
+    ) -> RestResult<GetOpenStakeResponse> {
         self.send_signed_request("private/staking/get-open-stake", request)
             .await
     }

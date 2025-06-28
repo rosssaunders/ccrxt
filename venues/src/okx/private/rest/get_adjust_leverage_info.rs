@@ -56,7 +56,10 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the adjust leverage info or an error
-    pub async fn get_adjust_leverage_info(&self, request: &GetAdjustLeverageInfoRequest) -> RestResult<OkxApiResponse<AdjustLeverageInfo>> {
+    pub async fn get_adjust_leverage_info(
+        &self,
+        request: &GetAdjustLeverageInfoRequest,
+    ) -> RestResult<OkxApiResponse<AdjustLeverageInfo>> {
         self.send_request(
             "api/v5/account/adjust-leverage-info",
             reqwest::Method::GET,
@@ -106,7 +109,8 @@ mod tests {
             ]
         }"#;
 
-        let response: OkxApiResponse<AdjustLeverageInfo> = serde_json::from_str(response_json).unwrap();
+        let response: OkxApiResponse<AdjustLeverageInfo> =
+            serde_json::from_str(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 1);
 

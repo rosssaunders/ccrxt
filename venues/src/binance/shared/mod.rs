@@ -1,6 +1,7 @@
 //! Shared Binance REST client logic for all Binance venues.
 //!
-//! This module provides the canonical implementation of send_signed_request for all Binance venues.
+//! This module provides a unified API client that works across all Binance venues
+//! (Spot, USDM, COINM, Options, Portfolio) with venue-specific configuration.
 
 use hex;
 use hmac::{Hmac, Mac};
@@ -8,6 +9,18 @@ use serde::Serialize;
 use sha2::Sha256;
 
 use rest::secrets::ExposableSecret;
+
+pub mod client;
+pub mod errors;
+pub mod rate_limiter;
+pub mod request;
+pub mod venue_trait;
+
+// Re-export commonly used items
+pub use client::{BinanceClient, RateLimitInfo, ResponseHeaders, RestResponse};
+pub use errors::{ApiError, ErrorResponse, Errors};
+pub use rate_limiter::{RateLimiter, UsageStats};
+pub use venue_trait::{RateLimits, VenueConfig};
 
 /// Signs a query string using the decrypted API secret and returns the signature as a hex string.
 pub fn sign_request(
@@ -66,6 +79,9 @@ where
 }
 
 /// Simplified trait for Binance REST clients to share signing logic.
+///
+/// This trait is for backward compatibility with existing implementations.
+/// New code should use the `BinanceClient<V>` directly.
 pub trait BinanceRestClient {
     type Error;
     type RestResponse<T>;

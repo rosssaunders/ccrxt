@@ -1,7 +1,9 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::deribit::{Currency, EndpointType, OrderDirection, RestResult, TradeOrderType, TriggerType};
+use crate::deribit::{
+    Currency, EndpointType, OrderDirection, RestResult, TradeOrderType, TriggerType,
+};
 
 /// Request parameters for getting trigger order history
 #[derive(Debug, Clone, Serialize)]
@@ -115,7 +117,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Trigger order history information for the specified currency
-    pub async fn get_trigger_order_history(&self, request: GetTriggerOrderHistoryRequest) -> RestResult<GetTriggerOrderHistoryResponse> {
+    pub async fn get_trigger_order_history(
+        &self,
+        request: GetTriggerOrderHistoryRequest,
+    ) -> RestResult<GetTriggerOrderHistoryResponse> {
         self.send_signed_request(
             "private/get_trigger_order_history",
             &request,
@@ -231,7 +236,8 @@ mod tests {
             }
         });
 
-        let response: GetTriggerOrderHistoryResponse = serde_json::from_value(response_json).unwrap();
+        let response: GetTriggerOrderHistoryResponse =
+            serde_json::from_value(response_json).unwrap();
 
         assert_eq!(response.id, 1);
         assert_eq!(response.jsonrpc, "2.0");
@@ -313,7 +319,8 @@ mod tests {
             }
         });
 
-        let response: GetTriggerOrderHistoryResponse = serde_json::from_value(response_json).unwrap();
+        let response: GetTriggerOrderHistoryResponse =
+            serde_json::from_value(response_json).unwrap();
 
         assert_eq!(response.id, 2);
         assert_eq!(response.jsonrpc, "2.0");
@@ -346,8 +353,10 @@ mod tests {
     #[tokio::test]
     async fn test_get_trigger_order_history_method_exists() {
         // Test that the method exists and compiles without needing to call it
-        let api_key = Box::new(PlainTextSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret = Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let api_key =
+            Box::new(PlainTextSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
+        let api_secret =
+            Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
         let client = reqwest::Client::new();
         let rate_limiter = crate::deribit::RateLimiter::new(AccountTier::Tier4);
 

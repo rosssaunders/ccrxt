@@ -62,7 +62,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Result containing array of MMP status objects
-    pub async fn get_mmp_status(&self, request: GetMmpStatusRequest) -> RestResult<GetMmpStatusResponse> {
+    pub async fn get_mmp_status(
+        &self,
+        request: GetMmpStatusRequest,
+    ) -> RestResult<GetMmpStatusResponse> {
         self.send_signed_request(
             "private/get_mmp_status",
             &request,
@@ -253,8 +256,10 @@ mod tests {
     #[tokio::test]
     async fn test_get_mmp_status_method_exists() {
         // Test that the method exists and compiles without needing to call it
-        let api_key = Box::new(PlainTextSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret = Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let api_key =
+            Box::new(PlainTextSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
+        let api_secret =
+            Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
         let client = reqwest::Client::new();
         let rate_limiter = crate::deribit::RateLimiter::new(AccountTier::Tier4);
 
@@ -280,8 +285,10 @@ mod tests {
         // This test demonstrates that the endpoint is properly integrated
         // and all types are accessible from the top-level module
 
-        let api_key = Box::new(PlainTextSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret = Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let api_key =
+            Box::new(PlainTextSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
+        let api_secret =
+            Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
         let client = reqwest::Client::new();
         let rate_limiter = crate::deribit::RateLimiter::new(AccountTier::Tier4);
 
@@ -316,7 +323,10 @@ mod tests {
         let _ = &rest_client;
 
         // Test that we can verify types are properly exported through module system
-        use crate::deribit::private::rest::{GetMmpStatusRequest as ExportedRequest, GetMmpStatusResponse as ExportedResponse, MmpStatus as ExportedStatus};
+        use crate::deribit::private::rest::{
+            GetMmpStatusRequest as ExportedRequest, GetMmpStatusResponse as ExportedResponse,
+            MmpStatus as ExportedStatus,
+        };
         let _exported_request = ExportedRequest {
             index_name: Some(IndexName::EthUsd),
             mmp_group: None,

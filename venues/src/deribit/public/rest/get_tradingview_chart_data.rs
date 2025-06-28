@@ -83,7 +83,10 @@ impl RestClient {
     /// Retrieves TradingView-compatible OHLCV chart data for a given instrument and time range.
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_tradingview_chart_data)
-    pub async fn get_tradingview_chart_data(&self, params: &GetTradingviewChartDataRequest) -> Result<GetTradingviewChartDataResponse, DeribitError> {
+    pub async fn get_tradingview_chart_data(
+        &self,
+        params: &GetTradingviewChartDataRequest,
+    ) -> Result<GetTradingviewChartDataResponse, DeribitError> {
         self.send_request(
             "public/get_tradingview_chart_data",
             Method::GET,
@@ -115,7 +118,18 @@ mod tests {
 
     #[test]
     fn test_deserialize_response() {
-        let data = r#"{\n    \"id\": 42,\n    \"jsonrpc\": \"2.0\",\n    \"result\": {\n        \"o\": [65000.0, 65100.0],\n        \"h\": [65200.0, 65250.0],\n        \"l\": [64900.0, 65050.0],\n        \"c\": [65100.0, 65200.0],\n        \"v\": [10.5, 12.3],\n        \"t\": [1680310800000, 1680310860000]\n    }\n}"#;
+        let data = r#"{
+    "id": 42,
+    "jsonrpc": "2.0",
+    "result": {
+        "o": [65000.0, 65100.0],
+        "h": [65200.0, 65250.0],
+        "l": [64900.0, 65050.0],
+        "c": [65100.0, 65200.0],
+        "v": [10.5, 12.3],
+        "t": [1680310800000, 1680310860000]
+    }
+}"#;
         let resp: GetTradingviewChartDataResponse = serde_json::from_str(data).unwrap();
         assert_eq!(resp.id, 42);
         assert_eq!(resp.jsonrpc, "2.0");

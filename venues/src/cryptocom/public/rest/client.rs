@@ -39,7 +39,11 @@ impl RestClient {
     /// * `base_url` - The base URL for the Crypto.com public REST API (e.g., "<https://api.crypto.com>")
     /// * `client` - The HTTP client to use for requests
     /// * `rate_limiter` - The rate limiter for managing API limits
-    pub fn new(base_url: impl Into<Cow<'static, str>>, client: Client, rate_limiter: RateLimiter) -> Self {
+    pub fn new(
+        base_url: impl Into<Cow<'static, str>>,
+        client: Client,
+        rate_limiter: RateLimiter,
+    ) -> Self {
         Self {
             base_url: base_url.into(),
             client,
@@ -57,7 +61,13 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the response data or an error
-    pub async fn send_request<T, P>(&self, endpoint: &str, method: reqwest::Method, params: Option<&P>, endpoint_type: EndpointType) -> RestResult<T>
+    pub async fn send_request<T, P>(
+        &self,
+        endpoint: &str,
+        method: reqwest::Method,
+        params: Option<&P>,
+        endpoint_type: EndpointType,
+    ) -> RestResult<T>
     where
         T: DeserializeOwned,
         P: serde::Serialize + ?Sized,
@@ -80,7 +90,8 @@ impl RestClient {
 
         // Add parameters based on method
         if let Some(params) = params {
-            let params_value = serde_json::to_value(params).map_err(|e| Errors::Error(format!("Failed to serialize params: {e}")))?;
+            let params_value = serde_json::to_value(params)
+                .map_err(|e| Errors::Error(format!("Failed to serialize params: {e}")))?;
             if method == reqwest::Method::GET {
                 // For GET requests, add parameters as query string
                 if let Some(params_obj) = params_value.as_object() {
@@ -119,7 +130,8 @@ impl RestClient {
         // Parse the response
         let response_text = response.text().await.map_err(Errors::HttpError)?;
 
-        let parsed_response: T = serde_json::from_str(&response_text).map_err(|e| Errors::Error(format!("Failed to parse response: {e}")))?;
+        let parsed_response: T = serde_json::from_str(&response_text)
+            .map_err(|e| Errors::Error(format!("Failed to parse response: {e}")))?;
 
         Ok(parsed_response)
     }

@@ -50,7 +50,10 @@ impl RestClient {
     /// `block_rfq:read`
     ///
     /// [Official API docs](https://docs.deribit.com/#private-get_block_rfq_quotes)
-    pub async fn get_block_rfq_quotes(&self, request: GetBlockRfqQuotesRequest) -> RestResult<GetBlockRfqQuotesResponse> {
+    pub async fn get_block_rfq_quotes(
+        &self,
+        request: GetBlockRfqQuotesRequest,
+    ) -> RestResult<GetBlockRfqQuotesResponse> {
         self.send_signed_request(
             "private/get_block_rfq_quotes",
             &request,

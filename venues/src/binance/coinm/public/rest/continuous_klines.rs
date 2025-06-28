@@ -65,7 +65,10 @@ impl RestClient {
     /// - [100, 500): 2
     /// - [500, 1000]: 5
     /// - > 1000: 10
-    pub async fn get_continuous_klines(&self, params: ContinuousKlineRequest) -> RestResult<ContinuousKlineResponse> {
+    pub async fn get_continuous_klines(
+        &self,
+        params: ContinuousKlineRequest,
+    ) -> RestResult<ContinuousKlineResponse> {
         let weight = match params.limit.unwrap_or(500) {
             1..=99 => 1,
             100..=499 => 2,

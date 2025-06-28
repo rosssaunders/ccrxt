@@ -149,12 +149,12 @@ impl RateLimiter {
 
     /// Check if a request can be made for the given endpoint type
     pub async fn check_limit(&self, endpoint_type: EndpointType) -> Result<(), RateLimitError> {
-        let rate_limit = self
-            .rate_limits
-            .get(&endpoint_type)
-            .ok_or_else(|| RateLimitError::Exceeded {
-                endpoint_type: endpoint_type.clone(),
-            })?;
+        let rate_limit =
+            self.rate_limits
+                .get(&endpoint_type)
+                .ok_or_else(|| RateLimitError::Exceeded {
+                    endpoint_type: endpoint_type.clone(),
+                })?;
 
         let mut trackers = self.trackers.write().await;
         let tracker = trackers

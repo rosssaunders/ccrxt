@@ -47,7 +47,10 @@ impl RestClient {
     ///
     /// # Returns
     /// List of deposit addresses for the specified currency
-    pub async fn get_deposit_address(&self, params: GetDepositAddressRequest) -> RestResult<GetDepositAddressResponse> {
+    pub async fn get_deposit_address(
+        &self,
+        params: GetDepositAddressRequest,
+    ) -> RestResult<GetDepositAddressResponse> {
         self.send_signed_request("private/get-deposit-address", params)
             .await
     }

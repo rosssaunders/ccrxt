@@ -53,7 +53,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Response with cancellation results for each order
-    pub async fn cancel_order_list(&self, request: CancelOrderListRequest) -> crate::cryptocom::RestResult<CancelOrderListResponse> {
+    pub async fn cancel_order_list(
+        &self,
+        request: CancelOrderListRequest,
+    ) -> crate::cryptocom::RestResult<CancelOrderListResponse> {
         self.send_signed_request("private/cancel-order-list", request)
             .await
     }

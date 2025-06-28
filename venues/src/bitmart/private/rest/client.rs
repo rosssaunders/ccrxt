@@ -94,13 +94,20 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the signature as a base64 string or an error
-    pub fn sign_request(&self, timestamp: &str, method: &str, request_path: &str, body: &str) -> Result<String, Errors> {
+    pub fn sign_request(
+        &self,
+        timestamp: &str,
+        method: &str,
+        request_path: &str,
+        body: &str,
+    ) -> Result<String, Errors> {
         // Create the message string: timestamp + method + requestPath + body
         let message = format!("{timestamp}{method}{request_path}{body}");
 
         // Sign with HMAC SHA256
         let api_secret = self.api_secret.expose_secret();
-        let mut mac = Hmac::<Sha256>::new_from_slice(api_secret.as_bytes()).map_err(|_| Errors::InvalidApiKey())?;
+        let mut mac = Hmac::<Sha256>::new_from_slice(api_secret.as_bytes())
+            .map_err(|_| Errors::InvalidApiKey())?;
         mac.update(message.as_bytes());
 
         // Encode as Base64
@@ -117,7 +124,13 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the parsed response data or an error
-    pub async fn send_request<R, T>(&self, endpoint: &str, method: Method, request: Option<&R>, endpoint_type: EndpointType) -> RestResult<T>
+    pub async fn send_request<R, T>(
+        &self,
+        endpoint: &str,
+        method: Method,
+        request: Option<&R>,
+        endpoint_type: EndpointType,
+    ) -> RestResult<T>
     where
         R: serde::Serialize + ?Sized,
         T: DeserializeOwned,
@@ -187,11 +200,12 @@ impl RestClient {
 
         // Parse response
         let response_text = response.text().await?;
-        let bitmart_response: BitMartResponse<T> = serde_json::from_str(&response_text).map_err(|e| {
-            Errors::Error(format!(
-                "Failed to parse response: {e} - Response: {response_text}"
-            ))
-        })?;
+        let bitmart_response: BitMartResponse<T> =
+            serde_json::from_str(&response_text).map_err(|e| {
+                Errors::Error(format!(
+                    "Failed to parse response: {e} - Response: {response_text}"
+                ))
+            })?;
 
         // Check for API errors
         if bitmart_response.code != 1000 {
@@ -237,7 +251,8 @@ mod tests {
     #[test]
     fn test_private_client_creation() {
         let api_key = Box::new(TestSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret = Box::new(TestSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let api_secret =
+            Box::new(TestSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
         let client = Client::new();
         let rate_limiter = RateLimiter::new();
 
@@ -255,7 +270,8 @@ mod tests {
     #[test]
     fn test_signature_generation() {
         let api_key = Box::new(TestSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret = Box::new(TestSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let api_secret =
+            Box::new(TestSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
         let client = Client::new();
         let rate_limiter = RateLimiter::new();
 

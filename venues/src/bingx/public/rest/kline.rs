@@ -160,7 +160,8 @@ mod tests {
         let timestamp = 1640995200000;
         let limit = 100;
 
-        let request = GetKlineRequest::new(symbol.clone(), interval.clone(), timestamp).with_limit(limit);
+        let request =
+            GetKlineRequest::new(symbol.clone(), interval.clone(), timestamp).with_limit(limit);
 
         assert_eq!(request.symbol, symbol);
         assert_eq!(request.interval, interval);

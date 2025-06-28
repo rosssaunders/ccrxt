@@ -50,7 +50,12 @@ where
     E: VenueErrorResponse,
 {
     /// Make a REST request and return a RestResponse
-    async fn request(&self, endpoint: &str, method: reqwest::Method, query: Option<&str>) -> Result<RestResponse<T, H, E>, RestError>;
+    async fn request(
+        &self,
+        endpoint: &str,
+        method: reqwest::Method,
+        query: Option<&str>,
+    ) -> Result<RestResponse<T, H, E>, RestError>;
 
     /// Get the base URL for the REST API
     fn base_url(&self) -> &str;

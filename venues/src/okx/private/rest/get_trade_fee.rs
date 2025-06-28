@@ -72,7 +72,10 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the trade fee or an error
-    pub async fn get_trade_fee(&self, request: &GetTradeFeeRequest) -> RestResult<OkxApiResponse<TradeFee>> {
+    pub async fn get_trade_fee(
+        &self,
+        request: &GetTradeFeeRequest,
+    ) -> RestResult<OkxApiResponse<TradeFee>> {
         self.send_request(
             "api/v5/account/trade-fee",
             reqwest::Method::GET,

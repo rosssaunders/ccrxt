@@ -61,7 +61,10 @@ impl RestClient {
     /// Fetches balance of Insurance Fund for a particular currency.
     ///
     /// [Official API docs](https://exchange-docs.crypto.com/spot/index.html)
-    pub async fn get_insurance(&self, params: GetInsuranceRequest) -> RestResult<GetInsuranceResponse> {
+    pub async fn get_insurance(
+        &self,
+        params: GetInsuranceRequest,
+    ) -> RestResult<GetInsuranceResponse> {
         self.send_request(
             "public/get-insurance",
             reqwest::Method::GET,

@@ -87,7 +87,10 @@ impl RestClient {
     /// Provides information on all supported instruments.
     ///
     /// [Official API docs](https://exchange-docs.crypto.com/spot/index.html)
-    pub async fn get_instruments(&self, params: GetInstrumentsRequest) -> RestResult<GetInstrumentsResponse> {
+    pub async fn get_instruments(
+        &self,
+        params: GetInstrumentsRequest,
+    ) -> RestResult<GetInstrumentsResponse> {
         self.send_request(
             "public/get-instruments",
             reqwest::Method::GET,

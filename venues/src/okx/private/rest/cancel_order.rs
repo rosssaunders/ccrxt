@@ -45,7 +45,10 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the order cancellation response or an error
-    pub async fn cancel_order(&self, request: &CancelOrderRequest) -> RestResult<OkxApiResponse<CancelOrderResponse>> {
+    pub async fn cancel_order(
+        &self,
+        request: &CancelOrderRequest,
+    ) -> RestResult<OkxApiResponse<CancelOrderResponse>> {
         self.send_request(
             "api/v5/trade/cancel-order",
             reqwest::Method::POST,
@@ -104,7 +107,8 @@ mod tests {
             ]
         }"#;
 
-        let response: OkxApiResponse<CancelOrderResponse> = serde_json::from_str(response_json).unwrap();
+        let response: OkxApiResponse<CancelOrderResponse> =
+            serde_json::from_str(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 1);
         assert_eq!(response.data[0].cl_ord_id, Some("my_order_123".to_string()));

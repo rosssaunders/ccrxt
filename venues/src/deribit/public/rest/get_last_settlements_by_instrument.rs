@@ -99,14 +99,14 @@ mod tests {
     #[test]
     fn test_deserialize_response() {
         let data = r#"{
-            \"id\": 17,
-            \"jsonrpc\": \"2.0\",
-            \"result\": {
-                \"settlements\": [
+            "id": 17,
+            "jsonrpc": "2.0",
+            "result": {
+                "settlements": [
                     {
-                        \"instrument_name\": \"BTC-PERPETUAL\",
-                        \"settlement_price\": 65000.0,
-                        \"timestamp\": 1680310800000
+                        "instrument_name": "BTC-PERPETUAL",
+                        "settlement_price": 65000.0,
+                        "timestamp": 1680310800000
                     }
                 ]
             }

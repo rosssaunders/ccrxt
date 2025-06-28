@@ -10,7 +10,9 @@ use tokio::sync::RwLock;
 /// Rate limit error
 #[derive(Error, Debug)]
 pub enum RateLimitError {
-    #[error("Rate limit exceeded for endpoint {endpoint:?}: {current}/{max} requests in {window:?}")]
+    #[error(
+        "Rate limit exceeded for endpoint {endpoint:?}: {current}/{max} requests in {window:?}"
+    )]
     RateLimitExceeded {
         endpoint: EndpointType,
         current: u32,
@@ -73,10 +75,16 @@ impl EndpointType {
             path if path.contains("/v1/candles") => EndpointType::PublicCandles,
 
             // Private endpoints
-            path if path.contains("/v1/users/login") || path.contains("/v1/users/hmac/login") => EndpointType::PrivateLogin,
-            path if path.contains("/v1/accounts/trading-accounts") => EndpointType::PrivateTradingAccounts,
+            path if path.contains("/v1/users/login") || path.contains("/v1/users/hmac/login") => {
+                EndpointType::PrivateLogin
+            }
+            path if path.contains("/v1/accounts/trading-accounts") => {
+                EndpointType::PrivateTradingAccounts
+            }
             path if path.contains("/v2/orders") => EndpointType::PrivateOrders,
-            path if path.contains("/v1/trades") && path.contains("trading") => EndpointType::PrivateTrades,
+            path if path.contains("/v1/trades") && path.contains("trading") => {
+                EndpointType::PrivateTrades
+            }
             path if path.contains("/v1/positions") => EndpointType::PrivatePositions,
 
             // Default to other for unrecognized private endpoints

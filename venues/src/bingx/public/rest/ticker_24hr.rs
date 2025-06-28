@@ -99,7 +99,10 @@ impl RestClient {
     /// # API Documentation
     /// - Endpoint: GET /openApi/spot/v1/ticker/24hr
     /// - Content-Type: request body(application/json)
-    pub async fn get_24hr_ticker(&self, request: &Get24hrTickerRequest) -> RestResult<Get24hrTickerResponse> {
+    pub async fn get_24hr_ticker(
+        &self,
+        request: &Get24hrTickerRequest,
+    ) -> RestResult<Get24hrTickerResponse> {
         self.send_request(
             "/openApi/spot/v1/ticker/24hr",
             Some(request),

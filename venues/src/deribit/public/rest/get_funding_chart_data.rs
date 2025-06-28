@@ -58,7 +58,10 @@ impl RestClient {
     /// Retrieves funding chart data for a given instrument name.
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_funding_chart_data)
-    pub async fn get_funding_chart_data(&self, params: GetFundingChartDataRequest) -> RestResult<GetFundingChartDataResponse> {
+    pub async fn get_funding_chart_data(
+        &self,
+        params: GetFundingChartDataRequest,
+    ) -> RestResult<GetFundingChartDataResponse> {
         self.send_request(
             "get_funding_chart_data",
             Method::POST,
@@ -86,12 +89,12 @@ mod tests {
     #[test]
     fn test_deserialize_response() {
         let data = r#"{
-            \"id\": 7,
-            \"jsonrpc\": \"2.0\",
-            \"result\": {
-                \"data\": [
-                    { \"timestamp\": 1680307200000, \"funding_rate\": 0.0001 },
-                    { \"timestamp\": 1680310800000, \"funding_rate\": 0.0002 }
+            "id": 7,
+            "jsonrpc": "2.0",
+            "result": {
+                "data": [
+                    { "timestamp": 1680307200000, "funding_rate": 0.0001 },
+                    { "timestamp": 1680310800000, "funding_rate": 0.0002 }
                 ]
             }
         }"#;

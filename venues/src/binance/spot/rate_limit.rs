@@ -200,7 +200,9 @@ impl RateLimiter {
     pub async fn update_from_headers(&self, headers: &ResponseHeaders) {
         let mut usage = self.usage.write().await;
         // Use a strongly-typed RateLimitHeader as the key
-        use crate::binance::spot::rate_limit::{IntervalUnit, RateLimitHeader, RateLimitHeaderKind};
+        use crate::binance::spot::rate_limit::{
+            IntervalUnit, RateLimitHeader, RateLimitHeaderKind,
+        };
         let key = RateLimitHeader {
             kind: RateLimitHeaderKind::UsedWeight,
             interval_value: 1,

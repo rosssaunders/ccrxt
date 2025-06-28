@@ -45,7 +45,10 @@ impl RestClient {
     /// # API Documentation
     /// - Endpoint: GET /openApi/spot/v1/ticker/price
     /// - Content-Type: request body(application/json)
-    pub async fn get_symbol_price_ticker(&self, request: &GetSymbolPriceTickerRequest) -> RestResult<GetSymbolPriceTickerResponse> {
+    pub async fn get_symbol_price_ticker(
+        &self,
+        request: &GetSymbolPriceTickerRequest,
+    ) -> RestResult<GetSymbolPriceTickerResponse> {
         self.send_request(
             "/openApi/spot/v1/ticker/price",
             Some(request),

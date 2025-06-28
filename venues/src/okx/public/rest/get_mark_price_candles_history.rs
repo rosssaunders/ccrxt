@@ -51,7 +51,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing historical mark price candlestick data
-    pub async fn get_mark_price_candles_history(&self, request: GetMarkPriceCandlesHistoryRequest) -> RestResult<GetMarkPriceCandlesHistoryResponse> {
+    pub async fn get_mark_price_candles_history(
+        &self,
+        request: GetMarkPriceCandlesHistoryRequest,
+    ) -> RestResult<GetMarkPriceCandlesHistoryResponse> {
         self.send_request(
             "api/v5/market/history-mark-price-candles",
             reqwest::Method::GET,
@@ -101,7 +104,8 @@ mod tests {
             ]
         });
 
-        let response: GetMarkPriceCandlesHistoryResponse = serde_json::from_value(response_json).unwrap();
+        let response: GetMarkPriceCandlesHistoryResponse =
+            serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.msg, "");
         assert_eq!(response.data.len(), 2);
@@ -124,7 +128,8 @@ mod tests {
         };
 
         let serialized = serde_json::to_value(&original).unwrap();
-        let deserialized: GetMarkPriceCandlesHistoryRequest = serde_json::from_value(serialized).unwrap();
+        let deserialized: GetMarkPriceCandlesHistoryRequest =
+            serde_json::from_value(serialized).unwrap();
 
         assert_eq!(original.inst_id, deserialized.inst_id);
         assert_eq!(original.after, deserialized.after);

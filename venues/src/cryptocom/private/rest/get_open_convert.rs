@@ -63,7 +63,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Open convert requests with status, rates, and timestamps
-    pub async fn get_open_convert(&self, params: GetOpenConvertRequest) -> RestResult<GetOpenConvertResponse> {
+    pub async fn get_open_convert(
+        &self,
+        params: GetOpenConvertRequest,
+    ) -> RestResult<GetOpenConvertResponse> {
         self.send_signed_request("private/get-open-convert", params)
             .await
     }

@@ -37,7 +37,10 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the commission rates or an error
-    pub async fn get_commission_rate(&self, request: &GetCommissionRateRequest) -> RestResult<GetCommissionRateResponse> {
+    pub async fn get_commission_rate(
+        &self,
+        request: &GetCommissionRateRequest,
+    ) -> RestResult<GetCommissionRateResponse> {
         self.send_request(
             "/openApi/spot/v1/user/commissionRate",
             reqwest::Method::GET,

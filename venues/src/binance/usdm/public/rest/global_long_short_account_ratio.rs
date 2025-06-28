@@ -49,9 +49,17 @@ impl RestClient {
         params: GlobalLongShortAccountRatioRequest<'a>,
     ) -> crate::binance::usdm::RestResult<Vec<GlobalLongShortAccountRatioResponse<'a>>> {
         let endpoint = "/futures/data/globalLongShortAccountRatio";
-        let query = serde_urlencoded::to_string(&params).map_err(|e| crate::binance::usdm::Errors::Error(format!("Failed to serialize params: {e}")))?;
+        let query = serde_urlencoded::to_string(&params).map_err(|e| {
+            crate::binance::usdm::Errors::Error(format!("Failed to serialize params: {e}"))
+        })?;
         let resp = self
-            .send_request::<Vec<GlobalLongShortAccountRatioResponse>>(endpoint, reqwest::Method::GET, Some(&query), None, 0)
+            .send_request::<Vec<GlobalLongShortAccountRatioResponse>>(
+                endpoint,
+                reqwest::Method::GET,
+                Some(&query),
+                None,
+                0,
+            )
             .await?;
         Ok(resp)
     }

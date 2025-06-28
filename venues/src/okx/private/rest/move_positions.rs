@@ -57,7 +57,10 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the move positions response or an error
-    pub async fn move_positions(&self, request: &MovePositionsRequest) -> RestResult<OkxApiResponse<MovePositionsResponse>> {
+    pub async fn move_positions(
+        &self,
+        request: &MovePositionsRequest,
+    ) -> RestResult<OkxApiResponse<MovePositionsResponse>> {
         self.send_request(
             "api/v5/account/move-positions",
             reqwest::Method::POST,
@@ -110,7 +113,8 @@ mod tests {
             ]
         }"#;
 
-        let response: OkxApiResponse<MovePositionsResponse> = serde_json::from_str(response_json).unwrap();
+        let response: OkxApiResponse<MovePositionsResponse> =
+            serde_json::from_str(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 1);
 

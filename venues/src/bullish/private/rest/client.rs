@@ -79,7 +79,8 @@ impl RestClient {
         let message = format!("GET/trading-api/v1/users/hmac/login{nonce}");
 
         // Sign the message with HMAC-SHA256
-        let mut mac = Hmac::<Sha256>::new_from_slice(self.api_secret.expose_secret().as_bytes()).map_err(|_| Errors::InvalidApiKey())?;
+        let mut mac = Hmac::<Sha256>::new_from_slice(self.api_secret.expose_secret().as_bytes())
+            .map_err(|_| Errors::InvalidApiKey())?;
         mac.update(message.as_bytes());
         let signature = general_purpose::STANDARD.encode(mac.finalize().into_bytes());
 
@@ -152,7 +153,9 @@ impl RestClient {
         }
 
         let url = format!("{}/trading-api{}", self.base_url, endpoint);
-        let token = self.jwt_token.as_ref().ok_or_else(|| Errors::AuthenticationError("JWT token missing after login attempt".to_owned()))?;
+        let token = self.jwt_token.as_ref().ok_or_else(|| {
+            Errors::AuthenticationError("JWT token missing after login attempt".to_owned())
+        })?;
 
         let mut request = self
             .client
@@ -174,7 +177,9 @@ impl RestClient {
             self.jwt_token = None;
             self.get_jwt_token().await?;
 
-            let token = self.jwt_token.as_ref().ok_or_else(|| Errors::AuthenticationError("JWT token missing after refresh attempt".to_owned()))?;
+            let token = self.jwt_token.as_ref().ok_or_else(|| {
+                Errors::AuthenticationError("JWT token missing after refresh attempt".to_owned())
+            })?;
             let mut retry_request = self
                 .client
                 .request(method, &url)
@@ -234,7 +239,8 @@ mod tests {
     #[test]
     fn test_private_client_creation() {
         let api_key = Box::new(TestSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret = Box::new(TestSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let api_secret =
+            Box::new(TestSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
         let client = Client::new();
         let rate_limiter = RateLimiter::new();
 
@@ -261,7 +267,8 @@ mod tests {
     #[tokio::test]
     async fn test_rate_limiting_integration() {
         let api_key = Box::new(TestSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret = Box::new(TestSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let api_secret =
+            Box::new(TestSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
         let client = Client::new();
         let rate_limiter = RateLimiter::new();
 

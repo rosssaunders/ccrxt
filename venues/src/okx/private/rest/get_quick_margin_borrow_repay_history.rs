@@ -131,7 +131,8 @@ mod tests {
             ]
         }"#;
 
-        let response: OkxApiResponse<QuickMarginBorrowRepayHistory> = serde_json::from_str(response_json).unwrap();
+        let response: OkxApiResponse<QuickMarginBorrowRepayHistory> =
+            serde_json::from_str(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 1);
 

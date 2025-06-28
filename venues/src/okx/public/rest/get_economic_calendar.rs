@@ -77,7 +77,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing the economic calendar events
-    pub async fn get_economic_calendar(&self, request: Option<GetEconomicCalendarRequest>) -> RestResult<GetEconomicCalendarResponse> {
+    pub async fn get_economic_calendar(
+        &self,
+        request: Option<GetEconomicCalendarRequest>,
+    ) -> RestResult<GetEconomicCalendarResponse> {
         self.send_request(
             "api/v5/public/economic-calendar",
             reqwest::Method::GET,

@@ -38,7 +38,11 @@ impl RestClient {
     ///
     /// # Returns
     /// A new RestClient instance
-    pub fn new(base_url: impl Into<Cow<'static, str>>, client: Client, rate_limiter: RateLimiter) -> Self {
+    pub fn new(
+        base_url: impl Into<Cow<'static, str>>,
+        client: Client,
+        rate_limiter: RateLimiter,
+    ) -> Self {
         Self {
             base_url: base_url.into(),
             client,
@@ -55,7 +59,12 @@ impl RestClient {
     ///
     /// # Returns
     /// The deserialized response of type T
-    pub async fn send_request<T, P>(&self, endpoint: &str, params: Option<&P>, endpoint_type: EndpointType) -> RestResult<T>
+    pub async fn send_request<T, P>(
+        &self,
+        endpoint: &str,
+        params: Option<&P>,
+        endpoint_type: EndpointType,
+    ) -> RestResult<T>
     where
         T: DeserializeOwned,
         P: Serialize + ?Sized,
@@ -96,7 +105,9 @@ impl RestClient {
                 .unwrap_or_else(|_| "Unknown error".to_string());
 
             // Try to parse as BingX error response
-            if let Ok(error_response) = serde_json::from_str::<crate::bingx::ErrorResponse>(&error_text) {
+            if let Ok(error_response) =
+                serde_json::from_str::<crate::bingx::ErrorResponse>(&error_text)
+            {
                 Err(Errors::from(error_response))
             } else {
                 Err(Errors::Error(format!("HTTP {status}: {error_text}")))

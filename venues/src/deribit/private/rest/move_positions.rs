@@ -80,7 +80,10 @@ impl RestClient {
     ///
     /// This endpoint allows moving open positions from one subaccount to another.
     /// Requires authentication and appropriate permissions.
-    pub async fn move_positions(&self, params: MovePositionsRequest) -> RestResult<MovePositionsResponse> {
+    pub async fn move_positions(
+        &self,
+        params: MovePositionsRequest,
+    ) -> RestResult<MovePositionsResponse> {
         self.send_signed_request(
             "private/move_positions",
             &params,

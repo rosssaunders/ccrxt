@@ -36,7 +36,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Result containing a list of available Block RFQ makers
-    pub async fn get_block_rfq_makers(&self, request: GetBlockRfqMakersRequest) -> RestResult<GetBlockRfqMakersResponse> {
+    pub async fn get_block_rfq_makers(
+        &self,
+        request: GetBlockRfqMakersRequest,
+    ) -> RestResult<GetBlockRfqMakersResponse> {
         self.send_signed_request(
             "private/get_block_rfq_makers",
             &request,

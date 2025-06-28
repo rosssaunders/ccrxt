@@ -71,7 +71,10 @@ impl RestClient {
     /// Retrieves the most recent settlements for a given currency and instrument kind.
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_last_settlements_by_currency)
-    pub async fn get_last_settlements_by_currency(&self, params: GetLastSettlementsByCurrencyRequest) -> RestResult<GetLastSettlementsByCurrencyResponse> {
+    pub async fn get_last_settlements_by_currency(
+        &self,
+        params: GetLastSettlementsByCurrencyRequest,
+    ) -> RestResult<GetLastSettlementsByCurrencyResponse> {
         self.send_request(
             "get_last_settlements_by_currency",
             Method::POST,
@@ -104,14 +107,14 @@ mod tests {
     #[test]
     fn test_deserialize_response() {
         let data = r#"{
-            \"id\": 16,
-            \"jsonrpc\": \"2.0\",
-            \"result\": {
-                \"settlements\": [
+            "id": 16,
+            "jsonrpc": "2.0",
+            "result": {
+                "settlements": [
                     {
-                        \"instrument_name\": \"BTC-PERPETUAL\",
-                        \"settlement_price\": 65000.0,
-                        \"timestamp\": 1680310800000
+                        "instrument_name": "BTC-PERPETUAL",
+                        "settlement_price": 65000.0,
+                        "timestamp": 1680310800000
                     }
                 ]
             }

@@ -88,7 +88,10 @@ impl RestClient {
     /// - If startTime and endTime are sent, the latest K-line data up to endTime is returned by default
     /// - If startTime is sent but endTime is not sent, the latest K-line data starting from startTime is returned by default
     /// - If startTime is not sent but endTime is sent, the latest K-line data up to endTime is returned by default
-    pub async fn get_historical_kline(&self, request: &GetHistoricalKlineRequest) -> RestResult<GetHistoricalKlineResponse> {
+    pub async fn get_historical_kline(
+        &self,
+        request: &GetHistoricalKlineRequest,
+    ) -> RestResult<GetHistoricalKlineResponse> {
         self.send_request(
             "/openApi/market/his/v1/kline",
             Some(request),
@@ -141,7 +144,8 @@ mod tests {
         let interval = "1h".to_string();
         let limit = 100;
 
-        let request = GetHistoricalKlineRequest::new(symbol.clone(), interval.clone()).with_limit(limit);
+        let request =
+            GetHistoricalKlineRequest::new(symbol.clone(), interval.clone()).with_limit(limit);
 
         assert_eq!(request.symbol, symbol);
         assert_eq!(request.interval, interval);

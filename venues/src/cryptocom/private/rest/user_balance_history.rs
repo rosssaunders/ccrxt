@@ -55,7 +55,10 @@ impl RestClient {
     ///
     /// # Returns
     /// User balance history information
-    pub async fn get_user_balance_history(&self, request: GetUserBalanceHistoryRequest) -> RestResult<GetUserBalanceHistoryResponse> {
+    pub async fn get_user_balance_history(
+        &self,
+        request: GetUserBalanceHistoryRequest,
+    ) -> RestResult<GetUserBalanceHistoryResponse> {
         self.send_signed_request("private/user-balance-history", request)
             .await
     }

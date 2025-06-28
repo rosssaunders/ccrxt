@@ -218,7 +218,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Order history information for the specified instrument
-    pub async fn get_order_history_by_instrument(&self, params: GetOrderHistoryByInstrumentRequest) -> RestResult<GetOrderHistoryByInstrumentResponse> {
+    pub async fn get_order_history_by_instrument(
+        &self,
+        params: GetOrderHistoryByInstrumentRequest,
+    ) -> RestResult<GetOrderHistoryByInstrumentResponse> {
         self.send_signed_request("private/get_order_history_by_instrument", params)
             .await
     }
@@ -374,7 +377,8 @@ mod tests {
             ]
         });
 
-        let response: GetOrderHistoryByInstrumentResponse = serde_json::from_value(response_json).unwrap();
+        let response: GetOrderHistoryByInstrumentResponse =
+            serde_json::from_value(response_json).unwrap();
         assert_eq!(response.result.len(), 1);
         assert_eq!(response.result[0].order_id, "12345");
         assert_eq!(response.result[0].instrument_name, "BTCUSD-PERP");
@@ -399,7 +403,8 @@ mod tests {
             "continuation": "next_page_token"
         });
 
-        let response: GetOrderHistoryByInstrumentWithContinuationResponse = serde_json::from_value(response_json).unwrap();
+        let response: GetOrderHistoryByInstrumentWithContinuationResponse =
+            serde_json::from_value(response_json).unwrap();
         assert_eq!(response.result.len(), 1);
         assert_eq!(response.result[0].order_id, "12345");
         assert_eq!(response.continuation, Some("next_page_token".to_string()));

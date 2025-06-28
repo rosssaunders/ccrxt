@@ -47,7 +47,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Actual trade fee rate information
-    pub async fn get_actual_trade_fee_rate(&self, request: GetActualTradeFeeRateRequest) -> RestResult<GetActualTradeFeeRateResponse> {
+    pub async fn get_actual_trade_fee_rate(
+        &self,
+        request: GetActualTradeFeeRateRequest,
+    ) -> RestResult<GetActualTradeFeeRateResponse> {
         self.send_request(
             "/spot/v1/trade_fee",
             reqwest::Method::GET,
@@ -124,7 +127,8 @@ mod tests {
         };
 
         let serialized = serde_json::to_string(&response).unwrap();
-        let deserialized: GetActualTradeFeeRateResponse = serde_json::from_str(&serialized).unwrap();
+        let deserialized: GetActualTradeFeeRateResponse =
+            serde_json::from_str(&serialized).unwrap();
 
         assert_eq!(response.symbol, deserialized.symbol);
         assert_eq!(response.buy_taker_fee_rate, deserialized.buy_taker_fee_rate);

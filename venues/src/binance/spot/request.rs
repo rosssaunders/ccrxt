@@ -82,12 +82,16 @@ where
                 let used_weight_1m = response_headers
                     .values
                     .iter()
-                    .find(|(k, _)| k.to_string().contains("used-weight") && k.to_string().contains("1m"))
+                    .find(|(k, _)| {
+                        k.to_string().contains("used-weight") && k.to_string().contains("1m")
+                    })
                     .map(|(_, v)| *v);
                 let order_count_1m = response_headers
                     .values
                     .iter()
-                    .find(|(k, _)| k.to_string().contains("order-count") && k.to_string().contains("1m"))
+                    .find(|(k, _)| {
+                        k.to_string().contains("order-count") && k.to_string().contains("1m")
+                    })
                     .map(|(_, v)| *v);
                 Errors::ApiError(ApiError::RateLimitExceeded {
                     msg: error_msg,
@@ -97,7 +101,9 @@ where
                 })
             }
             StatusCode::IM_A_TEAPOT => Errors::ApiError(ApiError::IpAutoBanned { msg: error_msg }),
-            StatusCode::FORBIDDEN => Errors::ApiError(ApiError::WafLimitViolated { msg: error_msg }),
+            StatusCode::FORBIDDEN => {
+                Errors::ApiError(ApiError::WafLimitViolated { msg: error_msg })
+            }
             StatusCode::UNAUTHORIZED => Errors::ApiError(ApiError::Unauthorized { msg: error_msg }),
             StatusCode::BAD_REQUEST => {
                 // Try to parse as structured error
@@ -113,7 +119,8 @@ where
     }
 
     // Try to parse the response as the expected type
-    let data = serde_json::from_str::<T>(&response_text).map_err(|e| Errors::Error(format!("Failed to parse response: {e}")))?;
+    let data = serde_json::from_str::<T>(&response_text)
+        .map_err(|e| Errors::Error(format!("Failed to parse response: {e}")))?;
 
     Ok(ParsedResponse {
         data,

@@ -32,7 +32,11 @@ impl RestClient {
     ///
     /// # Arguments
     /// * `base_url` - The base URL for the Binance USD-M public REST API (e.g., "<https://fapi.binance.com>").
-    pub fn new(base_url: impl Into<Cow<'static, str>>, client: Client, rate_limiter: RateLimiter) -> Self {
+    pub fn new(
+        base_url: impl Into<Cow<'static, str>>,
+        client: Client,
+        rate_limiter: RateLimiter,
+    ) -> Self {
         Self {
             base_url: base_url.into(),
             client,
@@ -52,10 +56,14 @@ impl RestClient {
     where
         T: serde::de::DeserializeOwned,
     {
-        let url = crate::binance::usdm::rest::common::build_url(&self.base_url, endpoint, query_string)?;
+        let url =
+            crate::binance::usdm::rest::common::build_url(&self.base_url, endpoint, query_string)?;
         let headers = vec![];
         let body_data = body
-            .map(|b| serde_urlencoded::to_string(b).map_err(|e| Errors::Error(format!("Failed to serialize body: {e}"))))
+            .map(|b| {
+                serde_urlencoded::to_string(b)
+                    .map_err(|e| Errors::Error(format!("Failed to serialize body: {e}")))
+            })
             .transpose()?;
         let rest_response = crate::binance::usdm::rest::common::send_rest_request(
             &self.client,

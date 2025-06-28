@@ -51,9 +51,16 @@ impl crate::binance::usdm::public::rest::RestClient {
     /// [API docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Basis)
     pub async fn basis<'a>(&self, params: BasisRequest<'a>) -> RestResult<Vec<BasisResponse<'a>>> {
         let endpoint = "/futures/data/basis";
-        let query = serde_urlencoded::to_string(&params).map_err(|e| Errors::Error(format!("Failed to serialize params: {e}")))?;
+        let query = serde_urlencoded::to_string(&params)
+            .map_err(|e| Errors::Error(format!("Failed to serialize params: {e}")))?;
         let resp = self
-            .send_request::<Vec<BasisResponse>>(endpoint, reqwest::Method::GET, Some(&query), None, 0)
+            .send_request::<Vec<BasisResponse>>(
+                endpoint,
+                reqwest::Method::GET,
+                Some(&query),
+                None,
+                0,
+            )
             .await?;
         Ok(resp)
     }

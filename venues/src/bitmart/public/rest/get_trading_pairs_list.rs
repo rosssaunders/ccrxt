@@ -32,7 +32,10 @@ impl RestClient {
     /// # Note
     /// - Returns an array of trading pairs
     /// - "BMX_ETH" means that the base currency of this trading pair is BMX, and the quote currency is ETH
-    pub async fn get_trading_pairs_list(&self, _request: GetTradingPairsListRequest) -> RestResult<GetTradingPairsListResponse> {
+    pub async fn get_trading_pairs_list(
+        &self,
+        _request: GetTradingPairsListRequest,
+    ) -> RestResult<GetTradingPairsListResponse> {
         self.send_request(
             "/spot/v1/symbols",
             reqwest::Method::GET,

@@ -94,7 +94,10 @@ impl RestClient {
     /// 2. If only after is passed, check backward according to the time
     /// 3. Both before and after need to verify whether the time interval is legal, and if it is legal, check the interval
     /// 4. If neither before nor after is passed, the latest K-line will be returned in reverse order
-    pub async fn get_history_kline(&self, request: GetHistoryKlineRequest) -> RestResult<GetHistoryKlineResponse> {
+    pub async fn get_history_kline(
+        &self,
+        request: GetHistoryKlineRequest,
+    ) -> RestResult<GetHistoryKlineResponse> {
         self.send_request(
             "/spot/quotation/v3/klines",
             reqwest::Method::GET,

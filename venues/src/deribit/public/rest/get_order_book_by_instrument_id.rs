@@ -78,7 +78,10 @@ impl RestClient {
     /// Retrieves the current order book for a given instrument by its ID.
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_order_book_by_instrument_id)
-    pub async fn get_order_book_by_instrument_id(&self, params: GetOrderBookByInstrumentIdRequest) -> RestResult<GetOrderBookByInstrumentIdResponse> {
+    pub async fn get_order_book_by_instrument_id(
+        &self,
+        params: GetOrderBookByInstrumentIdRequest,
+    ) -> RestResult<GetOrderBookByInstrumentIdResponse> {
         self.send_request(
             "get_order_book_by_instrument_id",
             Method::POST,
@@ -108,18 +111,18 @@ mod tests {
     #[test]
     fn test_deserialize_response() {
         let data = r#"{
-            \"id\": 24,
-            \"jsonrpc\": \"2.0\",
-            \"result\": {
-                \"bids\": [
-                    {\"price\": 64998.0, \"amount\": 0.6}
+            "id": 24,
+            "jsonrpc": "2.0",
+            "result": {
+                "bids": [
+                    {"price": 64998.0, "amount": 0.6}
                 ],
-                \"asks\": [
-                    {\"price\": 65002.0, \"amount\": 0.3}
+                "asks": [
+                    {"price": 65002.0, "amount": 0.3}
                 ],
-                \"best_bid_price\": 64998.0,
-                \"best_ask_price\": 65002.0,
-                \"timestamp\": 1680310800000
+                "best_bid_price": 64998.0,
+                "best_ask_price": 65002.0,
+                "timestamp": 1680310800000
             }
         }"#;
         let resp: GetOrderBookByInstrumentIdResponse = serde_json::from_str(data).unwrap();

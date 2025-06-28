@@ -50,9 +50,12 @@ impl RestClient {
     /// returned.
     ///
     /// [Official API docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Old-Trades-Lookup)
-    /// 
+    ///
     /// Weight: 20
-    pub async fn get_historical_trades(&self, params: HistoricalTradesRequest) -> RestResult<Vec<HistoricalTrade>> {
+    pub async fn get_historical_trades(
+        &self,
+        params: HistoricalTradesRequest,
+    ) -> RestResult<Vec<HistoricalTrade>> {
         self.send_request(
             "/dapi/v1/historicalTrades",
             reqwest::Method::GET,

@@ -29,7 +29,10 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the greeks response or an error
-    pub async fn set_greeks(&self, request: &SetGreeksRequest) -> RestResult<OkxApiResponse<SetGreeksResponse>> {
+    pub async fn set_greeks(
+        &self,
+        request: &SetGreeksRequest,
+    ) -> RestResult<OkxApiResponse<SetGreeksResponse>> {
         self.send_request(
             "api/v5/account/set-greeks",
             reqwest::Method::POST,
@@ -67,7 +70,8 @@ mod tests {
             ]
         }"#;
 
-        let response: OkxApiResponse<SetGreeksResponse> = serde_json::from_str(response_json).unwrap();
+        let response: OkxApiResponse<SetGreeksResponse> =
+            serde_json::from_str(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 1);
 

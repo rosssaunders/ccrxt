@@ -59,7 +59,10 @@ impl RestClient {
     /// Retrieves the trade volumes for all supported currencies.
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_trade_volumes)
-    pub async fn get_trade_volumes(&self, params: GetTradeVolumesRequest) -> RestResult<GetTradeVolumesResponse> {
+    pub async fn get_trade_volumes(
+        &self,
+        params: GetTradeVolumesRequest,
+    ) -> RestResult<GetTradeVolumesResponse> {
         self.send_request(
             "get_trade_volumes",
             Method::POST,
@@ -86,14 +89,14 @@ mod tests {
     #[test]
     fn test_deserialize_response() {
         let data = r#"{
-            \"id\": 27,
-            \"jsonrpc\": \"2.0\",
-            \"result\": {
-                \"volumes\": [
+            "id": 27,
+            "jsonrpc": "2.0",
+            "result": {
+                "volumes": [
                     {
-                        \"currency\": "BTC",
-                        \"volume_24h\": 12345.6,
-                        \"volume_30d\": 789012.3
+                        "currency": "BTC",
+                        "volume_24h": 12345.6,
+                        "volume_30d": 789012.3
                     }
                 ]
             }

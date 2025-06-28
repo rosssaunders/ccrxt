@@ -55,7 +55,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Trade history information for the specified order
-    pub async fn get_user_trades_by_order(&self, request: GetUserTradesByOrderRequest) -> RestResult<GetUserTradesByOrderResponse> {
+    pub async fn get_user_trades_by_order(
+        &self,
+        request: GetUserTradesByOrderRequest,
+    ) -> RestResult<GetUserTradesByOrderResponse> {
         self.send_signed_request(
             "private/get_user_trades_by_order",
             &request,
@@ -225,8 +228,10 @@ mod tests {
     #[tokio::test]
     async fn test_get_user_trades_by_order_method_exists() {
         // Test that the method exists and compiles without needing to call it
-        let api_key = Box::new(PlainTextSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret = Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let api_key =
+            Box::new(PlainTextSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
+        let api_secret =
+            Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
         let client = reqwest::Client::new();
         let rate_limiter = crate::deribit::RateLimiter::new(AccountTier::Tier4);
 

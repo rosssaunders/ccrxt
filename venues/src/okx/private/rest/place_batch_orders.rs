@@ -39,7 +39,10 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the batch order placement responses or an error
-    pub async fn place_batch_orders(&self, orders: &[PlaceOrderRequest]) -> RestResult<OkxApiResponse<PlaceBatchOrdersResponse>> {
+    pub async fn place_batch_orders(
+        &self,
+        orders: &[PlaceOrderRequest],
+    ) -> RestResult<OkxApiResponse<PlaceBatchOrdersResponse>> {
         self.send_request(
             "api/v5/trade/batch-orders",
             reqwest::Method::POST,
@@ -121,7 +124,8 @@ mod tests {
             ]
         }"#;
 
-        let response: OkxApiResponse<PlaceBatchOrdersResponse> = serde_json::from_str(response_json).unwrap();
+        let response: OkxApiResponse<PlaceBatchOrdersResponse> =
+            serde_json::from_str(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 2);
         assert_eq!(

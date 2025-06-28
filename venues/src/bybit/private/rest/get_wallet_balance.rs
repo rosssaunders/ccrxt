@@ -158,7 +158,10 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the wallet balance response or an error
-    pub async fn get_wallet_balance(&self, request: GetWalletBalanceRequest) -> RestResult<GetWalletBalanceResponse> {
+    pub async fn get_wallet_balance(
+        &self,
+        request: GetWalletBalanceRequest,
+    ) -> RestResult<GetWalletBalanceResponse> {
         self.send_signed_request(
             "/v5/account/wallet-balance",
             reqwest::Method::GET,
@@ -182,7 +185,8 @@ mod tests {
 
     #[test]
     fn test_get_wallet_balance_request_with_coin() {
-        let request = GetWalletBalanceRequest::new(AccountType::Unified).with_coin("BTC".to_string());
+        let request =
+            GetWalletBalanceRequest::new(AccountType::Unified).with_coin("BTC".to_string());
         assert_eq!(request.account_type, AccountType::Unified);
         assert_eq!(request.coin, Some("BTC".to_string()));
     }
@@ -190,11 +194,10 @@ mod tests {
     #[test]
     fn test_get_wallet_balance_request_serialization() {
         let request = GetWalletBalanceRequest::new(AccountType::Contract);
-        let serialized = serde_urlencoded::to_string(&request)
-            .unwrap_or_else(|e| {
-                eprintln!("Failed to serialize GetWalletBalanceRequest: {}", e);
-                String::new()
-            });
+        let serialized = serde_urlencoded::to_string(&request).unwrap_or_else(|e| {
+            eprintln!("Failed to serialize GetWalletBalanceRequest: {}", e);
+            String::new()
+        });
         assert!(serialized.contains("accountType=CONTRACT"));
     }
 
@@ -281,20 +284,30 @@ mod tests {
         assert_eq!(response.ret_code, 0);
         assert_eq!(response.ret_msg, "OK");
         assert_eq!(response.result.list.len(), 1);
-        assert_eq!(response.result.list.first().map(|a| &a.account_type), Some(&"UNIFIED".to_string()));
+        assert_eq!(
+            response.result.list.first().map(|a| &a.account_type),
+            Some(&"UNIFIED".to_string())
+        );
         assert_eq!(response.result.list.first().map(|a| a.coin.len()), Some(1));
-        assert_eq!(response.result.list.first().and_then(|a| a.coin.first()).map(|c| &c.coin), Some(&"BTC".to_string()));
+        assert_eq!(
+            response
+                .result
+                .list
+                .first()
+                .and_then(|a| a.coin.first())
+                .map(|c| &c.coin),
+            Some(&"BTC".to_string())
+        );
     }
 
     #[test]
     fn test_serialization_roundtrip() {
         let request = GetWalletBalanceRequest::new(AccountType::Spot).with_coin("USDT".to_string());
 
-        let serialized = serde_json::to_string(&request)
-            .unwrap_or_else(|e| {
-                eprintln!("Serialization failed: {}", e);
-                String::new()
-            });
+        let serialized = serde_json::to_string(&request).unwrap_or_else(|e| {
+            eprintln!("Serialization failed: {}", e);
+            String::new()
+        });
         let deserialized: GetWalletBalanceRequest = match serde_json::from_str(&serialized) {
             Ok(r) => r,
             Err(e) => {

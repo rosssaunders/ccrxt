@@ -74,7 +74,10 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the interest accrued or an error
-    pub async fn get_interest_accrued(&self, request: &GetInterestAccruedRequest) -> RestResult<OkxApiResponse<InterestAccrued>> {
+    pub async fn get_interest_accrued(
+        &self,
+        request: &GetInterestAccruedRequest,
+    ) -> RestResult<OkxApiResponse<InterestAccrued>> {
         self.send_request(
             "api/v5/account/interest-accrued",
             reqwest::Method::GET,
@@ -145,7 +148,8 @@ mod tests {
             ]
         }"#;
 
-        let response: OkxApiResponse<InterestAccrued> = serde_json::from_str(response_json).unwrap();
+        let response: OkxApiResponse<InterestAccrued> =
+            serde_json::from_str(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 1);
 

@@ -183,7 +183,8 @@ impl RestClient {
         let recv_window = 5000u64;
 
         // 3. Serialize params to query string (excluding api_key/api_secret)
-        let mut query_pairs = serde_urlencoded::to_string(&params).map_err(|e| OrderError::Other(format!("Failed to serialize params: {e}")))?;
+        let mut query_pairs = serde_urlencoded::to_string(&params)
+            .map_err(|e| OrderError::Other(format!("Failed to serialize params: {e}")))?;
         if !query_pairs.is_empty() {
             query_pairs.push('&');
         }
@@ -224,9 +225,13 @@ impl RestClient {
                 // Map to our endpoint error type
                 OrderError::Other(format!("API error: {api_err}"))
             }
-            crate::binance::usdm::Errors::HttpError(http_err) => OrderError::Other(format!("HTTP error: {http_err}")),
+            crate::binance::usdm::Errors::HttpError(http_err) => {
+                OrderError::Other(format!("HTTP error: {http_err}"))
+            }
             crate::binance::usdm::Errors::Error(msg) => OrderError::Other(msg),
-            crate::binance::usdm::Errors::InvalidApiKey() => OrderError::InvalidKey("Invalid API key or signature".to_string()),
+            crate::binance::usdm::Errors::InvalidApiKey() => {
+                OrderError::InvalidKey("Invalid API key or signature".to_string())
+            }
         })?;
 
         Ok(resp.data)

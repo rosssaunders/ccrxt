@@ -65,7 +65,10 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the close position response or an error
-    pub async fn close_position(&self, request: &ClosePositionRequest) -> RestResult<OkxApiResponse<ClosePositionResponse>> {
+    pub async fn close_position(
+        &self,
+        request: &ClosePositionRequest,
+    ) -> RestResult<OkxApiResponse<ClosePositionResponse>> {
         self.send_request(
             "api/v5/trade/close-position",
             reqwest::Method::POST,
@@ -138,7 +141,8 @@ mod tests {
             ]
         }"#;
 
-        let response: OkxApiResponse<ClosePositionResponse> = serde_json::from_str(response_json).unwrap();
+        let response: OkxApiResponse<ClosePositionResponse> =
+            serde_json::from_str(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 1);
         assert_eq!(response.data[0].inst_id, "BTC-USDT-SWAP");

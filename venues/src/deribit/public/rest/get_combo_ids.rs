@@ -48,7 +48,10 @@ impl RestClient {
     /// A result containing the response with combo IDs or an error
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_combo_ids)
-    pub async fn get_combo_ids(&self, params: GetComboIdsRequest) -> RestResult<GetComboIdsResponse> {
+    pub async fn get_combo_ids(
+        &self,
+        params: GetComboIdsRequest,
+    ) -> RestResult<GetComboIdsResponse> {
         self.send_request(
             "public/get_combo_ids",
             reqwest::Method::GET,

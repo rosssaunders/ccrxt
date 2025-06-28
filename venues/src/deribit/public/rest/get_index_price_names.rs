@@ -11,7 +11,8 @@ use serde::{Deserialize, Serialize};
 /// Request parameters for the get_index_price_names endpoint.
 /// This endpoint does not require any parameters.
 #[derive(Debug, Clone, Serialize, Default)]
-pub struct GetIndexPriceNamesRequest;
+#[serde(default)]
+pub struct GetIndexPriceNamesRequest {}
 
 /// The result object for get_index_price_names.
 #[derive(Debug, Clone, Deserialize)]
@@ -43,7 +44,10 @@ impl RestClient {
     /// Retrieves the list of all supported index price names.
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_index_price_names)
-    pub async fn get_index_price_names(&self, params: GetIndexPriceNamesRequest) -> RestResult<GetIndexPriceNamesResponse> {
+    pub async fn get_index_price_names(
+        &self,
+        params: GetIndexPriceNamesRequest,
+    ) -> RestResult<GetIndexPriceNamesResponse> {
         self.send_request(
             "get_index_price_names",
             Method::POST,
@@ -61,7 +65,7 @@ mod tests {
 
     #[test]
     fn test_serialize_request() {
-        let req = GetIndexPriceNamesRequest;
+        let req = GetIndexPriceNamesRequest {};
         let json = serde_json::to_string(&req).unwrap();
         assert_eq!(json, "{}");
     }
@@ -69,10 +73,10 @@ mod tests {
     #[test]
     fn test_deserialize_response() {
         let data = r#"{
-            \"id\": 13,
-            \"jsonrpc\": \"2.0\",
-            \"result\": {
-                \"index_price_names\": [\"btc_usd\", \"eth_usd\"]
+            "id": 13,
+            "jsonrpc": "2.0",
+            "result": {
+                "index_price_names": ["btc_usd", "eth_usd"]
             }
         }"#;
         let resp: GetIndexPriceNamesResponse = serde_json::from_str(data).unwrap();

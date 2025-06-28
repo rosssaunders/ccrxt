@@ -7,10 +7,13 @@ pub mod public {
     pub mod rest;
     pub use self::rest::RestClient as PublicRestClient;
     pub use self::rest::{
-        Get24hrTickerRequest, Get24hrTickerResponse, GetHistoricalKlineRequest, GetHistoricalKlineResponse, GetKlineRequest, GetKlineResponse,
-        GetOldTradeRequest, GetOldTradeResponse, GetOrderBookAggregationRequest, GetOrderBookAggregationResponse, GetOrderBookRequest, GetOrderBookResponse,
-        GetRecentTradesRequest, GetRecentTradesResponse, GetServerTimeRequest, GetServerTimeResponse, GetSymbolOrderBookTickerRequest,
-        GetSymbolOrderBookTickerResponse, GetSymbolPriceTickerRequest, GetSymbolPriceTickerResponse, GetSymbolsRequest, GetSymbolsResponse, HistoricalKline,
+        Get24hrTickerRequest, Get24hrTickerResponse, GetHistoricalKlineRequest,
+        GetHistoricalKlineResponse, GetKlineRequest, GetKlineResponse, GetOldTradeRequest,
+        GetOldTradeResponse, GetOrderBookAggregationRequest, GetOrderBookAggregationResponse,
+        GetOrderBookRequest, GetOrderBookResponse, GetRecentTradesRequest, GetRecentTradesResponse,
+        GetServerTimeRequest, GetServerTimeResponse, GetSymbolOrderBookTickerRequest,
+        GetSymbolOrderBookTickerResponse, GetSymbolPriceTickerRequest,
+        GetSymbolPriceTickerResponse, GetSymbolsRequest, GetSymbolsResponse, HistoricalKline,
         Kline, OldTrade, Symbol, Ticker24hr, Trade,
     };
 }

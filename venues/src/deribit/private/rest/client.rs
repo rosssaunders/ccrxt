@@ -74,20 +74,31 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the signature as a hex string or an error
-    pub fn sign_request(&self, request_data: &str, nonce: u64, request_id: u64) -> Result<String, Errors> {
+    pub fn sign_request(
+        &self,
+        request_data: &str,
+        nonce: u64,
+        request_id: u64,
+    ) -> Result<String, Errors> {
         // Create the signature payload: request_data + nonce + request_id
         let sig_payload = format!("{request_data}{nonce}{request_id}");
 
         // Sign with HMAC-SHA256
         let api_secret = self.api_secret.expose_secret();
-        let mut mac = Hmac::<Sha256>::new_from_slice(api_secret.as_bytes()).map_err(|_| Errors::InvalidApiKey())?;
+        let mut mac = Hmac::<Sha256>::new_from_slice(api_secret.as_bytes())
+            .map_err(|_| Errors::InvalidApiKey())?;
         mac.update(sig_payload.as_bytes());
 
         Ok(hex::encode(mac.finalize().into_bytes()))
     }
 
     /// Send a signed private request to Deribit API, handling serialization and rate limiting.
-    pub async fn send_signed_request<T, P>(&self, method: &str, params: &P, endpoint_type: EndpointType) -> RestResult<T>
+    pub async fn send_signed_request<T, P>(
+        &self,
+        method: &str,
+        params: &P,
+        endpoint_type: EndpointType,
+    ) -> RestResult<T>
     where
         T: DeserializeOwned,
         P: Serialize + ?Sized,
@@ -105,7 +116,8 @@ impl RestClient {
             "method": method,
             "params": params,
         });
-        let request_data_str = serde_json::to_string(&request_data).map_err(Errors::SerdeJsonError)?;
+        let request_data_str =
+            serde_json::to_string(&request_data).map_err(Errors::SerdeJsonError)?;
         let signature = self.sign_request(&request_data_str, nonce, request_id)?;
 
         // Prepare authenticated request
@@ -162,7 +174,8 @@ mod tests {
     #[test]
     fn test_private_client_creation() {
         let api_key = Box::new(TestSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret = Box::new(TestSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let api_secret =
+            Box::new(TestSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
         let client = Client::new();
         let rate_limiter = RateLimiter::new(AccountTier::Tier4);
 
@@ -180,7 +193,8 @@ mod tests {
     #[test]
     fn test_signature_generation() {
         let api_key = Box::new(TestSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret = Box::new(TestSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let api_secret =
+            Box::new(TestSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
         let client = Client::new();
         let rate_limiter = RateLimiter::new(AccountTier::Tier4);
 

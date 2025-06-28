@@ -78,7 +78,10 @@ impl RestClient {
     /// # API Documentation
     /// - Endpoint: GET /openApi/spot/v1/market/trades
     /// - Content-Type: request body(application/json)
-    pub async fn get_recent_trades(&self, request: &GetRecentTradesRequest) -> RestResult<GetRecentTradesResponse> {
+    pub async fn get_recent_trades(
+        &self,
+        request: &GetRecentTradesRequest,
+    ) -> RestResult<GetRecentTradesResponse> {
         self.send_request(
             "/openApi/spot/v1/market/trades",
             Some(request),
@@ -124,7 +127,8 @@ mod tests {
         let symbol = "BTC-USDT".to_string();
         let timestamp = 1640995200000;
         let recv_window = 5000;
-        let request = GetRecentTradesRequest::new(symbol.clone(), timestamp).with_recv_window(recv_window);
+        let request =
+            GetRecentTradesRequest::new(symbol.clone(), timestamp).with_recv_window(recv_window);
 
         assert_eq!(request.symbol, symbol);
         assert_eq!(request.timestamp, timestamp);

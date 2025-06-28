@@ -5,7 +5,9 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::deribit::enums::{CancelReason, Currency, OrderDirection, OrderState, OrderType, TriggerType};
+use crate::deribit::enums::{
+    CancelReason, Currency, OrderDirection, OrderState, OrderType, TriggerType,
+};
 use crate::deribit::{EndpointType, RestResult, TimeInForce, TriggerFillCondition};
 
 /// Request for /private/get_order_state_by_label
@@ -254,7 +256,10 @@ impl RestClient {
     ///
     /// # Returns
     /// * `GetOrderStateByLabelResponse` containing the order state(s)
-    pub async fn get_order_state_by_label(&self, request: GetOrderStateByLabelRequest) -> RestResult<GetOrderStateByLabelResponse> {
+    pub async fn get_order_state_by_label(
+        &self,
+        request: GetOrderStateByLabelRequest,
+    ) -> RestResult<GetOrderStateByLabelResponse> {
         self.send_signed_request(
             "private/get_order_state_by_label",
             &request,

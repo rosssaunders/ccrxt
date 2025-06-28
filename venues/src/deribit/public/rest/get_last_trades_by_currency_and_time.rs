@@ -3,7 +3,9 @@
 //! Retrieves the most recent trades for a given currency and instrument kind, filtered by start and end timestamps.
 
 use super::RestClient;
-use crate::deribit::enums::{Currency, InstrumentKind, Liquidity, Sorting, TickDirection, TradeOrderType};
+use crate::deribit::enums::{
+    Currency, InstrumentKind, Liquidity, Sorting, TickDirection, TradeOrderType,
+};
 use crate::deribit::{EndpointType, RestResult};
 
 use reqwest::Method;
@@ -120,7 +122,9 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::deribit::enums::{Currency, InstrumentKind, Liquidity, Sorting, TickDirection, TradeOrderType};
+    use crate::deribit::enums::{
+        Currency, InstrumentKind, Liquidity, Sorting, TickDirection, TradeOrderType,
+    };
     use serde_json;
 
     #[test]
@@ -144,19 +148,19 @@ mod tests {
     #[test]
     fn test_deserialize_response() {
         let data = r#"{
-            \"id\": 19,
-            \"jsonrpc\": \"2.0\",
-            \"result\": {
-                \"trades\": [
+            "id": 19,
+            "jsonrpc": "2.0",
+            "result": {
+                "trades": [
                     {
-                        \"trade_id\": \"123457\",
-                        \"price\": 65000.0,
-                        \"amount\": 0.2,
-                        \"timestamp\": 1680310800000,
-                        \"tick_direction\": "1",
-                        \"liquidity\": "T",
-                        \"order_type\": "market",
-                        \"instrument_name\": "BTC-PERPETUAL"
+                        "trade_id": "123457",
+                        "price": 65000.0,
+                        "amount": 0.2,
+                        "timestamp": 1680310800000,
+                        "tick_direction": "1",
+                        "liquidity": "T",
+                        "order_type": "market",
+                        "instrument_name": "BTC-PERPETUAL"
                     }
                 ]
             }

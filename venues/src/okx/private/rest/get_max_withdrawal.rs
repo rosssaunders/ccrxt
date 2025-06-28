@@ -40,7 +40,10 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the max withdrawal or an error
-    pub async fn get_max_withdrawal(&self, request: &GetMaxWithdrawalRequest) -> RestResult<OkxApiResponse<MaxWithdrawal>> {
+    pub async fn get_max_withdrawal(
+        &self,
+        request: &GetMaxWithdrawalRequest,
+    ) -> RestResult<OkxApiResponse<MaxWithdrawal>> {
         self.send_request(
             "api/v5/account/max-withdrawal",
             reqwest::Method::GET,

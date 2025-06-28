@@ -153,7 +153,8 @@ mod tests {
         };
 
         let serialized = serde_json::to_string(&depth).expect("Failed to serialize depth");
-        let deserialized: DepthData = serde_json::from_str(&serialized).expect("Failed to deserialize depth");
+        let deserialized: DepthData =
+            serde_json::from_str(&serialized).expect("Failed to deserialize depth");
 
         assert_eq!(depth.ts, deserialized.ts);
         assert_eq!(depth.symbol, deserialized.symbol);
@@ -170,7 +171,8 @@ mod tests {
             limit: Some(50),
         };
 
-        let serialized = serde_urlencoded::to_string(&request).expect("Failed to serialize request");
+        let serialized =
+            serde_urlencoded::to_string(&request).expect("Failed to serialize request");
         assert!(serialized.contains("symbol=BTC_USDT"));
         assert!(serialized.contains("limit=50"));
     }
@@ -182,7 +184,8 @@ mod tests {
             limit: None,
         };
 
-        let serialized = serde_urlencoded::to_string(&request).expect("Failed to serialize request");
+        let serialized =
+            serde_urlencoded::to_string(&request).expect("Failed to serialize request");
         assert!(serialized.contains("symbol=BTC_USDT"));
         assert!(!serialized.contains("limit"));
     }
@@ -206,7 +209,8 @@ mod tests {
             ]
         }"#;
 
-        let response: GetDepthResponse = serde_json::from_str(json).expect("Failed to deserialize response");
+        let response: GetDepthResponse =
+            serde_json::from_str(json).expect("Failed to deserialize response");
         assert_eq!(response.ts, "1691672864874");
         assert_eq!(response.symbol, "BTC_USDT");
         assert_eq!(response.asks.len(), 1);
@@ -229,7 +233,8 @@ mod tests {
             "bids": []
         }"#;
 
-        let response: GetDepthResponse = serde_json::from_str(json).expect("Failed to deserialize response");
+        let response: GetDepthResponse =
+            serde_json::from_str(json).expect("Failed to deserialize response");
         assert_eq!(response.ts, "1691672864874");
         assert_eq!(response.symbol, "BTC_USDT");
         assert_eq!(response.asks.len(), 0);

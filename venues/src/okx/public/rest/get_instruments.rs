@@ -153,7 +153,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing the list of available instruments
-    pub async fn get_instruments(&self, request: GetInstrumentsRequest) -> RestResult<GetInstrumentsResponse> {
+    pub async fn get_instruments(
+        &self,
+        request: GetInstrumentsRequest,
+    ) -> RestResult<GetInstrumentsResponse> {
         self.send_request(
             "api/v5/public/instruments",
             reqwest::Method::GET,

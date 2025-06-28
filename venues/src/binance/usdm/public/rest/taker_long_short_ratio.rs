@@ -42,11 +42,22 @@ impl RestClient {
     /// Taker Buy/Sell Volume (GET /futures/data/takerlongshortRatio)
     ///
     /// [API docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Taker-BuySell-Volume)
-    pub async fn taker_long_short_ratio<'a>(&self, params: TakerLongShortRatioRequest<'a>) -> RestResult<Vec<TakerLongShortRatioResponse<'a>>> {
+    pub async fn taker_long_short_ratio<'a>(
+        &self,
+        params: TakerLongShortRatioRequest<'a>,
+    ) -> RestResult<Vec<TakerLongShortRatioResponse<'a>>> {
         let endpoint = "/futures/data/takerlongshortRatio";
-        let query = serde_urlencoded::to_string(&params).map_err(|e| crate::binance::usdm::Errors::Error(format!("Failed to serialize params: {e}")))?;
+        let query = serde_urlencoded::to_string(&params).map_err(|e| {
+            crate::binance::usdm::Errors::Error(format!("Failed to serialize params: {e}"))
+        })?;
         let resp = self
-            .send_request::<Vec<TakerLongShortRatioResponse>>(endpoint, reqwest::Method::GET, Some(&query), None, 0)
+            .send_request::<Vec<TakerLongShortRatioResponse>>(
+                endpoint,
+                reqwest::Method::GET,
+                Some(&query),
+                None,
+                0,
+            )
             .await?;
         Ok(resp)
     }

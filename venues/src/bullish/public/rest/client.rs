@@ -30,7 +30,11 @@ impl RestClient {
     ///
     /// # Returns
     /// A new RestClient instance
-    pub fn new(base_url: impl Into<Cow<'static, str>>, client: Client, rate_limiter: RateLimiter) -> Self {
+    pub fn new(
+        base_url: impl Into<Cow<'static, str>>,
+        client: Client,
+        rate_limiter: RateLimiter,
+    ) -> Self {
         Self {
             client,
             base_url: base_url.into(),
@@ -48,7 +52,11 @@ impl RestClient {
     ///
     /// # Returns
     /// The deserialized response or an error
-    pub async fn send_request<T>(&self, endpoint: &str, endpoint_type: EndpointType) -> RestResult<T>
+    pub async fn send_request<T>(
+        &self,
+        endpoint: &str,
+        endpoint_type: EndpointType,
+    ) -> RestResult<T>
     where
         T: DeserializeOwned,
     {
@@ -95,7 +103,8 @@ mod tests {
         let client = Client::new();
         let rate_limiter = RateLimiter::new();
 
-        let _rest_client = RestClient::new("https://api.exchange.bullish.com", client, rate_limiter);
+        let _rest_client =
+            RestClient::new("https://api.exchange.bullish.com", client, rate_limiter);
 
         // Test that rate limiter integration works
         // This is a basic structure test since we can't make real API calls in unit tests

@@ -58,7 +58,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Historical staking rewards with quantities, balances, and timestamps
-    pub async fn get_reward_history(&self, params: GetRewardHistoryRequest) -> RestResult<GetRewardHistoryResponse> {
+    pub async fn get_reward_history(
+        &self,
+        params: GetRewardHistoryRequest,
+    ) -> RestResult<GetRewardHistoryResponse> {
         self.send_signed_request("private/staking/get-reward-history", params)
             .await
     }

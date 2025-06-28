@@ -44,7 +44,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing the list of underlying assets
-    pub async fn get_underlying(&self, request: GetUnderlyingRequest) -> RestResult<GetUnderlyingResponse> {
+    pub async fn get_underlying(
+        &self,
+        request: GetUnderlyingRequest,
+    ) -> RestResult<GetUnderlyingResponse> {
         self.send_request(
             "api/v5/public/underlying",
             reqwest::Method::GET,

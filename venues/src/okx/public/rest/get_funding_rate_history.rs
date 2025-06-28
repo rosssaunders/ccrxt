@@ -74,7 +74,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing the list of funding rate history entries
-    pub async fn get_funding_rate_history(&self, request: &GetFundingRateHistoryRequest) -> RestResult<GetFundingRateHistoryResponse> {
+    pub async fn get_funding_rate_history(
+        &self,
+        request: &GetFundingRateHistoryRequest,
+    ) -> RestResult<GetFundingRateHistoryResponse> {
         self.send_request(
             "api/v5/public/funding-rate-history",
             reqwest::Method::GET,
@@ -150,7 +153,8 @@ mod tests {
             "method": "current_period"
         });
 
-        let funding_rate_history: FundingRateHistory = serde_json::from_value(funding_rate_history_json).unwrap();
+        let funding_rate_history: FundingRateHistory =
+            serde_json::from_value(funding_rate_history_json).unwrap();
         assert_eq!(funding_rate_history.inst_type, "SWAP");
         assert_eq!(funding_rate_history.inst_id, "BTC-USD-SWAP");
         assert_eq!(funding_rate_history.formula_type, "withRate");
@@ -187,7 +191,8 @@ mod tests {
             ]
         });
 
-        let response: GetFundingRateHistoryResponse = serde_json::from_value(response_json).unwrap();
+        let response: GetFundingRateHistoryResponse =
+            serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.msg, "");
         assert_eq!(response.data.len(), 2);
@@ -219,7 +224,8 @@ mod tests {
         };
 
         let serialized = serde_json::to_value(&original).unwrap();
-        let deserialized: GetFundingRateHistoryRequest = serde_json::from_value(serialized).unwrap();
+        let deserialized: GetFundingRateHistoryRequest =
+            serde_json::from_value(serialized).unwrap();
 
         assert_eq!(original.inst_id, deserialized.inst_id);
         assert_eq!(original.after, deserialized.after);

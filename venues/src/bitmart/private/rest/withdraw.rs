@@ -47,7 +47,13 @@ pub struct WithdrawResponse {
 
 impl WithdrawRequest {
     /// Create a new blockchain withdraw request
-    pub fn new_blockchain_withdraw(currency: String, amount: String, address: String, address_memo: Option<String>, destination: Option<String>) -> Self {
+    pub fn new_blockchain_withdraw(
+        currency: String,
+        amount: String,
+        address: String,
+        address_memo: Option<String>,
+        destination: Option<String>,
+    ) -> Self {
         Self {
             currency,
             amount,
@@ -61,7 +67,13 @@ impl WithdrawRequest {
     }
 
     /// Create a new BitMart account withdraw request
-    pub fn new_bitmart_withdraw(currency: String, amount: String, account_type: i32, value: String, area_code: Option<String>) -> Self {
+    pub fn new_bitmart_withdraw(
+        currency: String,
+        amount: String,
+        account_type: i32,
+        value: String,
+        area_code: Option<String>,
+    ) -> Self {
         Self {
             currency,
             amount,

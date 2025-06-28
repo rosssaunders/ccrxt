@@ -71,7 +71,10 @@ impl RestClient {
     /// Retrieves candlestick (k-line) data for a given instrument and timeframe.
     ///
     /// [Official API docs](https://exchange-docs.crypto.com/spot/index.html)
-    pub async fn get_candlestick(&self, params: GetCandlestickRequest) -> RestResult<GetCandlestickResponse> {
+    pub async fn get_candlestick(
+        &self,
+        params: GetCandlestickRequest,
+    ) -> RestResult<GetCandlestickResponse> {
         self.send_request(
             "public/get-candlestick",
             reqwest::Method::GET,

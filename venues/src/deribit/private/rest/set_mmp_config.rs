@@ -145,7 +145,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Result with array of MMP configuration objects
-    pub async fn set_mmp_config(&self, request: SetMmpConfigRequest) -> RestResult<SetMmpConfigResponse> {
+    pub async fn set_mmp_config(
+        &self,
+        request: SetMmpConfigRequest,
+    ) -> RestResult<SetMmpConfigResponse> {
         self.send_signed_request(
             "private/set_mmp_config",
             &request,
@@ -419,8 +422,10 @@ mod tests {
     #[tokio::test]
     async fn test_set_mmp_config_method_exists() {
         // Test that the method exists and compiles without needing to call it
-        let api_key = Box::new(PlainTextSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret = Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let api_key =
+            Box::new(PlainTextSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
+        let api_secret =
+            Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
         let client = reqwest::Client::new();
         let rate_limiter = crate::deribit::RateLimiter::new(AccountTier::Tier4);
 

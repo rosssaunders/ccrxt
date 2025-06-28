@@ -49,7 +49,10 @@ impl RestClient {
     ///
     /// # Returns
     /// List of order details
-    pub async fn query_orders(&self, request: QueryOrdersRequest) -> RestResult<QueryOrdersResponse> {
+    pub async fn query_orders(
+        &self,
+        request: QueryOrdersRequest,
+    ) -> RestResult<QueryOrdersResponse> {
         self.send_request(
             "/spot/v4/query/orders",
             reqwest::Method::POST,

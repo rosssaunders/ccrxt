@@ -27,7 +27,10 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the set auto repay response or an error
-    pub async fn set_auto_repay(&self, request: &SetAutoRepayRequest) -> RestResult<OkxApiResponse<SetAutoRepayResponse>> {
+    pub async fn set_auto_repay(
+        &self,
+        request: &SetAutoRepayRequest,
+    ) -> RestResult<OkxApiResponse<SetAutoRepayResponse>> {
         self.send_request(
             "api/v5/account/set-auto-repay",
             reqwest::Method::POST,
@@ -63,7 +66,8 @@ mod tests {
             ]
         }"#;
 
-        let response: OkxApiResponse<SetAutoRepayResponse> = serde_json::from_str(response_json).unwrap();
+        let response: OkxApiResponse<SetAutoRepayResponse> =
+            serde_json::from_str(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 1);
 

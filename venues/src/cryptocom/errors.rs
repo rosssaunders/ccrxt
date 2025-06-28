@@ -314,7 +314,9 @@ pub enum ApiError {
     #[error("IOC order has not been filled and cancelled")]
     ImmediateOrCancel,
 
-    #[error("Rejected POST_ONLY create-order request (normally happened when exec_inst contains POST_ONLY but time_in_force is NOT GOOD_TILL_CANCEL)")]
+    #[error(
+        "Rejected POST_ONLY create-order request (normally happened when exec_inst contains POST_ONLY but time_in_force is NOT GOOD_TILL_CANCEL)"
+    )]
     PostOnlyRej,
 
     #[error("Canceled due to Self Trade Prevention")]
@@ -419,7 +421,9 @@ impl From<ErrorResponse> for ApiError {
             43005 => ApiError::PostOnlyRej,
             43012 => ApiError::SelfTradePrevention,
             50001 => match err.message.as_str() {
-                "If create-withdrawal call breaching credit line check" => ApiError::DwCreditLineNotMaintained,
+                "If create-withdrawal call breaching credit line check" => {
+                    ApiError::DwCreditLineNotMaintained
+                }
                 "Internal error" => ApiError::ErrInternal,
                 _ => ApiError::UnmappedApiError {
                     code: err.code,

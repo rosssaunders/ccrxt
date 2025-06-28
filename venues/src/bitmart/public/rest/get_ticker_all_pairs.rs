@@ -101,7 +101,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Ticker data for all trading pairs with volume > 0 in the last 24 hours
-    pub async fn get_ticker_all_pairs(&self, _request: GetTickerAllPairsRequest) -> RestResult<GetTickerAllPairsResponse> {
+    pub async fn get_ticker_all_pairs(
+        &self,
+        _request: GetTickerAllPairsRequest,
+    ) -> RestResult<GetTickerAllPairsResponse> {
         self.send_request(
             "/spot/quotation/v3/tickers",
             reqwest::Method::GET,

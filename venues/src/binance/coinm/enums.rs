@@ -606,7 +606,9 @@ impl fmt::Display for TransferType {
             TransferType::MarginCmfuture => write!(f, "MARGIN_CMFUTURE"),
             TransferType::IsolatedmarginMargin => write!(f, "ISOLATEDMARGIN_MARGIN"),
             TransferType::MarginIsolatedmargin => write!(f, "MARGIN_ISOLATEDMARGIN"),
-            TransferType::IsolatedmarginIsolatedmargin => write!(f, "ISOLATEDMARGIN_ISOLATEDMARGIN"),
+            TransferType::IsolatedmarginIsolatedmargin => {
+                write!(f, "ISOLATEDMARGIN_ISOLATEDMARGIN")
+            }
             TransferType::MainFunding => write!(f, "MAIN_FUNDING"),
             TransferType::FundingMain => write!(f, "FUNDING_MAIN"),
             TransferType::FundingUmfuture => write!(f, "FUNDING_UMFUTURE"),

@@ -63,7 +63,10 @@ impl RestClient {
     /// Retrieves available expiration timestamps for a given currency and instrument kind.
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_expirations)
-    pub async fn get_expirations(&self, params: GetExpirationsRequest) -> RestResult<GetExpirationsResponse> {
+    pub async fn get_expirations(
+        &self,
+        params: GetExpirationsRequest,
+    ) -> RestResult<GetExpirationsResponse> {
         self.send_request(
             "get_expirations",
             Method::POST,
@@ -93,10 +96,10 @@ mod tests {
     #[test]
     fn test_deserialize_response() {
         let data = r#"{
-            \"id\": 42,
-            \"jsonrpc\": \"2.0\",
-            \"result\": {
-                \"expirations\": [1680307200000, 1682918400000, 1685529600000]
+            "id": 42,
+            "jsonrpc": "2.0",
+            "result": {
+                "expirations": [1680307200000, 1682918400000, 1685529600000]
             }
         }"#;
         let resp: GetExpirationsResponse = serde_json::from_str(data).unwrap();

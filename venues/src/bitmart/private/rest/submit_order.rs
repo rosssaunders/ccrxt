@@ -53,7 +53,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Order submission response with order ID
-    pub async fn submit_order(&self, request: SubmitOrderRequest) -> RestResult<SubmitOrderResponse> {
+    pub async fn submit_order(
+        &self,
+        request: SubmitOrderRequest,
+    ) -> RestResult<SubmitOrderResponse> {
         self.send_request(
             "/spot/v2/submit_order",
             reqwest::Method::POST,

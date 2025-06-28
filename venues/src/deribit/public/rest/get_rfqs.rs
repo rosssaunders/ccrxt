@@ -99,14 +99,14 @@ mod tests {
     #[test]
     fn test_deserialize_response() {
         let data = r#"{
-            \"id\": 25,
-            \"jsonrpc\": \"2.0\",
-            \"result\": {
-                \"rfqs\": [
+            "id": 25,
+            "jsonrpc": "2.0",
+            "result": {
+                "rfqs": [
                     {
-                        \"rfq_id\": \"rfq-123\",
-                        \"state\": "active",
-                        \"timestamp\": 1680310800000
+                        "rfq_id": "rfq-123",
+                        "state": "active",
+                        "timestamp": 1680310800000
                     }
                 ]
             }

@@ -40,7 +40,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Deposit address information
-    pub async fn get_deposit_address(&self, request: GetDepositAddressRequest) -> RestResult<GetDepositAddressResponse> {
+    pub async fn get_deposit_address(
+        &self,
+        request: GetDepositAddressRequest,
+    ) -> RestResult<GetDepositAddressResponse> {
         self.send_request(
             "/account/v1/deposit/address",
             reqwest::Method::GET,

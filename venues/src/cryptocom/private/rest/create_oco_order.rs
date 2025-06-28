@@ -64,7 +64,10 @@ impl RestClient {
     ///
     /// # Returns
     /// The response contains the OCO list ID.
-    pub async fn create_oco_order_list(&self, request: CreateOcoOrderRequest) -> RestResult<CreateOcoOrderResponse> {
+    pub async fn create_oco_order_list(
+        &self,
+        request: CreateOcoOrderRequest,
+    ) -> RestResult<CreateOcoOrderResponse> {
         self.send_signed_request("private/create-order-list", request)
             .await
     }

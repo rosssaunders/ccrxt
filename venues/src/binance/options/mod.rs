@@ -9,7 +9,10 @@ pub mod errors;
 pub mod rate_limit;
 
 pub use errors::*;
-pub use rate_limit::{IntervalUnit, RateLimitHeader, RateLimitHeaderKind, RateLimitUsage, RateLimiter, ResponseHeaders};
+pub use rate_limit::{
+    IntervalUnit, RateLimitHeader, RateLimitHeaderKind, RateLimitUsage, RateLimiter,
+    ResponseHeaders,
+};
 
 mod enums;
 
@@ -26,6 +29,9 @@ pub mod rest;
 pub mod public;
 
 pub use public::PublicRestClient;
+
+// Private module
+pub mod private;
 
 /// REST response structure for Options API
 #[derive(Debug, Clone)]

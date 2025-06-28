@@ -28,7 +28,10 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the batch order cancellation responses or an error
-    pub async fn cancel_batch_orders(&self, orders: &[CancelOrderRequest]) -> RestResult<OkxApiResponse<CancelBatchOrdersResponse>> {
+    pub async fn cancel_batch_orders(
+        &self,
+        orders: &[CancelOrderRequest],
+    ) -> RestResult<OkxApiResponse<CancelBatchOrdersResponse>> {
         self.send_request(
             "api/v5/trade/cancel-batch-orders",
             reqwest::Method::POST,
@@ -87,7 +90,8 @@ mod tests {
             ]
         }"#;
 
-        let response: OkxApiResponse<CancelBatchOrdersResponse> = serde_json::from_str(response_json).unwrap();
+        let response: OkxApiResponse<CancelBatchOrdersResponse> =
+            serde_json::from_str(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 2);
         assert_eq!(response.data[0].ord_id, "312269865356374016");

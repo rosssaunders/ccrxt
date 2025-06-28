@@ -26,7 +26,10 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the activate option response or an error
-    pub async fn activate_option(&self, request: &ActivateOptionRequest) -> RestResult<OkxApiResponse<ActivateOptionResponse>> {
+    pub async fn activate_option(
+        &self,
+        request: &ActivateOptionRequest,
+    ) -> RestResult<OkxApiResponse<ActivateOptionResponse>> {
         self.send_request(
             "api/v5/account/activate-option",
             reqwest::Method::POST,
@@ -62,7 +65,8 @@ mod tests {
             ]
         }"#;
 
-        let response: OkxApiResponse<ActivateOptionResponse> = serde_json::from_str(response_json).unwrap();
+        let response: OkxApiResponse<ActivateOptionResponse> =
+            serde_json::from_str(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 1);
 

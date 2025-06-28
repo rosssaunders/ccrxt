@@ -44,7 +44,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Withdraw quota information
-    pub async fn get_withdraw_quota(&self, request: GetWithdrawQuotaRequest) -> RestResult<GetWithdrawQuotaResponse> {
+    pub async fn get_withdraw_quota(
+        &self,
+        request: GetWithdrawQuotaRequest,
+    ) -> RestResult<GetWithdrawQuotaResponse> {
         self.send_request(
             "/account/v1/withdraw/charge",
             reqwest::Method::GET,

@@ -46,15 +46,10 @@ impl RestClient {
     /// returned.
     ///
     /// [Official API docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Recent-Trades-List)
-    /// 
+    ///
     /// Weight: 5
     pub async fn get_recent_trades(&self, params: RecentTradesRequest) -> RestResult<Vec<Trade>> {
-        self.send_request(
-            "/dapi/v1/trades",
-            reqwest::Method::GET,
-            Some(params),
-            5,
-        )
-        .await
+        self.send_request("/dapi/v1/trades", reqwest::Method::GET, Some(params), 5)
+            .await
     }
 }

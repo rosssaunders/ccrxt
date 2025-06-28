@@ -55,7 +55,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing the estimated settlement info
-    pub async fn get_estimated_settlement_info(&self, request: &GetEstimatedSettlementInfoRequest) -> RestResult<GetEstimatedSettlementInfoResponse> {
+    pub async fn get_estimated_settlement_info(
+        &self,
+        request: &GetEstimatedSettlementInfoRequest,
+    ) -> RestResult<GetEstimatedSettlementInfoResponse> {
         self.send_request(
             "api/v5/public/estimated-settlement-info",
             reqwest::Method::GET,
@@ -116,7 +119,8 @@ mod tests {
             ]
         });
 
-        let response: GetEstimatedSettlementInfoResponse = serde_json::from_value(response_json).unwrap();
+        let response: GetEstimatedSettlementInfoResponse =
+            serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.msg, "");
         assert_eq!(response.data.len(), 1);
@@ -136,7 +140,8 @@ mod tests {
         };
 
         let serialized = serde_json::to_value(&original).unwrap();
-        let deserialized: GetEstimatedSettlementInfoRequest = serde_json::from_value(serialized).unwrap();
+        let deserialized: GetEstimatedSettlementInfoRequest =
+            serde_json::from_value(serialized).unwrap();
 
         assert_eq!(original.inst_id, deserialized.inst_id);
     }
@@ -149,7 +154,8 @@ mod tests {
             "data": []
         });
 
-        let response: GetEstimatedSettlementInfoResponse = serde_json::from_value(response_json).unwrap();
+        let response: GetEstimatedSettlementInfoResponse =
+            serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.msg, "");
         assert_eq!(response.data.len(), 0);

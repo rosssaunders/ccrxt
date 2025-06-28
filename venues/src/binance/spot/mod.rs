@@ -11,12 +11,20 @@ pub mod private {
     pub use self::rest::RestClient as PrivateRestClient;
 }
 
-// Re-export the PrivateRestClient at the spot level
+// Public module with re-exports
+pub mod public {
+    pub mod rest;
+    // Re-export RestClient so it can be re-exported by the parent
+    pub use self::rest::RestClient as PublicRestClient;
+}
+
+// Re-export the RestClients at the spot level
 // Re-export key components
 pub use enums::*;
 pub use errors::{ApiError, Errors};
 // Re-export for backward compatibility
 pub use private::PrivateRestClient;
+pub use public::PublicRestClient;
 pub use rate_limit::{RateLimitHeader, RateLimiter};
 
 pub use crate::binance::spot::errors::ErrorResponse;
@@ -38,7 +46,8 @@ impl ResponseHeaders {
         let values = headers
             .iter()
             .filter_map(|(name, val)| {
-                rate_limit::RateLimitHeader::parse(name.as_str()).and_then(|hdr| val.to_str().ok()?.parse::<u32>().ok().map(|v| (hdr, v)))
+                rate_limit::RateLimitHeader::parse(name.as_str())
+                    .and_then(|hdr| val.to_str().ok()?.parse::<u32>().ok().map(|v| (hdr, v)))
             })
             .collect();
         Self { values }

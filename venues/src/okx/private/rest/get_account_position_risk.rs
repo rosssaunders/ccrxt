@@ -122,7 +122,10 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the account position risk or an error
-    pub async fn get_account_position_risk(&self, request: &GetAccountPositionRiskRequest) -> RestResult<OkxApiResponse<AccountPositionRisk>> {
+    pub async fn get_account_position_risk(
+        &self,
+        request: &GetAccountPositionRiskRequest,
+    ) -> RestResult<OkxApiResponse<AccountPositionRisk>> {
         self.send_request(
             "api/v5/account/account-position-risk",
             reqwest::Method::GET,
@@ -202,7 +205,8 @@ mod tests {
             ]
         }"#;
 
-        let response: OkxApiResponse<AccountPositionRisk> = serde_json::from_str(response_json).unwrap();
+        let response: OkxApiResponse<AccountPositionRisk> =
+            serde_json::from_str(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 1);
 

@@ -56,7 +56,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 );
 
                 // Show BTC-related underlying assets
-                let btc_underlying: Vec<_> = data.uly.iter().filter(|u| u.contains("BTC")).collect();
+                let btc_underlying: Vec<_> =
+                    data.uly.iter().filter(|u| u.contains("BTC")).collect();
 
                 if !btc_underlying.is_empty() {
                     println!("BTC-related underlying assets:");

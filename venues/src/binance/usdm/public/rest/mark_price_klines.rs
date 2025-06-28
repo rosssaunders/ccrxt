@@ -68,7 +68,10 @@ impl RestClient {
     /// Get mark price kline/candlestick bars (GET /fapi/v1/markPriceKlines)
     ///
     /// [API docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Mark-Price-Kline-Candlestick-Data)
-    pub async fn get_mark_price_klines(&self, params: MarkPriceKlinesRequest) -> RestResult<Vec<MarkPriceKline>> {
+    pub async fn get_mark_price_klines(
+        &self,
+        params: MarkPriceKlinesRequest,
+    ) -> RestResult<Vec<MarkPriceKline>> {
         let mut query = format!(
             "symbol={}&interval={}",
             params.symbol,

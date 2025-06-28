@@ -35,6 +35,16 @@ The project is organized into three main crates:
 - `websockets`: Common WebSocket traits and utilities
 - `rest`: Common REST client traits and utilities
 
-### Architecture & Coding Standards.
+### Architecture & Coding Standards
 
-@path/.cursorrules
+Please refer to the detailed instruction files in `.github/instructions/`:
+- `general-coding.instructions.md` - General coding standards and practices
+- `venue.instructions.md` - Venue implementation guidelines
+- `websocket.instructions.md` - WebSocket implementation patterns
+- `rest.instructions.md` - REST API implementation guidelines
+- `error-handling.instructions.md` - Error handling patterns
+- `rate-limiting.instructions.md` - Rate limiting implementation
+- `enums.instructions.md` - Enum usage and patterns
+- `examples.instructions.md` - Example code guidelines
+- `testing.instructions.md` - Testing practices
+- `credentials.instructions.md` - Credential management guidelines

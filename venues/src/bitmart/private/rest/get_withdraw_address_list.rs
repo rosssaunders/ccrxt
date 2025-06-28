@@ -55,7 +55,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Withdraw address list information
-    pub async fn get_withdraw_address_list(&self, request: GetWithdrawAddressListRequest) -> RestResult<GetWithdrawAddressListResponse> {
+    pub async fn get_withdraw_address_list(
+        &self,
+        request: GetWithdrawAddressListRequest,
+    ) -> RestResult<GetWithdrawAddressListResponse> {
         self.send_request(
             "/account/v1/withdraw/address/list",
             reqwest::Method::GET,

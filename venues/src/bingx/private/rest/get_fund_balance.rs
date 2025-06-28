@@ -48,7 +48,10 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the fund account balances or an error
-    pub async fn get_fund_balance(&self, request: &GetFundBalanceRequest) -> RestResult<GetFundBalanceResponse> {
+    pub async fn get_fund_balance(
+        &self,
+        request: &GetFundBalanceRequest,
+    ) -> RestResult<GetFundBalanceResponse> {
         self.send_request(
             "/openApi/fund/v1/account/balance",
             reqwest::Method::GET,

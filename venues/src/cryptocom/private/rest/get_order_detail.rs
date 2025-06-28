@@ -83,7 +83,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Order detail information
-    pub async fn get_order_detail(&self, request: GetOrderDetailRequest) -> RestResult<OrderDetail> {
+    pub async fn get_order_detail(
+        &self,
+        request: GetOrderDetailRequest,
+    ) -> RestResult<OrderDetail> {
         self.send_signed_request("private/get-order-detail", request)
             .await
     }

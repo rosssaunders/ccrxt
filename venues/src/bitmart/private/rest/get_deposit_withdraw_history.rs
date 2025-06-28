@@ -118,7 +118,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Deposit and withdraw history information
-    pub async fn get_deposit_withdraw_history(&self, request: GetDepositWithdrawHistoryRequest) -> RestResult<GetDepositWithdrawHistoryResponse> {
+    pub async fn get_deposit_withdraw_history(
+        &self,
+        request: GetDepositWithdrawHistoryRequest,
+    ) -> RestResult<GetDepositWithdrawHistoryResponse> {
         self.send_request(
             "/account/v2/deposit-withdraw/history",
             reqwest::Method::GET,
@@ -155,13 +158,15 @@ mod tests {
 
     #[test]
     fn test_request_with_currency() {
-        let request = GetDepositWithdrawHistoryRequest::new_deposit_history(100).with_currency("BTC".to_string());
+        let request = GetDepositWithdrawHistoryRequest::new_deposit_history(100)
+            .with_currency("BTC".to_string());
         assert_eq!(request.currency, Some("BTC".to_string()));
     }
 
     #[test]
     fn test_request_with_time_range() {
-        let request = GetDepositWithdrawHistoryRequest::new_withdraw_history(100).with_time_range(1739499865000, 1739586265000);
+        let request = GetDepositWithdrawHistoryRequest::new_withdraw_history(100)
+            .with_time_range(1739499865000, 1739586265000);
         assert_eq!(request.start_time, Some(1739499865000));
         assert_eq!(request.end_time, Some(1739586265000));
     }

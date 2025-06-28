@@ -122,7 +122,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Margin isolated account information
-    pub async fn get_margin_isolated_account(&self, request: GetMarginIsolatedAccountRequest) -> RestResult<GetMarginIsolatedAccountResponse> {
+    pub async fn get_margin_isolated_account(
+        &self,
+        request: GetMarginIsolatedAccountRequest,
+    ) -> RestResult<GetMarginIsolatedAccountResponse> {
         self.send_request(
             "/spot/v1/margin/isolated/account",
             reqwest::Method::GET,

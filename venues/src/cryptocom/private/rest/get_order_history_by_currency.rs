@@ -134,7 +134,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Order history information for the specified currency
-    pub async fn get_order_history_by_currency(&self, params: GetOrderHistoryByCurrencyRequest) -> RestResult<GetOrderHistoryByCurrencyResponse> {
+    pub async fn get_order_history_by_currency(
+        &self,
+        params: GetOrderHistoryByCurrencyRequest,
+    ) -> RestResult<GetOrderHistoryByCurrencyResponse> {
         self.send_signed_request("private/get_order_history_by_currency", params)
             .await
     }
@@ -259,7 +262,8 @@ mod tests {
             ]
         });
 
-        let response: GetOrderHistoryByCurrencyResponse = serde_json::from_value(response_json).unwrap();
+        let response: GetOrderHistoryByCurrencyResponse =
+            serde_json::from_value(response_json).unwrap();
         assert_eq!(response.result.len(), 1);
         assert_eq!(response.result[0].order_id, "12345");
         assert_eq!(response.result[0].instrument_name, "BTCUSD-PERP");
@@ -284,7 +288,8 @@ mod tests {
             "continuation": "next_page_token"
         });
 
-        let response: GetOrderHistoryByCurrencyWithContinuationResponse = serde_json::from_value(response_json).unwrap();
+        let response: GetOrderHistoryByCurrencyWithContinuationResponse =
+            serde_json::from_value(response_json).unwrap();
         assert_eq!(response.result.len(), 1);
         assert_eq!(response.result[0].order_id, "67890");
         assert_eq!(response.continuation, Some("next_page_token".to_string()));
@@ -318,7 +323,8 @@ mod tests {
         ];
 
         for kind in kinds {
-            let request = GetOrderHistoryByCurrencyRequest::new("BTC".to_string()).with_kind(kind.to_string());
+            let request = GetOrderHistoryByCurrencyRequest::new("BTC".to_string())
+                .with_kind(kind.to_string());
             assert_eq!(request.kind, Some(kind.to_string()));
 
             let json_value = serde_json::to_value(request).unwrap();

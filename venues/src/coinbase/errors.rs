@@ -170,13 +170,23 @@ impl From<ErrorResponse> for ApiError {
         // Map common error messages to specific error types
         match err.message.as_str() {
             msg if msg.contains("Invalid price") => ApiError::InvalidPrice { msg: err.message },
-            msg if msg.contains("Insufficient funds") => ApiError::InsufficientFunds { msg: err.message },
-            msg if msg.contains("Invalid order size") => ApiError::InvalidOrderSize { msg: err.message },
+            msg if msg.contains("Insufficient funds") => {
+                ApiError::InsufficientFunds { msg: err.message }
+            }
+            msg if msg.contains("Invalid order size") => {
+                ApiError::InvalidOrderSize { msg: err.message }
+            }
             msg if msg.contains("Invalid product") => ApiError::InvalidProduct { msg: err.message },
             msg if msg.contains("Order not found") => ApiError::OrderNotFound { msg: err.message },
-            msg if msg.contains("already cancelled") => ApiError::OrderAlreadyCancelled { msg: err.message },
-            msg if msg.contains("already filled") => ApiError::OrderAlreadyFilled { msg: err.message },
-            msg if msg.contains("Post only") => ApiError::PostOnlyOrderWouldTrade { msg: err.message },
+            msg if msg.contains("already cancelled") => {
+                ApiError::OrderAlreadyCancelled { msg: err.message }
+            }
+            msg if msg.contains("already filled") => {
+                ApiError::OrderAlreadyFilled { msg: err.message }
+            }
+            msg if msg.contains("Post only") => {
+                ApiError::PostOnlyOrderWouldTrade { msg: err.message }
+            }
             msg if msg.contains("Timestamp") => ApiError::TimestampInvalid { msg: err.message },
             msg if msg.contains("Signature") => ApiError::SignatureInvalid { msg: err.message },
             msg if msg.contains("Passphrase") => ApiError::PassphraseInvalid { msg: err.message },

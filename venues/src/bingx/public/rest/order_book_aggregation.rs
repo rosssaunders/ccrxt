@@ -55,7 +55,10 @@ impl RestClient {
     /// # API Documentation
     /// - Endpoint: GET /openApi/spot/v2/market/depth
     /// - Content-Type: request body(application/json)
-    pub async fn get_order_book_aggregation(&self, request: &GetOrderBookAggregationRequest) -> RestResult<GetOrderBookAggregationResponse> {
+    pub async fn get_order_book_aggregation(
+        &self,
+        request: &GetOrderBookAggregationRequest,
+    ) -> RestResult<GetOrderBookAggregationResponse> {
         self.send_request(
             "/openApi/spot/v2/market/depth",
             Some(request),
@@ -86,7 +89,8 @@ mod tests {
 
     #[test]
     fn test_order_book_aggregation_request_serialization() {
-        let request = GetOrderBookAggregationRequest::new("BTC_USDT".to_string(), 20, "step0".to_string());
+        let request =
+            GetOrderBookAggregationRequest::new("BTC_USDT".to_string(), 20, "step0".to_string());
         let json = serde_json::to_string(&request).unwrap();
         assert!(json.contains("\"symbol\":\"BTC_USDT\""));
         assert!(json.contains("\"depth\":20"));
@@ -121,7 +125,8 @@ mod tests {
             RateLimiter::new(),
         );
 
-        let request = GetOrderBookAggregationRequest::new("BTC_USDT".to_string(), 20, "step0".to_string());
+        let request =
+            GetOrderBookAggregationRequest::new("BTC_USDT".to_string(), 20, "step0".to_string());
 
         // Test that the method exists and can be called
         // Note: This will fail with network error since we're not making real requests

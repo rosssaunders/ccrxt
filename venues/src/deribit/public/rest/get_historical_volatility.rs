@@ -67,7 +67,10 @@ impl RestClient {
     /// Retrieves historical volatility data for a given currency.
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_historical_volatility)
-    pub async fn get_historical_volatility(&self, params: GetHistoricalVolatilityRequest) -> RestResult<GetHistoricalVolatilityResponse> {
+    pub async fn get_historical_volatility(
+        &self,
+        params: GetHistoricalVolatilityRequest,
+    ) -> RestResult<GetHistoricalVolatilityResponse> {
         self.send_request(
             "get_historical_volatility",
             Method::POST,
@@ -99,12 +102,12 @@ mod tests {
     #[test]
     fn test_deserialize_response() {
         let data = r#"{
-            \"id\": 10,
-            \"jsonrpc\": \"2.0\",
-            \"result\": {
-                \"data\": [
-                    { \"volatility\": 0.65, \"timestamp\": 1680307200000 },
-                    { \"volatility\": 0.66, \"timestamp\": 1680310800000 }
+            "id": 10,
+            "jsonrpc": "2.0",
+            "result": {
+                "data": [
+                    { "volatility": 0.65, "timestamp": 1680307200000 },
+                    { "volatility": 0.66, "timestamp": 1680310800000 }
                 ]
             }
         }"#;

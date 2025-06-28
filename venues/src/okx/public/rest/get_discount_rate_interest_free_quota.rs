@@ -221,7 +221,8 @@ mod tests {
             ]
         });
 
-        let response: GetDiscountRateInterestFreeQuotaResponse = serde_json::from_value(response_json).unwrap();
+        let response: GetDiscountRateInterestFreeQuotaResponse =
+            serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.msg, "");
         assert_eq!(response.data.len(), 1);
@@ -265,7 +266,8 @@ mod tests {
             ]
         });
 
-        let response: GetDiscountRateInterestFreeQuotaResponse = serde_json::from_value(response_json).unwrap();
+        let response: GetDiscountRateInterestFreeQuotaResponse =
+            serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 2);
 
@@ -290,7 +292,8 @@ mod tests {
         };
 
         let serialized = serde_json::to_value(&original).unwrap();
-        let deserialized: GetDiscountRateInterestFreeQuotaRequest = serde_json::from_value(serialized).unwrap();
+        let deserialized: GetDiscountRateInterestFreeQuotaRequest =
+            serde_json::from_value(serialized).unwrap();
 
         assert_eq!(original.ccy, deserialized.ccy);
         assert_eq!(original.discount_lv, deserialized.discount_lv);

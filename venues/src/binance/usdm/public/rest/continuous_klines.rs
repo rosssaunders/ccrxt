@@ -52,7 +52,10 @@ impl RestClient {
     /// Get continuous contract kline/candlestick bars (GET /fapi/v1/continuousKlines)
     ///
     /// [API docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Continuous-Contract-Kline-Candlestick-Data)
-    pub async fn get_continuous_klines(&self, params: ContinuousKlinesRequest) -> RestResult<Vec<ContinuousKline>> {
+    pub async fn get_continuous_klines(
+        &self,
+        params: ContinuousKlinesRequest,
+    ) -> RestResult<Vec<ContinuousKline>> {
         let mut query = format!(
             "pair={}&contractType={}&interval={}",
             params.pair,

@@ -25,7 +25,10 @@ pub struct SubscribeResponse {
 
 impl PrivateWebSocketClient {
     /// Send a subscribe request and wait for the response
-    pub async fn subscribe(&mut self, request: SubscribeRequest) -> Result<SubscribeResponse, DeribitWebSocketError> {
+    pub async fn subscribe(
+        &mut self,
+        request: SubscribeRequest,
+    ) -> Result<SubscribeResponse, DeribitWebSocketError> {
         self.send_and_receive::<SubscribeRequest, SubscribeResponse>(&request)
             .await
     }

@@ -41,7 +41,10 @@ impl RestClient {
     /// Get funding rate history (GET /fapi/v1/fundingRate)
     ///
     /// [API docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Get-Funding-Rate-History)
-    pub async fn get_funding_rate_history(&self, params: FundingRateHistoryRequest) -> RestResult<Vec<FundingRateHistory>> {
+    pub async fn get_funding_rate_history(
+        &self,
+        params: FundingRateHistoryRequest,
+    ) -> RestResult<Vec<FundingRateHistory>> {
         let mut query = String::new();
         if let Some(symbol) = params.symbol {
             query.push_str(&format!("symbol={}", symbol));

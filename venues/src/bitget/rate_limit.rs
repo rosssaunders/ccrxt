@@ -188,7 +188,12 @@ impl RateLimiter {
     /// - endpoint_limit_per_second: the specific limit for this endpoint (e.g., 3, 10, 20)
     /// - is_order: whether this is an order-related endpoint
     /// - order_limit_per_second: the specific order limit for this endpoint if applicable
-    pub async fn check_limits(&self, endpoint_limit_per_second: u32, is_order: bool, order_limit_per_second: Option<u32>) -> Result<(), Errors> {
+    pub async fn check_limits(
+        &self,
+        endpoint_limit_per_second: u32,
+        is_order: bool,
+        order_limit_per_second: Option<u32>,
+    ) -> Result<(), Errors> {
         let usage = self.usage.read().await;
 
         // Overall IP limit: 6,000 per minute

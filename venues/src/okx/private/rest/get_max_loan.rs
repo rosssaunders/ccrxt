@@ -51,7 +51,10 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the max loan or an error
-    pub async fn get_max_loan(&self, request: &GetMaxLoanRequest) -> RestResult<OkxApiResponse<MaxLoan>> {
+    pub async fn get_max_loan(
+        &self,
+        request: &GetMaxLoanRequest,
+    ) -> RestResult<OkxApiResponse<MaxLoan>> {
         self.send_request(
             "api/v5/account/max-loan",
             reqwest::Method::GET,

@@ -84,7 +84,13 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the signature as a base64 string or an error
-    pub fn sign_request(&self, timestamp: &str, method: &str, request_path: &str, body: &str) -> Result<String, Errors> {
+    pub fn sign_request(
+        &self,
+        timestamp: &str,
+        method: &str,
+        request_path: &str,
+        body: &str,
+    ) -> Result<String, Errors> {
         // Create the prehash string: timestamp + method + requestPath + body
         let prehash = format!("{timestamp}{method}{request_path}{body}");
 
@@ -95,7 +101,8 @@ impl RestClient {
             .map_err(|e| Errors::Error(format!("Failed to decode API secret: {e}")))?;
 
         // Sign with HMAC SHA256
-        let mut mac = Hmac::<Sha256>::new_from_slice(&secret_bytes).map_err(|_| Errors::InvalidApiKey())?;
+        let mut mac =
+            Hmac::<Sha256>::new_from_slice(&secret_bytes).map_err(|_| Errors::InvalidApiKey())?;
         mac.update(prehash.as_bytes());
 
         // Encode as Base64
@@ -137,11 +144,15 @@ impl RestClient {
         let (request_path, body) = if method == reqwest::Method::GET {
             // For GET requests, add query parameters
             if let Some(params) = params {
-                let query_string = serde_urlencoded::to_string(params).map_err(|e| Errors::Error(format!("Failed to serialize query parameters: {e}")))?;
+                let query_string = serde_urlencoded::to_string(params).map_err(|e| {
+                    Errors::Error(format!("Failed to serialize query parameters: {e}"))
+                })?;
                 if !query_string.is_empty() {
                     // Parse the query string and add individual parameters
                     let parsed_params: Vec<(String, String)> =
-                        serde_urlencoded::from_str(&query_string).map_err(|e| Errors::Error(format!("Failed to parse query parameters: {e}")))?;
+                        serde_urlencoded::from_str(&query_string).map_err(|e| {
+                            Errors::Error(format!("Failed to parse query parameters: {e}"))
+                        })?;
                     for (key, value) in &parsed_params {
                         request_builder = request_builder.query(&[(key, value)]);
                     }
@@ -155,7 +166,8 @@ impl RestClient {
         } else {
             // For POST/PUT/DELETE requests, add JSON body
             let body = if let Some(params) = params {
-                serde_json::to_string(params).map_err(|e| Errors::Error(format!("Failed to serialize request body: {e}")))?
+                serde_json::to_string(params)
+                    .map_err(|e| Errors::Error(format!("Failed to serialize request body: {e}")))?
             } else {
                 String::new()
             };
@@ -192,11 +204,14 @@ impl RestClient {
 
         if status.is_success() {
             // Parse successful response
-            let data = serde_json::from_str::<T>(&response_text).map_err(|e| Errors::Error(format!("Failed to parse response: {e}")))?;
+            let data = serde_json::from_str::<T>(&response_text)
+                .map_err(|e| Errors::Error(format!("Failed to parse response: {e}")))?;
             Ok((data, headers))
         } else {
             // Parse error response
-            if let Ok(error_response) = serde_json::from_str::<crate::coinbase::ErrorResponse>(&response_text) {
+            if let Ok(error_response) =
+                serde_json::from_str::<crate::coinbase::ErrorResponse>(&response_text)
+            {
                 match status.as_u16() {
                     400 => Err(Errors::ApiError(crate::coinbase::ApiError::BadRequest {
                         msg: error_response.message,
@@ -291,7 +306,13 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the deserialized response or an error
-    pub async fn send_request<T, P>(&self, endpoint: &str, method: reqwest::Method, params: Option<&P>, endpoint_type: EndpointType) -> RestResult<T>
+    pub async fn send_request<T, P>(
+        &self,
+        endpoint: &str,
+        method: reqwest::Method,
+        params: Option<&P>,
+        endpoint_type: EndpointType,
+    ) -> RestResult<T>
     where
         T: DeserializeOwned,
         P: Serialize + ?Sized,
@@ -310,11 +331,15 @@ impl RestClient {
         let (request_path, body) = if method == reqwest::Method::GET {
             // For GET requests, add query parameters
             if let Some(params) = params {
-                let query_string = serde_urlencoded::to_string(params).map_err(|e| Errors::Error(format!("Failed to serialize query parameters: {e}")))?;
+                let query_string = serde_urlencoded::to_string(params).map_err(|e| {
+                    Errors::Error(format!("Failed to serialize query parameters: {e}"))
+                })?;
                 if !query_string.is_empty() {
                     // Parse the query string and add individual parameters
                     let parsed_params: Vec<(String, String)> =
-                        serde_urlencoded::from_str(&query_string).map_err(|e| Errors::Error(format!("Failed to parse query parameters: {e}")))?;
+                        serde_urlencoded::from_str(&query_string).map_err(|e| {
+                            Errors::Error(format!("Failed to parse query parameters: {e}"))
+                        })?;
                     for (key, value) in &parsed_params {
                         request_builder = request_builder.query(&[(key, value)]);
                     }
@@ -328,7 +353,8 @@ impl RestClient {
         } else {
             // For POST/PUT/DELETE requests, add JSON body
             let body = if let Some(params) = params {
-                serde_json::to_string(params).map_err(|e| Errors::Error(format!("Failed to serialize request body: {e}")))?
+                serde_json::to_string(params)
+                    .map_err(|e| Errors::Error(format!("Failed to serialize request body: {e}")))?
             } else {
                 String::new()
             };
@@ -364,10 +390,13 @@ impl RestClient {
 
         if status.is_success() {
             // Parse successful response
-            serde_json::from_str::<T>(&response_text).map_err(|e| Errors::Error(format!("Failed to parse response: {e}")))
+            serde_json::from_str::<T>(&response_text)
+                .map_err(|e| Errors::Error(format!("Failed to parse response: {e}")))
         } else {
             // Parse error response
-            if let Ok(error_response) = serde_json::from_str::<crate::coinbase::ErrorResponse>(&response_text) {
+            if let Ok(error_response) =
+                serde_json::from_str::<crate::coinbase::ErrorResponse>(&response_text)
+            {
                 match status.as_u16() {
                     400 => Err(Errors::ApiError(crate::coinbase::ApiError::BadRequest {
                         msg: error_response.message,
@@ -430,8 +459,10 @@ mod tests {
     #[test]
     fn test_private_client_creation() {
         let api_key = Box::new(TestSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret = Box::new(TestSecret::new("dGVzdF9zZWNyZXQ=".to_string())) as Box<dyn ExposableSecret>;
-        let api_passphrase = Box::new(TestSecret::new("test_passphrase".to_string())) as Box<dyn ExposableSecret>;
+        let api_secret =
+            Box::new(TestSecret::new("dGVzdF9zZWNyZXQ=".to_string())) as Box<dyn ExposableSecret>;
+        let api_passphrase =
+            Box::new(TestSecret::new("test_passphrase".to_string())) as Box<dyn ExposableSecret>;
         let client = Client::new();
         let rate_limiter = RateLimiter::new();
 
@@ -451,8 +482,10 @@ mod tests {
     fn test_signature_generation() {
         let api_key = Box::new(TestSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
         // Base64 encoded test secret
-        let api_secret = Box::new(TestSecret::new("dGVzdF9zZWNyZXQ=".to_string())) as Box<dyn ExposableSecret>;
-        let api_passphrase = Box::new(TestSecret::new("test_passphrase".to_string())) as Box<dyn ExposableSecret>;
+        let api_secret =
+            Box::new(TestSecret::new("dGVzdF9zZWNyZXQ=".to_string())) as Box<dyn ExposableSecret>;
+        let api_passphrase =
+            Box::new(TestSecret::new("test_passphrase".to_string())) as Box<dyn ExposableSecret>;
         let client = Client::new();
         let rate_limiter = RateLimiter::new();
 

@@ -48,7 +48,10 @@ impl RestClient {
     /// [Official API docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Get-Funding-Rate-History-of-Perpetual-Futures)
     ///
     /// Weight: 1
-    pub async fn get_funding_rate_history(&self, params: FundingRateRequest) -> RestResult<FundingRateResponse> {
+    pub async fn get_funding_rate_history(
+        &self,
+        params: FundingRateRequest,
+    ) -> RestResult<FundingRateResponse> {
         self.send_request(
             "/dapi/v1/fundingRate",
             reqwest::Method::GET,

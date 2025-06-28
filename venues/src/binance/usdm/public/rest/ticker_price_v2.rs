@@ -35,11 +35,21 @@ impl crate::binance::usdm::public::rest::RestClient {
     /// Latest price for a symbol or symbols (GET /fapi/v2/ticker/price)
     ///
     /// [API docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Symbol-Price-Ticker-v2)
-    pub async fn ticker_price_v2<'a>(&self, params: TickerPriceV2Request<'a>) -> RestResult<TickerPriceV2Result<'a>> {
+    pub async fn ticker_price_v2<'a>(
+        &self,
+        params: TickerPriceV2Request<'a>,
+    ) -> RestResult<TickerPriceV2Result<'a>> {
         let endpoint = "/fapi/v2/ticker/price";
-        let query = serde_urlencoded::to_string(&params).map_err(|e| Errors::Error(format!("Failed to serialize params: {e}")))?;
+        let query = serde_urlencoded::to_string(&params)
+            .map_err(|e| Errors::Error(format!("Failed to serialize params: {e}")))?;
         let resp = self
-            .send_request::<TickerPriceV2Result>(endpoint, reqwest::Method::GET, Some(&query), None, 1)
+            .send_request::<TickerPriceV2Result>(
+                endpoint,
+                reqwest::Method::GET,
+                Some(&query),
+                None,
+                1,
+            )
             .await?;
         Ok(resp)
     }

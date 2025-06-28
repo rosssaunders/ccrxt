@@ -1,5 +1,5 @@
-use crate::binance::coinm::{RestResult, RestResponse};
 use crate::binance::coinm::public::rest::RestClient;
+use crate::binance::coinm::{RestResponse, RestResult};
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
@@ -28,20 +28,24 @@ pub struct TickerPrice {
 
 impl RestClient {
     /// Get symbol price ticker
-    /// 
+    ///
     /// Weight: 1 for a single symbol; 2 when the symbol parameter is omitted
-    pub async fn get_ticker_price(&self, params: TickerPriceRequest) -> RestResult<Vec<TickerPrice>> {
+    pub async fn get_ticker_price(
+        &self,
+        params: TickerPriceRequest,
+    ) -> RestResult<Vec<TickerPrice>> {
         let weight = if params.symbol.is_some() { 1 } else { 2 };
-        
+
         if params.symbol.is_some() {
             // Single ticker
-            let response = self.send_request(
-                "/dapi/v1/ticker/price",
-                reqwest::Method::GET,
-                Some(params),
-                weight,
-            )
-            .await?;
+            let response = self
+                .send_request(
+                    "/dapi/v1/ticker/price",
+                    reqwest::Method::GET,
+                    Some(params),
+                    weight,
+                )
+                .await?;
             Ok(RestResponse {
                 data: vec![response.data],
                 request_duration: response.request_duration,

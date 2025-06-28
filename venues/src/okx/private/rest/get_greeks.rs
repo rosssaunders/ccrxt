@@ -55,7 +55,10 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the Greeks information or an error
-    pub async fn get_greeks(&self, request: &GetGreeksRequest) -> RestResult<OkxApiResponse<Greeks>> {
+    pub async fn get_greeks(
+        &self,
+        request: &GetGreeksRequest,
+    ) -> RestResult<OkxApiResponse<Greeks>> {
         self.send_request(
             "api/v5/account/greeks",
             reqwest::Method::GET,

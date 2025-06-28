@@ -2,8 +2,8 @@ use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 use crate::deribit::{
-    AdvancedType, Currency, EndpointType, InstrumentKind, LiquidationSide, Liquidity, OrderDirection, OrderState, RestResult, Sorting, TickDirection,
-    TradeOrderType,
+    AdvancedType, Currency, EndpointType, InstrumentKind, LiquidationSide, Liquidity,
+    OrderDirection, OrderState, RestResult, Sorting, TickDirection, TradeOrderType,
 };
 
 /// Request parameters for getting user trades by currency
@@ -183,7 +183,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Trade history information for the specified currency
-    pub async fn get_user_trades_by_currency(&self, request: GetUserTradesByCurrencyRequest) -> RestResult<GetUserTradesByCurrencyResponse> {
+    pub async fn get_user_trades_by_currency(
+        &self,
+        request: GetUserTradesByCurrencyRequest,
+    ) -> RestResult<GetUserTradesByCurrencyResponse> {
         self.send_signed_request(
             "private/get_user_trades_by_currency",
             &request,
@@ -315,7 +318,8 @@ mod tests {
             }
         });
 
-        let response: GetUserTradesByCurrencyResponse = serde_json::from_value(response_json).unwrap();
+        let response: GetUserTradesByCurrencyResponse =
+            serde_json::from_value(response_json).unwrap();
 
         assert_eq!(response.id, 1);
         assert_eq!(response.jsonrpc, "2.0");
@@ -435,7 +439,8 @@ mod tests {
             }
         });
 
-        let response: GetUserTradesByCurrencyResponse = serde_json::from_value(response_json).unwrap();
+        let response: GetUserTradesByCurrencyResponse =
+            serde_json::from_value(response_json).unwrap();
 
         assert_eq!(response.id, 2);
         assert_eq!(response.jsonrpc, "2.0");
@@ -446,8 +451,10 @@ mod tests {
     #[tokio::test]
     async fn test_get_user_trades_by_currency_method_exists() {
         // Test that the method exists and compiles without needing to call it
-        let api_key = Box::new(PlainTextSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret = Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let api_key =
+            Box::new(PlainTextSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
+        let api_secret =
+            Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
         let client = reqwest::Client::new();
         let rate_limiter = crate::deribit::RateLimiter::new(AccountTier::Tier4);
 

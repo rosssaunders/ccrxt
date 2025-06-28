@@ -105,7 +105,10 @@ impl RestClient {
     /// # Notes
     /// - Process mode controls error handling behavior
     /// - Either orderIds or clientOrderIds can be used to identify orders
-    pub async fn cancel_multiple_orders(&self, request: &CancelMultipleOrdersRequest) -> RestResult<CancelMultipleOrdersResponse> {
+    pub async fn cancel_multiple_orders(
+        &self,
+        request: &CancelMultipleOrdersRequest,
+    ) -> RestResult<CancelMultipleOrdersResponse> {
         self.send_request(
             "/openApi/spot/v1/trade/cancelOrders",
             reqwest::Method::POST,
@@ -135,7 +138,11 @@ impl CancelMultipleOrdersRequest {
     }
 
     /// Create a request to cancel multiple orders by client order IDs
-    pub fn by_client_order_ids(symbol: String, client_order_ids: Vec<String>, order_ids: Vec<i64>) -> Self {
+    pub fn by_client_order_ids(
+        symbol: String,
+        client_order_ids: Vec<String>,
+        order_ids: Vec<i64>,
+    ) -> Self {
         let order_ids_str = order_ids
             .iter()
             .map(|id| id.to_string())

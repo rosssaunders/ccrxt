@@ -129,9 +129,14 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the account assets or an error
-    pub async fn get_account_assets(&self, request: GetAccountAssetsRequest) -> RestResult<GetAccountAssetsResponse> {
+    pub async fn get_account_assets(
+        &self,
+        request: GetAccountAssetsRequest,
+    ) -> RestResult<GetAccountAssetsResponse> {
         let query_string = if request.coin.is_some() || request.asset_type.is_some() {
-            Some(serde_urlencoded::to_string(&request).map_err(|e| crate::bitget::Errors::Error(format!("Failed to encode query: {e}")))?)
+            Some(serde_urlencoded::to_string(&request).map_err(|e| {
+                crate::bitget::Errors::Error(format!("Failed to encode query: {e}"))
+            })?)
         } else {
             None
         };
@@ -190,11 +195,10 @@ mod tests {
             .coin("USDT")
             .asset_type(AssetType::All);
 
-        let serialized = serde_urlencoded::to_string(&request)
-            .unwrap_or_else(|e| {
-                eprintln!("Serialization failed: {}", e);
-                String::new()
-            });
+        let serialized = serde_urlencoded::to_string(&request).unwrap_or_else(|e| {
+            eprintln!("Serialization failed: {}", e);
+            String::new()
+        });
 
         // Should contain both parameters
         assert!(serialized.contains("coin=USDT"));
@@ -204,11 +208,10 @@ mod tests {
     #[test]
     fn test_get_account_assets_request_serialization_empty() {
         let request = GetAccountAssetsRequest::new();
-        let serialized = serde_urlencoded::to_string(&request)
-            .unwrap_or_else(|e| {
-                eprintln!("Serialization failed: {}", e);
-                String::new()
-            });
+        let serialized = serde_urlencoded::to_string(&request).unwrap_or_else(|e| {
+            eprintln!("Serialization failed: {}", e);
+            String::new()
+        });
 
         // Should be empty since both fields are None and skipped
         assert!(serialized.is_empty());
@@ -271,8 +274,17 @@ mod tests {
         };
 
         assert_eq!(response.assets.len(), 2);
-        assert_eq!(response.assets.first().map(|a| &a.coin), Some(&"USDT".to_string()));
-        assert_eq!(response.assets.get(1).map(|a| &a.coin), Some(&"BTC".to_string()));
-        assert_eq!(response.assets.get(1).map(|a| &a.frozen), Some(&"0.1".to_string()));
+        assert_eq!(
+            response.assets.first().map(|a| &a.coin),
+            Some(&"USDT".to_string())
+        );
+        assert_eq!(
+            response.assets.get(1).map(|a| &a.coin),
+            Some(&"BTC".to_string())
+        );
+        assert_eq!(
+            response.assets.get(1).map(|a| &a.frozen),
+            Some(&"0.1".to_string())
+        );
     }
 }

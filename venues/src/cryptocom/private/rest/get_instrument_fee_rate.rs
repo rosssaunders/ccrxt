@@ -40,7 +40,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Instrument fee rate information
-    pub async fn get_instrument_fee_rate(&self, request: GetInstrumentFeeRateRequest) -> RestResult<GetInstrumentFeeRateResponse> {
+    pub async fn get_instrument_fee_rate(
+        &self,
+        request: GetInstrumentFeeRateRequest,
+    ) -> RestResult<GetInstrumentFeeRateResponse> {
         self.send_signed_request("private/get-instrument-fee-rate", request)
             .await
     }

@@ -69,7 +69,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Account balance information for all accounts with pagination info
-    pub async fn get_account_balances(&self, request: &GetAccountBalancesRequest) -> RestResult<GetAccountBalancesResponse> {
+    pub async fn get_account_balances(
+        &self,
+        request: &GetAccountBalancesRequest,
+    ) -> RestResult<GetAccountBalancesResponse> {
         let (accounts, pagination) = self
             .send_request_with_pagination(
                 "accounts",
@@ -105,7 +108,8 @@ mod tests {
             "trading_enabled": true
         }"#;
 
-        let account: AccountBalance = serde_json::from_str(json).expect("Failed to deserialize account balance");
+        let account: AccountBalance =
+            serde_json::from_str(json).expect("Failed to deserialize account balance");
         assert_eq!(account.id, "71452118-efc7-4cc4-8780-a5e22d4baa53");
         assert_eq!(account.currency, "BTC");
         assert_eq!(account.balance, "1.100000000000");
@@ -123,7 +127,8 @@ mod tests {
             limit: Some(50),
         };
 
-        let query_string = serde_urlencoded::to_string(&request).expect("Failed to serialize request");
+        let query_string =
+            serde_urlencoded::to_string(&request).expect("Failed to serialize request");
         assert!(query_string.contains("before=before123"));
         assert!(query_string.contains("after=after123"));
         assert!(query_string.contains("limit=50"));
@@ -132,7 +137,8 @@ mod tests {
     #[test]
     fn test_empty_request_serialization() {
         let request = GetAccountBalancesRequest::default();
-        let query_string = serde_urlencoded::to_string(&request).expect("Failed to serialize request");
+        let query_string =
+            serde_urlencoded::to_string(&request).expect("Failed to serialize request");
         assert!(query_string.is_empty());
     }
 
@@ -156,7 +162,8 @@ mod tests {
             limit: None,
         };
 
-        let query_string = serde_urlencoded::to_string(&before_only_request).expect("Failed to serialize request");
+        let query_string =
+            serde_urlencoded::to_string(&before_only_request).expect("Failed to serialize request");
         assert!(query_string.contains("before=before123"));
         assert!(!query_string.contains("after="));
         assert!(!query_string.contains("limit="));
@@ -168,7 +175,8 @@ mod tests {
             limit: Some(100),
         };
 
-        let query_string = serde_urlencoded::to_string(&after_only_request).expect("Failed to serialize request");
+        let query_string =
+            serde_urlencoded::to_string(&after_only_request).expect("Failed to serialize request");
         assert!(!query_string.contains("before="));
         assert!(query_string.contains("after=after456"));
         assert!(query_string.contains("limit=100"));

@@ -54,7 +54,10 @@ impl RestClient {
     /// Retrieves volatility index data for a given index name.
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_volatility_index_data)
-    pub async fn get_volatility_index_data(&self, params: GetVolatilityIndexDataRequest) -> RestResult<GetVolatilityIndexDataResponse> {
+    pub async fn get_volatility_index_data(
+        &self,
+        params: GetVolatilityIndexDataRequest,
+    ) -> RestResult<GetVolatilityIndexDataResponse> {
         self.send_request(
             "get_volatility_index_data",
             Method::POST,
@@ -81,7 +84,14 @@ mod tests {
 
     #[test]
     fn test_deserialize_response() {
-        let data = r#"{\n    \"id\": 21,\n    \"jsonrpc\": \"2.0\",\n    \"result\": {\n        \"volatility_index\": 5.4321,\n        \"timestamp\": 1680310800000\n    }\n}"#;
+        let data = r#"{
+    "id": 21,
+    "jsonrpc": "2.0",
+    "result": {
+        "volatility_index": 5.4321,
+        "timestamp": 1680310800000
+    }
+}"#;
         let resp: GetVolatilityIndexDataResponse = serde_json::from_str(data).unwrap();
         assert_eq!(resp.id, 21);
         assert_eq!(resp.jsonrpc, "2.0");

@@ -42,7 +42,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Spot wallet balance information
-    pub async fn get_spot_wallet_balance(&self, request: GetSpotWalletBalanceRequest) -> RestResult<GetSpotWalletBalanceResponse> {
+    pub async fn get_spot_wallet_balance(
+        &self,
+        request: GetSpotWalletBalanceRequest,
+    ) -> RestResult<GetSpotWalletBalanceResponse> {
         self.send_request(
             "/spot/v1/wallet",
             reqwest::Method::GET,

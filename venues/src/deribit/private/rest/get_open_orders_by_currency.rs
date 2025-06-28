@@ -1,7 +1,10 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::deribit::{AdvancedType, CancelReason, Currency, EndpointType, InstrumentKind, OrderDirection, OrderState, RestResult, TriggerType};
+use crate::deribit::{
+    AdvancedType, CancelReason, Currency, EndpointType, InstrumentKind, OrderDirection, OrderState,
+    RestResult, TriggerType,
+};
 
 /// Order type filter for get_open_orders_by_currency endpoint
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -239,7 +242,10 @@ impl RestClient {
     ///
     /// # Returns
     /// List of user's open orders
-    pub async fn get_open_orders_by_currency(&self, request: GetOpenOrdersByCurrencyRequest) -> RestResult<GetOpenOrdersByCurrencyResponse> {
+    pub async fn get_open_orders_by_currency(
+        &self,
+        request: GetOpenOrdersByCurrencyRequest,
+    ) -> RestResult<GetOpenOrdersByCurrencyResponse> {
         self.send_signed_request(
             "private/get_open_orders_by_currency",
             &request,
@@ -330,7 +336,8 @@ mod tests {
     #[tokio::test]
     async fn test_method_exists() {
         let api_key = Box::new(PlainTextSecret::new("key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret = Box::new(PlainTextSecret::new("secret".to_string())) as Box<dyn ExposableSecret>;
+        let api_secret =
+            Box::new(PlainTextSecret::new("secret".to_string())) as Box<dyn ExposableSecret>;
         let client = reqwest::Client::new();
         let limiter = crate::deribit::RateLimiter::new(AccountTier::Tier4);
         let rest_client = RestClient::new(

@@ -44,7 +44,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Result with total number of successfully cancelled quotes
-    pub async fn cancel_all_block_rfq_quotes(&self, request: CancelAllBlockRfqQuotesRequest) -> RestResult<CancelAllBlockRfqQuotesResponse> {
+    pub async fn cancel_all_block_rfq_quotes(
+        &self,
+        request: CancelAllBlockRfqQuotesRequest,
+    ) -> RestResult<CancelAllBlockRfqQuotesResponse> {
         self.send_signed_request(
             "private/cancel_all_block_rfq_quotes",
             &request,
@@ -145,7 +148,8 @@ mod tests {
             "result": 3
         });
 
-        let response: CancelAllBlockRfqQuotesResponse = serde_json::from_value(response_json).unwrap();
+        let response: CancelAllBlockRfqQuotesResponse =
+            serde_json::from_value(response_json).unwrap();
 
         assert_eq!(response.id, 1);
         assert_eq!(response.jsonrpc, "2.0");
@@ -160,7 +164,8 @@ mod tests {
             "result": 0
         });
 
-        let response: CancelAllBlockRfqQuotesResponse = serde_json::from_value(response_json).unwrap();
+        let response: CancelAllBlockRfqQuotesResponse =
+            serde_json::from_value(response_json).unwrap();
 
         assert_eq!(response.id, 42);
         assert_eq!(response.jsonrpc, "2.0");
@@ -170,8 +175,10 @@ mod tests {
     #[tokio::test]
     async fn test_cancel_all_block_rfq_quotes_method_exists() {
         // Test that the method exists and compiles without needing to call it
-        let api_key = Box::new(PlainTextSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret = Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let api_key =
+            Box::new(PlainTextSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
+        let api_secret =
+            Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
         let client = reqwest::Client::new();
         let rate_limiter = crate::deribit::RateLimiter::new(AccountTier::Tier4);
 

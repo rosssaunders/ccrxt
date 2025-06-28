@@ -65,7 +65,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Result containing identity and rating information for the account and subaccounts
-    pub async fn get_block_rfq_user_info(&self, request: GetBlockRfqUserInfoRequest) -> RestResult<GetBlockRfqUserInfoResponse> {
+    pub async fn get_block_rfq_user_info(
+        &self,
+        request: GetBlockRfqUserInfoRequest,
+    ) -> RestResult<GetBlockRfqUserInfoResponse> {
         self.send_signed_request(
             "private/get_block_rfq_user_info",
             &request,

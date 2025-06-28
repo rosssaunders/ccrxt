@@ -26,13 +26,22 @@ pub use get_actual_trade_fee_rate::{GetActualTradeFeeRateRequest, GetActualTrade
 pub use get_basic_fee_rate::{GetBasicFeeRateRequest, GetBasicFeeRateResponse};
 pub use get_currencies::{Currency, GetCurrenciesRequest, GetCurrenciesResponse};
 pub use get_deposit_address::{GetDepositAddressRequest, GetDepositAddressResponse};
-pub use get_deposit_withdraw_detail::{DepositWithdrawDetail, GetDepositWithdrawDetailRequest, GetDepositWithdrawDetailResponse};
-pub use get_deposit_withdraw_history::{DepositWithdrawRecord, GetDepositWithdrawHistoryRequest, GetDepositWithdrawHistoryResponse};
-pub use get_margin_isolated_account::{
-    GetMarginIsolatedAccountRequest, GetMarginIsolatedAccountResponse, MarginAssetBase, MarginAssetQuote, MarginIsolatedSymbol,
+pub use get_deposit_withdraw_detail::{
+    DepositWithdrawDetail, GetDepositWithdrawDetailRequest, GetDepositWithdrawDetailResponse,
 };
-pub use get_spot_wallet_balance::{GetSpotWalletBalanceRequest, GetSpotWalletBalanceResponse, SpotWalletBalance};
-pub use get_withdraw_address_list::{GetWithdrawAddressListRequest, GetWithdrawAddressListResponse, WithdrawAddress};
+pub use get_deposit_withdraw_history::{
+    DepositWithdrawRecord, GetDepositWithdrawHistoryRequest, GetDepositWithdrawHistoryResponse,
+};
+pub use get_margin_isolated_account::{
+    GetMarginIsolatedAccountRequest, GetMarginIsolatedAccountResponse, MarginAssetBase,
+    MarginAssetQuote, MarginIsolatedSymbol,
+};
+pub use get_spot_wallet_balance::{
+    GetSpotWalletBalanceRequest, GetSpotWalletBalanceResponse, SpotWalletBalance,
+};
+pub use get_withdraw_address_list::{
+    GetWithdrawAddressListRequest, GetWithdrawAddressListResponse, WithdrawAddress,
+};
 pub use get_withdraw_quota::{GetWithdrawQuotaRequest, GetWithdrawQuotaResponse};
 pub use margin_asset_transfer::{MarginAssetTransferRequest, MarginAssetTransferResponse};
 pub use query_order::{OrderDetails, QueryOrderRequest, QueryOrderResponse};

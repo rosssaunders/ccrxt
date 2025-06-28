@@ -73,7 +73,10 @@ pub struct OpenOrder {
 impl RestClient {
     /// Get all open orders (GET /fapi/v1/openOrders)
     /// [Binance API docs](https://binance-docs.github.io/apidocs/futures/en/#current-all-open-orders-user_data)
-    pub async fn get_open_orders(&self, params: GetOpenOrdersRequest) -> OpenOrdersResult<Vec<OpenOrder>> {
+    pub async fn get_open_orders(
+        &self,
+        params: GetOpenOrdersRequest,
+    ) -> OpenOrdersResult<Vec<OpenOrder>> {
         use crate::binance::usdm::request::execute_request;
         use tracing::debug;
         let endpoint = "/fapi/v1/openOrders";
@@ -81,7 +84,8 @@ impl RestClient {
         let url = format!("{}{}", self.base_url, endpoint);
 
         // 1. Serialize params to query string (excluding api_key/api_secret)
-        let mut query_pairs = serde_urlencoded::to_string(&params).map_err(|e| OpenOrdersError::Other(format!("Failed to serialize params: {e}")))?;
+        let mut query_pairs = serde_urlencoded::to_string(&params)
+            .map_err(|e| OpenOrdersError::Other(format!("Failed to serialize params: {e}")))?;
         if !query_pairs.is_empty() {
             query_pairs.push('&');
         }
@@ -105,14 +109,21 @@ impl RestClient {
 
         // 5. Execute
         let full_url = format!("{}?{}", url, query_pairs);
-        let resp = execute_request::<Vec<OpenOrder>>(&self.client, &full_url, method, Some(headers), None)
-            .await
-            .map_err(|e| match e {
-                crate::binance::usdm::Errors::ApiError(api_err) => OpenOrdersError::Other(format!("API error: {api_err}")),
-                crate::binance::usdm::Errors::HttpError(http_err) => OpenOrdersError::Other(format!("HTTP error: {http_err}")),
-                crate::binance::usdm::Errors::Error(msg) => OpenOrdersError::Other(msg),
-                crate::binance::usdm::Errors::InvalidApiKey() => OpenOrdersError::InvalidKey("Invalid API key or signature".to_string()),
-            })?;
+        let resp =
+            execute_request::<Vec<OpenOrder>>(&self.client, &full_url, method, Some(headers), None)
+                .await
+                .map_err(|e| match e {
+                    crate::binance::usdm::Errors::ApiError(api_err) => {
+                        OpenOrdersError::Other(format!("API error: {api_err}"))
+                    }
+                    crate::binance::usdm::Errors::HttpError(http_err) => {
+                        OpenOrdersError::Other(format!("HTTP error: {http_err}"))
+                    }
+                    crate::binance::usdm::Errors::Error(msg) => OpenOrdersError::Other(msg),
+                    crate::binance::usdm::Errors::InvalidApiKey() => {
+                        OpenOrdersError::InvalidKey("Invalid API key or signature".to_string())
+                    }
+                })?;
 
         Ok(resp.data)
     }

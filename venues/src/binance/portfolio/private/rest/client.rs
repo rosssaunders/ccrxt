@@ -45,7 +45,8 @@ use crate::binance::portfolio::{Errors, RateLimiter, RestResult};
 #[allow(dead_code)]
 fn sign_request(api_secret: &dyn ExposableSecret, query_string: &str) -> Result<String, Errors> {
     let api_secret = api_secret.expose_secret();
-    let mut mac = Hmac::<Sha256>::new_from_slice(api_secret.as_bytes()).map_err(|_| Errors::InvalidApiKey())?;
+    let mut mac = Hmac::<Sha256>::new_from_slice(api_secret.as_bytes())
+        .map_err(|_| Errors::InvalidApiKey())?;
     mac.update(query_string.as_bytes());
     Ok(hex::encode(mac.finalize().into_bytes()))
 }
@@ -124,13 +125,20 @@ impl RestClient {
     where
         T: serde::de::DeserializeOwned,
     {
-        let url = crate::binance::portfolio::rest::common::build_url(&self.base_url, endpoint, query_string)?;
+        let url = crate::binance::portfolio::rest::common::build_url(
+            &self.base_url,
+            endpoint,
+            query_string,
+        )?;
         let mut headers = vec![];
         if !self.api_key.expose_secret().is_empty() {
             headers.push(("X-MBX-APIKEY", self.api_key.expose_secret()));
         }
         let body_data = body
-            .map(|b| serde_urlencoded::to_string(b).map_err(|e| Errors::Error(format!("Failed to serialize body: {e}"))))
+            .map(|b| {
+                serde_urlencoded::to_string(b)
+                    .map_err(|e| Errors::Error(format!("Failed to serialize body: {e}")))
+            })
             .transpose()?;
         if body_data.is_some() {
             headers.push((
@@ -171,7 +179,14 @@ impl RestClient {
     /// # Returns
     /// A result containing the parsed response data and metadata, or an error
     #[allow(dead_code)]
-    pub(super) async fn send_signed_request<T, R>(&self, endpoint: &str, method: reqwest::Method, request: R, weight: u32, is_order: bool) -> RestResult<T>
+    pub(super) async fn send_signed_request<T, R>(
+        &self,
+        endpoint: &str,
+        method: reqwest::Method,
+        request: R,
+        weight: u32,
+        is_order: bool,
+    ) -> RestResult<T>
     where
         T: serde::de::DeserializeOwned,
         R: serde::Serialize,

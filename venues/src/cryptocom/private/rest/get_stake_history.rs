@@ -64,7 +64,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Historical stake/unstake requests with final status and timestamps
-    pub async fn get_stake_history(&self, request: GetStakeHistoryRequest) -> RestResult<GetStakeHistoryResponse> {
+    pub async fn get_stake_history(
+        &self,
+        request: GetStakeHistoryRequest,
+    ) -> RestResult<GetStakeHistoryResponse> {
         self.send_signed_request("private/staking/get-stake-history", request)
             .await
     }

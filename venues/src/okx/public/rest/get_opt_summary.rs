@@ -102,7 +102,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing option market data
-    pub async fn get_opt_summary(&self, request: GetOptSummaryRequest) -> RestResult<GetOptSummaryResponse> {
+    pub async fn get_opt_summary(
+        &self,
+        request: GetOptSummaryRequest,
+    ) -> RestResult<GetOptSummaryResponse> {
         self.send_request(
             "api/v5/public/opt-summary",
             reqwest::Method::GET,

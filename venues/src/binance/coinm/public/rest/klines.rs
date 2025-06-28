@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use crate::binance::coinm::enums::KlineInterval;
 use crate::binance::coinm::RestResult;
+use crate::binance::coinm::enums::KlineInterval;
 use crate::binance::coinm::public::rest::RestClient;
 
 /// Request parameters for the kline/candlestick data endpoint.
@@ -29,23 +29,23 @@ pub struct KlineRequest {
 }
 
 /// Represents a single kline/candlestick.
-/// 
+///
 /// Klines are arrays with the following structure:
 /// [Open time, Open, High, Low, Close, Volume, Close time, Base asset volume, Number of trades, Taker buy volume, Taker buy base asset volume, Ignore]
 #[derive(Debug, Clone, Deserialize)]
 pub struct Kline(
-    pub u64,     // Open time
-    pub String,  // Open
-    pub String,  // High
-    pub String,  // Low
-    pub String,  // Close (or latest price)
-    pub String,  // Volume
-    pub u64,     // Close time
-    pub String,  // Base asset volume
-    pub u64,     // Number of trades
-    pub String,  // Taker buy volume
-    pub String,  // Taker buy base asset volume
-    pub String,  // Ignore
+    pub u64,    // Open time
+    pub String, // Open
+    pub String, // High
+    pub String, // Low
+    pub String, // Close (or latest price)
+    pub String, // Volume
+    pub u64,    // Close time
+    pub String, // Base asset volume
+    pub u64,    // Number of trades
+    pub String, // Taker buy volume
+    pub String, // Taker buy base asset volume
+    pub String, // Ignore
 );
 
 /// Response from the kline/candlestick data endpoint.

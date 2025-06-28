@@ -49,7 +49,11 @@ impl RestClient {
     /// * `base_url` - The base URL for the BitMart public API (e.g., "https://api-cloud.bitmart.com")
     /// * `client` - HTTP client for making requests
     /// * `rate_limiter` - Rate limiter for managing API limits
-    pub fn new(base_url: impl Into<Cow<'static, str>>, client: Client, rate_limiter: RateLimiter) -> Self {
+    pub fn new(
+        base_url: impl Into<Cow<'static, str>>,
+        client: Client,
+        rate_limiter: RateLimiter,
+    ) -> Self {
         Self {
             base_url: base_url.into(),
             client,
@@ -69,7 +73,13 @@ impl RestClient {
     /// # Returns
     ///
     /// The parsed response data
-    pub async fn send_request<R, T>(&self, endpoint: &str, method: Method, request: Option<&R>, endpoint_type: EndpointType) -> RestResult<T>
+    pub async fn send_request<R, T>(
+        &self,
+        endpoint: &str,
+        method: Method,
+        request: Option<&R>,
+        endpoint_type: EndpointType,
+    ) -> RestResult<T>
     where
         R: serde::Serialize + ?Sized,
         T: DeserializeOwned,
@@ -84,11 +94,16 @@ impl RestClient {
 
         // Build URL with query parameters for GET requests
         let final_url = if method == Method::GET && request.is_some() {
-            let query_params =
-                match request {
-                    Some(req) => serde_urlencoded::to_string(req).map_err(|e| Errors::Error(format!("Failed to serialize query parameters: {e}")))?,
-                    None => return Err(Errors::Error("Request parameters missing for GET method".to_string())),
-                };
+            let query_params = match request {
+                Some(req) => serde_urlencoded::to_string(req).map_err(|e| {
+                    Errors::Error(format!("Failed to serialize query parameters: {e}"))
+                })?,
+                None => {
+                    return Err(Errors::Error(
+                        "Request parameters missing for GET method".to_string(),
+                    ));
+                }
+            };
 
             if query_params.is_empty() {
                 url
@@ -117,11 +132,12 @@ impl RestClient {
 
         // Parse response
         let response_text = response.text().await?;
-        let bitmart_response: BitMartResponse<T> = serde_json::from_str(&response_text).map_err(|e| {
-            Errors::Error(format!(
-                "Failed to parse response: {e} - Response: {response_text}"
-            ))
-        })?;
+        let bitmart_response: BitMartResponse<T> =
+            serde_json::from_str(&response_text).map_err(|e| {
+                Errors::Error(format!(
+                    "Failed to parse response: {e} - Response: {response_text}"
+                ))
+            })?;
 
         // Check for API errors
         if bitmart_response.code != 1000 {

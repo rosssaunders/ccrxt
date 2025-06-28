@@ -85,7 +85,10 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the account balance overview or an error
-    pub async fn get_all_account_balance(&self, request: &GetAllAccountBalanceRequest) -> RestResult<GetAllAccountBalanceResponse> {
+    pub async fn get_all_account_balance(
+        &self,
+        request: &GetAllAccountBalanceRequest,
+    ) -> RestResult<GetAllAccountBalanceResponse> {
         self.send_request(
             "/openApi/account/v1/allAccountBalance",
             reqwest::Method::GET,

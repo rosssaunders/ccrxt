@@ -138,19 +138,19 @@ mod tests {
     #[test]
     fn test_deserialize_response() {
         let data = r#"{
-            \"id\": 21,
-            \"jsonrpc\": \"2.0\",
-            \"result\": {
-                \"trades\": [
+            "id": 21,
+            "jsonrpc": "2.0",
+            "result": {
+                "trades": [
                     {
-                        \"trade_id\": \"123459\",
-                        \"price\": 65000.0,
-                        \"amount\": 0.4,
-                        \"timestamp\": 1680310800000,
-                        \"tick_direction\": "3",
-                        \"liquidity\": "M",
-                        \"order_type\": "limit",
-                        \"instrument_name\": "BTC-PERPETUAL"
+                        "trade_id": "123459",
+                        "price": 65000.0,
+                        "amount": 0.4,
+                        "timestamp": 1680310800000,
+                        "tick_direction": "3",
+                        "liquidity": "M",
+                        "order_type": "limit",
+                        "instrument_name": "BTC-PERPETUAL"
                     }
                 ]
             }

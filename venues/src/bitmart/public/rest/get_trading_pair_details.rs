@@ -59,7 +59,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Detailed list of all trading pairs on the platform
-    pub async fn get_trading_pair_details(&self, _request: GetTradingPairDetailsRequest) -> RestResult<GetTradingPairDetailsResponse> {
+    pub async fn get_trading_pair_details(
+        &self,
+        _request: GetTradingPairDetailsRequest,
+    ) -> RestResult<GetTradingPairDetailsResponse> {
         self.send_request(
             "/spot/v1/symbols/details",
             reqwest::Method::GET,

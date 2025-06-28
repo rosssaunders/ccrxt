@@ -46,7 +46,8 @@ use crate::binance::spot::{
 /// A result containing the signature as a hex string or a Hmac error if signing fails.
 fn sign_request(api_secret: &dyn ExposableSecret, query_string: &str) -> Result<String, Errors> {
     let api_secret = api_secret.expose_secret();
-    let mut mac = Hmac::<Sha256>::new_from_slice(api_secret.as_bytes()).map_err(|_| Errors::InvalidApiKey())?;
+    let mut mac = Hmac::<Sha256>::new_from_slice(api_secret.as_bytes())
+        .map_err(|_| Errors::InvalidApiKey())?;
     mac.update(query_string.as_bytes());
     Ok(hex::encode(mac.finalize().into_bytes()))
 }
@@ -131,7 +132,8 @@ impl RestClient {
         // Add any additional query parameters
         if let Some(qs) = query_string {
             // Parse existing query string and add to params
-            let parsed: Vec<(String, String)> = serde_urlencoded::from_str(qs).map_err(|e| Errors::Error(format!("Invalid query string: {e}")))?;
+            let parsed: Vec<(String, String)> = serde_urlencoded::from_str(qs)
+                .map_err(|e| Errors::Error(format!("Invalid query string: {e}")))?;
             query_params.extend(parsed);
         }
 
@@ -143,14 +145,16 @@ impl RestClient {
         }
 
         // Build query string for signing
-        let query_for_signing = serde_urlencoded::to_string(&query_params).map_err(|e| Errors::Error(format!("Failed to encode query string: {e}")))?;
+        let query_for_signing = serde_urlencoded::to_string(&query_params)
+            .map_err(|e| Errors::Error(format!("Failed to encode query string: {e}")))?;
 
         // Sign the request
         let signature = sign_request(self.api_secret.as_ref(), &query_for_signing)?;
         query_params.push(("signature".to_string(), signature));
 
         // Final query string with signature
-        let final_query_string = serde_urlencoded::to_string(&query_params).map_err(|e| Errors::Error(format!("Failed to encode final query string: {e}")))?;
+        let final_query_string = serde_urlencoded::to_string(&query_params)
+            .map_err(|e| Errors::Error(format!("Failed to encode final query string: {e}")))?;
 
         let url = build_url(&self.base_url, endpoint, Some(&final_query_string))?;
 
@@ -161,7 +165,10 @@ impl RestClient {
         }
 
         let body_data = match body {
-            Some(b) => Some(serde_urlencoded::to_string(b).map_err(|e| Errors::Error(format!("URL encoding error: {e}")))?),
+            Some(b) => Some(
+                serde_urlencoded::to_string(b)
+                    .map_err(|e| Errors::Error(format!("URL encoding error: {e}")))?,
+            ),
             None => None,
         };
 
@@ -218,7 +225,8 @@ mod tests {
     #[test]
     fn test_private_client_creation() {
         let api_key = Box::new(TestSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret = Box::new(TestSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let api_secret =
+            Box::new(TestSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
         let client = Client::new();
         let rate_limiter = RateLimiter::new();
 
@@ -235,7 +243,9 @@ mod tests {
 
     #[test]
     fn test_request_signing() {
-        let secret = TestSecret::new("NhqPtmdSJYdKjVHjA7PZj4Mge3R5YNiP1e3UZjInClVN65XAbvqqM6A7H5fATj0j".to_string());
+        let secret = TestSecret::new(
+            "NhqPtmdSJYdKjVHjA7PZj4Mge3R5YNiP1e3UZjInClVN65XAbvqqM6A7H5fATj0j".to_string(),
+        );
         let query_string = "symbol=LTCBTC&side=BUY&type=LIMIT&timeInForce=GTC&quantity=1&price=0.1&recvWindow=5000&timestamp=1499827319559";
 
         let result = sign_request(&secret, query_string);

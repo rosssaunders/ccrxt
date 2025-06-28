@@ -78,7 +78,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing the list of delivery/exercise history entries
-    pub async fn get_delivery_exercise_history(&self, request: &GetDeliveryExerciseHistoryRequest) -> RestResult<GetDeliveryExerciseHistoryResponse> {
+    pub async fn get_delivery_exercise_history(
+        &self,
+        request: &GetDeliveryExerciseHistoryRequest,
+    ) -> RestResult<GetDeliveryExerciseHistoryResponse> {
         self.send_request(
             "api/v5/public/delivery-exercise-history",
             reqwest::Method::GET,
@@ -291,7 +294,8 @@ mod tests {
             ]
         });
 
-        let response: GetDeliveryExerciseHistoryResponse = serde_json::from_value(response_json).unwrap();
+        let response: GetDeliveryExerciseHistoryResponse =
+            serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.msg, "");
         assert_eq!(response.data.len(), 2);
@@ -364,7 +368,8 @@ mod tests {
         };
 
         let serialized = serde_json::to_value(&original).unwrap();
-        let deserialized: GetDeliveryExerciseHistoryRequest = serde_json::from_value(serialized).unwrap();
+        let deserialized: GetDeliveryExerciseHistoryRequest =
+            serde_json::from_value(serialized).unwrap();
 
         assert_eq!(original.inst_type, deserialized.inst_type);
         assert_eq!(original.underlying, deserialized.underlying);

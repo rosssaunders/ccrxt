@@ -64,7 +64,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Transfer result with complete transfer information
-    pub async fn submit_transfer_to_user(&self, params: SubmitTransferToUserRequest) -> RestResult<SubmitTransferToUserResponse> {
+    pub async fn submit_transfer_to_user(
+        &self,
+        params: SubmitTransferToUserRequest,
+    ) -> RestResult<SubmitTransferToUserResponse> {
         self.send_signed_request(
             "private/submit_transfer_to_user",
             &params,
@@ -148,8 +151,10 @@ mod tests {
     #[tokio::test]
     async fn test_submit_transfer_to_user_method_exists() {
         // Test that the method exists and compiles without needing to call it
-        let api_key = Box::new(PlainTextSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret = Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let api_key =
+            Box::new(PlainTextSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
+        let api_secret =
+            Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
         let client = reqwest::Client::new();
         let rate_limiter = crate::deribit::RateLimiter::new(AccountTier::Tier4);
 

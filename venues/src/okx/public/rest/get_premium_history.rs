@@ -59,7 +59,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing the list of premium history entries
-    pub async fn get_premium_history(&self, request: &GetPremiumHistoryRequest) -> RestResult<GetPremiumHistoryResponse> {
+    pub async fn get_premium_history(
+        &self,
+        request: &GetPremiumHistoryRequest,
+    ) -> RestResult<GetPremiumHistoryResponse> {
         self.send_request(
             "api/v5/public/premium-history",
             reqwest::Method::GET,

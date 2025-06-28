@@ -76,7 +76,10 @@ impl RestClient {
     /// # API Documentation
     /// - Endpoint: GET /openApi/market/his/v1/trade
     /// - Content-Type: request body(application/json)
-    pub async fn get_old_trade(&self, request: &GetOldTradeRequest) -> RestResult<GetOldTradeResponse> {
+    pub async fn get_old_trade(
+        &self,
+        request: &GetOldTradeRequest,
+    ) -> RestResult<GetOldTradeResponse> {
         self.send_request(
             "/openApi/market/his/v1/trade",
             Some(request),

@@ -106,7 +106,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Result with total number of successfully cancelled orders
-    pub async fn cancel_all_by_kind_or_type(&self, request: CancelAllByKindOrTypeRequest) -> RestResult<CancelAllByKindOrTypeResponse> {
+    pub async fn cancel_all_by_kind_or_type(
+        &self,
+        request: CancelAllByKindOrTypeRequest,
+    ) -> RestResult<CancelAllByKindOrTypeResponse> {
         self.send_signed_request(
             "private/cancel_all_by_kind_or_type",
             &request,
@@ -210,7 +213,11 @@ mod tests {
     #[test]
     fn test_request_parameters_serialization_multiple_currencies() {
         let request = CancelAllByKindOrTypeRequest {
-            currency: CurrencySelection::multiple(vec![Currency::BTC, Currency::ETH, Currency::USDC]),
+            currency: CurrencySelection::multiple(vec![
+                Currency::BTC,
+                Currency::ETH,
+                Currency::USDC,
+            ]),
             kind: Some(InstrumentKind::Future),
             order_type: None,
             detailed: None,
@@ -277,7 +284,8 @@ mod tests {
             "result": 5
         });
 
-        let response: CancelAllByKindOrTypeResponse = serde_json::from_value(response_json).unwrap();
+        let response: CancelAllByKindOrTypeResponse =
+            serde_json::from_value(response_json).unwrap();
 
         assert_eq!(response.id, 1);
         assert_eq!(response.jsonrpc, "2.0");
@@ -292,7 +300,8 @@ mod tests {
             "result": 0
         });
 
-        let response: CancelAllByKindOrTypeResponse = serde_json::from_value(response_json).unwrap();
+        let response: CancelAllByKindOrTypeResponse =
+            serde_json::from_value(response_json).unwrap();
 
         assert_eq!(response.id, 42);
         assert_eq!(response.jsonrpc, "2.0");
@@ -302,8 +311,10 @@ mod tests {
     #[tokio::test]
     async fn test_cancel_all_by_kind_or_type_method_exists() {
         // Test that the method exists and compiles without needing to call it
-        let api_key = Box::new(PlainTextSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret = Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let api_key =
+            Box::new(PlainTextSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
+        let api_secret =
+            Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
         let client = reqwest::Client::new();
         let rate_limiter = crate::deribit::RateLimiter::new(AccountTier::Tier4);
 

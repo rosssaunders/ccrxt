@@ -81,7 +81,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Deposit or withdraw detail information
-    pub async fn get_deposit_withdraw_detail(&self, request: GetDepositWithdrawDetailRequest) -> RestResult<GetDepositWithdrawDetailResponse> {
+    pub async fn get_deposit_withdraw_detail(
+        &self,
+        request: GetDepositWithdrawDetailRequest,
+    ) -> RestResult<GetDepositWithdrawDetailResponse> {
         self.send_request(
             "/account/v1/deposit-withdraw/detail",
             reqwest::Method::GET,

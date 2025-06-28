@@ -71,7 +71,10 @@ impl RestClient {
     /// Fetches settlement price of expired instruments.
     ///
     /// [Official API docs](https://exchange-docs.crypto.com/spot/index.html)
-    pub async fn get_expired_settlement_price(&self, params: GetExpiredSettlementPriceRequest) -> RestResult<GetExpiredSettlementPriceResponse> {
+    pub async fn get_expired_settlement_price(
+        &self,
+        params: GetExpiredSettlementPriceRequest,
+    ) -> RestResult<GetExpiredSettlementPriceResponse> {
         self.send_request(
             "public/get-expired-settlement-price",
             reqwest::Method::GET,

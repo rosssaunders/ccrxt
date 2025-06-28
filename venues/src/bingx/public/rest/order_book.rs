@@ -70,7 +70,10 @@ impl RestClient {
     /// # API Documentation
     /// - Endpoint: GET /openApi/spot/v1/market/depth
     /// - Content-Type: request body(application/json)
-    pub async fn get_order_book(&self, request: &GetOrderBookRequest) -> RestResult<GetOrderBookResponse> {
+    pub async fn get_order_book(
+        &self,
+        request: &GetOrderBookRequest,
+    ) -> RestResult<GetOrderBookResponse> {
         self.send_request(
             "/openApi/spot/v1/market/depth",
             Some(request),
@@ -116,7 +119,8 @@ mod tests {
         let symbol = "BTC-USDT".to_string();
         let timestamp = 1640995200000;
         let recv_window = 5000;
-        let request = GetOrderBookRequest::new(symbol.clone(), timestamp).with_recv_window(recv_window);
+        let request =
+            GetOrderBookRequest::new(symbol.clone(), timestamp).with_recv_window(recv_window);
 
         assert_eq!(request.symbol, symbol);
         assert_eq!(request.timestamp, timestamp);

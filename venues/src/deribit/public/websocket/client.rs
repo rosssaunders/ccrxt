@@ -101,7 +101,8 @@ impl PrivateWebSocketClient {
                 return Err(DeribitWebSocketError::Timeout { id });
             }
         };
-        let response_str = serde_json::to_string(&response).map_err(DeribitWebSocketError::Serialization)?;
+        let response_str =
+            serde_json::to_string(&response).map_err(DeribitWebSocketError::Serialization)?;
         Ok(response_str)
     }
 
@@ -111,7 +112,10 @@ impl PrivateWebSocketClient {
     }
 
     /// Send any serializable request struct over the websocket
-    pub async fn send_serializable<T: serde::Serialize + ?Sized>(&mut self, req: &T) -> Result<(), DeribitWebSocketError> {
+    pub async fn send_serializable<T: serde::Serialize + ?Sized>(
+        &mut self,
+        req: &T,
+    ) -> Result<(), DeribitWebSocketError> {
         if !self.is_connected() {
             return Err(DeribitWebSocketError::Connection(
                 "Not connected".to_string(),
@@ -120,7 +124,9 @@ impl PrivateWebSocketClient {
         let req_json = serde_json::to_string(req)?;
         self.websocket
             .as_mut()
-            .ok_or_else(|| DeribitWebSocketError::Connection("WebSocket not connected".to_string()))?
+            .ok_or_else(|| {
+                DeribitWebSocketError::Connection("WebSocket not connected".to_string())
+            })?
             .send(tokio_tungstenite::tungstenite::Message::Text(
                 req_json.into(),
             ))
@@ -131,7 +137,10 @@ impl PrivateWebSocketClient {
 
     /// Generic send and receive for request/response types
     /// Generic send and receive for request/response types, extracting the `result` field
-    pub async fn send_and_receive<T: Serialize, R: for<'de> Deserialize<'de>>(&mut self, request: &T) -> Result<R, DeribitWebSocketError> {
+    pub async fn send_and_receive<T: Serialize, R: for<'de> Deserialize<'de>>(
+        &mut self,
+        request: &T,
+    ) -> Result<R, DeribitWebSocketError> {
         self.send_serializable(request).await?;
         let response_str = self.receive_response().await?;
         let envelope: JsonRpcEnvelope<R> = serde_json::from_str(&response_str)?;
@@ -160,8 +169,20 @@ impl WebSocketConnection<DeribitMessage> for PrivateWebSocketClient {
         self.connected.load(Ordering::SeqCst)
     }
 
-    fn message_stream(&mut self) -> Pin<Box<dyn futures::Stream<Item = websockets::BoxResult<DeribitMessage>> + Send>> {
+    fn message_stream(
+        &mut self,
+    ) -> Pin<Box<dyn futures::Stream<Item = websockets::BoxResult<DeribitMessage>> + Send>> {
         // Not implemented for public client (not used in this context)
-        panic!("message_stream is not implemented for DeribitWebSocketClient public client");
+        use futures::stream::Stream;
+        use futures::stream::StreamExt;
+
+        let error_stream = futures::stream::iter(std::iter::once(Err(
+            Box::new(std::io::Error::new(
+                std::io::ErrorKind::Unsupported,
+                "message_stream is not implemented for DeribitWebSocketClient public client",
+            )) as Box<dyn std::error::Error + Send + Sync>,
+        )));
+
+        Box::pin(error_stream)
     }
 }

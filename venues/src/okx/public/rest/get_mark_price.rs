@@ -69,7 +69,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing mark price data
-    pub async fn get_mark_price(&self, request: &GetMarkPriceRequest) -> RestResult<GetMarkPriceResponse> {
+    pub async fn get_mark_price(
+        &self,
+        request: &GetMarkPriceRequest,
+    ) -> RestResult<GetMarkPriceResponse> {
         self.send_request(
             "api/v5/public/mark-price",
             reqwest::Method::GET,

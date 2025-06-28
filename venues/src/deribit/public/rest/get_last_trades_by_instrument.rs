@@ -91,7 +91,10 @@ impl RestClient {
     /// Retrieves the most recent trades for a given instrument.
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_last_trades_by_instrument)
-    pub async fn get_last_trades_by_instrument(&self, params: GetLastTradesByInstrumentRequest) -> RestResult<GetLastTradesByInstrumentResponse> {
+    pub async fn get_last_trades_by_instrument(
+        &self,
+        params: GetLastTradesByInstrumentRequest,
+    ) -> RestResult<GetLastTradesByInstrumentResponse> {
         self.send_request(
             "get_last_trades_by_instrument",
             Method::POST,
@@ -123,19 +126,19 @@ mod tests {
     #[test]
     fn test_deserialize_response() {
         let data = r#"{
-            \"id\": 20,
-            \"jsonrpc\": \"2.0\",
-            \"result\": {
-                \"trades\": [
+            "id": 20,
+            "jsonrpc": "2.0",
+            "result": {
+                "trades": [
                     {
-                        \"trade_id\": \"123458\",
-                        \"price\": 65000.0,
-                        \"amount\": 0.3,
-                        \"timestamp\": 1680310800000,
-                        \"tick_direction\": "2",
-                        \"liquidity\": "T",
-                        \"order_type\": "market",
-                        \"instrument_name\": "BTC-PERPETUAL"
+                        "trade_id": "123458",
+                        "price": 65000.0,
+                        "amount": 0.3,
+                        "timestamp": 1680310800000,
+                        "tick_direction": "2",
+                        "liquidity": "T",
+                        "order_type": "market",
+                        "instrument_name": "BTC-PERPETUAL"
                     }
                 ]
             }

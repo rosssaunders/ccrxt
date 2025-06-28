@@ -42,7 +42,10 @@ impl RestClient {
     /// Get open interest statistics
     ///
     /// Weight: 1
-    pub async fn get_open_interest_hist(&self, params: OpenInterestHistParams) -> RestResult<Vec<OpenInterestHist>> {
+    pub async fn get_open_interest_hist(
+        &self,
+        params: OpenInterestHistParams,
+    ) -> RestResult<Vec<OpenInterestHist>> {
         self.send_request(
             "/futures/data/openInterestHist",
             reqwest::Method::GET,

@@ -68,7 +68,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing the list of settlement history entries
-    pub async fn get_settlement_history(&self, request: &GetSettlementHistoryRequest) -> RestResult<GetSettlementHistoryResponse> {
+    pub async fn get_settlement_history(
+        &self,
+        request: &GetSettlementHistoryRequest,
+    ) -> RestResult<GetSettlementHistoryResponse> {
         self.send_request(
             "api/v5/public/settlement-history",
             reqwest::Method::GET,
@@ -139,7 +142,8 @@ mod tests {
             "settlePx": "30250.5"
         });
 
-        let settlement_detail: SettlementDetail = serde_json::from_value(settlement_detail_json).unwrap();
+        let settlement_detail: SettlementDetail =
+            serde_json::from_value(settlement_detail_json).unwrap();
         assert_eq!(settlement_detail.inst_id, "BTC-USD-230630");
         assert_eq!(settlement_detail.settle_px, "30250.5");
     }
@@ -160,7 +164,8 @@ mod tests {
             ]
         });
 
-        let settlement_history: SettlementHistory = serde_json::from_value(settlement_history_json).unwrap();
+        let settlement_history: SettlementHistory =
+            serde_json::from_value(settlement_history_json).unwrap();
         assert_eq!(settlement_history.ts, "1597026383085");
         assert_eq!(settlement_history.details.len(), 2);
         assert_eq!(

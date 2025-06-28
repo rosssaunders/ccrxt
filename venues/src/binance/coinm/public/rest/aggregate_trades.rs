@@ -80,7 +80,10 @@ impl RestClient {
     /// [Official API docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Compressed-Aggregate-Trades-List)
     ///
     /// Weight: 20
-    pub async fn get_aggregate_trades(&self, params: AggregateTradesRequest) -> RestResult<Vec<AggregateTrade>> {
+    pub async fn get_aggregate_trades(
+        &self,
+        params: AggregateTradesRequest,
+    ) -> RestResult<Vec<AggregateTrade>> {
         self.send_request("/dapi/v1/aggTrades", reqwest::Method::GET, Some(params), 20)
             .await
     }

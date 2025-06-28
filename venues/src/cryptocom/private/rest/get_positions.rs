@@ -56,7 +56,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Position information for all or specified instruments
-    pub async fn get_positions(&self, request: GetPositionsRequest) -> RestResult<GetPositionsResponse> {
+    pub async fn get_positions(
+        &self,
+        request: GetPositionsRequest,
+    ) -> RestResult<GetPositionsResponse> {
         self.send_signed_request("private/get-positions", request)
             .await
     }

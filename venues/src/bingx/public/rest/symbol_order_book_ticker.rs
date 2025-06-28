@@ -52,7 +52,10 @@ impl RestClient {
     /// # API Documentation
     /// - Endpoint: GET /openApi/spot/v1/ticker/bookTicker
     /// - Content-Type: request body(application/json)
-    pub async fn get_symbol_order_book_ticker(&self, request: &GetSymbolOrderBookTickerRequest) -> RestResult<GetSymbolOrderBookTickerResponse> {
+    pub async fn get_symbol_order_book_ticker(
+        &self,
+        request: &GetSymbolOrderBookTickerRequest,
+    ) -> RestResult<GetSymbolOrderBookTickerResponse> {
         self.send_request(
             "/openApi/spot/v1/ticker/bookTicker",
             Some(request),

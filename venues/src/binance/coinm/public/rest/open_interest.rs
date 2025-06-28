@@ -24,7 +24,7 @@ pub struct OpenInterest {
 
 impl RestClient {
     /// Get Open Interest
-    /// 
+    ///
     /// Weight: 1
     pub async fn get_open_interest(&self, params: OpenInterestRequest) -> RestResult<OpenInterest> {
         self.send_request(

@@ -12,14 +12,18 @@ mod symbols;
 mod ticker_24hr;
 
 pub use client::RestClient;
-pub use historical_kline::{GetHistoricalKlineRequest, GetHistoricalKlineResponse, HistoricalKline};
+pub use historical_kline::{
+    GetHistoricalKlineRequest, GetHistoricalKlineResponse, HistoricalKline,
+};
 pub use kline::{GetKlineRequest, GetKlineResponse, Kline};
 pub use old_trade_lookup::{GetOldTradeRequest, GetOldTradeResponse, OldTrade};
 pub use order_book::{GetOrderBookRequest, GetOrderBookResponse};
 pub use order_book_aggregation::{GetOrderBookAggregationRequest, GetOrderBookAggregationResponse};
 pub use recent_trades::{GetRecentTradesRequest, GetRecentTradesResponse, Trade};
 pub use server_time::{GetServerTimeRequest, GetServerTimeResponse};
-pub use symbol_order_book_ticker::{GetSymbolOrderBookTickerRequest, GetSymbolOrderBookTickerResponse};
+pub use symbol_order_book_ticker::{
+    GetSymbolOrderBookTickerRequest, GetSymbolOrderBookTickerResponse,
+};
 pub use symbol_price_ticker::{GetSymbolPriceTickerRequest, GetSymbolPriceTickerResponse};
 pub use symbols::{GetSymbolsRequest, GetSymbolsResponse, Symbol};
 pub use ticker_24hr::{Get24hrTickerRequest, Get24hrTickerResponse, Ticker24hr};

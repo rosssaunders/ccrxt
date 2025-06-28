@@ -21,7 +21,10 @@ pub struct UnsubscribeResponse {
 
 impl PrivateWebSocketClient {
     /// Unsubscribe from specific channels
-    pub async fn unsubscribe(&mut self, request: UnsubscribeRequest) -> Result<UnsubscribeResponse, DeribitWebSocketError> {
+    pub async fn unsubscribe(
+        &mut self,
+        request: UnsubscribeRequest,
+    ) -> Result<UnsubscribeResponse, DeribitWebSocketError> {
         self.send_and_receive::<UnsubscribeRequest, UnsubscribeResponse>(&request)
             .await
     }

@@ -59,7 +59,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Withdrawal creation result with newly created withdrawal details
-    pub async fn create_withdrawal(&self, request: CreateWithdrawalRequest) -> RestResult<CreateWithdrawalResponse> {
+    pub async fn create_withdrawal(
+        &self,
+        request: CreateWithdrawalRequest,
+    ) -> RestResult<CreateWithdrawalResponse> {
         self.send_signed_request("private/create-withdrawal", request)
             .await
     }

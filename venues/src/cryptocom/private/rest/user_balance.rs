@@ -130,7 +130,8 @@ mod tests {
             "reserved_qty": "0.00000000"
         });
 
-        let position_balance: PositionBalance = serde_json::from_value(position_balance_json).unwrap();
+        let position_balance: PositionBalance =
+            serde_json::from_value(position_balance_json).unwrap();
         assert_eq!(position_balance.instrument_name, "CRO");
         assert_eq!(position_balance.collateral_eligible, "true");
         assert_eq!(position_balance.quantity, "24422.72427884");

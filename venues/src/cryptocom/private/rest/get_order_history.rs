@@ -100,7 +100,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Order history information
-    pub async fn get_order_history(&self, params: GetOrderHistoryRequest) -> RestResult<GetOrderHistoryResponse> {
+    pub async fn get_order_history(
+        &self,
+        params: GetOrderHistoryRequest,
+    ) -> RestResult<GetOrderHistoryResponse> {
         self.send_signed_request("private/get-order-history", params)
             .await
     }

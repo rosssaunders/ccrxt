@@ -97,7 +97,10 @@ impl RestClient {
     /// # Notes
     /// - Either orderId or clientOrderId must be provided
     /// - Only orders with status NEW, PENDING, or PARTIALLY_FILLED can be canceled
-    pub async fn cancel_order(&self, request: &CancelOrderRequest) -> RestResult<CancelOrderResponse> {
+    pub async fn cancel_order(
+        &self,
+        request: &CancelOrderRequest,
+    ) -> RestResult<CancelOrderResponse> {
         self.send_request(
             "/openApi/spot/v1/trade/cancel",
             reqwest::Method::POST,

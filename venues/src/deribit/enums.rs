@@ -821,7 +821,8 @@ mod tests {
         );
         assert_eq!(serde_json::to_string(&completed).unwrap(), "\"completed\"");
 
-        let unconfirmed_from_json: WithdrawalState = serde_json::from_str("\"unconfirmed\"").unwrap();
+        let unconfirmed_from_json: WithdrawalState =
+            serde_json::from_str("\"unconfirmed\"").unwrap();
         let completed_from_json: WithdrawalState = serde_json::from_str("\"completed\"").unwrap();
 
         assert_eq!(unconfirmed_from_json, WithdrawalState::Unconfirmed);
@@ -856,7 +857,8 @@ mod tests {
 
         let transfer_from_json: AddressBookType = serde_json::from_str("\"transfer\"").unwrap();
         let withdrawal_from_json: AddressBookType = serde_json::from_str("\"withdrawal\"").unwrap();
-        let deposit_source_from_json: AddressBookType = serde_json::from_str("\"deposit_source\"").unwrap();
+        let deposit_source_from_json: AddressBookType =
+            serde_json::from_str("\"deposit_source\"").unwrap();
 
         assert_eq!(transfer_from_json, AddressBookType::Transfer);
         assert_eq!(withdrawal_from_json, AddressBookType::Withdrawal);
@@ -888,7 +890,8 @@ mod tests {
         assert_eq!(serde_json::to_string(&confirmed).unwrap(), "\"confirmed\"");
         assert_eq!(serde_json::to_string(&ready).unwrap(), "\"ready\"");
 
-        let admin_locked_from_json: AddressStatus = serde_json::from_str("\"admin_locked\"").unwrap();
+        let admin_locked_from_json: AddressStatus =
+            serde_json::from_str("\"admin_locked\"").unwrap();
         let waiting_from_json: AddressStatus = serde_json::from_str("\"waiting\"").unwrap();
         let confirmed_from_json: AddressStatus = serde_json::from_str("\"confirmed\"").unwrap();
         let ready_from_json: AddressStatus = serde_json::from_str("\"ready\"").unwrap();
@@ -978,8 +981,10 @@ mod tests {
             "\"autoliquidation\""
         );
 
-        let user_request_from_json: CancelReason = serde_json::from_str("\"user_request\"").unwrap();
-        let autoliquidation_from_json: CancelReason = serde_json::from_str("\"autoliquidation\"").unwrap();
+        let user_request_from_json: CancelReason =
+            serde_json::from_str("\"user_request\"").unwrap();
+        let autoliquidation_from_json: CancelReason =
+            serde_json::from_str("\"autoliquidation\"").unwrap();
 
         assert_eq!(user_request_from_json, CancelReason::UserRequest);
         assert_eq!(autoliquidation_from_json, CancelReason::Autoliquidation);
@@ -1163,7 +1168,8 @@ mod tests {
 
         let limit_from_json: TradeOrderType = serde_json::from_str("\"limit\"").unwrap();
         let market_from_json: TradeOrderType = serde_json::from_str("\"market\"").unwrap();
-        let liquidation_from_json: TradeOrderType = serde_json::from_str("\"liquidation\"").unwrap();
+        let liquidation_from_json: TradeOrderType =
+            serde_json::from_str("\"liquidation\"").unwrap();
 
         assert_eq!(limit_from_json, TradeOrderType::Limit);
         assert_eq!(market_from_json, TradeOrderType::Market);
@@ -1258,7 +1264,8 @@ mod tests {
         assert_eq!(serde_json::to_string(&failed).unwrap(), "\"failed\"");
         assert_eq!(serde_json::to_string(&refunded).unwrap(), "\"refunded\"");
 
-        let in_progress_from_json: ClearanceState = serde_json::from_str("\"in_progress\"").unwrap();
+        let in_progress_from_json: ClearanceState =
+            serde_json::from_str("\"in_progress\"").unwrap();
         let success_from_json: ClearanceState = serde_json::from_str("\"success\"").unwrap();
         let failed_from_json: ClearanceState = serde_json::from_str("\"failed\"").unwrap();
         let refunded_from_json: ClearanceState = serde_json::from_str("\"refunded\"").unwrap();

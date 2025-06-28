@@ -44,11 +44,21 @@ impl RestClient {
     /// Top Trader Long/Short Ratio (Accounts) (GET /futures/data/topLongShortAccountRatio)
     ///
     /// [API docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Top-Long-Short-Account-Ratio)
-    pub async fn top_long_short_account_ratio<'a>(&self, params: TopLongShortAccountRatioRequest<'a>) -> RestResult<Vec<TopLongShortAccountRatioResponse<'a>>> {
+    pub async fn top_long_short_account_ratio<'a>(
+        &self,
+        params: TopLongShortAccountRatioRequest<'a>,
+    ) -> RestResult<Vec<TopLongShortAccountRatioResponse<'a>>> {
         let endpoint = "/futures/data/topLongShortAccountRatio";
-        let query = serde_urlencoded::to_string(&params).map_err(|e| Errors::Error(format!("Failed to serialize params: {e}")))?;
+        let query = serde_urlencoded::to_string(&params)
+            .map_err(|e| Errors::Error(format!("Failed to serialize params: {e}")))?;
         let resp = self
-            .send_request::<Vec<TopLongShortAccountRatioResponse>>(endpoint, reqwest::Method::GET, Some(&query), None, 0)
+            .send_request::<Vec<TopLongShortAccountRatioResponse>>(
+                endpoint,
+                reqwest::Method::GET,
+                Some(&query),
+                None,
+                0,
+            )
             .await?;
         Ok(resp)
     }

@@ -119,7 +119,9 @@ pub enum ApiError {
     #[error("Service maintenance, the function is temporarily unavailable")]
     ServiceMaintenance,
 
-    #[error("Your account request is temporarily rejected due to violation of current limiting rules")]
+    #[error(
+        "Your account request is temporarily rejected due to violation of current limiting rules"
+    )]
     AccountRequestRejected,
 
     #[error("Request Body requires JSON format")]

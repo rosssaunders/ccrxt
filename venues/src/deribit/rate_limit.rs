@@ -65,13 +65,13 @@ impl EndpointType {
     pub fn credit_cost(&self) -> u32 {
         match self {
             EndpointType::NonMatchingEngine => 500,
-            EndpointType::MatchingEngine => 0,          // Uses tier-based limits, not credits
-            EndpointType::PublicGetInstruments => 0,    // Special time-based limit
-            EndpointType::PublicGetComboIds => 500,     // Non-matching engine endpoint
-            EndpointType::PublicGetCombos => 500,       // Non-matching engine endpoint
+            EndpointType::MatchingEngine => 0, // Uses tier-based limits, not credits
+            EndpointType::PublicGetInstruments => 0, // Special time-based limit
+            EndpointType::PublicGetComboIds => 500, // Non-matching engine endpoint
+            EndpointType::PublicGetCombos => 500, // Non-matching engine endpoint
             EndpointType::PublicGetComboDetails => 500, // Non-matching engine endpoint
-            EndpointType::PublicGetStatus => 500,       // Non-matching engine endpoint
-            EndpointType::PublicHello => 0,             // WebSocket only, no specific credit cost
+            EndpointType::PublicGetStatus => 500, // Non-matching engine endpoint
+            EndpointType::PublicHello => 0,    // WebSocket only, no specific credit cost
         }
     }
 
@@ -139,13 +139,17 @@ pub enum RateLimitError {
     #[error("Credit limit exceeded: {available} credits available, {required} credits required")]
     CreditLimitExceeded { available: u32, required: u32 },
 
-    #[error("Matching engine rate limit exceeded for tier {tier:?}: {requests_in_window} requests in current window")]
+    #[error(
+        "Matching engine rate limit exceeded for tier {tier:?}: {requests_in_window} requests in current window"
+    )]
     MatchingEngineRateExceeded {
         tier: AccountTier,
         requests_in_window: usize,
     },
 
-    #[error("Special endpoint rate limit exceeded for {endpoint}: {requests_in_window} requests in current window")]
+    #[error(
+        "Special endpoint rate limit exceeded for {endpoint}: {requests_in_window} requests in current window"
+    )]
     SpecialEndpointRateExceeded {
         endpoint: String,
         requests_in_window: usize,
@@ -183,7 +187,8 @@ impl CreditPool {
         let credits_to_add = (elapsed.as_secs_f64() * self.refill_rate as f64) as u32;
 
         if credits_to_add > 0 {
-            self.available_credits = (self.available_credits + credits_to_add).min(self.max_credits);
+            self.available_credits =
+                (self.available_credits + credits_to_add).min(self.max_credits);
             self.last_refill = now;
         }
     }
@@ -275,7 +280,8 @@ impl RateLimiter {
         let credit_pool = CreditPool::new(50_000, 10_000); // 50k max credits, 10k credits/sec refill
 
         // Matching engine limits based on account tier
-        let matching_engine_history = RequestHistory::new(Duration::from_secs(1), account_tier.sustained_rate());
+        let matching_engine_history =
+            RequestHistory::new(Duration::from_secs(1), account_tier.sustained_rate());
 
         // Special limit for public/get_instruments: 1 req per 10s, burst of 5
         let get_instruments_history = RequestHistory::new(
@@ -292,10 +298,15 @@ impl RateLimiter {
     }
 
     /// Create a rate limiter with custom credit pool settings
-    pub fn with_custom_credits(account_tier: AccountTier, max_credits: u32, refill_rate: u32) -> Self {
+    pub fn with_custom_credits(
+        account_tier: AccountTier,
+        max_credits: u32,
+        refill_rate: u32,
+    ) -> Self {
         let credit_pool = CreditPool::new(max_credits, refill_rate);
 
-        let matching_engine_history = RequestHistory::new(Duration::from_secs(1), account_tier.sustained_rate());
+        let matching_engine_history =
+            RequestHistory::new(Duration::from_secs(1), account_tier.sustained_rate());
 
         let get_instruments_history = RequestHistory::new(Duration::from_secs(10), 5);
 
@@ -320,21 +331,21 @@ impl RateLimiter {
             }
             EndpointType::MatchingEngine => {
                 let mut history = self.matching_engine_history.write().await;
-                history.check_limit().map_err(
-                    |requests_in_window| RateLimitError::MatchingEngineRateExceeded {
+                history.check_limit().map_err(|requests_in_window| {
+                    RateLimitError::MatchingEngineRateExceeded {
                         tier: self.account_tier,
                         requests_in_window,
-                    },
-                )
+                    }
+                })
             }
             EndpointType::PublicGetInstruments => {
                 let mut history = self.get_instruments_history.write().await;
-                history.check_limit().map_err(
-                    |requests_in_window| RateLimitError::SpecialEndpointRateExceeded {
+                history.check_limit().map_err(|requests_in_window| {
+                    RateLimitError::SpecialEndpointRateExceeded {
                         endpoint: "public/get_instruments".to_string(),
                         requests_in_window,
-                    },
-                )
+                    }
+                })
             }
             EndpointType::PublicHello => {
                 // public/hello is WebSocket only with no documented rate limits

@@ -61,7 +61,10 @@ impl RestClient {
     ///     Ok(())
     /// }
     /// ```
-    pub async fn get_balances(&self, request: &GetBalancesRequest) -> RestResult<GetBalancesResponse> {
+    pub async fn get_balances(
+        &self,
+        request: &GetBalancesRequest,
+    ) -> RestResult<GetBalancesResponse> {
         self.send_request(
             "/openApi/spot/v1/account/balance",
             reqwest::Method::GET,

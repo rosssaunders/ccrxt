@@ -29,7 +29,10 @@ pub struct OrderMarginInfo {
 }
 
 impl RestClient {
-    pub async fn get_order_margin_by_ids(&self, request: GetOrderMarginByIdsRequest) -> RestResult<GetOrderMarginByIdsResponse> {
+    pub async fn get_order_margin_by_ids(
+        &self,
+        request: GetOrderMarginByIdsRequest,
+    ) -> RestResult<GetOrderMarginByIdsResponse> {
         self.send_signed_request(
             "private/get_order_margin_by_ids",
             &request,

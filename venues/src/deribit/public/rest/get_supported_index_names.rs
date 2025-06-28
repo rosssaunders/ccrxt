@@ -42,7 +42,10 @@ impl RestClient {
     /// Retrieves the list of supported index names.
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_supported_index_names)
-    pub async fn get_supported_index_names(&self, params: GetSupportedIndexNamesRequest) -> RestResult<GetSupportedIndexNamesResponse> {
+    pub async fn get_supported_index_names(
+        &self,
+        params: GetSupportedIndexNamesRequest,
+    ) -> RestResult<GetSupportedIndexNamesResponse> {
         self.send_request(
             "get_supported_index_names",
             Method::POST,
@@ -68,10 +71,10 @@ mod tests {
     #[test]
     fn test_deserialize_response() {
         let data = r#"{
-            \"id\": 26,
-            \"jsonrpc\": \"2.0\",
-            \"result\": {
-                \"index_names\": ["btc_usd", "eth_usd"]
+            "id": 26,
+            "jsonrpc": "2.0",
+            "result": {
+                "index_names": ["btc_usd", "eth_usd"]
             }
         }"#;
         let resp: GetSupportedIndexNamesResponse = serde_json::from_str(data).unwrap();

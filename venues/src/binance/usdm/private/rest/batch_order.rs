@@ -70,7 +70,10 @@ pub struct BatchOrderResponse {
 impl RestClient {
     /// Place multiple orders (POST /fapi/v1/batchOrders)
     /// [Binance API docs](https://binance-docs.github.io/apidocs/futures/en/#place-multiple-orders-trade)
-    pub async fn place_batch_orders(&self, params: BatchOrderRequest) -> BatchOrderResult<BatchOrderResponse> {
+    pub async fn place_batch_orders(
+        &self,
+        params: BatchOrderRequest,
+    ) -> BatchOrderResult<BatchOrderResponse> {
         use crate::binance::usdm::request::execute_request;
         use tracing::debug;
         let endpoint = "/fapi/v1/batchOrders";
@@ -78,8 +81,9 @@ impl RestClient {
         let url = format!("{}{}", self.base_url, endpoint);
 
         // 1. Prepare batchOrders as JSON string (Binance expects this as a stringified array)
-        let batch_orders_json =
-            serde_json::to_string(&params.batch_orders).map_err(|e| BatchOrderError::Other(format!("Failed to serialize batch_orders: {e}")))?;
+        let batch_orders_json = serde_json::to_string(&params.batch_orders).map_err(|e| {
+            BatchOrderError::Other(format!("Failed to serialize batch_orders: {e}"))
+        })?;
 
         // 2. Build query string
         let timestamp = Utc::now().timestamp_millis();
@@ -121,10 +125,16 @@ impl RestClient {
         )
         .await
         .map_err(|e| match e {
-            crate::binance::usdm::Errors::ApiError(api_err) => BatchOrderError::Other(format!("API error: {api_err}")),
-            crate::binance::usdm::Errors::HttpError(http_err) => BatchOrderError::Other(format!("HTTP error: {http_err}")),
+            crate::binance::usdm::Errors::ApiError(api_err) => {
+                BatchOrderError::Other(format!("API error: {api_err}"))
+            }
+            crate::binance::usdm::Errors::HttpError(http_err) => {
+                BatchOrderError::Other(format!("HTTP error: {http_err}"))
+            }
             crate::binance::usdm::Errors::Error(msg) => BatchOrderError::Other(msg),
-            crate::binance::usdm::Errors::InvalidApiKey() => BatchOrderError::InvalidKey("Invalid API key or signature".to_string()),
+            crate::binance::usdm::Errors::InvalidApiKey() => {
+                BatchOrderError::InvalidKey("Invalid API key or signature".to_string())
+            }
         })?;
 
         Ok(resp.data)

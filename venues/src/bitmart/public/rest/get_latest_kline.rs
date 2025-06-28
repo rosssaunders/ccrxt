@@ -94,7 +94,10 @@ impl RestClient {
     /// 2. If only after is passed, check backward according to the time
     /// 3. Both before and after need to verify whether the time interval is legal, and if it is legal, check the interval
     /// 4. If neither before nor after is passed, the latest K-line will be returned in reverse order
-    pub async fn get_latest_kline(&self, request: GetLatestKlineRequest) -> RestResult<GetLatestKlineResponse> {
+    pub async fn get_latest_kline(
+        &self,
+        request: GetLatestKlineRequest,
+    ) -> RestResult<GetLatestKlineResponse> {
         self.send_request(
             "/spot/quotation/v3/lite-klines",
             reqwest::Method::GET,
@@ -255,7 +258,8 @@ mod tests {
             limit: Some(10),
         };
 
-        let serialized = serde_urlencoded::to_string(&request).expect("Failed to serialize request");
+        let serialized =
+            serde_urlencoded::to_string(&request).expect("Failed to serialize request");
         assert!(serialized.contains("symbol=BMX_ETH"));
         assert!(serialized.contains("step=15"));
         assert!(serialized.contains("limit=10"));
@@ -286,7 +290,8 @@ mod tests {
             ]
         ]"#;
 
-        let response: GetLatestKlineResponse = serde_json::from_str(json).expect("Failed to deserialize response");
+        let response: GetLatestKlineResponse =
+            serde_json::from_str(json).expect("Failed to deserialize response");
         assert_eq!(response.0.len(), 2);
         assert_eq!(
             GetLatestKlineResponse::timestamp(&response.0[0]),
@@ -310,7 +315,8 @@ mod tests {
     fn test_empty_response() {
         let json = r#"[]"#;
 
-        let response: GetLatestKlineResponse = serde_json::from_str(json).expect("Failed to deserialize response");
+        let response: GetLatestKlineResponse =
+            serde_json::from_str(json).expect("Failed to deserialize response");
         assert_eq!(response.0.len(), 0);
     }
 

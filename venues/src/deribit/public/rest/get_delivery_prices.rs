@@ -71,7 +71,10 @@ impl RestClient {
     /// Retrieves delivery prices for the given index.
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_delivery_prices)
-    pub async fn get_delivery_prices(&self, params: GetDeliveryPricesRequest) -> RestResult<GetDeliveryPricesResponse> {
+    pub async fn get_delivery_prices(
+        &self,
+        params: GetDeliveryPricesRequest,
+    ) -> RestResult<GetDeliveryPricesResponse> {
         self.send_request(
             "get_delivery_prices",
             Method::POST,

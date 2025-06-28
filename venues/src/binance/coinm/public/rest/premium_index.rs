@@ -51,9 +51,12 @@ impl RestClient {
     /// Query index price and mark price.
     ///
     /// [Official API docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Index-Price-and-Mark-Price)
-    /// 
+    ///
     /// Weight: 10
-    pub async fn get_premium_index(&self, params: PremiumIndexRequest) -> RestResult<Vec<PremiumIndex>> {
+    pub async fn get_premium_index(
+        &self,
+        params: PremiumIndexRequest,
+    ) -> RestResult<Vec<PremiumIndex>> {
         let params_opt = if params.symbol.is_some() || params.pair.is_some() {
             Some(params)
         } else {

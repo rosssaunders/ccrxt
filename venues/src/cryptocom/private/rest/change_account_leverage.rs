@@ -35,7 +35,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Success confirmation (code 0)
-    pub async fn change_account_leverage(&self, request: ChangeAccountLeverageRequest) -> RestResult<ChangeAccountLeverageResponse> {
+    pub async fn change_account_leverage(
+        &self,
+        request: ChangeAccountLeverageRequest,
+    ) -> RestResult<ChangeAccountLeverageResponse> {
         self.send_signed_request("private/change-account-leverage", request)
             .await
     }

@@ -33,7 +33,10 @@ pub struct HelloResult {
 
 impl PrivateWebSocketClient {
     /// Send a hello request and wait for the response
-    pub async fn hello(&mut self, request: HelloRequest) -> Result<HelloResult, DeribitWebSocketError> {
+    pub async fn hello(
+        &mut self,
+        request: HelloRequest,
+    ) -> Result<HelloResult, DeribitWebSocketError> {
         self.send_and_receive::<HelloRequest, HelloResult>(&request)
             .await
     }
@@ -62,7 +65,8 @@ mod tests {
     fn test_hello_response_deserialization() {
         let response_json = r#"{"result":{"version":"1.2.26"}}"#;
 
-        let response: HelloResponse = serde_json::from_str(response_json).expect("Failed to deserialize response");
+        let response: HelloResponse =
+            serde_json::from_str(response_json).expect("Failed to deserialize response");
 
         assert_eq!(response.result.version, "1.2.26");
     }

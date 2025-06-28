@@ -60,7 +60,10 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the max available size or an error
-    pub async fn get_max_avail_size(&self, request: &GetMaxAvailSizeRequest) -> RestResult<OkxApiResponse<MaxAvailSize>> {
+    pub async fn get_max_avail_size(
+        &self,
+        request: &GetMaxAvailSizeRequest,
+    ) -> RestResult<OkxApiResponse<MaxAvailSize>> {
         self.send_request(
             "api/v5/account/max-avail-size",
             reqwest::Method::GET,

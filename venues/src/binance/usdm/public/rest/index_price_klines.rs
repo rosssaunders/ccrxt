@@ -49,7 +49,10 @@ impl RestClient {
     /// Get index price kline/candlestick bars (GET /fapi/v1/indexPriceKlines)
     ///
     /// [API docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Index-Price-Kline-Candlestick-Data)
-    pub async fn get_index_price_klines(&self, params: IndexPriceKlinesRequest) -> RestResult<Vec<IndexPriceKline>> {
+    pub async fn get_index_price_klines(
+        &self,
+        params: IndexPriceKlinesRequest,
+    ) -> RestResult<Vec<IndexPriceKline>> {
         let mut query = format!("pair={}&interval={}", params.pair, params.interval.as_str());
         if let Some(start_time) = params.start_time {
             query.push_str(&format!("&startTime={}", start_time));

@@ -45,7 +45,10 @@ impl RestClient {
     /// Get older market historical trades (GET /fapi/v1/historicalTrades)
     ///
     /// [API docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Old-Trades-Lookup)
-    pub async fn get_historical_trades(&self, params: HistoricalTradesRequest) -> RestResult<Vec<HistoricalTrade>> {
+    pub async fn get_historical_trades(
+        &self,
+        params: HistoricalTradesRequest,
+    ) -> RestResult<Vec<HistoricalTrade>> {
         let mut query = format!("symbol={}", params.symbol);
         if let Some(limit) = params.limit {
             query.push_str(&format!("&limit={}", limit));

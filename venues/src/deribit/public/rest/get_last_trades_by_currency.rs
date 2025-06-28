@@ -3,7 +3,9 @@
 //! Retrieves the most recent trades for a given currency and instrument kind.
 
 use super::RestClient;
-use crate::deribit::enums::{Currency, InstrumentKind, Liquidity, Sorting, TickDirection, TradeOrderType};
+use crate::deribit::enums::{
+    Currency, InstrumentKind, Liquidity, Sorting, TickDirection, TradeOrderType,
+};
 use crate::deribit::{EndpointType, RestResult};
 
 use reqwest::Method;
@@ -95,7 +97,10 @@ impl RestClient {
     /// Retrieves the most recent trades for a given currency and instrument kind.
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_last_trades_by_currency)
-    pub async fn get_last_trades_by_currency(&self, params: GetLastTradesByCurrencyRequest) -> RestResult<GetLastTradesByCurrencyResponse> {
+    pub async fn get_last_trades_by_currency(
+        &self,
+        params: GetLastTradesByCurrencyRequest,
+    ) -> RestResult<GetLastTradesByCurrencyResponse> {
         self.send_request(
             "get_last_trades_by_currency",
             Method::POST,
@@ -109,7 +114,9 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::deribit::enums::{Currency, InstrumentKind, Liquidity, Sorting, TickDirection, TradeOrderType};
+    use crate::deribit::enums::{
+        Currency, InstrumentKind, Liquidity, Sorting, TickDirection, TradeOrderType,
+    };
     use serde_json;
 
     #[test]
@@ -129,19 +136,19 @@ mod tests {
     #[test]
     fn test_deserialize_response() {
         let data = r#"{
-            \"id\": 18,
-            \"jsonrpc\": \"2.0\",
-            \"result\": {
-                \"trades\": [
+            "id": 18,
+            "jsonrpc": "2.0",
+            "result": {
+                "trades": [
                     {
-                        \"trade_id\": \"123456\",
-                        \"price\": 65000.0,
-                        \"amount\": 0.1,
-                        \"timestamp\": 1680310800000,
-                        \"tick_direction\": "0",
-                        \"liquidity\": "M",
-                        \"order_type\": "limit",
-                        \"instrument_name\": "BTC-PERPETUAL"
+                        "trade_id": "123456",
+                        "price": 65000.0,
+                        "amount": 0.1,
+                        "timestamp": 1680310800000,
+                        "tick_direction": "0",
+                        "liquidity": "M",
+                        "order_type": "limit",
+                        "instrument_name": "BTC-PERPETUAL"
                     }
                 ]
             }

@@ -62,7 +62,9 @@ pub enum ApiError {
 
     /// Returned when the API responds with HTTP 429 (Too Many Requests).
     /// This error includes the original error message and relevant Binance rate limit headers.
-    #[error("429 Too Many Requests: {msg} (used_weight_1m={used_weight_1m:?}, order_count_1m={order_count_1m:?}, retry_after={retry_after:?})")]
+    #[error(
+        "429 Too Many Requests: {msg} (used_weight_1m={used_weight_1m:?}, order_count_1m={order_count_1m:?}, retry_after={retry_after:?})"
+    )]
     RateLimitExceeded {
         msg: String,
         used_weight_1m: Option<u32>,
@@ -79,20 +81,24 @@ pub enum ApiError {
     UnmappedApiError { code: i32, msg: String },
 }
 
+impl ApiError {
+    /// Create an ApiError from a numeric code and message
+    pub fn from_code(code: i32, msg: String) -> Self {
+        match code {
+            -1000 => ApiError::UnknownApiError { msg },
+            -1003 => ApiError::TooManyRequests { msg },
+            -1015 => ApiError::TooManyOrders { msg },
+            -1002 => ApiError::Unauthorized { msg },
+            -1021 => ApiError::InvalidTimestamp { msg },
+            -1022 => ApiError::InvalidSignature { msg },
+            _ => ApiError::UnmappedApiError { code, msg },
+        }
+    }
+}
+
 // Conversion from ErrorResponse to ApiError
 impl From<ErrorResponse> for ApiError {
     fn from(err: ErrorResponse) -> Self {
-        match err.code {
-            -1000 => ApiError::UnknownApiError { msg: err.msg },
-            -1003 => ApiError::TooManyRequests { msg: err.msg },
-            -1015 => ApiError::TooManyOrders { msg: err.msg },
-            -1002 => ApiError::Unauthorized { msg: err.msg },
-            -1021 => ApiError::InvalidTimestamp { msg: err.msg },
-            -1022 => ApiError::InvalidSignature { msg: err.msg },
-            _ => ApiError::UnmappedApiError {
-                code: err.code,
-                msg: err.msg,
-            },
-        }
+        Self::from_code(err.code, err.msg)
     }
 }

@@ -95,7 +95,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing the order details for the OCO order
-    pub async fn get_order_list(&self, params: GetOrderListRequest) -> RestResult<GetOrderListResponse> {
+    pub async fn get_order_list(
+        &self,
+        params: GetOrderListRequest,
+    ) -> RestResult<GetOrderListResponse> {
         self.send_signed_request("private/get-order-list", params)
             .await
     }

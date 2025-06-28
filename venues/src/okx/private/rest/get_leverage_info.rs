@@ -40,7 +40,10 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the leverage info or an error
-    pub async fn get_leverage_info(&self, request: &GetLeverageInfoRequest) -> RestResult<OkxApiResponse<LeverageInfo>> {
+    pub async fn get_leverage_info(
+        &self,
+        request: &GetLeverageInfoRequest,
+    ) -> RestResult<OkxApiResponse<LeverageInfo>> {
         self.send_request(
             "api/v5/account/leverage-info",
             reqwest::Method::GET,

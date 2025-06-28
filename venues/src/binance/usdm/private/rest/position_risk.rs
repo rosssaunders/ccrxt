@@ -73,7 +73,10 @@ pub struct PositionRisk {
 impl RestClient {
     /// Get position risk (GET /fapi/v2/positionRisk)
     /// [Binance API docs](https://binance-docs.github.io/apidocs/futures/en/#position-information-v2-user_data)
-    pub async fn get_position_risk(&self, params: GetPositionRiskRequest) -> PositionRiskResult<Vec<PositionRisk>> {
+    pub async fn get_position_risk(
+        &self,
+        params: GetPositionRiskRequest,
+    ) -> PositionRiskResult<Vec<PositionRisk>> {
         use crate::binance::usdm::request::execute_request;
         use tracing::debug;
         let endpoint = "/fapi/v2/positionRisk";
@@ -81,7 +84,8 @@ impl RestClient {
         let url = format!("{}{}", self.base_url, endpoint);
 
         // 1. Serialize params to query string (excluding api_key/api_secret)
-        let mut query_pairs = serde_urlencoded::to_string(&params).map_err(|e| PositionRiskError::Other(format!("Failed to serialize params: {e}")))?;
+        let mut query_pairs = serde_urlencoded::to_string(&params)
+            .map_err(|e| PositionRiskError::Other(format!("Failed to serialize params: {e}")))?;
         if !query_pairs.is_empty() {
             query_pairs.push('&');
         }
@@ -105,14 +109,26 @@ impl RestClient {
 
         // 5. Execute
         let full_url = format!("{}?{}", url, query_pairs);
-        let resp = execute_request::<Vec<PositionRisk>>(&self.client, &full_url, method, Some(headers), None)
-            .await
-            .map_err(|e| match e {
-                crate::binance::usdm::Errors::ApiError(api_err) => PositionRiskError::Other(format!("API error: {api_err}")),
-                crate::binance::usdm::Errors::HttpError(http_err) => PositionRiskError::Other(format!("HTTP error: {http_err}")),
-                crate::binance::usdm::Errors::Error(msg) => PositionRiskError::Other(msg),
-                crate::binance::usdm::Errors::InvalidApiKey() => PositionRiskError::InvalidKey("Invalid API key or signature".to_string()),
-            })?;
+        let resp = execute_request::<Vec<PositionRisk>>(
+            &self.client,
+            &full_url,
+            method,
+            Some(headers),
+            None,
+        )
+        .await
+        .map_err(|e| match e {
+            crate::binance::usdm::Errors::ApiError(api_err) => {
+                PositionRiskError::Other(format!("API error: {api_err}"))
+            }
+            crate::binance::usdm::Errors::HttpError(http_err) => {
+                PositionRiskError::Other(format!("HTTP error: {http_err}"))
+            }
+            crate::binance::usdm::Errors::Error(msg) => PositionRiskError::Other(msg),
+            crate::binance::usdm::Errors::InvalidApiKey() => {
+                PositionRiskError::InvalidKey("Invalid API key or signature".to_string())
+            }
+        })?;
 
         Ok(resp.data)
     }

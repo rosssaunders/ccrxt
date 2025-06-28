@@ -1,5 +1,5 @@
-use crate::binance::coinm::enums::Period;
 use crate::binance::coinm::RestResult;
+use crate::binance::coinm::enums::Period;
 use crate::binance::coinm::public::rest::RestClient;
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
@@ -40,9 +40,12 @@ pub struct TopLongShortAccountRatio {
 
 impl RestClient {
     /// Get top trader long/short ratio (accounts)
-    /// 
+    ///
     /// Weight: 1
-    pub async fn get_top_long_short_account_ratio(&self, params: TopLongShortAccountRatioParams) -> RestResult<Vec<TopLongShortAccountRatio>> {
+    pub async fn get_top_long_short_account_ratio(
+        &self,
+        params: TopLongShortAccountRatioParams,
+    ) -> RestResult<Vec<TopLongShortAccountRatio>> {
         self.send_request(
             "/futures/data/topLongShortAccountRatio",
             reqwest::Method::GET,

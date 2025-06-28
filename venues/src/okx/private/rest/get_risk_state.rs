@@ -38,7 +38,10 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the risk state or an error
-    pub async fn get_risk_state(&self, request: &GetRiskStateRequest) -> RestResult<OkxApiResponse<RiskState>> {
+    pub async fn get_risk_state(
+        &self,
+        request: &GetRiskStateRequest,
+    ) -> RestResult<OkxApiResponse<RiskState>> {
         self.send_request(
             "api/v5/account/risk-state",
             reqwest::Method::GET,

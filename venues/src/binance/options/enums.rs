@@ -108,3 +108,132 @@ impl fmt::Display for RateLimitInterval {
         }
     }
 }
+
+/// Order side (side) for Options
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum OptionsOrderSide {
+    Buy,
+    Sell,
+}
+
+impl fmt::Display for OptionsOrderSide {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            OptionsOrderSide::Buy => write!(f, "BUY"),
+            OptionsOrderSide::Sell => write!(f, "SELL"),
+        }
+    }
+}
+
+/// Time in force (timeInForce) for Options
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum OptionsTimeInForce {
+    Gtc,
+    Ioc,
+    Fok,
+}
+
+impl fmt::Display for OptionsTimeInForce {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            OptionsTimeInForce::Gtc => write!(f, "GTC"),
+            OptionsTimeInForce::Ioc => write!(f, "IOC"),
+            OptionsTimeInForce::Fok => write!(f, "FOK"),
+        }
+    }
+}
+
+/// Response Type (newOrderRespType) for Options
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum OptionsOrderResponseType {
+    Ack,
+    Result,
+}
+
+impl fmt::Display for OptionsOrderResponseType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            OptionsOrderResponseType::Ack => write!(f, "ACK"),
+            OptionsOrderResponseType::Result => write!(f, "RESULT"),
+        }
+    }
+}
+
+/// Account risk level
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum OptionsRiskLevel {
+    Normal,
+    Medium,
+    High,
+}
+
+impl fmt::Display for OptionsRiskLevel {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            OptionsRiskLevel::Normal => write!(f, "NORMAL"),
+            OptionsRiskLevel::Medium => write!(f, "MEDIUM"),
+            OptionsRiskLevel::High => write!(f, "HIGH"),
+        }
+    }
+}
+
+/// Bill/Funding flow type
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum OptionsBillType {
+    Fee,
+    Contract,
+    Transfer,
+}
+
+impl fmt::Display for OptionsBillType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            OptionsBillType::Fee => write!(f, "FEE"),
+            OptionsBillType::Contract => write!(f, "CONTRACT"),
+            OptionsBillType::Transfer => write!(f, "TRANSFER"),
+        }
+    }
+}
+
+/// Order liquidity type (TAKER or MAKER)
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum OptionsLiquidity {
+    Taker,
+    Maker,
+}
+
+impl fmt::Display for OptionsLiquidity {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            OptionsLiquidity::Taker => write!(f, "TAKER"),
+            OptionsLiquidity::Maker => write!(f, "MAKER"),
+        }
+    }
+}
+
+/// Block trade order status
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum OptionsBlockTradeStatus {
+    Received,
+    Accepted,
+    Cancelled,
+    Expired,
+}
+
+impl fmt::Display for OptionsBlockTradeStatus {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            OptionsBlockTradeStatus::Received => write!(f, "RECEIVED"),
+            OptionsBlockTradeStatus::Accepted => write!(f, "ACCEPTED"),
+            OptionsBlockTradeStatus::Cancelled => write!(f, "CANCELLED"),
+            OptionsBlockTradeStatus::Expired => write!(f, "EXPIRED"),
+        }
+    }
+}

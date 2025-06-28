@@ -18,7 +18,9 @@ pub struct UnsubscribeAllResponse {
 
 impl PrivateWebSocketClient {
     /// Unsubscribes from all channels for this client instance.
-    pub async fn unsubscribe_all(&mut self) -> Result<UnsubscribeAllResponse, DeribitWebSocketError> {
+    pub async fn unsubscribe_all(
+        &mut self,
+    ) -> Result<UnsubscribeAllResponse, DeribitWebSocketError> {
         let req = UnsubscribeAllRequest;
         self.send_and_receive::<UnsubscribeAllRequest, UnsubscribeAllResponse>(&req)
             .await

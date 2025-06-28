@@ -55,7 +55,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Result containing transfer history with count and data array
-    pub async fn get_transfers(&self, request: GetTransfersRequest) -> RestResult<GetTransfersResponse> {
+    pub async fn get_transfers(
+        &self,
+        request: GetTransfersRequest,
+    ) -> RestResult<GetTransfersResponse> {
         self.send_signed_request(
             "private/get_transfers",
             &request,
@@ -347,8 +350,10 @@ mod tests {
     #[tokio::test]
     async fn test_get_transfers_method_exists() {
         // Test that the method exists and compiles without needing to call it
-        let api_key = Box::new(PlainTextSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret = Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let api_key =
+            Box::new(PlainTextSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
+        let api_secret =
+            Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
         let client = reqwest::Client::new();
         let rate_limiter = crate::deribit::RateLimiter::new(AccountTier::Tier4);
 

@@ -192,3 +192,128 @@ pub enum KlineInterval {
     #[serde(rename = "1M")]
     I1M,
 }
+
+/// Represents the cancel restrictions for order cancellation.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum CancelRestrictions {
+    OnlyNew,
+    OnlyPartiallyFilled,
+}
+
+impl fmt::Display for CancelRestrictions {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            CancelRestrictions::OnlyNew => write!(f, "ONLY_NEW"),
+            CancelRestrictions::OnlyPartiallyFilled => write!(f, "ONLY_PARTIALLY_FILLED"),
+        }
+    }
+}
+
+/// Represents the cancel replace mode for cancel replace orders.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum CancelReplaceMode {
+    StopOnFailure,
+    AllowFailure,
+}
+
+impl fmt::Display for CancelReplaceMode {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            CancelReplaceMode::StopOnFailure => write!(f, "STOP_ON_FAILURE"),
+            CancelReplaceMode::AllowFailure => write!(f, "ALLOW_FAILURE"),
+        }
+    }
+}
+
+/// Represents the order rate limit exceeded mode.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum OrderRateLimitExceededMode {
+    DoNothing,
+    CancelOnly,
+}
+
+impl fmt::Display for OrderRateLimitExceededMode {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            OrderRateLimitExceededMode::DoNothing => write!(f, "DO_NOTHING"),
+            OrderRateLimitExceededMode::CancelOnly => write!(f, "CANCEL_ONLY"),
+        }
+    }
+}
+
+/// Represents the order list status for OCO, OTO, OTOCO.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum OrderListStatus {
+    Response,
+    ExecStarted,
+    AllDone,
+    Reject,
+}
+
+impl fmt::Display for OrderListStatus {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            OrderListStatus::Response => write!(f, "RESPONSE"),
+            OrderListStatus::ExecStarted => write!(f, "EXEC_STARTED"),
+            OrderListStatus::AllDone => write!(f, "ALL_DONE"),
+            OrderListStatus::Reject => write!(f, "REJECT"),
+        }
+    }
+}
+
+/// Represents the order list order status.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum OrderListOrderStatus {
+    Executing,
+    AllDone,
+    Reject,
+}
+
+impl fmt::Display for OrderListOrderStatus {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            OrderListOrderStatus::Executing => write!(f, "EXECUTING"),
+            OrderListOrderStatus::AllDone => write!(f, "ALL_DONE"),
+            OrderListOrderStatus::Reject => write!(f, "REJECT"),
+        }
+    }
+}
+
+/// Represents the contingency type for order lists.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum ContingencyType {
+    Oco,
+    Oto,
+    Otoco,
+}
+
+impl fmt::Display for ContingencyType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            ContingencyType::Oco => write!(f, "OCO"),
+            ContingencyType::Oto => write!(f, "OTO"),
+            ContingencyType::Otoco => write!(f, "OTOCO"),
+        }
+    }
+}
+
+/// Represents the allocation type for SOR.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum AllocationType {
+    Sor,
+}
+
+impl fmt::Display for AllocationType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            AllocationType::Sor => write!(f, "SOR"),
+        }
+    }
+}

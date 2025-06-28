@@ -90,7 +90,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing the converted values
-    pub async fn convert_contract_coin(&self, request: ConvertContractCoinRequest) -> RestResult<ConvertContractCoinResponse> {
+    pub async fn convert_contract_coin(
+        &self,
+        request: ConvertContractCoinRequest,
+    ) -> RestResult<ConvertContractCoinResponse> {
         self.send_request(
             "api/v5/public/convert-contract-coin",
             reqwest::Method::GET,
@@ -272,7 +275,10 @@ mod tests {
     // Integration test to verify all exports are accessible
     #[test]
     fn test_integration_exports_available() {
-        use crate::okx::{ConvertContractCoinData, ConvertContractCoinRequest, ConvertContractCoinResponse, PublicRestClient, RateLimiter};
+        use crate::okx::{
+            ConvertContractCoinData, ConvertContractCoinRequest, ConvertContractCoinResponse,
+            PublicRestClient, RateLimiter,
+        };
 
         // Test that we can create the request struct
         let _request = ConvertContractCoinRequest {

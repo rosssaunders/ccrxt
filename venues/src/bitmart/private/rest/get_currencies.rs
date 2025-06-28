@@ -62,7 +62,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Currency information
-    pub async fn get_currencies(&self, request: GetCurrenciesRequest) -> RestResult<GetCurrenciesResponse> {
+    pub async fn get_currencies(
+        &self,
+        request: GetCurrenciesRequest,
+    ) -> RestResult<GetCurrenciesResponse> {
         self.send_request(
             "/account/v1/currencies",
             reqwest::Method::GET,

@@ -89,7 +89,14 @@ impl RestClient {
     /// 1. Creating the string: timestamp + method + requestPath + queryString + body
     /// 2. HMAC SHA256 with the API secret
     /// 3. Base64 encoding the result
-    fn generate_signature(&self, timestamp: i64, method: &str, request_path: &str, query_string: Option<&str>, body: Option<&str>) -> Result<String, Errors> {
+    fn generate_signature(
+        &self,
+        timestamp: i64,
+        method: &str,
+        request_path: &str,
+        query_string: Option<&str>,
+        body: Option<&str>,
+    ) -> Result<String, Errors> {
         let query_part = match query_string {
             Some(q) if !q.is_empty() => format!("?{q}"),
             _ => String::new(),
@@ -106,8 +113,8 @@ impl RestClient {
             body_part
         );
 
-        let mut mac =
-            Hmac::<Sha256>::new_from_slice(self.api_secret.expose_secret().as_bytes()).map_err(|e| Errors::Error(format!("Failed to create HMAC: {e}")))?;
+        let mut mac = Hmac::<Sha256>::new_from_slice(self.api_secret.expose_secret().as_bytes())
+            .map_err(|e| Errors::Error(format!("Failed to create HMAC: {e}")))?;
 
         mac.update(sign_string.as_bytes());
         let result = mac.finalize();
@@ -153,7 +160,8 @@ impl RestClient {
         let timestamp = Utc::now().timestamp_millis();
 
         // Generate signature
-        let signature = self.generate_signature(timestamp, method.as_str(), endpoint, query_string, body)?;
+        let signature =
+            self.generate_signature(timestamp, method.as_str(), endpoint, query_string, body)?;
 
         // Build URL
         let url = match query_string {

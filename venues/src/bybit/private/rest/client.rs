@@ -82,7 +82,13 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the parsed response data, or an error
-    pub(super) async fn send_signed_request<T, R>(&self, endpoint: &str, method: reqwest::Method, request: R, endpoint_type: EndpointType) -> RestResult<T>
+    pub(super) async fn send_signed_request<T, R>(
+        &self,
+        endpoint: &str,
+        method: reqwest::Method,
+        request: R,
+        endpoint_type: EndpointType,
+    ) -> RestResult<T>
     where
         T: DeserializeOwned,
         R: Serialize,
@@ -165,7 +171,8 @@ impl RestClient {
     /// Generate HMAC-SHA256 signature for ByBit V5 API
     fn sign_payload(&self, payload: &str) -> Result<String, Errors> {
         let secret_key = self.api_secret.expose_secret();
-        let mut mac = Hmac::<Sha256>::new_from_slice(secret_key.as_bytes()).map_err(|e| Errors::AuthError(format!("Invalid secret key: {e}")))?;
+        let mut mac = Hmac::<Sha256>::new_from_slice(secret_key.as_bytes())
+            .map_err(|e| Errors::AuthError(format!("Invalid secret key: {e}")))?;
 
         mac.update(payload.as_bytes());
         let result = mac.finalize();
@@ -198,7 +205,8 @@ mod tests {
     #[test]
     fn test_private_client_creation() {
         let api_key = Box::new(TestSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret = Box::new(TestSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let api_secret =
+            Box::new(TestSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
         let client = Client::new();
         let rate_limiter = RateLimiter::new();
 
@@ -216,7 +224,8 @@ mod tests {
     #[test]
     fn test_sign_payload() {
         let api_key = Box::new(TestSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret = Box::new(TestSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let api_secret =
+            Box::new(TestSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
         let client = Client::new();
         let rate_limiter = RateLimiter::new();
 

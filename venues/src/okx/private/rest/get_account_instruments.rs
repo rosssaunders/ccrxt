@@ -130,7 +130,10 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the account instruments or an error
-    pub async fn get_account_instruments(&self, request: &GetAccountInstrumentsRequest) -> RestResult<OkxApiResponse<AccountInstrument>> {
+    pub async fn get_account_instruments(
+        &self,
+        request: &GetAccountInstrumentsRequest,
+    ) -> RestResult<OkxApiResponse<AccountInstrument>> {
         self.send_request(
             "api/v5/account/instruments",
             reqwest::Method::GET,
@@ -208,7 +211,8 @@ mod tests {
             ]
         }"#;
 
-        let response: OkxApiResponse<AccountInstrument> = serde_json::from_str(response_json).unwrap();
+        let response: OkxApiResponse<AccountInstrument> =
+            serde_json::from_str(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 1);
 

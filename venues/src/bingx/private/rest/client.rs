@@ -48,7 +48,13 @@ impl RestClient {
     ///
     /// # Returns
     /// A new RestClient instance
-    pub fn new(api_key: Box<dyn ExposableSecret>, api_secret: Box<dyn ExposableSecret>, base_url: &str, client: Client, rate_limiter: RateLimiter) -> Self {
+    pub fn new(
+        api_key: Box<dyn ExposableSecret>,
+        api_secret: Box<dyn ExposableSecret>,
+        base_url: &str,
+        client: Client,
+        rate_limiter: RateLimiter,
+    ) -> Self {
         Self {
             api_key,
             api_secret,
@@ -73,7 +79,8 @@ impl RestClient {
     pub fn sign_request(&self, query_string: &str) -> Result<String, Errors> {
         // Sign with HMAC SHA256
         let api_secret = self.api_secret.expose_secret();
-        let mut mac = Hmac::<Sha256>::new_from_slice(api_secret.as_bytes()).map_err(|_| Errors::InvalidApiKey)?;
+        let mut mac = Hmac::<Sha256>::new_from_slice(api_secret.as_bytes())
+            .map_err(|_| Errors::InvalidApiKey)?;
         mac.update(query_string.as_bytes());
 
         // Return as hex string
@@ -90,7 +97,13 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the parsed response data or an error
-    pub async fn send_request<T, P>(&self, endpoint: &str, method: reqwest::Method, params: Option<&P>, endpoint_type: EndpointType) -> RestResult<T>
+    pub async fn send_request<T, P>(
+        &self,
+        endpoint: &str,
+        method: reqwest::Method,
+        params: Option<&P>,
+        endpoint_type: EndpointType,
+    ) -> RestResult<T>
     where
         T: DeserializeOwned,
         P: Serialize + ?Sized,
@@ -107,11 +120,12 @@ impl RestClient {
 
         // Add optional parameters
         if let Some(params) = params {
-            let params_str = serde_urlencoded::to_string(params).map_err(|e| Errors::Error(format!("Failed to serialize parameters: {e}")))?;
+            let params_str = serde_urlencoded::to_string(params)
+                .map_err(|e| Errors::Error(format!("Failed to serialize parameters: {e}")))?;
 
             if !params_str.is_empty() {
-                for (key, value) in
-                    serde_urlencoded::from_str::<Vec<(String, String)>>(&params_str).map_err(|e| Errors::Error(format!("Failed to parse parameters: {e}")))?
+                for (key, value) in serde_urlencoded::from_str::<Vec<(String, String)>>(&params_str)
+                    .map_err(|e| Errors::Error(format!("Failed to parse parameters: {e}")))?
                 {
                     query_params.push((key, value));
                 }
@@ -167,7 +181,9 @@ impl RestClient {
                 .unwrap_or_else(|_| "Unknown error".to_string());
 
             // Try to parse as BingX error response
-            if let Ok(error_response) = serde_json::from_str::<crate::bingx::ErrorResponse>(&error_text) {
+            if let Ok(error_response) =
+                serde_json::from_str::<crate::bingx::ErrorResponse>(&error_text)
+            {
                 Err(Errors::from(error_response))
             } else {
                 Err(Errors::Error(format!("HTTP {status}: {error_text}")))
@@ -202,7 +218,8 @@ mod tests {
     #[test]
     fn test_private_client_creation() {
         let api_key = Box::new(TestSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret = Box::new(TestSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let api_secret =
+            Box::new(TestSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
         let client = Client::new();
         let rate_limiter = RateLimiter::new();
 
@@ -220,7 +237,8 @@ mod tests {
     #[test]
     fn test_sign_request() {
         let api_key = Box::new(TestSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret = Box::new(TestSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let api_secret =
+            Box::new(TestSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
         let client = Client::new();
         let rate_limiter = RateLimiter::new();
 

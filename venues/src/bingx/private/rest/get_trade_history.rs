@@ -108,7 +108,10 @@ impl RestClient {
     /// - If start_time/end_time is not filled, data of the past 24 hours is returned by default
     /// - Maximum 1000 records can be returned
     /// - Results are sorted by time field, from smallest to largest
-    pub async fn get_trade_history(&self, request: &GetTradeHistoryRequest) -> RestResult<GetTradeHistoryResponse> {
+    pub async fn get_trade_history(
+        &self,
+        request: &GetTradeHistoryRequest,
+    ) -> RestResult<GetTradeHistoryResponse> {
         self.send_request(
             "/openApi/spot/v1/trade/myTrades",
             reqwest::Method::GET,

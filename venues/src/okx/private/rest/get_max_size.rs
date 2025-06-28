@@ -62,7 +62,10 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the max size or an error
-    pub async fn get_max_size(&self, request: &GetMaxSizeRequest) -> RestResult<OkxApiResponse<MaxSize>> {
+    pub async fn get_max_size(
+        &self,
+        request: &GetMaxSizeRequest,
+    ) -> RestResult<OkxApiResponse<MaxSize>> {
         self.send_request(
             "api/v5/account/max-size",
             reqwest::Method::GET,

@@ -42,7 +42,10 @@ impl RestClient {
     ///
     /// # Returns
     /// Cancel order response with result status
-    pub async fn cancel_order(&self, request: CancelOrderRequest) -> RestResult<CancelOrderResponse> {
+    pub async fn cancel_order(
+        &self,
+        request: CancelOrderRequest,
+    ) -> RestResult<CancelOrderResponse> {
         self.send_request(
             "/spot/v3/cancel_order",
             reqwest::Method::POST,
