@@ -1,0 +1,35 @@
+{
+  "manifest_version": 3,
+  "name": "CCRXT API Explorer",
+  "version": "1.0.0",
+  "description": "Explore and test cryptocurrency exchange APIs with CCRXT",
+  
+  "permissions": [
+    "storage",
+    "activeTab"
+  ],
+  
+  "host_permissions": [
+    "https://api.exchange.coinbase.com/*",
+    "https://api.binance.com/*",
+    "https://api.binance.us/*", 
+    "https://fapi.binance.com/*",
+    "https://dapi.binance.com/*",
+    "https://www.deribit.com/*",
+    "https://www.okx.com/*",
+    "https://api.crypto.com/*",
+    "https://api-cloud.bitmart.com/*",
+    "https://open-api.bingx.com/*",
+    "https://api.bullish.com/*",
+    "https://api.bitget.com/*",
+    "https://api.bybit.com/*"
+  ],
+  
+  "background": {
+    "service_worker": "background.js"
+  },
+  
+  "action": {
+    "default_title": "CCRXT API Explorer"
+  }
+}

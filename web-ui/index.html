@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CCRXT API Explorer</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: #f8fafc;
+            color: #334155;
+            line-height: 1.6;
+        }
+
+        .app {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #64748b;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .panel {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        .panel h2 {
+            color: #1e293b;
+            margin-bottom: 16px;
+            font-size: 18px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 4px;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background: #2563eb;
+        }
+
+        button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        .response-area {
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            padding: 12px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            min-height: 200px;
+            overflow: auto;
+        }
+
+        .loading {
+            color: #6b7280;
+            font-style: italic;
+        }
+
+        .error {
+            color: #dc2626;
+            background: #fef2f2;
+            border-color: #fecaca;
+        }
+
+        .success {
+            color: #059669;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #e5e7eb;
+            margin-bottom: 16px;
+        }
+
+        .tab {
+            padding: 8px 16px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .tab.active {
+            border-bottom-color: #3b82f6;
+            color: #3b82f6;
+        }
+
+        .parameter-form {
+            display: grid;
+            gap: 12px;
+        }
+
+        .venue-badge {
+            display: inline-block;
+            background: #eff6ff;
+            color: #1d4ed8;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        /* Documentation Panel Styles */
+        .documentation-panel {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .endpoint-header {
+            background: white;
+            padding: 16px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .endpoint-title {
+            color: #1e293b;
+            margin: 0 0 12px 0;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .endpoint-meta {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .method-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .method-badge.get { background: #dcfce7; color: #166534; }
+        .method-badge.post { background: #dbeafe; color: #1d4ed8; }
+        .method-badge.put { background: #fef3c7; color: #92400e; }
+        .method-badge.delete { background: #fee2e2; color: #dc2626; }
+
+        .endpoint-path {
+            background: #f1f5f9;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            color: #475569;
+        }
+
+        .auth-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .auth-badge.public { background: #dcfce7; color: #166534; }
+        .auth-badge.private { background: #fee2e2; color: #dc2626; }
+
+        .documentation-content {
+            padding: 16px;
+        }
+
+        .description-section h4,
+        .parameters-section h4 {
+            color: #374151;
+            margin: 0 0 8px 0;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .summary {
+            margin: 0 0 12px 0;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .details {
+            margin-top: 8px;
+        }
+
+        .details p {
+            margin: 0 0 8px 0;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .parameters-section {
+            margin-top: 20px;
+        }
+
+        .parameter-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .parameter-item {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            padding: 12px;
+        }
+
+        .param-name {
+            background: #f8fafc;
+            color: #374151;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .param-type {
+            margin-left: 8px;
+            padding: 2px 6px;
+            background: #eff6ff;
+            color: #1d4ed8;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .required {
+            margin-left: 8px;
+            padding: 2px 6px;
+            background: #fee2e2;
+            color: #dc2626;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .optional {
+            margin-left: 8px;
+            padding: 2px 6px;
+            background: #f3f4f6;
+            color: #6b7280;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .param-description {
+            margin: 8px 0 0 0;
+            color: #6b7280;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+    <link data-trunk rel="rust" data-bin="ccrxt-web-ui" />
+    <script type="module">
+        import init from './pkg/ccrxt_web_ui.js';
+        init();
+    </script>
+</body>
+</html>

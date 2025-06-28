@@ -1,0 +1,15 @@
+# Generated files
+src/generated_endpoints.rs
+
+# Build artifacts
+target/
+dist/
+Cargo.lock
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
