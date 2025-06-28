@@ -8,4 +8,7 @@ mod binancespot;
 mod binanceportfolio;
 
 #[cfg(test)]
+mod bitget;
+
+#[cfg(test)]
 mod deribit;
