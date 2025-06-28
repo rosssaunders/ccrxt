@@ -24,7 +24,11 @@ pub struct TradeRow {
     pub time: String,
 }
 
-pub async fn handle_trades_command(client: Arc<PrivateRestClient>, symbol: String, limit: u32) -> Result<(), Errors> {
+pub async fn handle_trades_command(
+    client: Arc<PrivateRestClient>,
+    symbol: String,
+    limit: u32,
+) -> Result<(), Errors> {
     let mut trades = Vec::new();
     let mut from_id = 0_u64;
     let mut page_count = 0;

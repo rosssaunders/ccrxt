@@ -13,7 +13,8 @@ use venues::binance::coinm::{ApiError, Errors, RateLimiter};
 
 mod commands;
 use commands::{
-    handle_account_command, handle_all_orders_command, handle_batch_order_command, handle_order_command, handle_position_risk_command, handle_trades_command,
+    handle_account_command, handle_all_orders_command, handle_batch_order_command,
+    handle_order_command, handle_position_risk_command, handle_trades_command,
 };
 
 #[derive(Parser)]
@@ -630,7 +631,16 @@ async fn main() -> Result<()> {
             quantity,
             price,
         } => {
-            if let Err(e) = handle_batch_order_command(client.clone(), symbol, side, order_type, quantity, price).await {
+            if let Err(e) = handle_batch_order_command(
+                client.clone(),
+                symbol,
+                side,
+                order_type,
+                quantity,
+                price,
+            )
+            .await
+            {
                 if let Some(_api_err) = e.downcast_ref::<ApiError>() {
                     //handle__api_error(_api_err);
                 }
@@ -644,7 +654,10 @@ async fn main() -> Result<()> {
             quantity,
             price,
         } => {
-            if let Err(e) = handle_order_command(client.clone(), symbol, side, order_type, quantity, price).await {
+            if let Err(e) =
+                handle_order_command(client.clone(), symbol, side, order_type, quantity, price)
+                    .await
+            {
                 if let Some(_api_err) = e.downcast_ref::<ApiError>() {
                     //handle__api_error(_api_err);
                 }

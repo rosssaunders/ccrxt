@@ -92,12 +92,18 @@ pub enum Commands {
     PositionRisk,
 }
 
-pub async fn handle_all_orders_command(client: std::sync::Arc<venues::binance::coinm::PrivateRestClient>, symbol: String, limit: u32) -> anyhow::Result<()> {
+pub async fn handle_all_orders_command(
+    client: std::sync::Arc<venues::binance::coinm::PrivateRestClient>,
+    symbol: String,
+    limit: u32,
+) -> anyhow::Result<()> {
     crate::commands::all_orders::run_all_orders(&client, symbol, limit).await;
     Ok(())
 }
 
-pub async fn handle_position_risk_command(client: std::sync::Arc<venues::binance::coinm::PrivateRestClient>) -> anyhow::Result<()> {
+pub async fn handle_position_risk_command(
+    client: std::sync::Arc<venues::binance::coinm::PrivateRestClient>,
+) -> anyhow::Result<()> {
     crate::commands::position_risk::run_position_risk(&client).await;
     Ok(())
 }

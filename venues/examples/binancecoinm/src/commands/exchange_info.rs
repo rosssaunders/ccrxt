@@ -52,8 +52,13 @@ fn print_exchange_info(info: &ExchangeInfoResponse) {
         .collect();
 
     //sort symbol_rows by contract type and then pair and then symbol
-    symbol_rows
-        .sort_by(|a, b| (a.contract_type.as_str(), a.pair.as_str(), a.symbol.as_str()).cmp(&(b.contract_type.as_str(), b.pair.as_str(), b.symbol.as_str())));
+    symbol_rows.sort_by(|a, b| {
+        (a.contract_type.as_str(), a.pair.as_str(), a.symbol.as_str()).cmp(&(
+            b.contract_type.as_str(),
+            b.pair.as_str(),
+            b.symbol.as_str(),
+        ))
+    });
 
     let mut symbol_table = Table::new(symbol_rows);
     symbol_table.with(Style::rounded());
