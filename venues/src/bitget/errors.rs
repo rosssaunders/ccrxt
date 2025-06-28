@@ -143,6 +143,18 @@ pub enum ApiError {
     #[error("{msg}")]
     RequestOverLimit { msg: String },
 
+    /// HTTP error - for network and transport level errors
+    #[error("HTTP error: {0}")]
+    Http(String),
+
+    /// JSON parsing error
+    #[error("Parse error: {0}")]
+    Parse(String),
+
+    /// Generic API error with message
+    #[error("API error: {0}")]
+    Api(String),
+
     /// Unmapped API error - for error codes not explicitly handled
     #[error("API error (code: {code}): {msg}")]
     UnmappedApiError { code: String, msg: String },

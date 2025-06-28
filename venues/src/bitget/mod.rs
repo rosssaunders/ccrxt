@@ -4,6 +4,8 @@ mod rate_limit;
 
 // Private API modules
 mod private;
+// Public API modules
+pub mod public;
 
 // Re-export key components
 pub use enums::*;

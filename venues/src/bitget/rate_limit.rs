@@ -95,6 +95,17 @@ impl RateLimitHeader {
             interval_unit: IntervalUnit::Second,
         }
     }
+
+    /// Parse a header name string to RateLimitHeader
+    pub fn from_str(header_name: &str) -> Option<Self> {
+        // For now, we'll return standard headers based on common patterns
+        // This can be expanded later to parse actual Bitget rate limit headers
+        match header_name.to_lowercase().as_str() {
+            "x-ratelimit-remaining" | "x-ratelimit-limit" => Some(Self::request_frequency_1s()),
+            "x-ratelimit-reset" => Some(Self::request_frequency_1m()),
+            _ => None,
+        }
+    }
 }
 
 impl std::fmt::Display for IntervalUnit {
