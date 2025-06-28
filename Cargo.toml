@@ -6,7 +6,8 @@ members = [
     "rest",
     "venues/examples/binancecoinm",
     "venues/examples/binanceportfoliomargin",
-    "binance_macros"
+    "binance_macros",
+    "webui",
 ]
 
 [workspace.package]
