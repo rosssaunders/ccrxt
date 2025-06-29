@@ -1,3 +1,21 @@
+pub mod assets;
+pub mod candles;
 pub mod client;
+pub mod index_prices;
+pub mod markets;
+pub mod nonce;
+pub mod orderbook;
+pub mod public_trades;
+pub mod ticker;
+pub mod time;
 
+pub use assets::{Asset, AssetNetwork, AssetStatus, AssetsResponse, SingleAssetResponse};
+pub use candles::{Candle, CandleParams};
 pub use client::RestClient;
+pub use index_prices::IndexPrice;
+pub use markets::{Market, MarketStatus, MarketType, MarketsResponse, SingleMarketResponse};
+pub use nonce::Nonce;
+pub use orderbook::{HybridOrderbook, OrderbookEntry, OrderbookParams};
+pub use public_trades::{PublicTrade, PublicTradesParams};
+pub use ticker::Ticker;
+pub use time::ServerTime;

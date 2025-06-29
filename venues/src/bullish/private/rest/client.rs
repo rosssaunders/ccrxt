@@ -212,6 +212,160 @@ impl RestClient {
         let result: T = response.json().await?;
         Ok(result)
     }
+
+    /// Send a signed request to the Bullish API
+    ///
+    /// This method handles JWT token management, HMAC signing, rate limiting, and error handling.
+    /// Used for endpoints that require both JWT authentication and HMAC signatures.
+    ///
+    /// # Arguments
+    /// * `endpoint` - The API endpoint path
+    /// * `method` - The HTTP method
+    /// * `body` - Optional request body for POST/PUT requests
+    /// * `endpoint_type` - The endpoint type for rate limiting
+    ///
+    /// # Returns
+    /// The deserialized response or an error
+    pub async fn send_signed_request<T, B>(
+        &mut self,
+        endpoint: &str,
+        method: reqwest::Method,
+        body: Option<&B>,
+        endpoint_type: EndpointType,
+    ) -> RestResult<T>
+    where
+        T: DeserializeOwned,
+        B: Serialize,
+    {
+        // Check rate limits
+        self.rate_limiter
+            .check_limits(endpoint_type)
+            .await
+            .map_err(|e| Errors::RateLimitError(e.to_string()))?;
+
+        // Ensure we have a valid JWT token
+        if self.jwt_token.is_none() {
+            self.get_jwt_token().await?;
+        }
+
+        let timestamp = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_millis() as u64;
+
+        let nonce = timestamp; // Simple nonce implementation
+
+        let url = format!("{}/trading-api{}", self.base_url, endpoint);
+        let token = self.jwt_token.as_ref().ok_or_else(|| {
+            Errors::AuthenticationError("JWT token missing after login attempt".to_owned())
+        })?;
+
+        // Serialize body to string for signing
+        let body_str = if let Some(body_data) = body {
+            serde_json::to_string(body_data)?
+        } else {
+            String::new()
+        };
+
+        // Create signature data: timestamp + nonce + method + endpoint + body
+        let signature_data = format!(
+            "{}{}{}{}{}",
+            timestamp,
+            nonce,
+            method.as_str().to_uppercase(),
+            endpoint,
+            body_str
+        );
+
+        // Create HMAC signature
+        let mut mac = Hmac::<Sha256>::new_from_slice(self.api_secret.expose_secret().as_bytes())
+            .map_err(|e| Errors::AuthenticationError(format!("HMAC key error: {}", e)))?;
+        mac.update(signature_data.as_bytes());
+        let signature = general_purpose::STANDARD.encode(mac.finalize().into_bytes());
+
+        let mut request = self
+            .client
+            .request(method.clone(), &url)
+            .header("Authorization", format!("Bearer {token}"))
+            .header("Content-Type", "application/json")
+            .header("BX-TIMESTAMP", timestamp.to_string())
+            .header("BX-NONCE", nonce.to_string())
+            .header("BX-SIGNATURE", signature);
+
+        if !body_str.is_empty() {
+            request = request.body(body_str.clone());
+        }
+
+        let response = request.send().await?;
+
+        self.rate_limiter.increment_request(endpoint_type).await;
+
+        // Handle 401 Unauthorized - token might be expired
+        if response.status() == reqwest::StatusCode::UNAUTHORIZED {
+            // Try to refresh token once
+            self.jwt_token = None;
+            self.get_jwt_token().await?;
+
+            let token = self.jwt_token.as_ref().ok_or_else(|| {
+                Errors::AuthenticationError("JWT token missing after refresh attempt".to_owned())
+            })?;
+
+            // Create new signature with refreshed token
+            let new_timestamp = std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_millis() as u64;
+            let new_nonce = new_timestamp;
+
+            let new_signature_data = format!(
+                "{}{}{}{}{}",
+                new_timestamp,
+                new_nonce,
+                method.as_str().to_uppercase(),
+                endpoint,
+                body_str
+            );
+
+            let mut new_mac = Hmac::<Sha256>::new_from_slice(self.api_secret.expose_secret().as_bytes())
+                .map_err(|e| Errors::AuthenticationError(format!("HMAC key error: {}", e)))?;
+            new_mac.update(new_signature_data.as_bytes());
+            let new_signature = general_purpose::STANDARD.encode(new_mac.finalize().into_bytes());
+
+            let mut retry_request = self
+                .client
+                .request(method, &url)
+                .header("Authorization", format!("Bearer {token}"))
+                .header("Content-Type", "application/json")
+                .header("BX-TIMESTAMP", new_timestamp.to_string())
+                .header("BX-NONCE", new_nonce.to_string())
+                .header("BX-SIGNATURE", new_signature);
+
+            if !body_str.is_empty() {
+                retry_request = retry_request.body(body_str.clone());
+            }
+
+            let retry_response = retry_request.send().await?;
+            self.rate_limiter.increment_request(endpoint_type).await;
+
+            if !retry_response.status().is_success() {
+                let error_text = retry_response.text().await?;
+                return Err(Errors::Error(format!(
+                    "Signed request failed after token refresh: {error_text}"
+                )));
+            }
+
+            let result: T = retry_response.json().await?;
+            return Ok(result);
+        }
+
+        if !response.status().is_success() {
+            let error_text = response.text().await?;
+            return Err(Errors::Error(format!("Signed request failed: {error_text}")));
+        }
+
+        let result: T = response.json().await?;
+        Ok(result)
+    }
 }
 
 #[cfg(test)]

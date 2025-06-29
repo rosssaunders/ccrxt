@@ -31,6 +31,8 @@ pub enum EndpointType {
     PublicOrderbook,
     PublicTrades,
     PublicCandles,
+    PublicTime,
+    PublicOther,
 
     // Private endpoints
     PrivateLogin,
@@ -38,6 +40,8 @@ pub enum EndpointType {
     PrivateOrders,
     PrivateTrades,
     PrivatePositions,
+    PrivateAssetBalances,
+    PrivateWalletTransactions,
     PrivateOther,
 }
 
@@ -52,6 +56,8 @@ impl EndpointType {
             EndpointType::PublicOrderbook => RateLimit::new(50, Duration::from_secs(1)),
             EndpointType::PublicTrades => RateLimit::new(50, Duration::from_secs(1)),
             EndpointType::PublicCandles => RateLimit::new(50, Duration::from_secs(1)),
+            EndpointType::PublicTime => RateLimit::new(100, Duration::from_secs(1)),
+            EndpointType::PublicOther => RateLimit::new(50, Duration::from_secs(1)),
 
             // Private endpoints - 50 requests per second with higher limits for order endpoints
             EndpointType::PrivateLogin => RateLimit::new(10, Duration::from_secs(1)),
@@ -59,6 +65,8 @@ impl EndpointType {
             EndpointType::PrivateOrders => RateLimit::new(50, Duration::from_secs(1)),
             EndpointType::PrivateTrades => RateLimit::new(50, Duration::from_secs(1)),
             EndpointType::PrivatePositions => RateLimit::new(50, Duration::from_secs(1)),
+            EndpointType::PrivateAssetBalances => RateLimit::new(50, Duration::from_secs(1)),
+            EndpointType::PrivateWalletTransactions => RateLimit::new(50, Duration::from_secs(1)),
             EndpointType::PrivateOther => RateLimit::new(50, Duration::from_secs(1)),
         }
     }
@@ -70,9 +78,12 @@ impl EndpointType {
             path if path.contains("/v1/markets") => EndpointType::PublicMarkets,
             path if path.contains("/v1/assets") => EndpointType::PublicAssets,
             path if path.contains("/v1/ticker") => EndpointType::PublicTicker,
-            path if path.contains("/v1/orderbook") => EndpointType::PublicOrderbook,
-            path if path.contains("/v1/trades") => EndpointType::PublicTrades,
-            path if path.contains("/v1/candles") => EndpointType::PublicCandles,
+            path if path.contains("/orderbook") => EndpointType::PublicOrderbook,
+            path if path.contains("/v1/time") => EndpointType::PublicTime,
+            path if path.contains("/markets/") && path.contains("/trades") => EndpointType::PublicTrades,
+            path if path.contains("/v1/candles") || path.contains("/candles") => EndpointType::PublicCandles,
+            path if path.contains("/v1/nonce") => EndpointType::PublicOther,
+            path if path.contains("/v1/index-prices") => EndpointType::PublicOther,
 
             // Private endpoints
             path if path.contains("/v1/users/login") || path.contains("/v1/users/hmac/login") => {
@@ -82,12 +93,13 @@ impl EndpointType {
                 EndpointType::PrivateTradingAccounts
             }
             path if path.contains("/v2/orders") => EndpointType::PrivateOrders,
-            path if path.contains("/v1/trades") && path.contains("trading") => {
-                EndpointType::PrivateTrades
-            }
+            path if path.contains("/v1/trades") => EndpointType::PrivateTrades,
             path if path.contains("/v1/positions") => EndpointType::PrivatePositions,
+            path if path.contains("/v1/accounts/asset") => EndpointType::PrivateAssetBalances,
+            path if path.contains("/v1/wallets/transactions") => EndpointType::PrivateWalletTransactions,
 
-            // Default to other for unrecognized private endpoints
+            // Default based on whether it's a public or private path
+            path if path.starts_with("/trading-api/v1/") && !path.contains("/users/") && !path.contains("/accounts/") && !path.contains("/orders") && !path.contains("/positions") && !path.contains("/trades") && !path.contains("/wallets/") => EndpointType::PublicOther,
             _ => EndpointType::PrivateOther,
         }
     }
