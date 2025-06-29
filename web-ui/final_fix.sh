@@ -14,7 +14,10 @@ import init, * as bindings from './ccrxt-web-ui.js';
 
 async function initApp() {
     try {
-        const wasm = await init('./ccrxt-web-ui_bg.wasm');
+        // Use the new single-parameter format to avoid deprecation warning
+        const wasm = await init({
+            module_or_path: './ccrxt-web-ui_bg.wasm'
+        });
         window.wasmBindings = bindings;
         dispatchEvent(new CustomEvent("TrunkApplicationStarted", {detail: {wasm}}));
     } catch (error) {
@@ -40,9 +43,16 @@ in_script && /<\/script>/ {
 }
 !in_script {
     line = $0
+    # Remove integrity attributes and crossorigin
     gsub(/crossorigin="anonymous" integrity="[^"]*"/, "", line)
     gsub(/integrity="[^"]*"/, "", line)
     gsub(/crossorigin="anonymous" /, "", line)
+    
+    # Remove problematic preload links that cause warnings
+    if (line ~ /<link rel="(modulepreload|preload)"/) {
+        next
+    }
+    
     print line
 }
 ' dist/index.html > dist/index.html.tmp && mv dist/index.html.tmp dist/index.html
