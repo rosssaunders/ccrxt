@@ -4,7 +4,10 @@
 //! API credentials like keys and secrets. It uses the `secrecy` crate to ensure
 //! credentials are handled securely and not accidentally exposed.
 
-use secrecy::{ExposeSecret, SecretString};
+use secrecy::ExposeSecret;
+
+// Re-export SecretString for convenience
+pub use secrecy::SecretString;
 
 /// A trait for types that can securely expose a secret value.
 ///
@@ -20,6 +23,13 @@ pub trait ExposableSecret: Send + Sync {
     fn expose_secret(&self) -> String;
 }
 
+/// Implementation of ExposableSecret for SecretString from the secrecy crate
+impl ExposableSecret for SecretString {
+    fn expose_secret(&self) -> String {
+        ExposeSecret::expose_secret(self).to_string()
+    }
+}
+
 /// A simple implementation of ExposableSecret that wraps a SecretString.
 ///
 /// This struct provides a basic implementation of ExposableSecret that can be used
@@ -32,7 +42,7 @@ pub struct SecretValue {
 
 impl ExposableSecret for SecretValue {
     fn expose_secret(&self) -> String {
-        self.secret.expose_secret().to_string()
+        ExposeSecret::expose_secret(&self.secret).to_string()
     }
 }
 
