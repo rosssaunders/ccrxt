@@ -20,9 +20,9 @@ fi
 echo "Building with trunk..."
 trunk build --release
 
-# Ensure extension files are copied (trunk hook sometimes fails)
-echo "Copying extension files..."
-cp manifest.json background.js dist/
+# Apply comprehensive extension fixes
+echo "Applying Chrome extension fixes..."
+./final_fix.sh
 
 # Validate the build
 echo "Validating extension build..."

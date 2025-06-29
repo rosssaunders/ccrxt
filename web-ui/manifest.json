@@ -8,6 +8,10 @@
     "storage",
     "activeTab"
   ],
+
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+  },
   
   "host_permissions": [
     "https://api.exchange.coinbase.com/*",
@@ -30,6 +34,13 @@
   },
   
   "action": {
-    "default_title": "CCRXT API Explorer"
+    "default_title": "CCRXT API Explorer",
+    "default_popup": "index.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png", 
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
   }
 }

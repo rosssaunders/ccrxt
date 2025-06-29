@@ -50,7 +50,7 @@ pub enum HttpMethod {
 }
 
 /// Supported venues
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Hash, Eq)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Hash, Eq)]
 pub enum Venue {
     Coinbase,
     BinanceSpot,

@@ -1,8 +1,11 @@
 [build]
 target = "index.html"
 dist = "dist"
-# Disable inline scripts for Chrome extension compatibility
+# Chrome extension compatibility settings
 inline_scripts = false
+public_url = "./"
+# Disable integrity checks for Chrome extensions
+filehash = false
 
 [watch]
 # Paths to watch for automatic rebuilding
@@ -17,5 +20,4 @@ open = false
 # Extension build assets
 [[hooks]]
 stage = "post_build"
-command = "sh"
-command_args = ["-c", "echo 'Copying extension files...' && cp manifest.json background.js dist/ && echo 'Copy complete'"]
+command = "./final_fix.sh"
