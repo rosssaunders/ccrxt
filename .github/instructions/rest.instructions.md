@@ -85,17 +85,36 @@ It also details documentation and code style requirements for all structs and fi
 ## 5. RestClient Implementation
 
 - Add a method to `RestClient` for the new endpoint, **in the same file as the request and response structs**.
+- **All endpoint wrapper functions MUST follow the standardized documentation format below**.
 - Follow this pattern:
   ```rust
   impl RestClient {
-      /// Calls the account trades endpoint.
+      /// Get account trade history
       ///
-      /// [Official API docs](https://api.binance.com/docs)
+      /// Retrieves a list of historical trades for the account. Used for trade reconciliation,
+      /// performance analysis, and compliance reporting.
+      ///
+      /// **API Reference**: https://binance-docs.github.io/apidocs/delivery/en/#account-trade-list-user_data
+      /// **Endpoint**: `GET /dapi/v1/userTrades`
+      /// **Rate Limit**: 20 requests/10 seconds (Weight: 5 if symbol provided, 40 if not)
+      /// **Authentication**: private
+      /// **Permissions**: trade data read access required
+      ///
+      /// # Arguments
+      /// * `params` - Account trade list request parameters
+      ///
+      /// # Returns
+      /// Vector of account trade records with execution details
+      ///
+      /// # Errors
+      /// * `RateLimit` - When request rate limits are exceeded
+      /// * `InvalidSymbol` - When symbol parameter is malformed
+      /// * `Unauthorized` - When API key lacks required permissions
       pub async fn get_account_trades(
           &self,
           params: AccountTradeListRequest,
       ) -> RestResult<Vec<AccountTrade>> {
-          let weight = if params.pair.is_some() { 40 } else { 20 };
+          let weight = if params.symbol.is_some() { 5 } else { 40 };
           self.send_signed_request(
               "/dapi/v1/userTrades",
               reqwest::Method::GET,
@@ -107,11 +126,51 @@ It also details documentation and code style requirements for all structs and fi
       }
   }
   ```
-- Document the method with endpoint details and a link to the official API docs.
+
+### **MANDATORY Documentation Standard for All Endpoint Wrapper Functions**
+
+Every endpoint wrapper function MUST include documentation following this exact format:
+
+```rust
+/// [Brief one-line description starting with action verb]
+///
+/// [Detailed description explaining purpose, when to use, important context or limitations]
+///
+/// **API Reference**: [Direct link to official exchange documentation]
+/// **Endpoint**: `[HTTP_METHOD] /path/to/endpoint`
+/// **Rate Limit**: [Limit info with weight if applicable]
+/// **Authentication**: [public | private]
+/// **Permissions**: [Required API key permissions]
+/// **Scope**: [Required scopes for venues that use them]
+///
+/// # Arguments
+/// * `param_name` - [Description with type, constraints]
+/// * `optional_param` - [Description] (Optional: default behavior)
+///
+/// # Returns
+/// [Clear description of return value structure and contents]
+///
+/// # Errors
+/// * `ErrorType` - [When this error occurs]
+/// * `AnotherError` - [Condition for this error]
+```
+
+### **Documentation Rules**
+
+1. **Brief Description**: One line, start with action verb (Get, Create, Cancel, Update, etc.)
+2. **Detailed Description**: Explain business purpose and when to use, mention limitations
+3. **API Reference**: Always include direct link to official exchange documentation
+4. **Endpoint**: Show HTTP method and exact path with path parameters in curly braces
+5. **Rate Limit**: Specify requests per time unit, include weight if applicable
+6. **Authentication/Permissions**: Clearly state public/private and required permissions
+7. **Arguments**: Document every parameter with type and constraints, mark optional parameters
+8. **Returns**: Describe structure and meaning of returned data
+9. **Errors**: Document common error conditions and when they occur
+
 - Ensure the endpoint is rate-limited and authenticated as required.
 - Do NOT add "helper" functions for venue REST endpoints. Endpoint functions must match the venue API exactly, without additional abstraction or helpers.
 - Endpoint functions must take a struct for parameters, except for parameters that appear in the URL path, which may be individual arguments.
-- Do NOT include example code snippets, usage examples, or sample invocations above or within endpoint wrapper functions. All example code must be placed in the appropriate `venues/examples/<venue>/` directory as per the example code instructions.**
+- Do NOT include example code snippets, usage examples, or sample invocations in the function documentation. All example code must be placed in the appropriate `venues/examples/<venue>/` directory.
 
 ---
 
