@@ -9,11 +9,25 @@ pub enum EndpointType {
     /// Account related endpoints (wallet balance, etc.)
     Account,
     /// Trading related endpoints
-    Trading,
+    Trade,
+    /// Position related endpoints
+    Position,
     /// Asset related endpoints
     Asset,
     /// User management endpoints
     User,
+    /// Spot margin trade endpoints
+    SpotMargin,
+    /// Broker related endpoints
+    Broker,
+    /// Crypto loan endpoints
+    CryptoLoan,
+    /// Earn endpoints
+    Earn,
+    /// INS loan endpoints
+    InsLoan,
+    /// Market data endpoints (public)
+    Market,
 }
 
 /// Rate limit configuration for different endpoint types
@@ -69,12 +83,26 @@ impl RateLimiter {
             // Account endpoints like wallet balance: varies by account type (10-50/s)
             // Using conservative 10/s for general account endpoints
             EndpointType::Account => RateLimit::new(10, Duration::from_secs(1)),
-            // Trading endpoints: varies (10-20/s)
-            EndpointType::Trading => RateLimit::new(10, Duration::from_secs(1)),
+            // Trade endpoints: varies (10-20/s)
+            EndpointType::Trade => RateLimit::new(10, Duration::from_secs(1)),
+            // Position endpoints: varies (10-50/s)
+            EndpointType::Position => RateLimit::new(10, Duration::from_secs(1)),
             // Asset endpoints: varies (5 req/s to 300 req/min)
             EndpointType::Asset => RateLimit::new(5, Duration::from_secs(1)),
             // User endpoints: 5-10 req/s
             EndpointType::User => RateLimit::new(5, Duration::from_secs(1)),
+            // Spot margin trade endpoints
+            EndpointType::SpotMargin => RateLimit::new(10, Duration::from_secs(1)),
+            // Broker endpoints
+            EndpointType::Broker => RateLimit::new(5, Duration::from_secs(1)),
+            // Crypto loan endpoints
+            EndpointType::CryptoLoan => RateLimit::new(5, Duration::from_secs(1)),
+            // Earn endpoints
+            EndpointType::Earn => RateLimit::new(5, Duration::from_secs(1)),
+            // INS loan endpoints
+            EndpointType::InsLoan => RateLimit::new(5, Duration::from_secs(1)),
+            // Market data endpoints (public)
+            EndpointType::Market => RateLimit::new(10, Duration::from_secs(1)),
         }
     }
 
@@ -162,8 +190,8 @@ mod tests {
         limiter.increment_request(EndpointType::Account).await;
 
         // Test trading endpoint rate limiting
-        assert!(limiter.check_limits(EndpointType::Trading).await.is_ok());
-        limiter.increment_request(EndpointType::Trading).await;
+        assert!(limiter.check_limits(EndpointType::Trade).await.is_ok());
+        limiter.increment_request(EndpointType::Trade).await;
     }
 
     #[tokio::test]
@@ -176,7 +204,7 @@ mod tests {
     #[test]
     fn test_endpoint_types() {
         let account = EndpointType::Account;
-        let trading = EndpointType::Trading;
+        let trading = EndpointType::Trade;
         let asset = EndpointType::Asset;
         let user = EndpointType::User;
 

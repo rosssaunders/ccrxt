@@ -125,28 +125,6 @@ impl RestClient {
     /// This endpoint has a custom rate limit:
     /// - Requests per second per profile: 10
     /// - Requests per second per profile in bursts: Up to 20
-    ///
-    /// # Example
-    /// ```no_run
-    /// use ccrxt::venues::coinbase::private::rest::{GetFillsRequest, RestClient};
-    ///
-    /// # async fn example(client: RestClient) -> Result<(), Box<dyn std::error::Error>> {
-    /// let request = GetFillsRequest {
-    ///     order_id: None,
-    ///     product_id: Some("BTC-USD".to_string()),
-    ///     limit: Some(100),
-    ///     before: None,
-    ///     after: None,
-    ///     market_type: None,
-    ///     start_date: None,
-    ///     end_date: None,
-    /// };
-    ///
-    /// let (fills, pagination) = client.get_fills(&request).await?;
-    /// println!("Found {} fills", fills.len());
-    /// # Ok(())
-    /// # }
-    /// ```
     pub async fn get_fills(
         &self,
         request: &GetFillsRequest,

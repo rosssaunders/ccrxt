@@ -107,29 +107,6 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the product order book or an error
-    ///
-    /// # Example
-    /// ```no_run
-    /// use ccrxt::venues::coinbase::public::rest::{GetProductBookRequest, RestClient};
-    /// use reqwest::Client;
-    /// use ccrxt::venues::coinbase::RateLimiter;
-    ///
-    /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// let client = RestClient::new(
-    ///     "https://api.exchange.coinbase.com",
-    ///     Client::new(),
-    ///     RateLimiter::new(),
-    /// );
-    ///
-    /// let request = GetProductBookRequest {
-    ///     level: Some(2), // Full aggregated order book
-    /// };
-    /// let order_book = client.get_product_book("BTC-USD", &request).await?;
-    /// println!("Order book has {} bids and {} asks",
-    ///          order_book.bids.len(), order_book.asks.len());
-    /// # Ok(())
-    /// # }
-    /// ```
     pub async fn get_product_book(
         &self,
         product_id: &str,

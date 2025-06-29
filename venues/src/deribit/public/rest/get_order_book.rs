@@ -83,7 +83,7 @@ impl RestClient {
         params: GetOrderBookRequest,
     ) -> RestResult<GetOrderBookResponse> {
         self.send_request(
-            "get_order_book",
+            "public/get_order_book",
             Method::POST,
             Some(&params),
             EndpointType::NonMatchingEngine,

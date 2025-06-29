@@ -192,32 +192,6 @@ impl RestClient {
     ///
     /// # API Key Permissions
     /// This endpoint requires either the "view" or "trade" permission.
-    ///
-    /// # Example
-    /// ```no_run
-    /// use ccrxt::venues::coinbase::private::rest::{GetOrdersRequest, RestClient};
-    /// use ccrxt::venues::coinbase::enums::OrderStatus;
-    ///
-    /// # async fn example(client: RestClient) -> Result<(), Box<dyn std::error::Error>> {
-    /// let request = GetOrdersRequest {
-    ///     profile_id: None,
-    ///     product_id: Some("BTC-USD".to_string()),
-    ///     sorted_by: None,
-    ///     sorting: None,
-    ///     start_date: None,
-    ///     end_date: None,
-    ///     before: None,
-    ///     after: None,
-    ///     limit: Some(100),
-    ///     status: Some(vec![OrderStatus::Open]),
-    ///     market_type: None,
-    /// };
-    ///
-    /// let (orders, pagination) = client.get_orders(&request).await?;
-    /// println!("Found {} orders", orders.len());
-    /// # Ok(())
-    /// # }
-    /// ```
     pub async fn get_orders(
         &self,
         request: &GetOrdersRequest,
@@ -245,22 +219,6 @@ impl RestClient {
     ///
     /// # API Key Permissions
     /// This endpoint requires either the "view" or "trade" permission.
-    ///
-    /// # Example
-    /// ```no_run
-    /// use ccrxt::venues::coinbase::private::rest::{GetOrderRequest, RestClient};
-    ///
-    /// # async fn example(client: RestClient) -> Result<(), Box<dyn std::error::Error>> {
-    /// let order_id = "d0c5340b-6d6c-49d9-b567-48c4bfca13d2";
-    /// let request = GetOrderRequest {
-    ///     market_type: None,
-    /// };
-    ///
-    /// let order = client.get_order(order_id, &request).await?;
-    /// println!("Order status: {:?}", order.status);
-    /// # Ok(())
-    /// # }
-    /// ```
     pub async fn get_order(
         &self,
         order_id: &str,

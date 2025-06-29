@@ -197,37 +197,6 @@ impl RestClient {
     ///
     /// # API Key Permissions
     /// This endpoint requires the "trade" permission.
-    ///
-    /// # Example
-    /// ```no_run
-    /// use ccrxt::venues::coinbase::private::rest::{CreateOrderRequest, RestClient};
-    /// use ccrxt::venues::coinbase::enums::{OrderType, OrderSide};
-    ///
-    /// # async fn example(client: RestClient) -> Result<(), Box<dyn std::error::Error>> {
-    /// let request = CreateOrderRequest {
-    ///     profile_id: None,
-    ///     order_type: OrderType::Limit,
-    ///     side: OrderSide::Buy,
-    ///     product_id: "BTC-USD".to_string(),
-    ///     stp: None,
-    ///     stop: None,
-    ///     stop_price: None,
-    ///     price: Some("50000.00".to_string()),
-    ///     size: Some("0.01".to_string()),
-    ///     funds: None,
-    ///     time_in_force: None,
-    ///     cancel_after: None,
-    ///     post_only: None,
-    ///     client_oid: None,
-    ///     max_floor: None,
-    ///     stop_limit_price: None,
-    /// };
-    ///
-    /// let response = client.create_order(&request).await?;
-    /// println!("Created order: {}", response.id);
-    /// # Ok(())
-    /// # }
-    /// ```
     pub async fn create_order(
         &self,
         request: &CreateOrderRequest,
