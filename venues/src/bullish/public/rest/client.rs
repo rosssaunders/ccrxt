@@ -48,17 +48,22 @@ impl RestClient {
     ///
     /// # Arguments
     /// * `endpoint` - The API endpoint path
+    /// * `method` - The HTTP method
+    /// * `body` - Optional request body for POST/PUT requests
     /// * `endpoint_type` - The endpoint type for rate limiting
     ///
     /// # Returns
     /// The deserialized response or an error
-    pub async fn send_request<T>(
+    pub async fn send_request<T, B>(
         &self,
         endpoint: &str,
+        method: reqwest::Method,
+        body: Option<&B>,
         endpoint_type: EndpointType,
     ) -> RestResult<T>
     where
         T: DeserializeOwned,
+        B: serde::Serialize,
     {
         // Check rate limits
         self.rate_limiter
@@ -68,7 +73,13 @@ impl RestClient {
 
         let url = format!("{}{}", self.base_url, endpoint);
 
-        let response = self.client.get(&url).send().await?;
+        let mut request = self.client.request(method, &url);
+
+        if let Some(body_data) = body {
+            request = request.json(body_data);
+        }
+
+        let response = request.send().await?;
 
         self.rate_limiter.increment_request(endpoint_type).await;
 

@@ -45,6 +45,29 @@ pub enum OrderStatus {
     Rejected,
 }
 
+/// Candlestick intervals
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum CandleInterval {
+    #[serde(rename = "1m")]
+    OneMinute,
+    #[serde(rename = "5m")]
+    FiveMinutes,
+    #[serde(rename = "15m")]
+    FifteenMinutes,
+    #[serde(rename = "30m")]
+    ThirtyMinutes,
+    #[serde(rename = "1h")]
+    OneHour,
+    #[serde(rename = "4h")]
+    FourHours,
+    #[serde(rename = "1d")]
+    OneDay,
+    #[serde(rename = "1w")]
+    OneWeek,
+    #[serde(rename = "1M")]
+    OneMonth,
+}
+
 #[cfg(test)]
 mod tests {
     use serde_json;
@@ -99,5 +122,24 @@ mod tests {
 
         assert_eq!(serde_json::to_string(&open).unwrap(), "\"OPEN\"");
         assert_eq!(serde_json::to_string(&filled).unwrap(), "\"FILLED\"");
+    }
+
+    #[test]
+    fn test_candle_interval_serialization() {
+        let one_minute = CandleInterval::OneMinute;
+        let one_hour = CandleInterval::OneHour;
+        let one_day = CandleInterval::OneDay;
+
+        assert_eq!(serde_json::to_string(&one_minute).unwrap(), "\"1m\"");
+        assert_eq!(serde_json::to_string(&one_hour).unwrap(), "\"1h\"");
+        assert_eq!(serde_json::to_string(&one_day).unwrap(), "\"1d\"");
+
+        let one_minute_from_json: CandleInterval = serde_json::from_str("\"1m\"").unwrap();
+        let one_hour_from_json: CandleInterval = serde_json::from_str("\"1h\"").unwrap();
+        let one_day_from_json: CandleInterval = serde_json::from_str("\"1d\"").unwrap();
+
+        assert_eq!(one_minute_from_json, CandleInterval::OneMinute);
+        assert_eq!(one_hour_from_json, CandleInterval::OneHour);
+        assert_eq!(one_day_from_json, CandleInterval::OneDay);
     }
 }
