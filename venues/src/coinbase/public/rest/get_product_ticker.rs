@@ -62,27 +62,6 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the product ticker or an error
-    ///
-    /// # Example
-    /// ```no_run
-    /// use ccrxt::venues::coinbase::public::rest::{GetProductTickerRequest, RestClient};
-    /// use reqwest::Client;
-    /// use ccrxt::venues::coinbase::RateLimiter;
-    ///
-    /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// let client = RestClient::new(
-    ///     "https://api.exchange.coinbase.com",
-    ///     Client::new(),
-    ///     RateLimiter::new(),
-    /// );
-    ///
-    /// let request = GetProductTickerRequest::default();
-    /// let ticker = client.get_product_ticker("BTC-USD", &request).await?;
-    /// println!("BTC-USD ticker: bid={}, ask={}, last={}",
-    ///          ticker.bid, ticker.ask, ticker.price);
-    /// # Ok(())
-    /// # }
-    /// ```
     pub async fn get_product_ticker(
         &self,
         product_id: &str,

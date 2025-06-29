@@ -77,26 +77,6 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the list of product volume summaries or an error
-    ///
-    /// # Example
-    /// ```no_run
-    /// use ccrxt::venues::coinbase::public::rest::{GetProductVolumeSummaryRequest, RestClient};
-    /// use reqwest::Client;
-    /// use ccrxt::venues::coinbase::RateLimiter;
-    ///
-    /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// let client = RestClient::new(
-    ///     "https://api.exchange.coinbase.com",
-    ///     Client::new(),
-    ///     RateLimiter::new(),
-    /// );
-    ///
-    /// let request = GetProductVolumeSummaryRequest::default();
-    /// let volume_summaries = client.get_product_volume_summary(&request).await?;
-    /// println!("Found {} product volume summaries", volume_summaries.len());
-    /// # Ok(())
-    /// # }
-    /// ```
     pub async fn get_product_volume_summary(
         &self,
         request: &GetProductVolumeSummaryRequest,

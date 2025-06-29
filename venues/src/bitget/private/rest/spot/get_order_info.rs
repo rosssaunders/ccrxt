@@ -104,6 +104,7 @@ pub enum EntryPointSource {
     Android,
     /// iOS client
     #[serde(rename = "IOS")]
+    #[allow(non_camel_case_types)]
     iOS,
 }
 
@@ -113,7 +114,7 @@ pub struct FeeDetails {
     /// Fee coin
     #[serde(rename = "feeCoin")]
     pub fee_coin: String,
-    
+
     /// Fee amount (negative value)
     pub fee: String,
 }
@@ -219,9 +220,8 @@ impl RestClient {
         &self,
         request: GetOrderInfoRequest,
     ) -> RestResult<GetOrderInfoResponse> {
-        let query_string = serde_urlencoded::to_string(&request).map_err(|e| {
-            crate::bitget::Errors::Error(format!("Failed to encode query: {e}"))
-        })?;
+        let query_string = serde_urlencoded::to_string(&request)
+            .map_err(|e| crate::bitget::Errors::Error(format!("Failed to encode query: {e}")))?;
 
         self.send_signed_request(
             "/api/v2/spot/trade/orderInfo",
@@ -243,7 +243,7 @@ mod tests {
     #[test]
     fn test_get_order_info_request_by_order_id() {
         let request = GetOrderInfoRequest::by_order_id("1234567890");
-        
+
         assert_eq!(request.order_id, Some("1234567890".to_string()));
         assert!(request.client_order_id.is_none());
     }
@@ -251,7 +251,7 @@ mod tests {
     #[test]
     fn test_get_order_info_request_by_client_order_id() {
         let request = GetOrderInfoRequest::by_client_order_id("my-order-123");
-        
+
         assert!(request.order_id.is_none());
         assert_eq!(request.client_order_id, Some("my-order-123".to_string()));
     }
@@ -260,7 +260,7 @@ mod tests {
     fn test_get_order_info_request_serialization() {
         let request = GetOrderInfoRequest::by_order_id("1234567890");
         let query = serde_urlencoded::to_string(&request).unwrap();
-        
+
         assert!(query.contains("orderId=1234567890"));
     }
 

@@ -26,26 +26,6 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the product information or an error
-    ///
-    /// # Example
-    /// ```no_run
-    /// use ccrxt::venues::coinbase::public::rest::{GetProductRequest, RestClient};
-    /// use reqwest::Client;
-    /// use ccrxt::venues::coinbase::RateLimiter;
-    ///
-    /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// let client = RestClient::new(
-    ///     "https://api.exchange.coinbase.com",
-    ///     Client::new(),
-    ///     RateLimiter::new(),
-    /// );
-    ///
-    /// let request = GetProductRequest::default();
-    /// let product = client.get_product("BTC-USD", &request).await?;
-    /// println!("Product: {} - {}", product.id, product.display_name);
-    /// # Ok(())
-    /// # }
-    /// ```
     pub async fn get_product(
         &self,
         product_id: &str,

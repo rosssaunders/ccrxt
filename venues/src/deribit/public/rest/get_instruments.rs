@@ -115,7 +115,7 @@ impl RestClient {
         params: GetInstrumentsRequest,
     ) -> RestResult<GetInstrumentsResponse> {
         self.send_request(
-            "get_instruments",
+            "public/get_instruments",
             Method::POST,
             Some(&params),
             EndpointType::PublicGetInstruments,

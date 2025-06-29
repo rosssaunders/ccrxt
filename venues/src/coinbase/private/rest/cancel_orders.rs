@@ -59,22 +59,6 @@ impl RestClient {
     ///
     /// # API Key Permissions
     /// This endpoint requires the "trade" permission.
-    ///
-    /// # Example
-    /// ```no_run
-    /// use ccrxt::venues::coinbase::private::rest::{CancelAllOrdersRequest, RestClient};
-    ///
-    /// # async fn example(client: RestClient) -> Result<(), Box<dyn std::error::Error>> {
-    /// let request = CancelAllOrdersRequest {
-    ///     profile_id: None,
-    ///     product_id: Some("BTC-USD".to_string()),
-    /// };
-    ///
-    /// let canceled_order_ids = client.cancel_all_orders(&request).await?;
-    /// println!("Canceled {} orders", canceled_order_ids.len());
-    /// # Ok(())
-    /// # }
-    /// ```
     pub async fn cancel_all_orders(
         &self,
         request: &CancelAllOrdersRequest,
@@ -102,23 +86,6 @@ impl RestClient {
     ///
     /// # API Key Permissions
     /// This endpoint requires the "trade" permission.
-    ///
-    /// # Example
-    /// ```no_run
-    /// use ccrxt::venues::coinbase::private::rest::{CancelOrderRequest, RestClient};
-    ///
-    /// # async fn example(client: RestClient) -> Result<(), Box<dyn std::error::Error>> {
-    /// let order_id = "d0c5340b-6d6c-49d9-b567-48c4bfca13d2";
-    /// let request = CancelOrderRequest {
-    ///     profile_id: None,
-    ///     product_id: Some("BTC-USD".to_string()),
-    /// };
-    ///
-    /// let canceled_id = client.cancel_order(order_id, &request).await?;
-    /// println!("Canceled order: {:?}", canceled_id);
-    /// # Ok(())
-    /// # }
-    /// ```
     pub async fn cancel_order(
         &self,
         order_id: &str,

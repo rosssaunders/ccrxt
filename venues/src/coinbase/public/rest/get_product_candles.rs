@@ -84,30 +84,6 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the product candles or an error
-    ///
-    /// # Example
-    /// ```no_run
-    /// use ccrxt::venues::coinbase::public::rest::{GetProductCandlesRequest, RestClient};
-    /// use reqwest::Client;
-    /// use ccrxt::venues::coinbase::RateLimiter;
-    ///
-    /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// let client = RestClient::new(
-    ///     "https://api.exchange.coinbase.com",
-    ///     Client::new(),
-    ///     RateLimiter::new(),
-    /// );
-    ///
-    /// let request = GetProductCandlesRequest {
-    ///     granularity: Some(3600), // 1 hour candles
-    ///     start: None,
-    ///     end: None,
-    /// };
-    /// let candles = client.get_product_candles("BTC-USD", &request).await?;
-    /// println!("Found {} candles", candles.len());
-    /// # Ok(())
-    /// # }
-    /// ```
     pub async fn get_product_candles(
         &self,
         product_id: &str,
