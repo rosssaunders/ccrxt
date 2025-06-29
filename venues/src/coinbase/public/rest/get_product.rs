@@ -2,7 +2,7 @@
 //!
 //! Get information on a single product.
 
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 
 use crate::coinbase::RestResult;
 
