@@ -55,7 +55,7 @@ impl RestClient {
         params: GetFundingRateValueRequest,
     ) -> RestResult<GetFundingRateValueResponse> {
         self.send_request(
-            "get_funding_rate_value",
+            "public/get_funding_rate_value",
             Method::POST,
             Some(&params),
             EndpointType::NonMatchingEngine,

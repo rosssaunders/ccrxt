@@ -96,7 +96,7 @@ impl RestClient {
         params: GetLastTradesByInstrumentRequest,
     ) -> RestResult<GetLastTradesByInstrumentResponse> {
         self.send_request(
-            "get_last_trades_by_instrument",
+            "public/get_last_trades_by_instrument",
             Method::POST,
             Some(&params),
             EndpointType::NonMatchingEngine,

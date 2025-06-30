@@ -64,7 +64,7 @@ impl RestClient {
         params: GetTradeVolumesRequest,
     ) -> RestResult<GetTradeVolumesResponse> {
         self.send_request(
-            "get_trade_volumes",
+            "public/get_trade_volumes",
             Method::POST,
             Some(&params),
             EndpointType::NonMatchingEngine,

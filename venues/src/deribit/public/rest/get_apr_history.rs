@@ -76,7 +76,7 @@ impl RestClient {
         params: GetAprHistoryRequest,
     ) -> RestResult<GetAprHistoryResponse> {
         self.send_request(
-            "get_apr_history",
+            "public/get_apr_history",
             Method::POST,
             Some(&params),
             EndpointType::NonMatchingEngine,

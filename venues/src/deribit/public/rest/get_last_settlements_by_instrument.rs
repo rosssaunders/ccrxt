@@ -71,7 +71,7 @@ impl RestClient {
         params: GetLastSettlementsByInstrumentRequest,
     ) -> RestResult<GetLastSettlementsByInstrumentResponse> {
         self.send_request(
-            "get_last_settlements_by_instrument",
+            "public/get_last_settlements_by_instrument",
             Method::POST,
             Some(&params),
             EndpointType::NonMatchingEngine,

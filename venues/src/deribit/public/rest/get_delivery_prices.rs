@@ -76,7 +76,7 @@ impl RestClient {
         params: GetDeliveryPricesRequest,
     ) -> RestResult<GetDeliveryPricesResponse> {
         self.send_request(
-            "get_delivery_prices",
+            "public/get_delivery_prices",
             Method::POST,
             Some(&params),
             EndpointType::NonMatchingEngine,

@@ -49,7 +49,7 @@ impl RestClient {
         params: GetIndexPriceNamesRequest,
     ) -> RestResult<GetIndexPriceNamesResponse> {
         self.send_request(
-            "get_index_price_names",
+            "public/get_index_price_names",
             Method::POST,
             Some(&params),
             EndpointType::NonMatchingEngine,

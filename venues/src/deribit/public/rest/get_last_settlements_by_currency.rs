@@ -76,7 +76,7 @@ impl RestClient {
         params: GetLastSettlementsByCurrencyRequest,
     ) -> RestResult<GetLastSettlementsByCurrencyResponse> {
         self.send_request(
-            "get_last_settlements_by_currency",
+            "public/get_last_settlements_by_currency",
             Method::POST,
             Some(&params),
             EndpointType::NonMatchingEngine,

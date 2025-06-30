@@ -53,7 +53,7 @@ impl RestClient {
     /// [Official API docs](https://docs.deribit.com/#public-status)
     pub async fn get_status(&self, params: GetStatusRequest) -> RestResult<GetStatusResponse> {
         self.send_request(
-            "public/status",
+            "public/get_status",
             reqwest::Method::GET,
             Some(&params),
             EndpointType::NonMatchingEngine,

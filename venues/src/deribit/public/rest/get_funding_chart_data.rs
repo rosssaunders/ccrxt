@@ -63,7 +63,7 @@ impl RestClient {
         params: GetFundingChartDataRequest,
     ) -> RestResult<GetFundingChartDataResponse> {
         self.send_request(
-            "get_funding_chart_data",
+            "public/get_funding_chart_data",
             Method::POST,
             Some(&params),
             EndpointType::NonMatchingEngine,

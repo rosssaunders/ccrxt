@@ -118,7 +118,7 @@ impl RestClient {
             "public/get_instruments",
             Method::POST,
             Some(&params),
-            EndpointType::PublicGetInstruments,
+            EndpointType::NonMatchingEngine,
         )
         .await
     }

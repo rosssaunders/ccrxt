@@ -107,7 +107,7 @@ impl RestClient {
         params: GetInstrumentRequest,
     ) -> RestResult<GetInstrumentResponse> {
         self.send_request(
-            "get_instrument",
+            "public/get_instrument",
             Method::POST,
             Some(&params),
             EndpointType::NonMatchingEngine,

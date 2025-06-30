@@ -70,7 +70,7 @@ impl RestClient {
     /// [Official API docs](https://docs.deribit.com/#public-get_rfqs)
     pub async fn get_rfqs(&self, params: GetRfqsRequest) -> RestResult<GetRfqsResponse> {
         self.send_request(
-            "get_rfqs",
+            "public/get_rfqs",
             Method::POST,
             Some(&params),
             EndpointType::NonMatchingEngine,

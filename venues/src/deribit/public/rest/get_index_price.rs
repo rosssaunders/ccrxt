@@ -55,7 +55,7 @@ impl RestClient {
         params: GetIndexPriceRequest,
     ) -> RestResult<GetIndexPriceResponse> {
         self.send_request(
-            "get_index_price",
+            "public/get_index_price",
             Method::POST,
             Some(&params),
             EndpointType::NonMatchingEngine,

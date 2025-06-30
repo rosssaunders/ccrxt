@@ -51,7 +51,7 @@ impl RestClient {
         params: GetContractSizeRequest,
     ) -> RestResult<GetContractSizeResponse> {
         self.send_request(
-            "get_contract_size",
+            "public/get_contract_size",
             Method::POST,
             Some(&params),
             EndpointType::NonMatchingEngine,
