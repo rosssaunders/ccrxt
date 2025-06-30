@@ -7,5 +7,6 @@ pub mod bybit;
 pub mod coinbase;
 pub mod cryptocom;
 pub mod deribit;
+pub mod gateio;
 pub mod kucoin;
 pub mod okx;

@@ -62,7 +62,8 @@ impl RestClient {
     ///
     /// # Example
     /// ```rust,no_run
-    /// use kucoin::public::{RestClient, GetKlinesRequest, KlineInterval};
+    /// use venues::kucoin::public::rest::{RestClient, GetKlinesRequest};
+    /// use venues::kucoin::KlineInterval;
     ///
     /// #[tokio::main]
     /// async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -84,7 +85,7 @@ impl RestClient {
     ) -> Result<(Vec<Kline>, ResponseHeaders)> {
         let mut params = HashMap::new();
         params.insert("symbol".to_string(), request.symbol);
-        
+
         // Serialize the interval enum to get the correct string representation
         let interval_str = serde_json::to_string(&request.interval)?
             .trim_matches('"')

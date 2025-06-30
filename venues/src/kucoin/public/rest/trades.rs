@@ -32,7 +32,7 @@ impl RestClient {
     ///
     /// # Example
     /// ```rust,no_run
-    /// use kucoin::public::{RestClient, GetTradesRequest};
+    /// use venues::kucoin::public::rest::{RestClient, GetTradesRequest};
     ///
     /// #[tokio::main]
     /// async fn main() -> Result<(), Box<dyn std::error::Error>> {

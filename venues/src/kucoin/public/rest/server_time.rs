@@ -20,7 +20,7 @@ impl RestClient {
     ///
     /// # Example
     /// ```rust,no_run
-    /// use kucoin::public::RestClient;
+    /// use venues::kucoin::public::rest::{RestClient, GetServerTimeRequest};
     ///
     /// #[tokio::main]
     /// async fn main() -> Result<(), Box<dyn std::error::Error>> {
