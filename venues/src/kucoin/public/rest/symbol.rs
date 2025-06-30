@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
-use crate::kucoin::{Market, ResponseHeaders, RestResponse, Result};
+use crate::kucoin::{ResponseHeaders, RestResponse, Result};
 
 use super::RestClient;
 
@@ -12,61 +12,70 @@ pub struct GetSymbolRequest {
     pub symbol: String,
 }
 
-/// Request for getting all symbols
-#[derive(Debug, Clone, Default, Serialize)]
-pub struct GetAllSymbolsRequest {
-    /// Market filter (optional)
-    pub market: Option<Market>,
-}
-
 /// Symbol information response
 #[derive(Debug, Clone, Deserialize)]
 pub struct SymbolInfo {
     /// Symbol name
     pub symbol: String,
+
     /// Symbol name for display
     pub name: String,
+
     /// Base currency
     #[serde(rename = "baseCurrency")]
     pub base_currency: String,
+
     /// Quote currency
     #[serde(rename = "quoteCurrency")]
     pub quote_currency: String,
+
     /// Fee currency
     #[serde(rename = "feeCurrency")]
     pub fee_currency: String,
+
     /// Market (e.g., "BTC", "ETH", "USDT")
     pub market: String,
+
     /// Base minimum size
     #[serde(rename = "baseMinSize")]
     pub base_min_size: String,
+
     /// Quote minimum size
     #[serde(rename = "quoteMinSize")]
     pub quote_min_size: String,
+
     /// Base maximum size
     #[serde(rename = "baseMaxSize")]
     pub base_max_size: String,
+
     /// Quote maximum size
     #[serde(rename = "quoteMaxSize")]
     pub quote_max_size: String,
+
     /// Base increment (minimum order size increment)
     #[serde(rename = "baseIncrement")]
     pub base_increment: String,
+
     /// Quote increment (minimum price increment)
     #[serde(rename = "quoteIncrement")]
     pub quote_increment: String,
+
     /// Price increment (tick size)
     #[serde(rename = "priceIncrement")]
     pub price_increment: String,
+
     /// Price limit rate
     #[serde(rename = "priceLimitRate")]
     pub price_limit_rate: String,
+
     /// Whether trading is enabled
     #[serde(rename = "enableTrading")]
     pub enable_trading: bool,
+
     /// Whether this is a margin trading symbol
     #[serde(rename = "isMarginEnabled")]
     pub is_margin_enabled: bool,
+
     /// Fee category (optional as it might not always be present)
     #[serde(rename = "feeCategory")]
     pub fee_category: Option<i32>,
@@ -75,21 +84,7 @@ pub struct SymbolInfo {
 impl RestClient {
     /// Get information for a specific symbol
     ///
-    /// # Example
-    /// ```rust,no_run
-    /// use kucoin::public::{RestClient, GetSymbolRequest};
-    ///
-    /// #[tokio::main]
-    /// async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    ///     let client = RestClient::new_default();
-    ///     let request = GetSymbolRequest {
-    ///         symbol: "BTC-USDT".to_string(),
-    ///     };
-    ///     let (response, _headers) = client.get_symbol(request).await?;
-    ///     println!("Symbol: {}", response.symbol);
-    ///     Ok(())
-    /// }
-    /// ```
+    /// Reference: https://docs.kucoin.com/#get-symbol-list
     pub async fn get_symbol(
         &self,
         request: GetSymbolRequest,
@@ -102,38 +97,17 @@ impl RestClient {
 
         Ok((response.data, headers))
     }
+}
 
-    /// Get information for all available symbols
-    ///
-    /// # Example
-    /// ```rust,no_run
-    /// use kucoin::public::{RestClient, GetAllSymbolsRequest, Market};
-    ///
-    /// #[tokio::main]
-    /// async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    ///     let client = RestClient::new_default();
-    ///     let request = GetAllSymbolsRequest {
-    ///         market: Some(Market::Bitcoin),
-    ///     };
-    ///     let (response, _headers) = client.get_all_symbols(request).await?;
-    ///     println!("Found {} symbols", response.len());
-    ///     Ok(())
-    /// }
-    /// ```
-    pub async fn get_all_symbols(
-        &self,
-        request: GetAllSymbolsRequest,
-    ) -> Result<(Vec<SymbolInfo>, ResponseHeaders)> {
-        let mut params = HashMap::new();
-        if let Some(market) = request.market {
-            params.insert("market".to_string(), serde_json::to_string(&market)?);
-        }
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-        let params_option = if params.is_empty() { None } else { Some(params) };
-
-        let (response, headers): (RestResponse<Vec<SymbolInfo>>, ResponseHeaders) =
-            self.get("/api/v1/symbols", params_option).await?;
-
-        Ok((response.data, headers))
+    #[test]
+    fn test_symbol_request_creation() {
+        let request = GetSymbolRequest {
+            symbol: "BTC-USDT".to_string(),
+        };
+        assert_eq!(request.symbol, "BTC-USDT");
     }
 }

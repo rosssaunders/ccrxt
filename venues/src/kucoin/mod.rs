@@ -12,7 +12,7 @@ pub use enums::*;
 pub use errors::{ApiError, KucoinError, Result};
 pub use private::RestClient as PrivateRestClient;
 pub use public::RestClient as PublicRestClient;
-pub use rate_limit::{RateLimitHeader, RateLimiter};
+pub use rate_limit::{RateLimitHeader, RateLimitStatus, RateLimiter, ResourcePool, VipLevel};
 
 pub use crate::kucoin::errors::ErrorResponse;
 
