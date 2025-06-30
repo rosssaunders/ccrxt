@@ -1,5 +1,5 @@
 {
     "github.copilot.chat.codeGeneration.useInstructionFiles": true,
     "rust-analyzer.checkOnSave": true,
-    "chat.agent.maxRequests": 5000,
+    "chat.agent.maxRequests": 10000,
 }

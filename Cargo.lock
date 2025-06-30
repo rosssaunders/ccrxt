@@ -2851,6 +2851,7 @@ dependencies = [
  "ratatui",
  "reqwest",
  "rest",
+ "ring",
  "rust_decimal",
  "secrecy",
  "serde",
