@@ -68,6 +68,23 @@ pub enum CandleInterval {
     OneMonth,
 }
 
+impl std::fmt::Display for CandleInterval {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let s = match self {
+            CandleInterval::OneMinute => "1m",
+            CandleInterval::FiveMinutes => "5m",
+            CandleInterval::FifteenMinutes => "15m",
+            CandleInterval::ThirtyMinutes => "30m",
+            CandleInterval::OneHour => "1h",
+            CandleInterval::FourHours => "4h",
+            CandleInterval::OneDay => "1d",
+            CandleInterval::OneWeek => "1w",
+            CandleInterval::OneMonth => "1M",
+        };
+        write!(f, "{s}")
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use serde_json;

@@ -65,18 +65,7 @@ impl RestClient {
 
         if let Some(params) = params {
             if let Some(interval) = params.interval {
-                let interval_str = match interval {
-                    CandleInterval::OneMinute => "1m",
-                    CandleInterval::FiveMinutes => "5m",
-                    CandleInterval::FifteenMinutes => "15m",
-                    CandleInterval::ThirtyMinutes => "30m",
-                    CandleInterval::OneHour => "1h",
-                    CandleInterval::FourHours => "4h",
-                    CandleInterval::OneDay => "1d",
-                    CandleInterval::OneWeek => "1w",
-                    CandleInterval::OneMonth => "1M",
-                };
-                query_params.push(("interval".to_string(), interval_str.to_string()));
+                query_params.push(("interval".to_string(), interval.to_string()));
             }
 
             if let Some(start_time) = params.start_time {
