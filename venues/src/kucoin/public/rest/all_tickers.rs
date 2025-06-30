@@ -83,6 +83,6 @@ mod tests {
     fn test_all_tickers_request_default() {
         let request = GetAllTickersRequest::default();
         // Just verify it can be created
-        assert_eq!(format!("{:?}", request), "GetAllTickersRequest {}");
+        assert_eq!(format!("{:?}", request), "GetAllTickersRequest");
     }
 }

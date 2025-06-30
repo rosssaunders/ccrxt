@@ -63,6 +63,6 @@ mod tests {
     fn test_all_currencies_request_default() {
         let request = GetAllCurrenciesRequest::default();
         // Just verify it can be created
-        assert_eq!(format!("{:?}", request), "GetAllCurrenciesRequest {}");
+        assert_eq!(format!("{:?}", request), "GetAllCurrenciesRequest");
     }
 }
