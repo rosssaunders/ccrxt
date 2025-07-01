@@ -73,6 +73,8 @@ pub enum TimeInForce {
     FOK,
     /// Good Till Crossing (Post Only)
     GTX,
+    /// Good Till Date
+    GTD,
 }
 
 impl fmt::Display for TimeInForce {
@@ -82,6 +84,7 @@ impl fmt::Display for TimeInForce {
             TimeInForce::IOC => write!(f, "IOC"),
             TimeInForce::FOK => write!(f, "FOK"),
             TimeInForce::GTX => write!(f, "GTX"),
+            TimeInForce::GTD => write!(f, "GTD"),
         }
     }
 }
@@ -480,4 +483,171 @@ impl Period {
             Period::I1d => "1d",
         }
     }
+}
+
+/// Represents the amendment type for order amendments.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum AmendmentType {
+    Price,
+    Quantity,
+    Both,
+}
+
+impl fmt::Display for AmendmentType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            AmendmentType::Price => write!(f, "PRICE"),
+            AmendmentType::Quantity => write!(f, "QUANTITY"),
+            AmendmentType::Both => write!(f, "BOTH"),
+        }
+    }
+}
+
+/// Represents the status of order amendments.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum AmendmentStatus {
+    Success,
+    Failed,
+}
+
+impl fmt::Display for AmendmentStatus {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            AmendmentStatus::Success => write!(f, "SUCCESS"),
+            AmendmentStatus::Failed => write!(f, "FAILED"),
+        }
+    }
+}
+
+/// Time unit for countdown cancel all orders.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum CountDownTimeUnit {
+    Milliseconds,
+}
+
+impl fmt::Display for CountDownTimeUnit {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            CountDownTimeUnit::Milliseconds => write!(f, "MILLISECONDS"),
+        }
+    }
+}
+
+/// Auto close type for force orders.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum AutoCloseType {
+    /// Liquidation
+    Liquidation,
+    /// ADL (Auto-Deleveraging)
+    Adl,
+}
+
+impl fmt::Display for AutoCloseType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            AutoCloseType::Liquidation => write!(f, "LIQUIDATION"),
+            AutoCloseType::Adl => write!(f, "ADL"),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub enum PositionMode {
+    True,  // Hedge mode (dual position side)
+    False, // One-way mode (both position side)
+}
+
+impl fmt::Display for PositionMode {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            PositionMode::True => write!(f, "true"),
+            PositionMode::False => write!(f, "false"),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum MarginAction {
+    #[serde(rename = "1")]
+    Add,
+    #[serde(rename = "2")]
+    Reduce,
+}
+
+impl fmt::Display for MarginAction {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            MarginAction::Add => write!(f, "1"),
+            MarginAction::Reduce => write!(f, "2"),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum AccountStatus {
+    Normal,
+    Margin,
+    ReduceOnly,
+}
+
+impl fmt::Display for AccountStatus {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            AccountStatus::Normal => write!(f, "NORMAL"),
+            AccountStatus::Margin => write!(f, "MARGIN"),
+            AccountStatus::ReduceOnly => write!(f, "REDUCE_ONLY"),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum TradingStatus {
+    Enabled,
+    Disabled,
+}
+
+impl fmt::Display for TradingStatus {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            TradingStatus::Enabled => write!(f, "ENABLED"),
+            TradingStatus::Disabled => write!(f, "DISABLED"),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub enum BooleanStatus {
+    True,
+    False,
+}
+
+impl fmt::Display for BooleanStatus {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            BooleanStatus::True => write!(f, "true"),
+            BooleanStatus::False => write!(f, "false"),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub struct TriggerCondition {
+    /// GCR (Gross Collection Rate) trigger threshold
+    #[serde(rename = "GCR")]
+    pub gcr: i32,
+    /// IFER (Indicators of Failed Execution Rate) trigger threshold  
+    #[serde(rename = "IFER")]
+    pub ifer: i32,
+    /// UFR (Unable to Fill Rate) trigger threshold
+    #[serde(rename = "UFR")]
+    pub ufr: i32,
 }

@@ -2,16 +2,13 @@
 
 use secrecy::{ExposeSecret, SecretString};
 use serde::{Deserialize, Serialize};
-use std::borrow::Cow;
 use thiserror::Error;
 
-use crate::binance::usdm::enums::*;
 use crate::binance::usdm::private::rest::client::RestClient;
 use crate::binance::usdm::private::rest::order::{NewOrderRequest, NewOrderResponse};
 use crate::binance::usdm::signing::sign_query;
 use chrono::Utc;
 use reqwest::Method;
-use serde_urlencoded;
 
 /// Error type for USDM batch order endpoints.
 #[derive(Debug, Error, Clone, Deserialize)]
