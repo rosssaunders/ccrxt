@@ -6,7 +6,9 @@ use sha2::Sha256;
 
 /// Signs a query string using HMAC SHA256 and the given secret.
 /// Returns the hex-encoded signature.
+#[allow(dead_code)]
 pub fn sign_query(query: &str, secret: &SecretString) -> String {
+    #[allow(clippy::expect_used)]
     let mut mac = Hmac::<Sha256>::new_from_slice(secret.expose_secret().as_bytes())
         .expect("HMAC can take key of any size");
     mac.update(query.as_bytes());

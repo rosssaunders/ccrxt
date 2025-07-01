@@ -10,7 +10,7 @@ use serde::{Deserialize, Serialize};
 
 use super::super::RestClient;
 use super::get_current_orders::TPSLType;
-use super::get_order_info::{CancelReason, EntryPointSource, OrderSource, OrderStatus};
+use super::get_order_info::{EntryPointSource, OrderSource, OrderStatus};
 use crate::bitget::{OrderSide, OrderType, RestResult};
 
 /// Request parameters for getting order history
@@ -114,10 +114,12 @@ impl Default for GetOrderHistoryRequest {
 pub struct HistoricalFeeDetails {
     /// New fees structure
     #[serde(rename = "newFees")]
+    #[allow(dead_code)]
     pub new_fees: Option<NewFeeDetails>,
 
     /// Additional fee coin details
     #[serde(flatten)]
+    #[allow(dead_code)]
     pub additional_fees: serde_json::Value,
 }
 
@@ -125,17 +127,23 @@ pub struct HistoricalFeeDetails {
 #[derive(Debug, Clone, Deserialize)]
 pub struct NewFeeDetails {
     /// Fee component C
+    #[allow(dead_code)]
     pub c: String,
     /// Fee component D  
+    #[allow(dead_code)]
     pub d: String,
     /// Whether deduction was applied
+    #[allow(dead_code)]
     pub deduction: bool,
     /// Fee component R
+    #[allow(dead_code)]
     pub r: String,
     /// Fee component T
+    #[allow(dead_code)]
     pub t: String,
     /// Total deduction fee
     #[serde(rename = "totalDeductionFee")]
+    #[allow(dead_code)]
     pub total_deduction_fee: String,
 }
 

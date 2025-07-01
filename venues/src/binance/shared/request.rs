@@ -90,7 +90,7 @@ mod examples {
     #[tokio::test]
     async fn example_public_request() {
         // Create a client for any venue (no authentication needed for public endpoints)
-        let spot_client = BinanceClient::new(SpotConfig);
+        let _spot_client = BinanceClient::new(SpotConfig);
 
         // All venues support the server time endpoint
         // Note: This is a test example - we're not actually making the request
@@ -104,7 +104,7 @@ mod examples {
         let api_key = Box::new(SecretValue::new(SecretString::from("your_api_key"))) as Box<dyn ExposableSecret>;
         let api_secret = Box::new(SecretValue::new(SecretString::from("your_api_secret"))) as Box<dyn ExposableSecret>;
 
-        let client = BinanceClient::new_authenticated(SpotConfig, api_key, api_secret);
+        let _client = BinanceClient::new_authenticated(SpotConfig, api_key, api_secret);
 
         // Make authenticated requests
         // let account_info = client.get_account_info(None).await.unwrap();

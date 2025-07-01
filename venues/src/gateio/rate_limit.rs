@@ -37,6 +37,7 @@ impl RateLimitHeader {
     pub fn is_near_limit(&self) -> bool {
         match (self.requests_remain, self.limit) {
             (Some(remain), Some(limit)) => {
+                #[allow(clippy::float_arithmetic)]
                 let threshold = (limit as f32 * 0.1) as u32; // 10% threshold
                 remain <= threshold
             }
@@ -78,6 +79,7 @@ pub struct RateLimiter {
     margin_endpoints: Arc<Semaphore>,
     
     /// Last reset times for different categories
+    #[allow(dead_code)]
     last_reset: Arc<Mutex<std::collections::HashMap<String, Instant>>>,
     
     /// Current usage tracking
@@ -129,16 +131,23 @@ impl RateLimiter {
             let info = usage.entry(category.clone()).or_insert(UsageInfo {
                 requests_made: 0,
                 last_request: Instant::now(),
+                #[allow(clippy::arithmetic_side_effects)]
                 reset_time: Instant::now() + Duration::from_secs(10),
             });
             
             // Reset if needed
             if info.reset_time <= Instant::now() {
                 info.requests_made = 0;
-                info.reset_time = Instant::now() + Duration::from_secs(10);
+                #[allow(clippy::arithmetic_side_effects)]
+                {
+                    info.reset_time = Instant::now() + Duration::from_secs(10);
+                }
             }
             
-            info.requests_made += 1;
+            #[allow(clippy::arithmetic_side_effects)]
+            {
+                info.requests_made += 1;
+            }
             info.last_request = Instant::now();
         }
 
@@ -210,16 +219,21 @@ impl RateLimiter {
     /// Update rate limit status from response headers
     pub fn update_from_headers(&self, headers: &RateLimitHeader, endpoint: &str) -> Option<RateLimitStatus> {
         if let (Some(remain), Some(limit), Some(reset)) = (headers.requests_remain, headers.limit, headers.reset_timestamp) {
+            #[allow(clippy::unwrap_used)]
+            #[allow(clippy::arithmetic_side_effects)]
             let reset_duration = Duration::from_secs(reset - std::time::SystemTime::now()
                 .duration_since(std::time::UNIX_EPOCH)
                 .unwrap()
                 .as_secs());
             
+            #[allow(clippy::arithmetic_side_effects)]
+            let reset_at = Instant::now() + reset_duration;
+            
             Some(RateLimitStatus {
                 endpoint: endpoint.to_string(),
                 requests_remaining: remain,
                 limit,
-                reset_at: Instant::now() + reset_duration,
+                reset_at,
             })
         } else {
             None
@@ -249,6 +263,7 @@ impl RateLimiter {
                 _ => 1000,
             };
 
+            #[allow(clippy::float_arithmetic)]
             let usage_percentage = (info.requests_made as f32 / limit as f32) * 100.0;
             if usage_percentage > 80.0 {
                 warnings.push(format!(

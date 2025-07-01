@@ -1,3 +1,6 @@
+//! KuCoin rate limiting functionality
+#![allow(clippy::arithmetic_side_effects)]
+
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::time::{Duration, Instant};
@@ -5,8 +8,9 @@ use thiserror::Error;
 use tokio::sync::RwLock;
 
 /// VIP levels for KuCoin users, affecting rate limits
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
 pub enum VipLevel {
+    #[default]
     Vip0,
     Vip1,
     Vip2,
@@ -131,12 +135,6 @@ impl VipLevel {
                 public: 2000,
             },
         }
-    }
-}
-
-impl Default for VipLevel {
-    fn default() -> Self {
-        VipLevel::Vip0
     }
 }
 

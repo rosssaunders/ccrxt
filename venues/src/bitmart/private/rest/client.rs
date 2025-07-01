@@ -188,7 +188,7 @@ impl RestClient {
             .header("Content-Type", "application/json");
 
         // Add body if present and not GET/DELETE
-        if !body_str.is_empty() && !(method == Method::GET || method == Method::DELETE) {
+        if !(body_str.is_empty() || method == Method::GET || method == Method::DELETE) {
             request_builder = request_builder.body(body_str.clone());
         }
 

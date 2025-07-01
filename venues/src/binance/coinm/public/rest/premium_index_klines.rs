@@ -59,7 +59,7 @@ impl RestClient {
     /// Weight based on parameter LIMIT:
     /// - [1,100): 1
     /// - [100, 500): 2
-    /// - [500, 1000]: 5
+    /// - [500, 1000][]: 5
     /// - > 1000: 10
     pub async fn get_premium_index_klines(
         &self,

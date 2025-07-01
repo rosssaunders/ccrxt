@@ -61,7 +61,7 @@ pub struct GetOrdersRequest {
 }
 
 /// Request to get a single order
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Default)]
 pub struct GetOrderRequest {
     /// Market type which the order was traded in
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -253,11 +253,7 @@ impl Default for GetOrdersRequest {
     }
 }
 
-impl Default for GetOrderRequest {
-    fn default() -> Self {
-        Self { market_type: None }
-    }
-}
+
 
 #[cfg(test)]
 mod tests {

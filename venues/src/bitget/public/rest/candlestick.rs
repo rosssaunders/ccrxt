@@ -1,8 +1,8 @@
-use serde::{Deserialize, Serialize};
+// Removed unused Serialize and Deserialize imports
 use std::collections::HashMap;
 
-use crate::bitget::{ApiError, RestResponse, CandlestickGranularity};
 use super::RestClient;
+use crate::bitget::{ApiError, CandlestickGranularity, RestResponse};
 
 /// Request for getting candlestick data
 #[derive(Debug, Clone)]
@@ -54,15 +54,15 @@ impl GetCandlestickRequest {
         let mut params = HashMap::new();
         params.insert("symbol".to_string(), self.symbol.clone());
         params.insert("granularity".to_string(), self.granularity.to_string());
-        
+
         if let Some(start_time) = self.start_time {
             params.insert("startTime".to_string(), start_time.to_string());
         }
-        
+
         if let Some(end_time) = self.end_time {
             params.insert("endTime".to_string(), end_time.to_string());
         }
-        
+
         if let Some(limit) = self.limit {
             params.insert("limit".to_string(), limit.to_string());
         }
@@ -76,21 +76,21 @@ pub type Candlestick = [String; 8];
 
 impl RestClient {
     /// Get candlestick data
-    /// 
+    ///
     /// # Arguments
     /// * `request` - The request parameters
-    /// 
+    ///
     /// # Returns
     /// * `Result<RestResponse<Vec<Candlestick>>, ApiError>` - The candlestick data
-    /// 
+    ///
     /// # Example
     /// ```rust
     /// use venues::bitget::public::rest::{RestClient, GetCandlestickRequest};
     /// use venues::bitget::CandlestickGranularity;
-    /// 
+    ///
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
     /// let client = RestClient::new("https://api.bitget.com", Default::default(), reqwest::Client::new());
-    /// 
+    ///
     /// let response = client.get_candlestick(
     ///     GetCandlestickRequest::new("BTCUSDT", CandlestickGranularity::OneMinute)
     ///         .limit(100)
@@ -98,7 +98,10 @@ impl RestClient {
     /// # Ok(())
     /// # }
     /// ```
-    pub async fn get_candlestick(&self, request: GetCandlestickRequest) -> Result<RestResponse<Vec<Candlestick>>, ApiError> {
+    pub async fn get_candlestick(
+        &self,
+        request: GetCandlestickRequest,
+    ) -> Result<RestResponse<Vec<Candlestick>>, ApiError> {
         let endpoint = "/api/v2/spot/market/candles";
         let params = Some(request.to_params());
         self.get(endpoint, params).await

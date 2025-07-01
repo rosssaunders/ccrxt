@@ -1,4 +1,5 @@
 #[cfg(test)]
+#[allow(clippy::module_inception)]
 mod tests {
     use crate::bitget::public::rest::RestClient;
     use crate::bitget::public::rest::candlestick::GetCandlestickRequest;

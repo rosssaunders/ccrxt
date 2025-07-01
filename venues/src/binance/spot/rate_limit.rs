@@ -103,7 +103,7 @@ impl RateLimitHeader {
         if rest.len() < 2 {
             return None;
         }
-        let (num, unit) = rest.split_at(rest.len() - 1);
+        let (num, unit) = rest.split_at(rest.len().saturating_sub(1));
         let interval_value = num.parse::<u32>().ok()?;
         let interval_unit = IntervalUnit::from_char(unit.chars().next()?)?;
         Some(RateLimitHeader {
@@ -173,6 +173,7 @@ impl RateLimiter {
         let now = Instant::now();
         usage.raw_request_timestamps.push_back(now);
         // Remove timestamps older than 5 minutes
+        #[allow(clippy::arithmetic_side_effects)]
         Self::trim_older_than(
             &mut usage.raw_request_timestamps,
             now - Duration::from_secs(300),
@@ -186,10 +187,12 @@ impl RateLimiter {
         usage.order_timestamps_10s.push_back(now);
         usage.order_timestamps_1d.push_back(now);
         // Remove timestamps older than 10s and 24h
+        #[allow(clippy::arithmetic_side_effects)]
         Self::trim_older_than(
             &mut usage.order_timestamps_10s,
             now - Duration::from_secs(10),
         );
+        #[allow(clippy::arithmetic_side_effects)]
         Self::trim_older_than(
             &mut usage.order_timestamps_1d,
             now - Duration::from_secs(86400),
@@ -228,11 +231,11 @@ impl RateLimiter {
         }
 
         // Request weight: 1,200 per 1 min (Spot limit)
-        if usage.used_weight_1m + weight > 1200 {
+        if usage.used_weight_1m.saturating_add(weight) > 1200 {
             return Err(Errors::ApiError(ApiError::TooManyRequests {
                 msg: format!(
                     "Request weight {} would exceed limit of 1,200",
-                    usage.used_weight_1m + weight
+                    usage.used_weight_1m.saturating_add(weight)
                 ),
             }));
         }

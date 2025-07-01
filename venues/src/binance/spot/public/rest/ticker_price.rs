@@ -45,10 +45,8 @@ impl RestClient {
         let (query_string, weight) = if let Some(p) = params {
             let weight = if p.symbol.is_some() {
                 2 // Single symbol
-            } else if p.symbols.is_some() {
-                4 // Multiple symbols
             } else {
-                4 // Default to multiple symbols weight
+                4 // Multiple symbols or default
             };
 
             let qs = serde_urlencoded::to_string(&p).map_err(|e| {

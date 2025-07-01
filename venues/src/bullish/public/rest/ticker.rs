@@ -1,6 +1,6 @@
 //! Ticker endpoint for Bullish Exchange API
 
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 
 use super::client::RestClient;
 use crate::bullish::{EndpointType, RestResult};

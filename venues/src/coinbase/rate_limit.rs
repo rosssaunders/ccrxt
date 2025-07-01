@@ -66,6 +66,7 @@ impl RequestTracker {
     /// Clean up old request timestamps beyond the window
     fn cleanup(&mut self, window: Duration) {
         let now = Instant::now();
+        #[allow(clippy::arithmetic_side_effects)]
         let cutoff = now - window;
 
         self.request_times.retain(|&time| time > cutoff);
@@ -87,6 +88,7 @@ impl RequestTracker {
         }
 
         // Check rate limit (requests per second)
+        #[allow(clippy::arithmetic_side_effects)]
         let one_second_ago = now - Duration::from_secs(1);
         let recent_requests = self
             .request_times

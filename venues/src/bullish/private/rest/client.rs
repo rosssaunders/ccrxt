@@ -248,6 +248,7 @@ impl RestClient {
             self.get_jwt_token().await?;
         }
 
+        #[allow(clippy::unwrap_used)]
         let timestamp = std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
             .unwrap()
@@ -311,6 +312,7 @@ impl RestClient {
             })?;
 
             // Create new signature with refreshed token
+            #[allow(clippy::unwrap_used)]
             let new_timestamp = std::time::SystemTime::now()
                 .duration_since(std::time::UNIX_EPOCH)
                 .unwrap()

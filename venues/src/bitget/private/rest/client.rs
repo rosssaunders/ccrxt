@@ -275,6 +275,7 @@ struct BitgetResponse<T> {
     code: String,
     msg: String,
     #[serde(rename = "requestTime")]
+    #[allow(dead_code)]
     request_time: i64,
     data: T,
 }

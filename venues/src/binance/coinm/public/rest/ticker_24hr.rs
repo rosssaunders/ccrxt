@@ -5,7 +5,7 @@ use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
 /// Parameters for 24hr Ticker Price Change Statistics
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Default)]
 pub struct Ticker24hrParams {
     /// Symbol name
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -13,15 +13,6 @@ pub struct Ticker24hrParams {
     /// Contract type
     #[serde(skip_serializing_if = "Option::is_none")]
     pub pair: Option<String>,
-}
-
-impl Default for Ticker24hrParams {
-    fn default() -> Self {
-        Self {
-            symbol: None,
-            pair: None,
-        }
-    }
 }
 
 /// 24hr ticker price change statistics

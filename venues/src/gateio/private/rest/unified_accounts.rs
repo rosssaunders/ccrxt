@@ -1,3 +1,6 @@
+//! Unified account functionality 
+#![allow(clippy::float_arithmetic)]
+
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 

@@ -46,7 +46,9 @@ pub enum DeribitWebSocketError {
 
 #[derive(serde::Deserialize)]
 struct JsonRpcEnvelope<R> {
+    #[allow(dead_code)]
     id: Option<i32>,
+    #[allow(dead_code)]
     jsonrpc: Option<String>,
     result: R,
 }
@@ -60,6 +62,7 @@ pub struct PrivateWebSocketClient {
     /// Connection status
     connected: Arc<AtomicBool>,
     /// Rate limiter for API calls
+    #[allow(dead_code)]
     rate_limiter: Arc<RateLimiter>,
     /// Request ID counter for JSON-RPC
     pub(crate) request_id: Arc<AtomicU64>,
@@ -173,8 +176,7 @@ impl WebSocketConnection<DeribitMessage> for PrivateWebSocketClient {
         &mut self,
     ) -> Pin<Box<dyn futures::Stream<Item = websockets::BoxResult<DeribitMessage>> + Send>> {
         // Not implemented for public client (not used in this context)
-        use futures::stream::Stream;
-        use futures::stream::StreamExt;
+        // Removed unused futures imports
 
         let error_stream = futures::stream::iter(std::iter::once(Err(
             Box::new(std::io::Error::new(

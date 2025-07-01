@@ -157,13 +157,6 @@ impl GateIoError {
 
     /// Check if error indicates client-side issues (non-retryable)
     pub fn is_client_error(&self) -> bool {
-        match self {
-            GateIoError::InvalidParameter(_) => true,
-            GateIoError::Authentication(_) => true,
-            GateIoError::OrderNotFound { .. } => true,
-            GateIoError::UnsupportedCurrencyPair { .. } => true,
-            GateIoError::InsufficientBalance { .. } => true,
-            _ => false,
-        }
+        matches!(self, GateIoError::InvalidParameter(_) | GateIoError::Authentication(_) | GateIoError::OrderNotFound { .. } | GateIoError::UnsupportedCurrencyPair { .. } | GateIoError::InsufficientBalance { .. })
     }
 }

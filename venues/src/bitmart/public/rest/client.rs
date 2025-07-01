@@ -119,9 +119,12 @@ impl RestClient {
 
         // Add body for non-GET requests
         if method != Method::GET && request.is_some() {
+            // Using expect here as the condition guarantees request is Some
+            #[allow(clippy::expect_used)]
+            let req = request.expect("Request body must be Some for non-GET methods");
             request_builder = request_builder
                 .header("Content-Type", "application/json")
-                .json(request.expect("Request body must be Some for non-GET methods"));
+                .json(req);
         }
 
         // Send request

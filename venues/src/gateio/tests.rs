@@ -1,11 +1,11 @@
 #[cfg(test)]
+#[allow(clippy::module_inception)]
 mod tests {
-    use super::*;
     use crate::gateio::{
         errors::GateIoError,
         rate_limit::{RateLimiter, RateLimitHeader},
-        public::rest::{RestClient as PublicRestClient, tickers::TickersRequest},
-        private::rest::{RestClient as PrivateRestClient, create_order::CreateOrderRequest},
+        public::rest::tickers::TickersRequest,
+        private::rest::create_order::CreateOrderRequest,
     };
 
     #[test]

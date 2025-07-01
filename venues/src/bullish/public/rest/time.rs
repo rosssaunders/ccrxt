@@ -1,16 +1,17 @@
 //! Server time endpoint for Bullish Exchange API
 
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 
 use super::client::RestClient;
 use crate::bullish::{EndpointType, RestResult};
 
 /// Server time response
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct ServerTime {
     /// Server timestamp in milliseconds
     pub timestamp: u64,
+
     /// Server time in ISO 8601 format
     pub datetime: String,
 }
@@ -45,7 +46,7 @@ mod tests {
             "datetime": "2022-01-01T00:00:00Z"
         }"#;
 
-        let server_time: ServerTime = serde_json::from_str(json).unwrap();
+        let server_time: ServerTime = serde_json::from_str(json).expect("Deserialization failed");
         assert_eq!(server_time.timestamp, 1640995200000);
         assert_eq!(server_time.datetime, "2022-01-01T00:00:00Z");
     }

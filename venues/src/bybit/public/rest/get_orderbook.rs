@@ -27,6 +27,7 @@ impl<'de> Deserialize<'de> for OrderbookLevel {
         if arr.len() != 2 {
             return Err(serde::de::Error::custom("Expected 2 elements in orderbook level array"));
         }
+        #[allow(clippy::indexing_slicing)]
         Ok(OrderbookLevel {
             price: arr[0].clone(),
             size: arr[1].clone(),

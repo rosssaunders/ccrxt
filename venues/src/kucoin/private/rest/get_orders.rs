@@ -177,6 +177,7 @@ impl RestClient {
         let mut params = HashMap::new();
 
         if let Some(status) = request.status {
+            #[allow(clippy::unwrap_used)]
             params.insert(
                 "status".to_string(),
                 serde_json::to_string(&status)
@@ -189,6 +190,7 @@ impl RestClient {
             params.insert("symbol".to_string(), symbol);
         }
         if let Some(side) = request.side {
+            #[allow(clippy::unwrap_used)]
             params.insert(
                 "side".to_string(),
                 serde_json::to_string(&side)

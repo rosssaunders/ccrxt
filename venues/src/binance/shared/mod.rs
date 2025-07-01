@@ -90,6 +90,7 @@ pub trait BinanceRestClient {
     fn api_secret(&self) -> &dyn ExposableSecret;
 
     /// Send an HTTP request with optional query string or body.
+    #[allow(async_fn_in_trait)]
     async fn send_request<T>(
         &self,
         endpoint: &str,

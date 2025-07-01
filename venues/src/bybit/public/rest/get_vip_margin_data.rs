@@ -52,6 +52,12 @@ impl RestClient {
     }
 }
 
+impl Default for GetVipMarginDataRequest {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl GetVipMarginDataRequest {
     pub fn new() -> Self { Self { vip_level: None, currency: None } }
 }

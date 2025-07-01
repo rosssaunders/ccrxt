@@ -113,9 +113,11 @@ pub enum EntryPointSource {
 pub struct FeeDetails {
     /// Fee coin
     #[serde(rename = "feeCoin")]
+    #[allow(dead_code)]
     pub fee_coin: String,
 
     /// Fee amount (negative value)
+    #[allow(dead_code)]
     pub fee: String,
 }
 

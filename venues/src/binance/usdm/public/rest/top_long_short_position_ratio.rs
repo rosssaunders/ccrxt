@@ -4,7 +4,6 @@
 
 use super::RestClient;
 use crate::binance::usdm::enums::Period;
-use crate::binance::usdm::{Errors, RestResult};
 
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;

@@ -1,3 +1,7 @@
+//! KuCoin private REST API client
+#![allow(clippy::needless_borrows_for_generic_args)]
+#![allow(clippy::unwrap_used)]
+
 use std::collections::HashMap;
 
 use base64::{engine::general_purpose::STANDARD as BASE64, Engine};
@@ -18,6 +22,7 @@ pub struct RestClient {
     api_key: Box<dyn ExposableSecret>,
     api_secret: Box<dyn ExposableSecret>,
     api_passphrase: Box<dyn ExposableSecret>,
+    #[allow(dead_code)]
     is_sandbox: bool,
 }
 

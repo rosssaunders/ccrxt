@@ -1,4 +1,7 @@
-use crate::gateio::{rate_limit::RateLimiter, ResponseHeaders, Result};
+//! Gate.io public REST API client
+#![allow(clippy::redundant_closure)]
+
+use crate::gateio::{rate_limit::RateLimiter, Result};
 use reqwest::Client;
 use serde::{de::DeserializeOwned, Serialize};
 use std::sync::Arc;

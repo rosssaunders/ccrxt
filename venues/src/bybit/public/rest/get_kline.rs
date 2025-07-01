@@ -39,6 +39,7 @@ impl<'de> Deserialize<'de> for Kline {
         if arr.len() != 7 {
             return Err(serde::de::Error::custom("Expected 7 elements in kline array"));
         }
+        #[allow(clippy::indexing_slicing)]
         Ok(Kline {
             start_time: arr[0].clone(),
             open_price: arr[1].clone(),

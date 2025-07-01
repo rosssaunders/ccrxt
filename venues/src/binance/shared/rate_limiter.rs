@@ -55,9 +55,9 @@ impl IntervalUnit {
     pub fn to_duration(&self, value: u32) -> Duration {
         match self {
             IntervalUnit::Second => Duration::from_secs(value as u64),
-            IntervalUnit::Minute => Duration::from_secs(value as u64 * 60),
-            IntervalUnit::Hour => Duration::from_secs(value as u64 * 3600),
-            IntervalUnit::Day => Duration::from_secs(value as u64 * 86400),
+            IntervalUnit::Minute => Duration::from_secs(value.saturating_mul(60) as u64),
+            IntervalUnit::Hour => Duration::from_secs(value.saturating_mul(3600) as u64),
+            IntervalUnit::Day => Duration::from_secs(value.saturating_mul(86400) as u64),
         }
     }
 }
@@ -106,7 +106,7 @@ impl RateLimitHeader {
         let unit_char = rest.chars().last()?;
         let interval_unit = IntervalUnit::from_char(unit_char)?;
 
-        let interval_str = &rest[..rest.len() - 1];
+        let interval_str = &rest[..rest.len().saturating_sub(1)];
         let interval_value: u32 = interval_str.parse().ok()?;
 
         Some(RateLimitHeader {
@@ -269,7 +269,7 @@ impl RateLimiter {
         // Check request weight limit
         let current_weight =
             usage.get_weight_usage(weight_window_minutes as u32, IntervalUnit::Minute);
-        if current_weight + weight > self.limits.request_weight_limit {
+        if current_weight.saturating_add(weight) > self.limits.request_weight_limit {
             return Err(Errors::RateLimitExceeded {
                 retry_after: Some(self.limits.request_weight_window),
             });
@@ -284,7 +284,7 @@ impl RateLimiter {
             usage.get_raw_usage(raw_window_seconds as u32, IntervalUnit::Second)
         };
 
-        if current_raw + 1 > self.limits.raw_requests_limit {
+        if current_raw.saturating_add(1) > self.limits.raw_requests_limit {
             return Err(Errors::RateLimitExceeded {
                 retry_after: Some(self.limits.raw_requests_window),
             });
@@ -293,14 +293,14 @@ impl RateLimiter {
         // Check order limits if this is an order
         if is_order {
             let current_orders_10s = usage.get_order_usage(10, IntervalUnit::Second);
-            if current_orders_10s + 1 > self.limits.orders_10s_limit {
+            if current_orders_10s.saturating_add(1) > self.limits.orders_10s_limit {
                 return Err(Errors::RateLimitExceeded {
                     retry_after: Some(Duration::from_secs(10)),
                 });
             }
 
             let current_orders_1m = usage.get_order_usage(1, IntervalUnit::Minute);
-            if current_orders_1m + 1 > self.limits.orders_minute_limit {
+            if current_orders_1m.saturating_add(1) > self.limits.orders_minute_limit {
                 return Err(Errors::RateLimitExceeded {
                     retry_after: Some(Duration::from_secs(60)),
                 });
@@ -308,7 +308,7 @@ impl RateLimiter {
 
             if let Some(daily_limit) = self.limits.orders_day_limit {
                 let current_orders_1d = usage.get_order_usage(1, IntervalUnit::Day);
-                if current_orders_1d + 1 > daily_limit {
+                if current_orders_1d.saturating_add(1) > daily_limit {
                     return Err(Errors::RateLimitExceeded {
                         retry_after: Some(Duration::from_secs(86400)),
                     });

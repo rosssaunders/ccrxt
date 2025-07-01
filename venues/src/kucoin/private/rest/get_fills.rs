@@ -135,6 +135,7 @@ impl RestClient {
             params.insert("orderId".to_string(), order_id);
         }
         if let Some(side) = request.side {
+            #[allow(clippy::unwrap_used)]
             params.insert(
                 "side".to_string(),
                 serde_json::to_string(&side)

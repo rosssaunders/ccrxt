@@ -655,7 +655,10 @@ impl RestClient {
         });
         
         if let Some(underlying) = underlying {
-            request["underlying"] = serde_json::Value::String(underlying.to_string());
+            #[allow(clippy::indexing_slicing)]
+            {
+                request["underlying"] = serde_json::Value::String(underlying.to_string());
+            }
         }
         
         self.post("/options/countdown_cancel_all", &request).await

@@ -9,7 +9,7 @@ use crate::coinbase::{EndpointType, RestResult};
 use super::RestClient;
 
 /// Request to cancel all orders
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Default)]
 pub struct CancelAllOrdersRequest {
     /// Cancels orders on a specific profile
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -21,7 +21,7 @@ pub struct CancelAllOrdersRequest {
 }
 
 /// Request to cancel a single order
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Default)]
 pub struct CancelOrderRequest {
     /// Cancels orders on a specific profile
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -102,23 +102,7 @@ impl RestClient {
     }
 }
 
-impl Default for CancelAllOrdersRequest {
-    fn default() -> Self {
-        Self {
-            profile_id: None,
-            product_id: None,
-        }
-    }
-}
 
-impl Default for CancelOrderRequest {
-    fn default() -> Self {
-        Self {
-            profile_id: None,
-            product_id: None,
-        }
-    }
-}
 
 #[cfg(test)]
 mod tests {

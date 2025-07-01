@@ -7,4 +7,4 @@ pub use client::RestClient;
 // Re-export endpoints
 pub use get_account_assets::{AssetInfo, GetAccountAssetsRequest, GetAccountAssetsResponse};
 // Re-export spot trading endpoints
-pub use spot::*;
+// Removed unused pub use spot::* statement

@@ -1,4 +1,4 @@
-use crate::gateio::{rate_limit::RateLimiter, ResponseHeaders, Result};
+use crate::gateio::{rate_limit::RateLimiter, Result};
 use reqwest::{Client, Method};
 use ring::hmac;
 use serde::de::DeserializeOwned;
@@ -26,7 +26,7 @@ impl RestClient {
         let client = Client::builder()
             .timeout(std::time::Duration::from_secs(30))
             .build()
-            .map_err(|e| crate::gateio::GateIoError::Http(e))?;
+            .map_err(crate::gateio::GateIoError::Http)?;
 
         Ok(Self {
             client,
@@ -148,6 +148,7 @@ impl RestClient {
         let method_str = method.as_str();
 
         // Generate timestamp
+        #[allow(clippy::unwrap_used)]
         let timestamp = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
@@ -165,7 +166,7 @@ impl RestClient {
         // Get body string
         let body_str = if let Some(body_data) = body {
             serde_json::to_string(body_data)
-                .map_err(|e| crate::gateio::GateIoError::Json(e))?
+                .map_err(crate::gateio::GateIoError::Json)?
         } else {
             String::new()
         };
@@ -201,7 +202,7 @@ impl RestClient {
         let response = request_builder
             .send()
             .await
-            .map_err(|e| crate::gateio::GateIoError::Http(e))?;
+            .map_err(crate::gateio::GateIoError::Http)?;
 
         let status = response.status();
         let headers = crate::gateio::rate_limit::RateLimitHeader::from_headers(response.headers());
@@ -214,15 +215,15 @@ impl RestClient {
         let response_text = response
             .text()
             .await
-            .map_err(|e| crate::gateio::GateIoError::Http(e))?;
+            .map_err(crate::gateio::GateIoError::Http)?;
 
         if status.is_success() {
             let data: T = serde_json::from_str(&response_text)
-                .map_err(|e| crate::gateio::GateIoError::Json(e))?;
+                .map_err(crate::gateio::GateIoError::Json)?;
             Ok(data)
         } else {
             let error: crate::gateio::errors::ErrorResponse = serde_json::from_str(&response_text)
-                .map_err(|e| crate::gateio::GateIoError::Json(e))?;
+                .map_err(crate::gateio::GateIoError::Json)?;
             Err(crate::gateio::GateIoError::Api(crate::gateio::ApiError {
                 label: error.label,
                 message: error.message,

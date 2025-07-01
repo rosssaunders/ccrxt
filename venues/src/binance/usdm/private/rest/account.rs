@@ -5,12 +5,10 @@ use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
 use thiserror::Error;
 
-use crate::binance::usdm::enums::*;
 use crate::binance::usdm::private::rest::client::RestClient;
 use crate::binance::usdm::signing::sign_query;
 use chrono::Utc;
 use reqwest::Method;
-use serde_urlencoded;
 
 #[derive(Debug, Error, Clone, Deserialize)]
 #[serde(tag = "code", content = "msg")]

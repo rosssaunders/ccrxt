@@ -17,11 +17,13 @@ where
         for item in arr {
             if let Value::Array(entry) = item {
                 if entry.len() == 2 {
+                    #[allow(clippy::indexing_slicing)]
                     let price = match &entry[0] {
                         Value::String(s) => s.clone(),
                         Value::Number(n) => n.to_string(),
                         _ => return Err(serde::de::Error::custom("Invalid price format")),
                     };
+                    #[allow(clippy::indexing_slicing)]
                     let quantity = match &entry[1] {
                         Value::String(s) => s.clone(),
                         Value::Number(n) => n.to_string(),

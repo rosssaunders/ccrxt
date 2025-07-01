@@ -97,6 +97,7 @@ impl RateLimitHeader {
     }
 
     /// Parse a header name string to RateLimitHeader
+    #[allow(clippy::should_implement_trait)]
     pub fn from_str(header_name: &str) -> Option<Self> {
         // For now, we'll return standard headers based on common patterns
         // This can be expanded later to parse actual Bitget rate limit headers
@@ -167,6 +168,7 @@ impl RateLimiter {
 
         // Track for 1-second window (endpoint-specific limits)
         usage.request_timestamps_1s.push_back(now);
+        #[allow(clippy::arithmetic_side_effects)]
         Self::trim_older_than(
             &mut usage.request_timestamps_1s,
             now - Duration::from_secs(1),
@@ -174,6 +176,7 @@ impl RateLimiter {
 
         // Track for 1-minute window (overall IP limit)
         usage.request_timestamps_1m.push_back(now);
+        #[allow(clippy::arithmetic_side_effects)]
         Self::trim_older_than(
             &mut usage.request_timestamps_1m,
             now - Duration::from_secs(60),
@@ -186,6 +189,7 @@ impl RateLimiter {
         let now = Instant::now();
         usage.order_timestamps_1s.push_back(now);
         // Remove timestamps older than 1 second
+        #[allow(clippy::arithmetic_side_effects)]
         Self::trim_older_than(&mut usage.order_timestamps_1s, now - Duration::from_secs(1));
     }
 

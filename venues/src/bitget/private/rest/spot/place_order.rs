@@ -17,15 +17,18 @@ use crate::bitget::{OrderSide, OrderType, RestResult};
 pub enum Force {
     /// Good Till Cancel - normal limit order
     #[serde(rename = "gtc")]
+    #[allow(clippy::upper_case_acronyms)]
     GTC,
     /// Post only - only add liquidity to the book
     #[serde(rename = "post_only")]
     PostOnly,
     /// Fill or Kill - fill completely or cancel
     #[serde(rename = "fok")]
+    #[allow(clippy::upper_case_acronyms)]
     FOK,
     /// Immediate or Cancel - fill as much as possible, cancel remainder
     #[serde(rename = "ioc")]
+    #[allow(clippy::upper_case_acronyms)]
     IOC,
 }
 

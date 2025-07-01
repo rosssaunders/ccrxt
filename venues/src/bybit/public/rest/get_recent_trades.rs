@@ -167,7 +167,7 @@ mod tests {
         assert_eq!(trade.exec_id, "2100000000007764263");
         assert_eq!(trade.symbol, "BTCUSDT");
         assert_eq!(trade.side, Side::Buy);
-        assert_eq!(trade.is_block_trade, false);
+        assert!(!trade.is_block_trade);
         assert_eq!(trade.is_rpi_trade, Some(true));
     }
 }

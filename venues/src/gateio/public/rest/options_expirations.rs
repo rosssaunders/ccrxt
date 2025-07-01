@@ -1,4 +1,4 @@
-use serde::{Deserialize, Serialize};
+// Removed unused Serialize and Deserialize imports
 
 use super::RestClient;
 

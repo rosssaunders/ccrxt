@@ -196,11 +196,11 @@ impl<V: VenueConfig> BinanceClient<V> {
         }
 
         // Send request with retry logic for rate limiting
-        let mut attempts = 0;
+        let mut attempts: u32 = 0;
         const MAX_ATTEMPTS: u32 = 3;
 
         loop {
-            attempts += 1;
+            attempts = attempts.saturating_add(1);
 
             let response = request_builder
                 .try_clone()

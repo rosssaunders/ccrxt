@@ -40,6 +40,12 @@ impl RestClient {
     }
 }
 
+impl Default for GetInsuranceRequest {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl GetInsuranceRequest {
     pub fn new() -> Self { Self { coin: None } }
     pub fn coin(mut self, coin: String) -> Self { self.coin = Some(coin); self }

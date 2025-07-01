@@ -21,6 +21,7 @@ pub enum TPSLType {
     Normal,
     /// TPSL spot order
     #[serde(rename = "tpsl")]
+    #[allow(clippy::upper_case_acronyms)]
     TPSL,
 }
 

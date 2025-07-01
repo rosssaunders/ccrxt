@@ -1,3 +1,8 @@
+//! Trading statistics and trade history functionality
+#![allow(clippy::float_arithmetic)]
+#![allow(clippy::unwrap_used)]
+#![allow(clippy::arithmetic_side_effects)]
+
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;

@@ -55,5 +55,6 @@ where
 pub(crate) struct RestResponse<T> {
     pub data: T,
     pub headers: ResponseHeaders,
+    #[allow(dead_code)]
     pub request_duration: std::time::Duration,
 }
