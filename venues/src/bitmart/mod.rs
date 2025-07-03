@@ -3,7 +3,8 @@ mod errors;
 
 pub mod rate_limit;
 pub mod public {
-    mod rest;
+    pub mod rest;
+    pub mod websocket;
     pub use self::rest::RestClient;
     pub use self::rest::{Currency, GetCurrencyListRequest, GetCurrencyListResponse};
     pub use self::rest::{DepthData, GetDepthRequest, GetDepthResponse, OrderBookEntry};
@@ -16,10 +17,24 @@ pub mod public {
         GetTradingPairDetailsRequest, GetTradingPairDetailsResponse, TradingPairDetail,
     };
     pub use self::rest::{GetTradingPairsListRequest, GetTradingPairsListResponse};
+    pub use self::websocket::{BITMART_WS_PUBLIC_URL, PublicChannel, WsClient as WebSocketClient};
+    pub use self::websocket::{
+        DataResponse as WsDataResponse, DepthData as WsDepthData, DepthEntry, DepthLevel,
+        ErrorResponse as WsErrorResponse, EventResponse as WsEventResponse,
+        Operation as WsOperation, TickerData as WsTickerData, WsError, WsMessage, WsResponse,
+    };
 }
 pub mod private {
     mod rest;
+    mod websocket;
     pub use self::rest::RestClient;
+    pub use self::rest::{
+        BatchOrderData, BatchOrderParam, SubmitBatchOrderRequest, SubmitBatchOrderResponse,
+    };
+    pub use self::rest::{
+        CancelAllOrdersRequest, CancelAllOrdersResponse, CancelBatchOrderRequest,
+        CancelBatchOrderResponse,
+    };
     pub use self::rest::{
         CancelOrderRequest, CancelOrderResponse, OrderDetails, QueryOrderRequest,
         QueryOrderResponse, QueryOrderTradesRequest, QueryOrderTradesResponse, QueryOrdersRequest,
@@ -49,12 +64,22 @@ pub mod private {
     };
     pub use self::rest::{GetWithdrawQuotaRequest, GetWithdrawQuotaResponse};
     pub use self::rest::{MarginAssetTransferRequest, MarginAssetTransferResponse};
+    pub use self::rest::{SubmitMarginOrderRequest, SubmitMarginOrderResponse};
     pub use self::rest::{WithdrawRequest, WithdrawResponse};
+    pub use self::websocket::WsClient as WebSocketClient;
+    pub use self::websocket::{BITMART_WS_PRIVATE_URL, PrivateChannel};
 }
 
 pub use enums::*;
 pub use errors::{ApiError, ErrorResponse, Errors};
 pub use private::RestClient as PrivateRestClient;
+pub use private::{
+    BatchOrderData, BatchOrderParam, SubmitBatchOrderRequest, SubmitBatchOrderResponse,
+};
+pub use private::{
+    CancelAllOrdersRequest, CancelAllOrdersResponse, CancelBatchOrderRequest,
+    CancelBatchOrderResponse,
+};
 pub use private::{
     CancelOrderRequest, CancelOrderResponse, OrderDetails, QueryOrderRequest, QueryOrderResponse,
     QueryOrderTradesRequest, QueryOrderTradesResponse, QueryOrdersRequest, QueryOrdersResponse,
@@ -79,6 +104,7 @@ pub use private::{GetSpotWalletBalanceRequest, GetSpotWalletBalanceResponse, Spo
 pub use private::{GetWithdrawAddressListRequest, GetWithdrawAddressListResponse, WithdrawAddress};
 pub use private::{GetWithdrawQuotaRequest, GetWithdrawQuotaResponse};
 pub use private::{MarginAssetTransferRequest, MarginAssetTransferResponse};
+pub use private::{SubmitMarginOrderRequest, SubmitMarginOrderResponse};
 pub use private::{WithdrawRequest, WithdrawResponse};
 pub use public::RestClient as PublicRestClient;
 pub use public::{Currency as PublicCurrency, GetCurrencyListRequest, GetCurrencyListResponse};

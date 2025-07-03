@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::bingx::{EndpointType, RestResult};
+use crate::bingx::{EndpointType, RestResult, SymbolStatus};
 
 /// Request for the spot trading symbols endpoint
 #[derive(Debug, Clone, Serialize)]
@@ -68,7 +68,7 @@ pub struct Symbol {
     /// Maximum transaction amount
     pub max_notional: f64,
     /// Status: 0 offline, 1 online, 5 pre-open, 25 trading suspended
-    pub status: i32,
+    pub status: SymbolStatus,
     /// Available buy via api
     pub api_state_buy: bool,
     /// Available sell via api

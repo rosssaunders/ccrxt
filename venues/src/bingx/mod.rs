@@ -25,8 +25,10 @@ pub mod private {
 }
 
 pub use enums::*;
-pub use errors::{ErrorResponse, Errors};
+pub use errors::{ErrorResponse, Errors, BingXError};
 pub use private::RestClient as PrivateRestClient;
+// Alias for backward compatibility  
+pub use private::RestClient as BingXRestClient;
 pub use private::{Balance, GetBalancesRequest, GetBalancesResponse};
 pub use public::PublicRestClient;
 pub use rate_limit::{EndpointType, RateLimit, RateLimitError, RateLimiter};

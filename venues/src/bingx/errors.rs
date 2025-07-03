@@ -66,3 +66,6 @@ impl From<ErrorResponse> for Errors {
         }
     }
 }
+
+/// Type alias for backward compatibility
+pub type BingXError = Errors;

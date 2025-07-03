@@ -30,7 +30,7 @@ use rest::secrets::ExposableSecret;
 use sha2::Sha256;
 
 use crate::bitget::rate_limit::RateLimiter;
-use crate::bitget::{Errors, RestResult};
+use crate::bitget::{Errors, RestResult, BitgetError};
 
 /// A client for interacting with the Bitget private REST API
 ///
@@ -266,6 +266,40 @@ impl RestClient {
                 }
             }
         }
+    }
+
+    /// Send a request (for public endpoints or simple requests)
+    pub async fn send_request<T, R>(&self, request: &T) -> Result<R, Errors>
+    where
+        T: rest::BitgetRequest<Response = R> + serde::Serialize,
+        R: serde::de::DeserializeOwned,
+    {
+        // Placeholder implementation - just return an error for now
+        Err(Errors::Error("Not implemented".to_string()))
+    }
+
+    /// Send a signed GET request
+    pub async fn get_signed<T, R>(&self, endpoint: &str, params: Option<T>) -> Result<R, rest::error::RestError>
+    where
+        T: serde::Serialize,
+        R: serde::de::DeserializeOwned,
+    {
+        // Placeholder implementation - just return an error for now
+        Err(rest::error::RestError::HttpError(
+            "Not implemented".to_string(),
+        ))
+    }
+
+    /// Send a signed POST request
+    pub async fn post_signed<T, R>(&self, endpoint: &str, params: Option<T>) -> Result<R, rest::error::RestError>
+    where
+        T: serde::Serialize,
+        R: serde::de::DeserializeOwned,
+    {
+        // Placeholder implementation - just return an error for now
+        Err(rest::error::RestError::HttpError(
+            "Not implemented".to_string(),
+        ))
     }
 }
 

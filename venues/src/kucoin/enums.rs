@@ -142,3 +142,91 @@ pub enum FeeDeductType {
     #[serde(rename = "EXTERNAL")]
     External,
 }
+
+/// Futures position side
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum PositionSide {
+    Long,
+    Short,
+}
+
+/// Futures margin mode
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum MarginMode {
+    CrossMargin,
+    IsolatedMargin,
+}
+
+/// Futures order stop type
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum StopType {
+    #[serde(rename = "up")]
+    Up,
+    #[serde(rename = "down")]
+    Down,
+}
+
+/// Futures leverage
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum Leverage {
+    #[serde(rename = "1")]
+    One,
+    #[serde(rename = "2")]
+    Two,
+    #[serde(rename = "3")]
+    Three,
+    #[serde(rename = "5")]
+    Five,
+    #[serde(rename = "10")]
+    Ten,
+    #[serde(rename = "20")]
+    Twenty,
+    #[serde(rename = "50")]
+    Fifty,
+    #[serde(rename = "100")]
+    OneHundred,
+}
+
+/// Futures contract type
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum ContractType {
+    #[serde(rename = "FFWCSX")]
+    Perpetual,
+    #[serde(rename = "FFICSX")]
+    Futures,
+}
+
+/// Futures contract status
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum ContractStatus {
+    #[serde(rename = "Open")]
+    Open,
+    #[serde(rename = "BeingSettled")]
+    BeingSettled,
+    #[serde(rename = "Paused")]
+    Paused,
+    #[serde(rename = "CancelOnly")]
+    CancelOnly,
+    #[serde(rename = "PostOnly")]
+    PostOnly,
+}
+
+/// Futures position status
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum PositionStatus {
+    #[serde(rename = "opened")]
+    Opened,
+    #[serde(rename = "closed")]
+    Closed,
+}
+
+/// Auto deposit margin status
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum AutoDepositStatus {
+    #[serde(rename = "on")]
+    On,
+    #[serde(rename = "off")]
+    Off,
+}

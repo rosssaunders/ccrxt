@@ -190,6 +190,37 @@ impl RestClient {
             }
         }
     }
+
+    /// Send a signed request to a private endpoint
+    ///
+    /// # Arguments
+    /// * `method` - The HTTP method as a string (e.g., "GET", "POST")
+    /// * `endpoint` - The API endpoint path
+    /// * `params` - Optional parameters to include in the request
+    ///
+    /// # Returns
+    /// A result containing the parsed response data or an error
+    pub async fn send_signed_request<T, P>(
+        &self,
+        method: &str,
+        endpoint: &str,
+        params: Option<&P>,
+    ) -> RestResult<T>
+    where
+        T: DeserializeOwned,
+        P: Serialize + ?Sized,
+    {
+        let reqwest_method = match method {
+            "GET" => reqwest::Method::GET,
+            "POST" => reqwest::Method::POST,
+            "PUT" => reqwest::Method::PUT,
+            "DELETE" => reqwest::Method::DELETE,
+            _ => return Err(Errors::Error(format!("Unsupported HTTP method: {}", method))),
+        };
+
+        self.send_request(endpoint, reqwest_method, params, EndpointType::AccountApiGroup2)
+            .await
+    }
 }
 
 #[cfg(test)]

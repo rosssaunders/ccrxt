@@ -1,3 +1,5 @@
+pub mod error;
+
 pub mod binance;
 pub mod bingx;
 pub mod bitget;

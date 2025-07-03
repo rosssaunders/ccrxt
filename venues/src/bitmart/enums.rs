@@ -88,3 +88,17 @@ pub enum OrderStatus {
     #[serde(rename = "pending_cancel")]
     PendingCancel,
 }
+
+/// Self-trade prevention mode
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum StpMode {
+    /// No self-trade prevention
+    None,
+    /// Cancel the maker order when a self-trade occurs
+    CancelMaker,
+    /// Cancel the taker order when a self-trade occurs
+    CancelTaker,
+    /// Cancel both orders when a self-trade occurs
+    CancelBoth,
+}

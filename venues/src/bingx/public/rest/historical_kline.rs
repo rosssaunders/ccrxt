@@ -1,7 +1,15 @@
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Serialize, Serializer};
 
 use super::RestClient;
-use crate::bingx::{EndpointType, RestResult};
+use crate::bingx::{EndpointType, Interval, RestResult};
+
+/// Serialize interval enum as string
+fn serialize_interval<S>(interval: &Interval, serializer: S) -> Result<S::Ok, S::Error>
+where
+    S: Serializer,
+{
+    serializer.serialize_str(interval.as_str())
+}
 
 /// Request for the historical K-line endpoint
 #[derive(Debug, Clone, Serialize)]
@@ -10,8 +18,8 @@ pub struct GetHistoricalKlineRequest {
     /// Trading pair, e.g., BTC-USDT, please use uppercase letters (required)
     pub symbol: String,
     /// Time interval, reference field description (required)
-    /// Valid values: 1m, 3m, 5m, 15m, 30m, 1h, 2h, 4h, 6h, 8h, 12h, 1d, 3d, 1w, 1M
-    pub interval: String,
+    #[serde(serialize_with = "serialize_interval")]
+    pub interval: Interval,
     /// Start time, unit: milliseconds (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub start_time: Option<i64>,
@@ -25,7 +33,7 @@ pub struct GetHistoricalKlineRequest {
 
 impl GetHistoricalKlineRequest {
     /// Create a new request for historical K-line data
-    pub fn new(symbol: String, interval: String) -> Self {
+    pub fn new(symbol: String, interval: Interval) -> Self {
         Self {
             symbol,
             interval,
@@ -111,8 +119,8 @@ mod tests {
     #[test]
     fn test_historical_kline_request_creation() {
         let symbol = "BTC-USDT".to_string();
-        let interval = "1h".to_string();
-        let request = GetHistoricalKlineRequest::new(symbol.clone(), interval.clone());
+        let interval = Interval::OneHour;
+        let request = GetHistoricalKlineRequest::new(symbol.clone(), interval);
 
         assert_eq!(request.symbol, symbol);
         assert_eq!(request.interval, interval);
@@ -124,11 +132,11 @@ mod tests {
     #[test]
     fn test_historical_kline_request_with_time_range() {
         let symbol = "BTC-USDT".to_string();
-        let interval = "1h".to_string();
+        let interval = Interval::OneHour;
         let start_time = 1640995200000;
         let end_time = 1641081600000;
 
-        let request = GetHistoricalKlineRequest::new(symbol.clone(), interval.clone())
+        let request = GetHistoricalKlineRequest::new(symbol.clone(), interval)
             .with_start_time(start_time)
             .with_end_time(end_time);
 
@@ -141,11 +149,10 @@ mod tests {
     #[test]
     fn test_historical_kline_request_with_limit() {
         let symbol = "BTC-USDT".to_string();
-        let interval = "1h".to_string();
+        let interval = Interval::OneHour;
         let limit = 100;
 
-        let request =
-            GetHistoricalKlineRequest::new(symbol.clone(), interval.clone()).with_limit(limit);
+        let request = GetHistoricalKlineRequest::new(symbol.clone(), interval).with_limit(limit);
 
         assert_eq!(request.symbol, symbol);
         assert_eq!(request.interval, interval);
@@ -154,7 +161,7 @@ mod tests {
 
     #[test]
     fn test_historical_kline_request_serialization() {
-        let request = GetHistoricalKlineRequest::new("BTC-USDT".to_string(), "1h".to_string());
+        let request = GetHistoricalKlineRequest::new("BTC-USDT".to_string(), Interval::OneHour);
         let json = serde_json::to_string(&request).unwrap();
         assert!(json.contains("\"symbol\":\"BTC-USDT\""));
         assert!(json.contains("\"interval\":\"1h\""));
@@ -193,7 +200,7 @@ mod tests {
             RateLimiter::new(),
         );
 
-        let request = GetHistoricalKlineRequest::new("BTC-USDT".to_string(), "1h".to_string());
+        let request = GetHistoricalKlineRequest::new("BTC-USDT".to_string(), Interval::OneHour);
 
         // Test that the method exists and can be called
         // Note: This will fail with network error since we're not making real requests

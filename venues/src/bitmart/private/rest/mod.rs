@@ -1,3 +1,4 @@
+mod cancel_batch_order;
 mod cancel_order;
 mod client;
 mod get_account_balance;
@@ -16,9 +17,15 @@ mod query_order;
 mod query_order_trades;
 mod query_orders;
 mod query_trades;
+mod submit_batch_order;
+mod submit_margin_order;
 mod submit_order;
 mod withdraw;
 
+pub use cancel_batch_order::{
+    CancelAllOrdersRequest, CancelAllOrdersResponse, CancelBatchOrderRequest,
+    CancelBatchOrderResponse,
+};
 pub use cancel_order::{CancelOrderRequest, CancelOrderResponse};
 pub use client::RestClient;
 pub use get_account_balance::{GetAccountBalanceRequest, GetAccountBalanceResponse, WalletBalance};
@@ -48,5 +55,9 @@ pub use query_order::{OrderDetails, QueryOrderRequest, QueryOrderResponse};
 pub use query_order_trades::{QueryOrderTradesRequest, QueryOrderTradesResponse};
 pub use query_orders::{QueryOrdersRequest, QueryOrdersResponse};
 pub use query_trades::{QueryTradesRequest, QueryTradesResponse, TradeInfo};
+pub use submit_batch_order::{
+    BatchOrderData, BatchOrderParam, SubmitBatchOrderRequest, SubmitBatchOrderResponse,
+};
+pub use submit_margin_order::{SubmitMarginOrderRequest, SubmitMarginOrderResponse};
 pub use submit_order::{SubmitOrderRequest, SubmitOrderResponse};
 pub use withdraw::{WithdrawRequest, WithdrawResponse};

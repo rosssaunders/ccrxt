@@ -1,7 +1,15 @@
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Serialize, Serializer};
 
 use super::RestClient;
-use crate::bingx::{EndpointType, RestResult};
+use crate::bingx::{DepthType, EndpointType, RestResult};
+
+/// Serialize depth type enum as string
+fn serialize_depth_type<S>(depth_type: &DepthType, serializer: S) -> Result<S::Ok, S::Error>
+where
+    S: Serializer,
+{
+    serializer.serialize_str(depth_type.as_str())
+}
 
 /// Request for the order book aggregation endpoint
 #[derive(Debug, Clone, Serialize)]
@@ -10,15 +18,14 @@ pub struct GetOrderBookAggregationRequest {
     pub symbol: String,
     /// Query depth (required)
     pub depth: i64,
-    /// step0 default precision, step1 to step5 are 10 to 100000 times precision respectively (required)
-    /// Valid values: step0, step1, step2, step3, step4, step5
-    #[serde(rename = "type")]
-    pub type_: String,
+    /// Precision type: step0 default precision, step1 to step5 are 10 to 100000 times precision respectively (required)
+    #[serde(rename = "type", serialize_with = "serialize_depth_type")]
+    pub type_: DepthType,
 }
 
 impl GetOrderBookAggregationRequest {
     /// Create a new request for order book aggregation
-    pub fn new(symbol: String, depth: i64, type_: String) -> Self {
+    pub fn new(symbol: String, depth: i64, type_: DepthType) -> Self {
         Self {
             symbol,
             depth,
@@ -79,8 +86,8 @@ mod tests {
     fn test_order_book_aggregation_request_creation() {
         let symbol = "BTC_USDT".to_string();
         let depth = 20;
-        let type_ = "step0".to_string();
-        let request = GetOrderBookAggregationRequest::new(symbol.clone(), depth, type_.clone());
+        let type_ = DepthType::Step0;
+        let request = GetOrderBookAggregationRequest::new(symbol.clone(), depth, type_);
 
         assert_eq!(request.symbol, symbol);
         assert_eq!(request.depth, depth);
@@ -90,7 +97,7 @@ mod tests {
     #[test]
     fn test_order_book_aggregation_request_serialization() {
         let request =
-            GetOrderBookAggregationRequest::new("BTC_USDT".to_string(), 20, "step0".to_string());
+            GetOrderBookAggregationRequest::new("BTC_USDT".to_string(), 20, DepthType::Step0);
         let json = serde_json::to_string(&request).unwrap();
         assert!(json.contains("\"symbol\":\"BTC_USDT\""));
         assert!(json.contains("\"depth\":20"));
@@ -126,7 +133,7 @@ mod tests {
         );
 
         let request =
-            GetOrderBookAggregationRequest::new("BTC_USDT".to_string(), 20, "step0".to_string());
+            GetOrderBookAggregationRequest::new("BTC_USDT".to_string(), 20, DepthType::Step0);
 
         // Test that the method exists and can be called
         // Note: This will fail with network error since we're not making real requests

@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
 use crate::bitmart::rate_limit::EndpointType;
-use crate::bitmart::{OrderSide, OrderType, RestResult};
+use crate::bitmart::{OrderSide, OrderType, RestResult, StpMode};
 
 /// Request parameters for submitting a new order
 #[derive(Debug, Serialize)]
@@ -21,6 +21,9 @@ pub struct SubmitOrderRequest {
     /// Client-defined OrderId (optional, max 32 characters)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub client_order_id: Option<String>,
+    /// Self-trade prevention mode (default: none)
+    #[serde(rename = "stpMode", skip_serializing_if = "Option::is_none")]
+    pub stp_mode: Option<StpMode>,
     /// Order size (required for limit/limit_maker/ioc and market sell orders)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub size: Option<String>,
@@ -78,6 +81,7 @@ mod tests {
             side: OrderSide::Buy,
             order_type: OrderType::Limit,
             client_order_id: Some("test_order_123".to_string()),
+            stp_mode: None,
             size: Some("0.001".to_string()),
             price: Some("50000.00".to_string()),
             notional: None,
@@ -99,6 +103,7 @@ mod tests {
             side: OrderSide::Buy,
             order_type: OrderType::Market,
             client_order_id: None,
+            stp_mode: None,
             size: None,
             price: None,
             notional: Some("100.00".to_string()),
@@ -118,6 +123,7 @@ mod tests {
             side: OrderSide::Sell,
             order_type: OrderType::Market,
             client_order_id: None,
+            stp_mode: None,
             size: Some("0.001".to_string()),
             price: None,
             notional: None,
@@ -137,6 +143,7 @@ mod tests {
             side: OrderSide::Sell,
             order_type: OrderType::LimitMaker,
             client_order_id: Some("maker_order_456".to_string()),
+            stp_mode: None,
             size: Some("0.5".to_string()),
             price: Some("3000.00".to_string()),
             notional: None,
@@ -156,6 +163,7 @@ mod tests {
             side: OrderSide::Buy,
             order_type: OrderType::Ioc,
             client_order_id: None,
+            stp_mode: None,
             size: Some("1.0".to_string()),
             price: Some("2500.00".to_string()),
             notional: None,

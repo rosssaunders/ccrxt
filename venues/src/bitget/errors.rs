@@ -36,6 +36,25 @@ impl fmt::Display for Errors {
 
 impl std::error::Error for Errors {}
 
+impl From<rest::error::RestError> for Errors {
+    fn from(error: rest::error::RestError) -> Self {
+        match error {
+            rest::error::RestError::RequestError(e) => Errors::HttpError(e),
+            rest::error::RestError::RateLimitExceeded => {
+                Errors::Error("Rate limit exceeded".to_string())
+            }
+            rest::error::RestError::AuthenticationError(msg) => {
+                Errors::Error(format!("Authentication error: {}", msg))
+            }
+            rest::error::RestError::ValidationError(msg) => {
+                Errors::Error(format!("Validation error: {}", msg))
+            }
+            rest::error::RestError::HttpError(msg) => Errors::Error(format!("HTTP error: {}", msg)),
+            rest::error::RestError::Unknown(msg) => Errors::Error(msg),
+        }
+    }
+}
+
 /// Represents an error response from the Bitget API.
 ///
 /// This is public as it is used by Batch responses.
@@ -203,6 +222,9 @@ pub enum ApiError {
     #[error("503 Service Unavailable: {msg}")]
     ServiceUnavailable { msg: String },
 }
+
+/// Type alias for backward compatibility
+pub type BitgetError = Errors;
 
 // Conversion from ErrorResponse to ApiError
 impl From<ErrorResponse> for ApiError {

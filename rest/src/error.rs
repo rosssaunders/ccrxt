@@ -15,6 +15,9 @@ pub enum RestError {
     #[error("Validation error: {0}")]
     ValidationError(String),
 
+    #[error("HTTP error: {0}")]
+    HttpError(String),
+
     #[error("Unknown error: {0}")]
     Unknown(String),
 }

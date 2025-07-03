@@ -15,6 +15,10 @@ pub enum EndpointType {
     General,
     /// Public market data endpoints - 100 requests per 10 seconds for IP (Group 1)
     PublicMarket,
+    /// Account API Group 2 - 
+    AccountApiGroup2,
+    /// Account API Group 3 - 
+    AccountApiGroup3,
 }
 
 /// Rate limit configuration for different endpoint types
@@ -65,6 +69,8 @@ impl RateLimiter {
             EndpointType::Trading => RateLimit::new(10, Duration::from_secs(1)), // Conservative default
             EndpointType::General => RateLimit::new(20, Duration::from_secs(1)), // Conservative default
             EndpointType::PublicMarket => RateLimit::new(100, Duration::from_secs(10)), // 100 requests per 10 seconds for public market data
+            EndpointType::AccountApiGroup2 => RateLimit::new(5, Duration::from_secs(1)), // Similar to Account group
+            EndpointType::AccountApiGroup3 => RateLimit::new(5, Duration::from_secs(1)), // Similar to Account group
         }
     }
 

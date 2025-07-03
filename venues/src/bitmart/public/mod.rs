@@ -1,4 +1,5 @@
 pub mod rest;
+pub mod websocket;
 
 pub use self::rest::RestClient;
 pub use self::rest::{GetCurrencyListRequest, GetCurrencyListResponse, Currency};
@@ -10,3 +11,10 @@ pub use self::rest::{GetLatestKlineRequest, GetLatestKlineResponse, LatestKlineD
 pub use self::rest::{GetHistoryKlineRequest, GetHistoryKlineResponse, HistoryKlineData};
 pub use self::rest::{GetDepthRequest, GetDepthResponse, DepthData, OrderBookEntry};
 pub use self::rest::{GetRecentTradesRequest, GetRecentTradesResponse, TradeData};
+pub use self::websocket::WsClient as WebSocketClient;
+pub use self::websocket::{
+    DataResponse as WsDataResponse, DepthData as WsDepthData, DepthEntry, DepthLevel,
+    ErrorResponse as WsErrorResponse, EventResponse as WsEventResponse, Operation as WsOperation,
+    PublicChannel, TickerData as WsTickerData, WsError, WsMessage, WsResponse,
+    BITMART_WS_PUBLIC_URL,
+};

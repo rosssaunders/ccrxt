@@ -16,6 +16,8 @@ pub use rate_limit::{RateLimitHeader, RateLimitStatus, RateLimiter, ResourcePool
 
 pub use crate::kucoin::errors::ErrorResponse;
 
+// Futures are accessible through public::futures and private::futures
+
 /// Represents the relevant response headers returned by the KuCoin API for rate limiting.
 pub type ResponseHeaders = RateLimitHeader;
 
