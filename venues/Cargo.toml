@@ -76,6 +76,10 @@ path = "examples/bitget/bitget_futures_example.rs"
 name = "kucoin_futures_example"
 path = "examples/kucoin/futures_example.rs"
 
+[[example]]
+name = "kucoin_margin_credit_example"
+path = "examples/kucoin/margin_credit_example.rs"
+
 [dev-dependencies]
 tokio-test = "0.4"
 tracing-subscriber = { workspace = true }
