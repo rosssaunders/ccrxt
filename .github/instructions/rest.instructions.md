@@ -54,6 +54,13 @@ It also details documentation and code style requirements for all structs and fi
   }
   ```
 
+# Request Struct Simplicity
+
+- Do NOT add builder methods or `impl` blocks for request structs unless explicitly required by the API or project maintainers.
+- Use only `#[derive(Default)]` for structs with all-optional fields; construct with `StructName::default()` for an empty instance.
+- Do NOT add `new()` constructors for simple request structs—use the default derive.
+- Do NOT add `with_*` builder methods unless the struct is complex and builder pattern is explicitly requested.
+
 ---
 
 ## 4. Response Struct(s)
