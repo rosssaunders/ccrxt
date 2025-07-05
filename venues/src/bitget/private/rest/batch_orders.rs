@@ -1,16 +1,9 @@
-//! Batch Orders endpoint for Bitget Spot API
-//!
-//! This endpoint allows placing multiple spot trading orders in a single request.
-//!
-//! Reference: https://www.bitget.com/api-doc/spot/trade/Batch-Orders
-//! Endpoint: POST /api/v2/spot/trade/batch-orders
-//! Rate limit: 5 requests/second/UID, maximum 20 orders per batch
-
 use serde::{Deserialize, Serialize};
+
+use crate::bitget::{OrderSide, OrderType, RestResult};
 
 use super::super::RestClient;
 use super::place_order::{Force, STPMode};
-use crate::bitget::{OrderSide, OrderType, RestResult};
 
 /// Single order request within a batch
 #[derive(Debug, Clone, Serialize)]
@@ -47,59 +40,6 @@ pub struct BatchOrderItem {
     pub stp_mode: Option<STPMode>,
 }
 
-impl BatchOrderItem {
-    /// Create a new limit order item
-    pub fn limit(
-        symbol: impl Into<String>,
-        side: OrderSide,
-        price: impl Into<String>,
-        size: impl Into<String>,
-    ) -> Self {
-        Self {
-            symbol: symbol.into(),
-            side,
-            order_type: OrderType::Limit,
-            force: Force::GTC,
-            price: Some(price.into()),
-            size: size.into(),
-            client_order_id: None,
-            stp_mode: None,
-        }
-    }
-
-    /// Create a new market order item
-    pub fn market(symbol: impl Into<String>, side: OrderSide, size: impl Into<String>) -> Self {
-        Self {
-            symbol: symbol.into(),
-            side,
-            order_type: OrderType::Market,
-            force: Force::GTC, // Force is ignored for market orders
-            price: None,
-            size: size.into(),
-            client_order_id: None,
-            stp_mode: None,
-        }
-    }
-
-    /// Set the execution force/strategy
-    pub fn force(mut self, force: Force) -> Self {
-        self.force = force;
-        self
-    }
-
-    /// Set a custom client order ID
-    pub fn client_order_id(mut self, client_order_id: impl Into<String>) -> Self {
-        self.client_order_id = Some(client_order_id.into());
-        self
-    }
-
-    /// Set the self-trade prevention mode
-    pub fn stp_mode(mut self, stp_mode: STPMode) -> Self {
-        self.stp_mode = Some(stp_mode);
-        self
-    }
-}
-
 /// Request parameters for placing batch orders
 #[derive(Debug, Clone, Serialize)]
 pub struct BatchOrdersRequest {
@@ -115,29 +55,6 @@ pub struct BatchOrdersRequest {
     /// If set, request is valid only when server time is within receiveWindow
     #[serde(rename = "receiveWindow", skip_serializing_if = "Option::is_none")]
     pub receive_window: Option<i64>,
-}
-
-impl BatchOrdersRequest {
-    /// Create a new batch orders request
-    pub fn new(orders: Vec<BatchOrderItem>) -> Self {
-        Self {
-            order_list: orders,
-            request_time: None,
-            receive_window: None,
-        }
-    }
-
-    /// Set the request timestamp
-    pub fn request_time(mut self, request_time: i64) -> Self {
-        self.request_time = Some(request_time);
-        self
-    }
-
-    /// Set the receive window
-    pub fn receive_window(mut self, receive_window: i64) -> Self {
-        self.receive_window = Some(receive_window);
-        self
-    }
 }
 
 /// Result of a single order in the batch
@@ -234,7 +151,16 @@ mod tests {
 
     #[test]
     fn test_batch_order_item_limit() {
-        let item = BatchOrderItem::limit("BTCUSDT", OrderSide::Buy, "50000", "0.001");
+        let item = BatchOrderItem {
+            symbol: "BTCUSDT".to_string(),
+            side: OrderSide::Buy,
+            order_type: OrderType::Limit,
+            force: Force::GTC,
+            price: Some("50000".to_string()),
+            size: "0.001".to_string(),
+            client_order_id: None,
+            stp_mode: None,
+        };
 
         assert_eq!(item.symbol, "BTCUSDT");
         assert_eq!(item.side, OrderSide::Buy);
@@ -247,7 +173,16 @@ mod tests {
 
     #[test]
     fn test_batch_order_item_market() {
-        let item = BatchOrderItem::market("ETHUSDT", OrderSide::Sell, "1.0");
+        let item = BatchOrderItem {
+            symbol: "ETHUSDT".to_string(),
+            side: OrderSide::Sell,
+            order_type: OrderType::Market,
+            force: Force::GTC,
+            price: None,
+            size: "1.0".to_string(),
+            client_order_id: None,
+            stp_mode: None,
+        };
 
         assert_eq!(item.symbol, "ETHUSDT");
         assert_eq!(item.side, OrderSide::Sell);
@@ -258,10 +193,16 @@ mod tests {
 
     #[test]
     fn test_batch_order_item_builder() {
-        let item = BatchOrderItem::limit("BTCUSDT", OrderSide::Buy, "50000", "0.001")
-            .force(Force::PostOnly)
-            .client_order_id("batch-order-1")
-            .stp_mode(STPMode::CancelTaker);
+        let item = BatchOrderItem {
+            symbol: "BTCUSDT".to_string(),
+            side: OrderSide::Buy,
+            order_type: OrderType::Limit,
+            force: Force::PostOnly,
+            price: Some("50000".to_string()),
+            size: "0.001".to_string(),
+            client_order_id: Some("batch-order-1".to_string()),
+            stp_mode: Some(STPMode::CancelTaker),
+        };
 
         assert_eq!(item.force, Force::PostOnly);
         assert_eq!(item.client_order_id, Some("batch-order-1".to_string()));
@@ -271,11 +212,33 @@ mod tests {
     #[test]
     fn test_batch_orders_request() {
         let orders = vec![
-            BatchOrderItem::limit("BTCUSDT", OrderSide::Buy, "50000", "0.001"),
-            BatchOrderItem::market("ETHUSDT", OrderSide::Sell, "1.0"),
+            BatchOrderItem {
+                symbol: "BTCUSDT".to_string(),
+                side: OrderSide::Buy,
+                order_type: OrderType::Limit,
+                force: Force::GTC,
+                price: Some("50000".to_string()),
+                size: "0.001".to_string(),
+                client_order_id: None,
+                stp_mode: None,
+            },
+            BatchOrderItem {
+                symbol: "ETHUSDT".to_string(),
+                side: OrderSide::Sell,
+                order_type: OrderType::Market,
+                force: Force::GTC,
+                price: None,
+                size: "1.0".to_string(),
+                client_order_id: None,
+                stp_mode: None,
+            },
         ];
 
-        let request = BatchOrdersRequest::new(orders);
+        let request = BatchOrdersRequest {
+            order_list: orders,
+            request_time: None,
+            receive_window: None,
+        };
 
         assert_eq!(request.order_list.len(), 2);
         assert_eq!(request.order_list[0].symbol, "BTCUSDT");
@@ -284,12 +247,22 @@ mod tests {
 
     #[test]
     fn test_batch_orders_request_serialization() {
-        let orders = vec![
-            BatchOrderItem::limit("BTCUSDT", OrderSide::Buy, "50000", "0.001")
-                .client_order_id("order-1"),
-        ];
+        let orders = vec![BatchOrderItem {
+            symbol: "BTCUSDT".to_string(),
+            side: OrderSide::Buy,
+            order_type: OrderType::Limit,
+            force: Force::GTC,
+            price: Some("50000".to_string()),
+            size: "0.001".to_string(),
+            client_order_id: Some("order-1".to_string()),
+            stp_mode: None,
+        }];
 
-        let request = BatchOrdersRequest::new(orders);
+        let request = BatchOrdersRequest {
+            order_list: orders,
+            request_time: None,
+            receive_window: None,
+        };
         let json = serde_json::to_string(&request).unwrap();
 
         assert!(json.contains("\"orderList\""));

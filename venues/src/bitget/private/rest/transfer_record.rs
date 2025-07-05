@@ -1,11 +1,11 @@
-use crate::bitget::{BitgetRestClient, enums::*, error::BitgetError};
-use reqwest::Method;
-use rest::BitgetRequest;
 use serde::{Deserialize, Serialize};
 
+use crate::bitget::enums::*;
+use crate::bitget::{Errors, RestResult};
+
+use super::RestClient;
+
 /// Get Transfer Record
-///
-/// Get transfer record.
 ///
 /// Frequency limit: 20 times/1s (User ID)
 
@@ -102,81 +102,27 @@ pub struct TransferRecord {
     pub transfer_id: String,
 }
 
-impl GetTransferRecordRequest {
-    pub fn new(coin: impl Into<String>) -> Self {
-        Self {
-            coin: coin.into(),
-            from_type: None,
-            start_time: None,
-            end_time: None,
-            client_oid: None,
-            page_num: None,
-            limit: None,
-            id_less_than: None,
-        }
-    }
-
-    pub fn from_type(mut self, from_type: AccountType) -> Self {
-        self.from_type = Some(from_type);
-        self
-    }
-
-    pub fn start_time(mut self, start_time: impl Into<String>) -> Self {
-        self.start_time = Some(start_time.into());
-        self
-    }
-
-    pub fn end_time(mut self, end_time: impl Into<String>) -> Self {
-        self.end_time = Some(end_time.into());
-        self
-    }
-
-    pub fn client_oid(mut self, client_oid: impl Into<String>) -> Self {
-        self.client_oid = Some(client_oid.into());
-        self
-    }
-
-    pub fn page_num(mut self, page_num: impl Into<String>) -> Self {
-        self.page_num = Some(page_num.into());
-        self
-    }
-
-    pub fn limit(mut self, limit: impl Into<String>) -> Self {
-        self.limit = Some(limit.into());
-        self
-    }
-
-    pub fn id_less_than(mut self, id_less_than: impl Into<String>) -> Self {
-        self.id_less_than = Some(id_less_than.into());
-        self
-    }
-}
-
-impl BitgetRequest for GetTransferRecordRequest {
-    type Response = GetTransferRecordResponse;
-
-    fn path(&self) -> String {
-        "/api/v2/spot/account/transferRecords".to_string()
-    }
-
-    fn method(&self) -> String {
-        "GET".to_string()
-    }
-
-    fn need_signature(&self) -> bool {
-        true
-    }
-}
-
-impl BitgetRestClient {
+impl RestClient {
     /// Get Transfer Record
     ///
     /// Get transfer record.
     pub async fn get_transfer_record(
         &self,
         request: GetTransferRecordRequest,
-    ) -> Result<GetTransferRecordResponse, BitgetError> {
-        self.send_request(&request).await
+    ) -> RestResult<GetTransferRecordResponse> {
+        self.send_signed_request(
+            "/api/v2/spot/wallet/transfer-records",
+            reqwest::Method::GET,
+            None,
+            Some(
+                &serde_json::to_string(&request)
+                    .map_err(|e| Errors::Error(format!("Serialization error: {e}")))?,
+            ),
+            20,
+            false,
+            None,
+        )
+        .await
     }
 }
 
@@ -186,9 +132,16 @@ mod tests {
 
     #[test]
     fn test_get_transfer_record_request_serialization() {
-        let request = GetTransferRecordRequest::new("USDT")
-            .from_type(AccountType::Spot)
-            .limit("100");
+        let request = GetTransferRecordRequest {
+            coin: "USDT".to_string(),
+            from_type: Some(AccountType::Spot),
+            limit: Some("100".to_string()),
+            start_time: None,
+            end_time: None,
+            client_oid: None,
+            page_num: None,
+            id_less_than: None,
+        };
 
         let serialized = serde_json::to_string(&request).unwrap();
         println!("Serialized request: {}", serialized);
@@ -230,7 +183,16 @@ mod tests {
     #[tokio::test]
     async fn test_get_transfer_record_endpoint() {
         // This test requires API credentials and should be run manually
-        let _request = GetTransferRecordRequest::new("USDT").from_type(AccountType::Spot);
+        let _request = GetTransferRecordRequest {
+            coin: "USDT".to_string(),
+            from_type: Some(AccountType::Spot),
+            start_time: None,
+            end_time: None,
+            client_oid: None,
+            page_num: None,
+            limit: None,
+            id_less_than: None,
+        };
 
         // Uncomment the following lines to test with real API credentials:
         // let client = BitgetRestClient::new("api_key", "secret", "passphrase", false);

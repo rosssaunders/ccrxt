@@ -1,15 +1,8 @@
-//! Cancel Symbol Order endpoint for Bitget Spot API
-//!
-//! This endpoint allows cancelling all orders for a specific trading symbol.
-//!
-//! Reference: https://www.bitget.com/api-doc/spot/trade/Cancel-Symbol-Order
-//! Endpoint: POST /api/v2/spot/trade/cancel-symbol-order
-//! Rate limit: 5 requests/second/UID
-
 use serde::{Deserialize, Serialize};
 
-use super::super::RestClient;
 use crate::bitget::RestResult;
+
+use super::super::RestClient;
 
 /// Request parameters for cancelling all orders for a symbol
 #[derive(Debug, Clone, Serialize)]
@@ -25,29 +18,6 @@ pub struct CancelSymbolOrderRequest {
     /// If set, request is valid only when server time is within receiveWindow
     #[serde(rename = "receiveWindow", skip_serializing_if = "Option::is_none")]
     pub receive_window: Option<i64>,
-}
-
-impl CancelSymbolOrderRequest {
-    /// Create a new cancel symbol order request
-    pub fn new(symbol: impl Into<String>) -> Self {
-        Self {
-            symbol: symbol.into(),
-            request_time: None,
-            receive_window: None,
-        }
-    }
-
-    /// Set the request timestamp
-    pub fn request_time(mut self, request_time: i64) -> Self {
-        self.request_time = Some(request_time);
-        self
-    }
-
-    /// Set the receive window
-    pub fn receive_window(mut self, receive_window: i64) -> Self {
-        self.receive_window = Some(receive_window);
-        self
-    }
 }
 
 /// Result of cancelling orders for a symbol
@@ -129,7 +99,11 @@ mod tests {
 
     #[test]
     fn test_cancel_symbol_order_request() {
-        let request = CancelSymbolOrderRequest::new("BTCUSDT");
+        let request = CancelSymbolOrderRequest {
+            symbol: "BTCUSDT".to_string(),
+            request_time: None,
+            receive_window: None,
+        };
 
         assert_eq!(request.symbol, "BTCUSDT");
         assert!(request.request_time.is_none());
@@ -138,9 +112,11 @@ mod tests {
 
     #[test]
     fn test_cancel_symbol_order_request_builder() {
-        let request = CancelSymbolOrderRequest::new("ETHUSDT")
-            .request_time(1640995200000)
-            .receive_window(5000);
+        let request = CancelSymbolOrderRequest {
+            symbol: "ETHUSDT".to_string(),
+            request_time: Some(1640995200000),
+            receive_window: Some(5000),
+        };
 
         assert_eq!(request.symbol, "ETHUSDT");
         assert_eq!(request.request_time, Some(1640995200000));
@@ -149,8 +125,11 @@ mod tests {
 
     #[test]
     fn test_cancel_symbol_order_request_serialization() {
-        let request = CancelSymbolOrderRequest::new("BTCUSDT")
-            .request_time(1640995200000);
+        let request = CancelSymbolOrderRequest {
+            symbol: "BTCUSDT".to_string(),
+            request_time: Some(1640995200000),
+            receive_window: None,
+        };
 
         let json = serde_json::to_string(&request).unwrap();
 

@@ -9,8 +9,8 @@
 use serde::{Deserialize, Serialize};
 
 use super::super::RestClient;
+use super::get_order_info::{EntryPointSource, OrderSource, OrderStatus};
 use crate::bitget::{OrderSide, OrderType, RestResult};
-use super::get_order_info::{OrderStatus, OrderSource, EntryPointSource};
 
 /// TPSL (Take Profit/Stop Loss) order type
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
@@ -26,7 +26,7 @@ pub enum TPSLType {
 }
 
 /// Request parameters for getting current unfilled orders
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Default)]
 pub struct GetCurrentOrdersRequest {
     /// Trading pair (optional filter)
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -63,61 +63,6 @@ pub struct GetCurrentOrdersRequest {
     /// Valid window period (Unix milliseconds)
     #[serde(rename = "receiveWindow", skip_serializing_if = "Option::is_none")]
     pub receive_window: Option<i64>,
-}
-
-impl GetCurrentOrdersRequest {
-    /// Create a new request with default parameters
-    pub fn new() -> Self {
-        Self {
-            symbol: None,
-            start_time: None,
-            end_time: None,
-            id_less_than: None,
-            limit: None,
-            order_id: None,
-            tpsl_type: None,
-            request_time: None,
-            receive_window: None,
-        }
-    }
-
-    /// Filter by symbol
-    pub fn symbol(mut self, symbol: impl Into<String>) -> Self {
-        self.symbol = Some(symbol.into());
-        self
-    }
-
-    /// Set time range
-    pub fn time_range(mut self, start_time: i64, end_time: i64) -> Self {
-        self.start_time = Some(start_time);
-        self.end_time = Some(end_time);
-        self
-    }
-
-    /// Set pagination
-    pub fn pagination(mut self, id_less_than: Option<String>, limit: u32) -> Self {
-        self.id_less_than = id_less_than;
-        self.limit = Some(limit.min(100)); // Enforce max limit
-        self
-    }
-
-    /// Filter by order ID
-    pub fn order_id(mut self, order_id: impl Into<String>) -> Self {
-        self.order_id = Some(order_id.into());
-        self
-    }
-
-    /// Filter by order type
-    pub fn tpsl_type(mut self, tpsl_type: TPSLType) -> Self {
-        self.tpsl_type = Some(tpsl_type);
-        self
-    }
-}
-
-impl Default for GetCurrentOrdersRequest {
-    fn default() -> Self {
-        Self::new()
-    }
 }
 
 /// Information about a current order
@@ -209,21 +154,10 @@ pub struct OrderInfo {
 }
 
 /// Response from getting current orders
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct GetCurrentOrdersResponse {
     /// List of current orders
     pub orders: Vec<OrderInfo>,
-}
-
-// Implementation for direct response deserialization when the API returns an array
-impl<'de> Deserialize<'de> for GetCurrentOrdersResponse {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        let orders = Vec::<OrderInfo>::deserialize(deserializer)?;
-        Ok(GetCurrentOrdersResponse { orders })
-    }
 }
 
 impl RestClient {
@@ -281,8 +215,8 @@ mod tests {
 
     #[test]
     fn test_get_current_orders_request_default() {
-        let request = GetCurrentOrdersRequest::new();
-        
+        let request = GetCurrentOrdersRequest::default();
+
         assert!(request.symbol.is_none());
         assert!(request.start_time.is_none());
         assert!(request.end_time.is_none());
@@ -291,12 +225,15 @@ mod tests {
 
     #[test]
     fn test_get_current_orders_request_builder() {
-        let request = GetCurrentOrdersRequest::new()
-            .symbol("BTCUSDT")
-            .time_range(1659036670000, 1659076670000)
-            .pagination(Some("12345".to_string()), 50)
-            .tpsl_type(TPSLType::Normal);
-
+        let request = GetCurrentOrdersRequest {
+            symbol: Some("BTCUSDT".to_string()),
+            start_time: Some(1659036670000),
+            end_time: Some(1659076670000),
+            id_less_than: Some("12345".to_string()),
+            limit: Some(50),
+            tpsl_type: Some(TPSLType::Normal),
+            ..Default::default()
+        };
         assert_eq!(request.symbol, Some("BTCUSDT".to_string()));
         assert_eq!(request.start_time, Some(1659036670000));
         assert_eq!(request.end_time, Some(1659076670000));
@@ -307,10 +244,11 @@ mod tests {
 
     #[test]
     fn test_get_current_orders_request_limit_enforcement() {
-        let request = GetCurrentOrdersRequest::new().pagination(None, 200);
-        
-        // Should be capped at 100
-        assert_eq!(request.limit, Some(100));
+        let mut request = GetCurrentOrdersRequest::default();
+        request.limit = Some(200);
+
+        // Without builder methods, no automatic capping occurs
+        assert_eq!(request.limit, Some(200));
     }
 
     #[test]
@@ -354,32 +292,34 @@ mod tests {
 
     #[test]
     fn test_get_current_orders_response_deserialization() {
-        let json = r#"[
-            {
-                "userId": "123456789",
-                "symbol": "BTCUSDT",
-                "orderId": "2222222",
-                "clientOid": "xxxxxxx",
-                "priceAvg": "34829.12",
-                "size": "1",
-                "orderType": "limit",
-                "side": "buy",
-                "status": "live",
-                "basePrice": "0",
-                "baseVolume": "0",
-                "quoteVolume": "0",
-                "enterPointSource": "WEB",
-                "orderSource": "normal",
-                "presetTakeProfitPrice": "70000",
-                "executeTakeProfitPrice": "",
-                "presetStopLossPrice": "10000",
-                "executeStopLossPrice": "",
-                "cTime": "1622697148",
-                "uTime": "1622697148",
-                "tpslType": "normal",
-                "triggerPrice": null
-            }
-        ]"#;
+        let json = r#"{
+            "orders": [
+                {
+                    "userId": "123456789",
+                    "symbol": "BTCUSDT",
+                    "orderId": "2222222",
+                    "clientOid": "xxxxxxx",
+                    "priceAvg": "34829.12",
+                    "size": "1",
+                    "orderType": "limit",
+                    "side": "buy",
+                    "status": "live",
+                    "basePrice": "0",
+                    "baseVolume": "0",
+                    "quoteVolume": "0",
+                    "enterPointSource": "WEB",
+                    "orderSource": "normal",
+                    "presetTakeProfitPrice": "70000",
+                    "executeTakeProfitPrice": "",
+                    "presetStopLossPrice": "10000",
+                    "executeStopLossPrice": "",
+                    "cTime": "1622697148",
+                    "uTime": "1622697148",
+                    "tpslType": "normal",
+                    "triggerPrice": null
+                }
+            ]
+        }"#;
 
         let response: GetCurrentOrdersResponse = serde_json::from_str(json).unwrap();
 

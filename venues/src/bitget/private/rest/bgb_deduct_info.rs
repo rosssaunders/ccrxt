@@ -1,14 +1,8 @@
-use crate::bitget::{BitgetRestClient, enums::*, error::BitgetError};
-use reqwest::Method;
-use rest::BitgetRequest;
 use serde::{Deserialize, Serialize};
 
-/// Get BGB Deduct Info
-///
-/// Get the current BGB deduct status for fee optimization.
-///
-/// Rate limit: 5 req/sec/UID
+use super::RestClient;
 
+/// Get BGB Deduct Info
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct GetBgbDeductInfoRequest {
     // No parameters required
@@ -29,37 +23,29 @@ pub struct BgbDeductInfo {
     pub deduct: String,
 }
 
-impl GetBgbDeductInfoRequest {
-    pub fn new() -> Self {
-        Self {}
-    }
-}
-
-impl BitgetRequest for GetBgbDeductInfoRequest {
-    type Response = GetBgbDeductInfoResponse;
-
-    fn path(&self) -> String {
-        "/api/v2/spot/account/deduct-info".to_string()
-    }
-
-    fn method(&self) -> String {
-        "GET".to_string()
-    }
-
-    fn need_signature(&self) -> bool {
-        true
-    }
-}
-
-impl BitgetRestClient {
+impl RestClient {
     /// Get BGB Deduct Info
     ///
     /// Get the current BGB deduct status for fee optimization.
+    /// [API Documentation](https://www.bitget.com/api-doc/spot/account/GetBgbDeductInfo)
+    ///
+    /// Rate limit: 5 req/sec/UID
+    ///
+    /// Returns a `RestResult<GetBgbDeductInfoResponse>` containing the BGB deduct info or an error.
     pub async fn get_bgb_deduct_info(
         &self,
-        request: GetBgbDeductInfoRequest,
-    ) -> Result<GetBgbDeductInfoResponse, BitgetError> {
-        self.send_request(&request).await
+        _request: GetBgbDeductInfoRequest,
+    ) -> crate::bitget::RestResult<GetBgbDeductInfoResponse> {
+        self.send_signed_request(
+            "/api/v2/spot/account/bgb-deduct-info",
+            reqwest::Method::GET,
+            None,
+            None,
+            5,
+            false,
+            None,
+        )
+        .await
     }
 }
 
@@ -69,7 +55,7 @@ mod tests {
 
     #[test]
     fn test_get_bgb_deduct_info_request_serialization() {
-        let request = GetBgbDeductInfoRequest::new();
+        let request = GetBgbDeductInfoRequest::default();
 
         let serialized = serde_json::to_string(&request).unwrap();
         println!("Serialized request: {}", serialized);
@@ -97,7 +83,7 @@ mod tests {
     #[tokio::test]
     async fn test_get_bgb_deduct_info_endpoint() {
         // This test requires API credentials and should be run manually
-        let _request = GetBgbDeductInfoRequest::new();
+        let _request = GetBgbDeductInfoRequest::default();
 
         // Uncomment the following lines to test with real API credentials:
         // let client = BitgetRestClient::new("api_key", "secret", "passphrase", false);

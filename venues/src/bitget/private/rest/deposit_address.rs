@@ -1,14 +1,8 @@
-use crate::bitget::{BitgetRestClient, enums::*, error::BitgetError};
-use reqwest::Method;
-use rest::BitgetRequest;
+use super::RestClient;
+use crate::bitget::{Errors, RestResult};
 use serde::{Deserialize, Serialize};
 
 /// Get Deposit Address
-///
-/// Get Deposit Address.
-///
-/// Frequency limit: 10 times/1s (User ID)
-
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GetDepositAddressRequest {
     /// Coin name, e.g. USDT
@@ -48,51 +42,33 @@ pub struct DepositAddressInfo {
     pub url: String,
 }
 
-impl GetDepositAddressRequest {
-    pub fn new(coin: impl Into<String>) -> Self {
-        Self {
-            coin: coin.into(),
-            chain: None,
-            size: None,
-        }
-    }
-
-    pub fn chain(mut self, chain: impl Into<String>) -> Self {
-        self.chain = Some(chain.into());
-        self
-    }
-
-    pub fn size(mut self, size: impl Into<String>) -> Self {
-        self.size = Some(size.into());
-        self
-    }
-}
-
-impl BitgetRequest for GetDepositAddressRequest {
-    type Response = GetDepositAddressResponse;
-
-    fn path(&self) -> String {
-        "/api/v2/spot/wallet/deposit-address".to_string()
-    }
-
-    fn method(&self) -> String {
-        "GET".to_string()
-    }
-
-    fn need_signature(&self) -> bool {
-        true
-    }
-}
-
-impl BitgetRestClient {
+impl RestClient {
     /// Get Deposit Address
     ///
-    /// Get Deposit Address.
+    /// Get Deposit Address for a given coin and optional chain.
+    ///
+    /// [API Documentation](https://www.bitget.com/api-doc/spot/asset/Get-Deposit-Address)
+    ///
+    /// Frequency limit: 10 times/1s (User ID)
+    ///
+    /// Returns a `RestResult<GetDepositAddressResponse>` containing the deposit address info or an error.
     pub async fn get_deposit_address(
         &self,
-        request: GetDepositAddressRequest,
-    ) -> Result<GetDepositAddressResponse, BitgetError> {
-        self.send_request(&request).await
+        params: GetDepositAddressRequest,
+    ) -> RestResult<GetDepositAddressResponse> {
+        let endpoint = "/api/v2/spot/wallet/deposit-address";
+        let body = serde_json::to_string(&params)
+            .map_err(|e| Errors::Error(format!("Serialization error: {e}")))?;
+        self.send_signed_request::<GetDepositAddressResponse>(
+            endpoint,
+            reqwest::Method::POST,
+            None,
+            Some(&body),
+            10,
+            false,
+            None,
+        )
+        .await
     }
 }
 
@@ -102,7 +78,11 @@ mod tests {
 
     #[test]
     fn test_get_deposit_address_request_serialization() {
-        let request = GetDepositAddressRequest::new("USDT").chain("trc20");
+        let request = GetDepositAddressRequest {
+            coin: "USDT".to_string(),
+            chain: Some("trc20".to_string()),
+            size: None,
+        };
 
         let serialized = serde_json::to_string(&request).unwrap();
         println!("Serialized request: {}", serialized);
@@ -137,7 +117,11 @@ mod tests {
     #[tokio::test]
     async fn test_get_deposit_address_endpoint() {
         // This test requires API credentials and should be run manually
-        let _request = GetDepositAddressRequest::new("USDT").chain("trc20");
+        let _request = GetDepositAddressRequest {
+            coin: "USDT".to_string(),
+            chain: Some("trc20".to_string()),
+            size: None,
+        };
 
         // Uncomment the following lines to test with real API credentials:
         // let client = BitgetRestClient::new("api_key", "secret", "passphrase", false);

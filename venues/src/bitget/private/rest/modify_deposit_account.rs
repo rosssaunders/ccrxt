@@ -1,14 +1,9 @@
-use crate::bitget::{BitgetRestClient, enums::*, error::BitgetError};
-use reqwest::Method;
-use rest::BitgetRequest;
+use super::RestClient;
+use crate::bitget::enums::*;
+use crate::bitget::{Errors, RestResult};
 use serde::{Deserialize, Serialize};
 
 /// Modify Deposit Account
-///
-/// Modify the auto-transfer account type of deposit.
-///
-/// Frequency limit: 10 times/1s (User ID)
-
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ModifyDepositAccountRequest {
     /// Currency of transfer
@@ -29,40 +24,33 @@ pub struct ModifyDepositAccountResponse {
     pub data: String,
 }
 
-impl ModifyDepositAccountRequest {
-    pub fn new(coin: impl Into<String>, account_type: DepositAccountType) -> Self {
-        Self {
-            coin: coin.into(),
-            account_type,
-        }
-    }
-}
-
-impl BitgetRequest for ModifyDepositAccountRequest {
-    type Response = ModifyDepositAccountResponse;
-
-    fn path(&self) -> String {
-        "/api/v2/spot/wallet/modify-deposit-account".to_string()
-    }
-
-    fn method(&self) -> String {
-        "POST".to_string()
-    }
-
-    fn need_signature(&self) -> bool {
-        true
-    }
-}
-
-impl BitgetRestClient {
+impl RestClient {
     /// Modify Deposit Account
     ///
     /// Modify the auto-transfer account type of deposit.
+    ///
+    /// [API Documentation](https://www.bitget.com/api-doc/spot/asset/Modify-Deposit-Account)
+    ///
+    /// Frequency limit: 10 times/1s (User ID)
+    ///
+    /// Returns a `RestResult<ModifyDepositAccountResponse>` containing the result or an error.
     pub async fn modify_deposit_account(
         &self,
-        request: ModifyDepositAccountRequest,
-    ) -> Result<ModifyDepositAccountResponse, BitgetError> {
-        self.send_request(&request).await
+        params: ModifyDepositAccountRequest,
+    ) -> RestResult<ModifyDepositAccountResponse> {
+        let endpoint = "/api/v2/spot/wallet/modify-deposit-account";
+        let body = serde_json::to_string(&params)
+            .map_err(|e| Errors::Error(format!("Serialization error: {e}")))?;
+        self.send_signed_request::<ModifyDepositAccountResponse>(
+            endpoint,
+            reqwest::Method::POST,
+            None,
+            Some(&body),
+            10,
+            false,
+            None,
+        )
+        .await
     }
 }
 
@@ -72,7 +60,10 @@ mod tests {
 
     #[test]
     fn test_modify_deposit_account_request_serialization() {
-        let request = ModifyDepositAccountRequest::new("USDT", DepositAccountType::UsdtFutures);
+        let request = ModifyDepositAccountRequest {
+            coin: "USDT".to_string(),
+            account_type: DepositAccountType::UsdtFutures,
+        };
 
         let serialized = serde_json::to_string(&request).unwrap();
         println!("Serialized request: {}", serialized);
@@ -99,7 +90,10 @@ mod tests {
     #[tokio::test]
     async fn test_modify_deposit_account_endpoint() {
         // This test requires API credentials and should be run manually
-        let _request = ModifyDepositAccountRequest::new("USDT", DepositAccountType::UsdtFutures);
+        let _request = ModifyDepositAccountRequest {
+            coin: "USDT".to_string(),
+            account_type: DepositAccountType::UsdtFutures,
+        };
 
         // Uncomment the following lines to test with real API credentials:
         // let client = BitgetRestClient::new("api_key", "secret", "passphrase", false);

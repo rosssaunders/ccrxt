@@ -1,15 +1,8 @@
-//! Cancel Order endpoint for Bitget Spot API
-//!
-//! This endpoint allows cancelling a specific order.
-//!
-//! Reference: https://www.bitget.com/api-doc/spot/trade/Cancel-Order
-//! Endpoint: POST /api/v2/spot/trade/cancel-order
-//! Rate limit: 10 times/1s (UID)
-
 use serde::{Deserialize, Serialize};
 
-use super::super::RestClient;
 use crate::bitget::RestResult;
+
+use super::super::RestClient;
 
 /// Request parameters for cancelling an order
 #[derive(Debug, Clone, Serialize)]
@@ -24,29 +17,6 @@ pub struct CancelOrderRequest {
     /// Client order ID (either orderId or clientOrderId is required)
     #[serde(rename = "clientOrderId", skip_serializing_if = "Option::is_none")]
     pub client_order_id: Option<String>,
-}
-
-impl CancelOrderRequest {
-    /// Create a request to cancel an order by order ID
-    pub fn by_order_id(symbol: impl Into<String>, order_id: impl Into<String>) -> Self {
-        Self {
-            symbol: symbol.into(),
-            order_id: Some(order_id.into()),
-            client_order_id: None,
-        }
-    }
-
-    /// Create a request to cancel an order by client order ID
-    pub fn by_client_order_id(
-        symbol: impl Into<String>,
-        client_order_id: impl Into<String>,
-    ) -> Self {
-        Self {
-            symbol: symbol.into(),
-            order_id: None,
-            client_order_id: Some(client_order_id.into()),
-        }
-    }
 }
 
 /// Response from cancelling an order
@@ -101,7 +71,11 @@ mod tests {
 
     #[test]
     fn test_cancel_order_request_by_order_id() {
-        let request = CancelOrderRequest::by_order_id("BTCUSDT", "1234567890");
+        let request = CancelOrderRequest {
+            symbol: "BTCUSDT".to_string(),
+            order_id: Some("1234567890".to_string()),
+            client_order_id: None,
+        };
 
         assert_eq!(request.symbol, "BTCUSDT");
         assert_eq!(request.order_id, Some("1234567890".to_string()));
@@ -110,7 +84,11 @@ mod tests {
 
     #[test]
     fn test_cancel_order_request_by_client_order_id() {
-        let request = CancelOrderRequest::by_client_order_id("ETHUSDT", "my-order-123");
+        let request = CancelOrderRequest {
+            symbol: "ETHUSDT".to_string(),
+            order_id: None,
+            client_order_id: Some("my-order-123".to_string()),
+        };
 
         assert_eq!(request.symbol, "ETHUSDT");
         assert!(request.order_id.is_none());
@@ -119,7 +97,11 @@ mod tests {
 
     #[test]
     fn test_cancel_order_request_serialization() {
-        let request = CancelOrderRequest::by_order_id("BTCUSDT", "1234567890");
+        let request = CancelOrderRequest {
+            symbol: "BTCUSDT".to_string(),
+            order_id: Some("1234567890".to_string()),
+            client_order_id: None,
+        };
         let json = serde_json::to_string(&request).unwrap();
 
         assert!(json.contains("\"symbol\":\"BTCUSDT\""));

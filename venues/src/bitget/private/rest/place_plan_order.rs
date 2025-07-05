@@ -9,8 +9,8 @@
 use serde::{Deserialize, Serialize};
 
 use super::super::RestClient;
-use crate::bitget::{OrderSide, OrderType, RestResult};
 use super::place_order::{Force, STPMode};
+use crate::bitget::{OrderSide, OrderType, RestResult};
 
 /// Plan order type (trigger condition)
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -97,124 +97,6 @@ pub struct PlacePlanOrderRequest {
     pub receive_window: Option<i64>,
 }
 
-impl PlacePlanOrderRequest {
-    /// Create a new normal plan limit order request
-    pub fn normal_limit(
-        symbol: impl Into<String>,
-        side: OrderSide,
-        trigger_price: impl Into<String>,
-        price: impl Into<String>,
-        size: impl Into<String>,
-        trigger_type: TriggerType,
-    ) -> Self {
-        Self {
-            symbol: symbol.into(),
-            side,
-            order_type: OrderType::Limit,
-            force: Force::GTC,
-            plan_type: PlanType::NormalPlan,
-            trigger_type,
-            trigger_price: trigger_price.into(),
-            price: Some(price.into()),
-            size: size.into(),
-            client_order_id: None,
-            stp_mode: None,
-            callback_ratio: None,
-            request_time: None,
-            receive_window: None,
-        }
-    }
-
-    /// Create a new normal plan market order request
-    pub fn normal_market(
-        symbol: impl Into<String>,
-        side: OrderSide,
-        trigger_price: impl Into<String>,
-        size: impl Into<String>,
-        trigger_type: TriggerType,
-    ) -> Self {
-        Self {
-            symbol: symbol.into(),
-            side,
-            order_type: OrderType::Market,
-            force: Force::GTC, // Force is ignored for market orders
-            plan_type: PlanType::NormalPlan,
-            trigger_type,
-            trigger_price: trigger_price.into(),
-            price: None,
-            size: size.into(),
-            client_order_id: None,
-            stp_mode: None,
-            callback_ratio: None,
-            request_time: None,
-            receive_window: None,
-        }
-    }
-
-    /// Create a new track plan market order request (trailing stop)
-    pub fn track_market(
-        symbol: impl Into<String>,
-        side: OrderSide,
-        trigger_price: impl Into<String>,
-        size: impl Into<String>,
-        callback_ratio: impl Into<String>,
-        trigger_type: TriggerType,
-    ) -> Self {
-        Self {
-            symbol: symbol.into(),
-            side,
-            order_type: OrderType::Market,
-            force: Force::GTC, // Force is ignored for market orders
-            plan_type: PlanType::TrackPlan,
-            trigger_type,
-            trigger_price: trigger_price.into(),
-            price: None,
-            size: size.into(),
-            client_order_id: None,
-            stp_mode: None,
-            callback_ratio: Some(callback_ratio.into()),
-            request_time: None,
-            receive_window: None,
-        }
-    }
-
-    /// Set the execution force/strategy
-    pub fn force(mut self, force: Force) -> Self {
-        self.force = force;
-        self
-    }
-
-    /// Set a custom client order ID
-    pub fn client_order_id(mut self, client_order_id: impl Into<String>) -> Self {
-        self.client_order_id = Some(client_order_id.into());
-        self
-    }
-
-    /// Set the self-trade prevention mode
-    pub fn stp_mode(mut self, stp_mode: STPMode) -> Self {
-        self.stp_mode = Some(stp_mode);
-        self
-    }
-
-    /// Set the callback ratio for track plan orders
-    pub fn callback_ratio(mut self, callback_ratio: impl Into<String>) -> Self {
-        self.callback_ratio = Some(callback_ratio.into());
-        self
-    }
-
-    /// Set the request timestamp
-    pub fn request_time(mut self, request_time: i64) -> Self {
-        self.request_time = Some(request_time);
-        self
-    }
-
-    /// Set the receive window
-    pub fn receive_window(mut self, receive_window: i64) -> Self {
-        self.receive_window = Some(receive_window);
-        self
-    }
-}
-
 /// Response from placing a plan order
 #[derive(Debug, Clone, Deserialize)]
 pub struct PlacePlanOrderResponse {
@@ -268,14 +150,22 @@ mod tests {
 
     #[test]
     fn test_place_plan_order_request_normal_limit() {
-        let request = PlacePlanOrderRequest::normal_limit(
-            "BTCUSDT",
-            OrderSide::Buy,
-            "49000",
-            "50000",
-            "0.001",
-            TriggerType::FillPrice,
-        );
+        let request = PlacePlanOrderRequest {
+            symbol: "BTCUSDT".to_string(),
+            side: OrderSide::Buy,
+            order_type: OrderType::Limit,
+            force: Force::GTC,
+            plan_type: PlanType::NormalPlan,
+            trigger_type: TriggerType::FillPrice,
+            trigger_price: "49000".to_string(),
+            price: Some("50000".to_string()),
+            size: "0.001".to_string(),
+            client_order_id: None,
+            stp_mode: None,
+            callback_ratio: None,
+            request_time: None,
+            receive_window: None,
+        };
 
         assert_eq!(request.symbol, "BTCUSDT");
         assert_eq!(request.side, OrderSide::Buy);
@@ -290,13 +180,22 @@ mod tests {
 
     #[test]
     fn test_place_plan_order_request_normal_market() {
-        let request = PlacePlanOrderRequest::normal_market(
-            "ETHUSDT",
-            OrderSide::Sell,
-            "2900",
-            "1.0",
-            TriggerType::MarkPrice,
-        );
+        let request = PlacePlanOrderRequest {
+            symbol: "ETHUSDT".to_string(),
+            side: OrderSide::Sell,
+            order_type: OrderType::Market,
+            force: Force::GTC,
+            plan_type: PlanType::NormalPlan,
+            trigger_type: TriggerType::MarkPrice,
+            trigger_price: "2900".to_string(),
+            price: None,
+            size: "1.0".to_string(),
+            client_order_id: None,
+            stp_mode: None,
+            callback_ratio: None,
+            request_time: None,
+            receive_window: None,
+        };
 
         assert_eq!(request.symbol, "ETHUSDT");
         assert_eq!(request.side, OrderSide::Sell);
@@ -310,14 +209,22 @@ mod tests {
 
     #[test]
     fn test_place_plan_order_request_track_market() {
-        let request = PlacePlanOrderRequest::track_market(
-            "BTCUSDT",
-            OrderSide::Sell,
-            "51000",
-            "0.5",
-            "0.1",
-            TriggerType::FillPrice,
-        );
+        let request = PlacePlanOrderRequest {
+            symbol: "BTCUSDT".to_string(),
+            side: OrderSide::Sell,
+            order_type: OrderType::Market,
+            force: Force::GTC,
+            plan_type: PlanType::TrackPlan,
+            trigger_type: TriggerType::FillPrice,
+            trigger_price: "51000".to_string(),
+            price: None,
+            size: "0.5".to_string(),
+            client_order_id: None,
+            stp_mode: None,
+            callback_ratio: Some("0.1".to_string()),
+            request_time: None,
+            receive_window: None,
+        };
 
         assert_eq!(request.symbol, "BTCUSDT");
         assert_eq!(request.side, OrderSide::Sell);
@@ -332,17 +239,22 @@ mod tests {
 
     #[test]
     fn test_place_plan_order_request_builder() {
-        let request = PlacePlanOrderRequest::normal_limit(
-            "BTCUSDT",
-            OrderSide::Buy,
-            "49000",
-            "50000",
-            "0.001",
-            TriggerType::FillPrice,
-        )
-        .force(Force::PostOnly)
-        .client_order_id("plan-order-123")
-        .stp_mode(STPMode::CancelTaker);
+        let request = PlacePlanOrderRequest {
+            symbol: "BTCUSDT".to_string(),
+            side: OrderSide::Buy,
+            order_type: OrderType::Limit,
+            force: Force::PostOnly,
+            plan_type: PlanType::NormalPlan,
+            trigger_type: TriggerType::FillPrice,
+            trigger_price: "49000".to_string(),
+            price: Some("50000".to_string()),
+            size: "0.001".to_string(),
+            client_order_id: Some("plan-order-123".to_string()),
+            stp_mode: Some(STPMode::CancelTaker),
+            callback_ratio: None,
+            request_time: None,
+            receive_window: None,
+        };
 
         assert_eq!(request.force, Force::PostOnly);
         assert_eq!(request.client_order_id, Some("plan-order-123".to_string()));
@@ -351,15 +263,22 @@ mod tests {
 
     #[test]
     fn test_place_plan_order_request_serialization() {
-        let request = PlacePlanOrderRequest::normal_limit(
-            "BTCUSDT",
-            OrderSide::Buy,
-            "49000",
-            "50000",
-            "0.001",
-            TriggerType::FillPrice,
-        )
-        .client_order_id("plan-123");
+        let request = PlacePlanOrderRequest {
+            symbol: "BTCUSDT".to_string(),
+            side: OrderSide::Buy,
+            order_type: OrderType::Limit,
+            force: Force::GTC,
+            plan_type: PlanType::NormalPlan,
+            trigger_type: TriggerType::FillPrice,
+            trigger_price: "49000".to_string(),
+            price: Some("50000".to_string()),
+            size: "0.001".to_string(),
+            client_order_id: Some("plan-123".to_string()),
+            stp_mode: None,
+            callback_ratio: None,
+            request_time: None,
+            receive_window: None,
+        };
 
         let json = serde_json::to_string(&request).unwrap();
 

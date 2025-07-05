@@ -1,8 +1,6 @@
-use crate::bitget::{
-    BitgetRestClient,
-};
-use reqwest::Method;
-use rest::BitgetRequest;
+use super::RestClient;
+use crate::bitget::{Errors, RestResult};
+
 use serde::{Deserialize, Serialize};
 
 /// Request for getting subaccount deposit records
@@ -75,26 +73,25 @@ pub struct GetSubaccountDepositRecordsResponse {
     pub data: Vec<SubaccountDepositRecord>,
 }
 
-impl GetSubaccountDepositRecordsRequest {
-    /// Create a new request builder
-    pub fn builder() -> GetSubaccountDepositRecordsRequestBuilder {
-        GetSubaccountDepositRecordsRequestBuilder::default()
-    }
-}
-
-impl BitgetRequest for GetSubaccountDepositRecordsRequest {
-    type Response = GetSubaccountDepositRecordsResponse;
-
-    fn path(&self) -> String {
-        "/api/v2/spot/wallet/subaccount-deposit-records".to_string()
-    }
-
-    fn method(&self) -> String {
-        "GET".to_string()
-    }
-
-    fn need_signature(&self) -> bool {
-        true
+impl RestClient {
+    /// Get Subaccount Deposit Records
+    pub async fn get_subaccount_deposit_records(
+        &self,
+        request: GetSubaccountDepositRecordsRequest,
+    ) -> RestResult<GetSubaccountDepositRecordsResponse> {
+        self.send_signed_request(
+            "/api/v2/spot/wallet/subaccount-deposit-records",
+            reqwest::Method::GET,
+            None,
+            Some(
+                &serde_json::to_string(&request)
+                    .map_err(|e| Errors::Error(format!("Serialization error: {e}")))?,
+            ),
+            10,
+            false,
+            None,
+        )
+        .await
     }
 }
 
@@ -165,24 +162,34 @@ mod tests {
 
     #[test]
     fn test_request_builder() {
-        let request = GetSubaccountDepositRecordsRequest::builder()
-            .sub_uid("12121212")
-            .coin("USDT")
-            .id_less_than("1111120137173336063")
-            .limit("5")
-            .build();
+        let request = GetSubaccountDepositRecordsRequest {
+            sub_uid: "12121212".to_string(),
+            coin: Some("USDT".to_string()),
+            id_less_than: Some("1111120137173336063".to_string()),
+            limit: Some("5".to_string()),
+            start_time: None,
+            end_time: None,
+        };
 
         assert_eq!(request.sub_uid, "12121212");
         assert_eq!(request.coin, Some("USDT".to_string()));
-        assert_eq!(request.id_less_than, Some("1111120137173336063".to_string()));
+        assert_eq!(
+            request.id_less_than,
+            Some("1111120137173336063".to_string())
+        );
         assert_eq!(request.limit, Some("5".to_string()));
     }
 
     #[test]
     fn test_request_builder_required_only() {
-        let request = GetSubaccountDepositRecordsRequest::builder()
-            .sub_uid("12121212")
-            .build();
+        let request = GetSubaccountDepositRecordsRequest {
+            sub_uid: "12121212".to_string(),
+            coin: None,
+            start_time: None,
+            end_time: None,
+            id_less_than: None,
+            limit: None,
+        };
 
         assert_eq!(request.sub_uid, "12121212");
         assert_eq!(request.coin, None);

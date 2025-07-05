@@ -94,75 +94,6 @@ pub struct PlaceOrderRequest {
     pub receive_window: Option<i64>,
 }
 
-impl PlaceOrderRequest {
-    /// Create a new limit order request
-    pub fn limit(
-        symbol: impl Into<String>,
-        side: OrderSide,
-        price: impl Into<String>,
-        size: impl Into<String>,
-    ) -> Self {
-        Self {
-            symbol: symbol.into(),
-            side,
-            order_type: OrderType::Limit,
-            force: Force::GTC,
-            price: Some(price.into()),
-            size: size.into(),
-            client_order_id: None,
-            stp_mode: None,
-            request_time: None,
-            receive_window: None,
-        }
-    }
-
-    /// Create a new market order request
-    pub fn market(symbol: impl Into<String>, side: OrderSide, size: impl Into<String>) -> Self {
-        Self {
-            symbol: symbol.into(),
-            side,
-            order_type: OrderType::Market,
-            force: Force::GTC, // Force is ignored for market orders
-            price: None,
-            size: size.into(),
-            client_order_id: None,
-            stp_mode: None,
-            request_time: None,
-            receive_window: None,
-        }
-    }
-
-    /// Set the execution force/strategy
-    pub fn force(mut self, force: Force) -> Self {
-        self.force = force;
-        self
-    }
-
-    /// Set a custom client order ID
-    pub fn client_order_id(mut self, client_order_id: impl Into<String>) -> Self {
-        self.client_order_id = Some(client_order_id.into());
-        self
-    }
-
-    /// Set the self-trade prevention mode
-    pub fn stp_mode(mut self, stp_mode: STPMode) -> Self {
-        self.stp_mode = Some(stp_mode);
-        self
-    }
-
-    /// Set the request timestamp
-    pub fn request_time(mut self, request_time: i64) -> Self {
-        self.request_time = Some(request_time);
-        self
-    }
-
-    /// Set the receive window
-    pub fn receive_window(mut self, receive_window: i64) -> Self {
-        self.receive_window = Some(receive_window);
-        self
-    }
-}
-
 /// Response from placing an order
 #[derive(Debug, Clone, Deserialize)]
 pub struct PlaceOrderResponse {
@@ -213,7 +144,18 @@ mod tests {
 
     #[test]
     fn test_place_order_request_limit() {
-        let request = PlaceOrderRequest::limit("BTCUSDT", OrderSide::Buy, "50000", "0.001");
+        let request = PlaceOrderRequest {
+            symbol: "BTCUSDT".to_string(),
+            side: OrderSide::Buy,
+            price: Some("50000".to_string()),
+            size: "0.001".to_string(),
+            order_type: OrderType::Limit,
+            force: Force::GTC,
+            client_order_id: None,
+            stp_mode: None,
+            request_time: None,
+            receive_window: None,
+        };
 
         assert_eq!(request.symbol, "BTCUSDT");
         assert_eq!(request.side, OrderSide::Buy);
@@ -226,7 +168,18 @@ mod tests {
 
     #[test]
     fn test_place_order_request_market() {
-        let request = PlaceOrderRequest::market("ETHUSDT", OrderSide::Sell, "1.0");
+        let request = PlaceOrderRequest {
+            symbol: "ETHUSDT".to_string(),
+            side: OrderSide::Sell,
+            price: None,
+            size: "1.0".to_string(),
+            order_type: OrderType::Market,
+            force: Force::GTC,
+            client_order_id: None,
+            stp_mode: None,
+            request_time: None,
+            receive_window: None,
+        };
 
         assert_eq!(request.symbol, "ETHUSDT");
         assert_eq!(request.side, OrderSide::Sell);
@@ -237,10 +190,18 @@ mod tests {
 
     #[test]
     fn test_place_order_request_builder() {
-        let request = PlaceOrderRequest::limit("BTCUSDT", OrderSide::Buy, "50000", "0.001")
-            .force(Force::PostOnly)
-            .client_order_id("my-order-123")
-            .stp_mode(STPMode::CancelTaker);
+        let request = PlaceOrderRequest {
+            symbol: "BTCUSDT".to_string(),
+            side: OrderSide::Buy,
+            price: Some("50000".to_string()),
+            size: "0.001".to_string(),
+            order_type: OrderType::Limit,
+            force: Force::PostOnly,
+            client_order_id: Some("my-order-123".to_string()),
+            stp_mode: Some(STPMode::CancelTaker),
+            request_time: None,
+            receive_window: None,
+        };
 
         assert_eq!(request.force, Force::PostOnly);
         assert_eq!(request.client_order_id, Some("my-order-123".to_string()));
@@ -249,8 +210,18 @@ mod tests {
 
     #[test]
     fn test_place_order_request_serialization() {
-        let request = PlaceOrderRequest::limit("BTCUSDT", OrderSide::Buy, "50000", "0.001")
-            .client_order_id("test-123");
+        let request = PlaceOrderRequest {
+            symbol: "BTCUSDT".to_string(),
+            side: OrderSide::Buy,
+            price: Some("50000".to_string()),
+            size: "0.001".to_string(),
+            order_type: OrderType::Limit,
+            force: Force::GTC,
+            client_order_id: Some("test-123".to_string()),
+            stp_mode: None,
+            request_time: None,
+            receive_window: None,
+        };
 
         let json = serde_json::to_string(&request).unwrap();
 

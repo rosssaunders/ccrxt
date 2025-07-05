@@ -1,16 +1,30 @@
-mod client;
-mod get_account_assets;
-mod spot;
-
-// New wallet and account endpoints
 mod account_info;
+mod batch_cancel_orders;
+mod batch_cancel_plan_orders;
+mod batch_cancel_replace_orders;
+mod batch_orders;
 mod bgb_deduct_info;
 mod bills;
+mod cancel_order;
+mod cancel_plan_order;
+mod cancel_replace_order;
+mod cancel_symbol_order;
 mod cancel_withdrawal;
+mod client;
+mod current_plan_order;
 mod deposit_address;
 mod deposit_records;
+mod get_account_assets;
+mod get_current_orders;
+mod get_fills;
+mod get_order_history;
+mod get_order_info;
 mod main_sub_transfer_record;
 mod modify_deposit_account;
+mod modify_plan_order;
+mod place_order;
+mod place_plan_order;
+mod plan_sub_order;
 mod sub_transfer;
 mod subaccount_assets;
 mod subaccount_deposit_address;
@@ -23,6 +37,7 @@ mod withdraw;
 mod withdrawal_records;
 
 // Re-export client
+
 pub use client::RestClient;
 
 // Re-export existing endpoints
@@ -62,6 +77,3 @@ pub use withdraw::{WithdrawRequest, WithdrawResponse, WithdrawResult};
 pub use withdrawal_records::{
     GetWithdrawalRecordsRequest, GetWithdrawalRecordsResponse, WithdrawalRecord,
 };
-
-// Re-export spot trading endpoints
-pub use spot::*;

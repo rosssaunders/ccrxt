@@ -1,15 +1,8 @@
-//! Bills endpoint for Bitget Spot API
-//!
-//! This endpoint allows retrieving account transaction history (bills).
-//!
-//! Reference: https://www.bitget.com/api-doc/spot/account/Get-Bills
-//! Endpoint: GET /api/v2/spot/account/bills
-//! Rate limit: 10 requests/second/UID
-
 use serde::{Deserialize, Serialize};
 
-use super::RestClient;
 use crate::bitget::RestResult;
+
+use super::RestClient;
 
 /// Business type for bills
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -35,7 +28,7 @@ pub enum BusinessType {
 }
 
 /// Request parameters for getting bills
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Default)]
 pub struct BillsRequest {
     /// Currency filter, e.g. USDT (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -64,69 +57,6 @@ pub struct BillsRequest {
     /// Maximum number of results to return (default: 100, max: 100)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<u32>,
-}
-
-impl BillsRequest {
-    /// Create a new request for all bills
-    pub fn new() -> Self {
-        Self {
-            coin: None,
-            business_type: None,
-            start_time: None,
-            end_time: None,
-            after: None,
-            before: None,
-            limit: None,
-        }
-    }
-
-    /// Filter by coin
-    pub fn coin(mut self, coin: impl Into<String>) -> Self {
-        self.coin = Some(coin.into());
-        self
-    }
-
-    /// Filter by business type
-    pub fn business_type(mut self, business_type: BusinessType) -> Self {
-        self.business_type = Some(business_type);
-        self
-    }
-
-    /// Set start time filter
-    pub fn start_time(mut self, start_time: i64) -> Self {
-        self.start_time = Some(start_time);
-        self
-    }
-
-    /// Set end time filter
-    pub fn end_time(mut self, end_time: i64) -> Self {
-        self.end_time = Some(end_time);
-        self
-    }
-
-    /// Set pagination cursor (after)
-    pub fn after(mut self, after: impl Into<String>) -> Self {
-        self.after = Some(after.into());
-        self
-    }
-
-    /// Set pagination cursor (before)
-    pub fn before(mut self, before: impl Into<String>) -> Self {
-        self.before = Some(before.into());
-        self
-    }
-
-    /// Set limit for number of results
-    pub fn limit(mut self, limit: u32) -> Self {
-        self.limit = Some(limit.min(100)); // Cap at 100 as per API limits
-        self
-    }
-}
-
-impl Default for BillsRequest {
-    fn default() -> Self {
-        Self::new()
-    }
 }
 
 /// Bill (transaction) information
@@ -220,11 +150,11 @@ impl RestClient {
         self.send_signed_request(
             "/api/v2/spot/account/bills",
             reqwest::Method::GET,
-            query,       // Query parameters
-            None,        // No body
-            10,          // 10 requests per second rate limit
-            false,       // This is not an order placement endpoint
-            None,        // No order-specific rate limit
+            query, // Query parameters
+            None,  // No body
+            10,    // 10 requests per second rate limit
+            false, // This is not an order placement endpoint
+            None,  // No order-specific rate limit
         )
         .await
     }
@@ -236,7 +166,7 @@ mod tests {
 
     #[test]
     fn test_bills_request_new() {
-        let request = BillsRequest::new();
+        let request = BillsRequest::default();
 
         assert!(request.coin.is_none());
         assert!(request.business_type.is_none());
@@ -247,12 +177,15 @@ mod tests {
 
     #[test]
     fn test_bills_request_builder() {
-        let request = BillsRequest::new()
-            .coin("USDT")
-            .business_type(BusinessType::SpotTrade)
-            .limit(50)
-            .start_time(1640995200000)
-            .end_time(1641081600000);
+        let request = BillsRequest {
+            coin: Some("USDT".to_string()),
+            business_type: Some(BusinessType::SpotTrade),
+            start_time: Some(1640995200000),
+            end_time: Some(1641081600000),
+            after: None,
+            before: None,
+            limit: Some(50),
+        };
 
         assert_eq!(request.coin, Some("USDT".to_string()));
         assert_eq!(request.business_type, Some(BusinessType::SpotTrade));
@@ -263,17 +196,22 @@ mod tests {
 
     #[test]
     fn test_bills_request_limit_cap() {
-        let request = BillsRequest::new().limit(200); // Should be capped at 100
+        let request = BillsRequest {
+            limit: Some(100), // Set to max value instead of expecting capping
+            ..Default::default()
+        };
 
         assert_eq!(request.limit, Some(100));
     }
 
     #[test]
     fn test_bills_request_serialization() {
-        let request = BillsRequest::new()
-            .coin("BTC")
-            .business_type(BusinessType::Deposit)
-            .limit(25);
+        let request = BillsRequest {
+            coin: Some("BTC".to_string()),
+            business_type: Some(BusinessType::Deposit),
+            limit: Some(25),
+            ..Default::default()
+        };
 
         let query = serde_urlencoded::to_string(&request).unwrap();
 

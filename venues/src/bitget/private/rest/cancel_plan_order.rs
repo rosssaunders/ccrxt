@@ -1,15 +1,8 @@
-//! Cancel Plan Order endpoint for Bitget Spot API
-//!
-//! This endpoint allows cancelling a specific trigger/stop order (plan order).
-//!
-//! Reference: https://www.bitget.com/api-doc/spot/plan/Cancel-Plan-Order
-//! Endpoint: POST /api/v2/spot/plan/cancel-plan-order
-//! Rate limit: 10 requests/second/UID
-
 use serde::{Deserialize, Serialize};
 
-use super::super::RestClient;
 use crate::bitget::RestResult;
+
+use super::super::RestClient;
 
 /// Request parameters for cancelling a plan order
 #[derive(Debug, Clone, Serialize)]
@@ -33,45 +26,6 @@ pub struct CancelPlanOrderRequest {
     /// If set, request is valid only when server time is within receiveWindow
     #[serde(rename = "receiveWindow", skip_serializing_if = "Option::is_none")]
     pub receive_window: Option<i64>,
-}
-
-impl CancelPlanOrderRequest {
-    /// Create a request to cancel a plan order by order ID
-    pub fn by_order_id(symbol: impl Into<String>, order_id: impl Into<String>) -> Self {
-        Self {
-            symbol: symbol.into(),
-            order_id: Some(order_id.into()),
-            client_order_id: None,
-            request_time: None,
-            receive_window: None,
-        }
-    }
-
-    /// Create a request to cancel a plan order by client order ID
-    pub fn by_client_order_id(
-        symbol: impl Into<String>,
-        client_order_id: impl Into<String>,
-    ) -> Self {
-        Self {
-            symbol: symbol.into(),
-            order_id: None,
-            client_order_id: Some(client_order_id.into()),
-            request_time: None,
-            receive_window: None,
-        }
-    }
-
-    /// Set the request timestamp
-    pub fn request_time(mut self, request_time: i64) -> Self {
-        self.request_time = Some(request_time);
-        self
-    }
-
-    /// Set the receive window
-    pub fn receive_window(mut self, receive_window: i64) -> Self {
-        self.receive_window = Some(receive_window);
-        self
-    }
 }
 
 /// Response from cancelling a plan order
@@ -126,7 +80,13 @@ mod tests {
 
     #[test]
     fn test_cancel_plan_order_request_by_order_id() {
-        let request = CancelPlanOrderRequest::by_order_id("BTCUSDT", "plan_1234567890");
+        let request = CancelPlanOrderRequest {
+            symbol: "BTCUSDT".to_string(),
+            order_id: Some("plan_1234567890".to_string()),
+            client_order_id: None,
+            request_time: None,
+            receive_window: None,
+        };
 
         assert_eq!(request.symbol, "BTCUSDT");
         assert_eq!(request.order_id, Some("plan_1234567890".to_string()));
@@ -137,18 +97,31 @@ mod tests {
 
     #[test]
     fn test_cancel_plan_order_request_by_client_order_id() {
-        let request = CancelPlanOrderRequest::by_client_order_id("ETHUSDT", "my-plan-order-123");
+        let request = CancelPlanOrderRequest {
+            symbol: "ETHUSDT".to_string(),
+            order_id: None,
+            client_order_id: Some("my-plan-order-123".to_string()),
+            request_time: None,
+            receive_window: None,
+        };
 
         assert_eq!(request.symbol, "ETHUSDT");
         assert!(request.order_id.is_none());
-        assert_eq!(request.client_order_id, Some("my-plan-order-123".to_string()));
+        assert_eq!(
+            request.client_order_id,
+            Some("my-plan-order-123".to_string())
+        );
     }
 
     #[test]
     fn test_cancel_plan_order_request_builder() {
-        let request = CancelPlanOrderRequest::by_order_id("BTCUSDT", "plan_1234567890")
-            .request_time(1640995200000)
-            .receive_window(5000);
+        let request = CancelPlanOrderRequest {
+            symbol: "BTCUSDT".to_string(),
+            order_id: Some("plan_1234567890".to_string()),
+            client_order_id: None,
+            request_time: Some(1640995200000),
+            receive_window: Some(5000),
+        };
 
         assert_eq!(request.request_time, Some(1640995200000));
         assert_eq!(request.receive_window, Some(5000));
@@ -156,8 +129,13 @@ mod tests {
 
     #[test]
     fn test_cancel_plan_order_request_serialization() {
-        let request = CancelPlanOrderRequest::by_order_id("BTCUSDT", "plan_1234567890")
-            .request_time(1640995200000);
+        let request = CancelPlanOrderRequest {
+            symbol: "BTCUSDT".to_string(),
+            order_id: Some("plan_1234567890".to_string()),
+            client_order_id: None,
+            request_time: Some(1640995200000),
+            receive_window: None,
+        };
 
         let json = serde_json::to_string(&request).unwrap();
 
@@ -169,7 +147,13 @@ mod tests {
 
     #[test]
     fn test_cancel_plan_order_request_serialization_client_id() {
-        let request = CancelPlanOrderRequest::by_client_order_id("ETHUSDT", "my-plan-order-123");
+        let request = CancelPlanOrderRequest {
+            symbol: "ETHUSDT".to_string(),
+            order_id: None,
+            client_order_id: Some("my-plan-order-123".to_string()),
+            request_time: None,
+            receive_window: None,
+        };
 
         let json = serde_json::to_string(&request).unwrap();
 

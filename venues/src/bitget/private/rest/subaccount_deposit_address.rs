@@ -1,8 +1,5 @@
-use crate::bitget::{
-    BitgetRestClient,
-};
-use reqwest::Method;
-use rest::BitgetRequest;
+use super::RestClient;
+use crate::bitget::{Errors, RestResult};
 use serde::{Deserialize, Serialize};
 
 /// Request for getting subaccount deposit address
@@ -36,26 +33,25 @@ pub struct GetSubaccountDepositAddressResponse {
     pub url: String,
 }
 
-impl GetSubaccountDepositAddressRequest {
-    /// Create a new request builder
-    pub fn builder() -> GetSubaccountDepositAddressRequestBuilder {
-        GetSubaccountDepositAddressRequestBuilder::default()
-    }
-}
-
-impl BitgetRequest for GetSubaccountDepositAddressRequest {
-    type Response = GetSubaccountDepositAddressResponse;
-
-    fn path(&self) -> String {
-        "/api/v2/spot/wallet/subaccount-deposit-address".to_string()
-    }
-
-    fn method(&self) -> String {
-        "GET".to_string()
-    }
-
-    fn need_signature(&self) -> bool {
-        true
+impl RestClient {
+    /// Get Subaccount Deposit Address
+    pub async fn get_subaccount_deposit_address(
+        &self,
+        request: GetSubaccountDepositAddressRequest,
+    ) -> RestResult<GetSubaccountDepositAddressResponse> {
+        self.send_signed_request(
+            "/api/v2/spot/wallet/subaccount-deposit-address",
+            reqwest::Method::GET,
+            None,
+            Some(
+                &serde_json::to_string(&request)
+                    .map_err(|e| Errors::Error(format!("Serialization error: {e}")))?,
+            ),
+            10,
+            false,
+            None,
+        )
+        .await
     }
 }
 
@@ -68,53 +64,18 @@ pub struct GetSubaccountDepositAddressRequestBuilder {
     size: Option<String>,
 }
 
-impl GetSubaccountDepositAddressRequestBuilder {
-    /// Set the sub-account UID
-    pub fn sub_uid(mut self, sub_uid: impl Into<String>) -> Self {
-        self.sub_uid = Some(sub_uid.into());
-        self
-    }
-
-    /// Set the coin name
-    pub fn coin(mut self, coin: impl Into<String>) -> Self {
-        self.coin = Some(coin.into());
-        self
-    }
-
-    /// Set the chain name (optional)
-    pub fn chain(mut self, chain: impl Into<String>) -> Self {
-        self.chain = Some(chain.into());
-        self
-    }
-
-    /// Set the size for Bitcoin Lightning Network (optional)
-    pub fn size(mut self, size: impl Into<String>) -> Self {
-        self.size = Some(size.into());
-        self
-    }
-
-    /// Build the request
-    pub fn build(self) -> GetSubaccountDepositAddressRequest {
-        GetSubaccountDepositAddressRequest {
-            sub_uid: self.sub_uid.expect("sub_uid is required"),
-            coin: self.coin.expect("coin is required"),
-            chain: self.chain,
-            size: self.size,
-        }
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
     fn test_request_builder() {
-        let request = GetSubaccountDepositAddressRequest::builder()
-            .sub_uid("123456")
-            .coin("USDT")
-            .chain("ERC20")
-            .build();
+        let request = GetSubaccountDepositAddressRequest {
+            sub_uid: "123456".to_string(),
+            coin: "USDT".to_string(),
+            chain: Some("ERC20".to_string()),
+            size: None,
+        };
 
         assert_eq!(request.sub_uid, "123456");
         assert_eq!(request.coin, "USDT");
@@ -124,10 +85,12 @@ mod tests {
 
     #[test]
     fn test_request_builder_minimal() {
-        let request = GetSubaccountDepositAddressRequest::builder()
-            .sub_uid("123456")
-            .coin("BTC")
-            .build();
+        let request = GetSubaccountDepositAddressRequest {
+            sub_uid: "123456".to_string(),
+            coin: "BTC".to_string(),
+            chain: None,
+            size: None,
+        };
 
         assert_eq!(request.sub_uid, "123456");
         assert_eq!(request.coin, "BTC");

@@ -1,19 +1,9 @@
-use crate::bitget::{BitgetRestClient, enums::*, error::BitgetError};
-use reqwest::Method;
-use rest::BitgetRequest;
+use super::RestClient;
+use crate::bitget::enums::*;
+use crate::bitget::{Errors, RestResult};
 use serde::{Deserialize, Serialize};
 
 /// Sub Transfer
-///
-/// The types of transfers supported by this interface include:
-/// - Parent account transfer to sub-accounts (only parent account APIKey has access)
-/// - Sub-accounts to parent account (only parent account APIKey has access)
-/// - Sub-accounts transfer to sub-accounts (only the parent account APIKey has access and the sub-accounts belong to same parent account)
-/// - Sub-account inner accounts transfer, e.g. spot to futures (only the parent account APIKey has access, and the fromUserId & toUserId should be same)
-///
-/// Only the parent account API Key can use this endpoint, and the API Key must bind IP.
-///
-/// Rate limit: 10 req/sec/UID
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SubTransferRequest {
     /// Account type to transfer from
@@ -66,63 +56,33 @@ pub struct SubTransferResult {
     pub client_oid: String,
 }
 
-impl SubTransferRequest {
-    pub fn new(
-        from_type: AccountType,
-        to_type: AccountType,
-        amount: impl Into<String>,
-        coin: impl Into<String>,
-        from_user_id: impl Into<String>,
-        to_user_id: impl Into<String>,
-    ) -> Self {
-        Self {
-            from_type,
-            to_type,
-            amount: amount.into(),
-            coin: coin.into(),
-            symbol: None,
-            client_oid: None,
-            from_user_id: from_user_id.into(),
-            to_user_id: to_user_id.into(),
-        }
-    }
-
-    pub fn symbol(mut self, symbol: impl Into<String>) -> Self {
-        self.symbol = Some(symbol.into());
-        self
-    }
-
-    pub fn client_oid(mut self, client_oid: impl Into<String>) -> Self {
-        self.client_oid = Some(client_oid.into());
-        self
-    }
-}
-
-impl BitgetRequest for SubTransferRequest {
-    type Response = SubTransferResponse;
-
-    fn path(&self) -> String {
-        "/api/v2/spot/wallet/subaccount-transfer".to_string()
-    }
-
-    fn method(&self) -> String {
-        "POST".to_string()
-    }
-
-    fn need_signature(&self) -> bool {
-        true
-    }
-}
-
-impl BitgetRestClient {
+impl RestClient {
     /// Sub Transfer
     ///
     /// Transfer funds between parent and sub accounts or between sub accounts.
+    ///
+    /// [API Documentation](https://www.bitget.com/api-doc/spot/account/Sub-Transfer)
+    ///
+    /// Rate limit: 10 req/sec/UID
+    ///
+    /// Returns a `RestResult<SubTransferResponse>` containing the transfer result or an error.
     pub async fn sub_transfer(
         &self,
-        request: SubTransferRequest,
-    ) -> Result<SubTransferResponse, BitgetError> {
-        self.send_request(&request).await
+        params: SubTransferRequest,
+    ) -> RestResult<SubTransferResponse> {
+        let endpoint = "/api/v2/spot/wallet/subaccount-transfer";
+        let body = serde_json::to_string(&params)
+            .map_err(|e| Errors::Error(format!("Serialization error: {e}")))?;
+        self.send_signed_request::<SubTransferResponse>(
+            endpoint,
+            reqwest::Method::POST,
+            None,
+            Some(&body),
+            10,
+            false,
+            None,
+        )
+        .await
     }
 }
 
@@ -132,15 +92,16 @@ mod tests {
 
     #[test]
     fn test_sub_transfer_request_serialization() {
-        let request = SubTransferRequest::new(
-            AccountType::Spot,
-            AccountType::UsdtFutures,
-            "10",
-            "USDT",
-            "123456",
-            "789012",
-        )
-        .client_oid("my-transfer-123");
+        let request = SubTransferRequest {
+            from_type: AccountType::Spot,
+            to_type: AccountType::UsdtFutures,
+            amount: "10".to_string(),
+            coin: "USDT".to_string(),
+            from_user_id: "123456".to_string(),
+            to_user_id: "789012".to_string(),
+            client_oid: Some("my-transfer-123".to_string()),
+            symbol: None,
+        };
 
         let serialized = serde_json::to_string(&request).unwrap();
         println!("Serialized request: {}", serialized);
@@ -173,14 +134,16 @@ mod tests {
     #[tokio::test]
     async fn test_sub_transfer_endpoint() {
         // This test requires API credentials and should be run manually
-        let _request = SubTransferRequest::new(
-            AccountType::Spot,
-            AccountType::UsdtFutures,
-            "10",
-            "USDT",
-            "123456",
-            "789012",
-        );
+        let _request = SubTransferRequest {
+            from_type: AccountType::Spot,
+            to_type: AccountType::UsdtFutures,
+            amount: "10".to_string(),
+            coin: "USDT".to_string(),
+            from_user_id: "123456".to_string(),
+            to_user_id: "789012".to_string(),
+            client_oid: None,
+            symbol: None,
+        };
 
         // Uncomment the following lines to test with real API credentials:
         // let client = BitgetRestClient::new("api_key", "secret", "passphrase", false);

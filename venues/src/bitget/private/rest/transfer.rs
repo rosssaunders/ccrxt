@@ -1,11 +1,3 @@
-//! Transfer endpoint for Bitget Spot API
-//!
-//! This endpoint allows transferring funds between different account types.
-//!
-//! Reference: https://www.bitget.com/api-doc/spot/wallet/Transfer
-//! Endpoint: POST /api/v2/spot/wallet/transfer
-//! Rate limit: 10 requests/second/UID
-
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
@@ -64,51 +56,6 @@ pub struct TransferRequest {
     /// If set, request is valid only when server time is within receiveWindow
     #[serde(rename = "receiveWindow", skip_serializing_if = "Option::is_none")]
     pub receive_window: Option<i64>,
-}
-
-impl TransferRequest {
-    /// Create a new transfer request
-    pub fn new(
-        coin: impl Into<String>,
-        amount: impl Into<String>,
-        from_type: AccountType,
-        to_type: AccountType,
-    ) -> Self {
-        Self {
-            coin: coin.into(),
-            amount: amount.into(),
-            from_type,
-            to_type,
-            client_id: None,
-            sub_account_uid: None,
-            request_time: None,
-            receive_window: None,
-        }
-    }
-
-    /// Set a client transfer ID for idempotency
-    pub fn client_id(mut self, client_id: impl Into<String>) -> Self {
-        self.client_id = Some(client_id.into());
-        self
-    }
-
-    /// Set sub-account UID (for sub-account transfers)
-    pub fn sub_account_uid(mut self, sub_account_uid: impl Into<String>) -> Self {
-        self.sub_account_uid = Some(sub_account_uid.into());
-        self
-    }
-
-    /// Set the request timestamp
-    pub fn request_time(mut self, request_time: i64) -> Self {
-        self.request_time = Some(request_time);
-        self
-    }
-
-    /// Set the receive window
-    pub fn receive_window(mut self, receive_window: i64) -> Self {
-        self.receive_window = Some(receive_window);
-        self
-    }
 }
 
 /// Transfer status
@@ -180,12 +127,16 @@ mod tests {
 
     #[test]
     fn test_transfer_request_new() {
-        let request = TransferRequest::new(
-            "USDT",
-            "100.50",
-            AccountType::Spot,
-            AccountType::Margin,
-        );
+        let request = TransferRequest {
+            coin: "USDT".to_string(),
+            amount: "100.50".to_string(),
+            from_type: AccountType::Spot,
+            to_type: AccountType::Margin,
+            client_id: None,
+            sub_account_uid: None,
+            request_time: None,
+            receive_window: None,
+        };
 
         assert_eq!(request.coin, "USDT");
         assert_eq!(request.amount, "100.50");
@@ -197,15 +148,16 @@ mod tests {
 
     #[test]
     fn test_transfer_request_builder() {
-        let request = TransferRequest::new(
-            "BTC",
-            "0.001",
-            AccountType::Main,
-            AccountType::Sub,
-        )
-        .client_id("transfer-123")
-        .sub_account_uid("sub_987654321")
-        .request_time(1640995200000);
+        let request = TransferRequest {
+            coin: "BTC".to_string(),
+            amount: "0.001".to_string(),
+            from_type: AccountType::Main,
+            to_type: AccountType::Sub,
+            client_id: Some("transfer-123".to_string()),
+            sub_account_uid: Some("sub_987654321".to_string()),
+            request_time: Some(1640995200000),
+            receive_window: None,
+        };
 
         assert_eq!(request.coin, "BTC");
         assert_eq!(request.amount, "0.001");
@@ -218,13 +170,16 @@ mod tests {
 
     #[test]
     fn test_transfer_request_serialization() {
-        let request = TransferRequest::new(
-            "USDT",
-            "100.50",
-            AccountType::Spot,
-            AccountType::Futures,
-        )
-        .client_id("my-transfer-123");
+        let request = TransferRequest {
+            coin: "USDT".to_string(),
+            amount: "100.50".to_string(),
+            from_type: AccountType::Spot,
+            to_type: AccountType::Futures,
+            client_id: Some("my-transfer-123".to_string()),
+            sub_account_uid: None,
+            request_time: None,
+            receive_window: None,
+        };
 
         let json = serde_json::to_string(&request).unwrap();
 
@@ -249,18 +204,12 @@ mod tests {
             serde_json::to_string(&AccountType::Futures).unwrap(),
             "\"futures\""
         );
-        assert_eq!(
-            serde_json::to_string(&AccountType::P2P).unwrap(),
-            "\"p2p\""
-        );
+        assert_eq!(serde_json::to_string(&AccountType::P2P).unwrap(), "\"p2p\"");
         assert_eq!(
             serde_json::to_string(&AccountType::Main).unwrap(),
             "\"main\""
         );
-        assert_eq!(
-            serde_json::to_string(&AccountType::Sub).unwrap(),
-            "\"sub\""
-        );
+        assert_eq!(serde_json::to_string(&AccountType::Sub).unwrap(), "\"sub\"");
     }
 
     #[test]

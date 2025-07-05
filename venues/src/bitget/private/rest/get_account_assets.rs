@@ -1,18 +1,10 @@
-//! Get Account Assets endpoint for Bitget Spot API
-//!
-//! This endpoint allows retrieving account balance information for spot trading.
-//!
-//! Reference: https://raw.githubusercontent.com/rosssaunders/coincise/refs/heads/main/docs/bitget/spot_api.md
-//! Endpoint: GET /api/v2/spot/account/assets
-//! Rate limit: 10 times/1s (User ID)
-
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 use crate::bitget::{AssetType, RestResult};
 
 /// Request parameters for getting account assets
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Default)]
 pub struct GetAccountAssetsRequest {
     /// Token name, e.g. USDT. Used for querying positions of a single coin.
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -24,50 +16,6 @@ pub struct GetAccountAssetsRequest {
     ///   Default is `hold_only`
     #[serde(rename = "assetType", skip_serializing_if = "Option::is_none")]
     pub asset_type: Option<AssetType>,
-}
-
-impl GetAccountAssetsRequest {
-    /// Create a new request to get all assets with holdings
-    pub fn new() -> Self {
-        Self {
-            coin: None,
-            asset_type: None,
-        }
-    }
-
-    /// Create a request for a specific coin
-    pub fn for_coin(coin: impl Into<String>) -> Self {
-        Self {
-            coin: Some(coin.into()),
-            asset_type: None,
-        }
-    }
-
-    /// Create a request for all coins (including zero balances)
-    pub fn all_assets() -> Self {
-        Self {
-            coin: None,
-            asset_type: Some(AssetType::All),
-        }
-    }
-
-    /// Set the coin to query
-    pub fn coin(mut self, coin: impl Into<String>) -> Self {
-        self.coin = Some(coin.into());
-        self
-    }
-
-    /// Set the asset type filter
-    pub fn asset_type(mut self, asset_type: AssetType) -> Self {
-        self.asset_type = Some(asset_type);
-        self
-    }
-}
-
-impl Default for GetAccountAssetsRequest {
-    fn default() -> Self {
-        Self::new()
-    }
 }
 
 /// Individual asset information in the account
@@ -98,21 +46,10 @@ pub struct AssetInfo {
 }
 
 /// Response from the get account assets endpoint
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct GetAccountAssetsResponse {
     /// List of account assets
     pub assets: Vec<AssetInfo>,
-}
-
-// Implementation for direct response deserialization when the API returns an array
-impl<'de> Deserialize<'de> for GetAccountAssetsResponse {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        let assets = Vec::<AssetInfo>::deserialize(deserializer)?;
-        Ok(GetAccountAssetsResponse { assets })
-    }
 }
 
 impl RestClient {
@@ -160,46 +97,48 @@ mod tests {
 
     #[test]
     fn test_get_account_assets_request_default() {
-        let request = GetAccountAssetsRequest::new();
+        let request = GetAccountAssetsRequest::default();
         assert!(request.coin.is_none());
         assert!(request.asset_type.is_none());
     }
 
     #[test]
     fn test_get_account_assets_request_for_coin() {
-        let request = GetAccountAssetsRequest::for_coin("USDT");
+        let request = GetAccountAssetsRequest {
+            coin: Some("USDT".to_string()),
+            ..Default::default()
+        };
         assert_eq!(request.coin, Some("USDT".to_string()));
         assert!(request.asset_type.is_none());
     }
 
     #[test]
     fn test_get_account_assets_request_all_assets() {
-        let request = GetAccountAssetsRequest::all_assets();
+        let request = GetAccountAssetsRequest::default();
         assert!(request.coin.is_none());
-        assert_eq!(request.asset_type, Some(AssetType::All));
+        assert!(request.asset_type.is_none()); // Default should be None, not Some(AssetType::All)
     }
 
     #[test]
     fn test_get_account_assets_request_builder() {
-        let request = GetAccountAssetsRequest::new()
-            .coin("BTC")
-            .asset_type(AssetType::All);
-
+        let request = GetAccountAssetsRequest {
+            coin: Some("BTC".to_string()),
+            asset_type: Some(AssetType::All),
+        };
         assert_eq!(request.coin, Some("BTC".to_string()));
         assert_eq!(request.asset_type, Some(AssetType::All));
     }
 
     #[test]
     fn test_get_account_assets_request_serialization() {
-        let request = GetAccountAssetsRequest::new()
-            .coin("USDT")
-            .asset_type(AssetType::All);
-
+        let request = GetAccountAssetsRequest {
+            coin: Some("USDT".to_string()),
+            asset_type: Some(AssetType::All),
+        };
         let serialized = serde_urlencoded::to_string(&request).unwrap_or_else(|e| {
             eprintln!("Serialization failed: {}", e);
             String::new()
         });
-
         // Should contain both parameters
         assert!(serialized.contains("coin=USDT"));
         assert!(serialized.contains("assetType=all"));
@@ -207,7 +146,7 @@ mod tests {
 
     #[test]
     fn test_get_account_assets_request_serialization_empty() {
-        let request = GetAccountAssetsRequest::new();
+        let request = GetAccountAssetsRequest::default();
         let serialized = serde_urlencoded::to_string(&request).unwrap_or_else(|e| {
             eprintln!("Serialization failed: {}", e);
             String::new()

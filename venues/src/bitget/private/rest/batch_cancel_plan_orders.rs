@@ -1,15 +1,8 @@
-//! Batch Cancel Plan Order endpoint for Bitget Spot API
-//!
-//! This endpoint allows cancelling multiple trigger/stop orders (plan orders) in a single request.
-//!
-//! Reference: https://www.bitget.com/api-doc/spot/plan/Batch-Cancel-Plan-Order
-//! Endpoint: POST /api/v2/spot/plan/batch-cancel-plan-order
-//! Rate limit: 5 requests/second/UID, maximum 20 orders per batch
-
 use serde::{Deserialize, Serialize};
 
-use super::super::RestClient;
 use crate::bitget::RestResult;
+
+use super::super::RestClient;
 
 /// Single plan order cancellation request within a batch
 #[derive(Debug, Clone, Serialize)]
@@ -24,29 +17,6 @@ pub struct BatchCancelPlanOrderItem {
     /// Client order ID (either orderId or clientOrderId is required)
     #[serde(rename = "clientOrderId", skip_serializing_if = "Option::is_none")]
     pub client_order_id: Option<String>,
-}
-
-impl BatchCancelPlanOrderItem {
-    /// Create a cancellation item by plan order ID
-    pub fn by_order_id(symbol: impl Into<String>, order_id: impl Into<String>) -> Self {
-        Self {
-            symbol: symbol.into(),
-            order_id: Some(order_id.into()),
-            client_order_id: None,
-        }
-    }
-
-    /// Create a cancellation item by client order ID
-    pub fn by_client_order_id(
-        symbol: impl Into<String>,
-        client_order_id: impl Into<String>,
-    ) -> Self {
-        Self {
-            symbol: symbol.into(),
-            order_id: None,
-            client_order_id: Some(client_order_id.into()),
-        }
-    }
 }
 
 /// Request parameters for batch cancelling plan orders
@@ -64,29 +34,6 @@ pub struct BatchCancelPlanOrdersRequest {
     /// If set, request is valid only when server time is within receiveWindow
     #[serde(rename = "receiveWindow", skip_serializing_if = "Option::is_none")]
     pub receive_window: Option<i64>,
-}
-
-impl BatchCancelPlanOrdersRequest {
-    /// Create a new batch cancel plan orders request
-    pub fn new(orders: Vec<BatchCancelPlanOrderItem>) -> Self {
-        Self {
-            order_list: orders,
-            request_time: None,
-            receive_window: None,
-        }
-    }
-
-    /// Set the request timestamp
-    pub fn request_time(mut self, request_time: i64) -> Self {
-        self.request_time = Some(request_time);
-        self
-    }
-
-    /// Set the receive window
-    pub fn receive_window(mut self, receive_window: i64) -> Self {
-        self.receive_window = Some(receive_window);
-        self
-    }
 }
 
 /// Result of a single plan order cancellation in the batch
@@ -183,7 +130,11 @@ mod tests {
 
     #[test]
     fn test_batch_cancel_plan_order_item_by_order_id() {
-        let item = BatchCancelPlanOrderItem::by_order_id("BTCUSDT", "plan_1234567890");
+        let item = BatchCancelPlanOrderItem {
+            symbol: "BTCUSDT".to_string(),
+            order_id: Some("plan_1234567890".to_string()),
+            client_order_id: None,
+        };
 
         assert_eq!(item.symbol, "BTCUSDT");
         assert_eq!(item.order_id, Some("plan_1234567890".to_string()));
@@ -192,7 +143,11 @@ mod tests {
 
     #[test]
     fn test_batch_cancel_plan_order_item_by_client_order_id() {
-        let item = BatchCancelPlanOrderItem::by_client_order_id("ETHUSDT", "my-plan-order-123");
+        let item = BatchCancelPlanOrderItem {
+            symbol: "ETHUSDT".to_string(),
+            order_id: None,
+            client_order_id: Some("my-plan-order-123".to_string()),
+        };
 
         assert_eq!(item.symbol, "ETHUSDT");
         assert!(item.order_id.is_none());
@@ -202,11 +157,23 @@ mod tests {
     #[test]
     fn test_batch_cancel_plan_orders_request() {
         let orders = vec![
-            BatchCancelPlanOrderItem::by_order_id("BTCUSDT", "plan_1001"),
-            BatchCancelPlanOrderItem::by_client_order_id("ETHUSDT", "my-plan-order-123"),
+            BatchCancelPlanOrderItem {
+                symbol: "BTCUSDT".to_string(),
+                order_id: Some("plan_1001".to_string()),
+                client_order_id: None,
+            },
+            BatchCancelPlanOrderItem {
+                symbol: "ETHUSDT".to_string(),
+                order_id: None,
+                client_order_id: Some("my-plan-order-123".to_string()),
+            },
         ];
 
-        let request = BatchCancelPlanOrdersRequest::new(orders);
+        let request = BatchCancelPlanOrdersRequest {
+            order_list: orders,
+            request_time: None,
+            receive_window: None,
+        };
 
         assert_eq!(request.order_list.len(), 2);
         assert_eq!(request.order_list[0].symbol, "BTCUSDT");
@@ -217,13 +184,17 @@ mod tests {
 
     #[test]
     fn test_batch_cancel_plan_orders_request_builder() {
-        let orders = vec![
-            BatchCancelPlanOrderItem::by_order_id("BTCUSDT", "plan_1001"),
-        ];
+        let orders = vec![BatchCancelPlanOrderItem {
+            symbol: "BTCUSDT".to_string(),
+            order_id: Some("plan_1001".to_string()),
+            client_order_id: None,
+        }];
 
-        let request = BatchCancelPlanOrdersRequest::new(orders)
-            .request_time(1640995200000)
-            .receive_window(5000);
+        let request = BatchCancelPlanOrdersRequest {
+            order_list: orders,
+            request_time: Some(1640995200000),
+            receive_window: Some(5000),
+        };
 
         assert_eq!(request.request_time, Some(1640995200000));
         assert_eq!(request.receive_window, Some(5000));
@@ -232,11 +203,23 @@ mod tests {
     #[test]
     fn test_batch_cancel_plan_orders_request_serialization() {
         let orders = vec![
-            BatchCancelPlanOrderItem::by_order_id("BTCUSDT", "plan_1001"),
-            BatchCancelPlanOrderItem::by_client_order_id("ETHUSDT", "my-plan-order-123"),
+            BatchCancelPlanOrderItem {
+                symbol: "BTCUSDT".to_string(),
+                order_id: Some("plan_1001".to_string()),
+                client_order_id: None,
+            },
+            BatchCancelPlanOrderItem {
+                symbol: "ETHUSDT".to_string(),
+                order_id: None,
+                client_order_id: Some("my-plan-order-123".to_string()),
+            },
         ];
 
-        let request = BatchCancelPlanOrdersRequest::new(orders);
+        let request = BatchCancelPlanOrdersRequest {
+            order_list: orders,
+            request_time: None,
+            receive_window: None,
+        };
         let json = serde_json::to_string(&request).unwrap();
 
         assert!(json.contains("\"orderList\""));
@@ -259,7 +242,10 @@ mod tests {
         let result: BatchCancelPlanOrderResult = serde_json::from_str(json).unwrap();
 
         assert_eq!(result.order_id, Some("plan_1001".to_string()));
-        assert_eq!(result.client_order_id, Some("my-plan-order-123".to_string()));
+        assert_eq!(
+            result.client_order_id,
+            Some("my-plan-order-123".to_string())
+        );
         assert!(result.success);
         assert!(result.error_code.is_none());
         assert!(result.error_msg.is_none());
@@ -281,7 +267,10 @@ mod tests {
         assert!(result.client_order_id.is_none());
         assert!(!result.success);
         assert_eq!(result.error_code, Some("43025".to_string()));
-        assert_eq!(result.error_msg, Some("Plan order does not exist".to_string()));
+        assert_eq!(
+            result.error_msg,
+            Some("Plan order does not exist".to_string())
+        );
     }
 
     #[test]

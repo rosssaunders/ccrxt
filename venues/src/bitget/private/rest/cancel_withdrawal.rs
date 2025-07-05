@@ -1,12 +1,11 @@
-use crate::bitget::{
-    BitgetRestClient,
-};
-use reqwest::Method;
-use rest::BitgetRequest;
 use serde::{Deserialize, Serialize};
 
+use super::RestClient;
+
+use crate::bitget::RestResult;
+
 /// Request for canceling withdrawal
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Default)]
 pub struct CancelWithdrawalRequest {
     /// Withdraw order ID
     #[serde(rename = "orderId")]
@@ -20,28 +19,33 @@ pub struct CancelWithdrawalResponse {
     pub data: String,
 }
 
-impl CancelWithdrawalRequest {
-    /// Create a new request
-    pub fn new(order_id: impl Into<String>) -> Self {
-        Self {
-            order_id: order_id.into(),
-        }
-    }
-}
-
-impl BitgetRequest for CancelWithdrawalRequest {
-    type Response = CancelWithdrawalResponse;
-
-    fn path(&self) -> String {
-        "/api/v2/spot/wallet/cancel-withdrawal".to_string()
-    }
-
-    fn method(&self) -> String {
-        "POST".to_string()
-    }
-
-    fn need_signature(&self) -> bool {
-        true
+impl RestClient {
+    /// Cancel a withdrawal request
+    ///
+    /// Cancels a withdrawal by order ID.
+    ///
+    /// [API Documentation](https://www.bitget.com/api-doc/spot/withdraw/Cancel-Withdraw)
+    ///
+    /// Rate limit: 5 req/sec/UID
+    ///
+    /// Returns a `RestResult<CancelWithdrawalResponse>` containing the result or an error.
+    pub async fn cancel_withdrawal(
+        &self,
+        params: CancelWithdrawalRequest,
+    ) -> RestResult<CancelWithdrawalResponse> {
+        let endpoint = "/api/v2/spot/wallet/cancel-withdrawal";
+        let body = serde_json::to_string(&params)
+            .map_err(|e| crate::bitget::Errors::Error(format!("Serialization error: {e}")))?;
+        self.send_signed_request::<CancelWithdrawalResponse>(
+            endpoint,
+            reqwest::Method::POST,
+            None,
+            Some(&body),
+            5,
+            false,
+            None,
+        )
+        .await
     }
 }
 
@@ -51,13 +55,17 @@ mod tests {
 
     #[test]
     fn test_request_creation() {
-        let request = CancelWithdrawalRequest::new("1231231312312");
+        let request = CancelWithdrawalRequest {
+            order_id: "1231231312312".into(),
+        };
         assert_eq!(request.order_id, "1231231312312");
     }
 
     #[test]
     fn test_serialization() {
-        let request = CancelWithdrawalRequest::new("1231231312312");
+        let request = CancelWithdrawalRequest {
+            order_id: "1231231312312".into(),
+        };
         let json = serde_json::to_string(&request).unwrap();
         assert!(json.contains("orderId"));
         assert!(json.contains("1231231312312"));

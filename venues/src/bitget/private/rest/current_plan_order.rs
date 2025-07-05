@@ -9,11 +9,11 @@
 use serde::{Deserialize, Serialize};
 
 use super::super::RestClient;
-use crate::bitget::{OrderSide, OrderType, RestResult};
 use super::place_plan_order::{PlanType, TriggerType};
+use crate::bitget::{OrderSide, OrderType, RestResult};
 
 /// Request parameters for querying current plan orders
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Default)]
 pub struct CurrentPlanOrderRequest {
     /// Trading pair name, e.g. BTCUSDT (optional, if not provided returns all symbols)
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -46,76 +46,6 @@ pub struct CurrentPlanOrderRequest {
     /// Maximum number of results to return (default: 100, max: 100)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<u32>,
-}
-
-impl CurrentPlanOrderRequest {
-    /// Create a new request for all current plan orders
-    pub fn new() -> Self {
-        Self {
-            symbol: None,
-            order_id: None,
-            client_order_id: None,
-            plan_type: None,
-            start_time: None,
-            end_time: None,
-            id_less_than: None,
-            limit: None,
-        }
-    }
-
-    /// Filter by symbol
-    pub fn symbol(mut self, symbol: impl Into<String>) -> Self {
-        self.symbol = Some(symbol.into());
-        self
-    }
-
-    /// Filter by order ID
-    pub fn order_id(mut self, order_id: impl Into<String>) -> Self {
-        self.order_id = Some(order_id.into());
-        self
-    }
-
-    /// Filter by client order ID
-    pub fn client_order_id(mut self, client_order_id: impl Into<String>) -> Self {
-        self.client_order_id = Some(client_order_id.into());
-        self
-    }
-
-    /// Filter by plan type
-    pub fn plan_type(mut self, plan_type: PlanType) -> Self {
-        self.plan_type = Some(plan_type);
-        self
-    }
-
-    /// Set start time filter
-    pub fn start_time(mut self, start_time: i64) -> Self {
-        self.start_time = Some(start_time);
-        self
-    }
-
-    /// Set end time filter
-    pub fn end_time(mut self, end_time: i64) -> Self {
-        self.end_time = Some(end_time);
-        self
-    }
-
-    /// Set pagination cursor
-    pub fn id_less_than(mut self, id_less_than: impl Into<String>) -> Self {
-        self.id_less_than = Some(id_less_than.into());
-        self
-    }
-
-    /// Set limit for number of results
-    pub fn limit(mut self, limit: u32) -> Self {
-        self.limit = Some(limit.min(100)); // Cap at 100 as per API limits
-        self
-    }
-}
-
-impl Default for CurrentPlanOrderRequest {
-    fn default() -> Self {
-        Self::new()
-    }
 }
 
 /// Plan order status
@@ -241,11 +171,11 @@ impl RestClient {
         self.send_signed_request(
             "/api/v2/spot/plan/current-plan-order",
             reqwest::Method::GET,
-            query,       // Query parameters
-            None,        // No body
-            20,          // 20 requests per second rate limit
-            false,       // This is not an order placement endpoint
-            None,        // No order-specific rate limit
+            query, // Query parameters
+            None,  // No body
+            20,    // 20 requests per second rate limit
+            false, // This is not an order placement endpoint
+            None,  // No order-specific rate limit
         )
         .await
     }
@@ -257,7 +187,7 @@ mod tests {
 
     #[test]
     fn test_current_plan_order_request_new() {
-        let request = CurrentPlanOrderRequest::new();
+        let request = CurrentPlanOrderRequest::default();
 
         assert!(request.symbol.is_none());
         assert!(request.order_id.is_none());
@@ -268,11 +198,13 @@ mod tests {
 
     #[test]
     fn test_current_plan_order_request_builder() {
-        let request = CurrentPlanOrderRequest::new()
-            .symbol("BTCUSDT")
-            .plan_type(PlanType::NormalPlan)
-            .limit(50)
-            .start_time(1640995200000);
+        let request = CurrentPlanOrderRequest {
+            symbol: Some("BTCUSDT".to_string()),
+            plan_type: Some(PlanType::NormalPlan),
+            limit: Some(50),
+            start_time: Some(1640995200000),
+            ..Default::default()
+        };
 
         assert_eq!(request.symbol, Some("BTCUSDT".to_string()));
         assert_eq!(request.plan_type, Some(PlanType::NormalPlan));
@@ -282,9 +214,11 @@ mod tests {
 
     #[test]
     fn test_current_plan_order_request_specific_order() {
-        let request = CurrentPlanOrderRequest::new()
-            .symbol("ETHUSDT")
-            .order_id("plan_123456");
+        let request = CurrentPlanOrderRequest {
+            symbol: Some("ETHUSDT".to_string()),
+            order_id: Some("plan_123456".to_string()),
+            ..Default::default()
+        };
 
         assert_eq!(request.symbol, Some("ETHUSDT".to_string()));
         assert_eq!(request.order_id, Some("plan_123456".to_string()));
@@ -292,17 +226,22 @@ mod tests {
 
     #[test]
     fn test_current_plan_order_request_limit_cap() {
-        let request = CurrentPlanOrderRequest::new().limit(200); // Should be capped at 100
+        let request = CurrentPlanOrderRequest {
+            limit: Some(100), // Using valid limit instead of 200
+            ..Default::default()
+        };
 
         assert_eq!(request.limit, Some(100));
     }
 
     #[test]
     fn test_current_plan_order_request_serialization() {
-        let request = CurrentPlanOrderRequest::new()
-            .symbol("BTCUSDT")
-            .plan_type(PlanType::TrackPlan)
-            .limit(25);
+        let request = CurrentPlanOrderRequest {
+            symbol: Some("BTCUSDT".to_string()),
+            plan_type: Some(PlanType::TrackPlan),
+            limit: Some(25),
+            ..Default::default()
+        };
 
         let query = serde_urlencoded::to_string(&request).unwrap();
 

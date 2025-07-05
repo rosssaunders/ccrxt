@@ -2,26 +2,30 @@ mod enums;
 mod errors;
 mod rate_limit;
 
-// Private API modules
-mod private;
-// Public API modules
-pub mod public;
-// Futures API modules
-pub mod futures;
-
 // Re-export key components
 pub use enums::*;
-pub use errors::{ApiError, Errors, BitgetError};
+pub use errors::{ApiError, BitgetError, Errors};
 
-// Create error module for backward compatibility  
+// Create error module for backward compatibility
 pub mod error {
     pub use super::errors::BitgetError;
 }
-// Export clients and endpoint types
-pub use private::PrivateRestClient;
-// Alias for backward compatibility  
-pub use private::PrivateRestClient as BitgetRestClient;
-pub use private::{AssetInfo, GetAccountAssetsRequest, GetAccountAssetsResponse};
+
+pub mod public {
+    pub mod rest;
+    pub use self::rest::RestClient;
+}
+
+pub use public::RestClient as PublicRestClient;
+
+pub mod private {
+    pub mod rest;
+    pub use self::rest::RestClient;
+}
+
+pub use private::RestClient as PrivateRestClient;
+
+// Alias for backward compatibility
 pub use rate_limit::{RateLimitHeader, RateLimiter};
 
 pub use crate::bitget::errors::ErrorResponse;

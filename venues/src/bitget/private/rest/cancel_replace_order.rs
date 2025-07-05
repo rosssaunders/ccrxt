@@ -1,15 +1,8 @@
-//! Cancel Replace Order endpoint for Bitget Spot API
-//!
-//! This endpoint allows modifying an existing order by cancelling and replacing it.
-//!
-//! Reference: https://www.bitget.com/api-doc/spot/trade/Cancel-Replace-Order
-//! Endpoint: POST /api/v2/spot/trade/cancel-replace-order
-//! Rate limit: 10 requests/second/UID
-
 use serde::{Deserialize, Serialize};
 
-use super::super::RestClient;
 use crate::bitget::{OrderSide, OrderType, RestResult};
+
+use super::super::RestClient;
 use super::place_order::{Force, STPMode};
 
 /// Request parameters for cancelling and replacing an order
@@ -62,132 +55,6 @@ pub struct CancelReplaceOrderRequest {
     /// If set, request is valid only when server time is within receiveWindow
     #[serde(rename = "receiveWindow", skip_serializing_if = "Option::is_none")]
     pub receive_window: Option<i64>,
-}
-
-impl CancelReplaceOrderRequest {
-    /// Create a request to cancel and replace an order by order ID with a limit order
-    pub fn limit_by_order_id(
-        symbol: impl Into<String>,
-        order_id: impl Into<String>,
-        side: OrderSide,
-        price: impl Into<String>,
-        size: impl Into<String>,
-    ) -> Self {
-        Self {
-            symbol: symbol.into(),
-            order_id: Some(order_id.into()),
-            client_order_id: None,
-            side,
-            order_type: OrderType::Limit,
-            force: Force::GTC,
-            price: Some(price.into()),
-            size: size.into(),
-            new_client_order_id: None,
-            stp_mode: None,
-            request_time: None,
-            receive_window: None,
-        }
-    }
-
-    /// Create a request to cancel and replace an order by client order ID with a limit order
-    pub fn limit_by_client_order_id(
-        symbol: impl Into<String>,
-        client_order_id: impl Into<String>,
-        side: OrderSide,
-        price: impl Into<String>,
-        size: impl Into<String>,
-    ) -> Self {
-        Self {
-            symbol: symbol.into(),
-            order_id: None,
-            client_order_id: Some(client_order_id.into()),
-            side,
-            order_type: OrderType::Limit,
-            force: Force::GTC,
-            price: Some(price.into()),
-            size: size.into(),
-            new_client_order_id: None,
-            stp_mode: None,
-            request_time: None,
-            receive_window: None,
-        }
-    }
-
-    /// Create a request to cancel and replace an order by order ID with a market order
-    pub fn market_by_order_id(
-        symbol: impl Into<String>,
-        order_id: impl Into<String>,
-        side: OrderSide,
-        size: impl Into<String>,
-    ) -> Self {
-        Self {
-            symbol: symbol.into(),
-            order_id: Some(order_id.into()),
-            client_order_id: None,
-            side,
-            order_type: OrderType::Market,
-            force: Force::GTC, // Force is ignored for market orders
-            price: None,
-            size: size.into(),
-            new_client_order_id: None,
-            stp_mode: None,
-            request_time: None,
-            receive_window: None,
-        }
-    }
-
-    /// Create a request to cancel and replace an order by client order ID with a market order
-    pub fn market_by_client_order_id(
-        symbol: impl Into<String>,
-        client_order_id: impl Into<String>,
-        side: OrderSide,
-        size: impl Into<String>,
-    ) -> Self {
-        Self {
-            symbol: symbol.into(),
-            order_id: None,
-            client_order_id: Some(client_order_id.into()),
-            side,
-            order_type: OrderType::Market,
-            force: Force::GTC, // Force is ignored for market orders
-            price: None,
-            size: size.into(),
-            new_client_order_id: None,
-            stp_mode: None,
-            request_time: None,
-            receive_window: None,
-        }
-    }
-
-    /// Set the execution force/strategy
-    pub fn force(mut self, force: Force) -> Self {
-        self.force = force;
-        self
-    }
-
-    /// Set a new custom client order ID
-    pub fn new_client_order_id(mut self, new_client_order_id: impl Into<String>) -> Self {
-        self.new_client_order_id = Some(new_client_order_id.into());
-        self
-    }
-
-    /// Set the self-trade prevention mode
-    pub fn stp_mode(mut self, stp_mode: STPMode) -> Self {
-        self.stp_mode = Some(stp_mode);
-        self
-    }
-
-    /// Set the request timestamp
-    pub fn request_time(mut self, request_time: i64) -> Self {
-        self.request_time = Some(request_time);
-        self
-    }
-
-    /// Set the receive window
-    pub fn receive_window(mut self, receive_window: i64) -> Self {
-        self.receive_window = Some(receive_window);
-        self
-    }
 }
 
 /// Response from cancelling and replacing an order
@@ -252,13 +119,20 @@ mod tests {
 
     #[test]
     fn test_cancel_replace_order_request_limit_by_order_id() {
-        let request = CancelReplaceOrderRequest::limit_by_order_id(
-            "BTCUSDT",
-            "1234567890",
-            OrderSide::Buy,
-            "51000",
-            "0.002",
-        );
+        let request = CancelReplaceOrderRequest {
+            symbol: "BTCUSDT".to_string(),
+            order_id: Some("1234567890".to_string()),
+            client_order_id: None,
+            side: OrderSide::Buy,
+            order_type: OrderType::Limit,
+            force: Force::GTC,
+            price: Some("51000".to_string()),
+            size: "0.002".to_string(),
+            new_client_order_id: None,
+            stp_mode: None,
+            request_time: None,
+            receive_window: None,
+        };
 
         assert_eq!(request.symbol, "BTCUSDT");
         assert_eq!(request.order_id, Some("1234567890".to_string()));
@@ -272,13 +146,20 @@ mod tests {
 
     #[test]
     fn test_cancel_replace_order_request_limit_by_client_order_id() {
-        let request = CancelReplaceOrderRequest::limit_by_client_order_id(
-            "ETHUSDT",
-            "my-order-123",
-            OrderSide::Sell,
-            "3000",
-            "1.5",
-        );
+        let request = CancelReplaceOrderRequest {
+            symbol: "ETHUSDT".to_string(),
+            order_id: None,
+            client_order_id: Some("my-order-123".to_string()),
+            side: OrderSide::Sell,
+            order_type: OrderType::Limit,
+            force: Force::GTC,
+            price: Some("3000".to_string()),
+            size: "1.5".to_string(),
+            new_client_order_id: None,
+            stp_mode: None,
+            request_time: None,
+            receive_window: None,
+        };
 
         assert_eq!(request.symbol, "ETHUSDT");
         assert!(request.order_id.is_none());
@@ -291,12 +172,20 @@ mod tests {
 
     #[test]
     fn test_cancel_replace_order_request_market() {
-        let request = CancelReplaceOrderRequest::market_by_order_id(
-            "BTCUSDT",
-            "1234567890",
-            OrderSide::Sell,
-            "0.5",
-        );
+        let request = CancelReplaceOrderRequest {
+            symbol: "BTCUSDT".to_string(),
+            order_id: Some("1234567890".to_string()),
+            client_order_id: None,
+            side: OrderSide::Sell,
+            order_type: OrderType::Market,
+            force: Force::GTC,
+            price: None,
+            size: "0.5".to_string(),
+            new_client_order_id: None,
+            stp_mode: None,
+            request_time: None,
+            receive_window: None,
+        };
 
         assert_eq!(request.symbol, "BTCUSDT");
         assert_eq!(request.order_id, Some("1234567890".to_string()));
@@ -308,32 +197,45 @@ mod tests {
 
     #[test]
     fn test_cancel_replace_order_request_builder() {
-        let request = CancelReplaceOrderRequest::limit_by_order_id(
-            "BTCUSDT",
-            "1234567890",
-            OrderSide::Buy,
-            "51000",
-            "0.002",
-        )
-        .force(Force::PostOnly)
-        .new_client_order_id("new-order-456")
-        .stp_mode(STPMode::CancelTaker);
+        let request = CancelReplaceOrderRequest {
+            symbol: "BTCUSDT".to_string(),
+            order_id: Some("1234567890".to_string()),
+            client_order_id: None,
+            side: OrderSide::Buy,
+            order_type: OrderType::Limit,
+            force: Force::PostOnly,
+            price: Some("51000".to_string()),
+            size: "0.002".to_string(),
+            new_client_order_id: Some("new-order-456".to_string()),
+            stp_mode: Some(STPMode::CancelTaker),
+            request_time: None,
+            receive_window: None,
+        };
 
         assert_eq!(request.force, Force::PostOnly);
-        assert_eq!(request.new_client_order_id, Some("new-order-456".to_string()));
+        assert_eq!(
+            request.new_client_order_id,
+            Some("new-order-456".to_string())
+        );
         assert_eq!(request.stp_mode, Some(STPMode::CancelTaker));
     }
 
     #[test]
     fn test_cancel_replace_order_request_serialization() {
-        let request = CancelReplaceOrderRequest::limit_by_order_id(
-            "BTCUSDT",
-            "1234567890",
-            OrderSide::Buy,
-            "51000",
-            "0.002",
-        )
-        .new_client_order_id("new-order-456");
+        let request = CancelReplaceOrderRequest {
+            symbol: "BTCUSDT".to_string(),
+            order_id: Some("1234567890".to_string()),
+            client_order_id: None,
+            side: OrderSide::Buy,
+            order_type: OrderType::Limit,
+            force: Force::GTC,
+            price: Some("51000".to_string()),
+            size: "0.002".to_string(),
+            new_client_order_id: Some("new-order-456".to_string()),
+            stp_mode: None,
+            request_time: None,
+            receive_window: None,
+        };
 
         let json = serde_json::to_string(&request).unwrap();
 
@@ -361,7 +263,10 @@ mod tests {
         assert_eq!(response.order_id, "2001");
         assert_eq!(response.client_order_id, Some("new-order-456".to_string()));
         assert_eq!(response.cancel_order_id, "1001");
-        assert_eq!(response.cancel_client_order_id, Some("old-order-123".to_string()));
+        assert_eq!(
+            response.cancel_client_order_id,
+            Some("old-order-123".to_string())
+        );
     }
 
     #[test]

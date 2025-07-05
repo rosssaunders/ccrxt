@@ -1,14 +1,10 @@
-use crate::bitget::{BitgetRestClient, enums::*, error::BitgetError};
-use reqwest::Method;
-use rest::BitgetRequest;
+use super::RestClient;
+use crate::bitget::{Errors, RestResult};
 use serde::{Deserialize, Serialize};
 
 /// Get Deposit Records
 ///
-/// Get Deposit Records.
-///
 /// Frequency limit: 10 times/1s (UID)
-
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GetDepositRecordsRequest {
     /// Coin name, e.g. USDT
@@ -105,64 +101,33 @@ pub struct DepositRecord {
     pub u_time: String,
 }
 
-impl GetDepositRecordsRequest {
-    pub fn new(start_time: impl Into<String>, end_time: impl Into<String>) -> Self {
-        Self {
-            coin: None,
-            order_id: None,
-            start_time: start_time.into(),
-            end_time: end_time.into(),
-            id_less_than: None,
-            limit: None,
-        }
-    }
-
-    pub fn coin(mut self, coin: impl Into<String>) -> Self {
-        self.coin = Some(coin.into());
-        self
-    }
-
-    pub fn order_id(mut self, order_id: impl Into<String>) -> Self {
-        self.order_id = Some(order_id.into());
-        self
-    }
-
-    pub fn id_less_than(mut self, id_less_than: impl Into<String>) -> Self {
-        self.id_less_than = Some(id_less_than.into());
-        self
-    }
-
-    pub fn limit(mut self, limit: impl Into<String>) -> Self {
-        self.limit = Some(limit.into());
-        self
-    }
-}
-
-impl BitgetRequest for GetDepositRecordsRequest {
-    type Response = GetDepositRecordsResponse;
-
-    fn path(&self) -> String {
-        "/api/v2/spot/wallet/deposit-records".to_string()
-    }
-
-    fn method(&self) -> String {
-        "GET".to_string()
-    }
-
-    fn need_signature(&self) -> bool {
-        true
-    }
-}
-
-impl BitgetRestClient {
+impl RestClient {
     /// Get Deposit Records
     ///
-    /// Get Deposit Records.
+    /// Get Deposit Records for a given coin, time range, and optional filters.
+    ///
+    /// [API Documentation](https://www.bitget.com/api-doc/spot/asset/Get-Deposit-Records)
+    ///
+    /// Frequency limit: 10 times/1s (UID)
+    ///
+    /// Returns a `RestResult<GetDepositRecordsResponse>` containing the deposit records or an error.
     pub async fn get_deposit_records(
         &self,
-        request: GetDepositRecordsRequest,
-    ) -> Result<GetDepositRecordsResponse, BitgetError> {
-        self.send_request(&request).await
+        params: GetDepositRecordsRequest,
+    ) -> RestResult<GetDepositRecordsResponse> {
+        let endpoint = "/api/v2/spot/wallet/deposit-records";
+        let body = serde_json::to_string(&params)
+            .map_err(|e| Errors::Error(format!("Serialization error: {e}")))?;
+        self.send_signed_request::<GetDepositRecordsResponse>(
+            endpoint,
+            reqwest::Method::POST,
+            None,
+            Some(&body),
+            10,
+            false,
+            None,
+        )
+        .await
     }
 }
 
@@ -172,9 +137,14 @@ mod tests {
 
     #[test]
     fn test_get_deposit_records_request_serialization() {
-        let request = GetDepositRecordsRequest::new("1659036670000", "1659076670000")
-            .coin("USDT")
-            .limit("20");
+        let request = GetDepositRecordsRequest {
+            start_time: "1659036670000".to_string(),
+            end_time: "1659076670000".to_string(),
+            coin: Some("USDT".to_string()),
+            limit: Some("20".to_string()),
+            order_id: None,
+            id_less_than: None,
+        };
 
         let serialized = serde_json::to_string(&request).unwrap();
         println!("Serialized request: {}", serialized);
@@ -220,7 +190,14 @@ mod tests {
     #[tokio::test]
     async fn test_get_deposit_records_endpoint() {
         // This test requires API credentials and should be run manually
-        let _request = GetDepositRecordsRequest::new("1659036670000", "1659076670000").coin("USDT");
+        let _request = GetDepositRecordsRequest {
+            start_time: "1659036670000".to_string(),
+            end_time: "1659076670000".to_string(),
+            coin: Some("USDT".to_string()),
+            order_id: None,
+            id_less_than: None,
+            limit: None,
+        };
 
         // Uncomment the following lines to test with real API credentials:
         // let client = BitgetRestClient::new("api_key", "secret", "passphrase", false);

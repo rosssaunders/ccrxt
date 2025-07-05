@@ -1,14 +1,9 @@
-use crate::bitget::{BitgetRestClient, enums::*, error::BitgetError};
-use reqwest::Method;
-use rest::BitgetRequest;
 use serde::{Deserialize, Serialize};
 
-/// Get Withdrawal Records
-///
-/// Get Withdrawal Records.
-///
-/// Frequency limit: 10 times/1s (User ID)
+use super::RestClient;
+use crate::bitget::{Errors, RestResult};
 
+/// Get Withdrawal Records.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GetWithdrawalRecordsRequest {
     /// Coin name, e.g. USDT
@@ -122,70 +117,26 @@ pub struct WithdrawalRecord {
     pub u_time: String,
 }
 
-impl GetWithdrawalRecordsRequest {
-    pub fn new(start_time: impl Into<String>, end_time: impl Into<String>) -> Self {
-        Self {
-            coin: None,
-            client_oid: None,
-            start_time: start_time.into(),
-            end_time: end_time.into(),
-            id_less_than: None,
-            order_id: None,
-            limit: None,
-        }
-    }
-
-    pub fn coin(mut self, coin: impl Into<String>) -> Self {
-        self.coin = Some(coin.into());
-        self
-    }
-
-    pub fn client_oid(mut self, client_oid: impl Into<String>) -> Self {
-        self.client_oid = Some(client_oid.into());
-        self
-    }
-
-    pub fn id_less_than(mut self, id_less_than: impl Into<String>) -> Self {
-        self.id_less_than = Some(id_less_than.into());
-        self
-    }
-
-    pub fn order_id(mut self, order_id: impl Into<String>) -> Self {
-        self.order_id = Some(order_id.into());
-        self
-    }
-
-    pub fn limit(mut self, limit: impl Into<String>) -> Self {
-        self.limit = Some(limit.into());
-        self
-    }
-}
-
-impl BitgetRequest for GetWithdrawalRecordsRequest {
-    type Response = GetWithdrawalRecordsResponse;
-
-    fn path(&self) -> String {
-        "/api/v2/spot/wallet/withdrawal-records".to_string()
-    }
-
-    fn method(&self) -> String {
-        "GET".to_string()
-    }
-
-    fn need_signature(&self) -> bool {
-        true
-    }
-}
-
-impl BitgetRestClient {
-    /// Get Withdrawal Records
-    ///
+impl RestClient {
     /// Get Withdrawal Records.
+    /// Frequency limit: 10 times/1s (User ID)
     pub async fn get_withdrawal_records(
         &self,
         request: GetWithdrawalRecordsRequest,
-    ) -> Result<GetWithdrawalRecordsResponse, BitgetError> {
-        self.send_request(&request).await
+    ) -> RestResult<GetWithdrawalRecordsResponse> {
+        self.send_signed_request(
+            "/api/v2/spot/wallet/withdrawal-records",
+            reqwest::Method::GET,
+            None,
+            Some(
+                &serde_json::to_string(&request)
+                    .map_err(|e| Errors::Error(format!("Serialization error: {e}")))?,
+            ),
+            10,
+            false,
+            None,
+        )
+        .await
     }
 }
 
@@ -195,12 +146,18 @@ mod tests {
 
     #[test]
     fn test_get_withdrawal_records_request_serialization() {
-        let request = GetWithdrawalRecordsRequest::new("1659036670000", "1659076670000")
-            .coin("USDT")
-            .limit("20");
+        let request = GetWithdrawalRecordsRequest {
+            coin: Some("USDT".to_string()),
+            client_oid: None,
+            start_time: "1659036670000".to_string(),
+            end_time: "1659076670000".to_string(),
+            id_less_than: None,
+            order_id: None,
+            limit: Some("20".to_string()),
+        };
 
         let serialized = serde_json::to_string(&request).unwrap();
-        println!("Serialized request: {}", serialized);
+        // println!("Serialized request: {}", serialized); // Avoid println! per project rules
 
         assert!(serialized.contains("\"startTime\":\"1659036670000\""));
         assert!(serialized.contains("\"endTime\":\"1659076670000\""));
@@ -246,8 +203,15 @@ mod tests {
     #[tokio::test]
     async fn test_get_withdrawal_records_endpoint() {
         // This test requires API credentials and should be run manually
-        let _request =
-            GetWithdrawalRecordsRequest::new("1659036670000", "1659076670000").coin("USDT");
+        let _request = GetWithdrawalRecordsRequest {
+            coin: Some("USDT".to_string()),
+            client_oid: None,
+            start_time: "1659036670000".to_string(),
+            end_time: "1659076670000".to_string(),
+            id_less_than: None,
+            order_id: None,
+            limit: None,
+        };
 
         // Uncomment the following lines to test with real API credentials:
         // let client = BitgetRestClient::new("api_key", "secret", "passphrase", false);

@@ -1,14 +1,9 @@
-use crate::bitget::{BitgetRestClient, enums::*, error::BitgetError};
-use reqwest::Method;
-use rest::BitgetRequest;
+use super::RestClient;
+use crate::bitget::enums::*;
+use crate::bitget::{Errors, RestResult};
 use serde::{Deserialize, Serialize};
 
 /// Get MainSub Transfer Record
-///
-/// Get transfer record.
-///
-/// Rate limit: 20 req/sec/UID
-
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GetMainSubTransferRecordRequest {
     /// Token name
@@ -164,31 +159,33 @@ impl Default for GetMainSubTransferRecordRequest {
     }
 }
 
-impl BitgetRequest for GetMainSubTransferRecordRequest {
-    type Response = GetMainSubTransferRecordResponse;
-
-    fn path(&self) -> String {
-        "/api/v2/spot/account/sub-main-trans-record".to_string()
-    }
-
-    fn method(&self) -> String {
-        "GET".to_string()
-    }
-
-    fn need_signature(&self) -> bool {
-        true
-    }
-}
-
-impl BitgetRestClient {
+impl RestClient {
     /// Get MainSub Transfer Record
     ///
-    /// Get transfer record.
+    /// Get transfer record for main/sub accounts.
+    ///
+    /// [API Documentation](https://www.bitget.com/api-doc/spot/account/Get-Sub-Main-Transfer-Record)
+    ///
+    /// Rate limit: 20 req/sec/UID
+    ///
+    /// Returns a `RestResult<GetMainSubTransferRecordResponse>` containing the transfer records or an error.
     pub async fn get_main_sub_transfer_record(
         &self,
-        request: GetMainSubTransferRecordRequest,
-    ) -> Result<GetMainSubTransferRecordResponse, BitgetError> {
-        self.send_request(&request).await
+        params: GetMainSubTransferRecordRequest,
+    ) -> RestResult<GetMainSubTransferRecordResponse> {
+        let endpoint = "/api/v2/spot/account/sub-main-trans-record";
+        let body = serde_json::to_string(&params)
+            .map_err(|e| Errors::Error(format!("Serialization error: {e}")))?;
+        self.send_signed_request::<GetMainSubTransferRecordResponse>(
+            endpoint,
+            reqwest::Method::POST,
+            None,
+            Some(&body),
+            20,
+            false,
+            None,
+        )
+        .await
     }
 }
 
@@ -198,10 +195,12 @@ mod tests {
 
     #[test]
     fn test_get_main_sub_transfer_record_request_serialization() {
-        let request = GetMainSubTransferRecordRequest::new()
-            .coin("USDT")
-            .role(TransferRole::Initiator)
-            .limit("100");
+        let request = GetMainSubTransferRecordRequest {
+            coin: Some("USDT".to_string()),
+            role: Some(TransferRole::Initiator),
+            limit: Some("100".to_string()),
+            ..Default::default()
+        };
 
         let serialized = serde_json::to_string(&request).unwrap();
         println!("Serialized request: {}", serialized);
@@ -243,7 +242,16 @@ mod tests {
     #[tokio::test]
     async fn test_get_main_sub_transfer_record_endpoint() {
         // This test requires API credentials and should be run manually
-        let _request = GetMainSubTransferRecordRequest::new().coin("USDT");
+        let _request = GetMainSubTransferRecordRequest {
+            coin: Some("USDT".to_string()),
+            role: None,
+            sub_uid: None,
+            start_time: None,
+            end_time: None,
+            client_oid: None,
+            limit: None,
+            id_less_than: None,
+        };
 
         // Uncomment the following lines to test with real API credentials:
         // let client = BitgetRestClient::new("api_key", "secret", "passphrase", false);

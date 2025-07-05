@@ -1,18 +1,11 @@
-//! Account Info endpoint for Bitget Spot API
-//!
-//! This endpoint allows retrieving general account information.
-//!
-//! Reference: https://www.bitget.com/api-doc/spot/account/Get-Account-Info
-//! Endpoint: GET /api/v2/spot/account/info
-//! Rate limit: 10 requests/second/UID
-
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 use crate::bitget::RestResult;
 
 /// Request parameters for getting account information
-#[derive(Debug, Clone, Serialize)]
+/// Request parameters for getting account information
+#[derive(Debug, Clone, Serialize, Default)]
 pub struct AccountInfoRequest {
     /// Request timestamp (Unix milliseconds)
     #[serde(rename = "requestTime", skip_serializing_if = "Option::is_none")]
@@ -22,34 +15,6 @@ pub struct AccountInfoRequest {
     /// If set, request is valid only when server time is within receiveWindow
     #[serde(rename = "receiveWindow", skip_serializing_if = "Option::is_none")]
     pub receive_window: Option<i64>,
-}
-
-impl AccountInfoRequest {
-    /// Create a new account info request
-    pub fn new() -> Self {
-        Self {
-            request_time: None,
-            receive_window: None,
-        }
-    }
-
-    /// Set the request timestamp
-    pub fn request_time(mut self, request_time: i64) -> Self {
-        self.request_time = Some(request_time);
-        self
-    }
-
-    /// Set the receive window
-    pub fn receive_window(mut self, receive_window: i64) -> Self {
-        self.receive_window = Some(receive_window);
-        self
-    }
-}
-
-impl Default for AccountInfoRequest {
-    fn default() -> Self {
-        Self::new()
-    }
 }
 
 /// Account VIP level information
@@ -149,7 +114,10 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the account information response or an error
-    pub async fn account_info(&self, request: AccountInfoRequest) -> RestResult<AccountInfoResponse> {
+    pub async fn account_info(
+        &self,
+        request: AccountInfoRequest,
+    ) -> RestResult<AccountInfoResponse> {
         let query_params = serde_urlencoded::to_string(&request).map_err(|e| {
             crate::bitget::Errors::Error(format!("Failed to serialize query parameters: {e}"))
         })?;
@@ -163,11 +131,11 @@ impl RestClient {
         self.send_signed_request(
             "/api/v2/spot/account/info",
             reqwest::Method::GET,
-            query,       // Query parameters
-            None,        // No body
-            10,          // 10 requests per second rate limit
-            false,       // This is not an order placement endpoint
-            None,        // No order-specific rate limit
+            query, // Query parameters
+            None,  // No body
+            10,    // 10 requests per second rate limit
+            false, // This is not an order placement endpoint
+            None,  // No order-specific rate limit
         )
         .await
     }
@@ -179,7 +147,10 @@ mod tests {
 
     #[test]
     fn test_account_info_request_new() {
-        let request = AccountInfoRequest::new();
+        let request = AccountInfoRequest {
+            request_time: None,
+            receive_window: None,
+        };
 
         assert!(request.request_time.is_none());
         assert!(request.receive_window.is_none());
@@ -187,9 +158,10 @@ mod tests {
 
     #[test]
     fn test_account_info_request_builder() {
-        let request = AccountInfoRequest::new()
-            .request_time(1640995200000)
-            .receive_window(5000);
+        let request = AccountInfoRequest {
+            request_time: Some(1640995200000),
+            receive_window: Some(5000),
+        };
 
         assert_eq!(request.request_time, Some(1640995200000));
         assert_eq!(request.receive_window, Some(5000));
@@ -197,8 +169,10 @@ mod tests {
 
     #[test]
     fn test_account_info_request_serialization() {
-        let request = AccountInfoRequest::new()
-            .request_time(1640995200000);
+        let request = AccountInfoRequest {
+            request_time: Some(1640995200000),
+            receive_window: None,
+        };
 
         let query = serde_urlencoded::to_string(&request).unwrap();
 
@@ -208,7 +182,10 @@ mod tests {
 
     #[test]
     fn test_account_info_request_serialization_empty() {
-        let request = AccountInfoRequest::new();
+        let request = AccountInfoRequest {
+            request_time: None,
+            receive_window: None,
+        };
         let query = serde_urlencoded::to_string(&request).unwrap();
 
         assert!(query.is_empty());

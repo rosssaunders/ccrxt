@@ -1,16 +1,10 @@
-use crate::bitget::{BitgetRestClient, enums::*, error::BitgetError};
-use reqwest::Method;
-use rest::BitgetRequest;
+use super::RestClient;
+use crate::bitget::{Errors, RestResult};
+
 use serde::{Deserialize, Serialize};
 
 /// Get Sub-accounts Assets
-///
-/// Get Sub-accounts Assets (only return the sub-accounts which assets > 0).
-/// ND Brokers are not allowed to call this endpoint.
-///
-/// Frequency limit: 10 times/1s (User ID)
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct GetSubaccountAssetsRequest {
     /// Cursor ID
     /// Pagination cursor. Do not pass it in the first request.
@@ -63,57 +57,30 @@ pub struct AssetDetail {
     pub u_time: String,
 }
 
-impl GetSubaccountAssetsRequest {
-    pub fn new() -> Self {
-        Self {
-            id_less_than: None,
-            limit: None,
-        }
-    }
-
-    pub fn id_less_than(mut self, id_less_than: impl Into<String>) -> Self {
-        self.id_less_than = Some(id_less_than.into());
-        self
-    }
-
-    pub fn limit(mut self, limit: impl Into<String>) -> Self {
-        self.limit = Some(limit.into());
-        self
-    }
-}
-
-impl Default for GetSubaccountAssetsRequest {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-impl BitgetRequest for GetSubaccountAssetsRequest {
-    type Response = GetSubaccountAssetsResponse;
-
-    fn path(&self) -> String {
-        "/api/v2/spot/account/subaccount-assets".to_string()
-    }
-
-    fn method(&self) -> String {
-        "GET".to_string()
-    }
-
-    fn need_signature(&self) -> bool {
-        true
-    }
-}
-
-impl BitgetRestClient {
+impl RestClient {
     /// Get Sub-accounts Assets
     ///
     /// Get Sub-accounts Assets (only return the sub-accounts which assets > 0).
     /// ND Brokers are not allowed to call this endpoint.
+    ///
+    /// Frequency limit: 10 times/1s (User ID)
     pub async fn get_subaccount_assets(
         &self,
         request: GetSubaccountAssetsRequest,
-    ) -> Result<GetSubaccountAssetsResponse, BitgetError> {
-        self.send_request(&request).await
+    ) -> RestResult<GetSubaccountAssetsResponse> {
+        self.send_signed_request(
+            "/api/v2/spot/wallet/subaccount-assets",
+            reqwest::Method::GET,
+            None,
+            Some(
+                &serde_json::to_string(&request)
+                    .map_err(|e| Errors::Error(format!("Serialization error: {e}")))?,
+            ),
+            10,
+            false,
+            None,
+        )
+        .await
     }
 }
 
@@ -123,7 +90,10 @@ mod tests {
 
     #[test]
     fn test_get_subaccount_assets_request_serialization() {
-        let request = GetSubaccountAssetsRequest::new().limit("20");
+        let request = GetSubaccountAssetsRequest {
+            limit: Some("20".to_string()),
+            ..Default::default()
+        };
 
         let serialized = serde_json::to_string(&request).unwrap();
         println!("Serialized request: {}", serialized);
@@ -165,7 +135,10 @@ mod tests {
     #[tokio::test]
     async fn test_get_subaccount_assets_endpoint() {
         // This test requires API credentials and should be run manually
-        let _request = GetSubaccountAssetsRequest::new().limit("10");
+        let _request = GetSubaccountAssetsRequest {
+            limit: Some("10".to_string()),
+            ..Default::default()
+        };
 
         // Uncomment the following lines to test with real API credentials:
         // let client = BitgetRestClient::new("api_key", "secret", "passphrase", false);

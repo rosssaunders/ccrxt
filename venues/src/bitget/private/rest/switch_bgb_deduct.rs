@@ -1,6 +1,7 @@
-use crate::bitget::{BitgetRestClient, enums::*, error::BitgetError};
-use reqwest::Method;
-use rest::BitgetRequest;
+use super::RestClient;
+use crate::bitget::enums::*;
+use crate::bitget::{Errors, RestResult};
+
 use serde::{Deserialize, Serialize};
 
 /// Switch BGB Deduct
@@ -25,37 +26,27 @@ pub struct SwitchBgbDeductResponse {
     pub data: bool,
 }
 
-impl SwitchBgbDeductRequest {
-    pub fn new(deduct: BgbDeductStatus) -> Self {
-        Self { deduct }
-    }
-}
-
-impl BitgetRequest for SwitchBgbDeductRequest {
-    type Response = SwitchBgbDeductResponse;
-
-    fn path(&self) -> String {
-        "/api/v2/spot/account/switch-deduct".to_string()
-    }
-
-    fn method(&self) -> String {
-        "POST".to_string()
-    }
-
-    fn need_signature(&self) -> bool {
-        true
-    }
-}
-
-impl BitgetRestClient {
+impl RestClient {
     /// Switch BGB Deduct
     ///
     /// Switch the BGB deduct status for fee optimization.
     pub async fn switch_bgb_deduct(
         &self,
         request: SwitchBgbDeductRequest,
-    ) -> Result<SwitchBgbDeductResponse, BitgetError> {
-        self.send_request(&request).await
+    ) -> RestResult<SwitchBgbDeductResponse> {
+        self.send_signed_request(
+            "/api/v2/spot/account/switch-deduct",
+            reqwest::Method::POST,
+            None,
+            Some(
+                &serde_json::to_string(&request)
+                    .map_err(|e| Errors::Error(format!("Serialization error: {e}")))?,
+            ),
+            1,
+            false,
+            None,
+        )
+        .await
     }
 }
 
@@ -65,7 +56,9 @@ mod tests {
 
     #[test]
     fn test_switch_bgb_deduct_request_serialization() {
-        let request = SwitchBgbDeductRequest::new(BgbDeductStatus::On);
+        let request = SwitchBgbDeductRequest {
+            deduct: BgbDeductStatus::On,
+        };
 
         let serialized = serde_json::to_string(&request).unwrap();
         println!("Serialized request: {}", serialized);
@@ -91,7 +84,9 @@ mod tests {
     #[tokio::test]
     async fn test_switch_bgb_deduct_endpoint() {
         // This test requires API credentials and should be run manually
-        let _request = SwitchBgbDeductRequest::new(BgbDeductStatus::On);
+        let _request = SwitchBgbDeductRequest {
+            deduct: BgbDeductStatus::On,
+        };
 
         // Uncomment the following lines to test with real API credentials:
         // let client = BitgetRestClient::new("api_key", "secret", "passphrase", false);

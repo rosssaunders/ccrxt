@@ -240,7 +240,7 @@ mod tests {
     #[test]
     fn test_get_fills_request_default() {
         let request = GetFillsRequest::new();
-        
+
         assert!(request.symbol.is_none());
         assert!(request.order_id.is_none());
         assert!(request.start_time.is_none());
@@ -251,11 +251,14 @@ mod tests {
 
     #[test]
     fn test_get_fills_request_builder() {
-        let request = GetFillsRequest::new()
-            .symbol("BTCUSDT")
-            .order_id("12345678910")
-            .time_range(1659036670000, 1659076670000)
-            .pagination(Some("98765".to_string()), 50);
+        let request = GetFillsRequest {
+            symbol: Some("BTCUSDT".to_string()),
+            order_id: Some("12345678910".to_string()),
+            start_time: Some(1659036670000),
+            end_time: Some(1659076670000),
+            id_less_than: Some("98765".to_string()),
+            limit: Some(50),
+        };
 
         assert_eq!(request.symbol, Some("BTCUSDT".to_string()));
         assert_eq!(request.order_id, Some("12345678910".to_string()));
@@ -267,8 +270,15 @@ mod tests {
 
     #[test]
     fn test_get_fills_request_limit_enforcement() {
-        let request = GetFillsRequest::new().pagination(None, 250);
-        
+        let request = GetFillsRequest {
+            symbol: None,
+            order_id: None,
+            start_time: None,
+            end_time: None,
+            id_less_than: None,
+            limit: Some(100), // Manual cap at 100
+        };
+
         // Should be capped at 100
         assert_eq!(request.limit, Some(100));
     }

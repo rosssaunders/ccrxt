@@ -9,9 +9,9 @@
 use serde::{Deserialize, Serialize};
 
 use super::super::RestClient;
-use crate::bitget::{OrderSide, OrderType, RestResult};
-use super::place_plan_order::{PlanType, TriggerType};
 use super::current_plan_order::PlanOrderStatus;
+use super::place_plan_order::{PlanType, TriggerType};
+use crate::bitget::{OrderSide, OrderType, RestResult};
 
 /// Request parameters for querying plan sub order details
 #[derive(Debug, Clone, Serialize)]
@@ -26,29 +26,6 @@ pub struct PlanSubOrderRequest {
     /// Client order ID (either orderId or clientOrderId is required)
     #[serde(rename = "clientOrderId", skip_serializing_if = "Option::is_none")]
     pub client_order_id: Option<String>,
-}
-
-impl PlanSubOrderRequest {
-    /// Create a request to query plan order details by order ID
-    pub fn by_order_id(symbol: impl Into<String>, order_id: impl Into<String>) -> Self {
-        Self {
-            symbol: symbol.into(),
-            order_id: Some(order_id.into()),
-            client_order_id: None,
-        }
-    }
-
-    /// Create a request to query plan order details by client order ID
-    pub fn by_client_order_id(
-        symbol: impl Into<String>,
-        client_order_id: impl Into<String>,
-    ) -> Self {
-        Self {
-            symbol: symbol.into(),
-            order_id: None,
-            client_order_id: Some(client_order_id.into()),
-        }
-    }
 }
 
 /// Detailed plan order information
@@ -174,7 +151,11 @@ mod tests {
 
     #[test]
     fn test_plan_sub_order_request_by_order_id() {
-        let request = PlanSubOrderRequest::by_order_id("BTCUSDT", "plan_1234567890");
+        let request = PlanSubOrderRequest {
+            symbol: "BTCUSDT".to_string(),
+            order_id: Some("plan_1234567890".to_string()),
+            client_order_id: None,
+        };
 
         assert_eq!(request.symbol, "BTCUSDT");
         assert_eq!(request.order_id, Some("plan_1234567890".to_string()));
@@ -183,16 +164,27 @@ mod tests {
 
     #[test]
     fn test_plan_sub_order_request_by_client_order_id() {
-        let request = PlanSubOrderRequest::by_client_order_id("ETHUSDT", "my-plan-order-123");
+        let request = PlanSubOrderRequest {
+            symbol: "ETHUSDT".to_string(),
+            order_id: None,
+            client_order_id: Some("my-plan-order-123".to_string()),
+        };
 
         assert_eq!(request.symbol, "ETHUSDT");
         assert!(request.order_id.is_none());
-        assert_eq!(request.client_order_id, Some("my-plan-order-123".to_string()));
+        assert_eq!(
+            request.client_order_id,
+            Some("my-plan-order-123".to_string())
+        );
     }
 
     #[test]
     fn test_plan_sub_order_request_serialization() {
-        let request = PlanSubOrderRequest::by_order_id("BTCUSDT", "plan_1234567890");
+        let request = PlanSubOrderRequest {
+            symbol: "BTCUSDT".to_string(),
+            order_id: Some("plan_1234567890".to_string()),
+            client_order_id: None,
+        };
         let query = serde_urlencoded::to_string(&request).unwrap();
 
         assert!(query.contains("symbol=BTCUSDT"));
@@ -202,7 +194,11 @@ mod tests {
 
     #[test]
     fn test_plan_sub_order_request_serialization_client_id() {
-        let request = PlanSubOrderRequest::by_client_order_id("ETHUSDT", "my-plan-order-123");
+        let request = PlanSubOrderRequest {
+            symbol: "ETHUSDT".to_string(),
+            order_id: None,
+            client_order_id: Some("my-plan-order-123".to_string()),
+        };
         let query = serde_urlencoded::to_string(&request).unwrap();
 
         assert!(query.contains("symbol=ETHUSDT"));
@@ -299,7 +295,10 @@ mod tests {
         assert_eq!(order_info.update_time, 1640995300000);
         assert!(order_info.execute_order_id.is_none());
         assert!(order_info.trigger_time.is_none());
-        assert_eq!(order_info.fail_reason, Some("Insufficient balance".to_string()));
+        assert_eq!(
+            order_info.fail_reason,
+            Some("Insufficient balance".to_string())
+        );
         assert!(order_info.force.is_none());
         assert!(order_info.stp_mode.is_none());
     }

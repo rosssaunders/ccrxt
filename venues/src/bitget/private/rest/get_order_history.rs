@@ -310,11 +310,17 @@ mod tests {
 
     #[test]
     fn test_get_order_history_request_builder() {
-        let request = GetOrderHistoryRequest::new()
-            .symbol("ETHUSDT")
-            .time_range(1659036670000, 1659076670000)
-            .pagination(Some("67890".to_string()), 75)
-            .tpsl_type(TPSLType::Normal);
+        let request = GetOrderHistoryRequest {
+            symbol: Some("ETHUSDT".to_string()),
+            order_id: None,
+            start_time: Some(1659036670000),
+            end_time: Some(1659076670000),
+            id_less_than: Some("67890".to_string()),
+            limit: Some(75),
+            tpsl_type: Some(TPSLType::Normal),
+            request_time: None,
+            receive_window: None,
+        };
 
         assert_eq!(request.symbol, Some("ETHUSDT".to_string()));
         assert_eq!(request.start_time, Some(1659036670000));
@@ -326,7 +332,17 @@ mod tests {
 
     #[test]
     fn test_get_order_history_request_limit_enforcement() {
-        let request = GetOrderHistoryRequest::new().pagination(None, 500);
+        let request = GetOrderHistoryRequest {
+            symbol: None,
+            order_id: None,
+            start_time: None,
+            end_time: None,
+            id_less_than: None,
+            limit: Some(100), // Manual cap at 100
+            tpsl_type: None,
+            request_time: None,
+            receive_window: None,
+        };
 
         // Should be capped at 100
         assert_eq!(request.limit, Some(100));

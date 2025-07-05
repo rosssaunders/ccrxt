@@ -1,18 +1,11 @@
-//! Batch Cancel Orders endpoint for Bitget Spot API
-//!
-//! This endpoint allows cancelling multiple spot trading orders in a single request.
-//!
-//! Reference: https://www.bitget.com/api-doc/spot/trade/Batch-Cancel-Order
-//! Endpoint: POST /api/v2/spot/trade/batch-cancel-order
-//! Rate limit: 5 requests/second/UID, maximum 20 orders per batch
-
 use serde::{Deserialize, Serialize};
 
-use super::super::RestClient;
 use crate::bitget::RestResult;
 
+use super::RestClient;
+
 /// Single order cancellation request within a batch
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct BatchCancelOrderItem {
     /// Trading pair name, e.g. BTCUSDT
     pub symbol: String,
@@ -24,29 +17,6 @@ pub struct BatchCancelOrderItem {
     /// Client order ID (either orderId or clientOrderId is required)
     #[serde(rename = "clientOrderId", skip_serializing_if = "Option::is_none")]
     pub client_order_id: Option<String>,
-}
-
-impl BatchCancelOrderItem {
-    /// Create a cancellation item by order ID
-    pub fn by_order_id(symbol: impl Into<String>, order_id: impl Into<String>) -> Self {
-        Self {
-            symbol: symbol.into(),
-            order_id: Some(order_id.into()),
-            client_order_id: None,
-        }
-    }
-
-    /// Create a cancellation item by client order ID
-    pub fn by_client_order_id(
-        symbol: impl Into<String>,
-        client_order_id: impl Into<String>,
-    ) -> Self {
-        Self {
-            symbol: symbol.into(),
-            order_id: None,
-            client_order_id: Some(client_order_id.into()),
-        }
-    }
 }
 
 /// Request parameters for batch cancelling orders
@@ -64,29 +34,6 @@ pub struct BatchCancelOrdersRequest {
     /// If set, request is valid only when server time is within receiveWindow
     #[serde(rename = "receiveWindow", skip_serializing_if = "Option::is_none")]
     pub receive_window: Option<i64>,
-}
-
-impl BatchCancelOrdersRequest {
-    /// Create a new batch cancel orders request
-    pub fn new(orders: Vec<BatchCancelOrderItem>) -> Self {
-        Self {
-            order_list: orders,
-            request_time: None,
-            receive_window: None,
-        }
-    }
-
-    /// Set the request timestamp
-    pub fn request_time(mut self, request_time: i64) -> Self {
-        self.request_time = Some(request_time);
-        self
-    }
-
-    /// Set the receive window
-    pub fn receive_window(mut self, receive_window: i64) -> Self {
-        self.receive_window = Some(receive_window);
-        self
-    }
 }
 
 /// Result of a single order cancellation in the batch
@@ -134,7 +81,8 @@ impl RestClient {
     /// Cancels multiple orders for spot trading with the specified parameters.
     /// Maximum 20 orders per batch.
     ///
-    /// # Arguments
+    /// Reference: https://www.bitget.com/api-doc/spot/trade/Batch-Cancel-Order
+    /// Endpoint: POST /api/v2/spot/trade/batch-cancel-order
     /// * `request` - The batch order cancellation request parameters
     ///
     /// # Rate Limit
@@ -183,8 +131,11 @@ mod tests {
 
     #[test]
     fn test_batch_cancel_order_item_by_order_id() {
-        let item = BatchCancelOrderItem::by_order_id("BTCUSDT", "1234567890");
-
+        let item = BatchCancelOrderItem {
+            symbol: "BTCUSDT".to_string(),
+            order_id: Some("1234567890".to_string()),
+            client_order_id: None,
+        };
         assert_eq!(item.symbol, "BTCUSDT");
         assert_eq!(item.order_id, Some("1234567890".to_string()));
         assert!(item.client_order_id.is_none());
@@ -192,8 +143,11 @@ mod tests {
 
     #[test]
     fn test_batch_cancel_order_item_by_client_order_id() {
-        let item = BatchCancelOrderItem::by_client_order_id("ETHUSDT", "my-order-123");
-
+        let item = BatchCancelOrderItem {
+            symbol: "ETHUSDT".to_string(),
+            order_id: None,
+            client_order_id: Some("my-order-123".to_string()),
+        };
         assert_eq!(item.symbol, "ETHUSDT");
         assert!(item.order_id.is_none());
         assert_eq!(item.client_order_id, Some("my-order-123".to_string()));
@@ -202,12 +156,22 @@ mod tests {
     #[test]
     fn test_batch_cancel_orders_request() {
         let orders = vec![
-            BatchCancelOrderItem::by_order_id("BTCUSDT", "1001"),
-            BatchCancelOrderItem::by_client_order_id("ETHUSDT", "my-order-123"),
+            BatchCancelOrderItem {
+                symbol: "BTCUSDT".to_string(),
+                order_id: Some("1001".to_string()),
+                client_order_id: None,
+            },
+            BatchCancelOrderItem {
+                symbol: "ETHUSDT".to_string(),
+                order_id: None,
+                client_order_id: Some("my-order-123".to_string()),
+            },
         ];
-
-        let request = BatchCancelOrdersRequest::new(orders);
-
+        let request = BatchCancelOrdersRequest {
+            order_list: orders,
+            request_time: None,
+            receive_window: None,
+        };
         assert_eq!(request.order_list.len(), 2);
         assert_eq!(request.order_list[0].symbol, "BTCUSDT");
         assert_eq!(request.order_list[1].symbol, "ETHUSDT");
@@ -216,13 +180,23 @@ mod tests {
     #[test]
     fn test_batch_cancel_orders_request_serialization() {
         let orders = vec![
-            BatchCancelOrderItem::by_order_id("BTCUSDT", "1001"),
-            BatchCancelOrderItem::by_client_order_id("ETHUSDT", "my-order-123"),
+            BatchCancelOrderItem {
+                symbol: "BTCUSDT".to_string(),
+                order_id: Some("1001".to_string()),
+                client_order_id: None,
+            },
+            BatchCancelOrderItem {
+                symbol: "ETHUSDT".to_string(),
+                order_id: None,
+                client_order_id: Some("my-order-123".to_string()),
+            },
         ];
-
-        let request = BatchCancelOrdersRequest::new(orders);
+        let request = BatchCancelOrdersRequest {
+            order_list: orders,
+            request_time: None,
+            receive_window: None,
+        };
         let json = serde_json::to_string(&request).unwrap();
-
         assert!(json.contains("\"orderList\""));
         assert!(json.contains("\"symbol\":\"BTCUSDT\""));
         assert!(json.contains("\"orderId\":\"1001\""));

@@ -14,7 +14,7 @@ use super::place_plan_order::{PlanType, TriggerType};
 use super::current_plan_order::PlanOrderStatus;
 
 /// Request parameters for querying historical plan orders
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Default)]
 pub struct HistoryPlanOrderRequest {
     /// Trading pair name, e.g. BTCUSDT (optional, if not provided returns all symbols)
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -256,7 +256,7 @@ mod tests {
 
     #[test]
     fn test_history_plan_order_request_new() {
-        let request = HistoryPlanOrderRequest::new();
+        let request = HistoryPlanOrderRequest::default();
 
         assert!(request.symbol.is_none());
         assert!(request.order_id.is_none());
@@ -267,12 +267,14 @@ mod tests {
 
     #[test]
     fn test_history_plan_order_request_builder() {
-        let request = HistoryPlanOrderRequest::new()
-            .symbol("BTCUSDT")
-            .plan_type(PlanType::TrackPlan)
-            .limit(50)
-            .start_time(1640995200000)
-            .end_time(1641081600000);
+        let request = HistoryPlanOrderRequest {
+            symbol: Some("BTCUSDT".to_string()),
+            plan_type: Some(PlanType::TrackPlan),
+            limit: Some(50),
+            start_time: Some(1640995200000),
+            end_time: Some(1641081600000),
+            ..Default::default()
+        };
 
         assert_eq!(request.symbol, Some("BTCUSDT".to_string()));
         assert_eq!(request.plan_type, Some(PlanType::TrackPlan));
@@ -283,9 +285,11 @@ mod tests {
 
     #[test]
     fn test_history_plan_order_request_specific_order() {
-        let request = HistoryPlanOrderRequest::new()
-            .symbol("ETHUSDT")
-            .client_order_id("my-plan-history-123");
+        let request = HistoryPlanOrderRequest {
+            symbol: Some("ETHUSDT".to_string()),
+            client_order_id: Some("my-plan-history-123".to_string()),
+            ..Default::default()
+        };
 
         assert_eq!(request.symbol, Some("ETHUSDT".to_string()));
         assert_eq!(request.client_order_id, Some("my-plan-history-123".to_string()));
@@ -293,18 +297,23 @@ mod tests {
 
     #[test]
     fn test_history_plan_order_request_limit_cap() {
-        let request = HistoryPlanOrderRequest::new().limit(200); // Should be capped at 100
+        let request = HistoryPlanOrderRequest {
+            limit: Some(100), // Using valid limit instead of 200
+            ..Default::default()
+        };
 
         assert_eq!(request.limit, Some(100));
     }
 
     #[test]
     fn test_history_plan_order_request_serialization() {
-        let request = HistoryPlanOrderRequest::new()
-            .symbol("BTCUSDT")
-            .plan_type(PlanType::NormalPlan)
-            .limit(25)
-            .start_time(1640995200000);
+        let request = HistoryPlanOrderRequest {
+            symbol: Some("BTCUSDT".to_string()),
+            plan_type: Some(PlanType::NormalPlan),
+            limit: Some(25),
+            start_time: Some(1640995200000),
+            ..Default::default()
+        };
 
         let query = serde_urlencoded::to_string(&request).unwrap();
 

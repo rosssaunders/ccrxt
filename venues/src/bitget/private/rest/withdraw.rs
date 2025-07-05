@@ -1,6 +1,7 @@
-use crate::bitget::{BitgetRestClient, enums::*, error::BitgetError};
-use reqwest::Method;
-use rest::BitgetRequest;
+use super::RestClient;
+use crate::bitget::enums::*;
+use crate::bitget::{Errors, RestResult};
+
 use serde::{Deserialize, Serialize};
 
 /// Withdraw
@@ -101,113 +102,30 @@ pub struct WithdrawResult {
     pub client_oid: String,
 }
 
-impl WithdrawRequest {
-    pub fn new(
-        coin: impl Into<String>,
-        transfer_type: WithdrawType,
-        address: impl Into<String>,
-        size: impl Into<String>,
-    ) -> Self {
-        Self {
-            coin: coin.into(),
-            transfer_type,
-            address: address.into(),
-            chain: None,
-            inner_to_type: None,
-            area_code: None,
-            tag: None,
-            size: size.into(),
-            remark: None,
-            client_oid: None,
-            member_code: None,
-            identity_type: None,
-            company_name: None,
-            first_name: None,
-            last_name: None,
-        }
-    }
-
-    pub fn chain(mut self, chain: impl Into<String>) -> Self {
-        self.chain = Some(chain.into());
-        self
-    }
-
-    pub fn inner_to_type(mut self, inner_to_type: InnerTransferType) -> Self {
-        self.inner_to_type = Some(inner_to_type);
-        self
-    }
-
-    pub fn area_code(mut self, area_code: impl Into<String>) -> Self {
-        self.area_code = Some(area_code.into());
-        self
-    }
-
-    pub fn tag(mut self, tag: impl Into<String>) -> Self {
-        self.tag = Some(tag.into());
-        self
-    }
-
-    pub fn remark(mut self, remark: impl Into<String>) -> Self {
-        self.remark = Some(remark.into());
-        self
-    }
-
-    pub fn client_oid(mut self, client_oid: impl Into<String>) -> Self {
-        self.client_oid = Some(client_oid.into());
-        self
-    }
-
-    pub fn member_code(mut self, member_code: impl Into<String>) -> Self {
-        self.member_code = Some(member_code.into());
-        self
-    }
-
-    pub fn identity_type(mut self, identity_type: IdentityType) -> Self {
-        self.identity_type = Some(identity_type);
-        self
-    }
-
-    pub fn company_name(mut self, company_name: impl Into<String>) -> Self {
-        self.company_name = Some(company_name.into());
-        self
-    }
-
-    pub fn first_name(mut self, first_name: impl Into<String>) -> Self {
-        self.first_name = Some(first_name.into());
-        self
-    }
-
-    pub fn last_name(mut self, last_name: impl Into<String>) -> Self {
-        self.last_name = Some(last_name.into());
-        self
-    }
-}
-
-impl BitgetRequest for WithdrawRequest {
-    type Response = WithdrawResponse;
-
-    fn path(&self) -> String {
-        "/api/v2/spot/wallet/withdrawal".to_string()
-    }
-
-    fn method(&self) -> String {
-        "POST".to_string()
-    }
-
-    fn need_signature(&self) -> bool {
-        true
-    }
-}
-
-impl BitgetRestClient {
+impl RestClient {
     /// Withdraw
     ///
     /// Coin withdrawals including on-chain withdrawals and internal transfers.
-    pub async fn withdraw(
-        &self,
-        request: WithdrawRequest,
-    ) -> Result<WithdrawResponse, BitgetError> {
-        self.send_request(&request).await
+    ///
+    /// [API Documentation](https://www.bitget.com/api-doc/spot/withdraw/Withdraw)
+    ///
+    /// Rate limit: 5 req/sec/UID
+    ///
+    /// Returns a `RestResult<WithdrawResponse>` containing the withdrawal result or an error.
+    pub async fn withdraw(&self, request: WithdrawRequest) -> RestResult<WithdrawResponse> {
+        self.send_signed_request(
+            "/api/v2/spot/wallet/withdrawal",
+            reqwest::Method::POST,
+            None,
+            Some(
+                &serde_json::to_string(&request)
+                    .map_err(|e| Errors::Error(format!("Serialization error: {e}")))?,
+            ),
+            5,
+            false,
+            None,
+        )
+        .await
     }
 }
 
@@ -217,14 +135,23 @@ mod tests {
 
     #[test]
     fn test_withdraw_request_serialization() {
-        let request = WithdrawRequest::new(
-            "USDT",
-            WithdrawType::OnChain,
-            "TJRyWwFs9wTFGZg3JbrVriFbNfCug5tDeC",
-            "0.01",
-        )
-        .chain("trc20")
-        .client_oid("my-withdraw-123");
+        let request = WithdrawRequest {
+            coin: "USDT".to_string(),
+            transfer_type: WithdrawType::OnChain,
+            address: "TJRyWwFs9wTFGZg3JbrVriFbNfCug5tDeC".to_string(),
+            size: "0.01".to_string(),
+            chain: Some("trc20".to_string()),
+            client_oid: Some("my-withdraw-123".to_string()),
+            inner_to_type: None,
+            area_code: None,
+            tag: None,
+            remark: None,
+            member_code: None,
+            identity_type: None,
+            company_name: None,
+            first_name: None,
+            last_name: None,
+        };
 
         let serialized = serde_json::to_string(&request).unwrap();
         println!("Serialized request: {}", serialized);
@@ -256,13 +183,23 @@ mod tests {
     #[tokio::test]
     async fn test_withdraw_endpoint() {
         // This test requires API credentials and should be run manually
-        let _request = WithdrawRequest::new(
-            "USDT",
-            WithdrawType::OnChain,
-            "TJRyWwFs9wTFGZg3JbrVriFbNfCug5tDeC",
-            "0.01",
-        )
-        .chain("trc20");
+        let _request = WithdrawRequest {
+            coin: "USDT".to_string(),
+            transfer_type: WithdrawType::OnChain,
+            address: "TJRyWwFs9wTFGZg3JbrVriFbNfCug5tDeC".to_string(),
+            size: "0.01".to_string(),
+            chain: Some("trc20".to_string()),
+            inner_to_type: None,
+            area_code: None,
+            tag: None,
+            remark: None,
+            client_oid: None,
+            member_code: None,
+            identity_type: None,
+            company_name: None,
+            first_name: None,
+            last_name: None,
+        };
 
         // Uncomment the following lines to test with real API credentials:
         // let client = BitgetRestClient::new("api_key", "secret", "passphrase", false);

@@ -20,17 +20,16 @@
 //! - Endpoint-specific limits: varies (3-20 requests per second)
 //! - UID-based limits for private endpoints
 
-use std::borrow::Cow;
-
 use base64::{Engine, engine::general_purpose::STANDARD as BASE64};
 use chrono::Utc;
 use hmac::{Hmac, Mac};
 use reqwest::Client;
 use rest::secrets::ExposableSecret;
 use sha2::Sha256;
+use std::borrow::Cow;
 
 use crate::bitget::rate_limit::RateLimiter;
-use crate::bitget::{Errors, RestResult, BitgetError};
+use crate::bitget::{Errors, RestResult};
 
 /// A client for interacting with the Bitget private REST API
 ///
@@ -267,40 +266,6 @@ impl RestClient {
             }
         }
     }
-
-    /// Send a request (for public endpoints or simple requests)
-    pub async fn send_request<T, R>(&self, request: &T) -> Result<R, Errors>
-    where
-        T: rest::BitgetRequest<Response = R> + serde::Serialize,
-        R: serde::de::DeserializeOwned,
-    {
-        // Placeholder implementation - just return an error for now
-        Err(Errors::Error("Not implemented".to_string()))
-    }
-
-    /// Send a signed GET request
-    pub async fn get_signed<T, R>(&self, endpoint: &str, params: Option<T>) -> Result<R, rest::error::RestError>
-    where
-        T: serde::Serialize,
-        R: serde::de::DeserializeOwned,
-    {
-        // Placeholder implementation - just return an error for now
-        Err(rest::error::RestError::HttpError(
-            "Not implemented".to_string(),
-        ))
-    }
-
-    /// Send a signed POST request
-    pub async fn post_signed<T, R>(&self, endpoint: &str, params: Option<T>) -> Result<R, rest::error::RestError>
-    where
-        T: serde::Serialize,
-        R: serde::de::DeserializeOwned,
-    {
-        // Placeholder implementation - just return an error for now
-        Err(rest::error::RestError::HttpError(
-            "Not implemented".to_string(),
-        ))
-    }
 }
 
 /// Represents a successful response from the Bitget API
@@ -309,7 +274,6 @@ struct BitgetResponse<T> {
     code: String,
     msg: String,
     #[serde(rename = "requestTime")]
-    #[allow(dead_code)]
     request_time: i64,
     data: T,
 }

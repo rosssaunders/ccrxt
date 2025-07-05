@@ -1,6 +1,7 @@
-use crate::bitget::{BitgetRestClient, enums::*, error::BitgetError};
-use reqwest::Method;
-use rest::BitgetRequest;
+use super::RestClient;
+use crate::bitget::enums::*;
+use crate::bitget::{Errors, RestResult};
+
 use serde::{Deserialize, Serialize};
 
 /// Get Transferable Coin List
@@ -29,37 +30,27 @@ pub struct GetTransferableCoinListResponse {
     pub data: Vec<String>,
 }
 
-impl GetTransferableCoinListRequest {
-    pub fn new(from_type: AccountType, to_type: AccountType) -> Self {
-        Self { from_type, to_type }
-    }
-}
-
-impl BitgetRequest for GetTransferableCoinListRequest {
-    type Response = GetTransferableCoinListResponse;
-
-    fn path(&self) -> String {
-        "/api/v2/spot/wallet/transfer-coin-info".to_string()
-    }
-
-    fn method(&self) -> String {
-        "GET".to_string()
-    }
-
-    fn need_signature(&self) -> bool {
-        true
-    }
-}
-
-impl BitgetRestClient {
+impl RestClient {
     /// Get Transferable Coin List
     ///
     /// Get transferable coin list.
     pub async fn get_transferable_coin_list(
         &self,
         request: GetTransferableCoinListRequest,
-    ) -> Result<GetTransferableCoinListResponse, BitgetError> {
-        self.send_request(&request).await
+    ) -> RestResult<GetTransferableCoinListResponse> {
+        self.send_signed_request(
+            "/api/v2/spot/wallet/transfer-coin-info",
+            reqwest::Method::GET,
+            None,
+            Some(
+                &serde_json::to_string(&request)
+                    .map_err(|e| Errors::Error(format!("Serialization error: {e}")))?,
+            ),
+            10,
+            false,
+            None,
+        )
+        .await
     }
 }
 
@@ -69,8 +60,10 @@ mod tests {
 
     #[test]
     fn test_get_transferable_coin_list_request_serialization() {
-        let request =
-            GetTransferableCoinListRequest::new(AccountType::Spot, AccountType::IsolatedMargin);
+        let request = GetTransferableCoinListRequest {
+            from_type: AccountType::Spot,
+            to_type: AccountType::IsolatedMargin,
+        };
 
         let serialized = serde_json::to_string(&request).unwrap();
         println!("Serialized request: {}", serialized);
@@ -104,8 +97,10 @@ mod tests {
     #[tokio::test]
     async fn test_get_transferable_coin_list_endpoint() {
         // This test requires API credentials and should be run manually
-        let _request =
-            GetTransferableCoinListRequest::new(AccountType::Spot, AccountType::IsolatedMargin);
+        let _request = GetTransferableCoinListRequest {
+            from_type: AccountType::Spot,
+            to_type: AccountType::IsolatedMargin,
+        };
 
         // Uncomment the following lines to test with real API credentials:
         // let client = BitgetRestClient::new("api_key", "secret", "passphrase", false);
