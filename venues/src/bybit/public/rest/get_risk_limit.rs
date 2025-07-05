@@ -49,7 +49,3 @@ impl RestClient {
     }
 }
 
-impl GetRiskLimitRequest {
-    pub fn new(category: Category) -> Self { Self { category, symbol: None } }
-    pub fn symbol(mut self, symbol: String) -> Self { self.symbol = Some(symbol); self }
-}

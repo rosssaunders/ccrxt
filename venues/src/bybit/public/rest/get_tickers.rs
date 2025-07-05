@@ -113,35 +113,7 @@ impl RestClient {
     }
 }
 
-impl GetTickersRequest {
-    /// Create a new tickers request
-    pub fn new(category: Category) -> Self {
-        Self {
-            category,
-            symbol: None,
-            base_coin: None,
-            exp_date: None,
-        }
-    }
 
-    /// Filter by symbol
-    pub fn symbol(mut self, symbol: String) -> Self {
-        self.symbol = Some(symbol);
-        self
-    }
-
-    /// Filter by base coin (option only)
-    pub fn base_coin(mut self, base_coin: String) -> Self {
-        self.base_coin = Some(base_coin);
-        self
-    }
-
-    /// Filter by expiry date (option only, e.g., "25DEC22")
-    pub fn exp_date(mut self, exp_date: String) -> Self {
-        self.exp_date = Some(exp_date);
-        self
-    }
-}
 
 #[cfg(test)]
 mod tests {
@@ -149,8 +121,12 @@ mod tests {
 
     #[test]
     fn test_get_tickers_request_builder() {
-        let request = GetTickersRequest::new(Category::Linear)
-            .symbol("BTCUSDT".to_string());
+        let request = GetTickersRequest {
+            category: Category::Linear,
+            symbol: Some("BTCUSDT".to_string()),
+            base_coin: None,
+            exp_date: None,
+        };
 
         assert_eq!(request.category, Category::Linear);
         assert_eq!(request.symbol, Some("BTCUSDT".to_string()));
@@ -160,9 +136,12 @@ mod tests {
 
     #[test]
     fn test_get_tickers_request_options() {
-        let request = GetTickersRequest::new(Category::Option)
-            .base_coin("BTC".to_string())
-            .exp_date("25DEC22".to_string());
+        let request = GetTickersRequest {
+            category: Category::Option,
+            symbol: None,
+            base_coin: Some("BTC".to_string()),
+            exp_date: Some("25DEC22".to_string()),
+        };
 
         assert_eq!(request.category, Category::Option);
         assert_eq!(request.base_coin, Some("BTC".to_string()));

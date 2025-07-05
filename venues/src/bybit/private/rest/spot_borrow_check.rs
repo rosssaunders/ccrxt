@@ -59,16 +59,7 @@ impl RestClient {
     }
 }
 
-impl SpotBorrowCheckRequest {
-    /// Create a new spot borrow check request
-    pub fn new(symbol: String, side: Side) -> Self {
-        Self {
-            category: Category::Spot, // Must be spot for this endpoint
-            symbol,
-            side,
-        }
-    }
-}
+
 
 #[cfg(test)]
 mod tests {
@@ -76,7 +67,11 @@ mod tests {
 
     #[test]
     fn test_spot_borrow_check_request() {
-        let request = SpotBorrowCheckRequest::new("BTCUSDT".to_string(), Side::Buy);
+        let request = SpotBorrowCheckRequest {
+            category: Category::Spot,
+            symbol: "BTCUSDT".to_string(),
+            side: Side::Buy,
+        };
 
         assert_eq!(request.category, Category::Spot);
         assert_eq!(request.symbol, "BTCUSDT");
@@ -85,7 +80,11 @@ mod tests {
 
     #[test]
     fn test_spot_borrow_check_request_serialization() {
-        let request = SpotBorrowCheckRequest::new("ETHUSDT".to_string(), Side::Sell);
+        let request = SpotBorrowCheckRequest {
+            category: Category::Spot,
+            symbol: "ETHUSDT".to_string(),
+            side: Side::Sell,
+        };
 
         let json = serde_json::to_string(&request).unwrap();
         assert!(json.contains("\"category\":\"spot\""));

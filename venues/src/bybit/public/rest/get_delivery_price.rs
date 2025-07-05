@@ -50,6 +50,3 @@ impl RestClient {
     }
 }
 
-impl GetDeliveryPriceRequest {
-    pub fn new(category: Category) -> Self { Self { category, symbol: None, base_coin: None, limit: None, cursor: None } }
-}

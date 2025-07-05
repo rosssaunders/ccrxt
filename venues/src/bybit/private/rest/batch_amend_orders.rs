@@ -76,21 +76,7 @@ impl RestClient {
     }
 }
 
-impl BatchAmendOrdersRequest {
-    /// Create a new batch amend orders request
-    pub fn new(category: Category, orders: Vec<AmendOrderRequest>) -> Self {
-        Self {
-            category,
-            request: orders,
-        }
-    }
 
-    /// Add an order amendment to the batch
-    pub fn add_order(mut self, order: AmendOrderRequest) -> Self {
-        self.request.push(order);
-        self
-    }
-}
 
 #[cfg(test)]
 mod tests {
@@ -98,21 +84,48 @@ mod tests {
 
     #[test]
     fn test_batch_amend_orders_request() {
-        let amend1 = AmendOrderRequest::by_order_id(
-            Category::Linear,
-            "BTCUSDT".to_string(),
-            "order1".to_string(),
-        )
-        .price("51000".to_string());
+        let amend1 = AmendOrderRequest {
+            category: Category::Linear,
+            symbol: "BTCUSDT".to_string(),
+            order_id: Some("order1".to_string()),
+            order_link_id: None,
+            order_iv: None,
+            trigger_price: None,
+            qty: None,
+            price: Some("51000".to_string()),
+            tpsl_mode: None,
+            take_profit: None,
+            stop_loss: None,
+            tp_trigger_by: None,
+            sl_trigger_by: None,
+            trigger_by: None,
+            tp_limit_price: None,
+            sl_limit_price: None,
+        };
 
-        let amend2 = AmendOrderRequest::by_order_link_id(
-            Category::Linear,
-            "ETHUSDT".to_string(),
-            "custom-order-2".to_string(),
-        )
-        .qty("0.2".to_string());
+        let amend2 = AmendOrderRequest {
+            category: Category::Linear,
+            symbol: "ETHUSDT".to_string(),
+            order_id: None,
+            order_link_id: Some("custom-order-2".to_string()),
+            order_iv: None,
+            trigger_price: None,
+            qty: Some("0.2".to_string()),
+            price: None,
+            tpsl_mode: None,
+            take_profit: None,
+            stop_loss: None,
+            tp_trigger_by: None,
+            sl_trigger_by: None,
+            trigger_by: None,
+            tp_limit_price: None,
+            sl_limit_price: None,
+        };
 
-        let request = BatchAmendOrdersRequest::new(Category::Linear, vec![amend1, amend2]);
+        let request = BatchAmendOrdersRequest {
+            category: Category::Linear,
+            request: vec![amend1, amend2],
+        };
 
         assert_eq!(request.category, Category::Linear);
         assert_eq!(request.request.len(), 2);
@@ -122,20 +135,48 @@ mod tests {
 
     #[test]
     fn test_batch_amend_orders_request_builder() {
-        let amend1 = AmendOrderRequest::by_order_id(
-            Category::Spot,
-            "BTCUSDT".to_string(),
-            "order1".to_string(),
-        );
+        let amend1 = AmendOrderRequest {
+            category: Category::Spot,
+            symbol: "BTCUSDT".to_string(),
+            order_id: Some("order1".to_string()),
+            order_link_id: None,
+            order_iv: None,
+            trigger_price: None,
+            qty: None,
+            price: None,
+            tpsl_mode: None,
+            take_profit: None,
+            stop_loss: None,
+            tp_trigger_by: None,
+            sl_trigger_by: None,
+            trigger_by: None,
+            tp_limit_price: None,
+            sl_limit_price: None,
+        };
 
-        let amend2 = AmendOrderRequest::by_order_id(
-            Category::Spot,
-            "ETHUSDT".to_string(),
-            "order2".to_string(),
-        );
+        let amend2 = AmendOrderRequest {
+            category: Category::Spot,
+            symbol: "ETHUSDT".to_string(),
+            order_id: Some("order2".to_string()),
+            order_link_id: None,
+            order_iv: None,
+            trigger_price: None,
+            qty: None,
+            price: None,
+            tpsl_mode: None,
+            take_profit: None,
+            stop_loss: None,
+            tp_trigger_by: None,
+            sl_trigger_by: None,
+            trigger_by: None,
+            tp_limit_price: None,
+            sl_limit_price: None,
+        };
 
-        let request = BatchAmendOrdersRequest::new(Category::Spot, vec![amend1])
-            .add_order(amend2);
+        let request = BatchAmendOrdersRequest {
+            category: Category::Spot,
+            request: vec![amend1, amend2],
+        };
 
         assert_eq!(request.category, Category::Spot);
         assert_eq!(request.request.len(), 2);
@@ -143,13 +184,29 @@ mod tests {
 
     #[test]
     fn test_batch_amend_orders_request_serialization() {
-        let amend = AmendOrderRequest::by_order_id(
-            Category::Linear,
-            "BTCUSDT".to_string(),
-            "order123".to_string(),
-        );
+        let amend = AmendOrderRequest {
+            category: Category::Linear,
+            symbol: "BTCUSDT".to_string(),
+            order_id: Some("order123".to_string()),
+            order_link_id: None,
+            order_iv: None,
+            trigger_price: None,
+            qty: None,
+            price: None,
+            tpsl_mode: None,
+            take_profit: None,
+            stop_loss: None,
+            tp_trigger_by: None,
+            sl_trigger_by: None,
+            trigger_by: None,
+            tp_limit_price: None,
+            sl_limit_price: None,
+        };
 
-        let request = BatchAmendOrdersRequest::new(Category::Linear, vec![amend]);
+        let request = BatchAmendOrdersRequest {
+            category: Category::Linear,
+            request: vec![amend],
+        };
 
         let json = serde_json::to_string(&request).unwrap();
         assert!(json.contains("\"category\":\"linear\""));

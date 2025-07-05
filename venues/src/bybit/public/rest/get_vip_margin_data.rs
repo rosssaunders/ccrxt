@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use crate::bybit::{EndpointType, RestResult};
 use super::client::RestClient;
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Default)]
 pub struct GetVipMarginDataRequest {
     #[serde(rename = "vipLevel", skip_serializing_if = "Option::is_none")]
     pub vip_level: Option<String>,
@@ -52,12 +52,3 @@ impl RestClient {
     }
 }
 
-impl Default for GetVipMarginDataRequest {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-impl GetVipMarginDataRequest {
-    pub fn new() -> Self { Self { vip_level: None, currency: None } }
-}

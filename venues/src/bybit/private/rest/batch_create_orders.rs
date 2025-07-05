@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::bybit::{enums::*, EndpointType, RestResult};
+use crate::bybit::{EndpointType, RestResult, enums::*};
 
 use super::client::RestClient;
 use super::create_order::CreateOrderRequest;
@@ -76,22 +76,6 @@ impl RestClient {
     }
 }
 
-impl BatchCreateOrdersRequest {
-    /// Create a new batch create orders request
-    pub fn new(category: Category, orders: Vec<CreateOrderRequest>) -> Self {
-        Self {
-            category,
-            request: orders,
-        }
-    }
-
-    /// Add an order to the batch
-    pub fn add_order(mut self, order: CreateOrderRequest) -> Self {
-        self.request.push(order);
-        self
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -99,24 +83,29 @@ mod tests {
 
     #[test]
     fn test_batch_create_orders_request() {
-        let order1 = CreateOrderRequest::new(
-            Category::Linear,
-            "BTCUSDT".to_string(),
-            Side::Buy,
-            OrderType::Limit,
-            "0.001".to_string(),
-        )
-        .price("50000".to_string());
+        let order1 = CreateOrderRequest {
+            category: Category::Linear,
+            symbol: "BTCUSDT".to_string(),
+            side: Side::Buy,
+            order_type: OrderType::Limit,
+            qty: "0.001".to_string(),
+            price: Some("50000".to_string()),
+            ..Default::default()
+        };
 
-        let order2 = CreateOrderRequest::new(
-            Category::Linear,
-            "ETHUSDT".to_string(),
-            Side::Sell,
-            OrderType::Market,
-            "0.1".to_string(),
-        );
+        let order2 = CreateOrderRequest {
+            category: Category::Linear,
+            symbol: "ETHUSDT".to_string(),
+            side: Side::Sell,
+            order_type: OrderType::Market,
+            qty: "0.1".to_string(),
+            ..Default::default()
+        };
 
-        let request = BatchCreateOrdersRequest::new(Category::Linear, vec![order1, order2]);
+        let request = BatchCreateOrdersRequest {
+            category: Category::Linear,
+            request: vec![order1, order2],
+        };
 
         assert_eq!(request.category, Category::Linear);
         assert_eq!(request.request.len(), 2);
@@ -126,24 +115,28 @@ mod tests {
 
     #[test]
     fn test_batch_create_orders_request_builder() {
-        let order1 = CreateOrderRequest::new(
-            Category::Spot,
-            "BTCUSDT".to_string(),
-            Side::Buy,
-            OrderType::Limit,
-            "0.001".to_string(),
-        );
+        let order1 = CreateOrderRequest {
+            category: Category::Spot,
+            symbol: "BTCUSDT".to_string(),
+            side: Side::Buy,
+            order_type: OrderType::Limit,
+            qty: "0.001".to_string(),
+            ..Default::default()
+        };
 
-        let order2 = CreateOrderRequest::new(
-            Category::Spot,
-            "ETHUSDT".to_string(),
-            Side::Sell,
-            OrderType::Market,
-            "0.1".to_string(),
-        );
+        let order2 = CreateOrderRequest {
+            category: Category::Spot,
+            symbol: "ETHUSDT".to_string(),
+            side: Side::Sell,
+            order_type: OrderType::Market,
+            qty: "0.1".to_string(),
+            ..Default::default()
+        };
 
-        let request = BatchCreateOrdersRequest::new(Category::Spot, vec![order1])
-            .add_order(order2);
+        let request = BatchCreateOrdersRequest {
+            category: Category::Spot,
+            request: vec![order1, order2],
+        };
 
         assert_eq!(request.category, Category::Spot);
         assert_eq!(request.request.len(), 2);
@@ -151,15 +144,19 @@ mod tests {
 
     #[test]
     fn test_batch_create_orders_request_serialization() {
-        let order = CreateOrderRequest::new(
-            Category::Linear,
-            "BTCUSDT".to_string(),
-            Side::Buy,
-            OrderType::Limit,
-            "0.001".to_string(),
-        );
+        let order = CreateOrderRequest {
+            category: Category::Linear,
+            symbol: "BTCUSDT".to_string(),
+            side: Side::Buy,
+            order_type: OrderType::Limit,
+            qty: "0.001".to_string(),
+            ..Default::default()
+        };
 
-        let request = BatchCreateOrdersRequest::new(Category::Linear, vec![order]);
+        let request = BatchCreateOrdersRequest {
+            category: Category::Linear,
+            request: vec![order],
+        };
 
         let json = serde_json::to_string(&request).unwrap();
         assert!(json.contains("\"category\":\"linear\""));

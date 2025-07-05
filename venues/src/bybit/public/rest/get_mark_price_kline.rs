@@ -61,51 +61,20 @@ impl RestClient {
     }
 }
 
-impl GetMarkPriceKlineRequest {
-    /// Create a new mark price kline request
-    pub fn new(category: Category, symbol: String, interval: Interval) -> Self {
-        Self {
-            category,
-            symbol,
-            interval,
-            start: None,
-            end: None,
-            limit: None,
-        }
-    }
-
-    /// Set the start timestamp (ms)
-    pub fn start(mut self, start: u64) -> Self {
-        self.start = Some(start);
-        self
-    }
-
-    /// Set the end timestamp (ms)
-    pub fn end(mut self, end: u64) -> Self {
-        self.end = Some(end);
-        self
-    }
-
-    /// Set the limit (1-1000, default: 200)
-    pub fn limit(mut self, limit: i32) -> Self {
-        self.limit = Some(limit);
-        self
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn test_get_mark_price_kline_request_builder() {
-        let request = GetMarkPriceKlineRequest::new(
-            Category::Linear,
-            "BTCUSDT".to_string(),
-            Interval::Min15
-        )
-        .start(1670601600000)
-        .limit(50);
+    fn test_get_mark_price_kline_request_construction() {
+        let request = GetMarkPriceKlineRequest {
+            category: Category::Linear,
+            symbol: "BTCUSDT".to_string(),
+            interval: Interval::Min15,
+            start: Some(1670601600000),
+            end: None,
+            limit: Some(50),
+        };
 
         assert_eq!(request.category, Category::Linear);
         assert_eq!(request.symbol, "BTCUSDT");

@@ -91,43 +91,7 @@ impl RestClient {
     }
 }
 
-impl GetKlineRequest {
-    /// Create a new kline request
-    pub fn new(symbol: String, interval: Interval) -> Self {
-        Self {
-            category: None,
-            symbol,
-            interval,
-            start: None,
-            end: None,
-            limit: None,
-        }
-    }
 
-    /// Set the category (default: linear)
-    pub fn category(mut self, category: Category) -> Self {
-        self.category = Some(category);
-        self
-    }
-
-    /// Set the start timestamp (ms)
-    pub fn start(mut self, start: u64) -> Self {
-        self.start = Some(start);
-        self
-    }
-
-    /// Set the end timestamp (ms)
-    pub fn end(mut self, end: u64) -> Self {
-        self.end = Some(end);
-        self
-    }
-
-    /// Set the limit (1-1000, default: 200)
-    pub fn limit(mut self, limit: i32) -> Self {
-        self.limit = Some(limit);
-        self
-    }
-}
 
 #[cfg(test)]
 mod tests {
@@ -157,10 +121,14 @@ mod tests {
 
     #[test]
     fn test_get_kline_request_builder() {
-        let request = GetKlineRequest::new("BTCUSDT".to_string(), Interval::Min5)
-            .category(Category::Linear)
-            .start(1670601600000)
-            .limit(100);
+        let request = GetKlineRequest {
+            category: Some(Category::Linear),
+            symbol: "BTCUSDT".to_string(),
+            interval: Interval::Min5,
+            start: Some(1670601600000),
+            end: None,
+            limit: Some(100),
+        };
 
         assert_eq!(request.symbol, "BTCUSDT");
         assert_eq!(request.interval, Interval::Min5);

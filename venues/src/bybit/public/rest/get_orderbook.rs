@@ -92,25 +92,7 @@ impl RestClient {
     }
 }
 
-impl GetOrderbookRequest {
-    /// Create a new orderbook request
-    pub fn new(category: Category, symbol: String) -> Self {
-        Self {
-            category,
-            symbol,
-            limit: None,
-        }
-    }
 
-    /// Set the limit size for each bid and ask
-    /// - spot: [1, 200], default: 1
-    /// - linear & inverse: [1, 500], default: 25
-    /// - option: [1, 25], default: 1
-    pub fn limit(mut self, limit: i32) -> Self {
-        self.limit = Some(limit);
-        self
-    }
-}
 
 #[cfg(test)]
 mod tests {
@@ -126,9 +108,12 @@ mod tests {
     }
 
     #[test]
-    fn test_get_orderbook_request_builder() {
-        let request = GetOrderbookRequest::new(Category::Linear, "BTCUSDT".to_string())
-            .limit(100);
+    fn test_get_orderbook_request_direct_construction() {
+        let request = GetOrderbookRequest {
+            category: Category::Linear,
+            symbol: "BTCUSDT".to_string(),
+            limit: Some(100),
+        };
 
         assert_eq!(request.category, Category::Linear);
         assert_eq!(request.symbol, "BTCUSDT");

@@ -14,21 +14,7 @@ pub struct GetWalletBalanceRequest {
     pub coin: Option<String>,
 }
 
-impl GetWalletBalanceRequest {
-    /// Create a new wallet balance request
-    pub fn new(account_type: AccountType) -> Self {
-        Self {
-            account_type,
-            coin: None,
-        }
-    }
 
-    /// Set the coin filter
-    pub fn with_coin(mut self, coin: String) -> Self {
-        self.coin = Some(coin);
-        self
-    }
-}
 
 /// Individual balance data for a coin
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -178,22 +164,30 @@ mod tests {
 
     #[test]
     fn test_get_wallet_balance_request_structure() {
-        let request = GetWalletBalanceRequest::new(AccountType::Spot);
+        let request = GetWalletBalanceRequest {
+            account_type: AccountType::Spot,
+            coin: None,
+        };
         assert_eq!(request.account_type, AccountType::Spot);
         assert!(request.coin.is_none());
     }
 
     #[test]
     fn test_get_wallet_balance_request_with_coin() {
-        let request =
-            GetWalletBalanceRequest::new(AccountType::Unified).with_coin("BTC".to_string());
+        let request = GetWalletBalanceRequest {
+            account_type: AccountType::Unified,
+            coin: Some("BTC".to_string()),
+        };
         assert_eq!(request.account_type, AccountType::Unified);
         assert_eq!(request.coin, Some("BTC".to_string()));
     }
 
     #[test]
     fn test_get_wallet_balance_request_serialization() {
-        let request = GetWalletBalanceRequest::new(AccountType::Contract);
+        let request = GetWalletBalanceRequest {
+            account_type: AccountType::Contract,
+            coin: None,
+        };
         let serialized = serde_urlencoded::to_string(&request).unwrap_or_else(|e| {
             eprintln!("Failed to serialize GetWalletBalanceRequest: {}", e);
             String::new()
@@ -302,7 +296,10 @@ mod tests {
 
     #[test]
     fn test_serialization_roundtrip() {
-        let request = GetWalletBalanceRequest::new(AccountType::Spot).with_coin("USDT".to_string());
+        let request = GetWalletBalanceRequest {
+            account_type: AccountType::Spot,
+            coin: Some("USDT".to_string()),
+        };
 
         let serialized = serde_json::to_string(&request).unwrap_or_else(|e| {
             eprintln!("Serialization failed: {}", e);

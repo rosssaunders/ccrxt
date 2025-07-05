@@ -77,104 +77,28 @@ impl RestClient {
     }
 }
 
-impl GetOrderHistoryRequest {
-    /// Create a new get order history request
-    pub fn new(category: Category) -> Self {
-        Self {
-            category,
-            symbol: None,
-            base_coin: None,
-            settle_coin: None,
-            order_id: None,
-            order_link_id: None,
-            order_filter: None,
-            order_status: None,
-            start_time: None,
-            end_time: None,
-            limit: None,
-            cursor: None,
-        }
-    }
 
-    /// Filter by symbol
-    pub fn symbol(mut self, symbol: String) -> Self {
-        self.symbol = Some(symbol);
-        self
-    }
-
-    /// Filter by base coin
-    pub fn base_coin(mut self, base_coin: String) -> Self {
-        self.base_coin = Some(base_coin);
-        self
-    }
-
-    /// Filter by settle coin
-    pub fn settle_coin(mut self, settle_coin: String) -> Self {
-        self.settle_coin = Some(settle_coin);
-        self
-    }
-
-    /// Filter by order ID
-    pub fn order_id(mut self, order_id: String) -> Self {
-        self.order_id = Some(order_id);
-        self
-    }
-
-    /// Filter by order link ID
-    pub fn order_link_id(mut self, order_link_id: String) -> Self {
-        self.order_link_id = Some(order_link_id);
-        self
-    }
-
-    /// Set order filter
-    pub fn order_filter(mut self, order_filter: OrderFilter) -> Self {
-        self.order_filter = Some(order_filter);
-        self
-    }
-
-    /// Filter by order status
-    pub fn order_status(mut self, order_status: OrderStatus) -> Self {
-        self.order_status = Some(order_status);
-        self
-    }
-
-    /// Set start time (timestamp in milliseconds)
-    pub fn start_time(mut self, start_time: u64) -> Self {
-        self.start_time = Some(start_time);
-        self
-    }
-
-    /// Set end time (timestamp in milliseconds)
-    pub fn end_time(mut self, end_time: u64) -> Self {
-        self.end_time = Some(end_time);
-        self
-    }
-
-    /// Set page limit (1-50, default 20)
-    pub fn limit(mut self, limit: i32) -> Self {
-        self.limit = Some(limit);
-        self
-    }
-
-    /// Set pagination cursor
-    pub fn cursor(mut self, cursor: String) -> Self {
-        self.cursor = Some(cursor);
-        self
-    }
-}
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn test_get_order_history_request_builder() {
-        let request = GetOrderHistoryRequest::new(Category::Linear)
-            .symbol("BTCUSDT".to_string())
-            .order_status(OrderStatus::Filled)
-            .limit(10)
-            .start_time(1640995200000)
-            .end_time(1641081600000);
+    fn test_get_order_history_request_direct_construction() {
+        let request = GetOrderHistoryRequest {
+            category: Category::Linear,
+            symbol: Some("BTCUSDT".to_string()),
+            order_status: Some(OrderStatus::Filled),
+            limit: Some(10),
+            start_time: Some(1640995200000),
+            end_time: Some(1641081600000),
+            base_coin: None,
+            settle_coin: None,
+            order_id: None,
+            order_link_id: None,
+            order_filter: None,
+            cursor: None,
+        };
 
         assert_eq!(request.category, Category::Linear);
         assert_eq!(request.symbol, Some("BTCUSDT".to_string()));
@@ -186,10 +110,20 @@ mod tests {
 
     #[test]
     fn test_get_order_history_request_serialization() {
-        let request = GetOrderHistoryRequest::new(Category::Spot)
-            .base_coin("BTC".to_string())
-            .order_filter(OrderFilter::Order)
-            .limit(20);
+        let request = GetOrderHistoryRequest {
+            category: Category::Spot,
+            base_coin: Some("BTC".to_string()),
+            order_filter: Some(OrderFilter::Order),
+            limit: Some(20),
+            symbol: None,
+            settle_coin: None,
+            order_id: None,
+            order_link_id: None,
+            order_status: None,
+            start_time: None,
+            end_time: None,
+            cursor: None,
+        };
 
         let json = serde_json::to_string(&request).unwrap();
         assert!(json.contains("\"category\":\"spot\""));

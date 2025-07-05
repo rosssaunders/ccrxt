@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use crate::bybit::{EndpointType, RestResult};
 use super::client::RestClient;
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Default)]
 pub struct GetInsuranceRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub coin: Option<String>,
@@ -40,13 +40,3 @@ impl RestClient {
     }
 }
 
-impl Default for GetInsuranceRequest {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-impl GetInsuranceRequest {
-    pub fn new() -> Self { Self { coin: None } }
-    pub fn coin(mut self, coin: String) -> Self { self.coin = Some(coin); self }
-}

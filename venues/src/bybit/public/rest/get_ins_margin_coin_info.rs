@@ -48,8 +48,3 @@ impl RestClient {
     }
 }
 
-impl GetInsMarginCoinInfoRequest {
-    pub fn new(product_id: String) -> Self {
-        Self { product_id }
-    }
-}

@@ -69,49 +69,6 @@ impl RestClient {
     }
 }
 
-impl CancelAllOrdersRequest {
-    /// Create a new cancel all orders request
-    pub fn new(category: Category) -> Self {
-        Self {
-            category,
-            symbol: None,
-            base_coin: None,
-            settle_coin: None,
-            order_filter: None,
-            stop_order_type: None,
-        }
-    }
-
-    /// Cancel all orders for a specific symbol
-    pub fn symbol(mut self, symbol: String) -> Self {
-        self.symbol = Some(symbol);
-        self
-    }
-
-    /// Cancel all orders for a specific base coin
-    pub fn base_coin(mut self, base_coin: String) -> Self {
-        self.base_coin = Some(base_coin);
-        self
-    }
-
-    /// Cancel all orders for a specific settle coin
-    pub fn settle_coin(mut self, settle_coin: String) -> Self {
-        self.settle_coin = Some(settle_coin);
-        self
-    }
-
-    /// Set order filter
-    pub fn order_filter(mut self, order_filter: OrderFilter) -> Self {
-        self.order_filter = Some(order_filter);
-        self
-    }
-
-    /// Set stop order type filter
-    pub fn stop_order_type(mut self, stop_order_type: StopOrderType) -> Self {
-        self.stop_order_type = Some(stop_order_type);
-        self
-    }
-}
 
 #[cfg(test)]
 mod tests {
@@ -119,8 +76,14 @@ mod tests {
 
     #[test]
     fn test_cancel_all_orders_request_by_symbol() {
-        let request = CancelAllOrdersRequest::new(Category::Linear)
-            .symbol("BTCUSDT".to_string());
+        let request = CancelAllOrdersRequest {
+            category: Category::Linear,
+            symbol: Some("BTCUSDT".to_string()),
+            base_coin: None,
+            settle_coin: None,
+            order_filter: None,
+            stop_order_type: None,
+        };
 
         assert_eq!(request.category, Category::Linear);
         assert_eq!(request.symbol, Some("BTCUSDT".to_string()));
@@ -130,9 +93,14 @@ mod tests {
 
     #[test]
     fn test_cancel_all_orders_request_by_base_coin() {
-        let request = CancelAllOrdersRequest::new(Category::Spot)
-            .base_coin("BTC".to_string())
-            .order_filter(OrderFilter::Order);
+        let request = CancelAllOrdersRequest {
+            category: Category::Spot,
+            symbol: None,
+            base_coin: Some("BTC".to_string()),
+            settle_coin: None,
+            order_filter: Some(OrderFilter::Order),
+            stop_order_type: None,
+        };
 
         assert_eq!(request.category, Category::Spot);
         assert!(request.symbol.is_none());
@@ -142,9 +110,14 @@ mod tests {
 
     #[test]
     fn test_cancel_all_orders_request_serialization() {
-        let request = CancelAllOrdersRequest::new(Category::Linear)
-            .settle_coin("USDT".to_string())
-            .stop_order_type(StopOrderType::Stop);
+        let request = CancelAllOrdersRequest {
+            category: Category::Linear,
+            symbol: None,
+            base_coin: None,
+            settle_coin: Some("USDT".to_string()),
+            order_filter: None,
+            stop_order_type: Some(StopOrderType::Stop),
+        };
 
         let json = serde_json::to_string(&request).unwrap();
         assert!(json.contains("\"category\":\"linear\""));

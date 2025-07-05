@@ -52,8 +52,3 @@ impl RestClient {
     }
 }
 
-impl GetOpenInterestRequest {
-    pub fn new(category: Category, symbol: String, interval_time: String) -> Self {
-        Self { category, symbol, interval_time, start_time: None, end_time: None, limit: None, cursor: None }
-    }
-}

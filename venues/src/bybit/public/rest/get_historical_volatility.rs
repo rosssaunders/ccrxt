@@ -46,8 +46,3 @@ impl RestClient {
     }
 }
 
-impl GetHistoricalVolatilityRequest {
-    pub fn new(base_coin: String) -> Self {
-        Self { category: Category::Option, base_coin, period: None, start_time: None, end_time: None }
-    }
-}

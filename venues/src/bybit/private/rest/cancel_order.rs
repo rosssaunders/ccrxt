@@ -60,47 +60,19 @@ impl RestClient {
     }
 }
 
-impl CancelOrderRequest {
-    /// Create a new cancel order request by order ID
-    pub fn by_order_id(category: Category, symbol: String, order_id: String) -> Self {
-        Self {
-            category,
-            symbol,
-            order_id: Some(order_id),
-            order_link_id: None,
-            order_filter: None,
-        }
-    }
-
-    /// Create a new cancel order request by order link ID
-    pub fn by_order_link_id(category: Category, symbol: String, order_link_id: String) -> Self {
-        Self {
-            category,
-            symbol,
-            order_id: None,
-            order_link_id: Some(order_link_id),
-            order_filter: None,
-        }
-    }
-
-    /// Set order filter (for spot trading only)
-    pub fn order_filter(mut self, order_filter: OrderFilter) -> Self {
-        self.order_filter = Some(order_filter);
-        self
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
     fn test_cancel_order_request_by_order_id() {
-        let request = CancelOrderRequest::by_order_id(
-            Category::Linear,
-            "BTCUSDT".to_string(),
-            "12345".to_string(),
-        );
+        let request = CancelOrderRequest {
+            category: Category::Linear,
+            symbol: "BTCUSDT".to_string(),
+            order_id: Some("12345".to_string()),
+            order_link_id: None,
+            order_filter: None,
+        };
 
         assert_eq!(request.category, Category::Linear);
         assert_eq!(request.symbol, "BTCUSDT");
@@ -111,12 +83,13 @@ mod tests {
 
     #[test]
     fn test_cancel_order_request_by_order_link_id() {
-        let request = CancelOrderRequest::by_order_link_id(
-            Category::Spot,
-            "ETHUSDT".to_string(),
-            "custom-456".to_string(),
-        )
-        .order_filter(OrderFilter::Order);
+        let request = CancelOrderRequest {
+            category: Category::Spot,
+            symbol: "ETHUSDT".to_string(),
+            order_id: None,
+            order_link_id: Some("custom-456".to_string()),
+            order_filter: Some(OrderFilter::Order),
+        };
 
         assert_eq!(request.category, Category::Spot);
         assert_eq!(request.symbol, "ETHUSDT");
@@ -127,11 +100,13 @@ mod tests {
 
     #[test]
     fn test_cancel_order_request_serialization() {
-        let request = CancelOrderRequest::by_order_id(
-            Category::Linear,
-            "BTCUSDT".to_string(),
-            "order123".to_string(),
-        );
+        let request = CancelOrderRequest {
+            category: Category::Linear,
+            symbol: "BTCUSDT".to_string(),
+            order_id: Some("order123".to_string()),
+            order_link_id: None,
+            order_filter: None,
+        };
 
         let json = serde_json::to_string(&request).unwrap();
         assert!(json.contains("\"category\":\"linear\""));

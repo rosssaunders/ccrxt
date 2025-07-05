@@ -80,54 +80,21 @@ impl RestClient {
     }
 }
 
-impl GetRecentTradesRequest {
-    /// Create a new recent trades request
-    pub fn new(category: Category) -> Self {
-        Self {
-            category,
-            symbol: None,
-            base_coin: None,
-            option_type: None,
-            limit: None,
-        }
-    }
 
-    /// Set symbol (required for spot/linear/inverse, optional for option)
-    pub fn symbol(mut self, symbol: String) -> Self {
-        self.symbol = Some(symbol);
-        self
-    }
-
-    /// Set base coin (option only, default: BTC)
-    pub fn base_coin(mut self, base_coin: String) -> Self {
-        self.base_coin = Some(base_coin);
-        self
-    }
-
-    /// Set option type (option only)
-    pub fn option_type(mut self, option_type: OptionType) -> Self {
-        self.option_type = Some(option_type);
-        self
-    }
-
-    /// Set limit for data size per page
-    /// - spot: [1, 60], default: 60
-    /// - others: [1, 1000], default: 500
-    pub fn limit(mut self, limit: i32) -> Self {
-        self.limit = Some(limit);
-        self
-    }
-}
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn test_get_recent_trades_request_builder() {
-        let request = GetRecentTradesRequest::new(Category::Spot)
-            .symbol("BTCUSDT".to_string())
-            .limit(10);
+    fn test_get_recent_trades_request_direct_construction() {
+        let request = GetRecentTradesRequest {
+            category: Category::Spot,
+            symbol: Some("BTCUSDT".to_string()),
+            limit: Some(10),
+            base_coin: None,
+            option_type: None,
+        };
 
         assert_eq!(request.category, Category::Spot);
         assert_eq!(request.symbol, Some("BTCUSDT".to_string()));
@@ -138,10 +105,13 @@ mod tests {
 
     #[test]
     fn test_get_recent_trades_request_options() {
-        let request = GetRecentTradesRequest::new(Category::Option)
-            .base_coin("ETH".to_string())
-            .option_type(OptionType::Call)
-            .limit(100);
+        let request = GetRecentTradesRequest {
+            category: Category::Option,
+            symbol: None,
+            base_coin: Some("ETH".to_string()),
+            option_type: Some(OptionType::Call),
+            limit: Some(100),
+        };
 
         assert_eq!(request.category, Category::Option);
         assert_eq!(request.base_coin, Some("ETH".to_string()));

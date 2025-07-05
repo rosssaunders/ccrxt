@@ -76,21 +76,7 @@ impl RestClient {
     }
 }
 
-impl BatchCancelOrdersRequest {
-    /// Create a new batch cancel orders request
-    pub fn new(category: Category, orders: Vec<CancelOrderRequest>) -> Self {
-        Self {
-            category,
-            request: orders,
-        }
-    }
 
-    /// Add an order cancellation to the batch
-    pub fn add_order(mut self, order: CancelOrderRequest) -> Self {
-        self.request.push(order);
-        self
-    }
-}
 
 #[cfg(test)]
 mod tests {
@@ -98,19 +84,26 @@ mod tests {
 
     #[test]
     fn test_batch_cancel_orders_request() {
-        let cancel1 = CancelOrderRequest::by_order_id(
-            Category::Linear,
-            "BTCUSDT".to_string(),
-            "order1".to_string(),
-        );
+        let cancel1 = CancelOrderRequest {
+            category: Category::Linear,
+            symbol: "BTCUSDT".to_string(),
+            order_id: Some("order1".to_string()),
+            order_link_id: None,
+            order_filter: None,
+        };
 
-        let cancel2 = CancelOrderRequest::by_order_link_id(
-            Category::Linear,
-            "ETHUSDT".to_string(),
-            "custom-order-2".to_string(),
-        );
+        let cancel2 = CancelOrderRequest {
+            category: Category::Linear,
+            symbol: "ETHUSDT".to_string(),
+            order_id: None,
+            order_link_id: Some("custom-order-2".to_string()),
+            order_filter: None,
+        };
 
-        let request = BatchCancelOrdersRequest::new(Category::Linear, vec![cancel1, cancel2]);
+        let request = BatchCancelOrdersRequest {
+            category: Category::Linear,
+            request: vec![cancel1, cancel2],
+        };
 
         assert_eq!(request.category, Category::Linear);
         assert_eq!(request.request.len(), 2);
@@ -120,20 +113,26 @@ mod tests {
 
     #[test]
     fn test_batch_cancel_orders_request_builder() {
-        let cancel1 = CancelOrderRequest::by_order_id(
-            Category::Spot,
-            "BTCUSDT".to_string(),
-            "order1".to_string(),
-        );
+        let cancel1 = CancelOrderRequest {
+            category: Category::Spot,
+            symbol: "BTCUSDT".to_string(),
+            order_id: Some("order1".to_string()),
+            order_link_id: None,
+            order_filter: None,
+        };
 
-        let cancel2 = CancelOrderRequest::by_order_id(
-            Category::Spot,
-            "ETHUSDT".to_string(),
-            "order2".to_string(),
-        );
+        let cancel2 = CancelOrderRequest {
+            category: Category::Spot,
+            symbol: "ETHUSDT".to_string(),
+            order_id: Some("order2".to_string()),
+            order_link_id: None,
+            order_filter: None,
+        };
 
-        let request = BatchCancelOrdersRequest::new(Category::Spot, vec![cancel1])
-            .add_order(cancel2);
+        let request = BatchCancelOrdersRequest {
+            category: Category::Spot,
+            request: vec![cancel1, cancel2],
+        };
 
         assert_eq!(request.category, Category::Spot);
         assert_eq!(request.request.len(), 2);
@@ -141,13 +140,18 @@ mod tests {
 
     #[test]
     fn test_batch_cancel_orders_request_serialization() {
-        let cancel = CancelOrderRequest::by_order_id(
-            Category::Linear,
-            "BTCUSDT".to_string(),
-            "order123".to_string(),
-        );
+        let cancel = CancelOrderRequest {
+            category: Category::Linear,
+            symbol: "BTCUSDT".to_string(),
+            order_id: Some("order123".to_string()),
+            order_link_id: None,
+            order_filter: None,
+        };
 
-        let request = BatchCancelOrdersRequest::new(Category::Linear, vec![cancel]);
+        let request = BatchCancelOrdersRequest {
+            category: Category::Linear,
+            request: vec![cancel],
+        };
 
         let json = serde_json::to_string(&request).unwrap();
         assert!(json.contains("\"category\":\"linear\""));

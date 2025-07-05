@@ -106,59 +106,22 @@ impl RestClient {
     }
 }
 
-impl GetPositionInfoRequest {
-    /// Create a new get position info request
-    pub fn new(category: Category) -> Self {
-        Self {
-            category,
-            symbol: None,
-            base_coin: None,
-            settle_coin: None,
-            limit: None,
-            cursor: None,
-        }
-    }
 
-    /// Filter by symbol
-    pub fn symbol(mut self, symbol: String) -> Self {
-        self.symbol = Some(symbol);
-        self
-    }
-
-    /// Filter by base coin (option only)
-    pub fn base_coin(mut self, base_coin: String) -> Self {
-        self.base_coin = Some(base_coin);
-        self
-    }
-
-    /// Filter by settle coin (linear requires either symbol or settleCoin)
-    pub fn settle_coin(mut self, settle_coin: String) -> Self {
-        self.settle_coin = Some(settle_coin);
-        self
-    }
-
-    /// Set page limit (1-200, default 20)
-    pub fn limit(mut self, limit: i32) -> Self {
-        self.limit = Some(limit);
-        self
-    }
-
-    /// Set pagination cursor
-    pub fn cursor(mut self, cursor: String) -> Self {
-        self.cursor = Some(cursor);
-        self
-    }
-}
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn test_get_position_info_request_builder() {
-        let request = GetPositionInfoRequest::new(Category::Linear)
-            .symbol("BTCUSDT".to_string())
-            .limit(50);
+    fn test_get_position_info_request_direct_construction() {
+        let request = GetPositionInfoRequest {
+            category: Category::Linear,
+            symbol: Some("BTCUSDT".to_string()),
+            limit: Some(50),
+            base_coin: None,
+            settle_coin: None,
+            cursor: None,
+        };
 
         assert_eq!(request.category, Category::Linear);
         assert_eq!(request.symbol, Some("BTCUSDT".to_string()));
@@ -169,9 +132,14 @@ mod tests {
 
     #[test]
     fn test_get_position_info_request_with_settle_coin() {
-        let request = GetPositionInfoRequest::new(Category::Linear)
-            .settle_coin("USDT".to_string())
-            .limit(10);
+        let request = GetPositionInfoRequest {
+            category: Category::Linear,
+            settle_coin: Some("USDT".to_string()),
+            limit: Some(10),
+            symbol: None,
+            base_coin: None,
+            cursor: None,
+        };
 
         assert_eq!(request.category, Category::Linear);
         assert_eq!(request.settle_coin, Some("USDT".to_string()));
@@ -181,9 +149,14 @@ mod tests {
 
     #[test]
     fn test_get_position_info_request_serialization() {
-        let request = GetPositionInfoRequest::new(Category::Option)
-            .base_coin("BTC".to_string())
-            .limit(20);
+        let request = GetPositionInfoRequest {
+            category: Category::Option,
+            base_coin: Some("BTC".to_string()),
+            limit: Some(20),
+            symbol: None,
+            settle_coin: None,
+            cursor: None,
+        };
 
         let json = serde_json::to_string(&request).unwrap();
         assert!(json.contains("\"category\":\"option\""));

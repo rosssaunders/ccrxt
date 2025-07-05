@@ -61,51 +61,20 @@ impl RestClient {
     }
 }
 
-impl GetIndexPriceKlineRequest {
-    /// Create a new index price kline request
-    pub fn new(category: Category, symbol: String, interval: Interval) -> Self {
-        Self {
-            category,
-            symbol,
-            interval,
-            start: None,
-            end: None,
-            limit: None,
-        }
-    }
-
-    /// Set the start timestamp (ms)
-    pub fn start(mut self, start: u64) -> Self {
-        self.start = Some(start);
-        self
-    }
-
-    /// Set the end timestamp (ms)
-    pub fn end(mut self, end: u64) -> Self {
-        self.end = Some(end);
-        self
-    }
-
-    /// Set the limit (1-1000, default: 200)
-    pub fn limit(mut self, limit: i32) -> Self {
-        self.limit = Some(limit);
-        self
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn test_get_index_price_kline_request_builder() {
-        let request = GetIndexPriceKlineRequest::new(
-            Category::Linear,
-            "BTCUSDT".to_string(),
-            Interval::Min60,
-        )
-        .end(1670688000000)
-        .limit(100);
+    fn test_get_index_price_kline_request_construction() {
+        let request = GetIndexPriceKlineRequest {
+            category: Category::Linear,
+            symbol: "BTCUSDT".to_string(),
+            interval: Interval::Min60,
+            start: None,
+            end: Some(1670688000000),
+            limit: Some(100),
+        };
 
         assert_eq!(request.category, Category::Linear);
         assert_eq!(request.symbol, "BTCUSDT");

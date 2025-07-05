@@ -45,8 +45,3 @@ impl RestClient {
     }
 }
 
-impl GetLongShortRatioRequest {
-    pub fn new(category: Category, symbol: String, period: String) -> Self {
-        Self { category, symbol, period, limit: None }
-    }
-}

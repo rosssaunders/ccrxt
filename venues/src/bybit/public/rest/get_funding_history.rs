@@ -66,46 +66,21 @@ impl RestClient {
     }
 }
 
-impl GetFundingHistoryRequest {
-    /// Create a new funding history request
-    pub fn new(category: Category, symbol: String) -> Self {
-        Self {
-            category,
-            symbol,
-            start_time: None,
-            end_time: None,
-            limit: None,
-        }
-    }
 
-    /// Set start time (timestamp in milliseconds)
-    pub fn start_time(mut self, start_time: u64) -> Self {
-        self.start_time = Some(start_time);
-        self
-    }
-
-    /// Set end time (timestamp in milliseconds)
-    pub fn end_time(mut self, end_time: u64) -> Self {
-        self.end_time = Some(end_time);
-        self
-    }
-
-    /// Set limit (1-200, default: 200)
-    pub fn limit(mut self, limit: i32) -> Self {
-        self.limit = Some(limit);
-        self
-    }
-}
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn test_get_funding_history_request_builder() {
-        let request = GetFundingHistoryRequest::new(Category::Linear, "BTCUSDT".to_string())
-            .start_time(1670601600000)
-            .limit(50);
+    fn test_get_funding_history_request_construction() {
+        let request = GetFundingHistoryRequest {
+            category: Category::Linear,
+            symbol: "BTCUSDT".to_string(),
+            start_time: Some(1670601600000),
+            end_time: None,
+            limit: Some(50),
+        };
 
         assert_eq!(request.category, Category::Linear);
         assert_eq!(request.symbol, "BTCUSDT");

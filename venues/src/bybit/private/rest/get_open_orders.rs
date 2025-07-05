@@ -118,77 +118,7 @@ impl RestClient {
     }
 }
 
-impl GetOpenOrdersRequest {
-    /// Create a new get open orders request
-    pub fn new(category: Category) -> Self {
-        Self {
-            category,
-            symbol: None,
-            base_coin: None,
-            settle_coin: None,
-            order_id: None,
-            order_link_id: None,
-            open_only: None,
-            order_filter: None,
-            limit: None,
-            cursor: None,
-        }
-    }
 
-    /// Filter by symbol
-    pub fn symbol(mut self, symbol: String) -> Self {
-        self.symbol = Some(symbol);
-        self
-    }
-
-    /// Filter by base coin
-    pub fn base_coin(mut self, base_coin: String) -> Self {
-        self.base_coin = Some(base_coin);
-        self
-    }
-
-    /// Filter by settle coin
-    pub fn settle_coin(mut self, settle_coin: String) -> Self {
-        self.settle_coin = Some(settle_coin);
-        self
-    }
-
-    /// Filter by order ID
-    pub fn order_id(mut self, order_id: String) -> Self {
-        self.order_id = Some(order_id);
-        self
-    }
-
-    /// Filter by order link ID
-    pub fn order_link_id(mut self, order_link_id: String) -> Self {
-        self.order_link_id = Some(order_link_id);
-        self
-    }
-
-    /// Set open only filter (0=open only, 1/2=include closed orders)
-    pub fn open_only(mut self, open_only: i32) -> Self {
-        self.open_only = Some(open_only);
-        self
-    }
-
-    /// Set order filter
-    pub fn order_filter(mut self, order_filter: OrderFilter) -> Self {
-        self.order_filter = Some(order_filter);
-        self
-    }
-
-    /// Set page limit (1-50, default 20)
-    pub fn limit(mut self, limit: i32) -> Self {
-        self.limit = Some(limit);
-        self
-    }
-
-    /// Set pagination cursor
-    pub fn cursor(mut self, cursor: String) -> Self {
-        self.cursor = Some(cursor);
-        self
-    }
-}
 
 #[cfg(test)]
 mod tests {
@@ -196,10 +126,18 @@ mod tests {
 
     #[test]
     fn test_get_open_orders_request_builder() {
-        let request = GetOpenOrdersRequest::new(Category::Linear)
-            .symbol("BTCUSDT".to_string())
-            .limit(10)
-            .open_only(0);
+        let request = GetOpenOrdersRequest {
+            category: Category::Linear,
+            symbol: Some("BTCUSDT".to_string()),
+            base_coin: None,
+            settle_coin: None,
+            order_id: None,
+            order_link_id: None,
+            open_only: Some(0),
+            order_filter: None,
+            limit: Some(10),
+            cursor: None,
+        };
 
         assert_eq!(request.category, Category::Linear);
         assert_eq!(request.symbol, Some("BTCUSDT".to_string()));
@@ -211,10 +149,18 @@ mod tests {
 
     #[test]
     fn test_get_open_orders_request_serialization() {
-        let request = GetOpenOrdersRequest::new(Category::Spot)
-            .symbol("ETHUSDT".to_string())
-            .order_filter(OrderFilter::Order)
-            .limit(20);
+        let request = GetOpenOrdersRequest {
+            category: Category::Spot,
+            symbol: Some("ETHUSDT".to_string()),
+            base_coin: None,
+            settle_coin: None,
+            order_id: None,
+            order_link_id: None,
+            open_only: None,
+            order_filter: Some(OrderFilter::Order),
+            limit: Some(20),
+            cursor: None,
+        };
 
         let json = serde_json::to_string(&request).unwrap();
         assert!(json.contains("\"category\":\"spot\""));

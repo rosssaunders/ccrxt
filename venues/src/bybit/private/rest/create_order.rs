@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::bybit::{enums::*, EndpointType, RestResult};
+use crate::bybit::{EndpointType, RestResult, enums::*};
 
 use super::client::RestClient;
 
@@ -148,77 +148,22 @@ impl Default for CreateOrderRequest {
     }
 }
 
-impl CreateOrderRequest {
-    /// Create a new order request builder
-    pub fn new(category: Category, symbol: String, side: Side, order_type: OrderType, qty: String) -> Self {
-        Self {
-            category,
-            symbol,
-            side,
-            order_type,
-            qty,
-            ..Default::default()
-        }
-    }
-
-    /// Set the price for limit orders
-    pub fn price(mut self, price: String) -> Self {
-        self.price = Some(price);
-        self
-    }
-
-    /// Set time in force
-    pub fn time_in_force(mut self, time_in_force: TimeInForce) -> Self {
-        self.time_in_force = Some(time_in_force);
-        self
-    }
-
-    /// Set order link ID for custom order identification
-    pub fn order_link_id(mut self, order_link_id: String) -> Self {
-        self.order_link_id = Some(order_link_id);
-        self
-    }
-
-    /// Set take profit price
-    pub fn take_profit(mut self, take_profit: String) -> Self {
-        self.take_profit = Some(take_profit);
-        self
-    }
-
-    /// Set stop loss price
-    pub fn stop_loss(mut self, stop_loss: String) -> Self {
-        self.stop_loss = Some(stop_loss);
-        self
-    }
-
-    /// Set reduce only flag
-    pub fn reduce_only(mut self, reduce_only: bool) -> Self {
-        self.reduce_only = Some(reduce_only);
-        self
-    }
-
-    /// Set position index for hedge mode
-    pub fn position_idx(mut self, position_idx: PositionIdx) -> Self {
-        self.position_idx = Some(position_idx);
-        self
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
     fn test_create_order_request_serialization() {
-        let request = CreateOrderRequest::new(
-            Category::Linear,
-            "BTCUSDT".to_string(),
-            Side::Buy,
-            OrderType::Limit,
-            "0.001".to_string(),
-        )
-        .price("50000".to_string())
-        .time_in_force(TimeInForce::GTC);
+        let request = CreateOrderRequest {
+            category: Category::Linear,
+            symbol: "BTCUSDT".to_string(),
+            side: Side::Buy,
+            order_type: OrderType::Limit,
+            qty: "0.001".to_string(),
+            price: Some("50000".to_string()),
+            time_in_force: Some(TimeInForce::GTC),
+            ..Default::default()
+        };
 
         let json = serde_json::to_string(&request).unwrap();
         assert!(json.contains("\"category\":\"linear\""));
@@ -232,15 +177,16 @@ mod tests {
 
     #[test]
     fn test_create_order_request_builder() {
-        let request = CreateOrderRequest::new(
-            Category::Spot,
-            "ETHUSDT".to_string(),
-            Side::Sell,
-            OrderType::Market,
-            "1.0".to_string(),
-        )
-        .order_link_id("custom-123".to_string())
-        .reduce_only(true);
+        let request = CreateOrderRequest {
+            category: Category::Spot,
+            symbol: "ETHUSDT".to_string(),
+            side: Side::Sell,
+            order_type: OrderType::Market,
+            qty: "1.0".to_string(),
+            order_link_id: Some("custom-123".to_string()),
+            reduce_only: Some(true),
+            ..Default::default()
+        };
 
         assert_eq!(request.category, Category::Spot);
         assert_eq!(request.symbol, "ETHUSDT");

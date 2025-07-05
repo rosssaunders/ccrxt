@@ -82,107 +82,30 @@ impl RestClient {
     }
 }
 
-impl AmendOrderRequest {
-    /// Create a new amend order request by order ID
-    pub fn by_order_id(category: Category, symbol: String, order_id: String) -> Self {
-        Self {
-            category,
-            symbol,
-            order_id: Some(order_id),
-            order_link_id: None,
-            order_iv: None,
-            trigger_price: None,
-            qty: None,
-            price: None,
-            tpsl_mode: None,
-            take_profit: None,
-            stop_loss: None,
-            tp_trigger_by: None,
-            sl_trigger_by: None,
-            trigger_by: None,
-            tp_limit_price: None,
-            sl_limit_price: None,
-        }
-    }
-
-    /// Create a new amend order request by order link ID
-    pub fn by_order_link_id(category: Category, symbol: String, order_link_id: String) -> Self {
-        Self {
-            category,
-            symbol,
-            order_id: None,
-            order_link_id: Some(order_link_id),
-            order_iv: None,
-            trigger_price: None,
-            qty: None,
-            price: None,
-            tpsl_mode: None,
-            take_profit: None,
-            stop_loss: None,
-            tp_trigger_by: None,
-            sl_trigger_by: None,
-            trigger_by: None,
-            tp_limit_price: None,
-            sl_limit_price: None,
-        }
-    }
-
-    /// Set new order quantity
-    pub fn qty(mut self, qty: String) -> Self {
-        self.qty = Some(qty);
-        self
-    }
-
-    /// Set new order price
-    pub fn price(mut self, price: String) -> Self {
-        self.price = Some(price);
-        self
-    }
-
-    /// Set new take profit price (use "0" to cancel existing TP)
-    pub fn take_profit(mut self, take_profit: String) -> Self {
-        self.take_profit = Some(take_profit);
-        self
-    }
-
-    /// Set new stop loss price (use "0" to cancel existing SL)
-    pub fn stop_loss(mut self, stop_loss: String) -> Self {
-        self.stop_loss = Some(stop_loss);
-        self
-    }
-
-    /// Set trigger price for conditional orders
-    pub fn trigger_price(mut self, trigger_price: String) -> Self {
-        self.trigger_price = Some(trigger_price);
-        self
-    }
-
-    /// Set take profit trigger by
-    pub fn tp_trigger_by(mut self, tp_trigger_by: TriggerBy) -> Self {
-        self.tp_trigger_by = Some(tp_trigger_by);
-        self
-    }
-
-    /// Set stop loss trigger by
-    pub fn sl_trigger_by(mut self, sl_trigger_by: TriggerBy) -> Self {
-        self.sl_trigger_by = Some(sl_trigger_by);
-        self
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
     fn test_amend_order_request_by_order_id() {
-        let request = AmendOrderRequest::by_order_id(
-            Category::Linear,
-            "BTCUSDT".to_string(),
-            "12345".to_string(),
-        )
-        .price("51000".to_string())
-        .qty("0.002".to_string());
+        let request = AmendOrderRequest {
+            category: Category::Linear,
+            symbol: "BTCUSDT".to_string(),
+            order_id: Some("12345".to_string()),
+            order_link_id: None,
+            order_iv: None,
+            trigger_price: None,
+            qty: Some("0.002".to_string()),
+            price: Some("51000".to_string()),
+            tpsl_mode: None,
+            take_profit: None,
+            stop_loss: None,
+            tp_trigger_by: None,
+            sl_trigger_by: None,
+            trigger_by: None,
+            tp_limit_price: None,
+            sl_limit_price: None,
+        };
 
         assert_eq!(request.category, Category::Linear);
         assert_eq!(request.symbol, "BTCUSDT");
@@ -194,13 +117,24 @@ mod tests {
 
     #[test]
     fn test_amend_order_request_by_order_link_id() {
-        let request = AmendOrderRequest::by_order_link_id(
-            Category::Spot,
-            "ETHUSDT".to_string(),
-            "custom-456".to_string(),
-        )
-        .take_profit("3500".to_string())
-        .stop_loss("2800".to_string());
+        let request = AmendOrderRequest {
+            category: Category::Spot,
+            symbol: "ETHUSDT".to_string(),
+            order_id: None,
+            order_link_id: Some("custom-456".to_string()),
+            order_iv: None,
+            trigger_price: None,
+            qty: None,
+            price: None,
+            tpsl_mode: None,
+            take_profit: Some("3500".to_string()),
+            stop_loss: Some("2800".to_string()),
+            tp_trigger_by: None,
+            sl_trigger_by: None,
+            trigger_by: None,
+            tp_limit_price: None,
+            sl_limit_price: None,
+        };
 
         assert_eq!(request.category, Category::Spot);
         assert_eq!(request.symbol, "ETHUSDT");
@@ -212,12 +146,24 @@ mod tests {
 
     #[test]
     fn test_amend_order_request_serialization() {
-        let request = AmendOrderRequest::by_order_id(
-            Category::Linear,
-            "BTCUSDT".to_string(),
-            "order123".to_string(),
-        )
-        .price("50000".to_string());
+        let request = AmendOrderRequest {
+            category: Category::Linear,
+            symbol: "BTCUSDT".to_string(),
+            order_id: Some("order123".to_string()),
+            order_link_id: None,
+            order_iv: None,
+            trigger_price: None,
+            qty: None,
+            price: Some("50000".to_string()),
+            tpsl_mode: None,
+            take_profit: None,
+            stop_loss: None,
+            tp_trigger_by: None,
+            sl_trigger_by: None,
+            trigger_by: None,
+            tp_limit_price: None,
+            sl_limit_price: None,
+        };
 
         let json = serde_json::to_string(&request).unwrap();
         assert!(json.contains("\"category\":\"linear\""));

@@ -113,42 +113,7 @@ impl RestClient {
     }
 }
 
-impl GetInstrumentsInfoRequest {
-    /// Create a new instruments info request
-    pub fn new(category: Category) -> Self {
-        Self {
-            category,
-            symbol: None,
-            base_coin: None,
-            limit: None,
-            cursor: None,
-        }
-    }
 
-    /// Filter by symbol
-    pub fn symbol(mut self, symbol: String) -> Self {
-        self.symbol = Some(symbol);
-        self
-    }
-
-    /// Filter by base coin (option only)
-    pub fn base_coin(mut self, base_coin: String) -> Self {
-        self.base_coin = Some(base_coin);
-        self
-    }
-
-    /// Set limit (1-1000, default: 500)
-    pub fn limit(mut self, limit: i32) -> Self {
-        self.limit = Some(limit);
-        self
-    }
-
-    /// Set pagination cursor
-    pub fn cursor(mut self, cursor: String) -> Self {
-        self.cursor = Some(cursor);
-        self
-    }
-}
 
 #[cfg(test)]
 mod tests {
@@ -156,9 +121,13 @@ mod tests {
 
     #[test]
     fn test_get_instruments_info_request_builder() {
-        let request = GetInstrumentsInfoRequest::new(Category::Linear)
-            .symbol("BTCUSDT".to_string())
-            .limit(100);
+        let request = GetInstrumentsInfoRequest {
+            category: Category::Linear,
+            symbol: Some("BTCUSDT".to_string()),
+            base_coin: None,
+            limit: Some(100),
+            cursor: None,
+        };
 
         assert_eq!(request.category, Category::Linear);
         assert_eq!(request.symbol, Some("BTCUSDT".to_string()));
