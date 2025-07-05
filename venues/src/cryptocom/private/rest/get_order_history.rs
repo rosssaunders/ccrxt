@@ -35,7 +35,7 @@ pub struct OrderHistoryEntry {
     pub time_in_force: String,
     /// Side: BUY or SELL
     pub side: String,
-    /// Execution instructions: POST_ONLY, LIQUIDATION
+    /// Execution instructions: POST_ONLY, SMART_POST_ONLY, LIQUIDATION
     pub exec_inst: Vec<String>,
     /// Quantity specified in the order
     pub quantity: String,
