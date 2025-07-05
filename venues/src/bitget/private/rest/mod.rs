@@ -25,6 +25,7 @@ mod modify_plan_order;
 mod place_order;
 mod place_plan_order;
 mod plan_sub_order;
+pub mod spot;
 mod sub_transfer;
 mod subaccount_assets;
 mod subaccount_deposit_address;

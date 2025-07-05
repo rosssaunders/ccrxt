@@ -120,7 +120,7 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the order placement response or an error
-    pub async fn place_order(&self, request: PlaceOrderRequest) -> RestResult<PlaceOrderResponse> {
+    pub async fn place_order(&self, request: &PlaceOrderRequest) -> RestResult<PlaceOrderResponse> {
         let body = serde_json::to_string(&request).map_err(|e| {
             crate::bitget::Errors::Error(format!("Failed to serialize request: {e}"))
         })?;

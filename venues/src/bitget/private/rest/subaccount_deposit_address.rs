@@ -55,15 +55,6 @@ impl RestClient {
     }
 }
 
-/// Builder for GetSubaccountDepositAddressRequest
-#[derive(Debug, Default)]
-pub struct GetSubaccountDepositAddressRequestBuilder {
-    sub_uid: Option<String>,
-    coin: Option<String>,
-    chain: Option<String>,
-    size: Option<String>,
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;

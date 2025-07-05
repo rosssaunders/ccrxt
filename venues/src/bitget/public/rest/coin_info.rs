@@ -17,24 +17,14 @@ where
 }
 
 /// Request for getting coin information
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone, Default, Serialize)]
 pub struct GetCoinInfoRequest {
     /// Specific coin to query, if empty returns all coins
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub coin: Option<String>,
 }
 
 impl GetCoinInfoRequest {
-    /// Create a new request for all coins
-    pub fn new() -> Self {
-        Self::default()
-    }
-
-    /// Set specific coin to query
-    pub fn coin(mut self, coin: impl Into<String>) -> Self {
-        self.coin = Some(coin.into());
-        self
-    }
-
     /// Convert to query parameters
     pub fn to_params(&self) -> Option<HashMap<String, String>> {
         let mut params = HashMap::new();
@@ -125,26 +115,10 @@ impl RestClient {
     /// * `request` - The request parameters
     ///
     /// # Returns
-    /// * `Result<RestResponse<Vec<CoinInfo>>, ApiError>` - The coin information
-    ///
-    /// # Example
-    /// ```rust
-    /// use venues::bitget::public::rest::{RestClient, GetCoinInfoRequest};
-    ///
-    /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// let client = RestClient::new("https://api.bitget.com", Default::default(), reqwest::Client::new());
-    ///
-    /// // Get all coins
-    /// let response = client.get_coin_info(GetCoinInfoRequest::new()).await?;
-    ///
-    /// // Get specific coin
-    /// let response = client.get_coin_info(GetCoinInfoRequest::new().coin("BTC")).await?;
-    /// # Ok(())
-    /// # }
-    /// ```
+    /// The coin information
     pub async fn get_coin_info(
         &self,
-        request: GetCoinInfoRequest,
+        request: &GetCoinInfoRequest,
     ) -> Result<RestResponse<Vec<CoinInfo>>, ApiError> {
         let endpoint = "/api/v2/spot/public/coins";
         let params = request.to_params();

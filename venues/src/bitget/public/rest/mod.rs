@@ -10,9 +10,6 @@ pub mod symbol_info;
 pub mod ticker;
 pub mod vip_fee_rate;
 
-#[cfg(test)]
-pub mod tests;
-
 // Re-export client and main types
 pub use candlestick::*;
 pub use client::RestClient;

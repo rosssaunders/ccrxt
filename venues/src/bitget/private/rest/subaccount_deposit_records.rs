@@ -95,67 +95,6 @@ impl RestClient {
     }
 }
 
-/// Builder for GetSubaccountDepositRecordsRequest
-#[derive(Debug, Default)]
-pub struct GetSubaccountDepositRecordsRequestBuilder {
-    sub_uid: Option<String>,
-    coin: Option<String>,
-    start_time: Option<String>,
-    end_time: Option<String>,
-    id_less_than: Option<String>,
-    limit: Option<String>,
-}
-
-impl GetSubaccountDepositRecordsRequestBuilder {
-    /// Set the sub-account UID
-    pub fn sub_uid(mut self, sub_uid: impl Into<String>) -> Self {
-        self.sub_uid = Some(sub_uid.into());
-        self
-    }
-
-    /// Set the coin name (optional)
-    pub fn coin(mut self, coin: impl Into<String>) -> Self {
-        self.coin = Some(coin.into());
-        self
-    }
-
-    /// Set the start time (optional)
-    pub fn start_time(mut self, start_time: impl Into<String>) -> Self {
-        self.start_time = Some(start_time.into());
-        self
-    }
-
-    /// Set the end time (optional)
-    pub fn end_time(mut self, end_time: impl Into<String>) -> Self {
-        self.end_time = Some(end_time.into());
-        self
-    }
-
-    /// Set the ID less than parameter (optional)
-    pub fn id_less_than(mut self, id_less_than: impl Into<String>) -> Self {
-        self.id_less_than = Some(id_less_than.into());
-        self
-    }
-
-    /// Set the limit (optional)
-    pub fn limit(mut self, limit: impl Into<String>) -> Self {
-        self.limit = Some(limit.into());
-        self
-    }
-
-    /// Build the request
-    pub fn build(self) -> GetSubaccountDepositRecordsRequest {
-        GetSubaccountDepositRecordsRequest {
-            sub_uid: self.sub_uid.expect("sub_uid is required"),
-            coin: self.coin,
-            start_time: self.start_time,
-            end_time: self.end_time,
-            id_less_than: self.id_less_than,
-            limit: self.limit,
-        }
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -5,24 +5,14 @@ use crate::bitget::{ApiError, RestResponse};
 use super::RestClient;
 
 /// Request for getting ticker information
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone, Default, Serialize)]
 pub struct GetTickerRequest {
     /// Specific symbol to query, if empty returns all symbols
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub symbol: Option<String>,
 }
 
 impl GetTickerRequest {
-    /// Create a new request for all symbols
-    pub fn new() -> Self {
-        Self::default()
-    }
-
-    /// Set specific symbol to query
-    pub fn symbol(mut self, symbol: impl Into<String>) -> Self {
-        self.symbol = Some(symbol.into());
-        self
-    }
-
     /// Convert to query parameters
     pub fn to_params(&self) -> Option<HashMap<String, String>> {
         let mut params = HashMap::new();
@@ -91,24 +81,8 @@ impl RestClient {
     /// * `request` - The request parameters
     /// 
     /// # Returns
-    /// * `Result<RestResponse<Vec<Ticker>>, ApiError>` - The ticker information
-    /// 
-    /// # Example
-    /// ```rust
-    /// use venues::bitget::public::rest::{RestClient, GetTickerRequest};
-    /// 
-    /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// let client = RestClient::new("https://api.bitget.com", Default::default(), reqwest::Client::new());
-    /// 
-    /// // Get all tickers
-    /// let response = client.get_ticker(GetTickerRequest::new()).await?;
-    /// 
-    /// // Get specific ticker
-    /// let response = client.get_ticker(GetTickerRequest::new().symbol("BTCUSDT")).await?;
-    /// # Ok(())
-    /// # }
-    /// ```
-    pub async fn get_ticker(&self, request: GetTickerRequest) -> Result<RestResponse<Vec<Ticker>>, ApiError> {
+    /// The ticker information
+    pub async fn get_ticker(&self, request: &GetTickerRequest) -> Result<RestResponse<Vec<Ticker>>, ApiError> {
         let endpoint = "/api/v2/spot/market/tickers";
         let params = request.to_params();
         self.get(endpoint, params).await

@@ -220,7 +220,7 @@ impl RestClient {
     /// A result containing the order information or an error
     pub async fn get_order_info(
         &self,
-        request: GetOrderInfoRequest,
+        request: &GetOrderInfoRequest,
     ) -> RestResult<GetOrderInfoResponse> {
         let query_string = serde_urlencoded::to_string(&request)
             .map_err(|e| crate::bitget::Errors::Error(format!("Failed to encode query: {e}")))?;

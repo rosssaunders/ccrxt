@@ -14,7 +14,7 @@ use super::get_order_info::{EntryPointSource, OrderSource, OrderStatus};
 use crate::bitget::{OrderSide, OrderType, RestResult};
 
 /// Request parameters for getting order history
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Default)]
 pub struct GetOrderHistoryRequest {
     /// Trading pair (optional filter)
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -52,61 +52,6 @@ pub struct GetOrderHistoryRequest {
     /// Valid window period (Unix milliseconds)
     #[serde(rename = "receiveWindow", skip_serializing_if = "Option::is_none")]
     pub receive_window: Option<i64>,
-}
-
-impl GetOrderHistoryRequest {
-    /// Create a new request with default parameters
-    pub fn new() -> Self {
-        Self {
-            symbol: None,
-            start_time: None,
-            end_time: None,
-            id_less_than: None,
-            limit: None,
-            order_id: None,
-            tpsl_type: None,
-            request_time: None,
-            receive_window: None,
-        }
-    }
-
-    /// Filter by symbol
-    pub fn symbol(mut self, symbol: impl Into<String>) -> Self {
-        self.symbol = Some(symbol.into());
-        self
-    }
-
-    /// Set time range (max 90 days)
-    pub fn time_range(mut self, start_time: i64, end_time: i64) -> Self {
-        self.start_time = Some(start_time);
-        self.end_time = Some(end_time);
-        self
-    }
-
-    /// Set pagination
-    pub fn pagination(mut self, id_less_than: Option<String>, limit: u32) -> Self {
-        self.id_less_than = id_less_than;
-        self.limit = Some(limit.min(100)); // Enforce max limit
-        self
-    }
-
-    /// Filter by order ID
-    pub fn order_id(mut self, order_id: impl Into<String>) -> Self {
-        self.order_id = Some(order_id.into());
-        self
-    }
-
-    /// Filter by order type
-    pub fn tpsl_type(mut self, tpsl_type: TPSLType) -> Self {
-        self.tpsl_type = Some(tpsl_type);
-        self
-    }
-}
-
-impl Default for GetOrderHistoryRequest {
-    fn default() -> Self {
-        Self::new()
-    }
 }
 
 /// Fee details for historical orders
@@ -260,7 +205,7 @@ impl RestClient {
     /// A result containing the order history or an error
     pub async fn get_order_history(
         &self,
-        request: GetOrderHistoryRequest,
+        request: &GetOrderHistoryRequest,
     ) -> RestResult<GetOrderHistoryResponse> {
         // Only create query string if there are parameters to serialize
         let has_params = request.symbol.is_some()
@@ -300,7 +245,7 @@ mod tests {
 
     #[test]
     fn test_get_order_history_request_default() {
-        let request = GetOrderHistoryRequest::new();
+        let request = GetOrderHistoryRequest::default();
 
         assert!(request.symbol.is_none());
         assert!(request.start_time.is_none());

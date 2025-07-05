@@ -24,7 +24,7 @@ pub enum TradeScope {
 }
 
 /// Request parameters for getting fills
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Default, Serialize)]
 pub struct GetFillsRequest {
     /// Trading pair name (optional filter)
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -52,52 +52,6 @@ pub struct GetFillsRequest {
     /// Value should be the tradeId from the corresponding interface
     #[serde(rename = "idLessThan", skip_serializing_if = "Option::is_none")]
     pub id_less_than: Option<String>,
-}
-
-impl GetFillsRequest {
-    /// Create a new request with default parameters
-    pub fn new() -> Self {
-        Self {
-            symbol: None,
-            order_id: None,
-            start_time: None,
-            end_time: None,
-            limit: None,
-            id_less_than: None,
-        }
-    }
-
-    /// Filter by symbol
-    pub fn symbol(mut self, symbol: impl Into<String>) -> Self {
-        self.symbol = Some(symbol.into());
-        self
-    }
-
-    /// Filter by order ID
-    pub fn order_id(mut self, order_id: impl Into<String>) -> Self {
-        self.order_id = Some(order_id.into());
-        self
-    }
-
-    /// Set time range (max 90 days)
-    pub fn time_range(mut self, start_time: i64, end_time: i64) -> Self {
-        self.start_time = Some(start_time);
-        self.end_time = Some(end_time);
-        self
-    }
-
-    /// Set pagination
-    pub fn pagination(mut self, id_less_than: Option<String>, limit: u32) -> Self {
-        self.id_less_than = id_less_than;
-        self.limit = Some(limit.min(100)); // Enforce max limit
-        self
-    }
-}
-
-impl Default for GetFillsRequest {
-    fn default() -> Self {
-        Self::new()
-    }
 }
 
 /// Fee details for a fill
@@ -203,7 +157,7 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the trade fills or an error
-    pub async fn get_fills(&self, request: GetFillsRequest) -> RestResult<GetFillsResponse> {
+    pub async fn get_fills(&self, request: &GetFillsRequest) -> RestResult<GetFillsResponse> {
         // Only create query string if there are parameters to serialize
         let has_params = request.symbol.is_some()
             || request.order_id.is_some()
@@ -213,7 +167,7 @@ impl RestClient {
             || request.id_less_than.is_some();
 
         let query_string = if has_params {
-            Some(serde_urlencoded::to_string(&request).map_err(|e| {
+            Some(serde_urlencoded::to_string(request).map_err(|e| {
                 crate::bitget::Errors::Error(format!("Failed to encode query: {e}"))
             })?)
         } else {
@@ -239,7 +193,7 @@ mod tests {
 
     #[test]
     fn test_get_fills_request_default() {
-        let request = GetFillsRequest::new();
+        let request = GetFillsRequest::default();
 
         assert!(request.symbol.is_none());
         assert!(request.order_id.is_none());

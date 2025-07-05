@@ -4,7 +4,7 @@ use crate::bitget::{Errors, RestResult};
 use serde::{Deserialize, Serialize};
 
 /// Get MainSub Transfer Record
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct GetMainSubTransferRecordRequest {
     /// Token name
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -96,67 +96,6 @@ pub struct MainSubTransferRecord {
     /// The user ID who receive the transfer
     #[serde(rename = "toUserId")]
     pub to_user_id: String,
-}
-
-impl GetMainSubTransferRecordRequest {
-    pub fn new() -> Self {
-        Self {
-            coin: None,
-            role: None,
-            sub_uid: None,
-            start_time: None,
-            end_time: None,
-            client_oid: None,
-            limit: None,
-            id_less_than: None,
-        }
-    }
-
-    pub fn coin(mut self, coin: impl Into<String>) -> Self {
-        self.coin = Some(coin.into());
-        self
-    }
-
-    pub fn role(mut self, role: TransferRole) -> Self {
-        self.role = Some(role);
-        self
-    }
-
-    pub fn sub_uid(mut self, sub_uid: impl Into<String>) -> Self {
-        self.sub_uid = Some(sub_uid.into());
-        self
-    }
-
-    pub fn start_time(mut self, start_time: impl Into<String>) -> Self {
-        self.start_time = Some(start_time.into());
-        self
-    }
-
-    pub fn end_time(mut self, end_time: impl Into<String>) -> Self {
-        self.end_time = Some(end_time.into());
-        self
-    }
-
-    pub fn client_oid(mut self, client_oid: impl Into<String>) -> Self {
-        self.client_oid = Some(client_oid.into());
-        self
-    }
-
-    pub fn limit(mut self, limit: impl Into<String>) -> Self {
-        self.limit = Some(limit.into());
-        self
-    }
-
-    pub fn id_less_than(mut self, id_less_than: impl Into<String>) -> Self {
-        self.id_less_than = Some(id_less_than.into());
-        self
-    }
-}
-
-impl Default for GetMainSubTransferRecordRequest {
-    fn default() -> Self {
-        Self::new()
-    }
 }
 
 impl RestClient {

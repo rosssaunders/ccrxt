@@ -46,7 +46,7 @@ impl RestClient {
     /// A result containing the cancel order response or an error
     pub async fn cancel_order(
         &self,
-        request: CancelOrderRequest,
+        request: &CancelOrderRequest,
     ) -> RestResult<CancelOrderResponse> {
         let body = serde_json::to_string(&request).map_err(|e| {
             crate::bitget::Errors::Error(format!("Failed to serialize request: {e}"))

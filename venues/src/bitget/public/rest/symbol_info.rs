@@ -5,24 +5,14 @@ use crate::bitget::{ApiError, RestResponse, SymbolStatus};
 use super::RestClient;
 
 /// Request for getting symbol information
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone, Default, Serialize)]
 pub struct GetSymbolInfoRequest {
     /// Specific symbol to query, if empty returns all symbols
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub symbol: Option<String>,
 }
 
 impl GetSymbolInfoRequest {
-    /// Create a new request for all symbols
-    pub fn new() -> Self {
-        Self::default()
-    }
-
-    /// Set specific symbol to query
-    pub fn symbol(mut self, symbol: impl Into<String>) -> Self {
-        self.symbol = Some(symbol.into());
-        self
-    }
-
     /// Convert to query parameters
     pub fn to_params(&self) -> Option<HashMap<String, String>> {
         let mut params = HashMap::new();
@@ -89,24 +79,8 @@ impl RestClient {
     /// * `request` - The request parameters
     /// 
     /// # Returns
-    /// * `Result<RestResponse<Vec<SymbolInfo>>, ApiError>` - The symbol information
-    /// 
-    /// # Example
-    /// ```rust
-    /// use venues::bitget::public::rest::{RestClient, GetSymbolInfoRequest};
-    /// 
-    /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// let client = RestClient::new("https://api.bitget.com", Default::default(), reqwest::Client::new());
-    /// 
-    /// // Get all symbols
-    /// let response = client.get_symbol_info(GetSymbolInfoRequest::new()).await?;
-    /// 
-    /// // Get specific symbol
-    /// let response = client.get_symbol_info(GetSymbolInfoRequest::new().symbol("BTCUSDT")).await?;
-    /// # Ok(())
-    /// # }
-    /// ```
-    pub async fn get_symbol_info(&self, request: GetSymbolInfoRequest) -> Result<RestResponse<Vec<SymbolInfo>>, ApiError> {
+    /// The symbol information
+    pub async fn get_symbol_info(&self, request: &GetSymbolInfoRequest) -> Result<RestResponse<Vec<SymbolInfo>>, ApiError> {
         let endpoint = "/api/v2/spot/public/symbols";
         let params = request.to_params();
         self.get(endpoint, params).await

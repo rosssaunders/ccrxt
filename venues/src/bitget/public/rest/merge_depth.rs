@@ -46,37 +46,19 @@ where
 }
 
 /// Request for getting merge depth
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default, Serialize)]
 pub struct GetMergeDepthRequest {
     /// Trading pair
     pub symbol: String,
     /// Price precision
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub precision: Option<PricePrecision>,
     /// Limit number
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<u32>,
 }
 
 impl GetMergeDepthRequest {
-    /// Create a new request
-    pub fn new(symbol: impl Into<String>) -> Self {
-        Self {
-            symbol: symbol.into(),
-            precision: None,
-            limit: None,
-        }
-    }
-
-    /// Set precision
-    pub fn precision(mut self, precision: PricePrecision) -> Self {
-        self.precision = Some(precision);
-        self
-    }
-
-    /// Set limit
-    pub fn limit(mut self, limit: u32) -> Self {
-        self.limit = Some(limit);
-        self
-    }
 
     /// Convert to query parameters
     pub fn to_params(&self) -> HashMap<String, String> {
@@ -122,27 +104,10 @@ impl RestClient {
     /// * `request` - The request parameters
     ///
     /// # Returns
-    /// * `Result<RestResponse<MergeDepth>, ApiError>` - The merge depth information
-    ///
-    /// # Example
-    /// ```rust
-    /// use venues::bitget::public::rest::{RestClient, GetMergeDepthRequest};
-    /// use venues::bitget::PricePrecision;
-    ///
-    /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// let client = RestClient::new("https://api.bitget.com", Default::default(), reqwest::Client::new());
-    ///
-    /// let response = client.get_merge_depth(
-    ///     GetMergeDepthRequest::new("BTCUSDT")
-    ///         .precision(PricePrecision::Scale1)
-    ///         .limit(50)
-    /// ).await?;
-    /// # Ok(())
-    /// # }
-    /// ```
+    /// The merge depth information
     pub async fn get_merge_depth(
         &self,
-        request: GetMergeDepthRequest,
+        request: &GetMergeDepthRequest,
     ) -> Result<RestResponse<MergeDepth>, ApiError> {
         let endpoint = "/api/v2/spot/market/merge-depth";
         let params = Some(request.to_params());
