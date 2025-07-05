@@ -12,7 +12,7 @@ use super::super::RestClient;
 use crate::bitget::{OrderSide, OrderType, RestResult};
 
 /// Request parameters for getting order information
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Default)]
 pub struct GetOrderInfoRequest {
     /// Order ID (either orderId or clientOrderId is required)
     #[serde(rename = "orderId", skip_serializing_if = "Option::is_none")]
@@ -21,24 +21,6 @@ pub struct GetOrderInfoRequest {
     /// Client order ID (either orderId or clientOrderId is required)
     #[serde(rename = "clientOrderId", skip_serializing_if = "Option::is_none")]
     pub client_order_id: Option<String>,
-}
-
-impl GetOrderInfoRequest {
-    /// Create a request using order ID
-    pub fn by_order_id(order_id: impl Into<String>) -> Self {
-        Self {
-            order_id: Some(order_id.into()),
-            client_order_id: None,
-        }
-    }
-
-    /// Create a request using client order ID
-    pub fn by_client_order_id(client_order_id: impl Into<String>) -> Self {
-        Self {
-            order_id: None,
-            client_order_id: Some(client_order_id.into()),
-        }
-    }
 }
 
 /// Order status as returned by the API
@@ -244,7 +226,10 @@ mod tests {
 
     #[test]
     fn test_get_order_info_request_by_order_id() {
-        let request = GetOrderInfoRequest::by_order_id("1234567890");
+        let request = GetOrderInfoRequest {
+            order_id: Some("1234567890".to_string()),
+            client_order_id: None,
+        };
 
         assert_eq!(request.order_id, Some("1234567890".to_string()));
         assert!(request.client_order_id.is_none());
@@ -252,7 +237,10 @@ mod tests {
 
     #[test]
     fn test_get_order_info_request_by_client_order_id() {
-        let request = GetOrderInfoRequest::by_client_order_id("my-order-123");
+        let request = GetOrderInfoRequest {
+            order_id: None,
+            client_order_id: Some("my-order-123".to_string()),
+        };
 
         assert!(request.order_id.is_none());
         assert_eq!(request.client_order_id, Some("my-order-123".to_string()));
@@ -260,7 +248,10 @@ mod tests {
 
     #[test]
     fn test_get_order_info_request_serialization() {
-        let request = GetOrderInfoRequest::by_order_id("1234567890");
+        let request = GetOrderInfoRequest {
+            order_id: Some("1234567890".to_string()),
+            client_order_id: None,
+        };
         let query = serde_urlencoded::to_string(&request).unwrap();
 
         assert!(query.contains("orderId=1234567890"));

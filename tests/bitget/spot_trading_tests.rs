@@ -3,18 +3,7 @@
 //! These tests verify that the spot trading endpoint implementations work correctly
 //! with the Bitget API structure.
 
-use venues::bitget::private::rest::spot::*;
 use venues::bitget::enums::*;
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-//! Integration tests for Bitget Spot Trading endpoints
-//!
-//! These tests verify that the spot trading endpoint implementations work correctly
-//! with the Bitget API structure.
-
 use venues::bitget::private::rest::spot::*;
 
 #[cfg(test)]
@@ -58,7 +47,7 @@ mod tests {
             request_time: None,
             receive_window: None,
         };
-        
+
         assert_eq!(request.symbol, "ETHUSDT");
         assert_eq!(request.side, OrderSide::Buy);
         assert_eq!(request.order_type, OrderType::Market);
@@ -69,11 +58,12 @@ mod tests {
 
     #[test]
     fn test_get_order_info_request() {
-        let request = GetOrderInfoRequest::by_order_id("123456789");
+        let request = GetOrderInfoRequest {
+            order_id: Some("123456789".to_string()),
+            client_order_id: None,
+        };
 
         assert_eq!(request.order_id, Some("123456789".to_string()));
-        assert!(request.client_order_id.is_none());
-    }
         assert!(request.client_order_id.is_none());
     }
 
@@ -221,15 +211,21 @@ mod tests {
         assert_eq!(fill.size, "0.001");
     }
 
-    #[test]  
+    #[test]
     fn test_enum_serialization() {
         // Test OrderSide
         assert_eq!(serde_json::to_string(&OrderSide::Buy).unwrap(), "\"buy\"");
         assert_eq!(serde_json::to_string(&OrderSide::Sell).unwrap(), "\"sell\"");
 
         // Test OrderType
-        assert_eq!(serde_json::to_string(&OrderType::Limit).unwrap(), "\"limit\"");
-        assert_eq!(serde_json::to_string(&OrderType::Market).unwrap(), "\"market\"");
+        assert_eq!(
+            serde_json::to_string(&OrderType::Limit).unwrap(),
+            "\"limit\""
+        );
+        assert_eq!(
+            serde_json::to_string(&OrderType::Market).unwrap(),
+            "\"market\""
+        );
 
         // Test Force (replaces TimeInForce)
         assert_eq!(serde_json::to_string(&Force::GTC).unwrap(), "\"gtc\"");
@@ -238,8 +234,17 @@ mod tests {
 
         // Test OrderStatus
         assert_eq!(serde_json::to_string(&OrderStatus::New).unwrap(), "\"new\"");
-        assert_eq!(serde_json::to_string(&OrderStatus::PartiallyFilled).unwrap(), "\"partial_fill\"");
-        assert_eq!(serde_json::to_string(&OrderStatus::Filled).unwrap(), "\"full_fill\"");
-        assert_eq!(serde_json::to_string(&OrderStatus::Cancelled).unwrap(), "\"cancelled\"");
+        assert_eq!(
+            serde_json::to_string(&OrderStatus::PartiallyFilled).unwrap(),
+            "\"partial_fill\""
+        );
+        assert_eq!(
+            serde_json::to_string(&OrderStatus::Filled).unwrap(),
+            "\"full_fill\""
+        );
+        assert_eq!(
+            serde_json::to_string(&OrderStatus::Cancelled).unwrap(),
+            "\"cancelled\""
+        );
     }
 }
