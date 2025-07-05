@@ -5,7 +5,7 @@ use crate::bitmart::RestResult;
 use crate::bitmart::rate_limit::EndpointType;
 
 /// Request parameters for getting deposit and withdraw history
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Default)]
 pub struct GetDepositWithdrawHistoryRequest {
     /// Token symbol, e.g., 'BTC' (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -67,43 +67,6 @@ pub struct GetDepositWithdrawHistoryResponse {
     pub records: Vec<DepositWithdrawRecord>,
 }
 
-impl GetDepositWithdrawHistoryRequest {
-    /// Create a new deposit history request
-    pub fn new_deposit_history(limit: i32) -> Self {
-        Self {
-            currency: None,
-            operation_type: "deposit".to_string(),
-            start_time: None,
-            end_time: None,
-            limit,
-        }
-    }
-
-    /// Create a new withdraw history request
-    pub fn new_withdraw_history(limit: i32) -> Self {
-        Self {
-            currency: None,
-            operation_type: "withdraw".to_string(),
-            start_time: None,
-            end_time: None,
-            limit,
-        }
-    }
-
-    /// Set currency filter
-    pub fn with_currency(mut self, currency: String) -> Self {
-        self.currency = Some(currency);
-        self
-    }
-
-    /// Set time range
-    pub fn with_time_range(mut self, start_time: i64, end_time: i64) -> Self {
-        self.start_time = Some(start_time);
-        self.end_time = Some(end_time);
-        self
-    }
-}
-
 impl RestClient {
     /// Get deposit and withdraw history
     ///
@@ -137,8 +100,14 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_new_deposit_history_request() {
-        let request = GetDepositWithdrawHistoryRequest::new_deposit_history(100);
+    fn test_deposit_history_request() {
+        let request = GetDepositWithdrawHistoryRequest {
+            currency: None,
+            operation_type: "deposit".to_string(),
+            start_time: None,
+            end_time: None,
+            limit: 100,
+        };
         assert_eq!(request.operation_type, "deposit");
         assert_eq!(request.limit, 100);
         assert!(request.currency.is_none());
@@ -147,8 +116,14 @@ mod tests {
     }
 
     #[test]
-    fn test_new_withdraw_history_request() {
-        let request = GetDepositWithdrawHistoryRequest::new_withdraw_history(50);
+    fn test_withdraw_history_request() {
+        let request = GetDepositWithdrawHistoryRequest {
+            currency: None,
+            operation_type: "withdraw".to_string(),
+            start_time: None,
+            end_time: None,
+            limit: 50,
+        };
         assert_eq!(request.operation_type, "withdraw");
         assert_eq!(request.limit, 50);
         assert!(request.currency.is_none());
@@ -158,15 +133,25 @@ mod tests {
 
     #[test]
     fn test_request_with_currency() {
-        let request = GetDepositWithdrawHistoryRequest::new_deposit_history(100)
-            .with_currency("BTC".to_string());
+        let request = GetDepositWithdrawHistoryRequest {
+            currency: Some("BTC".to_string()),
+            operation_type: "deposit".to_string(),
+            start_time: None,
+            end_time: None,
+            limit: 100,
+        };
         assert_eq!(request.currency, Some("BTC".to_string()));
     }
 
     #[test]
     fn test_request_with_time_range() {
-        let request = GetDepositWithdrawHistoryRequest::new_withdraw_history(100)
-            .with_time_range(1739499865000, 1739586265000);
+        let request = GetDepositWithdrawHistoryRequest {
+            currency: None,
+            operation_type: "withdraw".to_string(),
+            start_time: Some(1739499865000),
+            end_time: Some(1739586265000),
+            limit: 100,
+        };
         assert_eq!(request.start_time, Some(1739499865000));
         assert_eq!(request.end_time, Some(1739586265000));
     }

@@ -5,7 +5,7 @@ use crate::bitmart::RestResult;
 use crate::bitmart::rate_limit::EndpointType;
 
 /// Request parameters for getting actual trade fee rate
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Default)]
 pub struct GetActualTradeFeeRateRequest {
     /// Trading pair (e.g. BMX_USDT)
     pub symbol: String,
@@ -24,13 +24,6 @@ pub struct GetActualTradeFeeRateResponse {
     pub buy_maker_fee_rate: String,
     /// Maker fee rate (Sell)
     pub sell_maker_fee_rate: String,
-}
-
-impl GetActualTradeFeeRateRequest {
-    /// Create a new request for a specific trading pair
-    pub fn new(symbol: String) -> Self {
-        Self { symbol }
-    }
 }
 
 impl RestClient {
@@ -64,12 +57,6 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    fn test_get_actual_trade_fee_rate_request_new() {
-        let request = GetActualTradeFeeRateRequest::new("BTC_USDT".to_string());
-        assert_eq!(request.symbol, "BTC_USDT");
-    }
 
     #[test]
     fn test_request_serialization() {
@@ -163,9 +150,15 @@ mod tests {
 
     #[test]
     fn test_request_with_different_symbols() {
-        let btc_request = GetActualTradeFeeRateRequest::new("BTC_USDT".to_string());
-        let eth_request = GetActualTradeFeeRateRequest::new("ETH_USDT".to_string());
-        let bmx_request = GetActualTradeFeeRateRequest::new("BMX_USDT".to_string());
+        let btc_request = GetActualTradeFeeRateRequest {
+            symbol: "BTC_USDT".to_string(),
+        };
+        let eth_request = GetActualTradeFeeRateRequest {
+            symbol: "ETH_USDT".to_string(),
+        };
+        let bmx_request = GetActualTradeFeeRateRequest {
+            symbol: "BMX_USDT".to_string(),
+        };
 
         assert_eq!(btc_request.symbol, "BTC_USDT");
         assert_eq!(eth_request.symbol, "ETH_USDT");

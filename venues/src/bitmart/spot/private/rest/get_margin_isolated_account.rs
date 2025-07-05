@@ -94,20 +94,6 @@ pub struct GetMarginIsolatedAccountResponse {
     pub symbols: Vec<MarginIsolatedSymbol>,
 }
 
-impl GetMarginIsolatedAccountRequest {
-    /// Create a new request for all isolated margin assets
-    pub fn new() -> Self {
-        Self { symbol: None }
-    }
-
-    /// Create a new request for a specific trading pair
-    pub fn new_with_symbol(symbol: String) -> Self {
-        Self {
-            symbol: Some(symbol),
-        }
-    }
-}
-
 impl RestClient {
     /// Get margin account details (isolated)
     ///
@@ -142,13 +128,15 @@ mod tests {
 
     #[test]
     fn test_get_margin_isolated_account_request_new() {
-        let request = GetMarginIsolatedAccountRequest::new();
+        let request = GetMarginIsolatedAccountRequest::default();
         assert!(request.symbol.is_none());
     }
 
     #[test]
     fn test_get_margin_isolated_account_request_with_symbol() {
-        let request = GetMarginIsolatedAccountRequest::new_with_symbol("BTC_USDT".to_string());
+        let request = GetMarginIsolatedAccountRequest {
+            symbol: Some("BTC_USDT".to_string()),
+        };
         assert_eq!(request.symbol, Some("BTC_USDT".to_string()));
     }
 

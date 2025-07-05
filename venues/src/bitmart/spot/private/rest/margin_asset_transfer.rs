@@ -5,7 +5,7 @@ use crate::bitmart::RestResult;
 use crate::bitmart::rate_limit::EndpointType;
 
 /// Request parameters for margin asset transfer
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Default)]
 pub struct MarginAssetTransferRequest {
     /// Trading pair (e.g. BMX_USDT)
     pub symbol: String,
@@ -24,28 +24,6 @@ pub struct MarginAssetTransferRequest {
 pub struct MarginAssetTransferResponse {
     /// Transfer order id, only successful transfers will be returned
     pub transfer_id: String,
-}
-
-impl MarginAssetTransferRequest {
-    /// Create a new transfer in request
-    pub fn new_transfer_in(symbol: String, currency: String, amount: String) -> Self {
-        Self {
-            symbol,
-            currency,
-            amount,
-            side: "in".to_string(),
-        }
-    }
-
-    /// Create a new transfer out request
-    pub fn new_transfer_out(symbol: String, currency: String, amount: String) -> Self {
-        Self {
-            symbol,
-            currency,
-            amount,
-            side: "out".to_string(),
-        }
-    }
 }
 
 impl RestClient {
@@ -81,12 +59,13 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_new_transfer_in_request() {
-        let request = MarginAssetTransferRequest::new_transfer_in(
-            "BTC_USDT".to_string(),
-            "BTC".to_string(),
-            "1".to_string(),
-        );
+    fn test_transfer_in_request() {
+        let request = MarginAssetTransferRequest {
+            symbol: "BTC_USDT".to_string(),
+            currency: "BTC".to_string(),
+            amount: "1".to_string(),
+            side: "in".to_string(),
+        };
 
         assert_eq!(request.symbol, "BTC_USDT");
         assert_eq!(request.currency, "BTC");
@@ -95,12 +74,13 @@ mod tests {
     }
 
     #[test]
-    fn test_new_transfer_out_request() {
-        let request = MarginAssetTransferRequest::new_transfer_out(
-            "ETH_USDT".to_string(),
-            "ETH".to_string(),
-            "0.5".to_string(),
-        );
+    fn test_transfer_out_request() {
+        let request = MarginAssetTransferRequest {
+            symbol: "ETH_USDT".to_string(),
+            currency: "ETH".to_string(),
+            amount: "0.5".to_string(),
+            side: "out".to_string(),
+        };
 
         assert_eq!(request.symbol, "ETH_USDT");
         assert_eq!(request.currency, "ETH");
@@ -157,18 +137,20 @@ mod tests {
 
     #[test]
     fn test_request_validation() {
-        let transfer_in = MarginAssetTransferRequest::new_transfer_in(
-            "BTC_USDT".to_string(),
-            "BTC".to_string(),
-            "0.001".to_string(),
-        );
+        let transfer_in = MarginAssetTransferRequest {
+            symbol: "BTC_USDT".to_string(),
+            currency: "BTC".to_string(),
+            amount: "0.001".to_string(),
+            side: "in".to_string(),
+        };
         assert_eq!(transfer_in.side, "in");
 
-        let transfer_out = MarginAssetTransferRequest::new_transfer_out(
-            "BTC_USDT".to_string(),
-            "USDT".to_string(),
-            "100.00".to_string(),
-        );
+        let transfer_out = MarginAssetTransferRequest {
+            symbol: "BTC_USDT".to_string(),
+            currency: "USDT".to_string(),
+            amount: "100.00".to_string(),
+            side: "out".to_string(),
+        };
         assert_eq!(transfer_out.side, "out");
         assert_eq!(transfer_out.currency, "USDT");
     }

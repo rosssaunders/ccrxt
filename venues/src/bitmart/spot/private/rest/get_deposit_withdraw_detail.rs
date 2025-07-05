@@ -5,7 +5,7 @@ use crate::bitmart::RestResult;
 use crate::bitmart::rate_limit::EndpointType;
 
 /// Request parameters for getting deposit or withdraw detail
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Default)]
 pub struct GetDepositWithdrawDetailRequest {
     /// `withdraw_id` or `deposit_id`
     pub id: String,
@@ -53,18 +53,6 @@ pub struct GetDepositWithdrawDetailResponse {
     pub record: DepositWithdrawDetail,
 }
 
-impl GetDepositWithdrawDetailRequest {
-    /// Create a new request for withdraw detail
-    pub fn new_withdraw_detail(withdraw_id: String) -> Self {
-        Self { id: withdraw_id }
-    }
-
-    /// Create a new request for deposit detail
-    pub fn new_deposit_detail(deposit_id: String) -> Self {
-        Self { id: deposit_id }
-    }
-}
-
 impl RestClient {
     /// Get deposit or withdraw detail
     ///
@@ -100,14 +88,18 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_new_withdraw_detail_request() {
-        let request = GetDepositWithdrawDetailRequest::new_withdraw_detail("1679952".to_string());
+    fn test_withdraw_detail_request() {
+        let request = GetDepositWithdrawDetailRequest {
+            id: "1679952".to_string(),
+        };
         assert_eq!(request.id, "1679952");
     }
 
     #[test]
-    fn test_new_deposit_detail_request() {
-        let request = GetDepositWithdrawDetailRequest::new_deposit_detail("123456".to_string());
+    fn test_deposit_detail_request() {
+        let request = GetDepositWithdrawDetailRequest {
+            id: "123456".to_string(),
+        };
         assert_eq!(request.id, "123456");
     }
 

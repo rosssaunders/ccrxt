@@ -5,7 +5,7 @@ use crate::bitmart::RestResult;
 use crate::bitmart::rate_limit::EndpointType;
 
 /// Request parameters for withdraw
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Default)]
 pub struct WithdrawRequest {
     /// Token symbol, e.g., 'BTC'
     pub currency: String,
@@ -45,48 +45,6 @@ pub struct WithdrawResponse {
     pub withdraw_id: String,
 }
 
-impl WithdrawRequest {
-    /// Create a new blockchain withdraw request
-    pub fn new_blockchain_withdraw(
-        currency: String,
-        amount: String,
-        address: String,
-        address_memo: Option<String>,
-        destination: Option<String>,
-    ) -> Self {
-        Self {
-            currency,
-            amount,
-            destination,
-            address: Some(address),
-            address_memo,
-            account_type: None,
-            value: None,
-            area_code: None,
-        }
-    }
-
-    /// Create a new BitMart account withdraw request
-    pub fn new_bitmart_withdraw(
-        currency: String,
-        amount: String,
-        account_type: i32,
-        value: String,
-        area_code: Option<String>,
-    ) -> Self {
-        Self {
-            currency,
-            amount,
-            destination: None,
-            address: None,
-            address_memo: None,
-            account_type: Some(account_type),
-            value: Some(value),
-            area_code,
-        }
-    }
-}
-
 impl RestClient {
     /// Withdraw
     ///
@@ -122,13 +80,16 @@ mod tests {
 
     #[test]
     fn test_blockchain_withdraw_request() {
-        let request = WithdrawRequest::new_blockchain_withdraw(
-            "USDT-TRC20".to_string(),
-            "100.000".to_string(),
-            "0x1EE6FA5A380360**********".to_string(),
-            Some("".to_string()),
-            Some("To Digital Address".to_string()),
-        );
+        let request = WithdrawRequest {
+            currency: "USDT-TRC20".to_string(),
+            amount: "100.000".to_string(),
+            destination: Some("To Digital Address".to_string()),
+            address: Some("0x1EE6FA5A380360**********".to_string()),
+            address_memo: Some("".to_string()),
+            account_type: None,
+            value: None,
+            area_code: None,
+        };
 
         assert_eq!(request.currency, "USDT-TRC20");
         assert_eq!(request.amount, "100.000");
@@ -145,13 +106,16 @@ mod tests {
 
     #[test]
     fn test_bitmart_account_withdraw_request() {
-        let request = WithdrawRequest::new_bitmart_withdraw(
-            "USDT-TRC20".to_string(),
-            "100.000".to_string(),
-            1, // CID
-            "876940329".to_string(),
-            Some("".to_string()),
-        );
+        let request = WithdrawRequest {
+            currency: "USDT-TRC20".to_string(),
+            amount: "100.000".to_string(),
+            destination: None,
+            address: None,
+            address_memo: None,
+            account_type: Some(1),
+            value: Some("876940329".to_string()),
+            area_code: Some("".to_string()),
+        };
 
         assert_eq!(request.currency, "USDT-TRC20");
         assert_eq!(request.amount, "100.000");
@@ -165,13 +129,16 @@ mod tests {
 
     #[test]
     fn test_phone_withdraw_request() {
-        let request = WithdrawRequest::new_bitmart_withdraw(
-            "BTC".to_string(),
-            "0.1".to_string(),
-            3, // Phone
-            "1234567890".to_string(),
-            Some("61".to_string()),
-        );
+        let request = WithdrawRequest {
+            currency: "BTC".to_string(),
+            amount: "0.1".to_string(),
+            destination: None,
+            address: None,
+            address_memo: None,
+            account_type: Some(3),
+            value: Some("1234567890".to_string()),
+            area_code: Some("61".to_string()),
+        };
 
         assert_eq!(request.currency, "BTC");
         assert_eq!(request.amount, "0.1");
@@ -182,13 +149,16 @@ mod tests {
 
     #[test]
     fn test_withdraw_request_serialization() {
-        let request = WithdrawRequest::new_blockchain_withdraw(
-            "BTC".to_string(),
-            "0.5".to_string(),
-            "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh".to_string(),
-            None,
-            None,
-        );
+        let request = WithdrawRequest {
+            currency: "BTC".to_string(),
+            amount: "0.5".to_string(),
+            destination: None,
+            address: Some("bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh".to_string()),
+            address_memo: None,
+            account_type: None,
+            value: None,
+            area_code: None,
+        };
 
         let serialized = serde_json::to_string(&request).unwrap();
         assert!(serialized.contains("BTC"));
