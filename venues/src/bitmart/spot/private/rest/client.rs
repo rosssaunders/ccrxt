@@ -209,7 +209,7 @@ impl RestClient {
 
         // Check for API errors
         if bitmart_response.code != 1000 {
-            let error_response = crate::bitmart::errors::ErrorResponse {
+            let error_response = crate::bitmart::ErrorResponse {
                 code: bitmart_response.code,
                 message: bitmart_response.message,
                 trace: bitmart_response.trace,
