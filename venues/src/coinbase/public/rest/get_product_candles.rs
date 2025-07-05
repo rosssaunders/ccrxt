@@ -37,37 +37,7 @@ pub struct Candle(
     pub String,
 );
 
-impl Candle {
-    /// Get the timestamp
-    pub fn timestamp(&self) -> u64 {
-        self.0
-    }
 
-    /// Get the low price
-    pub fn low(&self) -> &str {
-        &self.1
-    }
-
-    /// Get the high price
-    pub fn high(&self) -> &str {
-        &self.2
-    }
-
-    /// Get the open price
-    pub fn open(&self) -> &str {
-        &self.3
-    }
-
-    /// Get the close price
-    pub fn close(&self) -> &str {
-        &self.4
-    }
-
-    /// Get the volume
-    pub fn volume(&self) -> &str {
-        &self.5
-    }
-}
 
 /// Response from getting product candles
 pub type GetProductCandlesResponse = Vec<Candle>;
@@ -125,12 +95,12 @@ mod tests {
         let json = r#"[1609459200, "28000.00", "29000.00", "28500.00", "28800.00", "150.5"]"#;
         let candle: Candle = serde_json::from_str(json).unwrap();
 
-        assert_eq!(candle.timestamp(), 1609459200);
-        assert_eq!(candle.low(), "28000.00");
-        assert_eq!(candle.high(), "29000.00");
-        assert_eq!(candle.open(), "28500.00");
-        assert_eq!(candle.close(), "28800.00");
-        assert_eq!(candle.volume(), "150.5");
+        assert_eq!(candle.0, 1609459200);
+        assert_eq!(candle.1, "28000.00");
+        assert_eq!(candle.2, "29000.00");
+        assert_eq!(candle.3, "28500.00");
+        assert_eq!(candle.4, "28800.00");
+        assert_eq!(candle.5, "150.5");
     }
 
     #[test]
@@ -142,7 +112,7 @@ mod tests {
 
         let candles: GetProductCandlesResponse = serde_json::from_str(json).unwrap();
         assert_eq!(candles.len(), 2);
-        assert_eq!(candles[0].timestamp(), 1609459200);
-        assert_eq!(candles[1].timestamp(), 1609462800);
+        assert_eq!(candles[0].0, 1609459200);
+        assert_eq!(candles[1].0, 1609462800);
     }
 }

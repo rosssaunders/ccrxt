@@ -55,41 +55,18 @@ pub struct OcoOrderReport {
     pub stop_price: Option<String>,
 }
 
-impl QueryOcoOrderRequest {
-    pub fn new(timestamp: i64) -> Self {
-        Self {
-            order_list_id: None,
-            orig_client_order_id: None,
-            recv_window: None,
-            timestamp,
-        }
-    }
-
-    pub fn order_list_id(mut self, order_list_id: i64) -> Self {
-        self.order_list_id = Some(order_list_id);
-        self
-    }
-
-    pub fn orig_client_order_id(mut self, orig_client_order_id: String) -> Self {
-        self.orig_client_order_id = Some(orig_client_order_id);
-        self
-    }
-
-    pub fn recv_window(mut self, recv_window: i64) -> Self {
-        self.recv_window = Some(recv_window);
-        self
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
     fn test_query_oco_order_request_serialization() {
-        let request = QueryOcoOrderRequest::new(1640995200000)
-            .order_list_id(123456789)
-            .recv_window(5000);
+        let request = QueryOcoOrderRequest {
+            order_list_id: Some(123456789),
+            orig_client_order_id: None,
+            recv_window: Some(5000),
+            timestamp: 1640995200000,
+        };
 
         let json = serde_json::to_string(&request).unwrap();
         assert!(json.contains("\"orderListId\":123456789"));

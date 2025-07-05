@@ -29,31 +29,7 @@ pub struct SubAccountTransferResponse {
     pub success: bool,
 }
 
-impl SubAccountTransferRequest {
-    pub fn new(
-        from_email: String,
-        to_email: String,
-        asset: String,
-        amount: String,
-        transfer_type: SubAccountTransferType,
-        timestamp: i64,
-    ) -> Self {
-        Self {
-            from_email,
-            to_email,
-            asset,
-            amount,
-            r#type: transfer_type,
-            recv_window: None,
-            timestamp,
-        }
-    }
 
-    pub fn recv_window(mut self, recv_window: i64) -> Self {
-        self.recv_window = Some(recv_window);
-        self
-    }
-}
 
 #[cfg(test)]
 mod tests {
@@ -61,15 +37,15 @@ mod tests {
 
     #[test]
     fn test_sub_account_transfer_request_serialization() {
-        let request = SubAccountTransferRequest::new(
-            "master@example.com".to_string(),
-            "sub@example.com".to_string(),
-            "USDT".to_string(),
-            "100.0".to_string(),
-            SubAccountTransferType::ToSub,
-            1640995200000,
-        )
-        .recv_window(5000);
+        let request = SubAccountTransferRequest {
+            from_email: "master@example.com".to_string(),
+            to_email: "sub@example.com".to_string(),
+            asset: "USDT".to_string(),
+            amount: "100.0".to_string(),
+            r#type: SubAccountTransferType::ToSub,
+            recv_window: Some(5000),
+            timestamp: 1640995200000,
+        };
 
         let json = serde_json::to_string(&request).unwrap();
         assert!(json.contains("\"fromEmail\":\"master@example.com\""));

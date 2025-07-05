@@ -191,8 +191,8 @@ async fn main() -> Result<()> {
         Ok(trades) => {
             println!("✅ Found {} recent trades", trades.len());
             for trade in trades.iter().take(5) {
-                let side_emoji = if trade.is_buy() { "🟢" } else { "🔴" };
-                let role_emoji = if trade.is_maker() { "👥" } else { "⚡" };
+                let side_emoji = if trade.side == "buy" { "🟢" } else { "🔴" };
+                let role_emoji = if trade.role == "maker" { "👥" } else { "⚡" };
 
                 println!(
                     "  {} {} {} {}: {} @ {} (fee: {} {})",
@@ -226,7 +226,10 @@ async fn main() -> Result<()> {
             let non_zero_balances: Vec<_> = account
                 .balances
                 .iter()
-                .filter(|(_, balance)| balance.has_balance())
+                .filter(|(_, balance)| {
+                    balance.available.parse::<f64>().unwrap_or(0.0) > 0.0 
+                        || balance.borrowed.parse::<f64>().unwrap_or(0.0) > 0.0
+                })
                 .collect();
 
             println!("  📈 Currencies with balance: {}", non_zero_balances.len());

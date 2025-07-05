@@ -44,64 +44,6 @@ pub struct CreateOrderRequest {
     pub text: Option<String>,
 }
 
-impl CreateOrderRequest {
-    /// Create a new limit order
-    pub fn limit(currency_pair: String, side: OrderSide, amount: String, price: String) -> Self {
-        Self {
-            currency_pair,
-            order_type: OrderType::Limit,
-            account: None,
-            side,
-            amount,
-            price: Some(price),
-            time_in_force: Some(TimeInForce::GoodTillCanceled),
-            iceberg: None,
-            stp_mode: None,
-            text: None,
-        }
-    }
-
-    /// Create a new market order
-    pub fn market(currency_pair: String, side: OrderSide, amount: String) -> Self {
-        Self {
-            currency_pair,
-            order_type: OrderType::Market,
-            account: None,
-            side,
-            amount,
-            price: None,
-            time_in_force: None,
-            iceberg: Some("0".to_string()), // Required for market orders
-            stp_mode: None,
-            text: None,
-        }
-    }
-
-    /// Set the account type
-    pub fn with_account(mut self, account: String) -> Self {
-        self.account = Some(account);
-        self
-    }
-
-    /// Set the time in force
-    pub fn with_time_in_force(mut self, tif: TimeInForce) -> Self {
-        self.time_in_force = Some(tif);
-        self
-    }
-
-    /// Set the self-trade prevention mode
-    pub fn with_stp_mode(mut self, stp: StpMode) -> Self {
-        self.stp_mode = Some(stp);
-        self
-    }
-
-    /// Set the client order ID
-    pub fn with_text(mut self, text: String) -> Self {
-        self.text = Some(text);
-        self
-    }
-}
-
 /// Order information
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Order {

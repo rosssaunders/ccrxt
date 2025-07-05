@@ -14,19 +14,7 @@ pub struct GetRecentTradesRequest {
     pub limit: Option<u32>,
 }
 
-impl GetRecentTradesRequest {
-    /// Convert to query parameters
-    pub fn to_params(&self) -> HashMap<String, String> {
-        let mut params = HashMap::new();
-        params.insert("symbol".to_string(), self.symbol.clone());
 
-        if let Some(limit) = self.limit {
-            params.insert("limit".to_string(), limit.to_string());
-        }
-
-        params
-    }
-}
 
 /// Recent trade information
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -59,7 +47,14 @@ impl RestClient {
         request: &GetRecentTradesRequest,
     ) -> Result<RestResponse<Vec<RecentTrade>>, ApiError> {
         let endpoint = "/api/v2/spot/market/fills";
-        let params = Some(request.to_params());
-        self.get(endpoint, params).await
+        
+        let mut params = HashMap::new();
+        params.insert("symbol".to_string(), request.symbol.clone());
+
+        if let Some(limit) = request.limit {
+            params.insert("limit".to_string(), limit.to_string());
+        }
+
+        self.get(endpoint, Some(params)).await
     }
 }

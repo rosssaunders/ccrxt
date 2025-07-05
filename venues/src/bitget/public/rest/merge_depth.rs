@@ -58,24 +58,7 @@ pub struct GetMergeDepthRequest {
     pub limit: Option<u32>,
 }
 
-impl GetMergeDepthRequest {
 
-    /// Convert to query parameters
-    pub fn to_params(&self) -> HashMap<String, String> {
-        let mut params = HashMap::new();
-        params.insert("symbol".to_string(), self.symbol.clone());
-
-        if let Some(precision) = &self.precision {
-            params.insert("precision".to_string(), precision.to_string());
-        }
-
-        if let Some(limit) = self.limit {
-            params.insert("limit".to_string(), limit.to_string());
-        }
-
-        params
-    }
-}
 
 /// Merge depth information
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -110,7 +93,18 @@ impl RestClient {
         request: &GetMergeDepthRequest,
     ) -> Result<RestResponse<MergeDepth>, ApiError> {
         let endpoint = "/api/v2/spot/market/merge-depth";
-        let params = Some(request.to_params());
-        self.get(endpoint, params).await
+        
+        let mut params = HashMap::new();
+        params.insert("symbol".to_string(), request.symbol.clone());
+
+        if let Some(precision) = &request.precision {
+            params.insert("precision".to_string(), precision.to_string());
+        }
+
+        if let Some(limit) = request.limit {
+            params.insert("limit".to_string(), limit.to_string());
+        }
+
+        self.get(endpoint, Some(params)).await
     }
 }

@@ -23,17 +23,6 @@ pub struct GetOrderBookAggregationRequest {
     pub type_: DepthType,
 }
 
-impl GetOrderBookAggregationRequest {
-    /// Create a new request for order book aggregation
-    pub fn new(symbol: String, depth: i64, type_: DepthType) -> Self {
-        Self {
-            symbol,
-            depth,
-            type_,
-        }
-    }
-}
-
 /// Response from the order book aggregation endpoint
 #[derive(Debug, Clone, Deserialize)]
 pub struct GetOrderBookAggregationResponse {
@@ -87,7 +76,11 @@ mod tests {
         let symbol = "BTC_USDT".to_string();
         let depth = 20;
         let type_ = DepthType::Step0;
-        let request = GetOrderBookAggregationRequest::new(symbol.clone(), depth, type_);
+        let request = GetOrderBookAggregationRequest {
+            symbol: symbol.clone(),
+            depth,
+            type_,
+        };
 
         assert_eq!(request.symbol, symbol);
         assert_eq!(request.depth, depth);
@@ -96,8 +89,11 @@ mod tests {
 
     #[test]
     fn test_order_book_aggregation_request_serialization() {
-        let request =
-            GetOrderBookAggregationRequest::new("BTC_USDT".to_string(), 20, DepthType::Step0);
+        let request = GetOrderBookAggregationRequest {
+            symbol: "BTC_USDT".to_string(),
+            depth: 20,
+            type_: DepthType::Step0,
+        };
         let json = serde_json::to_string(&request).unwrap();
         assert!(json.contains("\"symbol\":\"BTC_USDT\""));
         assert!(json.contains("\"depth\":20"));
@@ -132,8 +128,11 @@ mod tests {
             RateLimiter::new(),
         );
 
-        let request =
-            GetOrderBookAggregationRequest::new("BTC_USDT".to_string(), 20, DepthType::Step0);
+        let request = GetOrderBookAggregationRequest {
+            symbol: "BTC_USDT".to_string(),
+            depth: 20,
+            type_: DepthType::Step0,
+        };
 
         // Test that the method exists and can be called
         // Note: This will fail with network error since we're not making real requests

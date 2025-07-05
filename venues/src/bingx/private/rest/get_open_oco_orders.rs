@@ -51,28 +51,16 @@ pub struct OpenOcoSubOrder {
     pub orig_quote_order_qty: Option<String>,
 }
 
-impl GetOpenOcoOrdersRequest {
-    pub fn new(timestamp: i64) -> Self {
-        Self {
-            recv_window: None,
-            timestamp,
-        }
-    }
-
-    pub fn recv_window(mut self, recv_window: i64) -> Self {
-        self.recv_window = Some(recv_window);
-        self
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
     fn test_get_open_oco_orders_request_serialization() {
-        let request = GetOpenOcoOrdersRequest::new(1640995200000)
-            .recv_window(5000);
+        let request = GetOpenOcoOrdersRequest {
+            recv_window: Some(5000),
+            timestamp: 1640995200000,
+        };
 
         let json = serde_json::to_string(&request).unwrap();
         assert!(json.contains("\"recvWindow\":5000"));

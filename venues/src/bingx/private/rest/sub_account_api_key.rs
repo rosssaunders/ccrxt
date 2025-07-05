@@ -33,30 +33,6 @@ pub struct CreateSubAccountApiKeyResponse {
     pub futures_trade: bool,
 }
 
-impl CreateSubAccountApiKeyRequest {
-    pub fn new(
-        sub_account: String,
-        can_trade: bool,
-        margin_trade: bool,
-        futures_trade: bool,
-        timestamp: i64,
-    ) -> Self {
-        Self {
-            sub_account,
-            can_trade,
-            margin_trade,
-            futures_trade,
-            recv_window: None,
-            timestamp,
-        }
-    }
-
-    pub fn recv_window(mut self, recv_window: i64) -> Self {
-        self.recv_window = Some(recv_window);
-        self
-    }
-}
-
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct GetSubAccountApiKeyRequest {
@@ -98,27 +74,6 @@ pub struct SubAccountApiKey {
     pub enable: bool,
 }
 
-impl GetSubAccountApiKeyRequest {
-    pub fn new(sub_account: String, timestamp: i64) -> Self {
-        Self {
-            sub_account,
-            api_key: None,
-            recv_window: None,
-            timestamp,
-        }
-    }
-
-    pub fn api_key(mut self, api_key: String) -> Self {
-        self.api_key = Some(api_key);
-        self
-    }
-
-    pub fn recv_window(mut self, recv_window: i64) -> Self {
-        self.recv_window = Some(recv_window);
-        self
-    }
-}
-
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct DeleteSubAccountApiKeyRequest {
@@ -139,36 +94,20 @@ pub struct DeleteSubAccountApiKeyResponse {
     pub success: bool,
 }
 
-impl DeleteSubAccountApiKeyRequest {
-    pub fn new(sub_account: String, api_key: String, timestamp: i64) -> Self {
-        Self {
-            sub_account,
-            api_key,
-            recv_window: None,
-            timestamp,
-        }
-    }
-
-    pub fn recv_window(mut self, recv_window: i64) -> Self {
-        self.recv_window = Some(recv_window);
-        self
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
     fn test_create_sub_account_api_key_request_serialization() {
-        let request = CreateSubAccountApiKeyRequest::new(
-            "sub@example.com".to_string(),
-            true,
-            false,
-            false,
-            1640995200000,
-        )
-        .recv_window(5000);
+        let request = CreateSubAccountApiKeyRequest {
+            sub_account: "sub@example.com".to_string(),
+            can_trade: true,
+            margin_trade: false,
+            futures_trade: false,
+            recv_window: Some(5000),
+            timestamp: 1640995200000,
+        };
 
         let json = serde_json::to_string(&request).unwrap();
         assert!(json.contains("\"subAccount\":\"sub@example.com\""));
@@ -192,8 +131,14 @@ mod tests {
         "#;
 
         let response: CreateSubAccountApiKeyResponse = serde_json::from_str(json).unwrap();
-        assert_eq!(response.api_key, "vmPUZE6mv9SD5VNHk4HlWFsOr6aKE2zvsw0MuIgwCIPy6utIco14y7Ju91duEh8A");
-        assert_eq!(response.secret_key, "NhqPtmdSJYdKjVHjA7PZj4Mge3R5YNiP1e3UZjInClVN65XAbvqqM6A7H5fATj0j");
+        assert_eq!(
+            response.api_key,
+            "vmPUZE6mv9SD5VNHk4HlWFsOr6aKE2zvsw0MuIgwCIPy6utIco14y7Ju91duEh8A"
+        );
+        assert_eq!(
+            response.secret_key,
+            "NhqPtmdSJYdKjVHjA7PZj4Mge3R5YNiP1e3UZjInClVN65XAbvqqM6A7H5fATj0j"
+        );
         assert!(response.can_trade);
         assert!(!response.margin_trade);
         assert!(!response.futures_trade);
@@ -220,7 +165,10 @@ mod tests {
 
         let response: GetSubAccountApiKeyResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.sub_account_api_keys.len(), 1);
-        assert_eq!(response.sub_account_api_keys[0].sub_account, "sub@example.com");
+        assert_eq!(
+            response.sub_account_api_keys[0].sub_account,
+            "sub@example.com"
+        );
         assert!(response.sub_account_api_keys[0].can_trade);
         assert!(response.sub_account_api_keys[0].enable);
     }

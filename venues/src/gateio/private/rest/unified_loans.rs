@@ -14,26 +14,6 @@ pub struct BorrowOrRepayRequest {
     pub type_: String,
 }
 
-impl BorrowOrRepayRequest {
-    /// Creates a new borrow request.
-    pub fn new_borrow(currency: impl Into<String>, amount: impl Into<String>) -> Self {
-        Self {
-            currency: currency.into(),
-            amount: amount.into(),
-            type_: "borrow".to_string(),
-        }
-    }
-
-    /// Creates a new repay request.
-    pub fn new_repay(currency: impl Into<String>, amount: impl Into<String>) -> Self {
-        Self {
-            currency: currency.into(),
-            amount: amount.into(),
-            type_: "repay".to_string(),
-        }
-    }
-}
-
 /// Borrow/repay response
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct BorrowOrRepayResponse {
@@ -130,7 +110,11 @@ impl RestClient {
         currency: &str,
         amount: &str,
     ) -> crate::gateio::Result<BorrowOrRepayResponse> {
-        let request = BorrowOrRepayRequest::new_borrow(currency, amount);
+        let request = BorrowOrRepayRequest {
+            currency: currency.to_string(),
+            amount: amount.to_string(),
+            type_: "borrow".to_string(),
+        };
         self.borrow_or_repay(request).await
     }
 
@@ -140,7 +124,11 @@ impl RestClient {
         currency: &str,
         amount: &str,
     ) -> crate::gateio::Result<BorrowOrRepayResponse> {
-        let request = BorrowOrRepayRequest::new_repay(currency, amount);
+        let request = BorrowOrRepayRequest {
+            currency: currency.to_string(),
+            amount: amount.to_string(),
+            type_: "repay".to_string(),
+        };
         self.borrow_or_repay(request).await
     }
 

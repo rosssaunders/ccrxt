@@ -31,46 +31,6 @@ pub type KlineData = Vec<String>;
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GetHistoryKlineResponse(pub Vec<KlineData>);
 
-impl GetHistoryKlineResponse {
-    /// Get the create timestamp (in seconds) from K-line data
-    /// It can be used as the unique identification of K line
-    pub fn timestamp(kline: &KlineData) -> Option<&str> {
-        kline.first().map(|s| s.as_str())
-    }
-
-    /// Get the open price from K-line data
-    pub fn open_price(kline: &KlineData) -> Option<&str> {
-        kline.get(1).map(|s| s.as_str())
-    }
-
-    /// Get the highest price from K-line data
-    pub fn high_price(kline: &KlineData) -> Option<&str> {
-        kline.get(2).map(|s| s.as_str())
-    }
-
-    /// Get the lowest price from K-line data
-    pub fn low_price(kline: &KlineData) -> Option<&str> {
-        kline.get(3).map(|s| s.as_str())
-    }
-
-    /// Get the close price from K-line data
-    pub fn close_price(kline: &KlineData) -> Option<&str> {
-        kline.get(4).map(|s| s.as_str())
-    }
-
-    /// Get the trading volume from K-line data
-    /// With a unit of currency (If in BTC_USDT, The unit is BTC)
-    pub fn volume(kline: &KlineData) -> Option<&str> {
-        kline.get(5).map(|s| s.as_str())
-    }
-
-    /// Get the trading volume in quote currency from K-line data
-    /// The value is the quantity in quote currency (If in BTC_USDT, The unit is USDT)
-    pub fn quote_volume(kline: &KlineData) -> Option<&str> {
-        kline.get(6).map(|s| s.as_str())
-    }
-}
-
 impl RestClient {
     /// Get History K-Line (V3)
     ///
@@ -159,31 +119,31 @@ mod tests {
         ];
 
         assert_eq!(
-            GetHistoryKlineResponse::timestamp(&kline_data),
+            kline_data.first().map(|s| s.as_str()),
             Some("1689736680")
         );
         assert_eq!(
-            GetHistoryKlineResponse::open_price(&kline_data),
+            kline_data.get(1).map(|s| s.as_str()),
             Some("3.721")
         );
         assert_eq!(
-            GetHistoryKlineResponse::high_price(&kline_data),
+            kline_data.get(2).map(|s| s.as_str()),
             Some("3.743")
         );
         assert_eq!(
-            GetHistoryKlineResponse::low_price(&kline_data),
+            kline_data.get(3).map(|s| s.as_str()),
             Some("3.677")
         );
         assert_eq!(
-            GetHistoryKlineResponse::close_price(&kline_data),
+            kline_data.get(4).map(|s| s.as_str()),
             Some("3.708")
         );
         assert_eq!(
-            GetHistoryKlineResponse::volume(&kline_data),
+            kline_data.get(5).map(|s| s.as_str()),
             Some("22698348.04828491")
         );
         assert_eq!(
-            GetHistoryKlineResponse::quote_volume(&kline_data),
+            kline_data.get(6).map(|s| s.as_str()),
             Some("12698348.04828491")
         );
     }
@@ -197,21 +157,21 @@ mod tests {
         ];
 
         assert_eq!(
-            GetHistoryKlineResponse::timestamp(&kline_data),
+            kline_data.first().map(|s| s.as_str()),
             Some("1689736680")
         );
         assert_eq!(
-            GetHistoryKlineResponse::open_price(&kline_data),
+            kline_data.get(1).map(|s| s.as_str()),
             Some("3.721")
         );
         assert_eq!(
-            GetHistoryKlineResponse::high_price(&kline_data),
+            kline_data.get(2).map(|s| s.as_str()),
             Some("3.743")
         );
-        assert_eq!(GetHistoryKlineResponse::low_price(&kline_data), None);
-        assert_eq!(GetHistoryKlineResponse::close_price(&kline_data), None);
-        assert_eq!(GetHistoryKlineResponse::volume(&kline_data), None);
-        assert_eq!(GetHistoryKlineResponse::quote_volume(&kline_data), None);
+        assert_eq!(kline_data.get(3).map(|s| s.as_str()), None);
+        assert_eq!(kline_data.get(4).map(|s| s.as_str()), None);
+        assert_eq!(kline_data.get(5).map(|s| s.as_str()), None);
+        assert_eq!(kline_data.get(6).map(|s| s.as_str()), None);
     }
 
     #[test]
@@ -239,11 +199,11 @@ mod tests {
 
         assert_eq!(response.0.len(), 2);
         assert_eq!(
-            GetHistoryKlineResponse::timestamp(&response.0[0]),
+            response.0[0].first().map(|s| s.as_str()),
             Some("1689736680")
         );
         assert_eq!(
-            GetHistoryKlineResponse::timestamp(&response.0[1]),
+            response.0[1].first().map(|s| s.as_str()),
             Some("1689736620")
         );
     }
@@ -292,19 +252,19 @@ mod tests {
         let response: GetHistoryKlineResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.0.len(), 2);
         assert_eq!(
-            GetHistoryKlineResponse::timestamp(&response.0[0]),
+            response.0[0].first().map(|s| s.as_str()),
             Some("1689736680")
         );
         assert_eq!(
-            GetHistoryKlineResponse::open_price(&response.0[0]),
+            response.0[0].get(1).map(|s| s.as_str()),
             Some("3.721")
         );
         assert_eq!(
-            GetHistoryKlineResponse::timestamp(&response.0[1]),
+            response.0[1].first().map(|s| s.as_str()),
             Some("1689736620")
         );
         assert_eq!(
-            GetHistoryKlineResponse::open_price(&response.0[1]),
+            response.0[1].get(1).map(|s| s.as_str()),
             Some("3.731")
         );
     }

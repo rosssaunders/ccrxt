@@ -50,55 +50,7 @@ pub struct SubAccountTransferRecord {
     pub time: i64,
 }
 
-impl GetSubAccountTransferHistoryRequest {
-    pub fn new(timestamp: i64) -> Self {
-        Self {
-            asset: None,
-            r#type: None,
-            start_time: None,
-            end_time: None,
-            page: None,
-            limit: None,
-            recv_window: None,
-            timestamp,
-        }
-    }
 
-    pub fn asset(mut self, asset: String) -> Self {
-        self.asset = Some(asset);
-        self
-    }
-
-    pub fn transfer_type(mut self, transfer_type: SubAccountTransferType) -> Self {
-        self.r#type = Some(transfer_type);
-        self
-    }
-
-    pub fn start_time(mut self, start_time: i64) -> Self {
-        self.start_time = Some(start_time);
-        self
-    }
-
-    pub fn end_time(mut self, end_time: i64) -> Self {
-        self.end_time = Some(end_time);
-        self
-    }
-
-    pub fn page(mut self, page: i32) -> Self {
-        self.page = Some(page);
-        self
-    }
-
-    pub fn limit(mut self, limit: i32) -> Self {
-        self.limit = Some(limit);
-        self
-    }
-
-    pub fn recv_window(mut self, recv_window: i64) -> Self {
-        self.recv_window = Some(recv_window);
-        self
-    }
-}
 
 #[cfg(test)]
 mod tests {
@@ -106,14 +58,16 @@ mod tests {
 
     #[test]
     fn test_get_sub_account_transfer_history_request_serialization() {
-        let request = GetSubAccountTransferHistoryRequest::new(1640995200000)
-            .asset("USDT".to_string())
-            .transfer_type(SubAccountTransferType::ToSub)
-            .start_time(1640908800000)
-            .end_time(1640995200000)
-            .page(1)
-            .limit(100)
-            .recv_window(5000);
+        let request = GetSubAccountTransferHistoryRequest {
+            asset: Some("USDT".to_string()),
+            r#type: Some(SubAccountTransferType::ToSub),
+            start_time: Some(1640908800000),
+            end_time: Some(1640995200000),
+            page: Some(1),
+            limit: Some(100),
+            recv_window: Some(5000),
+            timestamp: 1640995200000,
+        };
 
         let json = serde_json::to_string(&request).unwrap();
         assert!(json.contains("\"asset\":\"USDT\""));

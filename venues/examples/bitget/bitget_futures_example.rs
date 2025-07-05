@@ -36,9 +36,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     // Get ticker for a specific symbol
-    let ticker_request = GetTickerRequest::new().symbol("BTCUSDT");
+    let ticker_request = GetTickerRequest {
+        symbol: Some("BTCUSDT".to_string()),
+    };
     println!("\nGetting ticker for BTCUSDT...");
-    match client.get_ticker(ticker_request).await {
+    match client.get_ticker(&ticker_request).await {
         Ok(response) => {
             if let Some(ticker) = response.data.first() {
                 println!(
@@ -51,9 +53,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     // Get all tickers
-    let all_tickers_request = GetTickerRequest::new();
+    let all_tickers_request = GetTickerRequest {
+        symbol: None,
+    };
     println!("\nGetting all tickers...");
-    match client.get_ticker(all_tickers_request).await {
+    match client.get_ticker(&all_tickers_request).await {
         Ok(response) => {
             println!("Retrieved {} tickers", response.data.len());
         }
@@ -61,11 +65,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     // Get market depth
-    let depth_request = GetMergeDepthRequest::new("BTCUSDT".to_string())
-        .precision(PricePrecision::Scale0)
-        .limit(50);
+    let depth_request = GetMergeDepthRequest {
+        symbol: "BTCUSDT".to_string(),
+        precision: Some(PricePrecision::Scale0),
+        limit: Some(50),
+    };
     println!("\nGetting market depth for BTCUSDT...");
-    match client.get_merge_depth(depth_request).await {
+    match client.get_merge_depth(&depth_request).await {
         Ok(response) => {
             println!(
                 "Market depth retrieved with {} asks and {} bids",
@@ -77,11 +83,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     // Get candlestick data
-    let candle_request =
-        GetCandlestickRequest::new("BTCUSDT".to_string(), CandlestickGranularity::OneHour)
-            .limit(10);
+    let candle_request = GetCandlestickRequest {
+        symbol: "BTCUSDT".to_string(),
+        granularity: CandlestickGranularity::OneHour,
+        start_time: None,
+        end_time: None,
+        limit: Some(10),
+    };
     println!("\nGetting candlestick data for BTCUSDT...");
-    match client.get_candlestick(candle_request).await {
+    match client.get_candlestick(&candle_request).await {
         Ok(response) => {
             println!("Retrieved {} candlesticks", response.data.len());
             if let Some(candle) = response.data.first() {

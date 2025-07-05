@@ -18,21 +18,7 @@ pub struct GetHistoryCandlestickRequest {
     pub limit: Option<u32>,
 }
 
-impl GetHistoryCandlestickRequest {
-    /// Convert to query parameters
-    pub fn to_params(&self) -> HashMap<String, String> {
-        let mut params = HashMap::new();
-        params.insert("symbol".to_string(), self.symbol.clone());
-        params.insert("granularity".to_string(), self.granularity.to_string());
-        params.insert("endTime".to_string(), self.end_time.to_string());
 
-        if let Some(limit) = self.limit {
-            params.insert("limit".to_string(), limit.to_string());
-        }
-
-        params
-    }
-}
 
 /// Historical candlestick data - array format: [timestamp, open, high, low, close, base_volume, usdt_volume, quote_volume]
 pub type HistoryCandlestick = [String; 8];
@@ -50,7 +36,16 @@ impl RestClient {
         request: &GetHistoryCandlestickRequest,
     ) -> Result<RestResponse<Vec<HistoryCandlestick>>, ApiError> {
         let endpoint = "/api/v2/spot/market/history-candles";
-        let params = Some(request.to_params());
-        self.get(endpoint, params).await
+        
+        let mut params = HashMap::new();
+        params.insert("symbol".to_string(), request.symbol.clone());
+        params.insert("granularity".to_string(), request.granularity.to_string());
+        params.insert("endTime".to_string(), request.end_time.to_string());
+
+        if let Some(limit) = request.limit {
+            params.insert("limit".to_string(), limit.to_string());
+        }
+
+        self.get(endpoint, Some(params)).await
     }
 }

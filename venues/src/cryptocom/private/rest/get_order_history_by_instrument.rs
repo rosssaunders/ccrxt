@@ -31,8 +31,6 @@ pub struct GetOrderHistoryByInstrumentRequest {
     pub historical: Option<bool>,
 }
 
-
-
 /// Order history by instrument entry
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct OrderHistoryByInstrumentEntry {

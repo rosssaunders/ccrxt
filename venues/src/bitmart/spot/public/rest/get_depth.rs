@@ -31,18 +31,6 @@ pub struct DepthData {
     pub bids: Vec<OrderBookEntry>,
 }
 
-impl DepthData {
-    /// Get the price from an order book entry
-    pub fn entry_price(entry: &OrderBookEntry) -> Option<&str> {
-        entry.first().map(|s| s.as_str())
-    }
-
-    /// Get the amount from an order book entry
-    pub fn entry_amount(entry: &OrderBookEntry) -> Option<&str> {
-        entry.get(1).map(|s| s.as_str())
-    }
-}
-
 /// Response for depth endpoint
 pub type GetDepthResponse = DepthData;
 
@@ -106,16 +94,16 @@ mod tests {
             "69994.75267".to_string(), // amount
         ];
 
-        assert_eq!(DepthData::entry_price(&entry), Some("31012.44"));
-        assert_eq!(DepthData::entry_amount(&entry), Some("69994.75267"));
+        assert_eq!(entry.first().map(|s| s.as_str()), Some("31012.44"));
+        assert_eq!(entry.get(1).map(|s| s.as_str()), Some("69994.75267"));
     }
 
     #[test]
     fn test_order_book_entry_incomplete() {
         let entry = vec!["31012.44".to_string()];
 
-        assert_eq!(DepthData::entry_price(&entry), Some("31012.44"));
-        assert_eq!(DepthData::entry_amount(&entry), None);
+        assert_eq!(entry.first().map(|s| s.as_str()), Some("31012.44"));
+        assert_eq!(entry.get(1).map(|s| s.as_str()), None);
     }
 
     #[test]
@@ -131,10 +119,10 @@ mod tests {
         assert_eq!(depth.symbol, "BTC_USDT");
         assert_eq!(depth.asks.len(), 1);
         assert_eq!(depth.bids.len(), 1);
-        assert_eq!(DepthData::entry_price(&depth.asks[0]), Some("31012.44"));
-        assert_eq!(DepthData::entry_amount(&depth.asks[0]), Some("69994.75267"));
-        assert_eq!(DepthData::entry_price(&depth.bids[0]), Some("30000.00"));
-        assert_eq!(DepthData::entry_amount(&depth.bids[0]), Some("1.00000"));
+        assert_eq!(depth.asks[0].first().map(|s| s.as_str()), Some("31012.44"));
+        assert_eq!(depth.asks[0].get(1).map(|s| s.as_str()), Some("69994.75267"));
+        assert_eq!(depth.bids[0].first().map(|s| s.as_str()), Some("30000.00"));
+        assert_eq!(depth.bids[0].get(1).map(|s| s.as_str()), Some("1.00000"));
     }
 
     #[test]
@@ -215,13 +203,13 @@ mod tests {
         assert_eq!(response.symbol, "BTC_USDT");
         assert_eq!(response.asks.len(), 1);
         assert_eq!(response.bids.len(), 1);
-        assert_eq!(DepthData::entry_price(&response.asks[0]), Some("31012.44"));
+        assert_eq!(response.asks[0].first().map(|s| s.as_str()), Some("31012.44"));
         assert_eq!(
-            DepthData::entry_amount(&response.asks[0]),
+            response.asks[0].get(1).map(|s| s.as_str()),
             Some("69994.75267")
         );
-        assert_eq!(DepthData::entry_price(&response.bids[0]), Some("30000.00"));
-        assert_eq!(DepthData::entry_amount(&response.bids[0]), Some("1.00000"));
+        assert_eq!(response.bids[0].first().map(|s| s.as_str()), Some("30000.00"));
+        assert_eq!(response.bids[0].get(1).map(|s| s.as_str()), Some("1.00000"));
     }
 
     #[test]
@@ -256,7 +244,7 @@ mod tests {
 
         assert_eq!(depth.asks.len(), 50);
         assert_eq!(depth.bids.len(), 50);
-        assert_eq!(DepthData::entry_price(&depth.asks[0]), Some("30000.00"));
-        assert_eq!(DepthData::entry_price(&depth.bids[0]), Some("29999.00"));
+        assert_eq!(depth.asks[0].first().map(|s| s.as_str()), Some("30000.00"));
+        assert_eq!(depth.bids[0].first().map(|s| s.as_str()), Some("29999.00"));
     }
 }

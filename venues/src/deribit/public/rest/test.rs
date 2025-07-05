@@ -9,36 +9,14 @@ use super::client::RestClient;
 use crate::deribit::{EndpointType, RestResult};
 
 /// Request parameters for the public/test endpoint.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct TestRequest {
     /// The value "exception" will trigger an error response. This may be useful for testing wrapper libraries.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub expected_result: Option<String>,
 }
 
-impl TestRequest {
-    /// Creates a new test request with no expected result.
-    pub fn new() -> Self {
-        Self {
-            expected_result: None,
-        }
-    }
 
-    /// Creates a new test request that will trigger an exception.
-    ///
-    /// This is useful for testing error handling in wrapper libraries.
-    pub fn new_exception() -> Self {
-        Self {
-            expected_result: Some("exception".to_string()),
-        }
-    }
-}
-
-impl Default for TestRequest {
-    fn default() -> Self {
-        Self::new()
-    }
-}
 
 /// Response for public/test endpoint following Deribit JSON-RPC 2.0 format.
 #[derive(Debug, Clone, Deserialize)]
@@ -93,7 +71,9 @@ mod tests {
 
     #[test]
     fn test_test_request_serialization() {
-        let request = TestRequest::new();
+        let request = TestRequest {
+            expected_result: None,
+        };
 
         let json_value = serde_json::to_value(&request).unwrap();
         // Should serialize to an empty object when no expected_result is set
@@ -103,7 +83,9 @@ mod tests {
 
     #[test]
     fn test_test_request_with_exception() {
-        let request = TestRequest::new_exception();
+        let request = TestRequest {
+            expected_result: Some("exception".to_string()),
+        };
 
         let json_value = serde_json::to_value(&request).unwrap();
         assert_eq!(json_value["expected_result"], "exception");
@@ -190,8 +172,12 @@ mod tests {
         let rest_client = RestClient::new("https://test.deribit.com", client, rate_limiter);
 
         // Test that we can create requests - this doesn't actually call the API
-        let _normal_request = TestRequest::new();
-        let _exception_request = TestRequest::new_exception();
+        let _normal_request = TestRequest {
+            expected_result: None,
+        };
+        let _exception_request = TestRequest {
+            expected_result: Some("exception".to_string()),
+        };
 
         // Test that rate limiting works for this endpoint type
         let result = rest_client
@@ -244,12 +230,16 @@ mod tests {
 
     #[test]
     fn test_constructor_methods() {
-        // Test new() constructor
-        let normal_request = TestRequest::new();
+        // Test direct struct construction
+        let normal_request = TestRequest {
+            expected_result: None,
+        };
         assert!(normal_request.expected_result.is_none());
 
-        // Test new_exception() constructor
-        let exception_request = TestRequest::new_exception();
+        // Test direct struct construction with exception
+        let exception_request = TestRequest {
+            expected_result: Some("exception".to_string()),
+        };
         assert_eq!(
             exception_request.expected_result,
             Some("exception".to_string())

@@ -41,7 +41,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Example 2: Get trading symbols
     println!("\n2. Getting trading symbols...");
-    let symbols_request = GetSymbolsRequest::new(chrono::Utc::now().timestamp_millis());
+    let symbols_request = GetSymbolsRequest {
+        symbol: None,
+        recv_window: None,
+        timestamp: chrono::Utc::now().timestamp_millis(),
+    };
     match client.get_symbols(&symbols_request).await {
         Ok(response) => {
             println!("Found {} symbols", response.symbols.len());

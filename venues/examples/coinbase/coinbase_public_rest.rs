@@ -225,12 +225,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 println!(
                     "  {}. Timestamp: {}, OHLC: ${}/{}/{}/{}, Volume: {}",
                     i + 1,
-                    candle.timestamp(),
-                    candle.open(),
-                    candle.high(),
-                    candle.low(),
-                    candle.close(),
-                    candle.volume()
+                    candle.0,
+                    candle.3,
+                    candle.2,
+                    candle.1,
+                    candle.4,
+                    candle.5
                 );
             }
 

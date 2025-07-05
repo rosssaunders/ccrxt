@@ -17,23 +17,7 @@ pub struct GetOrderbookRequest {
     pub limit: Option<u32>,
 }
 
-impl GetOrderbookRequest {
-    /// Convert to query parameters
-    pub fn to_params(&self) -> HashMap<String, String> {
-        let mut params = HashMap::new();
-        params.insert("symbol".to_string(), self.symbol.clone());
-        
-        if let Some(depth_type) = &self.depth_type {
-            params.insert("type".to_string(), depth_type.to_string());
-        }
-        
-        if let Some(limit) = self.limit {
-            params.insert("limit".to_string(), limit.to_string());
-        }
 
-        params
-    }
-}
 
 /// Orderbook depth information
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -56,7 +40,18 @@ impl RestClient {
     /// The orderbook information
     pub async fn get_orderbook(&self, request: &GetOrderbookRequest) -> Result<RestResponse<Orderbook>, ApiError> {
         let endpoint = "/api/v2/spot/market/orderbook";
-        let params = Some(request.to_params());
-        self.get(endpoint, params).await
+        
+        let mut params = HashMap::new();
+        params.insert("symbol".to_string(), request.symbol.clone());
+        
+        if let Some(depth_type) = &request.depth_type {
+            params.insert("type".to_string(), depth_type.to_string());
+        }
+        
+        if let Some(limit) = request.limit {
+            params.insert("limit".to_string(), limit.to_string());
+        }
+
+        self.get(endpoint, Some(params)).await
     }
 }

@@ -64,29 +64,6 @@ pub struct CurrencyBalance {
     pub interest: String,
 }
 
-impl CurrencyBalance {
-    /// Calculate total balance (available + freeze)
-    pub fn total_balance(&self) -> Result<f64, std::num::ParseFloatError> {
-        let available: f64 = self.available.parse()?;
-        let freeze: f64 = self.freeze.parse()?;
-        Ok(available + freeze)
-    }
-
-    /// Check if this currency has any balance
-    pub fn has_balance(&self) -> bool {
-        let available: f64 = self.available.parse().unwrap_or(0.0);
-        let freeze: f64 = self.freeze.parse().unwrap_or(0.0);
-        let borrowed: f64 = self.borrowed.parse().unwrap_or(0.0);
-        available > 0.0 || freeze > 0.0 || borrowed > 0.0
-    }
-
-    /// Check if this currency has debt
-    pub fn has_debt(&self) -> bool {
-        let borrowed: f64 = self.borrowed.parse().unwrap_or(0.0);
-        borrowed > 0.0
-    }
-}
-
 /// Request to borrow or repay
 #[derive(Debug, Clone, Serialize)]
 pub struct BorrowOrRepayRequest {
@@ -99,25 +76,7 @@ pub struct BorrowOrRepayRequest {
     pub amount: String,
 }
 
-impl BorrowOrRepayRequest {
-    /// Create a borrow request
-    pub fn borrow(currency: String, amount: String) -> Self {
-        Self {
-            currency,
-            operation_type: "borrow".to_string(),
-            amount,
-        }
-    }
 
-    /// Create a repay request
-    pub fn repay(currency: String, amount: String) -> Self {
-        Self {
-            currency,
-            operation_type: "repay".to_string(),
-            amount,
-        }
-    }
-}
 
 /// Borrow/repay response
 #[derive(Debug, Clone, Serialize, Deserialize)]

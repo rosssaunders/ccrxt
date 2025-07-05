@@ -18,73 +18,6 @@ pub type TickerData = Vec<String>;
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GetTickerAllPairsResponse(pub Vec<TickerData>);
 
-impl GetTickerAllPairsResponse {
-    /// Get the symbol from ticker data
-    pub fn symbol(ticker: &TickerData) -> Option<&str> {
-        ticker.first().map(|s| s.as_str())
-    }
-
-    /// Get the latest price from ticker data
-    pub fn last_price(ticker: &TickerData) -> Option<&str> {
-        ticker.get(1).map(|s| s.as_str())
-    }
-
-    /// Get the 24-hour trade volume in base currency from ticker data
-    pub fn volume_24h(ticker: &TickerData) -> Option<&str> {
-        ticker.get(2).map(|s| s.as_str())
-    }
-
-    /// Get the 24-hour trade volume in quote currency from ticker data
-    pub fn quote_volume_24h(ticker: &TickerData) -> Option<&str> {
-        ticker.get(3).map(|s| s.as_str())
-    }
-
-    /// Get the 24-hour open price from ticker data
-    pub fn open_24h(ticker: &TickerData) -> Option<&str> {
-        ticker.get(4).map(|s| s.as_str())
-    }
-
-    /// Get the 24-hour highest price from ticker data
-    pub fn high_24h(ticker: &TickerData) -> Option<&str> {
-        ticker.get(5).map(|s| s.as_str())
-    }
-
-    /// Get the 24-hour lowest price from ticker data
-    pub fn low_24h(ticker: &TickerData) -> Option<&str> {
-        ticker.get(6).map(|s| s.as_str())
-    }
-
-    /// Get the 24-hour price change from ticker data
-    pub fn fluctuation(ticker: &TickerData) -> Option<&str> {
-        ticker.get(7).map(|s| s.as_str())
-    }
-
-    /// Get the top buy price from ticker data
-    pub fn bid_price(ticker: &TickerData) -> Option<&str> {
-        ticker.get(8).map(|s| s.as_str())
-    }
-
-    /// Get the size of top buy order from ticker data
-    pub fn bid_size(ticker: &TickerData) -> Option<&str> {
-        ticker.get(9).map(|s| s.as_str())
-    }
-
-    /// Get the top sell price from ticker data
-    pub fn ask_price(ticker: &TickerData) -> Option<&str> {
-        ticker.get(10).map(|s| s.as_str())
-    }
-
-    /// Get the size of top sell order from ticker data
-    pub fn ask_size(ticker: &TickerData) -> Option<&str> {
-        ticker.get(11).map(|s| s.as_str())
-    }
-
-    /// Get the time of generation (in milliseconds) from ticker data
-    pub fn timestamp(ticker: &TickerData) -> Option<&str> {
-        ticker.get(12).map(|s| s.as_str())
-    }
-}
-
 impl RestClient {
     /// Get Ticker of All Pairs (V3)
     ///
@@ -145,52 +78,52 @@ mod tests {
         ];
 
         assert_eq!(
-            GetTickerAllPairsResponse::symbol(&ticker_data),
+            ticker_data.first().map(|s| s.as_str()),
             Some("BTC_USDT")
         );
         assert_eq!(
-            GetTickerAllPairsResponse::last_price(&ticker_data),
+            ticker_data.get(1).map(|s| s.as_str()),
             Some("30000.00")
         );
         assert_eq!(
-            GetTickerAllPairsResponse::volume_24h(&ticker_data),
+            ticker_data.get(2).map(|s| s.as_str()),
             Some("582.08066")
         );
         assert_eq!(
-            GetTickerAllPairsResponse::quote_volume_24h(&ticker_data),
+            ticker_data.get(3).map(|s| s.as_str()),
             Some("4793098.48")
         );
         assert_eq!(
-            GetTickerAllPairsResponse::open_24h(&ticker_data),
+            ticker_data.get(4).map(|s| s.as_str()),
             Some("28596.30")
         );
         assert_eq!(
-            GetTickerAllPairsResponse::high_24h(&ticker_data),
+            ticker_data.get(5).map(|s| s.as_str()),
             Some("31012.44")
         );
         assert_eq!(
-            GetTickerAllPairsResponse::low_24h(&ticker_data),
+            ticker_data.get(6).map(|s| s.as_str()),
             Some("12.44")
         );
         assert_eq!(
-            GetTickerAllPairsResponse::fluctuation(&ticker_data),
+            ticker_data.get(7).map(|s| s.as_str()),
             Some("0.04909")
         );
         assert_eq!(
-            GetTickerAllPairsResponse::bid_price(&ticker_data),
+            ticker_data.get(8).map(|s| s.as_str()),
             Some("30000")
         );
-        assert_eq!(GetTickerAllPairsResponse::bid_size(&ticker_data), Some("1"));
+        assert_eq!(ticker_data.get(9).map(|s| s.as_str()), Some("1"));
         assert_eq!(
-            GetTickerAllPairsResponse::ask_price(&ticker_data),
+            ticker_data.get(10).map(|s| s.as_str()),
             Some("31012.44")
         );
         assert_eq!(
-            GetTickerAllPairsResponse::ask_size(&ticker_data),
+            ticker_data.get(11).map(|s| s.as_str()),
             Some("69994.75267")
         );
         assert_eq!(
-            GetTickerAllPairsResponse::timestamp(&ticker_data),
+            ticker_data.get(12).map(|s| s.as_str()),
             Some("1691671091933")
         );
     }
@@ -204,22 +137,22 @@ mod tests {
         ];
 
         assert_eq!(
-            GetTickerAllPairsResponse::symbol(&ticker_data),
+            ticker_data.first().map(|s| s.as_str()),
             Some("BTC_USDT")
         );
         assert_eq!(
-            GetTickerAllPairsResponse::last_price(&ticker_data),
+            ticker_data.get(1).map(|s| s.as_str()),
             Some("30000.00")
         );
         assert_eq!(
-            GetTickerAllPairsResponse::volume_24h(&ticker_data),
+            ticker_data.get(2).map(|s| s.as_str()),
             Some("582.08066")
         );
         assert_eq!(
-            GetTickerAllPairsResponse::quote_volume_24h(&ticker_data),
+            ticker_data.get(3).map(|s| s.as_str()),
             None
         );
-        assert_eq!(GetTickerAllPairsResponse::timestamp(&ticker_data), None);
+        assert_eq!(ticker_data.get(12).map(|s| s.as_str()), None);
     }
 
     #[test]
@@ -259,11 +192,11 @@ mod tests {
 
         assert_eq!(response.0.len(), 2);
         assert_eq!(
-            GetTickerAllPairsResponse::symbol(&response.0[0]),
+            response.0[0].get(0).map(|s| s.as_str()),
             Some("BTC_USDT")
         );
         assert_eq!(
-            GetTickerAllPairsResponse::symbol(&response.0[1]),
+            response.0[1].get(0).map(|s| s.as_str()),
             Some("ETH_USDT")
         );
     }
@@ -306,19 +239,19 @@ mod tests {
         let response: GetTickerAllPairsResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.0.len(), 2);
         assert_eq!(
-            GetTickerAllPairsResponse::symbol(&response.0[0]),
+            response.0[0].get(0).map(|s| s.as_str()),
             Some("BTC_USDT")
         );
         assert_eq!(
-            GetTickerAllPairsResponse::last_price(&response.0[0]),
+            response.0[0].get(1).map(|s| s.as_str()),
             Some("30000.00")
         );
         assert_eq!(
-            GetTickerAllPairsResponse::symbol(&response.0[1]),
+            response.0[1].get(0).map(|s| s.as_str()),
             Some("ETH_USDT")
         );
         assert_eq!(
-            GetTickerAllPairsResponse::last_price(&response.0[1]),
+            response.0[1].get(1).map(|s| s.as_str()),
             Some("1840.00")
         );
     }

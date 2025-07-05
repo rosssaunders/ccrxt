@@ -59,55 +59,20 @@ pub struct OcoHistorySubOrder {
     pub orig_quote_order_qty: Option<String>,
 }
 
-impl GetOcoOrderHistoryRequest {
-    pub fn new(timestamp: i64) -> Self {
-        Self {
-            start_time: None,
-            end_time: None,
-            from_id: None,
-            limit: None,
-            recv_window: None,
-            timestamp,
-        }
-    }
-
-    pub fn start_time(mut self, start_time: i64) -> Self {
-        self.start_time = Some(start_time);
-        self
-    }
-
-    pub fn end_time(mut self, end_time: i64) -> Self {
-        self.end_time = Some(end_time);
-        self
-    }
-
-    pub fn from_id(mut self, from_id: i64) -> Self {
-        self.from_id = Some(from_id);
-        self
-    }
-
-    pub fn limit(mut self, limit: i32) -> Self {
-        self.limit = Some(limit);
-        self
-    }
-
-    pub fn recv_window(mut self, recv_window: i64) -> Self {
-        self.recv_window = Some(recv_window);
-        self
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
     fn test_get_oco_order_history_request_serialization() {
-        let request = GetOcoOrderHistoryRequest::new(1640995200000)
-            .start_time(1640908800000)
-            .end_time(1640995200000)
-            .limit(100)
-            .recv_window(5000);
+        let request = GetOcoOrderHistoryRequest {
+            start_time: Some(1640908800000),
+            end_time: Some(1640995200000),
+            from_id: None,
+            limit: Some(100),
+            recv_window: Some(5000),
+            timestamp: 1640995200000,
+        };
 
         let json = serde_json::to_string(&request).unwrap();
         assert!(json.contains("\"startTime\":1640908800000"));

@@ -57,42 +57,7 @@ pub struct Candlestick {
     pub base_volume: String,
 }
 
-impl Candlestick {
-    /// Convert timestamp to i64
-    pub fn timestamp_i64(&self) -> i64 {
-        self.timestamp.parse().unwrap_or(0)
-    }
 
-    /// Convert open price to f64
-    pub fn open_f64(&self) -> f64 {
-        self.open.parse().unwrap_or(0.0)
-    }
-
-    /// Convert high price to f64
-    pub fn high_f64(&self) -> f64 {
-        self.high.parse().unwrap_or(0.0)
-    }
-
-    /// Convert low price to f64
-    pub fn low_f64(&self) -> f64 {
-        self.low.parse().unwrap_or(0.0)
-    }
-
-    /// Convert close price to f64
-    pub fn close_f64(&self) -> f64 {
-        self.close.parse().unwrap_or(0.0)
-    }
-
-    /// Convert volume to f64
-    pub fn volume_f64(&self) -> f64 {
-        self.volume.parse().unwrap_or(0.0)
-    }
-
-    /// Convert base volume to f64
-    pub fn base_volume_f64(&self) -> f64 {
-        self.base_volume.parse().unwrap_or(0.0)
-    }
-}
 
 impl RestClient {
     /// Get candlestick data for a currency pair

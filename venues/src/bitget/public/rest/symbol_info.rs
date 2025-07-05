@@ -12,22 +12,7 @@ pub struct GetSymbolInfoRequest {
     pub symbol: Option<String>,
 }
 
-impl GetSymbolInfoRequest {
-    /// Convert to query parameters
-    pub fn to_params(&self) -> Option<HashMap<String, String>> {
-        let mut params = HashMap::new();
-        
-        if let Some(symbol) = &self.symbol {
-            params.insert("symbol".to_string(), symbol.clone());
-        }
 
-        if params.is_empty() {
-            None
-        } else {
-            Some(params)
-        }
-    }
-}
 
 /// Symbol information
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -82,7 +67,14 @@ impl RestClient {
     /// The symbol information
     pub async fn get_symbol_info(&self, request: &GetSymbolInfoRequest) -> Result<RestResponse<Vec<SymbolInfo>>, ApiError> {
         let endpoint = "/api/v2/spot/public/symbols";
-        let params = request.to_params();
+        
+        let mut params = HashMap::new();
+        if let Some(symbol) = &request.symbol {
+            params.insert("symbol".to_string(), symbol.clone());
+        }
+        
+        let params = if params.is_empty() { None } else { Some(params) };
+        
         self.get(endpoint, params).await
     }
 }

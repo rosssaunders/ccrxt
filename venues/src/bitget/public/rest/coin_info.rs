@@ -24,22 +24,7 @@ pub struct GetCoinInfoRequest {
     pub coin: Option<String>,
 }
 
-impl GetCoinInfoRequest {
-    /// Convert to query parameters
-    pub fn to_params(&self) -> Option<HashMap<String, String>> {
-        let mut params = HashMap::new();
 
-        if let Some(coin) = &self.coin {
-            params.insert("coin".to_string(), coin.clone());
-        }
-
-        if params.is_empty() {
-            None
-        } else {
-            Some(params)
-        }
-    }
-}
 
 /// Chain information for a coin
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -121,7 +106,14 @@ impl RestClient {
         request: &GetCoinInfoRequest,
     ) -> Result<RestResponse<Vec<CoinInfo>>, ApiError> {
         let endpoint = "/api/v2/spot/public/coins";
-        let params = request.to_params();
+        
+        let mut params = HashMap::new();
+        if let Some(coin) = &request.coin {
+            params.insert("coin".to_string(), coin.clone());
+        }
+        
+        let params = if params.is_empty() { None } else { Some(params) };
+        
         self.get(endpoint, params).await
     }
 }

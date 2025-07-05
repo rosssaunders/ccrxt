@@ -60,12 +60,16 @@ It also details documentation and code style requirements for all structs and fi
 - Use only `#[derive(Default)]` for structs with all-optional fields; construct with `StructName::default()` for an empty instance.
 - Do NOT add `new()` constructors for simple request structs—use the default derive.
 - Do NOT add `with_*` builder methods unless the struct is complex and builder pattern is explicitly requested.
+- **DO NOT add calculation/utility methods to request or response structs** (e.g., `average_trade_size()`, `calculate_ratio()`, `is_valid()`). These structs should be simple data containers only.
+- **DO NOT add helper methods, validation methods, or any business logic to structs**. Keep structs as pure data transfer objects.
 
 ---
 
 ## 4. Response Struct(s)
 
 - Define one or more response structs, using `#[derive(Debug, Clone, Deserialize)]`.
+- **DO NOT add any `impl` blocks to response structs.** No calculation methods, utility methods, or business logic should be added.
+- **Response structs should be pure data containers** that only hold deserialized API response data.
 - **Documentation:**
   - All structs and fields must be documented as above.
   - Use serde attributes for all fields.

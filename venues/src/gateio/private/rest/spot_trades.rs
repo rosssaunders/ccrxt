@@ -73,52 +73,16 @@ pub struct MyTrade {
     pub text: Option<String>,
 }
 
-impl MyTrade {
-    /// Calculate the total value of the trade (amount * price)
-    pub fn total_value(&self) -> Result<f64, std::num::ParseFloatError> {
-        let amount: f64 = self.amount.parse()?;
-        let price: f64 = self.price.parse()?;
-        Ok(amount * price)
-    }
-
-    /// Check if this trade was a maker trade
-    pub fn is_maker(&self) -> bool {
-        self.role == "maker"
-    }
-
-    /// Check if this trade was a taker trade
-    pub fn is_taker(&self) -> bool {
-        self.role == "taker"
-    }
-
-    /// Check if this was a buy trade
-    pub fn is_buy(&self) -> bool {
-        self.side == "buy"
-    }
-
-    /// Check if this was a sell trade
-    pub fn is_sell(&self) -> bool {
-        self.side == "sell"
-    }
-
-    /// Get the timestamp as Unix timestamp in seconds
-    pub fn timestamp(&self) -> Result<i64, std::num::ParseIntError> {
-        self.create_time.parse()
-    }
-
-    /// Get the timestamp in milliseconds
-    pub fn timestamp_ms(&self) -> Result<i64, std::num::ParseIntError> {
-        self.create_time_ms.parse()
-    }
-}
-
 /// Implementation for the client
 impl RestClient {
     /// Get personal trading history
-    /// 
+    ///
     /// This endpoint returns your personal trading history.
     /// You can filter by currency pair, time range, and other parameters.
-    pub async fn get_my_trades(&self, request: GetMyTradesRequest) -> crate::gateio::Result<Vec<MyTrade>> {
+    pub async fn get_my_trades(
+        &self,
+        request: GetMyTradesRequest,
+    ) -> crate::gateio::Result<Vec<MyTrade>> {
         self.get_with_query("/spot/my_trades", &request).await
     }
 
@@ -180,7 +144,8 @@ impl RestClient {
             .as_secs() as i64;
         let yesterday = now - 86400; // 24 hours ago
 
-        self.get_my_trades_in_range(currency_pair, yesterday, now, limit).await
+        self.get_my_trades_in_range(currency_pair, yesterday, now, limit)
+            .await
     }
 
     /// Get trading statistics for a currency pair within a time range
@@ -190,24 +155,27 @@ impl RestClient {
         from: i64,
         to: i64,
     ) -> crate::gateio::Result<TradingStats> {
-        let trades = self.get_my_trades_in_range(Some(currency_pair), from, to, None).await?;
-        
-        let mut stats = TradingStats::new();
-        
+        let trades = self
+            .get_my_trades_in_range(Some(currency_pair), from, to, None)
+            .await?;
+
+        let mut stats = TradingStats::default();
+
         for trade in trades {
-            if let Ok(value) = trade.total_value() {
+            if let (Ok(amount), Ok(price)) = (trade.amount.parse::<f64>(), trade.price.parse::<f64>()) {
+                let value = amount * price;
                 stats.total_volume += value;
                 stats.trade_count += 1;
-                
-                if trade.is_buy() {
+
+                if trade.side == "buy" {
                     stats.buy_volume += value;
                     stats.buy_count += 1;
                 } else {
                     stats.sell_volume += value;
                     stats.sell_count += 1;
                 }
-                
-                if trade.is_maker() {
+
+                if trade.role == "maker" {
                     stats.maker_volume += value;
                     stats.maker_count += 1;
                 } else {
@@ -216,7 +184,7 @@ impl RestClient {
                 }
             }
         }
-        
+
         Ok(stats)
     }
 }
@@ -244,37 +212,4 @@ pub struct TradingStats {
     pub taker_volume: f64,
     /// Number of taker trades
     pub taker_count: u32,
-}
-
-impl TradingStats {
-    fn new() -> Self {
-        Self::default()
-    }
-
-    /// Calculate average trade size
-    pub fn average_trade_size(&self) -> f64 {
-        if self.trade_count > 0 {
-            self.total_volume / self.trade_count as f64
-        } else {
-            0.0
-        }
-    }
-
-    /// Calculate maker ratio (percentage of maker trades)
-    pub fn maker_ratio(&self) -> f64 {
-        if self.trade_count > 0 {
-            (self.maker_count as f64 / self.trade_count as f64) * 100.0
-        } else {
-            0.0
-        }
-    }
-
-    /// Calculate buy ratio (percentage of buy trades)
-    pub fn buy_ratio(&self) -> f64 {
-        if self.trade_count > 0 {
-            (self.buy_count as f64 / self.trade_count as f64) * 100.0
-        } else {
-            0.0
-        }
-    }
 }

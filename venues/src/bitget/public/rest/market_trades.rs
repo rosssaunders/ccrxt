@@ -20,27 +20,7 @@ pub struct GetMarketTradesRequest {
     pub limit: Option<u32>,
 }
 
-impl GetMarketTradesRequest {
-    /// Convert to query parameters
-    pub fn to_params(&self) -> HashMap<String, String> {
-        let mut params = HashMap::new();
-        params.insert("symbol".to_string(), self.symbol.clone());
-        
-        if let Some(start_time) = self.start_time {
-            params.insert("startTime".to_string(), start_time.to_string());
-        }
-        
-        if let Some(end_time) = self.end_time {
-            params.insert("endTime".to_string(), end_time.to_string());
-        }
-        
-        if let Some(limit) = self.limit {
-            params.insert("limit".to_string(), limit.to_string());
-        }
 
-        params
-    }
-}
 
 /// Market trade information
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -70,7 +50,22 @@ impl RestClient {
     /// The market trade information
     pub async fn get_market_trades(&self, request: &GetMarketTradesRequest) -> Result<RestResponse<Vec<MarketTrade>>, ApiError> {
         let endpoint = "/api/v2/spot/market/fills-history";
-        let params = Some(request.to_params());
-        self.get(endpoint, params).await
+        
+        let mut params = HashMap::new();
+        params.insert("symbol".to_string(), request.symbol.clone());
+        
+        if let Some(start_time) = request.start_time {
+            params.insert("startTime".to_string(), start_time.to_string());
+        }
+        
+        if let Some(end_time) = request.end_time {
+            params.insert("endTime".to_string(), end_time.to_string());
+        }
+        
+        if let Some(limit) = request.limit {
+            params.insert("limit".to_string(), limit.to_string());
+        }
+
+        self.get(endpoint, Some(params)).await
     }
 }

@@ -29,20 +29,7 @@ pub struct SubAccountAsset {
     pub locked: String,
 }
 
-impl GetSubAccountAssetsRequest {
-    pub fn new(email: String, timestamp: i64) -> Self {
-        Self {
-            email,
-            recv_window: None,
-            timestamp,
-        }
-    }
 
-    pub fn recv_window(mut self, recv_window: i64) -> Self {
-        self.recv_window = Some(recv_window);
-        self
-    }
-}
 
 #[cfg(test)]
 mod tests {
@@ -50,11 +37,11 @@ mod tests {
 
     #[test]
     fn test_get_sub_account_assets_request_serialization() {
-        let request = GetSubAccountAssetsRequest::new(
-            "test@example.com".to_string(),
-            1640995200000,
-        )
-        .recv_window(5000);
+        let request = GetSubAccountAssetsRequest {
+            email: "test@example.com".to_string(),
+            recv_window: Some(5000),
+            timestamp: 1640995200000,
+        };
 
         let json = serde_json::to_string(&request).unwrap();
         assert!(json.contains("\"email\":\"test@example.com\""));

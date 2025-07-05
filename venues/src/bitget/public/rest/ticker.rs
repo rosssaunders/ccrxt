@@ -12,22 +12,7 @@ pub struct GetTickerRequest {
     pub symbol: Option<String>,
 }
 
-impl GetTickerRequest {
-    /// Convert to query parameters
-    pub fn to_params(&self) -> Option<HashMap<String, String>> {
-        let mut params = HashMap::new();
-        
-        if let Some(symbol) = &self.symbol {
-            params.insert("symbol".to_string(), symbol.clone());
-        }
 
-        if params.is_empty() {
-            None
-        } else {
-            Some(params)
-        }
-    }
-}
 
 /// Ticker information
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -84,7 +69,14 @@ impl RestClient {
     /// The ticker information
     pub async fn get_ticker(&self, request: &GetTickerRequest) -> Result<RestResponse<Vec<Ticker>>, ApiError> {
         let endpoint = "/api/v2/spot/market/tickers";
-        let params = request.to_params();
+        
+        let mut params = HashMap::new();
+        if let Some(symbol) = &request.symbol {
+            params.insert("symbol".to_string(), symbol.clone());
+        }
+        
+        let params = if params.is_empty() { None } else { Some(params) };
+        
         self.get(endpoint, params).await
     }
 }

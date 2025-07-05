@@ -41,37 +41,7 @@ pub struct SubAccountInfo {
     pub create_time: i64,
 }
 
-impl GetSubAccountListRequest {
-    pub fn new(timestamp: i64) -> Self {
-        Self {
-            email: None,
-            page: None,
-            size: None,
-            recv_window: None,
-            timestamp,
-        }
-    }
 
-    pub fn email(mut self, email: String) -> Self {
-        self.email = Some(email);
-        self
-    }
-
-    pub fn page(mut self, page: i32) -> Self {
-        self.page = Some(page);
-        self
-    }
-
-    pub fn size(mut self, size: i32) -> Self {
-        self.size = Some(size);
-        self
-    }
-
-    pub fn recv_window(mut self, recv_window: i64) -> Self {
-        self.recv_window = Some(recv_window);
-        self
-    }
-}
 
 #[cfg(test)]
 mod tests {
@@ -79,11 +49,13 @@ mod tests {
 
     #[test]
     fn test_get_sub_account_list_request_serialization() {
-        let request = GetSubAccountListRequest::new(1640995200000)
-            .email("test@example.com".to_string())
-            .page(1)
-            .size(10)
-            .recv_window(5000);
+        let request = GetSubAccountListRequest {
+            email: Some("test@example.com".to_string()),
+            page: Some(1),
+            size: Some(10),
+            recv_window: Some(5000),
+            timestamp: 1640995200000,
+        };
 
         let json = serde_json::to_string(&request).unwrap();
         assert!(json.contains("\"email\":\"test@example.com\""));

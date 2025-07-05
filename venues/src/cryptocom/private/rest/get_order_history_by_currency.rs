@@ -35,8 +35,6 @@ pub struct GetOrderHistoryByCurrencyRequest {
     pub historical: Option<bool>,
 }
 
-
-
 /// Response for get order history by currency endpoint (simple format)
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GetOrderHistoryByCurrencyResponse {
