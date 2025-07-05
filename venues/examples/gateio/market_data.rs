@@ -1,8 +1,10 @@
-use venues::gateio::public::rest::{
-    RestClient, candlesticks::CandlesticksRequest, order_book::OrderBookRequest,
-    tickers::TickersRequest, trades::TradesRequest,
+use venues::gateio::{
+    CandlestickInterval, Result,
+    public::rest::{
+        RestClient, candlesticks::CandlesticksRequest, order_book::OrderBookRequest,
+        tickers::TickersRequest, trades::TradesRequest,
+    },
 };
-use venues::gateio::{CandlestickInterval, Result};
 
 #[tokio::main]
 async fn main() -> Result<()> {

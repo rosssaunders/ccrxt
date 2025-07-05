@@ -1,9 +1,12 @@
 use std::env;
-use venues::gateio::private::rest::{
-    RestClient, account_book::GetAccountBookRequest, list_open_orders::ListOpenOrdersRequest,
-    list_orders::ListOrdersRequest, spot_trades::GetMyTradesRequest,
+
+use venues::gateio::{
+    OrderStatus, Result,
+    private::rest::{
+        RestClient, account_book::GetAccountBookRequest, list_open_orders::ListOpenOrdersRequest,
+        list_orders::ListOrdersRequest, spot_trades::GetMyTradesRequest,
+    },
 };
-use venues::gateio::{OrderStatus, Result};
 
 #[tokio::main]
 async fn main() -> Result<()> {

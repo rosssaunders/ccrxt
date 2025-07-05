@@ -1,9 +1,11 @@
 use tokio;
 use tracing_subscriber;
-use venues::gateio::public::RestClient as PublicClient;
-use venues::gateio::public::rest::{
-    OptionsCandlesticksRequest, OptionsContractsRequest, OptionsOrderBookRequest,
-    OptionsSettlementsRequest, OptionsTickersRequest, OptionsTradesRequest,
+use venues::gateio::public::{
+    RestClient as PublicClient,
+    rest::{
+        OptionsCandlesticksRequest, OptionsContractsRequest, OptionsOrderBookRequest,
+        OptionsSettlementsRequest, OptionsTickersRequest, OptionsTradesRequest,
+    },
 };
 
 #[tokio::main]

@@ -1,91 +1,102 @@
-use rest::Client;
-/// Example of using Bitget Futures API
+/// Example of using Bitget API
 ///
-/// This example demonstrates how to use the newly implemented
-/// Bitget Futures API endpoints for both public and private data.
-use venues::bitget::ProductType;
-use venues::bitget::futures::public::rest::*;
+/// This example demonstrates how to use the Bitget API endpoints for both public and private data.
+use reqwest::Client;
+use venues::bitget::public::rest::{GetCandlestickRequest, GetMergeDepthRequest, GetTickerRequest};
+use venues::bitget::{CandlestickGranularity, PricePrecision, PublicRestClient, RateLimiter};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // Initialize the client (for demonstration purposes - not used in this example)
-    let _client = Client::new("https://api.bitget.com", None, None, None)?;
-
-    // Public Endpoints Examples
-    println!("=== Bitget Futures Public API Examples ===");
-
-    // Get VIP fee rates
-    let vip_rates_request = GetVipFeeRateRequest::default();
-    println!("VIP Fee Rates request created: {:?}", vip_rates_request);
-
-    // Get ticker for a specific symbol
-    let ticker_request = GetTickerRequest {
-        symbol: "BTCUSDT".to_string(),
-        product_type: ProductType::UsdtFutures,
-    };
-    println!("Ticker request created: {:?}", ticker_request);
-
-    // Get all tickers
-    let all_tickers_request = GetAllTickersRequest {
-        product_type: ProductType::UsdtFutures,
-    };
-    println!("All Tickers request created: {:?}", all_tickers_request);
-
-    // Get market depth
-    let depth_request = MarketDepthRequest {
-        symbol: "BTCUSDT".to_string(),
-        product_type: ProductType::UsdtFutures,
-        precision: Some("scale0".to_string()),
-        limit: Some("50".to_string()),
-    };
-    println!("Market Depth request created: {:?}", depth_request);
-
-    // Get candlestick data
-    let candle_request = CandlestickRequest {
-        symbol: "BTCUSDT".to_string(),
-        product_type: ProductType::UsdtFutures,
-        granularity: "1h".to_string(),
-        start_time: None,
-        end_time: None,
-        limit: Some("100".to_string()),
-    };
-    println!("Candlestick request created: {:?}", candle_request);
-
-    // Get open interest
-    let oi_request = OpenInterestRequest {
-        symbol: "BTCUSDT".to_string(),
-        product_type: ProductType::UsdtFutures,
-    };
-    println!("Open Interest request created: {:?}", oi_request);
-
-    // Get funding rate
-    let funding_request = CurrentFundingRateRequest {
-        symbol: "BTCUSDT".to_string(),
-        product_type: ProductType::UsdtFutures,
-    };
-    println!(
-        "Current Funding Rate request created: {:?}",
-        funding_request
+    // Initialize the client
+    let client = PublicRestClient::new(
+        "https://api.bitget.com".to_string(),
+        RateLimiter::default(),
+        Client::new(),
     );
 
-    // Get contract config
-    let config_request = ContractConfigRequest {
-        symbol: "BTCUSDT".to_string(),
-        product_type: ProductType::UsdtFutures,
-    };
-    println!("Contract Config request created: {:?}", config_request);
+    // Public Endpoints Examples
+    println!("=== Bitget Public API Examples ===");
 
-    /*
-    // Note: To actually make API calls, you would need a properly configured RestClient
-    // and use the methods defined in each endpoint module:
-    //
-    // let rest_client = RestClient::new(...);
-    // let vip_rates = rest_client.get_vip_fee_rate(vip_rates_request).await?;
-    // let ticker = rest_client.get_ticker(ticker_request).await?;
-    // etc.
-     */
+    // Get VIP fee rates
+    println!("Getting VIP fee rates...");
+    match client.get_vip_fee_rate().await {
+        Ok(response) => {
+            println!("VIP fee rates retrieved successfully!");
+            for (i, rate) in response.data.iter().enumerate() {
+                if i < 3 {
+                    // Show first 3 rates
+                    println!(
+                        "Level {}: Taker {}%, Maker {}%",
+                        rate.level, rate.taker_fee_rate, rate.maker_fee_rate
+                    );
+                }
+            }
+        }
+        Err(e) => println!("Failed to get VIP fee rates: {:?}", e),
+    }
 
-    println!("\nBitget Futures API implementation completed successfully!");
-    println!("All request structures are properly constructed and ready for use.");
+    // Get ticker for a specific symbol
+    let ticker_request = GetTickerRequest::new().symbol("BTCUSDT");
+    println!("\nGetting ticker for BTCUSDT...");
+    match client.get_ticker(ticker_request).await {
+        Ok(response) => {
+            if let Some(ticker) = response.data.first() {
+                println!(
+                    "BTCUSDT Price: {} (24h high: {}, low: {})",
+                    ticker.last_price, ticker.high24h, ticker.low24h
+                );
+            }
+        }
+        Err(e) => println!("Failed to get ticker: {:?}", e),
+    }
+
+    // Get all tickers
+    let all_tickers_request = GetTickerRequest::new();
+    println!("\nGetting all tickers...");
+    match client.get_ticker(all_tickers_request).await {
+        Ok(response) => {
+            println!("Retrieved {} tickers", response.data.len());
+        }
+        Err(e) => println!("Failed to get all tickers: {:?}", e),
+    }
+
+    // Get market depth
+    let depth_request = GetMergeDepthRequest::new("BTCUSDT".to_string())
+        .precision(PricePrecision::Scale0)
+        .limit(50);
+    println!("\nGetting market depth for BTCUSDT...");
+    match client.get_merge_depth(depth_request).await {
+        Ok(response) => {
+            println!(
+                "Market depth retrieved with {} asks and {} bids",
+                response.data.asks.len(),
+                response.data.bids.len()
+            );
+        }
+        Err(e) => println!("Failed to get market depth: {:?}", e),
+    }
+
+    // Get candlestick data
+    let candle_request =
+        GetCandlestickRequest::new("BTCUSDT".to_string(), CandlestickGranularity::OneHour)
+            .limit(10);
+    println!("\nGetting candlestick data for BTCUSDT...");
+    match client.get_candlestick(candle_request).await {
+        Ok(response) => {
+            println!("Retrieved {} candlesticks", response.data.len());
+            if let Some(candle) = response.data.first() {
+                // Candlestick is [String; 8] with format: [timestamp, open, high, low, close, volume, quote_volume, count]
+                if candle.len() >= 5 {
+                    println!(
+                        "Latest candle: O:{} H:{} L:{} C:{}",
+                        candle[1], candle[2], candle[3], candle[4]
+                    );
+                }
+            }
+        }
+        Err(e) => println!("Failed to get candlestick data: {:?}", e),
+    }
+
+    println!("\nBitget API example completed successfully!");
     Ok(())
 }

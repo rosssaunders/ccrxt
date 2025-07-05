@@ -13,11 +13,12 @@
 //! credentials and permissions for margin trading on your KuCoin account.
 
 use std::env;
+
 use rest::secrets::SecretString;
 use venues::kucoin::private::rest::{
     GetLoanMarketInterestRateRequest, GetLoanMarketRequest, GetPurchaseOrdersRequest,
-    GetRedeemOrdersRequest, ModifyPurchaseRequest, PurchaseOrderStatus, PurchaseRequest,
-    RedeemOrderStatus, RedeemRequest, RestClient,
+    GetRedeemOrdersRequest, PurchaseOrderStatus, PurchaseRequest, RedeemOrderStatus, RedeemRequest,
+    RestClient,
 };
 
 #[tokio::main]
@@ -40,19 +41,32 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // 1. Get loan market information for all currencies
     println!("📊 Getting loan market information...");
     let loan_market_request = GetLoanMarketRequest { currency: None };
-    
+
     match client.get_loan_market(loan_market_request).await {
         Ok((markets, _headers)) => {
             println!("✅ Available lending markets: {}", markets.len());
-            
+
             // Show details for first few markets
             for (i, market) in markets.iter().take(3).enumerate() {
                 if let Some(currency) = &market.currency {
-                    println!("   {}. {} - Min rate: {:.4}%, Max rate: {:.4}%", 
+                    println!(
+                        "   {}. {} - Min rate: {:.4}%, Max rate: {:.4}%",
                         i + 1,
                         currency,
-                        market.min_interest_rate.as_ref().unwrap_or(&"0".to_string()).parse::<f64>().unwrap_or(0.0) * 100.0,
-                        market.max_interest_rate.as_ref().unwrap_or(&"0".to_string()).parse::<f64>().unwrap_or(0.0) * 100.0
+                        market
+                            .min_interest_rate
+                            .as_ref()
+                            .unwrap_or(&"0".to_string())
+                            .parse::<f64>()
+                            .unwrap_or(0.0)
+                            * 100.0,
+                        market
+                            .max_interest_rate
+                            .as_ref()
+                            .unwrap_or(&"0".to_string())
+                            .parse::<f64>()
+                            .unwrap_or(0.0)
+                            * 100.0
                     );
                 }
             }
@@ -65,17 +79,42 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let btc_market_request = GetLoanMarketRequest {
         currency: Some("BTC".to_string()),
     };
-    
+
     match client.get_loan_market(btc_market_request).await {
         Ok((markets, _headers)) => {
             if let Some(btc_market) = markets.first() {
                 println!("✅ BTC lending market:");
-                println!("   Purchase enabled: {}", btc_market.purchase_enable.unwrap_or(false));
-                println!("   Redeem enabled: {}", btc_market.redeem_enable.unwrap_or(false));
-                println!("   Min purchase: {} BTC", btc_market.min_purchase_size.as_ref().unwrap_or(&"N/A".to_string()));
-                println!("   Max purchase: {} BTC", btc_market.max_purchase_size.as_ref().unwrap_or(&"N/A".to_string()));
-                println!("   Market rate: {:.4}%", 
-                    btc_market.market_interest_rate.as_ref().unwrap_or(&"0".to_string()).parse::<f64>().unwrap_or(0.0) * 100.0
+                println!(
+                    "   Purchase enabled: {}",
+                    btc_market.purchase_enable.unwrap_or(false)
+                );
+                println!(
+                    "   Redeem enabled: {}",
+                    btc_market.redeem_enable.unwrap_or(false)
+                );
+                println!(
+                    "   Min purchase: {} BTC",
+                    btc_market
+                        .min_purchase_size
+                        .as_ref()
+                        .unwrap_or(&"N/A".to_string())
+                );
+                println!(
+                    "   Max purchase: {} BTC",
+                    btc_market
+                        .max_purchase_size
+                        .as_ref()
+                        .unwrap_or(&"N/A".to_string())
+                );
+                println!(
+                    "   Market rate: {:.4}%",
+                    btc_market
+                        .market_interest_rate
+                        .as_ref()
+                        .unwrap_or(&"0".to_string())
+                        .parse::<f64>()
+                        .unwrap_or(0.0)
+                        * 100.0
                 );
             }
         }
@@ -87,14 +126,21 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let rate_history_request = GetLoanMarketInterestRateRequest {
         currency: "BTC".to_string(),
     };
-    
-    match client.get_loan_market_interest_rate(rate_history_request).await {
+
+    match client
+        .get_loan_market_interest_rate(rate_history_request)
+        .await
+    {
         Ok((rates, _headers)) => {
-            println!("✅ BTC rate history (last 7 days): {} data points", rates.len());
-            
+            println!(
+                "✅ BTC rate history (last 7 days): {} data points",
+                rates.len()
+            );
+
             // Show latest rates
             for (i, rate) in rates.iter().take(3).enumerate() {
-                println!("   {}. {}: {:.4}%", 
+                println!(
+                    "   {}. {}: {:.4}%",
                     i + 1,
                     rate.time,
                     rate.market_interest_rate.parse::<f64>().unwrap_or(0.0) * 100.0
@@ -107,31 +153,36 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // 4. Example: Purchase/Lend credit (commented out to avoid real transactions)
     println!("\n💰 Purchase/Lending example (simulation)");
     println!("   This would place a lending order to earn interest:");
-    
+
     let purchase_request = PurchaseRequest {
         currency: "USDT".to_string(),
-        size: "100".to_string(),       // Lend 100 USDT
-        interest_rate: "0.05".to_string(),  // At 5% annual rate
+        size: "100".to_string(),           // Lend 100 USDT
+        interest_rate: "0.05".to_string(), // At 5% annual rate
     };
-    
+
     println!("   Currency: {}", purchase_request.currency);
-    println!("   Amount: {} {}", purchase_request.size, purchase_request.currency);
-    println!("   Interest rate: {}% annually", 
-        purchase_request.interest_rate.parse::<f64>().unwrap_or(0.0) * 100.0);
-    
+    println!(
+        "   Amount: {} {}",
+        purchase_request.size, purchase_request.currency
+    );
+    println!(
+        "   Interest rate: {}% annually",
+        purchase_request.interest_rate.parse::<f64>().unwrap_or(0.0) * 100.0
+    );
+
     // Uncomment to actually place the order (requires sufficient balance)
     /*
     match client.purchase(purchase_request).await {
         Ok((response, _headers)) => {
             println!("✅ Purchase order placed! Order ID: {}", response.order_no);
-            
+
             // 5. Example: Modify the purchase order
             let modify_request = ModifyPurchaseRequest {
                 currency: "USDT".to_string(),
                 purchase_order_no: response.order_no.clone(),
                 interest_rate: "0.06".to_string(),  // Change to 6% annual rate
             };
-            
+
             match client.modify_purchase(modify_request).await {
                 Ok((result, _headers)) => {
                     println!("✅ Purchase order modified: {}", result);
@@ -152,14 +203,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         current_page: Some(1),
         page_size: Some(10),
     };
-    
+
     match client.get_purchase_orders(purchase_orders_request).await {
         Ok((response, _headers)) => {
             println!("✅ Purchase orders found: {}", response.total_num);
             println!("   Page: {}/{}", response.current_page, response.total_page);
-            
+
             for (i, order) in response.items.iter().take(3).enumerate() {
-                println!("   {}. Order {}: {} {} at {:.4}% (Status: {})", 
+                println!(
+                    "   {}. Order {}: {} {} at {:.4}% (Status: {})",
                     i + 1,
                     order.purchase_order_no,
                     order.purchase_size,
@@ -175,17 +227,20 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // 7. Example: Redeem a loan order (commented out to avoid real transactions)
     println!("\n🔄 Redemption example (simulation)");
     println!("   This would redeem a lending position early:");
-    
+
     let redeem_request = RedeemRequest {
         currency: "USDT".to_string(),
-        size: "50".to_string(),           // Redeem 50 USDT
+        size: "50".to_string(), // Redeem 50 USDT
         purchase_order_no: "example-order-id".to_string(),
     };
-    
+
     println!("   Currency: {}", redeem_request.currency);
-    println!("   Amount: {} {}", redeem_request.size, redeem_request.currency);
+    println!(
+        "   Amount: {} {}",
+        redeem_request.size, redeem_request.currency
+    );
     println!("   Purchase order: {}", redeem_request.purchase_order_no);
-    
+
     // Uncomment to actually redeem (requires valid purchase order)
     /*
     match client.redeem(redeem_request).await {
@@ -205,14 +260,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         current_page: Some(1),
         page_size: Some(10),
     };
-    
+
     match client.get_redeem_orders(redeem_orders_request).await {
         Ok((response, _headers)) => {
             println!("✅ Redeem orders found: {}", response.total_num);
             println!("   Page: {}/{}", response.current_page, response.total_page);
-            
+
             for (i, order) in response.items.iter().take(3).enumerate() {
-                println!("   {}. Redeem {}: {} {} -> {} {} (Status: {})", 
+                println!(
+                    "   {}. Redeem {}: {} {} -> {} {} (Status: {})",
                     i + 1,
                     order.redeem_order_no,
                     order.redeem_size,

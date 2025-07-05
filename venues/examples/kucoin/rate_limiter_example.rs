@@ -3,8 +3,7 @@
 //! This example demonstrates how to use the KuCoin rate limiter to manage API request quotas
 //! according to VIP level limits and different resource pools.
 
-use std::time::Duration;
-use venues::kucoin::{RateLimitHeader, RateLimiter, ResourcePool, VipLevel};
+use venues::kucoin::{RateLimiter, ResourcePool, VipLevel};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {

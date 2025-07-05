@@ -5,15 +5,16 @@
 //! - Get current funding rates
 //! - Place and manage orders
 //! - Get position information
-//! 
+//!
 //! To run this example, you need to set the following environment variables:
 //! - KUCOIN_API_KEY: Your KuCoin API key
 //! - KUCOIN_API_SECRET: Your KuCoin API secret
 //! - KUCOIN_API_PASSPHRASE: Your KuCoin API passphrase
 
-use venues::kucoin;
-use rest::secrets::SecretString;
 use std::env;
+
+use rest::secrets::SecretString;
+use venues::kucoin;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -52,7 +53,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         symbol: "XBTUSDTM".to_string(),
     };
 
-    match public_client.get_current_funding_rate(funding_request).await {
+    match public_client
+        .get_current_funding_rate(funding_request)
+        .await
+    {
         Ok((response, _headers)) => {
             let funding_rate = response.data;
             println!("Symbol: {}", funding_rate.symbol);
@@ -72,7 +76,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             let contracts = response.data;
             println!("Found {} active contracts", contracts.len());
             for contract in contracts.iter().take(5) {
-                println!("  - {}: {} ({:?})", contract.symbol, contract.settle_currency, contract.status);
+                println!(
+                    "  - {}: {} ({:?})",
+                    contract.symbol, contract.settle_currency, contract.status
+                );
             }
             if contracts.len() > 5 {
                 println!("  ... and {} more", contracts.len() - 5);
@@ -92,8 +99,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         // Create private futures client
         let private_client = kucoin::private::futures::RestClient::new_with_credentials(
             Box::new(SecretString::new(api_key.into())) as Box<dyn rest::secrets::ExposableSecret>,
-            Box::new(SecretString::new(api_secret.into())) as Box<dyn rest::secrets::ExposableSecret>,
-            Box::new(SecretString::new(api_passphrase.into())) as Box<dyn rest::secrets::ExposableSecret>,
+            Box::new(SecretString::new(api_secret.into()))
+                as Box<dyn rest::secrets::ExposableSecret>,
+            Box::new(SecretString::new(api_passphrase.into()))
+                as Box<dyn rest::secrets::ExposableSecret>,
         );
 
         // Get all positions
@@ -105,11 +114,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 let positions = response.data;
                 println!("Found {} positions", positions.len());
                 for position in &positions {
-                    println!("  - {}: {:?} {} (PnL: {})",
-                        position.symbol,
-                        position.side,
-                        position.open_size,
-                        position.unrealized_pnl
+                    println!(
+                        "  - {}: {:?} {} (PnL: {})",
+                        position.symbol, position.side, position.open_size, position.unrealized_pnl
                     );
                 }
             }
@@ -127,8 +134,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 let margin_mode = response.data;
                 println!("Symbol: {}", margin_mode.symbol);
                 println!("Margin Mode: {:?}", margin_mode.margin_mode);
-                println!("Cross Margin Leverage: {}", margin_mode.cross_margin_leverage);
-                println!("Isolated Margin Leverage: {}", margin_mode.isolated_margin_leverage);
+                println!(
+                    "Cross Margin Leverage: {}",
+                    margin_mode.cross_margin_leverage
+                );
+                println!(
+                    "Isolated Margin Leverage: {}",
+                    margin_mode.isolated_margin_leverage
+                );
             }
             Err(e) => println!("Error getting margin mode: {}", e),
         }
@@ -149,13 +162,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         match private_client.get_orders(orders_request).await {
             Ok((response, _headers)) => {
                 let orders = response.data;
-                println!("Found {} orders (page {} of {})",
+                println!(
+                    "Found {} orders (page {} of {})",
                     orders.items.len(),
                     orders.current_page,
                     orders.total_page
                 );
                 for order in &orders.items {
-                    println!("  - {}: {:?} {:?} {} @ {} (Status: {:?})",
+                    println!(
+                        "  - {}: {:?} {:?} {} @ {} (Status: {:?})",
                         order.symbol,
                         order.side,
                         order.order_type,
