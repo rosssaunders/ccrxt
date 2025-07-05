@@ -119,48 +119,6 @@ impl RestClient {
     }
 }
 
-impl CancelMultipleOrdersRequest {
-    /// Create a request to cancel multiple orders by order IDs
-    pub fn by_order_ids(symbol: String, order_ids: Vec<i64>) -> Self {
-        let order_ids_str = order_ids
-            .iter()
-            .map(|id| id.to_string())
-            .collect::<Vec<_>>()
-            .join(",");
-
-        Self {
-            symbol,
-            process: None,
-            order_ids: order_ids_str,
-            client_order_ids: None,
-            recv_window: None,
-        }
-    }
-
-    /// Create a request to cancel multiple orders by client order IDs
-    pub fn by_client_order_ids(
-        symbol: String,
-        client_order_ids: Vec<String>,
-        order_ids: Vec<i64>,
-    ) -> Self {
-        let order_ids_str = order_ids
-            .iter()
-            .map(|id| id.to_string())
-            .collect::<Vec<_>>()
-            .join(",");
-
-        let client_order_ids_str = client_order_ids.join(",");
-
-        Self {
-            symbol,
-            process: None,
-            order_ids: order_ids_str,
-            client_order_ids: Some(client_order_ids_str),
-            recv_window: None,
-        }
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -185,10 +143,20 @@ mod tests {
 
     #[test]
     fn test_cancel_multiple_orders_by_order_ids() {
-        let request = CancelMultipleOrdersRequest::by_order_ids(
-            "BTC-USDT".to_string(),
-            vec![123456789, 123456790, 123456791],
-        );
+        let order_ids = vec![123456789, 123456790, 123456791];
+        let order_ids_str = order_ids
+            .iter()
+            .map(|id| id.to_string())
+            .collect::<Vec<_>>()
+            .join(",");
+
+        let request = CancelMultipleOrdersRequest {
+            symbol: "BTC-USDT".to_string(),
+            process: None,
+            order_ids: order_ids_str,
+            client_order_ids: None,
+            recv_window: None,
+        };
 
         assert_eq!(request.symbol, "BTC-USDT");
         assert_eq!(request.order_ids, "123456789,123456790,123456791");
@@ -198,15 +166,27 @@ mod tests {
 
     #[test]
     fn test_cancel_multiple_orders_by_client_order_ids() {
-        let request = CancelMultipleOrdersRequest::by_client_order_ids(
-            "BTC-USDT".to_string(),
-            vec![
-                "order1".to_string(),
-                "order2".to_string(),
-                "order3".to_string(),
-            ],
-            vec![123456789, 123456790, 123456791],
-        );
+        let client_order_ids = vec![
+            "order1".to_string(),
+            "order2".to_string(),
+            "order3".to_string(),
+        ];
+        let order_ids = vec![123456789, 123456790, 123456791];
+
+        let order_ids_str = order_ids
+            .iter()
+            .map(|id| id.to_string())
+            .collect::<Vec<_>>()
+            .join(",");
+        let client_order_ids_str = client_order_ids.join(",");
+
+        let request = CancelMultipleOrdersRequest {
+            symbol: "BTC-USDT".to_string(),
+            process: None,
+            order_ids: order_ids_str,
+            client_order_ids: Some(client_order_ids_str),
+            recv_window: None,
+        };
 
         assert_eq!(request.symbol, "BTC-USDT");
         assert_eq!(request.order_ids, "123456789,123456790,123456791");

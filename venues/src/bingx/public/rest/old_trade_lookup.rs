@@ -17,28 +17,7 @@ pub struct GetOldTradeRequest {
     pub from_id: Option<String>,
 }
 
-impl GetOldTradeRequest {
-    /// Create a new request for old trade lookup
-    pub fn new(symbol: String) -> Self {
-        Self {
-            symbol,
-            limit: None,
-            from_id: None,
-        }
-    }
 
-    /// Set the limit for number of trades to return
-    pub fn with_limit(mut self, limit: i32) -> Self {
-        self.limit = Some(limit);
-        self
-    }
-
-    /// Set the from_id to get trades from a specific trade ID
-    pub fn with_from_id(mut self, from_id: String) -> Self {
-        self.from_id = Some(from_id);
-        self
-    }
-}
 
 /// Response from the old trade lookup endpoint
 pub type GetOldTradeResponse = Vec<OldTrade>;
@@ -99,7 +78,11 @@ mod tests {
     #[test]
     fn test_old_trade_request_creation() {
         let symbol = "BTC-USDT".to_string();
-        let request = GetOldTradeRequest::new(symbol.clone());
+        let request = GetOldTradeRequest {
+            symbol: symbol.clone(),
+            limit: None,
+            from_id: None,
+        };
 
         assert_eq!(request.symbol, symbol);
         assert!(request.limit.is_none());
@@ -110,7 +93,11 @@ mod tests {
     fn test_old_trade_request_with_limit() {
         let symbol = "BTC-USDT".to_string();
         let limit = 50;
-        let request = GetOldTradeRequest::new(symbol.clone()).with_limit(limit);
+        let request = GetOldTradeRequest {
+            symbol: symbol.clone(),
+            limit: Some(limit),
+            from_id: None,
+        };
 
         assert_eq!(request.symbol, symbol);
         assert_eq!(request.limit, Some(limit));
@@ -120,7 +107,11 @@ mod tests {
     fn test_old_trade_request_with_from_id() {
         let symbol = "BTC-USDT".to_string();
         let from_id = "12345".to_string();
-        let request = GetOldTradeRequest::new(symbol.clone()).with_from_id(from_id.clone());
+        let request = GetOldTradeRequest {
+            symbol: symbol.clone(),
+            limit: None,
+            from_id: Some(from_id.clone()),
+        };
 
         assert_eq!(request.symbol, symbol);
         assert_eq!(request.from_id, Some(from_id));
@@ -128,7 +119,11 @@ mod tests {
 
     #[test]
     fn test_old_trade_request_serialization() {
-        let request = GetOldTradeRequest::new("BTC-USDT".to_string());
+        let request = GetOldTradeRequest {
+            symbol: "BTC-USDT".to_string(),
+            limit: None,
+            from_id: None,
+        };
         let json = serde_json::to_string(&request).unwrap();
         assert!(json.contains("\"symbol\":\"BTC-USDT\""));
     }
@@ -159,7 +154,11 @@ mod tests {
             RateLimiter::new(),
         );
 
-        let request = GetOldTradeRequest::new("BTC-USDT".to_string());
+        let request = GetOldTradeRequest {
+            symbol: "BTC-USDT".to_string(),
+            limit: None,
+            from_id: None,
+        };
 
         // Test that the method exists and can be called
         // Note: This will fail with network error since we're not making real requests

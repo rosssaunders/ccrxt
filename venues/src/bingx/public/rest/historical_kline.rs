@@ -31,36 +31,7 @@ pub struct GetHistoricalKlineRequest {
     pub limit: Option<i64>,
 }
 
-impl GetHistoricalKlineRequest {
-    /// Create a new request for historical K-line data
-    pub fn new(symbol: String, interval: Interval) -> Self {
-        Self {
-            symbol,
-            interval,
-            start_time: None,
-            end_time: None,
-            limit: None,
-        }
-    }
 
-    /// Set the start time
-    pub fn with_start_time(mut self, start_time: i64) -> Self {
-        self.start_time = Some(start_time);
-        self
-    }
-
-    /// Set the end time
-    pub fn with_end_time(mut self, end_time: i64) -> Self {
-        self.end_time = Some(end_time);
-        self
-    }
-
-    /// Set the limit for number of klines to return
-    pub fn with_limit(mut self, limit: i64) -> Self {
-        self.limit = Some(limit);
-        self
-    }
-}
 
 /// Response from the historical K-line endpoint
 #[derive(Debug, Clone, Deserialize)]
@@ -120,7 +91,13 @@ mod tests {
     fn test_historical_kline_request_creation() {
         let symbol = "BTC-USDT".to_string();
         let interval = Interval::OneHour;
-        let request = GetHistoricalKlineRequest::new(symbol.clone(), interval);
+        let request = GetHistoricalKlineRequest {
+            symbol: symbol.clone(),
+            interval,
+            start_time: None,
+            end_time: None,
+            limit: None,
+        };
 
         assert_eq!(request.symbol, symbol);
         assert_eq!(request.interval, interval);
@@ -136,9 +113,13 @@ mod tests {
         let start_time = 1640995200000;
         let end_time = 1641081600000;
 
-        let request = GetHistoricalKlineRequest::new(symbol.clone(), interval)
-            .with_start_time(start_time)
-            .with_end_time(end_time);
+        let request = GetHistoricalKlineRequest {
+            symbol: symbol.clone(),
+            interval,
+            start_time: Some(start_time),
+            end_time: Some(end_time),
+            limit: None,
+        };
 
         assert_eq!(request.symbol, symbol);
         assert_eq!(request.interval, interval);
@@ -152,7 +133,13 @@ mod tests {
         let interval = Interval::OneHour;
         let limit = 100;
 
-        let request = GetHistoricalKlineRequest::new(symbol.clone(), interval).with_limit(limit);
+        let request = GetHistoricalKlineRequest {
+            symbol: symbol.clone(),
+            interval,
+            start_time: None,
+            end_time: None,
+            limit: Some(limit),
+        };
 
         assert_eq!(request.symbol, symbol);
         assert_eq!(request.interval, interval);
@@ -161,7 +148,13 @@ mod tests {
 
     #[test]
     fn test_historical_kline_request_serialization() {
-        let request = GetHistoricalKlineRequest::new("BTC-USDT".to_string(), Interval::OneHour);
+        let request = GetHistoricalKlineRequest {
+            symbol: "BTC-USDT".to_string(),
+            interval: Interval::OneHour,
+            start_time: None,
+            end_time: None,
+            limit: None,
+        };
         let json = serde_json::to_string(&request).unwrap();
         assert!(json.contains("\"symbol\":\"BTC-USDT\""));
         assert!(json.contains("\"interval\":\"1h\""));
@@ -200,7 +193,13 @@ mod tests {
             RateLimiter::new(),
         );
 
-        let request = GetHistoricalKlineRequest::new("BTC-USDT".to_string(), Interval::OneHour);
+        let request = GetHistoricalKlineRequest {
+            symbol: "BTC-USDT".to_string(),
+            interval: Interval::OneHour,
+            start_time: None,
+            end_time: None,
+            limit: None,
+        };
 
         // Test that the method exists and can be called
         // Note: This will fail with network error since we're not making real requests

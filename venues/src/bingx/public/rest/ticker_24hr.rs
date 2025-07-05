@@ -17,31 +17,7 @@ pub struct Get24hrTickerRequest {
     pub recv_window: Option<i64>,
 }
 
-impl Get24hrTickerRequest {
-    /// Create a new request for all symbols
-    pub fn new(timestamp: i64) -> Self {
-        Self {
-            symbol: None,
-            timestamp,
-            recv_window: None,
-        }
-    }
 
-    /// Create a new request for a specific symbol
-    pub fn for_symbol(symbol: String, timestamp: i64) -> Self {
-        Self {
-            symbol: Some(symbol),
-            timestamp,
-            recv_window: None,
-        }
-    }
-
-    /// Set the receive window
-    pub fn with_recv_window(mut self, recv_window: i64) -> Self {
-        self.recv_window = Some(recv_window);
-        self
-    }
-}
 
 /// Response from the 24hr ticker endpoint
 pub type Get24hrTickerResponse = Vec<Ticker24hr>;
@@ -122,7 +98,11 @@ mod tests {
     #[test]
     fn test_24hr_ticker_request_creation() {
         let timestamp = 1640995200000;
-        let request = Get24hrTickerRequest::new(timestamp);
+        let request = Get24hrTickerRequest {
+            timestamp,
+            symbol: None,
+            recv_window: None,
+        };
 
         assert_eq!(request.timestamp, timestamp);
         assert!(request.symbol.is_none());
@@ -133,7 +113,11 @@ mod tests {
     fn test_24hr_ticker_request_for_symbol() {
         let timestamp = 1640995200000;
         let symbol = "BTC-USDT".to_string();
-        let request = Get24hrTickerRequest::for_symbol(symbol.clone(), timestamp);
+        let request = Get24hrTickerRequest {
+            timestamp,
+            symbol: Some(symbol.clone()),
+            recv_window: None,
+        };
 
         assert_eq!(request.timestamp, timestamp);
         assert_eq!(request.symbol, Some(symbol));
@@ -144,7 +128,11 @@ mod tests {
     fn test_24hr_ticker_request_with_recv_window() {
         let timestamp = 1640995200000;
         let recv_window = 5000;
-        let request = Get24hrTickerRequest::new(timestamp).with_recv_window(recv_window);
+        let request = Get24hrTickerRequest {
+            timestamp,
+            symbol: None,
+            recv_window: Some(recv_window),
+        };
 
         assert_eq!(request.timestamp, timestamp);
         assert_eq!(request.recv_window, Some(recv_window));
@@ -152,7 +140,11 @@ mod tests {
 
     #[test]
     fn test_24hr_ticker_request_serialization() {
-        let request = Get24hrTickerRequest::new(1640995200000);
+        let request = Get24hrTickerRequest {
+            timestamp: 1640995200000,
+            symbol: None,
+            recv_window: None,
+        };
         let json = serde_json::to_string(&request).unwrap();
         assert!(json.contains("\"timestamp\":1640995200000"));
     }
@@ -203,7 +195,11 @@ mod tests {
             RateLimiter::new(),
         );
 
-        let request = Get24hrTickerRequest::new(1640995200000);
+        let request = Get24hrTickerRequest {
+            timestamp: 1640995200000,
+            symbol: None,
+            recv_window: None,
+        };
 
         // Test that the method exists and can be called
         // Note: This will fail with network error since we're not making real requests

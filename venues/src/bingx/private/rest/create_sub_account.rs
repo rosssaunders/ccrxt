@@ -25,21 +25,7 @@ pub struct CreateSubAccountResponse {
     pub success: bool,
 }
 
-impl CreateSubAccountRequest {
-    pub fn new(sub_account: String, sub_account_type: SubAccountType, timestamp: i64) -> Self {
-        Self {
-            sub_account,
-            sub_account_type,
-            recv_window: None,
-            timestamp,
-        }
-    }
 
-    pub fn recv_window(mut self, recv_window: i64) -> Self {
-        self.recv_window = Some(recv_window);
-        self
-    }
-}
 
 #[cfg(test)]
 mod tests {
@@ -47,12 +33,12 @@ mod tests {
 
     #[test]
     fn test_create_sub_account_request_serialization() {
-        let request = CreateSubAccountRequest::new(
-            "test_sub_account".to_string(),
-            SubAccountType::Spot,
-            1640995200000,
-        )
-        .recv_window(5000);
+        let request = CreateSubAccountRequest {
+            sub_account: "test_sub_account".to_string(),
+            sub_account_type: SubAccountType::Spot,
+            timestamp: 1640995200000,
+            recv_window: Some(5000),
+        };
 
         let json = serde_json::to_string(&request).unwrap();
         assert!(json.contains("\"subAccount\":\"test_sub_account\""));

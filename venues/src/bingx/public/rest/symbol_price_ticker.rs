@@ -10,12 +10,7 @@ pub struct GetSymbolPriceTickerRequest {
     pub symbol: String,
 }
 
-impl GetSymbolPriceTickerRequest {
-    /// Create a new request for symbol price ticker
-    pub fn new(symbol: String) -> Self {
-        Self { symbol }
-    }
-}
+
 
 /// Response from the symbol price ticker endpoint
 #[derive(Debug, Clone, Deserialize)]
@@ -68,14 +63,18 @@ mod tests {
     #[test]
     fn test_symbol_price_ticker_request_creation() {
         let symbol = "BTC_USDT".to_string();
-        let request = GetSymbolPriceTickerRequest::new(symbol.clone());
+        let request = GetSymbolPriceTickerRequest {
+            symbol: symbol.clone(),
+        };
 
         assert_eq!(request.symbol, symbol);
     }
 
     #[test]
     fn test_symbol_price_ticker_request_serialization() {
-        let request = GetSymbolPriceTickerRequest::new("BTC_USDT".to_string());
+        let request = GetSymbolPriceTickerRequest {
+            symbol: "BTC_USDT".to_string(),
+        };
         let json = serde_json::to_string(&request).unwrap();
         assert!(json.contains("\"symbol\":\"BTC_USDT\""));
     }
@@ -102,7 +101,9 @@ mod tests {
             RateLimiter::new(),
         );
 
-        let request = GetSymbolPriceTickerRequest::new("BTC_USDT".to_string());
+        let request = GetSymbolPriceTickerRequest {
+            symbol: "BTC_USDT".to_string(),
+        };
 
         // Test that the method exists and can be called
         // Note: This will fail with network error since we're not making real requests

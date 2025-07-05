@@ -18,29 +18,7 @@ pub struct GetOrderBookRequest {
     pub timestamp: i64,
 }
 
-impl GetOrderBookRequest {
-    /// Create a new request for order book
-    pub fn new(symbol: String, timestamp: i64) -> Self {
-        Self {
-            symbol,
-            limit: None,
-            recv_window: None,
-            timestamp,
-        }
-    }
 
-    /// Set the limit for number of price levels to return
-    pub fn with_limit(mut self, limit: i32) -> Self {
-        self.limit = Some(limit);
-        self
-    }
-
-    /// Set the receive window
-    pub fn with_recv_window(mut self, recv_window: i64) -> Self {
-        self.recv_window = Some(recv_window);
-        self
-    }
-}
 
 /// Response from the order book endpoint
 #[derive(Debug, Clone, Deserialize)]
@@ -94,7 +72,12 @@ mod tests {
     fn test_order_book_request_creation() {
         let symbol = "BTC-USDT".to_string();
         let timestamp = 1640995200000;
-        let request = GetOrderBookRequest::new(symbol.clone(), timestamp);
+        let request = GetOrderBookRequest {
+            symbol: symbol.clone(),
+            limit: None,
+            recv_window: None,
+            timestamp,
+        };
 
         assert_eq!(request.symbol, symbol);
         assert_eq!(request.timestamp, timestamp);
@@ -107,7 +90,12 @@ mod tests {
         let symbol = "BTC-USDT".to_string();
         let timestamp = 1640995200000;
         let limit = 50;
-        let request = GetOrderBookRequest::new(symbol.clone(), timestamp).with_limit(limit);
+        let request = GetOrderBookRequest {
+            symbol: symbol.clone(),
+            limit: Some(limit),
+            recv_window: None,
+            timestamp,
+        };
 
         assert_eq!(request.symbol, symbol);
         assert_eq!(request.timestamp, timestamp);
@@ -119,8 +107,12 @@ mod tests {
         let symbol = "BTC-USDT".to_string();
         let timestamp = 1640995200000;
         let recv_window = 5000;
-        let request =
-            GetOrderBookRequest::new(symbol.clone(), timestamp).with_recv_window(recv_window);
+        let request = GetOrderBookRequest {
+            symbol: symbol.clone(),
+            limit: None,
+            recv_window: Some(recv_window),
+            timestamp,
+        };
 
         assert_eq!(request.symbol, symbol);
         assert_eq!(request.timestamp, timestamp);
@@ -129,7 +121,12 @@ mod tests {
 
     #[test]
     fn test_order_book_request_serialization() {
-        let request = GetOrderBookRequest::new("BTC-USDT".to_string(), 1640995200000);
+        let request = GetOrderBookRequest {
+            symbol: "BTC-USDT".to_string(),
+            limit: None,
+            recv_window: None,
+            timestamp: 1640995200000,
+        };
         let json = serde_json::to_string(&request).unwrap();
         assert!(json.contains("\"symbol\":\"BTC-USDT\""));
         assert!(json.contains("\"timestamp\":1640995200000"));
@@ -163,7 +160,12 @@ mod tests {
             RateLimiter::new(),
         );
 
-        let request = GetOrderBookRequest::new("BTC-USDT".to_string(), 1640995200000);
+        let request = GetOrderBookRequest {
+            symbol: "BTC-USDT".to_string(),
+            limit: None,
+            recv_window: None,
+            timestamp: 1640995200000,
+        };
 
         // Test that the method exists and can be called
         // Note: This will fail with network error since we're not making real requests

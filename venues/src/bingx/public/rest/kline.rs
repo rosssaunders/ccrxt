@@ -36,44 +36,7 @@ pub struct GetKlineRequest {
     pub timestamp: i64,
 }
 
-impl GetKlineRequest {
-    /// Create a new request for kline data
-    pub fn new(symbol: String, interval: Interval, timestamp: i64) -> Self {
-        Self {
-            symbol,
-            interval,
-            start_time: None,
-            end_time: None,
-            limit: None,
-            recv_window: None,
-            timestamp,
-        }
-    }
 
-    /// Set the start time
-    pub fn with_start_time(mut self, start_time: i64) -> Self {
-        self.start_time = Some(start_time);
-        self
-    }
-
-    /// Set the end time
-    pub fn with_end_time(mut self, end_time: i64) -> Self {
-        self.end_time = Some(end_time);
-        self
-    }
-
-    /// Set the limit for number of klines to return
-    pub fn with_limit(mut self, limit: i64) -> Self {
-        self.limit = Some(limit);
-        self
-    }
-
-    /// Set the receive window
-    pub fn with_recv_window(mut self, recv_window: i64) -> Self {
-        self.recv_window = Some(recv_window);
-        self
-    }
-}
 
 /// Response from the kline/candlestick data endpoint
 #[derive(Debug, Clone, Deserialize)]
@@ -131,7 +94,15 @@ mod tests {
         let symbol = "BTC-USDT".to_string();
         let interval = Interval::OneHour;
         let timestamp = 1640995200000;
-        let request = GetKlineRequest::new(symbol.clone(), interval, timestamp);
+        let request = GetKlineRequest {
+            symbol: symbol.clone(),
+            interval,
+            start_time: None,
+            end_time: None,
+            limit: None,
+            recv_window: None,
+            timestamp,
+        };
 
         assert_eq!(request.symbol, symbol);
         assert_eq!(request.interval, interval);
@@ -150,9 +121,15 @@ mod tests {
         let start_time = 1640995200000;
         let end_time = 1641081600000;
 
-        let request = GetKlineRequest::new(symbol.clone(), interval, timestamp)
-            .with_start_time(start_time)
-            .with_end_time(end_time);
+        let request = GetKlineRequest {
+            symbol: symbol.clone(),
+            interval,
+            start_time: Some(start_time),
+            end_time: Some(end_time),
+            limit: None,
+            recv_window: None,
+            timestamp,
+        };
 
         assert_eq!(request.symbol, symbol);
         assert_eq!(request.interval, interval);
@@ -168,7 +145,15 @@ mod tests {
         let timestamp = 1640995200000;
         let limit = 100;
 
-        let request = GetKlineRequest::new(symbol.clone(), interval, timestamp).with_limit(limit);
+        let request = GetKlineRequest {
+            symbol: symbol.clone(),
+            interval,
+            start_time: None,
+            end_time: None,
+            limit: Some(limit),
+            recv_window: None,
+            timestamp,
+        };
 
         assert_eq!(request.symbol, symbol);
         assert_eq!(request.interval, interval);
@@ -178,8 +163,15 @@ mod tests {
 
     #[test]
     fn test_kline_request_serialization() {
-        let request =
-            GetKlineRequest::new("BTC-USDT".to_string(), Interval::OneHour, 1640995200000);
+        let request = GetKlineRequest {
+            symbol: "BTC-USDT".to_string(),
+            interval: Interval::OneHour,
+            start_time: None,
+            end_time: None,
+            limit: None,
+            recv_window: None,
+            timestamp: 1640995200000,
+        };
         let json = serde_json::to_string(&request).unwrap();
         assert!(json.contains("\"symbol\":\"BTC-USDT\""));
         assert!(json.contains("\"interval\":\"1h\""));
@@ -219,8 +211,15 @@ mod tests {
             RateLimiter::new(),
         );
 
-        let request =
-            GetKlineRequest::new("BTC-USDT".to_string(), Interval::OneHour, 1640995200000);
+        let request = GetKlineRequest {
+            symbol: "BTC-USDT".to_string(),
+            interval: Interval::OneHour,
+            start_time: None,
+            end_time: None,
+            limit: None,
+            recv_window: None,
+            timestamp: 1640995200000,
+        };
 
         // Test that the method exists and can be called
         // Note: This will fail with network error since we're not making real requests

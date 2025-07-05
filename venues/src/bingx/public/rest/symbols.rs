@@ -16,32 +16,6 @@ pub struct GetSymbolsRequest {
     pub timestamp: i64,
 }
 
-impl GetSymbolsRequest {
-    /// Create a new request for all symbols
-    pub fn new(timestamp: i64) -> Self {
-        Self {
-            symbol: None,
-            recv_window: None,
-            timestamp,
-        }
-    }
-
-    /// Create a new request for a specific symbol
-    pub fn for_symbol(symbol: String, timestamp: i64) -> Self {
-        Self {
-            symbol: Some(symbol),
-            recv_window: None,
-            timestamp,
-        }
-    }
-
-    /// Set the receive window
-    pub fn with_recv_window(mut self, recv_window: i64) -> Self {
-        self.recv_window = Some(recv_window);
-        self
-    }
-}
-
 /// Response from the spot trading symbols endpoint
 #[derive(Debug, Clone, Deserialize)]
 pub struct GetSymbolsResponse {
@@ -119,7 +93,11 @@ mod tests {
     #[test]
     fn test_symbols_request_creation() {
         let timestamp = 1640995200000;
-        let request = GetSymbolsRequest::new(timestamp);
+        let request = GetSymbolsRequest {
+            symbol: None,
+            recv_window: None,
+            timestamp,
+        };
 
         assert_eq!(request.timestamp, timestamp);
         assert!(request.symbol.is_none());
@@ -130,7 +108,11 @@ mod tests {
     fn test_symbols_request_for_symbol() {
         let timestamp = 1640995200000;
         let symbol = "BTC-USDT".to_string();
-        let request = GetSymbolsRequest::for_symbol(symbol.clone(), timestamp);
+        let request = GetSymbolsRequest {
+            symbol: Some(symbol.clone()),
+            recv_window: None,
+            timestamp,
+        };
 
         assert_eq!(request.timestamp, timestamp);
         assert_eq!(request.symbol, Some(symbol));
@@ -141,7 +123,11 @@ mod tests {
     fn test_symbols_request_with_recv_window() {
         let timestamp = 1640995200000;
         let recv_window = 5000;
-        let request = GetSymbolsRequest::new(timestamp).with_recv_window(recv_window);
+        let request = GetSymbolsRequest {
+            symbol: None,
+            recv_window: Some(recv_window),
+            timestamp,
+        };
 
         assert_eq!(request.timestamp, timestamp);
         assert_eq!(request.recv_window, Some(recv_window));
@@ -149,7 +135,11 @@ mod tests {
 
     #[test]
     fn test_symbols_request_serialization() {
-        let request = GetSymbolsRequest::new(1640995200000);
+        let request = GetSymbolsRequest {
+            symbol: None,
+            recv_window: None,
+            timestamp: 1640995200000,
+        };
         let json = serde_json::to_string(&request).unwrap();
         assert!(json.contains("\"timestamp\":1640995200000"));
     }
@@ -162,7 +152,11 @@ mod tests {
             RateLimiter::new(),
         );
 
-        let request = GetSymbolsRequest::new(1640995200000);
+        let request = GetSymbolsRequest {
+            symbol: None,
+            recv_window: None,
+            timestamp: 1640995200000,
+        };
 
         // Test that the method exists and can be called
         // Note: This will fail with network error since we're not making real requests

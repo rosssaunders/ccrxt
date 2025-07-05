@@ -18,29 +18,7 @@ pub struct GetRecentTradesRequest {
     pub timestamp: i64,
 }
 
-impl GetRecentTradesRequest {
-    /// Create a new request for recent trades
-    pub fn new(symbol: String, timestamp: i64) -> Self {
-        Self {
-            symbol,
-            limit: None,
-            recv_window: None,
-            timestamp,
-        }
-    }
 
-    /// Set the limit for number of trades to return
-    pub fn with_limit(mut self, limit: i32) -> Self {
-        self.limit = Some(limit);
-        self
-    }
-
-    /// Set the receive window
-    pub fn with_recv_window(mut self, recv_window: i64) -> Self {
-        self.recv_window = Some(recv_window);
-        self
-    }
-}
 
 /// Response from the recent trades list endpoint
 pub type GetRecentTradesResponse = Vec<Trade>;
@@ -102,7 +80,12 @@ mod tests {
     fn test_recent_trades_request_creation() {
         let symbol = "BTC-USDT".to_string();
         let timestamp = 1640995200000;
-        let request = GetRecentTradesRequest::new(symbol.clone(), timestamp);
+        let request = GetRecentTradesRequest {
+            symbol: symbol.clone(),
+            timestamp,
+            limit: None,
+            recv_window: None,
+        };
 
         assert_eq!(request.symbol, symbol);
         assert_eq!(request.timestamp, timestamp);
@@ -115,7 +98,12 @@ mod tests {
         let symbol = "BTC-USDT".to_string();
         let timestamp = 1640995200000;
         let limit = 50;
-        let request = GetRecentTradesRequest::new(symbol.clone(), timestamp).with_limit(limit);
+        let request = GetRecentTradesRequest {
+            symbol: symbol.clone(),
+            timestamp,
+            limit: Some(limit),
+            recv_window: None,
+        };
 
         assert_eq!(request.symbol, symbol);
         assert_eq!(request.timestamp, timestamp);
@@ -127,8 +115,12 @@ mod tests {
         let symbol = "BTC-USDT".to_string();
         let timestamp = 1640995200000;
         let recv_window = 5000;
-        let request =
-            GetRecentTradesRequest::new(symbol.clone(), timestamp).with_recv_window(recv_window);
+        let request = GetRecentTradesRequest {
+            symbol: symbol.clone(),
+            timestamp,
+            limit: None,
+            recv_window: Some(recv_window),
+        };
 
         assert_eq!(request.symbol, symbol);
         assert_eq!(request.timestamp, timestamp);
@@ -137,7 +129,12 @@ mod tests {
 
     #[test]
     fn test_recent_trades_request_serialization() {
-        let request = GetRecentTradesRequest::new("BTC-USDT".to_string(), 1640995200000);
+        let request = GetRecentTradesRequest {
+            symbol: "BTC-USDT".to_string(),
+            timestamp: 1640995200000,
+            limit: None,
+            recv_window: None,
+        };
         let json = serde_json::to_string(&request).unwrap();
         assert!(json.contains("\"symbol\":\"BTC-USDT\""));
         assert!(json.contains("\"timestamp\":1640995200000"));
@@ -169,7 +166,12 @@ mod tests {
             RateLimiter::new(),
         );
 
-        let request = GetRecentTradesRequest::new("BTC-USDT".to_string(), 1640995200000);
+        let request = GetRecentTradesRequest {
+            symbol: "BTC-USDT".to_string(),
+            timestamp: 1640995200000,
+            limit: None,
+            recv_window: None,
+        };
 
         // Test that the method exists and can be called
         // Note: This will fail with network error since we're not making real requests
