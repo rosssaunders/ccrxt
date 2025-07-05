@@ -2883,6 +2883,8 @@ dependencies = [
  "serde_repr",
  "serde_urlencoded",
  "sha2",
+ "strum",
+ "strum_macros",
  "thiserror",
  "tokio",
  "tokio-test",

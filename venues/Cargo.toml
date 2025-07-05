@@ -44,6 +44,8 @@ url.workspace = true
 num_enum = "0.7.3"
 secrecy = "0.10.3"
 urlencoding = "2.1"
+strum = "0.26"
+strum_macros = "0.26"
 
 [lints]
 workspace = true
