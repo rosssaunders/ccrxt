@@ -28,7 +28,8 @@ pub struct OrderListItem {
     /// Time in force (LIMIT orders only)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub time_in_force: Option<TimeInForce>,
-    /// Execution instructions (LIMIT orders only)
+    /// Execution instructions (LIMIT orders only): POST_ONLY, SMART_POST_ONLY
+    /// Note: POST_ONLY and SMART_POST_ONLY cannot be used together.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub exec_inst: Option<Vec<ExecInst>>,
     /// Trigger price (for stop orders)
@@ -356,5 +357,31 @@ mod tests {
                 .unwrap()
                 .contains_key("trigger_price")
         );
+    }
+
+    #[test]
+    fn test_order_list_item_with_smart_post_only() {
+        let order = OrderListItem {
+            instrument_name: "ETH_USDT".to_string(),
+            side: OrderSide::Buy,
+            order_type: OrderType::Limit,
+            price: Some("2500.0".to_string()),
+            quantity: Some("1.0".to_string()),
+            notional: None,
+            client_oid: Some("smart_post_order".to_string()),
+            time_in_force: Some(TimeInForce::GoodTillCancel),
+            exec_inst: Some(vec![ExecInst::SmartPostOnly]),
+            trigger_price: None,
+            stp_scope: None,
+            stp_inst: None,
+            stp_id: None,
+            fee_instrument_name: None,
+            ref_price: None,
+        };
+
+        let serialized = serde_json::to_value(&order).unwrap();
+        assert_eq!(serialized.get("instrument_name").unwrap(), "ETH_USDT");
+        assert_eq!(serialized.get("exec_inst").unwrap()[0], "SMART_POST_ONLY");
+        assert_eq!(serialized.get("time_in_force").unwrap(), "GOOD_TILL_CANCEL");
     }
 }

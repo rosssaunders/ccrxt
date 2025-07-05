@@ -28,7 +28,8 @@ pub struct CreateOrderRequest {
     /// Client Order ID (Maximum 36 characters)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub client_oid: Option<String>,
-    /// Execution instruction: POST_ONLY
+    /// Execution instruction: POST_ONLY, SMART_POST_ONLY
+    /// Note: POST_ONLY and SMART_POST_ONLY cannot be used together.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub exec_inst: Option<Vec<ExecInst>>,
     /// Time in force: GOOD_TILL_CANCEL, IMMEDIATE_OR_CANCEL, FILL_OR_KILL
@@ -235,6 +236,53 @@ mod tests {
         assert_eq!(serialized.get("stp_scope").unwrap(), "M");
         assert_eq!(serialized.get("stp_inst").unwrap(), "M");
         assert_eq!(serialized.get("stp_id").unwrap(), 100);
+    }
+
+    #[test]
+    fn test_create_order_request_with_smart_post_only() {
+        let request = CreateOrderRequest {
+            instrument_name: "ETHUSD-PERP".to_string(),
+            side: TradeSide::Buy,
+            order_type: OrderType::Limit,
+            price: Some("2500.0".to_string()),
+            quantity: Some("0.5".to_string()),
+            notional: None,
+            client_oid: Some("smart_post_only_test".to_string()),
+            exec_inst: Some(vec![ExecInst::SmartPostOnly]),
+            time_in_force: Some(TimeInForce::GoodTillCancel),
+            ref_price: None,
+            ref_price_type: None,
+            spot_margin: None,
+            stp_scope: None,
+            stp_inst: None,
+            stp_id: None,
+            fee_instrument_name: None,
+        };
+
+        let serialized = serde_json::to_value(&request).unwrap();
+        assert_eq!(serialized.get("instrument_name").unwrap(), "ETHUSD-PERP");
+        assert_eq!(serialized.get("exec_inst").unwrap()[0], "SMART_POST_ONLY");
+        assert_eq!(serialized.get("time_in_force").unwrap(), "GOOD_TILL_CANCEL");
+    }
+
+    #[test]
+    fn test_exec_inst_enum_serialization() {
+        // Test serialization of both POST_ONLY and SMART_POST_ONLY
+        let post_only = ExecInst::PostOnly;
+        let smart_post_only = ExecInst::SmartPostOnly;
+
+        let post_only_serialized = serde_json::to_string(&post_only).unwrap();
+        let smart_post_only_serialized = serde_json::to_string(&smart_post_only).unwrap();
+
+        assert_eq!(post_only_serialized, "\"POST_ONLY\"");
+        assert_eq!(smart_post_only_serialized, "\"SMART_POST_ONLY\"");
+
+        // Test deserialization
+        let post_only_deserialized: ExecInst = serde_json::from_str("\"POST_ONLY\"").unwrap();
+        let smart_post_only_deserialized: ExecInst = serde_json::from_str("\"SMART_POST_ONLY\"").unwrap();
+
+        assert_eq!(post_only_deserialized, ExecInst::PostOnly);
+        assert_eq!(smart_post_only_deserialized, ExecInst::SmartPostOnly);
     }
 
     #[test]
