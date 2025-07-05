@@ -31,63 +31,7 @@ pub struct GetOrderHistoryByInstrumentRequest {
     pub historical: Option<bool>,
 }
 
-impl GetOrderHistoryByInstrumentRequest {
-    /// Create a new request with the required instrument_name
-    pub fn new(instrument_name: String) -> Self {
-        Self {
-            instrument_name,
-            count: None,
-            offset: None,
-            include_old: None,
-            include_unfilled: None,
-            with_continuation: None,
-            continuation: None,
-            historical: None,
-        }
-    }
 
-    /// Set the count parameter
-    pub fn with_count(mut self, count: i32) -> Self {
-        self.count = Some(count);
-        self
-    }
-
-    /// Set the offset parameter
-    pub fn with_offset(mut self, offset: i32) -> Self {
-        self.offset = Some(offset);
-        self
-    }
-
-    /// Set the include_old parameter
-    pub fn with_include_old(mut self, include_old: bool) -> Self {
-        self.include_old = Some(include_old);
-        self
-    }
-
-    /// Set the include_unfilled parameter
-    pub fn with_include_unfilled(mut self, include_unfilled: bool) -> Self {
-        self.include_unfilled = Some(include_unfilled);
-        self
-    }
-
-    /// Set the with_continuation parameter
-    pub fn with_continuation(mut self, with_continuation: bool) -> Self {
-        self.with_continuation = Some(with_continuation);
-        self
-    }
-
-    /// Set the continuation parameter
-    pub fn with_continuation_token(mut self, continuation: String) -> Self {
-        self.continuation = Some(continuation);
-        self
-    }
-
-    /// Set the historical parameter
-    pub fn with_historical(mut self, historical: bool) -> Self {
-        self.historical = Some(historical);
-        self
-    }
-}
 
 /// Order history by instrument entry
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -256,7 +200,16 @@ mod tests {
 
     #[test]
     fn test_request_creation_minimal() {
-        let request = GetOrderHistoryByInstrumentRequest::new("BTCUSD-PERP".to_string());
+        let request = GetOrderHistoryByInstrumentRequest {
+            instrument_name: "BTCUSD-PERP".to_string(),
+            count: None,
+            offset: None,
+            include_old: None,
+            include_unfilled: None,
+            with_continuation: None,
+            continuation: None,
+            historical: None,
+        };
 
         assert_eq!(request.instrument_name, "BTCUSD-PERP");
         assert!(request.count.is_none());
@@ -270,13 +223,16 @@ mod tests {
 
     #[test]
     fn test_request_creation_with_builder() {
-        let request = GetOrderHistoryByInstrumentRequest::new("BTCUSD-PERP".to_string())
-            .with_count(50)
-            .with_offset(10)
-            .with_include_old(true)
-            .with_include_unfilled(false)
-            .with_continuation(true)
-            .with_historical(false);
+        let request = GetOrderHistoryByInstrumentRequest {
+            instrument_name: "BTCUSD-PERP".to_string(),
+            count: Some(50),
+            offset: Some(10),
+            include_old: Some(true),
+            include_unfilled: Some(false),
+            with_continuation: Some(true),
+            continuation: None,
+            historical: Some(false),
+        };
 
         assert_eq!(request.instrument_name, "BTCUSD-PERP");
         assert_eq!(request.count, Some(50));
@@ -289,7 +245,16 @@ mod tests {
 
     #[test]
     fn test_request_serialization_minimal() {
-        let request = GetOrderHistoryByInstrumentRequest::new("BTCUSD-PERP".to_string());
+        let request = GetOrderHistoryByInstrumentRequest {
+            instrument_name: "BTCUSD-PERP".to_string(),
+            count: None,
+            offset: None,
+            include_old: None,
+            include_unfilled: None,
+            with_continuation: None,
+            continuation: None,
+            historical: None,
+        };
 
         let json_value = serde_json::to_value(request).unwrap();
         assert_eq!(json_value.get("instrument_name").unwrap(), "BTCUSD-PERP");
@@ -302,14 +267,16 @@ mod tests {
 
     #[test]
     fn test_request_serialization_full() {
-        let request = GetOrderHistoryByInstrumentRequest::new("BTCUSD-PERP".to_string())
-            .with_count(20)
-            .with_offset(5)
-            .with_include_old(true)
-            .with_include_unfilled(false)
-            .with_continuation(true)
-            .with_continuation_token("some_token".to_string())
-            .with_historical(false);
+        let request = GetOrderHistoryByInstrumentRequest {
+            instrument_name: "BTCUSD-PERP".to_string(),
+            count: Some(20),
+            offset: Some(5),
+            include_old: Some(true),
+            include_unfilled: Some(false),
+            with_continuation: Some(true),
+            continuation: Some("some_token".to_string()),
+            historical: Some(false),
+        };
 
         let json_value = serde_json::to_value(request).unwrap();
         assert_eq!(json_value.get("instrument_name").unwrap(), "BTCUSD-PERP");
