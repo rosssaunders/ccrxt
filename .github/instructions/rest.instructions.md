@@ -85,33 +85,39 @@ It also details documentation and code style requirements for all structs and fi
 ## 5. RestClient Implementation
 
 - Add a method to `RestClient` for the new endpoint, **in the same file as the request and response structs**.
-- Follow this pattern:
+- **All endpoint wrapper functions MUST include a doc comment above the function, following this standard:**
+  - Brief summary of the endpoint’s purpose.
+  - Details of what the function does.
+  - Link to the official API documentation.
+  - Rate limit information.
+  - Arguments (with a brief description for each).
+  - Return value (with a brief description).
+- Example:
   ```rust
-  impl RestClient {
-      /// Calls the account trades endpoint.
-      ///
-      /// [Official API docs](https://api.binance.com/docs)
-      pub async fn get_account_trades(
-          &self,
-          params: AccountTradeListRequest,
-      ) -> RestResult<Vec<AccountTrade>> {
-          let weight = if params.pair.is_some() { 40 } else { 20 };
-          self.send_signed_request(
-              "/dapi/v1/userTrades",
-              reqwest::Method::GET,
-              params,
-              weight,
-              false,
-          )
-          .await
-      }
+  /// Cancel all orders (v4)
+  ///
+  /// Cancels all outstanding orders for a symbol and/or side.
+  ///
+  /// See: https://raw.githubusercontent.com/rosssaunders/coincise/refs/heads/main/docs/bitmart/spot/spot___margin_trading.md
+  ///
+  /// Rate limit: varies by endpoint type
+  ///
+  /// # Arguments
+  /// * `request` - The cancel all request parameters
+  ///
+  /// # Returns
+  /// Empty response - success indicated by HTTP status
+  pub async fn cancel_all_orders(
+      &self,
+      request: CancelAllOrdersRequest,
+  ) -> RestResult<CancelAllOrdersResponse> {
+      // ...
   }
   ```
-- Document the method with endpoint details and a link to the official API docs.
 - Ensure the endpoint is rate-limited and authenticated as required.
 - Do NOT add "helper" functions for venue REST endpoints. Endpoint functions must match the venue API exactly, without additional abstraction or helpers.
 - Endpoint functions must take a struct for parameters, except for parameters that appear in the URL path, which may be individual arguments.
-- Do NOT include example code snippets, usage examples, or sample invocations above or within endpoint wrapper functions. All example code must be placed in the appropriate `venues/examples/<venue>/` directory as per the example code instructions.**
+- Do NOT include example code snippets, usage examples, or sample invocations above or within endpoint wrapper functions. All example code must be placed in the appropriate `venues/examples/<venue>/` directory as per the example code instructions.\*\*
 
 ---
 
