@@ -93,9 +93,23 @@ It also details documentation and code style requirements for all structs and fi
 
 ---
 
-## 5. RestClient Implementation
+## 5. Endpoint Constants
+
+- **All endpoint URL paths MUST be defined as constants** to allow reuse across endpoint wrapper functions, rate limiting, and other code.
+- Define the constant at the top of the file (after imports, before structs).
+- Use `SCREAMING_SNAKE_CASE` naming convention.
+- Example:
+
+  ```rust
+  const ACCOUNT_TRADES_ENDPOINT: &str = "/dapi/v1/userTrades";
+  ```
+
+---
+
+## 6. RestClient Implementation
 
 - Add a method to `RestClient` for the new endpoint, **in the same file as the request and response structs**.
+- **Use the endpoint constant defined in step 5** instead of hardcoding the URL path.
 - **All endpoint wrapper functions MUST include a doc comment above the function, following this standard:**
   - Brief summary of the endpoint’s purpose.
   - Details of what the function does.
@@ -122,7 +136,15 @@ It also details documentation and code style requirements for all structs and fi
       &self,
       request: CancelAllOrdersRequest,
   ) -> RestResult<CancelAllOrdersResponse> {
-      // ...
+      shared::send_signed_request(
+          self,
+          CANCEL_ALL_ORDERS_ENDPOINT,  // Use the constant here
+          reqwest::Method::POST,
+          request,
+          10,
+          false,
+      )
+      .await
   }
   ```
 - Ensure the endpoint is rate-limited and authenticated as required.
@@ -178,7 +200,7 @@ pub async fn submit_transfer_to_user(
 
 ---
 
-## 6. Update `mod.rs` File
+## 7. Update `mod.rs` File
 
 - After creating a new endpoint file, add a corresponding `mod` declaration to the appropriate `mod.rs` file (e.g., `venues/src/binance/coinm/private/rest/mod.rs`).
 - **Each endpoint import (`mod`) and each `pub use` MUST be on its own line.**  
@@ -194,14 +216,14 @@ pub async fn submit_transfer_to_user(
   pub use self::rest::{GetHistoryIndexCandlesRequest, GetHistoryIndexCandlesResponse, IndexCandle};
   ```
 
-## 7. Testing and Example Usage
+## 8. Testing and Example Usage
 
 - Optionally, add or update an example command in the CLI (e.g., in `venues/examples/binancecoinm/src/commands/`).
 - Provide a sample usage snippet.
 
 ---
 
-## 8. Additional Requirements
+## 9. Additional Requirements
 
 - For all struct fields representing headers or similar, implement `Display` for the type rather than custom `to_string` methods.
 - Follow Rust idioms and the code style of the `venues` crate.
