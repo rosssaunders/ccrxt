@@ -1,8 +1,9 @@
-use serde::{Deserialize, Serialize};
-
-use crate::binance::coinm::private::rest::client::RestClient;
+use crate::binance::coinm::private::rest::RestClient;
 use crate::binance::coinm::{OrderSide, PositionSide, RestResult};
 use crate::binance::shared;
+use serde::{Deserialize, Serialize};
+
+const ACCOUNT_TRADES_ENDPOINT: &str = "/dapi/v1/userTrades";
 
 /// Request parameters for the Account Trade List endpoint (GET /dapi/v1/userTrades).
 ///
@@ -155,7 +156,7 @@ impl RestClient {
         let weight = if params.pair.is_some() { 40 } else { 20 };
         shared::send_signed_request(
             self,
-            "/dapi/v1/userTrades",
+            ACCOUNT_TRADES_ENDPOINT,
             reqwest::Method::GET,
             params,
             weight,
