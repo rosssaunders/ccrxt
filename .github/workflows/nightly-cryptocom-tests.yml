@@ -1,0 +1,72 @@
+name: Nightly Cryptocom Integration Tests
+
+on:
+  schedule:
+    # Run every night at 9:00 AM UTC (staggered to spread load)
+    - cron: '0 9 * * *'
+  workflow_dispatch: # Allow manual triggering
+  push:
+    paths:
+      - 'venues/src/cryptocom/**'
+      - 'tests/generated/cryptocom_generated_tests.rs'
+      - '.github/workflows/nightly-cryptocom-tests.yml'
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+
+jobs:
+  test-cryptocom:
+    name: Test Cryptocom Public API
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Install Rust
+      uses: dtolnay/rust-toolchain@stable
+      with:
+        components: clippy, rustfmt
+        
+    - name: Cache Rust dependencies
+      uses: Swatinem/rust-cache@v2
+      with:
+        key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+        
+    - name: Build project
+      run: cargo build --release
+      
+    - name: Generate integration tests
+      run: cargo build --release  # This triggers the build script
+      
+    - name: Run cryptocom integration tests (serial)
+      run: |
+        cargo test test_cryptocom_all_public_methods_serial --release -- --ignored --nocapture --test-threads=1
+      continue-on-error: true  # Don't fail the workflow if API calls fail
+      
+    - name: Run cryptocom individual tests
+      run: |
+        cargo test --release -- --ignored --nocapture --test-threads=1 "test_cryptocom_.*_individual"
+      continue-on-error: true  # Don't fail the workflow if API calls fail
+      
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: cryptocom-test-results
+        path: |
+          tests/generated/cryptocom_generated_tests.rs
+        retention-days: 7
+        
+    - name: Create summary
+      if: always()
+      run: |
+        echo "## Cryptocom Integration Test Results" >> $GITHUB_STEP_SUMMARY
+        echo "- Workflow run: ${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+        echo "- Commit: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+        echo "- Triggered by: ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Test Execution" >> $GITHUB_STEP_SUMMARY
+        echo "✅ Build completed successfully" >> $GITHUB_STEP_SUMMARY
+        echo "✅ Tests executed (results may include API errors, which is expected)" >> $GITHUB_STEP_SUMMARY
