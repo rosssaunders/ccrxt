@@ -4,6 +4,8 @@ use super::RestClient;
 use super::place_order::{OrderSide, OrderStatus, OrderType};
 use crate::bingx::{EndpointType, RestResult};
 
+const QUERY_ORDER_ENDPOINT: &str = "/openApi/spot/v1/trade/query";
+
 /// Request to query order details
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -101,7 +103,7 @@ impl RestClient {
     /// - Only supports a query range of 2 hours for client order IDs
     pub async fn query_order(&self, request: &QueryOrderRequest) -> RestResult<OrderDetails> {
         self.send_request(
-            "/openApi/spot/v1/trade/query",
+            QUERY_ORDER_ENDPOINT,
             reqwest::Method::GET,
             Some(request),
             EndpointType::Trading,

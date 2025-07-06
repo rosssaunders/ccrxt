@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::bingx::{EndpointType, RestResult};
 
+const FUND_BALANCE_ENDPOINT: &str = "/openApi/wallets/v1/capital/config/getall";
+
 /// Request to get fund account balance
 #[derive(Debug, Clone, Default, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -53,7 +55,7 @@ impl RestClient {
         request: &GetFundBalanceRequest,
     ) -> RestResult<GetFundBalanceResponse> {
         self.send_request(
-            "/openApi/fund/v1/account/balance",
+            FUND_BALANCE_ENDPOINT,
             reqwest::Method::GET,
             Some(request),
             EndpointType::Account,

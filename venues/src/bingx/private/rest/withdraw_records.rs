@@ -4,6 +4,8 @@ use crate::bingx::{EndpointType, RestResult, WithdrawStatus};
 
 use super::RestClient;
 
+const WITHDRAW_RECORDS_ENDPOINT: &str = "/openApi/wallets/v1/capital/withdraw/history";
+
 /// Request for getting withdrawal records
 #[derive(Debug, Clone, Serialize)]
 pub struct GetWithdrawRecordsRequest {
@@ -131,7 +133,7 @@ impl RestClient {
         request: &GetWithdrawRecordsRequest,
     ) -> RestResult<GetWithdrawRecordsResponse> {
         self.send_request(
-            "/openApi/api/v3/capital/withdraw/history",
+            WITHDRAW_RECORDS_ENDPOINT,
             reqwest::Method::GET,
             Some(request),
             EndpointType::AccountApiGroup2,

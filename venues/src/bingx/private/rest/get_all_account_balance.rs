@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::bingx::{EndpointType, RestResult};
 
+const ALL_ACCOUNT_BALANCE_ENDPOINT: &str = "/openApi/spot/v1/account/balance";
+
 /// Account type enumeration
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum AccountType {
@@ -90,7 +92,7 @@ impl RestClient {
         request: &GetAllAccountBalanceRequest,
     ) -> RestResult<GetAllAccountBalanceResponse> {
         self.send_request(
-            "/openApi/account/v1/allAccountBalance",
+            ALL_ACCOUNT_BALANCE_ENDPOINT,
             reqwest::Method::GET,
             Some(request),
             EndpointType::Account,

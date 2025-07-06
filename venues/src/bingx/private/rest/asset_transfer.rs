@@ -4,6 +4,8 @@ use crate::bingx::{EndpointType, RestResult, TransferType};
 
 use super::RestClient;
 
+const ASSET_TRANSFER_ENDPOINT: &str = "/openApi/api/v3/post/asset/transfer";
+
 /// Request for asset transfer
 #[derive(Debug, Clone, Serialize)]
 pub struct AssetTransferRequest {
@@ -49,7 +51,7 @@ impl RestClient {
         request: &AssetTransferRequest,
     ) -> RestResult<AssetTransferResponse> {
         self.send_request(
-            "/openApi/api/v3/post/asset/transfer",
+            ASSET_TRANSFER_ENDPOINT,
             reqwest::Method::POST,
             Some(request),
             EndpointType::AccountApiGroup3,

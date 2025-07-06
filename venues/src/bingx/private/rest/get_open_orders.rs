@@ -4,6 +4,8 @@ use super::RestClient;
 use super::place_order::{OrderSide, OrderStatus, OrderType};
 use crate::bingx::{EndpointType, RestResult};
 
+const OPEN_ORDERS_ENDPOINT: &str = "/openApi/spot/v1/trade/openOrders";
+
 /// Order information
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -86,7 +88,7 @@ impl RestClient {
         request: &GetOpenOrdersRequest,
     ) -> RestResult<GetOpenOrdersResponse> {
         self.send_request(
-            "/openApi/spot/v1/trade/openOrders",
+            OPEN_ORDERS_ENDPOINT,
             reqwest::Method::GET,
             Some(request),
             EndpointType::Trading,

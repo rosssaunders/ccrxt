@@ -6,6 +6,8 @@ use crate::bingx::{
     errors::BingXError,
 };
 
+const PLACE_MULTIPLE_ORDERS_ENDPOINT: &str = "/openApi/spot/v1/trade/batchOrders";
+
 /// Request for placing multiple orders in batch
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -102,7 +104,7 @@ impl BingXRestClient {
         &self,
         request: PlaceMultipleOrdersRequest,
     ) -> Result<PlaceMultipleOrdersResponse, BingXError> {
-        self.send_signed_request("POST", "/openApi/spot/v1/trade/batchOrders", Some(&request))
+        self.send_signed_request("POST", PLACE_MULTIPLE_ORDERS_ENDPOINT, Some(&request))
             .await
     }
 }

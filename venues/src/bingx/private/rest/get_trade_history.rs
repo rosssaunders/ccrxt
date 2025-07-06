@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::bingx::{EndpointType, RestResult};
 
+const TRADE_HISTORY_ENDPOINT: &str = "/openApi/spot/v1/trade/myTrades";
+
 /// Trade information
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -113,7 +115,7 @@ impl RestClient {
         request: &GetTradeHistoryRequest,
     ) -> RestResult<GetTradeHistoryResponse> {
         self.send_request(
-            "/openApi/spot/v1/trade/myTrades",
+            TRADE_HISTORY_ENDPOINT,
             reqwest::Method::GET,
             Some(request),
             EndpointType::Trading,

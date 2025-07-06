@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::bingx::{EndpointType, RestResult};
 
+const PLACE_ORDER_ENDPOINT: &str = "/openApi/spot/v1/trade/order";
+
 /// Order type enumeration
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
@@ -165,7 +167,7 @@ impl RestClient {
     /// - For sell-side market orders, quantity is required
     pub async fn place_order(&self, request: &PlaceOrderRequest) -> RestResult<PlaceOrderResponse> {
         self.send_request(
-            "/openApi/spot/v1/trade/order",
+            PLACE_ORDER_ENDPOINT,
             reqwest::Method::POST,
             Some(request),
             EndpointType::Trading,

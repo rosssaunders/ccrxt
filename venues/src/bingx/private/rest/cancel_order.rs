@@ -4,6 +4,8 @@ use super::RestClient;
 use super::place_order::{OrderSide, OrderStatus, OrderType};
 use crate::bingx::{EndpointType, RestResult};
 
+const CANCEL_ORDER_ENDPOINT: &str = "/openApi/spot/v1/trade/cancel";
+
 /// Cancel restrictions enumeration
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
@@ -102,7 +104,7 @@ impl RestClient {
         request: &CancelOrderRequest,
     ) -> RestResult<CancelOrderResponse> {
         self.send_request(
-            "/openApi/spot/v1/trade/cancel",
+            CANCEL_ORDER_ENDPOINT,
             reqwest::Method::POST,
             Some(request),
             EndpointType::Trading,

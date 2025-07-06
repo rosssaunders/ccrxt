@@ -4,6 +4,8 @@ use crate::bingx::{DepositStatus, EndpointType, RestResult};
 
 use super::RestClient;
 
+const DEPOSIT_RECORDS_ENDPOINT: &str = "/openApi/wallets/v1/capital/deposit/hisrec";
+
 /// Request for getting deposit records
 #[derive(Debug, Clone, Serialize)]
 pub struct GetDepositRecordsRequest {
@@ -109,7 +111,7 @@ impl RestClient {
         request: &GetDepositRecordsRequest,
     ) -> RestResult<GetDepositRecordsResponse> {
         self.send_request(
-            "/openApi/api/v3/capital/deposit/hisrec",
+            DEPOSIT_RECORDS_ENDPOINT,
             reqwest::Method::GET,
             Some(request),
             EndpointType::AccountApiGroup2,

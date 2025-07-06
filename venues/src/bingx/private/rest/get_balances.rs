@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::bingx::{EndpointType, RestResult};
 
+const BALANCES_ENDPOINT: &str = "/openApi/spot/v1/account/balance";
+
 /// Request to get account balances
 #[derive(Debug, Clone, Default, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -66,7 +68,7 @@ impl RestClient {
         request: &GetBalancesRequest,
     ) -> RestResult<GetBalancesResponse> {
         self.send_request(
-            "/openApi/spot/v1/account/balance",
+            BALANCES_ENDPOINT,
             reqwest::Method::GET,
             Some(request),
             EndpointType::Account,

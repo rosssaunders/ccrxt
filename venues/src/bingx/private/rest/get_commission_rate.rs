@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::bingx::{EndpointType, RestResult};
 
+const COMMISSION_RATE_ENDPOINT: &str = "/openApi/spot/v1/account/commissionRate";
+
 /// Request to get trading commission rate
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -42,7 +44,7 @@ impl RestClient {
         request: &GetCommissionRateRequest,
     ) -> RestResult<GetCommissionRateResponse> {
         self.send_request(
-            "/openApi/spot/v1/user/commissionRate",
+            COMMISSION_RATE_ENDPOINT,
             reqwest::Method::GET,
             Some(request),
             EndpointType::Trading,

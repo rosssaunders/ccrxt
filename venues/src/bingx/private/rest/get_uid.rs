@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::bingx::{EndpointType, RestResult};
 
+const UID_ENDPOINT: &str = "/openApi/spot/v1/account/uid";
+
 /// Request to get account UID
 #[derive(Debug, Clone, Default, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -33,7 +35,7 @@ impl RestClient {
     /// A result containing the account UID or an error
     pub async fn get_uid(&self, request: &GetUidRequest) -> RestResult<GetUidResponse> {
         self.send_request(
-            "/openApi/account/v1/uid",
+            UID_ENDPOINT,
             reqwest::Method::GET,
             Some(request),
             EndpointType::Account,

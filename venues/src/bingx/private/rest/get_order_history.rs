@@ -4,6 +4,8 @@ use super::RestClient;
 use super::place_order::{OrderSide, OrderStatus, OrderType};
 use crate::bingx::{EndpointType, RestResult};
 
+const ORDER_HISTORY_ENDPOINT: &str = "/openApi/spot/v1/trade/historyOrders";
+
 /// Historical order information (similar to Order but with fee as f64)
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -126,7 +128,7 @@ impl RestClient {
         request: &GetOrderHistoryRequest,
     ) -> RestResult<GetOrderHistoryResponse> {
         self.send_request(
-            "/openApi/spot/v1/trade/historyOrders",
+            ORDER_HISTORY_ENDPOINT,
             reqwest::Method::GET,
             Some(request),
             EndpointType::Trading,
