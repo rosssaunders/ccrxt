@@ -1,8 +1,7 @@
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
 
-use crate::bitget::{ApiError, RestResponse};
 use super::RestClient;
+use crate::bitget::{ApiError, RestResponse};
 
 /// Endpoint for getting VIP fee rates
 const VIP_FEE_RATE_ENDPOINT: &str = "/api/v2/spot/market/vip-fee-rate";
@@ -29,23 +28,10 @@ pub struct VipFeeRate {
 
 impl RestClient {
     /// Get VIP fee rates
-    /// 
+    ///
     /// # Returns
     /// * `Result<RestResponse<Vec<VipFeeRate>>, ApiError>` - The VIP fee rate information
-    /// 
-    /// # Example
-    /// ```rust
-    /// use venues::bitget::public::rest::RestClient;
-    /// 
-    /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// let client = RestClient::new("https://api.bitget.com", Default::default(), reqwest::Client::new());
-    /// 
-    /// let response = client.get_vip_fee_rate().await?;
-    /// # Ok(())
-    /// # }
-    /// ```
     pub async fn get_vip_fee_rate(&self) -> Result<RestResponse<Vec<VipFeeRate>>, ApiError> {
-        let endpoint = VIP_FEE_RATE_ENDPOINT;
-        self.get(endpoint, None).await
+        self.get(VIP_FEE_RATE_ENDPOINT, None).await
     }
 }

@@ -4,6 +4,9 @@ use std::collections::HashMap;
 use super::RestClient;
 use crate::bitget::{ApiError, PricePrecision, RestResponse};
 
+/// Endpoint for getting merge depth data
+const MERGE_DEPTH_ENDPOINT: &str = "/api/v2/spot/market/merge-depth";
+
 /// Custom deserializer for order book entries that can be mixed number/string arrays
 fn deserialize_order_book_entries<'de, D>(deserializer: D) -> Result<Vec<[String; 2]>, D::Error>
 where
@@ -58,8 +61,6 @@ pub struct GetMergeDepthRequest {
     pub limit: Option<u32>,
 }
 
-
-
 /// Merge depth information
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct MergeDepth {
@@ -83,17 +84,12 @@ pub struct MergeDepth {
 impl RestClient {
     /// Get merge depth
     ///
-    /// # Arguments
-    /// * `request` - The request parameters
-    ///
     /// # Returns
     /// The merge depth information
     pub async fn get_merge_depth(
         &self,
         request: &GetMergeDepthRequest,
     ) -> Result<RestResponse<MergeDepth>, ApiError> {
-        let endpoint = "/api/v2/spot/market/merge-depth";
-        
         let mut params = HashMap::new();
         params.insert("symbol".to_string(), request.symbol.clone());
 
@@ -105,6 +101,6 @@ impl RestClient {
             params.insert("limit".to_string(), limit.to_string());
         }
 
-        self.get(endpoint, Some(params)).await
+        self.get(MERGE_DEPTH_ENDPOINT, Some(params)).await
     }
 }
