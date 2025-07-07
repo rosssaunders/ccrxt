@@ -70,6 +70,7 @@ It also details documentation and code style requirements for all structs and fi
 - Define one or more response structs, using `#[derive(Debug, Clone, Deserialize)]`.
 - **DO NOT add any `impl` blocks to response structs.** No calculation methods, utility methods, or business logic should be added.
 - **Response structs should be pure data containers** that only hold deserialized API response data.
+- **For single-field wrapper structs** (when the API returns a direct array/value but you want a named struct), use `#[serde(transparent)]` instead of custom `Deserialize` implementations.
 - **Documentation:**
   - All structs and fields must be documented as above.
   - Use serde attributes for all fields.
@@ -88,6 +89,14 @@ It also details documentation and code style requirements for all structs and fi
       pub id: u64;
 
       // ...other fields...
+  }
+
+  /// Response wrapper for direct array responses.
+  #[derive(Debug, Clone, Deserialize)]
+  #[serde(transparent)]
+  pub struct TradeListResponse {
+      /// List of trades returned by the API.
+      pub trades: Vec<AccountTrade>,
   }
   ```
 

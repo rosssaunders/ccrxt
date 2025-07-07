@@ -4,6 +4,7 @@ applyTo: "venues/src/**"
 
 # General Coding Standards
 
+- **NO BACKWARDS COMPATIBILITY REQUIRED**: Until the first release, there is zero need for backwards compatibility. Breaking changes are encouraged to improve the API. This rule will be removed after the first release.
 - All code must be as high performant and low latency as possible in Rust.
 - Prefer complex but fast (and correct) code over cleaner yet slower code.
 - Supporting code (e.g., websockets) must be clean, generic, and venue-agnostic.
