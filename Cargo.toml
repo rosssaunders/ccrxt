@@ -56,6 +56,24 @@ tracing-subscriber = "0.3"
 ratatui = "0.29.0"
 crossterm = "0.29.0"
 
+# Build configuration
+[package]
+name = "ccrxt"
+version = "0.1.0"
+edition = "2024"
+build = "build.rs"
+
+[dependencies]
+tokio = { workspace = true }
+reqwest = { workspace = true }
+venues = { path = "venues" }
+serde_json = { workspace = true }
+chrono = { workspace = true }
+
+[build-dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
 [workspace.lints.rust]
 unsafe_code = "forbid"
 
