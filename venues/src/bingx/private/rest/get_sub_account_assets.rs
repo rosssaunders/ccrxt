@@ -1,5 +1,10 @@
 use serde::{Deserialize, Serialize};
 
+use super::RestClient;
+use crate::bingx::{EndpointType, RestResult};
+
+const SUB_ACCOUNT_ASSETS_ENDPOINT: &str = "/openApi/subAccount/v1/subAccountAsset";
+
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct GetSubAccountAssetsRequest {
@@ -29,7 +34,35 @@ pub struct SubAccountAsset {
     pub locked: String,
 }
 
-
+impl RestClient {
+    /// Get sub-account assets
+    ///
+    /// Query the assets of a sub-account.
+    ///
+    /// # Arguments
+    /// * `request` - The sub-account assets request
+    ///
+    /// # Returns
+    /// A result containing the sub-account assets response or an error
+    ///
+    /// # Rate Limits
+    /// - UID rate limit: 10/s
+    ///
+    /// # API Permissions
+    /// - SubAccount-Read permission required
+    pub async fn get_sub_account_assets(
+        &self,
+        request: &GetSubAccountAssetsRequest,
+    ) -> RestResult<GetSubAccountAssetsResponse> {
+        self.send_request(
+            SUB_ACCOUNT_ASSETS_ENDPOINT,
+            reqwest::Method::GET,
+            Some(request),
+            EndpointType::Account,
+        )
+        .await
+    }
+}
 
 #[cfg(test)]
 mod tests {

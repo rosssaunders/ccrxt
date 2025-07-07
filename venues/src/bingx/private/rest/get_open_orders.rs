@@ -53,7 +53,7 @@ pub struct Order {
 }
 
 /// Request to get open orders
-#[derive(Debug, Clone, Default, Serialize)]
+#[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct GetOpenOrdersRequest {
     /// Trading pair, e.g., BTC-USDT (optional - query all when left blank)
@@ -63,6 +63,9 @@ pub struct GetOpenOrdersRequest {
     /// Request valid time window value, Unit: milliseconds
     #[serde(skip_serializing_if = "Option::is_none")]
     pub recv_window: Option<i64>,
+
+    /// Timestamp of initiating the request, Unit: milliseconds
+    pub timestamp: i64,
 }
 
 /// Response from getting open orders
@@ -103,11 +106,16 @@ mod tests {
 
     #[test]
     fn test_get_open_orders_request_serialization_all() {
-        let request = GetOpenOrdersRequest::default();
+        let request = GetOpenOrdersRequest {
+            symbol: None,
+            recv_window: None,
+            timestamp: 1658748648396,
+        };
 
         let serialized = serde_urlencoded::to_string(&request).unwrap();
-        // Should be empty when default
-        assert!(serialized.is_empty());
+        assert!(serialized.contains("timestamp=1658748648396"));
+        assert!(!serialized.contains("symbol"));
+        assert!(!serialized.contains("recvWindow"));
     }
 
     #[test]
@@ -115,11 +123,13 @@ mod tests {
         let request = GetOpenOrdersRequest {
             symbol: Some("BTC-USDT".to_string()),
             recv_window: Some(5000),
+            timestamp: 1658748648396,
         };
 
         let serialized = serde_urlencoded::to_string(&request).unwrap();
         assert!(serialized.contains("symbol=BTC-USDT"));
         assert!(serialized.contains("recvWindow=5000"));
+        assert!(serialized.contains("timestamp=1658748648396"));
     }
 
     #[test]

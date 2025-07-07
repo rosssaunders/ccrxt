@@ -1,5 +1,10 @@
 use serde::{Deserialize, Serialize};
 
+use super::RestClient;
+use crate::bingx::{EndpointType, RestResult};
+
+const SUB_ACCOUNT_LIST_ENDPOINT: &str = "/openApi/subAccount/v1/subAccountList";
+
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct GetSubAccountListRequest {
@@ -41,7 +46,35 @@ pub struct SubAccountInfo {
     pub create_time: i64,
 }
 
-
+impl RestClient {
+    /// Get list of sub-accounts
+    ///
+    /// Retrieves a list of sub-accounts with optional filtering by email and pagination.
+    ///
+    /// # Arguments
+    /// * `request` - The get sub account list request parameters
+    ///
+    /// # Returns
+    /// A result containing the sub account list response or an error
+    ///
+    /// # Rate Limits
+    /// - UID rate limit: 1/s
+    ///
+    /// # API Permissions
+    /// - SubAccount-Read permission required
+    pub async fn get_sub_account_list(
+        &self,
+        request: &GetSubAccountListRequest,
+    ) -> RestResult<GetSubAccountListResponse> {
+        self.send_request(
+            SUB_ACCOUNT_LIST_ENDPOINT,
+            reqwest::Method::GET,
+            Some(request),
+            EndpointType::Account,
+        )
+        .await
+    }
+}
 
 #[cfg(test)]
 mod tests {

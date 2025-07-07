@@ -72,24 +72,17 @@ pub struct CancelMultipleOrdersRequest {
     /// Request valid time window value, Unit: milliseconds
     #[serde(skip_serializing_if = "Option::is_none")]
     pub recv_window: Option<i64>,
+
+    /// Timestamp of initiating the request, Unit: milliseconds
+    pub timestamp: i64,
 }
 
 /// Response from canceling multiple orders
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Deserialize)]
+#[serde(transparent)]
 pub struct CancelMultipleOrdersResponse {
     /// List of canceled orders
     pub orders: Vec<CancelMultipleOrdersResponseItem>,
-}
-
-// Custom deserialization since the response is a direct array
-impl<'de> Deserialize<'de> for CancelMultipleOrdersResponse {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        let orders = Vec::<CancelMultipleOrdersResponseItem>::deserialize(deserializer)?;
-        Ok(CancelMultipleOrdersResponse { orders })
-    }
 }
 
 impl RestClient {
@@ -133,6 +126,7 @@ mod tests {
             order_ids: "123456789,123456790,123456791".to_string(),
             client_order_ids: Some("order1,order2,order3".to_string()),
             recv_window: Some(5000),
+            timestamp: 1658748648396,
         };
 
         let serialized = serde_urlencoded::to_string(&request).unwrap();
@@ -141,6 +135,7 @@ mod tests {
         assert!(serialized.contains("orderIds=123456789%2C123456790%2C123456791")); // URL encoded commas
         assert!(serialized.contains("clientOrderIDs=order1%2Corder2%2Corder3"));
         assert!(serialized.contains("recvWindow=5000"));
+        assert!(serialized.contains("timestamp=1658748648396"));
     }
 
     #[test]
@@ -158,6 +153,7 @@ mod tests {
             order_ids: order_ids_str,
             client_order_ids: None,
             recv_window: None,
+            timestamp: 1658748648396,
         };
 
         assert_eq!(request.symbol, "BTC-USDT");
@@ -188,6 +184,7 @@ mod tests {
             order_ids: order_ids_str,
             client_order_ids: Some(client_order_ids_str),
             recv_window: None,
+            timestamp: 1658748648396,
         };
 
         assert_eq!(request.symbol, "BTC-USDT");

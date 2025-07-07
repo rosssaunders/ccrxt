@@ -4,6 +4,8 @@ use crate::bingx::{EndpointType, RestResult};
 
 use super::RestClient;
 
+const CURRENCY_CONFIG_ENDPOINT: &str = "/openApi/wallets/v1/capital/config/getall";
+
 /// Request for getting currency deposit and withdrawal data
 #[derive(Debug, Clone, Serialize)]
 pub struct GetCurrencyConfigRequest {
@@ -13,15 +15,8 @@ pub struct GetCurrencyConfigRequest {
     /// Execution window time, cannot be greater than 60000 (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub recv_window: Option<i64>,
-}
-
-impl Default for GetCurrencyConfigRequest {
-    fn default() -> Self {
-        Self {
-            coin: None,
-            recv_window: None,
-        }
-    }
+    /// Timestamp of initiating the request, Unit: milliseconds
+    pub timestamp: i64,
 }
 
 /// Network information for a currency
@@ -113,7 +108,7 @@ impl RestClient {
         request: &GetCurrencyConfigRequest,
     ) -> RestResult<GetCurrencyConfigResponse> {
         self.send_request(
-            "/openApi/wallets/v1/capital/config/getall",
+            CURRENCY_CONFIG_ENDPOINT,
             reqwest::Method::GET,
             Some(request),
             EndpointType::AccountApiGroup2,
@@ -131,18 +126,27 @@ mod tests {
         let request = GetCurrencyConfigRequest {
             coin: Some("BTC".to_string()),
             recv_window: Some(5000),
+            timestamp: 1640995200000,
         };
 
         let serialized = serde_urlencoded::to_string(&request).unwrap();
         assert!(serialized.contains("coin=BTC"));
         assert!(serialized.contains("recv_window=5000"));
+        assert!(serialized.contains("timestamp=1640995200000"));
     }
 
     #[test]
-    fn test_currency_config_request_default() {
-        let request = GetCurrencyConfigRequest::default();
+    fn test_currency_config_request_minimal() {
+        let request = GetCurrencyConfigRequest {
+            coin: None,
+            recv_window: None,
+            timestamp: 1640995200000,
+        };
+
         let serialized = serde_urlencoded::to_string(&request).unwrap();
-        assert_eq!(serialized, "");
+        assert!(serialized.contains("timestamp=1640995200000"));
+        assert!(!serialized.contains("coin"));
+        assert!(!serialized.contains("recv_window"));
     }
 
     #[test]

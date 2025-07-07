@@ -59,7 +59,7 @@ pub struct HistoricalOrder {
 }
 
 /// Request to get order history
-#[derive(Debug, Clone, Default, Serialize)]
+#[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct GetOrderHistoryRequest {
     /// Trading pair, e.g., BTC-USDT (optional)
@@ -98,6 +98,9 @@ pub struct GetOrderHistoryRequest {
     /// Request valid time window value, Unit: milliseconds
     #[serde(skip_serializing_if = "Option::is_none")]
     pub recv_window: Option<i64>,
+
+    /// Timestamp of initiating the request, Unit: milliseconds
+    pub timestamp: i64,
 }
 
 /// Response from getting order history
@@ -142,12 +145,22 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_get_order_history_request_serialization_default() {
-        let request = GetOrderHistoryRequest::default();
+    fn test_get_order_history_request_serialization_minimal() {
+        let request = GetOrderHistoryRequest {
+            symbol: None,
+            order_id: None,
+            start_time: None,
+            end_time: None,
+            page_index: None,
+            page_size: None,
+            status: None,
+            order_type: None,
+            recv_window: None,
+            timestamp: 1640995200000,
+        };
 
         let serialized = serde_urlencoded::to_string(&request).unwrap();
-        // Should be empty when default
-        assert!(serialized.is_empty());
+        assert!(serialized.contains("timestamp=1640995200000"));
     }
 
     #[test]
@@ -162,6 +175,7 @@ mod tests {
             order_type: Some(OrderType::Limit),
             recv_window: Some(5000),
             order_id: None,
+            timestamp: 1658748648396,
         };
 
         let serialized = serde_urlencoded::to_string(&request).unwrap();

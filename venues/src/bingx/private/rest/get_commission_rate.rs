@@ -15,6 +15,9 @@ pub struct GetCommissionRateRequest {
     /// Request valid time window in milliseconds (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub recv_window: Option<i64>,
+
+    /// Request timestamp in milliseconds
+    pub timestamp: i64,
 }
 
 /// Response from getting trading commission rate
@@ -62,11 +65,13 @@ mod tests {
         let request = GetCommissionRateRequest {
             symbol: "BTC-USDT".to_string(),
             recv_window: Some(5000),
+            timestamp: 1640995200000,
         };
 
         let serialized = serde_urlencoded::to_string(&request).unwrap();
         assert!(serialized.contains("symbol=BTC-USDT"));
         assert!(serialized.contains("recvWindow=5000"));
+        assert!(serialized.contains("timestamp=1640995200000"));
     }
 
     #[test]
@@ -74,11 +79,13 @@ mod tests {
         let request = GetCommissionRateRequest {
             symbol: "BTC-USDT".to_string(),
             recv_window: None,
+            timestamp: 1640995200000,
         };
 
         let serialized = serde_urlencoded::to_string(&request).unwrap();
         assert!(serialized.contains("symbol=BTC-USDT"));
         assert!(!serialized.contains("recvWindow"));
+        assert!(serialized.contains("timestamp=1640995200000"));
     }
 
     #[test]

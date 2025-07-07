@@ -41,6 +41,9 @@ pub struct CancelOrderRequest {
     /// Request valid time window value, Unit: milliseconds
     #[serde(skip_serializing_if = "Option::is_none")]
     pub recv_window: Option<i64>,
+
+    /// Timestamp of initiating the request, Unit: milliseconds
+    pub timestamp: i64,
 }
 
 /// Response from canceling an order
@@ -125,6 +128,7 @@ mod tests {
             client_order_id: None,
             cancel_restrictions: Some(CancelRestrictions::New),
             recv_window: Some(5000),
+            timestamp: 1658748648396,
         };
 
         let serialized = serde_urlencoded::to_string(&request).unwrap();
@@ -132,6 +136,7 @@ mod tests {
         assert!(serialized.contains("orderId=123456789"));
         assert!(serialized.contains("cancelRestrictions=NEW"));
         assert!(serialized.contains("recvWindow=5000"));
+        assert!(serialized.contains("timestamp=1658748648396"));
         assert!(!serialized.contains("clientOrderID"));
     }
 
@@ -143,6 +148,7 @@ mod tests {
             client_order_id: Some("my_order_123".to_string()),
             cancel_restrictions: None,
             recv_window: None,
+            timestamp: 1658748648396,
         };
 
         let serialized = serde_urlencoded::to_string(&request).unwrap();
@@ -151,6 +157,7 @@ mod tests {
         assert!(!serialized.contains("orderId"));
         assert!(!serialized.contains("cancelRestrictions"));
         assert!(!serialized.contains("recvWindow"));
+        assert!(serialized.contains("timestamp=1658748648396"));
     }
 
     #[test]

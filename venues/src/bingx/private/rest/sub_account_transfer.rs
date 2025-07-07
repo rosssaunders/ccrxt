@@ -1,6 +1,11 @@
 use crate::bingx::enums::SubAccountTransferType;
 use serde::{Deserialize, Serialize};
 
+use super::RestClient;
+use crate::bingx::{EndpointType, RestResult};
+
+const SUB_ACCOUNT_TRANSFER_ENDPOINT: &str = "/openApi/subAccount/v1/subAccountTransfer";
+
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct SubAccountTransferRequest {
@@ -29,7 +34,35 @@ pub struct SubAccountTransferResponse {
     pub success: bool,
 }
 
-
+impl RestClient {
+    /// Execute sub-account transfer
+    ///
+    /// Transfer funds between master account and sub-account.
+    ///
+    /// # Arguments
+    /// * `request` - The sub-account transfer request
+    ///
+    /// # Returns
+    /// A result containing the sub-account transfer response or an error
+    ///
+    /// # Rate Limits
+    /// - UID rate limit: 1/s
+    ///
+    /// # API Permissions
+    /// - SubAccount-Write permission required
+    pub async fn sub_account_transfer(
+        &self,
+        request: &SubAccountTransferRequest,
+    ) -> RestResult<SubAccountTransferResponse> {
+        self.send_request(
+            SUB_ACCOUNT_TRANSFER_ENDPOINT,
+            reqwest::Method::POST,
+            Some(request),
+            EndpointType::Account,
+        )
+        .await
+    }
+}
 
 #[cfg(test)]
 mod tests {

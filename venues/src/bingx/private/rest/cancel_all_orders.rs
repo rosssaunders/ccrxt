@@ -1,10 +1,13 @@
 use serde::{Deserialize, Serialize};
 
+use super::RestClient;
 use crate::bingx::{
-    BingXRestClient,
+    EndpointType, RestResult,
     enums::{OrderSide, OrderStatus, OrderType},
-    errors::BingXError,
 };
+
+/// Cancel all orders endpoint URL
+const CANCEL_ALL_ORDERS_ENDPOINT: &str = "/openApi/spot/v1/trade/cancelOpenOrders";
 
 /// Request for canceling all open orders on a symbol
 #[derive(Debug, Clone, Serialize)]
@@ -58,22 +61,23 @@ pub struct CanceledOrderInfo {
     pub stop_price: String,
 }
 
-impl BingXRestClient {
+impl RestClient {
     /// Cancel all open orders on a symbol
     ///
     /// # Arguments
     /// * `request` - The cancel all orders request
     ///
     /// # Returns
-    /// * `Result<CancelAllOrdersResponse, BingXError>` - The canceled orders response or error
+    /// * `RestResult<CancelAllOrdersResponse>` - The canceled orders response or error
     pub async fn cancel_all_orders(
         &self,
-        request: CancelAllOrdersRequest,
-    ) -> Result<CancelAllOrdersResponse, BingXError> {
-        self.send_signed_request(
-            "POST",
-            "/openApi/spot/v1/trade/cancelOpenOrders",
-            Some(&request),
+        request: &CancelAllOrdersRequest,
+    ) -> RestResult<CancelAllOrdersResponse> {
+        self.send_request(
+            CANCEL_ALL_ORDERS_ENDPOINT,
+            reqwest::Method::POST,
+            Some(request),
+            EndpointType::Trading,
         )
         .await
     }

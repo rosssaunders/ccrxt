@@ -1,10 +1,13 @@
 use serde::{Deserialize, Serialize};
 
+use super::RestClient;
 use crate::bingx::{
+    EndpointType, RestResult,
     enums::{CancelAllAfterStatus, CancelAllAfterType},
-    errors::BingXError,
-    BingXRestClient,
 };
+
+/// Cancel all after endpoint URL
+const CANCEL_ALL_AFTER_ENDPOINT: &str = "/openApi/spot/v1/trade/cancelAllAfter";
 
 /// Request for cancel all after functionality
 #[derive(Debug, Clone, Serialize)]
@@ -35,7 +38,7 @@ pub struct CancelAllAfterResponse {
     pub note: String,
 }
 
-impl BingXRestClient {
+impl RestClient {
     /// Set up cancel all after functionality
     ///
     /// After the countdown ends, cancel all current pending orders.
@@ -45,15 +48,16 @@ impl BingXRestClient {
     /// * `request` - The cancel all after request
     ///
     /// # Returns
-    /// * `Result<CancelAllAfterResponse, BingXError>` - The cancel all after response or error
+    /// * `RestResult<CancelAllAfterResponse>` - The cancel all after response or error
     pub async fn cancel_all_after(
         &self,
-        request: CancelAllAfterRequest,
-    ) -> Result<CancelAllAfterResponse, BingXError> {
-        self.send_signed_request(
-            "POST",
-            "/openApi/spot/v1/trade/cancelAllAfter",
-            Some(&request),
+        request: &CancelAllAfterRequest,
+    ) -> RestResult<CancelAllAfterResponse> {
+        self.send_request(
+            CANCEL_ALL_AFTER_ENDPOINT,
+            reqwest::Method::POST,
+            Some(request),
+            EndpointType::Trading,
         )
         .await
     }

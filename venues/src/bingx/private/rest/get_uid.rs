@@ -6,13 +6,16 @@ use crate::bingx::{EndpointType, RestResult};
 const UID_ENDPOINT: &str = "/openApi/spot/v1/account/uid";
 
 /// Request to get account UID
-#[derive(Debug, Clone, Default, Serialize)]
+#[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct GetUidRequest {
     /// Timestamp of initiating the request, Unit: milliseconds
     /// This will be automatically set by the client
     #[serde(skip_serializing_if = "Option::is_none")]
     pub recv_window: Option<i64>,
+
+    /// Timestamp of initiating the request, Unit: milliseconds
+    pub timestamp: i64,
 }
 
 /// Response from the get UID endpoint
@@ -52,16 +55,24 @@ mod tests {
     fn test_get_uid_request_serialization() {
         let request = GetUidRequest {
             recv_window: Some(5000),
+            timestamp: 1640995200000,
         };
 
         let serialized = serde_urlencoded::to_string(&request).unwrap();
         assert!(serialized.contains("recvWindow=5000"));
+        assert!(serialized.contains("timestamp=1640995200000"));
     }
 
     #[test]
-    fn test_get_uid_request_default() {
-        let request = GetUidRequest::default();
-        assert!(request.recv_window.is_none());
+    fn test_get_uid_request_minimal() {
+        let request = GetUidRequest {
+            recv_window: None,
+            timestamp: 1640995200000,
+        };
+
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert!(serialized.contains("timestamp=1640995200000"));
+        assert!(!serialized.contains("recvWindow"));
     }
 
     #[test]

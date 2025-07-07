@@ -1,5 +1,10 @@
-use serde::{Deserialize, Serialize};
+use super::RestClient;
+use crate::bingx::{EndpointType, RestResult};
 use rust_decimal::Decimal;
+use serde::{Deserialize, Serialize};
+
+/// Endpoint constant for batch sub-account assets
+pub const BATCH_SUB_ACCOUNT_ASSETS_ENDPOINT: &str = "/openApi/subAccount/v1/assets";
 
 /// Request to get batch sub-account assets overview
 #[derive(Debug, Clone, Serialize)]
@@ -8,12 +13,17 @@ pub struct BatchSubAccountAssetsRequest {
     /// Sub-account UIDs (comma-separated, optional - if not provided, returns all)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub sub_uid_list: Option<String>,
+
     /// Page number (default: 1)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub page: Option<i32>,
+
     /// Page size (default: 10, max: 200)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub size: Option<i32>,
+
+    /// Request timestamp in milliseconds
+    pub timestamp: i64,
 }
 
 /// Sub-account asset summary
@@ -65,6 +75,36 @@ pub struct BatchSubAccountAssetsData {
     pub size: i32,
 }
 
+impl RestClient {
+    /// Get batch sub-account assets overview
+    ///
+    /// Returns asset information for multiple sub-accounts.
+    ///
+    /// # Arguments
+    /// * `request` - Request parameters including optional sub-account UIDs and pagination
+    ///
+    /// # Returns
+    /// A result containing the batch sub-account assets response or an error
+    ///
+    /// # Rate Limits
+    /// - UID rate limit: 5/s
+    ///
+    /// # API Permissions
+    /// - SubAccount-Read permission required
+    pub async fn batch_sub_account_assets(
+        &self,
+        request: &BatchSubAccountAssetsRequest,
+    ) -> RestResult<BatchSubAccountAssetsResponse> {
+        self.send_request(
+            BATCH_SUB_ACCOUNT_ASSETS_ENDPOINT,
+            reqwest::Method::GET,
+            Some(request),
+            EndpointType::Account,
+        )
+        .await
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -76,12 +116,14 @@ mod tests {
             sub_uid_list: Some("12345,67890".to_string()),
             page: Some(1),
             size: Some(20),
+            timestamp: 1640995200000,
         };
 
         let json = serde_json::to_string(&request).unwrap();
         assert!(json.contains("\"subUidList\":\"12345,67890\""));
         assert!(json.contains("\"page\":1"));
         assert!(json.contains("\"size\":20"));
+        assert!(json.contains("\"timestamp\":1640995200000"));
     }
 
     #[test]
@@ -90,10 +132,15 @@ mod tests {
             sub_uid_list: None,
             page: None,
             size: None,
+            timestamp: 1640995200000,
         };
 
         let json = serde_json::to_string(&request).unwrap();
-        assert_eq!(json, "{}");
+        assert!(json.contains("\"timestamp\":1640995200000"));
+        // Should only contain timestamp since other fields are None/optional
+        assert!(!json.contains("subUidList"));
+        assert!(!json.contains("page"));
+        assert!(!json.contains("size"));
     }
 
     #[test]
@@ -131,7 +178,7 @@ mod tests {
 
         let response: BatchSubAccountAssetsResponse = serde_json::from_str(json).unwrap();
         assert!(response.success);
-        
+
         let data = response.data.unwrap();
         assert_eq!(data.sub_accounts.len(), 2);
         assert_eq!(data.total_count, 2);

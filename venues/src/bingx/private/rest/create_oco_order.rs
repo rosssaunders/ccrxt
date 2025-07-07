@@ -1,10 +1,22 @@
 use serde::{Deserialize, Serialize};
 
-use crate::bingx::{
-    enums::{OcoOrderType, OrderSide, OrderStatus},
-    errors::BingXError,
-    BingXRestClient,
-};
+use super::RestClient;
+use super::place_order::OrderSide;
+use crate::bingx::{EndpointType, RestResult};
+
+const CREATE_OCO_ORDER_ENDPOINT: &str = "/openApi/spot/v1/oco/order";
+
+/// OCO order type enumeration
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[serde(rename_all = "camelCase")]
+pub enum OcoOrderType {
+    /// OCO limit order
+    #[serde(rename = "ocoLimit")]
+    OcoLimit,
+    /// OCO TPS (Take Profit Stop) order
+    #[serde(rename = "ocoTps")]
+    OcoTps,
+}
 
 /// Request for creating an OCO (One-Cancels-Other) order
 #[derive(Debug, Clone, Serialize)]
@@ -15,13 +27,13 @@ pub struct CreateOcoOrderRequest {
     /// Order side: BUY or SELL
     pub side: OrderSide,
     /// Order quantity
-    pub quantity: f64,
+    pub quantity: String,
     /// Limit order price
-    pub limit_price: f64,
+    pub limit_price: String,
     /// Limit order price set after a stop-limit order is triggered
-    pub order_price: f64,
+    pub order_price: String,
     /// Trigger price of the stop-limit order
-    pub trigger_price: f64,
+    pub trigger_price: String,
     /// Custom unique ID for the entire Order List
     #[serde(skip_serializing_if = "Option::is_none")]
     pub list_client_order_id: Option<String>,
@@ -33,9 +45,9 @@ pub struct CreateOcoOrderRequest {
     pub below_client_order_id: Option<String>,
     /// Request validity time window in milliseconds
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub recv_window: Option<u64>,
+    pub recv_window: Option<i64>,
     /// Request timestamp in milliseconds
-    pub timestamp: u64,
+    pub timestamp: i64,
 }
 
 /// Response for creating an OCO order
@@ -65,28 +77,37 @@ pub struct OcoOrderInfo {
     /// Order quantity
     pub quantity: f64,
     /// Order status
-    pub status: OrderStatus,
+    pub status: String,
     /// Order side
     pub side: OrderSide,
 }
 
-impl BingXRestClient {
+impl RestClient {
     /// Create an OCO (One-Cancels-Other) order
     ///
-    /// Sends a new one-cancels-the-other (OCO) order, initiating one of them
-    /// immediately cancels the other order.
+    /// Sends a new one-cancels-the-other (OCO) order.
+    /// Rate limit: 10/s by UID
     ///
     /// # Arguments
     /// * `request` - The OCO order creation request
     ///
     /// # Returns
-    /// * `Result<CreateOcoOrderResponse, BingXError>` - The OCO order response or error
+    /// A result containing the OCO order response or an error
+    ///
+    /// # Notes
+    /// - Creates two orders: a limit order and a stop-limit order
+    /// - When one executes, the other is automatically canceled
     pub async fn create_oco_order(
         &self,
-        request: CreateOcoOrderRequest,
-    ) -> Result<CreateOcoOrderResponse, BingXError> {
-        self.send_signed_request("POST", "/openApi/spot/v1/oco/order", Some(&request))
-            .await
+        request: &CreateOcoOrderRequest,
+    ) -> RestResult<CreateOcoOrderResponse> {
+        self.send_request(
+            CREATE_OCO_ORDER_ENDPOINT,
+            reqwest::Method::POST,
+            Some(request),
+            EndpointType::Trading,
+        )
+        .await
     }
 }
 
@@ -99,10 +120,10 @@ mod tests {
         let request = CreateOcoOrderRequest {
             symbol: "BTC-USDT".to_string(),
             side: OrderSide::Buy,
-            quantity: 0.001,
-            limit_price: 50000.0,
-            order_price: 48000.0,
-            trigger_price: 48500.0,
+            quantity: "0.001".to_string(),
+            limit_price: "50000.0".to_string(),
+            order_price: "48000.0".to_string(),
+            trigger_price: "48500.0".to_string(),
             list_client_order_id: Some("oco_list_1".to_string()),
             above_client_order_id: Some("limit_order_1".to_string()),
             below_client_order_id: Some("stop_order_1".to_string()),
@@ -116,6 +137,10 @@ mod tests {
         assert!(json.contains("48000"));
         assert!(json.contains("48500"));
         assert!(json.contains("oco_list_1"));
+
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert!(serialized.contains("timestamp=1658748648396"));
+        assert!(serialized.contains("recvWindow=5000"));
     }
 
     #[test]

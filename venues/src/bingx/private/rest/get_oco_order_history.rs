@@ -1,62 +1,95 @@
-use crate::bingx::enums::OcoOrderStatus;
 use serde::{Deserialize, Serialize};
 
+use super::RestClient;
+use crate::bingx::{EndpointType, RestResult};
+
+const GET_OCO_ORDER_ENDPOINT: &str = "/openApi/spot/v1/oco/orderList";
+
+/// Request for getting an OCO order list
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct GetOcoOrderHistoryRequest {
-    /// Start time timestamp in ms
-    pub start_time: Option<i64>,
-    /// End time timestamp in ms
-    pub end_time: Option<i64>,
-    /// From which order list id to return, used for pagination
-    pub from_id: Option<i64>,
-    /// Limit of results, default 500, max 1000
-    pub limit: Option<i32>,
-    /// Timestamp in ms
+pub struct GetOcoOrderRequest {
+    /// OCO order group ID. Either orderListId or clientOrderId must be filled in.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub order_list_id: Option<String>,
+
+    /// User-defined OCO order group ID
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub client_order_id: Option<String>,
+
+    /// Request valid time window, in milliseconds
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub recv_window: Option<i64>,
-    /// Timestamp in ms
+
+    /// Request timestamp, in milliseconds
     pub timestamp: i64,
 }
 
+/// Response for getting an OCO order list
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct GetOcoOrderHistoryResponse {
-    pub data: Vec<OcoOrderHistory>,
+pub struct GetOcoOrderResponse {
+    /// List of OCO orders
+    pub data: Vec<OcoOrderInfo>,
 }
 
+/// Information about an OCO order
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct OcoOrderHistory {
-    pub order_list_id: i64,
-    pub contingency_type: String,
-    pub list_status_type: OcoOrderStatus,
-    pub list_order_status: OcoOrderStatus,
-    pub list_client_order_id: String,
+pub struct OcoOrderInfo {
+    /// Order time
     pub transaction_time: i64,
+
+    /// Order ID
+    pub order_id: String,
+
+    /// User-defined order ID
+    pub client_order_id: String,
+
+    /// Trading pair
     pub symbol: String,
-    pub orders: Vec<OcoHistorySubOrder>,
+
+    /// Order type: ocoLimit (OCO limit order), ocoTps (OCO stop-limit order)
+    pub order_type: String,
+
+    /// Order side: BUY for buy, SELL for sell
+    pub side: String,
+
+    /// Trigger price
+    pub trigger_price: f64,
+
+    /// Order price
+    pub price: f64,
+
+    /// Order quantity
+    pub quantity: f64,
+
+    /// OCO order group ID
+    pub order_list_id: String,
 }
 
-#[derive(Debug, Clone, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct OcoHistorySubOrder {
-    pub symbol: String,
-    pub order_id: i64,
-    pub client_order_id: String,
-    pub price: String,
-    pub orig_qty: String,
-    pub executed_qty: String,
-    pub cummulative_quote_qty: String,
-    pub status: String,
-    pub time_in_force: String,
-    pub r#type: String,
-    pub side: String,
-    pub stop_price: Option<String>,
-    pub iceberg_qty: Option<String>,
-    pub time: i64,
-    pub update_time: i64,
-    pub is_working: bool,
-    pub orig_quote_order_qty: Option<String>,
+impl RestClient {
+    /// Query an OCO order list
+    ///
+    /// Get information about a specific OCO order list.
+    ///
+    /// # Arguments
+    /// * `request` - The get OCO order request
+    ///
+    /// # Returns
+    /// * `RestResult<GetOcoOrderResponse>` - The OCO order response or error
+    pub async fn get_oco_order(
+        &self,
+        request: &GetOcoOrderRequest,
+    ) -> RestResult<GetOcoOrderResponse> {
+        self.send_request(
+            GET_OCO_ORDER_ENDPOINT,
+            reqwest::Method::GET,
+            Some(request),
+            EndpointType::Trading,
+        )
+        .await
+    }
 }
 
 #[cfg(test)]
@@ -64,65 +97,65 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_get_oco_order_history_request_serialization() {
-        let request = GetOcoOrderHistoryRequest {
-            start_time: Some(1640908800000),
-            end_time: Some(1640995200000),
-            from_id: None,
-            limit: Some(100),
+    fn test_get_oco_order_request_serialization_with_order_list_id() {
+        let request = GetOcoOrderRequest {
+            order_list_id: Some("123456789".to_string()),
+            client_order_id: None,
             recv_window: Some(5000),
             timestamp: 1640995200000,
         };
 
         let json = serde_json::to_string(&request).unwrap();
-        assert!(json.contains("\"startTime\":1640908800000"));
-        assert!(json.contains("\"endTime\":1640995200000"));
-        assert!(json.contains("\"limit\":100"));
+        assert!(json.contains("\"orderListId\":\"123456789\""));
+        assert!(!json.contains("\"clientOrderId\""));
         assert!(json.contains("\"recvWindow\":5000"));
         assert!(json.contains("\"timestamp\":1640995200000"));
     }
 
     #[test]
-    fn test_get_oco_order_history_response_deserialization() {
+    fn test_get_oco_order_request_serialization_with_client_order_id() {
+        let request = GetOcoOrderRequest {
+            order_list_id: None,
+            client_order_id: Some("my_oco_order".to_string()),
+            recv_window: None,
+            timestamp: 1640995200000,
+        };
+
+        let json = serde_json::to_string(&request).unwrap();
+        assert!(!json.contains("\"orderListId\""));
+        assert!(json.contains("\"clientOrderId\":\"my_oco_order\""));
+        assert!(!json.contains("\"recvWindow\""));
+        assert!(json.contains("\"timestamp\":1640995200000"));
+    }
+
+    #[test]
+    fn test_get_oco_order_response_deserialization() {
         let json = r#"
         {
             "data": [
                 {
-                    "orderListId": 123456789,
-                    "contingencyType": "OCO",
-                    "listStatusType": "ALL_DONE",
-                    "listOrderStatus": "DONE",
-                    "listClientOrderId": "client123",
                     "transactionTime": 1640995200000,
+                    "orderId": "987654321",
+                    "clientOrderId": "my_order_123",
                     "symbol": "BTCUSDT",
-                    "orders": [
-                        {
-                            "symbol": "BTCUSDT",
-                            "orderId": 987654321,
-                            "clientOrderId": "order1",
-                            "price": "50000.00",
-                            "origQty": "0.001",
-                            "executedQty": "0.001",
-                            "cummulativeQuoteQty": "50.0",
-                            "status": "FILLED",
-                            "timeInForce": "GTC",
-                            "type": "LIMIT",
-                            "side": "BUY",
-                            "time": 1640995200000,
-                            "updateTime": 1640995200000,
-                            "isWorking": false
-                        }
-                    ]
+                    "orderType": "ocoLimit",
+                    "side": "BUY",
+                    "triggerPrice": 48500.0,
+                    "price": 50000.0,
+                    "quantity": 0.001,
+                    "orderListId": "123456789"
                 }
             ]
         }
         "#;
 
-        let response: GetOcoOrderHistoryResponse = serde_json::from_str(json).unwrap();
+        let response: GetOcoOrderResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.data.len(), 1);
-        assert_eq!(response.data[0].order_list_id, 123456789);
+        assert_eq!(response.data[0].order_id, "987654321");
         assert_eq!(response.data[0].symbol, "BTCUSDT");
-        assert_eq!(response.data[0].orders.len(), 1);
-        assert_eq!(response.data[0].orders[0].status, "FILLED");
+        assert_eq!(response.data[0].order_type, "ocoLimit");
+        assert_eq!(response.data[0].side, "BUY");
+        assert_eq!(response.data[0].price, 50000.0);
+        assert_eq!(response.data[0].quantity, 0.001);
     }
 }

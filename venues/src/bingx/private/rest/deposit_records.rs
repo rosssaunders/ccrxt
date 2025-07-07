@@ -30,20 +30,8 @@ pub struct GetDepositRecordsRequest {
     /// Execution window time, cannot be greater than 60000 (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub recv_window: Option<i64>,
-}
-
-impl Default for GetDepositRecordsRequest {
-    fn default() -> Self {
-        Self {
-            coin: None,
-            status: None,
-            start_time: None,
-            end_time: None,
-            offset: None,
-            limit: None,
-            recv_window: None,
-        }
-    }
+    /// Request timestamp in milliseconds
+    pub timestamp: i64,
 }
 
 /// Deposit record information
@@ -134,19 +122,14 @@ mod tests {
             offset: Some(0),
             limit: Some(100),
             recv_window: Some(5000),
+            timestamp: 1640995200000,
         };
 
         let serialized = serde_urlencoded::to_string(&request).unwrap();
         assert!(serialized.contains("coin=BTC"));
         assert!(serialized.contains("status=1"));
         assert!(serialized.contains("start_time=1658748648396"));
-    }
-
-    #[test]
-    fn test_deposit_records_request_default() {
-        let request = GetDepositRecordsRequest::default();
-        let serialized = serde_urlencoded::to_string(&request).unwrap();
-        assert_eq!(serialized, "");
+        assert!(serialized.contains("timestamp=1640995200000"));
     }
 
     #[test]

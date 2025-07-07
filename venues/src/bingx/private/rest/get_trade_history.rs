@@ -73,6 +73,9 @@ pub struct GetTradeHistoryRequest {
     /// Request valid time window, unit: milliseconds (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub recv_window: Option<i64>,
+
+    /// Timestamp of initiating the request, Unit: milliseconds
+    pub timestamp: i64,
 }
 
 /// Response from getting trade history
@@ -138,6 +141,7 @@ mod tests {
             from_id: Some(1000),
             limit: Some(100),
             recv_window: Some(5000),
+            timestamp: 1658748648396,
         };
 
         let serialized = serde_urlencoded::to_string(&request).unwrap();
@@ -160,6 +164,7 @@ mod tests {
             from_id: None,
             limit: None,
             recv_window: None,
+            timestamp: 1658748648396,
         };
 
         let serialized = serde_urlencoded::to_string(&request).unwrap();

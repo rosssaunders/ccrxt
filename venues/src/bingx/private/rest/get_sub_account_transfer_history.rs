@@ -1,6 +1,12 @@
 use crate::bingx::enums::SubAccountTransferType;
 use serde::{Deserialize, Serialize};
 
+use super::RestClient;
+use crate::bingx::{EndpointType, RestResult};
+
+const SUB_ACCOUNT_TRANSFER_HISTORY_ENDPOINT: &str =
+    "/openApi/subAccount/v1/subAccountTransferHistory";
+
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct GetSubAccountTransferHistoryRequest {
@@ -45,12 +51,41 @@ pub struct SubAccountTransferRecord {
     /// Transfer status
     pub status: String,
     /// Transaction ID
-    pub tranId: i64,
+    #[serde(rename = "tranId")]
+    pub tran_id: i64,
     /// Transfer time
     pub time: i64,
 }
 
-
+impl RestClient {
+    /// Get sub-account transfer history
+    ///
+    /// Retrieves the transfer history between main account and sub-accounts.
+    ///
+    /// # Arguments
+    /// * `request` - The transfer history request parameters
+    ///
+    /// # Returns
+    /// A result containing the transfer history response or an error
+    ///
+    /// # Rate Limits
+    /// - UID rate limit: 1/s
+    ///
+    /// # API Permissions
+    /// - SubAccount-Read permission required
+    pub async fn get_sub_account_transfer_history(
+        &self,
+        request: &GetSubAccountTransferHistoryRequest,
+    ) -> RestResult<GetSubAccountTransferHistoryResponse> {
+        self.send_request(
+            SUB_ACCOUNT_TRANSFER_HISTORY_ENDPOINT,
+            reqwest::Method::GET,
+            Some(request),
+            EndpointType::Account,
+        )
+        .await
+    }
+}
 
 #[cfg(test)]
 mod tests {

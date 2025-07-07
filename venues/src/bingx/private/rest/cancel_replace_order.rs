@@ -1,10 +1,13 @@
 use serde::{Deserialize, Serialize};
 
+use super::RestClient;
 use crate::bingx::{
+    EndpointType, RestResult,
     enums::{CancelReplaceMode, CancelRestriction, OrderSide, OrderStatus, OrderType},
-    errors::BingXError,
-    BingXRestClient,
 };
+
+/// Cancel replace order endpoint URL
+const CANCEL_REPLACE_ORDER_ENDPOINT: &str = "/openApi/spot/v1/trade/order/cancelReplace";
 
 /// Request for canceling an existing order and placing a new one
 #[derive(Debug, Clone, Serialize)]
@@ -86,22 +89,23 @@ pub struct CancelReplaceOrderResponse {
     pub transact_time: i64,
 }
 
-impl BingXRestClient {
+impl RestClient {
     /// Cancel an existing order and send a new order
     ///
     /// # Arguments
     /// * `request` - The cancel and replace order request
     ///
     /// # Returns
-    /// * `Result<CancelReplaceOrderResponse, BingXError>` - The new order response or error
+    /// * `RestResult<CancelReplaceOrderResponse>` - The new order response or error
     pub async fn cancel_replace_order(
         &self,
-        request: CancelReplaceOrderRequest,
-    ) -> Result<CancelReplaceOrderResponse, BingXError> {
-        self.send_signed_request(
-            "POST",
-            "/openApi/spot/v1/trade/order/cancelReplace",
-            Some(&request),
+        request: &CancelReplaceOrderRequest,
+    ) -> RestResult<CancelReplaceOrderResponse> {
+        self.send_request(
+            CANCEL_REPLACE_ORDER_ENDPOINT,
+            reqwest::Method::POST,
+            Some(request),
+            EndpointType::Trading,
         )
         .await
     }

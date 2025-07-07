@@ -1,8 +1,13 @@
-use serde::{Deserialize, Serialize};
 use rust_decimal::Decimal;
+use serde::{Deserialize, Serialize};
+
+use super::RestClient;
+use crate::bingx::{EndpointType, RestResult};
+
+const INTERNAL_TRANSFER_RECORDS_ENDPOINT: &str = "/openApi/wallets/v1/capital/innerTransfer";
 
 /// Request to get internal transfer records
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct InternalTransferRecordsRequest {
     /// Transfer ID (optional)
@@ -71,6 +76,32 @@ pub struct InternalTransferRecordsData {
     pub page: i32,
     /// Page size
     pub size: i32,
+}
+
+impl RestClient {
+    /// Query internal transfer records
+    ///
+    /// Retrieve internal transfer records with optional filtering by transfer ID, asset, time range, and pagination.
+    /// This endpoint provides historical records of internal transfers within the platform.
+    /// Rate limit: 2/s by UID & 2 by IP in group
+    ///
+    /// # Arguments
+    /// * `request` - The internal transfer records request with optional filters
+    ///
+    /// # Returns
+    /// A result containing the transfer records or an error
+    pub async fn get_internal_transfer_records(
+        &self,
+        request: &InternalTransferRecordsRequest,
+    ) -> RestResult<InternalTransferRecordsResponse> {
+        self.send_request(
+            INTERNAL_TRANSFER_RECORDS_ENDPOINT,
+            reqwest::Method::GET,
+            Some(request),
+            EndpointType::Account,
+        )
+        .await
+    }
 }
 
 #[cfg(test)]
@@ -149,7 +180,7 @@ mod tests {
 
         let response: InternalTransferRecordsResponse = serde_json::from_str(json).unwrap();
         assert!(response.success);
-        
+
         let data = response.data.unwrap();
         assert_eq!(data.records.len(), 2);
         assert_eq!(data.total_count, 2);

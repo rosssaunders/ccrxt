@@ -19,6 +19,8 @@ pub struct AssetTransferRequest {
     /// Execution window time, cannot be greater than 60000 (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub recv_window: Option<i64>,
+    /// Timestamp for this request
+    pub timestamp: i64,
 }
 
 /// Response for asset transfer
@@ -71,12 +73,14 @@ mod tests {
             asset: "USDT".to_string(),
             amount: 100.0,
             recv_window: Some(5000),
+            timestamp: 1640995200000,
         };
 
         let serialized = serde_urlencoded::to_string(&request).unwrap();
         assert!(serialized.contains("type=FUND_PFUTURES"));
         assert!(serialized.contains("asset=USDT"));
         assert!(serialized.contains("amount=100"));
+        assert!(serialized.contains("timestamp=1640995200000"));
     }
 
     #[test]

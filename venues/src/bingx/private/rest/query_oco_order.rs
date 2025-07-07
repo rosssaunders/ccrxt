@@ -1,6 +1,11 @@
 use crate::bingx::enums::OcoOrderStatus;
 use serde::{Deserialize, Serialize};
 
+use super::RestClient;
+use crate::bingx::{EndpointType, RestResult};
+
+const QUERY_OCO_ORDER_ENDPOINT: &str = "/openApi/spot/v1/oco/order";
+
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct QueryOcoOrderRequest {
@@ -53,6 +58,36 @@ pub struct OcoOrderReport {
     pub r#type: String,
     pub side: String,
     pub stop_price: Option<String>,
+}
+
+impl RestClient {
+    /// Query OCO order information
+    ///
+    /// Retrieves information about a specific OCO order.
+    ///
+    /// # Arguments
+    /// * `request` - The query OCO order request
+    ///
+    /// # Returns
+    /// A result containing the OCO order information or an error
+    ///
+    /// # Rate Limits
+    /// - UID rate limit: 10/s
+    ///
+    /// # API Permissions
+    /// - Spot trading permission required
+    pub async fn query_oco_order(
+        &self,
+        request: &QueryOcoOrderRequest,
+    ) -> RestResult<QueryOcoOrderResponse> {
+        self.send_request(
+            QUERY_OCO_ORDER_ENDPOINT,
+            reqwest::Method::GET,
+            Some(request),
+            EndpointType::Trading,
+        )
+        .await
+    }
 }
 
 #[cfg(test)]

@@ -1,10 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-use crate::bingx::{
-    BingXRestClient,
-    enums::{OrderSide, OrderStatus, OrderType, TimeInForce},
-    errors::BingXError,
-};
+use super::RestClient;
+use super::place_order::{OrderSide, OrderStatus, OrderType, TimeInForce};
+use crate::bingx::{EndpointType, RestResult};
 
 const PLACE_MULTIPLE_ORDERS_ENDPOINT: &str = "/openApi/spot/v1/trade/batchOrders";
 
@@ -17,6 +15,11 @@ pub struct PlaceMultipleOrdersRequest {
     /// Sync mode: false (default) = parallel ordering, true = serial ordering
     #[serde(skip_serializing_if = "Option::is_none")]
     pub sync: Option<bool>,
+    /// Request valid time window value in milliseconds
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub recv_window: Option<i64>,
+    /// Request timestamp in milliseconds
+    pub timestamp: i64,
 }
 
 /// Individual order data for batch orders
@@ -35,24 +38,19 @@ pub struct OrderData {
     pub stop_price: Option<String>,
     /// Order quantity
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub quantity: Option<f64>,
+    pub quantity: Option<String>,
     /// Quote order quantity (order amount)
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub quote_order_qty: Option<f64>,
+    pub quote_order_qty: Option<String>,
     /// Order price
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub price: Option<f64>,
+    pub price: Option<String>,
     /// Custom order ID
     #[serde(skip_serializing_if = "Option::is_none")]
     pub new_client_order_id: Option<String>,
     /// Time in force
     #[serde(skip_serializing_if = "Option::is_none")]
     pub time_in_force: Option<TimeInForce>,
-    /// Request valid time window value in milliseconds
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub recv_window: Option<u64>,
-    /// Request timestamp in milliseconds
-    pub timestamp: u64,
 }
 
 /// Response for placing multiple orders
@@ -92,20 +90,32 @@ pub struct BatchOrderResponse {
     pub client_order_id: String,
 }
 
-impl BingXRestClient {
+impl RestClient {
     /// Place multiple orders in batch
     ///
+    /// Places multiple orders in a single request (up to 5 orders).
+    /// Rate limit: 10/s by UID
+    ///
     /// # Arguments
-    /// * `request` - The batch order request
+    /// * `request` - The batch order request containing multiple orders
     ///
     /// # Returns
-    /// * `Result<PlaceMultipleOrdersResponse, BingXError>` - The batch order response or error
+    /// A result containing the batch order response or an error
+    ///
+    /// # Notes
+    /// - Maximum of 5 orders per batch
+    /// - sync=false (default): parallel ordering, sync=true: serial ordering
     pub async fn place_multiple_orders(
         &self,
-        request: PlaceMultipleOrdersRequest,
-    ) -> Result<PlaceMultipleOrdersResponse, BingXError> {
-        self.send_signed_request("POST", PLACE_MULTIPLE_ORDERS_ENDPOINT, Some(&request))
-            .await
+        request: &PlaceMultipleOrdersRequest,
+    ) -> RestResult<PlaceMultipleOrdersResponse> {
+        self.send_request(
+            PLACE_MULTIPLE_ORDERS_ENDPOINT,
+            reqwest::Method::POST,
+            Some(request),
+            EndpointType::Trading,
+        )
+        .await
     }
 }
 
@@ -122,35 +132,35 @@ mod tests {
                     side: OrderSide::Buy,
                     order_type: OrderType::Limit,
                     stop_price: None,
-                    quantity: Some(0.001),
+                    quantity: Some("0.001".to_string()),
                     quote_order_qty: None,
-                    price: Some(50000.0),
+                    price: Some("50000.0".to_string()),
                     new_client_order_id: Some("order1".to_string()),
                     time_in_force: Some(TimeInForce::Gtc),
-                    recv_window: None,
-                    timestamp: 1658748648396,
                 },
                 OrderData {
                     symbol: "ETH-USDT".to_string(),
                     side: OrderSide::Sell,
                     order_type: OrderType::Market,
                     stop_price: None,
-                    quantity: Some(0.1),
+                    quantity: Some("0.1".to_string()),
                     quote_order_qty: None,
                     price: None,
                     new_client_order_id: Some("order2".to_string()),
                     time_in_force: None,
-                    recv_window: None,
-                    timestamp: 1658748648396,
                 },
             ],
             sync: Some(false),
+            recv_window: Some(5000),
+            timestamp: 1658748648396,
         };
 
         let json = serde_json::to_string(&request).unwrap();
         assert!(json.contains("BTC-USDT"));
         assert!(json.contains("ETH-USDT"));
         assert!(json.contains("\"sync\":false"));
+        assert!(json.contains("1658748648396"));
+        assert!(json.contains("5000"));
     }
 
     #[test]

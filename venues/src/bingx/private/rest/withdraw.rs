@@ -4,6 +4,8 @@ use crate::bingx::{EndpointType, RestResult, WalletType};
 
 use super::RestClient;
 
+const WITHDRAW_ENDPOINT: &str = "/openApi/wallets/v1/capital/withdraw/apply";
+
 /// Request for withdrawing funds
 #[derive(Debug, Clone, Serialize)]
 pub struct WithdrawRequest {
@@ -39,6 +41,8 @@ pub struct WithdrawRequest {
     /// Execution window time, cannot be greater than 60000 (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub recv_window: Option<i64>,
+    /// Request timestamp in milliseconds
+    pub timestamp: i64,
 }
 
 /// Response for withdrawal request
@@ -70,7 +74,7 @@ impl RestClient {
     /// - Withdraw permission required
     pub async fn withdraw(&self, request: &WithdrawRequest) -> RestResult<WithdrawResponse> {
         self.send_request(
-            "/openApi/wallets/v1/capital/withdraw/apply",
+            WITHDRAW_ENDPOINT,
             reqwest::Method::POST,
             Some(request),
             EndpointType::AccountApiGroup2,
@@ -98,6 +102,7 @@ mod tests {
             recipient_first_name: None,
             date_of_birth: None,
             recv_window: Some(5000),
+            timestamp: 1640995200000,
         };
 
         let serialized = serde_urlencoded::to_string(&request).unwrap();

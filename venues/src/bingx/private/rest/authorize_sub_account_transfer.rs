@@ -1,5 +1,10 @@
 use serde::{Deserialize, Serialize};
 
+use super::RestClient;
+use crate::bingx::{EndpointType, RestResult};
+
+const AUTHORIZE_SUB_ACCOUNT_TRANSFER_ENDPOINT: &str = "/openApi/wallets/v1/capital/sub-account/transfer-auth";
+
 /// Request to authorize sub-account transfers
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -8,6 +13,8 @@ pub struct AuthorizeSubAccountTransferRequest {
     pub sub_uid: String,
     /// Whether to enable transfer authorization
     pub can_transfer: bool,
+    /// Timestamp of initiating the request, Unit: milliseconds
+    pub timestamp: i64,
 }
 
 /// Response for authorizing sub-account transfers
@@ -33,6 +40,31 @@ pub struct SubAccountTransferAuth {
     pub update_time: i64,
 }
 
+impl RestClient {
+    /// Authorize sub-account transfers
+    ///
+    /// Authorizes or revokes transfer permissions for a sub-account.
+    /// Rate limit: 5/s by UID
+    ///
+    /// # Arguments
+    /// * `request` - The authorize sub-account transfer request
+    ///
+    /// # Returns
+    /// A result containing the authorization response or an error
+    pub async fn authorize_sub_account_transfer(
+        &self,
+        request: &AuthorizeSubAccountTransferRequest,
+    ) -> RestResult<AuthorizeSubAccountTransferResponse> {
+        self.send_request(
+            AUTHORIZE_SUB_ACCOUNT_TRANSFER_ENDPOINT,
+            reqwest::Method::POST,
+            Some(request),
+            EndpointType::Account,
+        )
+        .await
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -42,11 +74,13 @@ mod tests {
         let request = AuthorizeSubAccountTransferRequest {
             sub_uid: "12345".to_string(),
             can_transfer: true,
+            timestamp: 1640995200000,
         };
 
         let json = serde_json::to_string(&request).unwrap();
         assert!(json.contains("\"subUid\":\"12345\""));
         assert!(json.contains("\"canTransfer\":true"));
+        assert!(json.contains("\"timestamp\":1640995200000"));
     }
 
     #[test]
@@ -54,11 +88,13 @@ mod tests {
         let request = AuthorizeSubAccountTransferRequest {
             sub_uid: "12345".to_string(),
             can_transfer: false,
+            timestamp: 1640995200000,
         };
 
         let json = serde_json::to_string(&request).unwrap();
         assert!(json.contains("\"subUid\":\"12345\""));
         assert!(json.contains("\"canTransfer\":false"));
+        assert!(json.contains("\"timestamp\":1640995200000"));
     }
 
     #[test]

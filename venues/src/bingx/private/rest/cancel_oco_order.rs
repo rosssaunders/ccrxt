@@ -1,6 +1,9 @@
 use serde::{Deserialize, Serialize};
 
-use crate::bingx::{errors::BingXError, BingXRestClient};
+use super::RestClient;
+use crate::bingx::{EndpointType, RestResult};
+
+const CANCEL_OCO_ORDER_ENDPOINT: &str = "/openApi/spot/v1/oco/cancel";
 
 /// Request for canceling an OCO order list
 #[derive(Debug, Clone, Serialize)]
@@ -29,7 +32,7 @@ pub struct CancelOcoOrderResponse {
     pub client_order_id: String,
 }
 
-impl BingXRestClient {
+impl RestClient {
     /// Cancel an OCO order list
     ///
     /// Used to cancel the entire OCO order.
@@ -38,13 +41,18 @@ impl BingXRestClient {
     /// * `request` - The cancel OCO order request
     ///
     /// # Returns
-    /// * `Result<CancelOcoOrderResponse, BingXError>` - The cancel OCO order response or error
+    /// * `RestResult<CancelOcoOrderResponse>` - The cancel OCO order response or error
     pub async fn cancel_oco_order(
         &self,
-        request: CancelOcoOrderRequest,
-    ) -> Result<CancelOcoOrderResponse, BingXError> {
-        self.send_signed_request("POST", "/openApi/spot/v1/oco/cancel", Some(&request))
-            .await
+        request: &CancelOcoOrderRequest,
+    ) -> RestResult<CancelOcoOrderResponse> {
+        self.send_request(
+            CANCEL_OCO_ORDER_ENDPOINT,
+            reqwest::Method::POST,
+            Some(request),
+            EndpointType::Trading,
+        )
+        .await
     }
 }
 

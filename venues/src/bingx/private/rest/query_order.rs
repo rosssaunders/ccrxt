@@ -25,6 +25,9 @@ pub struct QueryOrderRequest {
     /// Request valid time window value, Unit: milliseconds
     #[serde(skip_serializing_if = "Option::is_none")]
     pub recv_window: Option<i64>,
+
+    /// Timestamp of initiating the request, Unit: milliseconds
+    pub timestamp: i64,
 }
 
 /// Detailed order information
@@ -123,12 +126,14 @@ mod tests {
             order_id: Some(123456789),
             client_order_id: None,
             recv_window: Some(5000),
+            timestamp: 1658748648396,
         };
 
         let serialized = serde_urlencoded::to_string(&request).unwrap();
         assert!(serialized.contains("symbol=BTC-USDT"));
         assert!(serialized.contains("orderId=123456789"));
         assert!(serialized.contains("recvWindow=5000"));
+        assert!(serialized.contains("timestamp=1658748648396"));
         assert!(!serialized.contains("clientOrderID"));
     }
 
@@ -139,11 +144,13 @@ mod tests {
             order_id: None,
             client_order_id: Some("my_order_123".to_string()),
             recv_window: None,
+            timestamp: 1658748648396,
         };
 
         let serialized = serde_urlencoded::to_string(&request).unwrap();
         assert!(serialized.contains("symbol=BTC-USDT"));
         assert!(serialized.contains("clientOrderID=my_order_123"));
+        assert!(serialized.contains("timestamp=1658748648396"));
         assert!(!serialized.contains("orderId"));
         assert!(!serialized.contains("recvWindow"));
     }

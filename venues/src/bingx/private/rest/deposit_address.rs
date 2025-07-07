@@ -4,6 +4,8 @@ use crate::bingx::{AddressStatus, EndpointType, RestResult};
 
 use super::RestClient;
 
+const DEPOSIT_ADDRESS_ENDPOINT: &str = "/openApi/wallets/v1/capital/deposit/address";
+
 /// Request for getting main account deposit address
 #[derive(Debug, Clone, Serialize)]
 pub struct GetDepositAddressRequest {
@@ -18,17 +20,8 @@ pub struct GetDepositAddressRequest {
     /// Execution window time, cannot be greater than 60000 (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub recv_window: Option<i64>,
-}
-
-impl Default for GetDepositAddressRequest {
-    fn default() -> Self {
-        Self {
-            coin: String::new(),
-            offset: None,
-            limit: None,
-            recv_window: None,
-        }
-    }
+    /// Request timestamp in milliseconds
+    pub timestamp: i64,
 }
 
 /// Deposit address information
@@ -81,7 +74,7 @@ impl RestClient {
         request: &GetDepositAddressRequest,
     ) -> RestResult<GetDepositAddressResponse> {
         self.send_request(
-            "/openApi/wallets/v1/capital/deposit/address",
+            DEPOSIT_ADDRESS_ENDPOINT,
             reqwest::Method::GET,
             Some(request),
             EndpointType::AccountApiGroup2,
@@ -101,6 +94,7 @@ mod tests {
             offset: Some(0),
             limit: Some(100),
             recv_window: Some(5000),
+            timestamp: 1640995200000,
         };
 
         let serialized = serde_urlencoded::to_string(&request).unwrap();

@@ -6,13 +6,16 @@ use crate::bingx::{EndpointType, RestResult};
 const BALANCES_ENDPOINT: &str = "/openApi/spot/v1/account/balance";
 
 /// Request to get account balances
-#[derive(Debug, Clone, Default, Serialize)]
+#[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct GetBalancesRequest {
     /// Timestamp of initiating the request, Unit: milliseconds
     /// This will be automatically set by the client
     #[serde(skip_serializing_if = "Option::is_none")]
     pub recv_window: Option<i64>,
+
+    /// Timestamp of initiating the request, Unit: milliseconds
+    pub timestamp: i64,
 }
 
 /// Response from the get balances endpoint
@@ -50,19 +53,6 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the account balances or an error
-    ///
-    /// # Example
-    /// ```rust,no_run
-    /// use venues::bingx::{PrivateRestClient, GetBalancesRequest};
-    ///
-    /// async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    ///     let client: PrivateRestClient = todo!("Provide a real PrivateRestClient instance for this example");
-    ///     let request = GetBalancesRequest::default();
-    ///     let balances = client.get_balances(&request).await?;
-    ///     println!("Balances: {:?}", balances);
-    ///     Ok(())
-    /// }
-    /// ```
     pub async fn get_balances(
         &self,
         request: &GetBalancesRequest,
@@ -85,16 +75,24 @@ mod tests {
     fn test_get_balances_request_serialization() {
         let request = GetBalancesRequest {
             recv_window: Some(5000),
+            timestamp: 1640995200000,
         };
 
         let serialized = serde_urlencoded::to_string(&request).unwrap();
         assert!(serialized.contains("recvWindow=5000"));
+        assert!(serialized.contains("timestamp=1640995200000"));
     }
 
     #[test]
-    fn test_get_balances_request_default() {
-        let request = GetBalancesRequest::default();
-        assert!(request.recv_window.is_none());
+    fn test_get_balances_request_minimal() {
+        let request = GetBalancesRequest {
+            recv_window: None,
+            timestamp: 1640995200000,
+        };
+
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert!(serialized.contains("timestamp=1640995200000"));
+        assert!(!serialized.contains("recvWindow"));
     }
 
     #[test]

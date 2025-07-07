@@ -1,6 +1,11 @@
 use serde::{Deserialize, Serialize};
 use crate::bingx::enums::SubAccountStatus;
 
+use super::RestClient;
+use crate::bingx::{EndpointType, RestResult};
+
+const FREEZE_SUB_ACCOUNT_ENDPOINT: &str = "/openApi/subAccount/v1/freeze";
+
 /// Request to freeze/unfreeze sub-account
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -9,6 +14,11 @@ pub struct FreezeSubAccountRequest {
     pub sub_uid: String,
     /// Action: true for freeze, false for unfreeze
     pub is_freeze: bool,
+    /// Request validity window in milliseconds
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub recv_window: Option<i64>,
+    /// Request timestamp in milliseconds
+    pub timestamp: i64,
 }
 
 /// Response for freeze/unfreeze sub-account
@@ -36,6 +46,36 @@ pub struct FreezeSubAccountData {
     pub update_time: i64,
 }
 
+impl RestClient {
+    /// Freeze or unfreeze a sub-account
+    ///
+    /// Allows the main account to freeze or unfreeze a sub-account.
+    ///
+    /// # Arguments
+    /// * `request` - The freeze/unfreeze sub-account request
+    ///
+    /// # Returns
+    /// A result containing the operation response or an error
+    ///
+    /// # Rate Limits
+    /// - UID rate limit: 1/s
+    ///
+    /// # API Permissions
+    /// - SubAccount-Write permission required
+    pub async fn freeze_sub_account(
+        &self,
+        request: &FreezeSubAccountRequest,
+    ) -> RestResult<FreezeSubAccountResponse> {
+        self.send_request(
+            FREEZE_SUB_ACCOUNT_ENDPOINT,
+            reqwest::Method::POST,
+            Some(request),
+            EndpointType::Account,
+        )
+        .await
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -45,11 +85,15 @@ mod tests {
         let request = FreezeSubAccountRequest {
             sub_uid: "12345".to_string(),
             is_freeze: true,
+            recv_window: Some(5000),
+            timestamp: 1640995200000,
         };
 
         let json = serde_json::to_string(&request).unwrap();
         assert!(json.contains("\"subUid\":\"12345\""));
         assert!(json.contains("\"isFreeze\":true"));
+        assert!(json.contains("\"recvWindow\":5000"));
+        assert!(json.contains("\"timestamp\":1640995200000"));
     }
 
     #[test]
@@ -57,11 +101,15 @@ mod tests {
         let request = FreezeSubAccountRequest {
             sub_uid: "12345".to_string(),
             is_freeze: false,
+            recv_window: None,
+            timestamp: 1640995200000,
         };
 
         let json = serde_json::to_string(&request).unwrap();
         assert!(json.contains("\"subUid\":\"12345\""));
         assert!(json.contains("\"isFreeze\":false"));
+        assert!(json.contains("\"timestamp\":1640995200000"));
+        assert!(!json.contains("\"recvWindow\""));
     }
 
     #[test]

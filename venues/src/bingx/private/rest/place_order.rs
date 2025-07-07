@@ -48,7 +48,7 @@ pub enum TimeInForce {
 }
 
 /// Order status enumeration
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum OrderStatus {
     /// New order
@@ -106,6 +106,9 @@ pub struct PlaceOrderRequest {
     /// Request valid time window value, Unit: milliseconds
     #[serde(skip_serializing_if = "Option::is_none")]
     pub recv_window: Option<i64>,
+
+    /// Timestamp of initiating the request, Unit: milliseconds
+    pub timestamp: i64,
 }
 
 /// Response from placing a new order
@@ -193,6 +196,7 @@ mod tests {
             new_client_order_id: Some("my_order_123".to_string()),
             time_in_force: Some(TimeInForce::Gtc),
             recv_window: Some(5000),
+            timestamp: 1658748648396,
         };
 
         let serialized = serde_urlencoded::to_string(&request).unwrap();
@@ -204,6 +208,7 @@ mod tests {
         assert!(serialized.contains("newClientOrderId=my_order_123"));
         assert!(serialized.contains("timeInForce=GTC"));
         assert!(serialized.contains("recvWindow=5000"));
+        assert!(serialized.contains("timestamp=1658748648396"));
     }
 
     #[test]

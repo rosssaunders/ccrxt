@@ -36,22 +36,8 @@ pub struct GetWithdrawRecordsRequest {
     /// Execution window time, cannot be greater than 60000 (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub recv_window: Option<i64>,
-}
-
-impl Default for GetWithdrawRecordsRequest {
-    fn default() -> Self {
-        Self {
-            id: None,
-            coin: None,
-            withdraw_order_id: None,
-            status: None,
-            start_time: None,
-            end_time: None,
-            offset: None,
-            limit: None,
-            recv_window: None,
-        }
-    }
+    /// Request timestamp in milliseconds
+    pub timestamp: i64,
 }
 
 /// Withdrawal record information
@@ -158,19 +144,13 @@ mod tests {
             offset: Some(0),
             limit: Some(100),
             recv_window: Some(5000),
+            timestamp: 1640995200000,
         };
 
         let serialized = serde_urlencoded::to_string(&request).unwrap();
         assert!(serialized.contains("coin=BTC"));
         assert!(serialized.contains("status=6"));
         assert!(serialized.contains("id=12345"));
-    }
-
-    #[test]
-    fn test_withdraw_records_request_default() {
-        let request = GetWithdrawRecordsRequest::default();
-        let serialized = serde_urlencoded::to_string(&request).unwrap();
-        assert_eq!(serialized, "");
     }
     #[test]
     fn test_withdraw_record_deserialization() {

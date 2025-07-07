@@ -30,6 +30,9 @@ pub struct GetAssetTransferRecordsRequest {
     /// Execution window time, cannot be greater than 60000 (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub recv_window: Option<i64>,
+
+    /// Current timestamp (required)
+    pub timestamp: i64,
 }
 
 /// Asset transfer record
@@ -105,6 +108,7 @@ mod tests {
             current: Some(1),
             size: Some(10),
             recv_window: Some(5000),
+            timestamp: 1658748648396,
         };
 
         let serialized = serde_urlencoded::to_string(&request).unwrap();

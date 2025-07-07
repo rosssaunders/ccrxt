@@ -35,7 +35,7 @@ pub enum AccountType {
 }
 
 /// Request to get all account balance overview
-#[derive(Debug, Clone, Default, Serialize)]
+#[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct GetAllAccountBalanceRequest {
     /// Account type (optional - if blank, all assets will be checked)
@@ -45,6 +45,9 @@ pub struct GetAllAccountBalanceRequest {
     /// Request valid time window value, Unit: milliseconds
     #[serde(skip_serializing_if = "Option::is_none")]
     pub recv_window: Option<i64>,
+
+    /// Timestamp for this request
+    pub timestamp: i64,
 }
 
 /// Account balance overview item
@@ -59,21 +62,10 @@ pub struct AccountBalanceOverview {
 }
 
 /// Response from getting all account balance overview
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct GetAllAccountBalanceResponse {
     /// List of account balance overviews
     pub accounts: Vec<AccountBalanceOverview>,
-}
-
-// Custom deserialization since the response is a direct array
-impl<'de> Deserialize<'de> for GetAllAccountBalanceResponse {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        let accounts = Vec::<AccountBalanceOverview>::deserialize(deserializer)?;
-        Ok(GetAllAccountBalanceResponse { accounts })
-    }
 }
 
 impl RestClient {
@@ -106,12 +98,15 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_get_all_account_balance_request_serialization_default() {
-        let request = GetAllAccountBalanceRequest::default();
+    fn test_get_all_account_balance_request_serialization_with_timestamp() {
+        let request = GetAllAccountBalanceRequest {
+            account_type: None,
+            recv_window: None,
+            timestamp: 1640995200000,
+        };
 
         let serialized = serde_urlencoded::to_string(&request).unwrap();
-        // Should be empty when default
-        assert!(serialized.is_empty());
+        assert!(serialized.contains("timestamp=1640995200000"));
     }
 
     #[test]
@@ -119,11 +114,13 @@ mod tests {
         let request = GetAllAccountBalanceRequest {
             account_type: Some(AccountType::Spot),
             recv_window: Some(5000),
+            timestamp: 1640995200000,
         };
 
         let serialized = serde_urlencoded::to_string(&request).unwrap();
         assert!(serialized.contains("accountType=spot"));
         assert!(serialized.contains("recvWindow=5000"));
+        assert!(serialized.contains("timestamp=1640995200000"));
     }
 
     #[test]

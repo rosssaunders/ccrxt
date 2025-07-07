@@ -6,13 +6,16 @@ use crate::bingx::{EndpointType, RestResult};
 const FUND_BALANCE_ENDPOINT: &str = "/openApi/wallets/v1/capital/config/getall";
 
 /// Request to get fund account balance
-#[derive(Debug, Clone, Default, Serialize)]
+#[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct GetFundBalanceRequest {
     /// Timestamp of initiating the request, Unit: milliseconds
     /// This will be automatically set by the client
     #[serde(skip_serializing_if = "Option::is_none")]
     pub recv_window: Option<i64>,
+
+    /// Timestamp of initiating the request, Unit: milliseconds
+    pub timestamp: i64,
 }
 
 /// Response from the get fund balance endpoint
@@ -72,16 +75,22 @@ mod tests {
     fn test_get_fund_balance_request_serialization() {
         let request = GetFundBalanceRequest {
             recv_window: Some(5000),
+            timestamp: 1658748648396,
         };
 
         let serialized = serde_urlencoded::to_string(&request).unwrap();
         assert!(serialized.contains("recvWindow=5000"));
+        assert!(serialized.contains("timestamp=1658748648396"));
     }
 
     #[test]
-    fn test_get_fund_balance_request_default() {
-        let request = GetFundBalanceRequest::default();
+    fn test_get_fund_balance_request_minimal() {
+        let request = GetFundBalanceRequest {
+            recv_window: None,
+            timestamp: 1658748648396,
+        };
         assert!(request.recv_window.is_none());
+        assert_eq!(request.timestamp, 1658748648396);
     }
 
     #[test]
