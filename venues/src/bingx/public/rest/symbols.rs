@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::bingx::{EndpointType, RestResult, SymbolStatus};
 
+const SYMBOLS_ENDPOINT: &str = "/openApi/spot/v1/common/symbols";
+
 /// Request for the spot trading symbols endpoint
 #[derive(Debug, Clone, Serialize)]
 pub struct GetSymbolsRequest {
@@ -74,12 +76,8 @@ impl RestClient {
     /// - Endpoint: GET /openApi/spot/v1/common/symbols
     /// - For price reference, check GET /openApi/spot/v1/ticker/24hr
     pub async fn get_symbols(&self, request: &GetSymbolsRequest) -> RestResult<GetSymbolsResponse> {
-        self.send_request(
-            "/openApi/spot/v1/common/symbols",
-            Some(request),
-            EndpointType::PublicMarket,
-        )
-        .await
+        self.send_request(SYMBOLS_ENDPOINT, Some(request), EndpointType::PublicMarket)
+            .await
     }
 }
 

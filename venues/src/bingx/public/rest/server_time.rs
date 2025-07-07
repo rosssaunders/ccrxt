@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::bingx::{EndpointType, RestResult};
 
+const SERVER_TIME_ENDPOINT: &str = "/openApi/spot/v1/server/time";
+
 /// Request for the server time endpoint
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct GetServerTimeRequest {}
@@ -32,7 +34,7 @@ impl RestClient {
     /// - No parameters required
     pub async fn get_server_time(&self) -> RestResult<GetServerTimeResponse> {
         self.send_request::<GetServerTimeResponse, GetServerTimeRequest>(
-            "/openApi/spot/v1/server/time",
+            SERVER_TIME_ENDPOINT,
             None,
             EndpointType::PublicMarket,
         )

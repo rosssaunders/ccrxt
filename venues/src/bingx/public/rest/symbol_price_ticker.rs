@@ -3,14 +3,14 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::bingx::{EndpointType, RestResult};
 
+const SYMBOL_PRICE_TICKER_ENDPOINT: &str = "/openApi/spot/v1/ticker/price";
+
 /// Request for the symbol price ticker endpoint
 #[derive(Debug, Clone, Serialize)]
 pub struct GetSymbolPriceTickerRequest {
     /// Trading pair, such as: BTC_USDT (required)
     pub symbol: String,
 }
-
-
 
 /// Response from the symbol price ticker endpoint
 #[derive(Debug, Clone, Deserialize)]
@@ -45,7 +45,7 @@ impl RestClient {
         request: &GetSymbolPriceTickerRequest,
     ) -> RestResult<GetSymbolPriceTickerResponse> {
         self.send_request(
-            "/openApi/spot/v1/ticker/price",
+            SYMBOL_PRICE_TICKER_ENDPOINT,
             Some(request),
             EndpointType::PublicMarket,
         )

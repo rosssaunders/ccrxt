@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize, Serializer};
 use super::RestClient;
 use crate::bingx::{DepthType, EndpointType, RestResult};
 
+const ORDER_BOOK_AGGREGATION_ENDPOINT: &str = "/openApi/spot/v2/market/depth";
+
 /// Serialize depth type enum as string
 fn serialize_depth_type<S>(depth_type: &DepthType, serializer: S) -> Result<S::Ok, S::Error>
 where
@@ -56,7 +58,7 @@ impl RestClient {
         request: &GetOrderBookAggregationRequest,
     ) -> RestResult<GetOrderBookAggregationResponse> {
         self.send_request(
-            "/openApi/spot/v2/market/depth",
+            ORDER_BOOK_AGGREGATION_ENDPOINT,
             Some(request),
             EndpointType::PublicMarket,
         )

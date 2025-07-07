@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize, Serializer};
 use super::RestClient;
 use crate::bingx::{EndpointType, Interval, RestResult};
 
+const KLINE_ENDPOINT: &str = "/openApi/spot/v2/market/kline";
+
 /// Serialize interval enum as string
 fn serialize_interval<S>(interval: &Interval, serializer: S) -> Result<S::Ok, S::Error>
 where
@@ -35,8 +37,6 @@ pub struct GetKlineRequest {
     /// Request valid time window value, Unit: milliseconds (required)
     pub timestamp: i64,
 }
-
-
 
 /// Response from the kline/candlestick data endpoint
 #[derive(Debug, Clone, Deserialize)]
@@ -73,12 +73,8 @@ impl RestClient {
     /// - If startTime is provided and endTime is not provided, the latest candlestick chart data starting from startTime will be returned by default
     /// - If startTime is not provided and endTime is provided, the latest candlestick chart data up to endTime will be returned by default
     pub async fn get_kline(&self, request: &GetKlineRequest) -> RestResult<GetKlineResponse> {
-        self.send_request(
-            "/openApi/spot/v2/market/kline",
-            Some(request),
-            EndpointType::PublicMarket,
-        )
-        .await
+        self.send_request(KLINE_ENDPOINT, Some(request), EndpointType::PublicMarket)
+            .await
     }
 }
 

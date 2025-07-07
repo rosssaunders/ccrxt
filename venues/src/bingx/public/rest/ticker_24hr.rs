@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::bingx::{EndpointType, RestResult};
 
+const TICKER_24HR_ENDPOINT: &str = "/openApi/spot/v1/ticker/24hr";
+
 /// Request for the 24hr ticker price change statistics endpoint
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -16,8 +18,6 @@ pub struct Get24hrTickerRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub recv_window: Option<i64>,
 }
-
-
 
 /// Response from the 24hr ticker endpoint
 pub type Get24hrTickerResponse = Vec<Ticker24hr>;
@@ -80,7 +80,7 @@ impl RestClient {
         request: &Get24hrTickerRequest,
     ) -> RestResult<Get24hrTickerResponse> {
         self.send_request(
-            "/openApi/spot/v1/ticker/24hr",
+            TICKER_24HR_ENDPOINT,
             Some(request),
             EndpointType::PublicMarket,
         )

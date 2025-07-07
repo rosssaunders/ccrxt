@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::bingx::{EndpointType, RestResult};
 
+const RECENT_TRADES_ENDPOINT: &str = "/openApi/spot/v1/market/trades";
+
 /// Request for the recent trades list endpoint
 #[derive(Debug, Clone, Serialize)]
 pub struct GetRecentTradesRequest {
@@ -61,7 +63,7 @@ impl RestClient {
         request: &GetRecentTradesRequest,
     ) -> RestResult<GetRecentTradesResponse> {
         self.send_request(
-            "/openApi/spot/v1/market/trades",
+            RECENT_TRADES_ENDPOINT,
             Some(request),
             EndpointType::PublicMarket,
         )

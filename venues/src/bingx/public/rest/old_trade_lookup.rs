@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::bingx::{EndpointType, RestResult};
 
+const OLD_TRADE_LOOKUP_ENDPOINT: &str = "/openApi/market/his/v1/trade";
+
 /// Request for the old trade lookup endpoint
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -16,8 +18,6 @@ pub struct GetOldTradeRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub from_id: Option<String>,
 }
-
-
 
 /// Response from the old trade lookup endpoint
 pub type GetOldTradeResponse = Vec<OldTrade>;
@@ -60,7 +60,7 @@ impl RestClient {
         request: &GetOldTradeRequest,
     ) -> RestResult<GetOldTradeResponse> {
         self.send_request(
-            "/openApi/market/his/v1/trade",
+            OLD_TRADE_LOOKUP_ENDPOINT,
             Some(request),
             EndpointType::PublicMarket,
         )

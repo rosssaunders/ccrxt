@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize, Serializer};
 use super::RestClient;
 use crate::bingx::{EndpointType, Interval, RestResult};
 
+const HISTORICAL_KLINE_ENDPOINT: &str = "/openApi/market/his/v1/kline";
+
 /// Serialize interval enum as string
 fn serialize_interval<S>(interval: &Interval, serializer: S) -> Result<S::Ok, S::Error>
 where
@@ -30,8 +32,6 @@ pub struct GetHistoricalKlineRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i64>,
 }
-
-
 
 /// Response from the historical K-line endpoint
 #[derive(Debug, Clone, Deserialize)]
@@ -72,7 +72,7 @@ impl RestClient {
         request: &GetHistoricalKlineRequest,
     ) -> RestResult<GetHistoricalKlineResponse> {
         self.send_request(
-            "/openApi/market/his/v1/kline",
+            HISTORICAL_KLINE_ENDPOINT,
             Some(request),
             EndpointType::PublicMarket,
         )

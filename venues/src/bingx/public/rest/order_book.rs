@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::bingx::{EndpointType, RestResult};
 
+const ORDER_BOOK_ENDPOINT: &str = "/openApi/spot/v1/market/depth";
+
 /// Request for the order book endpoint
 #[derive(Debug, Clone, Serialize)]
 pub struct GetOrderBookRequest {
@@ -53,7 +55,7 @@ impl RestClient {
         request: &GetOrderBookRequest,
     ) -> RestResult<GetOrderBookResponse> {
         self.send_request(
-            "/openApi/spot/v1/market/depth",
+            ORDER_BOOK_ENDPOINT,
             Some(request),
             EndpointType::PublicMarket,
         )
