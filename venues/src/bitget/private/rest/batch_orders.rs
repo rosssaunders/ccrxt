@@ -5,6 +5,7 @@ use crate::bitget::{OrderSide, OrderType, RestResult};
 use super::super::RestClient;
 use super::place_order::{Force, STPMode};
 
+const BATCH_ORDERS_ENDPOINT: &str = "/api/v2/spot/trade/batch-orders";
 /// Single order request within a batch
 #[derive(Debug, Clone, Serialize)]
 pub struct BatchOrderItem {
@@ -133,7 +134,7 @@ impl RestClient {
         })?;
 
         self.send_signed_request(
-            "/api/v2/spot/trade/batch-orders",
+            BATCH_ORDERS_ENDPOINT,
             reqwest::Method::POST,
             None,        // No query parameters
             Some(&body), // JSON body

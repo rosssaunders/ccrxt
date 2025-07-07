@@ -12,6 +12,8 @@ use super::super::RestClient;
 use super::place_plan_order::{PlanType, TriggerType};
 use crate::bitget::{OrderSide, OrderType, RestResult};
 
+const CURRENT_PLAN_ORDER_ENDPOINT: &str = "/api/v2/spot/plan/current-plan-order";
+
 /// Request parameters for querying current plan orders
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct CurrentPlanOrderRequest {
@@ -169,7 +171,7 @@ impl RestClient {
         };
 
         self.send_signed_request(
-            "/api/v2/spot/plan/current-plan-order",
+            CURRENT_PLAN_ORDER_ENDPOINT,
             reqwest::Method::GET,
             query, // Query parameters
             None,  // No body

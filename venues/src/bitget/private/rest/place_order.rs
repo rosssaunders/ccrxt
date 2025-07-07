@@ -11,6 +11,9 @@ use serde::{Deserialize, Serialize};
 use super::super::RestClient;
 use crate::bitget::{OrderSide, OrderType, RestResult};
 
+/// Endpoint for placing spot orders
+const PLACE_ORDER_ENDPOINT: &str = "/api/v2/spot/trade/place-order";
+
 /// Order execution strategy
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
@@ -126,7 +129,7 @@ impl RestClient {
         })?;
 
         self.send_signed_request(
-            "/api/v2/spot/trade/place-order",
+            PLACE_ORDER_ENDPOINT,
             reqwest::Method::POST,
             None,        // No query parameters
             Some(&body), // JSON body

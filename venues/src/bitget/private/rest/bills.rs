@@ -1,8 +1,11 @@
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
+use super::super::RestClient;
 use crate::bitget::RestResult;
 
-use super::RestClient;
+/// Endpoint for getting account bills
+const BILLS_ENDPOINT: &str = "/api/v2/spot/account/bills";
 
 /// Business type for bills
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -148,7 +151,7 @@ impl RestClient {
         };
 
         self.send_signed_request(
-            "/api/v2/spot/account/bills",
+            BILLS_ENDPOINT,
             reqwest::Method::GET,
             query, // Query parameters
             None,  // No body

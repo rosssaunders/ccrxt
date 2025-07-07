@@ -1,9 +1,12 @@
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
-use crate::bitget::enums::*;
+use super::super::RestClient;
 use crate::bitget::{Errors, RestResult};
+use crate::bitget::enums::*;
 
-use super::RestClient;
+/// Endpoint for getting transfer records
+const TRANSFER_RECORD_ENDPOINT: &str = "/api/v2/spot/wallet/transfer-records";
 
 /// Get Transfer Record
 ///
@@ -111,7 +114,7 @@ impl RestClient {
         request: GetTransferRecordRequest,
     ) -> RestResult<GetTransferRecordResponse> {
         self.send_signed_request(
-            "/api/v2/spot/wallet/transfer-records",
+            TRANSFER_RECORD_ENDPOINT,
             reqwest::Method::GET,
             None,
             Some(

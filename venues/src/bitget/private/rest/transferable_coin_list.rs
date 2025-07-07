@@ -4,6 +4,8 @@ use crate::bitget::{Errors, RestResult};
 
 use serde::{Deserialize, Serialize};
 
+const TRANSFERABLE_COIN_LIST_ENDPOINT: &str = "/api/v2/spot/wallet/transfer-coinlist";
+
 /// Get Transferable Coin List
 ///
 /// Get transferable coin list.

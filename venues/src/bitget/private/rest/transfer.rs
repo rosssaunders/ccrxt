@@ -1,7 +1,10 @@
 use serde::{Deserialize, Serialize};
 
-use super::RestClient;
+use super::super::RestClient;
 use crate::bitget::RestResult;
+
+/// Endpoint for transferring funds
+const TRANSFER_ENDPOINT: &str = "/api/v2/spot/wallet/transfer";
 
 /// Account type for transfers
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -109,7 +112,7 @@ impl RestClient {
         })?;
 
         self.send_signed_request(
-            "/api/v2/spot/wallet/transfer",
+            TRANSFER_ENDPOINT,
             reqwest::Method::POST,
             None,        // No query parameters
             Some(&body), // JSON body

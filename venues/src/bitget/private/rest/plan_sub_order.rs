@@ -13,6 +13,7 @@ use super::current_plan_order::PlanOrderStatus;
 use super::place_plan_order::{PlanType, TriggerType};
 use crate::bitget::{OrderSide, OrderType, RestResult};
 
+const PLAN_SUB_ORDER_ENDPOINT: &str = "/api/v2/spot/plan/plan-sub-order";
 /// Request parameters for querying plan sub order details
 #[derive(Debug, Clone, Serialize)]
 pub struct PlanSubOrderRequest {
@@ -133,7 +134,7 @@ impl RestClient {
         })?;
 
         self.send_signed_request(
-            "/api/v2/spot/plan/plan-sub-order",
+            PLAN_SUB_ORDER_ENDPOINT,
             reqwest::Method::GET,
             Some(&query_params), // Query parameters
             None,                // No body

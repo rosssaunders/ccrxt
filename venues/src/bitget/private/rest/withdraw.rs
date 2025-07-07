@@ -4,6 +4,7 @@ use crate::bitget::{Errors, RestResult};
 
 use serde::{Deserialize, Serialize};
 
+const WITHDRAW_ENDPOINT: &str = "/api/v2/spot/wallet/withdrawal";
 /// Withdraw
 ///
 /// Coin withdrawals including on-chain withdrawals and internal transfers
@@ -114,7 +115,7 @@ impl RestClient {
     /// Returns a `RestResult<WithdrawResponse>` containing the withdrawal result or an error.
     pub async fn withdraw(&self, request: WithdrawRequest) -> RestResult<WithdrawResponse> {
         self.send_signed_request(
-            "/api/v2/spot/wallet/withdrawal",
+            WITHDRAW_ENDPOINT,
             reqwest::Method::POST,
             None,
             Some(

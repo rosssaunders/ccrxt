@@ -7,10 +7,14 @@
 //! Rate limit: 20 times/1s (UID)
 
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
 use super::super::RestClient;
 use super::get_order_info::{EntryPointSource, OrderSource, OrderStatus};
 use crate::bitget::{OrderSide, OrderType, RestResult};
+
+/// Endpoint for getting current orders
+const GET_CURRENT_ORDERS_ENDPOINT: &str = "/api/v2/spot/trade/unfilled-orders";
 
 /// TPSL (Take Profit/Stop Loss) order type
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
@@ -197,7 +201,7 @@ impl RestClient {
         };
 
         self.send_signed_request(
-            "/api/v2/spot/trade/unfilled-orders",
+            GET_CURRENT_ORDERS_ENDPOINT,
             reqwest::Method::GET,
             query_string.as_deref(),
             None,  // No body for GET request

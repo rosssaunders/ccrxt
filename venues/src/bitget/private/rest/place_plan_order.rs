@@ -12,6 +12,8 @@ use super::super::RestClient;
 use super::place_order::{Force, STPMode};
 use crate::bitget::{OrderSide, OrderType, RestResult};
 
+const PLACE_PLAN_ORDER_ENDPOINT: &str = "/api/v2/spot/plan/place-plan-order";
+
 /// Plan order type (trigger condition)
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
@@ -132,7 +134,7 @@ impl RestClient {
         })?;
 
         self.send_signed_request(
-            "/api/v2/spot/plan/place-plan-order",
+            PLACE_PLAN_ORDER_ENDPOINT,
             reqwest::Method::POST,
             None,        // No query parameters
             Some(&body), // JSON body

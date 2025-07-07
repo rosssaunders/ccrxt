@@ -5,6 +5,8 @@ use crate::bitget::{OrderSide, OrderType, RestResult};
 use super::super::RestClient;
 use super::place_order::{Force, STPMode};
 
+const BATCH_CANCEL_REPLACE_ORDERS_ENDPOINT: &str = "/api/v2/spot/trade/batch-cancel-replace-order";
+
 /// Single order cancel-replace request within a batch
 #[derive(Debug, Clone, Serialize)]
 pub struct BatchCancelReplaceOrderItem {
@@ -149,7 +151,7 @@ impl RestClient {
         })?;
 
         self.send_signed_request(
-            "/api/v2/spot/trade/batch-cancel-replace-order",
+            BATCH_CANCEL_REPLACE_ORDERS_ENDPOINT,
             reqwest::Method::POST,
             None,        // No query parameters
             Some(&body), // JSON body

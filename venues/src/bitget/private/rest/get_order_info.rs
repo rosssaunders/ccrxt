@@ -11,6 +11,9 @@ use serde::{Deserialize, Serialize};
 use super::super::RestClient;
 use crate::bitget::{OrderSide, OrderType, RestResult};
 
+/// Endpoint for getting order information
+const GET_ORDER_INFO_ENDPOINT: &str = "/api/v2/spot/trade/orderInfo";
+
 /// Request parameters for getting order information
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct GetOrderInfoRequest {
@@ -208,7 +211,7 @@ impl RestClient {
             .map_err(|e| crate::bitget::Errors::Error(format!("Failed to encode query: {e}")))?;
 
         self.send_signed_request(
-            "/api/v2/spot/trade/orderInfo",
+            GET_ORDER_INFO_ENDPOINT,
             reqwest::Method::GET,
             Some(&query_string),
             None,  // No body for GET request

@@ -13,6 +13,7 @@ use super::get_current_orders::TPSLType;
 use super::get_order_info::{EntryPointSource, OrderSource, OrderStatus};
 use crate::bitget::{OrderSide, OrderType, RestResult};
 
+const ORDER_HISTORY_ENDPOINT: &str = "/api/v2/spot/trade/history-orders";
 /// Request parameters for getting order history
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct GetOrderHistoryRequest {
@@ -227,7 +228,7 @@ impl RestClient {
         };
 
         self.send_signed_request(
-            "/api/v2/spot/trade/history-orders",
+            ORDER_HISTORY_ENDPOINT,
             reqwest::Method::GET,
             query_string.as_deref(),
             None,  // No body for GET request

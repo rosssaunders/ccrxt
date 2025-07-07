@@ -1,7 +1,10 @@
 use serde::{Deserialize, Serialize};
 
-use super::RestClient;
+use super::super::RestClient;
 use crate::bitget::{AssetType, RestResult};
+
+/// Endpoint for getting account assets
+const GET_ACCOUNT_ASSETS_ENDPOINT: &str = "/api/v2/spot/account/assets";
 
 /// Request parameters for getting account assets
 #[derive(Debug, Clone, Serialize, Default)]
@@ -79,7 +82,7 @@ impl RestClient {
         };
 
         self.send_signed_request(
-            "/api/v2/spot/account/assets",
+            GET_ACCOUNT_ASSETS_ENDPOINT,
             reqwest::Method::GET,
             query_string.as_deref(),
             None,  // No body for GET request

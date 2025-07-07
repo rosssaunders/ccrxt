@@ -1,7 +1,11 @@
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
-use super::RestClient;
+use super::super::RestClient;
 use crate::bitget::{Errors, RestResult};
+
+/// Endpoint for getting withdrawal records
+const WITHDRAWAL_RECORDS_ENDPOINT: &str = "/api/v2/spot/wallet/withdrawal-records";
 
 /// Get Withdrawal Records.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -125,7 +129,7 @@ impl RestClient {
         request: GetWithdrawalRecordsRequest,
     ) -> RestResult<GetWithdrawalRecordsResponse> {
         self.send_signed_request(
-            "/api/v2/spot/wallet/withdrawal-records",
+            WITHDRAWAL_RECORDS_ENDPOINT,
             reqwest::Method::GET,
             None,
             Some(

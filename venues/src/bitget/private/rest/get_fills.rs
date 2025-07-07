@@ -7,9 +7,13 @@
 //! Rate limit: 10 times/1s (UID)
 
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
 use super::super::RestClient;
 use crate::bitget::{OrderSide, OrderType, RestResult};
+
+/// Endpoint for getting trade fills
+const GET_FILLS_ENDPOINT: &str = "/api/v2/spot/trade/fills";
 
 /// Trade scope (liquidity direction)
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
@@ -175,7 +179,7 @@ impl RestClient {
         };
 
         self.send_signed_request(
-            "/api/v2/spot/trade/fills",
+            GET_FILLS_ENDPOINT,
             reqwest::Method::GET,
             query_string.as_deref(),
             None,  // No body for GET request

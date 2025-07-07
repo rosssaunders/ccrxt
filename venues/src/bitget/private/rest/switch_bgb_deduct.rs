@@ -4,6 +4,7 @@ use crate::bitget::{Errors, RestResult};
 
 use serde::{Deserialize, Serialize};
 
+const SWITCH_BGB_DEDUCT_ENDPOINT: &str = "/api/v2/spot/account/switch-deduct";
 /// Switch BGB Deduct
 ///
 /// Switch the BGB deduct status for fee optimization.
@@ -35,7 +36,7 @@ impl RestClient {
         request: SwitchBgbDeductRequest,
     ) -> RestResult<SwitchBgbDeductResponse> {
         self.send_signed_request(
-            "/api/v2/spot/account/switch-deduct",
+            SWITCH_BGB_DEDUCT_ENDPOINT,
             reqwest::Method::POST,
             None,
             Some(

@@ -13,6 +13,8 @@ use super::place_order::Force;
 use super::place_plan_order::{PlanType, TriggerType};
 use crate::bitget::{OrderSide, OrderType, RestResult};
 
+const MODIFY_PLAN_ORDER_ENDPOINT: &str = "/api/v2/spot/plan/modify-plan-order";
+
 /// Request parameters for modifying a plan order
 #[derive(Debug, Clone, Serialize)]
 pub struct ModifyPlanOrderRequest {
@@ -109,7 +111,7 @@ impl RestClient {
         })?;
 
         self.send_signed_request(
-            "/api/v2/spot/plan/modify-plan-order",
+            MODIFY_PLAN_ORDER_ENDPOINT,
             reqwest::Method::POST,
             None,        // No query parameters
             Some(&body), // JSON body

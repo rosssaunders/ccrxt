@@ -1,8 +1,10 @@
 use serde::{Deserialize, Serialize};
 
+use super::super::RestClient;
 use crate::bitget::RestResult;
 
-use super::RestClient;
+/// Endpoint for batch canceling orders
+const BATCH_CANCEL_ORDERS_ENDPOINT: &str = "/api/v2/spot/trade/batch-cancel-order";
 
 /// Single order cancellation request within a batch
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -113,7 +115,7 @@ impl RestClient {
         })?;
 
         self.send_signed_request(
-            "/api/v2/spot/trade/batch-cancel-order",
+            BATCH_CANCEL_ORDERS_ENDPOINT,
             reqwest::Method::POST,
             None,        // No query parameters
             Some(&body), // JSON body

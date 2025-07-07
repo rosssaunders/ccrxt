@@ -3,6 +3,8 @@ use crate::bitget::{Errors, RestResult};
 
 use serde::{Deserialize, Serialize};
 
+const SUBACCOUNT_ASSETS_ENDPOINT: &str = "/api/v2/spot/account/subaccount-assets";
+
 /// Get Sub-accounts Assets
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct GetSubaccountAssetsRequest {

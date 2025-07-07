@@ -4,6 +4,7 @@ use crate::bitget::RestResult;
 
 use super::super::RestClient;
 
+const CANCEL_SYMBOL_ORDER_ENDPOINT: &str = "/api/v2/spot/trade/cancel-symbol-order";
 /// Request parameters for cancelling all orders for a symbol
 #[derive(Debug, Clone, Serialize)]
 pub struct CancelSymbolOrderRequest {
@@ -81,7 +82,7 @@ impl RestClient {
         })?;
 
         self.send_signed_request(
-            "/api/v2/spot/trade/cancel-symbol-order",
+            CANCEL_SYMBOL_ORDER_ENDPOINT,
             reqwest::Method::POST,
             None,        // No query parameters
             Some(&body), // JSON body

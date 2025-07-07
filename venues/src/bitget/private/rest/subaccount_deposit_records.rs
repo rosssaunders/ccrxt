@@ -3,6 +3,7 @@ use crate::bitget::{Errors, RestResult};
 
 use serde::{Deserialize, Serialize};
 
+const SUBACCOUNT_DEPOSIT_RECORDS_ENDPOINT: &str = "/api/v2/spot/wallet/subaccount-deposit-records";
 /// Request for getting subaccount deposit records
 #[derive(Debug, Clone, Serialize)]
 pub struct GetSubaccountDepositRecordsRequest {
@@ -80,7 +81,7 @@ impl RestClient {
         request: GetSubaccountDepositRecordsRequest,
     ) -> RestResult<GetSubaccountDepositRecordsResponse> {
         self.send_signed_request(
-            "/api/v2/spot/wallet/subaccount-deposit-records",
+            SUBACCOUNT_DEPOSIT_RECORDS_ENDPOINT,
             reqwest::Method::GET,
             None,
             Some(

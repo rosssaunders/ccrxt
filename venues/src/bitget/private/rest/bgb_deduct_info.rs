@@ -1,6 +1,10 @@
 use serde::{Deserialize, Serialize};
 
-use super::RestClient;
+use super::super::RestClient;
+use crate::bitget::RestResult;
+
+/// Endpoint for getting BGB deduct information
+const BGB_DEDUCT_INFO_ENDPOINT: &str = "/api/v2/spot/account/bgb-deduct-info";
 
 /// Get BGB Deduct Info
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
@@ -37,7 +41,7 @@ impl RestClient {
         _request: GetBgbDeductInfoRequest,
     ) -> crate::bitget::RestResult<GetBgbDeductInfoResponse> {
         self.send_signed_request(
-            "/api/v2/spot/account/bgb-deduct-info",
+            BGB_DEDUCT_INFO_ENDPOINT,
             reqwest::Method::GET,
             None,
             None,

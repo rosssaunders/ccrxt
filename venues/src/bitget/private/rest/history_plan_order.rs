@@ -9,9 +9,11 @@
 use serde::{Deserialize, Serialize};
 
 use super::super::RestClient;
-use crate::bitget::{OrderSide, OrderType, RestResult};
-use super::place_plan_order::{PlanType, TriggerType};
 use super::current_plan_order::PlanOrderStatus;
+use super::place_plan_order::{PlanType, TriggerType};
+use crate::bitget::{OrderSide, OrderType, RestResult};
+
+const HISTORY_PLAN_ORDER_ENDPOINT: &str = "/api/v2/spot/plan/history-plan-order";
 
 /// Request parameters for querying historical plan orders
 #[derive(Debug, Clone, Serialize, Default)]
@@ -168,13 +170,13 @@ impl RestClient {
         };
 
         self.send_signed_request(
-            "/api/v2/spot/plan/history-plan-order",
+            HISTORY_PLAN_ORDER_ENDPOINT,
             reqwest::Method::GET,
-            query,       // Query parameters
-            None,        // No body
-            20,          // 20 requests per second rate limit
-            false,       // This is not an order placement endpoint
-            None,        // No order-specific rate limit
+            query, // Query parameters
+            None,  // No body
+            20,    // 20 requests per second rate limit
+            false, // This is not an order placement endpoint
+            None,  // No order-specific rate limit
         )
         .await
     }
@@ -222,7 +224,10 @@ mod tests {
         };
 
         assert_eq!(request.symbol, Some("ETHUSDT".to_string()));
-        assert_eq!(request.client_order_id, Some("my-plan-history-123".to_string()));
+        assert_eq!(
+            request.client_order_id,
+            Some("my-plan-history-123".to_string())
+        );
     }
 
     #[test]

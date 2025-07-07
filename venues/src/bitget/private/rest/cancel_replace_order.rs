@@ -5,6 +5,7 @@ use crate::bitget::{OrderSide, OrderType, RestResult};
 use super::super::RestClient;
 use super::place_order::{Force, STPMode};
 
+const CANCEL_REPLACE_ORDER_ENDPOINT: &str = "/api/v2/spot/trade/cancel-replace-order";
 /// Request parameters for cancelling and replacing an order
 #[derive(Debug, Clone, Serialize)]
 pub struct CancelReplaceOrderRequest {
@@ -101,7 +102,7 @@ impl RestClient {
         })?;
 
         self.send_signed_request(
-            "/api/v2/spot/trade/cancel-replace-order",
+            CANCEL_REPLACE_ORDER_ENDPOINT,
             reqwest::Method::POST,
             None,        // No query parameters
             Some(&body), // JSON body

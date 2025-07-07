@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::bitget::RestResult;
 
+const ACCOUNT_INFO_ENDPOINT: &str = "/api/v2/spot/account/info";
+
 /// Request parameters for getting account information
 /// Request parameters for getting account information
 #[derive(Debug, Clone, Serialize, Default)]
@@ -129,7 +131,7 @@ impl RestClient {
         };
 
         self.send_signed_request(
-            "/api/v2/spot/account/info",
+            ACCOUNT_INFO_ENDPOINT,
             reqwest::Method::GET,
             query, // Query parameters
             None,  // No body
