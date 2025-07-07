@@ -4,6 +4,8 @@ use std::collections::HashMap;
 use crate::bitget::{ApiError, RestResponse};
 use super::RestClient;
 
+const TICKER_ENDPOINT: &str = "/api/v2/spot/market/tickers";
+
 /// Request for getting ticker information
 #[derive(Debug, Clone, Default, Serialize)]
 pub struct GetTickerRequest {
@@ -68,7 +70,7 @@ impl RestClient {
     /// # Returns
     /// The ticker information
     pub async fn get_ticker(&self, request: &GetTickerRequest) -> Result<RestResponse<Vec<Ticker>>, ApiError> {
-        let endpoint = "/api/v2/spot/market/tickers";
+        let endpoint = TICKER_ENDPOINT;
         
         let mut params = HashMap::new();
         if let Some(symbol) = &request.symbol {

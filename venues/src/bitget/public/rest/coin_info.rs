@@ -4,6 +4,9 @@ use std::collections::HashMap;
 use super::RestClient;
 use crate::bitget::{ApiError, RestResponse};
 
+/// Endpoint for getting coin information
+const COIN_INFO_ENDPOINT: &str = "/api/v2/spot/public/coins";
+
 /// Custom deserializer for boolean fields that may come as strings
 fn deserialize_string_to_bool<'de, D>(deserializer: D) -> Result<bool, D::Error>
 where
@@ -105,7 +108,7 @@ impl RestClient {
         &self,
         request: &GetCoinInfoRequest,
     ) -> Result<RestResponse<Vec<CoinInfo>>, ApiError> {
-        let endpoint = "/api/v2/spot/public/coins";
+        let endpoint = COIN_INFO_ENDPOINT;
         
         let mut params = HashMap::new();
         if let Some(coin) = &request.coin {

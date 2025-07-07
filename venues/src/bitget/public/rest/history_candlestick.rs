@@ -4,6 +4,9 @@ use std::collections::HashMap;
 use super::RestClient;
 use crate::bitget::{ApiError, CandlestickGranularity, RestResponse};
 
+/// Endpoint for getting historical candlestick data
+const HISTORY_CANDLESTICK_ENDPOINT: &str = "/api/v2/spot/market/history-candles";
+
 /// Request for getting historical candlestick data
 #[derive(Debug, Clone, Serialize)]
 pub struct GetHistoryCandlestickRequest {
@@ -35,7 +38,7 @@ impl RestClient {
         &self,
         request: &GetHistoryCandlestickRequest,
     ) -> Result<RestResponse<Vec<HistoryCandlestick>>, ApiError> {
-        let endpoint = "/api/v2/spot/market/history-candles";
+        let endpoint = HISTORY_CANDLESTICK_ENDPOINT;
         
         let mut params = HashMap::new();
         params.insert("symbol".to_string(), request.symbol.clone());

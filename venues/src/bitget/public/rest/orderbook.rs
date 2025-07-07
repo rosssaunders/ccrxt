@@ -4,6 +4,9 @@ use std::collections::HashMap;
 use crate::bitget::{ApiError, RestResponse, DepthType};
 use super::RestClient;
 
+/// Endpoint for getting orderbook data
+const ORDERBOOK_ENDPOINT: &str = "/api/v2/spot/market/orderbook";
+
 /// Request for getting orderbook depth
 #[derive(Debug, Clone, Default, Serialize)]
 pub struct GetOrderbookRequest {
@@ -39,7 +42,7 @@ impl RestClient {
     /// # Returns
     /// The orderbook information
     pub async fn get_orderbook(&self, request: &GetOrderbookRequest) -> Result<RestResponse<Orderbook>, ApiError> {
-        let endpoint = "/api/v2/spot/market/orderbook";
+        let endpoint = ORDERBOOK_ENDPOINT;
         
         let mut params = HashMap::new();
         params.insert("symbol".to_string(), request.symbol.clone());

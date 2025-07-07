@@ -4,6 +4,9 @@ use std::collections::HashMap;
 use crate::bitget::{ApiError, RestResponse, OrderSide};
 use super::RestClient;
 
+/// Endpoint for getting market trade history
+const MARKET_TRADES_ENDPOINT: &str = "/api/v2/spot/market/fills-history";
+
 /// Request for getting market trades history
 #[derive(Debug, Clone, Default, Serialize)]
 pub struct GetMarketTradesRequest {
@@ -49,7 +52,7 @@ impl RestClient {
     /// # Returns
     /// The market trade information
     pub async fn get_market_trades(&self, request: &GetMarketTradesRequest) -> Result<RestResponse<Vec<MarketTrade>>, ApiError> {
-        let endpoint = "/api/v2/spot/market/fills-history";
+        let endpoint = MARKET_TRADES_ENDPOINT;
         
         let mut params = HashMap::new();
         params.insert("symbol".to_string(), request.symbol.clone());

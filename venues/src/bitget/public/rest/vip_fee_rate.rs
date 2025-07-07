@@ -1,7 +1,11 @@
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
 use crate::bitget::{ApiError, RestResponse};
 use super::RestClient;
+
+/// Endpoint for getting VIP fee rates
+const VIP_FEE_RATE_ENDPOINT: &str = "/api/v2/spot/market/vip-fee-rate";
 
 /// VIP fee rate information
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -41,7 +45,7 @@ impl RestClient {
     /// # }
     /// ```
     pub async fn get_vip_fee_rate(&self) -> Result<RestResponse<Vec<VipFeeRate>>, ApiError> {
-        let endpoint = "/api/v2/spot/market/vip-fee-rate";
+        let endpoint = VIP_FEE_RATE_ENDPOINT;
         self.get(endpoint, None).await
     }
 }

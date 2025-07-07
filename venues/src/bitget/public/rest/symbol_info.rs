@@ -4,6 +4,8 @@ use std::collections::HashMap;
 use crate::bitget::{ApiError, RestResponse, SymbolStatus};
 use super::RestClient;
 
+const SYMBOL_INFO_ENDPOINT: &str = "/api/v2/spot/public/symbols";
+
 /// Request for getting symbol information
 #[derive(Debug, Clone, Default, Serialize)]
 pub struct GetSymbolInfoRequest {
@@ -66,7 +68,7 @@ impl RestClient {
     /// # Returns
     /// The symbol information
     pub async fn get_symbol_info(&self, request: &GetSymbolInfoRequest) -> Result<RestResponse<Vec<SymbolInfo>>, ApiError> {
-        let endpoint = "/api/v2/spot/public/symbols";
+        let endpoint = SYMBOL_INFO_ENDPOINT;
         
         let mut params = HashMap::new();
         if let Some(symbol) = &request.symbol {

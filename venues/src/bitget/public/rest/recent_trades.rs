@@ -4,6 +4,9 @@ use std::collections::HashMap;
 use super::RestClient;
 use crate::bitget::{ApiError, OrderSide, RestResponse};
 
+/// Endpoint for getting recent trades
+const RECENT_TRADES_ENDPOINT: &str = "/api/v2/spot/market/fills";
+
 /// Request for getting recent trades
 #[derive(Debug, Clone, Default, Serialize)]
 pub struct GetRecentTradesRequest {
@@ -46,7 +49,7 @@ impl RestClient {
         &self,
         request: &GetRecentTradesRequest,
     ) -> Result<RestResponse<Vec<RecentTrade>>, ApiError> {
-        let endpoint = "/api/v2/spot/market/fills";
+        let endpoint = RECENT_TRADES_ENDPOINT;
         
         let mut params = HashMap::new();
         params.insert("symbol".to_string(), request.symbol.clone());
