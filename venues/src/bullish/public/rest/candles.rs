@@ -5,6 +5,9 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::bullish::{EndpointType, RestResult, enums::CandleInterval};
 
+/// Endpoint URL path for candles
+const ENDPOINT_PATH: &str = "/trading-api/v1/markets/{}/candles";
+
 /// Candlestick data
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -94,7 +97,7 @@ impl RestClient {
             )
         };
 
-        let endpoint = format!("/trading-api/v1/markets/{}/candles{}", symbol, query_string);
+        let endpoint = format!("{}{}", ENDPOINT_PATH.replace("{}", symbol), query_string);
 
         self.send_request::<Vec<Candle>, ()>(
             &endpoint,

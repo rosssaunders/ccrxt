@@ -5,6 +5,12 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::bullish::{EndpointType, RestResult};
 
+/// Endpoint URL path for assets
+const ENDPOINT_PATH: &str = "/v1/assets";
+
+/// Endpoint URL path for single asset (with parameter)
+const SINGLE_ASSET_ENDPOINT_PATH: &str = "/v1/assets/{}";
+
 /// Asset status
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "UPPERCASE")]
@@ -116,7 +122,7 @@ impl RestClient {
     /// List of all assets with their properties and trading parameters
     pub async fn get_assets(&self) -> RestResult<AssetsResponse> {
         self.send_request(
-            "/v1/assets",
+            ENDPOINT_PATH,
             reqwest::Method::GET,
             None::<&()>,
             EndpointType::PublicAssets,
@@ -134,8 +140,8 @@ impl RestClient {
     /// # Returns
     /// Detailed asset information including network details and trading parameters
     pub async fn get_asset(&self, symbol: &str) -> RestResult<SingleAssetResponse> {
-        let url = format!("/v1/assets/{}", symbol);
-        
+        let url = SINGLE_ASSET_ENDPOINT_PATH.replace("{}", symbol);
+
         self.send_request(
             &url,
             reqwest::Method::GET,
@@ -152,9 +158,18 @@ mod tests {
 
     #[test]
     fn test_asset_status_serialization() {
-        assert_eq!(serde_json::to_string(&AssetStatus::Active).unwrap(), "\"ACTIVE\"");
-        assert_eq!(serde_json::to_string(&AssetStatus::Inactive).unwrap(), "\"INACTIVE\"");
-        assert_eq!(serde_json::to_string(&AssetStatus::Suspended).unwrap(), "\"SUSPENDED\"");
+        assert_eq!(
+            serde_json::to_string(&AssetStatus::Active).unwrap(),
+            "\"ACTIVE\""
+        );
+        assert_eq!(
+            serde_json::to_string(&AssetStatus::Inactive).unwrap(),
+            "\"INACTIVE\""
+        );
+        assert_eq!(
+            serde_json::to_string(&AssetStatus::Suspended).unwrap(),
+            "\"SUSPENDED\""
+        );
     }
 
     #[test]
@@ -197,7 +212,7 @@ mod tests {
         assert!(asset.trading_enabled);
         assert_eq!(asset.precision, 8);
         assert!(asset.networks.is_some());
-        
+
         let networks = asset.networks.unwrap();
         assert_eq!(networks.len(), 1);
         assert_eq!(networks[0].network, "Bitcoin");

@@ -5,6 +5,9 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::bullish::{EndpointType, RestResult};
 
+/// Endpoint URL path for nonce
+const ENDPOINT_PATH: &str = "/trading-api/v1/nonce";
+
 /// Nonce range information
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -38,7 +41,7 @@ impl RestClient {
     /// ```
     pub async fn get_nonce(&self) -> RestResult<Nonce> {
         self.send_request::<Nonce, ()>(
-            "/trading-api/v1/nonce",
+            ENDPOINT_PATH,
             reqwest::Method::GET,
             None,
             EndpointType::PublicOther,

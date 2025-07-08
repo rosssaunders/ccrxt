@@ -5,6 +5,9 @@ use serde::Deserialize;
 use super::client::RestClient;
 use crate::bullish::{EndpointType, RestResult};
 
+/// Endpoint URL path for server time
+const ENDPOINT_PATH: &str = "/v1/time";
+
 /// Server time response
 #[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
@@ -26,7 +29,7 @@ impl RestClient {
     /// Current server timestamp and datetime
     pub async fn get_server_time(&self) -> RestResult<ServerTime> {
         self.send_request(
-            "/v1/time",
+            ENDPOINT_PATH,
             reqwest::Method::GET,
             None::<&()>,
             EndpointType::PublicTime,

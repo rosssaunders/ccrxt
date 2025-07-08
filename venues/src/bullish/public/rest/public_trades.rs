@@ -3,7 +3,10 @@
 use serde::Deserialize;
 
 use super::client::RestClient;
-use crate::bullish::{enums::OrderSide, EndpointType, RestResult};
+use crate::bullish::{EndpointType, RestResult, enums::OrderSide};
+
+/// Endpoint URL path for public trades
+const ENDPOINT_PATH: &str = "/v1/markets/{}/trades";
 
 /// Public trade execution
 #[derive(Debug, Clone, Deserialize)]
@@ -51,12 +54,16 @@ impl RestClient {
     ///
     /// # Returns
     /// List of recent public trades
-    pub async fn get_public_trades(&self, symbol: &str, params: Option<PublicTradesParams>) -> RestResult<Vec<PublicTrade>> {
-        let mut url = format!("/v1/markets/{}/trades", symbol);
-        
+    pub async fn get_public_trades(
+        &self,
+        symbol: &str,
+        params: Option<PublicTradesParams>,
+    ) -> RestResult<Vec<PublicTrade>> {
+        let mut url = ENDPOINT_PATH.replace("{}", symbol);
+
         if let Some(params) = params {
             let mut query_params = Vec::new();
-            
+
             if let Some(start_time) = params.start_time {
                 query_params.push(format!("startTime={}", start_time));
             }
@@ -66,13 +73,13 @@ impl RestClient {
             if let Some(limit) = params.limit {
                 query_params.push(format!("limit={}", limit));
             }
-            
+
             if !query_params.is_empty() {
                 url.push('?');
                 url.push_str(&query_params.join("&"));
             }
         }
-        
+
         self.send_request(
             &url,
             reqwest::Method::GET,

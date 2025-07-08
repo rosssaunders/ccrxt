@@ -5,6 +5,12 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::bullish::{EndpointType, RestResult};
 
+/// Endpoint URL path for markets
+const ENDPOINT_PATH: &str = "/v1/markets";
+
+/// Endpoint URL path for single market (with parameter)
+const SINGLE_MARKET_ENDPOINT_PATH: &str = "/v1/markets/{}";
+
 /// Market status
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "UPPERCASE")]
@@ -122,7 +128,7 @@ impl RestClient {
     /// List of all markets with their trading parameters and statistics
     pub async fn get_markets(&self) -> RestResult<MarketsResponse> {
         self.send_request(
-            "/v1/markets",
+            ENDPOINT_PATH,
             reqwest::Method::GET,
             None::<&()>,
             EndpointType::PublicMarkets,
@@ -140,8 +146,8 @@ impl RestClient {
     /// # Returns
     /// Detailed market information including trading parameters and 24h statistics
     pub async fn get_market(&self, symbol: &str) -> RestResult<SingleMarketResponse> {
-        let url = format!("/v1/markets/{}", symbol);
-        
+        let url = SINGLE_MARKET_ENDPOINT_PATH.replace("{}", symbol);
+
         self.send_request(
             &url,
             reqwest::Method::GET,
@@ -158,16 +164,34 @@ mod tests {
 
     #[test]
     fn test_market_type_serialization() {
-        assert_eq!(serde_json::to_string(&MarketType::Spot).unwrap(), "\"SPOT\"");
-        assert_eq!(serde_json::to_string(&MarketType::Futures).unwrap(), "\"FUTURES\"");
-        assert_eq!(serde_json::to_string(&MarketType::Perpetual).unwrap(), "\"PERPETUAL\"");
+        assert_eq!(
+            serde_json::to_string(&MarketType::Spot).unwrap(),
+            "\"SPOT\""
+        );
+        assert_eq!(
+            serde_json::to_string(&MarketType::Futures).unwrap(),
+            "\"FUTURES\""
+        );
+        assert_eq!(
+            serde_json::to_string(&MarketType::Perpetual).unwrap(),
+            "\"PERPETUAL\""
+        );
     }
 
     #[test]
     fn test_market_status_serialization() {
-        assert_eq!(serde_json::to_string(&MarketStatus::Active).unwrap(), "\"ACTIVE\"");
-        assert_eq!(serde_json::to_string(&MarketStatus::Inactive).unwrap(), "\"INACTIVE\"");
-        assert_eq!(serde_json::to_string(&MarketStatus::Suspended).unwrap(), "\"SUSPENDED\"");
+        assert_eq!(
+            serde_json::to_string(&MarketStatus::Active).unwrap(),
+            "\"ACTIVE\""
+        );
+        assert_eq!(
+            serde_json::to_string(&MarketStatus::Inactive).unwrap(),
+            "\"INACTIVE\""
+        );
+        assert_eq!(
+            serde_json::to_string(&MarketStatus::Suspended).unwrap(),
+            "\"SUSPENDED\""
+        );
     }
 
     #[test]

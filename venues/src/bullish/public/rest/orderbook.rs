@@ -5,6 +5,9 @@ use serde::Deserialize;
 use super::client::RestClient;
 use crate::bullish::{EndpointType, RestResult};
 
+/// Endpoint URL path for orderbook
+const ORDERBOOK_ENDPOINT_PATH: &str = "/v1/markets/{}/orderbook/hybrid";
+
 /// Orderbook entry (bid or ask)
 #[derive(Debug, Clone, Deserialize)]
 pub struct OrderbookEntry {
@@ -54,25 +57,29 @@ impl RestClient {
     ///
     /// # Returns
     /// Current orderbook state with bids and asks
-    pub async fn get_orderbook(&self, symbol: &str, params: Option<OrderbookParams>) -> RestResult<HybridOrderbook> {
-        let mut url = format!("/v1/markets/{}/orderbook/hybrid", symbol);
-        
+    pub async fn get_orderbook(
+        &self,
+        symbol: &str,
+        params: Option<OrderbookParams>,
+    ) -> RestResult<HybridOrderbook> {
+        let mut url = ORDERBOOK_ENDPOINT_PATH.replace("{}", symbol);
+
         if let Some(params) = params {
             let mut query_params = Vec::new();
-            
+
             if let Some(depth) = params.depth {
                 query_params.push(format!("depth={}", depth));
             }
             if let Some(aggregate) = params.aggregate {
                 query_params.push(format!("aggregate={}", aggregate));
             }
-            
+
             if !query_params.is_empty() {
                 url.push('?');
                 url.push_str(&query_params.join("&"));
             }
         }
-        
+
         self.send_request(
             &url,
             reqwest::Method::GET,

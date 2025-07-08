@@ -5,6 +5,12 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::bullish::{EndpointType, RestResult};
 
+/// Endpoint URL path for index prices
+const ENDPOINT_PATH: &str = "/trading-api/v1/index-prices";
+
+/// Endpoint URL path for single index price (with parameter)
+const SINGLE_INDEX_PRICE_ENDPOINT_PATH: &str = "/trading-api/v1/index-prices/{}";
+
 /// Index price information
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -43,7 +49,7 @@ impl RestClient {
     /// ```
     pub async fn get_index_prices(&self) -> RestResult<Vec<IndexPrice>> {
         self.send_request::<Vec<IndexPrice>, ()>(
-            "/trading-api/v1/index-prices",
+            ENDPOINT_PATH,
             reqwest::Method::GET,
             None,
             EndpointType::PublicOther,
@@ -74,7 +80,7 @@ impl RestClient {
     /// # }
     /// ```
     pub async fn get_index_price_by_symbol(&self, asset_symbol: &str) -> RestResult<IndexPrice> {
-        let endpoint = format!("/trading-api/v1/index-prices/{}", asset_symbol);
+        let endpoint = SINGLE_INDEX_PRICE_ENDPOINT_PATH.replace("{}", asset_symbol);
         self.send_request::<IndexPrice, ()>(
             &endpoint,
             reqwest::Method::GET,

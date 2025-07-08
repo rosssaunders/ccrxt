@@ -5,6 +5,9 @@ use serde::Deserialize;
 use super::client::RestClient;
 use crate::bullish::{EndpointType, RestResult};
 
+/// Endpoint URL path for ticker
+const ENDPOINT_PATH: &str = "/v1/markets/{}/tick";
+
 /// 24-hour ticker statistics
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -66,8 +69,8 @@ impl RestClient {
     /// # Returns
     /// 24-hour ticker statistics including price, volume, and order book data
     pub async fn get_ticker(&self, symbol: &str) -> RestResult<Ticker> {
-        let url = format!("/v1/markets/{}/tick", symbol);
-        
+        let url = ENDPOINT_PATH.replace("{}", symbol);
+
         self.send_request(
             &url,
             reqwest::Method::GET,
