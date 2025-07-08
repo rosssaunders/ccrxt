@@ -158,20 +158,22 @@ mod tests {
 
     #[test]
     fn test_get_all_account_balance_response_deserialization() {
-        let json = r#"[
-            {
-                "accountType": "spot",
-                "usdtBalance": "1000.50"
-            },
-            {
-                "accountType": "stdFutures",
-                "usdtBalance": "500.25"
-            },
-            {
-                "accountType": "coinMPerp",
-                "usdtBalance": "750.75"
-            }
-        ]"#;
+        let json = r#"{
+            "accounts": [
+                {
+                    "accountType": "spot",
+                    "usdtBalance": "1000.50"
+                },
+                {
+                    "accountType": "stdFutures",
+                    "usdtBalance": "500.25"
+                },
+                {
+                    "accountType": "coinMPerp",
+                    "usdtBalance": "750.75"
+                }
+            ]
+        }"#;
 
         let response: GetAllAccountBalanceResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.accounts.len(), 3);
