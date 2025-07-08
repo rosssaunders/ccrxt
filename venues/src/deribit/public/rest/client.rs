@@ -89,10 +89,10 @@ impl RestClient {
         let mut request_builder = self.client.request(method.clone(), &url);
 
         // Add parameters based on method
-        if let Some(params) = params {
-            let params_value = serde_json::to_value(params)
-                .map_err(|e| Errors::Error(format!("Failed to serialize params: {e}")))?;
-            if method == reqwest::Method::GET {
+        if method == reqwest::Method::GET {
+            if let Some(params) = params {
+                let params_value = serde_json::to_value(params)
+                    .map_err(|e| Errors::Error(format!("Failed to serialize params: {e}")))?;
                 // For GET requests, add parameters as query string
                 if let Some(params_obj) = params_value.as_object() {
                     for (key, value) in params_obj {
@@ -106,10 +106,23 @@ impl RestClient {
                         request_builder = request_builder.query(&[(key, value_str)]);
                     }
                 }
-            } else {
-                // For POST requests, add parameters as JSON body
-                request_builder = request_builder.json(&params_value);
             }
+        } else {
+            // For POST requests, wrap in JSON-RPC envelope
+            let params_value = if let Some(params) = params {
+                serde_json::to_value(params)
+                    .map_err(|e| Errors::Error(format!("Failed to serialize params: {e}")))?
+            } else {
+                serde_json::Value::Object(serde_json::Map::new())
+            };
+
+            let jsonrpc_body = serde_json::json!({
+                "method": endpoint,
+                "params": params_value,
+                "jsonrpc": "2.0",
+                "id": 1
+            });
+            request_builder = request_builder.json(&jsonrpc_body);
         }
 
         // Add required headers
