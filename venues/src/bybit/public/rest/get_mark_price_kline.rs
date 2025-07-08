@@ -5,6 +5,8 @@ use crate::bybit::{enums::*, EndpointType, RestResult};
 use super::client::RestClient;
 use super::get_kline::Kline;
 
+const MARK_PRICE_KLINE_ENDPOINT: &str = "/v5/market/mark-price-kline";
+
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct GetMarkPriceKlineRequest {
@@ -53,7 +55,7 @@ impl RestClient {
         request: GetMarkPriceKlineRequest,
     ) -> RestResult<GetMarkPriceKlineResponse> {
         self.send_public_request(
-            "/v5/market/mark-price-kline",
+            MARK_PRICE_KLINE_ENDPOINT,
             Some(&request),
             EndpointType::Market,
         )

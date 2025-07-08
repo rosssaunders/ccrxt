@@ -4,6 +4,9 @@ use crate::bybit::{EndpointType, RestResult};
 
 use super::client::RestClient;
 
+/// Endpoint URL path for server time
+const ENDPOINT_PATH: &str = "/v5/market/time";
+
 #[derive(Debug, Clone, Serialize)]
 pub struct GetServerTimeRequest;
 
@@ -35,7 +38,7 @@ impl RestClient {
     /// A result containing the server time response or an error
     pub async fn get_server_time(&self) -> RestResult<GetServerTimeResponse> {
         self.send_public_request(
-            "/v5/market/time",
+            ENDPOINT_PATH,
             None::<&GetServerTimeRequest>,
             EndpointType::Market,
         )

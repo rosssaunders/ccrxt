@@ -1,6 +1,8 @@
-use serde::{Deserialize, Serialize};
-use crate::bybit::{EndpointType, RestResult};
 use super::client::RestClient;
+use crate::bybit::{EndpointType, RestResult};
+use serde::{Deserialize, Serialize};
+
+const BORROWABLE_COINS_ENDPOINT: &str = "/v5/crypto-loan/loanable-data";
 
 #[derive(Debug, Clone, Serialize)]
 pub struct GetBorrowableCoinsRequest;
@@ -36,6 +38,11 @@ pub struct GetBorrowableCoinsResponse {
 
 impl RestClient {
     pub async fn get_borrowable_coins(&self) -> RestResult<GetBorrowableCoinsResponse> {
-        self.send_public_request("/v5/crypto-loan/loanable-data", None::<&GetBorrowableCoinsRequest>, EndpointType::Market).await
+        self.send_public_request(
+            BORROWABLE_COINS_ENDPOINT,
+            None::<&GetBorrowableCoinsRequest>,
+            EndpointType::Market,
+        )
+        .await
     }
 }

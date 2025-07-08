@@ -4,6 +4,8 @@ use crate::bybit::{enums::*, EndpointType, RestResult};
 
 use super::client::RestClient;
 
+const INSTRUMENTS_INFO_ENDPOINT: &str = "/v5/market/instruments-info";
+
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct GetInstrumentsInfoRequest {
@@ -105,7 +107,7 @@ impl RestClient {
         request: GetInstrumentsInfoRequest,
     ) -> RestResult<GetInstrumentsInfoResponse> {
         self.send_public_request(
-            "/v5/market/instruments-info",
+            INSTRUMENTS_INFO_ENDPOINT,
             Some(&request),
             EndpointType::Market,
         )

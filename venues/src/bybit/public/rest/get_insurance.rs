@@ -2,6 +2,8 @@ use serde::{Deserialize, Serialize};
 use crate::bybit::{EndpointType, RestResult};
 use super::client::RestClient;
 
+const INSURANCE_ENDPOINT: &str = "/v5/market/insurance";
+
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct GetInsuranceRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -36,7 +38,7 @@ pub struct GetInsuranceResponse {
 
 impl RestClient {
     pub async fn get_insurance(&self, request: Option<GetInsuranceRequest>) -> RestResult<GetInsuranceResponse> {
-        self.send_public_request("/v5/market/insurance", request.as_ref(), EndpointType::Market).await
+        self.send_public_request(INSURANCE_ENDPOINT, request.as_ref(), EndpointType::Market).await
     }
 }
 

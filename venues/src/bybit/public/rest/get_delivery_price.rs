@@ -2,6 +2,8 @@ use serde::{Deserialize, Serialize};
 use crate::bybit::{enums::*, EndpointType, RestResult};
 use super::client::RestClient;
 
+const DELIVERY_PRICE_ENDPOINT: &str = "/v5/market/delivery-price";
+
 #[derive(Debug, Clone, Serialize)]
 pub struct GetDeliveryPriceRequest {
     pub category: Category,
@@ -46,7 +48,7 @@ pub struct GetDeliveryPriceResponse {
 
 impl RestClient {
     pub async fn get_delivery_price(&self, request: GetDeliveryPriceRequest) -> RestResult<GetDeliveryPriceResponse> {
-        self.send_public_request("/v5/market/delivery-price", Some(&request), EndpointType::Market).await
+        self.send_public_request(DELIVERY_PRICE_ENDPOINT, Some(&request), EndpointType::Market).await
     }
 }
 

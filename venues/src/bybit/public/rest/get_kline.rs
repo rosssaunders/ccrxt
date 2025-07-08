@@ -1,8 +1,11 @@
 use serde::{Deserialize, Serialize};
 
-use crate::bybit::{enums::*, EndpointType, RestResult};
+use crate::bybit::{EndpointType, RestResult, enums::*};
 
 use super::client::RestClient;
+
+/// Endpoint URL path for kline data
+const ENDPOINT_PATH: &str = "/v5/market/kline";
 
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -37,7 +40,9 @@ impl<'de> Deserialize<'de> for Kline {
     {
         let arr: Vec<String> = Vec::deserialize(deserializer)?;
         if arr.len() != 7 {
-            return Err(serde::de::Error::custom("Expected 7 elements in kline array"));
+            return Err(serde::de::Error::custom(
+                "Expected 7 elements in kline array",
+            ));
         }
         #[allow(clippy::indexing_slicing)]
         Ok(Kline {
@@ -82,16 +87,10 @@ impl RestClient {
     /// # Returns
     /// A result containing the kline response or an error
     pub async fn get_kline(&self, request: GetKlineRequest) -> RestResult<GetKlineResponse> {
-        self.send_public_request(
-            "/v5/market/kline",
-            Some(&request),
-            EndpointType::Market,
-        )
-        .await
+        self.send_public_request(ENDPOINT_PATH, Some(&request), EndpointType::Market)
+            .await
     }
 }
-
-
 
 #[cfg(test)]
 mod tests {

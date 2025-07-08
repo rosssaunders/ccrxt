@@ -1,9 +1,10 @@
-use serde::{Deserialize, Serialize};
-
 use crate::bybit::{enums::*, EndpointType, RestResult};
+use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
 use super::get_kline::Kline;
+
+const PREMIUM_INDEX_PRICE_KLINE_ENDPOINT: &str = "/v5/market/premium-index-price-kline";
 
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -53,15 +54,13 @@ impl RestClient {
         request: GetPremiumIndexPriceKlineRequest,
     ) -> RestResult<GetPremiumIndexPriceKlineResponse> {
         self.send_public_request(
-            "/v5/market/premium-index-price-kline",
+            PREMIUM_INDEX_PRICE_KLINE_ENDPOINT,
             Some(&request),
             EndpointType::Market,
         )
         .await
     }
 }
-
-
 
 #[cfg(test)]
 mod tests {

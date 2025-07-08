@@ -4,6 +4,8 @@ use crate::bybit::{enums::*, EndpointType, RestResult};
 
 use super::client::RestClient;
 
+const RECENT_TRADES_ENDPOINT: &str = "/v5/market/recent-trade";
+
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct GetRecentTradesRequest {
@@ -72,7 +74,7 @@ impl RestClient {
         request: GetRecentTradesRequest,
     ) -> RestResult<GetRecentTradesResponse> {
         self.send_public_request(
-            "/v5/market/recent-trade",
+            RECENT_TRADES_ENDPOINT,
             Some(&request),
             EndpointType::Market,
         )

@@ -1,8 +1,11 @@
 use serde::{Deserialize, Serialize};
 
-use crate::bybit::{enums::*, EndpointType, RestResult};
+use crate::bybit::{EndpointType, RestResult, enums::*};
 
 use super::client::RestClient;
+
+/// Endpoint URL path for orderbook
+const ENDPOINT_PATH: &str = "/v5/market/orderbook";
 
 #[derive(Debug, Clone, Serialize)]
 pub struct GetOrderbookRequest {
@@ -25,7 +28,9 @@ impl<'de> Deserialize<'de> for OrderbookLevel {
     {
         let arr: Vec<String> = Vec::deserialize(deserializer)?;
         if arr.len() != 2 {
-            return Err(serde::de::Error::custom("Expected 2 elements in orderbook level array"));
+            return Err(serde::de::Error::custom(
+                "Expected 2 elements in orderbook level array",
+            ));
         }
         #[allow(clippy::indexing_slicing)]
         Ok(OrderbookLevel {
@@ -83,16 +88,10 @@ impl RestClient {
         &self,
         request: GetOrderbookRequest,
     ) -> RestResult<GetOrderbookResponse> {
-        self.send_public_request(
-            "/v5/market/orderbook",
-            Some(&request),
-            EndpointType::Market,
-        )
-        .await
+        self.send_public_request(ENDPOINT_PATH, Some(&request), EndpointType::Market)
+            .await
     }
 }
-
-
 
 #[cfg(test)]
 mod tests {

@@ -2,6 +2,8 @@ use serde::{Deserialize, Serialize};
 use crate::bybit::{EndpointType, RestResult};
 use super::client::RestClient;
 
+const INS_PRODUCT_INFO_ENDPOINT: &str = "/v5/ins-loan/product-infos";
+
 #[derive(Debug, Clone, Serialize)]
 pub struct GetInsProductInfoRequest;
 
@@ -38,6 +40,6 @@ pub struct GetInsProductInfoResponse {
 
 impl RestClient {
     pub async fn get_ins_product_info(&self) -> RestResult<GetInsProductInfoResponse> {
-        self.send_public_request("/v5/ins-loan/product-infos", None::<&GetInsProductInfoRequest>, EndpointType::Market).await
+        self.send_public_request(INS_PRODUCT_INFO_ENDPOINT, None::<&GetInsProductInfoRequest>, EndpointType::Market).await
     }
 }

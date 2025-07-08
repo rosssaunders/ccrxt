@@ -4,6 +4,8 @@ use crate::bybit::{enums::*, EndpointType, RestResult};
 
 use super::client::RestClient;
 
+const FUNDING_HISTORY_ENDPOINT: &str = "/v5/market/funding/history";
+
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct GetFundingHistoryRequest {
@@ -58,7 +60,7 @@ impl RestClient {
         request: GetFundingHistoryRequest,
     ) -> RestResult<GetFundingHistoryResponse> {
         self.send_public_request(
-            "/v5/market/funding/history",
+            FUNDING_HISTORY_ENDPOINT,
             Some(&request),
             EndpointType::Market,
         )

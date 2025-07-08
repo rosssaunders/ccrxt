@@ -1,8 +1,11 @@
 use serde::{Deserialize, Serialize};
 
-use crate::bybit::{enums::*, EndpointType, RestResult};
+use crate::bybit::{EndpointType, RestResult, enums::*};
 
 use super::client::RestClient;
+
+/// Endpoint URL path for tickers
+const ENDPOINT_PATH: &str = "/v5/market/tickers";
 
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -104,16 +107,10 @@ impl RestClient {
     /// # Returns
     /// A result containing the tickers response or an error
     pub async fn get_tickers(&self, request: GetTickersRequest) -> RestResult<GetTickersResponse> {
-        self.send_public_request(
-            "/v5/market/tickers",
-            Some(&request),
-            EndpointType::Market,
-        )
-        .await
+        self.send_public_request(ENDPOINT_PATH, Some(&request), EndpointType::Market)
+            .await
     }
 }
-
-
 
 #[cfg(test)]
 mod tests {
