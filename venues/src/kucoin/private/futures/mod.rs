@@ -1,16 +1,25 @@
-mod orders;
-mod positions;
-mod rest_client;
+mod add_margin;
+mod auto_deposit_margin;
+mod cancel_all_orders;
+mod cancel_order;
+mod change_margin_mode;
+mod client;
+mod get_all_positions;
+mod get_margin_mode;
+mod get_order;
+mod get_orders;
+mod get_position;
+mod place_order;
 
-pub use orders::{
-    CancelAllOrdersRequest, CancelAllOrdersResponse, CancelOrderRequest, CancelOrderResponse,
-    GetOrderRequest, GetOrdersRequest, OrderDetails, PaginatedOrdersResponse, PlaceOrderRequest,
-    PlaceOrderResponse,
-};
-pub use positions::{
-    AddMarginRequest, AddMarginResponse, AutoDepositMarginRequest, AutoDepositMarginResponse,
-    ChangeMarginModeRequest, ChangeMarginModeResponse, GetAllPositionsRequest,
-    GetAllPositionsResponse, GetMarginModeRequest, GetPositionRequest, MarginModeResponse,
-    Position,
-};
-pub use rest_client::RestClient;
+pub use add_margin::*;
+pub use auto_deposit_margin::*;
+pub use cancel_all_orders::*;
+pub use cancel_order::*;
+pub use change_margin_mode::*;
+pub use client::RestClient;
+pub use get_all_positions::*;
+pub use get_margin_mode::*;
+pub use get_order::*;
+pub use get_orders::*;
+pub use get_position::*;
+pub use place_order::*;
