@@ -45,8 +45,8 @@ url = "2.4"
 futures = "0.3"
 async-trait = "0.1"
 parking_lot = "0.12.4"
-rust_decimal = { version = "1.34", features = ["serde"] }
-clap = { version = "4.5.38", features = ["derive"] }
+rust_decimal = { version = "1.37.2", features = ["serde"] }
+clap = { version = "4.5.40", features = ["derive"] }
 
 # Logging
 tracing = "0.1"
@@ -61,7 +61,6 @@ crossterm = "0.29.0"
 name = "ccrxt"
 version = "0.1.0"
 edition = "2024"
-build = "build.rs"
 
 [dependencies]
 tokio = { workspace = true }
@@ -73,6 +72,9 @@ chrono = { workspace = true }
 [build-dependencies]
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
+syn = { version = "2.0.104", features = ["full", "parsing", "extra-traits"] }
+quote = "1.0"
+proc-macro2 = "1.0.95"
 
 [workspace.lints.rust]
 unsafe_code = "forbid"
