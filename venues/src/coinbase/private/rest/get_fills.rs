@@ -12,6 +12,8 @@ use crate::coinbase::{
 
 use super::{RestClient, get_account_balances::PaginationInfo};
 
+const FILLS_ENDPOINT: &str = "fills";
+
 /// Request to get fills
 #[derive(Debug, Clone, Serialize)]
 pub struct GetFillsRequest {
@@ -131,7 +133,7 @@ impl RestClient {
     ) -> RestResult<(GetFillsResponse, Option<PaginationInfo>)> {
         // Use custom endpoint type for fills due to different rate limits
         self.send_request_with_pagination(
-            "fills",
+            FILLS_ENDPOINT,
             reqwest::Method::GET,
             Some(request),
             EndpointType::PrivateFills,

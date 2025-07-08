@@ -12,6 +12,8 @@ use crate::coinbase::{
 
 use super::RestClient;
 
+const ORDERS_ENDPOINT: &str = "orders";
+
 /// Request to create a new order
 #[derive(Debug, Clone, Serialize)]
 pub struct CreateOrderRequest {
@@ -202,7 +204,7 @@ impl RestClient {
         request: &CreateOrderRequest,
     ) -> RestResult<CreateOrderResponse> {
         self.send_request(
-            "orders",
+            ORDERS_ENDPOINT,
             reqwest::Method::POST,
             Some(request),
             EndpointType::Private,

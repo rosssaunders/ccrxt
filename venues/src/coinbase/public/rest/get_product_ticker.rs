@@ -9,6 +9,9 @@ use crate::coinbase::RestResult;
 
 use super::RestClient;
 
+/// Endpoint URL path for getting product ticker
+const ENDPOINT_PATH: &str = "products/{}/ticker";
+
 /// Request to get product ticker
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct GetProductTickerRequest {}
@@ -67,7 +70,7 @@ impl RestClient {
         product_id: &str,
         request: &GetProductTickerRequest,
     ) -> RestResult<GetProductTickerResponse> {
-        let endpoint = format!("products/{}/ticker", product_id);
+        let endpoint = ENDPOINT_PATH.replace("{}", product_id);
         self.send_request(&endpoint, reqwest::Method::GET, Some(request))
             .await
     }

@@ -9,6 +9,9 @@ use crate::coinbase::{RestResult, enums::OrderSide};
 
 use super::RestClient;
 
+/// Endpoint URL path for getting product trades
+const ENDPOINT_PATH: &str = "products/{}/trades";
+
 /// Request to get product trades
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct GetProductTradesRequest {
@@ -77,7 +80,7 @@ impl RestClient {
         product_id: &str,
         request: &GetProductTradesRequest,
     ) -> RestResult<(GetProductTradesResponse, Option<PaginationInfo>)> {
-        let endpoint = format!("products/{}/trades", product_id);
+        let endpoint = ENDPOINT_PATH.replace("{}", product_id);
         let (data, headers) = self
             .send_request_with_headers(&endpoint, reqwest::Method::GET, Some(request))
             .await?;

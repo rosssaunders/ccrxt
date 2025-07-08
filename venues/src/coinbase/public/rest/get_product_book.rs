@@ -9,6 +9,9 @@ use crate::coinbase::RestResult;
 
 use super::RestClient;
 
+/// Endpoint URL path for getting product book
+const ENDPOINT_PATH: &str = "products/{}/book";
+
 /// Request to get product order book
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct GetProductBookRequest {
@@ -112,7 +115,7 @@ impl RestClient {
         product_id: &str,
         request: &GetProductBookRequest,
     ) -> RestResult<GetProductBookResponse> {
-        let endpoint = format!("products/{}/book", product_id);
+        let endpoint = ENDPOINT_PATH.replace("{}", product_id);
         self.send_request(&endpoint, reqwest::Method::GET, Some(request))
             .await
     }

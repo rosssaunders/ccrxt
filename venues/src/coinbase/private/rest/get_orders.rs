@@ -12,6 +12,8 @@ use crate::coinbase::{
 
 use super::{RestClient, get_account_balances::PaginationInfo};
 
+const ORDERS_ENDPOINT: &str = "orders";
+
 /// Request to get all orders
 #[derive(Debug, Clone, Serialize)]
 pub struct GetOrdersRequest {
@@ -197,7 +199,7 @@ impl RestClient {
         request: &GetOrdersRequest,
     ) -> RestResult<(GetOrdersResponse, Option<PaginationInfo>)> {
         self.send_request_with_pagination(
-            "orders",
+            ORDERS_ENDPOINT,
             reqwest::Method::GET,
             Some(request),
             EndpointType::Private,
@@ -252,8 +254,6 @@ impl Default for GetOrdersRequest {
         }
     }
 }
-
-
 
 #[cfg(test)]
 mod tests {

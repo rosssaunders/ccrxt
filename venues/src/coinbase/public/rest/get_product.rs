@@ -8,6 +8,9 @@ use crate::coinbase::RestResult;
 
 use super::{Product, RestClient};
 
+/// Endpoint URL path for getting a single product
+const ENDPOINT_PATH: &str = "products/{}";
+
 /// Request to get a single product
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct GetProductRequest {}
@@ -31,7 +34,7 @@ impl RestClient {
         product_id: &str,
         request: &GetProductRequest,
     ) -> RestResult<GetProductResponse> {
-        let endpoint = format!("products/{}", product_id);
+        let endpoint = ENDPOINT_PATH.replace("{}", product_id);
         self.send_request(&endpoint, reqwest::Method::GET, Some(request))
             .await
     }

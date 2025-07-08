@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::coinbase::{EndpointType, RestResult};
 
+const ACCOUNTS_ENDPOINT: &str = "accounts";
+
 /// Account balance information from Coinbase Exchange
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AccountBalance {
@@ -75,7 +77,7 @@ impl RestClient {
     ) -> RestResult<GetAccountBalancesResponse> {
         let (accounts, pagination) = self
             .send_request_with_pagination(
-                "accounts",
+                ACCOUNTS_ENDPOINT,
                 reqwest::Method::GET,
                 Some(request),
                 EndpointType::Private,

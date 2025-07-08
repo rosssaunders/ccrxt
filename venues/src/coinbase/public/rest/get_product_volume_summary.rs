@@ -8,6 +8,8 @@ use crate::coinbase::RestResult;
 
 use super::RestClient;
 
+const PRODUCT_VOLUME_SUMMARY_ENDPOINT: &str = "products/volume-summary";
+
 /// Request to get product volume summary
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct GetProductVolumeSummaryRequest {}
@@ -82,7 +84,7 @@ impl RestClient {
         request: &GetProductVolumeSummaryRequest,
     ) -> RestResult<GetProductVolumeSummaryResponse> {
         self.send_request(
-            "products/volume-summary",
+            PRODUCT_VOLUME_SUMMARY_ENDPOINT,
             reqwest::Method::GET,
             Some(request),
         )

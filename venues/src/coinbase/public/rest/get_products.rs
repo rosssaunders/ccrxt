@@ -8,6 +8,8 @@ use crate::coinbase::RestResult;
 
 use super::RestClient;
 
+const PRODUCTS_ENDPOINT: &str = "products";
+
 /// Request to get all products
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct GetProductsRequest {
@@ -101,7 +103,7 @@ impl RestClient {
         &self,
         request: &GetProductsRequest,
     ) -> RestResult<GetProductsResponse> {
-        self.send_request("products", reqwest::Method::GET, Some(request))
+        self.send_request(PRODUCTS_ENDPOINT, reqwest::Method::GET, Some(request))
             .await
     }
 }

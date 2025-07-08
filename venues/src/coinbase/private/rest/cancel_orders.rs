@@ -8,6 +8,8 @@ use crate::coinbase::{EndpointType, RestResult};
 
 use super::RestClient;
 
+const ORDERS_ENDPOINT: &str = "orders";
+
 /// Request to cancel all orders
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct CancelAllOrdersRequest {
@@ -64,7 +66,7 @@ impl RestClient {
         request: &CancelAllOrdersRequest,
     ) -> RestResult<CancelAllOrdersResponse> {
         self.send_request(
-            "orders",
+            ORDERS_ENDPOINT,
             reqwest::Method::DELETE,
             Some(request),
             EndpointType::Private,
@@ -101,8 +103,6 @@ impl RestClient {
         .await
     }
 }
-
-
 
 #[cfg(test)]
 mod tests {

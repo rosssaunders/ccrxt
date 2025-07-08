@@ -8,6 +8,9 @@ use crate::coinbase::RestResult;
 
 use super::RestClient;
 
+/// Endpoint URL path for getting product candles
+const ENDPOINT_PATH: &str = "products/{}/candles";
+
 /// Request to get product candles
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct GetProductCandlesRequest {
@@ -37,8 +40,6 @@ pub struct Candle(
     pub String,
 );
 
-
-
 /// Response from getting product candles
 pub type GetProductCandlesResponse = Vec<Candle>;
 
@@ -59,7 +60,7 @@ impl RestClient {
         product_id: &str,
         request: &GetProductCandlesRequest,
     ) -> RestResult<GetProductCandlesResponse> {
-        let endpoint = format!("products/{}/candles", product_id);
+        let endpoint = ENDPOINT_PATH.replace("{}", product_id);
         self.send_request(&endpoint, reqwest::Method::GET, Some(request))
             .await
     }
