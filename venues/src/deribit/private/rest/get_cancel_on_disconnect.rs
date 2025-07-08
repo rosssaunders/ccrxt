@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 pub use super::enable_cancel_on_disconnect::CancelOnDisconnectScope;
-use crate::deribit::{EndpointType, RestResult};
+use crate::deribit::{EndpointType, JsonRpcResult, RestResult};
 
 /// REST API endpoint constant
 const GET_CANCEL_ON_DISCONNECT_ENDPOINT: &str = "private/get_cancel_on_disconnect";
@@ -25,15 +25,7 @@ pub struct CancelOnDisconnectResult {
 }
 
 /// Response for get cancel on disconnect endpoint
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetCancelOnDisconnectResponse {
-    /// The id that was sent in the request
-    pub id: i64,
-    /// The JSON-RPC version (2.0)
-    pub jsonrpc: String,
-    /// Cancel On Disconnect configuration result
-    pub result: CancelOnDisconnectResult,
-}
+pub type GetCancelOnDisconnectResponse = JsonRpcResult<CancelOnDisconnectResult>;
 
 impl RestClient {
     /// Read current Cancel On Disconnect configuration for the account

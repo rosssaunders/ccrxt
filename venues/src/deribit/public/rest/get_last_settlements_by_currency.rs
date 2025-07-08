@@ -2,12 +2,11 @@
 //!
 //! Retrieves the most recent settlements for a given currency and instrument kind.
 
-use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 use crate::deribit::{
-    EndpointType, RestResult,
+    EndpointType, JsonRpcResult, RestResult,
     enums::{Currency, InstrumentKind},
 };
 
@@ -36,9 +35,9 @@ pub struct SettlementEntry {
     #[serde(rename = "instrument_name")]
     pub instrument_name: String,
 
-    /// Settlement price.
-    #[serde(rename = "settlement_price")]
-    pub settlement_price: f64,
+    /// Settlement price (optional, as some settlements may not include it).
+    #[serde(rename = "settlement_price", default)]
+    pub settlement_price: Option<f64>,
 
     /// Timestamp in milliseconds since epoch.
     #[serde(rename = "timestamp")]
@@ -53,21 +52,8 @@ pub struct GetLastSettlementsByCurrencyResult {
     pub settlements: Vec<SettlementEntry>,
 }
 
-/// Response for the get_last_settlements_by_currency endpoint.
-#[derive(Debug, Clone, Deserialize)]
-pub struct GetLastSettlementsByCurrencyResponse {
-    /// The id that was sent in the request.
-    #[serde(rename = "id")]
-    pub id: u64,
-
-    /// The JSON-RPC version (2.0).
-    #[serde(rename = "jsonrpc")]
-    pub jsonrpc: String,
-
-    /// The result object containing the settlements.
-    #[serde(rename = "result")]
-    pub result: GetLastSettlementsByCurrencyResult,
-}
+/// Response for public/get_last_settlements_by_currency endpoint following Deribit JSON-RPC 2.0 format.
+pub type GetLastSettlementsByCurrencyResponse = JsonRpcResult<GetLastSettlementsByCurrencyResult>;
 
 impl RestClient {
     /// Calls the /public/get_last_settlements_by_currency endpoint.
@@ -81,7 +67,6 @@ impl RestClient {
     ) -> RestResult<GetLastSettlementsByCurrencyResponse> {
         self.send_request(
             LAST_SETTLEMENTS_BY_CURRENCY_ENDPOINT,
-            Method::POST,
             Some(&params),
             EndpointType::NonMatchingEngine,
         )
@@ -129,7 +114,7 @@ mod tests {
         assert_eq!(resp.jsonrpc, "2.0");
         assert_eq!(resp.result.settlements.len(), 1);
         assert_eq!(resp.result.settlements[0].instrument_name, "BTC-PERPETUAL");
-        assert!((resp.result.settlements[0].settlement_price - 65000.0).abs() < 1e-8);
+        assert!((resp.result.settlements[0].settlement_price.unwrap() - 65000.0).abs() < 1e-8);
         assert_eq!(resp.result.settlements[0].timestamp, 1680310800000);
     }
 }

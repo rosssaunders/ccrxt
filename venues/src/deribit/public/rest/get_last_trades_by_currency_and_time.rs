@@ -2,12 +2,11 @@
 //!
 //! Retrieves the most recent trades for a given currency and instrument kind, filtered by start and end timestamps.
 
-use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 use crate::deribit::{
-    EndpointType, RestResult,
+    EndpointType, JsonRpcResult, RestResult,
     enums::{Currency, InstrumentKind, Liquidity, Sorting, TickDirection, TradeOrderType},
 };
 
@@ -87,20 +86,8 @@ pub struct GetLastTradesByCurrencyAndTimeResult {
 }
 
 /// Response for the get_last_trades_by_currency_and_time endpoint.
-#[derive(Debug, Clone, Deserialize)]
-pub struct GetLastTradesByCurrencyAndTimeResponse {
-    /// The id that was sent in the request.
-    #[serde(rename = "id")]
-    pub id: u64,
-
-    /// The JSON-RPC version (2.0).
-    #[serde(rename = "jsonrpc")]
-    pub jsonrpc: String,
-
-    /// The result object containing the trades.
-    #[serde(rename = "result")]
-    pub result: GetLastTradesByCurrencyAndTimeResult,
-}
+pub type GetLastTradesByCurrencyAndTimeResponse =
+    JsonRpcResult<GetLastTradesByCurrencyAndTimeResult>;
 
 impl RestClient {
     /// Calls the /public/get_last_trades_by_currency_and_time endpoint.
@@ -114,7 +101,6 @@ impl RestClient {
     ) -> RestResult<GetLastTradesByCurrencyAndTimeResponse> {
         self.send_request(
             LAST_TRADES_BY_CURRENCY_AND_TIME_ENDPOINT,
-            Method::POST,
             Some(&params),
             EndpointType::NonMatchingEngine,
         )

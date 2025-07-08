@@ -6,7 +6,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::deribit::{ComboState, Currency, EndpointType, RestResult};
+use crate::deribit::{ComboState, Currency, EndpointType, JsonRpcResult, RestResult};
 
 const COMBO_IDS_ENDPOINT: &str = "public/get_combo_ids";
 
@@ -25,17 +25,7 @@ pub struct GetComboIdsRequest {
 }
 
 /// Response for public/get_combo_ids endpoint following Deribit JSON-RPC 2.0 format.
-#[derive(Debug, Clone, Deserialize)]
-pub struct GetComboIdsResponse {
-    /// The id that was sent in the request
-    pub id: i64,
-
-    /// The JSON-RPC version (2.0)
-    pub jsonrpc: String,
-
-    /// Array of unique combo identifiers
-    pub result: Vec<String>,
-}
+pub type GetComboIdsResponse = JsonRpcResult<Vec<String>>;
 
 impl RestClient {
     /// Calls the public/get_combo_ids endpoint.
@@ -56,7 +46,6 @@ impl RestClient {
     ) -> RestResult<GetComboIdsResponse> {
         self.send_request(
             COMBO_IDS_ENDPOINT,
-            reqwest::Method::GET,
             Some(&params),
             EndpointType::NonMatchingEngine,
         )

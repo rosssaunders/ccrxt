@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 // Reuse the result structure from add_block_rfq_quote since the API returns the same quote object
 use super::RestClient;
 use super::add_block_rfq_quote::AddBlockRfqQuoteResult;
-use crate::deribit::{EndpointType, RestResult};
+use crate::deribit::{EndpointType, JsonRpcResult, RestResult};
 
 /// REST API endpoint constant
 const CANCEL_BLOCK_RFQ_QUOTE_ENDPOINT: &str = "private/cancel_block_rfq_quote";
@@ -23,15 +23,7 @@ pub struct CancelBlockRfqQuoteRequest {
 }
 
 /// Response for cancel block RFQ quote endpoint
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct CancelBlockRfqQuoteResponse {
-    /// The id that was sent in the request
-    pub id: i64,
-    /// The JSON-RPC version (2.0)
-    pub jsonrpc: String,
-    /// Result containing the cancelled Block RFQ quote details
-    pub result: AddBlockRfqQuoteResult,
-}
+pub type CancelBlockRfqQuoteResponse = JsonRpcResult<AddBlockRfqQuoteResult>;
 
 impl RestClient {
     /// Cancel a Block RFQ quote

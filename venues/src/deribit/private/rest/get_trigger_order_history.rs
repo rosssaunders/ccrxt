@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 use crate::deribit::{
-    Currency, EndpointType, OrderDirection, RestResult, TradeOrderType, TriggerType,
+    Currency, EndpointType, JsonRpcResult, OrderDirection, RestResult, TradeOrderType, TriggerType,
 };
 
 /// REST API endpoint constant
@@ -92,15 +92,7 @@ pub struct GetTriggerOrderHistoryResult {
 }
 
 /// Response for get trigger order history endpoint
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetTriggerOrderHistoryResponse {
-    /// The id that was sent in the request
-    pub id: i64,
-    /// The JSON-RPC version (2.0)
-    pub jsonrpc: String,
-    /// Result data containing trigger order history
-    pub result: GetTriggerOrderHistoryResult,
-}
+pub type GetTriggerOrderHistoryResponse = JsonRpcResult<GetTriggerOrderHistoryResult>;
 
 impl RestClient {
     /// Retrieves detailed log of the user's trigger orders

@@ -7,7 +7,7 @@
 
 use serde::{Deserialize, Serialize};
 
-use crate::deribit::{EndpointType, RestResult};
+use crate::deribit::{EndpointType, JsonRpcResult, RestResult};
 
 /// REST API endpoint constant
 const GET_MARGINS_ENDPOINT: &str = "private/get_margins";
@@ -49,20 +49,7 @@ pub struct GetMarginsResult {
 }
 
 /// JSON-RPC standard response structure for `/private/get_margins`.
-#[derive(Debug, Clone, Deserialize, Serialize)]
-pub struct GetMarginsResponse {
-    /// The JSON-RPC version (always "2.0").
-    #[serde(rename = "jsonrpc")]
-    pub jsonrpc: String,
-
-    /// The numeric id returned to match requests.
-    #[serde(rename = "id")]
-    pub id: u64,
-
-    /// Margin calculation result for the given parameters.
-    #[serde(rename = "result")]
-    pub result: GetMarginsResult,
-}
+pub type GetMarginsResponse = JsonRpcResult<GetMarginsResult>;
 
 /// Implementation for calling the endpoint from the REST client.
 impl super::client::RestClient {

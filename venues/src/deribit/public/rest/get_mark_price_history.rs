@@ -2,11 +2,10 @@
 //!
 //! Retrieves historical mark prices for a given instrument.
 
-use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::deribit::{EndpointType, RestResult};
+use crate::deribit::{EndpointType, JsonRpcResult, RestResult};
 
 const MARK_PRICE_HISTORY_ENDPOINT: &str = "public/get_mark_price_history";
 
@@ -50,21 +49,8 @@ pub struct GetMarkPriceHistoryResult {
     pub mark_prices: Vec<MarkPriceEntry>,
 }
 
-/// Response for the get_mark_price_history endpoint.
-#[derive(Debug, Clone, Deserialize)]
-pub struct GetMarkPriceHistoryResponse {
-    /// The id that was sent in the request.
-    #[serde(rename = "id")]
-    pub id: u64,
-
-    /// The JSON-RPC version (2.0).
-    #[serde(rename = "jsonrpc")]
-    pub jsonrpc: String,
-
-    /// The result object containing the mark price history.
-    #[serde(rename = "result")]
-    pub result: GetMarkPriceHistoryResult,
-}
+/// Response for public/get_mark_price_history endpoint following Deribit JSON-RPC 2.0 format.
+pub type GetMarkPriceHistoryResponse = JsonRpcResult<GetMarkPriceHistoryResult>;
 
 impl RestClient {
     /// Calls the /public/get_mark_price_history endpoint.
@@ -78,7 +64,6 @@ impl RestClient {
     ) -> RestResult<GetMarkPriceHistoryResponse> {
         self.send_request(
             MARK_PRICE_HISTORY_ENDPOINT,
-            Method::POST,
             Some(&params),
             EndpointType::NonMatchingEngine,
         )

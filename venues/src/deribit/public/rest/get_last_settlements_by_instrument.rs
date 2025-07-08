@@ -2,11 +2,10 @@
 //!
 //! Retrieves the most recent settlements for a given instrument.
 
-use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::deribit::{EndpointType, RestResult};
+use crate::deribit::{EndpointType, JsonRpcResult, RestResult};
 
 const LAST_SETTLEMENTS_BY_INSTRUMENT_ENDPOINT: &str = "public/get_last_settlements_by_instrument";
 
@@ -47,20 +46,8 @@ pub struct GetLastSettlementsByInstrumentResult {
 }
 
 /// Response for the get_last_settlements_by_instrument endpoint.
-#[derive(Debug, Clone, Deserialize)]
-pub struct GetLastSettlementsByInstrumentResponse {
-    /// The id that was sent in the request.
-    #[serde(rename = "id")]
-    pub id: u64,
-
-    /// The JSON-RPC version (2.0).
-    #[serde(rename = "jsonrpc")]
-    pub jsonrpc: String,
-
-    /// The result object containing the settlements.
-    #[serde(rename = "result")]
-    pub result: GetLastSettlementsByInstrumentResult,
-}
+pub type GetLastSettlementsByInstrumentResponse =
+    JsonRpcResult<GetLastSettlementsByInstrumentResult>;
 
 impl RestClient {
     /// Calls the /public/get_last_settlements_by_instrument endpoint.
@@ -74,7 +61,6 @@ impl RestClient {
     ) -> RestResult<GetLastSettlementsByInstrumentResponse> {
         self.send_request(
             LAST_SETTLEMENTS_BY_INSTRUMENT_ENDPOINT,
-            Method::POST,
             Some(&params),
             EndpointType::NonMatchingEngine,
         )

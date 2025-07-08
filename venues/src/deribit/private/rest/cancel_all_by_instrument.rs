@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::deribit::{EndpointType, OrderType, RestResult};
+use crate::deribit::{EndpointType, JsonRpcResult, OrderType, RestResult};
 
 /// REST API endpoint constant
 const CANCEL_ALL_BY_INSTRUMENT_ENDPOINT: &str = "private/cancel_all_by_instrument";
@@ -26,15 +26,7 @@ pub struct CancelAllByInstrumentRequest {
 }
 
 /// Response for cancel all by instrument endpoint
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct CancelAllByInstrumentResponse {
-    /// The id that was sent in the request
-    pub id: i64,
-    /// The JSON-RPC version (2.0)
-    pub jsonrpc: String,
-    /// Total number of successfully cancelled orders
-    pub result: i64,
-}
+pub type CancelAllByInstrumentResponse = JsonRpcResult<i64>;
 
 impl RestClient {
     /// Cancel all orders by instrument, optionally filtered by order type

@@ -2,11 +2,10 @@
 //!
 //! Retrieves delivery prices for the given index.
 
-use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::deribit::{EndpointType, RestResult, enums::CurrencyPair};
+use crate::deribit::{EndpointType, JsonRpcResult, RestResult, enums::CurrencyPair};
 
 const DELIVERY_PRICES_ENDPOINT: &str = "public/get_delivery_prices";
 
@@ -50,21 +49,8 @@ pub struct GetDeliveryPricesResult {
     pub records_total: u32,
 }
 
-/// Response for the get_delivery_prices endpoint.
-#[derive(Debug, Clone, Deserialize)]
-pub struct GetDeliveryPricesResponse {
-    /// The id that was sent in the request.
-    #[serde(rename = "id")]
-    pub id: u64,
-
-    /// The JSON-RPC version (2.0).
-    #[serde(rename = "jsonrpc")]
-    pub jsonrpc: String,
-
-    /// The result object containing delivery price data.
-    #[serde(rename = "result")]
-    pub result: GetDeliveryPricesResult,
-}
+/// Response for public/get_combo_ids endpoint following Deribit JSON-RPC 2.0 format.
+pub type GetDeliveryPricesResponse = JsonRpcResult<GetDeliveryPricesResult>;
 
 impl RestClient {
     /// Calls the /public/get_delivery_prices endpoint.
@@ -78,7 +64,6 @@ impl RestClient {
     ) -> RestResult<GetDeliveryPricesResponse> {
         self.send_request(
             DELIVERY_PRICES_ENDPOINT,
-            Method::POST,
             Some(&params),
             EndpointType::NonMatchingEngine,
         )

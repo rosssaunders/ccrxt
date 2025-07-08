@@ -1,7 +1,9 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::deribit::{AddressBookType, AddressStatus, Currency, EndpointType, RestResult};
+use crate::deribit::{
+    AddressBookType, AddressStatus, Currency, EndpointType, JsonRpcResult, RestResult,
+};
 
 /// REST API endpoint constant
 const ADD_TO_ADDRESS_BOOK_ENDPOINT: &str = "private/add_to_address_book";
@@ -94,15 +96,7 @@ pub struct AddressBookEntry {
 }
 
 /// Response for add to address book endpoint
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct AddToAddressBookResponse {
-    /// The id that was sent in the request
-    pub id: i64,
-    /// The JSON-RPC version (2.0)
-    pub jsonrpc: String,
-    /// Address book entry result data
-    pub result: AddressBookEntry,
-}
+pub type AddToAddressBookResponse = JsonRpcResult<AddressBookEntry>;
 
 impl RestClient {
     /// Adds new entry to address book of given type

@@ -2,11 +2,10 @@
 //!
 //! Retrieves the list of supported index names.
 
-use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::deribit::{EndpointType, RestResult};
+use crate::deribit::{EndpointType, JsonRpcResult, RestResult};
 
 const SUPPORTED_INDEX_NAMES_ENDPOINT: &str = "public/get_supported_index_names";
 
@@ -22,21 +21,8 @@ pub struct GetSupportedIndexNamesResult {
     pub index_names: Vec<String>,
 }
 
-/// Response for the get_supported_index_names endpoint.
-#[derive(Debug, Clone, Deserialize)]
-pub struct GetSupportedIndexNamesResponse {
-    /// The id that was sent in the request.
-    #[serde(rename = "id")]
-    pub id: u64,
-
-    /// The JSON-RPC version (2.0).
-    #[serde(rename = "jsonrpc")]
-    pub jsonrpc: String,
-
-    /// The result object containing the supported index names.
-    #[serde(rename = "result")]
-    pub result: GetSupportedIndexNamesResult,
-}
+/// Response for public/get_supported_index_names endpoint following Deribit JSON-RPC 2.0 format.
+pub type GetSupportedIndexNamesResponse = JsonRpcResult<GetSupportedIndexNamesResult>;
 
 impl RestClient {
     /// Calls the /public/get_supported_index_names endpoint.
@@ -50,7 +36,6 @@ impl RestClient {
     ) -> RestResult<GetSupportedIndexNamesResponse> {
         self.send_request(
             SUPPORTED_INDEX_NAMES_ENDPOINT,
-            Method::POST,
             Some(&params),
             EndpointType::NonMatchingEngine,
         )

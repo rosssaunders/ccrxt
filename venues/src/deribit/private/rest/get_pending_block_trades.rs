@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::deribit::{EndpointType, RestResult, enums::OrderDirection};
+use crate::deribit::{EndpointType, JsonRpcResult, RestResult, enums::OrderDirection};
 
 /// REST API endpoint constant
 const GET_PENDING_BLOCK_TRADES_ENDPOINT: &str = "private/get_pending_block_trades";
@@ -90,20 +90,7 @@ pub enum PendingBlockTradeRole {
 }
 
 /// Response for get_pending_block_trades endpoint.
-#[derive(Debug, Clone, Deserialize)]
-pub struct GetPendingBlockTradesResponse {
-    /// The id that was sent in the request.
-    #[serde(rename = "id")]
-    pub id: i64,
-
-    /// The JSON-RPC version (2.0).
-    #[serde(rename = "jsonrpc")]
-    pub jsonrpc: String,
-
-    /// List of pending block trade approvals.
-    #[serde(rename = "result")]
-    pub result: Vec<PendingBlockTrade>,
-}
+pub type GetPendingBlockTradesResponse = JsonRpcResult<Vec<PendingBlockTrade>>;
 
 impl RestClient {
     /// Provides a list of pending block trade approvals.

@@ -1,7 +1,7 @@
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 
 use super::RestClient;
-use crate::deribit::{EndpointType, RestResult};
+use crate::deribit::{EndpointType, JsonRpcResult, RestResult};
 
 /// REST API endpoint constant
 const INVALIDATE_BLOCK_TRADE_SIGNATURE_ENDPOINT: &str = "private/invalidate_block_trade_signature";
@@ -14,15 +14,7 @@ pub struct InvalidateBlockTradeSignatureRequest {
 }
 
 /// Response for invalidate block trade signature endpoint
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct InvalidateBlockTradeSignatureResponse {
-    /// The id that was sent in the request
-    pub id: i64,
-    /// The JSON-RPC version (2.0)
-    pub jsonrpc: String,
-    /// Result of method execution. "ok" in case of success
-    pub result: String,
-}
+pub type InvalidateBlockTradeSignatureResponse = JsonRpcResult<String>;
 
 impl RestClient {
     /// Invalidate block trade signature

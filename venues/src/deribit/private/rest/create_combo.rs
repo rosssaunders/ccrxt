@@ -5,7 +5,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::deribit::{EndpointType, RestResult};
+use crate::deribit::{EndpointType, JsonRpcResult, RestResult};
 
 /// REST API endpoint constant
 const CREATE_COMBO_ENDPOINT: &str = "private/create_combo";
@@ -66,17 +66,7 @@ pub struct CreateComboResult {
 }
 
 /// Response for private/create_combo endpoint following Deribit JSON-RPC 2.0 format
-#[derive(Debug, Clone, Deserialize)]
-pub struct CreateComboResponse {
-    /// The id that was sent in the request
-    pub id: i64,
-
-    /// The JSON-RPC version (2.0)
-    pub jsonrpc: String,
-
-    /// Result containing the combo details
-    pub result: CreateComboResult,
-}
+pub type CreateComboResponse = JsonRpcResult<CreateComboResult>;
 
 impl RestClient {
     /// Create a combo book or return an existing combo matching given trades

@@ -1,7 +1,9 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::deribit::{ClearanceState, Currency, DepositState, EndpointType, RestResult};
+use crate::deribit::{
+    ClearanceState, Currency, DepositState, EndpointType, JsonRpcResult, RestResult,
+};
 
 /// REST API endpoint constant
 const GET_DEPOSITS_ENDPOINT: &str = "private/get_deposits";
@@ -56,15 +58,7 @@ pub struct GetDepositsResult {
 }
 
 /// Response for get deposits endpoint
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetDepositsResponse {
-    /// The id that was sent in the request
-    pub id: i64,
-    /// The JSON-RPC version (2.0)
-    pub jsonrpc: String,
-    /// Deposit result data
-    pub result: GetDepositsResult,
-}
+pub type GetDepositsResponse = JsonRpcResult<GetDepositsResult>;
 
 impl RestClient {
     /// Retrieve the latest users deposits

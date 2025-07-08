@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::deribit::{EndpointType, RestResult};
+use crate::deribit::{EndpointType, JsonRpcResult, RestResult};
 
 /// REST API endpoint constant
 const SET_MMP_CONFIG_ENDPOINT: &str = "private/set_mmp_config";
@@ -121,15 +121,7 @@ pub struct MmpConfig {
 }
 
 /// Response for set MMP config endpoint
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct SetMmpConfigResponse {
-    /// The id that was sent in the request
-    pub id: i64,
-    /// The JSON-RPC version (2.0)
-    pub jsonrpc: String,
-    /// Array of MMP configuration objects
-    pub result: Vec<MmpConfig>,
-}
+pub type SetMmpConfigResponse = JsonRpcResult<Vec<MmpConfig>>;
 
 impl RestClient {
     /// Set config for MMP - triggers MMP reset

@@ -1,12 +1,10 @@
 //! Implements the /public/get_funding_chart_data endpoint for Deribit.
 //!
 //! Retrieves funding chart data for a given instrument name.
-
-use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::deribit::{EndpointType, RestResult};
+use crate::deribit::{EndpointType, JsonRpcResult, RestResult};
 
 const FUNDING_CHART_DATA_ENDPOINT: &str = "public/get_funding_chart_data";
 
@@ -39,20 +37,7 @@ pub struct GetFundingChartDataResult {
 }
 
 /// Response for the get_funding_chart_data endpoint.
-#[derive(Debug, Clone, Deserialize)]
-pub struct GetFundingChartDataResponse {
-    /// The id that was sent in the request.
-    #[serde(rename = "id")]
-    pub id: u64,
-
-    /// The JSON-RPC version (2.0).
-    #[serde(rename = "jsonrpc")]
-    pub jsonrpc: String,
-
-    /// The result object containing funding chart data.
-    #[serde(rename = "result")]
-    pub result: GetFundingChartDataResult,
-}
+pub type GetFundingChartDataResponse = JsonRpcResult<GetFundingChartDataResult>;
 
 impl RestClient {
     /// Calls the /public/get_funding_chart_data endpoint.
@@ -66,7 +51,6 @@ impl RestClient {
     ) -> RestResult<GetFundingChartDataResponse> {
         self.send_request(
             FUNDING_CHART_DATA_ENDPOINT,
-            Method::POST,
             Some(&params),
             EndpointType::NonMatchingEngine,
         )

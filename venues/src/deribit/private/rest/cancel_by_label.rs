@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::deribit::{Currency, EndpointType, RestResult};
+use crate::deribit::{Currency, EndpointType, JsonRpcResult, RestResult};
 
 /// REST API endpoint constant
 const CANCEL_BY_LABEL_ENDPOINT: &str = "private/cancel_by_label";
@@ -17,15 +17,7 @@ pub struct CancelByLabelRequest {
 }
 
 /// Response for cancel by label endpoint
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct CancelByLabelResponse {
-    /// The id that was sent in the request
-    pub id: i64,
-    /// The JSON-RPC version (2.0)
-    pub jsonrpc: String,
-    /// Total number of successfully cancelled orders
-    pub result: i64,
-}
+pub type CancelByLabelResponse = JsonRpcResult<i64>;
 
 impl RestClient {
     /// Cancel orders by label

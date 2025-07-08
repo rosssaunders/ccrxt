@@ -2,11 +2,10 @@
 //!
 //! Retrieves all cryptocurrencies supported by the API.
 
-use reqwest::Method;
 use serde::Deserialize;
 
 use super::RestClient;
-use crate::deribit::{EndpointType, RestResult, enums::Currency};
+use crate::deribit::{EndpointType, JsonRpcResult, RestResult, enums::Currency};
 
 const CURRENCIES_ENDPOINT: &str = "public/get_currencies";
 
@@ -66,21 +65,8 @@ pub struct CurrencyInfo {
     pub withdrawal_priorities: Vec<WithdrawalPriority>,
 }
 
-/// Response for the get_currencies endpoint.
-#[derive(Debug, Clone, Deserialize)]
-pub struct GetCurrenciesResponse {
-    /// The id that was sent in the request.
-    #[serde(rename = "id")]
-    pub id: u64,
-
-    /// The JSON-RPC version (2.0).
-    #[serde(rename = "jsonrpc")]
-    pub jsonrpc: String,
-
-    /// The result array of supported currencies.
-    #[serde(rename = "result")]
-    pub result: Vec<CurrencyInfo>,
-}
+/// Response for public/get_combo_ids endpoint following Deribit JSON-RPC 2.0 format.
+pub type GetCurrenciesResponse = JsonRpcResult<Vec<CurrencyInfo>>;
 
 impl RestClient {
     /// Calls the /public/get_currencies endpoint.
@@ -91,7 +77,6 @@ impl RestClient {
     pub async fn get_currencies(&self) -> RestResult<GetCurrenciesResponse> {
         self.send_request(
             CURRENCIES_ENDPOINT,
-            Method::POST,
             None::<&()>,
             EndpointType::NonMatchingEngine,
         )

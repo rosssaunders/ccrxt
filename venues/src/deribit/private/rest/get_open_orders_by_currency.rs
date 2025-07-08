@@ -2,8 +2,8 @@ use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 use crate::deribit::{
-    AdvancedType, CancelReason, Currency, EndpointType, InstrumentKind, OrderDirection, OrderState,
-    RestResult, TriggerType,
+    AdvancedType, CancelReason, Currency, EndpointType, InstrumentKind, JsonRpcResult,
+    OrderDirection, OrderState, RestResult, TriggerType,
 };
 
 /// REST API endpoint constant
@@ -220,15 +220,7 @@ pub struct OpenOrder {
 }
 
 /// Response for get_open_orders_by_currency endpoint
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetOpenOrdersByCurrencyResponse {
-    /// The id that was sent in the request
-    pub id: i64,
-    /// The JSON-RPC version (2.0)
-    pub jsonrpc: String,
-    /// Array of open orders
-    pub result: Vec<OpenOrder>,
-}
+pub type GetOpenOrdersByCurrencyResponse = JsonRpcResult<Vec<OpenOrder>>;
 
 impl RestClient {
     /// Retrieves list of user's open orders.

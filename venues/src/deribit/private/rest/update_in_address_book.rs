@@ -1,7 +1,7 @@
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 
 use super::RestClient;
-use crate::deribit::{AddressBookType, Currency, EndpointType, RestResult};
+use crate::deribit::{AddressBookType, Currency, EndpointType, JsonRpcResult, RestResult};
 
 /// REST API endpoint constant
 const UPDATE_IN_ADDRESS_BOOK_ENDPOINT: &str = "private/update_in_address_book";
@@ -43,15 +43,7 @@ pub struct UpdateInAddressBookRequest {
 }
 
 /// Response for update in address book endpoint
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct UpdateInAddressBookResponse {
-    /// The id that was sent in the request
-    pub id: i64,
-    /// The JSON-RPC version (2.0)
-    pub jsonrpc: String,
-    /// Result of method execution. "ok" in case of success
-    pub result: String,
-}
+pub type UpdateInAddressBookResponse = JsonRpcResult<String>;
 
 impl RestClient {
     /// Update an entry in the address book.

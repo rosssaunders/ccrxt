@@ -1,12 +1,10 @@
 //! Implements the /public/get_historical_volatility endpoint for Deribit.
 //!
 //! Retrieves historical volatility data for a given currency.
-
-use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::deribit::{EndpointType, RestResult, enums::Currency};
+use crate::deribit::{EndpointType, JsonRpcResult, RestResult, enums::Currency};
 
 const HISTORICAL_VOLATILITY_ENDPOINT: &str = "public/get_historical_volatility";
 
@@ -47,20 +45,7 @@ pub struct GetHistoricalVolatilityResult {
 }
 
 /// Response for the get_historical_volatility endpoint.
-#[derive(Debug, Clone, Deserialize)]
-pub struct GetHistoricalVolatilityResponse {
-    /// The id that was sent in the request.
-    #[serde(rename = "id")]
-    pub id: u64,
-
-    /// The JSON-RPC version (2.0).
-    #[serde(rename = "jsonrpc")]
-    pub jsonrpc: String,
-
-    /// The result object containing historical volatility data.
-    #[serde(rename = "result")]
-    pub result: GetHistoricalVolatilityResult,
-}
+pub type GetHistoricalVolatilityResponse = JsonRpcResult<GetHistoricalVolatilityResult>;
 
 impl RestClient {
     /// Calls the /public/get_historical_volatility endpoint.
@@ -74,7 +59,6 @@ impl RestClient {
     ) -> RestResult<GetHistoricalVolatilityResponse> {
         self.send_request(
             HISTORICAL_VOLATILITY_ENDPOINT,
-            Method::POST,
             Some(&params),
             EndpointType::NonMatchingEngine,
         )

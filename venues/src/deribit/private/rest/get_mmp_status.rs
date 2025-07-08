@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::{RestClient, reset_mmp::IndexName};
-use crate::deribit::{EndpointType, RestResult};
+use crate::deribit::{EndpointType, JsonRpcResult, RestResult};
 
 /// REST API endpoint constant
 const GET_MMP_STATUS_ENDPOINT: &str = "private/get_mmp_status";
@@ -35,15 +35,7 @@ pub struct MmpStatus {
 }
 
 /// Response for get MMP status endpoint
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetMmpStatusResponse {
-    /// The id that was sent in the request
-    pub id: i64,
-    /// The JSON-RPC version (2.0)
-    pub jsonrpc: String,
-    /// Array of MMP status objects
-    pub result: Vec<MmpStatus>,
-}
+pub type GetMmpStatusResponse = JsonRpcResult<Vec<MmpStatus>>;
 
 impl RestClient {
     /// Get MMP status

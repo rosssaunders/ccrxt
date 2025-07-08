@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 // Re-export WithdrawalData from withdraw.rs to maintain consistency
 pub use super::withdraw::WithdrawalData;
-use crate::deribit::{Currency, EndpointType, RestResult};
+use crate::deribit::{Currency, EndpointType, JsonRpcResult, RestResult};
 
 /// REST API endpoint constant
 const GET_WITHDRAWALS_ENDPOINT: &str = "private/get_withdrawals";
@@ -31,15 +31,7 @@ pub struct GetWithdrawalsResult {
 }
 
 /// Response for get withdrawals endpoint
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetWithdrawalsResponse {
-    /// The id that was sent in the request
-    pub id: i64,
-    /// The JSON-RPC version (2.0)
-    pub jsonrpc: String,
-    /// Withdrawal result data
-    pub result: GetWithdrawalsResult,
-}
+pub type GetWithdrawalsResponse = JsonRpcResult<GetWithdrawalsResult>;
 
 impl RestClient {
     /// Retrieve the latest users withdrawals

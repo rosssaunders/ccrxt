@@ -1,12 +1,10 @@
 //! Implements the /public/get_funding_rate_history endpoint for Deribit.
 //!
 //! Retrieves historical funding rates for a given instrument.
-
-use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::deribit::{EndpointType, RestResult};
+use crate::deribit::{EndpointType, JsonRpcResult, RestResult};
 
 const FUNDING_RATE_HISTORY_ENDPOINT: &str = "public/get_funding_rate_history";
 
@@ -47,20 +45,7 @@ pub struct GetFundingRateHistoryResult {
 }
 
 /// Response for the get_funding_rate_history endpoint.
-#[derive(Debug, Clone, Deserialize)]
-pub struct GetFundingRateHistoryResponse {
-    /// The id that was sent in the request.
-    #[serde(rename = "id")]
-    pub id: u64,
-
-    /// The JSON-RPC version (2.0).
-    #[serde(rename = "jsonrpc")]
-    pub jsonrpc: String,
-
-    /// The result object containing funding rate history data.
-    #[serde(rename = "result")]
-    pub result: GetFundingRateHistoryResult,
-}
+pub type GetFundingRateHistoryResponse = JsonRpcResult<GetFundingRateHistoryResult>;
 
 impl RestClient {
     /// Calls the /public/get_funding_rate_history endpoint.
@@ -74,7 +59,6 @@ impl RestClient {
     ) -> RestResult<GetFundingRateHistoryResponse> {
         self.send_request(
             FUNDING_RATE_HISTORY_ENDPOINT,
-            Method::POST,
             Some(&params),
             EndpointType::NonMatchingEngine,
         )

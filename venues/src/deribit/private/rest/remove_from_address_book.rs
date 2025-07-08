@@ -1,7 +1,7 @@
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 
 use super::RestClient;
-use crate::deribit::{AddressBookType, Currency, EndpointType, RestResult};
+use crate::deribit::{AddressBookType, Currency, EndpointType, JsonRpcResult, RestResult};
 
 /// REST API endpoint constant
 const REMOVE_FROM_ADDRESS_BOOK_ENDPOINT: &str = "private/remove_from_address_book";
@@ -19,15 +19,7 @@ pub struct RemoveFromAddressBookRequest {
 }
 
 /// Response for remove from address book endpoint
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct RemoveFromAddressBookResponse {
-    /// The id that was sent in the request
-    pub id: i64,
-    /// The JSON-RPC version (2.0)
-    pub jsonrpc: String,
-    /// Result of method execution. "ok" in case of success
-    pub result: String,
-}
+pub type RemoveFromAddressBookResponse = JsonRpcResult<String>;
 
 impl RestClient {
     /// Removes address book entry

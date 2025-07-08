@@ -1,14 +1,10 @@
 pub mod client;
-pub mod get_combo_details;
-pub mod get_combo_ids;
-pub mod get_combos;
-pub mod get_status;
-pub mod get_time;
-pub mod test;
-
 pub mod get_apr_history;
 pub mod get_book_summary_by_currency;
 pub mod get_book_summary_by_instrument;
+pub mod get_combo_details;
+pub mod get_combo_ids;
+pub mod get_combos;
 pub mod get_contract_size;
 pub mod get_currencies;
 pub mod get_delivery_prices;
@@ -32,11 +28,12 @@ pub mod get_mark_price_history;
 pub mod get_order_book;
 pub mod get_order_book_by_instrument_id;
 pub mod get_rfqs;
+pub mod get_status;
 pub mod get_supported_index_names;
+pub mod get_time;
 pub mod get_trade_volumes;
 pub mod get_tradingview_chart_data;
 pub mod get_volatility_index_data;
-pub mod ticker;
 
 pub use client::RestClient;
 pub use get_combo_details::{GetComboDetailsRequest, GetComboDetailsResponse};
@@ -47,4 +44,3 @@ pub use get_time::{GetTimeRequest, GetTimeResponse};
 pub use get_tradingview_chart_data::{
     GetTradingviewChartDataRequest, GetTradingviewChartDataResponse, GetTradingviewChartDataResult,
 };
-pub use test::{TestRequest, TestResponse, TestResult};

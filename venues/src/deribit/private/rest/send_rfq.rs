@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::deribit::{EndpointType, RestResult};
+use crate::deribit::{EndpointType, JsonRpcResult, RestResult};
 
 /// REST API endpoint constant
 const SEND_RFQ_ENDPOINT: &str = "private/send_rfq";
@@ -30,15 +30,7 @@ pub struct SendRfqRequest {
 }
 
 /// Response for send RFQ endpoint
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct SendRfqResponse {
-    /// The id that was sent in the request
-    pub id: i64,
-    /// The JSON-RPC version (2.0)
-    pub jsonrpc: String,
-    /// Result of method execution. "ok" in case of success
-    pub result: String,
-}
+pub type SendRfqResponse = JsonRpcResult<String>;
 
 impl RestClient {
     /// Send RFQ on a given instrument

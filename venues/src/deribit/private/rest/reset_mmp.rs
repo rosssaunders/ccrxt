@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::deribit::{EndpointType, RestResult};
+use crate::deribit::{EndpointType, JsonRpcResult, RestResult};
 
 /// REST API endpoint constant
 const RESET_MMP_ENDPOINT: &str = "private/reset_mmp";
@@ -81,15 +81,7 @@ pub struct ResetMmpRequest {
 }
 
 /// Response for reset MMP endpoint
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ResetMmpResponse {
-    /// The id that was sent in the request
-    pub id: i64,
-    /// The JSON-RPC version (2.0)
-    pub jsonrpc: String,
-    /// Result of method execution. "ok" in case of success
-    pub result: String,
-}
+pub type ResetMmpResponse = JsonRpcResult<String>;
 
 impl RestClient {
     /// Reset MMP (Market Maker Protection) for the specified index and optional MMP group.

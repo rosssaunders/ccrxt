@@ -1,6 +1,22 @@
 use serde::{Deserialize, Serialize};
 use websockets::VenueMessage;
 
+/// Generic JSON-RPC 2.0 result structure for Deribit REST API responses
+#[derive(Debug, Clone, Deserialize)]
+pub struct JsonRpcResult<T> {
+    /// The id that was sent in the request
+    #[serde(rename = "id")]
+    pub id: u64,
+
+    /// The JSON-RPC version (2.0)
+    #[serde(rename = "jsonrpc")]
+    pub jsonrpc: String,
+
+    /// The result object containing the actual response data
+    #[serde(rename = "result")]
+    pub result: T,
+}
+
 /// Wrapper for all Deribit WebSocket messages following JSON-RPC 2.0 protocol
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]

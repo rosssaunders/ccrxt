@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 use crate::deribit::{
-    EndpointType, RestResult,
+    EndpointType, JsonRpcResult, RestResult,
     enums::{
         AdvancedType, CancelReason, OpenOrdersOrderType, OrderDirection, OrderState, OrderType,
         TriggerType,
@@ -23,14 +23,6 @@ pub struct GetOpenOrdersByInstrumentRequest {
     /// Order type filter (optional, default: all)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub r#type: Option<OpenOrdersOrderType>,
-}
-
-/// Response for /private/get_open_orders_by_instrument
-#[derive(Debug, Clone, Deserialize)]
-pub struct GetOpenOrdersByInstrumentResponse {
-    pub id: i64,
-    pub jsonrpc: String,
-    pub result: Vec<OpenOrder>,
 }
 
 /// Open order object returned by the endpoint
@@ -132,6 +124,9 @@ pub struct OpenOrder {
     #[serde(default)]
     pub trigger_fill_condition: Option<String>,
 }
+
+/// Response for /private/get_open_orders_by_instrument
+pub type GetOpenOrdersByInstrumentResponse = JsonRpcResult<Vec<OpenOrder>>;
 
 impl RestClient {
     /// Retrieves user's open orders for a given instrument on Deribit.

@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::deribit::{EndpointType, RestResult};
+use crate::deribit::{EndpointType, JsonRpcResult, RestResult};
 
 /// REST API endpoint constant
 const CANCEL_ALL_BLOCK_RFQ_QUOTES_ENDPOINT: &str = "private/cancel_all_block_rfq_quotes";
@@ -18,15 +18,7 @@ pub struct CancelAllBlockRfqQuotesRequest {
 }
 
 /// Response for cancel all block RFQ quotes endpoint
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct CancelAllBlockRfqQuotesResponse {
-    /// The id that was sent in the request
-    pub id: i64,
-    /// The JSON-RPC version (2.0)
-    pub jsonrpc: String,
-    /// Total number of successfully cancelled quotes
-    pub result: i64,
-}
+pub type CancelAllBlockRfqQuotesResponse = JsonRpcResult<i64>;
 
 impl RestClient {
     /// Cancel all user quotes in all Block RFQs

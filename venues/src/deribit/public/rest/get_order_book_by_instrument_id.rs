@@ -2,11 +2,10 @@
 //!
 //! Retrieves the current order book for a given instrument by its ID.
 
-use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::deribit::{EndpointType, RestResult};
+use crate::deribit::{EndpointType, JsonRpcResult, RestResult};
 
 const ORDER_BOOK_BY_INSTRUMENT_ID_ENDPOINT: &str = "public/get_order_book_by_instrument_id";
 
@@ -59,20 +58,7 @@ pub struct GetOrderBookByInstrumentIdResult {
 }
 
 /// Response for the get_order_book_by_instrument_id endpoint.
-#[derive(Debug, Clone, Deserialize)]
-pub struct GetOrderBookByInstrumentIdResponse {
-    /// The id that was sent in the request.
-    #[serde(rename = "id")]
-    pub id: u64,
-
-    /// The JSON-RPC version (2.0).
-    #[serde(rename = "jsonrpc")]
-    pub jsonrpc: String,
-
-    /// The result object containing the order book.
-    #[serde(rename = "result")]
-    pub result: GetOrderBookByInstrumentIdResult,
-}
+pub type GetOrderBookByInstrumentIdResponse = JsonRpcResult<GetOrderBookByInstrumentIdResult>;
 
 impl RestClient {
     /// Calls the /public/get_order_book_by_instrument_id endpoint.
@@ -86,7 +72,6 @@ impl RestClient {
     ) -> RestResult<GetOrderBookByInstrumentIdResponse> {
         self.send_request(
             ORDER_BOOK_BY_INSTRUMENT_ID_ENDPOINT,
-            Method::POST,
             Some(&params),
             EndpointType::NonMatchingEngine,
         )

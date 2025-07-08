@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 // Reuse existing types from add_block_rfq_quote
 use super::RestClient;
 pub use super::add_block_rfq_quote::{BlockRfqHedge, Side};
-use crate::deribit::{EndpointType, RestResult};
+use crate::deribit::{EndpointType, JsonRpcResult, RestResult};
 
 /// REST API endpoint constant
 const CREATE_BLOCK_RFQ_ENDPOINT: &str = "private/create_block_rfq";
@@ -127,15 +127,7 @@ pub struct CreateBlockRfqResult {
 }
 
 /// Response for create Block RFQ endpoint
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct CreateBlockRfqResponse {
-    /// The id that was sent in the request
-    pub id: i64,
-    /// The JSON-RPC version (2.0)
-    pub jsonrpc: String,
-    /// Result containing the Block RFQ details
-    pub result: CreateBlockRfqResult,
-}
+pub type CreateBlockRfqResponse = JsonRpcResult<CreateBlockRfqResult>;
 
 impl RestClient {
     /// Create a new Block RFQ

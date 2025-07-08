@@ -1,7 +1,9 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::deribit::{Currency, EndpointType, InstrumentKind, OrderType, RestResult};
+use crate::deribit::{
+    Currency, EndpointType, InstrumentKind, JsonRpcResult, OrderType, RestResult,
+};
 
 /// REST API endpoint constant
 const CANCEL_ALL_BY_CURRENCY_ENDPOINT: &str = "private/cancel_all_by_currency";
@@ -26,15 +28,7 @@ pub struct CancelAllByCurrencyRequest {
 }
 
 /// Response for cancel all by currency endpoint
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct CancelAllByCurrencyResponse {
-    /// The id that was sent in the request
-    pub id: i64,
-    /// The JSON-RPC version (2.0)
-    pub jsonrpc: String,
-    /// Total number of successfully cancelled orders
-    pub result: i64,
-}
+pub type CancelAllByCurrencyResponse = JsonRpcResult<i64>;
 
 impl RestClient {
     /// Cancel all orders by currency, optionally filtered by instrument kind and/or order type

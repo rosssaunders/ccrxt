@@ -2,11 +2,11 @@
 //!
 //! Retrieves the trade volumes for all supported currencies.
 
-use reqwest::Method;
+
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::deribit::{EndpointType, RestResult, enums::Currency};
+use crate::deribit::{EndpointType, JsonRpcResult, RestResult, enums::Currency};
 
 const TRADE_VOLUMES_ENDPOINT: &str = "public/get_trade_volumes";
 
@@ -39,20 +39,7 @@ pub struct GetTradeVolumesResult {
 }
 
 /// Response for the get_trade_volumes endpoint.
-#[derive(Debug, Clone, Deserialize)]
-pub struct GetTradeVolumesResponse {
-    /// The id that was sent in the request.
-    #[serde(rename = "id")]
-    pub id: u64,
-
-    /// The JSON-RPC version (2.0).
-    #[serde(rename = "jsonrpc")]
-    pub jsonrpc: String,
-
-    /// The result object containing the trade volumes.
-    #[serde(rename = "result")]
-    pub result: GetTradeVolumesResult,
-}
+pub type GetTradeVolumesResponse = JsonRpcResult<GetTradeVolumesResult>;
 
 impl RestClient {
     /// Calls the /public/get_trade_volumes endpoint.
@@ -66,7 +53,7 @@ impl RestClient {
     ) -> RestResult<GetTradeVolumesResponse> {
         self.send_request(
             TRADE_VOLUMES_ENDPOINT,
-            Method::POST,
+
             Some(&params),
             EndpointType::NonMatchingEngine,
         )

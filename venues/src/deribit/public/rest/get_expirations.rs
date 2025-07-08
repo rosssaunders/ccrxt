@@ -2,11 +2,10 @@
 //!
 //! Retrieves available expiration timestamps for a given currency and instrument kind.
 
-use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::deribit::{EndpointType, RestResult, enums::Currency};
+use crate::deribit::{EndpointType, JsonRpcResult, RestResult, enums::Currency};
 
 const EXPIRATIONS_ENDPOINT: &str = "public/get_expirations";
 
@@ -42,21 +41,8 @@ pub struct GetExpirationsResult {
     pub expirations: Vec<u64>,
 }
 
-/// Response for the get_expirations endpoint.
-#[derive(Debug, Clone, Deserialize)]
-pub struct GetExpirationsResponse {
-    /// The id that was sent in the request.
-    #[serde(rename = "id")]
-    pub id: u64,
-
-    /// The JSON-RPC version (2.0).
-    #[serde(rename = "jsonrpc")]
-    pub jsonrpc: String,
-
-    /// The result object containing expiration data.
-    #[serde(rename = "result")]
-    pub result: GetExpirationsResult,
-}
+/// Response for public/get_expirations endpoint following Deribit JSON-RPC 2.0 format.
+pub type GetExpirationsResponse = JsonRpcResult<GetExpirationsResult>;
 
 impl RestClient {
     /// Calls the /public/get_expirations endpoint.
@@ -70,7 +56,6 @@ impl RestClient {
     ) -> RestResult<GetExpirationsResponse> {
         self.send_request(
             EXPIRATIONS_ENDPOINT,
-            Method::POST,
             Some(&params),
             EndpointType::NonMatchingEngine,
         )

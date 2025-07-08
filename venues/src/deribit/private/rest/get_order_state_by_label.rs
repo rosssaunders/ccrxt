@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 use crate::deribit::{
-    EndpointType, RestResult, TimeInForce, TriggerFillCondition,
+    EndpointType, JsonRpcResult, RestResult, TimeInForce, TriggerFillCondition,
     enums::{CancelReason, Currency, OrderDirection, OrderState, OrderType, TriggerType},
 };
 
@@ -26,20 +26,7 @@ pub struct GetOrderStateByLabelRequest {
 }
 
 /// Response for /private/get_order_state_by_label
-#[derive(Debug, Clone, Deserialize)]
-pub struct GetOrderStateByLabelResponse {
-    /// The id that was sent in the request
-    #[serde(rename = "id")]
-    pub id: u64,
-
-    /// The JSON-RPC version (2.0)
-    #[serde(rename = "jsonrpc")]
-    pub jsonrpc: String,
-
-    /// The result array containing order state information
-    #[serde(rename = "result")]
-    pub result: Vec<OrderStateByLabelInfo>,
-}
+pub type GetOrderStateByLabelResponse = JsonRpcResult<Vec<OrderStateByLabelInfo>>;
 
 /// Represents the state of an order returned by /private/get_order_state_by_label
 #[derive(Debug, Clone, Deserialize)]

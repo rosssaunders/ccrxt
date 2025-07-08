@@ -5,7 +5,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::deribit::{EndpointType, RestResult};
+use crate::deribit::{EndpointType, JsonRpcResult, RestResult};
 
 const STATUS_ENDPOINT: &str = "public/get_status";
 
@@ -14,19 +14,6 @@ const STATUS_ENDPOINT: &str = "public/get_status";
 /// This method takes no parameters.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GetStatusRequest {}
-
-/// Response for public/status endpoint following Deribit JSON-RPC 2.0 format.
-#[derive(Debug, Clone, Deserialize)]
-pub struct GetStatusResponse {
-    /// The id that was sent in the request
-    pub id: i64,
-
-    /// The JSON-RPC version (2.0)
-    pub jsonrpc: String,
-
-    /// Result object containing status information
-    pub result: GetStatusResult,
-}
 
 /// Result object for the public/status endpoint.
 #[derive(Debug, Clone, Deserialize)]
@@ -40,6 +27,9 @@ pub struct GetStatusResult {
     /// List of currency indices locked platform-wise
     pub locked_indices: Vec<String>,
 }
+
+/// Response for public/status endpoint following Deribit JSON-RPC 2.0 format.
+pub type GetStatusResponse = JsonRpcResult<GetStatusResult>;
 
 impl RestClient {
     /// Calls the public/status endpoint.
@@ -56,7 +46,6 @@ impl RestClient {
     pub async fn get_status(&self, params: GetStatusRequest) -> RestResult<GetStatusResponse> {
         self.send_request(
             STATUS_ENDPOINT,
-            reqwest::Method::GET,
             Some(&params),
             EndpointType::NonMatchingEngine,
         )

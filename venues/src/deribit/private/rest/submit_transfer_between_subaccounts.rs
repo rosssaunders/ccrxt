@@ -1,9 +1,9 @@
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 
 use super::RestClient;
 // Reuse the TransferData struct from submit_transfer_to_user
 use super::submit_transfer_to_user::TransferData;
-use crate::deribit::{EndpointType, RestResult};
+use crate::deribit::{EndpointType, JsonRpcResult, RestResult};
 
 /// REST API endpoint constant
 const SUBMIT_TRANSFER_BETWEEN_SUBACCOUNTS_ENDPOINT: &str =
@@ -24,15 +24,7 @@ pub struct SubmitTransferBetweenSubaccountsRequest {
 }
 
 /// Response for submit transfer between subaccounts endpoint
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct SubmitTransferBetweenSubaccountsResponse {
-    /// The id that was sent in the request
-    pub id: i64,
-    /// The JSON-RPC version (2.0)
-    pub jsonrpc: String,
-    /// Transfer result data
-    pub result: TransferData,
-}
+pub type SubmitTransferBetweenSubaccountsResponse = JsonRpcResult<TransferData>;
 
 impl RestClient {
     /// Transfer funds between two (sub)accounts

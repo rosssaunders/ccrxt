@@ -2,12 +2,11 @@
 //!
 //! Retrieves the summary information such as open interest, 24h volume, etc. for all instruments for the currency (optionally filtered by kind).
 
-use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 use crate::deribit::{
-    EndpointType, RestResult,
+    EndpointType, JsonRpcResult, RestResult,
     enums::{Currency, InstrumentKind},
 };
 
@@ -102,7 +101,7 @@ pub struct BookSummary {
 
     /// Name of the underlying future, or 'index_price' (options only).
     #[serde(rename = "underlying_index")]
-    pub underlying_index: String,
+    pub underlying_index: Option<String>,
 
     /// Underlying price for implied volatility calculations (options only).
     #[serde(rename = "underlying_price")]
@@ -121,21 +120,7 @@ pub struct BookSummary {
     pub volume_usd: Option<f64>,
 }
 
-/// Response for the get_book_summary_by_currency endpoint.
-#[derive(Debug, Clone, Deserialize)]
-pub struct GetBookSummaryByCurrencyResponse {
-    /// The id that was sent in the request.
-    #[serde(rename = "id")]
-    pub id: u64,
-
-    /// The JSON-RPC version (2.0).
-    #[serde(rename = "jsonrpc")]
-    pub jsonrpc: String,
-
-    /// The result array of book summaries.
-    #[serde(rename = "result")]
-    pub result: Vec<BookSummary>,
-}
+pub type GetBookSummaryByCurrencyResponse = JsonRpcResult<Vec<BookSummary>>;
 
 impl RestClient {
     /// Calls the /public/get_book_summary_by_currency endpoint.
@@ -149,7 +134,6 @@ impl RestClient {
     ) -> RestResult<GetBookSummaryByCurrencyResponse> {
         self.send_request(
             BOOK_SUMMARY_BY_CURRENCY_ENDPOINT,
-            Method::POST,
             Some(&params),
             EndpointType::NonMatchingEngine,
         )

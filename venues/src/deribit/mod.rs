@@ -96,7 +96,7 @@ pub mod message;
 
 pub use enums::*;
 pub use errors::{ApiError, ErrorResponse, Errors};
-pub use message::*;
+pub use message::{JsonRpcResult, *};
 pub use private::{
     AddToAddressBookRequest, AddToAddressBookResponse, AddressBookEntry,
     CancelAllByCurrencyPairRequest, CancelAllByCurrencyPairResponse, CancelAllByCurrencyRequest,

@@ -2,7 +2,8 @@ use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 use crate::deribit::{
-    AdvancedType, CancelReason, EndpointType, OrderDirection, OrderState, RestResult, TriggerType,
+    AdvancedType, CancelReason, EndpointType, JsonRpcResult, OrderDirection, OrderState,
+    RestResult, TriggerType,
 };
 
 /// REST API endpoint constant
@@ -215,15 +216,7 @@ pub struct CancelledOrder {
 }
 
 /// Response for cancel order endpoint
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct CancelOrderResponse {
-    /// The id that was sent in the request
-    pub id: i64,
-    /// The JSON-RPC version (2.0)
-    pub jsonrpc: String,
-    /// Cancel result data
-    pub result: CancelledOrder,
-}
+pub type CancelOrderResponse = JsonRpcResult<CancelledOrder>;
 
 impl RestClient {
     /// Cancel an order, specified by order id

@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::deribit::{EndpointType, RestResult};
+use crate::deribit::{EndpointType, JsonRpcResult, RestResult};
 
 /// REST API endpoint constant
 const EXECUTE_BLOCK_TRADE_ENDPOINT: &str = "private/execute_block_trade";
@@ -163,15 +163,7 @@ pub struct ExecuteBlockTradeResult {
 }
 
 /// Response for execute block trade endpoint
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ExecuteBlockTradeResponse {
-    /// The id that was sent in the request
-    pub id: i64,
-    /// The JSON-RPC version (2.0)
-    pub jsonrpc: String,
-    /// Result of method execution
-    pub result: ExecuteBlockTradeResult,
-}
+pub type ExecuteBlockTradeResponse = JsonRpcResult<ExecuteBlockTradeResult>;
 
 impl RestClient {
     /// Execute block trade

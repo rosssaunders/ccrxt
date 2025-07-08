@@ -1,9 +1,9 @@
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 
 use super::RestClient;
 // Reuse the result structure from create_block_rfq since the API returns the same Block RFQ object
 use super::create_block_rfq::CreateBlockRfqResult;
-use crate::deribit::{EndpointType, RestResult};
+use crate::deribit::{EndpointType, JsonRpcResult, RestResult};
 
 /// REST API endpoint constant
 const CANCEL_BLOCK_RFQ_ENDPOINT: &str = "private/cancel_block_rfq";
@@ -16,15 +16,7 @@ pub struct CancelBlockRfqRequest {
 }
 
 /// Response for cancel block RFQ endpoint
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct CancelBlockRfqResponse {
-    /// The id that was sent in the request
-    pub id: i64,
-    /// The JSON-RPC version (2.0)
-    pub jsonrpc: String,
-    /// Result containing the cancelled Block RFQ details
-    pub result: CreateBlockRfqResult,
-}
+pub type CancelBlockRfqResponse = JsonRpcResult<CreateBlockRfqResult>;
 
 impl RestClient {
     /// Cancel a Block RFQ

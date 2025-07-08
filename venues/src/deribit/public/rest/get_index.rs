@@ -1,12 +1,10 @@
 //! Implements the /public/get_index endpoint for Deribit.
 //!
 //! Retrieves the current index price for a given index name.
-
-use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::deribit::{EndpointType, RestResult};
+use crate::deribit::{EndpointType, JsonRpcResult, RestResult};
 
 const INDEX_ENDPOINT: &str = "public/get_index";
 
@@ -31,20 +29,7 @@ pub struct GetIndexResult {
 }
 
 /// Response for the get_index endpoint.
-#[derive(Debug, Clone, Deserialize)]
-pub struct GetIndexResponse {
-    /// The id that was sent in the request.
-    #[serde(rename = "id")]
-    pub id: u64,
-
-    /// The JSON-RPC version (2.0).
-    #[serde(rename = "jsonrpc")]
-    pub jsonrpc: String,
-
-    /// The result object containing the index price.
-    #[serde(rename = "result")]
-    pub result: GetIndexResult,
-}
+pub type GetIndexResponse = JsonRpcResult<GetIndexResult>;
 
 impl RestClient {
     /// Calls the /public/get_index endpoint.
@@ -55,7 +40,6 @@ impl RestClient {
     pub async fn get_index(&self, params: GetIndexRequest) -> RestResult<GetIndexResponse> {
         self.send_request(
             INDEX_ENDPOINT,
-            Method::POST,
             Some(&params),
             EndpointType::NonMatchingEngine,
         )

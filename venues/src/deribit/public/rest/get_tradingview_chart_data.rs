@@ -4,15 +4,14 @@
 //!
 //! [Official API docs](https://docs.deribit.com/#public-get_tradingview_chart_data)
 
-use reqwest::Method;
+
 use serde::{Deserialize, Serialize};
+use std::borrow::Cow;
 
 use super::RestClient;
-use crate::deribit::{EndpointType, Errors as DeribitError};
+use crate::deribit::{EndpointType, Errors as DeribitError, JsonRpcResult};
 
 const TRADINGVIEW_CHART_DATA_ENDPOINT: &str = "public/get_tradingview_chart_data";
-
-use std::borrow::Cow;
 
 /// Request parameters for the get_tradingview_chart_data endpoint.
 #[derive(Debug, Clone, Serialize, Default)]
@@ -63,20 +62,7 @@ pub struct GetTradingviewChartDataResult {
 }
 
 /// Response for the get_tradingview_chart_data endpoint.
-#[derive(Debug, Clone, Deserialize, PartialEq)]
-pub struct GetTradingviewChartDataResponse {
-    /// The id that was sent in the request.
-    #[serde(rename = "id")]
-    pub id: u64,
-
-    /// The JSON-RPC version (2.0).
-    #[serde(rename = "jsonrpc")]
-    pub jsonrpc: String,
-
-    /// The result object containing the chart data.
-    #[serde(rename = "result")]
-    pub result: GetTradingviewChartDataResult,
-}
+pub type GetTradingviewChartDataResponse = JsonRpcResult<GetTradingviewChartDataResult>;
 
 impl RestClient {
     /// Calls the /public/get_tradingview_chart_data endpoint.
@@ -90,7 +76,7 @@ impl RestClient {
     ) -> Result<GetTradingviewChartDataResponse, DeribitError> {
         self.send_request(
             TRADINGVIEW_CHART_DATA_ENDPOINT,
-            Method::GET,
+
             Some(params),
             EndpointType::NonMatchingEngine,
         )

@@ -6,7 +6,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::deribit::{EndpointType, RestResult};
+use crate::deribit::{EndpointType, JsonRpcResult, RestResult};
 
 const TIME_ENDPOINT: &str = "public/get_time";
 
@@ -17,17 +17,7 @@ const TIME_ENDPOINT: &str = "public/get_time";
 pub struct GetTimeRequest {}
 
 /// Response for public/get_time endpoint following Deribit JSON-RPC 2.0 format.
-#[derive(Debug, Clone, Deserialize)]
-pub struct GetTimeResponse {
-    /// The id that was sent in the request
-    pub id: i64,
-
-    /// The JSON-RPC version (2.0)
-    pub jsonrpc: String,
-
-    /// Current timestamp (milliseconds since the UNIX epoch)
-    pub result: i64,
-}
+pub type GetTimeResponse = JsonRpcResult<i64>;
 
 impl RestClient {
     /// Calls the public/get_time endpoint.
@@ -45,7 +35,6 @@ impl RestClient {
     pub async fn get_time(&self, params: GetTimeRequest) -> RestResult<GetTimeResponse> {
         self.send_request(
             TIME_ENDPOINT,
-            reqwest::Method::GET,
             Some(&params),
             EndpointType::NonMatchingEngine,
         )

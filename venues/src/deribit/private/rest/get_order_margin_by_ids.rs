@@ -5,7 +5,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::deribit::{EndpointType, RestResult};
+use crate::deribit::{EndpointType, JsonRpcResult, RestResult};
 
 /// REST API endpoint constant
 const GET_ORDER_MARGIN_BY_IDS_ENDPOINT: &str = "private/get_order_margin_by_ids";
@@ -17,12 +17,7 @@ pub struct GetOrderMarginByIdsRequest {
 }
 
 /// Response for /private/get_order_margin_by_ids
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetOrderMarginByIdsResponse {
-    pub jsonrpc: String,
-    pub id: u64,
-    pub result: Vec<OrderMarginInfo>,
-}
+pub type GetOrderMarginByIdsResponse = JsonRpcResult<Vec<OrderMarginInfo>>;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct OrderMarginInfo {

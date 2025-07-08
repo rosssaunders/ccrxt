@@ -1,9 +1,9 @@
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 
 // Reuse the result structure from add_block_rfq_quote since the API returns the same quote objects
 use super::RestClient;
 use super::add_block_rfq_quote::AddBlockRfqQuoteResult;
-use crate::deribit::{EndpointType, RestResult};
+use crate::deribit::{EndpointType, JsonRpcResult, RestResult};
 
 /// REST API endpoint constant
 const GET_BLOCK_RFQ_QUOTES_ENDPOINT: &str = "private/get_block_rfq_quotes";
@@ -23,15 +23,7 @@ pub struct GetBlockRfqQuotesRequest {
 }
 
 /// Response for get block RFQ quotes endpoint
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetBlockRfqQuotesResponse {
-    /// The id that was sent in the request
-    pub id: i64,
-    /// The JSON-RPC version (2.0)
-    pub jsonrpc: String,
-    /// Result containing the array of Block RFQ quotes
-    pub result: Vec<AddBlockRfqQuoteResult>,
-}
+pub type GetBlockRfqQuotesResponse = JsonRpcResult<Vec<AddBlockRfqQuoteResult>>;
 
 impl RestClient {
     /// Retrieves all open quotes for Block RFQs.

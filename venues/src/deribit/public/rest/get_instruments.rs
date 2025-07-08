@@ -2,12 +2,11 @@
 //!
 //! Retrieves a list of instruments for a given currency and kind.
 
-use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 use crate::deribit::{
-    EndpointType, RestResult,
+    EndpointType, JsonRpcResult, RestResult,
     enums::{Currency, InstrumentKind},
 };
 
@@ -36,9 +35,9 @@ pub struct InstrumentData {
     #[serde(rename = "instrument_name")]
     pub instrument_name: String,
 
-    /// Currency of the instrument.
-    #[serde(rename = "currency")]
-    pub currency: Currency,
+    /// Currency of the instrument (optional for some instruments).
+    #[serde(rename = "currency", default)]
+    pub currency: Option<Currency>,
 
     /// Kind of the instrument (future, option, etc.).
     #[serde(rename = "kind")]
@@ -84,29 +83,8 @@ pub struct InstrumentData {
     pub quote_currency: Option<Currency>,
 }
 
-/// The result object for get_instruments.
-#[derive(Debug, Clone, Deserialize)]
-pub struct GetInstrumentsResult {
-    /// List of instrument data.
-    #[serde(rename = "instruments")]
-    pub instruments: Vec<InstrumentData>,
-}
-
-/// Response for the get_instruments endpoint.
-#[derive(Debug, Clone, Deserialize)]
-pub struct GetInstrumentsResponse {
-    /// The id that was sent in the request.
-    #[serde(rename = "id")]
-    pub id: u64,
-
-    /// The JSON-RPC version (2.0).
-    #[serde(rename = "jsonrpc")]
-    pub jsonrpc: String,
-
-    /// The result object containing the list of instruments.
-    #[serde(rename = "result")]
-    pub result: GetInstrumentsResult,
-}
+/// Response for public/get_instruments endpoint following Deribit JSON-RPC 2.0 format.
+pub type GetInstrumentsResponse = JsonRpcResult<Vec<InstrumentData>>;
 
 impl RestClient {
     /// Calls the /public/get_instruments endpoint.
@@ -120,7 +98,6 @@ impl RestClient {
     ) -> RestResult<GetInstrumentsResponse> {
         self.send_request(
             INSTRUMENTS_ENDPOINT,
-            Method::POST,
             Some(&params),
             EndpointType::NonMatchingEngine,
         )
@@ -153,28 +130,25 @@ mod tests {
         let data = r#"{
             "id": 15,
             "jsonrpc": "2.0",
-            "result": {
-                "instruments": [
-                    {
-                        "instrument_name": "BTC-PERPETUAL",
-                        "currency": "BTC",
-                        "kind": "future",
-                        "tick_size": 0.5,
-                        "contract_size": 10.0,
-                        "min_trade_amount": 1.0
-                    }
-                ]
-            }
+            "result": [
+                {
+                    "instrument_name": "BTC-PERPETUAL",
+                    "currency": "BTC",
+                    "kind": "future",
+                    "tick_size": 0.5,
+                    "contract_size": 10.0,
+                    "min_trade_amount": 1.0
+                }
+            ]
         }"#;
         let resp: GetInstrumentsResponse = serde_json::from_str(data).unwrap();
-        assert_eq!(resp.id, 15);
         assert_eq!(resp.jsonrpc, "2.0");
-        assert_eq!(resp.result.instruments.len(), 1);
-        assert_eq!(resp.result.instruments[0].instrument_name, "BTC-PERPETUAL");
-        assert_eq!(resp.result.instruments[0].currency, Currency::BTC);
-        assert_eq!(resp.result.instruments[0].kind, InstrumentKind::Future);
-        assert!((resp.result.instruments[0].tick_size - 0.5).abs() < 1e-8);
-        assert!((resp.result.instruments[0].contract_size - 10.0).abs() < 1e-8);
-        assert!((resp.result.instruments[0].min_trade_amount - 1.0).abs() < 1e-8);
+        assert_eq!(resp.result.len(), 1);
+        assert_eq!(resp.result[0].instrument_name, "BTC-PERPETUAL");
+        assert_eq!(resp.result[0].currency, Some(Currency::BTC));
+        assert_eq!(resp.result[0].kind, InstrumentKind::Future);
+        assert!((resp.result[0].tick_size - 0.5).abs() < 1e-8);
+        assert!((resp.result[0].contract_size - 10.0).abs() < 1e-8);
+        assert!((resp.result[0].min_trade_amount - 1.0).abs() < 1e-8);
     }
 }

@@ -64,7 +64,6 @@ impl RestClient {
     pub async fn send_request<T, P>(
         &self,
         endpoint: &str,
-        method: reqwest::Method,
         params: Option<&P>,
         endpoint_type: EndpointType,
     ) -> RestResult<T>
@@ -86,44 +85,24 @@ impl RestClient {
         };
 
         // Build the request
-        let mut request_builder = self.client.request(method.clone(), &url);
+        let mut request_builder = self.client.request(reqwest::Method::POST, &url);
 
         // Add parameters based on method
-        if method == reqwest::Method::GET {
-            if let Some(params) = params {
-                let params_value = serde_json::to_value(params)
-                    .map_err(|e| Errors::Error(format!("Failed to serialize params: {e}")))?;
-                // For GET requests, add parameters as query string
-                if let Some(params_obj) = params_value.as_object() {
-                    for (key, value) in params_obj {
-                        let value_str = match value {
-                            serde_json::Value::String(s) => s.clone(),
-                            serde_json::Value::Number(n) => n.to_string(),
-                            serde_json::Value::Bool(b) => b.to_string(),
-                            serde_json::Value::Null => continue, // Skip null values
-                            _ => value.to_string(),
-                        };
-                        request_builder = request_builder.query(&[(key, value_str)]);
-                    }
-                }
-            }
+        // For POST requests, wrap in JSON-RPC envelope
+        let params_value = if let Some(params) = params {
+            serde_json::to_value(params)
+                .map_err(|e| Errors::Error(format!("Failed to serialize params: {e}")))?
         } else {
-            // For POST requests, wrap in JSON-RPC envelope
-            let params_value = if let Some(params) = params {
-                serde_json::to_value(params)
-                    .map_err(|e| Errors::Error(format!("Failed to serialize params: {e}")))?
-            } else {
-                serde_json::Value::Object(serde_json::Map::new())
-            };
+            serde_json::Value::Object(serde_json::Map::new())
+        };
 
-            let jsonrpc_body = serde_json::json!({
-                "method": endpoint,
-                "params": params_value,
-                "jsonrpc": "2.0",
-                "id": 1
-            });
-            request_builder = request_builder.json(&jsonrpc_body);
-        }
+        let jsonrpc_body = serde_json::json!({
+            "method": endpoint,
+            "params": params_value,
+            "jsonrpc": "2.0",
+            "id": 1
+        });
+        request_builder = request_builder.json(&jsonrpc_body);
 
         // Add required headers
         request_builder = request_builder.header("Content-Type", "application/json");

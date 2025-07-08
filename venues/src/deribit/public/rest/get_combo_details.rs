@@ -5,7 +5,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::{RestClient, get_combos::ComboInfo};
-use crate::deribit::{EndpointType, RestResult};
+use crate::deribit::{EndpointType, JsonRpcResult, RestResult};
 
 const COMBO_DETAILS_ENDPOINT: &str = "public/get_combo_details";
 
@@ -18,18 +18,7 @@ pub struct GetComboDetailsRequest {
     pub combo_id: String,
 }
 
-/// Response for public/get_combo_details endpoint following Deribit JSON-RPC 2.0 format.
-#[derive(Debug, Clone, Deserialize)]
-pub struct GetComboDetailsResponse {
-    /// The id that was sent in the request
-    pub id: i64,
-
-    /// The JSON-RPC version (2.0)
-    pub jsonrpc: String,
-
-    /// Combo information
-    pub result: ComboInfo,
-}
+pub type GetComboDetailsResponse = JsonRpcResult<ComboInfo>;
 
 impl RestClient {
     /// Calls the public/get_combo_details endpoint.
@@ -49,7 +38,6 @@ impl RestClient {
     ) -> RestResult<GetComboDetailsResponse> {
         self.send_request(
             COMBO_DETAILS_ENDPOINT,
-            reqwest::Method::GET,
             Some(&params),
             EndpointType::NonMatchingEngine,
         )

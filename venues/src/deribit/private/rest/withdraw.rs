@@ -1,7 +1,9 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::deribit::{Currency, EndpointType, RestResult, WithdrawalPriority, WithdrawalState};
+use crate::deribit::{
+    Currency, EndpointType, JsonRpcResult, RestResult, WithdrawalPriority, WithdrawalState,
+};
 
 /// REST API endpoint constant
 const WITHDRAW_ENDPOINT: &str = "private/withdraw";
@@ -48,15 +50,7 @@ pub struct WithdrawalData {
 }
 
 /// Response for withdrawal endpoint
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct WithdrawResponse {
-    /// The id that was sent in the request
-    pub id: i64,
-    /// The JSON-RPC version (2.0)
-    pub jsonrpc: String,
-    /// Withdrawal result data
-    pub result: WithdrawalData,
-}
+pub type WithdrawResponse = JsonRpcResult<WithdrawalData>;
 
 impl RestClient {
     /// Withdraw funds from your account to an address in your address book.

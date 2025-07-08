@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::deribit::{EndpointType, RestResult};
+use crate::deribit::{EndpointType, JsonRpcResult, RestResult};
 
 /// REST API endpoint constant
 const ENABLE_CANCEL_ON_DISCONNECT_ENDPOINT: &str = "private/enable_cancel_on_disconnect";
@@ -25,15 +25,7 @@ pub struct EnableCancelOnDisconnectRequest {
 }
 
 /// Response for enable cancel on disconnect endpoint
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct EnableCancelOnDisconnectResponse {
-    /// The id that was sent in the request
-    pub id: i64,
-    /// The JSON-RPC version (2.0)
-    pub jsonrpc: String,
-    /// Result of method execution. "ok" in case of success
-    pub result: String,
-}
+pub type EnableCancelOnDisconnectResponse = JsonRpcResult<String>;
 
 impl RestClient {
     /// Enable Cancel On Disconnect for the connection

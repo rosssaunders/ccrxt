@@ -6,11 +6,11 @@
 
 use std::borrow::Cow;
 
-use reqwest::Method;
+
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::deribit::{EndpointType, RestResult};
+use crate::deribit::{EndpointType, JsonRpcResult, RestResult};
 
 const VOLATILITY_INDEX_DATA_ENDPOINT: &str = "public/get_volatility_index_data";
 
@@ -34,21 +34,8 @@ pub struct GetVolatilityIndexDataResult {
     pub timestamp: u64,
 }
 
-/// Response for the get_volatility_index_data endpoint.
-#[derive(Debug, Clone, Deserialize, PartialEq)]
-pub struct GetVolatilityIndexDataResponse {
-    /// The id that was sent in the request.
-    #[serde(rename = "id")]
-    pub id: u64,
-
-    /// The JSON-RPC version (2.0).
-    #[serde(rename = "jsonrpc")]
-    pub jsonrpc: String,
-
-    /// The result object containing the volatility index data.
-    #[serde(rename = "result")]
-    pub result: GetVolatilityIndexDataResult,
-}
+/// Response for public/get_volatility_index_data endpoint following Deribit JSON-RPC 2.0 format.
+pub type GetVolatilityIndexDataResponse = JsonRpcResult<GetVolatilityIndexDataResult>;
 
 impl RestClient {
     /// Calls the /public/get_volatility_index_data endpoint.
@@ -62,7 +49,7 @@ impl RestClient {
     ) -> RestResult<GetVolatilityIndexDataResponse> {
         self.send_request(
             VOLATILITY_INDEX_DATA_ENDPOINT,
-            Method::POST,
+
             Some(&params),
             EndpointType::NonMatchingEngine,
         )

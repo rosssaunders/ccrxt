@@ -2,11 +2,10 @@
 //!
 //! Retrieves historical APR data for specified currency. Only applicable to yield-generating tokens (`USDE`, `STETH`).
 
-use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::deribit::{EndpointType, RestResult, enums::Currency};
+use crate::deribit::{EndpointType, JsonRpcResult, RestResult, enums::Currency};
 
 const APR_HISTORY_ENDPOINT: &str = "public/get_apr_history";
 
@@ -51,20 +50,7 @@ pub struct GetAprHistoryResult {
 }
 
 /// Response for the get_apr_history endpoint.
-#[derive(Debug, Clone, Deserialize)]
-pub struct GetAprHistoryResponse {
-    /// The id that was sent in the request.
-    #[serde(rename = "id")]
-    pub id: u64,
-
-    /// The JSON-RPC version (2.0).
-    #[serde(rename = "jsonrpc")]
-    pub jsonrpc: String,
-
-    /// The result object containing APR history data.
-    #[serde(rename = "result")]
-    pub result: GetAprHistoryResult,
-}
+pub type GetAprHistoryResponse = JsonRpcResult<GetAprHistoryResult>;
 
 impl RestClient {
     /// Calls the /public/get_apr_history endpoint.
@@ -78,7 +64,6 @@ impl RestClient {
     ) -> RestResult<GetAprHistoryResponse> {
         self.send_request(
             APR_HISTORY_ENDPOINT,
-            Method::POST,
             Some(&params),
             EndpointType::NonMatchingEngine,
         )

@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 // Reuse the Side enum from send_rfq for direction fields
 pub use super::send_rfq::Side;
-use crate::deribit::{EndpointType, RestResult};
+use crate::deribit::{EndpointType, JsonRpcResult, RestResult};
 
 /// REST API endpoint constant
 const ADD_BLOCK_RFQ_QUOTE_ENDPOINT: &str = "private/add_block_rfq_quote";
@@ -142,15 +142,7 @@ pub struct AddBlockRfqQuoteResult {
 }
 
 /// Response for add Block RFQ quote endpoint
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct AddBlockRfqQuoteResponse {
-    /// The id that was sent in the request
-    pub id: i64,
-    /// The JSON-RPC version (2.0)
-    pub jsonrpc: String,
-    /// Result containing the Block RFQ quote details
-    pub result: AddBlockRfqQuoteResult,
-}
+pub type AddBlockRfqQuoteResponse = JsonRpcResult<AddBlockRfqQuoteResult>;
 
 impl RestClient {
     /// Add quote to existing Block RFQ

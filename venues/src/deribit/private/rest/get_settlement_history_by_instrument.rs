@@ -7,7 +7,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::deribit::{EndpointType, RestResult};
+use crate::deribit::{EndpointType, JsonRpcResult, RestResult};
 
 /// REST API endpoint constant
 const GET_SETTLEMENT_HISTORY_BY_INSTRUMENT_ENDPOINT: &str =
@@ -49,10 +49,13 @@ pub struct SettlementEvent {
 
 /// Response for /private/get_settlement_history_by_instrument
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetSettlementHistoryByInstrumentResponse {
+pub struct GetSettlementHistoryByInstrumentResult {
     pub continuation: Option<String>,
     pub settlements: Vec<SettlementEvent>,
 }
+
+pub type GetSettlementHistoryByInstrumentResponse =
+    JsonRpcResult<GetSettlementHistoryByInstrumentResult>;
 
 impl RestClient {
     /// Retrieves public settlement, delivery and bankruptcy events filtered by instrument name.

@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::deribit::{EndpointType, RestResult};
+use crate::deribit::{EndpointType, JsonRpcResult, RestResult};
 
 /// REST API endpoint constant
 const SET_CLEARANCE_ORIGINATOR_ENDPOINT: &str = "private/set_clearance_originator";
@@ -71,15 +71,7 @@ pub struct SetClearanceOriginatorResult {
 }
 
 /// Response for set clearance originator endpoint
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct SetClearanceOriginatorResponse {
-    /// The id that was sent in the request
-    pub id: i64,
-    /// The JSON-RPC version (2.0)
-    pub jsonrpc: String,
-    /// Set clearance originator result data
-    pub result: SetClearanceOriginatorResult,
-}
+pub type SetClearanceOriginatorResponse = JsonRpcResult<SetClearanceOriginatorResult>;
 
 impl RestClient {
     /// Sets the clearance originator for a deposit.

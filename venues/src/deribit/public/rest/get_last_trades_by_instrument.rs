@@ -2,12 +2,11 @@
 //!
 //! Retrieves the most recent trades for a given instrument.
 
-use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 use crate::deribit::{
-    EndpointType, RestResult,
+    EndpointType, JsonRpcResult, RestResult,
     enums::{Liquidity, Sorting, TickDirection, TradeOrderType},
 };
 
@@ -74,20 +73,7 @@ pub struct GetLastTradesByInstrumentResult {
 }
 
 /// Response for the get_last_trades_by_instrument endpoint.
-#[derive(Debug, Clone, Deserialize)]
-pub struct GetLastTradesByInstrumentResponse {
-    /// The id that was sent in the request.
-    #[serde(rename = "id")]
-    pub id: u64,
-
-    /// The JSON-RPC version (2.0).
-    #[serde(rename = "jsonrpc")]
-    pub jsonrpc: String,
-
-    /// The result object containing the trades.
-    #[serde(rename = "result")]
-    pub result: GetLastTradesByInstrumentResult,
-}
+pub type GetLastTradesByInstrumentResponse = JsonRpcResult<GetLastTradesByInstrumentResult>;
 
 impl RestClient {
     /// Calls the /public/get_last_trades_by_instrument endpoint.
@@ -101,7 +87,6 @@ impl RestClient {
     ) -> RestResult<GetLastTradesByInstrumentResponse> {
         self.send_request(
             LAST_TRADES_BY_INSTRUMENT_ENDPOINT,
-            Method::POST,
             Some(&params),
             EndpointType::NonMatchingEngine,
         )

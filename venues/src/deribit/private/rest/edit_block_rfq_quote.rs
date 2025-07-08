@@ -1,9 +1,9 @@
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 
 // Reuse the types from add_block_rfq_quote since the API uses the same structures
 use super::RestClient;
 use super::add_block_rfq_quote::{AddBlockRfqQuoteResult, BlockRfqHedge, BlockRfqLeg};
-use crate::deribit::{EndpointType, RestResult};
+use crate::deribit::{EndpointType, JsonRpcResult, RestResult};
 
 /// REST API endpoint constant
 const EDIT_BLOCK_RFQ_QUOTE_ENDPOINT: &str = "private/edit_block_rfq_quote";
@@ -33,15 +33,7 @@ pub struct EditBlockRfqQuoteRequest {
 }
 
 /// Response for edit Block RFQ quote endpoint
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct EditBlockRfqQuoteResponse {
-    /// The id that was sent in the request
-    pub id: i64,
-    /// The JSON-RPC version (2.0)
-    pub jsonrpc: String,
-    /// Result containing the edited Block RFQ quote details
-    pub result: AddBlockRfqQuoteResult,
-}
+pub type EditBlockRfqQuoteResponse = JsonRpcResult<AddBlockRfqQuoteResult>;
 
 impl RestClient {
     /// Edit a Block RFQ quote

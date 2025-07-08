@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 // Reuse the Trade struct from get_user_trades_by_currency since it's identical
 pub use super::get_user_trades_by_currency::Trade;
-use crate::deribit::{EndpointType, RestResult, Sorting};
+use crate::deribit::{EndpointType, JsonRpcResult, RestResult, Sorting};
 
 /// REST API endpoint constant
 const GET_USER_TRADES_BY_ORDER_ENDPOINT: &str = "private/get_user_trades_by_order";
@@ -31,15 +31,7 @@ pub struct GetUserTradesByOrderResult {
 }
 
 /// Response for get user trades by order endpoint
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetUserTradesByOrderResponse {
-    /// The id that was sent in the request
-    pub id: i64,
-    /// The JSON-RPC version (2.0)
-    pub jsonrpc: String,
-    /// Result data containing trades
-    pub result: GetUserTradesByOrderResult,
-}
+pub type GetUserTradesByOrderResponse = JsonRpcResult<GetUserTradesByOrderResult>;
 
 impl RestClient {
     /// Retrieve the list of user trades that was created for given order

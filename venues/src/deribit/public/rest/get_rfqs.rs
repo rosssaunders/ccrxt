@@ -2,11 +2,10 @@
 //!
 //! Retrieves the list of current RFQs (Request For Quotes).
 
-use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::deribit::{EndpointType, RestResult, enums::ComboState};
+use crate::deribit::{EndpointType, JsonRpcResult, RestResult, enums::ComboState};
 
 const RFQS_ENDPOINT: &str = "public/get_rfqs";
 
@@ -47,20 +46,7 @@ pub struct GetRfqsResult {
 }
 
 /// Response for the get_rfqs endpoint.
-#[derive(Debug, Clone, Deserialize)]
-pub struct GetRfqsResponse {
-    /// The id that was sent in the request.
-    #[serde(rename = "id")]
-    pub id: u64,
-
-    /// The JSON-RPC version (2.0).
-    #[serde(rename = "jsonrpc")]
-    pub jsonrpc: String,
-
-    /// The result object containing the RFQs.
-    #[serde(rename = "result")]
-    pub result: GetRfqsResult,
-}
+pub type GetRfqsResponse = JsonRpcResult<GetRfqsResult>;
 
 impl RestClient {
     /// Calls the /public/get_rfqs endpoint.
@@ -71,7 +57,6 @@ impl RestClient {
     pub async fn get_rfqs(&self, params: GetRfqsRequest) -> RestResult<GetRfqsResponse> {
         self.send_request(
             RFQS_ENDPOINT,
-            Method::POST,
             Some(&params),
             EndpointType::NonMatchingEngine,
         )

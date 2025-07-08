@@ -2,8 +2,8 @@ use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 use crate::deribit::{
-    AdvancedType, Currency, EndpointType, InstrumentKind, LiquidationSide, Liquidity,
-    OrderDirection, OrderState, RestResult, Sorting, TickDirection, TradeOrderType,
+    AdvancedType, Currency, EndpointType, InstrumentKind, JsonRpcResult, LiquidationSide,
+    Liquidity, OrderDirection, OrderState, RestResult, Sorting, TickDirection, TradeOrderType,
 };
 
 /// REST API endpoint constant
@@ -152,15 +152,7 @@ pub struct GetUserTradesByCurrencyResult {
 }
 
 /// Response for get user trades by currency endpoint
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetUserTradesByCurrencyResponse {
-    /// The id that was sent in the request
-    pub id: i64,
-    /// The JSON-RPC version (2.0)
-    pub jsonrpc: String,
-    /// Result data containing trades
-    pub result: GetUserTradesByCurrencyResult,
-}
+pub type GetUserTradesByCurrencyResponse = JsonRpcResult<GetUserTradesByCurrencyResult>;
 
 impl RestClient {
     /// Retrieve the latest user trades that have occurred for instruments in a specific currency symbol

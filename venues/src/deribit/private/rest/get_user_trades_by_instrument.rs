@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 // Reuse the Trade struct from get_user_trades_by_currency since it's identical
 pub use super::get_user_trades_by_currency::Trade;
-use crate::deribit::{EndpointType, RestResult, Sorting};
+use crate::deribit::{EndpointType, JsonRpcResult, RestResult, Sorting};
 
 /// REST API endpoint constant
 const GET_USER_TRADES_BY_INSTRUMENT_ENDPOINT: &str = "private/get_user_trades_by_instrument";
@@ -46,15 +46,7 @@ pub struct GetUserTradesByInstrumentResult {
 }
 
 /// Response for get user trades by instrument endpoint
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetUserTradesByInstrumentResponse {
-    /// The id that was sent in the request
-    pub id: i64,
-    /// The JSON-RPC version (2.0)
-    pub jsonrpc: String,
-    /// Result data containing trades
-    pub result: GetUserTradesByInstrumentResult,
-}
+pub type GetUserTradesByInstrumentResponse = JsonRpcResult<GetUserTradesByInstrumentResult>;
 
 impl RestClient {
     /// Retrieve the latest user trades that have occurred for a specific instrument

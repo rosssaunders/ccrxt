@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::deribit::{Currency, EndpointType, RestResult};
+use crate::deribit::{Currency, EndpointType, JsonRpcResult, RestResult};
 
 /// REST API endpoint constant
 const GET_CURRENT_DEPOSIT_ADDRESS_ENDPOINT: &str = "private/get_current_deposit_address";
@@ -28,15 +28,7 @@ pub struct DepositAddress {
 }
 
 /// Response for get current deposit address endpoint
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetCurrentDepositAddressResponse {
-    /// The id that was sent in the request
-    pub id: i64,
-    /// The JSON-RPC version (2.0)
-    pub jsonrpc: String,
-    /// Object if address is created, null otherwise
-    pub result: Option<DepositAddress>,
-}
+pub type GetCurrentDepositAddressResponse = JsonRpcResult<Option<DepositAddress>>;
 
 impl RestClient {
     /// Retrieve deposit address for currency

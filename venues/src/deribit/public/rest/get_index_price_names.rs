@@ -1,12 +1,10 @@
 //! Implements the /public/get_index_price_names endpoint for Deribit.
 //!
 //! Retrieves the list of all supported index price names.
-
-use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::deribit::{EndpointType, RestResult};
+use crate::deribit::{EndpointType, JsonRpcResult, RestResult};
 
 const INDEX_PRICE_NAMES_ENDPOINT: &str = "public/get_index_price_names";
 
@@ -25,20 +23,7 @@ pub struct GetIndexPriceNamesResult {
 }
 
 /// Response for the get_index_price_names endpoint.
-#[derive(Debug, Clone, Deserialize)]
-pub struct GetIndexPriceNamesResponse {
-    /// The id that was sent in the request.
-    #[serde(rename = "id")]
-    pub id: u64,
-
-    /// The JSON-RPC version (2.0).
-    #[serde(rename = "jsonrpc")]
-    pub jsonrpc: String,
-
-    /// The result object containing the list of index price names.
-    #[serde(rename = "result")]
-    pub result: GetIndexPriceNamesResult,
-}
+pub type GetIndexPriceNamesResponse = JsonRpcResult<GetIndexPriceNamesResult>;
 
 impl RestClient {
     /// Calls the /public/get_index_price_names endpoint.
@@ -52,7 +37,6 @@ impl RestClient {
     ) -> RestResult<GetIndexPriceNamesResponse> {
         self.send_request(
             INDEX_PRICE_NAMES_ENDPOINT,
-            Method::POST,
             Some(&params),
             EndpointType::NonMatchingEngine,
         )

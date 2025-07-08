@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::deribit::{EndpointType, RestResult};
+use crate::deribit::{EndpointType, JsonRpcResult, RestResult};
 
 /// REST API endpoint constant
 const GET_BLOCK_RFQ_USER_INFO_ENDPOINT: &str = "private/get_block_rfq_user_info";
@@ -44,15 +44,7 @@ pub struct GetBlockRfqUserInfoResult {
 }
 
 /// Response for get Block RFQ user info endpoint
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetBlockRfqUserInfoResponse {
-    /// The id that was sent in the request
-    pub id: i64,
-    /// The JSON-RPC version (2.0)
-    pub jsonrpc: String,
-    /// Result containing identity and rating information
-    pub result: GetBlockRfqUserInfoResult,
-}
+pub type GetBlockRfqUserInfoResponse = JsonRpcResult<GetBlockRfqUserInfoResult>;
 
 impl RestClient {
     /// Get identity and rating information for the requesting account and its subaccounts

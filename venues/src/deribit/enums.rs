@@ -33,6 +33,10 @@ pub enum Currency {
     BNB,
     #[serde(rename = "USDE")]
     USDE,
+    #[serde(rename = "USD")]
+    USD,
+    #[serde(rename = "BUIDL")]
+    BUIDL,
     #[serde(rename = "any")]
     Any,
 }
@@ -54,6 +58,8 @@ impl Display for Currency {
             Currency::PAXG => write!(f, "PAXG"),
             Currency::BNB => write!(f, "BNB"),
             Currency::USDE => write!(f, "USDE"),
+            Currency::USD => write!(f, "USD"),
+            Currency::BUIDL => write!(f, "BUIDL"),
             Currency::Any => write!(f, "any"),
         }
     }

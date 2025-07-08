@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::{RestClient, submit_transfer_to_user::TransferData};
-use crate::deribit::{Currency, EndpointType, RestResult};
+use crate::deribit::{Currency, EndpointType, JsonRpcResult, RestResult};
 
 /// REST API endpoint constant
 const GET_TRANSFERS_ENDPOINT: &str = "private/get_transfers";
@@ -29,15 +29,7 @@ pub struct GetTransfersResult {
 }
 
 /// Response for get transfers endpoint
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetTransfersResponse {
-    /// The id that was sent in the request
-    pub id: i64,
-    /// The JSON-RPC version (2.0)
-    pub jsonrpc: String,
-    /// Transfer result data
-    pub result: GetTransfersResult,
-}
+pub type GetTransfersResponse = JsonRpcResult<GetTransfersResult>;
 
 impl RestClient {
     /// Retrieve the user's transfers list

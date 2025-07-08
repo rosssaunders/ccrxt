@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::deribit::{EndpointType, RestResult};
+use crate::deribit::{EndpointType, JsonRpcResult, RestResult};
 
 /// REST API endpoint constant
 const APPROVE_BLOCK_TRADE_ENDPOINT: &str = "private/approve_block_trade";
@@ -28,15 +28,7 @@ pub struct ApproveBlockTradeRequest {
 }
 
 /// Response for approve block trade endpoint
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ApproveBlockTradeResponse {
-    /// The id that was sent in the request
-    pub id: i64,
-    /// The JSON-RPC version (2.0)
-    pub jsonrpc: String,
-    /// Result of method execution. "ok" in case of success
-    pub result: String,
-}
+pub type ApproveBlockTradeResponse = JsonRpcResult<String>;
 
 impl RestClient {
     /// Approve a pending block trade

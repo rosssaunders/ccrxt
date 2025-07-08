@@ -1,7 +1,7 @@
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 
 use super::RestClient;
-use crate::deribit::{EndpointType, RestResult};
+use crate::deribit::{EndpointType, JsonRpcResult, RestResult};
 
 /// REST API endpoint constant
 const GET_BLOCK_RFQ_MAKERS_ENDPOINT: &str = "private/get_block_rfq_makers";
@@ -13,15 +13,7 @@ pub struct GetBlockRfqMakersRequest {
 }
 
 /// Response for get Block RFQ makers endpoint
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetBlockRfqMakersResponse {
-    /// The id that was sent in the request
-    pub id: i64,
-    /// The JSON-RPC version (2.0)
-    pub jsonrpc: String,
-    /// A list of available makers
-    pub result: Vec<String>,
-}
+pub type GetBlockRfqMakersResponse = JsonRpcResult<Vec<String>>;
 
 impl RestClient {
     /// Get a list of all available Block RFQ makers
