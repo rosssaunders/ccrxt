@@ -173,7 +173,7 @@ impl RestClient {
         // Make the request
         let response = self
             .client
-            .request(Method::GET, &format!("{}/fapi/v1/income", self.base_url))
+            .request(Method::GET, format!("{}/fapi/v1/income", self.base_url))
             .header("X-MBX-APIKEY", api_key.expose_secret())
             .query(&request)
             .send()

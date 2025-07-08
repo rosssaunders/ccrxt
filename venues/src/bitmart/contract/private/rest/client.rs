@@ -35,9 +35,9 @@ impl RestClient {
             .header("X-BM-KEY", self.api_key.expose_secret().to_string())
             .send()
             .await
-            .map_err(|e| Errors::HttpError(e))?;
+            .map_err(Errors::HttpError)?;
         let status = resp.status();
-        let text = resp.text().await.map_err(|e| Errors::HttpError(e))?;
+        let text = resp.text().await.map_err(Errors::HttpError)?;
         if !status.is_success() {
             let err: crate::bitmart::error::ErrorResponse = serde_json::from_str(&text)
                 .unwrap_or_else(|_| crate::bitmart::error::ErrorResponse {

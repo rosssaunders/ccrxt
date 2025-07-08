@@ -78,7 +78,7 @@ mod tests {
 
         let response: SwitchBgbDeductResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.code, "00000");
-        assert_eq!(response.data, true);
+        assert!(response.data);
     }
 
     #[tokio::test]

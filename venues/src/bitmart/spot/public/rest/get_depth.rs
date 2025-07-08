@@ -101,7 +101,7 @@ mod tests {
 
     #[test]
     fn test_order_book_entry_incomplete() {
-        let entry = vec!["31012.44".to_string()];
+        let entry = ["31012.44".to_string()];
 
         assert_eq!(entry.first().map(|s| s.as_str()), Some("31012.44"));
         assert_eq!(entry.get(1).map(|s| s.as_str()), None);

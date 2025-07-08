@@ -129,7 +129,7 @@ impl RestClient {
             .client
             .request(
                 Method::POST,
-                &format!("{}/fapi/v1/multiAssetsMargin", self.base_url),
+                format!("{}/fapi/v1/multiAssetsMargin", self.base_url),
             )
             .header("X-MBX-APIKEY", api_key.expose_secret())
             .form(&request)

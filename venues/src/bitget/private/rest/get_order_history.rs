@@ -222,7 +222,7 @@ impl RestClient {
             || request.receive_window.is_some();
 
         let query_string = if has_params {
-            Some(serde_urlencoded::to_string(&request).map_err(|e| {
+            Some(serde_urlencoded::to_string(request).map_err(|e| {
                 crate::bitget::Errors::Error(format!("Failed to encode query: {e}"))
             })?)
         } else {

@@ -106,7 +106,7 @@ impl RestClient {
             .client
             .request(
                 Method::GET,
-                &format!("{}/fapi/v1/rateLimit/order", self.base_url),
+                format!("{}/fapi/v1/rateLimit/order", self.base_url),
             )
             .header("X-MBX-APIKEY", api_key.expose_secret())
             .query(&request)

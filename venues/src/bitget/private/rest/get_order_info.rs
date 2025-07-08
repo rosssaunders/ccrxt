@@ -207,7 +207,7 @@ impl RestClient {
         &self,
         request: &GetOrderInfoRequest,
     ) -> RestResult<GetOrderInfoResponse> {
-        let query_string = serde_urlencoded::to_string(&request)
+        let query_string = serde_urlencoded::to_string(request)
             .map_err(|e| crate::bitget::Errors::Error(format!("Failed to encode query: {e}")))?;
 
         self.send_signed_request(

@@ -136,11 +136,9 @@ mod tests {
 
     #[test]
     fn test_kline_data_incomplete() {
-        let kline_data = vec![
-            "1689736680".to_string(),
+        let kline_data = ["1689736680".to_string(),
             "3.721".to_string(),
-            "3.743".to_string(),
-        ];
+            "3.743".to_string()];
 
         assert_eq!(kline_data.first().map(|s| s.as_str()), Some("1689736680"));
         assert_eq!(kline_data.get(1).map(|s| s.as_str()), Some("3.721"));

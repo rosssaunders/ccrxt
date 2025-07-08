@@ -1,4 +1,3 @@
-use std::collections::HashMap;
 
 use reqwest;
 use serde::{de::DeserializeOwned, Serialize};

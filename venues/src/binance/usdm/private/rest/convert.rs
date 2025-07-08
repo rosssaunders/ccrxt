@@ -225,7 +225,7 @@ impl RestClient {
             .client
             .request(
                 Method::GET,
-                &format!("{}/fapi/v1/convert/exchangeInfo", self.base_url),
+                format!("{}/fapi/v1/convert/exchangeInfo", self.base_url),
             )
             .header("X-MBX-APIKEY", api_key.expose_secret())
             .query(&request)
@@ -292,7 +292,7 @@ impl RestClient {
             .client
             .request(
                 Method::POST,
-                &format!("{}/fapi/v1/convert/getQuote", self.base_url),
+                format!("{}/fapi/v1/convert/getQuote", self.base_url),
             )
             .header("X-MBX-APIKEY", api_key.expose_secret())
             .query(&request)
@@ -351,7 +351,7 @@ impl RestClient {
             .client
             .request(
                 Method::POST,
-                &format!("{}/fapi/v1/convert/acceptQuote", self.base_url),
+                format!("{}/fapi/v1/convert/acceptQuote", self.base_url),
             )
             .header("X-MBX-APIKEY", api_key.expose_secret())
             .query(&request)
@@ -412,7 +412,7 @@ impl RestClient {
             .client
             .request(
                 Method::GET,
-                &format!("{}/fapi/v1/convert/orderStatus", self.base_url),
+                format!("{}/fapi/v1/convert/orderStatus", self.base_url),
             )
             .header("X-MBX-APIKEY", api_key.expose_secret())
             .query(&request)

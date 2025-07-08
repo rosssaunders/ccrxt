@@ -101,7 +101,7 @@ impl RestClient {
             })?;
 
         mac.update(str_to_sign.as_bytes());
-        let signature = BASE64.encode(&mac.finalize().into_bytes());
+        let signature = BASE64.encode(mac.finalize().into_bytes());
 
         // Create passphrase signature for KC-API-PASSPHRASE header
         let mut passphrase_mac =
@@ -111,7 +111,7 @@ impl RestClient {
             })?;
 
         passphrase_mac.update(api_passphrase.as_bytes());
-        let passphrase_signature = BASE64.encode(&passphrase_mac.finalize().into_bytes());
+        let passphrase_signature = BASE64.encode(passphrase_mac.finalize().into_bytes());
 
         let mut headers = HashMap::new();
         headers.insert("KC-API-KEY".to_string(), api_key);

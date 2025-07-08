@@ -135,7 +135,7 @@ impl RestClient {
             .client
             .request(
                 Method::GET,
-                &format!("{}/fapi/v1/order/asyn", self.base_url),
+                format!("{}/fapi/v1/order/asyn", self.base_url),
             )
             .header("X-MBX-APIKEY", api_key.expose_secret())
             .query(&request)
@@ -194,7 +194,7 @@ impl RestClient {
             .client
             .request(
                 Method::GET,
-                &format!("{}/fapi/v1/order/asyn/id", self.base_url),
+                format!("{}/fapi/v1/order/asyn/id", self.base_url),
             )
             .header("X-MBX-APIKEY", api_key.expose_secret())
             .query(&request)

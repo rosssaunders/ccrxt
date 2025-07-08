@@ -6,7 +6,6 @@
 //! Endpoint: GET /api/v2/spot/trade/unfilled-orders
 //! Rate limit: 20 times/1s (UID)
 
-use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
 
