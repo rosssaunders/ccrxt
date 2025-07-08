@@ -7,7 +7,7 @@ use super::RestClient;
 pub struct OptionsUnderlying {
     /// Underlying name
     pub name: String,
-    
+
     /// Spot index price (quote currency)
     pub index_price: String,
 }

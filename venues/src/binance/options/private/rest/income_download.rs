@@ -1,9 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use crate::binance::options::RestResult;
-use crate::binance::shared;
-
 use super::client::RestClient;
+use crate::binance::{options::RestResult, shared};
 
 /// Request parameters for initiating income download
 #[derive(Debug, Clone, Serialize)]

@@ -2,11 +2,12 @@
 //!
 //! See: https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Long-Short-Ratio
 
-use super::RestClient;
-use crate::binance::usdm::enums::Period;
+use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
-use std::borrow::Cow;
+
+use super::RestClient;
+use crate::binance::usdm::enums::Period;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GlobalLongShortAccountRatioResponse<'a> {

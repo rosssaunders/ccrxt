@@ -84,7 +84,6 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use rest::secrets::ExposableSecret;
-
     use serde_json::{Value, json};
 
     use super::*;

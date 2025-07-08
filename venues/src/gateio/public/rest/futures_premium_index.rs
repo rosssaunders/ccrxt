@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
-use crate::gateio::enums::CandlestickInterval;
 
 use super::RestClient;
+use crate::gateio::enums::CandlestickInterval;
 
 /// Request parameters for futures premium index
 #[derive(Debug, Clone, Serialize, Default)]
@@ -29,16 +29,16 @@ pub struct FuturesPremiumIndexRequest {
 pub struct FuturesPremiumIndex {
     /// Unix timestamp in seconds
     pub t: i64,
-    
+
     /// Close price
     pub c: String,
-    
+
     /// Highest price
     pub h: String,
-    
+
     /// Lowest price
     pub l: String,
-    
+
     /// Open price
     pub o: String,
 }
@@ -48,7 +48,10 @@ impl RestClient {
     ///
     /// Retrieves premium index candlestick data for a specific futures contract.
     /// Premium index tracks the difference between mark price and index price.
-    pub async fn get_futures_premium_index(&self, params: FuturesPremiumIndexRequest) -> crate::gateio::Result<Vec<FuturesPremiumIndex>> {
+    pub async fn get_futures_premium_index(
+        &self,
+        params: FuturesPremiumIndexRequest,
+    ) -> crate::gateio::Result<Vec<FuturesPremiumIndex>> {
         let endpoint = format!("/futures/{}/premium_index", params.settle);
         self.get_with_query(&endpoint, Some(&params)).await
     }

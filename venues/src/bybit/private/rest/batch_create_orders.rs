@@ -1,9 +1,7 @@
 use serde::{Deserialize, Serialize};
 
+use super::{client::RestClient, create_order::CreateOrderRequest};
 use crate::bybit::{EndpointType, RestResult, enums::*};
-
-use super::client::RestClient;
-use super::create_order::CreateOrderRequest;
 
 #[derive(Debug, Clone, Serialize)]
 pub struct BatchCreateOrdersRequest {

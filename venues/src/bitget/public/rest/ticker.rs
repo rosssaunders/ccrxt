@@ -1,8 +1,9 @@
-use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
-use crate::bitget::{ApiError, RestResponse};
+use serde::{Deserialize, Serialize};
+
 use super::RestClient;
+use crate::bitget::{ApiError, RestResponse};
 
 const TICKER_ENDPOINT: &str = "/api/v2/spot/market/tickers";
 
@@ -13,8 +14,6 @@ pub struct GetTickerRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub symbol: Option<String>,
 }
-
-
 
 /// Ticker information
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -63,22 +62,29 @@ pub struct Ticker {
 
 impl RestClient {
     /// Get ticker information
-    /// 
+    ///
     /// # Arguments
     /// * `request` - The request parameters
-    /// 
+    ///
     /// # Returns
     /// The ticker information
-    pub async fn get_ticker(&self, request: &GetTickerRequest) -> Result<RestResponse<Vec<Ticker>>, ApiError> {
+    pub async fn get_ticker(
+        &self,
+        request: &GetTickerRequest,
+    ) -> Result<RestResponse<Vec<Ticker>>, ApiError> {
         let endpoint = TICKER_ENDPOINT;
-        
+
         let mut params = HashMap::new();
         if let Some(symbol) = &request.symbol {
             params.insert("symbol".to_string(), symbol.clone());
         }
-        
-        let params = if params.is_empty() { None } else { Some(params) };
-        
+
+        let params = if params.is_empty() {
+            None
+        } else {
+            Some(params)
+        };
+
         self.get(endpoint, params).await
     }
 }

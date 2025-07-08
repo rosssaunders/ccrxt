@@ -1,8 +1,9 @@
-use crate::binance::coinm::RestResult;
-use crate::binance::coinm::enums::IncomeType;
-use crate::binance::coinm::private::rest::client::RestClient;
-use crate::binance::shared;
 use serde::{Deserialize, Serialize};
+
+use crate::binance::{
+    coinm::{RestResult, enums::IncomeType, private::rest::client::RestClient},
+    shared,
+};
 
 /// Request parameters for income history.
 #[derive(Debug, Clone, Serialize, Default)]

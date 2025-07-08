@@ -5,9 +5,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-
-use crate::bitmart::rate_limit::EndpointType;
-use crate::bitmart::{OrderSide, OrderType, RestResult, StpMode};
+use crate::bitmart::{OrderSide, OrderType, RestResult, StpMode, rate_limit::EndpointType};
 
 const SUBMIT_ORDER_ENDPOINT: &str = "/spot/v2/submit_order";
 

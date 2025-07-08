@@ -7,9 +7,7 @@ use std::borrow::Cow;
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::cryptocom::EndpointType;
-use crate::cryptocom::InstrumentType;
-use crate::cryptocom::RestResult;
+use crate::cryptocom::{EndpointType, InstrumentType, RestResult};
 
 /// Endpoint for getting instruments
 const GET_INSTRUMENTS_ENDPOINT: &str = "public/get-instruments";

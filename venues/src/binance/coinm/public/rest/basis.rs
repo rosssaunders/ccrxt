@@ -1,9 +1,11 @@
-use crate::binance::coinm::RestResult;
-use crate::binance::coinm::enums::{ContractType, Period};
-use crate::binance::coinm::public::rest::RestClient;
-
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
+
+use crate::binance::coinm::{
+    RestResult,
+    enums::{ContractType, Period},
+    public::rest::RestClient,
+};
 
 /// Parameters for Basis
 #[derive(Debug, Clone, Serialize)]

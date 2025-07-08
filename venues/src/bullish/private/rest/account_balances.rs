@@ -71,9 +71,12 @@ impl RestClient {
     ///
     /// # Returns
     /// List of all asset balances
-    pub async fn get_asset_balances(&mut self, trading_account_id: &str) -> RestResult<AssetBalancesResponse> {
+    pub async fn get_asset_balances(
+        &mut self,
+        trading_account_id: &str,
+    ) -> RestResult<AssetBalancesResponse> {
         let url = format!("/v1/accounts/asset?tradingAccountId={}", trading_account_id);
-        
+
         self.send_authenticated_request(
             &url,
             reqwest::Method::GET,
@@ -93,9 +96,16 @@ impl RestClient {
     ///
     /// # Returns
     /// Balance information for the specified asset
-    pub async fn get_asset_balance(&mut self, symbol: &str, trading_account_id: &str) -> RestResult<SingleAssetBalanceResponse> {
-        let url = format!("/v1/accounts/asset/{}?tradingAccountId={}", symbol, trading_account_id);
-        
+    pub async fn get_asset_balance(
+        &mut self,
+        symbol: &str,
+        trading_account_id: &str,
+    ) -> RestResult<SingleAssetBalanceResponse> {
+        let url = format!(
+            "/v1/accounts/asset/{}?tradingAccountId={}",
+            symbol, trading_account_id
+        );
+
         self.send_authenticated_request(
             &url,
             reqwest::Method::GET,

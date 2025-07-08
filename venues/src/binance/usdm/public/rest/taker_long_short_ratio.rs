@@ -1,12 +1,12 @@
 //! Taker Buy/Sell Volume (GET /futures/data/takerlongshortRatio)
 //!
 //! See: https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Taker-BuySell-Volume
-use super::RestClient;
-use crate::binance::usdm::RestResult;
-use crate::binance::usdm::enums::Period;
+use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
-use std::borrow::Cow;
+
+use super::RestClient;
+use crate::binance::usdm::{RestResult, enums::Period};
 
 /// Request parameters for the Taker Buy/Sell Volume endpoint.
 #[derive(Debug, Clone, Serialize)]

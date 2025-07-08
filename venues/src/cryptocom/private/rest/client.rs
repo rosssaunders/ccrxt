@@ -1,5 +1,4 @@
-use std::borrow::Cow;
-use std::collections::BTreeMap;
+use std::{borrow::Cow, collections::BTreeMap};
 
 use chrono::Utc;
 use hmac::{Hmac, Mac};

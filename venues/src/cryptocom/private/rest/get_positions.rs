@@ -61,8 +61,7 @@ impl RestClient {
         &self,
         request: GetPositionsRequest,
     ) -> RestResult<GetPositionsResponse> {
-        self.send_signed_request(POSITIONS_ENDPOINT, request)
-            .await
+        self.send_signed_request(POSITIONS_ENDPOINT, request).await
     }
 }
 

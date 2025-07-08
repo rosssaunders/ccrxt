@@ -1,9 +1,9 @@
-use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
-use crate::kucoin::{ResponseHeaders, RestResponse, Result};
+use serde::{Deserialize, Serialize};
 
 use super::RestClient;
+use crate::kucoin::{ResponseHeaders, RestResponse, Result};
 
 const SUB_ACCOUNT_BALANCE_ENDPOINT: &str = "/api/v1/sub-accounts/{subUserId}";
 

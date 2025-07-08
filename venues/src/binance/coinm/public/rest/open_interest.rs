@@ -1,7 +1,7 @@
-use crate::binance::coinm::RestResult;
-use crate::binance::coinm::public::rest::RestClient;
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
+
+use crate::binance::coinm::{RestResult, public::rest::RestClient};
 
 /// Parameters for Open Interest
 #[derive(Debug, Clone, Serialize, Default)]

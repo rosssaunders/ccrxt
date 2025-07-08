@@ -1,6 +1,7 @@
+use std::collections::HashMap;
+
 use reqwest::Client;
 use serde::de::DeserializeOwned;
-use std::collections::HashMap;
 
 use crate::bitget::{ApiError, RateLimiter, ResponseHeaders, RestResponse};
 

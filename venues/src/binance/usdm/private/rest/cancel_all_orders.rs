@@ -1,14 +1,14 @@
 //! Cancel all open orders and countdown cancel all orders on Binance USDM REST API.
 
-use secrecy::{ExposeSecret, SecretString};
-use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
-use thiserror::Error;
 
-use crate::binance::usdm::private::rest::client::RestClient;
-use crate::binance::usdm::signing::sign_query;
 use chrono::Utc;
 use reqwest::Method;
+use secrecy::{ExposeSecret, SecretString};
+use serde::{Deserialize, Serialize};
+use thiserror::Error;
+
+use crate::binance::usdm::{private::rest::client::RestClient, signing::sign_query};
 
 /// Error type for USDM cancel all orders endpoints.
 #[derive(Debug, Error, Clone, Deserialize)]
@@ -108,8 +108,9 @@ impl RestClient {
         &self,
         params: CancelAllOpenOrdersRequest,
     ) -> CancelAllOrdersResult<CancelAllOpenOrdersResponse> {
-        use crate::binance::usdm::request::execute_request;
         use tracing::debug;
+
+        use crate::binance::usdm::request::execute_request;
 
         // 1. Prepare endpoint and method
         let endpoint = "/fapi/v1/allOpenOrders";
@@ -133,9 +134,7 @@ impl RestClient {
         query_pairs.push_str(&format!("&signature={signature}"));
 
         // 5. Set headers
-        let headers = vec![
-            ("X-MBX-APIKEY", params.api_key.expose_secret().to_string()),
-        ];
+        let headers = vec![("X-MBX-APIKEY", params.api_key.expose_secret().to_string())];
 
         // 6. Rate limiting
         self.rate_limiter
@@ -143,7 +142,10 @@ impl RestClient {
             .await
             .map_err(|e| CancelAllOrdersError::Other(format!("Rate limiting error: {e}")))?;
 
-        debug!(endpoint = endpoint, "Sending cancel all open orders request");
+        debug!(
+            endpoint = endpoint,
+            "Sending cancel all open orders request"
+        );
 
         // 7. Execute request
         let resp = execute_request::<CancelAllOpenOrdersResponse>(
@@ -176,8 +178,9 @@ impl RestClient {
         &self,
         params: CountdownCancelAllRequest,
     ) -> CancelAllOrdersResult<CountdownCancelAllResponse> {
-        use crate::binance::usdm::request::execute_request;
         use tracing::debug;
+
+        use crate::binance::usdm::request::execute_request;
 
         // 1. Prepare endpoint and method
         let endpoint = "/fapi/v1/countdownCancelAll";

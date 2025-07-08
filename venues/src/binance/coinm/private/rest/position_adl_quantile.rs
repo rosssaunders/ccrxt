@@ -3,9 +3,10 @@
 
 use serde::{Deserialize, Serialize};
 
-use crate::binance::coinm::RestResult;
-use crate::binance::coinm::private::rest::client::RestClient;
-use crate::binance::shared;
+use crate::binance::{
+    coinm::{RestResult, private::rest::client::RestClient},
+    shared,
+};
 
 /// Request parameters for getting position ADL quantile estimation (GET /dapi/v1/adlQuantile).
 #[derive(Debug, Clone, Serialize, Default)]

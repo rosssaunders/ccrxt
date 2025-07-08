@@ -1,8 +1,7 @@
 use serde::{Deserialize, Serialize};
-use crate::bingx::enums::SubAccountStatus;
 
 use super::RestClient;
-use crate::bingx::{EndpointType, RestResult};
+use crate::bingx::{EndpointType, RestResult, enums::SubAccountStatus};
 
 const FREEZE_SUB_ACCOUNT_ENDPOINT: &str = "/openApi/subAccount/v1/freeze";
 
@@ -128,7 +127,7 @@ mod tests {
 
         let response: FreezeSubAccountResponse = serde_json::from_str(json).unwrap();
         assert!(response.success);
-        
+
         let data = response.data.unwrap();
         assert_eq!(data.sub_uid, "12345");
         assert_eq!(data.email, "subaccount@example.com");
@@ -152,7 +151,7 @@ mod tests {
 
         let response: FreezeSubAccountResponse = serde_json::from_str(json).unwrap();
         assert!(response.success);
-        
+
         let data = response.data.unwrap();
         assert_eq!(data.status, SubAccountStatus::Normal);
     }

@@ -1,9 +1,12 @@
 //! KuCoin rate limiting functionality
 #![allow(clippy::arithmetic_side_effects)]
 
+use std::{
+    collections::HashMap,
+    time::{Duration, Instant},
+};
+
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
-use std::time::{Duration, Instant};
 use thiserror::Error;
 use tokio::sync::RwLock;
 
@@ -595,8 +598,9 @@ impl RateLimitHeader {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use tokio::time::Duration;
+
+    use super::*;
 
     #[test]
     fn test_vip_level_limits() {

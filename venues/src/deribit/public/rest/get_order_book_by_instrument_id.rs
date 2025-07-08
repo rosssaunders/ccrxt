@@ -2,11 +2,11 @@
 //!
 //! Retrieves the current order book for a given instrument by its ID.
 
-use super::RestClient;
-use crate::deribit::{EndpointType, RestResult};
-
 use reqwest::Method;
 use serde::{Deserialize, Serialize};
+
+use super::RestClient;
+use crate::deribit::{EndpointType, RestResult};
 
 const ORDER_BOOK_BY_INSTRUMENT_ID_ENDPOINT: &str = "public/get_order_book_by_instrument_id";
 
@@ -96,8 +96,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use serde_json;
+
+    use super::*;
 
     #[test]
     fn test_serialize_request() {

@@ -1,8 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::cryptocom::RestResult;
-use crate::cryptocom::enums::ResponseCode;
+use crate::cryptocom::{RestResult, enums::ResponseCode};
 
 const CREATE_SUBACCOUNT_TRANSFER_ENDPOINT: &str = "private/create-subaccount-transfer";
 /// Request parameters for creating a subaccount transfer.

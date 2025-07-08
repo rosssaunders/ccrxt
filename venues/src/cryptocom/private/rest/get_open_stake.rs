@@ -69,8 +69,7 @@ impl RestClient {
         &self,
         request: GetOpenStakeRequest,
     ) -> RestResult<GetOpenStakeResponse> {
-        self.send_signed_request(OPEN_STAKE_ENDPOINT, request)
-            .await
+        self.send_signed_request(OPEN_STAKE_ENDPOINT, request).await
     }
 }
 

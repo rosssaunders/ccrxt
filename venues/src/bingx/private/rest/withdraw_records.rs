@@ -1,8 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use crate::bingx::{EndpointType, RestResult, WithdrawStatus};
-
 use super::RestClient;
+use crate::bingx::{EndpointType, RestResult, WithdrawStatus};
 
 const WITHDRAW_RECORDS_ENDPOINT: &str = "/openApi/wallets/v1/capital/withdraw/history";
 

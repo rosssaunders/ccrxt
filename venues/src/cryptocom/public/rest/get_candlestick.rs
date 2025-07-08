@@ -7,9 +7,7 @@ use std::borrow::Cow;
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::cryptocom::EndpointType;
-use crate::cryptocom::RestResult;
-use crate::cryptocom::Timeframe;
+use crate::cryptocom::{EndpointType, RestResult, Timeframe};
 
 /// Endpoint for getting candlestick data
 const GET_CANDLESTICK_ENDPOINT: &str = "public/get-candlestick";

@@ -3,13 +3,13 @@
 
 use serde::{Deserialize, Serialize};
 
-use crate::binance::coinm::RestResult;
-use crate::binance::coinm::private::rest::client::RestClient;
-use crate::binance::coinm::{
-    OrderResponseType, OrderSide, OrderType, PositionSide, PriceMatch, SelfTradePreventionMode,
-    TimeInForce, WorkingType,
+use crate::binance::{
+    coinm::{
+        OrderResponseType, OrderSide, OrderType, PositionSide, PriceMatch, RestResult,
+        SelfTradePreventionMode, TimeInForce, WorkingType, private::rest::client::RestClient,
+    },
+    shared,
 };
-use crate::binance::shared;
 
 /// Request parameters for placing a new order (POST /dapi/v1/order).
 #[derive(Debug, Clone, Serialize)]

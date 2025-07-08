@@ -1,8 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use crate::bybit::{enums::*, EndpointType, RestResult};
-
 use super::client::RestClient;
+use crate::bybit::{EndpointType, RestResult, enums::*};
 
 const RECENT_TRADES_ENDPOINT: &str = "/v5/market/recent-trade";
 
@@ -73,16 +72,10 @@ impl RestClient {
         &self,
         request: GetRecentTradesRequest,
     ) -> RestResult<GetRecentTradesResponse> {
-        self.send_public_request(
-            RECENT_TRADES_ENDPOINT,
-            Some(&request),
-            EndpointType::Market,
-        )
-        .await
+        self.send_public_request(RECENT_TRADES_ENDPOINT, Some(&request), EndpointType::Market)
+            .await
     }
 }
-
-
 
 #[cfg(test)]
 mod tests {

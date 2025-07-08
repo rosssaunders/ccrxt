@@ -1,9 +1,8 @@
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
-use crate::binance::spot::{RestResult, SelfTradePreventionMode};
-
 use super::client::RestClient;
+use crate::binance::spot::{RestResult, SelfTradePreventionMode};
 
 /// Request parameters for getting prevented matches
 #[derive(Debug, Clone, Serialize)]

@@ -8,9 +8,11 @@
 
 use serde::{Deserialize, Serialize};
 
-use super::super::RestClient;
-use super::get_current_orders::TPSLType;
-use super::get_order_info::{EntryPointSource, OrderSource, OrderStatus};
+use super::{
+    super::RestClient,
+    get_current_orders::TPSLType,
+    get_order_info::{EntryPointSource, OrderSource, OrderStatus},
+};
 use crate::bitget::{OrderSide, OrderType, RestResult};
 
 const ORDER_HISTORY_ENDPOINT: &str = "/api/v2/spot/trade/history-orders";

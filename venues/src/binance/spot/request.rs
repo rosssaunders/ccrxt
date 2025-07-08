@@ -3,8 +3,7 @@ use std::time::Duration;
 use reqwest::StatusCode;
 use tracing::debug;
 
-use crate::binance::spot::errors::ErrorResponse;
-use crate::binance::spot::{ApiError, Errors, ResponseHeaders};
+use crate::binance::spot::{ApiError, Errors, ResponseHeaders, errors::ErrorResponse};
 
 // Helper to extract error message from JSON or fallback to raw text
 async fn extract_msg(text: &str) -> String {

@@ -1,8 +1,7 @@
-use crate::gateio::OrderSide;
 use serde::Serialize;
 
 use super::RestClient;
-use crate::gateio::private::rest::create_order::Order;
+use crate::gateio::{OrderSide, private::rest::create_order::Order};
 
 /// Cancel all orders request
 #[derive(Debug, Clone, Serialize)]

@@ -3,16 +3,16 @@
 mod tests {
     use crate::gateio::{
         errors::GateIoError,
-        rate_limit::{RateLimiter, RateLimitHeader},
-        public::rest::tickers::TickersRequest,
         private::rest::create_order::CreateOrderRequest,
+        public::rest::tickers::TickersRequest,
+        rate_limit::{RateLimitHeader, RateLimiter},
     };
 
     #[test]
     fn test_error_categorization() {
         // Test retryable errors
-        let rate_limit_error = GateIoError::RateLimitExceeded { 
-            message: "Too many requests".to_string() 
+        let rate_limit_error = GateIoError::RateLimitExceeded {
+            message: "Too many requests".to_string(),
         };
         assert!(rate_limit_error.is_retryable());
         assert_eq!(rate_limit_error.retry_delay_secs(), Some(60));
@@ -51,7 +51,7 @@ mod tests {
         );
 
         let rate_limit = RateLimitHeader::from_headers(&headers);
-        
+
         assert_eq!(rate_limit.requests_remain, Some(5));
         assert_eq!(rate_limit.limit, Some(100));
         assert_eq!(rate_limit.reset_timestamp, Some(1640995200));
@@ -67,18 +67,18 @@ mod tests {
 
         // Get permit and check usage
         let _permit = rate_limiter.get_permit("/spot/tickers").await.unwrap();
-        
+
         let stats = rate_limiter.get_usage_stats().await;
         assert!(stats.contains_key("spot_other"));
-        
+
         let spot_usage = &stats["spot_other"];
         assert_eq!(spot_usage.requests_made, 1);
     }
 
     #[test]
     fn test_request_validation() {
-        use crate::gateio::enums::{OrderType, OrderSide, TimeInForce};
-        
+        use crate::gateio::enums::{OrderSide, OrderType, TimeInForce};
+
         // Test valid order request
         let valid_order = CreateOrderRequest {
             currency_pair: "BTC_USDT".to_string(),
@@ -92,12 +92,12 @@ mod tests {
             iceberg: None,
             stp_mode: None,
         };
-        
+
         // Verify required fields are present
         assert!(!valid_order.currency_pair.is_empty());
         assert!(matches!(valid_order.side, OrderSide::Buy));
         assert!(!valid_order.amount.is_empty());
-        
+
         // Test amount parsing
         assert!(valid_order.amount.parse::<f64>().is_ok());
         if let Some(ref price) = valid_order.price {
@@ -165,7 +165,7 @@ mod tests {
         }
 
         let warnings = rate_limiter.get_rate_limit_warnings().await;
-        
+
         // Should warn when approaching 80% of spot_order_placement limit (10 req/s)
         assert!(!warnings.is_empty());
         assert!(warnings[0].contains("spot_order_placement"));
@@ -178,12 +178,12 @@ mod tests {
     #[ignore] // Use with: cargo test -- --ignored
     async fn integration_test_public_api() {
         let client = PublicRestClient::new(false).unwrap();
-        
+
         let tickers = client.get_tickers(TickersRequest {
             currency_pair: Some("BTC_USDT".to_string()),
             timezone: None,
         }).await.unwrap();
-        
+
         assert!(!tickers.is_empty());
         let btc_ticker = &tickers[0];
         assert_eq!(btc_ticker.currency_pair, "BTC_USDT");
@@ -194,12 +194,12 @@ mod tests {
     #[ignore] // Use with: cargo test -- --ignored
     async fn integration_test_private_api() {
         use std::env;
-        
+
         let api_key = env::var("GATEIO_API_KEY").expect("API key required");
         let api_secret = env::var("GATEIO_API_SECRET").expect("API secret required");
-        
+
         let client = PrivateRestClient::new(api_key, api_secret, true).unwrap(); // testnet
-        
+
         let balances = client.get_spot_accounts(None).await.unwrap();
         // Just verify we can authenticate and get a response
         assert!(balances.is_empty() || !balances.is_empty()); // Any result is fine
@@ -214,14 +214,24 @@ mod tests {
         for currency in valid_currencies {
             assert!(currency.len() >= 2);
             assert!(currency.len() <= 10);
-            assert!(currency.chars().all(|c| c.is_ascii_uppercase() || c.is_ascii_digit()));
+            assert!(
+                currency
+                    .chars()
+                    .all(|c| c.is_ascii_uppercase() || c.is_ascii_digit())
+            );
         }
 
         for currency in invalid_currencies {
-            let is_invalid = currency.is_empty() 
-                || currency.len() > 10 
-                || !currency.chars().all(|c| c.is_ascii_uppercase() || c.is_ascii_digit());
-            assert!(is_invalid, "Currency '{}' should be invalid but validation passed", currency);
+            let is_invalid = currency.is_empty()
+                || currency.len() > 10
+                || !currency
+                    .chars()
+                    .all(|c| c.is_ascii_uppercase() || c.is_ascii_digit());
+            assert!(
+                is_invalid,
+                "Currency '{}' should be invalid but validation passed",
+                currency
+            );
         }
     }
 
@@ -239,7 +249,12 @@ mod tests {
 
         for pair in invalid_pairs {
             let parts: Vec<&str> = pair.split('_').collect();
-            assert!(parts.len() != 2 || parts.iter().any(|p| p.is_empty() || !p.chars().all(|c| c.is_ascii_uppercase())));
+            assert!(
+                parts.len() != 2
+                    || parts
+                        .iter()
+                        .any(|p| p.is_empty() || !p.chars().all(|c| c.is_ascii_uppercase()))
+            );
         }
     }
 }

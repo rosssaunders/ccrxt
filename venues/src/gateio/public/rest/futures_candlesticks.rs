@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
-use crate::gateio::enums::CandlestickInterval;
 
 use super::RestClient;
+use crate::gateio::enums::CandlestickInterval;
 
 /// Request parameters for futures candlesticks
 #[derive(Debug, Clone, Serialize, Default)]
@@ -29,22 +29,22 @@ pub struct FuturesCandlesticksRequest {
 pub struct FuturesCandlestick {
     /// Unix timestamp in seconds
     pub t: i64,
-    
+
     /// Trading volume (in quote currency)
     pub v: i64,
-    
+
     /// Close price
     pub c: String,
-    
+
     /// Highest price
     pub h: String,
-    
+
     /// Lowest price
     pub l: String,
-    
+
     /// Open price
     pub o: String,
-    
+
     /// Trading volume (in base currency)
     pub sum: String,
 }
@@ -54,25 +54,34 @@ impl RestClient {
     ///
     /// Retrieves candlestick data for a specific futures contract.
     /// Supports mark price and index price with prefixes `mark_` and `index_`.
-    pub async fn get_futures_candlesticks(&self, params: FuturesCandlesticksRequest) -> crate::gateio::Result<Vec<FuturesCandlestick>> {
+    pub async fn get_futures_candlesticks(
+        &self,
+        params: FuturesCandlesticksRequest,
+    ) -> crate::gateio::Result<Vec<FuturesCandlestick>> {
         let endpoint = format!("/futures/{}/candlesticks", params.settle);
         self.get_with_query(&endpoint, Some(&params)).await
     }
-    
+
     /// Get futures mark price candlesticks
     ///
     /// Retrieves mark price candlestick data for a specific futures contract.
-    pub async fn get_futures_mark_price_candlesticks(&self, params: FuturesCandlesticksRequest) -> crate::gateio::Result<Vec<FuturesCandlestick>> {
+    pub async fn get_futures_mark_price_candlesticks(
+        &self,
+        params: FuturesCandlesticksRequest,
+    ) -> crate::gateio::Result<Vec<FuturesCandlestick>> {
         let mut mark_params = params;
         mark_params.contract = format!("mark_{}", mark_params.contract);
         let endpoint = format!("/futures/{}/candlesticks", mark_params.settle);
         self.get_with_query(&endpoint, Some(&mark_params)).await
     }
-    
+
     /// Get futures index price candlesticks
     ///
     /// Retrieves index price candlestick data for a specific futures contract.
-    pub async fn get_futures_index_price_candlesticks(&self, params: FuturesCandlesticksRequest) -> crate::gateio::Result<Vec<FuturesCandlestick>> {
+    pub async fn get_futures_index_price_candlesticks(
+        &self,
+        params: FuturesCandlesticksRequest,
+    ) -> crate::gateio::Result<Vec<FuturesCandlestick>> {
         let mut index_params = params;
         index_params.contract = format!("index_{}", index_params.contract);
         let endpoint = format!("/futures/{}/candlesticks", index_params.settle);

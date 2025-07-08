@@ -1,6 +1,7 @@
+use std::collections::HashMap;
+
 use reqwest::Client;
 use serde::de::DeserializeOwned;
-use std::collections::HashMap;
 
 use crate::kucoin::{ApiError, RateLimiter, ResponseHeaders, RestResponse, Result};
 
@@ -24,7 +25,11 @@ impl RestClient {
 
     /// Create a new public futures REST client with default settings
     pub fn new_default() -> Self {
-        Self::new("https://api-futures.kucoin.com", RateLimiter::new(), Client::new())
+        Self::new(
+            "https://api-futures.kucoin.com",
+            RateLimiter::new(),
+            Client::new(),
+        )
     }
 
     /// Make a GET request to the public futures API
@@ -62,8 +67,7 @@ impl RestClient {
 
         if !status.is_success() {
             // Try to parse as error response
-            if let Ok(error_response) =
-                serde_json::from_str::<crate::kucoin::ErrorResponse>(&text)
+            if let Ok(error_response) = serde_json::from_str::<crate::kucoin::ErrorResponse>(&text)
             {
                 return Err(ApiError::from(error_response).into());
             } else {

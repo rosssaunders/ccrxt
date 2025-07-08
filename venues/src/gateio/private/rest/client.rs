@@ -1,11 +1,14 @@
-use crate::gateio::{rate_limit::RateLimiter, Result};
+use std::{
+    sync::Arc,
+    time::{SystemTime, UNIX_EPOCH},
+};
+
 use reqwest::{Client, Method};
 use ring::hmac;
-use serde::de::DeserializeOwned;
-use serde::Serialize;
+use serde::{Serialize, de::DeserializeOwned};
 use sha2::{Digest, Sha512};
-use std::sync::Arc;
-use std::time::{SystemTime, UNIX_EPOCH};
+
+use crate::gateio::{Result, rate_limit::RateLimiter};
 
 const LIVE_URL: &str = "https://api.gateio.ws/api/v4";
 const TESTNET_URL: &str = "https://api-testnet.gateapi.io/api/v4";
@@ -65,7 +68,7 @@ impl RestClient {
         // Generate HMAC-SHA512 signature
         let key = hmac::Key::new(hmac::HMAC_SHA512, self.api_secret.as_bytes());
         let signature = hmac::sign(&key, signature_string.as_bytes());
-        
+
         hex::encode(signature.as_ref())
     }
 
@@ -74,7 +77,8 @@ impl RestClient {
     where
         T: DeserializeOwned,
     {
-        self.request(Method::GET, endpoint, None::<&()>, None::<&()>).await
+        self.request(Method::GET, endpoint, None::<&()>, None::<&()>)
+            .await
     }
 
     /// Make a GET request to the API with query parameters
@@ -83,7 +87,8 @@ impl RestClient {
         T: DeserializeOwned,
         Q: Serialize,
     {
-        self.request(Method::GET, endpoint, Some(query), None::<&()>).await
+        self.request(Method::GET, endpoint, Some(query), None::<&()>)
+            .await
     }
 
     /// Make a POST request to the API
@@ -91,7 +96,8 @@ impl RestClient {
     where
         T: DeserializeOwned,
     {
-        self.request(Method::POST, endpoint, None::<&()>, Some(body)).await
+        self.request(Method::POST, endpoint, None::<&()>, Some(body))
+            .await
     }
 
     /// Make a PUT request to the API
@@ -99,7 +105,8 @@ impl RestClient {
     where
         T: DeserializeOwned,
     {
-        self.request(Method::PUT, endpoint, None::<&()>, Some(body)).await
+        self.request(Method::PUT, endpoint, None::<&()>, Some(body))
+            .await
     }
 
     /// Make a DELETE request to the API without query parameters
@@ -107,7 +114,8 @@ impl RestClient {
     where
         T: DeserializeOwned,
     {
-        self.request(Method::DELETE, endpoint, None::<&()>, None::<&()>).await
+        self.request(Method::DELETE, endpoint, None::<&()>, None::<&()>)
+            .await
     }
 
     /// Make a DELETE request to the API with query parameters
@@ -116,7 +124,8 @@ impl RestClient {
         T: DeserializeOwned,
         Q: Serialize,
     {
-        self.request(Method::DELETE, endpoint, Some(query), None::<&()>).await
+        self.request(Method::DELETE, endpoint, Some(query), None::<&()>)
+            .await
     }
 
     /// Make a PATCH request to the API
@@ -124,7 +133,8 @@ impl RestClient {
     where
         T: DeserializeOwned,
     {
-        self.request(Method::PATCH, endpoint, None::<&()>, Some(body)).await
+        self.request(Method::PATCH, endpoint, None::<&()>, Some(body))
+            .await
     }
 
     /// Make a request to the API with authentication
@@ -139,10 +149,11 @@ impl RestClient {
         T: DeserializeOwned,
     {
         // Apply rate limiting
-        let _permit = self.rate_limiter
-            .get_permit(endpoint)
-            .await
-            .map_err(|_| crate::gateio::GateIoError::RateLimitExceeded { message: "Rate limit exceeded".to_string() })?;
+        let _permit = self.rate_limiter.get_permit(endpoint).await.map_err(|_| {
+            crate::gateio::GateIoError::RateLimitExceeded {
+                message: "Rate limit exceeded".to_string(),
+            }
+        })?;
 
         let url = format!("{}{}", self.base_url, endpoint);
         let method_str = method.as_str();
@@ -165,22 +176,18 @@ impl RestClient {
 
         // Get body string
         let body_str = if let Some(body_data) = body {
-            serde_json::to_string(body_data)
-                .map_err(crate::gateio::GateIoError::Json)?
+            serde_json::to_string(body_data).map_err(crate::gateio::GateIoError::Json)?
         } else {
             String::new()
         };
 
         // Generate signature
-        let signature = self.generate_signature(
-            method_str,
-            endpoint,
-            &query_string,
-            &body_str,
-            &timestamp,
-        );
+        let signature =
+            self.generate_signature(method_str, endpoint, &query_string, &body_str, &timestamp);
 
-        let mut request_builder = self.client.request(method, &url)
+        let mut request_builder = self
+            .client
+            .request(method, &url)
             .header("KEY", &self.api_key)
             .header("Timestamp", &timestamp)
             .header("SIGN", signature);
@@ -206,7 +213,7 @@ impl RestClient {
 
         let status = response.status();
         let headers = crate::gateio::rate_limit::RateLimitHeader::from_headers(response.headers());
-        
+
         // Update rate limiter with response headers
         if let Some(rate_status) = self.rate_limiter.update_from_headers(&headers, endpoint) {
             tracing::debug!("Rate limit status for {}: {:?}", endpoint, rate_status);
@@ -218,12 +225,12 @@ impl RestClient {
             .map_err(crate::gateio::GateIoError::Http)?;
 
         if status.is_success() {
-            let data: T = serde_json::from_str(&response_text)
-                .map_err(crate::gateio::GateIoError::Json)?;
+            let data: T =
+                serde_json::from_str(&response_text).map_err(crate::gateio::GateIoError::Json)?;
             Ok(data)
         } else {
-            let error: crate::gateio::errors::ErrorResponse = serde_json::from_str(&response_text)
-                .map_err(crate::gateio::GateIoError::Json)?;
+            let error: crate::gateio::errors::ErrorResponse =
+                serde_json::from_str(&response_text).map_err(crate::gateio::GateIoError::Json)?;
             Err(crate::gateio::GateIoError::Api(crate::gateio::ApiError {
                 label: error.label,
                 message: error.message,

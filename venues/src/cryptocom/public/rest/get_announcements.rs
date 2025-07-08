@@ -6,8 +6,7 @@ use std::borrow::Cow;
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::cryptocom::RestResult;
-use crate::cryptocom::{AnnouncementCategory, ImpactedStatus, ProductType};
+use crate::cryptocom::{AnnouncementCategory, ImpactedStatus, ProductType, RestResult};
 
 /// Endpoint path for the get-announcements API
 const ANNOUNCEMENTS_ENDPOINT: &str = "public/get-announcements";

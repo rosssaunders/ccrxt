@@ -1,8 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use crate::kucoin::{OrderSide, ResponseHeaders, RestResponse, Result};
-
 use super::RestClient;
+use crate::kucoin::{OrderSide, ResponseHeaders, RestResponse, Result};
 
 const GET_ORDER_ENDPOINT: &str = "/api/v1/orders/{order_id}";
 

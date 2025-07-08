@@ -1,7 +1,7 @@
-use super::RestClient;
-use crate::bitget::enums::*;
-use crate::bitget::{Errors, RestResult};
 use serde::{Deserialize, Serialize};
+
+use super::RestClient;
+use crate::bitget::{Errors, RestResult, enums::*};
 
 /// Modify Deposit Account
 #[derive(Debug, Clone, Serialize, Deserialize)]

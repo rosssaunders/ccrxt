@@ -1,7 +1,7 @@
-use crate::gateio::{OrderSide, OrderStatus, OrderType, StpMode, TimeInForce};
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
+use crate::gateio::{OrderSide, OrderStatus, OrderType, StpMode, TimeInForce};
 
 /// Order creation request
 #[derive(Debug, Clone, Serialize)]

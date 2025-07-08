@@ -1,8 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::binance::coinm::RestResult;
-use crate::binance::coinm::enums::KlineInterval;
-use crate::binance::coinm::public::rest::RestClient;
+use crate::binance::coinm::{RestResult, enums::KlineInterval, public::rest::RestClient};
 
 /// Request parameters for the premium index kline data endpoint.
 #[derive(Debug, Clone, Serialize)]

@@ -1,14 +1,16 @@
-use serde::Serialize as SerdeSerialize;
-use serde::ser::Serializer;
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Serialize as SerdeSerialize, Serialize, ser::Serializer};
 
-use crate::binance::coinm::enums::{
-    OrderResponseType, OrderSide, OrderStatus, OrderType, PositionSide, PriceMatch,
-    SelfTradePreventionMode, TimeInForce, WorkingType,
+use crate::binance::{
+    coinm::{
+        ErrorResponse, RestResult,
+        enums::{
+            OrderResponseType, OrderSide, OrderStatus, OrderType, PositionSide, PriceMatch,
+            SelfTradePreventionMode, TimeInForce, WorkingType,
+        },
+        private::rest::client::RestClient,
+    },
+    shared,
 };
-use crate::binance::coinm::private::rest::client::RestClient;
-use crate::binance::coinm::{ErrorResponse, RestResult};
-use crate::binance::shared;
 
 /// Serializes a value as a JSON string for use in URL-encoded form bodies (Binance batch orders)
 fn as_json_string<S, T>(value: &T, serializer: S) -> Result<S::Ok, S::Error>

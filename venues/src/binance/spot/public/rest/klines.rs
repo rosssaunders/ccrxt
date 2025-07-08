@@ -1,9 +1,8 @@
 use rust_decimal::Decimal;
 use serde::Serialize;
 
-use crate::binance::spot::RestResult;
-
 use super::client::RestClient;
+use crate::binance::spot::RestResult;
 
 /// Request parameters for klines
 #[derive(Debug, Clone, Serialize)]

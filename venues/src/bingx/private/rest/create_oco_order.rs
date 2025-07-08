@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::RestClient;
-use super::place_order::OrderSide;
+use super::{RestClient, place_order::OrderSide};
 use crate::bingx::{EndpointType, RestResult};
 
 const CREATE_OCO_ORDER_ENDPOINT: &str = "/openApi/spot/v1/oco/order";

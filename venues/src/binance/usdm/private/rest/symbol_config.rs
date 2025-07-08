@@ -1,15 +1,16 @@
 //! User symbol configuration endpoints for Binance USDM REST API.
 
+use chrono::Utc;
+use reqwest::Method;
 use secrecy::{ExposeSecret, SecretString};
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
-use crate::binance::usdm::enums::MarginType;
-use crate::binance::usdm::private::rest::client::RestClient;
-use crate::binance::usdm::private::rest::order::OrderErrorResponse;
-use crate::binance::usdm::signing::sign_query;
-use chrono::Utc;
-use reqwest::Method;
+use crate::binance::usdm::{
+    enums::MarginType,
+    private::rest::{client::RestClient, order::OrderErrorResponse},
+    signing::sign_query,
+};
 
 /// Error type for USDM symbol config endpoints.
 #[derive(Debug, Error, Clone, Deserialize)]
@@ -125,7 +126,10 @@ impl RestClient {
         // Make the request
         let response = self
             .client
-            .request(Method::GET, &format!("{}/fapi/v1/symbolConfig", self.base_url))
+            .request(
+                Method::GET,
+                &format!("{}/fapi/v1/symbolConfig", self.base_url),
+            )
             .header("X-MBX-APIKEY", api_key.expose_secret())
             .query(&request)
             .send()
@@ -188,7 +192,7 @@ mod tests {
             "marginType": "cross",
             "isIsolated": false
         }]"#;
-        
+
         let response: Vec<SymbolConfigResponse> = serde_json::from_str(json).unwrap();
         assert_eq!(response.len(), 1);
         assert_eq!(response[0].symbol, "BTCUSDT");

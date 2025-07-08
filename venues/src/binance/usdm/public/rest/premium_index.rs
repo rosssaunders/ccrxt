@@ -1,12 +1,12 @@
 //! Mark Price and Funding Rate (GET /fapi/v1/premiumIndex)
 //!
 //! See: https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Mark-Price
-use super::RestClient;
-use crate::binance::usdm::Errors;
-use crate::binance::usdm::RestResult;
+use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
-use std::borrow::Cow;
+
+use super::RestClient;
+use crate::binance::usdm::{Errors, RestResult};
 
 /// Request parameters for the Mark Price and Funding Rate endpoint.
 #[derive(Debug, Clone, Serialize, Default)]

@@ -1,8 +1,7 @@
-use crate::gateio::{OrderSide, OrderStatus};
 use serde::Serialize;
 
 use super::RestClient;
-use crate::gateio::private::rest::create_order::Order;
+use crate::gateio::{OrderSide, OrderStatus, private::rest::create_order::Order};
 
 /// List orders request
 #[derive(Debug, Clone, Default, Serialize)]

@@ -4,12 +4,12 @@
 //!
 //! [Binance API docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Kline-Candlestick-Data)
 
-use super::RestClient;
-use crate::binance::usdm::RestResult;
-use crate::binance::usdm::enums::KlineInterval;
+use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
-use std::borrow::Cow;
+
+use super::RestClient;
+use crate::binance::usdm::{RestResult, enums::KlineInterval};
 
 /// Request parameters for kline/candlestick data.
 #[derive(Debug, Clone, Serialize)]

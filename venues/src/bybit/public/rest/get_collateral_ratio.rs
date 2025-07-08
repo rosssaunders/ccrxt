@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
-use crate::bybit::{EndpointType, RestResult};
+
 use super::client::RestClient;
+use crate::bybit::{EndpointType, RestResult};
 
 const COLLATERAL_RATIO_ENDPOINT: &str = "/v5/spot-margin-trade/collateral";
 
@@ -49,6 +50,11 @@ pub struct GetCollateralRatioResponse {
 
 impl RestClient {
     pub async fn get_collateral_ratio(&self) -> RestResult<GetCollateralRatioResponse> {
-        self.send_public_request(COLLATERAL_RATIO_ENDPOINT, None::<&GetCollateralRatioRequest>, EndpointType::Market).await
+        self.send_public_request(
+            COLLATERAL_RATIO_ENDPOINT,
+            None::<&GetCollateralRatioRequest>,
+            EndpointType::Market,
+        )
+        .await
     }
 }

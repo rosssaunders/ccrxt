@@ -4,11 +4,12 @@
 //!
 //! [Binance API docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Compressed-Aggregate-Trades-List)
 
-use super::RestClient;
-use crate::binance::usdm::RestResult;
+use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
-use std::borrow::Cow;
+
+use super::RestClient;
+use crate::binance::usdm::RestResult;
 
 /// Request parameters for aggregate trades list.
 #[derive(Debug, Clone, Serialize, Default)]

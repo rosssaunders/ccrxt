@@ -1,9 +1,7 @@
 use std::sync::Arc;
 
 use anyhow::{anyhow, Result};
-use venues::binance::coinm::NewOrderRequest;
-use venues::binance::coinm::PrivateRestClient;
-use venues::binance::coinm::{OrderSide, OrderType};
+use venues::binance::coinm::{NewOrderRequest, OrderSide, OrderType, PrivateRestClient};
 
 /// Example command to place a new order using the CLI.
 pub async fn handle_order_command(

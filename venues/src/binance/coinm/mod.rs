@@ -8,48 +8,24 @@ mod request;
 // Re-export modules for new structure
 mod public {
     mod rest;
-    pub use self::rest::RestClient as PublicRestClient;
-    pub use self::rest::exchange_info::*;
+    pub use self::rest::{RestClient as PublicRestClient, exchange_info::*};
 }
 
 mod private {
     mod rest;
     // Re-export RestClient so it can be re-exported by the parent
-    pub use self::rest::RestClient as PrivateRestClient;
-    pub use self::rest::account::*;
-    pub use self::rest::account_trades::*;
-    pub use self::rest::all_orders::*;
-    pub use self::rest::asset_index::*;
-    pub use self::rest::auto_cancel_all_open_orders::*;
-    pub use self::rest::batch_order::*;
-    pub use self::rest::cancel_all_open_orders::*;
-    pub use self::rest::cancel_order::*;
-    pub use self::rest::change_initial_leverage::*;
-    pub use self::rest::change_margin_type::*;
-    pub use self::rest::change_position_mode::*;
-    pub use self::rest::download_transaction_history::*;
-    pub use self::rest::force_orders::*;
-    pub use self::rest::futures_account_balance::*;
-    pub use self::rest::get_current_position_mode::*;
-    pub use self::rest::income_history::*;
-    pub use self::rest::listen_key::*;
-    pub use self::rest::modify_isolated_position_margin::*;
-    pub use self::rest::modify_multiple_orders::*;
-    pub use self::rest::modify_order::*;
-    pub use self::rest::multi_asset_mode::*;
-    pub use self::rest::notional_brackets::*;
-    pub use self::rest::open_orders::*;
-    pub use self::rest::order::*;
-    pub use self::rest::order_modify_history::*;
-    pub use self::rest::position_adl_quantile::*;
-    pub use self::rest::position_margin_change_history::*;
-    pub use self::rest::position_risk::*;
-    pub use self::rest::query_current_open_order::*;
-    pub use self::rest::query_order::*;
-    pub use self::rest::trading_status::*;
-    pub use self::rest::universal_transfer::*;
-    pub use self::rest::universal_transfer_history::*;
-    pub use self::rest::user_commission_rate::*;
+    pub use self::rest::{
+        RestClient as PrivateRestClient, account::*, account_trades::*, all_orders::*,
+        asset_index::*, auto_cancel_all_open_orders::*, batch_order::*, cancel_all_open_orders::*,
+        cancel_order::*, change_initial_leverage::*, change_margin_type::*,
+        change_position_mode::*, download_transaction_history::*, force_orders::*,
+        futures_account_balance::*, get_current_position_mode::*, income_history::*, listen_key::*,
+        modify_isolated_position_margin::*, modify_multiple_orders::*, modify_order::*,
+        multi_asset_mode::*, notional_brackets::*, open_orders::*, order::*,
+        order_modify_history::*, position_adl_quantile::*, position_margin_change_history::*,
+        position_risk::*, query_current_open_order::*, query_order::*, trading_status::*,
+        universal_transfer::*, universal_transfer_history::*, user_commission_rate::*,
+    };
 }
 
 // Only expose RestClient at the coinm level, not via private::rest

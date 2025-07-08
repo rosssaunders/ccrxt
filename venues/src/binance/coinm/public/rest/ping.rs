@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::binance::coinm::RestResult;
-use crate::binance::coinm::public::rest::RestClient;
+use crate::binance::coinm::{RestResult, public::rest::RestClient};
 
 /// Response from the test connectivity endpoint.
 /// This endpoint returns an empty JSON object to test API connectivity.

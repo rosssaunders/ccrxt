@@ -39,23 +39,19 @@ mod withdrawal_records;
 
 // Re-export client
 
-pub use client::RestClient;
-
-// Re-export existing endpoints
-pub use get_account_assets::{AssetInfo, GetAccountAssetsRequest, GetAccountAssetsResponse};
-
 // Re-export new account endpoints
 pub use account_info::{AccountInfo, AccountInfoRequest, AccountInfoResponse, VipInfo};
-pub use bills::{BillInfo, BillsRequest, BillsResponse};
-pub use transfer::{TransferRequest, TransferResponse};
-
 // Re-export new wallet endpoints
 pub use bgb_deduct_info::{BgbDeductInfo, GetBgbDeductInfoRequest, GetBgbDeductInfoResponse};
+pub use bills::{BillInfo, BillsRequest, BillsResponse};
 pub use cancel_withdrawal::{CancelWithdrawalRequest, CancelWithdrawalResponse};
+pub use client::RestClient;
 pub use deposit_address::{
     DepositAddressInfo, GetDepositAddressRequest, GetDepositAddressResponse,
 };
 pub use deposit_records::{DepositRecord, GetDepositRecordsRequest, GetDepositRecordsResponse};
+// Re-export existing endpoints
+pub use get_account_assets::{AssetInfo, GetAccountAssetsRequest, GetAccountAssetsResponse};
 pub use main_sub_transfer_record::{
     GetMainSubTransferRecordRequest, GetMainSubTransferRecordResponse, MainSubTransferRecord,
 };
@@ -72,6 +68,7 @@ pub use subaccount_deposit_records::{
     SubaccountDepositRecord,
 };
 pub use switch_bgb_deduct::{SwitchBgbDeductRequest, SwitchBgbDeductResponse};
+pub use transfer::{TransferRequest, TransferResponse};
 pub use transfer_record::{GetTransferRecordRequest, GetTransferRecordResponse, TransferRecord};
 pub use transferable_coin_list::{GetTransferableCoinListRequest, GetTransferableCoinListResponse};
 pub use withdraw::{WithdrawRequest, WithdrawResponse, WithdrawResult};

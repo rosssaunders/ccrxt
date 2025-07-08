@@ -261,7 +261,6 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use rest::secrets::ExposableSecret;
-
     /// REST API endpoint constant
     use serde_json::{Value, json};
 

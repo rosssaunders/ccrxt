@@ -1,8 +1,9 @@
-use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
-use crate::bitget::{ApiError, RestResponse, DepthType};
+use serde::{Deserialize, Serialize};
+
 use super::RestClient;
+use crate::bitget::{ApiError, DepthType, RestResponse};
 
 /// Endpoint for getting orderbook data
 const ORDERBOOK_ENDPOINT: &str = "/api/v2/spot/market/orderbook";
@@ -20,8 +21,6 @@ pub struct GetOrderbookRequest {
     pub limit: Option<u32>,
 }
 
-
-
 /// Orderbook depth information
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Orderbook {
@@ -35,22 +34,25 @@ pub struct Orderbook {
 
 impl RestClient {
     /// Get orderbook depth
-    /// 
+    ///
     /// # Arguments
     /// * `request` - The request parameters
-    /// 
+    ///
     /// # Returns
     /// The orderbook information
-    pub async fn get_orderbook(&self, request: &GetOrderbookRequest) -> Result<RestResponse<Orderbook>, ApiError> {
+    pub async fn get_orderbook(
+        &self,
+        request: &GetOrderbookRequest,
+    ) -> Result<RestResponse<Orderbook>, ApiError> {
         let endpoint = ORDERBOOK_ENDPOINT;
-        
+
         let mut params = HashMap::new();
         params.insert("symbol".to_string(), request.symbol.clone());
-        
+
         if let Some(depth_type) = &request.depth_type {
             params.insert("type".to_string(), depth_type.to_string());
         }
-        
+
         if let Some(limit) = request.limit {
             params.insert("limit".to_string(), limit.to_string());
         }

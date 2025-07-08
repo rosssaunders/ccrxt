@@ -14,9 +14,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Create client with credentials using SecretString directly
     let _client = RestClient::new_with_credentials(
-        Box::new(SecretString::new(api_key.to_string().into())) as Box<dyn rest::secrets::ExposableSecret>,
-        Box::new(SecretString::new(api_secret.to_string().into())) as Box<dyn rest::secrets::ExposableSecret>,
-        Box::new(SecretString::new(api_passphrase.to_string().into())) as Box<dyn rest::secrets::ExposableSecret>,
+        Box::new(SecretString::new(api_key.to_string().into()))
+            as Box<dyn rest::secrets::ExposableSecret>,
+        Box::new(SecretString::new(api_secret.to_string().into()))
+            as Box<dyn rest::secrets::ExposableSecret>,
+        Box::new(SecretString::new(api_passphrase.to_string().into()))
+            as Box<dyn rest::secrets::ExposableSecret>,
     );
 
     println!("✅ Client created successfully with credentials!");

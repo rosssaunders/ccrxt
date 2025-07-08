@@ -1,11 +1,10 @@
 use rust_decimal::Decimal;
 use serde::Serialize;
 
+use super::client::RestClient;
 use crate::binance::spot::{
     OrderResponseType, OrderSide, OrderType, RestResult, SelfTradePreventionMode, TimeInForce,
 };
-
-use super::client::RestClient;
 
 /// Request parameters for SOR order
 #[derive(Debug, Clone, Serialize)]

@@ -4,7 +4,6 @@
 ///! market data such as server time, symbols, and ticker information.
 ///!
 ///! This example does not require any credentials as it only uses public endpoints.
-
 use venues::kucoin::public::rest::{
     GetAllSymbolsRequest, GetAllTickersRequest, GetServerTimeRequest, RestClient,
 };

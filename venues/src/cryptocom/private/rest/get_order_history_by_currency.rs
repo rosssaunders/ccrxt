@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use super::get_order_history_by_instrument::OrderHistoryByInstrumentEntry;
+use super::{client::RestClient, get_order_history_by_instrument::OrderHistoryByInstrumentEntry};
 use crate::cryptocom::RestResult;
 
 const ORDER_HISTORY_BY_CURRENCY_ENDPOINT: &str = "private/get_order_history_by_currency";

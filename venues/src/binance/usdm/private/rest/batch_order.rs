@@ -1,14 +1,18 @@
 //! Place and manage batch orders on Binance USDM REST API.
 
+use chrono::Utc;
+use reqwest::Method;
 use secrecy::{ExposeSecret, SecretString};
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
-use crate::binance::usdm::private::rest::client::RestClient;
-use crate::binance::usdm::private::rest::order::{NewOrderRequest, NewOrderResponse};
-use crate::binance::usdm::signing::sign_query;
-use chrono::Utc;
-use reqwest::Method;
+use crate::binance::usdm::{
+    private::rest::{
+        client::RestClient,
+        order::{NewOrderRequest, NewOrderResponse},
+    },
+    signing::sign_query,
+};
 
 /// Error type for USDM batch order endpoints.
 #[derive(Debug, Error, Clone, Deserialize)]
@@ -71,8 +75,9 @@ impl RestClient {
         &self,
         params: BatchOrderRequest,
     ) -> BatchOrderResult<BatchOrderResponse> {
-        use crate::binance::usdm::request::execute_request;
         use tracing::debug;
+
+        use crate::binance::usdm::request::execute_request;
         let endpoint = "/fapi/v1/batchOrders";
         let method = Method::POST;
         let url = format!("{}{}", self.base_url, endpoint);

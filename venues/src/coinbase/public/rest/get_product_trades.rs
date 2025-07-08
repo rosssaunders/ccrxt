@@ -5,9 +5,8 @@
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 
-use crate::coinbase::{RestResult, enums::OrderSide};
-
 use super::RestClient;
+use crate::coinbase::{RestResult, enums::OrderSide};
 
 /// Endpoint URL path for getting product trades
 const ENDPOINT_PATH: &str = "products/{}/trades";

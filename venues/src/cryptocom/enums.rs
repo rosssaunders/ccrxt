@@ -127,7 +127,7 @@ pub enum TimeInForce {
 }
 
 /// Execution instruction for orders
-/// 
+///
 /// Note: `POST_ONLY` and `SMART_POST_ONLY` cannot be used together.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]

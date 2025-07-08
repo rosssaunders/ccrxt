@@ -1,12 +1,11 @@
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
+use super::client::RestClient;
 use crate::binance::spot::{
     ContingencyType, OrderListOrderStatus, OrderListStatus, OrderSide, OrderStatus, OrderType,
     RestResult, SelfTradePreventionMode, TimeInForce,
 };
-
-use super::client::RestClient;
 
 /// Request parameters for getting open order lists
 #[derive(Debug, Clone, Serialize, Default)]

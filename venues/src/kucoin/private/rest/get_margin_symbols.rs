@@ -1,9 +1,9 @@
-use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
-use crate::kucoin::{ResponseHeaders, RestResponse, Result};
+use serde::{Deserialize, Serialize};
 
 use super::RestClient;
+use crate::kucoin::{ResponseHeaders, RestResponse, Result};
 
 /// Request for getting cross margin symbols
 #[derive(Debug, Clone, Serialize)]

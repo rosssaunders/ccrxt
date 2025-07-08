@@ -1,6 +1,7 @@
+use serde::{Deserialize, Serialize};
+
 use super::RestClient;
 use crate::bitget::{Errors, RestResult};
-use serde::{Deserialize, Serialize};
 
 /// Get Deposit Records
 ///

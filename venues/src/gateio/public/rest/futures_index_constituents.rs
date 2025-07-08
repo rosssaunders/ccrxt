@@ -16,16 +16,16 @@ pub struct FuturesIndexConstituentsRequest {
 pub struct IndexConstituent {
     /// Exchange name
     pub exchange: String,
-    
+
     /// Trading pair
     pub symbol: String,
-    
+
     /// Weight percentage
     pub weight: String,
-    
+
     /// Price
     pub price: String,
-    
+
     /// Last update time
     pub update_time: i64,
 }
@@ -34,8 +34,14 @@ impl RestClient {
     /// Get index constituents
     ///
     /// Retrieves the constituent exchanges and their weights for a specific index.
-    pub async fn get_futures_index_constituents(&self, params: FuturesIndexConstituentsRequest) -> crate::gateio::Result<Vec<IndexConstituent>> {
-        let endpoint = format!("/futures/{}/index_constituents/{}", params.settle, params.index);
+    pub async fn get_futures_index_constituents(
+        &self,
+        params: FuturesIndexConstituentsRequest,
+    ) -> crate::gateio::Result<Vec<IndexConstituent>> {
+        let endpoint = format!(
+            "/futures/{}/index_constituents/{}",
+            params.settle, params.index
+        );
         self.get(&endpoint).await
     }
 }

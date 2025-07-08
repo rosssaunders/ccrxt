@@ -5,9 +5,8 @@
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 
-use crate::coinbase::RestResult;
-
 use super::RestClient;
+use crate::coinbase::RestResult;
 
 /// Endpoint URL path for getting product ticker
 const ENDPOINT_PATH: &str = "products/{}/ticker";

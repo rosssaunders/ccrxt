@@ -5,22 +5,24 @@
 //! All message construction, serialization, and endpoint logic must be in separate files.
 //! This file should not contain endpoint-specific logic or message types.
 
-use std::collections::HashMap;
-use std::pin::Pin;
-use std::sync::Arc;
-use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
+use std::{
+    collections::HashMap,
+    pin::Pin,
+    sync::{
+        Arc,
+        atomic::{AtomicBool, AtomicU64, Ordering},
+    },
+};
 
 use async_trait::async_trait;
 use futures::SinkExt;
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
-use tokio::net::TcpStream;
-use tokio::sync::Mutex;
+use tokio::{net::TcpStream, sync::Mutex};
 use tokio_tungstenite::{MaybeTlsStream, WebSocketStream, connect_async};
 use websockets::{BoxResult, WebSocketConnection};
 
-use crate::deribit::message::DeribitMessage;
-use crate::deribit::rate_limit::RateLimiter;
+use crate::deribit::{message::DeribitMessage, rate_limit::RateLimiter};
 
 /// Errors specific to Deribit WebSocket operations
 #[derive(Error, Debug)]

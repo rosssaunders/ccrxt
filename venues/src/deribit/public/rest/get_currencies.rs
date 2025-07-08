@@ -2,12 +2,11 @@
 //!
 //! Retrieves all cryptocurrencies supported by the API.
 
-use super::RestClient;
-use crate::deribit::enums::Currency;
-use crate::deribit::{EndpointType, RestResult};
-
 use reqwest::Method;
 use serde::Deserialize;
+
+use super::RestClient;
+use crate::deribit::{EndpointType, RestResult, enums::Currency};
 
 const CURRENCIES_ENDPOINT: &str = "public/get_currencies";
 
@@ -102,8 +101,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use serde_json;
+
+    use super::*;
 
     #[test]
     fn test_deserialize_response() {

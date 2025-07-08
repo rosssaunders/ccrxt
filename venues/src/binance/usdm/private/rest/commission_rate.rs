@@ -1,14 +1,15 @@
 //! User commission rate endpoints for Binance USDM REST API.
 
+use chrono::Utc;
+use reqwest::Method;
 use secrecy::{ExposeSecret, SecretString};
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
-use crate::binance::usdm::private::rest::client::RestClient;
-use crate::binance::usdm::private::rest::order::OrderErrorResponse;
-use crate::binance::usdm::signing::sign_query;
-use chrono::Utc;
-use reqwest::Method;
+use crate::binance::usdm::{
+    private::rest::{client::RestClient, order::OrderErrorResponse},
+    signing::sign_query,
+};
 
 /// Error type for USDM commission rate endpoints.
 #[derive(Debug, Error, Clone, Deserialize)]
@@ -121,7 +122,10 @@ impl RestClient {
         // Make the request
         let response = self
             .client
-            .request(Method::GET, &format!("{}/fapi/v1/commissionRate", self.base_url))
+            .request(
+                Method::GET,
+                &format!("{}/fapi/v1/commissionRate", self.base_url),
+            )
             .header("X-MBX-APIKEY", api_key.expose_secret())
             .query(&request)
             .send()
@@ -169,7 +173,7 @@ mod tests {
             "makerCommissionRate": "0.0002",
             "takerCommissionRate": "0.0004"
         }"#;
-        
+
         let response: CommissionRateResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.symbol, "BTCUSDT");
         assert_eq!(response.maker_commission_rate, "0.0002");

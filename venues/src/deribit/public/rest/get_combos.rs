@@ -2,10 +2,10 @@
 //!
 //! Retrieves information about active combos
 
-use super::RestClient;
-use crate::deribit::enums::Currency;
-use crate::deribit::{EndpointType, RestResult};
 use serde::{Deserialize, Serialize};
+
+use super::RestClient;
+use crate::deribit::{EndpointType, RestResult, enums::Currency};
 
 const COMBOS_ENDPOINT: &str = "public/get_combos";
 

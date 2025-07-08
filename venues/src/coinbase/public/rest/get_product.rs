@@ -4,9 +4,8 @@
 
 use serde::Serialize;
 
-use crate::coinbase::RestResult;
-
 use super::{Product, RestClient};
+use crate::coinbase::RestResult;
 
 /// Endpoint URL path for getting a single product
 const ENDPOINT_PATH: &str = "products/{}";

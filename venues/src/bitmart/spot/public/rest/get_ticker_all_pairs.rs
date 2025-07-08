@@ -1,8 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::bitmart::RestResult;
-use crate::bitmart::rate_limit::EndpointType;
+use crate::bitmart::{RestResult, rate_limit::EndpointType};
 
 const TICKER_ALL_PAIRS_ENDPOINT: &str = "/spot/quotation/v3/tickers";
 
@@ -79,51 +78,18 @@ mod tests {
             "1691671091933".to_string(), // ts
         ];
 
-        assert_eq!(
-            ticker_data.first().map(|s| s.as_str()),
-            Some("BTC_USDT")
-        );
-        assert_eq!(
-            ticker_data.get(1).map(|s| s.as_str()),
-            Some("30000.00")
-        );
-        assert_eq!(
-            ticker_data.get(2).map(|s| s.as_str()),
-            Some("582.08066")
-        );
-        assert_eq!(
-            ticker_data.get(3).map(|s| s.as_str()),
-            Some("4793098.48")
-        );
-        assert_eq!(
-            ticker_data.get(4).map(|s| s.as_str()),
-            Some("28596.30")
-        );
-        assert_eq!(
-            ticker_data.get(5).map(|s| s.as_str()),
-            Some("31012.44")
-        );
-        assert_eq!(
-            ticker_data.get(6).map(|s| s.as_str()),
-            Some("12.44")
-        );
-        assert_eq!(
-            ticker_data.get(7).map(|s| s.as_str()),
-            Some("0.04909")
-        );
-        assert_eq!(
-            ticker_data.get(8).map(|s| s.as_str()),
-            Some("30000")
-        );
+        assert_eq!(ticker_data.first().map(|s| s.as_str()), Some("BTC_USDT"));
+        assert_eq!(ticker_data.get(1).map(|s| s.as_str()), Some("30000.00"));
+        assert_eq!(ticker_data.get(2).map(|s| s.as_str()), Some("582.08066"));
+        assert_eq!(ticker_data.get(3).map(|s| s.as_str()), Some("4793098.48"));
+        assert_eq!(ticker_data.get(4).map(|s| s.as_str()), Some("28596.30"));
+        assert_eq!(ticker_data.get(5).map(|s| s.as_str()), Some("31012.44"));
+        assert_eq!(ticker_data.get(6).map(|s| s.as_str()), Some("12.44"));
+        assert_eq!(ticker_data.get(7).map(|s| s.as_str()), Some("0.04909"));
+        assert_eq!(ticker_data.get(8).map(|s| s.as_str()), Some("30000"));
         assert_eq!(ticker_data.get(9).map(|s| s.as_str()), Some("1"));
-        assert_eq!(
-            ticker_data.get(10).map(|s| s.as_str()),
-            Some("31012.44")
-        );
-        assert_eq!(
-            ticker_data.get(11).map(|s| s.as_str()),
-            Some("69994.75267")
-        );
+        assert_eq!(ticker_data.get(10).map(|s| s.as_str()), Some("31012.44"));
+        assert_eq!(ticker_data.get(11).map(|s| s.as_str()), Some("69994.75267"));
         assert_eq!(
             ticker_data.get(12).map(|s| s.as_str()),
             Some("1691671091933")
@@ -138,22 +104,10 @@ mod tests {
             "582.08066".to_string(),
         ];
 
-        assert_eq!(
-            ticker_data.first().map(|s| s.as_str()),
-            Some("BTC_USDT")
-        );
-        assert_eq!(
-            ticker_data.get(1).map(|s| s.as_str()),
-            Some("30000.00")
-        );
-        assert_eq!(
-            ticker_data.get(2).map(|s| s.as_str()),
-            Some("582.08066")
-        );
-        assert_eq!(
-            ticker_data.get(3).map(|s| s.as_str()),
-            None
-        );
+        assert_eq!(ticker_data.first().map(|s| s.as_str()), Some("BTC_USDT"));
+        assert_eq!(ticker_data.get(1).map(|s| s.as_str()), Some("30000.00"));
+        assert_eq!(ticker_data.get(2).map(|s| s.as_str()), Some("582.08066"));
+        assert_eq!(ticker_data.get(3).map(|s| s.as_str()), None);
         assert_eq!(ticker_data.get(12).map(|s| s.as_str()), None);
     }
 
@@ -193,14 +147,8 @@ mod tests {
         ]);
 
         assert_eq!(response.0.len(), 2);
-        assert_eq!(
-            response.0[0].get(0).map(|s| s.as_str()),
-            Some("BTC_USDT")
-        );
-        assert_eq!(
-            response.0[1].get(0).map(|s| s.as_str()),
-            Some("ETH_USDT")
-        );
+        assert_eq!(response.0[0].get(0).map(|s| s.as_str()), Some("BTC_USDT"));
+        assert_eq!(response.0[1].get(0).map(|s| s.as_str()), Some("ETH_USDT"));
     }
 
     #[test]
@@ -240,22 +188,10 @@ mod tests {
 
         let response: GetTickerAllPairsResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.0.len(), 2);
-        assert_eq!(
-            response.0[0].get(0).map(|s| s.as_str()),
-            Some("BTC_USDT")
-        );
-        assert_eq!(
-            response.0[0].get(1).map(|s| s.as_str()),
-            Some("30000.00")
-        );
-        assert_eq!(
-            response.0[1].get(0).map(|s| s.as_str()),
-            Some("ETH_USDT")
-        );
-        assert_eq!(
-            response.0[1].get(1).map(|s| s.as_str()),
-            Some("1840.00")
-        );
+        assert_eq!(response.0[0].get(0).map(|s| s.as_str()), Some("BTC_USDT"));
+        assert_eq!(response.0[0].get(1).map(|s| s.as_str()), Some("30000.00"));
+        assert_eq!(response.0[1].get(0).map(|s| s.as_str()), Some("ETH_USDT"));
+        assert_eq!(response.0[1].get(1).map(|s| s.as_str()), Some("1840.00"));
     }
 
     #[test]

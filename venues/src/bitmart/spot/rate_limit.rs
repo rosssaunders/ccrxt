@@ -1,6 +1,8 @@
-use std::collections::HashMap;
-use std::fmt;
-use std::time::{Duration, Instant};
+use std::{
+    collections::HashMap,
+    fmt,
+    time::{Duration, Instant},
+};
 
 use tokio::sync::RwLock;
 

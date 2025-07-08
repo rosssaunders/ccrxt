@@ -1,9 +1,8 @@
 use rust_decimal::Decimal;
 use serde::Deserialize;
 
-use crate::binance::options::{OptionsContractType, RestResult};
-
 use super::client::RestClient;
+use crate::binance::options::{OptionsContractType, RestResult};
 
 /// Exchange information response
 #[derive(Debug, Clone, Deserialize)]

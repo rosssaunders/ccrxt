@@ -1,8 +1,7 @@
 use std::borrow::Cow;
 
 use reqwest::Client;
-use serde::Serialize;
-use serde::de::DeserializeOwned;
+use serde::{Serialize, de::DeserializeOwned};
 
 use crate::bingx::{EndpointType, Errors, RateLimiter, RestResult};
 

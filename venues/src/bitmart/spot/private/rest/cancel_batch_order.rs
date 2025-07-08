@@ -5,8 +5,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::bitmart::rate_limit::EndpointType;
-use crate::bitmart::{OrderSide, RestResult};
+use crate::bitmart::{OrderSide, RestResult, rate_limit::EndpointType};
 
 const CANCEL_BATCH_ORDER_ENDPOINT: &str = "/spot/v4/cancel_orders";
 

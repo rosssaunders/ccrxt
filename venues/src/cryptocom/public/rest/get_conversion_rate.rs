@@ -2,8 +2,7 @@ use serde::{Deserialize, Serialize};
 use serde_json;
 
 use super::client::RestClient;
-use crate::cryptocom::RestResult;
-use crate::cryptocom::rate_limit::EndpointType;
+use crate::cryptocom::{RestResult, rate_limit::EndpointType};
 
 /// Endpoint path for the get-conversion-rate API
 const CONVERSION_RATE_ENDPOINT: &str = "public/staking/get-conversion-rate";

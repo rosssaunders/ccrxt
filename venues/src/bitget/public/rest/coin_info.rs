@@ -1,5 +1,6 @@
-use serde::{Deserialize, Deserializer, Serialize};
 use std::collections::HashMap;
+
+use serde::{Deserialize, Deserializer, Serialize};
 
 use super::RestClient;
 use crate::bitget::{ApiError, RestResponse};
@@ -26,8 +27,6 @@ pub struct GetCoinInfoRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub coin: Option<String>,
 }
-
-
 
 /// Chain information for a coin
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -109,14 +108,18 @@ impl RestClient {
         request: &GetCoinInfoRequest,
     ) -> Result<RestResponse<Vec<CoinInfo>>, ApiError> {
         let endpoint = COIN_INFO_ENDPOINT;
-        
+
         let mut params = HashMap::new();
         if let Some(coin) = &request.coin {
             params.insert("coin".to_string(), coin.clone());
         }
-        
-        let params = if params.is_empty() { None } else { Some(params) };
-        
+
+        let params = if params.is_empty() {
+            None
+        } else {
+            Some(params)
+        };
+
         self.get(endpoint, params).await
     }
 }

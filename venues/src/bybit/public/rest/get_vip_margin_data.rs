@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
-use crate::bybit::{EndpointType, RestResult};
+
 use super::client::RestClient;
+use crate::bybit::{EndpointType, RestResult};
 
 const VIP_MARGIN_DATA_ENDPOINT: &str = "/v5/spot-margin-trade/data";
 
@@ -49,8 +50,15 @@ pub struct GetVipMarginDataResponse {
 }
 
 impl RestClient {
-    pub async fn get_vip_margin_data(&self, request: Option<GetVipMarginDataRequest>) -> RestResult<GetVipMarginDataResponse> {
-        self.send_public_request(VIP_MARGIN_DATA_ENDPOINT, request.as_ref(), EndpointType::Market).await
+    pub async fn get_vip_margin_data(
+        &self,
+        request: Option<GetVipMarginDataRequest>,
+    ) -> RestResult<GetVipMarginDataResponse> {
+        self.send_public_request(
+            VIP_MARGIN_DATA_ENDPOINT,
+            request.as_ref(),
+            EndpointType::Market,
+        )
+        .await
     }
 }
-

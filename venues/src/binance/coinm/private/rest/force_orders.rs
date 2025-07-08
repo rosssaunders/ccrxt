@@ -3,12 +3,13 @@
 
 use serde::{Deserialize, Serialize};
 
-use crate::binance::coinm::RestResult;
-use crate::binance::coinm::private::rest::client::RestClient;
-use crate::binance::coinm::{
-    AutoCloseType, OrderSide, OrderStatus, OrderType, PositionSide, TimeInForce, WorkingType,
+use crate::binance::{
+    coinm::{
+        AutoCloseType, OrderSide, OrderStatus, OrderType, PositionSide, RestResult, TimeInForce,
+        WorkingType, private::rest::client::RestClient,
+    },
+    shared,
 };
-use crate::binance::shared;
 
 /// Request parameters for getting user's force orders (GET /dapi/v1/forceOrders).
 #[derive(Debug, Clone, Serialize, Default)]

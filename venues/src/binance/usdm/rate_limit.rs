@@ -1,12 +1,13 @@
-use std::collections::VecDeque;
-use std::sync::Arc;
-use std::time::{Duration, Instant};
+use std::{
+    collections::VecDeque,
+    sync::Arc,
+    time::{Duration, Instant},
+};
 
 use serde::Deserialize;
 use tokio::sync::RwLock;
 
-use crate::binance::usdm::errors::ApiError;
-use crate::binance::usdm::{Errors, ResponseHeaders};
+use crate::binance::usdm::{Errors, ResponseHeaders, errors::ApiError};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]

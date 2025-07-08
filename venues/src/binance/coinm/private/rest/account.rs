@@ -1,9 +1,13 @@
-use crate::binance::coinm::RestResult;
-use crate::binance::coinm::enums::{MarginType, PositionSide};
-use crate::binance::coinm::private::rest::client::RestClient;
-use crate::binance::shared;
-
 use serde::{Deserialize, Serialize};
+
+use crate::binance::{
+    coinm::{
+        RestResult,
+        enums::{MarginType, PositionSide},
+        private::rest::client::RestClient,
+    },
+    shared,
+};
 
 /// Request parameters for fetching account information.
 #[derive(Debug, Serialize)]

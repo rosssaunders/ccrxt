@@ -1,12 +1,13 @@
-use std::collections::{HashMap, VecDeque};
-use std::sync::Arc;
-use std::time::{Duration, Instant};
+use std::{
+    collections::{HashMap, VecDeque},
+    sync::Arc,
+    time::{Duration, Instant},
+};
 
 use serde::Deserialize;
 use tokio::sync::RwLock;
 
-use super::errors::Errors;
-use super::venue_trait::RateLimits;
+use super::{errors::Errors, venue_trait::RateLimits};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]

@@ -24,12 +24,15 @@
 //!
 //! - **Request Signing**: For private endpoints, query parameters (including timestamp) must be
 //!   signed using HMAC-SHA256 with the API secret
-use reqwest::Client;
-use rest::secrets::ExposableSecret;
 use std::borrow::Cow;
 
-use crate::binance::coinm::{Errors, RateLimiter, RestResult};
-use crate::binance::shared::BinanceRestClient;
+use reqwest::Client;
+use rest::secrets::ExposableSecret;
+
+use crate::binance::{
+    coinm::{Errors, RateLimiter, RestResult},
+    shared::BinanceRestClient,
+};
 
 /// A client for interacting with the Binance Coin-M Futures private REST API
 ///

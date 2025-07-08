@@ -7,9 +7,7 @@ use std::borrow::Cow;
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::cryptocom::EndpointType;
-use crate::cryptocom::RestResult;
-use crate::cryptocom::TradeSide;
+use crate::cryptocom::{EndpointType, RestResult, TradeSide};
 
 /// Endpoint for getting trades
 const GET_TRADES_ENDPOINT: &str = "public/get-trades";

@@ -1,7 +1,9 @@
-use crate::binance::coinm::private::rest::RestClient;
-use crate::binance::coinm::{OrderSide, PositionSide, RestResult};
-use crate::binance::shared;
 use serde::{Deserialize, Serialize};
+
+use crate::binance::{
+    coinm::{OrderSide, PositionSide, RestResult, private::rest::RestClient},
+    shared,
+};
 
 const ACCOUNT_TRADES_ENDPOINT: &str = "/dapi/v1/userTrades";
 

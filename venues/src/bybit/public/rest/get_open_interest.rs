@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
-use crate::bybit::{enums::*, EndpointType, RestResult};
+
 use super::client::RestClient;
+use crate::bybit::{EndpointType, RestResult, enums::*};
 
 const OPEN_INTEREST_ENDPOINT: &str = "/v5/market/open-interest";
 
@@ -49,8 +50,11 @@ pub struct GetOpenInterestResponse {
 }
 
 impl RestClient {
-    pub async fn get_open_interest(&self, request: GetOpenInterestRequest) -> RestResult<GetOpenInterestResponse> {
-        self.send_public_request(OPEN_INTEREST_ENDPOINT, Some(&request), EndpointType::Market).await
+    pub async fn get_open_interest(
+        &self,
+        request: GetOpenInterestRequest,
+    ) -> RestResult<GetOpenInterestResponse> {
+        self.send_public_request(OPEN_INTEREST_ENDPOINT, Some(&request), EndpointType::Market)
+            .await
     }
 }
-

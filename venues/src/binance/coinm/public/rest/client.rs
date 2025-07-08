@@ -6,8 +6,10 @@ use std::borrow::Cow;
 
 use reqwest::Client;
 
-use crate::binance::coinm::rest::common::{build_url, send_rest_request};
-use crate::binance::coinm::{RateLimiter, RestResponse, RestResult};
+use crate::binance::coinm::{
+    RateLimiter, RestResponse, RestResult,
+    rest::common::{build_url, send_rest_request},
+};
 
 #[non_exhaustive]
 #[derive(Debug, Clone)]

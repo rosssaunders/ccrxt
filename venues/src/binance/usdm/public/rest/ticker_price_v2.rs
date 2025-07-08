@@ -3,10 +3,11 @@
 //! Latest price for a symbol or symbols.
 //!
 //! See: https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Symbol-Price-Ticker-v2
-use crate::binance::usdm::{Errors, RestResult};
+use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
-use std::borrow::Cow;
+
+use crate::binance::usdm::{Errors, RestResult};
 
 /// Request parameters for the Symbol Price Ticker V2 endpoint.
 #[derive(Debug, Clone, Serialize, Default)]

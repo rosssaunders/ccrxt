@@ -1,14 +1,15 @@
 //! Order download async endpoints for Binance USDM REST API.
 
+use chrono::Utc;
+use reqwest::Method;
 use secrecy::{ExposeSecret, SecretString};
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
-use crate::binance::usdm::private::rest::client::RestClient;
-use crate::binance::usdm::private::rest::order::OrderErrorResponse;
-use crate::binance::usdm::signing::sign_query;
-use chrono::Utc;
-use reqwest::Method;
+use crate::binance::usdm::{
+    private::rest::{client::RestClient, order::OrderErrorResponse},
+    signing::sign_query,
+};
 
 /// Error type for USDM order download endpoints.
 #[derive(Debug, Error, Clone, Deserialize)]
@@ -132,7 +133,10 @@ impl RestClient {
         // Make the request
         let response = self
             .client
-            .request(Method::GET, &format!("{}/fapi/v1/order/asyn", self.base_url))
+            .request(
+                Method::GET,
+                &format!("{}/fapi/v1/order/asyn", self.base_url),
+            )
             .header("X-MBX-APIKEY", api_key.expose_secret())
             .query(&request)
             .send()
@@ -188,7 +192,10 @@ impl RestClient {
         // Make the request
         let response = self
             .client
-            .request(Method::GET, &format!("{}/fapi/v1/order/asyn/id", self.base_url))
+            .request(
+                Method::GET,
+                &format!("{}/fapi/v1/order/asyn/id", self.base_url),
+            )
             .header("X-MBX-APIKEY", api_key.expose_secret())
             .query(&request)
             .send()
@@ -240,7 +247,10 @@ mod tests {
 
         let response: OrderDownloadLinkResponse = serde_json::from_str(json).unwrap();
         assert!(response.download_link.is_some());
-        assert_eq!(response.download_link.unwrap(), "https://bin-prod-user-rebate-bucket.s3.amazonaws.com/...");
+        assert_eq!(
+            response.download_link.unwrap(),
+            "https://bin-prod-user-rebate-bucket.s3.amazonaws.com/..."
+        );
         matches!(response.status, DownloadStatus::Completed);
     }
 }

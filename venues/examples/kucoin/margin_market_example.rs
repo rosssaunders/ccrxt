@@ -17,9 +17,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         "https://api.kucoin.com",
         venues::kucoin::RateLimiter::new(),
         reqwest::Client::new(),
-        Box::new(rest::secrets::SecretValue::new(rest::secrets::SecretString::new(Box::<str>::default()))) as Box<dyn rest::secrets::ExposableSecret>,
-        Box::new(rest::secrets::SecretValue::new(rest::secrets::SecretString::new(Box::<str>::default()))) as Box<dyn rest::secrets::ExposableSecret>,
-        Box::new(rest::secrets::SecretValue::new(rest::secrets::SecretString::new(Box::<str>::default()))) as Box<dyn rest::secrets::ExposableSecret>,
+        Box::new(rest::secrets::SecretValue::new(
+            rest::secrets::SecretString::new(Box::<str>::default()),
+        )) as Box<dyn rest::secrets::ExposableSecret>,
+        Box::new(rest::secrets::SecretValue::new(
+            rest::secrets::SecretString::new(Box::<str>::default()),
+        )) as Box<dyn rest::secrets::ExposableSecret>,
+        Box::new(rest::secrets::SecretValue::new(
+            rest::secrets::SecretString::new(Box::<str>::default()),
+        )) as Box<dyn rest::secrets::ExposableSecret>,
         false,
     );
 
@@ -31,9 +37,21 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let request = GetMarginSymbolsRequest { symbol: None };
     match client.get_margin_symbols(request).await {
         Ok((response, _headers)) => {
-            println!("✅ Found {} symbols (timestamp: {})", response.items.len(), response.timestamp);
+            println!(
+                "✅ Found {} symbols (timestamp: {})",
+                response.items.len(),
+                response.timestamp
+            );
             for (i, symbol) in response.items.iter().take(5).enumerate() {
-                println!("   {}. {} ({}): {}-{} | Trading enabled: {}", i + 1, symbol.symbol, symbol.name, symbol.base_currency, symbol.quote_currency, symbol.enable_trading);
+                println!(
+                    "   {}. {} ({}): {}-{} | Trading enabled: {}",
+                    i + 1,
+                    symbol.symbol,
+                    symbol.name,
+                    symbol.base_currency,
+                    symbol.quote_currency,
+                    symbol.enable_trading
+                );
             }
         }
         Err(e) => println!("❌ Failed to get margin symbols: {}", e),
@@ -41,11 +59,16 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // 2. Get a specific symbol (e.g., BTC-USDT)
     println!("\n🔍 Getting BTC-USDT margin symbol...");
-    let request = GetMarginSymbolsRequest { symbol: Some("BTC-USDT".to_string()) };
+    let request = GetMarginSymbolsRequest {
+        symbol: Some("BTC-USDT".to_string()),
+    };
     match client.get_margin_symbols(request).await {
         Ok((response, _headers)) => {
             if let Some(symbol) = response.items.first() {
-                println!("✅ Symbol: {} ({}), Market: {}, Trading enabled: {}", symbol.symbol, symbol.name, symbol.market, symbol.enable_trading);
+                println!(
+                    "✅ Symbol: {} ({}), Market: {}, Trading enabled: {}",
+                    symbol.symbol, symbol.name, symbol.market, symbol.enable_trading
+                );
             } else {
                 println!("⚠️  BTC-USDT not found in margin symbols.");
             }

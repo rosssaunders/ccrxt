@@ -6,7 +6,8 @@ pub use super::get_user_trades_by_currency::Trade;
 use crate::deribit::{EndpointType, RestResult, Sorting};
 
 /// REST API endpoint constant
-const GET_USER_TRADES_BY_INSTRUMENT_AND_TIME_ENDPOINT: &str = "private/get_user_trades_by_instrument_and_time";
+const GET_USER_TRADES_BY_INSTRUMENT_AND_TIME_ENDPOINT: &str =
+    "private/get_user_trades_by_instrument_and_time";
 
 /// Request parameters for getting user trades by instrument and time
 #[derive(Debug, Clone, Serialize)]
@@ -85,8 +86,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use rest::secrets::ExposableSecret;
-
-/// REST API endpoint constant
+    /// REST API endpoint constant
     use serde_json::{Value, json};
 
     use super::*;

@@ -1,7 +1,9 @@
 //! BitMart Futures Public REST Client
-use crate::bitmart::spot::error::Result;
-use reqwest::Client;
 use std::sync::Arc;
+
+use reqwest::Client;
+
+use crate::bitmart::spot::error::Result;
 
 #[derive(Debug, Clone, Default)]
 pub struct RestClient {

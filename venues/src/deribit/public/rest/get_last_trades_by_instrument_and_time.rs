@@ -2,12 +2,14 @@
 //!
 //! Retrieves the most recent trades for a given instrument, filtered by start and end timestamps.
 
-use super::RestClient;
-use crate::deribit::enums::{Liquidity, Sorting, TickDirection, TradeOrderType};
-use crate::deribit::{EndpointType, RestResult};
-
 use reqwest::Method;
 use serde::{Deserialize, Serialize};
+
+use super::RestClient;
+use crate::deribit::{
+    EndpointType, RestResult,
+    enums::{Liquidity, Sorting, TickDirection, TradeOrderType},
+};
 
 const LAST_TRADES_BY_INSTRUMENT_AND_TIME_ENDPOINT: &str = "get_last_trades_by_instrument_and_time";
 
@@ -117,9 +119,10 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
+    use serde_json;
+
     use super::*;
     use crate::deribit::enums::{Liquidity, Sorting, TickDirection, TradeOrderType};
-    use serde_json;
 
     #[test]
     fn test_serialize_request() {

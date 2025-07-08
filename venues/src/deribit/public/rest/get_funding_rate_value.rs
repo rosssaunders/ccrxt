@@ -2,11 +2,11 @@
 //!
 //! Retrieves the current funding rate value for a given instrument.
 
-use super::RestClient;
-use crate::deribit::{EndpointType, RestResult};
-
 use reqwest::Method;
 use serde::{Deserialize, Serialize};
+
+use super::RestClient;
+use crate::deribit::{EndpointType, RestResult};
 
 const FUNDING_RATE_VALUE_ENDPOINT: &str = "public/get_funding_rate_value";
 
@@ -68,8 +68,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use serde_json;
+
+    use super::*;
 
     #[test]
     fn test_serialize_request() {

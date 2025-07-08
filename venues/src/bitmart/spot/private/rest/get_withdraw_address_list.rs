@@ -1,8 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::bitmart::RestResult;
-use crate::bitmart::rate_limit::EndpointType;
+use crate::bitmart::{RestResult, rate_limit::EndpointType};
 
 const WITHDRAW_ADDRESS_LIST_ENDPOINT: &str = "/account/v1/withdraw/address/list";
 

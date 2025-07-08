@@ -5,10 +5,9 @@
 
 use hex;
 use hmac::{Hmac, Mac};
+use rest::secrets::ExposableSecret;
 use serde::Serialize;
 use sha2::Sha256;
-
-use rest::secrets::ExposableSecret;
 
 pub mod client;
 pub mod errors;

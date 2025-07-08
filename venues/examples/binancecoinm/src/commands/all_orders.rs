@@ -1,5 +1,4 @@
-use venues::binance::coinm::AllOrdersRequest;
-use venues::binance::coinm::PrivateRestClient;
+use venues::binance::coinm::{AllOrdersRequest, PrivateRestClient};
 
 pub async fn run_all_orders(client: &PrivateRestClient, symbol: String, limit: u32) {
     let params = AllOrdersRequest {

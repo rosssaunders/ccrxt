@@ -1,6 +1,9 @@
+use std::{
+    sync::Arc,
+    time::{Duration, Instant},
+};
+
 use reqwest::header::HeaderMap;
-use std::sync::Arc;
-use std::time::{Duration, Instant};
 use tokio::sync::{Mutex, Semaphore};
 
 /// Rate limit header information from Gate.io API responses
@@ -77,11 +80,11 @@ pub struct RateLimiter {
     options_endpoints: Arc<Semaphore>,
     wallet_endpoints: Arc<Semaphore>,
     margin_endpoints: Arc<Semaphore>,
-    
+
     /// Last reset times for different categories
     #[allow(dead_code)]
     last_reset: Arc<Mutex<std::collections::HashMap<String, Instant>>>,
-    
+
     /// Current usage tracking
     usage_tracker: Arc<Mutex<std::collections::HashMap<String, UsageInfo>>>,
 }
@@ -92,39 +95,42 @@ impl RateLimiter {
             // Spot trading limits (per second or per 10 seconds)
             spot_order_placement: Arc::new(Semaphore::new(10)), // 10 req/s
             spot_order_cancellation: Arc::new(Semaphore::new(200)), // 200 req/s
-            spot_other: Arc::new(Semaphore::new(200)), // 200 req/10s
-            
+            spot_other: Arc::new(Semaphore::new(200)),          // 200 req/10s
+
             // Public endpoints
             public_endpoints: Arc::new(Semaphore::new(1000)), // 1000 req/10s
-            
+
             // Unified account limits
             unified_borrow_repay: Arc::new(Semaphore::new(15)), // 15 req/10s
-            unified_other: Arc::new(Semaphore::new(150)), // 150 req/10s
-            
+            unified_other: Arc::new(Semaphore::new(150)),       // 150 req/10s
+
             // Futures limits
             futures_endpoints: Arc::new(Semaphore::new(200)), // 200 req/10s
-            
+
             // Delivery limits
             delivery_endpoints: Arc::new(Semaphore::new(200)), // 200 req/10s
-            
+
             // Options limits
             options_endpoints: Arc::new(Semaphore::new(200)), // 200 req/10s
-            
+
             // Wallet limits
             wallet_endpoints: Arc::new(Semaphore::new(100)), // 100 req/10s
-            
+
             // Margin limits
             margin_endpoints: Arc::new(Semaphore::new(200)), // 200 req/10s
-            
+
             last_reset: Arc::new(Mutex::new(std::collections::HashMap::new())),
             usage_tracker: Arc::new(Mutex::new(std::collections::HashMap::new())),
         }
     }
 
     /// Get appropriate semaphore for the endpoint
-    pub async fn get_permit(&self, endpoint: &str) -> Result<tokio::sync::SemaphorePermit<'_>, tokio::sync::AcquireError> {
+    pub async fn get_permit(
+        &self,
+        endpoint: &str,
+    ) -> Result<tokio::sync::SemaphorePermit<'_>, tokio::sync::AcquireError> {
         let category = self.categorize_endpoint(endpoint);
-        
+
         // Track usage
         {
             let mut usage = self.usage_tracker.lock().await;
@@ -134,7 +140,7 @@ impl RateLimiter {
                 #[allow(clippy::arithmetic_side_effects)]
                 reset_time: Instant::now() + Duration::from_secs(10),
             });
-            
+
             // Reset if needed
             if info.reset_time <= Instant::now() {
                 info.requests_made = 0;
@@ -143,7 +149,7 @@ impl RateLimiter {
                     info.reset_time = Instant::now() + Duration::from_secs(10);
                 }
             }
-            
+
             #[allow(clippy::arithmetic_side_effects)]
             {
                 info.requests_made += 1;
@@ -174,61 +180,57 @@ impl RateLimiter {
                 "spot_order_placement".to_string()
             }
             // Spot order cancellation
-            endpoint if endpoint.starts_with("/spot/") && (endpoint.contains("cancel") || endpoint.contains("DELETE")) => {
+            endpoint
+                if endpoint.starts_with("/spot/")
+                    && (endpoint.contains("cancel") || endpoint.contains("DELETE")) =>
+            {
                 "spot_order_cancellation".to_string()
             }
             // Other spot endpoints
-            endpoint if endpoint.starts_with("/spot/") => {
-                "spot_other".to_string()
-            }
+            endpoint if endpoint.starts_with("/spot/") => "spot_other".to_string(),
             // Unified borrow/repay
-            "/unified/loans" | "/unified/borrow_or_repay" => {
-                "unified_borrow_repay".to_string()
-            }
+            "/unified/loans" | "/unified/borrow_or_repay" => "unified_borrow_repay".to_string(),
             // Other unified endpoints
-            endpoint if endpoint.starts_with("/unified/") => {
-                "unified_other".to_string()
-            }
+            endpoint if endpoint.starts_with("/unified/") => "unified_other".to_string(),
             // Futures endpoints
-            endpoint if endpoint.contains("/futures/") => {
-                "futures".to_string()
-            }
+            endpoint if endpoint.contains("/futures/") => "futures".to_string(),
             // Delivery endpoints
-            endpoint if endpoint.contains("/delivery/") => {
-                "delivery".to_string()
-            }
+            endpoint if endpoint.contains("/delivery/") => "delivery".to_string(),
             // Options endpoints
-            endpoint if endpoint.contains("/options/") => {
-                "options".to_string()
-            }
+            endpoint if endpoint.contains("/options/") => "options".to_string(),
             // Wallet endpoints
-            endpoint if endpoint.starts_with("/wallet/") => {
-                "wallet".to_string()
-            }
+            endpoint if endpoint.starts_with("/wallet/") => "wallet".to_string(),
             // Margin endpoints
-            endpoint if endpoint.starts_with("/margin/") => {
-                "margin".to_string()
-            }
+            endpoint if endpoint.starts_with("/margin/") => "margin".to_string(),
             // Public endpoints (default)
-            _ => {
-                "public".to_string()
-            }
+            _ => "public".to_string(),
         }
     }
 
     /// Update rate limit status from response headers
-    pub fn update_from_headers(&self, headers: &RateLimitHeader, endpoint: &str) -> Option<RateLimitStatus> {
-        if let (Some(remain), Some(limit), Some(reset)) = (headers.requests_remain, headers.limit, headers.reset_timestamp) {
+    pub fn update_from_headers(
+        &self,
+        headers: &RateLimitHeader,
+        endpoint: &str,
+    ) -> Option<RateLimitStatus> {
+        if let (Some(remain), Some(limit), Some(reset)) = (
+            headers.requests_remain,
+            headers.limit,
+            headers.reset_timestamp,
+        ) {
             #[allow(clippy::unwrap_used)]
             #[allow(clippy::arithmetic_side_effects)]
-            let reset_duration = Duration::from_secs(reset - std::time::SystemTime::now()
-                .duration_since(std::time::UNIX_EPOCH)
-                .unwrap()
-                .as_secs());
-            
+            let reset_duration = Duration::from_secs(
+                reset
+                    - std::time::SystemTime::now()
+                        .duration_since(std::time::UNIX_EPOCH)
+                        .unwrap()
+                        .as_secs(),
+            );
+
             #[allow(clippy::arithmetic_side_effects)]
             let reset_at = Instant::now() + reset_duration;
-            
+
             Some(RateLimitStatus {
                 endpoint: endpoint.to_string(),
                 requests_remaining: remain,

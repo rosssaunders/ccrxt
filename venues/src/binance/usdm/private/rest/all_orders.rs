@@ -1,16 +1,15 @@
 //! All orders endpoint for Binance USDM REST API.
 
-use secrecy::{ExposeSecret, SecretString};
-use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
-use thiserror::Error;
 
-use crate::binance::usdm::enums::*;
-use crate::binance::usdm::private::rest::client::RestClient;
-use crate::binance::usdm::signing::sign_query;
 use chrono::Utc;
 use reqwest::Method;
+use secrecy::{ExposeSecret, SecretString};
+use serde::{Deserialize, Serialize};
 use serde_urlencoded;
+use thiserror::Error;
+
+use crate::binance::usdm::{enums::*, private::rest::client::RestClient, signing::sign_query};
 
 #[derive(Debug, Error, Clone, Deserialize)]
 #[serde(tag = "code", content = "msg")]
@@ -81,8 +80,9 @@ impl RestClient {
         &self,
         params: GetAllOrdersRequest,
     ) -> AllOrdersResult<Vec<AllOrder>> {
-        use crate::binance::usdm::request::execute_request;
         use tracing::debug;
+
+        use crate::binance::usdm::request::execute_request;
         let endpoint = "/fapi/v1/allOrders";
         let method = Method::GET;
         let url = format!("{}{}", self.base_url, endpoint);

@@ -1,14 +1,15 @@
 //! Change initial leverage for a symbol on Binance USDM REST API.
 
+use chrono::Utc;
+use reqwest::Method;
 use secrecy::{ExposeSecret, SecretString};
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
-use crate::binance::usdm::private::rest::client::RestClient;
-use crate::binance::usdm::private::rest::order::OrderErrorResponse;
-use crate::binance::usdm::signing::sign_query;
-use chrono::Utc;
-use reqwest::Method;
+use crate::binance::usdm::{
+    private::rest::{client::RestClient, order::OrderErrorResponse},
+    signing::sign_query,
+};
 
 /// Error type for USDM leverage endpoints.
 #[derive(Debug, Error, Clone, Deserialize)]
@@ -183,7 +184,7 @@ mod tests {
     fn test_change_leverage_response_deserialization() {
         let json = r#"{"leverage":10,"maxNotionalValue":"1000000","symbol":"BTCUSDT"}"#;
         let response: ChangeLeverageResponse = serde_json::from_str(json).unwrap();
-        
+
         assert_eq!(response.leverage, 10);
         assert_eq!(response.max_notional_value, "1000000");
         assert_eq!(response.symbol, "BTCUSDT");

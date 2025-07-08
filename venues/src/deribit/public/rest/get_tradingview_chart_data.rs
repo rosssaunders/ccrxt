@@ -4,12 +4,11 @@
 //!
 //! [Official API docs](https://docs.deribit.com/#public-get_tradingview_chart_data)
 
-use super::RestClient;
-use crate::deribit::EndpointType;
-use crate::deribit::Errors as DeribitError;
-
 use reqwest::Method;
 use serde::{Deserialize, Serialize};
+
+use super::RestClient;
+use crate::deribit::{EndpointType, Errors as DeribitError};
 
 const TRADINGVIEW_CHART_DATA_ENDPOINT: &str = "public/get_tradingview_chart_data";
 
@@ -101,8 +100,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use serde_json;
+
+    use super::*;
 
     #[test]
     fn test_serialize_request() {

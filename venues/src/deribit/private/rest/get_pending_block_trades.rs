@@ -1,8 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::deribit::enums::OrderDirection;
-use crate::deribit::{EndpointType, RestResult};
+use crate::deribit::{EndpointType, RestResult, enums::OrderDirection};
 
 /// REST API endpoint constant
 const GET_PENDING_BLOCK_TRADES_ENDPOINT: &str = "private/get_pending_block_trades";
@@ -129,8 +128,7 @@ impl RestClient {
 mod tests {
     use serde_json::json;
 
-/// REST API endpoint constant
-
+    /// REST API endpoint constant
     use super::*;
 
     #[test]

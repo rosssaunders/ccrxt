@@ -82,12 +82,10 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use rest::secrets::ExposableSecret;
-
-/// REST API endpoint constant
+    /// REST API endpoint constant
     use serde_json::{Value, json};
 
-    use super::super::add_block_rfq_quote::Side;
-    use super::*;
+    use super::{super::add_block_rfq_quote::Side, *};
     use crate::deribit::AccountTier;
 
     // Test secret implementation

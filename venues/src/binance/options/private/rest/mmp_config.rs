@@ -1,10 +1,8 @@
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
-use crate::binance::options::RestResult;
-use crate::binance::shared;
-
 use super::client::RestClient;
+use crate::binance::{options::RestResult, shared};
 
 /// Request parameters for getting MMP configuration
 #[derive(Debug, Clone, Serialize)]

@@ -13,9 +13,11 @@
 //! credentials and permissions for margin trading on your KuCoin account.
 
 use std::env;
+
 use rest::secrets::SecretString;
 use venues::kucoin::private::rest::{
-    BorrowRequest, GetBorrowHistoryRequest, RepayRequest, GetRepayHistoryRequest, GetInterestHistoryRequest, ModifyLeverageRequest, TimeInForce, RestClient,
+    BorrowRequest, GetBorrowHistoryRequest, GetInterestHistoryRequest, GetRepayHistoryRequest,
+    ModifyLeverageRequest, RepayRequest, RestClient, TimeInForce,
 };
 
 #[tokio::main]
@@ -46,7 +48,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         is_hf: Some(false),
     };
     println!("   Currency: {}", borrow_request.currency);
-    println!("   Amount: {} {}", borrow_request.size, borrow_request.currency);
+    println!(
+        "   Amount: {} {}",
+        borrow_request.size, borrow_request.currency
+    );
     println!("   Time in force: {:?}", borrow_request.time_in_force);
     // Uncomment to actually borrow (requires sufficient margin)
     /*
@@ -74,7 +79,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         Ok((response, _headers)) => {
             println!("✅ Borrow history found: {} items", response.total_num);
             for (i, item) in response.items.iter().take(3).enumerate() {
-                println!("   {}. Order {}: {} {} (Status: {:?})", i + 1, item.order_no, item.size, item.currency, item.status);
+                println!(
+                    "   {}. Order {}: {} {} (Status: {:?})",
+                    i + 1,
+                    item.order_no,
+                    item.size,
+                    item.currency,
+                    item.status
+                );
             }
         }
         Err(e) => println!("❌ Failed to get borrow history: {}", e),
@@ -90,7 +102,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         is_hf: Some(false),
     };
     println!("   Currency: {}", repay_request.currency);
-    println!("   Amount: {} {}", repay_request.size, repay_request.currency);
+    println!(
+        "   Amount: {} {}",
+        repay_request.size, repay_request.currency
+    );
     // Uncomment to actually repay (requires valid borrow)
     /*
     match client.repay(repay_request).await {
@@ -117,7 +132,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         Ok((response, _headers)) => {
             println!("✅ Repay history found: {} items", response.total_num);
             for (i, item) in response.items.iter().take(3).enumerate() {
-                println!("   {}. Order {}: {} {} principal, {} interest (Status: {:?})", i + 1, item.order_no, item.principal, item.currency, item.interest, item.status);
+                println!(
+                    "   {}. Order {}: {} {} principal, {} interest (Status: {:?})",
+                    i + 1,
+                    item.order_no,
+                    item.principal,
+                    item.currency,
+                    item.interest,
+                    item.status
+                );
             }
         }
         Err(e) => println!("❌ Failed to get repay history: {}", e),
@@ -138,7 +161,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         Ok((response, _headers)) => {
             println!("✅ Interest history found: {} items", response.total_num);
             for (i, item) in response.items.iter().take(3).enumerate() {
-                println!("   {}. {}: {} interest at {}%", i + 1, item.currency, item.interest_amount, item.day_ratio);
+                println!(
+                    "   {}. {}: {} interest at {}%",
+                    i + 1,
+                    item.currency,
+                    item.interest_amount,
+                    item.day_ratio
+                );
             }
         }
         Err(e) => println!("❌ Failed to get interest history: {}", e),

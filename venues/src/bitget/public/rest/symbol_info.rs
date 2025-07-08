@@ -1,8 +1,9 @@
-use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
-use crate::bitget::{ApiError, RestResponse, SymbolStatus};
+use serde::{Deserialize, Serialize};
+
 use super::RestClient;
+use crate::bitget::{ApiError, RestResponse, SymbolStatus};
 
 const SYMBOL_INFO_ENDPOINT: &str = "/api/v2/spot/public/symbols";
 
@@ -13,8 +14,6 @@ pub struct GetSymbolInfoRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub symbol: Option<String>,
 }
-
-
 
 /// Symbol information
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -61,22 +60,29 @@ pub struct SymbolInfo {
 
 impl RestClient {
     /// Get symbol information
-    /// 
+    ///
     /// # Arguments
     /// * `request` - The request parameters
-    /// 
+    ///
     /// # Returns
     /// The symbol information
-    pub async fn get_symbol_info(&self, request: &GetSymbolInfoRequest) -> Result<RestResponse<Vec<SymbolInfo>>, ApiError> {
+    pub async fn get_symbol_info(
+        &self,
+        request: &GetSymbolInfoRequest,
+    ) -> Result<RestResponse<Vec<SymbolInfo>>, ApiError> {
         let endpoint = SYMBOL_INFO_ENDPOINT;
-        
+
         let mut params = HashMap::new();
         if let Some(symbol) = &request.symbol {
             params.insert("symbol".to_string(), symbol.clone());
         }
-        
-        let params = if params.is_empty() { None } else { Some(params) };
-        
+
+        let params = if params.is_empty() {
+            None
+        } else {
+            Some(params)
+        };
+
         self.get(endpoint, params).await
     }
 }

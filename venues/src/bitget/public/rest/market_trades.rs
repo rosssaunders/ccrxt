@@ -1,8 +1,9 @@
-use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
-use crate::bitget::{ApiError, RestResponse, OrderSide};
+use serde::{Deserialize, Serialize};
+
 use super::RestClient;
+use crate::bitget::{ApiError, OrderSide, RestResponse};
 
 /// Endpoint for getting market trade history
 const MARKET_TRADES_ENDPOINT: &str = "/api/v2/spot/market/fills-history";
@@ -22,8 +23,6 @@ pub struct GetMarketTradesRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<u32>,
 }
-
-
 
 /// Market trade information
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -45,26 +44,29 @@ pub struct MarketTrade {
 
 impl RestClient {
     /// Get market trades history
-    /// 
+    ///
     /// # Arguments
     /// * `request` - The request parameters
-    /// 
+    ///
     /// # Returns
     /// The market trade information
-    pub async fn get_market_trades(&self, request: &GetMarketTradesRequest) -> Result<RestResponse<Vec<MarketTrade>>, ApiError> {
+    pub async fn get_market_trades(
+        &self,
+        request: &GetMarketTradesRequest,
+    ) -> Result<RestResponse<Vec<MarketTrade>>, ApiError> {
         let endpoint = MARKET_TRADES_ENDPOINT;
-        
+
         let mut params = HashMap::new();
         params.insert("symbol".to_string(), request.symbol.clone());
-        
+
         if let Some(start_time) = request.start_time {
             params.insert("startTime".to_string(), start_time.to_string());
         }
-        
+
         if let Some(end_time) = request.end_time {
             params.insert("endTime".to_string(), end_time.to_string());
         }
-        
+
         if let Some(limit) = request.limit {
             params.insert("limit".to_string(), limit.to_string());
         }

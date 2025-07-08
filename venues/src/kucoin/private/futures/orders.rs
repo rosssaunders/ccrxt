@@ -1,9 +1,9 @@
-use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
+use serde::{Deserialize, Serialize};
+
 use crate::kucoin::{
-    OrderSide, OrderStatus, OrderType, ResponseHeaders, RestResponse, Result,
-    StopType, TimeInForce,
+    OrderSide, OrderStatus, OrderType, ResponseHeaders, RestResponse, Result, StopType, TimeInForce,
 };
 
 /// Place order request for futures
@@ -247,14 +247,18 @@ impl super::RestClient {
         request: CancelAllOrdersRequest,
     ) -> Result<(RestResponse<CancelAllOrdersResponse>, ResponseHeaders)> {
         let endpoint = "/api/v1/orders";
-        
+
         let mut params = HashMap::new();
         if let Some(symbol) = request.symbol {
             params.insert("symbol".to_string(), symbol);
         }
-        
-        let params = if params.is_empty() { None } else { Some(params) };
-        
+
+        let params = if params.is_empty() {
+            None
+        } else {
+            Some(params)
+        };
+
         self.delete(endpoint, params).await
     }
 
@@ -273,20 +277,38 @@ impl super::RestClient {
         request: GetOrdersRequest,
     ) -> Result<(RestResponse<PaginatedOrdersResponse>, ResponseHeaders)> {
         let endpoint = "/api/v1/orders";
-        
+
         let mut params = HashMap::new();
-        
+
         if let Some(status) = request.status {
-            params.insert("status".to_string(), serde_json::to_string(&status).unwrap().trim_matches('"').to_string());
+            params.insert(
+                "status".to_string(),
+                serde_json::to_string(&status)
+                    .unwrap()
+                    .trim_matches('"')
+                    .to_string(),
+            );
         }
         if let Some(symbol) = request.symbol {
             params.insert("symbol".to_string(), symbol);
         }
         if let Some(side) = request.side {
-            params.insert("side".to_string(), serde_json::to_string(&side).unwrap().trim_matches('"').to_string());
+            params.insert(
+                "side".to_string(),
+                serde_json::to_string(&side)
+                    .unwrap()
+                    .trim_matches('"')
+                    .to_string(),
+            );
         }
         if let Some(order_type) = request.order_type {
-            params.insert("type".to_string(), serde_json::to_string(&order_type).unwrap().trim_matches('"').to_string());
+            params.insert(
+                "type".to_string(),
+                serde_json::to_string(&order_type)
+                    .unwrap()
+                    .trim_matches('"')
+                    .to_string(),
+            );
         }
         if let Some(start_at) = request.start_at {
             params.insert("startAt".to_string(), start_at.to_string());
@@ -301,8 +323,12 @@ impl super::RestClient {
             params.insert("pageSize".to_string(), page_size.to_string());
         }
 
-        let params = if params.is_empty() { None } else { Some(params) };
-        
+        let params = if params.is_empty() {
+            None
+        } else {
+            Some(params)
+        };
+
         self.get(endpoint, params).await
     }
 }

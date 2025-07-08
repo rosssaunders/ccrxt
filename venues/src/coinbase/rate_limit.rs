@@ -1,5 +1,7 @@
-use std::collections::HashMap;
-use std::time::{Duration, Instant};
+use std::{
+    collections::HashMap,
+    time::{Duration, Instant},
+};
 
 use thiserror::Error;
 use tokio::sync::RwLock;

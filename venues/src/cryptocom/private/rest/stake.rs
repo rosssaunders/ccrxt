@@ -49,8 +49,7 @@ impl RestClient {
     /// # Returns
     /// Stake request information including staking ID, status, and charge details
     pub async fn stake(&self, params: StakeRequest) -> RestResult<StakeResponse> {
-        self.send_signed_request(STAKE_ENDPOINT, params)
-            .await
+        self.send_signed_request(STAKE_ENDPOINT, params).await
     }
 }
 

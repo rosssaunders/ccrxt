@@ -1,13 +1,14 @@
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
-use crate::binance::options::{
-    OptionsContractType, OptionsOrderSide, OptionsOrderStatus, OptionsOrderType,
-    OptionsTimeInForce, RestResult,
-};
-use crate::binance::shared;
-
 use super::client::RestClient;
+use crate::binance::{
+    options::{
+        OptionsContractType, OptionsOrderSide, OptionsOrderStatus, OptionsOrderType,
+        OptionsTimeInForce, RestResult,
+    },
+    shared,
+};
 
 /// Single order in batch request
 #[derive(Debug, Clone, Serialize)]

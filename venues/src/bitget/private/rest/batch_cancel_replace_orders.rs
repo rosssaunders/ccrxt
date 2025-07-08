@@ -1,9 +1,10 @@
 use serde::{Deserialize, Serialize};
 
+use super::{
+    super::RestClient,
+    place_order::{Force, STPMode},
+};
 use crate::bitget::{OrderSide, OrderType, RestResult};
-
-use super::super::RestClient;
-use super::place_order::{Force, STPMode};
 
 const BATCH_CANCEL_REPLACE_ORDERS_ENDPOINT: &str = "/api/v2/spot/trade/batch-cancel-replace-order";
 

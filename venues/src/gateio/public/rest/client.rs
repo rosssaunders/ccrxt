@@ -1,10 +1,12 @@
 //! Gate.io public REST API client
 #![allow(clippy::redundant_closure)]
 
-use crate::gateio::{rate_limit::RateLimiter, Result};
-use reqwest::Client;
-use serde::{de::DeserializeOwned, Serialize};
 use std::sync::Arc;
+
+use reqwest::Client;
+use serde::{Serialize, de::DeserializeOwned};
+
+use crate::gateio::{Result, rate_limit::RateLimiter};
 
 const LIVE_URL: &str = "https://api.gateio.ws/api/v4";
 const TESTNET_URL: &str = "https://api-testnet.gateapi.io/api/v4";
@@ -52,10 +54,11 @@ impl RestClient {
         Q: Serialize,
     {
         // Apply rate limiting
-        let _permit = self.rate_limiter
-            .get_permit(endpoint)
-            .await
-            .map_err(|_| crate::gateio::GateIoError::RateLimitExceeded { message: "Rate limit exceeded".to_string() })?;
+        let _permit = self.rate_limiter.get_permit(endpoint).await.map_err(|_| {
+            crate::gateio::GateIoError::RateLimitExceeded {
+                message: "Rate limit exceeded".to_string(),
+            }
+        })?;
 
         let url = format!("{}{}", self.base_url, endpoint);
         let mut request_builder = self.client.get(&url);
@@ -72,7 +75,7 @@ impl RestClient {
 
         let status = response.status();
         let headers = crate::gateio::rate_limit::RateLimitHeader::from_headers(response.headers());
-        
+
         // Update rate limiter with response headers
         if let Some(status) = self.rate_limiter.update_from_headers(&headers, endpoint) {
             tracing::debug!("Rate limit status for {}: {:?}", endpoint, status);
@@ -84,12 +87,12 @@ impl RestClient {
             .map_err(|e| crate::gateio::GateIoError::Http(e))?;
 
         if status.is_success() {
-            let data: T = serde_json::from_str(&body)
-                .map_err(|e| crate::gateio::GateIoError::Json(e))?;
+            let data: T =
+                serde_json::from_str(&body).map_err(|e| crate::gateio::GateIoError::Json(e))?;
             Ok(data)
         } else {
-            let error: crate::gateio::errors::ErrorResponse = serde_json::from_str(&body)
-                .map_err(|e| crate::gateio::GateIoError::Json(e))?;
+            let error: crate::gateio::errors::ErrorResponse =
+                serde_json::from_str(&body).map_err(|e| crate::gateio::GateIoError::Json(e))?;
             Err(crate::gateio::GateIoError::Api(crate::gateio::ApiError {
                 label: error.label,
                 message: error.message,

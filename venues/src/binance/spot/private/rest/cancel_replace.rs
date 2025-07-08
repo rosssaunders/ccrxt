@@ -1,12 +1,11 @@
 use rust_decimal::Decimal;
 use serde::Serialize;
 
+use super::client::RestClient;
 use crate::binance::spot::{
     CancelReplaceMode, CancelRestrictions, OrderRateLimitExceededMode, OrderResponseType,
     OrderSide, OrderType, RestResult, SelfTradePreventionMode, TimeInForce,
 };
-
-use super::client::RestClient;
 
 /// Request parameters for cancel replace order
 #[derive(Debug, Clone, Serialize)]

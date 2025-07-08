@@ -3,11 +3,13 @@
 
 use serde::{Deserialize, Serialize};
 
-use crate::binance::coinm::RestResult;
-use crate::binance::coinm::private::rest::client::RestClient;
-use crate::binance::coinm::private::rest::modify_order::ModifyOrderResponse;
-use crate::binance::coinm::{OrderSide, PriceMatch};
-use crate::binance::shared;
+use crate::binance::{
+    coinm::{
+        OrderSide, PriceMatch, RestResult,
+        private::rest::{client::RestClient, modify_order::ModifyOrderResponse},
+    },
+    shared,
+};
 
 /// Single order parameters for batch modify operation.
 #[derive(Debug, Clone, Serialize)]

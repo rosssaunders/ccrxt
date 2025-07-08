@@ -1,8 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use crate::kucoin::{ResponseHeaders, RestResponse, Result};
-
 use super::RestClient;
+use crate::kucoin::{ResponseHeaders, RestResponse, Result};
 
 const SERVER_TIME_ENDPOINT: &str = "/api/v1/timestamp";
 

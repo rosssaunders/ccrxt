@@ -1,14 +1,14 @@
 //! Account information, balance, and config endpoints for Binance USDM REST API.
 
-use secrecy::{ExposeSecret, SecretString};
-use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
-use thiserror::Error;
 
-use crate::binance::usdm::private::rest::client::RestClient;
-use crate::binance::usdm::signing::sign_query;
 use chrono::Utc;
 use reqwest::Method;
+use secrecy::{ExposeSecret, SecretString};
+use serde::{Deserialize, Serialize};
+use thiserror::Error;
+
+use crate::binance::usdm::{private::rest::client::RestClient, signing::sign_query};
 
 #[derive(Debug, Error, Clone, Deserialize)]
 #[serde(tag = "code", content = "msg")]
@@ -78,8 +78,9 @@ impl RestClient {
         &self,
         params: GetAccountInfoRequest,
     ) -> AccountResult<AccountInfo> {
-        use crate::binance::usdm::request::execute_request;
         use tracing::debug;
+
+        use crate::binance::usdm::request::execute_request;
         let endpoint = "/fapi/v2/account";
         let method = Method::GET;
         let url = format!("{}{}", self.base_url, endpoint);

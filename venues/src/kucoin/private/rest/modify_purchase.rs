@@ -1,6 +1,7 @@
+use serde::{Deserialize, Serialize};
+
 use super::RestClient;
 use crate::kucoin::{ResponseHeaders, RestResponse, Result};
-use serde::{Deserialize, Serialize};
 
 const MODIFY_PURCHASE_ENDPOINT: &str = "/api/v1/otc/loan/purchase";
 

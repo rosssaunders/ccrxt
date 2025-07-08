@@ -1,9 +1,9 @@
-use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
+use serde::{Deserialize, Serialize};
+
 use crate::kucoin::{
-    AutoDepositStatus, MarginMode, PositionSide, ResponseHeaders, RestResponse,
-    Result,
+    AutoDepositStatus, MarginMode, PositionSide, ResponseHeaders, RestResponse, Result,
 };
 
 /// Get position request
@@ -246,7 +246,7 @@ mod tests {
         let request = GetPositionRequest {
             symbol: "XBTUSDTM".to_string(),
         };
-        
+
         assert_eq!(request.symbol, "XBTUSDTM");
     }
 

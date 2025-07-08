@@ -4,10 +4,12 @@
 //!
 //! [Binance API docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Open-Interest)
 
+use std::borrow::Cow;
+
+use serde::{Deserialize, Serialize};
+
 use super::RestClient;
 use crate::binance::usdm::RestResult;
-use serde::{Deserialize, Serialize};
-use std::borrow::Cow;
 
 /// Request parameters for open interest.
 #[derive(Debug, Clone, Serialize, Default)]

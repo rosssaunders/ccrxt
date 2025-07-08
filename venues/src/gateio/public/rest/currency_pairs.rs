@@ -51,7 +51,7 @@ pub struct CurrencyPair {
 
 impl RestClient {
     /// List all currency pairs
-    /// 
+    ///
     /// This endpoint returns a list of all supported currency pairs with their
     /// trading fees, precision settings, and trading status.
     pub async fn list_currency_pairs(&self) -> crate::gateio::Result<Vec<CurrencyPair>> {

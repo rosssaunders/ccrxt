@@ -1,15 +1,14 @@
 //! Modify and cancel multiple orders in batches on Binance USDM REST API.
 
-use secrecy::{ExposeSecret, SecretString};
-use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
-use thiserror::Error;
 
-use crate::binance::usdm::enums::*;
-use crate::binance::usdm::private::rest::client::RestClient;
-use crate::binance::usdm::signing::sign_query;
 use chrono::Utc;
 use reqwest::Method;
+use secrecy::{ExposeSecret, SecretString};
+use serde::{Deserialize, Serialize};
+use thiserror::Error;
+
+use crate::binance::usdm::{enums::*, private::rest::client::RestClient, signing::sign_query};
 
 /// Error type for USDM batch order endpoints.
 #[derive(Debug, Error, Clone, Deserialize)]
@@ -228,8 +227,9 @@ impl RestClient {
         &self,
         params: ModifyBatchOrdersRequest,
     ) -> BatchOrderResult<Vec<ModifyBatchOrderResponse>> {
-        use crate::binance::usdm::request::execute_request;
         use tracing::debug;
+
+        use crate::binance::usdm::request::execute_request;
 
         // 1. Prepare endpoint and method
         let endpoint = "/fapi/v1/batchOrders";
@@ -305,8 +305,9 @@ impl RestClient {
         &self,
         params: CancelBatchOrdersRequest,
     ) -> BatchOrderResult<Vec<CancelBatchOrderResponse>> {
-        use crate::binance::usdm::request::execute_request;
         use tracing::debug;
+
+        use crate::binance::usdm::request::execute_request;
 
         // 1. Prepare endpoint and method
         let endpoint = "/fapi/v1/batchOrders";

@@ -1,8 +1,7 @@
-use crate::binance::coinm::RestResult;
-use crate::binance::coinm::enums::Period;
-use crate::binance::coinm::public::rest::RestClient;
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
+
+use crate::binance::coinm::{RestResult, enums::Period, public::rest::RestClient};
 
 /// Parameters for Top Trader Long/Short Ratio (Positions)
 #[derive(Debug, Clone, Serialize)]

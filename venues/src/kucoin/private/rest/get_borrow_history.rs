@@ -1,8 +1,8 @@
-use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
-use super::RestClient;
+use serde::{Deserialize, Serialize};
 
+use super::RestClient;
 use crate::kucoin::{ResponseHeaders, RestResponse, Result};
 
 const BORROW_HISTORY_ENDPOINT: &str = "/api/v3/margin/borrow";

@@ -2,8 +2,10 @@
 ///
 /// This example demonstrates how to use the Bitget API endpoints for both public and private data.
 use reqwest::Client;
-use venues::bitget::public::rest::{GetCandlestickRequest, GetMergeDepthRequest, GetTickerRequest};
-use venues::bitget::{CandlestickGranularity, PricePrecision, PublicRestClient, RateLimiter};
+use venues::bitget::{
+    CandlestickGranularity, PricePrecision, PublicRestClient, RateLimiter,
+    public::rest::{GetCandlestickRequest, GetMergeDepthRequest, GetTickerRequest},
+};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -53,9 +55,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     // Get all tickers
-    let all_tickers_request = GetTickerRequest {
-        symbol: None,
-    };
+    let all_tickers_request = GetTickerRequest { symbol: None };
     println!("\nGetting all tickers...");
     match client.get_ticker(&all_tickers_request).await {
         Ok(response) => {

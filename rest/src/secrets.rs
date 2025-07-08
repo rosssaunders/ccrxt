@@ -5,7 +5,6 @@
 //! credentials are handled securely and not accidentally exposed.
 
 use secrecy::ExposeSecret;
-
 // Re-export SecretString for convenience
 pub use secrecy::SecretString;
 

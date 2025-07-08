@@ -1,8 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use crate::bybit::{enums::*, EndpointType, RestResult};
-
 use super::client::RestClient;
+use crate::bybit::{EndpointType, RestResult, enums::*};
 
 #[derive(Debug, Clone, Serialize)]
 pub struct SpotBorrowCheckRequest {
@@ -58,8 +57,6 @@ impl RestClient {
         .await
     }
 }
-
-
 
 #[cfg(test)]
 mod tests {

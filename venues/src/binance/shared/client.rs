@@ -1,16 +1,16 @@
-use std::collections::HashMap;
-use std::time::Duration;
+use std::{collections::HashMap, time::Duration};
 
 use reqwest::{Client, Method};
+use rest::secrets::ExposableSecret;
 use serde::{Deserialize, Serialize};
 use tokio::time::sleep;
 
-use rest::secrets::ExposableSecret;
-
-use super::errors::{ApiError, ErrorResponse, Errors, handle_http_status};
-use super::rate_limiter::RateLimiter;
-use super::sign_request;
-use super::venue_trait::VenueConfig;
+use super::{
+    errors::{ApiError, ErrorResponse, Errors, handle_http_status},
+    rate_limiter::RateLimiter,
+    sign_request,
+    venue_trait::VenueConfig,
+};
 
 /// Response structure containing data, headers, and metadata
 #[derive(Debug)]
@@ -313,8 +313,7 @@ impl<V: VenueConfig> BinanceClient<V> {
 
 /// Convenience type aliases for each venue
 pub mod clients {
-    use super::super::venue_trait::configs::*;
-    use super::*;
+    use super::{super::venue_trait::configs::*, *};
 
     pub type SpotClient = BinanceClient<SpotConfig>;
     pub type UsdmClient = BinanceClient<UsdmConfig>;
@@ -325,8 +324,10 @@ pub mod clients {
 
 #[cfg(test)]
 mod tests {
-    use super::super::venue_trait::configs::{SpotConfig, UsdmConfig};
-    use super::*;
+    use super::{
+        super::venue_trait::configs::{SpotConfig, UsdmConfig},
+        *,
+    };
 
     #[tokio::test]
     async fn test_public_request() {

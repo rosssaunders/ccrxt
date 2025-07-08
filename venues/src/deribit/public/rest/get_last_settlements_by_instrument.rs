@@ -2,11 +2,11 @@
 //!
 //! Retrieves the most recent settlements for a given instrument.
 
-use super::RestClient;
-use crate::deribit::{EndpointType, RestResult};
-
 use reqwest::Method;
 use serde::{Deserialize, Serialize};
+
+use super::RestClient;
+use crate::deribit::{EndpointType, RestResult};
 
 const LAST_SETTLEMENTS_BY_INSTRUMENT_ENDPOINT: &str = "public/get_last_settlements_by_instrument";
 
@@ -84,8 +84,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use serde_json;
+
+    use super::*;
 
     #[test]
     fn test_serialize_request() {

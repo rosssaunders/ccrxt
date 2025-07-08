@@ -1,8 +1,7 @@
-use crate::bingx::enums::OcoOrderStatus;
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::bingx::{EndpointType, RestResult};
+use crate::bingx::{EndpointType, RestResult, enums::OcoOrderStatus};
 
 const QUERY_OCO_ORDER_ENDPOINT: &str = "/openApi/spot/v1/oco/order";
 

@@ -12,13 +12,16 @@
 //! WARNING: This example will attempt to place actual orders and transfers.
 //! Use the sandbox environment for testing.
 
-use rest::secrets::SecretString;
 use std::env;
-use venues::kucoin::private::rest::{
-    GetAccountBalanceRequest, GetAccountsRequest, GetDepositAddressRequest, GetFillsRequest,
-    GetOrdersRequest, GetTransferableRequest, GetWithdrawalQuotasRequest, RestClient,
+
+use rest::secrets::SecretString;
+use venues::kucoin::{
+    private::rest::{
+        GetAccountBalanceRequest, GetAccountsRequest, GetDepositAddressRequest, GetFillsRequest,
+        GetOrdersRequest, GetTransferableRequest, GetWithdrawalQuotasRequest, RestClient,
+    },
+    OrderStatus,
 };
-use venues::kucoin::OrderStatus;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {

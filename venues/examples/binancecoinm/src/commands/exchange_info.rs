@@ -2,8 +2,7 @@ use std::sync::Arc;
 
 use anyhow::Result;
 use tabled::{settings::Style, Table, Tabled};
-use venues::binance::coinm::PublicRestClient;
-use venues::binance::coinm::{ExchangeInfoResponse, Filter};
+use venues::binance::coinm::{ExchangeInfoResponse, Filter, PublicRestClient};
 
 /// Handles the `exchange-info` command: fetches and prints exchange information.
 pub async fn handle_exchange_info_command(client: Arc<PublicRestClient>) -> Result<()> {

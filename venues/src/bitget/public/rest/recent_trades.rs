@@ -1,5 +1,6 @@
-use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+
+use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 use crate::bitget::{ApiError, OrderSide, RestResponse};
@@ -16,8 +17,6 @@ pub struct GetRecentTradesRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<u32>,
 }
-
-
 
 /// Recent trade information
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -50,7 +49,7 @@ impl RestClient {
         request: &GetRecentTradesRequest,
     ) -> Result<RestResponse<Vec<RecentTrade>>, ApiError> {
         let endpoint = RECENT_TRADES_ENDPOINT;
-        
+
         let mut params = HashMap::new();
         params.insert("symbol".to_string(), request.symbol.clone());
 

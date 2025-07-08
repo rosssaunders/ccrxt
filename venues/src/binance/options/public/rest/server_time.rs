@@ -1,8 +1,7 @@
 use serde::Deserialize;
 
-use crate::binance::options::RestResult;
-
 use super::client::RestClient;
+use crate::binance::options::RestResult;
 
 /// Response for server time endpoint
 #[derive(Debug, Clone, Deserialize)]

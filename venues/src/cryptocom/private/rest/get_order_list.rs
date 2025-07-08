@@ -100,8 +100,7 @@ impl RestClient {
         &self,
         params: GetOrderListRequest,
     ) -> RestResult<GetOrderListResponse> {
-        self.send_signed_request(ORDER_LIST_ENDPOINT, params)
-            .await
+        self.send_signed_request(ORDER_LIST_ENDPOINT, params).await
     }
 }
 

@@ -1,8 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use crate::kucoin::{ResponseHeaders, RestResponse, Result};
-
 use super::RestClient;
+use crate::kucoin::{ResponseHeaders, RestResponse, Result};
 
 const CREATE_WITHDRAWAL_ENDPOINT: &str = "/api/v1/withdrawals";
 

@@ -1,14 +1,15 @@
 //! Change multi-assets mode on Binance USDM REST API.
 
+use chrono::Utc;
+use reqwest::Method;
 use secrecy::{ExposeSecret, SecretString};
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
-use crate::binance::usdm::private::rest::client::RestClient;
-use crate::binance::usdm::private::rest::order::OrderErrorResponse;
-use crate::binance::usdm::signing::sign_query;
-use chrono::Utc;
-use reqwest::Method;
+use crate::binance::usdm::{
+    private::rest::{client::RestClient, order::OrderErrorResponse},
+    signing::sign_query,
+};
 
 /// Error type for USDM multi-assets mode endpoints.
 #[derive(Debug, Error, Clone, Deserialize)]
@@ -126,7 +127,10 @@ impl RestClient {
         // Make the request
         let response = self
             .client
-            .request(Method::POST, &format!("{}/fapi/v1/multiAssetsMargin", self.base_url))
+            .request(
+                Method::POST,
+                &format!("{}/fapi/v1/multiAssetsMargin", self.base_url),
+            )
             .header("X-MBX-APIKEY", api_key.expose_secret())
             .form(&request)
             .send()
@@ -171,7 +175,7 @@ mod tests {
     fn test_change_multi_assets_mode_response_deserialization() {
         let json = r#"{"code":200,"msg":"success"}"#;
         let response: ChangeMultiAssetsModeResponse = serde_json::from_str(json).unwrap();
-        
+
         assert_eq!(response.code, 200);
         assert_eq!(response.msg, "success");
     }

@@ -1,8 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use crate::bingx::{EndpointType, RestResult, TransferType};
-
 use super::RestClient;
+use crate::bingx::{EndpointType, RestResult, TransferType};
 
 const ASSET_TRANSFER_RECORDS_ENDPOINT: &str = "/openApi/api/v3/asset/transfer";
 

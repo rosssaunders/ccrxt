@@ -1,6 +1,7 @@
 //! Unified account functionality
-use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+
+use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 

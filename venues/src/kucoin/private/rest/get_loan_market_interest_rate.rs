@@ -1,6 +1,7 @@
+use serde::{Deserialize, Serialize};
+
 use super::RestClient;
 use crate::kucoin::{ResponseHeaders, RestResponse, Result};
-use serde::{Deserialize, Serialize};
 
 /// Market interest rate data point
 #[derive(Debug, Clone, Deserialize)]

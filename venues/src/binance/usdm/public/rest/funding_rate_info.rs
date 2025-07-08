@@ -3,11 +3,12 @@
 //! Implements GET /fapi/v1/fundingInfo
 //!
 //! [Binance API docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Get-Funding-Rate-Info)
-use super::RestClient;
-use crate::binance::usdm::RestResult;
+use std::borrow::Cow;
 
 use serde::Deserialize;
-use std::borrow::Cow;
+
+use super::RestClient;
+use crate::binance::usdm::RestResult;
 
 /// Represents a funding rate info record returned by Binance USDM.
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize)]

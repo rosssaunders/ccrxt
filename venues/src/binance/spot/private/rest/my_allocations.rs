@@ -1,9 +1,8 @@
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
-use crate::binance::spot::{AllocationType, RestResult};
-
 use super::client::RestClient;
+use crate::binance::spot::{AllocationType, RestResult};
 
 /// Request parameters for getting account allocations
 #[derive(Debug, Clone, Serialize)]

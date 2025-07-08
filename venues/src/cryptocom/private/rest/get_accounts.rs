@@ -87,8 +87,7 @@ impl RestClient {
         &self,
         request: GetAccountsRequest,
     ) -> RestResult<GetAccountsResponse> {
-        self.send_signed_request(ACCOUNTS_ENDPOINT, request)
-            .await
+        self.send_signed_request(ACCOUNTS_ENDPOINT, request).await
     }
 }
 

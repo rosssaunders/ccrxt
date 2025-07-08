@@ -2,11 +2,12 @@
 //!
 //! See: https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Top-Trader-Long-Short-Ratio
 
-use super::RestClient;
-use crate::binance::usdm::enums::Period;
+use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
-use std::borrow::Cow;
+
+use super::RestClient;
+use crate::binance::usdm::enums::Period;
 
 /// Request parameters for the Top Trader Long/Short Ratio (Positions) endpoint.
 #[derive(Debug, Clone, Serialize)]

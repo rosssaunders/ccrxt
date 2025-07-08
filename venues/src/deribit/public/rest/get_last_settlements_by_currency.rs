@@ -2,12 +2,14 @@
 //!
 //! Retrieves the most recent settlements for a given currency and instrument kind.
 
-use super::RestClient;
-use crate::deribit::enums::{Currency, InstrumentKind};
-use crate::deribit::{EndpointType, RestResult};
-
 use reqwest::Method;
 use serde::{Deserialize, Serialize};
+
+use super::RestClient;
+use crate::deribit::{
+    EndpointType, RestResult,
+    enums::{Currency, InstrumentKind},
+};
 
 const LAST_SETTLEMENTS_BY_CURRENCY_ENDPOINT: &str = "public/get_last_settlements_by_currency";
 
@@ -89,9 +91,10 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
+    use serde_json;
+
     use super::*;
     use crate::deribit::enums::{Currency, InstrumentKind};
-    use serde_json;
 
     #[test]
     fn test_serialize_request() {

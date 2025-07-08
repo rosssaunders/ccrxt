@@ -1,8 +1,10 @@
 //! Rate limiting for Bullish Exchange API
 
-use std::collections::HashMap;
-use std::sync::Arc;
-use std::time::{Duration, Instant};
+use std::{
+    collections::HashMap,
+    sync::Arc,
+    time::{Duration, Instant},
+};
 
 use thiserror::Error;
 use tokio::sync::RwLock;
@@ -80,8 +82,12 @@ impl EndpointType {
             path if path.contains("/v1/ticker") => EndpointType::PublicTicker,
             path if path.contains("/orderbook") => EndpointType::PublicOrderbook,
             path if path.contains("/v1/time") => EndpointType::PublicTime,
-            path if path.contains("/markets/") && path.contains("/trades") => EndpointType::PublicTrades,
-            path if path.contains("/v1/candles") || path.contains("/candles") => EndpointType::PublicCandles,
+            path if path.contains("/markets/") && path.contains("/trades") => {
+                EndpointType::PublicTrades
+            }
+            path if path.contains("/v1/candles") || path.contains("/candles") => {
+                EndpointType::PublicCandles
+            }
             path if path.contains("/v1/nonce") => EndpointType::PublicOther,
             path if path.contains("/v1/index-prices") => EndpointType::PublicOther,
 
@@ -96,10 +102,21 @@ impl EndpointType {
             path if path.contains("/v1/trades") => EndpointType::PrivateTrades,
             path if path.contains("/v1/positions") => EndpointType::PrivatePositions,
             path if path.contains("/v1/accounts/asset") => EndpointType::PrivateAssetBalances,
-            path if path.contains("/v1/wallets/transactions") => EndpointType::PrivateWalletTransactions,
+            path if path.contains("/v1/wallets/transactions") => {
+                EndpointType::PrivateWalletTransactions
+            }
 
             // Default based on whether it's a public or private path
-            path if path.starts_with("/trading-api/v1/") && !path.contains("/users/") && !path.contains("/accounts/") && !path.contains("/orders") && !path.contains("/positions") && !path.contains("/trades") && !path.contains("/wallets/") => EndpointType::PublicOther,
+            path if path.starts_with("/trading-api/v1/")
+                && !path.contains("/users/")
+                && !path.contains("/accounts/")
+                && !path.contains("/orders")
+                && !path.contains("/positions")
+                && !path.contains("/trades")
+                && !path.contains("/wallets/") =>
+            {
+                EndpointType::PublicOther
+            }
             _ => EndpointType::PrivateOther,
         }
     }

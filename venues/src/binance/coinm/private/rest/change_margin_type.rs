@@ -3,10 +3,10 @@
 
 use serde::{Deserialize, Serialize};
 
-use crate::binance::coinm::MarginType;
-use crate::binance::coinm::RestResult;
-use crate::binance::coinm::private::rest::client::RestClient;
-use crate::binance::shared;
+use crate::binance::{
+    coinm::{MarginType, RestResult, private::rest::client::RestClient},
+    shared,
+};
 
 /// Request parameters for changing margin type (POST /dapi/v1/marginType).
 #[derive(Debug, Clone, Serialize)]

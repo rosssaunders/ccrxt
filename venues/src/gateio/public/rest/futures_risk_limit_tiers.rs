@@ -22,13 +22,13 @@ pub struct FuturesRiskLimitTiersRequest {
 pub struct RiskLimitTier {
     /// Tier level
     pub tier: i32,
-    
+
     /// Maximum position size for this tier
     pub risk_limit: String,
-    
+
     /// Initial margin rate
     pub initial_rate: String,
-    
+
     /// Maintenance margin rate
     pub maintenance_rate: String,
 }
@@ -38,7 +38,10 @@ impl RestClient {
     ///
     /// Retrieves risk limit tiers for a specific futures contract.
     /// Higher tiers require higher margin rates but allow larger positions.
-    pub async fn get_futures_risk_limit_tiers(&self, params: FuturesRiskLimitTiersRequest) -> crate::gateio::Result<Vec<RiskLimitTier>> {
+    pub async fn get_futures_risk_limit_tiers(
+        &self,
+        params: FuturesRiskLimitTiersRequest,
+    ) -> crate::gateio::Result<Vec<RiskLimitTier>> {
         let endpoint = format!("/futures/{}/risk_limit_tiers", params.settle);
         self.get_with_query(&endpoint, Some(&params)).await
     }

@@ -8,8 +8,10 @@
 
 use serde::{Deserialize, Serialize};
 
-use super::super::RestClient;
-use super::place_plan_order::{PlanType, TriggerType};
+use super::{
+    super::RestClient,
+    place_plan_order::{PlanType, TriggerType},
+};
 use crate::bitget::{OrderSide, OrderType, RestResult};
 
 const CURRENT_PLAN_ORDER_ENDPOINT: &str = "/api/v2/spot/plan/current-plan-order";

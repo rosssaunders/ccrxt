@@ -20,8 +20,6 @@ pub struct GetOrderBookRequest {
     pub timestamp: i64,
 }
 
-
-
 /// Response from the order book endpoint
 #[derive(Debug, Clone, Deserialize)]
 pub struct GetOrderBookResponse {

@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
-use crate::bybit::{EndpointType, RestResult};
+
 use super::client::RestClient;
+use crate::bybit::{EndpointType, RestResult};
 
 const COLLATERAL_COINS_ENDPOINT: &str = "/v5/crypto-loan/collateral-data";
 
@@ -38,6 +39,11 @@ pub struct GetCollateralCoinsResponse {
 
 impl RestClient {
     pub async fn get_collateral_coins(&self) -> RestResult<GetCollateralCoinsResponse> {
-        self.send_public_request(COLLATERAL_COINS_ENDPOINT, None::<&GetCollateralCoinsRequest>, EndpointType::Market).await
+        self.send_public_request(
+            COLLATERAL_COINS_ENDPOINT,
+            None::<&GetCollateralCoinsRequest>,
+            EndpointType::Market,
+        )
+        .await
     }
 }

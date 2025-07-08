@@ -2,13 +2,14 @@
 //!
 //! Retrieves the summary information such as open interest, 24h volume, etc. for all instruments for the currency (optionally filtered by kind).
 
-use super::RestClient;
-use crate::deribit::EndpointType;
-use crate::deribit::RestResult;
-use crate::deribit::enums::{Currency, InstrumentKind};
-
 use reqwest::Method;
 use serde::{Deserialize, Serialize};
+
+use super::RestClient;
+use crate::deribit::{
+    EndpointType, RestResult,
+    enums::{Currency, InstrumentKind},
+};
 
 const BOOK_SUMMARY_BY_CURRENCY_ENDPOINT: &str = "get_book_summary_by_currency";
 
@@ -158,8 +159,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use serde_json;
+
+    use super::*;
 
     #[test]
     fn test_serialize_request() {

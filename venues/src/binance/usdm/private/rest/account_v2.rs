@@ -1,15 +1,16 @@
 //! Account information V2 endpoints for Binance USDM REST API.
 
+use chrono::Utc;
+use reqwest::Method;
 use secrecy::{ExposeSecret, SecretString};
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
-use crate::binance::usdm::enums::{PositionSide};
-use crate::binance::usdm::private::rest::client::RestClient;
-use crate::binance::usdm::private::rest::order::OrderErrorResponse;
-use crate::binance::usdm::signing::sign_query;
-use chrono::Utc;
-use reqwest::Method;
+use crate::binance::usdm::{
+    enums::PositionSide,
+    private::rest::{client::RestClient, order::OrderErrorResponse},
+    signing::sign_query,
+};
 
 /// Error type for USDM account V2 endpoints.
 #[derive(Debug, Error, Clone, Deserialize)]
@@ -284,7 +285,7 @@ mod tests {
             "assets": [],
             "positions": []
         }"#;
-        
+
         let response: AccountV2Response = serde_json::from_str(json).unwrap();
         assert_eq!(response.fee_tier, 0);
         assert!(response.can_trade);

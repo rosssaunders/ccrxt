@@ -79,8 +79,7 @@ impl RestClient {
     /// # Returns
     /// Convert request information including convert ID, rates, and reason.
     pub async fn convert(&self, params: ConvertRequest) -> RestResult<ConvertResponse> {
-        self.send_signed_request(CONVERT_ENDPOINT, params)
-            .await
+        self.send_signed_request(CONVERT_ENDPOINT, params).await
     }
 }
 

@@ -34,16 +34,16 @@ pub struct DeliveryOrderBookEntry {
 pub struct DeliveryOrderBook {
     /// Order book ID
     pub id: i64,
-    
+
     /// Current timestamp
     pub current: f64,
-    
+
     /// Last update timestamp  
     pub update: f64,
-    
+
     /// Asks (selling orders)
     pub asks: Vec<DeliveryOrderBookEntry>,
-    
+
     /// Bids (buying orders)
     pub bids: Vec<DeliveryOrderBookEntry>,
 }
@@ -53,7 +53,10 @@ impl RestClient {
     ///
     /// Retrieves the order book for a specific delivery contract.
     /// Bids are sorted by price high to low, asks are sorted by price low to high.
-    pub async fn get_delivery_order_book(&self, params: DeliveryOrderBookRequest) -> crate::gateio::Result<DeliveryOrderBook> {
+    pub async fn get_delivery_order_book(
+        &self,
+        params: DeliveryOrderBookRequest,
+    ) -> crate::gateio::Result<DeliveryOrderBook> {
         let endpoint = format!("/delivery/{}/order_book", params.settle);
         self.get_with_query(&endpoint, Some(&params)).await
     }

@@ -1,8 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use crate::bybit::{EndpointType, RestResult, enums::*};
-
 use super::client::RestClient;
+use crate::bybit::{EndpointType, RestResult, enums::*};
 
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]

@@ -1,9 +1,9 @@
-use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
-use crate::kucoin::{ResponseHeaders, RestResponse, Result};
+use serde::{Deserialize, Serialize};
 
 use super::RestClient;
+use crate::kucoin::{ResponseHeaders, RestResponse, Result};
 
 const INNER_TRANSFERS_ENDPOINT: &str = "/api/v1/accounts/transferable";
 

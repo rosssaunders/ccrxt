@@ -1,8 +1,9 @@
 //! Get Contract Details endpoint for BitMart Futures (Public)
 // See: https://api-cloud-v2.bitmart.com/contract/public/details
 
-use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
+
+use serde::{Deserialize, Serialize};
 
 use crate::bitmart::contract::public::rest::enums::ContractStatus;
 
@@ -35,8 +36,7 @@ pub struct ContractDetails {
 }
 
 // RestClient implementation for this endpoint
-use crate::bitmart::contract::public::rest::client::RestClient;
-use crate::bitmart::error::Result;
+use crate::bitmart::{contract::public::rest::client::RestClient, error::Result};
 
 impl RestClient {
     /// Get contract details (public endpoint)

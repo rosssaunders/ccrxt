@@ -2,11 +2,10 @@
 //!
 //! Retrieves information about a combo
 
-use super::RestClient;
-use super::get_combos::ComboInfo;
-use crate::deribit::{EndpointType, RestResult};
-
 use serde::{Deserialize, Serialize};
+
+use super::{RestClient, get_combos::ComboInfo};
+use crate::deribit::{EndpointType, RestResult};
 
 const COMBO_DETAILS_ENDPOINT: &str = "public/get_combo_details";
 

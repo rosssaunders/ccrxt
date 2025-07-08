@@ -1,8 +1,7 @@
-use crate::bybit::{enums::*, EndpointType, RestResult};
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use super::get_kline::Kline;
+use super::{client::RestClient, get_kline::Kline};
+use crate::bybit::{EndpointType, RestResult, enums::*};
 
 const PREMIUM_INDEX_PRICE_KLINE_ENDPOINT: &str = "/v5/market/premium-index-price-kline";
 

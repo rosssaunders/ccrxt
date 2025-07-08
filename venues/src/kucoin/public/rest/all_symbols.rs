@@ -1,9 +1,9 @@
-use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
-use crate::kucoin::{Market, ResponseHeaders, RestResponse, Result};
+use serde::{Deserialize, Serialize};
 
 use super::RestClient;
+use crate::kucoin::{Market, ResponseHeaders, RestResponse, Result};
 
 const ALL_SYMBOLS_ENDPOINT: &str = "/api/v1/symbols";
 

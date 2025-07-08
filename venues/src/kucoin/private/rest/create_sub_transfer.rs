@@ -1,8 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use crate::kucoin::{ResponseHeaders, RestResponse, Result};
-
 use super::RestClient;
+use crate::kucoin::{ResponseHeaders, RestResponse, Result};
 
 const CREATE_SUB_TRANSFER_ENDPOINT: &str = "/api/v2/accounts/sub-transfer";
 

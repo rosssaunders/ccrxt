@@ -1,6 +1,8 @@
 use std::collections::HashMap;
+
 use reqwest;
-use serde::{Serialize, de::DeserializeOwned};
+use serde::{de::DeserializeOwned, Serialize};
+
 use crate::error::RestError;
 
 /// A generic REST client for making HTTP requests
@@ -15,7 +17,7 @@ impl Client {
     pub fn new(
         base_url: impl Into<String>,
         _api_key: Option<String>,
-        _secret: Option<String>, 
+        _secret: Option<String>,
         _passphrase: Option<String>,
     ) -> Result<Self, RestError> {
         Ok(Self {
@@ -43,7 +45,11 @@ impl Client {
     }
 
     /// Make a POST request with authentication
-    pub async fn post_signed<T, P>(&self, endpoint: &str, params: Option<&P>) -> Result<T, RestError>
+    pub async fn post_signed<T, P>(
+        &self,
+        endpoint: &str,
+        params: Option<&P>,
+    ) -> Result<T, RestError>
     where
         T: DeserializeOwned,
         P: Serialize,

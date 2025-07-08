@@ -17,7 +17,7 @@ pub struct FuturesInsuranceRequest {
 pub struct FuturesInsurance {
     /// Timestamp
     pub t: i64,
-    
+
     /// Insurance balance
     pub b: String,
 }
@@ -26,7 +26,10 @@ impl RestClient {
     /// Get futures insurance balance history
     ///
     /// Retrieves historical insurance fund balance for the specified settlement currency.
-    pub async fn get_futures_insurance(&self, params: FuturesInsuranceRequest) -> crate::gateio::Result<Vec<FuturesInsurance>> {
+    pub async fn get_futures_insurance(
+        &self,
+        params: FuturesInsuranceRequest,
+    ) -> crate::gateio::Result<Vec<FuturesInsurance>> {
         let endpoint = format!("/futures/{}/insurance", params.settle);
         self.get_with_query(&endpoint, Some(&params)).await
     }

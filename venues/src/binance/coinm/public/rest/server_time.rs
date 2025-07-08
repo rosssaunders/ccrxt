@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::binance::coinm::RestResult;
-use crate::binance::coinm::public::rest::RestClient;
+use crate::binance::coinm::{RestResult, public::rest::RestClient};
 
 /// Response from the server time endpoint.
 #[derive(Debug, Clone, Deserialize, Serialize)]

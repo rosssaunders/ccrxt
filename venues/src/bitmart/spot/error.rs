@@ -1,7 +1,8 @@
 //! BitMart error types for futures endpoints
+use std::borrow::Cow;
+
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
-use std::borrow::Cow;
 
 /// Error response struct as returned by BitMart
 #[derive(Debug, Clone, Serialize, Deserialize)]

@@ -1,8 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use crate::bybit::{enums::*, EndpointType, RestResult};
-
 use super::client::RestClient;
+use crate::bybit::{EndpointType, RestResult, enums::*};
 
 const FUNDING_HISTORY_ENDPOINT: &str = "/v5/market/funding/history";
 
@@ -67,8 +66,6 @@ impl RestClient {
         .await
     }
 }
-
-
 
 #[cfg(test)]
 mod tests {

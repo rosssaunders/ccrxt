@@ -3,8 +3,7 @@ use std::borrow::Cow;
 use hmac::{Hmac, Mac};
 use reqwest::Client;
 use rest::secrets::ExposableSecret;
-use serde::Serialize;
-use serde::de::DeserializeOwned;
+use serde::{Serialize, de::DeserializeOwned};
 use sha2::Sha256;
 
 use crate::bingx::{EndpointType, Errors, RateLimiter, RestResult};
@@ -215,11 +214,21 @@ impl RestClient {
             "POST" => reqwest::Method::POST,
             "PUT" => reqwest::Method::PUT,
             "DELETE" => reqwest::Method::DELETE,
-            _ => return Err(Errors::Error(format!("Unsupported HTTP method: {}", method))),
+            _ => {
+                return Err(Errors::Error(format!(
+                    "Unsupported HTTP method: {}",
+                    method
+                )));
+            }
         };
 
-        self.send_request(endpoint, reqwest_method, params, EndpointType::AccountApiGroup2)
-            .await
+        self.send_request(
+            endpoint,
+            reqwest_method,
+            params,
+            EndpointType::AccountApiGroup2,
+        )
+        .await
     }
 }
 

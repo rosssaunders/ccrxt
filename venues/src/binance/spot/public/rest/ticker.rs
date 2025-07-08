@@ -1,9 +1,8 @@
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
-use crate::binance::spot::RestResult;
-
 use super::client::RestClient;
+use crate::binance::spot::RestResult;
 
 /// Request parameters for rolling window ticker statistics
 #[derive(Debug, Clone, Serialize)]

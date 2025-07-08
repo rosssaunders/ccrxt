@@ -2,12 +2,11 @@
 //!
 //! Retrieves historical APR data for specified currency. Only applicable to yield-generating tokens (`USDE`, `STETH`).
 
-use super::RestClient;
-use crate::deribit::enums::Currency;
-use crate::deribit::{EndpointType, RestResult};
-
 use reqwest::Method;
 use serde::{Deserialize, Serialize};
+
+use super::RestClient;
+use crate::deribit::{EndpointType, RestResult, enums::Currency};
 
 const APR_HISTORY_ENDPOINT: &str = "public/get_apr_history";
 
@@ -89,8 +88,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use serde_json;
+
+    use super::*;
 
     #[test]
     fn test_serialize_request() {

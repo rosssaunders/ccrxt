@@ -1,8 +1,7 @@
-use super::RestClient;
-use crate::bitget::enums::*;
-use crate::bitget::{Errors, RestResult};
-
 use serde::{Deserialize, Serialize};
+
+use super::RestClient;
+use crate::bitget::{Errors, RestResult, enums::*};
 
 const TRANSFERABLE_COIN_LIST_ENDPOINT: &str = "/api/v2/spot/wallet/transfer-coinlist";
 

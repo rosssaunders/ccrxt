@@ -1,6 +1,7 @@
+use serde::{Deserialize, Serialize};
+
 use super::RestClient;
 use crate::bitget::{Errors, RestResult};
-use serde::{Deserialize, Serialize};
 
 const SUBACCOUNT_DEPOSIT_ADDRESS_ENDPOINT: &str = "/api/v2/spot/wallet/subaccount-deposit-address";
 /// Request for getting subaccount deposit address

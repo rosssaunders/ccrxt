@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use super::user_balance::PositionBalance;
+use super::{client::RestClient, user_balance::PositionBalance};
 use crate::cryptocom::RestResult;
 
 const SUBACCOUNT_BALANCES_ENDPOINT: &str = "private/get-subaccount-balances";

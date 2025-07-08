@@ -15,9 +15,10 @@ mod tests {
         assert_eq!(request.leverage, "5.0");
     }
 }
-use crate::kucoin::{ResponseHeaders, RestResponse, Result};
-use super::RestClient;
 use serde::{Deserialize, Serialize};
+
+use super::RestClient;
+use crate::kucoin::{ResponseHeaders, RestResponse, Result};
 
 /// Request for modifying leverage
 #[derive(Debug, Clone, Serialize)]

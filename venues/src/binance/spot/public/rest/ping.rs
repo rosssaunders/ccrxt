@@ -1,8 +1,7 @@
 use serde::Deserialize;
 
-use crate::binance::spot::RestResult;
-
 use super::client::RestClient;
+use crate::binance::spot::RestResult;
 
 /// Ping response (empty object)
 #[derive(Debug, Clone, Deserialize)]

@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-
 use crate::cryptocom::{
     ExecInst, OrderType, RefPriceType, RestResult, SpotMarginType, StpInst, StpScope, TimeInForce,
     TradeSide,

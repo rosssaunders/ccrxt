@@ -2,12 +2,11 @@
 //!
 //! Retrieves the trade volumes for all supported currencies.
 
-use super::RestClient;
-use crate::deribit::enums::Currency;
-use crate::deribit::{EndpointType, RestResult};
-
 use reqwest::Method;
 use serde::{Deserialize, Serialize};
+
+use super::RestClient;
+use crate::deribit::{EndpointType, RestResult, enums::Currency};
 
 const TRADE_VOLUMES_ENDPOINT: &str = "public/get_trade_volumes";
 
@@ -77,9 +76,10 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
+    use serde_json;
+
     use super::*;
     use crate::deribit::enums::Currency;
-    use serde_json;
 
     #[test]
     fn test_serialize_request() {

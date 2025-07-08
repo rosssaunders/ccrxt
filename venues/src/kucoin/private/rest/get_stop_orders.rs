@@ -1,10 +1,9 @@
-use serde::{Deserialize, Serialize};
-
 use std::collections::HashMap;
 
-use crate::kucoin::{OrderSide, ResponseHeaders, RestResponse, Result};
+use serde::{Deserialize, Serialize};
 
 use super::RestClient;
+use crate::kucoin::{OrderSide, ResponseHeaders, RestResponse, Result};
 
 const STOP_ORDERS_ENDPOINT: &str = "/api/v1/stop-order";
 

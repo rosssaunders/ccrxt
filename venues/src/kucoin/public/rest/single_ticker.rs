@@ -1,9 +1,9 @@
-use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
-use crate::kucoin::{ResponseHeaders, RestResponse, Result};
+use serde::{Deserialize, Serialize};
 
 use super::RestClient;
+use crate::kucoin::{ResponseHeaders, RestResponse, Result};
 
 /// Request for getting 24hr ticker statistics for a symbol
 #[derive(Debug, Clone, Serialize)]

@@ -6,8 +6,7 @@ use base64::{Engine as _, engine::general_purpose};
 use hmac::{Hmac, Mac};
 use reqwest::Client;
 use rest::secrets::ExposableSecret;
-use serde::Serialize;
-use serde::de::DeserializeOwned;
+use serde::{Serialize, de::DeserializeOwned};
 use serde_json::Value;
 use sha2::Sha256;
 
@@ -328,8 +327,9 @@ impl RestClient {
                 body_str
             );
 
-            let mut new_mac = Hmac::<Sha256>::new_from_slice(self.api_secret.expose_secret().as_bytes())
-                .map_err(|e| Errors::AuthenticationError(format!("HMAC key error: {}", e)))?;
+            let mut new_mac =
+                Hmac::<Sha256>::new_from_slice(self.api_secret.expose_secret().as_bytes())
+                    .map_err(|e| Errors::AuthenticationError(format!("HMAC key error: {}", e)))?;
             new_mac.update(new_signature_data.as_bytes());
             let new_signature = general_purpose::STANDARD.encode(new_mac.finalize().into_bytes());
 
@@ -362,7 +362,9 @@ impl RestClient {
 
         if !response.status().is_success() {
             let error_text = response.text().await?;
-            return Err(Errors::Error(format!("Signed request failed: {error_text}")));
+            return Err(Errors::Error(format!(
+                "Signed request failed: {error_text}"
+            )));
         }
 
         let result: T = response.json().await?;

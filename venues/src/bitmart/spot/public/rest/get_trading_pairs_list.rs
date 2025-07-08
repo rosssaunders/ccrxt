@@ -1,8 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::bitmart::RestResult;
-use crate::bitmart::rate_limit::EndpointType;
+use crate::bitmart::{RestResult, rate_limit::EndpointType};
 
 const TRADING_PAIRS_LIST_ENDPOINT: &str = "/spot/v1/symbols";
 

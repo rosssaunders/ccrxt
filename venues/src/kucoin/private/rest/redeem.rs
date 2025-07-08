@@ -1,8 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use crate::kucoin::{ResponseHeaders, RestResponse, Result};
-
 use super::RestClient;
+use crate::kucoin::{ResponseHeaders, RestResponse, Result};
 
 const REDEEM_ENDPOINT: &str = "/api/v3/redeem";
 

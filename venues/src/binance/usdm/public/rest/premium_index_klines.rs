@@ -4,12 +4,12 @@
 //!
 //! [Binance API docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Premium-Index-Kline-Data)
 
-use super::RestClient;
-use crate::binance::usdm::KlineInterval;
-use crate::binance::usdm::RestResult;
+use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
-use std::borrow::Cow;
+
+use super::RestClient;
+use crate::binance::usdm::{KlineInterval, RestResult};
 
 /// Request parameters for premium index kline data.
 #[derive(Debug, Clone, Serialize)]

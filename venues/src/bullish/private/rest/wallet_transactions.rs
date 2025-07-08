@@ -114,9 +114,12 @@ impl RestClient {
     ///
     /// # Returns
     /// Paginated list of wallet transactions
-    pub async fn get_wallet_transactions(&mut self, params: GetWalletTransactionsParams) -> RestResult<WalletTransactionsResponse> {
+    pub async fn get_wallet_transactions(
+        &mut self,
+        params: GetWalletTransactionsParams,
+    ) -> RestResult<WalletTransactionsResponse> {
         let mut query_params = vec![("tradingAccountId", params.trading_account_id)];
-        
+
         if let Some(symbol) = params.symbol {
             query_params.push(("symbol", symbol));
         }
@@ -165,16 +168,34 @@ mod tests {
 
     #[test]
     fn test_transaction_type_serialization() {
-        assert_eq!(serde_json::to_string(&TransactionType::Deposit).unwrap(), "\"DEPOSIT\"");
-        assert_eq!(serde_json::to_string(&TransactionType::Withdrawal).unwrap(), "\"WITHDRAWAL\"");
-        assert_eq!(serde_json::to_string(&TransactionType::Trade).unwrap(), "\"TRADE\"");
+        assert_eq!(
+            serde_json::to_string(&TransactionType::Deposit).unwrap(),
+            "\"DEPOSIT\""
+        );
+        assert_eq!(
+            serde_json::to_string(&TransactionType::Withdrawal).unwrap(),
+            "\"WITHDRAWAL\""
+        );
+        assert_eq!(
+            serde_json::to_string(&TransactionType::Trade).unwrap(),
+            "\"TRADE\""
+        );
     }
 
     #[test]
     fn test_transaction_status_serialization() {
-        assert_eq!(serde_json::to_string(&TransactionStatus::Pending).unwrap(), "\"PENDING\"");
-        assert_eq!(serde_json::to_string(&TransactionStatus::Completed).unwrap(), "\"COMPLETED\"");
-        assert_eq!(serde_json::to_string(&TransactionStatus::Failed).unwrap(), "\"FAILED\"");
+        assert_eq!(
+            serde_json::to_string(&TransactionStatus::Pending).unwrap(),
+            "\"PENDING\""
+        );
+        assert_eq!(
+            serde_json::to_string(&TransactionStatus::Completed).unwrap(),
+            "\"COMPLETED\""
+        );
+        assert_eq!(
+            serde_json::to_string(&TransactionStatus::Failed).unwrap(),
+            "\"FAILED\""
+        );
     }
 
     #[test]

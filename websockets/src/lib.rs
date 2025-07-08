@@ -1,5 +1,4 @@
-use std::error::Error;
-use std::pin::Pin;
+use std::{error::Error, pin::Pin};
 
 use async_trait::async_trait;
 use futures::Stream;

@@ -2,10 +2,10 @@
 //!
 //! Method used to get information about locked currencies
 
+use serde::{Deserialize, Serialize};
+
 use super::RestClient;
 use crate::deribit::{EndpointType, RestResult};
-
-use serde::{Deserialize, Serialize};
 
 const STATUS_ENDPOINT: &str = "public/get_status";
 

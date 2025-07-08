@@ -1,6 +1,7 @@
+use serde::{Deserialize, Serialize};
+
 use super::RestClient;
 use crate::kucoin::{ResponseHeaders, RestResponse, Result};
-use serde::{Deserialize, Serialize};
 
 const BORROW_ENDPOINT: &str = "/api/v3/margin/borrow";
 

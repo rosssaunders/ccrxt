@@ -31,19 +31,19 @@ pub struct DeliveryTradesRequest {
 pub struct DeliveryTrade {
     /// Trade ID
     pub id: i64,
-    
+
     /// Trading time
     pub create_time: f64,
-    
+
     /// Trading contract
     pub contract: String,
-    
+
     /// Trading size
     pub size: i64,
-    
+
     /// Trading price
     pub price: String,
-    
+
     /// Whether internal trade
     pub is_internal: bool,
 }
@@ -53,7 +53,10 @@ impl RestClient {
     ///
     /// Retrieves recent trades for a specific delivery contract.
     /// Maximum of 1000 records can be returned per request.
-    pub async fn get_delivery_trades(&self, params: DeliveryTradesRequest) -> crate::gateio::Result<Vec<DeliveryTrade>> {
+    pub async fn get_delivery_trades(
+        &self,
+        params: DeliveryTradesRequest,
+    ) -> crate::gateio::Result<Vec<DeliveryTrade>> {
         let endpoint = format!("/delivery/{}/trades", params.settle);
         self.get_with_query(&endpoint, Some(&params)).await
     }

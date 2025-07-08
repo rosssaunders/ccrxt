@@ -1,12 +1,12 @@
 //! Quarterly Contract Settlement Price (GET /futures/data/delivery-price)
 //!
 //! See: https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Delivery-Price
-use super::RestClient;
-use crate::binance::usdm::Errors;
-use crate::binance::usdm::RestResult;
+use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
-use std::borrow::Cow;
+
+use super::RestClient;
+use crate::binance::usdm::{Errors, RestResult};
 
 /// Request parameters for the Quarterly Contract Settlement Price endpoint.
 #[derive(Debug, Clone, Serialize, Default)]

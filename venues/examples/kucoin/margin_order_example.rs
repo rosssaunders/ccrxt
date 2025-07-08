@@ -15,15 +15,16 @@
 //! Run with:
 //!   cargo run --bin margin_order_example --manifest-path venues/examples/kucoin/Cargo.toml
 
-use rest::secrets::SecretString;
 use std::env;
+
+use rest::secrets::SecretString;
 use venues::kucoin::private::rest::{
     AddMarginOrderRequest, MarginOrderSide, MarginOrderTimeInForce, MarginOrderType, RestClient,
 };
 
 fn uuid() -> String {
     // Simple UUID generator for clientOid (not cryptographically secure)
-    use rand::{Rng, distributions::Alphanumeric};
+    use rand::{distributions::Alphanumeric, Rng};
     rand::thread_rng()
         .sample_iter(&Alphanumeric)
         .take(24)

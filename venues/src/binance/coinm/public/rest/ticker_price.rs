@@ -1,7 +1,7 @@
-use crate::binance::coinm::public::rest::RestClient;
-use crate::binance::coinm::{RestResponse, RestResult};
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
+
+use crate::binance::coinm::{RestResponse, RestResult, public::rest::RestClient};
 
 /// Parameters for Symbol Price Ticker
 #[derive(Debug, Clone, Serialize, Default)]

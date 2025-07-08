@@ -1,10 +1,11 @@
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
-use crate::binance::options::{OptionsContractType, RestResult};
-use crate::binance::shared;
-
 use super::client::RestClient;
+use crate::binance::{
+    options::{OptionsContractType, RestResult},
+    shared,
+};
 
 /// Request parameters for querying exercise records
 #[derive(Debug, Clone, Serialize, Default)]

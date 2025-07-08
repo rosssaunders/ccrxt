@@ -1,15 +1,15 @@
 //! Multi-assets margin status endpoints for Binance USDM REST API.
 
+use chrono::Utc;
+use reqwest::Method;
 use secrecy::{ExposeSecret, SecretString};
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
-
-use crate::binance::usdm::private::rest::client::RestClient;
-use crate::binance::usdm::private::rest::order::OrderErrorResponse;
-use crate::binance::usdm::signing::sign_query;
-use chrono::Utc;
-use reqwest::Method;
+use crate::binance::usdm::{
+    private::rest::{client::RestClient, order::OrderErrorResponse},
+    signing::sign_query,
+};
 
 /// Error type for USDM multi-assets margin status endpoints.
 #[derive(Debug, Error, Clone, Deserialize)]
@@ -63,10 +63,9 @@ impl RestClient {
         api_secret: impl Into<SecretString>,
     ) -> Result<MultiAssetsMarginStatusResponse, MultiAssetsMarginStatusError> {
         // Rate limiting for private endpoints (30 weight)
-        self.rate_limiter
-            .acquire_request(30)
-            .await
-            .map_err(|e| MultiAssetsMarginStatusError::Unknown(format!("Rate limiting error: {e}")))?;
+        self.rate_limiter.acquire_request(30).await.map_err(|e| {
+            MultiAssetsMarginStatusError::Unknown(format!("Rate limiting error: {e}"))
+        })?;
 
         let api_key = api_key.into();
         let api_secret = api_secret.into();
@@ -78,8 +77,9 @@ impl RestClient {
         };
 
         // Create query string for signing
-        let query_string = serde_urlencoded::to_string(&request)
-            .map_err(|_| MultiAssetsMarginStatusError::Unknown("Failed to serialize request".to_string()))?;
+        let query_string = serde_urlencoded::to_string(&request).map_err(|_| {
+            MultiAssetsMarginStatusError::Unknown("Failed to serialize request".to_string())
+        })?;
 
         // Sign the request
         let signature = sign_query(&query_string, &api_secret);
@@ -88,7 +88,10 @@ impl RestClient {
         // Make the request
         let response = self
             .client
-            .request(Method::GET, &format!("{}/fapi/v1/multiAssetsMargin", self.base_url))
+            .request(
+                Method::GET,
+                &format!("{}/fapi/v1/multiAssetsMargin", self.base_url),
+            )
             .header("X-MBX-APIKEY", api_key.expose_secret())
             .query(&request)
             .send()

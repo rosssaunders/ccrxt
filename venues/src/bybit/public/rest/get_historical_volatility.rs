@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
-use crate::bybit::{enums::*, EndpointType, RestResult};
+
 use super::client::RestClient;
+use crate::bybit::{EndpointType, RestResult, enums::*};
 
 const HISTORICAL_VOLATILITY_ENDPOINT: &str = "/v5/market/historical-volatility";
 
@@ -43,8 +44,15 @@ pub struct GetHistoricalVolatilityResponse {
 }
 
 impl RestClient {
-    pub async fn get_historical_volatility(&self, request: GetHistoricalVolatilityRequest) -> RestResult<GetHistoricalVolatilityResponse> {
-        self.send_public_request(HISTORICAL_VOLATILITY_ENDPOINT, Some(&request), EndpointType::Market).await
+    pub async fn get_historical_volatility(
+        &self,
+        request: GetHistoricalVolatilityRequest,
+    ) -> RestResult<GetHistoricalVolatilityResponse> {
+        self.send_public_request(
+            HISTORICAL_VOLATILITY_ENDPOINT,
+            Some(&request),
+            EndpointType::Market,
+        )
+        .await
     }
 }
-

@@ -4,10 +4,10 @@
 //
 // See: https://github.com/binance/binance-spot-api-docs/blob/master/rest-api.md
 
+use serde::Deserialize;
+
 use super::RestClient;
 use crate::binance::usdm::RestResult;
-
-use serde::Deserialize;
 
 /// Response from the Binance USDM server time endpoint.
 #[derive(Debug, Clone, Deserialize, PartialEq, Eq)]

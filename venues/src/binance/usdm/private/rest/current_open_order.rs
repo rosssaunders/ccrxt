@@ -1,15 +1,14 @@
 //! Query current open order on Binance USDM REST API.
 
-use secrecy::{ExposeSecret, SecretString};
-use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
-use thiserror::Error;
 
-use crate::binance::usdm::enums::*;
-use crate::binance::usdm::private::rest::client::RestClient;
-use crate::binance::usdm::signing::sign_query;
 use chrono::Utc;
 use reqwest::Method;
+use secrecy::{ExposeSecret, SecretString};
+use serde::{Deserialize, Serialize};
+use thiserror::Error;
+
+use crate::binance::usdm::{enums::*, private::rest::client::RestClient, signing::sign_query};
 
 /// Error type for USDM open order query endpoints.
 #[derive(Debug, Error, Clone, Deserialize)]
@@ -136,8 +135,9 @@ impl RestClient {
         &self,
         params: CurrentOpenOrderRequest,
     ) -> OpenOrderResult<CurrentOpenOrderResponse> {
-        use crate::binance::usdm::request::execute_request;
         use tracing::debug;
+
+        use crate::binance::usdm::request::execute_request;
 
         // 1. Prepare endpoint and method
         let endpoint = "/fapi/v1/openOrder";
@@ -161,9 +161,7 @@ impl RestClient {
         query_pairs.push_str(&format!("&signature={signature}"));
 
         // 5. Set headers
-        let headers = vec![
-            ("X-MBX-APIKEY", params.api_key.expose_secret().to_string()),
-        ];
+        let headers = vec![("X-MBX-APIKEY", params.api_key.expose_secret().to_string())];
 
         // 6. Rate limiting
         self.rate_limiter
@@ -171,7 +169,10 @@ impl RestClient {
             .await
             .map_err(|e| OpenOrderError::Other(format!("Rate limiting error: {e}")))?;
 
-        debug!(endpoint = endpoint, "Sending current open order query request");
+        debug!(
+            endpoint = endpoint,
+            "Sending current open order query request"
+        );
 
         // 7. Execute request
         let resp = execute_request::<CurrentOpenOrderResponse>(

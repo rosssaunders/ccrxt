@@ -1,5 +1,6 @@
-use serde::Serialize;
 use std::collections::HashMap;
+
+use serde::Serialize;
 
 use super::RestClient;
 use crate::bitget::{ApiError, CandlestickGranularity, RestResponse};

@@ -70,8 +70,7 @@ impl RestClient {
 mod tests {
     use serde_json::{Value, json};
 
-/// REST API endpoint constant
-
+    /// REST API endpoint constant
     use super::*;
 
     #[test]

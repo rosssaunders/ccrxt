@@ -2,11 +2,11 @@
 //!
 //! Retrieves contract size of provided instrument.
 
-use super::RestClient;
-use crate::deribit::{EndpointType, RestResult};
-
 use reqwest::Method;
 use serde::{Deserialize, Serialize};
+
+use super::RestClient;
+use crate::deribit::{EndpointType, RestResult};
 
 const CONTRACT_SIZE_ENDPOINT: &str = "public/get_contract_size";
 
@@ -64,8 +64,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use serde_json;
+
+    use super::*;
 
     #[test]
     fn test_serialize_request() {

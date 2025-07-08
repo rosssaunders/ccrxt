@@ -1,10 +1,9 @@
-use serde::{Deserialize, Serialize};
-
 use std::collections::HashMap;
 
-use crate::kucoin::{ResponseHeaders, RestResponse, Result, TradeSide};
+use serde::{Deserialize, Serialize};
 
 use super::RestClient;
+use crate::kucoin::{ResponseHeaders, RestResponse, Result, TradeSide};
 
 const FILLS_ENDPOINT: &str = "/api/v1/fills";
 

@@ -1,8 +1,7 @@
-use super::RestClient;
-
-use crate::kucoin::{ResponseHeaders, RestResponse, Result};
-
 use serde::{Deserialize, Serialize};
+
+use super::RestClient;
+use crate::kucoin::{ResponseHeaders, RestResponse, Result};
 
 const PURCHASE_ENDPOINT: &str = "/api/v3/purchase";
 

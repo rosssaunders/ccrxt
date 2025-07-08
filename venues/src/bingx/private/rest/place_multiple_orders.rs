@@ -1,7 +1,9 @@
 use serde::{Deserialize, Serialize};
 
-use super::RestClient;
-use super::place_order::{OrderSide, OrderStatus, OrderType, TimeInForce};
+use super::{
+    RestClient,
+    place_order::{OrderSide, OrderStatus, OrderType, TimeInForce},
+};
 use crate::bingx::{EndpointType, RestResult};
 
 const PLACE_MULTIPLE_ORDERS_ENDPOINT: &str = "/openApi/spot/v1/trade/batchOrders";

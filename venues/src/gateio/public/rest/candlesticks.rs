@@ -1,7 +1,7 @@
-use crate::gateio::CandlestickInterval;
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
+use crate::gateio::CandlestickInterval;
 
 /// Request parameters for retrieving candlestick data
 #[derive(Debug, Clone, Serialize, Default)]
@@ -56,8 +56,6 @@ pub struct Candlestick {
     #[serde(rename = "6")]
     pub base_volume: String,
 }
-
-
 
 impl RestClient {
     /// Get candlestick data for a currency pair

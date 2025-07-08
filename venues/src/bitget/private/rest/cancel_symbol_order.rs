@@ -1,8 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use crate::bitget::RestResult;
-
 use super::super::RestClient;
+use crate::bitget::RestResult;
 
 const CANCEL_SYMBOL_ORDER_ENDPOINT: &str = "/api/v2/spot/trade/cancel-symbol-order";
 /// Request parameters for cancelling all orders for a symbol

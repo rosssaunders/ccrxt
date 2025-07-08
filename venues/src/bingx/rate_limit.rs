@@ -1,5 +1,7 @@
-use std::collections::HashMap;
-use std::time::{Duration, Instant};
+use std::{
+    collections::HashMap,
+    time::{Duration, Instant},
+};
 
 use thiserror::Error;
 use tokio::sync::RwLock;
@@ -15,9 +17,9 @@ pub enum EndpointType {
     General,
     /// Public market data endpoints - 100 requests per 10 seconds for IP (Group 1)
     PublicMarket,
-    /// Account API Group 2 - 
+    /// Account API Group 2 -
     AccountApiGroup2,
-    /// Account API Group 3 - 
+    /// Account API Group 3 -
     AccountApiGroup3,
 }
 

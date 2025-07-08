@@ -1,7 +1,7 @@
+use serde::{Deserialize, Serialize};
+
 use super::RestClient;
 use crate::bitget::{Errors, RestResult};
-
-use serde::{Deserialize, Serialize};
 
 const SUBACCOUNT_ASSETS_ENDPOINT: &str = "/api/v2/spot/account/subaccount-assets";
 

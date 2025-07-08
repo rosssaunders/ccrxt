@@ -14,8 +14,6 @@ pub struct GetWalletBalanceRequest {
     pub coin: Option<String>,
 }
 
-
-
 /// Individual balance data for a coin
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct BalanceData {

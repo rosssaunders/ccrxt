@@ -7,9 +7,7 @@ use std::borrow::Cow;
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::cryptocom::EndpointType;
-use crate::cryptocom::InstrumentType;
-use crate::cryptocom::RestResult;
+use crate::cryptocom::{EndpointType, InstrumentType, RestResult};
 
 /// Endpoint path for the get-expired-settlement-price API
 const EXPIRED_SETTLEMENT_PRICE_ENDPOINT: &str = "public/get-expired-settlement-price";

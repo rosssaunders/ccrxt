@@ -4,6 +4,7 @@
 //! check the clock skew between your software and Deribit's systems.
 
 use serde::{Deserialize, Serialize};
+
 use super::RestClient;
 use crate::deribit::{EndpointType, RestResult};
 

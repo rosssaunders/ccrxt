@@ -1,13 +1,12 @@
 //! Top Trader Long/Short Ratio (Accounts) (GET /futures/data/topLongShortAccountRatio)
 //!
 //! See: https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Top-Long-Short-Account-Ratio
-use super::RestClient;
-use crate::binance::usdm::Errors;
-use crate::binance::usdm::RestResult;
-use crate::binance::usdm::enums::Period;
+use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
-use std::borrow::Cow;
+
+use super::RestClient;
+use crate::binance::usdm::{Errors, RestResult, enums::Period};
 
 /// Request parameters for the Top Trader Long/Short Ratio (Accounts) endpoint.
 #[derive(Debug, Clone, Serialize)]

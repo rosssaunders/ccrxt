@@ -1,15 +1,16 @@
 //! Portfolio margin endpoints for Binance USDM REST API.
 
+use chrono::Utc;
+use reqwest::Method;
 use secrecy::{ExposeSecret, SecretString};
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
-use crate::binance::usdm::enums::*;
-use crate::binance::usdm::private::rest::client::RestClient;
-use crate::binance::usdm::private::rest::order::OrderErrorResponse;
-use crate::binance::usdm::signing::sign_query;
-use chrono::Utc;
-use reqwest::Method;
+use crate::binance::usdm::{
+    enums::*,
+    private::rest::{client::RestClient, order::OrderErrorResponse},
+    signing::sign_query,
+};
 
 /// Error type for USDM portfolio margin endpoints.
 #[derive(Debug, Error, Clone, Deserialize)]
@@ -161,8 +162,9 @@ impl RestClient {
         };
 
         // Create query string for signing
-        let query_string = serde_urlencoded::to_string(&request)
-            .map_err(|_| PortfolioMarginError::Unknown("Failed to serialize request".to_string()))?;
+        let query_string = serde_urlencoded::to_string(&request).map_err(|_| {
+            PortfolioMarginError::Unknown("Failed to serialize request".to_string())
+        })?;
 
         // Sign the request
         let signature = sign_query(&query_string, &api_secret);
@@ -171,7 +173,10 @@ impl RestClient {
         // Make the request
         let response = self
             .client
-            .request(Method::GET, &format!("{}/fapi/v1/pmAccountInfo", self.base_url))
+            .request(
+                Method::GET,
+                &format!("{}/fapi/v1/pmAccountInfo", self.base_url),
+            )
             .header("X-MBX-APIKEY", api_key.expose_secret())
             .query(&request)
             .send()

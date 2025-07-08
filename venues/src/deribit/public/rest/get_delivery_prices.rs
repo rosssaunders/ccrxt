@@ -2,12 +2,11 @@
 //!
 //! Retrieves delivery prices for the given index.
 
-use super::RestClient;
-use crate::deribit::enums::CurrencyPair;
-use crate::deribit::{EndpointType, RestResult};
-
 use reqwest::Method;
 use serde::{Deserialize, Serialize};
+
+use super::RestClient;
+use crate::deribit::{EndpointType, RestResult, enums::CurrencyPair};
 
 const DELIVERY_PRICES_ENDPOINT: &str = "public/get_delivery_prices";
 
@@ -89,9 +88,10 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
+    use serde_json;
+
     use super::*;
     use crate::deribit::enums::CurrencyPair;
-    use serde_json;
 
     #[test]
     fn test_serialize_request() {

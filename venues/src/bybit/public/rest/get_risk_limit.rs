@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
-use crate::bybit::{enums::*, EndpointType, RestResult};
+
 use super::client::RestClient;
+use crate::bybit::{EndpointType, RestResult, enums::*};
 
 const RISK_LIMIT_ENDPOINT: &str = "/v5/market/risk-limit";
 
@@ -46,8 +47,11 @@ pub struct GetRiskLimitResponse {
 }
 
 impl RestClient {
-    pub async fn get_risk_limit(&self, request: GetRiskLimitRequest) -> RestResult<GetRiskLimitResponse> {
-        self.send_public_request(RISK_LIMIT_ENDPOINT, Some(&request), EndpointType::Market).await
+    pub async fn get_risk_limit(
+        &self,
+        request: GetRiskLimitRequest,
+    ) -> RestResult<GetRiskLimitResponse> {
+        self.send_public_request(RISK_LIMIT_ENDPOINT, Some(&request), EndpointType::Market)
+            .await
     }
 }
-

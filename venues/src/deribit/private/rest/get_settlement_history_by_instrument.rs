@@ -10,8 +10,8 @@ use super::RestClient;
 use crate::deribit::{EndpointType, RestResult};
 
 /// REST API endpoint constant
-const GET_SETTLEMENT_HISTORY_BY_INSTRUMENT_ENDPOINT: &str = "private/get_settlement_history_by_instrument";
-
+const GET_SETTLEMENT_HISTORY_BY_INSTRUMENT_ENDPOINT: &str =
+    "private/get_settlement_history_by_instrument";
 
 /// REST API endpoint constant
 /// Request for /private/get_settlement_history_by_instrument

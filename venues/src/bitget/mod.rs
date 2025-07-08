@@ -24,7 +24,6 @@ pub mod private {
 }
 
 pub use private::RestClient as PrivateRestClient;
-
 // Alias for backward compatibility
 pub use rate_limit::{RateLimitHeader, RateLimiter};
 

@@ -1,16 +1,15 @@
 //! Position margin change history endpoints for Binance USDM REST API.
 
-use secrecy::{ExposeSecret, SecretString};
-use serde::{Deserialize, Deserializer, Serialize};
 use std::borrow::Cow;
-use thiserror::Error;
 
-use crate::binance::usdm::enums::*;
-use crate::binance::usdm::private::rest::client::RestClient;
-use crate::binance::usdm::signing::sign_query;
 use chrono::Utc;
 use reqwest::Method;
+use secrecy::{ExposeSecret, SecretString};
+use serde::{Deserialize, Deserializer, Serialize};
 use serde_urlencoded;
+use thiserror::Error;
+
+use crate::binance::usdm::{enums::*, private::rest::client::RestClient, signing::sign_query};
 
 #[derive(Debug, Error, Clone, Deserialize)]
 #[serde(tag = "code", content = "msg")]
@@ -115,15 +114,17 @@ impl RestClient {
         &self,
         params: GetPositionMarginHistoryRequest,
     ) -> PositionMarginHistoryResult<Vec<PositionMarginHistoryEntry>> {
-        use crate::binance::usdm::request::execute_request;
         use tracing::debug;
+
+        use crate::binance::usdm::request::execute_request;
         let endpoint = "/fapi/v1/positionMargin/history";
         let method = Method::GET;
         let url = format!("{}{}", self.base_url, endpoint);
 
         // 1. Serialize params to query string (excluding api_key/api_secret)
-        let mut query_pairs = serde_urlencoded::to_string(&params)
-            .map_err(|e| PositionMarginHistoryError::Other(format!("Failed to serialize params: {e}")))?;
+        let mut query_pairs = serde_urlencoded::to_string(&params).map_err(|e| {
+            PositionMarginHistoryError::Other(format!("Failed to serialize params: {e}"))
+        })?;
         if !query_pairs.is_empty() {
             query_pairs.push('&');
         }
@@ -143,7 +144,10 @@ impl RestClient {
             .acquire_request(1)
             .await
             .map_err(|e| PositionMarginHistoryError::Other(format!("Rate limiting error: {e}")))?;
-        debug!(endpoint = endpoint, "Sending get position margin history request");
+        debug!(
+            endpoint = endpoint,
+            "Sending get position margin history request"
+        );
 
         // 5. Execute
         let full_url = format!("{}?{}", url, query_pairs);
@@ -203,8 +207,14 @@ mod tests {
         assert_eq!(result[0].amount, "100.00000000");
         assert_eq!(result[0].asset, "USDT");
         assert_eq!(result[0].position_side, PositionSide::Long);
-        assert!(matches!(result[0].modification_type, MarginModificationType::Add));
-        assert!(matches!(result[1].modification_type, MarginModificationType::Reduce));
+        assert!(matches!(
+            result[0].modification_type,
+            MarginModificationType::Add
+        ));
+        assert!(matches!(
+            result[1].modification_type,
+            MarginModificationType::Reduce
+        ));
     }
 
     #[test]

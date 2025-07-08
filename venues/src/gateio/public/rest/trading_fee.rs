@@ -15,25 +15,25 @@ pub struct TradingFeeRequest {
 pub struct TradingFee {
     /// Currency pair
     pub currency_pair: String,
-    
+
     /// Maker fee rate
     pub maker_fee: String,
-    
+
     /// Taker fee rate
     pub taker_fee: String,
-    
+
     /// GT deduction enabled
     pub gt_deduction: bool,
-    
+
     /// GT taker fee rate
     pub gt_taker_fee: String,
-    
+
     /// GT maker fee rate
     pub gt_maker_fee: String,
-    
+
     /// Loan fee rate
     pub loan_fee: String,
-    
+
     /// Point type (0: GT, 1: Point card, 2: Disabled)
     pub point_type: i32,
 }
@@ -43,25 +43,28 @@ pub struct TradingFee {
 pub struct BatchTradingFee {
     /// Currency pair
     pub currency_pair: String,
-    
+
     /// Maker fee rate
     pub maker_fee: String,
-    
+
     /// Taker fee rate  
     pub taker_fee: String,
 }
 
 impl RestClient {
     /// Get trading fee information for a currency pair
-    /// 
+    ///
     /// This endpoint returns the current trading fees for a specific currency pair
     /// or all pairs if no pair is specified.
-    pub async fn get_trading_fee(&self, params: TradingFeeRequest) -> crate::gateio::Result<TradingFee> {
+    pub async fn get_trading_fee(
+        &self,
+        params: TradingFeeRequest,
+    ) -> crate::gateio::Result<TradingFee> {
         self.get_with_query("/spot/fee", Some(&params)).await
     }
 
     /// Get batch trading fee information
-    /// 
+    ///
     /// This endpoint returns trading fees for multiple currency pairs at once.
     pub async fn get_batch_trading_fee(&self) -> crate::gateio::Result<Vec<BatchTradingFee>> {
         self.get("/spot/batch_fee").await

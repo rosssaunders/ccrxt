@@ -1,8 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use crate::bybit::{EndpointType, RestResult, enums::*};
-
 use super::client::RestClient;
+use crate::bybit::{EndpointType, RestResult, enums::*};
 
 /// Endpoint URL path for tickers
 const ENDPOINT_PATH: &str = "/v5/market/tickers";

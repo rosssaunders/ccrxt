@@ -8,9 +8,11 @@
 
 use serde::{Deserialize, Serialize};
 
-use super::super::RestClient;
-use super::place_order::Force;
-use super::place_plan_order::{PlanType, TriggerType};
+use super::{
+    super::RestClient,
+    place_order::Force,
+    place_plan_order::{PlanType, TriggerType},
+};
 use crate::bitget::{OrderSide, OrderType, RestResult};
 
 const MODIFY_PLAN_ORDER_ENDPOINT: &str = "/api/v2/spot/plan/modify-plan-order";

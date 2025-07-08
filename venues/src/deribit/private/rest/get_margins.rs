@@ -70,12 +70,8 @@ impl super::client::RestClient {
     ///
     /// [Official Deribit Docs](https://docs.deribit.com/v2/#private-get_margins)
     pub async fn get_margins(&self, request: GetMarginsRequest) -> RestResult<GetMarginsResponse> {
-        self.send_signed_request(
-            GET_MARGINS_ENDPOINT,
-            &request,
-            EndpointType::MatchingEngine,
-        )
-        .await
+        self.send_signed_request(GET_MARGINS_ENDPOINT, &request, EndpointType::MatchingEngine)
+            .await
     }
 }
 
@@ -83,8 +79,7 @@ impl super::client::RestClient {
 mod tests {
     use serde_json;
 
-/// REST API endpoint constant
-
+    /// REST API endpoint constant
     use super::*;
 
     #[test]

@@ -8,7 +8,7 @@ pub struct OptionsSettlementsRequest {
     /// Underlying asset filter
     #[serde(skip_serializing_if = "Option::is_none")]
     pub underlying: Option<String>,
-    
+
     /// Maximum number of records to return (1-1000, default 100)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i32>,
@@ -19,16 +19,16 @@ pub struct OptionsSettlementsRequest {
 pub struct OptionsSettlement {
     /// Settlement time
     pub time: i64,
-    
+
     /// Contract name
     pub contract: String,
-    
+
     /// Underlying asset
     pub underlying: String,
-    
+
     /// Strike price (quote currency)
     pub strike_price: String,
-    
+
     /// Settlement price (quote currency)
     pub settle_price: String,
 }
@@ -37,14 +37,21 @@ impl RestClient {
     /// List settlement history
     ///
     /// Retrieves settlement history for options contracts.
-    pub async fn get_options_settlements(&self, params: OptionsSettlementsRequest) -> crate::gateio::Result<Vec<OptionsSettlement>> {
-        self.get_with_query("/options/settlements", Some(&params)).await
+    pub async fn get_options_settlements(
+        &self,
+        params: OptionsSettlementsRequest,
+    ) -> crate::gateio::Result<Vec<OptionsSettlement>> {
+        self.get_with_query("/options/settlements", Some(&params))
+            .await
     }
-    
+
     /// Get specified contract's settlement
     ///
     /// Retrieves settlement information for a specific options contract.
-    pub async fn get_options_contract_settlement(&self, contract: &str) -> crate::gateio::Result<OptionsSettlement> {
+    pub async fn get_options_contract_settlement(
+        &self,
+        contract: &str,
+    ) -> crate::gateio::Result<OptionsSettlement> {
         let endpoint = format!("/options/settlements/{}", contract);
         self.get(&endpoint).await
     }

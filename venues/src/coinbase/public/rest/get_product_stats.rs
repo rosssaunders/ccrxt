@@ -4,9 +4,8 @@
 
 use serde::{Deserialize, Serialize};
 
-use crate::coinbase::RestResult;
-
 use super::RestClient;
+use crate::coinbase::RestResult;
 
 /// Endpoint URL path for getting product stats
 const ENDPOINT_PATH: &str = "products/{}/stats";

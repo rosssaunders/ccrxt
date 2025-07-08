@@ -102,8 +102,7 @@ impl RestClient {
         let params = serde_json::to_value(&request)
             .map_err(|e| crate::cryptocom::Errors::Error(format!("Serialization error: {e}")))?;
 
-        self.send_signed_request(OPEN_ORDERS_ENDPOINT, params)
-            .await
+        self.send_signed_request(OPEN_ORDERS_ENDPOINT, params).await
     }
 }
 

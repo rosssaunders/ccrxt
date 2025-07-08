@@ -1,5 +1,6 @@
-use serde::Serialize;
 use std::collections::HashMap;
+
+use serde::Serialize;
 
 use super::RestClient;
 use crate::bitget::{ApiError, CandlestickGranularity, RestResponse};
@@ -21,8 +22,6 @@ pub struct GetHistoryCandlestickRequest {
     pub limit: Option<u32>,
 }
 
-
-
 /// Historical candlestick data - array format: [timestamp, open, high, low, close, base_volume, usdt_volume, quote_volume]
 pub type HistoryCandlestick = [String; 8];
 
@@ -39,7 +38,7 @@ impl RestClient {
         request: &GetHistoryCandlestickRequest,
     ) -> Result<RestResponse<Vec<HistoryCandlestick>>, ApiError> {
         let endpoint = HISTORY_CANDLESTICK_ENDPOINT;
-        
+
         let mut params = HashMap::new();
         params.insert("symbol".to_string(), request.symbol.clone());
         params.insert("granularity".to_string(), request.granularity.to_string());

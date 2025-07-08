@@ -1,8 +1,9 @@
-use crate::binance::coinm::RestResult;
-use crate::binance::coinm::enums::DownloadStatus;
-use crate::binance::coinm::private::rest::client::RestClient;
-use crate::binance::shared;
 use serde::{Deserialize, Serialize};
+
+use crate::binance::{
+    coinm::{RestResult, enums::DownloadStatus, private::rest::client::RestClient},
+    shared,
+};
 
 /// Request parameters for getting download ID for transaction history.
 #[derive(Debug, Serialize)]

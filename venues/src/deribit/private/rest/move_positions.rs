@@ -100,7 +100,7 @@ impl RestClient {
 mod tests {
     use super::*;
 
-/// REST API endpoint constant
+    /// REST API endpoint constant
 
     #[test]
     fn test_serialize_move_positions_request() {

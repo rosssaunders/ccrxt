@@ -15,11 +15,12 @@
 use std::borrow::Cow;
 
 use reqwest::{Client, Method};
-use serde::Deserialize;
-use serde::de::DeserializeOwned;
+use serde::{Deserialize, de::DeserializeOwned};
 
-use crate::bitmart::rate_limit::{EndpointType, RateLimiter};
-use crate::bitmart::{Errors, RestResult};
+use crate::bitmart::{
+    Errors, RestResult,
+    rate_limit::{EndpointType, RateLimiter},
+};
 
 /// BitMart public REST client
 pub struct RestClient {

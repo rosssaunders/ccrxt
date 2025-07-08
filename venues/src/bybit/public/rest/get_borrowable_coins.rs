@@ -1,6 +1,7 @@
+use serde::{Deserialize, Serialize};
+
 use super::client::RestClient;
 use crate::bybit::{EndpointType, RestResult};
-use serde::{Deserialize, Serialize};
 
 const BORROWABLE_COINS_ENDPOINT: &str = "/v5/crypto-loan/loanable-data";
 

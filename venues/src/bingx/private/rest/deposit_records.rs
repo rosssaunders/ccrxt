@@ -1,8 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use crate::bingx::{DepositStatus, EndpointType, RestResult};
-
 use super::RestClient;
+use crate::bingx::{DepositStatus, EndpointType, RestResult};
 
 const DEPOSIT_RECORDS_ENDPOINT: &str = "/openApi/wallets/v1/capital/deposit/hisrec";
 

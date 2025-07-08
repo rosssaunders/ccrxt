@@ -21,13 +21,13 @@ pub struct AmendOrderRequest {
 
 impl RestClient {
     /// Amend an order
-    /// 
+    ///
     /// This endpoint modifies the price and/or amount of an existing order.
     pub async fn amend_order(
-        &self, 
-        order_id: &str, 
+        &self,
+        order_id: &str,
         currency_pair: &str,
-        amendment: AmendOrderRequest
+        amendment: AmendOrderRequest,
     ) -> crate::gateio::Result<Order> {
         let endpoint = format!("/spot/orders/{}", order_id);
         #[allow(clippy::unwrap_used)]
@@ -36,7 +36,7 @@ impl RestClient {
         {
             body["currency_pair"] = serde_json::Value::String(currency_pair.to_string());
         }
-        
+
         self.patch(&endpoint, &body).await
     }
 }

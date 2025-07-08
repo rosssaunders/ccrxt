@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use base64::{engine::general_purpose::STANDARD as BASE64, Engine};
+use base64::{Engine, engine::general_purpose::STANDARD as BASE64};
 use chrono::Utc;
 use hmac::{Hmac, Mac};
 use reqwest::Client;
@@ -94,8 +94,8 @@ impl RestClient {
         let str_to_sign = format!("{}{}{}{}", timestamp, method, endpoint, body);
 
         // Create HMAC-SHA256 signature
-        let mut mac = Hmac::<Sha256>::new_from_slice(api_secret.as_bytes())
-            .map_err(|e| ApiError::Other {
+        let mut mac =
+            Hmac::<Sha256>::new_from_slice(api_secret.as_bytes()).map_err(|e| ApiError::Other {
                 code: "AUTH_ERROR".to_string(),
                 message: format!("Failed to create HMAC: {}", e),
             })?;
@@ -104,8 +104,8 @@ impl RestClient {
         let signature = BASE64.encode(&mac.finalize().into_bytes());
 
         // Create passphrase signature for KC-API-PASSPHRASE header
-        let mut passphrase_mac = Hmac::<Sha256>::new_from_slice(api_secret.as_bytes())
-            .map_err(|e| ApiError::Other {
+        let mut passphrase_mac =
+            Hmac::<Sha256>::new_from_slice(api_secret.as_bytes()).map_err(|e| ApiError::Other {
                 code: "AUTH_ERROR".to_string(),
                 message: format!("Failed to create passphrase HMAC: {}", e),
             })?;
@@ -166,7 +166,8 @@ impl RestClient {
 
         if !status.is_success() {
             // Try to parse as error response
-            if let Ok(error_response) = serde_json::from_str::<crate::kucoin::ErrorResponse>(&text) {
+            if let Ok(error_response) = serde_json::from_str::<crate::kucoin::ErrorResponse>(&text)
+            {
                 return Err(ApiError::from(error_response).into());
             } else {
                 return Err(ApiError::Http(format!("HTTP {}: {}", status, text)).into());
@@ -213,8 +214,9 @@ impl RestClient {
         let timestamp = Utc::now().timestamp_millis();
         let url = format!("{}{}", self.base_url, endpoint);
 
-        let body_str = serde_json::to_string(body)
-            .map_err(|e| ApiError::JsonParsing(format!("Failed to serialize request body: {}", e)))?;
+        let body_str = serde_json::to_string(body).map_err(|e| {
+            ApiError::JsonParsing(format!("Failed to serialize request body: {}", e))
+        })?;
 
         // Create auth headers
         let auth_headers = self.create_auth_headers("POST", endpoint, &body_str, timestamp)?;
@@ -236,7 +238,8 @@ impl RestClient {
 
         if !status.is_success() {
             // Try to parse as error response
-            if let Ok(error_response) = serde_json::from_str::<crate::kucoin::ErrorResponse>(&text) {
+            if let Ok(error_response) = serde_json::from_str::<crate::kucoin::ErrorResponse>(&text)
+            {
                 return Err(ApiError::from(error_response).into());
             } else {
                 return Err(ApiError::Http(format!("HTTP {}: {}", status, text)).into());
@@ -305,7 +308,8 @@ impl RestClient {
 
         if !status.is_success() {
             // Try to parse as error response
-            if let Ok(error_response) = serde_json::from_str::<crate::kucoin::ErrorResponse>(&text) {
+            if let Ok(error_response) = serde_json::from_str::<crate::kucoin::ErrorResponse>(&text)
+            {
                 return Err(ApiError::from(error_response).into());
             } else {
                 return Err(ApiError::Http(format!("HTTP {}: {}", status, text)).into());

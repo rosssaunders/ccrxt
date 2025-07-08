@@ -1,15 +1,14 @@
 //! Get order amendment history on Binance USDM REST API.
 
-use secrecy::{ExposeSecret, SecretString};
-use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
-use thiserror::Error;
 
-use crate::binance::usdm::enums::*;
-use crate::binance::usdm::private::rest::client::RestClient;
-use crate::binance::usdm::signing::sign_query;
 use chrono::Utc;
 use reqwest::Method;
+use secrecy::{ExposeSecret, SecretString};
+use serde::{Deserialize, Serialize};
+use thiserror::Error;
+
+use crate::binance::usdm::{enums::*, private::rest::client::RestClient, signing::sign_query};
 
 /// Error type for USDM order amendment endpoints.
 #[derive(Debug, Error, Clone, Deserialize)]
@@ -128,8 +127,9 @@ impl RestClient {
         &self,
         params: OrderAmendmentRequest,
     ) -> OrderAmendmentResult<OrderAmendmentResponse> {
-        use crate::binance::usdm::request::execute_request;
         use tracing::debug;
+
+        use crate::binance::usdm::request::execute_request;
 
         // 1. Prepare endpoint and method
         let endpoint = "/fapi/v1/orderAmendment";
@@ -153,9 +153,7 @@ impl RestClient {
         query_pairs.push_str(&format!("&signature={signature}"));
 
         // 5. Set headers
-        let headers = vec![
-            ("X-MBX-APIKEY", params.api_key.expose_secret().to_string()),
-        ];
+        let headers = vec![("X-MBX-APIKEY", params.api_key.expose_secret().to_string())];
 
         // 6. Rate limiting
         self.rate_limiter
@@ -163,7 +161,10 @@ impl RestClient {
             .await
             .map_err(|e| OrderAmendmentError::Other(format!("Rate limiting error: {e}")))?;
 
-        debug!(endpoint = endpoint, "Sending order amendment history request");
+        debug!(
+            endpoint = endpoint,
+            "Sending order amendment history request"
+        );
 
         // 7. Execute request
         let resp = execute_request::<OrderAmendmentResponse>(

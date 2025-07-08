@@ -2,12 +2,14 @@
 //!
 //! Retrieves a list of instruments for a given currency and kind.
 
-use super::RestClient;
-use crate::deribit::enums::{Currency, InstrumentKind};
-use crate::deribit::{EndpointType, RestResult};
-
 use reqwest::Method;
 use serde::{Deserialize, Serialize};
+
+use super::RestClient;
+use crate::deribit::{
+    EndpointType, RestResult,
+    enums::{Currency, InstrumentKind},
+};
 
 const INSTRUMENTS_ENDPOINT: &str = "public/get_instruments";
 
@@ -128,10 +130,10 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use crate::deribit::enums::Currency;
-    use crate::deribit::enums::InstrumentKind;
     use serde_json;
+
+    use super::*;
+    use crate::deribit::enums::{Currency, InstrumentKind};
 
     #[test]
     fn test_serialize_request() {

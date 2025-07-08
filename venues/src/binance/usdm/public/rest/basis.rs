@@ -2,12 +2,11 @@
 //!
 //! See: https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Basis
 
-use crate::binance::usdm::Errors;
-use crate::binance::usdm::RestResult;
-use crate::binance::usdm::{ContractType, Period};
+use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
-use std::borrow::Cow;
+
+use crate::binance::usdm::{ContractType, Errors, Period, RestResult};
 
 /// Request parameters for the Basis endpoint.
 #[derive(Debug, Clone, Serialize)]

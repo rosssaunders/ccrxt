@@ -1,8 +1,10 @@
-use crate::binance::coinm::RestResult;
-use crate::binance::coinm::enums::{ContractType, KlineInterval};
-use crate::binance::coinm::public::rest::RestClient;
-
 use serde::{Deserialize, Serialize};
+
+use crate::binance::coinm::{
+    RestResult,
+    enums::{ContractType, KlineInterval},
+    public::rest::RestClient,
+};
 
 /// Request parameters for the continuous contract kline/candlestick data endpoint.
 #[derive(Debug, Clone, Serialize)]

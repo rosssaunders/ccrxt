@@ -4,9 +4,8 @@
 
 use serde::{Deserialize, Serialize};
 
-use crate::coinbase::RestResult;
-
 use super::RestClient;
+use crate::coinbase::RestResult;
 
 const PRODUCT_VOLUME_SUMMARY_ENDPOINT: &str = "products/volume-summary";
 

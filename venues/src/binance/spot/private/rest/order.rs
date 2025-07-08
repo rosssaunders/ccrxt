@@ -1,12 +1,11 @@
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
+use super::client::RestClient;
 use crate::binance::spot::{
     OrderResponseType, OrderSide, OrderStatus, OrderType, RestResult, SelfTradePreventionMode,
     TimeInForce,
 };
-
-use super::client::RestClient;
 
 /// Request parameters for placing a new order
 #[derive(Debug, Clone, Serialize)]

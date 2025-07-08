@@ -1,10 +1,11 @@
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
-use crate::binance::options::{OptionsContractType, OptionsOrderSide, RestResult};
-use crate::binance::shared;
-
 use super::client::RestClient;
+use crate::binance::{
+    options::{OptionsContractType, OptionsOrderSide, RestResult},
+    shared,
+};
 
 /// Request parameters for creating a block trade order
 #[derive(Debug, Clone, Serialize)]

@@ -1,8 +1,7 @@
-use crate::kucoin::{ResponseHeaders, RestResponse, Result};
+use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-
-use serde::{Deserialize, Serialize};
+use crate::kucoin::{ResponseHeaders, RestResponse, Result};
 
 const REPAY_ENDPOINT: &str = "/api/v3/margin/repay";
 

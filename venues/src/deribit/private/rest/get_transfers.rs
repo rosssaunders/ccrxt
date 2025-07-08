@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::RestClient;
-use super::submit_transfer_to_user::TransferData;
+use super::{RestClient, submit_transfer_to_user::TransferData};
 use crate::deribit::{Currency, EndpointType, RestResult};
 
 /// REST API endpoint constant
@@ -74,8 +73,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use rest::secrets::ExposableSecret;
-
-/// REST API endpoint constant
+    /// REST API endpoint constant
     use serde_json::{Value, json};
 
     use super::*;

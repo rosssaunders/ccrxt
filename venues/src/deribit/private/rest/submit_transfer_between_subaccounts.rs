@@ -6,7 +6,8 @@ use super::submit_transfer_to_user::TransferData;
 use crate::deribit::{EndpointType, RestResult};
 
 /// REST API endpoint constant
-const SUBMIT_TRANSFER_BETWEEN_SUBACCOUNTS_ENDPOINT: &str = "private/submit_transfer_between_subaccounts";
+const SUBMIT_TRANSFER_BETWEEN_SUBACCOUNTS_ENDPOINT: &str =
+    "private/submit_transfer_between_subaccounts";
 
 /// Request parameters for submit transfer between subaccounts
 #[derive(Debug, Clone, Serialize)]
@@ -64,7 +65,6 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use rest::secrets::ExposableSecret;
-
     use serde_json::{Value, json};
 
     use super::*;

@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
-use crate::bybit::{EndpointType, RestResult};
+
 use super::client::RestClient;
+use crate::bybit::{EndpointType, RestResult};
 
 const INS_MARGIN_COIN_INFO_ENDPOINT: &str = "/v5/ins-loan/ensure-tokens-convert";
 
@@ -45,8 +46,15 @@ pub struct GetInsMarginCoinInfoResponse {
 }
 
 impl RestClient {
-    pub async fn get_ins_margin_coin_info(&self, request: GetInsMarginCoinInfoRequest) -> RestResult<GetInsMarginCoinInfoResponse> {
-        self.send_public_request(INS_MARGIN_COIN_INFO_ENDPOINT, Some(&request), EndpointType::Market).await
+    pub async fn get_ins_margin_coin_info(
+        &self,
+        request: GetInsMarginCoinInfoRequest,
+    ) -> RestResult<GetInsMarginCoinInfoResponse> {
+        self.send_public_request(
+            INS_MARGIN_COIN_INFO_ENDPOINT,
+            Some(&request),
+            EndpointType::Market,
+        )
+        .await
     }
 }
-

@@ -2,9 +2,7 @@ use std::sync::Arc;
 
 use chrono::Utc;
 use tabled::{settings::Style, Table, Tabled};
-use venues::binance::coinm::AccountTradeListRequest;
-use venues::binance::coinm::Errors;
-use venues::binance::coinm::PrivateRestClient;
+use venues::binance::coinm::{AccountTradeListRequest, Errors, PrivateRestClient};
 
 #[derive(Tabled)]
 pub struct TradeRow {

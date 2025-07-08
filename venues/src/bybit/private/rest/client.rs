@@ -8,8 +8,7 @@ use std::borrow::Cow;
 use hmac::{Hmac, Mac};
 use reqwest::Client;
 use rest::secrets::ExposableSecret;
-use serde::Serialize;
-use serde::de::DeserializeOwned;
+use serde::{Serialize, de::DeserializeOwned};
 use sha2::Sha256;
 
 use crate::bybit::{EndpointType, Errors, RateLimiter, RestResult};

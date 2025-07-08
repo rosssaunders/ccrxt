@@ -20,16 +20,16 @@
 //! - Endpoint-specific limits: varies (3-20 requests per second)
 //! - UID-based limits for private endpoints
 
+use std::borrow::Cow;
+
 use base64::{Engine, engine::general_purpose::STANDARD as BASE64};
 use chrono::Utc;
 use hmac::{Hmac, Mac};
 use reqwest::Client;
 use rest::secrets::ExposableSecret;
 use sha2::Sha256;
-use std::borrow::Cow;
 
-use crate::bitget::rate_limit::RateLimiter;
-use crate::bitget::{Errors, RestResult};
+use crate::bitget::{Errors, RestResult, rate_limit::RateLimiter};
 
 /// A client for interacting with the Bitget private REST API
 ///

@@ -1,8 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use crate::bybit::{EndpointType, RestResult};
-
 use super::client::RestClient;
+use crate::bybit::{EndpointType, RestResult};
 
 /// Endpoint URL path for server time
 const ENDPOINT_PATH: &str = "/v5/market/time";

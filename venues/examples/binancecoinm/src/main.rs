@@ -7,9 +7,7 @@ use clap::{Parser, Subcommand};
 use dotenv::dotenv;
 use rest::secrets::SecretValue;
 use secrecy::SecretString;
-use venues::binance::coinm::PrivateRestClient;
-use venues::binance::coinm::PublicRestClient;
-use venues::binance::coinm::{ApiError, Errors, RateLimiter};
+use venues::binance::coinm::{ApiError, Errors, PrivateRestClient, PublicRestClient, RateLimiter};
 
 mod commands;
 use commands::{

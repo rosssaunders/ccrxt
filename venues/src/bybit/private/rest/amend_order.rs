@@ -1,8 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use crate::bybit::{enums::*, EndpointType, RestResult};
-
 use super::client::RestClient;
+use crate::bybit::{EndpointType, RestResult, enums::*};
 
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -68,10 +67,7 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the order amendment response or an error
-    pub async fn amend_order(
-        &self,
-        request: AmendOrderRequest,
-    ) -> RestResult<AmendOrderResponse> {
+    pub async fn amend_order(&self, request: AmendOrderRequest) -> RestResult<AmendOrderResponse> {
         self.send_signed_request(
             "/v5/order/amend",
             reqwest::Method::POST,

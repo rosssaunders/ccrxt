@@ -1,8 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use crate::binance::spot::{ContingencyType, OrderListOrderStatus, OrderListStatus, RestResult};
-
 use super::client::RestClient;
+use crate::binance::spot::{ContingencyType, OrderListOrderStatus, OrderListStatus, RestResult};
 
 /// Request parameters for getting all order lists
 #[derive(Debug, Clone, Serialize, Default)]

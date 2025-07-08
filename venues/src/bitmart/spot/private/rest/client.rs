@@ -20,12 +20,13 @@ use base64::{Engine as _, engine::general_purpose};
 use hmac::{Hmac, Mac};
 use reqwest::{Client, Method};
 use rest::secrets::ExposableSecret;
-use serde::Deserialize;
-use serde::de::DeserializeOwned;
+use serde::{Deserialize, de::DeserializeOwned};
 use sha2::Sha256;
 
-use crate::bitmart::rate_limit::{EndpointType, RateLimiter};
-use crate::bitmart::{Errors, RestResult};
+use crate::bitmart::{
+    Errors, RestResult,
+    rate_limit::{EndpointType, RateLimiter},
+};
 
 /// BitMart private REST client
 pub struct RestClient {

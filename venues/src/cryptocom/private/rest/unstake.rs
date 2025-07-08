@@ -45,8 +45,7 @@ impl RestClient {
     /// # Returns
     /// Unstake request information including staking ID, status, and reason
     pub async fn unstake(&self, params: UnstakeRequest) -> RestResult<UnstakeResponse> {
-        self.send_signed_request(UNSTAKE_ENDPOINT, params)
-            .await
+        self.send_signed_request(UNSTAKE_ENDPOINT, params).await
     }
 }
 

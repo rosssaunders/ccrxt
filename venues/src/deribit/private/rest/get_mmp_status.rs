@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::RestClient;
-use super::reset_mmp::IndexName;
+use super::{RestClient, reset_mmp::IndexName};
 use crate::deribit::{EndpointType, RestResult};
 
 /// REST API endpoint constant
@@ -81,8 +80,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use rest::secrets::ExposableSecret;
-
-/// REST API endpoint constant
+    /// REST API endpoint constant
     use serde_json::{Value, json};
 
     use super::*;

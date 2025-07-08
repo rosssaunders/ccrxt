@@ -4,14 +4,13 @@ mod errors;
 pub mod rate_limit;
 pub mod private {
     mod rest;
-    pub use self::rest::RestClient;
     pub use self::rest::{
         CancelOcoOrderRequest, CancelOrderListItem, CancelOrderListRequest,
         CancelOrderListResponse, CreateOcoOrderResponse, CreateOrderListRequest,
         CreateOrderListResponse, GetOrderHistoryByCurrencyRequest,
         GetOrderHistoryByCurrencyResponse, GetOrderHistoryByCurrencyWithContinuationResponse,
         GetOrderListRequest, GetOrderListResponse, OrderCancellationResult, OrderCreationResult,
-        OrderDetails, OrderListItem,
+        OrderDetails, OrderListItem, RestClient,
     };
 }
 

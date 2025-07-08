@@ -227,7 +227,7 @@ async fn main() -> Result<()> {
                 .balances
                 .iter()
                 .filter(|(_, balance)| {
-                    balance.available.parse::<f64>().unwrap_or(0.0) > 0.0 
+                    balance.available.parse::<f64>().unwrap_or(0.0) > 0.0
                         || balance.borrowed.parse::<f64>().unwrap_or(0.0) > 0.0
                 })
                 .collect();

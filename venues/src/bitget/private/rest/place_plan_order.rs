@@ -8,8 +8,10 @@
 
 use serde::{Deserialize, Serialize};
 
-use super::super::RestClient;
-use super::place_order::{Force, STPMode};
+use super::{
+    super::RestClient,
+    place_order::{Force, STPMode},
+};
 use crate::bitget::{OrderSide, OrderType, RestResult};
 
 const PLACE_PLAN_ORDER_ENDPOINT: &str = "/api/v2/spot/plan/place-plan-order";

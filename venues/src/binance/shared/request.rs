@@ -5,9 +5,7 @@
 
 use serde::{Deserialize, Serialize};
 
-use super::client::BinanceClient;
-use super::errors::Errors;
-use super::venue_trait::VenueConfig;
+use super::{client::BinanceClient, errors::Errors, venue_trait::VenueConfig};
 
 /// Example: Get server time (public endpoint, all venues)
 #[derive(Deserialize)]
@@ -82,10 +80,11 @@ impl<V: VenueConfig> BinanceClient<V> {
 /// Example usage patterns
 #[cfg(test)]
 mod examples {
-    use super::*;
-    use crate::binance::shared::venue_trait::configs::*;
     use rest::secrets::{ExposableSecret, SecretValue};
     use secrecy::SecretString;
+
+    use super::*;
+    use crate::binance::shared::venue_trait::configs::*;
 
     #[tokio::test]
     async fn example_public_request() {
@@ -101,8 +100,10 @@ mod examples {
     #[tokio::test]
     async fn example_authenticated_request() {
         // Create an authenticated client
-        let api_key = Box::new(SecretValue::new(SecretString::from("your_api_key"))) as Box<dyn ExposableSecret>;
-        let api_secret = Box::new(SecretValue::new(SecretString::from("your_api_secret"))) as Box<dyn ExposableSecret>;
+        let api_key = Box::new(SecretValue::new(SecretString::from("your_api_key")))
+            as Box<dyn ExposableSecret>;
+        let api_secret = Box::new(SecretValue::new(SecretString::from("your_api_secret")))
+            as Box<dyn ExposableSecret>;
 
         let _client = BinanceClient::new_authenticated(SpotConfig, api_key, api_secret);
 
@@ -114,11 +115,15 @@ mod examples {
     #[tokio::test]
     async fn example_multi_venue_usage() {
         // Create separate secrets for each venue (since trait objects can't be cloned)
-        let spot_api_key = Box::new(SecretValue::new(SecretString::from("your_api_key"))) as Box<dyn ExposableSecret>;
-        let spot_api_secret = Box::new(SecretValue::new(SecretString::from("your_api_secret"))) as Box<dyn ExposableSecret>;
-        
-        let futures_api_key = Box::new(SecretValue::new(SecretString::from("your_api_key"))) as Box<dyn ExposableSecret>;
-        let futures_api_secret = Box::new(SecretValue::new(SecretString::from("your_api_secret"))) as Box<dyn ExposableSecret>;
+        let spot_api_key = Box::new(SecretValue::new(SecretString::from("your_api_key")))
+            as Box<dyn ExposableSecret>;
+        let spot_api_secret = Box::new(SecretValue::new(SecretString::from("your_api_secret")))
+            as Box<dyn ExposableSecret>;
+
+        let futures_api_key = Box::new(SecretValue::new(SecretString::from("your_api_key")))
+            as Box<dyn ExposableSecret>;
+        let futures_api_secret = Box::new(SecretValue::new(SecretString::from("your_api_secret")))
+            as Box<dyn ExposableSecret>;
 
         // Create clients for different venues
         let spot_client =

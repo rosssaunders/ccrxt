@@ -1,14 +1,15 @@
 //! User account configuration endpoints for Binance USDM REST API.
 
+use chrono::Utc;
+use reqwest::Method;
 use secrecy::{ExposeSecret, SecretString};
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
-use crate::binance::usdm::private::rest::client::RestClient;
-use crate::binance::usdm::private::rest::order::OrderErrorResponse;
-use crate::binance::usdm::signing::sign_query;
-use chrono::Utc;
-use reqwest::Method;
+use crate::binance::usdm::{
+    private::rest::{client::RestClient, order::OrderErrorResponse},
+    signing::sign_query,
+};
 
 /// Error type for USDM account config endpoints.
 #[derive(Debug, Error, Clone, Deserialize)]
@@ -120,7 +121,10 @@ impl RestClient {
         // Make the request
         let response = self
             .client
-            .request(Method::GET, &format!("{}/fapi/v1/accountConfig", self.base_url))
+            .request(
+                Method::GET,
+                &format!("{}/fapi/v1/accountConfig", self.base_url),
+            )
             .header("X-MBX-APIKEY", api_key.expose_secret())
             .query(&request)
             .send()
@@ -170,7 +174,7 @@ mod tests {
             "multiAssetsMargin": false,
             "updateTime": 1625097600000
         }"#;
-        
+
         let response: AccountConfigResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.fee_tier, 0);
         assert!(response.can_trade);

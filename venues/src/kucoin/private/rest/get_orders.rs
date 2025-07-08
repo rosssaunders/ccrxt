@@ -1,9 +1,9 @@
-use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
-use crate::kucoin::{OrderSide, OrderStatus, ResponseHeaders, RestResponse, Result};
+use serde::{Deserialize, Serialize};
 
 use super::RestClient;
+use crate::kucoin::{OrderSide, OrderStatus, ResponseHeaders, RestResponse, Result};
 
 const ORDERS_ENDPOINT: &str = "/api/v1/orders";
 

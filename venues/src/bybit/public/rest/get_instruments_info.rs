@@ -1,8 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use crate::bybit::{enums::*, EndpointType, RestResult};
-
 use super::client::RestClient;
+use crate::bybit::{EndpointType, RestResult, enums::*};
 
 const INSTRUMENTS_INFO_ENDPOINT: &str = "/v5/market/instruments-info";
 
@@ -114,8 +113,6 @@ impl RestClient {
         .await
     }
 }
-
-
 
 #[cfg(test)]
 mod tests {

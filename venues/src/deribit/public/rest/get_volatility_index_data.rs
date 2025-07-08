@@ -4,13 +4,13 @@
 //!
 //! [Official API docs](https://docs.deribit.com/#public-get_volatility_index_data)
 
-use super::RestClient;
-use crate::deribit::{EndpointType, RestResult};
+use std::borrow::Cow;
 
 use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
-use std::borrow::Cow;
+use super::RestClient;
+use crate::deribit::{EndpointType, RestResult};
 
 const VOLATILITY_INDEX_DATA_ENDPOINT: &str = "get_volatility_index_data";
 
@@ -72,8 +72,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use serde_json;
+
+    use super::*;
 
     #[test]
     fn test_serialize_request() {

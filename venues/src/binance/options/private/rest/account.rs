@@ -1,10 +1,11 @@
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
-use crate::binance::options::{OptionsRiskLevel, RestResult};
-use crate::binance::shared;
-
 use super::client::RestClient;
+use crate::binance::{
+    options::{OptionsRiskLevel, RestResult},
+    shared,
+};
 
 /// Request parameters for the account information endpoint
 #[derive(Debug, Clone, Serialize, Default)]

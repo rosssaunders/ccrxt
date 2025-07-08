@@ -3,7 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::bingx::{EndpointType, RestResult};
 
-const AUTHORIZE_SUB_ACCOUNT_TRANSFER_ENDPOINT: &str = "/openApi/wallets/v1/capital/sub-account/transfer-auth";
+const AUTHORIZE_SUB_ACCOUNT_TRANSFER_ENDPOINT: &str =
+    "/openApi/wallets/v1/capital/sub-account/transfer-auth";
 
 /// Request to authorize sub-account transfers
 #[derive(Debug, Clone, Serialize)]
@@ -112,7 +113,7 @@ mod tests {
 
         let response: AuthorizeSubAccountTransferResponse = serde_json::from_str(json).unwrap();
         assert!(response.success);
-        
+
         let data = response.data.unwrap();
         assert_eq!(data.sub_uid, "12345");
         assert!(data.can_transfer);
@@ -134,7 +135,7 @@ mod tests {
 
         let response: AuthorizeSubAccountTransferResponse = serde_json::from_str(json).unwrap();
         assert!(response.success);
-        
+
         let data = response.data.unwrap();
         assert!(!data.can_transfer);
     }

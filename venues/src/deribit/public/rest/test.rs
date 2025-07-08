@@ -3,9 +3,10 @@
 //! Tests the connection to the API server, and returns its version. You can use
 //! this to make sure the API is reachable, and matches the expected version.
 
+use serde::{Deserialize, Serialize};
+
 use super::RestClient;
 use crate::deribit::{EndpointType, RestResult};
-use serde::{Deserialize, Serialize};
 
 const TEST_ENDPOINT: &str = "public/test";
 

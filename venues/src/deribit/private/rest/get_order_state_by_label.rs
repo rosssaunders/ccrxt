@@ -5,10 +5,10 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::deribit::enums::{
-    CancelReason, Currency, OrderDirection, OrderState, OrderType, TriggerType,
+use crate::deribit::{
+    EndpointType, RestResult, TimeInForce, TriggerFillCondition,
+    enums::{CancelReason, Currency, OrderDirection, OrderState, OrderType, TriggerType},
 };
-use crate::deribit::{EndpointType, RestResult, TimeInForce, TriggerFillCondition};
 
 /// REST API endpoint constant
 const GET_ORDER_STATE_BY_LABEL_ENDPOINT: &str = "private/get_order_state_by_label";
@@ -277,8 +277,7 @@ impl RestClient {
 mod tests {
     use serde_json;
 
-/// REST API endpoint constant
-
+    /// REST API endpoint constant
     use super::*;
     use crate::deribit::enums::Currency;
 

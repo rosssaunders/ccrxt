@@ -63,6 +63,9 @@ pub use get_interest_history::{
 };
 pub use get_loan_market::{GetLoanMarketRequest, LoanMarket};
 pub use get_loan_market_interest_rate::{GetLoanMarketInterestRateRequest, MarketInterestRate};
+pub use get_margin_risk_limit::{
+    GetMarginRiskLimitRequest, GetMarginRiskLimitResponse, MarginRiskLimitInfo,
+};
 pub use get_margin_symbols::{GetMarginSymbolsRequest, GetMarginSymbolsResponse, MarginSymbolInfo};
 pub use get_order::{GetOrderRequest, Order as OrderDetail};
 pub use get_orders::{GetOrdersRequest, Order, OrdersResponse};
@@ -91,7 +94,3 @@ pub use sub_account_balance::{
 };
 pub use withdrawal_history::{GetWithdrawalsRequest, Withdrawal, WithdrawalsResponse};
 pub use withdrawal_quotas::{GetWithdrawalQuotasRequest, WithdrawalQuota};
-
-pub use get_margin_risk_limit::{
-    GetMarginRiskLimitRequest, GetMarginRiskLimitResponse, MarginRiskLimitInfo,
-};

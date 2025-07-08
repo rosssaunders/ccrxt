@@ -13,7 +13,9 @@ mod trades;
 
 pub use all_currencies::{Currency as AllCurrenciesCurrency, GetAllCurrenciesRequest};
 pub use all_symbols::{GetAllSymbolsRequest, SymbolInfo as AllSymbolsInfo};
-pub use all_tickers::{AllTickersResponse, GetAllTickersRequest, TickerStatistics as AllTickersStatistics};
+pub use all_tickers::{
+    AllTickersResponse, GetAllTickersRequest, TickerStatistics as AllTickersStatistics,
+};
 pub use client::RestClient;
 pub use currency::{Currency, GetCurrencyRequest};
 pub use full_orderbook::{FullOrderBookResponse, GetFullOrderBookRequest};

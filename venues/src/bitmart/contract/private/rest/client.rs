@@ -1,10 +1,10 @@
 //! BitMart Futures Private REST Client
-use crate::bitmart::Errors;
-use crate::bitmart::RestResult;
-use reqwest::Client;
-use secrecy::ExposeSecret;
-use secrecy::SecretString;
 use std::sync::Arc;
+
+use reqwest::Client;
+use secrecy::{ExposeSecret, SecretString};
+
+use crate::bitmart::{Errors, RestResult};
 
 #[derive(Debug, Clone)]
 pub struct RestClient {

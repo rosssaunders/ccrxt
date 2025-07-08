@@ -1,8 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use crate::binance::spot::RestResult;
-
 use super::client::RestClient;
+use crate::binance::spot::RestResult;
 
 /// Request parameters for rate limit order query
 #[derive(Debug, Clone, Serialize, Default)]

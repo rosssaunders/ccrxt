@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::binance::coinm::RestResult;
-use crate::binance::coinm::public::rest::RestClient;
+use crate::binance::coinm::{RestResult, public::rest::RestClient};
 
 /// Request parameters for the order book endpoint.
 #[derive(Debug, Clone, Serialize, Default)]
@@ -68,9 +67,10 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
+    use reqwest::Client;
+
     use super::*;
     use crate::binance::coinm::RateLimiter;
-    use reqwest::Client;
 
     #[tokio::test]
     async fn test_get_order_book_parameters() {

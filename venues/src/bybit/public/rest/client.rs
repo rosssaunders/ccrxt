@@ -121,11 +121,7 @@ mod tests {
         let client = Client::new();
         let rate_limiter = RateLimiter::new();
 
-        let rest_client = RestClient::new(
-            "https://api.bybit.com",
-            rate_limiter,
-            client,
-        );
+        let rest_client = RestClient::new("https://api.bybit.com", rate_limiter, client);
 
         assert_eq!(rest_client.base_url, "https://api.bybit.com");
     }

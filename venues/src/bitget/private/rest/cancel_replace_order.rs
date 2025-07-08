@@ -1,9 +1,10 @@
 use serde::{Deserialize, Serialize};
 
+use super::{
+    super::RestClient,
+    place_order::{Force, STPMode},
+};
 use crate::bitget::{OrderSide, OrderType, RestResult};
-
-use super::super::RestClient;
-use super::place_order::{Force, STPMode};
 
 const CANCEL_REPLACE_ORDER_ENDPOINT: &str = "/api/v2/spot/trade/cancel-replace-order";
 /// Request parameters for cancelling and replacing an order

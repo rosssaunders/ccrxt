@@ -2,12 +2,11 @@
 //!
 //! Retrieves available expiration timestamps for a given currency and instrument kind.
 
-use super::RestClient;
-use crate::deribit::enums::Currency;
-use crate::deribit::{EndpointType, RestResult};
-
 use reqwest::Method;
 use serde::{Deserialize, Serialize};
+
+use super::RestClient;
+use crate::deribit::{EndpointType, RestResult, enums::Currency};
 
 const EXPIRATIONS_ENDPOINT: &str = "get_expirations";
 
@@ -81,8 +80,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use serde_json;
+
+    use super::*;
 
     #[test]
     fn test_serialize_request() {

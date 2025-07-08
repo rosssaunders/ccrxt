@@ -1,11 +1,12 @@
 //! Open Interest Statistics (GET /futures/data/openInterestHist)
 //!
 //! See: https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Open-Interest-Statistics
-use super::RestClient;
-use crate::binance::usdm::enums::Period;
+use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
-use std::borrow::Cow;
+
+use super::RestClient;
+use crate::binance::usdm::enums::Period;
 
 /// Request parameters for the Open Interest Statistics endpoint.
 #[derive(Debug, Clone, Serialize)]

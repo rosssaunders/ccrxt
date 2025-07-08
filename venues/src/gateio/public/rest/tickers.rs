@@ -69,7 +69,7 @@ pub struct Ticker {
 
 impl RestClient {
     /// Get tickers for all or specific currency pairs
-    /// 
+    ///
     /// This endpoint returns ticker information including 24h price changes,
     /// volumes, and current bid/ask prices. You can get all tickers or filter
     /// by a specific currency pair and timezone.

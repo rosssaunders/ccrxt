@@ -6,11 +6,14 @@
 //! Endpoint: GET /api/v2/spot/trade/unfilled-orders
 //! Rate limit: 20 times/1s (UID)
 
-use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
-use super::super::RestClient;
-use super::get_order_info::{EntryPointSource, OrderSource, OrderStatus};
+use serde::{Deserialize, Serialize};
+
+use super::{
+    super::RestClient,
+    get_order_info::{EntryPointSource, OrderSource, OrderStatus},
+};
 use crate::bitget::{OrderSide, OrderType, RestResult};
 
 /// Endpoint for getting current orders

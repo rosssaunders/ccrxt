@@ -1,10 +1,9 @@
-use crate::kucoin::{ResponseHeaders, RestResponse, Result};
-
-use super::RestClient;
+use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
 
-use std::collections::HashMap;
+use super::RestClient;
+use crate::kucoin::{ResponseHeaders, RestResponse, Result};
 
 const REPAY_HISTORY_ENDPOINT: &str = "/api/v3/margin/repay";
 

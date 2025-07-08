@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-
 use crate::bitget::RestResult;
 
 /// Request for canceling withdrawal

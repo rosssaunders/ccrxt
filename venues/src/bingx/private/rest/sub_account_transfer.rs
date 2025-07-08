@@ -1,8 +1,7 @@
-use crate::bingx::enums::SubAccountTransferType;
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::bingx::{EndpointType, RestResult};
+use crate::bingx::{EndpointType, RestResult, enums::SubAccountTransferType};
 
 const SUB_ACCOUNT_TRANSFER_ENDPOINT: &str = "/openApi/subAccount/v1/subAccountTransfer";
 

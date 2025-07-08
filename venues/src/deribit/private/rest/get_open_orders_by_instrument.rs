@@ -4,11 +4,13 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::deribit::enums::{
-    AdvancedType, CancelReason, OpenOrdersOrderType, OrderDirection, OrderState, OrderType,
-    TriggerType,
+use crate::deribit::{
+    EndpointType, RestResult,
+    enums::{
+        AdvancedType, CancelReason, OpenOrdersOrderType, OrderDirection, OrderState, OrderType,
+        TriggerType,
+    },
 };
-use crate::deribit::{EndpointType, RestResult};
 
 /// REST API endpoint constant
 const GET_OPEN_ORDERS_BY_INSTRUMENT_ENDPOINT: &str = "private/get_open_orders_by_instrument";
@@ -151,8 +153,7 @@ impl RestClient {
 mod tests {
     use serde_json::json;
 
-/// REST API endpoint constant
-
+    /// REST API endpoint constant
     use super::*;
 
     #[test]

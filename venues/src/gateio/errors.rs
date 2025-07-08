@@ -1,5 +1,6 @@
-use serde::Deserialize;
 use std::fmt;
+
+use serde::Deserialize;
 use thiserror::Error;
 
 /// Result type alias for Gate.io API operations
@@ -85,15 +86,13 @@ impl From<ErrorResponse> for GateIoError {
     fn from(error: ErrorResponse) -> Self {
         // Map specific Gate.io error codes to our custom error types
         match error.label.as_str() {
-            "INVALID_PARAM_VALUE" | "INVALID_PARAM" => {
-                GateIoError::InvalidParameter(error.message)
-            }
+            "INVALID_PARAM_VALUE" | "INVALID_PARAM" => GateIoError::InvalidParameter(error.message),
             "AUTHENTICATION_FAILED" | "INVALID_KEY" | "INVALID_SIGNATURE" => {
                 GateIoError::Authentication(error.message)
             }
-            "RATE_LIMIT_EXCEEDED" | "TOO_MANY_REQUESTS" => {
-                GateIoError::RateLimitExceeded { message: error.message }
-            }
+            "RATE_LIMIT_EXCEEDED" | "TOO_MANY_REQUESTS" => GateIoError::RateLimitExceeded {
+                message: error.message,
+            },
             "INSUFFICIENT_BALANCE" => {
                 // Try to parse balance details from message
                 GateIoError::InsufficientBalance {
@@ -102,27 +101,23 @@ impl From<ErrorResponse> for GateIoError {
                     available: "UNKNOWN".to_string(),
                 }
             }
-            "ORDER_NOT_FOUND" => {
-                GateIoError::OrderNotFound { order_id: "UNKNOWN".to_string() }
-            }
-            "CURRENCY_PAIR_NOT_SUPPORTED" => {
-                GateIoError::UnsupportedCurrencyPair { pair: "UNKNOWN".to_string() }
-            }
-            "ACCOUNT_LOCKED" | "ACCOUNT_SUSPENDED" => {
-                GateIoError::AccountLocked
-            }
-            "DAILY_LIMIT_EXCEEDED" => {
-                GateIoError::DailyLimitExceeded { operation: error.message }
-            }
-            "MAINTENANCE_MODE" | "SYSTEM_MAINTENANCE" => {
-                GateIoError::MaintenanceMode { message: error.message }
-            }
-            _ => {
-                GateIoError::Api(ApiError {
-                    label: error.label,
-                    message: error.message,
-                })
-            }
+            "ORDER_NOT_FOUND" => GateIoError::OrderNotFound {
+                order_id: "UNKNOWN".to_string(),
+            },
+            "CURRENCY_PAIR_NOT_SUPPORTED" => GateIoError::UnsupportedCurrencyPair {
+                pair: "UNKNOWN".to_string(),
+            },
+            "ACCOUNT_LOCKED" | "ACCOUNT_SUSPENDED" => GateIoError::AccountLocked,
+            "DAILY_LIMIT_EXCEEDED" => GateIoError::DailyLimitExceeded {
+                operation: error.message,
+            },
+            "MAINTENANCE_MODE" | "SYSTEM_MAINTENANCE" => GateIoError::MaintenanceMode {
+                message: error.message,
+            },
+            _ => GateIoError::Api(ApiError {
+                label: error.label,
+                message: error.message,
+            }),
         }
     }
 }
@@ -143,9 +138,9 @@ impl GateIoError {
     pub fn retry_delay_secs(&self) -> Option<u64> {
         match self {
             GateIoError::RateLimitExceeded { .. } => Some(60), // Wait 1 minute
-            GateIoError::Timeout { .. } => Some(5), // Wait 5 seconds
-            GateIoError::Http(_) => Some(10), // Wait 10 seconds
-            GateIoError::MaintenanceMode { .. } => Some(300), // Wait 5 minutes
+            GateIoError::Timeout { .. } => Some(5),            // Wait 5 seconds
+            GateIoError::Http(_) => Some(10),                  // Wait 10 seconds
+            GateIoError::MaintenanceMode { .. } => Some(300),  // Wait 5 minutes
             _ => None,
         }
     }
@@ -157,6 +152,13 @@ impl GateIoError {
 
     /// Check if error indicates client-side issues (non-retryable)
     pub fn is_client_error(&self) -> bool {
-        matches!(self, GateIoError::InvalidParameter(_) | GateIoError::Authentication(_) | GateIoError::OrderNotFound { .. } | GateIoError::UnsupportedCurrencyPair { .. } | GateIoError::InsufficientBalance { .. })
+        matches!(
+            self,
+            GateIoError::InvalidParameter(_)
+                | GateIoError::Authentication(_)
+                | GateIoError::OrderNotFound { .. }
+                | GateIoError::UnsupportedCurrencyPair { .. }
+                | GateIoError::InsufficientBalance { .. }
+        )
     }
 }

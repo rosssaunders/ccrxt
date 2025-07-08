@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
-use crate::bybit::{enums::*, EndpointType, RestResult};
+
 use super::client::RestClient;
+use crate::bybit::{EndpointType, RestResult, enums::*};
 
 const LONG_SHORT_RATIO_ENDPOINT: &str = "/v5/market/account-ratio";
 
@@ -42,8 +43,15 @@ pub struct GetLongShortRatioResponse {
 }
 
 impl RestClient {
-    pub async fn get_long_short_ratio(&self, request: GetLongShortRatioRequest) -> RestResult<GetLongShortRatioResponse> {
-        self.send_public_request(LONG_SHORT_RATIO_ENDPOINT, Some(&request), EndpointType::Market).await
+    pub async fn get_long_short_ratio(
+        &self,
+        request: GetLongShortRatioRequest,
+    ) -> RestResult<GetLongShortRatioResponse> {
+        self.send_public_request(
+            LONG_SHORT_RATIO_ENDPOINT,
+            Some(&request),
+            EndpointType::Market,
+        )
+        .await
     }
 }
-

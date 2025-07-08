@@ -3,10 +3,10 @@
 
 use serde::{Deserialize, Serialize};
 
-use crate::binance::coinm::RestResult;
-use crate::binance::coinm::private::rest::client::RestClient;
-use crate::binance::coinm::{MarginModificationType, PositionSide};
-use crate::binance::shared;
+use crate::binance::{
+    coinm::{MarginModificationType, PositionSide, RestResult, private::rest::client::RestClient},
+    shared,
+};
 
 /// Request parameters for getting position margin change history (GET /dapi/v1/positionMargin/history).
 #[derive(Debug, Clone, Serialize, Default)]

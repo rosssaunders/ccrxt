@@ -1,11 +1,12 @@
 use std::borrow::Cow;
 
 use reqwest::Client;
-
 use rest::secrets::ExposableSecret;
 
-use crate::binance::options::{Errors, RateLimiter, ResponseHeaders, RestResult};
-use crate::binance::shared::BinanceRestClient;
+use crate::binance::{
+    options::{Errors, RateLimiter, ResponseHeaders, RestResult},
+    shared::BinanceRestClient,
+};
 
 /// Private REST client for Binance Options API (EAPI)
 ///

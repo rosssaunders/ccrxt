@@ -1,16 +1,15 @@
 //! Place, modify, cancel, and query orders on Binance USDM REST API.
 
-use secrecy::{ExposeSecret, SecretString};
-use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
-use thiserror::Error;
 
-use crate::binance::usdm::enums::*;
-use crate::binance::usdm::private::rest::client::RestClient;
-use crate::binance::usdm::signing::sign_query;
 use chrono::Utc;
 use reqwest::Method;
+use secrecy::{ExposeSecret, SecretString};
+use serde::{Deserialize, Serialize};
 use serde_urlencoded;
+use thiserror::Error;
+
+use crate::binance::usdm::{enums::*, private::rest::client::RestClient, signing::sign_query};
 
 /// Error type for USDM order endpoints.
 #[derive(Debug, Error, Clone, Deserialize)]
@@ -316,8 +315,9 @@ impl RestClient {
     /// Place a new order (POST /fapi/v1/order)
     /// [Binance API docs](https://binance-docs.github.io/apidocs/futures/en/#new-order-trade)
     pub async fn new_order(&self, params: NewOrderRequest) -> OrderResult<NewOrderResponse> {
-        use crate::binance::usdm::request::execute_request;
         use tracing::debug;
+
+        use crate::binance::usdm::request::execute_request;
         // 1. Prepare endpoint and method
         let endpoint = "/fapi/v1/order";
         let method = Method::POST;
@@ -388,8 +388,9 @@ impl RestClient {
         &self,
         params: ModifyOrderRequest,
     ) -> OrderResult<ModifyOrderResponse> {
-        use crate::binance::usdm::request::execute_request;
         use tracing::debug;
+
+        use crate::binance::usdm::request::execute_request;
 
         // 1. Prepare endpoint and method
         let endpoint = "/fapi/v1/order";
@@ -460,8 +461,9 @@ impl RestClient {
         &self,
         params: CancelOrderRequest,
     ) -> OrderResult<CancelOrderResponse> {
-        use crate::binance::usdm::request::execute_request;
         use tracing::debug;
+
+        use crate::binance::usdm::request::execute_request;
 
         // 1. Prepare endpoint and method
         let endpoint = "/fapi/v1/order";
@@ -523,8 +525,9 @@ impl RestClient {
     /// Test a new order without placing it (POST /fapi/v1/order/test)
     /// [Binance API docs](https://binance-docs.github.io/apidocs/futures/en/#test-new-order-trade)
     pub async fn test_new_order(&self, params: NewOrderRequest) -> OrderResult<TestOrderResponse> {
-        use crate::binance::usdm::request::execute_request;
         use tracing::debug;
+
+        use crate::binance::usdm::request::execute_request;
 
         // 1. Prepare endpoint and method
         let endpoint = "/fapi/v1/order/test";

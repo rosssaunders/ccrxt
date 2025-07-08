@@ -3,10 +3,10 @@
 //! Retrieves available combos. This method can be used to get the list of all
 //! combos, or only the list of combos in the given state.
 
+use serde::{Deserialize, Serialize};
+
 use super::RestClient;
 use crate::deribit::{ComboState, Currency, EndpointType, RestResult};
-
-use serde::{Deserialize, Serialize};
 
 const COMBO_IDS_ENDPOINT: &str = "public/get_combo_ids";
 

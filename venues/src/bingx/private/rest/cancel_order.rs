@@ -1,7 +1,9 @@
 use serde::{Deserialize, Serialize};
 
-use super::RestClient;
-use super::place_order::{OrderSide, OrderStatus, OrderType};
+use super::{
+    RestClient,
+    place_order::{OrderSide, OrderStatus, OrderType},
+};
 use crate::bingx::{EndpointType, RestResult};
 
 const CANCEL_ORDER_ENDPOINT: &str = "/openApi/spot/v1/trade/cancel";

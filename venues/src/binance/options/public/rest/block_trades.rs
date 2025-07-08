@@ -1,9 +1,8 @@
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
-use crate::binance::options::RestResult;
-
 use super::client::RestClient;
+use crate::binance::options::RestResult;
 
 /// Request parameters for recent block trades
 #[derive(Debug, Clone, Serialize, Default)]

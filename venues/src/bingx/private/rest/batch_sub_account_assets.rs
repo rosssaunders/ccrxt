@@ -1,7 +1,8 @@
-use super::RestClient;
-use crate::bingx::{EndpointType, RestResult};
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
+
+use super::RestClient;
+use crate::bingx::{EndpointType, RestResult};
 
 /// Endpoint constant for batch sub-account assets
 pub const BATCH_SUB_ACCOUNT_ASSETS_ENDPOINT: &str = "/openApi/subAccount/v1/assets";
@@ -107,8 +108,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use rust_decimal_macros::dec;
+
+    use super::*;
 
     #[test]
     fn test_batch_sub_account_assets_request_serialization() {

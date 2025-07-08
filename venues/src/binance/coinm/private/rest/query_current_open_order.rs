@@ -3,13 +3,13 @@
 
 use serde::{Deserialize, Serialize};
 
-use crate::binance::coinm::RestResult;
-use crate::binance::coinm::private::rest::client::RestClient;
-use crate::binance::coinm::{
-    OrderSide, OrderStatus, OrderType, PositionSide, PriceMatch, SelfTradePreventionMode,
-    TimeInForce, WorkingType,
+use crate::binance::{
+    coinm::{
+        OrderSide, OrderStatus, OrderType, PositionSide, PriceMatch, RestResult,
+        SelfTradePreventionMode, TimeInForce, WorkingType, private::rest::client::RestClient,
+    },
+    shared,
 };
-use crate::binance::shared;
 
 /// Request parameters for querying a current open order (GET /dapi/v1/openOrder).
 #[derive(Debug, Clone, Serialize, Default)]

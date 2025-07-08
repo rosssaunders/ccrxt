@@ -19,7 +19,7 @@ pub struct FuturesFundingRateRequest {
 pub struct FuturesFundingRate {
     /// Funding time
     pub t: i64,
-    
+
     /// Funding rate
     pub r: String,
 }
@@ -28,7 +28,10 @@ impl RestClient {
     /// Get futures funding rate history
     ///
     /// Retrieves historical funding rates for a specific futures contract.
-    pub async fn get_futures_funding_rate(&self, params: FuturesFundingRateRequest) -> crate::gateio::Result<Vec<FuturesFundingRate>> {
+    pub async fn get_futures_funding_rate(
+        &self,
+        params: FuturesFundingRateRequest,
+    ) -> crate::gateio::Result<Vec<FuturesFundingRate>> {
         let endpoint = format!("/futures/{}/funding_rate", params.settle);
         self.get_with_query(&endpoint, Some(&params)).await
     }

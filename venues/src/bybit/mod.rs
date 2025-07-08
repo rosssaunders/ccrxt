@@ -5,9 +5,9 @@ pub mod rate_limit;
 pub mod private {
     mod rest;
 
-    pub use self::rest::RestClient as PrivateRestClient;
     pub use self::rest::{
-        BalanceData, GetWalletBalanceRequest, GetWalletBalanceResponse, WalletBalance,
+        BalanceData, GetWalletBalanceRequest, GetWalletBalanceResponse,
+        RestClient as PrivateRestClient, WalletBalance,
     };
 }
 
@@ -24,7 +24,6 @@ pub use errors::{ApiError, Errors};
 pub use private::PrivateRestClient;
 pub use private::{BalanceData, GetWalletBalanceRequest, GetWalletBalanceResponse, WalletBalance};
 pub use public::PublicRestClient;
-
 // Note: Trade and Position endpoint types are available via the private module
 // Example usage: bybit::private::CreateOrderRequest
 pub use rate_limit::{EndpointType, RateLimit, RateLimitError, RateLimiter};

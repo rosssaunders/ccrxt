@@ -1,8 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use crate::bingx::{EndpointType, RestResult};
-
 use super::RestClient;
+use crate::bingx::{EndpointType, RestResult};
 
 const CURRENCY_CONFIG_ENDPOINT: &str = "/openApi/wallets/v1/capital/config/getall";
 

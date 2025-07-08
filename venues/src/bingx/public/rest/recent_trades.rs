@@ -20,8 +20,6 @@ pub struct GetRecentTradesRequest {
     pub timestamp: i64,
 }
 
-
-
 /// Response from the recent trades list endpoint
 pub type GetRecentTradesResponse = Vec<Trade>;
 

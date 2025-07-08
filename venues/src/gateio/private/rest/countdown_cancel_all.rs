@@ -22,10 +22,13 @@ pub struct CountdownCancelAllResponse {
 
 impl RestClient {
     /// Set up countdown cancel all
-    /// 
+    ///
     /// This endpoint sets up an automatic order cancellation after a specified timeout.
     /// Setting timeout to 0 disables the countdown.
-    pub async fn countdown_cancel_all(&self, request: CountdownCancelAllRequest) -> crate::gateio::Result<CountdownCancelAllResponse> {
+    pub async fn countdown_cancel_all(
+        &self,
+        request: CountdownCancelAllRequest,
+    ) -> crate::gateio::Result<CountdownCancelAllResponse> {
         self.post("/spot/countdown_cancel_all", &request).await
     }
 }

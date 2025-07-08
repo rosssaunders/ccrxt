@@ -1,9 +1,9 @@
-use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
+use serde::{Deserialize, Serialize};
+
 use super::super::RestClient;
-use crate::bitget::{Errors, RestResult};
-use crate::bitget::enums::*;
+use crate::bitget::{Errors, RestResult, enums::*};
 
 /// Endpoint for getting transfer records
 const TRANSFER_RECORD_ENDPOINT: &str = "/api/v2/spot/wallet/transfer-records";

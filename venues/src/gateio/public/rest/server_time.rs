@@ -11,7 +11,7 @@ pub struct ServerTime {
 
 impl RestClient {
     /// Get current server time
-    /// 
+    ///
     /// This endpoint returns the current server time as a Unix timestamp.
     /// Useful for synchronizing client time with the server.
     pub async fn get_server_time(&self) -> crate::gateio::Result<ServerTime> {
