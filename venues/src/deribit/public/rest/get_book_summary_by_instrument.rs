@@ -8,7 +8,7 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::deribit::{EndpointType, RestResult, enums::Currency};
 
-const BOOK_SUMMARY_BY_INSTRUMENT_ENDPOINT: &str = "get_book_summary_by_instrument";
+const BOOK_SUMMARY_BY_INSTRUMENT_ENDPOINT: &str = "public/get_book_summary_by_instrument";
 
 /// Request parameters for the get_book_summary_by_instrument endpoint.
 #[derive(Debug, Clone, Serialize, Default)]

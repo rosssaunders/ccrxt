@@ -8,7 +8,7 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::deribit::{EndpointType, RestResult};
 
-const MARK_PRICE_HISTORY_ENDPOINT: &str = "get_mark_price_history";
+const MARK_PRICE_HISTORY_ENDPOINT: &str = "public/get_mark_price_history";
 
 /// Request parameters for the get_mark_price_history endpoint.
 #[derive(Debug, Clone, Serialize, Default)]

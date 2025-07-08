@@ -8,7 +8,7 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::deribit::{EndpointType, RestResult};
 
-const SUPPORTED_INDEX_NAMES_ENDPOINT: &str = "get_supported_index_names";
+const SUPPORTED_INDEX_NAMES_ENDPOINT: &str = "public/get_supported_index_names";
 
 /// Request parameters for the get_supported_index_names endpoint.
 #[derive(Debug, Clone, Serialize, Default)]

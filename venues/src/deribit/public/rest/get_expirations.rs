@@ -8,7 +8,7 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::deribit::{EndpointType, RestResult, enums::Currency};
 
-const EXPIRATIONS_ENDPOINT: &str = "get_expirations";
+const EXPIRATIONS_ENDPOINT: &str = "public/get_expirations";
 
 /// Instrument kind for get_expirations endpoint.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]

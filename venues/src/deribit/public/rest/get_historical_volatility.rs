@@ -8,7 +8,7 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::deribit::{EndpointType, RestResult, enums::Currency};
 
-const HISTORICAL_VOLATILITY_ENDPOINT: &str = "get_historical_volatility";
+const HISTORICAL_VOLATILITY_ENDPOINT: &str = "public/get_historical_volatility";
 
 /// Request parameters for the get_historical_volatility endpoint.
 #[derive(Debug, Clone, Serialize)]

@@ -11,7 +11,8 @@ use crate::deribit::{
     enums::{Currency, InstrumentKind, Liquidity, Sorting, TickDirection, TradeOrderType},
 };
 
-const LAST_TRADES_BY_CURRENCY_AND_TIME_ENDPOINT: &str = "get_last_trades_by_currency_and_time";
+const LAST_TRADES_BY_CURRENCY_AND_TIME_ENDPOINT: &str =
+    "public/get_last_trades_by_currency_and_time";
 
 /// Request parameters for the get_last_trades_by_currency_and_time endpoint.
 #[derive(Debug, Clone, Serialize)]

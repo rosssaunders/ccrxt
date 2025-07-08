@@ -12,7 +12,7 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::deribit::{EndpointType, RestResult};
 
-const VOLATILITY_INDEX_DATA_ENDPOINT: &str = "get_volatility_index_data";
+const VOLATILITY_INDEX_DATA_ENDPOINT: &str = "public/get_volatility_index_data";
 
 /// Request parameters for the get_volatility_index_data endpoint.
 #[derive(Debug, Clone, Serialize, Default)]

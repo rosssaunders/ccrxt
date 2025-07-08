@@ -8,7 +8,7 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::deribit::{EndpointType, RestResult};
 
-const FUNDING_RATE_HISTORY_ENDPOINT: &str = "get_funding_rate_history";
+const FUNDING_RATE_HISTORY_ENDPOINT: &str = "public/get_funding_rate_history";
 
 /// Request parameters for the get_funding_rate_history endpoint.
 #[derive(Debug, Clone, Serialize, Default)]

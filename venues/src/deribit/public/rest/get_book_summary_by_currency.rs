@@ -11,7 +11,7 @@ use crate::deribit::{
     enums::{Currency, InstrumentKind},
 };
 
-const BOOK_SUMMARY_BY_CURRENCY_ENDPOINT: &str = "get_book_summary_by_currency";
+const BOOK_SUMMARY_BY_CURRENCY_ENDPOINT: &str = "public/get_book_summary_by_currency";
 
 /// Request parameters for the get_book_summary_by_currency endpoint.
 #[derive(Debug, Clone, Serialize)]
