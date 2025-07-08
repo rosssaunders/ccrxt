@@ -1,6 +1,4 @@
-//! Unified account functionality 
-#![allow(clippy::float_arithmetic)]
-
+//! Unified account functionality
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
@@ -75,8 +73,6 @@ pub struct BorrowOrRepayRequest {
     /// Amount
     pub amount: String,
 }
-
-
 
 /// Borrow/repay response
 #[derive(Debug, Clone, Serialize, Deserialize)]

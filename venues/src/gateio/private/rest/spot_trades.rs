@@ -1,8 +1,4 @@
 //! Trading statistics and trade history functionality
-#![allow(clippy::float_arithmetic)]
-#![allow(clippy::unwrap_used)]
-#![allow(clippy::arithmetic_side_effects)]
-
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
@@ -147,69 +143,4 @@ impl RestClient {
         self.get_my_trades_in_range(currency_pair, yesterday, now, limit)
             .await
     }
-
-    /// Get trading statistics for a currency pair within a time range
-    pub async fn get_trading_stats(
-        &self,
-        currency_pair: &str,
-        from: i64,
-        to: i64,
-    ) -> crate::gateio::Result<TradingStats> {
-        let trades = self
-            .get_my_trades_in_range(Some(currency_pair), from, to, None)
-            .await?;
-
-        let mut stats = TradingStats::default();
-
-        for trade in trades {
-            if let (Ok(amount), Ok(price)) = (trade.amount.parse::<f64>(), trade.price.parse::<f64>()) {
-                let value = amount * price;
-                stats.total_volume += value;
-                stats.trade_count += 1;
-
-                if trade.side == "buy" {
-                    stats.buy_volume += value;
-                    stats.buy_count += 1;
-                } else {
-                    stats.sell_volume += value;
-                    stats.sell_count += 1;
-                }
-
-                if trade.role == "maker" {
-                    stats.maker_volume += value;
-                    stats.maker_count += 1;
-                } else {
-                    stats.taker_volume += value;
-                    stats.taker_count += 1;
-                }
-            }
-        }
-
-        Ok(stats)
-    }
-}
-
-/// Trading statistics summary
-#[derive(Debug, Clone, Default)]
-pub struct TradingStats {
-    /// Total trading volume
-    pub total_volume: f64,
-    /// Total number of trades
-    pub trade_count: u32,
-    /// Buy volume
-    pub buy_volume: f64,
-    /// Number of buy trades
-    pub buy_count: u32,
-    /// Sell volume
-    pub sell_volume: f64,
-    /// Number of sell trades
-    pub sell_count: u32,
-    /// Maker volume
-    pub maker_volume: f64,
-    /// Number of maker trades
-    pub maker_count: u32,
-    /// Taker volume
-    pub taker_volume: f64,
-    /// Number of taker trades
-    pub taker_count: u32,
 }
