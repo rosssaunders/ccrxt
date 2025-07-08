@@ -4,6 +4,8 @@ use crate::kucoin::{ResponseHeaders, RestResponse, Result};
 
 use super::RestClient;
 
+const SERVER_TIME_ENDPOINT: &str = "/api/v1/timestamp";
+
 /// Request for getting server time
 #[derive(Debug, Clone, Default, Serialize)]
 pub struct GetServerTimeRequest {}
@@ -17,26 +19,12 @@ pub struct GetServerTimeResponse {
 
 impl RestClient {
     /// Get the current server time
-    ///
-    /// # Example
-    /// ```rust,no_run
-    /// use venues::kucoin::public::rest::{RestClient, GetServerTimeRequest};
-    ///
-    /// #[tokio::main]
-    /// async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    ///     let client = RestClient::new_default();
-    ///     let request = GetServerTimeRequest::default();
-    ///     let (response, _headers) = client.get_server_time(request).await?;
-    ///     println!("Server time: {}", response.timestamp);
-    ///     Ok(())
-    /// }
-    /// ```
     pub async fn get_server_time(
         &self,
         _request: GetServerTimeRequest,
     ) -> Result<(GetServerTimeResponse, ResponseHeaders)> {
         let (response, headers): (RestResponse<i64>, ResponseHeaders) =
-            self.get("/api/v1/timestamp", None).await?;
+            self.get(SERVER_TIME_ENDPOINT, None).await?;
 
         let server_time_response = GetServerTimeResponse {
             timestamp: response.data,

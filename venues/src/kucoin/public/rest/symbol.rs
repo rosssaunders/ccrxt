@@ -5,6 +5,8 @@ use crate::kucoin::{ResponseHeaders, RestResponse, Result};
 
 use super::RestClient;
 
+const SYMBOL_ENDPOINT: &str = "/api/v1/symbols/{symbol}";
+
 /// Request for getting symbol information
 #[derive(Debug, Clone, Default, Serialize)]
 pub struct GetSymbolRequest {
@@ -89,12 +91,9 @@ impl RestClient {
         &self,
         request: GetSymbolRequest,
     ) -> Result<(SymbolInfo, ResponseHeaders)> {
-        let mut params = HashMap::new();
-        params.insert("symbol".to_string(), request.symbol);
-
+        let endpoint = SYMBOL_ENDPOINT.replace("{symbol}", &request.symbol);
         let (response, headers): (RestResponse<SymbolInfo>, ResponseHeaders) =
-            self.get("/api/v1/symbols", Some(params)).await?;
-
+            self.get(&endpoint, None).await?;
         Ok((response.data, headers))
     }
 }

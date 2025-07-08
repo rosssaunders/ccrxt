@@ -5,6 +5,8 @@ use crate::kucoin::{KlineInterval, ResponseHeaders, RestResponse, Result};
 
 use super::RestClient;
 
+const KLINES_ENDPOINT: &str = "/api/v1/market/candles";
+
 /// Request for getting klines/candlestick data
 #[derive(Debug, Clone, Serialize)]
 pub struct GetKlinesRequest {
@@ -101,7 +103,7 @@ impl RestClient {
         }
 
         let (response, headers): (RestResponse<Vec<KlineArray>>, ResponseHeaders) =
-            self.get("/api/v1/market/candles", Some(params)).await?;
+            self.get(KLINES_ENDPOINT, Some(params)).await?;
 
         let klines: Vec<Kline> = response.data.into_iter().map(Kline::from).collect();
 

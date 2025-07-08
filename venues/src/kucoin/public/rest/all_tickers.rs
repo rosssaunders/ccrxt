@@ -4,6 +4,8 @@ use crate::kucoin::{ResponseHeaders, RestResponse, Result};
 
 use super::RestClient;
 
+const ALL_TICKERS_ENDPOINT: &str = "/api/v1/market/allTickers";
+
 /// Request for getting all tickers
 #[derive(Debug, Clone, Default, Serialize)]
 pub struct GetAllTickersRequest {}
@@ -69,7 +71,7 @@ impl RestClient {
         _request: GetAllTickersRequest,
     ) -> Result<(AllTickersResponse, ResponseHeaders)> {
         let (response, headers): (RestResponse<AllTickersResponse>, ResponseHeaders) =
-            self.get("/api/v1/market/allTickers", None).await?;
+            self.get(ALL_TICKERS_ENDPOINT, None).await?;
 
         Ok((response.data, headers))
     }

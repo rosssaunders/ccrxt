@@ -5,6 +5,8 @@ use crate::kucoin::{ResponseHeaders, RestResponse, Result};
 
 use super::RestClient;
 
+const PARTIAL_ORDERBOOK_ENDPOINT: &str = "/api/v1/market/orderbook/level2_{level}";
+
 /// Request for getting partial order book
 #[derive(Debug, Clone, Serialize)]
 pub struct GetPartOrderBookRequest {
@@ -56,7 +58,7 @@ impl RestClient {
             OrderBookLevel::OneHundred => "100",
         };
 
-        let endpoint = format!("/api/v1/market/orderbook/level2_{}", level_str);
+        let endpoint = PARTIAL_ORDERBOOK_ENDPOINT.replace("{level}", level_str);
 
         let (response, headers): (RestResponse<PartOrderBookResponse>, ResponseHeaders) =
             self.get(&endpoint, Some(params)).await?;

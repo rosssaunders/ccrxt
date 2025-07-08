@@ -5,6 +5,8 @@ use crate::kucoin::{ResponseHeaders, RestResponse, Result};
 
 use super::RestClient;
 
+const FULL_ORDERBOOK_ENDPOINT: &str = "/api/v3/market/orderbook/level2";
+
 /// Request for getting full order book
 #[derive(Debug, Clone, Serialize)]
 pub struct GetFullOrderBookRequest {
@@ -39,8 +41,9 @@ impl RestClient {
         let mut params = HashMap::new();
         params.insert("symbol".to_string(), request.symbol);
 
-        let (response, headers): (RestResponse<FullOrderBookResponse>, ResponseHeaders) =
-            self.get("/api/v1/market/orderbook/level2", Some(params)).await?;
+        let (response, headers): (RestResponse<FullOrderBookResponse>, ResponseHeaders) = self
+            .get("/api/v1/market/orderbook/level2", Some(params))
+            .await?;
 
         Ok((response.data, headers))
     }

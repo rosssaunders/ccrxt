@@ -4,6 +4,8 @@ use crate::kucoin::{ResponseHeaders, RestResponse, Result};
 
 use super::RestClient;
 
+const CURRENCY_ENDPOINT: &str = "/api/v1/currencies/{currency}";
+
 /// Request for getting currency information
 #[derive(Debug, Clone, Serialize)]
 pub struct GetCurrencyRequest {
@@ -51,7 +53,7 @@ impl RestClient {
         &self,
         request: GetCurrencyRequest,
     ) -> Result<(Currency, ResponseHeaders)> {
-        let endpoint = format!("/api/v1/currencies/{}", request.currency);
+        let endpoint = CURRENCY_ENDPOINT.replace("{currency}", &request.currency);
 
         let (response, headers): (RestResponse<Currency>, ResponseHeaders) =
             self.get(&endpoint, None).await?;

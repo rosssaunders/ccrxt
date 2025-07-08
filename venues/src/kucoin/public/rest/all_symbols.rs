@@ -5,6 +5,8 @@ use crate::kucoin::{Market, ResponseHeaders, RestResponse, Result};
 
 use super::RestClient;
 
+const ALL_SYMBOLS_ENDPOINT: &str = "/api/v1/symbols";
+
 /// Request for getting all symbols
 #[derive(Debug, Clone, Default, Serialize)]
 pub struct GetAllSymbolsRequest {
@@ -94,10 +96,14 @@ impl RestClient {
             params.insert("market".to_string(), serde_json::to_string(&market)?);
         }
 
-        let params_option = if params.is_empty() { None } else { Some(params) };
+        let params_option = if params.is_empty() {
+            None
+        } else {
+            Some(params)
+        };
 
         let (response, headers): (RestResponse<Vec<SymbolInfo>>, ResponseHeaders) =
-            self.get("/api/v1/symbols", params_option).await?;
+            self.get(ALL_SYMBOLS_ENDPOINT, params_option).await?;
 
         Ok((response.data, headers))
     }

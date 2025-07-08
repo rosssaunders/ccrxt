@@ -5,6 +5,8 @@ use crate::kucoin::{ResponseHeaders, RestResponse, Result, TradeSide};
 
 use super::RestClient;
 
+const TRADES_ENDPOINT: &str = "/api/v1/market/histories";
+
 /// Request for getting recent trades
 #[derive(Debug, Clone, Serialize)]
 pub struct GetTradesRequest {
@@ -53,7 +55,7 @@ impl RestClient {
         params.insert("symbol".to_string(), request.symbol);
 
         let (response, headers): (RestResponse<Vec<Trade>>, ResponseHeaders) =
-            self.get("/api/v1/market/histories", Some(params)).await?;
+            self.get(TRADES_ENDPOINT, Some(params)).await?;
 
         Ok((response.data, headers))
     }
