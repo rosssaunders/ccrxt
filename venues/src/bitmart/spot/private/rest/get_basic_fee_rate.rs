@@ -4,6 +4,8 @@ use super::client::RestClient;
 use crate::bitmart::RestResult;
 use crate::bitmart::rate_limit::EndpointType;
 
+const BASIC_FEE_RATE_ENDPOINT: &str = "/spot/v1/user_fee";
+
 /// Request parameters for getting basic fee rate (no parameters required)
 #[derive(Debug, Serialize, Default)]
 pub struct GetBasicFeeRateRequest {}
@@ -55,7 +57,7 @@ impl RestClient {
         request: GetBasicFeeRateRequest,
     ) -> RestResult<GetBasicFeeRateResponse> {
         self.send_request(
-            "/spot/v1/user_fee",
+            BASIC_FEE_RATE_ENDPOINT,
             reqwest::Method::GET,
             Some(&request),
             EndpointType::FundingAccount,

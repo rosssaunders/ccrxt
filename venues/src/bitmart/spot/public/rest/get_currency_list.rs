@@ -4,6 +4,8 @@ use super::client::RestClient;
 use crate::bitmart::RestResult;
 use crate::bitmart::rate_limit::EndpointType;
 
+const CURRENCY_LIST_ENDPOINT: &str = "/spot/v1/currencies";
+
 /// Request parameters for getting currency list
 #[derive(Debug, Serialize, Default)]
 pub struct GetCurrencyListRequest {
@@ -50,7 +52,7 @@ impl RestClient {
         _request: GetCurrencyListRequest,
     ) -> RestResult<GetCurrencyListResponse> {
         self.send_request(
-            "/spot/v1/currencies",
+            CURRENCY_LIST_ENDPOINT,
             reqwest::Method::GET,
             Option::<&()>::None, // No query parameters
             EndpointType::SpotPublicMarket,

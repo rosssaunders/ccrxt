@@ -1,8 +1,11 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
+
 use crate::bitmart::RestResult;
 use crate::bitmart::rate_limit::EndpointType;
+
+const HISTORY_KLINE_ENDPOINT: &str = "/spot/quotation/v3/klines";
 
 /// Request parameters for getting history K-line
 #[derive(Debug, Serialize)]
@@ -59,7 +62,7 @@ impl RestClient {
         request: GetHistoryKlineRequest,
     ) -> RestResult<GetHistoryKlineResponse> {
         self.send_request(
-            "/spot/quotation/v3/klines",
+            HISTORY_KLINE_ENDPOINT,
             reqwest::Method::GET,
             Some(&request),
             EndpointType::SpotPublicMarket,
@@ -118,26 +121,11 @@ mod tests {
             "12698348.04828491".to_string(), // qv
         ];
 
-        assert_eq!(
-            kline_data.first().map(|s| s.as_str()),
-            Some("1689736680")
-        );
-        assert_eq!(
-            kline_data.get(1).map(|s| s.as_str()),
-            Some("3.721")
-        );
-        assert_eq!(
-            kline_data.get(2).map(|s| s.as_str()),
-            Some("3.743")
-        );
-        assert_eq!(
-            kline_data.get(3).map(|s| s.as_str()),
-            Some("3.677")
-        );
-        assert_eq!(
-            kline_data.get(4).map(|s| s.as_str()),
-            Some("3.708")
-        );
+        assert_eq!(kline_data.first().map(|s| s.as_str()), Some("1689736680"));
+        assert_eq!(kline_data.get(1).map(|s| s.as_str()), Some("3.721"));
+        assert_eq!(kline_data.get(2).map(|s| s.as_str()), Some("3.743"));
+        assert_eq!(kline_data.get(3).map(|s| s.as_str()), Some("3.677"));
+        assert_eq!(kline_data.get(4).map(|s| s.as_str()), Some("3.708"));
         assert_eq!(
             kline_data.get(5).map(|s| s.as_str()),
             Some("22698348.04828491")
@@ -156,18 +144,9 @@ mod tests {
             "3.743".to_string(),
         ];
 
-        assert_eq!(
-            kline_data.first().map(|s| s.as_str()),
-            Some("1689736680")
-        );
-        assert_eq!(
-            kline_data.get(1).map(|s| s.as_str()),
-            Some("3.721")
-        );
-        assert_eq!(
-            kline_data.get(2).map(|s| s.as_str()),
-            Some("3.743")
-        );
+        assert_eq!(kline_data.first().map(|s| s.as_str()), Some("1689736680"));
+        assert_eq!(kline_data.get(1).map(|s| s.as_str()), Some("3.721"));
+        assert_eq!(kline_data.get(2).map(|s| s.as_str()), Some("3.743"));
         assert_eq!(kline_data.get(3).map(|s| s.as_str()), None);
         assert_eq!(kline_data.get(4).map(|s| s.as_str()), None);
         assert_eq!(kline_data.get(5).map(|s| s.as_str()), None);
@@ -255,18 +234,12 @@ mod tests {
             response.0[0].first().map(|s| s.as_str()),
             Some("1689736680")
         );
-        assert_eq!(
-            response.0[0].get(1).map(|s| s.as_str()),
-            Some("3.721")
-        );
+        assert_eq!(response.0[0].get(1).map(|s| s.as_str()), Some("3.721"));
         assert_eq!(
             response.0[1].first().map(|s| s.as_str()),
             Some("1689736620")
         );
-        assert_eq!(
-            response.0[1].get(1).map(|s| s.as_str()),
-            Some("3.731")
-        );
+        assert_eq!(response.0[1].get(1).map(|s| s.as_str()), Some("3.731"));
     }
 
     #[test]

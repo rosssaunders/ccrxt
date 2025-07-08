@@ -4,6 +4,8 @@ use super::client::RestClient;
 use crate::bitmart::RestResult;
 use crate::bitmart::rate_limit::EndpointType;
 
+const SPOT_WALLET_BALANCE_ENDPOINT: &str = "/spot/v1/wallet";
+
 /// Request parameters for getting spot wallet balance (no parameters required)
 #[derive(Debug, Serialize, Default)]
 pub struct GetSpotWalletBalanceRequest {}
@@ -47,7 +49,7 @@ impl RestClient {
         request: GetSpotWalletBalanceRequest,
     ) -> RestResult<GetSpotWalletBalanceResponse> {
         self.send_request(
-            "/spot/v1/wallet",
+            SPOT_WALLET_BALANCE_ENDPOINT,
             reqwest::Method::GET,
             Some(&request),
             EndpointType::FundingAccount,

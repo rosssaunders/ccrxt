@@ -5,8 +5,11 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
+
 use crate::bitmart::rate_limit::EndpointType;
 use crate::bitmart::{OrderSide, OrderType, RestResult, StpMode};
+
+const SUBMIT_BATCH_ORDER_ENDPOINT: &str = "/spot/v4/batch_orders";
 
 /// Parameters for a single order in a batch
 #[derive(Debug, Serialize)]
@@ -90,7 +93,7 @@ impl RestClient {
         }
 
         self.send_request(
-            "/spot/v4/batch_orders",
+            SUBMIT_BATCH_ORDER_ENDPOINT,
             reqwest::Method::POST,
             Some(&request),
             EndpointType::SpotTrading,

@@ -9,6 +9,8 @@ use super::query_trades::TradeInfo;
 use crate::bitmart::RestResult;
 use crate::bitmart::rate_limit::EndpointType;
 
+const QUERY_ORDER_TRADES_ENDPOINT: &str = "/spot/v4/query/order-trades";
+
 /// Request parameters for querying order trades
 #[derive(Debug, Serialize)]
 pub struct QueryOrderTradesRequest {
@@ -41,7 +43,7 @@ impl RestClient {
         request: QueryOrderTradesRequest,
     ) -> RestResult<QueryOrderTradesResponse> {
         self.send_request(
-            "/spot/v4/query/order-trades",
+            QUERY_ORDER_TRADES_ENDPOINT,
             reqwest::Method::POST,
             Some(&request),
             EndpointType::SpotTrading,

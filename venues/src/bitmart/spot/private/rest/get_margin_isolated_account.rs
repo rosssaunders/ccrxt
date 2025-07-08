@@ -1,8 +1,11 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
+
 use crate::bitmart::RestResult;
 use crate::bitmart::rate_limit::EndpointType;
+
+const MARGIN_ISOLATED_ACCOUNT_ENDPOINT: &str = "/spot/v1/margin/isolated/account";
 
 /// Request parameters for getting margin account details (isolated)
 #[derive(Debug, Serialize, Default)]
@@ -113,7 +116,7 @@ impl RestClient {
         request: GetMarginIsolatedAccountRequest,
     ) -> RestResult<GetMarginIsolatedAccountResponse> {
         self.send_request(
-            "/spot/v1/margin/isolated/account",
+            MARGIN_ISOLATED_ACCOUNT_ENDPOINT,
             reqwest::Method::GET,
             Some(&request),
             EndpointType::MarginLoan,

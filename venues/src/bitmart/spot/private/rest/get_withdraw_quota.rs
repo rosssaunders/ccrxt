@@ -4,6 +4,8 @@ use super::client::RestClient;
 use crate::bitmart::RestResult;
 use crate::bitmart::rate_limit::EndpointType;
 
+const WITHDRAW_QUOTA_ENDPOINT: &str = "/account/v1/withdraw/charge";
+
 /// Request parameters for getting withdraw quota
 #[derive(Debug, Serialize)]
 pub struct GetWithdrawQuotaRequest {
@@ -49,7 +51,7 @@ impl RestClient {
         request: GetWithdrawQuotaRequest,
     ) -> RestResult<GetWithdrawQuotaResponse> {
         self.send_request(
-            "/account/v1/withdraw/charge",
+            WITHDRAW_QUOTA_ENDPOINT,
             reqwest::Method::GET,
             Some(&request),
             EndpointType::FundingAccount,

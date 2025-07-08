@@ -4,6 +4,8 @@ use super::client::RestClient;
 use crate::bitmart::RestResult;
 use crate::bitmart::rate_limit::EndpointType;
 
+const TRADING_PAIRS_LIST_ENDPOINT: &str = "/spot/v1/symbols";
+
 /// Request parameters for getting trading pairs list
 #[derive(Debug, Serialize, Default)]
 pub struct GetTradingPairsListRequest {
@@ -37,7 +39,7 @@ impl RestClient {
         _request: GetTradingPairsListRequest,
     ) -> RestResult<GetTradingPairsListResponse> {
         self.send_request(
-            "/spot/v1/symbols",
+            TRADING_PAIRS_LIST_ENDPOINT,
             reqwest::Method::GET,
             Option::<&()>::None, // No query parameters
             EndpointType::SpotPublicMarket,

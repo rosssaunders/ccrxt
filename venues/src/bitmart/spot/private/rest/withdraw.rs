@@ -4,6 +4,8 @@ use super::client::RestClient;
 use crate::bitmart::RestResult;
 use crate::bitmart::rate_limit::EndpointType;
 
+const WITHDRAW_ENDPOINT: &str = "/account/v1/withdraw/apply";
+
 /// Request parameters for withdraw
 #[derive(Debug, Serialize, Default)]
 pub struct WithdrawRequest {
@@ -65,7 +67,7 @@ impl RestClient {
     /// Withdraw response with withdraw ID
     pub async fn withdraw(&self, request: WithdrawRequest) -> RestResult<WithdrawResponse> {
         self.send_request(
-            "/account/v1/withdraw/apply",
+            WITHDRAW_ENDPOINT,
             reqwest::Method::POST,
             Some(&request),
             EndpointType::FundingAccount,

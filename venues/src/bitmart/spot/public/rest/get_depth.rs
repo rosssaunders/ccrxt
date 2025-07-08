@@ -1,8 +1,11 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
+
 use crate::bitmart::RestResult;
 use crate::bitmart::rate_limit::EndpointType;
+
+const DEPTH_ENDPOINT: &str = "/spot/quotation/v3/books";
 
 /// Request parameters for getting depth
 #[derive(Debug, Serialize)]
@@ -52,7 +55,7 @@ impl RestClient {
     /// Full depth data for the specified trading pair
     pub async fn get_depth(&self, request: GetDepthRequest) -> RestResult<GetDepthResponse> {
         self.send_request(
-            "/spot/quotation/v3/books",
+            DEPTH_ENDPOINT,
             reqwest::Method::GET,
             Some(&request),
             EndpointType::SpotPublicMarket,
@@ -120,7 +123,10 @@ mod tests {
         assert_eq!(depth.asks.len(), 1);
         assert_eq!(depth.bids.len(), 1);
         assert_eq!(depth.asks[0].first().map(|s| s.as_str()), Some("31012.44"));
-        assert_eq!(depth.asks[0].get(1).map(|s| s.as_str()), Some("69994.75267"));
+        assert_eq!(
+            depth.asks[0].get(1).map(|s| s.as_str()),
+            Some("69994.75267")
+        );
         assert_eq!(depth.bids[0].first().map(|s| s.as_str()), Some("30000.00"));
         assert_eq!(depth.bids[0].get(1).map(|s| s.as_str()), Some("1.00000"));
     }
@@ -203,12 +209,18 @@ mod tests {
         assert_eq!(response.symbol, "BTC_USDT");
         assert_eq!(response.asks.len(), 1);
         assert_eq!(response.bids.len(), 1);
-        assert_eq!(response.asks[0].first().map(|s| s.as_str()), Some("31012.44"));
+        assert_eq!(
+            response.asks[0].first().map(|s| s.as_str()),
+            Some("31012.44")
+        );
         assert_eq!(
             response.asks[0].get(1).map(|s| s.as_str()),
             Some("69994.75267")
         );
-        assert_eq!(response.bids[0].first().map(|s| s.as_str()), Some("30000.00"));
+        assert_eq!(
+            response.bids[0].first().map(|s| s.as_str()),
+            Some("30000.00")
+        );
         assert_eq!(response.bids[0].get(1).map(|s| s.as_str()), Some("1.00000"));
     }
 

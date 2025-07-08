@@ -1,8 +1,11 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
+
 use crate::bitmart::RestResult;
 use crate::bitmart::rate_limit::EndpointType;
+
+const DEPOSIT_ADDRESS_ENDPOINT: &str = "/account/v1/deposit/address";
 
 /// Request parameters for getting deposit address
 #[derive(Debug, Serialize)]
@@ -45,7 +48,7 @@ impl RestClient {
         request: GetDepositAddressRequest,
     ) -> RestResult<GetDepositAddressResponse> {
         self.send_request(
-            "/account/v1/deposit/address",
+            DEPOSIT_ADDRESS_ENDPOINT,
             reqwest::Method::GET,
             Some(&request),
             EndpointType::FundingAccount,

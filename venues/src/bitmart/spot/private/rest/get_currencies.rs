@@ -1,8 +1,11 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
+
 use crate::bitmart::RestResult;
 use crate::bitmart::rate_limit::EndpointType;
+
+const CURRENCIES_ENDPOINT: &str = "/account/v1/currencies";
 
 /// Request parameters for getting currencies
 #[derive(Debug, Serialize, Default)]
@@ -67,7 +70,7 @@ impl RestClient {
         request: GetCurrenciesRequest,
     ) -> RestResult<GetCurrenciesResponse> {
         self.send_request(
-            "/account/v1/currencies",
+            CURRENCIES_ENDPOINT,
             reqwest::Method::GET,
             Some(&request),
             EndpointType::FundingAccount,

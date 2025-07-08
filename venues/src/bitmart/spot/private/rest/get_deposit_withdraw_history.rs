@@ -1,8 +1,11 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
+
 use crate::bitmart::RestResult;
 use crate::bitmart::rate_limit::EndpointType;
+
+const DEPOSIT_WITHDRAW_HISTORY_ENDPOINT: &str = "/account/v2/deposit-withdraw/history";
 
 /// Request parameters for getting deposit and withdraw history
 #[derive(Debug, Serialize, Default)]
@@ -86,7 +89,7 @@ impl RestClient {
         request: GetDepositWithdrawHistoryRequest,
     ) -> RestResult<GetDepositWithdrawHistoryResponse> {
         self.send_request(
-            "/account/v2/deposit-withdraw/history",
+            DEPOSIT_WITHDRAW_HISTORY_ENDPOINT,
             reqwest::Method::GET,
             Some(&request),
             EndpointType::FundingAccount,

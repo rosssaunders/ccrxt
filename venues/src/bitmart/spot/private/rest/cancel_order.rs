@@ -8,6 +8,8 @@ use super::client::RestClient;
 use crate::bitmart::RestResult;
 use crate::bitmart::rate_limit::EndpointType;
 
+const CANCEL_ORDER_ENDPOINT: &str = "/spot/v3/cancel_order";
+
 /// Request parameters for canceling an order
 #[derive(Debug, Serialize)]
 pub struct CancelOrderRequest {
@@ -47,7 +49,7 @@ impl RestClient {
         request: CancelOrderRequest,
     ) -> RestResult<CancelOrderResponse> {
         self.send_request(
-            "/spot/v3/cancel_order",
+            CANCEL_ORDER_ENDPOINT,
             reqwest::Method::POST,
             Some(&request),
             EndpointType::SpotTrading,

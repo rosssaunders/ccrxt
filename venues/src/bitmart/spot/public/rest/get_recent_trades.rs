@@ -4,6 +4,8 @@ use super::client::RestClient;
 use crate::bitmart::RestResult;
 use crate::bitmart::rate_limit::EndpointType;
 
+const RECENT_TRADES_ENDPOINT: &str = "/spot/quotation/v3/trades";
+
 /// Request parameters for getting recent trades
 #[derive(Debug, Serialize)]
 pub struct GetRecentTradesRequest {
@@ -43,7 +45,7 @@ impl RestClient {
         request: GetRecentTradesRequest,
     ) -> RestResult<GetRecentTradesResponse> {
         self.send_request(
-            "/spot/quotation/v3/trades",
+            RECENT_TRADES_ENDPOINT,
             reqwest::Method::GET,
             Some(&request),
             EndpointType::SpotPublicMarket,
@@ -88,18 +90,9 @@ mod tests {
             "sell".to_string(),          // side
         ];
 
-        assert_eq!(
-            trade_data.first().map(|s| s.as_str()),
-            Some("BMX_ETH")
-        );
-        assert_eq!(
-            trade_data.get(1).map(|s| s.as_str()),
-            Some("1691743270994")
-        );
-        assert_eq!(
-            trade_data.get(2).map(|s| s.as_str()),
-            Some("1.00000000")
-        );
+        assert_eq!(trade_data.first().map(|s| s.as_str()), Some("BMX_ETH"));
+        assert_eq!(trade_data.get(1).map(|s| s.as_str()), Some("1691743270994"));
+        assert_eq!(trade_data.get(2).map(|s| s.as_str()), Some("1.00000000"));
         assert_eq!(trade_data.get(3).map(|s| s.as_str()), Some("1.0"));
         assert_eq!(trade_data.get(4).map(|s| s.as_str()), Some("sell"));
     }
@@ -112,18 +105,9 @@ mod tests {
             "1.00000000".to_string(),
         ];
 
-        assert_eq!(
-            trade_data.first().map(|s| s.as_str()),
-            Some("BMX_ETH")
-        );
-        assert_eq!(
-            trade_data.get(1).map(|s| s.as_str()),
-            Some("1691743270994")
-        );
-        assert_eq!(
-            trade_data.get(2).map(|s| s.as_str()),
-            Some("1.00000000")
-        );
+        assert_eq!(trade_data.first().map(|s| s.as_str()), Some("BMX_ETH"));
+        assert_eq!(trade_data.get(1).map(|s| s.as_str()), Some("1691743270994"));
+        assert_eq!(trade_data.get(2).map(|s| s.as_str()), Some("1.00000000"));
         assert_eq!(trade_data.get(3).map(|s| s.as_str()), None);
         assert_eq!(trade_data.get(4).map(|s| s.as_str()), None);
     }
@@ -148,15 +132,9 @@ mod tests {
         ]);
 
         assert_eq!(response.0.len(), 2);
-        assert_eq!(
-            response.0[0].get(0).map(|s| s.as_str()),
-            Some("BMX_ETH")
-        );
+        assert_eq!(response.0[0].get(0).map(|s| s.as_str()), Some("BMX_ETH"));
         assert_eq!(response.0[0].get(4).map(|s| s.as_str()), Some("sell"));
-        assert_eq!(
-            response.0[1].get(0).map(|s| s.as_str()),
-            Some("BTC_USDT")
-        );
+        assert_eq!(response.0[1].get(0).map(|s| s.as_str()), Some("BTC_USDT"));
         assert_eq!(response.0[1].get(4).map(|s| s.as_str()), Some("buy"));
     }
 
@@ -198,18 +176,12 @@ mod tests {
 
         let response: GetRecentTradesResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.0.len(), 1);
-        assert_eq!(
-            response.0[0].get(0).map(|s| s.as_str()),
-            Some("BMX_ETH")
-        );
+        assert_eq!(response.0[0].get(0).map(|s| s.as_str()), Some("BMX_ETH"));
         assert_eq!(
             response.0[0].get(1).map(|s| s.as_str()),
             Some("1691743270994")
         );
-        assert_eq!(
-            response.0[0].get(2).map(|s| s.as_str()),
-            Some("1.00000000")
-        );
+        assert_eq!(response.0[0].get(2).map(|s| s.as_str()), Some("1.00000000"));
         assert_eq!(response.0[0].get(3).map(|s| s.as_str()), Some("1.0"));
         assert_eq!(response.0[0].get(4).map(|s| s.as_str()), Some("sell"));
     }
@@ -245,34 +217,22 @@ mod tests {
         assert_eq!(response.0.len(), 2);
 
         // First trade
-        assert_eq!(
-            response.0[0].get(0).map(|s| s.as_str()),
-            Some("BMX_ETH")
-        );
+        assert_eq!(response.0[0].get(0).map(|s| s.as_str()), Some("BMX_ETH"));
         assert_eq!(
             response.0[0].get(1).map(|s| s.as_str()),
             Some("1691743270994")
         );
-        assert_eq!(
-            response.0[0].get(2).map(|s| s.as_str()),
-            Some("1.00000000")
-        );
+        assert_eq!(response.0[0].get(2).map(|s| s.as_str()), Some("1.00000000"));
         assert_eq!(response.0[0].get(3).map(|s| s.as_str()), Some("1.0"));
         assert_eq!(response.0[0].get(4).map(|s| s.as_str()), Some("sell"));
 
         // Second trade
-        assert_eq!(
-            response.0[1].get(0).map(|s| s.as_str()),
-            Some("BMX_ETH")
-        );
+        assert_eq!(response.0[1].get(0).map(|s| s.as_str()), Some("BMX_ETH"));
         assert_eq!(
             response.0[1].get(1).map(|s| s.as_str()),
             Some("1691743271000")
         );
-        assert_eq!(
-            response.0[1].get(2).map(|s| s.as_str()),
-            Some("1.00000001")
-        );
+        assert_eq!(response.0[1].get(2).map(|s| s.as_str()), Some("1.00000001"));
         assert_eq!(response.0[1].get(3).map(|s| s.as_str()), Some("2.5"));
         assert_eq!(response.0[1].get(4).map(|s| s.as_str()), Some("buy"));
     }

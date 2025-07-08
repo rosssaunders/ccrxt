@@ -4,6 +4,8 @@ use super::client::RestClient;
 use crate::bitmart::RestResult;
 use crate::bitmart::rate_limit::EndpointType;
 
+const MARGIN_ASSET_TRANSFER_ENDPOINT: &str = "/spot/v1/margin/isolated/transfer";
+
 /// Request parameters for margin asset transfer
 #[derive(Debug, Serialize, Default)]
 pub struct MarginAssetTransferRequest {
@@ -45,7 +47,7 @@ impl RestClient {
         request: MarginAssetTransferRequest,
     ) -> RestResult<MarginAssetTransferResponse> {
         self.send_request(
-            "/spot/v1/margin/isolated/transfer",
+            MARGIN_ASSET_TRANSFER_ENDPOINT,
             reqwest::Method::POST,
             Some(&request),
             EndpointType::MarginLoan,

@@ -5,8 +5,11 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
+
 use crate::bitmart::rate_limit::EndpointType;
 use crate::bitmart::{OrderSide, OrderType, RestResult};
+
+const SUBMIT_MARGIN_ORDER_ENDPOINT: &str = "/spot/v1/margin/submit_order";
 
 /// Request parameters for submitting a new margin order
 #[derive(Debug, Serialize)]
@@ -59,7 +62,7 @@ impl RestClient {
         request: SubmitMarginOrderRequest,
     ) -> RestResult<SubmitMarginOrderResponse> {
         self.send_request(
-            "/spot/v1/margin/submit_order",
+            SUBMIT_MARGIN_ORDER_ENDPOINT,
             reqwest::Method::POST,
             Some(&request),
             EndpointType::SpotTrading,

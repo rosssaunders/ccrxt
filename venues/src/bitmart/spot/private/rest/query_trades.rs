@@ -5,8 +5,11 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
+
 use crate::bitmart::rate_limit::EndpointType;
 use crate::bitmart::{OrderMode, OrderSide, OrderType, RestResult, TradeRole};
+
+const QUERY_TRADES_ENDPOINT: &str = "/spot/v4/query/trades";
 
 /// Request parameters for querying account trades
 #[derive(Debug, Serialize)]
@@ -97,7 +100,7 @@ impl RestClient {
         request: QueryTradesRequest,
     ) -> RestResult<QueryTradesResponse> {
         self.send_request(
-            "/spot/v4/query/trades",
+            QUERY_TRADES_ENDPOINT,
             reqwest::Method::POST,
             Some(&request),
             EndpointType::SpotTrading,

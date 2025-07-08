@@ -5,8 +5,11 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
+
 use crate::bitmart::rate_limit::EndpointType;
 use crate::bitmart::{OrderMode, OrderSide, OrderStatus, OrderType, RestResult};
+
+const QUERY_ORDER_ENDPOINT: &str = "/spot/v4/query/order";
 
 /// Request parameters for querying order details
 #[derive(Debug, Serialize)]
@@ -89,7 +92,7 @@ impl RestClient {
     /// Order details response
     pub async fn query_order(&self, request: QueryOrderRequest) -> RestResult<QueryOrderResponse> {
         self.send_request(
-            "/spot/v4/query/order",
+            QUERY_ORDER_ENDPOINT,
             reqwest::Method::POST,
             Some(&request),
             EndpointType::SpotTrading,

@@ -1,8 +1,11 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
+
 use crate::bitmart::RestResult;
 use crate::bitmart::rate_limit::EndpointType;
+
+const ACCOUNT_BALANCE_ENDPOINT: &str = "/account/v1/wallet";
 
 /// Request parameters for getting account balance
 #[derive(Debug, Serialize, Default)]
@@ -60,7 +63,7 @@ impl RestClient {
         request: GetAccountBalanceRequest,
     ) -> RestResult<GetAccountBalanceResponse> {
         self.send_request(
-            "/account/v1/wallet",
+            ACCOUNT_BALANCE_ENDPOINT,
             reqwest::Method::GET,
             Some(&request),
             EndpointType::FundingAccount,

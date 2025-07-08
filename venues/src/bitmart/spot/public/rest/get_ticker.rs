@@ -1,8 +1,11 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
+
 use crate::bitmart::RestResult;
 use crate::bitmart::rate_limit::EndpointType;
+
+const TICKER_ENDPOINT: &str = "/spot/quotation/v3/ticker";
 
 /// Request parameters for getting ticker of a trading pair
 #[derive(Debug, Serialize)]
@@ -69,7 +72,7 @@ impl RestClient {
     /// 2. For frequent query needs, we recommend using this endpoint to obtain aggregated ticker for a single trading pair.
     pub async fn get_ticker(&self, request: GetTickerRequest) -> RestResult<GetTickerResponse> {
         self.send_request(
-            "/spot/quotation/v3/ticker",
+            TICKER_ENDPOINT,
             reqwest::Method::GET,
             Some(&request),
             EndpointType::SpotPublicMarket,

@@ -8,6 +8,8 @@ use super::client::RestClient;
 use crate::bitmart::rate_limit::EndpointType;
 use crate::bitmart::{OrderSide, RestResult};
 
+const CANCEL_BATCH_ORDER_ENDPOINT: &str = "/spot/v4/cancel_orders";
+
 /// Request parameters for canceling batch orders
 #[derive(Debug, Serialize)]
 pub struct CancelBatchOrderRequest {
@@ -109,7 +111,7 @@ impl RestClient {
         }
 
         self.send_request(
-            "/spot/v4/cancel_orders",
+            CANCEL_BATCH_ORDER_ENDPOINT,
             reqwest::Method::POST,
             Some(&request),
             EndpointType::SpotTrading,

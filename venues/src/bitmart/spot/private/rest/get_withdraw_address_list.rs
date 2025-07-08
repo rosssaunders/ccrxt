@@ -4,6 +4,8 @@ use super::client::RestClient;
 use crate::bitmart::RestResult;
 use crate::bitmart::rate_limit::EndpointType;
 
+const WITHDRAW_ADDRESS_LIST_ENDPOINT: &str = "/account/v1/withdraw/address/list";
+
 /// Request parameters for getting withdraw address list (no parameters required)
 #[derive(Debug, Serialize, Default)]
 pub struct GetWithdrawAddressListRequest {}
@@ -60,7 +62,7 @@ impl RestClient {
         request: GetWithdrawAddressListRequest,
     ) -> RestResult<GetWithdrawAddressListResponse> {
         self.send_request(
-            "/account/v1/withdraw/address/list",
+            WITHDRAW_ADDRESS_LIST_ENDPOINT,
             reqwest::Method::GET,
             Some(&request),
             EndpointType::FundingAccount,

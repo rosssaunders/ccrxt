@@ -1,8 +1,11 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
+
 use crate::bitmart::RestResult;
 use crate::bitmart::rate_limit::EndpointType;
+
+const ACTUAL_TRADE_FEE_RATE_ENDPOINT: &str = "/spot/v1/trade_fee";
 
 /// Request parameters for getting actual trade fee rate
 #[derive(Debug, Serialize, Default)]
@@ -45,7 +48,7 @@ impl RestClient {
         request: GetActualTradeFeeRateRequest,
     ) -> RestResult<GetActualTradeFeeRateResponse> {
         self.send_request(
-            "/spot/v1/trade_fee",
+            ACTUAL_TRADE_FEE_RATE_ENDPOINT,
             reqwest::Method::GET,
             Some(&request),
             EndpointType::FundingAccount,

@@ -5,8 +5,11 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
+
 use crate::bitmart::rate_limit::EndpointType;
 use crate::bitmart::{OrderSide, OrderType, RestResult, StpMode};
+
+const SUBMIT_ORDER_ENDPOINT: &str = "/spot/v2/submit_order";
 
 /// Request parameters for submitting a new order
 #[derive(Debug, Serialize)]
@@ -61,7 +64,7 @@ impl RestClient {
         request: SubmitOrderRequest,
     ) -> RestResult<SubmitOrderResponse> {
         self.send_request(
-            "/spot/v2/submit_order",
+            SUBMIT_ORDER_ENDPOINT,
             reqwest::Method::POST,
             Some(&request),
             EndpointType::SpotTrading,

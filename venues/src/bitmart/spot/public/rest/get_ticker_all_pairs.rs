@@ -4,6 +4,8 @@ use super::client::RestClient;
 use crate::bitmart::RestResult;
 use crate::bitmart::rate_limit::EndpointType;
 
+const TICKER_ALL_PAIRS_ENDPOINT: &str = "/spot/quotation/v3/tickers";
+
 /// Request parameters for getting ticker of all pairs
 #[derive(Debug, Serialize, Default)]
 pub struct GetTickerAllPairsRequest {
@@ -39,7 +41,7 @@ impl RestClient {
         _request: GetTickerAllPairsRequest,
     ) -> RestResult<GetTickerAllPairsResponse> {
         self.send_request(
-            "/spot/quotation/v3/tickers",
+            TICKER_ALL_PAIRS_ENDPOINT,
             reqwest::Method::GET,
             Option::<&()>::None, // No query parameters
             EndpointType::SpotPublicMarket,
