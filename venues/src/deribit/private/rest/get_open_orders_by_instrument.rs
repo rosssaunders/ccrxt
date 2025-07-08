@@ -10,6 +10,9 @@ use crate::deribit::enums::{
 };
 use crate::deribit::{EndpointType, RestResult};
 
+/// REST API endpoint constant
+const GET_OPEN_ORDERS_BY_INSTRUMENT_ENDPOINT: &str = "private/get_open_orders_by_instrument";
+
 /// Request for /private/get_open_orders_by_instrument
 #[derive(Debug, Clone, Serialize)]
 pub struct GetOpenOrdersByInstrumentRequest {
@@ -136,7 +139,7 @@ impl RestClient {
         request: GetOpenOrdersByInstrumentRequest,
     ) -> RestResult<GetOpenOrdersByInstrumentResponse> {
         self.send_signed_request(
-            "private/get_open_orders_by_instrument",
+            GET_OPEN_ORDERS_BY_INSTRUMENT_ENDPOINT,
             &request,
             EndpointType::MatchingEngine,
         )
@@ -147,6 +150,8 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use serde_json::json;
+
+/// REST API endpoint constant
 
     use super::*;
 

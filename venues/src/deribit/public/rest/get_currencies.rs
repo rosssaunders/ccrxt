@@ -9,6 +9,8 @@ use crate::deribit::{EndpointType, RestResult};
 use reqwest::Method;
 use serde::Deserialize;
 
+const CURRENCIES_ENDPOINT: &str = "public/get_currencies";
+
 /// Represents a withdrawal priority for a currency.
 #[derive(Debug, Clone, Deserialize)]
 pub struct WithdrawalPriority {
@@ -89,7 +91,7 @@ impl RestClient {
     /// [Official API docs](https://docs.deribit.com/#public-get_currencies)
     pub async fn get_currencies(&self) -> RestResult<GetCurrenciesResponse> {
         self.send_request(
-            "public/get_currencies",
+            CURRENCIES_ENDPOINT,
             Method::POST,
             None::<&()>,
             EndpointType::NonMatchingEngine,

@@ -5,6 +5,9 @@ use super::RestClient;
 pub use super::withdraw::WithdrawalData;
 use crate::deribit::{Currency, EndpointType, RestResult};
 
+/// REST API endpoint constant
+const GET_WITHDRAWALS_ENDPOINT: &str = "private/get_withdrawals";
+
 /// Request parameters for get withdrawals
 #[derive(Debug, Clone, Serialize)]
 pub struct GetWithdrawalsRequest {
@@ -61,7 +64,7 @@ impl RestClient {
         request: GetWithdrawalsRequest,
     ) -> RestResult<GetWithdrawalsResponse> {
         self.send_signed_request(
-            "private/get_withdrawals",
+            GET_WITHDRAWALS_ENDPOINT,
             &request,
             EndpointType::MatchingEngine,
         )
@@ -72,6 +75,8 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use rest::secrets::ExposableSecret;
+
+/// REST API endpoint constant
     use serde_json::{Value, json};
 
     use super::*;

@@ -5,6 +5,9 @@ use crate::deribit::{
     AdvancedType, CancelReason, EndpointType, OrderDirection, OrderState, RestResult, TriggerType,
 };
 
+/// REST API endpoint constant
+const CANCEL_ORDER_ENDPOINT: &str = "private/cancel";
+
 /// Request parameters for canceling an order
 #[derive(Debug, Clone, Serialize)]
 pub struct CancelOrderRequest {
@@ -243,7 +246,7 @@ impl RestClient {
         request: CancelOrderRequest,
     ) -> RestResult<CancelOrderResponse> {
         self.send_signed_request(
-            "private/cancel_order",
+            CANCEL_ORDER_ENDPOINT,
             &request,
             EndpointType::MatchingEngine,
         )

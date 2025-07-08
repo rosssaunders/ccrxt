@@ -3,6 +3,9 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::deribit::{CurrencyPair, EndpointType, InstrumentKind, OrderType, RestResult};
 
+/// REST API endpoint constant
+const CANCEL_ALL_BY_CURRENCY_PAIR_ENDPOINT: &str = "private/cancel_all_by_currency_pair";
+
 /// Request parameters for cancel all by currency pair endpoint
 #[derive(Debug, Clone, Serialize)]
 pub struct CancelAllByCurrencyPairRequest {
@@ -58,7 +61,7 @@ impl RestClient {
         request: CancelAllByCurrencyPairRequest,
     ) -> RestResult<CancelAllByCurrencyPairResponse> {
         self.send_signed_request(
-            "private/cancel_all_by_currency_pair",
+            CANCEL_ALL_BY_CURRENCY_PAIR_ENDPOINT,
             &request,
             EndpointType::MatchingEngine,
         )

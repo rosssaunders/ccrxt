@@ -3,6 +3,9 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::deribit::{EndpointType, RestResult};
 
+/// REST API endpoint constant
+const APPROVE_BLOCK_TRADE_ENDPOINT: &str = "private/approve_block_trade";
+
 /// Role enum for block trade approval
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
@@ -65,7 +68,7 @@ impl RestClient {
         request: ApproveBlockTradeRequest,
     ) -> RestResult<ApproveBlockTradeResponse> {
         self.send_signed_request(
-            "private/approve_block_trade",
+            APPROVE_BLOCK_TRADE_ENDPOINT,
             &request,
             EndpointType::MatchingEngine,
         )

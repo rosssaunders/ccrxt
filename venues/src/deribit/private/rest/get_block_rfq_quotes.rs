@@ -5,6 +5,9 @@ use super::RestClient;
 use super::add_block_rfq_quote::AddBlockRfqQuoteResult;
 use crate::deribit::{EndpointType, RestResult};
 
+/// REST API endpoint constant
+const GET_BLOCK_RFQ_QUOTES_ENDPOINT: &str = "private/get_block_rfq_quotes";
+
 /// Request parameters for get block RFQ quotes endpoint
 #[derive(Debug, Clone, Serialize)]
 pub struct GetBlockRfqQuotesRequest {
@@ -55,7 +58,7 @@ impl RestClient {
         request: GetBlockRfqQuotesRequest,
     ) -> RestResult<GetBlockRfqQuotesResponse> {
         self.send_signed_request(
-            "private/get_block_rfq_quotes",
+            GET_BLOCK_RFQ_QUOTES_ENDPOINT,
             &request,
             EndpointType::MatchingEngine,
         )
@@ -66,6 +69,8 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use serde_json::{Value, json};
+
+/// REST API endpoint constant
 
     use super::*;
 

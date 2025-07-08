@@ -4,9 +4,10 @@
 //! check the clock skew between your software and Deribit's systems.
 
 use serde::{Deserialize, Serialize};
-
-use super::client::RestClient;
+use super::RestClient;
 use crate::deribit::{EndpointType, RestResult};
+
+const TIME_ENDPOINT: &str = "public/get_time";
 
 /// Request parameters for the public/get_time endpoint.
 ///
@@ -42,7 +43,7 @@ impl RestClient {
     /// [Official API docs](https://docs.deribit.com/#public-get_time)
     pub async fn get_time(&self, params: GetTimeRequest) -> RestResult<GetTimeResponse> {
         self.send_request(
-            "public/get_time",
+            TIME_ENDPOINT,
             reqwest::Method::GET,
             Some(&params),
             EndpointType::NonMatchingEngine,

@@ -11,6 +11,8 @@ use crate::deribit::Errors as DeribitError;
 use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
+const TRADINGVIEW_CHART_DATA_ENDPOINT: &str = "public/get_tradingview_chart_data";
+
 use std::borrow::Cow;
 
 /// Request parameters for the get_tradingview_chart_data endpoint.
@@ -88,7 +90,7 @@ impl RestClient {
         params: &GetTradingviewChartDataRequest,
     ) -> Result<GetTradingviewChartDataResponse, DeribitError> {
         self.send_request(
-            "public/get_tradingview_chart_data",
+            TRADINGVIEW_CHART_DATA_ENDPOINT,
             Method::GET,
             Some(params),
             EndpointType::NonMatchingEngine,

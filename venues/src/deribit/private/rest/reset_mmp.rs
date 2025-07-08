@@ -3,6 +3,9 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::deribit::{EndpointType, RestResult};
 
+/// REST API endpoint constant
+const RESET_MMP_ENDPOINT: &str = "private/reset_mmp";
+
 /// Index names supported by Deribit for MMP operations
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub enum IndexName {
@@ -103,7 +106,7 @@ impl RestClient {
     /// # Returns
     /// Result containing "ok" string on success
     pub async fn reset_mmp(&self, params: ResetMmpRequest) -> RestResult<ResetMmpResponse> {
-        self.send_signed_request("private/reset_mmp", &params, EndpointType::MatchingEngine)
+        self.send_signed_request(RESET_MMP_ENDPOINT, &params, EndpointType::MatchingEngine)
             .await
     }
 }

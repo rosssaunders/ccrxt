@@ -10,6 +10,8 @@ use crate::deribit::enums::{Currency, InstrumentKind};
 use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
+const BOOK_SUMMARY_BY_CURRENCY_ENDPOINT: &str = "get_book_summary_by_currency";
+
 /// Request parameters for the get_book_summary_by_currency endpoint.
 #[derive(Debug, Clone, Serialize)]
 pub struct GetBookSummaryByCurrencyRequest {
@@ -145,7 +147,7 @@ impl RestClient {
         params: GetBookSummaryByCurrencyRequest,
     ) -> RestResult<GetBookSummaryByCurrencyResponse> {
         self.send_request(
-            "get_book_summary_by_currency",
+            BOOK_SUMMARY_BY_CURRENCY_ENDPOINT,
             Method::POST,
             Some(&params),
             EndpointType::NonMatchingEngine,

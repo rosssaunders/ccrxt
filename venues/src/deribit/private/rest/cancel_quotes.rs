@@ -3,6 +3,9 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::deribit::{Currency, CurrencyPair, EndpointType, InstrumentKind, RestResult};
 
+/// REST API endpoint constant
+const CANCEL_QUOTES_ENDPOINT: &str = "private/cancel_quotes";
+
 /// Cancel type for cancel quotes endpoint
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
@@ -104,7 +107,7 @@ impl RestClient {
         request: CancelQuotesRequest,
     ) -> RestResult<CancelQuotesResponse> {
         self.send_signed_request(
-            "private/cancel_quotes",
+            CANCEL_QUOTES_ENDPOINT,
             &request,
             EndpointType::MatchingEngine,
         )
@@ -115,6 +118,8 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use rest::secrets::ExposableSecret;
+
+/// REST API endpoint constant
     use serde_json::{Value, json};
 
     use super::*;

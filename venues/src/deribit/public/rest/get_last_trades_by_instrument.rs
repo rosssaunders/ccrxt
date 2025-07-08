@@ -9,6 +9,8 @@ use crate::deribit::{EndpointType, RestResult};
 use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
+const LAST_TRADES_BY_INSTRUMENT_ENDPOINT: &str = "public/get_last_trades_by_instrument";
+
 /// Request parameters for the get_last_trades_by_instrument endpoint.
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct GetLastTradesByInstrumentRequest {
@@ -96,7 +98,7 @@ impl RestClient {
         params: GetLastTradesByInstrumentRequest,
     ) -> RestResult<GetLastTradesByInstrumentResponse> {
         self.send_request(
-            "public/get_last_trades_by_instrument",
+            LAST_TRADES_BY_INSTRUMENT_ENDPOINT,
             Method::POST,
             Some(&params),
             EndpointType::NonMatchingEngine,

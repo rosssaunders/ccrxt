@@ -3,6 +3,9 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::deribit::{EndpointType, RestResult};
 
+/// REST API endpoint constant
+const EXECUTE_BLOCK_TRADE_ENDPOINT: &str = "private/execute_block_trade";
+
 /// Role enum for execute block trade requests
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
@@ -202,7 +205,7 @@ impl RestClient {
         request: ExecuteBlockTradeRequest,
     ) -> RestResult<ExecuteBlockTradeResponse> {
         self.send_signed_request(
-            "private/execute_block_trade",
+            EXECUTE_BLOCK_TRADE_ENDPOINT,
             &request,
             EndpointType::MatchingEngine,
         )
@@ -213,6 +216,8 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use rest::secrets::ExposableSecret;
+
+/// REST API endpoint constant
     use serde_json::{Value, json};
 
     use super::*;

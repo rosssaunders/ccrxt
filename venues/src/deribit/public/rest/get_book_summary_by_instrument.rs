@@ -10,6 +10,8 @@ use crate::deribit::enums::Currency;
 use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
+const BOOK_SUMMARY_BY_INSTRUMENT_ENDPOINT: &str = "get_book_summary_by_instrument";
+
 /// Request parameters for the get_book_summary_by_instrument endpoint.
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct GetBookSummaryByInstrumentRequest {
@@ -141,7 +143,7 @@ impl RestClient {
         params: GetBookSummaryByInstrumentRequest,
     ) -> RestResult<GetBookSummaryByInstrumentResponse> {
         self.send_request(
-            "get_book_summary_by_instrument",
+            BOOK_SUMMARY_BY_INSTRUMENT_ENDPOINT,
             Method::POST,
             Some(&params),
             EndpointType::NonMatchingEngine,

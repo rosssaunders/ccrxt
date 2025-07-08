@@ -5,6 +5,9 @@ use super::RestClient;
 pub use super::send_rfq::Side;
 use crate::deribit::{EndpointType, RestResult};
 
+/// REST API endpoint constant
+const ADD_BLOCK_RFQ_QUOTE_ENDPOINT: &str = "private/add_block_rfq_quote";
+
 /// Execution instruction for Block RFQ quotes
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
@@ -178,7 +181,7 @@ impl RestClient {
         request: AddBlockRfqQuoteRequest,
     ) -> RestResult<AddBlockRfqQuoteResponse> {
         self.send_signed_request(
-            "private/add_block_rfq_quote",
+            ADD_BLOCK_RFQ_QUOTE_ENDPOINT,
             &request,
             EndpointType::MatchingEngine,
         )

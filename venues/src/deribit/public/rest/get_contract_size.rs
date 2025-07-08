@@ -8,6 +8,8 @@ use crate::deribit::{EndpointType, RestResult};
 use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
+const CONTRACT_SIZE_ENDPOINT: &str = "public/get_contract_size";
+
 /// Request parameters for the get_contract_size endpoint.
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct GetContractSizeRequest {
@@ -51,7 +53,7 @@ impl RestClient {
         params: GetContractSizeRequest,
     ) -> RestResult<GetContractSizeResponse> {
         self.send_request(
-            "public/get_contract_size",
+            CONTRACT_SIZE_ENDPOINT,
             Method::POST,
             Some(&params),
             EndpointType::NonMatchingEngine,

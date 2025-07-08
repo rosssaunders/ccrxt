@@ -3,6 +3,9 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::deribit::{Currency, EndpointType, InstrumentKind, OrderType, RestResult};
 
+/// REST API endpoint constant
+const CANCEL_ALL_BY_KIND_OR_TYPE_ENDPOINT: &str = "private/cancel_all_by_kind_or_type";
+
 /// Currency selection for cancel all by kind or type endpoint
 /// Can be a single currency, array of currencies, or "any" for all currencies
 #[derive(Debug, Clone, Serialize)]
@@ -111,7 +114,7 @@ impl RestClient {
         request: CancelAllByKindOrTypeRequest,
     ) -> RestResult<CancelAllByKindOrTypeResponse> {
         self.send_signed_request(
-            "private/cancel_all_by_kind_or_type",
+            CANCEL_ALL_BY_KIND_OR_TYPE_ENDPOINT,
             &request,
             EndpointType::MatchingEngine,
         )

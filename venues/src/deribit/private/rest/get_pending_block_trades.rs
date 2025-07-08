@@ -4,6 +4,9 @@ use super::RestClient;
 use crate::deribit::enums::OrderDirection;
 use crate::deribit::{EndpointType, RestResult};
 
+/// REST API endpoint constant
+const GET_PENDING_BLOCK_TRADES_ENDPOINT: &str = "private/get_pending_block_trades";
+
 /// Request parameters for the get_pending_block_trades endpoint.
 ///
 /// This endpoint does not take any parameters.
@@ -114,7 +117,7 @@ impl RestClient {
         request: GetPendingBlockTradesRequest,
     ) -> RestResult<GetPendingBlockTradesResponse> {
         self.send_signed_request(
-            "private/get_pending_block_trades",
+            GET_PENDING_BLOCK_TRADES_ENDPOINT,
             &request,
             EndpointType::MatchingEngine,
         )
@@ -125,6 +128,8 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use serde_json::json;
+
+/// REST API endpoint constant
 
     use super::*;
 

@@ -2,11 +2,13 @@
 //!
 //! Retrieves information about a combo
 
-use super::client::RestClient;
+use super::RestClient;
 use super::get_combos::ComboInfo;
 use crate::deribit::{EndpointType, RestResult};
 
 use serde::{Deserialize, Serialize};
+
+const COMBO_DETAILS_ENDPOINT: &str = "public/get_combo_details";
 
 /// Request parameters for the public/get_combo_details endpoint.
 ///
@@ -47,7 +49,7 @@ impl RestClient {
         params: GetComboDetailsRequest,
     ) -> RestResult<GetComboDetailsResponse> {
         self.send_request(
-            "public/get_combo_details",
+            COMBO_DETAILS_ENDPOINT,
             reqwest::Method::GET,
             Some(&params),
             EndpointType::NonMatchingEngine,

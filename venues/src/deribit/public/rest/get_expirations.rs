@@ -9,6 +9,8 @@ use crate::deribit::{EndpointType, RestResult};
 use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
+const EXPIRATIONS_ENDPOINT: &str = "get_expirations";
+
 /// Instrument kind for get_expirations endpoint.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
@@ -68,7 +70,7 @@ impl RestClient {
         params: GetExpirationsRequest,
     ) -> RestResult<GetExpirationsResponse> {
         self.send_request(
-            "get_expirations",
+            EXPIRATIONS_ENDPOINT,
             Method::POST,
             Some(&params),
             EndpointType::NonMatchingEngine,

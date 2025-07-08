@@ -3,6 +3,9 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::deribit::{EndpointType, RestResult};
 
+/// REST API endpoint constant
+const INVALIDATE_BLOCK_TRADE_SIGNATURE_ENDPOINT: &str = "private/invalidate_block_trade_signature";
+
 /// Request parameters for invalidate block trade signature
 #[derive(Debug, Clone, Serialize)]
 pub struct InvalidateBlockTradeSignatureRequest {
@@ -42,7 +45,7 @@ impl RestClient {
         request: InvalidateBlockTradeSignatureRequest,
     ) -> RestResult<InvalidateBlockTradeSignatureResponse> {
         self.send_signed_request(
-            "private/invalidate_block_trade_signature",
+            INVALIDATE_BLOCK_TRADE_SIGNATURE_ENDPOINT,
             &request,
             EndpointType::MatchingEngine,
         )
@@ -53,6 +56,8 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use rest::secrets::ExposableSecret;
+
+/// REST API endpoint constant
     use serde_json::{Value, json};
 
     use super::*;

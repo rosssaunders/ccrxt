@@ -8,6 +8,8 @@ use crate::deribit::{EndpointType, RestResult};
 use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
+const INDEX_PRICE_NAMES_ENDPOINT: &str = "public/get_index_price_names";
+
 /// Request parameters for the get_index_price_names endpoint.
 /// This endpoint does not require any parameters.
 #[derive(Debug, Clone, Serialize, Default)]
@@ -49,7 +51,7 @@ impl RestClient {
         params: GetIndexPriceNamesRequest,
     ) -> RestResult<GetIndexPriceNamesResponse> {
         self.send_request(
-            "public/get_index_price_names",
+            INDEX_PRICE_NAMES_ENDPOINT,
             Method::POST,
             Some(&params),
             EndpointType::NonMatchingEngine,

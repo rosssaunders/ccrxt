@@ -9,6 +9,8 @@ use crate::deribit::{EndpointType, RestResult};
 use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
+const INSTRUMENT_ENDPOINT: &str = "public/get_instrument";
+
 /// Request parameters for the get_instrument endpoint.
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct GetInstrumentRequest {
@@ -107,7 +109,7 @@ impl RestClient {
         params: GetInstrumentRequest,
     ) -> RestResult<GetInstrumentResponse> {
         self.send_request(
-            "public/get_instrument",
+            INSTRUMENT_ENDPOINT,
             Method::POST,
             Some(&params),
             EndpointType::NonMatchingEngine,

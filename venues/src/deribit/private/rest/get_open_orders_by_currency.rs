@@ -6,6 +6,9 @@ use crate::deribit::{
     RestResult, TriggerType,
 };
 
+/// REST API endpoint constant
+const GET_OPEN_ORDERS_BY_CURRENCY_ENDPOINT: &str = "private/get_open_orders_by_currency";
+
 /// Order type filter for get_open_orders_by_currency endpoint
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum OpenOrderType {
@@ -247,7 +250,7 @@ impl RestClient {
         request: GetOpenOrdersByCurrencyRequest,
     ) -> RestResult<GetOpenOrdersByCurrencyResponse> {
         self.send_signed_request(
-            "private/get_open_orders_by_currency",
+            GET_OPEN_ORDERS_BY_CURRENCY_ENDPOINT,
             &request,
             EndpointType::MatchingEngine,
         )
@@ -258,6 +261,8 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use rest::secrets::ExposableSecret;
+
+    /// REST API endpoint constant
     use serde_json::{Value, json};
 
     use super::*;

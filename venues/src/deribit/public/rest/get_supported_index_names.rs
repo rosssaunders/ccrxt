@@ -8,6 +8,8 @@ use crate::deribit::{EndpointType, RestResult};
 use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
+const SUPPORTED_INDEX_NAMES_ENDPOINT: &str = "get_supported_index_names";
+
 /// Request parameters for the get_supported_index_names endpoint.
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct GetSupportedIndexNamesRequest {}
@@ -47,7 +49,7 @@ impl RestClient {
         params: GetSupportedIndexNamesRequest,
     ) -> RestResult<GetSupportedIndexNamesResponse> {
         self.send_request(
-            "get_supported_index_names",
+            SUPPORTED_INDEX_NAMES_ENDPOINT,
             Method::POST,
             Some(&params),
             EndpointType::NonMatchingEngine,

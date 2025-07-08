@@ -10,6 +10,8 @@ use crate::deribit::enums::ComboState;
 use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
+const RFQS_ENDPOINT: &str = "public/get_rfqs";
+
 /// Request parameters for the get_rfqs endpoint.
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct GetRfqsRequest {
@@ -70,7 +72,7 @@ impl RestClient {
     /// [Official API docs](https://docs.deribit.com/#public-get_rfqs)
     pub async fn get_rfqs(&self, params: GetRfqsRequest) -> RestResult<GetRfqsResponse> {
         self.send_request(
-            "public/get_rfqs",
+            RFQS_ENDPOINT,
             Method::POST,
             Some(&params),
             EndpointType::NonMatchingEngine,

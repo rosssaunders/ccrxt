@@ -9,6 +9,8 @@ use crate::deribit::{EndpointType, RestResult};
 use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
+const APR_HISTORY_ENDPOINT: &str = "public/get_apr_history";
+
 /// Request parameters for the get_apr_history endpoint.
 #[derive(Debug, Clone, Serialize)]
 pub struct GetAprHistoryRequest {
@@ -76,7 +78,7 @@ impl RestClient {
         params: GetAprHistoryRequest,
     ) -> RestResult<GetAprHistoryResponse> {
         self.send_request(
-            "public/get_apr_history",
+            APR_HISTORY_ENDPOINT,
             Method::POST,
             Some(&params),
             EndpointType::NonMatchingEngine,

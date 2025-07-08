@@ -5,6 +5,9 @@ use super::RestClient;
 use super::create_block_rfq::CreateBlockRfqResult;
 use crate::deribit::{EndpointType, RestResult};
 
+/// REST API endpoint constant
+const CANCEL_BLOCK_RFQ_ENDPOINT: &str = "private/cancel_block_rfq";
+
 /// Request parameters for cancel block RFQ endpoint
 #[derive(Debug, Clone, Serialize)]
 pub struct CancelBlockRfqRequest {
@@ -46,7 +49,7 @@ impl RestClient {
         request: CancelBlockRfqRequest,
     ) -> RestResult<CancelBlockRfqResponse> {
         self.send_signed_request(
-            "private/cancel_block_rfq",
+            CANCEL_BLOCK_RFQ_ENDPOINT,
             &request,
             EndpointType::MatchingEngine,
         )

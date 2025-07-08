@@ -3,6 +3,9 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::deribit::{ClearanceState, Currency, DepositState, EndpointType, RestResult};
 
+/// REST API endpoint constant
+const GET_DEPOSITS_ENDPOINT: &str = "private/get_deposits";
+
 /// Deposit entry
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct DepositData {
@@ -86,7 +89,7 @@ impl RestClient {
         request: GetDepositsRequest,
     ) -> RestResult<GetDepositsResponse> {
         self.send_signed_request(
-            "private/get_deposits",
+            GET_DEPOSITS_ENDPOINT,
             &request,
             EndpointType::MatchingEngine,
         )
@@ -97,6 +100,8 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use rest::secrets::ExposableSecret;
+
+/// REST API endpoint constant
     use serde_json::{Value, json};
 
     use super::*;

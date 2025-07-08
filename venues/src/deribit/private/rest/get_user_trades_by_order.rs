@@ -5,6 +5,9 @@ use super::RestClient;
 pub use super::get_user_trades_by_currency::Trade;
 use crate::deribit::{EndpointType, RestResult, Sorting};
 
+/// REST API endpoint constant
+const GET_USER_TRADES_BY_ORDER_ENDPOINT: &str = "private/get_user_trades_by_order";
+
 /// Request parameters for getting user trades by order
 #[derive(Debug, Clone, Serialize)]
 pub struct GetUserTradesByOrderRequest {
@@ -60,7 +63,7 @@ impl RestClient {
         request: GetUserTradesByOrderRequest,
     ) -> RestResult<GetUserTradesByOrderResponse> {
         self.send_signed_request(
-            "private/get_user_trades_by_order",
+            GET_USER_TRADES_BY_ORDER_ENDPOINT,
             &request,
             EndpointType::MatchingEngine,
         )
@@ -71,6 +74,8 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use rest::secrets::ExposableSecret;
+
+/// REST API endpoint constant
     use serde_json::{Value, json};
 
     use super::*;

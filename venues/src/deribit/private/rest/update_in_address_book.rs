@@ -3,6 +3,9 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::deribit::{AddressBookType, Currency, EndpointType, RestResult};
 
+/// REST API endpoint constant
+const UPDATE_IN_ADDRESS_BOOK_ENDPOINT: &str = "private/update_in_address_book";
+
 /// Request parameters for update in address book
 #[derive(Debug, Clone, Serialize)]
 pub struct UpdateInAddressBookRequest {
@@ -68,7 +71,7 @@ impl RestClient {
         params: UpdateInAddressBookRequest,
     ) -> RestResult<UpdateInAddressBookResponse> {
         self.send_signed_request(
-            "private/update_in_address_book",
+            UPDATE_IN_ADDRESS_BOOK_ENDPOINT,
             &params,
             EndpointType::NonMatchingEngine,
         )
@@ -79,6 +82,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use rest::secrets::ExposableSecret;
+
     use serde_json::{Value, json};
 
     use super::*;

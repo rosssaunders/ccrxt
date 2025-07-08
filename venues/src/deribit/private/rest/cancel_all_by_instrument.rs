@@ -3,6 +3,9 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::deribit::{EndpointType, OrderType, RestResult};
 
+/// REST API endpoint constant
+const CANCEL_ALL_BY_INSTRUMENT_ENDPOINT: &str = "private/cancel_all_by_instrument";
+
 /// Request parameters for cancel all by instrument endpoint
 #[derive(Debug, Clone, Serialize)]
 pub struct CancelAllByInstrumentRequest {
@@ -58,7 +61,7 @@ impl RestClient {
         request: CancelAllByInstrumentRequest,
     ) -> RestResult<CancelAllByInstrumentResponse> {
         self.send_signed_request(
-            "private/cancel_all_by_instrument",
+            CANCEL_ALL_BY_INSTRUMENT_ENDPOINT,
             &request,
             EndpointType::MatchingEngine,
         )

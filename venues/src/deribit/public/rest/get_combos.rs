@@ -2,10 +2,12 @@
 //!
 //! Retrieves information about active combos
 
+use super::RestClient;
+use crate::deribit::enums::Currency;
+use crate::deribit::{EndpointType, RestResult};
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::deribit::{Currency, EndpointType, RestResult};
+const COMBOS_ENDPOINT: &str = "public/get_combos";
 
 /// Request parameters for the public/get_combos endpoint.
 ///
@@ -76,7 +78,7 @@ impl RestClient {
     /// [Official API docs](https://docs.deribit.com/#public-get_combos)
     pub async fn get_combos(&self, params: GetCombosRequest) -> RestResult<GetCombosResponse> {
         self.send_request(
-            "public/get_combos",
+            COMBOS_ENDPOINT,
             reqwest::Method::GET,
             Some(&params),
             EndpointType::PublicGetCombos,

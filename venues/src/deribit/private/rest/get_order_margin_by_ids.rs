@@ -7,6 +7,9 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::deribit::{EndpointType, RestResult};
 
+/// REST API endpoint constant
+const GET_ORDER_MARGIN_BY_IDS_ENDPOINT: &str = "private/get_order_margin_by_ids";
+
 /// Request for /private/get_order_margin_by_ids
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GetOrderMarginByIdsRequest {
@@ -34,7 +37,7 @@ impl RestClient {
         request: GetOrderMarginByIdsRequest,
     ) -> RestResult<GetOrderMarginByIdsResponse> {
         self.send_signed_request(
-            "private/get_order_margin_by_ids",
+            GET_ORDER_MARGIN_BY_IDS_ENDPOINT,
             &request,
             EndpointType::MatchingEngine,
         )
@@ -46,6 +49,8 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use serde_json;
+
+/// REST API endpoint constant
 
     use super::*;
 

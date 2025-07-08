@@ -3,6 +3,9 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::deribit::{EndpointType, RestResult};
 
+/// REST API endpoint constant
+const SET_CLEARANCE_ORIGINATOR_ENDPOINT: &str = "private/set_clearance_originator";
+
 /// Deposit ID parameters for set clearance originator request
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct DepositId {
@@ -93,7 +96,7 @@ impl RestClient {
         params: SetClearanceOriginatorRequest,
     ) -> RestResult<SetClearanceOriginatorResponse> {
         self.send_signed_request(
-            "private/set_clearance_originator",
+            SET_CLEARANCE_ORIGINATOR_ENDPOINT,
             &params,
             EndpointType::NonMatchingEngine,
         )
@@ -104,6 +107,8 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use rest::secrets::ExposableSecret;
+
+/// REST API endpoint constant
     use serde_json::{Value, json};
 
     use super::*;

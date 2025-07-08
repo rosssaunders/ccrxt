@@ -9,6 +9,8 @@ use crate::deribit::{EndpointType, RestResult};
 use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
+const DELIVERY_PRICES_ENDPOINT: &str = "public/get_delivery_prices";
+
 /// Request parameters for the get_delivery_prices endpoint.
 #[derive(Debug, Clone, Serialize)]
 pub struct GetDeliveryPricesRequest {
@@ -76,7 +78,7 @@ impl RestClient {
         params: GetDeliveryPricesRequest,
     ) -> RestResult<GetDeliveryPricesResponse> {
         self.send_request(
-            "public/get_delivery_prices",
+            DELIVERY_PRICES_ENDPOINT,
             Method::POST,
             Some(&params),
             EndpointType::NonMatchingEngine,

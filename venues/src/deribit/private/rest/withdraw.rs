@@ -3,6 +3,9 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::deribit::{Currency, EndpointType, RestResult, WithdrawalPriority, WithdrawalState};
 
+/// REST API endpoint constant
+const WITHDRAW_ENDPOINT: &str = "private/withdraw";
+
 /// Request parameters for withdrawal
 #[derive(Debug, Clone, Serialize)]
 pub struct WithdrawRequest {
@@ -69,7 +72,7 @@ impl RestClient {
     /// # Returns
     /// Response for withdrawal endpoint
     pub async fn withdraw(&self, params: WithdrawRequest) -> RestResult<WithdrawResponse> {
-        self.send_signed_request("private/withdraw", &params, EndpointType::NonMatchingEngine)
+        self.send_signed_request(WITHDRAW_ENDPOINT, &params, EndpointType::NonMatchingEngine)
             .await
     }
 }

@@ -8,6 +8,8 @@ use crate::deribit::{EndpointType, RestResult};
 use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
+const FUNDING_RATE_VALUE_ENDPOINT: &str = "public/get_funding_rate_value";
+
 /// Request parameters for the get_funding_rate_value endpoint.
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct GetFundingRateValueRequest {
@@ -55,7 +57,7 @@ impl RestClient {
         params: GetFundingRateValueRequest,
     ) -> RestResult<GetFundingRateValueResponse> {
         self.send_request(
-            "public/get_funding_rate_value",
+            FUNDING_RATE_VALUE_ENDPOINT,
             Method::POST,
             Some(&params),
             EndpointType::NonMatchingEngine,

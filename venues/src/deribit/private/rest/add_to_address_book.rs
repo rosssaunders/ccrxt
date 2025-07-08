@@ -3,6 +3,9 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::deribit::{AddressBookType, AddressStatus, Currency, EndpointType, RestResult};
 
+/// REST API endpoint constant
+const ADD_TO_ADDRESS_BOOK_ENDPOINT: &str = "private/add_to_address_book";
+
 /// Request parameters for adding to address book
 #[derive(Debug, Clone, Serialize)]
 pub struct AddToAddressBookRequest {
@@ -135,7 +138,7 @@ impl RestClient {
         request: AddToAddressBookRequest,
     ) -> RestResult<AddToAddressBookResponse> {
         self.send_signed_request(
-            "private/add_to_address_book",
+            ADD_TO_ADDRESS_BOOK_ENDPOINT,
             &request,
             EndpointType::MatchingEngine,
         )

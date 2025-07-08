@@ -4,6 +4,9 @@ use super::RestClient;
 pub use super::get_current_deposit_address::DepositAddress;
 use crate::deribit::{Currency, EndpointType, RestResult};
 
+/// REST API endpoint constant
+const CREATE_DEPOSIT_ADDRESS_ENDPOINT: &str = "private/create_deposit_address";
+
 /// Request parameters for create deposit address
 #[derive(Debug, Clone, Serialize)]
 pub struct CreateDepositAddressRequest {
@@ -43,7 +46,7 @@ impl RestClient {
         request: CreateDepositAddressRequest,
     ) -> RestResult<CreateDepositAddressResponse> {
         self.send_signed_request(
-            "private/create_deposit_address",
+            CREATE_DEPOSIT_ADDRESS_ENDPOINT,
             &request,
             EndpointType::MatchingEngine,
         )
@@ -54,6 +57,8 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use rest::secrets::ExposableSecret;
+
+/// REST API endpoint constant
     use serde_json::{Value, json};
 
     use super::*;

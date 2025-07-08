@@ -2,10 +2,12 @@
 //!
 //! Method used to get information about locked currencies
 
-use super::client::RestClient;
+use super::RestClient;
 use crate::deribit::{EndpointType, RestResult};
 
 use serde::{Deserialize, Serialize};
+
+const STATUS_ENDPOINT: &str = "public/get_status";
 
 /// Request parameters for the public/status endpoint.
 ///
@@ -53,7 +55,7 @@ impl RestClient {
     /// [Official API docs](https://docs.deribit.com/#public-status)
     pub async fn get_status(&self, params: GetStatusRequest) -> RestResult<GetStatusResponse> {
         self.send_request(
-            "public/get_status",
+            STATUS_ENDPOINT,
             reqwest::Method::GET,
             Some(&params),
             EndpointType::NonMatchingEngine,

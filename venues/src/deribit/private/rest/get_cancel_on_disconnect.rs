@@ -4,6 +4,9 @@ use super::RestClient;
 pub use super::enable_cancel_on_disconnect::CancelOnDisconnectScope;
 use crate::deribit::{EndpointType, RestResult};
 
+/// REST API endpoint constant
+const GET_CANCEL_ON_DISCONNECT_ENDPOINT: &str = "private/get_cancel_on_disconnect";
+
 /// Request parameters for get cancel on disconnect
 #[derive(Debug, Clone, Serialize)]
 pub struct GetCancelOnDisconnectRequest {
@@ -53,7 +56,7 @@ impl RestClient {
         request: GetCancelOnDisconnectRequest,
     ) -> RestResult<GetCancelOnDisconnectResponse> {
         self.send_signed_request(
-            "private/get_cancel_on_disconnect",
+            GET_CANCEL_ON_DISCONNECT_ENDPOINT,
             &request,
             EndpointType::MatchingEngine,
         )
@@ -64,6 +67,8 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use rest::secrets::ExposableSecret;
+
+/// REST API endpoint constant
     use serde_json::{Value, json};
 
     use super::*;

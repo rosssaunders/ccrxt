@@ -4,6 +4,9 @@ use super::RestClient;
 use super::submit_transfer_to_user::TransferData;
 use crate::deribit::{Currency, EndpointType, RestResult};
 
+/// REST API endpoint constant
+const GET_TRANSFERS_ENDPOINT: &str = "private/get_transfers";
+
 /// Request parameters for get transfers
 #[derive(Debug, Clone, Serialize)]
 pub struct GetTransfersRequest {
@@ -60,7 +63,7 @@ impl RestClient {
         request: GetTransfersRequest,
     ) -> RestResult<GetTransfersResponse> {
         self.send_signed_request(
-            "private/get_transfers",
+            GET_TRANSFERS_ENDPOINT,
             &request,
             EndpointType::MatchingEngine,
         )
@@ -71,6 +74,8 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use rest::secrets::ExposableSecret;
+
+/// REST API endpoint constant
     use serde_json::{Value, json};
 
     use super::*;

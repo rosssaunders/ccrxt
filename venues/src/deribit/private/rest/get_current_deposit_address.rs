@@ -3,6 +3,9 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::deribit::{Currency, EndpointType, RestResult};
 
+/// REST API endpoint constant
+const GET_CURRENT_DEPOSIT_ADDRESS_ENDPOINT: &str = "private/get_current_deposit_address";
+
 /// Request parameters for get current deposit address
 #[derive(Debug, Clone, Serialize)]
 pub struct GetCurrentDepositAddressRequest {
@@ -56,7 +59,7 @@ impl RestClient {
         request: GetCurrentDepositAddressRequest,
     ) -> RestResult<GetCurrentDepositAddressResponse> {
         self.send_signed_request(
-            "private/get_current_deposit_address",
+            GET_CURRENT_DEPOSIT_ADDRESS_ENDPOINT,
             &request,
             EndpointType::MatchingEngine,
         )
@@ -67,6 +70,8 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use rest::secrets::ExposableSecret;
+
+/// REST API endpoint constant
     use serde_json::{Value, json};
 
     use super::*;

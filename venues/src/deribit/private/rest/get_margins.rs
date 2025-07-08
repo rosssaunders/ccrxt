@@ -9,6 +9,9 @@ use serde::{Deserialize, Serialize};
 
 use crate::deribit::{EndpointType, RestResult};
 
+/// REST API endpoint constant
+const GET_MARGINS_ENDPOINT: &str = "private/get_margins";
+
 /// Request parameters for the `/private/get_margins` endpoint.
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct GetMarginsRequest {
@@ -68,7 +71,7 @@ impl super::client::RestClient {
     /// [Official Deribit Docs](https://docs.deribit.com/v2/#private-get_margins)
     pub async fn get_margins(&self, request: GetMarginsRequest) -> RestResult<GetMarginsResponse> {
         self.send_signed_request(
-            "private/get_margins",
+            GET_MARGINS_ENDPOINT,
             &request,
             EndpointType::MatchingEngine,
         )
@@ -79,6 +82,8 @@ impl super::client::RestClient {
 #[cfg(test)]
 mod tests {
     use serde_json;
+
+/// REST API endpoint constant
 
     use super::*;
 

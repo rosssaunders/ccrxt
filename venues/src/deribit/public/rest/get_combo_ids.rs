@@ -8,6 +8,8 @@ use crate::deribit::{ComboState, Currency, EndpointType, RestResult};
 
 use serde::{Deserialize, Serialize};
 
+const COMBO_IDS_ENDPOINT: &str = "public/get_combo_ids";
+
 /// Request parameters for the public/get_combo_ids endpoint.
 ///
 /// Retrieves available combos. This method can be used to get the list of all
@@ -53,7 +55,7 @@ impl RestClient {
         params: GetComboIdsRequest,
     ) -> RestResult<GetComboIdsResponse> {
         self.send_request(
-            "public/get_combo_ids",
+            COMBO_IDS_ENDPOINT,
             reqwest::Method::GET,
             Some(&params),
             EndpointType::NonMatchingEngine,

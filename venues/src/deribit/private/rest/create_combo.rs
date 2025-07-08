@@ -7,6 +7,9 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::deribit::{EndpointType, RestResult};
 
+/// REST API endpoint constant
+const CREATE_COMBO_ENDPOINT: &str = "private/create_combo";
+
 /// A trade used to create a combo
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CreateComboTrade {
@@ -98,7 +101,7 @@ impl RestClient {
         request: CreateComboRequest,
     ) -> RestResult<CreateComboResponse> {
         self.send_signed_request(
-            "private/create_combo",
+            CREATE_COMBO_ENDPOINT,
             &request,
             EndpointType::MatchingEngine,
         )
@@ -109,6 +112,8 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use rest::secrets::ExposableSecret;
+
+/// REST API endpoint constant
     use serde_json::{Value, json};
 
     use super::*;

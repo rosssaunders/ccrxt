@@ -5,6 +5,9 @@ use super::RestClient;
 pub use super::add_block_rfq_quote::{BlockRfqHedge, Side};
 use crate::deribit::{EndpointType, RestResult};
 
+/// REST API endpoint constant
+const CREATE_BLOCK_RFQ_ENDPOINT: &str = "private/create_block_rfq";
+
 /// A leg in the Block RFQ for creation
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CreateBlockRfqLeg {
@@ -157,7 +160,7 @@ impl RestClient {
         request: CreateBlockRfqRequest,
     ) -> RestResult<CreateBlockRfqResponse> {
         self.send_signed_request(
-            "private/create_block_rfq",
+            CREATE_BLOCK_RFQ_ENDPOINT,
             &request,
             EndpointType::MatchingEngine,
         )
@@ -168,6 +171,8 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use rest::secrets::ExposableSecret;
+
+/// REST API endpoint constant
     use serde_json::{Value, json};
 
     use super::*;

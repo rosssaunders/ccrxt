@@ -9,6 +9,8 @@ use crate::deribit::{EndpointType, RestResult};
 use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
+const LAST_SETTLEMENTS_BY_CURRENCY_ENDPOINT: &str = "public/get_last_settlements_by_currency";
+
 /// Request parameters for the get_last_settlements_by_currency endpoint.
 #[derive(Debug, Clone, Serialize)]
 pub struct GetLastSettlementsByCurrencyRequest {
@@ -76,7 +78,7 @@ impl RestClient {
         params: GetLastSettlementsByCurrencyRequest,
     ) -> RestResult<GetLastSettlementsByCurrencyResponse> {
         self.send_request(
-            "public/get_last_settlements_by_currency",
+            LAST_SETTLEMENTS_BY_CURRENCY_ENDPOINT,
             Method::POST,
             Some(&params),
             EndpointType::NonMatchingEngine,

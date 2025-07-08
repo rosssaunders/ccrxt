@@ -3,6 +3,9 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::deribit::{EndpointType, RestResult};
 
+/// REST API endpoint constant
+const MOVE_POSITIONS_ENDPOINT: &str = "private/move_positions";
+
 /// Trade data for position move
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct MovePositionTrade {
@@ -85,7 +88,7 @@ impl RestClient {
         params: MovePositionsRequest,
     ) -> RestResult<MovePositionsResponse> {
         self.send_signed_request(
-            "private/move_positions",
+            MOVE_POSITIONS_ENDPOINT,
             &params,
             EndpointType::NonMatchingEngine,
         )
@@ -96,6 +99,8 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+/// REST API endpoint constant
 
     #[test]
     fn test_serialize_move_positions_request() {

@@ -4,6 +4,9 @@ use super::RestClient;
 pub use super::add_to_address_book::AddressBookEntry;
 use crate::deribit::{AddressBookType, Currency, EndpointType, RestResult};
 
+/// REST API endpoint constant
+const GET_ADDRESS_BOOK_ENDPOINT: &str = "private/get_address_book";
+
 /// Request parameters for get address book
 #[derive(Debug, Clone, Serialize)]
 pub struct GetAddressBookRequest {
@@ -47,7 +50,7 @@ impl RestClient {
         request: GetAddressBookRequest,
     ) -> RestResult<GetAddressBookResponse> {
         self.send_signed_request(
-            "private/get_address_book",
+            GET_ADDRESS_BOOK_ENDPOINT,
             &request,
             EndpointType::MatchingEngine,
         )
@@ -58,6 +61,8 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use rest::secrets::ExposableSecret;
+
+/// REST API endpoint constant
     use serde_json::{Value, json};
 
     use super::*;

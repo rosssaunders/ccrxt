@@ -5,6 +5,9 @@ use super::RestClient;
 use super::add_block_rfq_quote::{AddBlockRfqQuoteResult, BlockRfqHedge, BlockRfqLeg};
 use crate::deribit::{EndpointType, RestResult};
 
+/// REST API endpoint constant
+const EDIT_BLOCK_RFQ_QUOTE_ENDPOINT: &str = "private/edit_block_rfq_quote";
+
 /// Request parameters for editing a Block RFQ quote
 #[derive(Debug, Clone, Serialize)]
 pub struct EditBlockRfqQuoteRequest {
@@ -68,7 +71,7 @@ impl RestClient {
         request: EditBlockRfqQuoteRequest,
     ) -> RestResult<EditBlockRfqQuoteResponse> {
         self.send_signed_request(
-            "private/edit_block_rfq_quote",
+            EDIT_BLOCK_RFQ_QUOTE_ENDPOINT,
             &request,
             EndpointType::MatchingEngine,
         )
@@ -79,6 +82,8 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use rest::secrets::ExposableSecret;
+
+/// REST API endpoint constant
     use serde_json::{Value, json};
 
     use super::super::add_block_rfq_quote::Side;

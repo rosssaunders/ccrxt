@@ -3,6 +3,9 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::deribit::{Currency, EndpointType, RestResult};
 
+/// REST API endpoint constant
+const SUBMIT_TRANSFER_TO_SUBACCOUNT_ENDPOINT: &str = "private/submit_transfer_to_subaccount";
+
 /// Request parameters for submit transfer to subaccount
 #[derive(Debug, Clone, Serialize)]
 pub struct SubmitTransferToSubaccountRequest {
@@ -70,7 +73,7 @@ impl RestClient {
         request: SubmitTransferToSubaccountRequest,
     ) -> RestResult<SubmitTransferToSubaccountResponse> {
         self.send_signed_request(
-            "private/submit_transfer_to_subaccount",
+            SUBMIT_TRANSFER_TO_SUBACCOUNT_ENDPOINT,
             &request,
             EndpointType::NonMatchingEngine,
         )
@@ -81,6 +84,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use rest::secrets::ExposableSecret;
+
     use serde_json::{Value, json};
 
     use super::*;

@@ -6,6 +6,9 @@ use crate::deribit::{
     OrderDirection, OrderState, RestResult, Sorting, TickDirection, TradeOrderType,
 };
 
+/// REST API endpoint constant
+const GET_USER_TRADES_BY_CURRENCY_ENDPOINT: &str = "private/get_user_trades_by_currency";
+
 /// Request parameters for getting user trades by currency
 #[derive(Debug, Clone, Serialize)]
 pub struct GetUserTradesByCurrencyRequest {
@@ -188,7 +191,7 @@ impl RestClient {
         request: GetUserTradesByCurrencyRequest,
     ) -> RestResult<GetUserTradesByCurrencyResponse> {
         self.send_signed_request(
-            "private/get_user_trades_by_currency",
+            GET_USER_TRADES_BY_CURRENCY_ENDPOINT,
             &request,
             EndpointType::MatchingEngine,
         )
@@ -199,6 +202,8 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use rest::secrets::ExposableSecret;
+
+/// REST API endpoint constant
     use serde_json::{Value, json};
 
     use super::*;

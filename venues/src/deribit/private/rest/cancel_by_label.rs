@@ -3,6 +3,9 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::deribit::{Currency, EndpointType, RestResult};
 
+/// REST API endpoint constant
+const CANCEL_BY_LABEL_ENDPOINT: &str = "private/cancel_by_label";
+
 /// Request parameters for cancel by label endpoint
 #[derive(Debug, Clone, Serialize)]
 pub struct CancelByLabelRequest {
@@ -47,7 +50,7 @@ impl RestClient {
         request: CancelByLabelRequest,
     ) -> RestResult<CancelByLabelResponse> {
         self.send_signed_request(
-            "private/cancel_by_label",
+            CANCEL_BY_LABEL_ENDPOINT,
             &request,
             EndpointType::MatchingEngine,
         )
@@ -58,6 +61,8 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use rest::secrets::ExposableSecret;
+
+/// REST API endpoint constant
     use serde_json::{Value, json};
 
     use super::*;

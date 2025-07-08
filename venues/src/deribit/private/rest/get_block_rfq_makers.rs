@@ -3,6 +3,9 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::deribit::{EndpointType, RestResult};
 
+/// REST API endpoint constant
+const GET_BLOCK_RFQ_MAKERS_ENDPOINT: &str = "private/get_block_rfq_makers";
+
 /// Request parameters for get Block RFQ makers
 #[derive(Debug, Clone, Serialize)]
 pub struct GetBlockRfqMakersRequest {
@@ -41,7 +44,7 @@ impl RestClient {
         request: GetBlockRfqMakersRequest,
     ) -> RestResult<GetBlockRfqMakersResponse> {
         self.send_signed_request(
-            "private/get_block_rfq_makers",
+            GET_BLOCK_RFQ_MAKERS_ENDPOINT,
             &request,
             EndpointType::MatchingEngine,
         )
@@ -52,6 +55,8 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use rest::secrets::ExposableSecret;
+
+/// REST API endpoint constant
     use serde_json::{Value, json};
 
     use super::*;

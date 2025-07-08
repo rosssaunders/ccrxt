@@ -8,6 +8,8 @@ use crate::deribit::{EndpointType, RestResult};
 use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
+const MARK_PRICE_HISTORY_ENDPOINT: &str = "get_mark_price_history";
+
 /// Request parameters for the get_mark_price_history endpoint.
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct GetMarkPriceHistoryRequest {
@@ -75,7 +77,7 @@ impl RestClient {
         params: GetMarkPriceHistoryRequest,
     ) -> RestResult<GetMarkPriceHistoryResponse> {
         self.send_request(
-            "get_mark_price_history",
+            MARK_PRICE_HISTORY_ENDPOINT,
             Method::POST,
             Some(&params),
             EndpointType::NonMatchingEngine,

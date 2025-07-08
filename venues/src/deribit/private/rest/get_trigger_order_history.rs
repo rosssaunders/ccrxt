@@ -5,6 +5,9 @@ use crate::deribit::{
     Currency, EndpointType, OrderDirection, RestResult, TradeOrderType, TriggerType,
 };
 
+/// REST API endpoint constant
+const GET_TRIGGER_ORDER_HISTORY_ENDPOINT: &str = "private/get_trigger_order_history";
+
 /// Request parameters for getting trigger order history
 #[derive(Debug, Clone, Serialize)]
 pub struct GetTriggerOrderHistoryRequest {
@@ -122,7 +125,7 @@ impl RestClient {
         request: GetTriggerOrderHistoryRequest,
     ) -> RestResult<GetTriggerOrderHistoryResponse> {
         self.send_signed_request(
-            "private/get_trigger_order_history",
+            GET_TRIGGER_ORDER_HISTORY_ENDPOINT,
             &request,
             EndpointType::MatchingEngine,
         )
@@ -133,6 +136,8 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use rest::secrets::ExposableSecret;
+
+    /// REST API endpoint constant
     use serde_json::{Value, json};
 
     use super::*;

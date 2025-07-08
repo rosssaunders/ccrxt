@@ -3,6 +3,9 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::deribit::{EndpointType, RestResult};
 
+/// REST API endpoint constant
+const ENABLE_CANCEL_ON_DISCONNECT_ENDPOINT: &str = "private/enable_cancel_on_disconnect";
+
 /// Scope for Cancel On Disconnect operations
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
@@ -53,7 +56,7 @@ impl RestClient {
         request: EnableCancelOnDisconnectRequest,
     ) -> RestResult<EnableCancelOnDisconnectResponse> {
         self.send_signed_request(
-            "private/enable_cancel_on_disconnect",
+            ENABLE_CANCEL_ON_DISCONNECT_ENDPOINT,
             &request,
             EndpointType::MatchingEngine,
         )
@@ -64,6 +67,8 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use rest::secrets::ExposableSecret;
+
+/// REST API endpoint constant
     use serde_json::{Value, json};
 
     use super::*;

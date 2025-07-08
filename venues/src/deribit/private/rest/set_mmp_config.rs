@@ -3,6 +3,9 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::deribit::{EndpointType, RestResult};
 
+/// REST API endpoint constant
+const SET_MMP_CONFIG_ENDPOINT: &str = "private/set_mmp_config";
+
 /// Index name for MMP configuration
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
@@ -150,7 +153,7 @@ impl RestClient {
         request: SetMmpConfigRequest,
     ) -> RestResult<SetMmpConfigResponse> {
         self.send_signed_request(
-            "private/set_mmp_config",
+            SET_MMP_CONFIG_ENDPOINT,
             &request,
             EndpointType::MatchingEngine,
         )
@@ -161,6 +164,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use rest::secrets::ExposableSecret;
+
     use serde_json::{Value, json};
 
     use super::*;

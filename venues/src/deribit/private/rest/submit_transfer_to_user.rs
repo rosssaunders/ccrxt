@@ -3,6 +3,9 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::deribit::{EndpointType, RestResult};
 
+/// REST API endpoint constant
+const SUBMIT_TRANSFER_TO_USER_ENDPOINT: &str = "private/submit_transfer_to_user";
+
 /// Request parameters for submit transfer to user
 #[derive(Debug, Clone, Serialize)]
 pub struct SubmitTransferToUserRequest {
@@ -69,7 +72,7 @@ impl RestClient {
         params: SubmitTransferToUserRequest,
     ) -> RestResult<SubmitTransferToUserResponse> {
         self.send_signed_request(
-            "private/submit_transfer_to_user",
+            SUBMIT_TRANSFER_TO_USER_ENDPOINT,
             &params,
             EndpointType::NonMatchingEngine,
         )
@@ -80,6 +83,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use rest::secrets::ExposableSecret;
+
     use serde_json::{Value, json};
 
     use super::*;

@@ -8,6 +8,8 @@ use crate::deribit::{EndpointType, RestResult};
 use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
+const INDEX_PRICE_ENDPOINT: &str = "public/get_index_price";
+
 /// Request parameters for the get_index_price endpoint.
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct GetIndexPriceRequest {
@@ -55,7 +57,7 @@ impl RestClient {
         params: GetIndexPriceRequest,
     ) -> RestResult<GetIndexPriceResponse> {
         self.send_request(
-            "public/get_index_price",
+            INDEX_PRICE_ENDPOINT,
             Method::POST,
             Some(&params),
             EndpointType::NonMatchingEngine,

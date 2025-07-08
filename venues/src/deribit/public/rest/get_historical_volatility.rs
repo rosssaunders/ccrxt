@@ -9,6 +9,8 @@ use crate::deribit::{EndpointType, RestResult};
 use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
+const HISTORICAL_VOLATILITY_ENDPOINT: &str = "get_historical_volatility";
+
 /// Request parameters for the get_historical_volatility endpoint.
 #[derive(Debug, Clone, Serialize)]
 pub struct GetHistoricalVolatilityRequest {
@@ -72,7 +74,7 @@ impl RestClient {
         params: GetHistoricalVolatilityRequest,
     ) -> RestResult<GetHistoricalVolatilityResponse> {
         self.send_request(
-            "get_historical_volatility",
+            HISTORICAL_VOLATILITY_ENDPOINT,
             Method::POST,
             Some(&params),
             EndpointType::NonMatchingEngine,

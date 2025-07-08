@@ -3,10 +3,11 @@
 //! Tests the connection to the API server, and returns its version. You can use
 //! this to make sure the API is reachable, and matches the expected version.
 
+use super::RestClient;
+use crate::deribit::{EndpointType, RestResult};
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::deribit::{EndpointType, RestResult};
+const TEST_ENDPOINT: &str = "public/test";
 
 /// Request parameters for the public/test endpoint.
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
@@ -15,8 +16,6 @@ pub struct TestRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub expected_result: Option<String>,
 }
-
-
 
 /// Response for public/test endpoint following Deribit JSON-RPC 2.0 format.
 #[derive(Debug, Clone, Deserialize)]
@@ -53,7 +52,7 @@ impl RestClient {
     /// [Official API docs](https://docs.deribit.com/#public-test)
     pub async fn test(&self, params: TestRequest) -> RestResult<TestResponse> {
         self.send_request(
-            "public/test",
+            TEST_ENDPOINT,
             reqwest::Method::GET,
             Some(&params),
             EndpointType::NonMatchingEngine,

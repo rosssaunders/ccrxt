@@ -12,6 +12,8 @@ use serde::{Deserialize, Serialize};
 
 use std::borrow::Cow;
 
+const VOLATILITY_INDEX_DATA_ENDPOINT: &str = "get_volatility_index_data";
+
 /// Request parameters for the get_volatility_index_data endpoint.
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct GetVolatilityIndexDataRequest {
@@ -59,7 +61,7 @@ impl RestClient {
         params: GetVolatilityIndexDataRequest,
     ) -> RestResult<GetVolatilityIndexDataResponse> {
         self.send_request(
-            "get_volatility_index_data",
+            VOLATILITY_INDEX_DATA_ENDPOINT,
             Method::POST,
             Some(&params),
             EndpointType::NonMatchingEngine,

@@ -3,6 +3,9 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::deribit::{EndpointType, RestResult};
 
+/// REST API endpoint constant
+const GET_BLOCK_RFQ_USER_INFO_ENDPOINT: &str = "private/get_block_rfq_user_info";
+
 /// Request parameters for get Block RFQ user info
 #[derive(Debug, Clone, Serialize)]
 pub struct GetBlockRfqUserInfoRequest {
@@ -70,7 +73,7 @@ impl RestClient {
         request: GetBlockRfqUserInfoRequest,
     ) -> RestResult<GetBlockRfqUserInfoResponse> {
         self.send_signed_request(
-            "private/get_block_rfq_user_info",
+            GET_BLOCK_RFQ_USER_INFO_ENDPOINT,
             &request,
             EndpointType::MatchingEngine,
         )
@@ -81,6 +84,8 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use rest::secrets::ExposableSecret;
+
+/// REST API endpoint constant
     use serde_json::{Value, json};
 
     use super::*;

@@ -3,6 +3,9 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::deribit::{AddressBookType, Currency, EndpointType, RestResult};
 
+/// REST API endpoint constant
+const REMOVE_FROM_ADDRESS_BOOK_ENDPOINT: &str = "private/remove_from_address_book";
+
 /// Request parameters for remove from address book
 #[derive(Debug, Clone, Serialize)]
 pub struct RemoveFromAddressBookRequest {
@@ -47,7 +50,7 @@ impl RestClient {
         request: RemoveFromAddressBookRequest,
     ) -> RestResult<RemoveFromAddressBookResponse> {
         self.send_signed_request(
-            "private/remove_from_address_book",
+            REMOVE_FROM_ADDRESS_BOOK_ENDPOINT,
             &request,
             EndpointType::NonMatchingEngine,
         )
@@ -58,6 +61,8 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use rest::secrets::ExposableSecret;
+
+/// REST API endpoint constant
     use serde_json::{Value, json};
 
     use super::*;

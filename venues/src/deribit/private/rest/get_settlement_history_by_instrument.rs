@@ -9,6 +9,11 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::deribit::{EndpointType, RestResult};
 
+/// REST API endpoint constant
+const GET_SETTLEMENT_HISTORY_BY_INSTRUMENT_ENDPOINT: &str = "private/get_settlement_history_by_instrument";
+
+
+/// REST API endpoint constant
 /// Request for /private/get_settlement_history_by_instrument
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GetSettlementHistoryByInstrumentRequest {
@@ -56,7 +61,7 @@ impl RestClient {
         request: GetSettlementHistoryByInstrumentRequest,
     ) -> RestResult<GetSettlementHistoryByInstrumentResponse> {
         self.send_signed_request(
-            "private/get_settlement_history_by_instrument",
+            GET_SETTLEMENT_HISTORY_BY_INSTRUMENT_ENDPOINT,
             &request,
             EndpointType::MatchingEngine,
         )

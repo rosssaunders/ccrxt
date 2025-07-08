@@ -8,6 +8,8 @@ use crate::deribit::{EndpointType, RestResult};
 use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
+const ORDER_BOOK_BY_INSTRUMENT_ID_ENDPOINT: &str = "public/get_order_book_by_instrument_id";
+
 /// Request parameters for the get_order_book_by_instrument_id endpoint.
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct GetOrderBookByInstrumentIdRequest {
@@ -83,7 +85,7 @@ impl RestClient {
         params: GetOrderBookByInstrumentIdRequest,
     ) -> RestResult<GetOrderBookByInstrumentIdResponse> {
         self.send_request(
-            "public/get_order_book_by_instrument_id",
+            ORDER_BOOK_BY_INSTRUMENT_ID_ENDPOINT,
             Method::POST,
             Some(&params),
             EndpointType::NonMatchingEngine,

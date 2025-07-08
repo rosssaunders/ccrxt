@@ -8,6 +8,8 @@ use crate::deribit::{EndpointType, RestResult};
 use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
+const INDEX_ENDPOINT: &str = "public/get_index";
+
 /// Request parameters for the get_index endpoint.
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct GetIndexRequest {
@@ -52,7 +54,7 @@ impl RestClient {
     /// [Official API docs](https://docs.deribit.com/#public-get_index)
     pub async fn get_index(&self, params: GetIndexRequest) -> RestResult<GetIndexResponse> {
         self.send_request(
-            "public/get_index",
+            INDEX_ENDPOINT,
             Method::POST,
             Some(&params),
             EndpointType::NonMatchingEngine,

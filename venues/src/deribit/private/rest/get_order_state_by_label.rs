@@ -10,6 +10,9 @@ use crate::deribit::enums::{
 };
 use crate::deribit::{EndpointType, RestResult, TimeInForce, TriggerFillCondition};
 
+/// REST API endpoint constant
+const GET_ORDER_STATE_BY_LABEL_ENDPOINT: &str = "private/get_order_state_by_label";
+
 /// Request for /private/get_order_state_by_label
 #[derive(Debug, Clone, Serialize)]
 pub struct GetOrderStateByLabelRequest {
@@ -261,7 +264,7 @@ impl RestClient {
         request: GetOrderStateByLabelRequest,
     ) -> RestResult<GetOrderStateByLabelResponse> {
         self.send_signed_request(
-            "private/get_order_state_by_label",
+            GET_ORDER_STATE_BY_LABEL_ENDPOINT,
             &request,
             EndpointType::MatchingEngine,
         )
@@ -273,6 +276,8 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use serde_json;
+
+/// REST API endpoint constant
 
     use super::*;
     use crate::deribit::enums::Currency;

@@ -4,6 +4,9 @@ use super::RestClient;
 use super::reset_mmp::IndexName;
 use crate::deribit::{EndpointType, RestResult};
 
+/// REST API endpoint constant
+const GET_MMP_STATUS_ENDPOINT: &str = "private/get_mmp_status";
+
 /// Request parameters for get MMP status
 #[derive(Debug, Clone, Serialize)]
 pub struct GetMmpStatusRequest {
@@ -67,7 +70,7 @@ impl RestClient {
         request: GetMmpStatusRequest,
     ) -> RestResult<GetMmpStatusResponse> {
         self.send_signed_request(
-            "private/get_mmp_status",
+            GET_MMP_STATUS_ENDPOINT,
             &request,
             EndpointType::MatchingEngine,
         )
@@ -78,6 +81,8 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use rest::secrets::ExposableSecret;
+
+/// REST API endpoint constant
     use serde_json::{Value, json};
 
     use super::*;

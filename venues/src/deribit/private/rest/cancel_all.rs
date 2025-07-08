@@ -3,6 +3,9 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::deribit::{EndpointType, RestResult};
 
+/// REST API endpoint constant
+const CANCEL_ALL_ENDPOINT: &str = "private/cancel_all";
+
 /// Request parameters for cancel all endpoint
 #[derive(Debug, Clone, Serialize)]
 pub struct CancelAllRequest {
@@ -42,7 +45,7 @@ impl RestClient {
     /// # Returns
     /// Result with total number of successfully cancelled orders
     pub async fn cancel_all(&self, request: CancelAllRequest) -> RestResult<CancelAllResponse> {
-        self.send_signed_request("private/cancel_all", &request, EndpointType::MatchingEngine)
+        self.send_signed_request(CANCEL_ALL_ENDPOINT, &request, EndpointType::MatchingEngine)
             .await
     }
 }

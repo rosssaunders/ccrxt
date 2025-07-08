@@ -3,6 +3,9 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::deribit::{EndpointType, RestResult};
 
+/// REST API endpoint constant
+const SEND_RFQ_ENDPOINT: &str = "private/send_rfq";
+
 /// Side enum for RFQ requests
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
@@ -54,7 +57,7 @@ impl RestClient {
     /// # Returns
     /// Result with "ok" string in case of success
     pub async fn send_rfq(&self, params: SendRfqRequest) -> RestResult<SendRfqResponse> {
-        self.send_signed_request("private/send_rfq", &params, EndpointType::NonMatchingEngine)
+        self.send_signed_request(SEND_RFQ_ENDPOINT, &params, EndpointType::NonMatchingEngine)
             .await
     }
 }
