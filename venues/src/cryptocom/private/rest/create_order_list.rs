@@ -1,6 +1,9 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
+
+/// Endpoint path for the create-order-list API
+const CREATE_ORDER_LIST_ENDPOINT: &str = "private/create-order-list";
 use crate::cryptocom::{RestResult, enums::*};
 
 /// Individual order in an order list
@@ -107,7 +110,7 @@ impl RestClient {
         &self,
         request: CreateOrderListRequest,
     ) -> RestResult<CreateOrderListResponse> {
-        self.send_signed_request("private/create-order-list", request)
+        self.send_signed_request(CREATE_ORDER_LIST_ENDPOINT, request)
             .await
     }
 }

@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
 
+const TRADES_ENDPOINT: &str = "private/get-trades";
 /// Parameters for get trades request
 #[derive(Debug, Clone, Serialize)]
 pub struct GetTradesRequest {
@@ -90,7 +91,7 @@ impl RestClient {
     /// # Returns
     /// Trade history information
     pub async fn get_trades(&self, params: GetTradesRequest) -> RestResult<GetTradesResponse> {
-        self.send_signed_request("private/get-trades", params).await
+        self.send_signed_request(TRADES_ENDPOINT, params).await
     }
 }
 

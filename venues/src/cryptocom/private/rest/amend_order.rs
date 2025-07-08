@@ -3,6 +3,9 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
 
+/// Endpoint path for the amend-order API
+const AMEND_ORDER_ENDPOINT: &str = "private/amend-order";
+
 /// Request parameters for amending an existing order
 #[derive(Debug, Clone, Serialize)]
 pub struct AmendOrderRequest {
@@ -48,7 +51,7 @@ impl RestClient {
     /// # Returns
     /// Client order ID and order ID
     pub async fn amend_order(&self, request: AmendOrderRequest) -> RestResult<AmendOrderResponse> {
-        self.send_signed_request("private/amend-order", request)
+        self.send_signed_request(AMEND_ORDER_ENDPOINT, request)
             .await
     }
 }

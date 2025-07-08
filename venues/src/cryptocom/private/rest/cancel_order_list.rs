@@ -2,6 +2,8 @@ use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
 
+/// Endpoint path for the cancel-order-list API
+const CANCEL_ORDER_LIST_ENDPOINT: &str = "private/cancel-order-list";
 /// Individual order to cancel in a list
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CancelOrderListItem {
@@ -57,7 +59,7 @@ impl RestClient {
         &self,
         request: CancelOrderListRequest,
     ) -> crate::cryptocom::RestResult<CancelOrderListResponse> {
-        self.send_signed_request("private/cancel-order-list", request)
+        self.send_signed_request(CANCEL_ORDER_LIST_ENDPOINT, request)
             .await
     }
 }

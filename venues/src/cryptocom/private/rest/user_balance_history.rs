@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
 
+const USER_BALANCE_HISTORY_ENDPOINT: &str = "private/user-balance-history";
 /// Balance history entry
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct BalanceHistoryEntry {
@@ -59,7 +60,7 @@ impl RestClient {
         &self,
         request: GetUserBalanceHistoryRequest,
     ) -> RestResult<GetUserBalanceHistoryResponse> {
-        self.send_signed_request("private/user-balance-history", request)
+        self.send_signed_request(USER_BALANCE_HISTORY_ENDPOINT, request)
             .await
     }
 }

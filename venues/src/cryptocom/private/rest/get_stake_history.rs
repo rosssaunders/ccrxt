@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
 
+const STAKE_HISTORY_ENDPOINT: &str = "private/staking/get-stake-history";
 /// Request parameters for get stake history
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GetStakeHistoryRequest {
@@ -68,7 +69,7 @@ impl RestClient {
         &self,
         request: GetStakeHistoryRequest,
     ) -> RestResult<GetStakeHistoryResponse> {
-        self.send_signed_request("private/staking/get-stake-history", request)
+        self.send_signed_request(STAKE_HISTORY_ENDPOINT, request)
             .await
     }
 }

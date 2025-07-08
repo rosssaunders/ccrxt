@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
 
+const FEE_RATE_ENDPOINT: &str = "private/get-fee-rate";
 /// Fee rate information for user's account
 #[derive(Debug, Clone, Deserialize)]
 #[allow(dead_code)]
@@ -35,7 +36,7 @@ impl RestClient {
         #[derive(Debug, Clone, Serialize)]
         struct EmptyRequest {}
 
-        self.send_signed_request("private/get-fee-rate", EmptyRequest {})
+        self.send_signed_request(FEE_RATE_ENDPOINT, EmptyRequest {})
             .await
     }
 }

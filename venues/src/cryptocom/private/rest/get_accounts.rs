@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
 
+const ACCOUNTS_ENDPOINT: &str = "private/get-accounts";
 /// Account information
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Account {
@@ -86,7 +87,7 @@ impl RestClient {
         &self,
         request: GetAccountsRequest,
     ) -> RestResult<GetAccountsResponse> {
-        self.send_signed_request("private/get-accounts", request)
+        self.send_signed_request(ACCOUNTS_ENDPOINT, request)
             .await
     }
 }

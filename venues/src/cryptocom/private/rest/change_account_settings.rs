@@ -1,6 +1,9 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
+
+/// Endpoint path for the change-account-settings API
+const CHANGE_ACCOUNT_SETTINGS_ENDPOINT: &str = "private/change-account-settings";
 use crate::cryptocom::{RestResult, StpInst, StpScope};
 
 /// Request parameters for changing account settings
@@ -44,7 +47,7 @@ impl RestClient {
         &self,
         request: ChangeAccountSettingsRequest,
     ) -> RestResult<ChangeAccountSettingsResponse> {
-        self.send_signed_request("private/change-account-settings", request)
+        self.send_signed_request(CHANGE_ACCOUNT_SETTINGS_ENDPOINT, request)
             .await
     }
 }

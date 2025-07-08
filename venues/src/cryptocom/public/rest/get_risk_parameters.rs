@@ -9,6 +9,9 @@ use serde::Deserialize;
 use super::client::RestClient;
 use crate::cryptocom::{EndpointType, RestResult};
 
+/// Endpoint path for the get-risk-parameters API
+const RISK_PARAMETERS_ENDPOINT: &str = "public/get-risk-parameters";
+
 /// Response for public/get-risk-parameters endpoint.
 #[derive(Debug, Clone, Deserialize)]
 pub struct GetRiskParametersResponse {
@@ -57,7 +60,7 @@ impl RestClient {
     /// [Official API docs](https://exchange-docs.crypto.com/spot/index.html)
     pub async fn get_risk_parameters(&self) -> RestResult<GetRiskParametersResponse> {
         self.send_request(
-            "public/get-risk-parameters",
+            RISK_PARAMETERS_ENDPOINT,
             reqwest::Method::GET,
             None::<&()>,
             EndpointType::PublicGetRiskParameters,

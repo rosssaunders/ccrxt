@@ -11,6 +11,9 @@ use crate::cryptocom::EndpointType;
 use crate::cryptocom::InstrumentType;
 use crate::cryptocom::RestResult;
 
+/// Endpoint path for the get-expired-settlement-price API
+const EXPIRED_SETTLEMENT_PRICE_ENDPOINT: &str = "public/get-expired-settlement-price";
+
 /// Request parameters for the public/get-expired-settlement-price endpoint.
 ///
 /// Fetches settlement price of expired instruments.
@@ -76,7 +79,7 @@ impl RestClient {
         params: GetExpiredSettlementPriceRequest,
     ) -> RestResult<GetExpiredSettlementPriceResponse> {
         self.send_request(
-            "public/get-expired-settlement-price",
+            EXPIRED_SETTLEMENT_PRICE_ENDPOINT,
             reqwest::Method::GET,
             Some(&params),
             EndpointType::PublicGetExpiredSettlementPrice,

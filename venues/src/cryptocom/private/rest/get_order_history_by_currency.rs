@@ -4,6 +4,7 @@ use super::client::RestClient;
 use super::get_order_history_by_instrument::OrderHistoryByInstrumentEntry;
 use crate::cryptocom::RestResult;
 
+const ORDER_HISTORY_BY_CURRENCY_ENDPOINT: &str = "private/get_order_history_by_currency";
 /// Parameters for get order history by currency request
 #[derive(Debug, Clone, Serialize)]
 pub struct GetOrderHistoryByCurrencyRequest {
@@ -73,7 +74,7 @@ impl RestClient {
         &self,
         params: GetOrderHistoryByCurrencyRequest,
     ) -> RestResult<GetOrderHistoryByCurrencyResponse> {
-        self.send_signed_request("private/get_order_history_by_currency", params)
+        self.send_signed_request(ORDER_HISTORY_BY_CURRENCY_ENDPOINT, params)
             .await
     }
 }

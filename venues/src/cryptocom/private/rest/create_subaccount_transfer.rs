@@ -4,6 +4,7 @@ use super::client::RestClient;
 use crate::cryptocom::RestResult;
 use crate::cryptocom::enums::ResponseCode;
 
+const CREATE_SUBACCOUNT_TRANSFER_ENDPOINT: &str = "private/create-subaccount-transfer";
 /// Request parameters for creating a subaccount transfer.
 #[derive(Debug, Clone, Serialize)]
 pub struct CreateSubaccountTransferRequest {
@@ -48,7 +49,7 @@ impl RestClient {
         let params = serde_json::to_value(&params)
             .map_err(|e| crate::cryptocom::Errors::Error(format!("Serialization error: {e}")))?;
 
-        self.send_signed_request("private/create-subaccount-transfer", params)
+        self.send_signed_request(CREATE_SUBACCOUNT_TRANSFER_ENDPOINT, params)
             .await
     }
 }

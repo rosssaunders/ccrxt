@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
 
+const INSTRUMENT_FEE_RATE_ENDPOINT: &str = "private/get-instrument-fee-rate";
 /// Request parameters for getting instrument fee rate
 #[derive(Debug, Clone, Serialize)]
 pub struct GetInstrumentFeeRateRequest {
@@ -44,7 +45,7 @@ impl RestClient {
         &self,
         request: GetInstrumentFeeRateRequest,
     ) -> RestResult<GetInstrumentFeeRateResponse> {
-        self.send_signed_request("private/get-instrument-fee-rate", request)
+        self.send_signed_request(INSTRUMENT_FEE_RATE_ENDPOINT, request)
             .await
     }
 }

@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
 
+const OPEN_ORDERS_ENDPOINT: &str = "private/get-open-orders";
 /// Enum representing the status of an order
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
@@ -101,7 +102,7 @@ impl RestClient {
         let params = serde_json::to_value(&request)
             .map_err(|e| crate::cryptocom::Errors::Error(format!("Serialization error: {e}")))?;
 
-        self.send_signed_request("private/get-open-orders", params)
+        self.send_signed_request(OPEN_ORDERS_ENDPOINT, params)
             .await
     }
 }

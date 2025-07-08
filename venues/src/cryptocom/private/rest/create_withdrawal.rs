@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
 
+const CREATE_WITHDRAWAL_ENDPOINT: &str = "private/create-withdrawal";
 /// Request parameters for create withdrawal
 #[derive(Debug, Clone, Serialize)]
 pub struct CreateWithdrawalRequest {
@@ -63,7 +64,7 @@ impl RestClient {
         &self,
         request: CreateWithdrawalRequest,
     ) -> RestResult<CreateWithdrawalResponse> {
-        self.send_signed_request("private/create-withdrawal", request)
+        self.send_signed_request(CREATE_WITHDRAWAL_ENDPOINT, request)
             .await
     }
 }

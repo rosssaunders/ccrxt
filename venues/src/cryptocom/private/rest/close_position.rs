@@ -1,6 +1,9 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
+
+/// Endpoint path for the close-position API
+const CLOSE_POSITION_ENDPOINT: &str = "private/close-position";
 use crate::cryptocom::RestResult;
 
 /// Position close order type
@@ -53,7 +56,7 @@ impl RestClient {
         &self,
         request: ClosePositionRequest,
     ) -> RestResult<ClosePositionResponse> {
-        self.send_signed_request("private/close-position", request)
+        self.send_signed_request(CLOSE_POSITION_ENDPOINT, request)
             .await
     }
 }

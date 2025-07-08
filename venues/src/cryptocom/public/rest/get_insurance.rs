@@ -9,6 +9,9 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::cryptocom::{EndpointType, RestResult};
 
+/// Endpoint path for the get-insurance API
+const INSURANCE_ENDPOINT: &str = "public/get-insurance";
+
 /// Request parameters for the public/get-insurance endpoint.
 ///
 /// Fetches balance of Insurance Fund for a particular currency.
@@ -66,7 +69,7 @@ impl RestClient {
         params: GetInsuranceRequest,
     ) -> RestResult<GetInsuranceResponse> {
         self.send_request(
-            "public/get-insurance",
+            INSURANCE_ENDPOINT,
             reqwest::Method::GET,
             Some(&params),
             EndpointType::PublicGetInsurance,

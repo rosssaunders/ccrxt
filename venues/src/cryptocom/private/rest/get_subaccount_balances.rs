@@ -4,6 +4,7 @@ use super::client::RestClient;
 use super::user_balance::PositionBalance;
 use crate::cryptocom::RestResult;
 
+const SUBACCOUNT_BALANCES_ENDPOINT: &str = "private/get-subaccount-balances";
 /// Subaccount balance information
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SubaccountBalance {
@@ -65,7 +66,7 @@ impl RestClient {
         #[derive(Debug, Clone, Serialize)]
         struct EmptyRequest {}
 
-        self.send_signed_request("private/get-subaccount-balances", EmptyRequest {})
+        self.send_signed_request(SUBACCOUNT_BALANCES_ENDPOINT, EmptyRequest {})
             .await
     }
 }

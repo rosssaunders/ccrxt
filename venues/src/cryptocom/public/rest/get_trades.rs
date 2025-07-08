@@ -11,6 +11,9 @@ use crate::cryptocom::EndpointType;
 use crate::cryptocom::RestResult;
 use crate::cryptocom::TradeSide;
 
+/// Endpoint for getting trades
+const GET_TRADES_ENDPOINT: &str = "public/get-trades";
+
 /// Request parameters for the public/get-trades endpoint.
 ///
 /// Fetches the public trades for a particular instrument.
@@ -81,7 +84,7 @@ impl RestClient {
     /// [Official API docs](https://exchange-docs.crypto.com/spot/index.html)
     pub async fn get_trades(&self, params: GetTradesRequest) -> RestResult<GetTradesResponse> {
         self.send_request(
-            "public/get-trades",
+            GET_TRADES_ENDPOINT,
             reqwest::Method::GET,
             Some(&params),
             EndpointType::PublicGetTrades,

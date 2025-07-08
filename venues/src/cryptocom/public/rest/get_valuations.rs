@@ -11,6 +11,9 @@ use crate::cryptocom::EndpointType;
 use crate::cryptocom::RestResult;
 use crate::cryptocom::ValuationType;
 
+/// Endpoint path for the get-valuations API
+const VALUATIONS_ENDPOINT: &str = "public/get-valuations";
+
 /// Request parameters for the public/get-valuations endpoint.
 ///
 /// Fetches certain valuation type data for a particular instrument.
@@ -88,7 +91,7 @@ impl RestClient {
         params: GetValuationsRequest,
     ) -> RestResult<GetValuationsResponse> {
         self.send_request(
-            "public/get-valuations",
+            VALUATIONS_ENDPOINT,
             reqwest::Method::GET,
             Some(&params),
             EndpointType::PublicGetValuations,

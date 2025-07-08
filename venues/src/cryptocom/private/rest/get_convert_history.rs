@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
 
+const CONVERT_HISTORY_ENDPOINT: &str = "private/staking/get-convert-history";
 /// Request parameters for get convert history
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GetConvertHistoryRequest {
@@ -67,7 +68,7 @@ impl RestClient {
         &self,
         request: GetConvertHistoryRequest,
     ) -> RestResult<GetConvertHistoryResponse> {
-        self.send_signed_request("private/staking/get-convert-history", request)
+        self.send_signed_request(CONVERT_HISTORY_ENDPOINT, request)
             .await
     }
 }

@@ -3,6 +3,9 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
 
+/// Endpoint path for the cancel-oco-order API
+const CANCEL_OCO_ORDER_ENDPOINT: &str = "private/cancel-order-list";
+
 /// Request for canceling OCO orders
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CancelOcoOrderRequest {
@@ -39,7 +42,7 @@ impl RestClient {
         &self,
         request: CancelOcoOrderRequest,
     ) -> RestResult<CancelOcoOrderResponse> {
-        self.send_signed_request("private/cancel-order-list", request)
+        self.send_signed_request(CANCEL_OCO_ORDER_ENDPOINT, request)
             .await
     }
 }

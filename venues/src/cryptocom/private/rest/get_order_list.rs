@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::cryptocom::{RestResult, enums::*};
 
+const ORDER_LIST_ENDPOINT: &str = "private/get-order-list";
 /// Request for getting OCO order details
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GetOrderListRequest {
@@ -99,7 +100,7 @@ impl RestClient {
         &self,
         params: GetOrderListRequest,
     ) -> RestResult<GetOrderListResponse> {
-        self.send_signed_request("private/get-order-list", params)
+        self.send_signed_request(ORDER_LIST_ENDPOINT, params)
             .await
     }
 }

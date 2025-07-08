@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
 
+const ACCOUNT_SETTINGS_ENDPOINT: &str = "private/get-account-settings";
 /// Account settings information
 #[derive(Debug, Clone, Deserialize)]
 #[allow(dead_code)]
@@ -41,7 +42,7 @@ impl RestClient {
     /// Account settings information
     pub async fn get_account_settings(&self) -> RestResult<GetAccountSettingsResponse> {
         self.send_signed_request(
-            "private/get-account-settings",
+            ACCOUNT_SETTINGS_ENDPOINT,
             GetAccountSettingsRequest::default(),
         )
         .await

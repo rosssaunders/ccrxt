@@ -4,6 +4,7 @@ use serde_json;
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
 
+const USER_BALANCE_ENDPOINT: &str = "private/user-balance";
 /// Position balance information
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PositionBalance {
@@ -85,7 +86,7 @@ impl RestClient {
     pub async fn get_user_balance(&self) -> RestResult<UserBalanceResponse> {
         let params = serde_json::json!({});
 
-        self.send_signed_request("private/user-balance", params)
+        self.send_signed_request(USER_BALANCE_ENDPOINT, params)
             .await
     }
 }

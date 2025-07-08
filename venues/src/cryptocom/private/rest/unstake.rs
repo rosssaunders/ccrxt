@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
 
+const UNSTAKE_ENDPOINT: &str = "private/staking/unstake";
 /// Request parameters for unstake
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct UnstakeRequest {
@@ -44,7 +45,7 @@ impl RestClient {
     /// # Returns
     /// Unstake request information including staking ID, status, and reason
     pub async fn unstake(&self, params: UnstakeRequest) -> RestResult<UnstakeResponse> {
-        self.send_signed_request("private/staking/unstake", params)
+        self.send_signed_request(UNSTAKE_ENDPOINT, params)
             .await
     }
 }

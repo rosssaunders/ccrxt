@@ -1,6 +1,9 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
+
+/// Endpoint path for the create-oco-order API
+const CREATE_OCO_ORDER_ENDPOINT: &str = "private/create-order-list";
 use crate::cryptocom::RestResult;
 
 /// Request parameters for creating an OCO order list (One-Cancels-the-Other).
@@ -68,7 +71,7 @@ impl RestClient {
         &self,
         request: CreateOcoOrderRequest,
     ) -> RestResult<CreateOcoOrderResponse> {
-        self.send_signed_request("private/create-order-list", request)
+        self.send_signed_request(CREATE_OCO_ORDER_ENDPOINT, request)
             .await
     }
 }

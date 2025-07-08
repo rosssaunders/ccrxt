@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
 
+const DEPOSIT_ADDRESS_ENDPOINT: &str = "private/get-deposit-address";
 /// Request parameters for get deposit address
 #[derive(Debug, Clone, Serialize)]
 pub struct GetDepositAddressRequest {
@@ -51,7 +52,7 @@ impl RestClient {
         &self,
         params: GetDepositAddressRequest,
     ) -> RestResult<GetDepositAddressResponse> {
-        self.send_signed_request("private/get-deposit-address", params)
+        self.send_signed_request(DEPOSIT_ADDRESS_ENDPOINT, params)
             .await
     }
 }

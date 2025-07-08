@@ -3,6 +3,9 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
 
+/// Endpoint path for the cancel-all-orders API
+const CANCEL_ALL_ORDERS_ENDPOINT: &str = "private/cancel-all-orders";
+
 /// Order type filter for cancel all orders
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
@@ -49,7 +52,7 @@ impl RestClient {
         &self,
         request: CancelAllOrdersRequest,
     ) -> RestResult<CancelAllOrdersResponse> {
-        self.send_signed_request("private/cancel-all-orders", request)
+        self.send_signed_request(CANCEL_ALL_ORDERS_ENDPOINT, request)
             .await
     }
 }

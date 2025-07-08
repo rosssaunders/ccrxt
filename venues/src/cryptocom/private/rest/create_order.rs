@@ -1,10 +1,14 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
+
 use crate::cryptocom::{
     ExecInst, OrderType, RefPriceType, RestResult, SpotMarginType, StpInst, StpScope, TimeInForce,
     TradeSide,
 };
+
+/// Endpoint path for the create-order API
+const CREATE_ORDER_ENDPOINT: &str = "private/create-order";
 
 /// Request parameters for creating a new order
 #[derive(Debug, Clone, Serialize)]
@@ -87,7 +91,7 @@ impl RestClient {
         &self,
         request: CreateOrderRequest,
     ) -> RestResult<CreateOrderResponse> {
-        self.send_signed_request("private/create-order", request)
+        self.send_signed_request(CREATE_ORDER_ENDPOINT, request)
             .await
     }
 }
@@ -279,7 +283,8 @@ mod tests {
 
         // Test deserialization
         let post_only_deserialized: ExecInst = serde_json::from_str("\"POST_ONLY\"").unwrap();
-        let smart_post_only_deserialized: ExecInst = serde_json::from_str("\"SMART_POST_ONLY\"").unwrap();
+        let smart_post_only_deserialized: ExecInst =
+            serde_json::from_str("\"SMART_POST_ONLY\"").unwrap();
 
         assert_eq!(post_only_deserialized, ExecInst::PostOnly);
         assert_eq!(smart_post_only_deserialized, ExecInst::SmartPostOnly);

@@ -3,6 +3,9 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
 
+/// Endpoint path for the convert API
+const CONVERT_ENDPOINT: &str = "private/staking/convert";
+
 /// Request parameters for the convert endpoint.
 ///
 /// Use this struct to specify the parameters for converting between staked and liquid staking tokens.
@@ -76,7 +79,7 @@ impl RestClient {
     /// # Returns
     /// Convert request information including convert ID, rates, and reason.
     pub async fn convert(&self, params: ConvertRequest) -> RestResult<ConvertResponse> {
-        self.send_signed_request("private/staking/convert", params)
+        self.send_signed_request(CONVERT_ENDPOINT, params)
             .await
     }
 }

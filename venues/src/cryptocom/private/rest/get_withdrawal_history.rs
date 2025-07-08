@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::cryptocom::{RestResult, enums::WithdrawalStatus};
 
+const WITHDRAWAL_HISTORY_ENDPOINT: &str = "private/get-withdrawal-history";
 /// Request parameters for get withdrawal history
 #[derive(Debug, Clone, Serialize)]
 pub struct GetWithdrawalHistoryRequest {
@@ -82,7 +83,7 @@ impl RestClient {
         &self,
         params: GetWithdrawalHistoryRequest,
     ) -> RestResult<GetWithdrawalHistoryResponse> {
-        self.send_signed_request("private/get-withdrawal-history", params)
+        self.send_signed_request(WITHDRAWAL_HISTORY_ENDPOINT, params)
             .await
     }
 }

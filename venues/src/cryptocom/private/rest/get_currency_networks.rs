@@ -5,6 +5,7 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
 
+const CURRENCY_NETWORKS_ENDPOINT: &str = "private/get-currency-networks";
 /// Network information for a currency
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct NetworkInfo {
@@ -57,7 +58,7 @@ impl RestClient {
         #[derive(Debug, Clone, Serialize)]
         struct EmptyRequest {}
 
-        self.send_signed_request("private/get-currency-networks", EmptyRequest {})
+        self.send_signed_request(CURRENCY_NETWORKS_ENDPOINT, EmptyRequest {})
             .await
     }
 }

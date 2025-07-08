@@ -9,6 +9,9 @@ use super::client::RestClient;
 use crate::cryptocom::RestResult;
 use crate::cryptocom::{AnnouncementCategory, ImpactedStatus, ProductType};
 
+/// Endpoint path for the get-announcements API
+const ANNOUNCEMENTS_ENDPOINT: &str = "public/get-announcements";
+
 /// Request parameters for the public/get-announcements endpoint.
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct GetAnnouncementsRequest {
@@ -149,7 +152,7 @@ impl RestClient {
         params: GetAnnouncementsRequest,
     ) -> RestResult<GetAnnouncementsResponse> {
         self.send_request(
-            "public/get-announcements",
+            ANNOUNCEMENTS_ENDPOINT,
             reqwest::Method::GET,
             Some(&params),
             crate::cryptocom::EndpointType::PublicGetAnnouncements,

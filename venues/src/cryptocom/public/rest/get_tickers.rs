@@ -9,6 +9,9 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::cryptocom::{EndpointType, RestResult};
 
+/// Endpoint for getting tickers
+const GET_TICKERS_ENDPOINT: &str = "public/get-tickers";
+
 /// Request parameters for the public/get-tickers endpoint.
 ///
 /// Fetches the public tickers for all or a particular instrument.
@@ -75,7 +78,7 @@ impl RestClient {
     /// [Official API docs](https://exchange-docs.crypto.com/spot/index.html)
     pub async fn get_tickers(&self, params: GetTickersRequest) -> RestResult<GetTickersResponse> {
         self.send_request(
-            "public/get-tickers",
+            GET_TICKERS_ENDPOINT,
             reqwest::Method::GET,
             Some(&params),
             EndpointType::PublicGetTickers,

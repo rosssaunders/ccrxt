@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
 
+const ORDER_HISTORY_ENDPOINT: &str = "private/get-order-history";
 /// Parameters for get order history request
 #[derive(Debug, Clone, Serialize)]
 pub struct GetOrderHistoryRequest {
@@ -104,7 +105,7 @@ impl RestClient {
         &self,
         params: GetOrderHistoryRequest,
     ) -> RestResult<GetOrderHistoryResponse> {
-        self.send_signed_request("private/get-order-history", params)
+        self.send_signed_request(ORDER_HISTORY_ENDPOINT, params)
             .await
     }
 }

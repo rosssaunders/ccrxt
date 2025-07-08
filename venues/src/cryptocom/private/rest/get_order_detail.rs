@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
 
+const ORDER_DETAIL_ENDPOINT: &str = "private/get-order-detail";
 /// Request parameters for getting order detail
 #[derive(Debug, Clone, Serialize)]
 pub struct GetOrderDetailRequest {
@@ -87,7 +88,7 @@ impl RestClient {
         &self,
         request: GetOrderDetailRequest,
     ) -> RestResult<OrderDetail> {
-        self.send_signed_request("private/get-order-detail", request)
+        self.send_signed_request(ORDER_DETAIL_ENDPOINT, request)
             .await
     }
 }

@@ -5,6 +5,9 @@ use super::client::RestClient;
 use crate::cryptocom::RestResult;
 use crate::cryptocom::rate_limit::EndpointType;
 
+/// Endpoint path for the get-conversion-rate API
+const CONVERSION_RATE_ENDPOINT: &str = "public/staking/get-conversion-rate";
+
 /// Request parameters for get conversion rate
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GetConversionRateRequest {
@@ -43,7 +46,7 @@ impl RestClient {
             .map_err(|e| crate::cryptocom::Errors::Error(format!("Serialization error: {e}")))?;
 
         self.send_request(
-            "public/staking/get-conversion-rate",
+            CONVERSION_RATE_ENDPOINT,
             reqwest::Method::POST,
             Some(&params_value),
             EndpointType::PublicStaking,

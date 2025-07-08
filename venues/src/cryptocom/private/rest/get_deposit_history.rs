@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
 
+const DEPOSIT_HISTORY_ENDPOINT: &str = "private/get-deposit-history";
 /// Request parameters for get deposit history
 #[derive(Debug, Clone, Serialize)]
 pub struct GetDepositHistoryRequest {
@@ -75,7 +76,7 @@ impl RestClient {
         &self,
         request: GetDepositHistoryRequest,
     ) -> RestResult<GetDepositHistoryResponse> {
-        self.send_signed_request("private/get-deposit-history", request)
+        self.send_signed_request(DEPOSIT_HISTORY_ENDPOINT, request)
             .await
     }
 }

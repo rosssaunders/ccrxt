@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
 
+const STAKING_POSITION_ENDPOINT: &str = "private/staking/get-staking-position";
 /// Request parameters for get staking position
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GetStakingPositionRequest {
@@ -53,7 +54,7 @@ impl RestClient {
         &self,
         request: GetStakingPositionRequest,
     ) -> RestResult<GetStakingPositionResponse> {
-        self.send_signed_request("private/staking/get-staking-position", request)
+        self.send_signed_request(STAKING_POSITION_ENDPOINT, request)
             .await
     }
 }

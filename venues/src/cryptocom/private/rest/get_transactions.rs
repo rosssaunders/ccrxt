@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
 
+const TRANSACTIONS_ENDPOINT: &str = "private/get-transactions";
 /// Parameters for get transactions request
 #[derive(Debug, Clone, Serialize)]
 pub struct GetTransactionsRequest {
@@ -88,7 +89,7 @@ impl RestClient {
         &self,
         request: GetTransactionsRequest,
     ) -> RestResult<GetTransactionsResponse> {
-        self.send_signed_request("private/get-transactions", request)
+        self.send_signed_request(TRANSACTIONS_ENDPOINT, request)
             .await
     }
 }

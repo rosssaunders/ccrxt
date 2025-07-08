@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
 
+const STAKE_ENDPOINT: &str = "private/staking/stake";
 /// Request parameters for stake
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct StakeRequest {
@@ -48,7 +49,7 @@ impl RestClient {
     /// # Returns
     /// Stake request information including staking ID, status, and charge details
     pub async fn stake(&self, params: StakeRequest) -> RestResult<StakeResponse> {
-        self.send_signed_request("private/staking/stake", params)
+        self.send_signed_request(STAKE_ENDPOINT, params)
             .await
     }
 }

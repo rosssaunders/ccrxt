@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
 
+const OPEN_CONVERT_ENDPOINT: &str = "private/get-open-convert";
 /// Request parameters for get open convert
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GetOpenConvertRequest {
@@ -67,7 +68,7 @@ impl RestClient {
         &self,
         params: GetOpenConvertRequest,
     ) -> RestResult<GetOpenConvertResponse> {
-        self.send_signed_request("private/get-open-convert", params)
+        self.send_signed_request(OPEN_CONVERT_ENDPOINT, params)
             .await
     }
 }

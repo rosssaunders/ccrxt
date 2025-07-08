@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
 
+const OPEN_STAKE_ENDPOINT: &str = "private/staking/get-open-stake";
 /// Request parameters for get open stake
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GetOpenStakeRequest {
@@ -68,7 +69,7 @@ impl RestClient {
         &self,
         request: GetOpenStakeRequest,
     ) -> RestResult<GetOpenStakeResponse> {
-        self.send_signed_request("private/staking/get-open-stake", request)
+        self.send_signed_request(OPEN_STAKE_ENDPOINT, request)
             .await
     }
 }

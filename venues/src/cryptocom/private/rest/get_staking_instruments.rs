@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
 
+const STAKING_INSTRUMENTS_ENDPOINT: &str = "private/staking/get-staking-instruments";
 /// Additional reward information
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AdditionalReward {
@@ -68,7 +69,7 @@ impl RestClient {
         #[derive(Debug, Clone, Serialize)]
         struct EmptyRequest {}
 
-        self.send_signed_request("private/staking/get-staking-instruments", EmptyRequest {})
+        self.send_signed_request(STAKING_INSTRUMENTS_ENDPOINT, EmptyRequest {})
             .await
     }
 }

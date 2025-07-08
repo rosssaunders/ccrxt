@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
 
+const POSITIONS_ENDPOINT: &str = "private/get-positions";
 /// Position information
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Position {
@@ -60,7 +61,7 @@ impl RestClient {
         &self,
         request: GetPositionsRequest,
     ) -> RestResult<GetPositionsResponse> {
-        self.send_signed_request("private/get-positions", request)
+        self.send_signed_request(POSITIONS_ENDPOINT, request)
             .await
     }
 }

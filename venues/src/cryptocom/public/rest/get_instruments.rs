@@ -11,6 +11,9 @@ use crate::cryptocom::EndpointType;
 use crate::cryptocom::InstrumentType;
 use crate::cryptocom::RestResult;
 
+/// Endpoint for getting instruments
+const GET_INSTRUMENTS_ENDPOINT: &str = "public/get-instruments";
+
 /// Request parameters for the public/get-instruments endpoint.
 ///
 /// Provides information on all supported instruments.
@@ -92,7 +95,7 @@ impl RestClient {
         params: GetInstrumentsRequest,
     ) -> RestResult<GetInstrumentsResponse> {
         self.send_request(
-            "public/get-instruments",
+            GET_INSTRUMENTS_ENDPOINT,
             reqwest::Method::GET,
             Some(&params),
             EndpointType::PublicGetInstruments,

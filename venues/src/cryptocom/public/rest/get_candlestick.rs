@@ -11,6 +11,9 @@ use crate::cryptocom::EndpointType;
 use crate::cryptocom::RestResult;
 use crate::cryptocom::Timeframe;
 
+/// Endpoint for getting candlestick data
+const GET_CANDLESTICK_ENDPOINT: &str = "public/get-candlestick";
+
 /// Request parameters for the public/get-candlestick endpoint.
 ///
 /// Retrieves candlestick (k-line) data for a given instrument and timeframe.
@@ -76,7 +79,7 @@ impl RestClient {
         params: GetCandlestickRequest,
     ) -> RestResult<GetCandlestickResponse> {
         self.send_request(
-            "public/get-candlestick",
+            GET_CANDLESTICK_ENDPOINT,
             reqwest::Method::GET,
             Some(&params),
             EndpointType::PublicGetCandlestick,
