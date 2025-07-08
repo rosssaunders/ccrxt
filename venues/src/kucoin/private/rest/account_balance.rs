@@ -5,6 +5,8 @@ use crate::kucoin::{ResponseHeaders, RestResponse, Result};
 
 use super::RestClient;
 
+const ACCOUNT_BALANCE_ENDPOINT: &str = "/api/v1/accounts";
+
 /// Request for getting account balance
 #[derive(Debug, Clone, Default, Serialize)]
 pub struct GetAccountBalanceRequest {
@@ -50,7 +52,7 @@ impl RestClient {
         }
 
         let (response, headers): (RestResponse<Vec<AccountBalance>>, ResponseHeaders) =
-            self.get("/api/v1/accounts", Some(params)).await?;
+            self.get(ACCOUNT_BALANCE_ENDPOINT, Some(params)).await?;
 
         Ok((response.data, headers))
     }

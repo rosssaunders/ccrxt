@@ -4,6 +4,8 @@ use crate::kucoin::{ResponseHeaders, RestResponse, Result};
 
 use super::RestClient;
 
+const CREATE_SUB_TRANSFER_ENDPOINT: &str = "/api/v2/accounts/sub-transfer";
+
 /// Request for sub-account transfer (main account only)
 #[derive(Debug, Clone, Serialize)]
 pub struct CreateSubTransferRequest {
@@ -49,11 +51,12 @@ impl RestClient {
         &self,
         request: CreateSubTransferRequest,
     ) -> Result<(SubTransferResponse, ResponseHeaders)> {
-        let body = serde_json::to_string(&request)
-            .map_err(|e| crate::kucoin::ApiError::JsonParsing(format!("Failed to serialize request: {}", e)))?;
+        let body = serde_json::to_string(&request).map_err(|e| {
+            crate::kucoin::ApiError::JsonParsing(format!("Failed to serialize request: {}", e))
+        })?;
 
         let (response, headers): (RestResponse<SubTransferResponse>, ResponseHeaders) =
-            self.post("/api/v2/accounts/sub-transfer", &body).await?;
+            self.post(CREATE_SUB_TRANSFER_ENDPOINT, &body).await?;
 
         Ok((response.data, headers))
     }

@@ -5,6 +5,8 @@ use crate::kucoin::{ResponseHeaders, RestResponse, Result, TradeSide};
 
 use super::RestClient;
 
+const RECENT_FILLS_ENDPOINT: &str = "/api/v1/limit/fills";
+
 /// Request for getting recent fills
 #[derive(Debug, Clone, Default, Serialize)]
 pub struct GetRecentFillsRequest {
@@ -91,7 +93,7 @@ impl RestClient {
         }
 
         let (response, headers): (RestResponse<Vec<Fill>>, ResponseHeaders) =
-            self.get("/api/v1/limit/fills", Some(params)).await?;
+            self.get(RECENT_FILLS_ENDPOINT, Some(params)).await?;
 
         Ok((response.data, headers))
     }

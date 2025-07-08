@@ -1,6 +1,8 @@
-use serde::{Deserialize, Serialize};
-use crate::kucoin::{ResponseHeaders, RestResponse, Result};
 use super::RestClient;
+use crate::kucoin::{ResponseHeaders, RestResponse, Result};
+use serde::{Deserialize, Serialize};
+
+const MODIFY_PURCHASE_ENDPOINT: &str = "/api/v1/otc/loan/purchase";
 
 /// Request for modifying a purchase order
 #[derive(Debug, Clone, Serialize)]
@@ -28,7 +30,7 @@ impl RestClient {
         })?;
 
         let (response, headers): (RestResponse<String>, ResponseHeaders) =
-            self.post("/api/v3/lend/purchase/update", &body).await?;
+            self.post(MODIFY_PURCHASE_ENDPOINT, &body).await?;
 
         Ok((response.data, headers))
     }

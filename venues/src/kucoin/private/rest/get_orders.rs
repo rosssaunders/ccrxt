@@ -5,6 +5,8 @@ use crate::kucoin::{OrderSide, OrderStatus, ResponseHeaders, RestResponse, Resul
 
 use super::RestClient;
 
+const ORDERS_ENDPOINT: &str = "/api/v1/orders";
+
 /// Request for getting order list
 #[derive(Debug, Clone, Default, Serialize)]
 pub struct GetOrdersRequest {
@@ -210,7 +212,7 @@ impl RestClient {
         }
 
         let (response, headers): (RestResponse<OrdersResponse>, ResponseHeaders) =
-            self.get("/api/v1/orders", Some(params)).await?;
+            self.get(ORDERS_ENDPOINT, Some(params)).await?;
 
         Ok((response.data, headers))
     }

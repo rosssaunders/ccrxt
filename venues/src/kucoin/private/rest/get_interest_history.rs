@@ -1,32 +1,11 @@
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_get_interest_history_request_creation() {
-        let request = GetInterestHistoryRequest {
-            currency: Some("BTC".to_string()),
-            is_isolated: Some(true),
-            symbol: Some("BTC-USDT".to_string()),
-            start_time: Some(1680278400000),
-            end_time: Some(1680364800000),
-            current_page: Some(1),
-            page_size: Some(50),
-        };
-
-        assert_eq!(request.currency, Some("BTC".to_string()));
-        assert_eq!(request.is_isolated, Some(true));
-        assert_eq!(request.symbol, Some("BTC-USDT".to_string()));
-        assert_eq!(request.start_time, Some(1680278400000));
-        assert_eq!(request.end_time, Some(1680364800000));
-        assert_eq!(request.current_page, Some(1));
-        assert_eq!(request.page_size, Some(50));
-    }
-}
-use crate::kucoin::{ResponseHeaders, RestResponse, Result};
-use super::RestClient;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+
+use crate::kucoin::{ResponseHeaders, RestResponse, Result};
+
+use super::RestClient;
+
+const INTEREST_HISTORY_ENDPOINT: &str = "/api/v3/margin/interest";
 
 /// Request for getting interest history
 #[derive(Debug, Clone, Serialize)]
@@ -98,7 +77,33 @@ impl RestClient {
             params.insert("pageSize".to_string(), page_size.to_string());
         }
         let (response, headers): (RestResponse<InterestHistoryResponse>, ResponseHeaders) =
-            self.get("/api/v3/margin/interest", Some(params)).await?;
+            self.get(INTEREST_HISTORY_ENDPOINT, Some(params)).await?;
         Ok((response.data, headers))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_get_interest_history_request_creation() {
+        let request = GetInterestHistoryRequest {
+            currency: Some("BTC".to_string()),
+            is_isolated: Some(true),
+            symbol: Some("BTC-USDT".to_string()),
+            start_time: Some(1680278400000),
+            end_time: Some(1680364800000),
+            current_page: Some(1),
+            page_size: Some(50),
+        };
+
+        assert_eq!(request.currency, Some("BTC".to_string()));
+        assert_eq!(request.is_isolated, Some(true));
+        assert_eq!(request.symbol, Some("BTC-USDT".to_string()));
+        assert_eq!(request.start_time, Some(1680278400000));
+        assert_eq!(request.end_time, Some(1680364800000));
+        assert_eq!(request.current_page, Some(1));
+        assert_eq!(request.page_size, Some(50));
     }
 }

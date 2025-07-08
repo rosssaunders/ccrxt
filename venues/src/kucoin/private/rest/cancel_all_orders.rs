@@ -1,9 +1,12 @@
 use serde::{Deserialize, Serialize};
+
 use std::collections::HashMap;
 
 use crate::kucoin::{ResponseHeaders, RestResponse, Result};
 
 use super::RestClient;
+
+const CANCEL_ALL_ORDERS_ENDPOINT: &str = "/api/v1/hf/orders";
 
 /// Request for cancelling all orders
 #[derive(Debug, Clone, Serialize)]
@@ -33,19 +36,24 @@ impl RestClient {
         request: CancelAllOrdersRequest,
     ) -> Result<(CancelAllOrdersResponse, ResponseHeaders)> {
         let mut params = HashMap::new();
-        
+
         if let Some(symbol) = request.symbol {
             params.insert("symbol".to_string(), symbol);
         }
-        
+
         if let Some(trade_type) = request.trade_type {
             params.insert("tradeType".to_string(), trade_type);
         }
 
-        let params_option = if params.is_empty() { None } else { Some(params) };
+        let params_option = if params.is_empty() {
+            None
+        } else {
+            Some(params)
+        };
 
-        let (response, headers): (RestResponse<CancelAllOrdersResponse>, ResponseHeaders) =
-            self.delete("/api/v1/hf/orders", params_option).await?;
+        let (response, headers): (RestResponse<CancelAllOrdersResponse>, ResponseHeaders) = self
+            .delete(CANCEL_ALL_ORDERS_ENDPOINT, params_option)
+            .await?;
 
         Ok((response.data, headers))
     }

@@ -5,6 +5,8 @@ use crate::kucoin::{ResponseHeaders, RestResponse, Result};
 
 use super::RestClient;
 
+const ACCOUNTS_ENDPOINT: &str = "/api/v1/accounts";
+
 /// Request for getting all accounts
 #[derive(Debug, Clone, Default, Serialize)]
 pub struct GetAccountsRequest {
@@ -57,7 +59,7 @@ impl RestClient {
         }
 
         let (response, headers): (RestResponse<Vec<Account>>, ResponseHeaders) =
-            self.get("/api/v1/accounts", Some(params)).await?;
+            self.get(ACCOUNTS_ENDPOINT, Some(params)).await?;
 
         Ok((response.data, headers))
     }

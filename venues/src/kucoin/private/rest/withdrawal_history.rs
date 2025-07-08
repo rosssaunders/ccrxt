@@ -5,6 +5,8 @@ use crate::kucoin::{ResponseHeaders, RestResponse, Result};
 
 use super::RestClient;
 
+const WITHDRAWAL_HISTORY_ENDPOINT: &str = "/api/v1/withdrawals";
+
 /// Request for getting withdrawal history
 #[derive(Debug, Clone, Default, Serialize)]
 pub struct GetWithdrawalsRequest {
@@ -117,7 +119,7 @@ impl RestClient {
         }
 
         let (response, headers): (RestResponse<WithdrawalsResponse>, ResponseHeaders) =
-            self.get("/api/v1/withdrawals", Some(params)).await?;
+            self.get(WITHDRAWAL_HISTORY_ENDPOINT, Some(params)).await?;
 
         Ok((response.data, headers))
     }

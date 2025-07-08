@@ -5,6 +5,8 @@ use crate::kucoin::{ResponseHeaders, RestResponse, Result};
 
 use super::RestClient;
 
+const WITHDRAWAL_QUOTAS_ENDPOINT: &str = "/api/v1/withdrawals/quotas";
+
 /// Request for getting withdrawal quotas
 #[derive(Debug, Clone, Serialize)]
 pub struct GetWithdrawalQuotasRequest {
@@ -72,7 +74,7 @@ impl RestClient {
         }
 
         let (response, headers): (RestResponse<WithdrawalQuota>, ResponseHeaders) =
-            self.get("/api/v1/withdrawals/quotas", Some(params)).await?;
+            self.get(WITHDRAWAL_QUOTAS_ENDPOINT, Some(params)).await?;
 
         Ok((response.data, headers))
     }

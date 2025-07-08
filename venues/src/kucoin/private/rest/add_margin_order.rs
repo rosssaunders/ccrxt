@@ -1,9 +1,10 @@
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
 
 use crate::kucoin::{ResponseHeaders, RestResponse, Result};
 
 use super::RestClient;
+
+const ADD_MARGIN_ORDER_ENDPOINT: &str = "/api/v3/hf/margin/order";
 
 /// Order side (buy or sell)
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -91,7 +92,7 @@ impl RestClient {
             crate::kucoin::ApiError::JsonParsing(format!("Failed to serialize request: {}", e))
         })?;
         let (response, headers): (RestResponse<AddMarginOrderResponse>, ResponseHeaders) =
-            self.post("/api/v3/hf/margin/order", &body).await?;
+            self.post(ADD_MARGIN_ORDER_ENDPOINT, &body).await?;
         Ok((response.data, headers))
     }
 }

@@ -1,22 +1,10 @@
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_redeem_order_status_serialization() {
-        assert_eq!(
-            serde_json::to_string(&RedeemOrderStatus::Done).unwrap(),
-            "\"DONE\""
-        );
-        assert_eq!(
-            serde_json::to_string(&RedeemOrderStatus::Pending).unwrap(),
-            "\"PENDING\""
-        );
-    }
-}
 use serde::{Deserialize, Serialize};
+
 use crate::kucoin::{ResponseHeaders, RestResponse, Result};
+
 use super::RestClient;
+
+const REDEEM_ORDERS_ENDPOINT: &str = "/api/v3/redeem/orders";
 
 /// Redeem order status
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -117,8 +105,25 @@ impl RestClient {
         }
 
         let (response, headers): (RestResponse<RedeemOrdersResponse>, ResponseHeaders) =
-            self.get("/api/v3/redeem/orders", Some(params)).await?;
+            self.get(REDEEM_ORDERS_ENDPOINT, Some(params)).await?;
 
         Ok((response.data, headers))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_redeem_order_status_serialization() {
+        assert_eq!(
+            serde_json::to_string(&RedeemOrderStatus::Done).unwrap(),
+            "\"DONE\""
+        );
+        assert_eq!(
+            serde_json::to_string(&RedeemOrderStatus::Pending).unwrap(),
+            "\"PENDING\""
+        );
     }
 }

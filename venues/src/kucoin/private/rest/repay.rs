@@ -1,27 +1,10 @@
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_repay_request_creation() {
-        let request = RepayRequest {
-            currency: "USDT".to_string(),
-            size: "50.0".to_string(),
-            symbol: None,
-            is_isolated: Some(false),
-            is_hf: Some(false),
-        };
-
-        assert_eq!(request.currency, "USDT");
-        assert_eq!(request.size, "50.0");
-        assert_eq!(request.symbol, None);
-        assert_eq!(request.is_isolated, Some(false));
-        assert_eq!(request.is_hf, Some(false));
-    }
-}
 use crate::kucoin::{ResponseHeaders, RestResponse, Result};
+
 use super::RestClient;
+
 use serde::{Deserialize, Serialize};
+
+const REPAY_ENDPOINT: &str = "/api/v3/margin/repay";
 
 /// Request for repay
 #[derive(Debug, Clone, Serialize)]
@@ -49,7 +32,29 @@ impl RestClient {
             crate::kucoin::ApiError::JsonParsing(format!("Failed to serialize request: {}", e))
         })?;
         let (response, headers): (RestResponse<RepayResponse>, ResponseHeaders) =
-            self.post("/api/v3/margin/repay", &body).await?;
+            self.post(REPAY_ENDPOINT, &body).await?;
         Ok((response.data, headers))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_repay_request_creation() {
+        let request = RepayRequest {
+            currency: "USDT".to_string(),
+            size: "50.0".to_string(),
+            symbol: None,
+            is_isolated: Some(false),
+            is_hf: Some(false),
+        };
+
+        assert_eq!(request.currency, "USDT");
+        assert_eq!(request.size, "50.0");
+        assert_eq!(request.symbol, None);
+        assert_eq!(request.is_isolated, Some(false));
+        assert_eq!(request.is_hf, Some(false));
     }
 }

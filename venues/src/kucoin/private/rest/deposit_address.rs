@@ -5,6 +5,8 @@ use crate::kucoin::{ResponseHeaders, RestResponse, Result};
 
 use super::RestClient;
 
+const DEPOSIT_ADDRESS_ENDPOINT: &str = "/api/v2/deposit-addresses";
+
 /// Request for getting deposit addresses
 #[derive(Debug, Clone, Serialize)]
 pub struct GetDepositAddressRequest {
@@ -48,7 +50,7 @@ impl RestClient {
         }
 
         let (response, headers): (RestResponse<DepositAddress>, ResponseHeaders) =
-            self.get("/api/v2/deposit-addresses", Some(params)).await?;
+            self.get(DEPOSIT_ADDRESS_ENDPOINT, Some(params)).await?;
 
         Ok((response.data, headers))
     }

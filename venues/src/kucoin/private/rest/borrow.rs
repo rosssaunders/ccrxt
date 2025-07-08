@@ -1,44 +1,8 @@
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_borrow_request_creation() {
-        let request = BorrowRequest {
-            currency: "USDT".to_string(),
-            size: "100.0".to_string(),
-            time_in_force: TimeInForce::ImmediateOrCancel,
-            symbol: Some("BTC-USDT".to_string()),
-            is_isolated: Some(true),
-            is_hf: Some(false),
-        };
-
-        assert_eq!(request.currency, "USDT");
-        assert_eq!(request.size, "100.0");
-        assert!(matches!(
-            request.time_in_force,
-            TimeInForce::ImmediateOrCancel
-        ));
-        assert_eq!(request.symbol, Some("BTC-USDT".to_string()));
-        assert_eq!(request.is_isolated, Some(true));
-        assert_eq!(request.is_hf, Some(false));
-    }
-
-    #[test]
-    fn test_time_in_force_serialization() {
-        assert_eq!(
-            serde_json::to_string(&TimeInForce::ImmediateOrCancel).unwrap(),
-            "\"IOC\""
-        );
-        assert_eq!(
-            serde_json::to_string(&TimeInForce::FillOrKill).unwrap(),
-            "\"FOK\""
-        );
-    }
-}
 use super::RestClient;
 use crate::kucoin::{ResponseHeaders, RestResponse, Result};
 use serde::{Deserialize, Serialize};
+
+const BORROW_ENDPOINT: &str = "/api/v3/margin/borrow";
 
 /// Request for borrowing margin
 #[derive(Debug, Clone, Serialize)]
@@ -93,7 +57,46 @@ impl RestClient {
             crate::kucoin::ApiError::JsonParsing(format!("Failed to serialize request: {}", e))
         })?;
         let (response, headers): (RestResponse<BorrowResponse>, ResponseHeaders) =
-            self.post("/api/v3/margin/borrow", &body).await?;
+            self.post(BORROW_ENDPOINT, &body).await?;
         Ok((response.data, headers))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_borrow_request_creation() {
+        let request = BorrowRequest {
+            currency: "USDT".to_string(),
+            size: "100.0".to_string(),
+            time_in_force: TimeInForce::ImmediateOrCancel,
+            symbol: Some("BTC-USDT".to_string()),
+            is_isolated: Some(true),
+            is_hf: Some(false),
+        };
+
+        assert_eq!(request.currency, "USDT");
+        assert_eq!(request.size, "100.0");
+        assert!(matches!(
+            request.time_in_force,
+            TimeInForce::ImmediateOrCancel
+        ));
+        assert_eq!(request.symbol, Some("BTC-USDT".to_string()));
+        assert_eq!(request.is_isolated, Some(true));
+        assert_eq!(request.is_hf, Some(false));
+    }
+
+    #[test]
+    fn test_time_in_force_serialization() {
+        assert_eq!(
+            serde_json::to_string(&TimeInForce::ImmediateOrCancel).unwrap(),
+            "\"IOC\""
+        );
+        assert_eq!(
+            serde_json::to_string(&TimeInForce::FillOrKill).unwrap(),
+            "\"FOK\""
+        );
     }
 }

@@ -5,6 +5,8 @@ use crate::kucoin::{ResponseHeaders, RestResponse, Result};
 
 use super::RestClient;
 
+const SUB_ACCOUNT_BALANCE_ENDPOINT: &str = "/api/v1/sub-accounts/{subUserId}";
+
 /// Request for getting sub-account balance (if main account)
 #[derive(Debug, Clone, Serialize)]
 pub struct GetSubAccountBalanceRequest {
@@ -73,18 +75,15 @@ impl RestClient {
         request: GetSubAccountBalanceRequest,
     ) -> Result<(SubAccountBalance, ResponseHeaders)> {
         let mut params = HashMap::new();
-        params.insert("subUserId".to_string(), request.sub_user_id);
-
         if let Some(include_base_amount) = request.include_base_amount {
             params.insert(
                 "includeBaseAmount".to_string(),
                 include_base_amount.to_string(),
             );
         }
-
+        let endpoint = SUB_ACCOUNT_BALANCE_ENDPOINT.replace("{subUserId}", &request.sub_user_id);
         let (response, headers): (RestResponse<SubAccountBalance>, ResponseHeaders) =
-            self.get("/api/v1/sub-accounts", Some(params)).await?;
-
+            self.get(&endpoint, Some(params)).await?;
         Ok((response.data, headers))
     }
 }

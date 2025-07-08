@@ -1,22 +1,10 @@
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_redeem_request_creation() {
-        let request = RedeemRequest {
-            currency: "BTC".to_string(),
-            size: "0.05".to_string(),
-            purchase_order_no: "123456".to_string(),
-        };
-        assert_eq!(request.currency, "BTC");
-        assert_eq!(request.size, "0.05");
-        assert_eq!(request.purchase_order_no, "123456");
-    }
-}
 use serde::{Deserialize, Serialize};
+
 use crate::kucoin::{ResponseHeaders, RestResponse, Result};
+
 use super::RestClient;
+
+const REDEEM_ENDPOINT: &str = "/api/v3/redeem";
 
 /// Request for redeeming a loan order
 #[derive(Debug, Clone, Serialize)]
@@ -51,8 +39,25 @@ impl RestClient {
         })?;
 
         let (response, headers): (RestResponse<RedeemResponse>, ResponseHeaders) =
-            self.post("/api/v3/redeem", &body).await?;
+            self.post(REDEEM_ENDPOINT, &body).await?;
 
         Ok((response.data, headers))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_redeem_request_creation() {
+        let request = RedeemRequest {
+            currency: "BTC".to_string(),
+            size: "0.05".to_string(),
+            purchase_order_no: "123456".to_string(),
+        };
+        assert_eq!(request.currency, "BTC");
+        assert_eq!(request.size, "0.05");
+        assert_eq!(request.purchase_order_no, "123456");
     }
 }

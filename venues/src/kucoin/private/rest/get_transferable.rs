@@ -1,9 +1,12 @@
 use serde::{Deserialize, Serialize};
+
 use std::collections::HashMap;
 
 use crate::kucoin::{ResponseHeaders, RestResponse, Result};
 
 use super::RestClient;
+
+const TRANSFERABLE_ENDPOINT: &str = "/api/v1/accounts/transferable";
 
 /// Request for getting transferable balance
 #[derive(Debug, Clone, Serialize)]
@@ -49,13 +52,13 @@ impl RestClient {
         let mut params = HashMap::new();
         params.insert("currency".to_string(), request.currency);
         params.insert("type".to_string(), request.account_type);
-        
+
         if let Some(tag) = request.tag {
             params.insert("tag".to_string(), tag);
         }
 
         let (response, headers): (RestResponse<TransferableBalance>, ResponseHeaders) =
-            self.get("/api/v1/accounts/transferable", Some(params)).await?;
+            self.get(TRANSFERABLE_ENDPOINT, Some(params)).await?;
 
         Ok((response.data, headers))
     }

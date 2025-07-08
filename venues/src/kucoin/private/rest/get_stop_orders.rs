@@ -1,9 +1,12 @@
 use serde::{Deserialize, Serialize};
+
 use std::collections::HashMap;
 
 use crate::kucoin::{OrderSide, ResponseHeaders, RestResponse, Result};
 
 use super::RestClient;
+
+const STOP_ORDERS_ENDPOINT: &str = "/api/v1/stop-order";
 
 /// Request for getting stop orders
 #[derive(Debug, Clone, Default, Serialize)]
@@ -198,7 +201,7 @@ impl RestClient {
         }
 
         let (response, headers): (RestResponse<OrdersResponse>, ResponseHeaders) =
-            self.get("/api/v1/stop-order", Some(params)).await?;
+            self.get(STOP_ORDERS_ENDPOINT, Some(params)).await?;
 
         Ok((response.data, headers))
     }

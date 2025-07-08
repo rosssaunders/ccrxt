@@ -1,49 +1,11 @@
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_get_borrow_history_request_creation() {
-        let request = GetBorrowHistoryRequest {
-            currency: "BTC".to_string(),
-            is_isolated: Some(false),
-            symbol: None,
-            order_no: None,
-            start_time: Some(1680278400000),
-            end_time: Some(1680364800000),
-            current_page: Some(1),
-            page_size: Some(50),
-        };
-
-        assert_eq!(request.currency, "BTC");
-        assert_eq!(request.is_isolated, Some(false));
-        assert_eq!(request.symbol, None);
-        assert_eq!(request.start_time, Some(1680278400000));
-        assert_eq!(request.end_time, Some(1680364800000));
-        assert_eq!(request.current_page, Some(1));
-        assert_eq!(request.page_size, Some(50));
-    }
-
-    #[test]
-    fn test_order_status_serialization() {
-        assert_eq!(
-            serde_json::to_string(&OrderStatus::Pending).unwrap(),
-            "\"PENDING\""
-        );
-        assert_eq!(
-            serde_json::to_string(&OrderStatus::Success).unwrap(),
-            "\"SUCCESS\""
-        );
-        assert_eq!(
-            serde_json::to_string(&OrderStatus::Failed).unwrap(),
-            "\"FAILED\""
-        );
-    }
-}
-use super::RestClient;
-use crate::kucoin::{ResponseHeaders, RestResponse, Result};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+
+use super::RestClient;
+
+use crate::kucoin::{ResponseHeaders, RestResponse, Result};
+
+const BORROW_HISTORY_ENDPOINT: &str = "/api/v3/margin/borrow";
 
 /// Request for getting borrow history
 #[derive(Debug, Clone, Serialize)]
@@ -130,7 +92,49 @@ impl RestClient {
             params.insert("pageSize".to_string(), page_size.to_string());
         }
         let (response, headers): (RestResponse<BorrowHistoryResponse>, ResponseHeaders) =
-            self.get("/api/v3/margin/borrow", Some(params)).await?;
+            self.get(BORROW_HISTORY_ENDPOINT, Some(params)).await?;
         Ok((response.data, headers))
+    }
+}
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_get_borrow_history_request_creation() {
+        let request = GetBorrowHistoryRequest {
+            currency: "BTC".to_string(),
+            is_isolated: Some(false),
+            symbol: None,
+            order_no: None,
+            start_time: Some(1680278400000),
+            end_time: Some(1680364800000),
+            current_page: Some(1),
+            page_size: Some(50),
+        };
+
+        assert_eq!(request.currency, "BTC");
+        assert_eq!(request.is_isolated, Some(false));
+        assert_eq!(request.symbol, None);
+        assert_eq!(request.start_time, Some(1680278400000));
+        assert_eq!(request.end_time, Some(1680364800000));
+        assert_eq!(request.current_page, Some(1));
+        assert_eq!(request.page_size, Some(50));
+    }
+
+    #[test]
+    fn test_order_status_serialization() {
+        assert_eq!(
+            serde_json::to_string(&OrderStatus::Pending).unwrap(),
+            "\"PENDING\""
+        );
+        assert_eq!(
+            serde_json::to_string(&OrderStatus::Success).unwrap(),
+            "\"SUCCESS\""
+        );
+        assert_eq!(
+            serde_json::to_string(&OrderStatus::Failed).unwrap(),
+            "\"FAILED\""
+        );
     }
 }

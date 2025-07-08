@@ -4,6 +4,8 @@ use crate::kucoin::{ResponseHeaders, RestResponse, Result};
 
 use super::RestClient;
 
+const CREATE_WITHDRAWAL_ENDPOINT: &str = "/api/v1/withdrawals";
+
 /// Request for creating a withdrawal
 #[derive(Debug, Clone, Serialize)]
 pub struct CreateWithdrawalRequest {
@@ -55,7 +57,7 @@ impl RestClient {
         })?;
 
         let (response, headers): (RestResponse<WithdrawalResponse>, ResponseHeaders) =
-            self.post("/api/v1/withdrawals", &body).await?;
+            self.post(CREATE_WITHDRAWAL_ENDPOINT, &body).await?;
 
         Ok((response.data, headers))
     }

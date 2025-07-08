@@ -1,22 +1,10 @@
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_purchase_request_creation() {
-        let request = PurchaseRequest {
-            currency: "BTC".to_string(),
-            size: "0.1".to_string(),
-            interest_rate: "0.005".to_string(),
-        };
-        assert_eq!(request.currency, "BTC");
-        assert_eq!(request.size, "0.1");
-        assert_eq!(request.interest_rate, "0.005");
-    }
-}
 use super::RestClient;
+
 use crate::kucoin::{ResponseHeaders, RestResponse, Result};
+
 use serde::{Deserialize, Serialize};
+
+const PURCHASE_ENDPOINT: &str = "/api/v3/purchase";
 
 /// Request for purchasing/lending credit
 #[derive(Debug, Clone, Serialize)]
@@ -51,8 +39,25 @@ impl RestClient {
         })?;
 
         let (response, headers): (RestResponse<PurchaseResponse>, ResponseHeaders) =
-            self.post("/api/v3/purchase", &body).await?;
+            self.post(PURCHASE_ENDPOINT, &body).await?;
 
         Ok((response.data, headers))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_purchase_request_creation() {
+        let request = PurchaseRequest {
+            currency: "BTC".to_string(),
+            size: "0.1".to_string(),
+            interest_rate: "0.005".to_string(),
+        };
+        assert_eq!(request.currency, "BTC");
+        assert_eq!(request.size, "0.1");
+        assert_eq!(request.interest_rate, "0.005");
     }
 }

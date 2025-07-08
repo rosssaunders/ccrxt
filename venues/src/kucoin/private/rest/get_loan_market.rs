@@ -1,24 +1,10 @@
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_get_loan_market_request_empty() {
-        let request = GetLoanMarketRequest { currency: None };
-        assert!(request.currency.is_none());
-    }
-
-    #[test]
-    fn test_get_loan_market_request_with_currency() {
-        let request = GetLoanMarketRequest {
-            currency: Some("BTC".to_string()),
-        };
-        assert_eq!(request.currency, Some("BTC".to_string()));
-    }
-}
 use super::RestClient;
+
 use crate::kucoin::{ResponseHeaders, RestResponse, Result};
+
 use serde::{Deserialize, Serialize};
+
+const LOAN_MARKET_ENDPOINT: &str = "/api/v3/project/list";
 
 /// Response data for loan market information
 #[derive(Debug, Clone, Deserialize)]
@@ -83,8 +69,27 @@ impl RestClient {
         };
 
         let (response, headers): (RestResponse<Vec<LoanMarket>>, ResponseHeaders) =
-            self.get("/api/v3/project/list", params).await?;
+            self.get(LOAN_MARKET_ENDPOINT, params).await?;
 
         Ok((response.data, headers))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_get_loan_market_request_empty() {
+        let request = GetLoanMarketRequest { currency: None };
+        assert!(request.currency.is_none());
+    }
+
+    #[test]
+    fn test_get_loan_market_request_with_currency() {
+        let request = GetLoanMarketRequest {
+            currency: Some("BTC".to_string()),
+        };
+        assert_eq!(request.currency, Some("BTC".to_string()));
     }
 }

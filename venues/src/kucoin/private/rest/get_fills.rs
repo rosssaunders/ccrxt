@@ -1,9 +1,12 @@
 use serde::{Deserialize, Serialize};
+
 use std::collections::HashMap;
 
 use crate::kucoin::{ResponseHeaders, RestResponse, Result, TradeSide};
 
 use super::RestClient;
+
+const FILLS_ENDPOINT: &str = "/api/v1/fills";
 
 /// Request for getting fills (trade history)
 #[derive(Debug, Clone, Default, Serialize)]
@@ -155,7 +158,7 @@ impl RestClient {
         }
 
         let (response, headers): (RestResponse<FillsResponse>, ResponseHeaders) =
-            self.get("/api/v1/fills", Some(params)).await?;
+            self.get(FILLS_ENDPOINT, Some(params)).await?;
 
         Ok((response.data, headers))
     }

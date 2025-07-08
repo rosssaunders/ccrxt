@@ -5,6 +5,8 @@ use crate::kucoin::{ResponseHeaders, RestResponse, Result};
 
 use super::RestClient;
 
+const ACCOUNT_LEDGERS_ENDPOINT: &str = "/api/v1/accounts/ledgers";
+
 /// Request for getting account ledgers (transaction history)
 #[derive(Debug, Clone, Default, Serialize)]
 pub struct GetAccountLedgersRequest {
@@ -114,7 +116,7 @@ impl RestClient {
         }
 
         let (response, headers): (RestResponse<AccountLedgersResponse>, ResponseHeaders) =
-            self.get("/api/v1/accounts/ledgers", Some(params)).await?;
+            self.get(ACCOUNT_LEDGERS_ENDPOINT, Some(params)).await?;
 
         Ok((response.data, headers))
     }

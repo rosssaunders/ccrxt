@@ -4,6 +4,8 @@ use crate::kucoin::{OrderSide, OrderType, ResponseHeaders, RestResponse, Result,
 
 use super::RestClient;
 
+const PLACE_ORDER_ENDPOINT: &str = "/api/v1/orders";
+
 /// Request for placing a new order
 #[derive(Debug, Clone, Serialize)]
 pub struct PlaceOrderRequest {
@@ -106,11 +108,12 @@ impl RestClient {
         &self,
         request: PlaceOrderRequest,
     ) -> Result<(PlaceOrderResponse, ResponseHeaders)> {
-        let body = serde_json::to_string(&request)
-            .map_err(|e| crate::kucoin::ApiError::JsonParsing(format!("Failed to serialize request: {}", e)))?;
+        let body = serde_json::to_string(&request).map_err(|e| {
+            crate::kucoin::ApiError::JsonParsing(format!("Failed to serialize request: {}", e))
+        })?;
 
         let (response, headers): (RestResponse<PlaceOrderResponse>, ResponseHeaders) =
-            self.post("/api/v1/hf/orders", &body).await?;
+            self.post(PLACE_ORDER_ENDPOINT, &body).await?;
 
         Ok((response.data, headers))
     }

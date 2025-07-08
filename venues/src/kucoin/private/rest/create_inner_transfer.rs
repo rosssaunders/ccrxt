@@ -4,6 +4,8 @@ use crate::kucoin::{ResponseHeaders, RestResponse, Result};
 
 use super::RestClient;
 
+const CREATE_INNER_TRANSFER_ENDPOINT: &str = "/api/v2/accounts/inner-transfer";
+
 /// Request for creating an inner transfer between accounts
 #[derive(Debug, Clone, Serialize)]
 pub struct CreateInnerTransferRequest {
@@ -48,11 +50,12 @@ impl RestClient {
         &self,
         request: CreateInnerTransferRequest,
     ) -> Result<(InnerTransferResponse, ResponseHeaders)> {
-        let body = serde_json::to_string(&request)
-            .map_err(|e| crate::kucoin::ApiError::JsonParsing(format!("Failed to serialize request: {}", e)))?;
+        let body = serde_json::to_string(&request).map_err(|e| {
+            crate::kucoin::ApiError::JsonParsing(format!("Failed to serialize request: {}", e))
+        })?;
 
         let (response, headers): (RestResponse<InnerTransferResponse>, ResponseHeaders) =
-            self.post("/api/v2/accounts/inner-transfer", &body).await?;
+            self.post(CREATE_INNER_TRANSFER_ENDPOINT, &body).await?;
 
         Ok((response.data, headers))
     }

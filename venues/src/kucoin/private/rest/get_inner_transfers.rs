@@ -5,6 +5,8 @@ use crate::kucoin::{ResponseHeaders, RestResponse, Result};
 
 use super::RestClient;
 
+const INNER_TRANSFERS_ENDPOINT: &str = "/api/v1/accounts/transferable";
+
 /// Request for getting inner transfer history
 #[derive(Debug, Clone, Default, Serialize)]
 pub struct GetInnerTransfersRequest {
@@ -97,7 +99,7 @@ impl RestClient {
         request: GetInnerTransfersRequest,
     ) -> Result<(InnerTransfersResponse, ResponseHeaders)> {
         let mut params = HashMap::new();
-        
+
         if let Some(currency) = request.currency {
             params.insert("currency".to_string(), currency);
         }
@@ -118,7 +120,7 @@ impl RestClient {
         }
 
         let (response, headers): (RestResponse<InnerTransfersResponse>, ResponseHeaders) =
-            self.get("/api/v1/accounts/transferable", Some(params)).await?;
+            self.get(INNER_TRANSFERS_ENDPOINT, Some(params)).await?;
 
         Ok((response.data, headers))
     }

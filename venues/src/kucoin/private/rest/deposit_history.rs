@@ -5,6 +5,8 @@ use crate::kucoin::{ResponseHeaders, RestResponse, Result};
 
 use super::RestClient;
 
+const DEPOSIT_HISTORY_ENDPOINT: &str = "/api/v1/deposits";
+
 /// Request for getting deposit history
 #[derive(Debug, Clone, Default, Serialize)]
 pub struct GetDepositsRequest {
@@ -114,7 +116,7 @@ impl RestClient {
         }
 
         let (response, headers): (RestResponse<DepositsResponse>, ResponseHeaders) =
-            self.get("/api/v1/deposits", Some(params)).await?;
+            self.get(DEPOSIT_HISTORY_ENDPOINT, Some(params)).await?;
 
         Ok((response.data, headers))
     }

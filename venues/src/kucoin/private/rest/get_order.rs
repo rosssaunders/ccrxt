@@ -4,6 +4,8 @@ use crate::kucoin::{OrderSide, ResponseHeaders, RestResponse, Result};
 
 use super::RestClient;
 
+const GET_ORDER_ENDPOINT: &str = "/api/v1/orders/{order_id}";
+
 /// Request for getting order details
 #[derive(Debug, Clone, Serialize)]
 pub struct GetOrderRequest {
@@ -129,11 +131,9 @@ impl RestClient {
     ///
     /// Reference: https://docs.kucoin.com/#get-single-order-info
     pub async fn get_order(&self, request: GetOrderRequest) -> Result<(Order, ResponseHeaders)> {
-        let endpoint = format!("/api/v1/orders/{}", request.order_id);
-
+        let endpoint = GET_ORDER_ENDPOINT.replace("{order_id}", &request.order_id);
         let (response, headers): (RestResponse<Order>, ResponseHeaders) =
             self.get(&endpoint, None).await?;
-
         Ok((response.data, headers))
     }
 }

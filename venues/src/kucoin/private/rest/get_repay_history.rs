@@ -1,33 +1,12 @@
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_repay_history_request_creation() {
-        let request = GetRepayHistoryRequest {
-            currency: "USDT".to_string(),
-            is_isolated: Some(false),
-            symbol: None,
-            order_no: None,
-            start_time: Some(1680278400000),
-            end_time: Some(1680364800000),
-            current_page: Some(1),
-            page_size: Some(50),
-        };
-
-        assert_eq!(request.currency, "USDT");
-        assert_eq!(request.is_isolated, Some(false));
-        assert_eq!(request.symbol, None);
-        assert_eq!(request.start_time, Some(1680278400000));
-        assert_eq!(request.end_time, Some(1680364800000));
-        assert_eq!(request.current_page, Some(1));
-        assert_eq!(request.page_size, Some(50));
-    }
-}
 use crate::kucoin::{ResponseHeaders, RestResponse, Result};
+
 use super::RestClient;
+
 use serde::{Deserialize, Serialize};
+
 use std::collections::HashMap;
+
+const REPAY_HISTORY_ENDPOINT: &str = "/api/v3/margin/repay";
 
 /// Request for getting repay history
 #[derive(Debug, Clone, Serialize)]
@@ -114,7 +93,34 @@ impl RestClient {
             params.insert("pageSize".to_string(), page_size.to_string());
         }
         let (response, headers): (RestResponse<RepayHistoryResponse>, ResponseHeaders) =
-            self.get("/api/v3/margin/repay", Some(params)).await?;
+            self.get(REPAY_HISTORY_ENDPOINT, Some(params)).await?;
         Ok((response.data, headers))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_repay_history_request_creation() {
+        let request = GetRepayHistoryRequest {
+            currency: "USDT".to_string(),
+            is_isolated: Some(false),
+            symbol: None,
+            order_no: None,
+            start_time: Some(1680278400000),
+            end_time: Some(1680364800000),
+            current_page: Some(1),
+            page_size: Some(50),
+        };
+
+        assert_eq!(request.currency, "USDT");
+        assert_eq!(request.is_isolated, Some(false));
+        assert_eq!(request.symbol, None);
+        assert_eq!(request.start_time, Some(1680278400000));
+        assert_eq!(request.end_time, Some(1680364800000));
+        assert_eq!(request.current_page, Some(1));
+        assert_eq!(request.page_size, Some(50));
     }
 }

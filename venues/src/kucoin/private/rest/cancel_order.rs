@@ -5,6 +5,8 @@ use crate::kucoin::{ResponseHeaders, RestResponse, Result};
 
 use super::RestClient;
 
+const CANCEL_ORDER_ENDPOINT: &str = "/api/v1/orders/{order_id}";
+
 /// Request for cancelling an order
 #[derive(Debug, Clone, Serialize)]
 pub struct CancelOrderRequest {
@@ -32,7 +34,7 @@ impl RestClient {
         params.insert("orderId".to_string(), request.order_id);
 
         let (response, headers): (RestResponse<CancelOrderResponse>, ResponseHeaders) =
-            self.delete("/api/v1/hf/orders", Some(params)).await?;
+            self.delete(CANCEL_ORDER_ENDPOINT, Some(params)).await?;
 
         Ok((response.data, headers))
     }

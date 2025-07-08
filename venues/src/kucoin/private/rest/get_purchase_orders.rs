@@ -1,22 +1,10 @@
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_purchase_order_status_serialization() {
-        assert_eq!(
-            serde_json::to_string(&PurchaseOrderStatus::Done).unwrap(),
-            "\"DONE\""
-        );
-        assert_eq!(
-            serde_json::to_string(&PurchaseOrderStatus::Pending).unwrap(),
-            "\"PENDING\""
-        );
-    }
-}
 use serde::{Deserialize, Serialize};
+
 use crate::kucoin::{ResponseHeaders, RestResponse, Result};
+
 use super::RestClient;
+
+const PURCHASE_ORDERS_ENDPOINT: &str = "/api/v3/purchase/orders";
 
 /// Purchase order status
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -123,8 +111,25 @@ impl RestClient {
         }
 
         let (response, headers): (RestResponse<PurchaseOrdersResponse>, ResponseHeaders) =
-            self.get("/api/v3/purchase/orders", Some(params)).await?;
+            self.get(PURCHASE_ORDERS_ENDPOINT, Some(params)).await?;
 
         Ok((response.data, headers))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_purchase_order_status_serialization() {
+        assert_eq!(
+            serde_json::to_string(&PurchaseOrderStatus::Done).unwrap(),
+            "\"DONE\""
+        );
+        assert_eq!(
+            serde_json::to_string(&PurchaseOrderStatus::Pending).unwrap(),
+            "\"PENDING\""
+        );
     }
 }
