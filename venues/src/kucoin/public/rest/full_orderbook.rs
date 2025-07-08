@@ -41,9 +41,8 @@ impl RestClient {
         let mut params = HashMap::new();
         params.insert("symbol".to_string(), request.symbol);
 
-        let (response, headers): (RestResponse<FullOrderBookResponse>, ResponseHeaders) = self
-            .get("/api/v1/market/orderbook/level2", Some(params))
-            .await?;
+        let (response, headers): (RestResponse<FullOrderBookResponse>, ResponseHeaders) =
+            self.get(FULL_ORDERBOOK_ENDPOINT, Some(params)).await?;
 
         Ok((response.data, headers))
     }
