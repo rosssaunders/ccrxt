@@ -56,9 +56,13 @@ pub struct GetExpirationsRequest {
 /// The result object for get_expirations.
 #[derive(Debug, Clone, Deserialize)]
 pub struct GetExpirationsResult {
-    /// List of available expiration timestamps (milliseconds since epoch).
-    #[serde(rename = "expirations")]
-    pub expirations: Vec<u64>,
+    /// Future expirations as strings (e.g., "21SEP24", "PERPETUAL").
+    #[serde(rename = "future")]
+    pub future: Option<Vec<String>>,
+
+    /// Option expirations as strings (e.g., "21SEP24", "22SEP24").
+    #[serde(rename = "option")]
+    pub option: Option<Vec<String>>,
 }
 
 /// Response for public/get_expirations endpoint following Deribit JSON-RPC 2.0 format.
@@ -106,13 +110,24 @@ mod tests {
             "id": 42,
             "jsonrpc": "2.0",
             "result": {
-                "expirations": [1680307200000, 1682918400000, 1685529600000]
+                "future": [
+                    "21SEP24",
+                    "22SEP24",
+                    "PERPETUAL"
+                ],
+                "option": [
+                    "21SEP24",
+                    "22SEP24",
+                    "23SEP24"
+                ]
             }
         }"#;
         let resp: GetExpirationsResponse = serde_json::from_str(data).unwrap();
         assert_eq!(resp.id, 42);
         assert_eq!(resp.jsonrpc, "2.0");
-        assert_eq!(resp.result.expirations.len(), 3);
-        assert_eq!(resp.result.expirations[0], 1680307200000);
+        assert_eq!(resp.result.future.as_ref().unwrap().len(), 3);
+        assert_eq!(resp.result.future.as_ref().unwrap()[0], "21SEP24");
+        assert_eq!(resp.result.option.as_ref().unwrap().len(), 3);
+        assert_eq!(resp.result.option.as_ref().unwrap()[2], "23SEP24");
     }
 }
