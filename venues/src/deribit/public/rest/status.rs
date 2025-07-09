@@ -2,30 +2,26 @@
 //!
 //! Method used to get information about locked currencies
 
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
+
+use crate::deribit::enums::PlatformLockStatus;
 
 use super::RestClient;
 use crate::deribit::{EndpointType, JsonRpcResult, RestResult};
 
-const STATUS_ENDPOINT: &str = "public/get_status";
-
-/// Request parameters for the public/status endpoint.
-///
-/// This method takes no parameters.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetStatusRequest {}
+const STATUS_ENDPOINT: &str = "public/status";
 
 /// Result object for the public/status endpoint.
 #[derive(Debug, Clone, Deserialize)]
 pub struct GetStatusResult {
     /// Platform lock status:
-    /// - "true" when platform is locked in all currencies
-    /// - "partial" when some currencies are locked
-    /// - "false" when there are no currencies locked
-    pub locked: String,
+    /// - `AllLocked`: Platform is locked in all currencies ("true")
+    /// - `PartialLocked`: Some currencies are locked ("partial")
+    /// - `Unlocked`: No currencies are locked ("false")
+    pub locked: PlatformLockStatus,
 
     /// List of currency indices locked platform-wise
-    pub locked_indices: Vec<String>,
+    pub locked_indices: Option<Vec<String>>,
 }
 
 /// Response for public/status endpoint following Deribit JSON-RPC 2.0 format.
@@ -43,10 +39,10 @@ impl RestClient {
     /// A result containing the response with status information or an error
     ///
     /// [Official API docs](https://docs.deribit.com/#public-status)
-    pub async fn get_status(&self, params: GetStatusRequest) -> RestResult<GetStatusResponse> {
+    pub async fn get_status(&self) -> RestResult<GetStatusResponse> {
         self.send_request(
             STATUS_ENDPOINT,
-            Some(&params),
+            None::<&()>,
             EndpointType::NonMatchingEngine,
         )
         .await
@@ -59,16 +55,6 @@ mod tests {
 
     use super::*;
     use crate::deribit::{AccountTier, RateLimiter};
-
-    #[test]
-    fn test_get_status_request_serialization() {
-        let request = GetStatusRequest {};
-
-        let json_value = serde_json::to_value(&request).unwrap();
-        // Should serialize to an empty object
-        assert!(json_value.is_object());
-        assert!(json_value.as_object().unwrap().is_empty());
-    }
 
     #[test]
     fn test_get_status_response_structure() {
@@ -84,8 +70,8 @@ mod tests {
         let response: GetStatusResponse = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.id, 123);
         assert_eq!(response.jsonrpc, "2.0");
-        assert_eq!(response.result.locked, "false");
-        assert!(response.result.locked_indices.is_empty());
+        assert_eq!(response.result.locked, PlatformLockStatus::Unlocked);
+        assert_eq!(response.result.locked_indices.as_deref(), Some(&[][..]));
     }
 
     #[test]
@@ -102,10 +88,11 @@ mod tests {
         let response: GetStatusResponse = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.id, 456);
         assert_eq!(response.jsonrpc, "2.0");
-        assert_eq!(response.result.locked, "partial");
-        assert_eq!(response.result.locked_indices.len(), 2);
-        assert_eq!(response.result.locked_indices[0], "BTC");
-        assert_eq!(response.result.locked_indices[1], "ETH");
+        assert_eq!(response.result.locked, PlatformLockStatus::PartialLocked);
+        let indices = response.result.locked_indices.as_ref().unwrap();
+        assert_eq!(indices.len(), 2);
+        assert_eq!(indices[0], "BTC");
+        assert_eq!(indices[1], "ETH");
     }
 
     #[test]
@@ -122,20 +109,24 @@ mod tests {
         let response: GetStatusResponse = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.id, 789);
         assert_eq!(response.jsonrpc, "2.0");
-        assert_eq!(response.result.locked, "true");
-        assert_eq!(response.result.locked_indices.len(), 4);
-        assert!(response.result.locked_indices.contains(&"BTC".to_string()));
-        assert!(response.result.locked_indices.contains(&"ETH".to_string()));
-        assert!(response.result.locked_indices.contains(&"SOL".to_string()));
-        assert!(response.result.locked_indices.contains(&"USDC".to_string()));
+        assert_eq!(response.result.locked, PlatformLockStatus::AllLocked);
+        let indices = response.result.locked_indices.as_ref().unwrap();
+        assert_eq!(indices.len(), 4);
+        assert!(indices.contains(&"BTC".to_string()));
+        assert!(indices.contains(&"ETH".to_string()));
+        assert!(indices.contains(&"SOL".to_string()));
+        assert!(indices.contains(&"USDC".to_string()));
     }
 
     #[test]
     fn test_locked_status_values() {
         // Test all possible values for the locked field
-        let locked_values = vec!["true", "false", "partial"];
-
-        for locked_value in locked_values {
+        let cases = vec![
+            ("true", PlatformLockStatus::AllLocked),
+            ("partial", PlatformLockStatus::PartialLocked),
+            ("false", PlatformLockStatus::Unlocked),
+        ];
+        for (locked_value, expected_enum) in cases {
             let response_json = json!({
                 "id": 1,
                 "jsonrpc": "2.0",
@@ -146,7 +137,7 @@ mod tests {
             });
 
             let response: GetStatusResponse = serde_json::from_value(response_json).unwrap();
-            assert_eq!(response.result.locked, locked_value);
+            assert_eq!(response.result.locked, expected_enum);
         }
     }
 
@@ -156,9 +147,6 @@ mod tests {
         let rate_limiter = RateLimiter::new(AccountTier::Tier4);
 
         let rest_client = RestClient::new("https://test.deribit.com", client, rate_limiter);
-
-        // Test that we can create a request - this doesn't actually call the API
-        let _request = GetStatusRequest {};
 
         // Test that rate limiting works for this endpoint type
         let result = rest_client
@@ -181,7 +169,7 @@ mod tests {
         });
 
         let response: GetStatusResponse = serde_json::from_value(response_json).unwrap();
-        assert!(response.result.locked_indices.is_empty());
+        assert_eq!(response.result.locked_indices, Some(vec![]));
 
         // Test with single locked index
         let response_json = json!({
@@ -194,7 +182,8 @@ mod tests {
         });
 
         let response: GetStatusResponse = serde_json::from_value(response_json).unwrap();
-        assert_eq!(response.result.locked_indices.len(), 1);
-        assert_eq!(response.result.locked_indices[0], "BTC");
+        let indices = response.result.locked_indices.as_ref().unwrap();
+        assert_eq!(indices.len(), 1);
+        assert_eq!(indices[0], "BTC");
     }
 }

@@ -3,18 +3,10 @@
 //! Retrieves the current time (in milliseconds). This API endpoint can be used to
 //! check the clock skew between your software and Deribit's systems.
 
-use serde::{Deserialize, Serialize};
-
 use super::RestClient;
 use crate::deribit::{EndpointType, JsonRpcResult, RestResult};
 
 const TIME_ENDPOINT: &str = "public/get_time";
-
-/// Request parameters for the public/get_time endpoint.
-///
-/// This method takes no parameters.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetTimeRequest {}
 
 /// Response for public/get_time endpoint following Deribit JSON-RPC 2.0 format.
 pub type GetTimeResponse = JsonRpcResult<i64>;
@@ -32,13 +24,9 @@ impl RestClient {
     /// A result containing the response with the current timestamp or an error
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_time)
-    pub async fn get_time(&self, params: GetTimeRequest) -> RestResult<GetTimeResponse> {
-        self.send_request(
-            TIME_ENDPOINT,
-            Some(&params),
-            EndpointType::NonMatchingEngine,
-        )
-        .await
+    pub async fn get_time(&self) -> RestResult<GetTimeResponse> {
+        self.send_request(TIME_ENDPOINT, None::<&()>, EndpointType::NonMatchingEngine)
+            .await
     }
 }
 
@@ -48,17 +36,6 @@ mod tests {
 
     use super::*;
     use crate::deribit::{AccountTier, RateLimiter};
-
-    #[test]
-    fn test_get_time_request_serialization() {
-        let request = GetTimeRequest {};
-
-        let json_value =
-            serde_json::to_value(&request).expect("Failed to convert request to value");
-        // Should serialize to an empty object
-        assert!(json_value.is_object());
-        assert!(json_value.as_object().expect("Expected object").is_empty());
-    }
 
     #[test]
     fn test_get_time_response_structure() {
@@ -123,9 +100,6 @@ mod tests {
         let rate_limiter = RateLimiter::new(AccountTier::Tier4);
 
         let rest_client = RestClient::new("https://test.deribit.com", client, rate_limiter);
-
-        // Test that we can create a request - this doesn't actually call the API
-        let _request = GetTimeRequest {};
 
         // Test that rate limiting works for this endpoint type
         let result = rest_client

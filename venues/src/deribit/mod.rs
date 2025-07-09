@@ -45,8 +45,8 @@ pub mod public {
 
     pub use self::{
         rest::{
-            GetComboIdsRequest, GetComboIdsResponse, GetStatusRequest, GetStatusResponse,
-            GetStatusResult, GetTimeRequest, GetTimeResponse, RestClient,
+            GetComboIdsRequest, GetComboIdsResponse, GetFundingRateValueRequest, GetStatusResponse,
+            GetStatusResult, GetTimeResponse, RestClient,
         },
         websocket::{
             HelloRequest, HelloResponse, HelloResult, PrivateWebSocketClient, SubscribeRequest,
@@ -127,8 +127,8 @@ pub use private::{
     WithdrawResponse, WithdrawalData,
 };
 pub use public::{
-    GetComboIdsRequest, GetComboIdsResponse, GetStatusRequest, GetStatusResponse, GetStatusResult,
-    GetTimeRequest, GetTimeResponse, HelloRequest, HelloResponse, HelloResult,
+    GetComboIdsRequest, GetComboIdsResponse, GetFundingRateValueRequest, GetStatusResponse,
+    GetStatusResult, GetTimeResponse, HelloRequest, HelloResponse, HelloResult,
     PrivateWebSocketClient, RestClient as PublicRestClient, SubscribeRequest, SubscribeResponse,
     websocket::client::DeribitWebSocketError,
 };

@@ -1375,3 +1375,29 @@ pub enum TriggerFillCondition {
     #[serde(rename = "incremental")]
     Incremental,
 }
+
+/// Platform lock status for Deribit public/status endpoint.
+///
+/// - `AllLocked`: Platform is locked in all currencies ("true")
+/// - `PartialLocked`: Some currencies are locked ("partial")
+/// - `Unlocked`: No currencies are locked ("false")
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum PlatformLockStatus {
+    #[serde(rename = "true")]
+    AllLocked,
+    #[serde(rename = "partial")]
+    PartialLocked,
+    #[serde(rename = "false")]
+    Unlocked,
+}
+
+impl std::fmt::Display for PlatformLockStatus {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            PlatformLockStatus::AllLocked => write!(f, "true"),
+            PlatformLockStatus::PartialLocked => write!(f, "partial"),
+            PlatformLockStatus::Unlocked => write!(f, "false"),
+        }
+    }
+}

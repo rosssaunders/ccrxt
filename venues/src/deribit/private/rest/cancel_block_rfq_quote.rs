@@ -1,4 +1,4 @@
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 
 // Reuse the result structure from add_block_rfq_quote since the API returns the same quote object
 use super::RestClient;

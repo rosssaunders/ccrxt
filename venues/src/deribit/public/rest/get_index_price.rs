@@ -12,20 +12,17 @@ const INDEX_PRICE_ENDPOINT: &str = "public/get_index_price";
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct GetIndexPriceRequest {
     /// Index name (e.g., "btc_usd").
-    #[serde(rename = "index_name")]
     pub index_name: String,
 }
 
 /// The result object for get_index_price.
 #[derive(Debug, Clone, Deserialize)]
 pub struct GetIndexPriceResult {
-    /// The current index price.
-    #[serde(rename = "index_price")]
+    /// Value of requested index.
     pub index_price: f64,
 
-    /// Timestamp in milliseconds since epoch for the index price.
-    #[serde(rename = "timestamp")]
-    pub timestamp: u64,
+    /// Estimated delivery price for the market. For more details, see Documentation > General > Expiration Price.
+    pub estimated_delivery_price: f64,
 }
 
 /// Response for public/get_index_price endpoint following Deribit JSON-RPC 2.0 format.
@@ -72,13 +69,13 @@ mod tests {
             "jsonrpc": "2.0",
             "result": {
                 "index_price": 65000.0,
-                "timestamp": 1680310800000
+                "timestamp": 65000.0
             }
         }"#;
         let resp: GetIndexPriceResponse = serde_json::from_str(data).unwrap();
         assert_eq!(resp.id, 12);
         assert_eq!(resp.jsonrpc, "2.0");
         assert!((resp.result.index_price - 65000.0).abs() < 1e-8);
-        assert_eq!(resp.result.timestamp, 1680310800000);
+        assert!((resp.result.estimated_delivery_price - 65000.0).abs() < 1e-8);
     }
 }

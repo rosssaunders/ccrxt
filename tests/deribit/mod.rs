@@ -1,8 +1,8 @@
-#[cfg(test)]
-mod deribit;
+// This module will contain private endpoint integration tests in the future
+// Currently, public endpoint integration tests are in ../deribit_public_integration_tests.rs
 
 #[cfg(test)]
-mod integration_tests;
-
-#[cfg(test)]
-mod rest_api_tests;
+mod private_endpoints_integration_tests {
+    // TODO: Implement private endpoint integration tests here
+    // These will require testnet credentials and authentication
+}
