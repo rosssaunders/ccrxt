@@ -1728,15 +1728,31 @@ async fn test_get_expirations() {
     assert_eq!(response.jsonrpc, "2.0");
     assert!(response.id > 0);
 
-    println!(
-        "Found {} expiration timestamps",
-        response.result.expirations.len()
-    );
+    println!("Future expirations: {:?}", response.result.future);
+    println!("Option expirations: {:?}", response.result.option);
 
-    // Validate expiration timestamps
-    for (i, &expiration) in response.result.expirations.iter().take(5).enumerate() {
-        assert!(expiration > 0, "Expiration timestamp should be positive");
-        println!("Expiration {}: {}", i, expiration);
+    // Validate future expirations if present
+    if let Some(ref future_expirations) = response.result.future {
+        println!("Found {} future expirations", future_expirations.len());
+        for (i, expiration) in future_expirations.iter().take(5).enumerate() {
+            assert!(
+                !expiration.is_empty(),
+                "Expiration string should not be empty"
+            );
+            println!("Future expiration {}: {}", i, expiration);
+        }
+    }
+
+    // Validate option expirations if present
+    if let Some(ref option_expirations) = response.result.option {
+        println!("Found {} option expirations", option_expirations.len());
+        for (i, expiration) in option_expirations.iter().take(5).enumerate() {
+            assert!(
+                !expiration.is_empty(),
+                "Expiration string should not be empty"
+            );
+            println!("Option expiration {}: {}", i, expiration);
+        }
     }
 }
 
