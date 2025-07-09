@@ -36,10 +36,29 @@ pub mod get_volatility_index_data;
 pub mod status;
 
 pub use client::RestClient;
+pub use get_book_summary_by_currency::{
+    BookSummary, GetBookSummaryByCurrencyRequest, GetBookSummaryByCurrencyResponse,
+};
+pub use get_book_summary_by_instrument::{
+    BookSummaryByInstrument, GetBookSummaryByInstrumentRequest, GetBookSummaryByInstrumentResponse,
+};
 pub use get_combo_details::{GetComboDetailsRequest, GetComboDetailsResponse};
 pub use get_combo_ids::{GetComboIdsRequest, GetComboIdsResponse};
 pub use get_combos::{ComboInfo, ComboLeg, GetCombosRequest, GetCombosResponse};
+pub use get_contract_size::{
+    GetContractSizeRequest, GetContractSizeResponse, GetContractSizeResult,
+};
 pub use get_funding_rate_value::GetFundingRateValueRequest;
+pub use get_index_price::{GetIndexPriceRequest, GetIndexPriceResponse, GetIndexPriceResult};
+pub use get_instruments::{GetInstrumentsRequest, GetInstrumentsResponse, InstrumentData};
+pub use get_last_settlements_by_currency::{
+    GetLastSettlementsByCurrencyRequest, GetLastSettlementsByCurrencyResponse,
+    GetLastSettlementsByCurrencyResult, SettlementEntry,
+};
+pub use get_last_trades_by_currency::{
+    GetLastTradesByCurrencyRequest, GetLastTradesByCurrencyResponse, GetLastTradesByCurrencyResult,
+    TradeEntry,
+};
 pub use get_time::GetTimeResponse;
 pub use get_tradingview_chart_data::{
     GetTradingviewChartDataRequest, GetTradingviewChartDataResponse, GetTradingviewChartDataResult,

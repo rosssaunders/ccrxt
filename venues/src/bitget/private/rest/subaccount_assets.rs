@@ -71,7 +71,7 @@ impl RestClient {
         request: GetSubaccountAssetsRequest,
     ) -> RestResult<GetSubaccountAssetsResponse> {
         self.send_signed_request(
-            "/api/v2/spot/wallet/subaccount-assets",
+            SUBACCOUNT_ASSETS_ENDPOINT,
             reqwest::Method::GET,
             None,
             Some(

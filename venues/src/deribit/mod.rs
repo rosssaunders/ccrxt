@@ -45,8 +45,18 @@ pub mod public {
 
     pub use self::{
         rest::{
-            GetComboIdsRequest, GetComboIdsResponse, GetFundingRateValueRequest, GetStatusResponse,
-            GetStatusResult, GetTimeResponse, RestClient,
+            BookSummary, BookSummaryByInstrument, GetBookSummaryByCurrencyRequest,
+            GetBookSummaryByCurrencyResponse, GetBookSummaryByInstrumentRequest,
+            GetBookSummaryByInstrumentResponse, GetComboDetailsRequest, GetComboDetailsResponse,
+            GetComboIdsRequest, GetComboIdsResponse, GetCombosRequest, GetCombosResponse,
+            GetContractSizeRequest, GetContractSizeResponse, GetContractSizeResult,
+            GetFundingRateValueRequest, GetIndexPriceRequest, GetIndexPriceResponse,
+            GetIndexPriceResult, GetInstrumentsRequest, GetInstrumentsResponse,
+            GetLastSettlementsByCurrencyRequest, GetLastSettlementsByCurrencyResponse,
+            GetLastSettlementsByCurrencyResult, GetLastTradesByCurrencyRequest,
+            GetLastTradesByCurrencyResponse, GetLastTradesByCurrencyResult, GetStatusResponse,
+            GetStatusResult, GetTimeResponse, InstrumentData, RestClient, SettlementEntry,
+            TradeEntry,
         },
         websocket::{
             HelloRequest, HelloResponse, HelloResult, PrivateWebSocketClient, SubscribeRequest,
@@ -127,10 +137,18 @@ pub use private::{
     WithdrawResponse, WithdrawalData,
 };
 pub use public::{
-    GetComboIdsRequest, GetComboIdsResponse, GetFundingRateValueRequest, GetStatusResponse,
-    GetStatusResult, GetTimeResponse, HelloRequest, HelloResponse, HelloResult,
-    PrivateWebSocketClient, RestClient as PublicRestClient, SubscribeRequest, SubscribeResponse,
-    websocket::client::DeribitWebSocketError,
+    BookSummary, BookSummaryByInstrument, GetBookSummaryByCurrencyRequest,
+    GetBookSummaryByCurrencyResponse, GetBookSummaryByInstrumentRequest,
+    GetBookSummaryByInstrumentResponse, GetComboDetailsRequest, GetComboDetailsResponse,
+    GetComboIdsRequest, GetComboIdsResponse, GetCombosRequest, GetCombosResponse,
+    GetContractSizeRequest, GetContractSizeResponse, GetContractSizeResult,
+    GetFundingRateValueRequest, GetIndexPriceRequest, GetIndexPriceResponse, GetIndexPriceResult,
+    GetInstrumentsRequest, GetInstrumentsResponse, GetLastSettlementsByCurrencyRequest,
+    GetLastSettlementsByCurrencyResponse, GetLastSettlementsByCurrencyResult,
+    GetLastTradesByCurrencyRequest, GetLastTradesByCurrencyResponse, GetLastTradesByCurrencyResult,
+    GetStatusResponse, GetStatusResult, GetTimeResponse, HelloRequest, HelloResponse, HelloResult,
+    InstrumentData, PrivateWebSocketClient, RestClient as PublicRestClient, SettlementEntry,
+    SubscribeRequest, SubscribeResponse, TradeEntry, websocket::client::DeribitWebSocketError,
 };
 pub use rate_limit::*;
 

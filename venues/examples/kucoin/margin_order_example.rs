@@ -24,7 +24,7 @@ use venues::kucoin::private::rest::{
 
 fn uuid() -> String {
     // Simple UUID generator for clientOid (not cryptographically secure)
-    use rand::{distributions::Alphanumeric, Rng};
+    use rand::{Rng, distributions::Alphanumeric};
     rand::thread_rng()
         .sample_iter(&Alphanumeric)
         .take(24)
