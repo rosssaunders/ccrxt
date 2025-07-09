@@ -17,10 +17,16 @@ pub mod spot_borrow_check;
 // Position endpoints
 pub mod get_position_info;
 
+// Asset endpoints
+pub mod transfer;
+pub mod withdraw;
+
 pub use client::RestClient;
 pub use get_wallet_balance::{
     BalanceData, GetWalletBalanceRequest, GetWalletBalanceResponse, WalletBalance,
 };
+pub use transfer::{TransferRequest, TransferResponse, TransferResult};
+pub use withdraw::{WithdrawRequest, WithdrawResponse, WithdrawResult};
 
 // Trade and position endpoint modules are available as sub-modules
 // Example usage: bybit::private::create_order::CreateOrderRequest

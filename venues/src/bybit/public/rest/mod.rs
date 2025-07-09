@@ -38,4 +38,8 @@ pub mod get_collateral_coins;
 pub mod get_ins_margin_coin_info;
 pub mod get_ins_product_info;
 
+// System Status endpoints
+pub mod get_system_status;
+
 pub use client::RestClient;
+pub use get_system_status::{SystemStatusEntry, SystemStatusResponse, SystemStatusResult};
