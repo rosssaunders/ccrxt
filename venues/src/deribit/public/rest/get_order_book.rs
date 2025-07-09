@@ -21,28 +21,16 @@ pub struct GetOrderBookRequest {
     pub depth: Option<u32>,
 }
 
-/// Represents a single order book entry (bid or ask).
-#[derive(Debug, Clone, Deserialize)]
-pub struct OrderBookEntry {
-    /// Price level.
-    #[serde(rename = "price")]
-    pub price: f64,
-
-    /// Amount available at this price level.
-    #[serde(rename = "amount")]
-    pub amount: f64,
-}
-
 /// The result object for get_order_book.
 #[derive(Debug, Clone, Deserialize)]
 pub struct GetOrderBookResult {
     /// List of bid entries.
     #[serde(rename = "bids")]
-    pub bids: Vec<OrderBookEntry>,
+    pub bids: Vec<(f64, f64)>,
 
     /// List of ask entries.
     #[serde(rename = "asks")]
-    pub asks: Vec<OrderBookEntry>,
+    pub asks: Vec<(f64, f64)>,
 
     /// The best bid price.
     #[serde(rename = "best_bid_price")]

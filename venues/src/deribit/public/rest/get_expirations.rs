@@ -5,20 +5,40 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::deribit::{EndpointType, JsonRpcResult, RestResult, enums::Currency};
+use crate::deribit::{EndpointType, JsonRpcResult, RestResult};
 
 const EXPIRATIONS_ENDPOINT: &str = "public/get_expirations";
+
+/// Currency for get_expirations endpoint.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub enum ExpirationsCurrency {
+    #[serde(rename = "BTC")]
+    BTC,
+    #[serde(rename = "ETH")]
+    ETH,
+    #[serde(rename = "USDC")]
+    USDC,
+    #[serde(rename = "USDT")]
+    USDT,
+    #[serde(rename = "any")]
+    Any,
+    #[serde(rename = "grouped")]
+    Grouped,
+}
 
 /// Instrument kind for get_expirations endpoint.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
-pub enum InstrumentKind {
+pub enum ExpirationsInstrumentKind {
     /// Futures
     #[serde(rename = "future")]
     Future,
     /// Options
     #[serde(rename = "option")]
     Option,
+    /// Any kind
+    #[serde(rename = "any")]
+    Any,
 }
 
 /// Request parameters for the get_expirations endpoint.
@@ -26,11 +46,11 @@ pub enum InstrumentKind {
 pub struct GetExpirationsRequest {
     /// Currency for which to retrieve expirations.
     #[serde(rename = "currency")]
-    pub currency: Currency,
+    pub currency: ExpirationsCurrency,
 
     /// Instrument kind: "future" or "option". Optional.
     #[serde(rename = "kind", skip_serializing_if = "Option::is_none")]
-    pub kind: Option<InstrumentKind>,
+    pub kind: Option<ExpirationsInstrumentKind>,
 }
 
 /// The result object for get_expirations.
@@ -72,8 +92,8 @@ mod tests {
     #[test]
     fn test_serialize_request() {
         let req = GetExpirationsRequest {
-            currency: Currency::BTC,
-            kind: Some(InstrumentKind::Option),
+            currency: ExpirationsCurrency::BTC,
+            kind: Some(ExpirationsInstrumentKind::Option),
         };
         let json = serde_json::to_string(&req).unwrap();
         assert!(json.contains("BTC"));

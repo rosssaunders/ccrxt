@@ -29,28 +29,25 @@ pub struct GetMarkPriceHistoryRequest {
     pub count: Option<u32>,
 }
 
-/// Represents a single mark price entry.
+/// Represents a single mark price entry as a tuple [timestamp, mark_price].
 #[derive(Debug, Clone, Deserialize)]
-pub struct MarkPriceEntry {
-    /// Mark price at the given timestamp.
-    #[serde(rename = "mark_price")]
-    pub mark_price: f64,
+#[serde(transparent)]
+pub struct MarkPriceEntry(pub (u64, f64));
 
-    /// Timestamp in milliseconds since epoch.
-    #[serde(rename = "timestamp")]
-    pub timestamp: u64,
-}
+impl MarkPriceEntry {
+    /// Get the timestamp in milliseconds since epoch.
+    pub fn timestamp(&self) -> u64 {
+        self.0.0
+    }
 
-/// The result object for get_mark_price_history.
-#[derive(Debug, Clone, Deserialize)]
-pub struct GetMarkPriceHistoryResult {
-    /// List of mark price entries.
-    #[serde(rename = "mark_prices")]
-    pub mark_prices: Vec<MarkPriceEntry>,
+    /// Get the mark price.
+    pub fn mark_price(&self) -> f64 {
+        self.0.1
+    }
 }
 
 /// Response for public/get_mark_price_history endpoint following Deribit JSON-RPC 2.0 format.
-pub type GetMarkPriceHistoryResponse = JsonRpcResult<GetMarkPriceHistoryResult>;
+pub type GetMarkPriceHistoryResponse = JsonRpcResult<Vec<MarkPriceEntry>>;
 
 impl RestClient {
     /// Calls the /public/get_mark_price_history endpoint.
@@ -97,21 +94,23 @@ mod tests {
         let data = r#"{
             "id": 22,
             "jsonrpc": "2.0",
-            "result": {
-                "mark_prices": [
-                    {
-                        "mark_price": 65000.0,
-                        "timestamp": 1680310800000
-                    }
-                ]
-            }
+            "result": [
+                [1608142381229, 0.5165791606037885],
+                [1608142380231, 0.5165737855432504],
+                [1608142379227, 0.5165768236356326]
+            ]
         }"#;
         let resp: GetMarkPriceHistoryResponse = serde_json::from_str(data).unwrap();
         assert_eq!(resp.id, 22);
         assert_eq!(resp.jsonrpc, "2.0");
-        assert_eq!(resp.result.mark_prices.len(), 1);
-        let entry = &resp.result.mark_prices[0];
-        assert!((entry.mark_price - 65000.0).abs() < 1e-8);
-        assert_eq!(entry.timestamp, 1680310800000);
+        assert_eq!(resp.result.len(), 3);
+
+        let entry = &resp.result[0];
+        assert_eq!(entry.timestamp(), 1608142381229);
+        assert!((entry.mark_price() - 0.5165791606037885).abs() < 1e-15);
+
+        let entry = &resp.result[1];
+        assert_eq!(entry.timestamp(), 1608142380231);
+        assert!((entry.mark_price() - 0.5165737855432504).abs() < 1e-15);
     }
 }

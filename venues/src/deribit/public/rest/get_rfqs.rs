@@ -1,57 +1,57 @@
 //! Implements the /public/get_rfqs endpoint for Deribit.
 //!
-//! Retrieves the list of current RFQs (Request For Quotes).
+//! Retrieves active RFQs for instruments in given currency.
 
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::deribit::{EndpointType, JsonRpcResult, RestResult, enums::ComboState};
+use crate::deribit::{EndpointType, JsonRpcResult, RestResult, enums::InstrumentKind};
 
 const RFQS_ENDPOINT: &str = "public/get_rfqs";
 
 /// Request parameters for the get_rfqs endpoint.
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct GetRfqsRequest {
-    /// State of the RFQ to filter (optional).
-    #[serde(rename = "state", skip_serializing_if = "Option::is_none")]
-    pub state: Option<ComboState>,
+    /// The currency symbol.
+    #[serde(rename = "currency")]
+    pub currency: String,
 
-    /// Number of results to return (default: 10, max: 1000).
-    #[serde(rename = "count", skip_serializing_if = "Option::is_none")]
-    pub count: Option<u32>,
+    /// Instrument kind, if not provided instruments of all kinds are considered.
+    #[serde(rename = "kind", skip_serializing_if = "Option::is_none")]
+    pub kind: Option<InstrumentKind>,
 }
 
 /// Represents a single RFQ entry.
 #[derive(Debug, Clone, Deserialize)]
 pub struct RfqEntry {
-    /// RFQ ID.
-    #[serde(rename = "rfq_id")]
-    pub rfq_id: String,
+    /// It represents the requested order size. For perpetual and inverse futures the amount is in USD units. For options and linear futures and it is the underlying base currency coin.
+    #[serde(rename = "amount")]
+    pub amount: f64,
 
-    /// State of the RFQ.
-    #[serde(rename = "state")]
-    pub state: ComboState,
+    /// Unique instrument identifier.
+    #[serde(rename = "instrument_name")]
+    pub instrument_name: String,
 
-    /// Timestamp in milliseconds since epoch.
-    #[serde(rename = "timestamp")]
-    pub timestamp: u64,
-}
+    /// The timestamp of last RFQ (milliseconds since the Unix epoch).
+    #[serde(rename = "last_rfq_timestamp")]
+    pub last_rfq_timestamp: u64,
 
-/// The result object for get_rfqs.
-#[derive(Debug, Clone, Deserialize)]
-pub struct GetRfqsResult {
-    /// List of RFQ entries.
-    #[serde(rename = "rfqs")]
-    pub rfqs: Vec<RfqEntry>,
+    /// Side - buy or sell.
+    #[serde(rename = "side")]
+    pub side: String,
+
+    /// Volume traded since last RFQ.
+    #[serde(rename = "traded_volume")]
+    pub traded_volume: f64,
 }
 
 /// Response for the get_rfqs endpoint.
-pub type GetRfqsResponse = JsonRpcResult<GetRfqsResult>;
+pub type GetRfqsResponse = JsonRpcResult<Vec<RfqEntry>>;
 
 impl RestClient {
     /// Calls the /public/get_rfqs endpoint.
     ///
-    /// Retrieves the list of current RFQs (Request For Quotes).
+    /// Retrieves active RFQs for instruments in given currency.
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_rfqs)
     pub async fn get_rfqs(&self, params: GetRfqsRequest) -> RestResult<GetRfqsResponse> {
@@ -69,17 +69,17 @@ mod tests {
     use serde_json;
 
     use super::*;
-    use crate::deribit::enums::ComboState;
+    use crate::deribit::enums::InstrumentKind;
 
     #[test]
     fn test_serialize_request() {
         let req = GetRfqsRequest {
-            state: Some(ComboState::Active),
-            count: Some(2),
+            currency: "BTC".to_string(),
+            kind: Some(InstrumentKind::Future),
         };
         let json = serde_json::to_string(&req).unwrap();
-        assert!(json.contains("active"));
-        assert!(json.contains("count"));
+        assert!(json.contains("BTC"));
+        assert!(json.contains("future"));
     }
 
     #[test]
@@ -87,23 +87,25 @@ mod tests {
         let data = r#"{
             "id": 25,
             "jsonrpc": "2.0",
-            "result": {
-                "rfqs": [
-                    {
-                        "rfq_id": "rfq-123",
-                        "state": "active",
-                        "timestamp": 1680310800000
-                    }
-                ]
-            }
+            "result": [
+                {
+                    "amount": 1000,
+                    "instrument_name": "BTC-PERPETUAL",
+                    "last_rfq_timestamp": 1680310800000,
+                    "side": "buy",
+                    "traded_volume": 50
+                }
+            ]
         }"#;
         let resp: GetRfqsResponse = serde_json::from_str(data).unwrap();
         assert_eq!(resp.id, 25);
         assert_eq!(resp.jsonrpc, "2.0");
-        assert_eq!(resp.result.rfqs.len(), 1);
-        let rfq = &resp.result.rfqs[0];
-        assert_eq!(rfq.rfq_id, "rfq-123");
-        assert_eq!(rfq.state, ComboState::Active);
-        assert_eq!(rfq.timestamp, 1680310800000);
+        assert_eq!(resp.result.len(), 1);
+        let rfq = &resp.result[0];
+        assert_eq!(rfq.amount, 1000.0);
+        assert_eq!(rfq.instrument_name, "BTC-PERPETUAL");
+        assert_eq!(rfq.side, "buy");
+        assert_eq!(rfq.last_rfq_timestamp, 1680310800000);
+        assert_eq!(rfq.traded_volume, 50.0);
     }
 }

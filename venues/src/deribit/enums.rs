@@ -1401,3 +1401,90 @@ impl std::fmt::Display for PlatformLockStatus {
         }
     }
 }
+
+/// Time resolution for volatility index data
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
+pub enum Resolution {
+    /// 1 second resolution
+    #[serde(rename = "1")]
+    OneSecond,
+    /// 60 seconds (1 minute) resolution
+    #[serde(rename = "60")]
+    #[default]
+    OneMinute,
+    /// 3600 seconds (1 hour) resolution
+    #[serde(rename = "3600")]
+    OneHour,
+    /// 43200 seconds (12 hours) resolution
+    #[serde(rename = "43200")]
+    TwelveHours,
+    /// Daily resolution
+    #[serde(rename = "1D")]
+    OneDay,
+}
+
+impl Display for Resolution {
+    fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
+        match self {
+            Resolution::OneSecond => write!(f, "1"),
+            Resolution::OneMinute => write!(f, "60"),
+            Resolution::OneHour => write!(f, "3600"),
+            Resolution::TwelveHours => write!(f, "43200"),
+            Resolution::OneDay => write!(f, "1D"),
+        }
+    }
+}
+
+/// Instrument type for futures (linear or reversed)
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum InstrumentType {
+    #[serde(rename = "linear")]
+    Linear,
+    #[serde(rename = "reversed")]
+    Reversed,
+}
+
+impl Display for InstrumentType {
+    fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
+        match self {
+            InstrumentType::Linear => write!(f, "linear"),
+            InstrumentType::Reversed => write!(f, "reversed"),
+        }
+    }
+}
+
+/// Option type (call or put)
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum OptionType {
+    #[serde(rename = "call")]
+    Call,
+    #[serde(rename = "put")]
+    Put,
+}
+
+impl Display for OptionType {
+    fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
+        match self {
+            OptionType::Call => write!(f, "call"),
+            OptionType::Put => write!(f, "put"),
+        }
+    }
+}
+
+/// Future type (deprecated, use instrument_type instead)
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum FutureType {
+    #[serde(rename = "reversed")]
+    Reversed,
+    #[serde(rename = "linear")]
+    Linear,
+}
+
+impl Display for FutureType {
+    fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
+        match self {
+            FutureType::Reversed => write!(f, "reversed"),
+            FutureType::Linear => write!(f, "linear"),
+        }
+    }
+}

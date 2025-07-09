@@ -36,6 +36,9 @@ pub mod get_volatility_index_data;
 pub mod status;
 
 pub use client::RestClient;
+pub use get_apr_history::{
+    AprHistoryData, GetAprHistoryRequest, GetAprHistoryResponse, GetAprHistoryResult,
+};
 pub use get_book_summary_by_currency::{
     BookSummary, GetBookSummaryByCurrencyRequest, GetBookSummaryByCurrencyResponse,
 };
@@ -48,19 +51,72 @@ pub use get_combos::{ComboInfo, ComboLeg, GetCombosRequest, GetCombosResponse};
 pub use get_contract_size::{
     GetContractSizeRequest, GetContractSizeResponse, GetContractSizeResult,
 };
+pub use get_delivery_prices::{
+    DeliveryPriceRecord, GetDeliveryPricesRequest, GetDeliveryPricesResponse,
+    GetDeliveryPricesResult,
+};
+pub use get_expirations::{GetExpirationsRequest, GetExpirationsResponse, GetExpirationsResult};
+pub use get_funding_chart_data::{
+    FundingChartDataPoint, GetFundingChartDataRequest, GetFundingChartDataResponse,
+    GetFundingChartDataResult,
+};
+pub use get_funding_rate_history::{
+    FundingRateHistoryData, GetFundingRateHistoryRequest, GetFundingRateHistoryResponse,
+    GetFundingRateHistoryResult,
+};
 pub use get_funding_rate_value::GetFundingRateValueRequest;
+pub use get_historical_volatility::{
+    GetHistoricalVolatilityRequest, GetHistoricalVolatilityResponse, GetHistoricalVolatilityResult,
+    HistoricalVolatilityData,
+};
+pub use get_index::{GetIndexRequest, GetIndexResponse, GetIndexResult};
 pub use get_index_price::{GetIndexPriceRequest, GetIndexPriceResponse, GetIndexPriceResult};
+pub use get_index_price_names::{
+    GetIndexPriceNamesRequest, GetIndexPriceNamesResponse, GetIndexPriceNamesResult,
+};
+pub use get_instrument::{GetInstrumentRequest, GetInstrumentResponse};
 pub use get_instruments::{GetInstrumentsRequest, GetInstrumentsResponse, InstrumentData};
 pub use get_last_settlements_by_currency::{
     GetLastSettlementsByCurrencyRequest, GetLastSettlementsByCurrencyResponse,
     GetLastSettlementsByCurrencyResult, SettlementEntry,
 };
+pub use get_last_settlements_by_instrument::{
+    GetLastSettlementsByInstrumentRequest, GetLastSettlementsByInstrumentResponse,
+    GetLastSettlementsByInstrumentResult,
+};
 pub use get_last_trades_by_currency::{
     GetLastTradesByCurrencyRequest, GetLastTradesByCurrencyResponse, GetLastTradesByCurrencyResult,
     TradeEntry,
 };
+pub use get_last_trades_by_currency_and_time::{
+    GetLastTradesByCurrencyAndTimeRequest, GetLastTradesByCurrencyAndTimeResponse,
+    GetLastTradesByCurrencyAndTimeResult,
+};
+pub use get_last_trades_by_instrument::{
+    GetLastTradesByInstrumentRequest, GetLastTradesByInstrumentResponse,
+    GetLastTradesByInstrumentResult,
+};
+pub use get_last_trades_by_instrument_and_time::{
+    GetLastTradesByInstrumentAndTimeRequest, GetLastTradesByInstrumentAndTimeResponse,
+    GetLastTradesByInstrumentAndTimeResult,
+};
+pub use get_mark_price_history::{
+    GetMarkPriceHistoryRequest, GetMarkPriceHistoryResponse, MarkPriceEntry,
+};
+pub use get_order_book::{GetOrderBookRequest, GetOrderBookResponse, GetOrderBookResult};
+pub use get_order_book_by_instrument_id::{
+    GetOrderBookByInstrumentIdRequest, GetOrderBookByInstrumentIdResponse,
+    GetOrderBookByInstrumentIdResult,
+};
+pub use get_rfqs::{GetRfqsRequest, GetRfqsResponse, RfqEntry};
 pub use get_time::GetTimeResponse;
+pub use get_trade_volumes::{
+    GetTradeVolumesRequest, GetTradeVolumesResponse, GetTradeVolumesResult, TradeVolumeEntry,
+};
 pub use get_tradingview_chart_data::{
     GetTradingviewChartDataRequest, GetTradingviewChartDataResponse, GetTradingviewChartDataResult,
+};
+pub use get_volatility_index_data::{
+    GetVolatilityIndexDataRequest, GetVolatilityIndexDataResponse, GetVolatilityIndexDataResult,
 };
 pub use status::{GetStatusResponse, GetStatusResult};
