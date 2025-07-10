@@ -45,7 +45,7 @@ impl RestClient {
     /// Retrieve the estimated delivery price which will only have a return value one
     /// hour before the delivery/exercise.
     ///
-    /// See: https://www.okx.com/docs-v5/en/#rest-api-public-data-get-estimated-delivery-exercise-price
+    /// See: https://www.okx.com/docs-v5/en/#public-data-rest-api-get-estimated-delivery-exercise-price
     ///
     /// Rate limit: 10 requests per 2 seconds
     /// Rate limit rule: IP + Instrument ID

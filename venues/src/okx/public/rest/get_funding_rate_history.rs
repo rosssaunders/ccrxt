@@ -64,7 +64,7 @@ impl RestClient {
     ///
     /// Retrieve funding rate history. This endpoint can retrieve data from the last 3 months.
     ///
-    /// See: https://www.okx.com/docs-v5/en/#rest-api-public-data-get-funding-rate-history
+    /// See: https://www.okx.com/docs-v5/en/#public-data-rest-api-get-funding-rate-history
     ///
     /// Rate limit: 10 requests per 2 seconds
     /// Rate limit rule: IP + Instrument ID

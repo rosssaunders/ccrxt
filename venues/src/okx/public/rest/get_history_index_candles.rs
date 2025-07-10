@@ -44,7 +44,7 @@ impl RestClient {
     ///
     /// Retrieve the candlestick charts of the index from recent years.
     ///
-    /// See: https://www.okx.com/docs-v5/en/#rest-api-market-data-get-index-candlesticks-history
+    /// See: https://www.okx.com/docs-v5/en/#public-data-rest-api-get-index-candlesticks-history
     ///
     /// Rate limit: 10 requests per 2 seconds
     ///
