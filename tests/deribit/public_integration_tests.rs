@@ -3,23 +3,24 @@
 //! These tests verify the functionality of all public endpoints that don't require authentication.
 //! Tests run against the live Deribit API using real market data.
 
+use chrono;
 use reqwest::Client;
 use tokio;
 
 use venues::deribit::{
-    AccountTier, Currency, CurrencyPair, GetAprHistoryRequest, GetBookSummaryByCurrencyRequest,
-    GetBookSummaryByInstrumentRequest, GetComboDetailsRequest, GetComboIdsRequest,
-    GetCombosRequest, GetContractSizeRequest, GetDeliveryPricesRequest, GetExpirationsRequest,
-    GetFundingChartDataRequest, GetFundingRateHistoryRequest, GetFundingRateValueRequest,
-    GetHistoricalVolatilityRequest, GetIndexPriceNamesRequest, GetIndexPriceRequest,
-    GetIndexRequest, GetInstrumentRequest, GetInstrumentsRequest,
-    GetLastSettlementsByCurrencyRequest, GetLastSettlementsByInstrumentRequest,
-    GetLastTradesByCurrencyAndTimeRequest, GetLastTradesByCurrencyRequest,
-    GetLastTradesByInstrumentAndTimeRequest, GetLastTradesByInstrumentRequest,
-    GetMarkPriceHistoryRequest, GetOrderBookByInstrumentIdRequest, GetOrderBookRequest,
-    GetRfqsRequest, GetTradeVolumesRequest, GetTradingviewChartDataRequest,
-    GetVolatilityIndexDataRequest, InstrumentKind, PublicRestClient, RateLimiter, Resolution,
-    public::rest::get_expirations::{ExpirationsCurrency, ExpirationsInstrumentKind},
+    AccountTier, Currency, CurrencyPair, ExpirationsCurrency, ExpirationsInstrumentKind,
+    GetAprHistoryRequest, GetBookSummaryByCurrencyRequest, GetBookSummaryByInstrumentRequest,
+    GetComboDetailsRequest, GetComboIdsRequest, GetCombosRequest, GetContractSizeRequest,
+    GetDeliveryPricesRequest, GetExpirationsRequest, GetFundingChartDataRequest,
+    GetFundingRateHistoryRequest, GetFundingRateValueRequest, GetHistoricalVolatilityRequest,
+    GetIndexPriceNamesRequest, GetIndexPriceRequest, GetIndexRequest, GetInstrumentRequest,
+    GetInstrumentsRequest, GetLastSettlementsByCurrencyRequest,
+    GetLastSettlementsByInstrumentRequest, GetLastTradesByCurrencyAndTimeRequest,
+    GetLastTradesByCurrencyRequest, GetLastTradesByInstrumentAndTimeRequest,
+    GetLastTradesByInstrumentRequest, GetMarkPriceHistoryRequest,
+    GetOrderBookByInstrumentIdRequest, GetOrderBookRequest, GetRfqsRequest, GetTradeVolumesRequest,
+    GetTradingviewChartDataRequest, GetVolatilityIndexDataRequest, InstrumentKind,
+    PublicRestClient, RateLimiter, Resolution,
 };
 
 /// Helper function to create a test client for public endpoints
@@ -1763,6 +1764,7 @@ async fn test_get_funding_chart_data() {
 
     let request = GetFundingChartDataRequest {
         instrument_name: "BTC-PERPETUAL".to_string(),
+        length: "8h".to_string(),
     };
 
     let result = client.get_funding_chart_data(request).await;
@@ -1785,8 +1787,8 @@ async fn test_get_funding_chart_data() {
     for (i, point) in response.result.data.iter().take(3).enumerate() {
         assert!(point.timestamp > 0, "Timestamp should be positive");
         println!(
-            "Funding chart point {}: timestamp={}, rate={}",
-            i, point.timestamp, point.funding_rate
+            "Funding chart point {}: timestamp={}, interest_8h={}, index_price={}",
+            i, point.timestamp, point.interest_8h, point.index_price
         );
     }
 }
@@ -1796,10 +1798,15 @@ async fn test_get_funding_chart_data() {
 async fn test_get_funding_rate_history() {
     let client = create_public_test_client();
 
+    // Get a timestamp range for the last 24 hours
+    let now = chrono::Utc::now().timestamp_millis() as u64;
+    let one_day_ago = now - 24 * 60 * 60 * 1000;
+
     let request = GetFundingRateHistoryRequest {
         instrument_name: "BTC-PERPETUAL".to_string(),
+        start_timestamp: one_day_ago,
+        end_timestamp: now,
         count: Some(5),
-        end_timestamp: None,
     };
 
     let result = client.get_funding_rate_history(request).await;
@@ -1815,15 +1822,15 @@ async fn test_get_funding_rate_history() {
 
     println!(
         "Found {} funding rate history entries",
-        response.result.data.len()
+        response.result.len()
     );
 
     // Validate data
-    for (i, entry) in response.result.data.iter().take(3).enumerate() {
+    for (i, entry) in response.result.iter().take(3).enumerate() {
         assert!(entry.timestamp > 0, "Timestamp should be positive");
         println!(
-            "Funding rate history {}: timestamp={}, rate={}",
-            i, entry.timestamp, entry.funding_rate
+            "Funding rate history {}: timestamp={}, interest_8h={}",
+            i, entry.timestamp, entry.interest_8h
         );
     }
 }
@@ -1852,16 +1859,17 @@ async fn test_get_historical_volatility() {
 
     println!(
         "Found {} historical volatility entries",
-        response.result.data.len()
+        response.result.len()
     );
 
     // Validate data
-    for (i, entry) in response.result.data.iter().take(3).enumerate() {
-        assert!(entry.timestamp > 0, "Timestamp should be positive");
-        assert!(entry.volatility >= 0.0, "Volatility should be non-negative");
+    for (i, data_point) in response.result.iter().take(3).enumerate() {
+        let (timestamp, volatility) = data_point;
+        assert!(*timestamp > 0, "Timestamp should be positive");
+        assert!(*volatility >= 0.0, "Volatility should be non-negative");
         println!(
             "Volatility entry {}: timestamp={}, volatility={}",
-            i, entry.timestamp, entry.volatility
+            i, timestamp, volatility
         );
     }
 }
@@ -1873,6 +1881,7 @@ async fn test_get_index() {
 
     let request = GetIndexRequest {
         index_name: "btc_usd".to_string(),
+        currency: "BTC".to_string(),
     };
 
     let result = client.get_index(request).await;
@@ -1886,18 +1895,19 @@ async fn test_get_index() {
     assert_eq!(response.jsonrpc, "2.0");
     assert!(response.id > 0);
     assert!(
-        response.result.index_price > 0.0,
-        "Index price should be positive"
+        response.result.currency_price.contains_key("BTC"),
+        "Response should contain price for BTC"
     );
     assert!(
-        response.result.timestamp > 0,
-        "Timestamp should be positive"
+        response.result.currency_price["BTC"] > 0.0,
+        "BTC price should be positive"
+    );
+    assert!(
+        response.result.estimated_delivery_price > 0.0,
+        "Estimated delivery price should be positive"
     );
 
-    println!(
-        "BTC index price: {} at timestamp {}",
-        response.result.index_price, response.result.timestamp
-    );
+    println!("BTC index price: {}", response.result.currency_price["BTC"]);
 }
 
 /// Test index price names endpoint
@@ -1918,23 +1928,16 @@ async fn test_get_index_price_names() {
     assert_eq!(response.jsonrpc, "2.0");
     assert!(response.id > 0);
     assert!(
-        !response.result.index_price_names.is_empty(),
+        !response.result.is_empty(),
         "Should have at least one index name"
     );
 
-    println!(
-        "Found {} index price names",
-        response.result.index_price_names.len()
-    );
+    println!("Found {} index price names", response.result.len());
 
     // Check for expected index names
     let expected_indices = vec!["btc_usd", "eth_usd"];
     for expected_index in expected_indices {
-        if response
-            .result
-            .index_price_names
-            .contains(&expected_index.to_string())
-        {
+        if response.result.contains(&expected_index.to_string()) {
             println!("Found expected index: {}", expected_index);
         }
     }
@@ -1961,20 +1964,22 @@ async fn test_get_instrument() {
     assert!(response.id > 0);
 
     // Validate instrument data
-    let instrument = &response.result.instrument;
-    assert_eq!(instrument.instrument_name, "BTC-PERPETUAL");
-    assert!(instrument.tick_size > 0.0, "Tick size should be positive");
+    assert_eq!(response.result.instrument_name, "BTC-PERPETUAL");
     assert!(
-        instrument.contract_size > 0.0,
+        response.result.tick_size > 0.0,
+        "Tick size should be positive"
+    );
+    assert!(
+        response.result.contract_size > 0.0,
         "Contract size should be positive"
     );
 
     println!(
         "Instrument: {} - Tick: {}, Contract: {}, Min trade: {}",
-        instrument.instrument_name,
-        instrument.tick_size,
-        instrument.contract_size,
-        instrument.min_trade_amount
+        response.result.instrument_name,
+        response.result.tick_size,
+        response.result.contract_size,
+        response.result.min_trade_amount
     );
 }
 
@@ -2011,7 +2016,7 @@ async fn test_get_last_settlements_by_instrument() {
             "Settlement timestamp should be positive"
         );
         println!(
-            "Settlement {}: timestamp={}, price={}",
+            "Settlement {}: timestamp={}, price={:?}",
             i, settlement.timestamp, settlement.settlement_price
         );
     }
@@ -2344,18 +2349,18 @@ async fn test_get_trade_volumes() {
 
     println!(
         "Found {} trade volume entries",
-        response.result.volumes.len()
+        response.result.len()
     );
 
     // Validate trade volume data
-    for (i, volume) in response.result.volumes.iter().take(3).enumerate() {
+    for (i, volume) in response.result.iter().take(3).enumerate() {
         assert!(
-            volume.volume_24h >= 0.0,
-            "24h volume should be non-negative"
+            volume.futures_volume >= 0.0,
+            "futures volume should be non-negative"
         );
         println!(
-            "Trade volume {}: currency={:?}, 24h_volume={}, 30d_volume={}",
-            i, volume.currency, volume.volume_24h, volume.volume_30d
+            "Trade volume {}: currency={:?}, currency_pair={}, futures_volume={}, calls_volume={}, puts_volume={}, spot_volume={}",
+            i, volume.currency, volume.currency_pair, volume.futures_volume, volume.calls_volume, volume.puts_volume, volume.spot_volume
         );
     }
 }
@@ -2477,6 +2482,7 @@ async fn test_new_endpoints_error_handling() {
     // Test with empty index name
     let empty_index_request = GetIndexRequest {
         index_name: "".to_string(),
+        currency: "BTC".to_string(),
     };
 
     let result = client.get_index(empty_index_request).await;
