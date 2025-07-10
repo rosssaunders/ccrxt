@@ -2,6 +2,10 @@
 //!
 //! These tests verify the functionality of all public endpoints that don't require authentication.
 //! Tests run against the live Binance CoinM API using real market data.
+//!
+//! **Note:** Binance API has geographic restrictions. Tests may fail with "Service unavailable 
+//! from a restricted location" errors when run from certain locations. This is expected behavior
+//! and indicates the tests are correctly configured to reach the live API.
 
 use reqwest::Client;
 use tokio;
