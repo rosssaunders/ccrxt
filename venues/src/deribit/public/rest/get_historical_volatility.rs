@@ -24,25 +24,22 @@ pub struct GetHistoricalVolatilityRequest {
     pub end_timestamp: Option<u64>,
 }
 
-/// Represents a single historical volatility data point.
+/// Data structure for a single historical volatility data point.
 #[derive(Debug, Clone, Deserialize)]
-pub struct HistoricalVolatilityData {
-    /// Volatility value (annualized, as a percentage).
-    #[serde(rename = "volatility")]
-    pub volatility: f64,
-
+pub struct HistoricalVolatilityDataPoint {
     /// Timestamp in milliseconds since epoch.
-    #[serde(rename = "timestamp")]
     pub timestamp: u64,
+
+    /// Volatility value.
+    pub value: f64,
 }
+
+/// Helper type for the array of [timestamp, value] pairs returned by the API.
+pub type RawVolatilityDataPoint = (u64, f64);
 
 /// The result object for get_historical_volatility.
-#[derive(Debug, Clone, Deserialize)]
-pub struct GetHistoricalVolatilityResult {
-    /// Array of historical volatility data points.
-    #[serde(rename = "data")]
-    pub data: Vec<HistoricalVolatilityData>,
-}
+/// The result for get_historical_volatility is a direct array of data points
+pub type GetHistoricalVolatilityResult = Vec<RawVolatilityDataPoint>;
 
 /// Response for the get_historical_volatility endpoint.
 pub type GetHistoricalVolatilityResponse = JsonRpcResult<GetHistoricalVolatilityResult>;
@@ -90,18 +87,16 @@ mod tests {
         let data = r#"{
             "id": 10,
             "jsonrpc": "2.0",
-            "result": {
-                "data": [
-                    { "volatility": 0.65, "timestamp": 1680307200000 },
-                    { "volatility": 0.66, "timestamp": 1680310800000 }
-                ]
-            }
+            "result": [
+                [1680307200000, 0.65],
+                [1680310800000, 0.66]
+            ]
         }"#;
         let resp: GetHistoricalVolatilityResponse = serde_json::from_str(data).unwrap();
         assert_eq!(resp.id, 10);
         assert_eq!(resp.jsonrpc, "2.0");
-        assert_eq!(resp.result.data.len(), 2);
-        assert!((resp.result.data[0].volatility - 0.65).abs() < 1e-8);
-        assert_eq!(resp.result.data[1].timestamp, 1680310800000);
+        assert_eq!(resp.result.len(), 2);
+        assert!((resp.result[0].1 - 0.65).abs() < 1e-8);
+        assert_eq!(resp.result[1].0, 1680310800000);
     }
 }

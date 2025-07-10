@@ -76,12 +76,11 @@ pub mod public {
             GetOrderBookByInstrumentIdResponse, GetOrderBookByInstrumentIdResult,
             GetOrderBookRequest, GetOrderBookResponse, GetOrderBookResult, GetRfqsRequest,
             GetRfqsResponse, GetStatusResponse, GetStatusResult, GetTimeResponse,
-            GetTradeVolumesRequest, GetTradeVolumesResponse, GetTradeVolumesResult,
+            GetTradeVolumesRequest, GetTradeVolumesResponse,
             GetTradingviewChartDataRequest, GetTradingviewChartDataResponse,
             GetTradingviewChartDataResult, GetVolatilityIndexDataRequest,
-            GetVolatilityIndexDataResponse, GetVolatilityIndexDataResult, HistoricalVolatilityData,
-            InstrumentData, MarkPriceEntry, RestClient, RfqEntry, SettlementEntry, TradeEntry,
-            TradeVolumeEntry,
+            GetVolatilityIndexDataResponse, GetVolatilityIndexDataResult, InstrumentData,
+            MarkPriceEntry, RestClient, RfqEntry, SettlementEntry, TradeEntry, TradeVolumeEntry,
         },
         websocket::{
             HelloRequest, HelloResponse, HelloResult, PrivateWebSocketClient, SubscribeRequest,
@@ -189,13 +188,15 @@ pub use public::{
     GetOrderBookByInstrumentIdResponse, GetOrderBookByInstrumentIdResult, GetOrderBookRequest,
     GetOrderBookResponse, GetOrderBookResult, GetRfqsRequest, GetRfqsResponse, GetStatusResponse,
     GetStatusResult, GetTimeResponse, GetTradeVolumesRequest, GetTradeVolumesResponse,
-    GetTradeVolumesResult, GetTradingviewChartDataRequest, GetTradingviewChartDataResponse,
+    GetTradingviewChartDataRequest, GetTradingviewChartDataResponse,
     GetTradingviewChartDataResult, GetVolatilityIndexDataRequest, GetVolatilityIndexDataResponse,
-    GetVolatilityIndexDataResult, HelloRequest, HelloResponse, HelloResult,
-    HistoricalVolatilityData, InstrumentData, MarkPriceEntry, PrivateWebSocketClient,
-    RestClient as PublicRestClient, RfqEntry, SettlementEntry, SubscribeRequest, SubscribeResponse,
-    TradeEntry, TradeVolumeEntry, websocket::client::DeribitWebSocketError,
+    GetVolatilityIndexDataResult, HelloRequest, HelloResponse, HelloResult, InstrumentData,
+    MarkPriceEntry, PrivateWebSocketClient, RestClient as PublicRestClient, RfqEntry,
+    SettlementEntry, SubscribeRequest, SubscribeResponse, TradeEntry, TradeVolumeEntry,
+    websocket::client::DeribitWebSocketError,
 };
+// Re-export specialized types from get_expirations
+pub use public::rest::get_expirations::{ExpirationsCurrency, ExpirationsInstrumentKind};
 pub use rate_limit::*;
 
 /// Type alias for results returned by Deribit API operations

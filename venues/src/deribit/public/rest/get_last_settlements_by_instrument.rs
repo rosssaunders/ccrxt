@@ -29,8 +29,8 @@ pub struct SettlementEntry {
     pub instrument_name: String,
 
     /// Settlement price.
-    #[serde(rename = "settlement_price")]
-    pub settlement_price: f64,
+    #[serde(rename = "settlement_price", skip_serializing_if = "Option::is_none")]
+    pub settlement_price: Option<f64>,
 
     /// Timestamp in milliseconds since epoch.
     #[serde(rename = "timestamp")]
@@ -105,7 +105,7 @@ mod tests {
         assert_eq!(resp.jsonrpc, "2.0");
         assert_eq!(resp.result.settlements.len(), 1);
         assert_eq!(resp.result.settlements[0].instrument_name, "BTC-PERPETUAL");
-        assert!((resp.result.settlements[0].settlement_price - 65000.0).abs() < 1e-8);
+        assert!((resp.result.settlements[0].settlement_price.unwrap() - 65000.0).abs() < 1e-8);
         assert_eq!(resp.result.settlements[0].timestamp, 1680310800000);
     }
 }

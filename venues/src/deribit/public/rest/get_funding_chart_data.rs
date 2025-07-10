@@ -14,6 +14,10 @@ pub struct GetFundingChartDataRequest {
     /// Instrument name (e.g., "BTC-PERPETUAL").
     #[serde(rename = "instrument_name")]
     pub instrument_name: String,
+
+    /// Specifies time period. 8h - 8 hours, 24h - 24 hours, 1m - 1 month
+    #[serde(rename = "length")]
+    pub length: String,
 }
 
 /// Represents a single funding chart data point.
@@ -23,9 +27,13 @@ pub struct FundingChartDataPoint {
     #[serde(rename = "timestamp")]
     pub timestamp: u64,
 
-    /// Funding rate value at this timestamp.
-    #[serde(rename = "funding_rate")]
-    pub funding_rate: f64,
+    /// 8-hour interest rate.
+    #[serde(rename = "interest_8h")]
+    pub interest_8h: f64,
+
+    /// Index price at this timestamp.
+    #[serde(rename = "index_price")]
+    pub index_price: f64,
 }
 
 /// The result object for get_funding_chart_data.
@@ -68,9 +76,11 @@ mod tests {
     fn test_serialize_request() {
         let req = GetFundingChartDataRequest {
             instrument_name: "BTC-PERPETUAL".to_string(),
+            length: "8h".to_string(),
         };
         let json = serde_json::to_string(&req).unwrap();
         assert!(json.contains("BTC-PERPETUAL"));
+        assert!(json.contains("8h"));
     }
 
     #[test]
@@ -80,8 +90,8 @@ mod tests {
             "jsonrpc": "2.0",
             "result": {
                 "data": [
-                    { "timestamp": 1680307200000, "funding_rate": 0.0001 },
-                    { "timestamp": 1680310800000, "funding_rate": 0.0002 }
+                    { "timestamp": 1680307200000, "interest_8h": 0.0001, "index_price": 65000.0 },
+                    { "timestamp": 1680310800000, "interest_8h": 0.0002, "index_price": 65100.0 }
                 ]
             }
         }"#;
@@ -89,7 +99,8 @@ mod tests {
         assert_eq!(resp.id, 7);
         assert_eq!(resp.jsonrpc, "2.0");
         assert_eq!(resp.result.data.len(), 2);
-        assert!((resp.result.data[0].funding_rate - 0.0001).abs() < 1e-8);
+        assert!((resp.result.data[0].interest_8h - 0.0001).abs() < 1e-8);
+        assert!((resp.result.data[0].index_price - 65000.0).abs() < 1e-8);
         assert_eq!(resp.result.data[1].timestamp, 1680310800000);
     }
 }

@@ -48,16 +48,16 @@ pub struct InstrumentData {
     pub base_currency: String,
 
     /// Block Trade commission for instrument.
-    #[serde(rename = "block_trade_commission")]
-    pub block_trade_commission: f64,
+    #[serde(rename = "block_trade_commission", skip_serializing_if = "Option::is_none")]
+    pub block_trade_commission: Option<f64>,
 
     /// Minimum amount for block trading.
-    #[serde(rename = "block_trade_min_trade_amount")]
-    pub block_trade_min_trade_amount: f64,
+    #[serde(rename = "block_trade_min_trade_amount", skip_serializing_if = "Option::is_none")]
+    pub block_trade_min_trade_amount: Option<f64>,
 
     /// Specifies minimal price change for block trading.
-    #[serde(rename = "block_trade_tick_size")]
-    pub block_trade_tick_size: f64,
+    #[serde(rename = "block_trade_tick_size", skip_serializing_if = "Option::is_none")]
+    pub block_trade_tick_size: Option<f64>,
 
     /// Contract size for instrument.
     #[serde(rename = "contract_size")]

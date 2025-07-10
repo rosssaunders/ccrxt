@@ -67,7 +67,6 @@ pub use get_funding_rate_history::{
 pub use get_funding_rate_value::GetFundingRateValueRequest;
 pub use get_historical_volatility::{
     GetHistoricalVolatilityRequest, GetHistoricalVolatilityResponse, GetHistoricalVolatilityResult,
-    HistoricalVolatilityData,
 };
 pub use get_index::{GetIndexRequest, GetIndexResponse, GetIndexResult};
 pub use get_index_price::{GetIndexPriceRequest, GetIndexPriceResponse, GetIndexPriceResult};
@@ -111,7 +110,7 @@ pub use get_order_book_by_instrument_id::{
 pub use get_rfqs::{GetRfqsRequest, GetRfqsResponse, RfqEntry};
 pub use get_time::GetTimeResponse;
 pub use get_trade_volumes::{
-    GetTradeVolumesRequest, GetTradeVolumesResponse, GetTradeVolumesResult, TradeVolumeEntry,
+    GetTradeVolumesRequest, GetTradeVolumesResponse, TradeVolumeEntry,
 };
 pub use get_tradingview_chart_data::{
     GetTradingviewChartDataRequest, GetTradingviewChartDataResponse, GetTradingviewChartDataResult,

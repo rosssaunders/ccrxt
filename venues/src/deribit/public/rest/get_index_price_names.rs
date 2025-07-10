@@ -1,7 +1,7 @@
 //! Implements the /public/get_index_price_names endpoint for Deribit.
 //!
 //! Retrieves the list of all supported index price names.
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 
 use super::RestClient;
 use crate::deribit::{EndpointType, JsonRpcResult, RestResult};
@@ -14,13 +14,8 @@ const INDEX_PRICE_NAMES_ENDPOINT: &str = "public/get_index_price_names";
 #[serde(default)]
 pub struct GetIndexPriceNamesRequest {}
 
-/// The result object for get_index_price_names.
-#[derive(Debug, Clone, Deserialize)]
-pub struct GetIndexPriceNamesResult {
-    /// List of all supported index price names (e.g., "btc_usd").
-    #[serde(rename = "index_price_names")]
-    pub index_price_names: Vec<String>,
-}
+/// The result is a direct list of strings (index price names)
+pub type GetIndexPriceNamesResult = Vec<String>;
 
 /// Response for the get_index_price_names endpoint.
 pub type GetIndexPriceNamesResponse = JsonRpcResult<GetIndexPriceNamesResult>;
@@ -62,13 +57,11 @@ mod tests {
         let data = r#"{
             "id": 13,
             "jsonrpc": "2.0",
-            "result": {
-                "index_price_names": ["btc_usd", "eth_usd"]
-            }
+            "result": ["btc_usd", "eth_usd"]
         }"#;
         let resp: GetIndexPriceNamesResponse = serde_json::from_str(data).unwrap();
         assert_eq!(resp.id, 13);
         assert_eq!(resp.jsonrpc, "2.0");
-        assert_eq!(resp.result.index_price_names, vec!["btc_usd", "eth_usd"]);
+        assert_eq!(resp.result, vec!["btc_usd", "eth_usd"]);
     }
 }
