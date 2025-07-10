@@ -47,4 +47,5 @@ Please refer to the detailed instruction files in `.github/instructions/`:
 - `enums.instructions.md` - Enum usage and patterns
 - `examples.instructions.md` - Example code guidelines
 - `testing.instructions.md` - Testing practices
+- `integration-tests.instructions.md` - Integration test standards
 - `credentials.instructions.md` - Credential management guidelines

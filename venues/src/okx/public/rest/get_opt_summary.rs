@@ -9,14 +9,14 @@ use crate::okx::{EndpointType, InstrumentType, RestResult};
 pub struct GetOptSummaryRequest {
     /// Underlying, only applicable to OPTION
     /// Either uly or instFamily is required. If both are passed, instFamily will be used.
-    #[serde(rename = "uly")]
+    #[serde(rename = "uly", skip_serializing_if = "Option::is_none")]
     pub underlying: Option<String>,
     /// Instrument family, only applicable to OPTION
     /// Either uly or instFamily is required. If both are passed, instFamily will be used.
-    #[serde(rename = "instFamily")]
+    #[serde(rename = "instFamily", skip_serializing_if = "Option::is_none")]
     pub inst_family: Option<String>,
     /// Contract expiry date, the format is "YYMMDD", e.g. "200527"
-    #[serde(rename = "expTime")]
+    #[serde(rename = "expTime", skip_serializing_if = "Option::is_none")]
     pub exp_time: Option<String>,
 }
 

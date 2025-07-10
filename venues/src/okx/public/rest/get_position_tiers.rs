@@ -19,22 +19,19 @@ pub struct GetPositionTiersRequest {
     /// Single underlying or multiple underlyings (no more than 3) separated with comma
     /// If instType is SWAP/FUTURES/OPTION, either uly or instFamily is required
     /// If both are passed, instFamily will be used
-    #[serde(rename = "uly")]
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "uly", skip_serializing_if = "Option::is_none")]
     pub underlying: Option<String>,
 
     /// Single instrument family or multiple instrument families (no more than 5) separated with comma
     /// If instType is SWAP/FUTURES/OPTION, either uly or instFamily is required
     /// If both are passed, instFamily will be used
-    #[serde(rename = "instFamily")]
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "instFamily", skip_serializing_if = "Option::is_none")]
     pub inst_family: Option<String>,
 
     /// Single instrument or multiple instruments (no more than 5) separated with comma
     /// Either instId or ccy is required, if both are passed, instId will be used
     /// Ignore when instType is one of SWAP, FUTURES, OPTION
-    #[serde(rename = "instId")]
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "instId", skip_serializing_if = "Option::is_none")]
     pub inst_id: Option<String>,
 
     /// Margin currency

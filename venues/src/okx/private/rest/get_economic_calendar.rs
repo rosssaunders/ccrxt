@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
+use super::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
 /// Request parameters for getting economic calendar data
@@ -63,6 +63,8 @@ pub struct GetEconomicCalendarResponse {
 
 impl RestClient {
     /// Get economic calendar data
+    ///
+    ///  Authentication is required for this endpoint. This endpoint is only supported in production environment.
     ///
     /// Get the macro-economic calendar data within 3 months. Historical data from 3
     /// months ago is only available to users with trading fee tier VIP1 and above.

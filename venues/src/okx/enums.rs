@@ -137,6 +137,9 @@ pub enum AdlType {
     PosAdlStart,
     /// ADL ends
     AdlEnd,
+    /// Unknown or empty variant
+    #[serde(other)]
+    Unknown,
 }
 
 /// Delivery/exercise type for futures and options

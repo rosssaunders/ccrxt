@@ -16,6 +16,7 @@ mod get_adjust_leverage_info;
 mod get_bills;
 mod get_bills_archive;
 mod get_collateral_assets;
+mod get_economic_calendar;
 mod get_fills;
 mod get_greeks;
 mod get_interest_accrued;

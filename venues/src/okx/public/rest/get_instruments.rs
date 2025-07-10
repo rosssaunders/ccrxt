@@ -11,13 +11,13 @@ pub struct GetInstrumentsRequest {
     #[serde(rename = "instType")]
     pub inst_type: InstrumentType,
     /// Underlying (for SWAP/FUTURES/OPTION)
-    #[serde(rename = "uly")]
+    #[serde(rename = "uly", skip_serializing_if = "Option::is_none")]
     pub underlying: Option<String>,
     /// Instrument family (for FUTURES/SWAP/OPTION)
-    #[serde(rename = "instFamily")]
+    #[serde(rename = "instFamily", skip_serializing_if = "Option::is_none")]
     pub inst_family: Option<String>,
     /// Instrument ID
-    #[serde(rename = "instId")]
+    #[serde(rename = "instId", skip_serializing_if = "Option::is_none")]
     pub inst_id: Option<String>,
 }
 
@@ -191,6 +191,9 @@ mod tests {
             serialized.get("instId").and_then(|v| v.as_str()),
             Some("BTC-USDT")
         );
+        // Verify that null fields are not serialized
+        assert!(serialized.get("instFamily").is_none());
+        assert!(serialized.get("uly").is_none());
     }
 
     #[test]
@@ -326,5 +329,45 @@ mod tests {
         assert_eq!(original.underlying, deserialized.underlying);
         assert_eq!(original.inst_family, deserialized.inst_family);
         assert_eq!(original.inst_id, deserialized.inst_id);
+    }
+
+    #[test]
+    fn test_get_instruments_request_serialization_variations() {
+        // Test SPOT request (should only include instType)
+        let spot_request = GetInstrumentsRequest {
+            inst_type: InstrumentType::Spot,
+            underlying: None,
+            inst_family: None,
+            inst_id: None,
+        };
+        let spot_serialized = serde_json::to_value(&spot_request).unwrap();
+        assert_eq!(
+            spot_serialized.get("instType").and_then(|v| v.as_str()),
+            Some("SPOT")
+        );
+        assert!(spot_serialized.get("instFamily").is_none());
+        assert!(spot_serialized.get("uly").is_none());
+        assert!(spot_serialized.get("instId").is_none());
+
+        // Test FUTURES request with instFamily (should include instType and instFamily)
+        let futures_request = GetInstrumentsRequest {
+            inst_type: InstrumentType::Futures,
+            underlying: None,
+            inst_family: Some("BTC-USD".to_string()),
+            inst_id: None,
+        };
+        let futures_serialized = serde_json::to_value(&futures_request).unwrap();
+        assert_eq!(
+            futures_serialized.get("instType").and_then(|v| v.as_str()),
+            Some("FUTURES")
+        );
+        assert_eq!(
+            futures_serialized
+                .get("instFamily")
+                .and_then(|v| v.as_str()),
+            Some("BTC-USD")
+        );
+        assert!(futures_serialized.get("uly").is_none());
+        assert!(futures_serialized.get("instId").is_none());
     }
 }

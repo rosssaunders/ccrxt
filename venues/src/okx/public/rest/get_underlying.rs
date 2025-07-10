@@ -23,11 +23,12 @@ pub struct GetUnderlyingResponse {
     pub data: Vec<UnderlyingData>,
 }
 
-/// Individual underlying asset data
+/// Individual underlying asset data - array of underlying asset names
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(transparent)]
 pub struct UnderlyingData {
     /// Underlying assets array
-    pub uly: Vec<String>,
+    pub assets: Vec<String>,
 }
 
 impl RestClient {
@@ -105,15 +106,13 @@ mod tests {
 
     #[test]
     fn test_underlying_data_structure() {
-        let underlying_json = json!({
-            "uly": ["BTC-USD", "ETH-USD", "LTC-USD"]
-        });
+        let underlying_json = json!(["BTC-USD", "ETH-USD", "LTC-USD"]);
 
         let underlying_data: UnderlyingData = serde_json::from_value(underlying_json).unwrap();
-        assert_eq!(underlying_data.uly.len(), 3);
-        assert_eq!(underlying_data.uly[0], "BTC-USD");
-        assert_eq!(underlying_data.uly[1], "ETH-USD");
-        assert_eq!(underlying_data.uly[2], "LTC-USD");
+        assert_eq!(underlying_data.assets.len(), 3);
+        assert_eq!(underlying_data.assets[0], "BTC-USD");
+        assert_eq!(underlying_data.assets[1], "ETH-USD");
+        assert_eq!(underlying_data.assets[2], "LTC-USD");
     }
 
     #[test]
@@ -122,9 +121,9 @@ mod tests {
             "code": "0",
             "msg": "",
             "data": [
-                {
-                    "uly": ["BTC-USD", "ETH-USD", "LTC-USD"]
-                }
+                [
+                    "BTC-USD", "ETH-USD", "LTC-USD"
+                ]
             ]
         });
 
@@ -132,8 +131,8 @@ mod tests {
         assert_eq!(response.code, "0");
         assert_eq!(response.msg, "");
         assert_eq!(response.data.len(), 1);
-        assert_eq!(response.data[0].uly.len(), 3);
-        assert_eq!(response.data[0].uly[0], "BTC-USD");
+        assert_eq!(response.data[0].assets.len(), 3);
+        assert_eq!(response.data[0].assets[0], "BTC-USD");
     }
 
     #[test]
@@ -154,15 +153,13 @@ mod tests {
             "code": "0",
             "msg": "",
             "data": [
-                {
-                    "uly": []
-                }
+                []
             ]
         });
 
         let response: GetUnderlyingResponse = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 1);
-        assert_eq!(response.data[0].uly.len(), 0);
+        assert_eq!(response.data[0].assets.len(), 0);
     }
 }

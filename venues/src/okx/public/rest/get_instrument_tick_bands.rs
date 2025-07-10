@@ -1,15 +1,24 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::okx::{EndpointType, InstrumentType, RestResult};
+use crate::okx::{EndpointType, RestResult};
+
+/// Instrument type enum specifically for instrument tick bands endpoint
+/// This endpoint only supports Option instruments
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "UPPERCASE")]
+pub enum TickBandInstrumentType {
+    /// Options contract
+    Option,
+}
 
 /// Request parameters for getting instrument tick bands
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct GetInstrumentTickBandsRequest {
-    /// Instrument type (required)
+    /// Instrument type (required, only OPTION is supported)
     #[serde(rename = "instType")]
-    pub inst_type: InstrumentType,
+    pub inst_type: TickBandInstrumentType,
     /// Instrument family (optional, only applicable to OPTION)
     #[serde(rename = "instFamily", skip_serializing_if = "Option::is_none")]
     pub inst_family: Option<String>,
@@ -93,7 +102,7 @@ mod tests {
     #[test]
     fn test_get_instrument_tick_bands_request_structure() {
         let request = GetInstrumentTickBandsRequest {
-            inst_type: InstrumentType::Option,
+            inst_type: TickBandInstrumentType::Option,
             inst_family: Some("BTC-USD".to_string()),
         };
 
@@ -111,7 +120,7 @@ mod tests {
     #[test]
     fn test_get_instrument_tick_bands_request_minimal() {
         let request = GetInstrumentTickBandsRequest {
-            inst_type: InstrumentType::Option,
+            inst_type: TickBandInstrumentType::Option,
             inst_family: None,
         };
 
@@ -205,7 +214,7 @@ mod tests {
     #[test]
     fn test_request_serialization_roundtrip() {
         let original = GetInstrumentTickBandsRequest {
-            inst_type: InstrumentType::Option,
+            inst_type: TickBandInstrumentType::Option,
             inst_family: Some("BTC-USD".to_string()),
         };
 

@@ -51,7 +51,7 @@ pub struct GetIndexComponentsResponse {
     /// Response message
     pub msg: String,
     /// Index component data
-    pub data: Vec<IndexComponentData>,
+    pub data: IndexComponentData,
 }
 
 impl RestClient {
@@ -59,7 +59,7 @@ impl RestClient {
     ///
     /// Get the index component information data on the market.
     ///
-    /// See: https://www.okx.com/docs-v5/en/#rest-api-public-data-get-index-components
+    /// See: https://www.okx.com/docs-v5/en/#public-data-rest-api-get-index-components
     ///
     /// Rate limit: 20 requests per 2 seconds
     ///
@@ -150,40 +150,37 @@ mod tests {
         let response_json = json!({
             "code": "0",
             "msg": "",
-            "data": [
-                {
-                    "index": "BTC-USDT",
-                    "last": "50000.0",
-                    "ts": "1597026383085",
-                    "components": [
-                        {
-                            "exch": "Binance",
-                            "symbol": "BTCUSDT",
-                            "symPx": "50000.0",
-                            "wgt": "0.25",
-                            "cnvPx": "50000.0"
-                        },
-                        {
-                            "exch": "Coinbase",
-                            "symbol": "BTC-USD",
-                            "symPx": "49950.0",
-                            "wgt": "0.30",
-                            "cnvPx": "49950.0"
-                        }
-                    ]
-                }
-            ]
+            "data": {
+                "index": "BTC-USDT",
+                "last": "50000.0",
+                "ts": "1597026383085",
+                "components": [
+                    {
+                        "exch": "Binance",
+                        "symbol": "BTCUSDT",
+                        "symPx": "50000.0",
+                        "wgt": "0.25",
+                        "cnvPx": "50000.0"
+                    },
+                    {
+                        "exch": "Coinbase",
+                        "symbol": "BTC-USD",
+                        "symPx": "49950.0",
+                        "wgt": "0.30",
+                        "cnvPx": "49950.0"
+                    }
+                ]
+            }
         });
 
         let response: GetIndexComponentsResponse = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
-        assert_eq!(response.data.len(), 1);
-        assert_eq!(response.data[0].index, "BTC-USDT");
-        assert_eq!(response.data[0].last, "50000.0");
-        assert_eq!(response.data[0].ts, "1597026383085");
-        assert_eq!(response.data[0].components.len(), 2);
-        assert_eq!(response.data[0].components[0].exch, "Binance");
-        assert_eq!(response.data[0].components[1].exch, "Coinbase");
+        assert_eq!(response.data.index, "BTC-USDT");
+        assert_eq!(response.data.last, "50000.0");
+        assert_eq!(response.data.ts, "1597026383085");
+        assert_eq!(response.data.components.len(), 2);
+        assert_eq!(response.data.components[0].exch, "Binance");
+        assert_eq!(response.data.components[1].exch, "Coinbase");
     }
 
     #[test]

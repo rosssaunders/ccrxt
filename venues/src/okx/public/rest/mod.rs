@@ -3,7 +3,6 @@ mod convert_contract_coin;
 mod exchange_rate;
 mod get_delivery_exercise_history;
 mod get_discount_rate_interest_free_quota;
-mod get_economic_calendar;
 mod get_estimated_price;
 mod get_estimated_settlement_info;
 mod get_funding_rate;
@@ -42,9 +41,6 @@ pub use get_discount_rate_interest_free_quota::{
     DiscountDetail, DiscountRateInterestFreeQuota, GetDiscountRateInterestFreeQuotaRequest,
     GetDiscountRateInterestFreeQuotaResponse,
 };
-pub use get_economic_calendar::{
-    EconomicEvent, GetEconomicCalendarRequest, GetEconomicCalendarResponse,
-};
 pub use get_estimated_price::{
     EstimatedPriceData, GetEstimatedPriceRequest, GetEstimatedPriceResponse,
 };
@@ -64,7 +60,8 @@ pub use get_index_components::{
 };
 pub use get_index_tickers::{GetIndexTickersRequest, GetIndexTickersResponse, IndexTicker};
 pub use get_instrument_tick_bands::{
-    GetInstrumentTickBandsRequest, GetInstrumentTickBandsResponse, InstrumentTickBandData, TickBand,
+    GetInstrumentTickBandsRequest, GetInstrumentTickBandsResponse, InstrumentTickBandData,
+    TickBand, TickBandInstrumentType,
 };
 pub use get_instruments::{GetInstrumentsRequest, GetInstrumentsResponse, Instrument};
 pub use get_insurance_fund::{
