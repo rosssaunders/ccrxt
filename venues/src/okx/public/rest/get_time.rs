@@ -26,7 +26,7 @@ impl RestClient {
     ///
     /// Retrieve API server time.
     ///
-    /// See: https://www.okx.com/docs-v5/en/#rest-api-public-data-get-system-time
+    /// See: https://www.okx.com/docs-v5/en/#public-data-rest-api-get-system-time
     ///
     /// Rate limit: 10 requests per 2 seconds
     ///

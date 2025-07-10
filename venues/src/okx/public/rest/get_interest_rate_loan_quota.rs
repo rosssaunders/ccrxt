@@ -78,7 +78,7 @@ impl RestClient {
     ///
     /// Retrieve interest rate and loan quota information for basic, VIP, and regular users.
     ///
-    /// See: https://www.okx.com/docs-v5/en/#rest-api-public-data-get-interest-rate-and-loan-quota
+    /// See: https://www.okx.com/docs-v5/en/#public-data-rest-api-get-interest-rate-and-loan-quota
     ///
     /// Rate limit: 2 requests per 2 seconds
     ///

@@ -70,7 +70,7 @@ impl RestClient {
     ///
     /// Get option tick bands information
     ///
-    /// See: https://www.okx.com/docs-v5/en/#rest-api-public-data-get-option-tick-bands
+    /// See: https://www.okx.com/docs-v5/en/#public-data-rest-api-get-option-tick-bands
     ///
     /// Rate limit: 5 requests per 2 seconds
     ///

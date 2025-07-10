@@ -36,7 +36,7 @@ impl RestClient {
     ///
     /// Retrieve underlying assets for specified instrument type.
     ///
-    /// See: https://www.okx.com/docs-v5/en/#rest-api-public-data-get-underlying
+    /// See: https://www.okx.com/docs-v5/en/#public-data-rest-api-get-underlying
     ///
     /// Rate limit: 20 requests per 2 seconds
     ///

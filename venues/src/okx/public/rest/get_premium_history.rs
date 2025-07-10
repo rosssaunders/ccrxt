@@ -50,7 +50,7 @@ impl RestClient {
     ///
     /// Returns premium data in the past 6 months.
     ///
-    /// See: https://www.okx.com/docs-v5/en/#rest-api-public-data-get-premium-history
+    /// See: https://www.okx.com/docs-v5/en/#public-data-rest-api-get-premium-history
     ///
     /// Rate limit: 20 requests per 2 seconds
     ///

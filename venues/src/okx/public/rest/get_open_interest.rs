@@ -60,7 +60,7 @@ impl RestClient {
     ///
     /// Retrieve the total open interest for contracts on OKX.
     ///
-    /// See: https://www.okx.com/docs-v5/en/#rest-api-public-data-get-open-interest
+    /// See: https://www.okx.com/docs-v5/en/#public-data-rest-api-get-open-interest
     ///
     /// Rate limit: 20 requests per 2 seconds
     ///
