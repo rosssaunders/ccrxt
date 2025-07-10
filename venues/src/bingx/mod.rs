@@ -29,7 +29,16 @@ pub use private::RestClient as BingXRestClient;
 pub use private::{
     Balance, GetBalancesRequest, GetBalancesResponse, RestClient as PrivateRestClient,
 };
-pub use public::PublicRestClient;
+pub use public::{
+    Get24hrTickerRequest, Get24hrTickerResponse, GetHistoricalKlineRequest,
+    GetHistoricalKlineResponse, GetKlineRequest, GetKlineResponse, GetOldTradeRequest,
+    GetOldTradeResponse, GetOrderBookAggregationRequest, GetOrderBookAggregationResponse,
+    GetOrderBookRequest, GetOrderBookResponse, GetRecentTradesRequest, GetRecentTradesResponse,
+    GetServerTimeRequest, GetServerTimeResponse, GetSymbolOrderBookTickerRequest,
+    GetSymbolOrderBookTickerResponse, GetSymbolPriceTickerRequest,
+    GetSymbolPriceTickerResponse, GetSymbolsRequest, GetSymbolsResponse, HistoricalKline,
+    Kline, OldTrade, PublicRestClient, Symbol, Ticker24hr, Trade,
+};
 pub use rate_limit::{EndpointType, RateLimit, RateLimitError, RateLimiter};
 
 /// Type alias for results returned by BingX API operations
