@@ -12,14 +12,17 @@ pub struct ConvertContractCoinRequest {
     /// 2: Convert contract to currency
     #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
     pub convert_type: Option<String>,
+
     /// Instrument ID (required)
     /// Only applicable to FUTURES/SWAP/OPTION
     #[serde(rename = "instId")]
     pub inst_id: String,
+
     /// Quantity to buy or sell (required)
     /// It is quantity of currency while converting currency to contract
     /// It is quantity of contract while converting contract to currency
     pub sz: String,
+
     /// Order price (conditional)
     /// For crypto-margined contracts, it is necessary while converting
     /// For USDT-margined contracts, it is necessary while converting between usdt and contract
@@ -27,12 +30,14 @@ pub struct ConvertContractCoinRequest {
     /// For OPTION, it is optional
     #[serde(skip_serializing_if = "Option::is_none")]
     pub px: Option<String>,
+
     /// The unit of currency
     /// coin (default)
     /// usds: USDT/USDC
     /// Only applicable to USDⓈ-margined contracts from FUTURES/SWAP
     #[serde(skip_serializing_if = "Option::is_none")]
     pub unit: Option<String>,
+
     /// Order type
     /// open: round down sz when opening positions
     /// close: round sz to the nearest when closing positions (default)
@@ -50,15 +55,19 @@ pub struct ConvertContractCoinData {
     /// 2: Convert contract to currency
     #[serde(rename = "type")]
     pub convert_type: String,
+
     /// Instrument ID
     #[serde(rename = "instId")]
     pub inst_id: String,
+
     /// Order price
     pub px: String,
+
     /// Quantity to buy or sell
     /// It is quantity of contract while converting currency to contract
     /// It is quantity of currency while contract to currency
     pub sz: String,
+
     /// The unit of currency
     /// coin
     /// usds: USDT/USDC
@@ -70,8 +79,10 @@ pub struct ConvertContractCoinData {
 pub struct ConvertContractCoinResponse {
     /// Response code ("0" for success)
     pub code: String,
+
     /// Response message
     pub msg: String,
+
     /// Convert data
     pub data: Vec<ConvertContractCoinData>,
 }
@@ -81,7 +92,7 @@ impl RestClient {
     ///
     /// Convert the crypto value to the number of contracts, or vice versa.
     ///
-    /// See: https://www.okx.com/docs-v5/en/#rest-api-public-data-unit-convert
+    /// See: https://www.okx.com/docs-v5/en/#public-data-rest-api-unit-convert
     ///
     /// Rate limit: 10 requests per 2 seconds
     ///
