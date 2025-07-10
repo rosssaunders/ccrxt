@@ -69,7 +69,7 @@ impl RestClient {
     /// Get the macro-economic calendar data within 3 months. Historical data from 3
     /// months ago is only available to users with trading fee tier VIP1 and above.
     ///
-    /// See: https://www.okx.com/docs-v5/en/#rest-api-public-data-get-economic-calendar
+    /// See: https://www.okx.com/docs-v5/en/#public-data-rest-api-get-economic-calendar-data
     ///
     /// Rate limit: 1 request per 5 seconds
     /// Rate limit rule: IP
