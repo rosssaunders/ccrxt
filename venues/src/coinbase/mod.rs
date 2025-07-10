@@ -16,6 +16,17 @@ pub mod public {
 
 pub use public::RestClient as PublicRestClient;
 
+// Re-export all public REST types for integration tests
+pub use public::rest::{
+    AuctionInfo, Candle, GetProductBookRequest, GetProductBookResponse, GetProductCandlesRequest,
+    GetProductCandlesResponse, GetProductRequest, GetProductResponse, GetProductStatsRequest,
+    GetProductStatsResponse, GetProductTickerRequest, GetProductTickerResponse,
+    GetProductTradesRequest, GetProductTradesResponse, GetProductVolumeSummaryRequest,
+    GetProductVolumeSummaryResponse, GetProductsRequest, GetProductsResponse, MarketType,
+    OrderBookLevel, PaginationInfo, Product, ProductStats, ProductTicker, ProductVolumeSummary,
+    Trade,
+};
+
 pub mod private {
     pub mod rest;
     pub use self::rest::RestClient;
