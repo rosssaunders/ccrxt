@@ -360,7 +360,10 @@ async fn test_get_candlestick() {
     assert_eq!(response.code, 0);
     // id can be -1 for public endpoints; do not assert on id
     assert_eq!(response.result.instrument_name, "BTCUSD-PERP");
-    assert!(!response.result.interval.is_empty(), "Interval should not be empty");
+    assert!(
+        !response.result.interval.is_empty(),
+        "Interval should not be empty"
+    );
 
     println!(
         "Found {} candlesticks for {} with interval {}",
@@ -393,7 +396,7 @@ async fn test_get_candlestick() {
 /// Test the get_valuations endpoint
 ///
 /// [API docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#public-get-valuations)
-/// 
+///
 /// **NOTE**: This endpoint appears to return a different response format than expected.
 /// The test is included for completeness but may fail due to API response format changes.
 #[tokio::test]
