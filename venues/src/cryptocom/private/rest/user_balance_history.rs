@@ -44,7 +44,7 @@ impl RestClient {
     /// Returns the user's balance history with optional timeframe filtering (H1/D1).
     /// This call may temporarily have discrepancies with that shown on the GUI.
     ///
-    /// See: <https://exchange-docs.crypto.com/derivatives/index.html>
+    /// [Official API docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#private-user-balance-history)
     ///
     /// Rate limit: No rate limit
     ///

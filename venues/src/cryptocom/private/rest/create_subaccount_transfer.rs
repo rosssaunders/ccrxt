@@ -32,7 +32,7 @@ impl RestClient {
     ///
     /// Transfers funds between master account and sub-accounts.
     ///
-    /// See: <https://exchange-docs.crypto.com/derivatives/index.html>
+    /// [Official API docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#private-create-subaccount-transfer)
     ///
     /// Rate limit: No rate limit
     ///
