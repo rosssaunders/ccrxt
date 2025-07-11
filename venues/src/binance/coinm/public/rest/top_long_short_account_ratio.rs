@@ -6,8 +6,8 @@ use crate::binance::coinm::{RestResult, enums::Period, public::rest::RestClient}
 /// Parameters for Top Trader Long/Short Ratio (Accounts)
 #[derive(Debug, Clone, Serialize)]
 pub struct TopLongShortAccountRatioParams {
-    /// Symbol name
-    pub symbol: String,
+    /// Pair name (e.g., "BTCUSD")
+    pub pair: String,
     /// The time interval
     pub period: Period,
     /// Maximum 500
@@ -27,12 +27,14 @@ pub struct TopLongShortAccountRatioParams {
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct TopLongShortAccountRatio {
-    /// Symbol name
-    pub symbol: String,
+    /// Pair name
+    pub pair: String,
     /// Long account ratio
     pub long_account: Decimal,
     /// Short account ratio
     pub short_account: Decimal,
+    /// Long/short ratio
+    pub long_short_ratio: Decimal,
     /// Timestamp
     pub timestamp: i64,
 }

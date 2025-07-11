@@ -6,8 +6,11 @@ use crate::binance::coinm::{RestResult, enums::Period, public::rest::RestClient}
 /// Parameters for Open Interest Statistics
 #[derive(Debug, Clone, Serialize)]
 pub struct OpenInterestHistParams {
-    /// Symbol name
-    pub symbol: String,
+    /// Trading pair (e.g., "BTCUSD")
+    pub pair: String,
+    /// Contract type (e.g., "PERPETUAL", "CURRENT_QUARTER", "NEXT_QUARTER")
+    #[serde(rename = "contractType")]
+    pub contract_type: String,
     /// The time interval
     pub period: Period,
     /// Maximum 500
@@ -27,8 +30,11 @@ pub struct OpenInterestHistParams {
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct OpenInterestHist {
-    /// Symbol name
-    pub symbol: String,
+    /// Trading pair (e.g., "BTCUSD")
+    pub pair: String,
+    /// Contract type (e.g., "PERPETUAL")
+    #[serde(rename = "contractType")]
+    pub contract_type: String,
     /// Sum of open interest
     pub sum_open_interest: Decimal,
     /// Sum of open interest value

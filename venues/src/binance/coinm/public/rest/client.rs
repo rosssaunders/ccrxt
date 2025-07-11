@@ -65,24 +65,20 @@ impl RestClient {
 
         let url = build_url(&self.base_url, endpoint, Some(&query_string))?;
         let headers = vec![];
-        let rest_response: crate::binance::coinm::rest::common::RestResponse<String> =
-            send_rest_request(
-                &self.client,
-                &url,
-                method,
-                headers,
-                None,
-                &self.rate_limiter,
-                weight,
-                false,
-            )
-            .await?;
-
-        let parsed_data: Resp = serde_json::from_str(&rest_response.data)
-            .map_err(|e| crate::binance::coinm::Errors::Error(format!("JSON parse error: {e}")))?;
+        let rest_response = send_rest_request(
+            &self.client,
+            &url,
+            method,
+            headers,
+            None,
+            &self.rate_limiter,
+            weight,
+            false,
+        )
+        .await?;
 
         Ok(RestResponse {
-            data: parsed_data,
+            data: rest_response.data,
             request_duration: rest_response.request_duration,
             headers: rest_response.headers,
         })

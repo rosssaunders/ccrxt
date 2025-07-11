@@ -6,8 +6,11 @@ use crate::binance::coinm::{RestResult, enums::Period, public::rest::RestClient}
 /// Parameters for Taker Buy/Sell Volume
 #[derive(Debug, Clone, Serialize)]
 pub struct TakerBuySellVolParams {
-    /// Symbol name
-    pub symbol: String,
+    /// Trading pair (e.g., "BTCUSD")
+    pub pair: String,
+    /// Contract type (e.g., "PERPETUAL", "CURRENT_QUARTER", "NEXT_QUARTER")
+    #[serde(rename = "contractType")]
+    pub contract_type: String,
     /// The time interval
     pub period: Period,
     /// Maximum 500
@@ -27,10 +30,18 @@ pub struct TakerBuySellVolParams {
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct TakerBuySellVol {
-    /// Buy volume
-    pub buy_vol: Decimal,
-    /// Sell volume
-    pub sell_vol: Decimal,
+    /// Pair name
+    pub pair: String,
+    /// Contract type
+    pub contract_type: String,
+    /// Taker buy volume
+    pub taker_buy_vol: Decimal,
+    /// Taker sell volume
+    pub taker_sell_vol: Decimal,
+    /// Taker buy volume value
+    pub taker_buy_vol_value: Decimal,
+    /// Taker sell volume value
+    pub taker_sell_vol_value: Decimal,
     /// Timestamp
     pub timestamp: i64,
 }
