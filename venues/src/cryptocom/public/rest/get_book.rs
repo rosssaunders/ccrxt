@@ -29,37 +29,53 @@ pub struct GetBookRequest {
 /// Response for public/get-book endpoint.
 #[derive(Debug, Clone, Deserialize)]
 pub struct GetBookResponse {
+    /// Response code (0 = success)
+    #[serde(rename = "code")]
+    pub code: i64,
+
     /// Result data for the order book.
     #[serde(rename = "result")]
     pub result: BookResult,
 
-    /// Success status.
-    #[serde(rename = "success")]
-    pub success: bool,
-
-    /// Response ID.
+    /// Response ID (may be -1)
     #[serde(rename = "id")]
-    pub id: u64,
+    pub id: i64,
 }
 
 /// Result data for order book.
 #[derive(Debug, Clone, Deserialize)]
 pub struct BookResult {
-    /// Instrument name.
+    /// Depth of the order book returned.
+    #[serde(rename = "depth")]
+    pub depth: u32,
+
+    /// Data array containing bids/asks and instrument_name.
+    #[serde(rename = "data")]
+    pub data: Vec<BookData>,
+
+    /// Instrument name (for convenience, also present in data[0]).
     #[serde(rename = "instrument_name")]
     pub instrument_name: Cow<'static, str>,
+}
 
-    /// List of bids (price, quantity).
-    #[serde(rename = "bids")]
-    pub bids: Vec<[f64; 2]>,
-
-    /// List of asks (price, quantity).
+/// Order book data for a single snapshot.
+#[derive(Debug, Clone, Deserialize)]
+pub struct BookData {
+    /// List of asks: [price, quantity, num_orders] as strings.
     #[serde(rename = "asks")]
-    pub asks: Vec<[f64; 2]>,
+    pub asks: Vec<Vec<String>>,
 
-    /// Timestamp of the order book snapshot (milliseconds since epoch).
-    #[serde(rename = "timestamp")]
-    pub timestamp: u64,
+    /// List of bids: [price, quantity, num_orders] as strings.
+    #[serde(rename = "bids")]
+    pub bids: Vec<Vec<String>>,
+
+    /// Optional: timestamp fields, sequence numbers, etc.
+    #[serde(rename = "t", default)]
+    pub t: Option<u64>,
+    #[serde(rename = "tt", default)]
+    pub tt: Option<u64>,
+    #[serde(rename = "u", default)]
+    pub u: Option<u64>,
 }
 
 impl RestClient {
@@ -67,7 +83,7 @@ impl RestClient {
     ///
     /// Fetches the public order book for a particular instrument and depth.
     ///
-    /// [Official API docs](https://exchange-docs.crypto.com/spot/index.html)
+    /// [Official API docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#public-get-book)
     pub async fn get_book(&self, params: GetBookRequest) -> RestResult<GetBookResponse> {
         self.send_request(
             GET_BOOK_ENDPOINT,

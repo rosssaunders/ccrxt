@@ -25,17 +25,17 @@ pub struct GetInsuranceRequest {
 /// Response for public/get-insurance endpoint.
 #[derive(Debug, Clone, Deserialize)]
 pub struct GetInsuranceResponse {
+    /// Response code (0 = success)
+    #[serde(rename = "code")]
+    pub code: i64,
+
     /// Result data for insurance.
     #[serde(rename = "result")]
     pub result: InsuranceResult,
 
-    /// Success status.
-    #[serde(rename = "success")]
-    pub success: bool,
-
-    /// Response ID.
+    /// Response ID (may be -1)
     #[serde(rename = "id")]
-    pub id: u64,
+    pub id: i64,
 }
 
 /// Result data for insurance.
@@ -63,7 +63,7 @@ impl RestClient {
     ///
     /// Fetches balance of Insurance Fund for a particular currency.
     ///
-    /// [Official API docs](https://exchange-docs.crypto.com/spot/index.html)
+    /// [Official API docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#public-get-insurance)
     pub async fn get_insurance(
         &self,
         params: GetInsuranceRequest,

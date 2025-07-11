@@ -1,0 +1,52 @@
+name: Crypto.com Integration Tests
+
+on:
+  schedule:
+    # Run nightly at 2:00 AM UTC
+    - cron: "0 2 * * *"
+  workflow_dispatch:
+    # Allow manual trigger
+
+jobs:
+  cryptocom-integration-tests:
+    name: Crypto.com Public API Integration Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: "./venues"
+
+      - name: Run Crypto.com integration tests
+        run: |
+          cd venues
+          cargo test --test cryptocom_tests -- --nocapture
+        env:
+          RUST_BACKTRACE: 1
+
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cryptocom-test-results-${{ github.run_id }}
+          path: |
+            venues/target/debug/deps/
+            !venues/target/debug/deps/*.d
+          retention-days: 7
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "::error::Crypto.com integration tests failed. Check the logs for details."
+          echo "Tests may fail due to API changes, rate limiting, or network issues."
+          echo "Review the test output and update tests if necessary."

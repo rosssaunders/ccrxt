@@ -15,8 +15,16 @@ pub mod private {
 }
 
 pub mod public {
-    mod rest;
-    pub use self::rest::RestClient;
+    pub mod rest;
+    pub use rest::RestClient;
+    pub use rest::{
+        ConversionRateResponse, GetAnnouncementsRequest, GetAnnouncementsResponse, GetBookRequest,
+        GetBookResponse, GetCandlestickRequest, GetCandlestickResponse, GetConversionRateRequest,
+        GetExpiredSettlementPriceRequest, GetExpiredSettlementPriceResponse, GetInstrumentsRequest,
+        GetInstrumentsResponse, GetInsuranceRequest, GetInsuranceResponse,
+        GetRiskParametersResponse, GetTickersRequest, GetTickersResponse, GetTradesRequest,
+        GetTradesResponse, GetValuationsRequest, GetValuationsResponse,
+    };
 }
 
 pub use enums::*;
@@ -31,6 +39,14 @@ pub use private::{
     OrderCancellationResult, OrderCreationResult, OrderDetails, OrderListItem,
 };
 pub use public::RestClient as PublicRestClient;
+pub use public::{
+    ConversionRateResponse, GetAnnouncementsRequest, GetAnnouncementsResponse, GetBookRequest,
+    GetBookResponse, GetCandlestickRequest, GetCandlestickResponse, GetConversionRateRequest,
+    GetExpiredSettlementPriceRequest, GetExpiredSettlementPriceResponse, GetInstrumentsRequest,
+    GetInstrumentsResponse, GetInsuranceRequest, GetInsuranceResponse, GetRiskParametersResponse,
+    GetTickersRequest, GetTickersResponse, GetTradesRequest, GetTradesResponse,
+    GetValuationsRequest, GetValuationsResponse,
+};
 pub use rate_limit::{EndpointType, RateLimit, RateLimitError, RateLimiter};
 
 /// Type alias for results returned by Crypto.com API operations

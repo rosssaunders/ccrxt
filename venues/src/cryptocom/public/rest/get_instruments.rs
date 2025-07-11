@@ -30,56 +30,80 @@ pub struct GetInstrumentsRequest {
 #[derive(Debug, Clone, Deserialize)]
 pub struct GetInstrumentsResponse {
     /// Result data for instruments.
-    #[serde(rename = "result")]
     pub result: InstrumentsResult,
 
-    /// Success status.
-    #[serde(rename = "success")]
-    pub success: bool,
+    /// Response code (0 = success).
+    pub code: i32,
 
     /// Response ID.
-    #[serde(rename = "id")]
-    pub id: u64,
+    pub id: i64,
+
+    /// Method name.
+    pub method: String,
 }
 
 /// Result data for instruments.
 #[derive(Debug, Clone, Deserialize)]
 pub struct InstrumentsResult {
     /// List of instrument objects.
-    #[serde(rename = "data")]
     pub data: Vec<Instrument>,
 }
 
 /// Instrument object.
 #[derive(Debug, Clone, Deserialize)]
 pub struct Instrument {
-    /// Instrument name.
-    #[serde(rename = "instrument_name")]
-    pub instrument_name: Cow<'static, str>,
+    /// Symbol (instrument name).
+    pub symbol: String,
 
     /// Instrument type.
-    #[serde(rename = "instrument_type")]
-    pub instrument_type: InstrumentType,
+    pub inst_type: String,
 
-    /// Quote currency.
-    #[serde(rename = "quote_currency")]
-    pub quote_currency: Cow<'static, str>,
+    /// Display name.
+    pub display_name: String,
 
     /// Base currency.
-    #[serde(rename = "base_currency")]
-    pub base_currency: Cow<'static, str>,
+    pub base_ccy: String,
 
-    /// Price decimal places.
-    #[serde(rename = "price_decimals")]
-    pub price_decimals: u32,
+    /// Quote currency.
+    pub quote_ccy: String,
+
+    /// Quote decimal places.
+    pub quote_decimals: u32,
 
     /// Quantity decimal places.
-    #[serde(rename = "quantity_decimals")]
     pub quantity_decimals: u32,
 
-    /// Maximum leverage allowed.
-    #[serde(rename = "max_leverage")]
-    pub max_leverage: f64,
+    /// Price tick size.
+    pub price_tick_size: String,
+
+    /// Quantity tick size.
+    pub qty_tick_size: String,
+
+    /// Maximum leverage allowed (returned as string by API).
+    pub max_leverage: String,
+
+    /// Whether the instrument is tradable.
+    pub tradable: bool,
+
+    /// Expiry timestamp in milliseconds.
+    pub expiry_timestamp_ms: u64,
+
+    /// Whether this is a beta product.
+    pub beta_product: bool,
+
+    /// Underlying symbol (for derivatives).
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub underlying_symbol: Option<String>,
+
+    /// Contract size (for derivatives).
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub contract_size: Option<String>,
+
+    /// Whether margin buying is enabled.
+    pub margin_buy_enabled: bool,
+
+    /// Whether margin selling is enabled.
+    pub margin_sell_enabled: bool,
 }
 
 impl RestClient {
@@ -87,7 +111,7 @@ impl RestClient {
     ///
     /// Provides information on all supported instruments.
     ///
-    /// [Official API docs](https://exchange-docs.crypto.com/spot/index.html)
+    /// [Official API docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#public-get-instruments)
     pub async fn get_instruments(
         &self,
         params: GetInstrumentsRequest,

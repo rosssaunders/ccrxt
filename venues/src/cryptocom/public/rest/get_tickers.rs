@@ -25,17 +25,17 @@ pub struct GetTickersRequest {
 /// Response for public/get-tickers endpoint.
 #[derive(Debug, Clone, Deserialize)]
 pub struct GetTickersResponse {
+    /// Response code (0 = success)
+    #[serde(rename = "code")]
+    pub code: i64,
+
     /// Result data for tickers.
     #[serde(rename = "result")]
     pub result: TickersResult,
 
-    /// Success status.
-    #[serde(rename = "success")]
-    pub success: bool,
-
-    /// Response ID.
+    /// Response ID (may be -1)
     #[serde(rename = "id")]
-    pub id: u64,
+    pub id: i64,
 }
 
 /// Result data for tickers.
@@ -49,25 +49,49 @@ pub struct TickersResult {
 /// Ticker data for an instrument.
 #[derive(Debug, Clone, Deserialize)]
 pub struct Ticker {
-    /// Instrument name.
-    #[serde(rename = "instrument_name")]
-    pub instrument_name: Cow<'static, str>,
+    /// Instrument name (e.g., "BTCUSD-PERP")
+    #[serde(rename = "i")]
+    pub instrument_name: Option<String>,
 
-    /// Last traded price.
-    #[serde(rename = "last_trade_price")]
-    pub last_trade_price: f64,
+    /// Price of the 24h highest trade
+    #[serde(rename = "h")]
+    pub high_price_24h: Option<String>,
 
-    /// 24h high price.
-    #[serde(rename = "high_price_24h")]
-    pub high_price_24h: f64,
+    /// Price of the 24h lowest trade, null if there weren't any trades
+    #[serde(rename = "l")]
+    pub low_price_24h: Option<String>,
 
-    /// 24h low price.
-    #[serde(rename = "low_price_24h")]
-    pub low_price_24h: f64,
+    /// The price of the latest trade, null if there weren't any trades
+    #[serde(rename = "a")]
+    pub last_trade_price: Option<String>,
 
-    /// 24h volume.
-    #[serde(rename = "volume_24h")]
-    pub volume_24h: f64,
+    /// The total 24h traded volume
+    #[serde(rename = "v")]
+    pub volume_24h: Option<String>,
+
+    /// The total 24h traded volume value (in USD)
+    #[serde(rename = "vv")]
+    pub volume_24h_value: Option<String>,
+
+    /// Open interest
+    #[serde(rename = "oi")]
+    pub open_interest: Option<String>,
+
+    /// 24-hour price change, null if there weren't any trades
+    #[serde(rename = "c")]
+    pub price_change_24h: Option<String>,
+
+    /// The current best bid price, null if there aren't any bids
+    #[serde(rename = "b")]
+    pub best_bid_price: Option<String>,
+
+    /// The current best ask price, null if there aren't any asks
+    #[serde(rename = "k")]
+    pub best_ask_price: Option<String>,
+
+    /// The published timestamp in ms
+    #[serde(rename = "t")]
+    pub timestamp: Option<u64>,
 }
 
 impl RestClient {
@@ -75,7 +99,7 @@ impl RestClient {
     ///
     /// Fetches the public tickers for all or a particular instrument.
     ///
-    /// [Official API docs](https://exchange-docs.crypto.com/spot/index.html)
+    /// [Official API docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#public-get-tickers)
     pub async fn get_tickers(&self, params: GetTickersRequest) -> RestResult<GetTickersResponse> {
         self.send_request(
             GET_TICKERS_ENDPOINT,

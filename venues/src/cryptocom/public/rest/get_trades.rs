@@ -7,7 +7,7 @@ use std::borrow::Cow;
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::cryptocom::{EndpointType, RestResult, TradeSide};
+use crate::cryptocom::{EndpointType, RestResult};
 
 /// Endpoint for getting trades
 const GET_TRADES_ENDPOINT: &str = "public/get-trades";
@@ -29,17 +29,17 @@ pub struct GetTradesRequest {
 /// Response for public/get-trades endpoint.
 #[derive(Debug, Clone, Deserialize)]
 pub struct GetTradesResponse {
+    /// Response code (0 = success)
+    #[serde(rename = "code")]
+    pub code: i64,
+
     /// Result data for trades.
     #[serde(rename = "result")]
     pub result: TradesResult,
 
-    /// Success status.
-    #[serde(rename = "success")]
-    pub success: bool,
-
-    /// Response ID.
+    /// Response ID (may be -1)
     #[serde(rename = "id")]
-    pub id: u64,
+    pub id: i64,
 }
 
 /// Result data for trades.
@@ -50,28 +50,58 @@ pub struct TradesResult {
     pub data: Vec<Trade>,
 }
 
-/// Trade data for a single trade.
+
+/// Helper for fields that may be string or integer.
+#[derive(Debug, Clone, Deserialize)]
+#[serde(untagged)]
+pub enum StringOrInt {
+    String(String),
+    Int(i64),
+}
+
+impl StringOrInt {
+    pub fn as_str(&self) -> String {
+        match self {
+            StringOrInt::String(s) => s.clone(),
+            StringOrInt::Int(i) => i.to_string(),
+        }
+    }
+}
+
+/// Trade data for a single trade, matching Crypto.com API.
 #[derive(Debug, Clone, Deserialize)]
 pub struct Trade {
-    /// Trade ID.
-    #[serde(rename = "trade_id")]
-    pub trade_id: u64,
+    /// Trade ID (string or int in API)
+    #[serde(rename = "d")]
+    pub trade_id: StringOrInt,
 
-    /// Price.
-    #[serde(rename = "price")]
-    pub price: f64,
-
-    /// Quantity.
-    #[serde(rename = "quantity")]
-    pub quantity: f64,
-
-    /// Trade side (buy/sell).
-    #[serde(rename = "side")]
-    pub side: TradeSide,
-
-    /// Timestamp (milliseconds since epoch).
-    #[serde(rename = "timestamp")]
+    /// Trade timestamp (milliseconds since epoch)
+    #[serde(rename = "t")]
     pub timestamp: u64,
+
+    /// Trade timestamp (nanoseconds, string or int)
+    #[serde(rename = "tn")]
+    pub timestamp_ns: Option<StringOrInt>,
+
+    /// Quantity (string)
+    #[serde(rename = "q")]
+    pub quantity: String,
+
+    /// Price (string)
+    #[serde(rename = "p")]
+    pub price: String,
+
+    /// Side ("BUY" or "SELL")
+    #[serde(rename = "s")]
+    pub side: String,
+
+    /// Instrument name
+    #[serde(rename = "i")]
+    pub instrument_name: String,
+
+    /// Trade match ID (string or int)
+    #[serde(rename = "m")]
+    pub match_id: Option<StringOrInt>,
 }
 
 impl RestClient {
@@ -79,7 +109,7 @@ impl RestClient {
     ///
     /// Fetches the public trades for a particular instrument.
     ///
-    /// [Official API docs](https://exchange-docs.crypto.com/spot/index.html)
+    /// [Official API docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#public-get-trades)
     pub async fn get_trades(&self, params: GetTradesRequest) -> RestResult<GetTradesResponse> {
         self.send_request(
             GET_TRADES_ENDPOINT,

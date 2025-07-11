@@ -145,6 +145,7 @@ impl RestClient {
     /// Calls the public/get-announcements endpoint.
     ///
     /// Fetches all announcements in Crypto.com Exchange.
+    ///
     /// [Official API docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#public-get-announcements)
     pub async fn get_announcements(
         &self,
