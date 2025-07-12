@@ -7,7 +7,7 @@ use std::borrow::Cow;
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::cryptocom::{EndpointType, InstrumentType, RestResult};
+use crate::cryptocom::{ApiResult, EndpointType, InstrumentType, RestResult};
 
 /// Endpoint path for the get-expired-settlement-price API
 const EXPIRED_SETTLEMENT_PRICE_ENDPOINT: &str = "public/get-expired-settlement-price";
@@ -27,20 +27,7 @@ pub struct GetExpiredSettlementPriceRequest {
 }
 
 /// Response for public/get-expired-settlement-price endpoint.
-#[derive(Debug, Clone, Deserialize)]
-pub struct GetExpiredSettlementPriceResponse {
-    /// Result data for expired settlement prices.
-    #[serde(rename = "result")]
-    pub result: ExpiredSettlementPriceResult,
-
-    /// Success status.
-    #[serde(rename = "success")]
-    pub success: bool,
-
-    /// Response ID.
-    #[serde(rename = "id")]
-    pub id: u64,
-}
+pub type GetExpiredSettlementPriceResponse = ApiResult<ExpiredSettlementPriceResult>;
 
 /// Result data for expired settlement prices.
 #[derive(Debug, Clone, Deserialize)]
@@ -53,9 +40,9 @@ pub struct ExpiredSettlementPriceResult {
 /// Settlement price data for an expired instrument.
 #[derive(Debug, Clone, Deserialize)]
 pub struct SettlementPrice {
-    /// Instrument name.
-    #[serde(rename = "instrument_name")]
-    pub instrument_name: Cow<'static, str>,
+    /// Instrument name (may not be present in response).
+    #[serde(rename = "instrument_name", skip_serializing_if = "Option::is_none")]
+    pub instrument_name: Option<Cow<'static, str>>,
 
     /// Settlement price.
     #[serde(rename = "settlement_price")]
@@ -71,7 +58,7 @@ impl RestClient {
     ///
     /// Fetches settlement price of expired instruments.
     ///
-    /// [Official API docs](https://exchange-docs.crypto.com/spot/index.html)
+    /// [Official API docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#public-get-expired-settlement-price)
     pub async fn get_expired_settlement_price(
         &self,
         params: GetExpiredSettlementPriceRequest,

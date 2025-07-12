@@ -1,0 +1,16 @@
+https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#public-get-announcements
+https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#public-get-risk-parameters
+https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#public-get-instruments
+https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#public-get-book
+https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#public-get-candlestick
+https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#public-get-trades
+https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#public-get-tickers
+https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#public-get-valuations
+https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#public-get-expired-settlement-price
+https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#public-get-insurance
+https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#private-user-balance
+https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#private-user-balance-history
+https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#private-get-accounts
+https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#private-create-subaccount-transfer
+https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#private-get-subaccount-balances
+https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#private-get-positions

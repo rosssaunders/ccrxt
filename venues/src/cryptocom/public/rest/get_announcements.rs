@@ -6,7 +6,7 @@ use std::borrow::Cow;
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::cryptocom::{AnnouncementCategory, ImpactedStatus, ProductType, RestResult};
+use crate::cryptocom::{AnnouncementCategory, ApiResult, ImpactedStatus, ProductType, RestResult};
 
 /// Endpoint path for the get-announcements API
 const ANNOUNCEMENTS_ENDPOINT: &str = "public/get-announcements";
@@ -26,24 +26,7 @@ pub struct GetAnnouncementsRequest {
 }
 
 /// Response for public/get-announcements
-#[derive(Debug, Clone, Deserialize)]
-pub struct GetAnnouncementsResponse {
-    /// Response id
-    #[serde(rename = "id")]
-    pub id: i64,
-
-    /// Method name
-    #[serde(rename = "method")]
-    pub method: Cow<'static, str>,
-
-    /// Response code
-    #[serde(rename = "code")]
-    pub code: i32,
-
-    /// Result data
-    #[serde(rename = "result")]
-    pub result: AnnouncementsResult,
-}
+pub type GetAnnouncementsResponse = ApiResult<AnnouncementsResult>;
 
 /// Result data for announcements
 #[derive(Debug, Clone, Deserialize)]
@@ -145,6 +128,7 @@ impl RestClient {
     /// Calls the public/get-announcements endpoint.
     ///
     /// Fetches all announcements in Crypto.com Exchange.
+    ///
     /// [Official API docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#public-get-announcements)
     pub async fn get_announcements(
         &self,

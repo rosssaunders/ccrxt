@@ -15,7 +15,7 @@ Rust wrappers around cryptocurrency exchange APIs with a focus on low-latency, h
 
 | Exchange       | Type                   | Status         | Features                                                                                    |
 | -------------- | ---------------------- | -------------- | ------------------------------------------------------------------------------------------- |
-| **Binance**    | COIN-M Futures         | ✅ Complete    | Public & Private REST, Rate Limiting, WebSocket Support                                     |
+| **Binance**    | COIN-M Futures         | ✅ Complete    | Public & Private REST, Rate Limiting, WebSocket Support, Integration Tests                  |
 | **Binance**    | USD-M Futures (USDT-M) | ✅ Complete    | Public & Private REST, Rate Limiting, WebSocket Support                                     |
 | **Binance**    | Portfolio Margin       | ✅ Complete    | Public & Private REST, Rate Limiting, Error Handling, Request Signing                       |
 | **Binance**    | Options (EAPI)         | 🚧 In Progress | Rate Limiting Framework                                                                     |

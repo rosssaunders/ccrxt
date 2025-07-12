@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
 use crate::cryptocom::{
-    ExecInst, OrderType, RefPriceType, RestResult, SpotMarginType, StpInst, StpScope, TimeInForce,
+    ApiResult, ExecInst, OrderType, RefPriceType, RestResult, SpotMarginType, StpInst, StpScope, TimeInForce,
     TradeSide,
 };
 
@@ -61,15 +61,18 @@ pub struct CreateOrderRequest {
     pub fee_instrument_name: Option<String>,
 }
 
-/// Response for creating a new order
+/// Response data for creating a new order
 #[derive(Debug, Clone, Deserialize)]
 #[allow(dead_code)]
-pub struct CreateOrderResponse {
+pub struct CreateOrderResult {
     /// Newly created order ID
     pub order_id: String,
     /// Client Order ID if provided, otherwise the nonce
     pub client_oid: String,
 }
+
+/// Response wrapper for create-order endpoint
+pub type CreateOrderResponse = ApiResult<CreateOrderResult>;
 
 impl RestClient {
     /// Creates a new BUY or SELL Order on the Exchange

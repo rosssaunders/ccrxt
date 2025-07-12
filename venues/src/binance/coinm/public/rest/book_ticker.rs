@@ -46,15 +46,14 @@ pub struct BookTicker {
 }
 
 impl RestClient {
-    /// Get symbol order book ticker
+    /// Get symbol order book ticker by symbol
     ///
     /// Weight: 2 for a single symbol; 5 when the symbol parameter is omitted
-    pub async fn get_book_ticker(&self, params: BookTickerRequest) -> RestResult<Vec<BookTicker>> {
-        // 2 for a single symbol, 5 when the symbol parameter is omitted
-        let weight = match params {
-            BookTickerRequest::BySymbol(_) => 2,
-            BookTickerRequest::ByPair(_) => 5,
-        };
+    async fn get_book_ticker_by_symbol(
+        &self,
+        params: BookTickerRequestBySymbol,
+    ) -> RestResult<Vec<BookTicker>> {
+        let weight = if params.symbol.is_some() { 2 } else { 5 };
 
         self.send_request(
             "/dapi/v1/ticker/bookTicker",
@@ -63,5 +62,35 @@ impl RestClient {
             weight,
         )
         .await
+    }
+
+    /// Get symbol order book ticker by pair
+    ///
+    /// Weight: 2 for a single pair; 5 when the pair parameter is omitted
+    async fn get_book_ticker_by_pair(
+        &self,
+        params: BookTickerRequestByPair,
+    ) -> RestResult<Vec<BookTicker>> {
+        let weight = if params.pair.is_some() { 2 } else { 5 };
+
+        self.send_request(
+            "/dapi/v1/ticker/bookTicker",
+            reqwest::Method::GET,
+            Some(params),
+            weight,
+        )
+        .await
+    }
+
+    /// Get symbol order book ticker
+    ///
+    /// Weight: 2 for a single symbol; 5 when the symbol parameter is omitted
+    pub async fn get_book_ticker(&self, params: BookTickerRequest) -> RestResult<Vec<BookTicker>> {
+        match params {
+            BookTickerRequest::BySymbol(by_symbol) => {
+                self.get_book_ticker_by_symbol(by_symbol).await
+            }
+            BookTickerRequest::ByPair(by_pair) => self.get_book_ticker_by_pair(by_pair).await,
+        }
     }
 }

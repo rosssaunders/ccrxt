@@ -29,3 +29,31 @@ pub mod top_long_short_account_ratio;
 pub mod top_long_short_position_ratio;
 
 pub use client::RestClient;
+
+// Re-export all endpoint types for integration tests
+pub use aggregate_trades::*;
+pub use basis::*;
+pub use book_ticker::*;
+pub use constituents::*;
+pub use continuous_klines::*;
+pub use exchange_info::*;
+pub use funding_info::*;
+pub use funding_rate::*;
+pub use global_long_short_account_ratio::*;
+pub use historical_trades::*;
+pub use index_price_klines::*;
+pub use klines::*;
+pub use mark_price_klines::*;
+pub use open_interest::*;
+pub use open_interest_hist::*;
+pub use order_book::*;
+pub use ping::*;
+pub use premium_index::*;
+pub use premium_index_klines::*;
+pub use recent_trades::*;
+pub use server_time::*;
+pub use taker_buy_sell_vol::*;
+pub use ticker_24hr::*;
+pub use ticker_price::*;
+pub use top_long_short_account_ratio::*;
+pub use top_long_short_position_ratio::*;

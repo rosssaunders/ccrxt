@@ -7,7 +7,7 @@ use std::borrow::Cow;
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::cryptocom::{EndpointType, RestResult};
+use crate::cryptocom::{ApiResult, EndpointType, RestResult};
 
 /// Endpoint path for the get-insurance API
 const INSURANCE_ENDPOINT: &str = "public/get-insurance";
@@ -23,20 +23,7 @@ pub struct GetInsuranceRequest {
 }
 
 /// Response for public/get-insurance endpoint.
-#[derive(Debug, Clone, Deserialize)]
-pub struct GetInsuranceResponse {
-    /// Result data for insurance.
-    #[serde(rename = "result")]
-    pub result: InsuranceResult,
-
-    /// Success status.
-    #[serde(rename = "success")]
-    pub success: bool,
-
-    /// Response ID.
-    #[serde(rename = "id")]
-    pub id: u64,
-}
+pub type GetInsuranceResponse = ApiResult<InsuranceResult>;
 
 /// Result data for insurance.
 #[derive(Debug, Clone, Deserialize)]
@@ -63,7 +50,7 @@ impl RestClient {
     ///
     /// Fetches balance of Insurance Fund for a particular currency.
     ///
-    /// [Official API docs](https://exchange-docs.crypto.com/spot/index.html)
+    /// [Official API docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#public-get-insurance)
     pub async fn get_insurance(
         &self,
         params: GetInsuranceRequest,

@@ -4,7 +4,7 @@ use super::client::RestClient;
 
 /// Endpoint path for the change-account-settings API
 const CHANGE_ACCOUNT_SETTINGS_ENDPOINT: &str = "private/change-account-settings";
-use crate::cryptocom::{RestResult, StpInst, StpScope};
+use crate::cryptocom::{RestResult, StpInst, StpScope, ApiResult};
 
 /// Request parameters for changing account settings
 #[derive(Debug, Clone, Serialize)]
@@ -23,13 +23,16 @@ pub struct ChangeAccountSettingsRequest {
     pub leverage: Option<u8>,
 }
 
-/// Response for change account settings endpoint
+/// Result data for change account settings endpoint
 #[derive(Debug, Clone, Deserialize)]
-pub struct ChangeAccountSettingsResponse {
+pub struct ChangeAccountSettingsResult {
     /// Success code (typically 0)
     #[serde(default)]
     pub code: i32,
 }
+
+/// Response wrapper for endpoint
+pub type ChangeAccountSettingsResponse = ApiResult<ChangeAccountSettingsResult>;
 
 impl RestClient {
     /// Change the account STP settings

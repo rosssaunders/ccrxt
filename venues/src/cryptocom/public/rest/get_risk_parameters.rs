@@ -2,54 +2,63 @@
 //!
 //! Provides information on risk parameter settings for Smart Cross Margin.
 
-use std::borrow::Cow;
-
 use serde::Deserialize;
 
 use super::client::RestClient;
-use crate::cryptocom::{EndpointType, RestResult};
+use crate::cryptocom::{ApiResult, EndpointType, RestResult};
 
 /// Endpoint path for the get-risk-parameters API
 const RISK_PARAMETERS_ENDPOINT: &str = "public/get-risk-parameters";
 
 /// Response for public/get-risk-parameters endpoint.
-#[derive(Debug, Clone, Deserialize)]
-pub struct GetRiskParametersResponse {
-    /// Result data for risk parameters.
-    #[serde(rename = "result")]
-    pub result: RiskParametersResult,
-
-    /// Success status.
-    #[serde(rename = "success")]
-    pub success: bool,
-
-    /// Response ID.
-    #[serde(rename = "id")]
-    pub id: u64,
-}
+pub type GetRiskParametersResponse = ApiResult<RiskParametersResult>;
 
 /// Result data for risk parameters.
 #[derive(Debug, Clone, Deserialize)]
 pub struct RiskParametersResult {
-    /// List of base currency configs.
-    #[serde(rename = "data")]
-    pub data: Vec<BaseCurrencyConfig>,
+    #[serde(rename = "default_max_product_leverage_for_spot")]
+    pub default_max_product_leverage_for_spot: Option<String>,
+    #[serde(rename = "default_max_product_leverage_for_perps")]
+    pub default_max_product_leverage_for_perps: Option<String>,
+    #[serde(rename = "default_max_product_leverage_for_futures")]
+    pub default_max_product_leverage_for_futures: Option<String>,
+    #[serde(rename = "default_unit_margin_rate")]
+    pub default_unit_margin_rate: Option<String>,
+    #[serde(rename = "default_collateral_cap")]
+    pub default_collateral_cap: Option<String>,
+    #[serde(rename = "update_timestamp_ms")]
+    pub update_timestamp_ms: Option<i64>,
+    #[serde(rename = "base_currency_config")]
+    pub base_currency_config: Option<Vec<BaseCurrencyConfig>>,
 }
 
 /// Base currency config for risk parameters.
 #[derive(Debug, Clone, Deserialize)]
 pub struct BaseCurrencyConfig {
-    /// Base currency code.
-    #[serde(rename = "base_currency")]
-    pub base_currency: Cow<'static, str>,
-
-    /// Maintenance margin rate.
-    #[serde(rename = "maintenance_margin_rate")]
-    pub maintenance_margin_rate: f64,
-
-    /// Initial margin rate.
-    #[serde(rename = "initial_margin_rate")]
-    pub initial_margin_rate: f64,
+    #[serde(rename = "instrument_name")]
+    pub instrument_name: Option<String>,
+    #[serde(rename = "collateral_cap_notional")]
+    pub collateral_cap_notional: Option<String>,
+    #[serde(rename = "minimum_haircut")]
+    pub minimum_haircut: Option<String>,
+    #[serde(rename = "max_product_leverage_for_spot")]
+    pub max_product_leverage_for_spot: Option<String>,
+    #[serde(rename = "max_product_leverage_for_perps")]
+    pub max_product_leverage_for_perps: Option<String>,
+    #[serde(rename = "max_product_leverage_for_futures")]
+    pub max_product_leverage_for_futures: Option<String>,
+    #[serde(rename = "unit_margin_rate")]
+    pub unit_margin_rate: Option<String>,
+    #[serde(rename = "max_short_sell_limit")]
+    pub max_short_sell_limit: Option<String>,
+    #[serde(rename = "order_limit")]
+    pub order_limit: Option<String>,
+    #[serde(rename = "max_order_notional_usd")]
+    pub max_order_notional_usd: Option<String>,
+    #[serde(rename = "min_order_notional_usd")]
+    pub min_order_notional_usd: Option<String>,
+    #[serde(flatten)]
+    pub extra: std::collections::HashMap<String, serde_json::Value>,
 }
 
 impl RestClient {
@@ -57,7 +66,7 @@ impl RestClient {
     ///
     /// Provides information on risk parameter settings for Smart Cross Margin.
     ///
-    /// [Official API docs](https://exchange-docs.crypto.com/spot/index.html)
+    /// [Official API docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#public-get-risk-parameters)
     pub async fn get_risk_parameters(&self) -> RestResult<GetRiskParametersResponse> {
         self.send_request(
             RISK_PARAMETERS_ENDPOINT,

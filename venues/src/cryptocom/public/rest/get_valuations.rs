@@ -7,7 +7,7 @@ use std::borrow::Cow;
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::cryptocom::{EndpointType, RestResult, ValuationType};
+use crate::cryptocom::{ApiResult, EndpointType, RestResult, ValuationType};
 
 /// Endpoint path for the get-valuations API
 const VALUATIONS_ENDPOINT: &str = "public/get-valuations";
@@ -39,20 +39,7 @@ pub struct GetValuationsRequest {
 }
 
 /// Response for public/get-valuations endpoint.
-#[derive(Debug, Clone, Deserialize)]
-pub struct GetValuationsResponse {
-    /// Result data for valuations.
-    #[serde(rename = "result")]
-    pub result: ValuationsResult,
-
-    /// Success status.
-    #[serde(rename = "success")]
-    pub success: bool,
-
-    /// Response ID.
-    #[serde(rename = "id")]
-    pub id: u64,
-}
+pub type GetValuationsResponse = ApiResult<ValuationsResult>;
 
 /// Result data for valuations.
 #[derive(Debug, Clone, Deserialize)]
@@ -65,13 +52,13 @@ pub struct ValuationsResult {
 /// Valuation data for an instrument.
 #[derive(Debug, Clone, Deserialize)]
 pub struct Valuation {
-    /// Instrument name.
-    #[serde(rename = "instrument_name")]
-    pub instrument_name: Cow<'static, str>,
+    /// Instrument name (may not be present in response).
+    #[serde(rename = "instrument_name", skip_serializing_if = "Option::is_none")]
+    pub instrument_name: Option<Cow<'static, str>>,
 
-    /// Valuation type.
-    #[serde(rename = "valuation_type")]
-    pub valuation_type: ValuationType,
+    /// Valuation type (may not be present in response).
+    #[serde(rename = "valuation_type", skip_serializing_if = "Option::is_none")]
+    pub valuation_type: Option<ValuationType>,
 
     /// Valuation value.
     #[serde(rename = "value")]
@@ -83,7 +70,7 @@ impl RestClient {
     ///
     /// Fetches certain valuation type data for a particular instrument.
     ///
-    /// [Official API docs](https://exchange-docs.crypto.com/spot/index.html)
+    /// [Official API docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#public-get-valuations)
     pub async fn get_valuations(
         &self,
         params: GetValuationsRequest,

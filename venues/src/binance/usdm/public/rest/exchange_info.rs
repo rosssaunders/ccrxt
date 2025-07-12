@@ -1,10 +1,28 @@
-use serde::Deserialize;
+use serde::{Deserialize, Deserializer};
 
 use super::RestClient;
 use crate::binance::usdm::{
-    ContractStatus, ContractType, OrderType, RestResult, TimeInForce, UnderlyingType,
+    ContractStatus, ContractType, MarginAsset, OrderType, RestResult, TimeInForce, UnderlyingType,
     rate_limit::{RateLimitInterval, RateLimitType},
 };
+
+// Custom deserializer for ContractType that handles empty strings
+fn deserialize_optional_contract_type<'de, D>(
+    deserializer: D,
+) -> Result<Option<ContractType>, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let s: String = String::deserialize(deserializer)?;
+    if s.is_empty() {
+        Ok(None)
+    } else {
+        match ContractType::deserialize(serde_json::Value::String(s)) {
+            Ok(contract_type) => Ok(Some(contract_type)),
+            Err(_) => Ok(None), // If deserialization fails, return None
+        }
+    }
+}
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -13,17 +31,19 @@ pub struct Symbol {
 
     pub pair: String,
 
-    pub contract_type: ContractType,
+    #[serde(deserialize_with = "deserialize_optional_contract_type")]
+    pub contract_type: Option<ContractType>,
 
     pub delivery_date: i64,
 
     pub onboard_date: i64,
 
+    #[serde(rename = "status")]
     pub contract_status: ContractStatus,
 
-    pub contract_size: i64,
+    pub contract_size: Option<i64>,
 
-    pub margin_asset: String,
+    pub margin_asset: MarginAsset,
 
     pub maint_margin_percent: String,
 
@@ -41,7 +61,7 @@ pub struct Symbol {
 
     pub quote_precision: i64,
 
-    pub equal_qty_precision: i64,
+    pub equal_qty_precision: Option<i64>,
 
     pub max_move_order_limit: i64,
 
@@ -153,10 +173,22 @@ pub enum FilterType {
     PriceFilter,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub enum QuoteAsset {
-    #[serde(rename = "USD")]
-    Usd,
+    #[serde(rename = "USDT")]
+    Usdt,
+    #[serde(rename = "USDC")]
+    Usdc,
+    #[serde(rename = "FDUSD")]
+    Fdusd,
+    #[serde(rename = "BFUSD")]
+    Bfusd,
+    #[serde(rename = "BNFCR")]
+    Bnfcr,
+    #[serde(rename = "LDUSDT")]
+    Ldusdt,
+    #[serde(rename = "BTC")]
+    Btc,
 }
 
 /// Represents the response from the Binance USD-M Futures Exchange Information endpoint.
@@ -171,12 +203,30 @@ pub struct ExchangeInfoResponse {
     #[serde(rename = "rateLimits")]
     pub rate_limits: Vec<RateLimit>,
 
-    /// The list of contract symbols available on the exchange.
-    pub symbols: Vec<Symbol>,
-
     /// The list of exchange-wide filters (currently always empty for this endpoint).
     #[serde(rename = "exchangeFilters")]
     pub exchange_filters: Vec<serde_json::Value>,
+
+    /// The list of assets available for margin trading.
+    pub assets: Vec<Asset>,
+
+    /// The list of contract symbols available on the exchange.
+    pub symbols: Vec<Symbol>,
+}
+
+/// Represents an asset available for margin trading.
+#[derive(Debug, Deserialize)]
+pub struct Asset {
+    /// The asset symbol (e.g., "USDT", "BTC", "ETH").
+    pub asset: String,
+
+    /// Whether margin trading is available for this asset.
+    #[serde(rename = "marginAvailable")]
+    pub margin_available: bool,
+
+    /// Auto asset exchange value.
+    #[serde(rename = "autoAssetExchange")]
+    pub auto_asset_exchange: String,
 }
 
 /// Represents a rate limit object in the exchange info response.

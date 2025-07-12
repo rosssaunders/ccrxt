@@ -7,7 +7,7 @@ use std::borrow::Cow;
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::cryptocom::{EndpointType, RestResult, Timeframe};
+use crate::cryptocom::{ApiResult, EndpointType, RestResult, Timeframe};
 
 /// Endpoint for getting candlestick data
 const GET_CANDLESTICK_ENDPOINT: &str = "public/get-candlestick";
@@ -39,31 +39,50 @@ pub struct GetCandlestickRequest {
 }
 
 /// Response for public/get-candlestick endpoint.
-#[derive(Debug, Clone, Deserialize)]
-pub struct GetCandlestickResponse {
-    /// Result data for candlesticks.
-    #[serde(rename = "result")]
-    pub result: CandlestickResult,
-
-    /// Success status.
-    #[serde(rename = "success")]
-    pub success: bool,
-
-    /// Response ID.
-    #[serde(rename = "id")]
-    pub id: u64,
-}
+pub type GetCandlestickResponse = ApiResult<CandlestickResult>;
 
 /// Result data for candlesticks.
 #[derive(Debug, Clone, Deserialize)]
 pub struct CandlestickResult {
+    /// Interval for candlesticks (e.g., "M5").
+    #[serde(rename = "interval")]
+    pub interval: Cow<'static, str>,
+
+    /// List of candlestick data objects.
+    #[serde(rename = "data")]
+    pub data: Vec<CandlestickData>,
+
     /// Instrument name.
     #[serde(rename = "instrument_name")]
     pub instrument_name: Cow<'static, str>,
+}
 
-    /// List of candlestick data arrays: [timestamp, open, high, low, close, volume].
-    #[serde(rename = "data")]
-    pub data: Vec<[f64; 6]>,
+/// A single candlestick data point.
+#[derive(Debug, Clone, Deserialize)]
+pub struct CandlestickData {
+    /// Open price.
+    #[serde(rename = "o")]
+    pub o: String,
+
+    /// High price.
+    #[serde(rename = "h")]
+    pub h: String,
+
+    /// Low price.
+    #[serde(rename = "l")]
+    pub l: String,
+
+    /// Close price.
+    #[serde(rename = "c")]
+    pub c: String,
+
+    /// Volume.
+    #[serde(rename = "v")]
+    pub v: String,
+
+    /// Start time (timestamp in ms).
+    #[serde(rename = "t")]
+    pub t: u64,
 }
 
 impl RestClient {
@@ -71,7 +90,7 @@ impl RestClient {
     ///
     /// Retrieves candlestick (k-line) data for a given instrument and timeframe.
     ///
-    /// [Official API docs](https://exchange-docs.crypto.com/spot/index.html)
+    /// [Official API docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#public-get-candlestick)
     pub async fn get_candlestick(
         &self,
         params: GetCandlestickRequest,

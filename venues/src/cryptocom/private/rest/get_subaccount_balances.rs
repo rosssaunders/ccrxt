@@ -54,7 +54,7 @@ impl RestClient {
     ///
     /// Returns the user's wallet balances for all sub-accounts.
     ///
-    /// See: <https://exchange-docs.crypto.com/derivatives/index.html>
+    /// [Official API docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#private-get-subaccount-balances)
     ///
     /// Rate limit: No rate limit
     ///
