@@ -16,6 +16,16 @@ pub use rate_limit::{RateLimitHeader, RateLimitStatus, RateLimiter, ResourcePool
 
 pub use crate::kucoin::errors::ErrorResponse;
 
+// Re-export public REST types for integration tests
+pub use public::rest::{
+    AllCurrenciesCurrency, AllSymbolsInfo, AllTickersResponse, AllTickersStatistics, Currency,
+    GetAllCurrenciesRequest, GetAllSymbolsRequest, GetAllTickersRequest,
+    GetCurrencyRequest, GetKlinesRequest, GetPartOrderBookRequest,
+    GetServerTimeRequest, GetServerTimeResponse, GetSymbolRequest, GetTickerRequest,
+    GetTradesRequest, Kline, OrderBookLevel, PartOrderBookResponse, SymbolInfo, TickerStatistics,
+    Trade,
+};
+
 // Futures are accessible through public::futures and private::futures
 
 /// Represents the relevant response headers returned by the KuCoin API for rate limiting.

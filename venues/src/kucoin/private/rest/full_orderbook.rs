@@ -31,7 +31,7 @@ pub struct FullOrderBookResponse {
 }
 
 impl RestClient {
-    /// Get full order book (all levels)
+    /// Get full order book (all levels) - requires authentication
     ///
     /// Reference: https://docs.kucoin.com/#get-full-order-book-aggregated
     pub async fn get_full_order_book(

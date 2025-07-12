@@ -15,49 +15,67 @@ pub struct GetTickerRequest {
 /// 24hr ticker statistics
 #[derive(Debug, Clone, Deserialize)]
 pub struct TickerStatistics {
+    /// Timestamp
+    pub time: i64,
+
     /// Symbol name
     pub symbol: String,
 
-    /// Symbol name for display (optional as it might not always be present)
-    pub name: Option<String>,
+    /// Best bid price
+    pub buy: String,
 
-    /// Last traded price
-    #[serde(rename = "last")]
-    pub last_price: Option<String>,
+    /// Best ask price
+    pub sell: String,
 
-    /// 24hr change percentage (optional as it might not always be present)
-    #[serde(rename = "changePercentage")]
-    pub change_percentage: Option<String>,
+    /// 24h change rate
+    #[serde(rename = "changeRate")]
+    pub change_rate: String,
 
-    /// 24hr change amount (optional as it might not always be present)
+    /// 24h change price
     #[serde(rename = "changePrice")]
-    pub change_price: Option<String>,
+    pub change_price: String,
 
     /// 24hr high price
-    pub high: Option<String>,
+    pub high: String,
 
     /// 24hr low price
-    pub low: Option<String>,
+    pub low: String,
 
     /// 24hr volume in base currency
-    pub vol: Option<String>,
+    pub vol: String,
 
     /// 24hr volume in quote currency
     #[serde(rename = "volValue")]
-    pub vol_value: Option<String>,
+    pub vol_value: String,
 
-    /// Last trade size (optional)
-    #[serde(rename = "size")]
-    pub last_size: Option<String>,
+    /// Last traded price
+    pub last: String,
 
-    /// Timestamp of the statistics
-    pub time: Option<i64>,
+    /// Average trading price in 24h
+    #[serde(rename = "averagePrice")]
+    pub average_price: String,
+
+    /// Taker fee rate
+    #[serde(rename = "takerFeeRate")]
+    pub taker_fee_rate: String,
+
+    /// Maker fee rate
+    #[serde(rename = "makerFeeRate")]
+    pub maker_fee_rate: String,
+
+    /// Taker coefficient
+    #[serde(rename = "takerCoefficient")]
+    pub taker_coefficient: String,
+
+    /// Maker coefficient
+    #[serde(rename = "makerCoefficient")]
+    pub maker_coefficient: String,
 }
 
 impl RestClient {
     /// Get 24hr ticker statistics for a specific symbol
     ///
-    /// Reference: https://docs.kucoin.com/#get-ticker
+    /// Reference: https://www.kucoin.com/docs-new/rest/spot-trading/market-data/get-ticker
     pub async fn get_ticker(
         &self,
         request: GetTickerRequest,
@@ -66,7 +84,7 @@ impl RestClient {
         params.insert("symbol".to_string(), request.symbol);
 
         let (response, headers): (RestResponse<TickerStatistics>, ResponseHeaders) = self
-            .get("/api/v1/market/orderbook/level1", Some(params))
+            .get("/api/v1/market/stats", Some(params))
             .await?;
 
         Ok((response.data, headers))

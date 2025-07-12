@@ -3,7 +3,6 @@ mod all_symbols;
 mod all_tickers;
 mod client;
 mod currency;
-mod full_orderbook;
 mod klines;
 mod partial_orderbook;
 mod server_time;
@@ -18,7 +17,6 @@ pub use all_tickers::{
 };
 pub use client::RestClient;
 pub use currency::{Currency, GetCurrencyRequest};
-pub use full_orderbook::{FullOrderBookResponse, GetFullOrderBookRequest};
 pub use klines::*;
 pub use partial_orderbook::{GetPartOrderBookRequest, OrderBookLevel, PartOrderBookResponse};
 pub use server_time::*;

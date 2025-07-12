@@ -11,6 +11,7 @@ mod create_sub_transfer;
 mod create_withdrawal;
 mod deposit_address;
 mod deposit_history;
+mod full_orderbook;
 mod get_borrow_history;
 mod get_fills;
 mod get_inner_transfers;
@@ -53,6 +54,7 @@ pub use create_sub_transfer::{CreateSubTransferRequest, SubTransferResponse};
 pub use create_withdrawal::{CreateWithdrawalRequest, WithdrawalResponse};
 pub use deposit_address::{DepositAddress, GetDepositAddressRequest};
 pub use deposit_history::{Deposit, DepositsResponse, GetDepositsRequest};
+pub use full_orderbook::{FullOrderBookResponse, GetFullOrderBookRequest};
 pub use get_borrow_history::{
     BorrowHistoryItem, BorrowHistoryResponse, GetBorrowHistoryRequest, OrderStatus,
 };
