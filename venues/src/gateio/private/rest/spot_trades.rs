@@ -75,6 +75,9 @@ impl RestClient {
     ///
     /// This endpoint returns your personal trading history.
     /// You can filter by currency pair, time range, and other parameters.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#list-personal-trading-history>
     pub async fn get_my_trades(
         &self,
         request: GetMyTradesRequest,

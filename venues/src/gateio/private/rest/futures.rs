@@ -977,6 +977,9 @@ impl RestClient {
     /// Get futures account information
     ///
     /// This endpoint returns futures account balances and margin information.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#query-futures-account>
     pub async fn get_futures_accounts(
         &self,
         params: FuturesAccountsRequest,
@@ -988,6 +991,9 @@ impl RestClient {
     /// Get futures positions
     ///
     /// This endpoint returns all futures positions for the authenticated user.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#list-all-positions-of-a-user>
     pub async fn get_futures_positions(
         &self,
         params: FuturesPositionsRequest,
@@ -999,6 +1005,9 @@ impl RestClient {
     /// Get a specific futures position
     ///
     /// This endpoint returns details for a specific futures position.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#get-single-position>
     pub async fn get_futures_position(
         &self,
         settle: &str,
@@ -1011,6 +1020,9 @@ impl RestClient {
     /// Create a futures order
     ///
     /// This endpoint creates a new futures order.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#create-a-futures-order>
     pub async fn create_futures_order(
         &self,
         request: CreateFuturesOrderRequest,
@@ -1022,6 +1034,9 @@ impl RestClient {
     /// List futures orders
     ///
     /// This endpoint returns futures orders for the authenticated user.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#list-futures-orders>
     pub async fn list_futures_orders(
         &self,
         params: ListFuturesOrdersRequest,

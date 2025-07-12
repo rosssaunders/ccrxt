@@ -75,6 +75,9 @@ impl RestClient {
     /// This endpoint returns ticker information including 24h price changes,
     /// volumes, and current bid/ask prices. You can get all tickers or filter
     /// by a specific currency pair and timezone.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#retrieve-ticker-information>
     pub async fn get_tickers(&self, params: TickersRequest) -> crate::gateio::Result<Vec<Ticker>> {
         self.get_with_query("/spot/tickers", Some(&params)).await
     }

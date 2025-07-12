@@ -77,6 +77,9 @@ impl RestClient {
     /// List delivery tickers
     ///
     /// Retrieves ticker information for delivery contracts.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#list-futures-tickers-2>
     /// If contract is not specified, returns tickers for all contracts in the settlement currency.
     pub async fn get_delivery_tickers(
         &self,

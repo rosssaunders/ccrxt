@@ -37,6 +37,9 @@ impl RestClient {
     ///
     /// This endpoint allows cancelling multiple orders at once. It returns
     /// information about which orders were successfully cancelled and which failed.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#cancel-a-batch-of-orders-with-an-id-list>
     pub async fn cancel_batch_orders(
         &self,
         request: CancelBatchOrdersRequest,

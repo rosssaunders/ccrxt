@@ -28,6 +28,9 @@ impl RestClient {
     /// Get futures funding rate history
     ///
     /// Retrieves historical funding rates for a specific futures contract.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#funding-rate-history>
     pub async fn get_futures_funding_rate(
         &self,
         params: FuturesFundingRateRequest,

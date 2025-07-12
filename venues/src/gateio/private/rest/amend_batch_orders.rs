@@ -110,6 +110,9 @@ impl RestClient {
     ///
     /// This endpoint allows amending price and/or amount for multiple orders at once.
     /// Returns information about each order amendment attempt.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#batch-modification-of-orders>
     pub async fn amend_batch_orders(
         &self,
         request: AmendBatchOrdersRequest,

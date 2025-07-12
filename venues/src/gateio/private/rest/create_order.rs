@@ -134,6 +134,9 @@ impl RestClient {
     /// Create a new order
     ///
     /// This endpoint creates a new spot order.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#create-an-order>
     pub async fn create_order(&self, order: CreateOrderRequest) -> crate::gateio::Result<Order> {
         self.post("/spot/orders", &order).await
     }

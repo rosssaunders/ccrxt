@@ -67,6 +67,9 @@ impl RestClient {
     /// Get futures contract stats
     ///
     /// Retrieves statistical data for a specific futures contract including
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#futures-stats>
     /// liquidation data, position ratios, and open interest.
     pub async fn get_futures_stats(
         &self,

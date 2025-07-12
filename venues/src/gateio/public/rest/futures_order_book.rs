@@ -53,6 +53,9 @@ impl RestClient {
     ///
     /// Retrieves the order book for a specific futures contract.
     /// Bids are sorted by price high to low, asks are sorted by price low to high.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#futures-order-book>
     pub async fn get_futures_order_book(
         &self,
         params: FuturesOrderBookRequest,

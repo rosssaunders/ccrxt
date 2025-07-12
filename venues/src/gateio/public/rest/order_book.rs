@@ -54,6 +54,9 @@ impl RestClient {
     ///
     /// This endpoint returns the current order book (bid/ask) for the specified currency pair.
     /// You can optionally include order IDs and limit the number of levels returned.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#retrieve-order-book>
     pub async fn get_order_book(
         &self,
         params: OrderBookRequest,

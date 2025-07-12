@@ -55,6 +55,9 @@ impl RestClient {
     /// Get trading fee information for a currency pair
     ///
     /// This endpoint returns the current trading fees for a specific currency pair
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#query-user-trading-fee-rates>
     /// or all pairs if no pair is specified.
     pub async fn get_trading_fee(
         &self,

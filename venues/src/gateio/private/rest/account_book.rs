@@ -51,6 +51,9 @@ impl RestClient {
     ///
     /// This endpoint returns the account balance change history.
     /// You can filter by currency, time range, and record type.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#query-account-book>
     pub async fn get_account_book(
         &self,
         request: GetAccountBookRequest,

@@ -144,6 +144,9 @@ impl RestClient {
     /// List all futures contracts
     ///
     /// Retrieves all available futures contracts for the specified settlement currency.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#list-all-futures-contracts>
     pub async fn get_futures_contracts(
         &self,
         params: FuturesContractsRequest,
@@ -155,6 +158,9 @@ impl RestClient {
     /// Get a single futures contract
     ///
     /// Retrieves detailed information about a specific futures contract.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#get-a-single-contract>
     pub async fn get_futures_contract(
         &self,
         params: FuturesContractRequest,

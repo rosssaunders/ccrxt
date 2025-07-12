@@ -53,6 +53,9 @@ impl RestClient {
     /// Get delivery candlesticks
     ///
     /// Retrieves candlestick data for a specific delivery contract.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#get-futures-candlesticks-2>
     /// Supports mark price and index price with prefixes `mark_` and `index_`.
     pub async fn get_delivery_candlesticks(
         &self,

@@ -79,6 +79,9 @@ impl RestClient {
     ///
     /// This endpoint returns recent trades for the specified currency pair.
     /// You can filter by time range and limit the number of results.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#retrieve-market-trades>
     pub async fn get_trades(&self, params: TradesRequest) -> crate::gateio::Result<Vec<Trade>> {
         self.get_with_query("/spot/trades", Some(&params)).await
     }

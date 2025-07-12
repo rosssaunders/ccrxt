@@ -18,6 +18,9 @@ impl RestClient {
     /// Cancel an order
     ///
     /// This endpoint cancels a specific order.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#cancel-a-single-order>
     pub async fn cancel_order(
         &self,
         order_id: &str,

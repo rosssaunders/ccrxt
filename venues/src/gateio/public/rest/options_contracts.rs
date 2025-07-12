@@ -71,6 +71,9 @@ impl RestClient {
     /// List all the contracts with specified underlying and expiration time
     ///
     /// Retrieves options contracts with optional filtering by underlying and expiration.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#list-all-the-contracts-with-specified-underlying-and-expiration-time>
     pub async fn get_options_contracts(
         &self,
         params: OptionsContractsRequest,
@@ -82,6 +85,9 @@ impl RestClient {
     /// Query specified contract detail
     ///
     /// Retrieves detailed information for a specific options contract.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#query-specified-contract-detail>
     pub async fn get_options_contract(
         &self,
         contract: &str,

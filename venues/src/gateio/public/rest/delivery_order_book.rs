@@ -52,6 +52,9 @@ impl RestClient {
     /// Get delivery order book
     ///
     /// Retrieves the order book for a specific delivery contract.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#futures-order-book-2>
     /// Bids are sorted by price high to low, asks are sorted by price low to high.
     pub async fn get_delivery_order_book(
         &self,

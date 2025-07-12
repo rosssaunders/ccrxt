@@ -34,6 +34,9 @@ impl RestClient {
     /// Get index constituents
     ///
     /// Retrieves the constituent exchanges and their weights for a specific index.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#get-index-constituents>
     pub async fn get_futures_index_constituents(
         &self,
         params: FuturesIndexConstituentsRequest,
