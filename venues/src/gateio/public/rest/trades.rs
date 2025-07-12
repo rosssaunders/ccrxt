@@ -44,7 +44,8 @@ pub struct Trade {
     pub side: String,
 
     /// Trade role (taker/maker)
-    pub role: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub role: Option<String>,
 
     /// Trade amount
     pub amount: String,

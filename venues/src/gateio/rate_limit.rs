@@ -220,13 +220,18 @@ impl RateLimiter {
         ) {
             #[allow(clippy::unwrap_used)]
             #[allow(clippy::arithmetic_side_effects)]
-            let reset_duration = Duration::from_secs(
-                reset
-                    - std::time::SystemTime::now()
-                        .duration_since(std::time::UNIX_EPOCH)
-                        .unwrap()
-                        .as_secs(),
-            );
+            let current_timestamp = std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_secs();
+            
+            // Handle case where reset timestamp is in the past by using a default duration
+            let reset_duration = if reset > current_timestamp {
+                Duration::from_secs(reset - current_timestamp)
+            } else {
+                // If reset time is in the past, assume a 10-second window
+                Duration::from_secs(10)
+            };
 
             #[allow(clippy::arithmetic_side_effects)]
             let reset_at = Instant::now() + reset_duration;
