@@ -7,7 +7,7 @@ use std::borrow::Cow;
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::cryptocom::{EndpointType, RestResult};
+use crate::cryptocom::{ApiResult, EndpointType, RestResult};
 
 /// Endpoint path for the get-insurance API
 const INSURANCE_ENDPOINT: &str = "public/get-insurance";
@@ -23,20 +23,7 @@ pub struct GetInsuranceRequest {
 }
 
 /// Response for public/get-insurance endpoint.
-#[derive(Debug, Clone, Deserialize)]
-pub struct GetInsuranceResponse {
-    /// Response code (0 = success)
-    #[serde(rename = "code")]
-    pub code: i64,
-
-    /// Result data for insurance.
-    #[serde(rename = "result")]
-    pub result: InsuranceResult,
-
-    /// Response ID (may be -1)
-    #[serde(rename = "id")]
-    pub id: i64,
-}
+pub type GetInsuranceResponse = ApiResult<InsuranceResult>;
 
 /// Result data for insurance.
 #[derive(Debug, Clone, Deserialize)]

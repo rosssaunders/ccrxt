@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::cryptocom::RestResult;
+use crate::cryptocom::{ApiResult, RestResult};
 
 /// Endpoint path for the convert API
 const CONVERT_ENDPOINT: &str = "private/staking/convert";
@@ -32,11 +32,11 @@ pub struct ConvertRequest {
     pub slippage_tolerance_bps: String,
 }
 
-/// Response for the convert endpoint.
+/// Result data for the convert endpoint.
 ///
 /// Contains details of the conversion request and result.
 #[derive(Debug, Clone, Deserialize)]
-pub struct ConvertResponse {
+pub struct ConvertResult {
     /// Instrument name to convert from, e.g. "ETH.staked".
     #[serde(rename = "from_instrument_name")]
     pub from_instrument_name: String,
@@ -65,6 +65,9 @@ pub struct ConvertResponse {
     #[serde(rename = "reason")]
     pub reason: String,
 }
+
+/// Response wrapper for endpoint
+pub type ConvertResponse = ApiResult<ConvertResult>;
 
 impl RestClient {
     /// Create a request to convert between staked token and liquid staking token.

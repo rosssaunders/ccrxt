@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::cryptocom::{RestResult, enums::ResponseCode};
+use crate::cryptocom::{RestResult, enums::ResponseCode, ApiResult};
 
 const CREATE_SUBACCOUNT_TRANSFER_ENDPOINT: &str = "private/create-subaccount-transfer";
 /// Request parameters for creating a subaccount transfer.
@@ -20,12 +20,15 @@ pub struct CreateSubaccountTransferRequest {
     pub amount: String,
 }
 
-/// Response for creating a subaccount transfer.
+/// Result data for creating a subaccount transfer.
 #[derive(Debug, Clone, Deserialize)]
-pub struct CreateSubaccountTransferResponse {
+pub struct CreateSubaccountTransferResult {
     /// Status code: 0 for successful transfer (NO_ERROR), else the error code.
     pub code: ResponseCode,
 }
+
+/// Response wrapper for endpoint
+pub type CreateSubaccountTransferResponse = ApiResult<CreateSubaccountTransferResult>;
 
 impl RestClient {
     /// Transfer funds between master and sub-accounts.

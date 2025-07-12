@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::cryptocom::RestResult;
+use crate::cryptocom::{ApiResult, RestResult};
 
 /// Request parameters for changing account leverage
 #[derive(Debug, Clone, Serialize)]
@@ -12,13 +12,16 @@ pub struct ChangeAccountLeverageRequest {
     pub leverage: u8,
 }
 
-/// Response for change account leverage endpoint
+/// Result data for change account leverage endpoint
 #[derive(Debug, Clone, Deserialize)]
-pub struct ChangeAccountLeverageResponse {
+pub struct ChangeAccountLeverageResult {
     /// Success code (typically 0)
     #[serde(default)]
     pub code: i32,
 }
+
+/// Response wrapper for endpoint
+pub type ChangeAccountLeverageResponse = ApiResult<ChangeAccountLeverageResult>;
 
 impl RestClient {
     /// Changes the maximum leverage used by the account

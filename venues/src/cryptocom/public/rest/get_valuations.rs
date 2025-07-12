@@ -7,7 +7,7 @@ use std::borrow::Cow;
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::cryptocom::{EndpointType, RestResult, ValuationType};
+use crate::cryptocom::{ApiResult, EndpointType, RestResult, ValuationType};
 
 /// Endpoint path for the get-valuations API
 const VALUATIONS_ENDPOINT: &str = "public/get-valuations";
@@ -39,20 +39,7 @@ pub struct GetValuationsRequest {
 }
 
 /// Response for public/get-valuations endpoint.
-#[derive(Debug, Clone, Deserialize)]
-pub struct GetValuationsResponse {
-    /// Response code (0 = success)
-    #[serde(rename = "code")]
-    pub code: i64,
-
-    /// Result data for valuations.
-    #[serde(rename = "result")]
-    pub result: ValuationsResult,
-
-    /// Response ID (may be -1)
-    #[serde(rename = "id")]
-    pub id: i64,
-}
+pub type GetValuationsResponse = ApiResult<ValuationsResult>;
 
 /// Result data for valuations.
 #[derive(Debug, Clone, Deserialize)]

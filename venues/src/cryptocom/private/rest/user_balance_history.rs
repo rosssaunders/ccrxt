@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::cryptocom::RestResult;
+use crate::cryptocom::{ApiResult, RestResult};
 
 const USER_BALANCE_HISTORY_ENDPOINT: &str = "private/user-balance-history";
 /// Balance history entry
@@ -29,14 +29,17 @@ pub struct GetUserBalanceHistoryRequest {
     pub limit: Option<i32>,
 }
 
-/// Response for get user balance history endpoint
+/// Result data for get user balance history endpoint
 #[derive(Debug, Clone, Deserialize)]
-pub struct GetUserBalanceHistoryResponse {
+pub struct GetUserBalanceHistoryResult {
     /// Instrument name (typically "USD")
     pub instrument_name: String,
     /// Array of balance history entries
     pub data: Vec<BalanceHistoryEntry>,
 }
+
+/// Response wrapper for endpoint
+pub type GetUserBalanceHistoryResponse = ApiResult<GetUserBalanceHistoryResult>;
 
 impl RestClient {
     /// Get user balance history

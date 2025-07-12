@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::cryptocom::RestResult;
+use crate::cryptocom::{ApiResult, RestResult};
 
 const INSTRUMENT_FEE_RATE_ENDPOINT: &str = "private/get-instrument-fee-rate";
 /// Request parameters for getting instrument fee rate
@@ -23,11 +23,7 @@ pub struct InstrumentFeeRate {
 }
 
 /// Response for get instrument fee rate endpoint
-#[derive(Debug, Clone, Deserialize)]
-pub struct GetInstrumentFeeRateResponse {
-    /// Fee rate information
-    pub result: InstrumentFeeRate,
-}
+pub type GetInstrumentFeeRateResponse = ApiResult<InstrumentFeeRate>;
 
 impl RestClient {
     /// Get the instrument fee rate

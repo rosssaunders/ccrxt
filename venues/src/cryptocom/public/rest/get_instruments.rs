@@ -7,7 +7,7 @@ use std::borrow::Cow;
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::cryptocom::{EndpointType, InstrumentType, RestResult};
+use crate::cryptocom::{ApiResult, EndpointType, InstrumentType, RestResult};
 
 /// Endpoint for getting instruments
 const GET_INSTRUMENTS_ENDPOINT: &str = "public/get-instruments";
@@ -27,20 +27,7 @@ pub struct GetInstrumentsRequest {
 }
 
 /// Response for public/get-instruments endpoint.
-#[derive(Debug, Clone, Deserialize)]
-pub struct GetInstrumentsResponse {
-    /// Result data for instruments.
-    pub result: InstrumentsResult,
-
-    /// Response code (0 = success).
-    pub code: i32,
-
-    /// Response ID.
-    pub id: i64,
-
-    /// Method name.
-    pub method: String,
-}
+pub type GetInstrumentsResponse = ApiResult<InstrumentsResult>;
 
 /// Result data for instruments.
 #[derive(Debug, Clone, Deserialize)]

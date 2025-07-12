@@ -7,7 +7,7 @@ use std::borrow::Cow;
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::cryptocom::{EndpointType, RestResult};
+use crate::cryptocom::{ApiResult, EndpointType, RestResult};
 
 /// Endpoint for getting tickers
 const GET_TICKERS_ENDPOINT: &str = "public/get-tickers";
@@ -23,20 +23,7 @@ pub struct GetTickersRequest {
 }
 
 /// Response for public/get-tickers endpoint.
-#[derive(Debug, Clone, Deserialize)]
-pub struct GetTickersResponse {
-    /// Response code (0 = success)
-    #[serde(rename = "code")]
-    pub code: i64,
-
-    /// Result data for tickers.
-    #[serde(rename = "result")]
-    pub result: TickersResult,
-
-    /// Response ID (may be -1)
-    #[serde(rename = "id")]
-    pub id: i64,
-}
+pub type GetTickersResponse = ApiResult<TickersResult>;
 
 /// Result data for tickers.
 #[derive(Debug, Clone, Deserialize)]

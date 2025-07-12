@@ -1,5 +1,6 @@
 pub mod enums;
 mod errors;
+pub mod message;
 
 pub mod rate_limit;
 pub mod private {
@@ -29,6 +30,7 @@ pub mod public {
 
 pub use enums::*;
 pub use errors::{ApiError, ErrorResponse, Errors};
+pub use message::ApiResult;
 pub use private::RestClient as PrivateRestClient;
 // Re-export the advanced order trading types
 pub use private::{

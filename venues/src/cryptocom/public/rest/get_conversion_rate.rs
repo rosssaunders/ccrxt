@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use serde_json;
 
 use super::client::RestClient;
-use crate::cryptocom::{RestResult, rate_limit::EndpointType};
+use crate::cryptocom::{ApiResult, RestResult, rate_limit::EndpointType};
 
 /// Endpoint path for the get-conversion-rate API
 const CONVERSION_RATE_ENDPOINT: &str = "public/staking/get-conversion-rate";
@@ -16,12 +16,15 @@ pub struct GetConversionRateRequest {
 
 /// Conversion rate response information
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ConversionRateResponse {
+pub struct ConversionRateResult {
     /// CDCETH
     pub instrument_name: String,
     /// Conversion rate between staked token (ETH.staked) and liquid staking token (CDCETH)
     pub conversion_rate: String,
 }
+
+/// Response wrapper for get-conversion-rate endpoint
+pub type ConversionRateResponse = ApiResult<ConversionRateResult>;
 
 impl RestClient {
     /// Get conversion rate between staked token and liquid staking token
@@ -85,13 +88,17 @@ mod tests {
     #[test]
     fn test_conversion_rate_response_structure() {
         let response_json = json!({
-            "instrument_name": "CDCETH",
-            "conversion_rate": "1.0203"
+            "code": 0,
+            "result": {
+                "instrument_name": "CDCETH",
+                "conversion_rate": "1.0203"
+            },
+            "id": -1
         });
 
         let response: ConversionRateResponse = serde_json::from_value(response_json).unwrap();
-        assert_eq!(response.instrument_name, "CDCETH");
-        assert_eq!(response.conversion_rate, "1.0203");
+        assert_eq!(response.result.instrument_name, "CDCETH");
+        assert_eq!(response.result.conversion_rate, "1.0203");
     }
 
     #[test]
@@ -100,25 +107,29 @@ mod tests {
 
         for rate in rates {
             let response_json = json!({
-                "instrument_name": "CDCETH",
-                "conversion_rate": rate
+                "code": 0,
+                "result": {
+                    "instrument_name": "CDCETH",
+                    "conversion_rate": rate
+                },
+                "id": -1
             });
 
             let response: ConversionRateResponse = serde_json::from_value(response_json).unwrap();
-            assert_eq!(response.conversion_rate, rate);
-            assert_eq!(response.instrument_name, "CDCETH");
+            assert_eq!(response.result.conversion_rate, rate);
+            assert_eq!(response.result.instrument_name, "CDCETH");
         }
     }
 
     #[test]
     fn test_conversion_rate_response_serialization() {
-        let response = ConversionRateResponse {
+        let response = ConversionRateResult {
             instrument_name: "CDCETH".to_string(),
             conversion_rate: "1.0203".to_string(),
         };
 
         let serialized = serde_json::to_string(&response).unwrap();
-        let deserialized: ConversionRateResponse = serde_json::from_str(&serialized).unwrap();
+        let deserialized: ConversionRateResult = serde_json::from_str(&serialized).unwrap();
 
         assert_eq!(deserialized.instrument_name, "CDCETH");
         assert_eq!(deserialized.conversion_rate, "1.0203");
@@ -137,12 +148,16 @@ mod tests {
 
         for rate in precise_rates {
             let response_json = json!({
-                "instrument_name": "CDCETH",
-                "conversion_rate": rate
+                "code": 0,
+                "result": {
+                    "instrument_name": "CDCETH",
+                    "conversion_rate": rate
+                },
+                "id": -1
             });
 
             let response: ConversionRateResponse = serde_json::from_value(response_json).unwrap();
-            assert_eq!(response.conversion_rate, rate);
+            assert_eq!(response.result.conversion_rate, rate);
         }
     }
 

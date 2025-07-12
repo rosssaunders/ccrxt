@@ -7,7 +7,7 @@ use std::borrow::Cow;
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::cryptocom::{EndpointType, RestResult};
+use crate::cryptocom::{ApiResult, EndpointType, RestResult};
 
 /// Endpoint for getting order book data
 const GET_BOOK_ENDPOINT: &str = "public/get-book";
@@ -27,20 +27,7 @@ pub struct GetBookRequest {
 }
 
 /// Response for public/get-book endpoint.
-#[derive(Debug, Clone, Deserialize)]
-pub struct GetBookResponse {
-    /// Response code (0 = success)
-    #[serde(rename = "code")]
-    pub code: i64,
-
-    /// Result data for the order book.
-    #[serde(rename = "result")]
-    pub result: BookResult,
-
-    /// Response ID (may be -1)
-    #[serde(rename = "id")]
-    pub id: i64,
-}
+pub type GetBookResponse = ApiResult<BookResult>;
 
 /// Result data for order book.
 #[derive(Debug, Clone, Deserialize)]

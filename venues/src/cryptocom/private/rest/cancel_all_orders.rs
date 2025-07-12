@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::cryptocom::RestResult;
+use crate::cryptocom::{ApiResult, RestResult};
 
 /// Endpoint path for the cancel-all-orders API
 const CANCEL_ALL_ORDERS_ENDPOINT: &str = "private/cancel-all-orders";
@@ -26,12 +26,15 @@ pub struct CancelAllOrdersRequest {
     pub order_type: Option<CancelOrderType>,
 }
 
-/// Response for canceling all orders
+/// Result data for canceling all orders
 #[derive(Debug, Clone, Deserialize)]
-pub struct CancelAllOrdersResponse {
+pub struct CancelAllOrdersResult {
     /// Result code (0 for success)
     pub code: i32,
 }
+
+/// Response wrapper for endpoint
+pub type CancelAllOrdersResponse = ApiResult<CancelAllOrdersResult>;
 
 impl RestClient {
     /// Cancels all orders for a particular instrument/pair (asynchronous)

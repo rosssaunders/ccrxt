@@ -7,7 +7,7 @@ use std::borrow::Cow;
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::cryptocom::{EndpointType, RestResult};
+use crate::cryptocom::{ApiResult, EndpointType, RestResult};
 
 /// Endpoint for getting trades
 const GET_TRADES_ENDPOINT: &str = "public/get-trades";
@@ -27,20 +27,7 @@ pub struct GetTradesRequest {
 }
 
 /// Response for public/get-trades endpoint.
-#[derive(Debug, Clone, Deserialize)]
-pub struct GetTradesResponse {
-    /// Response code (0 = success)
-    #[serde(rename = "code")]
-    pub code: i64,
-
-    /// Result data for trades.
-    #[serde(rename = "result")]
-    pub result: TradesResult,
-
-    /// Response ID (may be -1)
-    #[serde(rename = "id")]
-    pub id: i64,
-}
+pub type GetTradesResponse = ApiResult<TradesResult>;
 
 /// Result data for trades.
 #[derive(Debug, Clone, Deserialize)]

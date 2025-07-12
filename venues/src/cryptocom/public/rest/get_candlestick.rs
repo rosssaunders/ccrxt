@@ -7,7 +7,7 @@ use std::borrow::Cow;
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::cryptocom::{EndpointType, RestResult, Timeframe};
+use crate::cryptocom::{ApiResult, EndpointType, RestResult, Timeframe};
 
 /// Endpoint for getting candlestick data
 const GET_CANDLESTICK_ENDPOINT: &str = "public/get-candlestick";
@@ -39,20 +39,7 @@ pub struct GetCandlestickRequest {
 }
 
 /// Response for public/get-candlestick endpoint.
-#[derive(Debug, Clone, Deserialize)]
-pub struct GetCandlestickResponse {
-    /// Response code (0 = success)
-    #[serde(rename = "code")]
-    pub code: i64,
-
-    /// Result data for candlesticks.
-    #[serde(rename = "result")]
-    pub result: CandlestickResult,
-
-    /// Response ID (may be -1)
-    #[serde(rename = "id")]
-    pub id: i64,
-}
+pub type GetCandlestickResponse = ApiResult<CandlestickResult>;
 
 /// Result data for candlesticks.
 #[derive(Debug, Clone, Deserialize)]

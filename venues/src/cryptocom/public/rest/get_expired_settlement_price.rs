@@ -7,7 +7,7 @@ use std::borrow::Cow;
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::cryptocom::{EndpointType, InstrumentType, RestResult};
+use crate::cryptocom::{ApiResult, EndpointType, InstrumentType, RestResult};
 
 /// Endpoint path for the get-expired-settlement-price API
 const EXPIRED_SETTLEMENT_PRICE_ENDPOINT: &str = "public/get-expired-settlement-price";
@@ -27,20 +27,7 @@ pub struct GetExpiredSettlementPriceRequest {
 }
 
 /// Response for public/get-expired-settlement-price endpoint.
-#[derive(Debug, Clone, Deserialize)]
-pub struct GetExpiredSettlementPriceResponse {
-    /// Result data for expired settlement prices.
-    #[serde(rename = "result")]
-    pub result: ExpiredSettlementPriceResult,
-
-    /// Success status.
-    #[serde(rename = "success")]
-    pub success: bool,
-
-    /// Response ID (may be -1).
-    #[serde(rename = "id")]
-    pub id: i64,
-}
+pub type GetExpiredSettlementPriceResponse = ApiResult<ExpiredSettlementPriceResult>;
 
 /// Result data for expired settlement prices.
 #[derive(Debug, Clone, Deserialize)]

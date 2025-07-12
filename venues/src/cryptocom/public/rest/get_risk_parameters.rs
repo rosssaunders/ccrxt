@@ -5,30 +5,13 @@
 use serde::Deserialize;
 
 use super::client::RestClient;
-use crate::cryptocom::{EndpointType, RestResult};
+use crate::cryptocom::{ApiResult, EndpointType, RestResult};
 
 /// Endpoint path for the get-risk-parameters API
 const RISK_PARAMETERS_ENDPOINT: &str = "public/get-risk-parameters";
 
 /// Response for public/get-risk-parameters endpoint.
-#[derive(Debug, Clone, Deserialize)]
-pub struct GetRiskParametersResponse {
-    /// Response ID (can be -1).
-    #[serde(rename = "id")]
-    pub id: i64,
-
-    /// Method name.
-    #[serde(rename = "method")]
-    pub method: String,
-
-    /// Response code (0 = success).
-    #[serde(rename = "code")]
-    pub code: i64,
-
-    /// Result data for risk parameters.
-    #[serde(rename = "result")]
-    pub result: RiskParametersResult,
-}
+pub type GetRiskParametersResponse = ApiResult<RiskParametersResult>;
 
 /// Result data for risk parameters.
 #[derive(Debug, Clone, Deserialize)]

@@ -571,12 +571,12 @@ async fn test_get_conversion_rate() {
     );
 
     let response = result.unwrap();
-    assert_eq!(response.instrument_name, "CDCETH");
-    assert!(!response.conversion_rate.is_empty());
+    assert_eq!(response.result.instrument_name, "CDCETH");
+    assert!(!response.result.conversion_rate.is_empty());
 
     println!(
         "Conversion rate for {}: {}",
-        response.instrument_name, response.conversion_rate
+        response.result.instrument_name, response.result.conversion_rate
     );
 }
 
@@ -601,9 +601,8 @@ async fn test_get_expired_settlement_price() {
     );
 
     let response = result.unwrap();
-    assert!(response.success);
-    assert!(response.id > 0);
-
+    assert_eq!(response.code, 0); // 0 means success in the Crypto.com API
+    
     println!(
         "Found {} expired settlement prices",
         response.result.data.len()

@@ -1,10 +1,10 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
+use crate::cryptocom::{ApiResult, RestResult};
 
 /// Endpoint path for the create-oco-order API
 const CREATE_OCO_ORDER_ENDPOINT: &str = "private/create-order-list";
-use crate::cryptocom::RestResult;
 
 /// Request parameters for creating an OCO order list (One-Cancels-the-Other).
 ///
@@ -46,12 +46,15 @@ pub struct OcoOrderItem {
     pub ref_price: Option<String>,
 }
 
-/// Response for creating OCO orders
+/// Result data for creating OCO orders
 #[derive(Debug, Clone, Deserialize)]
-pub struct CreateOcoOrderResponse {
+pub struct CreateOcoOrderResult {
     /// List ID for the OCO order
     pub list_id: String,
 }
+
+/// Response wrapper for endpoint
+pub type CreateOcoOrderResponse = ApiResult<CreateOcoOrderResult>;
 
 impl RestClient {
     /// Create an OCO order list (One-Cancels-the-Other)
