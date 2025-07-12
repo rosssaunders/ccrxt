@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::cryptocom::RestResult;
+use crate::cryptocom::{ApiResult, RestResult};
 
 const OPEN_STAKE_ENDPOINT: &str = "private/staking/get-open-stake";
 /// Request parameters for get open stake
@@ -44,12 +44,15 @@ pub struct OpenStakeEntry {
     pub create_timestamp_ms: String,
 }
 
-/// Response for get open stake endpoint
+/// Open stake data result
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetOpenStakeResponse {
+pub struct GetOpenStakeResult {
     /// Array of open stake data
     pub data: Vec<OpenStakeEntry>,
 }
+
+/// Response wrapper for get open stake endpoint
+pub type GetOpenStakeResponse = ApiResult<GetOpenStakeResult>;
 
 impl RestClient {
     /// Get stake/unstake requests that status is not in final state
@@ -194,38 +197,42 @@ mod tests {
     #[test]
     fn test_get_open_stake_response_structure() {
         let response_json = json!({
-            "data": [
-                {
-                    "instrument_name": "SOL.staked",
-                    "underlying_inst_name": "SOL",
-                    "cycle_id": "1",
-                    "staking_id": "1",
-                    "status": "PENDING",
-                    "account": "12345678-9999-1234-9999-123456789999",
-                    "quantity": "1",
-                    "side": "STAKE",
-                    "create_timestamp_ms": "1668658093600"
-                },
-                {
-                    "instrument_name": "SOL.staked",
-                    "underlying_inst_name": "SOL",
-                    "cycle_id": "2",
-                    "staking_id": "2",
-                    "status": "UNSTAKING",
-                    "account": "12345678-9999-1234-9999-123456789999",
-                    "quantity": "0.5",
-                    "side": "UNSTAKE",
-                    "create_timestamp_ms": "1668658093600"
-                }
-            ]
+            "code": 0,
+            "id": 1,
+            "result": {
+                "data": [
+                    {
+                        "instrument_name": "SOL.staked",
+                        "underlying_inst_name": "SOL",
+                        "cycle_id": "1",
+                        "staking_id": "1",
+                        "status": "PENDING",
+                        "account": "12345678-9999-1234-9999-123456789999",
+                        "quantity": "1",
+                        "side": "STAKE",
+                        "create_timestamp_ms": "1668658093600"
+                    },
+                    {
+                        "instrument_name": "SOL.staked",
+                        "underlying_inst_name": "SOL",
+                        "cycle_id": "2",
+                        "staking_id": "2",
+                        "status": "UNSTAKING",
+                        "account": "12345678-9999-1234-9999-123456789999",
+                        "quantity": "0.5",
+                        "side": "UNSTAKE",
+                        "create_timestamp_ms": "1668658093600"
+                    }
+                ]
+            }
         });
 
         let response: GetOpenStakeResponse = serde_json::from_value(response_json).unwrap();
-        assert_eq!(response.data.len(), 2);
-        assert_eq!(response.data.first().unwrap().side, "STAKE");
-        assert_eq!(response.data.get(1).unwrap().side, "UNSTAKE");
-        assert_eq!(response.data.first().unwrap().status, "PENDING");
-        assert_eq!(response.data.get(1).unwrap().status, "UNSTAKING");
+        assert_eq!(response.result.data.len(), 2);
+        assert_eq!(response.result.data.first().unwrap().side, "STAKE");
+        assert_eq!(response.result.data.get(1).unwrap().side, "UNSTAKE");
+        assert_eq!(response.result.data.first().unwrap().status, "PENDING");
+        assert_eq!(response.result.data.get(1).unwrap().status, "UNSTAKING");
     }
 
     #[test]

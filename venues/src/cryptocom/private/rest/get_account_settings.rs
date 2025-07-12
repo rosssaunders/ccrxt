@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::cryptocom::RestResult;
+use crate::cryptocom::{ApiResult, RestResult};
 
 const ACCOUNT_SETTINGS_ENDPOINT: &str = "private/get-account-settings";
 /// Account settings information
@@ -18,14 +18,16 @@ pub struct AccountSettings {
     pub stp_inst: String,
 }
 
-/// Response for getting account settings
+/// Account settings data result
 #[derive(Debug, Clone, Deserialize)]
 #[allow(dead_code)]
-pub struct GetAccountSettingsResponse {
+pub struct GetAccountSettingsResult {
     /// Array of account settings (typically one element)
-    #[serde(rename = "result")]
     pub data: Vec<AccountSettings>,
 }
+
+/// Response wrapper for getting account settings
+pub type GetAccountSettingsResponse = ApiResult<GetAccountSettingsResult>;
 
 /// Empty request struct for get account settings endpoint
 #[derive(Debug, Clone, Default, Serialize)]
@@ -95,22 +97,26 @@ mod tests {
     #[test]
     fn test_get_account_settings_response_structure() {
         let response_json = json!({
-            "result": [
-                {
-                    "leverage": 20,
-                    "stp_id": 100,
-                    "stp_scope": "S",
-                    "stp_inst": "M"
-                }
-            ]
+            "code": 0,
+            "id": 1,
+            "result": {
+                "data": [
+                    {
+                        "leverage": 20,
+                        "stp_id": 100,
+                        "stp_scope": "S",
+                        "stp_inst": "M"
+                    }
+                ]
+            }
         });
 
         let response: GetAccountSettingsResponse = serde_json::from_value(response_json).unwrap();
-        assert_eq!(response.data.len(), 1);
-        assert_eq!(response.data.first().unwrap().leverage, 20);
-        assert_eq!(response.data.first().unwrap().stp_id, 100);
-        assert_eq!(response.data.first().unwrap().stp_scope, "S");
-        assert_eq!(response.data.first().unwrap().stp_inst, "M");
+        assert_eq!(response.result.data.len(), 1);
+        assert_eq!(response.result.data.first().unwrap().leverage, 20);
+        assert_eq!(response.result.data.first().unwrap().stp_id, 100);
+        assert_eq!(response.result.data.first().unwrap().stp_scope, "S");
+        assert_eq!(response.result.data.first().unwrap().stp_inst, "M");
     }
 
     #[test]

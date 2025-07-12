@@ -129,26 +129,34 @@ mod tests {
     #[test]
     fn test_create_subaccount_transfer_response_structure() {
         let response_json = json!({
-            "code": 0
+            "code": 0,
+            "id": 1,
+            "result": {
+                "code": 0
+            }
         });
 
         let response: CreateSubaccountTransferResponse =
             serde_json::from_value(response_json).unwrap();
-        assert_eq!(response.code, ResponseCode::NoError);
+        assert_eq!(response.result.code, ResponseCode::NoError);
     }
 
     #[test]
     fn test_create_subaccount_transfer_response_error() {
         let response_json = json!({
-            "code": 10002
+            "code": 0,
+            "id": 1,
+            "result": {
+                "code": 10002
+            }
         });
 
         let response: CreateSubaccountTransferResponse =
             serde_json::from_value(response_json).unwrap();
-        if let ResponseCode::Error(code) = response.code {
+        if let ResponseCode::Error(code) = response.result.code {
             assert_eq!(code, 10002);
         } else {
-            assert_eq!(true, false, "Expected Error variant");
+            assert!(false, "Expected Error variant");
         }
     }
 

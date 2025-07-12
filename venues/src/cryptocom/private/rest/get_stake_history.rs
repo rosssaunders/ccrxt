@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::cryptocom::RestResult;
+use crate::cryptocom::{ApiResult, RestResult};
 
 const STAKE_HISTORY_ENDPOINT: &str = "private/staking/get-stake-history";
 /// Request parameters for get stake history
@@ -44,12 +44,15 @@ pub struct StakeHistoryEntry {
     pub create_timestamp_ms: String,
 }
 
-/// Response for get stake history endpoint
+/// Stake history data result
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetStakeHistoryResponse {
+pub struct GetStakeHistoryResult {
     /// Array of stake history data
     pub data: Vec<StakeHistoryEntry>,
 }
+
+/// Response wrapper for get stake history endpoint
+pub type GetStakeHistoryResponse = ApiResult<GetStakeHistoryResult>;
 
 impl RestClient {
     /// Get stake/unstake request history
@@ -179,38 +182,42 @@ mod tests {
     #[test]
     fn test_get_stake_history_response_structure() {
         let response_json = json!({
-            "data": [
-                {
-                    "instrument_name": "SOL.staked",
-                    "underlying_inst_name": "SOL",
-                    "cycle_id": "1",
-                    "staking_id": "1",
-                    "status": "COMPLETED",
-                    "account": "12345678-9999-1234-9999-123456789999",
-                    "quantity": "1",
-                    "side": "STAKE",
-                    "create_timestamp_ms": "1668658093600"
-                },
-                {
-                    "instrument_name": "SOL.staked",
-                    "underlying_inst_name": "SOL",
-                    "cycle_id": "2",
-                    "staking_id": "2",
-                    "status": "REJECTED",
-                    "account": "12345678-9999-1234-9999-123456789999",
-                    "quantity": "0.5",
-                    "side": "UNSTAKE",
-                    "create_timestamp_ms": "1668658093600"
-                }
-            ]
+            "code": 0,
+            "id": 1,
+            "result": {
+                "data": [
+                    {
+                        "instrument_name": "SOL.staked",
+                        "underlying_inst_name": "SOL",
+                        "cycle_id": "1",
+                        "staking_id": "1",
+                        "status": "COMPLETED",
+                        "account": "12345678-9999-1234-9999-123456789999",
+                        "quantity": "1",
+                        "side": "STAKE",
+                        "create_timestamp_ms": "1668658093600"
+                    },
+                    {
+                        "instrument_name": "SOL.staked",
+                        "underlying_inst_name": "SOL",
+                        "cycle_id": "2",
+                        "staking_id": "2",
+                        "status": "REJECTED",
+                        "account": "12345678-9999-1234-9999-123456789999",
+                        "quantity": "0.5",
+                        "side": "UNSTAKE",
+                        "create_timestamp_ms": "1668658093600"
+                    }
+                ]
+            }
         });
 
         let response: GetStakeHistoryResponse = serde_json::from_value(response_json).unwrap();
-        assert_eq!(response.data.len(), 2);
-        assert_eq!(response.data.first().unwrap().status, "COMPLETED");
-        assert_eq!(response.data.get(1).unwrap().status, "REJECTED");
-        assert_eq!(response.data.first().unwrap().side, "STAKE");
-        assert_eq!(response.data.get(1).unwrap().side, "UNSTAKE");
+        assert_eq!(response.result.data.len(), 2);
+        assert_eq!(response.result.data.first().unwrap().status, "COMPLETED");
+        assert_eq!(response.result.data.get(1).unwrap().status, "REJECTED");
+        assert_eq!(response.result.data.first().unwrap().side, "STAKE");
+        assert_eq!(response.result.data.get(1).unwrap().side, "UNSTAKE");
     }
 
     #[test]

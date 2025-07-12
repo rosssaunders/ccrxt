@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::cryptocom::{RestResult, enums::*};
+use crate::cryptocom::{ApiResult, RestResult, enums::*};
 
 const ORDER_LIST_ENDPOINT: &str = "private/get-order-list";
 /// Request for getting OCO order details
@@ -75,12 +75,15 @@ pub struct OrderDetails {
     pub update_time: u64,
 }
 
-/// Response for getting OCO order details
+/// Order list data result
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetOrderListResponse {
+pub struct GetOrderListResult {
     /// Array of order details
     pub data: Vec<OrderDetails>,
 }
+
+/// Response wrapper for getting OCO order details
+pub type GetOrderListResponse = ApiResult<GetOrderListResult>;
 
 impl RestClient {
     /// Get OCO order details
@@ -233,46 +236,50 @@ mod tests {
     #[test]
     fn test_get_order_list_response_structure() {
         let response_json = json!({
-            "data": [
-                {
-                    "account_id": "88888888-8888-8888-8888-000000000001",
-                    "order_id": "4611686018427387905",
-                    "client_oid": "1661331443",
-                    "type": "LIMIT",
-                    "time_in_force": "GOOD_TILL_CANCEL",
-                    "side": "SELL",
-                    "exec_inst": [],
-                    "quantity": "0.1000",
-                    "price": "23000.0",
-                    "order_value": "2300.00000000",
-                    "avg_price": "0",
-                    "trigger_price": "0",
-                    "cumulative_quantity": "0",
-                    "cumulative_value": "0",
-                    "cumulative_fee": "0",
-                    "status": "ACTIVE",
-                    "update_user_id": "11111111-1111-1111-1111-000000000001",
-                    "order_date": "2022-08-24",
-                    "instrument_name": "BTCUSD-PERP",
-                    "fee_instrument_name": "USD",
-                    "list_id": "6498090546073120100",
-                    "contingency_type": "OCO",
-                    "trigger_price_type": "NULL_VAL",
-                    "create_time": 1661331445398_u64,
-                    "create_time_ns": "1661331445398773329",
-                    "update_time": 1661331445482_u64
-                }
-            ]
+            "code": 0,
+            "id": 1,
+            "result": {
+                "data": [
+                    {
+                        "account_id": "88888888-8888-8888-8888-000000000001",
+                        "order_id": "4611686018427387905",
+                        "client_oid": "1661331443",
+                        "type": "LIMIT",
+                        "time_in_force": "GOOD_TILL_CANCEL",
+                        "side": "SELL",
+                        "exec_inst": [],
+                        "quantity": "0.1000",
+                        "price": "23000.0",
+                        "order_value": "2300.00000000",
+                        "avg_price": "0",
+                        "trigger_price": "0",
+                        "cumulative_quantity": "0",
+                        "cumulative_value": "0",
+                        "cumulative_fee": "0",
+                        "status": "ACTIVE",
+                        "update_user_id": "11111111-1111-1111-1111-000000000001",
+                        "order_date": "2022-08-24",
+                        "instrument_name": "BTCUSD-PERP",
+                        "fee_instrument_name": "USD",
+                        "list_id": "6498090546073120100",
+                        "contingency_type": "OCO",
+                        "trigger_price_type": "NULL_VAL",
+                        "create_time": 1661331445398_u64,
+                        "create_time_ns": "1661331445398773329",
+                        "update_time": 1661331445482_u64
+                    }
+                ]
+            }
         });
 
         let response: GetOrderListResponse = serde_json::from_value(response_json).unwrap();
-        assert_eq!(response.data.len(), 1);
+        assert_eq!(response.result.data.len(), 1);
         assert_eq!(
-            response.data.first().unwrap().order_id,
+            response.result.data.first().unwrap().order_id,
             "4611686018427387905"
         );
         assert_eq!(
-            response.data.first().unwrap().contingency_type,
+            response.result.data.first().unwrap().contingency_type,
             ContingencyType::Oco
         );
     }

@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::cryptocom::RestResult;
+use crate::cryptocom::{ApiResult, RestResult};
 
 const OPEN_ORDERS_ENDPOINT: &str = "private/get-open-orders";
 /// Enum representing the status of an order
@@ -75,13 +75,16 @@ pub struct OpenOrder {
     pub fee_instrument_name: String,
 }
 
-/// Response for getting open orders
+/// Open orders data result
 #[derive(Debug, Clone, Deserialize)]
 #[allow(dead_code)]
-pub struct GetOpenOrdersResponse {
+pub struct GetOpenOrdersResult {
     /// Array of open orders
     pub data: Vec<OpenOrder>,
 }
+
+/// Response wrapper for getting open orders
+pub type GetOpenOrdersResponse = ApiResult<GetOpenOrdersResult>;
 
 impl RestClient {
     /// Gets all open orders for a particular instrument
@@ -201,37 +204,41 @@ mod tests {
     #[test]
     fn test_get_open_orders_response_structure() {
         let response_json = json!({
-            "data": [{
-                "account_id": "52e7c00f-1324-5a6z-bfgt-de445bde21a5",
-                "order_id": "19848525",
-                "client_oid": "1613571154900",
-                "order_type": "LIMIT",
-                "time_in_force": "GOOD_TILL_CANCEL",
-                "side": "BUY",
-                "exec_inst": [],
-                "quantity": "0.0100",
-                "limit_price": "50000.0",
-                "order_value": "500.000000",
-                "maker_fee_rate": "0.000250",
-                "taker_fee_rate": "0.000400",
-                "avg_price": "0.0",
-                "cumulative_quantity": "0.0000",
-                "cumulative_value": "0.000000",
-                "cumulative_fee": "0.000000",
-                "status": "ACTIVE",
-                "update_user_id": "fd797356-55db-48c2-a44d-157aabf702e8",
-                "order_date": "2021-02-17",
-                "instrument_name": "BTCUSD-PERP",
-                "fee_instrument_name": "USD",
-                "create_time": 1613575617173_u64,
-                "create_time_ns": "1613575617173123456",
-                "update_time": 1613575617173_u64
-            }]
+            "code": 0,
+            "id": 1,
+            "result": {
+                "data": [{
+                    "account_id": "52e7c00f-1324-5a6z-bfgt-de445bde21a5",
+                    "order_id": "19848525",
+                    "client_oid": "1613571154900",
+                    "order_type": "LIMIT",
+                    "time_in_force": "GOOD_TILL_CANCEL",
+                    "side": "BUY",
+                    "exec_inst": [],
+                    "quantity": "0.0100",
+                    "limit_price": "50000.0",
+                    "order_value": "500.000000",
+                    "maker_fee_rate": "0.000250",
+                    "taker_fee_rate": "0.000400",
+                    "avg_price": "0.0",
+                    "cumulative_quantity": "0.0000",
+                    "cumulative_value": "0.000000",
+                    "cumulative_fee": "0.000000",
+                    "status": "ACTIVE",
+                    "update_user_id": "fd797356-55db-48c2-a44d-157aabf702e8",
+                    "order_date": "2021-02-17",
+                    "instrument_name": "BTCUSD-PERP",
+                    "fee_instrument_name": "USD",
+                    "create_time": 1613575617173_u64,
+                    "create_time_ns": "1613575617173123456",
+                    "update_time": 1613575617173_u64
+                }]
+            }
         });
 
         let response: GetOpenOrdersResponse = serde_json::from_value(response_json).unwrap();
-        assert_eq!(response.data.len(), 1);
-        assert_eq!(response.data.first().unwrap().order_id, "19848525");
-        assert_eq!(response.data.first().unwrap().status, "ACTIVE");
+        assert_eq!(response.result.data.len(), 1);
+        assert_eq!(response.result.data.first().unwrap().order_id, "19848525");
+        assert_eq!(response.result.data.first().unwrap().status, "ACTIVE");
     }
 }

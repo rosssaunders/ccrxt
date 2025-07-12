@@ -93,22 +93,24 @@ mod tests {
 
     #[test]
     fn test_symbol_order_book_ticker_response_deserialization() {
-        let json = r#"{
+        let json = r#"[{
             "eventType": "bookTicker",
+            "time": 1640995200000,
             "symbol": "BTC_USDT",
             "bidPrice": "44999.50",
             "bidVolume": "1.5",
             "askPrice": "45001.00",
             "askVolume": "2.0"
-        }"#;
+        }]"#;
 
         let response: GetSymbolOrderBookTickerResponse = serde_json::from_str(json).unwrap();
-        assert_eq!(response.event_type, "bookTicker");
-        assert_eq!(response.symbol, "BTC_USDT");
-        assert_eq!(response.bid_price, "44999.50");
-        assert_eq!(response.bid_volume, "1.5");
-        assert_eq!(response.ask_price, "45001.00");
-        assert_eq!(response.ask_volume, "2.0");
+        let ticker = response.first().expect("Expected at least one ticker");
+        assert_eq!(ticker.event_type, "bookTicker");
+        assert_eq!(ticker.symbol, "BTC_USDT");
+        assert_eq!(ticker.bid_price, "44999.50");
+        assert_eq!(ticker.bid_volume, "1.5");
+        assert_eq!(ticker.ask_price, "45001.00");
+        assert_eq!(ticker.ask_volume, "2.0");
     }
 
     #[tokio::test]

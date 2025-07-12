@@ -157,13 +157,13 @@ mod tests {
             "reason": "NO_ERROR"
         });
         let response: ConvertResponse = serde_json::from_value(response_json).unwrap();
-        assert_eq!(response.from_instrument_name, "ETH.staked");
-        assert_eq!(response.to_instrument_name, "CDCETH");
-        assert_eq!(response.expected_rate, "1.0203");
-        assert_eq!(response.from_quantity, "3.14159265");
-        assert_eq!(response.slippage_tolerance_bps, "3");
-        assert_eq!(response.convert_id, "1");
-        assert_eq!(response.reason, "NO_ERROR");
+        assert_eq!(response.result.from_instrument_name, "ETH.staked");
+        assert_eq!(response.result.to_instrument_name, "CDCETH");
+        assert_eq!(response.result.expected_rate, "1.0203");
+        assert_eq!(response.result.from_quantity, "3.14159265");
+        assert_eq!(response.result.slippage_tolerance_bps, "3");
+        assert_eq!(response.result.convert_id, "1");
+        assert_eq!(response.result.reason, "NO_ERROR");
     }
 
     #[test]
@@ -178,7 +178,7 @@ mod tests {
             "reason": "NO_ERROR"
         });
         let response: ConvertResponse = serde_json::from_value(response_json).unwrap();
-        assert_eq!(response.convert_id, "42");
+        assert_eq!(response.result.convert_id, "42");
     }
 
     #[test]
@@ -193,6 +193,6 @@ mod tests {
             "reason": "NO_ERROR"
         });
         let response: ConvertResponse = serde_json::from_value(response_json).unwrap();
-        assert_eq!(response.slippage_tolerance_bps, "7");
+        assert_eq!(response.result.slippage_tolerance_bps, "7");
     }
 }

@@ -132,19 +132,21 @@ mod tests {
     #[test]
     fn test_old_trade_deserialization() {
         let json = r#"{
-            "id": 123456,
-            "price": 45000.50,
-            "qty": 0.1,
-            "time": 1640995200000,
-            "buyerMaker": true
+            "tid": "123456",
+            "t": 1640995200000,
+            "ms": 1,
+            "s": "BTC-USDT",
+            "p": 45000.50,
+            "v": 0.1
         }"#;
 
         let trade: OldTrade = serde_json::from_str(json).unwrap();
-        assert_eq!(trade.id, 123456);
-        assert_eq!(trade.price, 45000.50);
-        assert_eq!(trade.qty, 0.1);
-        assert_eq!(trade.time, 1640995200000);
-        assert!(trade.buyer_maker);
+        assert_eq!(trade.tid, "123456");
+        assert_eq!(trade.t, 1640995200000);
+        assert_eq!(trade.ms, 1);
+        assert_eq!(trade.s, "BTC-USDT");
+        assert_eq!(trade.p, 45000.50);
+        assert_eq!(trade.v, 0.1);
     }
 
     #[tokio::test]

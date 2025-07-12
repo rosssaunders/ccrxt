@@ -124,12 +124,12 @@ mod tests {
         });
 
         let history: GetUserBalanceHistoryResponse = serde_json::from_value(history_json).unwrap();
-        assert_eq!(history.instrument_name, "USD");
-        assert_eq!(history.data.len(), 2);
-        assert_eq!(history.data.first().unwrap().t, 1629478800000_u64);
-        assert_eq!(history.data.first().unwrap().c, "811.621851");
-        assert_eq!(history.data.get(1).unwrap().t, 1629565200000_u64);
-        assert_eq!(history.data.get(1).unwrap().c, "900.123456");
+        assert_eq!(history.result.instrument_name, "USD");
+        assert_eq!(history.result.data.len(), 2);
+        assert_eq!(history.result.data.first().unwrap().t, 1629478800000_u64);
+        assert_eq!(history.result.data.first().unwrap().c, "811.621851");
+        assert_eq!(history.result.data.get(1).unwrap().t, 1629565200000_u64);
+        assert_eq!(history.result.data.get(1).unwrap().c, "900.123456");
     }
 
     #[test]

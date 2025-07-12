@@ -4,14 +4,19 @@ pub mod shared;
 pub mod spot;
 pub mod usdm;
 
-// Re-export modules for top-level access
-pub use coinm::*;
+// Re-export specific types from coinm to avoid conflicts  
+pub use coinm::{
+    PrivateRestClient as CoinmPrivateRestClient,
+    RateLimiter as CoinmRateLimiter,
+    ResponseHeaders as CoinmResponseHeaders,
+    RestResponse as CoinmRestResponse,
+    RestResult as CoinmRestResult,
+};
 // Re-export response types and structures
 pub use spot::public::rest::agg_trades::AggTrade;
 // Re-export request types
 pub use spot::public::rest::agg_trades::AggTradesRequest;
-// Re-export spot public REST types for integration tests
-pub use spot::{ApiError, Errors, PublicRestClient, RateLimiter, ResponseHeaders};
+// Re-export spot types and modules
 pub use spot::{
     public::rest::{
         avg_price::{AvgPriceRequest, AvgPriceResponse},
@@ -29,5 +34,10 @@ pub use spot::{
         trades::{Trade, TradesRequest},
         ui_klines::UiKlinesRequest,
     },
-    *,
+    // Specific re-exports from spot to avoid ambiguous glob re-exports
+    ApiError, Errors, PublicRestClient, RateLimiter, ResponseHeaders,
+    RestResult, RestResponse, ErrorResponse,
+    // Re-export enums and order types
+    OrderSide, OrderType, TimeInForce, OrderStatus, OrderResponseType, 
+    SelfTradePreventionMode, SymbolStatus, KlineInterval,
 };

@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::cryptocom::RestResult;
+use crate::cryptocom::{ApiResult, RestResult};
 
 const REWARD_HISTORY_ENDPOINT: &str = "private/staking/get-reward-history";
 /// Request parameters for get reward history
@@ -38,12 +38,15 @@ pub struct RewardHistoryEntry {
     pub event_timestamp_ms: String,
 }
 
-/// Response for get reward history endpoint
+/// Reward history data result
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetRewardHistoryResponse {
+pub struct GetRewardHistoryResult {
     /// Array of reward history data
     pub data: Vec<RewardHistoryEntry>,
 }
+
+/// Response wrapper for get reward history endpoint
+pub type GetRewardHistoryResponse = ApiResult<GetRewardHistoryResult>;
 
 impl RestClient {
     /// Get staking reward history
@@ -147,62 +150,70 @@ mod tests {
     #[test]
     fn test_get_reward_history_response_structure() {
         let response_json = json!({
-            "data": [
-                {
-                    "staking_inst_name": "SOL.staked",
-                    "underlying_inst_name": "SOL",
-                    "reward_inst_name": "SOL.staked",
-                    "reward_quantity": "123.4567",
-                    "staked_balance": "1234567",
-                    "event_timestamp_ms": "1667795832609"
-                }
-            ]
+            "code": 0,
+            "id": 1,
+            "result": {
+                "data": [
+                    {
+                        "staking_inst_name": "SOL.staked",
+                        "underlying_inst_name": "SOL",
+                        "reward_inst_name": "SOL.staked",
+                        "reward_quantity": "123.4567",
+                        "staked_balance": "1234567",
+                        "event_timestamp_ms": "1667795832609"
+                    }
+                ]
+            }
         });
 
         let response: GetRewardHistoryResponse = serde_json::from_value(response_json).unwrap();
-        assert_eq!(response.data.len(), 1);
+        assert_eq!(response.result.data.len(), 1);
         assert_eq!(
-            response.data.first().unwrap().staking_inst_name,
+            response.result.data.first().unwrap().staking_inst_name,
             "SOL.staked"
         );
-        assert_eq!(response.data.first().unwrap().reward_quantity, "123.4567");
+        assert_eq!(response.result.data.first().unwrap().reward_quantity, "123.4567");
     }
 
     #[test]
     fn test_reward_history_multiple_entries() {
         let response_json = json!({
-            "data": [
-                {
-                    "staking_inst_name": "SOL.staked",
-                    "underlying_inst_name": "SOL",
-                    "reward_inst_name": "SOL.staked",
-                    "reward_quantity": "50.0",
-                    "staked_balance": "1000.0",
-                    "event_timestamp_ms": "1667795832609"
-                },
-                {
-                    "staking_inst_name": "ETH.staked",
-                    "underlying_inst_name": "ETH",
-                    "reward_inst_name": "ETH.staked",
-                    "reward_quantity": "0.125",
-                    "staked_balance": "5.0",
-                    "event_timestamp_ms": "1667795832610"
-                }
-            ]
+            "code": 0,
+            "id": 1,
+            "result": {
+                "data": [
+                    {
+                        "staking_inst_name": "SOL.staked",
+                        "underlying_inst_name": "SOL",
+                        "reward_inst_name": "SOL.staked",
+                        "reward_quantity": "50.0",
+                        "staked_balance": "1000.0",
+                        "event_timestamp_ms": "1667795832609"
+                    },
+                    {
+                        "staking_inst_name": "ETH.staked",
+                        "underlying_inst_name": "ETH",
+                        "reward_inst_name": "ETH.staked",
+                        "reward_quantity": "0.125",
+                        "staked_balance": "5.0",
+                        "event_timestamp_ms": "1667795832610"
+                    }
+                ]
+            }
         });
 
         let response: GetRewardHistoryResponse = serde_json::from_value(response_json).unwrap();
-        assert_eq!(response.data.len(), 2);
+        assert_eq!(response.result.data.len(), 2);
         assert_eq!(
-            response.data.first().unwrap().staking_inst_name,
+            response.result.data.first().unwrap().staking_inst_name,
             "SOL.staked"
         );
         assert_eq!(
-            response.data.get(1).unwrap().staking_inst_name,
+            response.result.data.get(1).unwrap().staking_inst_name,
             "ETH.staked"
         );
-        assert_eq!(response.data.first().unwrap().reward_quantity, "50.0");
-        assert_eq!(response.data.get(1).unwrap().reward_quantity, "0.125");
+        assert_eq!(response.result.data.first().unwrap().reward_quantity, "50.0");
+        assert_eq!(response.result.data.get(1).unwrap().reward_quantity, "0.125");
     }
 
     #[test]

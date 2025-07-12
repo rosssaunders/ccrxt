@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::cryptocom::RestResult;
+use crate::cryptocom::{ApiResult, RestResult};
 
 const POSITIONS_ENDPOINT: &str = "private/get-positions";
 /// Position information
@@ -28,12 +28,15 @@ pub struct Position {
     pub position_type: String,
 }
 
-/// Response for get positions endpoint
+/// Positions data result
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetPositionsResponse {
+pub struct GetPositionsResult {
     /// Array of position data
     pub data: Vec<Position>,
 }
+
+/// Response wrapper for get positions endpoint
+pub type GetPositionsResponse = ApiResult<GetPositionsResult>;
 
 /// Request parameters for get positions endpoint
 #[derive(Debug, Clone, Serialize)]
@@ -140,43 +143,47 @@ mod tests {
     #[test]
     fn test_get_positions_response_structure() {
         let response_json = json!({
-            "data": [
-                {
-                    "account_id": "account-1",
-                    "quantity": "0.5000",
-                    "cost": "25000.0000",
-                    "open_position_pnl": "500.0000",
-                    "open_pos_cost": "24500.0000",
-                    "session_pnl": "100.0000",
-                    "update_timestamp_ms": 1640995200000_u64,
-                    "instrument_name": "BTCUSD-PERP",
-                    "type": "PERPETUAL_SWAP"
-                },
-                {
-                    "account_id": "account-2",
-                    "quantity": "-1.0000",
-                    "cost": "-3000.0000",
-                    "open_position_pnl": "-50.0000",
-                    "open_pos_cost": "-2950.0000",
-                    "session_pnl": "-25.0000",
-                    "update_timestamp_ms": 1640995300000_u64,
-                    "instrument_name": "ETHUSD-PERP",
-                    "type": "PERPETUAL_SWAP"
-                }
-            ]
+            "code": 0,
+            "id": 1,
+            "result": {
+                "data": [
+                    {
+                        "account_id": "account-1",
+                        "quantity": "0.5000",
+                        "cost": "25000.0000",
+                        "open_position_pnl": "500.0000",
+                        "open_pos_cost": "24500.0000",
+                        "session_pnl": "100.0000",
+                        "update_timestamp_ms": 1640995200000_u64,
+                        "instrument_name": "BTCUSD-PERP",
+                        "type": "PERPETUAL_SWAP"
+                    },
+                    {
+                        "account_id": "account-2",
+                        "quantity": "-1.0000",
+                        "cost": "-3000.0000",
+                        "open_position_pnl": "-50.0000",
+                        "open_pos_cost": "-2950.0000",
+                        "session_pnl": "-25.0000",
+                        "update_timestamp_ms": 1640995300000_u64,
+                        "instrument_name": "ETHUSD-PERP",
+                        "type": "PERPETUAL_SWAP"
+                    }
+                ]
+            }
         });
 
         let response: GetPositionsResponse = serde_json::from_value(response_json).unwrap();
-        assert_eq!(response.data.len(), 2);
-        assert_eq!(response.data.first().unwrap().account_id, "account-1");
+        assert_eq!(response.result.data.len(), 2);
+        assert_eq!(response.result.data.first().unwrap().account_id, "account-1");
         assert_eq!(
-            response.data.first().unwrap().instrument_name,
+            response.result.data.first().unwrap().instrument_name,
             "BTCUSD-PERP"
         );
-        assert_eq!(response.data.first().unwrap().quantity, "0.5000");
-        assert_eq!(response.data.get(1).unwrap().account_id, "account-2");
-        assert_eq!(response.data.get(1).unwrap().instrument_name, "ETHUSD-PERP");
-        assert_eq!(response.data.get(1).unwrap().quantity, "-1.0000");
+        assert_eq!(response.result.data.first().unwrap().quantity, "0.5000");
+        assert_eq!(response.result.data.get(1).unwrap().account_id, "account-2");
+        assert_eq!(response.result.data.get(1).unwrap().instrument_name, "ETHUSD-PERP");
+        assert_eq!(response.result.data.get(1).unwrap().quantity, "-1.0000");
     }
 
     #[test]

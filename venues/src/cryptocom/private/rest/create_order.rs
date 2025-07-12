@@ -300,7 +300,7 @@ mod tests {
         });
 
         let response: CreateOrderResponse = serde_json::from_value(response_json).unwrap();
-        assert_eq!(response.order_id, "18342311");
-        assert_eq!(response.client_oid, "c5f682ed-7108-4f1c-b755-972fcdca0f02");
+        assert_eq!(response.result.order_id, "18342311");
+        assert_eq!(response.result.client_oid, "c5f682ed-7108-4f1c-b755-972fcdca0f02");
     }
 }

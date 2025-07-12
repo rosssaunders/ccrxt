@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::cryptocom::RestResult;
+use crate::cryptocom::{ApiResult, RestResult};
 
 const CONVERT_HISTORY_ENDPOINT: &str = "private/staking/get-convert-history";
 /// Request parameters for get convert history
@@ -43,12 +43,15 @@ pub struct ConvertHistoryEntry {
     pub create_timestamp_ms: String,
 }
 
-/// Response for get convert history endpoint
+/// Convert history data result
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetConvertHistoryResponse {
+pub struct GetConvertHistoryResult {
     /// Array of convert history data
     pub data: Vec<ConvertHistoryEntry>,
 }
+
+/// Response wrapper for get convert history endpoint
+pub type GetConvertHistoryResponse = ApiResult<GetConvertHistoryResult>;
 
 impl RestClient {
     /// Get convert request history
@@ -180,68 +183,76 @@ mod tests {
     #[test]
     fn test_get_convert_history_response_structure() {
         let response_json = json!({
-            "data": [
-                {
-                    "from_instrument_name": "ETH.staked",
-                    "to_instrument_name": "CDCETH",
-                    "expected_rate": "1.0203",
-                    "from_quantity": "3.14159265",
-                    "slippage_tolerance_bps": "3",
-                    "actual_rate": "1.0203",
-                    "to_quantity": "3.14159265",
-                    "convert_id": 1,
-                    "status": "COMPLETED",
-                    "create_timestamp_ms": "1688140984005"
-                }
-            ]
+            "code": 0,
+            "id": 1,
+            "result": {
+                "data": [
+                    {
+                        "from_instrument_name": "ETH.staked",
+                        "to_instrument_name": "CDCETH",
+                        "expected_rate": "1.0203",
+                        "from_quantity": "3.14159265",
+                        "slippage_tolerance_bps": "3",
+                        "actual_rate": "1.0203",
+                        "to_quantity": "3.14159265",
+                        "convert_id": 1,
+                        "status": "COMPLETED",
+                        "create_timestamp_ms": "1688140984005"
+                    }
+                ]
+            }
         });
 
         let response: GetConvertHistoryResponse = serde_json::from_value(response_json).unwrap();
-        assert_eq!(response.data.len(), 1);
+        assert_eq!(response.result.data.len(), 1);
         assert_eq!(
-            response.data.first().unwrap().from_instrument_name,
+            response.result.data.first().unwrap().from_instrument_name,
             "ETH.staked"
         );
-        assert_eq!(response.data.first().unwrap().status, "COMPLETED");
+        assert_eq!(response.result.data.first().unwrap().status, "COMPLETED");
     }
 
     #[test]
     fn test_convert_history_multiple_entries() {
         let response_json = json!({
-            "data": [
-                {
-                    "from_instrument_name": "ETH.staked",
-                    "to_instrument_name": "CDCETH",
-                    "expected_rate": "1.0203",
-                    "from_quantity": "1.0",
-                    "slippage_tolerance_bps": "3",
-                    "actual_rate": "1.0203",
-                    "to_quantity": "1.0203",
-                    "convert_id": 1,
-                    "status": "COMPLETED",
-                    "create_timestamp_ms": "1688140984005"
-                },
-                {
-                    "from_instrument_name": "CDCETH",
-                    "to_instrument_name": "ETH.staked",
-                    "expected_rate": "0.9801",
-                    "from_quantity": "2.0",
-                    "slippage_tolerance_bps": "1",
-                    "actual_rate": "0.9750",
-                    "to_quantity": "0.0",
-                    "convert_id": 2,
-                    "status": "SLIPPAGE_TOO_HIGH",
-                    "create_timestamp_ms": "1688140984006"
-                }
-            ]
+            "code": 0,
+            "id": 1,
+            "result": {
+                "data": [
+                    {
+                        "from_instrument_name": "ETH.staked",
+                        "to_instrument_name": "CDCETH",
+                        "expected_rate": "1.0203",
+                        "from_quantity": "1.0",
+                        "slippage_tolerance_bps": "3",
+                        "actual_rate": "1.0203",
+                        "to_quantity": "1.0203",
+                        "convert_id": 1,
+                        "status": "COMPLETED",
+                        "create_timestamp_ms": "1688140984005"
+                    },
+                    {
+                        "from_instrument_name": "CDCETH",
+                        "to_instrument_name": "ETH.staked",
+                        "expected_rate": "0.9801",
+                        "from_quantity": "2.0",
+                        "slippage_tolerance_bps": "1",
+                        "actual_rate": "0.9750",
+                        "to_quantity": "0.0",
+                        "convert_id": 2,
+                        "status": "SLIPPAGE_TOO_HIGH",
+                        "create_timestamp_ms": "1688140984006"
+                    }
+                ]
+            }
         });
 
         let response: GetConvertHistoryResponse = serde_json::from_value(response_json).unwrap();
-        assert_eq!(response.data.len(), 2);
-        assert_eq!(response.data.first().unwrap().status, "COMPLETED");
-        assert_eq!(response.data.get(1).unwrap().status, "SLIPPAGE_TOO_HIGH");
-        assert_eq!(response.data.first().unwrap().convert_id, 1);
-        assert_eq!(response.data.get(1).unwrap().convert_id, 2);
+        assert_eq!(response.result.data.len(), 2);
+        assert_eq!(response.result.data.first().unwrap().status, "COMPLETED");
+        assert_eq!(response.result.data.get(1).unwrap().status, "SLIPPAGE_TOO_HIGH");
+        assert_eq!(response.result.data.first().unwrap().convert_id, 1);
+        assert_eq!(response.result.data.get(1).unwrap().convert_id, 2);
     }
 
     #[test]

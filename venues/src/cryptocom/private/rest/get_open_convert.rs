@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::cryptocom::RestResult;
+use crate::cryptocom::{ApiResult, RestResult};
 
 const OPEN_CONVERT_ENDPOINT: &str = "private/get-open-convert";
 /// Request parameters for get open convert
@@ -43,12 +43,15 @@ pub struct OpenConvertEntry {
     pub create_timestamp_ms: String,
 }
 
-/// Response for get open convert endpoint
+/// Open convert data result
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetOpenConvertResponse {
+pub struct GetOpenConvertResult {
     /// Array of open convert data
     pub data: Vec<OpenConvertEntry>,
 }
+
+/// Response wrapper for get open convert endpoint
+pub type GetOpenConvertResponse = ApiResult<GetOpenConvertResult>;
 
 impl RestClient {
     /// Get convert request that status is not in final state
@@ -193,68 +196,76 @@ mod tests {
     #[test]
     fn test_get_open_convert_response_structure() {
         let response_json = json!({
-            "data": [
-                {
-                    "from_instrument_name": "ETH.staked",
-                    "to_instrument_name": "CDCETH",
-                    "expected_rate": "1.0203",
-                    "from_quantity": "3.14159265",
-                    "slippage_tolerance_bps": "3",
-                    "actual_rate": "1.0203",
-                    "to_quantity": "3.14159265",
-                    "convert_id": 1,
-                    "status": "COMPLETED",
-                    "create_timestamp_ms": "1688140984005"
-                }
-            ]
+            "code": 0,
+            "id": 1,
+            "result": {
+                "data": [
+                    {
+                        "from_instrument_name": "ETH.staked",
+                        "to_instrument_name": "CDCETH",
+                        "expected_rate": "1.0203",
+                        "from_quantity": "3.14159265",
+                        "slippage_tolerance_bps": "3",
+                        "actual_rate": "1.0203",
+                        "to_quantity": "3.14159265",
+                        "convert_id": 1,
+                        "status": "COMPLETED",
+                        "create_timestamp_ms": "1688140984005"
+                    }
+                ]
+            }
         });
 
         let response: GetOpenConvertResponse = serde_json::from_value(response_json).unwrap();
-        assert_eq!(response.data.len(), 1);
+        assert_eq!(response.result.data.len(), 1);
         assert_eq!(
-            response.data.first().unwrap().from_instrument_name,
+            response.result.data.first().unwrap().from_instrument_name,
             "ETH.staked"
         );
-        assert_eq!(response.data.first().unwrap().status, "COMPLETED");
+        assert_eq!(response.result.data.first().unwrap().status, "COMPLETED");
     }
 
     #[test]
     fn test_open_convert_multiple_entries() {
         let response_json = json!({
-            "data": [
-                {
-                    "from_instrument_name": "ETH.staked",
-                    "to_instrument_name": "CDCETH",
-                    "expected_rate": "1.0203",
-                    "from_quantity": "1.0",
-                    "slippage_tolerance_bps": "3",
-                    "actual_rate": "1.0203",
-                    "to_quantity": "1.0203",
-                    "convert_id": 1,
-                    "status": "COMPLETED",
-                    "create_timestamp_ms": "1688140984005"
-                },
-                {
-                    "from_instrument_name": "CDCETH",
-                    "to_instrument_name": "ETH.staked",
-                    "expected_rate": "0.9801",
-                    "from_quantity": "2.0",
-                    "slippage_tolerance_bps": "5",
-                    "actual_rate": "0.9802",
-                    "to_quantity": "1.9604",
-                    "convert_id": 2,
-                    "status": "NEW",
-                    "create_timestamp_ms": "1688140984006"
-                }
-            ]
+            "code": 0,
+            "id": 1,
+            "result": {
+                "data": [
+                    {
+                        "from_instrument_name": "ETH.staked",
+                        "to_instrument_name": "CDCETH",
+                        "expected_rate": "1.0203",
+                        "from_quantity": "1.0",
+                        "slippage_tolerance_bps": "3",
+                        "actual_rate": "1.0203",
+                        "to_quantity": "1.0203",
+                        "convert_id": 1,
+                        "status": "COMPLETED",
+                        "create_timestamp_ms": "1688140984005"
+                    },
+                    {
+                        "from_instrument_name": "CDCETH",
+                        "to_instrument_name": "ETH.staked",
+                        "expected_rate": "0.9801",
+                        "from_quantity": "2.0",
+                        "slippage_tolerance_bps": "5",
+                        "actual_rate": "0.9802",
+                        "to_quantity": "1.9604",
+                        "convert_id": 2,
+                        "status": "NEW",
+                        "create_timestamp_ms": "1688140984006"
+                    }
+                ]
+            }
         });
 
         let response: GetOpenConvertResponse = serde_json::from_value(response_json).unwrap();
-        assert_eq!(response.data.len(), 2);
-        assert_eq!(response.data.first().unwrap().status, "COMPLETED");
-        assert_eq!(response.data.get(1).unwrap().status, "NEW");
-        assert_eq!(response.data.first().unwrap().convert_id, 1);
-        assert_eq!(response.data.get(1).unwrap().convert_id, 2);
+        assert_eq!(response.result.data.len(), 2);
+        assert_eq!(response.result.data.first().unwrap().status, "COMPLETED");
+        assert_eq!(response.result.data.get(1).unwrap().status, "NEW");
+        assert_eq!(response.result.data.first().unwrap().convert_id, 1);
+        assert_eq!(response.result.data.get(1).unwrap().convert_id, 2);
     }
 
     #[test]

@@ -175,15 +175,15 @@ mod tests {
 
         let ticker: Ticker24hr = serde_json::from_str(json).unwrap();
         assert_eq!(ticker.symbol, "BTC-USDT");
-        assert_eq!(ticker.open_price, "44000.00");
-        assert_eq!(ticker.high_price, "46000.00");
-        assert_eq!(ticker.low_price, "43000.00");
-        assert_eq!(ticker.last_price, "45000.00");
-        assert_eq!(ticker.volume, "1000.50");
-        assert_eq!(ticker.quote_volume, "45002250.00");
+        assert_eq!(ticker.open_price, 44000.0);
+        assert_eq!(ticker.high_price, 46000.0);
+        assert_eq!(ticker.low_price, 43000.0);
+        assert_eq!(ticker.last_price, 45000.0);
+        assert_eq!(ticker.volume, 1000.5);
+        assert_eq!(ticker.quote_volume, 45002250.0);
         assert_eq!(ticker.open_time, 1640995200000);
         assert_eq!(ticker.close_time, 1641081599999);
-        assert_eq!(ticker.count, 12345);
+        assert_eq!(ticker.count, Some(12345));
         assert_eq!(ticker.bid_price, 44999.0);
         assert_eq!(ticker.bid_qty, 1.5);
         assert_eq!(ticker.ask_price, 45001.0);

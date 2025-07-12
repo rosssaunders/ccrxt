@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::{client::RestClient, user_balance::PositionBalance};
-use crate::cryptocom::RestResult;
+use crate::cryptocom::{ApiResult, RestResult};
 
 const SUBACCOUNT_BALANCES_ENDPOINT: &str = "private/get-subaccount-balances";
 /// Subaccount balance information
@@ -42,12 +42,15 @@ pub struct SubaccountBalance {
     pub position_balances: Vec<PositionBalance>,
 }
 
-/// Response for get subaccount balances endpoint
+/// Subaccount balances data result
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetSubaccountBalancesResponse {
+pub struct GetSubaccountBalancesResult {
     /// Array of subaccount balance data
     pub data: Vec<SubaccountBalance>,
 }
+
+/// Response wrapper for get subaccount balances endpoint
+pub type GetSubaccountBalancesResponse = ApiResult<GetSubaccountBalancesResult>;
 
 impl RestClient {
     /// Get wallet balances for all sub-accounts
@@ -201,54 +204,58 @@ mod tests {
     #[test]
     fn test_get_subaccount_balances_response_structure() {
         let response_json = json!({
-            "data": [
-                {
-                    "account": "account-1",
-                    "instrument_name": "USD",
-                    "total_available_balance": "100.00000000",
-                    "total_margin_balance": "100.00000000",
-                    "total_initial_margin": "0.00000000",
-                    "total_maintenance_margin": "0.00000000",
-                    "total_position_cost": "0.00000000",
-                    "total_cash_balance": "100.00000000",
-                    "total_collateral_value": "100.00000000",
-                    "total_session_unrealized_pnl": "0.00000000",
-                    "total_session_realized_pnl": "0.00000000",
-                    "total_effective_leverage": "0.00000000",
-                    "position_limit": "3000000.00000000",
-                    "used_position_limit": "0.00000000",
-                    "is_liquidating": false,
-                    "position_balances": []
-                },
-                {
-                    "account": "account-2",
-                    "total_available_balance": "200.00000000",
-                    "total_margin_balance": "200.00000000",
-                    "total_initial_margin": "0.00000000",
-                    "total_maintenance_margin": "0.00000000",
-                    "total_position_cost": "0.00000000",
-                    "total_cash_balance": "200.00000000",
-                    "total_collateral_value": "200.00000000",
-                    "total_session_unrealized_pnl": "0.00000000",
-                    "total_session_realized_pnl": "0.00000000",
-                    "total_effective_leverage": "0.00000000",
-                    "position_limit": "3000000.00000000",
-                    "used_position_limit": "0.00000000",
-                    "is_liquidating": false,
-                    "position_balances": []
-                }
-            ]
+            "code": 0,
+            "id": 1,
+            "result": {
+                "data": [
+                    {
+                        "account": "account-1",
+                        "instrument_name": "USD",
+                        "total_available_balance": "100.00000000",
+                        "total_margin_balance": "100.00000000",
+                        "total_initial_margin": "0.00000000",
+                        "total_maintenance_margin": "0.00000000",
+                        "total_position_cost": "0.00000000",
+                        "total_cash_balance": "100.00000000",
+                        "total_collateral_value": "100.00000000",
+                        "total_session_unrealized_pnl": "0.00000000",
+                        "total_session_realized_pnl": "0.00000000",
+                        "total_effective_leverage": "0.00000000",
+                        "position_limit": "3000000.00000000",
+                        "used_position_limit": "0.00000000",
+                        "is_liquidating": false,
+                        "position_balances": []
+                    },
+                    {
+                        "account": "account-2",
+                        "total_available_balance": "200.00000000",
+                        "total_margin_balance": "200.00000000",
+                        "total_initial_margin": "0.00000000",
+                        "total_maintenance_margin": "0.00000000",
+                        "total_position_cost": "0.00000000",
+                        "total_cash_balance": "200.00000000",
+                        "total_collateral_value": "200.00000000",
+                        "total_session_unrealized_pnl": "0.00000000",
+                        "total_session_realized_pnl": "0.00000000",
+                        "total_effective_leverage": "0.00000000",
+                        "position_limit": "3000000.00000000",
+                        "used_position_limit": "0.00000000",
+                        "is_liquidating": false,
+                        "position_balances": []
+                    }
+                ]
+            }
         });
 
         let response: GetSubaccountBalancesResponse =
             serde_json::from_value(response_json).unwrap();
-        assert_eq!(response.data.len(), 2);
-        assert_eq!(response.data.first().unwrap().account, "account-1");
+        assert_eq!(response.result.data.len(), 2);
+        assert_eq!(response.result.data.first().unwrap().account, "account-1");
         assert_eq!(
-            response.data.first().unwrap().instrument_name,
+            response.result.data.first().unwrap().instrument_name,
             Some("USD".to_string())
         );
-        assert_eq!(response.data.get(1).unwrap().account, "account-2");
-        assert_eq!(response.data.get(1).unwrap().instrument_name, None);
+        assert_eq!(response.result.data.get(1).unwrap().account, "account-2");
+        assert_eq!(response.result.data.get(1).unwrap().instrument_name, None);
     }
 }

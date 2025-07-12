@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use serde_json;
 
 use super::client::RestClient;
-use crate::cryptocom::RestResult;
+use crate::cryptocom::{ApiResult, RestResult};
 
 const USER_BALANCE_ENDPOINT: &str = "private/user-balance";
 /// Position balance information
@@ -65,12 +65,15 @@ pub struct UserBalance {
     pub position_balances: Vec<PositionBalance>,
 }
 
-/// Response for user balance endpoint
+/// User balance data result
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct UserBalanceResponse {
+pub struct UserBalanceResult {
     /// Array of user balance data
     pub data: Vec<UserBalance>,
 }
+
+/// Response wrapper for user balance endpoint
+pub type UserBalanceResponse = ApiResult<UserBalanceResult>;
 
 impl RestClient {
     /// Get user balance
@@ -184,32 +187,36 @@ mod tests {
     #[test]
     fn test_user_balance_response_structure() {
         let response_json = json!({
-            "data": [
-                {
-                    "total_available_balance": "4721.05898582",
-                    "total_margin_balance": "7595.42571782",
-                    "total_initial_margin": "2874.36673202",
-                    "total_position_im": "486.31273202",
-                    "total_haircut": "2388.054",
-                    "total_maintenance_margin": "1437.18336601",
-                    "total_position_cost": "14517.54641301",
-                    "total_cash_balance": "7890.00320721",
-                    "total_collateral_value": "7651.18811483",
-                    "total_session_unrealized_pnl": "-55.76239701",
-                    "instrument_name": "USD",
-                    "total_session_realized_pnl": "0.00000000",
-                    "is_liquidating": false,
-                    "total_effective_leverage": "1.90401230",
-                    "position_limit": "3000000.00000000",
-                    "used_position_limit": "40674.69622001",
-                    "position_balances": []
-                }
-            ]
+            "code": 0,
+            "id": 1,
+            "result": {
+                "data": [
+                    {
+                        "total_available_balance": "4721.05898582",
+                        "total_margin_balance": "7595.42571782",
+                        "total_initial_margin": "2874.36673202",
+                        "total_position_im": "486.31273202",
+                        "total_haircut": "2388.054",
+                        "total_maintenance_margin": "1437.18336601",
+                        "total_position_cost": "14517.54641301",
+                        "total_cash_balance": "7890.00320721",
+                        "total_collateral_value": "7651.18811483",
+                        "total_session_unrealized_pnl": "-55.76239701",
+                        "instrument_name": "USD",
+                        "total_session_realized_pnl": "0.00000000",
+                        "is_liquidating": false,
+                        "total_effective_leverage": "1.90401230",
+                        "position_limit": "3000000.00000000",
+                        "used_position_limit": "40674.69622001",
+                        "position_balances": []
+                    }
+                ]
+            }
         });
 
         let response: UserBalanceResponse = serde_json::from_value(response_json).unwrap();
-        assert_eq!(response.data.len(), 1);
-        assert_eq!(response.data.first().unwrap().instrument_name, "USD");
-        assert!(!response.data.first().unwrap().is_liquidating);
+        assert_eq!(response.result.data.len(), 1);
+        assert_eq!(response.result.data.first().unwrap().instrument_name, "USD");
+        assert!(!response.result.data.first().unwrap().is_liquidating);
     }
 }

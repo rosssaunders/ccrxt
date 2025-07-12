@@ -102,16 +102,25 @@ mod tests {
 
     #[test]
     fn test_symbol_price_ticker_response_deserialization() {
-        let json = r#"{
-            "price": "45000.50",
+        let json = r#"[{
             "symbol": "BTC_USDT",
-            "timestamp": 1640995200000
-        }"#;
+            "trades": [{
+                "timestamp": 1640995200000,
+                "tradeId": "123456",
+                "price": "45000.50",
+                "amount": "",
+                "type": 1,
+                "volume": "0.1"
+            }]
+        }]"#;
 
         let response: GetSymbolPriceTickerResponse = serde_json::from_str(json).unwrap();
-        assert_eq!(response.price, "45000.50");
-        assert_eq!(response.symbol, "BTC_USDT");
-        assert_eq!(response.timestamp, 1640995200000);
+        let ticker = response.first().expect("Expected at least one ticker");
+        assert_eq!(ticker.symbol, "BTC_USDT");
+        assert_eq!(ticker.trades.len(), 1);
+        let trade = ticker.trades.first().expect("Expected at least one trade");
+        assert_eq!(trade.price, "45000.50");
+        assert_eq!(trade.timestamp, 1640995200000);
     }
 
     #[tokio::test]

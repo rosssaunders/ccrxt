@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::cryptocom::RestResult;
+use crate::cryptocom::{ApiResult, RestResult};
 
 const STAKING_POSITION_ENDPOINT: &str = "private/staking/get-staking-position";
 /// Request parameters for get staking position
@@ -29,12 +29,15 @@ pub struct StakingPosition {
     pub reward_eligible_quantity: String,
 }
 
-/// Response for get staking position endpoint
+/// Staking position data result
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetStakingPositionResponse {
+pub struct GetStakingPositionResult {
     /// Array of staking position data
     pub data: Vec<StakingPosition>,
 }
+
+/// Response wrapper for get staking position endpoint
+pub type GetStakingPositionResponse = ApiResult<GetStakingPositionResult>;
 
 impl RestClient {
     /// Get the total staking position for a user/token
@@ -129,50 +132,58 @@ mod tests {
     #[test]
     fn test_get_staking_position_response_structure() {
         let response_json = json!({
-            "data": [
-                {
-                    "instrument_name": "SOL.staked",
-                    "underlying_inst_name": "SOL",
-                    "staked_quantity": "30000.00",
-                    "pending_staked_quantity": "20000.00",
-                    "pending_unstaked_quantity": "10000.00",
-                    "reward_eligible_quantity": "10000.00"
-                }
-            ]
+            "code": 0,
+            "id": 1,
+            "result": {
+                "data": [
+                    {
+                        "instrument_name": "SOL.staked",
+                        "underlying_inst_name": "SOL",
+                        "staked_quantity": "30000.00",
+                        "pending_staked_quantity": "20000.00",
+                        "pending_unstaked_quantity": "10000.00",
+                        "reward_eligible_quantity": "10000.00"
+                    }
+                ]
+            }
         });
 
         let response: GetStakingPositionResponse = serde_json::from_value(response_json).unwrap();
-        assert_eq!(response.data.len(), 1);
-        assert_eq!(response.data.first().unwrap().instrument_name, "SOL.staked");
-        assert_eq!(response.data.first().unwrap().underlying_inst_name, "SOL");
+        assert_eq!(response.result.data.len(), 1);
+        assert_eq!(response.result.data.first().unwrap().instrument_name, "SOL.staked");
+        assert_eq!(response.result.data.first().unwrap().underlying_inst_name, "SOL");
     }
 
     #[test]
     fn test_get_staking_position_response_multiple_positions() {
         let response_json = json!({
-            "data": [
-                {
-                    "instrument_name": "SOL.staked",
-                    "underlying_inst_name": "SOL",
-                    "staked_quantity": "30000.00",
-                    "pending_staked_quantity": "20000.00",
-                    "pending_unstaked_quantity": "10000.00",
-                    "reward_eligible_quantity": "10000.00"
-                },
-                {
-                    "instrument_name": "ETH.staked",
-                    "underlying_inst_name": "ETH",
-                    "staked_quantity": "5.50",
-                    "pending_staked_quantity": "2.25",
-                    "pending_unstaked_quantity": "1.00",
-                    "reward_eligible_quantity": "4.50"
-                }
-            ]
+            "code": 0,
+            "id": 1,
+            "result": {
+                "data": [
+                    {
+                        "instrument_name": "SOL.staked",
+                        "underlying_inst_name": "SOL",
+                        "staked_quantity": "30000.00",
+                        "pending_staked_quantity": "20000.00",
+                        "pending_unstaked_quantity": "10000.00",
+                        "reward_eligible_quantity": "10000.00"
+                    },
+                    {
+                        "instrument_name": "ETH.staked",
+                        "underlying_inst_name": "ETH",
+                        "staked_quantity": "5.50",
+                        "pending_staked_quantity": "2.25",
+                        "pending_unstaked_quantity": "1.00",
+                        "reward_eligible_quantity": "4.50"
+                    }
+                ]
+            }
         });
 
         let response: GetStakingPositionResponse = serde_json::from_value(response_json).unwrap();
-        assert_eq!(response.data.len(), 2);
-        assert_eq!(response.data.first().unwrap().instrument_name, "SOL.staked");
-        assert_eq!(response.data.get(1).unwrap().instrument_name, "ETH.staked");
+        assert_eq!(response.result.data.len(), 2);
+        assert_eq!(response.result.data.first().unwrap().instrument_name, "SOL.staked");
+        assert_eq!(response.result.data.get(1).unwrap().instrument_name, "ETH.staked");
     }
 }

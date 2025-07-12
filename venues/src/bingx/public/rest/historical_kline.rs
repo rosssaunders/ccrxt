@@ -160,16 +160,13 @@ mod tests {
 
     #[test]
     fn test_historical_kline_response_deserialization() {
-        let json = r#"{
-            "klines": [
-                [1640995200000.0, 45000.0, 46000.0, 44000.0, 45500.0, 1000.0, 1640998799999.0, 45250000.0, 500.0, 600.0, 27150000.0, 0.0]
-            ]
-        }"#;
+        let json = r#"[
+            [1640995200000.0, 45000.0, 46000.0, 44000.0, 45500.0, 1000.0, 1640998799999.0, 45250000.0]
+        ]"#;
 
         let response: GetHistoricalKlineResponse = serde_json::from_str(json).unwrap();
-        assert_eq!(response.klines.len(), 1);
+        assert_eq!(response.len(), 1);
         let kline = response
-            .klines
             .first()
             .expect("Expected at least one kline entry");
         assert_eq!(
