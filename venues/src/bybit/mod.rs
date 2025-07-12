@@ -14,7 +14,16 @@ pub mod private {
 pub mod public {
     mod rest;
 
-    pub use self::rest::RestClient as PublicRestClient;
+    pub use self::rest::{
+        RestClient as PublicRestClient,
+        // Re-export public REST types for integration tests
+        GetServerTimeRequest, GetServerTimeResponse, ServerTimeData,
+        GetTickersRequest, GetTickersResponse, TickerInfo, GetTickersData,
+        GetKlineRequest, GetKlineResponse, Kline, GetKlineData,
+        GetOrderbookRequest, GetOrderbookResponse, OrderbookLevel, GetOrderbookData,
+        GetRecentTradesRequest, GetRecentTradesResponse, TradeInfo, GetRecentTradesData,
+        GetInstrumentsInfoRequest, GetInstrumentsInfoResponse, InstrumentInfo, GetInstrumentsInfoData,
+    };
 }
 
 // Re-export public modules
@@ -24,6 +33,15 @@ pub use errors::{ApiError, Errors};
 pub use private::PrivateRestClient;
 pub use private::{BalanceData, GetWalletBalanceRequest, GetWalletBalanceResponse, WalletBalance};
 pub use public::PublicRestClient;
+// Re-export public REST types for integration tests
+pub use public::{
+    GetServerTimeRequest, GetServerTimeResponse, ServerTimeData,
+    GetTickersRequest, GetTickersResponse, TickerInfo, GetTickersData,
+    GetKlineRequest, GetKlineResponse, Kline, GetKlineData,
+    GetOrderbookRequest, GetOrderbookResponse, OrderbookLevel, GetOrderbookData,
+    GetRecentTradesRequest, GetRecentTradesResponse, TradeInfo, GetRecentTradesData,
+    GetInstrumentsInfoRequest, GetInstrumentsInfoResponse, InstrumentInfo, GetInstrumentsInfoData,
+};
 // Note: Trade and Position endpoint types are available via the private module
 // Example usage: bybit::private::CreateOrderRequest
 pub use rate_limit::{EndpointType, RateLimit, RateLimitError, RateLimiter};
