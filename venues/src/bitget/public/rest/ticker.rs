@@ -44,10 +44,10 @@ pub struct Ticker {
     pub ask_price: String,
     /// Buying 1 amount
     #[serde(rename = "bidSz")]
-    pub bid_size: String,
+    pub bid_size: Option<String>,
     /// Selling 1 amount
     #[serde(rename = "askSz")]
-    pub ask_size: String,
+    pub ask_size: Option<String>,
     /// UTC±00:00 Entry price
     #[serde(rename = "openUtc")]
     pub open_utc: String,
@@ -68,6 +68,8 @@ impl RestClient {
     ///
     /// # Returns
     /// The ticker information
+    ///
+    /// https://www.bitget.com/api-doc/spot/market/Get-Tickers
     pub async fn get_ticker(
         &self,
         request: &GetTickerRequest,
