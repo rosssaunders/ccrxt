@@ -9,36 +9,14 @@
 
 use reqwest::Client;
 use tokio;
-use venues::binance::{
-    AggregateTradesRequest,
-    BasisRequest,
-    BookTickerRequest,
-    BookTickerRequestBySymbol,
-    ConstituentsRequest,
-    ContinuousKlineRequest,
-    ContractType,
-    FundingRateRequest,
-    GlobalLongShortAccountRatioParams,
-    HistoricalTradesRequest,
-    IndexPriceKlineRequest,
-    KlineInterval,
-    KlineRequest,
-    MarkPriceKlineRequest,
-    OpenInterestHistParams,
-    OpenInterestRequest,
-    // Request types
-    OrderBookRequest,
-    Period,
-    PremiumIndexKlineRequest,
-    PremiumIndexRequest,
-    RateLimiter,
-    RecentTradesRequest,
-    // Basic types
-    RestClient as PublicRestClient,
-    TakerBuySellVolParams,
-    Ticker24hrParams,
-    TickerPriceRequest,
-    TopLongShortAccountRatioParams,
+use venues::binance::coinm::{
+    AggregateTradesRequest, BasisRequest, BookTickerRequest, BookTickerRequestBySymbol,
+    ConstituentsRequest, ContinuousKlineRequest, ContractType, FundingRateRequest,
+    GlobalLongShortAccountRatioParams, HistoricalTradesRequest, IndexPriceKlineRequest,
+    KlineInterval, KlineRequest, MarkPriceKlineRequest, OpenInterestHistParams,
+    OpenInterestRequest, OrderBookRequest, Period, PremiumIndexKlineRequest, PremiumIndexRequest,
+    RateLimiter, RecentTradesRequest, RestClient as PublicRestClient, TakerBuySellVolParams,
+    Ticker24hrParams, TickerPriceRequest, TopLongShortAccountRatioParams,
     TopLongShortPositionRatioParams,
 };
 
@@ -423,6 +401,7 @@ async fn test_get_ticker_24hr() {
 #[tokio::test]
 async fn test_get_ticker_price() {
     let client = create_public_test_client();
+
     let request = TickerPriceRequest {
         symbol: Some("BTCUSD_PERP".to_string()),
         pair: None,
