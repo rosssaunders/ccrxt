@@ -62,6 +62,9 @@ impl RestClient {
     ///
     /// This endpoint returns OHLCV candlestick data for the specified currency pair and interval.
     /// You can filter by time range and limit the number of results.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#market-candlesticks>
     pub async fn get_candlesticks(
         &self,
         params: CandlesticksRequest,

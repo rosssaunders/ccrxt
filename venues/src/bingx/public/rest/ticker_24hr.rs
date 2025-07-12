@@ -29,31 +29,35 @@ pub struct Ticker24hr {
     /// Trading pair, for example: BTC-USDT
     pub symbol: String,
     /// Opening price in the last 24 hours
-    pub open_price: String,
+    pub open_price: f64,
     /// The highest price in the last 24 hours
-    pub high_price: String,
+    pub high_price: f64,
     /// The lowest price in the last 24 hours
-    pub low_price: String,
+    pub low_price: f64,
     /// Latest price
-    pub last_price: String,
+    pub last_price: f64,
+    /// Price change amount
+    #[serde(default)]
+    pub price_change: Option<f64>,
     /// Total trading volume (base asset)
-    pub volume: String,
+    pub volume: f64,
     /// Total quote volume (quote asset)
-    pub quote_volume: String,
+    pub quote_volume: f64,
     /// The start time of the ticker interval
     pub open_time: i64,
     /// End time of the ticker interval
     pub close_time: i64,
     /// The number of transactions within the statistical time
-    pub count: i32,
+    #[serde(default)]
+    pub count: Option<i32>,
     /// Bid price
-    pub bid_price: f64,
-    /// Bid quantity
-    pub bid_qty: f64,
-    /// Ask price
     pub ask_price: f64,
-    /// Ask quantity
+    /// Bid quantity
     pub ask_qty: f64,
+    /// Ask price
+    pub bid_price: f64,
+    /// Ask quantity
+    pub bid_qty: f64,
     /// Price change percentage field
     pub price_change_percent: String,
 }

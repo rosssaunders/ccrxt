@@ -44,6 +44,9 @@ impl RestClient {
     /// Options trade history
     ///
     /// Retrieves recent trade history for a specific options contract.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#options-trade-history>
     pub async fn get_options_trades(
         &self,
         params: OptionsTradesRequest,

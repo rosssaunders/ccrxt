@@ -30,6 +30,9 @@ impl RestClient {
     ///
     /// This endpoint creates multiple orders in a single request.
     /// Maximum 10 orders per batch.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#create-a-batch-of-orders>
     pub async fn create_batch_orders(
         &self,
         orders: Vec<CreateOrderRequest>,

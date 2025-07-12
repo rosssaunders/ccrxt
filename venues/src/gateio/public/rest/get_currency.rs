@@ -36,6 +36,9 @@ impl RestClient {
     /// Get specific currency details
     ///
     /// This endpoint returns details for a specific currency, including trading status, withdrawal/deposit status, and fee information.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#get-details-of-a-specific-currency>
     pub async fn get_currency(&self, currency: &str) -> crate::gateio::Result<Currency> {
         let endpoint = format!("/spot/currencies/{}", currency);
         self.get(&endpoint).await

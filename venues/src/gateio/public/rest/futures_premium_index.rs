@@ -47,6 +47,9 @@ impl RestClient {
     /// Get premium index K-line
     ///
     /// Retrieves premium index candlestick data for a specific futures contract.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#premium-index-k-line>
     /// Premium index tracks the difference between mark price and index price.
     pub async fn get_futures_premium_index(
         &self,

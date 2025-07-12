@@ -85,6 +85,15 @@ pub struct MergeDepth {
 impl RestClient {
     /// Get merge depth
     ///
+    /// Returns merged orderbook depth for a symbol.
+    ///
+    /// [Bitget API Docs - Merge Depth](https://www.bitget.com/api-doc/spot/market/Merge-Orderbook)
+    ///
+    /// Rate limit: see official docs
+    ///
+    /// # Arguments
+    /// * `request` - The request parameters
+    ///
     /// # Returns
     /// The merge depth information
     pub async fn get_merge_depth(

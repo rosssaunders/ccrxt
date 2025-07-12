@@ -98,6 +98,12 @@ pub struct GetCoinInfoResponse {
 impl RestClient {
     /// Get coin information
     ///
+    /// Returns information about supported coins.
+    ///
+    /// [Bitget API Docs - Get Coin Info](https://www.bitget.com/api-doc/spot/market/Get-Coin-List)
+    ///
+    /// Rate limit: see official docs
+    ///
     /// # Arguments
     /// * `request` - The request parameters
     ///

@@ -26,6 +26,9 @@ impl RestClient {
     /// List spot accounts
     ///
     /// This endpoint returns all spot account balances or a specific currency balance.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#list-spot-accounts>
     pub async fn list_spot_accounts(
         &self,
         currency: Option<&str>,

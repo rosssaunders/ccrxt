@@ -37,6 +37,9 @@ impl RestClient {
     /// List risk limit tiers
     ///
     /// Retrieves risk limit tiers for a specific futures contract.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#list-risk-limit-tiers>
     /// Higher tiers require higher margin rates but allow larger positions.
     pub async fn get_futures_risk_limit_tiers(
         &self,

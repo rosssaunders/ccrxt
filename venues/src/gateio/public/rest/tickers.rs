@@ -33,10 +33,12 @@ pub struct Ticker {
     pub change_percentage: String,
 
     /// Change amount in the last 24h
-    pub change_utc0: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub change_utc0: Option<String>,
 
     /// Change amount in the last 24h in given timezone
-    pub change_utc8: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub change_utc8: Option<String>,
 
     /// Base currency traded volume in the last 24h
     pub base_volume: String,
@@ -73,6 +75,9 @@ impl RestClient {
     /// This endpoint returns ticker information including 24h price changes,
     /// volumes, and current bid/ask prices. You can get all tickers or filter
     /// by a specific currency pair and timezone.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#retrieve-ticker-information>
     pub async fn get_tickers(&self, params: TickersRequest) -> crate::gateio::Result<Vec<Ticker>> {
         self.get_with_query("/spot/tickers", Some(&params)).await
     }

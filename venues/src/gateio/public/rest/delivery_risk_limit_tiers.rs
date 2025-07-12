@@ -37,6 +37,9 @@ impl RestClient {
     /// List delivery risk limit tiers
     ///
     /// Retrieves risk limit tiers for a specific delivery contract.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#list-risk-limit-tiers-2>
     /// Higher tiers require higher margin rates but allow larger positions.
     pub async fn get_delivery_risk_limit_tiers(
         &self,

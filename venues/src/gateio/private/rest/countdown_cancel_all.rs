@@ -25,6 +25,9 @@ impl RestClient {
     ///
     /// This endpoint sets up an automatic order cancellation after a specified timeout.
     /// Setting timeout to 0 disables the countdown.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#countdown-cancel-orders>
     pub async fn countdown_cancel_all(
         &self,
         request: CountdownCancelAllRequest,

@@ -32,11 +32,11 @@ pub struct GetProductCandlesRequest {
 #[derive(Debug, Clone, Deserialize)]
 pub struct Candle(
     pub u64,
-    pub String,
-    pub String,
-    pub String,
-    pub String,
-    pub String,
+    pub f64,
+    pub f64,
+    pub f64,
+    pub f64,
+    pub f64,
 );
 
 /// Response from getting product candles
@@ -92,22 +92,22 @@ mod tests {
 
     #[test]
     fn test_candle_deserialization() {
-        let json = r#"[1609459200, "28000.00", "29000.00", "28500.00", "28800.00", "150.5"]"#;
+        let json = r#"[1609459200, 28000.00, 29000.00, 28500.00, 28800.00, 150.5]"#;
         let candle: Candle = serde_json::from_str(json).unwrap();
 
         assert_eq!(candle.0, 1609459200);
-        assert_eq!(candle.1, "28000.00");
-        assert_eq!(candle.2, "29000.00");
-        assert_eq!(candle.3, "28500.00");
-        assert_eq!(candle.4, "28800.00");
-        assert_eq!(candle.5, "150.5");
+        assert_eq!(candle.1, 28000.00);
+        assert_eq!(candle.2, 29000.00);
+        assert_eq!(candle.3, 28500.00);
+        assert_eq!(candle.4, 28800.00);
+        assert_eq!(candle.5, 150.5);
     }
 
     #[test]
     fn test_get_product_candles_response_deserialization() {
         let json = r#"[
-            [1609459200, "28000.00", "29000.00", "28500.00", "28800.00", "150.5"],
-            [1609462800, "28800.00", "29500.00", "28800.00", "29200.00", "200.3"]
+            [1609459200, 28000.00, 29000.00, 28500.00, 28800.00, 150.5],
+            [1609462800, 28800.00, 29500.00, 28800.00, 29200.00, 200.3]
         ]"#;
 
         let candles: GetProductCandlesResponse = serde_json::from_str(json).unwrap();

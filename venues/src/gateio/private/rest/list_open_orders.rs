@@ -114,6 +114,9 @@ impl RestClient {
     ///
     /// This endpoint returns all open (active) orders for the authenticated user.
     /// You can filter by currency pair, side, and account type.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#list-all-open-orders>
     pub async fn list_open_orders(
         &self,
         params: ListOpenOrdersRequest,

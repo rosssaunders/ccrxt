@@ -61,6 +61,12 @@ pub struct SymbolInfo {
 impl RestClient {
     /// Get symbol information
     ///
+    /// Returns information about trading pairs (symbols).
+    ///
+    /// [Bitget API Docs - Get Symbol Info](https://www.bitget.com/api-doc/spot/market/Get-Symbols)
+    ///
+    /// Rate limit: see official docs
+    ///
     /// # Arguments
     /// * `request` - The request parameters
     ///

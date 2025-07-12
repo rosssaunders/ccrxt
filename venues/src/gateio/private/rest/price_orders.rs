@@ -130,6 +130,9 @@ impl RestClient {
     ///
     /// This endpoint returns price orders (conditional orders) for the authenticated user.
     /// Price orders are triggered when the market price reaches the specified trigger price.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#retrieve-running-auto-order-list>
     pub async fn list_price_orders(
         &self,
         params: ListPriceOrdersRequest,
@@ -140,6 +143,9 @@ impl RestClient {
     /// Get a specific price order
     ///
     /// This endpoint returns details for a specific price order by ID.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#get-a-single-order>
     pub async fn get_price_order(&self, order_id: &str) -> crate::gateio::Result<PriceOrder> {
         let endpoint = format!("/spot/price_orders/{}", order_id);
         self.get(&endpoint).await
@@ -149,6 +155,9 @@ impl RestClient {
     ///
     /// This endpoint creates a new price order (conditional order) that will be
     /// triggered when the market price reaches the specified trigger price.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#create-a-price-triggered-order>
     pub async fn create_price_order(
         &self,
         request: CreatePriceOrderRequest,
@@ -159,6 +168,9 @@ impl RestClient {
     /// Cancel all price orders
     ///
     /// This endpoint cancels all price orders for the specified currency pair.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#cancel-all-open-orders-under-specified-currency-pair>
     pub async fn cancel_all_price_orders(
         &self,
         currency_pair: &str,
@@ -174,6 +186,9 @@ impl RestClient {
     /// Cancel a specific price order
     ///
     /// This endpoint cancels a specific price order by ID.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#cancel-a-price-triggered-order>
     pub async fn cancel_price_order(&self, order_id: &str) -> crate::gateio::Result<PriceOrder> {
         let endpoint = format!("/spot/price_orders/{}", order_id);
         self.delete(&endpoint).await

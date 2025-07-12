@@ -166,9 +166,11 @@ mod tests {
 
     #[test]
     fn test_cancel_multiple_orders_by_client_order_ids() {
-        let client_order_ids = ["order1".to_string(),
+        let client_order_ids = [
+            "order1".to_string(),
             "order2".to_string(),
-            "order3".to_string()];
+            "order3".to_string(),
+        ];
         let order_ids = [123456789, 123456790, 123456791];
 
         let order_ids_str = order_ids

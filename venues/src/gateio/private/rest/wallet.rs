@@ -280,6 +280,9 @@ impl RestClient {
     /// Get total balance
     ///
     /// This endpoint returns the total balance across all accounts.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#query-account-book>
     pub async fn get_total_balance(
         &self,
         params: TotalBalanceRequest,
@@ -290,6 +293,9 @@ impl RestClient {
     /// Get deposit address
     ///
     /// This endpoint returns the deposit address for a specific currency.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#generate-currency-deposit-address>
     pub async fn get_deposit_address(
         &self,
         params: DepositAddressRequest,
@@ -301,6 +307,9 @@ impl RestClient {
     /// Get deposit history
     ///
     /// This endpoint returns the deposit history for the authenticated user.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#retrieve-deposit-records>
     pub async fn get_deposits(
         &self,
         params: DepositsRequest,
@@ -311,6 +320,9 @@ impl RestClient {
     /// Get withdrawal history
     ///
     /// This endpoint returns the withdrawal history for the authenticated user.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#retrieve-withdrawal-records>
     pub async fn get_withdrawals(
         &self,
         params: WithdrawalsRequest,
@@ -321,6 +333,9 @@ impl RestClient {
     /// Create a transfer
     ///
     /// This endpoint creates a transfer between different accounts.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#transfer-between-trading-accounts>
     pub async fn create_transfer(
         &self,
         request: CreateTransferRequest,
@@ -331,6 +346,9 @@ impl RestClient {
     /// Get withdrawal fees
     ///
     /// This endpoint returns withdrawal fee information for currencies.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#retrieve-withdrawal-status>
     pub async fn get_withdrawal_fees(
         &self,
         params: WithdrawalFeesRequest,

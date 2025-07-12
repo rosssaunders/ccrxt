@@ -3,7 +3,7 @@ use std::borrow::Cow;
 use reqwest::Client;
 use serde::{Serialize, de::DeserializeOwned};
 
-use crate::bingx::{EndpointType, Errors, RateLimiter, RestResult};
+use crate::bingx::{ApiResponse, EndpointType, Errors, RateLimiter, RestResult};
 
 /// Public REST client for BingX exchange
 ///
@@ -94,8 +94,26 @@ impl RestClient {
         // Check if request was successful
         if response.status().is_success() {
             let response_text = response.text().await?;
-            let parsed_response: T = serde_json::from_str(&response_text)?;
-            Ok(parsed_response)
+
+            // Parse the API response wrapper
+            match serde_json::from_str::<ApiResponse<T>>(&response_text) {
+                Ok(api_response) => {
+                    // Check if the API returned an error
+                    if api_response.code != 0 {
+                        return Err(Errors::ApiError {
+                            code: api_response.code,
+                            msg: api_response.msg,
+                        });
+                    }
+
+                    // Return the unwrapped data
+                    match api_response.data {
+                        Some(data) => Ok(data),
+                        None => Err(Errors::ParseError("Response data is missing".to_string())),
+                    }
+                }
+                Err(e) => Err(Errors::ParseError(e.to_string())),
+            }
         } else {
             let status = response.status();
             let error_text = response

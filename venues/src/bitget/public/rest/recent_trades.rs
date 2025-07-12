@@ -39,6 +39,12 @@ pub struct RecentTrade {
 impl RestClient {
     /// Get recent trades
     ///
+    /// Returns recent trades for a symbol.
+    ///
+    /// [Bitget API Docs - Get Recent Trades](https://www.bitget.com/api-doc/spot/market/Get-Recent-Trades)
+    ///
+    /// Rate limit: see official docs
+    ///
     /// # Arguments
     /// * `request` - The request parameters
     ///

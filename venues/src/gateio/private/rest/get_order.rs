@@ -18,6 +18,9 @@ impl RestClient {
     /// Get a specific order
     ///
     /// This endpoint returns details of a specific order.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#get-a-single-order>
     pub async fn get_order(
         &self,
         order_id: &str,

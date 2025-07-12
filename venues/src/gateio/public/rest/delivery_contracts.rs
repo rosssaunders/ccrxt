@@ -135,6 +135,9 @@ impl RestClient {
     /// List all delivery contracts
     ///
     /// Retrieves all available delivery contracts for the specified settlement currency.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#list-all-futures-contracts-2>
     pub async fn get_delivery_contracts(
         &self,
         params: DeliveryContractsRequest,
@@ -146,6 +149,9 @@ impl RestClient {
     /// Get a single delivery contract
     ///
     /// Retrieves detailed information about a specific delivery contract.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#get-a-single-contract-2>
     pub async fn get_delivery_contract(
         &self,
         params: DeliveryContractRequest,

@@ -26,6 +26,9 @@ impl RestClient {
     /// Get futures insurance balance history
     ///
     /// Retrieves historical insurance fund balance for the specified settlement currency.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#futures-insurance-balance-history>
     pub async fn get_futures_insurance(
         &self,
         params: FuturesInsuranceRequest,

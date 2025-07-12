@@ -23,6 +23,9 @@ impl RestClient {
     /// Amend an order
     ///
     /// This endpoint modifies the price and/or amount of an existing order.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#amend-an-order>
     pub async fn amend_order(
         &self,
         order_id: &str,

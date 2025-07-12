@@ -16,6 +16,9 @@ impl RestClient {
     /// List all underlyings
     ///
     /// Retrieves all available underlying assets for options trading.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#list-all-underlyings>
     pub async fn get_options_underlyings(&self) -> crate::gateio::Result<Vec<OptionsUnderlying>> {
         self.get("/options/underlyings").await
     }

@@ -29,6 +29,12 @@ pub struct VipFeeRate {
 impl RestClient {
     /// Get VIP fee rates
     ///
+    /// Returns VIP fee rate information for all levels.
+    ///
+    /// [Bitget API Docs - VIP Fee Rate](https://www.bitget.com/api-doc/spot/market/Get-VIP-Fee-Rate)
+    ///
+    /// Rate limit: see official docs
+    ///
     /// # Returns
     /// * `Result<RestResponse<Vec<VipFeeRate>>, ApiError>` - The VIP fee rate information
     pub async fn get_vip_fee_rate(&self) -> Result<RestResponse<Vec<VipFeeRate>>, ApiError> {

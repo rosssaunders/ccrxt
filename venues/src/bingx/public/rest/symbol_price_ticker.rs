@@ -13,14 +13,35 @@ pub struct GetSymbolPriceTickerRequest {
 }
 
 /// Response from the symbol price ticker endpoint
+pub type GetSymbolPriceTickerResponse = Vec<SymbolTicker>;
+
+/// Symbol ticker data
 #[derive(Debug, Clone, Deserialize)]
-pub struct GetSymbolPriceTickerResponse {
-    /// Latest price
-    pub price: String,
+pub struct SymbolTicker {
     /// Trading pair, such as: BTC_USDT
     pub symbol: String,
-    /// Timestamp
+    /// Trade data array
+    pub trades: Vec<TradeData>,
+}
+
+/// Trade data within ticker response
+#[derive(Debug, Clone, Deserialize)]
+pub struct TradeData {
+    /// Trade timestamp
     pub timestamp: i64,
+    /// Trade ID
+    #[serde(rename = "tradeId")]
+    pub trade_id: String,
+    /// Trade price
+    pub price: String,
+    /// Amount (may be empty)
+    #[serde(default)]
+    pub amount: String,
+    /// Trade type
+    #[serde(rename = "type")]
+    pub trade_type: i32,
+    /// Volume
+    pub volume: String,
 }
 
 impl RestClient {

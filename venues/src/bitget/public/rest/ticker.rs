@@ -44,10 +44,10 @@ pub struct Ticker {
     pub ask_price: String,
     /// Buying 1 amount
     #[serde(rename = "bidSz")]
-    pub bid_size: String,
+    pub bid_size: Option<String>,
     /// Selling 1 amount
     #[serde(rename = "askSz")]
-    pub ask_size: String,
+    pub ask_size: Option<String>,
     /// UTC±00:00 Entry price
     #[serde(rename = "openUtc")]
     pub open_utc: String,
@@ -62,6 +62,12 @@ pub struct Ticker {
 
 impl RestClient {
     /// Get ticker information
+    ///
+    /// Returns the latest ticker information for a symbol or all symbols.
+    ///
+    /// [Bitget API Docs - Get Tickers](https://www.bitget.com/api-doc/spot/market/Get-Tickers)
+    ///
+    /// Rate limit: see official docs
     ///
     /// # Arguments
     /// * `request` - The request parameters

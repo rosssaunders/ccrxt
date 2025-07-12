@@ -45,6 +45,12 @@ pub struct MarketTrade {
 impl RestClient {
     /// Get market trades history
     ///
+    /// Returns historical market trades for a symbol.
+    ///
+    /// [Bitget API Docs - Get Market Trades](https://www.bitget.com/api-doc/spot/market/Get-Market-Trades)
+    ///
+    /// Rate limit: see official docs
+    ///
     /// # Arguments
     /// * `request` - The request parameters
     ///

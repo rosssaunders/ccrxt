@@ -43,6 +43,9 @@ impl RestClient {
     /// List orders
     ///
     /// This endpoint returns a list of orders based on the provided filters.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#list-orders>
     pub async fn list_orders(
         &self,
         request: ListOrdersRequest,

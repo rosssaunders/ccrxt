@@ -22,6 +22,9 @@ impl RestClient {
     /// Cancel all orders
     ///
     /// This endpoint cancels all open orders for a currency pair.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#cancel-all-open-orders-in-specified-currency-pair>
     pub async fn cancel_all_orders(
         &self,
         request: CancelAllOrdersRequest,

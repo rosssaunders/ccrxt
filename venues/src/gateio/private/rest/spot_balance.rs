@@ -6,6 +6,9 @@ impl RestClient {
     /// Get spot account balance for a specific currency
     ///
     /// This endpoint returns the spot account balance for a given currency.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#list-spot-accounts>
     pub async fn get_spot_account_balance(
         &self,
         currency: &str,

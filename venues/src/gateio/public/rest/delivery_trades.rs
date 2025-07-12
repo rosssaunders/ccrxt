@@ -52,6 +52,9 @@ impl RestClient {
     /// Get delivery trading history
     ///
     /// Retrieves recent trades for a specific delivery contract.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#futures-trading-history-2>
     /// Maximum of 1000 records can be returned per request.
     pub async fn get_delivery_trades(
         &self,

@@ -4,6 +4,9 @@ impl RestClient {
     /// Get all non-zero spot account balances
     ///
     /// This endpoint returns all spot account balances with non-zero available or locked amounts.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#list-spot-accounts>
     pub async fn get_non_zero_spot_balances(&self) -> crate::gateio::Result<Vec<SpotAccount>> {
         let accounts = self.list_spot_accounts(None).await?;
         Ok(accounts

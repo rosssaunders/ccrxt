@@ -52,6 +52,9 @@ impl RestClient {
     /// Get futures trading history
     ///
     /// Retrieves recent trades for a specific futures contract.
+    ///
+    /// # API Documentation
+    /// <https://www.gate.com/docs/developers/apiv4/#futures-trading-history>
     /// Maximum of 1000 records can be returned per request.
     pub async fn get_futures_trades(
         &self,
