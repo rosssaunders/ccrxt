@@ -25,49 +25,91 @@ jobs:
       - name: Install cargo-tarpaulin
         run: cargo install cargo-tarpaulin
         
-      - name: Generate coverage report
+      - name: Generate source code coverage report
         run: |
           cargo tarpaulin --verbose --all-features --workspace --timeout 120 \
             --exclude-files 'venues/examples/*' \
             --exclude-files 'tests/*' \
             --out xml json html \
-            --output-dir ./coverage
+            --output-dir ./coverage/source
             
-      - name: Parse coverage and generate badge
+      - name: Generate integration tests coverage report
+        run: |
+          cargo tarpaulin --verbose --all-features --workspace --timeout 120 \
+            --exclude-files 'venues/examples/*' \
+            --exclude-files 'venues/src/*' \
+            --exclude-files 'rest/src/*' \
+            --exclude-files 'websockets/src/*' \
+            --exclude-files 'binance_macros/src/*' \
+            --exclude-files 'src/*' \
+            --out xml json html \
+            --output-dir ./coverage/integration
+            
+      - name: Parse coverage and generate badges
         id: coverage
         run: |
-          # Extract coverage percentage from XML
-          COVERAGE=$(grep -o 'line-rate="[^"]*"' coverage/cobertura.xml | head -1 | sed 's/line-rate="//;s/"//')
-          COVERAGE_PERCENT=$(echo "$COVERAGE * 100" | bc -l | xargs printf "%.0f")
+          # Parse source coverage
+          SOURCE_COVERAGE=$(grep -o 'line-rate="[^"]*"' coverage/source/cobertura.xml | head -1 | sed 's/line-rate="//;s/"//')
+          SOURCE_PERCENT=$(echo "$SOURCE_COVERAGE * 100" | bc -l | xargs printf "%.0f")
           
-          # Determine badge color
-          if [ "$COVERAGE_PERCENT" -ge 80 ]; then
-            COLOR="brightgreen"
-          elif [ "$COVERAGE_PERCENT" -ge 60 ]; then
-            COLOR="yellow"
+          # Parse integration coverage  
+          INTEGRATION_COVERAGE=$(grep -o 'line-rate="[^"]*"' coverage/integration/cobertura.xml | head -1 | sed 's/line-rate="//;s/"//')
+          INTEGRATION_PERCENT=$(echo "$INTEGRATION_COVERAGE * 100" | bc -l | xargs printf "%.0f")
+          
+          # Determine source badge color
+          if [ "$SOURCE_PERCENT" -ge 80 ]; then
+            SOURCE_COLOR="brightgreen"
+          elif [ "$SOURCE_PERCENT" -ge 60 ]; then
+            SOURCE_COLOR="yellow"
           else
-            COLOR="red"
+            SOURCE_COLOR="red"
           fi
           
-          echo "coverage=$COVERAGE_PERCENT" >> $GITHUB_OUTPUT
-          echo "color=$COLOR" >> $GITHUB_OUTPUT
+          # Determine integration badge color
+          if [ "$INTEGRATION_PERCENT" -ge 80 ]; then
+            INTEGRATION_COLOR="brightgreen"
+          elif [ "$INTEGRATION_PERCENT" -ge 60 ]; then
+            INTEGRATION_COLOR="yellow"
+          else
+            INTEGRATION_COLOR="red"
+          fi
+          
+          echo "source_coverage=$SOURCE_PERCENT" >> $GITHUB_OUTPUT
+          echo "source_color=$SOURCE_COLOR" >> $GITHUB_OUTPUT
+          echo "integration_coverage=$INTEGRATION_PERCENT" >> $GITHUB_OUTPUT
+          echo "integration_color=$INTEGRATION_COLOR" >> $GITHUB_OUTPUT
           
           # Create coverage summary
           echo "## Coverage Report" > coverage/summary.md
           echo "" >> coverage/summary.md
-          echo "**Total Coverage: ${COVERAGE_PERCENT}%**" >> coverage/summary.md
+          echo "**Source Code Coverage: ${SOURCE_PERCENT}%**" >> coverage/summary.md
+          echo "**Integration Tests Coverage: ${INTEGRATION_PERCENT}%**" >> coverage/summary.md
           echo "" >> coverage/summary.md
-          echo "[![Coverage](https://img.shields.io/badge/Coverage-${COVERAGE_PERCENT}%25-${COLOR})](https://github.com/${{ github.repository }}/actions/workflows/coverage.yml)" >> coverage/summary.md
+          echo "[![Source Coverage](https://img.shields.io/badge/Source%20Coverage-${SOURCE_PERCENT}%25-${SOURCE_COLOR})](https://github.com/${{ github.repository }}/actions/workflows/coverage.yml)" >> coverage/summary.md
+          echo "" >> coverage/summary.md
+          echo "[![Integration Coverage](https://img.shields.io/badge/Integration%20Coverage-${INTEGRATION_PERCENT}%25-${INTEGRATION_COLOR})](https://github.com/${{ github.repository }}/actions/workflows/coverage.yml)" >> coverage/summary.md
           
-      - name: Generate coverage badge JSON
+      - name: Generate coverage badge JSONs
         run: |
           mkdir -p badges
-          cat > badges/coverage.json << EOF
+          
+          # Source coverage badge
+          cat > badges/source-coverage.json << EOF
           {
             "schemaVersion": 1,
-            "label": "coverage",
-            "message": "${{ steps.coverage.outputs.coverage }}%",
-            "color": "${{ steps.coverage.outputs.color }}"
+            "label": "source coverage",
+            "message": "${{ steps.coverage.outputs.source_coverage }}%",
+            "color": "${{ steps.coverage.outputs.source_color }}"
+          }
+          EOF
+          
+          # Integration coverage badge
+          cat > badges/integration-coverage.json << EOF
+          {
+            "schemaVersion": 1,
+            "label": "integration coverage",
+            "message": "${{ steps.coverage.outputs.integration_coverage }}%",
+            "color": "${{ steps.coverage.outputs.integration_color }}"
           }
           EOF
           
@@ -99,15 +141,16 @@ jobs:
               const summaryContent = fs.readFileSync('coverage/summary.md', 'utf8');
               
               // Read detailed coverage info
-              const coverageData = JSON.parse(fs.readFileSync('coverage/tarpaulin-report.json', 'utf8'));
+              const sourceCoverageData = JSON.parse(fs.readFileSync('coverage/source/tarpaulin-report.json', 'utf8'));
+              const integrationCoverageData = JSON.parse(fs.readFileSync('coverage/integration/tarpaulin-report.json', 'utf8'));
               
-              let detailsTable = '\n\n### Coverage by Module\n\n| Module | Coverage |\n|--------|----------|\n';
+              let detailsTable = '\n\n### Source Code Coverage by Module\n\n| Module | Coverage |\n|--------|----------|\n';
               
-              if (coverageData.files) {
+              if (sourceCoverageData.files) {
                 const moduleStats = {};
                 
                 // Group by module/crate
-                for (const [filePath, fileData] of Object.entries(coverageData.files)) {
+                for (const [filePath, fileData] of Object.entries(sourceCoverageData.files)) {
                   const moduleName = filePath.split('/')[0] || 'root';
                   if (!moduleStats[moduleName]) {
                     moduleStats[moduleName] = { covered: 0, total: 0 };
@@ -125,6 +168,31 @@ jobs:
                 }
               }
               
+              // Integration test coverage by exchange
+              detailsTable += '\n\n### Integration Test Coverage by Exchange\n\n| Exchange | Coverage |\n|----------|----------|\n';
+              
+              if (integrationCoverageData.files) {
+                const exchangeStats = {};
+                
+                // Group by exchange
+                for (const [filePath, fileData] of Object.entries(integrationCoverageData.files)) {
+                  const exchangeName = filePath.split('/')[1] || 'unknown';
+                  if (!exchangeStats[exchangeName]) {
+                    exchangeStats[exchangeName] = { covered: 0, total: 0 };
+                  }
+                  exchangeStats[exchangeName].covered += fileData.covered || 0;
+                  exchangeStats[exchangeName].total += fileData.coverable || 0;
+                }
+                
+                // Add exchange stats to table
+                for (const [exchange, stats] of Object.entries(exchangeStats)) {
+                  if (stats.total > 0) {
+                    const percent = ((stats.covered / stats.total) * 100).toFixed(1);
+                    detailsTable += `| ${exchange} | ${percent}% (${stats.covered}/${stats.total}) |\n`;
+                  }
+                }
+              }
+              
               const comment = summaryContent + detailsTable + 
                 `\n\n[📊 View detailed HTML report](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})`;
 
@@ -138,8 +206,9 @@ jobs:
               console.log('Could not post coverage comment:', error.message);
               
               // Fallback simple comment
-              const coverage = '${{ steps.coverage.outputs.coverage }}';
-              const simpleComment = `## Coverage Report\n\n**Total Coverage: ${coverage}%**\n\n[📊 View detailed report](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})`;
+              const sourceCoverage = '${{ steps.coverage.outputs.source_coverage }}';
+              const integrationCoverage = '${{ steps.coverage.outputs.integration_coverage }}';
+              const simpleComment = `## Coverage Report\n\n**Source Code Coverage: ${sourceCoverage}%**\n**Integration Tests Coverage: ${integrationCoverage}%**\n\n[📊 View detailed report](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})`;
               
               github.rest.issues.createComment({
                 issue_number: context.issue.number,

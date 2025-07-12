@@ -1,7 +1,8 @@
 # CCRXT
 
 [![CI](https://github.com/rosssaunders/ccrxt/actions/workflows/ci.yml/badge.svg)](https://github.com/rosssaunders/ccrxt/actions/workflows/ci.yml)
-[![Coverage](https://img.shields.io/endpoint?url=https://rosssaunders.github.io/ccrxt/badges/coverage.json)](https://github.com/rosssaunders/ccrxt/actions/workflows/coverage.yml)
+[![Source Coverage](https://img.shields.io/endpoint?url=https://rosssaunders.github.io/ccrxt/badges/source-coverage.json)](https://github.com/rosssaunders/ccrxt/actions/workflows/coverage.yml)
+[![Integration Coverage](https://img.shields.io/endpoint?url=https://rosssaunders.github.io/ccrxt/badges/integration-coverage.json)](https://github.com/rosssaunders/ccrxt/actions/workflows/coverage.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Rust](https://img.shields.io/badge/rust-stable-brightgreen.svg)](https://www.rust-lang.org)
 [![Crates.io](https://img.shields.io/crates/v/ccrxt.svg)](https://crates.io/crates/ccrxt)
