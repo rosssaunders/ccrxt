@@ -103,24 +103,22 @@ mod tests {
         let data = r#"{
             "id": 8,
             "jsonrpc": "2.0",
-            "result": {
-                "data": [
-                    { 
-                        "timestamp": 1680307200000, 
-                        "interest_8h": 0.0001,
-                        "interest_1h": 0.00005,
-                        "index_price": 30000.0,
-                        "prev_index_price": 29900.0
-                    },
-                    { 
-                        "timestamp": 1680310800000, 
-                        "interest_8h": 0.0002,
-                        "interest_1h": 0.00006,
-                        "index_price": 30100.0,
-                        "prev_index_price": 30000.0
-                    }
-                ]
-            }
+            "result": [
+                { 
+                    "timestamp": 1680307200000, 
+                    "interest_8h": 0.0001,
+                    "interest_1h": 0.00005,
+                    "index_price": 30000.0,
+                    "prev_index_price": 29900.0
+                },
+                { 
+                    "timestamp": 1680310800000, 
+                    "interest_8h": 0.0002,
+                    "interest_1h": 0.00006,
+                    "index_price": 30100.0,
+                    "prev_index_price": 30000.0
+                }
+            ]
         }"#;
         let resp: GetFundingRateHistoryResponse = serde_json::from_str(data).unwrap();
         assert_eq!(resp.id, 8);

@@ -114,7 +114,13 @@ mod tests {
 
     #[test]
     fn test_oco_order_response_structure() {
-        let json = r#"{ "list_id": "6498090546073120100" }"#;
+        let json = r#"{
+            "code": 0,
+            "id": 1,
+            "result": {
+                "list_id": "6498090546073120100"
+            }
+        }"#;
         let resp: CreateOcoOrderResponse = serde_json::from_str(json).unwrap();
         assert_eq!(resp.result.list_id, "6498090546073120100");
     }

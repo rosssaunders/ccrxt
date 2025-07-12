@@ -69,6 +69,7 @@ mod tests {
             "jsonrpc": "2.0",
             "result": {
                 "index_price": 65000.0,
+                "estimated_delivery_price": 65000.0,
                 "timestamp": 65000.0
             }
         }"#;

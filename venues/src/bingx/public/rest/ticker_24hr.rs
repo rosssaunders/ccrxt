@@ -157,12 +157,12 @@ mod tests {
     fn test_ticker_24hr_deserialization() {
         let json = r#"{
             "symbol": "BTC-USDT",
-            "openPrice": "44000.00",
-            "highPrice": "46000.00",
-            "lowPrice": "43000.00",
-            "lastPrice": "45000.00",
-            "volume": "1000.50",
-            "quoteVolume": "45002250.00",
+            "openPrice": 44000.00,
+            "highPrice": 46000.00,
+            "lowPrice": 43000.00,
+            "lastPrice": 45000.00,
+            "volume": 1000.50,
+            "quoteVolume": 45002250.00,
             "openTime": 1640995200000,
             "closeTime": 1641081599999,
             "count": 12345,

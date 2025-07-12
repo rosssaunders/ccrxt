@@ -166,9 +166,7 @@ mod tests {
 
         let response: GetHistoricalKlineResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.len(), 1);
-        let kline = response
-            .first()
-            .expect("Expected at least one kline entry");
+        let kline = response.first().expect("Expected at least one kline entry");
         assert_eq!(
             *kline.first().expect("Missing open_time in kline"),
             1640995200000.0
@@ -183,7 +181,7 @@ mod tests {
     #[tokio::test]
     async fn test_get_historical_kline_method_exists() {
         let client = RestClient::new(
-            "https://open-api.bingx.com",
+            "http://127.0.0.1:0", // Invalid URL to guarantee error
             Client::new(),
             RateLimiter::new(),
         );

@@ -52,7 +52,7 @@ mod tests {
     #[tokio::test]
     async fn test_get_server_time_request_structure() {
         let client = RestClient::new(
-            "https://open-api.bingx.com",
+            "http://127.0.0.1:0",
             Client::new(),
             RateLimiter::new(),
         );

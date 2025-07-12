@@ -193,7 +193,7 @@ mod tests {
     #[tokio::test]
     async fn test_get_kline_method_exists() {
         let client = RestClient::new(
-            "https://open-api.bingx.com",
+            "http://127.0.0.1:0", // Invalid URL to guarantee error
             Client::new(),
             RateLimiter::new(),
         );

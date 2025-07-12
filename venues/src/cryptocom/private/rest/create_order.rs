@@ -295,8 +295,12 @@ mod tests {
     #[test]
     fn test_create_order_response_structure() {
         let response_json = json!({
-            "order_id": "18342311",
-            "client_oid": "c5f682ed-7108-4f1c-b755-972fcdca0f02"
+            "code": 0,
+            "id": 1,
+            "result": {
+                "order_id": "18342311",
+                "client_oid": "c5f682ed-7108-4f1c-b755-972fcdca0f02"
+            }
         });
 
         let response: CreateOrderResponse = serde_json::from_value(response_json).unwrap();

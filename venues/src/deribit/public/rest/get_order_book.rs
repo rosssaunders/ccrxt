@@ -91,10 +91,10 @@ mod tests {
             "jsonrpc": "2.0",
             "result": {
                 "bids": [
-                    {"price": 64999.0, "amount": 0.5}
+                    [64999.0, 0.5]
                 ],
                 "asks": [
-                    {"price": 65001.0, "amount": 0.4}
+                    [65001.0, 0.4]
                 ],
                 "best_bid_price": 64999.0,
                 "best_ask_price": 65001.0,

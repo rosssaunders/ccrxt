@@ -7,7 +7,7 @@
 //! # Example Usage
 //!
 //! ```rust,no_run
-//! use venues::deribit::{RateLimiter, AccountTier, EndpointType, PublicRestClient, GetComboIdsRequest, GetStatusRequest, Currency};
+//! use venues::deribit::{RateLimiter, AccountTier, EndpointType, PublicRestClient, GetComboIdsRequest, Currency};
 //!
 //! #[tokio::main]
 //! async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -27,8 +27,7 @@
 //!     println!("Found {} combo IDs", response.result.len());
 //!    
 //!     // Get platform status
-//!     let status_request = GetStatusRequest {};
-//!     let status_response = rest_client.get_status(status_request).await?;
+//!     let status_response = rest_client.get_status().await?;
 //!     println!("Platform locked status: {}", status_response.result.locked);
 //!    
 //!     Ok(())

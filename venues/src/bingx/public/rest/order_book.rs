@@ -157,8 +157,8 @@ mod tests {
     #[test]
     fn test_order_book_response_deserialization() {
         let json = r#"{
-            "bids": [[45000.0, 1.5], [44999.0, 2.0]],
-            "asks": [[45001.0, 1.2], [45002.0, 0.8]],
+            "bids": [["45000.0", "1.5"], ["44999.0", "2.0"]],
+            "asks": [["45001.0", "1.2"], ["45002.0", "0.8"]],
             "ts": 1640995200000
         }"#;
 
@@ -177,7 +177,7 @@ mod tests {
     #[tokio::test]
     async fn test_get_order_book_method_exists() {
         let client = RestClient::new(
-            "https://open-api.bingx.com",
+            "http://127.0.0.1:0", // Invalid URL to guarantee error
             Client::new(),
             RateLimiter::new(),
         );

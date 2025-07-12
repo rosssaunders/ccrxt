@@ -110,17 +110,21 @@ mod tests {
     #[test]
     fn test_balance_history_response_structure() {
         let history_json = json!({
-            "instrument_name": "USD",
-            "data": [
-                {
-                    "t": 1629478800000_u64,
-                    "c": "811.621851"
-                },
-                {
-                    "t": 1629565200000_u64,
-                    "c": "900.123456"
-                }
-            ]
+            "code": 0,
+            "id": 1,
+            "result": {
+                "instrument_name": "USD",
+                "data": [
+                    {
+                        "t": 1629478800000_u64,
+                        "c": "811.621851"
+                    },
+                    {
+                        "t": 1629565200000_u64,
+                        "c": "900.123456"
+                    }
+                ]
+            }
         });
 
         let history: GetUserBalanceHistoryResponse = serde_json::from_value(history_json).unwrap();

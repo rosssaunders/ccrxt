@@ -148,13 +148,17 @@ mod tests {
     #[test]
     fn test_convert_response_structure() {
         let response_json = json!({
-            "from_instrument_name": "ETH.staked",
-            "to_instrument_name": "CDCETH",
-            "expected_rate": "1.0203",
-            "from_quantity": "3.14159265",
-            "slippage_tolerance_bps": "3",
-            "convert_id": "1",
-            "reason": "NO_ERROR"
+            "code": 0,
+            "id": 1,
+            "result": {
+                "from_instrument_name": "ETH.staked",
+                "to_instrument_name": "CDCETH",
+                "expected_rate": "1.0203",
+                "from_quantity": "3.14159265",
+                "slippage_tolerance_bps": "3",
+                "convert_id": "1",
+                "reason": "NO_ERROR"
+            }
         });
         let response: ConvertResponse = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.result.from_instrument_name, "ETH.staked");
@@ -169,13 +173,17 @@ mod tests {
     #[test]
     fn test_convert_response_different_convert_ids() {
         let response_json = json!({
-            "from_instrument_name": "CDCETH",
-            "to_instrument_name": "ETH.staked",
-            "expected_rate": "0.9801",
-            "from_quantity": "2.0",
-            "slippage_tolerance_bps": "5",
-            "convert_id": "42",
-            "reason": "NO_ERROR"
+            "code": 0,
+            "id": 2,
+            "result": {
+                "from_instrument_name": "CDCETH",
+                "to_instrument_name": "ETH.staked",
+                "expected_rate": "0.9801",
+                "from_quantity": "2.0",
+                "slippage_tolerance_bps": "5",
+                "convert_id": "42",
+                "reason": "NO_ERROR"
+            }
         });
         let response: ConvertResponse = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.result.convert_id, "42");
@@ -184,13 +192,17 @@ mod tests {
     #[test]
     fn test_convert_different_slippage_tolerances() {
         let response_json = json!({
-            "from_instrument_name": "ETH.staked",
-            "to_instrument_name": "CDCETH",
-            "expected_rate": "1.0203",
-            "from_quantity": "3.14159265",
-            "slippage_tolerance_bps": "7",
-            "convert_id": "99",
-            "reason": "NO_ERROR"
+            "code": 0,
+            "id": 3,
+            "result": {
+                "from_instrument_name": "ETH.staked",
+                "to_instrument_name": "CDCETH",
+                "expected_rate": "1.0203",
+                "from_quantity": "3.14159265",
+                "slippage_tolerance_bps": "7",
+                "convert_id": "99",
+                "reason": "NO_ERROR"
+            }
         });
         let response: ConvertResponse = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.result.slippage_tolerance_bps, "7");
