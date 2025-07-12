@@ -1,0 +1,150 @@
+name: Coverage
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: llvm-tools-preview
+          
+      - name: Install cargo-tarpaulin
+        run: cargo install cargo-tarpaulin
+        
+      - name: Generate coverage report
+        run: |
+          cargo tarpaulin --verbose --all-features --workspace --timeout 120 \
+            --exclude-files 'venues/examples/*' \
+            --exclude-files 'tests/*' \
+            --out xml json html \
+            --output-dir ./coverage
+            
+      - name: Parse coverage and generate badge
+        id: coverage
+        run: |
+          # Extract coverage percentage from XML
+          COVERAGE=$(grep -o 'line-rate="[^"]*"' coverage/cobertura.xml | head -1 | sed 's/line-rate="//;s/"//')
+          COVERAGE_PERCENT=$(echo "$COVERAGE * 100" | bc -l | xargs printf "%.0f")
+          
+          # Determine badge color
+          if [ "$COVERAGE_PERCENT" -ge 80 ]; then
+            COLOR="brightgreen"
+          elif [ "$COVERAGE_PERCENT" -ge 60 ]; then
+            COLOR="yellow"
+          else
+            COLOR="red"
+          fi
+          
+          echo "coverage=$COVERAGE_PERCENT" >> $GITHUB_OUTPUT
+          echo "color=$COLOR" >> $GITHUB_OUTPUT
+          
+          # Create coverage summary
+          echo "## Coverage Report" > coverage/summary.md
+          echo "" >> coverage/summary.md
+          echo "**Total Coverage: ${COVERAGE_PERCENT}%**" >> coverage/summary.md
+          echo "" >> coverage/summary.md
+          echo "[![Coverage](https://img.shields.io/badge/Coverage-${COVERAGE_PERCENT}%25-${COLOR})](https://github.com/${{ github.repository }}/actions/workflows/coverage.yml)" >> coverage/summary.md
+          
+      - name: Generate coverage badge JSON
+        run: |
+          mkdir -p badges
+          cat > badges/coverage.json << EOF
+          {
+            "schemaVersion": 1,
+            "label": "coverage",
+            "message": "${{ steps.coverage.outputs.coverage }}%",
+            "color": "${{ steps.coverage.outputs.color }}"
+          }
+          EOF
+          
+      - name: Deploy coverage badge to GitHub Pages
+        if: github.ref == 'refs/heads/main'
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./badges
+          destination_dir: badges
+          keep_files: true
+          
+      - name: Archive coverage results
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report-${{ github.run_id }}
+          path: |
+            coverage/
+            !coverage/*.profraw
+            
+      - name: Comment coverage on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            
+            try {
+              const summaryContent = fs.readFileSync('coverage/summary.md', 'utf8');
+              
+              // Read detailed coverage info
+              const coverageData = JSON.parse(fs.readFileSync('coverage/tarpaulin-report.json', 'utf8'));
+              
+              let detailsTable = '\n\n### Coverage by Module\n\n| Module | Coverage |\n|--------|----------|\n';
+              
+              if (coverageData.files) {
+                const moduleStats = {};
+                
+                // Group by module/crate
+                for (const [filePath, fileData] of Object.entries(coverageData.files)) {
+                  const moduleName = filePath.split('/')[0] || 'root';
+                  if (!moduleStats[moduleName]) {
+                    moduleStats[moduleName] = { covered: 0, total: 0 };
+                  }
+                  moduleStats[moduleName].covered += fileData.covered || 0;
+                  moduleStats[moduleName].total += fileData.coverable || 0;
+                }
+                
+                // Add module stats to table
+                for (const [module, stats] of Object.entries(moduleStats)) {
+                  if (stats.total > 0) {
+                    const percent = ((stats.covered / stats.total) * 100).toFixed(1);
+                    detailsTable += `| ${module} | ${percent}% (${stats.covered}/${stats.total}) |\n`;
+                  }
+                }
+              }
+              
+              const comment = summaryContent + detailsTable + 
+                `\n\n[📊 View detailed HTML report](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})`;
+
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: comment
+              });
+            } catch (error) {
+              console.log('Could not post coverage comment:', error.message);
+              
+              // Fallback simple comment
+              const coverage = '${{ steps.coverage.outputs.coverage }}';
+              const simpleComment = `## Coverage Report\n\n**Total Coverage: ${coverage}%**\n\n[📊 View detailed report](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})`;
+              
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: simpleComment
+              });
+            }
