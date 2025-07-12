@@ -6,7 +6,7 @@ use super::client::RestClient;
 use crate::bullish::{EndpointType, RestResult, enums::OrderSide};
 
 /// Endpoint URL path for public trades
-const ENDPOINT_PATH: &str = "/v1/markets/{}/trades";
+const ENDPOINT_PATH: &str = "/trading-api/v1/markets/{}/trades";
 
 /// Public trade execution
 #[derive(Debug, Clone, Deserialize)]

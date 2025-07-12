@@ -6,7 +6,7 @@ use super::client::RestClient;
 use crate::bullish::{EndpointType, RestResult};
 
 /// Endpoint URL path for ticker
-const ENDPOINT_PATH: &str = "/v1/markets/{}/tick";
+const ENDPOINT_PATH: &str = "/trading-api/v1/markets/{}/tick";
 
 /// 24-hour ticker statistics
 #[derive(Debug, Clone, Deserialize)]

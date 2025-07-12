@@ -6,10 +6,10 @@ use super::client::RestClient;
 use crate::bullish::{EndpointType, RestResult};
 
 /// Endpoint URL path for markets
-const ENDPOINT_PATH: &str = "/v1/markets";
+const ENDPOINT_PATH: &str = "/trading-api/v1/markets";
 
 /// Endpoint URL path for single market (with parameter)
-const SINGLE_MARKET_ENDPOINT_PATH: &str = "/v1/markets/{}";
+const SINGLE_MARKET_ENDPOINT_PATH: &str = "/trading-api/v1/markets/{}";
 
 /// Market status
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -126,7 +126,7 @@ impl RestClient {
     ///
     /// # Returns
     /// List of all markets with their trading parameters and statistics
-    pub async fn get_markets(&self) -> RestResult<MarketsResponse> {
+    pub async fn get_markets(&self) -> RestResult<Vec<Market>> {
         self.send_request(
             ENDPOINT_PATH,
             reqwest::Method::GET,
@@ -145,7 +145,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Detailed market information including trading parameters and 24h statistics
-    pub async fn get_market(&self, symbol: &str) -> RestResult<SingleMarketResponse> {
+    pub async fn get_market(&self, symbol: &str) -> RestResult<Market> {
         let url = SINGLE_MARKET_ENDPOINT_PATH.replace("{}", symbol);
 
         self.send_request(

@@ -6,10 +6,10 @@ use super::client::RestClient;
 use crate::bullish::{EndpointType, RestResult};
 
 /// Endpoint URL path for assets
-const ENDPOINT_PATH: &str = "/v1/assets";
+const ENDPOINT_PATH: &str = "/trading-api/v1/assets";
 
 /// Endpoint URL path for single asset (with parameter)
-const SINGLE_ASSET_ENDPOINT_PATH: &str = "/v1/assets/{}";
+const SINGLE_ASSET_ENDPOINT_PATH: &str = "/trading-api/v1/assets/{}";
 
 /// Asset status
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -120,7 +120,7 @@ impl RestClient {
     ///
     /// # Returns
     /// List of all assets with their properties and trading parameters
-    pub async fn get_assets(&self) -> RestResult<AssetsResponse> {
+    pub async fn get_assets(&self) -> RestResult<Vec<Asset>> {
         self.send_request(
             ENDPOINT_PATH,
             reqwest::Method::GET,
@@ -139,7 +139,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Detailed asset information including network details and trading parameters
-    pub async fn get_asset(&self, symbol: &str) -> RestResult<SingleAssetResponse> {
+    pub async fn get_asset(&self, symbol: &str) -> RestResult<Asset> {
         let url = SINGLE_ASSET_ENDPOINT_PATH.replace("{}", symbol);
 
         self.send_request(

@@ -6,7 +6,7 @@ use super::client::RestClient;
 use crate::bullish::{EndpointType, RestResult};
 
 /// Endpoint URL path for server time
-const ENDPOINT_PATH: &str = "/v1/time";
+const ENDPOINT_PATH: &str = "/trading-api/v1/time";
 
 /// Server time response
 #[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
