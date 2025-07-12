@@ -187,6 +187,103 @@ pub enum OptionType {
     Put,
 }
 
+/// Status types for various operations
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub enum Status {
+    /// Operation is scheduled
+    Scheduled,
+    /// Operation is ongoing
+    Ongoing,
+    /// Operation is completed
+    Completed,
+    /// Operation was canceled
+    Canceled,
+}
+
+/// Service types for system status and operations
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub enum ServiceType {
+    /// Trading service
+    #[serde(rename = "Trading service")]
+    TradingService,
+    /// HTTP trading service
+    #[serde(rename = "Http trading service")]
+    HttpTradingService,
+    /// WebSocket trading service
+    #[serde(rename = "Websocket trading service")]
+    WebsocketTradingService,
+    /// Derivatives trading service
+    #[serde(rename = "Derivatives trading service")]
+    DerivativesTradingService,
+    /// Spot trading service
+    #[serde(rename = "Spot trading service")]
+    SpotTradingService,
+    /// Options trading service
+    #[serde(rename = "Options trading service")]
+    OptionsTradingService,
+}
+
+/// Product types (extended from Category for more specific use cases)
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub enum ProductType {
+    /// Future products
+    Future,
+    /// Spot products
+    Spot,
+    /// Option products
+    Option,
+    /// Spread products
+    Spread,
+}
+
+/// Maintenance types for system status
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub enum MaintenanceType {
+    /// Planned maintenance
+    #[serde(rename = "Planned maintenance")]
+    PlannedMaintenance,
+    /// Temporary maintenance
+    #[serde(rename = "Temporary maintenance")]
+    TemporaryMaintenance,
+    /// System failure
+    #[serde(rename = "System failure")]
+    SystemFailure,
+}
+
+/// Network environment types
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub enum NetworkType {
+    /// Mainnet environment
+    Mainnet,
+    /// Mainnet demo environment
+    #[serde(rename = "mainnet demo")]
+    MainnetDemo,
+}
+
+/// Transfer types for internal transfers
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "UPPERCASE")]
+pub enum TransferType {
+    /// Transfer to spot account
+    #[serde(rename = "SPOT")]
+    Spot,
+    /// Transfer to contract account
+    #[serde(rename = "CONTRACT")]
+    Contract,
+    /// Transfer to unified account
+    #[serde(rename = "UNIFIED")]
+    Unified,
+    /// Transfer to option account
+    #[serde(rename = "OPTION")]
+    Option,
+    /// Transfer to fund account
+    #[serde(rename = "FUND")]
+    Fund,
+}
+
 impl std::fmt::Display for AccountType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
@@ -222,5 +319,93 @@ mod tests {
         assert_eq!(AccountType::Spot.to_string(), "SPOT");
         assert_eq!(AccountType::Contract.to_string(), "CONTRACT");
         assert_eq!(AccountType::Unified.to_string(), "UNIFIED");
+    }
+
+    #[test]
+    fn test_status_serialization() {
+        assert_eq!(
+            serde_json::to_string(&Status::Scheduled).unwrap(),
+            "\"scheduled\""
+        );
+        assert_eq!(
+            serde_json::to_string(&Status::Ongoing).unwrap(),
+            "\"ongoing\""
+        );
+        assert_eq!(
+            serde_json::to_string(&Status::Completed).unwrap(),
+            "\"completed\""
+        );
+        assert_eq!(
+            serde_json::to_string(&Status::Canceled).unwrap(),
+            "\"canceled\""
+        );
+    }
+
+    #[test]
+    fn test_service_type_serialization() {
+        assert_eq!(
+            serde_json::to_string(&ServiceType::TradingService).unwrap(),
+            "\"Trading service\""
+        );
+        assert_eq!(
+            serde_json::to_string(&ServiceType::HttpTradingService).unwrap(),
+            "\"Http trading service\""
+        );
+        assert_eq!(
+            serde_json::to_string(&ServiceType::WebsocketTradingService).unwrap(),
+            "\"Websocket trading service\""
+        );
+    }
+
+    #[test]
+    fn test_product_type_serialization() {
+        assert_eq!(
+            serde_json::to_string(&ProductType::Future).unwrap(),
+            "\"future\""
+        );
+        assert_eq!(
+            serde_json::to_string(&ProductType::Spot).unwrap(),
+            "\"spot\""
+        );
+        assert_eq!(
+            serde_json::to_string(&ProductType::Option).unwrap(),
+            "\"option\""
+        );
+        assert_eq!(
+            serde_json::to_string(&ProductType::Spread).unwrap(),
+            "\"spread\""
+        );
+    }
+
+    #[test]
+    fn test_maintenance_type_serialization() {
+        assert_eq!(
+            serde_json::to_string(&MaintenanceType::PlannedMaintenance).unwrap(),
+            "\"Planned maintenance\""
+        );
+        assert_eq!(
+            serde_json::to_string(&MaintenanceType::TemporaryMaintenance).unwrap(),
+            "\"Temporary maintenance\""
+        );
+        assert_eq!(
+            serde_json::to_string(&MaintenanceType::SystemFailure).unwrap(),
+            "\"System failure\""
+        );
+    }
+
+    #[test]
+    fn test_transfer_type_serialization() {
+        assert_eq!(
+            serde_json::to_string(&TransferType::Spot).unwrap(),
+            "\"SPOT\""
+        );
+        assert_eq!(
+            serde_json::to_string(&TransferType::Contract).unwrap(),
+            "\"CONTRACT\""
+        );
+        assert_eq!(
+            serde_json::to_string(&TransferType::Unified).unwrap(),
+            "\"UNIFIED\""
+        );
     }
 }

@@ -7,14 +7,17 @@ pub mod private {
 
     pub use self::rest::{
         BalanceData, GetWalletBalanceRequest, GetWalletBalanceResponse,
-        RestClient as PrivateRestClient, WalletBalance,
+        RestClient as PrivateRestClient, TransferRequest, TransferResponse, TransferResult,
+        WalletBalance, WithdrawRequest, WithdrawResponse, WithdrawResult,
     };
 }
 
 pub mod public {
     mod rest;
 
-    pub use self::rest::RestClient as PublicRestClient;
+    pub use self::rest::{
+        RestClient as PublicRestClient, SystemStatusEntry, SystemStatusResponse, SystemStatusResult,
+    };
 }
 
 // Re-export public modules
@@ -22,8 +25,12 @@ pub use enums::*;
 pub use errors::{ApiError, Errors};
 // Export clients
 pub use private::PrivateRestClient;
-pub use private::{BalanceData, GetWalletBalanceRequest, GetWalletBalanceResponse, WalletBalance};
-pub use public::PublicRestClient;
+pub use private::{
+    BalanceData, GetWalletBalanceRequest, GetWalletBalanceResponse, TransferRequest,
+    TransferResponse, TransferResult, WalletBalance, WithdrawRequest, WithdrawResponse,
+    WithdrawResult,
+};
+pub use public::{PublicRestClient, SystemStatusEntry, SystemStatusResponse, SystemStatusResult};
 // Note: Trade and Position endpoint types are available via the private module
 // Example usage: bybit::private::CreateOrderRequest
 pub use rate_limit::{EndpointType, RateLimit, RateLimitError, RateLimiter};
