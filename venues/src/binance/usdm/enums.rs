@@ -322,6 +322,7 @@ impl ContractType {
 /// - `PreDelivering`
 /// - `Delivering`
 /// - `Delivered`
+/// - `Settling`
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum ContractStatus {
@@ -330,6 +331,7 @@ pub enum ContractStatus {
     PreDelivering,
     Delivering,
     Delivered,
+    Settling,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -650,4 +652,42 @@ pub struct TriggerCondition {
     /// UFR (Unable to Fill Rate) trigger threshold
     #[serde(rename = "UFR")]
     pub ufr: i32,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum MarginAsset {
+    #[serde(rename = "USDT")]
+    Usdt,
+    #[serde(rename = "USDC")]
+    Usdc,
+    #[serde(rename = "FDUSD")]
+    Fdusd,
+    #[serde(rename = "BFUSD")]
+    Bfusd,
+    #[serde(rename = "BNFCR")]
+    Bnfcr,
+    #[serde(rename = "LDUSDT")]
+    Ldusdt,
+    #[serde(rename = "BTC")]
+    Btc,
+    #[serde(rename = "BNB")]
+    Bnb,
+    #[serde(rename = "ETH")]
+    Eth,
+}
+
+impl fmt::Display for MarginAsset {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            MarginAsset::Usdt => write!(f, "USDT"),
+            MarginAsset::Usdc => write!(f, "USDC"),
+            MarginAsset::Fdusd => write!(f, "FDUSD"),
+            MarginAsset::Bfusd => write!(f, "BFUSD"),
+            MarginAsset::Bnfcr => write!(f, "BNFCR"),
+            MarginAsset::Ldusdt => write!(f, "LDUSDT"),
+            MarginAsset::Btc => write!(f, "BTC"),
+            MarginAsset::Bnb => write!(f, "BNB"),
+            MarginAsset::Eth => write!(f, "ETH"),
+        }
+    }
 }
