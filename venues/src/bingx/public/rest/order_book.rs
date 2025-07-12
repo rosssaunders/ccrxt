@@ -1,4 +1,4 @@
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Deserializer, Serialize};
 
 use super::RestClient;
 use crate::bingx::{EndpointType, RestResult};
@@ -20,15 +20,37 @@ pub struct GetOrderBookRequest {
     pub timestamp: i64,
 }
 
+/// Custom deserializer for price-quantity pairs that come as string arrays
+fn deserialize_price_qty_array<'de, D>(deserializer: D) -> Result<Vec<[f64; 2]>, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let string_arrays: Vec<[String; 2]> = Vec::deserialize(deserializer)?;
+    let mut result = Vec::new();
+
+    for arr in string_arrays {
+        let price = arr[0].parse::<f64>().map_err(serde::de::Error::custom)?;
+        let quantity = arr[1].parse::<f64>().map_err(serde::de::Error::custom)?;
+        result.push([price, quantity]);
+    }
+
+    Ok(result)
+}
+
 /// Response from the order book endpoint
 #[derive(Debug, Clone, Deserialize)]
 pub struct GetOrderBookResponse {
     /// Buy depth, where the first element of the array is the price and the second element is the quantity
+    #[serde(deserialize_with = "deserialize_price_qty_array")]
     pub bids: Vec<[f64; 2]>,
     /// Sell depth, where the first element of the array is the price and the second element is the quantity
+    #[serde(deserialize_with = "deserialize_price_qty_array")]
     pub asks: Vec<[f64; 2]>,
     /// Timestamp of depth, Unit: milliseconds
     pub ts: i64,
+    /// Last update ID (optional field from API response)
+    #[serde(rename = "lastUpdateId", default)]
+    pub last_update_id: Option<i64>,
 }
 
 impl RestClient {

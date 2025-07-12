@@ -34,15 +34,11 @@ pub struct GetHistoricalKlineRequest {
 }
 
 /// Response from the historical K-line endpoint
-#[derive(Debug, Clone, Deserialize)]
-pub struct GetHistoricalKlineResponse {
-    /// K-line array
-    pub klines: Vec<HistoricalKline>,
-}
+pub type GetHistoricalKlineResponse = Vec<HistoricalKline>;
 
 /// Historical K-line data
-/// [open_time, open, high, low, close, volume, close_time, quote_asset_volume, count, taker_buy_base_asset_volume, taker_buy_quote_asset_volume, ignore]
-pub type HistoricalKline = [f64; 12];
+/// [open_time, open, high, low, close, volume, close_time, quote_asset_volume]
+pub type HistoricalKline = [f64; 8];
 
 impl RestClient {
     /// Get historical K-line data
@@ -67,6 +63,8 @@ impl RestClient {
     /// - If startTime and endTime are sent, the latest K-line data up to endTime is returned by default
     /// - If startTime is sent but endTime is not sent, the latest K-line data starting from startTime is returned by default
     /// - If startTime is not sent but endTime is sent, the latest K-line data up to endTime is returned by default
+    ///
+    /// https://bingx-api.github.io/docs/#/en-us/spot/market-api.html#Historical%20K-line
     pub async fn get_historical_kline(
         &self,
         request: &GetHistoricalKlineRequest,
