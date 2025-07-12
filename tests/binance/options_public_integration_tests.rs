@@ -6,12 +6,13 @@
 use chrono::{Duration, Utc};
 use reqwest::Client;
 use tokio;
-
-use venues::binance::options::public::rest::{
-    klines::KlinesRequest, mark_price::MarkPriceRequest, order_book::OrderBookRequest,
-    recent_trades::RecentTradesRequest, ticker::TickerRequest,
+use venues::binance::options::{
+    PublicRestClient, RateLimiter,
+    public::rest::{
+        klines::KlinesRequest, mark_price::MarkPriceRequest, order_book::OrderBookRequest,
+        recent_trades::RecentTradesRequest, ticker::TickerRequest,
+    },
 };
-use venues::binance::options::{PublicRestClient, RateLimiter};
 
 /// Helper function to create a test client for public endpoints
 fn create_public_test_client() -> PublicRestClient {
@@ -438,8 +439,14 @@ async fn test_klines_with_time_range() {
                     println!("  Data is in chronological order (oldest first)");
                 }
                 // Either order is valid, just verify we have sensible timestamps
-                assert!(first.open_time > 0, "First kline timestamp should be positive");
-                assert!(last.open_time > 0, "Last kline timestamp should be positive");
+                assert!(
+                    first.open_time > 0,
+                    "First kline timestamp should be positive"
+                );
+                assert!(
+                    last.open_time > 0,
+                    "Last kline timestamp should be positive"
+                );
             }
         }
         Err(error) => {

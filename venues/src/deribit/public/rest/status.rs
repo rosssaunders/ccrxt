@@ -4,10 +4,8 @@
 
 use serde::Deserialize;
 
-use crate::deribit::enums::PlatformLockStatus;
-
 use super::RestClient;
-use crate::deribit::{EndpointType, JsonRpcResult, RestResult};
+use crate::deribit::{EndpointType, JsonRpcResult, RestResult, enums::PlatformLockStatus};
 
 const STATUS_ENDPOINT: &str = "public/status";
 

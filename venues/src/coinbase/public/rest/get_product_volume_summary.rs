@@ -114,7 +114,10 @@ mod tests {
         assert_eq!(volume_summary.id, "BTC-USD");
         assert_eq!(volume_summary.base_currency, "BTC");
         assert_eq!(volume_summary.quote_currency, "USD");
-        assert_eq!(volume_summary.market_types, vec!["rfq", "spot", "conversions"]);
+        assert_eq!(
+            volume_summary.market_types,
+            vec!["rfq", "spot", "conversions"]
+        );
         assert_eq!(volume_summary.spot_volume_24hour, "1000000.00");
         assert_eq!(volume_summary.spot_volume_30day, "30000000.00");
     }

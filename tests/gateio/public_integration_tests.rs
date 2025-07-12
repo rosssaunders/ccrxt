@@ -4,15 +4,11 @@
 //! Tests run against the live Gate.io API using real market data.
 
 use tokio;
-
 use venues::gateio::{
     CandlestickInterval,
     public::rest::{
-        RestClient, 
-        candlesticks::CandlesticksRequest, 
-        order_book::OrderBookRequest,
-        tickers::TickersRequest, 
-        trades::TradesRequest,
+        RestClient, candlesticks::CandlesticksRequest, order_book::OrderBookRequest,
+        tickers::TickersRequest, trades::TradesRequest,
     },
 };
 
@@ -92,14 +88,14 @@ async fn test_list_currency_pairs() {
 #[tokio::test]
 async fn test_list_currencies() {
     rate_limit_delay().await; // Add initial delay
-    
+
     // Retry logic to handle rate limiter issues
     let mut attempts = 0;
     let max_attempts = 3;
-    
+
     while attempts < max_attempts {
         let client = create_public_test_client();
-        
+
         match client.list_currencies().await {
             Ok(response) => {
                 assert!(!response.is_empty(), "Should return at least one currency");
@@ -121,7 +117,10 @@ async fn test_list_currencies() {
                 if attempts < max_attempts {
                     tokio::time::sleep(tokio::time::Duration::from_millis(5000)).await;
                 } else {
-                    panic!("list_currencies failed after {} attempts: {:?}", max_attempts, e);
+                    panic!(
+                        "list_currencies failed after {} attempts: {:?}",
+                        max_attempts, e
+                    );
                 }
             }
         }
@@ -314,11 +313,11 @@ async fn test_get_trades() {
 #[tokio::test]
 async fn test_get_trades_with_time_range() {
     rate_limit_delay().await; // Add initial delay
-    
+
     // Retry logic to handle rate limiter issues
     let mut attempts = 0;
     let max_attempts = 2;
-    
+
     while attempts < max_attempts {
         let client = create_public_test_client();
 
@@ -355,7 +354,10 @@ async fn test_get_trades_with_time_range() {
                 if attempts < max_attempts {
                     tokio::time::sleep(tokio::time::Duration::from_millis(3000)).await;
                 } else {
-                    panic!("get_trades with time range failed after {} attempts: {:?}", max_attempts, e);
+                    panic!(
+                        "get_trades with time range failed after {} attempts: {:?}",
+                        max_attempts, e
+                    );
                 }
             }
         }
@@ -481,15 +483,15 @@ async fn test_error_handling_invalid_pair() {
 #[tokio::test]
 async fn test_rate_limiting() {
     rate_limit_delay().await; // Add initial delay
-    
+
     let mut success_count = 0;
     let target_requests = 3;
-    
+
     // Make multiple requests with retry logic
     for i in 0..target_requests {
         let mut attempts = 0;
         let max_attempts = 2;
-        
+
         while attempts < max_attempts {
             let client = create_public_test_client();
             match client.get_server_time().await {
@@ -507,14 +509,20 @@ async fn test_rate_limiting() {
                 }
             }
         }
-        
+
         // Delay between different requests
         tokio::time::sleep(tokio::time::Duration::from_millis(2000)).await;
     }
-    
+
     // As long as we got at least one successful request, consider the test passed
-    assert!(success_count > 0, "Should have at least one successful rate limited request");
-    println!("Successfully completed {}/{} rate limited requests", success_count, target_requests);
+    assert!(
+        success_count > 0,
+        "Should have at least one successful rate limited request"
+    );
+    println!(
+        "Successfully completed {}/{} rate limited requests",
+        success_count, target_requests
+    );
 }
 
 /// Test client creation and configuration
@@ -530,14 +538,14 @@ fn test_client_creation() {
 #[tokio::test]
 async fn test_multiple_currency_pairs() {
     rate_limit_delay().await; // Add initial delay
-    
+
     let pairs = vec!["BTC_USDT", "ETH_USDT"];
     let mut successful_pairs = 0;
 
     for pair in pairs {
         let mut attempts = 0;
         let max_attempts = 2;
-        
+
         while attempts < max_attempts {
             let client = create_public_test_client();
             let request = TickersRequest {
@@ -561,7 +569,10 @@ async fn test_multiple_currency_pairs() {
                 }
                 Err(error) => {
                     attempts += 1;
-                    println!("Ticker request for {} attempt {} failed: {:?}", pair, attempts, error);
+                    println!(
+                        "Ticker request for {} attempt {} failed: {:?}",
+                        pair, attempts, error
+                    );
                     if attempts < max_attempts {
                         tokio::time::sleep(tokio::time::Duration::from_millis(3000)).await;
                     }
@@ -572,9 +583,12 @@ async fn test_multiple_currency_pairs() {
         // Small delay between requests to avoid rate limiting
         tokio::time::sleep(tokio::time::Duration::from_millis(2000)).await;
     }
-    
+
     // As long as we got data for at least one pair, consider the test passed
-    assert!(successful_pairs > 0, "Should have successful ticker data for at least one pair");
+    assert!(
+        successful_pairs > 0,
+        "Should have successful ticker data for at least one pair"
+    );
     println!("Successfully tested {}/2 currency pairs", successful_pairs);
 }
 
@@ -582,14 +596,14 @@ async fn test_multiple_currency_pairs() {
 #[tokio::test]
 async fn test_order_book_multiple_pairs() {
     rate_limit_delay().await; // Add initial delay
-    
-    let pairs = vec!["BTC_USDT"];  // Reduced to just one pair to minimize API calls
+
+    let pairs = vec!["BTC_USDT"]; // Reduced to just one pair to minimize API calls
     let mut successful_pairs = 0;
 
     for pair in pairs {
         let mut attempts = 0;
         let max_attempts = 2;
-        
+
         while attempts < max_attempts {
             let client = create_public_test_client();
             let request = OrderBookRequest {
@@ -611,7 +625,10 @@ async fn test_order_book_multiple_pairs() {
                 }
                 Err(error) => {
                     attempts += 1;
-                    println!("Order book request for {} attempt {} failed: {:?}", pair, attempts, error);
+                    println!(
+                        "Order book request for {} attempt {} failed: {:?}",
+                        pair, attempts, error
+                    );
                     if attempts < max_attempts {
                         tokio::time::sleep(tokio::time::Duration::from_millis(3000)).await;
                     }
@@ -622,10 +639,16 @@ async fn test_order_book_multiple_pairs() {
         // Small delay between requests to avoid rate limiting
         tokio::time::sleep(tokio::time::Duration::from_millis(2000)).await;
     }
-    
+
     // As long as we got data for at least one pair, consider the test passed
-    assert!(successful_pairs > 0, "Should have successful order book data for at least one pair");
-    println!("Successfully tested {}/1 order book pairs", successful_pairs);
+    assert!(
+        successful_pairs > 0,
+        "Should have successful order book data for at least one pair"
+    );
+    println!(
+        "Successfully tested {}/1 order book pairs",
+        successful_pairs
+    );
 }
 
 /// Test trades pagination

@@ -98,9 +98,11 @@ mod tests {
 
     #[test]
     fn test_trade_data_incomplete() {
-        let trade_data = ["BMX_ETH".to_string(),
+        let trade_data = [
+            "BMX_ETH".to_string(),
             "1691743270994".to_string(),
-            "1.00000000".to_string()];
+            "1.00000000".to_string(),
+        ];
 
         assert_eq!(trade_data.first().map(|s| s.as_str()), Some("BMX_ETH"));
         assert_eq!(trade_data.get(1).map(|s| s.as_str()), Some("1691743270994"));
@@ -236,17 +238,21 @@ mod tests {
 
     #[test]
     fn test_trade_sides() {
-        let buy_trade = ["BTC_USDT".to_string(),
+        let buy_trade = [
+            "BTC_USDT".to_string(),
             "1691743270994".to_string(),
             "30000.00".to_string(),
             "0.1".to_string(),
-            "buy".to_string()];
+            "buy".to_string(),
+        ];
 
-        let sell_trade = ["BTC_USDT".to_string(),
+        let sell_trade = [
+            "BTC_USDT".to_string(),
             "1691743270995".to_string(),
             "29999.99".to_string(),
             "0.2".to_string(),
-            "sell".to_string()];
+            "sell".to_string(),
+        ];
 
         assert_eq!(buy_trade.get(4).map(|s| s.as_str()), Some("buy"));
         assert_eq!(sell_trade.get(4).map(|s| s.as_str()), Some("sell"));

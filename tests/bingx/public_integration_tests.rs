@@ -6,7 +6,6 @@
 use chrono;
 use reqwest::Client;
 use tokio;
-
 use venues::bingx::{
     Get24hrTickerRequest, GetHistoricalKlineRequest, GetKlineRequest, GetOldTradeRequest,
     GetOrderBookAggregationRequest, GetOrderBookRequest, GetRecentTradesRequest,

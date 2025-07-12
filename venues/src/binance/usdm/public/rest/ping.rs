@@ -4,9 +4,10 @@
 //
 // See: https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api
 
+use serde::Deserialize;
+
 use super::RestClient;
 use crate::binance::usdm::RestResult;
-use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
 pub struct PingResponse {}

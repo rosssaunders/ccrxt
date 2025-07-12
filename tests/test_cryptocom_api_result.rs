@@ -33,6 +33,9 @@ fn test_api_result_with_method() {
     let response: GetAnnouncementsResponse = serde_json::from_value(response_json).unwrap();
     assert_eq!(response.code, 0);
     assert_eq!(response.id, -1);
-    assert_eq!(response.method, Some("public/get-announcements".to_string()));
+    assert_eq!(
+        response.method,
+        Some("public/get-announcements".to_string())
+    );
     assert!(response.result.data.is_empty());
 }

@@ -30,14 +30,7 @@ pub struct GetProductCandlesRequest {
 ///
 /// Array format: [timestamp, price_low, price_high, price_open, price_close, volume]
 #[derive(Debug, Clone, Deserialize)]
-pub struct Candle(
-    pub u64,
-    pub f64,
-    pub f64,
-    pub f64,
-    pub f64,
-    pub f64,
-);
+pub struct Candle(pub u64, pub f64, pub f64, pub f64, pub f64, pub f64);
 
 /// Response from getting product candles
 pub type GetProductCandlesResponse = Vec<Candle>;

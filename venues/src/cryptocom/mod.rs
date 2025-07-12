@@ -17,14 +17,13 @@ pub mod private {
 
 pub mod public {
     pub mod rest;
-    pub use rest::RestClient;
     pub use rest::{
         ConversionRateResponse, GetAnnouncementsRequest, GetAnnouncementsResponse, GetBookRequest,
         GetBookResponse, GetCandlestickRequest, GetCandlestickResponse, GetConversionRateRequest,
         GetExpiredSettlementPriceRequest, GetExpiredSettlementPriceResponse, GetInstrumentsRequest,
         GetInstrumentsResponse, GetInsuranceRequest, GetInsuranceResponse,
         GetRiskParametersResponse, GetTickersRequest, GetTickersResponse, GetTradesRequest,
-        GetTradesResponse, GetValuationsRequest, GetValuationsResponse,
+        GetTradesResponse, GetValuationsRequest, GetValuationsResponse, RestClient,
     };
 }
 
@@ -40,14 +39,13 @@ pub use private::{
     GetOrderHistoryByCurrencyWithContinuationResponse, GetOrderListRequest, GetOrderListResponse,
     OrderCancellationResult, OrderCreationResult, OrderDetails, OrderListItem,
 };
-pub use public::RestClient as PublicRestClient;
 pub use public::{
     ConversionRateResponse, GetAnnouncementsRequest, GetAnnouncementsResponse, GetBookRequest,
     GetBookResponse, GetCandlestickRequest, GetCandlestickResponse, GetConversionRateRequest,
     GetExpiredSettlementPriceRequest, GetExpiredSettlementPriceResponse, GetInstrumentsRequest,
     GetInstrumentsResponse, GetInsuranceRequest, GetInsuranceResponse, GetRiskParametersResponse,
     GetTickersRequest, GetTickersResponse, GetTradesRequest, GetTradesResponse,
-    GetValuationsRequest, GetValuationsResponse,
+    GetValuationsRequest, GetValuationsResponse, RestClient as PublicRestClient,
 };
 pub use rate_limit::{EndpointType, RateLimit, RateLimitError, RateLimiter};
 

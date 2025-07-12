@@ -20,7 +20,6 @@ pub use get_product_trades::{
     GetProductTradesRequest, GetProductTradesResponse, PaginationInfo, Trade,
 };
 pub use get_product_volume_summary::{
-    GetProductVolumeSummaryRequest, GetProductVolumeSummaryResponse,
-    ProductVolumeSummary,
+    GetProductVolumeSummaryRequest, GetProductVolumeSummaryResponse, ProductVolumeSummary,
 };
 pub use get_products::{GetProductsRequest, GetProductsResponse, Product};

@@ -4,9 +4,9 @@
 //!
 //! [Official API docs](https://docs.deribit.com/#public-get_tradingview_chart_data)
 
+use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
-use std::borrow::Cow;
 
 use super::RestClient;
 use crate::deribit::{EndpointType, Errors as DeribitError, JsonRpcResult};
@@ -76,7 +76,6 @@ impl RestClient {
     ) -> Result<GetTradingviewChartDataResponse, DeribitError> {
         self.send_request(
             TRADINGVIEW_CHART_DATA_ENDPOINT,
-
             Some(params),
             EndpointType::NonMatchingEngine,
         )

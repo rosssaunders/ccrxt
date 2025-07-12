@@ -104,7 +104,7 @@ mod tests {
         assert_eq!(resp.id, 27);
         assert_eq!(resp.jsonrpc, "2.0");
         assert_eq!(resp.result.len(), 2);
-        
+
         let entry1 = &resp.result[0];
         assert_eq!(entry1.currency, "BTC");
         assert_eq!(entry1.currency_pair, "btc_usd");
@@ -112,7 +112,7 @@ mod tests {
         assert!((entry1.calls_volume - 22403.1).abs() < 1e-8);
         assert!((entry1.puts_volume - 12744.4).abs() < 1e-8);
         assert!((entry1.spot_volume - 73.55579536).abs() < 1e-8);
-        
+
         let entry2 = &resp.result[1];
         assert_eq!(entry2.currency, "ETH");
         assert_eq!(entry2.currency_pair, "eth_usd");

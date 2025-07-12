@@ -9,7 +9,6 @@
 
 use reqwest::Client;
 use tokio;
-
 use venues::binance::{
     AggregateTradesRequest,
     BasisRequest,

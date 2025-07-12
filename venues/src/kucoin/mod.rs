@@ -12,19 +12,17 @@ pub use enums::*;
 pub use errors::{ApiError, KucoinError, Result};
 pub use private::RestClient as PrivateRestClient;
 pub use public::RestClient as PublicRestClient;
-pub use rate_limit::{RateLimitHeader, RateLimitStatus, RateLimiter, ResourcePool, VipLevel};
-
-pub use crate::kucoin::errors::ErrorResponse;
-
 // Re-export public REST types for integration tests
 pub use public::rest::{
     AllCurrenciesCurrency, AllSymbolsInfo, AllTickersResponse, AllTickersStatistics, Currency,
-    GetAllCurrenciesRequest, GetAllSymbolsRequest, GetAllTickersRequest,
-    GetCurrencyRequest, GetKlinesRequest, GetPartOrderBookRequest,
-    GetServerTimeRequest, GetServerTimeResponse, GetSymbolRequest, GetTickerRequest,
-    GetTradesRequest, Kline, OrderBookLevel, PartOrderBookResponse, SymbolInfo, TickerStatistics,
-    Trade,
+    GetAllCurrenciesRequest, GetAllSymbolsRequest, GetAllTickersRequest, GetCurrencyRequest,
+    GetKlinesRequest, GetPartOrderBookRequest, GetServerTimeRequest, GetServerTimeResponse,
+    GetSymbolRequest, GetTickerRequest, GetTradesRequest, Kline, OrderBookLevel,
+    PartOrderBookResponse, SymbolInfo, TickerStatistics, Trade,
 };
+pub use rate_limit::{RateLimitHeader, RateLimitStatus, RateLimiter, ResourcePool, VipLevel};
+
+pub use crate::kucoin::errors::ErrorResponse;
 
 // Futures are accessible through public::futures and private::futures
 
