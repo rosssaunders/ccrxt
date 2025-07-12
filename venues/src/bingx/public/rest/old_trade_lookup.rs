@@ -24,18 +24,19 @@ pub type GetOldTradeResponse = Vec<OldTrade>;
 
 /// Old trade information
 #[derive(Debug, Clone, Deserialize)]
-#[serde(rename_all = "camelCase")]
 pub struct OldTrade {
     /// Trade id
-    pub id: i64,
+    pub tid: String,
+    /// Trade time
+    pub t: i64,
+    /// Market side (1=buy, 2=sell)
+    pub ms: i32,
+    /// Symbol
+    pub s: String,
     /// Price
-    pub price: f64,
-    /// Quantity
-    pub qty: f64,
-    /// Time
-    pub time: i64,
-    /// Buyer maker
-    pub buyer_maker: bool,
+    pub p: f64,
+    /// Volume/Quantity
+    pub v: f64,
 }
 
 impl RestClient {

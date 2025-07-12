@@ -8,11 +8,10 @@ use reqwest::Client;
 use tokio;
 
 use venues::bingx::{
-    DepthType, Get24hrTickerRequest, GetHistoricalKlineRequest, GetKlineRequest, GetOldTradeRequest,
+    Get24hrTickerRequest, GetHistoricalKlineRequest, GetKlineRequest, GetOldTradeRequest,
     GetOrderBookAggregationRequest, GetOrderBookRequest, GetRecentTradesRequest,
-    GetServerTimeRequest, GetSymbolOrderBookTickerRequest,
-    GetSymbolPriceTickerRequest, GetSymbolsRequest, Interval, PublicRestClient,
-    RateLimiter,
+    GetSymbolOrderBookTickerRequest, GetSymbolPriceTickerRequest, GetSymbolsRequest, Interval,
+    PublicRestClient, RateLimiter,
 };
 
 /// Helper function to create a test client for public endpoints
@@ -29,7 +28,7 @@ async fn test_get_server_time() {
     let client = create_public_test_client();
 
     let result = client.get_server_time().await;
-    
+
     // This test validates the endpoint is callable and returns a result
     // The actual response format may vary between API versions
     match result {
@@ -56,7 +55,7 @@ async fn test_get_symbols() {
     };
 
     let result = client.get_symbols(&request).await;
-    
+
     // This test validates the endpoint is callable and returns a result
     match result {
         Ok(response) => {
@@ -68,7 +67,10 @@ async fn test_get_symbols() {
 
             // Verify structure of first symbol if available
             if let Some(first_symbol) = response.symbols.first() {
-                assert!(!first_symbol.symbol.is_empty(), "Symbol name should not be empty");
+                assert!(
+                    !first_symbol.symbol.is_empty(),
+                    "Symbol name should not be empty"
+                );
                 println!("First symbol: {}", first_symbol.symbol);
             }
         }
@@ -146,8 +148,9 @@ async fn test_get_order_book_aggregation() {
     let client = create_public_test_client();
     let request = GetOrderBookAggregationRequest {
         symbol: "BTC-USDT".to_string(),
-        depth: 10,
-        type_: DepthType::Step0,
+        limit: Some(10),
+        recv_window: None,
+        timestamp: chrono::Utc::now().timestamp_millis(),
     };
 
     let result = client.get_order_book_aggregation(&request).await;
@@ -158,16 +161,22 @@ async fn test_get_order_book_aggregation() {
     );
 
     let response = result.unwrap();
-    println!("Aggregated order book for BTC-USDT:");
+    println!("Order book for BTC-USDT:");
     println!("  Bids: {}", response.bids.len());
     println!("  Asks: {}", response.asks.len());
 
     // Verify structure if orders are available
     if !response.bids.is_empty() {
         let first_bid = &response.bids[0];
-        assert!(first_bid[0] > 0.0, "Bid price should be positive");
-        assert!(first_bid[1] > 0.0, "Bid quantity should be positive");
-        println!("Best aggregated bid: {} @ {}", first_bid[1], first_bid[0]);
+        let bid_price: f64 = first_bid[0]
+            .parse()
+            .expect("Bid price should be parseable as f64");
+        let bid_qty: f64 = first_bid[1]
+            .parse()
+            .expect("Bid quantity should be parseable as f64");
+        assert!(bid_price > 0.0, "Bid price should be positive");
+        assert!(bid_qty > 0.0, "Bid quantity should be positive");
+        println!("Best bid: {} @ {}", bid_qty, bid_price);
     }
 }
 
@@ -193,16 +202,18 @@ async fn test_get_kline() {
     );
 
     let response = result.unwrap();
-    println!("Found {} klines for BTC-USDT", response.klines.len());
+    println!("Found {} klines for BTC-USDT", response.len());
 
     // Verify structure of first kline if available
-    if let Some(first_kline) = response.klines.first() {
+    if let Some(first_kline) = response.first() {
         assert!(first_kline[1] > 0.0, "Open price should be positive");
         assert!(first_kline[2] > 0.0, "High price should be positive");
         assert!(first_kline[3] > 0.0, "Low price should be positive");
         assert!(first_kline[4] > 0.0, "Close price should be positive");
-        println!("First kline: O:{} H:{} L:{} C:{}", 
-                 first_kline[1], first_kline[2], first_kline[3], first_kline[4]);
+        println!(
+            "First kline: O:{} H:{} L:{} C:{}",
+            first_kline[1], first_kline[2], first_kline[3], first_kline[4]
+        );
     }
 }
 
@@ -212,7 +223,7 @@ async fn test_get_historical_kline() {
     let client = create_public_test_client();
     let request = GetHistoricalKlineRequest {
         symbol: "BTC-USDT".to_string(),
-        interval: Interval::OneHour,
+        interval: Interval::OneDay,
         limit: Some(10),
         start_time: None,
         end_time: None,
@@ -226,16 +237,18 @@ async fn test_get_historical_kline() {
     );
 
     let response = result.unwrap();
-    println!("Found {} historical klines for BTC-USDT", response.klines.len());
+    println!("Found {} historical klines for BTC-USDT", response.len());
 
     // Verify structure of first historical kline if available
-    if let Some(first_kline) = response.klines.first() {
+    if let Some(first_kline) = response.first() {
         assert!(first_kline[1] > 0.0, "Open price should be positive");
         assert!(first_kline[2] > 0.0, "High price should be positive");
         assert!(first_kline[3] > 0.0, "Low price should be positive");
         assert!(first_kline[4] > 0.0, "Close price should be positive");
-        println!("First historical kline: O:{} H:{} L:{} C:{}", 
-                 first_kline[1], first_kline[2], first_kline[3], first_kline[4]);
+        println!(
+            "First historical kline: O:{} H:{} L:{} C:{}",
+            first_kline[1], first_kline[2], first_kline[3], first_kline[4]
+        );
     }
 }
 
@@ -261,9 +274,14 @@ async fn test_get_24hr_ticker() {
 
     // Verify structure of first ticker if available
     if let Some(first_ticker) = response.first() {
-        assert!(!first_ticker.symbol.is_empty(), "Symbol should not be empty");
-        println!("24hr ticker for {}: open_price={}, last_price={}", 
-                 first_ticker.symbol, first_ticker.open_price, first_ticker.last_price);
+        assert!(
+            !first_ticker.symbol.is_empty(),
+            "Symbol should not be empty"
+        );
+        println!(
+            "24hr ticker for {}: open_price={}, last_price={}",
+            first_ticker.symbol, first_ticker.open_price, first_ticker.last_price
+        );
     }
 }
 
@@ -285,9 +303,24 @@ async fn test_get_symbol_price_ticker() {
     let response = result.unwrap();
     println!("Symbol price ticker for BTC-USDT");
 
-    assert!(!response.symbol.is_empty(), "Symbol should not be empty");
-    assert!(!response.price.is_empty(), "Price should not be empty");
-    println!("Price ticker for {}: {}", response.symbol, response.price);
+    assert!(!response.is_empty(), "Response should not be empty");
+    if let Some(first_ticker) = response.first() {
+        assert!(
+            !first_ticker.symbol.is_empty(),
+            "Symbol should not be empty"
+        );
+        assert!(
+            !first_ticker.trades.is_empty(),
+            "Trades should not be empty"
+        );
+        if let Some(first_trade) = first_ticker.trades.first() {
+            assert!(!first_trade.price.is_empty(), "Price should not be empty");
+            println!(
+                "Price ticker for {}: {}",
+                first_ticker.symbol, first_trade.price
+            );
+        }
+    }
 }
 
 /// Test the get_symbol_order_book_ticker endpoint
@@ -308,11 +341,25 @@ async fn test_get_symbol_order_book_ticker() {
     let response = result.unwrap();
     println!("Symbol order book ticker for BTC-USDT");
 
-    assert!(!response.symbol.is_empty(), "Symbol should not be empty");
-    assert!(!response.bid_price.is_empty(), "Bid price should not be empty");
-    assert!(!response.ask_price.is_empty(), "Ask price should not be empty");
-    println!("Order book ticker for {}: bid={}, ask={}", 
-             response.symbol, response.bid_price, response.ask_price);
+    assert!(!response.is_empty(), "Response should not be empty");
+    if let Some(first_ticker) = response.first() {
+        assert!(
+            !first_ticker.symbol.is_empty(),
+            "Symbol should not be empty"
+        );
+        assert!(
+            !first_ticker.bid_price.is_empty(),
+            "Bid price should not be empty"
+        );
+        assert!(
+            !first_ticker.ask_price.is_empty(),
+            "Ask price should not be empty"
+        );
+        println!(
+            "Order book ticker for {}: bid={}, ask={}",
+            first_ticker.symbol, first_ticker.bid_price, first_ticker.ask_price
+        );
+    }
 }
 
 /// Test the get_old_trade endpoint
@@ -337,9 +384,9 @@ async fn test_get_old_trade() {
 
     // Verify structure of first trade if available
     if let Some(first_trade) = response.first() {
-        assert!(first_trade.price > 0.0, "Trade price should be positive");
-        assert!(first_trade.qty > 0.0, "Trade quantity should be positive");
-        println!("First old trade: {} @ {}", first_trade.qty, first_trade.price);
+        assert!(first_trade.p > 0.0, "Trade price should be positive");
+        assert!(first_trade.v > 0.0, "Trade quantity should be positive");
+        println!("First old trade: {} @ {}", first_trade.v, first_trade.p);
     }
 }
 
@@ -366,7 +413,10 @@ async fn test_error_handling() {
             println!("Found {} trades for invalid symbol", response.len());
         }
         Err(error) => {
-            println!("API returned expected error for invalid symbol: {:?}", error);
+            println!(
+                "API returned expected error for invalid symbol: {:?}",
+                error
+            );
             // Error should be structured, not a panic
         }
     }
@@ -424,7 +474,11 @@ async fn test_multiple_symbols() {
         );
 
         let response = result.unwrap();
-        println!("Price ticker for {}: {}", symbol, response.price);
+        if let Some(first_ticker) = response.first() {
+            if let Some(first_trade) = first_ticker.trades.first() {
+                println!("Price ticker for {}: {}", symbol, first_trade.price);
+            }
+        }
 
         // Small delay between requests
         tokio::time::sleep(tokio::time::Duration::from_millis(100)).await;
@@ -437,7 +491,11 @@ async fn test_endpoint_parameters() {
     let client = create_public_test_client();
 
     // Test kline with different intervals
-    let intervals = vec![Interval::OneMinute, Interval::FiveMinutes, Interval::OneHour];
+    let intervals = vec![
+        Interval::OneMinute,
+        Interval::FiveMinutes,
+        Interval::OneHour,
+    ];
     for interval in intervals {
         let request = GetKlineRequest {
             symbol: "BTC-USDT".to_string(),
@@ -458,7 +516,11 @@ async fn test_endpoint_parameters() {
         );
 
         let response = result.unwrap();
-        println!("Klines for {:?} interval: {} results", interval, response.klines.len());
+        println!(
+            "Klines for {:?} interval: {} results",
+            interval,
+            response.len()
+        );
 
         // Small delay between requests
         tokio::time::sleep(tokio::time::Duration::from_millis(100)).await;
@@ -488,8 +550,12 @@ async fn test_order_book_limits() {
         );
 
         let response = result.unwrap();
-        println!("Order book with limit {}: {} bids, {} asks", 
-                 limit, response.bids.len(), response.asks.len());
+        println!(
+            "Order book with limit {}: {} bids, {} asks",
+            limit,
+            response.bids.len(),
+            response.asks.len()
+        );
 
         // Small delay between requests
         tokio::time::sleep(tokio::time::Duration::from_millis(100)).await;
@@ -522,5 +588,8 @@ async fn test_comprehensive_endpoint_coverage() {
         println!("✅ {} endpoint is exported and testable", endpoint);
     }
 
-    println!("✅ All {} BingX public endpoints are covered!", endpoints.len());
+    println!(
+        "✅ All {} BingX public endpoints are covered!",
+        endpoints.len()
+    );
 }

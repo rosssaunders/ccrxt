@@ -69,3 +69,27 @@ impl From<ErrorResponse> for Errors {
 
 /// Type alias for backward compatibility
 pub type BingXError = Errors;
+
+/// BingX API response wrapper
+/// All BingX API responses are wrapped in this structure
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ApiResponse<T> {
+    /// Response code (0 for success, non-zero for errors)
+    pub code: i32,
+    /// Error message (empty string for successful responses)
+    #[serde(default)]
+    pub msg: String,
+    /// Debug message for troubleshooting
+    #[serde(default)]
+    pub debug_msg: String,
+    /// Whether the request can be retried
+    #[serde(default)]
+    pub retryable: i32,
+    /// The actual response data (only present for successful responses)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub data: Option<T>,
+    /// Timestamp (always present)
+    #[serde(default)]
+    pub timestamp: i64,
+}

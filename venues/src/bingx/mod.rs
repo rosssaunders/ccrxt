@@ -23,7 +23,7 @@ pub mod private {
 }
 
 pub use enums::*;
-pub use errors::{BingXError, ErrorResponse, Errors};
+pub use errors::{ApiResponse, BingXError, ErrorResponse, Errors};
 // Alias for backward compatibility
 pub use private::RestClient as BingXRestClient;
 pub use private::{
@@ -35,9 +35,9 @@ pub use public::{
     GetOldTradeResponse, GetOrderBookAggregationRequest, GetOrderBookAggregationResponse,
     GetOrderBookRequest, GetOrderBookResponse, GetRecentTradesRequest, GetRecentTradesResponse,
     GetServerTimeRequest, GetServerTimeResponse, GetSymbolOrderBookTickerRequest,
-    GetSymbolOrderBookTickerResponse, GetSymbolPriceTickerRequest,
-    GetSymbolPriceTickerResponse, GetSymbolsRequest, GetSymbolsResponse, HistoricalKline,
-    Kline, OldTrade, PublicRestClient, Symbol, Ticker24hr, Trade,
+    GetSymbolOrderBookTickerResponse, GetSymbolPriceTickerRequest, GetSymbolPriceTickerResponse,
+    GetSymbolsRequest, GetSymbolsResponse, HistoricalKline, Kline, OldTrade, PublicRestClient,
+    Symbol, Ticker24hr, Trade,
 };
 pub use rate_limit::{EndpointType, RateLimit, RateLimitError, RateLimiter};
 

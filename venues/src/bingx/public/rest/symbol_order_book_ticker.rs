@@ -13,11 +13,16 @@ pub struct GetSymbolOrderBookTickerRequest {
 }
 
 /// Response from the symbol order book ticker endpoint
+pub type GetSymbolOrderBookTickerResponse = Vec<OrderBookTicker>;
+
+/// Order book ticker data
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct GetSymbolOrderBookTickerResponse {
+pub struct OrderBookTicker {
     /// Data type
     pub event_type: String,
+    /// Event time
+    pub time: i64,
     /// Trading pair, such as: BTC_USDT
     pub symbol: String,
     /// Best bid price

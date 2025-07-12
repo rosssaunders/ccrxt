@@ -39,15 +39,11 @@ pub struct GetKlineRequest {
 }
 
 /// Response from the kline/candlestick data endpoint
-#[derive(Debug, Clone, Deserialize)]
-pub struct GetKlineResponse {
-    /// Candlestick chart array
-    pub klines: Vec<Kline>,
-}
+pub type GetKlineResponse = Vec<Kline>;
 
 /// Candlestick/K-line data
-/// [open_time, open, high, low, close, volume, close_time, quote_asset_volume, count, taker_buy_base_asset_volume, taker_buy_quote_asset_volume, ignore]
-pub type Kline = [f64; 12];
+/// [open_time, open, high, low, close, volume, close_time, quote_asset_volume]
+pub type Kline = [f64; 8];
 
 impl RestClient {
     /// Get kline/candlestick data
