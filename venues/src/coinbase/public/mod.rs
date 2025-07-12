@@ -6,7 +6,7 @@ pub use self::rest::{
     GetProductCandlesResponse, GetProductRequest, GetProductResponse, GetProductStatsRequest,
     GetProductStatsResponse, GetProductTickerRequest, GetProductTickerResponse,
     GetProductTradesRequest, GetProductTradesResponse, GetProductVolumeSummaryRequest,
-    GetProductVolumeSummaryResponse, GetProductsRequest, GetProductsResponse, MarketType,
+    GetProductVolumeSummaryResponse, GetProductsRequest, GetProductsResponse,
     OrderBookLevel, PaginationInfo, Product, ProductStats, ProductTicker, ProductVolumeSummary,
     Trade,
 };

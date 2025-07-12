@@ -13,14 +13,6 @@ const PRODUCT_VOLUME_SUMMARY_ENDPOINT: &str = "products/volume-summary";
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct GetProductVolumeSummaryRequest {}
 
-/// Market type information
-#[derive(Debug, Clone, Deserialize)]
-pub struct MarketType {
-    /// Market type name
-    #[serde(default)]
-    pub name: String,
-}
-
 /// Product volume summary information
 #[derive(Debug, Clone, Deserialize)]
 pub struct ProductVolumeSummary {
@@ -36,9 +28,9 @@ pub struct ProductVolumeSummary {
     /// Display name for the product
     pub display_name: String,
 
-    /// Market types
+    /// Market types (array of strings like ["rfq", "spot", "conversions"])
     #[serde(default)]
-    pub market_types: Vec<MarketType>,
+    pub market_types: Vec<String>,
 
     /// 24-hour spot volume
     #[serde(default)]
@@ -109,7 +101,7 @@ mod tests {
             "base_currency": "BTC",
             "quote_currency": "USD",
             "display_name": "BTC/USD",
-            "market_types": [],
+            "market_types": ["rfq", "spot", "conversions"],
             "spot_volume_24hour": "1000000.00",
             "spot_volume_30day": "30000000.00",
             "rfq_volume_24hour": "50000.00",
@@ -122,6 +114,7 @@ mod tests {
         assert_eq!(volume_summary.id, "BTC-USD");
         assert_eq!(volume_summary.base_currency, "BTC");
         assert_eq!(volume_summary.quote_currency, "USD");
+        assert_eq!(volume_summary.market_types, vec!["rfq", "spot", "conversions"]);
         assert_eq!(volume_summary.spot_volume_24hour, "1000000.00");
         assert_eq!(volume_summary.spot_volume_30day, "30000000.00");
     }
@@ -133,7 +126,7 @@ mod tests {
             "base_currency": "BTC",
             "quote_currency": "USD",
             "display_name": "BTC/USD",
-            "market_types": [],
+            "market_types": ["spot"],
             "spot_volume_24hour": "1000000.00",
             "spot_volume_30day": "30000000.00",
             "rfq_volume_24hour": "50000.00",
