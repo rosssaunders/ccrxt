@@ -35,6 +35,12 @@ pub struct Orderbook {
 impl RestClient {
     /// Get orderbook depth
     ///
+    /// Returns the current orderbook depth for a symbol.
+    ///
+    /// [Bitget API Docs - Get OrderBook Depth](https://www.bitget.com/api-doc/spot/market/Get-Orderbook)
+    ///
+    /// Rate limit: see official docs
+    ///
     /// # Arguments
     /// * `request` - The request parameters
     ///

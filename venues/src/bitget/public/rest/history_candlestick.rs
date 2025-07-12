@@ -28,6 +28,12 @@ pub type HistoryCandlestick = [String; 8];
 impl RestClient {
     /// Get historical candlestick data
     ///
+    /// Returns historical candlestick (kline) data for a symbol and interval.
+    ///
+    /// [Bitget API Docs - Get History Candle Data](https://www.bitget.com/api-doc/spot/market/Get-History-Candle-Data)
+    ///
+    /// Rate limit: see official docs
+    ///
     /// # Arguments
     /// * `request` - The request parameters
     ///

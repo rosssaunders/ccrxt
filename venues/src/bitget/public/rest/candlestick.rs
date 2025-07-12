@@ -32,6 +32,12 @@ pub type Candlestick = [String; 8];
 impl RestClient {
     /// Get candlestick data
     ///
+    /// Returns candlestick (kline) data for a symbol and interval.
+    ///
+    /// [Bitget API Docs - Get Candle Data](https://www.bitget.com/api-doc/spot/market/Get-Candle-Data)
+    ///
+    /// Rate limit: see official docs
+    ///
     /// # Arguments
     /// * `request` - The request parameters
     ///

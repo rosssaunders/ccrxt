@@ -66,6 +66,9 @@ fn get_test_coin() -> String {
 }
 
 /// Test the ticker endpoint with no symbol (all symbols)
+///
+/// [Bitget API Docs - Ticker](https://www.bitget.com/api-doc/spot/market/Get-Symbols)  
+/// Note: The direct Ticker endpoint doc returns 404; Symbol Info is the closest match.
 #[tokio::test]
 async fn test_ticker_all_symbols() {
     let client = create_public_test_client();
@@ -95,6 +98,9 @@ async fn test_ticker_all_symbols() {
 }
 
 /// Test the ticker endpoint with specific symbol
+///
+/// [Bitget API Docs - Ticker](https://www.bitget.com/api-doc/spot/market/Get-Symbols)  
+/// Note: The direct Ticker endpoint doc returns 404; Symbol Info is the closest match.
 #[tokio::test]
 async fn test_ticker_specific_symbol() {
     let client = create_public_test_client();
@@ -131,6 +137,8 @@ async fn test_ticker_specific_symbol() {
 }
 
 /// Test the orderbook endpoint
+///
+/// [Bitget API Docs - Get OrderBook Depth](https://www.bitget.com/api-doc/spot/market/Get-Orderbook)
 #[tokio::test]
 async fn test_orderbook() {
     let client = create_public_test_client();
@@ -184,6 +192,9 @@ async fn test_orderbook() {
 }
 
 /// Test the candlestick endpoint
+///
+/// [Bitget API Docs - Candlestick](https://www.bitget.com/api-doc/spot/market/Get-Candle-Data)  
+/// Note: The direct Candlestick endpoint doc returns 404; this is the likely correct page.
 #[tokio::test]
 async fn test_candlestick() {
     let client = create_public_test_client();
@@ -225,6 +236,9 @@ async fn test_candlestick() {
 }
 
 /// Test the history candlestick endpoint
+///
+/// [Bitget API Docs - History Candlestick](https://www.bitget.com/api-doc/spot/market/Get-History-Candle-Data)  
+/// Note: The direct History Candlestick endpoint doc returns 404; this is the likely correct page.
 #[tokio::test]
 async fn test_history_candlestick() {
     let client = create_public_test_client();
@@ -265,6 +279,8 @@ async fn test_history_candlestick() {
 }
 
 /// Test the recent trades endpoint
+///
+/// [Bitget API Docs - Get Recent Trades](https://www.bitget.com/api-doc/spot/market/Get-Recent-Trades)
 #[tokio::test]
 async fn test_recent_trades() {
     let client = create_public_test_client();
@@ -302,6 +318,8 @@ async fn test_recent_trades() {
 }
 
 /// Test the market trades endpoint
+///
+/// [Bitget API Docs - Get Market Trades](https://www.bitget.com/api-doc/spot/market/Get-Market-Trades)
 #[tokio::test]
 async fn test_market_trades() {
     let client = create_public_test_client();
@@ -340,6 +358,8 @@ async fn test_market_trades() {
 }
 
 /// Test the symbol info endpoint with all symbols
+///
+/// [Bitget API Docs - Get Symbol Info](https://www.bitget.com/api-doc/spot/market/Get-Symbols)
 #[tokio::test]
 async fn test_symbol_info_all() {
     let client = create_public_test_client();
@@ -383,6 +403,8 @@ async fn test_symbol_info_all() {
 }
 
 /// Test the symbol info endpoint with specific symbol
+///
+/// [Bitget API Docs - Get Symbol Info](https://www.bitget.com/api-doc/spot/market/Get-Symbols)
 #[tokio::test]
 async fn test_symbol_info_specific() {
     let client = create_public_test_client();
@@ -415,6 +437,9 @@ async fn test_symbol_info_specific() {
 }
 
 /// Test the merge depth endpoint
+///
+/// [Bitget API Docs - Merge Depth](https://www.bitget.com/api-doc/spot/market/Merge-Orderbook)  
+/// Note: The direct Merge Depth endpoint doc returns 404; this is the likely correct page.
 #[tokio::test]
 async fn test_merge_depth() {
     let client = create_public_test_client();
@@ -457,6 +482,8 @@ async fn test_merge_depth() {
 }
 
 /// Test the coin info endpoint with all coins
+///
+/// [Bitget API Docs - Get Coin Info](https://www.bitget.com/api-doc/spot/market/Get-Coin-List)
 #[tokio::test]
 async fn test_coin_info_all() {
     let client = create_public_test_client();
@@ -491,6 +518,8 @@ async fn test_coin_info_all() {
 }
 
 /// Test the coin info endpoint with specific coin
+///
+/// [Bitget API Docs - Get Coin Info](https://www.bitget.com/api-doc/spot/market/Get-Coin-List)
 #[tokio::test]
 async fn test_coin_info_specific() {
     let client = create_public_test_client();
@@ -524,6 +553,9 @@ async fn test_coin_info_specific() {
 }
 
 /// Test the VIP fee rate endpoint
+///
+/// [Bitget API Docs - VIP Fee Rate](https://www.bitget.com/api-doc/spot/market/Get-VIP-Fee-Rate)  
+/// Note: The direct VIP Fee Rate endpoint doc returns 404; this is the likely correct page.
 #[tokio::test]
 async fn test_vip_fee_rate() {
     let client = create_public_test_client();

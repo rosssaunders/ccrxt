@@ -63,13 +63,17 @@ pub struct Ticker {
 impl RestClient {
     /// Get ticker information
     ///
+    /// Returns the latest ticker information for a symbol or all symbols.
+    ///
+    /// [Bitget API Docs - Get Tickers](https://www.bitget.com/api-doc/spot/market/Get-Tickers)
+    ///
+    /// Rate limit: see official docs
+    ///
     /// # Arguments
     /// * `request` - The request parameters
     ///
     /// # Returns
     /// The ticker information
-    ///
-    /// https://www.bitget.com/api-doc/spot/market/Get-Tickers
     pub async fn get_ticker(
         &self,
         request: &GetTickerRequest,
