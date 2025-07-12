@@ -5,10 +5,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::deribit::{
-    EndpointType, JsonRpcResult, RestResult,
-    enums::{Sorting},
-};
+use crate::deribit::{EndpointType, JsonRpcResult, RestResult, enums::Sorting};
 
 const LAST_TRADES_BY_INSTRUMENT_ENDPOINT: &str = "public/get_last_trades_by_instrument";
 
@@ -46,7 +43,7 @@ pub struct TradeEntry {
     /// Timestamp in milliseconds since epoch.
     #[serde(rename = "timestamp")]
     pub timestamp: u64,
-    
+
     /// Direction of the trade (buy/sell).
     #[serde(rename = "direction")]
     pub direction: String,
@@ -54,23 +51,23 @@ pub struct TradeEntry {
     /// Index price at the time of the trade.
     #[serde(rename = "index_price")]
     pub index_price: f64,
-    
+
     /// Instrument name.
     #[serde(rename = "instrument_name")]
     pub instrument_name: String,
-    
+
     /// Trade sequence number.
     #[serde(rename = "trade_seq")]
     pub trade_seq: u64,
-    
+
     /// Mark price at the time of the trade.
     #[serde(rename = "mark_price")]
     pub mark_price: f64,
-    
+
     /// Tick direction (enum).
     #[serde(rename = "tick_direction")]
     pub tick_direction: u8,
-    
+
     /// Number of contracts.
     #[serde(rename = "contracts")]
     pub contracts: f64,
@@ -82,7 +79,7 @@ pub struct GetLastTradesByInstrumentResult {
     /// List of trade entries.
     #[serde(rename = "trades")]
     pub trades: Vec<TradeEntry>,
-    
+
     /// Whether there are more trades available.
     #[serde(rename = "has_more")]
     pub has_more: bool,

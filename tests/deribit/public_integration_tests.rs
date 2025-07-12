@@ -6,7 +6,6 @@
 use chrono;
 use reqwest::Client;
 use tokio;
-
 use venues::deribit::{
     AccountTier, Currency, CurrencyPair, ExpirationsCurrency, ExpirationsInstrumentKind,
     GetAprHistoryRequest, GetBookSummaryByCurrencyRequest, GetBookSummaryByInstrumentRequest,
@@ -2347,10 +2346,7 @@ async fn test_get_trade_volumes() {
     assert_eq!(response.jsonrpc, "2.0");
     assert!(response.id > 0);
 
-    println!(
-        "Found {} trade volume entries",
-        response.result.len()
-    );
+    println!("Found {} trade volume entries", response.result.len());
 
     // Validate trade volume data
     for (i, volume) in response.result.iter().take(3).enumerate() {
@@ -2360,7 +2356,13 @@ async fn test_get_trade_volumes() {
         );
         println!(
             "Trade volume {}: currency={:?}, currency_pair={}, futures_volume={}, calls_volume={}, puts_volume={}, spot_volume={}",
-            i, volume.currency, volume.currency_pair, volume.futures_volume, volume.calls_volume, volume.puts_volume, volume.spot_volume
+            i,
+            volume.currency,
+            volume.currency_pair,
+            volume.futures_volume,
+            volume.calls_volume,
+            volume.puts_volume,
+            volume.spot_volume
         );
     }
 }

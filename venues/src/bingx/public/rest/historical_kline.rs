@@ -1,4 +1,4 @@
-use serde::{Deserialize, Serialize, Serializer};
+use serde::{Serialize, Serializer};
 
 use super::RestClient;
 use crate::bingx::{EndpointType, Interval, RestResult};

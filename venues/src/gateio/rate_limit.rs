@@ -224,7 +224,7 @@ impl RateLimiter {
                 .duration_since(std::time::UNIX_EPOCH)
                 .unwrap()
                 .as_secs();
-            
+
             // Handle case where reset timestamp is in the past by using a default duration
             let reset_duration = if reset > current_timestamp {
                 Duration::from_secs(reset - current_timestamp)

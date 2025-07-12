@@ -2,8 +2,8 @@ use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
 use crate::cryptocom::{
-    ApiResult, ExecInst, OrderType, RefPriceType, RestResult, SpotMarginType, StpInst, StpScope, TimeInForce,
-    TradeSide,
+    ApiResult, ExecInst, OrderType, RefPriceType, RestResult, SpotMarginType, StpInst, StpScope,
+    TimeInForce, TradeSide,
 };
 
 /// Endpoint path for the create-order API

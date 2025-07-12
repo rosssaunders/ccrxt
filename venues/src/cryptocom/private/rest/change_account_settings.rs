@@ -4,7 +4,7 @@ use super::client::RestClient;
 
 /// Endpoint path for the change-account-settings API
 const CHANGE_ACCOUNT_SETTINGS_ENDPOINT: &str = "private/change-account-settings";
-use crate::cryptocom::{RestResult, StpInst, StpScope, ApiResult};
+use crate::cryptocom::{ApiResult, RestResult, StpInst, StpScope};
 
 /// Request parameters for changing account settings
 #[derive(Debug, Clone, Serialize)]

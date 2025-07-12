@@ -39,11 +39,16 @@ pub mod get_ins_margin_coin_info;
 pub mod get_ins_product_info;
 
 pub use client::RestClient;
-
+pub use get_instruments_info::{
+    GetInstrumentsInfoData, GetInstrumentsInfoRequest, GetInstrumentsInfoResponse, InstrumentInfo,
+};
+pub use get_kline::{GetKlineData, GetKlineRequest, GetKlineResponse, Kline};
+pub use get_orderbook::{
+    GetOrderbookData, GetOrderbookRequest, GetOrderbookResponse, OrderbookLevel,
+};
+pub use get_recent_trades::{
+    GetRecentTradesData, GetRecentTradesRequest, GetRecentTradesResponse, TradeInfo,
+};
 // Re-export key types for integration tests
 pub use get_server_time::{GetServerTimeRequest, GetServerTimeResponse, ServerTimeData};
-pub use get_tickers::{GetTickersRequest, GetTickersResponse, TickerInfo, GetTickersData};
-pub use get_kline::{GetKlineRequest, GetKlineResponse, Kline, GetKlineData};
-pub use get_orderbook::{GetOrderbookRequest, GetOrderbookResponse, OrderbookLevel, GetOrderbookData};
-pub use get_recent_trades::{GetRecentTradesRequest, GetRecentTradesResponse, TradeInfo, GetRecentTradesData};
-pub use get_instruments_info::{GetInstrumentsInfoRequest, GetInstrumentsInfoResponse, InstrumentInfo, GetInstrumentsInfoData};
+pub use get_tickers::{GetTickersData, GetTickersRequest, GetTickersResponse, TickerInfo};

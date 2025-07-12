@@ -83,9 +83,8 @@ impl RestClient {
         let mut params = HashMap::new();
         params.insert("symbol".to_string(), request.symbol);
 
-        let (response, headers): (RestResponse<TickerStatistics>, ResponseHeaders) = self
-            .get("/api/v1/market/stats", Some(params))
-            .await?;
+        let (response, headers): (RestResponse<TickerStatistics>, ResponseHeaders) =
+            self.get("/api/v1/market/stats", Some(params)).await?;
 
         Ok((response.data, headers))
     }

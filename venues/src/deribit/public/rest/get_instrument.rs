@@ -5,10 +5,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::deribit::{
-    EndpointType, JsonRpcResult, RestResult,
-    enums::InstrumentKind,
-};
+use crate::deribit::{EndpointType, JsonRpcResult, RestResult, enums::InstrumentKind};
 
 const INSTRUMENT_ENDPOINT: &str = "public/get_instrument";
 
@@ -92,23 +89,38 @@ pub struct InstrumentData {
     pub max_leverage: Option<f64>,
 
     /// Maximum liquidation commission.
-    #[serde(rename = "max_liquidation_commission", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "max_liquidation_commission",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub max_liquidation_commission: Option<f64>,
 
     /// Block trade commission.
-    #[serde(rename = "block_trade_commission", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "block_trade_commission",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub block_trade_commission: Option<f64>,
 
     /// Minimum block trade amount.
-    #[serde(rename = "block_trade_min_trade_amount", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "block_trade_min_trade_amount",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub block_trade_min_trade_amount: Option<f64>,
 
     /// Block trade tick size.
-    #[serde(rename = "block_trade_tick_size", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "block_trade_tick_size",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub block_trade_tick_size: Option<f64>,
 
     /// Settlement currency.
-    #[serde(rename = "settlement_currency", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "settlement_currency",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub settlement_currency: Option<String>,
 
     /// Base currency of the instrument.
@@ -132,7 +144,11 @@ pub struct InstrumentData {
     pub strike: Option<f64>,
 
     /// Option type (optional).
-    #[serde(rename = "option_type", default, skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "option_type",
+        default,
+        skip_serializing_if = "Option::is_none"
+    )]
     pub option_type: Option<String>,
 }
 

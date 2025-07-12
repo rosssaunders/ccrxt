@@ -37,7 +37,6 @@
 
 use reqwest::Client;
 use tokio;
-
 use venues::cryptocom::{
     GetAnnouncementsRequest, GetBookRequest, GetCandlestickRequest, GetConversionRateRequest,
     GetExpiredSettlementPriceRequest, GetInstrumentsRequest, GetInsuranceRequest,
@@ -602,7 +601,7 @@ async fn test_get_expired_settlement_price() {
 
     let response = result.unwrap();
     assert_eq!(response.code, 0); // 0 means success in the Crypto.com API
-    
+
     println!(
         "Found {} expired settlement prices",
         response.result.data.len()

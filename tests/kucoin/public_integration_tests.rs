@@ -5,9 +5,9 @@
 
 use venues::kucoin::{
     GetAllCurrenciesRequest, GetAllSymbolsRequest, GetAllTickersRequest, GetCurrencyRequest,
-    GetKlinesRequest, GetPartOrderBookRequest, GetServerTimeRequest,
-    GetSymbolRequest, GetTickerRequest, GetTradesRequest, KlineInterval, OrderBookLevel,
-    PublicRestClient, RateLimiter,
+    GetKlinesRequest, GetPartOrderBookRequest, GetServerTimeRequest, GetSymbolRequest,
+    GetTickerRequest, GetTradesRequest, KlineInterval, OrderBookLevel, PublicRestClient,
+    RateLimiter,
 };
 
 /// Helper function to create a test client with shared rate limiter
@@ -162,10 +162,7 @@ async fn test_get_ticker() {
 
     println!(
         "Ticker for {}: Last: {}, High: {}, Low: {}",
-        ticker.symbol,
-        ticker.last,
-        ticker.high,
-        ticker.low
+        ticker.symbol, ticker.last, ticker.high, ticker.low
     );
 }
 

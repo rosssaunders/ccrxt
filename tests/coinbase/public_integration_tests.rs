@@ -5,7 +5,6 @@
 
 use reqwest::Client;
 use tokio;
-
 use venues::coinbase::{
     GetProductBookRequest, GetProductCandlesRequest, GetProductRequest, GetProductStatsRequest,
     GetProductTickerRequest, GetProductTradesRequest, GetProductVolumeSummaryRequest,
@@ -34,23 +33,28 @@ async fn test_get_products() {
     );
 
     let response = result.unwrap();
-    assert!(
-        !response.is_empty(),
-        "Should return at least one product"
-    );
+    assert!(!response.is_empty(), "Should return at least one product");
 
     println!("Found {} products", response.len());
 
     // Verify structure of first product
     let first_product = &response[0];
-    assert!(!first_product.id.is_empty(), "Product ID should not be empty");
-    assert!(!first_product.base_currency.is_empty(), "Base currency should not be empty");
-    assert!(!first_product.quote_currency.is_empty(), "Quote currency should not be empty");
+    assert!(
+        !first_product.id.is_empty(),
+        "Product ID should not be empty"
+    );
+    assert!(
+        !first_product.base_currency.is_empty(),
+        "Base currency should not be empty"
+    );
+    assert!(
+        !first_product.quote_currency.is_empty(),
+        "Quote currency should not be empty"
+    );
 
-    println!("First product: {} ({}/{})", 
-        first_product.id, 
-        first_product.base_currency, 
-        first_product.quote_currency
+    println!(
+        "First product: {} ({}/{})",
+        first_product.id, first_product.base_currency, first_product.quote_currency
     );
 }
 
@@ -58,8 +62,8 @@ async fn test_get_products() {
 #[tokio::test]
 async fn test_get_products_with_type_filter() {
     let client = create_public_test_client();
-    let request = GetProductsRequest { 
-        r#type: Some("spot".to_string())
+    let request = GetProductsRequest {
+        r#type: Some("spot".to_string()),
     };
 
     let result = client.get_products(&request).await;
@@ -137,7 +141,7 @@ async fn test_get_product_book_level_1() {
     println!("Order book level 1 for BTC-USD:");
     println!("  Bids: {}", response.bids.len());
     println!("  Asks: {}", response.asks.len());
-    
+
     println!("  Sequence: {}", response.sequence);
 }
 
@@ -184,12 +188,19 @@ async fn test_get_product_candles() {
     assert!(!response.is_empty(), "Should return at least one candle");
 
     println!("Found {} candles for BTC-USD", response.len());
-    
+
     // Verify structure of first candle
     if !response.is_empty() {
         let first_candle = &response[0];
-        println!("First candle: timestamp={}, low={}, high={}, open={}, close={}, volume={}", 
-            first_candle.0, first_candle.1, first_candle.2, first_candle.3, first_candle.4, first_candle.5);
+        println!(
+            "First candle: timestamp={}, low={}, high={}, open={}, close={}, volume={}",
+            first_candle.0,
+            first_candle.1,
+            first_candle.2,
+            first_candle.3,
+            first_candle.4,
+            first_candle.5
+        );
     }
 }
 
@@ -197,11 +208,11 @@ async fn test_get_product_candles() {
 #[tokio::test]
 async fn test_get_product_candles_with_time_range() {
     let client = create_public_test_client();
-    
+
     // Use a recent time range (last 24 hours)
     let end_time = chrono::Utc::now();
     let start_time = end_time - chrono::Duration::days(1);
-    
+
     let request = GetProductCandlesRequest {
         granularity: Some(3600), // 1 hour candles
         start: Some(start_time.to_rfc3339()),
@@ -216,7 +227,10 @@ async fn test_get_product_candles_with_time_range() {
     );
 
     let response = result.unwrap();
-    println!("Found {} candles for BTC-USD in last 24 hours", response.len());
+    println!(
+        "Found {} candles for BTC-USD in last 24 hours",
+        response.len()
+    );
 }
 
 /// Test the get_product_stats endpoint
@@ -233,7 +247,7 @@ async fn test_get_product_stats() {
     );
 
     let response = result.unwrap();
-    
+
     println!("BTC-USD 24h stats:");
     println!("  Open: {}", response.open);
     println!("  High: {}", response.high);
@@ -257,7 +271,7 @@ async fn test_get_product_ticker() {
     );
 
     let response = result.unwrap();
-    
+
     println!("BTC-USD ticker:");
     println!("  Trade ID: {}", response.trade_id);
     println!("  Price: {}", response.price);
@@ -289,12 +303,18 @@ async fn test_get_product_trades() {
     assert!(!response.is_empty(), "Should return at least one trade");
 
     println!("Found {} recent trades for BTC-USD", response.len());
-    
+
     // Verify structure of first trade
     if !response.is_empty() {
         let first_trade = &response[0];
-        println!("First trade: time={}, trade_id={}, price={}, size={}, side={:?}", 
-            first_trade.time, first_trade.trade_id, first_trade.price, first_trade.size, first_trade.side);
+        println!(
+            "First trade: time={}, trade_id={}, price={}, size={}, side={:?}",
+            first_trade.time,
+            first_trade.trade_id,
+            first_trade.price,
+            first_trade.size,
+            first_trade.side
+        );
     }
 
     // Show pagination info if available
@@ -326,7 +346,10 @@ async fn test_get_product_trades_with_limit() {
     );
 
     let (response, _) = result.unwrap();
-    assert!(response.len() <= 5, "Should not return more than requested limit");
+    assert!(
+        response.len() <= 5,
+        "Should not return more than requested limit"
+    );
 
     println!("Found {} trades for ETH-USD (limit 5)", response.len());
 }
@@ -345,10 +368,13 @@ async fn test_get_product_volume_summary() {
     );
 
     let response = result.unwrap();
-    assert!(!response.is_empty(), "Should return at least one volume summary");
-    
+    assert!(
+        !response.is_empty(),
+        "Should return at least one volume summary"
+    );
+
     println!("Found {} product volume summaries", response.len());
-    
+
     // Show the first volume summary
     if !response.is_empty() {
         let first_summary = &response[0];
@@ -365,7 +391,7 @@ async fn test_error_handling_invalid_product() {
     let request = GetProductRequest::default();
 
     let result = client.get_product("INVALID-PAIR", &request).await;
-    
+
     // This should either succeed with an error response or fail gracefully
     match result {
         Ok(_) => println!("API handled invalid product gracefully"),
@@ -410,9 +436,9 @@ fn test_client_creation() {
 #[tokio::test]
 async fn test_get_product_candles_different_granularities() {
     let client = create_public_test_client();
-    
+
     let granularities = vec![60, 300, 900, 3600, 21600, 86400]; // Valid granularities
-    
+
     for granularity in granularities {
         let request = GetProductCandlesRequest {
             granularity: Some(granularity),
@@ -429,8 +455,12 @@ async fn test_get_product_candles_different_granularities() {
         );
 
         let response = result.unwrap();
-        println!("Granularity {} returned {} candles", granularity, response.len());
-        
+        println!(
+            "Granularity {} returned {} candles",
+            granularity,
+            response.len()
+        );
+
         // Small delay between requests to avoid rate limiting
         tokio::time::sleep(tokio::time::Duration::from_millis(100)).await;
     }
@@ -440,7 +470,7 @@ async fn test_get_product_candles_different_granularities() {
 #[tokio::test]
 async fn test_get_product_book_different_levels() {
     let client = create_public_test_client();
-    
+
     for level in 1..=3 {
         let request = GetProductBookRequest { level: Some(level) };
 
@@ -453,9 +483,13 @@ async fn test_get_product_book_different_levels() {
         );
 
         let response = result.unwrap();
-        println!("Level {} order book: {} bids, {} asks", 
-            level, response.bids.len(), response.asks.len());
-        
+        println!(
+            "Level {} order book: {} bids, {} asks",
+            level,
+            response.bids.len(),
+            response.asks.len()
+        );
+
         // Small delay between requests to avoid rate limiting
         tokio::time::sleep(tokio::time::Duration::from_millis(100)).await;
     }
@@ -466,24 +500,28 @@ async fn test_get_product_book_different_levels() {
 async fn test_multiple_products() {
     let client = create_public_test_client();
     let request = GetProductRequest::default();
-    
+
     let products = vec!["BTC-USD", "ETH-USD", "LTC-USD"];
-    
+
     for product_id in products {
         let result = client.get_product(product_id, &request).await;
-        
+
         match result {
             Ok(response) => {
                 assert_eq!(response.id, product_id);
-                println!("Product {}: {} ({}/{})", 
-                    product_id, response.display_name, 
-                    response.base_currency, response.quote_currency);
+                println!(
+                    "Product {}: {} ({}/{})",
+                    product_id,
+                    response.display_name,
+                    response.base_currency,
+                    response.quote_currency
+                );
             }
             Err(error) => {
                 println!("Product {} error (may not exist): {:?}", product_id, error);
             }
         }
-        
+
         // Small delay between requests to avoid rate limiting
         tokio::time::sleep(tokio::time::Duration::from_millis(100)).await;
     }
@@ -494,19 +532,21 @@ async fn test_multiple_products() {
 async fn test_stats_multiple_products() {
     let client = create_public_test_client();
     let request = GetProductStatsRequest::default();
-    
+
     let products = vec!["BTC-USD", "ETH-USD"];
-    
+
     for product_id in products {
         let result = client.get_product_stats(product_id, &request).await;
-        
+
         if let Ok(response) = result {
-            println!("{} stats: Last={}, Volume={}, High={}, Low={}", 
-                product_id, response.last, response.volume, response.high, response.low);
+            println!(
+                "{} stats: Last={}, Volume={}, High={}, Low={}",
+                product_id, response.last, response.volume, response.high, response.low
+            );
         } else {
             println!("Could not get stats for {}: {:?}", product_id, result.err());
         }
-        
+
         // Small delay between requests to avoid rate limiting
         tokio::time::sleep(tokio::time::Duration::from_millis(100)).await;
     }
@@ -517,19 +557,25 @@ async fn test_stats_multiple_products() {
 async fn test_tickers_multiple_products() {
     let client = create_public_test_client();
     let request = GetProductTickerRequest::default();
-    
+
     let products = vec!["BTC-USD", "ETH-USD"];
-    
+
     for product_id in products {
         let result = client.get_product_ticker(product_id, &request).await;
-        
+
         if let Ok(response) = result {
-            println!("{} ticker: Price={}, Bid={}, Ask={}, Volume={}", 
-                product_id, response.price, response.bid, response.ask, response.volume);
+            println!(
+                "{} ticker: Price={}, Bid={}, Ask={}, Volume={}",
+                product_id, response.price, response.bid, response.ask, response.volume
+            );
         } else {
-            println!("Could not get ticker for {}: {:?}", product_id, result.err());
+            println!(
+                "Could not get ticker for {}: {:?}",
+                product_id,
+                result.err()
+            );
         }
-        
+
         // Small delay between requests to avoid rate limiting
         tokio::time::sleep(tokio::time::Duration::from_millis(100)).await;
     }
@@ -539,7 +585,7 @@ async fn test_tickers_multiple_products() {
 #[tokio::test]
 async fn test_get_product_trades_pagination() {
     let client = create_public_test_client();
-    
+
     // First, get some trades
     let initial_request = GetProductTradesRequest {
         limit: Some(3),
@@ -555,10 +601,10 @@ async fn test_get_product_trades_pagination() {
     );
 
     let (initial_trades, _) = result.unwrap();
-    
+
     if !initial_trades.is_empty() {
         println!("Found {} initial trades", initial_trades.len());
-        
+
         // Try to get trades before the first trade
         let before_request = GetProductTradesRequest {
             limit: Some(2),
@@ -567,12 +613,18 @@ async fn test_get_product_trades_pagination() {
         };
 
         let before_result = client.get_product_trades("BTC-USD", &before_request).await;
-        
+
         if let Ok((before_trades, _)) = before_result {
-            println!("Found {} trades before trade {}", 
-                before_trades.len(), initial_trades[0].trade_id);
+            println!(
+                "Found {} trades before trade {}",
+                before_trades.len(),
+                initial_trades[0].trade_id
+            );
         } else {
-            println!("Pagination request failed (expected): {:?}", before_result.err());
+            println!(
+                "Pagination request failed (expected): {:?}",
+                before_result.err()
+            );
         }
     } else {
         println!("No initial trades found for pagination test");
@@ -584,24 +636,28 @@ async fn test_get_product_trades_pagination() {
 async fn test_volume_summary_multiple_products() {
     let client = create_public_test_client();
     let request = GetProductVolumeSummaryRequest::default();
-    
+
     let products = vec!["BTC-USD", "ETH-USD"];
-    
+
     for product_id in products {
         let result = client.get_product_volume_summary(&request).await;
-        
+
         if let Ok(response) = result {
             // Find the matching product in the response
             if let Some(product_summary) = response.iter().find(|p| p.id == product_id) {
-                println!("{} volume: Spot 24h={}, Spot 30d={}", 
-                    product_id, product_summary.spot_volume_24hour, product_summary.spot_volume_30day);
+                println!(
+                    "{} volume: Spot 24h={}, Spot 30d={}",
+                    product_id,
+                    product_summary.spot_volume_24hour,
+                    product_summary.spot_volume_30day
+                );
             } else {
                 println!("Product {} not found in volume summary", product_id);
             }
         } else {
             println!("Could not get volume summary: {:?}", result.err());
         }
-        
+
         // Small delay between requests to avoid rate limiting
         tokio::time::sleep(tokio::time::Duration::from_millis(100)).await;
     }
@@ -614,7 +670,7 @@ async fn test_comprehensive_endpoint_coverage() {
 
     let endpoints = vec![
         "get_products",
-        "get_product", 
+        "get_product",
         "get_product_book",
         "get_product_candles",
         "get_product_stats",

@@ -6,7 +6,6 @@
 //! Endpoint: GET /api/v2/spot/trade/fills
 //! Rate limit: 10 times/1s (UID)
 
-
 use serde::{Deserialize, Serialize};
 
 use super::super::RestClient;

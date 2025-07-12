@@ -109,9 +109,7 @@ pub use get_order_book_by_instrument_id::{
 };
 pub use get_rfqs::{GetRfqsRequest, GetRfqsResponse, RfqEntry};
 pub use get_time::GetTimeResponse;
-pub use get_trade_volumes::{
-    GetTradeVolumesRequest, GetTradeVolumesResponse, TradeVolumeEntry,
-};
+pub use get_trade_volumes::{GetTradeVolumesRequest, GetTradeVolumesResponse, TradeVolumeEntry};
 pub use get_tradingview_chart_data::{
     GetTradingviewChartDataRequest, GetTradingviewChartDataResponse, GetTradingviewChartDataResult,
 };

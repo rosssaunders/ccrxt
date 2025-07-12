@@ -15,14 +15,31 @@ pub mod public {
     mod rest;
 
     pub use self::rest::{
-        RestClient as PublicRestClient,
+        GetInstrumentsInfoData,
+        GetInstrumentsInfoRequest,
+        GetInstrumentsInfoResponse,
+        GetKlineData,
+        GetKlineRequest,
+        GetKlineResponse,
+        GetOrderbookData,
+        GetOrderbookRequest,
+        GetOrderbookResponse,
+        GetRecentTradesData,
+        GetRecentTradesRequest,
+        GetRecentTradesResponse,
         // Re-export public REST types for integration tests
-        GetServerTimeRequest, GetServerTimeResponse, ServerTimeData,
-        GetTickersRequest, GetTickersResponse, TickerInfo, GetTickersData,
-        GetKlineRequest, GetKlineResponse, Kline, GetKlineData,
-        GetOrderbookRequest, GetOrderbookResponse, OrderbookLevel, GetOrderbookData,
-        GetRecentTradesRequest, GetRecentTradesResponse, TradeInfo, GetRecentTradesData,
-        GetInstrumentsInfoRequest, GetInstrumentsInfoResponse, InstrumentInfo, GetInstrumentsInfoData,
+        GetServerTimeRequest,
+        GetServerTimeResponse,
+        GetTickersData,
+        GetTickersRequest,
+        GetTickersResponse,
+        InstrumentInfo,
+        Kline,
+        OrderbookLevel,
+        RestClient as PublicRestClient,
+        ServerTimeData,
+        TickerInfo,
+        TradeInfo,
     };
 }
 
@@ -35,12 +52,11 @@ pub use private::{BalanceData, GetWalletBalanceRequest, GetWalletBalanceResponse
 pub use public::PublicRestClient;
 // Re-export public REST types for integration tests
 pub use public::{
-    GetServerTimeRequest, GetServerTimeResponse, ServerTimeData,
-    GetTickersRequest, GetTickersResponse, TickerInfo, GetTickersData,
-    GetKlineRequest, GetKlineResponse, Kline, GetKlineData,
-    GetOrderbookRequest, GetOrderbookResponse, OrderbookLevel, GetOrderbookData,
-    GetRecentTradesRequest, GetRecentTradesResponse, TradeInfo, GetRecentTradesData,
-    GetInstrumentsInfoRequest, GetInstrumentsInfoResponse, InstrumentInfo, GetInstrumentsInfoData,
+    GetInstrumentsInfoData, GetInstrumentsInfoRequest, GetInstrumentsInfoResponse, GetKlineData,
+    GetKlineRequest, GetKlineResponse, GetOrderbookData, GetOrderbookRequest, GetOrderbookResponse,
+    GetRecentTradesData, GetRecentTradesRequest, GetRecentTradesResponse, GetServerTimeRequest,
+    GetServerTimeResponse, GetTickersData, GetTickersRequest, GetTickersResponse, InstrumentInfo,
+    Kline, OrderbookLevel, ServerTimeData, TickerInfo, TradeInfo,
 };
 // Note: Trade and Position endpoint types are available via the private module
 // Example usage: bybit::private::CreateOrderRequest

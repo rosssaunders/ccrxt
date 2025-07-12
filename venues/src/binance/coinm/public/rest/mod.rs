@@ -28,12 +28,11 @@ pub mod ticker_price;
 pub mod top_long_short_account_ratio;
 pub mod top_long_short_position_ratio;
 
-pub use client::RestClient;
-
 // Re-export all endpoint types for integration tests
 pub use aggregate_trades::*;
 pub use basis::*;
 pub use book_ticker::*;
+pub use client::RestClient;
 pub use constituents::*;
 pub use continuous_klines::*;
 pub use exchange_info::*;

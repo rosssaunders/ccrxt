@@ -5,7 +5,6 @@
 
 use reqwest::Client;
 use tokio;
-
 // Import types from top-level venue exports as required by integration test standards
 use venues::binance::{
     AggTradesRequest, AvgPriceRequest, DepthRequest, Errors, HistoricalTradesRequest,

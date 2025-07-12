@@ -98,9 +98,11 @@ mod tests {
 
     #[test]
     fn test_ticker_data_incomplete() {
-        let ticker_data = ["BTC_USDT".to_string(),
+        let ticker_data = [
+            "BTC_USDT".to_string(),
             "30000.00".to_string(),
-            "582.08066".to_string()];
+            "582.08066".to_string(),
+        ];
 
         assert_eq!(ticker_data.first().map(|s| s.as_str()), Some("BTC_USDT"));
         assert_eq!(ticker_data.get(1).map(|s| s.as_str()), Some("30000.00"));

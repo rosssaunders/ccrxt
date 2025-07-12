@@ -6,14 +6,13 @@
 use chrono::Utc;
 use reqwest::Client;
 use tokio;
-
-use venues::bitget::public::rest::{
-    GetCandlestickRequest, GetCoinInfoRequest, GetHistoryCandlestickRequest,
-    GetMarketTradesRequest, GetMergeDepthRequest, GetOrderbookRequest, GetRecentTradesRequest,
-    GetSymbolInfoRequest, GetTickerRequest,
-};
 use venues::bitget::{
     ApiError, CandlestickGranularity, DepthType, PricePrecision, PublicRestClient, RateLimiter,
+    public::rest::{
+        GetCandlestickRequest, GetCoinInfoRequest, GetHistoryCandlestickRequest,
+        GetMarketTradesRequest, GetMergeDepthRequest, GetOrderbookRequest, GetRecentTradesRequest,
+        GetSymbolInfoRequest, GetTickerRequest,
+    },
 };
 
 /// Helper function to create a test client for public endpoints

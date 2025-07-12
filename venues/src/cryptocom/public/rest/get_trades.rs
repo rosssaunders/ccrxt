@@ -37,7 +37,6 @@ pub struct TradesResult {
     pub data: Vec<Trade>,
 }
 
-
 /// Helper for fields that may be string or integer.
 #[derive(Debug, Clone, Deserialize)]
 #[serde(untagged)]
