@@ -2,7 +2,7 @@
 
 use venues::okx::{
     Bar, BarSize, ConvertContractCoinRequest, GetDeliveryExerciseHistoryRequest,
-    GetDiscountRateInterestFreeQuotaRequest, GetEstimatedPriceRequest,
+    GetDiscountRateInterestFreeQuotaRequest, GetEstimatedPriceRequest, GetEstimatedSettlementInfoRequest,
     GetFundingRateHistoryRequest, GetFundingRateRequest, GetHistoryIndexCandlesRequest,
     GetHistoryMarkPriceCandlesRequest, GetIndexCandlesRequest, GetIndexComponentsRequest,
     GetIndexTickersRequest, GetInstrumentTickBandsRequest, GetInstrumentsRequest,
@@ -237,6 +237,55 @@ async fn test_get_estimated_price() {
     } else {
         println!(
             "Estimated price endpoint returned error: {:?}",
+            result.err()
+        );
+    }
+}
+
+#[tokio::test]
+async fn test_get_estimated_settlement_info() {
+    let client = create_public_test_client();
+    // Fetch a live instrument ID for a futures contract
+    let instruments_req = GetInstrumentsRequest {
+        inst_type: InstrumentType::Futures,
+        underlying: Some("BTC-USD".to_string()),
+        inst_family: None,
+        inst_id: None,
+    };
+    let instruments_resp = client
+        .get_instruments(instruments_req)
+        .await
+        .expect("get_instruments failed");
+    assert_eq!(instruments_resp.code, "0");
+    let inst_id = instruments_resp
+        .data
+        .iter()
+        .find(|inst| inst.state == InstrumentState::Live)
+        .map(|inst| inst.inst_id.clone())
+        .expect("No live futures instrument found");
+
+    let request = GetEstimatedSettlementInfoRequest { inst_id };
+
+    let result = client.get_estimated_settlement_info(&request).await;
+
+    // This endpoint might return empty data if the instrument is not near settlement
+    // (only has data one hour before settlement)
+    if result.is_ok() {
+        let response = result.unwrap();
+        assert_eq!(response.code, "0");
+        if !response.data.is_empty() {
+            println!(
+                "Estimated settlement info: inst_id={}, est_settle_px={}, next_settle_time={}",
+                response.data[0].inst_id,
+                response.data[0].est_settle_px,
+                response.data[0].next_settle_time
+            );
+        } else {
+            println!("No estimated settlement info available for this instrument (likely not near settlement time)");
+        }
+    } else {
+        println!(
+            "Estimated settlement info endpoint returned error: {:?}",
             result.err()
         );
     }

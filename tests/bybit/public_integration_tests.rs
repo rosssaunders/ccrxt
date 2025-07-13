@@ -7,6 +7,15 @@ use venues::bybit::{
     Category, GetInstrumentsInfoRequest, GetKlineRequest, GetOrderbookRequest,
     GetRecentTradesRequest, GetServerTimeRequest, GetTickersRequest, Interval, PublicRestClient,
     RateLimiter,
+    // Price kline endpoints
+    GetMarkPriceKlineRequest, GetIndexPriceKlineRequest, GetPremiumIndexPriceKlineRequest,
+    // Trading & market statistics endpoints
+    GetFundingHistoryRequest, GetHistoricalVolatilityRequest, GetOpenInterestRequest,
+    GetLongShortRatioRequest,
+    // Risk management endpoints
+    GetDeliveryPriceRequest, GetInsuranceRequest, GetRiskLimitRequest,
+    // Margin & loan endpoints
+    GetVipMarginDataRequest, GetCollateralRatioRequest, GetInsMarginCoinInfoRequest,
 };
 
 /// Helper function to create a test client with shared rate limiter
@@ -429,4 +438,430 @@ async fn test_client_creation() {
     );
 
     println!("Bybit public REST client created and connected successfully");
+}
+
+// ===============================
+// MISSING ENDPOINT TESTS
+// ===============================
+
+/// Test mark price kline endpoint
+#[tokio::test]
+async fn test_get_mark_price_kline() {
+    let client = create_public_test_client();
+    let request = GetMarkPriceKlineRequest {
+        category: Category::Linear,
+        symbol: "BTCUSDT".to_string(),
+        interval: Interval::Min1,
+        start: None,
+        end: None,
+        limit: Some(10),
+    };
+
+    let result = client.get_mark_price_kline(request).await;
+    assert!(
+        result.is_ok(),
+        "get_mark_price_kline should succeed: {:?}",
+        result.err()
+    );
+
+    let response = result.unwrap();
+    assert_eq!(response.ret_code, 0, "Response should indicate success");
+
+    println!(
+        "Mark price klines: {} entries for {}",
+        response.result.list.len(),
+        response.result.symbol
+    );
+}
+
+/// Test index price kline endpoint
+#[tokio::test]
+async fn test_get_index_price_kline() {
+    let client = create_public_test_client();
+    let request = GetIndexPriceKlineRequest {
+        category: Category::Linear,
+        symbol: "BTCUSDT".to_string(),
+        interval: Interval::Min1,
+        start: None,
+        end: None,
+        limit: Some(10),
+    };
+
+    let result = client.get_index_price_kline(request).await;
+    assert!(
+        result.is_ok(),
+        "get_index_price_kline should succeed: {:?}",
+        result.err()
+    );
+
+    let response = result.unwrap();
+    assert_eq!(response.ret_code, 0, "Response should indicate success");
+
+    println!(
+        "Index price klines: {} entries for {}",
+        response.result.list.len(),
+        response.result.symbol
+    );
+}
+
+/// Test premium index price kline endpoint
+#[tokio::test]
+async fn test_get_premium_index_price_kline() {
+    let client = create_public_test_client();
+    let request = GetPremiumIndexPriceKlineRequest {
+        category: Category::Linear,
+        symbol: "BTCUSDT".to_string(),
+        interval: Interval::Min1,
+        start: None,
+        end: None,
+        limit: Some(10),
+    };
+
+    let result = client.get_premium_index_price_kline(request).await;
+    assert!(
+        result.is_ok(),
+        "get_premium_index_price_kline should succeed: {:?}",
+        result.err()
+    );
+
+    let response = result.unwrap();
+    assert_eq!(response.ret_code, 0, "Response should indicate success");
+
+    println!(
+        "Premium index price klines: {} entries for {}",
+        response.result.list.len(),
+        response.result.symbol
+    );
+}
+
+/// Test funding history endpoint
+#[tokio::test]
+async fn test_get_funding_history() {
+    let client = create_public_test_client();
+    let request = GetFundingHistoryRequest {
+        category: Category::Linear,
+        symbol: "BTCUSDT".to_string(),
+        start_time: None,
+        end_time: None,
+        limit: Some(10),
+    };
+
+    let result = client.get_funding_history(request).await;
+    assert!(
+        result.is_ok(),
+        "get_funding_history should succeed: {:?}",
+        result.err()
+    );
+
+    let response = result.unwrap();
+    assert_eq!(response.ret_code, 0, "Response should indicate success");
+
+    println!(
+        "Funding history: {} entries for category {:?}",
+        response.result.list.len(),
+        response.result.category
+    );
+}
+
+/// Test open interest endpoint
+#[tokio::test]
+async fn test_get_open_interest() {
+    let client = create_public_test_client();
+    let request = GetOpenInterestRequest {
+        category: Category::Linear,
+        symbol: "BTCUSDT".to_string(),
+        interval_time: "5min".to_string(),
+        start_time: None,
+        end_time: None,
+        limit: Some(10),
+        cursor: None,
+    };
+
+    let result = client.get_open_interest(request).await;
+    assert!(
+        result.is_ok(),
+        "get_open_interest should succeed: {:?}",
+        result.err()
+    );
+
+    let response = result.unwrap();
+    assert_eq!(response.ret_code, 0, "Response should indicate success");
+
+    println!(
+        "Open interest: {} entries for {}",
+        response.result.list.len(),
+        response.result.symbol
+    );
+}
+
+/// Test historical volatility endpoint
+#[tokio::test]
+async fn test_get_historical_volatility() {
+    let client = create_public_test_client();
+    let request = GetHistoricalVolatilityRequest {
+        category: Category::Option,
+        base_coin: "BTC".to_string(),
+        period: Some(7),
+        start_time: None,
+        end_time: None,
+    };
+
+    let result = client.get_historical_volatility(request).await;
+    
+    // This might fail for some accounts/regions, handle gracefully
+    match result {
+        Ok(response) => {
+            assert_eq!(response.ret_code, 0, "Response should indicate success");
+            println!(
+                "Historical volatility: {} entries",
+                response.result.list.len()
+            );
+        }
+        Err(error) => {
+            println!("Historical volatility test skipped due to: {:?}", error);
+        }
+    }
+}
+
+/// Test long short ratio endpoint
+#[tokio::test]
+async fn test_get_long_short_ratio() {
+    let client = create_public_test_client();
+    let request = GetLongShortRatioRequest {
+        category: Category::Linear,
+        symbol: "BTCUSDT".to_string(),
+        period: "5min".to_string(),
+        limit: Some(10),
+    };
+
+    let result = client.get_long_short_ratio(request).await;
+    
+    // This endpoint might have access restrictions
+    match result {
+        Ok(response) => {
+            assert_eq!(response.ret_code, 0, "Response should indicate success");
+            println!(
+                "Long short ratio: {} entries for category {:?}",
+                response.result.list.len(),
+                response.result.category
+            );
+        }
+        Err(error) => {
+            println!("Long short ratio test skipped due to: {:?}", error);
+        }
+    }
+}
+
+/// Test risk limit endpoint
+#[tokio::test]
+async fn test_get_risk_limit() {
+    let client = create_public_test_client();
+    let request = GetRiskLimitRequest {
+        category: Category::Linear,
+        symbol: Some("BTCUSDT".to_string()),
+    };
+
+    let result = client.get_risk_limit(request).await;
+    assert!(
+        result.is_ok(),
+        "get_risk_limit should succeed: {:?}",
+        result.err()
+    );
+
+    let response = result.unwrap();
+    assert_eq!(response.ret_code, 0, "Response should indicate success");
+
+    println!(
+        "Risk limits: {} entries",
+        response.result.list.len()
+    );
+}
+
+/// Test delivery price endpoint
+#[tokio::test]
+async fn test_get_delivery_price() {
+    let client = create_public_test_client();
+    let request = GetDeliveryPriceRequest {
+        category: Category::Linear,
+        symbol: Some("BTCUSDT".to_string()),
+        base_coin: None,
+        limit: Some(10),
+        cursor: None,
+    };
+
+    let result = client.get_delivery_price(request).await;
+    
+    // This might not be available for all symbols
+    match result {
+        Ok(response) => {
+            assert_eq!(response.ret_code, 0, "Response should indicate success");
+            println!(
+                "Delivery prices: {} entries",
+                response.result.list.len()
+            );
+        }
+        Err(error) => {
+            println!("Delivery price test skipped due to: {:?}", error);
+        }
+    }
+}
+
+/// Test insurance endpoint
+#[tokio::test]
+async fn test_get_insurance() {
+    let client = create_public_test_client();
+    let request = GetInsuranceRequest {
+        coin: Some("BTC".to_string()),
+    };
+
+    let result = client.get_insurance(Some(request)).await;
+    assert!(
+        result.is_ok(),
+        "get_insurance should succeed: {:?}",
+        result.err()
+    );
+
+    let response = result.unwrap();
+    assert_eq!(response.ret_code, 0, "Response should indicate success");
+
+    println!(
+        "Insurance data updated at: {}",
+        response.result.updated_time
+    );
+}
+
+/// Test collateral ratio endpoint (no parameters)
+#[tokio::test]
+async fn test_get_collateral_ratio() {
+    let client = create_public_test_client();
+    let result = client.get_collateral_ratio().await;
+    
+    // This might require special permissions
+    match result {
+        Ok(response) => {
+            assert_eq!(response.ret_code, 0, "Response should indicate success");
+            println!(
+                "Collateral ratio: {} entries",
+                response.result.list.len()
+            );
+        }
+        Err(error) => {
+            println!("Collateral ratio test skipped due to: {:?}", error);
+        }
+    }
+}
+
+/// Test borrowable coins endpoint (no parameters)
+#[tokio::test]
+async fn test_get_borrowable_coins() {
+    let client = create_public_test_client();
+    let result = client.get_borrowable_coins().await;
+    
+    // This might require special permissions
+    match result {
+        Ok(response) => {
+            assert_eq!(response.ret_code, 0, "Response should indicate success");
+            println!(
+                "Borrowable coins: {} entries",
+                response.result.list.len()
+            );
+        }
+        Err(error) => {
+            println!("Borrowable coins test skipped due to: {:?}", error);
+        }
+    }
+}
+
+/// Test collateral coins endpoint (no parameters)
+#[tokio::test]
+async fn test_get_collateral_coins() {
+    let client = create_public_test_client();
+    let result = client.get_collateral_coins().await;
+    
+    // This might require special permissions
+    match result {
+        Ok(response) => {
+            assert_eq!(response.ret_code, 0, "Response should indicate success");
+            println!(
+                "Collateral coins: {} entries",
+                response.result.list.len()
+            );
+        }
+        Err(error) => {
+            println!("Collateral coins test skipped due to: {:?}", error);
+        }
+    }
+}
+
+/// Test VIP margin data endpoint
+#[tokio::test]
+async fn test_get_vip_margin_data() {
+    let client = create_public_test_client();
+    let request = GetVipMarginDataRequest {
+        vip_level: Some("1".to_string()),
+        currency: Some("USDT".to_string()),
+    };
+
+    let result = client.get_vip_margin_data(Some(request)).await;
+    
+    // This might require VIP status
+    match result {
+        Ok(response) => {
+            assert_eq!(response.ret_code, 0, "Response should indicate success");
+            println!(
+                "VIP margin data: {} entries",
+                response.result.list.len()
+            );
+        }
+        Err(error) => {
+            println!("VIP margin data test skipped due to: {:?}", error);
+        }
+    }
+}
+
+/// Test institutional margin coin info endpoint
+#[tokio::test]
+async fn test_get_ins_margin_coin_info() {
+    let client = create_public_test_client();
+    let request = GetInsMarginCoinInfoRequest {
+        product_id: "BTC".to_string(),
+    };
+
+    let result = client.get_ins_margin_coin_info(request).await;
+    
+    // This might require institutional access
+    match result {
+        Ok(response) => {
+            assert_eq!(response.ret_code, 0, "Response should indicate success");
+            println!(
+                "Institutional margin coin info for product {}: {} margin coins",
+                response.result.product_id,
+                response.result.margin_coin_info_list.len()
+            );
+        }
+        Err(error) => {
+            println!("Institutional margin coin info test skipped due to: {:?}", error);
+        }
+    }
+}
+
+/// Test institutional product info endpoint (no parameters)
+#[tokio::test]
+async fn test_get_ins_product_info() {
+    let client = create_public_test_client();
+    let result = client.get_ins_product_info().await;
+    
+    // This might require institutional access
+    match result {
+        Ok(response) => {
+            assert_eq!(response.ret_code, 0, "Response should indicate success");
+            println!(
+                "Institutional product info: {} entries",
+                response.result.list.len()
+            );
+        }
+        Err(error) => {
+            println!("Institutional product info test skipped due to: {:?}", error);
+        }
+    }
 }

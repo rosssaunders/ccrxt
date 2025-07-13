@@ -44,6 +44,9 @@ pub use get_discount_rate_interest_free_quota::{
 pub use get_estimated_price::{
     EstimatedPriceData, GetEstimatedPriceRequest, GetEstimatedPriceResponse,
 };
+pub use get_estimated_settlement_info::{
+    EstimatedSettlementInfo, GetEstimatedSettlementInfoRequest, GetEstimatedSettlementInfoResponse,
+};
 pub use get_funding_rate::{FundingRate, GetFundingRateRequest, GetFundingRateResponse};
 pub use get_funding_rate_history::{
     FundingRateHistory, GetFundingRateHistoryRequest, GetFundingRateHistoryResponse,
