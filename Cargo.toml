@@ -4,7 +4,6 @@ members = [
     "venues",
     "websockets",
     "rest",
-    "binance_macros"
 ]
 
 [workspace.package]
@@ -44,7 +43,7 @@ futures = "0.3"
 async-trait = "0.1"
 parking_lot = "0.12.4"
 rust_decimal = { version = "1.37.2", features = ["serde"] }
-clap = { version = "4.5.40", features = ["derive"] }
+clap = { version = "4.5.41", features = ["derive"] }
 
 # Logging
 tracing = "0.1"
