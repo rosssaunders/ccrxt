@@ -68,6 +68,8 @@ impl RestClient {
     ///
     /// # Returns
     /// 24-hour ticker statistics including price, volume, and order book data
+    ///
+    /// https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/markets/-symbol-/tick
     pub async fn get_ticker(&self, symbol: &str) -> RestResult<Ticker> {
         let url = ENDPOINT_PATH.replace("{}", symbol);
 

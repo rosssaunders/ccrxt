@@ -34,73 +34,134 @@ pub enum MarketType {
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Market {
+    /// Market ID
+    #[serde(rename = "marketId")]
+    pub market_id: String,
     /// Market symbol
     pub symbol: String,
-    /// Market display name
-    #[serde(rename = "displayName")]
-    pub display_name: String,
-    /// Base asset symbol
-    #[serde(rename = "baseAsset")]
-    pub base_asset: String,
-    /// Quote asset symbol
-    #[serde(rename = "quoteAsset")]
-    pub quote_asset: String,
+    /// Quote asset ID
+    #[serde(rename = "quoteAssetId")]
+    pub quote_asset_id: String,
+    /// Base asset ID
+    #[serde(rename = "baseAssetId")]
+    pub base_asset_id: String,
+    /// Quote symbol
+    #[serde(rename = "quoteSymbol")]
+    pub quote_symbol: String,
+    /// Base symbol
+    #[serde(rename = "baseSymbol")]
+    pub base_symbol: String,
+    /// Quote precision
+    #[serde(rename = "quotePrecision")]
+    pub quote_precision: String,
+    /// Base precision
+    #[serde(rename = "basePrecision")]
+    pub base_precision: String,
+    /// Price precision
+    #[serde(rename = "pricePrecision")]
+    pub price_precision: String,
+    /// Quantity precision
+    #[serde(rename = "quantityPrecision")]
+    pub quantity_precision: String,
+    /// Cost precision
+    #[serde(rename = "costPrecision")]
+    pub cost_precision: String,
+    /// Minimum quantity limit
+    #[serde(rename = "minQuantityLimit")]
+    pub min_quantity_limit: String,
+    /// Maximum quantity limit
+    #[serde(rename = "maxQuantityLimit")]
+    pub max_quantity_limit: String,
+    /// Maximum price limit
+    #[serde(rename = "maxPriceLimit")]
+    pub max_price_limit: Option<String>,
+    /// Minimum price limit
+    #[serde(rename = "minPriceLimit")]
+    pub min_price_limit: Option<String>,
+    /// Maximum cost limit
+    #[serde(rename = "maxCostLimit")]
+    pub max_cost_limit: Option<String>,
+    /// Minimum cost limit
+    #[serde(rename = "minCostLimit")]
+    pub min_cost_limit: Option<String>,
+    /// Time zone
+    #[serde(rename = "timeZone")]
+    pub time_zone: String,
+    /// Tick size
+    #[serde(rename = "tickSize")]
+    pub tick_size: String,
+    /// Liquidity tick size
+    #[serde(rename = "liquidityTickSize")]
+    pub liquidity_tick_size: String,
+    /// Liquidity precision
+    #[serde(rename = "liquidityPrecision")]
+    pub liquidity_precision: String,
+    /// Maker fee
+    #[serde(rename = "makerFee")]
+    pub maker_fee: String,
+    /// Taker fee
+    #[serde(rename = "takerFee")]
+    pub taker_fee: String,
+    /// Rounding correction factor
+    #[serde(rename = "roundingCorrectionFactor")]
+    pub rounding_correction_factor: String,
+    /// Maker minimum liquidity addition
+    #[serde(rename = "makerMinLiquidityAddition")]
+    pub maker_min_liquidity_addition: String,
+    /// Order types
+    #[serde(rename = "orderTypes")]
+    pub order_types: Vec<String>,
+    /// Whether spot trading is enabled
+    #[serde(rename = "spotTradingEnabled")]
+    pub spot_trading_enabled: bool,
+    /// Whether margin trading is enabled
+    #[serde(rename = "marginTradingEnabled")]
+    pub margin_trading_enabled: bool,
+    /// Whether market is enabled
+    #[serde(rename = "marketEnabled")]
+    pub market_enabled: bool,
+    /// Whether create order is enabled
+    #[serde(rename = "createOrderEnabled")]
+    pub create_order_enabled: bool,
+    /// Whether cancel order is enabled
+    #[serde(rename = "cancelOrderEnabled")]
+    pub cancel_order_enabled: bool,
+    /// Whether amend order is enabled
+    #[serde(rename = "amendOrderEnabled")]
+    pub amend_order_enabled: bool,
+    /// Whether liquidity invest is enabled
+    #[serde(rename = "liquidityInvestEnabled")]
+    pub liquidity_invest_enabled: bool,
+    /// Whether liquidity withdraw is enabled
+    #[serde(rename = "liquidityWithdrawEnabled")]
+    pub liquidity_withdraw_enabled: bool,
+    /// Fee tiers
+    #[serde(rename = "feeTiers")]
+    pub fee_tiers: Vec<FeeTier>,
     /// Market type
-    #[serde(rename = "type")]
-    pub market_type: MarketType,
-    /// Market status
-    pub status: MarketStatus,
-    /// Whether trading is enabled
-    #[serde(rename = "tradingEnabled")]
-    pub trading_enabled: bool,
-    /// Minimum order quantity
-    #[serde(rename = "minOrderQty")]
-    pub min_order_qty: String,
-    /// Maximum order quantity
-    #[serde(rename = "maxOrderQty")]
-    pub max_order_qty: String,
-    /// Quantity increment (step size)
-    #[serde(rename = "qtyIncrement")]
-    pub qty_increment: String,
-    /// Minimum order price
-    #[serde(rename = "minOrderPrice")]
-    pub min_order_price: String,
-    /// Maximum order price
-    #[serde(rename = "maxOrderPrice")]
-    pub max_order_price: String,
-    /// Price increment (tick size)
-    #[serde(rename = "priceIncrement")]
-    pub price_increment: String,
-    /// Minimum notional value
-    #[serde(rename = "minNotional")]
-    pub min_notional: String,
-    /// Maximum notional value
-    #[serde(rename = "maxNotional")]
-    pub max_notional: String,
-    /// Maker fee rate
-    #[serde(rename = "makerFeeRate")]
-    pub maker_fee_rate: String,
-    /// Taker fee rate
-    #[serde(rename = "takerFeeRate")]
-    pub taker_fee_rate: String,
-    /// Last trade price
-    #[serde(rename = "lastPrice")]
-    pub last_price: Option<String>,
-    /// 24h price change percentage
-    #[serde(rename = "priceChange24h")]
-    pub price_change_24h: Option<String>,
-    /// 24h high price
-    #[serde(rename = "high24h")]
-    pub high_24h: Option<String>,
-    /// 24h low price
-    #[serde(rename = "low24h")]
-    pub low_24h: Option<String>,
-    /// 24h volume in base asset
-    #[serde(rename = "volume24h")]
-    pub volume_24h: Option<String>,
-    /// 24h volume in quote asset
-    #[serde(rename = "quoteVolume24h")]
-    pub quote_volume_24h: Option<String>,
+    #[serde(rename = "marketType")]
+    pub market_type: String,
+    /// Price buffer
+    #[serde(rename = "priceBuffer")]
+    pub price_buffer: String,
+    /// Fee group ID
+    #[serde(rename = "feeGroupId")]
+    pub fee_group_id: String,
+}
+
+/// Fee tier information
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct FeeTier {
+    /// Fee tier ID
+    #[serde(rename = "feeTierId")]
+    pub fee_tier_id: String,
+    /// Static spread fee
+    #[serde(rename = "staticSpreadFee")]
+    pub static_spread_fee: String,
+    /// Whether dislocation is enabled
+    #[serde(rename = "isDislocationEnabled")]
+    pub is_dislocation_enabled: bool,
 }
 
 /// Response for markets query
@@ -126,6 +187,8 @@ impl RestClient {
     ///
     /// # Returns
     /// List of all markets with their trading parameters and statistics
+    ///
+    /// https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/markets
     pub async fn get_markets(&self) -> RestResult<Vec<Market>> {
         self.send_request(
             ENDPOINT_PATH,
@@ -145,6 +208,8 @@ impl RestClient {
     ///
     /// # Returns
     /// Detailed market information including trading parameters and 24h statistics
+    ///
+    /// https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/markets/-symbol-
     pub async fn get_market(&self, symbol: &str) -> RestResult<Market> {
         let url = SINGLE_MARKET_ENDPOINT_PATH.replace("{}", symbol);
 
@@ -197,37 +262,52 @@ mod tests {
     #[test]
     fn test_market_deserialization() {
         let json = r#"{
+            "marketId": "BTCUSDC",
             "symbol": "BTCUSDC",
-            "displayName": "BTC/USDC",
-            "baseAsset": "BTC",
-            "quoteAsset": "USDC",
-            "type": "SPOT",
-            "status": "ACTIVE",
-            "tradingEnabled": true,
-            "minOrderQty": "0.0001",
-            "maxOrderQty": "1000",
-            "qtyIncrement": "0.0001",
-            "minOrderPrice": "0.01",
-            "maxOrderPrice": "1000000",
-            "priceIncrement": "0.01",
-            "minNotional": "10",
-            "maxNotional": "1000000",
-            "makerFeeRate": "0.001",
-            "takerFeeRate": "0.002",
-            "lastPrice": "30000.0",
-            "priceChange24h": "2.5",
-            "high24h": "31000.0",
-            "low24h": "29000.0",
-            "volume24h": "100.0",
-            "quoteVolume24h": "3000000.0"
+            "quoteAssetId": "USDC",
+            "baseAssetId": "BTC",
+            "quoteSymbol": "USDC",
+            "baseSymbol": "BTC",
+            "quotePrecision": "2",
+            "basePrecision": "8",
+            "pricePrecision": "2",
+            "quantityPrecision": "4",
+            "costPrecision": "2",
+            "minQuantityLimit": "0.0001",
+            "maxQuantityLimit": "1000",
+            "maxPriceLimit": "1000000",
+            "minPriceLimit": "0.01",
+            "maxCostLimit": "1000000",
+            "minCostLimit": "10",
+            "timeZone": "UTC",
+            "tickSize": "0.01",
+            "liquidityTickSize": "0.01",
+            "liquidityPrecision": "2",
+            "makerFee": "0.001",
+            "takerFee": "0.002",
+            "roundingCorrectionFactor": "1",
+            "makerMinLiquidityAddition": "0",
+            "orderTypes": ["LIMIT", "MARKET"],
+            "spotTradingEnabled": true,
+            "marginTradingEnabled": false,
+            "marketEnabled": true,
+            "createOrderEnabled": true,
+            "cancelOrderEnabled": true,
+            "amendOrderEnabled": true,
+            "liquidityInvestEnabled": true,
+            "liquidityWithdrawEnabled": true,
+            "feeTiers": [],
+            "marketType": "SPOT",
+            "priceBuffer": "0.01",
+            "feeGroupId": "default"
         }"#;
 
         let market: Market = serde_json::from_str(json).unwrap();
         assert_eq!(market.symbol, "BTCUSDC");
-        assert_eq!(market.base_asset, "BTC");
-        assert_eq!(market.quote_asset, "USDC");
-        assert_eq!(market.market_type, MarketType::Spot);
-        assert_eq!(market.status, MarketStatus::Active);
-        assert!(market.trading_enabled);
+        assert_eq!(market.base_asset_id, "BTC");
+        assert_eq!(market.quote_asset_id, "USDC");
+        assert_eq!(market.market_type, "SPOT");
+        assert!(market.market_enabled);
+        assert!(market.spot_trading_enabled);
     }
 }

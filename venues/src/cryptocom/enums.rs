@@ -45,6 +45,7 @@ pub enum ProductType {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "UPPERCASE")]
 pub enum ImpactedStatus {
+    Yes,
     Partial,
     Bau,
 }

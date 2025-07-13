@@ -1,15 +1,27 @@
 # Gate.io Integration Tests
 
-This directory contains comprehensive integration tests for Gate.io's public REST API endpoints.
+This directory contains comprehensive integration tests for Gate.io's REST API endpoints, organized by product type.
 
 ## Test Structure
 
+The tests are organized following Gate.io's documentation structure:
+
+- `spot/` - Spot trading integration tests
+- `delivery/` - Delivery trading integration tests  
+- `perpetual/` - Perpetual/futures trading integration tests
+- `options/` - Options trading integration tests
+- `unified/` - Unified trading integration tests
 - `mod.rs` - Module exports
-- `public_integration_tests.rs` - Complete test suite for public endpoints
+
+### Product Type Directories
+
+Each product type has its own directory with:
+- `mod.rs` - Module exports for the product type
+- `public_integration_tests.rs` - Test suite for public endpoints
 
 ## Covered Endpoints
 
-### Core Infrastructure
+### Spot Trading (`spot/`)
 - **Server Time** (`/spot/time`) - Validates server connectivity and time synchronization
 - **Client Creation** - Tests REST client initialization and configuration
 
@@ -49,15 +61,23 @@ This directory contains comprehensive integration tests for Gate.io's public RES
 ## Running Tests
 
 ### Local Testing
+
 ```bash
 # Run all Gate.io integration tests
 cargo test --test gateio_tests
 
-# Run with single thread (recommended for rate limiting)
+# Run with single thread (recommended for rate limiting)  
 cargo test --test gateio_tests -- --test-threads=1
 
+# Run specific product type tests
+cargo test gateio::spot --test gateio_tests
+cargo test gateio::delivery --test gateio_tests  
+cargo test gateio::perpetual --test gateio_tests
+cargo test gateio::options --test gateio_tests
+cargo test gateio::unified --test gateio_tests
+
 # Run specific test
-cargo test gateio::public_integration_tests::test_get_server_time --test gateio_tests
+cargo test gateio::spot::public_integration_tests::test_get_server_time --test gateio_tests
 ```
 
 ### Automated Testing

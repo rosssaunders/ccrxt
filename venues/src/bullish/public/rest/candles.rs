@@ -59,6 +59,8 @@ impl RestClient {
     ///
     /// # Errors
     /// Returns an error if the request fails or the response cannot be parsed
+    ///
+    /// https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/markets/-symbol-/candle
     pub async fn get_candles(
         &self,
         symbol: &str,
