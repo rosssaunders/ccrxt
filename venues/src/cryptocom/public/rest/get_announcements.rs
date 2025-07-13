@@ -69,15 +69,15 @@ pub struct Announcement {
 
     /// Impacted parameters
     #[serde(rename = "impacted_params")]
-    pub impacted_params: ImpactedParams,
+    pub impacted_params: Option<ImpactedParams>,
 
     /// Announcements start time timestamp (ms)
     #[serde(rename = "start_time")]
-    pub start_time: i64,
+    pub start_time: Option<i64>,
 
     /// Announcements end time timestamp (ms)
     #[serde(rename = "end_time")]
-    pub end_time: i64,
+    pub end_time: Option<i64>,
 }
 
 /// Impacted parameters for announcement
