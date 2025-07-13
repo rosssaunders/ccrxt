@@ -211,48 +211,52 @@ mod tests {
     #[test]
     fn test_asset_deserialization() {
         let json = r#"{
+            "assetId": "BTC",
             "symbol": "BTC",
-            "displayName": "Bitcoin",
-            "description": "Bitcoin cryptocurrency",
-            "status": "ACTIVE",
-            "depositEnabled": true,
-            "withdrawalEnabled": true,
-            "tradingEnabled": true,
-            "borrowingEnabled": true,
-            "collateralEnabled": true,
-            "precision": 8,
-            "minDeposit": "0.001",
-            "minWithdrawal": "0.001",
-            "maxWithdrawal": "100.0",
-            "withdrawalFee": "0.0005",
-            "depositConfirmations": 6,
-            "networks": [
+            "name": "Bitcoin",
+            "precision": "8",
+            "minBalanceInterest": "0.01",
+            "apr": "0.05",
+            "minFee": "0.001",
+            "maxBorrow": "1000",
+            "totalOfferedLoanQuantity": "50000",
+            "loanBorrowedQuantity": "25000",
+            "collateralBands": [
                 {
-                    "network": "Bitcoin",
-                    "displayName": "Bitcoin Network",
-                    "enabled": true,
-                    "contractAddress": null,
-                    "minDeposit": "0.001",
-                    "minWithdrawal": "0.001",
-                    "withdrawalFee": "0.0005",
-                    "depositConfirmations": 6
+                    "collateralPercentage": "80",
+                    "bandLimitUSD": "100000"
+                },
+                {
+                    "collateralPercentage": "70",
+                    "bandLimitUSD": "500000"
                 }
-            ]
+            ],
+            "underlyingAsset": {
+                "symbol": "BTC",
+                "assetId": "BTC",
+                "bpmMinReturnStart": "0.01",
+                "bpmMinReturnEnd": "0.02",
+                "bpmMaxReturnStart": "0.05",
+                "bpmMaxReturnEnd": "0.10",
+                "marketRiskFloorPctStart": "0.01",
+                "marketRiskFloorPctEnd": "0.02",
+                "bpmTransitionDateTimeStart": "2024-01-01T00:00:00Z",
+                "bpmTransitionDateTimeEnd": "2024-12-31T23:59:59Z"
+            }
         }"#;
 
         let asset: Asset = serde_json::from_str(json).unwrap();
         assert_eq!(asset.symbol, "BTC");
-        assert_eq!(asset.display_name, "Bitcoin");
-        assert_eq!(asset.status, AssetStatus::Active);
-        assert!(asset.deposit_enabled);
-        assert!(asset.trading_enabled);
-        assert_eq!(asset.precision, 8);
-        assert!(asset.networks.is_some());
-
-        let networks = asset.networks.unwrap();
-        assert_eq!(networks.len(), 1);
-        assert_eq!(networks[0].network, "Bitcoin");
-        assert_eq!(networks[0].deposit_confirmations, 6);
+        assert_eq!(asset.asset_id, "BTC");
+        assert_eq!(asset.name, "Bitcoin");
+        assert_eq!(asset.precision, "8");
+        assert_eq!(asset.apr, "0.05");
+        assert_eq!(asset.min_fee, "0.001");
+        assert_eq!(asset.max_borrow, "1000");
+        assert_eq!(asset.collateral_bands.len(), 2);
+        assert_eq!(asset.collateral_bands[0].collateral_percentage, "80");
+        assert_eq!(asset.collateral_bands[0].band_limit_usd, "100000");
+        assert_eq!(asset.underlying_asset.symbol, "BTC");
     }
 
     #[test]
@@ -260,19 +264,34 @@ mod tests {
         let json = r#"{
             "data": [
                 {
+                    "assetId": "BTC",
                     "symbol": "BTC",
-                    "displayName": "Bitcoin",
-                    "status": "ACTIVE",
-                    "depositEnabled": true,
-                    "withdrawalEnabled": true,
-                    "tradingEnabled": true,
-                    "borrowingEnabled": true,
-                    "collateralEnabled": true,
-                    "precision": 8,
-                    "minDeposit": "0.001",
-                    "minWithdrawal": "0.001",
-                    "maxWithdrawal": "100.0",
-                    "withdrawalFee": "0.0005"
+                    "name": "Bitcoin",
+                    "precision": "8",
+                    "minBalanceInterest": "0.01",
+                    "apr": "0.05",
+                    "minFee": "0.001",
+                    "maxBorrow": "1000",
+                    "totalOfferedLoanQuantity": "50000",
+                    "loanBorrowedQuantity": "25000",
+                    "collateralBands": [
+                        {
+                            "collateralPercentage": "80",
+                            "bandLimitUSD": "100000"
+                        }
+                    ],
+                    "underlyingAsset": {
+                        "symbol": "BTC",
+                        "assetId": "BTC",
+                        "bpmMinReturnStart": "0.01",
+                        "bpmMinReturnEnd": "0.02",
+                        "bpmMaxReturnStart": "0.05",
+                        "bpmMaxReturnEnd": "0.10",
+                        "marketRiskFloorPctStart": "0.01",
+                        "marketRiskFloorPctEnd": "0.02",
+                        "bpmTransitionDateTimeStart": "2024-01-01T00:00:00Z",
+                        "bpmTransitionDateTimeEnd": "2024-12-31T23:59:59Z"
+                    }
                 }
             ]
         }"#;

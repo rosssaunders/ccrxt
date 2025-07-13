@@ -262,37 +262,52 @@ mod tests {
     #[test]
     fn test_market_deserialization() {
         let json = r#"{
+            "marketId": "BTCUSDC",
             "symbol": "BTCUSDC",
-            "displayName": "BTC/USDC",
-            "baseAsset": "BTC",
-            "quoteAsset": "USDC",
-            "type": "SPOT",
-            "status": "ACTIVE",
-            "tradingEnabled": true,
-            "minOrderQty": "0.0001",
-            "maxOrderQty": "1000",
-            "qtyIncrement": "0.0001",
-            "minOrderPrice": "0.01",
-            "maxOrderPrice": "1000000",
-            "priceIncrement": "0.01",
-            "minNotional": "10",
-            "maxNotional": "1000000",
-            "makerFeeRate": "0.001",
-            "takerFeeRate": "0.002",
-            "lastPrice": "30000.0",
-            "priceChange24h": "2.5",
-            "high24h": "31000.0",
-            "low24h": "29000.0",
-            "volume24h": "100.0",
-            "quoteVolume24h": "3000000.0"
+            "quoteAssetId": "USDC",
+            "baseAssetId": "BTC",
+            "quoteSymbol": "USDC",
+            "baseSymbol": "BTC",
+            "quotePrecision": "2",
+            "basePrecision": "8",
+            "pricePrecision": "2",
+            "quantityPrecision": "4",
+            "costPrecision": "2",
+            "minQuantityLimit": "0.0001",
+            "maxQuantityLimit": "1000",
+            "maxPriceLimit": "1000000",
+            "minPriceLimit": "0.01",
+            "maxCostLimit": "1000000",
+            "minCostLimit": "10",
+            "timeZone": "UTC",
+            "tickSize": "0.01",
+            "liquidityTickSize": "0.01",
+            "liquidityPrecision": "2",
+            "makerFee": "0.001",
+            "takerFee": "0.002",
+            "roundingCorrectionFactor": "1",
+            "makerMinLiquidityAddition": "0",
+            "orderTypes": ["LIMIT", "MARKET"],
+            "spotTradingEnabled": true,
+            "marginTradingEnabled": false,
+            "marketEnabled": true,
+            "createOrderEnabled": true,
+            "cancelOrderEnabled": true,
+            "amendOrderEnabled": true,
+            "liquidityInvestEnabled": true,
+            "liquidityWithdrawEnabled": true,
+            "feeTiers": [],
+            "marketType": "SPOT",
+            "priceBuffer": "0.01",
+            "feeGroupId": "default"
         }"#;
 
         let market: Market = serde_json::from_str(json).unwrap();
         assert_eq!(market.symbol, "BTCUSDC");
-        assert_eq!(market.base_asset, "BTC");
-        assert_eq!(market.quote_asset, "USDC");
-        assert_eq!(market.market_type, MarketType::Spot);
-        assert_eq!(market.status, MarketStatus::Active);
-        assert!(market.trading_enabled);
+        assert_eq!(market.base_asset_id, "BTC");
+        assert_eq!(market.quote_asset_id, "USDC");
+        assert_eq!(market.market_type, "SPOT");
+        assert!(market.market_enabled);
+        assert!(market.spot_trading_enabled);
     }
 }
