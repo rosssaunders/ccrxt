@@ -4,7 +4,7 @@
 //! Tests run against the live Gate.io API using real market data.
 
 use tokio;
-use venues::gateio::{
+use venues::gateio::spotandmargin::{
     CandlestickInterval,
     public::rest::{
         RestClient, candlesticks::CandlesticksRequest, order_book::OrderBookRequest,
@@ -408,7 +408,7 @@ async fn test_get_candlesticks() {
         if first_candle.len() >= 6 {
             println!(
                 "First candle parsed: timestamp={}, volume={}, close={}, high={}, low={}, open={}",
-                first_candle.get(0).unwrap_or(&"N/A".to_string()),
+                first_candle.first().unwrap_or(&"N/A".to_string()),
                 first_candle.get(1).unwrap_or(&"N/A".to_string()),
                 first_candle.get(2).unwrap_or(&"N/A".to_string()),
                 first_candle.get(3).unwrap_or(&"N/A".to_string()),

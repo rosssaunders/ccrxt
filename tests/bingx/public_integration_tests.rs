@@ -6,7 +6,7 @@
 use chrono;
 use reqwest::Client;
 use tokio;
-use venues::bingx::{
+use venues::bingx::spot::{
     Get24hrTickerRequest, GetHistoricalKlineRequest, GetKlineRequest, GetOldTradeRequest,
     GetOrderBookAggregationRequest, GetOrderBookRequest, GetRecentTradesRequest,
     GetSymbolOrderBookTickerRequest, GetSymbolPriceTickerRequest, GetSymbolsRequest, Interval,
@@ -498,7 +498,7 @@ async fn test_endpoint_parameters() {
     for interval in intervals {
         let request = GetKlineRequest {
             symbol: "BTC-USDT".to_string(),
-            interval: interval.clone(),
+            interval: interval,
             limit: Some(5),
             start_time: None,
             end_time: None,

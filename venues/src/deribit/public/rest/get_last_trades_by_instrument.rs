@@ -112,7 +112,7 @@ mod tests {
     use serde_json;
 
     use super::*;
-    use crate::deribit::enums::{Liquidity, Sorting, TickDirection, TradeOrderType};
+    use crate::deribit::enums::Sorting;
 
     #[test]
     fn test_serialize_request() {

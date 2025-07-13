@@ -150,8 +150,14 @@ mod tests {
 
         let response: GetStakingPositionResponse = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.result.data.len(), 1);
-        assert_eq!(response.result.data.first().unwrap().instrument_name, "SOL.staked");
-        assert_eq!(response.result.data.first().unwrap().underlying_inst_name, "SOL");
+        assert_eq!(
+            response.result.data.first().unwrap().instrument_name,
+            "SOL.staked"
+        );
+        assert_eq!(
+            response.result.data.first().unwrap().underlying_inst_name,
+            "SOL"
+        );
     }
 
     #[test]
@@ -183,7 +189,13 @@ mod tests {
 
         let response: GetStakingPositionResponse = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.result.data.len(), 2);
-        assert_eq!(response.result.data.first().unwrap().instrument_name, "SOL.staked");
-        assert_eq!(response.result.data.get(1).unwrap().instrument_name, "ETH.staked");
+        assert_eq!(
+            response.result.data.first().unwrap().instrument_name,
+            "SOL.staked"
+        );
+        assert_eq!(
+            response.result.data.get(1).unwrap().instrument_name,
+            "ETH.staked"
+        );
     }
 }

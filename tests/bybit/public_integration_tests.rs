@@ -282,7 +282,7 @@ async fn test_spot_category() {
 async fn test_multiple_intervals() {
     let client = create_public_test_client();
 
-    let intervals = vec![Interval::Min1, Interval::Min5, Interval::Min60];
+    let intervals = [Interval::Min1, Interval::Min5, Interval::Min60];
 
     for interval in intervals.iter() {
         let request = GetKlineRequest {
@@ -320,7 +320,7 @@ async fn test_multiple_intervals() {
 async fn test_different_categories() {
     let client = create_public_test_client();
 
-    let categories = vec![Category::Linear, Category::Spot];
+    let categories = [Category::Linear, Category::Spot];
 
     for category in categories.iter() {
         let request = GetTickersRequest {

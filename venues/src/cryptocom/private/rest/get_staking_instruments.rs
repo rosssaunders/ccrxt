@@ -234,8 +234,23 @@ mod tests {
         let response: GetStakingInstrumentsResponse =
             serde_json::from_value(response_json).unwrap();
         assert_eq!(response.result.data.len(), 2);
-        assert_eq!(response.result.data.first().unwrap().instrument_name, "SOL.staked");
-        assert_eq!(response.result.data.get(1).unwrap().instrument_name, "DYDX.staked");
-        assert_eq!(response.result.data.get(1).unwrap().additional_rewards.len(), 1);
+        assert_eq!(
+            response.result.data.first().unwrap().instrument_name,
+            "SOL.staked"
+        );
+        assert_eq!(
+            response.result.data.get(1).unwrap().instrument_name,
+            "DYDX.staked"
+        );
+        assert_eq!(
+            response
+                .result
+                .data
+                .get(1)
+                .unwrap()
+                .additional_rewards
+                .len(),
+            1
+        );
     }
 }

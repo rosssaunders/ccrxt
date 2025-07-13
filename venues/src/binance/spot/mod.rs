@@ -25,6 +25,12 @@ pub use errors::{ApiError, Errors};
 // Re-export for backward compatibility
 pub use private::PrivateRestClient;
 pub use public::PublicRestClient;
+// Re-export all public request types for integration tests
+pub use public::rest::{
+    AggTradesRequest, AvgPriceRequest, DepthRequest, ExchangeInfoRequest, HistoricalTradesRequest,
+    KlinesRequest, Ticker24hrRequest, TickerBookRequest, TickerPriceRequest, TickerRequest,
+    TickerTradingDayRequest, TradesRequest, UiKlinesRequest,
+};
 pub use rate_limit::{RateLimitHeader, RateLimiter};
 
 pub use crate::binance::spot::errors::ErrorResponse;

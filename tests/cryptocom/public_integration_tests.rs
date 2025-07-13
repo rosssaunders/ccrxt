@@ -157,7 +157,7 @@ async fn test_get_tickers() {
             first_ticker
                 .instrument_name
                 .as_ref()
-                .map_or(false, |s| !s.is_empty())
+                .is_some_and(|s| !s.is_empty())
         );
 
         // Parse price fields as f64 if present and check >= 0.0

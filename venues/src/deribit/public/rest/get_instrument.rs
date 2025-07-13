@@ -182,7 +182,7 @@ mod tests {
     use serde_json;
 
     use super::*;
-    use crate::deribit::enums::{Currency, InstrumentKind};
+    use crate::deribit::enums::InstrumentKind;
 
     #[test]
     fn test_serialize_request() {

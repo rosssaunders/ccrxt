@@ -5,9 +5,10 @@
 
 use reqwest::Client;
 use tokio;
-
-use venues::bullish::public::rest::{CandleParams, OrderbookParams, PublicTradesParams};
-use venues::bullish::{Errors, PublicRestClient, RateLimiter};
+use venues::bullish::{
+    Errors, PublicRestClient, RateLimiter,
+    public::rest::{CandleParams, OrderbookParams, PublicTradesParams},
+};
 
 /// Helper function to create a test client for public endpoints
 fn create_public_test_client() -> PublicRestClient {
@@ -30,7 +31,7 @@ fn print_error_details(err: &Errors, endpoint_name: &str) {
     println!("  Error type: {:?}", err);
     let error_str = format!("{}", err);
     println!("  Error message: {}", error_str);
-    
+
     // Check for common error patterns
     if error_str.contains("404") {
         println!("  → Likely cause: Endpoint not found (404)");
@@ -86,31 +87,31 @@ fn get_test_asset() -> String {
 #[tokio::test]
 async fn test_api_diagnostics() {
     println!("🔍 Running Bullish API diagnostics...");
-    
+
     // Test basic connectivity with reqwest directly
     let client = reqwest::Client::new();
     let base_url = "https://api.exchange.bullish.com";
-    
+
     println!("📡 Testing connectivity to: {}", base_url);
-    
+
     // Test different endpoints to see which ones work
     let test_endpoints = vec![
         "/v1/time",
-        "/v1/assets", 
+        "/v1/assets",
         "/v1/markets",
         "/trading-api/v1/nonce",
         "/trading-api/v1/index-prices",
     ];
-    
+
     for endpoint in test_endpoints {
         let url = format!("{}{}", base_url, endpoint);
         println!("🧪 Testing endpoint: {}", url);
-        
+
         match client.get(&url).send().await {
             Ok(response) => {
                 let status = response.status();
                 println!("  ✅ Response status: {}", status);
-                
+
                 // Try to get response body
                 match response.text().await {
                     Ok(body) => {
@@ -150,14 +151,17 @@ async fn test_server_time() {
 
         // Validate response structure
         assert!(response.timestamp > 0, "Timestamp should be greater than 0");
-        assert!(!response.datetime.is_empty(), "Datetime should not be empty");
+        assert!(
+            !response.datetime.is_empty(),
+            "Datetime should not be empty"
+        );
 
         // Basic sanity check for timestamp (should be recent)
         let current_time = std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
             .unwrap()
             .as_millis() as u64;
-        
+
         // Allow for some clock drift (10 minutes)
         let time_diff = if current_time > response.timestamp {
             current_time - response.timestamp
@@ -189,8 +193,14 @@ async fn test_nonce() {
             response.lower_bound < response.upper_bound,
             "Lower bound should be less than upper bound"
         );
-        assert!(response.lower_bound > 0, "Lower bound should be greater than 0");
-        assert!(response.upper_bound > 0, "Upper bound should be greater than 0");
+        assert!(
+            response.lower_bound > 0,
+            "Lower bound should be greater than 0"
+        );
+        assert!(
+            response.upper_bound > 0,
+            "Upper bound should be greater than 0"
+        );
     }
 }
 
@@ -222,7 +232,10 @@ async fn test_assets_all() {
                 !first_asset.display_name.is_empty(),
                 "Display name should not be empty"
             );
-            assert!(first_asset.precision <= 18, "Precision should be reasonable");
+            assert!(
+                first_asset.precision <= 18,
+                "Precision should be reasonable"
+            );
         }
     }
 }
@@ -251,7 +264,10 @@ async fn test_asset_specific() {
             asset.symbol, asset_symbol,
             "Returned asset should match requested asset"
         );
-        assert!(!asset.display_name.is_empty(), "Display name should not be empty");
+        assert!(
+            !asset.display_name.is_empty(),
+            "Display name should not be empty"
+        );
     }
 }
 
@@ -278,7 +294,10 @@ async fn test_markets_all() {
             println!("    Trading enabled: {}", first_market.trading_enabled);
 
             // Validate market structure
-            assert!(!first_market.symbol.is_empty(), "Symbol should not be empty");
+            assert!(
+                !first_market.symbol.is_empty(),
+                "Symbol should not be empty"
+            );
             assert!(
                 !first_market.display_name.is_empty(),
                 "Display name should not be empty"
@@ -320,8 +339,14 @@ async fn test_market_specific() {
             market.symbol, market_symbol,
             "Returned market should match requested market"
         );
-        assert!(!market.base_asset.is_empty(), "Base asset should not be empty");
-        assert!(!market.quote_asset.is_empty(), "Quote asset should not be empty");
+        assert!(
+            !market.base_asset.is_empty(),
+            "Base asset should not be empty"
+        );
+        assert!(
+            !market.quote_asset.is_empty(),
+            "Quote asset should not be empty"
+        );
     }
 }
 
@@ -350,7 +375,10 @@ async fn test_ticker() {
 
         // Validate ticker structure
         assert_eq!(response.symbol, symbol, "Symbol should match requested");
-        assert!(!response.last_price.is_empty(), "Last price should not be empty");
+        assert!(
+            !response.last_price.is_empty(),
+            "Last price should not be empty"
+        );
         assert!(!response.volume.is_empty(), "Volume should not be empty");
         assert!(response.timestamp > 0, "Timestamp should be greater than 0");
     }
@@ -386,14 +414,20 @@ async fn test_orderbook() {
             let best_bid = &response.bids[0];
             println!("  Best bid: {} @ {}", best_bid.quantity, best_bid.price);
             assert!(!best_bid.price.is_empty(), "Bid price should not be empty");
-            assert!(!best_bid.quantity.is_empty(), "Bid quantity should not be empty");
+            assert!(
+                !best_bid.quantity.is_empty(),
+                "Bid quantity should not be empty"
+            );
         }
 
         if !response.asks.is_empty() {
             let best_ask = &response.asks[0];
             println!("  Best ask: {} @ {}", best_ask.quantity, best_ask.price);
             assert!(!best_ask.price.is_empty(), "Ask price should not be empty");
-            assert!(!best_ask.quantity.is_empty(), "Ask quantity should not be empty");
+            assert!(
+                !best_ask.quantity.is_empty(),
+                "Ask quantity should not be empty"
+            );
         }
     }
 }
@@ -434,7 +468,10 @@ async fn test_candles() {
             assert!(!first_candle.high.is_empty(), "High should not be empty");
             assert!(!first_candle.low.is_empty(), "Low should not be empty");
             assert!(!first_candle.close.is_empty(), "Close should not be empty");
-            assert!(!first_candle.volume.is_empty(), "Volume should not be empty");
+            assert!(
+                !first_candle.volume.is_empty(),
+                "Volume should not be empty"
+            );
             assert!(
                 !first_candle.open_time_datetime.is_empty(),
                 "Open time should not be empty"
@@ -473,10 +510,19 @@ async fn test_public_trades() {
             println!("    Timestamp: {}", first_trade.timestamp);
 
             // Validate trade structure
-            assert!(!first_trade.trade_id.is_empty(), "Trade ID should not be empty");
+            assert!(
+                !first_trade.trade_id.is_empty(),
+                "Trade ID should not be empty"
+            );
             assert!(!first_trade.price.is_empty(), "Price should not be empty");
-            assert!(!first_trade.quantity.is_empty(), "Quantity should not be empty");
-            assert!(first_trade.timestamp > 0, "Timestamp should be greater than 0");
+            assert!(
+                !first_trade.quantity.is_empty(),
+                "Quantity should not be empty"
+            );
+            assert!(
+                first_trade.timestamp > 0,
+                "Timestamp should be greater than 0"
+            );
         }
     }
 }
@@ -501,9 +547,15 @@ async fn test_index_prices() {
             println!("    Updated at: {}", first_index.updated_at_datetime);
 
             // Validate index price structure
-            assert!(!first_index.asset_symbol.is_empty(), "Symbol should not be empty");
+            assert!(
+                !first_index.asset_symbol.is_empty(),
+                "Symbol should not be empty"
+            );
             assert!(!first_index.price.is_empty(), "Price should not be empty");
-            assert!(!first_index.updated_at_datetime.is_empty(), "Updated at should not be empty");
+            assert!(
+                !first_index.updated_at_datetime.is_empty(),
+                "Updated at should not be empty"
+            );
         }
     }
 }

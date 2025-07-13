@@ -250,7 +250,10 @@ mod tests {
         let response: GetConvertHistoryResponse = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.result.data.len(), 2);
         assert_eq!(response.result.data.first().unwrap().status, "COMPLETED");
-        assert_eq!(response.result.data.get(1).unwrap().status, "SLIPPAGE_TOO_HIGH");
+        assert_eq!(
+            response.result.data.get(1).unwrap().status,
+            "SLIPPAGE_TOO_HIGH"
+        );
         assert_eq!(response.result.data.first().unwrap().convert_id, 1);
         assert_eq!(response.result.data.get(1).unwrap().convert_id, 2);
     }

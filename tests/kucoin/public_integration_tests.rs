@@ -3,7 +3,7 @@
 //! These tests verify that the Kucoin public REST API client can successfully
 //! communicate with the live API and receive valid responses.
 
-use venues::kucoin::{
+use venues::kucoin::spot::{
     GetAllCurrenciesRequest, GetAllSymbolsRequest, GetAllTickersRequest, GetCurrencyRequest,
     GetKlinesRequest, GetPartOrderBookRequest, GetServerTimeRequest, GetSymbolRequest,
     GetTickerRequest, GetTradesRequest, KlineInterval, OrderBookLevel, PublicRestClient,

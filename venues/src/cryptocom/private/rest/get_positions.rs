@@ -175,14 +175,20 @@ mod tests {
 
         let response: GetPositionsResponse = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.result.data.len(), 2);
-        assert_eq!(response.result.data.first().unwrap().account_id, "account-1");
+        assert_eq!(
+            response.result.data.first().unwrap().account_id,
+            "account-1"
+        );
         assert_eq!(
             response.result.data.first().unwrap().instrument_name,
             "BTCUSD-PERP"
         );
         assert_eq!(response.result.data.first().unwrap().quantity, "0.5000");
         assert_eq!(response.result.data.get(1).unwrap().account_id, "account-2");
-        assert_eq!(response.result.data.get(1).unwrap().instrument_name, "ETHUSD-PERP");
+        assert_eq!(
+            response.result.data.get(1).unwrap().instrument_name,
+            "ETHUSD-PERP"
+        );
         assert_eq!(response.result.data.get(1).unwrap().quantity, "-1.0000");
     }
 

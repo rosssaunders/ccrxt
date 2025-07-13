@@ -163,7 +163,7 @@ mod tests {
         assert_eq!(resp.id, 18);
         assert_eq!(resp.jsonrpc, "2.0");
         assert_eq!(resp.result.trades.len(), 1);
-        assert_eq!(resp.result.has_more, true);
+        assert!(resp.result.has_more);
         let trade = &resp.result.trades[0];
         assert_eq!(trade.trade_id, "374718632");
         assert!((trade.price - 109133.0).abs() < 1e-8);

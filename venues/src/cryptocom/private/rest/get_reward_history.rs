@@ -172,7 +172,10 @@ mod tests {
             response.result.data.first().unwrap().staking_inst_name,
             "SOL.staked"
         );
-        assert_eq!(response.result.data.first().unwrap().reward_quantity, "123.4567");
+        assert_eq!(
+            response.result.data.first().unwrap().reward_quantity,
+            "123.4567"
+        );
     }
 
     #[test]
@@ -212,8 +215,14 @@ mod tests {
             response.result.data.get(1).unwrap().staking_inst_name,
             "ETH.staked"
         );
-        assert_eq!(response.result.data.first().unwrap().reward_quantity, "50.0");
-        assert_eq!(response.result.data.get(1).unwrap().reward_quantity, "0.125");
+        assert_eq!(
+            response.result.data.first().unwrap().reward_quantity,
+            "50.0"
+        );
+        assert_eq!(
+            response.result.data.get(1).unwrap().reward_quantity,
+            "0.125"
+        );
     }
 
     #[test]

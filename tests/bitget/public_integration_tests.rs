@@ -3,10 +3,9 @@
 //! These tests verify the functionality of all public endpoints that don't require authentication.
 //! Tests run against the live Bitget API using real market data.
 
-use chrono::Utc;
 use reqwest::Client;
 use tokio;
-use venues::bitget::{
+use venues::bitget::spot::{
     ApiError, CandlestickGranularity, DepthType, PricePrecision, PublicRestClient, RateLimiter,
     public::rest::{
         GetCandlestickRequest, GetCoinInfoRequest, GetHistoryCandlestickRequest,

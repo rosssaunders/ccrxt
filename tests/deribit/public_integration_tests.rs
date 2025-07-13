@@ -976,7 +976,7 @@ async fn test_get_book_summary_by_currency_various() {
     for (currency, kind) in test_cases {
         let request = GetBookSummaryByCurrencyRequest {
             currency: currency.clone(),
-            kind: Some(kind.clone()),
+            kind: Some(kind),
         };
 
         let result = client.get_book_summary_by_currency(request).await;
@@ -2171,8 +2171,8 @@ async fn test_get_mark_price_history() {
 
     let request = GetMarkPriceHistoryRequest {
         instrument_name: "BTC-PERPETUAL".to_string(),
-        start_timestamp: start_timestamp,
-        end_timestamp: end_timestamp,
+        start_timestamp,
+        end_timestamp,
         count: Some(10),
     };
 
