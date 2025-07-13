@@ -38,10 +38,10 @@
 use reqwest::Client;
 use tokio;
 use venues::cryptocom::{
-    GetAnnouncementsRequest, GetBookRequest, GetCandlestickRequest, GetConversionRateRequest,
-    GetExpiredSettlementPriceRequest, GetInstrumentsRequest, GetInsuranceRequest,
-    GetTickersRequest, GetTradesRequest, GetValuationsRequest, InstrumentType, ProductType,
-    PublicRestClient, RateLimiter, Timeframe, ValuationType,
+    AnnouncementCategory, GetAnnouncementsRequest, GetBookRequest, GetCandlestickRequest,
+    GetConversionRateRequest, GetExpiredSettlementPriceRequest, GetInstrumentsRequest,
+    GetInsuranceRequest, GetTickersRequest, GetTradesRequest, GetValuationsRequest, InstrumentType,
+    ProductType, PublicRestClient, RateLimiter, Timeframe, ValuationType,
 };
 
 /// Helper function to create a test client for public endpoints
@@ -520,9 +520,13 @@ async fn test_get_risk_parameters() {
 #[tokio::test]
 #[ignore = "Endpoint returns HTTP 404 Not Found"]
 async fn test_get_announcements() {
-    let client = create_public_test_client();
+    let client = Client::new();
+    let rate_limiter = RateLimiter::new();
+
+    let client = PublicRestClient::new("https://api.crypto.com/", client, rate_limiter);
+
     let request = GetAnnouncementsRequest {
-        category: None,
+        category: Some(AnnouncementCategory::System),
         product_type: Some(ProductType::Spot),
     };
 
@@ -555,7 +559,7 @@ async fn test_get_announcements() {
 /// **NOTE**: This endpoint returns HTTP 415 Unsupported Media Type, indicating
 /// it may require different content type headers or have moved to a different path.
 #[tokio::test]
-#[ignore = "Endpoint returns HTTP 415 Unsupported Media Type"]
+#[ignore = "Endpoint returns HTTP 415 Unsupported Media Type and cannot work out what is wrong."]
 async fn test_get_conversion_rate() {
     let client = create_public_test_client();
     let request = GetConversionRateRequest {
