@@ -21,15 +21,20 @@ pub struct PublicTrade {
     pub price: String,
     /// Trade quantity
     pub quantity: String,
-    /// Quote amount
-    #[serde(rename = "quoteAmount")]
-    pub quote_amount: String,
     /// Trade side (from the taker's perspective)
     pub side: OrderSide,
-    /// Trade execution timestamp
-    pub timestamp: u64,
-    /// Trade execution datetime
+    /// Whether this is a taker trade
+    #[serde(rename = "isTaker")]
+    pub is_taker: bool,
+    /// Trade creation timestamp
+    #[serde(rename = "createdAtTimestamp")]
+    pub timestamp: String,
+    /// Trade creation datetime
+    #[serde(rename = "createdAtDatetime")]
     pub datetime: String,
+    /// Published timestamp
+    #[serde(rename = "publishedAtTimestamp")]
+    pub published_timestamp: String,
 }
 
 /// Parameters for querying public trades
@@ -54,6 +59,8 @@ impl RestClient {
     ///
     /// # Returns
     /// List of recent public trades
+    ///
+    /// https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/markets/-symbol-/trades
     pub async fn get_public_trades(
         &self,
         symbol: &str,
@@ -101,10 +108,11 @@ mod tests {
             "symbol": "BTCUSDC",
             "price": "30000.0",
             "quantity": "1.0",
-            "quoteAmount": "30000.0",
             "side": "BUY",
-            "timestamp": 1640995200000,
-            "datetime": "2022-01-01T00:00:00Z"
+            "isTaker": true,
+            "createdAtTimestamp": "1640995200000",
+            "createdAtDatetime": "2022-01-01T00:00:00Z",
+            "publishedAtTimestamp": "1640995200100"
         }"#;
 
         let trade: PublicTrade = serde_json::from_str(json).unwrap();
@@ -112,7 +120,8 @@ mod tests {
         assert_eq!(trade.symbol, "BTCUSDC");
         assert_eq!(trade.price, "30000.0");
         assert_eq!(trade.side, OrderSide::Buy);
-        assert_eq!(trade.timestamp, 1640995200000);
+        assert_eq!(trade.timestamp, "1640995200000");
+        assert_eq!(trade.is_taker, true);
     }
 
     #[test]

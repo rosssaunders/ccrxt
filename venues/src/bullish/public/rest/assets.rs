@@ -24,49 +24,85 @@ pub enum AssetStatus {
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Asset {
+    /// Asset ID
+    #[serde(rename = "assetId")]
+    pub asset_id: String,
     /// Asset symbol
     pub symbol: String,
-    /// Asset display name
-    #[serde(rename = "displayName")]
-    pub display_name: String,
-    /// Asset description
-    pub description: Option<String>,
-    /// Asset status
-    pub status: AssetStatus,
-    /// Whether deposits are enabled
-    #[serde(rename = "depositEnabled")]
-    pub deposit_enabled: bool,
-    /// Whether withdrawals are enabled
-    #[serde(rename = "withdrawalEnabled")]
-    pub withdrawal_enabled: bool,
-    /// Whether trading is enabled
-    #[serde(rename = "tradingEnabled")]
-    pub trading_enabled: bool,
-    /// Whether borrowing is enabled
-    #[serde(rename = "borrowingEnabled")]
-    pub borrowing_enabled: bool,
-    /// Whether this asset can be used as collateral
-    #[serde(rename = "collateralEnabled")]
-    pub collateral_enabled: bool,
+    /// Asset name
+    pub name: String,
     /// Decimal precision for this asset
-    pub precision: u8,
-    /// Minimum deposit amount
-    #[serde(rename = "minDeposit")]
-    pub min_deposit: String,
-    /// Minimum withdrawal amount
-    #[serde(rename = "minWithdrawal")]
-    pub min_withdrawal: String,
-    /// Maximum withdrawal amount
-    #[serde(rename = "maxWithdrawal")]
-    pub max_withdrawal: String,
-    /// Withdrawal fee
-    #[serde(rename = "withdrawalFee")]
-    pub withdrawal_fee: String,
-    /// Network confirmations required for deposits
-    #[serde(rename = "depositConfirmations")]
-    pub deposit_confirmations: Option<u32>,
-    /// Network information for crypto assets
-    pub networks: Option<Vec<AssetNetwork>>,
+    pub precision: String,
+    /// Minimum balance to earn interest
+    #[serde(rename = "minBalanceInterest")]
+    pub min_balance_interest: String,
+    /// Annual percentage rate
+    pub apr: String,
+    /// Minimum fee
+    #[serde(rename = "minFee")]
+    pub min_fee: String,
+    /// Maximum borrow amount
+    #[serde(rename = "maxBorrow")]
+    pub max_borrow: String,
+    /// Total offered loan quantity
+    #[serde(rename = "totalOfferedLoanQuantity")]
+    pub total_offered_loan_quantity: String,
+    /// Loan borrowed quantity
+    #[serde(rename = "loanBorrowedQuantity")]
+    pub loan_borrowed_quantity: String,
+    /// Collateral bands
+    #[serde(rename = "collateralBands")]
+    pub collateral_bands: Vec<CollateralBand>,
+    /// Underlying asset information
+    #[serde(rename = "underlyingAsset")]
+    pub underlying_asset: UnderlyingAsset,
+}
+
+/// Collateral band information
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct CollateralBand {
+    /// Collateral percentage
+    #[serde(rename = "collateralPercentage")]
+    pub collateral_percentage: String,
+    /// Band limit in USD
+    #[serde(rename = "bandLimitUSD")]
+    pub band_limit_usd: String,
+}
+
+/// Underlying asset information
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct UnderlyingAsset {
+    /// Symbol
+    pub symbol: String,
+    /// Asset ID
+    #[serde(rename = "assetId")]
+    pub asset_id: String,
+    /// BPM minimum return start
+    #[serde(rename = "bpmMinReturnStart")]
+    pub bpm_min_return_start: String,
+    /// BPM minimum return end
+    #[serde(rename = "bpmMinReturnEnd")]
+    pub bpm_min_return_end: String,
+    /// BPM maximum return start
+    #[serde(rename = "bpmMaxReturnStart")]
+    pub bpm_max_return_start: String,
+    /// BPM maximum return end
+    #[serde(rename = "bpmMaxReturnEnd")]
+    pub bpm_max_return_end: String,
+    /// Market risk floor percentage start
+    #[serde(rename = "marketRiskFloorPctStart")]
+    pub market_risk_floor_pct_start: String,
+    /// Market risk floor percentage end
+    #[serde(rename = "marketRiskFloorPctEnd")]
+    pub market_risk_floor_pct_end: String,
+    /// BPM transition datetime start
+    #[serde(rename = "bpmTransitionDateTimeStart")]
+    pub bpm_transition_datetime_start: String,
+    /// BPM transition datetime end
+    #[serde(rename = "bpmTransitionDateTimeEnd")]
+    pub bpm_transition_datetime_end: String,
 }
 
 /// Network information for crypto assets

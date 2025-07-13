@@ -14,10 +14,11 @@ pub struct OrderbookEntry {
     /// Price level
     pub price: String,
     /// Quantity available at this price level
+    #[serde(rename = "priceLevelQuantity")]
     pub quantity: String,
-    /// Number of orders at this price level
-    #[serde(rename = "orderCount")]
-    pub order_count: Option<u32>,
+    /// Entry type (bid/ask)
+    #[serde(rename = "type")]
+    pub entry_type: String,
 }
 
 /// Hybrid orderbook response
@@ -26,10 +27,6 @@ pub struct OrderbookEntry {
 pub struct HybridOrderbook {
     /// Market symbol
     pub symbol: String,
-    /// Orderbook timestamp
-    pub timestamp: u64,
-    /// Sequence number for ordering updates
-    pub sequence: u64,
     /// Bid levels (buy orders)
     pub bids: Vec<OrderbookEntry>,
     /// Ask levels (sell orders)
@@ -57,6 +54,8 @@ impl RestClient {
     ///
     /// # Returns
     /// Current orderbook state with bids and asks
+    ///
+    /// https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/markets/-symbol-/orderbook/hybrid
     pub async fn get_orderbook(
         &self,
         symbol: &str,
@@ -98,42 +97,38 @@ mod tests {
     fn test_orderbook_entry_deserialization() {
         let json = r#"{
             "price": "30000.0",
-            "quantity": "1.5",
-            "orderCount": 5
+            "priceLevelQuantity": "1.5",
+            "type": "bid"
         }"#;
 
         let entry: OrderbookEntry = serde_json::from_str(json).unwrap();
         assert_eq!(entry.price, "30000.0");
         assert_eq!(entry.quantity, "1.5");
-        assert_eq!(entry.order_count, Some(5));
+        assert_eq!(entry.entry_type, "bid");
     }
 
     #[test]
     fn test_hybrid_orderbook_deserialization() {
         let json = r#"{
             "symbol": "BTCUSDC",
-            "timestamp": 1640995200000,
-            "sequence": 12345,
             "bids": [
                 {
                     "price": "29900.0",
-                    "quantity": "1.0",
-                    "orderCount": 3
+                    "priceLevelQuantity": "1.0",
+                    "type": "bid"
                 }
             ],
             "asks": [
                 {
                     "price": "30100.0",
-                    "quantity": "2.0",
-                    "orderCount": 2
+                    "priceLevelQuantity": "2.0",
+                    "type": "ask"
                 }
             ]
         }"#;
 
         let orderbook: HybridOrderbook = serde_json::from_str(json).unwrap();
         assert_eq!(orderbook.symbol, "BTCUSDC");
-        assert_eq!(orderbook.timestamp, 1640995200000);
-        assert_eq!(orderbook.sequence, 12345);
         assert_eq!(orderbook.bids.len(), 1);
         assert_eq!(orderbook.asks.len(), 1);
         assert_eq!(orderbook.bids[0].price, "29900.0");
