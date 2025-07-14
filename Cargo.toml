@@ -4,7 +4,8 @@ members = [
     "venues",
     "websockets",
     "rest",
-    "binance_macros"
+    "binance_macros",
+    "python-bindings"
 ]
 
 [workspace.package]
