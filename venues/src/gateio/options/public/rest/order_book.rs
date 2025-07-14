@@ -39,10 +39,10 @@ pub struct OptionsOrderBook {
     pub id: Option<i64>,
 
     /// Current timestamp
-    pub current: i64,
+    pub current: f64,
 
     /// Last update timestamp
-    pub update: i64,
+    pub update: f64,
 
     /// Ask orders (selling)
     pub asks: Vec<OptionsOrderBookEntry>,

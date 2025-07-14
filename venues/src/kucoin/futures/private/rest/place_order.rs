@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::kucoin::{
+use crate::kucoin::spot::{
     OrderSide, OrderType, ResponseHeaders, RestResponse, Result, StopType, TimeInForce,
 };
 
@@ -66,7 +66,7 @@ impl super::RestClient {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::kucoin::{OrderSide, OrderType, TimeInForce};
+    use crate::kucoin::spot::{OrderSide, OrderType, TimeInForce};
 
     #[test]
     fn test_place_order_request_serialization() {

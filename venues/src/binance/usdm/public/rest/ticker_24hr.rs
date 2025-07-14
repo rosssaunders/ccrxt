@@ -19,7 +19,7 @@ pub struct Ticker24hrRequest {
 }
 
 /// Represents a 24hr ticker price change statistics response.
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Ticker24hr {
     /// Trading pair symbol (e.g., "BTCUSDT").
     pub symbol: Cow<'static, str>,
@@ -83,11 +83,18 @@ pub struct Ticker24hr {
     pub count: u64,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum Ticker24hrResult {
+    Multiple(Vec<Ticker24hr>),
+    Single(Ticker24hr),
+}
+
 impl RestClient {
     /// Get 24hr ticker price change statistics (GET /fapi/v1/ticker/24hr)
     ///
     /// [API docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/24hr-Ticker-Price-Change-Statistics)
-    pub async fn get_ticker_24hr(&self, params: Ticker24hrRequest) -> RestResult<Vec<Ticker24hr>> {
+    pub async fn get_ticker_24hr(&self, params: Ticker24hrRequest) -> RestResult<Ticker24hrResult> {
         let query = params.symbol.map(|s| format!("symbol={}", s));
         self.send_request(
             "/fapi/v1/ticker/24hr",

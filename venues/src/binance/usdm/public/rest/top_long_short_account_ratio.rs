@@ -33,10 +33,13 @@ pub struct TopLongShortAccountRatioRequest<'a> {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TopLongShortAccountRatioResponse<'a> {
     pub symbol: Cow<'a, str>,
+    #[serde(rename = "longShortRatio")]
     pub long_short_ratio: Cow<'a, str>,
+    #[serde(rename = "longAccount")]
     pub long_account: Cow<'a, str>,
+    #[serde(rename = "shortAccount")]
     pub short_account: Cow<'a, str>,
-    pub timestamp: Cow<'a, str>,
+    pub timestamp: u64,
 }
 
 impl RestClient {

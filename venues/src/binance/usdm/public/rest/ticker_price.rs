@@ -19,11 +19,18 @@ pub struct TickerPriceRequest {
 }
 
 /// Represents a symbol price ticker response.
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TickerPrice {
     pub symbol: Cow<'static, str>,
     pub price: String,
     pub time: Option<u64>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum TickerPriceResult {
+    Multiple(Vec<TickerPrice>),
+    Single(TickerPrice),
 }
 
 impl RestClient {
@@ -33,7 +40,7 @@ impl RestClient {
     pub async fn get_ticker_price(
         &self,
         params: TickerPriceRequest,
-    ) -> RestResult<Vec<TickerPrice>> {
+    ) -> RestResult<TickerPriceResult> {
         let query = params.symbol.map(|s| format!("symbol={}", s));
         self.send_request(
             "/fapi/v1/ticker/price",

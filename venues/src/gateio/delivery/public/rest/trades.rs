@@ -47,7 +47,7 @@ pub struct DeliveryTrade {
     pub price: String,
 
     /// Whether internal trade
-    pub is_internal: bool,
+    pub is_internal: Option<bool>,
 }
 
 impl RestClient {

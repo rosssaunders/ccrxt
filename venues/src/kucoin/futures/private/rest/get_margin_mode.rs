@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::kucoin::{MarginMode, ResponseHeaders, RestResponse, Result};
+use crate::kucoin::spot::{MarginMode, ResponseHeaders, RestResponse, Result};
 
 /// Endpoint URL for get margin mode
 pub const GET_MARGIN_MODE_ENDPOINT: &str = "/api/v2/position/getMarginMode";
@@ -20,7 +20,7 @@ pub struct MarginModeResponse {
     pub isolated_margin_leverage: String,
 }
 
-impl super::super::RestClient {
+impl super::RestClient {
     /// Get margin mode for a symbol
     pub async fn get_margin_mode(
         &self,

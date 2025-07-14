@@ -19,11 +19,17 @@ pub struct PremiumIndexRequest<'a> {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PremiumIndexResponse<'a> {
     pub symbol: Cow<'a, str>,
+    #[serde(rename = "markPrice")]
     pub mark_price: Cow<'a, str>,
+    #[serde(rename = "indexPrice")]
     pub index_price: Cow<'a, str>,
+    #[serde(rename = "estimatedSettlePrice")]
     pub estimated_settle_price: Cow<'a, str>,
+    #[serde(rename = "lastFundingRate")]
     pub last_funding_rate: Cow<'a, str>,
+    #[serde(rename = "interestRate")]
     pub interest_rate: Cow<'a, str>,
+    #[serde(rename = "nextFundingTime")]
     pub next_funding_time: u64,
     pub time: u64,
 }
@@ -31,8 +37,8 @@ pub struct PremiumIndexResponse<'a> {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum PremiumIndexResult<'a> {
-    Single(PremiumIndexResponse<'a>),
     Multiple(Vec<PremiumIndexResponse<'a>>),
+    Single(PremiumIndexResponse<'a>),
 }
 
 impl RestClient {

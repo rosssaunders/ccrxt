@@ -17,59 +17,59 @@ pub struct OptionsTicker {
     pub name: String,
 
     /// Last trading price
-    pub last: String,
+    pub last: Option<String>,
 
     /// Change percentage (24h)
-    pub change_percentage: String,
+    pub change_percentage: Option<String>,
 
     /// Total size (24h)
-    pub total_size: String,
+    pub total_size: Option<String>,
 
     /// Lowest ask
-    pub lowest_ask: String,
+    pub lowest_ask: Option<String>,
 
     /// Highest bid
-    pub highest_bid: String,
+    pub highest_bid: Option<String>,
 
     /// Mark price
-    pub mark_price: String,
+    pub mark_price: Option<String>,
 
     /// Mark IV (implied volatility)
-    pub mark_iv: String,
+    pub mark_iv: Option<String>,
 
     /// Index price
-    pub index_price: String,
+    pub index_price: Option<String>,
 
     /// Bid IV
-    pub bid_iv: String,
+    pub bid_iv: Option<String>,
 
     /// Ask IV
-    pub ask_iv: String,
+    pub ask_iv: Option<String>,
 
     /// Position size
-    pub position_size: i64,
+    pub position_size: Option<i64>,
 
     /// Delta
-    pub delta: String,
+    pub delta: Option<String>,
 
     /// Gamma
-    pub gamma: String,
+    pub gamma: Option<String>,
 
     /// Vega
-    pub vega: String,
+    pub vega: Option<String>,
 
     /// Theta
-    pub theta: String,
+    pub theta: Option<String>,
 
     /// Rho
-    pub rho: String,
+    pub rho: Option<String>,
 }
 
 /// Underlying ticker information
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct UnderlyingTicker {
     /// Trading enabled
-    pub trade_enabled: bool,
+    pub trade_enabled: Option<bool>,
 
     /// Index price (quote currency)
     pub index_price: String,

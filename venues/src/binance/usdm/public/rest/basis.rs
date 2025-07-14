@@ -10,6 +10,7 @@ use crate::binance::usdm::{ContractType, Errors, Period, RestResult};
 
 /// Request parameters for the Basis endpoint.
 #[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct BasisRequest<'a> {
     /// The pair to query (e.g., "BTCUSDT").
     pub pair: Cow<'a, str>,
@@ -33,6 +34,7 @@ pub struct BasisRequest<'a> {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct BasisResponse<'a> {
     pub index_price: Cow<'a, str>,
     pub contract_type: ContractType,

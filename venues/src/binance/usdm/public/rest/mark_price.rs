@@ -20,7 +20,7 @@ pub struct MarkPriceRequest {
 }
 
 /// Represents a mark price response.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct MarkPrice {
     /// Trading pair symbol (e.g., "BTCUSDT").
     #[serde(rename = "symbol")]
@@ -55,11 +55,18 @@ pub struct MarkPrice {
     pub time: u64,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum MarkPriceResult {
+    Multiple(Vec<MarkPrice>),
+    Single(MarkPrice),
+}
+
 impl RestClient {
     /// Get mark price and funding rate (GET /fapi/v1/premiumIndex)
     ///
     /// [API docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Mark-Price)
-    pub async fn get_mark_price(&self, params: MarkPriceRequest) -> RestResult<Vec<MarkPrice>> {
+    pub async fn get_mark_price(&self, params: MarkPriceRequest) -> RestResult<MarkPriceResult> {
         let query = params.symbol.map(|s| format!("symbol={}", s));
         self.send_request(
             "/fapi/v1/premiumIndex",

@@ -27,40 +27,40 @@ pub struct FuturesStats {
     pub time: i64,
 
     /// Long/short account number ratio
-    pub lsr_taker: String,
+    pub lsr_taker: f64,
 
     /// Long/short position ratio  
-    pub lsr_account: String,
+    pub lsr_account: f64,
 
     /// Long liquidation size
-    pub long_liq_size: String,
+    pub long_liq_size: serde_json::Value,
 
     /// Long liquidation amount
-    pub long_liq_amount: String,
+    pub long_liq_amount: serde_json::Value,
 
     /// Long liquidation volume (in USD)
-    pub long_liq_usd: String,
+    pub long_liq_usd: serde_json::Value,
 
     /// Short liquidation size
-    pub short_liq_size: String,
+    pub short_liq_size: serde_json::Value,
 
     /// Short liquidation amount
-    pub short_liq_amount: String,
+    pub short_liq_amount: serde_json::Value,
 
     /// Short liquidation volume (in USD)
-    pub short_liq_usd: String,
+    pub short_liq_usd: serde_json::Value,
 
     /// Open interest
-    pub open_interest: String,
+    pub open_interest: serde_json::Value,
 
     /// Mark price
-    pub mark_price: String,
+    pub mark_price: serde_json::Value,
 
     /// Top trader long/short position ratio
-    pub top_lsr_account: String,
+    pub top_lsr_account: f64,
 
     /// Top trader long/short size ratio
-    pub top_lsr_size: String,
+    pub top_lsr_size: f64,
 }
 
 impl RestClient {

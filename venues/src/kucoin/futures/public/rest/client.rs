@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use reqwest::Client;
 use serde::de::DeserializeOwned;
 
-use crate::kucoin::{ApiError, RateLimiter, ResponseHeaders, RestResponse, Result};
+use crate::kucoin::spot::{ApiError, RateLimiter, ResponseHeaders, RestResponse, Result};
 
 /// Public REST client for KuCoin futures market
 #[derive(Debug, Clone)]
@@ -67,7 +67,7 @@ impl RestClient {
 
         if !status.is_success() {
             // Try to parse as error response
-            if let Ok(error_response) = serde_json::from_str::<crate::kucoin::ErrorResponse>(&text)
+            if let Ok(error_response) = serde_json::from_str::<crate::kucoin::spot::ErrorResponse>(&text)
             {
                 return Err(ApiError::from(error_response).into());
             } else {

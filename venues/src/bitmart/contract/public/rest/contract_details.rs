@@ -19,20 +19,26 @@ pub struct GetContractDetailsRequest<'a> {
 pub struct GetContractDetailsResponse {
     pub code: i32,
     pub message: Cow<'static, str>,
-    pub data: Option<ContractDetailsData>,
+    #[serde(default)]
+    pub data: Option<serde_json::Value>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ContractDetailsData {
-    pub contracts: Vec<ContractDetails>,
+#[serde(untagged)]
+pub enum ContractDetailsData {
+    List(Vec<ContractDetails>),
+    Object { contracts: Vec<ContractDetails> },
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ContractDetails {
     pub symbol: Cow<'static, str>,
-    pub status: ContractStatus,
+    #[serde(default)]
+    pub status: Option<ContractStatus>,
+    #[serde(default)]
     pub delist_time: Option<u64>,
-    // ... add other fields as needed ...
+    #[serde(flatten)]
+    pub extra: std::collections::HashMap<String, serde_json::Value>,
 }
 
 // RestClient implementation for this endpoint

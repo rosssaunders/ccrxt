@@ -19,7 +19,7 @@ pub struct AssetIndexRequest {
 }
 
 /// Represents an asset index response.
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AssetIndex {
     pub symbol: Cow<'static, str>,
     pub time: u64,
@@ -42,11 +42,18 @@ pub struct AssetIndex {
     pub auto_exchange_ask_rate: String,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum AssetIndexResult {
+    Multiple(Vec<AssetIndex>),
+    Single(AssetIndex),
+}
+
 impl RestClient {
     /// Get asset index for Multi-Assets mode (GET /fapi/v1/assetIndex)
     ///
     /// [API docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Multi-Assets-Mode-Asset-Index)
-    pub async fn get_asset_index(&self, params: AssetIndexRequest) -> RestResult<Vec<AssetIndex>> {
+    pub async fn get_asset_index(&self, params: AssetIndexRequest) -> RestResult<AssetIndexResult> {
         let query = params.symbol.map(|s| format!("symbol={}", s));
         self.send_request(
             "/fapi/v1/assetIndex",

@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
 
-use crate::kucoin::{OrderSide, OrderStatus, OrderType, ResponseHeaders, RestResponse, Result};
+use crate::kucoin::spot::{OrderSide, OrderStatus, OrderType, ResponseHeaders, RestResponse, Result};
 
 /// Endpoint URL for get orders
 pub const GET_ORDERS_ENDPOINT: &str = "/api/v1/orders";

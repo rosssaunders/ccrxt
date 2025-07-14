@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::kucoin::{ResponseHeaders, RestResponse, Result};
+use crate::kucoin::spot::{ResponseHeaders, RestResponse, Result};
 
 /// Endpoint URL for cancel order (format string)
 pub const CANCEL_ORDER_ENDPOINT: &str = "/api/v1/orders/";

@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
 
-use crate::kucoin::{ResponseHeaders, RestResponse, Result};
+use crate::kucoin::spot::{ResponseHeaders, RestResponse, Result};
 
 /// Endpoint URL for cancel all orders
 pub const CANCEL_ALL_ORDERS_ENDPOINT: &str = "/api/v1/orders";

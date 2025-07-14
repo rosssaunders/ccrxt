@@ -116,22 +116,22 @@ pub struct DeliveryContract {
     pub orders_limit: i32,
 
     /// Whether inverse contract
-    pub enable_bonus: bool,
+    pub enable_bonus: Option<bool>,
 
     /// Enable credit trading
-    pub enable_credit: bool,
+    pub enable_credit: Option<bool>,
 
     /// Create time
-    pub create_time: f64,
+    pub create_time: Option<f64>,
 
     /// Expiration time
-    pub expire_time: i64,
+    pub expire_time: Option<i64>,
 
     /// Settlement price
-    pub settle_price: String,
+    pub settle_price: Option<String>,
 
     /// Settlement size
-    pub settle_size: i64,
+    pub settle_size: Option<i64>,
 }
 
 impl RestClient {

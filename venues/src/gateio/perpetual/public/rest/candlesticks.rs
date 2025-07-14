@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::gateio::perpetual::enums::CandlestickInterval;
+use crate::gateio::shared::enums::CandlestickInterval;
 
 /// Request parameters for futures candlesticks
 #[derive(Debug, Clone, Serialize, Default)]

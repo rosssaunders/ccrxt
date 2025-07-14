@@ -32,10 +32,13 @@ pub struct TakerLongShortRatioRequest<'a> {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TakerLongShortRatioResponse<'a> {
+    #[serde(rename = "buySellRatio")]
     pub buy_sell_ratio: Cow<'a, str>,
+    #[serde(rename = "buyVol")]
     pub buy_vol: Cow<'a, str>,
+    #[serde(rename = "sellVol")]
     pub sell_vol: Cow<'a, str>,
-    pub timestamp: Cow<'a, str>,
+    pub timestamp: u64,
 }
 
 impl RestClient {

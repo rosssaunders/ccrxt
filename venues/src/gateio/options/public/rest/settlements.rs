@@ -24,7 +24,7 @@ pub struct OptionsSettlement {
     pub contract: String,
 
     /// Underlying asset
-    pub underlying: String,
+    pub underlying: Option<String>,
 
     /// Strike price (quote currency)
     pub strike_price: String,

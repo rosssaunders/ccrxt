@@ -33,9 +33,11 @@ pub struct OpenInterestHistRequest<'a> {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct OpenInterestHistResponse<'a> {
     pub symbol: Cow<'a, str>,
+    #[serde(rename = "sumOpenInterest")]
     pub sum_open_interest: Cow<'a, str>,
+    #[serde(rename = "sumOpenInterestValue")]
     pub sum_open_interest_value: Cow<'a, str>,
-    pub timestamp: Cow<'a, str>,
+    pub timestamp: u64,
 }
 
 impl RestClient {

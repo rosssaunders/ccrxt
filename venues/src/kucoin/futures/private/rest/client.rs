@@ -8,7 +8,7 @@ use rest::secrets::ExposableSecret;
 use serde::de::DeserializeOwned;
 use sha2::Sha256;
 
-use crate::kucoin::{ApiError, RateLimiter, ResponseHeaders, RestResponse, Result};
+use crate::kucoin::spot::{ApiError, RateLimiter, ResponseHeaders, RestResponse, Result};
 
 /// Private REST client for KuCoin futures market
 pub struct RestClient {
@@ -166,7 +166,7 @@ impl RestClient {
 
         if !status.is_success() {
             // Try to parse as error response
-            if let Ok(error_response) = serde_json::from_str::<crate::kucoin::ErrorResponse>(&text)
+            if let Ok(error_response) = serde_json::from_str::<crate::kucoin::spot::ErrorResponse>(&text)
             {
                 return Err(ApiError::from(error_response).into());
             } else {
@@ -238,7 +238,7 @@ impl RestClient {
 
         if !status.is_success() {
             // Try to parse as error response
-            if let Ok(error_response) = serde_json::from_str::<crate::kucoin::ErrorResponse>(&text)
+            if let Ok(error_response) = serde_json::from_str::<crate::kucoin::spot::ErrorResponse>(&text)
             {
                 return Err(ApiError::from(error_response).into());
             } else {
@@ -308,7 +308,7 @@ impl RestClient {
 
         if !status.is_success() {
             // Try to parse as error response
-            if let Ok(error_response) = serde_json::from_str::<crate::kucoin::ErrorResponse>(&text)
+            if let Ok(error_response) = serde_json::from_str::<crate::kucoin::spot::ErrorResponse>(&text)
             {
                 return Err(ApiError::from(error_response).into());
             } else {

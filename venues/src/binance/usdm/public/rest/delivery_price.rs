@@ -17,7 +17,9 @@ pub struct DeliveryPriceRequest<'a> {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct DeliveryPriceResponse {
+    #[serde(rename = "deliveryTime")]
     pub delivery_time: u64,
+    #[serde(rename = "deliveryPrice")]
     pub delivery_price: f64,
 }
 

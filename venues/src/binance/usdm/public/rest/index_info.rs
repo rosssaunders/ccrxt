@@ -59,11 +59,19 @@ pub struct IndexInfo {
     pub base_asset_list: Vec<IndexBaseAsset>,
 }
 
+/// Wrapper for index info response that can be either a single object or an array
+#[derive(Debug, Clone, Deserialize)]
+#[serde(untagged)]
+pub enum IndexInfoResult {
+    Single(IndexInfo),
+    Multiple(Vec<IndexInfo>),
+}
+
 impl RestClient {
     /// Query composite index symbol information (GET /fapi/v1/indexInfo)
     ///
     /// [API docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Composite-Index-Symbol-Information)
-    pub async fn get_index_info(&self, params: IndexInfoRequest) -> RestResult<Vec<IndexInfo>> {
+    pub async fn get_index_info(&self, params: IndexInfoRequest) -> RestResult<IndexInfoResult> {
         let query = params.symbol.map(|s| format!("symbol={}", s));
         self.send_request(
             "/fapi/v1/indexInfo",

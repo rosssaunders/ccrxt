@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::kucoin::{
+use crate::kucoin::spot::{
     OrderSide, OrderStatus, OrderType, ResponseHeaders, RestResponse, Result, TimeInForce,
 };
 

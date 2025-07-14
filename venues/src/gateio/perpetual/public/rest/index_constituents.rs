@@ -18,16 +18,26 @@ pub struct IndexConstituent {
     pub exchange: String,
 
     /// Trading pair
-    pub symbol: String,
+    pub symbol: Option<String>,
 
     /// Weight percentage
-    pub weight: String,
+    pub weight: Option<String>,
 
     /// Price
-    pub price: String,
+    pub price: Option<String>,
 
     /// Last update time
-    pub update_time: i64,
+    pub update_time: Option<i64>,
+}
+
+/// Index constituents response
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct IndexConstituentsResponse {
+    /// Index name
+    pub index: String,
+    
+    /// List of constituents
+    pub constituents: Vec<IndexConstituent>,
 }
 
 impl RestClient {
@@ -40,7 +50,7 @@ impl RestClient {
     pub async fn get_futures_index_constituents(
         &self,
         params: FuturesIndexConstituentsRequest,
-    ) -> crate::gateio::perpetual::Result<Vec<IndexConstituent>> {
+    ) -> crate::gateio::perpetual::Result<IndexConstituentsResponse> {
         let endpoint = format!(
             "/futures/{}/index_constituents/{}",
             params.settle, params.index

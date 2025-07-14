@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::kucoin::{ResponseHeaders, RestResponse, Result};
+use crate::kucoin::spot::{ResponseHeaders, RestResponse, Result};
 
 /// Get current funding rate request
 #[derive(Debug, Clone, Serialize)]
@@ -21,7 +21,7 @@ pub struct CurrentFundingRate {
     /// Funding rate
     pub value: f64,
     /// Predicted funding rate
-    pub predicted_value: f64,
+    pub predicted_value: Option<f64>,
 }
 
 /// Get funding rate history request
@@ -122,14 +122,14 @@ mod tests {
             "granularity": 28800000,
             "timePoint": 1637049600000,
             "value": 0.000100,
-            "predictedValue": 0.000200
+            "predictedValue": null
         }"#;
 
         let funding_rate: CurrentFundingRate = serde_json::from_str(json).unwrap();
         assert_eq!(funding_rate.symbol, "XBTUSDTM");
         assert_eq!(funding_rate.granularity, 28800000);
         assert_eq!(funding_rate.value, 0.000100);
-        assert_eq!(funding_rate.predicted_value, 0.000200);
+        assert_eq!(funding_rate.predicted_value, None);
     }
 
     #[test]

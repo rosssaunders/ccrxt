@@ -33,7 +33,7 @@ pub struct OrderBookEntry {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FuturesOrderBook {
     /// Order book ID
-    pub id: i64,
+    pub id: Option<i64>,
 
     /// Current timestamp
     pub current: f64,

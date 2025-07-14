@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::kucoin::{AutoDepositStatus, PositionSide, ResponseHeaders, RestResponse, Result};
+use crate::kucoin::spot::{AutoDepositStatus, PositionSide, ResponseHeaders, RestResponse, Result};
 
 /// Endpoint URL for get position
 pub const GET_POSITION_ENDPOINT: &str = "/api/v1/position";
@@ -50,7 +50,7 @@ pub struct Position {
     pub available_balance: f64,
 }
 
-impl super::super::RestClient {
+impl super::RestClient {
     /// Get position for a specific symbol
     pub async fn get_position(
         &self,

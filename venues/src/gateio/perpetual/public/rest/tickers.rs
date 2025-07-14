@@ -31,34 +31,34 @@ pub struct FuturesTicker {
     pub change_percentage: String,
 
     /// Change amount (24h)
-    pub change_utc0: String,
+    pub change_utc0: Option<String>,
 
     /// Change amount (UTC 8)
-    pub change_utc8: String,
+    pub change_utc8: Option<String>,
 
     /// Total trading volume (24h)
-    pub total_size: String,
+    pub total_size: Option<String>,
 
     /// Trading volume (24h in quote currency)
-    pub volume_24h: String,
+    pub volume_24h: Option<String>,
 
     /// Trading volume (24h in base currency)
-    pub volume_24h_btc: String,
+    pub volume_24h_btc: Option<String>,
 
     /// Trading volume (24h in quote currency)
-    pub volume_24h_usd: String,
+    pub volume_24h_usd: Option<String>,
 
     /// Trading volume (24h in settlement currency)
-    pub volume_24h_base: String,
+    pub volume_24h_base: Option<String>,
 
     /// Trading volume (24h in quote currency)
-    pub volume_24h_quote: String,
+    pub volume_24h_quote: Option<String>,
 
     /// Trading volume (24h in settlement currency, BTC denominated)
-    pub volume_24h_settle: String,
+    pub volume_24h_settle: Option<String>,
 
     /// Mark price
-    pub mark_price: String,
+    pub mark_price: Option<String>,
 
     /// Funding rate
     pub funding_rate: String,
@@ -67,22 +67,22 @@ pub struct FuturesTicker {
     pub funding_rate_indicative: String,
 
     /// Index price
-    pub index_price: String,
+    pub index_price: Option<String>,
 
     /// Trading enabled
-    pub quanto_base_rate: String,
+    pub quanto_base_rate: Option<String>,
 
     /// Next funding time
-    pub funding_next_apply: i64,
+    pub funding_next_apply: Option<i64>,
 
     /// Basis rate
-    pub basis_rate: String,
+    pub basis_rate: Option<String>,
 
     /// Basis value
-    pub basis_value: String,
+    pub basis_value: Option<String>,
 
     /// Premium index
-    pub premium_index: String,
+    pub premium_index: Option<String>,
 }
 
 impl RestClient {

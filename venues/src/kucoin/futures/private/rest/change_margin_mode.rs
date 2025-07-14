@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::kucoin::{MarginMode, ResponseHeaders, RestResponse, Result};
+use crate::kucoin::spot::{MarginMode, ResponseHeaders, RestResponse, Result};
 
 /// Endpoint URL for change margin mode
 pub const CHANGE_MARGIN_MODE_ENDPOINT: &str = "/api/v2/position/changeMarginMode";

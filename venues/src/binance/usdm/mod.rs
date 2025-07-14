@@ -47,8 +47,8 @@ mod request;
 mod signing;
 
 // Re-export modules for new structure
-mod public {
-    mod rest;
+pub mod public {
+    pub mod rest;
     pub use self::rest::{RestClient as PublicRestClient, exchange_info::*};
 }
 

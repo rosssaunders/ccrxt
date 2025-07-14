@@ -21,7 +21,7 @@ pub struct DeliveryInsurance {
     pub t: i64,
 
     /// Insurance balance
-    pub b: String,
+    pub b: f64,
 }
 
 impl RestClient {

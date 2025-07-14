@@ -1,7 +1,7 @@
 use serde::Serialize;
 
 use super::Position;
-use crate::kucoin::{ResponseHeaders, RestResponse, Result};
+use crate::kucoin::spot::{ResponseHeaders, RestResponse, Result};
 
 /// Endpoint URL for get all positions
 pub const GET_ALL_POSITIONS_ENDPOINT: &str = "/api/v1/positions";

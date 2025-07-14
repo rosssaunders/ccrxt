@@ -16,7 +16,3 @@ async fn test_unified_client_creation() {
     let _client = create_unified_test_client();
     println!("✓ Unified client creation successful");
 }
-
-// TODO: Add more unified-specific integration tests
-// Note: Unified API typically has fewer public endpoints
-// Most functionality is in private endpoints which require authentication

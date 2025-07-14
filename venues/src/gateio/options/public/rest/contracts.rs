@@ -33,23 +33,23 @@ pub struct OptionsContract {
     pub underlying: String,
 
     /// Underlying price
-    pub underlying_price: String,
+    pub underlying_price: Option<String>,
 
     /// Last trading time
-    pub last_price: String,
+    pub last_price: Option<String>,
 
     /// Mark price
-    pub mark_price: String,
+    pub mark_price: Option<String>,
 
     /// Index price
-    pub index_price: String,
+    pub index_price: Option<String>,
 
     /// Mark IV (implied volatility)
-    pub mark_iv: String,
+    pub mark_iv: Option<String>,
 
     /// Option type (call/put)
     #[serde(rename = "type")]
-    pub option_type: String,
+    pub option_type: Option<String>,
 
     /// Strike price
     pub strike_price: String,
@@ -61,7 +61,7 @@ pub struct OptionsContract {
     pub multiplier: String,
 
     /// Current total long position size
-    pub position_size: i64,
+    pub position_size: Option<i64>,
 
     /// Maximum number of open orders
     pub orders_limit: i32,

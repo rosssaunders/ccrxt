@@ -92,7 +92,7 @@ pub struct UnderlyingCandlestick {
     pub o: String,
 
     /// Trading volume (unit: Quote currency)
-    pub sum: String,
+    pub sum: Option<String>,
 }
 
 impl RestClient {

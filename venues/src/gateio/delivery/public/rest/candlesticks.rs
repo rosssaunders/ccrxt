@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::gateio::delivery::enums::CandlestickInterval;
+use crate::gateio::shared::enums::CandlestickInterval;
 
 const DELIVERY_CANDLESTICKS_ENDPOINT: &str = "/delivery/{}/candlesticks";
 
@@ -33,7 +33,7 @@ pub struct DeliveryCandlestick {
     pub t: i64,
 
     /// Trading volume (in quote currency)
-    pub v: i64,
+    pub v: Option<i64>,
 
     /// Close price
     pub c: String,
@@ -48,7 +48,7 @@ pub struct DeliveryCandlestick {
     pub o: String,
 
     /// Trading volume (in base currency)
-    pub sum: String,
+    pub sum: Option<String>,
 }
 
 impl RestClient {

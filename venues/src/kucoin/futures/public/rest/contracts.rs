@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::kucoin::{ContractStatus, ContractType, ResponseHeaders, RestResponse, Result};
+use crate::kucoin::spot::{ContractStatus, ContractType, ResponseHeaders, RestResponse, Result};
 
 /// Get contract information request
 #[derive(Debug, Clone, Serialize)]
@@ -46,21 +46,21 @@ pub struct ContractInfo {
     /// Initial margin
     pub initial_margin: f64,
     /// Maintenance margin
-    pub maintenance_margin: f64,
+    pub maintenance_margin: Option<f64>,
     /// Maximum risk limit
     pub max_risk_limit: f64,
     /// Minimum risk limit
     pub min_risk_limit: f64,
     /// Risk limit step
-    pub risk_limit_step: f64,
+    pub risk_limit_step: Option<f64>,
     /// Maker fee rate
     pub maker_fee_rate: f64,
     /// Taker fee rate
     pub taker_fee_rate: f64,
     /// Taker fixed fee
-    pub taker_fixed_fee: f64,
+    pub taker_fixed_fee: Option<f64>,
     /// Maker fixed fee
-    pub maker_fixed_fee: f64,
+    pub maker_fixed_fee: Option<f64>,
     /// Settlement fee
     pub settlement_fee: Option<f64>,
     /// Is quanto
@@ -68,9 +68,9 @@ pub struct ContractInfo {
     /// Is inverse
     pub is_inverse: bool,
     /// Mark method
-    pub mark_method: String,
+    pub mark_method: Option<String>,
     /// Fair method
-    pub fair_method: String,
+    pub fair_method: Option<String>,
     /// Funding base symbol
     pub funding_base_symbol: Option<String>,
     /// Funding quote symbol
@@ -78,7 +78,7 @@ pub struct ContractInfo {
     /// Funding rate symbol
     pub funding_rate_symbol: Option<String>,
     /// Index symbol
-    pub index_symbol: String,
+    pub index_symbol: Option<String>,
     /// Settlement symbol
     pub settlement_symbol: Option<String>,
     /// Status
@@ -155,23 +155,23 @@ mod tests {
             "indexPriceTickSize": 0.01,
             "multiplier": 0.001,
             "initialMargin": 0.01,
-            "maintenanceMargin": 0.005,
+            "maintenanceMargin": null,
             "maxRiskLimit": 200000,
             "minRiskLimit": 200000,
-            "riskLimitStep": 100000,
+            "riskLimitStep": null,
             "makerFeeRate": 0.0002,
             "takerFeeRate": 0.0006,
-            "takerFixedFee": 0.0,
-            "makerFixedFee": 0.0,
+            "takerFixedFee": null,
+            "makerFixedFee": null,
             "settlementFee": null,
             "isQuanto": false,
             "isInverse": true,
-            "markMethod": "FairPrice",
-            "fairMethod": "FundingRate",
+            "markMethod": null,
+            "fairMethod": null,
             "fundingBaseSymbol": null,
             "fundingQuoteSymbol": null,
             "fundingRateSymbol": null,
-            "indexSymbol": ".BXBT",
+            "indexSymbol": null,
             "settlementSymbol": null,
             "status": "Open",
             "fundFeeBeginTime": null,

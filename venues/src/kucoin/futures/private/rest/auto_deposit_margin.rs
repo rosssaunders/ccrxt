@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::kucoin::{AutoDepositStatus, ResponseHeaders, RestResponse, Result};
+use crate::kucoin::spot::{AutoDepositStatus, ResponseHeaders, RestResponse, Result};
 
 /// Endpoint URL for auto deposit margin
 pub const AUTO_DEPOSIT_MARGIN_ENDPOINT: &str = "/api/v1/position/margin/auto-deposit-status";

@@ -25,13 +25,13 @@ pub struct FuturesContract {
     pub name: String,
 
     /// Underlying
-    pub underlying: String,
+    pub underlying: Option<String>,
 
     /// Quote currency
-    pub quote_currency: String,
+    pub quote_currency: Option<String>,
 
     /// Settlement currency
-    pub settle_currency: String,
+    pub settle_currency: Option<String>,
 
     /// Contract type (inverse, linear)
     #[serde(rename = "type")]
@@ -119,25 +119,25 @@ pub struct FuturesContract {
     pub config_change_time: f64,
 
     /// Whether the contract is delisted
-    pub in_delisting: bool,
+    pub in_delisting: Option<bool>,
 
     /// Total traded volume in quote currency
     pub orders_limit: i32,
 
     /// Whether inverse contract
-    pub enable_bonus: bool,
+    pub enable_bonus: Option<bool>,
 
     /// Enable credit trading
-    pub enable_credit: bool,
+    pub enable_credit: Option<bool>,
 
     /// Create time
-    pub create_time: f64,
+    pub create_time: Option<f64>,
 
     /// Funding rate high limit
-    pub funding_cap: String,
+    pub funding_cap: Option<String>,
 
     /// Funding rate low limit  
-    pub funding_floor: String,
+    pub funding_floor: Option<String>,
 }
 
 impl RestClient {
