@@ -40,3 +40,14 @@ pub mod order_amendments;
 pub mod rate_limit_order;
 
 pub use client::RestClient;
+
+// Re-export request and response types for integration tests
+pub use account::{AccountRequest, AccountResponse};
+pub use account_commission::{AccountCommissionRequest, AccountCommissionResponse};
+pub use all_orders::AllOrdersRequest;
+pub use cancel_order::CancelOrderRequest;
+pub use my_trades::MyTradesRequest;
+pub use open_orders::OpenOrdersRequest;
+pub use order::NewOrderRequest;
+pub use query_order::QueryOrderRequest;
+pub use test_order::TestNewOrderRequest;

@@ -1,2 +1,3 @@
 mod futures_public_integration_tests;
+mod private_integration_tests;
 mod public_integration_tests;

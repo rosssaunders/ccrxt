@@ -177,13 +177,15 @@ async fn test_endpoint_diversity() {
     let client = create_public_test_client();
 
     // Test different endpoint types
-    let endpoints_tested = [("ping", client.ping().await.is_ok()),
+    let endpoints_tested = [
+        ("ping", client.ping().await.is_ok()),
         ("server_time", client.get_server_time().await.is_ok()),
         ("exchange_info", client.get_exchange_info().await.is_ok()),
         (
             "funding_rate_info",
             client.get_funding_rate_info().await.is_ok(),
-        )];
+        ),
+    ];
 
     let successful_endpoints: Vec<_> = endpoints_tested
         .iter()

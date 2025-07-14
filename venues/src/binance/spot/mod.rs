@@ -31,6 +31,13 @@ pub use public::rest::{
     KlinesRequest, Ticker24hrRequest, TickerBookRequest, TickerPriceRequest, TickerRequest,
     TickerTradingDayRequest, TradesRequest, UiKlinesRequest,
 };
+
+// Re-export all private request types for integration tests
+pub use private::rest::{
+    AccountCommissionRequest, AccountCommissionResponse, AccountRequest, AccountResponse,
+    AllOrdersRequest, CancelOrderRequest, MyTradesRequest, NewOrderRequest, OpenOrdersRequest,
+    QueryOrderRequest, TestNewOrderRequest,
+};
 pub use rate_limit::{RateLimitHeader, RateLimiter};
 
 pub use crate::binance::spot::errors::ErrorResponse;

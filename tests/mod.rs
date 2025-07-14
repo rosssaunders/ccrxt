@@ -21,6 +21,22 @@
 //! ```bash
 //! cargo test binance::coinm::public_integration_tests::test_get_exchange_info
 //! ```
+//!
+//! ## Private Endpoint Testing
+//!
+//! Private endpoint tests require API credentials and are disabled by default.
+//! To enable private tests, set environment variables:
+//!
+//! ```bash
+//! export RUN_PRIVATE_TESTS=true
+//! export BINANCE_API_KEY=your_api_key
+//! export BINANCE_SECRET_KEY=your_secret_key
+//! # ... other venue credentials
+//! cargo test
+//! ```
+
+// Common testing utilities
+pub mod common;
 
 // Venue-specific test modules
 pub mod binance;

@@ -76,7 +76,6 @@ impl RestClient {
         &self,
         request: OptionsSettlementsRequest,
     ) -> crate::gateio::options::Result<Vec<OptionsSettlement>> {
-        self.get_with_query("/options/settlements", &request)
-            .await
+        self.get_with_query("/options/settlements", &request).await
     }
 }

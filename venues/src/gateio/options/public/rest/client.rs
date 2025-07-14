@@ -6,7 +6,7 @@ use std::sync::Arc;
 use reqwest::Client;
 use serde::{Serialize, de::DeserializeOwned};
 
-use crate::gateio::shared::{Result, RateLimiter};
+use crate::gateio::shared::{RateLimiter, Result};
 
 const LIVE_URL: &str = "https://api.gateio.ws/api/v4";
 const TESTNET_URL: &str = "https://api-testnet.gateapi.io/api/v4";
@@ -74,9 +74,8 @@ impl RestClient {
             .map_err(|e| crate::gateio::options::GateIoError::Http(e))?;
 
         let status = response.status();
-        let headers = crate::gateio::options::rate_limit::RateLimitHeader::from_headers(
-            response.headers(),
-        );
+        let headers =
+            crate::gateio::options::rate_limit::RateLimitHeader::from_headers(response.headers());
 
         // Update rate limiter with response headers
         if let Some(status) = self.rate_limiter.update_from_headers(&headers, endpoint) {
@@ -93,9 +92,8 @@ impl RestClient {
                 .map_err(|e| crate::gateio::options::GateIoError::Json(e))?;
             Ok(data)
         } else {
-            let error: crate::gateio::options::errors::ErrorResponse =
-                serde_json::from_str(&body)
-                    .map_err(|e| crate::gateio::options::GateIoError::Json(e))?;
+            let error: crate::gateio::options::errors::ErrorResponse = serde_json::from_str(&body)
+                .map_err(|e| crate::gateio::options::GateIoError::Json(e))?;
             Err(crate::gateio::options::GateIoError::Api(
                 crate::gateio::options::ApiError {
                     label: error.label,

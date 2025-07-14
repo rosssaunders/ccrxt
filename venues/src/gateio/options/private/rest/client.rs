@@ -176,8 +176,7 @@ impl RestClient {
 
         // Get body string
         let body_str = if let Some(body_data) = body {
-            serde_json::to_string(body_data)
-                .map_err(crate::gateio::options::GateIoError::Json)?
+            serde_json::to_string(body_data).map_err(crate::gateio::options::GateIoError::Json)?
         } else {
             String::new()
         };
@@ -213,9 +212,8 @@ impl RestClient {
             .map_err(crate::gateio::options::GateIoError::Http)?;
 
         let status = response.status();
-        let headers = crate::gateio::options::rate_limit::RateLimitHeader::from_headers(
-            response.headers(),
-        );
+        let headers =
+            crate::gateio::options::rate_limit::RateLimitHeader::from_headers(response.headers());
 
         // Update rate limiter with response headers
         if let Some(rate_status) = self.rate_limiter.update_from_headers(&headers, endpoint) {

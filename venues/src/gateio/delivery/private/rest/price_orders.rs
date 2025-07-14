@@ -154,7 +154,9 @@ impl RestClient {
         settle: &str,
         order_id: &str,
     ) -> crate::gateio::delivery::Result<DeliveryPriceOrder> {
-        let endpoint = DELIVERY_PRICE_ORDER_ENDPOINT.replace("{}", settle).replace("{}", order_id);
+        let endpoint = DELIVERY_PRICE_ORDER_ENDPOINT
+            .replace("{}", settle)
+            .replace("{}", order_id);
         self.get(&endpoint).await
     }
 
@@ -177,7 +179,9 @@ impl RestClient {
         settle: &str,
         order_id: &str,
     ) -> crate::gateio::delivery::Result<DeliveryPriceOrder> {
-        let endpoint = DELIVERY_PRICE_ORDER_ENDPOINT.replace("{}", settle).replace("{}", order_id);
+        let endpoint = DELIVERY_PRICE_ORDER_ENDPOINT
+            .replace("{}", settle)
+            .replace("{}", order_id);
         self.delete(&endpoint).await
     }
 

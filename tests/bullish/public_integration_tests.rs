@@ -243,10 +243,7 @@ async fn test_assets_all() {
             );
             // Precision is a string, check if it's a valid number
             let precision_num: i32 = first_asset.precision.parse().unwrap_or(0);
-            assert!(
-                precision_num <= 18,
-                "Precision should be reasonable"
-            );
+            assert!(precision_num <= 18, "Precision should be reasonable");
         }
     }
 }
@@ -570,10 +567,7 @@ async fn test_public_trades() {
             );
             // Timestamp is a string, check if it's a valid number
             let timestamp_num: u64 = first_trade.timestamp.parse().unwrap_or(0);
-            assert!(
-                timestamp_num > 0,
-                "Timestamp should be greater than 0"
-            );
+            assert!(timestamp_num > 0, "Timestamp should be greater than 0");
         }
     }
 }
