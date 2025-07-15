@@ -9,19 +9,23 @@ use crate::coinbaseexchange::{EndpointType, RestResult};
 
 const ORDERS_ENDPOINT: &str = "orders";
 
-/// Request to cancel all orders
+/// Request to cancel all orders.
+///
+/// Allows cancelling all open orders, optionally filtered by profile or product.
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct CancelAllOrdersRequest {
     /// Cancels orders on a specific profile
     #[serde(skip_serializing_if = "Option::is_none")]
     pub profile_id: Option<String>,
 
-    /// Cancels orders on a specific product only
+    /// Cancels orders on a specific product only (e.g., "BTC-USD")
     #[serde(skip_serializing_if = "Option::is_none")]
     pub product_id: Option<String>,
 }
 
-/// Request to cancel a single order
+/// Request to cancel a single order.
+///
+/// Optional parameters for cancelling a specific order by ID.
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct CancelOrderRequest {
     /// Cancels orders on a specific profile
@@ -52,6 +56,10 @@ impl RestClient {
     /// With best effort, cancel all open orders. This may require you to make the
     /// request multiple times until all of the open orders are deleted.
     ///
+    /// [API Documentation](https://docs.cdp.coinbase.com/exchange/reference/exchangerestapi_deleteorders)
+    ///
+    /// Rate limit: 100 requests per second
+    ///
     /// # Arguments
     /// * `request` - The cancel all orders request parameters
     ///
@@ -77,6 +85,10 @@ impl RestClient {
     ///
     /// Cancel a single open order by ID. Orders can be canceled using either the exchange assigned ID
     /// or the client assigned client_oid. When using client_oid it must be preceded by the "client:" namespace.
+    ///
+    /// [API Documentation](https://docs.cdp.coinbase.com/exchange/reference/exchangerestapi_deleteorder)
+    ///
+    /// Rate limit: 100 requests per second
     ///
     /// # Arguments
     /// * `order_id` - The order ID (either exchange ID or "client:client_oid")

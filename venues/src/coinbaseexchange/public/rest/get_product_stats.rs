@@ -1,7 +1,3 @@
-//! Get product stats endpoint for Coinbase Exchange REST API
-//!
-//! Gets 30day and 24hour stats for a product.
-
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
@@ -60,6 +56,10 @@ impl RestClient {
     ///
     /// Gets 30day and 24hour stats for a product.
     /// The volume property is in base currency units. Properties open, high, low are in quote currency units.
+    ///
+    /// [API Documentation](https://docs.cdp.coinbase.com/exchange/reference/exchangerestapi_getproductstats)
+    ///
+    /// Rate limit: 10 requests per second
     ///
     /// # Arguments
     /// * `product_id` - The product ID (e.g., "BTC-USD")

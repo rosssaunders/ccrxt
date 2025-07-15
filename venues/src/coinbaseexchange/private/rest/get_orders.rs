@@ -185,6 +185,10 @@ impl RestClient {
     /// List your current open orders. Only open or un-settled orders are returned by default.
     /// As soon as an order is no longer open and settled, it will no longer appear in the default request.
     ///
+    /// [API Documentation](https://docs.cdp.coinbase.com/exchange/reference/exchangerestapi_getorders)
+    ///
+    /// Rate limit: 100 requests per second
+    ///
     /// # Arguments
     /// * `request` - The orders request parameters
     ///
@@ -210,6 +214,10 @@ impl RestClient {
     ///
     /// Get a single order by order ID. Orders can be queried using either the exchange assigned ID
     /// or the client assigned client_oid. When using client_oid it must be preceded by the "client:" namespace.
+    ///
+    /// [API Documentation](https://docs.cdp.coinbase.com/exchange/reference/exchangerestapi_getorder)
+    ///
+    /// Rate limit: 100 requests per second
     ///
     /// # Arguments
     /// * `order_id` - The order ID (either exchange ID or "client:client_oid")

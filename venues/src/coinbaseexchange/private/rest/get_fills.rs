@@ -113,6 +113,10 @@ impl RestClient {
     /// Get a list of fills. A fill is a partial or complete match on a specific order.
     /// Fees are recorded in two stages and the fee field indicates the fees charged for this individual fill.
     ///
+    /// [API Documentation](https://docs.cdp.coinbase.com/exchange/reference/exchangerestapi_getfills)
+    ///
+    /// Rate limit: 10 requests per second per profile (burst up to 20)
+    ///
     /// # Arguments
     /// * `request` - The fills request parameters
     ///
@@ -121,11 +125,6 @@ impl RestClient {
     ///
     /// # API Key Permissions
     /// This endpoint requires either the "view" or "trade" permission.
-    ///
-    /// # Rate Limits
-    /// This endpoint has a custom rate limit:
-    /// - Requests per second per profile: 10
-    /// - Requests per second per profile in bursts: Up to 20
     pub async fn get_fills(
         &self,
         request: &GetFillsRequest,

@@ -1,7 +1,3 @@
-//! Get product ticker endpoint for Coinbase Exchange REST API
-//!
-//! Gets snapshot information about the last trade, best bid/ask and 24h volume.
-
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 
@@ -57,6 +53,10 @@ impl RestClient {
     /// Gets snapshot information about the last trade (tick), best bid/ask and 24h volume.
     /// For real-time updates, Coinbase recommends connecting with the WebSocket stream
     /// and listening for match messages, rather than polling.
+    ///
+    /// [API Documentation](https://docs.cdp.coinbase.com/exchange/reference/exchangerestapi_getproductticker)
+    ///
+    /// Rate limit: 10 requests per second
     ///
     /// # Arguments
     /// * `product_id` - The product ID (e.g., "BTC-USD")

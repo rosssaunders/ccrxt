@@ -1,7 +1,3 @@
-//! Get all products endpoint for Coinbase Exchange REST API
-//!
-//! Gets a list of available currency pairs for trading.
-
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
@@ -92,6 +88,10 @@ impl RestClient {
     /// Get all known trading pairs
     ///
     /// Gets a list of available currency pairs for trading.
+    ///
+    /// [API Documentation](https://docs.cdp.coinbase.com/exchange/reference/exchangerestapi_getproducts)
+    ///
+    /// Rate limit: 10 requests per second
     ///
     /// # Arguments
     /// * `request` - The products request parameters

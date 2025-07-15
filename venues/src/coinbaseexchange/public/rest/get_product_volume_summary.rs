@@ -1,7 +1,3 @@
-//! Get product volume summary endpoint for Coinbase Exchange REST API
-//!
-//! Gets 30day and 24hour volume for all products and market types.
-
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
@@ -64,6 +60,10 @@ impl RestClient {
     /// Get all product volume summary
     ///
     /// Gets 30day and 24hour volume for all products and market types.
+    ///
+    /// [API Documentation](https://docs.cdp.coinbase.com/exchange/reference/exchangerestapi_getproductvolumesummary)
+    ///
+    /// Rate limit: 10 requests per second
     ///
     /// # Arguments
     /// * `request` - The product volume summary request parameters

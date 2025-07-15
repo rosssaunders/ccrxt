@@ -190,11 +190,15 @@ impl RestClient {
     /// Place a new order on the Coinbase Exchange. Orders can be limit, market, or stop orders.
     /// Each profile can place a maximum of 500 open orders on a product.
     ///
+    /// [API Documentation](https://docs.cdp.coinbase.com/exchange/reference/exchangerestapi_postorders)
+    ///
+    /// Rate limit: 100 requests per second
+    ///
     /// # Arguments
-    /// * `request` - The order creation request
+    /// * `request` - The order creation request parameters including order type, side, and product
     ///
     /// # Returns
-    /// A result containing the created order details or an error
+    /// A result containing the created order details with ID, status, and fill information
     ///
     /// # API Key Permissions
     /// This endpoint requires the "trade" permission.

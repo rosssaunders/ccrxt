@@ -10,16 +10,22 @@ const ACCOUNTS_ENDPOINT: &str = "accounts";
 pub struct AccountBalance {
     /// Account ID
     pub id: String,
+
     /// Currency code (e.g., "BTC", "USD")
     pub currency: String,
+
     /// Current balance
     pub balance: String,
+
     /// Amount on hold
     pub hold: String,
+
     /// Available balance (balance - hold)
     pub available: String,
+
     /// Profile ID this account belongs to
     pub profile_id: String,
+
     /// Whether this is a trading account
     pub trading_enabled: bool,
 }
@@ -30,9 +36,11 @@ pub struct GetAccountBalancesRequest {
     /// Request page before (newer) this pagination id
     #[serde(skip_serializing_if = "Option::is_none")]
     pub before: Option<String>,
+
     /// Request page after (older) this pagination id
     #[serde(skip_serializing_if = "Option::is_none")]
     pub after: Option<String>,
+
     /// Number of results per request. Maximum 1000 (default 1000)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<u32>,
@@ -43,6 +51,7 @@ pub struct GetAccountBalancesRequest {
 pub struct GetAccountBalancesResponse {
     /// List of account balances
     pub accounts: Vec<AccountBalance>,
+
     /// Pagination information
     pub pagination: Option<PaginationInfo>,
 }
@@ -52,6 +61,7 @@ pub struct GetAccountBalancesResponse {
 pub struct PaginationInfo {
     /// Cursor for the page before (newer page)
     pub before: Option<String>,
+
     /// Cursor for the page after (older page)
     pub after: Option<String>,
 }

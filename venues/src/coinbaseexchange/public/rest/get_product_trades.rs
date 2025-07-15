@@ -1,7 +1,3 @@
-//! Get product trades endpoint for Coinbase Exchange REST API
-//!
-//! Gets a list of the latest trades for a product.
-
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 
@@ -67,6 +63,10 @@ impl RestClient {
     /// The side of a trade indicates the maker order side. The maker order is the order that was open on the order book.
     /// A buy side indicates a down-tick because the maker was a buy order and their order was removed.
     /// A sell side indicates an up-tick.
+    ///
+    /// [API Documentation](https://docs.cdp.coinbase.com/exchange/reference/exchangerestapi_getproducttrades)
+    ///
+    /// Rate limit: 10 requests per second
     ///
     /// # Arguments
     /// * `product_id` - The product ID (e.g., "BTC-USD")

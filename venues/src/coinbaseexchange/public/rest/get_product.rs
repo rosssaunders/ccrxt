@@ -1,7 +1,3 @@
-//! Get single product endpoint for Coinbase Exchange REST API
-//!
-//! Get information on a single product.
-
 use serde::Serialize;
 
 use super::{Product, RestClient};
@@ -21,6 +17,10 @@ impl RestClient {
     /// Get single product
     ///
     /// Get information on a single product.
+    ///
+    /// [API Documentation](https://docs.cdp.coinbase.com/exchange/reference/exchangerestapi_getproduct)
+    ///
+    /// Rate limit: 10 requests per second
     ///
     /// # Arguments
     /// * `product_id` - The product ID (e.g., "BTC-USD")
