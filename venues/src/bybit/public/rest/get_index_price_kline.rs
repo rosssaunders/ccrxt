@@ -5,26 +5,48 @@ use crate::bybit::{EndpointType, RestResult, enums::*};
 
 const INDEX_PRICE_KLINE_ENDPOINT: &str = "/v5/market/index-price-kline";
 
+/// Request parameters for getting index price kline data
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct GetIndexPriceKlineRequest {
+    /// Product type (Linear or Inverse)
     pub category: Category,
+    
+    /// Symbol name (e.g., "BTCUSDT")
     pub symbol: String,
+    
+    /// Kline interval
     pub interval: Interval,
+    
+    /// Start timestamp in milliseconds
     #[serde(skip_serializing_if = "Option::is_none")]
     pub start: Option<u64>,
+    
+    /// End timestamp in milliseconds. Default: current time
     #[serde(skip_serializing_if = "Option::is_none")]
     pub end: Option<u64>,
+    
+    /// Limit for data size per page. [1, 1000]. Default: 200
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i32>,
 }
 
+/// Index price kline data
 #[derive(Debug, Clone)]
 pub struct IndexPriceKline {
+    /// Start timestamp of the kline in milliseconds
     pub start_time: String,
+    
+    /// Open price
     pub open_price: String,
+    
+    /// High price
     pub high_price: String,
+    
+    /// Low price
     pub low_price: String,
+    
+    /// Close price
     pub close_price: String,
 }
 
@@ -51,35 +73,62 @@ impl<'de> Deserialize<'de> for IndexPriceKline {
     }
 }
 
+/// Index price kline data container
 #[derive(Debug, Clone, Deserialize)]
 pub struct GetIndexPriceKlineData {
+    /// Product type
     pub category: Category,
+    
+    /// Symbol name
     pub symbol: String,
+    
+    /// Array of kline data
     pub list: Vec<IndexPriceKline>,
 }
 
+/// Response from the index price kline endpoint
 #[derive(Debug, Clone, Deserialize)]
 pub struct GetIndexPriceKlineResponse {
+    /// Success/Error code (0: success, 1: error)
     #[serde(rename = "retCode")]
     pub ret_code: i32,
+    
+    /// Success/Error message
     #[serde(rename = "retMsg")]
     pub ret_msg: String,
+    
+    /// Business data result
     pub result: GetIndexPriceKlineData,
+    
+    /// Extended information
     #[serde(rename = "retExtInfo")]
     pub ret_ext_info: serde_json::Value,
+    
+    /// Current timestamp in milliseconds
     pub time: u64,
 }
 
 impl RestClient {
     /// Get index price kline data
     ///
-    /// Query for historical index price klines. USDT/USDC contract and Inverse contract only.
+    /// Query for historical index price klines. This endpoint is only available for USDT/USDC perpetual
+    /// and Inverse perpetual contracts.
+    ///
+    /// [API Documentation](https://bybit-exchange.github.io/docs/v5/market/index-kline)
+    ///
+    /// Rate limit: 10 requests per second
     ///
     /// # Arguments
-    /// * `request` - The index price kline request parameters
+    /// * `request` - The index price kline request parameters including:
+    ///   - `category`: Product type (Linear or Inverse)
+    ///   - `symbol`: Symbol name
+    ///   - `interval`: Kline interval
+    ///   - `start`: Optional start timestamp
+    ///   - `end`: Optional end timestamp
+    ///   - `limit`: Optional result limit
     ///
     /// # Returns
-    /// A result containing the index price kline response or an error
+    /// A result containing the index price kline response with kline data or an error
     pub async fn get_index_price_kline(
         &self,
         request: GetIndexPriceKlineRequest,

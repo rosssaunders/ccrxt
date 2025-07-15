@@ -5,56 +5,104 @@ use crate::bybit::{EndpointType, RestResult, enums::*};
 
 const RECENT_TRADES_ENDPOINT: &str = "/v5/market/recent-trade";
 
+/// Request parameters for getting recent trades
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct GetRecentTradesRequest {
+    /// Product type
     pub category: Category,
+    
+    /// Symbol name. Required for Spot/Linear/Inverse
     #[serde(skip_serializing_if = "Option::is_none")]
     pub symbol: Option<String>,
+    
+    /// Base coin. For Option only, returns all option symbols of the base coin
     #[serde(skip_serializing_if = "Option::is_none")]
     pub base_coin: Option<String>,
+    
+    /// Option type. For Option only
     #[serde(skip_serializing_if = "Option::is_none")]
     pub option_type: Option<OptionType>,
+    
+    /// Limit for data size per page. Spot: [1,60], others: [1,1000]. Default: 500
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i32>,
 }
 
+/// Trade information
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct TradeInfo {
+    /// Execution ID
     pub exec_id: String,
+    
+    /// Symbol name
     pub symbol: String,
+    
+    /// Trade price
     pub price: String,
+    
+    /// Trade size
     pub size: String,
+    
+    /// Side of taker
     pub side: Side,
+    
+    /// Trade time in milliseconds
     pub time: String,
+    
+    /// Whether it's a block trade
     pub is_block_trade: bool,
+    
+    /// Whether it's a RPI trade. Valid for Spot only
     #[serde(rename = "isRPITrade")]
     pub is_rpi_trade: Option<bool>,
+    
+    /// Mark price. Valid for Option only
     #[serde(rename = "mP")]
     pub mark_price: Option<String>,
+    
+    /// Index price. Valid for Option only
     #[serde(rename = "iP")]
     pub index_price: Option<String>,
+    
+    /// Mark IV. Valid for Option only
     #[serde(rename = "mIv")]
     pub mark_iv: Option<String>,
+    
+    /// IV. Valid for Option only
     pub iv: Option<String>,
 }
 
+/// Recent trades data container
 #[derive(Debug, Clone, Deserialize)]
 pub struct GetRecentTradesData {
+    /// Product type
     pub category: Category,
+    
+    /// Array of trade data
     pub list: Vec<TradeInfo>,
 }
 
+/// Response from the recent trades endpoint
 #[derive(Debug, Clone, Deserialize)]
 pub struct GetRecentTradesResponse {
+    /// Success/Error code (0: success, 1: error)
     #[serde(rename = "retCode")]
     pub ret_code: i32,
+    
+    /// Success/Error message
     #[serde(rename = "retMsg")]
     pub ret_msg: String,
+    
+    /// Business data result
     pub result: GetRecentTradesData,
+    
+    /// Extended information
     #[serde(rename = "retExtInfo")]
     pub ret_ext_info: serde_json::Value,
+    
+    /// Current timestamp in milliseconds
     pub time: u64,
 }
 
@@ -63,11 +111,20 @@ impl RestClient {
     ///
     /// Query recent public trading history in Bybit.
     ///
+    /// [API Documentation](https://bybit-exchange.github.io/docs/v5/market/recent-trade)
+    ///
+    /// Rate limit: 10 requests per second
+    ///
     /// # Arguments
-    /// * `request` - The recent trades request parameters
+    /// * `request` - The recent trades request parameters including:
+    ///   - `category`: Product type
+    ///   - `symbol`: Optional symbol name (required for Spot/Linear/Inverse)
+    ///   - `base_coin`: Optional base coin (for Option only)
+    ///   - `option_type`: Optional option type (for Option only)
+    ///   - `limit`: Optional result limit
     ///
     /// # Returns
-    /// A result containing the recent trades response or an error
+    /// A result containing the recent trades response with trade data or an error
     pub async fn get_recent_trades(
         &self,
         request: GetRecentTradesRequest,

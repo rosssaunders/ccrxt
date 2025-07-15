@@ -6,17 +6,27 @@ use crate::bybit::{EndpointType, RestResult, enums::*};
 /// Endpoint URL path for orderbook
 const ENDPOINT_PATH: &str = "/v5/market/orderbook";
 
+/// Request parameters for getting orderbook data
 #[derive(Debug, Clone, Serialize)]
 pub struct GetOrderbookRequest {
+    /// Product type
     pub category: Category,
+    
+    /// Symbol name (e.g., "BTCUSDT")
     pub symbol: String,
+    
+    /// Limit size for each bid and ask. Spot: [1, 200]. Linear&Inverse: [1, 500]. Option: [1, 25]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i32>,
 }
 
+/// Orderbook level containing price and size
 #[derive(Debug, Clone)]
 pub struct OrderbookLevel {
+    /// Price level
     pub price: String,
+    
+    /// Size at this price level
     pub size: String,
 }
 
@@ -39,34 +49,51 @@ impl<'de> Deserialize<'de> for OrderbookLevel {
     }
 }
 
+/// Orderbook data
 #[derive(Debug, Clone, Deserialize)]
 pub struct GetOrderbookData {
     /// Symbol name
     pub s: String,
+    
     /// Bid array, sorted by price in descending order
     pub b: Vec<OrderbookLevel>,
+    
     /// Ask array, sorted by price in ascending order
     pub a: Vec<OrderbookLevel>,
+    
     /// Timestamp (ms) when system generates the data
     pub ts: u64,
+    
     /// Update ID, always in sequence
     pub u: u64,
+    
     /// Cross sequence (compare different levels orderbook data)
     pub seq: u64,
+    
     /// Timestamp from matching engine when data is produced
     #[serde(rename = "cts")]
     pub create_time: u64,
 }
 
+/// Response from the orderbook endpoint
 #[derive(Debug, Clone, Deserialize)]
 pub struct GetOrderbookResponse {
+    /// Success/Error code (0: success, 1: error)
     #[serde(rename = "retCode")]
     pub ret_code: i32,
+    
+    /// Success/Error message
     #[serde(rename = "retMsg")]
     pub ret_msg: String,
+    
+    /// Business data result
     pub result: GetOrderbookData,
+    
+    /// Extended information
     #[serde(rename = "retExtInfo")]
     pub ret_ext_info: serde_json::Value,
+    
+    /// Current timestamp in milliseconds
     pub time: u64,
 }
 
@@ -78,11 +105,18 @@ impl RestClient {
     /// - Spot: 200-level orderbook data  
     /// - Option: 25-level orderbook data
     ///
+    /// [API Documentation](https://bybit-exchange.github.io/docs/v5/market/orderbook)
+    ///
+    /// Rate limit: 10 requests per second
+    ///
     /// # Arguments
-    /// * `request` - The orderbook request parameters
+    /// * `request` - The orderbook request parameters including:
+    ///   - `category`: Product type
+    ///   - `symbol`: Symbol name
+    ///   - `limit`: Optional depth limit
     ///
     /// # Returns
-    /// A result containing the orderbook response or an error
+    /// A result containing the orderbook response with bid/ask levels or an error
     pub async fn get_orderbook(
         &self,
         request: GetOrderbookRequest,
