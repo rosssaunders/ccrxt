@@ -11,45 +11,59 @@ const CREATE_ORDER_LIST_ENDPOINT: &str = "private/create-order-list";
 pub struct OrderListItem {
     /// Instrument name (e.g., ETH_CRO, BTC_USDT)
     pub instrument_name: String,
+
     /// Order side (BUY or SELL)
     pub side: OrderSide,
+
     /// Order type
     #[serde(rename = "type")]
     pub order_type: OrderType,
+
     /// Order price (required for LIMIT and STOP_LIMIT orders)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub price: Option<String>,
+
     /// Order quantity (required for most order types)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub quantity: Option<String>,
+
     /// Notional amount (for MARKET BUY orders)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub notional: Option<String>,
+
     /// Client order ID (maximum 36 characters)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub client_oid: Option<String>,
+
     /// Time in force (LIMIT orders only)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub time_in_force: Option<TimeInForce>,
+
     /// Execution instructions (LIMIT orders only): POST_ONLY, SMART_POST_ONLY
     /// Note: POST_ONLY and SMART_POST_ONLY cannot be used together.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub exec_inst: Option<Vec<ExecInst>>,
+
     /// Trigger price (for stop orders)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub trigger_price: Option<String>,
+
     /// STP scope
     #[serde(skip_serializing_if = "Option::is_none")]
     pub stp_scope: Option<StpScope>,
+
     /// STP instruction
     #[serde(skip_serializing_if = "Option::is_none")]
     pub stp_inst: Option<StpInst>,
+
     /// STP ID (0 to 32767)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub stp_id: Option<u16>,
+
     /// Preferred fee token
     #[serde(skip_serializing_if = "Option::is_none")]
     pub fee_instrument_name: Option<String>,
+
     /// Reference price for OCO orders (STOP_LOSS orders in OCO)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub ref_price: Option<String>,
@@ -60,6 +74,7 @@ pub struct OrderListItem {
 pub struct CreateOrderListRequest {
     /// Contingency type (LIST or OCO)
     pub contingency_type: ContingencyType,
+
     /// List of orders (1-10 for LIST, exactly 2 for OCO)
     pub order_list: Vec<OrderListItem>,
 }
@@ -69,14 +84,18 @@ pub struct CreateOrderListRequest {
 pub struct OrderCreationResult {
     /// Index of the order in the request (starts from 0)
     pub index: u32,
+
     /// Status code (0 if successful)
     pub code: i32,
+
     /// Error message (if any)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub message: Option<String>,
+
     /// Order ID (if successful)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub order_id: Option<String>,
+
     /// Client order ID (if provided)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub client_oid: Option<String>,

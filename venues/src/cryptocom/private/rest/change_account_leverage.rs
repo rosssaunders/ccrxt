@@ -3,11 +3,15 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::cryptocom::{ApiResult, RestResult};
 
+/// Endpoint path for the change-account-leverage API
+const CHANGE_ACCOUNT_LEVERAGE_ENDPOINT: &str = "private/change-account-leverage";
+
 /// Request parameters for changing account leverage
 #[derive(Debug, Clone, Serialize)]
 pub struct ChangeAccountLeverageRequest {
     /// Account ID to change the leverage. Must be currently the logged user's account
     pub account_id: String,
+
     /// Maximum leverage to be used for the account. Valid values are between 1-100 (inclusive)
     pub leverage: u8,
 }
@@ -42,7 +46,7 @@ impl RestClient {
         &self,
         request: ChangeAccountLeverageRequest,
     ) -> RestResult<ChangeAccountLeverageResponse> {
-        self.send_signed_request("private/change-account-leverage", request)
+        self.send_signed_request(CHANGE_ACCOUNT_LEVERAGE_ENDPOINT, request)
             .await
     }
 }

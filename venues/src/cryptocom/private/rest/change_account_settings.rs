@@ -2,9 +2,10 @@ use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
 
+use crate::cryptocom::{ApiResult, RestResult, StpInst, StpScope};
+
 /// Endpoint path for the change-account-settings API
 const CHANGE_ACCOUNT_SETTINGS_ENDPOINT: &str = "private/change-account-settings";
-use crate::cryptocom::{ApiResult, RestResult, StpInst, StpScope};
 
 /// Request parameters for changing account settings
 #[derive(Debug, Clone, Serialize)]
@@ -12,12 +13,15 @@ pub struct ChangeAccountSettingsRequest {
     /// Self-trade prevention scope: M (Matches Master or Sub a/c), S (Matches Sub a/c only)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub stp_scope: Option<StpScope>,
+
     /// Self-trade prevention instruction: M (Cancel Maker), T (Cancel Taker), B (Cancel Both)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub stp_inst: Option<StpInst>,
+
     /// STP ID value: 0 to 32767
     #[serde(skip_serializing_if = "Option::is_none")]
     pub stp_id: Option<String>,
+
     /// Maximum leverage user intends to set for the account. Valid values are between 1-50 (inclusive)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub leverage: Option<u8>,

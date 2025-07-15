@@ -1,10 +1,10 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
+use crate::cryptocom::RestResult;
 
 /// Endpoint path for the close-position API
 const CLOSE_POSITION_ENDPOINT: &str = "private/close-position";
-use crate::cryptocom::RestResult;
 
 /// Position close order type
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -19,9 +19,11 @@ pub enum ClosePositionType {
 pub struct ClosePositionRequest {
     /// Instrument name e.g. BTCUSD-PERP
     pub instrument_name: String,
+
     /// Order type: LIMIT or MARKET
     #[serde(rename = "type")]
     pub order_type: ClosePositionType,
+
     /// Price (required for LIMIT orders only)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub price: Option<String>,
@@ -33,6 +35,7 @@ pub struct ClosePositionRequest {
 pub struct ClosePositionResponse {
     /// Order ID
     pub order_id: String,
+
     /// Client Order ID
     pub client_oid: String,
 }

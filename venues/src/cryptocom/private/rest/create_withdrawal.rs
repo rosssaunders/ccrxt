@@ -3,22 +3,29 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
 
+/// Endpoint path for the create-withdrawal API
 const CREATE_WITHDRAWAL_ENDPOINT: &str = "private/create-withdrawal";
+
 /// Request parameters for create withdrawal
 #[derive(Debug, Clone, Serialize)]
 pub struct CreateWithdrawalRequest {
     /// Optional Client withdrawal ID
     #[serde(skip_serializing_if = "Option::is_none")]
     pub client_wid: Option<String>,
+
     /// Currency symbol e.g. BTC, CRO
     pub currency: String,
+
     /// Amount to withdraw
     pub amount: String,
+
     /// Withdrawal address
     pub address: String,
+
     /// Secondary address identifier for coins like XRP, XLM etc. Also known as memo or tags
     #[serde(skip_serializing_if = "Option::is_none")]
     pub address_tag: Option<String>,
+
     /// Network ID - must be whitelisted first
     #[serde(skip_serializing_if = "Option::is_none")]
     pub network_id: Option<String>,
@@ -29,19 +36,26 @@ pub struct CreateWithdrawalRequest {
 pub struct CreateWithdrawalResponse {
     /// Newly created withdrawal ID
     pub id: u64,
+
     /// Currency symbol e.g. BTC, CRO  
     pub symbol: String,
+
     /// Withdrawal amount
     pub amount: f64,
+
     /// Withdrawal fee
     pub fee: f64,
+
     /// Withdrawal address with Address Tag (if any)
     pub address: String,
+
     /// Optional Client withdrawal ID if provided in request
     #[serde(skip_serializing_if = "Option::is_none")]
     pub client_wid: Option<String>,
+
     /// Creation timestamp
     pub create_time: u64,
+
     /// Network ID if specified
     #[serde(skip_serializing_if = "Option::is_none")]
     pub network_id: Option<String>,
@@ -53,7 +67,7 @@ impl RestClient {
     /// Creates a withdrawal request. Withdrawal setting must be enabled for your API Key.
     /// If you do not see the option when viewing your API Key, this feature is not yet available for you.
     ///
-    /// See: <>
+    /// See: <https://exchange-docs.crypto.com/derivatives/index.html>
     ///
     /// # Arguments
     /// * `request` - Parameters for creating a withdrawal

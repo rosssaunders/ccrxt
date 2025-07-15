@@ -4,11 +4,13 @@ use super::client::RestClient;
 
 /// Endpoint path for the cancel-order-list API
 const CANCEL_ORDER_LIST_ENDPOINT: &str = "private/cancel-order-list";
+
 /// Individual order to cancel in a list
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CancelOrderListItem {
     /// Instrument name (e.g., ETH_CRO, BTC_USDT)
     pub instrument_name: String,
+
     /// Order ID to cancel
     pub order_id: String,
 }
@@ -18,6 +20,7 @@ pub struct CancelOrderListItem {
 pub struct CancelOrderListRequest {
     /// Contingency type (must be LIST)
     pub contingency_type: crate::cryptocom::enums::ContingencyType,
+
     /// List of orders to cancel
     pub order_list: Vec<CancelOrderListItem>,
 }
@@ -27,8 +30,10 @@ pub struct CancelOrderListRequest {
 pub struct OrderCancellationResult {
     /// Index of the order in the request (starts from 0)
     pub index: u32,
+
     /// Status code (0 if successful)
     pub code: i32,
+
     /// Error message (if any)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub message: Option<String>,

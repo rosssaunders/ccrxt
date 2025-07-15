@@ -3,48 +3,68 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::cryptocom::RestResult;
 
+/// Endpoint path for the get-accounts API
 const ACCOUNTS_ENDPOINT: &str = "private/get-accounts";
+
 /// Account information
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Account {
     /// Sub account uuid
     pub uuid: String,
+
     /// Master account uuid
     pub master_account_uuid: String,
+
     /// (optional) Margin account uuid
     #[serde(skip_serializing_if = "Option::is_none")]
     pub margin_account_uuid: Option<String>,
+
     /// Sub account label
     #[serde(skip_serializing_if = "Option::is_none")]
     pub label: Option<String>,
+
     /// true or false
     pub enabled: bool,
+
     /// true or false
     pub tradable: bool,
+
     /// Name of sub account
     pub name: String,
+
     /// Email of sub account
     pub email: String,
+
     /// Mobile number of sub account
     pub mobile_number: String,
+
     /// Country Code of sub account
     pub country_code: String,
+
     /// Address of sub account
     pub address: String,
+
     /// DEFAULT or DISABLED
     pub margin_access: String,
+
     /// DEFAULT or DISABLED
     pub derivatives_access: String,
+
     /// Creation timestamp (milliseconds since the Unix epoch)
     pub create_time: u64,
+
     /// Last update timestamp (milliseconds since the Unix epoch)
     pub update_time: u64,
+
     /// true or false
     pub two_fa_enabled: bool,
+
     /// Kyc Level
     pub kyc_level: String,
+
     /// true or false
     pub suspended: bool,
+
     /// true or false
     pub terminated: bool,
 }
@@ -54,6 +74,7 @@ pub struct Account {
 pub struct GetAccountsResponse {
     /// Master account information
     pub master_account: Account,
+
     /// List of sub accounts
     pub sub_account_list: Vec<Account>,
 }
@@ -64,6 +85,7 @@ pub struct GetAccountsRequest {
     /// Page size (default: 20)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub page_size: Option<u32>,
+
     /// Page number (default: 0)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub page: Option<u32>,

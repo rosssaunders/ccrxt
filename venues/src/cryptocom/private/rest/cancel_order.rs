@@ -12,6 +12,7 @@ pub struct CancelOrderRequest {
     /// Order ID (string format is highly recommended)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub order_id: Option<String>,
+
     /// Client Order ID
     #[serde(skip_serializing_if = "Option::is_none")]
     pub client_oid: Option<String>,
@@ -23,6 +24,7 @@ pub struct CancelOrderRequest {
 pub struct CancelOrderResponse {
     /// Order ID
     pub order_id: String,
+
     /// Client Order ID
     pub client_oid: String,
 }

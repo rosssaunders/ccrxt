@@ -12,11 +12,14 @@ pub struct AmendOrderRequest {
     /// Order ID (string format is highly recommended)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub order_id: Option<String>,
+
     /// Original Client Order ID
     #[serde(skip_serializing_if = "Option::is_none")]
     pub orig_client_oid: Option<String>,
+
     /// The new amended price (if no change required, input original value)
     pub new_price: String,
+
     /// The new amended quantity (if no change required, input original value)  
     pub new_quantity: String,
 }
@@ -27,6 +30,7 @@ pub struct AmendOrderRequest {
 pub struct AmendOrderResponse {
     /// Client order ID
     pub client_oid: String,
+
     /// Order ID  
     pub order_id: String,
 }

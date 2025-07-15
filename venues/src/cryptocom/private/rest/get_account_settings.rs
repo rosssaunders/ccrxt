@@ -3,17 +3,22 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::cryptocom::{ApiResult, RestResult};
 
+/// Endpoint path for the get-account-settings API
 const ACCOUNT_SETTINGS_ENDPOINT: &str = "private/get-account-settings";
+
 /// Account settings information
 #[derive(Debug, Clone, Deserialize)]
 #[allow(dead_code)]
 pub struct AccountSettings {
     /// Maximum leverage user set on the account
     pub leverage: u8,
+
     /// STP ID value: 0 to 32767
     pub stp_id: u16,
+
     /// Self-trade prevention scope: M (Matches Master or Sub a/c), S (Matches Sub a/c only)
     pub stp_scope: String,
+
     /// Self-trade prevention instruction: M (Cancel Maker), T (Cancel Taker), B (Cancel Both)
     pub stp_inst: String,
 }

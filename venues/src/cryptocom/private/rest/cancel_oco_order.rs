@@ -11,8 +11,10 @@ const CANCEL_OCO_ORDER_ENDPOINT: &str = "private/cancel-order-list";
 pub struct CancelOcoOrderRequest {
     /// Contingency type (must be OCO)
     pub contingency_type: crate::cryptocom::ContingencyType,
+
     /// List ID of the OCO order to cancel
     pub list_id: String,
+
     /// Instrument name
     pub instrument_name: String,
 }

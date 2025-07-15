@@ -21,6 +21,7 @@ pub struct CancelAllOrdersRequest {
     /// Instrument name e.g. BTCUSD-PERP (if not provided, orders of ALL instruments will be canceled)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub instrument_name: Option<String>,
+
     /// Order type filter: LIMIT, TRIGGER, ALL
     #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
     pub order_type: Option<CancelOrderType>,
