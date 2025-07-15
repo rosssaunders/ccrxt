@@ -3,63 +3,104 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::bybit::{EndpointType, RestResult, enums::*};
 
+/// Endpoint URL for cancelling all orders
+const CANCEL_ALL_ORDERS_ENDPOINT: &str = "/v5/order/cancel-all";
+
+/// Request parameters for cancelling all orders.
+///
+/// Cancels all open orders that match the specified criteria. You can filter by
+/// symbol, base coin, settle coin, order type, and stop order type.
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct CancelAllOrdersRequest {
+    /// Product type (linear, spot, option, inverse)
     pub category: Category,
+
+    /// Trading symbol (e.g., "BTCUSDT"). If not provided, cancels all symbols
     #[serde(skip_serializing_if = "Option::is_none")]
     pub symbol: Option<String>,
+
+    /// Base coin (e.g., "BTC"). Valid for option only
     #[serde(skip_serializing_if = "Option::is_none")]
     pub base_coin: Option<String>,
+
+    /// Settle coin (e.g., "USDT"). Valid for linear and inverse only
     #[serde(skip_serializing_if = "Option::is_none")]
     pub settle_coin: Option<String>,
+
+    /// Order filter for conditional orders
     #[serde(skip_serializing_if = "Option::is_none")]
     pub order_filter: Option<OrderFilter>,
+
+    /// Stop order type filter
     #[serde(skip_serializing_if = "Option::is_none")]
     pub stop_order_type: Option<StopOrderType>,
 }
 
+/// Information about a cancelled order.
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct CancelledOrder {
+    /// Unique order ID of the cancelled order
     pub order_id: String,
+
+    /// User-defined order ID of the cancelled order
     pub order_link_id: String,
 }
 
+/// Data from the cancel all orders response.
 #[derive(Debug, Clone, Deserialize)]
 pub struct CancelAllOrdersData {
+    /// List of cancelled orders
     pub list: Vec<CancelledOrder>,
+
+    /// Success status message
     pub success: String,
 }
 
+/// Response from the cancel all orders API endpoint.
 #[derive(Debug, Clone, Deserialize)]
 pub struct CancelAllOrdersResponse {
+    /// Return code (0 indicates success)
     #[serde(rename = "retCode")]
     pub ret_code: i32,
+
+    /// Return message
     #[serde(rename = "retMsg")]
     pub ret_msg: String,
+
+    /// Cancel all orders result data
     pub result: CancelAllOrdersData,
+
+    /// Extended information (varies by endpoint)
     #[serde(rename = "retExtInfo")]
     pub ret_ext_info: serde_json::Value,
+
+    /// Response timestamp in milliseconds
     pub time: u64,
 }
 
 impl RestClient {
     /// Cancel all orders
     ///
-    /// Cancel all open orders by symbol/baseCoin/settleCoin.
+    /// Cancel all open orders that match the specified criteria. You can filter by
+    /// symbol, base coin, settle coin, order type, and stop order type.
+    ///
+    /// [API Documentation](https://bybit-exchange.github.io/docs/v5/order/cancel-all)
+    ///
+    /// Rate limit: 10 requests per second per UID
     ///
     /// # Arguments
-    /// * `request` - The cancel all orders request parameters
+    /// * `request` - The cancellation request with optional filters for symbol, coin, and order type
     ///
     /// # Returns
-    /// A result containing the cancel all orders response or an error
+    /// A result containing the list of cancelled orders and success status
     pub async fn cancel_all_orders(
         &self,
         request: CancelAllOrdersRequest,
     ) -> RestResult<CancelAllOrdersResponse> {
         self.send_signed_request(
-            "/v5/order/cancel-all",
+            CANCEL_ALL_ORDERS_ENDPOINT,
             reqwest::Method::POST,
             request,
             EndpointType::Trade,

@@ -3,6 +3,13 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::bybit::{EndpointType, RestResult, enums::*};
 
+/// Endpoint URL for getting execution list
+const GET_EXECUTION_LIST_ENDPOINT: &str = "/v5/execution/list";
+
+/// Request parameters for getting the execution list.
+///
+/// Retrieves a list of trade executions (fills) for the account. Supports filtering
+/// by various criteria including symbol, order ID, time range, and execution type.
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct GetExecutionListRequest {
@@ -80,19 +87,24 @@ pub struct GetExecutionListResponse {
 impl RestClient {
     /// Get execution list (trade history)
     ///
-    /// Query execution records sorted by execTime in descending order.
+    /// Query execution records (trade fills) sorted by execution time in descending order.
+    /// Supports filtering by symbol, order ID, time range, and execution type.
+    ///
+    /// [API Documentation](https://bybit-exchange.github.io/docs/v5/position/execution)
+    ///
+    /// Rate limit: 10 requests per second per UID
     ///
     /// # Arguments
-    /// * `request` - The get execution list request parameters
+    /// * `request` - The execution list request with optional filters for symbol, order, and time range
     ///
     /// # Returns
-    /// A result containing the execution list response or an error
+    /// A result containing the list of execution records with trade details and pagination info
     pub async fn get_execution_list(
         &self,
         request: GetExecutionListRequest,
     ) -> RestResult<GetExecutionListResponse> {
         self.send_signed_request(
-            "/v5/execution/list",
+            GET_EXECUTION_LIST_ENDPOINT,
             reqwest::Method::GET,
             request,
             EndpointType::Trade,
