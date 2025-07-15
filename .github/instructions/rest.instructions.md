@@ -132,7 +132,7 @@ It also details documentation and code style requirements for all structs and fi
   ///
   /// Cancels all outstanding orders for a symbol and/or side.
   ///
-  /// See: https://raw.githubusercontent.com/rosssaunders/coincise/refs/heads/main/docs/bitmart/spot/spot___margin_trading.md
+  /// [documentation]: https://raw.githubusercontent.com/rosssaunders/coincise/refs/heads/main/docs/bitmart/spot/spot___margin_trading.md
   ///
   /// Rate limit: varies by endpoint type
   ///

@@ -5,7 +5,12 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::bullish::{EndpointType, RestResult, enums::*};
 
-/// Request to create a new order
+/// Endpoint URL for orders operations
+const ORDERS_ENDPOINT: &str = "/v2/orders";
+
+/// Request parameters for creating a new order.
+///
+/// Creates a new trading order with specified parameters including symbol, type, side, and quantity.
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct CreateOrderRequest {
@@ -188,7 +193,7 @@ impl RestClient {
             query_params.push(("status", format!("{:?}", status).to_uppercase()));
         }
 
-        let mut url = "/v2/orders".to_string();
+        let mut url = ORDERS_ENDPOINT.to_string();
         if !query_params.is_empty() {
             url.push('?');
             let query_string: Vec<String> = query_params
@@ -210,19 +215,23 @@ impl RestClient {
     /// Create a new order
     ///
     /// Creates an order using the V3CreateOrder command type.
-    /// Requires bearer token and HMAC signature in headers.
+    /// Supports market, limit, and stop orders with various time-in-force options.
+    ///
+    /// [API Documentation](https://docs.bullish.com/api/v2/orders)
+    ///
+    /// Rate limit: 100 requests per second
     ///
     /// # Arguments
-    /// * `request` - Order creation request
+    /// * `request` - Order creation request parameters including symbol, type, side, and quantity
     ///
     /// # Returns
-    /// Order creation acknowledgment with order ID
+    /// Order creation acknowledgment with assigned order ID and status
     pub async fn create_order(
         &mut self,
         request: CreateOrderRequest,
     ) -> RestResult<CreateOrderResponse> {
         self.send_signed_request(
-            "/v2/orders",
+            ORDERS_ENDPOINT,
             reqwest::Method::POST,
             Some(&request),
             EndpointType::PrivateOrders,
@@ -246,8 +255,8 @@ impl RestClient {
         trading_account_id: &str,
     ) -> RestResult<Order> {
         let url = format!(
-            "/v2/orders/{}?tradingAccountId={}",
-            order_id, trading_account_id
+            "{}{}?tradingAccountId={}",
+            ORDERS_ENDPOINT, order_id, trading_account_id
         );
 
         self.send_authenticated_request(

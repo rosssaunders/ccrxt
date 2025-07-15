@@ -3,6 +3,9 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, OrderSide, OrderType, RestResult};
 
+/// Endpoint URL for placing orders
+const PLACE_ORDER_ENDPOINT: &str = "api/v5/trade/order";
+
 /// Request to place a new order
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -120,17 +123,23 @@ pub struct PlaceOrderResponse {
 impl RestClient {
     /// Place a new order
     ///
+    /// Place orders for spot, margin, futures, perpetual swap, and options.
+    ///
+    /// [API Documentation](https://www.okx.com/docs-v5/en/#order-book-trading-trade-post-place-order)
+    ///
+    /// Rate limit: 60 requests per 2 seconds
+    ///
     /// # Arguments
-    /// * `request` - The order placement request
+    /// * `request` - The order placement request parameters
     ///
     /// # Returns
-    /// A result containing the order placement response or an error
+    /// A result containing the order placement response with order ID and status
     pub async fn place_order(
         &self,
         request: &PlaceOrderRequest,
     ) -> RestResult<OkxApiResponse<PlaceOrderResponse>> {
         self.send_request(
-            "api/v5/trade/order",
+            PLACE_ORDER_ENDPOINT,
             reqwest::Method::POST,
             Some(request),
             EndpointType::PrivateTrading,

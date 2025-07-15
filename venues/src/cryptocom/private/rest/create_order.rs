@@ -14,48 +14,63 @@ const CREATE_ORDER_ENDPOINT: &str = "private/create-order";
 pub struct CreateOrderRequest {
     /// Instrument name e.g. BTCUSD-PERP
     pub instrument_name: String,
+
     /// Order side: BUY or SELL
     pub side: TradeSide,
+
     /// Order type: LIMIT, MARKET, STOP_LOSS, STOP_LIMIT, TAKE_PROFIT, TAKE_PROFIT_LIMIT
     #[serde(rename = "type")]
     pub order_type: OrderType,
+
     /// Price (required for most order types)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub price: Option<String>,
+
     /// Order quantity
     #[serde(skip_serializing_if = "Option::is_none")]
     pub quantity: Option<String>,
+
     /// For MARKET (BUY), STOP_LOSS (BUY), TAKE_PROFIT (BUY) orders only: Amount to spend
     #[serde(skip_serializing_if = "Option::is_none")]
     pub notional: Option<f64>,
+
     /// Client Order ID (Maximum 36 characters)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub client_oid: Option<String>,
+
     /// Execution instruction: POST_ONLY, SMART_POST_ONLY
     /// Note: POST_ONLY and SMART_POST_ONLY cannot be used together.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub exec_inst: Option<Vec<ExecInst>>,
+
     /// Time in force: GOOD_TILL_CANCEL, IMMEDIATE_OR_CANCEL, FILL_OR_KILL
     #[serde(skip_serializing_if = "Option::is_none")]
     pub time_in_force: Option<TimeInForce>,
+
     /// Trigger price required for conditional orders
     #[serde(skip_serializing_if = "Option::is_none")]
     pub ref_price: Option<String>,
+
     /// Reference price type: MARK_PRICE (default), INDEX_PRICE, LAST_PRICE
     #[serde(skip_serializing_if = "Option::is_none")]
     pub ref_price_type: Option<RefPriceType>,
+
     /// Spot margin: SPOT (non-margin order), MARGIN (margin order)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub spot_margin: Option<SpotMarginType>,
+
     /// Self-trade prevention scope: M (Matches Master or Sub a/c), S (Matches Sub a/c only)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub stp_scope: Option<StpScope>,
+
     /// Self-trade prevention instruction: M (Cancel Maker), T (Cancel Taker), B (Cancel Both)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub stp_inst: Option<StpInst>,
+
     /// STP ID value: 0 to 32767
     #[serde(skip_serializing_if = "Option::is_none")]
     pub stp_id: Option<u16>,
+
     /// Preferred fee token
     #[serde(skip_serializing_if = "Option::is_none")]
     pub fee_instrument_name: Option<String>,
@@ -67,6 +82,7 @@ pub struct CreateOrderRequest {
 pub struct CreateOrderResult {
     /// Newly created order ID
     pub order_id: String,
+
     /// Client Order ID if provided, otherwise the nonce
     pub client_oid: String,
 }

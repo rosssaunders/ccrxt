@@ -3,84 +3,166 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::bybit::{EndpointType, RestResult, enums::*};
 
+/// Endpoint URL for creating orders
+const CREATE_ORDER_ENDPOINT: &str = "/v5/order/create";
+
+/// Request parameters for creating a new order.
+///
+/// Supports creating orders for Spot, Margin trading, USDT perpetual, USDT futures,
+/// USDC perpetual, USDC futures, Inverse Futures and Options.
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct CreateOrderRequest {
+    /// Product type (linear, spot, option, inverse)
     pub category: Category,
+
+    /// Trading symbol (e.g., "BTCUSDT")
     pub symbol: String,
+
+    /// Whether to borrow coins for trade (0: false, 1: true). Only for spot margin trading
     #[serde(skip_serializing_if = "Option::is_none")]
     pub is_leverage: Option<i32>,
+
+    /// Order side (Buy or Sell)
     pub side: Side,
+
+    /// Order type (Market, Limit, etc.)
     pub order_type: OrderType,
+
+    /// Order quantity. For Spot Market buy orders, qty needs to be specified in quote currency
     pub qty: String,
+
+    /// Market unit for order quantity. Only valid for spot market orders
     #[serde(skip_serializing_if = "Option::is_none")]
     pub market_unit: Option<MarketUnit>,
+
+    /// Slippage tolerance type for market orders
     #[serde(skip_serializing_if = "Option::is_none")]
     pub slippage_tolerance_type: Option<SlippageToleranceType>,
+
+    /// Slippage tolerance value. Only valid for market orders
     #[serde(skip_serializing_if = "Option::is_none")]
     pub slippage_tolerance: Option<String>,
+
+    /// Order price. Required for limit orders
     #[serde(skip_serializing_if = "Option::is_none")]
     pub price: Option<String>,
+
+    /// Trigger direction (1: rise to trigger, 2: fall to trigger)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub trigger_direction: Option<i32>,
+
+    /// Order filter for conditional orders
     #[serde(skip_serializing_if = "Option::is_none")]
     pub order_filter: Option<OrderFilter>,
+
+    /// Trigger price for conditional orders
     #[serde(skip_serializing_if = "Option::is_none")]
     pub trigger_price: Option<String>,
+
+    /// Trigger price type (LastPrice, IndexPrice, MarkPrice)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub trigger_by: Option<TriggerBy>,
+
+    /// Implied volatility. Only valid for options
     #[serde(skip_serializing_if = "Option::is_none")]
     pub order_iv: Option<String>,
+
+    /// Time in force (GTC, IOC, FOK, PostOnly)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub time_in_force: Option<TimeInForce>,
+
+    /// Position index for hedge mode (0: one-way, 1: buy side, 2: sell side)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub position_idx: Option<PositionIdx>,
+
+    /// User-defined order ID. Maximum 36 characters
     #[serde(skip_serializing_if = "Option::is_none")]
     pub order_link_id: Option<String>,
+
+    /// Take profit price
     #[serde(skip_serializing_if = "Option::is_none")]
     pub take_profit: Option<String>,
+
+    /// Stop loss price
     #[serde(skip_serializing_if = "Option::is_none")]
     pub stop_loss: Option<String>,
+
+    /// Take profit trigger price type
     #[serde(skip_serializing_if = "Option::is_none")]
     pub tp_trigger_by: Option<TriggerBy>,
+
+    /// Stop loss trigger price type
     #[serde(skip_serializing_if = "Option::is_none")]
     pub sl_trigger_by: Option<TriggerBy>,
+
+    /// Whether to reduce position only. Only valid for futures and perpetual
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reduce_only: Option<bool>,
+
+    /// Whether to close position on trigger. Only valid for conditional orders
     #[serde(skip_serializing_if = "Option::is_none")]
     pub close_on_trigger: Option<bool>,
+
+    /// Self match prevention type
     #[serde(skip_serializing_if = "Option::is_none")]
     pub smp_type: Option<SmpType>,
+
+    /// Market maker protection flag
     #[serde(skip_serializing_if = "Option::is_none")]
     pub mmp: Option<bool>,
+
+    /// Take profit/stop loss mode (Full or Partial)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub tpsl_mode: Option<TpSlMode>,
+
+    /// Take profit limit price. Only valid when tpOrderType is Limit
     #[serde(skip_serializing_if = "Option::is_none")]
     pub tp_limit_price: Option<String>,
+
+    /// Stop loss limit price. Only valid when slOrderType is Limit
     #[serde(skip_serializing_if = "Option::is_none")]
     pub sl_limit_price: Option<String>,
+
+    /// Take profit order type (Market or Limit)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub tp_order_type: Option<OrderType>,
+
+    /// Stop loss order type (Market or Limit)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub sl_order_type: Option<OrderType>,
 }
 
+/// Order creation result data.
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct CreateOrderData {
+    /// Unique order ID generated by the system
     pub order_id: String,
+
+    /// User-defined order ID
     pub order_link_id: String,
 }
 
+/// Response from the create order API endpoint.
 #[derive(Debug, Clone, Deserialize)]
 pub struct CreateOrderResponse {
+    /// Return code (0 indicates success)
     #[serde(rename = "retCode")]
     pub ret_code: i32,
+
+    /// Return message
     #[serde(rename = "retMsg")]
     pub ret_msg: String,
+
+    /// Order creation result data
     pub result: CreateOrderData,
+
+    /// Extended information (varies by endpoint)
     #[serde(rename = "retExtInfo")]
     pub ret_ext_info: serde_json::Value,
+
+    /// Response timestamp in milliseconds
     pub time: u64,
 }
 
@@ -90,17 +172,21 @@ impl RestClient {
     /// Create orders for Spot, Margin trading, USDT perpetual, USDT futures, USDC perpetual,
     /// USDC futures, Inverse Futures and Options.
     ///
+    /// [API Documentation](https://bybit-exchange.github.io/docs/v5/order/create-order)
+    ///
+    /// Rate limit: 10 requests per second per UID
+    ///
     /// # Arguments
     /// * `request` - The order creation request parameters
     ///
     /// # Returns
-    /// A result containing the order creation response or an error
+    /// A result containing the order creation response with order ID and link ID
     pub async fn create_order(
         &self,
         request: CreateOrderRequest,
     ) -> RestResult<CreateOrderResponse> {
         self.send_signed_request(
-            "/v5/order/create",
+            CREATE_ORDER_ENDPOINT,
             reqwest::Method::POST,
             request,
             EndpointType::Trade,

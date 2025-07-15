@@ -3,54 +3,88 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::bybit::{EndpointType, RestResult, enums::*};
 
+/// Endpoint URL for cancelling orders
+const CANCEL_ORDER_ENDPOINT: &str = "/v5/order/cancel";
+
+/// Request parameters for cancelling an existing order.
+///
+/// You must specify either order_id or order_link_id to identify the order to cancel.
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct CancelOrderRequest {
+    /// Product type (linear, spot, option, inverse)
     pub category: Category,
+
+    /// Trading symbol (e.g., "BTCUSDT")
     pub symbol: String,
+
+    /// Order ID. Either order_id or order_link_id is required
     #[serde(skip_serializing_if = "Option::is_none")]
     pub order_id: Option<String>,
+
+    /// User-defined order ID. Either order_id or order_link_id is required
     #[serde(skip_serializing_if = "Option::is_none")]
     pub order_link_id: Option<String>,
+
+    /// Order filter for conditional orders
     #[serde(skip_serializing_if = "Option::is_none")]
     pub order_filter: Option<OrderFilter>,
 }
 
+/// Order cancellation result data.
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct CancelOrderData {
+    /// Unique order ID of the cancelled order
     pub order_id: String,
+
+    /// User-defined order ID of the cancelled order
     pub order_link_id: String,
 }
 
+/// Response from the cancel order API endpoint.
 #[derive(Debug, Clone, Deserialize)]
 pub struct CancelOrderResponse {
+    /// Return code (0 indicates success)
     #[serde(rename = "retCode")]
     pub ret_code: i32,
+
+    /// Return message
     #[serde(rename = "retMsg")]
     pub ret_msg: String,
+
+    /// Order cancellation result data
     pub result: CancelOrderData,
+
+    /// Extended information (varies by endpoint)
     #[serde(rename = "retExtInfo")]
     pub ret_ext_info: serde_json::Value,
+
+    /// Response timestamp in milliseconds
     pub time: u64,
 }
 
 impl RestClient {
     /// Cancel an existing order
     ///
-    /// Cancel unfilled or partially filled orders.
+    /// Cancel unfilled or partially filled orders. You must specify either order_id
+    /// or order_link_id to identify the order to cancel.
+    ///
+    /// [API Documentation](https://bybit-exchange.github.io/docs/v5/order/cancel-order)
+    ///
+    /// Rate limit: 10 requests per second per UID
     ///
     /// # Arguments
     /// * `request` - The order cancellation request parameters
     ///
     /// # Returns
-    /// A result containing the order cancellation response or an error
+    /// A result containing the cancelled order information
     pub async fn cancel_order(
         &self,
         request: CancelOrderRequest,
     ) -> RestResult<CancelOrderResponse> {
         self.send_signed_request(
-            "/v5/order/cancel",
+            CANCEL_ORDER_ENDPOINT,
             reqwest::Method::POST,
             request,
             EndpointType::Trade,

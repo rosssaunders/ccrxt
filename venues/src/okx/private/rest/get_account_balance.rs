@@ -3,6 +3,9 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
+/// Endpoint URL for getting account balance
+const GET_ACCOUNT_BALANCE_ENDPOINT: &str = "api/v5/account/balance";
+
 /// Request to get account balance
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -147,17 +150,23 @@ pub struct BalanceDetail {
 impl RestClient {
     /// Get account balance
     ///
+    /// Retrieve the balances of assets and the amount that is available or on hold.
+    ///
+    /// [API Documentation](https://www.okx.com/docs-v5/en/#trading-account-rest-api-get-balance)
+    ///
+    /// Rate limit: 10 requests per 2 seconds
+    ///
     /// # Arguments
-    /// * `request` - The get account balance request
+    /// * `request` - The account balance request parameters
     ///
     /// # Returns
-    /// A result containing the account balance or an error
+    /// A result containing the account balance information including equity and available funds
     pub async fn get_account_balance(
         &self,
         request: &GetAccountBalanceRequest,
     ) -> RestResult<OkxApiResponse<AccountBalance>> {
         self.send_request(
-            "api/v5/account/balance",
+            GET_ACCOUNT_BALANCE_ENDPOINT,
             reqwest::Method::GET,
             Some(request),
             EndpointType::PrivateAccount,
