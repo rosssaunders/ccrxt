@@ -3,8 +3,8 @@ use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
 use crate::binance::spot::{
-    CancelRestrictions, OrderSide, OrderStatus, OrderType, RestResult, SelfTradePreventionMode,
-    TimeInForce,
+    CancelRestrictions, Errors, OrderSide, OrderStatus, OrderType, RestResult, 
+    SelfTradePreventionMode, TimeInForce,
 };
 
 /// Request parameters for cancelling an order
@@ -138,13 +138,15 @@ impl RestClient {
             .chain(params.recv_window.map(|v| ("recvWindow", v.to_string())))
             .collect();
 
-        let body: Vec<(&str, &str)> = body_params.iter().map(|(k, v)| (*k, v.as_str())).collect();
-
+        // For Binance, DELETE /api/v3/order expects all params in the query string
+        let query_string = serde_urlencoded::to_string(&body_params)
+            .map_err(|e| Errors::Error(format!("Failed to encode query string: {e}")))?;
+            
         self.send_request(
             "/api/v3/order",
             reqwest::Method::DELETE,
+            Some(&query_string),
             None,
-            Some(&body),
             1,
             true,
         )

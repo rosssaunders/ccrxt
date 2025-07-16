@@ -137,7 +137,7 @@ pub struct Discount {
 
     /// Discount asset
     #[serde(rename = "discountAsset")]
-    pub discount_asset: String,
+    pub discount_asset: Option<String>,
 
     /// Discount rate
     #[serde(rename = "discount")]
@@ -164,59 +164,65 @@ impl RestClient {
             1
         };
 
-        let body_params: Vec<(&str, String)> = vec![
+        // Build query string with all parameters
+        let mut query_params: Vec<(&str, String)> = vec![
             ("symbol", params.symbol),
             ("side", params.side.to_string()),
             ("type", params.order_type.to_string()),
-        ]
-        .into_iter()
-        .chain(params.time_in_force.map(|v| ("timeInForce", v.to_string())))
-        .chain(params.quantity.map(|v| ("quantity", v.to_string())))
-        .chain(
-            params
-                .quote_order_qty
-                .map(|v| ("quoteOrderQty", v.to_string())),
-        )
-        .chain(params.price.map(|v| ("price", v.to_string())))
-        .chain(params.new_client_order_id.map(|v| ("newClientOrderId", v)))
-        .chain(params.strategy_id.map(|v| ("strategyId", v.to_string())))
-        .chain(
-            params
-                .strategy_type
-                .map(|v| ("strategyType", v.to_string())),
-        )
-        .chain(params.stop_price.map(|v| ("stopPrice", v.to_string())))
-        .chain(
-            params
-                .trailing_delta
-                .map(|v| ("trailingDelta", v.to_string())),
-        )
-        .chain(params.iceberg_qty.map(|v| ("icebergQty", v.to_string())))
-        .chain(
-            params
-                .new_order_resp_type
-                .map(|v| ("newOrderRespType", v.to_string())),
-        )
-        .chain(
-            params
-                .self_trade_prevention_mode
-                .map(|v| ("selfTradePreventionMode", v.to_string())),
-        )
-        .chain(
-            params
-                .compute_commission_rates
-                .map(|v| ("computeCommissionRates", v.to_string())),
-        )
-        .chain(params.recv_window.map(|v| ("recvWindow", v.to_string())))
-        .collect();
+        ];
+        
+        if let Some(v) = params.time_in_force {
+            query_params.push(("timeInForce", v.to_string()));
+        }
+        if let Some(v) = params.quantity {
+            query_params.push(("quantity", v.to_string()));
+        }
+        if let Some(v) = params.quote_order_qty {
+            query_params.push(("quoteOrderQty", v.to_string()));
+        }
+        if let Some(v) = params.price {
+            query_params.push(("price", v.to_string()));
+        }
+        if let Some(v) = params.new_client_order_id {
+            query_params.push(("newClientOrderId", v));
+        }
+        if let Some(v) = params.strategy_id {
+            query_params.push(("strategyId", v.to_string()));
+        }
+        if let Some(v) = params.strategy_type {
+            query_params.push(("strategyType", v.to_string()));
+        }
+        if let Some(v) = params.stop_price {
+            query_params.push(("stopPrice", v.to_string()));
+        }
+        if let Some(v) = params.trailing_delta {
+            query_params.push(("trailingDelta", v.to_string()));
+        }
+        if let Some(v) = params.iceberg_qty {
+            query_params.push(("icebergQty", v.to_string()));
+        }
+        if let Some(v) = params.new_order_resp_type {
+            query_params.push(("newOrderRespType", v.to_string()));
+        }
+        if let Some(v) = params.self_trade_prevention_mode {
+            query_params.push(("selfTradePreventionMode", v.to_string()));
+        }
+        if let Some(v) = params.compute_commission_rates {
+            query_params.push(("computeCommissionRates", v.to_string()));
+        }
+        if let Some(v) = params.recv_window {
+            query_params.push(("recvWindow", v.to_string()));
+        }
 
-        let body: Vec<(&str, &str)> = body_params.iter().map(|(k, v)| (*k, v.as_str())).collect();
+        // Convert to query string format
+        let query_string = serde_urlencoded::to_string(&query_params)
+            .map_err(|e| crate::binance::spot::Errors::Error(format!("Failed to encode query string: {e}")))?;
 
         self.send_request(
             "/api/v3/order/test",
             reqwest::Method::POST,
+            Some(&query_string),
             None,
-            Some(&body),
             weight,
             true,
         )

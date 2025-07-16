@@ -59,34 +59,41 @@ impl RestClient {
         }
     }
 
-    /// Signs a request for Deribit private endpoints
+    /// Signs a request for Deribit private endpoints using the deri-hmac-sha256 method
     ///
     /// The Deribit signing algorithm:
-    /// 1. Create a message string: request_data + nonce + request_id
-    /// 2. Use HMAC-SHA256 to hash using API Secret as cryptographic key
-    /// 3. Encode output as hex string
+    /// 1. RequestData = UPPERCASE(HTTP_METHOD) + "\n" + URI + "\n" + RequestBody + "\n"
+    /// 2. StringToSign = Timestamp + "\n" + Nonce + "\n" + RequestData
+    /// 3. Signature = HEX_STRING( HMAC-SHA256( ClientSecret, StringToSign ) )
     ///
     /// # Arguments
-    /// * `request_data` - The request data as JSON string
+    /// * `http_method` - The HTTP method (GET, POST, etc.)
+    /// * `uri` - The request URI path
+    /// * `body` - The request body (can be empty string)
+    /// * `timestamp` - The timestamp in milliseconds
     /// * `nonce` - The nonce value
-    /// * `request_id` - The request ID
     ///
     /// # Returns
     /// A result containing the signature as a hex string or an error
     pub fn sign_request(
         &self,
-        request_data: &str,
-        nonce: u64,
-        request_id: u64,
+        http_method: &str,
+        uri: &str,
+        body: &str,
+        timestamp: u64,
+        nonce: &str,
     ) -> Result<String, Errors> {
-        // Create the signature payload: request_data + nonce + request_id
-        let sig_payload = format!("{request_data}{nonce}{request_id}");
+        // Create RequestData = UPPERCASE(HTTP_METHOD) + "\n" + URI + "\n" + RequestBody + "\n"
+        let request_data = format!("{}\n{}\n{}\n", http_method.to_uppercase(), uri, body);
+        
+        // Create StringToSign = Timestamp + "\n" + Nonce + "\n" + RequestData
+        let string_to_sign = format!("{}\n{}\n{}", timestamp, nonce, request_data);
 
         // Sign with HMAC-SHA256
         let api_secret = self.api_secret.expose_secret();
         let mut mac = Hmac::<Sha256>::new_from_slice(api_secret.as_bytes())
             .map_err(|_| Errors::InvalidApiKey())?;
-        mac.update(sig_payload.as_bytes());
+        mac.update(string_to_sign.as_bytes());
 
         Ok(hex::encode(mac.finalize().into_bytes()))
     }
@@ -105,44 +112,72 @@ impl RestClient {
         // Rate limiting
         self.rate_limiter.check_limits(endpoint_type).await?;
 
-        let nonce = Utc::now().timestamp_millis() as u64;
+        let timestamp = Utc::now().timestamp_millis() as u64;
         let request_id = 1;
+        
+        // Generate a nonce using timestamp + counter
+        let nonce = format!("{}{}", timestamp, request_id);
 
-        // Prepare the JSON-RPC request body for signing
-        let request_data = json!({
+        // Prepare the JSON-RPC request body
+        let request_body = json!({
             "jsonrpc": "2.0",
             "id": request_id,
             "method": method,
             "params": params,
         });
-        let request_data_str =
-            serde_json::to_string(&request_data).map_err(Errors::SerdeJsonError)?;
-        let signature = self.sign_request(&request_data_str, nonce, request_id)?;
+        let body_str = serde_json::to_string(&request_body).map_err(Errors::SerdeJsonError)?;
+        
+        // Create the URI path
+        let uri = format!("/api/v2/{}", method);
+        
+        // Generate the signature
+        let signature = self.sign_request("POST", &uri, &body_str, timestamp, &nonce)?;
+        
+        // Create the Authorization header
+        let auth_header = format!(
+            "deri-hmac-sha256 id={},ts={},sig={},nonce={}",
+            self.api_key.expose_secret(),
+            timestamp,
+            signature,
+            nonce
+        );
 
-        // Prepare authenticated request
-        let authenticated_request = json!({
-            "jsonrpc": "2.0",
-            "id": request_id,
-            "method": method,
-            "params": params,
-            "sig": signature,
-            "nonce": nonce,
-            "api_key": self.api_key.expose_secret(),
-        });
-
-        // Send HTTP request
+        // Send HTTP request with Authorization header
         let resp = self
             .client
-            .post(format!("{}/api/v2/{}", self.base_url, method))
-            .json(&authenticated_request)
+            .post(format!("{}{}", self.base_url, uri))
+            .header("Authorization", auth_header)
+            .json(&request_body)
             .send()
             .await?;
 
         // Record request for rate limiting
         self.rate_limiter.record_request(endpoint_type).await;
 
-        // Deserialize response
-        let result = resp.json::<T>().await?;
+        // Deserialize response directly to the expected type T (which is JsonRpcResult<SomeType>)
+        // We need to handle potential JSON-RPC error responses
+        let resp_text = resp.text().await?;
+        
+        
+        // Check if the response contains an error field
+        if let Ok(json_value) = serde_json::from_str::<serde_json::Value>(&resp_text) {
+            if let Some(error_obj) = json_value.get("error") {
+                // Parse the error
+                if let Ok(error) = serde_json::from_value::<crate::deribit::JsonRpcError>(error_obj.clone()) {
+                    let error_response = crate::deribit::errors::ErrorResponse {
+                        code: error.code,
+                        message: error.message,
+                        data: error.data,
+                    };
+                    return Err(Errors::ApiError(error_response.into()));
+                }
+            }
+        }
+        
+        // If not an error, parse as the expected response type
+        let result: T = serde_json::from_str(&resp_text)
+            .map_err(Errors::SerdeJsonError)?;
+            
         Ok(result)
     }
 }

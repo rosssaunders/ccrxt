@@ -22,12 +22,17 @@ use venues::deribit::{
     PublicRestClient, RateLimiter, Resolution,
 };
 
+// Import common testing utilities
+use crate::common::TestEnv;
+
 /// Helper function to create a test client for public endpoints
 fn create_public_test_client() -> PublicRestClient {
     let client = Client::new();
     let rate_limiter = RateLimiter::new(AccountTier::Tier1);
+    let test_env = TestEnv::new();
+    let base_url = test_env.get_base_url("deribit");
 
-    PublicRestClient::new("https://www.deribit.com", client, rate_limiter)
+    PublicRestClient::new(base_url, client, rate_limiter)
 }
 
 /// Test the get_status endpoint

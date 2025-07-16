@@ -155,6 +155,7 @@ impl From<ErrorResponse> for ApiError {
             10001 => ApiError::InvalidCredentials,
             10002 => ApiError::RateLimitExceeded,
             10003 => ApiError::InternalServerError,
+            13009 => ApiError::InvalidCredentials, // invalid_token error
             // Add more specific Deribit error codes here
             _ => ApiError::UnmappedApiError {
                 code: err.code,

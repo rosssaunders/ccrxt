@@ -16,7 +16,10 @@ pub struct DepositData {
     /// Amount of funds in given currency
     pub amount: f64,
     /// Clearance state
-    pub clearance_state: ClearanceState,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub clearance_state: Option<ClearanceState>,
+
     /// Currency, i.e "BTC", "ETH", "USDC"
     pub currency: String,
     /// Note
@@ -26,7 +29,8 @@ pub struct DepositData {
     /// Transaction id in proper format for currency, null if id is not available
     pub refund_transaction_id: Option<String>,
     /// Address in proper format for currency
-    pub source_address: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub source_address: Option<String>,
     /// Deposit state
     pub state: DepositState,
     /// Transaction id in proper format for currency, null if id is not available

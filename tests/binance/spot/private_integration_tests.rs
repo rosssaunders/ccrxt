@@ -27,6 +27,42 @@ use venues::binance::spot::{
 
 // Import common testing utilities
 use crate::common::{BinanceCredentials, CredentialLoader, PrivateTestConfig};
+use secrecy::SecretString;
+use std::env;
+use std::path::Path;
+
+/// Load Binance credentials from .env file in the current test directory
+fn load_binance_credentials_from_env_file() -> Option<BinanceCredentials> {
+    // First try to load from the .env file in the current test directory
+    let env_path = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("tests/binance/spot/.env");
+    
+    if env_path.exists() {
+        // Load the .env file
+        if let Ok(env_content) = std::fs::read_to_string(&env_path) {
+            let mut api_key = None;
+            let mut secret_key = None;
+            
+            for line in env_content.lines() {
+                if line.starts_with("API_KEY=") {
+                    api_key = Some(line.trim_start_matches("API_KEY=").to_string());
+                } else if line.starts_with("SECRET_KEY=") {
+                    secret_key = Some(line.trim_start_matches("SECRET_KEY=").to_string());
+                }
+            }
+            
+            if let (Some(api_key), Some(secret_key)) = (api_key, secret_key) {
+                return Some(BinanceCredentials {
+                    api_key: SecretString::new(api_key.into()),
+                    secret_key: SecretString::new(secret_key.into()),
+                });
+            }
+        }
+    }
+    
+    // Fall back to environment variables
+    BinanceCredentials::load_from_env()
+}
 
 /// Helper function to create a test client for private endpoints
 fn create_private_test_client(
@@ -102,10 +138,10 @@ async fn test_get_account_info() {
         return;
     }
 
-    let credentials = match BinanceCredentials::load_from_env() {
+    let credentials = match load_binance_credentials_from_env_file() {
         Some(creds) => creds,
         None => {
-            println!("⚠️ Skipping Binance private test - credentials not available");
+            println!("⚠️ Skipping Binance private test - credentials not available in .env file or environment");
             return;
         }
     };
@@ -145,10 +181,10 @@ async fn test_get_open_orders() {
         return;
     }
 
-    let credentials = match BinanceCredentials::load_from_env() {
+    let credentials = match load_binance_credentials_from_env_file() {
         Some(creds) => creds,
         None => {
-            println!("⚠️ Skipping Binance private test - credentials not available");
+            println!("⚠️ Skipping Binance private test - credentials not available in .env file or environment");
             return;
         }
     };
@@ -183,10 +219,10 @@ async fn test_get_order_history() {
         return;
     }
 
-    let credentials = match BinanceCredentials::load_from_env() {
+    let credentials = match load_binance_credentials_from_env_file() {
         Some(creds) => creds,
         None => {
-            println!("⚠️ Skipping Binance private test - credentials not available");
+            println!("⚠️ Skipping Binance private test - credentials not available in .env file or environment");
             return;
         }
     };
@@ -231,10 +267,10 @@ async fn test_get_trade_history() {
         return;
     }
 
-    let credentials = match BinanceCredentials::load_from_env() {
+    let credentials = match load_binance_credentials_from_env_file() {
         Some(creds) => creds,
         None => {
-            println!("⚠️ Skipping Binance private test - credentials not available");
+            println!("⚠️ Skipping Binance private test - credentials not available in .env file or environment");
             return;
         }
     };
@@ -280,10 +316,10 @@ async fn test_error_handling_invalid_symbol() {
         return;
     }
 
-    let credentials = match BinanceCredentials::load_from_env() {
+    let credentials = match load_binance_credentials_from_env_file() {
         Some(creds) => creds,
         None => {
-            println!("⚠️ Skipping Binance private test - credentials not available");
+            println!("⚠️ Skipping Binance private test - credentials not available in .env file or environment");
             return;
         }
     };
@@ -326,10 +362,10 @@ async fn test_rate_limiting() {
         return;
     }
 
-    let credentials = match BinanceCredentials::load_from_env() {
+    let credentials = match load_binance_credentials_from_env_file() {
         Some(creds) => creds,
         None => {
-            println!("⚠️ Skipping Binance private test - credentials not available");
+            println!("⚠️ Skipping Binance private test - credentials not available in .env file or environment");
             return;
         }
     };
@@ -362,10 +398,10 @@ async fn test_get_account_commission() {
         return;
     }
 
-    let credentials = match BinanceCredentials::load_from_env() {
+    let credentials = match load_binance_credentials_from_env_file() {
         Some(creds) => creds,
         None => {
-            println!("⚠️ Skipping Binance private test - credentials not available");
+            println!("⚠️ Skipping Binance private test - credentials not available in .env file or environment");
             return;
         }
     };
@@ -404,10 +440,10 @@ async fn test_order_validation() {
         return;
     }
 
-    let credentials = match BinanceCredentials::load_from_env() {
+    let credentials = match load_binance_credentials_from_env_file() {
         Some(creds) => creds,
         None => {
-            println!("⚠️ Skipping Binance private test - credentials not available");
+            println!("⚠️ Skipping Binance private test - credentials not available in .env file or environment");
             return;
         }
     };
@@ -419,9 +455,9 @@ async fn test_order_validation() {
         side: OrderSide::Buy,
         order_type: OrderType::Limit,
         time_in_force: Some(TimeInForce::GTC),
-        quantity: Some(rust_decimal::Decimal::new(1, 5)), // 0.00001 BTC (very small amount)
+        quantity: Some(rust_decimal::Decimal::new(1, 4)), // 0.0001 BTC (minimum for most pairs)
         quote_order_qty: None,
-        price: Some(rust_decimal::Decimal::new(20000, 0)), // $20,000 (low price)
+        price: Some(rust_decimal::Decimal::new(90000, 0)), // $90,000 (reasonable price)
         new_client_order_id: None,
         strategy_id: None,
         strategy_type: None,
@@ -449,10 +485,10 @@ async fn test_get_symbol_open_orders() {
         return;
     }
 
-    let credentials = match BinanceCredentials::load_from_env() {
+    let credentials = match load_binance_credentials_from_env_file() {
         Some(creds) => creds,
         None => {
-            println!("⚠️ Skipping Binance private test - credentials not available");
+            println!("⚠️ Skipping Binance private test - credentials not available in .env file or environment");
             return;
         }
     };
@@ -491,10 +527,10 @@ async fn test_account_balance_filtering() {
         return;
     }
 
-    let credentials = match BinanceCredentials::load_from_env() {
+    let credentials = match load_binance_credentials_from_env_file() {
         Some(creds) => creds,
         None => {
-            println!("⚠️ Skipping Binance private test - credentials not available");
+            println!("⚠️ Skipping Binance private test - credentials not available in .env file or environment");
             return;
         }
     };
@@ -558,10 +594,10 @@ async fn test_order_history_time_filtering() {
         return;
     }
 
-    let credentials = match BinanceCredentials::load_from_env() {
+    let credentials = match load_binance_credentials_from_env_file() {
         Some(creds) => creds,
         None => {
-            println!("⚠️ Skipping Binance private test - credentials not available");
+            println!("⚠️ Skipping Binance private test - credentials not available in .env file or environment");
             return;
         }
     };

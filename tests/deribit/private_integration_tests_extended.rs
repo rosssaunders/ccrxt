@@ -35,8 +35,10 @@ fn is_auth_error(err: &Errors) -> bool {
     error_str.contains("Invalid")
         || error_str.contains("Unauthorized")
         || error_str.contains("Authentication")
+        || error_str.contains("InvalidCredentials")
         || error_str.contains("access_denied")
         || error_str.contains("invalid_credentials")
+        || error_str.contains("13009") // invalid_token error
 }
 
 /// Helper function to check if an error is due to API restrictions or unavailability

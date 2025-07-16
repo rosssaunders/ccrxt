@@ -48,8 +48,10 @@ fn is_auth_error(err: &Errors) -> bool {
     error_str.contains("Unauthorized") ||
     error_str.contains("Invalid") ||
     error_str.contains("Authentication") ||
+    error_str.contains("InvalidCredentials") ||
     error_str.contains("10009") || // Deribit auth error code
-    error_str.contains("10010") // API key error
+    error_str.contains("10010") || // API key error
+    error_str.contains("13009") // invalid_token error
 }
 
 /// Helper function to check if an error is due to API restrictions

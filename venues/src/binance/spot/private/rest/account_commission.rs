@@ -69,7 +69,7 @@ pub struct Discount {
 
     /// Discount asset
     #[serde(rename = "discountAsset")]
-    pub discount_asset: String,
+    pub discount_asset: Option<String>,
 
     /// Discount rate
     #[serde(rename = "discount")]

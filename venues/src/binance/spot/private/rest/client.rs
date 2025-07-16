@@ -49,7 +49,15 @@ fn sign_request(api_secret: &dyn ExposableSecret, query_string: &str) -> Result<
     let mut mac = Hmac::<Sha256>::new_from_slice(api_secret.as_bytes())
         .map_err(|_| Errors::InvalidApiKey())?;
     mac.update(query_string.as_bytes());
-    Ok(hex::encode(mac.finalize().into_bytes()))
+    let signature = hex::encode(mac.finalize().into_bytes());
+    
+    #[cfg(debug_assertions)]
+    {
+        eprintln!("[DEBUG] Signing string: {}", query_string);
+        eprintln!("[DEBUG] Generated signature: {}", signature);
+    }
+    
+    Ok(signature)
 }
 
 /// A client for interacting with the Binance Spot private REST API
@@ -125,10 +133,9 @@ impl RestClient {
     where
         T: serde::de::DeserializeOwned,
     {
-        // Add timestamp to query params for signing
-        let timestamp = chrono::Utc::now().timestamp_millis().to_string();
-        let mut query_params = vec![("timestamp".to_string(), timestamp)];
-
+        // Start with query parameters
+        let mut query_params = vec![];
+        
         // Add any additional query parameters
         if let Some(qs) = query_string {
             // Parse existing query string and add to params
@@ -136,23 +143,30 @@ impl RestClient {
                 .map_err(|e| Errors::Error(format!("Invalid query string: {e}")))?;
             query_params.extend(parsed);
         }
+        
+        // Add timestamp last for Binance API requirements
+        let timestamp = chrono::Utc::now().timestamp_millis().to_string();
+        query_params.push(("timestamp".to_string(), timestamp));
 
-        // Add body parameters to query params for signing
-        if let Some(body_params) = body {
+        // Build query string for signing (includes body params if present)
+        let query_for_signing = if let Some(body_params) = body {
+            // For POST requests with body, combine query and body params for signing
+            let mut signing_params = query_params.clone();
             for (k, v) in body_params {
-                query_params.push((k.to_string(), v.to_string()));
+                signing_params.push((k.to_string(), v.to_string()));
             }
-        }
-
-        // Build query string for signing
-        let query_for_signing = serde_urlencoded::to_string(&query_params)
-            .map_err(|e| Errors::Error(format!("Failed to encode query string: {e}")))?;
+            serde_urlencoded::to_string(&signing_params)
+                .map_err(|e| Errors::Error(format!("Failed to encode query string: {e}")))?
+        } else {
+            serde_urlencoded::to_string(&query_params)
+                .map_err(|e| Errors::Error(format!("Failed to encode query string: {e}")))?
+        };
 
         // Sign the request
         let signature = sign_request(self.api_secret.as_ref(), &query_for_signing)?;
         query_params.push(("signature".to_string(), signature));
 
-        // Final query string with signature
+        // Final query string with signature (does not include body params)
         let final_query_string = serde_urlencoded::to_string(&query_params)
             .map_err(|e| Errors::Error(format!("Failed to encode final query string: {e}")))?;
 
