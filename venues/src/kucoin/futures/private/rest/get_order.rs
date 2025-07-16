@@ -63,3 +63,121 @@ impl super::RestClient {
         self.get(&endpoint, None).await
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_get_order_request_creation() {
+        let request = GetOrderRequest {
+            order_id: "5e8c8c2f1a3b4a001c5d8e31".to_string(),
+        };
+        assert_eq!(request.order_id, "5e8c8c2f1a3b4a001c5d8e31");
+    }
+
+    #[test]
+    fn test_order_details_deserialization_complete() {
+        let json = r#"{
+            "id": "5e8c8c2f1a3b4a001c5d8e31",
+            "symbol": "XBTUSDTM",
+            "type": "limit",
+            "side": "buy",
+            "size": "1000",
+            "price": "50000",
+            "stopPrice": "49500",
+            "dealSize": "500",
+            "dealFunds": "25000000",
+            "fee": "12.5",
+            "feeCurrency": "USDT",
+            "stop": "up",
+            "timeInForce": "GTC",
+            "postOnly": false,
+            "hidden": false,
+            "iceberg": false,
+            "leverage": "10",
+            "forceHold": false,
+            "closeOrder": false,
+            "visibleSize": "100",
+            "clientOid": "my-order-123",
+            "remark": "Test order",
+            "tags": "strategy1",
+            "isActive": true,
+            "cancelExistStop": false,
+            "createdAt": 1234567890000,
+            "updatedAt": 1234567900000,
+            "endAt": 1234568000000,
+            "orderTime": 1234567890000,
+            "settleCurrency": "USDT",
+            "status": "active",
+            "filledValue": "25000",
+            "reduceOnly": false
+        }"#;
+
+        let order: OrderDetails = serde_json::from_str(json).unwrap();
+        assert_eq!(order.id, "5e8c8c2f1a3b4a001c5d8e31");
+        assert_eq!(order.symbol, "XBTUSDTM");
+        assert_eq!(order.order_type, OrderType::Limit);
+        assert_eq!(order.side, OrderSide::Buy);
+        assert_eq!(order.size, "1000");
+        assert_eq!(order.price, Some("50000".to_string()));
+        assert_eq!(order.stop_price, Some("49500".to_string()));
+        assert_eq!(order.time_in_force, Some(TimeInForce::GoodTillCanceled));
+        assert_eq!(order.status, OrderStatus::Active);
+        assert_eq!(order.client_oid, Some("my-order-123".to_string()));
+        assert_eq!(order.reduce_only, false);
+    }
+
+    #[test]
+    fn test_order_details_deserialization_minimal() {
+        let json = r#"{
+            "id": "order123",
+            "symbol": "ETHUSDTM",
+            "type": "market",
+            "side": "sell",
+            "size": "500",
+            "dealSize": "500",
+            "dealFunds": "15000000",
+            "fee": "7.5",
+            "feeCurrency": "USDT",
+            "postOnly": false,
+            "hidden": false,
+            "iceberg": false,
+            "leverage": "5",
+            "forceHold": false,
+            "closeOrder": false,
+            "isActive": false,
+            "cancelExistStop": false,
+            "createdAt": 1234567890000,
+            "updatedAt": 1234567900000,
+            "orderTime": 1234567890000,
+            "settleCurrency": "USDT",
+            "status": "done",
+            "filledValue": "15000",
+            "reduceOnly": true
+        }"#;
+
+        let order: OrderDetails = serde_json::from_str(json).unwrap();
+        assert_eq!(order.id, "order123");
+        assert_eq!(order.order_type, OrderType::Market);
+        assert_eq!(order.side, OrderSide::Sell);
+        assert!(order.price.is_none());
+        assert!(order.stop_price.is_none());
+        assert!(order.time_in_force.is_none());
+        assert!(order.client_oid.is_none());
+        assert_eq!(order.status, OrderStatus::Done);
+        assert_eq!(order.reduce_only, true);
+    }
+
+    #[test]
+    fn test_get_order_endpoint() {
+        assert_eq!(GET_ORDER_ENDPOINT, "/api/v1/orders/");
+    }
+
+    #[test]
+    fn test_get_order_endpoint_formatting() {
+        let order_id = "test123";
+        let endpoint = format!("{}{}", GET_ORDER_ENDPOINT, order_id);
+        assert_eq!(endpoint, "/api/v1/orders/test123");
+    }
+}
