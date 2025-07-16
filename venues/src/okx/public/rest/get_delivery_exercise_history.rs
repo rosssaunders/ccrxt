@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::okx::{DeliveryExerciseType, EndpointType, InstrumentType, RestResult};
 
+const PUBLIC_DELIVERY_EXERCISE_HISTORY_ENDPOINT: &str = "/api/v5/public/delivery-exercise-history";
+
 /// Request parameters for getting delivery/exercise history
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -83,7 +85,7 @@ impl RestClient {
         request: &GetDeliveryExerciseHistoryRequest,
     ) -> RestResult<GetDeliveryExerciseHistoryResponse> {
         self.send_request(
-            "api/v5/public/delivery-exercise-history",
+            PUBLIC_DELIVERY_EXERCISE_HISTORY_ENDPOINT,
             reqwest::Method::GET,
             Some(request),
             EndpointType::PublicMarketData,

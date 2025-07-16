@@ -110,7 +110,7 @@ impl RestClient {
     /// Send a request to a private endpoint
     ///
     /// # Arguments
-    /// * `endpoint` - The API endpoint path (e.g., "api/v5/trade/order")
+    /// * `endpoint` - The API endpoint path (e.g., "/api/v5/trade/order")
     /// * `method` - The HTTP method to use
     /// * `params` - Optional struct of query/body parameters (must implement Serialize)
     /// * `endpoint_type` - The endpoint type for rate limiting

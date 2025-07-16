@@ -3,6 +3,9 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, InstrumentType, RestResult};
 
+const ACCOUNT_ACCOUNT_POSITION_RISK_ENDPOINT: &str = "/api/v5/account/account-position-risk";
+
+
 /// Request to get account position risk
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -127,7 +130,7 @@ impl RestClient {
         request: &GetAccountPositionRiskRequest,
     ) -> RestResult<OkxApiResponse<AccountPositionRisk>> {
         self.send_request(
-            "api/v5/account/account-position-risk",
+            ACCOUNT_ACCOUNT_POSITION_RISK_ENDPOINT,
             reqwest::Method::GET,
             Some(request),
             EndpointType::PrivateAccount,

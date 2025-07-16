@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
+const MARKET_HISTORY_MARK_PRICE_CANDLES_ENDPOINT: &str = "/api/v5/market/history-mark-price-candles";
+
 /// Bar size/timeframe for candlesticks
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub enum BarSize {
@@ -136,7 +138,7 @@ impl RestClient {
         request: GetHistoryMarkPriceCandlesRequest,
     ) -> RestResult<GetHistoryMarkPriceCandlesResponse> {
         self.send_request(
-            "api/v5/market/history-mark-price-candles",
+            MARKET_HISTORY_MARK_PRICE_CANDLES_ENDPOINT,
             reqwest::Method::GET,
             Some(&request),
             EndpointType::PublicMarketData,

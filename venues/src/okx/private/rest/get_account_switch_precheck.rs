@@ -3,6 +3,9 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
+const ACCOUNT_SET_ACCOUNT_SWITCH_PRECHECK_ENDPOINT: &str = "/api/v5/account/set-account-switch-precheck";
+
+
 /// Request to get account switch precheck
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -35,7 +38,7 @@ impl RestClient {
         request: &GetAccountSwitchPrecheckRequest,
     ) -> RestResult<OkxApiResponse<AccountSwitchPrecheck>> {
         self.send_request(
-            "api/v5/account/set-account-switch-precheck",
+            ACCOUNT_SET_ACCOUNT_SWITCH_PRECHECK_ENDPOINT,
             reqwest::Method::GET,
             Some(request),
             EndpointType::PrivateAccount,

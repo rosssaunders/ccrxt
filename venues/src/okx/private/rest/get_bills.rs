@@ -3,6 +3,9 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, InstrumentType, RestResult};
 
+const ACCOUNT_BILLS_ENDPOINT: &str = "/api/v5/account/bills";
+
+
 /// Request to get account bills
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -155,7 +158,7 @@ impl RestClient {
     /// A result containing the bills or an error
     pub async fn get_bills(&self, request: &GetBillsRequest) -> RestResult<OkxApiResponse<Bill>> {
         self.send_request(
-            "api/v5/account/bills",
+            ACCOUNT_BILLS_ENDPOINT,
             reqwest::Method::GET,
             Some(request),
             EndpointType::PrivateAccount,

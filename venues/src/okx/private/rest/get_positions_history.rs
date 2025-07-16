@@ -3,6 +3,9 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, InstrumentType, RestResult};
 
+const ACCOUNT_POSITIONS_HISTORY_ENDPOINT: &str = "/api/v5/account/positions-history";
+
+
 /// Request to get account positions history
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -115,7 +118,7 @@ impl RestClient {
         request: &GetPositionsHistoryRequest,
     ) -> RestResult<OkxApiResponse<PositionHistory>> {
         self.send_request(
-            "api/v5/account/positions-history",
+            ACCOUNT_POSITIONS_HISTORY_ENDPOINT,
             reqwest::Method::GET,
             Some(request),
             EndpointType::PrivateAccount,

@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::okx::{AdlType, EndpointType, InstrumentType, RestResult};
 
+const PUBLIC_INSURANCE_FUND_ENDPOINT: &str = "/api/v5/public/insurance-fund";
+
 /// Insurance fund type for filtering insurance fund data
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
@@ -126,7 +128,7 @@ impl RestClient {
         request: GetInsuranceFundRequest,
     ) -> RestResult<GetInsuranceFundResponse> {
         self.send_request(
-            "api/v5/public/insurance-fund",
+            PUBLIC_INSURANCE_FUND_ENDPOINT,
             reqwest::Method::GET,
             Some(&request),
             EndpointType::PublicInsuranceFund,

@@ -3,6 +3,9 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
+const ACCOUNT_BILLS_HISTORY_ARCHIVE_ENDPOINT: &str = "/api/v5/account/bills-history-archive";
+
+
 /// Request to post bills history archive
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -66,7 +69,7 @@ impl RestClient {
         request: &PostBillsHistoryArchiveRequest,
     ) -> RestResult<OkxApiResponse<PostBillsHistoryArchiveResponse>> {
         self.send_request(
-            "api/v5/account/bills-history-archive",
+            ACCOUNT_BILLS_HISTORY_ARCHIVE_ENDPOINT,
             reqwest::Method::POST,
             Some(request),
             EndpointType::PrivateAccount,
@@ -86,7 +89,7 @@ impl RestClient {
         request: &GetBillsHistoryArchiveRequest,
     ) -> RestResult<OkxApiResponse<GetBillsHistoryArchiveResponse>> {
         self.send_request(
-            "api/v5/account/bills-history-archive",
+            ACCOUNT_BILLS_HISTORY_ARCHIVE_ENDPOINT,
             reqwest::Method::GET,
             Some(request),
             EndpointType::PrivateAccount,

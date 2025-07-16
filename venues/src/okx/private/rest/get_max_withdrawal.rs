@@ -3,6 +3,9 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
+const ACCOUNT_MAX_WITHDRAWAL_ENDPOINT: &str = "/api/v5/account/max-withdrawal";
+
+
 /// Request to get max withdrawal
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -45,7 +48,7 @@ impl RestClient {
         request: &GetMaxWithdrawalRequest,
     ) -> RestResult<OkxApiResponse<MaxWithdrawal>> {
         self.send_request(
-            "api/v5/account/max-withdrawal",
+            ACCOUNT_MAX_WITHDRAWAL_ENDPOINT,
             reqwest::Method::GET,
             Some(request),
             EndpointType::PrivateAccount,

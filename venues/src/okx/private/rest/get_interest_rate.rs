@@ -3,6 +3,9 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
+const ACCOUNT_INTEREST_RATE_ENDPOINT: &str = "/api/v5/account/interest-rate";
+
+
 /// Request to get interest rate
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -36,7 +39,7 @@ impl RestClient {
         request: &GetInterestRateRequest,
     ) -> RestResult<OkxApiResponse<InterestRate>> {
         self.send_request(
-            "api/v5/account/interest-rate",
+            ACCOUNT_INTEREST_RATE_ENDPOINT,
             reqwest::Method::GET,
             Some(request),
             EndpointType::PrivateAccount,

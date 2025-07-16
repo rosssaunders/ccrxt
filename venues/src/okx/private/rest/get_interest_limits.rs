@@ -3,6 +3,9 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, InstrumentType, RestResult};
 
+const ACCOUNT_INTEREST_LIMITS_ENDPOINT: &str = "/api/v5/account/interest-limits";
+
+
 /// Request to get interest limits
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -70,7 +73,7 @@ impl RestClient {
         request: &GetInterestLimitsRequest,
     ) -> RestResult<OkxApiResponse<InterestLimits>> {
         self.send_request(
-            "api/v5/account/interest-limits",
+            ACCOUNT_INTEREST_LIMITS_ENDPOINT,
             reqwest::Method::GET,
             Some(request),
             EndpointType::PrivateAccount,

@@ -3,6 +3,9 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
+const ACCOUNT_BALANCE_ENDPOINT: &str = "/api/v5/account/balance";
+
+
 /// Request to get account balance
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -157,7 +160,7 @@ impl RestClient {
         request: &GetAccountBalanceRequest,
     ) -> RestResult<OkxApiResponse<AccountBalance>> {
         self.send_request(
-            "api/v5/account/balance",
+            ACCOUNT_BALANCE_ENDPOINT,
             reqwest::Method::GET,
             Some(request),
             EndpointType::PrivateAccount,

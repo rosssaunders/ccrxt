@@ -3,6 +3,9 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
+const ACCOUNT_LEVERAGE_INFO_ENDPOINT: &str = "/api/v5/account/leverage-info";
+
+
 /// Request to get leverage info
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -45,7 +48,7 @@ impl RestClient {
         request: &GetLeverageInfoRequest,
     ) -> RestResult<OkxApiResponse<LeverageInfo>> {
         self.send_request(
-            "api/v5/account/leverage-info",
+            ACCOUNT_LEVERAGE_INFO_ENDPOINT,
             reqwest::Method::GET,
             Some(request),
             EndpointType::PrivateAccount,

@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::okx::{EndpointType, InstrumentType, RestResult};
 
+const PUBLIC_PRICE_LIMIT_ENDPOINT: &str = "/api/v5/public/price-limit";
+
 /// Request parameters for getting price limit
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -64,7 +66,7 @@ impl RestClient {
         request: GetPriceLimitRequest,
     ) -> RestResult<GetPriceLimitResponse> {
         self.send_request(
-            "api/v5/public/price-limit",
+            PUBLIC_PRICE_LIMIT_ENDPOINT,
             reqwest::Method::GET,
             Some(&request),
             EndpointType::PublicMarketData,

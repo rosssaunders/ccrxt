@@ -3,6 +3,9 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
+const ACCOUNT_SPOT_MANUAL_BORROW_REPAY_ENDPOINT: &str = "/api/v5/account/spot-manual-borrow-repay";
+
+
 /// Request to spot manual borrow repay
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -47,7 +50,7 @@ impl RestClient {
         request: &SpotManualBorrowRepayRequest,
     ) -> RestResult<OkxApiResponse<SpotManualBorrowRepayResponse>> {
         self.send_request(
-            "api/v5/account/spot-manual-borrow-repay",
+            ACCOUNT_SPOT_MANUAL_BORROW_REPAY_ENDPOINT,
             reqwest::Method::POST,
             Some(request),
             EndpointType::PrivateAccount,

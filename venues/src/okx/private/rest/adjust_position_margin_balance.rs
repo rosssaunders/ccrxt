@@ -3,6 +3,9 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
+const ACCOUNT_POSITION_MARGIN_BALANCE_ENDPOINT: &str = "/api/v5/account/position-margin-balance";
+
+
 /// Request to adjust position margin balance
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -64,7 +67,7 @@ impl RestClient {
         request: &AdjustPositionMarginBalanceRequest,
     ) -> RestResult<OkxApiResponse<AdjustPositionMarginBalanceResponse>> {
         self.send_request(
-            "api/v5/account/position/margin-balance",
+            ACCOUNT_POSITION_MARGIN_BALANCE_ENDPOINT,
             reqwest::Method::POST,
             Some(request),
             EndpointType::PrivateAccount,

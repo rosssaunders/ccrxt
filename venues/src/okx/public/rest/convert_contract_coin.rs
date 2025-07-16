@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
+const PUBLIC_CONVERT_CONTRACT_COIN_ENDPOINT: &str = "/api/v5/public/convert-contract-coin";
+
 /// Request parameters for converting between contract and coin
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -106,7 +108,7 @@ impl RestClient {
         request: ConvertContractCoinRequest,
     ) -> RestResult<ConvertContractCoinResponse> {
         self.send_request(
-            "api/v5/public/convert-contract-coin",
+            PUBLIC_CONVERT_CONTRACT_COIN_ENDPOINT,
             reqwest::Method::GET,
             Some(&request),
             EndpointType::PublicMarketData,

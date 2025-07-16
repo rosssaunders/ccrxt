@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::okx::{EndpointType, InstrumentType, RestResult};
 
+const PUBLIC_ESTIMATED_PRICE_ENDPOINT: &str = "/api/v5/public/estimated-price";
+
 /// Request parameters for getting estimated delivery/exercise price
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GetEstimatedPriceRequest {
@@ -60,7 +62,7 @@ impl RestClient {
         request: GetEstimatedPriceRequest,
     ) -> RestResult<GetEstimatedPriceResponse> {
         self.send_request(
-            "api/v5/public/estimated-price",
+            PUBLIC_ESTIMATED_PRICE_ENDPOINT,
             reqwest::Method::GET,
             Some(&request),
             EndpointType::PublicMarketData,
@@ -219,6 +221,7 @@ mod tests {
         // This test ensures the get_estimated_price method compiles and is accessible
         // without needing to make an actual HTTP request
         use crate::okx::RateLimiter;
+
         let client = reqwest::Client::new();
         let rate_limiter = RateLimiter::new();
         let rest_client = super::RestClient::new("https://www.okx.com", client, rate_limiter);

@@ -3,6 +3,9 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
+const PUBLIC_ECONOMIC_CALENDAR_ENDPOINT: &str = "/api/v5/market/economic-calendar";
+
+
 /// Request parameters for getting economic calendar data
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 #[serde(rename_all = "camelCase")]
@@ -84,7 +87,7 @@ impl RestClient {
         request: Option<GetEconomicCalendarRequest>,
     ) -> RestResult<GetEconomicCalendarResponse> {
         self.send_request(
-            "api/v5/public/economic-calendar",
+            PUBLIC_ECONOMIC_CALENDAR_ENDPOINT,
             reqwest::Method::GET,
             request.as_ref(),
             EndpointType::PublicMarketData,

@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::okx::{EndpointType, InstrumentType, RestResult};
 
+const PUBLIC_UNDERLYING_ENDPOINT: &str = "/api/v5/public/underlying";
+
 /// Request parameters for getting underlying assets
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -50,7 +52,7 @@ impl RestClient {
         request: GetUnderlyingRequest,
     ) -> RestResult<GetUnderlyingResponse> {
         self.send_request(
-            "api/v5/public/underlying",
+            PUBLIC_UNDERLYING_ENDPOINT,
             reqwest::Method::GET,
             Some(&request),
             EndpointType::PublicMarketData,

@@ -3,6 +3,9 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
+const ACCOUNT_MAX_LOAN_ENDPOINT: &str = "/api/v5/account/max-loan";
+
+
 /// Request to get max loan
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -56,7 +59,7 @@ impl RestClient {
         request: &GetMaxLoanRequest,
     ) -> RestResult<OkxApiResponse<MaxLoan>> {
         self.send_request(
-            "api/v5/account/max-loan",
+            ACCOUNT_MAX_LOAN_ENDPOINT,
             reqwest::Method::GET,
             Some(request),
             EndpointType::PrivateAccount,

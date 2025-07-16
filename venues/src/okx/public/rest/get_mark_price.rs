@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
+const PUBLIC_MARK_PRICE_ENDPOINT: &str = "/api/v5/public/mark-price";
+
 /// Request parameters for getting mark price
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GetMarkPriceRequest {
@@ -74,7 +76,7 @@ impl RestClient {
         request: &GetMarkPriceRequest,
     ) -> RestResult<GetMarkPriceResponse> {
         self.send_request(
-            "api/v5/public/mark-price",
+            PUBLIC_MARK_PRICE_ENDPOINT,
             reqwest::Method::GET,
             Some(request),
             EndpointType::PublicMarketDataHistory,

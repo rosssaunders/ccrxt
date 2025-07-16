@@ -3,6 +3,9 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
+const ACCOUNT_SET_ACCOUNT_LEVEL_ENDPOINT: &str = "/api/v5/account/set-account-level";
+
+
 /// Request to set account level
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -32,7 +35,7 @@ impl RestClient {
         request: &SetAccountLevelRequest,
     ) -> RestResult<OkxApiResponse<SetAccountLevelResponse>> {
         self.send_request(
-            "api/v5/account/set-account-level",
+            ACCOUNT_SET_ACCOUNT_LEVEL_ENDPOINT,
             reqwest::Method::POST,
             Some(request),
             EndpointType::PrivateAccount,

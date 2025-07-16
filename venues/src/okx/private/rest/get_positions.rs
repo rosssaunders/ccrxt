@@ -3,6 +3,9 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, InstrumentType, RestResult};
 
+const ACCOUNT_POSITIONS_ENDPOINT: &str = "/api/v5/account/positions";
+
+
 /// Request to get account positions
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -202,7 +205,7 @@ impl RestClient {
         request: &GetPositionsRequest,
     ) -> RestResult<OkxApiResponse<Position>> {
         self.send_request(
-            "api/v5/account/positions",
+            ACCOUNT_POSITIONS_ENDPOINT,
             reqwest::Method::GET,
             Some(request),
             EndpointType::PrivateAccount,
