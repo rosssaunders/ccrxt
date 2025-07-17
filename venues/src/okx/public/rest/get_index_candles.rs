@@ -65,7 +65,7 @@ impl RestClient {
     /// Retrieve the candlestick charts of the index. This endpoint can retrieve the
     /// latest 1,440 data entries. Charts are returned in groups based on the requested bar.
     ///
-    /// See: https://www.okx.com/docs-v5/en/#public-data-rest-api-get-index-candlesticks
+    /// See: https://www.okx.com/docs-v5/en/#market-data-rest-api-get-index-candlesticks
     ///
     /// Rate limit: 20 requests per 2 seconds
     ///
