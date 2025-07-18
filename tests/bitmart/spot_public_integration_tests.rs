@@ -13,10 +13,10 @@ use venues::bitmart::spot::public::rest::{
 fn create_spot_test_client() -> RestClient {
     use reqwest::Client;
     use venues::bitmart::rate_limit::RateLimiter;
-    
+
     let client = Client::new();
     let rate_limiter = RateLimiter::default();
-    
+
     RestClient::new("https://api-cloud.bitmart.com", client, rate_limiter)
 }
 
@@ -34,7 +34,10 @@ async fn test_get_currency_list() {
     );
 
     let response = result.unwrap();
-    assert!(!response.currencies.is_empty(), "Should have at least one currency");
+    assert!(
+        !response.currencies.is_empty(),
+        "Should have at least one currency"
+    );
 
     println!("Found {} currencies", response.currencies.len());
     if let Some(first_currency) = response.currencies.first() {
@@ -62,7 +65,10 @@ async fn test_get_trading_pairs_list() {
     );
 
     let response = result.unwrap();
-    assert!(!response.symbols.is_empty(), "Should have at least one trading pair");
+    assert!(
+        !response.symbols.is_empty(),
+        "Should have at least one trading pair"
+    );
 
     println!("Found {} trading pairs", response.symbols.len());
     if let Some(first_pair) = response.symbols.first() {
@@ -84,8 +90,11 @@ async fn test_get_trading_pair_details() {
     );
 
     let response = result.unwrap();
-    assert!(!response.symbols.is_empty(), "Should have trading pair details");
-    
+    assert!(
+        !response.symbols.is_empty(),
+        "Should have trading pair details"
+    );
+
     let symbol_detail = &response.symbols[0];
     assert!(!symbol_detail.symbol.is_empty(), "Should have symbol");
 
@@ -116,10 +125,7 @@ async fn test_get_ticker() {
 
     println!(
         "Ticker for {}: price={}, volume={}, change={}%",
-        response.symbol,
-        response.last,
-        response.v_24h,
-        response.fluctuation
+        response.symbol, response.last, response.v_24h, response.fluctuation
     );
 }
 
@@ -197,7 +203,7 @@ async fn test_get_recent_trades() {
     assert!(!response.0.is_empty(), "Should have recent trades");
 
     println!("Recent trades: {} trades", response.0.len());
-    
+
     if let Some(first_trade) = response.0.first() {
         // Trade data is array format: [symbol, timestamp, price, size, side]
         if first_trade.len() >= 5 {
@@ -232,7 +238,7 @@ async fn test_get_latest_kline() {
     assert!(!response.0.is_empty(), "Should have kline data");
 
     println!("Latest klines: {} candles", response.0.len());
-    
+
     if let Some(first_kline) = response.0.first() {
         // Kline data is array format: [timestamp, open, high, low, close, volume, quote_volume]
         if first_kline.len() >= 7 {
@@ -265,7 +271,7 @@ async fn test_get_history_kline() {
 
     let response = result.unwrap();
     println!("Historical klines: {} candles", response.0.len());
-    
+
     if !response.0.is_empty() {
         let first_kline = &response.0[0];
         // Kline data is array format: [timestamp, open, high, low, close, volume, quote_volume]
@@ -317,7 +323,11 @@ async fn test_rate_limiting() {
         println!(
             "Request {}: {:?}",
             i + 1,
-            if results[i].is_ok() { "Success" } else { "Failed" }
+            if results[i].is_ok() {
+                "Success"
+            } else {
+                "Failed"
+            }
         );
     }
 

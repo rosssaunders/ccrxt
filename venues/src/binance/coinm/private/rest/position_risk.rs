@@ -169,7 +169,7 @@ mod tests {
 
         let response: Vec<PositionRisk> = serde_json::from_str(json).unwrap();
         assert_eq!(response.len(), 1);
-        
+
         let position = &response[0];
         assert_eq!(position.symbol, "BTCUSD_PERP");
         assert_eq!(position.position_amt, "10.0");
@@ -226,11 +226,11 @@ mod tests {
 
         let response: Vec<PositionRisk> = serde_json::from_str(json).unwrap();
         assert_eq!(response.len(), 2);
-        
+
         assert_eq!(response[0].symbol, "BTCUSD_PERP");
         assert_eq!(response[0].position_amt, "10.0");
         assert_eq!(response[0].position_side, "LONG");
-        
+
         assert_eq!(response[1].symbol, "ETHUSD_PERP");
         assert_eq!(response[1].position_amt, "-5.0");
         assert_eq!(response[1].position_side, "SHORT");

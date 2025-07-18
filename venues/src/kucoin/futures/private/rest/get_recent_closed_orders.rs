@@ -1,6 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-use crate::kucoin::spot::{OrderSide, OrderType, OrderStatus, ResponseHeaders, RestResponse, Result};
+use crate::kucoin::spot::{
+    OrderSide, OrderStatus, OrderType, ResponseHeaders, RestResponse, Result,
+};
 
 /// Get recent closed orders request
 #[derive(Debug, Clone, Serialize)]
@@ -93,7 +95,7 @@ impl super::RestClient {
         request: GetRecentClosedOrdersRequest,
     ) -> Result<(RestResponse<GetRecentClosedOrdersResponse>, ResponseHeaders)> {
         const GET_RECENT_CLOSED_ORDERS_ENDPOINT: &str = "/api/v1/recentDoneOrders";
-        
+
         let params = if let Some(symbol) = request.symbol {
             let mut params = std::collections::HashMap::new();
             params.insert("symbol".to_string(), symbol);
@@ -101,8 +103,9 @@ impl super::RestClient {
         } else {
             None
         };
-        
-        self.get(GET_RECENT_CLOSED_ORDERS_ENDPOINT, params.as_ref()).await
+
+        self.get(GET_RECENT_CLOSED_ORDERS_ENDPOINT, params.as_ref())
+            .await
     }
 }
 
@@ -120,9 +123,7 @@ mod tests {
 
     #[test]
     fn test_get_recent_closed_orders_request_without_symbol() {
-        let request = GetRecentClosedOrdersRequest {
-            symbol: None,
-        };
+        let request = GetRecentClosedOrdersRequest { symbol: None };
         assert!(request.symbol.is_none());
     }
 

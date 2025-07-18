@@ -74,9 +74,8 @@ impl RestClient {
             .map_err(|e| crate::gateio::perpetual::GateIoError::Http(e))?;
 
         let status = response.status();
-        let headers = crate::gateio::perpetual::rate_limit::RateLimitHeader::from_headers(
-            response.headers(),
-        );
+        let headers =
+            crate::gateio::perpetual::rate_limit::RateLimitHeader::from_headers(response.headers());
 
         // Update rate limiter with response headers
         if let Some(status) = self.rate_limiter.update_from_headers(&headers, endpoint) {

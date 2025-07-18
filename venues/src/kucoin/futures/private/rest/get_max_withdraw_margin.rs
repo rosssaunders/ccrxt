@@ -26,11 +26,12 @@ impl super::RestClient {
         request: GetMaxWithdrawMarginRequest,
     ) -> Result<(RestResponse<String>, ResponseHeaders)> {
         const GET_MAX_WITHDRAW_MARGIN_ENDPOINT: &str = "/api/v1/margin/maxWithdrawMargin";
-        
+
         let mut params = std::collections::HashMap::new();
         params.insert("symbol".to_string(), request.symbol);
-        
-        self.get(GET_MAX_WITHDRAW_MARGIN_ENDPOINT, Some(&params)).await
+
+        self.get(GET_MAX_WITHDRAW_MARGIN_ENDPOINT, Some(&params))
+            .await
     }
 }
 

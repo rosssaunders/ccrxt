@@ -3,9 +3,7 @@
 //! These tests verify that the Bitmart contract public REST API client can successfully
 //! communicate with the live API and receive valid responses.
 
-use venues::bitmart::contract::public::rest::{
-    GetContractDetailsRequest, RestClient,
-};
+use venues::bitmart::contract::public::rest::{GetContractDetailsRequest, RestClient};
 
 /// Helper function to create a test client
 fn create_contract_test_client() -> RestClient {
@@ -27,10 +25,13 @@ async fn test_get_all_contract_details() {
 
     let response = result.unwrap();
     assert_eq!(response.code, 1000, "Response should have success code");
-    
+
     if let Some(data) = response.data {
         // Try to parse the JSON data - it could be an array or an object
-        if let Ok(contracts) = serde_json::from_value::<Vec<venues::bitmart::contract::public::rest::ContractDetails>>(data.clone()) {
+        if let Ok(contracts) = serde_json::from_value::<
+            Vec<venues::bitmart::contract::public::rest::ContractDetails>,
+        >(data.clone())
+        {
             println!("Found {} contracts", contracts.len());
             if let Some(first_contract) = contracts.first() {
                 println!(
@@ -63,10 +64,13 @@ async fn test_get_specific_contract_details() {
 
     let response = result.unwrap();
     assert_eq!(response.code, 1000, "Response should have success code");
-    
+
     if let Some(data) = response.data {
         // Try to parse the JSON data
-        if let Ok(contracts) = serde_json::from_value::<Vec<venues::bitmart::contract::public::rest::ContractDetails>>(data.clone()) {
+        if let Ok(contracts) = serde_json::from_value::<
+            Vec<venues::bitmart::contract::public::rest::ContractDetails>,
+        >(data.clone())
+        {
             if !contracts.is_empty() {
                 let contract = &contracts[0];
                 assert_eq!(contract.symbol, "BTCUSDT", "Should have correct symbol");
@@ -99,14 +103,17 @@ async fn test_error_handling_invalid_symbol() {
     };
 
     let result = client.get_contract_details(&request).await;
-    
+
     // This should either fail or return empty results
     if result.is_err() {
         println!("Expected error for invalid symbol: {:?}", result.err());
     } else {
         let response = result.unwrap();
         if let Some(data) = response.data {
-            if let Ok(contracts) = serde_json::from_value::<Vec<venues::bitmart::contract::public::rest::ContractDetails>>(data) {
+            if let Ok(contracts) = serde_json::from_value::<
+                Vec<venues::bitmart::contract::public::rest::ContractDetails>,
+            >(data)
+            {
                 if contracts.is_empty() {
                     println!("Empty response for invalid symbol (expected behavior)");
                 } else {
@@ -134,7 +141,11 @@ async fn test_rate_limiting() {
         println!(
             "Request {}: {:?}",
             i + 1,
-            if results[i].is_ok() { "Success" } else { "Failed" }
+            if results[i].is_ok() {
+                "Success"
+            } else {
+                "Failed"
+            }
         );
     }
 

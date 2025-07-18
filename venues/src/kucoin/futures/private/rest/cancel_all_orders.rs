@@ -58,9 +58,7 @@ mod tests {
 
     #[test]
     fn test_cancel_all_orders_request_serialization_without_symbol() {
-        let request = CancelAllOrdersRequest {
-            symbol: None,
-        };
+        let request = CancelAllOrdersRequest { symbol: None };
 
         let json = serde_json::to_string(&request).unwrap();
         let expected = r#"{}"#;

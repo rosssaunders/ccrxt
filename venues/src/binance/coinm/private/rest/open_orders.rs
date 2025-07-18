@@ -227,7 +227,7 @@ mod tests {
 
         let response: Vec<OpenOrder> = serde_json::from_str(json).unwrap();
         assert_eq!(response.len(), 1);
-        
+
         let order = &response[0];
         assert_eq!(order.avg_price, "0.00000");
         assert_eq!(order.client_order_id, "abc123");
@@ -309,11 +309,11 @@ mod tests {
 
         let response: Vec<OpenOrder> = serde_json::from_str(json).unwrap();
         assert_eq!(response.len(), 2);
-        
+
         assert_eq!(response[0].order_id, 123456789);
         assert_eq!(response[0].symbol, "BTCUSD_PERP");
         assert_eq!(response[0].side, "BUY");
-        
+
         assert_eq!(response[1].order_id, 987654321);
         assert_eq!(response[1].symbol, "ETHUSD_PERP");
         assert_eq!(response[1].side, "SELL");

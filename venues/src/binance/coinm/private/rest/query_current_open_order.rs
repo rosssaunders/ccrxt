@@ -267,7 +267,10 @@ mod tests {
         assert_eq!(response.working_type, WorkingType::ContractPrice);
         assert!(!response.price_protect);
         assert_eq!(response.price_match, PriceMatch::None);
-        assert_eq!(response.self_trade_prevention_mode, SelfTradePreventionMode::None);
+        assert_eq!(
+            response.self_trade_prevention_mode,
+            SelfTradePreventionMode::None
+        );
     }
 
     #[test]
@@ -311,7 +314,10 @@ mod tests {
         assert_eq!(response.working_type, WorkingType::MarkPrice);
         assert!(response.price_protect);
         assert_eq!(response.price_match, PriceMatch::Queue);
-        assert_eq!(response.self_trade_prevention_mode, SelfTradePreventionMode::ExpireTaker);
+        assert_eq!(
+            response.self_trade_prevention_mode,
+            SelfTradePreventionMode::ExpireTaker
+        );
     }
 
     #[test]

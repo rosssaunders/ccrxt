@@ -28,7 +28,8 @@ impl super::RestClient {
         request: ModifyCrossMarginLeverageRequest,
     ) -> Result<(RestResponse<bool>, ResponseHeaders)> {
         const MODIFY_CROSS_MARGIN_LEVERAGE_ENDPOINT: &str = "/api/v2/changeCrossUserLeverage";
-        self.post(MODIFY_CROSS_MARGIN_LEVERAGE_ENDPOINT, &request).await
+        self.post(MODIFY_CROSS_MARGIN_LEVERAGE_ENDPOINT, &request)
+            .await
     }
 }
 

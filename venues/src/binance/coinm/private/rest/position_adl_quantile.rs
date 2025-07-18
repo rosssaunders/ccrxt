@@ -194,13 +194,13 @@ mod tests {
 
         let response: GetPositionAdlQuantileResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.len(), 2);
-        
+
         let entry1 = &response[0];
         assert_eq!(entry1.symbol, "BTCUSD_PERP");
         assert_eq!(entry1.adl_quantile.both, Some(2));
         assert!(entry1.adl_quantile.long.is_none());
         assert!(entry1.adl_quantile.short.is_none());
-        
+
         let entry2 = &response[1];
         assert_eq!(entry2.symbol, "ETHUSD_PERP");
         assert_eq!(entry2.adl_quantile.long, Some(3));

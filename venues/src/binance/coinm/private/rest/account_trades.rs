@@ -365,12 +365,12 @@ mod tests {
 
         let trades: Vec<AccountTrade> = serde_json::from_str(json).unwrap();
         assert_eq!(trades.len(), 2);
-        
+
         assert_eq!(trades[0].id, 123456789);
         assert_eq!(trades[0].side, OrderSide::Buy);
         assert_eq!(trades[0].price, "50000.0");
         assert!(trades[0].maker);
-        
+
         assert_eq!(trades[1].id, 123456790);
         assert_eq!(trades[1].side, OrderSide::Sell);
         assert_eq!(trades[1].price, "51000.0");

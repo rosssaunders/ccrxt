@@ -174,11 +174,11 @@ mod tests {
 
         let trades: Vec<BlockTrade> = serde_json::from_str(json).unwrap();
         assert_eq!(trades.len(), 2);
-        
+
         assert_eq!(trades[0].id, 123456);
         assert_eq!(trades[0].side, 1); // Buy
         assert_eq!(trades[0].price, Decimal::from_f64(1500.00).unwrap());
-        
+
         assert_eq!(trades[1].id, 123457);
         assert_eq!(trades[1].side, -1); // Sell
         assert_eq!(trades[1].price, Decimal::from_f64(1520.00).unwrap());

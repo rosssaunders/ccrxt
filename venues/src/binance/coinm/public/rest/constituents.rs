@@ -124,21 +124,26 @@ mod tests {
         assert_eq!(constituents.symbol, "BTCUSD");
         assert_eq!(constituents.time, 1625097600000);
         assert_eq!(constituents.constituents.len(), 4);
-        
+
         assert_eq!(constituents.constituents[0].exchange, "Binance");
-        assert_eq!(constituents.constituents[0].price, Decimal::from_f64(50000.50).unwrap());
-        assert_eq!(constituents.constituents[0].weight, Decimal::from_f64(0.25).unwrap());
-        
+        assert_eq!(
+            constituents.constituents[0].price,
+            Decimal::from_f64(50000.50).unwrap()
+        );
+        assert_eq!(
+            constituents.constituents[0].weight,
+            Decimal::from_f64(0.25).unwrap()
+        );
+
         assert_eq!(constituents.constituents[1].exchange, "Coinbase");
         assert_eq!(constituents.constituents[1].symbol, "BTC-USD");
-        assert_eq!(constituents.constituents[1].weight, Decimal::from_f64(0.30).unwrap());
-        
+        assert_eq!(
+            constituents.constituents[1].weight,
+            Decimal::from_f64(0.30).unwrap()
+        );
+
         // Verify weights sum to 1.0
-        let total_weight: Decimal = constituents
-            .constituents
-            .iter()
-            .map(|c| c.weight)
-            .sum();
+        let total_weight: Decimal = constituents.constituents.iter().map(|c| c.weight).sum();
         assert_eq!(total_weight, Decimal::from_f64(1.0).unwrap());
     }
 }

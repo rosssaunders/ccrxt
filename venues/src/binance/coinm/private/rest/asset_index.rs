@@ -157,18 +157,24 @@ mod tests {
         assert_eq!(response.symbol, "BTCUSD_PERP");
         assert_eq!(response.time, 1699948800000);
         assert_eq!(response.base_asset_list.len(), 3);
-        
+
         assert_eq!(response.base_asset_list[0].base_asset, "BTC");
         assert_eq!(response.base_asset_list[0].weight_in_percentage, "50.00");
         assert_eq!(response.base_asset_list[0].weight_in_quantity, "1.00000000");
-        
+
         assert_eq!(response.base_asset_list[1].base_asset, "ETH");
         assert_eq!(response.base_asset_list[1].weight_in_percentage, "30.00");
-        assert_eq!(response.base_asset_list[1].weight_in_quantity, "10.00000000");
-        
+        assert_eq!(
+            response.base_asset_list[1].weight_in_quantity,
+            "10.00000000"
+        );
+
         assert_eq!(response.base_asset_list[2].base_asset, "BNB");
         assert_eq!(response.base_asset_list[2].weight_in_percentage, "20.00");
-        assert_eq!(response.base_asset_list[2].weight_in_quantity, "100.00000000");
+        assert_eq!(
+            response.base_asset_list[2].weight_in_quantity,
+            "100.00000000"
+        );
     }
 
     #[test]

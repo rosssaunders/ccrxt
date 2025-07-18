@@ -141,7 +141,7 @@ mod tests {
         ]"#;
         let response: GetFuturesAccountBalanceResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.len(), 2);
-        
+
         let btc_balance = &response[0];
         assert_eq!(btc_balance.account_alias, "SgsR");
         assert_eq!(btc_balance.asset, "BTC");
@@ -151,7 +151,7 @@ mod tests {
         assert_eq!(btc_balance.cross_un_pnl, "0.00000000");
         assert_eq!(btc_balance.available_balance, "0.00241969");
         assert_eq!(btc_balance.update_time, 1625097600000);
-        
+
         let eth_balance = &response[1];
         assert_eq!(eth_balance.asset, "ETH");
         assert_eq!(eth_balance.balance, "0.10000000");

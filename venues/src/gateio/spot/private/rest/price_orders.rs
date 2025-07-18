@@ -146,10 +146,7 @@ impl RestClient {
     ///
     /// # API Documentation
     /// <https://www.gate.com/docs/developers/apiv4/#get-a-single-order>
-    pub async fn get_price_order(
-        &self,
-        order_id: &str,
-    ) -> crate::gateio::spot::Result<PriceOrder> {
+    pub async fn get_price_order(&self, order_id: &str) -> crate::gateio::spot::Result<PriceOrder> {
         let endpoint = format!("/spot/price_orders/{}", order_id);
         self.get(&endpoint).await
     }

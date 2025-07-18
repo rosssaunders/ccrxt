@@ -93,9 +93,7 @@ mod tests {
 
     #[test]
     fn test_trading_status_request_serialization() {
-        let request = TradingStatusRequest {
-            recv_window: None,
-        };
+        let request = TradingStatusRequest { recv_window: None };
 
         let serialized = serde_urlencoded::to_string(&request).unwrap();
         assert_eq!(serialized, "");
@@ -176,26 +174,26 @@ mod tests {
         let response: TradingStatusResponse = serde_json::from_str(json).unwrap();
         assert!(response.is_locked);
         assert_eq!(response.planned_recover_time, 1625097700000);
-        
+
         let trigger = response.trigger_condition.unwrap();
         assert_eq!(trigger.indicator, "GCR");
         assert_eq!(trigger.count, 200);
         assert_eq!(trigger.current_value, 0.20);
         assert_eq!(trigger.trigger_value, 0.15);
-        
+
         let indicators = response.indicators.unwrap();
         assert_eq!(indicators.len(), 2);
-        
+
         assert_eq!(indicators[0].indicator, "UFR");
         assert_eq!(indicators[0].count, 50);
         assert_eq!(indicators[0].current_value, 0.95);
         assert_eq!(indicators[0].trigger_value, 0.99);
-        
+
         assert_eq!(indicators[1].indicator, "IFER");
         assert_eq!(indicators[1].count, 100);
         assert_eq!(indicators[1].current_value, 0.10);
         assert_eq!(indicators[1].trigger_value, 0.05);
-        
+
         assert_eq!(response.update_time, 1625097600000);
     }
 }

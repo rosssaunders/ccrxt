@@ -80,7 +80,6 @@ impl RestClient {
         &self,
         request: OptionsTradesRequest,
     ) -> crate::gateio::options::Result<Vec<OptionsTrade>> {
-        self.get_with_query("/options/my_trades", &request)
-            .await
+        self.get_with_query("/options/my_trades", &request).await
     }
 }

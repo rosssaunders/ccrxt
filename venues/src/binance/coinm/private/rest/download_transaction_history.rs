@@ -195,7 +195,10 @@ mod tests {
         let response: GetDownloadLinkResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.download_id, "123456");
         assert_eq!(response.status, DownloadStatus::Completed);
-        assert_eq!(response.url, Some("https://example.com/download".to_string()));
+        assert_eq!(
+            response.url,
+            Some("https://example.com/download".to_string())
+        );
         assert_eq!(response.expired_timestamp, Some(1625270400000));
     }
 

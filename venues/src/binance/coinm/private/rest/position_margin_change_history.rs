@@ -205,14 +205,14 @@ mod tests {
 
         let response: GetPositionMarginChangeHistoryResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.len(), 2);
-        
+
         let entry1 = &response[0];
         assert_eq!(entry1.amount, "0.001");
         assert_eq!(entry1.asset, "BTC");
         assert_eq!(entry1.symbol, "BTCUSD_PERP");
         assert_eq!(entry1.modification_type, 1);
         assert_eq!(entry1.position_side, PositionSide::Long);
-        
+
         let entry2 = &response[1];
         assert_eq!(entry2.amount, "0.0005");
         assert_eq!(entry2.asset, "ETH");

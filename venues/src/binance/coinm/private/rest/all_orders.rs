@@ -356,12 +356,12 @@ mod tests {
 
         let orders: Vec<AllOrder> = serde_json::from_str(json).unwrap();
         assert_eq!(orders.len(), 2);
-        
+
         assert_eq!(orders[0].order_id, 111111);
         assert_eq!(orders[0].side, "BUY");
         assert_eq!(orders[0].status, "NEW");
         assert_eq!(orders[0].order_type, "LIMIT");
-        
+
         assert_eq!(orders[1].order_id, 222222);
         assert_eq!(orders[1].side, "SELL");
         assert_eq!(orders[1].status, "FILLED");

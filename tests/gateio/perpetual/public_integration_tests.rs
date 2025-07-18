@@ -22,7 +22,7 @@ async fn test_perpetual_client_creation() {
 #[tokio::test]
 async fn test_get_futures_contracts() {
     use venues::gateio::perpetual::public::rest::contracts::FuturesContractsRequest;
-    
+
     let client = create_perpetual_test_client();
     let request = FuturesContractsRequest {
         settle: "usdt".to_string(),
@@ -37,22 +37,22 @@ async fn test_get_futures_contracts() {
 
     let response = result.unwrap();
     assert!(!response.is_empty(), "Should have contract data");
-    
+
     let contract = &response[0];
     assert!(!contract.name.is_empty(), "Contract should have name");
-    assert!(!contract.contract_type.is_empty(), "Contract should have type");
-    
-    println!(
-        "Futures contracts: {} contracts available",
-        response.len()
+    assert!(
+        !contract.contract_type.is_empty(),
+        "Contract should have type"
     );
+
+    println!("Futures contracts: {} contracts available", response.len());
 }
 
 /// Test single futures contract endpoint
 #[tokio::test]
 async fn test_get_futures_contract() {
     use venues::gateio::perpetual::public::rest::contracts::FuturesContractRequest;
-    
+
     let client = create_perpetual_test_client();
     let request = FuturesContractRequest {
         settle: "usdt".to_string(),
@@ -67,13 +67,18 @@ async fn test_get_futures_contract() {
     );
 
     let response = result.unwrap();
-    assert_eq!(response.name, "BTC_USDT", "Should have correct contract name");
-    assert!(!response.contract_type.is_empty(), "Should have contract type");
-    
+    assert_eq!(
+        response.name, "BTC_USDT",
+        "Should have correct contract name"
+    );
+    assert!(
+        !response.contract_type.is_empty(),
+        "Should have contract type"
+    );
+
     println!(
         "Futures contract: {} (type: {})",
-        response.name,
-        response.contract_type
+        response.name, response.contract_type
     );
 }
 
@@ -81,7 +86,7 @@ async fn test_get_futures_contract() {
 #[tokio::test]
 async fn test_get_futures_tickers() {
     use venues::gateio::perpetual::public::rest::tickers::FuturesTickersRequest;
-    
+
     let client = create_perpetual_test_client();
     let request = FuturesTickersRequest {
         settle: "usdt".to_string(),
@@ -97,11 +102,11 @@ async fn test_get_futures_tickers() {
 
     let response = result.unwrap();
     assert!(!response.is_empty(), "Should have ticker data");
-    
+
     let ticker = &response[0];
     assert_eq!(ticker.contract, "BTC_USDT", "Should have correct contract");
     assert!(!ticker.last.is_empty(), "Should have last price");
-    
+
     println!(
         "Futures ticker: {} = {} (volume: {})",
         ticker.contract,
@@ -114,7 +119,7 @@ async fn test_get_futures_tickers() {
 #[tokio::test]
 async fn test_get_futures_order_book() {
     use venues::gateio::perpetual::public::rest::order_book::FuturesOrderBookRequest;
-    
+
     let client = create_perpetual_test_client();
     let request = FuturesOrderBookRequest {
         settle: "usdt".to_string(),
@@ -134,7 +139,7 @@ async fn test_get_futures_order_book() {
     let response = result.unwrap();
     assert!(!response.asks.is_empty(), "Should have ask orders");
     assert!(!response.bids.is_empty(), "Should have bid orders");
-    
+
     println!(
         "Futures order book: {} bids, {} asks",
         response.bids.len(),
@@ -146,7 +151,7 @@ async fn test_get_futures_order_book() {
 #[tokio::test]
 async fn test_get_futures_trades() {
     use venues::gateio::perpetual::public::rest::trades::FuturesTradesRequest;
-    
+
     let client = create_perpetual_test_client();
     let request = FuturesTradesRequest {
         settle: "usdt".to_string(),
@@ -167,23 +172,20 @@ async fn test_get_futures_trades() {
 
     let response = result.unwrap();
     assert!(!response.is_empty(), "Should have trade data");
-    
+
     let trade = &response[0];
     assert!(trade.id > 0, "Trade should have valid ID");
     assert!(!trade.price.is_empty(), "Trade should have price");
     assert!(trade.size != 0, "Trade should have non-zero size");
-    
-    println!(
-        "Futures trades: {} trades",
-        response.len()
-    );
+
+    println!("Futures trades: {} trades", response.len());
 }
 
 /// Test futures candlesticks endpoint
 #[tokio::test]
 async fn test_get_futures_candlesticks() {
     use venues::gateio::perpetual::public::rest::candlesticks::FuturesCandlesticksRequest;
-    
+
     let client = create_perpetual_test_client();
     let request = FuturesCandlesticksRequest {
         settle: "usdt".to_string(),
@@ -203,23 +205,20 @@ async fn test_get_futures_candlesticks() {
 
     let response = result.unwrap();
     assert!(!response.is_empty(), "Should have candlestick data");
-    
+
     let candle = &response[0];
     assert!(candle.t > 0, "Candle should have valid timestamp");
     assert!(!candle.o.is_empty(), "Candle should have open price");
     assert!(!candle.c.is_empty(), "Candle should have close price");
-    
-    println!(
-        "Futures candlesticks: {} candles",
-        response.len()
-    );
+
+    println!("Futures candlesticks: {} candles", response.len());
 }
 
 /// Test futures mark price candlesticks endpoint
 #[tokio::test]
 async fn test_get_futures_mark_price_candlesticks() {
     use venues::gateio::perpetual::public::rest::candlesticks::FuturesCandlesticksRequest;
-    
+
     let client = create_perpetual_test_client();
     let request = FuturesCandlesticksRequest {
         settle: "usdt".to_string(),
@@ -238,12 +237,15 @@ async fn test_get_futures_mark_price_candlesticks() {
     );
 
     let response = result.unwrap();
-    assert!(!response.is_empty(), "Should have mark price candlestick data");
-    
+    assert!(
+        !response.is_empty(),
+        "Should have mark price candlestick data"
+    );
+
     let candle = &response[0];
     assert!(candle.t > 0, "Candle should have valid timestamp");
     assert!(!candle.o.is_empty(), "Candle should have open price");
-    
+
     println!(
         "Futures mark price candlesticks: {} candles",
         response.len()
@@ -254,7 +256,7 @@ async fn test_get_futures_mark_price_candlesticks() {
 #[tokio::test]
 async fn test_get_futures_index_price_candlesticks() {
     use venues::gateio::perpetual::public::rest::candlesticks::FuturesCandlesticksRequest;
-    
+
     let client = create_perpetual_test_client();
     let request = FuturesCandlesticksRequest {
         settle: "usdt".to_string(),
@@ -273,12 +275,15 @@ async fn test_get_futures_index_price_candlesticks() {
     );
 
     let response = result.unwrap();
-    assert!(!response.is_empty(), "Should have index price candlestick data");
-    
+    assert!(
+        !response.is_empty(),
+        "Should have index price candlestick data"
+    );
+
     let candle = &response[0];
     assert!(candle.t > 0, "Candle should have valid timestamp");
     assert!(!candle.o.is_empty(), "Candle should have open price");
-    
+
     println!(
         "Futures index price candlesticks: {} candles",
         response.len()
@@ -289,7 +294,7 @@ async fn test_get_futures_index_price_candlesticks() {
 #[tokio::test]
 async fn test_get_futures_funding_rate() {
     use venues::gateio::perpetual::public::rest::funding_rate::FuturesFundingRateRequest;
-    
+
     let client = create_perpetual_test_client();
     let request = FuturesFundingRateRequest {
         settle: "usdt".to_string(),
@@ -306,22 +311,19 @@ async fn test_get_futures_funding_rate() {
 
     let response = result.unwrap();
     assert!(!response.is_empty(), "Should have funding rate data");
-    
+
     let funding = &response[0];
     assert!(funding.t > 0, "Funding rate should have valid timestamp");
     assert!(!funding.r.is_empty(), "Funding rate should have rate value");
-    
-    println!(
-        "Futures funding rates: {} entries",
-        response.len()
-    );
+
+    println!("Futures funding rates: {} entries", response.len());
 }
 
 /// Test futures insurance endpoint
 #[tokio::test]
 async fn test_get_futures_insurance() {
     use venues::gateio::perpetual::public::rest::insurance::FuturesInsuranceRequest;
-    
+
     let client = create_perpetual_test_client();
     let request = FuturesInsuranceRequest {
         settle: "usdt".to_string(),
@@ -337,22 +339,19 @@ async fn test_get_futures_insurance() {
 
     let response = result.unwrap();
     assert!(!response.is_empty(), "Should have insurance data");
-    
+
     let insurance = &response[0];
     assert!(insurance.t > 0, "Insurance should have valid timestamp");
     assert!(insurance.b > 0.0, "Insurance should have positive balance");
-    
-    println!(
-        "Futures insurance: {} entries",
-        response.len()
-    );
+
+    println!("Futures insurance: {} entries", response.len());
 }
 
 /// Test futures stats endpoint
 #[tokio::test]
 async fn test_get_futures_stats() {
     use venues::gateio::perpetual::public::rest::stats::FuturesStatsRequest;
-    
+
     let client = create_perpetual_test_client();
     let request = FuturesStatsRequest {
         settle: "usdt".to_string(),
@@ -371,21 +370,18 @@ async fn test_get_futures_stats() {
 
     let response = result.unwrap();
     assert!(!response.is_empty(), "Should have stats data");
-    
+
     let stats = &response[0];
     assert!(stats.time > 0, "Stats should have valid timestamp");
-    
-    println!(
-        "Futures stats: {} entries",
-        response.len()
-    );
+
+    println!("Futures stats: {} entries", response.len());
 }
 
 /// Test futures risk limit tiers endpoint
 #[tokio::test]
 async fn test_get_futures_risk_limit_tiers() {
     use venues::gateio::perpetual::public::rest::risk_limit_tiers::FuturesRiskLimitTiersRequest;
-    
+
     let client = create_perpetual_test_client();
     let request = FuturesRiskLimitTiersRequest {
         settle: "usdt".to_string(),
@@ -403,22 +399,19 @@ async fn test_get_futures_risk_limit_tiers() {
 
     let response = result.unwrap();
     assert!(!response.is_empty(), "Should have risk limit tiers data");
-    
+
     let tier = &response[0];
     assert!(!tier.risk_limit.is_empty(), "Tier should have risk limit");
     assert!(!tier.risk_limit.is_empty(), "Tier should have risk limit");
-    
-    println!(
-        "Futures risk limit tiers: {} tiers",
-        response.len()
-    );
+
+    println!("Futures risk limit tiers: {} tiers", response.len());
 }
 
 /// Test futures premium index endpoint
 #[tokio::test]
 async fn test_get_futures_premium_index() {
     use venues::gateio::perpetual::public::rest::premium_index::FuturesPremiumIndexRequest;
-    
+
     let client = create_perpetual_test_client();
     let request = FuturesPremiumIndexRequest {
         settle: "usdt".to_string(),
@@ -438,21 +431,18 @@ async fn test_get_futures_premium_index() {
 
     let response = result.unwrap();
     assert!(!response.is_empty(), "Should have premium index data");
-    
+
     let premium = &response[0];
     assert!(premium.t > 0, "Premium index should have valid timestamp");
-    
-    println!(
-        "Futures premium index: {} entries",
-        response.len()
-    );
+
+    println!("Futures premium index: {} entries", response.len());
 }
 
 /// Test futures index constituents endpoint
 #[tokio::test]
 async fn test_get_futures_index_constituents() {
     use venues::gateio::perpetual::public::rest::index_constituents::FuturesIndexConstituentsRequest;
-    
+
     let client = create_perpetual_test_client();
     let request = FuturesIndexConstituentsRequest {
         settle: "usdt".to_string(),
@@ -467,8 +457,11 @@ async fn test_get_futures_index_constituents() {
     );
 
     let response = result.unwrap();
-    assert!(!response.constituents.is_empty(), "Should have index constituents data");
-    
+    assert!(
+        !response.constituents.is_empty(),
+        "Should have index constituents data"
+    );
+
     println!(
         "Futures index constituents: {} constituents for index {}",
         response.constituents.len(),

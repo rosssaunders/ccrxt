@@ -172,7 +172,7 @@ mod tests {
         ]"#;
         let response: Vec<IncomeHistoryEntry> = serde_json::from_str(json).unwrap();
         assert_eq!(response.len(), 2);
-        
+
         let first_entry = &response[0];
         assert_eq!(first_entry.symbol, "BTCUSD_PERP");
         assert_eq!(first_entry.income_type, IncomeType::RealizedPnl);
@@ -182,7 +182,7 @@ mod tests {
         assert_eq!(first_entry.time, 1625097600000);
         assert_eq!(first_entry.tran_id, Some(7957183248));
         assert_eq!(first_entry.trade_id, Some("123456".to_string()));
-        
+
         let second_entry = &response[1];
         assert_eq!(second_entry.symbol, "ETHUSD_PERP");
         assert_eq!(second_entry.income_type, IncomeType::FundingFee);

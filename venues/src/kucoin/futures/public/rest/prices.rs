@@ -70,24 +70,29 @@ pub type GetSpotIndexPriceResponse = Vec<SpotIndexPriceItem>;
 
 impl super::RestClient {
     /// Get current mark price for a symbol
-    /// 
+    ///
     /// <https://www.kucoin.com/docs-new/rest/futures-trading/market-data/get-mark-price>
     pub async fn get_mark_price(
         &self,
         request: GetMarkPriceRequest,
     ) -> Result<(RestResponse<MarkPrice>, ResponseHeaders)> {
-        let endpoint = format!("{}{}{}", MARK_PRICE_ENDPOINT_PREFIX, request.symbol, MARK_PRICE_ENDPOINT_SUFFIX);
-        self.send_request(&endpoint, None::<&GetMarkPriceRequest>).await
+        let endpoint = format!(
+            "{}{}{}",
+            MARK_PRICE_ENDPOINT_PREFIX, request.symbol, MARK_PRICE_ENDPOINT_SUFFIX
+        );
+        self.send_request(&endpoint, None::<&GetMarkPriceRequest>)
+            .await
     }
 
     /// Get spot index price for one or more index symbols
-    /// 
+    ///
     /// <https://www.kucoin.com/docs-new/rest/futures-trading/market-data/get-spot-index-price>
     pub async fn get_spot_index_price(
         &self,
         request: GetSpotIndexPriceRequest,
     ) -> Result<(RestResponse<GetSpotIndexPriceResponse>, ResponseHeaders)> {
-        self.send_request(SPOT_INDEX_PRICE_ENDPOINT, Some(&request)).await
+        self.send_request(SPOT_INDEX_PRICE_ENDPOINT, Some(&request))
+            .await
     }
 }
 

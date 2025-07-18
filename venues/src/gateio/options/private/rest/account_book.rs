@@ -68,7 +68,6 @@ impl RestClient {
         &self,
         request: OptionsAccountBookRequest,
     ) -> crate::gateio::options::Result<Vec<OptionsAccountBookEntry>> {
-        self.get_with_query("/options/account_book", &request)
-            .await
+        self.get_with_query("/options/account_book", &request).await
     }
 }

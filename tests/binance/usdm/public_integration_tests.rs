@@ -177,13 +177,15 @@ async fn test_endpoint_diversity() {
     let client = create_public_test_client();
 
     // Test different endpoint types
-    let endpoints_tested = [("ping", client.ping().await.is_ok()),
+    let endpoints_tested = [
+        ("ping", client.ping().await.is_ok()),
         ("server_time", client.get_server_time().await.is_ok()),
         ("exchange_info", client.get_exchange_info().await.is_ok()),
         (
             "funding_rate_info",
             client.get_funding_rate_info().await.is_ok(),
-        )];
+        ),
+    ];
 
     let successful_endpoints: Vec<_> = endpoints_tested
         .iter()
@@ -205,7 +207,7 @@ async fn test_endpoint_diversity() {
 #[tokio::test]
 async fn test_get_order_book() {
     use venues::binance::usdm::public::rest::depth::OrderBookRequest;
-    
+
     let client = create_public_test_client();
     let request = OrderBookRequest {
         symbol: "BTCUSDT".into(),
@@ -222,8 +224,11 @@ async fn test_get_order_book() {
     let response = result.unwrap();
     assert!(!response.data.bids.is_empty(), "Should have bid orders");
     assert!(!response.data.asks.is_empty(), "Should have ask orders");
-    assert!(response.data.last_update_id > 0, "Should have valid update ID");
-    
+    assert!(
+        response.data.last_update_id > 0,
+        "Should have valid update ID"
+    );
+
     println!(
         "Order book: {} bids, {} asks (took {:?})",
         response.data.bids.len(),
@@ -236,7 +241,7 @@ async fn test_get_order_book() {
 #[tokio::test]
 async fn test_get_recent_trades() {
     use venues::binance::usdm::public::rest::recent_trades::RecentTradesRequest;
-    
+
     let client = create_public_test_client();
     let request = RecentTradesRequest {
         symbol: "BTCUSDT".into(),
@@ -252,12 +257,12 @@ async fn test_get_recent_trades() {
 
     let response = result.unwrap();
     assert!(!response.data.is_empty(), "Should have trade data");
-    
+
     let trade = &response.data[0];
     assert!(trade.id > 0, "Trade should have valid ID");
     assert!(!trade.price.is_empty(), "Trade should have price");
     assert!(!trade.qty.is_empty(), "Trade should have quantity");
-    
+
     println!(
         "Recent trades: {} trades (took {:?})",
         response.data.len(),
@@ -269,7 +274,7 @@ async fn test_get_recent_trades() {
 #[tokio::test]
 async fn test_get_klines() {
     use venues::binance::usdm::public::rest::klines::KlinesRequest;
-    
+
     let client = create_public_test_client();
     let request = KlinesRequest {
         symbol: "BTCUSDT".into(),
@@ -288,12 +293,12 @@ async fn test_get_klines() {
 
     let response = result.unwrap();
     assert!(!response.data.is_empty(), "Should have kline data");
-    
+
     let kline = &response.data[0];
     assert!(kline.open_time > 0, "Kline should have valid open time");
     assert!(!kline.open.is_empty(), "Kline should have open price");
     assert!(!kline.close.is_empty(), "Kline should have close price");
-    
+
     println!(
         "Klines: {} candles (took {:?})",
         response.data.len(),
@@ -305,7 +310,7 @@ async fn test_get_klines() {
 #[tokio::test]
 async fn test_get_ticker_24hr() {
     use venues::binance::usdm::public::rest::ticker_24hr::Ticker24hrRequest;
-    
+
     let client = create_public_test_client();
     let request = Ticker24hrRequest {
         symbol: Some("BTCUSDT".into()),
@@ -319,13 +324,13 @@ async fn test_get_ticker_24hr() {
     );
 
     let response = result.unwrap();
-    
+
     // Handle both single and multiple results
     match &response.data {
         venues::binance::usdm::public::rest::ticker_24hr::Ticker24hrResult::Single(ticker) => {
             assert_eq!(ticker.symbol, "BTCUSDT", "Should have correct symbol");
             assert!(!ticker.last_price.is_empty(), "Should have last price");
-        },
+        }
         venues::binance::usdm::public::rest::ticker_24hr::Ticker24hrResult::Multiple(tickers) => {
             assert!(!tickers.is_empty(), "Should have ticker data");
             let ticker = &tickers[0];
@@ -333,26 +338,22 @@ async fn test_get_ticker_24hr() {
             assert!(!ticker.last_price.is_empty(), "Should have last price");
         }
     }
-    
+
     // Print ticker info based on result type
     match &response.data {
         venues::binance::usdm::public::rest::ticker_24hr::Ticker24hrResult::Single(ticker) => {
             assert!(!ticker.volume.is_empty(), "Should have volume");
             println!(
                 "24hr ticker: price={}, volume={} (took {:?})",
-                ticker.last_price,
-                ticker.volume,
-                response.request_duration
+                ticker.last_price, ticker.volume, response.request_duration
             );
-        },
+        }
         venues::binance::usdm::public::rest::ticker_24hr::Ticker24hrResult::Multiple(tickers) => {
             let ticker = &tickers[0];
             assert!(!ticker.volume.is_empty(), "Should have volume");
             println!(
                 "24hr ticker: price={}, volume={} (took {:?})",
-                ticker.last_price,
-                ticker.volume,
-                response.request_duration
+                ticker.last_price, ticker.volume, response.request_duration
             );
         }
     }
@@ -362,7 +363,7 @@ async fn test_get_ticker_24hr() {
 #[tokio::test]
 async fn test_get_ticker_price() {
     use venues::binance::usdm::public::rest::ticker_price::TickerPriceRequest;
-    
+
     let client = create_public_test_client();
     let request = TickerPriceRequest {
         symbol: Some("BTCUSDT".into()),
@@ -376,31 +377,27 @@ async fn test_get_ticker_price() {
     );
 
     let response = result.unwrap();
-    
+
     // Handle both single and multiple results
     match &response.data {
         venues::binance::usdm::public::rest::ticker_price::TickerPriceResult::Single(ticker) => {
             assert_eq!(ticker.symbol, "BTCUSDT", "Should have correct symbol");
             assert!(!ticker.price.is_empty(), "Should have price");
-            
+
             println!(
                 "Ticker price: {} = {} (took {:?})",
-                ticker.symbol,
-                ticker.price,
-                response.request_duration
+                ticker.symbol, ticker.price, response.request_duration
             );
-        },
+        }
         venues::binance::usdm::public::rest::ticker_price::TickerPriceResult::Multiple(tickers) => {
             assert!(!tickers.is_empty(), "Should have ticker price data");
             let ticker = &tickers[0];
             assert_eq!(ticker.symbol, "BTCUSDT", "Should have correct symbol");
             assert!(!ticker.price.is_empty(), "Should have price");
-            
+
             println!(
                 "Ticker price: {} = {} (took {:?})",
-                ticker.symbol,
-                ticker.price,
-                response.request_duration
+                ticker.symbol, ticker.price, response.request_duration
             );
         }
     }
@@ -410,7 +407,7 @@ async fn test_get_ticker_price() {
 #[tokio::test]
 async fn test_get_book_ticker() {
     use venues::binance::usdm::public::rest::book_ticker::BookTickerRequest;
-    
+
     let client = create_public_test_client();
     let request = BookTickerRequest {
         symbol: Some("BTCUSDT".into()),
@@ -424,14 +421,14 @@ async fn test_get_book_ticker() {
     );
 
     let response = result.unwrap();
-    
+
     // Handle BookTickerResult enum properly
     match &response.data {
         venues::binance::usdm::public::rest::book_ticker::BookTickerResult::Single(ticker) => {
             assert_eq!(ticker.symbol, "BTCUSDT", "Should have correct symbol");
             assert!(!ticker.bid_price.is_empty(), "Should have bid price");
             assert!(!ticker.ask_price.is_empty(), "Should have ask price");
-        },
+        }
         venues::binance::usdm::public::rest::book_ticker::BookTickerResult::Multiple(tickers) => {
             assert!(!tickers.is_empty(), "Should have book ticker data");
             let ticker = &tickers[0];
@@ -439,7 +436,7 @@ async fn test_get_book_ticker() {
             assert!(!ticker.ask_price.is_empty(), "Should have ask price");
         }
     }
-    
+
     println!("Book ticker test completed successfully");
 }
 
@@ -447,7 +444,7 @@ async fn test_get_book_ticker() {
 #[tokio::test]
 async fn test_get_mark_price() {
     use venues::binance::usdm::public::rest::mark_price::MarkPriceRequest;
-    
+
     let client = create_public_test_client();
     let request = MarkPriceRequest {
         symbol: Some("BTCUSDT".into()),
@@ -461,31 +458,27 @@ async fn test_get_mark_price() {
     );
 
     let response = result.unwrap();
-    
+
     // Handle both single and multiple results
     match &response.data {
         venues::binance::usdm::public::rest::mark_price::MarkPriceResult::Single(mark_price) => {
             assert_eq!(mark_price.symbol, "BTCUSDT", "Should have correct symbol");
             assert!(!mark_price.mark_price.is_empty(), "Should have mark price");
-            
+
             println!(
                 "Mark price: {} = {} (took {:?})",
-                mark_price.symbol,
-                mark_price.mark_price,
-                response.request_duration
+                mark_price.symbol, mark_price.mark_price, response.request_duration
             );
-        },
+        }
         venues::binance::usdm::public::rest::mark_price::MarkPriceResult::Multiple(mark_prices) => {
             assert!(!mark_prices.is_empty(), "Should have mark price data");
             let mark_price = &mark_prices[0];
             assert_eq!(mark_price.symbol, "BTCUSDT", "Should have correct symbol");
             assert!(!mark_price.mark_price.is_empty(), "Should have mark price");
-            
+
             println!(
                 "Mark price: {} = {} (took {:?})",
-                mark_price.symbol,
-                mark_price.mark_price,
-                response.request_duration
+                mark_price.symbol, mark_price.mark_price, response.request_duration
             );
         }
     }
@@ -495,7 +488,7 @@ async fn test_get_mark_price() {
 #[tokio::test]
 async fn test_get_funding_rate_history() {
     use venues::binance::usdm::public::rest::funding_rate_history::FundingRateHistoryRequest;
-    
+
     let client = create_public_test_client();
     let request = FundingRateHistoryRequest {
         symbol: Some("BTCUSDT".into()),
@@ -512,12 +505,15 @@ async fn test_get_funding_rate_history() {
     );
 
     let response = result.unwrap();
-    assert!(!response.data.is_empty(), "Should have funding rate history");
-    
+    assert!(
+        !response.data.is_empty(),
+        "Should have funding rate history"
+    );
+
     let funding = &response.data[0];
     assert_eq!(funding.symbol, "BTCUSDT", "Should have correct symbol");
     assert!(!funding.funding_rate.is_empty(), "Should have funding rate");
-    
+
     println!(
         "Funding rate history: {} entries (took {:?})",
         response.data.len(),
@@ -529,7 +525,7 @@ async fn test_get_funding_rate_history() {
 #[tokio::test]
 async fn test_get_open_interest() {
     use venues::binance::usdm::public::rest::open_interest::OpenInterestRequest;
-    
+
     let client = create_public_test_client();
     let request = OpenInterestRequest {
         symbol: "BTCUSDT".into(),
@@ -543,14 +539,18 @@ async fn test_get_open_interest() {
     );
 
     let response = result.unwrap();
-    assert_eq!(response.data.symbol, "BTCUSDT", "Should have correct symbol");
-    assert!(!response.data.open_interest.is_empty(), "Should have open interest value");
-    
+    assert_eq!(
+        response.data.symbol, "BTCUSDT",
+        "Should have correct symbol"
+    );
+    assert!(
+        !response.data.open_interest.is_empty(),
+        "Should have open interest value"
+    );
+
     println!(
         "Open interest: {} = {} (took {:?})",
-        response.data.symbol,
-        response.data.open_interest,
-        response.request_duration
+        response.data.symbol, response.data.open_interest, response.request_duration
     );
 }
 
@@ -558,7 +558,7 @@ async fn test_get_open_interest() {
 #[tokio::test]
 async fn test_get_agg_trades() {
     use venues::binance::usdm::public::rest::agg_trades::AggTradesRequest;
-    
+
     let client = create_public_test_client();
     let request = AggTradesRequest {
         symbol: "BTCUSDT".into(),
@@ -576,13 +576,19 @@ async fn test_get_agg_trades() {
     );
 
     let response = result.unwrap();
-    assert!(!response.data.is_empty(), "Should have aggregate trade data");
-    
+    assert!(
+        !response.data.is_empty(),
+        "Should have aggregate trade data"
+    );
+
     let trade = &response.data[0];
-    assert!(trade.agg_trade_id > 0, "Should have valid aggregate trade ID");
+    assert!(
+        trade.agg_trade_id > 0,
+        "Should have valid aggregate trade ID"
+    );
     assert!(!trade.price.is_empty(), "Should have price");
     assert!(!trade.qty.is_empty(), "Should have quantity");
-    
+
     println!(
         "Aggregate trades: {} trades (took {:?})",
         response.data.len(),
@@ -594,7 +600,7 @@ async fn test_get_agg_trades() {
 #[tokio::test]
 async fn test_get_continuous_klines() {
     use venues::binance::usdm::public::rest::continuous_klines::ContinuousKlinesRequest;
-    
+
     let client = create_public_test_client();
     let request = ContinuousKlinesRequest {
         pair: "BTCUSDT".into(),
@@ -613,12 +619,15 @@ async fn test_get_continuous_klines() {
     );
 
     let response = result.unwrap();
-    assert!(!response.data.is_empty(), "Should have continuous kline data");
-    
+    assert!(
+        !response.data.is_empty(),
+        "Should have continuous kline data"
+    );
+
     let kline = &response.data[0];
     assert!(kline.open_time > 0, "Should have valid open time");
     assert!(!kline.open.is_empty(), "Should have open price");
-    
+
     println!(
         "Continuous klines: {} candles (took {:?})",
         response.data.len(),
@@ -630,7 +639,7 @@ async fn test_get_continuous_klines() {
 #[tokio::test]
 async fn test_get_index_price_klines() {
     use venues::binance::usdm::public::rest::index_price_klines::IndexPriceKlinesRequest;
-    
+
     let client = create_public_test_client();
     let request = IndexPriceKlinesRequest {
         pair: "BTCUSDT".into(),
@@ -648,12 +657,15 @@ async fn test_get_index_price_klines() {
     );
 
     let response = result.unwrap();
-    assert!(!response.data.is_empty(), "Should have index price kline data");
-    
+    assert!(
+        !response.data.is_empty(),
+        "Should have index price kline data"
+    );
+
     let kline = &response.data[0];
     assert!(kline.open_time > 0, "Should have valid open time");
     assert!(!kline.open.is_empty(), "Should have open price");
-    
+
     println!(
         "Index price klines: {} candles (took {:?})",
         response.data.len(),
@@ -665,7 +677,7 @@ async fn test_get_index_price_klines() {
 #[tokio::test]
 async fn test_get_mark_price_klines() {
     use venues::binance::usdm::public::rest::mark_price_klines::MarkPriceKlinesRequest;
-    
+
     let client = create_public_test_client();
     let request = MarkPriceKlinesRequest {
         symbol: "BTCUSDT".into(),
@@ -683,12 +695,15 @@ async fn test_get_mark_price_klines() {
     );
 
     let response = result.unwrap();
-    assert!(!response.data.is_empty(), "Should have mark price kline data");
-    
+    assert!(
+        !response.data.is_empty(),
+        "Should have mark price kline data"
+    );
+
     let kline = &response.data[0];
     assert!(kline.open_time > 0, "Should have valid open time");
     assert!(!kline.open.is_empty(), "Should have open price");
-    
+
     println!(
         "Mark price klines: {} candles (took {:?})",
         response.data.len(),
@@ -700,7 +715,7 @@ async fn test_get_mark_price_klines() {
 #[tokio::test]
 async fn test_get_premium_index_klines() {
     use venues::binance::usdm::public::rest::premium_index_klines::PremiumIndexKlinesRequest;
-    
+
     let client = create_public_test_client();
     let request = PremiumIndexKlinesRequest {
         symbol: "BTCUSDT".into(),
@@ -718,12 +733,15 @@ async fn test_get_premium_index_klines() {
     );
 
     let response = result.unwrap();
-    assert!(!response.data.is_empty(), "Should have premium index kline data");
-    
+    assert!(
+        !response.data.is_empty(),
+        "Should have premium index kline data"
+    );
+
     let kline = &response.data[0];
     assert!(kline.open_time > 0, "Should have valid open time");
     assert!(!kline.open.is_empty(), "Should have open price");
-    
+
     println!(
         "Premium index klines: {} candles (took {:?})",
         response.data.len(),
@@ -735,7 +753,7 @@ async fn test_get_premium_index_klines() {
 #[tokio::test]
 async fn test_get_historical_trades() {
     use venues::binance::usdm::public::rest::historical_trades::HistoricalTradesRequest;
-    
+
     let client = create_public_test_client();
     let request = HistoricalTradesRequest {
         symbol: "BTCUSDT".into(),
@@ -744,16 +762,20 @@ async fn test_get_historical_trades() {
     };
 
     let result = client.get_historical_trades(request).await;
-    
+
     // Historical trades endpoint requires authentication
     match &result {
-        Err(venues::binance::usdm::Errors::ApiError(venues::binance::usdm::ApiError::BadApiKeyFmt { .. })) => {
-            println!("Historical trades requires API key (expected behavior for public endpoint test)");
+        Err(venues::binance::usdm::Errors::ApiError(
+            venues::binance::usdm::ApiError::BadApiKeyFmt { .. },
+        )) => {
+            println!(
+                "Historical trades requires API key (expected behavior for public endpoint test)"
+            );
             return; // Skip test since we don't have API key
         }
         _ => {}
     }
-    
+
     assert!(
         result.is_ok(),
         "get_historical_trades request should succeed: {:?}",
@@ -761,13 +783,16 @@ async fn test_get_historical_trades() {
     );
 
     let response = result.unwrap();
-    assert!(!response.data.is_empty(), "Should have historical trade data");
-    
+    assert!(
+        !response.data.is_empty(),
+        "Should have historical trade data"
+    );
+
     let trade = &response.data[0];
     assert!(trade.id > 0, "Trade should have valid ID");
     assert!(!trade.price.is_empty(), "Trade should have price");
     assert!(!trade.qty.is_empty(), "Trade should have quantity");
-    
+
     println!(
         "Historical trades: {} trades (took {:?})",
         response.data.len(),
@@ -779,7 +804,7 @@ async fn test_get_historical_trades() {
 #[tokio::test]
 async fn test_get_open_interest_hist() {
     use venues::binance::usdm::public::rest::open_interest_hist::OpenInterestHistRequest;
-    
+
     let client = create_public_test_client();
     let request = OpenInterestHistRequest {
         symbol: "BTCUSDT".into(),
@@ -797,12 +822,18 @@ async fn test_get_open_interest_hist() {
     );
 
     let response = result.unwrap();
-    assert!(!response.data.is_empty(), "Should have open interest history");
-    
+    assert!(
+        !response.data.is_empty(),
+        "Should have open interest history"
+    );
+
     let entry = &response.data[0];
     assert_eq!(entry.symbol, "BTCUSDT", "Should have correct symbol");
-    assert!(!entry.sum_open_interest.is_empty(), "Should have open interest value");
-    
+    assert!(
+        !entry.sum_open_interest.is_empty(),
+        "Should have open interest value"
+    );
+
     println!(
         "Open interest history: {} entries (took {:?})",
         response.data.len(),
@@ -814,7 +845,7 @@ async fn test_get_open_interest_hist() {
 #[tokio::test]
 async fn test_get_global_long_short_account_ratio() {
     use venues::binance::usdm::public::rest::global_long_short_account_ratio::GlobalLongShortAccountRatioRequest;
-    
+
     let client = create_public_test_client();
     let request = GlobalLongShortAccountRatioRequest {
         symbol: Some("BTCUSDT".into()),
@@ -832,12 +863,18 @@ async fn test_get_global_long_short_account_ratio() {
     );
 
     let response = result.unwrap();
-    assert!(!response.data.is_empty(), "Should have global long/short ratio data");
-    
+    assert!(
+        !response.data.is_empty(),
+        "Should have global long/short ratio data"
+    );
+
     let entry = &response.data[0];
     assert_eq!(entry.symbol, "BTCUSDT", "Should have correct symbol");
-    assert!(!entry.long_short_ratio.is_empty(), "Should have ratio value");
-    
+    assert!(
+        !entry.long_short_ratio.is_empty(),
+        "Should have ratio value"
+    );
+
     println!(
         "Global long/short account ratio: {} entries (took {:?})",
         response.data.len(),
@@ -849,7 +886,7 @@ async fn test_get_global_long_short_account_ratio() {
 #[tokio::test]
 async fn test_get_top_long_short_account_ratio() {
     use venues::binance::usdm::public::rest::top_long_short_account_ratio::TopLongShortAccountRatioRequest;
-    
+
     let client = create_public_test_client();
     let request = TopLongShortAccountRatioRequest {
         symbol: "BTCUSDT".into(),
@@ -867,12 +904,18 @@ async fn test_get_top_long_short_account_ratio() {
     );
 
     let response = result.unwrap();
-    assert!(!response.data.is_empty(), "Should have top long/short account ratio data");
-    
+    assert!(
+        !response.data.is_empty(),
+        "Should have top long/short account ratio data"
+    );
+
     let entry = &response.data[0];
     assert_eq!(entry.symbol, "BTCUSDT", "Should have correct symbol");
-    assert!(!entry.long_short_ratio.is_empty(), "Should have ratio value");
-    
+    assert!(
+        !entry.long_short_ratio.is_empty(),
+        "Should have ratio value"
+    );
+
     println!(
         "Top long/short account ratio: {} entries (took {:?})",
         response.data.len(),
@@ -884,7 +927,7 @@ async fn test_get_top_long_short_account_ratio() {
 #[tokio::test]
 async fn test_get_top_long_short_position_ratio() {
     use venues::binance::usdm::public::rest::top_long_short_position_ratio::TopLongShortPositionRatioRequest;
-    
+
     let client = create_public_test_client();
     let request = TopLongShortPositionRatioRequest {
         symbol: "BTCUSDT".into(),
@@ -902,12 +945,18 @@ async fn test_get_top_long_short_position_ratio() {
     );
 
     let response = result.unwrap();
-    assert!(!response.data.is_empty(), "Should have top long/short position ratio data");
-    
+    assert!(
+        !response.data.is_empty(),
+        "Should have top long/short position ratio data"
+    );
+
     let entry = &response.data[0];
     assert_eq!(entry.symbol, "BTCUSDT", "Should have correct symbol");
-    assert!(!entry.long_short_ratio.is_empty(), "Should have ratio value");
-    
+    assert!(
+        !entry.long_short_ratio.is_empty(),
+        "Should have ratio value"
+    );
+
     println!(
         "Top long/short position ratio: {} entries (took {:?})",
         response.data.len(),
@@ -919,7 +968,7 @@ async fn test_get_top_long_short_position_ratio() {
 #[tokio::test]
 async fn test_get_taker_long_short_ratio() {
     use venues::binance::usdm::public::rest::taker_long_short_ratio::TakerLongShortRatioRequest;
-    
+
     let client = create_public_test_client();
     let request = TakerLongShortRatioRequest {
         symbol: "BTCUSDT".into(),
@@ -937,11 +986,14 @@ async fn test_get_taker_long_short_ratio() {
     );
 
     let response = result.unwrap();
-    assert!(!response.data.is_empty(), "Should have taker long/short ratio data");
-    
+    assert!(
+        !response.data.is_empty(),
+        "Should have taker long/short ratio data"
+    );
+
     let entry = &response.data[0];
     assert!(!entry.buy_sell_ratio.is_empty(), "Should have ratio value");
-    
+
     println!(
         "Taker long/short ratio: {} entries (took {:?})",
         response.data.len(),
@@ -953,7 +1005,7 @@ async fn test_get_taker_long_short_ratio() {
 #[tokio::test]
 async fn test_get_basis() {
     use venues::binance::usdm::public::rest::basis::BasisRequest;
-    
+
     let client = create_public_test_client();
     let request = BasisRequest {
         pair: "BTCUSDT".into(),
@@ -973,11 +1025,11 @@ async fn test_get_basis() {
 
     let response = result.unwrap();
     assert!(!response.data.is_empty(), "Should have basis data");
-    
+
     let entry = &response.data[0];
     assert_eq!(entry.pair, "BTCUSDT", "Should have correct pair");
     assert!(!entry.basis.is_empty(), "Should have basis value");
-    
+
     println!(
         "Basis data: {} entries (took {:?})",
         response.data.len(),
@@ -989,7 +1041,7 @@ async fn test_get_basis() {
 #[tokio::test]
 async fn test_get_delivery_price() {
     use venues::binance::usdm::public::rest::delivery_price::DeliveryPriceRequest;
-    
+
     let client = create_public_test_client();
     let request = DeliveryPriceRequest {
         pair: "BTCUSDT".into(),
@@ -1004,10 +1056,10 @@ async fn test_get_delivery_price() {
 
     let response = result.unwrap();
     assert!(!response.data.is_empty(), "Should have delivery price data");
-    
+
     let entry = &response.data[0];
     assert!(entry.delivery_price > 0.0, "Should have delivery price");
-    
+
     println!(
         "Delivery price: {} entries (took {:?})",
         response.data.len(),
@@ -1019,7 +1071,7 @@ async fn test_get_delivery_price() {
 #[tokio::test]
 async fn test_get_asset_index() {
     use venues::binance::usdm::public::rest::asset_index::AssetIndexRequest;
-    
+
     let client = create_public_test_client();
     let request = AssetIndexRequest {
         symbol: Some("BTCUSD".into()), // Note: different format for asset index
@@ -1033,13 +1085,13 @@ async fn test_get_asset_index() {
     );
 
     let response = result.unwrap();
-    
+
     // Handle both single and multiple results
     match &response.data {
         venues::binance::usdm::public::rest::asset_index::AssetIndexResult::Single(entry) => {
             assert_eq!(entry.symbol, "BTCUSD", "Should have correct symbol");
             assert!(!entry.index.is_empty(), "Should have index value");
-        },
+        }
         venues::binance::usdm::public::rest::asset_index::AssetIndexResult::Multiple(entries) => {
             assert!(!entries.is_empty(), "Should have asset index data");
             let entry = &entries[0];
@@ -1047,16 +1099,17 @@ async fn test_get_asset_index() {
             assert!(!entry.index.is_empty(), "Should have index value");
         }
     }
-    
+
     let count = match &response.data {
         venues::binance::usdm::public::rest::asset_index::AssetIndexResult::Single(_) => 1,
-        venues::binance::usdm::public::rest::asset_index::AssetIndexResult::Multiple(entries) => entries.len(),
+        venues::binance::usdm::public::rest::asset_index::AssetIndexResult::Multiple(entries) => {
+            entries.len()
+        }
     };
-    
+
     println!(
         "Asset index: {} entries (took {:?})",
-        count,
-        response.request_duration
+        count, response.request_duration
     );
 }
 
@@ -1064,7 +1117,7 @@ async fn test_get_asset_index() {
 #[tokio::test]
 async fn test_get_constituents() {
     use venues::binance::usdm::public::rest::constituents::ConstituentsRequest;
-    
+
     let client = create_public_test_client();
     let request = ConstituentsRequest {
         symbol: "BTCUSD".into(),
@@ -1078,12 +1131,18 @@ async fn test_get_constituents() {
     );
 
     let response = result.unwrap();
-    assert!(!response.data.constituents.is_empty(), "Should have constituents data");
-    
+    assert!(
+        !response.data.constituents.is_empty(),
+        "Should have constituents data"
+    );
+
     let constituent = &response.data.constituents[0];
     assert_eq!(response.data.symbol, "BTCUSD", "Should have correct symbol");
-    assert!(!constituent.symbol.is_empty(), "Should have constituent symbol");
-    
+    assert!(
+        !constituent.symbol.is_empty(),
+        "Should have constituent symbol"
+    );
+
     println!(
         "Constituents: {} entries (took {:?})",
         response.data.constituents.len(),
@@ -1095,10 +1154,10 @@ async fn test_get_constituents() {
 #[tokio::test]
 async fn test_get_index_info() {
     use venues::binance::usdm::public::rest::index_info::IndexInfoRequest;
-    
+
     let client = create_public_test_client();
     let request = IndexInfoRequest {
-        symbol: Some("DEFIUSDT".into()),  // Multi-asset index symbol
+        symbol: Some("DEFIUSDT".into()), // Multi-asset index symbol
     };
 
     let result = client.get_index_info(request).await;
@@ -1109,18 +1168,20 @@ async fn test_get_index_info() {
     );
 
     let response = result.unwrap();
-    
+
     let infos = match response.data {
-        venues::binance::usdm::public::rest::index_info::IndexInfoResult::Single(info) => vec![info],
+        venues::binance::usdm::public::rest::index_info::IndexInfoResult::Single(info) => {
+            vec![info]
+        }
         venues::binance::usdm::public::rest::index_info::IndexInfoResult::Multiple(infos) => infos,
     };
-    
+
     assert!(!infos.is_empty(), "Should have index info data");
-    
+
     let entry = &infos[0];
     assert!(!entry.symbol.is_empty(), "Should have symbol");
     assert!(!entry.base_asset_list.is_empty(), "Should have base assets");
-    
+
     println!(
         "Index info: {} with {} base assets (took {:?})",
         entry.symbol,
@@ -1133,7 +1194,7 @@ async fn test_get_index_info() {
 #[tokio::test]
 async fn test_get_premium_index() {
     use venues::binance::usdm::public::rest::premium_index::PremiumIndexRequest;
-    
+
     let client = create_public_test_client();
     let request = PremiumIndexRequest {
         symbol: Some("BTCUSDT".into()),
@@ -1147,15 +1208,20 @@ async fn test_get_premium_index() {
     );
 
     let response = result.unwrap();
-    
+
     // Handle PremiumIndexResult enum properly
     match &response.data {
         venues::binance::usdm::public::rest::premium_index::PremiumIndexResult::Single(entry) => {
             assert_eq!(entry.symbol, "BTCUSDT", "Should have correct symbol");
             assert!(!entry.mark_price.is_empty(), "Should have mark price");
-            println!("Premium index (single): symbol={}, mark_price={}", entry.symbol, entry.mark_price);
-        },
-        venues::binance::usdm::public::rest::premium_index::PremiumIndexResult::Multiple(entries) => {
+            println!(
+                "Premium index (single): symbol={}, mark_price={}",
+                entry.symbol, entry.mark_price
+            );
+        }
+        venues::binance::usdm::public::rest::premium_index::PremiumIndexResult::Multiple(
+            entries,
+        ) => {
             assert!(!entries.is_empty(), "Should have premium index data");
             let entry = &entries[0];
             assert!(!entry.mark_price.is_empty(), "Should have mark price");

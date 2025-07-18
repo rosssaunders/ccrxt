@@ -180,7 +180,10 @@ mod tests {
 
         let response: BatchAddOrdersResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.data.len(), 2);
-        assert_eq!(response.data[0].order_id, Some("5e8c8c2f1a3b4a001c5d8e31".to_string()));
+        assert_eq!(
+            response.data[0].order_id,
+            Some("5e8c8c2f1a3b4a001c5d8e31".to_string())
+        );
         assert_eq!(response.data[0].code, "200000");
         assert_eq!(response.data[1].order_id, None);
         assert_eq!(response.data[1].code, "400001");
@@ -190,7 +193,7 @@ mod tests {
     fn test_margin_mode_serialization() {
         let isolated = MarginMode::Isolated;
         let cross = MarginMode::Cross;
-        
+
         assert_eq!(serde_json::to_string(&isolated).unwrap(), "\"ISOLATED\"");
         assert_eq!(serde_json::to_string(&cross).unwrap(), "\"CROSS\"");
     }

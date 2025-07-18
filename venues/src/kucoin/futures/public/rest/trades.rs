@@ -40,13 +40,14 @@ pub type GetTradeHistoryResponse = Vec<TradeHistoryItem>;
 
 impl super::RestClient {
     /// Get trade history for a specific symbol (last 100 records)
-    /// 
+    ///
     /// <https://www.kucoin.com/docs-new/rest/futures-trading/market-data/get-trade-history>
     pub async fn get_trade_history(
         &self,
         request: GetTradeHistoryRequest,
     ) -> Result<(RestResponse<GetTradeHistoryResponse>, ResponseHeaders)> {
-        self.send_request(TRADE_HISTORY_ENDPOINT, Some(&request)).await
+        self.send_request(TRADE_HISTORY_ENDPOINT, Some(&request))
+            .await
     }
 }
 

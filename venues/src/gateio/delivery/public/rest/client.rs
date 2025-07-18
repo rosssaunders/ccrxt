@@ -74,9 +74,8 @@ impl RestClient {
             .map_err(|e| crate::gateio::delivery::GateIoError::Http(e))?;
 
         let status = response.status();
-        let headers = crate::gateio::delivery::rate_limit::RateLimitHeader::from_headers(
-            response.headers(),
-        );
+        let headers =
+            crate::gateio::delivery::rate_limit::RateLimitHeader::from_headers(response.headers());
 
         // Update rate limiter with response headers
         if let Some(status) = self.rate_limiter.update_from_headers(&headers, endpoint) {
@@ -93,9 +92,8 @@ impl RestClient {
                 .map_err(|e| crate::gateio::delivery::GateIoError::Json(e))?;
             Ok(data)
         } else {
-            let error: crate::gateio::delivery::errors::ErrorResponse =
-                serde_json::from_str(&body)
-                    .map_err(|e| crate::gateio::delivery::GateIoError::Json(e))?;
+            let error: crate::gateio::delivery::errors::ErrorResponse = serde_json::from_str(&body)
+                .map_err(|e| crate::gateio::delivery::GateIoError::Json(e))?;
             Err(crate::gateio::delivery::GateIoError::Api(
                 crate::gateio::delivery::ApiError {
                     label: error.label,

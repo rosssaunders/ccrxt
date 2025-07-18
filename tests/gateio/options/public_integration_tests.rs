@@ -32,10 +32,10 @@ async fn test_get_options_underlyings() {
 
     let response = result.unwrap();
     assert!(!response.is_empty(), "Should have underlying data");
-    
+
     let underlying = &response[0];
     assert!(!underlying.name.is_empty(), "Underlying should have name");
-    
+
     println!(
         "Options underlyings: {} underlyings available",
         response.len()
@@ -46,7 +46,7 @@ async fn test_get_options_underlyings() {
 #[tokio::test]
 async fn test_get_options_expirations() {
     use venues::gateio::options::public::rest::expirations::OptionsExpirationsRequest;
-    
+
     let client = create_options_test_client();
     let request = OptionsExpirationsRequest {
         underlying: "BTC_USDT".to_string(),
@@ -61,26 +61,23 @@ async fn test_get_options_expirations() {
 
     let response = result.unwrap();
     assert!(!response.is_empty(), "Should have expiration data");
-    
-    println!(
-        "Options expirations: {} expiration dates",
-        response.len()
-    );
+
+    println!("Options expirations: {} expiration dates", response.len());
 }
 
 /// Test options contracts endpoint
 #[tokio::test]
 async fn test_get_options_contracts() {
     use venues::gateio::options::public::rest::contracts::OptionsContractsRequest;
-    
+
     let client = create_options_test_client();
-    
+
     // First get available underlyings
     let underlyings_result = client.get_options_underlyings().await;
     if let Ok(underlyings) = underlyings_result {
         if !underlyings.is_empty() {
             let underlying_name = &underlyings[0].name;
-            
+
             let request = OptionsContractsRequest {
                 underlying: Some(underlying_name.clone()),
                 expiration: None,
@@ -109,25 +106,25 @@ async fn test_get_options_contracts() {
 #[tokio::test]
 async fn test_get_options_contracts_filtered() {
     use venues::gateio::options::public::rest::contracts::OptionsContractsRequest;
-    
+
     let client = create_options_test_client();
-    
+
     // First get available underlyings and contracts
     let underlyings_result = client.get_options_underlyings().await;
     if let Ok(underlyings) = underlyings_result {
         if !underlyings.is_empty() {
             let underlying_name = &underlyings[0].name;
-            
+
             let contracts_request = OptionsContractsRequest {
                 underlying: Some(underlying_name.clone()),
                 expiration: None,
             };
-            
+
             let contracts_result = client.get_options_contracts(contracts_request).await;
             if let Ok(contracts) = contracts_result {
                 if !contracts.is_empty() {
                     let contract_name = &contracts[0].name;
-                    
+
                     let request = OptionsContractsRequest {
                         underlying: Some(underlying_name.clone()),
                         expiration: None,
@@ -142,7 +139,7 @@ async fn test_get_options_contracts_filtered() {
 
                     let response = result.unwrap();
                     assert!(!response.is_empty(), "Should have contracts");
-                    
+
                     println!(
                         "Options contracts filtered for {}: {} contracts",
                         underlying_name,
@@ -162,15 +159,15 @@ async fn test_get_options_contracts_filtered() {
 #[tokio::test]
 async fn test_get_options_tickers() {
     use venues::gateio::options::public::rest::tickers::OptionsTickersRequest;
-    
+
     let client = create_options_test_client();
-    
+
     // First get available underlyings
     let underlyings_result = client.get_options_underlyings().await;
     if let Ok(underlyings) = underlyings_result {
         if !underlyings.is_empty() {
             let underlying_name = &underlyings[0].name;
-            
+
             let request = OptionsTickersRequest {
                 underlying: Some(underlying_name.clone()),
             };
@@ -198,15 +195,15 @@ async fn test_get_options_tickers() {
 #[tokio::test]
 async fn test_get_underlying_ticker() {
     // UnderlyingTicker doesn't need a request struct - uses string parameter directly
-    
+
     let client = create_options_test_client();
-    
+
     // First get available underlyings
     let underlyings_result = client.get_options_underlyings().await;
     if let Ok(underlyings) = underlyings_result {
         if !underlyings.is_empty() {
             let underlying_name = &underlyings[0].name;
-            
+
             let result = client.get_underlying_ticker(underlying_name).await;
             assert!(
                 result.is_ok(),
@@ -216,12 +213,10 @@ async fn test_get_underlying_ticker() {
 
             let response = result.unwrap();
             assert!(!response.index_price.is_empty(), "Should have index price");
-            
+
             println!(
                 "Underlying ticker for {}: index_price={}, trade_enabled={:?}",
-                underlying_name,
-                response.index_price,
-                response.trade_enabled
+                underlying_name, response.index_price, response.trade_enabled
             );
         } else {
             println!("No options underlyings available to test underlying ticker");
@@ -232,27 +227,27 @@ async fn test_get_underlying_ticker() {
 /// Test options order book endpoint
 #[tokio::test]
 async fn test_get_options_order_book() {
-    use venues::gateio::options::public::rest::order_book::OptionsOrderBookRequest;
     use venues::gateio::options::public::rest::contracts::OptionsContractsRequest;
-    
+    use venues::gateio::options::public::rest::order_book::OptionsOrderBookRequest;
+
     let client = create_options_test_client();
-    
+
     // First get available underlyings and contracts
     let underlyings_result = client.get_options_underlyings().await;
     if let Ok(underlyings) = underlyings_result {
         if !underlyings.is_empty() {
             let underlying_name = &underlyings[0].name;
-            
+
             let contracts_request = OptionsContractsRequest {
                 underlying: Some(underlying_name.clone()),
                 expiration: None,
             };
-            
+
             let contracts_result = client.get_options_contracts(contracts_request).await;
             if let Ok(contracts) = contracts_result {
                 if !contracts.is_empty() {
                     let contract_name = &contracts[0].name;
-                    
+
                     let request = OptionsOrderBookRequest {
                         contract: contract_name.clone(),
                         interval: Some("0".to_string()),
@@ -275,7 +270,10 @@ async fn test_get_options_order_book() {
                         response.asks.len()
                     );
                 } else {
-                    println!("No options contracts available for {} to test order book", underlying_name);
+                    println!(
+                        "No options contracts available for {} to test order book",
+                        underlying_name
+                    );
                 }
             }
         } else {
@@ -287,27 +285,27 @@ async fn test_get_options_order_book() {
 /// Test options trades endpoint
 #[tokio::test]
 async fn test_get_options_trades() {
-    use venues::gateio::options::public::rest::trades::OptionsTradesRequest;
     use venues::gateio::options::public::rest::contracts::OptionsContractsRequest;
-    
+    use venues::gateio::options::public::rest::trades::OptionsTradesRequest;
+
     let client = create_options_test_client();
-    
+
     // First get available underlyings and contracts
     let underlyings_result = client.get_options_underlyings().await;
     if let Ok(underlyings) = underlyings_result {
         if !underlyings.is_empty() {
             let underlying_name = &underlyings[0].name;
-            
+
             let contracts_request = OptionsContractsRequest {
                 underlying: Some(underlying_name.clone()),
                 expiration: None,
             };
-            
+
             let contracts_result = client.get_options_contracts(contracts_request).await;
             if let Ok(contracts) = contracts_result {
                 if !contracts.is_empty() {
                     let contract_name = &contracts[0].name;
-                    
+
                     let request = OptionsTradesRequest {
                         contract: contract_name.clone(),
                         last_id: None,
@@ -328,7 +326,10 @@ async fn test_get_options_trades() {
                         response.len()
                     );
                 } else {
-                    println!("No options contracts available for {} to test trades", underlying_name);
+                    println!(
+                        "No options contracts available for {} to test trades",
+                        underlying_name
+                    );
                 }
             }
         } else {
@@ -342,25 +343,25 @@ async fn test_get_options_trades() {
 async fn test_get_options_candlesticks() {
     use venues::gateio::options::public::rest::candlesticks::OptionsCandlesticksRequest;
     use venues::gateio::options::public::rest::contracts::OptionsContractsRequest;
-    
+
     let client = create_options_test_client();
-    
+
     // First get available underlyings and contracts
     let underlyings_result = client.get_options_underlyings().await;
     if let Ok(underlyings) = underlyings_result {
         if !underlyings.is_empty() {
             let underlying_name = &underlyings[0].name;
-            
+
             let contracts_request = OptionsContractsRequest {
                 underlying: Some(underlying_name.clone()),
                 expiration: None,
             };
-            
+
             let contracts_result = client.get_options_contracts(contracts_request).await;
             if let Ok(contracts) = contracts_result {
                 if !contracts.is_empty() {
                     let contract_name = &contracts[0].name;
-                    
+
                     let request = OptionsCandlesticksRequest {
                         contract: contract_name.clone(),
                         from: None,
@@ -383,7 +384,10 @@ async fn test_get_options_candlesticks() {
                         response.len()
                     );
                 } else {
-                    println!("No options contracts available for {} to test candlesticks", underlying_name);
+                    println!(
+                        "No options contracts available for {} to test candlesticks",
+                        underlying_name
+                    );
                 }
             }
         } else {
@@ -396,15 +400,15 @@ async fn test_get_options_candlesticks() {
 #[tokio::test]
 async fn test_get_underlying_candlesticks() {
     use venues::gateio::options::public::rest::candlesticks::UnderlyingCandlesticksRequest;
-    
+
     let client = create_options_test_client();
-    
+
     // First get available underlyings
     let underlyings_result = client.get_options_underlyings().await;
     if let Ok(underlyings) = underlyings_result {
         if !underlyings.is_empty() {
             let underlying_name = &underlyings[0].name;
-            
+
             let request = UnderlyingCandlesticksRequest {
                 underlying: underlying_name.clone(),
                 from: None,
@@ -436,15 +440,15 @@ async fn test_get_underlying_candlesticks() {
 #[tokio::test]
 async fn test_get_options_settlements() {
     use venues::gateio::options::public::rest::settlements::OptionsSettlementsRequest;
-    
+
     let client = create_options_test_client();
-    
+
     // First get available underlyings
     let underlyings_result = client.get_options_underlyings().await;
     if let Ok(underlyings) = underlyings_result {
         if !underlyings.is_empty() {
             let underlying_name = &underlyings[0].name;
-            
+
             let request = OptionsSettlementsRequest {
                 underlying: Some(underlying_name.clone()),
                 limit: Some(10),
@@ -474,25 +478,25 @@ async fn test_get_options_settlements() {
 async fn test_get_options_contract_settlement() {
     // OptionsContractSettlement doesn't need a request struct - uses contract name directly
     use venues::gateio::options::public::rest::contracts::OptionsContractsRequest;
-    
+
     let client = create_options_test_client();
-    
+
     // First get available underlyings and contracts
     let underlyings_result = client.get_options_underlyings().await;
     if let Ok(underlyings) = underlyings_result {
         if !underlyings.is_empty() {
             let underlying_name = &underlyings[0].name;
-            
+
             let contracts_request = OptionsContractsRequest {
                 underlying: Some(underlying_name.clone()),
                 expiration: None,
             };
-            
+
             let contracts_result = client.get_options_contracts(contracts_request).await;
             if let Ok(contracts) = contracts_result {
                 if !contracts.is_empty() {
                     let contract_name = &contracts[0].name;
-                    
+
                     let result = client.get_options_contract_settlement(contract_name).await;
                     // Note: This endpoint might return empty results if no settlements exist
                     // or an error if the contract has never been settled
@@ -505,12 +509,14 @@ async fn test_get_options_contract_settlement() {
                         let response = result.unwrap();
                         println!(
                             "Options contract settlement for {}: price={}",
-                            contract_name,
-                            response.settle_price
+                            contract_name, response.settle_price
                         );
                     }
                 } else {
-                    println!("No options contracts available for {} to test contract settlement", underlying_name);
+                    println!(
+                        "No options contracts available for {} to test contract settlement",
+                        underlying_name
+                    );
                 }
             }
         } else {
