@@ -2,6 +2,10 @@ use serde::{Deserialize, Serialize};
 
 use crate::kucoin::spot::{ResponseHeaders, RestResponse, Result};
 
+// API endpoints
+const CURRENT_FUNDING_RATE_ENDPOINT_PREFIX: &str = "/api/v1/funding-rate/";
+const CURRENT_FUNDING_RATE_ENDPOINT_SUFFIX: &str = "/current";
+
 /// Get current funding rate request
 #[derive(Debug, Clone, Serialize)]
 pub struct GetCurrentFundingRateRequest {
@@ -24,82 +28,25 @@ pub struct CurrentFundingRate {
     pub predicted_value: Option<f64>,
 }
 
-/// Get funding rate history request
-#[derive(Debug, Clone, Serialize)]
-pub struct GetFundingRateHistoryRequest {
-    pub symbol: String,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub from: Option<i64>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub to: Option<i64>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub offset: Option<i32>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub forward: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub max_count: Option<i32>,
-}
-
-/// Funding rate history item
-#[derive(Debug, Clone, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct FundingRateHistoryItem {
-    /// Symbol of the contract
-    pub symbol: String,
-    /// Granularity (funding rate interval in milliseconds)
-    pub granularity: i64,
-    /// Time point (milliseconds)
-    pub time_point: i64,
-    /// Funding rate
-    pub value: f64,
-}
-
-/// Response for funding rate history
-pub type GetFundingRateHistoryResponse = Vec<FundingRateHistoryItem>;
 
 impl super::RestClient {
     /// Get current funding rate for a specific symbol
+    ///
+    /// <https://www.kucoin.com/docs-new/rest/futures-trading/funding-fees/get-current-funding-rate>
     pub async fn get_current_funding_rate(
         &self,
         request: GetCurrentFundingRateRequest,
     ) -> Result<(RestResponse<CurrentFundingRate>, ResponseHeaders)> {
-        let endpoint = format!("/api/v1/funding-rate/{}/current", request.symbol);
-        self.get(&endpoint, None).await
+        let endpoint = format!(
+            "{}{}{}",
+            CURRENT_FUNDING_RATE_ENDPOINT_PREFIX,
+            request.symbol,
+            CURRENT_FUNDING_RATE_ENDPOINT_SUFFIX
+        );
+        self.send_request(&endpoint, None::<&GetCurrentFundingRateRequest>)
+            .await
     }
 
-    /// Get funding rate history for a specific symbol
-    pub async fn get_funding_rate_history(
-        &self,
-        request: GetFundingRateHistoryRequest,
-    ) -> Result<(RestResponse<GetFundingRateHistoryResponse>, ResponseHeaders)> {
-        let endpoint = format!("/api/v1/funding-rate/{}/history", request.symbol);
-
-        let mut params = std::collections::HashMap::new();
-
-        if let Some(from) = request.from {
-            params.insert("from".to_string(), from.to_string());
-        }
-        if let Some(to) = request.to {
-            params.insert("to".to_string(), to.to_string());
-        }
-        if let Some(offset) = request.offset {
-            params.insert("offset".to_string(), offset.to_string());
-        }
-        if let Some(forward) = request.forward {
-            params.insert("forward".to_string(), forward.to_string());
-        }
-        if let Some(max_count) = request.max_count {
-            params.insert("maxCount".to_string(), max_count.to_string());
-        }
-
-        let params = if params.is_empty() {
-            None
-        } else {
-            Some(params)
-        };
-
-        self.get(&endpoint, params).await
-    }
 }
 
 #[cfg(test)]
@@ -132,18 +79,4 @@ mod tests {
         assert_eq!(funding_rate.predicted_value, None);
     }
 
-    #[test]
-    fn test_funding_rate_history_item_deserialization() {
-        let json = r#"{
-            "symbol": "XBTUSDTM",
-            "granularity": 28800000,
-            "timePoint": 1637049600000,
-            "value": 0.000100
-        }"#;
-
-        let item: FundingRateHistoryItem = serde_json::from_str(json).unwrap();
-        assert_eq!(item.symbol, "XBTUSDTM");
-        assert_eq!(item.granularity, 28800000);
-        assert_eq!(item.value, 0.000100);
-    }
 }

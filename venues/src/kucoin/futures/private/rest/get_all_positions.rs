@@ -13,11 +13,14 @@ pub type GetAllPositionsResponse = Vec<Position>;
 
 impl super::RestClient {
     /// Get all positions
+    ///
+    /// Reference: <https://www.kucoin.com/docs-new/rest/futures-trading/positions/get-position-list>
     pub async fn get_all_positions(
         &self,
         _request: GetAllPositionsRequest,
     ) -> Result<(RestResponse<GetAllPositionsResponse>, ResponseHeaders)> {
-        self.get(GET_ALL_POSITIONS_ENDPOINT, None).await
+        self.get::<GetAllPositionsResponse, ()>(GET_ALL_POSITIONS_ENDPOINT, None)
+            .await
     }
 }
 

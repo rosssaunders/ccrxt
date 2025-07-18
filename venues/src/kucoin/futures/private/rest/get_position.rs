@@ -53,6 +53,8 @@ pub struct Position {
 
 impl super::RestClient {
     /// Get position for a specific symbol
+    ///
+    /// Reference: <https://www.kucoin.com/docs-new/rest/futures-trading/positions/get-position-details>
     pub async fn get_position(
         &self,
         request: GetPositionRequest,
@@ -60,7 +62,7 @@ impl super::RestClient {
         let endpoint = GET_POSITION_ENDPOINT;
         let mut params = HashMap::new();
         params.insert("symbol".to_string(), request.symbol);
-        self.get(endpoint, Some(params)).await
+        self.get(endpoint, Some(&params)).await
     }
 }
 

@@ -55,12 +55,14 @@ pub struct OrderDetails {
 
 impl super::RestClient {
     /// Get order details
+    ///
+    /// Reference: <https://www.kucoin.com/docs-new/rest/futures-trading/orders/get-order-by-orderld>
     pub async fn get_order(
         &self,
         request: GetOrderRequest,
     ) -> Result<(RestResponse<OrderDetails>, ResponseHeaders)> {
         let endpoint = format!("{}{}", GET_ORDER_ENDPOINT, request.order_id);
-        self.get(&endpoint, None).await
+        self.get::<OrderDetails, ()>(&endpoint, None).await
     }
 }
 

@@ -4,10 +4,10 @@ use crate::kucoin::spot::{
     OrderSide, OrderType, ResponseHeaders, RestResponse, Result, StopType, TimeInForce,
 };
 
-/// Place order request for futures
+/// Add order test request for futures
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct PlaceOrderRequest {
+pub struct AddOrderTestRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub client_oid: Option<String>,
     pub side: OrderSide,
@@ -48,20 +48,22 @@ pub struct PlaceOrderRequest {
 
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct PlaceOrderResponse {
+pub struct AddOrderTestResponse {
     pub order_id: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub client_oid: Option<String>,
 }
 
 impl super::RestClient {
-    /// Place a new order
+    /// Test placing a new order (does not execute)
     ///
-    /// Reference: <https://www.kucoin.com/docs-new/rest/futures-trading/orders/add-order>
-    pub async fn place_order(
+    /// <https://www.kucoin.com/docs-new/rest/futures-trading/orders/add-order-test>
+    pub async fn add_order_test(
         &self,
-        request: PlaceOrderRequest,
-    ) -> Result<(RestResponse<PlaceOrderResponse>, ResponseHeaders)> {
-        const PLACE_ORDER_ENDPOINT: &str = "/api/v1/orders";
-        self.post(PLACE_ORDER_ENDPOINT, &request).await
+        request: AddOrderTestRequest,
+    ) -> Result<(RestResponse<AddOrderTestResponse>, ResponseHeaders)> {
+        const ADD_ORDER_TEST_ENDPOINT: &str = "/api/v1/orders/test";
+        self.post(ADD_ORDER_TEST_ENDPOINT, &request).await
     }
 }
 
@@ -71,8 +73,8 @@ mod tests {
     use crate::kucoin::spot::{OrderSide, OrderType, TimeInForce};
 
     #[test]
-    fn test_place_order_request_serialization() {
-        let request = PlaceOrderRequest {
+    fn test_add_order_test_request_serialization() {
+        let request = AddOrderTestRequest {
             client_oid: Some("test123".to_string()),
             side: OrderSide::Buy,
             symbol: "XBTUSDTM".to_string(),
@@ -98,5 +100,17 @@ mod tests {
         assert!(json.contains("XBTUSDTM"));
         assert!(json.contains("buy"));
         assert!(json.contains("limit"));
+    }
+
+    #[test]
+    fn test_add_order_test_response_deserialization() {
+        let json = r#"{
+            "orderId": "5e8c8c2f1a3b4a001c5d8e31",
+            "clientOid": "test123"
+        }"#;
+
+        let response: AddOrderTestResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.order_id, "5e8c8c2f1a3b4a001c5d8e31");
+        assert_eq!(response.client_oid, Some("test123".to_string()));
     }
 }

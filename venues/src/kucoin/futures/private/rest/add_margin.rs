@@ -33,6 +33,8 @@ pub struct AddMarginResponse {
 
 impl super::RestClient {
     /// Add margin to position
+    ///
+    /// <https://www.kucoin.com/docs-new/rest/futures-trading/positions/add-isolated-margin>
     pub async fn add_margin(
         &self,
         request: AddMarginRequest,

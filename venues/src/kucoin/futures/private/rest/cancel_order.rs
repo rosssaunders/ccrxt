@@ -18,6 +18,8 @@ pub struct CancelOrderResponse {
 
 impl super::RestClient {
     /// Cancel an order
+    ///
+    /// <https://www.kucoin.com/docs-new/rest/futures-trading/orders/cancel-order-by-orderld>
     pub async fn cancel_order(
         &self,
         request: CancelOrderRequest,

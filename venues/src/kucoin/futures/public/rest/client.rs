@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use reqwest::Client;
 use serde::de::DeserializeOwned;
 
@@ -33,13 +31,14 @@ impl RestClient {
     }
 
     /// Make a GET request to the public futures API
-    pub async fn get<T>(
+    pub async fn send_request<T, R>(
         &self,
         endpoint: &str,
-        params: Option<HashMap<String, String>>,
+        request: Option<&R>,
     ) -> Result<(RestResponse<T>, ResponseHeaders)>
     where
         T: DeserializeOwned,
+        R: serde::Serialize,
     {
         // Check rate limiter
         if !self.rate_limiter.can_proceed().await {
@@ -52,13 +51,13 @@ impl RestClient {
 
         let url = format!("{}{}", self.base_url, endpoint);
 
-        let mut request = self.client.get(&url);
+        let mut req = self.client.get(&url);
 
-        if let Some(params) = params {
-            request = request.query(&params);
+        if let Some(req_data) = request {
+            req = req.query(req_data);
         }
 
-        let response = request.send().await?;
+        let response = req.send().await?;
 
         let status = response.status();
         let headers = response.headers().clone();
@@ -67,7 +66,8 @@ impl RestClient {
 
         if !status.is_success() {
             // Try to parse as error response
-            if let Ok(error_response) = serde_json::from_str::<crate::kucoin::spot::ErrorResponse>(&text)
+            if let Ok(error_response) =
+                serde_json::from_str::<crate::kucoin::spot::ErrorResponse>(&text)
             {
                 return Err(ApiError::from(error_response).into());
             } else {

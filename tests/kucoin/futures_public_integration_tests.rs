@@ -5,7 +5,7 @@
 
 use venues::kucoin::futures::public::rest::{
     GetAllContractsRequest, GetContractRequest, GetCurrentFundingRateRequest,
-    GetFundingRateHistoryRequest, RestClient as PublicRestClient,
+    RestClient as PublicRestClient,
 };
 
 /// Helper function to create a test client with shared rate limiter
@@ -121,62 +121,6 @@ async fn test_get_current_funding_rate() {
     }
 }
 
-/// Test get funding rate history endpoint
-#[tokio::test]
-async fn test_get_funding_rate_history() {
-    let client = create_futures_test_client();
-
-    // First get available contracts to test with
-    let all_contracts_request = GetAllContractsRequest {};
-    let contracts_result = client.get_all_contracts(all_contracts_request).await;
-
-    if let Ok((response, _)) = contracts_result {
-        let contracts = response.data;
-        if !contracts.is_empty() {
-            let contract_symbol = &contracts[0].symbol;
-
-            let request = GetFundingRateHistoryRequest {
-                symbol: contract_symbol.clone(),
-                from: None,
-                to: None,
-                offset: None,
-                forward: None,
-                max_count: Some(10),
-            };
-
-            let result = client.get_funding_rate_history(request).await;
-
-            // Handle the case where funding rate history might not be available
-            match result {
-                Ok((response, _headers)) => {
-                    let history = response.data;
-                    println!(
-                        "Funding rate history for {}: {} entries",
-                        contract_symbol,
-                        history.len()
-                    );
-
-                    if !history.is_empty() {
-                        let first_entry = &history[0];
-                        println!(
-                            "First entry: rate={}, time={}",
-                            first_entry.value, first_entry.time_point
-                        );
-                    }
-                }
-                Err(e) => {
-                    println!(
-                        "Funding rate history not available for {}: {:?}",
-                        contract_symbol, e
-                    );
-                    // This is acceptable behavior - not all contracts may have funding rate history
-                }
-            }
-        } else {
-            println!("No futures contracts available to test funding rate history");
-        }
-    }
-}
 
 /// Test client creation and basic functionality
 #[tokio::test]

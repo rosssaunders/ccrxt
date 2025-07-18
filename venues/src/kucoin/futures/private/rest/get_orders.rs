@@ -2,7 +2,9 @@ use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
 
-use crate::kucoin::spot::{OrderSide, OrderStatus, OrderType, ResponseHeaders, RestResponse, Result};
+use crate::kucoin::spot::{
+    OrderSide, OrderStatus, OrderType, ResponseHeaders, RestResponse, Result,
+};
 
 /// Endpoint URL for get orders
 pub const GET_ORDERS_ENDPOINT: &str = "/api/v1/orders";
@@ -39,6 +41,8 @@ pub struct PaginatedOrdersResponse {
 
 impl super::RestClient {
     /// Get orders with pagination
+    ///
+    /// Reference: <https://www.kucoin.com/docs-new/rest/futures-trading/orders/get-order-list>
     pub async fn get_orders(
         &self,
         request: GetOrdersRequest,
@@ -92,7 +96,7 @@ impl super::RestClient {
         } else {
             Some(params)
         };
-        self.get(endpoint, params).await
+        self.get(endpoint, params.as_ref()).await
     }
 }
 
@@ -207,12 +211,12 @@ mod tests {
         assert_eq!(response.total_num, 5);
         assert_eq!(response.total_page, 3);
         assert_eq!(response.items.len(), 2);
-        
+
         let order1 = &response.items[0];
         assert_eq!(order1.id, "order1");
         assert_eq!(order1.symbol, "XBTUSDTM");
         assert_eq!(order1.status, OrderStatus::Active);
-        
+
         let order2 = &response.items[1];
         assert_eq!(order2.id, "order2");
         assert_eq!(order2.symbol, "ETHUSDTM");

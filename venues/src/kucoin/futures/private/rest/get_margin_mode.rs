@@ -22,6 +22,8 @@ pub struct MarginModeResponse {
 
 impl super::RestClient {
     /// Get margin mode for a symbol
+    ///
+    /// Reference: <https://www.kucoin.com/docs-new/rest/futures-trading/positions/get-margin-mode>
     pub async fn get_margin_mode(
         &self,
         request: GetMarginModeRequest,
@@ -29,7 +31,7 @@ impl super::RestClient {
         let endpoint = GET_MARGIN_MODE_ENDPOINT;
         let mut params = HashMap::new();
         params.insert("symbol".to_string(), request.symbol);
-        self.get(endpoint, Some(params)).await
+        self.get(endpoint, Some(&params)).await
     }
 }
 

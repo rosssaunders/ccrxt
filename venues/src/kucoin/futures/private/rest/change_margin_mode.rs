@@ -19,6 +19,8 @@ pub struct ChangeMarginModeResponse {
 
 impl super::RestClient {
     /// Change margin mode
+    ///
+    /// Reference: <https://www.kucoin.com/docs-new/rest/futures-trading/positions/switch-margin-mode>
     pub async fn change_margin_mode(
         &self,
         request: ChangeMarginModeRequest,
@@ -71,6 +73,9 @@ mod tests {
 
     #[test]
     fn test_change_margin_mode_endpoint() {
-        assert_eq!(CHANGE_MARGIN_MODE_ENDPOINT, "/api/v2/position/changeMarginMode");
+        assert_eq!(
+            CHANGE_MARGIN_MODE_ENDPOINT,
+            "/api/v2/position/changeMarginMode"
+        );
     }
 }
