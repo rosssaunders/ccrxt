@@ -5,6 +5,8 @@ use crate::binance::{
     shared,
 };
 
+const MULTI_ASSETS_MARGIN_ENDPOINT: &str = "/dapi/v1/multiAssetsMargin";
+
 /// Request parameters for changing multi-asset mode.
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -65,7 +67,7 @@ impl RestClient {
         let weight = 1;
         shared::send_signed_request(
             self,
-            "/dapi/v1/multiAssetsMargin",
+            MULTI_ASSETS_MARGIN_ENDPOINT,
             reqwest::Method::POST,
             params,
             weight,
@@ -93,12 +95,92 @@ impl RestClient {
         let weight = 30;
         shared::send_signed_request(
             self,
-            "/dapi/v1/multiAssetsMargin",
+            MULTI_ASSETS_MARGIN_ENDPOINT,
             reqwest::Method::GET,
             params,
             weight,
             false,
         )
         .await
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_change_multi_asset_mode_request_serialization() {
+        let request = ChangeMultiAssetModeRequest {
+            multi_assets_margin: true,
+            recv_window: None,
+        };
+
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert_eq!(serialized, "multiAssetsMargin=true");
+    }
+
+    #[test]
+    fn test_change_multi_asset_mode_request_with_recv_window() {
+        let request = ChangeMultiAssetModeRequest {
+            multi_assets_margin: false,
+            recv_window: Some(5000),
+        };
+
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert!(serialized.contains("multiAssetsMargin=false"));
+        assert!(serialized.contains("recvWindow=5000"));
+    }
+
+    #[test]
+    fn test_get_multi_asset_mode_request_serialization() {
+        let request = GetMultiAssetModeRequest {
+            recv_window: None,
+        };
+
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert_eq!(serialized, "");
+    }
+
+    #[test]
+    fn test_get_multi_asset_mode_request_with_recv_window() {
+        let request = GetMultiAssetModeRequest {
+            recv_window: Some(3000),
+        };
+
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert_eq!(serialized, "recvWindow=3000");
+    }
+
+    #[test]
+    fn test_change_multi_asset_mode_response_deserialization() {
+        let json = r#"{
+            "code": 200,
+            "msg": "success"
+        }"#;
+
+        let response: ChangeMultiAssetModeResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.code, 200);
+        assert_eq!(response.msg, "success");
+    }
+
+    #[test]
+    fn test_get_multi_asset_mode_response_deserialization() {
+        let json = r#"{
+            "multiAssetsMargin": true
+        }"#;
+
+        let response: GetMultiAssetModeResponse = serde_json::from_str(json).unwrap();
+        assert!(response.multi_assets_margin);
+    }
+
+    #[test]
+    fn test_get_multi_asset_mode_response_false() {
+        let json = r#"{
+            "multiAssetsMargin": false
+        }"#;
+
+        let response: GetMultiAssetModeResponse = serde_json::from_str(json).unwrap();
+        assert!(!response.multi_assets_margin);
     }
 }

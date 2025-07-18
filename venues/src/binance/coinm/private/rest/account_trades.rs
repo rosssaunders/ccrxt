@@ -167,3 +167,213 @@ impl RestClient {
         .await
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_account_trade_list_request_serialization_with_symbol() {
+        let request = AccountTradeListRequest {
+            symbol: Some("BTCUSD_PERP".to_string()),
+            pair: None,
+            order_id: Some("123456".to_string()),
+            start_time: Some(1625097600000),
+            end_time: Some(1625184000000),
+            from_id: None,
+            limit: Some(100),
+            recv_window: Some(5000),
+            timestamp: 1625184000000,
+        };
+
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert!(serialized.contains("symbol=BTCUSD_PERP"));
+        assert!(serialized.contains("orderId=123456"));
+        assert!(serialized.contains("startTime=1625097600000"));
+        assert!(serialized.contains("endTime=1625184000000"));
+        assert!(serialized.contains("limit=100"));
+        assert!(serialized.contains("recvWindow=5000"));
+        assert!(serialized.contains("timestamp=1625184000000"));
+        assert!(!serialized.contains("pair="));
+        assert!(!serialized.contains("fromId="));
+    }
+
+    #[test]
+    fn test_account_trade_list_request_serialization_with_pair() {
+        let request = AccountTradeListRequest {
+            symbol: None,
+            pair: Some("BTCUSD".to_string()),
+            order_id: None,
+            start_time: None,
+            end_time: None,
+            from_id: Some(789012),
+            limit: Some(50),
+            recv_window: None,
+            timestamp: 1625184000000,
+        };
+
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert!(serialized.contains("pair=BTCUSD"));
+        assert!(serialized.contains("fromId=789012"));
+        assert!(serialized.contains("limit=50"));
+        assert!(serialized.contains("timestamp=1625184000000"));
+        assert!(!serialized.contains("symbol="));
+        assert!(!serialized.contains("orderId="));
+        assert!(!serialized.contains("startTime="));
+        assert!(!serialized.contains("endTime="));
+        assert!(!serialized.contains("recvWindow="));
+    }
+
+    #[test]
+    fn test_account_trade_list_request_minimal_serialization() {
+        let request = AccountTradeListRequest {
+            symbol: Some("ETHUSD_PERP".to_string()),
+            pair: None,
+            order_id: None,
+            start_time: None,
+            end_time: None,
+            from_id: None,
+            limit: None,
+            recv_window: None,
+            timestamp: 1625184000000,
+        };
+
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert_eq!(serialized, "symbol=ETHUSD_PERP&timestamp=1625184000000");
+    }
+
+    #[test]
+    fn test_account_trade_deserialization() {
+        let json = r#"{
+            "symbol": "BTCUSD_200626",
+            "id": 215970406,
+            "orderId": 469935690,
+            "pair": "BTCUSD",
+            "side": "SELL",
+            "price": "9638.0",
+            "qty": "1",
+            "realizedPnl": "-0.00058794",
+            "marginAsset": "BTC",
+            "baseQty": "0.01037883",
+            "commission": "0.00000454",
+            "commissionAsset": "BTC",
+            "time": 1591155762721,
+            "positionSide": "BOTH",
+            "buyer": false,
+            "maker": true
+        }"#;
+
+        let trade: AccountTrade = serde_json::from_str(json).unwrap();
+        assert_eq!(trade.symbol, "BTCUSD_200626");
+        assert_eq!(trade.id, 215970406);
+        assert_eq!(trade.order_id, 469935690);
+        assert_eq!(trade.pair, "BTCUSD");
+        assert_eq!(trade.side, OrderSide::Sell);
+        assert_eq!(trade.price, "9638.0");
+        assert_eq!(trade.quantity, "1");
+        assert_eq!(trade.realized_pnl, "-0.00058794");
+        assert_eq!(trade.margin_asset, "BTC");
+        assert_eq!(trade.base_qty, "0.01037883");
+        assert_eq!(trade.commission, "0.00000454");
+        assert_eq!(trade.commission_asset, "BTC");
+        assert_eq!(trade.time, 1591155762721);
+        assert_eq!(trade.position_side, PositionSide::Both);
+        assert!(!trade.buyer);
+        assert!(trade.maker);
+    }
+
+    #[test]
+    fn test_account_trade_deserialization_buy_taker() {
+        let json = r#"{
+            "symbol": "ETHUSD_PERP",
+            "id": 315970407,
+            "orderId": 569935691,
+            "pair": "ETHUSD",
+            "side": "BUY",
+            "price": "3200.50",
+            "qty": "10",
+            "realizedPnl": "0.00123456",
+            "marginAsset": "ETH",
+            "baseQty": "0.00312109",
+            "commission": "0.00000125",
+            "commissionAsset": "ETH",
+            "time": 1625184000000,
+            "positionSide": "LONG",
+            "buyer": true,
+            "maker": false
+        }"#;
+
+        let trade: AccountTrade = serde_json::from_str(json).unwrap();
+        assert_eq!(trade.symbol, "ETHUSD_PERP");
+        assert_eq!(trade.id, 315970407);
+        assert_eq!(trade.order_id, 569935691);
+        assert_eq!(trade.pair, "ETHUSD");
+        assert_eq!(trade.side, OrderSide::Buy);
+        assert_eq!(trade.price, "3200.50");
+        assert_eq!(trade.quantity, "10");
+        assert_eq!(trade.realized_pnl, "0.00123456");
+        assert_eq!(trade.margin_asset, "ETH");
+        assert_eq!(trade.base_qty, "0.00312109");
+        assert_eq!(trade.commission, "0.00000125");
+        assert_eq!(trade.commission_asset, "ETH");
+        assert_eq!(trade.time, 1625184000000);
+        assert_eq!(trade.position_side, PositionSide::Long);
+        assert!(trade.buyer);
+        assert!(!trade.maker);
+    }
+
+    #[test]
+    fn test_account_trades_list_deserialization() {
+        let json = r#"[
+            {
+                "symbol": "BTCUSD_PERP",
+                "id": 123456789,
+                "orderId": 987654321,
+                "pair": "BTCUSD",
+                "side": "BUY",
+                "price": "50000.0",
+                "qty": "5",
+                "realizedPnl": "0.00010000",
+                "marginAsset": "BTC",
+                "baseQty": "0.00010000",
+                "commission": "0.00000010",
+                "commissionAsset": "BTC",
+                "time": 1625097600000,
+                "positionSide": "LONG",
+                "buyer": true,
+                "maker": true
+            },
+            {
+                "symbol": "BTCUSD_PERP",
+                "id": 123456790,
+                "orderId": 987654322,
+                "pair": "BTCUSD",
+                "side": "SELL",
+                "price": "51000.0",
+                "qty": "5",
+                "realizedPnl": "0.00019608",
+                "marginAsset": "BTC",
+                "baseQty": "0.00009804",
+                "commission": "0.00000010",
+                "commissionAsset": "BTC",
+                "time": 1625097700000,
+                "positionSide": "SHORT",
+                "buyer": false,
+                "maker": false
+            }
+        ]"#;
+
+        let trades: Vec<AccountTrade> = serde_json::from_str(json).unwrap();
+        assert_eq!(trades.len(), 2);
+        
+        assert_eq!(trades[0].id, 123456789);
+        assert_eq!(trades[0].side, OrderSide::Buy);
+        assert_eq!(trades[0].price, "50000.0");
+        assert!(trades[0].maker);
+        
+        assert_eq!(trades[1].id, 123456790);
+        assert_eq!(trades[1].side, OrderSide::Sell);
+        assert_eq!(trades[1].price, "51000.0");
+        assert!(!trades[1].maker);
+    }
+}

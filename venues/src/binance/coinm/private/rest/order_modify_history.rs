@@ -8,6 +8,8 @@ use crate::binance::{
     shared,
 };
 
+const ORDER_AMENDMENT_ENDPOINT: &str = "/dapi/v1/orderAmendment";
+
 /// Request parameters for getting order modification history (GET /dapi/v1/orderAmendment).
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct GetOrderModifyHistoryRequest {
@@ -121,12 +123,165 @@ impl RestClient {
         let weight = 1;
         shared::send_signed_request(
             self,
-            "/dapi/v1/orderAmendment",
+            ORDER_AMENDMENT_ENDPOINT,
             reqwest::Method::GET,
             params,
             weight,
             false,
         )
         .await
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_order_modify_history_request_serialization() {
+        let request = GetOrderModifyHistoryRequest {
+            symbol: "BTCUSD_PERP".to_string(),
+            order_id: Some(12345),
+            orig_client_order_id: None,
+            start_time: None,
+            end_time: None,
+            limit: None,
+            recv_window: None,
+            timestamp: 1625097600000,
+        };
+
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert!(serialized.contains("symbol=BTCUSD_PERP"));
+        assert!(serialized.contains("orderId=12345"));
+        assert!(serialized.contains("timestamp=1625097600000"));
+        assert!(!serialized.contains("origClientOrderId"));
+        assert!(!serialized.contains("startTime"));
+        assert!(!serialized.contains("endTime"));
+        assert!(!serialized.contains("limit"));
+    }
+
+    #[test]
+    fn test_order_modify_history_request_with_client_order_id() {
+        let request = GetOrderModifyHistoryRequest {
+            symbol: "ETHUSD_PERP".to_string(),
+            order_id: None,
+            orig_client_order_id: Some("my_order_123".to_string()),
+            start_time: Some(1625097500000),
+            end_time: Some(1625097700000),
+            limit: Some(50),
+            recv_window: Some(5000),
+            timestamp: 1625097600000,
+        };
+
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert!(serialized.contains("symbol=ETHUSD_PERP"));
+        assert!(serialized.contains("origClientOrderId=my_order_123"));
+        assert!(serialized.contains("startTime=1625097500000"));
+        assert!(serialized.contains("endTime=1625097700000"));
+        assert!(serialized.contains("limit=50"));
+        assert!(serialized.contains("recvWindow=5000"));
+        assert!(serialized.contains("timestamp=1625097600000"));
+        assert!(!serialized.contains("orderId"));
+    }
+
+    #[test]
+    fn test_order_amendment_field_deserialization() {
+        let json = r#"{
+            "before": "45000.0",
+            "after": "45500.0"
+        }"#;
+
+        let field: OrderAmendmentField = serde_json::from_str(json).unwrap();
+        assert_eq!(field.before, "45000.0");
+        assert_eq!(field.after, "45500.0");
+    }
+
+    #[test]
+    fn test_order_amendment_deserialization() {
+        let json = r#"{
+            "price": {
+                "before": "45000.0",
+                "after": "45500.0"
+            },
+            "origQty": {
+                "before": "10.0",
+                "after": "15.0"
+            },
+            "count": 2
+        }"#;
+
+        let amendment: OrderAmendment = serde_json::from_str(json).unwrap();
+        assert_eq!(amendment.count, 2);
+        
+        let price = amendment.price.unwrap();
+        assert_eq!(price.before, "45000.0");
+        assert_eq!(price.after, "45500.0");
+        
+        let qty = amendment.orig_qty.unwrap();
+        assert_eq!(qty.before, "10.0");
+        assert_eq!(qty.after, "15.0");
+    }
+
+    #[test]
+    fn test_order_modify_history_response_deserialization() {
+        let json = r#"[
+            {
+                "amendmentId": 100001,
+                "symbol": "BTCUSD_PERP",
+                "pair": "BTCUSD",
+                "orderId": 12345,
+                "clientOrderId": "my_order_123",
+                "time": 1625097600000,
+                "amendment": {
+                    "price": {
+                        "before": "45000.0",
+                        "after": "45500.0"
+                    },
+                    "count": 1
+                }
+            },
+            {
+                "amendmentId": 100002,
+                "symbol": "BTCUSD_PERP",
+                "pair": "BTCUSD",
+                "orderId": 12345,
+                "clientOrderId": "my_order_123",
+                "time": 1625097700000,
+                "amendment": {
+                    "origQty": {
+                        "before": "10.0",
+                        "after": "20.0"
+                    },
+                    "count": 2
+                }
+            }
+        ]"#;
+
+        let response: GetOrderModifyHistoryResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.len(), 2);
+        
+        let entry1 = &response[0];
+        assert_eq!(entry1.amendment_id, 100001);
+        assert_eq!(entry1.symbol, "BTCUSD_PERP");
+        assert_eq!(entry1.pair, "BTCUSD");
+        assert_eq!(entry1.order_id, 12345);
+        assert_eq!(entry1.client_order_id, "my_order_123");
+        assert_eq!(entry1.time, 1625097600000);
+        assert_eq!(entry1.amendment.count, 1);
+        assert!(entry1.amendment.price.is_some());
+        assert!(entry1.amendment.orig_qty.is_none());
+        
+        let entry2 = &response[1];
+        assert_eq!(entry2.amendment_id, 100002);
+        assert_eq!(entry2.amendment.count, 2);
+        assert!(entry2.amendment.price.is_none());
+        assert!(entry2.amendment.orig_qty.is_some());
+    }
+
+    #[test]
+    fn test_empty_order_modify_history_response() {
+        let json = r#"[]"#;
+        let response: GetOrderModifyHistoryResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.len(), 0);
     }
 }

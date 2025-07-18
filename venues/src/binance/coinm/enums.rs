@@ -667,3 +667,118 @@ impl fmt::Display for MarginModificationType {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_order_side_serialization() {
+        assert_eq!(serde_json::to_string(&OrderSide::Buy).unwrap(), "\"BUY\"");
+        assert_eq!(serde_json::to_string(&OrderSide::Sell).unwrap(), "\"SELL\"");
+    }
+
+    #[test]
+    fn test_order_side_deserialization() {
+        assert_eq!(serde_json::from_str::<OrderSide>("\"BUY\"").unwrap(), OrderSide::Buy);
+        assert_eq!(serde_json::from_str::<OrderSide>("\"SELL\"").unwrap(), OrderSide::Sell);
+    }
+
+    #[test]
+    fn test_order_side_display() {
+        assert_eq!(OrderSide::Buy.to_string(), "BUY");
+        assert_eq!(OrderSide::Sell.to_string(), "SELL");
+    }
+
+    #[test]
+    fn test_position_side_serialization() {
+        assert_eq!(serde_json::to_string(&PositionSide::Both).unwrap(), "\"BOTH\"");
+        assert_eq!(serde_json::to_string(&PositionSide::Long).unwrap(), "\"LONG\"");
+        assert_eq!(serde_json::to_string(&PositionSide::Short).unwrap(), "\"SHORT\"");
+    }
+
+    #[test]
+    fn test_position_side_deserialization() {
+        assert_eq!(serde_json::from_str::<PositionSide>("\"BOTH\"").unwrap(), PositionSide::Both);
+        assert_eq!(serde_json::from_str::<PositionSide>("\"LONG\"").unwrap(), PositionSide::Long);
+        assert_eq!(serde_json::from_str::<PositionSide>("\"SHORT\"").unwrap(), PositionSide::Short);
+    }
+
+    #[test]
+    fn test_order_type_serialization() {
+        assert_eq!(serde_json::to_string(&OrderType::Limit).unwrap(), "\"LIMIT\"");
+        assert_eq!(serde_json::to_string(&OrderType::Market).unwrap(), "\"MARKET\"");
+        assert_eq!(serde_json::to_string(&OrderType::Stop).unwrap(), "\"STOP\"");
+        assert_eq!(serde_json::to_string(&OrderType::StopMarket).unwrap(), "\"STOP_MARKET\"");
+    }
+
+    #[test]
+    fn test_order_type_deserialization() {
+        assert_eq!(serde_json::from_str::<OrderType>("\"LIMIT\"").unwrap(), OrderType::Limit);
+        assert_eq!(serde_json::from_str::<OrderType>("\"MARKET\"").unwrap(), OrderType::Market);
+        assert_eq!(serde_json::from_str::<OrderType>("\"STOP\"").unwrap(), OrderType::Stop);
+        assert_eq!(serde_json::from_str::<OrderType>("\"STOP_MARKET\"").unwrap(), OrderType::StopMarket);
+    }
+
+    #[test]
+    fn test_time_in_force_serialization() {
+        assert_eq!(serde_json::to_string(&TimeInForce::GTC).unwrap(), "\"GTC\"");
+        assert_eq!(serde_json::to_string(&TimeInForce::IOC).unwrap(), "\"IOC\"");
+        assert_eq!(serde_json::to_string(&TimeInForce::FOK).unwrap(), "\"FOK\"");
+        assert_eq!(serde_json::to_string(&TimeInForce::GTX).unwrap(), "\"GTX\"");
+    }
+
+    #[test]
+    fn test_time_in_force_deserialization() {
+        assert_eq!(serde_json::from_str::<TimeInForce>("\"GTC\"").unwrap(), TimeInForce::GTC);
+        assert_eq!(serde_json::from_str::<TimeInForce>("\"IOC\"").unwrap(), TimeInForce::IOC);
+        assert_eq!(serde_json::from_str::<TimeInForce>("\"FOK\"").unwrap(), TimeInForce::FOK);
+        assert_eq!(serde_json::from_str::<TimeInForce>("\"GTX\"").unwrap(), TimeInForce::GTX);
+    }
+
+    #[test]
+    fn test_order_status_serialization() {
+        assert_eq!(serde_json::to_string(&OrderStatus::New).unwrap(), "\"NEW\"");
+        assert_eq!(serde_json::to_string(&OrderStatus::Filled).unwrap(), "\"FILLED\"");
+        assert_eq!(serde_json::to_string(&OrderStatus::Canceled).unwrap(), "\"CANCELED\"");
+        assert_eq!(serde_json::to_string(&OrderStatus::Expired).unwrap(), "\"EXPIRED\"");
+    }
+
+    #[test]
+    fn test_order_status_deserialization() {
+        assert_eq!(serde_json::from_str::<OrderStatus>("\"NEW\"").unwrap(), OrderStatus::New);
+        assert_eq!(serde_json::from_str::<OrderStatus>("\"FILLED\"").unwrap(), OrderStatus::Filled);
+        assert_eq!(serde_json::from_str::<OrderStatus>("\"CANCELED\"").unwrap(), OrderStatus::Canceled);
+        assert_eq!(serde_json::from_str::<OrderStatus>("\"EXPIRED\"").unwrap(), OrderStatus::Expired);
+    }
+
+    #[test]
+    fn test_margin_type_serialization() {
+        assert_eq!(serde_json::to_string(&MarginType::Cross).unwrap(), "\"cross\"");
+        assert_eq!(serde_json::to_string(&MarginType::Isolated).unwrap(), "\"isolated\"");
+    }
+
+    #[test]
+    fn test_margin_type_deserialization() {
+        assert_eq!(serde_json::from_str::<MarginType>("\"cross\"").unwrap(), MarginType::Cross);
+        assert_eq!(serde_json::from_str::<MarginType>("\"isolated\"").unwrap(), MarginType::Isolated);
+    }
+
+    #[test]
+    fn test_margin_modification_type_serialization() {
+        assert_eq!(serde_json::to_string(&MarginModificationType::Add).unwrap(), "\"1\"");
+        assert_eq!(serde_json::to_string(&MarginModificationType::Reduce).unwrap(), "\"2\"");
+    }
+
+    #[test]
+    fn test_margin_modification_type_deserialization() {
+        assert_eq!(serde_json::from_str::<MarginModificationType>("\"1\"").unwrap(), MarginModificationType::Add);
+        assert_eq!(serde_json::from_str::<MarginModificationType>("\"2\"").unwrap(), MarginModificationType::Reduce);
+    }
+
+    #[test]
+    fn test_margin_modification_type_display() {
+        assert_eq!(MarginModificationType::Add.to_string(), "1");
+        assert_eq!(MarginModificationType::Reduce.to_string(), "2");
+    }
+}

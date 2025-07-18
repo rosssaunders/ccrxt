@@ -9,6 +9,8 @@ use crate::binance::{
     shared,
 };
 
+const ACCOUNT_ENDPOINT: &str = "/dapi/v1/account";
+
 /// Request parameters for fetching account information.
 #[derive(Debug, Serialize)]
 pub struct AccountRequest {
@@ -238,12 +240,200 @@ impl RestClient {
     pub async fn get_account(&self, request: AccountRequest) -> RestResult<AccountResponse> {
         shared::send_signed_request(
             self,
-            "/dapi/v1/account",
+            ACCOUNT_ENDPOINT,
             reqwest::Method::GET,
             request,
             5,
             false,
         )
         .await
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_account_request_serialization() {
+        let request = AccountRequest {
+            timestamp: 1625097600000,
+            recv_window: None,
+        };
+
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert_eq!(serialized, "timestamp=1625097600000");
+    }
+
+    #[test]
+    fn test_account_request_serialization_with_recv_window() {
+        let request = AccountRequest {
+            timestamp: 1625097600000,
+            recv_window: Some(5000),
+        };
+
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert!(serialized.contains("timestamp=1625097600000"));
+        assert!(serialized.contains("recv_window=5000"));
+    }
+
+    #[test]
+    fn test_account_response_deserialization() {
+        let json = r#"{
+            "feeTier": 0,
+            "canTrade": true,
+            "canDeposit": true,
+            "canWithdraw": true,
+            "updateTime": 1699948800000,
+            "assets": [
+                {
+                    "asset": "BTC",
+                    "walletBalance": "1.50000000",
+                    "unrealizedProfit": "0.00000000",
+                    "marginBalance": "1.50000000",
+                    "maintMargin": "0.00000000",
+                    "initialMargin": "0.00000000",
+                    "positionInitialMargin": "0.00000000",
+                    "openOrderInitialMargin": "0.00000000",
+                    "crossWalletBalance": "1.50000000",
+                    "crossUnPnl": "0.00000000",
+                    "availableBalance": "1.50000000",
+                    "maxWithdrawAmount": "1.50000000",
+                    "updateTime": 1699948800000
+                }
+            ],
+            "positions": [
+                {
+                    "symbol": "BTCUSD_PERP",
+                    "positionAmt": "10.00000000",
+                    "initialMargin": "0.00100000",
+                    "maintMargin": "0.00050000",
+                    "unrealizedProfit": "0.00010000",
+                    "positionInitialMargin": "0.00100000",
+                    "openOrderInitialMargin": "0.00000000",
+                    "leverage": "20",
+                    "isolated": false,
+                    "positionSide": "LONG",
+                    "entryPrice": "50000.00000000",
+                    "breakEvenPrice": "50000.00000000",
+                    "maxQty": "1000.00000000",
+                    "updateTime": 1699948800000
+                }
+            ]
+        }"#;
+
+        let response: AccountResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.fee_tier, 0);
+        assert!(response.can_trade);
+        assert!(response.can_deposit);
+        assert!(response.can_withdraw);
+        assert_eq!(response.update_time, 1699948800000);
+        assert_eq!(response.assets.len(), 1);
+        assert_eq!(response.positions.len(), 1);
+    }
+
+    #[test]
+    fn test_asset_deserialization() {
+        let json = r#"{
+            "asset": "ETH",
+            "walletBalance": "10.50000000",
+            "unrealizedProfit": "-0.50000000",
+            "marginBalance": "10.00000000",
+            "maintMargin": "0.10000000",
+            "initialMargin": "0.20000000",
+            "positionInitialMargin": "0.15000000",
+            "openOrderInitialMargin": "0.05000000",
+            "crossWalletBalance": "10.50000000",
+            "crossUnPnl": "-0.50000000",
+            "availableBalance": "9.80000000",
+            "maxWithdrawAmount": "9.80000000",
+            "updateTime": 1699948800000
+        }"#;
+
+        let asset: Asset = serde_json::from_str(json).unwrap();
+        assert_eq!(asset.asset, "ETH");
+        assert_eq!(asset.wallet_balance, "10.50000000");
+        assert_eq!(asset.unrealized_profit, "-0.50000000");
+        assert_eq!(asset.margin_balance, "10.00000000");
+        assert_eq!(asset.maint_margin, "0.10000000");
+        assert_eq!(asset.initial_margin, "0.20000000");
+        assert_eq!(asset.position_initial_margin, "0.15000000");
+        assert_eq!(asset.open_order_initial_margin, "0.05000000");
+        assert_eq!(asset.cross_wallet_balance, "10.50000000");
+        assert_eq!(asset.cross_un_pnl, "-0.50000000");
+        assert_eq!(asset.available_balance, "9.80000000");
+        assert_eq!(asset.max_withdraw_amount, "9.80000000");
+        assert_eq!(asset.update_time, 1699948800000);
+    }
+
+    #[test]
+    fn test_position_deserialization_cross_margin() {
+        let json = r#"{
+            "symbol": "ETHUSD_PERP",
+            "positionAmt": "-5.00000000",
+            "initialMargin": "0.00050000",
+            "maintMargin": "0.00025000",
+            "unrealizedProfit": "-0.00005000",
+            "positionInitialMargin": "0.00050000",
+            "openOrderInitialMargin": "0.00000000",
+            "leverage": "10",
+            "isolated": false,
+            "positionSide": "SHORT",
+            "entryPrice": "3000.00000000",
+            "breakEvenPrice": "3000.00000000",
+            "maxQty": "500.00000000",
+            "updateTime": 1699948800000
+        }"#;
+
+        let position: Position = serde_json::from_str(json).unwrap();
+        assert_eq!(position.symbol, "ETHUSD_PERP");
+        assert_eq!(position.position_amt, "-5.00000000");
+        assert_eq!(position.initial_margin, "0.00050000");
+        assert_eq!(position.maint_margin, "0.00025000");
+        assert_eq!(position.unrealized_profit, "-0.00005000");
+        assert_eq!(position.position_initial_margin, "0.00050000");
+        assert_eq!(position.open_order_initial_margin, "0.00000000");
+        assert_eq!(position.leverage, "10");
+        assert!(!position.isolated);
+        assert_eq!(position.position_side, PositionSide::Short);
+        assert_eq!(position.entry_price, "3000.00000000");
+        assert_eq!(position.break_even_price, "3000.00000000");
+        assert_eq!(position.max_qty, "500.00000000");
+        assert_eq!(position.update_time, 1699948800000);
+        assert!(position.margin_type.is_none());
+        assert!(position.notional_value.is_none());
+        assert!(position.isolated_wallet.is_none());
+    }
+
+    #[test]
+    fn test_position_deserialization_isolated_margin() {
+        let json = r#"{
+            "symbol": "SOLUSD_240329",
+            "positionAmt": "100.00000000",
+            "initialMargin": "0.01000000",
+            "maintMargin": "0.00500000",
+            "unrealizedProfit": "0.00100000",
+            "positionInitialMargin": "0.01000000",
+            "openOrderInitialMargin": "0.00000000",
+            "leverage": "5",
+            "isolated": true,
+            "marginType": "isolated",
+            "positionSide": "BOTH",
+            "entryPrice": "100.00000000",
+            "breakEvenPrice": "100.00000000",
+            "maxQty": "10000.00000000",
+            "notionalValue": "10000.00000000",
+            "isolatedWallet": "0.01100000",
+            "updateTime": 1699948800000
+        }"#;
+
+        let position: Position = serde_json::from_str(json).unwrap();
+        assert_eq!(position.symbol, "SOLUSD_240329");
+        assert_eq!(position.position_amt, "100.00000000");
+        assert!(position.isolated);
+        assert_eq!(position.margin_type, Some(MarginType::Isolated));
+        assert_eq!(position.position_side, PositionSide::Both);
+        assert_eq!(position.notional_value, Some("10000.00000000".to_string()));
+        assert_eq!(position.isolated_wallet, Some("0.01100000".to_string()));
     }
 }

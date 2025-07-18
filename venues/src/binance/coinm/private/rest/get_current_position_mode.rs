@@ -8,6 +8,8 @@ use crate::binance::{
     shared,
 };
 
+const POSITION_SIDE_DUAL_ENDPOINT: &str = "/dapi/v1/positionSide/dual";
+
 /// Request parameters for getting current position mode (GET /dapi/v1/positionSide/dual).
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct GetCurrentPositionModeRequest {
@@ -49,12 +51,56 @@ impl RestClient {
         let weight = 30;
         shared::send_signed_request(
             self,
-            "/dapi/v1/positionSide/dual",
+            POSITION_SIDE_DUAL_ENDPOINT,
             reqwest::Method::GET,
             params,
             weight,
             false,
         )
         .await
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_get_current_position_mode_request_serialization() {
+        let request = GetCurrentPositionModeRequest {
+            recv_window: None,
+            timestamp: 1625097600000,
+        };
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert_eq!(serialized, "timestamp=1625097600000");
+    }
+
+    #[test]
+    fn test_get_current_position_mode_request_serialization_with_recv_window() {
+        let request = GetCurrentPositionModeRequest {
+            recv_window: Some(5000),
+            timestamp: 1625097600000,
+        };
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert!(serialized.contains("recvWindow=5000"));
+        assert!(serialized.contains("timestamp=1625097600000"));
+    }
+
+    #[test]
+    fn test_get_current_position_mode_response_deserialization_hedge_mode() {
+        let json = r#"{
+            "dualSidePosition": true
+        }"#;
+        let response: GetCurrentPositionModeResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.dual_side_position, true);
+    }
+
+    #[test]
+    fn test_get_current_position_mode_response_deserialization_one_way_mode() {
+        let json = r#"{
+            "dualSidePosition": false
+        }"#;
+        let response: GetCurrentPositionModeResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.dual_side_position, false);
     }
 }

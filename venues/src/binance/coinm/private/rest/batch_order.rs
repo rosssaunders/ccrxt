@@ -12,6 +12,8 @@ use crate::binance::{
     shared,
 };
 
+const BATCH_ORDERS_ENDPOINT: &str = "/dapi/v1/batchOrders";
+
 /// Serializes a value as a JSON string for use in URL-encoded form bodies (Binance batch orders)
 fn as_json_string<S, T>(value: &T, serializer: S) -> Result<S::Ok, S::Error>
 where
@@ -301,12 +303,250 @@ impl RestClient {
     ) -> RestResult<Vec<BatchOrderResult>> {
         shared::send_signed_request(
             self,
-            "/dapi/v1/batchOrders",
+            BATCH_ORDERS_ENDPOINT,
             reqwest::Method::POST,
             request,
             5,    // weight
             true, // is_order
         )
         .await
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_batch_order_request_serialization() {
+        let order = BatchOrderRequest {
+            symbol: "BTCUSD_PERP".to_string(),
+            side: OrderSide::Buy,
+            position_side: Some(PositionSide::Long),
+            order_type: OrderType::Limit,
+            time_in_force: Some(TimeInForce::GTC),
+            quantity: "10.00000000".to_string(),
+            reduce_only: Some("false".to_string()),
+            price: Some("50000.00".to_string()),
+            new_client_order_id: Some("test123".to_string()),
+            stop_price: None,
+            activation_price: None,
+            callback_rate: None,
+            working_type: Some(WorkingType::ContractPrice),
+            price_protect: Some("TRUE".to_string()),
+            new_order_resp_type: Some(OrderResponseType::Result),
+            price_match: None,
+            self_trade_prevention_mode: None,
+        };
+
+        let serialized = serde_json::to_string(&order).unwrap();
+        assert!(serialized.contains("\"symbol\":\"BTCUSD_PERP\""));
+        assert!(serialized.contains("\"side\":\"BUY\""));
+        assert!(serialized.contains("\"positionSide\":\"LONG\""));
+        assert!(serialized.contains("\"type\":\"LIMIT\""));
+        assert!(serialized.contains("\"timeInForce\":\"GTC\""));
+        assert!(serialized.contains("\"quantity\":\"10.00000000\""));
+        assert!(serialized.contains("\"price\":\"50000.00\""));
+        assert!(serialized.contains("\"newClientOrderId\":\"test123\""));
+    }
+
+    #[test]
+    fn test_place_batch_orders_request_serialization() {
+        let orders = vec![
+            BatchOrderRequest {
+                symbol: "BTCUSD_PERP".to_string(),
+                side: OrderSide::Buy,
+                position_side: None,
+                order_type: OrderType::Market,
+                time_in_force: None,
+                quantity: "5.00000000".to_string(),
+                reduce_only: None,
+                price: None,
+                new_client_order_id: None,
+                stop_price: None,
+                activation_price: None,
+                callback_rate: None,
+                working_type: None,
+                price_protect: None,
+                new_order_resp_type: None,
+                price_match: None,
+                self_trade_prevention_mode: None,
+            },
+        ];
+
+        let request = PlaceBatchOrdersRequest {
+            batch_orders: orders,
+            recv_window: Some(5000),
+            timestamp: 1625097600000,
+        };
+
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert!(serialized.contains("timestamp=1625097600000"));
+        assert!(serialized.contains("recvWindow=5000"));
+        // The batchOrders field is serialized as JSON string
+        assert!(serialized.contains("batchOrders=%5B%7B"));
+    }
+
+    #[test]
+    fn test_batch_order_response_deserialization() {
+        let json = r#"{
+            "clientOrderId": "test123",
+            "cumQty": "10.00000000",
+            "cumBase": "0.00020000",
+            "executedQty": "10.00000000",
+            "orderId": 123456789,
+            "avgPrice": "50000.00",
+            "origQty": "10.00000000",
+            "price": "50000.00",
+            "reduceOnly": false,
+            "side": "BUY",
+            "positionSide": "LONG",
+            "status": "NEW",
+            "stopPrice": null,
+            "symbol": "BTCUSD_PERP",
+            "pair": "BTCUSD",
+            "timeInForce": "GTC",
+            "type": "LIMIT",
+            "origType": "LIMIT",
+            "activatePrice": null,
+            "priceRate": null,
+            "updateTime": 1625097600000,
+            "workingType": "CONTRACT_PRICE",
+            "priceProtect": true,
+            "priceMatch": "NONE",
+            "selfTradePreventionMode": "NONE"
+        }"#;
+
+        let response: BatchOrderResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.client_order_id, "test123");
+        assert_eq!(response.cum_qty, "10.00000000");
+        assert_eq!(response.cum_base, "0.00020000");
+        assert_eq!(response.executed_qty, "10.00000000");
+        assert_eq!(response.order_id, 123456789);
+        assert_eq!(response.avg_price, "50000.00");
+        assert_eq!(response.orig_qty, "10.00000000");
+        assert_eq!(response.price, "50000.00");
+        assert!(!response.reduce_only);
+        assert_eq!(response.side, OrderSide::Buy);
+        assert_eq!(response.position_side, PositionSide::Long);
+        assert_eq!(response.status, OrderStatus::New);
+        assert!(response.stop_price.is_none());
+        assert_eq!(response.symbol, "BTCUSD_PERP");
+        assert_eq!(response.pair, "BTCUSD");
+        assert_eq!(response.time_in_force, TimeInForce::GTC);
+        assert_eq!(response.order_type, OrderType::Limit);
+        assert_eq!(response.orig_type, OrderType::Limit);
+        assert_eq!(response.update_time, 1625097600000);
+        assert_eq!(response.working_type, WorkingType::ContractPrice);
+        assert!(response.price_protect);
+        assert_eq!(response.price_match, PriceMatch::None);
+        assert_eq!(response.self_trade_prevention_mode, SelfTradePreventionMode::None);
+    }
+
+    #[test]
+    fn test_batch_order_result_success_deserialization() {
+        let json = r#"{
+            "clientOrderId": "test123",
+            "cumQty": "0",
+            "cumBase": "0",
+            "executedQty": "0",
+            "orderId": 123456789,
+            "avgPrice": "0",
+            "origQty": "10.00000000",
+            "price": "50000.00",
+            "reduceOnly": false,
+            "side": "BUY",
+            "positionSide": "BOTH",
+            "status": "NEW",
+            "symbol": "BTCUSD_PERP",
+            "pair": "BTCUSD",
+            "timeInForce": "GTC",
+            "type": "LIMIT",
+            "origType": "LIMIT",
+            "updateTime": 1625097600000,
+            "workingType": "CONTRACT_PRICE",
+            "priceProtect": false,
+            "priceMatch": "NONE",
+            "selfTradePreventionMode": "NONE"
+        }"#;
+
+        let result: BatchOrderResult = serde_json::from_str(json).unwrap();
+        match result {
+            BatchOrderResult::Ok(response) => {
+                assert_eq!(response.order_id, 123456789);
+                assert_eq!(response.client_order_id, "test123");
+            }
+            BatchOrderResult::Err(_) => panic!("Expected Ok variant"),
+        }
+    }
+
+    #[test]
+    fn test_batch_order_result_error_deserialization() {
+        let json = r#"{
+            "code": -2022,
+            "msg": "ReduceOnly Order is rejected."
+        }"#;
+
+        let result: BatchOrderResult = serde_json::from_str(json).unwrap();
+        match result {
+            BatchOrderResult::Err(error) => {
+                assert_eq!(error.code, -2022);
+                assert_eq!(error.msg, "ReduceOnly Order is rejected.");
+            }
+            BatchOrderResult::Ok(_) => panic!("Expected Err variant"),
+        }
+    }
+
+    #[test]
+    fn test_batch_order_results_mixed_deserialization() {
+        let json = r#"[
+            {
+                "clientOrderId": "test123",
+                "cumQty": "0",
+                "cumBase": "0",
+                "executedQty": "0",
+                "orderId": 123456789,
+                "avgPrice": "0",
+                "origQty": "10.00000000",
+                "price": "50000.00",
+                "reduceOnly": false,
+                "side": "BUY",
+                "positionSide": "BOTH",
+                "status": "NEW",
+                "symbol": "BTCUSD_PERP",
+                "pair": "BTCUSD",
+                "timeInForce": "GTC",
+                "type": "LIMIT",
+                "origType": "LIMIT",
+                "updateTime": 1625097600000,
+                "workingType": "CONTRACT_PRICE",
+                "priceProtect": false,
+                "priceMatch": "NONE",
+                "selfTradePreventionMode": "NONE"
+            },
+            {
+                "code": -2022,
+                "msg": "ReduceOnly Order is rejected."
+            }
+        ]"#;
+
+        let results: Vec<BatchOrderResult> = serde_json::from_str(json).unwrap();
+        assert_eq!(results.len(), 2);
+        
+        // First result should be Ok
+        match &results[0] {
+            BatchOrderResult::Ok(response) => {
+                assert_eq!(response.order_id, 123456789);
+            }
+            BatchOrderResult::Err(_) => panic!("Expected Ok variant for first result"),
+        }
+        
+        // Second result should be Err
+        match &results[1] {
+            BatchOrderResult::Err(error) => {
+                assert_eq!(error.code, -2022);
+            }
+            BatchOrderResult::Ok(_) => panic!("Expected Err variant for second result"),
+        }
     }
 }

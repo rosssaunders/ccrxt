@@ -8,6 +8,8 @@ use crate::binance::{
     shared,
 };
 
+const POSITION_MARGIN_ENDPOINT: &str = "/dapi/v1/positionMargin";
+
 /// Request parameters for modifying isolated position margin (POST /dapi/v1/positionMargin).
 #[derive(Debug, Clone, Serialize)]
 pub struct ModifyIsolatedPositionMarginRequest {
@@ -73,12 +75,83 @@ impl RestClient {
         let weight = 1;
         shared::send_signed_request(
             self,
-            "/dapi/v1/positionMargin",
+            POSITION_MARGIN_ENDPOINT,
             reqwest::Method::POST,
             params,
             weight,
             true,
         )
         .await
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_modify_isolated_position_margin_request_serialization_one_way() {
+        let request = ModifyIsolatedPositionMarginRequest {
+            symbol: "BTCUSD_PERP".to_string(),
+            position_side: None,
+            amount: "0.01".to_string(),
+            modification_type: MarginModificationType::Add,
+            recv_window: None,
+            timestamp: 1625097600000,
+        };
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert!(serialized.contains("symbol=BTCUSD_PERP"));
+        assert!(serialized.contains("amount=0.01"));
+        assert!(serialized.contains("type=1"));
+        assert!(serialized.contains("timestamp=1625097600000"));
+        assert!(!serialized.contains("positionSide"));
+    }
+
+    #[test]
+    fn test_modify_isolated_position_margin_request_serialization_hedge_mode() {
+        let request = ModifyIsolatedPositionMarginRequest {
+            symbol: "BTCUSD_PERP".to_string(),
+            position_side: Some(PositionSide::Long),
+            amount: "0.02".to_string(),
+            modification_type: MarginModificationType::Reduce,
+            recv_window: Some(5000),
+            timestamp: 1625097600000,
+        };
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert!(serialized.contains("symbol=BTCUSD_PERP"));
+        assert!(serialized.contains("positionSide=LONG"));
+        assert!(serialized.contains("amount=0.02"));
+        assert!(serialized.contains("type=2"));
+        assert!(serialized.contains("recvWindow=5000"));
+        assert!(serialized.contains("timestamp=1625097600000"));
+    }
+
+    #[test]
+    fn test_modify_isolated_position_margin_response_deserialization() {
+        let json = r#"{
+            "amount": 0.01,
+            "code": 200,
+            "msg": "Successfully modify position margin.",
+            "type": 1
+        }"#;
+        let response: ModifyIsolatedPositionMarginResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.amount, 0.01);
+        assert_eq!(response.code, 200);
+        assert_eq!(response.msg, "Successfully modify position margin.");
+        assert_eq!(response.modification_type, 1);
+    }
+
+    #[test]
+    fn test_modify_isolated_position_margin_response_deserialization_reduce() {
+        let json = r#"{
+            "amount": 0.005,
+            "code": 200,
+            "msg": "Successfully modify position margin.",
+            "type": 2
+        }"#;
+        let response: ModifyIsolatedPositionMarginResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.amount, 0.005);
+        assert_eq!(response.code, 200);
+        assert_eq!(response.modification_type, 2);
     }
 }

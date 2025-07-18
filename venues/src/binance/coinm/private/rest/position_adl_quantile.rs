@@ -8,6 +8,8 @@ use crate::binance::{
     shared,
 };
 
+const ADL_QUANTILE_ENDPOINT: &str = "/dapi/v1/adlQuantile";
+
 /// Request parameters for getting position ADL quantile estimation (GET /dapi/v1/adlQuantile).
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct GetPositionAdlQuantileRequest {
@@ -88,12 +90,128 @@ impl RestClient {
         let weight = 5;
         shared::send_signed_request(
             self,
-            "/dapi/v1/adlQuantile",
+            ADL_QUANTILE_ENDPOINT,
             reqwest::Method::GET,
             params,
             weight,
             false,
         )
         .await
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_position_adl_quantile_request_serialization() {
+        let request = GetPositionAdlQuantileRequest {
+            symbol: Some("BTCUSD_PERP".to_string()),
+            recv_window: None,
+            timestamp: 1625097600000,
+        };
+
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert!(serialized.contains("symbol=BTCUSD_PERP"));
+        assert!(serialized.contains("timestamp=1625097600000"));
+        assert!(!serialized.contains("recvWindow"));
+    }
+
+    #[test]
+    fn test_position_adl_quantile_request_without_symbol() {
+        let request = GetPositionAdlQuantileRequest {
+            symbol: None,
+            recv_window: Some(5000),
+            timestamp: 1625097600000,
+        };
+
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert!(serialized.contains("recvWindow=5000"));
+        assert!(serialized.contains("timestamp=1625097600000"));
+        assert!(!serialized.contains("symbol"));
+    }
+
+    #[test]
+    fn test_adl_quantile_values_one_way_mode() {
+        let json = r#"{
+            "BOTH": 2
+        }"#;
+
+        let values: AdlQuantileValues = serde_json::from_str(json).unwrap();
+        assert_eq!(values.both, Some(2));
+        assert!(values.long.is_none());
+        assert!(values.short.is_none());
+        assert!(values.hedge.is_none());
+    }
+
+    #[test]
+    fn test_adl_quantile_values_hedge_mode_isolated() {
+        let json = r#"{
+            "LONG": 3,
+            "SHORT": 1
+        }"#;
+
+        let values: AdlQuantileValues = serde_json::from_str(json).unwrap();
+        assert_eq!(values.long, Some(3));
+        assert_eq!(values.short, Some(1));
+        assert!(values.both.is_none());
+        assert!(values.hedge.is_none());
+    }
+
+    #[test]
+    fn test_adl_quantile_values_hedge_mode_crossed() {
+        let json = r#"{
+            "LONG": 4,
+            "SHORT": 4,
+            "HEDGE": 0
+        }"#;
+
+        let values: AdlQuantileValues = serde_json::from_str(json).unwrap();
+        assert_eq!(values.long, Some(4));
+        assert_eq!(values.short, Some(4));
+        assert!(values.both.is_none());
+        assert_eq!(values.hedge, Some(0));
+    }
+
+    #[test]
+    fn test_position_adl_quantile_response_deserialization() {
+        let json = r#"[
+            {
+                "symbol": "BTCUSD_PERP",
+                "adlQuantile": {
+                    "BOTH": 2
+                }
+            },
+            {
+                "symbol": "ETHUSD_PERP",
+                "adlQuantile": {
+                    "LONG": 3,
+                    "SHORT": 1
+                }
+            }
+        ]"#;
+
+        let response: GetPositionAdlQuantileResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.len(), 2);
+        
+        let entry1 = &response[0];
+        assert_eq!(entry1.symbol, "BTCUSD_PERP");
+        assert_eq!(entry1.adl_quantile.both, Some(2));
+        assert!(entry1.adl_quantile.long.is_none());
+        assert!(entry1.adl_quantile.short.is_none());
+        
+        let entry2 = &response[1];
+        assert_eq!(entry2.symbol, "ETHUSD_PERP");
+        assert_eq!(entry2.adl_quantile.long, Some(3));
+        assert_eq!(entry2.adl_quantile.short, Some(1));
+        assert!(entry2.adl_quantile.both.is_none());
+    }
+
+    #[test]
+    fn test_empty_position_adl_quantile_response() {
+        let json = r#"[]"#;
+        let response: GetPositionAdlQuantileResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.len(), 0);
     }
 }
