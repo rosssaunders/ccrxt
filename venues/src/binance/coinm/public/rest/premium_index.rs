@@ -125,7 +125,7 @@ mod tests {
 
         let response: Vec<PremiumIndex> = serde_json::from_str(json).unwrap();
         assert_eq!(response.len(), 1);
-        
+
         let item = &response[0];
         assert_eq!(item.symbol, "BTCUSD_PERP");
         assert_eq!(item.pair, "BTCUSD");
@@ -154,7 +154,7 @@ mod tests {
 
         let response: Vec<PremiumIndex> = serde_json::from_str(json).unwrap();
         assert_eq!(response.len(), 1);
-        
+
         let item = &response[0];
         assert_eq!(item.symbol, "BTCUSD_240329");
         assert_eq!(item.last_funding_rate, "");

@@ -138,9 +138,7 @@ mod tests {
 
     #[test]
     fn test_create_listen_key_request_serialization() {
-        let request = CreateListenKeyRequest {
-            recv_window: None,
-        };
+        let request = CreateListenKeyRequest { recv_window: None };
         let serialized = serde_urlencoded::to_string(&request).unwrap();
         assert_eq!(serialized, "");
     }
@@ -156,9 +154,7 @@ mod tests {
 
     #[test]
     fn test_extend_listen_key_request_serialization() {
-        let request = ExtendListenKeyRequest {
-            recv_window: None,
-        };
+        let request = ExtendListenKeyRequest { recv_window: None };
         let serialized = serde_urlencoded::to_string(&request).unwrap();
         assert_eq!(serialized, "");
     }
@@ -174,9 +170,7 @@ mod tests {
 
     #[test]
     fn test_delete_listen_key_request_serialization() {
-        let request = DeleteListenKeyRequest {
-            recv_window: None,
-        };
+        let request = DeleteListenKeyRequest { recv_window: None };
         let serialized = serde_urlencoded::to_string(&request).unwrap();
         assert_eq!(serialized, "");
     }
@@ -196,7 +190,10 @@ mod tests {
             "listenKey": "pqia91ma19a5s61cv6a81va65sdf19v8a65a1a5s61cv6a81va65sdf19v8a65a1"
         }"#;
         let response: CreateListenKeyResponse = serde_json::from_str(json).unwrap();
-        assert_eq!(response.listen_key, "pqia91ma19a5s61cv6a81va65sdf19v8a65a1a5s61cv6a81va65sdf19v8a65a1");
+        assert_eq!(
+            response.listen_key,
+            "pqia91ma19a5s61cv6a81va65sdf19v8a65a1a5s61cv6a81va65sdf19v8a65a1"
+        );
     }
 
     #[test]

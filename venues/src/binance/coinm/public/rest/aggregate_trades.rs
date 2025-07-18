@@ -171,11 +171,11 @@ mod tests {
 
         let trades: Vec<AggregateTrade> = serde_json::from_str(json).unwrap();
         assert_eq!(trades.len(), 2);
-        
+
         assert_eq!(trades[0].agg_trade_id, 26129);
         assert_eq!(trades[0].price, "50000.00");
         assert!(trades[0].is_buyer_maker);
-        
+
         assert_eq!(trades[1].agg_trade_id, 26130);
         assert_eq!(trades[1].price, "50001.00");
         assert!(!trades[1].is_buyer_maker);

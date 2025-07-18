@@ -39,10 +39,7 @@ impl RestClient {
     ///
     /// # API Documentation
     /// <https://www.gate.com/docs/developers/apiv4/#get-details-of-a-specific-currency>
-    pub async fn get_currency(
-        &self,
-        currency: &str,
-    ) -> crate::gateio::spot::Result<Currency> {
+    pub async fn get_currency(&self, currency: &str) -> crate::gateio::spot::Result<Currency> {
         let endpoint = format!("/spot/currencies/{}", currency);
         self.get(&endpoint).await
     }

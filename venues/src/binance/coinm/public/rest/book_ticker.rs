@@ -175,10 +175,10 @@ mod tests {
 
         let tickers: Vec<BookTicker> = serde_json::from_str(json).unwrap();
         assert_eq!(tickers.len(), 2);
-        
+
         assert_eq!(tickers[0].symbol, "BTCUSD_PERP");
         assert_eq!(tickers[0].bid_price, Decimal::from_f64(50000.25).unwrap());
-        
+
         assert_eq!(tickers[1].symbol, "ETHUSD_PERP");
         assert_eq!(tickers[1].ask_price, Decimal::from_f64(3001.00).unwrap());
     }

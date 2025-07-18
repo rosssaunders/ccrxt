@@ -33,9 +33,11 @@ pub struct WebSocketToken {
 
 impl super::RestClient {
     /// Get public WebSocket token for futures
-    /// 
+    ///
     /// <https://www.kucoin.com/docs-new/websocket-api/base-info/get-public-token-futures>
-    pub async fn get_public_token(&self) -> Result<(RestResponse<WebSocketToken>, ResponseHeaders)> {
+    pub async fn get_public_token(
+        &self,
+    ) -> Result<(RestResponse<WebSocketToken>, ResponseHeaders)> {
         // POST requests use empty params for public endpoints
         self.send_request(PUBLIC_TOKEN_ENDPOINT, None::<&()>).await
     }
@@ -79,8 +81,14 @@ mod tests {
         }"#;
 
         let token_response: WebSocketToken = serde_json::from_str(json).unwrap();
-        assert_eq!(token_response.token, "2neKiuYvAU61ZDXANAGAsiL4-iAExhsBXZxftpOeh_55i3Ysy2q2LEsEWU64mdzUOPusi34M_wGoSf7iNyEWJz8fXXX-0GUfLZ2Z2Z");
+        assert_eq!(
+            token_response.token,
+            "2neKiuYvAU61ZDXANAGAsiL4-iAExhsBXZxftpOeh_55i3Ysy2q2LEsEWU64mdzUOPusi34M_wGoSf7iNyEWJz8fXXX-0GUfLZ2Z2Z"
+        );
         assert_eq!(token_response.instance_servers.len(), 1);
-        assert_eq!(token_response.instance_servers[0].endpoint, "wss://push1.kucoin.com/endpoint");
+        assert_eq!(
+            token_response.instance_servers[0].endpoint,
+            "wss://push1.kucoin.com/endpoint"
+        );
     }
 }

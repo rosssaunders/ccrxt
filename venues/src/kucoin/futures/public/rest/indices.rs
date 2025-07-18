@@ -106,23 +106,25 @@ pub struct PremiumIndexResponse {
 
 impl super::RestClient {
     /// Get interest rate index data
-    /// 
+    ///
     /// <https://www.kucoin.com/docs-new/rest/futures-trading/market-data/get-interest-rate-index>
     pub async fn get_interest_rate_index(
         &self,
         request: GetInterestRateIndexRequest,
     ) -> Result<(RestResponse<InterestRateIndexResponse>, ResponseHeaders)> {
-        self.send_request(INTEREST_RATE_INDEX_ENDPOINT, Some(&request)).await
+        self.send_request(INTEREST_RATE_INDEX_ENDPOINT, Some(&request))
+            .await
     }
 
     /// Get premium index data
-    /// 
+    ///
     /// <https://www.kucoin.com/docs-new/rest/futures-trading/market-data/get-premium-index>
     pub async fn get_premium_index(
         &self,
         request: GetPremiumIndexRequest,
     ) -> Result<(RestResponse<PremiumIndexResponse>, ResponseHeaders)> {
-        self.send_request(PREMIUM_INDEX_ENDPOINT, Some(&request)).await
+        self.send_request(PREMIUM_INDEX_ENDPOINT, Some(&request))
+            .await
     }
 }
 
@@ -141,7 +143,7 @@ mod tests {
             forward: Some(true),
             max_count: Some(50),
         };
-        
+
         assert_eq!(request.symbol, ".XBTINT8H,.USDTINT8H");
         assert_eq!(request.start_at, Some(1634567890000));
         assert_eq!(request.max_count, Some(50));
@@ -185,7 +187,7 @@ mod tests {
             forward: None,
             max_count: None,
         };
-        
+
         assert_eq!(request.symbol, ".XBTUSDTMPI,.XBTUSDTMPI8H");
     }
 

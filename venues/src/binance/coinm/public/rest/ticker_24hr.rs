@@ -141,7 +141,7 @@ mod tests {
 
         let response: Vec<Ticker24hr> = serde_json::from_str(json).unwrap();
         assert_eq!(response.len(), 1);
-        
+
         let ticker = &response[0];
         assert_eq!(ticker.symbol, "BTCUSD_PERP");
         assert_eq!(ticker.pair, "BTCUSD");
@@ -186,7 +186,7 @@ mod tests {
 
         let response: Vec<Ticker24hr> = serde_json::from_str(json).unwrap();
         assert_eq!(response.len(), 1);
-        
+
         let ticker = &response[0];
         assert_eq!(ticker.symbol, "ETHUSD_PERP");
         assert_eq!(ticker.price_change, Decimal::new(-12575, 2));

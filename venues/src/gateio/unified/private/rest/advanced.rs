@@ -312,9 +312,7 @@ impl RestClient {
     /// Get unified mode status
     ///
     /// This endpoint returns the current unified mode status.
-    pub async fn get_unified_mode(
-        &self,
-    ) -> crate::gateio::unified::Result<UnifiedModeResponse> {
+    pub async fn get_unified_mode(&self) -> crate::gateio::unified::Result<UnifiedModeResponse> {
         self.get("/unified/unified_mode").await
     }
 

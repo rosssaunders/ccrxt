@@ -35,7 +35,7 @@ pub struct IndexConstituent {
 pub struct IndexConstituentsResponse {
     /// Index name
     pub index: String,
-    
+
     /// List of constituents
     pub constituents: Vec<IndexConstituent>,
 }

@@ -154,11 +154,20 @@ mod tests {
 
         let basis_list: Vec<Basis> = serde_json::from_str(json).unwrap();
         assert_eq!(basis_list.len(), 2);
-        
-        assert_eq!(basis_list[0].futures_price, Decimal::from_f64(50000.50).unwrap());
+
+        assert_eq!(
+            basis_list[0].futures_price,
+            Decimal::from_f64(50000.50).unwrap()
+        );
         assert_eq!(basis_list[0].timestamp, 1625097600000);
-        
-        assert_eq!(basis_list[1].futures_price, Decimal::from_f64(50100.00).unwrap());
-        assert_eq!(basis_list[1].basis_rate, Decimal::from_f64(0.002000).unwrap());
+
+        assert_eq!(
+            basis_list[1].futures_price,
+            Decimal::from_f64(50100.00).unwrap()
+        );
+        assert_eq!(
+            basis_list[1].basis_rate,
+            Decimal::from_f64(0.002000).unwrap()
+        );
     }
 }

@@ -26,17 +26,20 @@ pub struct ServiceStatus {
 
 impl super::RestClient {
     /// Get server time
-    /// 
+    ///
     /// <https://www.kucoin.com/docs-new/rest/futures-trading/market-data/get-server-time>
     pub async fn get_server_time(&self) -> Result<(RestResponse<ServerTime>, ResponseHeaders)> {
         self.send_request(SERVER_TIME_ENDPOINT, None::<&()>).await
     }
 
     /// Get service status
-    /// 
+    ///
     /// <https://www.kucoin.com/docs-new/rest/futures-trading/market-data/get-service-status>
-    pub async fn get_service_status(&self) -> Result<(RestResponse<ServiceStatus>, ResponseHeaders)> {
-        self.send_request(SERVICE_STATUS_ENDPOINT, None::<&()>).await
+    pub async fn get_service_status(
+        &self,
+    ) -> Result<(RestResponse<ServiceStatus>, ResponseHeaders)> {
+        self.send_request(SERVICE_STATUS_ENDPOINT, None::<&()>)
+            .await
     }
 }
 

@@ -71,6 +71,9 @@ mod tests {
 
     #[test]
     fn test_auto_deposit_margin_endpoint() {
-        assert_eq!(AUTO_DEPOSIT_MARGIN_ENDPOINT, "/api/v1/position/margin/auto-deposit-status");
+        assert_eq!(
+            AUTO_DEPOSIT_MARGIN_ENDPOINT,
+            "/api/v1/position/margin/auto-deposit-status"
+        );
     }
 }

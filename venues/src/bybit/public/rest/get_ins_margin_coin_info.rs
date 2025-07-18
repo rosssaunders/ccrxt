@@ -19,11 +19,11 @@ pub struct InsMarginCoinInfo {
     /// Margin coin
     #[serde(rename = "marginCoin")]
     pub margin_coin: String,
-    
+
     /// Conversion rate
     #[serde(rename = "conversionRate")]
     pub conversion_rate: String,
-    
+
     /// Liquidation order
     #[serde(rename = "liquidationOrder")]
     pub liquidation_order: String,
@@ -35,15 +35,15 @@ pub struct GetInsMarginCoinInfoData {
     /// Product ID
     #[serde(rename = "productId")]
     pub product_id: String,
-    
+
     /// Parent UID
     #[serde(rename = "parentUid")]
     pub parent_uid: String,
-    
+
     /// Loan coin
     #[serde(rename = "loanCoin")]
     pub loan_coin: String,
-    
+
     /// List of margin coin information
     #[serde(rename = "marginCoinInfoList")]
     pub margin_coin_info_list: Vec<InsMarginCoinInfo>,
@@ -55,18 +55,18 @@ pub struct GetInsMarginCoinInfoResponse {
     /// Success/Error code (0: success, 1: error)
     #[serde(rename = "retCode")]
     pub ret_code: i32,
-    
+
     /// Success/Error message
     #[serde(rename = "retMsg")]
     pub ret_msg: String,
-    
+
     /// Business data result
     pub result: GetInsMarginCoinInfoData,
-    
+
     /// Extended information
     #[serde(rename = "retExtInfo")]
     pub ret_ext_info: serde_json::Value,
-    
+
     /// Current timestamp in milliseconds
     pub time: u64,
 }

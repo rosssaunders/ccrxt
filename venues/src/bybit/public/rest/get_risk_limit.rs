@@ -10,7 +10,7 @@ const RISK_LIMIT_ENDPOINT: &str = "/v5/market/risk-limit";
 pub struct GetRiskLimitRequest {
     /// Product type (Linear or Inverse)
     pub category: Category,
-    
+
     /// Symbol name. Required for Linear, optional for Inverse
     #[serde(skip_serializing_if = "Option::is_none")]
     pub symbol: Option<String>,
@@ -21,26 +21,26 @@ pub struct GetRiskLimitRequest {
 pub struct RiskLimitInfo {
     /// Risk limit ID
     pub id: i32,
-    
+
     /// Symbol name
     pub symbol: String,
-    
+
     /// Position limit value corresponding to risk ID
     #[serde(rename = "riskLimitValue")]
     pub risk_limit_value: String,
-    
+
     /// Maintenance margin rate
     #[serde(rename = "maintenanceMargin")]
     pub maintenance_margin: String,
-    
+
     /// Initial margin rate
     #[serde(rename = "initialMargin")]
     pub initial_margin: String,
-    
+
     /// Whether this is the lowest risk ID (1: true, 0: false)
     #[serde(rename = "isLowestRisk")]
     pub is_lowest_risk: i32,
-    
+
     /// Maximum leverage
     #[serde(rename = "maxLeverage")]
     pub max_leverage: String,
@@ -51,7 +51,7 @@ pub struct RiskLimitInfo {
 pub struct GetRiskLimitData {
     /// Product type
     pub category: Category,
-    
+
     /// Array of risk limit info
     pub list: Vec<RiskLimitInfo>,
 }
@@ -62,18 +62,18 @@ pub struct GetRiskLimitResponse {
     /// Success/Error code (0: success, 1: error)
     #[serde(rename = "retCode")]
     pub ret_code: i32,
-    
+
     /// Success/Error message
     #[serde(rename = "retMsg")]
     pub ret_msg: String,
-    
+
     /// Business data result
     pub result: GetRiskLimitData,
-    
+
     /// Extended information
     #[serde(rename = "retExtInfo")]
     pub ret_ext_info: serde_json::Value,
-    
+
     /// Current timestamp in milliseconds
     pub time: u64,
 }

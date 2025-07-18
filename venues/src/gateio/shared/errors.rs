@@ -179,7 +179,10 @@ mod tests {
         let api_error: ApiError = error_response.clone().into();
         assert_eq!(api_error.label, "INVALID_PARAM");
         assert_eq!(api_error.message, "Invalid parameter provided");
-        assert_eq!(api_error.detail, Some("Currency pair not found".to_string()));
+        assert_eq!(
+            api_error.detail,
+            Some("Currency pair not found".to_string())
+        );
 
         let gateio_error: GateIoError = error_response.into();
         assert!(matches!(gateio_error, GateIoError::Api(_)));

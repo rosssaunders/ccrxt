@@ -72,24 +72,29 @@ pub struct PartOrderBook {
 
 impl super::RestClient {
     /// Get full orderbook depth data
-    /// 
+    ///
     /// <https://www.kucoin.com/docs-new/rest/futures-trading/market-data/get-full-orderbook>
     pub async fn get_full_orderbook(
         &self,
         request: GetFullOrderBookRequest,
     ) -> Result<(RestResponse<FullOrderBook>, ResponseHeaders)> {
-        self.send_request(FULL_ORDERBOOK_ENDPOINT, Some(&request)).await
+        self.send_request(FULL_ORDERBOOK_ENDPOINT, Some(&request))
+            .await
     }
 
     /// Get part orderbook depth data (20 or 100 levels)
-    /// 
+    ///
     /// <https://www.kucoin.com/docs-new/rest/futures-trading/market-data/get-part-orderbook>
     pub async fn get_part_orderbook(
         &self,
         request: GetPartOrderBookRequest,
     ) -> Result<(RestResponse<PartOrderBook>, ResponseHeaders)> {
-        let endpoint = format!("{}{}", PART_ORDERBOOK_ENDPOINT_PREFIX, request.depth.as_str());
-        
+        let endpoint = format!(
+            "{}{}",
+            PART_ORDERBOOK_ENDPOINT_PREFIX,
+            request.depth.as_str()
+        );
+
         self.send_request(&endpoint, Some(&request)).await
     }
 }

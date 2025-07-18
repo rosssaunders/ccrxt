@@ -2,15 +2,15 @@
 
 use venues::okx::{
     Bar, BarSize, ConvertContractCoinRequest, GetDeliveryExerciseHistoryRequest,
-    GetDiscountRateInterestFreeQuotaRequest, GetEstimatedPriceRequest, GetEstimatedSettlementInfoRequest,
-    GetFundingRateHistoryRequest, GetFundingRateRequest, GetHistoryIndexCandlesRequest,
-    GetHistoryMarkPriceCandlesRequest, GetIndexCandlesRequest, GetIndexComponentsRequest,
-    GetIndexTickersRequest, GetInstrumentTickBandsRequest, GetInstrumentsRequest,
-    GetInsuranceFundRequest, GetMarkPriceCandlesHistoryRequest, GetMarkPriceCandlesRequest,
-    GetMarkPriceRequest, GetOpenInterestRequest, GetOptSummaryRequest, GetPositionTiersRequest,
-    GetPremiumHistoryRequest, GetPriceLimitRequest, GetSettlementHistoryRequest,
-    GetUnderlyingRequest, InstrumentState, InstrumentType, PublicRestClient, RateLimiter,
-    TickBandInstrumentType,
+    GetDiscountRateInterestFreeQuotaRequest, GetEstimatedPriceRequest,
+    GetEstimatedSettlementInfoRequest, GetFundingRateHistoryRequest, GetFundingRateRequest,
+    GetHistoryIndexCandlesRequest, GetHistoryMarkPriceCandlesRequest, GetIndexCandlesRequest,
+    GetIndexComponentsRequest, GetIndexTickersRequest, GetInstrumentTickBandsRequest,
+    GetInstrumentsRequest, GetInsuranceFundRequest, GetMarkPriceCandlesHistoryRequest,
+    GetMarkPriceCandlesRequest, GetMarkPriceRequest, GetOpenInterestRequest, GetOptSummaryRequest,
+    GetPositionTiersRequest, GetPremiumHistoryRequest, GetPriceLimitRequest,
+    GetSettlementHistoryRequest, GetUnderlyingRequest, InstrumentState, InstrumentType,
+    PublicRestClient, RateLimiter, TickBandInstrumentType,
 };
 
 /// Helper function to create a test client with rate limiting
@@ -281,7 +281,9 @@ async fn test_get_estimated_settlement_info() {
                 response.data[0].next_settle_time
             );
         } else {
-            println!("No estimated settlement info available for this instrument (likely not near settlement time)");
+            println!(
+                "No estimated settlement info available for this instrument (likely not near settlement time)"
+            );
         }
     } else {
         println!(

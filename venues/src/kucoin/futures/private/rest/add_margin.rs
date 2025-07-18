@@ -106,6 +106,9 @@ mod tests {
 
     #[test]
     fn test_add_margin_endpoint() {
-        assert_eq!(ADD_MARGIN_ENDPOINT, "/api/v1/position/margin/deposit-margin");
+        assert_eq!(
+            ADD_MARGIN_ENDPOINT,
+            "/api/v1/position/margin/deposit-margin"
+        );
     }
 }

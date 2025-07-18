@@ -13,21 +13,21 @@ pub struct GetKlineRequest {
     /// Product type. Required for Inverse and USDC Futures, optional for others
     #[serde(skip_serializing_if = "Option::is_none")]
     pub category: Option<Category>,
-    
+
     /// Symbol name (e.g., "BTCUSDT")
     pub symbol: String,
-    
+
     /// Kline interval
     pub interval: Interval,
-    
+
     /// Start timestamp in milliseconds
     #[serde(skip_serializing_if = "Option::is_none")]
     pub start: Option<u64>,
-    
+
     /// End timestamp in milliseconds. Default: current time
     #[serde(skip_serializing_if = "Option::is_none")]
     pub end: Option<u64>,
-    
+
     /// Limit for data size per page. Spot: [1,1000], others: [1,200]. Default: 200
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i32>,
@@ -38,22 +38,22 @@ pub struct GetKlineRequest {
 pub struct Kline {
     /// Start timestamp of the kline in milliseconds
     pub start_time: String,
-    
+
     /// Open price
     pub open_price: String,
-    
+
     /// High price
     pub high_price: String,
-    
+
     /// Low price
     pub low_price: String,
-    
+
     /// Close price
     pub close_price: String,
-    
+
     /// Trade volume. Unit of contract: pieces of contract. Unit of spot: quantity of coins
     pub volume: String,
-    
+
     /// Turnover. Unit of contract: quote currency. Unit of spot: quote currency
     pub turnover: String,
 }
@@ -87,10 +87,10 @@ impl<'de> Deserialize<'de> for Kline {
 pub struct GetKlineData {
     /// Product type
     pub category: Category,
-    
+
     /// Symbol name
     pub symbol: String,
-    
+
     /// Array of kline data
     pub list: Vec<Kline>,
 }
@@ -101,18 +101,18 @@ pub struct GetKlineResponse {
     /// Success/Error code (0: success, 1: error)
     #[serde(rename = "retCode")]
     pub ret_code: i32,
-    
+
     /// Success/Error message
     #[serde(rename = "retMsg")]
     pub ret_msg: String,
-    
+
     /// Business data result
     pub result: GetKlineData,
-    
+
     /// Extended information
     #[serde(rename = "retExtInfo")]
     pub ret_ext_info: serde_json::Value,
-    
+
     /// Current timestamp in milliseconds
     pub time: u64,
 }

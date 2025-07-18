@@ -11,21 +11,21 @@ const MARK_PRICE_KLINE_ENDPOINT: &str = "/v5/market/mark-price-kline";
 pub struct GetMarkPriceKlineRequest {
     /// Product type (Linear or Inverse)
     pub category: Category,
-    
+
     /// Symbol name (e.g., "BTCUSDT")
     pub symbol: String,
-    
+
     /// Kline interval
     pub interval: Interval,
-    
+
     /// Start timestamp in milliseconds
     #[serde(skip_serializing_if = "Option::is_none")]
     pub start: Option<u64>,
-    
+
     /// End timestamp in milliseconds. Default: current time
     #[serde(skip_serializing_if = "Option::is_none")]
     pub end: Option<u64>,
-    
+
     /// Limit for data size per page. [1, 1000]. Default: 200
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i32>,
@@ -36,16 +36,16 @@ pub struct GetMarkPriceKlineRequest {
 pub struct MarkPriceKline {
     /// Start timestamp of the kline in milliseconds
     pub start_time: String,
-    
+
     /// Open price
     pub open_price: String,
-    
+
     /// High price
     pub high_price: String,
-    
+
     /// Low price
     pub low_price: String,
-    
+
     /// Close price
     pub close_price: String,
 }
@@ -78,10 +78,10 @@ impl<'de> Deserialize<'de> for MarkPriceKline {
 pub struct GetMarkPriceKlineData {
     /// Product type
     pub category: Category,
-    
+
     /// Symbol name
     pub symbol: String,
-    
+
     /// Array of kline data
     pub list: Vec<MarkPriceKline>,
 }
@@ -92,18 +92,18 @@ pub struct GetMarkPriceKlineResponse {
     /// Success/Error code (0: success, 1: error)
     #[serde(rename = "retCode")]
     pub ret_code: i32,
-    
+
     /// Success/Error message
     #[serde(rename = "retMsg")]
     pub ret_msg: String,
-    
+
     /// Business data result
     pub result: GetMarkPriceKlineData,
-    
+
     /// Extended information
     #[serde(rename = "retExtInfo")]
     pub ret_ext_info: serde_json::Value,
-    
+
     /// Current timestamp in milliseconds
     pub time: u64,
 }

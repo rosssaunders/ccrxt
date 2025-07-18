@@ -78,7 +78,7 @@ impl super::RestClient {
         request: GetPositionListRequest,
     ) -> Result<(RestResponse<GetPositionListResponse>, ResponseHeaders)> {
         const GET_POSITION_LIST_ENDPOINT: &str = "/api/v1/positions";
-        
+
         let params = if let Some(currency) = request.currency {
             let mut params = std::collections::HashMap::new();
             params.insert("currency".to_string(), currency);
@@ -86,7 +86,7 @@ impl super::RestClient {
         } else {
             None
         };
-        
+
         self.get(GET_POSITION_LIST_ENDPOINT, params.as_ref()).await
     }
 }
@@ -105,9 +105,7 @@ mod tests {
 
     #[test]
     fn test_get_position_list_request_without_currency() {
-        let request = GetPositionListRequest {
-            currency: None,
-        };
+        let request = GetPositionListRequest { currency: None };
         assert!(request.currency.is_none());
     }
 

@@ -104,7 +104,10 @@ mod tests {
 
         let response: CancelAllOpenOrdersResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.code, 200);
-        assert_eq!(response.msg, "The operation of cancel all open order is done.");
+        assert_eq!(
+            response.msg,
+            "The operation of cancel all open order is done."
+        );
     }
 
     #[test]

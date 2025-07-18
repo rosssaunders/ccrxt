@@ -11,19 +11,19 @@ const INSTRUMENTS_INFO_ENDPOINT: &str = "/v5/market/instruments-info";
 pub struct GetInstrumentsInfoRequest {
     /// Product type
     pub category: Category,
-    
+
     /// Symbol name (e.g., "BTCUSDT")
     #[serde(skip_serializing_if = "Option::is_none")]
     pub symbol: Option<String>,
-    
+
     /// Base coin. For Option only
     #[serde(skip_serializing_if = "Option::is_none")]
     pub base_coin: Option<String>,
-    
+
     /// Limit for data size per page. [1, 1000]. Default: 500
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i32>,
-    
+
     /// Cursor. Use the nextPageCursor token from the response to retrieve the next page
     #[serde(skip_serializing_if = "Option::is_none")]
     pub cursor: Option<String>,
@@ -35,61 +35,61 @@ pub struct GetInstrumentsInfoRequest {
 pub struct InstrumentInfo {
     /// Symbol name
     pub symbol: String,
-    
+
     /// Contract type
     pub contract_type: Option<String>,
-    
+
     /// Instrument status
     pub status: String,
-    
+
     /// Base coin
     pub base_coin: String,
-    
+
     /// Quote coin
     pub quote_coin: String,
-    
+
     /// Launch timestamp in milliseconds
     pub launch_time: String,
-    
+
     /// Delivery timestamp in milliseconds. Valid for Inverse Futures
     pub delivery_time: Option<String>,
-    
+
     /// Delivery fee rate. Valid for Inverse Futures
     pub delivery_fee_rate: Option<String>,
-    
+
     /// Price scale
     pub price_scale: String,
-    
+
     /// Leverage filter
     pub leverage_filter: LeverageFilter,
-    
+
     /// Price filter
     pub price_filter: PriceFilter,
-    
+
     /// Lot size filter
     pub lot_size_filter: LotSizeFilter,
-    
+
     /// Whether to support unified margin trade
     pub unified_margin_trade: Option<bool>,
-    
+
     /// Funding interval (minutes)
     pub funding_interval: Option<i32>,
-    
+
     /// Settle coin
     pub settle_coin: Option<String>,
-    
+
     /// Copy trading support ("none", "both", "copyOnly", "normalOnly")
     pub copy_trading: Option<String>,
-    
+
     /// Upper funding rate
     pub upper_funding_rate: Option<String>,
-    
+
     /// Lower funding rate
     pub lower_funding_rate: Option<String>,
-    
+
     /// Whether the contract is in pre-listing phase
     pub is_pre_listing: Option<bool>,
-    
+
     /// Pre-listing information
     pub pre_listing_info: Option<serde_json::Value>,
 }
@@ -100,10 +100,10 @@ pub struct InstrumentInfo {
 pub struct LeverageFilter {
     /// Minimum leverage
     pub min_leverage: String,
-    
+
     /// Maximum leverage
     pub max_leverage: String,
-    
+
     /// Leverage step
     pub leverage_step: String,
 }
@@ -114,10 +114,10 @@ pub struct LeverageFilter {
 pub struct PriceFilter {
     /// Minimum order price
     pub min_price: String,
-    
+
     /// Maximum order price
     pub max_price: String,
-    
+
     /// Tick size
     pub tick_size: String,
 }
@@ -128,19 +128,19 @@ pub struct PriceFilter {
 pub struct LotSizeFilter {
     /// Maximum order quantity
     pub max_order_qty: String,
-    
+
     /// Maximum market order quantity
     pub max_market_order_qty: Option<String>,
-    
+
     /// Minimum order quantity
     pub min_order_qty: String,
-    
+
     /// Order quantity step
     pub qty_step: String,
-    
+
     /// Maximum order quantity for post-only orders
     pub post_only_max_order_qty: Option<String>,
-    
+
     /// Minimum notional value
     pub min_notional_value: Option<String>,
 }
@@ -150,10 +150,10 @@ pub struct LotSizeFilter {
 pub struct GetInstrumentsInfoData {
     /// Product type
     pub category: Category,
-    
+
     /// Array of instrument info
     pub list: Vec<InstrumentInfo>,
-    
+
     /// Cursor for pagination
     #[serde(rename = "nextPageCursor")]
     pub next_page_cursor: String,
@@ -165,18 +165,18 @@ pub struct GetInstrumentsInfoResponse {
     /// Success/Error code (0: success, 1: error)
     #[serde(rename = "retCode")]
     pub ret_code: i32,
-    
+
     /// Success/Error message
     #[serde(rename = "retMsg")]
     pub ret_msg: String,
-    
+
     /// Business data result
     pub result: GetInstrumentsInfoData,
-    
+
     /// Extended information
     #[serde(rename = "retExtInfo")]
     pub ret_ext_info: serde_json::Value,
-    
+
     /// Current timestamp in milliseconds
     pub time: u64,
 }

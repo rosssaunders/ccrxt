@@ -134,9 +134,7 @@ mod tests {
 
     #[test]
     fn test_get_multi_asset_mode_request_serialization() {
-        let request = GetMultiAssetModeRequest {
-            recv_window: None,
-        };
+        let request = GetMultiAssetModeRequest { recv_window: None };
 
         let serialized = serde_urlencoded::to_string(&request).unwrap();
         assert_eq!(serialized, "");

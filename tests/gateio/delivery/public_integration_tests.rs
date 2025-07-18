@@ -22,7 +22,7 @@ async fn test_delivery_client_creation() {
 #[tokio::test]
 async fn test_get_delivery_contracts() {
     use venues::gateio::delivery::public::rest::contracts::DeliveryContractsRequest;
-    
+
     let client = create_delivery_test_client();
     let request = DeliveryContractsRequest {
         settle: "usdt".to_string(),
@@ -37,38 +37,40 @@ async fn test_get_delivery_contracts() {
 
     let response = result.unwrap();
     assert!(!response.is_empty(), "Should have contract data");
-    
+
     let contract = &response[0];
     assert!(!contract.name.is_empty(), "Contract should have name");
-    assert!(!contract.contract_type.is_empty(), "Contract should have type");
-    
-    println!(
-        "Delivery contracts: {} contracts available",
-        response.len()
+    assert!(
+        !contract.contract_type.is_empty(),
+        "Contract should have type"
     );
+
+    println!("Delivery contracts: {} contracts available", response.len());
 }
 
 /// Test single delivery contract endpoint
 #[tokio::test]
 async fn test_get_delivery_contract() {
     use venues::gateio::delivery::public::rest::contracts::DeliveryContractRequest;
-    
+
     let client = create_delivery_test_client();
     let request = DeliveryContractRequest {
         settle: "usdt".to_string(),
-        contract: "BTC_USDT_20250328".to_string(),  // Use a quarterly contract
+        contract: "BTC_USDT_20250328".to_string(), // Use a quarterly contract
     };
 
     let result = client.get_delivery_contract(request).await;
     // Note: This might fail if the contract doesn't exist, which is okay for a delivery contract
     if let Ok(response) = result {
         assert!(!response.name.is_empty(), "Should have contract name");
-        assert!(!response.contract_type.is_empty(), "Should have contract type");
-        
+        assert!(
+            !response.contract_type.is_empty(),
+            "Should have contract type"
+        );
+
         println!(
             "Delivery contract: {} (type: {})",
-            response.name,
-            response.contract_type
+            response.name, response.contract_type
         );
     } else {
         println!("No active delivery contracts found (expected for some periods)");
@@ -79,11 +81,11 @@ async fn test_get_delivery_contract() {
 #[tokio::test]
 async fn test_get_delivery_tickers() {
     use venues::gateio::delivery::public::rest::tickers::DeliveryTickersRequest;
-    
+
     let client = create_delivery_test_client();
     let request = DeliveryTickersRequest {
         settle: "usdt".to_string(),
-        contract: None,  // Get all tickers
+        contract: None, // Get all tickers
     };
 
     let result = client.get_delivery_tickers(request).await;
@@ -94,16 +96,13 @@ async fn test_get_delivery_tickers() {
     );
 
     let response = result.unwrap();
-    
+
     if !response.is_empty() {
         let ticker = &response[0];
         assert!(!ticker.contract.is_empty(), "Should have contract name");
         assert!(!ticker.last.is_empty(), "Should have last price");
-        
-        println!(
-            "Delivery tickers: {} tickers available",
-            response.len()
-        );
+
+        println!("Delivery tickers: {} tickers available", response.len());
     } else {
         println!("No active delivery tickers found (expected when no contracts are active)");
     }
@@ -113,19 +112,20 @@ async fn test_get_delivery_tickers() {
 #[tokio::test]
 async fn test_get_delivery_order_book() {
     use venues::gateio::delivery::public::rest::order_book::DeliveryOrderBookRequest;
-    
+
     let client = create_delivery_test_client();
-    
+
     // First get available contracts to test with
-    let contracts_request = venues::gateio::delivery::public::rest::contracts::DeliveryContractsRequest {
-        settle: "usdt".to_string(),
-    };
-    
+    let contracts_request =
+        venues::gateio::delivery::public::rest::contracts::DeliveryContractsRequest {
+            settle: "usdt".to_string(),
+        };
+
     let contracts_result = client.get_delivery_contracts(contracts_request).await;
     if let Ok(contracts) = contracts_result {
         if !contracts.is_empty() {
             let contract_name = &contracts[0].name;
-            
+
             let request = DeliveryOrderBookRequest {
                 settle: "usdt".to_string(),
                 contract: contract_name.clone(),
@@ -159,19 +159,20 @@ async fn test_get_delivery_order_book() {
 #[tokio::test]
 async fn test_get_delivery_trades() {
     use venues::gateio::delivery::public::rest::trades::DeliveryTradesRequest;
-    
+
     let client = create_delivery_test_client();
-    
+
     // First get available contracts to test with
-    let contracts_request = venues::gateio::delivery::public::rest::contracts::DeliveryContractsRequest {
-        settle: "usdt".to_string(),
-    };
-    
+    let contracts_request =
+        venues::gateio::delivery::public::rest::contracts::DeliveryContractsRequest {
+            settle: "usdt".to_string(),
+        };
+
     let contracts_result = client.get_delivery_contracts(contracts_request).await;
     if let Ok(contracts) = contracts_result {
         if !contracts.is_empty() {
             let contract_name = &contracts[0].name;
-            
+
             let request = DeliveryTradesRequest {
                 settle: "usdt".to_string(),
                 contract: contract_name.clone(),
@@ -205,19 +206,20 @@ async fn test_get_delivery_trades() {
 #[tokio::test]
 async fn test_get_delivery_candlesticks() {
     use venues::gateio::delivery::public::rest::candlesticks::DeliveryCandlesticksRequest;
-    
+
     let client = create_delivery_test_client();
-    
+
     // First get available contracts to test with
-    let contracts_request = venues::gateio::delivery::public::rest::contracts::DeliveryContractsRequest {
-        settle: "usdt".to_string(),
-    };
-    
+    let contracts_request =
+        venues::gateio::delivery::public::rest::contracts::DeliveryContractsRequest {
+            settle: "usdt".to_string(),
+        };
+
     let contracts_result = client.get_delivery_contracts(contracts_request).await;
     if let Ok(contracts) = contracts_result {
         if !contracts.is_empty() {
             let contract_name = &contracts[0].name;
-            
+
             let request = DeliveryCandlesticksRequest {
                 settle: "usdt".to_string(),
                 contract: contract_name.clone(),
@@ -249,21 +251,22 @@ async fn test_get_delivery_candlesticks() {
 /// Test delivery mark price candlesticks endpoint
 #[tokio::test]
 async fn test_get_delivery_mark_price_candlesticks() {
-    use venues::gateio::delivery::public::rest::candlesticks::DeliveryCandlesticksRequest;
     use venues::gateio::delivery::enums::CandlestickInterval;
-    
+    use venues::gateio::delivery::public::rest::candlesticks::DeliveryCandlesticksRequest;
+
     let client = create_delivery_test_client();
-    
+
     // First get available contracts to test with
-    let contracts_request = venues::gateio::delivery::public::rest::contracts::DeliveryContractsRequest {
-        settle: "usdt".to_string(),
-    };
-    
+    let contracts_request =
+        venues::gateio::delivery::public::rest::contracts::DeliveryContractsRequest {
+            settle: "usdt".to_string(),
+        };
+
     let contracts_result = client.get_delivery_contracts(contracts_request).await;
     if let Ok(contracts) = contracts_result {
         if !contracts.is_empty() {
             let contract_name = &contracts[0].name;
-            
+
             let request = DeliveryCandlesticksRequest {
                 settle: "usdt".to_string(),
                 contract: contract_name.clone(),
@@ -295,21 +298,22 @@ async fn test_get_delivery_mark_price_candlesticks() {
 /// Test delivery index price candlesticks endpoint
 #[tokio::test]
 async fn test_get_delivery_index_price_candlesticks() {
-    use venues::gateio::delivery::public::rest::candlesticks::DeliveryCandlesticksRequest;
     use venues::gateio::delivery::enums::CandlestickInterval;
-    
+    use venues::gateio::delivery::public::rest::candlesticks::DeliveryCandlesticksRequest;
+
     let client = create_delivery_test_client();
-    
+
     // First get available contracts to test with
-    let contracts_request = venues::gateio::delivery::public::rest::contracts::DeliveryContractsRequest {
-        settle: "usdt".to_string(),
-    };
-    
+    let contracts_request =
+        venues::gateio::delivery::public::rest::contracts::DeliveryContractsRequest {
+            settle: "usdt".to_string(),
+        };
+
     let contracts_result = client.get_delivery_contracts(contracts_request).await;
     if let Ok(contracts) = contracts_result {
         if !contracts.is_empty() {
             let contract_name = &contracts[0].name;
-            
+
             let request = DeliveryCandlesticksRequest {
                 settle: "usdt".to_string(),
                 contract: contract_name.clone(),
@@ -342,7 +346,7 @@ async fn test_get_delivery_index_price_candlesticks() {
 #[tokio::test]
 async fn test_get_delivery_insurance() {
     use venues::gateio::delivery::public::rest::insurance::DeliveryInsuranceRequest;
-    
+
     let client = create_delivery_test_client();
     let request = DeliveryInsuranceRequest {
         settle: "usdt".to_string(),
@@ -358,34 +362,32 @@ async fn test_get_delivery_insurance() {
 
     let response = result.unwrap();
     assert!(!response.is_empty(), "Should have insurance data");
-    
+
     let insurance = &response[0];
     assert!(insurance.t > 0, "Insurance should have valid timestamp");
     assert!(insurance.b > 0.0, "Insurance should have positive balance");
-    
-    println!(
-        "Delivery insurance: {} entries",
-        response.len()
-    );
+
+    println!("Delivery insurance: {} entries", response.len());
 }
 
 /// Test delivery risk limit tiers endpoint
 #[tokio::test]
 async fn test_get_delivery_risk_limit_tiers() {
     use venues::gateio::delivery::public::rest::risk_limit_tiers::DeliveryRiskLimitTiersRequest;
-    
+
     let client = create_delivery_test_client();
-    
+
     // First get available contracts to test with
-    let contracts_request = venues::gateio::delivery::public::rest::contracts::DeliveryContractsRequest {
-        settle: "usdt".to_string(),
-    };
-    
+    let contracts_request =
+        venues::gateio::delivery::public::rest::contracts::DeliveryContractsRequest {
+            settle: "usdt".to_string(),
+        };
+
     let contracts_result = client.get_delivery_contracts(contracts_request).await;
     if let Ok(contracts) = contracts_result {
         if !contracts.is_empty() {
             let contract_name = &contracts[0].name;
-            
+
             let request = DeliveryRiskLimitTiersRequest {
                 settle: "usdt".to_string(),
                 contract: contract_name.clone(),
@@ -402,11 +404,11 @@ async fn test_get_delivery_risk_limit_tiers() {
 
             let response = result.unwrap();
             assert!(!response.is_empty(), "Should have risk limit tiers data");
-            
+
             let tier = &response[0];
             assert!(!tier.risk_limit.is_empty(), "Tier should have risk limit");
             assert!(!tier.risk_limit.is_empty(), "Tier should have risk limit");
-            
+
             println!(
                 "Delivery risk limit tiers for {}: {} tiers",
                 contract_name,

@@ -69,9 +69,7 @@ impl RestClient {
     /// Get batch trading fee information
     ///
     /// This endpoint returns trading fees for multiple currency pairs at once.
-    pub async fn get_batch_trading_fee(
-        &self,
-    ) -> crate::gateio::spot::Result<Vec<BatchTradingFee>> {
+    pub async fn get_batch_trading_fee(&self) -> crate::gateio::spot::Result<Vec<BatchTradingFee>> {
         self.get("/spot/batch_fee").await
     }
 }

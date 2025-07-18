@@ -369,7 +369,10 @@ mod tests {
         assert_eq!(response.working_type, WorkingType::ContractPrice);
         assert!(!response.price_protect);
         assert_eq!(response.price_match, Some(PriceMatch::None));
-        assert_eq!(response.self_trade_prevention_mode, Some(SelfTradePreventionMode::None));
+        assert_eq!(
+            response.self_trade_prevention_mode,
+            Some(SelfTradePreventionMode::None)
+        );
     }
 
     #[test]

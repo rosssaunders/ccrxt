@@ -275,14 +275,14 @@ mod tests {
         ]"#;
         let response: ModifyMultipleOrdersResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.len(), 2);
-        
+
         match &response[0] {
             BatchModifyOrderResponseItem::Success(order) => {
                 assert_eq!(order.order_id, 123456789);
             }
             BatchModifyOrderResponseItem::Error(_) => panic!("Expected success for first item"),
         }
-        
+
         match &response[1] {
             BatchModifyOrderResponseItem::Error(error) => {
                 assert_eq!(error.code, -2011);

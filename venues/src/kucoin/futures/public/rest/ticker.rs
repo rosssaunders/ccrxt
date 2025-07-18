@@ -108,7 +108,7 @@ pub struct Stats24Hr {
 
 impl super::RestClient {
     /// Get ticker information for a specific symbol
-    /// 
+    ///
     /// <https://www.kucoin.com/docs-new/rest/futures-trading/market-data/get-ticker>
     pub async fn get_ticker(
         &self,
@@ -118,17 +118,18 @@ impl super::RestClient {
     }
 
     /// Get all ticker information
-    /// 
+    ///
     /// <https://www.kucoin.com/docs-new/rest/futures-trading/market-data/get-all-tickers>
     pub async fn get_all_tickers(
         &self,
         _request: GetAllTickersRequest,
     ) -> Result<(RestResponse<GetAllTickersResponse>, ResponseHeaders)> {
-        self.send_request(ALL_TICKERS_ENDPOINT, None::<&GetAllTickersRequest>).await
+        self.send_request(ALL_TICKERS_ENDPOINT, None::<&GetAllTickersRequest>)
+            .await
     }
 
     /// Get 24hr stats for a specific symbol
-    /// 
+    ///
     /// <https://www.kucoin.com/docs-new/rest/futures-trading/market-data/get-24hr-stats>
     pub async fn get_24hr_stats(
         &self,

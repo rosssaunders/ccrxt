@@ -50,7 +50,10 @@ pub struct GetKlinesRequest {
     pub to: Option<i64>,
 }
 
-fn serialize_granularity<S>(granularity: &KlineGranularity, serializer: S) -> std::result::Result<S::Ok, S::Error>
+fn serialize_granularity<S>(
+    granularity: &KlineGranularity,
+    serializer: S,
+) -> std::result::Result<S::Ok, S::Error>
 where
     S: serde::Serializer,
 {

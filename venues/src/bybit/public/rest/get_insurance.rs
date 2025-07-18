@@ -18,10 +18,10 @@ pub struct GetInsuranceRequest {
 pub struct InsuranceInfo {
     /// Coin name
     pub coin: String,
-    
+
     /// Insurance pool balance
     pub balance: String,
-    
+
     /// USD value
     pub value: String,
 }
@@ -32,7 +32,7 @@ pub struct GetInsuranceData {
     /// Data updated timestamp in milliseconds
     #[serde(rename = "updatedTime")]
     pub updated_time: String,
-    
+
     /// Array of insurance pool info
     pub list: Vec<InsuranceInfo>,
 }
@@ -43,18 +43,18 @@ pub struct GetInsuranceResponse {
     /// Success/Error code (0: success, 1: error)
     #[serde(rename = "retCode")]
     pub ret_code: i32,
-    
+
     /// Success/Error message
     #[serde(rename = "retMsg")]
     pub ret_msg: String,
-    
+
     /// Business data result
     pub result: GetInsuranceData,
-    
+
     /// Extended information
     #[serde(rename = "retExtInfo")]
     pub ret_ext_info: serde_json::Value,
-    
+
     /// Current timestamp in milliseconds
     pub time: u64,
 }

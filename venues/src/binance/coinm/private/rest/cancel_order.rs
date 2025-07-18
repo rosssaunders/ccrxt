@@ -282,6 +282,9 @@ mod tests {
         assert_eq!(response.working_type, WorkingType::MarkPrice);
         assert!(response.price_protect);
         assert_eq!(response.price_match, Some(PriceMatch::Opponent));
-        assert_eq!(response.self_trade_prevention_mode, Some(SelfTradePreventionMode::ExpireMaker));
+        assert_eq!(
+            response.self_trade_prevention_mode,
+            Some(SelfTradePreventionMode::ExpireMaker)
+        );
     }
 }

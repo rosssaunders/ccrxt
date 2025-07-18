@@ -207,14 +207,14 @@ mod tests {
         let response: UniversalTransferHistoryResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.total, 3);
         assert_eq!(response.rows.len(), 3);
-        
+
         assert_eq!(response.rows[0].asset, "USDT");
         assert_eq!(response.rows[0].amount, "100.50");
         assert_eq!(response.rows[0].status, "CONFIRMED");
-        
+
         assert_eq!(response.rows[1].asset, "BTC");
         assert_eq!(response.rows[1].transfer_type, "ISOLATEDMARGIN_MAIN");
-        
+
         assert_eq!(response.rows[2].asset, "ETH");
         assert_eq!(response.rows[2].status, "PENDING");
     }
