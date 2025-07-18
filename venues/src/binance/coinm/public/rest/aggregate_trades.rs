@@ -87,3 +87,97 @@ impl RestClient {
             .await
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_aggregate_trades_request_serialization() {
+        let request = AggregateTradesRequest {
+            symbol: "BTCUSD_PERP".to_string(),
+            from_id: None,
+            start_time: None,
+            end_time: None,
+            limit: None,
+        };
+
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert_eq!(serialized, "symbol=BTCUSD_PERP");
+    }
+
+    #[test]
+    fn test_aggregate_trades_request_serialization_with_all_params() {
+        let request = AggregateTradesRequest {
+            symbol: "ETHUSD_PERP".to_string(),
+            from_id: Some(12345),
+            start_time: Some(1625097600000),
+            end_time: Some(1625101200000),
+            limit: Some(100),
+        };
+
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert!(serialized.contains("symbol=ETHUSD_PERP"));
+        assert!(serialized.contains("fromId=12345"));
+        assert!(serialized.contains("startTime=1625097600000"));
+        assert!(serialized.contains("endTime=1625101200000"));
+        assert!(serialized.contains("limit=100"));
+    }
+
+    #[test]
+    fn test_aggregate_trade_deserialization() {
+        let json = r#"{
+            "a": 26129,
+            "p": "50000.00",
+            "q": "10.00000000",
+            "f": 27781,
+            "l": 27781,
+            "T": 1498793709153,
+            "m": true
+        }"#;
+
+        let trade: AggregateTrade = serde_json::from_str(json).unwrap();
+        assert_eq!(trade.agg_trade_id, 26129);
+        assert_eq!(trade.price, "50000.00");
+        assert_eq!(trade.quantity, "10.00000000");
+        assert_eq!(trade.first_trade_id, 27781);
+        assert_eq!(trade.last_trade_id, 27781);
+        assert_eq!(trade.timestamp, 1498793709153);
+        assert!(trade.is_buyer_maker);
+    }
+
+    #[test]
+    fn test_aggregate_trades_list_deserialization() {
+        let json = r#"[
+            {
+                "a": 26129,
+                "p": "50000.00",
+                "q": "10.00000000",
+                "f": 27781,
+                "l": 27781,
+                "T": 1498793709153,
+                "m": true
+            },
+            {
+                "a": 26130,
+                "p": "50001.00",
+                "q": "5.00000000",
+                "f": 27782,
+                "l": 27783,
+                "T": 1498793709200,
+                "m": false
+            }
+        ]"#;
+
+        let trades: Vec<AggregateTrade> = serde_json::from_str(json).unwrap();
+        assert_eq!(trades.len(), 2);
+        
+        assert_eq!(trades[0].agg_trade_id, 26129);
+        assert_eq!(trades[0].price, "50000.00");
+        assert!(trades[0].is_buyer_maker);
+        
+        assert_eq!(trades[1].agg_trade_id, 26130);
+        assert_eq!(trades[1].price, "50001.00");
+        assert!(!trades[1].is_buyer_maker);
+    }
+}

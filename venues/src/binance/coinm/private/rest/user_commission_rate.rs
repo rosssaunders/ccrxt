@@ -8,6 +8,8 @@ use crate::binance::{
     shared,
 };
 
+const COMMISSION_RATE_ENDPOINT: &str = "/dapi/v1/commissionRate";
+
 /// Request parameters for getting user commission rate (GET /dapi/v1/commissionRate).
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct GetUserCommissionRateRequest {
@@ -59,12 +61,87 @@ impl RestClient {
         let weight = 20;
         shared::send_signed_request(
             self,
-            "/dapi/v1/commissionRate",
+            COMMISSION_RATE_ENDPOINT,
             reqwest::Method::GET,
             params,
             weight,
             false,
         )
         .await
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_user_commission_rate_request_serialization() {
+        let request = GetUserCommissionRateRequest {
+            symbol: "BTCUSD_PERP".to_string(),
+            recv_window: None,
+            timestamp: 1625097600000,
+        };
+
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert!(serialized.contains("symbol=BTCUSD_PERP"));
+        assert!(serialized.contains("timestamp=1625097600000"));
+        assert!(!serialized.contains("recvWindow"));
+    }
+
+    #[test]
+    fn test_user_commission_rate_request_with_recv_window() {
+        let request = GetUserCommissionRateRequest {
+            symbol: "ETHUSD_PERP".to_string(),
+            recv_window: Some(5000),
+            timestamp: 1625097600000,
+        };
+
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert!(serialized.contains("symbol=ETHUSD_PERP"));
+        assert!(serialized.contains("recvWindow=5000"));
+        assert!(serialized.contains("timestamp=1625097600000"));
+    }
+
+    #[test]
+    fn test_user_commission_rate_response_deserialization() {
+        let json = r#"{
+            "symbol": "BTCUSD_PERP",
+            "makerCommissionRate": "0.00015",
+            "takerCommissionRate": "0.00040"
+        }"#;
+
+        let response: GetUserCommissionRateResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.symbol, "BTCUSD_PERP");
+        assert_eq!(response.maker_commission_rate, "0.00015");
+        assert_eq!(response.taker_commission_rate, "0.00040");
+    }
+
+    #[test]
+    fn test_user_commission_rate_response_different_rates() {
+        let json = r#"{
+            "symbol": "ETHUSD_PERP",
+            "makerCommissionRate": "0.00020",
+            "takerCommissionRate": "0.00050"
+        }"#;
+
+        let response: GetUserCommissionRateResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.symbol, "ETHUSD_PERP");
+        assert_eq!(response.maker_commission_rate, "0.00020");
+        assert_eq!(response.taker_commission_rate, "0.00050");
+    }
+
+    #[test]
+    fn test_user_commission_rate_response_zero_rates() {
+        let json = r#"{
+            "symbol": "BTCUSD_PERP",
+            "makerCommissionRate": "0.00000",
+            "takerCommissionRate": "0.00000"
+        }"#;
+
+        let response: GetUserCommissionRateResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.symbol, "BTCUSD_PERP");
+        assert_eq!(response.maker_commission_rate, "0.00000");
+        assert_eq!(response.taker_commission_rate, "0.00000");
     }
 }

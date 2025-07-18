@@ -5,6 +5,9 @@ use crate::binance::{
     shared,
 };
 
+const INCOME_ASYN_ENDPOINT: &str = "/dapi/v1/income/asyn";
+const INCOME_ASYN_ID_ENDPOINT: &str = "/dapi/v1/income/asyn/id";
+
 /// Request parameters for getting download ID for transaction history.
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -82,7 +85,7 @@ impl RestClient {
         let weight = 5;
         shared::send_signed_request(
             self,
-            "/dapi/v1/income/asyn",
+            INCOME_ASYN_ENDPOINT,
             reqwest::Method::GET,
             params,
             weight,
@@ -110,12 +113,102 @@ impl RestClient {
         let weight = 5;
         shared::send_signed_request(
             self,
-            "/dapi/v1/income/asyn/id",
+            INCOME_ASYN_ID_ENDPOINT,
             reqwest::Method::GET,
             params,
             weight,
             false,
         )
         .await
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_get_download_id_request_serialization() {
+        let request = GetDownloadIdRequest {
+            start_time: 1625097600000,
+            end_time: 1625184000000,
+            recv_window: None,
+        };
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert!(serialized.contains("startTime=1625097600000"));
+        assert!(serialized.contains("endTime=1625184000000"));
+    }
+
+    #[test]
+    fn test_get_download_id_request_serialization_with_recv_window() {
+        let request = GetDownloadIdRequest {
+            start_time: 1625097600000,
+            end_time: 1625184000000,
+            recv_window: Some(5000),
+        };
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert!(serialized.contains("startTime=1625097600000"));
+        assert!(serialized.contains("endTime=1625184000000"));
+        assert!(serialized.contains("recvWindow=5000"));
+    }
+
+    #[test]
+    fn test_get_download_link_request_serialization() {
+        let request = GetDownloadLinkRequest {
+            download_id: "abc123".to_string(),
+            recv_window: None,
+        };
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert_eq!(serialized, "downloadId=abc123");
+    }
+
+    #[test]
+    fn test_get_download_link_request_serialization_with_recv_window() {
+        let request = GetDownloadLinkRequest {
+            download_id: "abc123".to_string(),
+            recv_window: Some(5000),
+        };
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert!(serialized.contains("downloadId=abc123"));
+        assert!(serialized.contains("recvWindow=5000"));
+    }
+
+    #[test]
+    fn test_get_download_id_response_deserialization() {
+        let json = r#"{
+            "avgCostTimestamp": "300",
+            "downloadId": "123456"
+        }"#;
+        let response: GetDownloadIdResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.avg_cost_timestamp, "300");
+        assert_eq!(response.download_id, "123456");
+    }
+
+    #[test]
+    fn test_get_download_link_response_deserialization_completed() {
+        let json = r#"{
+            "downloadId": "123456",
+            "status": "completed",
+            "url": "https://example.com/download",
+            "expiredTimestamp": 1625270400000
+        }"#;
+        let response: GetDownloadLinkResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.download_id, "123456");
+        assert_eq!(response.status, DownloadStatus::Completed);
+        assert_eq!(response.url, Some("https://example.com/download".to_string()));
+        assert_eq!(response.expired_timestamp, Some(1625270400000));
+    }
+
+    #[test]
+    fn test_get_download_link_response_deserialization_processing() {
+        let json = r#"{
+            "downloadId": "123456",
+            "status": "processing"
+        }"#;
+        let response: GetDownloadLinkResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.download_id, "123456");
+        assert_eq!(response.status, DownloadStatus::Processing);
+        assert_eq!(response.url, None);
+        assert_eq!(response.expired_timestamp, None);
     }
 }

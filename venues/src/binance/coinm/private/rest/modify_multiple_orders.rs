@@ -11,6 +11,8 @@ use crate::binance::{
     shared,
 };
 
+const BATCH_ORDERS_ENDPOINT: &str = "/dapi/v1/batchOrders";
+
 /// Single order parameters for batch modify operation.
 #[derive(Debug, Clone, Serialize)]
 pub struct BatchModifyOrderItem {
@@ -105,12 +107,188 @@ impl RestClient {
         let weight = 5;
         shared::send_signed_request(
             self,
-            "/dapi/v1/batchOrders",
+            BATCH_ORDERS_ENDPOINT,
             reqwest::Method::PUT,
             params,
             weight,
             true,
         )
         .await
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_batch_modify_order_item_serialization_with_order_id() {
+        let item = BatchModifyOrderItem {
+            symbol: "BTCUSD_PERP".to_string(),
+            side: OrderSide::Buy,
+            order_id: Some(123456789),
+            orig_client_order_id: None,
+            quantity: Some("0.1".to_string()),
+            price: Some("50000".to_string()),
+            price_match: None,
+        };
+        let json = serde_json::to_string(&item).unwrap();
+        assert!(json.contains(r#""symbol":"BTCUSD_PERP""#));
+        assert!(json.contains(r#""side":"BUY""#));
+        assert!(json.contains(r#""orderId":123456789"#));
+        assert!(json.contains(r#""quantity":"0.1""#));
+        assert!(json.contains(r#""price":"50000""#));
+        assert!(!json.contains("origClientOrderId"));
+        assert!(!json.contains("priceMatch"));
+    }
+
+    #[test]
+    fn test_batch_modify_order_item_serialization_with_client_order_id() {
+        let item = BatchModifyOrderItem {
+            symbol: "ETHUSD_PERP".to_string(),
+            side: OrderSide::Sell,
+            order_id: None,
+            orig_client_order_id: Some("my_order_123".to_string()),
+            quantity: Some("1.5".to_string()),
+            price: None,
+            price_match: Some(PriceMatch::Opponent),
+        };
+        let json = serde_json::to_string(&item).unwrap();
+        assert!(json.contains(r#""symbol":"ETHUSD_PERP""#));
+        assert!(json.contains(r#""side":"SELL""#));
+        assert!(json.contains(r#""origClientOrderId":"my_order_123""#));
+        assert!(json.contains(r#""quantity":"1.5""#));
+        assert!(json.contains(r#""priceMatch":"OPPONENT""#));
+        assert!(!json.contains("orderId"));
+        assert!(!json.contains(r#""price""#));
+    }
+
+    #[test]
+    fn test_modify_multiple_orders_request_serialization() {
+        let request = ModifyMultipleOrdersRequest {
+            batch_orders: vec![
+                BatchModifyOrderItem {
+                    symbol: "BTCUSD_PERP".to_string(),
+                    side: OrderSide::Buy,
+                    order_id: Some(123456789),
+                    orig_client_order_id: None,
+                    quantity: Some("0.1".to_string()),
+                    price: Some("50000".to_string()),
+                    price_match: None,
+                },
+                BatchModifyOrderItem {
+                    symbol: "ETHUSD_PERP".to_string(),
+                    side: OrderSide::Sell,
+                    order_id: None,
+                    orig_client_order_id: Some("my_order_456".to_string()),
+                    quantity: None,
+                    price: Some("3000".to_string()),
+                    price_match: None,
+                },
+            ],
+            recv_window: Some(5000),
+            timestamp: 1625097600000,
+        };
+        let json = serde_json::to_string(&request).unwrap();
+        assert!(json.contains(r#""batchOrders""#));
+        assert!(json.contains(r#""recvWindow":5000"#));
+        assert!(json.contains(r#""timestamp":1625097600000"#));
+        assert!(json.contains(r#""BTCUSD_PERP""#));
+        assert!(json.contains(r#""ETHUSD_PERP""#));
+    }
+
+    #[test]
+    fn test_modify_multiple_orders_response_deserialization_success() {
+        let json = r#"[
+            {
+                "orderId": 123456789,
+                "symbol": "BTCUSD_PERP",
+                "pair": "BTCUSD",
+                "status": "PARTIALLY_FILLED",
+                "clientOrderId": "testOrder",
+                "price": "50000",
+                "avgPrice": "0",
+                "origQty": "0.1",
+                "executedQty": "0.05",
+                "cumBase": "0.00001",
+                "timeInForce": "GTC",
+                "type": "LIMIT",
+                "reduceOnly": false,
+                "closePosition": false,
+                "side": "BUY",
+                "positionSide": "BOTH",
+                "stopPrice": "0",
+                "workingType": "CONTRACT_PRICE",
+                "priceProtect": false,
+                "origType": "LIMIT",
+                "priceMatch": "NONE",
+                "selfTradePreventionMode": "NONE",
+                "goodTillDate": 0,
+                "updateTime": 1625097600001
+            }
+        ]"#;
+        let response: ModifyMultipleOrdersResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.len(), 1);
+        match &response[0] {
+            BatchModifyOrderResponseItem::Success(order) => {
+                assert_eq!(order.order_id, 123456789);
+                assert_eq!(order.symbol, "BTCUSD_PERP");
+                assert_eq!(order.price, "50000");
+            }
+            BatchModifyOrderResponseItem::Error(_) => panic!("Expected success, got error"),
+        }
+    }
+
+    #[test]
+    fn test_modify_multiple_orders_response_deserialization_mixed() {
+        let json = r#"[
+            {
+                "orderId": 123456789,
+                "symbol": "BTCUSD_PERP",
+                "pair": "BTCUSD",
+                "status": "NEW",
+                "clientOrderId": "testOrder1",
+                "price": "50000",
+                "avgPrice": "0",
+                "origQty": "0.1",
+                "executedQty": "0",
+                "cumBase": "0",
+                "timeInForce": "GTC",
+                "type": "LIMIT",
+                "reduceOnly": false,
+                "closePosition": false,
+                "side": "BUY",
+                "positionSide": "BOTH",
+                "stopPrice": "0",
+                "workingType": "CONTRACT_PRICE",
+                "priceProtect": false,
+                "origType": "LIMIT",
+                "priceMatch": "NONE",
+                "selfTradePreventionMode": "NONE",
+                "goodTillDate": 0,
+                "updateTime": 1625097600001
+            },
+            {
+                "code": -2011,
+                "msg": "Unknown order sent."
+            }
+        ]"#;
+        let response: ModifyMultipleOrdersResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.len(), 2);
+        
+        match &response[0] {
+            BatchModifyOrderResponseItem::Success(order) => {
+                assert_eq!(order.order_id, 123456789);
+            }
+            BatchModifyOrderResponseItem::Error(_) => panic!("Expected success for first item"),
+        }
+        
+        match &response[1] {
+            BatchModifyOrderResponseItem::Error(error) => {
+                assert_eq!(error.code, -2011);
+                assert_eq!(error.msg, "Unknown order sent.");
+            }
+            BatchModifyOrderResponseItem::Success(_) => panic!("Expected error for second item"),
+        }
     }
 }

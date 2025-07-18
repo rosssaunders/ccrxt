@@ -8,6 +8,8 @@ use crate::binance::{
     shared,
 };
 
+const LEVERAGE_ENDPOINT: &str = "/dapi/v1/leverage";
+
 /// Request parameters for changing initial leverage (POST /dapi/v1/leverage).
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct ChangeInitialLeverageRequest {
@@ -61,12 +63,90 @@ impl RestClient {
     ) -> RestResult<ChangeInitialLeverageResponse> {
         shared::send_signed_request(
             self,
-            "/dapi/v1/leverage",
+            LEVERAGE_ENDPOINT,
             reqwest::Method::POST,
             params,
             1,
             true,
         )
         .await
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_change_initial_leverage_request_serialization() {
+        let request = ChangeInitialLeverageRequest {
+            symbol: "BTCUSD_PERP".to_string(),
+            leverage: 20,
+            recv_window: None,
+            timestamp: 1625097600000,
+        };
+
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert!(serialized.contains("symbol=BTCUSD_PERP"));
+        assert!(serialized.contains("leverage=20"));
+        assert!(serialized.contains("timestamp=1625097600000"));
+        assert!(!serialized.contains("recvWindow"));
+    }
+
+    #[test]
+    fn test_change_initial_leverage_request_serialization_with_recv_window() {
+        let request = ChangeInitialLeverageRequest {
+            symbol: "ETHUSD_PERP".to_string(),
+            leverage: 10,
+            recv_window: Some(5000),
+            timestamp: 1625097600000,
+        };
+
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert!(serialized.contains("symbol=ETHUSD_PERP"));
+        assert!(serialized.contains("leverage=10"));
+        assert!(serialized.contains("recvWindow=5000"));
+        assert!(serialized.contains("timestamp=1625097600000"));
+    }
+
+    #[test]
+    fn test_change_initial_leverage_request_serialization_max_leverage() {
+        let request = ChangeInitialLeverageRequest {
+            symbol: "BTCUSD_PERP".to_string(),
+            leverage: 125,
+            recv_window: None,
+            timestamp: 1625097600000,
+        };
+
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert!(serialized.contains("leverage=125"));
+    }
+
+    #[test]
+    fn test_change_initial_leverage_response_deserialization() {
+        let json = r#"{
+            "leverage": 20,
+            "maxQty": "100000.00000000",
+            "symbol": "BTCUSD_PERP"
+        }"#;
+
+        let response: ChangeInitialLeverageResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.leverage, 20);
+        assert_eq!(response.max_qty, "100000.00000000");
+        assert_eq!(response.symbol, "BTCUSD_PERP");
+    }
+
+    #[test]
+    fn test_change_initial_leverage_response_deserialization_low_leverage() {
+        let json = r#"{
+            "leverage": 1,
+            "maxQty": "1000000.00000000",
+            "symbol": "ETHUSD_240329"
+        }"#;
+
+        let response: ChangeInitialLeverageResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.leverage, 1);
+        assert_eq!(response.max_qty, "1000000.00000000");
+        assert_eq!(response.symbol, "ETHUSD_240329");
     }
 }

@@ -11,6 +11,8 @@ use crate::binance::{
     shared,
 };
 
+const ORDER_ENDPOINT: &str = "/dapi/v1/order";
+
 /// Request parameters for modifying an existing order (PUT /dapi/v1/order).
 #[derive(Debug, Clone, Serialize)]
 pub struct ModifyOrderRequest {
@@ -169,12 +171,168 @@ impl RestClient {
         let weight = 1;
         shared::send_signed_request(
             self,
-            "/dapi/v1/order",
+            ORDER_ENDPOINT,
             reqwest::Method::PUT,
             params,
             weight,
             true,
         )
         .await
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_modify_order_request_serialization() {
+        let request = ModifyOrderRequest {
+            symbol: "BTCUSD_PERP".to_string(),
+            side: OrderSide::Buy,
+            order_id: Some(12345),
+            orig_client_order_id: None,
+            quantity: Some("10.5".to_string()),
+            price: Some("45000.0".to_string()),
+            price_match: None,
+            recv_window: None,
+            timestamp: 1625097600000,
+        };
+
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert!(serialized.contains("symbol=BTCUSD_PERP"));
+        assert!(serialized.contains("side=BUY"));
+        assert!(serialized.contains("orderId=12345"));
+        assert!(serialized.contains("quantity=10.5"));
+        assert!(serialized.contains("price=45000.0"));
+        assert!(serialized.contains("timestamp=1625097600000"));
+        assert!(!serialized.contains("origClientOrderId"));
+        assert!(!serialized.contains("priceMatch"));
+        assert!(!serialized.contains("recvWindow"));
+    }
+
+    #[test]
+    fn test_modify_order_request_with_client_order_id() {
+        let request = ModifyOrderRequest {
+            symbol: "ETHUSD_PERP".to_string(),
+            side: OrderSide::Sell,
+            order_id: None,
+            orig_client_order_id: Some("my_order_123".to_string()),
+            quantity: Some("5.0".to_string()),
+            price: None,
+            price_match: Some(PriceMatch::Opponent),
+            recv_window: Some(5000),
+            timestamp: 1625097600000,
+        };
+
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert!(serialized.contains("symbol=ETHUSD_PERP"));
+        assert!(serialized.contains("side=SELL"));
+        assert!(serialized.contains("origClientOrderId=my_order_123"));
+        assert!(serialized.contains("quantity=5.0"));
+        assert!(serialized.contains("priceMatch=OPPONENT"));
+        assert!(serialized.contains("recvWindow=5000"));
+        assert!(serialized.contains("timestamp=1625097600000"));
+        assert!(!serialized.contains("orderId"));
+        assert!(!serialized.contains("price"));
+    }
+
+    #[test]
+    fn test_modify_order_response_deserialization() {
+        let json = r#"{
+            "orderId": 12345,
+            "symbol": "BTCUSD_PERP",
+            "pair": "BTCUSD",
+            "status": "NEW",
+            "clientOrderId": "my_order_123",
+            "price": "45000.0",
+            "avgPrice": "0.0",
+            "origQty": "10.5",
+            "executedQty": "0.0",
+            "cumQty": "0.0",
+            "cumBase": "0.0",
+            "timeInForce": "GTC",
+            "type": "LIMIT",
+            "reduceOnly": false,
+            "closePosition": false,
+            "side": "BUY",
+            "positionSide": "LONG",
+            "stopPrice": "0.0",
+            "workingType": "CONTRACT_PRICE",
+            "priceProtect": false,
+            "origType": "LIMIT",
+            "priceMatch": "NONE",
+            "selfTradePreventionMode": "NONE",
+            "updateTime": 1625097600000
+        }"#;
+
+        let response: ModifyOrderResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.order_id, 12345);
+        assert_eq!(response.symbol, "BTCUSD_PERP");
+        assert_eq!(response.pair, "BTCUSD");
+        assert_eq!(response.status, OrderStatus::New);
+        assert_eq!(response.client_order_id, "my_order_123");
+        assert_eq!(response.price, "45000.0");
+        assert_eq!(response.avg_price, "0.0");
+        assert_eq!(response.orig_qty, "10.5");
+        assert_eq!(response.executed_qty, "0.0");
+        assert_eq!(response.cum_qty, "0.0");
+        assert_eq!(response.cum_base, "0.0");
+        assert_eq!(response.time_in_force, TimeInForce::GTC);
+        assert_eq!(response.order_type, OrderType::Limit);
+        assert!(!response.reduce_only);
+        assert!(!response.close_position);
+        assert_eq!(response.side, OrderSide::Buy);
+        assert_eq!(response.position_side, PositionSide::Long);
+        assert_eq!(response.stop_price, "0.0");
+        assert_eq!(response.working_type, WorkingType::ContractPrice);
+        assert!(!response.price_protect);
+        assert_eq!(response.orig_type, OrderType::Limit);
+        assert_eq!(response.price_match, PriceMatch::None);
+        assert_eq!(response.self_trade_prevention_mode, SelfTradePreventionMode::None);
+        assert_eq!(response.update_time, 1625097600000);
+    }
+
+    #[test]
+    fn test_modify_order_response_with_execution() {
+        let json = r#"{
+            "orderId": 67890,
+            "symbol": "ETHUSD_PERP",
+            "pair": "ETHUSD",
+            "status": "PARTIALLY_FILLED",
+            "clientOrderId": "client_456",
+            "price": "3000.0",
+            "avgPrice": "2999.5",
+            "origQty": "20.0",
+            "executedQty": "10.0",
+            "cumQty": "10.0",
+            "cumBase": "0.00333",
+            "timeInForce": "IOC",
+            "type": "LIMIT",
+            "reduceOnly": true,
+            "closePosition": false,
+            "side": "SELL",
+            "positionSide": "SHORT",
+            "stopPrice": "0.0",
+            "workingType": "CONTRACT_PRICE",
+            "priceProtect": true,
+            "origType": "LIMIT",
+            "priceMatch": "QUEUE",
+            "selfTradePreventionMode": "EXPIRE_TAKER",
+            "updateTime": 1625097700000
+        }"#;
+
+        let response: ModifyOrderResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.order_id, 67890);
+        assert_eq!(response.symbol, "ETHUSD_PERP");
+        assert_eq!(response.status, OrderStatus::PartiallyFilled);
+        assert_eq!(response.executed_qty, "10.0");
+        assert_eq!(response.avg_price, "2999.5");
+        assert!(response.reduce_only);
+        assert_eq!(response.side, OrderSide::Sell);
+        assert_eq!(response.position_side, PositionSide::Short);
+        assert!(response.price_protect);
+        assert_eq!(response.price_match, PriceMatch::Queue);
+        assert_eq!(response.self_trade_prevention_mode, SelfTradePreventionMode::ExpireTaker);
     }
 }

@@ -8,6 +8,8 @@ use crate::binance::{
     shared,
 };
 
+const OPEN_ORDERS_ENDPOINT: &str = "/dapi/v1/openOrders";
+
 /// Request parameters for the Current All Open Orders endpoint (GET /dapi/v1/openOrders).
 ///
 /// See: <https://binance-docs.github.io/apidocs/delivery/en/>
@@ -132,12 +134,190 @@ impl RestClient {
         };
         shared::send_signed_request(
             self,
-            "/dapi/v1/openOrders",
+            OPEN_ORDERS_ENDPOINT,
             reqwest::Method::GET,
             params,
             weight,
             false,
         )
         .await
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_open_orders_request_serialization() {
+        let request = OpenOrdersRequest {
+            symbol: Some("BTCUSD_PERP".to_string()),
+            pair: None,
+            recv_window: None,
+            timestamp: 1625097600000,
+        };
+
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert!(serialized.contains("symbol=BTCUSD_PERP"));
+        assert!(serialized.contains("timestamp=1625097600000"));
+        assert!(!serialized.contains("pair"));
+        assert!(!serialized.contains("recvWindow"));
+    }
+
+    #[test]
+    fn test_open_orders_request_with_pair() {
+        let request = OpenOrdersRequest {
+            symbol: None,
+            pair: Some("BTCUSD".to_string()),
+            recv_window: Some(5000),
+            timestamp: 1625097600000,
+        };
+
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert!(serialized.contains("pair=BTCUSD"));
+        assert!(serialized.contains("recvWindow=5000"));
+        assert!(serialized.contains("timestamp=1625097600000"));
+        assert!(!serialized.contains("symbol"));
+    }
+
+    #[test]
+    fn test_open_orders_request_minimal() {
+        let request = OpenOrdersRequest {
+            symbol: None,
+            pair: None,
+            recv_window: None,
+            timestamp: 1625097600000,
+        };
+
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert_eq!(serialized, "timestamp=1625097600000");
+    }
+
+    #[test]
+    fn test_open_order_deserialization() {
+        let json = r#"[
+            {
+                "avgPrice": "0.00000",
+                "clientOrderId": "abc123",
+                "cumBase": "0",
+                "executedQty": "0",
+                "orderId": 123456789,
+                "origQty": "10",
+                "origType": "LIMIT",
+                "price": "45000.0",
+                "reduceOnly": false,
+                "side": "BUY",
+                "positionSide": "LONG",
+                "status": "NEW",
+                "stopPrice": "0",
+                "closePosition": false,
+                "symbol": "BTCUSD_PERP",
+                "time": 1625097600000,
+                "timeInForce": "GTC",
+                "type": "LIMIT",
+                "activatePrice": null,
+                "priceRate": null,
+                "updateTime": 1625097600000,
+                "workingType": "CONTRACT_PRICE",
+                "priceProtect": false,
+                "priceMatch": "NONE",
+                "selfTradePreventionMode": "NONE"
+            }
+        ]"#;
+
+        let response: Vec<OpenOrder> = serde_json::from_str(json).unwrap();
+        assert_eq!(response.len(), 1);
+        
+        let order = &response[0];
+        assert_eq!(order.avg_price, "0.00000");
+        assert_eq!(order.client_order_id, "abc123");
+        assert_eq!(order.cum_base, "0");
+        assert_eq!(order.executed_qty, "0");
+        assert_eq!(order.order_id, 123456789);
+        assert_eq!(order.orig_qty, "10");
+        assert_eq!(order.orig_type, "LIMIT");
+        assert_eq!(order.price, "45000.0");
+        assert!(!order.reduce_only);
+        assert_eq!(order.side, "BUY");
+        assert_eq!(order.position_side, "LONG");
+        assert_eq!(order.status, "NEW");
+        assert_eq!(order.stop_price, "0");
+        assert!(!order.close_position);
+        assert_eq!(order.symbol, "BTCUSD_PERP");
+        assert_eq!(order.time, 1625097600000);
+        assert_eq!(order.time_in_force, "GTC");
+        assert_eq!(order.order_type, "LIMIT");
+        assert!(order.activate_price.is_none());
+        assert!(order.price_rate.is_none());
+        assert_eq!(order.update_time, 1625097600000);
+        assert_eq!(order.working_type, "CONTRACT_PRICE");
+        assert!(!order.price_protect);
+        assert_eq!(order.price_match.as_ref().unwrap(), "NONE");
+        assert_eq!(order.self_trade_prevention_mode.as_ref().unwrap(), "NONE");
+    }
+
+    #[test]
+    fn test_multiple_open_orders() {
+        let json = r#"[
+            {
+                "avgPrice": "0.00000",
+                "clientOrderId": "order1",
+                "cumBase": "0",
+                "executedQty": "0",
+                "orderId": 123456789,
+                "origQty": "10",
+                "origType": "LIMIT",
+                "price": "45000.0",
+                "reduceOnly": false,
+                "side": "BUY",
+                "positionSide": "LONG",
+                "status": "NEW",
+                "stopPrice": "0",
+                "closePosition": false,
+                "symbol": "BTCUSD_PERP",
+                "time": 1625097600000,
+                "timeInForce": "GTC",
+                "type": "LIMIT",
+                "updateTime": 1625097600000,
+                "workingType": "CONTRACT_PRICE",
+                "priceProtect": false
+            },
+            {
+                "avgPrice": "3000.50",
+                "clientOrderId": "order2",
+                "cumBase": "5",
+                "executedQty": "5",
+                "orderId": 987654321,
+                "origQty": "20",
+                "origType": "LIMIT",
+                "price": "3000.0",
+                "reduceOnly": true,
+                "side": "SELL",
+                "positionSide": "SHORT",
+                "status": "PARTIALLY_FILLED",
+                "stopPrice": "0",
+                "closePosition": false,
+                "symbol": "ETHUSD_PERP",
+                "time": 1625097700000,
+                "timeInForce": "IOC",
+                "type": "LIMIT",
+                "updateTime": 1625097800000,
+                "workingType": "MARK_PRICE",
+                "priceProtect": true
+            }
+        ]"#;
+
+        let response: Vec<OpenOrder> = serde_json::from_str(json).unwrap();
+        assert_eq!(response.len(), 2);
+        
+        assert_eq!(response[0].order_id, 123456789);
+        assert_eq!(response[0].symbol, "BTCUSD_PERP");
+        assert_eq!(response[0].side, "BUY");
+        
+        assert_eq!(response[1].order_id, 987654321);
+        assert_eq!(response[1].symbol, "ETHUSD_PERP");
+        assert_eq!(response[1].side, "SELL");
+        assert_eq!(response[1].status, "PARTIALLY_FILLED");
+        assert!(response[1].reduce_only);
     }
 }

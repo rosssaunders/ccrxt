@@ -5,6 +5,8 @@ use crate::binance::{
     shared,
 };
 
+const LISTEN_KEY_ENDPOINT: &str = "/dapi/v1/listenKey";
+
 /// Request parameters for creating listen key.
 #[derive(Debug, Serialize, Default)]
 #[serde(rename_all = "camelCase")]
@@ -64,7 +66,7 @@ impl RestClient {
         let weight = 1;
         shared::send_signed_request(
             self,
-            "/dapi/v1/listenKey",
+            LISTEN_KEY_ENDPOINT,
             reqwest::Method::POST,
             params,
             weight,
@@ -92,7 +94,7 @@ impl RestClient {
         let weight = 1;
         shared::send_signed_request(
             self,
-            "/dapi/v1/listenKey",
+            LISTEN_KEY_ENDPOINT,
             reqwest::Method::PUT,
             params,
             weight,
@@ -120,12 +122,88 @@ impl RestClient {
         let weight = 1;
         shared::send_signed_request(
             self,
-            "/dapi/v1/listenKey",
+            LISTEN_KEY_ENDPOINT,
             reqwest::Method::DELETE,
             params,
             weight,
             false,
         )
         .await
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_create_listen_key_request_serialization() {
+        let request = CreateListenKeyRequest {
+            recv_window: None,
+        };
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert_eq!(serialized, "");
+    }
+
+    #[test]
+    fn test_create_listen_key_request_serialization_with_recv_window() {
+        let request = CreateListenKeyRequest {
+            recv_window: Some(5000),
+        };
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert_eq!(serialized, "recvWindow=5000");
+    }
+
+    #[test]
+    fn test_extend_listen_key_request_serialization() {
+        let request = ExtendListenKeyRequest {
+            recv_window: None,
+        };
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert_eq!(serialized, "");
+    }
+
+    #[test]
+    fn test_extend_listen_key_request_serialization_with_recv_window() {
+        let request = ExtendListenKeyRequest {
+            recv_window: Some(5000),
+        };
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert_eq!(serialized, "recvWindow=5000");
+    }
+
+    #[test]
+    fn test_delete_listen_key_request_serialization() {
+        let request = DeleteListenKeyRequest {
+            recv_window: None,
+        };
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert_eq!(serialized, "");
+    }
+
+    #[test]
+    fn test_delete_listen_key_request_serialization_with_recv_window() {
+        let request = DeleteListenKeyRequest {
+            recv_window: Some(5000),
+        };
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert_eq!(serialized, "recvWindow=5000");
+    }
+
+    #[test]
+    fn test_create_listen_key_response_deserialization() {
+        let json = r#"{
+            "listenKey": "pqia91ma19a5s61cv6a81va65sdf19v8a65a1a5s61cv6a81va65sdf19v8a65a1"
+        }"#;
+        let response: CreateListenKeyResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.listen_key, "pqia91ma19a5s61cv6a81va65sdf19v8a65a1a5s61cv6a81va65sdf19v8a65a1");
+    }
+
+    #[test]
+    fn test_listen_key_response_deserialization() {
+        let json = r#"{}"#;
+        let response: ListenKeyResponse = serde_json::from_str(json).unwrap();
+        // Just ensure it deserializes successfully - empty response
+        let _ = response;
     }
 }

@@ -8,6 +8,8 @@ use crate::binance::{
     shared,
 };
 
+const COUNTDOWN_CANCEL_ALL_ENDPOINT: &str = "/dapi/v1/countdownCancelAll";
+
 /// Request parameters for auto-canceling all open orders (POST /dapi/v1/countdownCancelAll).
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct AutoCancelAllOpenOrdersRequest {
@@ -71,12 +73,73 @@ impl RestClient {
     ) -> RestResult<AutoCancelAllOpenOrdersResponse> {
         shared::send_signed_request(
             self,
-            "/dapi/v1/countdownCancelAll",
+            COUNTDOWN_CANCEL_ALL_ENDPOINT,
             reqwest::Method::POST,
             params,
             10,
             true,
         )
         .await
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_auto_cancel_all_open_orders_request_serialization() {
+        let request = AutoCancelAllOpenOrdersRequest {
+            symbol: "BTCUSD_PERP".to_string(),
+            countdown_time: 120000,
+            recv_window: None,
+            timestamp: 1625097600000,
+        };
+
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert!(serialized.contains("symbol=BTCUSD_PERP"));
+        assert!(serialized.contains("countdownTime=120000"));
+        assert!(serialized.contains("timestamp=1625097600000"));
+        assert!(!serialized.contains("recvWindow"));
+    }
+
+    #[test]
+    fn test_auto_cancel_all_open_orders_request_serialization_with_recv_window() {
+        let request = AutoCancelAllOpenOrdersRequest {
+            symbol: "ETHUSD_PERP".to_string(),
+            countdown_time: 0, // Cancel the timer
+            recv_window: Some(5000),
+            timestamp: 1625097600000,
+        };
+
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert!(serialized.contains("symbol=ETHUSD_PERP"));
+        assert!(serialized.contains("countdownTime=0"));
+        assert!(serialized.contains("recvWindow=5000"));
+        assert!(serialized.contains("timestamp=1625097600000"));
+    }
+
+    #[test]
+    fn test_auto_cancel_all_open_orders_response_deserialization() {
+        let json = r#"{
+            "symbol": "BTCUSD_PERP",
+            "countdownTime": "120000"
+        }"#;
+
+        let response: AutoCancelAllOpenOrdersResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.symbol, "BTCUSD_PERP");
+        assert_eq!(response.countdown_time, "120000");
+    }
+
+    #[test]
+    fn test_auto_cancel_all_open_orders_response_deserialization_cancelled() {
+        let json = r#"{
+            "symbol": "ETHUSD_PERP",
+            "countdownTime": "0"
+        }"#;
+
+        let response: AutoCancelAllOpenOrdersResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.symbol, "ETHUSD_PERP");
+        assert_eq!(response.countdown_time, "0");
     }
 }

@@ -8,6 +8,8 @@ use crate::binance::{
     shared,
 };
 
+const POSITION_SIDE_DUAL_ENDPOINT: &str = "/dapi/v1/positionSide/dual";
+
 /// Request parameters for changing position mode (POST /dapi/v1/positionSide/dual).
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct ChangePositionModeRequest {
@@ -54,12 +56,69 @@ impl RestClient {
     ) -> RestResult<ChangePositionModeResponse> {
         shared::send_signed_request(
             self,
-            "/dapi/v1/positionSide/dual",
+            POSITION_SIDE_DUAL_ENDPOINT,
             reqwest::Method::POST,
             params,
             1,
             true,
         )
         .await
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_change_position_mode_request_serialization_hedge_mode() {
+        let request = ChangePositionModeRequest {
+            dual_side_position: "true".to_string(),
+            recv_window: None,
+            timestamp: 1625097600000,
+        };
+
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert!(serialized.contains("dualSidePosition=true"));
+        assert!(serialized.contains("timestamp=1625097600000"));
+        assert!(!serialized.contains("recvWindow"));
+    }
+
+    #[test]
+    fn test_change_position_mode_request_serialization_one_way_mode() {
+        let request = ChangePositionModeRequest {
+            dual_side_position: "false".to_string(),
+            recv_window: Some(5000),
+            timestamp: 1625097600000,
+        };
+
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert!(serialized.contains("dualSidePosition=false"));
+        assert!(serialized.contains("recvWindow=5000"));
+        assert!(serialized.contains("timestamp=1625097600000"));
+    }
+
+    #[test]
+    fn test_change_position_mode_response_deserialization() {
+        let json = r#"{
+            "code": 200,
+            "msg": "success"
+        }"#;
+
+        let response: ChangePositionModeResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.code, 200);
+        assert_eq!(response.msg, "success");
+    }
+
+    #[test]
+    fn test_change_position_mode_response_deserialization_with_different_message() {
+        let json = r#"{
+            "code": 200,
+            "msg": "Position mode changed successfully"
+        }"#;
+
+        let response: ChangePositionModeResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.code, 200);
+        assert_eq!(response.msg, "Position mode changed successfully");
     }
 }
