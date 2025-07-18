@@ -69,3 +69,77 @@ impl RestClient {
         .await
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_universal_transfer_request_serialization() {
+        let request = UniversalTransferRequest {
+            transfer_type: TransferType::MainUmfuture,
+            asset: "USDT".to_string(),
+            amount: "100.50".to_string(),
+            from_symbol: None,
+            to_symbol: None,
+            recv_window: None,
+        };
+
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert!(serialized.contains("type=MAIN_UMFUTURE"));
+        assert!(serialized.contains("asset=USDT"));
+        assert!(serialized.contains("amount=100.50"));
+        assert!(!serialized.contains("fromSymbol"));
+        assert!(!serialized.contains("toSymbol"));
+        assert!(!serialized.contains("recvWindow"));
+    }
+
+    #[test]
+    fn test_universal_transfer_request_with_symbols() {
+        let request = UniversalTransferRequest {
+            transfer_type: TransferType::IsolatedmarginMargin,
+            asset: "BTC".to_string(),
+            amount: "0.001".to_string(),
+            from_symbol: Some("BTCUSDT".to_string()),
+            to_symbol: None,
+            recv_window: Some(5000),
+        };
+
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert!(serialized.contains("type=ISOLATEDMARGIN_MAIN"));
+        assert!(serialized.contains("asset=BTC"));
+        assert!(serialized.contains("amount=0.001"));
+        assert!(serialized.contains("fromSymbol=BTCUSDT"));
+        assert!(!serialized.contains("toSymbol"));
+        assert!(serialized.contains("recvWindow=5000"));
+    }
+
+    #[test]
+    fn test_universal_transfer_request_bidirectional() {
+        let request = UniversalTransferRequest {
+            transfer_type: TransferType::MarginIsolatedmargin,
+            asset: "ETH".to_string(),
+            amount: "0.5".to_string(),
+            from_symbol: None,
+            to_symbol: Some("ETHUSDT".to_string()),
+            recv_window: None,
+        };
+
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert!(serialized.contains("type=MAIN_ISOLATEDMARGIN"));
+        assert!(serialized.contains("asset=ETH"));
+        assert!(serialized.contains("amount=0.5"));
+        assert!(!serialized.contains("fromSymbol"));
+        assert!(serialized.contains("toSymbol=ETHUSDT"));
+    }
+
+    #[test]
+    fn test_universal_transfer_response_deserialization() {
+        let json = r#"{
+            "tranId": 13526853623
+        }"#;
+
+        let response: UniversalTransferResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.tran_id, 13526853623);
+    }
+}

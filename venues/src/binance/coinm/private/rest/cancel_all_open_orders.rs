@@ -8,6 +8,8 @@ use crate::binance::{
     shared,
 };
 
+const ALL_OPEN_ORDERS_ENDPOINT: &str = "/dapi/v1/allOpenOrders";
+
 /// Request parameters for canceling all open orders (DELETE /dapi/v1/allOpenOrders).
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct CancelAllOpenOrdersRequest {
@@ -51,12 +53,69 @@ impl RestClient {
     ) -> RestResult<CancelAllOpenOrdersResponse> {
         shared::send_signed_request(
             self,
-            "/dapi/v1/allOpenOrders",
+            ALL_OPEN_ORDERS_ENDPOINT,
             reqwest::Method::DELETE,
             params,
             1,
             true,
         )
         .await
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_cancel_all_open_orders_request_serialization() {
+        let request = CancelAllOpenOrdersRequest {
+            symbol: "BTCUSD_PERP".to_string(),
+            recv_window: None,
+            timestamp: 1625097600000,
+        };
+
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert!(serialized.contains("symbol=BTCUSD_PERP"));
+        assert!(serialized.contains("timestamp=1625097600000"));
+        assert!(!serialized.contains("recvWindow"));
+    }
+
+    #[test]
+    fn test_cancel_all_open_orders_request_serialization_with_recv_window() {
+        let request = CancelAllOpenOrdersRequest {
+            symbol: "ETHUSD_PERP".to_string(),
+            recv_window: Some(5000),
+            timestamp: 1625097600000,
+        };
+
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert!(serialized.contains("symbol=ETHUSD_PERP"));
+        assert!(serialized.contains("recvWindow=5000"));
+        assert!(serialized.contains("timestamp=1625097600000"));
+    }
+
+    #[test]
+    fn test_cancel_all_open_orders_response_deserialization() {
+        let json = r#"{
+            "code": 200,
+            "msg": "The operation of cancel all open order is done."
+        }"#;
+
+        let response: CancelAllOpenOrdersResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.code, 200);
+        assert_eq!(response.msg, "The operation of cancel all open order is done.");
+    }
+
+    #[test]
+    fn test_cancel_all_open_orders_response_deserialization_with_different_message() {
+        let json = r#"{
+            "code": 200,
+            "msg": "All orders cancelled successfully"
+        }"#;
+
+        let response: CancelAllOpenOrdersResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.code, 200);
+        assert_eq!(response.msg, "All orders cancelled successfully");
     }
 }

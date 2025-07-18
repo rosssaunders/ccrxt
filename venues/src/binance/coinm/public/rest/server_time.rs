@@ -21,3 +21,28 @@ impl RestClient {
             .await
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_server_time_response_deserialization() {
+        let json = r#"{
+            "serverTime": 1625097600000
+        }"#;
+
+        let response: ServerTimeResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.server_time, 1625097600000);
+    }
+
+    #[test]
+    fn test_server_time_response_serialization() {
+        let response = ServerTimeResponse {
+            server_time: 1625097600000,
+        };
+
+        let json = serde_json::to_string(&response).unwrap();
+        assert!(json.contains("\"serverTime\":1625097600000"));
+    }
+}

@@ -8,6 +8,8 @@ use crate::binance::{
     shared,
 };
 
+const MARGIN_TYPE_ENDPOINT: &str = "/dapi/v1/marginType";
+
 /// Request parameters for changing margin type (POST /dapi/v1/marginType).
 #[derive(Debug, Clone, Serialize)]
 pub struct ChangeMarginTypeRequest {
@@ -59,12 +61,73 @@ impl RestClient {
     ) -> RestResult<ChangeMarginTypeResponse> {
         shared::send_signed_request(
             self,
-            "/dapi/v1/marginType",
+            MARGIN_TYPE_ENDPOINT,
             reqwest::Method::POST,
             params,
             1,
             true,
         )
         .await
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_change_margin_type_request_serialization_isolated() {
+        let request = ChangeMarginTypeRequest {
+            symbol: "BTCUSD_PERP".to_string(),
+            margin_type: MarginType::Isolated,
+            recv_window: None,
+            timestamp: 1625097600000,
+        };
+
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert!(serialized.contains("symbol=BTCUSD_PERP"));
+        assert!(serialized.contains("marginType=ISOLATED"));
+        assert!(serialized.contains("timestamp=1625097600000"));
+        assert!(!serialized.contains("recvWindow"));
+    }
+
+    #[test]
+    fn test_change_margin_type_request_serialization_crossed() {
+        let request = ChangeMarginTypeRequest {
+            symbol: "ETHUSD_PERP".to_string(),
+            margin_type: MarginType::Cross,
+            recv_window: Some(5000),
+            timestamp: 1625097600000,
+        };
+
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert!(serialized.contains("symbol=ETHUSD_PERP"));
+        assert!(serialized.contains("marginType=CROSSED"));
+        assert!(serialized.contains("recvWindow=5000"));
+        assert!(serialized.contains("timestamp=1625097600000"));
+    }
+
+    #[test]
+    fn test_change_margin_type_response_deserialization() {
+        let json = r#"{
+            "code": 200,
+            "msg": "success"
+        }"#;
+
+        let response: ChangeMarginTypeResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.code, 200);
+        assert_eq!(response.msg, "success");
+    }
+
+    #[test]
+    fn test_change_margin_type_response_deserialization_with_different_message() {
+        let json = r#"{
+            "code": 200,
+            "msg": "Margin type changed successfully"
+        }"#;
+
+        let response: ChangeMarginTypeResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.code, 200);
+        assert_eq!(response.msg, "Margin type changed successfully");
     }
 }

@@ -11,6 +11,8 @@ use crate::binance::{
     shared,
 };
 
+const OPEN_ORDER_ENDPOINT: &str = "/dapi/v1/openOrder";
+
 /// Request parameters for querying a current open order (GET /dapi/v1/openOrder).
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct QueryCurrentOpenOrderRequest {
@@ -158,12 +160,196 @@ impl RestClient {
         let weight = 1;
         shared::send_signed_request(
             self,
-            "/dapi/v1/openOrder",
+            OPEN_ORDER_ENDPOINT,
             reqwest::Method::GET,
             params,
             weight,
             false,
         )
         .await
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_query_current_open_order_request_with_order_id() {
+        let request = QueryCurrentOpenOrderRequest {
+            symbol: "BTCUSD_PERP".to_string(),
+            order_id: Some(12345),
+            orig_client_order_id: None,
+            recv_window: None,
+            timestamp: 1625097600000,
+        };
+
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert!(serialized.contains("symbol=BTCUSD_PERP"));
+        assert!(serialized.contains("orderId=12345"));
+        assert!(serialized.contains("timestamp=1625097600000"));
+        assert!(!serialized.contains("origClientOrderId"));
+        assert!(!serialized.contains("recvWindow"));
+    }
+
+    #[test]
+    fn test_query_current_open_order_request_with_client_order_id() {
+        let request = QueryCurrentOpenOrderRequest {
+            symbol: "ETHUSD_PERP".to_string(),
+            order_id: None,
+            orig_client_order_id: Some("my_order_123".to_string()),
+            recv_window: Some(5000),
+            timestamp: 1625097600000,
+        };
+
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert!(serialized.contains("symbol=ETHUSD_PERP"));
+        assert!(serialized.contains("origClientOrderId=my_order_123"));
+        assert!(serialized.contains("recvWindow=5000"));
+        assert!(serialized.contains("timestamp=1625097600000"));
+        assert!(!serialized.contains("orderId"));
+    }
+
+    #[test]
+    fn test_query_current_open_order_response_deserialization() {
+        let json = r#"{
+            "avgPrice": "0.0",
+            "clientOrderId": "my_order_123",
+            "cumBase": "0",
+            "executedQty": "0",
+            "orderId": 12345,
+            "origQty": "10.5",
+            "origType": "LIMIT",
+            "price": "45000.0",
+            "reduceOnly": false,
+            "side": "BUY",
+            "positionSide": "LONG",
+            "status": "NEW",
+            "stopPrice": "0",
+            "closePosition": false,
+            "symbol": "BTCUSD_PERP",
+            "pair": "BTCUSD",
+            "time": 1625097600000,
+            "timeInForce": "GTC",
+            "type": "LIMIT",
+            "activatePrice": null,
+            "priceRate": null,
+            "updateTime": 1625097600000,
+            "workingType": "CONTRACT_PRICE",
+            "priceProtect": false,
+            "priceMatch": "NONE",
+            "selfTradePreventionMode": "NONE"
+        }"#;
+
+        let response: QueryCurrentOpenOrderResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.avg_price, "0.0");
+        assert_eq!(response.client_order_id, "my_order_123");
+        assert_eq!(response.cum_base, "0");
+        assert_eq!(response.executed_qty, "0");
+        assert_eq!(response.order_id, 12345);
+        assert_eq!(response.orig_qty, "10.5");
+        assert_eq!(response.orig_type, OrderType::Limit);
+        assert_eq!(response.price, "45000.0");
+        assert!(!response.reduce_only);
+        assert_eq!(response.side, OrderSide::Buy);
+        assert_eq!(response.position_side, PositionSide::Long);
+        assert_eq!(response.status, OrderStatus::New);
+        assert_eq!(response.stop_price, "0");
+        assert!(!response.close_position);
+        assert_eq!(response.symbol, "BTCUSD_PERP");
+        assert_eq!(response.pair, "BTCUSD");
+        assert_eq!(response.time, 1625097600000);
+        assert_eq!(response.time_in_force, TimeInForce::GTC);
+        assert_eq!(response.order_type, OrderType::Limit);
+        assert!(response.activate_price.is_none());
+        assert!(response.price_rate.is_none());
+        assert_eq!(response.update_time, 1625097600000);
+        assert_eq!(response.working_type, WorkingType::ContractPrice);
+        assert!(!response.price_protect);
+        assert_eq!(response.price_match, PriceMatch::None);
+        assert_eq!(response.self_trade_prevention_mode, SelfTradePreventionMode::None);
+    }
+
+    #[test]
+    fn test_query_current_open_order_response_with_execution() {
+        let json = r#"{
+            "avgPrice": "44999.5",
+            "clientOrderId": "order_456",
+            "cumBase": "0.00111",
+            "executedQty": "5.0",
+            "orderId": 67890,
+            "origQty": "20.0",
+            "origType": "LIMIT",
+            "price": "45000.0",
+            "reduceOnly": true,
+            "side": "SELL",
+            "positionSide": "SHORT",
+            "status": "PARTIALLY_FILLED",
+            "stopPrice": "0",
+            "closePosition": false,
+            "symbol": "ETHUSD_PERP",
+            "pair": "ETHUSD",
+            "time": 1625097600000,
+            "timeInForce": "IOC",
+            "type": "LIMIT",
+            "updateTime": 1625097700000,
+            "workingType": "MARK_PRICE",
+            "priceProtect": true,
+            "priceMatch": "QUEUE",
+            "selfTradePreventionMode": "EXPIRE_TAKER"
+        }"#;
+
+        let response: QueryCurrentOpenOrderResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.avg_price, "44999.5");
+        assert_eq!(response.executed_qty, "5.0");
+        assert_eq!(response.orig_qty, "20.0");
+        assert_eq!(response.status, OrderStatus::PartiallyFilled);
+        assert!(response.reduce_only);
+        assert_eq!(response.side, OrderSide::Sell);
+        assert_eq!(response.position_side, PositionSide::Short);
+        assert_eq!(response.time_in_force, TimeInForce::IOC);
+        assert_eq!(response.working_type, WorkingType::MarkPrice);
+        assert!(response.price_protect);
+        assert_eq!(response.price_match, PriceMatch::Queue);
+        assert_eq!(response.self_trade_prevention_mode, SelfTradePreventionMode::ExpireTaker);
+    }
+
+    #[test]
+    fn test_query_current_open_order_response_stop_order() {
+        let json = r#"{
+            "avgPrice": "0.0",
+            "clientOrderId": "stop_order_789",
+            "cumBase": "0",
+            "executedQty": "0",
+            "orderId": 11111,
+            "origQty": "15.0",
+            "origType": "STOP",
+            "price": "43000.0",
+            "reduceOnly": false,
+            "side": "BUY",
+            "positionSide": "LONG",
+            "status": "NEW",
+            "stopPrice": "42500.0",
+            "closePosition": false,
+            "symbol": "BTCUSD_PERP",
+            "pair": "BTCUSD",
+            "time": 1625097600000,
+            "timeInForce": "GTC",
+            "type": "STOP",
+            "activatePrice": "42000.0",
+            "priceRate": "0.05",
+            "updateTime": 1625097600000,
+            "workingType": "CONTRACT_PRICE",
+            "priceProtect": false,
+            "priceMatch": "OPPONENT",
+            "selfTradePreventionMode": "NONE"
+        }"#;
+
+        let response: QueryCurrentOpenOrderResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.order_type, OrderType::Stop);
+        assert_eq!(response.stop_price, "42500.0");
+        assert_eq!(response.activate_price, Some("42000.0".to_string()));
+        assert_eq!(response.price_rate, Some("0.05".to_string()));
+        assert_eq!(response.price_match, PriceMatch::Opponent);
     }
 }

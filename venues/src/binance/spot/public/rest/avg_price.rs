@@ -50,3 +50,47 @@ impl RestClient {
         .await
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use rust_decimal::prelude::FromPrimitive;
+
+    #[test]
+    fn test_avg_price_request_serialization() {
+        let request = AvgPriceRequest {
+            symbol: "BTCUSDT".to_string(),
+        };
+
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert_eq!(serialized, "symbol=BTCUSDT");
+    }
+
+    #[test]
+    fn test_avg_price_response_deserialization() {
+        let json = r#"{
+            "mins": 5,
+            "price": "50000.50",
+            "closeTime": 1625097600000
+        }"#;
+
+        let response: AvgPriceResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.mins, 5);
+        assert_eq!(response.price, Decimal::from_f64(50000.50).unwrap());
+        assert_eq!(response.close_time, 1625097600000);
+    }
+
+    #[test]
+    fn test_avg_price_response_deserialization_different_duration() {
+        let json = r#"{
+            "mins": 15,
+            "price": "3200.75",
+            "closeTime": 1625184000000
+        }"#;
+
+        let response: AvgPriceResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.mins, 15);
+        assert_eq!(response.price, Decimal::from_f64(3200.75).unwrap());
+        assert_eq!(response.close_time, 1625184000000);
+    }
+}
