@@ -4,6 +4,10 @@ applyTo: "venues/src/**/rest/**"
 
 # Adding a New REST API Endpoint for an Existing Venue (Rust, venues crate)
 
+## File Header and Documentation Link Rules
+
+- **Do NOT put comments at the top of endpoint files** (except for license headers if required by the project).
+
 ## Overview
 
 This guide describes how to add a new REST API endpoint for an existing venue in the `venues` crate, following the conventions and structure of the `account_trades` implementation.
@@ -29,11 +33,18 @@ It also details documentation and code style requirements for all structs and fi
 
 - Define a `Request` struct for the endpoint parameters.
 - Use `#[derive(Debug, Clone, Serialize, Default)]`.
+- **Serde Attributes:**
+  - Use `#[serde(rename_all = "camelCase")]` or similar container-level attribute when the API uses a consistent naming convention (e.g., camelCase, snake_case).
+  - Use individual `#[serde(rename = "fieldName")]` attributes ONLY when:
+    - The field name differs from what the container-level rename would produce, OR
+    - No container-level rename is used and the field name differs from the Rust field name.
+  - Do NOT use both container-level `rename_all` AND individual `rename` attributes unless the field name is an exception to the container rule.
 - **Documentation:**
   - All structs MUST have a doc comment explaining their purpose and usage.
+  - Do not put a doc link here.
   - All struct fields MUST have doc comments with:
     - Purpose, valid values/ranges, constraints, relationships, units/formats.
-  - Use Rust snake_case for fields; map to API names with serde attributes.
+  - Use Rust snake_case for fields.
   - Field names in serde attributes MUST exactly match the venue's API docs.
   - There MUST be a blank line between each field.
 - Example:
@@ -41,16 +52,18 @@ It also details documentation and code style requirements for all structs and fi
   ```rust
   /// Request parameters for the account trade list endpoint.
   #[derive(Debug, Clone, Serialize, Default)]
+  #[serde(rename_all = "camelCase")]
   pub struct AccountTradeListRequest {
       /// Trading symbol (e.g., "BTCUSD_PERP"). Optional.
-      #[serde(rename = "symbol", skip_serializing_if = "Option::is_none")]
-      pub symbol: Option<String>;
+      #[serde(skip_serializing_if = "Option::is_none")]
+      pub symbol: Option<String>,
 
-      // ...other fields...
+      /// Start time for filtering trades (milliseconds since epoch).
+      #[serde(skip_serializing_if = "Option::is_none")]
+      pub start_time: Option<u64>,
 
       /// Request timestamp (milliseconds since epoch).
-      #[serde(rename = "timestamp")]
-      pub timestamp: u64;
+      pub timestamp: u64,
   }
   ```
 
@@ -71,24 +84,30 @@ It also details documentation and code style requirements for all structs and fi
 - **DO NOT add any `impl` blocks to response structs.** No calculation methods, utility methods, or business logic should be added.
 - **Response structs should be pure data containers** that only hold deserialized API response data.
 - **For single-field wrapper structs** (when the API returns a direct array/value but you want a named struct), use `#[serde(transparent)]` instead of custom `Deserialize` implementations.
+- **Serde Attributes:**
+  - Use `#[serde(rename_all = "camelCase")]` or similar container-level attribute when the API uses a consistent naming convention.
+  - Use individual `#[serde(rename = "fieldName")]` attributes ONLY when the field name differs from what the container-level rename would produce.
+  - Do NOT use both container-level `rename_all` AND individual `rename` attributes unless the field name is an exception to the container rule.
 - **Documentation:**
   - All structs and fields must be documented as above.
-  - Use serde attributes for all fields.
+  - Do not put a doc link here.
+  - There MUST be a blank line between each field.
 - Example:
 
   ```rust
   /// Represents a single account trade.
   #[derive(Debug, Clone, Deserialize)]
+  #[serde(rename_all = "camelCase")]
   pub struct AccountTrade {
       /// Trading symbol.
-      #[serde(rename = "symbol")]
-      pub symbol: String;
+      pub symbol: String,
 
       /// Trade ID.
-      #[serde(rename = "id")]
-      pub id: u64;
+      pub id: u64,
 
-      // ...other fields...
+      /// Custom field that doesn't follow camelCase in the API.
+      #[serde(rename = "trade_time_ms")]
+      pub trade_time: u64,
   }
 
   /// Response wrapper for direct array responses.
@@ -118,11 +137,12 @@ It also details documentation and code style requirements for all structs and fi
 ## 6. RestClient Implementation
 
 - Add a method to `RestClient` for the new endpoint, **in the same file as the request and response structs**.
-- **Use the endpoint constant defined in step 5** instead of hardcoding the URL path.
+- **Use the endpoint constant defined in step 5** instead of hardcoding the URL path in the endpoint wrapper.
 - **All endpoint wrapper functions MUST include a doc comment above the function, following this standard:**
-  - Brief summary of the endpoint’s purpose.
-  - Details of what the function does.
-  - Link to the official API documentation.
+  - Title of the endpoints MATCHING the exchange docs EXACTLY.
+  - Any additional details that the exchange docs provide.
+  - Link to the official API documentation in the format:
+    `[docs]: <FULL URL>`
   - Rate limit information.
   - Arguments (with a brief description for each).
   - Return value (with a brief description).
@@ -132,7 +152,7 @@ It also details documentation and code style requirements for all structs and fi
   ///
   /// Cancels all outstanding orders for a symbol and/or side.
   ///
-  /// [documentation]: https://raw.githubusercontent.com/rosssaunders/coincise/refs/heads/main/docs/bitmart/spot/spot___margin_trading.md
+  /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Get-Funding-Info
   ///
   /// Rate limit: varies by endpoint type
   ///
