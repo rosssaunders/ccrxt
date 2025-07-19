@@ -3,10 +3,14 @@ use serde::{Deserialize, Serialize};
 
 use crate::binance::coinm::{RestResult, public::rest::RestClient};
 
+/// Index Price Constituents endpoint path
+const CONSTITUENTS_ENDPOINT: &str = "/dapi/v1/constituents";
+
 /// Parameters for Query Index Price Constituents
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct ConstituentsRequest {
     /// Symbol name
+    #[serde(rename = "symbol")]
     pub symbol: String,
 }
 
@@ -15,15 +19,19 @@ pub struct ConstituentsRequest {
 #[serde(rename_all = "camelCase")]
 pub struct Constituent {
     /// Exchange name
+    #[serde(rename = "exchange")]
     pub exchange: String,
 
     /// Symbol name
+    #[serde(rename = "symbol")]
     pub symbol: String,
 
     /// Price
+    #[serde(rename = "price")]
     pub price: Decimal,
 
     /// Weight
+    #[serde(rename = "weight")]
     pub weight: Decimal,
 }
 
@@ -32,27 +40,35 @@ pub struct Constituent {
 #[serde(rename_all = "camelCase")]
 pub struct Constituents {
     /// Symbol name
+    #[serde(rename = "symbol")]
     pub symbol: String,
 
     /// Timestamp
+    #[serde(rename = "time")]
     pub time: i64,
 
     /// Constituents
+    #[serde(rename = "constituents")]
     pub constituents: Vec<Constituent>,
 }
 
 impl RestClient {
     /// Query index price constituents
     ///
-    /// Weight: 2
+    /// Retrieves the list of constituents that make up an index price for a given symbol.
+    ///
+    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Index-Constituents
+    ///
+    /// Rate limit: 2
+    ///
+    /// # Arguments
+    /// * `params` - The `ConstituentsRequest` specifying the symbol to query.
+    ///
+    /// # Returns
+    /// A `Constituents` object containing the symbol, timestamp, and list of constituents.
     pub async fn get_constituents(&self, params: ConstituentsRequest) -> RestResult<Constituents> {
-        self.send_request(
-            "/dapi/v1/constituents",
-            reqwest::Method::GET,
-            Some(params),
-            2,
-        )
-        .await
+        self.send_request(CONSTITUENTS_ENDPOINT, reqwest::Method::GET, Some(params), 2)
+            .await
     }
 }
 
@@ -124,21 +140,26 @@ mod tests {
         assert_eq!(constituents.symbol, "BTCUSD");
         assert_eq!(constituents.time, 1625097600000);
         assert_eq!(constituents.constituents.len(), 4);
-        
+
         assert_eq!(constituents.constituents[0].exchange, "Binance");
-        assert_eq!(constituents.constituents[0].price, Decimal::from_f64(50000.50).unwrap());
-        assert_eq!(constituents.constituents[0].weight, Decimal::from_f64(0.25).unwrap());
-        
+        assert_eq!(
+            constituents.constituents[0].price,
+            Decimal::from_f64(50000.50).unwrap()
+        );
+        assert_eq!(
+            constituents.constituents[0].weight,
+            Decimal::from_f64(0.25).unwrap()
+        );
+
         assert_eq!(constituents.constituents[1].exchange, "Coinbase");
         assert_eq!(constituents.constituents[1].symbol, "BTC-USD");
-        assert_eq!(constituents.constituents[1].weight, Decimal::from_f64(0.30).unwrap());
-        
+        assert_eq!(
+            constituents.constituents[1].weight,
+            Decimal::from_f64(0.30).unwrap()
+        );
+
         // Verify weights sum to 1.0
-        let total_weight: Decimal = constituents
-            .constituents
-            .iter()
-            .map(|c| c.weight)
-            .sum();
+        let total_weight: Decimal = constituents.constituents.iter().map(|c| c.weight).sum();
         assert_eq!(total_weight, Decimal::from_f64(1.0).unwrap());
     }
 }

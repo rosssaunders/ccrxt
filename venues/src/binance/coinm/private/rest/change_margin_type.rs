@@ -1,6 +1,3 @@
-// Change Margin Type (TRADE) endpoint implementation for POST /dapi/v1/marginType
-// See: <https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Change-Margin-Type>
-
 use serde::{Deserialize, Serialize};
 
 use crate::binance::{
@@ -41,7 +38,8 @@ pub struct ChangeMarginTypeResponse {
 impl RestClient {
     /// Changes user's margin type (TRADE) for a specific symbol on Binance Coin-M Futures.
     ///
-    /// See: <https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Change-Margin-Type>
+    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Change-Margin-Type
+    ///
     /// POST /dapi/v1/marginType
     /// Weight: 1
     /// Requires API key and signature.

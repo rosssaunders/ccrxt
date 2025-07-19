@@ -3,64 +3,116 @@ use serde::{Deserialize, Serialize};
 
 use crate::binance::coinm::{RestResult, public::rest::RestClient};
 
-/// Parameters for 24hr Ticker Price Change Statistics
+/// Endpoint path for 24hr Ticker Price Change Statistics.
+const TICKER_24HR_ENDPOINT: &str = "/dapi/v1/ticker/24hr";
+
+/// Request parameters for the 24hr Ticker Price Change Statistics endpoint.
+///
+/// Used to filter results by symbol or pair. Symbol and pair cannot be sent together.
+/// If neither is provided, tickers for all symbols of all pairs will be returned.
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct Ticker24hrParams {
-    /// Symbol name
+    /// Trading symbol (e.g., "BTCUSD_PERP"). Optional.
+    /// If provided, returns statistics for the specified symbol.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub symbol: Option<String>,
-    /// Contract type
+
+    /// Contract pair (e.g., "BTCUSD"). Optional.
+    /// If provided, returns statistics for all symbols of the pair.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub pair: Option<String>,
 }
 
-/// 24hr ticker price change statistics
+/// 24hr ticker price change statistics returned by the endpoint.
+///
+/// All fields are direct mappings from the Binance API response.
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Ticker24hr {
-    /// Symbol name
+    /// Trading symbol (e.g., "BTCUSD_PERP").
+    /// Matches the symbol field in the Binance API response.
     pub symbol: String,
-    /// Pair name
+
+    /// Contract pair (e.g., "BTCUSD").
+    /// Matches the pair field in the Binance API response.
     pub pair: String,
-    /// Price change
+
+    /// Absolute price change over the last 24 hours.
+    /// Value is a signed decimal string from the API.
     pub price_change: Decimal,
-    /// Price change percent
+
+    /// Price change percent over the last 24 hours.
+    /// Value is a signed decimal string from the API.
     pub price_change_percent: Decimal,
-    /// Weighted average price
+
+    /// Weighted average price over the last 24 hours.
+    /// Value is a decimal string from the API.
     pub weighted_avg_price: Decimal,
-    /// Last price
+
+    /// Last traded price.
+    /// Value is a decimal string from the API.
     pub last_price: Decimal,
-    /// Last quantity
+
+    /// Quantity of the last trade.
+    /// Value is a decimal string from the API.
     pub last_qty: Decimal,
-    /// Open price
+
+    /// Opening price 24 hours ago.
+    /// Value is a decimal string from the API.
     pub open_price: Decimal,
-    /// High price
+
+    /// Highest price in the last 24 hours.
+    /// Value is a decimal string from the API.
     pub high_price: Decimal,
-    /// Low price
+
+    /// Lowest price in the last 24 hours.
+    /// Value is a decimal string from the API.
     pub low_price: Decimal,
-    /// Total traded base asset volume
+
+    /// Total traded base asset volume in the last 24 hours.
+    /// Value is a decimal string from the API.
     pub volume: Decimal,
-    /// Total traded quote asset volume (called baseVolume in API response)
+
+    /// Total traded base asset volume in the last 24 hours.
+    /// This field is called baseVolume in the API response.
     #[serde(rename = "baseVolume")]
-    pub quote_volume: Decimal,
-    /// Statistics open time
+    pub base_volume: Decimal,
+
+    /// Statistics open time (milliseconds since epoch).
+    /// Value is an integer from the API.
     pub open_time: i64,
-    /// Statistics close time
+
+    /// Statistics close time (milliseconds since epoch).
+    /// Value is an integer from the API.
     pub close_time: i64,
-    /// First trade id
+
+    /// First trade ID in the 24hr window.
+    /// Value is an integer from the API.
     pub first_id: i64,
-    /// Last trade id
+
+    /// Last trade ID in the 24hr window.
+    /// Value is an integer from the API.
     pub last_id: i64,
-    /// Trade count
+
+    /// Number of trades in the 24hr window.
+    /// Value is an integer from the API.
     pub count: i64,
 }
 
 impl RestClient {
-    /// Get 24hr ticker price change statistics
+    /// 24hr Ticker Price Change Statistics
     ///
-    /// https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/24hr-Ticker-Price-Change-Statistics
+    /// Returns 24 hour rolling window price change statistics for coin-margined futures.
+    ///
+    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/24hr-Ticker-Price-Change-Statistics
     ///
     /// Weight: 1 for a single symbol; 40 when the symbol parameter is omitted
+    ///
+    /// # Arguments
+    /// * `params` - Request parameters for filtering by symbol or pair. If both are None, returns all tickers.
+    ///
+    /// # Returns
+    /// A vector of `Ticker24hr` structs containing price change statistics for each symbol.
     pub async fn get_ticker_24hr(&self, params: Ticker24hrParams) -> RestResult<Vec<Ticker24hr>> {
         let weight = if params.symbol.is_some() || params.pair.is_some() {
             1
@@ -70,7 +122,7 @@ impl RestClient {
 
         // The API always returns an array, even for single symbols
         self.send_request(
-            "/dapi/v1/ticker/24hr",
+            TICKER_24HR_ENDPOINT,
             reqwest::Method::GET,
             Some(params),
             weight,
@@ -141,7 +193,7 @@ mod tests {
 
         let response: Vec<Ticker24hr> = serde_json::from_str(json).unwrap();
         assert_eq!(response.len(), 1);
-        
+
         let ticker = &response[0];
         assert_eq!(ticker.symbol, "BTCUSD_PERP");
         assert_eq!(ticker.pair, "BTCUSD");
@@ -154,7 +206,7 @@ mod tests {
         assert_eq!(ticker.high_price, Decimal::new(46000, 0));
         assert_eq!(ticker.low_price, Decimal::new(44500, 0));
         assert_eq!(ticker.volume, Decimal::new(1250750, 3));
-        assert_eq!(ticker.quote_volume, Decimal::new(56875250125, 3));
+        assert_eq!(ticker.base_volume, Decimal::new(56875250125, 3));
         assert_eq!(ticker.open_time, 1625011200000);
         assert_eq!(ticker.close_time, 1625097599999);
         assert_eq!(ticker.first_id, 123456789);
@@ -186,7 +238,7 @@ mod tests {
 
         let response: Vec<Ticker24hr> = serde_json::from_str(json).unwrap();
         assert_eq!(response.len(), 1);
-        
+
         let ticker = &response[0];
         assert_eq!(ticker.symbol, "ETHUSD_PERP");
         assert_eq!(ticker.price_change, Decimal::new(-12575, 2));

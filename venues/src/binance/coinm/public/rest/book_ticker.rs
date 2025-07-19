@@ -3,25 +3,31 @@ use serde::{Deserialize, Serialize};
 
 use crate::binance::coinm::{RestResult, public::rest::RestClient};
 
-/// Parameters for Symbol Order Book Ticker
+/// Symbol Order Book Ticker endpoint path
+const BOOK_TICKER_ENDPOINT: &str = "/dapi/v1/ticker/bookTicker";
+
+/// Parameters for Symbol Order Book Ticker by symbol.
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct BookTickerRequestBySymbol {
-    /// Symbol name
-    #[serde(skip_serializing_if = "Option::is_none")]
+    /// Symbol name (optional). When provided, returns ticker for a single symbol.
+    #[serde(rename = "symbol", skip_serializing_if = "Option::is_none")]
     pub symbol: Option<String>,
 }
 
-/// Parameters for Symbol Order Book Ticker
+/// Parameters for Symbol Order Book Ticker by pair.
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct BookTickerRequestByPair {
-    /// Pair name
-    #[serde(skip_serializing_if = "Option::is_none")]
+    /// Pair name (optional). When provided, returns ticker for a single pair.
+    #[serde(rename = "pair", skip_serializing_if = "Option::is_none")]
     pub pair: Option<String>,
 }
 
-#[derive(Serialize)]
+/// Request parameters for the Symbol Order Book Ticker endpoint.
+#[derive(Debug, Clone, Serialize)]
 pub enum BookTickerRequest {
+    /// Request by symbol
     BySymbol(BookTickerRequestBySymbol),
+    /// Request by pair
     ByPair(BookTickerRequestByPair),
 }
 
@@ -31,66 +37,62 @@ pub enum BookTickerRequest {
 pub struct BookTicker {
     /// Symbol name
     pub symbol: String,
+
     /// Pair name
     pub pair: String,
+
     /// Best bid price
     pub bid_price: Decimal,
+
     /// Best bid quantity
     pub bid_qty: Decimal,
+
     /// Best ask price
     pub ask_price: Decimal,
+
     /// Best ask quantity
     pub ask_qty: Decimal,
+
     /// Timestamp
     pub time: i64,
 }
 
 impl RestClient {
-    /// Get symbol order book ticker by symbol
-    ///
-    /// Weight: 2 for a single symbol; 5 when the symbol parameter is omitted
-    async fn get_book_ticker_by_symbol(
-        &self,
-        params: BookTickerRequestBySymbol,
-    ) -> RestResult<Vec<BookTicker>> {
-        let weight = if params.symbol.is_some() { 2 } else { 5 };
-
-        self.send_request(
-            "/dapi/v1/ticker/bookTicker",
-            reqwest::Method::GET,
-            Some(params),
-            weight,
-        )
-        .await
-    }
-
-    /// Get symbol order book ticker by pair
-    ///
-    /// Weight: 2 for a single pair; 5 when the pair parameter is omitted
-    async fn get_book_ticker_by_pair(
-        &self,
-        params: BookTickerRequestByPair,
-    ) -> RestResult<Vec<BookTicker>> {
-        let weight = if params.pair.is_some() { 2 } else { 5 };
-
-        self.send_request(
-            "/dapi/v1/ticker/bookTicker",
-            reqwest::Method::GET,
-            Some(params),
-            weight,
-        )
-        .await
-    }
-
     /// Get symbol order book ticker
     ///
-    /// Weight: 2 for a single symbol; 5 when the symbol parameter is omitted
+    /// Retrieves the best bid and ask price and quantity for a given symbol or pair.
+    ///
+    /// [docs]:  https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Symbol-Order-Book-Ticker
+    ///
+    /// Rate limit: 2 (single symbol/pair), 5 (all symbols/pairs)
+    ///
+    /// # Arguments
+    /// * `params` - The `BookTickerRequest` specifying a symbol or pair filter.
+    ///
+    /// # Returns
+    /// A list of `BookTicker` records for the requested symbol(s) or pair(s).
     pub async fn get_book_ticker(&self, params: BookTickerRequest) -> RestResult<Vec<BookTicker>> {
         match params {
             BookTickerRequest::BySymbol(by_symbol) => {
-                self.get_book_ticker_by_symbol(by_symbol).await
+                let weight = if by_symbol.symbol.is_some() { 2 } else { 5 };
+                self.send_request(
+                    BOOK_TICKER_ENDPOINT,
+                    reqwest::Method::GET,
+                    Some(by_symbol),
+                    weight,
+                )
+                .await
             }
-            BookTickerRequest::ByPair(by_pair) => self.get_book_ticker_by_pair(by_pair).await,
+            BookTickerRequest::ByPair(by_pair) => {
+                let weight = if by_pair.pair.is_some() { 2 } else { 5 };
+                self.send_request(
+                    BOOK_TICKER_ENDPOINT,
+                    reqwest::Method::GET,
+                    Some(by_pair),
+                    weight,
+                )
+                .await
+            }
         }
     }
 }
@@ -175,10 +177,10 @@ mod tests {
 
         let tickers: Vec<BookTicker> = serde_json::from_str(json).unwrap();
         assert_eq!(tickers.len(), 2);
-        
+
         assert_eq!(tickers[0].symbol, "BTCUSD_PERP");
         assert_eq!(tickers[0].bid_price, Decimal::from_f64(50000.25).unwrap());
-        
+
         assert_eq!(tickers[1].symbol, "ETHUSD_PERP");
         assert_eq!(tickers[1].ask_price, Decimal::from_f64(3001.00).unwrap());
     }

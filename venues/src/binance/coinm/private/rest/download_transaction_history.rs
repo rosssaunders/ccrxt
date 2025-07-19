@@ -68,7 +68,8 @@ pub struct GetDownloadLinkResponse {
 impl RestClient {
     /// Get download ID for transaction history on Binance Coin-M Futures.
     ///
-    /// See: <https://binance-docs.github.io/apidocs/delivery/en/>
+    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/account/rest-api/Get-Futures-Transaction-History-Download-Link-by-Id
+    ///
     /// GET /dapi/v1/income/asyn
     /// Weight: 5
     /// Requires API key and signature.
@@ -96,7 +97,8 @@ impl RestClient {
 
     /// Get download link for transaction history on Binance Coin-M Futures.
     ///
-    /// See: <https://binance-docs.github.io/apidocs/delivery/en/>
+    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/account/rest-api/Get-Futures-Transaction-History-Download-Link-by-Id
+    ///
     /// GET /dapi/v1/income/asyn/id
     /// Weight: 5
     /// Requires API key and signature.
@@ -195,7 +197,10 @@ mod tests {
         let response: GetDownloadLinkResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.download_id, "123456");
         assert_eq!(response.status, DownloadStatus::Completed);
-        assert_eq!(response.url, Some("https://example.com/download".to_string()));
+        assert_eq!(
+            response.url,
+            Some("https://example.com/download".to_string())
+        );
         assert_eq!(response.expired_timestamp, Some(1625270400000));
     }
 

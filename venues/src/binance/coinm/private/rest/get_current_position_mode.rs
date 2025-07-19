@@ -1,6 +1,3 @@
-// Get Current Position Mode (USER_DATA) endpoint implementation for GET /dapi/v1/positionSide/dual
-// See: <https://developers.binance.com/docs/derivatives/coin-margined-futures/account/rest-api/Get-Current-Position-Mode>
-
 use serde::{Deserialize, Serialize};
 
 use crate::binance::{
@@ -32,7 +29,8 @@ pub struct GetCurrentPositionModeResponse {
 impl RestClient {
     /// Gets user's current position mode (USER_DATA) on Binance Coin-M Futures.
     ///
-    /// See: <https://developers.binance.com/docs/derivatives/coin-margined-futures/account/rest-api/Get-Current-Position-Mode>
+    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/account/rest-api/Get-Current-Position-Mode
+    ///
     /// GET /dapi/v1/positionSide/dual
     /// Weight: 30
     /// Requires API key and signature.

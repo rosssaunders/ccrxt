@@ -1,6 +1,3 @@
-// Get Order Modify History (USER_DATA) endpoint implementation for GET /dapi/v1/orderAmendment
-// See: <https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Get-Order-Modify-History>
-
 use serde::{Deserialize, Serialize};
 
 use crate::binance::{
@@ -103,7 +100,8 @@ pub type GetOrderModifyHistoryResponse = Vec<OrderModifyHistoryEntry>;
 impl RestClient {
     /// Gets order modification history (USER_DATA) for Binance Coin-M Futures.
     ///
-    /// See: <https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Get-Order-Modify-History>
+    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Get-Order-Modify-History
+    ///
     /// GET /dapi/v1/orderAmendment
     /// Weight: 1
     /// Requires API key and signature.
@@ -212,11 +210,11 @@ mod tests {
 
         let amendment: OrderAmendment = serde_json::from_str(json).unwrap();
         assert_eq!(amendment.count, 2);
-        
+
         let price = amendment.price.unwrap();
         assert_eq!(price.before, "45000.0");
         assert_eq!(price.after, "45500.0");
-        
+
         let qty = amendment.orig_qty.unwrap();
         assert_eq!(qty.before, "10.0");
         assert_eq!(qty.after, "15.0");
@@ -259,7 +257,7 @@ mod tests {
 
         let response: GetOrderModifyHistoryResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.len(), 2);
-        
+
         let entry1 = &response[0];
         assert_eq!(entry1.amendment_id, 100001);
         assert_eq!(entry1.symbol, "BTCUSD_PERP");
@@ -270,7 +268,7 @@ mod tests {
         assert_eq!(entry1.amendment.count, 1);
         assert!(entry1.amendment.price.is_some());
         assert!(entry1.amendment.orig_qty.is_none());
-        
+
         let entry2 = &response[1];
         assert_eq!(entry2.amendment_id, 100002);
         assert_eq!(entry2.amendment.count, 2);

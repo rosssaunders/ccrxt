@@ -1,6 +1,3 @@
-// User Commission Rate (USER_DATA) endpoint implementation for GET /dapi/v1/commissionRate
-// See: <https://developers.binance.com/docs/derivatives/coin-margined-futures/account/rest-api/User-Commission-Rate>
-
 use serde::{Deserialize, Serialize};
 
 use crate::binance::{
@@ -42,7 +39,8 @@ pub struct GetUserCommissionRateResponse {
 impl RestClient {
     /// Gets user commission rate (USER_DATA) on Binance Coin-M Futures.
     ///
-    /// See: <https://developers.binance.com/docs/derivatives/coin-margined-futures/account/rest-api/User-Commission-Rate>
+    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/account/rest-api/User-Commission-Rate
+    ///
     /// GET /dapi/v1/commissionRate
     /// Weight: 20
     /// Requires API key and signature.

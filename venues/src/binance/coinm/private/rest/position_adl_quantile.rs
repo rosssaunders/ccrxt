@@ -1,6 +1,3 @@
-// Position ADL Quantile Estimation (USER_DATA) endpoint implementation for GET /dapi/v1/adlQuantile
-// See: <https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Position-ADL-Quantile-Estimation>
-
 use serde::{Deserialize, Serialize};
 
 use crate::binance::{
@@ -62,7 +59,8 @@ pub type GetPositionAdlQuantileResponse = Vec<PositionAdlQuantileEntry>;
 impl RestClient {
     /// Gets position ADL quantile estimation (USER_DATA) on Binance Coin-M Futures.
     ///
-    /// See: <https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Position-ADL-Quantile-Estimation>
+    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Position-ADL-Quantile-Estimation
+    ///
     /// GET /dapi/v1/adlQuantile
     /// Weight: 5
     /// Requires API key and signature.
@@ -194,13 +192,13 @@ mod tests {
 
         let response: GetPositionAdlQuantileResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.len(), 2);
-        
+
         let entry1 = &response[0];
         assert_eq!(entry1.symbol, "BTCUSD_PERP");
         assert_eq!(entry1.adl_quantile.both, Some(2));
         assert!(entry1.adl_quantile.long.is_none());
         assert!(entry1.adl_quantile.short.is_none());
-        
+
         let entry2 = &response[1];
         assert_eq!(entry2.symbol, "ETHUSD_PERP");
         assert_eq!(entry2.adl_quantile.long, Some(3));

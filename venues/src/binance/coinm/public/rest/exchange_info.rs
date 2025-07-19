@@ -7,106 +7,164 @@ use crate::binance::coinm::{
     rate_limit::{RateLimitInterval, RateLimitType},
 };
 
+const EXCHANGE_INFO_ENDPOINT: &str = "/dapi/v1/exchangeInfo";
+
+/// Represents a symbol in the exchange info response.
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Symbol {
+    /// Trading symbol name.
     pub symbol: String,
 
+    /// Trading pair name.
     pub pair: String,
 
+    /// Contract type.
     pub contract_type: ContractType,
 
+    /// Delivery date in milliseconds.
     pub delivery_date: i64,
 
+    /// Onboard date in milliseconds.
     pub onboard_date: i64,
 
+    /// Current status of the contract.
     pub contract_status: ContractStatus,
 
+    /// Size of one contract.
     pub contract_size: i64,
 
+    /// Margin asset for the symbol.
     pub margin_asset: String,
 
+    /// Maintenance margin percentage.
     pub maint_margin_percent: String,
 
+    /// Required margin percentage.
     pub required_margin_percent: String,
 
+    /// Base asset of the symbol.
     pub base_asset: String,
 
+    /// Quote asset of the symbol.
     pub quote_asset: QuoteAsset,
 
+    /// Price precision for the symbol.
     pub price_precision: i64,
 
+    /// Quantity precision for the symbol.
     pub quantity_precision: i64,
 
+    /// Base asset precision.
     pub base_asset_precision: i64,
 
+    /// Quote precision.
     pub quote_precision: i64,
 
+    /// Equal quantity precision.
     pub equal_qty_precision: i64,
 
+    /// Maximum move order limit.
     pub max_move_order_limit: i64,
 
+    /// Trigger protection percentage.
     pub trigger_protect: String,
 
+    /// Underlying asset type.
     pub underlying_type: UnderlyingType,
 
+    /// Underlying sub types.
     pub underlying_sub_type: Vec<String>,
 
+    /// List of filters applied to the symbol.
     pub filters: Vec<Filter>,
 
+    /// Allowed order types for the symbol.
     pub order_types: Vec<OrderType>,
 
+    /// Allowed time in force values.
     pub time_in_force: Vec<TimeInForce>,
 
+    /// Liquidation fee percentage.
     pub liquidation_fee: String,
 
+    /// Market take bound percentage.
     pub market_take_bound: String,
 }
 
+/// Price filter for a symbol.
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct PriceFilter {
+    /// Minimum price allowed.
     pub min_price: Option<String>,
+
+    /// Maximum price allowed.
     pub max_price: Option<String>,
+
+    /// Tick size for price increments.
     pub tick_size: Option<String>,
 }
 
+/// Lot size filter for a symbol.
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct LotSizeFilter {
+    /// Maximum quantity allowed.
     pub max_qty: Option<String>,
+
+    /// Minimum quantity allowed.
     pub min_qty: Option<String>,
+
+    /// Step size for quantity increments.
     pub step_size: Option<String>,
 }
 
+/// Market lot size filter for a symbol.
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct MarketLotSizeFilter {
+    /// Maximum quantity allowed for market orders.
     pub max_qty: Option<String>,
+
+    /// Minimum quantity allowed for market orders.
     pub min_qty: Option<String>,
+
+    /// Step size for market order quantity increments.
     pub step_size: Option<String>,
 }
 
+/// Maximum number of orders filter.
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct MaxNumOrdersFilter {
+    /// Maximum number of orders allowed.
     pub limit: Option<i64>,
 }
 
+/// Maximum number of algo orders filter.
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct MaxNumAlgoOrdersFilter {
+    /// Maximum number of algo orders allowed.
     pub limit: Option<i64>,
 }
 
+/// Percent price filter for a symbol.
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct PercentPriceFilter {
+    /// Price multiplier up.
     pub multiplier_up: Option<String>,
+
+    /// Price multiplier down.
     pub multiplier_down: Option<String>,
+
+    /// Multiplier decimal places.
     pub multiplier_decimal: Option<String>,
 }
 
+/// Filter types that can be applied to symbols.
 #[derive(Debug, Deserialize)]
 #[serde(tag = "filterType")]
 pub enum Filter {
@@ -132,6 +190,7 @@ pub enum Filter {
     Unknown,
 }
 
+/// Types of filters that can be applied.
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum FilterType {
@@ -154,6 +213,7 @@ pub enum FilterType {
     PriceFilter,
 }
 
+/// Quote asset types.
 #[derive(Debug, Deserialize)]
 pub enum QuoteAsset {
     #[serde(rename = "USD")]
@@ -161,8 +221,6 @@ pub enum QuoteAsset {
 }
 
 /// Represents the response from the Binance Coin-M Futures Exchange Information endpoint.
-///
-/// See: <https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Exchange-Information>
 #[derive(Debug, Deserialize)]
 pub struct ExchangeInfoResponse {
     /// The timezone of the exchange (e.g., "UTC").
@@ -203,13 +261,21 @@ pub struct RateLimit {
 }
 
 impl RestClient {
+    /// Exchange information
+    ///
     /// Fetches current exchange trading rules and symbol information.
     ///
-    /// See: <https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Exchange-Information>
-    /// Corresponds to endpoint GET /dapi/v1/exchangeInfo.
-    /// Weight: 1
+    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Exchange-Information
+    ///
+    /// Rate limit: 1
+    ///
+    /// # Arguments
+    /// This endpoint takes no parameters
+    ///
+    /// # Returns
+    /// Exchange information including symbols, rate limits, and trading rules
     pub async fn get_exchange_info(&self) -> RestResult<ExchangeInfoResponse> {
-        self.send_request("/dapi/v1/exchangeInfo", reqwest::Method::GET, None::<()>, 1)
+        self.send_request(EXCHANGE_INFO_ENDPOINT, reqwest::Method::GET, None::<()>, 1)
             .await
     }
 }

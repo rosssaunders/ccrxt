@@ -1,6 +1,3 @@
-// Change Initial Leverage (TRADE) endpoint implementation for POST /dapi/v1/leverage
-// See: <https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Change-Initial-Leverage>
-
 use serde::{Deserialize, Serialize};
 
 use crate::binance::{
@@ -44,7 +41,8 @@ pub struct ChangeInitialLeverageResponse {
 impl RestClient {
     /// Changes user's initial leverage (TRADE) for a specific symbol on Binance Coin-M Futures.
     ///
-    /// See: <https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Change-Initial-Leverage>
+    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Change-Initial-Leverage
+    ///
     /// POST /dapi/v1/leverage
     /// Weight: 1
     /// Requires API key and signature.

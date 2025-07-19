@@ -16,15 +16,14 @@ mod private {
     // Re-export RestClient so it can be re-exported by the parent
     pub use self::rest::{
         RestClient as PrivateRestClient, account::*, account_trades::*, all_orders::*,
-        asset_index::*, auto_cancel_all_open_orders::*, batch_order::*, cancel_all_open_orders::*,
-        cancel_order::*, change_initial_leverage::*, change_margin_type::*,
-        change_position_mode::*, download_transaction_history::*, force_orders::*,
-        futures_account_balance::*, get_current_position_mode::*, income_history::*, listen_key::*,
+        auto_cancel_all_open_orders::*, batch_order::*, cancel_all_open_orders::*, cancel_order::*,
+        change_initial_leverage::*, change_margin_type::*, change_position_mode::*,
+        download_transaction_history::*, force_orders::*, futures_account_balance::*,
+        get_current_position_mode::*, income_history::*, listen_key::*,
         modify_isolated_position_margin::*, modify_multiple_orders::*, modify_order::*,
-        multi_asset_mode::*, notional_brackets::*, open_orders::*, order::*,
-        order_modify_history::*, position_adl_quantile::*, position_margin_change_history::*,
-        position_risk::*, query_current_open_order::*, query_order::*, trading_status::*,
-        universal_transfer::*, universal_transfer_history::*, user_commission_rate::*,
+        notional_brackets::*, open_orders::*, order::*, order_modify_history::*,
+        position_adl_quantile::*, position_margin_change_history::*, position_risk::*,
+        query_current_open_order::*, query_order::*, user_commission_rate::*,
     };
 }
 

@@ -287,7 +287,7 @@ pub enum BatchOrderResult {
 impl RestClient {
     /// Places multiple orders in a single batch.
     ///
-    /// See: <https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Place-Multiple-Orders>
+    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Place-Multiple-Orders
     ///
     /// POST /dapi/v1/batchOrders
     /// Weight: 5
@@ -352,27 +352,25 @@ mod tests {
 
     #[test]
     fn test_place_batch_orders_request_serialization() {
-        let orders = vec![
-            BatchOrderRequest {
-                symbol: "BTCUSD_PERP".to_string(),
-                side: OrderSide::Buy,
-                position_side: None,
-                order_type: OrderType::Market,
-                time_in_force: None,
-                quantity: "5.00000000".to_string(),
-                reduce_only: None,
-                price: None,
-                new_client_order_id: None,
-                stop_price: None,
-                activation_price: None,
-                callback_rate: None,
-                working_type: None,
-                price_protect: None,
-                new_order_resp_type: None,
-                price_match: None,
-                self_trade_prevention_mode: None,
-            },
-        ];
+        let orders = vec![BatchOrderRequest {
+            symbol: "BTCUSD_PERP".to_string(),
+            side: OrderSide::Buy,
+            position_side: None,
+            order_type: OrderType::Market,
+            time_in_force: None,
+            quantity: "5.00000000".to_string(),
+            reduce_only: None,
+            price: None,
+            new_client_order_id: None,
+            stop_price: None,
+            activation_price: None,
+            callback_rate: None,
+            working_type: None,
+            price_protect: None,
+            new_order_resp_type: None,
+            price_match: None,
+            self_trade_prevention_mode: None,
+        }];
 
         let request = PlaceBatchOrdersRequest {
             batch_orders: orders,
@@ -440,7 +438,10 @@ mod tests {
         assert_eq!(response.working_type, WorkingType::ContractPrice);
         assert!(response.price_protect);
         assert_eq!(response.price_match, PriceMatch::None);
-        assert_eq!(response.self_trade_prevention_mode, SelfTradePreventionMode::None);
+        assert_eq!(
+            response.self_trade_prevention_mode,
+            SelfTradePreventionMode::None
+        );
     }
 
     #[test]
@@ -532,7 +533,7 @@ mod tests {
 
         let results: Vec<BatchOrderResult> = serde_json::from_str(json).unwrap();
         assert_eq!(results.len(), 2);
-        
+
         // First result should be Ok
         match &results[0] {
             BatchOrderResult::Ok(response) => {
@@ -540,7 +541,7 @@ mod tests {
             }
             BatchOrderResult::Err(_) => panic!("Expected Ok variant for first result"),
         }
-        
+
         // Second result should be Err
         match &results[1] {
             BatchOrderResult::Err(error) => {

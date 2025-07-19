@@ -1,6 +1,3 @@
-// Change Position Mode (TRADE) endpoint implementation for POST /dapi/v1/positionSide/dual
-// See: <https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Change-Position-Mode>
-
 use serde::{Deserialize, Serialize};
 
 use crate::binance::{
@@ -38,7 +35,8 @@ pub struct ChangePositionModeResponse {
 impl RestClient {
     /// Changes user's position mode (TRADE) on Binance Coin-M Futures.
     ///
-    /// See: <https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Change-Position-Mode>
+    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Change-Position-Mode
+    ///
     /// POST /dapi/v1/positionSide/dual
     /// Weight: 1
     /// Requires API key and signature.

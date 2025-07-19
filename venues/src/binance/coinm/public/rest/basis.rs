@@ -41,16 +41,22 @@ pub struct BasisRequest {
 pub struct Basis {
     /// Pair name
     pub pair: String,
+
     /// Contract type
     pub contract_type: ContractType,
+
     /// Futures price
     pub futures_price: Decimal,
+
     /// Index price
     pub index_price: Decimal,
+
     /// Basis
     pub basis: Decimal,
+
     /// Basis rate
     pub basis_rate: Decimal,
+
     /// Timestamp
     pub timestamp: i64,
 }
@@ -59,8 +65,9 @@ impl RestClient {
     /// Get basis
     ///
     /// Weight: 1
+    /// [docs]: (https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Basis)
     pub async fn get_basis(&self, params: BasisRequest) -> RestResult<Vec<Basis>> {
-        self.send_request("/futures/data/basis", reqwest::Method::GET, Some(params), 1)
+        self.send_request("/dapi/v1/basis", reqwest::Method::GET, Some(params), 1)
             .await
     }
 }
@@ -154,11 +161,20 @@ mod tests {
 
         let basis_list: Vec<Basis> = serde_json::from_str(json).unwrap();
         assert_eq!(basis_list.len(), 2);
-        
-        assert_eq!(basis_list[0].futures_price, Decimal::from_f64(50000.50).unwrap());
+
+        assert_eq!(
+            basis_list[0].futures_price,
+            Decimal::from_f64(50000.50).unwrap()
+        );
         assert_eq!(basis_list[0].timestamp, 1625097600000);
-        
-        assert_eq!(basis_list[1].futures_price, Decimal::from_f64(50100.00).unwrap());
-        assert_eq!(basis_list[1].basis_rate, Decimal::from_f64(0.002000).unwrap());
+
+        assert_eq!(
+            basis_list[1].futures_price,
+            Decimal::from_f64(50100.00).unwrap()
+        );
+        assert_eq!(
+            basis_list[1].basis_rate,
+            Decimal::from_f64(0.002000).unwrap()
+        );
     }
 }

@@ -1,6 +1,7 @@
-// Query Order endpoint implementation for GET /dapi/v1/order
-// See: https://binance-docs.github.io/apidocs/delivery/en/>
-
+use crate::binance::coinm::enums::{
+    OrderSide, OrderStatus, OrderType, PriceMatch, SelfTradePreventionMode, TimeInForce,
+    WorkingType,
+};
 use serde::{Deserialize, Serialize};
 
 use crate::binance::{
@@ -36,57 +37,113 @@ pub struct QueryOrderRequest {
 
 /// Response for querying an order (GET /dapi/v1/order).
 #[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct QueryOrderResponse {
+    /// Average price of filled trades for this order.
     #[serde(rename = "avgPrice")]
     pub avg_price: String,
+
+    /// Client order ID assigned by the user.
     #[serde(rename = "clientOrderId")]
     pub client_order_id: String,
+
+    /// Cumulative base asset amount filled.
     #[serde(rename = "cumBase")]
     pub cum_base: String,
+
+    /// Executed quantity for this order.
     #[serde(rename = "executedQty")]
     pub executed_qty: String,
+
+    /// Exchange-assigned order ID.
     #[serde(rename = "orderId")]
     pub order_id: u64,
+
+    /// Original order quantity.
     #[serde(rename = "origQty")]
     pub orig_qty: String,
+
+    /// Original order type (e.g., LIMIT, MARKET).
     #[serde(rename = "origType")]
-    pub orig_type: String,
+    pub orig_type: OrderType,
+
+    /// Price specified in the order.
     pub price: String,
+
+    /// True if the order is reduce-only.
     #[serde(rename = "reduceOnly")]
     pub reduce_only: bool,
-    pub side: String,
-    pub status: String,
+
+    /// Order side (BUY or SELL).
+    pub side: OrderSide,
+
+    /// Order status (e.g., NEW, FILLED, CANCELED).
+    pub status: OrderStatus,
+
+    /// Stop price for conditional orders.
     #[serde(rename = "stopPrice")]
     pub stop_price: String,
+
+    /// True if this is a close-all position order.
     #[serde(rename = "closePosition")]
     pub close_position: bool,
+
+    /// Trading symbol (e.g., BTCUSD_PERP).
     pub symbol: String,
+
+    /// Trading pair (e.g., BTCUSD).
     pub pair: String,
+
+    /// Order creation time (milliseconds since epoch).
     pub time: u64,
+
+    /// Time in force for the order (e.g., GTC, IOC).
     #[serde(rename = "timeInForce")]
-    pub time_in_force: String,
+    pub time_in_force: TimeInForce,
+
+    /// Order type (e.g., LIMIT, MARKET).
     #[serde(rename = "type")]
-    pub order_type: String,
+    pub order_type: OrderType,
+
+    /// Activation price (for trailing stop orders).
     #[serde(rename = "activatePrice")]
     pub activate_price: Option<String>,
+
+    /// Callback rate (for trailing stop orders).
     #[serde(rename = "priceRate")]
     pub price_rate: Option<String>,
+
+    /// Last update time for the order (milliseconds since epoch).
     #[serde(rename = "updateTime")]
     pub update_time: u64,
+
+    /// Working type (e.g., CONTRACT_PRICE, MARK_PRICE).
     #[serde(rename = "workingType")]
-    pub working_type: String,
+    pub working_type: WorkingType,
+
+    /// True if price protection is enabled for this order.
     #[serde(rename = "priceProtect")]
     pub price_protect: bool,
+
+    /// Price match mode.
     #[serde(rename = "priceMatch")]
-    pub price_match: String,
+    pub price_match: PriceMatch,
+
+    /// Self-trade prevention mode.
     #[serde(rename = "selfTradePreventionMode")]
-    pub self_trade_prevention_mode: String,
+    pub self_trade_prevention_mode: SelfTradePreventionMode,
 }
 
 impl RestClient {
     /// Query an order's status on Binance Coin-M Futures.
     ///
-    /// See: <https://binance-docs.github.io/apidocs/delivery/en/>
+    /// Check an order's status.
+    /// These orders will not be found:
+    /// order status is CANCELED or EXPIRED AND order has NO filled trade AND created time + 3 days < current time
+    /// order create time + 90 days < current time
+    ///
+    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Query-Order
+    ///
     /// GET /dapi/v1/order
     /// Weight: 1
     /// Requires API key and signature.
@@ -184,25 +241,28 @@ mod tests {
         assert_eq!(response.executed_qty, "0");
         assert_eq!(response.order_id, 12345);
         assert_eq!(response.orig_qty, "10.5");
-        assert_eq!(response.orig_type, "LIMIT");
+        assert_eq!(response.orig_type, OrderType::Limit);
         assert_eq!(response.price, "45000.0");
         assert!(!response.reduce_only);
-        assert_eq!(response.side, "BUY");
-        assert_eq!(response.status, "NEW");
+        assert_eq!(response.side, OrderSide::Buy);
+        assert_eq!(response.status, OrderStatus::New);
         assert_eq!(response.stop_price, "0");
         assert!(!response.close_position);
         assert_eq!(response.symbol, "BTCUSD_PERP");
         assert_eq!(response.pair, "BTCUSD");
         assert_eq!(response.time, 1625097600000);
-        assert_eq!(response.time_in_force, "GTC");
-        assert_eq!(response.order_type, "LIMIT");
+        assert_eq!(response.time_in_force, TimeInForce::GTC);
+        assert_eq!(response.order_type, OrderType::Limit);
         assert!(response.activate_price.is_none());
         assert!(response.price_rate.is_none());
         assert_eq!(response.update_time, 1625097600000);
-        assert_eq!(response.working_type, "CONTRACT_PRICE");
+        assert_eq!(response.working_type, WorkingType::ContractPrice);
         assert!(!response.price_protect);
-        assert_eq!(response.price_match, "NONE");
-        assert_eq!(response.self_trade_prevention_mode, "NONE");
+        assert_eq!(response.price_match, PriceMatch::None);
+        assert_eq!(
+            response.self_trade_prevention_mode,
+            SelfTradePreventionMode::None
+        );
     }
 
     #[test]
@@ -236,11 +296,14 @@ mod tests {
         let response: QueryOrderResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.avg_price, "44999.5");
         assert_eq!(response.executed_qty, "10.0");
-        assert_eq!(response.status, "FILLED");
-        assert_eq!(response.orig_type, "MARKET");
+        assert_eq!(response.status, OrderStatus::Filled);
+        assert_eq!(response.orig_type, OrderType::Market);
         assert!(response.reduce_only);
-        assert_eq!(response.side, "SELL");
-        assert_eq!(response.self_trade_prevention_mode, "EXPIRE_TAKER");
+        assert_eq!(response.side, OrderSide::Sell);
+        assert_eq!(
+            response.self_trade_prevention_mode,
+            SelfTradePreventionMode::ExpireTaker
+        );
     }
 
     #[test]
@@ -274,13 +337,13 @@ mod tests {
         }"#;
 
         let response: QueryOrderResponse = serde_json::from_str(json).unwrap();
-        assert_eq!(response.status, "CANCELED");
+        assert_eq!(response.status, OrderStatus::Canceled);
         assert_eq!(response.executed_qty, "0");
-        assert_eq!(response.order_type, "STOP");
+        assert_eq!(response.order_type, OrderType::Stop);
         assert_eq!(response.stop_price, "42500.0");
         assert_eq!(response.activate_price, Some("42000.0".to_string()));
         assert_eq!(response.price_rate, Some("0.02".to_string()));
-        assert_eq!(response.working_type, "MARK_PRICE");
-        assert_eq!(response.price_match, "OPPONENT");
+        assert_eq!(response.working_type, WorkingType::MarkPrice);
+        assert_eq!(response.price_match, PriceMatch::Opponent);
     }
 }

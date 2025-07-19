@@ -57,7 +57,8 @@ pub struct NotionalBracketResponse {
 impl RestClient {
     /// Get notional and leverage brackets on Binance Coin-M Futures.
     ///
-    /// See: <https://binance-docs.github.io/apidocs/delivery/en/>
+    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/account/rest-api/Notional-Bracket-for-Pair
+    ///
     /// GET /dapi/v1/leverageBracket
     /// Weight: 1 if pair provided, 40 otherwise
     /// Requires API key and signature.
@@ -152,7 +153,7 @@ mod tests {
         assert_eq!(response.len(), 1);
         assert_eq!(response[0].pair, "BTCUSD_PERP");
         assert_eq!(response[0].brackets.len(), 2);
-        
+
         let bracket1 = &response[0].brackets[0];
         assert_eq!(bracket1.bracket, 1);
         assert_eq!(bracket1.initial_leverage, 125);
@@ -160,7 +161,7 @@ mod tests {
         assert_eq!(bracket1.notional_floor, "0");
         assert_eq!(bracket1.maint_margin_ratio, "0.004");
         assert_eq!(bracket1.cum, "0");
-        
+
         let bracket2 = &response[0].brackets[1];
         assert_eq!(bracket2.bracket, 2);
         assert_eq!(bracket2.initial_leverage, 100);

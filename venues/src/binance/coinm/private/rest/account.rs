@@ -233,7 +233,9 @@ pub struct Position {
 
 impl RestClient {
     /// Fetches the user's account information, including assets and positions.
-    /// See: <https://developers.binance.com/docs/derivatives/coin-margined-futures/account/rest-api/Account-Information>
+    ///
+    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/account/rest-api/Account-Information
+    ///
     /// Corresponds to endpoint GET /dapi/v1/account.
     /// Requires API key authentication.
     /// Weight: 5

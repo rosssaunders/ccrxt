@@ -1,6 +1,3 @@
-// Get Position Margin Change History (TRADE) endpoint implementation for GET /dapi/v1/positionMargin/history
-// See: <https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Get-Position-Margin-Change-History>
-
 use serde::{Deserialize, Serialize};
 
 use crate::binance::{
@@ -70,7 +67,8 @@ pub type GetPositionMarginChangeHistoryResponse = Vec<PositionMarginChangeHistor
 impl RestClient {
     /// Gets position margin change history (TRADE) on Binance Coin-M Futures.
     ///
-    /// See: <https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Get-Position-Margin-Change-History>
+    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Get-Position-Margin-Change-History
+    ///
     /// GET /dapi/v1/positionMargin/history
     /// Weight: 1
     /// Requires API key and signature.
@@ -205,14 +203,14 @@ mod tests {
 
         let response: GetPositionMarginChangeHistoryResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.len(), 2);
-        
+
         let entry1 = &response[0];
         assert_eq!(entry1.amount, "0.001");
         assert_eq!(entry1.asset, "BTC");
         assert_eq!(entry1.symbol, "BTCUSD_PERP");
         assert_eq!(entry1.modification_type, 1);
         assert_eq!(entry1.position_side, PositionSide::Long);
-        
+
         let entry2 = &response[1];
         assert_eq!(entry2.amount, "0.0005");
         assert_eq!(entry2.asset, "ETH");

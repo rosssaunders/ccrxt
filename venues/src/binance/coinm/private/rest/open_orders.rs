@@ -1,6 +1,3 @@
-// Request and response structs, and RestClient method for GET /dapi/v1/openOrders
-// See: <https://binance-docs.github.io/apidocs/delivery/en/>
-
 use serde::{Deserialize, Serialize};
 
 use crate::binance::{
@@ -10,9 +7,7 @@ use crate::binance::{
 
 const OPEN_ORDERS_ENDPOINT: &str = "/dapi/v1/openOrders";
 
-/// Request parameters for the Current All Open Orders endpoint (GET /dapi/v1/openOrders).
-///
-/// See: <https://binance-docs.github.io/apidocs/delivery/en/>
+/// Request parameters for the Current All Open Orders endpoint
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct OpenOrdersRequest {
     /// The trading symbol (e.g., "BTCUSD_200925").
@@ -116,7 +111,7 @@ pub struct OpenOrder {
 impl RestClient {
     /// Fetches all open orders for a symbol or all symbols.
     ///
-    /// See: <https://binance-docs.github.io/apidocs/delivery/en/>
+    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Current-All-Open-Orders
     ///
     /// GET /dapi/v1/openOrders
     /// Weight: 1 for single symbol, 40 for multiple symbols
@@ -227,7 +222,7 @@ mod tests {
 
         let response: Vec<OpenOrder> = serde_json::from_str(json).unwrap();
         assert_eq!(response.len(), 1);
-        
+
         let order = &response[0];
         assert_eq!(order.avg_price, "0.00000");
         assert_eq!(order.client_order_id, "abc123");
@@ -309,11 +304,11 @@ mod tests {
 
         let response: Vec<OpenOrder> = serde_json::from_str(json).unwrap();
         assert_eq!(response.len(), 2);
-        
+
         assert_eq!(response[0].order_id, 123456789);
         assert_eq!(response[0].symbol, "BTCUSD_PERP");
         assert_eq!(response[0].side, "BUY");
-        
+
         assert_eq!(response[1].order_id, 987654321);
         assert_eq!(response[1].symbol, "ETHUSD_PERP");
         assert_eq!(response[1].side, "SELL");

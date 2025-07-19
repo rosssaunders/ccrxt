@@ -1,23 +1,35 @@
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 
-use crate::binance::coinm::{RestResult, public::rest::RestClient};
+use crate::binance::coinm::RestResult;
+use crate::binance::coinm::public::rest::RestClient;
+
+/// Endpoint path for the server time API.
+const SERVER_TIME_ENDPOINT: &str = "/dapi/v1/time";
 
 /// Response from the server time endpoint.
-#[derive(Debug, Clone, Deserialize, Serialize)]
+///
+/// Returned by the `/dapi/v1/time` endpoint. Contains the current server time in milliseconds since epoch.
+#[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ServerTimeResponse {
     /// Server time in milliseconds since epoch.
+    /// This value is returned directly from the Binance API.
     pub server_time: u64,
 }
 
 impl RestClient {
+    /// Check Server time
+    ///
     /// Test connectivity to the REST API and get the current server time.
     ///
-    /// [Official API docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Check-Server-time)
+    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Check-Server-time
     ///
-    /// Weight: 1
+    /// Rate limit: 1
+    ///
+    /// # Returns
+    /// * `ServerTimeResponse` - Contains the current server time in milliseconds since epoch.
     pub async fn get_server_time(&self) -> RestResult<ServerTimeResponse> {
-        self.send_request("/dapi/v1/time", reqwest::Method::GET, None::<()>, 1)
+        self.send_request(SERVER_TIME_ENDPOINT, reqwest::Method::GET, None::<()>, 1)
             .await
     }
 }
@@ -28,21 +40,8 @@ mod tests {
 
     #[test]
     fn test_server_time_response_deserialization() {
-        let json = r#"{
-            "serverTime": 1625097600000
-        }"#;
-
+        let json = r#"{\"serverTime\": 1625097600000}"#;
         let response: ServerTimeResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.server_time, 1625097600000);
-    }
-
-    #[test]
-    fn test_server_time_response_serialization() {
-        let response = ServerTimeResponse {
-            server_time: 1625097600000,
-        };
-
-        let json = serde_json::to_string(&response).unwrap();
-        assert!(json.contains("\"serverTime\":1625097600000"));
     }
 }

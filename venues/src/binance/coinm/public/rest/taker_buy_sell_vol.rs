@@ -1,63 +1,90 @@
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
+use crate::binance::coinm::enums::ContractTypeFilter;
 use crate::binance::coinm::{RestResult, enums::Period, public::rest::RestClient};
 
-/// Parameters for Taker Buy/Sell Volume
+const TAKER_BUY_SELL_VOL_ENDPOINT: &str = "/futures/data/takerBuySellVol";
+
+/// Request parameters for the Taker Buy/Sell Volume endpoint.
 #[derive(Debug, Clone, Serialize)]
-pub struct TakerBuySellVolParams {
-    /// Trading pair (e.g., "BTCUSD")
+#[serde(rename_all = "camelCase")]
+pub struct TakerBuySellVolRequest {
+    /// Trading pair (e.g., "BTCUSD"). Required.
+    /// Must be a valid Coin-M futures symbol.
     pub pair: String,
-    /// Contract type (e.g., "PERPETUAL", "CURRENT_QUARTER", "NEXT_QUARTER")
-    #[serde(rename = "contractType")]
-    pub contract_type: String,
-    /// The time interval
+
+    /// Contract type. Required.
+    /// One of: ALL, CURRENT_QUARTER, NEXT_QUARTER, PERPETUAL.
+    /// See [`ContractTypeFilter`] enum for valid values.
+    pub contract_type: ContractTypeFilter,
+
+    /// Time interval. Required.
+    /// One of: "5m", "15m", "30m", "1h", "2h", "4h", "6h", "12h", "1d".
+    /// See [`Period`] enum for valid values.
     pub period: Period,
-    /// Maximum 500
+
+    /// Number of data points to return. Optional. Default: 30, Max: 500.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub limit: Option<i32>,
-    /// Start time
-    #[serde(rename = "startTime")]
+    pub limit: Option<u32>,
+
+    /// Start time in milliseconds since epoch. Optional.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub start_time: Option<i64>,
-    /// End time
-    #[serde(rename = "endTime")]
+
+    /// End time in milliseconds since epoch. Optional.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub end_time: Option<i64>,
 }
 
-/// Taker buy/sell volume
+/// Represents a single taker buy/sell volume data point.
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct TakerBuySellVol {
-    /// Pair name
+    /// Trading pair (e.g., "BTCUSD").
     pub pair: String,
-    /// Contract type
-    pub contract_type: String,
-    /// Taker buy volume
+
+    /// Contract type (e.g., "PERPETUAL", "CURRENT_QUARTER", "NEXT_QUARTER").
+    pub contract_type: ContractTypeFilter,
+
+    /// Taker buy volume (unit: contracts).
     pub taker_buy_vol: Decimal,
-    /// Taker sell volume
+
+    /// Taker sell volume (unit: contracts).
     pub taker_sell_vol: Decimal,
-    /// Taker buy volume value
+
+    /// Taker buy volume value (unit: base asset).
     pub taker_buy_vol_value: Decimal,
-    /// Taker sell volume value
+
+    /// Taker sell volume value (unit: base asset).
     pub taker_sell_vol_value: Decimal,
-    /// Timestamp
+
+    /// Timestamp in milliseconds since epoch.
     pub timestamp: i64,
 }
 
 impl RestClient {
-    /// Get taker buy/sell volume
+    /// Taker Buy/Sell Volume
     ///
-    /// Weight: 1
+    /// Returns the total volume of buy and sell orders filled by takers within the specified period.
+    ///
+    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Taker-Buy-Sell-Volume
+    ///
+    /// Rate limit: 1 request per second
+    ///
+    /// # Arguments
+    /// * `request` - The request parameters for taker buy/sell volume
+    ///
+    /// # Returns
+    /// A vector of [`TakerBuySellVol`] data points for the requested period.
     pub async fn get_taker_buy_sell_vol(
         &self,
-        params: TakerBuySellVolParams,
+        request: TakerBuySellVolRequest,
     ) -> RestResult<Vec<TakerBuySellVol>> {
         self.send_request(
-            "/futures/data/takerBuySellVol",
+            TAKER_BUY_SELL_VOL_ENDPOINT,
             reqwest::Method::GET,
-            Some(params),
+            Some(request),
             1,
         )
         .await

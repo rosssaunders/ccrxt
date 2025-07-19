@@ -1,6 +1,3 @@
-// Cancel All Open Orders (TRADE) endpoint implementation for DELETE /dapi/v1/allOpenOrders
-// See: <https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Cancel-All-Open-Orders>
-
 use serde::{Deserialize, Serialize};
 
 use crate::binance::{
@@ -37,7 +34,8 @@ pub struct CancelAllOpenOrdersResponse {
 impl RestClient {
     /// Cancels all open orders (TRADE) for a symbol on Binance Coin-M Futures.
     ///
-    /// See: <https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Cancel-All-Open-Orders>
+    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Cancel-All-Open-Orders
+    ///
     /// DELETE /dapi/v1/allOpenOrders
     /// Weight: 1
     /// Requires API key and signature.
@@ -104,7 +102,10 @@ mod tests {
 
         let response: CancelAllOpenOrdersResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.code, 200);
-        assert_eq!(response.msg, "The operation of cancel all open order is done.");
+        assert_eq!(
+            response.msg,
+            "The operation of cancel all open order is done."
+        );
     }
 
     #[test]

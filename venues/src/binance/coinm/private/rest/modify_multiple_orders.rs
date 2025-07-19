@@ -1,6 +1,3 @@
-// Modify Multiple Orders (TRADE) endpoint implementation for PUT /dapi/v1/batchOrders
-// See: <https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Modify-Multiple-Orders>
-
 use serde::{Deserialize, Serialize};
 
 use crate::binance::{
@@ -85,7 +82,8 @@ pub type ModifyMultipleOrdersResponse = Vec<BatchModifyOrderResponseItem>;
 impl RestClient {
     /// Modifies multiple orders (TRADE) on Binance Coin-M Futures.
     ///
-    /// See: <https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Modify-Multiple-Orders>
+    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Modify-Multiple-Orders
+    ///
     /// PUT /dapi/v1/batchOrders
     /// Weight: 5
     /// Requires API key and signature.
@@ -275,14 +273,14 @@ mod tests {
         ]"#;
         let response: ModifyMultipleOrdersResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.len(), 2);
-        
+
         match &response[0] {
             BatchModifyOrderResponseItem::Success(order) => {
                 assert_eq!(order.order_id, 123456789);
             }
             BatchModifyOrderResponseItem::Error(_) => panic!("Expected success for first item"),
         }
-        
+
         match &response[1] {
             BatchModifyOrderResponseItem::Error(error) => {
                 assert_eq!(error.code, -2011);

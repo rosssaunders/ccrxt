@@ -1,6 +1,3 @@
-// Query Current Open Order (USER_DATA) endpoint implementation for GET /dapi/v1/openOrder
-// See: <https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Query-Current-Open-Order>
-
 use serde::{Deserialize, Serialize};
 
 use crate::binance::{
@@ -140,7 +137,8 @@ pub struct QueryCurrentOpenOrderResponse {
 impl RestClient {
     /// Queries a current open order (USER_DATA) on Binance Coin-M Futures.
     ///
-    /// See: <https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Query-Current-Open-Order>
+    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Query-Current-Open-Order
+    ///
     /// GET /dapi/v1/openOrder
     /// Weight: 1
     /// Requires API key and signature.
@@ -267,7 +265,10 @@ mod tests {
         assert_eq!(response.working_type, WorkingType::ContractPrice);
         assert!(!response.price_protect);
         assert_eq!(response.price_match, PriceMatch::None);
-        assert_eq!(response.self_trade_prevention_mode, SelfTradePreventionMode::None);
+        assert_eq!(
+            response.self_trade_prevention_mode,
+            SelfTradePreventionMode::None
+        );
     }
 
     #[test]
@@ -311,7 +312,10 @@ mod tests {
         assert_eq!(response.working_type, WorkingType::MarkPrice);
         assert!(response.price_protect);
         assert_eq!(response.price_match, PriceMatch::Queue);
-        assert_eq!(response.self_trade_prevention_mode, SelfTradePreventionMode::ExpireTaker);
+        assert_eq!(
+            response.self_trade_prevention_mode,
+            SelfTradePreventionMode::ExpireTaker
+        );
     }
 
     #[test]

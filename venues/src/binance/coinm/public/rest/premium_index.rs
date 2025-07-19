@@ -2,15 +2,23 @@ use serde::{Deserialize, Serialize};
 
 use crate::binance::coinm::{RestResult, public::rest::RestClient};
 
+/// Endpoint path for querying premium index.
+const PREMIUM_INDEX_ENDPOINT: &str = "/dapi/v1/premiumIndex";
+
 /// Request parameters for the premium index endpoint.
 #[derive(Debug, Clone, Serialize, Default)]
+#[serde(rename_all = "camelCase")]
 pub struct PremiumIndexRequest {
     /// Trading symbol (e.g., "BTCUSD_PERP"). Optional.
-    #[serde(rename = "symbol", skip_serializing_if = "Option::is_none")]
+    ///
+    /// If provided, filters the result to this symbol.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub symbol: Option<String>,
 
     /// Trading pair (e.g., "BTCUSD"). Optional.
-    #[serde(rename = "pair", skip_serializing_if = "Option::is_none")]
+    ///
+    /// If provided, filters the result to this pair.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub pair: Option<String>,
 }
 
@@ -19,39 +27,65 @@ pub struct PremiumIndexRequest {
 #[serde(rename_all = "camelCase")]
 pub struct PremiumIndex {
     /// Trading symbol.
+    ///
+    /// Example: "BTCUSD_PERP"
     pub symbol: String,
 
     /// Trading pair.
+    ///
+    /// Example: "BTCUSD"
     pub pair: String,
 
     /// Mark price.
+    ///
+    /// The current mark price for the symbol.
     pub mark_price: String,
 
     /// Index price.
+    ///
+    /// The current index price for the symbol.
     pub index_price: String,
 
     /// Estimated settle price, only useful in the last hour before the settlement starts.
+    ///
+    /// For perpetual contracts, this is the estimated settle price. For delivery contracts, may be empty.
     pub estimated_settle_price: String,
 
     /// The latest funding rate, for perpetual contract symbols only. For delivery symbols, "" will be shown.
+    ///
+    /// For perpetual contracts, this is the last funding rate. For delivery contracts, will be empty.
     pub last_funding_rate: String,
 
     /// The base asset interest rate, for perpetual contract symbols only. For delivery symbols, "" will be shown.
+    ///
+    /// For perpetual contracts, this is the interest rate. For delivery contracts, will be empty.
     pub interest_rate: String,
 
-    /// Next funding time for perpetual contract symbols only. For delivery symbols, "" will be shown.
+    /// Next funding time for perpetual contract symbols only. For delivery symbols, 0 will be shown.
+    ///
+    /// Unix timestamp in milliseconds.
     pub next_funding_time: u64,
 
     /// Timestamp.
+    ///
+    /// Unix timestamp in milliseconds.
     pub time: u64,
 }
 
 impl RestClient {
-    /// Query index price and mark price.
+    /// Index Price and Mark Price
     ///
-    /// [Official API docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Index-Price-and-Mark-Price)
+    /// Query index price and mark price for coin-margined futures.
     ///
-    /// Weight: 10
+    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Index-Price-and-Mark-Price
+    ///
+    /// Rate limit: 10
+    ///
+    /// # Arguments
+    /// * `params` - The request parameters for filtering by symbol or pair.
+    ///
+    /// # Returns
+    /// Returns a vector of `PremiumIndex` for each symbol or pair.
     pub async fn get_premium_index(
         &self,
         params: PremiumIndexRequest,
@@ -62,13 +96,8 @@ impl RestClient {
             None
         };
 
-        self.send_request(
-            "/dapi/v1/premiumIndex",
-            reqwest::Method::GET,
-            params_opt,
-            10,
-        )
-        .await
+        self.send_request(PREMIUM_INDEX_ENDPOINT, reqwest::Method::GET, params_opt, 10)
+            .await
     }
 }
 
@@ -125,7 +154,7 @@ mod tests {
 
         let response: Vec<PremiumIndex> = serde_json::from_str(json).unwrap();
         assert_eq!(response.len(), 1);
-        
+
         let item = &response[0];
         assert_eq!(item.symbol, "BTCUSD_PERP");
         assert_eq!(item.pair, "BTCUSD");
@@ -154,7 +183,7 @@ mod tests {
 
         let response: Vec<PremiumIndex> = serde_json::from_str(json).unwrap();
         assert_eq!(response.len(), 1);
-        
+
         let item = &response[0];
         assert_eq!(item.symbol, "BTCUSD_240329");
         assert_eq!(item.last_funding_rate, "");

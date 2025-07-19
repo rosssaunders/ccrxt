@@ -3,7 +3,6 @@
 pub mod account;
 pub mod account_trades;
 pub mod all_orders;
-pub mod asset_index;
 pub mod auto_cancel_all_open_orders;
 pub mod batch_order;
 pub mod cancel_all_open_orders;
@@ -21,7 +20,6 @@ pub mod listen_key;
 pub mod modify_isolated_position_margin;
 pub mod modify_multiple_orders;
 pub mod modify_order;
-pub mod multi_asset_mode;
 pub mod notional_brackets;
 pub mod open_orders;
 pub mod order;
@@ -31,9 +29,6 @@ pub mod position_margin_change_history;
 pub mod position_risk;
 pub mod query_current_open_order;
 pub mod query_order;
-pub mod trading_status;
-pub mod universal_transfer;
-pub mod universal_transfer_history;
 pub mod user_commission_rate;
 
 pub use client::RestClient;

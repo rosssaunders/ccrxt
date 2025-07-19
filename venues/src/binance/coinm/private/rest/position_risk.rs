@@ -1,6 +1,3 @@
-// Position Risk endpoint implementation for GET /dapi/v1/positionRisk
-// See: https://binance-docs.github.io/apidocs/delivery/en/>
-
 use serde::{Deserialize, Serialize};
 
 use crate::binance::{
@@ -35,41 +32,54 @@ pub struct PositionRiskRequest {
 pub struct PositionRisk {
     /// Trading symbol (e.g., "BTCUSD_201225").
     pub symbol: String,
+
     /// Position amount.
     #[serde(rename = "positionAmt")]
     pub position_amt: String,
+
     /// Entry price.
     #[serde(rename = "entryPrice")]
     pub entry_price: String,
+
     /// Break-even price.
     #[serde(rename = "breakEvenPrice")]
     pub break_even_price: String,
+
     /// Mark price.
     #[serde(rename = "markPrice")]
     pub mark_price: String,
+
     /// Unrealized profit.
     #[serde(rename = "unRealizedProfit")]
     pub unrealized_profit: String,
+
     /// Liquidation price.
     #[serde(rename = "liquidationPrice")]
     pub liquidation_price: String,
+
     /// Leverage.
     pub leverage: String,
+
     /// Maximum quantity of base asset.
     #[serde(rename = "maxQty")]
     pub max_qty: String,
+
     /// Margin type (e.g., "cross").
     #[serde(rename = "marginType")]
     pub margin_type: String,
+
     /// Isolated margin.
     #[serde(rename = "isolatedMargin")]
     pub isolated_margin: String,
+
     /// Is auto add margin enabled.
     #[serde(rename = "isAutoAddMargin")]
     pub is_auto_add_margin: String,
+
     /// Position side ("BOTH", "LONG", "SHORT").
     #[serde(rename = "positionSide")]
     pub position_side: String,
+
     /// Update time (milliseconds since epoch).
     #[serde(rename = "updateTime")]
     pub update_time: u64,
@@ -78,7 +88,8 @@ pub struct PositionRisk {
 impl RestClient {
     /// Get current account position risk information on Binance Coin-M Futures.
     ///
-    /// See: <https://binance-docs.github.io/apidocs/delivery/en/>
+    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Position-Information
+    ///
     /// GET /dapi/v1/positionRisk
     /// Weight: 1
     /// Requires API key and signature.
@@ -169,7 +180,7 @@ mod tests {
 
         let response: Vec<PositionRisk> = serde_json::from_str(json).unwrap();
         assert_eq!(response.len(), 1);
-        
+
         let position = &response[0];
         assert_eq!(position.symbol, "BTCUSD_PERP");
         assert_eq!(position.position_amt, "10.0");
@@ -226,11 +237,11 @@ mod tests {
 
         let response: Vec<PositionRisk> = serde_json::from_str(json).unwrap();
         assert_eq!(response.len(), 2);
-        
+
         assert_eq!(response[0].symbol, "BTCUSD_PERP");
         assert_eq!(response[0].position_amt, "10.0");
         assert_eq!(response[0].position_side, "LONG");
-        
+
         assert_eq!(response[1].symbol, "ETHUSD_PERP");
         assert_eq!(response[1].position_amt, "-5.0");
         assert_eq!(response[1].position_side, "SHORT");

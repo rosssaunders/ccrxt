@@ -49,7 +49,8 @@ pub struct ListenKeyResponse {}
 impl RestClient {
     /// Create a listen key for user data stream on Binance Coin-M Futures.
     ///
-    /// See: <https://binance-docs.github.io/apidocs/delivery/en/>
+    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/user-data-streams/Start-User-Data-Stream
+    ///
     /// POST /dapi/v1/listenKey
     /// Weight: 1
     /// Requires API key.
@@ -77,7 +78,8 @@ impl RestClient {
 
     /// Extend a listen key for user data stream on Binance Coin-M Futures.
     ///
-    /// See: <https://binance-docs.github.io/apidocs/delivery/en/>
+    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/user-data-streams/Keepalive-User-Data-Stream
+    ///
     /// PUT /dapi/v1/listenKey
     /// Weight: 1
     /// Requires API key.
@@ -105,7 +107,8 @@ impl RestClient {
 
     /// Delete a listen key for user data stream on Binance Coin-M Futures.
     ///
-    /// See: <https://binance-docs.github.io/apidocs/delivery/en/>
+    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/user-data-streams/Close-User-Data-Stream
+    ///
     /// DELETE /dapi/v1/listenKey
     /// Weight: 1
     /// Requires API key.
@@ -138,9 +141,7 @@ mod tests {
 
     #[test]
     fn test_create_listen_key_request_serialization() {
-        let request = CreateListenKeyRequest {
-            recv_window: None,
-        };
+        let request = CreateListenKeyRequest { recv_window: None };
         let serialized = serde_urlencoded::to_string(&request).unwrap();
         assert_eq!(serialized, "");
     }
@@ -156,9 +157,7 @@ mod tests {
 
     #[test]
     fn test_extend_listen_key_request_serialization() {
-        let request = ExtendListenKeyRequest {
-            recv_window: None,
-        };
+        let request = ExtendListenKeyRequest { recv_window: None };
         let serialized = serde_urlencoded::to_string(&request).unwrap();
         assert_eq!(serialized, "");
     }
@@ -174,9 +173,7 @@ mod tests {
 
     #[test]
     fn test_delete_listen_key_request_serialization() {
-        let request = DeleteListenKeyRequest {
-            recv_window: None,
-        };
+        let request = DeleteListenKeyRequest { recv_window: None };
         let serialized = serde_urlencoded::to_string(&request).unwrap();
         assert_eq!(serialized, "");
     }
@@ -196,7 +193,10 @@ mod tests {
             "listenKey": "pqia91ma19a5s61cv6a81va65sdf19v8a65a1a5s61cv6a81va65sdf19v8a65a1"
         }"#;
         let response: CreateListenKeyResponse = serde_json::from_str(json).unwrap();
-        assert_eq!(response.listen_key, "pqia91ma19a5s61cv6a81va65sdf19v8a65a1a5s61cv6a81va65sdf19v8a65a1");
+        assert_eq!(
+            response.listen_key,
+            "pqia91ma19a5s61cv6a81va65sdf19v8a65a1a5s61cv6a81va65sdf19v8a65a1"
+        );
     }
 
     #[test]
