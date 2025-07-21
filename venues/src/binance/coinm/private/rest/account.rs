@@ -6,7 +6,6 @@ use crate::binance::{
         enums::{MarginType, PositionSide},
         private::rest::client::RestClient,
     },
-    shared,
 };
 
 const ACCOUNT_ENDPOINT: &str = "/dapi/v1/account";
@@ -240,8 +239,7 @@ impl RestClient {
     /// Requires API key authentication.
     /// Weight: 5
     pub async fn get_account(&self, request: AccountRequest) -> RestResult<AccountResponse> {
-        shared::send_signed_request(
-            self,
+        self.send_signed_request(
             ACCOUNT_ENDPOINT,
             reqwest::Method::GET,
             request,

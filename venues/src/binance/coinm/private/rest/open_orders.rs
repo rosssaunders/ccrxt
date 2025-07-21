@@ -2,7 +2,6 @@ use serde::{Deserialize, Serialize};
 
 use crate::binance::{
     coinm::{RestResult, private::rest::client::RestClient},
-    shared,
 };
 
 const OPEN_ORDERS_ENDPOINT: &str = "/dapi/v1/openOrders";
@@ -127,8 +126,7 @@ impl RestClient {
         } else {
             40
         };
-        shared::send_signed_request(
-            self,
+        self.send_signed_request(
             OPEN_ORDERS_ENDPOINT,
             reqwest::Method::GET,
             params,

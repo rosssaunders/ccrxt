@@ -5,7 +5,6 @@ use crate::binance::{
         OrderSide, PriceMatch, RestResult,
         private::rest::{client::RestClient, modify_order::ModifyOrderResponse},
     },
-    shared,
 };
 
 const BATCH_ORDERS_ENDPOINT: &str = "/dapi/v1/batchOrders";
@@ -103,8 +102,7 @@ impl RestClient {
         params: ModifyMultipleOrdersRequest,
     ) -> RestResult<ModifyMultipleOrdersResponse> {
         let weight = 5;
-        shared::send_signed_request(
-            self,
+        self.send_signed_request(
             BATCH_ORDERS_ENDPOINT,
             reqwest::Method::PUT,
             params,

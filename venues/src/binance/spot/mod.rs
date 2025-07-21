@@ -1,8 +1,6 @@
 mod enums;
 mod errors;
 mod rate_limit;
-mod request;
-pub(crate) mod rest;
 
 // Private module with re-exports
 pub mod private {
@@ -34,8 +32,6 @@ pub use public::rest::{
 pub use rate_limit::{RateLimitHeader, RateLimiter};
 
 pub use crate::binance::spot::errors::ErrorResponse;
-// Internal re-export for private client usage
-pub(crate) use crate::binance::spot::request::execute_request;
 
 /// Represents the relevant response headers returned by the Binance Spot API for rate limiting and order tracking.
 ///
@@ -68,3 +64,41 @@ pub struct RestResponse<T> {
 
 /// Type alias for results returned by Binance Spot API operations
 pub type RestResult<T> = Result<RestResponse<T>, Errors>;
+
+pub type SpotClient =
+    crate::binance::shared::client::BinanceClient<crate::binance::spot::SpotConfig>;
+
+use crate::binance::shared::venue_trait::{RateLimits, VenueConfig};
+use std::time::Duration;
+
+/// Spot trading venue configuration
+pub struct SpotConfig;
+
+impl VenueConfig for SpotConfig {
+    fn base_url(&self) -> &str {
+        "https://api.binance.com"
+    }
+    fn venue_name(&self) -> &str {
+        "spot"
+    }
+    fn rate_limits(&self) -> RateLimits {
+        RateLimits {
+            request_weight_limit: 1200,
+            request_weight_window: Duration::from_secs(60),
+            raw_requests_limit: 6000,
+            raw_requests_window: Duration::from_secs(300), // 5 minutes
+            orders_10s_limit: 100,
+            orders_minute_limit: 1000,
+            orders_day_limit: Some(1000),
+        }
+    }
+    fn supports_futures(&self) -> bool {
+        false
+    }
+    fn supports_options(&self) -> bool {
+        false
+    }
+    fn supports_margin(&self) -> bool {
+        true
+    }
+}

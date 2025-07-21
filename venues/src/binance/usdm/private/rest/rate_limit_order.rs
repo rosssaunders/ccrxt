@@ -1,138 +1,121 @@
-//! Rate limit order endpoints for Binance USDM REST API.
-
-use chrono::Utc;
+use super::UsdmClient;
+use crate::binance::usdm::RestResult;
 use reqwest::Method;
-use secrecy::{ExposeSecret, SecretString};
 use serde::{Deserialize, Serialize};
-use thiserror::Error;
 
-use crate::binance::usdm::{
-    private::rest::{client::RestClient, order::OrderErrorResponse},
-    signing::sign_query,
-};
+/// Endpoint for querying rate limit order usage.
+const RATE_LIMIT_ORDER_ENDPOINT: &str = "/fapi/v1/rateLimit/order";
 
-/// Error type for USDM rate limit order endpoints.
-#[derive(Debug, Error, Clone, Deserialize)]
-#[serde(tag = "code", content = "msg")]
-pub enum RateLimitOrderError {
-    /// Invalid API key or signature.
-    #[error("Invalid API key or signature: {0}")]
-    #[serde(rename = "-1022")]
-    InvalidSignature(String),
-    /// Timestamp for this request is outside of the recv window.
-    #[error("Timestamp for this request is outside of the recv window: {0}")]
-    #[serde(rename = "-1021")]
-    TimestampOutOfRecvWindow(String),
-    /// Invalid API key format.
-    #[error("Invalid API key format: {0}")]
-    #[serde(rename = "-2014")]
-    BadApiKeyFmt(String),
-    /// Invalid API key, IP, or permissions for action.
-    #[error("Invalid API key, IP, or permissions for action: {0}")]
-    #[serde(rename = "-2015")]
-    RejectedMbxKey(String),
-    /// Unknown error.
-    #[error("Unknown error: {0}")]
-    Unknown(String),
+/// Rate limit type for the order rate limit endpoint.
+///
+/// Valid values: "ORDERS", "REQUESTS".
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum RateLimitType {
+    Orders,
+    Requests,
 }
 
-/// Request for getting rate limit order count.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+/// Interval type for the rate limit window.
+///
+/// Valid values: "SECOND", "MINUTE", "HOUR", "DAY".
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum IntervalType {
+    Second,
+    Minute,
+    Hour,
+    Day,
+}
+
+/// Request parameters for the rate limit order endpoint.
+#[derive(Debug, Clone, Serialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct GetRateLimitOrderRequest {
-    /// Timestamp in milliseconds.
-    pub timestamp: u64,
-    /// Signature for the request.
+    /// Optional. The number of milliseconds after timestamp the request is valid for.
+    /// If not sent, defaults to the exchange default.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub signature: Option<String>,
+    pub recv_window: Option<u64>,
+
+    /// Required. Timestamp in milliseconds since epoch.
+    pub timestamp: u64,
 }
 
-/// Rate limit data
-#[derive(Debug, Clone, Serialize, Deserialize)]
+/// Represents a single rate limit window for orders.
+#[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct RateLimitOrderData {
-    /// Rate limit type
-    pub rate_limit_type: String,
-    /// Interval for the rate limit
-    pub interval: String,
-    /// Interval unit (e.g., "MINUTE")
+    /// Rate limit type (e.g., "ORDERS").
+    pub rate_limit_type: RateLimitType,
+
+    /// Interval type (e.g., "SECOND", "MINUTE").
+    pub interval: IntervalType,
+
+    /// Number of intervals (e.g., 10 for 10 seconds).
     pub interval_num: u32,
-    /// Maximum allowed count within the interval
+
+    /// Maximum allowed count within the interval.
     pub limit: u32,
-    /// Current count within the interval
+
+    /// Current count within the interval.
     pub count: u32,
 }
 
-/// Response from rate limit order endpoint
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
+/// Response wrapper for the rate limit order endpoint.
+///
+/// The API returns a direct array, so this struct is a transparent wrapper.
+#[derive(Debug, Clone, Deserialize)]
+#[serde(transparent)]
 pub struct RateLimitOrderResponse {
-    /// List of rate limit data
+    /// List of rate limit windows returned by the API.
     pub rate_limits: Vec<RateLimitOrderData>,
 }
 
-impl RestClient {
-    /// Query current order count usage in current time window.
+impl UsdmClient {
+    /// Query User Rate Limit
+    ///
+    /// Queries the current order count usage in the current time window for the account.
+    ///
+    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Query-Rate-Limit
+    ///
+    /// Rate limit: 1 request per second
+    ///
+    /// # Arguments
+    /// * `params` - The request parameters for the rate limit order endpoint.
+    ///
+    /// # Returns
+    /// A transparent wrapper containing a list of `RateLimitOrderData`.
     pub async fn get_rate_limit_order(
         &self,
-        api_key: impl Into<SecretString>,
-        api_secret: impl Into<SecretString>,
-    ) -> Result<Vec<RateLimitOrderData>, RateLimitOrderError> {
-        // Rate limiting for private endpoints (20 weight)
-        self.rate_limiter
-            .acquire_request(20)
+        params: GetRateLimitOrderRequest,
+    ) -> RestResult<RateLimitOrderResponse> {
+        self.send_signed_request(RATE_LIMIT_ORDER_ENDPOINT, Method::GET, params, 1, true)
             .await
-            .map_err(|e| RateLimitOrderError::Unknown(format!("Rate limiting error: {e}")))?;
-
-        let api_key = api_key.into();
-        let api_secret = api_secret.into();
-        let timestamp = Utc::now().timestamp_millis() as u64;
-
-        let mut request = GetRateLimitOrderRequest {
-            timestamp,
-            signature: None,
-        };
-
-        // Create query string for signing
-        let query_string = serde_urlencoded::to_string(&request)
-            .map_err(|_| RateLimitOrderError::Unknown("Failed to serialize request".to_string()))?;
-
-        // Sign the request
-        let signature = sign_query(&query_string, &api_secret);
-        request.signature = Some(signature);
-
-        // Make the request
-        let response = self
-            .client
-            .request(
-                Method::GET,
-                format!("{}/fapi/v1/rateLimit/order", self.base_url),
-            )
-            .header("X-MBX-APIKEY", api_key.expose_secret())
-            .query(&request)
-            .send()
-            .await
-            .map_err(|e| RateLimitOrderError::Unknown(e.to_string()))?;
-
-        if response.status().is_success() {
-            let rate_limit_response: Vec<RateLimitOrderData> = response
-                .json()
-                .await
-                .map_err(|e| RateLimitOrderError::Unknown(e.to_string()))?;
-            Ok(rate_limit_response)
-        } else {
-            let error_response: OrderErrorResponse = response
-                .json()
-                .await
-                .map_err(|e| RateLimitOrderError::Unknown(e.to_string()))?;
-            Err(RateLimitOrderError::Unknown(error_response.msg))
-        }
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_rate_limit_order_data_deserialization() {
+        let json = r#"
+        {
+            "rateLimitType": "ORDERS",
+            "interval": "SECOND",
+            "intervalNum": 10,
+            "limit": 50,
+            "count": 0
+        }
+        "#;
+        let data: RateLimitOrderData = serde_json::from_str(json).unwrap();
+        assert_eq!(data.rate_limit_type, RateLimitType::Orders);
+        assert_eq!(data.interval, IntervalType::Second);
+        assert_eq!(data.interval_num, 10);
+        assert_eq!(data.limit, 50);
+        assert_eq!(data.count, 0);
+    }
 
     #[test]
     fn test_rate_limit_order_response_deserialization() {
@@ -154,11 +137,16 @@ mod tests {
             }
         ]
         "#;
-
         let response: Vec<RateLimitOrderData> = serde_json::from_str(json).unwrap();
         assert_eq!(response.len(), 2);
-        assert_eq!(response[0].rate_limit_type, "ORDERS");
-        assert_eq!(response[0].interval, "SECOND");
+        assert_eq!(response[0].rate_limit_type, RateLimitType::Orders);
+        assert_eq!(response[0].interval, IntervalType::Second);
         assert_eq!(response[0].limit, 50);
+    }
+
+    #[test]
+    fn test_get_rate_limit_order_request_default() {
+        let req = GetRateLimitOrderRequest::default();
+        assert_eq!(req.recv_window, None);
     }
 }

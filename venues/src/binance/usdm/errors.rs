@@ -1,12 +1,33 @@
-use std::fmt;
-
 use serde::Deserialize;
 use thiserror::Error;
 
+// Allow conversion from shared errors to USDM errors for endpoint propagation
+impl From<crate::binance::shared::errors::Errors> for Errors {
+    fn from(err: crate::binance::shared::errors::Errors) -> Self {
+        match err {
+            crate::binance::shared::errors::Errors::InvalidApiKey() => Errors::InvalidApiKey(),
+            crate::binance::shared::errors::Errors::ApiError(e) => {
+                Errors::ApiError(ApiError::UnknownApiError { msg: e.to_string() })
+            }
+            crate::binance::shared::errors::Errors::HttpError(e) => Errors::HttpError(e),
+            crate::binance::shared::errors::Errors::RateLimitExceeded { retry_after } => {
+                Errors::RateLimitExceeded {
+                    retry_after: retry_after.map(|d| d.as_secs()),
+                }
+            }
+            crate::binance::shared::errors::Errors::SerializationError(msg) => {
+                Errors::SerializationError(msg)
+            }
+            crate::binance::shared::errors::Errors::Error(msg) => Errors::Error(msg),
+        }
+    }
+}
+
 /// Represents all possible errors that can occur when interacting with the Binance API
-#[derive(Debug)]
+#[derive(Error, Debug)]
 pub enum Errors {
     /// Invalid API key or signature
+    #[error("Invalid API key or signature")]
     InvalidApiKey(),
 
     /// Http error occurred while making a request
@@ -14,27 +35,28 @@ pub enum Errors {
     /// such as network issues or HTTP errors.
     /// It can be used to wrap any error that occurs during the request process.
     /// This variant is not used for errors returned by the Binance API itself.
-    HttpError(reqwest::Error),
+    #[error("HTTP error: {0}")]
+    HttpError(#[from] reqwest::Error),
 
     /// An error returned by the Binance API
-    ApiError(ApiError),
+    #[error("API error: {0}")]
+    ApiError(#[from] ApiError),
 
     /// A general error with a descriptive message
+    #[error("Error: {0}")]
     Error(String),
+
+    /// Error occurred during serialization or deserialization
+    #[error("Serialization error: {0}")]
+    SerializationError(String),
+
+    /// Rate limit exceeded error with retry information
+    #[error("Rate limit exceeded, retry after: {retry_after:?}")]
+    RateLimitExceeded { retry_after: Option<u64> },
 }
 
-impl fmt::Display for Errors {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            Errors::InvalidApiKey() => write!(f, "Invalid API key or signature"),
-            Errors::HttpError(err) => write!(f, "HTTP error: {err}"),
-            Errors::ApiError(err) => write!(f, "API error: {err}"),
-            Errors::Error(msg) => write!(f, "Error: {msg}"),
-        }
-    }
-}
-
-impl std::error::Error for Errors {}
+/// Result type alias for Binance USDM operations
+pub type Result<T> = std::result::Result<T, Errors>;
 
 /// Represents an error response from the Binance API.
 ///

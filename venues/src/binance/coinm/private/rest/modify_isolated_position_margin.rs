@@ -2,7 +2,6 @@ use serde::{Deserialize, Serialize};
 
 use crate::binance::{
     coinm::{MarginModificationType, PositionSide, RestResult, private::rest::client::RestClient},
-    shared,
 };
 
 const POSITION_MARGIN_ENDPOINT: &str = "/dapi/v1/positionMargin";
@@ -71,8 +70,7 @@ impl RestClient {
         params: ModifyIsolatedPositionMarginRequest,
     ) -> RestResult<ModifyIsolatedPositionMarginResponse> {
         let weight = 1;
-        shared::send_signed_request(
-            self,
+        self.send_signed_request(
             POSITION_MARGIN_ENDPOINT,
             reqwest::Method::POST,
             params,

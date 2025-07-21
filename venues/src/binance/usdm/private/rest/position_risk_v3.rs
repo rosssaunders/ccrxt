@@ -1,141 +1,124 @@
-//! Position risk V3 endpoints for Binance USDM REST API.
+// No top-of-file comments per project instructions.
 
 use std::borrow::Cow;
 
-use chrono::Utc;
 use reqwest::Method;
-use secrecy::{ExposeSecret, SecretString};
 use serde::{Deserialize, Serialize};
-use serde_urlencoded;
-use thiserror::Error;
 
-use crate::binance::usdm::{enums::*, private::rest::client::RestClient, signing::sign_query};
+use super::UsdmClient;
+use crate::binance::usdm::RestResult;
+use crate::binance::usdm::enums::*;
 
-#[derive(Debug, Error, Clone, Deserialize)]
-#[serde(tag = "code", content = "msg")]
-pub enum PositionRiskV3Error {
-    #[error("Invalid API key or signature: {0}")]
-    InvalidKey(String),
-    #[error("Position risk V3 error: {0}")]
-    PositionRiskV3(String),
-    #[error("Rate limit exceeded: {0}")]
-    RateLimit(String),
-    #[error("Other error: {0}")]
-    Other(String),
-}
+/// Endpoint path for Position Risk V3.
+const POSITION_RISK_V3_ENDPOINT: &str = "/fapi/v3/positionRisk";
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct PositionRiskV3ErrorResponse {
-    pub code: i64,
-    pub msg: String,
-}
-
-impl From<PositionRiskV3ErrorResponse> for PositionRiskV3Error {
-    fn from(e: PositionRiskV3ErrorResponse) -> Self {
-        match e.code {
-            -2015 | -2014 => PositionRiskV3Error::InvalidKey(e.msg),
-            -1003 => PositionRiskV3Error::RateLimit(e.msg),
-            _ => PositionRiskV3Error::Other(e.msg),
-        }
-    }
-}
-
-pub type PositionRiskV3Result<T> = std::result::Result<T, PositionRiskV3Error>;
-
-/// Request for getting position risk info V3.
-#[derive(Debug, Clone, Serialize)]
+/// Request parameters for the Position Risk V3 endpoint.
+#[derive(Debug, Clone, Serialize, Default)]
+#[serde(rename_all = "camelCase")]
 pub struct GetPositionRiskV3Request {
-    #[serde(skip_serializing)]
-    pub api_key: SecretString,
-    #[serde(skip_serializing)]
-    pub api_secret: SecretString,
+    /// Trading symbol (e.g., "BTCUSDT"). Optional.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub symbol: Option<Cow<'static, str>>,
 }
 
-/// Response for position risk info V3.
+/// Position risk information for a single symbol.
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct PositionRiskV3 {
-    pub entry_price: String,
-    pub leverage: String,
-    pub max_notional_value: String,
-    pub liquidation_price: String,
-    pub mark_price: String,
-    pub position_amt: String,
-    pub notional: String,
-    pub isolated_wallet: String,
+    /// Trading symbol (e.g., "BTCUSDT").
     pub symbol: String,
-    pub un_realized_profit: String,
-    pub margin_type: MarginType,
-    pub isolated_margin: String,
-    pub is_auto_add_margin: bool,
+
+    /// Position side (e.g., LONG, SHORT, BOTH).
     pub position_side: PositionSide,
+
+    /// Position amount (positive for long, negative for short).
+    pub position_amt: String,
+
+    /// Entry price for the position.
+    pub entry_price: String,
+
+    /// Break-even price for the position.
     pub break_even_price: String,
+
+    /// Mark price for the symbol.
+    pub mark_price: String,
+
+    /// Unrealized profit for the position.
+    pub un_realized_profit: String,
+
+    /// Liquidation price for the position.
+    pub liquidation_price: String,
+
+    /// Isolated margin for the position.
+    pub isolated_margin: String,
+
+    /// Notional value of the position.
+    pub notional: String,
+
+    /// Margin asset for the position (e.g., "USDT").
+    pub margin_asset: String,
+
+    /// Isolated wallet balance for the position.
+    pub isolated_wallet: String,
+
+    /// Initial margin required with current mark price.
+    pub initial_margin: String,
+
+    /// Maintenance margin required.
+    pub maint_margin: String,
+
+    /// Initial margin required for positions with current mark price.
+    pub position_initial_margin: String,
+
+    /// Initial margin required for open orders with current mark price.
+    pub open_order_initial_margin: String,
+
+    /// ADL quantile indicator.
+    #[serde(rename = "adl")]
     pub adl_quantile: u8,
+
+    /// Bids notional (ignored).
+    pub bid_notional: String,
+
+    /// Asks notional (ignored).
+    pub ask_notional: String,
+
+    /// Update time (milliseconds since epoch).
+    pub update_time: Option<u64>,
+
+    /// Leverage used for the position.
+    pub leverage: String,
+
+    /// Maximum notional value allowed for the position.
+    pub max_notional_value: String,
+
+    /// Margin type for the position (isolated or cross).
+    pub margin_type: MarginType,
+
+    /// Whether auto add margin is enabled.
+    pub is_auto_add_margin: bool,
 }
 
-impl RestClient {
-    /// Get position risk V3 (GET /fapi/v3/positionRisk)
-    /// [Binance API docs](https://binance-docs.github.io/apidocs/futures/en/#position-information-v3-user_data)
+impl UsdmClient {
+    /// Position Information V3
+    ///
+    /// Get current position information (only symbols with position or open orders will be returned).
+    ///
+    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Position-Information-V3
+    ///
+    /// Rate limit: 5
+    ///
+    /// # Arguments
+    /// * `request` - The request parameters for Position Risk V3
+    ///
+    /// # Returns
+    /// Returns a vector of position risk information for each symbol.
     pub async fn get_position_risk_v3(
         &self,
-        params: GetPositionRiskV3Request,
-    ) -> PositionRiskV3Result<Vec<PositionRiskV3>> {
-        use tracing::debug;
-
-        use crate::binance::usdm::request::execute_request;
-        let endpoint = "/fapi/v3/positionRisk";
-        let method = Method::GET;
-        let url = format!("{}{}", self.base_url, endpoint);
-
-        // 1. Serialize params to query string (excluding api_key/api_secret)
-        let mut query_pairs = serde_urlencoded::to_string(&params)
-            .map_err(|e| PositionRiskV3Error::Other(format!("Failed to serialize params: {e}")))?;
-        if !query_pairs.is_empty() {
-            query_pairs.push('&');
-        }
-        let timestamp = Utc::now().timestamp_millis();
-        let recv_window = 5000u64;
-        query_pairs.push_str(&format!("timestamp={timestamp}&recvWindow={recv_window}"));
-
-        // 2. Sign
-        let signature = sign_query(&query_pairs, &params.api_secret);
-        query_pairs.push_str(&format!("&signature={signature}"));
-
-        // 3. Headers
-        let headers = vec![("X-MBX-APIKEY", params.api_key.expose_secret().to_string())];
-
-        // 4. Rate limiting
-        self.rate_limiter
-            .acquire_request(2)
+        request: GetPositionRiskV3Request,
+    ) -> RestResult<Vec<PositionRiskV3>> {
+        self.send_signed_request(POSITION_RISK_V3_ENDPOINT, Method::GET, request, 5, false)
             .await
-            .map_err(|e| PositionRiskV3Error::Other(format!("Rate limiting error: {e}")))?;
-        debug!(endpoint = endpoint, "Sending get position risk V3 request");
-
-        // 5. Execute
-        let full_url = format!("{}?{}", url, query_pairs);
-        let resp = execute_request::<Vec<PositionRiskV3>>(
-            &self.client,
-            &full_url,
-            method,
-            Some(headers),
-            None,
-        )
-        .await
-        .map_err(|e| match e {
-            crate::binance::usdm::Errors::ApiError(api_err) => {
-                PositionRiskV3Error::Other(format!("API error: {api_err}"))
-            }
-            crate::binance::usdm::Errors::HttpError(http_err) => {
-                PositionRiskV3Error::Other(format!("HTTP error: {http_err}"))
-            }
-            crate::binance::usdm::Errors::Error(msg) => PositionRiskV3Error::Other(msg),
-            crate::binance::usdm::Errors::InvalidApiKey() => {
-                PositionRiskV3Error::InvalidKey("Invalid API key or signature".to_string())
-            }
-        })?;
-
-        Ok(resp.data)
     }
 }
 
@@ -147,38 +130,49 @@ mod tests {
     fn test_position_risk_v3_response_deserialization() {
         let json = r#"[
             {
+                "symbol": "BTCUSDT",
+                "positionSide": "LONG",
+                "positionAmt": "0.1",
                 "entryPrice": "50000.0",
+                "breakEvenPrice": "50025.0",
+                "markPrice": "51000.0",
+                "unRealizedProfit": "100.0",
+                "liquidationPrice": "45000.0",
+                "isolatedMargin": "510.0",
+                "notional": "5100.0",
+                "marginAsset": "USDT",
+                "isolatedWallet": "510.0",
+                "initialMargin": "510.0",
+                "maintMargin": "51.0",
+                "positionInitialMargin": "510.0",
+                "openOrderInitialMargin": "0.0",
+                "adl": 2,
+                "bidNotional": "0.0",
+                "askNotional": "0.0",
+                "updateTime": 1720736417660,
                 "leverage": "10",
                 "maxNotionalValue": "1000000",
-                "liquidationPrice": "45000.0",
-                "markPrice": "51000.0",
-                "positionAmt": "0.1",
-                "notional": "5100.0",
-                "isolatedWallet": "510.0",
-                "symbol": "BTCUSDT",
-                "unRealizedProfit": "100.0",
                 "marginType": "isolated",
-                "isolatedMargin": "510.0",
-                "isAutoAddMargin": false,
-                "positionSide": "LONG",
-                "breakEvenPrice": "50025.0",
-                "adlQuantile": 2
+                "isAutoAddMargin": false
             }
         ]"#;
 
         let result: Vec<PositionRiskV3> = serde_json::from_str(json).unwrap();
         assert_eq!(result.len(), 1);
-        assert_eq!(result[0].symbol, "BTCUSDT");
-        assert_eq!(result[0].position_side, PositionSide::Long);
-        assert_eq!(result[0].margin_type, MarginType::Isolated);
-        assert_eq!(result[0].adl_quantile, 2);
+        let pos = &result[0];
+        assert_eq!(pos.symbol, "BTCUSDT");
+        assert_eq!(pos.position_side, PositionSide::Long);
+        assert_eq!(pos.margin_type, MarginType::Isolated);
+        assert_eq!(pos.adl_quantile, 2);
+        assert_eq!(pos.update_time, Some(1720736417660));
+        assert_eq!(pos.margin_asset, "USDT");
+        assert_eq!(pos.leverage, "10");
+        assert_eq!(pos.max_notional_value, "1000000");
     }
 
     #[test]
     fn test_get_position_risk_v3_request_serialization() {
         let request = GetPositionRiskV3Request {
-            api_key: SecretString::new("test_key".to_string().into()),
-            api_secret: SecretString::new("test_secret".to_string().into()),
             symbol: Some(Cow::Borrowed("BTCUSDT")),
         };
 

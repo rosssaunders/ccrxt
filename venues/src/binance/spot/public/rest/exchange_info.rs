@@ -4,6 +4,8 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::binance::spot::RestResult;
 
+const EXCHANGE_INFO_ENDPOINT: &str = "/api/v3/exchangeInfo";
+
 /// Request parameters for exchange info
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct ExchangeInfoRequest {
@@ -292,20 +294,349 @@ impl RestClient {
         &self,
         params: Option<ExchangeInfoRequest>,
     ) -> RestResult<ExchangeInfoResponse> {
-        let query_string = if let Some(p) = params {
-            Some(serde_urlencoded::to_string(&p).map_err(|e| {
-                crate::binance::spot::Errors::Error(format!("URL encoding error: {e}"))
-            })?)
-        } else {
-            None
+        self.send_public_request(EXCHANGE_INFO_ENDPOINT, reqwest::Method::GET, params, 20)
+            .await
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_exchange_info_request_serialization_empty() {
+        let request = ExchangeInfoRequest::default();
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert_eq!(serialized, "");
+    }
+
+    #[test]
+    fn test_exchange_info_request_serialization_single_symbol() {
+        let request = ExchangeInfoRequest {
+            symbol: Some("BTCUSDT".to_string()),
+            symbols: None,
+            permissions: None,
+            show_permission_sets: None,
+            symbol_status: None,
         };
 
-        self.send_request(
-            "/api/v3/exchangeInfo",
-            reqwest::Method::GET,
-            query_string.as_deref(),
-            20,
-        )
-        .await
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert_eq!(serialized, "symbol=BTCUSDT");
+    }
+
+    #[test]
+    fn test_exchange_info_request_serialization_multiple_symbols() {
+        let request = ExchangeInfoRequest {
+            symbol: None,
+            symbols: Some("[\"BTCUSDT\",\"ETHUSDT\"]".to_string()),
+            permissions: None,
+            show_permission_sets: None,
+            symbol_status: None,
+        };
+
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert!(serialized.contains("symbols=%5B%22BTCUSDT%22%2C%22ETHUSDT%22%5D"));
+    }
+
+    #[test]
+    fn test_exchange_info_request_serialization_permissions() {
+        let request = ExchangeInfoRequest {
+            symbol: None,
+            symbols: None,
+            permissions: Some("SPOT".to_string()),
+            show_permission_sets: Some(true),
+            symbol_status: Some("TRADING".to_string()),
+        };
+
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert!(serialized.contains("permissions=SPOT"));
+        assert!(serialized.contains("showPermissionSets=true"));
+        assert!(serialized.contains("symbolStatus=TRADING"));
+    }
+
+    #[test]
+    fn test_rate_limit_deserialization() {
+        let json = r#"{
+            "rateLimitType": "REQUEST_WEIGHT",
+            "interval": "MINUTE",
+            "intervalNum": 1,
+            "limit": 6000
+        }"#;
+
+        let rate_limit: RateLimit = serde_json::from_str(json).unwrap();
+        assert_eq!(rate_limit.rate_limit_type, "REQUEST_WEIGHT");
+        assert_eq!(rate_limit.interval, "MINUTE");
+        assert_eq!(rate_limit.interval_num, 1);
+        assert_eq!(rate_limit.limit, 6000);
+    }
+
+    #[test]
+    fn test_filter_price_filter_deserialization() {
+        let json = r#"{
+            "filterType": "PRICE_FILTER",
+            "minPrice": "0.00010000",
+            "maxPrice": "100000.00000000",
+            "tickSize": "0.00010000"
+        }"#;
+
+        let filter: Filter = serde_json::from_str(json).unwrap();
+        match filter {
+            Filter::PriceFilter {
+                min_price,
+                max_price,
+                tick_size,
+            } => {
+                assert_eq!(min_price.to_string(), "0.00010000");
+                assert_eq!(max_price.to_string(), "100000.00000000");
+                assert_eq!(tick_size.to_string(), "0.00010000");
+            }
+            _ => panic!("Expected PriceFilter"),
+        }
+    }
+
+    #[test]
+    fn test_filter_lot_size_deserialization() {
+        let json = r#"{
+            "filterType": "LOT_SIZE",
+            "minQty": "0.00100000",
+            "maxQty": "100000.00000000",
+            "stepSize": "0.00100000"
+        }"#;
+
+        let filter: Filter = serde_json::from_str(json).unwrap();
+        match filter {
+            Filter::LotSize {
+                min_qty,
+                max_qty,
+                step_size,
+            } => {
+                assert_eq!(min_qty.to_string(), "0.00100000");
+                assert_eq!(max_qty.to_string(), "100000.00000000");
+                assert_eq!(step_size.to_string(), "0.00100000");
+            }
+            _ => panic!("Expected LotSize"),
+        }
+    }
+
+    #[test]
+    fn test_filter_min_notional_deserialization() {
+        let json = r#"{
+            "filterType": "MIN_NOTIONAL",
+            "minNotional": "10.00000000",
+            "applyToMarket": true,
+            "avgPriceMins": 5
+        }"#;
+
+        let filter: Filter = serde_json::from_str(json).unwrap();
+        match filter {
+            Filter::MinNotional {
+                min_notional,
+                apply_to_market,
+                avg_price_mins,
+            } => {
+                assert_eq!(min_notional.to_string(), "10.00000000");
+                assert!(apply_to_market);
+                assert_eq!(avg_price_mins, 5);
+            }
+            _ => panic!("Expected MinNotional"),
+        }
+    }
+
+    #[test]
+    fn test_filter_max_num_orders_deserialization() {
+        let json = r#"{
+            "filterType": "MAX_NUM_ORDERS",
+            "maxNumOrders": 200
+        }"#;
+
+        let filter: Filter = serde_json::from_str(json).unwrap();
+        match filter {
+            Filter::MaxNumOrders { max_num_orders } => {
+                assert_eq!(max_num_orders, 200);
+            }
+            _ => panic!("Expected MaxNumOrders"),
+        }
+    }
+
+    #[test]
+    fn test_filter_unknown_deserialization() {
+        let json = r#"{
+            "filterType": "UNKNOWN_FILTER",
+            "someField": "someValue"
+        }"#;
+
+        let filter: Filter = serde_json::from_str(json).unwrap();
+        match filter {
+            Filter::Unknown => {
+                // This is expected for unknown filter types
+            }
+            _ => panic!("Expected Unknown filter"),
+        }
+    }
+
+    #[test]
+    fn test_symbol_deserialization() {
+        let json = r#"{
+            "symbol": "BTCUSDT",
+            "status": "TRADING",
+            "baseAsset": "BTC",
+            "baseAssetPrecision": 8,
+            "quoteAsset": "USDT",
+            "quotePrecision": 8,
+            "quoteAssetPrecision": 8,
+            "baseCommissionPrecision": 8,
+            "quoteCommissionPrecision": 8,
+            "orderTypes": ["LIMIT", "LIMIT_MAKER", "MARKET", "STOP_LOSS_LIMIT", "TAKE_PROFIT_LIMIT"],
+            "icebergAllowed": true,
+            "ocoAllowed": true,
+            "quoteOrderQtyMarketAllowed": true,
+            "allowTrailingStop": true,
+            "cancelReplaceAllowed": true,
+            "isSpotTradingAllowed": true,
+            "isMarginTradingAllowed": true,
+            "filters": [],
+            "permissions": ["SPOT", "MARGIN"],
+            "defaultSelfTradePreventionMode": "NONE",
+            "allowedSelfTradePreventionModes": ["NONE", "EXPIRE_TAKER", "EXPIRE_MAKER", "EXPIRE_BOTH"]
+        }"#;
+
+        let symbol: Symbol = serde_json::from_str(json).unwrap();
+        assert_eq!(symbol.symbol, "BTCUSDT");
+        assert_eq!(symbol.status, "TRADING");
+        assert_eq!(symbol.base_asset, "BTC");
+        assert_eq!(symbol.base_asset_precision, 8);
+        assert_eq!(symbol.quote_asset, "USDT");
+        assert!(symbol.iceberg_allowed);
+        assert!(symbol.oco_allowed);
+        assert!(symbol.is_spot_trading_allowed);
+        assert!(symbol.is_margin_trading_allowed);
+        assert_eq!(symbol.permissions, vec!["SPOT", "MARGIN"]);
+        assert_eq!(symbol.default_self_trade_prevention_mode, "NONE");
+    }
+
+    #[test]
+    fn test_exchange_info_response_deserialization() {
+        let json = r#"{
+            "timezone": "UTC",
+            "serverTime": 1625184000000,
+            "rateLimits": [
+                {
+                    "rateLimitType": "REQUEST_WEIGHT",
+                    "interval": "MINUTE",
+                    "intervalNum": 1,
+                    "limit": 6000
+                }
+            ],
+            "exchangeFilters": [],
+            "symbols": [
+                {
+                    "symbol": "BTCUSDT",
+                    "status": "TRADING",
+                    "baseAsset": "BTC",
+                    "baseAssetPrecision": 8,
+                    "quoteAsset": "USDT",
+                    "quotePrecision": 8,
+                    "quoteAssetPrecision": 8,
+                    "baseCommissionPrecision": 8,
+                    "quoteCommissionPrecision": 8,
+                    "orderTypes": ["LIMIT", "MARKET"],
+                    "icebergAllowed": true,
+                    "ocoAllowed": true,
+                    "quoteOrderQtyMarketAllowed": true,
+                    "allowTrailingStop": false,
+                    "cancelReplaceAllowed": false,
+                    "isSpotTradingAllowed": true,
+                    "isMarginTradingAllowed": false,
+                    "filters": [],
+                    "permissions": ["SPOT"],
+                    "defaultSelfTradePreventionMode": "NONE",
+                    "allowedSelfTradePreventionModes": ["NONE"]
+                }
+            ]
+        }"#;
+
+        let response: ExchangeInfoResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.timezone, "UTC");
+        assert_eq!(response.server_time, 1625184000000);
+        assert_eq!(response.rate_limits.len(), 1);
+        assert_eq!(response.symbols.len(), 1);
+        assert_eq!(response.symbols[0].symbol, "BTCUSDT");
+    }
+
+    #[test]
+    fn test_exchange_info_response_with_filters() {
+        let json = r#"{
+            "timezone": "UTC",
+            "serverTime": 1625184000000,
+            "rateLimits": [],
+            "exchangeFilters": [],
+            "symbols": [
+                {
+                    "symbol": "ETHUSDT",
+                    "status": "TRADING",
+                    "baseAsset": "ETH",
+                    "baseAssetPrecision": 8,
+                    "quoteAsset": "USDT",
+                    "quotePrecision": 8,
+                    "quoteAssetPrecision": 8,
+                    "baseCommissionPrecision": 8,
+                    "quoteCommissionPrecision": 8,
+                    "orderTypes": ["LIMIT", "MARKET"],
+                    "icebergAllowed": true,
+                    "ocoAllowed": true,
+                    "quoteOrderQtyMarketAllowed": true,
+                    "allowTrailingStop": false,
+                    "cancelReplaceAllowed": false,
+                    "isSpotTradingAllowed": true,
+                    "isMarginTradingAllowed": false,
+                    "filters": [
+                        {
+                            "filterType": "PRICE_FILTER",
+                            "minPrice": "0.01000000",
+                            "maxPrice": "1000000.00000000",
+                            "tickSize": "0.01000000"
+                        },
+                        {
+                            "filterType": "LOT_SIZE",
+                            "minQty": "0.00010000",
+                            "maxQty": "100000.00000000",
+                            "stepSize": "0.00010000"
+                        }
+                    ],
+                    "permissions": ["SPOT"],
+                    "defaultSelfTradePreventionMode": "NONE",
+                    "allowedSelfTradePreventionModes": ["NONE"]
+                }
+            ]
+        }"#;
+
+        let response: ExchangeInfoResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.symbols[0].filters.len(), 2);
+
+        match &response.symbols[0].filters[0] {
+            Filter::PriceFilter {
+                min_price,
+                max_price,
+                tick_size,
+            } => {
+                assert_eq!(min_price.to_string(), "0.01000000");
+                assert_eq!(max_price.to_string(), "1000000.00000000");
+                assert_eq!(tick_size.to_string(), "0.01000000");
+            }
+            _ => panic!("Expected PriceFilter"),
+        }
+
+        match &response.symbols[0].filters[1] {
+            Filter::LotSize {
+                min_qty,
+                max_qty,
+                step_size,
+            } => {
+                assert_eq!(min_qty.to_string(), "0.00010000");
+                assert_eq!(max_qty.to_string(), "100000.00000000");
+                assert_eq!(step_size.to_string(), "0.00010000");
+            }
+            _ => panic!("Expected LotSize"),
+        }
     }
 }

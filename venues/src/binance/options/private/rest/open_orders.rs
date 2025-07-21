@@ -2,13 +2,12 @@ use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::binance::{
-    options::{
-        OptionsContractType, OptionsOrderSide, OptionsOrderStatus, OptionsOrderType,
-        OptionsTimeInForce, RestResult,
-    },
-    shared,
+use crate::binance::options::{
+    OptionsContractType, OptionsOrderSide, OptionsOrderStatus, OptionsOrderType,
+    OptionsTimeInForce, RestResult,
 };
+
+const GET_OPEN_ORDERS_ENDPOINT: &str = "/eapi/v1/openOrders";
 
 /// Request parameters for querying open orders
 #[derive(Debug, Clone, Serialize, Default)]
@@ -143,9 +142,8 @@ impl RestClient {
     pub async fn get_open_orders(&self, params: OpenOrdersRequest) -> RestResult<Vec<OpenOrder>> {
         let weight = if params.symbol.is_some() { 1 } else { 40 };
 
-        shared::send_signed_request(
-            self,
-            "/eapi/v1/openOrders",
+        self.send_signed_request(
+            GET_OPEN_ORDERS_ENDPOINT,
             reqwest::Method::GET,
             params,
             weight,

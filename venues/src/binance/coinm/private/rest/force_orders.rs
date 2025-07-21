@@ -5,7 +5,6 @@ use crate::binance::{
         AutoCloseType, OrderSide, OrderStatus, OrderType, PositionSide, RestResult, TimeInForce,
         WorkingType, private::rest::client::RestClient,
     },
-    shared,
 };
 
 const FORCE_ORDERS_ENDPOINT: &str = "/dapi/v1/forceOrders";
@@ -152,8 +151,7 @@ impl RestClient {
         params: GetForceOrdersRequest,
     ) -> RestResult<GetForceOrdersResponse> {
         let weight = if params.symbol.is_some() { 20 } else { 50 };
-        shared::send_signed_request(
-            self,
+        self.send_signed_request(
             FORCE_ORDERS_ENDPOINT,
             reqwest::Method::GET,
             params,

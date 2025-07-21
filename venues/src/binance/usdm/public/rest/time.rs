@@ -1,13 +1,15 @@
-// Implements the Binance USDM public REST API endpoint: time.
-//
-// - GET /fapi/v1/time
-//
-// See: https://github.com/binance/binance-spot-api-docs/blob/master/rest-api.md
-
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 use crate::binance::usdm::RestResult;
+
+const SERVER_TIME_ENDPOINT: &str = "/fapi/v1/time";
+
+/// Request parameters for the server time endpoint.
+#[derive(Debug, Clone, Serialize, Default)]
+pub struct ServerTimeRequest {
+    // This endpoint has no parameters, but we need a struct per project rules
+}
 
 /// Response from the Binance USDM server time endpoint.
 #[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
@@ -18,12 +20,77 @@ pub struct ServerTimeResponse {
 }
 
 impl RestClient {
-    /// Get the current server time.
+    /// Check Server Time
     ///
-    /// Endpoint: GET /fapi/v1/time
-    /// [Binance API Docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Check-Server-Time)
-    pub async fn get_server_time(&self) -> RestResult<ServerTimeResponse> {
-        self.send_request("/fapi/v1/time", reqwest::Method::GET, None, None, 1)
+    /// Test connectivity to the Rest API and get the current server time.
+    ///
+    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Check-Server-Time
+    ///
+    /// Rate limit: 1
+    ///
+    /// # Arguments
+    /// * `request` - The server time request parameters (empty for this endpoint)
+    ///
+    /// # Returns
+    /// A result containing the server time response.
+    pub async fn server_time(&self, request: ServerTimeRequest) -> RestResult<ServerTimeResponse> {
+        self.send_public_request(SERVER_TIME_ENDPOINT, reqwest::Method::GET, Some(request), 1)
             .await
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_server_time_request_default() {
+        let request = ServerTimeRequest::default();
+        let serialized = serde_json::to_string(&request).unwrap();
+        assert_eq!(serialized, "{}");
+    }
+
+    #[test]
+    fn test_server_time_response_deserialization() {
+        let json = r#"{
+            "serverTime": 1625184000000
+        }"#;
+
+        let response: ServerTimeResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.server_time, 1625184000000);
+    }
+
+    #[test]
+    fn test_server_time_response_large_value() {
+        let json = r#"{
+            "serverTime": 9999999999999
+        }"#;
+
+        let response: ServerTimeResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.server_time, 9999999999999);
+    }
+
+    #[test]
+    fn test_server_time_response_with_extra_fields() {
+        // Test that extra fields are ignored
+        let json = r#"{
+            "serverTime": 1625184000000,
+            "timezone": "UTC",
+            "extra": "field"
+        }"#;
+
+        let response: ServerTimeResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.server_time, 1625184000000);
+    }
+
+    #[test]
+    fn test_server_time_response_equality() {
+        let response1 = ServerTimeResponse {
+            server_time: 1625184000000,
+        };
+        let response2 = ServerTimeResponse {
+            server_time: 1625184000000,
+        };
+        assert_eq!(response1, response2);
     }
 }

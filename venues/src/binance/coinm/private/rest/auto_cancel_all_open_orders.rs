@@ -2,7 +2,6 @@ use serde::{Deserialize, Serialize};
 
 use crate::binance::{
     coinm::{RestResult, private::rest::client::RestClient},
-    shared,
 };
 
 const COUNTDOWN_CANCEL_ALL_ENDPOINT: &str = "/dapi/v1/countdownCancelAll";
@@ -69,8 +68,7 @@ impl RestClient {
         &self,
         params: AutoCancelAllOpenOrdersRequest,
     ) -> RestResult<AutoCancelAllOpenOrdersResponse> {
-        shared::send_signed_request(
-            self,
+        self.send_signed_request(
             COUNTDOWN_CANCEL_ALL_ENDPOINT,
             reqwest::Method::POST,
             params,

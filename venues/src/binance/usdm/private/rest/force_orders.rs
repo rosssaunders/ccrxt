@@ -1,181 +1,111 @@
-//! Get user's force orders on Binance USDM REST API.
-
+use reqwest::Method;
+use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
 
-use chrono::Utc;
-use reqwest::Method;
-use secrecy::{ExposeSecret, SecretString};
-use serde::{Deserialize, Serialize};
-use thiserror::Error;
+use super::UsdmClient;
+use crate::binance::usdm::RestResult;
+use crate::binance::usdm::enums::{AutoCloseType, OrderSide, OrderStatus, OrderType, TimeInForce};
 
-use crate::binance::usdm::{enums::*, private::rest::client::RestClient, signing::sign_query};
+const FORCE_ORDERS_ENDPOINT: &str = "/fapi/v1/forceOrders";
 
-/// Error type for USDM force orders endpoints.
-#[derive(Debug, Error, Clone, Deserialize)]
-#[serde(tag = "code", content = "msg")]
-pub enum ForceOrdersError {
-    /// Invalid API key or signature.
-    #[error("Invalid API key or signature: {0}")]
-    InvalidKey(String),
-    /// Symbol not found.
-    #[error("Symbol not found: {0}")]
-    SymbolNotFound(String),
-    /// Rate limit exceeded.
-    #[error("Rate limit exceeded: {0}")]
-    RateLimit(String),
-    /// Any other error.
-    #[error("Other error: {0}")]
-    Other(String),
-}
-
-/// Error response from Binance REST API.
-#[derive(Debug, Clone, Deserialize)]
-pub struct ForceOrdersErrorResponse {
-    /// Error code returned by Binance.
-    pub code: i64,
-    /// Error message returned by Binance.
-    pub msg: String,
-}
-
-impl From<ForceOrdersErrorResponse> for ForceOrdersError {
-    fn from(e: ForceOrdersErrorResponse) -> Self {
-        match e.code {
-            -2015 | -2014 => ForceOrdersError::InvalidKey(e.msg),
-            -1121 => ForceOrdersError::SymbolNotFound(e.msg),
-            -1003 => ForceOrdersError::RateLimit(e.msg),
-            _ => ForceOrdersError::Other(e.msg),
-        }
-    }
-}
-
-/// Result type for force orders operations.
-pub type ForceOrdersResult<T> = Result<T, ForceOrdersError>;
-
-/// Request to get user's force orders.
-#[derive(Debug, Clone, Serialize)]
+/// Request parameters for getting user's force orders.
+///
+/// Parameters for retrieving force orders (liquidation and ADL orders).
+#[derive(Debug, Clone, Serialize, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct ForceOrdersRequest {
-    /// API key (securely stored)
-    #[serde(skip)]
-    pub api_key: SecretString,
-    /// API secret (securely stored)
-    #[serde(skip)]
-    pub api_secret: SecretString,
-    /// Symbol (optional, if omitted returns for all symbols)
+pub struct GetForceOrdersRequest {
+    /// Trading symbol (e.g., "BTCUSDT"). Optional.
+    /// If omitted, returns for all symbols.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub symbol: Option<Cow<'static, str>>,
-    /// Start time for the query (milliseconds since epoch)
+
+    /// Start time for filtering orders (milliseconds since epoch). Optional.
+    /// If not sent, data within 7 days before endTime can be queried.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub start_time: Option<u64>,
-    /// End time for the query (milliseconds since epoch)
+
+    /// End time for filtering orders (milliseconds since epoch). Optional.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub end_time: Option<u64>,
-    /// Auto close type
+
+    /// Auto close type filter. Optional.
+    /// "LIQUIDATION" for liquidation orders, "ADL" for ADL orders.
+    /// If not sent, orders with both types will be returned.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub auto_close_type: Option<AutoCloseType>,
-    /// Limit the number of results (default 50, max 100)
+
+    /// Maximum number of results to return (default 50, max 100). Optional.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<u32>,
 }
 
 /// Response containing user's force orders.
-pub type ForceOrdersResponse = Vec<ForceOrder>;
+pub type GetForceOrdersResponse = Vec<ForceOrder>;
 
 /// Individual force order record.
+///
+/// Represents a single force order (liquidation or ADL order) from the API.
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ForceOrder {
-    /// Symbol
+    /// Trading symbol.
     pub symbol: Cow<'static, str>,
-    /// Order ID
+
+    /// Unique order ID assigned by Binance.
     pub order_id: u64,
-    /// Order side
+
+    /// Order side (buy/sell).
     pub side: OrderSide,
-    /// Order type
+
+    /// Order type.
     #[serde(rename = "type")]
     pub order_type: OrderType,
-    /// Time in force
+
+    /// Time in force for the order.
     pub time_in_force: TimeInForce,
-    /// Original quantity
+
+    /// Original order quantity.
     pub orig_qty: Cow<'static, str>,
-    /// Price
+
+    /// Order price.
     pub price: Cow<'static, str>,
-    /// Average price
+
+    /// Average execution price.
     pub avg_price: Cow<'static, str>,
-    /// Order status
+
+    /// Current order status.
     pub status: OrderStatus,
-    /// Order time
+
+    /// Order timestamp (milliseconds since epoch).
     pub time: u64,
-    /// Auto close type
+
+    /// Auto close type (LIQUIDATION or ADL).
     pub auto_close_type: AutoCloseType,
 }
 
-impl RestClient {
-    /// Get user's force orders (GET /fapi/v1/forceOrders)
-    /// [Binance API docs](https://binance-docs.github.io/apidocs/futures/en/#user-s-force-orders-user_data)
+impl UsdmClient {
+    /// User's Force Orders (USER_DATA)
+    ///
+    /// Get user's force orders (liquidation and ADL orders).
+    ///
+    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Users-Force-Orders
+    ///
+    /// Rate limit: 20 if symbol is sent, 50 if symbol is not sent
+    ///
+    /// # Arguments
+    /// * `params` - The request parameters for force orders
+    ///
+    /// # Returns
+    /// Returns a list of force orders for the account.
     pub async fn get_force_orders(
         &self,
-        params: ForceOrdersRequest,
-    ) -> ForceOrdersResult<ForceOrdersResponse> {
-        use tracing::debug;
+        params: GetForceOrdersRequest,
+    ) -> RestResult<GetForceOrdersResponse> {
+        // Weight depends on whether symbol is provided
+        let weight = if params.symbol.is_some() { 20 } else { 50 };
 
-        use crate::binance::usdm::request::execute_request;
-
-        // 1. Prepare endpoint and method
-        let endpoint = "/fapi/v1/forceOrders";
-        let method = Method::GET;
-        let url = format!("{}{}", self.base_url, endpoint);
-
-        // 2. Add timestamp and recvWindow
-        let timestamp = Utc::now().timestamp_millis();
-        let recv_window = 5000u64;
-
-        // 3. Serialize params to query string
-        let mut query_pairs = serde_urlencoded::to_string(&params)
-            .map_err(|e| ForceOrdersError::Other(format!("Failed to serialize params: {e}")))?;
-        if !query_pairs.is_empty() {
-            query_pairs.push('&');
-        }
-        query_pairs.push_str(&format!("timestamp={timestamp}&recvWindow={recv_window}"));
-
-        // 4. Sign the query string
-        let signature = sign_query(&query_pairs, &params.api_secret);
-        query_pairs.push_str(&format!("&signature={signature}"));
-
-        // 5. Set headers
-        let headers = vec![("X-MBX-APIKEY", params.api_key.expose_secret().to_string())];
-
-        // 6. Rate limiting
-        self.rate_limiter
-            .acquire_request(1)
+        self.send_signed_request(FORCE_ORDERS_ENDPOINT, Method::GET, params, weight, false)
             .await
-            .map_err(|e| ForceOrdersError::Other(format!("Rate limiting error: {e}")))?;
-
-        debug!(endpoint = endpoint, "Sending force orders request");
-
-        // 7. Execute request
-        let resp = execute_request::<ForceOrdersResponse>(
-            &self.client,
-            &url,
-            method,
-            Some(headers),
-            Some(&query_pairs),
-        )
-        .await
-        .map_err(|e| match e {
-            crate::binance::usdm::Errors::ApiError(api_err) => {
-                ForceOrdersError::Other(format!("API error: {api_err}"))
-            }
-            crate::binance::usdm::Errors::HttpError(http_err) => {
-                ForceOrdersError::Other(format!("HTTP error: {http_err}"))
-            }
-            crate::binance::usdm::Errors::Error(msg) => ForceOrdersError::Other(msg),
-            crate::binance::usdm::Errors::InvalidApiKey() => {
-                ForceOrdersError::InvalidKey("Invalid API key or signature".to_string())
-            }
-        })?;
-
-        Ok(resp.data)
     }
 }
 
@@ -184,25 +114,92 @@ mod tests {
     use super::*;
 
     #[test]
+    fn test_get_force_orders_request_serialization_minimal() {
+        let request = GetForceOrdersRequest::default();
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert_eq!(serialized, "");
+    }
+
+    #[test]
+    fn test_get_force_orders_request_serialization_with_symbol() {
+        let request = GetForceOrdersRequest {
+            symbol: Some("BTCUSDT".into()),
+            ..Default::default()
+        };
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert_eq!(serialized, "symbol=BTCUSDT");
+    }
+
+    #[test]
+    fn test_get_force_orders_request_serialization_full() {
+        let request = GetForceOrdersRequest {
+            symbol: Some("BTCUSDT".into()),
+            start_time: Some(1625097600000),
+            end_time: Some(1625184000000),
+            auto_close_type: Some(AutoCloseType::Liquidation),
+            limit: Some(100),
+        };
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert!(serialized.contains("symbol=BTCUSDT"));
+        assert!(serialized.contains("startTime=1625097600000"));
+        assert!(serialized.contains("endTime=1625184000000"));
+        assert!(serialized.contains("autoCloseType=LIQUIDATION"));
+        assert!(serialized.contains("limit=100"));
+    }
+
+    #[test]
     fn test_force_order_deserialization() {
+        let json = r#"{
+            "symbol": "BTCUSDT",
+            "orderId": 6071832819,
+            "side": "SELL",
+            "type": "LIMIT",
+            "timeInForce": "IOC",
+            "origQty": "0.001",
+            "price": "10871.09",
+            "avgPrice": "10913.21000",
+            "status": "FILLED",
+            "time": 1596107620044,
+            "autoCloseType": "LIQUIDATION"
+        }"#;
+
+        let order: ForceOrder = serde_json::from_str(json).unwrap();
+        assert_eq!(order.symbol, "BTCUSDT");
+        assert_eq!(order.order_id, 6071832819);
+        assert_eq!(order.side, OrderSide::Sell);
+        assert_eq!(order.order_type, OrderType::Limit);
+        assert_eq!(order.time_in_force, TimeInForce::IOC);
+        assert_eq!(order.status, OrderStatus::Filled);
+        assert_eq!(order.auto_close_type, AutoCloseType::Liquidation);
+    }
+
+    #[test]
+    fn test_force_orders_response_deserialization() {
         let json = r#"[{
             "symbol": "BTCUSDT",
-            "orderId": 12345,
-            "side": "BUY",
-            "type": "MARKET",
+            "orderId": 6071832819,
+            "side": "SELL",
+            "type": "LIMIT",
             "timeInForce": "IOC",
-            "origQty": "1.0",
-            "price": "0",
-            "avgPrice": "50000.0",
+            "origQty": "0.001",
+            "price": "10871.09",
+            "avgPrice": "10913.21000",
             "status": "FILLED",
-            "time": 1641038400000,
+            "time": 1596107620044,
             "autoCloseType": "LIQUIDATION"
         }]"#;
 
-        let response: ForceOrdersResponse = serde_json::from_str(json).unwrap();
+        let response: GetForceOrdersResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.len(), 1);
         assert_eq!(response[0].symbol, "BTCUSDT");
-        assert_eq!(response[0].order_id, 12345);
+        assert_eq!(response[0].order_id, 6071832819);
         assert_eq!(response[0].auto_close_type, AutoCloseType::Liquidation);
+    }
+
+    #[test]
+    fn test_force_orders_response_deserialization_empty() {
+        let json = "[]";
+        let response: GetForceOrdersResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.len(), 0);
     }
 }

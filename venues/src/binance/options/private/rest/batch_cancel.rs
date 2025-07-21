@@ -2,13 +2,14 @@ use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::binance::{
-    options::{
-        OptionsContractType, OptionsOrderSide, OptionsOrderStatus, OptionsOrderType,
-        OptionsTimeInForce, RestResult,
-    },
-    shared,
+use crate::binance::options::{
+    OptionsContractType, OptionsOrderSide, OptionsOrderStatus, OptionsOrderType,
+    OptionsTimeInForce, RestResult,
 };
+
+const BATCH_CANCEL_ORDERS_ENDPOINT: &str = "/eapi/v1/batchOrders";
+const CANCEL_ALL_BY_UNDERLYING_ENDPOINT: &str = "/eapi/v1/allOpenOrdersByUnderlying";
+const CANCEL_ALL_BY_SYMBOL_ENDPOINT: &str = "/eapi/v1/allOpenOrders";
 
 /// Request parameters for batch cancel orders
 #[derive(Debug, Clone, Serialize)]
@@ -167,9 +168,8 @@ impl RestClient {
         &self,
         params: BatchCancelRequest,
     ) -> RestResult<Vec<CancelResponse>> {
-        shared::send_signed_request(
-            self,
-            "/eapi/v1/batchOrders",
+        self.send_signed_request(
+            BATCH_CANCEL_ORDERS_ENDPOINT,
             reqwest::Method::DELETE,
             params,
             1,
@@ -190,9 +190,8 @@ impl RestClient {
         &self,
         params: CancelAllByUnderlyingRequest,
     ) -> RestResult<Vec<CancelResponse>> {
-        shared::send_signed_request(
-            self,
-            "/eapi/v1/allOpenOrdersByUnderlying",
+        self.send_signed_request(
+            CANCEL_ALL_BY_UNDERLYING_ENDPOINT,
             reqwest::Method::DELETE,
             params,
             1,
@@ -213,9 +212,8 @@ impl RestClient {
         &self,
         params: CancelAllBySymbolRequest,
     ) -> RestResult<Vec<CancelResponse>> {
-        shared::send_signed_request(
-            self,
-            "/eapi/v1/allOpenOrders",
+        self.send_signed_request(
+            CANCEL_ALL_BY_SYMBOL_ENDPOINT,
             reqwest::Method::DELETE,
             params,
             1,

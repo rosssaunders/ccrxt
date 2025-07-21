@@ -2,7 +2,6 @@ use serde::{Deserialize, Serialize};
 
 use crate::binance::{
     coinm::{RestResult, enums::DownloadStatus, private::rest::client::RestClient},
-    shared,
 };
 
 const INCOME_ASYN_ENDPOINT: &str = "/dapi/v1/income/asyn";
@@ -84,8 +83,7 @@ impl RestClient {
         params: GetDownloadIdRequest,
     ) -> RestResult<GetDownloadIdResponse> {
         let weight = 5;
-        shared::send_signed_request(
-            self,
+        self.send_signed_request(
             INCOME_ASYN_ENDPOINT,
             reqwest::Method::GET,
             params,
@@ -113,8 +111,7 @@ impl RestClient {
         params: GetDownloadLinkRequest,
     ) -> RestResult<GetDownloadLinkResponse> {
         let weight = 5;
-        shared::send_signed_request(
-            self,
+        self.send_signed_request(
             INCOME_ASYN_ID_ENDPOINT,
             reqwest::Method::GET,
             params,

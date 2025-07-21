@@ -2,13 +2,12 @@ use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::binance::{
-    options::{
-        OptionsContractType, OptionsOrderSide, OptionsOrderStatus, OptionsOrderType,
-        OptionsTimeInForce, RestResult,
-    },
-    shared,
+use crate::binance::options::{
+    OptionsContractType, OptionsOrderSide, OptionsOrderStatus, OptionsOrderType,
+    OptionsTimeInForce, RestResult,
 };
+
+const QUERY_ORDER_ENDPOINT: &str = "/eapi/v1/order";
 
 /// Request parameters for querying a single order
 #[derive(Debug, Clone, Serialize)]
@@ -145,9 +144,8 @@ impl RestClient {
             ));
         }
 
-        shared::send_signed_request(
-            self,
-            "/eapi/v1/order",
+        self.send_signed_request(
+            QUERY_ORDER_ENDPOINT,
             reqwest::Method::GET,
             params,
             1,

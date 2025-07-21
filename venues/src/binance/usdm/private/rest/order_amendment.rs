@@ -1,194 +1,125 @@
-//! Get order amendment history on Binance USDM REST API.
-
 use std::borrow::Cow;
 
-use chrono::Utc;
 use reqwest::Method;
-use secrecy::{ExposeSecret, SecretString};
 use serde::{Deserialize, Serialize};
-use thiserror::Error;
 
-use crate::binance::usdm::{enums::*, private::rest::client::RestClient, signing::sign_query};
+use super::UsdmClient;
+use crate::binance::usdm::RestResult;
 
-/// Error type for USDM order amendment endpoints.
-#[derive(Debug, Error, Clone, Deserialize)]
-#[serde(tag = "code", content = "msg")]
-pub enum OrderAmendmentError {
-    /// Invalid API key or signature.
-    #[error("Invalid API key or signature: {0}")]
-    InvalidKey(String),
-    /// Order not found.
-    #[error("Order not found: {0}")]
-    OrderNotFound(String),
-    /// Rate limit exceeded.
-    #[error("Rate limit exceeded: {0}")]
-    RateLimit(String),
-    /// Any other error.
-    #[error("Other error: {0}")]
-    Other(String),
-}
+const ORDER_AMENDMENT_ENDPOINT: &str = "/fapi/v1/orderAmendment";
 
-/// Error response from Binance REST API.
-#[derive(Debug, Clone, Deserialize)]
-pub struct OrderAmendmentErrorResponse {
-    /// Error code returned by Binance.
-    pub code: i64,
-    /// Error message returned by Binance.
-    pub msg: String,
-}
-
-impl From<OrderAmendmentErrorResponse> for OrderAmendmentError {
-    fn from(e: OrderAmendmentErrorResponse) -> Self {
-        match e.code {
-            -2015 | -2014 => OrderAmendmentError::InvalidKey(e.msg),
-            -2013 => OrderAmendmentError::OrderNotFound(e.msg),
-            -1003 => OrderAmendmentError::RateLimit(e.msg),
-            _ => OrderAmendmentError::Other(e.msg),
-        }
-    }
-}
-
-/// Result type for order amendment operations.
-pub type OrderAmendmentResult<T> = Result<T, OrderAmendmentError>;
-
-/// Request to get order amendment history.
-#[derive(Debug, Clone, Serialize)]
+/// Request parameters for getting order amendment history.
+#[derive(Debug, Clone, Serialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct OrderAmendmentRequest {
-    /// API key (securely stored)
-    #[serde(skip)]
-    pub api_key: SecretString,
-    /// API secret (securely stored)
-    #[serde(skip)]
-    pub api_secret: SecretString,
-    /// Symbol
+    /// Trading symbol (e.g., "BTCUSDT"). Required.
     pub symbol: Cow<'static, str>,
-    /// Order ID to get amendment history for (either this or origClientOrderId must be provided)
+
+    /// Order ID to get amendment history for (either this or origClientOrderId must be provided).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub order_id: Option<u64>,
-    /// Original client order ID (either this or orderId must be provided)
+
+    /// Original client order ID (either this or orderId must be provided).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub orig_client_order_id: Option<Cow<'static, str>>,
-    /// Start time for the query (milliseconds since epoch)
+
+    /// Start time for filtering amendments (milliseconds since epoch).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub start_time: Option<u64>,
-    /// End time for the query (milliseconds since epoch)
+
+    /// End time for filtering amendments (milliseconds since epoch).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub end_time: Option<u64>,
-    /// Limit the number of results (default 50, max 100)
+
+    /// Limit the number of results (default 50, max 100).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<u32>,
-}
 
-/// Response containing order amendment history.
-#[derive(Debug, Clone, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct OrderAmendmentResponse {
-    /// List of order amendments
-    pub amendments: Vec<OrderAmendment>,
-    /// Total count of amendments
-    pub total: u32,
+    /// The value cannot be greater than 60000 (milliseconds).
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub recv_window: Option<u64>,
 }
 
 /// Individual order amendment record.
+///
+/// Represents a single order modification entry from the API response.
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct OrderAmendment {
-    /// Amendment ID
+    /// Amendment ID.
     pub amendment_id: u64,
-    /// Symbol
+
+    /// Trading symbol.
     pub symbol: Cow<'static, str>,
-    /// Order ID
+
+    /// Trading pair name.
+    pub pair: Cow<'static, str>,
+
+    /// Order ID.
     pub order_id: u64,
-    /// Client order ID
+
+    /// Client order ID.
     pub client_order_id: Cow<'static, str>,
-    /// Amendment timestamp
+
+    /// Amendment timestamp (milliseconds since epoch).
     pub time: u64,
-    /// Amendment type (PRICE, QUANTITY, or BOTH)
-    pub amendment_type: AmendmentType,
-    /// Original price (before amendment)
-    pub orig_price: Cow<'static, str>,
-    /// Original quantity (before amendment)
-    pub orig_qty: Cow<'static, str>,
-    /// New price (after amendment)
-    pub price: Cow<'static, str>,
-    /// New quantity (after amendment)
-    pub quantity: Cow<'static, str>,
-    /// Amendment status
-    pub status: AmendmentStatus,
-    /// Price match mode
-    pub price_match: PriceMatch,
+
+    /// Amendment details containing before and after values.
+    pub amendment: AmendmentDetails,
 }
 
-impl RestClient {
-    /// Get order amendment history (GET /fapi/v1/orderAmendment)
-    /// [Binance API docs](https://binance-docs.github.io/apidocs/futures/en/#get-order-amendment-history-user_data)
+/// Amendment details showing the before and after values for modified fields.
+#[derive(Debug, Clone, Deserialize)]
+pub struct AmendmentDetails {
+    /// Price change information (if price was modified).
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub price: Option<AmendmentField>,
+
+    /// Original quantity change information (if quantity was modified).
+    #[serde(rename = "origQty", skip_serializing_if = "Option::is_none")]
+    pub orig_qty: Option<AmendmentField>,
+
+    /// Number of times the order has been modified.
+    pub count: u32,
+}
+
+/// Represents a field change in order modification.
+#[derive(Debug, Clone, Deserialize)]
+pub struct AmendmentField {
+    /// Value before the modification.
+    pub before: Cow<'static, str>,
+
+    /// Value after the modification.
+    pub after: Cow<'static, str>,
+}
+
+/// Response type for order amendment history.
+///
+/// Based on the API documentation, the response is a direct array of order amendments.
+pub type OrderAmendmentResponse = Vec<OrderAmendment>;
+
+impl UsdmClient {
+    /// Get Order Modify History (USER_DATA)
+    ///
+    /// Get order modification history for a specific order or symbol.
+    /// Either orderId or origClientOrderId must be sent, and the orderId will prevail if both are sent.
+    /// Order modify history longer than 3 months is not available.
+    ///
+    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Get-Order-Modify-History
+    ///
+    /// Rate limit: 1
+    ///
+    /// # Arguments
+    /// * `request` - The order amendment history request parameters
+    ///
+    /// # Returns
+    /// Array of order amendment records
     pub async fn get_order_amendment_history(
         &self,
-        params: OrderAmendmentRequest,
-    ) -> OrderAmendmentResult<OrderAmendmentResponse> {
-        use tracing::debug;
-
-        use crate::binance::usdm::request::execute_request;
-
-        // 1. Prepare endpoint and method
-        let endpoint = "/fapi/v1/orderAmendment";
-        let method = Method::GET;
-        let url = format!("{}{}", self.base_url, endpoint);
-
-        // 2. Add timestamp and recvWindow
-        let timestamp = Utc::now().timestamp_millis();
-        let recv_window = 5000u64;
-
-        // 3. Serialize params to query string
-        let mut query_pairs = serde_urlencoded::to_string(&params)
-            .map_err(|e| OrderAmendmentError::Other(format!("Failed to serialize params: {e}")))?;
-        if !query_pairs.is_empty() {
-            query_pairs.push('&');
-        }
-        query_pairs.push_str(&format!("timestamp={timestamp}&recvWindow={recv_window}"));
-
-        // 4. Sign the query string
-        let signature = sign_query(&query_pairs, &params.api_secret);
-        query_pairs.push_str(&format!("&signature={signature}"));
-
-        // 5. Set headers
-        let headers = vec![("X-MBX-APIKEY", params.api_key.expose_secret().to_string())];
-
-        // 6. Rate limiting
-        self.rate_limiter
-            .acquire_request(1)
+        request: OrderAmendmentRequest,
+    ) -> RestResult<OrderAmendmentResponse> {
+        self.send_signed_request(ORDER_AMENDMENT_ENDPOINT, Method::GET, request, 1, false)
             .await
-            .map_err(|e| OrderAmendmentError::Other(format!("Rate limiting error: {e}")))?;
-
-        debug!(
-            endpoint = endpoint,
-            "Sending order amendment history request"
-        );
-
-        // 7. Execute request
-        let resp = execute_request::<OrderAmendmentResponse>(
-            &self.client,
-            &url,
-            method,
-            Some(headers),
-            Some(&query_pairs),
-        )
-        .await
-        .map_err(|e| match e {
-            crate::binance::usdm::Errors::ApiError(api_err) => {
-                OrderAmendmentError::Other(format!("API error: {api_err}"))
-            }
-            crate::binance::usdm::Errors::HttpError(http_err) => {
-                OrderAmendmentError::Other(format!("HTTP error: {http_err}"))
-            }
-            crate::binance::usdm::Errors::Error(msg) => OrderAmendmentError::Other(msg),
-            crate::binance::usdm::Errors::InvalidApiKey() => {
-                OrderAmendmentError::InvalidKey("Invalid API key or signature".to_string())
-            }
-        })?;
-
-        Ok(resp.data)
     }
 }
 
@@ -197,31 +128,126 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_order_amendment_deserialization() {
-        let json = r#"{
-            "amendments": [
-                {
-                    "amendmentId": 123456,
-                    "symbol": "BTCUSDT",
-                    "orderId": 789012,
-                    "clientOrderId": "myOrder1",
-                    "time": 1641038400000,
-                    "amendmentType": "PRICE",
-                    "origPrice": "50000.0",
-                    "origQty": "1.0",
-                    "price": "51000.0",
-                    "quantity": "1.0",
-                    "status": "SUCCESS",
-                    "priceMatch": "NONE"
+    fn test_order_amendment_response_deserialization() {
+        let json = r#"[
+            {
+                "amendmentId": 5363,
+                "symbol": "BTCUSDT",
+                "pair": "BTCUSDT",
+                "orderId": 20072994037,
+                "clientOrderId": "LJ9R4QZDihCaS8UAOOLpgW",
+                "time": 1629184560899,
+                "amendment": {
+                    "price": {
+                        "before": "30004",
+                        "after": "30003.2"
+                    },
+                    "origQty": {
+                        "before": "1",
+                        "after": "1"
+                    },
+                    "count": 3
                 }
-            ],
-            "total": 1
-        }"#;
+            },
+            {
+                "amendmentId": 5361,
+                "symbol": "BTCUSDT",
+                "pair": "BTCUSDT",
+                "orderId": 20072994037,
+                "clientOrderId": "LJ9R4QZDihCaS8UAOOLpgW",
+                "time": 1629184533946,
+                "amendment": {
+                    "price": {
+                        "before": "30005",
+                        "after": "30004"
+                    },
+                    "origQty": {
+                        "before": "1",
+                        "after": "1"
+                    },
+                    "count": 2
+                }
+            }
+        ]"#;
 
         let response: OrderAmendmentResponse = serde_json::from_str(json).unwrap();
-        assert_eq!(response.total, 1);
-        assert_eq!(response.amendments.len(), 1);
-        assert_eq!(response.amendments[0].amendment_id, 123456);
-        assert_eq!(response.amendments[0].symbol, "BTCUSDT");
+        assert_eq!(response.len(), 2);
+
+        let first_amendment = &response[0];
+        assert_eq!(first_amendment.amendment_id, 5363);
+        assert_eq!(first_amendment.symbol, "BTCUSDT");
+        assert_eq!(first_amendment.pair, "BTCUSDT");
+        assert_eq!(first_amendment.order_id, 20072994037);
+        assert_eq!(first_amendment.client_order_id, "LJ9R4QZDihCaS8UAOOLpgW");
+        assert_eq!(first_amendment.time, 1629184560899);
+        assert_eq!(first_amendment.amendment.count, 3);
+
+        let price_change = first_amendment.amendment.price.as_ref().unwrap();
+        assert_eq!(price_change.before, "30004");
+        assert_eq!(price_change.after, "30003.2");
+
+        let qty_change = first_amendment.amendment.orig_qty.as_ref().unwrap();
+        assert_eq!(qty_change.before, "1");
+        assert_eq!(qty_change.after, "1");
+    }
+
+    #[test]
+    fn test_amendment_field_deserialization() {
+        let json = r#"{
+            "before": "45000.0",
+            "after": "45500.0"
+        }"#;
+
+        let field: AmendmentField = serde_json::from_str(json).unwrap();
+        assert_eq!(field.before, "45000.0");
+        assert_eq!(field.after, "45500.0");
+    }
+
+    #[test]
+    fn test_amendment_details_with_only_price_change() {
+        let json = r#"{
+            "price": {
+                "before": "50000.0",
+                "after": "51000.0"
+            },
+            "count": 1
+        }"#;
+
+        let details: AmendmentDetails = serde_json::from_str(json).unwrap();
+        assert_eq!(details.count, 1);
+        assert!(details.price.is_some());
+        assert!(details.orig_qty.is_none());
+
+        let price_change = details.price.unwrap();
+        assert_eq!(price_change.before, "50000.0");
+        assert_eq!(price_change.after, "51000.0");
+    }
+
+    #[test]
+    fn test_order_amendment_request_serialization() {
+        let request = OrderAmendmentRequest {
+            symbol: "BTCUSDT".into(),
+            order_id: Some(12345),
+            orig_client_order_id: None,
+            start_time: Some(1629184560000),
+            end_time: Some(1629184570000),
+            limit: Some(50),
+            recv_window: Some(5000),
+        };
+
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert!(serialized.contains("symbol=BTCUSDT"));
+        assert!(serialized.contains("orderId=12345"));
+        assert!(serialized.contains("startTime=1629184560000"));
+        assert!(serialized.contains("endTime=1629184570000"));
+        assert!(serialized.contains("limit=50"));
+        assert!(serialized.contains("recvWindow=5000"));
+    }
+
+    #[test]
+    fn test_empty_amendment_response() {
+        let json = "[]";
+        let response: OrderAmendmentResponse = serde_json::from_str(json).unwrap();
+        assert!(response.is_empty());
     }
 }

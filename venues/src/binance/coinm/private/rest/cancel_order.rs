@@ -5,7 +5,6 @@ use crate::binance::{
         OrderSide, OrderType, PositionSide, PriceMatch, RestResult, SelfTradePreventionMode,
         TimeInForce, WorkingType, private::rest::client::RestClient,
     },
-    shared,
 };
 
 const CANCEL_ORDER_ENDPOINT: &str = "/dapi/v1/order";
@@ -129,8 +128,7 @@ impl RestClient {
         &self,
         params: CancelOrderRequest,
     ) -> RestResult<CancelOrderResponse> {
-        shared::send_signed_request(
-            self,
+        self.send_signed_request(
             CANCEL_ORDER_ENDPOINT,
             reqwest::Method::DELETE,
             params,

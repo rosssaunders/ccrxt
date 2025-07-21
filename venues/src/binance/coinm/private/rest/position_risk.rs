@@ -2,7 +2,6 @@ use serde::{Deserialize, Serialize};
 
 use crate::binance::{
     coinm::{RestResult, private::rest::client::RestClient},
-    shared,
 };
 
 const POSITION_RISK_ENDPOINT: &str = "/dapi/v1/positionRisk";
@@ -98,8 +97,7 @@ impl RestClient {
         params: PositionRiskRequest,
     ) -> RestResult<Vec<PositionRisk>> {
         let weight = 1;
-        shared::send_signed_request(
-            self,
+        self.send_signed_request(
             POSITION_RISK_ENDPOINT,
             reqwest::Method::GET,
             params,

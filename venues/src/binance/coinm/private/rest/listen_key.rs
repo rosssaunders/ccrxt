@@ -2,7 +2,6 @@ use serde::{Deserialize, Serialize};
 
 use crate::binance::{
     coinm::{RestResult, private::rest::client::RestClient},
-    shared,
 };
 
 const LISTEN_KEY_ENDPOINT: &str = "/dapi/v1/listenKey";
@@ -65,8 +64,7 @@ impl RestClient {
         params: CreateListenKeyRequest,
     ) -> RestResult<CreateListenKeyResponse> {
         let weight = 1;
-        shared::send_signed_request(
-            self,
+        self.send_signed_request(
             LISTEN_KEY_ENDPOINT,
             reqwest::Method::POST,
             params,
@@ -94,8 +92,7 @@ impl RestClient {
         params: ExtendListenKeyRequest,
     ) -> RestResult<ListenKeyResponse> {
         let weight = 1;
-        shared::send_signed_request(
-            self,
+        self.send_signed_request(
             LISTEN_KEY_ENDPOINT,
             reqwest::Method::PUT,
             params,
@@ -123,8 +120,7 @@ impl RestClient {
         params: DeleteListenKeyRequest,
     ) -> RestResult<ListenKeyResponse> {
         let weight = 1;
-        shared::send_signed_request(
-            self,
+        self.send_signed_request(
             LISTEN_KEY_ENDPOINT,
             reqwest::Method::DELETE,
             params,

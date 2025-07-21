@@ -2,7 +2,6 @@ use serde::{Deserialize, Serialize};
 
 use crate::binance::{
     coinm::{RestResult, private::rest::client::RestClient},
-    shared,
 };
 
 const POSITION_SIDE_DUAL_ENDPOINT: &str = "/dapi/v1/positionSide/dual";
@@ -47,8 +46,7 @@ impl RestClient {
         params: GetCurrentPositionModeRequest,
     ) -> RestResult<GetCurrentPositionModeResponse> {
         let weight = 30;
-        shared::send_signed_request(
-            self,
+        self.send_signed_request(
             POSITION_SIDE_DUAL_ENDPOINT,
             reqwest::Method::GET,
             params,

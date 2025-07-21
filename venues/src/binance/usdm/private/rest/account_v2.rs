@@ -1,247 +1,212 @@
-//! Account information V2 endpoints for Binance USDM REST API.
-
-use chrono::Utc;
+use super::UsdmClient;
+use crate::binance::usdm::RestResult;
+use crate::binance::usdm::enums::PositionSide;
 use reqwest::Method;
-use secrecy::{ExposeSecret, SecretString};
 use serde::{Deserialize, Serialize};
-use thiserror::Error;
 
-use crate::binance::usdm::{
-    enums::PositionSide,
-    private::rest::{client::RestClient, order::OrderErrorResponse},
-    signing::sign_query,
-};
-
-/// Error type for USDM account V2 endpoints.
-#[derive(Debug, Error, Clone, Deserialize)]
-pub enum AccountV2Error {
-    #[error("Invalid API key or signature: {0}")]
-    InvalidApiKeyOrSignature(String),
-
-    #[error("Too many requests: {0}")]
-    TooManyRequests(String),
-
-    #[error("Unknown error: {0}")]
-    Unknown(String),
-}
-
-/// Result type for USDM account V2 operations.
-pub type AccountV2Result<T> = Result<T, AccountV2Error>;
-
-/// Request for getting account information V2.
-#[derive(Debug, Clone, Serialize)]
+/// Request parameters for the Account Information V2 endpoint.
+#[derive(Debug, Clone, Serialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct GetAccountV2Request {
-    /// Request timestamp in milliseconds.
+    /// Request timestamp in milliseconds since epoch.
     pub timestamp: u64,
-    /// Request signature.
+
+    /// The number of milliseconds after timestamp the request is valid for. Optional.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub signature: Option<String>,
+    pub recv_window: Option<u64>,
 }
 
-impl Default for GetAccountV2Request {
-    fn default() -> Self {
-        Self {
-            timestamp: Utc::now().timestamp_millis() as u64,
-            signature: None,
-        }
-    }
-}
-
-/// Asset information in account V2.
+/// Asset information for a single asset in Account Information V2 response.
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct AssetV2 {
-    /// Asset name.
+    /// Asset name (e.g., "USDT").
     pub asset: String,
-    /// Wallet balance.
+
+    /// Wallet balance for the asset.
     pub wallet_balance: String,
-    /// Unrealized PnL.
+
+    /// Unrealized profit and loss for the asset.
     pub unrealized_profit: String,
-    /// Margin balance.
+
+    /// Margin balance for the asset.
     pub margin_balance: String,
-    /// Maintenance margin.
+
+    /// Maintenance margin required for the asset.
     pub maint_margin: String,
-    /// Initial margin.
+
+    /// Initial margin required for the asset.
     pub initial_margin: String,
-    /// Position initial margin.
+
+    /// Position initial margin required for the asset.
     pub position_initial_margin: String,
-    /// Open order initial margin.
+
+    /// Open order initial margin required for the asset.
     pub open_order_initial_margin: String,
-    /// Cross wallet balance.
+
+    /// Cross wallet balance for the asset.
     pub cross_wallet_balance: String,
-    /// Cross unrealized PnL.
+
+    /// Cross unrealized profit and loss for the asset.
     pub cross_un_pnl: String,
-    /// Available balance.
+
+    /// Available balance for the asset.
     pub available_balance: String,
-    /// Maximum amount for transfer out.
+
+    /// Maximum amount for transfer out for the asset.
     pub max_withdraw_amount: String,
+
     /// Whether the asset can be used as margin in Multi-Assets mode.
     pub margin_available: bool,
-    /// Last update time.
+
+    /// Last update time for the asset (milliseconds since epoch).
     pub update_time: u64,
 }
 
-/// Position information in account V2.
+/// Position information for a single symbol in Account Information V2 response.
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct PositionV2 {
-    /// Trading symbol.
+    /// Trading symbol (e.g., "BTCUSDT").
     pub symbol: String,
-    /// Initial margin.
+
+    /// Initial margin required for the position.
     pub initial_margin: String,
-    /// Maintenance margin.
+
+    /// Maintenance margin required for the position.
     pub maint_margin: String,
-    /// Unrealized PnL.
+
+    /// Unrealized profit and loss for the position.
     pub unrealized_profit: String,
-    /// Position initial margin.
+
+    /// Position initial margin required for the position.
     pub position_initial_margin: String,
-    /// Open order initial margin.
+
+    /// Open order initial margin required for the position.
     pub open_order_initial_margin: String,
-    /// Current leverage.
+
+    /// Current leverage for the position.
     pub leverage: String,
-    /// Isolated position value.
+
+    /// Whether the position is isolated.
     pub isolated: bool,
-    /// Entry price.
+
+    /// Average entry price for the position.
     pub entry_price: String,
-    /// Break-even price.
+
+    /// Break-even price for the position.
     pub break_even_price: String,
-    /// Maximum notional value.
+
+    /// Maximum available notional value for the position.
     pub max_notional: String,
-    /// Bid notional.
+
+    /// Bid notional value (may be ignored).
     pub bid_notional: String,
-    /// Ask notional.
+
+    /// Ask notional value (may be ignored).
     pub ask_notional: String,
-    /// Position side.
+
+    /// Position side (see PositionSide enum).
     pub position_side: PositionSide,
+
     /// Position amount.
     pub position_amt: String,
-    /// Last update time.
+
+    /// Last update time for the position (milliseconds since epoch).
     pub update_time: u64,
 }
 
-/// Account information V2 response.
+/// Response for Account Information V2 endpoint.
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct AccountV2Response {
-    /// Fee tier.
+    /// Account commission tier.
     pub fee_tier: u32,
+
+    /// Whether fee discount is enabled.
+    pub fee_burn: bool,
+
     /// Whether the account can trade.
     pub can_trade: bool,
-    /// Whether the account can deposit.
+
+    /// Whether the account can deposit assets.
     pub can_deposit: bool,
-    /// Whether the account can withdraw.
+
+    /// Whether the account can withdraw assets.
     pub can_withdraw: bool,
-    /// Fee burn option for spot trading.
-    pub fee_burn: bool,
-    /// Last update time.
+
+    /// Last update time (reserved, may be ignored).
     pub update_time: u64,
-    /// Multi-assets margin.
+
+    /// Whether multi-assets margin mode is enabled.
     pub multi_assets_margin: bool,
+
     /// Trade group ID.
     pub trade_group_id: Option<i64>,
-    /// Total initial margin.
+
+    /// Total initial margin required with current mark price (USD value).
     pub total_initial_margin: String,
-    /// Total maintenance margin.
+
+    /// Total maintenance margin required (USD value).
     pub total_maint_margin: String,
-    /// Total wallet balance.
+
+    /// Total wallet balance (USD value).
     pub total_wallet_balance: String,
-    /// Total unrealized PnL.
+
+    /// Total unrealized profit (USD value).
     pub total_unrealized_profit: String,
-    /// Total margin balance.
+
+    /// Total margin balance (USD value).
     pub total_margin_balance: String,
-    /// Total position initial margin.
+
+    /// Total position initial margin (USD value).
     pub total_position_initial_margin: String,
-    /// Total open order initial margin.
+
+    /// Total open order initial margin (USD value).
     pub total_open_order_initial_margin: String,
-    /// Total cross wallet balance.
+
+    /// Total cross wallet balance (USD value).
     pub total_cross_wallet_balance: String,
-    /// Total cross unrealized PnL.
+
+    /// Total cross unrealized profit (USD value).
     pub total_cross_un_pnl: String,
-    /// Available balance.
+
+    /// Available balance (USD value).
     pub available_balance: String,
-    /// Maximum amount for transfer out.
+
+    /// Maximum amount for transfer out (USD value).
     pub max_withdraw_amount: String,
-    /// Assets information.
+
+    /// List of asset information.
     pub assets: Vec<AssetV2>,
-    /// Positions information.
+
+    /// List of position information.
     pub positions: Vec<PositionV2>,
 }
 
-impl RestClient {
-    /// Get account information V2.
+/// Endpoint path for Account Information V2.
+const ACCOUNT_V2_ENDPOINT: &str = "/fapi/v2/account";
+
+impl UsdmClient {
+    /// Account Information V2 (GET /fapi/v2/account)
     ///
-    /// Retrieves comprehensive account information including balances, positions,
-    /// and trading permissions with detailed asset and position information.
+    /// Retrieves current account information for a Binance USDM futures account, including balances, positions, and trading permissions.
     ///
-    /// Weight: 5
+    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Account-Information-V2
+    ///
+    /// Rate limit: 5
     ///
     /// # Arguments
-    ///
-    /// * `api_key` - API key for authentication
-    /// * `api_secret` - API secret for signing requests
+    /// * `params` - The request parameters
     ///
     /// # Returns
-    ///
-    /// Returns `AccountV2Response` containing comprehensive account information.
-    ///
-    /// # Errors
-    ///
-    /// Returns `AccountV2Error` if:
-    /// - Authentication fails
-    /// - Rate limits are exceeded
-    /// - API error occurs
+    /// AccountV2Response - The account information response
     pub async fn get_account_v2(
         &self,
-        api_key: impl Into<SecretString>,
-        api_secret: impl Into<SecretString>,
-    ) -> AccountV2Result<AccountV2Response> {
-        // Acquire rate limit permit
-        self.rate_limiter
-            .acquire_request(5)
+        params: GetAccountV2Request,
+    ) -> RestResult<AccountV2Response> {
+        self.send_signed_request(ACCOUNT_V2_ENDPOINT, Method::GET, params, 5, false)
             .await
-            .map_err(|e| AccountV2Error::Unknown(format!("Rate limiting error: {e}")))?;
-
-        let api_key = api_key.into();
-        let api_secret = api_secret.into();
-        let timestamp = Utc::now().timestamp_millis() as u64;
-
-        let mut request = GetAccountV2Request {
-            timestamp,
-            signature: None,
-        };
-
-        // Create query string for signing
-        let query_string = serde_urlencoded::to_string(&request)
-            .map_err(|_| AccountV2Error::Unknown("Failed to serialize request".to_string()))?;
-
-        // Sign the request
-        let signature = sign_query(&query_string, &api_secret);
-        request.signature = Some(signature);
-
-        // Make the request
-        let response = self
-            .client
-            .request(Method::GET, format!("{}/fapi/v2/account", self.base_url))
-            .header("X-MBX-APIKEY", api_key.expose_secret())
-            .query(&request)
-            .send()
-            .await
-            .map_err(|e| AccountV2Error::Unknown(e.to_string()))?;
-
-        if response.status().is_success() {
-            let account_response: AccountV2Response = response
-                .json()
-                .await
-                .map_err(|e| AccountV2Error::Unknown(e.to_string()))?;
-            Ok(account_response)
-        } else {
-            let error_response: OrderErrorResponse = response
-                .json()
-                .await
-                .map_err(|e| AccountV2Error::Unknown(e.to_string()))?;
-            Err(AccountV2Error::Unknown(error_response.msg))
-        }
     }
 }
 
@@ -251,44 +216,95 @@ mod tests {
 
     #[test]
     fn test_get_account_v2_request_serialization() {
-        let request = GetAccountV2Request {
-            timestamp: 1625097600000,
-            signature: Some("test_signature".to_string()),
+        let req = GetAccountV2Request {
+            timestamp: 1234567890,
+            recv_window: Some(5000),
         };
+        let json = serde_json::to_string(&req).unwrap();
+        assert!(json.contains("timestamp"));
+        assert!(json.contains("recvWindow"));
+    }
 
-        let serialized = serde_urlencoded::to_string(&request).unwrap();
-        assert!(serialized.contains("timestamp=1625097600000"));
-        assert!(serialized.contains("signature=test_signature"));
+    #[test]
+    fn test_asset_v2_deserialization() {
+        let json = r#"{
+            "asset": "USDT",
+            "walletBalance": "100.0",
+            "unrealizedProfit": "0.0",
+            "marginBalance": "100.0",
+            "maintMargin": "0.0",
+            "initialMargin": "0.0",
+            "positionInitialMargin": "0.0",
+            "openOrderInitialMargin": "0.0",
+            "crossWalletBalance": "100.0",
+            "crossUnPnl": "0.0",
+            "availableBalance": "100.0",
+            "maxWithdrawAmount": "100.0",
+            "marginAvailable": true,
+            "updateTime": 1625474304765
+        }"#;
+        let asset: AssetV2 = serde_json::from_str(json).unwrap();
+        assert_eq!(asset.asset, "USDT");
+        assert!(asset.margin_available);
+        assert_eq!(asset.update_time, 1625474304765);
+    }
+
+    #[test]
+    fn test_position_v2_deserialization() {
+        let json = r#"{
+            "symbol": "BTCUSDT",
+            "initialMargin": "0.0",
+            "maintMargin": "0.0",
+            "unrealizedProfit": "0.0",
+            "positionInitialMargin": "0.0",
+            "openOrderInitialMargin": "0.0",
+            "leverage": "100",
+            "isolated": true,
+            "entryPrice": "0.0",
+            "breakEvenPrice": "0.0",
+            "maxNotional": "250000",
+            "bidNotional": "0",
+            "askNotional": "0",
+            "positionSide": "BOTH",
+            "positionAmt": "0",
+            "updateTime": 0
+        }"#;
+        let pos: PositionV2 = serde_json::from_str(json).unwrap();
+        assert_eq!(pos.symbol, "BTCUSDT");
+        assert_eq!(pos.position_side.to_string(), "BOTH");
+        assert!(pos.isolated);
     }
 
     #[test]
     fn test_account_v2_response_deserialization() {
         let json = r#"{
             "feeTier": 0,
+            "feeBurn": true,
             "canTrade": true,
             "canDeposit": true,
             "canWithdraw": true,
-            "feeBurn": false,
-            "updateTime": 1625097600000,
+            "updateTime": 0,
             "multiAssetsMargin": false,
+            "tradeGroupId": -1,
             "totalInitialMargin": "0.00000000",
             "totalMaintMargin": "0.00000000",
-            "totalWalletBalance": "1000.00000000",
+            "totalWalletBalance": "23.72469206",
             "totalUnrealizedProfit": "0.00000000",
-            "totalMarginBalance": "1000.00000000",
+            "totalMarginBalance": "23.72469206",
             "totalPositionInitialMargin": "0.00000000",
             "totalOpenOrderInitialMargin": "0.00000000",
-            "totalCrossWalletBalance": "1000.00000000",
+            "totalCrossWalletBalance": "23.72469206",
             "totalCrossUnPnl": "0.00000000",
-            "availableBalance": "1000.00000000",
-            "maxWithdrawAmount": "1000.00000000",
+            "availableBalance": "23.72469206",
+            "maxWithdrawAmount": "23.72469206",
             "assets": [],
             "positions": []
         }"#;
-
-        let response: AccountV2Response = serde_json::from_str(json).unwrap();
-        assert_eq!(response.fee_tier, 0);
-        assert!(response.can_trade);
-        assert_eq!(response.total_wallet_balance, "1000.00000000");
+        let resp: AccountV2Response = serde_json::from_str(json).unwrap();
+        assert_eq!(resp.fee_tier, 0);
+        assert!(resp.fee_burn);
+        assert!(resp.can_trade);
+        assert_eq!(resp.assets.len(), 0);
+        assert_eq!(resp.positions.len(), 0);
     }
 }

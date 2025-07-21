@@ -1,149 +1,80 @@
-//! User account configuration endpoints for Binance USDM REST API.
-
-use chrono::Utc;
 use reqwest::Method;
-use secrecy::{ExposeSecret, SecretString};
 use serde::{Deserialize, Serialize};
-use thiserror::Error;
 
-use crate::binance::usdm::{
-    private::rest::{client::RestClient, order::OrderErrorResponse},
-    signing::sign_query,
-};
+use super::UsdmClient;
+use crate::binance::usdm::RestResult;
 
-/// Error type for USDM account config endpoints.
-#[derive(Debug, Error, Clone, Deserialize)]
-pub enum AccountConfigError {
-    #[error("Invalid API key or signature: {0}")]
-    InvalidApiKeyOrSignature(String),
+const ACCOUNT_CONFIG_ENDPOINT: &str = "/fapi/v1/accountConfig";
 
-    #[error("Too many requests: {0}")]
-    TooManyRequests(String),
-
-    #[error("Unknown error: {0}")]
-    Unknown(String),
-}
-
-/// Result type for USDM account config operations.
-pub type AccountConfigResult<T> = Result<T, AccountConfigError>;
-
-/// Request for getting account configuration.
-#[derive(Debug, Clone, Serialize)]
+/// Request parameters for the account configuration endpoint.
+#[derive(Debug, Clone, Serialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct GetAccountConfigRequest {
-    /// Request timestamp in milliseconds.
+    /// Request timestamp in milliseconds since epoch.
+    /// Must be the current server time.
     pub timestamp: u64,
-    /// Request signature.
+
+    /// Optional receive window (milliseconds). If not set, default is used by API.
+    /// Valid range: 1-60000. Used to specify the number of milliseconds after timestamp the request is valid for.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub signature: Option<String>,
+    pub recv_window: Option<u64>,
 }
 
-impl Default for GetAccountConfigRequest {
-    fn default() -> Self {
-        Self {
-            timestamp: Utc::now().timestamp_millis() as u64,
-            signature: None,
-        }
-    }
-}
-
-/// User account configuration response.
+/// Response for user account configuration.
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct AccountConfigResponse {
-    /// Fee tier.
+    /// Fee tier for the account. Integer commission tier.
     pub fee_tier: u32,
+
     /// Whether the account can trade.
     pub can_trade: bool,
-    /// Whether the account can deposit.
+
+    /// Whether the account can deposit (transfer in asset).
     pub can_deposit: bool,
-    /// Whether the account can withdraw.
+
+    /// Whether the account can withdraw (transfer out asset).
     pub can_withdraw: bool,
-    /// Fee burn option for spot trading.
+
+    /// Fee burn option for spot trading. (Not documented, returned by API.)
+    #[serde(default)]
     pub fee_burn: bool,
+
     /// Multi-assets margin enabled.
     pub multi_assets_margin: bool,
-    /// Last update time.
+
+    /// Whether dual side position is enabled. (API field: dualSidePosition)
+    #[serde(rename = "dualSidePosition")]
+    pub dual_side_position: Option<bool>,
+
+    /// Trade group ID. (API field: tradeGroupId)
+    #[serde(rename = "tradeGroupId")]
+    pub trade_group_id: Option<i32>,
+
+    /// Last update time (milliseconds since epoch). Reserved property, may be zero.
     pub update_time: u64,
 }
 
-impl RestClient {
-    /// Get user account configuration.
+impl UsdmClient {
+    /// Get Account Configuration (GET /fapi/v1/accountConfig)
     ///
-    /// Retrieves the current account configuration including fee tier,
-    /// trading permissions, and margin settings.
+    /// Retrieves the current account configuration including fee tier, trading permissions, margin settings, and other account flags.
     ///
-    /// Weight: 5
+    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Account-Config
+    ///
+    /// Rate limit: 5
     ///
     /// # Arguments
-    ///
-    /// * `api_key` - API key for authentication
-    /// * `api_secret` - API secret for signing requests
+    /// * `params` - The request parameters
     ///
     /// # Returns
-    ///
-    /// Returns `AccountConfigResponse` containing account configuration.
-    ///
-    /// # Errors
-    ///
-    /// Returns `AccountConfigError` if:
-    /// - Authentication fails
-    /// - Rate limits are exceeded
-    /// - API error occurs
+    /// Account configuration response
     pub async fn get_account_config(
         &self,
-        api_key: impl Into<SecretString>,
-        api_secret: impl Into<SecretString>,
-    ) -> AccountConfigResult<AccountConfigResponse> {
-        // Acquire rate limit permit
-        self.rate_limiter
-            .acquire_request(5)
+        params: GetAccountConfigRequest,
+    ) -> RestResult<AccountConfigResponse> {
+        self.send_signed_request(ACCOUNT_CONFIG_ENDPOINT, Method::GET, params, 5, false)
             .await
-            .map_err(|e| AccountConfigError::Unknown(format!("Rate limiting error: {e}")))?;
-
-        let api_key = api_key.into();
-        let api_secret = api_secret.into();
-        let timestamp = Utc::now().timestamp_millis() as u64;
-
-        let mut request = GetAccountConfigRequest {
-            timestamp,
-            signature: None,
-        };
-
-        // Create query string for signing
-        let query_string = serde_urlencoded::to_string(&request)
-            .map_err(|_| AccountConfigError::Unknown("Failed to serialize request".to_string()))?;
-
-        // Sign the request
-        let signature = sign_query(&query_string, &api_secret);
-        request.signature = Some(signature);
-
-        // Make the request
-        let response = self
-            .client
-            .request(
-                Method::GET,
-                format!("{}/fapi/v1/accountConfig", self.base_url),
-            )
-            .header("X-MBX-APIKEY", api_key.expose_secret())
-            .query(&request)
-            .send()
-            .await
-            .map_err(|e| AccountConfigError::Unknown(e.to_string()))?;
-
-        if response.status().is_success() {
-            let config_response: AccountConfigResponse = response
-                .json()
-                .await
-                .map_err(|e| AccountConfigError::Unknown(e.to_string()))?;
-            Ok(config_response)
-        } else {
-            let error_response: OrderErrorResponse = response
-                .json()
-                .await
-                .map_err(|e| AccountConfigError::Unknown(e.to_string()))?;
-            Err(AccountConfigError::Unknown(error_response.msg))
-        }
     }
 }
 
@@ -155,16 +86,15 @@ mod tests {
     fn test_get_account_config_request_serialization() {
         let request = GetAccountConfigRequest {
             timestamp: 1625097600000,
-            signature: Some("test_signature".to_string()),
+            recv_window: Some(5000),
         };
-
         let serialized = serde_urlencoded::to_string(&request).unwrap();
         assert!(serialized.contains("timestamp=1625097600000"));
-        assert!(serialized.contains("signature=test_signature"));
+        assert!(serialized.contains("recv_window=5000"));
     }
 
     #[test]
-    fn test_account_config_response_deserialization() {
+    fn test_account_config_response_deserialization_full() {
         let json = r#"{
             "feeTier": 0,
             "canTrade": true,
@@ -172,12 +102,42 @@ mod tests {
             "canWithdraw": true,
             "feeBurn": false,
             "multiAssetsMargin": false,
+            "dualSidePosition": true,
+            "tradeGroupId": -1,
             "updateTime": 1625097600000
         }"#;
-
         let response: AccountConfigResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.fee_tier, 0);
         assert!(response.can_trade);
+        assert!(response.can_deposit);
+        assert!(response.can_withdraw);
+        assert!(!response.fee_burn);
         assert!(!response.multi_assets_margin);
+        assert_eq!(response.dual_side_position, Some(true));
+        assert_eq!(response.trade_group_id, Some(-1));
+        assert_eq!(response.update_time, 1625097600000);
+    }
+
+    #[test]
+    fn test_account_config_response_deserialization_minimal() {
+        let json = r#"{
+            "feeTier": 1,
+            "canTrade": false,
+            "canDeposit": false,
+            "canWithdraw": false,
+            "feeBurn": true,
+            "multiAssetsMargin": true,
+            "updateTime": 0
+        }"#;
+        let response: AccountConfigResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.fee_tier, 1);
+        assert!(!response.can_trade);
+        assert!(!response.can_deposit);
+        assert!(!response.can_withdraw);
+        assert!(response.fee_burn);
+        assert!(response.multi_assets_margin);
+        assert_eq!(response.dual_side_position, None);
+        assert_eq!(response.trade_group_id, None);
+        assert_eq!(response.update_time, 0);
     }
 }

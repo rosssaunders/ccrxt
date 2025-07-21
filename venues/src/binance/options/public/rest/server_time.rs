@@ -3,6 +3,8 @@ use serde::Deserialize;
 use super::client::RestClient;
 use crate::binance::options::RestResult;
 
+const TIME_ENDPOINT: &str = "/eapi/v1/time";
+
 /// Response for server time endpoint
 #[derive(Debug, Clone, Deserialize)]
 pub struct ServerTimeResponse {
@@ -21,7 +23,7 @@ impl RestClient {
     /// Weight: 1
     /// Security: None
     pub async fn get_server_time(&self) -> RestResult<ServerTimeResponse> {
-        self.send_request("/eapi/v1/time", reqwest::Method::GET, None, None, 1)
+        self.send_public_request(TIME_ENDPOINT, reqwest::Method::GET, None::<()>, 1)
             .await
     }
 }

@@ -3,7 +3,6 @@ use std::time::Duration;
 mod enums;
 mod errors;
 mod rate_limit;
-mod request;
 
 // Re-export modules for new structure
 mod public {
@@ -35,7 +34,6 @@ pub use public::*;
 pub use rate_limit::{RateLimitHeader, RateLimiter};
 
 pub use crate::binance::coinm::errors::ErrorResponse;
-pub(crate) use crate::binance::coinm::request::execute_request;
 
 /// Represents the relevant response headers returned by the Binance API for rate limiting and order tracking.
 ///
@@ -63,6 +61,40 @@ pub struct RestResponse<T> {
 /// Type alias for results returned by Binance API operations
 pub type RestResult<T> = Result<RestResponse<T>, Errors>;
 
-pub mod rest {
-    pub mod common;
+/// Type alias for the CoinmClient
+pub type CoinmClient =
+    crate::binance::shared::client::BinanceClient<crate::binance::coinm::CoinmConfig>;
+
+use crate::binance::shared::venue_trait::{RateLimits, VenueConfig};
+
+/// Coin-Margined Futures venue configuration
+pub struct CoinmConfig;
+
+impl VenueConfig for CoinmConfig {
+    fn base_url(&self) -> &str {
+        "https://dapi.binance.com"
+    }
+    fn venue_name(&self) -> &str {
+        "coinm"
+    }
+    fn rate_limits(&self) -> RateLimits {
+        RateLimits {
+            request_weight_limit: 6000,
+            request_weight_window: Duration::from_secs(60),
+            raw_requests_limit: 61000,
+            raw_requests_window: Duration::from_secs(300), // 5 minutes
+            orders_10s_limit: 100,
+            orders_minute_limit: 1200,
+            orders_day_limit: None,
+        }
+    }
+    fn supports_futures(&self) -> bool {
+        true
+    }
+    fn supports_options(&self) -> bool {
+        false
+    }
+    fn supports_margin(&self) -> bool {
+        false
+    }
 }

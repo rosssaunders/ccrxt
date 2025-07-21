@@ -2,13 +2,12 @@ use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::binance::{
-    options::{
-        OptionsContractType, OptionsOrderSide, OptionsOrderStatus, OptionsOrderType,
-        OptionsTimeInForce, RestResult,
-    },
-    shared,
+use crate::binance::options::{
+    OptionsContractType, OptionsOrderSide, OptionsOrderStatus, OptionsOrderType,
+    OptionsTimeInForce, RestResult,
 };
+
+const CREATE_BATCH_ORDERS_ENDPOINT: &str = "/eapi/v1/batchOrders";
 
 /// Single order in batch request
 #[derive(Debug, Clone, Serialize)]
@@ -167,9 +166,8 @@ impl RestClient {
         &self,
         params: BatchOrdersRequest,
     ) -> RestResult<Vec<BatchOrderResponse>> {
-        shared::send_signed_request(
-            self,
-            "/eapi/v1/batchOrders",
+        self.send_signed_request(
+            CREATE_BATCH_ORDERS_ENDPOINT,
             reqwest::Method::POST,
             params,
             5,

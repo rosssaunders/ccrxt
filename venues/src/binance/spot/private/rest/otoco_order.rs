@@ -7,6 +7,8 @@ use crate::binance::spot::{
     OrderType, RestResult, SelfTradePreventionMode, TimeInForce,
 };
 
+const CREATE_OTOCO_ORDER_ENDPOINT: &str = "/api/v3/orderList/otoco";
+
 /// Request parameters for OTOCO order
 #[derive(Debug, Clone, Serialize)]
 pub struct OtocoOrderRequest {
@@ -271,151 +273,424 @@ impl RestClient {
         &self,
         params: OtocoOrderRequest,
     ) -> RestResult<OtocoOrderResponse> {
-        let body_params: Vec<(&str, String)> = vec![
-            ("symbol", params.symbol),
-            ("workingType", params.working_type.to_string()),
-            ("workingSide", params.working_side.to_string()),
-            ("workingQuantity", params.working_quantity.to_string()),
-            ("workingPrice", params.working_price.to_string()),
-            ("pendingSide", params.pending_side.to_string()),
-            ("pendingQuantity", params.pending_quantity.to_string()),
-            ("pendingAboveType", params.pending_above_type.to_string()),
-            ("pendingBelowType", params.pending_below_type.to_string()),
-        ]
-        .into_iter()
-        .chain(
-            params
-                .list_client_order_id
-                .map(|v| ("listClientOrderId", v)),
-        )
-        .chain(
-            params
-                .new_order_resp_type
-                .map(|v| ("newOrderRespType", v.to_string())),
-        )
-        .chain(
-            params
-                .self_trade_prevention_mode
-                .map(|v| ("selfTradePreventionMode", v.to_string())),
-        )
-        .chain(
-            params
-                .working_client_order_id
-                .map(|v| ("workingClientOrderId", v)),
-        )
-        .chain(
-            params
-                .working_time_in_force
-                .map(|v| ("workingTimeInForce", v.to_string())),
-        )
-        .chain(
-            params
-                .working_strategy_id
-                .map(|v| ("workingStrategyId", v.to_string())),
-        )
-        .chain(
-            params
-                .working_strategy_type
-                .map(|v| ("workingStrategyType", v.to_string())),
-        )
-        .chain(
-            params
-                .working_iceberg_qty
-                .map(|v| ("workingIcebergQty", v.to_string())),
-        )
-        .chain(
-            params
-                .pending_above_client_order_id
-                .map(|v| ("pendingAboveClientOrderId", v)),
-        )
-        .chain(
-            params
-                .pending_above_price
-                .map(|v| ("pendingAbovePrice", v.to_string())),
-        )
-        .chain(
-            params
-                .pending_above_stop_price
-                .map(|v| ("pendingAboveStopPrice", v.to_string())),
-        )
-        .chain(
-            params
-                .pending_above_trailing_delta
-                .map(|v| ("pendingAboveTrailingDelta", v.to_string())),
-        )
-        .chain(
-            params
-                .pending_above_iceberg_qty
-                .map(|v| ("pendingAboveIcebergQty", v.to_string())),
-        )
-        .chain(
-            params
-                .pending_above_time_in_force
-                .map(|v| ("pendingAboveTimeInForce", v.to_string())),
-        )
-        .chain(
-            params
-                .pending_above_strategy_id
-                .map(|v| ("pendingAboveStrategyId", v.to_string())),
-        )
-        .chain(
-            params
-                .pending_above_strategy_type
-                .map(|v| ("pendingAboveStrategyType", v.to_string())),
-        )
-        .chain(
-            params
-                .pending_below_client_order_id
-                .map(|v| ("pendingBelowClientOrderId", v)),
-        )
-        .chain(
-            params
-                .pending_below_price
-                .map(|v| ("pendingBelowPrice", v.to_string())),
-        )
-        .chain(
-            params
-                .pending_below_stop_price
-                .map(|v| ("pendingBelowStopPrice", v.to_string())),
-        )
-        .chain(
-            params
-                .pending_below_trailing_delta
-                .map(|v| ("pendingBelowTrailingDelta", v.to_string())),
-        )
-        .chain(
-            params
-                .pending_below_iceberg_qty
-                .map(|v| ("pendingBelowIcebergQty", v.to_string())),
-        )
-        .chain(
-            params
-                .pending_below_time_in_force
-                .map(|v| ("pendingBelowTimeInForce", v.to_string())),
-        )
-        .chain(
-            params
-                .pending_below_strategy_id
-                .map(|v| ("pendingBelowStrategyId", v.to_string())),
-        )
-        .chain(
-            params
-                .pending_below_strategy_type
-                .map(|v| ("pendingBelowStrategyType", v.to_string())),
-        )
-        .chain(params.recv_window.map(|v| ("recvWindow", v.to_string())))
-        .collect();
-
-        let body: Vec<(&str, &str)> = body_params.iter().map(|(k, v)| (*k, v.as_str())).collect();
-
-        self.send_request(
-            "/api/v3/orderList/otoco",
+        self.send_signed_request(
+            CREATE_OTOCO_ORDER_ENDPOINT,
             reqwest::Method::POST,
-            None,
-            Some(&body),
+            params,
             1,
             true,
         )
         .await
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use rust_decimal_macros::dec;
+
+    #[test]
+    fn test_otoco_order_request_minimal_serialization() {
+        let request = OtocoOrderRequest {
+            symbol: "BTCUSDT".to_string(),
+            list_client_order_id: None,
+            new_order_resp_type: None,
+            self_trade_prevention_mode: None,
+            // Working order parameters
+            working_type: OrderType::Limit,
+            working_side: OrderSide::Buy,
+            working_client_order_id: None,
+            working_quantity: dec!(0.001),
+            working_price: dec!(50000),
+            working_time_in_force: None,
+            working_strategy_id: None,
+            working_strategy_type: None,
+            working_iceberg_qty: None,
+            // Pending order parameters
+            pending_side: OrderSide::Sell,
+            pending_quantity: dec!(0.001),
+            // Pending above parameters
+            pending_above_type: OrderType::Limit,
+            pending_above_client_order_id: None,
+            pending_above_price: None,
+            pending_above_stop_price: None,
+            pending_above_trailing_delta: None,
+            pending_above_iceberg_qty: None,
+            pending_above_time_in_force: None,
+            pending_above_strategy_id: None,
+            pending_above_strategy_type: None,
+            // Pending below parameters
+            pending_below_type: OrderType::StopLossLimit,
+            pending_below_client_order_id: None,
+            pending_below_price: None,
+            pending_below_stop_price: None,
+            pending_below_trailing_delta: None,
+            pending_below_iceberg_qty: None,
+            pending_below_time_in_force: None,
+            pending_below_strategy_id: None,
+            pending_below_strategy_type: None,
+            recv_window: None,
+        };
+
+        let json = serde_json::to_value(&request).unwrap();
+        assert_eq!(json["symbol"], "BTCUSDT");
+        assert_eq!(json["workingType"], "LIMIT");
+        assert_eq!(json["workingSide"], "BUY");
+        assert_eq!(json["workingQuantity"], "0.001");
+        assert_eq!(json["workingPrice"], "50000");
+        assert_eq!(json["pendingSide"], "SELL");
+        assert_eq!(json["pendingQuantity"], "0.001");
+        assert_eq!(json["pendingAboveType"], "LIMIT");
+        assert_eq!(json["pendingBelowType"], "STOP_LOSS_LIMIT");
+        // Check that optional fields are not present
+        assert!(json.get("listClientOrderId").is_none());
+        assert!(json.get("newOrderRespType").is_none());
+        assert!(json.get("selfTradePreventionMode").is_none());
+        assert!(json.get("workingClientOrderId").is_none());
+        assert!(json.get("workingTimeInForce").is_none());
+        assert!(json.get("recvWindow").is_none());
+    }
+
+    #[test]
+    fn test_otoco_order_request_full_serialization() {
+        let request = OtocoOrderRequest {
+            symbol: "ETHUSDT".to_string(),
+            list_client_order_id: Some("my-otoco-123".to_string()),
+            new_order_resp_type: Some(OrderResponseType::Full),
+            self_trade_prevention_mode: Some(SelfTradePreventionMode::ExpireTaker),
+            // Working order parameters
+            working_type: OrderType::Limit,
+            working_side: OrderSide::Buy,
+            working_client_order_id: Some("working-order-123".to_string()),
+            working_quantity: dec!(0.5),
+            working_price: dec!(3000),
+            working_time_in_force: Some(TimeInForce::GTC),
+            working_strategy_id: Some(1000000),
+            working_strategy_type: Some(1000001),
+            working_iceberg_qty: Some(dec!(0.1)),
+            // Pending order parameters
+            pending_side: OrderSide::Sell,
+            pending_quantity: dec!(0.5),
+            // Pending above parameters
+            pending_above_type: OrderType::Limit,
+            pending_above_client_order_id: Some("pending-above-123".to_string()),
+            pending_above_price: Some(dec!(3500)),
+            pending_above_stop_price: None,
+            pending_above_trailing_delta: None,
+            pending_above_iceberg_qty: Some(dec!(0.1)),
+            pending_above_time_in_force: Some(TimeInForce::GTC),
+            pending_above_strategy_id: Some(2000000),
+            pending_above_strategy_type: Some(2000001),
+            // Pending below parameters
+            pending_below_type: OrderType::StopLossLimit,
+            pending_below_client_order_id: Some("pending-below-123".to_string()),
+            pending_below_price: Some(dec!(2800)),
+            pending_below_stop_price: Some(dec!(2850)),
+            pending_below_trailing_delta: None,
+            pending_below_iceberg_qty: None,
+            pending_below_time_in_force: Some(TimeInForce::GTC),
+            pending_below_strategy_id: Some(3000000),
+            pending_below_strategy_type: Some(3000001),
+            recv_window: Some(5000),
+        };
+
+        let json = serde_json::to_value(&request).unwrap();
+        assert_eq!(json["symbol"], "ETHUSDT");
+        assert_eq!(json["listClientOrderId"], "my-otoco-123");
+        assert_eq!(json["newOrderRespType"], "FULL");
+        assert_eq!(json["selfTradePreventionMode"], "EXPIRE_TAKER");
+        // Working order
+        assert_eq!(json["workingType"], "LIMIT");
+        assert_eq!(json["workingSide"], "BUY");
+        assert_eq!(json["workingClientOrderId"], "working-order-123");
+        assert_eq!(json["workingQuantity"], "0.5");
+        assert_eq!(json["workingPrice"], "3000");
+        assert_eq!(json["workingTimeInForce"], "GTC");
+        assert_eq!(json["workingStrategyId"], 1000000);
+        assert_eq!(json["workingStrategyType"], 1000001);
+        assert_eq!(json["workingIcebergQty"], "0.1");
+        // Pending common
+        assert_eq!(json["pendingSide"], "SELL");
+        assert_eq!(json["pendingQuantity"], "0.5");
+        // Pending above
+        assert_eq!(json["pendingAboveType"], "LIMIT");
+        assert_eq!(json["pendingAboveClientOrderId"], "pending-above-123");
+        assert_eq!(json["pendingAbovePrice"], "3500");
+        assert_eq!(json["pendingAboveIcebergQty"], "0.1");
+        assert_eq!(json["pendingAboveTimeInForce"], "GTC");
+        assert_eq!(json["pendingAboveStrategyId"], 2000000);
+        assert_eq!(json["pendingAboveStrategyType"], 2000001);
+        // Pending below
+        assert_eq!(json["pendingBelowType"], "STOP_LOSS_LIMIT");
+        assert_eq!(json["pendingBelowClientOrderId"], "pending-below-123");
+        assert_eq!(json["pendingBelowPrice"], "2800");
+        assert_eq!(json["pendingBelowStopPrice"], "2850");
+        assert_eq!(json["pendingBelowTimeInForce"], "GTC");
+        assert_eq!(json["pendingBelowStrategyId"], 3000000);
+        assert_eq!(json["pendingBelowStrategyType"], 3000001);
+        assert_eq!(json["recvWindow"], 5000);
+    }
+
+    #[test]
+    fn test_otoco_order_request_with_trailing_stop() {
+        let request = OtocoOrderRequest {
+            symbol: "BTCUSDT".to_string(),
+            list_client_order_id: None,
+            new_order_resp_type: None,
+            self_trade_prevention_mode: None,
+            // Working order parameters
+            working_type: OrderType::Limit,
+            working_side: OrderSide::Buy,
+            working_client_order_id: None,
+            working_quantity: dec!(0.01),
+            working_price: dec!(60000),
+            working_time_in_force: None,
+            working_strategy_id: None,
+            working_strategy_type: None,
+            working_iceberg_qty: None,
+            // Pending order parameters
+            pending_side: OrderSide::Sell,
+            pending_quantity: dec!(0.01),
+            // Pending above parameters - take profit
+            pending_above_type: OrderType::TakeProfitLimit,
+            pending_above_client_order_id: None,
+            pending_above_price: Some(dec!(65000)),
+            pending_above_stop_price: Some(dec!(64000)),
+            pending_above_trailing_delta: None,
+            pending_above_iceberg_qty: None,
+            pending_above_time_in_force: None,
+            pending_above_strategy_id: None,
+            pending_above_strategy_type: None,
+            // Pending below parameters - trailing stop
+            pending_below_type: OrderType::StopLoss,
+            pending_below_client_order_id: None,
+            pending_below_price: None,
+            pending_below_stop_price: None,
+            pending_below_trailing_delta: Some(200), // 2% trailing
+            pending_below_iceberg_qty: None,
+            pending_below_time_in_force: None,
+            pending_below_strategy_id: None,
+            pending_below_strategy_type: None,
+            recv_window: None,
+        };
+
+        let json = serde_json::to_value(&request).unwrap();
+        assert_eq!(json["pendingAboveType"], "TAKE_PROFIT_LIMIT");
+        assert_eq!(json["pendingAbovePrice"], "65000");
+        assert_eq!(json["pendingAboveStopPrice"], "64000");
+        assert_eq!(json["pendingBelowType"], "STOP_LOSS");
+        assert_eq!(json["pendingBelowTrailingDelta"], 200);
+        assert!(json.get("pendingBelowPrice").is_none());
+        assert!(json.get("pendingBelowStopPrice").is_none());
+    }
+
+    #[test]
+    fn test_otoco_order_response_deserialization() {
+        let json = r#"{
+            "orderListId": 1,
+            "contingencyType": "OTOCO",
+            "listStatusType": "EXEC_STARTED",
+            "listOrderStatus": "EXECUTING",
+            "listClientOrderId": "my-otoco-123",
+            "transactionTime": 1624348976000,
+            "symbol": "BTCUSDT",
+            "orders": [
+                {
+                    "symbol": "BTCUSDT",
+                    "orderId": 123456,
+                    "clientOrderId": "working-order-123"
+                },
+                {
+                    "symbol": "BTCUSDT",
+                    "orderId": 123457,
+                    "clientOrderId": "pending-above-123"
+                },
+                {
+                    "symbol": "BTCUSDT",
+                    "orderId": 123458,
+                    "clientOrderId": "pending-below-123"
+                }
+            ],
+            "orderReports": []
+        }"#;
+
+        let response: OtocoOrderResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.order_list_id, 1);
+        assert_eq!(response.contingency_type, ContingencyType::Otoco);
+        assert_eq!(response.list_status_type, OrderListStatus::ExecStarted);
+        assert_eq!(response.list_order_status, OrderListOrderStatus::Executing);
+        assert_eq!(response.list_client_order_id, "my-otoco-123");
+        assert_eq!(response.transaction_time, 1624348976000);
+        assert_eq!(response.symbol, "BTCUSDT");
+        assert_eq!(response.orders.len(), 3);
+        assert_eq!(response.orders[0].order_id, 123456);
+        assert_eq!(response.orders[0].client_order_id, "working-order-123");
+        assert_eq!(response.orders[1].order_id, 123457);
+        assert_eq!(response.orders[1].client_order_id, "pending-above-123");
+        assert_eq!(response.orders[2].order_id, 123458);
+        assert_eq!(response.orders[2].client_order_id, "pending-below-123");
+    }
+
+    #[test]
+    fn test_otoco_order_response_all_done_status() {
+        let json = r#"{
+            "orderListId": 2,
+            "contingencyType": "OTOCO",
+            "listStatusType": "ALL_DONE",
+            "listOrderStatus": "ALL_DONE",
+            "listClientOrderId": "completed-otoco",
+            "transactionTime": 1624349000000,
+            "symbol": "ETHUSDT",
+            "orders": [
+                {
+                    "symbol": "ETHUSDT",
+                    "orderId": 223456,
+                    "clientOrderId": "order-1"
+                }
+            ],
+            "orderReports": []
+        }"#;
+
+        let response: OtocoOrderResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.list_status_type, OrderListStatus::AllDone);
+        assert_eq!(response.list_order_status, OrderListOrderStatus::AllDone);
+    }
+
+    #[test]
+    fn test_otoco_order_response_reject_status() {
+        let json = r#"{
+            "orderListId": 3,
+            "contingencyType": "OTOCO",
+            "listStatusType": "REJECT",
+            "listOrderStatus": "REJECT",
+            "listClientOrderId": "rejected-otoco",
+            "transactionTime": 1624349100000,
+            "symbol": "BTCUSDT",
+            "orders": [],
+            "orderReports": []
+        }"#;
+
+        let response: OtocoOrderResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.list_status_type, OrderListStatus::Reject);
+        assert_eq!(response.list_order_status, OrderListOrderStatus::Reject);
+        assert_eq!(response.orders.len(), 0);
+    }
+
+    #[test]
+    fn test_otoco_order_deserialization() {
+        let json = r#"{
+            "symbol": "BTCUSDT",
+            "orderId": 987654321,
+            "clientOrderId": "my-custom-order-id"
+        }"#;
+
+        let order: OtocoOrder = serde_json::from_str(json).unwrap();
+        assert_eq!(order.symbol, "BTCUSDT");
+        assert_eq!(order.order_id, 987654321);
+        assert_eq!(order.client_order_id, "my-custom-order-id");
+    }
+
+    #[test]
+    fn test_otoco_order_request_market_working_order() {
+        let request = OtocoOrderRequest {
+            symbol: "BTCUSDT".to_string(),
+            list_client_order_id: None,
+            new_order_resp_type: Some(OrderResponseType::Ack),
+            self_trade_prevention_mode: None,
+            // Working order parameters - market order
+            working_type: OrderType::Market,
+            working_side: OrderSide::Buy,
+            working_client_order_id: None,
+            working_quantity: dec!(0.001),
+            working_price: dec!(0), // Price is required in struct but ignored for market orders
+            working_time_in_force: None,
+            working_strategy_id: None,
+            working_strategy_type: None,
+            working_iceberg_qty: None,
+            // Pending order parameters
+            pending_side: OrderSide::Sell,
+            pending_quantity: dec!(0.001),
+            // Pending above parameters
+            pending_above_type: OrderType::Limit,
+            pending_above_client_order_id: None,
+            pending_above_price: Some(dec!(70000)),
+            pending_above_stop_price: None,
+            pending_above_trailing_delta: None,
+            pending_above_iceberg_qty: None,
+            pending_above_time_in_force: Some(TimeInForce::IOC),
+            pending_above_strategy_id: None,
+            pending_above_strategy_type: None,
+            // Pending below parameters
+            pending_below_type: OrderType::StopLoss,
+            pending_below_client_order_id: None,
+            pending_below_price: None,
+            pending_below_stop_price: Some(dec!(50000)),
+            pending_below_trailing_delta: None,
+            pending_below_iceberg_qty: None,
+            pending_below_time_in_force: None,
+            pending_below_strategy_id: None,
+            pending_below_strategy_type: None,
+            recv_window: Some(10000),
+        };
+
+        let json = serde_json::to_value(&request).unwrap();
+        assert_eq!(json["workingType"], "MARKET");
+        assert_eq!(json["newOrderRespType"], "ACK");
+        assert_eq!(json["pendingAboveTimeInForce"], "IOC");
+        assert_eq!(json["pendingBelowStopPrice"], "50000");
+        assert_eq!(json["recvWindow"], 10000);
+    }
+
+    #[test]
+    fn test_otoco_order_request_different_order_types() {
+        let request = OtocoOrderRequest {
+            symbol: "ETHUSDT".to_string(),
+            list_client_order_id: Some("complex-otoco".to_string()),
+            new_order_resp_type: Some(OrderResponseType::Result),
+            self_trade_prevention_mode: Some(SelfTradePreventionMode::ExpireBoth),
+            // Working order parameters
+            working_type: OrderType::LimitMaker,
+            working_side: OrderSide::Sell,
+            working_client_order_id: None,
+            working_quantity: dec!(1.5),
+            working_price: dec!(3200),
+            working_time_in_force: None,
+            working_strategy_id: None,
+            working_strategy_type: None,
+            working_iceberg_qty: None,
+            // Pending order parameters
+            pending_side: OrderSide::Buy,
+            pending_quantity: dec!(1.5),
+            // Pending above parameters
+            pending_above_type: OrderType::Market,
+            pending_above_client_order_id: None,
+            pending_above_price: None,
+            pending_above_stop_price: None,
+            pending_above_trailing_delta: None,
+            pending_above_iceberg_qty: None,
+            pending_above_time_in_force: None,
+            pending_above_strategy_id: None,
+            pending_above_strategy_type: None,
+            // Pending below parameters
+            pending_below_type: OrderType::TakeProfit,
+            pending_below_client_order_id: None,
+            pending_below_price: None,
+            pending_below_stop_price: Some(dec!(2900)),
+            pending_below_trailing_delta: None,
+            pending_below_iceberg_qty: None,
+            pending_below_time_in_force: None,
+            pending_below_strategy_id: None,
+            pending_below_strategy_type: None,
+            recv_window: None,
+        };
+
+        let json = serde_json::to_value(&request).unwrap();
+        assert_eq!(json["workingType"], "LIMIT_MAKER");
+        assert_eq!(json["workingSide"], "SELL");
+        assert_eq!(json["pendingSide"], "BUY");
+        assert_eq!(json["pendingAboveType"], "MARKET");
+        assert_eq!(json["pendingBelowType"], "TAKE_PROFIT");
+        assert_eq!(json["newOrderRespType"], "RESULT");
+        assert_eq!(json["selfTradePreventionMode"], "EXPIRE_BOTH");
     }
 }

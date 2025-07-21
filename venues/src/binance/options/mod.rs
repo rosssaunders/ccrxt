@@ -22,9 +22,6 @@ pub use enums::*;
 // Re-export compatible enums from coinm where appropriate
 pub use crate::binance::coinm::{KlineInterval, OrderResponseType, OrderSide, TimeInForce};
 
-// REST module
-pub mod rest;
-
 // Public module
 pub mod public;
 
@@ -32,6 +29,9 @@ pub use public::PublicRestClient;
 
 // Private module
 pub mod private;
+
+pub type OptionsClient =
+    crate::binance::shared::client::BinanceClient<crate::binance::options::OptionsConfig>;
 
 /// REST response structure for Options API
 #[derive(Debug, Clone)]

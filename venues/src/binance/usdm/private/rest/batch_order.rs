@@ -1,144 +1,227 @@
-//! Place and manage batch orders on Binance USDM REST API.
-
-use chrono::Utc;
 use reqwest::Method;
-use secrecy::{ExposeSecret, SecretString};
 use serde::{Deserialize, Serialize};
-use thiserror::Error;
 
+use super::UsdmClient;
 use crate::binance::usdm::{
-    private::rest::{
-        client::RestClient,
-        order::{NewOrderRequest, NewOrderResponse},
-    },
-    signing::sign_query,
+    RestResult,
+    enums::{OrderSide, OrderType, PositionSide, TimeInForce, WorkingType},
 };
 
-/// Error type for USDM batch order endpoints.
-#[derive(Debug, Error, Clone, Deserialize)]
-#[serde(tag = "code", content = "msg")]
-pub enum BatchOrderError {
-    #[error("Invalid API key or signature: {0}")]
-    InvalidKey(String),
-    #[error("Batch order error: {0}")]
-    BatchOrder(String),
-    #[error("Rate limit exceeded: {0}")]
-    RateLimit(String),
-    #[error("Other error: {0}")]
-    Other(String),
-}
+const BATCH_ORDERS_ENDPOINT: &str = "/fapi/v1/batchOrders";
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct BatchOrderErrorResponse {
-    pub code: i64,
-    pub msg: String,
-}
+/// Individual order in a batch request.
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct BatchOrderItem {
+    /// Trading symbol
+    pub symbol: String,
 
-impl From<BatchOrderErrorResponse> for BatchOrderError {
-    fn from(e: BatchOrderErrorResponse) -> Self {
-        match e.code {
-            -2015 | -2014 => BatchOrderError::InvalidKey(e.msg),
-            -1003 => BatchOrderError::RateLimit(e.msg),
-            _ => BatchOrderError::Other(e.msg),
-        }
-    }
-}
+    /// Order side
+    pub side: OrderSide,
 
-pub type BatchOrderResult<T> = std::result::Result<T, BatchOrderError>;
+    /// Position side
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub position_side: Option<PositionSide>,
+
+    /// Order type
+    #[serde(rename = "type")]
+    pub order_type: OrderType,
+
+    /// Time in force
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub time_in_force: Option<TimeInForce>,
+
+    /// Order quantity
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub quantity: Option<String>,
+
+    /// Order price
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub price: Option<String>,
+
+    /// Client order ID
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub new_client_order_id: Option<String>,
+
+    /// Stop price
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub stop_price: Option<String>,
+
+    /// Close position flag
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub close_position: Option<bool>,
+
+    /// Reduce only flag
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub reduce_only: Option<bool>,
+
+    /// Working type
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub working_type: Option<WorkingType>,
+
+    /// Price protection flag
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub price_protect: Option<bool>,
+}
 
 /// Request parameters for placing batch orders.
 #[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct BatchOrderRequest {
-    /// API key (SecretString, securely stored)
-    #[serde(skip_serializing)]
-    pub api_key: SecretString,
-
-    /// API secret (SecretString, securely stored)
-    #[serde(skip_serializing)]
-    pub api_secret: SecretString,
-
-    /// List of orders to place
-    pub batch_orders: Vec<NewOrderRequest>,
+    /// List of orders to place (max 5)
+    pub batch_orders: Vec<BatchOrderItem>,
 }
 
-/// Response for a batch order request.
+/// Response for a single order in the batch.
 #[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct BatchOrderResponse {
-    /// List of order responses
-    pub orders: Vec<NewOrderResponse>,
+    /// Trading symbol.
+    pub symbol: String,
+
+    /// Order ID.
+    pub order_id: u64,
+
+    /// Client order ID.
+    pub client_order_id: String,
+
+    /// Transaction time (timestamp in milliseconds).
+    pub transact_time: u64,
+
+    /// Order price.
+    pub price: String,
+
+    /// Original order quantity.
+    pub orig_qty: String,
+
+    /// Executed quantity.
+    pub executed_qty: String,
+
+    /// Cumulative quote quantity.
+    pub cum_quote: String,
+
+    /// Order status.
+    pub status: String,
+
+    /// Time in force.
+    pub time_in_force: String,
+
+    /// Order type.
+    #[serde(rename = "type")]
+    pub order_type: String,
+
+    /// Order side.
+    pub side: String,
+
+    /// Position side.
+    pub position_side: String,
+
+    /// Working type.
+    pub working_type: String,
 }
 
-impl RestClient {
+impl UsdmClient {
     /// Place multiple orders (POST /fapi/v1/batchOrders)
-    /// [Binance API docs](https://binance-docs.github.io/apidocs/futures/en/#place-multiple-orders-trade)
+    ///
+    /// Places multiple orders in a single batch for USDM futures.
+    ///
+    /// [docs]: https://binance-docs.github.io/apidocs/futures/en/#place-multiple-orders-trade
+    ///
+    /// Rate limit: 5 weight
+    ///
+    /// # Arguments
+    /// * `request` - The batch order request parameters
+    ///
+    /// # Returns
+    /// Vector of order responses, one for each order in the batch
     pub async fn place_batch_orders(
         &self,
-        params: BatchOrderRequest,
-    ) -> BatchOrderResult<BatchOrderResponse> {
-        use tracing::debug;
-
-        use crate::binance::usdm::request::execute_request;
-        let endpoint = "/fapi/v1/batchOrders";
-        let method = Method::POST;
-        let url = format!("{}{}", self.base_url, endpoint);
-
-        // 1. Prepare batchOrders as JSON string (Binance expects this as a stringified array)
-        let batch_orders_json = serde_json::to_string(&params.batch_orders).map_err(|e| {
-            BatchOrderError::Other(format!("Failed to serialize batch_orders: {e}"))
-        })?;
-
-        // 2. Build query string
-        let timestamp = Utc::now().timestamp_millis();
-        let recv_window = 5000u64;
-        let mut query_pairs = format!(
-            "batchOrders={}&timestamp={}&recvWindow={}",
-            urlencoding::encode(&batch_orders_json),
-            timestamp,
-            recv_window
-        );
-
-        // 3. Sign
-        let signature = sign_query(&query_pairs, &params.api_secret);
-        query_pairs.push_str(&format!("&signature={signature}"));
-
-        // 4. Headers
-        let headers = vec![
-            ("X-MBX-APIKEY", params.api_key.expose_secret().to_string()),
-            (
-                "Content-Type",
-                "application/x-www-form-urlencoded".to_string(),
-            ),
-        ];
-
-        // 5. Rate limiting
-        self.rate_limiter
-            .acquire_order()
+        request: BatchOrderRequest,
+    ) -> RestResult<Vec<BatchOrderResponse>> {
+        self.send_signed_request(BATCH_ORDERS_ENDPOINT, Method::POST, request, 5, true)
             .await
-            .map_err(|e| BatchOrderError::Other(format!("Rate limiting error: {e}")))?;
-        debug!(endpoint = endpoint, "Sending batch order request");
+    }
+}
 
-        // 6. Execute
-        let resp = execute_request::<BatchOrderResponse>(
-            &self.client,
-            &url,
-            method,
-            Some(headers),
-            Some(&query_pairs),
-        )
-        .await
-        .map_err(|e| match e {
-            crate::binance::usdm::Errors::ApiError(api_err) => {
-                BatchOrderError::Other(format!("API error: {api_err}"))
-            }
-            crate::binance::usdm::Errors::HttpError(http_err) => {
-                BatchOrderError::Other(format!("HTTP error: {http_err}"))
-            }
-            crate::binance::usdm::Errors::Error(msg) => BatchOrderError::Other(msg),
-            crate::binance::usdm::Errors::InvalidApiKey() => {
-                BatchOrderError::InvalidKey("Invalid API key or signature".to_string())
-            }
-        })?;
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-        Ok(resp.data)
+    #[test]
+    fn test_batch_order_item_serialization() {
+        let item = BatchOrderItem {
+            symbol: "BTCUSDT".to_string(),
+            side: OrderSide::Buy,
+            position_side: Some(PositionSide::Long),
+            order_type: OrderType::Limit,
+            time_in_force: Some(TimeInForce::GTC),
+            quantity: Some("0.1".to_string()),
+            price: Some("50000".to_string()),
+            new_client_order_id: Some("test123".to_string()),
+            stop_price: None,
+            close_position: None,
+            reduce_only: Some(false),
+            working_type: Some(WorkingType::ContractPrice),
+            price_protect: None,
+        };
+
+        let json = serde_json::to_string(&item).unwrap();
+        assert!(json.contains(r#""symbol":"BTCUSDT""#));
+        assert!(json.contains(r#""side":"BUY""#));
+        assert!(json.contains(r#""type":"LIMIT""#));
+        assert!(json.contains(r#""quantity":"0.1""#));
+        assert!(json.contains(r#""price":"50000""#));
+    }
+
+    #[test]
+    fn test_batch_order_request_serialization() {
+        let request = BatchOrderRequest {
+            batch_orders: vec![BatchOrderItem {
+                symbol: "BTCUSDT".to_string(),
+                side: OrderSide::Buy,
+                position_side: Some(PositionSide::Long),
+                order_type: OrderType::Limit,
+                time_in_force: Some(TimeInForce::GTC),
+                quantity: Some("0.1".to_string()),
+                price: Some("50000".to_string()),
+                new_client_order_id: Some("order1".to_string()),
+                stop_price: None,
+                close_position: None,
+                reduce_only: Some(false),
+                working_type: Some(WorkingType::ContractPrice),
+                price_protect: None,
+            }],
+        };
+
+        let json = serde_json::to_string(&request).unwrap();
+        assert!(json.contains(r#""batchOrders":[{"#));
+        assert!(json.contains(r#""symbol":"BTCUSDT""#));
+    }
+
+    #[test]
+    fn test_batch_order_response_deserialization() {
+        let json = r#"{
+            "symbol": "BTCUSDT",
+            "orderId": 123456789,
+            "clientOrderId": "test123",
+            "transactTime": 1625184000000,
+            "price": "50000.00",
+            "origQty": "0.100",
+            "executedQty": "0.000",
+            "cumQuote": "0.00000000",
+            "status": "NEW",
+            "timeInForce": "GTC",
+            "type": "LIMIT",
+            "side": "BUY",
+            "positionSide": "LONG",
+            "workingType": "CONTRACT_PRICE"
+        }"#;
+
+        let response: BatchOrderResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.symbol, "BTCUSDT");
+        assert_eq!(response.order_id, 123456789);
+        assert_eq!(response.client_order_id, "test123");
+        assert_eq!(response.price, "50000.00");
+        assert_eq!(response.status, "NEW");
     }
 }

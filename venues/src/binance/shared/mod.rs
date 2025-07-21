@@ -12,7 +12,6 @@ use sha2::Sha256;
 pub mod client;
 pub mod errors;
 pub mod rate_limiter;
-pub mod request;
 pub mod venue_trait;
 
 // Re-export commonly used items

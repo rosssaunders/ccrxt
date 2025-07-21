@@ -1,148 +1,85 @@
-//! Future account balance V3 endpoints for Binance USDM REST API.
-
-use chrono::Utc;
 use reqwest::Method;
-use secrecy::{ExposeSecret, SecretString};
 use serde::{Deserialize, Serialize};
-use thiserror::Error;
 
-use crate::binance::usdm::{
-    private::rest::{client::RestClient, order::OrderErrorResponse},
-    signing::sign_query,
-};
+use super::UsdmClient;
+use crate::binance::usdm::RestResult;
 
-/// Error type for USDM balance V3 endpoints.
-#[derive(Debug, Error, Clone, Deserialize)]
-pub enum BalanceV3Error {
-    #[error("Invalid API key or signature: {0}")]
-    InvalidApiKeyOrSignature(String),
+const BALANCE_V3_ENDPOINT: &str = "/fapi/v3/balance";
 
-    #[error("Too many requests: {0}")]
-    TooManyRequests(String),
-
-    #[error("Unknown error: {0}")]
-    Unknown(String),
-}
-
-/// Result type for USDM balance V3 operations.
-pub type BalanceV3Result<T> = Result<T, BalanceV3Error>;
-
-/// Request for getting account balance V3.
-#[derive(Debug, Clone, Serialize)]
+/// Request parameters for the Balance V3 endpoint.
+///
+/// Retrieves the current account balance for all assets with detailed information
+/// including cross wallet balance, unrealized PnL, and margin availability.
+#[derive(Debug, Clone, Serialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct GetBalanceV3Request {
-    /// Request timestamp in milliseconds.
+    /// Request timestamp in milliseconds since epoch.
+    /// Must be the current server time within the receive window.
     pub timestamp: u64,
-    /// Request signature.
+
+    /// Optional receive window in milliseconds (default: 5000).
+    /// Valid range: 1-60000. Used to specify the number of milliseconds
+    /// after timestamp the request is valid for.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub signature: Option<String>,
+    pub recv_window: Option<u64>,
 }
 
-impl Default for GetBalanceV3Request {
-    fn default() -> Self {
-        Self {
-            timestamp: Utc::now().timestamp_millis() as u64,
-            signature: None,
-        }
-    }
-}
-
-/// Account balance V3 response.
+/// Account balance V3 response item for a single asset.
+///
+/// Contains detailed balance information including cross wallet balance,
+/// unrealized PnL, and margin availability for each asset.
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct BalanceV3Response {
-    /// Asset name.
+    /// Unique account code identifier.
+    pub account_alias: String,
+
+    /// Asset name (e.g., "USDT", "BTC").
     pub asset: String,
-    /// Account balance.
+
+    /// Total wallet balance for the asset.
     pub balance: String,
-    /// Cross wallet balance.
+
+    /// Cross wallet balance for the asset.
     pub cross_wallet_balance: String,
-    /// Cross unrealized PnL.
+
+    /// Unrealized profit/loss of crossed positions for the asset.
     pub cross_un_pnl: String,
-    /// Available balance.
+
+    /// Available balance that can be used for new orders.
     pub available_balance: String,
-    /// Maximum amount for transfer out.
+
+    /// Maximum amount that can be transferred out.
     pub max_withdraw_amount: String,
+
     /// Whether the asset can be used as margin in Multi-Assets mode.
     pub margin_available: bool,
-    /// Last update time.
+
+    /// Last update time as Unix timestamp in milliseconds.
     pub update_time: u64,
 }
 
-impl RestClient {
-    /// Get future account balance V3.
+impl UsdmClient {
+    /// Future Account Balance V3 (GET /fapi/v3/balance)
     ///
     /// Retrieves the current account balance for all assets with detailed information
     /// including cross wallet balance, unrealized PnL, and margin availability.
     ///
-    /// Weight: 5
+    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Futures-Account-Balance-V3
+    ///
+    /// Rate limit: 5
     ///
     /// # Arguments
-    ///
-    /// * `api_key` - API key for authentication
-    /// * `api_secret` - API secret for signing requests
+    /// * `params` - The request parameters
     ///
     /// # Returns
-    ///
-    /// Returns `Vec<BalanceV3Response>` containing balance information for all assets.
-    ///
-    /// # Errors
-    ///
-    /// Returns `BalanceV3Error` if:
-    /// - Authentication fails
-    /// - Rate limits are exceeded
-    /// - API error occurs
+    /// Vec<BalanceV3Response> - List of balance information for all assets
     pub async fn get_balance_v3(
         &self,
-        api_key: impl Into<SecretString>,
-        api_secret: impl Into<SecretString>,
-    ) -> BalanceV3Result<Vec<BalanceV3Response>> {
-        // Acquire rate limit permit
-        self.rate_limiter
-            .acquire_request(5)
+        params: GetBalanceV3Request,
+    ) -> RestResult<Vec<BalanceV3Response>> {
+        self.send_signed_request(BALANCE_V3_ENDPOINT, Method::GET, params, 5, false)
             .await
-            .map_err(|e| BalanceV3Error::Unknown(format!("Rate limiting error: {e}")))?;
-
-        let api_key = api_key.into();
-        let api_secret = api_secret.into();
-        let timestamp = Utc::now().timestamp_millis() as u64;
-
-        let mut request = GetBalanceV3Request {
-            timestamp,
-            signature: None,
-        };
-
-        // Create query string for signing
-        let query_string = serde_urlencoded::to_string(&request)
-            .map_err(|_| BalanceV3Error::Unknown("Failed to serialize request".to_string()))?;
-
-        // Sign the request
-        let signature = sign_query(&query_string, &api_secret);
-        request.signature = Some(signature);
-
-        // Make the request
-        let response = self
-            .client
-            .request(Method::GET, format!("{}/fapi/v3/balance", self.base_url))
-            .header("X-MBX-APIKEY", api_key.expose_secret())
-            .query(&request)
-            .send()
-            .await
-            .map_err(|e| BalanceV3Error::Unknown(e.to_string()))?;
-
-        if response.status().is_success() {
-            let balance_response: Vec<BalanceV3Response> = response
-                .json()
-                .await
-                .map_err(|e| BalanceV3Error::Unknown(e.to_string()))?;
-            Ok(balance_response)
-        } else {
-            let error_response: OrderErrorResponse = response
-                .json()
-                .await
-                .map_err(|e| BalanceV3Error::Unknown(e.to_string()))?;
-            Err(BalanceV3Error::Unknown(error_response.msg))
-        }
     }
 }
 
@@ -154,17 +91,30 @@ mod tests {
     fn test_get_balance_v3_request_serialization() {
         let request = GetBalanceV3Request {
             timestamp: 1625097600000,
-            signature: Some("test_signature".to_string()),
+            recv_window: Some(5000),
         };
 
         let serialized = serde_urlencoded::to_string(&request).unwrap();
         assert!(serialized.contains("timestamp=1625097600000"));
-        assert!(serialized.contains("signature=test_signature"));
+        assert!(serialized.contains("recvWindow=5000"));
+    }
+
+    #[test]
+    fn test_get_balance_v3_request_serialization_minimal() {
+        let request = GetBalanceV3Request {
+            timestamp: 1625097600000,
+            recv_window: None,
+        };
+
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert!(serialized.contains("timestamp=1625097600000"));
+        assert!(!serialized.contains("recvWindow"));
     }
 
     #[test]
     fn test_balance_v3_response_deserialization() {
         let json = r#"[{
+            "accountAlias": "SgsR",
             "asset": "USDT",
             "balance": "1000.00000000",
             "crossWalletBalance": "1000.00000000",
@@ -177,8 +127,62 @@ mod tests {
 
         let response: Vec<BalanceV3Response> = serde_json::from_str(json).unwrap();
         assert_eq!(response.len(), 1);
+        assert_eq!(response[0].account_alias, "SgsR");
         assert_eq!(response[0].asset, "USDT");
         assert_eq!(response[0].balance, "1000.00000000");
+        assert_eq!(response[0].cross_wallet_balance, "1000.00000000");
+        assert_eq!(response[0].cross_un_pnl, "0.00000000");
+        assert_eq!(response[0].available_balance, "1000.00000000");
+        assert_eq!(response[0].max_withdraw_amount, "1000.00000000");
         assert!(response[0].margin_available);
+        assert_eq!(response[0].update_time, 1625097600000);
+    }
+
+    #[test]
+    fn test_balance_v3_response_deserialization_multiple_assets() {
+        let json = r#"[
+            {
+                "accountAlias": "SgsR",
+                "asset": "USDT",
+                "balance": "1000.00000000",
+                "crossWalletBalance": "1000.00000000",
+                "crossUnPnl": "0.00000000",
+                "availableBalance": "1000.00000000",
+                "maxWithdrawAmount": "1000.00000000",
+                "marginAvailable": true,
+                "updateTime": 1625097600000
+            },
+            {
+                "accountAlias": "SgsR", 
+                "asset": "BTC",
+                "balance": "0.50000000",
+                "crossWalletBalance": "0.50000000",
+                "crossUnPnl": "10.50000000",
+                "availableBalance": "0.60500000",
+                "maxWithdrawAmount": "0.60500000",
+                "marginAvailable": false,
+                "updateTime": 1625097600001
+            }
+        ]"#;
+
+        let response: Vec<BalanceV3Response> = serde_json::from_str(json).unwrap();
+        assert_eq!(response.len(), 2);
+
+        // USDT balance
+        assert_eq!(response[0].asset, "USDT");
+        assert!(response[0].margin_available);
+
+        // BTC balance
+        assert_eq!(response[1].asset, "BTC");
+        assert_eq!(response[1].cross_un_pnl, "10.50000000");
+        assert!(!response[1].margin_available);
+        assert_eq!(response[1].update_time, 1625097600001);
+    }
+
+    #[test]
+    fn test_balance_v3_response_deserialization_empty() {
+        let json = r#"[]"#;
+        let response: Vec<BalanceV3Response> = serde_json::from_str(json).unwrap();
+        assert_eq!(response.len(), 0);
     }
 }

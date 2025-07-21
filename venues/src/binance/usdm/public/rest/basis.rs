@@ -1,12 +1,11 @@
-//! Basis (GET /futures/data/basis)
-//!
-//! See: https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Basis
-
 use std::borrow::Cow;
 
+use super::RestClient;
+use crate::binance::usdm::{ContractType, Period, RestResult};
 use serde::{Deserialize, Serialize};
 
-use crate::binance::usdm::{ContractType, Errors, Period, RestResult};
+/// Endpoint path for futures basis data
+const BASIS_ENDPOINT: &str = "/futures/data/basis";
 
 /// Request parameters for the Basis endpoint.
 #[derive(Debug, Clone, Serialize)]
@@ -33,36 +32,195 @@ pub struct BasisRequest<'a> {
     pub end_time: Option<u64>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+/// Response for futures basis endpoint.
+///
+/// Contains basis data for a symbol over time.
+#[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct BasisResponse<'a> {
+    /// Index price at the timestamp.
     pub index_price: Cow<'a, str>,
+
+    /// Contract type (PERPETUAL, CURRENT_QUARTER, NEXT_QUARTER).
     pub contract_type: ContractType,
+
+    /// Basis rate as a decimal string.
     pub basis_rate: Cow<'a, str>,
+
+    /// Futures price at the timestamp.
     pub futures_price: Cow<'a, str>,
+
+    /// Annualized basis rate as a decimal string.
     pub annualized_basis_rate: Cow<'a, str>,
+
+    /// Basis value as a decimal string.
     pub basis: Cow<'a, str>,
+
+    /// Trading pair symbol (e.g., "BTCUSDT").
     pub pair: Cow<'a, str>,
+
+    /// Timestamp in milliseconds since epoch.
     pub timestamp: u64,
 }
 
-impl crate::binance::usdm::public::rest::RestClient {
+impl RestClient {
     /// Query future basis (GET /futures/data/basis)
     ///
-    /// [API docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Basis)
+    /// Returns futures basis data for a symbol and contract type over a period.
+    ///
+    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Basis
+    ///
+    /// Rate limit: 1 request per second
+    ///
+    /// # Arguments
+    /// * `params` - BasisRequest parameters
+    ///
+    /// # Returns
+    /// Vec<BasisResponse> - list of basis data points
     pub async fn basis<'a>(&self, params: BasisRequest<'a>) -> RestResult<Vec<BasisResponse<'a>>> {
-        let endpoint = "/futures/data/basis";
-        let query = serde_urlencoded::to_string(&params)
-            .map_err(|e| Errors::Error(format!("Failed to serialize params: {e}")))?;
-        let resp = self
-            .send_request::<Vec<BasisResponse>>(
-                endpoint,
-                reqwest::Method::GET,
-                Some(&query),
-                None,
-                0,
-            )
-            .await?;
-        Ok(resp)
+        self.send_public_request(BASIS_ENDPOINT, reqwest::Method::GET, Some(params), 1)
+            .await
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_basis_request_serialization() {
+        let request = BasisRequest {
+            pair: "BTCUSDT".into(),
+            contract_type: ContractType::Perpetual,
+            period: Period::I5m,
+            limit: 100,
+            start_time: Some(1625097600000),
+            end_time: Some(1625184000000),
+        };
+
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert!(serialized.contains("pair=BTCUSDT"));
+        assert!(serialized.contains("contractType=PERPETUAL"));
+        assert!(serialized.contains("period=5m"));
+        assert!(serialized.contains("limit=100"));
+        assert!(serialized.contains("startTime=1625097600000"));
+        assert!(serialized.contains("endTime=1625184000000"));
+    }
+
+    #[test]
+    fn test_basis_request_serialization_minimal() {
+        let request = BasisRequest {
+            pair: "ETHUSDT".into(),
+            contract_type: ContractType::CurrentQuarter,
+            period: Period::I1h,
+            limit: 30,
+            start_time: None,
+            end_time: None,
+        };
+
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert!(serialized.contains("pair=ETHUSDT"));
+        assert!(serialized.contains("contractType=CURRENT_QUARTER"));
+        assert!(serialized.contains("period=1h"));
+        assert!(serialized.contains("limit=30"));
+        assert!(!serialized.contains("startTime"));
+        assert!(!serialized.contains("endTime"));
+    }
+
+    #[test]
+    fn test_basis_response_deserialization() {
+        let json = r#"[
+            {
+                "indexPrice": "45000.00000000",
+                "contractType": "PERPETUAL",
+                "basisRate": "0.00100000",
+                "futuresPrice": "45045.00000000",
+                "annualizedBasisRate": "0.36500000",
+                "basis": "45.00000000",
+                "pair": "BTCUSDT",
+                "timestamp": 1625097600000
+            },
+            {
+                "indexPrice": "45100.00000000",
+                "contractType": "PERPETUAL",
+                "basisRate": "-0.00050000",
+                "futuresPrice": "45077.45000000",
+                "annualizedBasisRate": "-0.18250000",
+                "basis": "-22.55000000",
+                "pair": "BTCUSDT",
+                "timestamp": 1625098500000
+            }
+        ]"#;
+
+        let basis_data: Vec<BasisResponse> = serde_json::from_str(json).unwrap();
+        assert_eq!(basis_data.len(), 2);
+
+        let first = &basis_data[0];
+        assert_eq!(first.index_price, "45000.00000000");
+        assert_eq!(first.contract_type, ContractType::Perpetual);
+        assert_eq!(first.basis_rate, "0.00100000");
+        assert_eq!(first.futures_price, "45045.00000000");
+        assert_eq!(first.annualized_basis_rate, "0.36500000");
+        assert_eq!(first.basis, "45.00000000");
+        assert_eq!(first.pair, "BTCUSDT");
+        assert_eq!(first.timestamp, 1625097600000);
+
+        let second = &basis_data[1];
+        assert_eq!(second.basis_rate, "-0.00050000");
+        assert_eq!(second.annualized_basis_rate, "-0.18250000");
+        assert_eq!(second.basis, "-22.55000000");
+    }
+
+    #[test]
+    fn test_basis_different_contract_types() {
+        let json = r#"[
+            {
+                "indexPrice": "45000.00000000",
+                "contractType": "CURRENT_QUARTER",
+                "basisRate": "0.00200000",
+                "futuresPrice": "45090.00000000",
+                "annualizedBasisRate": "0.73000000",
+                "basis": "90.00000000",
+                "pair": "BTCUSDT",
+                "timestamp": 1625097600000
+            },
+            {
+                "indexPrice": "45000.00000000",
+                "contractType": "NEXT_QUARTER",
+                "basisRate": "0.00300000",
+                "futuresPrice": "45135.00000000",
+                "annualizedBasisRate": "1.09500000",
+                "basis": "135.00000000",
+                "pair": "BTCUSDT",
+                "timestamp": 1625097600000
+            }
+        ]"#;
+
+        let basis_data: Vec<BasisResponse> = serde_json::from_str(json).unwrap();
+        assert_eq!(basis_data.len(), 2);
+        assert_eq!(basis_data[0].contract_type, ContractType::CurrentQuarter);
+        assert_eq!(basis_data[1].contract_type, ContractType::NextQuarter);
+    }
+
+    #[test]
+    fn test_basis_negative_values() {
+        let json = r#"[
+            {
+                "indexPrice": "3000.00000000",
+                "contractType": "PERPETUAL",
+                "basisRate": "-0.00250000",
+                "futuresPrice": "2992.50000000",
+                "annualizedBasisRate": "-0.91250000",
+                "basis": "-7.50000000",
+                "pair": "ETHUSDT",
+                "timestamp": 1625097600000
+            }
+        ]"#;
+
+        let basis_data: Vec<BasisResponse> = serde_json::from_str(json).unwrap();
+        assert_eq!(basis_data.len(), 1);
+        assert_eq!(basis_data[0].basis_rate, "-0.00250000");
+        assert_eq!(basis_data[0].annualized_basis_rate, "-0.91250000");
+        assert_eq!(basis_data[0].basis, "-7.50000000");
     }
 }

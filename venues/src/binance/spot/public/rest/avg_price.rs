@@ -4,6 +4,8 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::binance::spot::RestResult;
 
+const AVG_PRICE_ENDPOINT: &str = "/api/v3/avgPrice";
+
 /// Request parameters for average price
 #[derive(Debug, Clone, Serialize)]
 pub struct AvgPriceRequest {
@@ -38,16 +40,8 @@ impl RestClient {
     /// Weight: 2
     /// Security: None
     pub async fn get_avg_price(&self, params: AvgPriceRequest) -> RestResult<AvgPriceResponse> {
-        let query_string = serde_urlencoded::to_string(&params)
-            .map_err(|e| crate::binance::spot::Errors::Error(format!("URL encoding error: {e}")))?;
-
-        self.send_request(
-            "/api/v3/avgPrice",
-            reqwest::Method::GET,
-            Some(&query_string),
-            2,
-        )
-        .await
+        self.send_public_request(AVG_PRICE_ENDPOINT, reqwest::Method::GET, Some(params), 2)
+            .await
     }
 }
 

@@ -2,7 +2,9 @@ use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::binance::{options::RestResult, shared};
+use crate::binance::options::RestResult;
+
+const GET_MARGIN_ACCOUNT_ENDPOINT: &str = "/eapi/v1/marginAccount";
 
 /// Request parameters for querying margin account information
 #[derive(Debug, Clone, Serialize, Default)]
@@ -105,9 +107,8 @@ impl RestClient {
         &self,
         params: MarginAccountRequest,
     ) -> RestResult<MarginAccount> {
-        shared::send_signed_request(
-            self,
-            "/eapi/v1/marginAccount",
+        self.send_signed_request(
+            GET_MARGIN_ACCOUNT_ENDPOINT,
             reqwest::Method::GET,
             params,
             1,

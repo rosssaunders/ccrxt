@@ -5,7 +5,6 @@ use crate::binance::{
         OrderSide, OrderStatus, OrderType, PositionSide, PriceMatch, RestResult,
         SelfTradePreventionMode, TimeInForce, WorkingType, private::rest::client::RestClient,
     },
-    shared,
 };
 
 const OPEN_ORDER_ENDPOINT: &str = "/dapi/v1/openOrder";
@@ -156,8 +155,7 @@ impl RestClient {
         params: QueryCurrentOpenOrderRequest,
     ) -> RestResult<QueryCurrentOpenOrderResponse> {
         let weight = 1;
-        shared::send_signed_request(
-            self,
+        self.send_signed_request(
             OPEN_ORDER_ENDPOINT,
             reqwest::Method::GET,
             params,

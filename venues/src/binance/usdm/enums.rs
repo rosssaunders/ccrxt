@@ -676,6 +676,37 @@ pub enum MarginAsset {
     Eth,
 }
 
+/// Convert order status enumeration.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum ConvertOrderStatus {
+    /// Order is being processed.
+    #[serde(rename = "PROCESS")]
+    Process,
+
+    /// Order quote has been accepted successfully.
+    #[serde(rename = "ACCEPT_SUCCESS")]
+    AcceptSuccess,
+
+    /// Order has been completed successfully.
+    #[serde(rename = "SUCCESS")]
+    Success,
+
+    /// Order has failed.
+    #[serde(rename = "FAIL")]
+    Fail,
+}
+
+impl fmt::Display for ConvertOrderStatus {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            ConvertOrderStatus::Process => write!(f, "PROCESS"),
+            ConvertOrderStatus::AcceptSuccess => write!(f, "ACCEPT_SUCCESS"),
+            ConvertOrderStatus::Success => write!(f, "SUCCESS"),
+            ConvertOrderStatus::Fail => write!(f, "FAIL"),
+        }
+    }
+}
+
 impl fmt::Display for MarginAsset {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {

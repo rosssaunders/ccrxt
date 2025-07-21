@@ -1,9 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::binance::{
-    coinm::{OrderSide, PositionSide, RestResult, private::rest::RestClient},
-    shared,
-};
+use crate::binance::coinm::{super::RestClient, OrderSide, PositionSide, RestResult};
 
 const ACCOUNT_TRADES_ENDPOINT: &str = "/dapi/v1/userTrades";
 
@@ -154,8 +151,7 @@ impl RestClient {
         params: AccountTradeListRequest,
     ) -> RestResult<Vec<AccountTrade>> {
         let weight = if params.pair.is_some() { 40 } else { 20 };
-        shared::send_signed_request(
-            self,
+        self.send_signed_request(
             ACCOUNT_TRADES_ENDPOINT,
             reqwest::Method::GET,
             params,

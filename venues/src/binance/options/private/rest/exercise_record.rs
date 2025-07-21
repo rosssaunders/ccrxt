@@ -2,10 +2,9 @@ use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::binance::{
-    options::{OptionsContractType, RestResult},
-    shared,
-};
+use crate::binance::options::{OptionsContractType, RestResult};
+
+const GET_EXERCISE_RECORD_ENDPOINT: &str = "/eapi/v1/exerciseRecord";
 
 /// Request parameters for querying exercise records
 #[derive(Debug, Clone, Serialize, Default)]
@@ -108,9 +107,8 @@ impl RestClient {
         &self,
         params: ExerciseRecordRequest,
     ) -> RestResult<Vec<ExerciseRecord>> {
-        shared::send_signed_request(
-            self,
-            "/eapi/v1/exerciseRecord",
+        self.send_signed_request(
+            GET_EXERCISE_RECORD_ENDPOINT,
             reqwest::Method::GET,
             params,
             1,

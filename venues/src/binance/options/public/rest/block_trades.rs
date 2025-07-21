@@ -4,6 +4,8 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::binance::options::RestResult;
 
+const BLOCK_TRADES_ENDPOINT: &str = "/eapi/v1/blockTrades";
+
 /// Request parameters for recent block trades
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct BlockTradesRequest {
@@ -65,22 +67,13 @@ impl RestClient {
         &self,
         params: BlockTradesRequest,
     ) -> RestResult<Vec<BlockTrade>> {
-        let query_string = if params.symbol.is_some() || params.limit.is_some() {
-            Some(serde_urlencoded::to_string(&params).map_err(|e| {
-                crate::binance::options::Errors::Error(format!("URL encoding error: {e}"))
-            })?)
+        if params.symbol.is_none() && params.limit.is_none() {
+            self.send_public_request(BLOCK_TRADES_ENDPOINT, reqwest::Method::GET, None::<()>, 5)
+                .await
         } else {
-            None
-        };
-
-        self.send_request(
-            "/eapi/v1/blockTrades",
-            reqwest::Method::GET,
-            query_string.as_deref(),
-            None,
-            5,
-        )
-        .await
+            self.send_public_request(BLOCK_TRADES_ENDPOINT, reqwest::Method::GET, Some(params), 5)
+                .await
+        }
     }
 }
 
@@ -174,11 +167,11 @@ mod tests {
 
         let trades: Vec<BlockTrade> = serde_json::from_str(json).unwrap();
         assert_eq!(trades.len(), 2);
-        
+
         assert_eq!(trades[0].id, 123456);
         assert_eq!(trades[0].side, 1); // Buy
         assert_eq!(trades[0].price, Decimal::from_f64(1500.00).unwrap());
-        
+
         assert_eq!(trades[1].id, 123457);
         assert_eq!(trades[1].side, -1); // Sell
         assert_eq!(trades[1].price, Decimal::from_f64(1520.00).unwrap());

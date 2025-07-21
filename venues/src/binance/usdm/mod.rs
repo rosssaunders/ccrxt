@@ -38,13 +38,12 @@
 //! }
 //! ```
 
-use std::time::Duration;
-
 mod enums;
 mod errors;
 mod rate_limit;
 mod request;
 mod signing;
+use std::time::Duration;
 
 // Re-export modules for new structure
 pub mod public {
@@ -52,10 +51,14 @@ pub mod public {
     pub use self::rest::{RestClient as PublicRestClient, exchange_info::*};
 }
 
+use crate::binance::shared::RateLimits;
+use crate::binance::shared::VenueConfig;
+use crate::binance::shared::client::RestResponse;
+
 mod private {
-    mod rest;
+    pub mod rest;
     // Re-export RestClient so it can be re-exported by the parent
-    pub use self::rest::RestClient as PrivateRestClient;
+    pub use self::rest::UsdmClient as PrivateRestClient;
 }
 
 // Only expose RestClient at the usdm level, not via private::rest
@@ -84,16 +87,45 @@ pub struct ResponseHeaders {
     pub values: std::collections::HashMap<RateLimitHeader, u32>,
 }
 
-#[derive(Debug, Clone)]
-pub struct RestResponse<T> {
-    pub data: T,
-    pub request_duration: Duration,
-    pub headers: ResponseHeaders,
-}
-
 /// Type alias for results returned by Binance API operations
 pub type RestResult<T> = Result<RestResponse<T>, Errors>;
 
 pub mod rest {
     pub mod common;
+}
+
+pub struct UsdmConfig;
+
+impl VenueConfig for UsdmConfig {
+    fn base_url(&self) -> &str {
+        "https://fapi.binance.com"
+    }
+
+    fn venue_name(&self) -> &str {
+        "usdm"
+    }
+
+    fn rate_limits(&self) -> RateLimits {
+        RateLimits {
+            request_weight_limit: 2400,
+            request_weight_window: Duration::from_secs(60),
+            raw_requests_limit: 1200,
+            raw_requests_window: Duration::from_secs(60),
+            orders_10s_limit: 100,
+            orders_minute_limit: 1200,
+            orders_day_limit: None,
+        }
+    }
+
+    fn supports_futures(&self) -> bool {
+        true
+    }
+
+    fn supports_options(&self) -> bool {
+        false
+    }
+
+    fn supports_margin(&self) -> bool {
+        false
+    }
 }

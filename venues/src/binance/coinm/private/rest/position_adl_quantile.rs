@@ -2,7 +2,6 @@ use serde::{Deserialize, Serialize};
 
 use crate::binance::{
     coinm::{RestResult, private::rest::client::RestClient},
-    shared,
 };
 
 const ADL_QUANTILE_ENDPOINT: &str = "/dapi/v1/adlQuantile";
@@ -86,8 +85,7 @@ impl RestClient {
         params: GetPositionAdlQuantileRequest,
     ) -> RestResult<GetPositionAdlQuantileResponse> {
         let weight = 5;
-        shared::send_signed_request(
-            self,
+        self.send_signed_request(
             ADL_QUANTILE_ENDPOINT,
             reqwest::Method::GET,
             params,

@@ -7,6 +7,8 @@ use crate::binance::spot::{
     OrderType, RestResult, SelfTradePreventionMode, TimeInForce,
 };
 
+const CREATE_OTO_ORDER_ENDPOINT: &str = "/api/v3/orderList/oto";
+
 /// Request parameters for OTO order
 #[derive(Debug, Clone, Serialize)]
 pub struct OtoOrderRequest {
@@ -197,110 +199,460 @@ impl RestClient {
     /// Weight: 1
     /// Security: TRADE
     pub async fn new_oto_order(&self, params: OtoOrderRequest) -> RestResult<OtoOrderResponse> {
-        let body_params: Vec<(&str, String)> = vec![
-            ("symbol", params.symbol),
-            ("workingType", params.working_type.to_string()),
-            ("workingSide", params.working_side.to_string()),
-            ("workingQuantity", params.working_quantity.to_string()),
-            ("workingPrice", params.working_price.to_string()),
-            ("pendingType", params.pending_type.to_string()),
-            ("pendingSide", params.pending_side.to_string()),
-            ("pendingQuantity", params.pending_quantity.to_string()),
-        ]
-        .into_iter()
-        .chain(
-            params
-                .list_client_order_id
-                .map(|v| ("listClientOrderId", v)),
-        )
-        .chain(
-            params
-                .new_order_resp_type
-                .map(|v| ("newOrderRespType", v.to_string())),
-        )
-        .chain(
-            params
-                .self_trade_prevention_mode
-                .map(|v| ("selfTradePreventionMode", v.to_string())),
-        )
-        .chain(
-            params
-                .working_client_order_id
-                .map(|v| ("workingClientOrderId", v)),
-        )
-        .chain(
-            params
-                .working_time_in_force
-                .map(|v| ("workingTimeInForce", v.to_string())),
-        )
-        .chain(
-            params
-                .working_strategy_id
-                .map(|v| ("workingStrategyId", v.to_string())),
-        )
-        .chain(
-            params
-                .working_strategy_type
-                .map(|v| ("workingStrategyType", v.to_string())),
-        )
-        .chain(
-            params
-                .working_iceberg_qty
-                .map(|v| ("workingIcebergQty", v.to_string())),
-        )
-        .chain(
-            params
-                .pending_client_order_id
-                .map(|v| ("pendingClientOrderId", v)),
-        )
-        .chain(
-            params
-                .pending_price
-                .map(|v| ("pendingPrice", v.to_string())),
-        )
-        .chain(
-            params
-                .pending_stop_price
-                .map(|v| ("pendingStopPrice", v.to_string())),
-        )
-        .chain(
-            params
-                .pending_trailing_delta
-                .map(|v| ("pendingTrailingDelta", v.to_string())),
-        )
-        .chain(
-            params
-                .pending_time_in_force
-                .map(|v| ("pendingTimeInForce", v.to_string())),
-        )
-        .chain(
-            params
-                .pending_strategy_id
-                .map(|v| ("pendingStrategyId", v.to_string())),
-        )
-        .chain(
-            params
-                .pending_strategy_type
-                .map(|v| ("pendingStrategyType", v.to_string())),
-        )
-        .chain(
-            params
-                .pending_iceberg_qty
-                .map(|v| ("pendingIcebergQty", v.to_string())),
-        )
-        .chain(params.recv_window.map(|v| ("recvWindow", v.to_string())))
-        .collect();
-
-        let body: Vec<(&str, &str)> = body_params.iter().map(|(k, v)| (*k, v.as_str())).collect();
-
-        self.send_request(
-            "/api/v3/orderList/oto",
+        self.send_signed_request(
+            CREATE_OTO_ORDER_ENDPOINT,
             reqwest::Method::POST,
-            None,
-            Some(&body),
+            params,
             1,
             true,
         )
         .await
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use rust_decimal_macros::dec;
+
+    #[test]
+    fn test_oto_order_request_minimal_serialization() {
+        let request = OtoOrderRequest {
+            symbol: "BTCUSDT".to_string(),
+            list_client_order_id: None,
+            new_order_resp_type: None,
+            self_trade_prevention_mode: None,
+            working_type: OrderType::Limit,
+            working_side: OrderSide::Buy,
+            working_client_order_id: None,
+            working_quantity: dec!(0.001),
+            working_price: dec!(50000),
+            working_time_in_force: None,
+            working_strategy_id: None,
+            working_strategy_type: None,
+            working_iceberg_qty: None,
+            pending_type: OrderType::Limit,
+            pending_side: OrderSide::Sell,
+            pending_client_order_id: None,
+            pending_quantity: dec!(0.001),
+            pending_price: Some(dec!(60000)),
+            pending_stop_price: None,
+            pending_trailing_delta: None,
+            pending_time_in_force: None,
+            pending_strategy_id: None,
+            pending_strategy_type: None,
+            pending_iceberg_qty: None,
+            recv_window: None,
+        };
+
+        let json = serde_json::to_value(&request).unwrap();
+        assert_eq!(json["symbol"], "BTCUSDT");
+        assert_eq!(json["workingType"], "LIMIT");
+        assert_eq!(json["workingSide"], "BUY");
+        assert_eq!(json["workingQuantity"], "0.001");
+        assert_eq!(json["workingPrice"], "50000");
+        assert_eq!(json["pendingType"], "LIMIT");
+        assert_eq!(json["pendingSide"], "SELL");
+        assert_eq!(json["pendingQuantity"], "0.001");
+        assert_eq!(json["pendingPrice"], "60000");
+
+        // Verify optional fields are not present
+        assert!(json.get("listClientOrderId").is_none());
+        assert!(json.get("newOrderRespType").is_none());
+        assert!(json.get("selfTradePreventionMode").is_none());
+        assert!(json.get("workingClientOrderId").is_none());
+        assert!(json.get("workingTimeInForce").is_none());
+        assert!(json.get("pendingStopPrice").is_none());
+        assert!(json.get("recvWindow").is_none());
+    }
+
+    #[test]
+    fn test_oto_order_request_full_serialization() {
+        let request = OtoOrderRequest {
+            symbol: "ETHUSDT".to_string(),
+            list_client_order_id: Some("my-oto-list-123".to_string()),
+            new_order_resp_type: Some(OrderResponseType::Full),
+            self_trade_prevention_mode: Some(SelfTradePreventionMode::ExpireTaker),
+            working_type: OrderType::Limit,
+            working_side: OrderSide::Buy,
+            working_client_order_id: Some("working-order-456".to_string()),
+            working_quantity: dec!(1.5),
+            working_price: dec!(3000.25),
+            working_time_in_force: Some(TimeInForce::GTC),
+            working_strategy_id: Some(12345),
+            working_strategy_type: Some(1000000),
+            working_iceberg_qty: Some(dec!(0.5)),
+            pending_type: OrderType::StopLossLimit,
+            pending_side: OrderSide::Sell,
+            pending_client_order_id: Some("pending-order-789".to_string()),
+            pending_quantity: dec!(1.5),
+            pending_price: Some(dec!(2900)),
+            pending_stop_price: Some(dec!(2950)),
+            pending_trailing_delta: Some(100),
+            pending_time_in_force: Some(TimeInForce::IOC),
+            pending_strategy_id: Some(67890),
+            pending_strategy_type: Some(2000000),
+            pending_iceberg_qty: Some(dec!(0.25)),
+            recv_window: Some(5000),
+        };
+
+        let json = serde_json::to_value(&request).unwrap();
+        assert_eq!(json["symbol"], "ETHUSDT");
+        assert_eq!(json["listClientOrderId"], "my-oto-list-123");
+        assert_eq!(json["newOrderRespType"], "FULL");
+        assert_eq!(json["selfTradePreventionMode"], "EXPIRE_TAKER");
+        assert_eq!(json["workingType"], "LIMIT");
+        assert_eq!(json["workingSide"], "BUY");
+        assert_eq!(json["workingClientOrderId"], "working-order-456");
+        assert_eq!(json["workingQuantity"], "1.5");
+        assert_eq!(json["workingPrice"], "3000.25");
+        assert_eq!(json["workingTimeInForce"], "GTC");
+        assert_eq!(json["workingStrategyId"], 12345);
+        assert_eq!(json["workingStrategyType"], 1000000);
+        assert_eq!(json["workingIcebergQty"], "0.5");
+        assert_eq!(json["pendingType"], "STOP_LOSS_LIMIT");
+        assert_eq!(json["pendingSide"], "SELL");
+        assert_eq!(json["pendingClientOrderId"], "pending-order-789");
+        assert_eq!(json["pendingQuantity"], "1.5");
+        assert_eq!(json["pendingPrice"], "2900");
+        assert_eq!(json["pendingStopPrice"], "2950");
+        assert_eq!(json["pendingTrailingDelta"], 100);
+        assert_eq!(json["pendingTimeInForce"], "IOC");
+        assert_eq!(json["pendingStrategyId"], 67890);
+        assert_eq!(json["pendingStrategyType"], 2000000);
+        assert_eq!(json["pendingIcebergQty"], "0.25");
+        assert_eq!(json["recvWindow"], 5000);
+    }
+
+    #[test]
+    fn test_oto_order_request_market_orders_serialization() {
+        let request = OtoOrderRequest {
+            symbol: "BNBUSDT".to_string(),
+            list_client_order_id: Some("bnb-oto-market".to_string()),
+            new_order_resp_type: Some(OrderResponseType::Ack),
+            self_trade_prevention_mode: None,
+            working_type: OrderType::Market,
+            working_side: OrderSide::Buy,
+            working_client_order_id: None,
+            working_quantity: dec!(10),
+            working_price: dec!(0), // Market orders don't use price, but field is required
+            working_time_in_force: None,
+            working_strategy_id: None,
+            working_strategy_type: None,
+            working_iceberg_qty: None,
+            pending_type: OrderType::Market,
+            pending_side: OrderSide::Sell,
+            pending_client_order_id: None,
+            pending_quantity: dec!(10),
+            pending_price: None,
+            pending_stop_price: None,
+            pending_trailing_delta: None,
+            pending_time_in_force: None,
+            pending_strategy_id: None,
+            pending_strategy_type: None,
+            pending_iceberg_qty: None,
+            recv_window: None,
+        };
+
+        let json = serde_json::to_value(&request).unwrap();
+        assert_eq!(json["symbol"], "BNBUSDT");
+        assert_eq!(json["listClientOrderId"], "bnb-oto-market");
+        assert_eq!(json["newOrderRespType"], "ACK");
+        assert_eq!(json["workingType"], "MARKET");
+        assert_eq!(json["workingSide"], "BUY");
+        assert_eq!(json["workingQuantity"], "10");
+        assert_eq!(json["workingPrice"], "0");
+        assert_eq!(json["pendingType"], "MARKET");
+        assert_eq!(json["pendingSide"], "SELL");
+        assert_eq!(json["pendingQuantity"], "10");
+    }
+
+    #[test]
+    fn test_oto_order_request_stop_loss_limit_serialization() {
+        let request = OtoOrderRequest {
+            symbol: "ADAUSDT".to_string(),
+            list_client_order_id: None,
+            new_order_resp_type: Some(OrderResponseType::Result),
+            self_trade_prevention_mode: Some(SelfTradePreventionMode::ExpireBoth),
+            working_type: OrderType::Limit,
+            working_side: OrderSide::Buy,
+            working_client_order_id: Some("ada-limit-buy".to_string()),
+            working_quantity: dec!(1000),
+            working_price: dec!(0.5),
+            working_time_in_force: Some(TimeInForce::FOK),
+            working_strategy_id: None,
+            working_strategy_type: None,
+            working_iceberg_qty: None,
+            pending_type: OrderType::StopLossLimit,
+            pending_side: OrderSide::Sell,
+            pending_client_order_id: Some("ada-stop-loss-limit".to_string()),
+            pending_quantity: dec!(1000),
+            pending_price: Some(dec!(0.44)),
+            pending_stop_price: Some(dec!(0.45)),
+            pending_trailing_delta: None,
+            pending_time_in_force: Some(TimeInForce::GTC),
+            pending_strategy_id: None,
+            pending_strategy_type: None,
+            pending_iceberg_qty: None,
+            recv_window: Some(10000),
+        };
+
+        let json = serde_json::to_value(&request).unwrap();
+        assert_eq!(json["symbol"], "ADAUSDT");
+        assert_eq!(json["newOrderRespType"], "RESULT");
+        assert_eq!(json["selfTradePreventionMode"], "EXPIRE_BOTH");
+        assert_eq!(json["workingType"], "LIMIT");
+        assert_eq!(json["workingSide"], "BUY");
+        assert_eq!(json["workingClientOrderId"], "ada-limit-buy");
+        assert_eq!(json["workingQuantity"], "1000");
+        assert_eq!(json["workingPrice"], "0.5");
+        assert_eq!(json["workingTimeInForce"], "FOK");
+        assert_eq!(json["pendingType"], "STOP_LOSS_LIMIT");
+        assert_eq!(json["pendingSide"], "SELL");
+        assert_eq!(json["pendingClientOrderId"], "ada-stop-loss-limit");
+        assert_eq!(json["pendingQuantity"], "1000");
+        assert_eq!(json["pendingPrice"], "0.44");
+        assert_eq!(json["pendingStopPrice"], "0.45");
+        assert_eq!(json["pendingTimeInForce"], "GTC");
+        assert_eq!(json["recvWindow"], 10000);
+    }
+
+    #[test]
+    fn test_oto_order_request_decimal_precision_serialization() {
+        let request = OtoOrderRequest {
+            symbol: "SHIBUSDT".to_string(),
+            list_client_order_id: None,
+            new_order_resp_type: None,
+            self_trade_prevention_mode: None,
+            working_type: OrderType::Limit,
+            working_side: OrderSide::Buy,
+            working_client_order_id: None,
+            working_quantity: dec!(1000000.123456789),
+            working_price: dec!(0.00001234),
+            working_time_in_force: None,
+            working_strategy_id: None,
+            working_strategy_type: None,
+            working_iceberg_qty: Some(dec!(100000.987654321)),
+            pending_type: OrderType::Limit,
+            pending_side: OrderSide::Sell,
+            pending_client_order_id: None,
+            pending_quantity: dec!(1000000.123456789),
+            pending_price: Some(dec!(0.00002345)),
+            pending_stop_price: None,
+            pending_trailing_delta: None,
+            pending_time_in_force: None,
+            pending_strategy_id: None,
+            pending_strategy_type: None,
+            pending_iceberg_qty: Some(dec!(50000.111111111)),
+            recv_window: None,
+        };
+
+        let json = serde_json::to_value(&request).unwrap();
+        assert_eq!(json["workingQuantity"], "1000000.123456789");
+        assert_eq!(json["workingPrice"], "0.00001234");
+        assert_eq!(json["workingIcebergQty"], "100000.987654321");
+        assert_eq!(json["pendingQuantity"], "1000000.123456789");
+        assert_eq!(json["pendingPrice"], "0.00002345");
+        assert_eq!(json["pendingIcebergQty"], "50000.111111111");
+    }
+
+    #[test]
+    fn test_oto_order_response_minimal_deserialization() {
+        let json = r#"{
+            "orderListId": 12345678,
+            "contingencyType": "OTO",
+            "listStatusType": "EXEC_STARTED",
+            "listOrderStatus": "EXECUTING",
+            "listClientOrderId": "my-oto-list-123",
+            "transactionTime": 1621234567890,
+            "symbol": "BTCUSDT",
+            "orders": [
+                {
+                    "symbol": "BTCUSDT",
+                    "orderId": 987654321,
+                    "clientOrderId": "working-order-456"
+                },
+                {
+                    "symbol": "BTCUSDT",
+                    "orderId": 987654322,
+                    "clientOrderId": "pending-order-789"
+                }
+            ],
+            "orderReports": []
+        }"#;
+
+        let response: OtoOrderResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.order_list_id, 12345678);
+        assert_eq!(response.contingency_type, ContingencyType::Oto);
+        assert_eq!(response.list_status_type, OrderListStatus::ExecStarted);
+        assert_eq!(response.list_order_status, OrderListOrderStatus::Executing);
+        assert_eq!(response.list_client_order_id, "my-oto-list-123");
+        assert_eq!(response.transaction_time, 1621234567890);
+        assert_eq!(response.symbol, "BTCUSDT");
+        assert_eq!(response.orders.len(), 2);
+        assert_eq!(response.orders[0].symbol, "BTCUSDT");
+        assert_eq!(response.orders[0].order_id, 987654321);
+        assert_eq!(response.orders[0].client_order_id, "working-order-456");
+        assert_eq!(response.orders[1].symbol, "BTCUSDT");
+        assert_eq!(response.orders[1].order_id, 987654322);
+        assert_eq!(response.orders[1].client_order_id, "pending-order-789");
+        assert_eq!(response.order_reports.len(), 0);
+    }
+
+    #[test]
+    fn test_oto_order_response_with_order_reports_deserialization() {
+        let json = r#"{
+            "orderListId": 99887766,
+            "contingencyType": "OTO",
+            "listStatusType": "ALL_DONE",
+            "listOrderStatus": "ALL_DONE",
+            "listClientOrderId": "eth-oto-999",
+            "transactionTime": 1621234567999,
+            "symbol": "ETHUSDT",
+            "orders": [
+                {
+                    "symbol": "ETHUSDT",
+                    "orderId": 111222333,
+                    "clientOrderId": "eth-working-111"
+                },
+                {
+                    "symbol": "ETHUSDT",
+                    "orderId": 111222334,
+                    "clientOrderId": "eth-pending-222"
+                }
+            ],
+            "orderReports": [
+                {
+                    "symbol": "ETHUSDT",
+                    "orderId": 111222333,
+                    "orderListId": 99887766,
+                    "clientOrderId": "eth-working-111",
+                    "price": "3000.00",
+                    "origQty": "1.00",
+                    "executedQty": "1.00",
+                    "cummulativeQuoteQty": "3000.00",
+                    "status": "FILLED",
+                    "timeInForce": "GTC",
+                    "type": "LIMIT",
+                    "side": "BUY",
+                    "stopPrice": "0.00",
+                    "selfTradePreventionMode": "NONE"
+                },
+                {
+                    "symbol": "ETHUSDT",
+                    "orderId": 111222334,
+                    "orderListId": 99887766,
+                    "clientOrderId": "eth-pending-222",
+                    "price": "3500.00",
+                    "origQty": "1.00",
+                    "executedQty": "1.00",
+                    "cummulativeQuoteQty": "3500.00",
+                    "status": "FILLED",
+                    "timeInForce": "GTC",
+                    "type": "LIMIT",
+                    "side": "SELL",
+                    "stopPrice": "0.00",
+                    "selfTradePreventionMode": "NONE"
+                }
+            ]
+        }"#;
+
+        let response: OtoOrderResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.order_list_id, 99887766);
+        assert_eq!(response.contingency_type, ContingencyType::Oto);
+        assert_eq!(response.list_status_type, OrderListStatus::AllDone);
+        assert_eq!(response.list_order_status, OrderListOrderStatus::AllDone);
+        assert_eq!(response.list_client_order_id, "eth-oto-999");
+        assert_eq!(response.transaction_time, 1621234567999);
+        assert_eq!(response.symbol, "ETHUSDT");
+        assert_eq!(response.orders.len(), 2);
+        assert_eq!(response.order_reports.len(), 2);
+    }
+
+    #[test]
+    fn test_oto_order_deserialization() {
+        let json = r#"{
+            "symbol": "BNBUSDT",
+            "orderId": 555666777,
+            "clientOrderId": "bnb-order-xyz"
+        }"#;
+
+        let order: OtoOrder = serde_json::from_str(json).unwrap();
+        assert_eq!(order.symbol, "BNBUSDT");
+        assert_eq!(order.order_id, 555666777);
+        assert_eq!(order.client_order_id, "bnb-order-xyz");
+    }
+
+    #[test]
+    fn test_order_type_serialization() {
+        assert_eq!(
+            serde_json::to_string(&OrderType::Limit).unwrap(),
+            "\"LIMIT\""
+        );
+        assert_eq!(
+            serde_json::to_string(&OrderType::Market).unwrap(),
+            "\"MARKET\""
+        );
+        assert_eq!(
+            serde_json::to_string(&OrderType::StopLoss).unwrap(),
+            "\"STOP_LOSS\""
+        );
+        assert_eq!(
+            serde_json::to_string(&OrderType::StopLossLimit).unwrap(),
+            "\"STOP_LOSS_LIMIT\""
+        );
+        assert_eq!(
+            serde_json::to_string(&OrderType::TakeProfit).unwrap(),
+            "\"TAKE_PROFIT\""
+        );
+        assert_eq!(
+            serde_json::to_string(&OrderType::TakeProfitLimit).unwrap(),
+            "\"TAKE_PROFIT_LIMIT\""
+        );
+        assert_eq!(
+            serde_json::to_string(&OrderType::LimitMaker).unwrap(),
+            "\"LIMIT_MAKER\""
+        );
+    }
+
+    #[test]
+    fn test_contingency_type_deserialization() {
+        let json = "\"OTO\"";
+        let contingency_type: ContingencyType = serde_json::from_str(json).unwrap();
+        assert_eq!(contingency_type, ContingencyType::Oto);
+    }
+
+    #[test]
+    fn test_order_list_status_deserialization() {
+        let json = "\"EXEC_STARTED\"";
+        let status: OrderListStatus = serde_json::from_str(json).unwrap();
+        assert_eq!(status, OrderListStatus::ExecStarted);
+
+        let json = "\"ALL_DONE\"";
+        let status: OrderListStatus = serde_json::from_str(json).unwrap();
+        assert_eq!(status, OrderListStatus::AllDone);
+
+        let json = "\"RESPONSE\"";
+        let status: OrderListStatus = serde_json::from_str(json).unwrap();
+        assert_eq!(status, OrderListStatus::Response);
+
+        let json = "\"REJECT\"";
+        let status: OrderListStatus = serde_json::from_str(json).unwrap();
+        assert_eq!(status, OrderListStatus::Reject);
+    }
+
+    #[test]
+    fn test_order_list_order_status_deserialization() {
+        let json = "\"EXECUTING\"";
+        let status: OrderListOrderStatus = serde_json::from_str(json).unwrap();
+        assert_eq!(status, OrderListOrderStatus::Executing);
+
+        let json = "\"ALL_DONE\"";
+        let status: OrderListOrderStatus = serde_json::from_str(json).unwrap();
+        assert_eq!(status, OrderListOrderStatus::AllDone);
+
+        let json = "\"REJECT\"";
+        let status: OrderListOrderStatus = serde_json::from_str(json).unwrap();
+        assert_eq!(status, OrderListOrderStatus::Reject);
     }
 }

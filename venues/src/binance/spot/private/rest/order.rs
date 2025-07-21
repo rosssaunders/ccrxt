@@ -7,6 +7,8 @@ use crate::binance::spot::{
     TimeInForce,
 };
 
+const CREATE_ORDER_ENDPOINT: &str = "/api/v3/order";
+
 /// Request parameters for placing a new order
 #[derive(Debug, Clone, Serialize)]
 pub struct NewOrderRequest {
@@ -276,57 +278,570 @@ impl RestClient {
     /// Weight: 1
     /// Security: TRADE
     pub async fn new_order(&self, params: NewOrderRequest) -> RestResult<serde_json::Value> {
-        let body_params: Vec<(&str, String)> = vec![
-            ("symbol", params.symbol),
-            ("side", params.side.to_string()),
-            ("type", params.order_type.to_string()),
-        ]
-        .into_iter()
-        .chain(params.time_in_force.map(|v| ("timeInForce", v.to_string())))
-        .chain(params.quantity.map(|v| ("quantity", v.to_string())))
-        .chain(
-            params
-                .quote_order_qty
-                .map(|v| ("quoteOrderQty", v.to_string())),
-        )
-        .chain(params.price.map(|v| ("price", v.to_string())))
-        .chain(params.new_client_order_id.map(|v| ("newClientOrderId", v)))
-        .chain(params.strategy_id.map(|v| ("strategyId", v.to_string())))
-        .chain(
-            params
-                .strategy_type
-                .map(|v| ("strategyType", v.to_string())),
-        )
-        .chain(params.stop_price.map(|v| ("stopPrice", v.to_string())))
-        .chain(
-            params
-                .trailing_delta
-                .map(|v| ("trailingDelta", v.to_string())),
-        )
-        .chain(params.iceberg_qty.map(|v| ("icebergQty", v.to_string())))
-        .chain(
-            params
-                .new_order_resp_type
-                .map(|v| ("newOrderRespType", v.to_string())),
-        )
-        .chain(
-            params
-                .self_trade_prevention_mode
-                .map(|v| ("selfTradePreventionMode", v.to_string())),
-        )
-        .chain(params.recv_window.map(|v| ("recvWindow", v.to_string())))
-        .collect();
-
-        let body: Vec<(&str, &str)> = body_params.iter().map(|(k, v)| (*k, v.as_str())).collect();
-
-        self.send_request(
-            "/api/v3/order",
+        self.send_signed_request(
+            CREATE_ORDER_ENDPOINT,
             reqwest::Method::POST,
-            None,
-            Some(&body),
+            params,
             1,
             true,
         )
         .await
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use rust_decimal_macros::dec;
+
+    #[test]
+    fn test_new_order_request_minimal_serialization() {
+        let request = NewOrderRequest {
+            symbol: "BTCUSDT".to_string(),
+            side: OrderSide::Buy,
+            order_type: OrderType::Market,
+            time_in_force: None,
+            quantity: Some(dec!(0.001)),
+            quote_order_qty: None,
+            price: None,
+            new_client_order_id: None,
+            strategy_id: None,
+            strategy_type: None,
+            stop_price: None,
+            trailing_delta: None,
+            iceberg_qty: None,
+            new_order_resp_type: None,
+            self_trade_prevention_mode: None,
+            recv_window: None,
+        };
+
+        let json = serde_json::to_value(&request).unwrap();
+        assert_eq!(json["symbol"], "BTCUSDT");
+        assert_eq!(json["side"], "BUY");
+        assert_eq!(json["type"], "MARKET");
+        assert_eq!(json["quantity"], "0.001");
+        assert!(json.get("timeInForce").is_none());
+        assert!(json.get("price").is_none());
+    }
+
+    #[test]
+    fn test_new_order_request_limit_order_serialization() {
+        let request = NewOrderRequest {
+            symbol: "ETHUSDT".to_string(),
+            side: OrderSide::Sell,
+            order_type: OrderType::Limit,
+            time_in_force: Some(TimeInForce::GTC),
+            quantity: Some(dec!(0.5)),
+            quote_order_qty: None,
+            price: Some(dec!(3000.50)),
+            new_client_order_id: Some("my-order-123".to_string()),
+            strategy_id: None,
+            strategy_type: None,
+            stop_price: None,
+            trailing_delta: None,
+            iceberg_qty: None,
+            new_order_resp_type: Some(OrderResponseType::Full),
+            self_trade_prevention_mode: None,
+            recv_window: Some(5000),
+        };
+
+        let json = serde_json::to_value(&request).unwrap();
+        assert_eq!(json["symbol"], "ETHUSDT");
+        assert_eq!(json["side"], "SELL");
+        assert_eq!(json["type"], "LIMIT");
+        assert_eq!(json["timeInForce"], "GTC");
+        assert_eq!(json["quantity"], "0.5");
+        assert_eq!(json["price"], "3000.50");
+        assert_eq!(json["newClientOrderId"], "my-order-123");
+        assert_eq!(json["newOrderRespType"], "FULL");
+        assert_eq!(json["recvWindow"], 5000);
+    }
+
+    #[test]
+    fn test_new_order_request_stop_loss_serialization() {
+        let request = NewOrderRequest {
+            symbol: "BTCUSDT".to_string(),
+            side: OrderSide::Sell,
+            order_type: OrderType::StopLossLimit,
+            time_in_force: Some(TimeInForce::GTC),
+            quantity: Some(dec!(0.1)),
+            quote_order_qty: None,
+            price: Some(dec!(45000)),
+            new_client_order_id: None,
+            strategy_id: None,
+            strategy_type: None,
+            stop_price: Some(dec!(45500)),
+            trailing_delta: None,
+            iceberg_qty: None,
+            new_order_resp_type: None,
+            self_trade_prevention_mode: None,
+            recv_window: None,
+        };
+
+        let json = serde_json::to_value(&request).unwrap();
+        assert_eq!(json["type"], "STOP_LOSS_LIMIT");
+        assert_eq!(json["stopPrice"], "45500");
+        assert_eq!(json["price"], "45000");
+    }
+
+    #[test]
+    fn test_new_order_request_iceberg_order_serialization() {
+        let request = NewOrderRequest {
+            symbol: "BTCUSDT".to_string(),
+            side: OrderSide::Buy,
+            order_type: OrderType::Limit,
+            time_in_force: Some(TimeInForce::GTC),
+            quantity: Some(dec!(10)),
+            quote_order_qty: None,
+            price: Some(dec!(50000)),
+            new_client_order_id: None,
+            strategy_id: None,
+            strategy_type: None,
+            stop_price: None,
+            trailing_delta: None,
+            iceberg_qty: Some(dec!(1)),
+            new_order_resp_type: None,
+            self_trade_prevention_mode: None,
+            recv_window: None,
+        };
+
+        let json = serde_json::to_value(&request).unwrap();
+        assert_eq!(json["icebergQty"], "1");
+    }
+
+    #[test]
+    fn test_new_order_request_with_strategy_serialization() {
+        let request = NewOrderRequest {
+            symbol: "BTCUSDT".to_string(),
+            side: OrderSide::Buy,
+            order_type: OrderType::Limit,
+            time_in_force: Some(TimeInForce::IOC),
+            quantity: Some(dec!(0.5)),
+            quote_order_qty: None,
+            price: Some(dec!(48000)),
+            new_client_order_id: None,
+            strategy_id: Some(12345),
+            strategy_type: Some(1000000),
+            stop_price: None,
+            trailing_delta: None,
+            iceberg_qty: None,
+            new_order_resp_type: None,
+            self_trade_prevention_mode: Some(SelfTradePreventionMode::ExpireTaker),
+            recv_window: None,
+        };
+
+        let json = serde_json::to_value(&request).unwrap();
+        assert_eq!(json["strategyId"], 12345);
+        assert_eq!(json["strategyType"], 1000000);
+        assert_eq!(json["selfTradePreventionMode"], "EXPIRE_TAKER");
+        assert_eq!(json["timeInForce"], "IOC");
+    }
+
+    #[test]
+    fn test_new_order_request_quote_order_qty_serialization() {
+        let request = NewOrderRequest {
+            symbol: "BTCUSDT".to_string(),
+            side: OrderSide::Buy,
+            order_type: OrderType::Market,
+            time_in_force: None,
+            quantity: None,
+            quote_order_qty: Some(dec!(1000)),
+            price: None,
+            new_client_order_id: None,
+            strategy_id: None,
+            strategy_type: None,
+            stop_price: None,
+            trailing_delta: None,
+            iceberg_qty: None,
+            new_order_resp_type: None,
+            self_trade_prevention_mode: None,
+            recv_window: None,
+        };
+
+        let json = serde_json::to_value(&request).unwrap();
+        assert_eq!(json["quoteOrderQty"], "1000");
+        assert!(json.get("quantity").is_none());
+    }
+
+    #[test]
+    fn test_new_order_request_trailing_stop_serialization() {
+        let request = NewOrderRequest {
+            symbol: "BTCUSDT".to_string(),
+            side: OrderSide::Sell,
+            order_type: OrderType::StopLoss,
+            time_in_force: None,
+            quantity: Some(dec!(0.1)),
+            quote_order_qty: None,
+            price: None,
+            new_client_order_id: None,
+            strategy_id: None,
+            strategy_type: None,
+            stop_price: None,
+            trailing_delta: Some(200),
+            iceberg_qty: None,
+            new_order_resp_type: None,
+            self_trade_prevention_mode: None,
+            recv_window: None,
+        };
+
+        let json = serde_json::to_value(&request).unwrap();
+        assert_eq!(json["trailingDelta"], 200);
+    }
+
+    #[test]
+    fn test_fill_deserialization() {
+        let json = r#"{
+            "price": "4000.00000000",
+            "qty": "1.00000000",
+            "commission": "1.00000000",
+            "commissionAsset": "USDT",
+            "tradeId": 12345
+        }"#;
+
+        let fill: Fill = serde_json::from_str(json).unwrap();
+        assert_eq!(fill.price.to_string(), "4000.00000000");
+        assert_eq!(fill.qty.to_string(), "1.00000000");
+        assert_eq!(fill.commission.to_string(), "1.00000000");
+        assert_eq!(fill.commission_asset, "USDT");
+        assert_eq!(fill.trade_id, 12345);
+    }
+
+    #[test]
+    fn test_order_ack_response_deserialization() {
+        let json = r#"{
+            "symbol": "BTCUSDT",
+            "orderId": 28,
+            "orderListId": -1,
+            "clientOrderId": "6gCrw2kRUAF9CvJDGP16IP",
+            "transactTime": 1507725176595
+        }"#;
+
+        let response: OrderAckResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.symbol, "BTCUSDT");
+        assert_eq!(response.order_id, 28);
+        assert_eq!(response.order_list_id, -1);
+        assert_eq!(response.client_order_id, "6gCrw2kRUAF9CvJDGP16IP");
+        assert_eq!(response.transact_time, 1507725176595);
+    }
+
+    #[test]
+    fn test_order_result_response_deserialization() {
+        let json = r#"{
+            "symbol": "BTCUSDT",
+            "orderId": 28,
+            "orderListId": -1,
+            "clientOrderId": "6gCrw2kRUAF9CvJDGP16IP",
+            "transactTime": 1507725176595,
+            "price": "1.00000000",
+            "origQty": "10.00000000",
+            "executedQty": "10.00000000",
+            "cummulativeQuoteQty": "10.00000000",
+            "status": "FILLED",
+            "timeInForce": "GTC",
+            "type": "MARKET",
+            "side": "SELL",
+            "workingTime": 1507725176595,
+            "selfTradePreventionMode": "NONE"
+        }"#;
+
+        let response: OrderResultResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.symbol, "BTCUSDT");
+        assert_eq!(response.order_id, 28);
+        assert_eq!(response.order_list_id, -1);
+        assert_eq!(response.client_order_id, "6gCrw2kRUAF9CvJDGP16IP");
+        assert_eq!(response.transact_time, 1507725176595);
+        assert_eq!(response.price.to_string(), "1.00000000");
+        assert_eq!(response.orig_qty.to_string(), "10.00000000");
+        assert_eq!(response.executed_qty.to_string(), "10.00000000");
+        assert_eq!(response.cummulative_quote_qty.to_string(), "10.00000000");
+        assert_eq!(response.status, OrderStatus::Filled);
+        assert_eq!(response.time_in_force, TimeInForce::GTC);
+        assert_eq!(response.order_type, OrderType::Market);
+        assert_eq!(response.side, OrderSide::Sell);
+        assert_eq!(response.working_time, 1507725176595);
+        assert_eq!(
+            response.self_trade_prevention_mode,
+            SelfTradePreventionMode::None
+        );
+    }
+
+    #[test]
+    fn test_order_full_response_deserialization() {
+        let json = r#"{
+            "symbol": "BTCUSDT",
+            "orderId": 28,
+            "orderListId": -1,
+            "clientOrderId": "6gCrw2kRUAF9CvJDGP16IP",
+            "transactTime": 1507725176595,
+            "price": "1.00000000",
+            "origQty": "10.00000000",
+            "executedQty": "10.00000000",
+            "cummulativeQuoteQty": "10.00000000",
+            "status": "FILLED",
+            "timeInForce": "GTC",
+            "type": "MARKET",
+            "side": "SELL",
+            "workingTime": 1507725176595,
+            "selfTradePreventionMode": "NONE",
+            "fills": [
+                {
+                    "price": "4000.00000000",
+                    "qty": "1.00000000",
+                    "commission": "4.00000000",
+                    "commissionAsset": "USDT",
+                    "tradeId": 56
+                },
+                {
+                    "price": "3999.00000000",
+                    "qty": "5.00000000",
+                    "commission": "19.99500000",
+                    "commissionAsset": "USDT",
+                    "tradeId": 57
+                }
+            ]
+        }"#;
+
+        let response: OrderFullResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.symbol, "BTCUSDT");
+        assert_eq!(response.order_id, 28);
+        assert_eq!(response.fills.len(), 2);
+        assert_eq!(response.fills[0].price.to_string(), "4000.00000000");
+        assert_eq!(response.fills[0].qty.to_string(), "1.00000000");
+        assert_eq!(response.fills[0].trade_id, 56);
+        assert_eq!(response.fills[1].price.to_string(), "3999.00000000");
+        assert_eq!(response.fills[1].qty.to_string(), "5.00000000");
+        assert_eq!(response.fills[1].trade_id, 57);
+    }
+
+    #[test]
+    fn test_order_full_response_with_optional_fields_deserialization() {
+        let json = r#"{
+            "symbol": "BTCUSDT",
+            "orderId": 28,
+            "orderListId": -1,
+            "clientOrderId": "6gCrw2kRUAF9CvJDGP16IP",
+            "transactTime": 1507725176595,
+            "price": "50000.00000000",
+            "origQty": "10.00000000",
+            "executedQty": "0.00000000",
+            "cummulativeQuoteQty": "0.00000000",
+            "status": "NEW",
+            "timeInForce": "GTC",
+            "type": "LIMIT",
+            "side": "BUY",
+            "stopPrice": "49500.00000000",
+            "icebergQty": "1.00000000",
+            "workingTime": 1507725176595,
+            "selfTradePreventionMode": "EXPIRE_BOTH",
+            "fills": []
+        }"#;
+
+        let response: OrderFullResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.stop_price.unwrap().to_string(), "49500.00000000");
+        assert_eq!(response.iceberg_qty.unwrap().to_string(), "1.00000000");
+        assert_eq!(
+            response.self_trade_prevention_mode,
+            SelfTradePreventionMode::ExpireBoth
+        );
+        assert!(response.fills.is_empty());
+    }
+
+    #[test]
+    fn test_order_status_edge_cases_deserialization() {
+        // Test all order statuses
+        let statuses = vec![
+            ("NEW", OrderStatus::New),
+            ("PARTIALLY_FILLED", OrderStatus::PartiallyFilled),
+            ("FILLED", OrderStatus::Filled),
+            ("CANCELED", OrderStatus::Canceled),
+            ("PENDING_CANCEL", OrderStatus::PendingCancel),
+            ("REJECTED", OrderStatus::Rejected),
+            ("EXPIRED", OrderStatus::Expired),
+            ("EXPIRED_IN_MATCH", OrderStatus::ExpiredInMatch),
+        ];
+
+        for (status_str, expected_status) in statuses {
+            let json = format!(r#"{{"status": "{}"}}"#, status_str);
+            #[derive(Deserialize)]
+            struct TestStatus {
+                status: OrderStatus,
+            }
+            let result: TestStatus = serde_json::from_str(&json).unwrap();
+            assert_eq!(result.status, expected_status);
+        }
+    }
+
+    #[test]
+    fn test_order_type_edge_cases_serialization() {
+        // Test all order types
+        let order_types = vec![
+            (OrderType::Limit, "LIMIT"),
+            (OrderType::Market, "MARKET"),
+            (OrderType::StopLoss, "STOP_LOSS"),
+            (OrderType::StopLossLimit, "STOP_LOSS_LIMIT"),
+            (OrderType::TakeProfit, "TAKE_PROFIT"),
+            (OrderType::TakeProfitLimit, "TAKE_PROFIT_LIMIT"),
+            (OrderType::LimitMaker, "LIMIT_MAKER"),
+        ];
+
+        for (order_type, expected_str) in order_types {
+            let request = NewOrderRequest {
+                symbol: "BTCUSDT".to_string(),
+                side: OrderSide::Buy,
+                order_type,
+                time_in_force: None,
+                quantity: Some(dec!(1)),
+                quote_order_qty: None,
+                price: None,
+                new_client_order_id: None,
+                strategy_id: None,
+                strategy_type: None,
+                stop_price: None,
+                trailing_delta: None,
+                iceberg_qty: None,
+                new_order_resp_type: None,
+                self_trade_prevention_mode: None,
+                recv_window: None,
+            };
+
+            let json = serde_json::to_value(&request).unwrap();
+            assert_eq!(json["type"], expected_str);
+        }
+    }
+
+    #[test]
+    fn test_time_in_force_serialization() {
+        // Test all TimeInForce values
+        let tif_values = vec![
+            (TimeInForce::GTC, "GTC"),
+            (TimeInForce::IOC, "IOC"),
+            (TimeInForce::FOK, "FOK"),
+        ];
+
+        for (tif, expected_str) in tif_values {
+            let request = NewOrderRequest {
+                symbol: "BTCUSDT".to_string(),
+                side: OrderSide::Buy,
+                order_type: OrderType::Limit,
+                time_in_force: Some(tif),
+                quantity: Some(dec!(1)),
+                quote_order_qty: None,
+                price: Some(dec!(50000)),
+                new_client_order_id: None,
+                strategy_id: None,
+                strategy_type: None,
+                stop_price: None,
+                trailing_delta: None,
+                iceberg_qty: None,
+                new_order_resp_type: None,
+                self_trade_prevention_mode: None,
+                recv_window: None,
+            };
+
+            let json = serde_json::to_value(&request).unwrap();
+            assert_eq!(json["timeInForce"], expected_str);
+        }
+    }
+
+    #[test]
+    fn test_self_trade_prevention_mode_serialization() {
+        // Test all SelfTradePreventionMode values
+        let stp_modes = vec![
+            (SelfTradePreventionMode::None, "NONE"),
+            (SelfTradePreventionMode::ExpireTaker, "EXPIRE_TAKER"),
+            (SelfTradePreventionMode::ExpireMaker, "EXPIRE_MAKER"),
+            (SelfTradePreventionMode::ExpireBoth, "EXPIRE_BOTH"),
+        ];
+
+        for (stp_mode, expected_str) in stp_modes {
+            let request = NewOrderRequest {
+                symbol: "BTCUSDT".to_string(),
+                side: OrderSide::Buy,
+                order_type: OrderType::Limit,
+                time_in_force: Some(TimeInForce::GTC),
+                quantity: Some(dec!(1)),
+                quote_order_qty: None,
+                price: Some(dec!(50000)),
+                new_client_order_id: None,
+                strategy_id: None,
+                strategy_type: None,
+                stop_price: None,
+                trailing_delta: None,
+                iceberg_qty: None,
+                new_order_resp_type: None,
+                self_trade_prevention_mode: Some(stp_mode),
+                recv_window: None,
+            };
+
+            let json = serde_json::to_value(&request).unwrap();
+            assert_eq!(json["selfTradePreventionMode"], expected_str);
+        }
+    }
+
+    #[test]
+    fn test_order_response_type_serialization() {
+        // Test all OrderResponseType values
+        let response_types = vec![
+            (OrderResponseType::Ack, "ACK"),
+            (OrderResponseType::Result, "RESULT"),
+            (OrderResponseType::Full, "FULL"),
+        ];
+
+        for (resp_type, expected_str) in response_types {
+            let request = NewOrderRequest {
+                symbol: "BTCUSDT".to_string(),
+                side: OrderSide::Buy,
+                order_type: OrderType::Market,
+                time_in_force: None,
+                quantity: Some(dec!(1)),
+                quote_order_qty: None,
+                price: None,
+                new_client_order_id: None,
+                strategy_id: None,
+                strategy_type: None,
+                stop_price: None,
+                trailing_delta: None,
+                iceberg_qty: None,
+                new_order_resp_type: Some(resp_type),
+                self_trade_prevention_mode: None,
+                recv_window: None,
+            };
+
+            let json = serde_json::to_value(&request).unwrap();
+            assert_eq!(json["newOrderRespType"], expected_str);
+        }
+    }
+
+    #[test]
+    fn test_decimal_precision_in_responses() {
+        // Test that decimal values maintain precision
+        let json = r#"{
+            "price": "12345.67890123",
+            "qty": "0.00000001",
+            "commission": "999999999.99999999",
+            "commissionAsset": "BTC",
+            "tradeId": 1
+        }"#;
+
+        let fill: Fill = serde_json::from_str(json).unwrap();
+        assert_eq!(fill.price.to_string(), "12345.67890123");
+        assert_eq!(fill.qty.to_string(), "0.00000001");
+        assert_eq!(fill.commission.to_string(), "999999999.99999999");
+    }
+
+    #[test]
+    fn test_large_order_id_deserialization() {
+        // Test handling of large order IDs
+        let json = r#"{
+            "symbol": "BTCUSDT",
+            "orderId": 9223372036854775807,
+            "orderListId": -9223372036854775808,
+            "clientOrderId": "test",
+            "transactTime": 1507725176595
+        }"#;
+
+        let response: OrderAckResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.order_id, 9223372036854775807u64);
+        assert_eq!(response.order_list_id, -9223372036854775808i64);
     }
 }

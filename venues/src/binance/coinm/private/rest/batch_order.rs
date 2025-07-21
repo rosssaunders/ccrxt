@@ -9,7 +9,6 @@ use crate::binance::{
         },
         private::rest::client::RestClient,
     },
-    shared,
 };
 
 const BATCH_ORDERS_ENDPOINT: &str = "/dapi/v1/batchOrders";
@@ -301,8 +300,7 @@ impl RestClient {
         &self,
         request: PlaceBatchOrdersRequest,
     ) -> RestResult<Vec<BatchOrderResult>> {
-        shared::send_signed_request(
-            self,
+        self.send_signed_request(
             BATCH_ORDERS_ENDPOINT,
             reqwest::Method::POST,
             request,

@@ -3,6 +3,8 @@ use serde::Deserialize;
 use super::client::RestClient;
 use crate::binance::options::RestResult;
 
+const PING_ENDPOINT: &str = "/eapi/v1/ping";
+
 /// Ping response (empty object)
 #[derive(Debug, Clone, Deserialize)]
 pub struct PingResponse {}
@@ -17,7 +19,7 @@ impl RestClient {
     /// Weight: 1
     /// Security: None
     pub async fn ping(&self) -> RestResult<PingResponse> {
-        self.send_request("/eapi/v1/ping", reqwest::Method::GET, None, None, 1)
+        self.send_public_request(PING_ENDPOINT, reqwest::Method::GET, None::<()>, 1)
             .await
     }
 }

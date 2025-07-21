@@ -1,203 +1,112 @@
-//! User symbol configuration endpoints for Binance USDM REST API.
-
-use chrono::Utc;
-use reqwest::Method;
-use secrecy::{ExposeSecret, SecretString};
 use serde::{Deserialize, Serialize};
-use thiserror::Error;
 
-use crate::binance::usdm::{
-    enums::MarginType,
-    private::rest::{client::RestClient, order::OrderErrorResponse},
-    signing::sign_query,
-};
+use super::UsdmClient;
+use crate::binance::usdm::RestResult;
+use crate::binance::usdm::enums::MarginType;
 
-/// Error type for USDM symbol config endpoints.
-#[derive(Debug, Error, Clone, Deserialize)]
-pub enum SymbolConfigError {
-    #[error("Invalid API key or signature: {0}")]
-    InvalidApiKeyOrSignature(String),
+/// Endpoint path for symbol configuration.
+const SYMBOL_CONFIG_ENDPOINT: &str = "/fapi/v1/symbolConfig";
 
-    #[error("Symbol not found: {0}")]
-    InvalidSymbol(String),
-
-    #[error("Too many requests: {0}")]
-    TooManyRequests(String),
-
-    #[error("Unknown error: {0}")]
-    Unknown(String),
-}
-
-/// Result type for USDM symbol config operations.
-pub type SymbolConfigResult<T> = Result<T, SymbolConfigError>;
-
-/// Request for getting symbol configuration.
-#[derive(Debug, Clone, Serialize)]
+/// Request parameters for the Symbol Config endpoint.
+///
+/// Used to query symbol configuration for a specific symbol or all symbols.
+#[derive(Debug, Clone, Serialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct GetSymbolConfigRequest {
-    /// Trading symbol (optional, if not provided returns all symbols).
+    /// Trading symbol to query (optional).
+    /// If not provided, returns configuration for all symbols.
+    /// Must match a valid trading symbol (e.g., "BTCUSDT").
     #[serde(skip_serializing_if = "Option::is_none")]
     pub symbol: Option<String>,
-    /// Request timestamp in milliseconds.
-    pub timestamp: u64,
-    /// Request signature.
+
+    /// Optional window for request validity in milliseconds.
+    /// If not provided, default is 5000ms.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub signature: Option<String>,
+    pub recv_window: Option<u64>,
+
+    /// Request timestamp in milliseconds since epoch.
+    pub timestamp: u64,
 }
 
-impl Default for GetSymbolConfigRequest {
-    fn default() -> Self {
-        Self {
-            symbol: None,
-            timestamp: Utc::now().timestamp_millis() as u64,
-            signature: None,
-        }
-    }
-}
-
-/// User symbol configuration response.
+/// Symbol configuration response for a single symbol.
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct SymbolConfigResponse {
     /// Trading symbol.
     pub symbol: String,
-    /// Current leverage for the symbol.
-    pub leverage: u32,
+
     /// Margin type for the symbol.
     pub margin_type: MarginType,
-    /// Whether isolated positions are allowed for the symbol.
-    pub is_isolated: bool,
+
+    /// Whether auto add margin is enabled for the symbol.
+    pub is_auto_add_margin: bool,
+
+    /// Current leverage for the symbol.
+    pub leverage: u32,
+
+    /// Maximum notional value allowed for the symbol.
+    pub max_notional_value: String,
 }
 
-impl RestClient {
-    /// Get user symbol configuration.
+impl UsdmClient {
+    /// Symbol Configuration (USER_DATA)
     ///
-    /// Retrieves the current configuration for a specific symbol or all symbols,
-    /// including leverage, margin type, and isolation settings.
+    /// Get current account symbol configuration.
     ///
-    /// Weight: 1
+    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Symbol-Config
+    ///
+    /// Rate limit: 5
     ///
     /// # Arguments
-    ///
-    /// * `symbol` - Trading symbol (optional, if not provided returns all symbols)
-    /// * `api_key` - API key for authentication
-    /// * `api_secret` - API secret for signing requests
+    /// * `params` - The request parameters for symbol config
     ///
     /// # Returns
-    ///
     /// Returns `Vec<SymbolConfigResponse>` containing symbol configurations.
-    ///
-    /// # Errors
-    ///
-    /// Returns `SymbolConfigError` if:
-    /// - The symbol is invalid (if provided)
-    /// - Authentication fails
-    /// - Rate limits are exceeded
     pub async fn get_symbol_config(
         &self,
-        symbol: Option<impl Into<String>>,
-        api_key: impl Into<SecretString>,
-        api_secret: impl Into<SecretString>,
-    ) -> SymbolConfigResult<Vec<SymbolConfigResponse>> {
-        // Acquire rate limit permit
-        self.rate_limiter
-            .acquire_request(1)
-            .await
-            .map_err(|e| SymbolConfigError::Unknown(format!("Rate limiting error: {e}")))?;
-
-        let api_key = api_key.into();
-        let api_secret = api_secret.into();
-        let timestamp = Utc::now().timestamp_millis() as u64;
-
-        let mut request = GetSymbolConfigRequest {
-            symbol: symbol.map(|s| s.into()),
-            timestamp,
-            signature: None,
-        };
-
-        // Create query string for signing
-        let query_string = serde_urlencoded::to_string(&request)
-            .map_err(|_| SymbolConfigError::Unknown("Failed to serialize request".to_string()))?;
-
-        // Sign the request
-        let signature = sign_query(&query_string, &api_secret);
-        request.signature = Some(signature);
-
-        // Make the request
-        let response = self
-            .client
-            .request(
-                Method::GET,
-                format!("{}/fapi/v1/symbolConfig", self.base_url),
-            )
-            .header("X-MBX-APIKEY", api_key.expose_secret())
-            .query(&request)
-            .send()
-            .await
-            .map_err(|e| SymbolConfigError::Unknown(e.to_string()))?;
-
-        if response.status().is_success() {
-            let config_response: Vec<SymbolConfigResponse> = response
-                .json()
-                .await
-                .map_err(|e| SymbolConfigError::Unknown(e.to_string()))?;
-            Ok(config_response)
-        } else {
-            let error_response: OrderErrorResponse = response
-                .json()
-                .await
-                .map_err(|e| SymbolConfigError::Unknown(e.to_string()))?;
-            Err(SymbolConfigError::Unknown(error_response.msg))
-        }
+        params: GetSymbolConfigRequest,
+    ) -> RestResult<Vec<SymbolConfigResponse>> {
+        self.send_signed_request(
+            SYMBOL_CONFIG_ENDPOINT,
+            reqwest::Method::GET,
+            Some(&params),
+            5,
+            false,
+        )
+        .await
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use serde_json;
 
     #[test]
-    fn test_get_symbol_config_request_serialization_with_symbol() {
-        let request = GetSymbolConfigRequest {
+    fn test_request_serialization() {
+        let req = GetSymbolConfigRequest {
             symbol: Some("BTCUSDT".to_string()),
-            timestamp: 1625097600000,
-            signature: Some("test_signature".to_string()),
+            recv_window: Some(5000),
+            timestamp: 1640995200000,
         };
-
-        let serialized = serde_urlencoded::to_string(&request).unwrap();
-        assert!(serialized.contains("symbol=BTCUSDT"));
-        assert!(serialized.contains("timestamp=1625097600000"));
-        assert!(serialized.contains("signature=test_signature"));
+        let json = serde_json::to_string(&req).unwrap();
+        assert!(json.contains("BTCUSDT"));
+        assert!(json.contains("recvWindow"));
+        assert!(json.contains("timestamp"));
     }
 
     #[test]
-    fn test_get_symbol_config_request_serialization_without_symbol() {
-        let request = GetSymbolConfigRequest {
-            symbol: None,
-            timestamp: 1625097600000,
-            signature: Some("test_signature".to_string()),
-        };
-
-        let serialized = serde_urlencoded::to_string(&request).unwrap();
-        assert!(!serialized.contains("symbol="));
-        assert!(serialized.contains("timestamp=1625097600000"));
-        assert!(serialized.contains("signature=test_signature"));
-    }
-
-    #[test]
-    fn test_symbol_config_response_deserialization() {
-        let json = r#"[{
-            "symbol": "BTCUSDT",
-            "leverage": 20,
-            "marginType": "cross",
-            "isIsolated": false
-        }]"#;
-
-        let response: Vec<SymbolConfigResponse> = serde_json::from_str(json).unwrap();
-        assert_eq!(response.len(), 1);
-        assert_eq!(response[0].symbol, "BTCUSDT");
-        assert_eq!(response[0].leverage, 20);
-        assert_eq!(response[0].margin_type, MarginType::Cross);
-        assert!(!response[0].is_isolated);
+    fn test_response_deserialization() {
+        let json = r#"{
+            \"symbol\": \"BTCUSDT\",
+            \"marginType\": \"CROSSED\",
+            \"isAutoAddMargin\": true,
+            \"leverage\": 21,
+            \"maxNotionalValue\": \"1000000\"
+        }"#;
+        let resp: SymbolConfigResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(resp.symbol, "BTCUSDT");
+        assert_eq!(resp.leverage, 21);
+        assert_eq!(resp.max_notional_value, "1000000");
     }
 }

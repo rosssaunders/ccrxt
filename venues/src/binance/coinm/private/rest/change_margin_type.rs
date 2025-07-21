@@ -2,7 +2,6 @@ use serde::{Deserialize, Serialize};
 
 use crate::binance::{
     coinm::{MarginType, RestResult, private::rest::client::RestClient},
-    shared,
 };
 
 const MARGIN_TYPE_ENDPOINT: &str = "/dapi/v1/marginType";
@@ -57,8 +56,7 @@ impl RestClient {
         &self,
         params: ChangeMarginTypeRequest,
     ) -> RestResult<ChangeMarginTypeResponse> {
-        shared::send_signed_request(
-            self,
+        self.send_signed_request(
             MARGIN_TYPE_ENDPOINT,
             reqwest::Method::POST,
             params,

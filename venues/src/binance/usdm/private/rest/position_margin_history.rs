@@ -1,178 +1,114 @@
-//! Position margin change history endpoints for Binance USDM REST API.
-
+use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
 
-use chrono::Utc;
-use reqwest::Method;
-use secrecy::{ExposeSecret, SecretString};
-use serde::{Deserialize, Deserializer, Serialize};
-use serde_urlencoded;
-use thiserror::Error;
+use super::UsdmClient;
+use crate::binance::usdm::RestResult;
+use crate::binance::usdm::enums::*;
 
-use crate::binance::usdm::{enums::*, private::rest::client::RestClient, signing::sign_query};
+/// Endpoint path for position margin change history.
+const POSITION_MARGIN_HISTORY_ENDPOINT: &str = "/fapi/v1/positionMargin/history";
 
-#[derive(Debug, Error, Clone, Deserialize)]
-#[serde(tag = "code", content = "msg")]
-pub enum PositionMarginHistoryError {
-    #[error("Invalid API key or signature: {0}")]
-    InvalidKey(String),
-    #[error("Position margin history error: {0}")]
-    PositionMarginHistory(String),
-    #[error("Rate limit exceeded: {0}")]
-    RateLimit(String),
-    #[error("Other error: {0}")]
-    Other(String),
-}
-
-#[derive(Debug, Clone, Deserialize)]
-pub struct PositionMarginHistoryErrorResponse {
-    pub code: i64,
-    pub msg: String,
-}
-
-impl From<PositionMarginHistoryErrorResponse> for PositionMarginHistoryError {
-    fn from(e: PositionMarginHistoryErrorResponse) -> Self {
-        match e.code {
-            -2015 | -2014 => PositionMarginHistoryError::InvalidKey(e.msg),
-            -1003 => PositionMarginHistoryError::RateLimit(e.msg),
-            _ => PositionMarginHistoryError::Other(e.msg),
-        }
-    }
-}
-
-pub type PositionMarginHistoryResult<T> = std::result::Result<T, PositionMarginHistoryError>;
-
-/// Margin modification type for position margin history.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+/// Type of margin modification for position margin history.
+///
+/// 1: Add position margin
+/// 2: Reduce position margin
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum MarginModificationType {
+    #[serde(rename = "1")]
     Add = 1,
+
+    #[serde(rename = "2")]
     Reduce = 2,
 }
 
-impl Serialize for MarginModificationType {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        match self {
-            MarginModificationType::Add => serializer.serialize_u8(1),
-            MarginModificationType::Reduce => serializer.serialize_u8(2),
-        }
-    }
-}
-
-impl<'de> Deserialize<'de> for MarginModificationType {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: Deserializer<'de>,
-    {
-        match u8::deserialize(deserializer)? {
-            1 => Ok(MarginModificationType::Add),
-            2 => Ok(MarginModificationType::Reduce),
-            other => Err(serde::de::Error::invalid_value(
-                serde::de::Unexpected::Unsigned(other as u64),
-                &"1 or 2",
-            )),
-        }
-    }
-}
-
-/// Request for getting position margin change history.
-#[derive(Debug, Clone, Serialize)]
+/// Request parameters for the position margin change history endpoint.
+///
+/// All credential fields must be securely stored and passed as `SecretString`.
+#[derive(Debug, Clone, Serialize, Default)]
+#[serde(rename_all = "camelCase")]
 pub struct GetPositionMarginHistoryRequest {
-    #[serde(skip_serializing)]
-    pub api_key: SecretString,
-    #[serde(skip_serializing)]
-    pub api_secret: SecretString,
+    /// Trading symbol (e.g., "BTCUSDT"). Required.
     pub symbol: Cow<'static, str>,
-    #[serde(rename = "type")]
+
+    /// Type of margin modification. Optional. 1: Add, 2: Reduce.
+    #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
     pub modification_type: Option<MarginModificationType>,
-    #[serde(rename = "startTime")]
+
+    /// Start time for filtering (milliseconds since epoch). Optional.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub start_time: Option<u64>,
-    #[serde(rename = "endTime")]
+
+    /// End time for filtering (milliseconds since epoch). Optional. Defaults to current time if not provided.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub end_time: Option<u64>,
+
+    /// Maximum number of results to return. Optional. Default: 500.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<u32>,
+
+    /// Optional receive window (milliseconds).
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub recv_window: Option<u64>,
+
+    /// Request timestamp (milliseconds since epoch). Required by API, set automatically.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub timestamp: Option<u64>,
 }
 
-/// Position margin change history entry.
+/// Represents a single position margin change history entry.
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct PositionMarginHistoryEntry {
-    pub amount: String,
-    pub asset: String,
+    /// Trading symbol.
     pub symbol: String,
-    pub time: u64,
+
+    /// Type of margin modification (1: Add, 2: Reduce).
     #[serde(rename = "type")]
     pub modification_type: MarginModificationType,
+
+    /// Delta type (e.g., "USER_ADJUST").
+    pub delta_type: Option<String>,
+
+    /// Amount of margin changed.
+    pub amount: String,
+
+    /// Asset (e.g., "USDT").
+    pub asset: String,
+
+    /// Time of modification (milliseconds since epoch).
+    pub time: u64,
+
+    /// Position side (e.g., "BOTH", "LONG", "SHORT").
     pub position_side: PositionSide,
 }
 
-impl RestClient {
-    /// Get position margin change history (GET /fapi/v1/positionMargin/history)
-    /// [Binance API docs](https://binance-docs.github.io/apidocs/futures/en/#get-position-margin-change-history-trade)
+impl UsdmClient {
+    /// Get Position Margin Change History (TRADE)
+    ///
+    /// Retrieves position margin change history for a given symbol on Binance USDM Futures.
+    ///
+    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Get-Position-Margin-Change-History
+    ///
+    /// Rate limit: 1 request per second
+    ///
+    /// # Arguments
+    /// * `params` - The request parameters for position margin history
+    ///
+    /// # Returns
+    /// A vector of position margin change history entries
     pub async fn get_position_margin_history(
         &self,
         params: GetPositionMarginHistoryRequest,
-    ) -> PositionMarginHistoryResult<Vec<PositionMarginHistoryEntry>> {
-        use tracing::debug;
-
-        use crate::binance::usdm::request::execute_request;
-        let endpoint = "/fapi/v1/positionMargin/history";
-        let method = Method::GET;
-        let url = format!("{}{}", self.base_url, endpoint);
-
-        // 1. Serialize params to query string (excluding api_key/api_secret)
-        let mut query_pairs = serde_urlencoded::to_string(&params).map_err(|e| {
-            PositionMarginHistoryError::Other(format!("Failed to serialize params: {e}"))
-        })?;
-        if !query_pairs.is_empty() {
-            query_pairs.push('&');
-        }
-        let timestamp = Utc::now().timestamp_millis();
-        let recv_window = 5000u64;
-        query_pairs.push_str(&format!("timestamp={timestamp}&recvWindow={recv_window}"));
-
-        // 2. Sign
-        let signature = sign_query(&query_pairs, &params.api_secret);
-        query_pairs.push_str(&format!("&signature={signature}"));
-
-        // 3. Headers
-        let headers = vec![("X-MBX-APIKEY", params.api_key.expose_secret().to_string())];
-
-        // 4. Rate limiting
-        self.rate_limiter
-            .acquire_request(1)
-            .await
-            .map_err(|e| PositionMarginHistoryError::Other(format!("Rate limiting error: {e}")))?;
-        debug!(
-            endpoint = endpoint,
-            "Sending get position margin history request"
-        );
-
-        // 5. Execute
-        let full_url = format!("{}?{}", url, query_pairs);
-        let resp = execute_request::<Vec<PositionMarginHistoryEntry>>(
-            &self.client,
-            &full_url,
-            method,
-            Some(headers),
-            None,
+    ) -> RestResult<Vec<PositionMarginHistoryEntry>> {
+        self.send_signed_request(
+            POSITION_MARGIN_HISTORY_ENDPOINT,
+            reqwest::Method::GET,
+            params,
+            1,
+            true,
         )
         .await
-        .map_err(|e| match e {
-            crate::binance::usdm::Errors::ApiError(api_err) => {
-                PositionMarginHistoryError::Other(format!("API error: {api_err}"))
-            }
-            crate::binance::usdm::Errors::HttpError(http_err) => {
-                PositionMarginHistoryError::Other(format!("HTTP error: {http_err}"))
-            }
-            crate::binance::usdm::Errors::Error(msg) => PositionMarginHistoryError::Other(msg),
-            crate::binance::usdm::Errors::InvalidApiKey() => {
-                PositionMarginHistoryError::InvalidKey("Invalid API key or signature".to_string())
-            }
-        })?;
-
-        Ok(resp.data)
     }
 }
 
@@ -184,29 +120,32 @@ mod tests {
     fn test_position_margin_history_response_deserialization() {
         let json = r#"[
             {
-                "amount": "100.00000000",
-                "asset": "USDT",
                 "symbol": "BTCUSDT",
-                "time": 1578047897183,
                 "type": 1,
-                "positionSide": "LONG"
+                "deltaType": "USER_ADJUST",
+                "amount": "23.36332311",
+                "asset": "USDT",
+                "time": 1578047897183,
+                "positionSide": "BOTH"
             },
             {
-                "amount": "50.00000000",
-                "asset": "USDT",
                 "symbol": "BTCUSDT",
-                "time": 1578047897184,
                 "type": 2,
-                "positionSide": "SHORT"
+                "deltaType": "USER_ADJUST",
+                "amount": "100",
+                "asset": "USDT",
+                "time": 1578047900425,
+                "positionSide": "LONG"
             }
         ]"#;
 
         let result: Vec<PositionMarginHistoryEntry> = serde_json::from_str(json).unwrap();
         assert_eq!(result.len(), 2);
         assert_eq!(result[0].symbol, "BTCUSDT");
-        assert_eq!(result[0].amount, "100.00000000");
+        assert_eq!(result[0].amount, "23.36332311");
         assert_eq!(result[0].asset, "USDT");
-        assert_eq!(result[0].position_side, PositionSide::Long);
+        assert_eq!(result[0].position_side, PositionSide::Both);
+        assert_eq!(result[0].delta_type.as_deref(), Some("USER_ADJUST"));
         assert!(matches!(
             result[0].modification_type,
             MarginModificationType::Add
@@ -220,13 +159,13 @@ mod tests {
     #[test]
     fn test_get_position_margin_history_request_serialization() {
         let request = GetPositionMarginHistoryRequest {
-            api_key: SecretString::new("test_key".to_string().into()),
-            api_secret: SecretString::new("test_secret".to_string().into()),
             symbol: Cow::Borrowed("BTCUSDT"),
             modification_type: Some(MarginModificationType::Add),
             start_time: Some(1578047897183),
             end_time: Some(1578047897184),
             limit: Some(100),
+            recv_window: Some(5000),
+            timestamp: Some(1578047897000),
         };
 
         let serialized = serde_urlencoded::to_string(&request).unwrap();
@@ -235,6 +174,8 @@ mod tests {
         assert!(serialized.contains("startTime=1578047897183"));
         assert!(serialized.contains("endTime=1578047897184"));
         assert!(serialized.contains("limit=100"));
+        assert!(serialized.contains("recvWindow=5000"));
+        assert!(serialized.contains("timestamp=1578047897000"));
     }
 
     #[test]

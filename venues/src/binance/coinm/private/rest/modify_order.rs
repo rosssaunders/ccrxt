@@ -5,7 +5,6 @@ use crate::binance::{
         OrderSide, OrderStatus, OrderType, PositionSide, PriceMatch, RestResult,
         SelfTradePreventionMode, TimeInForce, WorkingType, private::rest::client::RestClient,
     },
-    shared,
 };
 
 const ORDER_ENDPOINT: &str = "/dapi/v1/order";
@@ -167,8 +166,7 @@ impl RestClient {
         params: ModifyOrderRequest,
     ) -> RestResult<ModifyOrderResponse> {
         let weight = 1;
-        shared::send_signed_request(
-            self,
+        self.send_signed_request(
             ORDER_ENDPOINT,
             reqwest::Method::PUT,
             params,

@@ -2,10 +2,9 @@ use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::binance::{
-    options::{OptionsBillType, RestResult},
-    shared,
-};
+use crate::binance::options::{OptionsBillType, RestResult};
+
+const GET_ACCOUNT_FUNDING_FLOW_ENDPOINT: &str = "/eapi/v1/bill";
 
 /// Request parameters for querying account funding flows
 #[derive(Debug, Clone, Serialize)]
@@ -76,9 +75,8 @@ impl RestClient {
         &self,
         params: AccountFundingFlowRequest,
     ) -> RestResult<Vec<FundingFlowRecord>> {
-        shared::send_signed_request(
-            self,
-            "/eapi/v1/bill",
+        self.send_signed_request(
+            GET_ACCOUNT_FUNDING_FLOW_ENDPOINT,
             reqwest::Method::GET,
             params,
             1,

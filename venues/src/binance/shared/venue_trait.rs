@@ -42,194 +42,159 @@ pub struct RateLimits {
     pub orders_day_limit: Option<u32>,
 }
 
-/// Predefined venue configurations
-pub mod configs {
-    use super::*;
+// /// Predefined venue configurations
+// pub mod configs {
+//     use super::*;
 
-    /// Spot trading venue configuration
-    pub struct SpotConfig;
+//     /// Spot trading venue configuration
+//     pub struct SpotConfig;
 
-    impl VenueConfig for SpotConfig {
-        fn base_url(&self) -> &str {
-            "https://api.binance.com"
-        }
+//     impl VenueConfig for SpotConfig {
+//         fn base_url(&self) -> &str {
+//             "https://api.binance.com"
+//         }
 
-        fn venue_name(&self) -> &str {
-            "spot"
-        }
+//         fn venue_name(&self) -> &str {
+//             "spot"
+//         }
 
-        fn rate_limits(&self) -> RateLimits {
-            RateLimits {
-                request_weight_limit: 1200,
-                request_weight_window: Duration::from_secs(60),
-                raw_requests_limit: 6000,
-                raw_requests_window: Duration::from_secs(300), // 5 minutes
-                orders_10s_limit: 100,
-                orders_minute_limit: 1000,
-                orders_day_limit: Some(1000),
-            }
-        }
+//         fn rate_limits(&self) -> RateLimits {
+//             RateLimits {
+//                 request_weight_limit: 1200,
+//                 request_weight_window: Duration::from_secs(60),
+//                 raw_requests_limit: 6000,
+//                 raw_requests_window: Duration::from_secs(300), // 5 minutes
+//                 orders_10s_limit: 100,
+//                 orders_minute_limit: 1000,
+//                 orders_day_limit: Some(1000),
+//             }
+//         }
 
-        fn supports_futures(&self) -> bool {
-            false
-        }
+//         fn supports_futures(&self) -> bool {
+//             false
+//         }
 
-        fn supports_options(&self) -> bool {
-            false
-        }
+//         fn supports_options(&self) -> bool {
+//             false
+//         }
 
-        fn supports_margin(&self) -> bool {
-            true
-        }
-    }
+//         fn supports_margin(&self) -> bool {
+//             true
+//         }
+//     }
 
-    /// USD-Margined Futures venue configuration
-    pub struct UsdmConfig;
+//
 
-    impl VenueConfig for UsdmConfig {
-        fn base_url(&self) -> &str {
-            "https://fapi.binance.com"
-        }
+//     /// Coin-Margined Futures venue configuration
+//     pub struct CoinmConfig;
 
-        fn venue_name(&self) -> &str {
-            "usdm"
-        }
+//     impl VenueConfig for CoinmConfig {
+//         fn base_url(&self) -> &str {
+//             "https://dapi.binance.com"
+//         }
 
-        fn rate_limits(&self) -> RateLimits {
-            RateLimits {
-                request_weight_limit: 2400,
-                request_weight_window: Duration::from_secs(60),
-                raw_requests_limit: 1200,
-                raw_requests_window: Duration::from_secs(60),
-                orders_10s_limit: 100,
-                orders_minute_limit: 1200,
-                orders_day_limit: None,
-            }
-        }
+//         fn venue_name(&self) -> &str {
+//             "coinm"
+//         }
 
-        fn supports_futures(&self) -> bool {
-            true
-        }
+//         fn rate_limits(&self) -> RateLimits {
+//             RateLimits {
+//                 request_weight_limit: 6000,
+//                 request_weight_window: Duration::from_secs(60),
+//                 raw_requests_limit: 61000,
+//                 raw_requests_window: Duration::from_secs(300), // 5 minutes
+//                 orders_10s_limit: 100,
+//                 orders_minute_limit: 1200,
+//                 orders_day_limit: None,
+//             }
+//         }
 
-        fn supports_options(&self) -> bool {
-            false
-        }
+//         fn supports_futures(&self) -> bool {
+//             true
+//         }
 
-        fn supports_margin(&self) -> bool {
-            false
-        }
-    }
+//         fn supports_options(&self) -> bool {
+//             false
+//         }
 
-    /// Coin-Margined Futures venue configuration
-    pub struct CoinmConfig;
+//         fn supports_margin(&self) -> bool {
+//             false
+//         }
+//     }
 
-    impl VenueConfig for CoinmConfig {
-        fn base_url(&self) -> &str {
-            "https://dapi.binance.com"
-        }
+//     /// Options venue configuration
+//     pub struct OptionsConfig;
 
-        fn venue_name(&self) -> &str {
-            "coinm"
-        }
+//     impl VenueConfig for OptionsConfig {
+//         fn base_url(&self) -> &str {
+//             "https://eapi.binance.com"
+//         }
 
-        fn rate_limits(&self) -> RateLimits {
-            RateLimits {
-                request_weight_limit: 6000,
-                request_weight_window: Duration::from_secs(60),
-                raw_requests_limit: 61000,
-                raw_requests_window: Duration::from_secs(300), // 5 minutes
-                orders_10s_limit: 100,
-                orders_minute_limit: 1200,
-                orders_day_limit: None,
-            }
-        }
+//         fn venue_name(&self) -> &str {
+//             "options"
+//         }
 
-        fn supports_futures(&self) -> bool {
-            true
-        }
+//         fn rate_limits(&self) -> RateLimits {
+//             // Same as COINM
+//             RateLimits {
+//                 request_weight_limit: 6000,
+//                 request_weight_window: Duration::from_secs(60),
+//                 raw_requests_limit: 61000,
+//                 raw_requests_window: Duration::from_secs(300), // 5 minutes
+//                 orders_10s_limit: 100,
+//                 orders_minute_limit: 1200,
+//                 orders_day_limit: None,
+//             }
+//         }
 
-        fn supports_options(&self) -> bool {
-            false
-        }
+//         fn supports_futures(&self) -> bool {
+//             false
+//         }
 
-        fn supports_margin(&self) -> bool {
-            false
-        }
-    }
+//         fn supports_options(&self) -> bool {
+//             true
+//         }
 
-    /// Options venue configuration
-    pub struct OptionsConfig;
+//         fn supports_margin(&self) -> bool {
+//             false
+//         }
+//     }
 
-    impl VenueConfig for OptionsConfig {
-        fn base_url(&self) -> &str {
-            "https://eapi.binance.com"
-        }
+//     /// Portfolio Margin venue configuration
+//     pub struct PortfolioConfig;
 
-        fn venue_name(&self) -> &str {
-            "options"
-        }
+//     impl VenueConfig for PortfolioConfig {
+//         fn base_url(&self) -> &str {
+//             "https://papi.binance.com"
+//         }
 
-        fn rate_limits(&self) -> RateLimits {
-            // Same as COINM
-            RateLimits {
-                request_weight_limit: 6000,
-                request_weight_window: Duration::from_secs(60),
-                raw_requests_limit: 61000,
-                raw_requests_window: Duration::from_secs(300), // 5 minutes
-                orders_10s_limit: 100,
-                orders_minute_limit: 1200,
-                orders_day_limit: None,
-            }
-        }
+//         fn venue_name(&self) -> &str {
+//             "portfolio"
+//         }
 
-        fn supports_futures(&self) -> bool {
-            false
-        }
+//         fn rate_limits(&self) -> RateLimits {
+//             // Same as COINM
+//             RateLimits {
+//                 request_weight_limit: 6000,
+//                 request_weight_window: Duration::from_secs(60),
+//                 raw_requests_limit: 61000,
+//                 raw_requests_window: Duration::from_secs(300), // 5 minutes
+//                 orders_10s_limit: 100,
+//                 orders_minute_limit: 1200,
+//                 orders_day_limit: None,
+//             }
+//         }
 
-        fn supports_options(&self) -> bool {
-            true
-        }
+//         fn supports_futures(&self) -> bool {
+//             true
+//         }
 
-        fn supports_margin(&self) -> bool {
-            false
-        }
-    }
+//         fn supports_options(&self) -> bool {
+//             false
+//         }
 
-    /// Portfolio Margin venue configuration
-    pub struct PortfolioConfig;
-
-    impl VenueConfig for PortfolioConfig {
-        fn base_url(&self) -> &str {
-            "https://papi.binance.com"
-        }
-
-        fn venue_name(&self) -> &str {
-            "portfolio"
-        }
-
-        fn rate_limits(&self) -> RateLimits {
-            // Same as COINM
-            RateLimits {
-                request_weight_limit: 6000,
-                request_weight_window: Duration::from_secs(60),
-                raw_requests_limit: 61000,
-                raw_requests_window: Duration::from_secs(300), // 5 minutes
-                orders_10s_limit: 100,
-                orders_minute_limit: 1200,
-                orders_day_limit: None,
-            }
-        }
-
-        fn supports_futures(&self) -> bool {
-            true
-        }
-
-        fn supports_options(&self) -> bool {
-            false
-        }
-
-        fn supports_margin(&self) -> bool {
-            true
-        }
-    }
-}
+//         fn supports_margin(&self) -> bool {
+//             true
+//         }
+//     }
+// }

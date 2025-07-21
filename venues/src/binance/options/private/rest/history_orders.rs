@@ -2,13 +2,12 @@ use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::binance::{
-    options::{
-        OptionsContractType, OptionsOrderSide, OptionsOrderStatus, OptionsOrderType,
-        OptionsTimeInForce, RestResult,
-    },
-    shared,
+use crate::binance::options::{
+    OptionsContractType, OptionsOrderSide, OptionsOrderStatus, OptionsOrderType,
+    OptionsTimeInForce, RestResult,
 };
+
+const GET_HISTORY_ORDERS_ENDPOINT: &str = "/eapi/v1/historyOrders";
 
 /// Request parameters for querying history orders
 #[derive(Debug, Clone, Serialize)]
@@ -147,9 +146,8 @@ impl RestClient {
         &self,
         params: HistoryOrdersRequest,
     ) -> RestResult<Vec<HistoryOrder>> {
-        shared::send_signed_request(
-            self,
-            "/eapi/v1/historyOrders",
+        self.send_signed_request(
+            GET_HISTORY_ORDERS_ENDPOINT,
             reqwest::Method::GET,
             params,
             1,

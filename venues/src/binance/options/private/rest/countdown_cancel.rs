@@ -1,7 +1,10 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::binance::{options::RestResult, shared};
+use crate::binance::options::RestResult;
+
+const COUNTDOWN_CANCEL_ALL_ENDPOINT: &str = "/eapi/v1/countdownCancelAll";
+const COUNTDOWN_CANCEL_HEARTBEAT_ENDPOINT: &str = "/eapi/v1/countdownCancelAllHeartBeat";
 
 /// Request parameters for countdown cancel
 #[derive(Debug, Clone, Serialize)]
@@ -84,9 +87,8 @@ impl RestClient {
         &self,
         params: GetCountdownCancelRequest,
     ) -> RestResult<CountdownCancelResponse> {
-        shared::send_signed_request(
-            self,
-            "/eapi/v1/countdownCancelAll",
+        self.send_signed_request(
+            COUNTDOWN_CANCEL_ALL_ENDPOINT,
             reqwest::Method::GET,
             params,
             1,
@@ -108,9 +110,8 @@ impl RestClient {
         &self,
         params: CountdownCancelRequest,
     ) -> RestResult<CountdownCancelResponse> {
-        shared::send_signed_request(
-            self,
-            "/eapi/v1/countdownCancelAll",
+        self.send_signed_request(
+            COUNTDOWN_CANCEL_ALL_ENDPOINT,
             reqwest::Method::POST,
             params,
             1,
@@ -132,9 +133,8 @@ impl RestClient {
         &self,
         params: CountdownCancelHeartbeatRequest,
     ) -> RestResult<CountdownCancelResponse> {
-        shared::send_signed_request(
-            self,
-            "/eapi/v1/countdownCancelAllHeartBeat",
+        self.send_signed_request(
+            COUNTDOWN_CANCEL_HEARTBEAT_ENDPOINT,
             reqwest::Method::POST,
             params,
             1,

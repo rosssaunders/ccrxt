@@ -1,204 +1,170 @@
-//! Income history endpoints for Binance USDM REST API.
-
-use chrono::Utc;
-use reqwest::Method;
-use secrecy::{ExposeSecret, SecretString};
 use serde::{Deserialize, Serialize};
-use thiserror::Error;
 
-use crate::binance::usdm::{
-    private::rest::{client::RestClient, order::OrderErrorResponse},
-    signing::sign_query,
-};
+use super::UsdmClient;
+use crate::binance::usdm::{RestResult, enums::IncomeType};
 
-/// Error type for USDM income history endpoints.
-#[derive(Debug, Error, Clone, Deserialize)]
-#[serde(tag = "code", content = "msg")]
-pub enum IncomeHistoryError {
-    /// Invalid API key or signature.
-    #[error("Invalid API key or signature: {0}")]
-    #[serde(rename = "-1022")]
-    InvalidSignature(String),
-    /// Timestamp for this request is outside of the recv window.
-    #[error("Timestamp for this request is outside of the recv window: {0}")]
-    #[serde(rename = "-1021")]
-    TimestampOutOfRecvWindow(String),
-    /// Invalid API key format.
-    #[error("Invalid API key format: {0}")]
-    #[serde(rename = "-2014")]
-    BadApiKeyFmt(String),
-    /// Invalid API key, IP, or permissions for action.
-    #[error("Invalid API key, IP, or permissions for action: {0}")]
-    #[serde(rename = "-2015")]
-    RejectedMbxKey(String),
-    /// Unknown error.
-    #[error("Unknown error: {0}")]
-    Unknown(String),
-}
+const INCOME_HISTORY_ENDPOINT: &str = "/fapi/v1/income";
 
-/// Income type enumeration
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub enum IncomeType {
-    #[serde(rename = "TRANSFER")]
-    Transfer,
-    #[serde(rename = "WELCOME_BONUS")]
-    WelcomeBonus,
-    #[serde(rename = "REALIZED_PNL")]
-    RealizedPnl,
-    #[serde(rename = "FUNDING_FEE")]
-    FundingFee,
-    #[serde(rename = "COMMISSION")]
-    Commission,
-    #[serde(rename = "INSURANCE_CLEAR")]
-    InsuranceClear,
-    #[serde(rename = "REFERRAL_KICKBACK")]
-    ReferralKickback,
-    #[serde(rename = "COMMISSION_REBATE")]
-    CommissionRebate,
-    #[serde(rename = "API_REBATE")]
-    ApiRebate,
-    #[serde(rename = "CONTEST_REWARD")]
-    ContestReward,
-    #[serde(rename = "CROSS_COLLATERAL_TRANSFER")]
-    CrossCollateralTransfer,
-    #[serde(rename = "OPTIONS_PREMIUM_FEE")]
-    OptionsPremiumFee,
-    #[serde(rename = "OPTIONS_SETTLE_PROFIT")]
-    OptionsSettleProfit,
-    #[serde(rename = "INTERNAL_TRANSFER")]
-    InternalTransfer,
-    #[serde(rename = "AUTO_EXCHANGE")]
-    AutoExchange,
-    #[serde(rename = "DELIVERED_SETTELMENT")]
-    DeliveredSettlement,
-    #[serde(rename = "COIN_SWAP_DEPOSIT")]
-    CoinSwapDeposit,
-    #[serde(rename = "COIN_SWAP_WITHDRAW")]
-    CoinSwapWithdraw,
-    #[serde(rename = "POSITION_LIMIT_INCREASE_FEE")]
-    PositionLimitIncreaseFee,
-}
-
-/// Request for getting income history.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+/// Request parameters for getting income history
+#[derive(Debug, Clone, Serialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct GetIncomeHistoryRequest {
-    /// Trading symbol.
+    /// Trading symbol (e.g., "BTCUSDT"). Optional.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub symbol: Option<String>,
-    /// Income type.
+
+    /// Income type filter. If not sent, all kinds of flow will be returned.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub income_type: Option<IncomeType>,
-    /// Start time in milliseconds.
+
+    /// Timestamp in ms to get funding from INCLUSIVE. If neither startTime nor endTime is sent, the recent 7-day data will be returned.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub start_time: Option<u64>,
-    /// End time in milliseconds.
+
+    /// Timestamp in ms to get funding until INCLUSIVE. If neither startTime nor endTime is sent, the recent 7-day data will be returned.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub end_time: Option<u64>,
+
+    /// Page number for pagination. Optional.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub page: Option<u32>,
+
     /// Number of records to return (default 100, max 1000).
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub limit: Option<u16>,
-    /// Timestamp in milliseconds.
-    pub timestamp: u64,
-    /// Signature for the request.
+    pub limit: Option<u32>,
+
+    /// Receive window for request validity (optional).
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub signature: Option<String>,
+    pub recv_window: Option<u64>,
 }
 
-/// Income history record
-#[derive(Debug, Clone, Serialize, Deserialize)]
+/// Individual income history entry
+#[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct IncomeHistoryResponse {
-    /// Trading symbol
+pub struct IncomeHistoryEntry {
+    /// Trading symbol (if existing).
     pub symbol: String,
-    /// Income type
+
+    /// Income type.
     pub income_type: IncomeType,
-    /// Income amount
+
+    /// Income amount.
     pub income: String,
-    /// Asset
+
+    /// Income asset.
     pub asset: String,
-    /// Income info
+
+    /// Extra information.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub info: Option<String>,
-    /// Time when income was recorded
+
+    /// Time when income was recorded (milliseconds since epoch).
     pub time: u64,
-    /// Transaction ID
+
+    /// Transaction ID (unique in the same incomeType for a user).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub tran_id: Option<u64>,
-    /// Trade ID
+
+    /// Trade ID (if existing).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub trade_id: Option<String>,
 }
 
-impl RestClient {
-    /// Get income history.
+/// Response wrapper for income history endpoint
+pub type GetIncomeHistoryResponse = Vec<IncomeHistoryEntry>;
+
+impl UsdmClient {
+    /// Get Income History (USER_DATA)
+    ///
+    /// Query income history
+    ///
+    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Get-Income-History
+    ///
+    /// Rate limit: 30
+    ///
+    /// # Arguments
+    /// * `request` - The income history request parameters
+    ///
+    /// # Returns
+    /// A list of income history entries
     pub async fn get_income_history(
         &self,
-        api_key: impl Into<SecretString>,
-        api_secret: impl Into<SecretString>,
-        symbol: Option<String>,
-        income_type: Option<IncomeType>,
-        start_time: Option<u64>,
-        end_time: Option<u64>,
-        limit: Option<u16>,
-    ) -> Result<Vec<IncomeHistoryResponse>, IncomeHistoryError> {
-        // Rate limiting for private endpoints (30 weight)
-        self.rate_limiter
-            .acquire_request(30)
-            .await
-            .map_err(|e| IncomeHistoryError::Unknown(format!("Rate limiting error: {e}")))?;
-
-        let api_key = api_key.into();
-        let api_secret = api_secret.into();
-        let timestamp = Utc::now().timestamp_millis() as u64;
-
-        let mut request = GetIncomeHistoryRequest {
-            symbol,
-            income_type,
-            start_time,
-            end_time,
-            limit,
-            timestamp,
-            signature: None,
-        };
-
-        // Create query string for signing
-        let query_string = serde_urlencoded::to_string(&request)
-            .map_err(|_| IncomeHistoryError::Unknown("Failed to serialize request".to_string()))?;
-
-        // Sign the request
-        let signature = sign_query(&query_string, &api_secret);
-        request.signature = Some(signature);
-
-        // Make the request
-        let response = self
-            .client
-            .request(Method::GET, format!("{}/fapi/v1/income", self.base_url))
-            .header("X-MBX-APIKEY", api_key.expose_secret())
-            .query(&request)
-            .send()
-            .await
-            .map_err(|e| IncomeHistoryError::Unknown(e.to_string()))?;
-
-        if response.status().is_success() {
-            let income_response: Vec<IncomeHistoryResponse> = response
-                .json()
-                .await
-                .map_err(|e| IncomeHistoryError::Unknown(e.to_string()))?;
-            Ok(income_response)
-        } else {
-            let error_response: OrderErrorResponse = response
-                .json()
-                .await
-                .map_err(|e| IncomeHistoryError::Unknown(e.to_string()))?;
-            Err(IncomeHistoryError::Unknown(error_response.msg))
-        }
+        request: GetIncomeHistoryRequest,
+    ) -> RestResult<GetIncomeHistoryResponse> {
+        self.send_signed_request(
+            INCOME_HISTORY_ENDPOINT,
+            reqwest::Method::GET,
+            request,
+            30,
+            false,
+        )
+        .await
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_get_income_history_request_serialization_minimal() {
+        let request = GetIncomeHistoryRequest::default();
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert_eq!(serialized, "");
+    }
+
+    #[test]
+    fn test_get_income_history_request_serialization_with_symbol() {
+        let request = GetIncomeHistoryRequest {
+            symbol: Some("BTCUSDT".to_string()),
+            ..Default::default()
+        };
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert_eq!(serialized, "symbol=BTCUSDT");
+    }
+
+    #[test]
+    fn test_get_income_history_request_serialization_full() {
+        let request = GetIncomeHistoryRequest {
+            symbol: Some("BTCUSDT".to_string()),
+            income_type: Some(IncomeType::RealizedPnl),
+            start_time: Some(1625097600000),
+            end_time: Some(1625184000000),
+            page: Some(1),
+            limit: Some(100),
+            recv_window: Some(5000),
+        };
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert!(serialized.contains("symbol=BTCUSDT"));
+        assert!(serialized.contains("incomeType=REALIZED_PNL"));
+        assert!(serialized.contains("startTime=1625097600000"));
+        assert!(serialized.contains("endTime=1625184000000"));
+        assert!(serialized.contains("page=1"));
+        assert!(serialized.contains("limit=100"));
+        assert!(serialized.contains("recvWindow=5000"));
+    }
+
+    #[test]
+    fn test_income_history_entry_deserialization() {
+        let json = r#"{
+            "symbol": "BTCUSDT",
+            "incomeType": "REALIZED_PNL",
+            "income": "-1.37500000",
+            "asset": "USDT",
+            "info": "BTCUSDT",
+            "time": 1570608000000,
+            "tranId": 9689322392,
+            "tradeId": "2059192"
+        }"#;
+
+        let entry: IncomeHistoryEntry = serde_json::from_str(json).unwrap();
+        assert_eq!(entry.symbol, "BTCUSDT");
+        assert_eq!(entry.income, "-1.37500000");
+        assert_eq!(entry.asset, "USDT");
+        assert_eq!(entry.time, 1570608000000);
+        assert_eq!(entry.tran_id, Some(9689322392));
+        assert_eq!(entry.trade_id, Some("2059192".to_string()));
+    }
 
     #[test]
     fn test_income_history_response_deserialization() {
@@ -213,15 +179,60 @@ mod tests {
                 "time": 1570608000000,
                 "tranId": 9689322392,
                 "tradeId": "2059192"
+            },
+            {
+                "symbol": "",
+                "incomeType": "TRANSFER",
+                "income": "-0.37500000",
+                "asset": "USDT",
+                "info": "TRANSFER",
+                "time": 1570608000000,
+                "tranId": 9689322393,
+                "tradeId": ""
             }
         ]
         "#;
 
-        let response: Vec<IncomeHistoryResponse> = serde_json::from_str(json).unwrap();
-        assert_eq!(response.len(), 1);
+        let response: GetIncomeHistoryResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.len(), 2);
+
+        // Test first entry
         assert_eq!(response[0].symbol, "BTCUSDT");
         assert_eq!(response[0].income, "-1.37500000");
         assert_eq!(response[0].asset, "USDT");
         assert_eq!(response[0].time, 1570608000000);
+
+        // Test second entry
+        assert_eq!(response[1].symbol, "");
+        assert_eq!(response[1].income, "-0.37500000");
+        assert_eq!(response[1].asset, "USDT");
+        assert_eq!(response[1].time, 1570608000000);
+    }
+
+    #[test]
+    fn test_income_history_response_deserialization_empty() {
+        let json = "[]";
+        let response: GetIncomeHistoryResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.len(), 0);
+    }
+
+    #[test]
+    fn test_income_history_entry_optional_fields() {
+        let json = r#"{
+            "symbol": "BTCUSDT",
+            "incomeType": "COMMISSION",
+            "income": "-0.01000000",
+            "asset": "USDT",
+            "time": 1570636800000
+        }"#;
+
+        let entry: IncomeHistoryEntry = serde_json::from_str(json).unwrap();
+        assert_eq!(entry.symbol, "BTCUSDT");
+        assert_eq!(entry.income, "-0.01000000");
+        assert_eq!(entry.asset, "USDT");
+        assert_eq!(entry.time, 1570636800000);
+        assert_eq!(entry.info, None);
+        assert_eq!(entry.tran_id, None);
+        assert_eq!(entry.trade_id, None);
     }
 }
