@@ -134,3 +134,168 @@ impl From<ErrorResponse> for ApiError {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_error_response_display() {
+        let error = ErrorResponse {
+            code: "400001".to_string(),
+            msg: "Invalid API key".to_string(),
+        };
+        assert_eq!(format!("{}", error), "KuCoin API Error 400001: Invalid API key");
+    }
+
+    #[test]
+    fn test_api_error_from_error_response_authentication() {
+        let test_cases = vec![
+            ("400001", "Invalid API key"),
+            ("400002", "Invalid signature"),
+            ("400003", "Invalid timestamp"),
+            ("400004", "Invalid KC-API-KEY"),
+            ("400005", "Invalid KC-API-PASSPHRASE"),
+            ("400006", "Invalid KC-API-KEY-VERSION"),
+        ];
+
+        for (code, msg) in test_cases {
+            let error_response = ErrorResponse {
+                code: code.to_string(),
+                msg: msg.to_string(),
+            };
+            
+            let api_error = ApiError::from(error_response);
+            
+            match api_error {
+                ApiError::AuthenticationError { code: err_code, message } => {
+                    assert_eq!(err_code, code);
+                    assert_eq!(message, msg);
+                }
+                _ => panic!("Expected AuthenticationError for code {}", code),
+            }
+        }
+    }
+
+    #[test]
+    fn test_api_error_from_error_response_bad_request() {
+        let error_response = ErrorResponse {
+            code: "400100".to_string(),
+            msg: "Invalid parameter".to_string(),
+        };
+        
+        let api_error = ApiError::from(error_response);
+        
+        match api_error {
+            ApiError::BadRequest { code, message } => {
+                assert_eq!(code, "400100");
+                assert_eq!(message, "Invalid parameter");
+            }
+            _ => panic!("Expected BadRequest"),
+        }
+    }
+
+    #[test]
+    fn test_api_error_from_error_response_rate_limit() {
+        let error_response = ErrorResponse {
+            code: "429000".to_string(),
+            msg: "Too many requests".to_string(),
+        };
+        
+        let api_error = ApiError::from(error_response);
+        
+        match api_error {
+            ApiError::RateLimitExceeded { code, message } => {
+                assert_eq!(code, "429000");
+                assert_eq!(message, "Too many requests");
+            }
+            _ => panic!("Expected RateLimitExceeded"),
+        }
+    }
+
+    #[test]
+    fn test_api_error_from_error_response_server_error() {
+        let error_response = ErrorResponse {
+            code: "500000".to_string(),
+            msg: "Internal server error".to_string(),
+        };
+        
+        let api_error = ApiError::from(error_response);
+        
+        match api_error {
+            ApiError::ServerError { code, message } => {
+                assert_eq!(code, "500000");
+                assert_eq!(message, "Internal server error");
+            }
+            _ => panic!("Expected ServerError"),
+        }
+    }
+
+    #[test]
+    fn test_api_error_from_error_response_other() {
+        let error_response = ErrorResponse {
+            code: "200001".to_string(),
+            msg: "Unknown error".to_string(),
+        };
+        
+        let api_error = ApiError::from(error_response);
+        
+        match api_error {
+            ApiError::Other { code, message } => {
+                assert_eq!(code, "200001");
+                assert_eq!(message, "Unknown error");
+            }
+            _ => panic!("Expected Other error"),
+        }
+    }
+
+    #[test]
+    fn test_kucoin_error_display() {
+        let error = KucoinError::InvalidApiKey;
+        assert_eq!(format!("{}", error), "Invalid API key or signature");
+
+        let error = KucoinError::Error("Custom error".to_string());
+        assert_eq!(format!("{}", error), "Error: Custom error");
+    }
+
+    #[test]
+    fn test_api_error_display() {
+        let error = ApiError::AuthenticationError {
+            code: "400001".to_string(),
+            message: "Invalid API key".to_string(),
+        };
+        assert_eq!(format!("{}", error), "Authentication failed: Invalid API key (code: 400001)");
+
+        let error = ApiError::BadRequest {
+            code: "400100".to_string(),
+            message: "Invalid parameter".to_string(),
+        };
+        assert_eq!(format!("{}", error), "Bad request: Invalid parameter (code: 400100)");
+
+        let error = ApiError::RateLimitExceeded {
+            code: "429000".to_string(),
+            message: "Too many requests".to_string(),
+        };
+        assert_eq!(format!("{}", error), "Rate limit exceeded: Too many requests (code: 429000)");
+
+        let error = ApiError::ServerError {
+            code: "500000".to_string(),
+            message: "Internal server error".to_string(),
+        };
+        assert_eq!(format!("{}", error), "Server error: Internal server error (code: 500000)");
+
+        let error = ApiError::Http("Connection timeout".to_string());
+        assert_eq!(format!("{}", error), "HTTP error: Connection timeout");
+
+        let error = ApiError::JsonParsing("Invalid JSON".to_string());
+        assert_eq!(format!("{}", error), "JSON parsing error: Invalid JSON");
+    }
+
+    #[test]
+    fn test_error_response_deserialization() {
+        let json = r#"{"code":"400001","msg":"Invalid API key"}"#;
+        let error: ErrorResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(error.code, "400001");
+        assert_eq!(error.msg, "Invalid API key");
+    }
+}

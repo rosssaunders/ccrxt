@@ -39,10 +39,12 @@ pub struct OptionsOrderBook {
     pub id: Option<i64>,
 
     /// Current timestamp
-    pub current: f64,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub current: Option<f64>,
 
     /// Last update timestamp
-    pub update: f64,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub update: Option<f64>,
 
     /// Ask orders (selling)
     pub asks: Vec<OptionsOrderBookEntry>,

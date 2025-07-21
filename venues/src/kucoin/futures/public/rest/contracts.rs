@@ -2,6 +2,10 @@ use serde::{Deserialize, Serialize};
 
 use crate::kucoin::spot::{ContractStatus, ContractType, ResponseHeaders, RestResponse, Result};
 
+// API endpoints
+const CONTRACT_ENDPOINT_PREFIX: &str = "/api/v1/contracts/";
+const ALL_CONTRACTS_ENDPOINT: &str = "/api/v1/contracts/active";
+
 /// Get contract information request
 #[derive(Debug, Clone, Serialize)]
 pub struct GetContractRequest {
@@ -104,21 +108,26 @@ pub type GetAllContractsResponse = Vec<ContractInfo>;
 
 impl super::RestClient {
     /// Get contract information for a specific symbol
+    ///
+    /// <https://www.kucoin.com/docs-new/rest/futures-trading/market-data/get-symbol>
     pub async fn get_contract(
         &self,
         request: GetContractRequest,
     ) -> Result<(RestResponse<ContractInfo>, ResponseHeaders)> {
-        let endpoint = format!("/api/v1/contracts/{}", request.symbol);
-        self.get(&endpoint, None).await
+        let endpoint = format!("{}{}", CONTRACT_ENDPOINT_PREFIX, request.symbol);
+        self.send_request(&endpoint, None::<&GetContractRequest>)
+            .await
     }
 
     /// Get all contract information
+    ///
+    /// <https://www.kucoin.com/docs-new/rest/futures-trading/market-data/get-all-symbols>
     pub async fn get_all_contracts(
         &self,
         _request: GetAllContractsRequest,
     ) -> Result<(RestResponse<GetAllContractsResponse>, ResponseHeaders)> {
-        let endpoint = "/api/v1/contracts/active";
-        self.get(endpoint, None).await
+        self.send_request(ALL_CONTRACTS_ENDPOINT, None::<&GetAllContractsRequest>)
+            .await
     }
 }
 
