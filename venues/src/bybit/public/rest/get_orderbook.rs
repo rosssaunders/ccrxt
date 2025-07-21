@@ -11,10 +11,10 @@ const ENDPOINT_PATH: &str = "/v5/market/orderbook";
 pub struct GetOrderbookRequest {
     /// Product type
     pub category: Category,
-    
+
     /// Symbol name (e.g., "BTCUSDT")
     pub symbol: String,
-    
+
     /// Limit size for each bid and ask. Spot: [1, 200]. Linear&Inverse: [1, 500]. Option: [1, 25]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i32>,
@@ -25,7 +25,7 @@ pub struct GetOrderbookRequest {
 pub struct OrderbookLevel {
     /// Price level
     pub price: String,
-    
+
     /// Size at this price level
     pub size: String,
 }
@@ -54,22 +54,22 @@ impl<'de> Deserialize<'de> for OrderbookLevel {
 pub struct GetOrderbookData {
     /// Symbol name
     pub s: String,
-    
+
     /// Bid array, sorted by price in descending order
     pub b: Vec<OrderbookLevel>,
-    
+
     /// Ask array, sorted by price in ascending order
     pub a: Vec<OrderbookLevel>,
-    
+
     /// Timestamp (ms) when system generates the data
     pub ts: u64,
-    
+
     /// Update ID, always in sequence
     pub u: u64,
-    
+
     /// Cross sequence (compare different levels orderbook data)
     pub seq: u64,
-    
+
     /// Timestamp from matching engine when data is produced
     #[serde(rename = "cts")]
     pub create_time: u64,
@@ -81,18 +81,18 @@ pub struct GetOrderbookResponse {
     /// Success/Error code (0: success, 1: error)
     #[serde(rename = "retCode")]
     pub ret_code: i32,
-    
+
     /// Success/Error message
     #[serde(rename = "retMsg")]
     pub ret_msg: String,
-    
+
     /// Business data result
     pub result: GetOrderbookData,
-    
+
     /// Extended information
     #[serde(rename = "retExtInfo")]
     pub ret_ext_info: serde_json::Value,
-    
+
     /// Current timestamp in milliseconds
     pub time: u64,
 }

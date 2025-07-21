@@ -10,19 +10,19 @@ const HISTORICAL_VOLATILITY_ENDPOINT: &str = "/v5/market/historical-volatility";
 pub struct GetHistoricalVolatilityRequest {
     /// Product type (Option only)
     pub category: Category,
-    
+
     /// Base coin (e.g., "BTC", "ETH")
     #[serde(rename = "baseCoin")]
     pub base_coin: String,
-    
+
     /// Period: 7, 14, 21, 30, 60, 90, 180, 270
     #[serde(skip_serializing_if = "Option::is_none")]
     pub period: Option<i32>,
-    
+
     /// Start timestamp in milliseconds
     #[serde(skip_serializing_if = "Option::is_none")]
     pub start_time: Option<u64>,
-    
+
     /// End timestamp in milliseconds. Default: current time
     #[serde(skip_serializing_if = "Option::is_none")]
     pub end_time: Option<u64>,
@@ -33,10 +33,10 @@ pub struct GetHistoricalVolatilityRequest {
 pub struct VolatilityInfo {
     /// Volatility period
     pub period: i32,
-    
+
     /// Volatility value
     pub value: String,
-    
+
     /// Timestamp in milliseconds
     pub time: String,
 }
@@ -46,7 +46,7 @@ pub struct VolatilityInfo {
 pub struct GetHistoricalVolatilityData {
     /// Product type
     pub category: Category,
-    
+
     /// Array of volatility data
     pub list: Vec<VolatilityInfo>,
 }
@@ -57,18 +57,18 @@ pub struct GetHistoricalVolatilityResponse {
     /// Success/Error code (0: success, 1: error)
     #[serde(rename = "retCode")]
     pub ret_code: i32,
-    
+
     /// Success/Error message
     #[serde(rename = "retMsg")]
     pub ret_msg: String,
-    
+
     /// Business data result
     pub result: GetHistoricalVolatilityData,
-    
+
     /// Extended information
     #[serde(rename = "retExtInfo")]
     pub ret_ext_info: serde_json::Value,
-    
+
     /// Current timestamp in milliseconds
     pub time: u64,
 }

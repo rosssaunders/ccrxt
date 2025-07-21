@@ -16,7 +16,7 @@ pub struct GetServerTimeRequest;
 pub struct ServerTimeData {
     /// Server time in seconds
     pub time_second: String,
-    
+
     /// Server time in nanoseconds
     pub time_nano: String,
 }
@@ -27,18 +27,18 @@ pub struct GetServerTimeResponse {
     /// Success/Error code (0: success, 1: error)
     #[serde(rename = "retCode")]
     pub ret_code: i32,
-    
+
     /// Success/Error message
     #[serde(rename = "retMsg")]
     pub ret_msg: String,
-    
+
     /// Business data result
     pub result: ServerTimeData,
-    
+
     /// Extended information
     #[serde(rename = "retExtInfo")]
     pub ret_ext_info: serde_json::Value,
-    
+
     /// Current timestamp in milliseconds
     pub time: u64,
 }

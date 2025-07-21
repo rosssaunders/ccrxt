@@ -11,19 +11,19 @@ const RECENT_TRADES_ENDPOINT: &str = "/v5/market/recent-trade";
 pub struct GetRecentTradesRequest {
     /// Product type
     pub category: Category,
-    
+
     /// Symbol name. Required for Spot/Linear/Inverse
     #[serde(skip_serializing_if = "Option::is_none")]
     pub symbol: Option<String>,
-    
+
     /// Base coin. For Option only, returns all option symbols of the base coin
     #[serde(skip_serializing_if = "Option::is_none")]
     pub base_coin: Option<String>,
-    
+
     /// Option type. For Option only
     #[serde(skip_serializing_if = "Option::is_none")]
     pub option_type: Option<OptionType>,
-    
+
     /// Limit for data size per page. Spot: [1,60], others: [1,1000]. Default: 500
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i32>,
@@ -35,41 +35,41 @@ pub struct GetRecentTradesRequest {
 pub struct TradeInfo {
     /// Execution ID
     pub exec_id: String,
-    
+
     /// Symbol name
     pub symbol: String,
-    
+
     /// Trade price
     pub price: String,
-    
+
     /// Trade size
     pub size: String,
-    
+
     /// Side of taker
     pub side: Side,
-    
+
     /// Trade time in milliseconds
     pub time: String,
-    
+
     /// Whether it's a block trade
     pub is_block_trade: bool,
-    
+
     /// Whether it's a RPI trade. Valid for Spot only
     #[serde(rename = "isRPITrade")]
     pub is_rpi_trade: Option<bool>,
-    
+
     /// Mark price. Valid for Option only
     #[serde(rename = "mP")]
     pub mark_price: Option<String>,
-    
+
     /// Index price. Valid for Option only
     #[serde(rename = "iP")]
     pub index_price: Option<String>,
-    
+
     /// Mark IV. Valid for Option only
     #[serde(rename = "mIv")]
     pub mark_iv: Option<String>,
-    
+
     /// IV. Valid for Option only
     pub iv: Option<String>,
 }
@@ -79,7 +79,7 @@ pub struct TradeInfo {
 pub struct GetRecentTradesData {
     /// Product type
     pub category: Category,
-    
+
     /// Array of trade data
     pub list: Vec<TradeInfo>,
 }
@@ -90,18 +90,18 @@ pub struct GetRecentTradesResponse {
     /// Success/Error code (0: success, 1: error)
     #[serde(rename = "retCode")]
     pub ret_code: i32,
-    
+
     /// Success/Error message
     #[serde(rename = "retMsg")]
     pub ret_msg: String,
-    
+
     /// Business data result
     pub result: GetRecentTradesData,
-    
+
     /// Extended information
     #[serde(rename = "retExtInfo")]
     pub ret_ext_info: serde_json::Value,
-    
+
     /// Current timestamp in milliseconds
     pub time: u64,
 }
