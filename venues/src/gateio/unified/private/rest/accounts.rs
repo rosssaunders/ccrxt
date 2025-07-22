@@ -5,6 +5,8 @@ use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 
+const UNIFIED_ACCOUNTS_ENDPOINT: &str = "/unified/accounts";
+
 /// Request parameters for getting unified account info
 #[derive(Debug, Clone, Default, Serialize)]
 pub struct GetUnifiedAccountRequest {
@@ -145,6 +147,17 @@ impl RestClient {
         let request = GetUnifiedAccountRequest {
             currency: currency.map(|s| s.to_string()),
         };
-        self.get_with_query("/unified/accounts", &request).await
+        self.get_with_query(UNIFIED_ACCOUNTS_ENDPOINT, &request)
+            .await
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_unified_accounts_endpoint() {
+        assert_eq!(UNIFIED_ACCOUNTS_ENDPOINT, "/unified/accounts");
     }
 }

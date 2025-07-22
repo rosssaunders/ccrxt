@@ -1,3 +1,5 @@
+// Models
+pub mod models;
 // Private API modules
 pub mod private;
 // Public API modules
@@ -5,6 +7,13 @@ pub mod public;
 
 // Re-export key components from shared modules
 pub use crate::gateio::shared::*;
+pub use models::{
+    CreateDeliveryOrderRequest, DeliveryCandlestick, DeliveryCandlesticksRequest,
+    DeliveryLeverageResponse, DeliveryOrder, DeliveryPosition, DeliveryPositionMarginResponse,
+    DeliveryPositionsRequest, DeliveryRiskLimitResponse, ListDeliveryOrdersRequest,
+    SetDeliveryLeverageRequest, UpdateDeliveryPositionMarginRequest,
+    UpdateDeliveryRiskLimitRequest,
+};
 pub use private::RestClient as PrivateRestClient;
 pub use public::RestClient as PublicRestClient;
 

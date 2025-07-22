@@ -1,4 +1,8 @@
-pub mod candlesticks;
+// Candlestick-related modules
+pub mod candlestick;
+pub mod get_options_candlesticks;
+pub mod get_underlying_candlesticks;
+
 pub mod client;
 pub mod contracts;
 pub mod expirations;
@@ -8,7 +12,11 @@ pub mod tickers;
 pub mod trades;
 pub mod underlyings;
 
-pub use candlesticks::OptionsCandlesticksRequest;
+// Re-export candlestick types
+pub use candlestick::*;
+pub use get_options_candlesticks::*;
+pub use get_underlying_candlesticks::*;
+
 pub use client::RestClient;
 pub use contracts::OptionsContractsRequest;
 pub use order_book::OptionsOrderBookRequest;

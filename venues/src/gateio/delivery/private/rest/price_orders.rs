@@ -1,12 +1,10 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
+use crate::gateio::delivery::models::CreateDeliveryOrderRequest;
 
 const DELIVERY_PRICE_ORDERS_ENDPOINT: &str = "/delivery/{}/price_orders";
 const DELIVERY_PRICE_ORDER_ENDPOINT: &str = "/delivery/{}/price_orders/{}";
-
-/// Request to create delivery order (re-exported from orders module)
-pub use super::orders::CreateDeliveryOrderRequest;
 
 /// Request to create a delivery price-triggered order
 #[derive(Debug, Clone, Serialize)]
@@ -154,7 +152,9 @@ impl RestClient {
         settle: &str,
         order_id: &str,
     ) -> crate::gateio::delivery::Result<DeliveryPriceOrder> {
-        let endpoint = DELIVERY_PRICE_ORDER_ENDPOINT.replace("{}", settle).replace("{}", order_id);
+        let endpoint = DELIVERY_PRICE_ORDER_ENDPOINT
+            .replace("{}", settle)
+            .replace("{}", order_id);
         self.get(&endpoint).await
     }
 
@@ -177,7 +177,9 @@ impl RestClient {
         settle: &str,
         order_id: &str,
     ) -> crate::gateio::delivery::Result<DeliveryPriceOrder> {
-        let endpoint = DELIVERY_PRICE_ORDER_ENDPOINT.replace("{}", settle).replace("{}", order_id);
+        let endpoint = DELIVERY_PRICE_ORDER_ENDPOINT
+            .replace("{}", settle)
+            .replace("{}", order_id);
         self.delete(&endpoint).await
     }
 

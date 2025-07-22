@@ -1,4 +1,6 @@
-pub mod candlesticks;
+pub mod candlesticks_index_price;
+pub mod candlesticks_mark_price;
+pub mod candlesticks_standard;
 pub mod client;
 pub mod contracts;
 pub mod insurance;

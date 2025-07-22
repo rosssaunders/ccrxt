@@ -5,7 +5,7 @@ use super::RestClient;
 const DELIVERY_TICKERS_ENDPOINT: &str = "/delivery/{}/tickers";
 
 /// Request parameters for delivery tickers
-#[derive(Debug, Clone, Serialize, Default)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct DeliveryTickersRequest {
     /// Settlement currency
     pub settle: String,
