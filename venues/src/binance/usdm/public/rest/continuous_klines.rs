@@ -33,33 +33,58 @@ pub struct ContinuousKlinesRequest {
 const CONTINUOUS_KLINES_ENDPOINT: &str = "/fapi/v1/continuousKlines";
 
 /// Represents a single continuous contract kline/candlestick bar.
-#[derive(Debug, Clone, Deserialize)]
-pub struct ContinuousKline(
+#[derive(Debug, Clone)]
+pub struct ContinuousKline {
     /// Open time in ms.
-    pub u64,
+    pub open_time: u64,
     /// Open price.
-    pub String,
+    pub open: String,
     /// High price.
-    pub String,
+    pub high: String,
     /// Low price.
-    pub String,
+    pub low: String,
     /// Close price.
-    pub String,
+    pub close: String,
     /// Volume.
-    pub String,
+    pub volume: String,
     /// Close time in ms.
-    pub u64,
+    pub close_time: u64,
     /// Quote asset volume.
-    pub String,
+    pub quote_asset_volume: String,
     /// Number of trades.
-    pub u64,
+    pub number_of_trades: u64,
     /// Taker buy base asset volume.
-    pub String,
+    pub taker_buy_base_asset_volume: String,
     /// Taker buy quote asset volume.
-    pub String,
+    pub taker_buy_quote_asset_volume: String,
     /// Ignore field.
-    pub String,
-);
+    pub ignore: String,
+}
+
+impl<'de> Deserialize<'de> for ContinuousKline {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let array: (u64, String, String, String, String, String, u64, String, u64, String, String, String) = 
+            Deserialize::deserialize(deserializer)?;
+        
+        Ok(ContinuousKline {
+            open_time: array.0,
+            open: array.1,
+            high: array.2,
+            low: array.3,
+            close: array.4,
+            volume: array.5,
+            close_time: array.6,
+            quote_asset_volume: array.7,
+            number_of_trades: array.8,
+            taker_buy_base_asset_volume: array.9,
+            taker_buy_quote_asset_volume: array.10,
+            ignore: array.11,
+        })
+    }
+}
 
 impl RestClient {
     /// Continuous Contract Kline/Candlestick Data (GET /fapi/v1/continuousKlines)
@@ -169,21 +194,21 @@ mod tests {
         let klines: Vec<ContinuousKline> = serde_json::from_str(json).unwrap();
         assert_eq!(klines.len(), 2);
 
-        assert_eq!(klines[0].0, 1625184000000); // open_time
-        assert_eq!(klines[0].1, "45380.10"); // open
-        assert_eq!(klines[0].2, "45400.20"); // high
-        assert_eq!(klines[0].3, "45360.00"); // low
-        assert_eq!(klines[0].4, "45390.30"); // close
-        assert_eq!(klines[0].5, "1234.567"); // volume
-        assert_eq!(klines[0].6, 1625184059999); // close_time
-        assert_eq!(klines[0].7, "56012345.67890"); // quote_asset_volume
-        assert_eq!(klines[0].8, 5678); // number_of_trades
-        assert_eq!(klines[0].9, "567.890"); // taker_buy_base_asset_volume
-        assert_eq!(klines[0].10, "25801234.56789"); // taker_buy_quote_asset_volume
+        assert_eq!(klines[0].open_time, 1625184000000); // open_time
+        assert_eq!(klines[0].open, "45380.10"); // open
+        assert_eq!(klines[0].high, "45400.20"); // high
+        assert_eq!(klines[0].low, "45360.00"); // low
+        assert_eq!(klines[0].close, "45390.30"); // close
+        assert_eq!(klines[0].volume, "1234.567"); // volume
+        assert_eq!(klines[0].close_time, 1625184059999); // close_time
+        assert_eq!(klines[0].quote_asset_volume, "56012345.67890"); // quote_asset_volume
+        assert_eq!(klines[0].number_of_trades, 5678); // number_of_trades
+        assert_eq!(klines[0].taker_buy_base_asset_volume, "567.890"); // taker_buy_base_asset_volume
+        assert_eq!(klines[0].taker_buy_quote_asset_volume, "25801234.56789"); // taker_buy_quote_asset_volume
 
-        assert_eq!(klines[1].0, 1625184060000);
-        assert_eq!(klines[1].5, "2345.678");
-        assert_eq!(klines[1].8, 6789);
+        assert_eq!(klines[1].open_time, 1625184060000);
+        assert_eq!(klines[1].volume, "2345.678");
+        assert_eq!(klines[1].number_of_trades, 6789);
     }
 
     #[test]
@@ -285,9 +310,9 @@ mod tests {
 
         let klines: Vec<ContinuousKline> = serde_json::from_str(json).unwrap();
         assert_eq!(klines.len(), 1);
-        assert_eq!(klines[0].5, "1000000.000"); // volume
-        assert_eq!(klines[0].7, "45390300000.00"); // quote_asset_volume
-        assert_eq!(klines[0].8, 100000); // number_of_trades
+        assert_eq!(klines[0].volume, "1000000.000"); // volume
+        assert_eq!(klines[0].quote_asset_volume, "45390300000.00"); // quote_asset_volume
+        assert_eq!(klines[0].number_of_trades, 100000); // number_of_trades
     }
 
     #[test]
@@ -311,8 +336,8 @@ mod tests {
 
         let klines: Vec<ContinuousKline> = serde_json::from_str(json).unwrap();
         assert_eq!(klines.len(), 1);
-        assert_eq!(klines[0].1, "0.00001234");
-        assert_eq!(klines[0].5, "0.001");
-        assert_eq!(klines[0].8, 1);
+        assert_eq!(klines[0].open, "0.00001234");
+        assert_eq!(klines[0].volume, "0.001");
+        assert_eq!(klines[0].number_of_trades, 1);
     }
 }

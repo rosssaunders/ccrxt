@@ -1,8 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use crate::binance::{
-    coinm::{RestResult, enums::TransferType, private::rest::client::RestClient},
-    shared,
+    coinm::{RestResult, TransferType, PrivateRestClient as RestClient},
 };
 
 const UNIVERSAL_TRANSFER_ENDPOINT: &str = "/sapi/v1/asset/transfer";
@@ -60,8 +59,7 @@ impl RestClient {
         params: UniversalTransferRequest,
     ) -> RestResult<UniversalTransferResponse> {
         let weight = 900;
-        shared::send_signed_request(
-            self,
+        self.send_signed_request(
             UNIVERSAL_TRANSFER_ENDPOINT,
             reqwest::Method::POST,
             params,

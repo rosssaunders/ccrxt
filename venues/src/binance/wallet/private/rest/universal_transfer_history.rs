@@ -1,8 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use crate::binance::{
-    coinm::{RestResult, enums::TransferType, private::rest::client::RestClient},
-    shared,
+    coinm::{RestResult, TransferType, PrivateRestClient as RestClient},
 };
 
 const UNIVERSAL_TRANSFER_HISTORY_ENDPOINT: &str = "/sapi/v1/asset/transfer";
@@ -97,8 +96,7 @@ impl RestClient {
         params: UniversalTransferHistoryRequest,
     ) -> RestResult<UniversalTransferHistoryResponse> {
         let weight = 1;
-        shared::send_signed_request(
-            self,
+        self.send_signed_request(
             UNIVERSAL_TRANSFER_HISTORY_ENDPOINT,
             reqwest::Method::GET,
             params,

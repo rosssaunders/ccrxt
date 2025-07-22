@@ -36,44 +36,60 @@ pub struct PremiumIndexKlinesRequest {
 
 /// Represents a single premium index kline bar returned by the API.
 ///
-/// The tuple fields correspond to the array response from Binance:
-/// 0: Open time (ms since epoch)
-/// 1: Open price (string)
-/// 2: High price (string)
-/// 3: Low price (string)
-/// 4: Close price (string)
-/// 5: Ignore (string, always "0")
-/// 6: Close time (ms since epoch)
-/// 7: Ignore (string, always "0")
-/// 8: Ignore (u64, count of trades)
-/// 9-11: Ignore (string, always "0")
-#[derive(Debug, Clone, Deserialize)]
-pub struct PremiumIndexKline(
+/// The fields correspond to the array response from Binance:
+/// Open time, Open price, High price, Low price, Close price, Ignore fields, Close time, etc.
+#[derive(Debug, Clone)]
+pub struct PremiumIndexKline {
     /// Open time in milliseconds since epoch.
-    pub u64,
+    pub open_time: u64,
     /// Open price as string.
-    pub String,
+    pub open: String,
     /// High price as string.
-    pub String,
+    pub high: String,
     /// Low price as string.
-    pub String,
+    pub low: String,
     /// Close price as string.
-    pub String,
+    pub close: String,
     /// Ignore field (always "0").
-    pub String,
+    pub ignore1: String,
     /// Close time in milliseconds since epoch.
-    pub u64,
+    pub close_time: u64,
     /// Ignore field (always "0").
-    pub String,
+    pub ignore2: String,
     /// Ignore field (count of trades).
-    pub u64,
+    pub ignore3: u64,
     /// Ignore field (always "0").
-    pub String,
+    pub ignore4: String,
     /// Ignore field (always "0").
-    pub String,
+    pub ignore5: String,
     /// Ignore field (always "0").
-    pub String,
-);
+    pub ignore6: String,
+}
+
+impl<'de> Deserialize<'de> for PremiumIndexKline {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let array: (u64, String, String, String, String, String, u64, String, u64, String, String, String) = 
+            Deserialize::deserialize(deserializer)?;
+        
+        Ok(PremiumIndexKline {
+            open_time: array.0,
+            open: array.1,
+            high: array.2,
+            low: array.3,
+            close: array.4,
+            ignore1: array.5,
+            close_time: array.6,
+            ignore2: array.7,
+            ignore3: array.8,
+            ignore4: array.9,
+            ignore5: array.10,
+            ignore6: array.11,
+        })
+    }
+}
 
 impl RestClient {
     /// Premium Index Kline Data
@@ -174,18 +190,18 @@ mod tests {
         let klines: Vec<PremiumIndexKline> = serde_json::from_str(json).unwrap();
         assert_eq!(klines.len(), 2);
 
-        assert_eq!(klines[0].0, 1625184000000); // open_time
-        assert_eq!(klines[0].1, "0.0003"); // open
-        assert_eq!(klines[0].2, "0.0004"); // high
-        assert_eq!(klines[0].3, "0.0002"); // low
-        assert_eq!(klines[0].4, "0.0003"); // close
-        assert_eq!(klines[0].6, 1625184059999); // close_time
+        assert_eq!(klines[0].open_time, 1625184000000); // open_time
+        assert_eq!(klines[0].open, "0.0003"); // open
+        assert_eq!(klines[0].high, "0.0004"); // high
+        assert_eq!(klines[0].low, "0.0002"); // low
+        assert_eq!(klines[0].close, "0.0003"); // close
+        assert_eq!(klines[0].close_time, 1625184059999); // close_time
 
-        assert_eq!(klines[1].0, 1625184060000);
-        assert_eq!(klines[1].1, "0.0003");
-        assert_eq!(klines[1].2, "0.0005");
-        assert_eq!(klines[1].3, "0.0003");
-        assert_eq!(klines[1].4, "0.0004");
+        assert_eq!(klines[1].open_time, 1625184060000);
+        assert_eq!(klines[1].open, "0.0003");
+        assert_eq!(klines[1].high, "0.0005");
+        assert_eq!(klines[1].low, "0.0003");
+        assert_eq!(klines[1].close, "0.0004");
     }
 
     #[test]
@@ -258,9 +274,9 @@ mod tests {
 
         let klines: Vec<PremiumIndexKline> = serde_json::from_str(json).unwrap();
         assert_eq!(klines.len(), 1);
-        assert_eq!(klines[0].1, "-0.0003");
-        assert_eq!(klines[0].2, "-0.0001");
-        assert_eq!(klines[0].3, "-0.0005");
-        assert_eq!(klines[0].4, "-0.0002");
+        assert_eq!(klines[0].open, "-0.0003");
+        assert_eq!(klines[0].high, "-0.0001");
+        assert_eq!(klines[0].low, "-0.0005");
+        assert_eq!(klines[0].close, "-0.0002");
     }
 }

@@ -131,13 +131,14 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::binance::coinm::RateLimiter;
     use reqwest::Client;
+    use crate::binance::shared::venue_trait::VenueConfig;
 
     #[tokio::test]
     async fn test_get_order_book_parameters() {
         let client = Client::new();
-        let rate_limiter = RateLimiter::new();
+        let config = crate::binance::coinm::CoinmConfig;
+        let rate_limiter = crate::binance::shared::RateLimiter::new(config.rate_limits());
         let _rest_client = RestClient::new("https://dapi.binance.com", client, rate_limiter);
 
         let request = OrderBookRequest {

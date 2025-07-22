@@ -30,33 +30,58 @@ pub struct MarkPriceKlinesRequest {
 }
 
 /// Represents a single mark price kline/candlestick bar.
-#[derive(Debug, Clone, Deserialize, PartialEq)]
-pub struct MarkPriceKline(
+#[derive(Debug, Clone, PartialEq)]
+pub struct MarkPriceKline {
     /// Open time (milliseconds since epoch).
-    pub u64,
+    pub open_time: u64,
     /// Open price as string.
-    pub Cow<'static, str>,
+    pub open: Cow<'static, str>,
     /// High price as string.
-    pub Cow<'static, str>,
+    pub high: Cow<'static, str>,
     /// Low price as string.
-    pub Cow<'static, str>,
+    pub low: Cow<'static, str>,
     /// Close price (or latest price) as string.
-    pub Cow<'static, str>,
+    pub close: Cow<'static, str>,
     /// Unused field (always empty string).
-    pub Cow<'static, str>,
+    pub ignore1: Cow<'static, str>,
     /// Close time (milliseconds since epoch).
-    pub u64,
+    pub close_time: u64,
     /// Unused field (always empty string).
-    pub Cow<'static, str>,
+    pub ignore2: Cow<'static, str>,
     /// Unused field (always 0).
-    pub u64,
+    pub ignore3: u64,
     /// Unused field (always empty string).
-    pub Cow<'static, str>,
+    pub ignore4: Cow<'static, str>,
     /// Unused field (always empty string).
-    pub Cow<'static, str>,
+    pub ignore5: Cow<'static, str>,
     /// Unused field (always empty string).
-    pub Cow<'static, str>,
-);
+    pub ignore6: Cow<'static, str>,
+}
+
+impl<'de> Deserialize<'de> for MarkPriceKline {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let array: (u64, Cow<'static, str>, Cow<'static, str>, Cow<'static, str>, Cow<'static, str>, Cow<'static, str>, u64, Cow<'static, str>, u64, Cow<'static, str>, Cow<'static, str>, Cow<'static, str>) = 
+            Deserialize::deserialize(deserializer)?;
+        
+        Ok(MarkPriceKline {
+            open_time: array.0,
+            open: array.1,
+            high: array.2,
+            low: array.3,
+            close: array.4,
+            ignore1: array.5,
+            close_time: array.6,
+            ignore2: array.7,
+            ignore3: array.8,
+            ignore4: array.9,
+            ignore5: array.10,
+            ignore6: array.11,
+        })
+    }
+}
 
 impl RestClient {
     /// Mark Price Kline/Candlestick Data
@@ -98,27 +123,27 @@ mod tests {
 
     #[test]
     fn test_mark_price_kline_field_access() {
-        let kline = MarkPriceKline(
-            1625184000000,
-            "45380.10".into(),
-            "45400.20".into(),
-            "45360.00".into(),
-            "45390.30".into(),
-            "".into(),
-            1625184059999,
-            "".into(),
-            0,
-            "".into(),
-            "".into(),
-            "".into(),
-        );
+        let kline = MarkPriceKline {
+            open_time: 1625184000000,
+            open: "45380.10".into(),
+            high: "45400.20".into(),
+            low: "45360.00".into(),
+            close: "45390.30".into(),
+            ignore1: "".into(),
+            close_time: 1625184059999,
+            ignore2: "".into(),
+            ignore3: 0,
+            ignore4: "".into(),
+            ignore5: "".into(),
+            ignore6: "".into(),
+        };
 
-        assert_eq!(kline.0, 1625184000000); // open_time
-        assert_eq!(kline.1, "45380.10"); // open
-        assert_eq!(kline.2, "45400.20"); // high
-        assert_eq!(kline.3, "45360.00"); // low
-        assert_eq!(kline.4, "45390.30"); // close
-        assert_eq!(kline.6, 1625184059999); // close_time
+        assert_eq!(kline.open_time, 1625184000000); // open_time
+        assert_eq!(kline.open, "45380.10"); // open
+        assert_eq!(kline.high, "45400.20"); // high
+        assert_eq!(kline.low, "45360.00"); // low
+        assert_eq!(kline.close, "45390.30"); // close
+        assert_eq!(kline.close_time, 1625184059999); // close_time
     }
 
     #[test]
@@ -193,16 +218,16 @@ mod tests {
         let klines: Vec<MarkPriceKline> = serde_json::from_str(json).unwrap();
         assert_eq!(klines.len(), 2);
 
-        assert_eq!(klines[0].0, 1625184000000); // open_time
-        assert_eq!(klines[0].1, "45380.10"); // open
-        assert_eq!(klines[0].2, "45400.20"); // high
-        assert_eq!(klines[0].3, "45360.00"); // low
-        assert_eq!(klines[0].4, "45390.30"); // close
-        assert_eq!(klines[0].6, 1625184059999); // close_time
+        assert_eq!(klines[0].open_time, 1625184000000); // open_time
+        assert_eq!(klines[0].open, "45380.10"); // open
+        assert_eq!(klines[0].high, "45400.20"); // high
+        assert_eq!(klines[0].low, "45360.00"); // low
+        assert_eq!(klines[0].close, "45390.30"); // close
+        assert_eq!(klines[0].close_time, 1625184059999); // close_time
 
-        assert_eq!(klines[1].0, 1625184060000);
-        assert_eq!(klines[1].1, "45390.30");
-        assert_eq!(klines[1].4, "45405.40");
+        assert_eq!(klines[1].open_time, 1625184060000);
+        assert_eq!(klines[1].open, "45390.30");
+        assert_eq!(klines[1].close, "45405.40");
     }
 
     #[test]
@@ -280,10 +305,10 @@ mod tests {
 
         let klines: Vec<MarkPriceKline> = serde_json::from_str(json).unwrap();
         assert_eq!(klines.len(), 1);
-        assert_eq!(klines[0].1, "0.00001234");
-        assert_eq!(klines[0].2, "0.00001240");
-        assert_eq!(klines[0].3, "0.00001230");
-        assert_eq!(klines[0].4, "0.00001235");
+        assert_eq!(klines[0].open, "0.00001234");
+        assert_eq!(klines[0].high, "0.00001240");
+        assert_eq!(klines[0].low, "0.00001230");
+        assert_eq!(klines[0].close, "0.00001235");
     }
 
     #[test]
@@ -307,9 +332,9 @@ mod tests {
 
         let klines: Vec<MarkPriceKline> = serde_json::from_str(json).unwrap();
         assert_eq!(klines.len(), 1);
-        assert_eq!(klines[0].1, "100000.00");
-        assert_eq!(klines[0].2, "105000.00");
-        assert_eq!(klines[0].3, "99000.00");
-        assert_eq!(klines[0].4, "102000.00");
+        assert_eq!(klines[0].open, "100000.00");
+        assert_eq!(klines[0].high, "105000.00");
+        assert_eq!(klines[0].low, "99000.00");
+        assert_eq!(klines[0].close, "102000.00");
     }
 }

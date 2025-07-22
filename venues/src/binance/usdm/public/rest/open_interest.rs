@@ -43,11 +43,10 @@ impl RestClient {
     /// # Returns
     /// Open interest data including the current value, symbol, and timestamp
     pub async fn get_open_interest(&self, params: OpenInterestRequest) -> RestResult<OpenInterest> {
-        let query = format!("symbol={}", params.symbol);
         self.send_public_request(
             OPEN_INTEREST_ENDPOINT,
             reqwest::Method::GET,
-            Some(&query),
+            Some(params),
             1,
         )
         .await

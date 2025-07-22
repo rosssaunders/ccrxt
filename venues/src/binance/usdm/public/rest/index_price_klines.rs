@@ -35,33 +35,58 @@ pub struct IndexPriceKlinesRequest {
 ///
 /// Klines are returned as arrays with the following structure:
 /// [Open time, Open, High, Low, Close, Ignore, Close time, Ignore, Ignore, Ignore, Ignore, Ignore]
-#[derive(Debug, Clone, Deserialize)]
-pub struct IndexPriceKline(
+#[derive(Debug, Clone)]
+pub struct IndexPriceKline {
     /// Open time (milliseconds since epoch).
-    pub u64,
+    pub open_time: u64,
     /// Open price as string.
-    pub String,
+    pub open: String,
     /// High price as string.
-    pub String,
+    pub high: String,
     /// Low price as string.
-    pub String,
+    pub low: String,
     /// Close price as string.
-    pub String,
+    pub close: String,
     /// Ignored field.
-    pub String,
+    pub ignore1: String,
     /// Close time (milliseconds since epoch).
-    pub u64,
+    pub close_time: u64,
     /// Ignored field.
-    pub String,
+    pub ignore2: String,
     /// Ignored field.
-    pub u64,
+    pub ignore3: u64,
     /// Ignored field.
-    pub String,
+    pub ignore4: String,
     /// Ignored field.
-    pub String,
+    pub ignore5: String,
     /// Ignored field.
-    pub String,
-);
+    pub ignore6: String,
+}
+
+impl<'de> Deserialize<'de> for IndexPriceKline {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let array: (u64, String, String, String, String, String, u64, String, u64, String, String, String) = 
+            Deserialize::deserialize(deserializer)?;
+        
+        Ok(IndexPriceKline {
+            open_time: array.0,
+            open: array.1,
+            high: array.2,
+            low: array.3,
+            close: array.4,
+            ignore1: array.5,
+            close_time: array.6,
+            ignore2: array.7,
+            ignore3: array.8,
+            ignore4: array.9,
+            ignore5: array.10,
+            ignore6: array.11,
+        })
+    }
+}
 
 impl RestClient {
     /// Index Price Kline/Candlestick Data
@@ -173,22 +198,22 @@ mod tests {
         assert_eq!(klines.len(), 2);
 
         let first_kline = &klines[0];
-        assert_eq!(first_kline.0, 1625097600000); // Open time
-        assert_eq!(first_kline.1, "45000.00"); // Open
-        assert_eq!(first_kline.2, "45500.00"); // High
-        assert_eq!(first_kline.3, "44800.00"); // Low
-        assert_eq!(first_kline.4, "45200.00"); // Close
-        assert_eq!(first_kline.5, "0"); // Ignore
-        assert_eq!(first_kline.6, 1625101199999); // Close time
-        assert_eq!(first_kline.7, "0"); // Ignore
-        assert_eq!(first_kline.8, 0); // Ignore
-        assert_eq!(first_kline.9, "0"); // Ignore
-        assert_eq!(first_kline.10, "0"); // Ignore
-        assert_eq!(first_kline.11, "0"); // Ignore
+        assert_eq!(first_kline.open_time, 1625097600000); // Open time
+        assert_eq!(first_kline.open, "45000.00"); // Open
+        assert_eq!(first_kline.high, "45500.00"); // High
+        assert_eq!(first_kline.low, "44800.00"); // Low
+        assert_eq!(first_kline.close, "45200.00"); // Close
+        assert_eq!(first_kline.ignore1, "0"); // Ignore
+        assert_eq!(first_kline.close_time, 1625101199999); // Close time
+        assert_eq!(first_kline.ignore2, "0"); // Ignore
+        assert_eq!(first_kline.ignore3, 0); // Ignore
+        assert_eq!(first_kline.ignore4, "0"); // Ignore
+        assert_eq!(first_kline.ignore5, "0"); // Ignore
+        assert_eq!(first_kline.ignore6, "0"); // Ignore
 
         let second_kline = &klines[1];
-        assert_eq!(second_kline.0, 1625101200000);
-        assert_eq!(second_kline.4, "45400.00"); // Close price
+        assert_eq!(second_kline.open_time, 1625101200000);
+        assert_eq!(second_kline.close, "45400.00"); // Close price
     }
 
     #[test]

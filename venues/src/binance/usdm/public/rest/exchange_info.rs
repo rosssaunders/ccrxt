@@ -248,7 +248,6 @@ pub enum FilterType {
 
 /// Quote asset for USD-M futures (e.g., USDT, USDC, BTC).
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum QuoteAsset {
     /// Tether USD.
     USDT,

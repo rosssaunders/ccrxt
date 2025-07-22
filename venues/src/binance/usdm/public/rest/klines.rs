@@ -39,33 +39,58 @@ pub struct KlinesRequest {
 ///
 /// Klines are returned as arrays with the following structure:
 /// [Open time, Open, High, Low, Close, Volume, Close time, Quote asset volume, Number of trades, Taker buy base asset volume, Taker buy quote asset volume, Ignore]
-#[derive(Debug, Clone, Deserialize)]
-pub struct Kline(
+#[derive(Debug, Clone)]
+pub struct Kline {
     /// Open time (milliseconds since epoch)
-    pub u64,
+    pub open_time: u64,
     /// Open price
-    pub String,
+    pub open: String,
     /// High price
-    pub String,
+    pub high: String,
     /// Low price
-    pub String,
+    pub low: String,
     /// Close price
-    pub String,
+    pub close: String,
     /// Volume
-    pub String,
+    pub volume: String,
     /// Close time (milliseconds since epoch)
-    pub u64,
+    pub close_time: u64,
     /// Quote asset volume
-    pub String,
+    pub quote_asset_volume: String,
     /// Number of trades
-    pub u64,
+    pub number_of_trades: u64,
     /// Taker buy base asset volume
-    pub String,
+    pub taker_buy_base_asset_volume: String,
     /// Taker buy quote asset volume
-    pub String,
+    pub taker_buy_quote_asset_volume: String,
     /// Ignore field
-    pub String,
-);
+    pub ignore: String,
+}
+
+impl<'de> Deserialize<'de> for Kline {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let array: (u64, String, String, String, String, String, u64, String, u64, String, String, String) = 
+            Deserialize::deserialize(deserializer)?;
+        
+        Ok(Kline {
+            open_time: array.0,
+            open: array.1,
+            high: array.2,
+            low: array.3,
+            close: array.4,
+            volume: array.5,
+            close_time: array.6,
+            quote_asset_volume: array.7,
+            number_of_trades: array.8,
+            taker_buy_base_asset_volume: array.9,
+            taker_buy_quote_asset_volume: array.10,
+            ignore: array.11,
+        })
+    }
+}
 
 impl RestClient {
     /// Kline/Candlestick Data
@@ -169,22 +194,22 @@ mod tests {
         assert_eq!(klines.len(), 2);
 
         let first_kline = &klines[0];
-        assert_eq!(first_kline.0, 1625097600000); // Open time
-        assert_eq!(first_kline.1, "45000.00"); // Open
-        assert_eq!(first_kline.2, "45500.00"); // High
-        assert_eq!(first_kline.3, "44800.00"); // Low
-        assert_eq!(first_kline.4, "45200.00"); // Close
-        assert_eq!(first_kline.5, "1250.500"); // Volume
-        assert_eq!(first_kline.6, 1625101199999); // Close time
-        assert_eq!(first_kline.7, "56475000.00"); // Quote asset volume
-        assert_eq!(first_kline.8, 2500); // Number of trades
-        assert_eq!(first_kline.9, "625.250"); // Taker buy base asset volume
-        assert_eq!(first_kline.10, "28237500.00"); // Taker buy quote asset volume
-        assert_eq!(first_kline.11, "0"); // Ignore
+        assert_eq!(first_kline.open_time, 1625097600000); // Open time
+        assert_eq!(first_kline.open, "45000.00"); // Open
+        assert_eq!(first_kline.high, "45500.00"); // High
+        assert_eq!(first_kline.low, "44800.00"); // Low
+        assert_eq!(first_kline.close, "45200.00"); // Close
+        assert_eq!(first_kline.volume, "1250.500"); // Volume
+        assert_eq!(first_kline.close_time, 1625101199999); // Close time
+        assert_eq!(first_kline.quote_asset_volume, "56475000.00"); // Quote asset volume
+        assert_eq!(first_kline.number_of_trades, 2500); // Number of trades
+        assert_eq!(first_kline.taker_buy_base_asset_volume, "625.250"); // Taker buy base asset volume
+        assert_eq!(first_kline.taker_buy_quote_asset_volume, "28237500.00"); // Taker buy quote asset volume
+        assert_eq!(first_kline.ignore, "0"); // Ignore
 
         let second_kline = &klines[1];
-        assert_eq!(second_kline.0, 1625101200000);
-        assert_eq!(second_kline.4, "45400.00"); // Close price
+        assert_eq!(second_kline.open_time, 1625101200000);
+        assert_eq!(second_kline.close, "45400.00"); // Close price
     }
 
     #[test]

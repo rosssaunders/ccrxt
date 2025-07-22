@@ -1,7 +1,6 @@
 //! Change position mode (dual position side) on Binance USDM REST API.
 
 use super::UsdmClient;
-use crate::binance::usdm::RestResponse;
 use crate::binance::usdm::RestResult;
 use crate::binance::usdm::enums::PositionMode;
 use reqwest::Method;
@@ -46,7 +45,7 @@ impl UsdmClient {
     /// # Returns
     /// Empty response on success. If there is an error, it will be returned.
     pub async fn change_position_mode(&self, request: ChangePositionModeRequest) -> RestResult<()> {
-        self.send_signed_request::<(), _, _>(
+        self.send_signed_request::<(), _>(
             CHANGE_POSITION_MODE_ENDPOINT,
             Method::POST,
             request,
@@ -54,11 +53,6 @@ impl UsdmClient {
             false,
         )
         .await
-        .map(|resp| RestResponse {
-            data: (),
-            headers: resp.headers,
-            rate_limit_info: resp.rate_limit_info,
-        })
     }
 }
 
