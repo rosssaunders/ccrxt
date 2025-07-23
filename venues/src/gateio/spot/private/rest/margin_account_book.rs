@@ -274,19 +274,19 @@ mod tests {
         let limits = vec![10, 50, 100];
 
         for page in pages {
-            for limit in &limits {
+            for limit in limits.clone() {
                 let request = MarginAccountBookRequest {
                     currency_pair: None,
                     currency: None,
                     from: None,
                     to: None,
                     page: Some(page),
-                    limit: Some(*limit),
+                    limit: Some(limit),
                 };
 
                 let json = serde_json::to_value(&request).unwrap();
                 assert_eq!(json["page"], page);
-                assert_eq!(json["limit"], *limit);
+                assert_eq!(json["limit"], limit);
             }
         }
     }

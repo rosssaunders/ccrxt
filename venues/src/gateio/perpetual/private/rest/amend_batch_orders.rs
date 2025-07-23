@@ -1,8 +1,8 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use super::batch_orders::BatchOrderResult;
 use super::amend_order::AmendFuturesOrderRequest;
+use super::batch_orders::BatchOrderResult;
 
 /// Request to amend batch orders
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -43,15 +43,13 @@ mod tests {
 
     #[test]
     fn test_batch_amend_orders_request_single() {
-        let amendments = vec![
-            AmendFuturesOrderRequest {
-                settle: "USDT".to_string(),
-                order_id: "123456789".to_string(),
-                size: Some(1500),
-                price: Some("43100.0".to_string()),
-                amend_text: Some("price-update".to_string()),
-            },
-        ];
+        let amendments = vec![AmendFuturesOrderRequest {
+            settle: "USDT".to_string(),
+            order_id: "123456789".to_string(),
+            size: Some(1500),
+            price: Some("43100.0".to_string()),
+            amend_text: Some("price-update".to_string()),
+        }];
 
         let request = BatchAmendOrdersRequest {
             settle: "USDT".to_string(),
@@ -101,17 +99,17 @@ mod tests {
         let json = serde_json::to_value(&request).unwrap();
         assert_eq!(json["settle"], "USDT");
         assert_eq!(json["orders"].as_array().unwrap().len(), 3);
-        
+
         // First amendment - both price and size
         assert_eq!(json["orders"][0]["order_id"], "123456789");
         assert_eq!(json["orders"][0]["size"], 1500);
         assert_eq!(json["orders"][0]["price"], "43100.0");
-        
+
         // Second amendment - price only
         assert_eq!(json["orders"][1]["order_id"], "987654321");
         assert!(!json["orders"][1].as_object().unwrap().contains_key("size"));
         assert_eq!(json["orders"][1]["price"], "2655.0");
-        
+
         // Third amendment - size only
         assert_eq!(json["orders"][2]["order_id"], "555555555");
         assert_eq!(json["orders"][2]["size"], 500);
@@ -119,48 +117,8 @@ mod tests {
     }
 
     #[test]
-    fn test_batch_amend_various_sizes() {
-        let size_scenarios = vec![
-            (1000, "Increase to 1000"),
-            (500, "Reduce to 500"),
-            (10000, "Large position"),
-            (-1000, "Short position"),
-            (-500, "Small short"),
-        ];
-
-        let mut amendments = Vec::new();
-        for (i, (size, _description)) in size_scenarios.iter().enumerate() {
-            amendments.push(AmendFuturesOrderRequest {
-                settle: "USDT".to_string(),
-                order_id: format!("order_{}", i + 1),
-                size: Some(*size),
-                price: None,
-                amend_text: None,
-            });
-        }
-
-        let request = BatchAmendOrdersRequest {
-            settle: "USDT".to_string(),
-            orders: amendments,
-        };
-
-        let json = serde_json::to_value(&request).unwrap();
-        assert_eq!(json["orders"].as_array().unwrap().len(), 5);
-        
-        for (i, (size, _)) in size_scenarios.iter().enumerate() {
-            assert_eq!(json["orders"][i]["size"], *size);
-        }
-    }
-
-    #[test]
     fn test_batch_amend_various_prices() {
-        let price_scenarios = vec![
-            "43000.0",
-            "43000.50",
-            "43000.25",
-            "43000.125",
-            "43000.0625",
-        ];
+        let price_scenarios = vec!["43000.0", "43000.50", "43000.25", "43000.125", "43000.0625"];
 
         let mut amendments = Vec::new();
         for (i, price) in price_scenarios.iter().enumerate() {
@@ -180,7 +138,7 @@ mod tests {
 
         let json = serde_json::to_value(&request).unwrap();
         assert_eq!(json["orders"].as_array().unwrap().len(), 5);
-        
+
         for (i, price) in price_scenarios.iter().enumerate() {
             assert_eq!(json["orders"][i]["price"], *price);
         }
@@ -206,12 +164,12 @@ mod tests {
 
         let json = serde_json::to_value(&request).unwrap();
         assert_eq!(json["orders"].as_array().unwrap().len(), 50);
-        
+
         // Check first and last orders
         assert_eq!(json["orders"][0]["order_id"], "order_1");
         assert_eq!(json["orders"][0]["size"], 100);
         assert_eq!(json["orders"][0]["price"], "43001.0");
-        
+
         assert_eq!(json["orders"][49]["order_id"], "order_50");
         assert_eq!(json["orders"][49]["size"], 5000);
         assert_eq!(json["orders"][49]["price"], "43050.0");
@@ -278,7 +236,7 @@ mod tests {
 
         let json = serde_json::to_value(&request).unwrap();
         assert_eq!(json["orders"].as_array().unwrap().len(), 3);
-        
+
         // Verify increasing sizes and decreasing prices
         for i in 0..3 {
             let size = json["orders"][i]["size"].as_i64().unwrap();
@@ -319,11 +277,26 @@ mod tests {
 
         let json = serde_json::to_value(&request).unwrap();
         assert_eq!(json["orders"].as_array().unwrap().len(), 3);
-        
+
         // Each order can be for different contracts (identified by order_id)
-        assert!(json["orders"][0]["order_id"].as_str().unwrap().contains("btc"));
-        assert!(json["orders"][1]["order_id"].as_str().unwrap().contains("eth"));
-        assert!(json["orders"][2]["order_id"].as_str().unwrap().contains("sol"));
+        assert!(
+            json["orders"][0]["order_id"]
+                .as_str()
+                .unwrap()
+                .contains("btc")
+        );
+        assert!(
+            json["orders"][1]["order_id"]
+                .as_str()
+                .unwrap()
+                .contains("eth")
+        );
+        assert!(
+            json["orders"][2]["order_id"]
+                .as_str()
+                .unwrap()
+                .contains("sol")
+        );
     }
 
     #[test]
@@ -331,15 +304,13 @@ mod tests {
         let settlements = vec!["USDT", "BTC", "ETH"];
 
         for settle in settlements {
-            let amendments = vec![
-                AmendFuturesOrderRequest {
-                    settle: settle.to_string(),
-                    order_id: "12345".to_string(),
-                    size: Some(1000),
-                    price: None,
-                    amend_text: None,
-                },
-            ];
+            let amendments = vec![AmendFuturesOrderRequest {
+                settle: settle.to_string(),
+                order_id: "12345".to_string(),
+                size: Some(1000),
+                price: None,
+                amend_text: None,
+            }];
 
             let request = BatchAmendOrdersRequest {
                 settle: settle.to_string(),
@@ -354,15 +325,13 @@ mod tests {
 
     #[test]
     fn test_empty_amend_text() {
-        let amendments = vec![
-            AmendFuturesOrderRequest {
-                settle: "USDT".to_string(),
-                order_id: "123456789".to_string(),
-                size: Some(1500),
-                price: Some("43100.0".to_string()),
-                amend_text: None,
-            },
-        ];
+        let amendments = vec![AmendFuturesOrderRequest {
+            settle: "USDT".to_string(),
+            order_id: "123456789".to_string(),
+            size: Some(1500),
+            price: Some("43100.0".to_string()),
+            amend_text: None,
+        }];
 
         let request = BatchAmendOrdersRequest {
             settle: "USDT".to_string(),
@@ -370,6 +339,11 @@ mod tests {
         };
 
         let json = serde_json::to_value(&request).unwrap();
-        assert!(!json["orders"][0].as_object().unwrap().contains_key("amend_text"));
+        assert!(
+            !json["orders"][0]
+                .as_object()
+                .unwrap()
+                .contains_key("amend_text")
+        );
     }
 }

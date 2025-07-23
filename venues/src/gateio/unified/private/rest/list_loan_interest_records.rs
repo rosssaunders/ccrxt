@@ -98,16 +98,16 @@ mod tests {
         let pages = vec![1, 2, 5, 10];
         let limits = vec![10, 50, 100, 500];
         
-        for (page, limit) in pages.iter().zip(limits.iter()) {
+        for (page, limit) in pages.into_iter().zip(limits) {
             let request = ListLoanInterestRecordsRequest {
                 currency: Some("BTC".to_string()),
-                page: Some(*page),
-                limit: Some(*limit),
+                page: Some(page),
+                limit: Some(limit),
             };
 
             let json = serde_json::to_value(&request).unwrap();
-            assert_eq!(json["page"], *page);
-            assert_eq!(json["limit"], *limit);
+            assert_eq!(json["page"], page);
+            assert_eq!(json["limit"], limit);
         }
     }
 }
