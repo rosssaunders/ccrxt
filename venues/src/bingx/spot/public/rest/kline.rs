@@ -62,6 +62,7 @@ impl RestClient {
     /// # API Documentation
     /// - Endpoint: GET /openApi/spot/v2/market/kline
     /// - Content-Type: request body(application/json)
+    /// - [docs]: https://bingx-api.github.io/docs/#/en-us/spot/market-api.html#Kline/Candlestick%20Data
     ///
     /// # Time Interval Rules
     /// - If startTime and endTime are not provided, the latest candlestick chart data will be returned by default

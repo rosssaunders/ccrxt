@@ -106,6 +106,9 @@ impl RestClient {
     /// # Notes
     /// - Either orderId or clientOrderId must be provided
     /// - Only supports a query range of 2 hours for client order IDs
+    ///
+    /// # API Documentation
+    /// - [docs]: https://bingx-api.github.io/docs/#/en-us/spot/trade-api.html#Query%20Order%20details
     pub async fn query_order(&self, request: &QueryOrderRequest) -> RestResult<OrderDetails> {
         self.send_request(
             QUERY_ORDER_ENDPOINT,

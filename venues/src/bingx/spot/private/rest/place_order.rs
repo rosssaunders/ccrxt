@@ -168,6 +168,9 @@ impl RestClient {
     /// - For limit orders, either quantity or quoteOrderQty is required
     /// - For buy-side market orders, quoteOrderQty is required
     /// - For sell-side market orders, quantity is required
+    ///
+    /// # API Documentation
+    /// - [docs]: https://bingx-api.github.io/docs/#/en-us/spot/trade-api.html#Place%20order
     pub async fn place_order(&self, request: &PlaceOrderRequest) -> RestResult<PlaceOrderResponse> {
         self.send_request(
             PLACE_ORDER_ENDPOINT,

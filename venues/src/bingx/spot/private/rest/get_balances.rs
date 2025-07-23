@@ -53,6 +53,9 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the account balances or an error
+    ///
+    /// # API Documentation
+    /// - [docs]: https://bingx-api.github.io/docs/#/en-us/spot/account-api.html#Query%20Assets
     pub async fn get_balances(
         &self,
         request: &GetBalancesRequest,

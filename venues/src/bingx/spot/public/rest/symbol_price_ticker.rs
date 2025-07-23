@@ -61,6 +61,7 @@ impl RestClient {
     /// # API Documentation
     /// - Endpoint: GET /openApi/spot/v1/ticker/price
     /// - Content-Type: request body(application/json)
+    /// - [docs]: https://bingx-api.github.io/docs/#/en-us/spot/market-api.html#Symbol%20Price%20Ticker
     pub async fn get_symbol_price_ticker(
         &self,
         request: &GetSymbolPriceTickerRequest,

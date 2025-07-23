@@ -36,6 +36,9 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the account UID or an error
+    ///
+    /// # API Documentation
+    /// - [docs]: https://bingx-api.github.io/docs/#/en-us/spot/account-api.html#Query%20account%20uid
     pub async fn get_uid(&self, request: &GetUidRequest) -> RestResult<GetUidResponse> {
         self.send_request(
             UID_ENDPOINT,

@@ -79,6 +79,7 @@ impl RestClient {
     /// # API Documentation
     /// - Endpoint: GET /openApi/spot/v1/ticker/24hr
     /// - Content-Type: request body(application/json)
+    /// - [docs]: https://bingx-api.github.io/docs/#/en-us/spot/market-api.html#24hr%20Ticker%20Price%20Change%20Statistics
     pub async fn get_24hr_ticker(
         &self,
         request: &Get24hrTickerRequest,

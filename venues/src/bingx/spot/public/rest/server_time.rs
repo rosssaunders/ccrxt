@@ -32,6 +32,7 @@ impl RestClient {
     /// # API Documentation
     /// - Endpoint: GET /openApi/spot/v1/server/time
     /// - No parameters required
+    /// - [docs]: https://bingx-api.github.io/docs/#/en-us/spot/base-info.html#Server%20time
     pub async fn get_server_time(&self) -> RestResult<GetServerTimeResponse> {
         self.send_request::<GetServerTimeResponse, GetServerTimeRequest>(
             SERVER_TIME_ENDPOINT,

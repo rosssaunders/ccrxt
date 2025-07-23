@@ -1,4 +1,5 @@
 // Existing modules
+mod asset_transfer;
 mod cancel_multiple_orders;
 mod cancel_order;
 mod client;

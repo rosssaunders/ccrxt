@@ -88,6 +88,9 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the open orders or an error
+    ///
+    /// # API Documentation
+    /// - [docs]: https://bingx-api.github.io/docs/#/en-us/spot/trade-api.html#Current%20Open%20Orders
     pub async fn get_open_orders(
         &self,
         request: &GetOpenOrdersRequest,

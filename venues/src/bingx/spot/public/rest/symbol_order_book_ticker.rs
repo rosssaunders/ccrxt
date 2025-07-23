@@ -52,6 +52,7 @@ impl RestClient {
     /// # API Documentation
     /// - Endpoint: GET /openApi/spot/v1/ticker/bookTicker
     /// - Content-Type: request body(application/json)
+    /// - [docs]: https://bingx-api.github.io/docs/#/en-us/spot/market-api.html#Symbol%20Order%20Book%20Ticker
     pub async fn get_symbol_order_book_ticker(
         &self,
         request: &GetSymbolOrderBookTickerRequest,

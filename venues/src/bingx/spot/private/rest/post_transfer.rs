@@ -9,7 +9,7 @@ const ASSET_TRANSFER_NEW_ENDPOINT: &str = "/openApi/api/asset/v1/transfer";
 /// Request to create a new asset transfer between accounts
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct AssetTransferRequest {
+pub struct AssetTransferNewRequest {
     /// From account: fund=Funding Account, spot=Spot Account, stdFutures=Standard Contract, coinMPerp=COIN-M Perpetual Future, USDTMPerp=Perpetual Future
     pub from_account: String,
 
@@ -33,7 +33,7 @@ pub struct AssetTransferRequest {
 /// Response from the new asset transfer endpoint
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct AssetTransferResponse {
+pub struct AssetTransferNewResponse {
     /// Transfer ID
     pub transfer_id: String,
 }
@@ -44,15 +44,17 @@ impl RestClient {
     /// Transfer assets between different account types within the same user account.
     /// Rate limit: 2/s by UID & 2 by IP in group
     ///
+    /// [docs]: https://bingx-api.github.io/docs/#/en-us/common/account-api.html#Asset%20Transfer%20New
+    ///
     /// # Arguments
     /// * `request` - The asset transfer request
     ///
     /// # Returns
     /// A result containing the transfer response or an error
-    pub async fn asset_transfer(
+    pub async fn asset_transfer_new(
         &self,
-        request: &AssetTransferRequest,
-    ) -> RestResult<AssetTransferResponse> {
+        request: &AssetTransferNewRequest,
+    ) -> RestResult<AssetTransferNewResponse> {
         self.send_request(
             ASSET_TRANSFER_NEW_ENDPOINT,
             reqwest::Method::POST,
@@ -71,7 +73,7 @@ mod tests {
 
     #[test]
     fn test_asset_transfer_new_request_serialization() {
-        let request = AssetTransferRequest {
+        let request = AssetTransferNewRequest {
             from_account: "fund".to_string(),
             to_account: "spot".to_string(),
             asset: "USDT".to_string(),
@@ -97,13 +99,13 @@ mod tests {
         }
         "#;
 
-        let response: AssetTransferResponse = serde_json::from_str(json).unwrap();
+        let response: AssetTransferNewResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.transfer_id, "TRANSFER123456789");
     }
 
     #[test]
     fn test_minimal_request() {
-        let request = AssetTransferRequest {
+        let request = AssetTransferNewRequest {
             from_account: "spot".to_string(),
             to_account: "USDTMPerp".to_string(),
             asset: "BTC".to_string(),
@@ -123,7 +125,7 @@ mod tests {
 
     #[test]
     fn test_futures_transfer() {
-        let request = AssetTransferRequest {
+        let request = AssetTransferNewRequest {
             from_account: "stdFutures".to_string(),
             to_account: "coinMPerp".to_string(),
             asset: "ETH".to_string(),

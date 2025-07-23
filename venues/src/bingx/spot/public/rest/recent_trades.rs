@@ -56,6 +56,7 @@ impl RestClient {
     /// # API Documentation
     /// - Endpoint: GET /openApi/spot/v1/market/trades
     /// - Content-Type: request body(application/json)
+    /// - [docs]: https://bingx-api.github.io/docs/#/en-us/spot/market-api.html#Recent%20Trades%20List
     pub async fn get_recent_trades(
         &self,
         request: &GetRecentTradesRequest,

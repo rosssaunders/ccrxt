@@ -56,6 +56,7 @@ impl RestClient {
     /// # API Documentation
     /// - Endpoint: GET /openApi/market/his/v1/trade
     /// - Content-Type: request body(application/json)
+    /// - [docs]: https://bingx-api.github.io/docs/#/en-us/spot/market-api.html#Old%20Trade%20Lookup
     pub async fn get_old_trade(
         &self,
         request: &GetOldTradeRequest,

@@ -104,6 +104,9 @@ impl RestClient {
     /// # Notes
     /// - Either orderId or clientOrderId must be provided
     /// - Only orders with status NEW, PENDING, or PARTIALLY_FILLED can be canceled
+    ///
+    /// # API Documentation
+    /// - [docs]: https://bingx-api.github.io/docs/#/en-us/spot/trade-api.html#Cancel%20Order
     pub async fn cancel_order(
         &self,
         request: &CancelOrderRequest,

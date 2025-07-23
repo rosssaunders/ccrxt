@@ -69,6 +69,9 @@ impl RestClient {
     ///
     /// # Returns
     /// * `RestResult<CancelAllOrdersResponse>` - The canceled orders response or error
+    ///
+    /// # API Documentation
+    /// - [docs]: https://bingx-api.github.io/docs/#/en-us/spot/trade-api.html#Cancel%20all%20Open%20Orders%20on%20a%20Symbol
     pub async fn cancel_all_orders(
         &self,
         request: &CancelAllOrdersRequest,

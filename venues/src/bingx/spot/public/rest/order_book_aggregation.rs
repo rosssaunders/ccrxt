@@ -3,56 +3,53 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::bingx::spot::{EndpointType, RestResult};
 
-const ORDER_BOOK_AGGREGATION_ENDPOINT: &str = "/openApi/spot/v1/market/depth";
+/// Endpoint for BingX Spot Order Book Aggregation
+const ORDER_BOOK_AGGREGATION_ENDPOINT: &str = "/openApi/spot/v2/market/depth";
 
-/// Request for the order book endpoint
+/// Request parameters for the BingX Spot Order Book Aggregation endpoint.
+///
+/// See [docs]: https://bingx-api.github.io/docs/#/en-us/spot/market-api.html#Order%20Book%20aggregation
 #[derive(Debug, Clone, Serialize, Default)]
+#[serde(rename_all = "camelCase")]
 pub struct GetOrderBookAggregationRequest {
-    /// Trading pair, e.g., BTC-USDT (required)
+    /// Trading pair, e.g., "BTC_USDT". Required.
     pub symbol: String,
 
-    /// Default 20, max 1000 (optional)
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub limit: Option<i32>,
+    /// Query depth. Required. (e.g., 20)
+    pub depth: i64,
 
-    /// Request valid time window value (optional)
-    #[serde(rename = "recvWindow", skip_serializing_if = "Option::is_none")]
-    pub recv_window: Option<i64>,
-
-    /// Request valid time window value (required)
-    pub timestamp: i64,
+    /// Aggregation type. Required. (e.g., "step0", "step1", "step2")
+    pub r#type: String,
 }
 
-/// Response from the order book aggregation endpoint
+/// Response from the BingX Spot Order Book Aggregation endpoint.
 #[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct GetOrderBookAggregationResponse {
-    /// Buy depth, where the first element of the array is the price and the second element is the quantity
+    /// Buy depth, where each element is [price, quantity] as strings.
     pub bids: Vec<[String; 2]>,
-    /// Sell depth, where the first element of the array is the price and the second element is the quantity
+
+    /// Sell depth, where each element is [price, quantity] as strings.
     pub asks: Vec<[String; 2]>,
-    /// Timestamp
+
+    /// Timestamp in milliseconds since epoch.
     pub ts: i64,
 }
 
 impl RestClient {
-    /// Get order book
+    /// Order Book aggregation
     ///
-    /// Get order book depth for a trading pair.
+    /// Used to query aggregated depth for a trading pair.
+    ///
+    /// [docs]: https://bingx-api.github.io/docs/#/en-us/spot/market-api.html#Order%20Book%20aggregation
+    ///
+    /// Rate limit: IP - 100 requests per 10 seconds (Group 1)
     ///
     /// # Arguments
-    /// * `request` - The order book request parameters
+    /// * `request` - The order book aggregation request parameters
     ///
     /// # Returns
-    /// Order book response containing bids, asks, and timestamp
-    ///
-    /// # Rate Limit
-    /// - IP: 100 requests per 10 seconds (Group 1)
-    ///
-    /// # API Documentation
-    /// - Endpoint: GET /openApi/spot/v1/market/depth
-    /// - Content-Type: request body(application/json)
-    ///
-    /// https://bingx-api.github.io/docs/#/en-us/spot/market-api.html#Order%20Book
+    /// Order book aggregation response containing bids, asks, and timestamp
     pub async fn get_order_book_aggregation(
         &self,
         request: &GetOrderBookAggregationRequest,
@@ -68,43 +65,34 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use reqwest::Client;
-
     use super::*;
-    use crate::bingx::spot::RateLimiter;
 
     #[test]
     fn test_order_book_aggregation_request_creation() {
-        let symbol = "BTC-USDT".to_string();
-        let limit = Some(20);
-        let recv_window = Some(5000);
-        let timestamp = 1640995200000i64;
+        let symbol = "BTC_USDT".to_string();
+        let depth = 20;
+        let r#type = "step0".to_string();
         let request = GetOrderBookAggregationRequest {
             symbol: symbol.clone(),
-            limit,
-            recv_window,
-            timestamp,
+            depth,
+            r#type: r#type.clone(),
         };
-
         assert_eq!(request.symbol, symbol);
-        assert_eq!(request.limit, limit);
-        assert_eq!(request.recv_window, recv_window);
-        assert_eq!(request.timestamp, timestamp);
+        assert_eq!(request.depth, depth);
+        assert_eq!(request.r#type, r#type);
     }
 
     #[test]
     fn test_order_book_aggregation_request_serialization() {
         let request = GetOrderBookAggregationRequest {
-            symbol: "BTC-USDT".to_string(),
-            limit: Some(20),
-            recv_window: Some(5000),
-            timestamp: 1640995200000i64,
+            symbol: "BTC_USDT".to_string(),
+            depth: 20,
+            r#type: "step0".to_string(),
         };
         let json = serde_json::to_string(&request).unwrap();
-        assert!(json.contains("\"symbol\":\"BTC-USDT\""));
-        assert!(json.contains("\"limit\":20"));
-        assert!(json.contains("\"recvWindow\":5000"));
-        assert!(json.contains("\"timestamp\":1640995200000"));
+        assert!(json.contains("\"symbol\":\"BTC_USDT\""));
+        assert!(json.contains("\"depth\":20"));
+        assert!(json.contains("\"type\":\"step0\""));
     }
 
     #[test]
@@ -114,7 +102,6 @@ mod tests {
             "asks": [["45001.0", "1.2"], ["45002.0", "0.8"]],
             "ts": 1640995200000
         }"#;
-
         let response: GetOrderBookAggregationResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.bids.len(), 2);
         assert_eq!(response.asks.len(), 2);
@@ -125,25 +112,5 @@ mod tests {
         let ask0 = response.asks.first().expect("Expected at least one ask");
         assert_eq!(*ask0.first().expect("Missing price in ask0"), "45001.0");
         assert_eq!(*ask0.get(1).expect("Missing amount in ask0"), "1.2");
-    }
-
-    #[tokio::test]
-    async fn test_get_order_book_aggregation_method_exists() {
-        let client = RestClient::new(
-            "http://127.0.0.1:0", // Invalid URL to guarantee error
-            Client::new(),
-            RateLimiter::new(),
-        );
-
-        let request = GetOrderBookAggregationRequest {
-            symbol: "BTC-USDT".to_string(),
-            limit: Some(20),
-            recv_window: None,
-            timestamp: 1640995200000i64,
-        };
-
-        // Test that the method exists and can be called
-        // Note: This will fail with network error since we're not making real requests
-        assert!(client.get_order_book_aggregation(&request).await.is_err());
     }
 }

@@ -68,6 +68,9 @@ impl RestClient {
     ///
     /// # API Permissions
     /// - Read permission required
+    ///
+    /// # API Documentation
+    /// - [docs]: https://bingx-api.github.io/docs/#/en-us/spot/wallet-api.html#Main%20Account%20Deposit%20Address
     pub async fn get_deposit_address(
         &self,
         request: &GetDepositAddressRequest,
