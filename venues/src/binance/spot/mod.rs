@@ -65,8 +65,7 @@ pub struct RestResponse<T> {
 /// Type alias for results returned by Binance Spot API operations
 pub type RestResult<T> = Result<RestResponse<T>, Errors>;
 
-pub type SpotClient =
-    crate::binance::shared::client::BinanceClient<crate::binance::spot::SpotConfig>;
+pub type SpotClient = crate::binance::shared::client::PrivateBinanceClient;
 
 use crate::binance::shared::venue_trait::{RateLimits, VenueConfig};
 use std::time::Duration;

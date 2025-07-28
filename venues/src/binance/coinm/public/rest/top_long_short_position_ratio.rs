@@ -91,12 +91,12 @@ mod tests {
             start_time: Some(1592870400000),
             end_time: Some(1592956800000),
         };
-        let json = serde_json::to_string(&req).unwrap();
-        assert!(json.contains("BTCUSD"));
-        assert!(json.contains("oneHour"));
-        assert!(json.contains("limit"));
-        assert!(json.contains("startTime"));
-        assert!(json.contains("endTime"));
+        let encoded = serde_urlencoded::to_string(&req).unwrap();
+        assert!(encoded.contains("pair=BTCUSD"));
+        assert!(encoded.contains("period=1h"));
+        assert!(encoded.contains("limit=100"));
+        assert!(encoded.contains("startTime=1592870400000"));
+        assert!(encoded.contains("endTime=1592956800000"));
     }
 
     #[test]

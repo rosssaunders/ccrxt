@@ -1,8 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::binance::{
-    coinm::{RestResult, private::rest::client::RestClient},
-};
+use crate::binance::coinm::{RestResult, private::rest::client::RestClient};
 
 const POSITION_RISK_ENDPOINT: &str = "/dapi/v1/positionRisk";
 
@@ -168,7 +166,7 @@ mod tests {
                 "liquidationPrice": "40000.0",
                 "leverage": "20",
                 "maxQty": "1000.0",
-                "marginType": "cross",
+                "marginType": "CROSS",
                 "isolatedMargin": "0.0",
                 "isAutoAddMargin": "false",
                 "positionSide": "LONG",
@@ -189,7 +187,7 @@ mod tests {
         assert_eq!(position.liquidation_price, "40000.0");
         assert_eq!(position.leverage, "20");
         assert_eq!(position.max_qty, "1000.0");
-        assert_eq!(position.margin_type, "cross");
+        assert_eq!(position.margin_type, "CROSS");
         assert_eq!(position.isolated_margin, "0.0");
         assert_eq!(position.is_auto_add_margin, "false");
         assert_eq!(position.position_side, "LONG");
@@ -209,7 +207,7 @@ mod tests {
                 "liquidationPrice": "40000.0",
                 "leverage": "20",
                 "maxQty": "1000.0",
-                "marginType": "cross",
+                "marginType": "CROSS",
                 "isolatedMargin": "0.0",
                 "isAutoAddMargin": "false",
                 "positionSide": "LONG",
@@ -225,7 +223,7 @@ mod tests {
                 "liquidationPrice": "3500.0",
                 "leverage": "10",
                 "maxQty": "500.0",
-                "marginType": "isolated",
+                "marginType": "ISOLATED",
                 "isolatedMargin": "0.5",
                 "isAutoAddMargin": "true",
                 "positionSide": "SHORT",
@@ -243,7 +241,7 @@ mod tests {
         assert_eq!(response[1].symbol, "ETHUSD_PERP");
         assert_eq!(response[1].position_amt, "-5.0");
         assert_eq!(response[1].position_side, "SHORT");
-        assert_eq!(response[1].margin_type, "isolated");
+        assert_eq!(response[1].margin_type, "ISOLATED");
         assert_eq!(response[1].is_auto_add_margin, "true");
     }
 

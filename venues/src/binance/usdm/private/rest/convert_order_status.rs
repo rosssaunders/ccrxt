@@ -4,29 +4,34 @@ use serde::{Deserialize, Serialize};
 use super::UsdmClient;
 use crate::binance::usdm::RestResult;
 
+/// Endpoint path for the convert order status API.
 const CONVERT_ORDER_STATUS_ENDPOINT: &str = "/fapi/v1/convert/orderStatus";
 
-/// Request parameters for getting convert order status.
+/// Request parameters for the convert order status endpoint.
+///
+/// Query order status by order ID or quote ID. Either `order_id` or `quote_id` is required.
 #[derive(Debug, Clone, Serialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct GetConvertOrderStatusRequest {
-    /// Order ID (either orderId or quoteId is required).
+    /// Order ID for the conversion. Either `order_id` or `quote_id` is required.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub order_id: Option<String>,
 
-    /// Quote ID (either orderId or quoteId is required).
+    /// Quote ID for the conversion. Either `order_id` or `quote_id` is required.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub quote_id: Option<String>,
 
     /// Request timestamp in milliseconds since epoch.
     pub timestamp: u64,
 
-    /// Optional receive window (milliseconds). If not set, default is used by API.
+    /// Optional receive window (milliseconds). If not set, the API default is used.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub recv_window: Option<u64>,
 }
 
-/// Convert order status enumeration.
+/// Status of a convert order.
+///
+/// See [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/convert/Order-Status
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum ConvertOrderStatus {
     /// Order is being processed.
@@ -46,52 +51,52 @@ pub enum ConvertOrderStatus {
     Fail,
 }
 
-/// Response from convert order status endpoint.
+/// Response for the convert order status endpoint.
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ConvertOrderStatusResponse {
     /// Order ID for the conversion.
     pub order_id: String,
 
-    /// Order status for the conversion.
+    /// Status of the convert order.
     pub order_status: ConvertOrderStatus,
 
-    /// From asset symbol.
+    /// Symbol of the asset being converted from.
     pub from_asset: String,
 
-    /// From amount for the conversion.
+    /// Amount of the asset being converted from.
     pub from_amount: String,
 
-    /// To asset symbol.
+    /// Symbol of the asset being converted to.
     pub to_asset: String,
 
-    /// To amount for the conversion.
+    /// Amount of the asset being converted to.
     pub to_amount: String,
 
-    /// Ratio for conversion.
+    /// Conversion ratio.
     pub ratio: String,
 
-    /// Inverse ratio for conversion.
+    /// Inverse conversion ratio.
     pub inverse_ratio: String,
 
-    /// Create time in milliseconds since epoch.
+    /// Creation time in milliseconds since epoch.
     pub create_time: u64,
 }
 
 impl UsdmClient {
     /// Order status
     ///
-    /// Query order status by order ID.
+    /// Query order status by order ID or quote ID.
     ///
     /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/convert/Order-Status
     ///
-    /// Rate limit: 50
+    /// Rate limit: 50 (IP)
     ///
     /// # Arguments
     /// * `params` - The convert order status request parameters
     ///
     /// # Returns
-    /// ConvertOrderStatusResponse - Order status and details
+    /// `ConvertOrderStatusResponse` - Order status and details
     pub async fn get_convert_order_status(
         &self,
         params: GetConvertOrderStatusRequest,
@@ -113,8 +118,7 @@ mod tests {
 
     #[test]
     fn test_convert_order_status_response_deserialization() {
-        let json = r#"
-        {
+        let json = r#"{
             "orderId": "933256278426274426",
             "orderStatus": "SUCCESS",
             "fromAsset": "USDT",
@@ -124,14 +128,14 @@ mod tests {
             "ratio": "0.00307702",
             "inverseRatio": "324.99",
             "createTime": 1624248872184
-        }
-        "#;
+        }"#;
 
         let response: ConvertOrderStatusResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.order_id, "933256278426274426");
         assert_eq!(response.from_asset, "USDT");
         assert_eq!(response.to_asset, "BNB");
         assert_eq!(response.order_status, ConvertOrderStatus::Success);
+        assert_eq!(response.create_time, 1624248872184);
     }
 
     #[test]

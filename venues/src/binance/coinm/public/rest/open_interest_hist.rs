@@ -173,10 +173,10 @@ mod tests {
             ContractTypeFilter::NextQuarter,
             ContractTypeFilter::All,
         ];
-        for ct in contract_types.iter() {
+        for ct in contract_types {
             let req = OpenInterestHistRequest {
                 pair: Cow::Borrowed("BTCUSD"),
-                contract_type: *ct,
+                contract_type: ct,
                 period: Period::I5m,
                 limit: None,
                 start_time: None,

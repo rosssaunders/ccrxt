@@ -142,7 +142,7 @@ mod tests {
         };
 
         let serialized = serde_urlencoded::to_string(&request).unwrap();
-        assert!(serialized.contains("type=ISOLATEDMARGIN_MAIN"));
+        assert!(serialized.contains("type=ISOLATEDMARGIN_MARGIN"));
         assert!(serialized.contains("startTime=1625097500000"));
         assert!(serialized.contains("endTime=1625097700000"));
         assert!(serialized.contains("current=2"));

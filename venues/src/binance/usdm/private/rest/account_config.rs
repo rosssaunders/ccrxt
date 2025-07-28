@@ -90,7 +90,7 @@ mod tests {
         };
         let serialized = serde_urlencoded::to_string(&request).unwrap();
         assert!(serialized.contains("timestamp=1625097600000"));
-        assert!(serialized.contains("recv_window=5000"));
+        assert!(serialized.contains("recvWindow=5000"));
     }
 
     #[test]

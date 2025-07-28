@@ -1,8 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::binance::{
-    coinm::{MarginType, RestResult, private::rest::client::RestClient},
-};
+use crate::binance::coinm::{MarginType, RestResult, private::rest::client::RestClient};
 
 const MARGIN_TYPE_ENDPOINT: &str = "/dapi/v1/marginType";
 
@@ -12,7 +10,7 @@ pub struct ChangeMarginTypeRequest {
     /// Trading symbol (e.g., "BTCUSD_PERP").
     pub symbol: String,
 
-    /// Margin type: ISOLATED or CROSSED.
+    /// Margin type: ISOLATED or CROSS.
     #[serde(rename = "marginType")]
     pub margin_type: MarginType,
 
@@ -56,14 +54,8 @@ impl RestClient {
         &self,
         params: ChangeMarginTypeRequest,
     ) -> RestResult<ChangeMarginTypeResponse> {
-        self.send_signed_request(
-            MARGIN_TYPE_ENDPOINT,
-            reqwest::Method::POST,
-            params,
-            1,
-            true,
-        )
-        .await
+        self.send_signed_request(MARGIN_TYPE_ENDPOINT, reqwest::Method::POST, params, 1, true)
+            .await
     }
 }
 
@@ -98,7 +90,7 @@ mod tests {
 
         let serialized = serde_urlencoded::to_string(&request).unwrap();
         assert!(serialized.contains("symbol=ETHUSD_PERP"));
-        assert!(serialized.contains("marginType=CROSSED"));
+        assert!(serialized.contains("marginType=CROSS"));
         assert!(serialized.contains("recvWindow=5000"));
         assert!(serialized.contains("timestamp=1625097600000"));
     }

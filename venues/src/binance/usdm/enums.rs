@@ -1,6 +1,9 @@
+/// Alias for the response type used in the `newOrderRespType` field in Binance API requests/responses.
 use std::fmt;
 
 use serde::{Deserialize, Serialize};
+
+pub type NewOrderRespType = OrderResponseType;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
@@ -219,7 +222,7 @@ impl fmt::Display for IncomeType {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum MarginType {
     Cross,
     Isolated,

@@ -3,7 +3,9 @@ use std::borrow::Cow;
 
 use super::UsdmClient;
 use crate::binance::usdm::RestResult;
-use crate::binance::usdm::enums::*;
+use crate::binance::usdm::enums::{
+    OrderSide, OrderStatus, OrderType, PositionSide, TimeInForce, WorkingType,
+};
 
 /// Endpoint path for getting all open orders.
 const OPEN_ORDERS_ENDPOINT: &str = "/fapi/v1/openOrders";
@@ -17,44 +19,50 @@ const OPEN_ORDERS_ENDPOINT: &str = "/fapi/v1/openOrders";
 #[serde(rename_all = "camelCase")]
 pub struct GetOpenOrdersRequest {
     /// Trading symbol (e.g., "BTCUSDT"). Optional.
+    /// Must match a valid symbol listed on Binance USDM Futures.
+    /// If omitted, returns open orders for all symbols.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub symbol: Option<Cow<'static, str>>,
 
     /// The number of milliseconds the request is valid for. Optional.
+    /// Used to specify how long the request remains valid after timestamp.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub recv_window: Option<u64>,
 
     /// Request timestamp (milliseconds since epoch). Required.
+    /// Must be the current server time in milliseconds.
     pub timestamp: u64,
 }
 
 /// Represents a single open order returned by the Current All Open Orders endpoint.
+///
+/// All fields are deserialized from the Binance USDM Futures API response.
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct OpenOrder {
-    /// Trading symbol.
+    /// Trading symbol for the order.
     pub symbol: Cow<'static, str>,
 
-    /// Order ID.
+    /// Unique order ID assigned by Binance.
     #[serde(rename = "orderId")]
     pub order_id: u64,
 
-    /// Client order ID.
+    /// Client-supplied order ID.
     #[serde(rename = "clientOrderId")]
     pub client_order_id: Cow<'static, str>,
 
-    /// Order price.
+    /// Price at which the order is placed.
     pub price: Cow<'static, str>,
 
-    /// Original quantity.
+    /// Original quantity of the order.
     #[serde(rename = "origQty")]
     pub orig_qty: Cow<'static, str>,
 
-    /// Executed quantity.
+    /// Executed quantity so far.
     #[serde(rename = "executedQty")]
     pub executed_qty: Cow<'static, str>,
 
-    /// Cumulative quote asset transacted.
+    /// Cumulative quote asset transacted for the order.
     #[serde(rename = "cumQuote")]
     pub cum_quote: Option<Cow<'static, str>>,
 
@@ -62,17 +70,17 @@ pub struct OpenOrder {
     #[serde(rename = "avgPrice")]
     pub avg_price: Option<Cow<'static, str>>,
 
-    /// Order status.
+    /// Status of the order (see OrderStatus enum).
     pub status: OrderStatus,
 
-    /// Time in force policy.
+    /// Time in force policy for the order (see TimeInForce enum).
     pub time_in_force: TimeInForce,
 
-    /// Order type.
+    /// Type of the order (see OrderType enum).
     #[serde(rename = "type")]
     pub order_type: OrderType,
 
-    /// Order side (buy/sell).
+    /// Side of the order (buy/sell).
     pub side: OrderSide,
 
     /// Position side (LONG/SHORT/BOTH).
@@ -81,7 +89,7 @@ pub struct OpenOrder {
     /// If true, the order is reduce-only.
     pub reduce_only: Option<bool>,
 
-    /// Stop price (for stop orders).
+    /// Stop price for stop orders.
     pub stop_price: Option<Cow<'static, str>>,
 
     /// Working type (CONTRACT_PRICE/MARK_PRICE).
@@ -90,10 +98,10 @@ pub struct OpenOrder {
     /// If true, the conditional order trigger is protected.
     pub price_protect: Option<bool>,
 
-    /// Price match mode.
+    /// Price match mode (e.g., NONE).
     pub price_match: Option<Cow<'static, str>>,
 
-    /// Self-trade prevention mode.
+    /// Self-trade prevention mode (e.g., NONE).
     pub self_trade_prevention_mode: Option<Cow<'static, str>>,
 
     /// If true, this is a close-all order.
@@ -156,13 +164,12 @@ mod tests {
     #[test]
     fn test_get_open_orders_request_serialization_with_symbol() {
         let request = GetOpenOrdersRequest {
-            symbol: Some("BTCUSDT".into()),
+            symbol: Some(Cow::Borrowed("BTCUSDT")),
             recv_window: None,
             timestamp: 1234567890,
         };
-
         let serialized = serde_urlencoded::to_string(&request).unwrap();
-        assert_eq!(serialized, "symbol=BTCUSDT");
+        assert_eq!(serialized, "symbol=BTCUSDT&timestamp=1234567890");
         assert!(!serialized.contains("api_key"));
         assert!(!serialized.contains("api_secret"));
     }
@@ -174,9 +181,8 @@ mod tests {
             recv_window: None,
             timestamp: 1234567890,
         };
-
         let serialized = serde_urlencoded::to_string(&request).unwrap();
-        assert_eq!(serialized, "");
+        assert_eq!(serialized, "timestamp=1234567890");
     }
 
     #[test]
@@ -195,7 +201,6 @@ mod tests {
             "positionSide": "LONG",
             "workingType": "CONTRACT_PRICE"
         }"#;
-
         let order: OpenOrder = serde_json::from_str(json).unwrap();
         assert_eq!(order.symbol, "BTCUSDT");
         assert_eq!(order.order_id, 1234567890);
@@ -227,7 +232,6 @@ mod tests {
             "positionSide": "SHORT",
             "workingType": "MARK_PRICE"
         }"#;
-
         let order: OpenOrder = serde_json::from_str(json).unwrap();
         assert_eq!(order.symbol, "ETHUSDT");
         assert!(matches!(order.status, OrderStatus::New));
@@ -267,7 +271,6 @@ mod tests {
                 "workingType": "MARK_PRICE"
             }
         ]"#;
-
         let orders: Vec<OpenOrder> = serde_json::from_str(json).unwrap();
         assert_eq!(orders.len(), 2);
         assert_eq!(orders[0].symbol, "BTCUSDT");
@@ -301,7 +304,6 @@ mod tests {
             "positionSide": "LONG",
             "workingType": "MARK_PRICE"
         }"#;
-
         let order: OpenOrder = serde_json::from_str(json).unwrap();
         assert!(matches!(order.order_type, OrderType::TakeProfitMarket));
         assert_eq!(order.price, "0"); // TP market orders don't have price
@@ -323,7 +325,6 @@ mod tests {
             "positionSide": "BOTH",
             "workingType": "CONTRACT_PRICE"
         }"#;
-
         let order: OpenOrder = serde_json::from_str(json).unwrap();
         assert!(matches!(order.position_side, PositionSide::Both));
     }

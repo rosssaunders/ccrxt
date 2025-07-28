@@ -35,7 +35,7 @@ impl UsdmClient {
     ///
     /// Toggle BNB burn on futures trading and margin interest.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Toggle-BNB-Burn-On-Futures-Trading-And-Margin-Interest
+    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Toggle-BNB-Burn-On-Futures-Trade
     ///
     /// Rate limit: 1
     ///

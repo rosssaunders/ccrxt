@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use serde_repr::{Deserialize_repr, Serialize_repr};
 use std::borrow::Cow;
 
 use super::UsdmClient;
@@ -12,13 +13,13 @@ const POSITION_MARGIN_HISTORY_ENDPOINT: &str = "/fapi/v1/positionMargin/history"
 ///
 /// 1: Add position margin
 /// 2: Reduce position margin
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize_repr, Deserialize_repr)]
+#[repr(u8)]
 pub enum MarginModificationType {
-    #[serde(rename = "1")]
+    /// Add position margin
     Add = 1,
 
-    #[serde(rename = "2")]
+    /// Reduce position margin
     Reduce = 2,
 }
 

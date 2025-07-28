@@ -5,51 +5,79 @@ use crate::binance::usdm::{RestResult, enums::*};
 
 const CURRENT_OPEN_ORDER_ENDPOINT: &str = "/fapi/v1/openOrder";
 
-/// Request parameters for querying a current open order.
+/// Request parameters for the Query Current Open Order endpoint.
+///
+/// See the [Binance API documentation][docs] for details.
+///
+/// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Query-Current-Open-Order
 #[derive(Debug, Clone, Serialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct CurrentOpenOrderRequest {
-    /// Trading symbol (e.g., "BTCUSDT"). Required.
+    /// Trading symbol (e.g., "BTCUSDT").
+    ///
+    /// This field is required.
     pub symbol: String,
 
-    /// Order ID to query. Either orderId or origClientOrderId must be sent.
-    #[serde(skip_serializing_if = "Option::is_none")]
+    /// Order ID to query. Either `order_id` or `orig_client_order_id` must be sent.
+    ///
+    /// If both are provided, `order_id` is used.
+    #[serde(rename = "orderId", skip_serializing_if = "Option::is_none")]
     pub order_id: Option<u64>,
 
-    /// Original client order ID. Either orderId or origClientOrderId must be sent.
-    #[serde(skip_serializing_if = "Option::is_none")]
+    /// Original client order ID. Either `order_id` or `orig_client_order_id` must be sent.
+    #[serde(rename = "origClientOrderId", skip_serializing_if = "Option::is_none")]
     pub orig_client_order_id: Option<String>,
+
+    /// The value cannot be greater than 60000
+    ///
+    /// Optional. Default: 5000.
+    #[serde(rename = "recvWindow", skip_serializing_if = "Option::is_none")]
+    pub recv_window: Option<u64>,
+
+    /// Request timestamp (milliseconds since epoch).
+    pub timestamp: u64,
 }
 
-/// Response for querying a current open order.
+/// Response for the Query Current Open Order endpoint.
+///
+/// See the [Binance API documentation][docs] for field details and valid values.
+///
+/// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Query-Current-Open-Order
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct CurrentOpenOrderResponse {
-    /// Symbol.
+    /// Trading symbol.
     pub symbol: String,
 
     /// Order ID.
+    #[serde(rename = "orderId")]
     pub order_id: u64,
 
     /// Client order ID.
+    #[serde(rename = "clientOrderId")]
     pub client_order_id: String,
 
     /// Price.
     pub price: String,
 
+    /// Average price.
+    pub avg_price: String,
+
     /// Original quantity.
+    #[serde(rename = "origQty")]
     pub orig_qty: String,
 
     /// Executed quantity.
+    #[serde(rename = "executedQty")]
     pub executed_qty: String,
 
     /// Cumulative quote asset transacted quantity.
     pub cum_quote: String,
 
-    /// Status.
+    /// Status of the order.
     pub status: OrderStatus,
 
-    /// Time in force.
+    /// Time in force policy for the order.
     pub time_in_force: TimeInForce,
 
     /// Order type.
@@ -68,7 +96,7 @@ pub struct CurrentOpenOrderResponse {
     /// Close position flag.
     pub close_position: bool,
 
-    /// Stop price.
+    /// Stop price (if applicable).
     pub stop_price: Option<String>,
 
     /// Working type.
@@ -86,13 +114,13 @@ pub struct CurrentOpenOrderResponse {
     /// Self trade prevention mode.
     pub self_trade_prevention_mode: SelfTradePreventionMode,
 
-    /// Good till date.
+    /// Good till date (for GTD orders).
     pub good_till_date: u64,
 
-    /// Order time.
+    /// Order time (milliseconds since epoch).
     pub time: u64,
 
-    /// Update time.
+    /// Update time (milliseconds since epoch).
     pub update_time: u64,
 
     /// Activation price (for trailing stop orders).
@@ -105,8 +133,7 @@ pub struct CurrentOpenOrderResponse {
 impl UsdmClient {
     /// Query Current Open Order (USER_DATA)
     ///
-    /// Check an order's status.
-    /// Either orderId or origClientOrderId must be sent.
+    /// Check an order's status. Either `orderId` or `origClientOrderId` must be sent.
     /// If the queried order has been filled or cancelled, the error message "Order does not exist" will be returned.
     ///
     /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Query-Current-Open-Order
@@ -143,12 +170,16 @@ mod tests {
             symbol: "BTCUSDT".to_string(),
             order_id: Some(12345),
             orig_client_order_id: None,
+            recv_window: Some(5000),
+            timestamp: 1234567890,
         };
 
         let serialized = serde_urlencoded::to_string(&request).unwrap();
         assert!(serialized.contains("symbol=BTCUSDT"));
         assert!(serialized.contains("orderId=12345"));
         assert!(!serialized.contains("origClientOrderId"));
+        assert!(serialized.contains("recvWindow=5000"));
+        assert!(serialized.contains("timestamp=1234567890"));
     }
 
     #[test]
@@ -157,12 +188,15 @@ mod tests {
             symbol: "BTCUSDT".to_string(),
             order_id: None,
             orig_client_order_id: Some("myOrder123".to_string()),
+            recv_window: None,
+            timestamp: 9876543210,
         };
 
         let serialized = serde_urlencoded::to_string(&request).unwrap();
         assert!(serialized.contains("symbol=BTCUSDT"));
         assert!(serialized.contains("origClientOrderId=myOrder123"));
         assert!(!serialized.contains("orderId"));
+        assert!(serialized.contains("timestamp=9876543210"));
     }
 
     #[test]
@@ -172,6 +206,7 @@ mod tests {
             "orderId": 12345,
             "clientOrderId": "myOrder1",
             "price": "50000.0",
+            "avgPrice": "0.0",
             "origQty": "1.0",
             "executedQty": "0.5",
             "cumQuote": "25000.0",
@@ -203,6 +238,7 @@ mod tests {
         assert_eq!(response.position_side, PositionSide::Both);
         assert!(!response.reduce_only);
         assert!(!response.close_position);
+        assert_eq!(response.avg_price, "0.0");
     }
 
     #[test]
@@ -211,6 +247,8 @@ mod tests {
         assert!(request.symbol.is_empty());
         assert!(request.order_id.is_none());
         assert!(request.orig_client_order_id.is_none());
+        assert!(request.recv_window.is_none());
+        assert_eq!(request.timestamp, 0);
     }
 
     #[test]
@@ -219,11 +257,14 @@ mod tests {
             symbol: "ETHUSDT".to_string(),
             order_id: Some(67890),
             orig_client_order_id: Some("clientOrder456".to_string()),
+            recv_window: None,
+            timestamp: 1111111111,
         };
 
         let serialized = serde_urlencoded::to_string(&request).unwrap();
         assert!(serialized.contains("symbol=ETHUSDT"));
         assert!(serialized.contains("orderId=67890"));
         assert!(serialized.contains("origClientOrderId=clientOrder456"));
+        assert!(serialized.contains("timestamp=1111111111"));
     }
 }

@@ -8,14 +8,24 @@ use crate::binance::usdm::enums::*;
 
 const ACCOUNT_TRADES_ENDPOINT: &str = "/fapi/v1/userTrades";
 
-/// Request parameters for the account trade list endpoint.
+/// Request parameters for the Account Trade List endpoint.
+///
+/// All fields are documented per Binance API requirements.
 #[derive(Debug, Clone, Serialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct GetAccountTradesRequest {
     /// Trading symbol (e.g., "BTCUSDT"). Required.
+    /// Must be a valid symbol listed on Binance USDM Futures.
     pub symbol: Cow<'static, str>,
 
+    /// Order ID to filter trades. Optional.
+    /// Can only be used in combination with `symbol`.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub order_id: Option<u64>,
+
     /// Start time for filtering trades (milliseconds since epoch). Optional.
+    /// If both `start_time` and `end_time` are not sent, last 7 days' data will be returned.
+    /// The time between `start_time` and `end_time` cannot be longer than 7 days.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub start_time: Option<u64>,
 
@@ -24,15 +34,23 @@ pub struct GetAccountTradesRequest {
     pub end_time: Option<u64>,
 
     /// Trade ID to fetch from. Optional.
+    /// Cannot be sent with `start_time` or `end_time`. Default gets most recent trades.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub from_id: Option<u64>,
 
-    /// Limit the number of trades returned. Optional.
+    /// Limit the number of trades returned. Optional. Default 500; max 1000.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<u32>,
+
+    /// The number of milliseconds the request is valid for. Optional.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub recv_window: Option<u64>,
+
+    /// Request timestamp (milliseconds since epoch). Required.
+    pub timestamp: u64,
 }
 
-/// Represents a single account trade.
+/// Represents a single account trade returned by the Account Trade List endpoint.
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct AccountTrade {
@@ -50,6 +68,12 @@ pub struct AccountTrade {
 
     /// Trade quantity.
     pub qty: Cow<'static, str>,
+
+    /// Quote quantity.
+    pub quote_qty: Cow<'static, str>,
+
+    /// Realized PnL for the trade.
+    pub realized_pnl: Cow<'static, str>,
 
     /// Commission amount.
     pub commission: Cow<'static, str>,
@@ -74,18 +98,19 @@ pub struct AccountTrade {
 }
 
 impl UsdmClient {
-    /// Account trade list (GET /fapi/v1/userTrades)
+    /// Account Trade List (GET /fapi/v1/userTrades)
     ///
-    /// Returns a list of trades for the account.
-    /// [docs]: https://binance-docs.github.io/apidocs/futures/en/#account-trade-list-user_data
+    /// Returns a list of trades for the account and symbol.
+    ///
+    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Account-Trade-List
     ///
     /// Rate limit: 5
     ///
     /// # Arguments
-    /// * `params` - The request parameters
+    /// * `params` - The request parameters for the Account Trade List endpoint
     ///
     /// # Returns
-    /// Vector of account trades
+    /// Vector of account trades for the account and symbol
     pub async fn get_account_trades(
         &self,
         params: GetAccountTradesRequest,
@@ -103,17 +128,20 @@ mod tests {
     fn test_get_account_trades_request_serialization() {
         let request = GetAccountTradesRequest {
             symbol: "BTCUSDT".into(),
+            order_id: None,
             start_time: Some(1625184000000),
             end_time: Some(1625270400000),
             from_id: Some(1000),
             limit: Some(100),
+            recv_window: None,
+            timestamp: 1625270400000,
         };
 
         let serialized = serde_urlencoded::to_string(&request).unwrap();
         assert!(serialized.contains("symbol=BTCUSDT"));
-        assert!(serialized.contains("start_time=1625184000000"));
-        assert!(serialized.contains("end_time=1625270400000"));
-        assert!(serialized.contains("from_id=1000"));
+        assert!(serialized.contains("startTime=1625184000000"));
+        assert!(serialized.contains("endTime=1625270400000"));
+        assert!(serialized.contains("fromId=1000"));
         assert!(serialized.contains("limit=100"));
     }
 
@@ -121,14 +149,17 @@ mod tests {
     fn test_get_account_trades_request_minimal() {
         let request = GetAccountTradesRequest {
             symbol: "ETHUSDT".into(),
+            order_id: None,
             start_time: None,
             end_time: None,
             from_id: None,
             limit: None,
+            recv_window: None,
+            timestamp: 1625270400000,
         };
 
         let serialized = serde_urlencoded::to_string(&request).unwrap();
-        assert_eq!(serialized, "symbol=ETHUSDT");
+        assert_eq!(serialized, "symbol=ETHUSDT&timestamp=1625270400000");
     }
 
     #[test]
@@ -139,6 +170,8 @@ mod tests {
             "symbol": "BTCUSDT",
             "price": "45380.10",
             "qty": "0.100",
+            "quoteQty": "4538.010",
+            "realizedPnl": "0.00000000",
             "commission": "0.04538010",
             "commissionAsset": "USDT",
             "time": 1625184000000,
@@ -154,6 +187,8 @@ mod tests {
         assert_eq!(trade.symbol, "BTCUSDT");
         assert_eq!(trade.price, "45380.10");
         assert_eq!(trade.qty, "0.100");
+        assert_eq!(trade.quote_qty, "4538.010");
+        assert_eq!(trade.realized_pnl, "0.00000000");
         assert_eq!(trade.commission, "0.04538010");
         assert_eq!(trade.commission_asset, "USDT");
         assert_eq!(trade.time, 1625184000000);
@@ -171,6 +206,8 @@ mod tests {
             "symbol": "ETHUSDT",
             "price": "3070.50",
             "qty": "0.500",
+            "quoteQty": "1535.250",
+            "realizedPnl": "-0.50000000",
             "commission": "0.07676250",
             "commissionAsset": "USDT",
             "time": 1625184000000,
@@ -195,6 +232,8 @@ mod tests {
             "symbol": "BTCUSDT",
             "price": "45380.10",
             "qty": "0.100",
+            "quoteQty": "4538.010",
+            "realizedPnl": "1.23000000",
             "commission": "0.00000100",
             "commissionAsset": "BTC",
             "time": 1625184000000,
@@ -219,6 +258,8 @@ mod tests {
                 "symbol": "BTCUSDT",
                 "price": "45380.10",
                 "qty": "0.100",
+                "quoteQty": "4538.010",
+                "realizedPnl": "0.00000000",
                 "commission": "0.04538010",
                 "commissionAsset": "USDT",
                 "time": 1625184000000,
@@ -233,6 +274,8 @@ mod tests {
                 "symbol": "BTCUSDT",
                 "price": "45385.20",
                 "qty": "0.050",
+                "quoteQty": "2269.260",
+                "realizedPnl": "-0.10000000",
                 "commission": "0.02269260",
                 "commissionAsset": "USDT",
                 "time": 1625184060000,
@@ -266,6 +309,8 @@ mod tests {
             "symbol": "DOGEUSDT",
             "price": "0.12345678",
             "qty": "10000.00000000",
+            "quoteQty": "1234.56780000",
+            "realizedPnl": "5.67890000",
             "commission": "0.00123456",
             "commissionAsset": "DOGE",
             "time": 1625184000000,
@@ -289,6 +334,8 @@ mod tests {
             "symbol": "BTCUSDT",
             "price": "45380.10",
             "qty": "0.100",
+            "quoteQty": "4538.010",
+            "realizedPnl": "0.00000000",
             "commission": "0.00000000",
             "commissionAsset": "BNB",
             "time": 1625184000000,

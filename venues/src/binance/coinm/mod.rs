@@ -5,8 +5,8 @@ mod errors;
 mod rate_limit;
 
 // Re-export modules for new structure
-mod public {
-    mod rest;
+pub mod public {
+    pub mod rest;
     pub use self::rest::*;
 }
 
@@ -62,8 +62,13 @@ pub struct RestResponse<T> {
 pub type RestResult<T> = Result<RestResponse<T>, Errors>;
 
 /// Type alias for the CoinmClient
-pub type CoinmClient =
-    crate::binance::shared::client::BinanceClient<crate::binance::coinm::CoinmConfig>;
+pub type CoinmClient = crate::binance::shared::client::PrivateBinanceClient;
+
+// Type aliases for backwards compatibility with integration tests  
+pub use TopLongShortAccountRatioRequest as TopLongShortAccountRatioParams;
+pub use TopLongShortPositionRatioRequest as TopLongShortPositionRatioParams;
+pub use OpenInterestHistRequest as OpenInterestHistParams;
+pub use TakerBuySellVolRequest as TakerBuySellVolParams;
 
 use crate::binance::shared::venue_trait::{RateLimits, VenueConfig};
 

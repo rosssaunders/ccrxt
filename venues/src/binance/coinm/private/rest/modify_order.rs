@@ -1,10 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-use crate::binance::{
-    coinm::{
-        OrderSide, OrderStatus, OrderType, PositionSide, PriceMatch, RestResult,
-        SelfTradePreventionMode, TimeInForce, WorkingType, private::rest::client::RestClient,
-    },
+use crate::binance::coinm::{
+    OrderSide, OrderStatus, OrderType, PositionSide, PriceMatch, RestResult,
+    SelfTradePreventionMode, TimeInForce, WorkingType, private::rest::client::RestClient,
 };
 
 const ORDER_ENDPOINT: &str = "/dapi/v1/order";
@@ -28,11 +26,11 @@ pub struct ModifyOrderRequest {
 
     /// New order quantity. Either quantity or price must be sent.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub quantity: Option<String>,
+    pub quantity: Option<f64>,
 
     /// New order price. Either quantity or price must be sent.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub price: Option<String>,
+    pub price: Option<f64>,
 
     /// Price match mode. Only available for LIMIT/STOP/TAKE_PROFIT orders.
     /// Cannot be passed together with price.
@@ -166,14 +164,8 @@ impl RestClient {
         params: ModifyOrderRequest,
     ) -> RestResult<ModifyOrderResponse> {
         let weight = 1;
-        self.send_signed_request(
-            ORDER_ENDPOINT,
-            reqwest::Method::PUT,
-            params,
-            weight,
-            true,
-        )
-        .await
+        self.send_signed_request(ORDER_ENDPOINT, reqwest::Method::PUT, params, weight, true)
+            .await
     }
 }
 
@@ -188,8 +180,8 @@ mod tests {
             side: OrderSide::Buy,
             order_id: Some(12345),
             orig_client_order_id: None,
-            quantity: Some("10.5".to_string()),
-            price: Some("45000.0".to_string()),
+            quantity: Some(10.5),
+            price: Some(45000.0),
             price_match: None,
             recv_window: None,
             timestamp: 1625097600000,
@@ -214,7 +206,7 @@ mod tests {
             side: OrderSide::Sell,
             order_id: None,
             orig_client_order_id: Some("my_order_123".to_string()),
-            quantity: Some("5.0".to_string()),
+            quantity: Some(5.0),
             price: None,
             price_match: Some(PriceMatch::Opponent),
             recv_window: Some(5000),
@@ -230,7 +222,7 @@ mod tests {
         assert!(serialized.contains("recvWindow=5000"));
         assert!(serialized.contains("timestamp=1625097600000"));
         assert!(!serialized.contains("orderId"));
-        assert!(!serialized.contains("price"));
+        assert!(!serialized.contains("price="));
     }
 
     #[test]

@@ -9,7 +9,6 @@ use super::{
     errors::{ApiError, ErrorResponse, Errors, handle_http_status},
     rate_limiter::RateLimiter,
     sign_request,
-    venue_trait::VenueConfig,
 };
 
 /// Response structure containing data, headers, and metadata
@@ -139,13 +138,14 @@ impl PrivateBinanceClient {
         const MAX_ATTEMPTS: u32 = 3;
 
         loop {
-            attempts = attempts.saturating_add(1);
+            attempts = attempts.saturating_add(1u32);
 
             let response = request_builder
                 .try_clone()
                 .ok_or_else(|| Errors::Error("Failed to clone request".to_string()))?
                 .send()
-                .await?;
+                .await
+                .map_err(Errors::from)?;
 
             // Extract headers
             let mut headers = HashMap::new();
@@ -292,25 +292,34 @@ impl PublicBinanceClient {
         let mut request_builder = self.client.request(method, &url);
 
         // Send request with retry logic
-        let mut attempts = 0;
+        let mut attempts: u32 = 0;
         const MAX_ATTEMPTS: u32 = 3;
 
         loop {
-            attempts = attempts.saturating_add(1);
+            attempts = attempts.saturating_add(1u32);
             let response = request_builder
                 .try_clone()
                 .ok_or_else(|| Errors::Error("Failed to clone request".to_string()))?
                 .send()
-                .await?;
+                .await
+                .map_err(Errors::from)?;
 
             let status = response.status();
-            let text = response.text().await?;
+            
+            // Extract headers before consuming response
+            let mut headers_map = HashMap::new();
+            for (k, v) in response.headers() {
+                if let Ok(s) = v.to_str() {
+                    headers_map.insert(k.to_string(), s.to_string());
+                }
+            }
+            
+            let text = response.text().await.map_err(Errors::from)?;
 
             if status == reqwest::StatusCode::TOO_MANY_REQUESTS && attempts < MAX_ATTEMPTS {
-                let retry_secs = response
-                    .headers()
+                let retry_secs = headers_map
                     .get("retry-after")
-                    .and_then(|v| v.to_str().ok()?.parse::<u64>().ok())
+                    .and_then(|v| v.parse::<u64>().ok())
                     .unwrap_or(1);
                 sleep(Duration::from_secs(retry_secs)).await;
                 continue;
@@ -334,12 +343,6 @@ impl PublicBinanceClient {
 
             // Record and update rate limiter
             self.rate_limiter.record_usage(weight, false).await;
-            let mut headers_map = HashMap::new();
-            for (k, v) in response.headers() {
-                if let Ok(s) = v.to_str() {
-                    headers_map.insert(k.to_string(), s.to_string());
-                }
-            }
             self.rate_limiter.update_from_headers(&headers_map).await;
 
             let rate_limit_info = {

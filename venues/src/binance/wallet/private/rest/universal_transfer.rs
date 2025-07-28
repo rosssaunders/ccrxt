@@ -106,7 +106,7 @@ mod tests {
         };
 
         let serialized = serde_urlencoded::to_string(&request).unwrap();
-        assert!(serialized.contains("type=ISOLATEDMARGIN_MAIN"));
+        assert!(serialized.contains("type=ISOLATEDMARGIN_MARGIN"));
         assert!(serialized.contains("asset=BTC"));
         assert!(serialized.contains("amount=0.001"));
         assert!(serialized.contains("fromSymbol=BTCUSDT"));
@@ -126,7 +126,7 @@ mod tests {
         };
 
         let serialized = serde_urlencoded::to_string(&request).unwrap();
-        assert!(serialized.contains("type=MAIN_ISOLATEDMARGIN"));
+        assert!(serialized.contains("type=MARGIN_ISOLATEDMARGIN"));
         assert!(serialized.contains("asset=ETH"));
         assert!(serialized.contains("amount=0.5"));
         assert!(!serialized.contains("fromSymbol"));

@@ -9,25 +9,33 @@ use crate::binance::usdm::enums::PositionSide;
 const ACCOUNT_INFO_ENDPOINT: &str = "/fapi/v3/account";
 
 /// Request parameters for the Account Information V3 endpoint.
+///
+/// See [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Account-Information-V3
 #[derive(Debug, Clone, Serialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct GetAccountV3Request {
     /// Request timestamp in milliseconds since epoch.
+    /// Must be the current server time.
     pub timestamp: u64,
 
     /// The number of milliseconds after timestamp the request is valid for. Optional.
+    /// If omitted, default is 5000ms.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub recv_window: Option<u64>,
 }
 
 /// Asset information for a single asset in Account Information V3 response.
+///
+/// All fields are returned as strings per Binance API. See [docs].
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct AssetV3 {
     /// Asset name (e.g., "USDT").
+    /// See API docs for supported assets.
     pub asset: String,
 
     /// Wallet balance for the asset.
+    /// String value representing the balance.
     pub wallet_balance: String,
 
     /// Unrealized profit and loss for the asset.
@@ -69,6 +77,8 @@ pub struct AssetV3 {
 }
 
 /// Position information for a single symbol in Account Information V3 response.
+///
+/// See API docs for details on position modes and returned fields.
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct PositionV3 {
@@ -76,9 +86,10 @@ pub struct PositionV3 {
     pub symbol: String,
 
     /// Position side (see PositionSide enum).
+    /// "BOTH" for One-way mode, "LONG"/"SHORT" for Hedge mode.
     pub position_side: PositionSide,
 
-    /// Position amount.
+    /// Position amount as string.
     pub position_amt: String,
 
     /// Unrealized profit and loss for the position.
@@ -104,10 +115,13 @@ pub struct PositionV3 {
 }
 
 /// Response for Account Information V3 endpoint.
+///
+/// See [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Account-Information-V3
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct AccountV3Response {
     /// Total initial margin required with current mark price (USD value).
+    /// String value, see API docs for details.
     pub total_initial_margin: String,
 
     /// Total maintenance margin required (USD value).
@@ -148,7 +162,7 @@ pub struct AccountV3Response {
 }
 
 impl UsdmClient {
-    /// Account Information V3 (GET /fapi/v3/account)
+    /// Account Information V3
     ///
     /// Retrieves current account information for a Binance USDM futures account, including balances, positions, and trading permissions.
     ///

@@ -5,7 +5,10 @@ use std::borrow::Cow;
 use super::UsdmClient;
 use crate::binance::usdm::{
     RestResult,
-    enums::{OrderSide, PriceMatch},
+    enums::{
+        OrderSide, OrderStatus, OrderType, PositionSide, PriceMatch, SelfTradePreventionMode,
+        TimeInForce, WorkingType,
+    },
 };
 
 const MODIFY_BATCH_ORDERS_ENDPOINT: &str = "/fapi/v1/batchOrders";
@@ -61,8 +64,14 @@ pub enum ModifyBatchOrderResponse {
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ModifyBatchOrderSuccess {
-    /// Trading symbol.
+    /// Trading symbol (e.g., "BTCUSDT").
     pub symbol: String,
+
+    /// Trading pair (e.g., "BTCUSDT").
+    pub pair: String,
+
+    /// Order status. See [`OrderStatus`] for possible values.
+    pub status: OrderStatus,
 
     /// Order ID.
     pub order_id: u64,
@@ -70,11 +79,11 @@ pub struct ModifyBatchOrderSuccess {
     /// Client order ID.
     pub client_order_id: String,
 
-    /// Transaction time (timestamp in milliseconds).
-    pub transact_time: u64,
-
     /// Order price.
     pub price: String,
+
+    /// Average price (filled).
+    pub avg_price: String,
 
     /// Original order quantity.
     pub orig_qty: String,
@@ -82,27 +91,57 @@ pub struct ModifyBatchOrderSuccess {
     /// Executed quantity.
     pub executed_qty: String,
 
-    /// Cumulative quote quantity.
-    pub cum_quote: String,
+    /// Cumulative filled quantity.
+    pub cum_qty: String,
 
-    /// Order status.
-    pub status: String,
+    /// Cumulative base quantity.
+    pub cum_base: String,
 
-    /// Time in force.
-    pub time_in_force: String,
+    /// Time in force. See [`TimeInForce`] for possible values.
+    pub time_in_force: TimeInForce,
 
-    /// Order type.
+    /// Order type. See [`OrderType`] for possible values.
     #[serde(rename = "type")]
-    pub order_type: String,
+    pub order_type: OrderType,
 
-    /// Order side.
-    pub side: String,
+    /// Reduce-only flag.
+    pub reduce_only: bool,
 
-    /// Position side.
-    pub position_side: String,
+    /// Close position flag.
+    pub close_position: bool,
+
+    /// Order side. See [`OrderSide`] for possible values.
+    pub side: OrderSide,
+
+    /// Position side. See [`PositionSide`] for possible values.
+    pub position_side: PositionSide,
+
+    /// Stop price (if applicable).
+    pub stop_price: String,
+
+    /// Working type. See [`WorkingType`] for possible values.
+    pub working_type: WorkingType,
+
+    /// Price protection enabled.
+    pub price_protect: bool,
+
+    /// Original order type. See [`OrderType`] for possible values.
+    pub orig_type: OrderType,
+
+    /// Price match mode. See [`PriceMatch`] for possible values.
+    pub price_match: PriceMatch,
+
+    /// Self-trade prevention mode. See [`SelfTradePreventionMode`] for possible values.
+    pub self_trade_prevention_mode: SelfTradePreventionMode,
+
+    /// Good-till-date (timestamp in milliseconds, for GTD orders).
+    pub good_till_date: u64,
 
     /// Update time (timestamp in milliseconds).
     pub update_time: u64,
+
+    /// Transaction time (timestamp in milliseconds).
+    pub transact_time: u64,
 }
 
 impl UsdmClient {
@@ -110,7 +149,7 @@ impl UsdmClient {
     ///
     /// Modifies multiple orders in a single batch for USDM futures.
     ///
-    /// [docs]: https://binance-docs.github.io/apidocs/futures/en/#modify-multiple-orders-trade
+    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Modify-Multiple-Orders
     ///
     /// Rate limit: 5 weight
     ///
@@ -176,26 +215,39 @@ mod tests {
     fn test_modify_batch_order_response_deserialization() {
         let json = r#"{
             "symbol": "BTCUSDT",
+            "pair": "BTCUSDT",
             "orderId": 123456789,
             "clientOrderId": "test123",
             "transactTime": 1625184000000,
             "price": "50000.00",
+            "avgPrice": "0.00",
             "origQty": "0.100",
             "executedQty": "0.000",
-            "cumQuote": "0.00000000",
+            "cumQty": "0.000",
+            "cumBase": "0.000",
             "status": "NEW",
             "timeInForce": "GTC",
             "type": "LIMIT",
+            "reduceOnly": false,
+            "closePosition": false,
             "side": "BUY",
             "positionSide": "LONG",
+            "stopPrice": "0.00",
+            "workingType": "CONTRACT_PRICE",
+            "priceProtect": false,
+            "origType": "LIMIT",
+            "priceMatch": "NONE",
+            "selfTradePreventionMode": "NONE",
+            "goodTillDate": 0,
             "updateTime": 1625184001000
         }"#;
 
         let response: ModifyBatchOrderSuccess = serde_json::from_str(json).unwrap();
         assert_eq!(response.symbol, "BTCUSDT");
+        assert_eq!(response.pair, "BTCUSDT");
         assert_eq!(response.order_id, 123456789);
         assert_eq!(response.client_order_id, "test123");
         assert_eq!(response.price, "50000.00");
-        assert_eq!(response.status, "NEW");
+        assert_eq!(response.status, OrderStatus::New);
     }
 }

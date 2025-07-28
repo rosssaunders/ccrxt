@@ -417,7 +417,7 @@ mod tests {
             "openOrderInitialMargin": "0.00000000",
             "leverage": "5",
             "isolated": true,
-            "marginType": "isolated",
+            "marginType": "ISOLATED",
             "positionSide": "BOTH",
             "entryPrice": "100.00000000",
             "breakEvenPrice": "100.00000000",

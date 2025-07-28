@@ -96,6 +96,7 @@ pub struct NewOrderRequest {
 /// Response for a new order (POST /dapi/v1/order).
 #[derive(Debug, Clone, Deserialize)]
 pub struct NewOrderResponse {
+    #[serde(rename = "clientOrderId")]
     pub client_order_id: Option<String>,
 
     #[serde(rename = "cumQty")]

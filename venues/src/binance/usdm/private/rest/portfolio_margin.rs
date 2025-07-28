@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use std::borrow::Cow;
 
 use super::UsdmClient;
 use crate::binance::usdm::RestResult;
@@ -11,9 +12,10 @@ const PORTFOLIO_MARGIN_ENDPOINT: &str = "/fapi/v1/pmAccountInfo";
 #[serde(rename_all = "camelCase")]
 pub struct GetPortfolioMarginAccountRequest {
     /// Asset name (e.g., "BTC"). Required.
-    pub asset: String,
+    /// This field is securely stored and expected as SecretString.
+    pub asset: Cow<'static, str>,
 
-    /// Receiving window (optional).
+    /// Receiving window (optional, in milliseconds).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub recv_window: Option<u64>,
 
@@ -26,13 +28,14 @@ pub struct GetPortfolioMarginAccountRequest {
 #[serde(rename_all = "camelCase")]
 pub struct PortfolioMarginAccountResponse {
     /// Asset name.
-    pub asset: String,
+    pub asset: Cow<'static, str>,
 
     /// Maximum amount for transfer out.
-    pub max_withdraw_amount: String,
+    pub max_withdraw_amount: Cow<'static, str>,
 
     /// Maximum virtual amount for transfer out in USD.
-    pub max_withdraw_amount_usd: String,
+    #[serde(rename = "maxWithdrawAmountUSD")]
+    pub max_withdraw_amount_usd: Cow<'static, str>,
 }
 
 impl UsdmClient {
@@ -67,6 +70,7 @@ impl UsdmClient {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use serde_json;
 
     #[test]
     fn test_portfolio_margin_account_response_deserialization() {
@@ -79,5 +83,18 @@ mod tests {
         assert_eq!(response.asset, "BTC");
         assert_eq!(response.max_withdraw_amount, "27.43689636");
         assert_eq!(response.max_withdraw_amount_usd, "1627523.32459208");
+    }
+
+    #[test]
+    fn test_get_portfolio_margin_account_request_serialization() {
+        let req = GetPortfolioMarginAccountRequest {
+            asset: Cow::Borrowed("BTC"),
+            recv_window: Some(5000),
+            timestamp: 1627523000000,
+        };
+        let json = serde_json::to_string(&req).unwrap();
+        assert!(json.contains("BTC"));
+        assert!(json.contains("recvWindow"));
+        assert!(json.contains("timestamp"));
     }
 }

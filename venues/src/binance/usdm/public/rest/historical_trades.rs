@@ -14,10 +14,11 @@ pub struct HistoricalTradesRequest {
     pub symbol: Cow<'static, str>,
 
     /// Number of trades to return. Default 100; max 500.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<u16>,
 
     /// TradeId to fetch from. Default gets most recent trades.
-    #[serde(rename = "fromId")]
+    #[serde(rename = "fromId", skip_serializing_if = "Option::is_none")]
     pub from_id: Option<u64>,
 }
 

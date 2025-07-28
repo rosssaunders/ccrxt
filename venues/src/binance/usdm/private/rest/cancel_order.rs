@@ -8,16 +8,33 @@ use std::borrow::Cow;
 #[derive(Debug, Clone, Serialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct CancelOrderRequest {
-    /// Trading symbol (e.g., "BTCUSDT"). Required.
+    /// Trading symbol (e.g., "BTCUSDT").
+    ///
+    /// Required. Must be a valid symbol listed on Binance USDM Futures.
     pub symbol: Cow<'static, str>,
 
-    /// Order ID to cancel. Either this or `orig_client_order_id` must be provided.
+    /// Order ID to cancel.
+    ///
+    /// Either this or `orig_client_order_id` must be provided. If both are provided, `order_id` is used.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub order_id: Option<u64>,
 
-    /// Original client order ID. Either this or `order_id` must be provided.
+    /// Original client order ID to cancel.
+    ///
+    /// Either this or `order_id` must be provided. If both are provided, `order_id` is used.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub orig_client_order_id: Option<Cow<'static, str>>,
+
+    /// The value cannot be greater than 60000 (milliseconds).
+    ///
+    /// Optional. The number of milliseconds after timestamp the request is valid for.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub recv_window: Option<u64>,
+
+    /// Request timestamp (milliseconds since epoch).
+    ///
+    /// Required. Must be the current server time in milliseconds.
+    pub timestamp: u64,
 }
 
 /// Response containing details of the cancelled order.
@@ -104,10 +121,12 @@ mod tests {
     #[test]
     fn test_cancel_order_request_default() {
         let req = CancelOrderRequest::default();
-        // Default instance should have empty symbol and None for IDs
+        // Default instance should have empty symbol, None for IDs, None for recv_window, and 0 timestamp
         assert_eq!(req.symbol, Cow::Borrowed(""));
         assert!(req.order_id.is_none());
         assert!(req.orig_client_order_id.is_none());
+        assert!(req.recv_window.is_none());
+        assert_eq!(req.timestamp, 0);
     }
 
     #[test]

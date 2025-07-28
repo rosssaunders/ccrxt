@@ -4,33 +4,47 @@ use serde::{Deserialize, Serialize};
 use super::UsdmClient;
 use crate::binance::usdm::RestResult;
 
+/// Endpoint path for getting BNB burn status.
 const FEE_BURN_STATUS_ENDPOINT: &str = "/fapi/v1/feeBurn";
 
-/// Request parameters for getting BNB burn status.
+/// Request parameters for the Get BNB Burn Status endpoint.
 ///
-/// Used to query the current BNB burn status for futures trading fees.
+/// Used to query the current BNB burn status for futures trading fees and margin interest.
+///
+/// See [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Get-BNB-Burn-Status
 #[derive(Debug, Clone, Serialize, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct GetFeeBurnStatusRequest {}
+pub struct GetFeeBurnStatusRequest {
+    /// The value cannot be greater than 60000
+    ///
+    /// Optional. If not sent, default is 5000.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub recv_window: Option<u64>,
 
-/// Response from the get fee burn status endpoint.
+    /// Timestamp in milliseconds since epoch.
+    pub timestamp: u64,
+}
+
+/// Response from the Get BNB Burn Status endpoint.
 ///
 /// Contains the current BNB burn status for futures trading fees and margin interest.
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct FeeBurnStatusResponse {
     /// Whether BNB burn is currently enabled for futures trading fees.
+    ///
+    /// `true`: Fee Discount On; `false`: Fee Discount Off
     pub fee_burn: bool,
 }
 
 impl UsdmClient {
     /// Get BNB Burn Status (USER_DATA)
     ///
-    /// Get current BNB burn status for futures trading and margin interest.
+    /// Get user's BNB Fee Discount (Fee Discount On or Fee Discount Off).
     ///
     /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Get-BNB-Burn-Status
     ///
-    /// Rate limit: 5
+    /// Rate limit: 30
     ///
     /// # Arguments
     /// * `request` - The get fee burn status request parameters
@@ -41,7 +55,7 @@ impl UsdmClient {
         &self,
         request: GetFeeBurnStatusRequest,
     ) -> RestResult<FeeBurnStatusResponse> {
-        self.send_signed_request(FEE_BURN_STATUS_ENDPOINT, Method::GET, request, 5, false)
+        self.send_signed_request(FEE_BURN_STATUS_ENDPOINT, Method::GET, request, 30, false)
             .await
     }
 }
@@ -51,33 +65,37 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_get_fee_burn_status_request_serialization() {
-        let request = GetFeeBurnStatusRequest {};
-
+    fn test_get_fee_burn_status_request_serialization_empty_recv_window() {
+        let request = GetFeeBurnStatusRequest {
+            recv_window: None,
+            timestamp: 1234567890,
+        };
         let serialized = serde_urlencoded::to_string(&request).unwrap();
-        assert_eq!(serialized, "");
+        // Only timestamp should be present
+        assert_eq!(serialized, "timestamp=1234567890");
+    }
+
+    #[test]
+    fn test_get_fee_burn_status_request_serialization_with_recv_window() {
+        let request = GetFeeBurnStatusRequest {
+            recv_window: Some(60000),
+            timestamp: 1234567890,
+        };
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert!(serialized.contains("recvWindow=60000"));
+        assert!(serialized.contains("timestamp=1234567890"));
     }
 
     #[test]
     fn test_fee_burn_status_response_deserialization_enabled() {
-        let json = r#"
-        {
-            "feeBurn": true
-        }
-        "#;
-
+        let json = r#"{"feeBurn": true}"#;
         let response: FeeBurnStatusResponse = serde_json::from_str(json).unwrap();
         assert!(response.fee_burn);
     }
 
     #[test]
     fn test_fee_burn_status_response_deserialization_disabled() {
-        let json = r#"
-        {
-            "feeBurn": false
-        }
-        "#;
-
+        let json = r#"{"feeBurn": false}"#;
         let response: FeeBurnStatusResponse = serde_json::from_str(json).unwrap();
         assert!(!response.fee_burn);
     }

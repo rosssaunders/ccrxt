@@ -4,14 +4,19 @@ use crate::binance::usdm::enums::PositionSide;
 use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
+/// Endpoint path for Account Information V2.
+const ACCOUNT_V2_ENDPOINT: &str = "/fapi/v2/account";
+
 /// Request parameters for the Account Information V2 endpoint.
 #[derive(Debug, Clone, Serialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct GetAccountV2Request {
     /// Request timestamp in milliseconds since epoch.
+    /// This is required by Binance for all signed requests.
     pub timestamp: u64,
 
-    /// The number of milliseconds after timestamp the request is valid for. Optional.
+    /// The number of milliseconds after timestamp the request is valid for.
+    /// Optional. If not provided, Binance will use the default window.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub recv_window: Option<u64>,
 }
@@ -21,39 +26,40 @@ pub struct GetAccountV2Request {
 #[serde(rename_all = "camelCase")]
 pub struct AssetV2 {
     /// Asset name (e.g., "USDT").
+    /// This field matches the asset field in Binance's API response.
     pub asset: String,
 
-    /// Wallet balance for the asset.
+    /// Wallet balance for the asset, as a string to preserve precision.
     pub wallet_balance: String,
 
-    /// Unrealized profit and loss for the asset.
+    /// Unrealized profit and loss for the asset, as a string.
     pub unrealized_profit: String,
 
-    /// Margin balance for the asset.
+    /// Margin balance for the asset, as a string.
     pub margin_balance: String,
 
-    /// Maintenance margin required for the asset.
+    /// Maintenance margin required for the asset, as a string.
     pub maint_margin: String,
 
-    /// Initial margin required for the asset.
+    /// Initial margin required for the asset, as a string.
     pub initial_margin: String,
 
-    /// Position initial margin required for the asset.
+    /// Position initial margin required for the asset, as a string.
     pub position_initial_margin: String,
 
-    /// Open order initial margin required for the asset.
+    /// Open order initial margin required for the asset, as a string.
     pub open_order_initial_margin: String,
 
-    /// Cross wallet balance for the asset.
+    /// Cross wallet balance for the asset, as a string.
     pub cross_wallet_balance: String,
 
-    /// Cross unrealized profit and loss for the asset.
+    /// Cross unrealized profit and loss for the asset, as a string.
     pub cross_un_pnl: String,
 
-    /// Available balance for the asset.
+    /// Available balance for the asset, as a string.
     pub available_balance: String,
 
-    /// Maximum amount for transfer out for the asset.
+    /// Maximum amount for transfer out for the asset, as a string.
     pub max_withdraw_amount: String,
 
     /// Whether the asset can be used as margin in Multi-Assets mode.
@@ -70,46 +76,47 @@ pub struct PositionV2 {
     /// Trading symbol (e.g., "BTCUSDT").
     pub symbol: String,
 
-    /// Initial margin required for the position.
+    /// Initial margin required for the position, as a string.
     pub initial_margin: String,
 
-    /// Maintenance margin required for the position.
+    /// Maintenance margin required for the position, as a string.
     pub maint_margin: String,
 
-    /// Unrealized profit and loss for the position.
+    /// Unrealized profit and loss for the position, as a string.
     pub unrealized_profit: String,
 
-    /// Position initial margin required for the position.
+    /// Position initial margin required for the position, as a string.
     pub position_initial_margin: String,
 
-    /// Open order initial margin required for the position.
+    /// Open order initial margin required for the position, as a string.
     pub open_order_initial_margin: String,
 
-    /// Current leverage for the position.
+    /// Current leverage for the position, as a string.
     pub leverage: String,
 
     /// Whether the position is isolated.
     pub isolated: bool,
 
-    /// Average entry price for the position.
+    /// Average entry price for the position, as a string.
     pub entry_price: String,
 
-    /// Break-even price for the position.
+    /// Break-even price for the position, as a string.
     pub break_even_price: String,
 
-    /// Maximum available notional value for the position.
+    /// Maximum available notional value for the position, as a string.
     pub max_notional: String,
 
-    /// Bid notional value (may be ignored).
+    /// Bid notional value (may be ignored), as a string.
     pub bid_notional: String,
 
-    /// Ask notional value (may be ignored).
+    /// Ask notional value (may be ignored), as a string.
     pub ask_notional: String,
 
     /// Position side (see PositionSide enum).
+    /// This field uses the PositionSide enum defined in enums.rs.
     pub position_side: PositionSide,
 
-    /// Position amount.
+    /// Position amount, as a string.
     pub position_amt: String,
 
     /// Last update time for the position (milliseconds since epoch).
@@ -141,7 +148,7 @@ pub struct AccountV2Response {
     /// Whether multi-assets margin mode is enabled.
     pub multi_assets_margin: bool,
 
-    /// Trade group ID.
+    /// Trade group ID. Optional field.
     pub trade_group_id: Option<i64>,
 
     /// Total initial margin required with current mark price (USD value).
@@ -178,29 +185,28 @@ pub struct AccountV2Response {
     pub max_withdraw_amount: String,
 
     /// List of asset information.
+    /// Each entry represents a single asset's details.
     pub assets: Vec<AssetV2>,
 
     /// List of position information.
+    /// Each entry represents a single position's details.
     pub positions: Vec<PositionV2>,
 }
-
-/// Endpoint path for Account Information V2.
-const ACCOUNT_V2_ENDPOINT: &str = "/fapi/v2/account";
 
 impl UsdmClient {
     /// Account Information V2 (GET /fapi/v2/account)
     ///
     /// Retrieves current account information for a Binance USDM futures account, including balances, positions, and trading permissions.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Account-Information-V2
+    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Futures-Account-Balance-V2
     ///
     /// Rate limit: 5
     ///
     /// # Arguments
-    /// * `params` - The request parameters
+    /// * `params` - The request parameters struct
     ///
     /// # Returns
-    /// AccountV2Response - The account information response
+    /// AccountV2Response - The account information response struct
     pub async fn get_account_v2(
         &self,
         params: GetAccountV2Request,
@@ -247,6 +253,7 @@ mod tests {
         assert_eq!(asset.asset, "USDT");
         assert!(asset.margin_available);
         assert_eq!(asset.update_time, 1625474304765);
+        assert_eq!(asset.wallet_balance, "100.0");
     }
 
     #[test]
@@ -273,6 +280,7 @@ mod tests {
         assert_eq!(pos.symbol, "BTCUSDT");
         assert_eq!(pos.position_side.to_string(), "BOTH");
         assert!(pos.isolated);
+        assert_eq!(pos.leverage, "100");
     }
 
     #[test]
@@ -306,5 +314,6 @@ mod tests {
         assert!(resp.can_trade);
         assert_eq!(resp.assets.len(), 0);
         assert_eq!(resp.positions.len(), 0);
+        assert_eq!(resp.total_wallet_balance, "23.72469206");
     }
 }

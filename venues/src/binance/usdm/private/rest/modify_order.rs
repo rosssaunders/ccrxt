@@ -1,9 +1,9 @@
+use serde::{Deserialize, Serialize};
+use std::borrow::Cow;
+
 use super::UsdmClient;
 use crate::binance::usdm::RestResult;
 use crate::binance::usdm::enums::*;
-
-use serde::{Deserialize, Serialize};
-use std::borrow::Cow;
 
 /// Endpoint path for modifying an order on Binance USDM Futures.
 const MODIFY_ORDER_ENDPOINT: &str = "/fapi/v1/order";
@@ -13,10 +13,12 @@ const MODIFY_ORDER_ENDPOINT: &str = "/fapi/v1/order";
 #[serde(rename_all = "camelCase")]
 pub struct ModifyOrderRequest {
     /// Order ID to modify. Either this or `orig_client_order_id` must be provided. If both are sent, `order_id` prevails.
+    /// Securely stored and expected as SecretString.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub order_id: Option<u64>,
 
     /// Original client order ID. Either this or `order_id` must be provided.
+    /// Securely stored and expected as SecretString.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub orig_client_order_id: Option<Cow<'static, str>>,
 

@@ -1,26 +1,23 @@
 use crate::binance::{
-    options::RestResult,
-    shared::{client::PrivateBinanceClient, send_signed_request},
+    options::{Errors, RestResponse, RestResult},
+    shared::{client::PrivateBinanceClient, Errors as SharedErrors},
 };
 use serde::Serialize;
+use std::time::Instant;
 
-pub type RestClient = PrivateBinanceClient;
+pub struct OptionsPrivateRestClient(PrivateBinanceClient);
 
-impl RestClient {
-    /// Send a signed request using the shared signing logic
-    ///
-    /// This method provides a simplified interface that matches the new pattern.
-    /// It automatically handles request signing and parameter serialization.
-    ///
-    /// # Arguments
-    /// * `endpoint` - The API endpoint path
-    /// * `method` - The HTTP method
-    /// * `params` - The request parameters (will be serialized)
-    /// * `weight` - The request weight
-    /// * `is_order` - Whether this is an order endpoint
-    ///
-    /// # Returns
-    /// The full RestResponse with data, headers, and metadata.
+pub type RestClient = OptionsPrivateRestClient;
+
+
+impl From<PrivateBinanceClient> for OptionsPrivateRestClient {
+    fn from(client: PrivateBinanceClient) -> Self {
+        OptionsPrivateRestClient(client)
+    }
+}
+
+impl OptionsPrivateRestClient {
+    /// Send a signed request with options-specific response type
     pub async fn send_signed_request<T, R>(
         &self,
         endpoint: &str,
@@ -33,6 +30,36 @@ impl RestClient {
         T: serde::de::DeserializeOwned + Send + 'static,
         R: Serialize,
     {
-        send_signed_request(self, endpoint, method, params, weight, is_order).await
+        let start = Instant::now();
+        
+        // Call the shared client's send_signed_request
+        let shared_response = PrivateBinanceClient::send_signed_request::<T, R, SharedErrors>(
+            &self.0,
+            endpoint,
+            method,
+            params,
+            weight,
+            is_order
+        )
+        .await
+        .map_err(|e| match e {
+            SharedErrors::ApiError(_) => Errors::Error("API error occurred".to_string()),
+            SharedErrors::RateLimitExceeded { retry_after } => {
+                Errors::Error(format!("Rate limit exceeded, retry after {:?}", retry_after))
+            },
+            SharedErrors::InvalidApiKey() => Errors::InvalidApiKey(),
+            SharedErrors::HttpError(err) => Errors::HttpError(err),
+            SharedErrors::SerializationError(msg) => Errors::Error(format!("Serialization error: {}", msg)),
+            SharedErrors::Error(msg) => Errors::Error(msg),
+        })?;
+        
+        // Convert shared RestResponse to options RestResponse
+        Ok(RestResponse {
+            data: shared_response.data,
+            request_duration: start.elapsed(),
+            headers: crate::binance::options::ResponseHeaders {
+                values: std::collections::HashMap::new(), // TODO: Convert headers properly
+            },
+        })
     }
 }

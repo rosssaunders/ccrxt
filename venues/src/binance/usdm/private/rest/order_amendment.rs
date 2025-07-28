@@ -6,65 +6,73 @@ use serde::{Deserialize, Serialize};
 use super::UsdmClient;
 use crate::binance::usdm::RestResult;
 
+/// Endpoint path for order amendment history.
 const ORDER_AMENDMENT_ENDPOINT: &str = "/fapi/v1/orderAmendment";
 
-/// Request parameters for getting order amendment history.
+/// Request parameters for the Get Order Modify History endpoint.
+///
+/// See [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Get-Order-Modify-History
 #[derive(Debug, Clone, Serialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct OrderAmendmentRequest {
-    /// Trading symbol (e.g., "BTCUSDT"). Required.
+    /// Trading symbol (e.g., "BTCUSDT").
+    /// Required. Must be a valid symbol listed on Binance USDM Futures.
     pub symbol: Cow<'static, str>,
 
-    /// Order ID to get amendment history for (either this or origClientOrderId must be provided).
+    /// Order ID to get amendment history for.
+    /// Either this or `orig_client_order_id` must be provided. If both are sent, `order_id` prevails.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub order_id: Option<u64>,
 
-    /// Original client order ID (either this or orderId must be provided).
+    /// Original client order ID to get amendment history for.
+    /// Either this or `order_id` must be provided.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub orig_client_order_id: Option<Cow<'static, str>>,
 
     /// Start time for filtering amendments (milliseconds since epoch).
+    /// Optional. Must be within the last 3 months.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub start_time: Option<u64>,
 
     /// End time for filtering amendments (milliseconds since epoch).
+    /// Optional. Must be within the last 3 months.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub end_time: Option<u64>,
 
     /// Limit the number of results (default 50, max 100).
+    /// Optional. Maximum value is 100.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<u32>,
 
     /// The value cannot be greater than 60000 (milliseconds).
+    /// Optional. Used to specify the receive window for the request.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub recv_window: Option<u64>,
 }
 
-/// Individual order amendment record.
-///
-/// Represents a single order modification entry from the API response.
+/// Represents a single order amendment record returned by the API.
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct OrderAmendment {
-    /// Amendment ID.
+    /// Amendment ID assigned by Binance.
     pub amendment_id: u64,
 
-    /// Trading symbol.
+    /// Trading symbol for the amended order.
     pub symbol: Cow<'static, str>,
 
     /// Trading pair name.
     pub pair: Cow<'static, str>,
 
-    /// Order ID.
+    /// Order ID of the amended order.
     pub order_id: u64,
 
-    /// Client order ID.
+    /// Client order ID of the amended order.
     pub client_order_id: Cow<'static, str>,
 
     /// Amendment timestamp (milliseconds since epoch).
     pub time: u64,
 
-    /// Amendment details containing before and after values.
+    /// Amendment details containing before and after values for modified fields.
     pub amendment: AmendmentDetails,
 }
 
@@ -95,14 +103,14 @@ pub struct AmendmentField {
 
 /// Response type for order amendment history.
 ///
-/// Based on the API documentation, the response is a direct array of order amendments.
+/// The API returns a direct array of order amendments.
 pub type OrderAmendmentResponse = Vec<OrderAmendment>;
 
 impl UsdmClient {
     /// Get Order Modify History (USER_DATA)
     ///
-    /// Get order modification history for a specific order or symbol.
-    /// Either orderId or origClientOrderId must be sent, and the orderId will prevail if both are sent.
+    /// Retrieves order modification history for a specific order or symbol.
+    /// Either `order_id` or `orig_client_order_id` must be sent; if both are sent, `order_id` prevails.
     /// Order modify history longer than 3 months is not available.
     ///
     /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Get-Order-Modify-History

@@ -53,7 +53,6 @@ pub mod public {
 
 use crate::binance::shared::RateLimits;
 use crate::binance::shared::VenueConfig;
-use crate::binance::shared::client::RestResponse;
 
 mod private {
     pub mod rest;
@@ -87,8 +86,18 @@ pub struct ResponseHeaders {
     pub values: std::collections::HashMap<RateLimitHeader, u32>,
 }
 
+impl ResponseHeaders {
+    /// Create ResponseHeaders from shared ResponseHeaders
+    pub fn from_shared(shared: crate::binance::shared::client::ResponseHeaders) -> Self {
+        // For now, just return empty headers - TODO: properly convert
+        Self {
+            values: std::collections::HashMap::new(),
+        }
+    }
+}
+
 /// Type alias for results returned by Binance API operations
-pub type RestResult<T> = Result<RestResponse<T>, Errors>;
+pub type RestResult<T> = Result<rest::common::RestResponse<T>, Errors>;
 
 pub mod rest {
     pub mod common;

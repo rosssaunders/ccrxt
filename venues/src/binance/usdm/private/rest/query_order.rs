@@ -3,55 +3,79 @@ use serde::{Deserialize, Serialize};
 use super::UsdmClient;
 use crate::binance::usdm::RestResult;
 use crate::binance::usdm::enums::*;
+use std::borrow::Cow;
 
 const QUERY_ORDER_ENDPOINT: &str = "/fapi/v1/order";
 
 /// Request parameters for the query order endpoint.
-#[derive(Debug, Clone, Serialize)]
+///
+/// Used to retrieve details for a specific order on Binance USDM Futures.
+#[derive(Debug, Clone, Serialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct QueryOrderRequest {
     /// Trading symbol (e.g., "BTCUSDT"). Required.
-    pub symbol: std::borrow::Cow<'static, str>,
+    /// Must match a valid symbol listed on Binance USDM Futures.
+    pub symbol: Cow<'static, str>,
 
     /// Order ID. Optional.
+    /// Either `order_id` or `orig_client_order_id` must be provided.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub order_id: Option<u64>,
 
     /// Original client order ID. Optional.
+    /// Either `order_id` or `orig_client_order_id` must be provided.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub orig_client_order_id: Option<std::borrow::Cow<'static, str>>,
+    pub orig_client_order_id: Option<Cow<'static, str>>,
+
+    /// The timestamp of the request (milliseconds since epoch). Required.
+    pub timestamp: u64,
+
+    /// The number of milliseconds after timestamp the request is valid for. Optional.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub recv_window: Option<u64>,
 }
 
 /// Response for a queried order.
+///
+/// Contains all details returned by Binance for a queried order.
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct QueryOrderResponse {
     /// Trading symbol.
-    pub symbol: std::borrow::Cow<'static, str>,
+    pub symbol: Cow<'static, str>,
 
     /// Order ID.
     pub order_id: u64,
 
     /// Client order ID.
-    pub client_order_id: std::borrow::Cow<'static, str>,
+    pub client_order_id: Cow<'static, str>,
 
     /// Price for the order.
-    pub price: std::borrow::Cow<'static, str>,
+    pub price: Cow<'static, str>,
 
     /// Original quantity.
-    pub orig_qty: std::borrow::Cow<'static, str>,
+    pub orig_qty: Cow<'static, str>,
 
     /// Executed quantity.
-    pub executed_qty: std::borrow::Cow<'static, str>,
+    pub executed_qty: Cow<'static, str>,
 
-    /// Order status.
+    /// Cumulative quote asset transacted.
+    pub cum_quote: Option<Cow<'static, str>>,
+
+    /// Average price for the order.
+    pub avg_price: Option<Cow<'static, str>>,
+
+    /// Status of the order.
     pub status: OrderStatus,
 
-    /// Time in force.
+    /// Time in force for the order.
     pub time_in_force: TimeInForce,
 
     /// Order type.
     pub order_type: OrderType,
+
+    /// Original order type (for trailing stop market).
+    pub orig_type: Option<OrderType>,
 
     /// Order side.
     pub side: OrderSide,
@@ -61,14 +85,47 @@ pub struct QueryOrderResponse {
 
     /// Working type.
     pub working_type: WorkingType,
+
+    /// Stop price (for stop orders).
+    pub stop_price: Option<Cow<'static, str>>,
+
+    /// Activation price (for trailing stop market).
+    pub activate_price: Option<Cow<'static, str>>,
+
+    /// Callback rate (for trailing stop market).
+    pub price_rate: Option<Cow<'static, str>>,
+
+    /// Reduce only flag.
+    pub reduce_only: Option<bool>,
+
+    /// Close position flag.
+    pub close_position: Option<bool>,
+
+    /// Price protect flag.
+    pub price_protect: Option<bool>,
+
+    /// Price match mode.
+    pub price_match: Option<Cow<'static, str>>,
+
+    /// Self trade prevention mode.
+    pub self_trade_prevention_mode: Option<Cow<'static, str>>,
+
+    /// Good till date (for GTD orders).
+    pub good_till_date: Option<u64>,
+
+    /// Order creation time (milliseconds since epoch).
+    pub time: Option<u64>,
+
+    /// Order update time (milliseconds since epoch).
+    pub update_time: Option<u64>,
 }
 
 impl UsdmClient {
-    /// Query Order
+    /// Query Order (USER_DATA)
     ///
     /// Retrieves information about a specific order on Binance USDM Futures.
     ///
-    /// [docs]: https://binance-docs.github.io/apidocs/futures/en/#query-order-user_data
+    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Query-Order
     ///
     /// Rate limit: 2 requests per second
     ///
@@ -97,14 +154,17 @@ mod tests {
     fn test_query_order_request_serialization_with_order_id() {
         let request = QueryOrderRequest {
             symbol: "BTCUSDT".into(),
-            order_id: Some(1234567890),
+            order_id: Some(1234567890u64),
             orig_client_order_id: None,
+            timestamp: 1620000000000,
+            recv_window: None,
         };
 
         let serialized = serde_urlencoded::to_string(&request).unwrap();
         assert!(serialized.contains("symbol=BTCUSDT"));
-        assert!(serialized.contains("order_id=1234567890"));
-        assert!(!serialized.contains("orig_client_order_id="));
+        assert!(serialized.contains("orderId=1234567890"));
+        assert!(serialized.contains("timestamp=1620000000000"));
+        assert!(!serialized.contains("origClientOrderId="));
         assert!(!serialized.contains("api_key"));
         assert!(!serialized.contains("api_secret"));
     }
@@ -115,26 +175,34 @@ mod tests {
             symbol: "ETHUSDT".into(),
             order_id: None,
             orig_client_order_id: Some("my_order_123".into()),
+            timestamp: 1620000000001,
+            recv_window: Some(5000),
         };
 
         let serialized = serde_urlencoded::to_string(&request).unwrap();
         assert!(serialized.contains("symbol=ETHUSDT"));
-        assert!(serialized.contains("orig_client_order_id=my_order_123"));
-        assert!(!serialized.contains("order_id="));
+        assert!(serialized.contains("origClientOrderId=my_order_123"));
+        assert!(serialized.contains("timestamp=1620000000001"));
+        assert!(serialized.contains("recvWindow=5000"));
+        assert!(!serialized.contains("orderId="));
     }
 
     #[test]
     fn test_query_order_request_with_both_ids() {
         let request = QueryOrderRequest {
             symbol: "BTCUSDT".into(),
-            order_id: Some(1234567890),
+            order_id: Some(1234567890u64),
             orig_client_order_id: Some("my_order_123".into()),
+            timestamp: 1620000000002,
+            recv_window: Some(10000),
         };
 
         let serialized = serde_urlencoded::to_string(&request).unwrap();
         assert!(serialized.contains("symbol=BTCUSDT"));
-        assert!(serialized.contains("order_id=1234567890"));
-        assert!(serialized.contains("orig_client_order_id=my_order_123"));
+        assert!(serialized.contains("orderId=1234567890"));
+        assert!(serialized.contains("origClientOrderId=my_order_123"));
+        assert!(serialized.contains("timestamp=1620000000002"));
+        assert!(serialized.contains("recvWindow=10000"));
     }
 
     #[test]
@@ -148,7 +216,7 @@ mod tests {
             "executedQty": "0.050",
             "status": "PARTIALLY_FILLED",
             "timeInForce": "GTC",
-            "type": "LIMIT",
+            "orderType": "LIMIT",
             "side": "BUY",
             "positionSide": "LONG",
             "workingType": "CONTRACT_PRICE"
@@ -180,7 +248,7 @@ mod tests {
             "executedQty": "1.000",
             "status": "FILLED",
             "timeInForce": "IOC",
-            "type": "MARKET",
+            "orderType": "MARKET",
             "side": "SELL",
             "positionSide": "SHORT",
             "workingType": "MARK_PRICE"
@@ -204,7 +272,7 @@ mod tests {
             "executedQty": "0.000",
             "status": "CANCELED",
             "timeInForce": "FOK",
-            "type": "STOP",
+            "orderType": "STOP",
             "side": "BUY",
             "positionSide": "BOTH",
             "workingType": "CONTRACT_PRICE"
@@ -227,7 +295,7 @@ mod tests {
             "executedQty": "0.000",
             "status": "NEW",
             "timeInForce": "GTC",
-            "type": "STOP_MARKET",
+            "orderType": "STOP_MARKET",
             "side": "SELL",
             "positionSide": "LONG",
             "workingType": "CONTRACT_PRICE"

@@ -105,7 +105,8 @@ mod tests {
 
     #[test]
     fn test_ticker_price_response_deserialization() {
-        let json = r#"[{\"symbol\":\"BTCUSD_200626\",\"ps\":\"BTCUSD\",\"price\":\"9647.8\",\"time\":1591257246176}]"#;
+        let json =
+            r#"[{"symbol":"BTCUSD_200626","ps":"BTCUSD","price":"9647.8","time":1591257246176}]"#;
         let resp: Vec<TickerPrice> = serde_json::from_str(json).unwrap();
         assert_eq!(resp.len(), 1);
         let ticker = &resp[0];

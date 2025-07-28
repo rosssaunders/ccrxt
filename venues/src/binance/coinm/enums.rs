@@ -216,9 +216,10 @@ impl fmt::Display for IncomeType {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
 pub enum MarginType {
+    #[serde(rename = "CROSS")]
     Cross,
+    #[serde(rename = "ISOLATED")]
     Isolated,
 }
 
@@ -841,22 +842,22 @@ mod tests {
     fn test_margin_type_serialization() {
         assert_eq!(
             serde_json::to_string(&MarginType::Cross).unwrap(),
-            "\"cross\""
+            "\"CROSS\""
         );
         assert_eq!(
             serde_json::to_string(&MarginType::Isolated).unwrap(),
-            "\"isolated\""
+            "\"ISOLATED\""
         );
     }
 
     #[test]
     fn test_margin_type_deserialization() {
         assert_eq!(
-            serde_json::from_str::<MarginType>("\"cross\"").unwrap(),
+            serde_json::from_str::<MarginType>("\"CROSS\"").unwrap(),
             MarginType::Cross
         );
         assert_eq!(
-            serde_json::from_str::<MarginType>("\"isolated\"").unwrap(),
+            serde_json::from_str::<MarginType>("\"ISOLATED\"").unwrap(),
             MarginType::Isolated
         );
     }

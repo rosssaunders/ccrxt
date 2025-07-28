@@ -1,7 +1,8 @@
-use super::UsdmClient;
-use crate::binance::usdm::RestResult;
 use reqwest::Method;
 use serde::{Deserialize, Serialize};
+
+use super::UsdmClient;
+use crate::binance::usdm::RestResult;
 
 /// Endpoint for querying rate limit order usage.
 const RATE_LIMIT_ORDER_ENDPOINT: &str = "/fapi/v1/rateLimit/order";
@@ -29,15 +30,18 @@ pub enum IntervalType {
 }
 
 /// Request parameters for the rate limit order endpoint.
+///
+/// Used to query the current order count usage in the current time window for the account.
 #[derive(Debug, Clone, Serialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct GetRateLimitOrderRequest {
-    /// Optional. The number of milliseconds after timestamp the request is valid for.
-    /// If not sent, defaults to the exchange default.
+    /// The number of milliseconds after timestamp the request is valid for.
+    /// Optional. If not sent, defaults to the exchange default.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub recv_window: Option<u64>,
 
-    /// Required. Timestamp in milliseconds since epoch.
+    /// Timestamp in milliseconds since epoch.
+    /// Required.
     pub timestamp: u64,
 }
 
@@ -45,10 +49,10 @@ pub struct GetRateLimitOrderRequest {
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct RateLimitOrderData {
-    /// Rate limit type (e.g., "ORDERS").
+    /// Rate limit type for the window ("ORDERS" or "REQUESTS").
     pub rate_limit_type: RateLimitType,
 
-    /// Interval type (e.g., "SECOND", "MINUTE").
+    /// Interval type for the window ("SECOND", "MINUTE", "HOUR", "DAY").
     pub interval: IntervalType,
 
     /// Number of intervals (e.g., 10 for 10 seconds).
@@ -100,15 +104,13 @@ mod tests {
 
     #[test]
     fn test_rate_limit_order_data_deserialization() {
-        let json = r#"
-        {
+        let json = r#"{
             "rateLimitType": "ORDERS",
             "interval": "SECOND",
             "intervalNum": 10,
             "limit": 50,
             "count": 0
-        }
-        "#;
+        }"#;
         let data: RateLimitOrderData = serde_json::from_str(json).unwrap();
         assert_eq!(data.rate_limit_type, RateLimitType::Orders);
         assert_eq!(data.interval, IntervalType::Second);
@@ -119,8 +121,7 @@ mod tests {
 
     #[test]
     fn test_rate_limit_order_response_deserialization() {
-        let json = r#"
-        [
+        let json = r#"[
             {
                 "rateLimitType": "ORDERS",
                 "interval": "SECOND",
@@ -135,8 +136,7 @@ mod tests {
                 "limit": 160000,
                 "count": 0
             }
-        ]
-        "#;
+        ]"#;
         let response: Vec<RateLimitOrderData> = serde_json::from_str(json).unwrap();
         assert_eq!(response.len(), 2);
         assert_eq!(response[0].rate_limit_type, RateLimitType::Orders);

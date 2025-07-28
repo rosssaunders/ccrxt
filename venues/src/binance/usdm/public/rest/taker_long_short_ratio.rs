@@ -11,7 +11,6 @@ const TAKER_LONG_SHORT_RATIO_ENDPOINT: &str = "/futures/data/takerlongshortRatio
 ///
 /// All fields correspond to query parameters for the endpoint.
 #[derive(Debug, Clone, Serialize)]
-#[serde(rename_all = "camelCase")]
 pub struct TakerLongShortRatioRequest<'a> {
     /// Trading symbol to query (e.g., "BTCUSDT").
     /// Must be a valid symbol listed on Binance USDM futures.
@@ -28,12 +27,12 @@ pub struct TakerLongShortRatioRequest<'a> {
 
     /// Start time in milliseconds since epoch. Optional.
     /// If not provided, the API will return the most recent data points.
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "startTime", skip_serializing_if = "Option::is_none")]
     pub start_time: Option<u64>,
 
     /// End time in milliseconds since epoch. Optional.
     /// If not provided, the API will return data up to the current time.
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "endTime", skip_serializing_if = "Option::is_none")]
     pub end_time: Option<u64>,
 }
 
@@ -105,8 +104,8 @@ mod tests {
         assert!(serialized.contains("symbol=BTCUSDT"));
         assert!(serialized.contains("period=5m"));
         assert!(serialized.contains("limit=100"));
-        assert!(serialized.contains("start_time=1625097600000"));
-        assert!(serialized.contains("end_time=1625184000000"));
+        assert!(serialized.contains("startTime=1625097600000"));
+        assert!(serialized.contains("endTime=1625184000000"));
     }
 
     #[test]
@@ -123,8 +122,8 @@ mod tests {
         assert!(serialized.contains("symbol=ETHUSDT"));
         assert!(serialized.contains("period=1h"));
         assert!(!serialized.contains("limit"));
-        assert!(!serialized.contains("start_time"));
-        assert!(!serialized.contains("end_time"));
+        assert!(!serialized.contains("startTime"));
+        assert!(!serialized.contains("endTime"));
     }
 
     #[test]

@@ -17,8 +17,17 @@ const POSITION_RISK_V3_ENDPOINT: &str = "/fapi/v3/positionRisk";
 #[serde(rename_all = "camelCase")]
 pub struct GetPositionRiskV3Request {
     /// Trading symbol (e.g., "BTCUSDT"). Optional.
+    /// If not provided, returns all symbols with open positions or orders.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub symbol: Option<Cow<'static, str>>,
+
+    /// The number of milliseconds after timestamp the request is valid for. Optional.
+    /// If omitted, default is 5000ms.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub recv_window: Option<u64>,
+
+    /// Request timestamp (milliseconds since epoch). Required.
+    pub timestamp: u64,
 }
 
 /// Position risk information for a single symbol.
@@ -109,10 +118,10 @@ impl UsdmClient {
     /// Rate limit: 5
     ///
     /// # Arguments
-    /// * `request` - The request parameters for Position Risk V3
+    /// * `request` - The request parameters for Position Risk V3. See [`GetPositionRiskV3Request`].
     ///
     /// # Returns
-    /// Returns a vector of position risk information for each symbol.
+    /// Returns a vector of position risk information for each symbol. See [`PositionRiskV3`].
     pub async fn get_position_risk_v3(
         &self,
         request: GetPositionRiskV3Request,
@@ -152,7 +161,7 @@ mod tests {
                 "updateTime": 1720736417660,
                 "leverage": "10",
                 "maxNotionalValue": "1000000",
-                "marginType": "isolated",
+                "marginType": "ISOLATED",
                 "isAutoAddMargin": false
             }
         ]"#;
@@ -174,9 +183,13 @@ mod tests {
     fn test_get_position_risk_v3_request_serialization() {
         let request = GetPositionRiskV3Request {
             symbol: Some(Cow::Borrowed("BTCUSDT")),
+            recv_window: Some(10000),
+            timestamp: 1720736417660,
         };
 
         let serialized = serde_urlencoded::to_string(&request).unwrap();
         assert!(serialized.contains("symbol=BTCUSDT"));
+        assert!(serialized.contains("recvWindow=10000"));
+        assert!(serialized.contains("timestamp=1720736417660"));
     }
 }

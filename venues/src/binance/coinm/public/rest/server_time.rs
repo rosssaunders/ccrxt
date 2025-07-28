@@ -40,7 +40,8 @@ mod tests {
 
     #[test]
     fn test_server_time_response_deserialization() {
-        let json = r#"{\"serverTime\": 1625097600000}"#;
+        // Example response from Binance API
+        let json = r#"{"serverTime": 1625097600000}"#;
         let response: ServerTimeResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.server_time, 1625097600000);
     }

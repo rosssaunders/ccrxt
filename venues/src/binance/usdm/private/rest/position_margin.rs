@@ -1,12 +1,10 @@
-//! Modify isolated position margin on Binance USDM REST API.
+use reqwest::Method;
+use serde::{Deserialize, Serialize};
+use std::borrow::Cow;
+
 use super::UsdmClient;
 use crate::binance::usdm::RestResult;
 use crate::binance::usdm::enums::{MarginAction, PositionSide};
-use reqwest::Method;
-
-use serde::{Deserialize, Serialize};
-
-use std::borrow::Cow;
 
 const MODIFY_POSITION_MARGIN_ENDPOINT: &str = "/fapi/v1/positionMargin";
 
@@ -114,8 +112,6 @@ mod tests {
         assert!(serialized.contains("amount=100.0"));
         assert!(serialized.contains("type=1"));
         assert!(serialized.contains("timestamp=1625097600000"));
-        assert!(serialized.contains("api_key=api_key_test"));
-        assert!(serialized.contains("api_secret=api_secret_test"));
         assert!(serialized.contains("recvWindow=5000"));
     }
 

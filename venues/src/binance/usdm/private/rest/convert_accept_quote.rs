@@ -5,9 +5,14 @@ use super::UsdmClient;
 use crate::binance::usdm::ConvertOrderStatus;
 use crate::binance::usdm::RestResult;
 
+/// Endpoint path for the accept convert quote API.
 const ACCEPT_CONVERT_QUOTE_ENDPOINT: &str = "/fapi/v1/convert/acceptQuote";
 
-/// Request parameters for accepting convert quote.
+/// Request parameters for accepting a convert quote.
+///
+/// See the [Binance USDT-margined Futures API documentation][docs] for details.
+///
+/// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/convert/Accept-Quote
 #[derive(Debug, Clone, Serialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct AcceptConvertQuoteRequest {
@@ -17,12 +22,14 @@ pub struct AcceptConvertQuoteRequest {
     /// Request timestamp in milliseconds since epoch.
     pub timestamp: u64,
 
-    /// Optional receive window (milliseconds). If not set, default is used by API.
+    /// Optional receive window (milliseconds). The value cannot be greater than 60000.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub recv_window: Option<u64>,
 }
 
 /// Response from accept convert quote endpoint.
+///
+/// Contains order information for the accepted quote.
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct AcceptConvertQuoteResponse {
@@ -37,7 +44,7 @@ pub struct AcceptConvertQuoteResponse {
 }
 
 impl UsdmClient {
-    /// Accept the offered quote
+    /// Accept the offered quote (USER_DATA)
     ///
     /// Accept the offered quote by quote ID.
     ///
@@ -49,7 +56,7 @@ impl UsdmClient {
     /// * `params` - The accept convert quote request parameters
     ///
     /// # Returns
-    /// AcceptConvertQuoteResponse - Order information for the accepted quote
+    /// Order information for the accepted quote
     pub async fn accept_convert_quote(
         &self,
         params: AcceptConvertQuoteRequest,
@@ -80,5 +87,39 @@ mod tests {
         assert!(serialized.contains("quoteId=12415572564"));
         assert!(serialized.contains("timestamp=1625097600000"));
         assert!(serialized.contains("recvWindow=5000"));
+    }
+
+    #[test]
+    fn test_accept_convert_quote_request_serialization_optional_recv_window() {
+        let request = AcceptConvertQuoteRequest {
+            quote_id: "12415572564".to_string(),
+            timestamp: 1625097600000,
+            recv_window: None,
+        };
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert!(serialized.contains("quoteId=12415572564"));
+        assert!(serialized.contains("timestamp=1625097600000"));
+        assert!(!serialized.contains("recvWindow"));
+    }
+
+    #[test]
+    fn test_accept_convert_quote_response_deserialization() {
+        // Example from Binance API docs
+        let json = r#"{
+            "orderId": "933256278426274426",
+            "createTime": 1623381330472,
+            "orderStatus": "PROCESS"
+        }"#;
+        #[derive(Debug, Deserialize)]
+        #[serde(rename_all = "camelCase")]
+        struct Resp {
+            order_id: String,
+            create_time: u64,
+            order_status: String,
+        }
+        let resp: Resp = serde_json::from_str(json).unwrap();
+        assert_eq!(resp.order_id, "933256278426274426");
+        assert_eq!(resp.create_time, 1623381330472);
+        assert_eq!(resp.order_status, "PROCESS");
     }
 }

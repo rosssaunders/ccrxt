@@ -26,36 +26,35 @@ pub struct GetConvertExchangeInfoRequest {
     pub recv_window: Option<u64>,
 }
 
-/// Convert exchange info for a trading pair.
-#[derive(Debug, Clone, Deserialize)]
+/// Information about a convertible trading pair and its limits.
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ConvertExchangeInfo {
-    /// From asset symbol.
+    /// Asset user spends (e.g., "BTC").
     pub from_asset: String,
 
-    /// To asset symbol.
+    /// Asset user receives (e.g., "USDT").
     pub to_asset: String,
 
-    /// From asset minimum amount.
+    /// Minimum amount of `from_asset` allowed for conversion (as string).
     pub from_asset_min_amount: String,
 
-    /// From asset maximum amount.
+    /// Maximum amount of `from_asset` allowed for conversion (as string).
     pub from_asset_max_amount: String,
 
-    /// To asset minimum amount.
+    /// Minimum amount of `to_asset` allowed for conversion (as string).
     pub to_asset_min_amount: String,
 
-    /// To asset maximum amount.
+    /// Maximum amount of `to_asset` allowed for conversion (as string).
     pub to_asset_max_amount: String,
 }
 
 /// Response from convert exchange info endpoint.
-#[derive(Debug, Clone, Deserialize)]
+///
+/// This is a transparent wrapper for a list of `ConvertExchangeInfo`.
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
 #[serde(transparent)]
-pub struct ConvertExchangeInfoResponse {
-    /// List of convert exchange info pairs.
-    pub pairs: Vec<ConvertExchangeInfo>,
-}
+pub struct ConvertExchangeInfoResponse(pub Vec<ConvertExchangeInfo>);
 
 impl UsdmClient {
     /// List All Convert Pairs
@@ -64,13 +63,13 @@ impl UsdmClient {
     ///
     /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/convert
     ///
-    /// Rate limit: 20
+    /// Rate limit: 20 (IP)
     ///
     /// # Arguments
     /// * `params` - The convert exchange info request parameters
     ///
     /// # Returns
-    /// ConvertExchangeInfoResponse - List of convert pairs and their limits
+    /// `ConvertExchangeInfoResponse` - List of convert pairs and their limits
     pub async fn get_convert_exchange_info(
         &self,
         params: GetConvertExchangeInfoRequest,
@@ -89,6 +88,7 @@ impl UsdmClient {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use serde_json;
 
     #[test]
     fn test_convert_exchange_info_response_deserialization() {
@@ -104,11 +104,15 @@ mod tests {
             }
         ]
         "#;
-
-        let response: Vec<ConvertExchangeInfo> = serde_json::from_str(json).unwrap();
-        assert_eq!(response.len(), 1);
-        assert_eq!(response[0].from_asset, "USDT");
-        assert_eq!(response[0].to_asset, "BNB");
+        let response: ConvertExchangeInfoResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.0.len(), 1);
+        let info = &response.0[0];
+        assert_eq!(info.from_asset, "USDT");
+        assert_eq!(info.to_asset, "BNB");
+        assert_eq!(info.from_asset_min_amount, "0.1");
+        assert_eq!(info.from_asset_max_amount, "100");
+        assert_eq!(info.to_asset_min_amount, "0.001");
+        assert_eq!(info.to_asset_max_amount, "1");
     }
 
     #[test]
@@ -124,5 +128,25 @@ mod tests {
         assert!(serialized.contains("toAsset=USDT"));
         assert!(serialized.contains("timestamp=1625097600000"));
         assert!(serialized.contains("recvWindow=5000"));
+    }
+
+    #[test]
+    fn test_convert_exchange_info_partial_fields() {
+        // Test deserialization with only required fields
+        let json = r#"
+        [
+            {
+                "fromAsset": "BTC",
+                "toAsset": "USDT",
+                "fromAssetMinAmount": "0.0004",
+                "fromAssetMaxAmount": "50",
+                "toAssetMinAmount": "20",
+                "toAssetMaxAmount": "2500000"
+            }
+        ]
+        "#;
+        let response: ConvertExchangeInfoResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.0[0].from_asset, "BTC");
+        assert_eq!(response.0[0].to_asset, "USDT");
     }
 }

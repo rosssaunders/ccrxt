@@ -1,15 +1,17 @@
 use super::UsdmClient;
 use super::new_order::NewOrderRequest;
 use crate::binance::usdm::RestResult;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
+/// Endpoint path for Binance USDM Test Order
 const TEST_ORDER_ENDPOINT: &str = "/fapi/v1/order/test";
 
 /// Response for a test order (usually empty JSON object {}).
-#[derive(Debug, Clone, Deserialize)]
-pub struct TestOrderResponse {
-    // Binance returns an empty object for successful test orders
-}
+///
+/// This struct is returned by the Binance USDM Test Order endpoint.
+/// The response is always an empty object `{}` if successful.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
+pub struct TestOrderResponse {}
 
 impl UsdmClient {
     /// New Order Test
@@ -34,5 +36,24 @@ impl UsdmClient {
             false,
         )
         .await
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_deserialize_empty_object() {
+        let data = "{}";
+        let resp: TestOrderResponse = serde_json::from_str(data).unwrap();
+        assert_eq!(resp, TestOrderResponse::default());
+    }
+
+    #[test]
+    fn test_serialize_empty_object() {
+        let resp = TestOrderResponse::default();
+        let json = serde_json::to_string(&resp).unwrap();
+        assert_eq!(json, "{}");
     }
 }

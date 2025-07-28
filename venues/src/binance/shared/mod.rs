@@ -11,12 +11,14 @@ use sha2::Sha256;
 
 pub mod client;
 pub mod errors;
+pub mod http_client;
 pub mod rate_limiter;
 pub mod venue_trait;
 
 // Re-export commonly used items
-pub use client::{BinanceClient, RateLimitInfo, ResponseHeaders, RestResponse};
+pub use client::{PrivateBinanceClient, PublicBinanceClient, RateLimitInfo, ResponseHeaders, RestResponse};
 pub use errors::{ApiError, ErrorResponse, Errors};
+pub use http_client::{PrivateBinanceHttpClient, PublicBinanceHttpClient};
 pub use rate_limiter::{RateLimiter, UsageStats};
 pub use venue_trait::{RateLimits, VenueConfig};
 
