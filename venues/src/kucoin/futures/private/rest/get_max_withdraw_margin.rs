@@ -17,6 +17,8 @@ pub struct GetMaxWithdrawMarginResponse {
     pub max_withdraw_margin: String,
 }
 
+const GET_MAX_WITHDRAW_MARGIN_ENDPOINT: &str = "/api/v1/margin/maxWithdrawMargin";
+
 impl super::RestClient {
     /// Get maximum withdrawable margin for a position
     ///
@@ -25,12 +27,11 @@ impl super::RestClient {
         &self,
         request: GetMaxWithdrawMarginRequest,
     ) -> Result<(RestResponse<String>, ResponseHeaders)> {
-        const GET_MAX_WITHDRAW_MARGIN_ENDPOINT: &str = "/api/v1/margin/maxWithdrawMargin";
-        
         let mut params = std::collections::HashMap::new();
         params.insert("symbol".to_string(), request.symbol);
-        
-        self.get(GET_MAX_WITHDRAW_MARGIN_ENDPOINT, Some(&params)).await
+
+        self.get(GET_MAX_WITHDRAW_MARGIN_ENDPOINT, Some(&params))
+            .await
     }
 }
 
@@ -48,8 +49,16 @@ mod tests {
 
     #[test]
     fn test_get_max_withdraw_margin_response_deserialization() {
-        let json = r#"21.1135719252"#;
+        let json = r#""21.1135719252""#;
         let response: String = serde_json::from_str(json).unwrap();
         assert_eq!(response, "21.1135719252");
+    }
+
+    #[test]
+    fn test_get_max_withdraw_margin_endpoint() {
+        assert_eq!(
+            GET_MAX_WITHDRAW_MARGIN_ENDPOINT,
+            "/api/v1/margin/maxWithdrawMargin"
+        );
     }
 }

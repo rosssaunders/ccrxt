@@ -27,7 +27,7 @@ impl super::RestClient {
     pub async fn remove_isolated_margin(
         &self,
         request: RemoveIsolatedMarginRequest,
-    ) -> Result<(RestResponse<String>, ResponseHeaders)> {
+    ) -> Result<(RestResponse<RemoveIsolatedMarginResponse>, ResponseHeaders)> {
         const REMOVE_ISOLATED_MARGIN_ENDPOINT: &str = "/api/v1/margin/withdrawMargin";
         self.post(REMOVE_ISOLATED_MARGIN_ENDPOINT, &request).await
     }
@@ -52,8 +52,10 @@ mod tests {
 
     #[test]
     fn test_remove_isolated_margin_response_deserialization() {
-        let json = r#"10.5"#;
-        let response: String = serde_json::from_str(json).unwrap();
-        assert_eq!(response, "10.5");
+        let json = r#"{
+            "data": "10.5"
+        }"#;
+        let response: RemoveIsolatedMarginResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.withdrawn_amount, "10.5");
     }
 }

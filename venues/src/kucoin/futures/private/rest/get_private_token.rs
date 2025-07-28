@@ -3,8 +3,8 @@ use serde::{Deserialize, Serialize};
 use crate::kucoin::spot::{ResponseHeaders, RestResponse, Result};
 
 /// Get private WebSocket token request (no parameters needed)
-#[derive(Debug, Clone, Default, Serialize)]
-pub struct GetPrivateTokenRequest;
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct GetPrivateTokenRequest {}
 
 /// Instance server information for WebSocket connection
 #[derive(Debug, Clone, Deserialize)]
@@ -36,10 +36,13 @@ impl super::RestClient {
     /// Get private WebSocket token for futures
     ///
     /// <https://www.kucoin.com/docs-new/websocket-api/base-info/get-private-token-futures>
-    pub async fn get_private_token(&self) -> Result<(RestResponse<WebSocketPrivateToken>, ResponseHeaders)> {
+    pub async fn get_private_token(
+        &self,
+    ) -> Result<(RestResponse<WebSocketPrivateToken>, ResponseHeaders)> {
         const PRIVATE_TOKEN_ENDPOINT: &str = "/api/v1/bullet-private";
         // POST requests use empty params for private endpoints
-        self.post(PRIVATE_TOKEN_ENDPOINT, &GetPrivateTokenRequest::default()).await
+        self.post(PRIVATE_TOKEN_ENDPOINT, &GetPrivateTokenRequest::default())
+            .await
     }
 }
 
@@ -83,7 +86,10 @@ mod tests {
         let token: WebSocketPrivateToken = serde_json::from_str(json).unwrap();
         assert!(token.token.starts_with("2neAiuYvAU61ZD"));
         assert_eq!(token.instance_servers.len(), 1);
-        assert_eq!(token.instance_servers[0].endpoint, "wss://ws-api-futures.kucoin.com/");
+        assert_eq!(
+            token.instance_servers[0].endpoint,
+            "wss://ws-api-futures.kucoin.com/"
+        );
     }
 
     #[test]
@@ -91,5 +97,10 @@ mod tests {
         let request = GetPrivateTokenRequest::default();
         let json = serde_json::to_string(&request).unwrap();
         assert_eq!(json, "{}");
+
+        // Also verify deserialization works as expected
+        let deserialized: GetPrivateTokenRequest = serde_json::from_str("{}").unwrap();
+        let re_serialized = serde_json::to_string(&deserialized).unwrap();
+        assert_eq!(re_serialized, "{}");
     }
 }
