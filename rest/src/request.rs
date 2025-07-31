@@ -2,7 +2,7 @@ use std::time::Duration;
 
 use async_trait::async_trait;
 
-use crate::{error::RestError, rate_limiter::RateLimiter};
+use crate::{error::RestError, rate_limiter::RateLimiter, http_client::Method};
 
 /// Common trait for venue-specific HTTP headers
 pub trait VenueHeaders: Send + Sync + std::fmt::Debug {}
@@ -52,7 +52,7 @@ where
     async fn request(
         &self,
         endpoint: &str,
-        method: reqwest::Method,
+        method: Method,
         query: Option<&str>,
     ) -> Result<RestResponse<T, H, E>, RestError>;
 

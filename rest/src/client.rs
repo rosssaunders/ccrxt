@@ -1,28 +1,48 @@
-use reqwest;
 use serde::{de::DeserializeOwned, Serialize};
+use std::sync::Arc;
 
 use crate::error::RestError;
+use crate::http_client::{HttpClient, HttpError, Method, RequestBuilder};
+
+#[cfg(feature = "native")]
+use crate::native::NativeHttpClient;
 
 /// A generic REST client for making HTTP requests
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub struct Client {
     base_url: String,
-    client: reqwest::Client,
+    http_client: Arc<dyn HttpClient>,
 }
 
 impl Client {
-    /// Create a new REST client
-    pub fn new(
+    /// Create a new REST client with a custom HTTP client
+    pub fn with_http_client(
         base_url: impl Into<String>,
+        http_client: impl HttpClient + 'static,
         _api_key: Option<String>,
         _secret: Option<String>,
         _passphrase: Option<String>,
     ) -> Result<Self, RestError> {
         Ok(Self {
             base_url: base_url.into(),
-            client: reqwest::Client::new(),
+            http_client: Arc::new(http_client),
         })
     }
+
+    /// Create a new REST client with the default HTTP client for the platform
+    #[cfg(feature = "native")]
+    pub fn new(
+        base_url: impl Into<String>,
+        _api_key: Option<String>,
+        _secret: Option<String>,
+        _passphrase: Option<String>,
+    ) -> Result<Self, RestError> {
+        let http_client = NativeHttpClient::new()
+            .map_err(|e| RestError::Unknown(format!("Failed to create HTTP client: {}", e)))?;
+        
+        Self::with_http_client(base_url, http_client, _api_key, _secret, _passphrase)
+    }
+
 
     /// Make a GET request
     pub async fn get<T, P>(&self, endpoint: &str, params: Option<&P>) -> Result<T, RestError>
@@ -31,14 +51,26 @@ impl Client {
         P: Serialize,
     {
         let url = format!("{}{}", self.base_url, endpoint);
-        let mut request = self.client.get(&url);
+        let mut builder = RequestBuilder::new(Method::Get, url);
 
         if let Some(params) = params {
-            request = request.query(params);
+            builder = builder.query(params).map_err(|e| RestError::from(e))?;
         }
 
-        let response = request.send().await?;
-        let result = response.json().await?;
+        let request = builder.build();
+        let response = self.http_client.execute(request).await
+            .map_err(|e| RestError::from(e))?;
+
+        if !response.is_success() {
+            return Err(RestError::HttpError(format!(
+                "HTTP {}: {}",
+                response.status,
+                response.text().unwrap_or_default()
+            )));
+        }
+
+        let result = response.json()
+            .map_err(|e| RestError::Unknown(format!("Failed to parse response: {}", e)))?;
         Ok(result)
     }
 
@@ -53,14 +85,26 @@ impl Client {
         P: Serialize,
     {
         let url = format!("{}{}", self.base_url, endpoint);
-        let mut request = self.client.post(&url);
+        let mut builder = RequestBuilder::new(Method::Post, url);
 
         if let Some(params) = params {
-            request = request.json(params);
+            builder = builder.json(params).map_err(|e| RestError::from(e))?;
         }
 
-        let response = request.send().await?;
-        let result = response.json().await?;
+        let request = builder.build();
+        let response = self.http_client.execute(request).await
+            .map_err(|e| RestError::from(e))?;
+
+        if !response.is_success() {
+            return Err(RestError::HttpError(format!(
+                "HTTP {}: {}",
+                response.status,
+                response.text().unwrap_or_default()
+            )));
+        }
+
+        let result = response.json()
+            .map_err(|e| RestError::Unknown(format!("Failed to parse response: {}", e)))?;
         Ok(result)
     }
 
@@ -71,5 +115,18 @@ impl Client {
         P: Serialize,
     {
         self.get(endpoint, params).await
+    }
+}
+
+impl From<HttpError> for RestError {
+    fn from(err: HttpError) -> Self {
+        match err {
+            HttpError::Network(msg) => RestError::HttpError(msg),
+            HttpError::Timeout => RestError::HttpError("Request timeout".to_string()),
+            HttpError::InvalidUrl(msg) => RestError::ValidationError(msg),
+            HttpError::Decode(msg) => RestError::Unknown(msg),
+            HttpError::Http { status, body } => RestError::HttpError(format!("HTTP {}: {}", status, body)),
+            HttpError::Unknown(msg) => RestError::Unknown(msg),
+        }
     }
 }
