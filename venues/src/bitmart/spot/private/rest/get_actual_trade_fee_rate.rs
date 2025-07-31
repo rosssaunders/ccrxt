@@ -45,9 +45,8 @@ impl RestClient {
         &self,
         request: GetActualTradeFeeRateRequest,
     ) -> RestResult<GetActualTradeFeeRateResponse> {
-        self.send_request(
+        self.send_get_request(
             ACTUAL_TRADE_FEE_RATE_ENDPOINT,
-            reqwest::Method::GET,
             Some(&request),
             EndpointType::FundingAccount,
         )

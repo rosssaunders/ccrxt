@@ -14,9 +14,11 @@ const CANCEL_ORDER_ENDPOINT: &str = "/spot/v3/cancel_order";
 pub struct CancelOrderRequest {
     /// Trading pair (e.g. BTC_USDT)
     pub symbol: String,
+
     /// Order ID (required if client_order_id not provided)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub order_id: Option<String>,
+
     /// Client-defined Order ID (required if order_id not provided)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub client_order_id: Option<String>,
@@ -47,9 +49,8 @@ impl RestClient {
         &self,
         request: CancelOrderRequest,
     ) -> RestResult<CancelOrderResponse> {
-        self.send_request(
+        self.send_post_request(
             CANCEL_ORDER_ENDPOINT,
-            reqwest::Method::POST,
             Some(&request),
             EndpointType::SpotTrading,
         )

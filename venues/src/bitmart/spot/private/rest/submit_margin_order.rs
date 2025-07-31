@@ -59,9 +59,8 @@ impl RestClient {
         &self,
         request: SubmitMarginOrderRequest,
     ) -> RestResult<SubmitMarginOrderResponse> {
-        self.send_request(
+        self.send_post_request(
             SUBMIT_MARGIN_ORDER_ENDPOINT,
-            reqwest::Method::POST,
             Some(&request),
             EndpointType::SpotTrading,
         )

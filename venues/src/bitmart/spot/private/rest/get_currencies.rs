@@ -67,9 +67,8 @@ impl RestClient {
         &self,
         request: GetCurrenciesRequest,
     ) -> RestResult<GetCurrenciesResponse> {
-        self.send_request(
+        self.send_get_request(
             CURRENCIES_ENDPOINT,
-            reqwest::Method::GET,
             Some(&request),
             EndpointType::FundingAccount,
         )

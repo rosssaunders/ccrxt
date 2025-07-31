@@ -60,9 +60,8 @@ impl RestClient {
         &self,
         request: GetAccountBalanceRequest,
     ) -> RestResult<GetAccountBalanceResponse> {
-        self.send_request(
+        self.send_get_request(
             ACCOUNT_BALANCE_ENDPOINT,
-            reqwest::Method::GET,
             Some(&request),
             EndpointType::FundingAccount,
         )

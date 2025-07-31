@@ -61,9 +61,8 @@ impl RestClient {
         &self,
         request: SubmitOrderRequest,
     ) -> RestResult<SubmitOrderResponse> {
-        self.send_request(
+        self.send_post_request(
             SUBMIT_ORDER_ENDPOINT,
-            reqwest::Method::POST,
             Some(&request),
             EndpointType::SpotTrading,
         )

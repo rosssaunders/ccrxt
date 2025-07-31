@@ -86,9 +86,8 @@ impl RestClient {
         &self,
         request: GetDepositWithdrawHistoryRequest,
     ) -> RestResult<GetDepositWithdrawHistoryResponse> {
-        self.send_request(
+        self.send_get_request(
             DEPOSIT_WITHDRAW_HISTORY_ENDPOINT,
-            reqwest::Method::GET,
             Some(&request),
             EndpointType::FundingAccount,
         )

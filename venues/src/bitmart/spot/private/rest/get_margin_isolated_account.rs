@@ -113,9 +113,8 @@ impl RestClient {
         &self,
         request: GetMarginIsolatedAccountRequest,
     ) -> RestResult<GetMarginIsolatedAccountResponse> {
-        self.send_request(
+        self.send_get_request(
             MARGIN_ISOLATED_ACCOUNT_ENDPOINT,
-            reqwest::Method::GET,
             Some(&request),
             EndpointType::MarginLoan,
         )

@@ -99,9 +99,8 @@ impl RestClient {
         &self,
         request: QueryTradesRequest,
     ) -> RestResult<QueryTradesResponse> {
-        self.send_request(
+        self.send_post_request(
             QUERY_TRADES_ENDPOINT,
-            reqwest::Method::POST,
             Some(&request),
             EndpointType::SpotTrading,
         )

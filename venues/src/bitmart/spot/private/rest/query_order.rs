@@ -91,9 +91,8 @@ impl RestClient {
     /// # Returns
     /// Order details response
     pub async fn query_order(&self, request: QueryOrderRequest) -> RestResult<QueryOrderResponse> {
-        self.send_request(
+        self.send_post_request(
             QUERY_ORDER_ENDPOINT,
-            reqwest::Method::POST,
             Some(&request),
             EndpointType::SpotTrading,
         )

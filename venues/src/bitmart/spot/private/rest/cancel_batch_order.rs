@@ -1,10 +1,9 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::bitmart::{OrderSide, RestResult, rate_limit::EndpointType};
+use crate::bitmart::{RestResult, rate_limit::EndpointType};
 
 const CANCEL_BATCH_ORDER_ENDPOINT: &str = "/spot/v4/cancel_orders";
-const CANCEL_ALL_ORDERS_ENDPOINT: &str = "/spot/v4/cancel_all";
 
 /// Request parameters for canceling batch orders.
 #[derive(Debug, Clone, Serialize, Default)]
@@ -49,24 +48,6 @@ pub struct CancelBatchOrderResponse {
     pub failed_count: i32,
 }
 
-/// Request parameters for canceling all orders.
-#[derive(Debug, Clone, Serialize, Default)]
-pub struct CancelAllOrdersRequest {
-    /// Trading pair (optional, e.g., BTC_USDT).
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub symbol: Option<String>,
-
-    /// Order side (optional).
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub side: Option<OrderSide>,
-}
-
-/// Response for canceling all orders.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct CancelAllOrdersResponse {
-    // Empty response data - success is indicated by HTTP status code
-}
-
 impl RestClient {
     /// Cancel Batch Order(v4)
     ///
@@ -86,35 +67,8 @@ impl RestClient {
         &self,
         request: CancelBatchOrderRequest,
     ) -> RestResult<CancelBatchOrderResponse> {
-        self.send_request(
+        self.send_post_request(
             CANCEL_BATCH_ORDER_ENDPOINT,
-            reqwest::Method::POST,
-            Some(&request),
-            EndpointType::SpotTrading,
-        )
-        .await
-    }
-
-    /// Cancel All Order(v4)
-    ///
-    /// Cancels all outstanding orders for a symbol and/or side.
-    ///
-    /// [docs]: https://developer-pro.bitmart.com/en/spot/#cancel-all-order-v4-signed
-    ///
-    /// Rate limit: UID-based, 1 times/3 sec
-    ///
-    /// # Arguments
-    /// * `request` - The cancel all request parameters
-    ///
-    /// # Returns
-    /// Empty response - success indicated by HTTP status
-    pub async fn cancel_all_orders(
-        &self,
-        request: CancelAllOrdersRequest,
-    ) -> RestResult<CancelAllOrdersResponse> {
-        self.send_request(
-            CANCEL_ALL_ORDERS_ENDPOINT,
-            reqwest::Method::POST,
             Some(&request),
             EndpointType::SpotTrading,
         )
@@ -181,44 +135,6 @@ mod tests {
         assert_eq!(response.total_count, 3);
         assert_eq!(response.success_count, 2);
         assert_eq!(response.failed_count, 1);
-    }
-
-    #[test]
-    fn test_cancel_all_orders_request() {
-        let request = CancelAllOrdersRequest {
-            symbol: Some("BTC_USDT".to_string()),
-            side: Some(OrderSide::Buy),
-        };
-
-        assert_eq!(request.symbol, Some("BTC_USDT".to_string()));
-        assert_eq!(request.side, Some(OrderSide::Buy));
-    }
-
-    #[test]
-    fn test_cancel_all_orders_request_empty() {
-        let request = CancelAllOrdersRequest {
-            symbol: None,
-            side: None,
-        };
-
-        assert!(request.symbol.is_none());
-        assert!(request.side.is_none());
-    }
-
-    #[test]
-    fn test_cancel_all_orders_request_default() {
-        let request = CancelAllOrdersRequest::default();
-
-        assert!(request.symbol.is_none());
-        assert!(request.side.is_none());
-    }
-
-    #[test]
-    fn test_cancel_all_orders_response_structure() {
-        let response = CancelAllOrdersResponse {};
-
-        // This is an empty struct, just test it can be constructed
-        drop(response);
     }
 
     #[test]

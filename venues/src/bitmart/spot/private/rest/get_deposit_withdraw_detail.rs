@@ -74,9 +74,8 @@ impl RestClient {
         &self,
         request: GetDepositWithdrawDetailRequest,
     ) -> RestResult<GetDepositWithdrawDetailResponse> {
-        self.send_request(
+        self.send_get_request(
             DEPOSIT_WITHDRAW_DETAIL_ENDPOINT,
-            reqwest::Method::GET,
             Some(&request),
             EndpointType::FundingAccount,
         )

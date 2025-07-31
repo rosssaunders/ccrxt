@@ -55,9 +55,8 @@ impl RestClient {
         &self,
         request: GetBasicFeeRateRequest,
     ) -> RestResult<GetBasicFeeRateResponse> {
-        self.send_request(
+        self.send_get_request(
             BASIC_FEE_RATE_ENDPOINT,
-            reqwest::Method::GET,
             Some(&request),
             EndpointType::FundingAccount,
         )

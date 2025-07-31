@@ -47,9 +47,8 @@ impl RestClient {
         &self,
         request: GetSpotWalletBalanceRequest,
     ) -> RestResult<GetSpotWalletBalanceResponse> {
-        self.send_request(
+        self.send_get_request(
             SPOT_WALLET_BALANCE_ENDPOINT,
-            reqwest::Method::GET,
             Some(&request),
             EndpointType::FundingAccount,
         )

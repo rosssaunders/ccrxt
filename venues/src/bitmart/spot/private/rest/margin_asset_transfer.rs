@@ -45,9 +45,8 @@ impl RestClient {
         &self,
         request: MarginAssetTransferRequest,
     ) -> RestResult<MarginAssetTransferResponse> {
-        self.send_request(
+        self.send_post_request(
             MARGIN_ASSET_TRANSFER_ENDPOINT,
-            reqwest::Method::POST,
             Some(&request),
             EndpointType::MarginLoan,
         )

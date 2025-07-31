@@ -18,7 +18,7 @@ use std::borrow::Cow;
 
 use base64::{Engine as _, engine::general_purpose};
 use hmac::{Hmac, Mac};
-use reqwest::{Client, Method};
+use reqwest::Client;
 use rest::secrets::ExposableSecret;
 use serde::{Deserialize, de::DeserializeOwned};
 use sha2::Sha256;
@@ -115,20 +115,18 @@ impl RestClient {
         Ok(general_purpose::STANDARD.encode(mac.finalize().into_bytes()))
     }
 
-    /// Send a request to a private endpoint
+    /// Send a GET request to a private endpoint
     ///
     /// # Arguments
     /// * `endpoint` - The API endpoint path
-    /// * `method` - The HTTP method to use
-    /// * `request` - The request object (parameters/body), must implement Serialize
+    /// * `request` - The request object (query parameters), must implement Serialize
     /// * `endpoint_type` - The endpoint type for rate limiting
     ///
     /// # Returns
     /// A result containing the parsed response data or an error
-    pub async fn send_request<R, T>(
+    pub async fn send_get_request<R, T>(
         &self,
         endpoint: &str,
-        method: Method,
         request: Option<&R>,
         endpoint_type: EndpointType,
     ) -> RestResult<T>
@@ -141,57 +139,40 @@ impl RestClient {
             .check_limits(endpoint_type.clone())
             .await?;
 
-        // Serialize request to query params or JSON body
-        let (url, body_str, request_path) = match method {
-            Method::GET | Method::DELETE => {
-                let query = if let Some(req) = request {
-                    let s = serde_urlencoded::to_string(req).unwrap_or_default();
-                    if s.is_empty() { None } else { Some(s) }
-                } else {
-                    None
-                };
-                let url = if let Some(params) = &query {
-                    format!("{}{}?{}", self.base_url, endpoint, params)
-                } else {
-                    format!("{}{}", self.base_url, endpoint)
-                };
-                let request_path = if let Some(params) = &query {
-                    format!("{endpoint}?{params}")
-                } else {
-                    endpoint.to_string()
-                };
-                (url, String::new(), request_path)
-            }
-            _ => {
-                let body = if let Some(req) = request {
-                    serde_json::to_string(req).unwrap_or_default()
-                } else {
-                    String::new()
-                };
-                let url = format!("{}{}", self.base_url, endpoint);
-                (url, body, endpoint.to_string())
-            }
+        // Serialize request to query params
+        let query = if let Some(req) = request {
+            let s = serde_urlencoded::to_string(req).unwrap_or_default();
+            if s.is_empty() { None } else { Some(s) }
+        } else {
+            None
+        };
+
+        let url = if let Some(params) = &query {
+            format!("{}{}?{}", self.base_url, endpoint, params)
+        } else {
+            format!("{}{}", self.base_url, endpoint)
+        };
+
+        let request_path = if let Some(params) = &query {
+            format!("{endpoint}?{params}")
+        } else {
+            endpoint.to_string()
         };
 
         // Create timestamp
         let timestamp = chrono::Utc::now().timestamp_millis().to_string();
 
-        // Create signature
-        let signature = self.sign_request(&timestamp, method.as_str(), &request_path, &body_str)?;
+        // Create signature (GET method with empty body)
+        let signature = self.sign_request(&timestamp, "GET", &request_path, "")?;
 
-        // Build request
-        let mut request_builder = self
+        // Build GET request
+        let request_builder = self
             .client
-            .request(method.clone(), &url)
+            .get(&url)
             .header("X-BM-KEY", self.api_key.expose_secret())
             .header("X-BM-SIGN", signature)
             .header("X-BM-TIMESTAMP", timestamp)
             .header("Content-Type", "application/json");
-
-        // Add body if present and not GET/DELETE
-        if !(body_str.is_empty() || method == Method::GET || method == Method::DELETE) {
-            request_builder = request_builder.body(body_str.clone());
-        }
 
         // Send request
         let response = request_builder.send().await?;
@@ -199,6 +180,204 @@ impl RestClient {
         // Record the request for rate limiting
         self.rate_limiter.increment_request(endpoint_type).await;
 
+        self.parse_response(response).await
+    }
+
+    /// Send a POST request to a private endpoint
+    ///
+    /// # Arguments
+    /// * `endpoint` - The API endpoint path
+    /// * `request` - The request object (JSON body), must implement Serialize
+    /// * `endpoint_type` - The endpoint type for rate limiting
+    ///
+    /// # Returns
+    /// A result containing the parsed response data or an error
+    pub async fn send_post_request<R, T>(
+        &self,
+        endpoint: &str,
+        request: Option<&R>,
+        endpoint_type: EndpointType,
+    ) -> RestResult<T>
+    where
+        R: serde::Serialize + ?Sized,
+        T: DeserializeOwned,
+    {
+        // Check rate limits before making the request
+        self.rate_limiter
+            .check_limits(endpoint_type.clone())
+            .await?;
+
+        // Serialize request to JSON body
+        let body = if let Some(req) = request {
+            serde_json::to_string(req).unwrap_or_default()
+        } else {
+            String::new()
+        };
+
+        let url = format!("{}{}", self.base_url, endpoint);
+
+        // Create timestamp
+        let timestamp = chrono::Utc::now().timestamp_millis().to_string();
+
+        // Create signature (POST method with JSON body)
+        let signature = self.sign_request(&timestamp, "POST", endpoint, &body)?;
+
+        // Build POST request
+        let request_builder = self
+            .client
+            .post(&url)
+            .header("X-BM-KEY", self.api_key.expose_secret())
+            .header("X-BM-SIGN", signature)
+            .header("X-BM-TIMESTAMP", timestamp)
+            .header("Content-Type", "application/json")
+            .body(body);
+
+        // Send request
+        let response = request_builder.send().await?;
+
+        // Record the request for rate limiting
+        self.rate_limiter.increment_request(endpoint_type).await;
+
+        self.parse_response(response).await
+    }
+
+    /// Send a DELETE request to a private endpoint
+    ///
+    /// # Arguments
+    /// * `endpoint` - The API endpoint path
+    /// * `request` - The request object (query parameters), must implement Serialize
+    /// * `endpoint_type` - The endpoint type for rate limiting
+    ///
+    /// # Returns
+    /// A result containing the parsed response data or an error
+    pub async fn send_delete_request<R, T>(
+        &self,
+        endpoint: &str,
+        request: Option<&R>,
+        endpoint_type: EndpointType,
+    ) -> RestResult<T>
+    where
+        R: serde::Serialize + ?Sized,
+        T: DeserializeOwned,
+    {
+        // Check rate limits before making the request
+        self.rate_limiter
+            .check_limits(endpoint_type.clone())
+            .await?;
+
+        // Serialize request to query params
+        let query = if let Some(req) = request {
+            let s = serde_urlencoded::to_string(req).unwrap_or_default();
+            if s.is_empty() { None } else { Some(s) }
+        } else {
+            None
+        };
+
+        let url = if let Some(params) = &query {
+            format!("{}{}?{}", self.base_url, endpoint, params)
+        } else {
+            format!("{}{}", self.base_url, endpoint)
+        };
+
+        let request_path = if let Some(params) = &query {
+            format!("{endpoint}?{params}")
+        } else {
+            endpoint.to_string()
+        };
+
+        // Create timestamp
+        let timestamp = chrono::Utc::now().timestamp_millis().to_string();
+
+        // Create signature (DELETE method with empty body)
+        let signature = self.sign_request(&timestamp, "DELETE", &request_path, "")?;
+
+        // Build DELETE request
+        let request_builder = self
+            .client
+            .delete(&url)
+            .header("X-BM-KEY", self.api_key.expose_secret())
+            .header("X-BM-SIGN", signature)
+            .header("X-BM-TIMESTAMP", timestamp)
+            .header("Content-Type", "application/json");
+
+        // Send request
+        let response = request_builder.send().await?;
+
+        // Record the request for rate limiting
+        self.rate_limiter.increment_request(endpoint_type).await;
+
+        self.parse_response(response).await
+    }
+
+    /// Send a PUT request to a private endpoint
+    ///
+    /// # Arguments
+    /// * `endpoint` - The API endpoint path
+    /// * `request` - The request object (JSON body), must implement Serialize
+    /// * `endpoint_type` - The endpoint type for rate limiting
+    ///
+    /// # Returns
+    /// A result containing the parsed response data or an error
+    pub async fn send_put_request<R, T>(
+        &self,
+        endpoint: &str,
+        request: Option<&R>,
+        endpoint_type: EndpointType,
+    ) -> RestResult<T>
+    where
+        R: serde::Serialize + ?Sized,
+        T: DeserializeOwned,
+    {
+        // Check rate limits before making the request
+        self.rate_limiter
+            .check_limits(endpoint_type.clone())
+            .await?;
+
+        // Serialize request to JSON body
+        let body = if let Some(req) = request {
+            serde_json::to_string(req).unwrap_or_default()
+        } else {
+            String::new()
+        };
+
+        let url = format!("{}{}", self.base_url, endpoint);
+
+        // Create timestamp
+        let timestamp = chrono::Utc::now().timestamp_millis().to_string();
+
+        // Create signature (PUT method with JSON body)
+        let signature = self.sign_request(&timestamp, "PUT", endpoint, &body)?;
+
+        // Build PUT request
+        let request_builder = self
+            .client
+            .put(&url)
+            .header("X-BM-KEY", self.api_key.expose_secret())
+            .header("X-BM-SIGN", signature)
+            .header("X-BM-TIMESTAMP", timestamp)
+            .header("Content-Type", "application/json")
+            .body(body);
+
+        // Send request
+        let response = request_builder.send().await?;
+
+        // Record the request for rate limiting
+        self.rate_limiter.increment_request(endpoint_type).await;
+
+        self.parse_response(response).await
+    }
+
+    /// Parse the HTTP response and handle BitMart API errors
+    ///
+    /// # Arguments
+    /// * `response` - The HTTP response from the API
+    ///
+    /// # Returns
+    /// A result containing the parsed response data or an error
+    async fn parse_response<T>(&self, response: reqwest::Response) -> RestResult<T>
+    where
+        T: DeserializeOwned,
+    {
         // Parse response
         let response_text = response.text().await?;
         let bitmart_response: BitMartResponse<T> =

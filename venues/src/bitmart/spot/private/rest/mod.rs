@@ -1,3 +1,4 @@
+mod cancel_all_orders;
 mod cancel_batch_order;
 mod cancel_order;
 mod client;
@@ -22,10 +23,8 @@ mod submit_margin_order;
 mod submit_order;
 mod withdraw;
 
-pub use cancel_batch_order::{
-    CancelAllOrdersRequest, CancelAllOrdersResponse, CancelBatchOrderRequest,
-    CancelBatchOrderResponse,
-};
+pub use cancel_all_orders::{CancelAllOrdersRequest, CancelAllOrdersResponse};
+pub use cancel_batch_order::{CancelBatchOrderRequest, CancelBatchOrderResponse};
 pub use cancel_order::{CancelOrderRequest, CancelOrderResponse};
 pub use client::RestClient;
 pub use get_account_balance::{GetAccountBalanceRequest, GetAccountBalanceResponse, WalletBalance};
