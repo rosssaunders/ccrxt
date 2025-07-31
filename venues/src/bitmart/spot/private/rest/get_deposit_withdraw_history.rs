@@ -69,11 +69,11 @@ pub struct GetDepositWithdrawHistoryResponse {
 }
 
 impl RestClient {
-    /// Get deposit and withdraw history
+    /// Get Deposit And Withdraw History
     ///
     /// Search for all existed withdraws and deposits and return their latest status.
     ///
-    /// See: https://raw.githubusercontent.com/rosssaunders/coincise/refs/heads/main/docs/bitmart/spot/funding_account.md
+    /// [docs]: https://developer-pro.bitmart.com/en/spot/#get-deposit-and-withdraw-history-keyed
     ///
     /// Rate limit: 12 times/2 sec per API key
     ///

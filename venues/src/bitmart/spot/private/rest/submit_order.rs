@@ -44,11 +44,11 @@ pub struct SubmitOrderResponse {
 }
 
 impl RestClient {
-    /// Submit a new order (v2)
+    /// New Order (v2)
     ///
     /// Places a new order on the BitMart exchange.
     ///
-    /// See: https://raw.githubusercontent.com/rosssaunders/coincise/refs/heads/main/docs/bitmart/spot/spot___margin_trading.md
+    /// [docs]: https://developer-pro.bitmart.com/en/spot/#new-orderv2-signed
     ///
     /// Rate limit: varies by endpoint type
     ///

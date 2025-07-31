@@ -50,11 +50,11 @@ pub struct GetCurrenciesResponse {
 }
 
 impl RestClient {
-    /// Get currencies
+    /// Get Currencies
     ///
     /// Gets the currency of the asset for withdrawal
     ///
-    /// See: https://raw.githubusercontent.com/rosssaunders/coincise/refs/heads/main/docs/bitmart/spot/funding_account.md
+    /// [docs]: https://developer-pro.bitmart.com/en/spot/#get-currencies
     ///
     /// Rate limit: 12 times/2 sec per API key
     ///

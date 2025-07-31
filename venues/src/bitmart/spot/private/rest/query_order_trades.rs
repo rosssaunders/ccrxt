@@ -23,11 +23,11 @@ pub struct QueryOrderTradesRequest {
 pub type QueryOrderTradesResponse = Vec<TradeInfo>;
 
 impl RestClient {
-    /// Query order trade list (v4)
+    /// Order Trade List (v4)
     ///
     /// Retrieves the trade list for a specific order.
     ///
-    /// See: https://raw.githubusercontent.com/rosssaunders/coincise/refs/heads/main/docs/bitmart/spot/spot___margin_trading.md
+    /// [docs]: https://developer-pro.bitmart.com/en/spot/#order-trade-listv4-signed
     ///
     /// Rate limit: varies by endpoint type
     ///

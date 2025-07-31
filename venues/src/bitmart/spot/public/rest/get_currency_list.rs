@@ -40,7 +40,7 @@ impl RestClient {
     ///
     /// Get a list of all cryptocurrencies on the platform
     ///
-    /// See: https://raw.githubusercontent.com/rosssaunders/coincise/refs/heads/main/docs/bitmart/spot/public_market_data.md
+    /// [docs]: https://developer-pro.bitmart.com/en/spot/#get-currency-list-v1
     ///
     /// Rate limit: 10 times/2sec per IP
     ///

@@ -96,11 +96,11 @@ pub struct GetMarginIsolatedAccountResponse {
 }
 
 impl RestClient {
-    /// Get margin account details (isolated)
+    /// Get Margin Account Details (Isolated)
     ///
     /// Applicable for isolated margin account inquiries
     ///
-    /// See: https://raw.githubusercontent.com/rosssaunders/coincise/refs/heads/main/docs/bitmart/spot/funding_account.md
+    /// [docs]: https://developer-pro.bitmart.com/en/spot/#get-margin-account-detailsisolated-keyed
     ///
     /// Rate limit: 12 times/2 sec per API key
     ///

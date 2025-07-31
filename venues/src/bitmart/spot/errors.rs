@@ -66,7 +66,8 @@ pub struct ErrorResponse {
 }
 
 /// BitMart API error codes as documented in their REST API specification
-/// See: https://raw.githubusercontent.com/rosssaunders/coincise/refs/heads/main/docs/bitmart/spot/error_code.md
+///
+/// For complete error code documentation, see the BitMart API documentation.
 #[derive(Error, Debug, Clone, Deserialize)]
 pub enum ApiError {
     // Success

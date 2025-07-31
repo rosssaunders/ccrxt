@@ -77,11 +77,11 @@ pub struct QueryOrderResponse {
 }
 
 impl RestClient {
-    /// Query order details (v4)
+    /// Query Order By Id (v4)
     ///
     /// Retrieves details for a specific order.
     ///
-    /// See: https://raw.githubusercontent.com/rosssaunders/coincise/refs/heads/main/docs/bitmart/spot/spot___margin_trading.md
+    /// [docs]: https://developer-pro.bitmart.com/en/spot/#query-order-by-id-v4-signed
     ///
     /// Rate limit: varies by endpoint type
     ///

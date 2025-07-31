@@ -43,11 +43,11 @@ pub struct GetWithdrawAddressListResponse {
 }
 
 impl RestClient {
-    /// Get withdraw address list
+    /// Withdraw Address
     ///
     /// Gets the user's withdraw address list
     ///
-    /// See: https://raw.githubusercontent.com/rosssaunders/coincise/refs/heads/main/docs/bitmart/spot/funding_account.md
+    /// [docs]: https://developer-pro.bitmart.com/en/spot/#withdraw-address-keyed
     ///
     /// Rate limit: 12 times/2 sec per API key
     ///

@@ -4,12 +4,16 @@ use strum_macros::{Display, EnumString};
 
 /// Contract status as returned by BitMart API
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, EnumString, Display)]
-#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum ContractStatus {
-    #[serde(rename = "NORMAL")]
+    /// Normal trading status (API returns "Trading")
+    #[serde(rename = "Trading")]
     Normal,
-    #[serde(rename = "DELISTED")]
+    
+    /// Delisted status
+    #[serde(rename = "Delisted")]
     Delisted,
+    
+    /// Unknown status for any other values
     #[serde(other)]
     Unknown,
 }

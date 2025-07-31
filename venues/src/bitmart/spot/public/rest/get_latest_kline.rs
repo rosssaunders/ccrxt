@@ -39,7 +39,7 @@ impl RestClient {
     /// Note that the latest K-line of the interface is not real-time data.
     /// If you want real-time data, please use websocket to subscribe to K-line channel
     ///
-    /// See: https://raw.githubusercontent.com/rosssaunders/coincise/refs/heads/main/docs/bitmart/spot/public_market_data.md
+    /// [docs]: https://developer-pro.bitmart.com/en/spot/#get-latest-k-line-v3
     ///
     /// Rate limit: 10 times/2sec per IP
     ///

@@ -67,11 +67,11 @@ pub struct BatchOrderData {
 }
 
 impl RestClient {
-    /// Submit batch orders (v4)
+    /// New Batch Order (v4)
     ///
     /// Places multiple orders in a single request. Maximum 10 orders per batch.
     ///
-    /// See: https://raw.githubusercontent.com/rosssaunders/coincise/refs/heads/main/docs/bitmart/spot/spot___margin_trading.md
+    /// [docs]: https://developer-pro.bitmart.com/en/spot/#new-batch-orderv4-signed
     ///
     /// Rate limit: varies by endpoint type
     ///

@@ -30,11 +30,11 @@ pub struct CancelOrderResponse {
 }
 
 impl RestClient {
-    /// Cancel an order (v3)
+    /// Cancel Order (v3)
     ///
     /// Cancels a specified unfinished order.
     ///
-    /// See: https://raw.githubusercontent.com/rosssaunders/coincise/refs/heads/main/docs/bitmart/spot/spot___margin_trading.md
+    /// [docs]: https://developer-pro.bitmart.com/en/spot/#cancel-orderv3-signed
     ///
     /// Rate limit: varies by endpoint type
     ///

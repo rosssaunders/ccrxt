@@ -1,76 +1,81 @@
-//! BitMart cancel batch order REST API endpoint
-//!
-//! This module implements the BitMart batch order cancellation API endpoint.
-
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
 use crate::bitmart::{OrderSide, RestResult, rate_limit::EndpointType};
 
 const CANCEL_BATCH_ORDER_ENDPOINT: &str = "/spot/v4/cancel_orders";
+const CANCEL_ALL_ORDERS_ENDPOINT: &str = "/spot/v4/cancel_all";
 
-/// Request parameters for canceling batch orders
-#[derive(Debug, Serialize)]
+/// Request parameters for canceling batch orders.
+#[derive(Debug, Clone, Serialize, Default)]
 pub struct CancelBatchOrderRequest {
-    /// Trading pair (e.g. BTC_USDT)
+    /// Trading pair (e.g., BTC_USDT).
     pub symbol: String,
-    /// Order ID list (max 10 IDs) - mutually exclusive with client_order_ids
+
+    /// Order ID list (max 10 IDs) - mutually exclusive with client_order_ids.
     #[serde(rename = "orderIds", skip_serializing_if = "Option::is_none")]
     pub order_ids: Option<Vec<String>>,
-    /// Client order ID list (max 10 IDs) - mutually exclusive with order_ids
+
+    /// Client order ID list (max 10 IDs) - mutually exclusive with order_ids.
     #[serde(rename = "clientOrderIds", skip_serializing_if = "Option::is_none")]
     pub client_order_ids: Option<Vec<String>>,
-    /// Trade time limit in milliseconds, allowed range (0,60000], default: 5000
+
+    /// Trade time limit in milliseconds, allowed range (0,60000], default: 5000.
     #[serde(rename = "recvWindow", skip_serializing_if = "Option::is_none")]
     pub recv_window: Option<u64>,
 }
 
-/// Response for canceling batch orders
+/// Response for canceling batch orders.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CancelBatchOrderResponse {
-    /// Successfully canceled order IDs
+    /// Successfully canceled order IDs.
     #[serde(rename = "successIds")]
     pub success_ids: Vec<String>,
-    /// Order IDs that failed to cancel
+
+    /// Order IDs that failed to cancel.
     #[serde(rename = "failIds")]
     pub fail_ids: Vec<String>,
-    /// Total number of submissions
+
+    /// Total number of submissions.
     #[serde(rename = "totalCount")]
     pub total_count: i32,
-    /// Number of successful cancellations
+
+    /// Number of successful cancellations.
     #[serde(rename = "successCount")]
     pub success_count: i32,
-    /// Number of failed cancellations
+
+    /// Number of failed cancellations.
     #[serde(rename = "failedCount")]
     pub failed_count: i32,
 }
 
-/// Request parameters for canceling all orders
-#[derive(Debug, Serialize)]
+/// Request parameters for canceling all orders.
+#[derive(Debug, Clone, Serialize, Default)]
 pub struct CancelAllOrdersRequest {
-    /// Trading pair (optional, e.g. BTC_USDT)
+    /// Trading pair (optional, e.g., BTC_USDT).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub symbol: Option<String>,
-    /// Order side (optional)
+
+    /// Order side (optional).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub side: Option<OrderSide>,
 }
 
-/// Response for canceling all orders
+/// Response for canceling all orders.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CancelAllOrdersResponse {
     // Empty response data - success is indicated by HTTP status code
 }
 
 impl RestClient {
-    /// Cancel batch orders (v4)
+    /// Cancel Batch Order(v4)
     ///
     /// Cancels multiple orders by order IDs or client order IDs. Maximum 10 orders per batch.
     /// Must specify either order_ids or client_order_ids, but not both.
     ///
-    /// See: https://raw.githubusercontent.com/rosssaunders/coincise/refs/heads/main/docs/bitmart/spot/spot___margin_trading.md
+    /// [docs]: https://developer-pro.bitmart.com/en/spot/#cancel-batch-order-v4-signed
     ///
-    /// Rate limit: varies by endpoint type
+    /// Rate limit: UID-based, 40 times/2 sec
     ///
     /// # Arguments
     /// * `request` - The batch cancel request parameters
@@ -81,34 +86,6 @@ impl RestClient {
         &self,
         request: CancelBatchOrderRequest,
     ) -> RestResult<CancelBatchOrderResponse> {
-        // Validate that exactly one of order_ids or client_order_ids is provided
-        match (&request.order_ids, &request.client_order_ids) {
-            (Some(order_ids), None) => {
-                if order_ids.is_empty() || order_ids.len() > 10 {
-                    return Err(crate::bitmart::Errors::Error(
-                        "order_ids must contain 1-10 order IDs".to_string(),
-                    ));
-                }
-            }
-            (None, Some(client_order_ids)) => {
-                if client_order_ids.is_empty() || client_order_ids.len() > 10 {
-                    return Err(crate::bitmart::Errors::Error(
-                        "client_order_ids must contain 1-10 client order IDs".to_string(),
-                    ));
-                }
-            }
-            (Some(_), Some(_)) => {
-                return Err(crate::bitmart::Errors::Error(
-                    "Cannot specify both order_ids and client_order_ids".to_string(),
-                ));
-            }
-            (None, None) => {
-                return Err(crate::bitmart::Errors::Error(
-                    "Must specify either order_ids or client_order_ids".to_string(),
-                ));
-            }
-        }
-
         self.send_request(
             CANCEL_BATCH_ORDER_ENDPOINT,
             reqwest::Method::POST,
@@ -118,13 +95,13 @@ impl RestClient {
         .await
     }
 
-    /// Cancel all orders (v4)
+    /// Cancel All Order(v4)
     ///
     /// Cancels all outstanding orders for a symbol and/or side.
     ///
-    /// See: https://raw.githubusercontent.com/rosssaunders/coincise/refs/heads/main/docs/bitmart/spot/spot___margin_trading.md
+    /// [docs]: https://developer-pro.bitmart.com/en/spot/#cancel-all-order-v4-signed
     ///
-    /// Rate limit: varies by endpoint type
+    /// Rate limit: UID-based, 1 times/3 sec
     ///
     /// # Arguments
     /// * `request` - The cancel all request parameters
@@ -136,7 +113,7 @@ impl RestClient {
         request: CancelAllOrdersRequest,
     ) -> RestResult<CancelAllOrdersResponse> {
         self.send_request(
-            "/spot/v4/cancel_all",
+            CANCEL_ALL_ORDERS_ENDPOINT,
             reqwest::Method::POST,
             Some(&request),
             EndpointType::SpotTrading,
@@ -180,6 +157,33 @@ mod tests {
     }
 
     #[test]
+    fn test_cancel_batch_order_request_default() {
+        let request = CancelBatchOrderRequest::default();
+
+        assert!(request.symbol.is_empty());
+        assert!(request.order_ids.is_none());
+        assert!(request.client_order_ids.is_none());
+        assert!(request.recv_window.is_none());
+    }
+
+    #[test]
+    fn test_cancel_batch_order_response_structure() {
+        let response = CancelBatchOrderResponse {
+            success_ids: vec!["123".to_string(), "456".to_string()],
+            fail_ids: vec!["789".to_string()],
+            total_count: 3,
+            success_count: 2,
+            failed_count: 1,
+        };
+
+        assert_eq!(response.success_ids.len(), 2);
+        assert_eq!(response.fail_ids.len(), 1);
+        assert_eq!(response.total_count, 3);
+        assert_eq!(response.success_count, 2);
+        assert_eq!(response.failed_count, 1);
+    }
+
+    #[test]
     fn test_cancel_all_orders_request() {
         let request = CancelAllOrdersRequest {
             symbol: Some("BTC_USDT".to_string()),
@@ -199,5 +203,81 @@ mod tests {
 
         assert!(request.symbol.is_none());
         assert!(request.side.is_none());
+    }
+
+    #[test]
+    fn test_cancel_all_orders_request_default() {
+        let request = CancelAllOrdersRequest::default();
+
+        assert!(request.symbol.is_none());
+        assert!(request.side.is_none());
+    }
+
+    #[test]
+    fn test_cancel_all_orders_response_structure() {
+        let response = CancelAllOrdersResponse {};
+
+        // This is an empty struct, just test it can be constructed
+        drop(response);
+    }
+
+    #[test]
+    fn test_request_serialization() {
+        let request = CancelBatchOrderRequest {
+            symbol: "BTC_USDT".to_string(),
+            order_ids: Some(vec!["123".to_string()]),
+            client_order_ids: None,
+            recv_window: Some(5000),
+        };
+
+        let json = serde_json::to_string(&request).unwrap();
+        assert!(json.contains("\"symbol\":\"BTC_USDT\""));
+        assert!(json.contains("\"orderIds\":[\"123\"]"));
+        assert!(json.contains("\"recvWindow\":5000"));
+        assert!(!json.contains("\"clientOrderIds\""));
+    }
+
+    #[test]
+    fn test_response_deserialization() {
+        let json = r#"{
+            "successIds": ["123", "456"],
+            "failIds": ["789"],
+            "totalCount": 3,
+            "successCount": 2,
+            "failedCount": 1
+        }"#;
+
+        let response: CancelBatchOrderResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.success_ids, vec!["123", "456"]);
+        assert_eq!(response.fail_ids, vec!["789"]);
+        assert_eq!(response.total_count, 3);
+        assert_eq!(response.success_count, 2);
+        assert_eq!(response.failed_count, 1);
+    }
+
+    #[test]
+    fn test_clone_derives() {
+        let request = CancelBatchOrderRequest {
+            symbol: "BTC_USDT".to_string(),
+            order_ids: Some(vec!["123".to_string()]),
+            client_order_ids: None,
+            recv_window: Some(5000),
+        };
+
+        let cloned_request = request.clone();
+        assert_eq!(request.symbol, cloned_request.symbol);
+        assert_eq!(request.order_ids, cloned_request.order_ids);
+
+        let response = CancelBatchOrderResponse {
+            success_ids: vec!["123".to_string()],
+            fail_ids: vec![],
+            total_count: 1,
+            success_count: 1,
+            failed_count: 0,
+        };
+
+        let cloned_response = response.clone();
+        assert_eq!(response.success_ids, cloned_response.success_ids);
+        assert_eq!(response.total_count, cloned_response.total_count);
     }
 }

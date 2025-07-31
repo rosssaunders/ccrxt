@@ -43,11 +43,11 @@ pub struct GetAccountBalanceResponse {
 }
 
 impl RestClient {
-    /// Get account balance
+    /// Get Account Balance
     ///
     /// Gets the user's wallet balance. Only assets with a balance greater than 0 will be returned.
     ///
-    /// See: https://raw.githubusercontent.com/rosssaunders/coincise/refs/heads/main/docs/bitmart/spot/funding_account.md
+    /// [docs]: https://developer-pro.bitmart.com/en/spot/#get-account-balance-keyed
     ///
     /// Rate limit: 12 times/2 sec per API key
     ///

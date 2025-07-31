@@ -36,11 +36,11 @@ pub struct QueryOrdersRequest {
 pub type QueryOrdersResponse = Vec<OrderDetails>;
 
 impl RestClient {
-    /// Query order list (v4)
+    /// Account Orders (v4)
     ///
     /// Retrieves a list of orders based on filtering criteria.
     ///
-    /// See: https://raw.githubusercontent.com/rosssaunders/coincise/refs/heads/main/docs/bitmart/spot/spot___margin_trading.md
+    /// [docs]: https://developer-pro.bitmart.com/en/spot/#account-ordersv4-signed
     ///
     /// Rate limit: varies by endpoint type
     ///

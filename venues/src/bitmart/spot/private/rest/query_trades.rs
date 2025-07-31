@@ -82,11 +82,11 @@ pub struct TradeInfo {
 pub type QueryTradesResponse = Vec<TradeInfo>;
 
 impl RestClient {
-    /// Query account trade list (v4)
+    /// Account Trade List (v4)
     ///
     /// Retrieves the account's trade history based on filtering criteria.
     ///
-    /// See: https://raw.githubusercontent.com/rosssaunders/coincise/refs/heads/main/docs/bitmart/spot/spot___margin_trading.md
+    /// [docs]: https://developer-pro.bitmart.com/en/spot/#account-trade-listv4-signed
     ///
     /// Rate limit: varies by endpoint type
     ///

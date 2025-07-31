@@ -28,11 +28,11 @@ pub struct MarginAssetTransferResponse {
 }
 
 impl RestClient {
-    /// Margin asset transfer
+    /// Margin Asset Transfer
     ///
     /// For fund transfers between a margin account and spot account
     ///
-    /// See: https://raw.githubusercontent.com/rosssaunders/coincise/refs/heads/main/docs/bitmart/spot/funding_account.md
+    /// [docs]: https://developer-pro.bitmart.com/en/spot/#margin-asset-transfer-signed
     ///
     /// Rate limit: 12 times/2 sec per API key
     ///

@@ -30,11 +30,11 @@ pub struct GetSpotWalletBalanceResponse {
 }
 
 impl RestClient {
-    /// Get spot wallet balance
+    /// Get Spot Wallet Balance
     ///
     /// Get the user's wallet balance for all currencies
     ///
-    /// See: https://raw.githubusercontent.com/rosssaunders/coincise/refs/heads/main/docs/bitmart/spot/funding_account.md
+    /// [docs]: https://developer-pro.bitmart.com/en/spot/#get-spot-wallet-balance-keyed
     ///
     /// Rate limit: 12 times/2 sec per API key
     ///

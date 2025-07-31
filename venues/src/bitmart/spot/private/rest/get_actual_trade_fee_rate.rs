@@ -28,11 +28,11 @@ pub struct GetActualTradeFeeRateResponse {
 }
 
 impl RestClient {
-    /// Get actual trade fee rate
+    /// Get Actual Trade Fee Rate
     ///
     /// For the actual fee rate of the trading pairs
     ///
-    /// See: https://raw.githubusercontent.com/rosssaunders/coincise/refs/heads/main/docs/bitmart/spot/funding_account.md
+    /// [docs]: https://developer-pro.bitmart.com/en/spot/#get-actual-trade-fee-rate-keyed
     ///
     /// Rate limit: 12 times/2 sec per API key
     ///
