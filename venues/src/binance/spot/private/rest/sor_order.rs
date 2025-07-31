@@ -98,7 +98,7 @@ impl RestClient {
     /// Security: TRADE
     pub async fn test_sor_order(
         &self,
-        mut params: SorOrderRequest,
+        params: SorOrderRequest,
         compute_commission_rates: Option<bool>,
     ) -> RestResult<serde_json::Value> {
         let weight = if compute_commission_rates.unwrap_or(false) {
@@ -112,7 +112,10 @@ impl RestClient {
         struct TestSorOrderRequest {
             #[serde(flatten)]
             base: SorOrderRequest,
-            #[serde(rename = "computeCommissionRates", skip_serializing_if = "Option::is_none")]
+            #[serde(
+                rename = "computeCommissionRates",
+                skip_serializing_if = "Option::is_none"
+            )]
             compute_commission_rates: Option<bool>,
         }
 

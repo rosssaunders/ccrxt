@@ -39,7 +39,7 @@ impl std::error::Error for Errors {}
 impl From<rest::error::RestError> for Errors {
     fn from(error: rest::error::RestError) -> Self {
         match error {
-            rest::error::RestError::RequestError(e) => Errors::HttpError(e),
+            rest::error::RestError::HttpError(e) => Errors::Error(format!("HTTP error: {}", e)),
             rest::error::RestError::RateLimitExceeded => {
                 Errors::Error("Rate limit exceeded".to_string())
             }

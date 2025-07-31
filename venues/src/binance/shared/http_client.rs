@@ -1,6 +1,6 @@
 use std::{borrow::Cow, collections::HashMap, sync::Arc, time::Duration};
 
-use rest::{HttpClient, HttpRequest, Method as HttpMethod};
+use rest::{HttpClient, RequestBuilder, Method as HttpMethod};
 use rest::secrets::ExposableSecret;
 use serde::{Deserialize, Serialize};
 use tokio::time::sleep;
@@ -158,17 +158,19 @@ impl PrivateBinanceHttpClient {
             attempts = attempts.saturating_add(1u32);
 
             // Build the request
-            let mut request = HttpRequest::new(method, url.clone());
+            let mut builder = RequestBuilder::new(method, url.clone());
             
             // Add API key header
-            request = request.header("X-MBX-APIKEY", self.api_key.expose_secret());
+            builder = builder.header("X-MBX-APIKEY", self.api_key.expose_secret());
 
             // Add body for non-GET requests
             if let Some(body_content) = body {
-                request = request
+                builder = builder
                     .header("Content-Type", "application/x-www-form-urlencoded")
                     .body(body_content.as_bytes().to_vec());
             }
+
+            let request = builder.build();
 
             let response = self.http_client.execute(request).await
                 .map_err(|e| Errors::Error(format!("HTTP request failed: {e}")))?;
@@ -330,7 +332,7 @@ impl PublicBinanceHttpClient {
         };
 
         // Build and send request
-        let request = HttpRequest::new(method, url);
+        let request = RequestBuilder::new(method, url).build();
         let response = self.http_client.execute(request).await
             .map_err(|e| Errors::Error(format!("HTTP request failed: {e}")))?;
 

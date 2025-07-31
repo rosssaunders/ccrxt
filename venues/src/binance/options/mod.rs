@@ -55,7 +55,6 @@ mod tests {
 
     #[tokio::test]
     async fn test_public_client_creation() {
-        let client = reqwest::Client::new();
         // Create rate limits for testing
         let rate_limits = crate::binance::shared::venue_trait::RateLimits {
             request_weight_limit: 6000,
@@ -66,8 +65,6 @@ mod tests {
             orders_minute_limit: 1200,
             orders_day_limit: None,
         };
-        let rate_limiter = crate::binance::shared::RateLimiter::new(rate_limits);
-        let public_client = PublicRestClient::new("https://eapi.binance.com", client, rate_limiter);
 
         // Test is successful if client is created without panic
     }

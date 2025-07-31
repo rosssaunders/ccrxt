@@ -289,7 +289,7 @@ impl PublicBinanceClient {
             format!("{}{}", self.base_url, endpoint)
         };
 
-        let mut request_builder = self.client.request(method, &url);
+        let request_builder = self.client.request(method, &url);
 
         // Send request with retry logic
         let mut attempts: u32 = 0;
@@ -305,7 +305,7 @@ impl PublicBinanceClient {
                 .map_err(Errors::from)?;
 
             let status = response.status();
-            
+
             // Extract headers before consuming response
             let mut headers_map = HashMap::new();
             for (k, v) in response.headers() {
@@ -313,7 +313,7 @@ impl PublicBinanceClient {
                     headers_map.insert(k.to_string(), s.to_string());
                 }
             }
-            
+
             let text = response.text().await.map_err(Errors::from)?;
 
             if status == reqwest::StatusCode::TOO_MANY_REQUESTS && attempts < MAX_ATTEMPTS {

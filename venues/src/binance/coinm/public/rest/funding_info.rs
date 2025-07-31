@@ -1,13 +1,8 @@
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize};
 
 use crate::binance::coinm::{RestResult, public::rest::RestClient};
 
 const FUNDING_INFO_ENDPOINT: &str = "/dapi/v1/fundingInfo";
-
-/// Request parameters for the funding rate info endpoint.
-/// No parameters required for this endpoint.
-#[derive(Debug, Clone, Serialize, Default)]
-struct FundingInfoRequest {}
 
 /// Represents funding rate info for a symbol.
 #[derive(Debug, Clone, Deserialize)]
@@ -55,13 +50,6 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    fn test_funding_info_request_serialization() {
-        let request = FundingInfoRequest {};
-        let serialized = serde_urlencoded::to_string(&request).unwrap();
-        assert_eq!(serialized, "");
-    }
 
     #[test]
     fn test_funding_info_response_deserialization() {
