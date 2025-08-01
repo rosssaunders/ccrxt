@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
+
+const MARKET_EXCHANGE_RATE_ENDPOINT: &str = "api/v5/market/exchange-rate";
 /// Exchange rate information
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -36,7 +38,7 @@ impl RestClient {
     /// Response containing the exchange rate information
     pub async fn get_exchange_rate(&self) -> RestResult<ExchangeRateResponse> {
         self.send_request(
-            "api/v5/market/exchange-rate",
+            MARKET_EXCHANGE_RATE_ENDPOINT,
             reqwest::Method::GET,
             None::<&()>,
             EndpointType::PublicMarketData,
