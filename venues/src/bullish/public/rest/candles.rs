@@ -6,7 +6,7 @@ use super::client::RestClient;
 use crate::bullish::{EndpointType, RestResult, enums::CandleInterval};
 
 /// Endpoint URL path for candles
-const ENDPOINT_PATH: &str = "/trading-api/v1/markets/{}/candles";
+const CANDLES_ENDPOINT: &str = "/trading-api/v1/markets/{}/candles";
 
 /// Candlestick data
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -99,7 +99,7 @@ impl RestClient {
             )
         };
 
-        let endpoint = format!("{}{}", ENDPOINT_PATH.replace("{}", symbol), query_string);
+        let endpoint = format!("{}{}", CANDLES_ENDPOINT.replace("{}", symbol), query_string);
 
         self.send_request::<Vec<Candle>, ()>(
             &endpoint,
