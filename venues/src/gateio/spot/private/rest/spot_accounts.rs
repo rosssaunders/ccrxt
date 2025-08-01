@@ -38,9 +38,9 @@ impl RestClient {
         };
 
         if currency.is_some() {
-            self.get_with_query("/spot/accounts", &request).await
+            self.get_with_query(SPOT_ACCOUNTS_ENDPOINT, &request).await
         } else {
-            self.get("/spot/accounts").await
+            self.get(SPOT_ACCOUNTS_ENDPOINT).await
         }
     }
 }

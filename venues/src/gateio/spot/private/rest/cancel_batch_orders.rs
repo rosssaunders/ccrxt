@@ -2,6 +2,8 @@ use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 
+const CANCEL_BATCH_ORDERS_ENDPOINT: &str = "/spot/cancel_batch_orders";
+
 /// Request to cancel batch orders
 #[derive(Debug, Clone, Serialize)]
 pub struct CancelBatchOrdersRequest {
@@ -44,7 +46,7 @@ impl RestClient {
         &self,
         request: CancelBatchOrdersRequest,
     ) -> crate::gateio::spot::Result<CancelBatchOrdersResponse> {
-        self.post("/spot/cancel_batch_orders", &request).await
+        self.post(CANCEL_BATCH_ORDERS_ENDPOINT, &request).await
     }
 }
 

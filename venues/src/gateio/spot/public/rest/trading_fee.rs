@@ -2,6 +2,8 @@ use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 
+const TRADING_FEE_ENDPOINT: &str = "/spot/batch_fee";
+
 /// Request parameters for trading fee inquiry
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct TradingFeeRequest {
