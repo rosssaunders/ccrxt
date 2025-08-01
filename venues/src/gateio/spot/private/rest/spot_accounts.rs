@@ -2,6 +2,8 @@ use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 
+const SPOT_ACCOUNTS_ENDPOINT: &str = "/spot/accounts";
+
 /// Request parameters for listing spot accounts
 #[derive(Debug, Clone, Default, Serialize)]
 pub struct ListSpotAccountsRequest {
