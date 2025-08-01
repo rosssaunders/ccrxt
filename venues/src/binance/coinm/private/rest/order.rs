@@ -186,9 +186,9 @@ impl RestClient {
     /// A [`NewOrderResponse`] object with order details.
     pub async fn post_order(&self, params: NewOrderRequest) -> RestResult<NewOrderResponse> {
         let weight = 1;
-        self.send_signed_request(
+        // HIGH PERFORMANCE: Use POST-specific function, no HTTP verb branching
+        self.send_post_signed_request(
             ORDER_ENDPOINT,
-            reqwest::Method::POST,
             params,
             weight,
             true,

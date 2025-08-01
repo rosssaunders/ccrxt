@@ -151,9 +151,9 @@ impl RestClient {
         params: QueryOrderRequest,
     ) -> RestResult<QueryOrderResponse> {
         let weight = 1;
-        self.send_signed_request(
+        // HIGH PERFORMANCE: Use GET-specific function, no HTTP verb branching
+        self.send_get_signed_request(
             ORDER_ENDPOINT,
-            reqwest::Method::GET,
             params,
             weight,
             false,
