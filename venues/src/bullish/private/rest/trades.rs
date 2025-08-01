@@ -5,6 +5,12 @@ use serde::Deserialize;
 use super::client::RestClient;
 use crate::bullish::{EndpointType, RestResult, enums::*};
 
+/// Endpoint URL path for trades
+const TRADES_ENDPOINT: &str = "/v1/trades";
+
+/// Endpoint URL path for single trade (with parameter)
+const SINGLE_TRADE_ENDPOINT: &str = "/v1/trades/{}";
+
 /// Trade execution details
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -96,7 +102,7 @@ impl RestClient {
             query_params.push(("endTime", end_time.to_string()));
         }
 
-        let mut url = "/v1/trades".to_string();
+        let mut url = TRADES_ENDPOINT.to_string();
         if !query_params.is_empty() {
             url.push('?');
             let query_string: Vec<String> = query_params
@@ -131,8 +137,8 @@ impl RestClient {
         trading_account_id: &str,
     ) -> RestResult<Trade> {
         let url = format!(
-            "/v1/trades/{}?tradingAccountId={}",
-            trade_id, trading_account_id
+            "{}?tradingAccountId={}",
+            SINGLE_TRADE_ENDPOINT.replace("{}", trade_id), trading_account_id
         );
 
         self.send_authenticated_request(

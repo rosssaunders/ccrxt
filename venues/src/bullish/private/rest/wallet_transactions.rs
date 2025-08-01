@@ -5,6 +5,9 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::bullish::{EndpointType, RestResult};
 
+/// Endpoint URL path for wallet transactions
+const WALLET_TRANSACTIONS_ENDPOINT: &str = "/v1/wallets/transactions";
+
 /// Transaction status
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "UPPERCASE")]
@@ -142,7 +145,7 @@ impl RestClient {
             query_params.push(("pageToken", page_token));
         }
 
-        let mut url = "/v1/wallets/transactions".to_string();
+        let mut url = WALLET_TRANSACTIONS_ENDPOINT.to_string();
         if !query_params.is_empty() {
             url.push('?');
             let query_string: Vec<String> = query_params
