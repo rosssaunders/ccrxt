@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse, place_order::PlaceOrderRequest};
 use crate::okx::{EndpointType, RestResult};
 
+
+const TRADE_BATCH_ORDERS_ENDPOINT: &str = "api/v5/trade/batch-orders";
 /// Request to place multiple orders at once
 #[derive(Debug, Clone, Serialize)]
 pub struct PlaceBatchOrdersRequest {
@@ -44,7 +46,7 @@ impl RestClient {
         orders: &[PlaceOrderRequest],
     ) -> RestResult<OkxApiResponse<PlaceBatchOrdersResponse>> {
         self.send_request(
-            "api/v5/trade/batch-orders",
+            TRADE_BATCH_ORDERS_ENDPOINT,
             reqwest::Method::POST,
             Some(orders),
             EndpointType::PrivateTrading,

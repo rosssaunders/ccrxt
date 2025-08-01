@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
+
+const ACCOUNT_SET_COLLATERAL_ASSETS_ENDPOINT: &str = "api/v5/account/set-collateral-assets";
 /// Request to set collateral assets
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -38,7 +40,7 @@ impl RestClient {
         request: &SetCollateralAssetsRequest,
     ) -> RestResult<OkxApiResponse<SetCollateralAssetsResponse>> {
         self.send_request(
-            "api/v5/account/set-collateral-assets",
+            ACCOUNT_SET_COLLATERAL_ASSETS_ENDPOINT,
             reqwest::Method::POST,
             Some(request),
             EndpointType::PrivateAccount,

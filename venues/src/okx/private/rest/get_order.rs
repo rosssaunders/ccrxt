@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, OrderSide, OrderType, RestResult};
 
+
+const TRADE_ORDER_ENDPOINT: &str = "api/v5/trade/order";
 /// Request to get order details
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -147,7 +149,7 @@ impl RestClient {
         request: &GetOrderRequest,
     ) -> RestResult<OkxApiResponse<OrderDetails>> {
         self.send_request(
-            "api/v5/trade/order",
+            TRADE_ORDER_ENDPOINT,
             reqwest::Method::GET,
             Some(request),
             EndpointType::PrivateTrading,

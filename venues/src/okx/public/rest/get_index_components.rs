@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
+
+const MARKET_INDEX_COMPONENTS_ENDPOINT: &str = "api/v5/market/index-components";
 /// Request parameters for getting index components
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -73,7 +75,7 @@ impl RestClient {
         request: &GetIndexComponentsRequest,
     ) -> RestResult<GetIndexComponentsResponse> {
         self.send_request(
-            "api/v5/market/index-components",
+            MARKET_INDEX_COMPONENTS_ENDPOINT,
             reqwest::Method::GET,
             Some(request),
             EndpointType::PublicMarketData,

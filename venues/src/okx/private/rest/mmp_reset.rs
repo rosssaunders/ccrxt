@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
+
+const ACCOUNT_MMP_RESET_ENDPOINT: &str = "api/v5/account/mmp-reset";
 /// Request to reset MMP
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -35,7 +37,7 @@ impl RestClient {
         request: &MmpResetRequest,
     ) -> RestResult<OkxApiResponse<MmpResetResponse>> {
         self.send_request(
-            "api/v5/account/mmp-reset",
+            ACCOUNT_MMP_RESET_ENDPOINT,
             reqwest::Method::POST,
             Some(request),
             EndpointType::PrivateAccount,

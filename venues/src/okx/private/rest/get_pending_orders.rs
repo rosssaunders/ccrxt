@@ -3,6 +3,8 @@ use serde::Serialize;
 use super::{RestClient, common::OkxApiResponse, get_order::OrderDetails};
 use crate::okx::{EndpointType, InstrumentType, RestResult};
 
+
+const TRADE_ORDERS_PENDING_ENDPOINT: &str = "api/v5/trade/orders-pending";
 /// Request to get pending orders
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -57,7 +59,7 @@ impl RestClient {
         request: &GetPendingOrdersRequest,
     ) -> RestResult<OkxApiResponse<OrderDetails>> {
         self.send_request(
-            "api/v5/trade/orders-pending",
+            TRADE_ORDERS_PENDING_ENDPOINT,
             reqwest::Method::GET,
             Some(request),
             EndpointType::PrivateTrading,

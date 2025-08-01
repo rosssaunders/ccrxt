@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::okx::{EndpointType, InstrumentState, InstrumentType, RestResult};
 
+
+const PUBLIC_INSTRUMENTS_ENDPOINT: &str = "api/v5/public/instruments";
 /// Request parameters for getting instruments
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -158,7 +160,7 @@ impl RestClient {
         request: GetInstrumentsRequest,
     ) -> RestResult<GetInstrumentsResponse> {
         self.send_request(
-            "api/v5/public/instruments",
+            PUBLIC_INSTRUMENTS_ENDPOINT,
             reqwest::Method::GET,
             Some(&request),
             EndpointType::PublicMarketData,
