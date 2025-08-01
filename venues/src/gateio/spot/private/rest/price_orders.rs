@@ -3,6 +3,9 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 
 /// Request parameters for listing price orders
+
+const SPOT_PRICE_ORDERS_ENDPOINT: &str = "/spot/price_orders";
+
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct ListPriceOrdersRequest {
     /// Currency pair
@@ -137,7 +140,7 @@ impl RestClient {
         &self,
         params: ListPriceOrdersRequest,
     ) -> crate::gateio::spot::Result<Vec<PriceOrder>> {
-        self.get_with_query("/spot/price_orders", &params).await
+        self.get_with_query(SPOT_PRICE_ORDERS_ENDPOINT, &params).await
     }
 
     /// Get a specific price order

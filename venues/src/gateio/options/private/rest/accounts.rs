@@ -2,6 +2,8 @@ use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 
+const OPTIONS_ACCOUNTS_ENDPOINT: &str = "/options/accounts";
+
 /// Options account information
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct OptionsAccount {
@@ -45,7 +47,7 @@ impl RestClient {
     /// # Returns
     /// Options account information including balances and margins
     pub async fn get_options_accounts(&self) -> crate::gateio::options::Result<OptionsAccount> {
-        self.get("/options/accounts").await
+        self.get(OPTIONS_ACCOUNTS_ENDPOINT).await
     }
 }
 

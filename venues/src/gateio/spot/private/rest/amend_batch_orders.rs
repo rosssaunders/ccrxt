@@ -2,6 +2,8 @@ use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 
+const AMEND_BATCH_ORDERS_ENDPOINT: &str = "/spot/amend_batch_orders";
+
 /// Request to amend an order in batch
 #[derive(Debug, Clone, Serialize)]
 pub struct AmendOrderRequest {
@@ -117,7 +119,7 @@ impl RestClient {
         &self,
         request: AmendBatchOrdersRequest,
     ) -> crate::gateio::spot::Result<Vec<AmendedOrder>> {
-        self.post("/spot/amend_batch_orders", &request).await
+        self.post(AMEND_BATCH_ORDERS_ENDPOINT, &request).await
     }
 }
 

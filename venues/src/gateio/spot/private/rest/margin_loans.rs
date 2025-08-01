@@ -3,6 +3,10 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 
 /// Request parameters for listing loans
+
+const MARGIN_LOAN_RECORDS_ENDPOINT: &str = "/margin/loan_records";
+const MARGIN_LOANS_ENDPOINT: &str = "/margin/loans";
+
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct ListLoansRequest {
     /// Status filter (open, finished)
@@ -257,7 +261,7 @@ impl RestClient {
         &self,
         params: ListLoansRequest,
     ) -> crate::gateio::spot::Result<Vec<Loan>> {
-        self.get_with_query("/margin/loans", &params).await
+        self.get_with_query(MARGIN_LOANS_ENDPOINT, &params).await
     }
 
     /// Get a specific loan
@@ -336,7 +340,7 @@ impl RestClient {
         &self,
         params: LoanRecordsRequest,
     ) -> crate::gateio::spot::Result<Vec<LoanRecord>> {
-        self.get_with_query("/margin/loan_records", &params).await
+        self.get_with_query(MARGIN_LOAN_RECORDS_ENDPOINT, &params).await
     }
 
     /// Get a specific loan record

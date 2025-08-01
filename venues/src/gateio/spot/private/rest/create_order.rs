@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::gateio::spot::{OrderSide, OrderStatus, OrderType, StpMode, TimeInForce};
 
+const CREATE_ORDER_ENDPOINT: &str = "/spot/orders";
+
 /// Order creation request
 #[derive(Debug, Clone, Serialize)]
 pub struct CreateOrderRequest {
@@ -141,7 +143,7 @@ impl RestClient {
         &self,
         order: CreateOrderRequest,
     ) -> crate::gateio::spot::Result<Order> {
-        self.post("/spot/orders", &order).await
+        self.post(CREATE_ORDER_ENDPOINT, &order).await
     }
 }
 

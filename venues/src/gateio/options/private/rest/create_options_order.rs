@@ -3,6 +3,8 @@ use serde::Serialize;
 use super::RestClient;
 use super::order::OptionsOrder;
 
+const CREATE_OPTIONS_ORDER_ENDPOINT: &str = "/options/orders";
+
 /// Request to create options order
 #[derive(Debug, Clone, Serialize)]
 pub struct CreateOptionsOrderRequest {
@@ -52,7 +54,7 @@ impl RestClient {
         &self,
         request: CreateOptionsOrderRequest,
     ) -> crate::gateio::options::Result<OptionsOrder> {
-        self.post("/options/orders", &request).await
+        self.post(CREATE_OPTIONS_ORDER_ENDPOINT, &request).await
     }
 }
 
