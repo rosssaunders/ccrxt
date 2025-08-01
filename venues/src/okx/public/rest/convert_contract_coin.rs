@@ -94,7 +94,7 @@ impl RestClient {
     ///
     /// Convert the crypto value to the number of contracts, or vice versa.
     ///
-    /// See: https://www.okx.com/docs-v5/en/#public-data-rest-api-unit-convert
+    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-unit-convert
     ///
     /// Rate limit: 10 requests per 2 seconds
     ///

@@ -40,7 +40,13 @@ pub struct CancelOrderResponse {
 }
 
 impl RestClient {
-    /// Cancel an existing order
+    /// Cancel order
+    ///
+    /// Cancels an incomplete order.
+    ///
+    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-trade-rest-api-post-cancel-order
+    ///
+    /// Rate limit: 60 requests per 2 seconds
     ///
     /// # Arguments
     /// * `request` - The order cancellation request
