@@ -2,7 +2,7 @@
 //!
 //! This endpoint allows querying historical trigger/stop orders (plan orders).
 //!
-//! Reference: https://www.bitget.com/api-doc/spot/plan/History-Plan-Order
+//! Reference: https://www.bitget.com/api-doc/spot/trade/History-Plan-Order
 //! Endpoint: GET /api/v2/spot/plan/history-plan-order
 //! Rate limit: 20 requests/second/UID
 

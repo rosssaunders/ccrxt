@@ -2,7 +2,7 @@
 //!
 //! This endpoint allows querying details of a specific trigger/stop order (plan order).
 //!
-//! Reference: https://www.bitget.com/api-doc/spot/plan/Plan-Sub-Order
+//! Reference: https://www.bitget.com/api-doc/spot/trade/Plan-Sub-Order
 //! Endpoint: GET /api/v2/spot/plan/plan-sub-order
 //! Rate limit: 20 requests/second/UID
 

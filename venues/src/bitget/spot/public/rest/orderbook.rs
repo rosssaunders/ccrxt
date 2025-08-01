@@ -37,7 +37,7 @@ impl RestClient {
     ///
     /// Returns the current orderbook depth for a symbol.
     ///
-    /// [Bitget API Docs - Get OrderBook Depth](https://www.bitget.com/api-doc/spot/market/Get-Orderbook)
+    /// [docs]: https://www.bitget.com/api-doc/spot/market/Get-OrderBook-Depth
     ///
     /// Rate limit: see official docs
     ///

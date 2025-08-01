@@ -2,7 +2,7 @@
 //!
 //! This endpoint allows querying current (active) trigger/stop orders (plan orders).
 //!
-//! Reference: https://www.bitget.com/api-doc/spot/plan/Current-Plan-Order
+//! Reference: https://www.bitget.com/api-doc/spot/trade/Current-Plan-Order
 //! Endpoint: GET /api/v2/spot/plan/current-plan-order
 //! Rate limit: 20 requests/second/UID
 

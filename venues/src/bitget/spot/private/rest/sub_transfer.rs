@@ -61,7 +61,7 @@ impl RestClient {
     ///
     /// Transfer funds between parent and sub accounts or between sub accounts.
     ///
-    /// [API Documentation](https://www.bitget.com/api-doc/spot/account/Sub-Transfer)
+    /// [docs]: https://www.bitget.com/api-doc/spot/wallet/Transfer-to-Subaccount
     ///
     /// Rate limit: 10 req/sec/UID
     ///

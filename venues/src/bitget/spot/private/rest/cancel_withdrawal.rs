@@ -23,7 +23,7 @@ impl RestClient {
     ///
     /// Cancels a withdrawal by order ID.
     ///
-    /// [API Documentation](https://www.bitget.com/api-doc/spot/withdraw/Cancel-Withdraw)
+    /// [docs]: https://www.bitget.com/api-doc/spot/wallet/Cancel-Withdrawal
     ///
     /// Rate limit: 5 req/sec/UID
     ///
