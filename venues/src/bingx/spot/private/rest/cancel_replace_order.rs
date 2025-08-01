@@ -15,42 +15,55 @@ const CANCEL_REPLACE_ORDER_ENDPOINT: &str = "/openApi/spot/v1/trade/order/cancel
 pub struct CancelReplaceOrderRequest {
     /// Trading symbol, e.g., BTC-USDT
     pub symbol: String,
+
     /// ID of the order to be canceled
     #[serde(skip_serializing_if = "Option::is_none")]
     pub cancel_order_id: Option<i64>,
+
     /// User-defined ID of the order to be canceled
     #[serde(rename = "cancelClientOrderID")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub cancel_client_order_id: Option<String>,
+
     /// Cancel orders with specified status
     #[serde(skip_serializing_if = "Option::is_none")]
     pub cancel_restrictions: Option<CancelRestriction>,
+
     /// Cancel and replace mode
     #[serde(rename = "CancelReplaceMode")]
     pub cancel_replace_mode: CancelReplaceMode,
+
     /// Order side: BUY or SELL
     pub side: OrderSide,
+
     /// Order type
     #[serde(rename = "type")]
     pub order_type: OrderType,
+
     /// Trigger price for stop orders
     #[serde(skip_serializing_if = "Option::is_none")]
     pub stop_price: Option<String>,
+
     /// Order quantity
     #[serde(skip_serializing_if = "Option::is_none")]
     pub quantity: Option<f64>,
+
     /// Quote order quantity (order amount)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub quote_order_qty: Option<f64>,
+
     /// Order price
     #[serde(skip_serializing_if = "Option::is_none")]
     pub price: Option<f64>,
+
     /// Custom order ID for the new order
     #[serde(skip_serializing_if = "Option::is_none")]
     pub new_client_order_id: Option<String>,
+
     /// Request valid time window in milliseconds
     #[serde(skip_serializing_if = "Option::is_none")]
     pub recv_window: Option<u64>,
+
     /// Request timestamp in milliseconds
     pub timestamp: u64,
 }
@@ -61,30 +74,42 @@ pub struct CancelReplaceOrderRequest {
 pub struct CancelReplaceOrderResponse {
     /// Trading symbol
     pub symbol: String,
+
     /// Order ID
     pub order_id: i64,
+
     /// Order price
     pub price: String,
+
     /// Original quantity
     pub orig_qty: String,
+
     /// Executed quantity
     pub executed_qty: String,
+
     /// Cumulative quote quantity
     pub cummulative_quote_qty: String,
+
     /// Order status
     pub status: OrderStatus,
+
     /// Order type
     #[serde(rename = "type")]
     pub order_type: OrderType,
+
     /// Order side
     pub side: OrderSide,
+
     /// User-defined order ID
     #[serde(rename = "clientOrderID")]
     pub client_order_id: String,
+
     /// Trigger price
     pub stop_price: String,
+
     /// Cancel restrictions
     pub cancel_restrictions: Option<CancelRestriction>,
+
     /// Transaction timestamp
     pub transact_time: i64,
 }
@@ -92,19 +117,26 @@ pub struct CancelReplaceOrderResponse {
 impl RestClient {
     /// Cancel an existing order and send a new order
     ///
+    /// This endpoint allows users to cancel an existing order and place a new order
+    /// in a single atomic operation, ensuring better price execution.
+    ///
+    /// [docs]: https://bingx-api.github.io/docs/#/en-us/spot/trade-api.html#Cancel%20an%20existing%20order%20and%20send%20a%20new%20order
+    ///
+    /// Rate limit: 1000 requests per 10 seconds total, 100 per interface (Group 2)
+    ///
     /// # Arguments
-    /// * `request` - The cancel and replace order request
+    /// * `request` - The cancel and replace order request parameters
     ///
     /// # Returns
-    /// * `RestResult<CancelReplaceOrderResponse>` - The new order response or error
+    /// The new order response containing order details or error
     pub async fn cancel_replace_order(
         &self,
-        request: &CancelReplaceOrderRequest,
+        request: CancelReplaceOrderRequest,
     ) -> RestResult<CancelReplaceOrderResponse> {
         self.send_request(
             CANCEL_REPLACE_ORDER_ENDPOINT,
             reqwest::Method::POST,
-            Some(request),
+            Some(&request),
             EndpointType::Trading,
         )
         .await

@@ -31,28 +31,40 @@ pub struct GetSymbolsResponse {
 pub struct Symbol {
     /// Trading pair
     pub symbol: String,
+
     /// Price step
     pub tick_size: f64,
+
     /// Quantity step
     pub step_size: f64,
+
     /// Minimum quantity (deprecated, use min_notional/price formula)
     pub min_qty: f64,
+
     /// Maximum quantity (deprecated, use max_notional/price formula)
     pub max_qty: f64,
+
     /// Minimum transaction amount
     pub min_notional: f64,
+
     /// Maximum transaction amount
     pub max_notional: f64,
+
     /// Status: 0 offline, 1 online, 5 pre-open, 25 trading suspended
     pub status: SymbolStatus,
+
     /// Available buy via api
     pub api_state_buy: bool,
+
     /// Available sell via api
     pub api_state_sell: bool,
+
     /// Online time
     pub time_online: i64,
+
     /// Offline time
     pub off_time: i64,
+
     /// Trading suspension time
     pub maintain_time: i64,
 }
@@ -76,8 +88,8 @@ impl RestClient {
     /// - Endpoint: GET /openApi/spot/v1/common/symbols
     /// - For price reference, check GET /openApi/spot/v1/ticker/24hr
     /// - [docs]: https://bingx-api.github.io/docs/#/en-us/spot/market-api.html#Spot%20trading%20symbols
-    pub async fn get_symbols(&self, request: &GetSymbolsRequest) -> RestResult<GetSymbolsResponse> {
-        self.send_request(SYMBOLS_ENDPOINT, Some(request), EndpointType::PublicMarket)
+    pub async fn get_symbols(&self, request: GetSymbolsRequest) -> RestResult<GetSymbolsResponse> {
+        self.send_request(SYMBOLS_ENDPOINT, Some(&request), EndpointType::PublicMarket)
             .await
     }
 }

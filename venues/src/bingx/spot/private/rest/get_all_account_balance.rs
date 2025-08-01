@@ -1,38 +1,9 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::bingx::spot::{EndpointType, RestResult};
+use crate::bingx::spot::{EndpointType, RestResult, enums::AccountType};
 
 const ALL_ACCOUNT_BALANCE_ENDPOINT: &str = "/openApi/spot/v1/account/balance";
-
-/// Account type enumeration
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub enum AccountType {
-    /// Spot (fund account)
-    #[serde(rename = "spot")]
-    Spot,
-    /// Standard futures account
-    #[serde(rename = "stdFutures")]
-    StdFutures,
-    /// Coin base account
-    #[serde(rename = "coinMPerp")]
-    CoinMPerp,
-    /// U base account
-    #[serde(rename = "USDTMPerp")]
-    UsdtmPerp,
-    /// Copy trading account
-    #[serde(rename = "copyTrading")]
-    CopyTrading,
-    /// Grid account
-    #[serde(rename = "grid")]
-    Grid,
-    /// Wealth account
-    #[serde(rename = "eran")]
-    Eran,
-    /// C2C account
-    #[serde(rename = "c2c")]
-    C2c,
-}
 
 /// Request to get all account balance overview
 #[derive(Debug, Clone, Serialize)]
@@ -138,7 +109,7 @@ mod tests {
             "\"coinMPerp\""
         );
         assert_eq!(
-            serde_json::to_string(&AccountType::UsdtmPerp).unwrap(),
+            serde_json::to_string(&AccountType::UsdtMPerp).unwrap(),
             "\"USDTMPerp\""
         );
         assert_eq!(
@@ -150,10 +121,10 @@ mod tests {
             "\"grid\""
         );
         assert_eq!(
-            serde_json::to_string(&AccountType::Eran).unwrap(),
-            "\"eran\""
+            serde_json::to_string(&AccountType::Earn).unwrap(),
+            "\"earn\""
         );
-        assert_eq!(serde_json::to_string(&AccountType::C2c).unwrap(), "\"c2c\"");
+        assert_eq!(serde_json::to_string(&AccountType::C2C).unwrap(), "\"c2c\"");
     }
 
     #[test]

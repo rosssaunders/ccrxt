@@ -1,24 +1,12 @@
 use serde::{Deserialize, Serialize};
 
-use super::{
-    RestClient,
-    place_order::{OrderSide, OrderStatus, OrderType},
+use super::RestClient;
+use crate::bingx::spot::{
+    EndpointType, RestResult,
+    enums::{CancelRestriction, OrderSide, OrderStatus, OrderType},
 };
-use crate::bingx::spot::{EndpointType, RestResult};
 
 const CANCEL_ORDER_ENDPOINT: &str = "/openApi/spot/v1/trade/cancel";
-
-/// Cancel restrictions enumeration
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
-pub enum CancelRestrictions {
-    /// New order
-    New,
-    /// Order in progress
-    Pending,
-    /// Partially filled
-    PartiallyFilled,
-}
 
 /// Request to cancel an order
 #[derive(Debug, Clone, Serialize)]
@@ -38,7 +26,7 @@ pub struct CancelOrderRequest {
 
     /// Cancel orders with specified status
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub cancel_restrictions: Option<CancelRestrictions>,
+    pub cancel_restrictions: Option<CancelRestriction>,
 
     /// Request valid time window value, Unit: milliseconds
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -131,7 +119,7 @@ mod tests {
             symbol: "BTC-USDT".to_string(),
             order_id: Some(123456789),
             client_order_id: None,
-            cancel_restrictions: Some(CancelRestrictions::New),
+            cancel_restrictions: Some(CancelRestriction::New),
             recv_window: Some(5000),
             timestamp: 1658748648396,
         };
@@ -198,15 +186,15 @@ mod tests {
     #[test]
     fn test_cancel_restrictions_serialization() {
         assert_eq!(
-            serde_json::to_string(&CancelRestrictions::New).unwrap(),
+            serde_json::to_string(&CancelRestriction::New).unwrap(),
             "\"NEW\""
         );
         assert_eq!(
-            serde_json::to_string(&CancelRestrictions::Pending).unwrap(),
+            serde_json::to_string(&CancelRestriction::Pending).unwrap(),
             "\"PENDING\""
         );
         assert_eq!(
-            serde_json::to_string(&CancelRestrictions::PartiallyFilled).unwrap(),
+            serde_json::to_string(&CancelRestriction::PartiallyFilled).unwrap(),
             "\"PARTIALLY_FILLED\""
         );
     }

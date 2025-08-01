@@ -1,69 +1,12 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::bingx::spot::{EndpointType, RestResult};
+use crate::bingx::spot::{
+    EndpointType, RestResult,
+    enums::{OrderSide, OrderStatus, OrderType, TimeInForce},
+};
 
 const PLACE_ORDER_ENDPOINT: &str = "/openApi/spot/v1/trade/order";
-
-/// Order type enumeration
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
-pub enum OrderType {
-    /// Market order
-    Market,
-    /// Limit order
-    Limit,
-    /// Take stop limit order
-    TakeStopLimit,
-    /// Take stop market order
-    TakeStopMarket,
-    /// Trigger limit order
-    TriggerLimit,
-    /// Trigger market order
-    TriggerMarket,
-}
-
-/// Order side enumeration
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
-pub enum OrderSide {
-    /// Buy order
-    Buy,
-    /// Sell order
-    Sell,
-}
-
-/// Time in force enumeration
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
-pub enum TimeInForce {
-    /// Post only
-    PostOnly,
-    /// Good till canceled
-    Gtc,
-    /// Immediate or cancel
-    Ioc,
-    /// Fill or kill
-    Fok,
-}
-
-/// Order status enumeration
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
-pub enum OrderStatus {
-    /// New order
-    New,
-    /// Pending order
-    Pending,
-    /// Partially filled
-    PartiallyFilled,
-    /// Filled
-    Filled,
-    /// Canceled
-    Canceled,
-    /// Failed
-    Failed,
-}
 
 /// Request to place a new order
 #[derive(Debug, Clone, Serialize)]
@@ -171,11 +114,11 @@ impl RestClient {
     ///
     /// # API Documentation
     /// - [docs]: https://bingx-api.github.io/docs/#/en-us/spot/trade-api.html#Place%20order
-    pub async fn place_order(&self, request: &PlaceOrderRequest) -> RestResult<PlaceOrderResponse> {
+    pub async fn place_order(&self, request: PlaceOrderRequest) -> RestResult<PlaceOrderResponse> {
         self.send_request(
             PLACE_ORDER_ENDPOINT,
             reqwest::Method::POST,
-            Some(request),
+            Some(&request),
             EndpointType::Trading,
         )
         .await

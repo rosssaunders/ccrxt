@@ -69,8 +69,8 @@ impl RestClient {
     /// - If startTime and endTime are provided, the latest candlestick chart data up to endTime will be returned by default
     /// - If startTime is provided and endTime is not provided, the latest candlestick chart data starting from startTime will be returned by default
     /// - If startTime is not provided and endTime is provided, the latest candlestick chart data up to endTime will be returned by default
-    pub async fn get_kline(&self, request: &GetKlineRequest) -> RestResult<GetKlineResponse> {
-        self.send_request(KLINE_ENDPOINT, Some(request), EndpointType::PublicMarket)
+    pub async fn get_kline(&self, request: GetKlineRequest) -> RestResult<GetKlineResponse> {
+        self.send_request(KLINE_ENDPOINT, Some(&request), EndpointType::PublicMarket)
             .await
     }
 }

@@ -1,9 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use super::{
-    RestClient,
-    place_order::{OrderSide, OrderStatus, OrderType},
-};
+use super::RestClient;
+use crate::bingx::spot::enums::{OrderSide, OrderStatus, OrderType};
 use crate::bingx::spot::{EndpointType, RestResult};
 
 const QUERY_ORDER_ENDPOINT: &str = "/openApi/spot/v1/trade/query";
@@ -109,11 +107,11 @@ impl RestClient {
     ///
     /// # API Documentation
     /// - [docs]: https://bingx-api.github.io/docs/#/en-us/spot/trade-api.html#Query%20Order%20details
-    pub async fn query_order(&self, request: &QueryOrderRequest) -> RestResult<OrderDetails> {
+    pub async fn query_order(&self, request: QueryOrderRequest) -> RestResult<OrderDetails> {
         self.send_request(
             QUERY_ORDER_ENDPOINT,
             reqwest::Method::GET,
-            Some(request),
+            Some(&request),
             EndpointType::Trading,
         )
         .await

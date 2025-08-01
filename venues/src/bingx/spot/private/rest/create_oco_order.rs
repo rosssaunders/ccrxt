@@ -1,21 +1,12 @@
 use serde::{Deserialize, Serialize};
 
-use super::{RestClient, place_order::OrderSide};
-use crate::bingx::spot::{EndpointType, RestResult};
+use super::RestClient;
+use crate::bingx::spot::{
+    EndpointType, RestResult,
+    enums::{OcoOrderType, OrderSide},
+};
 
 const CREATE_OCO_ORDER_ENDPOINT: &str = "/openApi/spot/v1/oco/order";
-
-/// OCO order type enumeration
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-#[serde(rename_all = "camelCase")]
-pub enum OcoOrderType {
-    /// OCO limit order
-    #[serde(rename = "ocoLimit")]
-    OcoLimit,
-    /// OCO TPS (Take Profit Stop) order
-    #[serde(rename = "ocoTps")]
-    OcoTps,
-}
 
 /// Request for creating an OCO (One-Cancels-Other) order
 #[derive(Debug, Clone, Serialize)]

@@ -1,9 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use super::{
-    RestClient,
-    place_order::{OrderSide, OrderStatus, OrderType},
-};
+use super::RestClient;
+use crate::bingx::spot::enums::{OrderSide, OrderStatus, OrderType};
 use crate::bingx::spot::{EndpointType, RestResult};
 
 const OPEN_ORDERS_ENDPOINT: &str = "/openApi/spot/v1/trade/openOrders";
