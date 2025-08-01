@@ -23,7 +23,13 @@ pub struct CancelBatchOrdersResponse {
 }
 
 impl RestClient {
-    /// Cancel multiple orders at once
+    /// Cancel batch orders
+    ///
+    /// Cancel incomplete orders in batches. Maximum 20 orders can be canceled per request.
+    ///
+    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-trade-rest-api-post-cancel-batch-orders
+    ///
+    /// Rate limit: 300 orders per 2 seconds
     ///
     /// # Arguments
     /// * `orders` - Vector of order cancellation requests (maximum 20 orders)

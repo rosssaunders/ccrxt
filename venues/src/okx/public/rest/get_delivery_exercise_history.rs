@@ -71,7 +71,7 @@ impl RestClient {
     ///
     /// Retrieve delivery records of Futures and exercise records of Options in the last 3 months.
     ///
-    /// See: https://www.okx.com/docs-v5/en/#public-data-rest-api-get-delivery-exercise-history
+    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-delivery-exercise-history
     ///
     /// Rate limit: 40 requests per 2 seconds
     ///

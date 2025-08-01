@@ -24,11 +24,11 @@ pub struct GetTimeResponse {
 }
 
 impl RestClient {
-    /// Get system time
+    /// Get server time
     ///
     /// Retrieve API server time.
     ///
-    /// See: https://www.okx.com/docs-v5/en/#public-data-rest-api-get-system-time
+    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-time
     ///
     /// Rate limit: 10 requests per 2 seconds
     ///

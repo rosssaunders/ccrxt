@@ -62,7 +62,7 @@ impl RestClient {
     ///
     /// Retrieve index tickers.
     ///
-    /// See: https://www.okx.com/docs-v5/en/#public-data-rest-api-get-index-tickers
+    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-market-data-rest-api-get-index-tickers
     ///
     /// Rate limit: 20 requests per 2 seconds
     ///

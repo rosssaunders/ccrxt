@@ -30,7 +30,7 @@ impl RestClient {
     ///
     /// This interface provides the average exchange rate data for 2 weeks
     ///
-    /// See: https://www.okx.com/docs-v5/en/#public-data-rest-api-get-exchange-rate
+    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-exchange-rate
     ///
     /// Rate limit: 1 request per 2 seconds
     ///

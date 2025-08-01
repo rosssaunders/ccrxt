@@ -83,7 +83,7 @@ impl RestClient {
     ///
     /// Retrieve funding rate.
     ///
-    /// See: https://www.okx.com/docs-v5/en/#public-data-rest-api-get-funding-rate
+    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-funding-rate
     ///
     /// Rate limit: 10 requests per 2 seconds
     ///

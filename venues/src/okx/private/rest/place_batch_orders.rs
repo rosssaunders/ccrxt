@@ -34,7 +34,13 @@ pub struct PlaceBatchOrdersResponse {
 }
 
 impl RestClient {
-    /// Place multiple orders at once
+    /// Place batch orders
+    ///
+    /// Place orders in batches. Maximum 20 orders can be placed per request.
+    ///
+    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-trade-rest-api-post-batch-orders
+    ///
+    /// Rate limit: 300 orders per 2 seconds
     ///
     /// # Arguments
     /// * `orders` - Vector of order placement requests (maximum 20 orders)

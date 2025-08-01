@@ -121,11 +121,11 @@ pub struct PlaceOrderResponse {
 }
 
 impl RestClient {
-    /// Place a new order
+    /// Place order
     ///
     /// Place orders for spot, margin, futures, perpetual swap, and options.
     ///
-    /// [API Documentation](https://www.okx.com/docs-v5/en/#order-book-trading-trade-post-place-order)
+    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-trade-rest-api-post-order
     ///
     /// Rate limit: 60 requests per 2 seconds
     ///

@@ -46,7 +46,7 @@ impl RestClient {
     /// latest 1,440 data entries. Charts are returned in groups based on the requested
     /// bar.
     ///
-    /// See: https://www.okx.com/docs-v5/en/#public-data-rest-api-get-mark-price-candlesticks
+    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-mark-price-candlesticks
     ///
     /// Rate limit: 20 requests per 2 seconds
     ///
