@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
+
+const PUBLIC_SETTLEMENT_HISTORY_ENDPOINT: &str = "api/v5/public/settlement-history";
 /// Request parameters for getting settlement history
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -73,7 +75,7 @@ impl RestClient {
         request: &GetSettlementHistoryRequest,
     ) -> RestResult<GetSettlementHistoryResponse> {
         self.send_request(
-            "api/v5/public/settlement-history",
+            PUBLIC_SETTLEMENT_HISTORY_ENDPOINT,
             reqwest::Method::GET,
             Some(request),
             EndpointType::PublicMarketData,

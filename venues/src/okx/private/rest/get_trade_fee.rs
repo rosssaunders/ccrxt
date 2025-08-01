@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, InstrumentType, RestResult};
 
+
+const ACCOUNT_TRADE_FEE_ENDPOINT: &str = "api/v5/account/trade-fee";
 /// Request to get trade fee
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -77,7 +79,7 @@ impl RestClient {
         request: &GetTradeFeeRequest,
     ) -> RestResult<OkxApiResponse<TradeFee>> {
         self.send_request(
-            "api/v5/account/trade-fee",
+            ACCOUNT_TRADE_FEE_ENDPOINT,
             reqwest::Method::GET,
             Some(request),
             EndpointType::PrivateAccount,

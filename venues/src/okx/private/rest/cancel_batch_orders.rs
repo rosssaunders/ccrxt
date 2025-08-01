@@ -3,6 +3,8 @@ use serde::Deserialize;
 use super::{RestClient, cancel_order::CancelOrderRequest, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
+
+const TRADE_CANCEL_BATCH_ORDERS_ENDPOINT: &str = "api/v5/trade/cancel-batch-orders";
 /// Response from canceling multiple orders
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -33,7 +35,7 @@ impl RestClient {
         orders: &[CancelOrderRequest],
     ) -> RestResult<OkxApiResponse<CancelBatchOrdersResponse>> {
         self.send_request(
-            "api/v5/trade/cancel-batch-orders",
+            TRADE_CANCEL_BATCH_ORDERS_ENDPOINT,
             reqwest::Method::POST,
             Some(orders),
             EndpointType::PrivateTrading,

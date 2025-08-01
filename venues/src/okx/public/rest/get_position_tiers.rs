@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::okx::{EndpointType, InstrumentType, RestResult};
 
+
+const PUBLIC_POSITION_TIERS_ENDPOINT: &str = "api/v5/public/position-tiers";
 /// Request parameters for getting position tiers
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -132,7 +134,7 @@ impl RestClient {
         request: GetPositionTiersRequest,
     ) -> RestResult<GetPositionTiersResponse> {
         self.send_request(
-            "api/v5/public/position-tiers",
+            PUBLIC_POSITION_TIERS_ENDPOINT,
             reqwest::Method::GET,
             Some(&request),
             EndpointType::PublicMarketData,

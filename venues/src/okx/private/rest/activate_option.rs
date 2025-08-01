@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
+
+const ACCOUNT_ACTIVATE_OPTION_ENDPOINT: &str = "api/v5/account/activate-option";
 /// Request to activate option
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -31,7 +33,7 @@ impl RestClient {
         request: &ActivateOptionRequest,
     ) -> RestResult<OkxApiResponse<ActivateOptionResponse>> {
         self.send_request(
-            "api/v5/account/activate-option",
+            ACCOUNT_ACTIVATE_OPTION_ENDPOINT,
             reqwest::Method::POST,
             Some(request),
             EndpointType::PrivateAccount,

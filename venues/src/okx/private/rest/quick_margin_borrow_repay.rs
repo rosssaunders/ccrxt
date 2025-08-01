@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
+
+const ACCOUNT_QUICK_MARGIN_BORROW_REPAY_ENDPOINT: &str = "api/v5/account/quick-margin-borrow-repay";
 /// Request to quick margin borrow repay
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -53,7 +55,7 @@ impl RestClient {
         request: &QuickMarginBorrowRepayRequest,
     ) -> RestResult<OkxApiResponse<QuickMarginBorrowRepayResponse>> {
         self.send_request(
-            "api/v5/account/quick-margin-borrow-repay",
+            ACCOUNT_QUICK_MARGIN_BORROW_REPAY_ENDPOINT,
             reqwest::Method::POST,
             Some(request),
             EndpointType::PrivateAccount,

@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
+
+const PUBLIC_FUNDING_RATE_ENDPOINT: &str = "api/v5/public/funding-rate";
 /// Request parameters for getting funding rate
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -95,7 +97,7 @@ impl RestClient {
         request: &GetFundingRateRequest,
     ) -> RestResult<GetFundingRateResponse> {
         self.send_request(
-            "api/v5/public/funding-rate",
+            PUBLIC_FUNDING_RATE_ENDPOINT,
             reqwest::Method::GET,
             Some(request),
             EndpointType::PublicMarketData,

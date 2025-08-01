@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
+const GET_TIME_ENDPOINT: &str = "api/v5/public/time";
+
 /// Time data structure
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TimeData {
@@ -34,7 +36,7 @@ impl RestClient {
     /// Response containing the current system time as Unix timestamp in milliseconds
     pub async fn get_time(&self) -> RestResult<GetTimeResponse> {
         self.send_request(
-            "api/v5/public/time",
+            GET_TIME_ENDPOINT,
             reqwest::Method::GET,
             None::<&()>,
             EndpointType::PublicMarketData,

@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::okx::{EndpointType, InstrumentType, RestResult};
 
+
+const PUBLIC_OPT_SUMMARY_ENDPOINT: &str = "api/v5/public/opt-summary";
 /// Request parameters for getting option summary data
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -107,7 +109,7 @@ impl RestClient {
         request: GetOptSummaryRequest,
     ) -> RestResult<GetOptSummaryResponse> {
         self.send_request(
-            "api/v5/public/opt-summary",
+            PUBLIC_OPT_SUMMARY_ENDPOINT,
             reqwest::Method::GET,
             Some(&request),
             EndpointType::PublicMarketData,

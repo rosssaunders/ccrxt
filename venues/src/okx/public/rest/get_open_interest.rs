@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::okx::{EndpointType, InstrumentType, RestResult};
 
+
+const PUBLIC_OPEN_INTEREST_ENDPOINT: &str = "api/v5/public/open-interest";
 /// Request parameters for getting open interest
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -74,7 +76,7 @@ impl RestClient {
         request: GetOpenInterestRequest,
     ) -> RestResult<GetOpenInterestResponse> {
         self.send_request(
-            "api/v5/public/open-interest",
+            PUBLIC_OPEN_INTEREST_ENDPOINT,
             reqwest::Method::GET,
             Some(&request),
             EndpointType::PublicMarketData,

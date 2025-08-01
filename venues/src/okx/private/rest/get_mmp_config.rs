@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
+
+const ACCOUNT_MMP_CONFIG_ENDPOINT: &str = "api/v5/account/mmp-config";
 /// Request to get mmp config
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -42,7 +44,7 @@ impl RestClient {
         request: &GetMmpConfigRequest,
     ) -> RestResult<OkxApiResponse<MmpConfig>> {
         self.send_request(
-            "api/v5/account/mmp-config",
+            ACCOUNT_MMP_CONFIG_ENDPOINT,
             reqwest::Method::GET,
             Some(request),
             EndpointType::PrivateAccount,

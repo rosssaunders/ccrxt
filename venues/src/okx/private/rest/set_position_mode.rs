@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
+
+const ACCOUNT_SET_POSITION_MODE_ENDPOINT: &str = "api/v5/account/set-position-mode";
 /// Request to set position mode
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -34,7 +36,7 @@ impl RestClient {
         request: &SetPositionModeRequest,
     ) -> RestResult<OkxApiResponse<SetPositionModeResponse>> {
         self.send_request(
-            "api/v5/account/set-position-mode",
+            ACCOUNT_SET_POSITION_MODE_ENDPOINT,
             reqwest::Method::POST,
             Some(request),
             EndpointType::PrivateAccount,
