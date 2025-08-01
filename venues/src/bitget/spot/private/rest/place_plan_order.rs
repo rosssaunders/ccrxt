@@ -2,7 +2,7 @@
 //!
 //! This endpoint allows placing trigger/stop orders (plan orders) for spot trading.
 //!
-//! Reference: https://www.bitget.com/api-doc/spot/plan/Place-Plan-Order
+//! Reference: https://www.bitget.com/api-doc/spot/trade/Place-Plan-Order
 //! Endpoint: POST /api/v2/spot/plan/place-plan-order
 //! Rate limit: 10 requests/second/UID
 

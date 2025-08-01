@@ -2,7 +2,7 @@
 //!
 //! This endpoint allows modifying existing trigger/stop orders (plan orders) for spot trading.
 //!
-//! Reference: https://www.bitget.com/api-doc/spot/plan/Modify-Plan-Order
+//! Reference: https://www.bitget.com/api-doc/spot/trade/Modify-Plan-Order
 //! Endpoint: POST /api/v2/spot/plan/modify-plan-order
 //! Rate limit: 10 requests/second/UID
 

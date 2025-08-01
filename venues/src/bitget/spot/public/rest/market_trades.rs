@@ -47,7 +47,7 @@ impl RestClient {
     ///
     /// Returns historical market trades for a symbol.
     ///
-    /// [Bitget API Docs - Get Market Trades](https://www.bitget.com/api-doc/spot/market/Get-Market-Trades)
+    /// [docs]: https://www.bitget.com/api-doc/spot/market/Get-Market-Trades
     ///
     /// Rate limit: see official docs
     ///
