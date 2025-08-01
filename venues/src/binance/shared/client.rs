@@ -43,7 +43,183 @@ pub struct PrivateBinanceClient {
 }
 
 impl PrivateBinanceClient {
-    /// Send a signed (authenticated) request, mapping errors to venue-specific error type
+    /// Send a signed GET request (high-performance, no HTTP verb branching)
+    pub async fn send_get_signed_request<T, R, E>(
+        &self,
+        endpoint: &str,
+        params: R,
+        weight: u32,
+        is_order: bool,
+    ) -> Result<RestResponse<T>, E>
+    where
+        T: for<'de> Deserialize<'de> + Send + 'static,
+        R: Serialize,
+        E: From<Errors>,
+    {
+        // Add timestamp
+        let mut params_with_timestamp =
+            serde_urlencoded::to_string(&params).map_err(Errors::from)?;
+        if !params_with_timestamp.is_empty() {
+            params_with_timestamp.push('&');
+        }
+        params_with_timestamp.push_str(&format!(
+            "timestamp={}",
+            chrono::Utc::now().timestamp_millis()
+        ));
+
+        // Sign the request using the secret trait object
+        let signature = sign_request(&*self.api_secret, &params_with_timestamp)
+            .map_err(|e| Errors::Error(format!("Signing failed: {e}")))?;
+
+        let signed_params = format!("{params_with_timestamp}&signature={signature}");
+
+        // Optimized for GET requests - no branching
+        self.send_request_internal(
+            endpoint,
+            Method::GET,
+            Some(&signed_params),
+            None,
+            weight,
+            is_order,
+        )
+        .await
+        .map_err(E::from)
+    }
+
+    /// Send a signed POST request (high-performance, no HTTP verb branching)
+    pub async fn send_post_signed_request<T, R, E>(
+        &self,
+        endpoint: &str,
+        params: R,
+        weight: u32,
+        is_order: bool,
+    ) -> Result<RestResponse<T>, E>
+    where
+        T: for<'de> Deserialize<'de> + Send + 'static,
+        R: Serialize,
+        E: From<Errors>,
+    {
+        // Add timestamp
+        let mut params_with_timestamp =
+            serde_urlencoded::to_string(&params).map_err(Errors::from)?;
+        if !params_with_timestamp.is_empty() {
+            params_with_timestamp.push('&');
+        }
+        params_with_timestamp.push_str(&format!(
+            "timestamp={}",
+            chrono::Utc::now().timestamp_millis()
+        ));
+
+        // Sign the request using the secret trait object
+        let signature = sign_request(&*self.api_secret, &params_with_timestamp)
+            .map_err(|e| Errors::Error(format!("Signing failed: {e}")))?;
+
+        let signed_params = format!("{params_with_timestamp}&signature={signature}");
+
+        // Optimized for POST requests - no branching
+        self.send_request_internal(
+            endpoint,
+            Method::POST,
+            None,
+            Some(&signed_params),
+            weight,
+            is_order,
+        )
+        .await
+        .map_err(E::from)
+    }
+
+    /// Send a signed PUT request (high-performance, no HTTP verb branching)
+    pub async fn send_put_signed_request<T, R, E>(
+        &self,
+        endpoint: &str,
+        params: R,
+        weight: u32,
+        is_order: bool,
+    ) -> Result<RestResponse<T>, E>
+    where
+        T: for<'de> Deserialize<'de> + Send + 'static,
+        R: Serialize,
+        E: From<Errors>,
+    {
+        // Add timestamp
+        let mut params_with_timestamp =
+            serde_urlencoded::to_string(&params).map_err(Errors::from)?;
+        if !params_with_timestamp.is_empty() {
+            params_with_timestamp.push('&');
+        }
+        params_with_timestamp.push_str(&format!(
+            "timestamp={}",
+            chrono::Utc::now().timestamp_millis()
+        ));
+
+        // Sign the request using the secret trait object
+        let signature = sign_request(&*self.api_secret, &params_with_timestamp)
+            .map_err(|e| Errors::Error(format!("Signing failed: {e}")))?;
+
+        let signed_params = format!("{params_with_timestamp}&signature={signature}");
+
+        // Optimized for PUT requests - no branching
+        self.send_request_internal(
+            endpoint,
+            Method::PUT,
+            None,
+            Some(&signed_params),
+            weight,
+            is_order,
+        )
+        .await
+        .map_err(E::from)
+    }
+
+    /// Send a signed DELETE request (high-performance, no HTTP verb branching)
+    pub async fn send_delete_signed_request<T, R, E>(
+        &self,
+        endpoint: &str,
+        params: R,
+        weight: u32,
+        is_order: bool,
+    ) -> Result<RestResponse<T>, E>
+    where
+        T: for<'de> Deserialize<'de> + Send + 'static,
+        R: Serialize,
+        E: From<Errors>,
+    {
+        // Add timestamp
+        let mut params_with_timestamp =
+            serde_urlencoded::to_string(&params).map_err(Errors::from)?;
+        if !params_with_timestamp.is_empty() {
+            params_with_timestamp.push('&');
+        }
+        params_with_timestamp.push_str(&format!(
+            "timestamp={}",
+            chrono::Utc::now().timestamp_millis()
+        ));
+
+        // Sign the request using the secret trait object
+        let signature = sign_request(&*self.api_secret, &params_with_timestamp)
+            .map_err(|e| Errors::Error(format!("Signing failed: {e}")))?;
+
+        let signed_params = format!("{params_with_timestamp}&signature={signature}");
+
+        // Optimized for DELETE requests - no branching
+        self.send_request_internal(
+            endpoint,
+            Method::DELETE,
+            Some(&signed_params), // DELETE can have query params
+            None,
+            weight,
+            is_order,
+        )
+        .await
+        .map_err(E::from)
+    }
+
+    /// ⚠️ DEPRECATED: Use verb-specific functions instead for better performance
+    /// 
+    /// This function remains for backward compatibility but creates branch prediction penalties.
+    /// Use send_get_signed_request, send_post_signed_request, etc. instead.
+    #[deprecated(note = "Use verb-specific functions (send_get_signed_request, send_post_signed_request, etc.) for better performance")]
     pub async fn send_signed_request<T, R, E>(
         &self,
         endpoint: &str,
