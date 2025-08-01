@@ -1,5 +1,5 @@
 use crate::binance::{
-    coinm::{Errors, RestResult},
+    coinm::{Errors, RestResponse, RestResult, ResponseHeaders},
     shared::{client::PrivateBinanceClient, Errors as SharedErrors},
 };
 use serde::Serialize;
@@ -47,13 +47,19 @@ impl CoinmRestClient {
                 Errors::Error(format!("Rate limit exceeded, retry after {:?}", retry_after))
             },
             SharedErrors::HttpError(msg) => Errors::Error(format!("HTTP error: {msg}")),
+            SharedErrors::InvalidApiKey() => Errors::Error("Invalid API key".to_string()),
+            SharedErrors::SerializationError(msg) => Errors::Error(format!("Serialization error: {msg}")),
             SharedErrors::Error(msg) => Errors::Error(msg),
         })?;
 
         let duration = start.elapsed();
         tracing::debug!("Request to {endpoint} took {duration:?}");
 
-        Ok(shared_response.data)
+        Ok(RestResponse {
+            data: shared_response.data,
+            request_duration: duration,
+            headers: ResponseHeaders::default(), // TODO: Convert headers properly
+        })
     }
 
     /// Send a signed POST request with coinm-specific response type (high-performance)
@@ -85,13 +91,19 @@ impl CoinmRestClient {
                 Errors::Error(format!("Rate limit exceeded, retry after {:?}", retry_after))
             },
             SharedErrors::HttpError(msg) => Errors::Error(format!("HTTP error: {msg}")),
+            SharedErrors::InvalidApiKey() => Errors::Error("Invalid API key".to_string()),
+            SharedErrors::SerializationError(msg) => Errors::Error(format!("Serialization error: {msg}")),
             SharedErrors::Error(msg) => Errors::Error(msg),
         })?;
 
         let duration = start.elapsed();
         tracing::debug!("Request to {endpoint} took {duration:?}");
 
-        Ok(shared_response.data)
+        Ok(RestResponse {
+            data: shared_response.data,
+            request_duration: duration,
+            headers: ResponseHeaders::default(), // TODO: Convert headers properly
+        })
     }
 
     /// Send a signed PUT request with coinm-specific response type (high-performance)
@@ -123,13 +135,19 @@ impl CoinmRestClient {
                 Errors::Error(format!("Rate limit exceeded, retry after {:?}", retry_after))
             },
             SharedErrors::HttpError(msg) => Errors::Error(format!("HTTP error: {msg}")),
+            SharedErrors::InvalidApiKey() => Errors::Error("Invalid API key".to_string()),
+            SharedErrors::SerializationError(msg) => Errors::Error(format!("Serialization error: {msg}")),
             SharedErrors::Error(msg) => Errors::Error(msg),
         })?;
 
         let duration = start.elapsed();
         tracing::debug!("Request to {endpoint} took {duration:?}");
 
-        Ok(shared_response.data)
+        Ok(RestResponse {
+            data: shared_response.data,
+            request_duration: duration,
+            headers: ResponseHeaders::default(), // TODO: Convert headers properly
+        })
     }
 
     /// Send a signed DELETE request with coinm-specific response type (high-performance)
@@ -161,13 +179,19 @@ impl CoinmRestClient {
                 Errors::Error(format!("Rate limit exceeded, retry after {:?}", retry_after))
             },
             SharedErrors::HttpError(msg) => Errors::Error(format!("HTTP error: {msg}")),
+            SharedErrors::InvalidApiKey() => Errors::Error("Invalid API key".to_string()),
+            SharedErrors::SerializationError(msg) => Errors::Error(format!("Serialization error: {msg}")),
             SharedErrors::Error(msg) => Errors::Error(msg),
         })?;
 
         let duration = start.elapsed();
         tracing::debug!("Request to {endpoint} took {duration:?}");
 
-        Ok(shared_response.data)
+        Ok(RestResponse {
+            data: shared_response.data,
+            request_duration: duration,
+            headers: ResponseHeaders::default(), // TODO: Convert headers properly
+        })
     }
 
     /// ⚠️ DEPRECATED: Use verb-specific functions instead for better performance
@@ -206,12 +230,18 @@ impl CoinmRestClient {
                 Errors::Error(format!("Rate limit exceeded, retry after {:?}", retry_after))
             },
             SharedErrors::HttpError(msg) => Errors::Error(format!("HTTP error: {msg}")),
+            SharedErrors::InvalidApiKey() => Errors::Error("Invalid API key".to_string()),
+            SharedErrors::SerializationError(msg) => Errors::Error(format!("Serialization error: {msg}")),
             SharedErrors::Error(msg) => Errors::Error(msg),
         })?;
 
         let duration = start.elapsed();
         tracing::debug!("Request to {endpoint} took {duration:?}");
 
-        Ok(shared_response.data)
+        Ok(RestResponse {
+            data: shared_response.data,
+            request_duration: duration,
+            headers: ResponseHeaders::default(), // TODO: Convert headers properly
+        })
     }
 }
