@@ -8,6 +8,7 @@ applyTo: "venues/src/**"
 - All code must be as high performant and low latency as possible in Rust.
 - Prefer complex but fast (and correct) code over cleaner yet slower code.
 - Supporting code (e.g., websockets) must be clean, generic, and venue-agnostic.
+- **CRITICAL**: All HTTP wrappers around REST API endpoints MUST NOT pass HTTP verbs as parameters to avoid branch prediction penalties. Use verb-specific functions (send_get_request, send_post_request, etc.) instead of generic functions that take HTTP method as parameter. See `http-performance.instructions.md` for detailed requirements.
 - **Respect the repository's clippy rules** as defined in `clippy.toml`. All code must pass clippy checks with the project's configured settings.
 - All logging and debugging output MUST use a structured logging facade (`log` or `tracing`). DO NOT use `println!` or `eprintln!` for debugging or production code.
 - **Import and Namespace Usage**: All types and functions MUST be imported at the top of the file and used by their short names throughout the code. DO NOT use fully qualified paths (e.g., `crate::module::Type`) when the type is already imported. Instead of `crate::binance::coinm::ResponseHeaders::default()`, import `ResponseHeaders` and use `ResponseHeaders::default()`.

@@ -146,40 +146,72 @@ It also details documentation and code style requirements for all structs and fi
   - Rate limit information.
   - Arguments (with a brief description for each).
   - Return value (with a brief description).
-- Example:
-  ```rust
-  /// Cancel all orders (v4)
-  ///
-  /// Cancels all outstanding orders for a symbol and/or side.
-  ///
-  /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Get-Funding-Info
-  ///
-  /// Rate limit: varies by endpoint type
-  ///
-  /// # Arguments
-  /// * `request` - The cancel all request parameters
-  ///
-  /// # Returns
-  /// Empty response - success indicated by HTTP status
-  pub async fn cancel_all_orders(
-      &self,
-      request: CancelAllOrdersRequest,
-  ) -> RestResult<CancelAllOrdersResponse> {
-      shared::send_signed_request(
-          self,
-          CANCEL_ALL_ORDERS_ENDPOINT,  // Use the constant here
-          reqwest::Method::POST,
-          request,
-          10,
-          false,
-      )
-      .await
-  }
-  ```
+
+### High-Performance HTTP Request Requirements
+
+**CRITICAL PERFORMANCE RULE**: **Do NOT pass HTTP verbs as parameters to avoid branch prediction penalties.**
+
+- **MUST use verb-specific request functions** instead of generic functions that take HTTP method as parameter
+- **MUST NOT pass `reqwest::Method` or equivalent HTTP verb enums as function parameters**
+- Each HTTP verb MUST have its own specialized function to eliminate runtime branching
+
+#### Correct Pattern (High Performance):
+```rust
+/// Cancel all orders (v4)
+///
+/// Cancels all outstanding orders for a symbol and/or side.
+///
+/// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Get-Funding-Info
+///
+/// Rate limit: varies by endpoint type
+///
+/// # Arguments
+/// * `request` - The cancel all request parameters
+///
+/// # Returns
+/// Empty response - success indicated by HTTP status
+pub async fn cancel_all_orders(
+    &self,
+    request: CancelAllOrdersRequest,
+) -> RestResult<CancelAllOrdersResponse> {
+    // Use verb-specific function - NO method parameter
+    self.send_post_request(CANCEL_ALL_ORDERS_ENDPOINT, &request, endpoint_type).await
+}
+```
+
+#### Incorrect Pattern (Causes Branch Misprediction):
+```rust
+// ❌ DO NOT DO THIS - HTTP verb as parameter causes performance issues
+pub async fn cancel_all_orders(
+    &self,
+    request: CancelAllOrdersRequest,
+) -> RestResult<CancelAllOrdersResponse> {
+    // ❌ BAD: Passing method as parameter creates branch prediction penalty
+    self.send_request(
+        CANCEL_ALL_ORDERS_ENDPOINT,
+        reqwest::Method::POST,  // ❌ This parameter hurts performance
+        &request,
+        endpoint_type,
+    ).await
+}
+```
+
+#### Required HTTP Verb-Specific Functions
+
+RestClient implementations MUST provide these verb-specific functions instead of generic `send_request()`:
+
+- `send_get_request()` - for GET requests
+- `send_post_request()` - for POST requests  
+- `send_put_request()` - for PUT requests
+- `send_delete_request()` - for DELETE requests
+- `send_patch_request()` - for PATCH requests (if needed)
+
+Each function MUST be optimized for its specific HTTP verb without runtime branching on method type.
+
 - Ensure the endpoint is rate-limited and authenticated as required.
 - Do NOT add "helper" functions for venue REST endpoints. Endpoint functions must match the venue API exactly, without additional abstraction or helpers.
 - Endpoint functions must take a struct for parameters, except for parameters that appear in the URL path, which may be individual arguments.
-- Do NOT include example code snippets, usage examples, or sample invocations above or within endpoint wrapper functions. All example code must be placed in the appropriate `venues/examples/<venue>/` directory as per the example code instructions.\*\*
+- Do NOT include example code snippets, usage examples, or sample invocations above or within endpoint wrapper functions. All example code must be placed in the appropriate `venues/examples/<venue>/` directory as per the example code instructions.
 
 ---
 
