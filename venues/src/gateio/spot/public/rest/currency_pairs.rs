@@ -2,6 +2,8 @@ use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 
+const CURRENCY_PAIRS_ENDPOINT: &str = "/spot/currency_pairs";
+
 /// Currency pair information
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CurrencyPair {
@@ -58,7 +60,7 @@ impl RestClient {
     /// # API Documentation
     /// <https://www.gate.com/docs/developers/apiv4/#list-all-currency-pairs-supported>
     pub async fn list_currency_pairs(&self) -> crate::gateio::spot::Result<Vec<CurrencyPair>> {
-        self.get("/spot/currency_pairs").await
+        self.get(CURRENCY_PAIRS_ENDPOINT).await
     }
 }
 

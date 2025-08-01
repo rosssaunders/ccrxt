@@ -2,6 +2,8 @@ use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 
+const SERVER_TIME_ENDPOINT: &str = "/spot/time";
+
 /// Server time response
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ServerTime {
@@ -18,7 +20,7 @@ impl RestClient {
     /// # API Documentation
     /// <https://www.gate.com/docs/developers/apiv4/#get-server-current-time>
     pub async fn get_server_time(&self) -> crate::gateio::spot::Result<ServerTime> {
-        self.get("/spot/time").await
+        self.get(SERVER_TIME_ENDPOINT).await
     }
 }
 

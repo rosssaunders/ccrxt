@@ -2,6 +2,8 @@ use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 
+const OPTIONS_UNDERLYINGS_ENDPOINT: &str = "/options/underlyings";
+
 /// Options underlying asset information
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct OptionsUnderlying {
@@ -22,7 +24,7 @@ impl RestClient {
     pub async fn get_options_underlyings(
         &self,
     ) -> crate::gateio::options::Result<Vec<OptionsUnderlying>> {
-        self.get("/options/underlyings").await
+        self.get(OPTIONS_UNDERLYINGS_ENDPOINT).await
     }
 }
 

@@ -1,6 +1,8 @@
 use super::RestClient;
 use super::mmp_settings::{MMPSettings, UpdateMMPRequest};
 
+const UPDATE_MMP_SETTINGS_ENDPOINT: &str = "/options/mmp";
+
 impl RestClient {
     /// Update MMP settings
     ///
@@ -20,7 +22,7 @@ impl RestClient {
         &self,
         request: UpdateMMPRequest,
     ) -> crate::gateio::options::Result<MMPSettings> {
-        self.post("/options/mmp", &request).await
+        self.post(UPDATE_MMP_SETTINGS_ENDPOINT, &request).await
     }
 }
 
