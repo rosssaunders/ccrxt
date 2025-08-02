@@ -163,15 +163,10 @@ impl RestClient {
     /// A result containing the account balance information including equity and available funds
     pub async fn get_account_balance(
         &self,
-        request: &GetAccountBalanceRequest,
+        request: GetAccountBalanceRequest,
     ) -> RestResult<OkxApiResponse<AccountBalance>> {
-        self.send_request(
-            GET_ACCOUNT_BALANCE_ENDPOINT,
-            reqwest::Method::GET,
-            Some(request),
-            EndpointType::PrivateAccount,
-        )
-        .await
+        self.send_get_request(GET_ACCOUNT_BALANCE_ENDPOINT, request, EndpointType::PrivateAccount)
+            .await
     }
 }
 

@@ -204,15 +204,10 @@ impl RestClient {
     /// This endpoint requires the "trade" permission.
     pub async fn create_order(
         &self,
-        request: &CreateOrderRequest,
+        request: CreateOrderRequest,
     ) -> RestResult<CreateOrderResponse> {
-        self.send_request(
-            ORDERS_ENDPOINT,
-            reqwest::Method::POST,
-            Some(request),
-            EndpointType::Private,
-        )
-        .await
+        self.send_post_request(ORDERS_ENDPOINT, request, EndpointType::Private)
+            .await
     }
 }
 

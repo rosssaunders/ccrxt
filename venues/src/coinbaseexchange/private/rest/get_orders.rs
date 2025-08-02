@@ -199,15 +199,10 @@ impl RestClient {
     /// This endpoint requires either the "view" or "trade" permission.
     pub async fn get_orders(
         &self,
-        request: &GetOrdersRequest,
+        request: GetOrdersRequest,
     ) -> RestResult<(GetOrdersResponse, Option<PaginationInfo>)> {
-        self.send_request_with_pagination(
-            ORDERS_ENDPOINT,
-            reqwest::Method::GET,
-            Some(request),
-            EndpointType::Private,
-        )
-        .await
+        self.send_get_request_with_pagination(ORDERS_ENDPOINT, request, EndpointType::Private)
+            .await
     }
 
     /// Get a single order by ID
@@ -231,16 +226,11 @@ impl RestClient {
     pub async fn get_order(
         &self,
         order_id: &str,
-        request: &GetOrderRequest,
+        request: GetOrderRequest,
     ) -> RestResult<GetOrderResponse> {
         let endpoint = format!("orders/{}", order_id);
-        self.send_request(
-            &endpoint,
-            reqwest::Method::GET,
-            Some(request),
-            EndpointType::Private,
-        )
-        .await
+        self.send_get_request(&endpoint, request, EndpointType::Private)
+            .await
     }
 }
 

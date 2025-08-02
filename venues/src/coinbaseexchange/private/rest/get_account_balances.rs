@@ -83,15 +83,10 @@ impl RestClient {
     /// Account balance information for all accounts with pagination info
     pub async fn get_account_balances(
         &self,
-        request: &GetAccountBalancesRequest,
+        request: GetAccountBalancesRequest,
     ) -> RestResult<GetAccountBalancesResponse> {
         let (accounts, pagination) = self
-            .send_request_with_pagination(
-                ACCOUNTS_ENDPOINT,
-                reqwest::Method::GET,
-                Some(request),
-                EndpointType::Private,
-            )
+            .send_get_request_with_pagination(ACCOUNTS_ENDPOINT, request, EndpointType::Private)
             .await?;
 
         Ok(GetAccountBalancesResponse {

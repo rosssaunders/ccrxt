@@ -136,15 +136,10 @@ impl RestClient {
     /// A result containing the order placement response with order ID and status
     pub async fn place_order(
         &self,
-        request: &PlaceOrderRequest,
+        request: PlaceOrderRequest,
     ) -> RestResult<OkxApiResponse<PlaceOrderResponse>> {
-        self.send_request(
-            PLACE_ORDER_ENDPOINT,
-            reqwest::Method::POST,
-            Some(request),
-            EndpointType::PrivateTrading,
-        )
-        .await
+        self.send_post_request(PLACE_ORDER_ENDPOINT, request, EndpointType::PrivateTrading)
+            .await
     }
 }
 

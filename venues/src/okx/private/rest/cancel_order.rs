@@ -55,15 +55,10 @@ impl RestClient {
     /// A result containing the order cancellation response or an error
     pub async fn cancel_order(
         &self,
-        request: &CancelOrderRequest,
+        request: CancelOrderRequest,
     ) -> RestResult<OkxApiResponse<CancelOrderResponse>> {
-        self.send_request(
-            TRADE_CANCEL_ORDER_ENDPOINT,
-            reqwest::Method::POST,
-            Some(request),
-            EndpointType::PrivateTrading,
-        )
-        .await
+        self.send_post_request(TRADE_CANCEL_ORDER_ENDPOINT, request, EndpointType::PrivateTrading)
+            .await
     }
 }
 

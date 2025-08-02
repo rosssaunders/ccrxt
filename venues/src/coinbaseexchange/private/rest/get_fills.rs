@@ -127,16 +127,11 @@ impl RestClient {
     /// This endpoint requires either the "view" or "trade" permission.
     pub async fn get_fills(
         &self,
-        request: &GetFillsRequest,
+        request: GetFillsRequest,
     ) -> RestResult<(GetFillsResponse, Option<PaginationInfo>)> {
         // Use custom endpoint type for fills due to different rate limits
-        self.send_request_with_pagination(
-            FILLS_ENDPOINT,
-            reqwest::Method::GET,
-            Some(request),
-            EndpointType::PrivateFills,
-        )
-        .await
+        self.send_get_request_with_pagination(FILLS_ENDPOINT, request, EndpointType::PrivateFills)
+            .await
     }
 }
 

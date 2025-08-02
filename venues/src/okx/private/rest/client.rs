@@ -207,6 +207,98 @@ impl RestClient {
             Err(Errors::Error(format!("HTTP {status}: {error_text}")))
         }
     }
+
+    /// Send a GET request to a private endpoint
+    ///
+    /// # Arguments
+    /// * `endpoint` - The API endpoint path (e.g., "api/v5/account/balance")
+    /// * `params` - Optional query parameters
+    /// * `endpoint_type` - The endpoint type for rate limiting
+    ///
+    /// # Returns
+    /// A result containing the deserialized response or an error
+    pub async fn send_get_request<T, P>(
+        &self,
+        endpoint: &str,
+        params: P,
+        endpoint_type: EndpointType,
+    ) -> RestResult<T>
+    where
+        T: DeserializeOwned,
+        P: Serialize,
+    {
+        self.send_request(endpoint, reqwest::Method::GET, Some(&params), endpoint_type)
+            .await
+    }
+
+    /// Send a POST request to a private endpoint
+    ///
+    /// # Arguments
+    /// * `endpoint` - The API endpoint path (e.g., "api/v5/trade/order")
+    /// * `params` - Request body parameters
+    /// * `endpoint_type` - The endpoint type for rate limiting
+    ///
+    /// # Returns
+    /// A result containing the deserialized response or an error
+    pub async fn send_post_request<T, P>(
+        &self,
+        endpoint: &str,
+        params: P,
+        endpoint_type: EndpointType,
+    ) -> RestResult<T>
+    where
+        T: DeserializeOwned,
+        P: Serialize,
+    {
+        self.send_request(endpoint, reqwest::Method::POST, Some(&params), endpoint_type)
+            .await
+    }
+
+    /// Send a PUT request to a private endpoint
+    ///
+    /// # Arguments
+    /// * `endpoint` - The API endpoint path
+    /// * `params` - Request body parameters
+    /// * `endpoint_type` - The endpoint type for rate limiting
+    ///
+    /// # Returns
+    /// A result containing the deserialized response or an error
+    pub async fn send_put_request<T, P>(
+        &self,
+        endpoint: &str,
+        params: P,
+        endpoint_type: EndpointType,
+    ) -> RestResult<T>
+    where
+        T: DeserializeOwned,
+        P: Serialize,
+    {
+        self.send_request(endpoint, reqwest::Method::PUT, Some(&params), endpoint_type)
+            .await
+    }
+
+    /// Send a DELETE request to a private endpoint
+    ///
+    /// # Arguments
+    /// * `endpoint` - The API endpoint path
+    /// * `params` - Optional query parameters or request body
+    /// * `endpoint_type` - The endpoint type for rate limiting
+    ///
+    /// # Returns
+    /// A result containing the deserialized response or an error
+    pub async fn send_delete_request<T, P>(
+        &self,
+        endpoint: &str,
+        params: P,
+        endpoint_type: EndpointType,
+    ) -> RestResult<T>
+    where
+        T: DeserializeOwned,
+        P: Serialize,
+    {
+        self.send_request(endpoint, reqwest::Method::DELETE, Some(&params), endpoint_type)
+            .await
+    }
 }
 
 #[cfg(test)]

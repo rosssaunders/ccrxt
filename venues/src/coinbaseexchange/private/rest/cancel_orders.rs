@@ -70,15 +70,10 @@ impl RestClient {
     /// This endpoint requires the "trade" permission.
     pub async fn cancel_all_orders(
         &self,
-        request: &CancelAllOrdersRequest,
+        request: CancelAllOrdersRequest,
     ) -> RestResult<CancelAllOrdersResponse> {
-        self.send_request(
-            ORDERS_ENDPOINT,
-            reqwest::Method::DELETE,
-            Some(request),
-            EndpointType::Private,
-        )
-        .await
+        self.send_delete_request(ORDERS_ENDPOINT, request, EndpointType::Private)
+            .await
     }
 
     /// Cancel a single order
@@ -102,16 +97,11 @@ impl RestClient {
     pub async fn cancel_order(
         &self,
         order_id: &str,
-        request: &CancelOrderRequest,
+        request: CancelOrderRequest,
     ) -> RestResult<CancelOrderResponse> {
         let endpoint = format!("orders/{}", order_id);
-        self.send_request(
-            &endpoint,
-            reqwest::Method::DELETE,
-            Some(request),
-            EndpointType::Private,
-        )
-        .await
+        self.send_delete_request(&endpoint, request, EndpointType::Private)
+            .await
     }
 }
 
