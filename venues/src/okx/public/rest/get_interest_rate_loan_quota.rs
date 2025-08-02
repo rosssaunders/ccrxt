@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
+
+const PUBLIC_INTEREST_RATE_LOAN_QUOTA_ENDPOINT: &str = "api/v5/public/interest-rate-loan-quota";
 /// Request parameters for getting interest rate and loan quota
 /// This endpoint does not require any parameters
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
@@ -78,7 +80,7 @@ impl RestClient {
     ///
     /// Retrieve interest rate and loan quota information for basic, VIP, and regular users.
     ///
-    /// See: https://www.okx.com/docs-v5/en/#public-data-rest-api-get-interest-rate-and-loan-quota
+    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-interest-rate-and-loan-quota
     ///
     /// Rate limit: 2 requests per 2 seconds
     ///
@@ -88,7 +90,7 @@ impl RestClient {
         &self,
     ) -> RestResult<GetInterestRateLoanQuotaResponse> {
         self.send_request(
-            "api/v5/public/interest-rate-loan-quota",
+            PUBLIC_INTEREST_RATE_LOAN_QUOTA_ENDPOINT,
             reqwest::Method::GET,
             None::<&GetInterestRateLoanQuotaRequest>,
             EndpointType::PublicMarketData,

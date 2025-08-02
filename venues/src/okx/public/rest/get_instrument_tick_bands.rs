@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
+const GET_INSTRUMENT_TICK_BANDS_ENDPOINT: &str = "api/v5/public/instrument-tick-bands";
+
 /// Instrument type enum specifically for instrument tick bands endpoint
 /// This endpoint only supports Option instruments
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -70,7 +72,7 @@ impl RestClient {
     ///
     /// Get option tick bands information
     ///
-    /// See: https://www.okx.com/docs-v5/en/#public-data-rest-api-get-option-tick-bands
+    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-option-tick-bands
     ///
     /// Rate limit: 5 requests per 2 seconds
     ///
@@ -84,7 +86,7 @@ impl RestClient {
         request: GetInstrumentTickBandsRequest,
     ) -> RestResult<GetInstrumentTickBandsResponse> {
         self.send_request(
-            "api/v5/public/instrument-tick-bands",
+            GET_INSTRUMENT_TICK_BANDS_ENDPOINT,
             reqwest::Method::GET,
             Some(&request),
             EndpointType::PublicMarketData,

@@ -3,7 +3,7 @@ use serde::Serialize;
 use super::RestClient;
 use super::order::OptionsOrder;
 
-const OPTIONS_ORDERS_ENDPOINT: &str = "/options/orders";
+const LIST_OPTIONS_ORDERS_ENDPOINT: &str = "/options/orders";
 
 /// Request parameters for listing options orders
 #[derive(Debug, Clone, Serialize, Default)]
@@ -56,7 +56,8 @@ impl RestClient {
         &self,
         params: ListOptionsOrdersRequest,
     ) -> crate::gateio::options::Result<Vec<OptionsOrder>> {
-        self.get_with_query(OPTIONS_ORDERS_ENDPOINT, &params).await
+        self.get_with_query(LIST_OPTIONS_ORDERS_ENDPOINT, &params)
+            .await
     }
 }
 

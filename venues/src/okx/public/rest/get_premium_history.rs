@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
+
+const PUBLIC_PREMIUM_HISTORY_ENDPOINT: &str = "api/v5/public/premium-history";
 /// Request parameters for getting premium history
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -50,7 +52,7 @@ impl RestClient {
     ///
     /// Returns premium data in the past 6 months.
     ///
-    /// See: https://www.okx.com/docs-v5/en/#public-data-rest-api-get-premium-history
+    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-premium-history
     ///
     /// Rate limit: 20 requests per 2 seconds
     ///
@@ -64,7 +66,7 @@ impl RestClient {
         request: &GetPremiumHistoryRequest,
     ) -> RestResult<GetPremiumHistoryResponse> {
         self.send_request(
-            "api/v5/public/premium-history",
+            PUBLIC_PREMIUM_HISTORY_ENDPOINT,
             reqwest::Method::GET,
             Some(request),
             EndpointType::PublicMarketData,

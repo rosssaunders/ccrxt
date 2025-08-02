@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
+const CONVERT_CONTRACT_COIN_ENDPOINT: &str = "api/v5/public/convert-contract-coin";
+
 /// Request parameters for converting between contract and coin
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -92,7 +94,7 @@ impl RestClient {
     ///
     /// Convert the crypto value to the number of contracts, or vice versa.
     ///
-    /// See: https://www.okx.com/docs-v5/en/#public-data-rest-api-unit-convert
+    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-unit-convert
     ///
     /// Rate limit: 10 requests per 2 seconds
     ///
@@ -106,7 +108,7 @@ impl RestClient {
         request: ConvertContractCoinRequest,
     ) -> RestResult<ConvertContractCoinResponse> {
         self.send_request(
-            "api/v5/public/convert-contract-coin",
+            CONVERT_CONTRACT_COIN_ENDPOINT,
             reqwest::Method::GET,
             Some(&request),
             EndpointType::PublicMarketData,

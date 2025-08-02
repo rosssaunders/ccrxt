@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
+
+const PUBLIC_ECONOMIC_CALENDAR_ENDPOINT: &str = "api/v5/public/economic-calendar";
 /// Request parameters for getting economic calendar data
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 #[serde(rename_all = "camelCase")]
@@ -69,7 +71,7 @@ impl RestClient {
     /// Get the macro-economic calendar data within 3 months. Historical data from 3
     /// months ago is only available to users with trading fee tier VIP1 and above.
     ///
-    /// See: https://www.okx.com/docs-v5/en/#public-data-rest-api-get-economic-calendar-data
+    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-economic-calendar-data
     ///
     /// Rate limit: 1 request per 5 seconds
     /// Rate limit rule: IP
@@ -84,7 +86,7 @@ impl RestClient {
         request: Option<GetEconomicCalendarRequest>,
     ) -> RestResult<GetEconomicCalendarResponse> {
         self.send_request(
-            "api/v5/public/economic-calendar",
+            PUBLIC_ECONOMIC_CALENDAR_ENDPOINT,
             reqwest::Method::GET,
             request.as_ref(),
             EndpointType::PublicMarketData,

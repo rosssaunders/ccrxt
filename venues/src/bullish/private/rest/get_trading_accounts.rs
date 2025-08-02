@@ -5,6 +5,12 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::bullish::{EndpointType, RestResult};
 
+/// Endpoint URL path for trading accounts
+const TRADING_ACCOUNTS_ENDPOINT: &str = "/v1/accounts/trading-accounts";
+
+/// Endpoint URL path for single trading account (with parameter)
+const SINGLE_TRADING_ACCOUNT_ENDPOINT: &str = "/v1/accounts/trading-accounts/{}";
+
 /// Trading account information
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TradingAccount {
@@ -89,7 +95,7 @@ impl RestClient {
     /// Trading accounts information including balances, borrowing status, and fee rates
     pub async fn get_trading_accounts(&mut self) -> RestResult<TradingAccountsResponse> {
         self.send_authenticated_request(
-            "/v1/accounts/trading-accounts",
+            TRADING_ACCOUNTS_ENDPOINT,
             reqwest::Method::GET,
             None::<&()>,
             EndpointType::PrivateTradingAccounts,
@@ -110,7 +116,7 @@ impl RestClient {
         &mut self,
         trading_account_id: &str,
     ) -> RestResult<TradingAccount> {
-        let endpoint = format!("/v1/accounts/trading-accounts/{trading_account_id}");
+        let endpoint = SINGLE_TRADING_ACCOUNT_ENDPOINT.replace("{}", trading_account_id);
 
         self.send_authenticated_request(
             &endpoint,

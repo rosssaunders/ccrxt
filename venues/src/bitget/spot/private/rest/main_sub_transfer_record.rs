@@ -103,7 +103,7 @@ impl RestClient {
     ///
     /// Get transfer record for main/sub accounts.
     ///
-    /// [API Documentation](https://www.bitget.com/api-doc/spot/account/Get-Sub-Main-Transfer-Record)
+    /// [docs]: https://www.bitget.com/api-doc/spot/account/Get-Transfer-Records
     ///
     /// Rate limit: 20 req/sec/UID
     ///

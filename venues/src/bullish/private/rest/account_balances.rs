@@ -5,6 +5,12 @@ use serde::Deserialize;
 use super::client::RestClient;
 use crate::bullish::{EndpointType, RestResult};
 
+/// Endpoint URL path for asset balances
+const ASSET_BALANCES_ENDPOINT: &str = "/v1/accounts/asset";
+
+/// Endpoint URL path for single asset balance (with parameter)
+const SINGLE_ASSET_BALANCE_ENDPOINT: &str = "/v1/accounts/asset/{}";
+
 /// Asset balance information
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -75,7 +81,7 @@ impl RestClient {
         &mut self,
         trading_account_id: &str,
     ) -> RestResult<AssetBalancesResponse> {
-        let url = format!("/v1/accounts/asset?tradingAccountId={}", trading_account_id);
+        let url = format!("{}?tradingAccountId={}", ASSET_BALANCES_ENDPOINT, trading_account_id);
 
         self.send_authenticated_request(
             &url,
@@ -102,8 +108,8 @@ impl RestClient {
         trading_account_id: &str,
     ) -> RestResult<SingleAssetBalanceResponse> {
         let url = format!(
-            "/v1/accounts/asset/{}?tradingAccountId={}",
-            symbol, trading_account_id
+            "{}?tradingAccountId={}",
+            SINGLE_ASSET_BALANCE_ENDPOINT.replace("{}", symbol), trading_account_id
         );
 
         self.send_authenticated_request(

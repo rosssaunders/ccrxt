@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
+
+const PUBLIC_FUNDING_RATE_HISTORY_ENDPOINT: &str = "api/v5/public/funding-rate-history";
 /// Request parameters for getting funding rate history
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -64,7 +66,7 @@ impl RestClient {
     ///
     /// Retrieve funding rate history. This endpoint can retrieve data from the last 3 months.
     ///
-    /// See: https://www.okx.com/docs-v5/en/#public-data-rest-api-get-funding-rate-history
+    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-funding-rate-history
     ///
     /// Rate limit: 10 requests per 2 seconds
     /// Rate limit rule: IP + Instrument ID
@@ -79,7 +81,7 @@ impl RestClient {
         request: &GetFundingRateHistoryRequest,
     ) -> RestResult<GetFundingRateHistoryResponse> {
         self.send_request(
-            "api/v5/public/funding-rate-history",
+            PUBLIC_FUNDING_RATE_HISTORY_ENDPOINT,
             reqwest::Method::GET,
             Some(request),
             EndpointType::PublicMarketData,

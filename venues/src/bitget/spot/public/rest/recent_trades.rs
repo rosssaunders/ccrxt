@@ -41,7 +41,7 @@ impl RestClient {
     ///
     /// Returns recent trades for a symbol.
     ///
-    /// [Bitget API Docs - Get Recent Trades](https://www.bitget.com/api-doc/spot/market/Get-Recent-Trades)
+    /// [docs]: https://www.bitget.com/api-doc/spot/market/Get-Recent-Trades
     ///
     /// Rate limit: see official docs
     ///

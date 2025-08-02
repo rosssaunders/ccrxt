@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::okx::{Bar, EndpointType, RestResult};
 
+const GET_HISTORY_INDEX_CANDLES_ENDPOINT: &str = "api/v5/market/history-index-candles";
+
 /// Request parameters for getting index candlesticks history
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -44,7 +46,7 @@ impl RestClient {
     ///
     /// Retrieve the candlestick charts of the index from recent years.
     ///
-    /// See: https://www.okx.com/docs-v5/en/#public-data-rest-api-get-index-candlesticks-history
+    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-index-candlesticks-history
     ///
     /// Rate limit: 10 requests per 2 seconds
     ///
@@ -58,7 +60,7 @@ impl RestClient {
         request: GetHistoryIndexCandlesRequest,
     ) -> RestResult<GetHistoryIndexCandlesResponse> {
         self.send_request(
-            "api/v5/market/history-index-candles",
+            GET_HISTORY_INDEX_CANDLES_ENDPOINT,
             reqwest::Method::GET,
             Some(&request),
             EndpointType::PublicMarketDataHistory,

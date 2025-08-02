@@ -2,6 +2,8 @@ use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 
+const TRADING_FEE_ENDPOINT: &str = "/spot/batch_fee";
+
 /// Request parameters for trading fee inquiry
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct TradingFeeRequest {
@@ -70,7 +72,7 @@ impl RestClient {
     ///
     /// This endpoint returns trading fees for multiple currency pairs at once.
     pub async fn get_batch_trading_fee(&self) -> crate::gateio::spot::Result<Vec<BatchTradingFee>> {
-        self.get("/spot/batch_fee").await
+        self.get(TRADING_FEE_ENDPOINT).await
     }
 }
 

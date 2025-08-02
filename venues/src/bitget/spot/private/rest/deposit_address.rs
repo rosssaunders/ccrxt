@@ -48,7 +48,7 @@ impl RestClient {
     ///
     /// Get Deposit Address for a given coin and optional chain.
     ///
-    /// [API Documentation](https://www.bitget.com/api-doc/spot/asset/Get-Deposit-Address)
+    /// [docs]: https://www.bitget.com/api-doc/spot/wallet/Get-Deposit-Address
     ///
     /// Frequency limit: 10 times/1s (User ID)
     ///

@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::okx::{AdlType, EndpointType, InstrumentType, RestResult};
 
+
+const PUBLIC_INSURANCE_FUND_ENDPOINT: &str = "api/v5/public/insurance-fund";
 /// Insurance fund type for filtering insurance fund data
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
@@ -112,7 +114,7 @@ impl RestClient {
     ///
     /// Retrieve insurance fund balance information for different instrument types.
     ///
-    /// See: https://www.okx.com/docs-v5/en/#public-data-rest-api-get-insurance-fund
+    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-insurance-fund
     ///
     /// Rate limit: 10 requests per 2 seconds
     ///
@@ -126,7 +128,7 @@ impl RestClient {
         request: GetInsuranceFundRequest,
     ) -> RestResult<GetInsuranceFundResponse> {
         self.send_request(
-            "api/v5/public/insurance-fund",
+            PUBLIC_INSURANCE_FUND_ENDPOINT,
             reqwest::Method::GET,
             Some(&request),
             EndpointType::PublicInsuranceFund,

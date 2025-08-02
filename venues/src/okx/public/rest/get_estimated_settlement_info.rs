@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
+
+const PUBLIC_ESTIMATED_SETTLEMENT_INFO_ENDPOINT: &str = "api/v5/public/estimated-settlement-info";
 /// Request parameters for getting estimated settlement info
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -45,7 +47,7 @@ impl RestClient {
     /// Retrieve the estimated settlement price which will only have a return value one
     /// hour before the settlement.
     ///
-    /// See: https://www.okx.com/docs-v5/en/#public-data-rest-api-get-estimated-future-settlement-price
+    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-estimated-future-settlement-price
     ///
     /// Rate limit: 10 requests per 2 seconds
     /// Rate limit rule: IP + Instrument ID
@@ -60,7 +62,7 @@ impl RestClient {
         request: &GetEstimatedSettlementInfoRequest,
     ) -> RestResult<GetEstimatedSettlementInfoResponse> {
         self.send_request(
-            "api/v5/public/estimated-settlement-info",
+            PUBLIC_ESTIMATED_SETTLEMENT_INFO_ENDPOINT,
             reqwest::Method::GET,
             Some(request),
             EndpointType::PublicMarketData,

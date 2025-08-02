@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
+
+const MARKET_MARK_PRICE_CANDLES_ENDPOINT: &str = "api/v5/market/mark-price-candles";
 /// Request parameters for getting mark price candlesticks
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GetMarkPriceCandlesRequest {
@@ -44,7 +46,7 @@ impl RestClient {
     /// latest 1,440 data entries. Charts are returned in groups based on the requested
     /// bar.
     ///
-    /// See: https://www.okx.com/docs-v5/en/#public-data-rest-api-get-mark-price-candlesticks
+    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-mark-price-candlesticks
     ///
     /// Rate limit: 20 requests per 2 seconds
     ///
@@ -58,7 +60,7 @@ impl RestClient {
         request: GetMarkPriceCandlesRequest,
     ) -> RestResult<GetMarkPriceCandlesResponse> {
         self.send_request(
-            "api/v5/market/mark-price-candles",
+            MARKET_MARK_PRICE_CANDLES_ENDPOINT,
             reqwest::Method::GET,
             Some(&request),
             EndpointType::PublicMarketData,

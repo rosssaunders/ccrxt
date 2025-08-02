@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::okx::{EndpointType, InstrumentType, RestResult};
 
+const GET_PRICE_LIMIT_ENDPOINT: &str = "api/v5/public/price-limit";
+
 /// Request parameters for getting price limit
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -50,7 +52,7 @@ impl RestClient {
     ///
     /// Retrieve the highest buy limit and lowest sell limit of the instrument.
     ///
-    /// See: https://www.okx.com/docs-v5/en/#public-data-rest-api-get-limit-price
+    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-price-limit
     ///
     /// Rate limit: 20 requests per 2 seconds
     ///
@@ -64,7 +66,7 @@ impl RestClient {
         request: GetPriceLimitRequest,
     ) -> RestResult<GetPriceLimitResponse> {
         self.send_request(
-            "api/v5/public/price-limit",
+            GET_PRICE_LIMIT_ENDPOINT,
             reqwest::Method::GET,
             Some(&request),
             EndpointType::PublicMarketData,

@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::okx::{EndpointType, InstrumentState, InstrumentType, RestResult};
 
+
+const PUBLIC_INSTRUMENTS_ENDPOINT: &str = "api/v5/public/instruments";
 /// Request parameters for getting instruments
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -140,11 +142,11 @@ pub struct GetInstrumentsResponse {
 }
 
 impl RestClient {
-    /// Get available trading instruments
+    /// Get instruments
     ///
     /// Retrieve a list of instruments with open contracts.
     ///
-    /// See: https://www.okx.com/docs-v5/en/#public-data-rest-api-get-instruments
+    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-instruments
     ///
     /// Rate limit: 20 requests per 2 seconds
     ///
@@ -158,7 +160,7 @@ impl RestClient {
         request: GetInstrumentsRequest,
     ) -> RestResult<GetInstrumentsResponse> {
         self.send_request(
-            "api/v5/public/instruments",
+            PUBLIC_INSTRUMENTS_ENDPOINT,
             reqwest::Method::GET,
             Some(&request),
             EndpointType::PublicMarketData,

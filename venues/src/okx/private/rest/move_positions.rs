@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
+
+const ACCOUNT_MOVE_POSITIONS_ENDPOINT: &str = "api/v5/account/move-positions";
 /// Request to move positions
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -62,7 +64,7 @@ impl RestClient {
         request: &MovePositionsRequest,
     ) -> RestResult<OkxApiResponse<MovePositionsResponse>> {
         self.send_request(
-            "api/v5/account/move-positions",
+            ACCOUNT_MOVE_POSITIONS_ENDPOINT,
             reqwest::Method::POST,
             Some(request),
             EndpointType::PrivateAccount,

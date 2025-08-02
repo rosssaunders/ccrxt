@@ -107,7 +107,7 @@ impl RestClient {
     ///
     /// Coin withdrawals including on-chain withdrawals and internal transfers.
     ///
-    /// [API Documentation](https://www.bitget.com/api-doc/spot/withdraw/Withdraw)
+    /// [docs]: https://www.bitget.com/api-doc/spot/wallet/Withdraw-Funds
     ///
     /// Rate limit: 5 req/sec/UID
     ///

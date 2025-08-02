@@ -107,7 +107,7 @@ impl RestClient {
     ///
     /// Get Deposit Records for a given coin, time range, and optional filters.
     ///
-    /// [API Documentation](https://www.bitget.com/api-doc/spot/asset/Get-Deposit-Records)
+    /// [docs]: https://www.bitget.com/api-doc/spot/wallet/Get-Deposit-History
     ///
     /// Frequency limit: 10 times/1s (UID)
     ///

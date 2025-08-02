@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::okx::{EndpointType, InstrumentType, RestResult};
 
+
+const PUBLIC_ESTIMATED_PRICE_ENDPOINT: &str = "api/v5/public/estimated-price";
 /// Request parameters for getting estimated delivery/exercise price
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GetEstimatedPriceRequest {
@@ -45,7 +47,7 @@ impl RestClient {
     /// Retrieve the estimated delivery price which will only have a return value one
     /// hour before the delivery/exercise.
     ///
-    /// See: https://www.okx.com/docs-v5/en/#public-data-rest-api-get-estimated-delivery-exercise-price
+    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-estimated-delivery-exercise-price
     ///
     /// Rate limit: 10 requests per 2 seconds
     /// Rate limit rule: IP + Instrument ID
@@ -60,7 +62,7 @@ impl RestClient {
         request: GetEstimatedPriceRequest,
     ) -> RestResult<GetEstimatedPriceResponse> {
         self.send_request(
-            "api/v5/public/estimated-price",
+            PUBLIC_ESTIMATED_PRICE_ENDPOINT,
             reqwest::Method::GET,
             Some(&request),
             EndpointType::PublicMarketData,

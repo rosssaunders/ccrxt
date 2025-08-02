@@ -2,6 +2,8 @@ use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 
+const SPOT_ACCOUNTS_ENDPOINT: &str = "/spot/accounts";
+
 /// Request parameters for listing spot accounts
 #[derive(Debug, Clone, Default, Serialize)]
 pub struct ListSpotAccountsRequest {
@@ -38,9 +40,9 @@ impl RestClient {
         };
 
         if currency.is_some() {
-            self.get_with_query("/spot/accounts", &request).await
+            self.get_with_query(SPOT_ACCOUNTS_ENDPOINT, &request).await
         } else {
-            self.get("/spot/accounts").await
+            self.get(SPOT_ACCOUNTS_ENDPOINT).await
         }
     }
 }

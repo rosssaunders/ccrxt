@@ -1,7 +1,7 @@
 use super::RestClient;
 use super::mmp_settings::{MMPSettings, UpdateMMPRequest};
 
-const MMP_ENDPOINT: &str = "/options/mmp";
+const UPDATE_MMP_SETTINGS_ENDPOINT: &str = "/options/mmp";
 
 impl RestClient {
     /// Update MMP settings
@@ -22,7 +22,7 @@ impl RestClient {
         &self,
         request: UpdateMMPRequest,
     ) -> crate::gateio::options::Result<MMPSettings> {
-        self.post(MMP_ENDPOINT, &request).await
+        self.post(UPDATE_MMP_SETTINGS_ENDPOINT, &request).await
     }
 }
 
@@ -44,7 +44,7 @@ mod tests {
 
         let json = serde_json::to_value(&request).unwrap();
         assert_eq!(json["underlying"], "BTC_USDT");
-        
+
         // Ensure optional fields are not serialized when None
         let obj = json.as_object().unwrap();
         assert_eq!(obj.len(), 1); // Only underlying
@@ -65,7 +65,7 @@ mod tests {
         let json = serde_json::to_value(&request).unwrap();
         assert_eq!(json["underlying"], "ETH_USDT");
         assert_eq!(json["enable"], true);
-        
+
         let obj = json.as_object().unwrap();
         assert_eq!(obj.len(), 2); // underlying and enable
     }
@@ -112,7 +112,7 @@ mod tests {
         assert_eq!(json["trade_limit"], 150);
         assert_eq!(json["delta_limit"], "1500.75");
         assert_eq!(json["vega_limit"], "750.25");
-        
+
         let obj = json.as_object().unwrap();
         assert_eq!(obj.len(), 7); // All fields
     }
@@ -171,7 +171,7 @@ mod tests {
         let json = serde_json::to_value(&request).unwrap();
         assert_eq!(json["underlying"], "BTC_USDT");
         assert_eq!(json["enable"], false);
-        
+
         let obj = json.as_object().unwrap();
         assert_eq!(obj.len(), 2); // Only underlying and enable
     }
@@ -179,7 +179,7 @@ mod tests {
     #[test]
     fn test_update_mmp_request_different_underlyings() {
         let underlyings = vec!["BTC_USDT", "ETH_USDT", "BNB_USDT", "SOL_USDT", "ADA_USDT"];
-        
+
         for underlying in underlyings {
             let request = UpdateMMPRequest {
                 underlying: underlying.to_string(),

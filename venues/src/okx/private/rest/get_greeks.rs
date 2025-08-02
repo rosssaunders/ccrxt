@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
+
+const ACCOUNT_GREEKS_ENDPOINT: &str = "api/v5/account/greeks";
 /// Request to get account Greeks
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -60,7 +62,7 @@ impl RestClient {
         request: &GetGreeksRequest,
     ) -> RestResult<OkxApiResponse<Greeks>> {
         self.send_request(
-            "api/v5/account/greeks",
+            ACCOUNT_GREEKS_ENDPOINT,
             reqwest::Method::GET,
             Some(request),
             EndpointType::PrivateAccount,

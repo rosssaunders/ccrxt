@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
+
+const ACCOUNT_CONFIG_ENDPOINT: &str = "api/v5/account/config";
 /// Request to get account configuration
 #[derive(Debug, Clone, Serialize)]
 pub struct GetAccountConfigRequest {
@@ -116,7 +118,7 @@ impl RestClient {
     pub async fn get_account_config(&self) -> RestResult<OkxApiResponse<AccountConfig>> {
         let request = GetAccountConfigRequest {};
         self.send_request(
-            "api/v5/account/config",
+            ACCOUNT_CONFIG_ENDPOINT,
             reqwest::Method::GET,
             Some(&request),
             EndpointType::PrivateAccount,

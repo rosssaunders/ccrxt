@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
+
+const PUBLIC_MARK_PRICE_ENDPOINT: &str = "api/v5/public/mark-price";
 /// Request parameters for getting mark price
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GetMarkPriceRequest {
@@ -59,7 +61,7 @@ impl RestClient {
     /// prevent individual users from manipulating the market and causing the contract
     /// price to fluctuate.
     ///
-    /// See: https://www.okx.com/docs-v5/en/#public-data-rest-api-get-mark-price
+    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-mark-price
     ///
     /// Rate limit: 10 requests per 2 seconds
     /// Rate limit rule: IP + Instrument ID
@@ -74,7 +76,7 @@ impl RestClient {
         request: &GetMarkPriceRequest,
     ) -> RestResult<GetMarkPriceResponse> {
         self.send_request(
-            "api/v5/public/mark-price",
+            PUBLIC_MARK_PRICE_ENDPOINT,
             reqwest::Method::GET,
             Some(request),
             EndpointType::PublicMarketDataHistory,

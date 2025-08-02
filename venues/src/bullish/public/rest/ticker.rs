@@ -6,7 +6,7 @@ use super::client::RestClient;
 use crate::bullish::{EndpointType, RestResult};
 
 /// Endpoint URL path for ticker
-const ENDPOINT_PATH: &str = "/trading-api/v1/markets/{}/tick";
+const TICKER_ENDPOINT: &str = "/trading-api/v1/markets/{}/tick";
 
 /// 24-hour ticker statistics
 #[derive(Debug, Clone, Deserialize)]
@@ -71,7 +71,7 @@ impl RestClient {
     ///
     /// https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/markets/-symbol-/tick
     pub async fn get_ticker(&self, symbol: &str) -> RestResult<Ticker> {
-        let url = ENDPOINT_PATH.replace("{}", symbol);
+        let url = TICKER_ENDPOINT.replace("{}", symbol);
 
         self.send_request(
             &url,

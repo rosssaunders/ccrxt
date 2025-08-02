@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
+
+const PUBLIC_DISCOUNT_RATE_INTEREST_FREE_QUOTA_ENDPOINT: &str = "api/v5/public/discount-rate-interest-free-quota";
 /// Request parameters for getting discount rate and interest-free quota
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -75,7 +77,7 @@ impl RestClient {
     ///
     /// Retrieve discount rate level and interest-free quota.
     ///
-    /// See: https://www.okx.com/docs-v5/en/#public-data-rest-api-get-discount-rate-and-interest-free-quota
+    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-discount-rate-and-interest-free-quota
     ///
     /// Rate limit: 2 requests per 2 seconds
     ///
@@ -89,7 +91,7 @@ impl RestClient {
         request: &GetDiscountRateInterestFreeQuotaRequest,
     ) -> RestResult<GetDiscountRateInterestFreeQuotaResponse> {
         self.send_request(
-            "api/v5/public/discount-rate-interest-free-quota",
+            PUBLIC_DISCOUNT_RATE_INTEREST_FREE_QUOTA_ENDPOINT,
             reqwest::Method::GET,
             Some(request),
             EndpointType::PublicMarketData,

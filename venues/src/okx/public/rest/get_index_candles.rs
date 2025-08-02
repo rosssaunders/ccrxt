@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::okx::{Bar, EndpointType, RestResult};
 
+
+const MARKET_INDEX_CANDLES_ENDPOINT: &str = "api/v5/market/index-candles";
 /// Request parameters for getting index candlesticks
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -63,7 +65,7 @@ impl RestClient {
     /// Retrieve the candlestick charts of the index. This endpoint can retrieve the
     /// latest 1,440 data entries. Charts are returned in groups based on the requested bar.
     ///
-    /// See: https://www.okx.com/docs-v5/en/#public-data-rest-api-get-index-candlesticks
+    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-index-candlesticks
     ///
     /// Rate limit: 20 requests per 2 seconds
     ///
@@ -77,7 +79,7 @@ impl RestClient {
         request: GetIndexCandlesRequest,
     ) -> RestResult<GetIndexCandlesResponse> {
         self.send_request(
-            "api/v5/market/index-candles",
+            MARKET_INDEX_CANDLES_ENDPOINT,
             reqwest::Method::GET,
             Some(&request),
             EndpointType::PublicMarketData,

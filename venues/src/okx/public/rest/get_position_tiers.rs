@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::okx::{EndpointType, InstrumentType, RestResult};
 
+
+const PUBLIC_POSITION_TIERS_ENDPOINT: &str = "api/v5/public/position-tiers";
 /// Request parameters for getting position tiers
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -118,7 +120,7 @@ impl RestClient {
     /// Retrieve position tiers information, maximum leverage depends on your borrowings
     /// and Maintenance margin ratio.
     ///
-    /// See: https://www.okx.com/docs-v5/en/#public-data-rest-api-get-position-tiers
+    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-position-tiers
     ///
     /// Rate limit: 10 requests per 2 seconds
     ///
@@ -132,7 +134,7 @@ impl RestClient {
         request: GetPositionTiersRequest,
     ) -> RestResult<GetPositionTiersResponse> {
         self.send_request(
-            "api/v5/public/position-tiers",
+            PUBLIC_POSITION_TIERS_ENDPOINT,
             reqwest::Method::GET,
             Some(&request),
             EndpointType::PublicMarketData,

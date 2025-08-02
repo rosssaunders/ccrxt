@@ -3,6 +3,8 @@ use serde::Deserialize;
 use super::{RestClient, cancel_order::CancelOrderRequest, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
+
+const TRADE_CANCEL_BATCH_ORDERS_ENDPOINT: &str = "api/v5/trade/cancel-batch-orders";
 /// Response from canceling multiple orders
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -21,7 +23,13 @@ pub struct CancelBatchOrdersResponse {
 }
 
 impl RestClient {
-    /// Cancel multiple orders at once
+    /// Cancel batch orders
+    ///
+    /// Cancel incomplete orders in batches. Maximum 20 orders can be canceled per request.
+    ///
+    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-trade-rest-api-post-cancel-batch-orders
+    ///
+    /// Rate limit: 300 orders per 2 seconds
     ///
     /// # Arguments
     /// * `orders` - Vector of order cancellation requests (maximum 20 orders)
@@ -33,7 +41,7 @@ impl RestClient {
         orders: &[CancelOrderRequest],
     ) -> RestResult<OkxApiResponse<CancelBatchOrdersResponse>> {
         self.send_request(
-            "api/v5/trade/cancel-batch-orders",
+            TRADE_CANCEL_BATCH_ORDERS_ENDPOINT,
             reqwest::Method::POST,
             Some(orders),
             EndpointType::PrivateTrading,

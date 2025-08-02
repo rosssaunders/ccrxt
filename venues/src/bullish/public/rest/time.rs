@@ -6,7 +6,7 @@ use super::client::RestClient;
 use crate::bullish::{EndpointType, RestResult};
 
 /// Endpoint URL path for server time
-const ENDPOINT_PATH: &str = "/trading-api/v1/time";
+const SERVER_TIME_ENDPOINT: &str = "/trading-api/v1/time";
 
 /// Server time response
 #[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
@@ -29,7 +29,7 @@ impl RestClient {
     /// Current server timestamp and datetime
     pub async fn get_server_time(&self) -> RestResult<ServerTime> {
         self.send_request(
-            ENDPOINT_PATH,
+            SERVER_TIME_ENDPOINT,
             reqwest::Method::GET,
             None::<&()>,
             EndpointType::PublicTime,

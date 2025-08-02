@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
+
+const MARKET_INDEX_TICKERS_ENDPOINT: &str = "api/v5/market/index-tickers";
 /// Request parameters for getting index tickers
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -60,7 +62,7 @@ impl RestClient {
     ///
     /// Retrieve index tickers.
     ///
-    /// See: https://www.okx.com/docs-v5/en/#public-data-rest-api-get-index-tickers
+    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-market-data-rest-api-get-index-tickers
     ///
     /// Rate limit: 20 requests per 2 seconds
     ///
@@ -74,7 +76,7 @@ impl RestClient {
         request: Option<GetIndexTickersRequest>,
     ) -> RestResult<GetIndexTickersResponse> {
         self.send_request(
-            "api/v5/market/index-tickers",
+            MARKET_INDEX_TICKERS_ENDPOINT,
             reqwest::Method::GET,
             request.as_ref(),
             EndpointType::PublicMarketData,

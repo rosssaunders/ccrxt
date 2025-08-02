@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
+
+const TRADE_CANCEL_ORDER_ENDPOINT: &str = "api/v5/trade/cancel-order";
 /// Request to cancel an existing order
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -38,7 +40,13 @@ pub struct CancelOrderResponse {
 }
 
 impl RestClient {
-    /// Cancel an existing order
+    /// Cancel order
+    ///
+    /// Cancels an incomplete order.
+    ///
+    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-trade-rest-api-post-cancel-order
+    ///
+    /// Rate limit: 60 requests per 2 seconds
     ///
     /// # Arguments
     /// * `request` - The order cancellation request
@@ -50,7 +58,7 @@ impl RestClient {
         request: &CancelOrderRequest,
     ) -> RestResult<OkxApiResponse<CancelOrderResponse>> {
         self.send_request(
-            "api/v5/trade/cancel-order",
+            TRADE_CANCEL_ORDER_ENDPOINT,
             reqwest::Method::POST,
             Some(request),
             EndpointType::PrivateTrading,

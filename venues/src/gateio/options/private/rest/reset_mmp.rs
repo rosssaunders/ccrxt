@@ -2,7 +2,7 @@ use serde::Serialize;
 
 use super::RestClient;
 
-const MMP_RESET_ENDPOINT: &str = "/options/mmp/reset";
+const RESET_MMP_ENDPOINT: &str = "/options/mmp/reset";
 
 /// Request to reset MMP
 #[derive(Debug, Clone, Serialize)]
@@ -30,7 +30,7 @@ impl RestClient {
         let request = ResetMMPRequest {
             underlying: underlying.to_string(),
         };
-        self.post(MMP_RESET_ENDPOINT, &request).await
+        self.post(RESET_MMP_ENDPOINT, &request).await
     }
 }
 
@@ -46,20 +46,14 @@ mod tests {
 
         let json = serde_json::to_value(&request).unwrap();
         assert_eq!(json["underlying"], "BTC_USDT");
-        
+
         let obj = json.as_object().unwrap();
         assert_eq!(obj.len(), 1); // Only underlying field
     }
 
     #[test]
     fn test_reset_mmp_request_different_underlyings() {
-        let underlyings = vec![
-            "BTC_USDT",
-            "ETH_USDT",
-            "BNB_USDT",
-            "SOL_USDT",
-            "ADA_USDT",
-        ];
+        let underlyings = vec!["BTC_USDT", "ETH_USDT", "BNB_USDT", "SOL_USDT", "ADA_USDT"];
 
         for underlying in underlyings {
             let request = ResetMMPRequest {
@@ -73,12 +67,7 @@ mod tests {
 
     #[test]
     fn test_reset_mmp_request_special_chars() {
-        let underlyings = vec![
-            "BTC_USDT",
-            "ETH_USDT",
-            "BTC-PERP",
-            "ETH-PERP",
-        ];
+        let underlyings = vec!["BTC_USDT", "ETH_USDT", "BTC-PERP", "ETH-PERP"];
 
         for underlying in underlyings {
             let request = ResetMMPRequest {

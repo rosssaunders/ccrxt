@@ -3,7 +3,7 @@ use serde::Serialize;
 use super::RestClient;
 use super::order::OptionsOrder;
 
-const OPTIONS_ORDERS_ENDPOINT: &str = "/options/orders";
+const CREATE_OPTIONS_ORDER_ENDPOINT: &str = "/options/orders";
 
 /// Request to create options order
 #[derive(Debug, Clone, Serialize)]
@@ -54,7 +54,7 @@ impl RestClient {
         &self,
         request: CreateOptionsOrderRequest,
     ) -> crate::gateio::options::Result<OptionsOrder> {
-        self.post(OPTIONS_ORDERS_ENDPOINT, &request).await
+        self.post(CREATE_OPTIONS_ORDER_ENDPOINT, &request).await
     }
 }
 
@@ -78,7 +78,7 @@ mod tests {
         let json = serde_json::to_value(&request).unwrap();
         assert_eq!(json["contract"], "BTC-20240101-50000-C");
         assert_eq!(json["size"], "1");
-        
+
         // Ensure optional fields are not serialized when None
         assert!(json.get("price").is_none());
         assert!(json.get("tif").is_none());
@@ -112,7 +112,7 @@ mod tests {
     #[test]
     fn test_tif_values() {
         let tif_values = vec!["gtc", "ioc", "poc", "fok"];
-        
+
         for tif in tif_values {
             let request = CreateOptionsOrderRequest {
                 contract: "BTC-20240101-50000-C".to_string(),
@@ -152,8 +152,8 @@ mod tests {
     #[test]
     fn test_options_contract_formats() {
         let contracts = vec![
-            "BTC-20240101-50000-C",  // Call option
-            "BTC-20240101-50000-P",  // Put option
+            "BTC-20240101-50000-C", // Call option
+            "BTC-20240101-50000-P", // Put option
             "ETH-20240101-3000-C",
             "ETH-20240101-3000-P",
         ];

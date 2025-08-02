@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
+
+const MARKET_INDEX_COMPONENTS_ENDPOINT: &str = "api/v5/market/index-components";
 /// Request parameters for getting index components
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -59,7 +61,7 @@ impl RestClient {
     ///
     /// Get the index component information data on the market.
     ///
-    /// See: https://www.okx.com/docs-v5/en/#public-data-rest-api-get-index-components
+    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-index-components
     ///
     /// Rate limit: 20 requests per 2 seconds
     ///
@@ -73,7 +75,7 @@ impl RestClient {
         request: &GetIndexComponentsRequest,
     ) -> RestResult<GetIndexComponentsResponse> {
         self.send_request(
-            "api/v5/market/index-components",
+            MARKET_INDEX_COMPONENTS_ENDPOINT,
             reqwest::Method::GET,
             Some(request),
             EndpointType::PublicMarketData,

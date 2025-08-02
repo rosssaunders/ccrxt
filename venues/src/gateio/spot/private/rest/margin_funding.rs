@@ -2,6 +2,11 @@ use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 
+const MARGIN_FUNDING_ACCOUNTS_ENDPOINT: &str = "/margin/funding_accounts";
+const MARGIN_TRANSFERABLE_ENDPOINT: &str = "/margin/transferable";
+const MARGIN_BORROWABLE_ENDPOINT: &str = "/margin/borrowable";
+const MARGIN_AUTO_REPAY_ENDPOINT: &str = "/margin/auto_repay";
+
 /// Request parameters for funding accounts
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct FundingAccountsRequest {
@@ -93,7 +98,7 @@ impl RestClient {
         &self,
         params: FundingAccountsRequest,
     ) -> crate::gateio::spot::Result<Vec<FundingAccount>> {
-        self.get_with_query("/margin/funding_accounts", &params)
+        self.get_with_query(MARGIN_FUNDING_ACCOUNTS_ENDPOINT, &params)
             .await
     }
 
@@ -105,7 +110,7 @@ impl RestClient {
         &self,
         params: TransferableRequest,
     ) -> crate::gateio::spot::Result<TransferableAmount> {
-        self.get_with_query("/margin/transferable", &params).await
+        self.get_with_query(MARGIN_TRANSFERABLE_ENDPOINT, &params).await
     }
 
     /// Get borrowable amount
@@ -116,14 +121,14 @@ impl RestClient {
         &self,
         params: BorrowableRequest,
     ) -> crate::gateio::spot::Result<BorrowableAmount> {
-        self.get_with_query("/margin/borrowable", &params).await
+        self.get_with_query(MARGIN_BORROWABLE_ENDPOINT, &params).await
     }
 
     /// Get auto repay settings
     ///
     /// This endpoint returns the current auto repay settings for margin trading.
     pub async fn get_auto_repay(&self) -> crate::gateio::spot::Result<AutoRepaySetting> {
-        self.get("/margin/auto_repay").await
+        self.get(MARGIN_AUTO_REPAY_ENDPOINT).await
     }
 
     /// Update auto repay settings
@@ -133,7 +138,7 @@ impl RestClient {
         &self,
         params: AutoRepayRequest,
     ) -> crate::gateio::spot::Result<AutoRepaySetting> {
-        self.post("/margin/auto_repay", &params).await
+        self.post(MARGIN_AUTO_REPAY_ENDPOINT, &params).await
     }
 }
 

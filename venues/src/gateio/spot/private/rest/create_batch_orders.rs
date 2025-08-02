@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::gateio::spot::private::rest::create_order::{CreateOrderRequest, Order};
 
+const CREATE_BATCH_ORDERS_ENDPOINT: &str = "/spot/batch_orders";
+
 /// Batch order creation request
 #[derive(Debug, Clone, Serialize)]
 pub struct CreateBatchOrdersRequest {
@@ -38,7 +40,7 @@ impl RestClient {
         orders: Vec<CreateOrderRequest>,
     ) -> crate::gateio::spot::Result<Vec<BatchOrderResponse>> {
         let request = CreateBatchOrdersRequest { orders };
-        self.post("/spot/batch_orders", &request).await
+        self.post(CREATE_BATCH_ORDERS_ENDPOINT, &request).await
     }
 }
 

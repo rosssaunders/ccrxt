@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
+const GET_TIME_ENDPOINT: &str = "api/v5/public/time";
+
 /// Time data structure
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TimeData {
@@ -22,11 +24,11 @@ pub struct GetTimeResponse {
 }
 
 impl RestClient {
-    /// Get system time
+    /// Get server time
     ///
     /// Retrieve API server time.
     ///
-    /// See: https://www.okx.com/docs-v5/en/#public-data-rest-api-get-system-time
+    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-time
     ///
     /// Rate limit: 10 requests per 2 seconds
     ///
@@ -34,7 +36,7 @@ impl RestClient {
     /// Response containing the current system time as Unix timestamp in milliseconds
     pub async fn get_time(&self) -> RestResult<GetTimeResponse> {
         self.send_request(
-            "api/v5/public/time",
+            GET_TIME_ENDPOINT,
             reqwest::Method::GET,
             None::<&()>,
             EndpointType::PublicMarketData,

@@ -6,7 +6,7 @@ use super::client::RestClient;
 use crate::bullish::{EndpointType, RestResult};
 
 /// Endpoint URL path for orderbook
-const ORDERBOOK_ENDPOINT_PATH: &str = "/trading-api/v1/markets/{}/orderbook/hybrid";
+const ORDERBOOK_ENDPOINT: &str = "/trading-api/v1/markets/{}/orderbook/hybrid";
 
 /// Orderbook entry (bid or ask)
 #[derive(Debug, Clone, Deserialize)]
@@ -61,7 +61,7 @@ impl RestClient {
         symbol: &str,
         params: Option<OrderbookParams>,
     ) -> RestResult<HybridOrderbook> {
-        let mut url = ORDERBOOK_ENDPOINT_PATH.replace("{}", symbol);
+        let mut url = ORDERBOOK_ENDPOINT.replace("{}", symbol);
 
         if let Some(params) = params {
             let mut query_params = Vec::new();

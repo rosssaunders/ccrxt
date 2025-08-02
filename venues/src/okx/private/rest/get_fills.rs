@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, InstrumentType, OrderSide, RestResult};
 
+
+const TRADE_FILLS_ENDPOINT: &str = "api/v5/trade/fills";
 /// Request to get recent fills
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -149,7 +151,7 @@ impl RestClient {
     /// A result containing the recent fills or an error
     pub async fn get_fills(&self, request: &GetFillsRequest) -> RestResult<OkxApiResponse<Fill>> {
         self.send_request(
-            "api/v5/trade/fills",
+            TRADE_FILLS_ENDPOINT,
             reqwest::Method::GET,
             Some(request),
             EndpointType::PrivateTrading,

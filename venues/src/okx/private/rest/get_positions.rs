@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, InstrumentType, RestResult};
 
+
+const ACCOUNT_POSITIONS_ENDPOINT: &str = "api/v5/account/positions";
 /// Request to get account positions
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -190,7 +192,13 @@ pub struct CloseOrderAlgo {
 }
 
 impl RestClient {
-    /// Get account positions
+    /// Get positions
+    ///
+    /// Retrieve information on your current positions. When there are no positions, an empty array will be returned.
+    ///
+    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-account-rest-api-get-positions
+    ///
+    /// Rate limit: 10 requests per 2 seconds
     ///
     /// # Arguments
     /// * `request` - The get positions request
@@ -202,7 +210,7 @@ impl RestClient {
         request: &GetPositionsRequest,
     ) -> RestResult<OkxApiResponse<Position>> {
         self.send_request(
-            "api/v5/account/positions",
+            ACCOUNT_POSITIONS_ENDPOINT,
             reqwest::Method::GET,
             Some(request),
             EndpointType::PrivateAccount,

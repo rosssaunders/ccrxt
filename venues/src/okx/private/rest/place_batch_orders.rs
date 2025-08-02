@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse, place_order::PlaceOrderRequest};
 use crate::okx::{EndpointType, RestResult};
 
+
+const TRADE_BATCH_ORDERS_ENDPOINT: &str = "api/v5/trade/batch-orders";
 /// Request to place multiple orders at once
 #[derive(Debug, Clone, Serialize)]
 pub struct PlaceBatchOrdersRequest {
@@ -32,7 +34,13 @@ pub struct PlaceBatchOrdersResponse {
 }
 
 impl RestClient {
-    /// Place multiple orders at once
+    /// Place batch orders
+    ///
+    /// Place orders in batches. Maximum 20 orders can be placed per request.
+    ///
+    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-trade-rest-api-post-batch-orders
+    ///
+    /// Rate limit: 300 orders per 2 seconds
     ///
     /// # Arguments
     /// * `orders` - Vector of order placement requests (maximum 20 orders)
@@ -44,7 +52,7 @@ impl RestClient {
         orders: &[PlaceOrderRequest],
     ) -> RestResult<OkxApiResponse<PlaceBatchOrdersResponse>> {
         self.send_request(
-            "api/v5/trade/batch-orders",
+            TRADE_BATCH_ORDERS_ENDPOINT,
             reqwest::Method::POST,
             Some(orders),
             EndpointType::PrivateTrading,

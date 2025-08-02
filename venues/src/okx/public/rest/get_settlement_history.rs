@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
+
+const PUBLIC_SETTLEMENT_HISTORY_ENDPOINT: &str = "api/v5/public/settlement-history";
 /// Request parameters for getting settlement history
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -59,7 +61,7 @@ impl RestClient {
     ///
     /// Retrieve settlement records of futures in the last 3 months.
     ///
-    /// See: https://www.okx.com/docs-v5/en/#public-data-rest-api-get-futures-settlement-history
+    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-futures-settlement-history
     ///
     /// Rate limit: 40 requests per 2 seconds
     ///
@@ -73,7 +75,7 @@ impl RestClient {
         request: &GetSettlementHistoryRequest,
     ) -> RestResult<GetSettlementHistoryResponse> {
         self.send_request(
-            "api/v5/public/settlement-history",
+            PUBLIC_SETTLEMENT_HISTORY_ENDPOINT,
             reqwest::Method::GET,
             Some(request),
             EndpointType::PublicMarketData,

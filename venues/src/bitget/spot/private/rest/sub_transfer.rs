@@ -6,7 +6,7 @@ use crate::bitget::spot::{RestResult, enums::*};
 const SUB_TRANSFER_ENDPOINT: &str = "/api/v2/spot/wallet/subaccount-transfer";
 
 /// Request parameters for sub account transfer endpoint.
-#[derive(Debug, Clone, Serialize, Default)]
+#[derive(Debug, Clone, Serialize)]
 pub struct SubTransferRequest {
     /// Account type to transfer from (spot, p2p, coin_futures, usdt_futures, usdc_futures, crossed_margin, isolated_margin).
     #[serde(rename = "fromType")]
