@@ -102,9 +102,7 @@ impl RestClient {
         &self,
         request: BatchCreateOrdersRequest,
     ) -> RestResult<BatchCreateOrdersResponse> {
-        self.send_signed_request(
-            BATCH_CREATE_ORDERS_ENDPOINT,
-            reqwest::Method::POST,
+        self.send_post_request(BATCH_CREATE_ORDERS_ENDPOINT,
             request,
             EndpointType::Trade,
         )

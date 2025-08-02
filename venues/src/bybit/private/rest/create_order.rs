@@ -185,9 +185,7 @@ impl RestClient {
         &self,
         request: CreateOrderRequest,
     ) -> RestResult<CreateOrderResponse> {
-        self.send_signed_request(
-            CREATE_ORDER_ENDPOINT,
-            reqwest::Method::POST,
+        self.send_post_request(CREATE_ORDER_ENDPOINT,
             request,
             EndpointType::Trade,
         )

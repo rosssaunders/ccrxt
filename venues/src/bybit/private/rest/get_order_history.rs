@@ -65,9 +65,7 @@ impl RestClient {
         &self,
         request: GetOrderHistoryRequest,
     ) -> RestResult<GetOrderHistoryResponse> {
-        self.send_signed_request(
-            "/v5/order/history",
-            reqwest::Method::GET,
+        self.send_get_request("/v5/order/history",
             request,
             EndpointType::Trade,
         )

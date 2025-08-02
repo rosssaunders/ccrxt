@@ -177,6 +177,94 @@ impl RestClient {
         let result = mac.finalize();
         Ok(hex::encode(result.into_bytes()))
     }
+
+    /// High-performance GET request method
+    ///
+    /// # Arguments
+    /// * `endpoint` - The API endpoint path
+    /// * `request` - The request parameters
+    /// * `endpoint_type` - The endpoint type for rate limiting
+    ///
+    /// # Returns
+    /// The deserialized response or an error
+    pub async fn send_get_request<T, R>(
+        &self,
+        endpoint: &str,
+        request: R,
+        endpoint_type: EndpointType,
+    ) -> RestResult<T>
+    where
+        T: serde::de::DeserializeOwned,
+        R: Serialize,
+    {
+        self.send_signed_request(endpoint, reqwest::Method::GET, request, endpoint_type).await
+    }
+
+    /// High-performance POST request method
+    ///
+    /// # Arguments
+    /// * `endpoint` - The API endpoint path
+    /// * `request` - The request parameters
+    /// * `endpoint_type` - The endpoint type for rate limiting
+    ///
+    /// # Returns
+    /// The deserialized response or an error
+    pub async fn send_post_request<T, R>(
+        &self,
+        endpoint: &str,
+        request: R,
+        endpoint_type: EndpointType,
+    ) -> RestResult<T>
+    where
+        T: serde::de::DeserializeOwned,
+        R: Serialize,
+    {
+        self.send_signed_request(endpoint, reqwest::Method::POST, request, endpoint_type).await
+    }
+
+    /// High-performance PUT request method
+    ///
+    /// # Arguments
+    /// * `endpoint` - The API endpoint path
+    /// * `request` - The request parameters
+    /// * `endpoint_type` - The endpoint type for rate limiting
+    ///
+    /// # Returns
+    /// The deserialized response or an error
+    pub async fn send_put_request<T, R>(
+        &self,
+        endpoint: &str,
+        request: R,
+        endpoint_type: EndpointType,
+    ) -> RestResult<T>
+    where
+        T: serde::de::DeserializeOwned,
+        R: Serialize,
+    {
+        self.send_signed_request(endpoint, reqwest::Method::PUT, request, endpoint_type).await
+    }
+
+    /// High-performance DELETE request method
+    ///
+    /// # Arguments
+    /// * `endpoint` - The API endpoint path
+    /// * `request` - The request parameters
+    /// * `endpoint_type` - The endpoint type for rate limiting
+    ///
+    /// # Returns
+    /// The deserialized response or an error
+    pub async fn send_delete_request<T, R>(
+        &self,
+        endpoint: &str,
+        request: R,
+        endpoint_type: EndpointType,
+    ) -> RestResult<T>
+    where
+        T: serde::de::DeserializeOwned,
+        R: Serialize,
+    {
+        self.send_signed_request(endpoint, reqwest::Method::DELETE, request, endpoint_type).await
+    }
 }
 
 #[cfg(test)]

@@ -107,9 +107,7 @@ impl RestClient {
         &self,
         request: GetOpenOrdersRequest,
     ) -> RestResult<GetOpenOrdersResponse> {
-        self.send_signed_request(
-            "/v5/order/realtime",
-            reqwest::Method::GET,
+        self.send_get_request("/v5/order/realtime",
             request,
             EndpointType::Trade,
         )

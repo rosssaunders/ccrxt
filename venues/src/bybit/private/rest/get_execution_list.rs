@@ -103,9 +103,7 @@ impl RestClient {
         &self,
         request: GetExecutionListRequest,
     ) -> RestResult<GetExecutionListResponse> {
-        self.send_signed_request(
-            GET_EXECUTION_LIST_ENDPOINT,
-            reqwest::Method::GET,
+        self.send_get_request(GET_EXECUTION_LIST_ENDPOINT,
             request,
             EndpointType::Trade,
         )

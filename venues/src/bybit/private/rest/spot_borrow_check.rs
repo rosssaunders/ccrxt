@@ -48,9 +48,7 @@ impl RestClient {
         &self,
         request: SpotBorrowCheckRequest,
     ) -> RestResult<SpotBorrowCheckResponse> {
-        self.send_signed_request(
-            "/v5/order/spot-borrow-check",
-            reqwest::Method::GET,
+        self.send_get_request("/v5/order/spot-borrow-check",
             request,
             EndpointType::Trade,
         )

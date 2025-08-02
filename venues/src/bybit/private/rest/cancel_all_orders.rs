@@ -99,9 +99,7 @@ impl RestClient {
         &self,
         request: CancelAllOrdersRequest,
     ) -> RestResult<CancelAllOrdersResponse> {
-        self.send_signed_request(
-            CANCEL_ALL_ORDERS_ENDPOINT,
-            reqwest::Method::POST,
+        self.send_post_request(CANCEL_ALL_ORDERS_ENDPOINT,
             request,
             EndpointType::Trade,
         )
