@@ -46,11 +46,7 @@ impl RestClient {
         &self,
         request: &GetCommissionRateRequest,
     ) -> RestResult<GetCommissionRateResponse> {
-        self.send_request(
-            COMMISSION_RATE_ENDPOINT,
-            reqwest::Method::GET,
-            Some(request),
-            EndpointType::Trading,
+        self.send_get_signed_request(COMMISSION_RATE_ENDPOINT, request, EndpointType::Trading,
         )
         .await
     }

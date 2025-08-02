@@ -46,11 +46,7 @@ impl RestClient {
         &self,
         request: &CancelOcoOrderRequest,
     ) -> RestResult<CancelOcoOrderResponse> {
-        self.send_request(
-            CANCEL_OCO_ORDER_ENDPOINT,
-            reqwest::Method::POST,
-            Some(request),
-            EndpointType::Trading,
+        self.send_post_signed_request(CANCEL_OCO_ORDER_ENDPOINT, request, EndpointType::Trading,
         )
         .await
     }

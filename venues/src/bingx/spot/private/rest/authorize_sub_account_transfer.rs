@@ -56,11 +56,7 @@ impl RestClient {
         &self,
         request: &AuthorizeSubAccountTransferRequest,
     ) -> RestResult<AuthorizeSubAccountTransferResponse> {
-        self.send_request(
-            AUTHORIZE_SUB_ACCOUNT_TRANSFER_ENDPOINT,
-            reqwest::Method::POST,
-            Some(request),
-            EndpointType::Account,
+        self.send_post_signed_request(AUTHORIZE_SUB_ACCOUNT_TRANSFER_ENDPOINT, request, EndpointType::Account,
         )
         .await
     }

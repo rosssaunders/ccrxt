@@ -55,11 +55,7 @@ impl RestClient {
         &self,
         request: &QueryTransferableCoinsRequest,
     ) -> RestResult<QueryTransferableCoinsResponse> {
-        self.send_request(
-            TRANSFERABLE_COINS_ENDPOINT,
-            reqwest::Method::GET,
-            Some(request),
-            EndpointType::Account,
+        self.send_get_signed_request(TRANSFERABLE_COINS_ENDPOINT, request, EndpointType::Account,
         )
         .await
     }

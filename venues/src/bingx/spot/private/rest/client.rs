@@ -245,6 +245,118 @@ impl RestClient {
         )
         .await
     }
+
+    /// Send a signed GET request (high-performance)
+    ///
+    /// # Arguments
+    /// * `endpoint` - The API endpoint path
+    /// * `params` - Parameters to include in the request
+    /// * `endpoint_type` - The endpoint type for rate limiting
+    ///
+    /// # Returns
+    /// A result containing the parsed response data or an error
+    pub async fn send_get_signed_request<T, P>(
+        &self,
+        endpoint: &str,
+        params: P,
+        endpoint_type: EndpointType,
+    ) -> RestResult<T>
+    where
+        T: DeserializeOwned,
+        P: Serialize,
+    {
+        self.send_request(
+            endpoint,
+            reqwest::Method::GET,
+            Some(&params),
+            endpoint_type,
+        )
+        .await
+    }
+
+    /// Send a signed POST request (high-performance)
+    ///
+    /// # Arguments
+    /// * `endpoint` - The API endpoint path
+    /// * `params` - Parameters to include in the request
+    /// * `endpoint_type` - The endpoint type for rate limiting
+    ///
+    /// # Returns
+    /// A result containing the parsed response data or an error
+    pub async fn send_post_signed_request<T, P>(
+        &self,
+        endpoint: &str,
+        params: P,
+        endpoint_type: EndpointType,
+    ) -> RestResult<T>
+    where
+        T: DeserializeOwned,
+        P: Serialize,
+    {
+        self.send_request(
+            endpoint,
+            reqwest::Method::POST,
+            Some(&params),
+            endpoint_type,
+        )
+        .await
+    }
+
+    /// Send a signed PUT request (high-performance)
+    ///
+    /// # Arguments
+    /// * `endpoint` - The API endpoint path
+    /// * `params` - Parameters to include in the request
+    /// * `endpoint_type` - The endpoint type for rate limiting
+    ///
+    /// # Returns
+    /// A result containing the parsed response data or an error
+    pub async fn send_put_signed_request<T, P>(
+        &self,
+        endpoint: &str,
+        params: P,
+        endpoint_type: EndpointType,
+    ) -> RestResult<T>
+    where
+        T: DeserializeOwned,
+        P: Serialize,
+    {
+        self.send_request(
+            endpoint,
+            reqwest::Method::PUT,
+            Some(&params),
+            endpoint_type,
+        )
+        .await
+    }
+
+    /// Send a signed DELETE request (high-performance)
+    ///
+    /// # Arguments
+    /// * `endpoint` - The API endpoint path
+    /// * `params` - Parameters to include in the request
+    /// * `endpoint_type` - The endpoint type for rate limiting
+    ///
+    /// # Returns
+    /// A result containing the parsed response data or an error
+    pub async fn send_delete_signed_request<T, P>(
+        &self,
+        endpoint: &str,
+        params: P,
+        endpoint_type: EndpointType,
+    ) -> RestResult<T>
+    where
+        T: DeserializeOwned,
+        P: Serialize,
+    {
+        self.send_request(
+            endpoint,
+            reqwest::Method::DELETE,
+            Some(&params),
+            endpoint_type,
+        )
+        .await
+    }
 }
 
 #[cfg(test)]

@@ -104,11 +104,7 @@ impl RestClient {
         &self,
         request: &CancelMultipleOrdersRequest,
     ) -> RestResult<CancelMultipleOrdersResponse> {
-        self.send_request(
-            CANCEL_MULTIPLE_ORDERS_ENDPOINT,
-            reqwest::Method::POST,
-            Some(request),
-            EndpointType::Trading,
+        self.send_post_signed_request(CANCEL_MULTIPLE_ORDERS_ENDPOINT, request, EndpointType::Trading,
         )
         .await
     }

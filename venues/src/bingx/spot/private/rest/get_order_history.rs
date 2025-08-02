@@ -133,11 +133,7 @@ impl RestClient {
         &self,
         request: &GetOrderHistoryRequest,
     ) -> RestResult<GetOrderHistoryResponse> {
-        self.send_request(
-            ORDER_HISTORY_ENDPOINT,
-            reqwest::Method::GET,
-            Some(request),
-            EndpointType::Trading,
+        self.send_get_signed_request(ORDER_HISTORY_ENDPOINT, request, EndpointType::Trading,
         )
         .await
     }

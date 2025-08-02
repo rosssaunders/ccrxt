@@ -117,11 +117,7 @@ impl RestClient {
         &self,
         request: &GetWithdrawRecordsRequest,
     ) -> RestResult<GetWithdrawRecordsResponse> {
-        self.send_request(
-            WITHDRAW_RECORDS_ENDPOINT,
-            reqwest::Method::GET,
-            Some(request),
-            EndpointType::AccountApiGroup2,
+        self.send_get_signed_request(WITHDRAW_RECORDS_ENDPOINT, request, EndpointType::AccountApiGroup2,
         )
         .await
     }

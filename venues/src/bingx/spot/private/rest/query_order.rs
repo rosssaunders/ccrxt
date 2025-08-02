@@ -108,11 +108,7 @@ impl RestClient {
     /// # API Documentation
     /// - [docs]: https://bingx-api.github.io/docs/#/en-us/spot/trade-api.html#Query%20Order%20details
     pub async fn query_order(&self, request: QueryOrderRequest) -> RestResult<OrderDetails> {
-        self.send_request(
-            QUERY_ORDER_ENDPOINT,
-            reqwest::Method::GET,
-            Some(&request),
-            EndpointType::Trading,
+        self.send_get_signed_request(QUERY_ORDER_ENDPOINT, &request, EndpointType::Trading,
         )
         .await
     }

@@ -75,11 +75,7 @@ impl RestClient {
         &self,
         request: &GetDepositAddressRequest,
     ) -> RestResult<GetDepositAddressResponse> {
-        self.send_request(
-            DEPOSIT_ADDRESS_ENDPOINT,
-            reqwest::Method::GET,
-            Some(request),
-            EndpointType::AccountApiGroup2,
+        self.send_get_signed_request(DEPOSIT_ADDRESS_ENDPOINT, request, EndpointType::AccountApiGroup2,
         )
         .await
     }

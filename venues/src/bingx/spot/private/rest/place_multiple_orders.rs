@@ -109,11 +109,7 @@ impl RestClient {
         &self,
         request: &PlaceMultipleOrdersRequest,
     ) -> RestResult<PlaceMultipleOrdersResponse> {
-        self.send_request(
-            PLACE_MULTIPLE_ORDERS_ENDPOINT,
-            reqwest::Method::POST,
-            Some(request),
-            EndpointType::Trading,
+        self.send_post_signed_request(PLACE_MULTIPLE_ORDERS_ENDPOINT, request, EndpointType::Trading,
         )
         .await
     }

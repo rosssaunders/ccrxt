@@ -53,11 +53,7 @@ impl RestClient {
         &self,
         request: &CancelAllAfterRequest,
     ) -> RestResult<CancelAllAfterResponse> {
-        self.send_request(
-            CANCEL_ALL_AFTER_ENDPOINT,
-            reqwest::Method::POST,
-            Some(request),
-            EndpointType::Trading,
+        self.send_post_signed_request(CANCEL_ALL_AFTER_ENDPOINT, request, EndpointType::Trading,
         )
         .await
     }

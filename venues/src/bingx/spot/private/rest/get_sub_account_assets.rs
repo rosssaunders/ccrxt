@@ -54,11 +54,7 @@ impl RestClient {
         &self,
         request: &GetSubAccountAssetsRequest,
     ) -> RestResult<GetSubAccountAssetsResponse> {
-        self.send_request(
-            SUB_ACCOUNT_ASSETS_ENDPOINT,
-            reqwest::Method::GET,
-            Some(request),
-            EndpointType::Account,
+        self.send_get_signed_request(SUB_ACCOUNT_ASSETS_ENDPOINT, request, EndpointType::Account,
         )
         .await
     }

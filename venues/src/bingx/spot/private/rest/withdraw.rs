@@ -75,11 +75,7 @@ impl RestClient {
     /// # API Documentation
     /// - [docs]: https://bingx-api.github.io/docs/#/en-us/spot/wallet-api.html#Withdraw
     pub async fn withdraw(&self, request: WithdrawRequest) -> RestResult<WithdrawResponse> {
-        self.send_request(
-            WITHDRAW_ENDPOINT,
-            reqwest::Method::POST,
-            Some(&request),
-            EndpointType::AccountApiGroup2,
+        self.send_post_signed_request(WITHDRAW_ENDPOINT, &request, EndpointType::AccountApiGroup2,
         )
         .await
     }

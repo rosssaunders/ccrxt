@@ -94,11 +94,7 @@ impl RestClient {
         &self,
         request: &InternalTransferRecordsRequest,
     ) -> RestResult<InternalTransferRecordsResponse> {
-        self.send_request(
-            INTERNAL_TRANSFER_RECORDS_ENDPOINT,
-            reqwest::Method::GET,
-            Some(request),
-            EndpointType::Account,
+        self.send_get_signed_request(INTERNAL_TRANSFER_RECORDS_ENDPOINT, request, EndpointType::Account,
         )
         .await
     }

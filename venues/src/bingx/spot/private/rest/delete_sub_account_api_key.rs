@@ -53,11 +53,7 @@ impl RestClient {
         &self,
         request: &DeleteSubAccountApiKeyRequest,
     ) -> RestResult<DeleteSubAccountApiKeyResponse> {
-        self.send_request(
-            DELETE_SUB_ACCOUNT_API_KEY_ENDPOINT,
-            reqwest::Method::POST,
-            Some(request),
-            EndpointType::Account,
+        self.send_post_signed_request(DELETE_SUB_ACCOUNT_API_KEY_ENDPOINT, request, EndpointType::Account,
         )
         .await
     }

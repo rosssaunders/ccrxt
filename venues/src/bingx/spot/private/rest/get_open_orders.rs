@@ -93,11 +93,7 @@ impl RestClient {
         &self,
         request: &GetOpenOrdersRequest,
     ) -> RestResult<GetOpenOrdersResponse> {
-        self.send_request(
-            OPEN_ORDERS_ENDPOINT,
-            reqwest::Method::GET,
-            Some(request),
-            EndpointType::Trading,
+        self.send_get_signed_request(OPEN_ORDERS_ENDPOINT, request, EndpointType::Trading,
         )
         .await
     }
