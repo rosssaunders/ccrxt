@@ -51,8 +51,7 @@ pub mod public {
     pub use self::rest::{RestClient as PublicRestClient, exchange_info::*};
 }
 
-use crate::binance::shared::RateLimits;
-use crate::binance::shared::VenueConfig;
+use crate::binance::shared::{RateLimits, VenueConfig};
 
 mod private {
     pub mod rest;
@@ -90,7 +89,7 @@ impl ResponseHeaders {
     /// Create ResponseHeaders from shared ResponseHeaders
     pub fn from_shared(shared: crate::binance::shared::client::ResponseHeaders) -> Self {
         let mut values = std::collections::HashMap::new();
-        
+
         // Iterate through all headers from the shared response
         for (header_name, header_value) in shared.headers.iter() {
             // Try to parse the header name as a RateLimitHeader
@@ -101,7 +100,7 @@ impl ResponseHeaders {
                 }
             }
         }
-        
+
         Self { values }
     }
 }

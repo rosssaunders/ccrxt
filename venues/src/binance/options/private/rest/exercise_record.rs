@@ -107,12 +107,7 @@ impl RestClient {
         &self,
         params: ExerciseRecordRequest,
     ) -> RestResult<Vec<ExerciseRecord>> {
-        self.send_get_signed_request(
-            GET_EXERCISE_RECORD_ENDPOINT,
-            params,
-            1,
-            false,
-        )
-        .await
+        self.send_get_signed_request(GET_EXERCISE_RECORD_ENDPOINT, params, 1, false)
+            .await
     }
 }

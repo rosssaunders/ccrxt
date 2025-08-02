@@ -97,8 +97,14 @@ mod tests {
     #[test]
     fn test_different_contract_pairs() {
         let contracts = vec![
-            "BTC_USDT", "ETH_USDT", "ADA_USDT", "SOL_USDT",
-            "MATIC_USDT", "DOT_USDT", "AVAX_USDT", "LINK_USDT"
+            "BTC_USDT",
+            "ETH_USDT",
+            "ADA_USDT",
+            "SOL_USDT",
+            "MATIC_USDT",
+            "DOT_USDT",
+            "AVAX_USDT",
+            "LINK_USDT",
         ];
 
         for contract in contracts {
@@ -152,10 +158,13 @@ mod tests {
         ];
 
         for (rate, _description) in positive_rates {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "t": 1640995200,
                 "r": "{}"
-            }}"#, rate);
+            }}"#,
+                rate
+            );
 
             let funding_rate: FuturesFundingRate = serde_json::from_str(&json).unwrap();
             assert_eq!(funding_rate.r, rate);
@@ -175,10 +184,13 @@ mod tests {
         ];
 
         for (rate, _description) in negative_rates {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "t": 1640995200,
                 "r": "{}"
-            }}"#, rate);
+            }}"#,
+                rate
+            );
 
             let funding_rate: FuturesFundingRate = serde_json::from_str(&json).unwrap();
             assert_eq!(funding_rate.r, rate);
@@ -213,10 +225,13 @@ mod tests {
         ];
 
         for (rate, timestamp, _scenario) in btc_scenarios {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "t": {},
                 "r": "{}"
-            }}"#, timestamp, rate);
+            }}"#,
+                timestamp, rate
+            );
 
             let funding_rate: FuturesFundingRate = serde_json::from_str(&json).unwrap();
             assert_eq!(funding_rate.t, timestamp);
@@ -237,10 +252,13 @@ mod tests {
         ];
 
         for (rate, timestamp, _scenario) in eth_scenarios {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "t": {},
                 "r": "{}"
-            }}"#, timestamp, rate);
+            }}"#,
+                timestamp, rate
+            );
 
             let funding_rate: FuturesFundingRate = serde_json::from_str(&json).unwrap();
             assert_eq!(funding_rate.t, timestamp);
@@ -262,10 +280,13 @@ mod tests {
         ];
 
         for rate in precision_rates {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "t": 1640995200,
                 "r": "{}"
-            }}"#, rate);
+            }}"#,
+                rate
+            );
 
             let funding_rate: FuturesFundingRate = serde_json::from_str(&json).unwrap();
             assert_eq!(funding_rate.r, rate);
@@ -286,10 +307,13 @@ mod tests {
         ];
 
         for (timestamp, _description) in timestamps {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "t": {},
                 "r": "0.000075"
-            }}"#, timestamp);
+            }}"#,
+                timestamp
+            );
 
             let funding_rate: FuturesFundingRate = serde_json::from_str(&json).unwrap();
             assert_eq!(funding_rate.t, timestamp);
@@ -311,10 +335,13 @@ mod tests {
 
         let mut prev_timestamp = 0;
         for (rate, timestamp, _phase) in rate_sequence {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "t": {},
                 "r": "{}"
-            }}"#, timestamp, rate);
+            }}"#,
+                timestamp, rate
+            );
 
             let funding_rate: FuturesFundingRate = serde_json::from_str(&json).unwrap();
             assert_eq!(funding_rate.t, timestamp);
@@ -339,10 +366,13 @@ mod tests {
         ];
 
         for (rate, _scenario) in extreme_scenarios {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "t": 1640995200,
                 "r": "{}"
-            }}"#, rate);
+            }}"#,
+                rate
+            );
 
             let funding_rate: FuturesFundingRate = serde_json::from_str(&json).unwrap();
             assert_eq!(funding_rate.r, rate);
@@ -364,10 +394,13 @@ mod tests {
         ];
 
         for (rate, _condition) in market_scenarios {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "t": 1640995200,
                 "r": "{}"
-            }}"#, rate);
+            }}"#,
+                rate
+            );
 
             let funding_rate: FuturesFundingRate = serde_json::from_str(&json).unwrap();
             let rate_val: f64 = funding_rate.r.parse().unwrap();
@@ -377,7 +410,7 @@ mod tests {
                 // High positive rate indicates long bias
                 assert!(rate_val > 0.0001);
             } else if rate_val < -0.0001 {
-                // High negative rate indicates short bias  
+                // High negative rate indicates short bias
                 assert!(rate_val < -0.0001);
             } else {
                 // Near zero indicates balanced market
@@ -436,7 +469,6 @@ mod tests {
             ("0.000350", 1640995200 + 28800),
             ("-0.000100", 1640995200 + 57600),
             ("0.000075", 1640995200 + 86400),
-            
             // Stable period
             ("0.000050", 1641081600),
             ("0.000055", 1641081600 + 28800),
@@ -445,10 +477,13 @@ mod tests {
         ];
 
         for (rate, timestamp) in historical_patterns {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "t": {},
                 "r": "{}"
-            }}"#, timestamp, rate);
+            }}"#,
+                timestamp, rate
+            );
 
             let funding_rate: FuturesFundingRate = serde_json::from_str(&json).unwrap();
             assert_eq!(funding_rate.t, timestamp);
@@ -466,7 +501,11 @@ mod tests {
         let contract_rates = vec![
             ("BTC_USDT", "0.000075", "BTC typically moderate rates"),
             ("ETH_USDT", "0.000125", "ETH might have higher rates"),
-            ("ADA_USDT", "0.000200", "Altcoins might have higher volatility"),
+            (
+                "ADA_USDT",
+                "0.000200",
+                "Altcoins might have higher volatility",
+            ),
             ("SOL_USDT", "-0.000150", "Some alts might be negative"),
         ];
 
@@ -481,10 +520,13 @@ mod tests {
             assert_eq!(json["contract"], contract);
 
             // Test the corresponding funding rate
-            let funding_json = format!(r#"{{
+            let funding_json = format!(
+                r#"{{
                 "t": 1640995200,
                 "r": "{}"
-            }}"#, rate);
+            }}"#,
+                rate
+            );
 
             let funding_rate: FuturesFundingRate = serde_json::from_str(&funding_json).unwrap();
             assert_eq!(funding_rate.r, rate);

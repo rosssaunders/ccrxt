@@ -1,7 +1,7 @@
-use super::UsdmClient;
-use super::new_order::NewOrderRequest;
-use crate::binance::usdm::RestResult;
 use serde::{Deserialize, Serialize};
+
+use super::{UsdmClient, new_order::NewOrderRequest};
+use crate::binance::usdm::RestResult;
 
 /// Endpoint path for Binance USDM Test Order
 const TEST_ORDER_ENDPOINT: &str = "/fapi/v1/order/test";
@@ -28,13 +28,8 @@ impl UsdmClient {
     /// # Returns
     /// Empty response if successful
     pub async fn new_order_test(&self, request: NewOrderRequest) -> RestResult<TestOrderResponse> {
-        self.send_post_signed_request(
-            TEST_ORDER_ENDPOINT,
-            request,
-            1,
-            false,
-        )
-        .await
+        self.send_post_signed_request(TEST_ORDER_ENDPOINT, request, 1, false)
+            .await
     }
 }
 

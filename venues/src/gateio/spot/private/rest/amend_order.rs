@@ -146,7 +146,7 @@ mod tests {
         };
 
         let json = serde_json::to_value(&request).unwrap();
-        
+
         // Optional fields should be omitted when None
         let obj = json.as_object().unwrap();
         assert!(!obj.contains_key("amount"));
@@ -157,7 +157,7 @@ mod tests {
     #[test]
     fn test_amend_order_request_different_amounts() {
         let amounts = vec!["0.001", "0.1", "1.0", "10.5", "100.123456"];
-        
+
         for amount in amounts {
             let request = AmendOrderRequest {
                 amount: Some(amount.to_string()),
@@ -173,7 +173,7 @@ mod tests {
     #[test]
     fn test_amend_order_request_different_prices() {
         let prices = vec!["100", "1000.5", "30000", "50000.123", "999999.9999"];
-        
+
         for price in prices {
             let request = AmendOrderRequest {
                 amount: None,
@@ -190,12 +190,12 @@ mod tests {
     fn test_amend_order_request_different_amend_texts() {
         let texts = vec![
             "increase_amount",
-            "decrease_price", 
+            "decrease_price",
             "urgent_update",
             "client_modification",
-            "algo_adjustment"
+            "algo_adjustment",
         ];
-        
+
         for text in texts {
             let request = AmendOrderRequest {
                 amount: None,
@@ -211,12 +211,12 @@ mod tests {
     #[test]
     fn test_amend_order_request_precision_amounts() {
         let precision_amounts = vec![
-            "0.00000001",  // 8 decimal places
-            "1.12345678",  // Max precision BTC
-            "0.123456",    // 6 decimal places
-            "1000.00001",  // Large amount with precision
+            "0.00000001", // 8 decimal places
+            "1.12345678", // Max precision BTC
+            "0.123456",   // 6 decimal places
+            "1000.00001", // Large amount with precision
         ];
-        
+
         for amount in precision_amounts {
             let request = AmendOrderRequest {
                 amount: Some(amount.to_string()),
@@ -233,12 +233,12 @@ mod tests {
     #[test]
     fn test_amend_order_request_precision_prices() {
         let precision_prices = vec![
-            "30000.01",      // 2 decimal places
-            "30000.12345",   // 5 decimal places  
-            "1.00000001",    // Small price with precision
-            "99999.999999",  // High precision
+            "30000.01",     // 2 decimal places
+            "30000.12345",  // 5 decimal places
+            "1.00000001",   // Small price with precision
+            "99999.999999", // High precision
         ];
-        
+
         for price in precision_prices {
             let request = AmendOrderRequest {
                 amount: Some("1.0".to_string()),
@@ -314,7 +314,7 @@ mod tests {
             "urgent!update",
             "order#123",
         ];
-        
+
         for text in special_texts {
             let request = AmendOrderRequest {
                 amount: Some("1.0".to_string()),
@@ -369,14 +369,17 @@ mod tests {
     #[test]
     fn test_amend_order_endpoint_path_construction() {
         let order_ids = vec!["12345678", "87654321", "11111111", "order_abc123"];
-        
+
         for order_id in order_ids {
             let expected_endpoint = format!("/spot/orders/{}", order_id);
-            
+
             // Verify the path construction logic
             assert!(expected_endpoint.starts_with("/spot/orders/"));
             assert!(expected_endpoint.ends_with(order_id));
-            assert_eq!(expected_endpoint.len(), "/spot/orders/".len() + order_id.len());
+            assert_eq!(
+                expected_endpoint.len(),
+                "/spot/orders/".len() + order_id.len()
+            );
         }
     }
 
@@ -387,13 +390,13 @@ mod tests {
             price: Some("32000".to_string()),
             amend_text: Some("test_update".to_string()),
         };
-        
+
         let currency_pair = "BTC_USDT";
-        
+
         // Simulate the body construction logic
         let mut body = serde_json::to_value(&amendment).unwrap();
         body["currency_pair"] = serde_json::Value::String(currency_pair.to_string());
-        
+
         // Verify the body contains all expected fields
         assert_eq!(body["amount"], "1.5");
         assert_eq!(body["price"], "32000");
@@ -408,17 +411,17 @@ mod tests {
             price: None,
             amend_text: None,
         };
-        
+
         let currency_pair = "ETH_USDT";
-        
+
         // Simulate the body construction logic
         let mut body = serde_json::to_value(&amendment).unwrap();
         body["currency_pair"] = serde_json::Value::String(currency_pair.to_string());
-        
+
         // Verify the body contains expected fields
         assert_eq!(body["amount"], "0.1");
         assert_eq!(body["currency_pair"], "ETH_USDT");
-        
+
         // Verify optional fields are not present
         let obj = body.as_object().unwrap();
         assert!(!obj.contains_key("price"));
@@ -466,7 +469,7 @@ mod tests {
         let json = serde_json::to_value(&stablecoin_amendment).unwrap();
         assert_eq!(json["amount"], "1000.0");
         assert_eq!(json["price"], "1.0001");
-        
+
         let price: f64 = json["price"].as_str().unwrap().parse().unwrap();
         assert!(price > 0.999 && price < 1.001); // Should be close to 1.0
     }
@@ -479,7 +482,7 @@ mod tests {
             ("MATIC_USDT", "0.8765", "100.0"),
             ("LINK_USDT", "18.99", "15.25"),
         ];
-        
+
         for (pair, price, amount) in altcoin_pairs {
             let request = AmendOrderRequest {
                 amount: Some(amount.to_string()),
@@ -502,12 +505,12 @@ mod tests {
         };
 
         let serialized = serde_urlencoded::to_string(&request).unwrap();
-        
+
         // All fields should be present
         assert!(serialized.contains("amount=1.0"));
         assert!(serialized.contains("price=30000"));
         assert!(serialized.contains("amend_text=test"));
-        
+
         // Should be connected with &
         let field_count = serialized.matches('&').count();
         assert_eq!(field_count, 2); // Two & symbols for three fields
@@ -517,15 +520,15 @@ mod tests {
     fn test_amend_order_request_partial_updates() {
         // Test all possible combinations of partial updates
         let partial_tests = vec![
-            (Some("1.0"), None, None),                                          // Amount only
-            (None, Some("30000"), None),                                        // Price only
-            (None, None, Some("text_only")),                                    // Text only
-            (Some("1.0"), Some("30000"), None),                                 // Amount + Price
-            (Some("1.0"), None, Some("amount_text")),                           // Amount + Text
-            (None, Some("30000"), Some("price_text")),                          // Price + Text
-            (Some("1.0"), Some("30000"), Some("full_update")),                  // All fields
+            (Some("1.0"), None, None),                         // Amount only
+            (None, Some("30000"), None),                       // Price only
+            (None, None, Some("text_only")),                   // Text only
+            (Some("1.0"), Some("30000"), None),                // Amount + Price
+            (Some("1.0"), None, Some("amount_text")),          // Amount + Text
+            (None, Some("30000"), Some("price_text")),         // Price + Text
+            (Some("1.0"), Some("30000"), Some("full_update")), // All fields
         ];
-        
+
         for (amount, price, text) in partial_tests {
             let request = AmendOrderRequest {
                 amount: amount.map(|s| s.to_string()),
@@ -535,7 +538,7 @@ mod tests {
 
             let json = serde_json::to_value(&request).unwrap();
             let obj = json.as_object().unwrap();
-            
+
             // Verify only provided fields are present
             assert_eq!(obj.contains_key("amount"), amount.is_some());
             assert_eq!(obj.contains_key("price"), price.is_some());
@@ -546,21 +549,26 @@ mod tests {
     #[test]
     fn test_amend_order_request_currency_pair_scenarios() {
         let currency_pairs = vec![
-            "BTC_USDT", "ETH_BTC", "BNB_USDT", "SOL_USDC", 
-            "USDC_USDT", "BTC3L_USDT", "ETH3S_USDT"
+            "BTC_USDT",
+            "ETH_BTC",
+            "BNB_USDT",
+            "SOL_USDC",
+            "USDC_USDT",
+            "BTC3L_USDT",
+            "ETH3S_USDT",
         ];
-        
+
         for pair in currency_pairs {
             let amendment = AmendOrderRequest {
                 amount: Some("1.0".to_string()),
                 price: Some("100".to_string()),
                 amend_text: Some("test".to_string()),
             };
-            
+
             // Simulate body construction with different currency pairs
             let mut body = serde_json::to_value(&amendment).unwrap();
             body["currency_pair"] = serde_json::Value::String(pair.to_string());
-            
+
             assert_eq!(body["currency_pair"], pair);
             assert_eq!(body["amount"], "1.0");
         }

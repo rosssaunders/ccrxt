@@ -155,10 +155,8 @@ impl RestClient {
             url.push_str(&query_string.join("&"));
         }
 
-        self.send_get_authenticated_request(&url, (),
-            EndpointType::PrivateWalletTransactions,
-        )
-        .await
+        self.send_get_authenticated_request(&url, (), EndpointType::PrivateWalletTransactions)
+            .await
     }
 }
 

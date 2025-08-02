@@ -3,7 +3,6 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, InstrumentType, RestResult};
 
-
 const ACCOUNT_INTEREST_ACCRUED_ENDPOINT: &str = "api/v5/account/interest-accrued";
 /// Request to get interest accrued
 #[derive(Debug, Clone, Serialize)]

@@ -1,8 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use crate::deribit::{EndpointType, JsonRpcResult, RestResult, enums::Currency};
-
 use super::RestClient;
+use crate::deribit::{EndpointType, JsonRpcResult, RestResult, enums::Currency};
 
 const LAST_SETTLEMENTS_BY_CURRENCY_ENDPOINT: &str = "public/get_last_settlements_by_currency";
 

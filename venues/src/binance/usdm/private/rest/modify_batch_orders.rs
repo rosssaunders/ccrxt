@@ -1,6 +1,7 @@
+use std::borrow::Cow;
+
 use reqwest::Method;
 use serde::{Deserialize, Serialize};
-use std::borrow::Cow;
 
 use super::UsdmClient;
 use crate::binance::usdm::{
@@ -162,9 +163,7 @@ impl UsdmClient {
         &self,
         request: ModifyBatchOrdersRequest,
     ) -> RestResult<Vec<ModifyBatchOrderResponse>> {
-        self.send_put_signed_request(
-            MODIFY_BATCH_ORDERS_ENDPOINT,
-            request, 5, true)
+        self.send_put_signed_request(MODIFY_BATCH_ORDERS_ENDPOINT, request, 5, true)
             .await
     }
 }

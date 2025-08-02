@@ -113,10 +113,10 @@ mod tests {
         assert_eq!(resp[1].brackets[0].initial_leverage, 100);
     }
 }
-use crate::binance::usdm::RestResult;
 use serde::{Deserialize, Serialize};
 
 use super::UsdmClient;
+use crate::binance::usdm::RestResult;
 
 const LEVERAGE_BRACKET_ENDPOINT: &str = "/fapi/v1/leverageBracket";
 
@@ -196,12 +196,7 @@ impl UsdmClient {
         params: GetLeverageBracketRequest,
     ) -> RestResult<Vec<LeverageBracketResponse>> {
         let weight = if params.symbol.is_some() { 1 } else { 40 };
-        self.send_get_signed_request(
-            LEVERAGE_BRACKET_ENDPOINT,
-            params,
-            weight,
-            false,
-        )
-        .await
+        self.send_get_signed_request(LEVERAGE_BRACKET_ENDPOINT, params, weight, false)
+            .await
     }
 }

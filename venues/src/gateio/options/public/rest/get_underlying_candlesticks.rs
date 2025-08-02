@@ -1,7 +1,6 @@
 use serde::Serialize;
 
-use super::RestClient;
-use super::candlestick::UnderlyingCandlestick;
+use super::{RestClient, candlestick::UnderlyingCandlestick};
 
 const OPTIONS_UNDERLYING_CANDLESTICKS_ENDPOINT: &str = "/options/underlying/candlesticks";
 
@@ -103,7 +102,7 @@ mod tests {
     #[test]
     fn test_underlying_candlesticks_request_underlyings() {
         let underlyings = vec!["BTC_USDT", "ETH_USDT", "BNB_USDT", "SOL_USDT", "ADA_USDT"];
-        
+
         for underlying in underlyings {
             let request = UnderlyingCandlesticksRequest {
                 underlying: underlying.to_string(),
@@ -120,8 +119,10 @@ mod tests {
 
     #[test]
     fn test_underlying_candlesticks_request_intervals() {
-        let intervals = vec!["10s", "1m", "5m", "15m", "30m", "1h", "4h", "8h", "1d", "7d", "30d"];
-        
+        let intervals = vec![
+            "10s", "1m", "5m", "15m", "30m", "1h", "4h", "8h", "1d", "7d", "30d",
+        ];
+
         for interval in intervals {
             let request = UnderlyingCandlesticksRequest {
                 underlying: "BTC_USDT".to_string(),
@@ -139,7 +140,7 @@ mod tests {
     #[test]
     fn test_underlying_candlesticks_request_limits() {
         let limits = vec![1, 50, 100, 500, 1000];
-        
+
         for limit in limits {
             let request = UnderlyingCandlesticksRequest {
                 underlying: "BTC_USDT".to_string(),
@@ -156,7 +157,10 @@ mod tests {
 
     #[test]
     fn test_underlying_candlesticks_endpoint() {
-        assert_eq!(OPTIONS_UNDERLYING_CANDLESTICKS_ENDPOINT, "/options/underlying/candlesticks");
+        assert_eq!(
+            OPTIONS_UNDERLYING_CANDLESTICKS_ENDPOINT,
+            "/options/underlying/candlesticks"
+        );
     }
 
     #[test]

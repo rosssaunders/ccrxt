@@ -1,12 +1,15 @@
-use reqwest::Method;
-use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
 
+use reqwest::Method;
+use serde::{Deserialize, Serialize};
+
 use super::UsdmClient;
-use crate::binance::usdm::RestResult;
-use crate::binance::usdm::enums::{
-    OrderSide, OrderStatus, OrderType, PositionSide, PriceMatch, SelfTradePreventionMode,
-    TimeInForce, WorkingType,
+use crate::binance::usdm::{
+    RestResult,
+    enums::{
+        OrderSide, OrderStatus, OrderType, PositionSide, PriceMatch, SelfTradePreventionMode,
+        TimeInForce, WorkingType,
+    },
 };
 
 /// Endpoint path for cancelling multiple orders in a single batch for USDM futures.
@@ -168,20 +171,18 @@ impl UsdmClient {
         &self,
         request: CancelBatchOrdersRequest,
     ) -> RestResult<Vec<CancelBatchOrderResponse>> {
-        self.send_delete_signed_request(
-            CANCEL_BATCH_ORDERS_ENDPOINT,
-            request,
-            1,
-            true,)
-        .await
+        self.send_delete_signed_request(CANCEL_BATCH_ORDERS_ENDPOINT, request, 1, true)
+            .await
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use serde_json::{from_value, json};
     use std::borrow::Cow;
+
+    use serde_json::{from_value, json};
+
+    use super::*;
 
     #[test]
     fn test_cancel_batch_orders_request_serialization() {

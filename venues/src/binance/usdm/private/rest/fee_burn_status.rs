@@ -55,9 +55,7 @@ impl UsdmClient {
         &self,
         request: GetFeeBurnStatusRequest,
     ) -> RestResult<FeeBurnStatusResponse> {
-        self.send_get_signed_request(
-            FEE_BURN_STATUS_ENDPOINT,
-            request, 30, false)
+        self.send_get_signed_request(FEE_BURN_STATUS_ENDPOINT, request, 30, false)
             .await
     }
 }

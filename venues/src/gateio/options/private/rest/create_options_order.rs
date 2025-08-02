@@ -1,7 +1,6 @@
 use serde::Serialize;
 
-use super::RestClient;
-use super::order::OptionsOrder;
+use super::{RestClient, order::OptionsOrder};
 
 const CREATE_OPTIONS_ORDER_ENDPOINT: &str = "/options/orders";
 
@@ -60,7 +59,6 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use super::*;
 
     #[test]

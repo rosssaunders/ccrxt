@@ -1,5 +1,7 @@
-use super::RestClient;
-use super::loan::{BorrowOrRepayRequest, BorrowOrRepayResponse};
+use super::{
+    RestClient,
+    loan::{BorrowOrRepayRequest, BorrowOrRepayResponse},
+};
 
 impl RestClient {
     /// Borrow funds
@@ -30,7 +32,7 @@ mod tests {
     fn test_borrow_creates_correct_request() {
         let currency = "BTC";
         let amount = "0.5";
-        
+
         let request = BorrowOrRepayRequest {
             currency: currency.to_string(),
             amount: amount.to_string(),
@@ -45,7 +47,7 @@ mod tests {
     #[test]
     fn test_borrow_different_currencies() {
         let currencies = vec![("BTC", "0.1"), ("ETH", "1.0"), ("USDT", "1000.0")];
-        
+
         for (currency, amount) in currencies {
             let request = BorrowOrRepayRequest {
                 currency: currency.to_string(),

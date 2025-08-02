@@ -7,11 +7,14 @@
 //! from a restricted location" errors when run from certain locations. This is expected behavior
 //! and indicates the tests are correctly configured to reach the live API.
 
-use reqwest::Client;
 use std::time::Duration;
+
+use reqwest::Client;
 use tokio;
-use venues::binance::shared::{RateLimiter, RateLimits};
-use venues::binance::usdm::PublicRestClient;
+use venues::binance::{
+    shared::{RateLimiter, RateLimits},
+    usdm::PublicRestClient,
+};
 
 /// Helper function to create a test client for public endpoints
 fn create_public_test_client() -> PublicRestClient {

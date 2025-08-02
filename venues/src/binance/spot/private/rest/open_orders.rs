@@ -120,20 +120,16 @@ impl RestClient {
         let request = params.unwrap_or_default();
         let weight = if request.symbol.is_some() { 6 } else { 80 };
 
-        self.send_get_signed_request(
-            GET_OPEN_ORDERS_ENDPOINT,
-            request,
-            weight,
-            false,
-        )
-        .await
+        self.send_get_signed_request(GET_OPEN_ORDERS_ENDPOINT, request, weight, false)
+            .await
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use rust_decimal_macros::dec;
+
+    use super::*;
 
     #[test]
     fn test_open_orders_request_serialization_minimal() {

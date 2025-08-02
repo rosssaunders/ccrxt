@@ -1,5 +1,7 @@
-use super::RestClient;
-use super::unified_mode::{UnifiedCurrenciesRequest, UnifiedCurrency};
+use super::{
+    RestClient,
+    unified_mode::{UnifiedCurrenciesRequest, UnifiedCurrency},
+};
 
 const UNIFIED_CURRENCIES_ENDPOINT: &str = "/unified/currencies";
 
@@ -36,7 +38,7 @@ mod tests {
     #[test]
     fn test_unified_currencies_request_default() {
         let request = UnifiedCurrenciesRequest::default();
-        
+
         let json = serde_json::to_value(&request).unwrap();
         assert!(!json.as_object().unwrap().contains_key("currency"));
     }

@@ -1,8 +1,6 @@
 //! Example demonstrating how to use the HTTP client abstraction
 
-use rest::{HttpClient, Method, RequestBuilder};
-
-use rest::NativeHttpClient;
+use rest::{HttpClient, Method, NativeHttpClient, RequestBuilder};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -15,7 +13,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .build();
 
     let response = http_client.execute(request).await?;
-    
+
     println!("Status: {}", response.status);
     println!("Response: {}", response.text()?);
 
@@ -31,13 +29,16 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         per_page: 10,
     };
 
-    let request = RequestBuilder::new(Method::Get, "https://api.github.com/repos/rust-lang/rust/issues")
-        .header("User-Agent", "rest-example/0.1.0")
-        .query(&params)?
-        .build();
+    let request = RequestBuilder::new(
+        Method::Get,
+        "https://api.github.com/repos/rust-lang/rust/issues",
+    )
+    .header("User-Agent", "rest-example/0.1.0")
+    .query(&params)?
+    .build();
 
     let response = http_client.execute(request).await?;
-    
+
     if response.is_success() {
         // Parse as JSON
         #[derive(serde::Deserialize, Debug)]
@@ -65,11 +66,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         body: "This is a test issue created by the example".to_string(),
     };
 
-    let _request = RequestBuilder::new(Method::Post, "https://api.github.com/repos/owner/repo/issues")
-        .header("User-Agent", "rest-example/0.1.0")
-        .header("Authorization", "token YOUR_GITHUB_TOKEN")
-        .json(&new_issue)?
-        .build();
+    let _request = RequestBuilder::new(
+        Method::Post,
+        "https://api.github.com/repos/owner/repo/issues",
+    )
+    .header("User-Agent", "rest-example/0.1.0")
+    .header("Authorization", "token YOUR_GITHUB_TOKEN")
+    .json(&new_issue)?
+    .build();
 
     // Don't actually execute this request as it would require authentication
     println!("\nWould send POST request to create issue (not executed)");

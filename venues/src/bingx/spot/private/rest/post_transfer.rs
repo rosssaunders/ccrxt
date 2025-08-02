@@ -55,9 +55,8 @@ impl RestClient {
         &self,
         request: &AssetTransferNewRequest,
     ) -> RestResult<AssetTransferNewResponse> {
-        self.send_post_signed_request(ASSET_TRANSFER_NEW_ENDPOINT, request, EndpointType::Trading,
-        )
-        .await
+        self.send_post_signed_request(ASSET_TRANSFER_NEW_ENDPOINT, request, EndpointType::Trading)
+            .await
     }
 }
 

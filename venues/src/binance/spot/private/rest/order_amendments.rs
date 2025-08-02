@@ -91,20 +91,16 @@ impl RestClient {
         &self,
         params: OrderAmendmentsRequest,
     ) -> RestResult<Vec<OrderAmendment>> {
-        self.send_get_signed_request(
-            GET_ORDER_AMENDMENTS_ENDPOINT,
-            params,
-            4,
-            false,
-        )
-        .await
+        self.send_get_signed_request(GET_ORDER_AMENDMENTS_ENDPOINT, params, 4, false)
+            .await
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use rust_decimal_macros::dec;
+
+    use super::*;
 
     #[test]
     fn test_order_amendments_request_minimal_serialization() {

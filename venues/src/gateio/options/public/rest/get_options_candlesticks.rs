@@ -1,7 +1,6 @@
 use serde::Serialize;
 
-use super::RestClient;
-use super::candlestick::OptionsCandlestick;
+use super::{RestClient, candlestick::OptionsCandlestick};
 
 const OPTIONS_CANDLESTICKS_ENDPOINT: &str = "/options/candlesticks";
 
@@ -102,8 +101,10 @@ mod tests {
 
     #[test]
     fn test_options_candlesticks_request_intervals() {
-        let intervals = vec!["10s", "1m", "5m", "15m", "30m", "1h", "4h", "8h", "1d", "7d", "30d"];
-        
+        let intervals = vec![
+            "10s", "1m", "5m", "15m", "30m", "1h", "4h", "8h", "1d", "7d", "30d",
+        ];
+
         for interval in intervals {
             let request = OptionsCandlesticksRequest {
                 contract: "BTC-20240101-50000-C".to_string(),
@@ -121,7 +122,7 @@ mod tests {
     #[test]
     fn test_options_candlesticks_request_limits() {
         let limits = vec![1, 50, 100, 500, 1000];
-        
+
         for limit in limits {
             let request = OptionsCandlesticksRequest {
                 contract: "BTC-20240101-50000-C".to_string(),
@@ -144,7 +145,7 @@ mod tests {
             "BNB-20240301-400-C",
             "SOL-20240315-150-P",
         ];
-        
+
         for contract in contracts {
             let request = OptionsCandlesticksRequest {
                 contract: contract.to_string(),

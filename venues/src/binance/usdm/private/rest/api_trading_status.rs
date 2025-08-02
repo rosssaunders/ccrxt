@@ -72,16 +72,15 @@ impl UsdmClient {
         &self,
         params: GetApiTradingStatusRequest,
     ) -> RestResult<ApiTradingStatusResponse> {
-        self.send_get_signed_request(
-            API_TRADING_STATUS_ENDPOINT,
-            params, 10, false)
+        self.send_get_signed_request(API_TRADING_STATUS_ENDPOINT, params, 10, false)
             .await
     }
 }
 #[cfg(test)]
 mod tests {
-    use super::*;
     use serde_json;
+
+    use super::*;
 
     #[test]
     fn test_get_api_trading_status_request_serialization() {

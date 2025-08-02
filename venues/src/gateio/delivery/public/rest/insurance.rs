@@ -126,13 +126,13 @@ mod tests {
         let mut previous_balance = 0.0;
         for (i, json_str) in entries.iter().enumerate() {
             let insurance: DeliveryInsurance = serde_json::from_str(json_str).unwrap();
-            
+
             if i > 0 {
                 // Insurance fund should be growing
                 assert!(insurance.b > previous_balance);
             }
             previous_balance = insurance.b;
-            
+
             // Verify reasonable insurance fund size
             assert!(insurance.b >= 5000000.0 && insurance.b <= 10000000.0);
         }
@@ -150,13 +150,13 @@ mod tests {
         let mut previous_balance = f64::MAX;
         for (i, json_str) in entries.iter().enumerate() {
             let insurance: DeliveryInsurance = serde_json::from_str(json_str).unwrap();
-            
+
             if i > 0 {
                 // Insurance fund is decreasing (liquidations)
                 assert!(insurance.b < previous_balance);
             }
             previous_balance = insurance.b;
-            
+
             // Fund should still be substantial
             assert!(insurance.b >= 8000000.0);
         }
@@ -174,7 +174,7 @@ mod tests {
         let base_balance = 25000000.0;
         for json_str in entries {
             let insurance: DeliveryInsurance = serde_json::from_str(json_str).unwrap();
-            
+
             // Fund is relatively stable (within 0.1%)
             let variance = ((insurance.b - base_balance) / base_balance).abs();
             assert!(variance < 0.001); // Less than 0.1% variance
@@ -191,7 +191,7 @@ mod tests {
         let insurance: DeliveryInsurance = serde_json::from_str(json).unwrap();
         assert_eq!(insurance.t, 1641024000);
         assert_eq!(insurance.b, 150.75);
-        
+
         // BTC insurance fund should be reasonable
         assert!(insurance.b > 10.0 && insurance.b < 1000.0);
     }
@@ -205,7 +205,7 @@ mod tests {
 
         let insurance: DeliveryInsurance = serde_json::from_str(json).unwrap();
         assert_eq!(insurance.b, 100000000.0); // 100 million
-        
+
         // Very large insurance fund (major exchange)
         assert!(insurance.b >= 100000000.0);
     }
@@ -219,7 +219,7 @@ mod tests {
 
         let insurance: DeliveryInsurance = serde_json::from_str(json).unwrap();
         assert_eq!(insurance.b, 500000.0);
-        
+
         // Smaller but still substantial fund
         assert!(insurance.b >= 100000.0 && insurance.b < 1000000.0);
     }
@@ -293,7 +293,7 @@ mod tests {
 
         for json_str in crash_entries {
             let insurance: DeliveryInsurance = serde_json::from_str(json_str).unwrap();
-            
+
             let drawdown = (initial_balance - insurance.b) / initial_balance;
             if drawdown > max_drawdown {
                 max_drawdown = drawdown;
@@ -321,7 +321,7 @@ mod tests {
         let mut previous_balance = 0.0;
         for (i, json_str) in recovery_entries.iter().enumerate() {
             let insurance: DeliveryInsurance = serde_json::from_str(json_str).unwrap();
-            
+
             if i > 0 {
                 // Fund should be recovering
                 assert!(insurance.b > previous_balance);
@@ -378,16 +378,25 @@ mod tests {
 
         let insurance: DeliveryInsurance = serde_json::from_str(json).unwrap();
         assert_eq!(insurance.b, 0.0);
-        
+
         // Zero balance would be concerning but technically valid
     }
 
     #[test]
     fn test_timestamp_ordering() {
         let entries = vec![
-            DeliveryInsurance { t: 1641024000, b: 5000000.0 },
-            DeliveryInsurance { t: 1641027600, b: 5100000.0 },
-            DeliveryInsurance { t: 1641031200, b: 5200000.0 },
+            DeliveryInsurance {
+                t: 1641024000,
+                b: 5000000.0,
+            },
+            DeliveryInsurance {
+                t: 1641027600,
+                b: 5100000.0,
+            },
+            DeliveryInsurance {
+                t: 1641031200,
+                b: 5200000.0,
+            },
         ];
 
         for i in 1..entries.len() {
@@ -445,7 +454,7 @@ mod tests {
 
         let entries: Vec<DeliveryInsurance> = serde_json::from_str(json).unwrap();
         assert_eq!(entries.len(), 3);
-        
+
         // Verify chronological order and growth
         for i in 1..entries.len() {
             assert!(entries[i].t > entries[i - 1].t);

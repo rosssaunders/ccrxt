@@ -106,7 +106,10 @@ impl RestClient {
         &self,
         request: &GetCurrencyConfigRequest,
     ) -> RestResult<GetCurrencyConfigResponse> {
-        self.send_get_signed_request(CURRENCY_CONFIG_ENDPOINT, request, EndpointType::AccountApiGroup2,
+        self.send_get_signed_request(
+            CURRENCY_CONFIG_ENDPOINT,
+            request,
+            EndpointType::AccountApiGroup2,
         )
         .await
     }

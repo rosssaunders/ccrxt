@@ -112,7 +112,7 @@ mod tests {
     #[test]
     fn test_options_settlements_request_different_underlyings() {
         let underlyings = vec!["BTC_USDT", "ETH_USDT", "BNB_USDT", "SOL_USDT", "ADA_USDT"];
-        
+
         for underlying in underlyings {
             let request = OptionsSettlementsRequest {
                 underlying: Some(underlying.to_string()),
@@ -127,7 +127,7 @@ mod tests {
     #[test]
     fn test_options_settlements_request_limit_ranges() {
         let limits = vec![1, 50, 100, 500, 1000];
-        
+
         for limit in limits {
             let request = OptionsSettlementsRequest {
                 underlying: None,
@@ -268,12 +268,15 @@ mod tests {
 
     #[test]
     fn test_options_settlement_large_timestamp() {
-        let json = format!(r#"{{
+        let json = format!(
+            r#"{{
             "time": {},
             "contract": "ETH-20240315-3500-P",
             "strike_price": "3500.00",
             "settle_price": "3400.00"
-        }}"#, i64::MAX);
+        }}"#,
+            i64::MAX
+        );
 
         let settlement: OptionsSettlement = serde_json::from_str(&json).unwrap();
         assert_eq!(settlement.time, i64::MAX);
@@ -309,19 +312,19 @@ mod tests {
 
         let settlements: Vec<OptionsSettlement> = serde_json::from_str(json).unwrap();
         assert_eq!(settlements.len(), 3);
-        
+
         assert_eq!(settlements[0].time, 1640995200);
         assert_eq!(settlements[0].contract, "BTC-20240101-50000-C");
         assert_eq!(settlements[0].underlying, Some("BTC_USDT".to_string()));
         assert_eq!(settlements[0].strike_price, "50000.00");
         assert_eq!(settlements[0].settle_price, "45000.00");
-        
+
         assert_eq!(settlements[1].time, 1640995300);
         assert_eq!(settlements[1].contract, "ETH-20240101-3000-P");
         assert_eq!(settlements[1].underlying, Some("ETH_USDT".to_string()));
         assert_eq!(settlements[1].strike_price, "3000.00");
         assert_eq!(settlements[1].settle_price, "3200.50");
-        
+
         assert_eq!(settlements[2].time, 1640995400);
         assert_eq!(settlements[2].contract, "BNB-20240201-400-C");
         assert_eq!(settlements[2].underlying, None);
@@ -366,7 +369,7 @@ mod tests {
 
         let json = serde_json::to_string(&original).unwrap();
         let deserialized: OptionsSettlement = serde_json::from_str(&json).unwrap();
-        
+
         assert_eq!(deserialized.time, original.time);
         assert_eq!(deserialized.contract, original.contract);
         assert_eq!(deserialized.underlying, original.underlying);
@@ -388,7 +391,7 @@ mod tests {
         let settlement: OptionsSettlement = serde_json::from_str(json).unwrap();
         assert_eq!(settlement.contract, "BTC-20240101-40000-C");
         assert!(settlement.contract.ends_with("-C"));
-        
+
         // Parse prices to verify ITM status
         let strike: f64 = settlement.strike_price.parse().unwrap();
         let settle: f64 = settlement.settle_price.parse().unwrap();
@@ -409,7 +412,7 @@ mod tests {
         let settlement: OptionsSettlement = serde_json::from_str(json).unwrap();
         assert_eq!(settlement.contract, "ETH-20240101-3500-P");
         assert!(settlement.contract.ends_with("-P"));
-        
+
         // Parse prices to verify ITM status
         let strike: f64 = settlement.strike_price.parse().unwrap();
         let settle: f64 = settlement.settle_price.parse().unwrap();
@@ -485,21 +488,24 @@ mod tests {
             ("ETH-20240215-3000-P", "put"),
             ("BNB-20240301-400-C", "call"),
             ("SOL-20240315-150-P", "put"),
-            ("ADA-20240401-1-C", "call")
+            ("ADA-20240401-1-C", "call"),
         ];
-        
+
         for (contract, option_type) in contracts {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "time": 1704067200,
                 "contract": "{}",
                 "underlying": "TEST_USDT",
                 "strike_price": "100.00",
                 "settle_price": "105.00"
-            }}"#, contract);
+            }}"#,
+                contract
+            );
 
             let settlement: OptionsSettlement = serde_json::from_str(&json).unwrap();
             assert_eq!(settlement.contract, contract);
-            
+
             if option_type == "call" {
                 assert!(settlement.contract.ends_with("-C"));
             } else {
@@ -512,24 +518,27 @@ mod tests {
     fn test_options_settlement_expiration_times() {
         let expiration_times = vec![
             (1704067200, "2024-01-01"), // Monday
-            (1704499200, "2024-01-05"), // Friday  
+            (1704499200, "2024-01-05"), // Friday
             (1706745600, "2024-01-31"), // End of month
             (1711929600, "2024-03-31"), // Quarterly
             (1719792000, "2024-06-30"), // Half-yearly
         ];
-        
+
         for (timestamp, _description) in expiration_times {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "time": {},
                 "contract": "BTC-20240101-50000-C",
                 "underlying": "BTC_USDT",
                 "strike_price": "50000.00",
                 "settle_price": "45000.00"
-            }}"#, timestamp);
+            }}"#,
+                timestamp
+            );
 
             let settlement: OptionsSettlement = serde_json::from_str(&json).unwrap();
             assert_eq!(settlement.time, timestamp);
-            
+
             // Verify timestamp is reasonable (after 2020 and before 2030)
             assert!(timestamp > 1577836800); // 2020-01-01
             assert!(timestamp < 1893456000); // 2030-01-01

@@ -1,8 +1,8 @@
-use super::UsdmClient;
-use crate::binance::usdm::RestResult;
-
 use reqwest::Method;
 use serde::{Deserialize, Serialize};
+
+use super::UsdmClient;
+use crate::binance::usdm::RestResult;
 
 const GET_POSITION_MODE_STATUS_ENDPOINT: &str = "/fapi/v1/positionSide/dual";
 
@@ -50,12 +50,8 @@ impl UsdmClient {
         &self,
         params: GetPositionModeStatusRequest,
     ) -> RestResult<PositionModeStatusResponse> {
-        self.send_get_signed_request(
-            GET_POSITION_MODE_STATUS_ENDPOINT,
-            params,
-            30,
-            true,)
-        .await
+        self.send_get_signed_request(GET_POSITION_MODE_STATUS_ENDPOINT, params, 30, true)
+            .await
     }
 }
 

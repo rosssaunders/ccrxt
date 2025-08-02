@@ -1,5 +1,7 @@
-use super::RestClient;
-use super::borrowable::{UnifiedBorrowableRequest, UnifiedBorrowableResponse};
+use super::{
+    RestClient,
+    borrowable::{UnifiedBorrowableRequest, UnifiedBorrowableResponse},
+};
 
 const UNIFIED_BORROWABLE_ENDPOINT: &str = "/unified/borrowable";
 
@@ -53,7 +55,7 @@ mod tests {
     #[test]
     fn test_unified_borrowable_different_currencies() {
         let currencies = vec!["BTC", "ETH", "USDT", "BNB", "SOL"];
-        
+
         for currency in currencies {
             let request = UnifiedBorrowableRequest {
                 currency: currency.to_string(),

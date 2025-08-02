@@ -1,10 +1,10 @@
-use reqwest::Method;
-use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
 
+use reqwest::Method;
+use serde::{Deserialize, Serialize};
+
 use super::UsdmClient;
-use crate::binance::usdm::RestResult;
-use crate::binance::usdm::enums::*;
+use crate::binance::usdm::{RestResult, enums::*};
 
 const ACCOUNT_TRADES_ENDPOINT: &str = "/fapi/v1/userTrades";
 
@@ -115,9 +115,7 @@ impl UsdmClient {
         &self,
         params: GetAccountTradesRequest,
     ) -> RestResult<Vec<AccountTrade>> {
-        self.send_get_signed_request(
-            ACCOUNT_TRADES_ENDPOINT,
-            params, 5, false)
+        self.send_get_signed_request(ACCOUNT_TRADES_ENDPOINT, params, 5, false)
             .await
     }
 }

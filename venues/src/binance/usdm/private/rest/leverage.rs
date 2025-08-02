@@ -64,9 +64,7 @@ impl UsdmClient {
         &self,
         params: ChangeLeverageRequest,
     ) -> RestResult<ChangeLeverageResponse> {
-        self.send_post_signed_request(
-            CHANGE_LEVERAGE_ENDPOINT,
-            params, 1, false)
+        self.send_post_signed_request(CHANGE_LEVERAGE_ENDPOINT, params, 1, false)
             .await
     }
 }

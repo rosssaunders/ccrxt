@@ -3,7 +3,6 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
-
 const ACCOUNT_SET_POSITION_MODE_ENDPOINT: &str = "api/v5/account/set-position-mode";
 /// Request to set position mode
 #[derive(Debug, Clone, Serialize)]

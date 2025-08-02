@@ -72,9 +72,10 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use rust_decimal_macros::dec;
     use serde_json;
+
+    use super::*;
 
     #[test]
     fn test_ticker_price_request_serialization_symbol() {

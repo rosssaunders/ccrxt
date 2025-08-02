@@ -393,13 +393,13 @@ impl RestClient {
         // Serialize params to query string
         let query = serde_urlencoded::to_string(&params)
             .map_err(|e| Errors::Error(format!("Failed to serialize params: {}", e)))?;
-        
+
         let url_with_query = if query.is_empty() {
             endpoint.to_string()
         } else {
             format!("{}?{}", endpoint, query)
         };
-        
+
         self.send_authenticated_request(
             &url_with_query,
             reqwest::Method::GET,
@@ -456,13 +456,8 @@ impl RestClient {
         T: DeserializeOwned,
         P: Serialize,
     {
-        self.send_signed_request(
-            endpoint,
-            reqwest::Method::PUT,
-            Some(&params),
-            endpoint_type,
-        )
-        .await
+        self.send_signed_request(endpoint, reqwest::Method::PUT, Some(&params), endpoint_type)
+            .await
     }
 
     /// High-performance DELETE request method for signed endpoints
@@ -487,13 +482,13 @@ impl RestClient {
         // For DELETE, params go in query string
         let query = serde_urlencoded::to_string(&params)
             .map_err(|e| Errors::Error(format!("Failed to serialize params: {}", e)))?;
-        
+
         let url_with_query = if query.is_empty() {
             endpoint.to_string()
         } else {
             format!("{}?{}", endpoint, query)
         };
-        
+
         self.send_signed_request(
             &url_with_query,
             reqwest::Method::DELETE,

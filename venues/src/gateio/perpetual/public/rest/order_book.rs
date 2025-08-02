@@ -132,8 +132,14 @@ mod tests {
     #[test]
     fn test_different_contract_pairs() {
         let contracts = vec![
-            "BTC_USDT", "ETH_USDT", "ADA_USDT", "SOL_USDT",
-            "MATIC_USDT", "DOT_USDT", "AVAX_USDT", "LINK_USDT"
+            "BTC_USDT",
+            "ETH_USDT",
+            "ADA_USDT",
+            "SOL_USDT",
+            "MATIC_USDT",
+            "DOT_USDT",
+            "AVAX_USDT",
+            "LINK_USDT",
         ];
 
         for contract in contracts {
@@ -297,14 +303,14 @@ mod tests {
 
         // Verify asks are sorted low to high (ascending)
         for i in 1..order_book.asks.len() {
-            let prev_price: f64 = order_book.asks[i-1].p.parse().unwrap();
+            let prev_price: f64 = order_book.asks[i - 1].p.parse().unwrap();
             let curr_price: f64 = order_book.asks[i].p.parse().unwrap();
             assert!(curr_price >= prev_price, "Asks should be sorted ascending");
         }
 
         // Verify bids are sorted high to low (descending)
         for i in 1..order_book.bids.len() {
-            let prev_price: f64 = order_book.bids[i-1].p.parse().unwrap();
+            let prev_price: f64 = order_book.bids[i - 1].p.parse().unwrap();
             let curr_price: f64 = order_book.bids[i].p.parse().unwrap();
             assert!(curr_price <= prev_price, "Bids should be sorted descending");
         }
@@ -324,7 +330,7 @@ mod tests {
         }"#;
 
         let order_book: FuturesOrderBook = serde_json::from_str(json).unwrap();
-        
+
         let best_ask: f64 = order_book.asks[0].p.parse().unwrap();
         let best_bid: f64 = order_book.bids[0].p.parse().unwrap();
 
@@ -359,11 +365,11 @@ mod tests {
         }"#;
 
         let order_book: FuturesOrderBook = serde_json::from_str(json).unwrap();
-        
+
         // Verify BTC price range is reasonable
         let best_ask: f64 = order_book.asks[0].p.parse().unwrap();
         let best_bid: f64 = order_book.bids[0].p.parse().unwrap();
-        
+
         assert!(best_bid > 40000.0 && best_bid < 50000.0);
         assert!(best_ask > 40000.0 && best_ask < 50000.0);
 
@@ -403,11 +409,11 @@ mod tests {
         }"#;
 
         let order_book: FuturesOrderBook = serde_json::from_str(json).unwrap();
-        
+
         // Verify ETH price range is reasonable
         let best_ask: f64 = order_book.asks[0].p.parse().unwrap();
         let best_bid: f64 = order_book.bids[0].p.parse().unwrap();
-        
+
         assert!(best_bid > 2000.0 && best_bid < 3000.0);
         assert!(best_ask > 2000.0 && best_ask < 3000.0);
 
@@ -429,7 +435,7 @@ mod tests {
             });
         }
 
-        // Generate bids from 43250.0 to 43201.0  
+        // Generate bids from 43250.0 to 43201.0
         for i in 0..50 {
             bids.push(OrderBookEntry {
                 p: format!("{:.1}", 43250.0 - i as f64 * 1.0),
@@ -493,7 +499,7 @@ mod tests {
         }"#;
 
         let order_book: FuturesOrderBook = serde_json::from_str(json).unwrap();
-        
+
         // More asks than bids (bearish sentiment)
         assert!(order_book.asks.len() > order_book.bids.len());
         assert_eq!(order_book.asks.len(), 5);
@@ -516,13 +522,13 @@ mod tests {
         }"#;
 
         let order_book: FuturesOrderBook = serde_json::from_str(json).unwrap();
-        
+
         // Verify precision is maintained
         assert_eq!(order_book.asks[0].p, "43251.123456789");
         assert_eq!(order_book.asks[1].p, "43251.987654321");
         assert_eq!(order_book.bids[0].p, "43250.555555555");
         assert_eq!(order_book.bids[1].p, "43250.111111111");
-        
+
         // For timestamps (f64), use epsilon comparison due to floating-point precision limits
         // With large numbers like Unix timestamps, we need a larger epsilon
         let epsilon = 1e-6;
@@ -546,16 +552,16 @@ mod tests {
         }"#;
 
         let order_book: FuturesOrderBook = serde_json::from_str(json).unwrap();
-        
+
         // Verify large sizes are handled correctly
         assert_eq!(order_book.asks[0].s, 999999999);
         assert_eq!(order_book.bids[1].s, 1000000000);
-        
+
         // All sizes should be positive
         for ask in &order_book.asks {
             assert!(ask.s > 0);
         }
-        
+
         for bid in &order_book.bids {
             assert!(bid.s > 0);
         }
@@ -570,7 +576,8 @@ mod tests {
         ];
 
         for (current, update, _description) in timestamps {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "current": {},
                 "update": {},
                 "asks": [
@@ -579,7 +586,9 @@ mod tests {
                 "bids": [
                     {{"p": "29999.0", "s": 1500}}
                 ]
-            }}"#, current, update);
+            }}"#,
+                current, update
+            );
 
             let order_book: FuturesOrderBook = serde_json::from_str(&json).unwrap();
             assert_eq!(order_book.current, current);
@@ -609,14 +618,14 @@ mod tests {
         }"#;
 
         let order_book: FuturesOrderBook = serde_json::from_str(json).unwrap();
-        
+
         // Calculate total ask and bid volumes
         let total_ask_volume: i64 = order_book.asks.iter().map(|a| a.s).sum();
         let total_bid_volume: i64 = order_book.bids.iter().map(|b| b.s).sum();
-        
+
         assert_eq!(total_ask_volume, 10000); // 1000+1500+2000+2500+3000
         assert_eq!(total_bid_volume, 11200); // 1200+1800+2200+2800+3200
-        
+
         // Bid volume slightly higher indicates buying pressure
         assert!(total_bid_volume > total_ask_volume);
     }
@@ -664,15 +673,15 @@ mod tests {
         }"#;
 
         let order_book: FuturesOrderBook = serde_json::from_str(json).unwrap();
-        
+
         let best_ask: f64 = order_book.asks[0].p.parse().unwrap();
         let best_bid: f64 = order_book.bids[0].p.parse().unwrap();
-        
+
         // Wide spread indicates volatility
         let spread = best_ask - best_bid;
         let mid_price = (best_ask + best_bid) / 2.0;
         let spread_percentage = (spread / mid_price) * 100.0;
-        
+
         assert!(spread > 500.0); // Large absolute spread
         assert!(spread_percentage > 1.0); // Large percentage spread
     }
@@ -715,12 +724,24 @@ mod tests {
             current: 1640995200.123,
             update: 1640995200.456,
             asks: vec![
-                OrderBookEntry { p: "43251.0".to_string(), s: 1500 },
-                OrderBookEntry { p: "43252.0".to_string(), s: 2000 },
+                OrderBookEntry {
+                    p: "43251.0".to_string(),
+                    s: 1500,
+                },
+                OrderBookEntry {
+                    p: "43252.0".to_string(),
+                    s: 2000,
+                },
             ],
             bids: vec![
-                OrderBookEntry { p: "43250.0".to_string(), s: 2500 },
-                OrderBookEntry { p: "43249.0".to_string(), s: 3000 },
+                OrderBookEntry {
+                    p: "43250.0".to_string(),
+                    s: 2500,
+                },
+                OrderBookEntry {
+                    p: "43249.0".to_string(),
+                    s: 3000,
+                },
             ],
         };
 

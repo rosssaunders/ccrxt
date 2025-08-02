@@ -156,7 +156,7 @@ mod tests {
     #[test]
     fn test_tickers_request_different_pairs() {
         let pairs = vec!["BTC_USDT", "ETH_BTC", "BNB_USDT", "SOL_USDC", "ADA_USDT"];
-        
+
         for pair in pairs {
             let request = TickersRequest {
                 currency_pair: Some(pair.to_string()),
@@ -171,7 +171,7 @@ mod tests {
     #[test]
     fn test_tickers_request_different_timezones() {
         let timezones = vec!["utc0", "utc8", "utc-5", "local"];
-        
+
         for timezone in timezones {
             let request = TickersRequest {
                 currency_pair: None,
@@ -301,7 +301,7 @@ mod tests {
         let ticker: Ticker = serde_json::from_str(json).unwrap();
         assert_eq!(ticker.change_percentage, "-15.0");
         assert_eq!(ticker.change_utc0, Some("-0.15".to_string()));
-        
+
         // Verify negative change
         let change_pct: f64 = ticker.change_percentage.parse().unwrap();
         assert!(change_pct < 0.0);
@@ -364,7 +364,7 @@ mod tests {
 
         let ticker: Ticker = serde_json::from_str(json).unwrap();
         assert_eq!(ticker.currency_pair, "USDC_USDT");
-        
+
         // Verify tight spread for stablecoin pair
         let bid: f64 = ticker.highest_bid.parse().unwrap();
         let ask: f64 = ticker.lowest_ask.parse().unwrap();
@@ -401,11 +401,11 @@ mod tests {
 
         let tickers: Vec<Ticker> = serde_json::from_str(json).unwrap();
         assert_eq!(tickers.len(), 2);
-        
+
         assert_eq!(tickers[0].currency_pair, "BTC_USDT");
         assert_eq!(tickers[0].last, "30000.0");
         assert_eq!(tickers[0].change_percentage, "2.0");
-        
+
         assert_eq!(tickers[1].currency_pair, "ETH_USDT");
         assert_eq!(tickers[1].last, "2500.0");
         assert_eq!(tickers[1].change_percentage, "-1.0");
@@ -468,7 +468,7 @@ mod tests {
 
         let json = serde_json::to_string(&original).unwrap();
         let deserialized: Ticker = serde_json::from_str(&json).unwrap();
-        
+
         assert_eq!(deserialized.currency_pair, original.currency_pair);
         assert_eq!(deserialized.last, original.last);
         assert_eq!(deserialized.change_percentage, original.change_percentage);
@@ -518,12 +518,19 @@ mod tests {
     #[test]
     fn test_ticker_different_currencies() {
         let currencies = vec![
-            "BTC_USDT", "ETH_BTC", "BNB_USDT", "SOL_USDC", 
-            "ADA_USDT", "DOT_USDT", "MATIC_USDT", "LINK_USDT"
+            "BTC_USDT",
+            "ETH_BTC",
+            "BNB_USDT",
+            "SOL_USDC",
+            "ADA_USDT",
+            "DOT_USDT",
+            "MATIC_USDT",
+            "LINK_USDT",
         ];
 
         for currency_pair in currencies {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "currency_pair": "{}",
                 "last": "100.0",
                 "lowest_ask": "100.1",
@@ -533,7 +540,9 @@ mod tests {
                 "quote_volume": "100000.0",
                 "high_24h": "105.0",
                 "low_24h": "95.0"
-            }}"#, currency_pair);
+            }}"#,
+                currency_pair
+            );
 
             let ticker: Ticker = serde_json::from_str(&json).unwrap();
             assert_eq!(ticker.currency_pair, currency_pair);

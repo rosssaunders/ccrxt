@@ -92,13 +92,8 @@ impl UsdmClient {
         &self,
         request: GetOrderDownloadLinkRequest,
     ) -> RestResult<GetOrderDownloadLinkResponse> {
-        self.send_get_signed_request(
-            GET_ORDER_DOWNLOAD_LINK_ENDPOINT,
-            request,
-            10,
-            false,
-        )
-        .await
+        self.send_get_signed_request(GET_ORDER_DOWNLOAD_LINK_ENDPOINT, request, 10, false)
+            .await
     }
 }
 

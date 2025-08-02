@@ -1,5 +1,7 @@
-use super::RestClient;
-use super::unified_margin::{UnifiedMarginBorrowableRequest, UnifiedMarginBorrowable};
+use super::{
+    RestClient,
+    unified_margin::{UnifiedMarginBorrowable, UnifiedMarginBorrowableRequest},
+};
 
 const MARGIN_UNI_BORROWABLE_ENDPOINT: &str = "/margin/uni/borrowable";
 
@@ -14,7 +16,8 @@ impl RestClient {
         &self,
         params: UnifiedMarginBorrowableRequest,
     ) -> crate::gateio::unified::Result<UnifiedMarginBorrowable> {
-        self.get_with_query(MARGIN_UNI_BORROWABLE_ENDPOINT, &params).await
+        self.get_with_query(MARGIN_UNI_BORROWABLE_ENDPOINT, &params)
+            .await
     }
 }
 

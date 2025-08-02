@@ -1,5 +1,4 @@
-use super::RestClient;
-use super::discount_tiers::LoanMarginTier;
+use super::{RestClient, discount_tiers::LoanMarginTier};
 
 const LOAN_MARGIN_TIERS_ENDPOINT: &str = "/unified/loan_margin_tiers";
 
@@ -83,15 +82,18 @@ mod tests {
     #[test]
     fn test_loan_margin_tier_different_currencies() {
         let currencies = vec!["BTC", "ETH", "USDT", "BNB"];
-        
+
         for currency in currencies {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "currency": "{}",
                 "tier": 1,
                 "margin_rate": "0.05",
                 "min_amount": "0",
                 "max_amount": "1000"
-            }}"#, currency);
+            }}"#,
+                currency
+            );
 
             let tier: LoanMarginTier = serde_json::from_str(&json).unwrap();
             assert_eq!(tier.currency, currency);

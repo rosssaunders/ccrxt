@@ -82,7 +82,8 @@ impl RestClient {
         &self,
         request: OptionsTradesRequest,
     ) -> crate::gateio::options::Result<Vec<OptionsTrade>> {
-        self.get_with_query(OPTIONS_MY_TRADES_ENDPOINT, &request).await
+        self.get_with_query(OPTIONS_MY_TRADES_ENDPOINT, &request)
+            .await
     }
 }
 
@@ -344,11 +345,12 @@ mod tests {
             "ETH-20240215-3000-P",
             "BNB-20240301-400-C",
             "SOL-20240315-150-P",
-            "ADA-20240401-1-C"
+            "ADA-20240401-1-C",
         ];
-        
+
         for contract in contracts {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "id": "test_id_{}",
                 "create_time": 1640995200.0,
                 "order_id": "test_order_123",
@@ -357,7 +359,10 @@ mod tests {
                 "price": "0.1",
                 "underlying": "BTC_USDT",
                 "role": "taker"
-            }}"#, contract.replace("-", "_"), contract);
+            }}"#,
+                contract.replace("-", "_"),
+                contract
+            );
 
             let trade: OptionsTrade = serde_json::from_str(&json).unwrap();
             assert_eq!(trade.contract, contract);
@@ -368,9 +373,10 @@ mod tests {
     #[test]
     fn test_options_trade_different_underlyings() {
         let underlyings = vec!["BTC_USDT", "ETH_USDT", "BNB_USDT", "SOL_USDT", "ADA_USDT"];
-        
+
         for underlying in underlyings {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "id": "test_{}",
                 "create_time": 1640995200.0,
                 "order_id": "order_123",
@@ -379,7 +385,9 @@ mod tests {
                 "price": "0.05",
                 "underlying": "{}",
                 "role": "maker"
-            }}"#, underlying, underlying);
+            }}"#,
+                underlying, underlying
+            );
 
             let trade: OptionsTrade = serde_json::from_str(&json).unwrap();
             assert_eq!(trade.underlying, underlying);
@@ -390,9 +398,10 @@ mod tests {
     #[test]
     fn test_options_trade_different_roles() {
         let roles = vec!["taker", "maker"];
-        
+
         for role in roles {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "id": "role_test_{}",
                 "create_time": 1640995200.0,
                 "order_id": "role_order_123",
@@ -401,7 +410,9 @@ mod tests {
                 "price": "0.1",
                 "underlying": "BTC_USDT",
                 "role": "{}"
-            }}"#, role, role);
+            }}"#,
+                role, role
+            );
 
             let trade: OptionsTrade = serde_json::from_str(&json).unwrap();
             assert_eq!(trade.role, role);
@@ -451,11 +462,12 @@ mod tests {
             "trade-id-with-dashes",
             "TradeIdWithCapitals",
             "trade.id.with.dots",
-            "0000000000000001"
+            "0000000000000001",
         ];
-        
+
         for id in id_formats {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "id": "{}",
                 "create_time": 1640995200.0,
                 "order_id": "order_123",
@@ -464,7 +476,9 @@ mod tests {
                 "price": "0.1",
                 "underlying": "BTC_USDT",
                 "role": "taker"
-            }}"#, id);
+            }}"#,
+                id
+            );
 
             let trade: OptionsTrade = serde_json::from_str(&json).unwrap();
             assert_eq!(trade.id, id);
@@ -541,19 +555,19 @@ mod tests {
 
         let trades: Vec<OptionsTrade> = serde_json::from_str(json).unwrap();
         assert_eq!(trades.len(), 3);
-        
+
         assert_eq!(trades[0].id, "trade_1");
         assert_eq!(trades[0].create_time, 1640995200.0);
         assert_eq!(trades[0].contract, "BTC-20240101-50000-C");
         assert_eq!(trades[0].size, 5);
         assert_eq!(trades[0].role, "taker");
-        
+
         assert_eq!(trades[1].id, "trade_2");
         assert_eq!(trades[1].create_time, 1640995300.0);
         assert_eq!(trades[1].contract, "ETH-20240101-3000-P");
         assert_eq!(trades[1].size, -3);
         assert_eq!(trades[1].role, "maker");
-        
+
         assert_eq!(trades[2].id, "trade_3");
         assert_eq!(trades[2].create_time, 1640995400.0);
         assert_eq!(trades[2].contract, "BNB-20240201-400-C");
@@ -576,11 +590,12 @@ mod tests {
             "1.0",
             "999.999999999",
             "0.00000001",
-            "1000000.0"
+            "1000000.0",
         ];
-        
+
         for price in price_formats {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "id": "price_test_{}",
                 "create_time": 1640995200.0,
                 "order_id": "order_123",
@@ -589,7 +604,10 @@ mod tests {
                 "price": "{}",
                 "underlying": "BTC_USDT",
                 "role": "taker"
-            }}"#, price.replace(".", "_"), price);
+            }}"#,
+                price.replace(".", "_"),
+                price
+            );
 
             let trade: OptionsTrade = serde_json::from_str(&json).unwrap();
             assert_eq!(trade.price, price);

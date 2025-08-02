@@ -95,8 +95,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use std::borrow::Cow;
+
+    use super::*;
 
     #[test]
     fn test_request_serialization() {

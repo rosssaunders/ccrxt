@@ -1,5 +1,7 @@
-use super::RestClient;
-use super::unified_margin::{UnifiedMarginLoanRecordsRequest, UnifiedMarginLoanRecord};
+use super::{
+    RestClient,
+    unified_margin::{UnifiedMarginLoanRecord, UnifiedMarginLoanRecordsRequest},
+};
 
 const MARGIN_UNI_LOAN_RECORDS_ENDPOINT: &str = "/margin/uni/loan_records";
 

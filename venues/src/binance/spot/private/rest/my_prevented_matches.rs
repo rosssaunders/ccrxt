@@ -98,20 +98,16 @@ impl RestClient {
         &self,
         params: MyPreventedMatchesRequest,
     ) -> RestResult<Vec<MyPreventedMatch>> {
-        self.send_get_signed_request(
-            GET_MY_PREVENTED_MATCHES_ENDPOINT,
-            params,
-            20,
-            false,
-        )
-        .await
+        self.send_get_signed_request(GET_MY_PREVENTED_MATCHES_ENDPOINT, params, 20, false)
+            .await
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use rust_decimal_macros::dec;
+
+    use super::*;
 
     #[test]
     fn test_my_prevented_matches_request_minimal_serialization() {

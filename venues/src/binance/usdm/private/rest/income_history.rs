@@ -91,13 +91,8 @@ impl UsdmClient {
         &self,
         request: GetIncomeHistoryRequest,
     ) -> RestResult<GetIncomeHistoryResponse> {
-        self.send_get_signed_request(
-            INCOME_HISTORY_ENDPOINT,
-            request,
-            30,
-            false,
-        )
-        .await
+        self.send_get_signed_request(INCOME_HISTORY_ENDPOINT, request, 30, false)
+            .await
     }
 }
 

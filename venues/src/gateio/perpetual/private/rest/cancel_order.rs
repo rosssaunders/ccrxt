@@ -1,5 +1,4 @@
-use super::RestClient;
-use super::order::FuturesOrder;
+use super::{RestClient, order::FuturesOrder};
 
 impl RestClient {
     /// Cancel a specific futures order

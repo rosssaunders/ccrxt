@@ -142,8 +142,14 @@ mod tests {
     #[test]
     fn test_different_contract_pairs() {
         let contracts = vec![
-            "BTC_USDT", "ETH_USDT", "ADA_USDT", "SOL_USDT",
-            "MATIC_USDT", "DOT_USDT", "AVAX_USDT", "LINK_USDT"
+            "BTC_USDT",
+            "ETH_USDT",
+            "ADA_USDT",
+            "SOL_USDT",
+            "MATIC_USDT",
+            "DOT_USDT",
+            "AVAX_USDT",
+            "LINK_USDT",
         ];
 
         for contract in contracts {
@@ -232,12 +238,7 @@ mod tests {
 
     #[test]
     fn test_last_id_scenarios() {
-        let last_ids = vec![
-            "123456789",
-            "987654321",
-            "1",
-            "9999999999",
-        ];
+        let last_ids = vec!["123456789", "987654321", "1", "9999999999"];
 
         for last_id in last_ids {
             let request = FuturesTradesRequest {
@@ -331,20 +332,23 @@ mod tests {
         ];
 
         for (id, price, size, _description) in btc_trades {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "id": {},
                 "create_time": 1640995200.123,
                 "contract": "BTC_USDT",
                 "size": {},
                 "price": "{}",
                 "is_internal": false
-            }}"#, id, size, price);
+            }}"#,
+                id, size, price
+            );
 
             let trade: FuturesTrade = serde_json::from_str(&json).unwrap();
             assert_eq!(trade.id, id);
             assert_eq!(trade.size, size);
             assert_eq!(trade.price, price);
-            
+
             // Verify BTC price is reasonable
             let trade_price: f64 = trade.price.parse().unwrap();
             assert!(trade_price > 40000.0 && trade_price < 50000.0);
@@ -361,20 +365,23 @@ mod tests {
         ];
 
         for (id, price, size, _description) in eth_trades {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "id": {},
                 "create_time": 1640995250.789,
                 "contract": "ETH_USDT",
                 "size": {},
                 "price": "{}",
                 "is_internal": false
-            }}"#, id, size, price);
+            }}"#,
+                id, size, price
+            );
 
             let trade: FuturesTrade = serde_json::from_str(&json).unwrap();
             assert_eq!(trade.id, id);
             assert_eq!(trade.size, size);
             assert_eq!(trade.price, price);
-            
+
             // Verify ETH price is reasonable
             let trade_price: f64 = trade.price.parse().unwrap();
             assert!(trade_price > 2000.0 && trade_price < 3000.0);
@@ -383,20 +390,20 @@ mod tests {
 
     #[test]
     fn test_internal_vs_external_trades() {
-        let trade_types = vec![
-            (true, "Internal trade"),
-            (false, "External trade"),
-        ];
+        let trade_types = vec![(true, "Internal trade"), (false, "External trade")];
 
         for (is_internal, _description) in trade_types {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "id": 123456789,
                 "create_time": 1640995200.123,
                 "contract": "BTC_USDT",
                 "size": 1000,
                 "price": "43250.0",
                 "is_internal": {}
-            }}"#, is_internal);
+            }}"#,
+                is_internal
+            );
 
             let trade: FuturesTrade = serde_json::from_str(&json).unwrap();
             assert_eq!(trade.is_internal.unwrap(), is_internal);
@@ -408,13 +415,16 @@ mod tests {
         let sizes = vec![1, 10, 100, 1000, 10000, 100000, 1000000];
 
         for size in sizes {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "id": 123456789,
                 "create_time": 1640995200.123,
                 "contract": "BTC_USDT",
                 "size": {},
                 "price": "43250.0"
-            }}"#, size);
+            }}"#,
+                size
+            );
 
             let trade: FuturesTrade = serde_json::from_str(&json).unwrap();
             assert_eq!(trade.size, size);
@@ -433,7 +443,7 @@ mod tests {
         }"#;
 
         let trade: FuturesTrade = serde_json::from_str(json).unwrap();
-        
+
         // Verify precision is maintained
         assert_eq!(trade.price, "43251.123456789");
         assert_eq!(trade.create_time, 1640995200.123456789);
@@ -441,20 +451,19 @@ mod tests {
 
     #[test]
     fn test_large_trade_ids() {
-        let large_ids = vec![
-            9999999999i64,
-            1234567890123i64,
-            9876543210987i64,
-        ];
+        let large_ids = vec![9999999999i64, 1234567890123i64, 9876543210987i64];
 
         for id in large_ids {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "id": {},
                 "create_time": 1640995200.123,
                 "contract": "BTC_USDT",
                 "size": 1000,
                 "price": "43250.0"
-            }}"#, id);
+            }}"#,
+                id
+            );
 
             let trade: FuturesTrade = serde_json::from_str(&json).unwrap();
             assert_eq!(trade.id, id);
@@ -471,13 +480,16 @@ mod tests {
         ];
 
         for (timestamp, _description) in timestamps {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "id": 123456789,
                 "create_time": {},
                 "contract": "BTC_USDT",
                 "size": 1000,
                 "price": "43250.0"
-            }}"#, timestamp);
+            }}"#,
+                timestamp
+            );
 
             let trade: FuturesTrade = serde_json::from_str(&json).unwrap();
             assert_eq!(trade.create_time, timestamp);
@@ -496,19 +508,22 @@ mod tests {
         ];
 
         for (contract, price, size) in altcoin_trades {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "id": 123456789,
                 "create_time": 1640995200.123,
                 "contract": "{}",
                 "size": {},
                 "price": "{}"
-            }}"#, contract, size, price);
+            }}"#,
+                contract, size, price
+            );
 
             let trade: FuturesTrade = serde_json::from_str(&json).unwrap();
             assert_eq!(trade.contract, contract);
             assert_eq!(trade.size, size);
             assert_eq!(trade.price, price);
-            
+
             // Verify price is positive
             let trade_price: f64 = trade.price.parse().unwrap();
             assert!(trade_price > 0.0);
@@ -528,22 +543,25 @@ mod tests {
 
         let mut prev_time = 0.0;
         for (id, timestamp, price, size) in trade_sequence {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "id": {},
                 "create_time": {},
                 "contract": "BTC_USDT",
                 "size": {},
                 "price": "{}"
-            }}"#, id, timestamp, size, price);
+            }}"#,
+                id, timestamp, size, price
+            );
 
             let trade: FuturesTrade = serde_json::from_str(&json).unwrap();
             assert_eq!(trade.id, id);
             assert_eq!(trade.create_time, timestamp);
-            
+
             // Verify timestamps are in ascending order
             assert!(trade.create_time > prev_time);
             prev_time = trade.create_time;
-            
+
             // Verify trade data
             assert!(trade.size > 0);
             let trade_price: f64 = trade.price.parse().unwrap();
@@ -563,17 +581,20 @@ mod tests {
         ];
 
         for (price, _description) in volatile_trades {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "id": 123456789,
                 "create_time": 1640995200.123,
                 "contract": "BTC_USDT",
                 "size": 1000,
                 "price": "{}"
-            }}"#, price);
+            }}"#,
+                price
+            );
 
             let trade: FuturesTrade = serde_json::from_str(&json).unwrap();
             assert_eq!(trade.price, price);
-            
+
             let trade_price: f64 = trade.price.parse().unwrap();
             assert!(trade_price > 42000.0 && trade_price < 44000.0);
         }
@@ -585,19 +606,22 @@ mod tests {
             (1, "Minimum trade"),
             (100, "Small retail trade"),
             (1000, "Medium trade"),
-            (10000, "Large trade"), 
+            (10000, "Large trade"),
             (100000, "Institutional trade"),
             (1000000, "Whale trade"),
         ];
 
         for (size, _description) in volume_scenarios {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "id": 123456789,
                 "create_time": 1640995200.123,
                 "contract": "BTC_USDT",
                 "size": {},
                 "price": "43250.0"
-            }}"#, size);
+            }}"#,
+                size
+            );
 
             let trade: FuturesTrade = serde_json::from_str(&json).unwrap();
             assert_eq!(trade.size, size);
@@ -615,19 +639,22 @@ mod tests {
         ];
 
         for (size, price, _description) in market_impact_trades {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "id": 123456789,
                 "create_time": 1640995200.123,
                 "contract": "BTC_USDT",
                 "size": {},
                 "price": "{}",
                 "is_internal": false
-            }}"#, size, price);
+            }}"#,
+                size, price
+            );
 
             let trade: FuturesTrade = serde_json::from_str(&json).unwrap();
             assert_eq!(trade.size, size);
             assert_eq!(trade.price, price);
-            
+
             // Large trades should be marked as external
             assert_eq!(trade.is_internal.unwrap(), false);
         }
@@ -644,14 +671,17 @@ mod tests {
         ];
 
         for (id, price, is_internal, _description) in arbitrage_trades {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "id": {},
                 "create_time": 1640995200.123,
                 "contract": "BTC_USDT",
                 "size": 1000,
                 "price": "{}",
                 "is_internal": {}
-            }}"#, id, price, is_internal);
+            }}"#,
+                id, price, is_internal
+            );
 
             let trade: FuturesTrade = serde_json::from_str(&json).unwrap();
             assert_eq!(trade.id, id);

@@ -103,8 +103,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use rust_decimal_macros::dec;
+
+    use super::*;
 
     #[test]
     fn test_exercise_history_request_serialization_empty() {
@@ -278,9 +279,9 @@ mod tests {
     fn test_strike_result_deserialization_realistic_value_stricken() {
         let json = r#""REALISTIC_VALUE_STRICKEN""#;
         let result: StrikeResult = serde_json::from_str(json).unwrap();
-        
+
         match result {
-            StrikeResult::RealisticValueStricken => {},
+            StrikeResult::RealisticValueStricken => {}
             _ => panic!("Expected RealisticValueStricken"),
         }
     }
@@ -289,9 +290,9 @@ mod tests {
     fn test_strike_result_deserialization_extrinsic_value_expired() {
         let json = r#""EXTRINSIC_VALUE_EXPIRED""#;
         let result: StrikeResult = serde_json::from_str(json).unwrap();
-        
+
         match result {
-            StrikeResult::ExtrinsicValueExpired => {},
+            StrikeResult::ExtrinsicValueExpired => {}
             _ => panic!("Expected ExtrinsicValueExpired"),
         }
     }
@@ -300,9 +301,9 @@ mod tests {
     fn test_strike_result_clone() {
         let result = StrikeResult::RealisticValueStricken;
         let cloned = result.clone();
-        
+
         match (result, cloned) {
-            (StrikeResult::RealisticValueStricken, StrikeResult::RealisticValueStricken) => {},
+            (StrikeResult::RealisticValueStricken, StrikeResult::RealisticValueStricken) => {}
             _ => panic!("Clone should maintain the same variant"),
         }
     }
@@ -333,9 +334,9 @@ mod tests {
         assert_eq!(record.strike_price, dec!(70000.00000000));
         assert_eq!(record.real_strike_price, dec!(69500.25000000));
         assert_eq!(record.expiry_date, 1711641600000);
-        
+
         match record.strike_result {
-            StrikeResult::RealisticValueStricken => {},
+            StrikeResult::RealisticValueStricken => {}
             _ => panic!("Expected RealisticValueStricken"),
         }
     }
@@ -355,9 +356,9 @@ mod tests {
         assert_eq!(record.strike_price, dec!(4000.00000000));
         assert_eq!(record.real_strike_price, dec!(4200.50000000));
         assert_eq!(record.expiry_date, 1711641600000);
-        
+
         match record.strike_result {
-            StrikeResult::ExtrinsicValueExpired => {},
+            StrikeResult::ExtrinsicValueExpired => {}
             _ => panic!("Expected ExtrinsicValueExpired"),
         }
     }
@@ -425,13 +426,16 @@ mod tests {
         ];
 
         for symbol in symbols {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "symbol": "{}",
                 "strikePrice": "1000.00000000",
                 "realStrikePrice": "1050.00000000",
                 "expiryDate": 1711641600000,
                 "strikeResult": "REALISTIC_VALUE_STRICKEN"
-            }}"#, symbol);
+            }}"#,
+                symbol
+            );
 
             let record: ExerciseHistoryRecord = serde_json::from_str(&json).unwrap();
             assert_eq!(record.symbol, symbol);
@@ -451,13 +455,16 @@ mod tests {
         ];
 
         for expiry_date in expiry_dates {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "symbol": "BTC-240329-70000-C",
                 "strikePrice": "70000.00000000",
                 "realStrikePrice": "69500.00000000",
                 "expiryDate": {},
                 "strikeResult": "REALISTIC_VALUE_STRICKEN"
-            }}"#, expiry_date);
+            }}"#,
+                expiry_date
+            );
 
             let record: ExerciseHistoryRecord = serde_json::from_str(&json).unwrap();
             assert_eq!(record.expiry_date, expiry_date);
@@ -475,13 +482,16 @@ mod tests {
         ];
 
         for strike_price in strike_prices {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "symbol": "BTC-240329-70000-C",
                 "strikePrice": "{}",
                 "realStrikePrice": "{}",
                 "expiryDate": 1711641600000,
                 "strikeResult": "REALISTIC_VALUE_STRICKEN"
-            }}"#, strike_price, strike_price);
+            }}"#,
+                strike_price, strike_price
+            );
 
             let record: ExerciseHistoryRecord = serde_json::from_str(&json).unwrap();
             assert_eq!(record.strike_price.to_string(), strike_price);
@@ -497,29 +507,28 @@ mod tests {
         ];
 
         for (strike_result, symbol) in test_cases {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "symbol": "{}",
                 "strikePrice": "50000.00000000",
                 "realStrikePrice": "49750.00000000",
                 "expiryDate": 1711641600000,
                 "strikeResult": "{}"
-            }}"#, symbol, strike_result);
+            }}"#,
+                symbol, strike_result
+            );
 
             let record: ExerciseHistoryRecord = serde_json::from_str(&json).unwrap();
             assert_eq!(record.symbol, symbol);
-            
+
             match strike_result {
-                "REALISTIC_VALUE_STRICKEN" => {
-                    match record.strike_result {
-                        StrikeResult::RealisticValueStricken => {},
-                        _ => panic!("Expected RealisticValueStricken"),
-                    }
+                "REALISTIC_VALUE_STRICKEN" => match record.strike_result {
+                    StrikeResult::RealisticValueStricken => {}
+                    _ => panic!("Expected RealisticValueStricken"),
                 },
-                "EXTRINSIC_VALUE_EXPIRED" => {
-                    match record.strike_result {
-                        StrikeResult::ExtrinsicValueExpired => {},
-                        _ => panic!("Expected ExtrinsicValueExpired"),
-                    }
+                "EXTRINSIC_VALUE_EXPIRED" => match record.strike_result {
+                    StrikeResult::ExtrinsicValueExpired => {}
+                    _ => panic!("Expected ExtrinsicValueExpired"),
                 },
                 _ => panic!("Unexpected strike result"),
             }
@@ -538,15 +547,15 @@ mod tests {
 
         let record: ExerciseHistoryRecord = serde_json::from_str(json).unwrap();
         let cloned = record.clone();
-        
+
         assert_eq!(record.symbol, cloned.symbol);
         assert_eq!(record.strike_price, cloned.strike_price);
         assert_eq!(record.real_strike_price, cloned.real_strike_price);
         assert_eq!(record.expiry_date, cloned.expiry_date);
-        
+
         match (record.strike_result, cloned.strike_result) {
-            (StrikeResult::RealisticValueStricken, StrikeResult::RealisticValueStricken) => {},
-            (StrikeResult::ExtrinsicValueExpired, StrikeResult::ExtrinsicValueExpired) => {},
+            (StrikeResult::RealisticValueStricken, StrikeResult::RealisticValueStricken) => {}
+            (StrikeResult::ExtrinsicValueExpired, StrikeResult::ExtrinsicValueExpired) => {}
             _ => panic!("Clone should maintain the same strike result variant"),
         }
     }
@@ -563,7 +572,7 @@ mod tests {
 
         let record: ExerciseHistoryRecord = serde_json::from_str(json).unwrap();
         let debug_output = format!("{:?}", record);
-        
+
         assert!(debug_output.contains("ExerciseHistoryRecord"));
         assert!(debug_output.contains("BTC-240329-70000-C"));
         assert!(debug_output.contains("70000"));
@@ -575,20 +584,23 @@ mod tests {
     #[test]
     fn test_exercise_history_record_deserialization_edge_case_symbols() {
         let edge_symbols = vec![
-            "BTC-991231-999999-C",    // Far expiry, high strike
-            "ETH-000101-1-P",         // Low strike
-            "BNB-240229-100000-C",    // Leap year
-            "ADA-240101-0-P",         // Zero strike
+            "BTC-991231-999999-C", // Far expiry, high strike
+            "ETH-000101-1-P",      // Low strike
+            "BNB-240229-100000-C", // Leap year
+            "ADA-240101-0-P",      // Zero strike
         ];
 
         for symbol in edge_symbols {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "symbol": "{}",
                 "strikePrice": "1000.00000000",
                 "realStrikePrice": "1050.00000000",
                 "expiryDate": 1711641600000,
                 "strikeResult": "REALISTIC_VALUE_STRICKEN"
-            }}"#, symbol);
+            }}"#,
+                symbol
+            );
 
             let record: ExerciseHistoryRecord = serde_json::from_str(&json).unwrap();
             assert_eq!(record.symbol, symbol);
@@ -610,9 +622,9 @@ mod tests {
         let record: ExerciseHistoryRecord = serde_json::from_str(json).unwrap();
         assert_eq!(record.strike_price, dec!(0.00000001));
         assert_eq!(record.real_strike_price, dec!(0.00000001));
-        
+
         match record.strike_result {
-            StrikeResult::ExtrinsicValueExpired => {},
+            StrikeResult::ExtrinsicValueExpired => {}
             _ => panic!("Expected ExtrinsicValueExpired"),
         }
     }
@@ -638,18 +650,18 @@ mod tests {
 
         let records: Vec<ExerciseHistoryRecord> = serde_json::from_str(json).unwrap();
         assert_eq!(records.len(), 2);
-        
+
         assert_eq!(records[0].symbol, "BTC-240329-70000-C");
         assert_eq!(records[0].strike_price, dec!(70000.00000000));
         match records[0].strike_result {
-            StrikeResult::RealisticValueStricken => {},
+            StrikeResult::RealisticValueStricken => {}
             _ => panic!("Expected RealisticValueStricken"),
         }
-        
+
         assert_eq!(records[1].symbol, "ETH-240329-4000-P");
         assert_eq!(records[1].strike_price, dec!(4000.00000000));
         match records[1].strike_result {
-            StrikeResult::ExtrinsicValueExpired => {},
+            StrikeResult::ExtrinsicValueExpired => {}
             _ => panic!("Expected ExtrinsicValueExpired"),
         }
     }

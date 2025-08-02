@@ -144,20 +144,16 @@ impl RestClient {
     /// Weight: 5
     /// Requires: API key and signature
     pub async fn get_user_trades(&self, params: UserTradesRequest) -> RestResult<Vec<UserTrade>> {
-        self.send_get_signed_request(
-            GET_USER_TRADES_ENDPOINT,
-            params,
-            5,
-            false,
-        )
-        .await
+        self.send_get_signed_request(GET_USER_TRADES_ENDPOINT, params, 5, false)
+            .await
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use rust_decimal_macros::dec;
+
+    use super::*;
 
     #[test]
     fn test_user_trades_request_minimal_serialization() {
@@ -175,7 +171,7 @@ mod tests {
         let json = serde_json::to_value(&request).unwrap();
         assert_eq!(json["symbol"], "BTC-240329-50000-C");
         assert_eq!(json["timestamp"], 1640995200000u64);
-        
+
         // Ensure optional fields are not serialized when None
         assert!(json.get("fromId").is_none());
         assert!(json.get("startTime").is_none());
@@ -201,7 +197,7 @@ mod tests {
         assert_eq!(json["symbol"], "ETH-240329-3000-P");
         assert_eq!(json["fromId"], 123456789);
         assert_eq!(json["timestamp"], 1640995200000u64);
-        
+
         // Ensure other optional fields are not serialized
         assert!(json.get("startTime").is_none());
         assert!(json.get("endTime").is_none());
@@ -227,7 +223,7 @@ mod tests {
         assert_eq!(json["startTime"], 1640995200000u64);
         assert_eq!(json["endTime"], 1640998800000u64);
         assert_eq!(json["timestamp"], 1640995200000u64);
-        
+
         // Ensure other optional fields are not serialized
         assert!(json.get("fromId").is_none());
         assert!(json.get("limit").is_none());
@@ -251,7 +247,7 @@ mod tests {
         assert_eq!(json["symbol"], "ETH-240329-3000-P");
         assert_eq!(json["limit"], 500);
         assert_eq!(json["timestamp"], 1640995200000u64);
-        
+
         // Ensure other optional fields are not serialized
         assert!(json.get("fromId").is_none());
         assert!(json.get("startTime").is_none());
@@ -276,7 +272,7 @@ mod tests {
         assert_eq!(json["symbol"], "BTC-240329-50000-C");
         assert_eq!(json["recvWindow"], 60000);
         assert_eq!(json["timestamp"], 1640995200000u64);
-        
+
         // Ensure other optional fields are not serialized
         assert!(json.get("fromId").is_none());
         assert!(json.get("startTime").is_none());
@@ -315,7 +311,7 @@ mod tests {
             from_id: Some(0), // Minimum value
             start_time: Some(0),
             end_time: Some(u64::MAX),
-            limit: Some(1), // Minimum limit
+            limit: Some(1),       // Minimum limit
             recv_window: Some(1), // Minimum recv_window
             timestamp: u64::MAX,
         };
@@ -334,7 +330,7 @@ mod tests {
             from_id: Some(u64::MAX),
             start_time: Some(u64::MAX),
             end_time: Some(u64::MAX),
-            limit: Some(1000), // Maximum limit
+            limit: Some(1000),        // Maximum limit
             recv_window: Some(60000), // Maximum recv_window
             timestamp: u64::MAX,
         };
@@ -680,7 +676,8 @@ mod tests {
         ];
 
         for (symbol, quote_asset, option_side) in assets {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "id": 4611686018427387909,
                 "tradeId": 4611686018427387909,
                 "orderId": 12569099453718797317,
@@ -704,7 +701,9 @@ mod tests {
                 "quantityScale": 1,
                 "optionSide": "{}",
                 "quoteAsset": "{}"
-            }}"#, symbol, option_side, quote_asset);
+            }}"#,
+                symbol, option_side, quote_asset
+            );
 
             let trade: UserTrade = serde_json::from_str(&json).unwrap();
             assert_eq!(trade.symbol, symbol);
@@ -722,7 +721,8 @@ mod tests {
         ];
 
         for (side_str, expected_side) in sides {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "id": 4611686018427387910,
                 "tradeId": 4611686018427387910,
                 "orderId": 12569099453718797318,
@@ -746,7 +746,9 @@ mod tests {
                 "quantityScale": 1,
                 "optionSide": "CALL",
                 "quoteAsset": "BTC"
-            }}"#, side_str);
+            }}"#,
+                side_str
+            );
 
             let trade: UserTrade = serde_json::from_str(&json).unwrap();
             assert_eq!(trade.side, expected_side);
@@ -762,7 +764,8 @@ mod tests {
         ];
 
         for (option_side_str, expected_option_side) in option_sides {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "id": 4611686018427387911,
                 "tradeId": 4611686018427387911,
                 "orderId": 12569099453718797319,
@@ -786,7 +789,9 @@ mod tests {
                 "quantityScale": 1,
                 "optionSide": "{}",
                 "quoteAsset": "BTC"
-            }}"#, option_side_str);
+            }}"#,
+                option_side_str
+            );
 
             let trade: UserTrade = serde_json::from_str(&json).unwrap();
             assert_eq!(trade.option_side, expected_option_side);
@@ -823,7 +828,7 @@ mod tests {
         }"#;
 
         let trade: UserTrade = serde_json::from_str(json).unwrap();
-        
+
         // Verify Greeks have realistic values for a call option
         assert!(trade.delta > dec!(0) && trade.delta < dec!(1)); // Delta between 0 and 1 for call
         assert!(trade.gamma > dec!(0)); // Gamma is positive
@@ -865,7 +870,7 @@ mod tests {
         }"#;
 
         let trade: UserTrade = serde_json::from_str(json).unwrap();
-        
+
         // Verify Greeks have realistic values for a put option
         assert!(trade.delta < dec!(0) && trade.delta > dec!(-1)); // Delta between -1 and 0 for put
         assert!(trade.gamma > dec!(0)); // Gamma is positive
@@ -1099,11 +1104,11 @@ mod tests {
         }"#;
 
         let trade: UserTrade = serde_json::from_str(json).unwrap();
-        
+
         // Verify scales are reasonable
         assert!(trade.price_scale <= 18); // Reasonable price scale
         assert!(trade.quantity_scale <= 18); // Reasonable quantity scale
-        
+
         // Verify quote quantity matches price * quantity approximately
         let calculated_quote_qty = trade.price * trade.quantity;
         assert!((trade.quote_qty - calculated_quote_qty).abs() < dec!(0.000001));

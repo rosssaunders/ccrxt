@@ -83,7 +83,10 @@ impl RestClient {
         &self,
         request: &GetAssetTransferRecordsRequest,
     ) -> RestResult<GetAssetTransferRecordsResponse> {
-        self.send_get_signed_request(ASSET_TRANSFER_RECORDS_ENDPOINT, request, EndpointType::AccountApiGroup2,
+        self.send_get_signed_request(
+            ASSET_TRANSFER_RECORDS_ENDPOINT,
+            request,
+            EndpointType::AccountApiGroup2,
         )
         .await
     }

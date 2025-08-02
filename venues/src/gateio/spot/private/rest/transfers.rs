@@ -145,7 +145,12 @@ mod tests {
     #[test]
     fn test_different_account_types() {
         let account_types = vec![
-            "spot", "margin", "futures", "delivery", "cross_margin", "options"
+            "spot",
+            "margin",
+            "futures",
+            "delivery",
+            "cross_margin",
+            "options",
         ];
 
         for from_account in &account_types {

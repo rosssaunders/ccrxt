@@ -1,6 +1,8 @@
-use crate::binance::coinm::{RestResult, public::rest::RestClient};
-use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
+
+use serde::{Deserialize, Serialize};
+
+use crate::binance::coinm::{RestResult, public::rest::RestClient};
 
 /// Endpoint path for the order book API.
 const ORDER_BOOK_ENDPOINT: &str = "/dapi/v1/depth";
@@ -66,8 +68,9 @@ fn deserialize_levels<'de, D>(deserializer: D) -> Result<Vec<OrderBookLevel>, D:
 where
     D: serde::Deserializer<'de>,
 {
-    use serde::de::{SeqAccess, Visitor};
     use std::fmt;
+
+    use serde::de::{SeqAccess, Visitor};
 
     struct LevelsVisitor;
     impl<'de> Visitor<'de> for LevelsVisitor {
@@ -130,8 +133,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use reqwest::Client;
+
+    use super::*;
     use crate::binance::shared::venue_trait::VenueConfig;
 
     #[tokio::test]

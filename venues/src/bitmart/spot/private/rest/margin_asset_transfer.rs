@@ -45,7 +45,9 @@ impl RestClient {
         &self,
         request: MarginAssetTransferRequest,
     ) -> RestResult<MarginAssetTransferResponse> {
-        self.send_post_signed_request(MARGIN_ASSET_TRANSFER_ENDPOINT, request,
+        self.send_post_signed_request(
+            MARGIN_ASSET_TRANSFER_ENDPOINT,
+            request,
             EndpointType::MarginLoan,
         )
         .await

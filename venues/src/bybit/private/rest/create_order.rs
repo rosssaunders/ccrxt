@@ -185,11 +185,8 @@ impl RestClient {
         &self,
         request: CreateOrderRequest,
     ) -> RestResult<CreateOrderResponse> {
-        self.send_post_request(CREATE_ORDER_ENDPOINT,
-            request,
-            EndpointType::Trade,
-        )
-        .await
+        self.send_post_request(CREATE_ORDER_ENDPOINT, request, EndpointType::Trade)
+            .await
     }
 }
 

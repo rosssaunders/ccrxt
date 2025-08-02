@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use crate::binance::{
-    coinm::{MarginModificationType, PositionSide, RestResult, private::rest::client::RestClient},
+use crate::binance::coinm::{
+    MarginModificationType, PositionSide, RestResult, private::rest::client::RestClient,
 };
 
 const POSITION_MARGIN_HISTORY_ENDPOINT: &str = "/dapi/v1/positionMargin/history";
@@ -82,13 +82,8 @@ impl RestClient {
         params: GetPositionMarginChangeHistoryRequest,
     ) -> RestResult<GetPositionMarginChangeHistoryResponse> {
         let weight = 1;
-        self.send_get_signed_request(
-            POSITION_MARGIN_HISTORY_ENDPOINT,
-            params,
-            weight,
-            false,
-        )
-        .await
+        self.send_get_signed_request(POSITION_MARGIN_HISTORY_ENDPOINT, params, weight, false)
+            .await
     }
 }
 

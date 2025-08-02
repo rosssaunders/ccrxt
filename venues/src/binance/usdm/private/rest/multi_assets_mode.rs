@@ -1,8 +1,9 @@
+use std::borrow::Cow;
+
 use serde::{Deserialize, Serialize};
 
 use super::UsdmClient;
 use crate::binance::usdm::{BooleanStatus, RestResult};
-use std::borrow::Cow;
 
 /// Endpoint path for changing multi-assets margin mode.
 const CHANGE_MULTI_ASSETS_MODE_ENDPOINT: &str = "/fapi/v1/multiAssetsMargin";
@@ -59,13 +60,8 @@ impl UsdmClient {
         &self,
         request: ChangeMultiAssetsModeRequest,
     ) -> RestResult<ChangeMultiAssetsModeResponse> {
-        self.send_post_signed_request(
-            CHANGE_MULTI_ASSETS_MODE_ENDPOINT,
-            request,
-            1,
-            false,
-        )
-        .await
+        self.send_post_signed_request(CHANGE_MULTI_ASSETS_MODE_ENDPOINT, request, 1, false)
+            .await
     }
 }
 

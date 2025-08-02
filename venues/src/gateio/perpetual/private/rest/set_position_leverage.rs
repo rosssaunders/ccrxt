@@ -49,7 +49,10 @@ impl RestClient {
         &self,
         request: SetLeverageRequest,
     ) -> crate::gateio::perpetual::Result<LeverageResponse> {
-        let endpoint = format!("/futures/{}/positions/{}/leverage", request.settle, request.contract);
+        let endpoint = format!(
+            "/futures/{}/positions/{}/leverage",
+            request.settle, request.contract
+        );
         self.post(&endpoint, &request).await
     }
 }
@@ -71,7 +74,12 @@ mod tests {
         assert_eq!(json["settle"], "USDT");
         assert_eq!(json["contract"], "BTC_USDT");
         assert_eq!(json["leverage"], "10");
-        assert!(!json.as_object().unwrap().contains_key("cross_leverage_limit"));
+        assert!(
+            !json
+                .as_object()
+                .unwrap()
+                .contains_key("cross_leverage_limit")
+        );
     }
 
     #[test]
@@ -174,11 +182,16 @@ mod tests {
             };
 
             let json = serde_json::to_value(&request).unwrap();
-            
+
             if let Some(limit) = cross_limit {
                 assert_eq!(json["cross_leverage_limit"], limit);
             } else {
-                assert!(!json.as_object().unwrap().contains_key("cross_leverage_limit"));
+                assert!(
+                    !json
+                        .as_object()
+                        .unwrap()
+                        .contains_key("cross_leverage_limit")
+                );
             }
         }
     }
@@ -198,6 +211,9 @@ mod tests {
         assert_eq!(deserialized.settle, request.settle);
         assert_eq!(deserialized.contract, request.contract);
         assert_eq!(deserialized.leverage, request.leverage);
-        assert_eq!(deserialized.cross_leverage_limit, request.cross_leverage_limit);
+        assert_eq!(
+            deserialized.cross_leverage_limit,
+            request.cross_leverage_limit
+        );
     }
 }

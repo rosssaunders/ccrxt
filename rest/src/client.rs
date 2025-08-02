@@ -1,11 +1,13 @@
-use serde::{de::DeserializeOwned, Serialize};
 use std::sync::Arc;
 
-use crate::error::RestError;
-use crate::http_client::{HttpClient, HttpError, Method, RequestBuilder};
+use serde::{de::DeserializeOwned, Serialize};
 
 #[cfg(feature = "native")]
 use crate::native::NativeHttpClient;
+use crate::{
+    error::RestError,
+    http_client::{HttpClient, HttpError, Method, RequestBuilder},
+};
 
 /// A generic REST client for making HTTP requests
 #[derive(Clone)]
@@ -39,10 +41,9 @@ impl Client {
     ) -> Result<Self, RestError> {
         let http_client = NativeHttpClient::new()
             .map_err(|e| RestError::Unknown(format!("Failed to create HTTP client: {}", e)))?;
-        
+
         Self::with_http_client(base_url, http_client, _api_key, _secret, _passphrase)
     }
-
 
     /// Make a GET request
     pub async fn get<T, P>(&self, endpoint: &str, params: Option<&P>) -> Result<T, RestError>
@@ -58,7 +59,10 @@ impl Client {
         }
 
         let request = builder.build();
-        let response = self.http_client.execute(request).await
+        let response = self
+            .http_client
+            .execute(request)
+            .await
             .map_err(|e| RestError::from(e))?;
 
         if !response.is_success() {
@@ -69,7 +73,8 @@ impl Client {
             )));
         }
 
-        let result = response.json()
+        let result = response
+            .json()
             .map_err(|e| RestError::Unknown(format!("Failed to parse response: {}", e)))?;
         Ok(result)
     }
@@ -92,7 +97,10 @@ impl Client {
         }
 
         let request = builder.build();
-        let response = self.http_client.execute(request).await
+        let response = self
+            .http_client
+            .execute(request)
+            .await
             .map_err(|e| RestError::from(e))?;
 
         if !response.is_success() {
@@ -103,7 +111,8 @@ impl Client {
             )));
         }
 
-        let result = response.json()
+        let result = response
+            .json()
             .map_err(|e| RestError::Unknown(format!("Failed to parse response: {}", e)))?;
         Ok(result)
     }
@@ -125,7 +134,9 @@ impl From<HttpError> for RestError {
             HttpError::Timeout => RestError::HttpError("Request timeout".to_string()),
             HttpError::InvalidUrl(msg) => RestError::ValidationError(msg),
             HttpError::Decode(msg) => RestError::Unknown(msg),
-            HttpError::Http { status, body } => RestError::HttpError(format!("HTTP {}: {}", status, body)),
+            HttpError::Http { status, body } => {
+                RestError::HttpError(format!("HTTP {}: {}", status, body))
+            }
             HttpError::Unknown(msg) => RestError::Unknown(msg),
         }
     }

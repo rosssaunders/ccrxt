@@ -1,5 +1,4 @@
-use super::RestClient;
-use super::position::DualModePosition;
+use super::{RestClient, position::DualModePosition};
 
 impl RestClient {
     /// Get dual mode position

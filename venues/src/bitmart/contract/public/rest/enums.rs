@@ -8,11 +8,11 @@ pub enum ContractStatus {
     /// Normal trading status (API returns "Trading")
     #[serde(rename = "Trading")]
     Normal,
-    
+
     /// Delisted status
     #[serde(rename = "Delisted")]
     Delisted,
-    
+
     /// Unknown status for any other values
     #[serde(other)]
     Unknown,

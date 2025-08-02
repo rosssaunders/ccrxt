@@ -1,8 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::RestClient;
-use super::amend_order::AmendFuturesOrderRequest;
-use super::batch_orders::BatchOrderResult;
+use super::{RestClient, amend_order::AmendFuturesOrderRequest, batch_orders::BatchOrderResult};
 
 /// Request to amend batch orders
 #[derive(Debug, Clone, Serialize, Deserialize)]

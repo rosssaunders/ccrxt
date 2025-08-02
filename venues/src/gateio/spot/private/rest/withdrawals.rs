@@ -261,7 +261,8 @@ mod tests {
         let statuses = vec!["pending", "processing", "completed", "failed", "cancelled"];
 
         for status in statuses {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "id": "withdrawal_789012",
                 "currency": "ETH",
                 "chain": "ETH",
@@ -270,7 +271,9 @@ mod tests {
                 "address": "0x123456789abcdef123456789abcdef123456789a",
                 "status": "{}",
                 "timestamp": "1640995400"
-            }}"#, status);
+            }}"#,
+                status
+            );
 
             let record: WithdrawalRecord = serde_json::from_str(&json).unwrap();
             assert_eq!(record.status, status);

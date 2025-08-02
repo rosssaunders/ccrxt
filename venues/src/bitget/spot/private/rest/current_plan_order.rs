@@ -162,7 +162,9 @@ impl RestClient {
         &self,
         request: CurrentPlanOrderRequest,
     ) -> RestResult<CurrentPlanOrderResponse> {
-        self.send_get_signed_request(CURRENT_PLAN_ORDER_ENDPOINT, request,
+        self.send_get_signed_request(
+            CURRENT_PLAN_ORDER_ENDPOINT,
+            request,
             20,    // 20 requests per second rate limit
             false, // This is not an order placement endpoint
             None,  // No order-specific rate limit

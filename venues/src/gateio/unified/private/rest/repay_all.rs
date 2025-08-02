@@ -1,5 +1,4 @@
-use super::RestClient;
-use super::loan::BorrowOrRepayResponse;
+use super::{RestClient, loan::BorrowOrRepayResponse};
 
 impl RestClient {
     /// Repay all borrowed funds for a currency

@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::RestClient;
-use super::order::FuturesOrder;
+use super::{RestClient, order::FuturesOrder};
 
 /// Request to create futures order
 #[derive(Debug, Clone, Serialize, Deserialize)]

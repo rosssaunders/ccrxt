@@ -4,9 +4,10 @@ pub mod private;
 pub mod public;
 
 // Re-export key components from shared modules
-pub use crate::gateio::shared::*;
 pub use private::RestClient as PrivateRestClient;
 pub use public::RestClient as PublicRestClient;
+
+pub use crate::gateio::shared::*;
 
 /// Represents the relevant response headers returned by the Gate.io API for rate limiting.
 pub type ResponseHeaders = RateLimitHeader;

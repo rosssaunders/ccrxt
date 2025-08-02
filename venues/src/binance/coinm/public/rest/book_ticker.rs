@@ -99,8 +99,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use rust_decimal::prelude::FromPrimitive;
+
+    use super::*;
 
     #[test]
     fn test_book_ticker_request_by_symbol_serialization() {

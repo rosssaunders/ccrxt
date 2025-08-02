@@ -210,12 +210,8 @@ impl RestClient {
         &self,
         request: GetOrderHistoryRequest,
     ) -> RestResult<GetOrderHistoryResponse> {
-        self.send_get_signed_request(ORDER_HISTORY_ENDPOINT, request,
-            10,
-            false,
-            None,
-        )
-        .await
+        self.send_get_signed_request(ORDER_HISTORY_ENDPOINT, request, 10, false, None)
+            .await
     }
 }
 

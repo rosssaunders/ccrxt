@@ -197,7 +197,7 @@ mod tests {
     #[test]
     fn test_options_position_close_history_request_different_sides() {
         let sides = vec!["long", "short"];
-        
+
         for side in sides {
             let request = OptionsPositionCloseHistoryRequest {
                 underlying: None,
@@ -332,17 +332,20 @@ mod tests {
             "ETH-20240215-3000-P",
             "BNB-20240301-400-C",
             "SOL-20240315-150-P",
-            "ADA-20240401-1-C"
+            "ADA-20240401-1-C",
         ];
-        
+
         for contract in contracts {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "time": 1640995200.0,
                 "pnl": "100.0",
                 "side": "long",
                 "contract": "{}",
                 "text": "Contract test"
-            }}"#, contract);
+            }}"#,
+                contract
+            );
 
             let entry: OptionsPositionCloseHistory = serde_json::from_str(&json).unwrap();
             assert_eq!(entry.contract, contract);
@@ -353,15 +356,18 @@ mod tests {
     #[test]
     fn test_options_position_close_history_entry_different_sides() {
         let sides = vec!["long", "short"];
-        
+
         for side in sides {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "time": 1640995200.0,
                 "pnl": "50.0",
                 "side": "{}",
                 "contract": "BTC-20240101-50000-C",
                 "text": "Side test"
-            }}"#, side);
+            }}"#,
+                side
+            );
 
             let entry: OptionsPositionCloseHistory = serde_json::from_str(&json).unwrap();
             assert_eq!(entry.side, side);
@@ -378,17 +384,20 @@ mod tests {
             "Exercise",
             "Auto close due to insufficient margin",
             "Stop loss triggered",
-            "Take profit triggered"
+            "Take profit triggered",
         ];
-        
+
         for text in texts {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "time": 1640995200.0,
                 "pnl": "25.0",
                 "side": "long",
                 "contract": "BTC-20240101-50000-C",
                 "text": "{}"
-            }}"#, text);
+            }}"#,
+                text
+            );
 
             let entry: OptionsPositionCloseHistory = serde_json::from_str(&json).unwrap();
             assert_eq!(entry.text, text);
@@ -406,7 +415,8 @@ mod tests {
             "text": "Massive profit"
         }"#;
 
-        let large_profit_entry: OptionsPositionCloseHistory = serde_json::from_str(large_profit_json).unwrap();
+        let large_profit_entry: OptionsPositionCloseHistory =
+            serde_json::from_str(large_profit_json).unwrap();
         assert_eq!(large_profit_entry.pnl, "999999999.99999999");
 
         // Test very large loss
@@ -418,7 +428,8 @@ mod tests {
             "text": "Massive loss"
         }"#;
 
-        let large_loss_entry: OptionsPositionCloseHistory = serde_json::from_str(large_loss_json).unwrap();
+        let large_loss_entry: OptionsPositionCloseHistory =
+            serde_json::from_str(large_loss_json).unwrap();
         assert_eq!(large_loss_entry.pnl, "-999999999.99999999");
     }
 
@@ -468,17 +479,17 @@ mod tests {
 
         let entries: Vec<OptionsPositionCloseHistory> = serde_json::from_str(json).unwrap();
         assert_eq!(entries.len(), 3);
-        
+
         assert_eq!(entries[0].time, 1640995200.0);
         assert_eq!(entries[0].pnl, "100.0");
         assert_eq!(entries[0].side, "long");
         assert_eq!(entries[0].contract, "BTC-20240101-50000-C");
-        
+
         assert_eq!(entries[1].time, 1640995300.0);
         assert_eq!(entries[1].pnl, "-50.0");
         assert_eq!(entries[1].side, "short");
         assert_eq!(entries[1].contract, "ETH-20240101-3000-P");
-        
+
         assert_eq!(entries[2].time, 1640995400.0);
         assert_eq!(entries[2].pnl, "0.0");
         assert_eq!(entries[2].side, "long");
@@ -507,7 +518,10 @@ mod tests {
         assert_eq!(entry.pnl, "75.5");
         assert_eq!(entry.side, "long");
         assert_eq!(entry.contract, "BTC-20240101-50000-C");
-        assert_eq!(entry.text, "Position closed due to user action: \"Stop Loss\" @50000");
+        assert_eq!(
+            entry.text,
+            "Position closed due to user action: \"Stop Loss\" @50000"
+        );
     }
 
     #[test]
@@ -521,7 +535,8 @@ mod tests {
             "text": "Call option closed in-the-money at expiry"
         }"#;
 
-        let profitable_call: OptionsPositionCloseHistory = serde_json::from_str(profitable_call_json).unwrap();
+        let profitable_call: OptionsPositionCloseHistory =
+            serde_json::from_str(profitable_call_json).unwrap();
         assert_eq!(profitable_call.pnl, "500.75");
         assert_eq!(profitable_call.side, "long");
         assert!(profitable_call.contract.ends_with("-C"));
@@ -549,7 +564,8 @@ mod tests {
             "text": "Short call option expired worthless"
         }"#;
 
-        let short_profit: OptionsPositionCloseHistory = serde_json::from_str(short_profit_json).unwrap();
+        let short_profit: OptionsPositionCloseHistory =
+            serde_json::from_str(short_profit_json).unwrap();
         assert_eq!(short_profit.pnl, "150.0");
         assert_eq!(short_profit.side, "short");
         assert!(short_profit.contract.contains("-60000-"));
@@ -584,7 +600,8 @@ mod tests {
             "text": "Old timestamp"
         }"#;
 
-        let old_entry: OptionsPositionCloseHistory = serde_json::from_str(old_timestamp_json).unwrap();
+        let old_entry: OptionsPositionCloseHistory =
+            serde_json::from_str(old_timestamp_json).unwrap();
         assert_eq!(old_entry.time, 0.0);
 
         // Test future timestamp
@@ -596,7 +613,8 @@ mod tests {
             "text": "Future timestamp"
         }"#;
 
-        let future_entry: OptionsPositionCloseHistory = serde_json::from_str(future_timestamp_json).unwrap();
+        let future_entry: OptionsPositionCloseHistory =
+            serde_json::from_str(future_timestamp_json).unwrap();
         assert_eq!(future_entry.time, 9999999999.999);
     }
 }

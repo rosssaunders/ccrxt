@@ -1,10 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-use crate::binance::{
-    coinm::{
-        OrderSide, OrderType, PositionSide, PriceMatch, RestResult, SelfTradePreventionMode,
-        TimeInForce, WorkingType, private::rest::client::RestClient,
-    },
+use crate::binance::coinm::{
+    OrderSide, OrderType, PositionSide, PriceMatch, RestResult, SelfTradePreventionMode,
+    TimeInForce, WorkingType, private::rest::client::RestClient,
 };
 
 const CANCEL_ORDER_ENDPOINT: &str = "/dapi/v1/order";
@@ -128,13 +126,8 @@ impl RestClient {
         &self,
         params: CancelOrderRequest,
     ) -> RestResult<CancelOrderResponse> {
-        self.send_delete_signed_request(
-            CANCEL_ORDER_ENDPOINT,
-            params,
-            1,
-            false,
-        )
-        .await
+        self.send_delete_signed_request(CANCEL_ORDER_ENDPOINT, params, 1, false)
+            .await
     }
 }
 

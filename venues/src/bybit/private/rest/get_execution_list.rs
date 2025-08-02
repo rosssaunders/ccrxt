@@ -103,11 +103,8 @@ impl RestClient {
         &self,
         request: GetExecutionListRequest,
     ) -> RestResult<GetExecutionListResponse> {
-        self.send_get_request(GET_EXECUTION_LIST_ENDPOINT,
-            request,
-            EndpointType::Trade,
-        )
-        .await
+        self.send_get_request(GET_EXECUTION_LIST_ENDPOINT, request, EndpointType::Trade)
+            .await
     }
 }
 

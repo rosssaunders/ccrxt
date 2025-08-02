@@ -250,8 +250,13 @@ impl RestClient {
         T: DeserializeOwned,
         P: Serialize,
     {
-        self.send_request(endpoint, reqwest::Method::POST, Some(&params), endpoint_type)
-            .await
+        self.send_request(
+            endpoint,
+            reqwest::Method::POST,
+            Some(&params),
+            endpoint_type,
+        )
+        .await
     }
 
     /// Send a PUT request to a private endpoint
@@ -296,8 +301,13 @@ impl RestClient {
         T: DeserializeOwned,
         P: Serialize,
     {
-        self.send_request(endpoint, reqwest::Method::DELETE, Some(&params), endpoint_type)
-            .await
+        self.send_request(
+            endpoint,
+            reqwest::Method::DELETE,
+            Some(&params),
+            endpoint_type,
+        )
+        .await
     }
 }
 

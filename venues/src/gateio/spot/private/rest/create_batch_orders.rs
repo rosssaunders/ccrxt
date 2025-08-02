@@ -47,9 +47,14 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::gateio::spot::{OrderSide, OrderType, TimeInForce, StpMode};
+    use crate::gateio::spot::{OrderSide, OrderType, StpMode, TimeInForce};
 
-    fn create_sample_order(currency_pair: &str, side: OrderSide, amount: &str, price: &str) -> CreateOrderRequest {
+    fn create_sample_order(
+        currency_pair: &str,
+        side: OrderSide,
+        amount: &str,
+        price: &str,
+    ) -> CreateOrderRequest {
         CreateOrderRequest {
             currency_pair: currency_pair.to_string(),
             side,
@@ -74,7 +79,7 @@ mod tests {
         let json = serde_json::to_value(&request).unwrap();
         assert!(json["orders"].is_array());
         assert_eq!(json["orders"].as_array().unwrap().len(), 1);
-        
+
         let first_order = &json["orders"][0];
         assert_eq!(first_order["currency_pair"], "BTC_USDT");
         assert_eq!(first_order["side"], "buy");
@@ -89,13 +94,13 @@ mod tests {
             create_sample_order("ETH_USDT", OrderSide::Sell, "0.1", "2500"),
             create_sample_order("BNB_USDT", OrderSide::Buy, "1.0", "300"),
         ];
-        
+
         let request = CreateBatchOrdersRequest { orders };
 
         let json = serde_json::to_value(&request).unwrap();
         assert!(json["orders"].is_array());
         assert_eq!(json["orders"].as_array().unwrap().len(), 3);
-        
+
         // Verify each order
         let orders_array = json["orders"].as_array().unwrap();
         assert_eq!(orders_array[0]["currency_pair"], "BTC_USDT");
@@ -110,17 +115,21 @@ mod tests {
         for i in 0..10 {
             orders.push(create_sample_order(
                 "BTC_USDT",
-                if i % 2 == 0 { OrderSide::Buy } else { OrderSide::Sell },
+                if i % 2 == 0 {
+                    OrderSide::Buy
+                } else {
+                    OrderSide::Sell
+                },
                 "0.001",
                 &format!("{}", 30000 + i * 100),
             ));
         }
-        
+
         let request = CreateBatchOrdersRequest { orders };
 
         let json = serde_json::to_value(&request).unwrap();
         assert_eq!(json["orders"].as_array().unwrap().len(), 10);
-        
+
         // Verify prices increment correctly
         let orders_array = json["orders"].as_array().unwrap();
         for (i, order) in orders_array.iter().enumerate() {
@@ -131,9 +140,7 @@ mod tests {
 
     #[test]
     fn test_create_batch_orders_request_empty_orders() {
-        let request = CreateBatchOrdersRequest {
-            orders: vec![],
-        };
+        let request = CreateBatchOrdersRequest { orders: vec![] };
 
         let json = serde_json::to_value(&request).unwrap();
         assert!(json["orders"].is_array());
@@ -148,12 +155,12 @@ mod tests {
             create_sample_order("SOL_USDC", OrderSide::Buy, "10.0", "150"),
             create_sample_order("USDC_USDT", OrderSide::Sell, "1000", "1.0001"),
         ];
-        
+
         let request = CreateBatchOrdersRequest { orders };
 
         let json = serde_json::to_value(&request).unwrap();
         let orders_array = json["orders"].as_array().unwrap();
-        
+
         assert_eq!(orders_array[0]["currency_pair"], "BTC_USDT");
         assert_eq!(orders_array[1]["currency_pair"], "ETH_BTC");
         assert_eq!(orders_array[2]["currency_pair"], "SOL_USDC");
@@ -168,12 +175,12 @@ mod tests {
             create_sample_order("ETH_USDT", OrderSide::Buy, "0.1", "2500"),
             create_sample_order("ETH_USDT", OrderSide::Sell, "0.15", "2600"),
         ];
-        
+
         let request = CreateBatchOrdersRequest { orders };
 
         let json = serde_json::to_value(&request).unwrap();
         let orders_array = json["orders"].as_array().unwrap();
-        
+
         assert_eq!(orders_array[0]["side"], "buy");
         assert_eq!(orders_array[1]["side"], "sell");
         assert_eq!(orders_array[2]["side"], "buy");
@@ -216,7 +223,7 @@ mod tests {
         assert!(response.succeeded);
         assert!(response.order.is_some());
         assert!(response.message.is_none());
-        
+
         let order = response.order.unwrap();
         assert_eq!(order.id, "12345678");
         assert_eq!(order.currency_pair, "BTC_USDT");
@@ -279,12 +286,12 @@ mod tests {
 
         let responses: Vec<BatchOrderResponse> = serde_json::from_str(json).unwrap();
         assert_eq!(responses.len(), 2);
-        
+
         // First response - successful
         assert!(responses[0].succeeded);
         assert!(responses[0].order.is_some());
         assert!(responses[0].message.is_none());
-        
+
         // Second response - failed
         assert!(!responses[1].succeeded);
         assert!(responses[1].order.is_none());
@@ -293,10 +300,13 @@ mod tests {
 
     #[test]
     fn test_create_batch_orders_request_different_order_types() {
-        let mut orders = vec![
-            create_sample_order("BTC_USDT", OrderSide::Buy, "0.001", "30000"),
-        ];
-        
+        let mut orders = vec![create_sample_order(
+            "BTC_USDT",
+            OrderSide::Buy,
+            "0.001",
+            "30000",
+        )];
+
         // Market order (no price)
         orders.push(CreateOrderRequest {
             currency_pair: "ETH_USDT".to_string(),
@@ -310,15 +320,15 @@ mod tests {
             stp_mode: None,
             text: None,
         });
-        
+
         let request = CreateBatchOrdersRequest { orders };
 
         let json = serde_json::to_value(&request).unwrap();
         let orders_array = json["orders"].as_array().unwrap();
-        
+
         assert_eq!(orders_array[0]["type"], "limit");
         assert_eq!(orders_array[1]["type"], "market");
-        
+
         // Limit order should have price, market order should not
         assert!(orders_array[0]["price"].is_string());
         let obj = orders_array[1].as_object().unwrap();
@@ -339,14 +349,14 @@ mod tests {
             stp_mode: Some(StpMode::CancelNewest),
             text: Some("batch_test_order".to_string()),
         };
-        
+
         let request = CreateBatchOrdersRequest {
             orders: vec![order],
         };
 
         let json = serde_json::to_value(&request).unwrap();
         let first_order = &json["orders"][0];
-        
+
         assert_eq!(first_order["account"], "spot");
         assert_eq!(first_order["iceberg"], "0.0001");
         assert_eq!(first_order["stp_mode"], "cn");
@@ -364,19 +374,19 @@ mod tests {
             // Sell ETH for USDT
             create_sample_order("ETH_USDT", OrderSide::Sell, "1.25", "2400"),
         ];
-        
+
         let request = CreateBatchOrdersRequest { orders };
 
         let json = serde_json::to_value(&request).unwrap();
         let orders_array = json["orders"].as_array().unwrap();
-        
+
         // Verify the arbitrage chain
         assert_eq!(orders_array[0]["currency_pair"], "BTC_USDT");
         assert_eq!(orders_array[0]["side"], "buy");
-        
+
         assert_eq!(orders_array[1]["currency_pair"], "BTC_ETH");
         assert_eq!(orders_array[1]["side"], "sell");
-        
+
         assert_eq!(orders_array[2]["currency_pair"], "ETH_USDT");
         assert_eq!(orders_array[2]["side"], "sell");
     }
@@ -387,7 +397,7 @@ mod tests {
         let mut orders = Vec::new();
         let base_price = 30000;
         let increment = 500;
-        
+
         for i in 0..5 {
             let price = base_price - (i * increment);
             orders.push(create_sample_order(
@@ -397,14 +407,14 @@ mod tests {
                 &price.to_string(),
             ));
         }
-        
+
         let request = CreateBatchOrdersRequest { orders };
 
         let json = serde_json::to_value(&request).unwrap();
         let orders_array = json["orders"].as_array().unwrap();
-        
+
         assert_eq!(orders_array.len(), 5);
-        
+
         // Verify descending price levels
         for (i, order) in orders_array.iter().enumerate() {
             let expected_price = base_price - (i * increment);
@@ -420,11 +430,15 @@ mod tests {
         let mut orders = Vec::new();
         let base_price = 30000;
         let grid_size = 200;
-        
+
         for i in 0..6 {
             let price = base_price + ((i as i32 - 3) * grid_size);
-            let side = if i < 3 { OrderSide::Buy } else { OrderSide::Sell };
-            
+            let side = if i < 3 {
+                OrderSide::Buy
+            } else {
+                OrderSide::Sell
+            };
+
             orders.push(create_sample_order(
                 "BTC_USDT",
                 side,
@@ -432,14 +446,14 @@ mod tests {
                 &price.to_string(),
             ));
         }
-        
+
         let request = CreateBatchOrdersRequest { orders };
 
         let json = serde_json::to_value(&request).unwrap();
         let orders_array = json["orders"].as_array().unwrap();
-        
+
         assert_eq!(orders_array.len(), 6);
-        
+
         // Verify grid structure
         for (i, order) in orders_array.iter().enumerate() {
             let expected_side = if i < 3 { "buy" } else { "sell" };
@@ -451,16 +465,16 @@ mod tests {
     fn test_create_batch_orders_request_different_precision_amounts() {
         let orders = vec![
             create_sample_order("BTC_USDT", OrderSide::Buy, "0.00000001", "30000"), // Min BTC precision
-            create_sample_order("ETH_USDT", OrderSide::Buy, "0.000001", "2500"),    // Min ETH precision
-            create_sample_order("BNB_USDT", OrderSide::Buy, "0.001", "300"),        // Normal precision
+            create_sample_order("ETH_USDT", OrderSide::Buy, "0.000001", "2500"), // Min ETH precision
+            create_sample_order("BNB_USDT", OrderSide::Buy, "0.001", "300"),     // Normal precision
             create_sample_order("USDC_USDT", OrderSide::Buy, "1000.123456", "1.0001"), // Stablecoin
         ];
-        
+
         let request = CreateBatchOrdersRequest { orders };
 
         let json = serde_json::to_value(&request).unwrap();
         let orders_array = json["orders"].as_array().unwrap();
-        
+
         assert_eq!(orders_array[0]["amount"], "0.00000001");
         assert_eq!(orders_array[1]["amount"], "0.000001");
         assert_eq!(orders_array[2]["amount"], "0.001");
@@ -469,16 +483,19 @@ mod tests {
 
     #[test]
     fn test_create_batch_orders_request_endpoint_validation() {
-        let orders = vec![
-            create_sample_order("BTC_USDT", OrderSide::Buy, "0.001", "30000"),
-        ];
-        
+        let orders = vec![create_sample_order(
+            "BTC_USDT",
+            OrderSide::Buy,
+            "0.001",
+            "30000",
+        )];
+
         let request = CreateBatchOrdersRequest { orders };
-        
+
         // Verify request can be serialized for the endpoint
         let json = serde_json::to_value(&request).unwrap();
         assert!(json["orders"].is_array());
-        
+
         // Verify the structure matches API expectations
         assert!(json.as_object().unwrap().contains_key("orders"));
         assert_eq!(json.as_object().unwrap().len(), 1); // Only "orders" field
@@ -495,7 +512,7 @@ mod tests {
         let json = serde_json::to_value(&response).unwrap();
         assert_eq!(json["succeeded"], true);
         assert_eq!(json["message"], "Order queued");
-        
+
         // Order should be omitted when None
         let obj = json.as_object().unwrap();
         assert!(!obj.contains_key("order"));
@@ -503,26 +520,35 @@ mod tests {
 
     #[test]
     fn test_create_batch_orders_request_clone() {
-        let orders = vec![
-            create_sample_order("BTC_USDT", OrderSide::Buy, "0.001", "30000"),
-        ];
-        
+        let orders = vec![create_sample_order(
+            "BTC_USDT",
+            OrderSide::Buy,
+            "0.001",
+            "30000",
+        )];
+
         let original = CreateBatchOrdersRequest { orders };
         let cloned = original.clone();
-        
+
         assert_eq!(cloned.orders.len(), original.orders.len());
-        assert_eq!(cloned.orders[0].currency_pair, original.orders[0].currency_pair);
+        assert_eq!(
+            cloned.orders[0].currency_pair,
+            original.orders[0].currency_pair
+        );
     }
 
     #[test]
     fn test_create_batch_orders_request_debug() {
-        let orders = vec![
-            create_sample_order("BTC_USDT", OrderSide::Buy, "0.001", "30000"),
-        ];
-        
+        let orders = vec![create_sample_order(
+            "BTC_USDT",
+            OrderSide::Buy,
+            "0.001",
+            "30000",
+        )];
+
         let request = CreateBatchOrdersRequest { orders };
         let debug_str = format!("{:?}", request);
-        
+
         assert!(debug_str.contains("CreateBatchOrdersRequest"));
         assert!(debug_str.contains("BTC_USDT"));
     }
@@ -567,19 +593,19 @@ mod tests {
                 &format!("{}", 30000 + i * 10),
             ));
         }
-        
+
         let request = CreateBatchOrdersRequest { orders };
 
         let json = serde_json::to_value(&request).unwrap();
         let orders_array = json["orders"].as_array().unwrap();
-        
+
         assert_eq!(orders_array.len(), 10);
-        
+
         // Verify each order has unique values
         for (i, order) in orders_array.iter().enumerate() {
             let expected_amount = format!("0.00{}", i + 1);
             let expected_price = format!("{}", 30000 + (i + 1) * 10);
-            
+
             assert_eq!(order["amount"], expected_amount);
             assert_eq!(order["price"], expected_price);
         }
@@ -613,12 +639,12 @@ mod tests {
                 text: None,
             },
         ];
-        
+
         let request = CreateBatchOrdersRequest { orders };
 
         let json = serde_json::to_value(&request).unwrap();
         let orders_array = json["orders"].as_array().unwrap();
-        
+
         assert_eq!(orders_array[0]["account"], "spot");
         assert_eq!(orders_array[1]["account"], "margin");
     }

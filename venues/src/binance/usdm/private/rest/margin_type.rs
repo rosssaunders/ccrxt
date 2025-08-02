@@ -56,13 +56,8 @@ impl UsdmClient {
         &self,
         request: ChangeMarginTypeRequest,
     ) -> RestResult<ChangeMarginTypeResponse> {
-        self.send_post_signed_request(
-            MARGIN_TYPE_ENDPOINT,
-            request,
-            1,
-            false,
-        )
-        .await
+        self.send_post_signed_request(MARGIN_TYPE_ENDPOINT, request, 1, false)
+            .await
     }
 }
 

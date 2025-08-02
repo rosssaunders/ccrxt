@@ -343,7 +343,7 @@ mod tests {
     use super::*;
 
     struct MockSecret(String);
-    
+
     impl ExposableSecret for MockSecret {
         fn expose_secret(&self) -> String {
             self.0.clone()
@@ -361,7 +361,7 @@ mod tests {
             Box::new(MockSecret("test_passphrase".to_string())) as Box<dyn ExposableSecret>,
             false,
         );
-        
+
         assert_eq!(client.base_url, "https://api.kucoin.com");
         assert_eq!(client.is_sandbox, false);
     }
@@ -373,7 +373,7 @@ mod tests {
             Box::new(MockSecret("test_secret".to_string())) as Box<dyn ExposableSecret>,
             Box::new(MockSecret("test_passphrase".to_string())) as Box<dyn ExposableSecret>,
         );
-        
+
         assert_eq!(client.base_url, "https://api.kucoin.com");
         assert_eq!(client.is_sandbox, false);
     }
@@ -385,7 +385,7 @@ mod tests {
             Box::new(MockSecret("test_secret".to_string())) as Box<dyn ExposableSecret>,
             Box::new(MockSecret("test_passphrase".to_string())) as Box<dyn ExposableSecret>,
         );
-        
+
         assert_eq!(client.base_url, "https://openapi-sandbox.kucoin.com");
         assert_eq!(client.is_sandbox, true);
     }
@@ -403,7 +403,9 @@ mod tests {
         );
 
         let timestamp = 1234567890123i64;
-        let headers = client.create_auth_headers("GET", "/api/v1/test", "", timestamp).unwrap();
+        let headers = client
+            .create_auth_headers("GET", "/api/v1/test", "", timestamp)
+            .unwrap();
 
         assert_eq!(headers.get("KC-API-KEY").unwrap(), "test_key");
         assert_eq!(headers.get("KC-API-TIMESTAMP").unwrap(), "1234567890123");
@@ -425,17 +427,31 @@ mod tests {
         );
 
         let timestamp = 1234567890123i64;
-        let headers = client.create_auth_headers("POST", "/api/v1/orders", "{\"symbol\":\"BTC-USDT\"}", timestamp).unwrap();
-        
+        let headers = client
+            .create_auth_headers(
+                "POST",
+                "/api/v1/orders",
+                "{\"symbol\":\"BTC-USDT\"}",
+                timestamp,
+            )
+            .unwrap();
+
         // Verify all required headers are present
         assert!(headers.contains_key("KC-API-KEY"));
         assert!(headers.contains_key("KC-API-SIGN"));
         assert!(headers.contains_key("KC-API-TIMESTAMP"));
         assert!(headers.contains_key("KC-API-PASSPHRASE"));
         assert!(headers.contains_key("KC-API-KEY-VERSION"));
-        
+
         // The signature should be deterministic for the same inputs
-        let headers2 = client.create_auth_headers("POST", "/api/v1/orders", "{\"symbol\":\"BTC-USDT\"}", timestamp).unwrap();
+        let headers2 = client
+            .create_auth_headers(
+                "POST",
+                "/api/v1/orders",
+                "{\"symbol\":\"BTC-USDT\"}",
+                timestamp,
+            )
+            .unwrap();
         assert_eq!(headers.get("KC-API-SIGN"), headers2.get("KC-API-SIGN"));
     }
 
@@ -452,15 +468,30 @@ mod tests {
         );
 
         let timestamp = 1234567890123i64;
-        
-        let get_headers = client.create_auth_headers("GET", "/api/v1/accounts", "", timestamp).unwrap();
-        let post_headers = client.create_auth_headers("POST", "/api/v1/accounts", "", timestamp).unwrap();
-        let delete_headers = client.create_auth_headers("DELETE", "/api/v1/accounts", "", timestamp).unwrap();
-        
+
+        let get_headers = client
+            .create_auth_headers("GET", "/api/v1/accounts", "", timestamp)
+            .unwrap();
+        let post_headers = client
+            .create_auth_headers("POST", "/api/v1/accounts", "", timestamp)
+            .unwrap();
+        let delete_headers = client
+            .create_auth_headers("DELETE", "/api/v1/accounts", "", timestamp)
+            .unwrap();
+
         // Different methods should produce different signatures
-        assert_ne!(get_headers.get("KC-API-SIGN"), post_headers.get("KC-API-SIGN"));
-        assert_ne!(get_headers.get("KC-API-SIGN"), delete_headers.get("KC-API-SIGN"));
-        assert_ne!(post_headers.get("KC-API-SIGN"), delete_headers.get("KC-API-SIGN"));
+        assert_ne!(
+            get_headers.get("KC-API-SIGN"),
+            post_headers.get("KC-API-SIGN")
+        );
+        assert_ne!(
+            get_headers.get("KC-API-SIGN"),
+            delete_headers.get("KC-API-SIGN")
+        );
+        assert_ne!(
+            post_headers.get("KC-API-SIGN"),
+            delete_headers.get("KC-API-SIGN")
+        );
     }
 
     #[test]
@@ -476,10 +507,14 @@ mod tests {
         );
 
         let timestamp = 1234567890123i64;
-        
-        let headers1 = client.create_auth_headers("GET", "/api/v1/accounts", "", timestamp).unwrap();
-        let headers2 = client.create_auth_headers("GET", "/api/v1/orders", "", timestamp).unwrap();
-        
+
+        let headers1 = client
+            .create_auth_headers("GET", "/api/v1/accounts", "", timestamp)
+            .unwrap();
+        let headers2 = client
+            .create_auth_headers("GET", "/api/v1/orders", "", timestamp)
+            .unwrap();
+
         // Different endpoints should produce different signatures
         assert_ne!(headers1.get("KC-API-SIGN"), headers2.get("KC-API-SIGN"));
     }
@@ -497,12 +532,24 @@ mod tests {
         );
 
         let timestamp = 1234567890123i64;
-        
-        let headers_no_body = client.create_auth_headers("POST", "/api/v1/orders", "", timestamp).unwrap();
-        let headers_with_body = client.create_auth_headers("POST", "/api/v1/orders", "{\"symbol\":\"BTC-USDT\"}", timestamp).unwrap();
-        
+
+        let headers_no_body = client
+            .create_auth_headers("POST", "/api/v1/orders", "", timestamp)
+            .unwrap();
+        let headers_with_body = client
+            .create_auth_headers(
+                "POST",
+                "/api/v1/orders",
+                "{\"symbol\":\"BTC-USDT\"}",
+                timestamp,
+            )
+            .unwrap();
+
         // Different body content should produce different signatures
-        assert_ne!(headers_no_body.get("KC-API-SIGN"), headers_with_body.get("KC-API-SIGN"));
+        assert_ne!(
+            headers_no_body.get("KC-API-SIGN"),
+            headers_with_body.get("KC-API-SIGN")
+        );
     }
 
     #[test]
@@ -518,8 +565,10 @@ mod tests {
         );
 
         let timestamp = 1234567890123i64;
-        let headers = client.create_auth_headers("GET", "/api/v1/test", "", timestamp).unwrap();
-        
+        let headers = client
+            .create_auth_headers("GET", "/api/v1/test", "", timestamp)
+            .unwrap();
+
         // Passphrase should be signed and not be the plain passphrase
         assert!(headers.contains_key("KC-API-PASSPHRASE"));
         assert_ne!(headers.get("KC-API-PASSPHRASE").unwrap(), "passphrase123");

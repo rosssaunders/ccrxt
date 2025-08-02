@@ -127,7 +127,12 @@ impl RestClient {
 mod tests {
     use super::*;
 
-    fn create_sample_amend_request(id: &str, currency_pair: &str, price: Option<&str>, amount: Option<&str>) -> AmendOrderRequest {
+    fn create_sample_amend_request(
+        id: &str,
+        currency_pair: &str,
+        price: Option<&str>,
+        amount: Option<&str>,
+    ) -> AmendOrderRequest {
         AmendOrderRequest {
             id: id.to_string(),
             price: price.map(|p| p.to_string()),
@@ -199,7 +204,8 @@ mod tests {
 
     #[test]
     fn test_amend_batch_orders_request_single_order() {
-        let order = create_sample_amend_request("12345678", "BTC_USDT", Some("31000"), Some("0.002"));
+        let order =
+            create_sample_amend_request("12345678", "BTC_USDT", Some("31000"), Some("0.002"));
         let request = AmendBatchOrdersRequest {
             orders: vec![order],
         };
@@ -230,7 +236,7 @@ mod tests {
         assert_eq!(json["orders"].as_array().unwrap().len(), 3);
 
         let orders_array = json["orders"].as_array().unwrap();
-        
+
         // First order - price amendment only
         assert_eq!(orders_array[0]["id"], "12345678");
         assert_eq!(orders_array[0]["price"], "31000");
@@ -251,9 +257,7 @@ mod tests {
 
     #[test]
     fn test_amend_batch_orders_request_empty_orders() {
-        let request = AmendBatchOrdersRequest {
-            orders: vec![],
-        };
+        let request = AmendBatchOrdersRequest { orders: vec![] };
 
         let json = serde_json::to_value(&request).unwrap();
         assert!(json["orders"].is_array());
@@ -395,8 +399,14 @@ mod tests {
         // Second amendment - failed
         assert_eq!(amended_orders[1].id, "87654321");
         assert!(!amended_orders[1].succeeded);
-        assert_eq!(amended_orders[1].message.as_ref().unwrap(), "Insufficient balance");
-        assert_eq!(amended_orders[1].code.as_ref().unwrap(), "INSUFFICIENT_BALANCE");
+        assert_eq!(
+            amended_orders[1].message.as_ref().unwrap(),
+            "Insufficient balance"
+        );
+        assert_eq!(
+            amended_orders[1].code.as_ref().unwrap(),
+            "INSUFFICIENT_BALANCE"
+        );
     }
 
     #[test]
@@ -452,7 +462,7 @@ mod tests {
 
         assert_eq!(orders_array[0]["account"], "spot");
         assert_eq!(orders_array[1]["account"], "margin");
-        
+
         // Third order should not have account field
         let obj2 = orders_array[2].as_object().unwrap();
         assert!(!obj2.contains_key("account"));
@@ -464,8 +474,8 @@ mod tests {
         let orders = vec![
             create_sample_amend_request("order1", "BTC_USDT", Some("31500"), None), // Increase bid
             create_sample_amend_request("order2", "BTC_USDT", Some("31600"), None), // Increase ask
-            create_sample_amend_request("order3", "ETH_USDT", Some("2550"), None),  // Adjust ETH bid
-            create_sample_amend_request("order4", "ETH_USDT", Some("2560"), None),  // Adjust ETH ask
+            create_sample_amend_request("order3", "ETH_USDT", Some("2550"), None), // Adjust ETH bid
+            create_sample_amend_request("order4", "ETH_USDT", Some("2560"), None), // Adjust ETH ask
         ];
 
         let request = AmendBatchOrdersRequest { orders };
@@ -474,7 +484,7 @@ mod tests {
         let orders_array = json["orders"].as_array().unwrap();
 
         assert_eq!(orders_array.len(), 4);
-        
+
         // Verify all are price-only amendments
         for order in orders_array {
             assert!(order["price"].is_string());
@@ -488,8 +498,8 @@ mod tests {
         // Scenario: Adjusting order sizes based on inventory management
         let orders = vec![
             create_sample_amend_request("order1", "BTC_USDT", None, Some("0.001")), // Reduce BTC size
-            create_sample_amend_request("order2", "ETH_USDT", None, Some("2.0")),   // Increase ETH size
-            create_sample_amend_request("order3", "BNB_USDT", None, Some("50.0")),  // Adjust BNB size
+            create_sample_amend_request("order2", "ETH_USDT", None, Some("2.0")), // Increase ETH size
+            create_sample_amend_request("order3", "BNB_USDT", None, Some("50.0")), // Adjust BNB size
         ];
 
         let request = AmendBatchOrdersRequest { orders };
@@ -498,7 +508,7 @@ mod tests {
         let orders_array = json["orders"].as_array().unwrap();
 
         assert_eq!(orders_array.len(), 3);
-        
+
         // Verify all are amount-only amendments
         for order in orders_array {
             assert!(order["amount"].is_string());
@@ -512,9 +522,9 @@ mod tests {
         // Scenario: Complex adjustment with both price and amount changes
         let orders = vec![
             create_sample_amend_request("order1", "BTC_USDT", Some("31200"), Some("0.005")), // Both
-            create_sample_amend_request("order2", "ETH_USDT", Some("2520"), None),           // Price only
-            create_sample_amend_request("order3", "BNB_USDT", None, Some("25.0")),          // Amount only
-            create_sample_amend_request("order4", "SOL_USDC", Some("155"), Some("100.0")),  // Both
+            create_sample_amend_request("order2", "ETH_USDT", Some("2520"), None), // Price only
+            create_sample_amend_request("order3", "BNB_USDT", None, Some("25.0")), // Amount only
+            create_sample_amend_request("order4", "SOL_USDC", Some("155"), Some("100.0")), // Both
         ];
 
         let request = AmendBatchOrdersRequest { orders };
@@ -523,20 +533,20 @@ mod tests {
         let orders_array = json["orders"].as_array().unwrap();
 
         assert_eq!(orders_array.len(), 4);
-        
+
         // Verify mixed amendments
         let obj0 = orders_array[0].as_object().unwrap();
         assert!(obj0.contains_key("price"));
         assert!(obj0.contains_key("amount"));
-        
+
         let obj1 = orders_array[1].as_object().unwrap();
         assert!(obj1.contains_key("price"));
         assert!(!obj1.contains_key("amount"));
-        
+
         let obj2 = orders_array[2].as_object().unwrap();
         assert!(!obj2.contains_key("price"));
         assert!(obj2.contains_key("amount"));
-        
+
         let obj3 = orders_array[3].as_object().unwrap();
         assert!(obj3.contains_key("price"));
         assert!(obj3.contains_key("amount"));
@@ -545,9 +555,24 @@ mod tests {
     #[test]
     fn test_amend_batch_orders_request_precision_handling() {
         let orders = vec![
-            create_sample_amend_request("order1", "BTC_USDT", Some("31000.12345678"), Some("0.00000001")),
-            create_sample_amend_request("order2", "ETH_USDT", Some("2500.123456"), Some("0.000001")),
-            create_sample_amend_request("order3", "USDC_USDT", Some("1.00001234"), Some("1000.123456")),
+            create_sample_amend_request(
+                "order1",
+                "BTC_USDT",
+                Some("31000.12345678"),
+                Some("0.00000001"),
+            ),
+            create_sample_amend_request(
+                "order2",
+                "ETH_USDT",
+                Some("2500.123456"),
+                Some("0.000001"),
+            ),
+            create_sample_amend_request(
+                "order3",
+                "USDC_USDT",
+                Some("1.00001234"),
+                Some("1000.123456"),
+            ),
         ];
 
         let request = AmendBatchOrdersRequest { orders };
@@ -626,7 +651,8 @@ mod tests {
 
     #[test]
     fn test_amend_order_request_clone() {
-        let original = create_sample_amend_request("12345678", "BTC_USDT", Some("31000"), Some("0.002"));
+        let original =
+            create_sample_amend_request("12345678", "BTC_USDT", Some("31000"), Some("0.002"));
         let cloned = original.clone();
 
         assert_eq!(cloned.id, original.id);
@@ -642,7 +668,7 @@ mod tests {
             create_sample_amend_request("12345678", "BTC_USDT", Some("31000"), None),
             create_sample_amend_request("87654321", "ETH_USDT", None, Some("0.5")),
         ];
-        
+
         let original = AmendBatchOrdersRequest { orders };
         let cloned = original.clone();
 
@@ -687,7 +713,8 @@ mod tests {
 
     #[test]
     fn test_amend_order_request_debug() {
-        let request = create_sample_amend_request("12345678", "BTC_USDT", Some("31000"), Some("0.002"));
+        let request =
+            create_sample_amend_request("12345678", "BTC_USDT", Some("31000"), Some("0.002"));
         let debug_str = format!("{:?}", request);
 
         assert!(debug_str.contains("AmendOrderRequest"));
@@ -697,10 +724,13 @@ mod tests {
 
     #[test]
     fn test_amend_batch_orders_request_debug() {
-        let orders = vec![
-            create_sample_amend_request("12345678", "BTC_USDT", Some("31000"), None),
-        ];
-        
+        let orders = vec![create_sample_amend_request(
+            "12345678",
+            "BTC_USDT",
+            Some("31000"),
+            None,
+        )];
+
         let request = AmendBatchOrdersRequest { orders };
         let debug_str = format!("{:?}", request);
 
@@ -743,16 +773,19 @@ mod tests {
 
     #[test]
     fn test_amend_batch_orders_request_endpoint_validation() {
-        let orders = vec![
-            create_sample_amend_request("12345678", "BTC_USDT", Some("31000"), Some("0.002")),
-        ];
-        
+        let orders = vec![create_sample_amend_request(
+            "12345678",
+            "BTC_USDT",
+            Some("31000"),
+            Some("0.002"),
+        )];
+
         let request = AmendBatchOrdersRequest { orders };
-        
+
         // Verify request can be serialized for the endpoint
         let json = serde_json::to_value(&request).unwrap();
         assert!(json["orders"].is_array());
-        
+
         // Verify the structure matches API expectations
         assert!(json.as_object().unwrap().contains_key("orders"));
         assert_eq!(json.as_object().unwrap().len(), 1); // Only "orders" field
@@ -791,7 +824,7 @@ mod tests {
         assert_eq!(json["type"], "limit");
         assert_eq!(json["succeeded"], true);
         assert_eq!(json["text"], "test_order");
-        
+
         // Optional fields that are None should be omitted
         let obj = json.as_object().unwrap();
         assert!(!obj.contains_key("message"));
@@ -815,14 +848,14 @@ mod tests {
 
         let json = serde_json::to_value(&request).unwrap();
         let orders_array = json["orders"].as_array().unwrap();
-        
+
         assert_eq!(orders_array.len(), 10);
-        
+
         // Verify each order has incremental values
         for (i, order) in orders_array.iter().enumerate() {
             let expected_id = format!("order_{}", i + 1);
             let expected_price = format!("{}", 30000 + (i + 1) * 100);
-            
+
             assert_eq!(order["id"], expected_id);
             assert_eq!(order["price"], expected_price);
         }
@@ -836,7 +869,12 @@ mod tests {
             // Very large amounts and prices
             create_sample_amend_request("order2", "BTC_USDT", Some("999999.99"), Some("1000000.0")),
             // Stablecoin pair with precise pricing
-            create_sample_amend_request("order3", "USDC_USDT", Some("1.00000001"), Some("10000.000001")),
+            create_sample_amend_request(
+                "order3",
+                "USDC_USDT",
+                Some("1.00000001"),
+                Some("10000.000001"),
+            ),
         ];
 
         let request = AmendBatchOrdersRequest { orders };

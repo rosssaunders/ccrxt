@@ -108,7 +108,7 @@ mod tests {
         let json = serde_json::to_value(&request).unwrap();
         assert_eq!(json["currency_pair"], "BTC_USDT");
         assert_eq!(json["type"], "close_position");
-        
+
         // text should be omitted when None
         let obj = json.as_object().unwrap();
         assert!(!obj.contains_key("text"));
@@ -167,11 +167,7 @@ mod tests {
 
     #[test]
     fn test_cross_liquidate_orders_request_different_liquidation_types() {
-        let types = vec![
-            "close_position",
-            "auto_borrow",
-            "auto_repay",
-        ];
+        let types = vec!["close_position", "auto_borrow", "auto_repay"];
 
         for liquidation_type in types {
             let request = CrossLiquidateOrdersRequest {
@@ -345,7 +341,7 @@ mod tests {
         assert_eq!(response.left, "0");
         assert_eq!(response.avg_deal_price, "30100");
         assert_eq!(response.fee, "30.1");
-        
+
         // Verify liquidation was completed
         let filled: f64 = response.filled_amount.parse().unwrap();
         let left: f64 = response.left.parse().unwrap();
@@ -380,7 +376,7 @@ mod tests {
         assert_eq!(response.status, "open");
         assert_eq!(response.filled_amount, "2.0");
         assert_eq!(response.left, "3.0");
-        
+
         // Verify partial fill math
         let total: f64 = response.amount.parse().unwrap();
         let filled: f64 = response.filled_amount.parse().unwrap();
@@ -561,7 +557,7 @@ mod tests {
         let json = serde_json::to_value(&request).unwrap();
         assert!(json.as_object().unwrap().contains_key("currency_pair"));
         assert!(json.as_object().unwrap().contains_key("type"));
-        
+
         // Verify required fields are strings
         assert!(json["currency_pair"].is_string());
         assert!(json["type"].is_string());
@@ -664,7 +660,7 @@ mod tests {
     #[test]
     fn test_cross_liquidate_orders_request_liquidation_type_validation() {
         let valid_types = vec!["close_position", "auto_borrow", "auto_repay"];
-        
+
         for liquidation_type in valid_types {
             let request = CrossLiquidateOrdersRequest {
                 currency_pair: "BTC_USDT".to_string(),
@@ -680,9 +676,10 @@ mod tests {
     #[test]
     fn test_cross_liquidate_order_response_order_sides() {
         let sides = vec!["buy", "sell"];
-        
+
         for side in sides {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "id": "12345678",
                 "currency_pair": "BTC_USDT",
                 "status": "open",
@@ -701,7 +698,9 @@ mod tests {
                 "gt_fee": "0",
                 "create_time": "1640995200",
                 "update_time": "1640995200"
-            }}"#, side);
+            }}"#,
+                side
+            );
 
             let response: CrossLiquidateOrder = serde_json::from_str(&json).unwrap();
             assert_eq!(response.side, side);
@@ -711,9 +710,10 @@ mod tests {
     #[test]
     fn test_cross_liquidate_order_response_order_statuses() {
         let statuses = vec!["open", "closed", "cancelled"];
-        
+
         for status in statuses {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "id": "12345678",
                 "currency_pair": "BTC_USDT",
                 "status": "{}",
@@ -732,7 +732,9 @@ mod tests {
                 "gt_fee": "0",
                 "create_time": "1640995200",
                 "update_time": "1640995200"
-            }}"#, status);
+            }}"#,
+                status
+            );
 
             let response: CrossLiquidateOrder = serde_json::from_str(&json).unwrap();
             assert_eq!(response.status, status);

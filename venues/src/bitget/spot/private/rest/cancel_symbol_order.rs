@@ -76,10 +76,12 @@ impl RestClient {
         &self,
         request: CancelSymbolOrderRequest,
     ) -> RestResult<CancelSymbolOrderResponse> {
-        self.send_post_signed_request(CANCEL_SYMBOL_ORDER_ENDPOINT, request,
-            5,           // 5 requests per second rate limit
-            true,        // This is an order endpoint
-            Some(5),     // Order-specific rate limit
+        self.send_post_signed_request(
+            CANCEL_SYMBOL_ORDER_ENDPOINT,
+            request,
+            5,       // 5 requests per second rate limit
+            true,    // This is an order endpoint
+            Some(5), // Order-specific rate limit
         )
         .await
     }

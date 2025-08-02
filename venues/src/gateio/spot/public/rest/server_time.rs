@@ -72,9 +72,12 @@ mod tests {
 
     #[test]
     fn test_server_time_max_timestamp() {
-        let json = format!(r#"{{
+        let json = format!(
+            r#"{{
             "server_time": {}
-        }}"#, i64::MAX);
+        }}"#,
+            i64::MAX
+        );
 
         let server_time: ServerTime = serde_json::from_str(&json).unwrap();
         assert_eq!(server_time.server_time, i64::MAX);
@@ -82,9 +85,12 @@ mod tests {
 
     #[test]
     fn test_server_time_min_timestamp() {
-        let json = format!(r#"{{
+        let json = format!(
+            r#"{{
             "server_time": {}
-        }}"#, i64::MIN);
+        }}"#,
+            i64::MIN
+        );
 
         let server_time: ServerTime = serde_json::from_str(&json).unwrap();
         assert_eq!(server_time.server_time, i64::MIN);
@@ -108,7 +114,7 @@ mod tests {
 
         let json = serde_json::to_string(&original).unwrap();
         let deserialized: ServerTime = serde_json::from_str(&json).unwrap();
-        
+
         assert_eq!(deserialized.server_time, original.server_time);
     }
 
@@ -122,13 +128,16 @@ mod tests {
         ];
 
         for ts in timestamps {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "server_time": {}
-            }}"#, ts);
+            }}"#,
+                ts
+            );
 
             let server_time: ServerTime = serde_json::from_str(&json).unwrap();
             assert_eq!(server_time.server_time, ts);
-            
+
             // Verify it's in a reasonable range
             assert!(server_time.server_time > 1600000000); // After 2020
             assert!(server_time.server_time < 2000000000); // Before 2033

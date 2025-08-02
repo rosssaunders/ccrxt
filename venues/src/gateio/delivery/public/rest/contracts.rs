@@ -295,7 +295,8 @@ mod tests {
         ];
 
         for (name, cycle, _description) in weekly_contracts {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "name": "{}",
                 "underlying": "BTC_USDT",
                 "cycle": "{}",
@@ -326,7 +327,9 @@ mod tests {
                 "config_change_time": 1640995200.0,
                 "in_delisting": false,
                 "orders_limit": 100
-            }}"#, name, cycle);
+            }}"#,
+                name, cycle
+            );
 
             let contract: DeliveryContract = serde_json::from_str(&json).unwrap();
             assert_eq!(contract.name, name);
@@ -343,7 +346,8 @@ mod tests {
         ];
 
         for (name, cycle, _description) in monthly_contracts {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "name": "{}",
                 "underlying": "BTC_USDT",
                 "cycle": "{}",
@@ -374,7 +378,9 @@ mod tests {
                 "config_change_time": 1640995200.0,
                 "in_delisting": false,
                 "orders_limit": 100
-            }}"#, name, cycle);
+            }}"#,
+                name, cycle
+            );
 
             let contract: DeliveryContract = serde_json::from_str(&json).unwrap();
             assert_eq!(contract.name, name);
@@ -391,7 +397,8 @@ mod tests {
         ];
 
         for (name, cycle, _description) in quarterly_contracts {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "name": "{}",
                 "underlying": "BTC_USDT",
                 "cycle": "{}",
@@ -422,7 +429,9 @@ mod tests {
                 "config_change_time": 1640995200.0,
                 "in_delisting": false,
                 "orders_limit": 100
-            }}"#, name, cycle);
+            }}"#,
+                name, cycle
+            );
 
             let contract: DeliveryContract = serde_json::from_str(&json).unwrap();
             assert_eq!(contract.name, name);
@@ -438,7 +447,8 @@ mod tests {
         ];
 
         for (contract_type, _description) in contract_types {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "name": "BTC_USDT_20241227",
                 "underlying": "BTC_USDT",
                 "cycle": "WEEK",
@@ -469,7 +479,9 @@ mod tests {
                 "config_change_time": 1640995200.0,
                 "in_delisting": false,
                 "orders_limit": 100
-            }}"#, contract_type);
+            }}"#,
+                contract_type
+            );
 
             let contract: DeliveryContract = serde_json::from_str(&json).unwrap();
             assert_eq!(contract.contract_type, contract_type);
@@ -486,7 +498,8 @@ mod tests {
         ];
 
         for (min, max, _description) in leverage_scenarios {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "name": "BTC_USDT_20241227",
                 "underlying": "BTC_USDT",
                 "cycle": "WEEK",
@@ -517,12 +530,14 @@ mod tests {
                 "config_change_time": 1640995200.0,
                 "in_delisting": false,
                 "orders_limit": 100
-            }}"#, min, max);
+            }}"#,
+                min, max
+            );
 
             let contract: DeliveryContract = serde_json::from_str(&json).unwrap();
             assert_eq!(contract.leverage_min, min);
             assert_eq!(contract.leverage_max, max);
-            
+
             let min_val: f64 = min.parse().unwrap();
             let max_val: f64 = max.parse().unwrap();
             assert!(min_val >= 1.0);
@@ -540,7 +555,8 @@ mod tests {
         ];
 
         for (maker, taker, _description) in fee_scenarios {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "name": "BTC_USDT_20241227",
                 "underlying": "BTC_USDT",
                 "cycle": "WEEK",
@@ -571,12 +587,14 @@ mod tests {
                 "config_change_time": 1640995200.0,
                 "in_delisting": false,
                 "orders_limit": 100
-            }}"#, maker, taker);
+            }}"#,
+                maker, taker
+            );
 
             let contract: DeliveryContract = serde_json::from_str(&json).unwrap();
             assert_eq!(contract.maker_fee_rate, maker);
             assert_eq!(contract.taker_fee_rate, taker);
-            
+
             let maker_val: f64 = maker.parse().unwrap();
             let taker_val: f64 = taker.parse().unwrap();
             assert!(maker_val <= taker_val); // Maker fee should be <= taker fee
@@ -593,7 +611,8 @@ mod tests {
         ];
 
         for (min, max, _description) in size_scenarios {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "name": "BTC_USDT_20241227",
                 "underlying": "BTC_USDT",
                 "cycle": "WEEK",
@@ -624,7 +643,9 @@ mod tests {
                 "config_change_time": 1640995200.0,
                 "in_delisting": false,
                 "orders_limit": 100
-            }}"#, min, max);
+            }}"#,
+                min, max
+            );
 
             let contract: DeliveryContract = serde_json::from_str(&json).unwrap();
             assert_eq!(contract.order_size_min, min);
@@ -643,7 +664,8 @@ mod tests {
         ];
 
         for (base, step, max, _description) in risk_scenarios {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "name": "BTC_USDT_20241227",
                 "underlying": "BTC_USDT",
                 "cycle": "WEEK",
@@ -674,7 +696,9 @@ mod tests {
                 "config_change_time": 1640995200.0,
                 "in_delisting": false,
                 "orders_limit": 100
-            }}"#, base, step, max);
+            }}"#,
+                base, step, max
+            );
 
             let contract: DeliveryContract = serde_json::from_str(&json).unwrap();
             assert_eq!(contract.risk_limit_base, base);
@@ -685,13 +709,11 @@ mod tests {
 
     #[test]
     fn test_delisting_status() {
-        let delisting_scenarios = vec![
-            (false, "Active contract"),
-            (true, "Delisting contract"),
-        ];
+        let delisting_scenarios = vec![(false, "Active contract"), (true, "Delisting contract")];
 
         for (in_delisting, _description) in delisting_scenarios {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "name": "BTC_USDT_20241227",
                 "underlying": "BTC_USDT",
                 "cycle": "WEEK",
@@ -722,7 +744,9 @@ mod tests {
                 "config_change_time": 1640995200.0,
                 "in_delisting": {},
                 "orders_limit": 100
-            }}"#, in_delisting);
+            }}"#,
+                in_delisting
+            );
 
             let contract: DeliveryContract = serde_json::from_str(&json).unwrap();
             assert_eq!(contract.in_delisting, in_delisting);
@@ -788,7 +812,8 @@ mod tests {
         ];
 
         for (name, underlying, _description) in altcoin_contracts {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "name": "{}",
                 "underlying": "{}",
                 "cycle": "WEEK",
@@ -819,12 +844,14 @@ mod tests {
                 "config_change_time": 1640995200.0,
                 "in_delisting": false,
                 "orders_limit": 100
-            }}"#, name, underlying);
+            }}"#,
+                name, underlying
+            );
 
             let contract: DeliveryContract = serde_json::from_str(&json).unwrap();
             assert_eq!(contract.name, name);
             assert_eq!(contract.underlying, underlying);
-            
+
             // Altcoins often have lower leverage limits
             let max_leverage: f64 = contract.leverage_max.parse().unwrap();
             assert!(max_leverage <= 100.0);
@@ -885,7 +912,8 @@ mod tests {
         ];
 
         for (order_round, mark_round, _description) in precision_scenarios {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "name": "BTC_USDT_20241227",
                 "underlying": "BTC_USDT",
                 "cycle": "WEEK",
@@ -916,7 +944,9 @@ mod tests {
                 "config_change_time": 1640995200.0,
                 "in_delisting": false,
                 "orders_limit": 100
-            }}"#, order_round, mark_round);
+            }}"#,
+                order_round, mark_round
+            );
 
             let contract: DeliveryContract = serde_json::from_str(&json).unwrap();
             assert_eq!(contract.order_price_round, order_round);
@@ -934,7 +964,8 @@ mod tests {
         ];
 
         for (deviate, _description) in deviate_scenarios {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "name": "BTC_USDT_20241227",
                 "underlying": "BTC_USDT",
                 "cycle": "WEEK",
@@ -965,11 +996,13 @@ mod tests {
                 "config_change_time": 1640995200.0,
                 "in_delisting": false,
                 "orders_limit": 100
-            }}"#, deviate);
+            }}"#,
+                deviate
+            );
 
             let contract: DeliveryContract = serde_json::from_str(&json).unwrap();
             assert_eq!(contract.order_price_deviate, deviate);
-            
+
             let deviate_val: f64 = deviate.parse().unwrap();
             assert!(deviate_val > 0.0 && deviate_val <= 1.0);
         }

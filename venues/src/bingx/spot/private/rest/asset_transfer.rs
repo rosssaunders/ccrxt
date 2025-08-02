@@ -1,8 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use crate::bingx::spot::{EndpointType, RestResult, TransferType};
-
 use super::RestClient;
+use crate::bingx::spot::{EndpointType, RestResult, TransferType};
 
 const ASSET_TRANSFER_ENDPOINT: &str = "/openApi/api/v3/post/asset/transfer";
 
@@ -53,7 +52,10 @@ impl RestClient {
         &self,
         request: AssetTransferRequest,
     ) -> RestResult<AssetTransferResponse> {
-        self.send_post_signed_request(ASSET_TRANSFER_ENDPOINT, &request, EndpointType::AccountApiGroup3,
+        self.send_post_signed_request(
+            ASSET_TRANSFER_ENDPOINT,
+            &request,
+            EndpointType::AccountApiGroup3,
         )
         .await
     }

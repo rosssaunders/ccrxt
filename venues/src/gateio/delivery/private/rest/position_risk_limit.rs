@@ -1,5 +1,5 @@
 use super::RestClient;
-use crate::gateio::delivery::models::{UpdateDeliveryRiskLimitRequest, DeliveryRiskLimitResponse};
+use crate::gateio::delivery::models::{DeliveryRiskLimitResponse, UpdateDeliveryRiskLimitRequest};
 
 const DELIVERY_POSITION_RISK_LIMIT_ENDPOINT: &str = "/delivery/{}/positions/{}/risk_limit";
 

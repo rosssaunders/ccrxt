@@ -1,7 +1,7 @@
-use super::UsdmClient;
-use crate::binance::usdm::RestResult;
-use crate::binance::usdm::enums::*;
 use serde::{Deserialize, Serialize};
+
+use super::UsdmClient;
+use crate::binance::usdm::{RestResult, enums::*};
 
 /// Endpoint path for Position Information V2.
 const POSITION_RISK_ENDPOINT: &str = "/fapi/v2/positionRisk";
@@ -93,13 +93,8 @@ impl UsdmClient {
         &self,
         request: GetPositionRiskRequest,
     ) -> RestResult<Vec<PositionRisk>> {
-        self.send_get_signed_request(
-            POSITION_RISK_ENDPOINT,
-            request,
-            5,
-            false,
-        )
-        .await
+        self.send_get_signed_request(POSITION_RISK_ENDPOINT, request, 5, false)
+            .await
     }
 }
 

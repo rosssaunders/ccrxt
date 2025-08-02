@@ -66,9 +66,8 @@ impl RestClient {
         &self,
         request: &GetSubAccountListRequest,
     ) -> RestResult<GetSubAccountListResponse> {
-        self.send_get_signed_request(SUB_ACCOUNT_LIST_ENDPOINT, request, EndpointType::Account,
-        )
-        .await
+        self.send_get_signed_request(SUB_ACCOUNT_LIST_ENDPOINT, request, EndpointType::Account)
+            .await
     }
 }
 

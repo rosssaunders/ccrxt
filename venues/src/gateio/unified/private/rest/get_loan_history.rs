@@ -1,5 +1,7 @@
-use super::RestClient;
-use super::loan::{ListLoansRequest, LoanRecord};
+use super::{
+    RestClient,
+    loan::{ListLoansRequest, LoanRecord},
+};
 
 impl RestClient {
     /// Get loan history for a specific currency
@@ -30,7 +32,7 @@ mod tests {
     fn test_get_loan_history_request() {
         let currency = "BTC";
         let limit = Some(50);
-        
+
         let request = ListLoansRequest {
             currency: Some(currency.to_string()),
             limit,
@@ -45,7 +47,7 @@ mod tests {
     #[test]
     fn test_get_loan_history_no_limit() {
         let currency = "ETH";
-        
+
         let request = ListLoansRequest {
             currency: Some(currency.to_string()),
             limit: None,
@@ -59,7 +61,7 @@ mod tests {
     #[test]
     fn test_get_loan_history_different_currencies() {
         let currencies = vec!["BTC", "ETH", "USDT", "BNB", "SOL"];
-        
+
         for currency in currencies {
             let request = ListLoansRequest {
                 currency: Some(currency.to_string()),

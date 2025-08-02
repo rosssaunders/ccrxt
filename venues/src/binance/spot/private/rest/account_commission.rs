@@ -91,13 +91,8 @@ impl RestClient {
         &self,
         params: AccountCommissionRequest,
     ) -> RestResult<AccountCommissionResponse> {
-        self.send_get_signed_request(
-            GET_ACCOUNT_COMMISSION_ENDPOINT,
-            params,
-            20,
-            false,
-        )
-        .await
+        self.send_get_signed_request(GET_ACCOUNT_COMMISSION_ENDPOINT, params, 20, false)
+            .await
     }
 }
 

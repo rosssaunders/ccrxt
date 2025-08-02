@@ -3,7 +3,6 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
-
 const TRADE_CANCEL_ORDER_ENDPOINT: &str = "api/v5/trade/cancel-order";
 /// Request to cancel an existing order
 #[derive(Debug, Clone, Serialize)]
@@ -57,8 +56,12 @@ impl RestClient {
         &self,
         request: CancelOrderRequest,
     ) -> RestResult<OkxApiResponse<CancelOrderResponse>> {
-        self.send_post_request(TRADE_CANCEL_ORDER_ENDPOINT, request, EndpointType::PrivateTrading)
-            .await
+        self.send_post_request(
+            TRADE_CANCEL_ORDER_ENDPOINT,
+            request,
+            EndpointType::PrivateTrading,
+        )
+        .await
     }
 }
 

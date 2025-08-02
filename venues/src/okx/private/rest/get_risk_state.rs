@@ -3,7 +3,6 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
-
 const ACCOUNT_RISK_STATE_ENDPOINT: &str = "api/v5/account/risk-state";
 /// Request to get risk state
 #[derive(Debug, Clone, Serialize)]

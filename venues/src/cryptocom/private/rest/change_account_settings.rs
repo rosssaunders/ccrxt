@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-
 use crate::cryptocom::{ApiResult, RestResult, StpInst, StpScope};
 
 /// Endpoint path for the change-account-settings API

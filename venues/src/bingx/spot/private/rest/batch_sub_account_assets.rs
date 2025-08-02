@@ -96,7 +96,10 @@ impl RestClient {
         &self,
         request: &BatchSubAccountAssetsRequest,
     ) -> RestResult<BatchSubAccountAssetsResponse> {
-        self.send_get_signed_request(BATCH_SUB_ACCOUNT_ASSETS_ENDPOINT, request, EndpointType::Account,
+        self.send_get_signed_request(
+            BATCH_SUB_ACCOUNT_ASSETS_ENDPOINT,
+            request,
+            EndpointType::Account,
         )
         .await
     }

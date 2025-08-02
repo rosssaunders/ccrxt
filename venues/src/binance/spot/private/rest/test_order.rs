@@ -166,19 +166,16 @@ impl RestClient {
             1
         };
 
-        self.send_post_signed_request(
-            TEST_ORDER_ENDPOINT,
-            params,
-            weight,
-            true,)
-        .await
+        self.send_post_signed_request(TEST_ORDER_ENDPOINT, params, weight, true)
+            .await
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use rust_decimal_macros::dec;
+
+    use super::*;
 
     #[test]
     fn test_test_new_order_request_minimal_serialization() {

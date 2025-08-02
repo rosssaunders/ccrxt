@@ -132,19 +132,22 @@ mod tests {
     fn test_options_underlying_different_name_formats() {
         let names = vec![
             "BTC_USDT",
-            "ETH_USDT", 
+            "ETH_USDT",
             "BNB_USDT",
             "SOL_USDT",
             "ADA_USDT",
             "MATIC_USDT",
-            "AVAX_USDT"
+            "AVAX_USDT",
         ];
-        
+
         for name in names {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "name": "{}",
                 "index_price": "100.0"
-            }}"#, name);
+            }}"#,
+                name
+            );
 
             let underlying: OptionsUnderlying = serde_json::from_str(&json).unwrap();
             assert_eq!(underlying.name, name);
@@ -171,13 +174,13 @@ mod tests {
 
         let underlyings: Vec<OptionsUnderlying> = serde_json::from_str(json).unwrap();
         assert_eq!(underlyings.len(), 3);
-        
+
         assert_eq!(underlyings[0].name, "BTC_USDT");
         assert_eq!(underlyings[0].index_price, "42000.50");
-        
+
         assert_eq!(underlyings[1].name, "ETH_USDT");
         assert_eq!(underlyings[1].index_price, "3000.75");
-        
+
         assert_eq!(underlyings[2].name, "BNB_USDT");
         assert_eq!(underlyings[2].index_price, "400.25");
     }
@@ -225,7 +228,7 @@ mod tests {
 
         let json = serde_json::to_string(&original).unwrap();
         let deserialized: OptionsUnderlying = serde_json::from_str(&json).unwrap();
-        
+
         assert_eq!(deserialized.name, original.name);
         assert_eq!(deserialized.index_price, original.index_price);
     }
@@ -242,14 +245,17 @@ mod tests {
             ("AVAX_USDT", "25.50"),
             ("DOT_USDT", "6.75"),
             ("LINK_USDT", "14.25"),
-            ("UNI_USDT", "7.50")
+            ("UNI_USDT", "7.50"),
         ];
-        
+
         for (name, price) in crypto_prices {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "name": "{}",
                 "index_price": "{}"
-            }}"#, name, price);
+            }}"#,
+                name, price
+            );
 
             let underlying: OptionsUnderlying = serde_json::from_str(&json).unwrap();
             assert_eq!(underlying.name, name);
@@ -268,14 +274,17 @@ mod tests {
             "42000.123456789",
             "0.001",
             "0.0001",
-            "0.00000001"
+            "0.00000001",
         ];
-        
+
         for price in price_formats {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "name": "BTC_USDT",
                 "index_price": "{}"
-            }}"#, price);
+            }}"#,
+                price
+            );
 
             let underlying: OptionsUnderlying = serde_json::from_str(&json).unwrap();
             assert_eq!(underlying.name, "BTC_USDT");
@@ -286,20 +295,17 @@ mod tests {
     #[test]
     fn test_options_underlying_name_variations() {
         let name_variations = vec![
-            "BTC_USDT",
-            "btc_usdt",
-            "BTC_usdt",
-            "btc_USDT",
-            "BTC-USDT",
-            "BTC/USDT",
-            "BTCUSDT"
+            "BTC_USDT", "btc_usdt", "BTC_usdt", "btc_USDT", "BTC-USDT", "BTC/USDT", "BTCUSDT",
         ];
-        
+
         for name in name_variations {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "name": "{}",
                 "index_price": "42000.50"
-            }}"#, name);
+            }}"#,
+                name
+            );
 
             let underlying: OptionsUnderlying = serde_json::from_str(&json).unwrap();
             assert_eq!(underlying.name, name);
@@ -343,19 +349,22 @@ mod tests {
             ("AVAX_USDT", "26.85"),
             ("DOT_USDT", "6.925"),
             ("LINK_USDT", "14.675"),
-            ("UNI_USDT", "7.825")
+            ("UNI_USDT", "7.825"),
         ];
-        
+
         for (name, price) in market_data {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "name": "{}",
                 "index_price": "{}"
-            }}"#, name, price);
+            }}"#,
+                name, price
+            );
 
             let underlying: OptionsUnderlying = serde_json::from_str(&json).unwrap();
             assert_eq!(underlying.name, name);
             assert_eq!(underlying.index_price, price);
-            
+
             // Verify that the price string can be parsed as a valid number
             let price_value: f64 = price.parse().unwrap();
             assert!(price_value >= 0.0);

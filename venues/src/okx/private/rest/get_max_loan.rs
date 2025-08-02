@@ -3,7 +3,6 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
-
 const ACCOUNT_MAX_LOAN_ENDPOINT: &str = "api/v5/account/max-loan";
 /// Request to get max loan
 #[derive(Debug, Clone, Serialize)]

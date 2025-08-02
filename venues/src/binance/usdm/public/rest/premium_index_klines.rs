@@ -71,9 +71,21 @@ impl<'de> Deserialize<'de> for PremiumIndexKline {
     where
         D: serde::Deserializer<'de>,
     {
-        let array: (u64, String, String, String, String, String, u64, String, u64, String, String, String) = 
-            Deserialize::deserialize(deserializer)?;
-        
+        let array: (
+            u64,
+            String,
+            String,
+            String,
+            String,
+            String,
+            u64,
+            String,
+            u64,
+            String,
+            String,
+            String,
+        ) = Deserialize::deserialize(deserializer)?;
+
         Ok(PremiumIndexKline {
             open_time: array.0,
             open: array.1,

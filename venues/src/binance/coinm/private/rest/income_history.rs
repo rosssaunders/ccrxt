@@ -1,8 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::binance::{
-    coinm::{RestResult, enums::IncomeType, private::rest::client::RestClient},
-};
+use crate::binance::coinm::{RestResult, enums::IncomeType, private::rest::client::RestClient};
 
 const INCOME_ENDPOINT: &str = "/dapi/v1/income";
 
@@ -86,13 +84,8 @@ impl RestClient {
         params: IncomeHistoryRequest,
     ) -> RestResult<Vec<IncomeHistoryEntry>> {
         let weight = 20;
-        self.send_get_signed_request(
-            INCOME_ENDPOINT,
-            params,
-            weight,
-            false,
-        )
-        .await
+        self.send_get_signed_request(INCOME_ENDPOINT, params, weight, false)
+            .await
     }
 }
 

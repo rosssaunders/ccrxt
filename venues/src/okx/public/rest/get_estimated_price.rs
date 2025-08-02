@@ -3,7 +3,6 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::okx::{EndpointType, InstrumentType, RestResult};
 
-
 const PUBLIC_ESTIMATED_PRICE_ENDPOINT: &str = "api/v5/public/estimated-price";
 /// Request parameters for getting estimated delivery/exercise price
 #[derive(Debug, Clone, Serialize, Deserialize)]

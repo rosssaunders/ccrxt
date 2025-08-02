@@ -69,7 +69,10 @@ impl RestClient {
         &self,
         request: &InternalTransferApplyRequest,
     ) -> RestResult<InternalTransferApplyResponse> {
-        self.send_post_signed_request(INTERNAL_TRANSFER_APPLY_ENDPOINT, request, EndpointType::Trading,
+        self.send_post_signed_request(
+            INTERNAL_TRANSFER_APPLY_ENDPOINT,
+            request,
+            EndpointType::Trading,
         )
         .await
     }

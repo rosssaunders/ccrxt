@@ -124,7 +124,10 @@ impl RestClient {
         &self,
         request: &CreateSubAccountApiKeyRequest,
     ) -> RestResult<CreateSubAccountApiKeyResponse> {
-        self.send_post_signed_request(CREATE_SUB_ACCOUNT_API_KEY_ENDPOINT, request, EndpointType::Account,
+        self.send_post_signed_request(
+            CREATE_SUB_ACCOUNT_API_KEY_ENDPOINT,
+            request,
+            EndpointType::Account,
         )
         .await
     }
@@ -150,9 +153,8 @@ impl RestClient {
         &self,
         request: &QueryApiKeyRequest,
     ) -> RestResult<QueryApiKeyResponse> {
-        self.send_get_signed_request(QUERY_API_KEY_ENDPOINT, request, EndpointType::Account,
-        )
-        .await
+        self.send_get_signed_request(QUERY_API_KEY_ENDPOINT, request, EndpointType::Account)
+            .await
     }
 }
 

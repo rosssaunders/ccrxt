@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::RestClient;
-use super::contract::FuturesContract;
+use super::{RestClient, contract::FuturesContract};
 
 /// Request parameters for futures contracts
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]

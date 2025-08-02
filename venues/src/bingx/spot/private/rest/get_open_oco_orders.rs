@@ -76,9 +76,8 @@ impl RestClient {
         &self,
         request: &GetOpenOcoOrdersRequest,
     ) -> RestResult<GetOpenOcoOrdersResponse> {
-        self.send_get_signed_request(OPEN_OCO_ORDERS_ENDPOINT, request, EndpointType::Trading,
-        )
-        .await
+        self.send_get_signed_request(OPEN_OCO_ORDERS_ENDPOINT, request, EndpointType::Trading)
+            .await
     }
 }
 

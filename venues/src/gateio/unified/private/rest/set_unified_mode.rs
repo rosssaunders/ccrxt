@@ -1,5 +1,7 @@
-use super::RestClient;
-use super::unified_mode::{UnifiedModeRequest, UnifiedModeResponse};
+use super::{
+    RestClient,
+    unified_mode::{UnifiedModeRequest, UnifiedModeResponse},
+};
 
 const UNIFIED_MODE_ENDPOINT: &str = "/unified/unified_mode";
 
@@ -24,9 +26,7 @@ mod tests {
 
     #[test]
     fn test_unified_mode_request_enable() {
-        let request = UnifiedModeRequest {
-            unified: true,
-        };
+        let request = UnifiedModeRequest { unified: true };
 
         let json = serde_json::to_value(&request).unwrap();
         assert_eq!(json["unified"], true);
@@ -34,9 +34,7 @@ mod tests {
 
     #[test]
     fn test_unified_mode_request_disable() {
-        let request = UnifiedModeRequest {
-            unified: false,
-        };
+        let request = UnifiedModeRequest { unified: false };
 
         let json = serde_json::to_value(&request).unwrap();
         assert_eq!(json["unified"], false);

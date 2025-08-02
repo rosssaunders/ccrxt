@@ -3,7 +3,6 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
-
 const PUBLIC_ESTIMATED_SETTLEMENT_INFO_ENDPOINT: &str = "api/v5/public/estimated-settlement-info";
 /// Request parameters for getting estimated settlement info
 #[derive(Debug, Clone, Serialize, Deserialize)]

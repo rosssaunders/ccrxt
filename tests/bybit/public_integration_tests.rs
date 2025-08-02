@@ -4,18 +4,32 @@
 //! communicate with the live API and receive valid responses.
 
 use venues::bybit::{
-    Category, GetInstrumentsInfoRequest, GetKlineRequest, GetOrderbookRequest,
-    GetRecentTradesRequest, GetServerTimeRequest, GetTickersRequest, Interval, PublicRestClient,
-    RateLimiter,
-    // Price kline endpoints
-    GetMarkPriceKlineRequest, GetIndexPriceKlineRequest, GetPremiumIndexPriceKlineRequest,
-    // Trading & market statistics endpoints
-    GetFundingHistoryRequest, GetHistoricalVolatilityRequest, GetOpenInterestRequest,
-    GetLongShortRatioRequest,
+    Category,
     // Risk management endpoints
-    GetDeliveryPriceRequest, GetInsuranceRequest, GetRiskLimitRequest,
+    GetDeliveryPriceRequest,
+    // Trading & market statistics endpoints
+    GetFundingHistoryRequest,
+    GetHistoricalVolatilityRequest,
+    GetIndexPriceKlineRequest,
+    GetInsMarginCoinInfoRequest,
+    GetInstrumentsInfoRequest,
+    GetInsuranceRequest,
+    GetKlineRequest,
+    GetLongShortRatioRequest,
+    // Price kline endpoints
+    GetMarkPriceKlineRequest,
+    GetOpenInterestRequest,
+    GetOrderbookRequest,
+    GetPremiumIndexPriceKlineRequest,
+    GetRecentTradesRequest,
+    GetRiskLimitRequest,
+    GetServerTimeRequest,
+    GetTickersRequest,
     // Margin & loan endpoints
-    GetVipMarginDataRequest, GetInsMarginCoinInfoRequest,
+    GetVipMarginDataRequest,
+    Interval,
+    PublicRestClient,
+    RateLimiter,
 };
 
 /// Helper function to create a test client with shared rate limiter
@@ -607,7 +621,7 @@ async fn test_get_historical_volatility() {
     };
 
     let result = client.get_historical_volatility(request).await;
-    
+
     // This might fail for some accounts/regions, handle gracefully
     match result {
         Ok(response) => {
@@ -635,7 +649,7 @@ async fn test_get_long_short_ratio() {
     };
 
     let result = client.get_long_short_ratio(request).await;
-    
+
     // This endpoint might have access restrictions
     match result {
         Ok(response) => {
@@ -671,10 +685,7 @@ async fn test_get_risk_limit() {
     let response = result.unwrap();
     assert_eq!(response.ret_code, 0, "Response should indicate success");
 
-    println!(
-        "Risk limits: {} entries",
-        response.result.list.len()
-    );
+    println!("Risk limits: {} entries", response.result.list.len());
 }
 
 /// Test delivery price endpoint
@@ -690,15 +701,12 @@ async fn test_get_delivery_price() {
     };
 
     let result = client.get_delivery_price(request).await;
-    
+
     // This might not be available for all symbols
     match result {
         Ok(response) => {
             assert_eq!(response.ret_code, 0, "Response should indicate success");
-            println!(
-                "Delivery prices: {} entries",
-                response.result.list.len()
-            );
+            println!("Delivery prices: {} entries", response.result.list.len());
         }
         Err(error) => {
             println!("Delivery price test skipped due to: {:?}", error);
@@ -735,15 +743,12 @@ async fn test_get_insurance() {
 async fn test_get_collateral_ratio() {
     let client = create_public_test_client();
     let result = client.get_collateral_ratio().await;
-    
+
     // This might require special permissions
     match result {
         Ok(response) => {
             assert_eq!(response.ret_code, 0, "Response should indicate success");
-            println!(
-                "Collateral ratio: {} entries",
-                response.result.list.len()
-            );
+            println!("Collateral ratio: {} entries", response.result.list.len());
         }
         Err(error) => {
             println!("Collateral ratio test skipped due to: {:?}", error);
@@ -756,15 +761,12 @@ async fn test_get_collateral_ratio() {
 async fn test_get_borrowable_coins() {
     let client = create_public_test_client();
     let result = client.get_borrowable_coins().await;
-    
+
     // This might require special permissions
     match result {
         Ok(response) => {
             assert_eq!(response.ret_code, 0, "Response should indicate success");
-            println!(
-                "Borrowable coins: {} entries",
-                response.result.list.len()
-            );
+            println!("Borrowable coins: {} entries", response.result.list.len());
         }
         Err(error) => {
             println!("Borrowable coins test skipped due to: {:?}", error);
@@ -777,15 +779,12 @@ async fn test_get_borrowable_coins() {
 async fn test_get_collateral_coins() {
     let client = create_public_test_client();
     let result = client.get_collateral_coins().await;
-    
+
     // This might require special permissions
     match result {
         Ok(response) => {
             assert_eq!(response.ret_code, 0, "Response should indicate success");
-            println!(
-                "Collateral coins: {} entries",
-                response.result.list.len()
-            );
+            println!("Collateral coins: {} entries", response.result.list.len());
         }
         Err(error) => {
             println!("Collateral coins test skipped due to: {:?}", error);
@@ -803,15 +802,12 @@ async fn test_get_vip_margin_data() {
     };
 
     let result = client.get_vip_margin_data(Some(request)).await;
-    
+
     // This might require VIP status
     match result {
         Ok(response) => {
             assert_eq!(response.ret_code, 0, "Response should indicate success");
-            println!(
-                "VIP margin data: {} entries",
-                response.result.list.len()
-            );
+            println!("VIP margin data: {} entries", response.result.list.len());
         }
         Err(error) => {
             println!("VIP margin data test skipped due to: {:?}", error);
@@ -828,7 +824,7 @@ async fn test_get_ins_margin_coin_info() {
     };
 
     let result = client.get_ins_margin_coin_info(request).await;
-    
+
     // This might require institutional access
     match result {
         Ok(response) => {
@@ -840,7 +836,10 @@ async fn test_get_ins_margin_coin_info() {
             );
         }
         Err(error) => {
-            println!("Institutional margin coin info test skipped due to: {:?}", error);
+            println!(
+                "Institutional margin coin info test skipped due to: {:?}",
+                error
+            );
         }
     }
 }
@@ -850,7 +849,7 @@ async fn test_get_ins_margin_coin_info() {
 async fn test_get_ins_product_info() {
     let client = create_public_test_client();
     let result = client.get_ins_product_info().await;
-    
+
     // This might require institutional access
     match result {
         Ok(response) => {
@@ -861,7 +860,10 @@ async fn test_get_ins_product_info() {
             );
         }
         Err(error) => {
-            println!("Institutional product info test skipped due to: {:?}", error);
+            println!(
+                "Institutional product info test skipped due to: {:?}",
+                error
+            );
         }
     }
 }

@@ -51,15 +51,21 @@ impl RestClient {
         &self,
         params: OpenInterestRequest,
     ) -> RestResult<Vec<OpenInterestResponse>> {
-        self.send_public_request(OPEN_INTEREST_ENDPOINT, reqwest::Method::GET, Some(params), 0)
-            .await
+        self.send_public_request(
+            OPEN_INTEREST_ENDPOINT,
+            reqwest::Method::GET,
+            Some(params),
+            0,
+        )
+        .await
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use rust_decimal_macros::dec;
+
+    use super::*;
 
     #[test]
     fn test_open_interest_request_serialization_btc() {
@@ -197,7 +203,10 @@ mod tests {
         let response: OpenInterestResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.symbol, "BTC-240329-65000-C");
         assert_eq!(response.sum_open_interest.to_string(), "123.45678901");
-        assert_eq!(response.sum_open_interest_usd.to_string(), "8642100.12345678");
+        assert_eq!(
+            response.sum_open_interest_usd.to_string(),
+            "8642100.12345678"
+        );
         assert_eq!(response.timestamp, "1625097600000");
     }
 
@@ -229,7 +238,10 @@ mod tests {
         let response: OpenInterestResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.symbol, "BTC-240329-50000-C");
         assert_eq!(response.sum_open_interest.to_string(), "999999.99999999");
-        assert_eq!(response.sum_open_interest_usd.to_string(), "49999999999.99999999");
+        assert_eq!(
+            response.sum_open_interest_usd.to_string(),
+            "49999999999.99999999"
+        );
         assert_eq!(response.timestamp, "1625097600000");
     }
 
@@ -378,9 +390,9 @@ mod tests {
     #[test]
     fn test_open_interest_response_deserialization_timestamp_formats() {
         let timestamps = vec![
-            "1625097600000",  // Standard timestamp
-            "1625097600001",  // Millisecond precision
-            "1640995200000",  // Different timestamp
+            "1625097600000", // Standard timestamp
+            "1625097600001", // Millisecond precision
+            "1640995200000", // Different timestamp
         ];
 
         for timestamp in timestamps {
@@ -483,7 +495,7 @@ mod tests {
         }"#;
 
         let response: OpenInterestResponse = serde_json::from_str(json).unwrap();
-        
+
         // Verify that the USD value is consistent with the open interest
         // For a $70,000 strike price, 100 contracts should be worth $7,000,000
         let expected_usd = response.sum_open_interest * dec!(70000.00);

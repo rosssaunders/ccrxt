@@ -93,16 +93,16 @@ mod tests {
     #[test]
     fn test_filter_non_zero_balances_mixed_available_and_locked() {
         let accounts = vec![
-            create_spot_account("BTC", "0.1", "0.05"),    // Both non-zero
-            create_spot_account("ETH", "5.0", "0"),       // Available only
-            create_spot_account("USDT", "0", "1000.0"),   // Locked only
-            create_spot_account("BNB", "0", "0"),         // Both zero
-            create_spot_account("SOL", "100.0", "50.0"),  // Both non-zero
+            create_spot_account("BTC", "0.1", "0.05"),  // Both non-zero
+            create_spot_account("ETH", "5.0", "0"),     // Available only
+            create_spot_account("USDT", "0", "1000.0"), // Locked only
+            create_spot_account("BNB", "0", "0"),       // Both zero
+            create_spot_account("SOL", "100.0", "50.0"), // Both non-zero
         ];
 
         let filtered = filter_non_zero_accounts(accounts);
         assert_eq!(filtered.len(), 4);
-        
+
         let currencies: Vec<&str> = filtered.iter().map(|acc| acc.currency.as_str()).collect();
         assert!(currencies.contains(&"BTC"));
         assert!(currencies.contains(&"ETH"));
@@ -122,7 +122,7 @@ mod tests {
 
         let filtered = filter_non_zero_accounts(accounts.clone());
         assert_eq!(filtered.len(), accounts.len());
-        
+
         for (original, filtered) in accounts.iter().zip(filtered.iter()) {
             assert_eq!(original.currency, filtered.currency);
         }
@@ -138,15 +138,15 @@ mod tests {
     #[test]
     fn test_filter_non_zero_balances_very_small_amounts() {
         let accounts = vec![
-            create_spot_account("BTC", "0.00000001", "0"),       // Smallest BTC unit
+            create_spot_account("BTC", "0.00000001", "0"), // Smallest BTC unit
             create_spot_account("ETH", "0", "0.000000000000000001"), // Very small locked
-            create_spot_account("USDT", "0.000001", "0"),        // Micro USDT
-            create_spot_account("BNB", "0", "0"),                // Zero
+            create_spot_account("USDT", "0.000001", "0"),  // Micro USDT
+            create_spot_account("BNB", "0", "0"),          // Zero
         ];
 
         let filtered = filter_non_zero_accounts(accounts);
         assert_eq!(filtered.len(), 3);
-        
+
         let currencies: Vec<&str> = filtered.iter().map(|acc| acc.currency.as_str()).collect();
         assert!(currencies.contains(&"BTC"));
         assert!(currencies.contains(&"ETH"));
@@ -165,7 +165,7 @@ mod tests {
 
         let filtered = filter_non_zero_accounts(accounts);
         assert_eq!(filtered.len(), 3);
-        
+
         // Verify amounts are preserved
         assert_eq!(filtered[0].available, "1000.12345678");
         assert_eq!(filtered[0].locked, "500.87654321");
@@ -176,15 +176,15 @@ mod tests {
     #[test]
     fn test_filter_non_zero_balances_scientific_notation() {
         let accounts = vec![
-            create_spot_account("BTC", "1e-8", "0"),        // Scientific notation
-            create_spot_account("ETH", "1.5e-6", "0"),      // Scientific notation
-            create_spot_account("USDT", "0", "1e6"),        // Large scientific notation
-            create_spot_account("BNB", "0", "0"),           // Zero
+            create_spot_account("BTC", "1e-8", "0"), // Scientific notation
+            create_spot_account("ETH", "1.5e-6", "0"), // Scientific notation
+            create_spot_account("USDT", "0", "1e6"), // Large scientific notation
+            create_spot_account("BNB", "0", "0"),    // Zero
         ];
 
         let filtered = filter_non_zero_accounts(accounts);
         assert_eq!(filtered.len(), 3);
-        
+
         let currencies: Vec<&str> = filtered.iter().map(|acc| acc.currency.as_str()).collect();
         assert!(currencies.contains(&"BTC"));
         assert!(currencies.contains(&"ETH"));
@@ -195,10 +195,10 @@ mod tests {
     fn test_filter_non_zero_balances_negative_amounts() {
         // While negative amounts shouldn't normally occur, test the filter behavior
         let accounts = vec![
-            create_spot_account("BTC", "-0.1", "0"),        // Negative available
-            create_spot_account("ETH", "0", "-0.05"),       // Negative locked
-            create_spot_account("USDT", "-100", "-50"),     // Both negative
-            create_spot_account("BNB", "0", "0"),           // Zero
+            create_spot_account("BTC", "-0.1", "0"), // Negative available
+            create_spot_account("ETH", "0", "-0.05"), // Negative locked
+            create_spot_account("USDT", "-100", "-50"), // Both negative
+            create_spot_account("BNB", "0", "0"),    // Zero
         ];
 
         let filtered = filter_non_zero_accounts(accounts);
@@ -209,10 +209,10 @@ mod tests {
     #[test]
     fn test_filter_non_zero_balances_invalid_number_strings() {
         let accounts = vec![
-            create_spot_account("BTC", "invalid", "0"),     // Invalid available
+            create_spot_account("BTC", "invalid", "0"), // Invalid available
             create_spot_account("ETH", "0", "not_a_number"), // Invalid locked
-            create_spot_account("USDT", "abc", "def"),      // Both invalid
-            create_spot_account("BNB", "1.0", "0.5"),       // Valid
+            create_spot_account("USDT", "abc", "def"),  // Both invalid
+            create_spot_account("BNB", "1.0", "0.5"),   // Valid
         ];
 
         let filtered = filter_non_zero_accounts(accounts);
@@ -224,10 +224,10 @@ mod tests {
     #[test]
     fn test_filter_non_zero_balances_edge_case_whitespace() {
         let accounts = vec![
-            create_spot_account("BTC", " 0.1 ", "0"),       // Whitespace around number
-            create_spot_account("ETH", "0", " 0.05 "),      // Whitespace around number
-            create_spot_account("USDT", " ", "0"),          // Just whitespace
-            create_spot_account("BNB", "", ""),             // Empty strings
+            create_spot_account("BTC", " 0.1 ", "0"), // Whitespace around number
+            create_spot_account("ETH", "0", " 0.05 "), // Whitespace around number
+            create_spot_account("USDT", " ", "0"),    // Just whitespace
+            create_spot_account("BNB", "", ""),       // Empty strings
         ];
 
         let filtered = filter_non_zero_accounts(accounts);
@@ -241,21 +241,21 @@ mod tests {
     fn test_filter_non_zero_balances_realistic_portfolio_scenario() {
         // Simulate a realistic trading portfolio
         let accounts = vec![
-            create_spot_account("BTC", "0.12345678", "0"),          // Active BTC position
-            create_spot_account("ETH", "2.5", "0.5"),               // ETH with some locked
-            create_spot_account("USDT", "1500.50", "0"),            // USDT for trading
-            create_spot_account("BNB", "0", "10.0"),                // BNB locked for fees
-            create_spot_account("ADA", "0", "0"),                   // No ADA holdings
-            create_spot_account("SOL", "5.0", "0"),                 // SOL position
-            create_spot_account("DOT", "0", "0"),                   // No DOT holdings
-            create_spot_account("MATIC", "0", "0"),                 // No MATIC holdings
-            create_spot_account("LINK", "1.25", "0.75"),            // LINK with both
-            create_spot_account("UNI", "0", "0"),                   // No UNI holdings
+            create_spot_account("BTC", "0.12345678", "0"), // Active BTC position
+            create_spot_account("ETH", "2.5", "0.5"),      // ETH with some locked
+            create_spot_account("USDT", "1500.50", "0"),   // USDT for trading
+            create_spot_account("BNB", "0", "10.0"),       // BNB locked for fees
+            create_spot_account("ADA", "0", "0"),          // No ADA holdings
+            create_spot_account("SOL", "5.0", "0"),        // SOL position
+            create_spot_account("DOT", "0", "0"),          // No DOT holdings
+            create_spot_account("MATIC", "0", "0"),        // No MATIC holdings
+            create_spot_account("LINK", "1.25", "0.75"),   // LINK with both
+            create_spot_account("UNI", "0", "0"),          // No UNI holdings
         ];
 
         let filtered = filter_non_zero_accounts(accounts);
         assert_eq!(filtered.len(), 6); // BTC, ETH, USDT, BNB, SOL, LINK
-        
+
         let currencies: Vec<&str> = filtered.iter().map(|acc| acc.currency.as_str()).collect();
         assert!(currencies.contains(&"BTC"));
         assert!(currencies.contains(&"ETH"));
@@ -273,20 +273,20 @@ mod tests {
     fn test_filter_non_zero_balances_dust_filtering_scenario() {
         // Test filtering out dust amounts vs keeping them
         let accounts = vec![
-            create_spot_account("BTC", "0.00000001", "0"),          // 1 satoshi
+            create_spot_account("BTC", "0.00000001", "0"), // 1 satoshi
             create_spot_account("ETH", "0.000000000000000001", "0"), // 1 wei
-            create_spot_account("USDT", "0.000001", "0"),           // 1 micro USDT
-            create_spot_account("BNB", "0.00000000", "0"),          // Zero
-            create_spot_account("SOL", "0.000000001", "0"),         // 1 nano SOL
+            create_spot_account("USDT", "0.000001", "0"),  // 1 micro USDT
+            create_spot_account("BNB", "0.00000000", "0"), // Zero
+            create_spot_account("SOL", "0.000000001", "0"), // 1 nano SOL
         ];
 
         let filtered = filter_non_zero_accounts(accounts);
         assert_eq!(filtered.len(), 4); // All except BNB should be included
-        
+
         // Verify that even tiny amounts are preserved
         let btc_account = filtered.iter().find(|acc| acc.currency == "BTC").unwrap();
         assert_eq!(btc_account.available, "0.00000001");
-        
+
         let eth_account = filtered.iter().find(|acc| acc.currency == "ETH").unwrap();
         assert_eq!(eth_account.available, "0.000000000000000001");
     }
@@ -295,17 +295,17 @@ mod tests {
     fn test_filter_non_zero_balances_stablecoin_scenario() {
         // Test with various stablecoins
         let accounts = vec![
-            create_spot_account("USDT", "1000.50", "0"),    // Tether
-            create_spot_account("USDC", "0", "500.25"),     // USD Coin
-            create_spot_account("BUSD", "0", "0"),          // Binance USD (deprecated)
-            create_spot_account("DAI", "250.75", "0"),      // Dai
-            create_spot_account("TUSD", "0", "0"),          // TrueUSD
-            create_spot_account("USDP", "100.0", "0"),      // Pax Dollar
+            create_spot_account("USDT", "1000.50", "0"), // Tether
+            create_spot_account("USDC", "0", "500.25"),  // USD Coin
+            create_spot_account("BUSD", "0", "0"),       // Binance USD (deprecated)
+            create_spot_account("DAI", "250.75", "0"),   // Dai
+            create_spot_account("TUSD", "0", "0"),       // TrueUSD
+            create_spot_account("USDP", "100.0", "0"),   // Pax Dollar
         ];
 
         let filtered = filter_non_zero_accounts(accounts);
         assert_eq!(filtered.len(), 4); // USDT, USDC, DAI, USDP
-        
+
         let currencies: Vec<&str> = filtered.iter().map(|acc| acc.currency.as_str()).collect();
         assert!(currencies.contains(&"USDT"));
         assert!(currencies.contains(&"USDC"));
@@ -319,16 +319,16 @@ mod tests {
     fn test_filter_non_zero_balances_order_preservation() {
         // Test that the order of accounts is preserved
         let accounts = vec![
-            create_spot_account("ZEC", "1.0", "0"),         // Last alphabetically
-            create_spot_account("BTC", "0", "0"),           // Should be filtered
-            create_spot_account("ADA", "2.0", "0"),         // First alphabetically  
-            create_spot_account("ETH", "0", "0"),           // Should be filtered
-            create_spot_account("SOL", "3.0", "0"),         // Middle
+            create_spot_account("ZEC", "1.0", "0"), // Last alphabetically
+            create_spot_account("BTC", "0", "0"),   // Should be filtered
+            create_spot_account("ADA", "2.0", "0"), // First alphabetically
+            create_spot_account("ETH", "0", "0"),   // Should be filtered
+            create_spot_account("SOL", "3.0", "0"), // Middle
         ];
 
         let filtered = filter_non_zero_accounts(accounts);
         assert_eq!(filtered.len(), 3);
-        
+
         // Order should be preserved: ZEC, ADA, SOL
         assert_eq!(filtered[0].currency, "ZEC");
         assert_eq!(filtered[1].currency, "ADA");
@@ -339,10 +339,10 @@ mod tests {
     fn test_filter_non_zero_balances_clone_behavior() {
         let account = create_spot_account("BTC", "1.0", "0.5");
         let accounts = vec![account.clone()];
-        
+
         let filtered = filter_non_zero_accounts(accounts);
         assert_eq!(filtered.len(), 1);
-        
+
         // Verify the account data is correctly copied
         assert_eq!(filtered[0].currency, account.currency);
         assert_eq!(filtered[0].available, account.available);
@@ -352,16 +352,16 @@ mod tests {
     #[test]
     fn test_filter_non_zero_balances_precision_edge_cases() {
         let accounts = vec![
-            create_spot_account("BTC", "0.123456789012345", "0"),      // High precision
-            create_spot_account("ETH", "0", "0.987654321098765"),      // High precision locked
-            create_spot_account("USDT", "1.0000000000000001", "0"),    // Floating point precision
-            create_spot_account("BNB", "0.9999999999999999", "0"),     // Close to 1.0
-            create_spot_account("SOL", "0.0000000000000001", "0"),     // Very small precision
+            create_spot_account("BTC", "0.123456789012345", "0"), // High precision
+            create_spot_account("ETH", "0", "0.987654321098765"), // High precision locked
+            create_spot_account("USDT", "1.0000000000000001", "0"), // Floating point precision
+            create_spot_account("BNB", "0.9999999999999999", "0"), // Close to 1.0
+            create_spot_account("SOL", "0.0000000000000001", "0"), // Very small precision
         ];
 
         let filtered = filter_non_zero_accounts(accounts);
         assert_eq!(filtered.len(), 5); // All should be included as they're > 0
-        
+
         // Verify precision is maintained
         assert_eq!(filtered[0].available, "0.123456789012345");
         assert_eq!(filtered[1].locked, "0.987654321098765");
@@ -384,7 +384,7 @@ mod tests {
     fn test_spot_account_clone() {
         let original = create_spot_account("BTC", "1.0", "0.5");
         let cloned = original.clone();
-        
+
         assert_eq!(cloned.currency, original.currency);
         assert_eq!(cloned.available, original.available);
         assert_eq!(cloned.locked, original.locked);

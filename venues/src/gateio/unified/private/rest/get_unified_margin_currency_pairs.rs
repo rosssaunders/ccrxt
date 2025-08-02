@@ -1,5 +1,7 @@
-use super::RestClient;
-use super::unified_margin::{UnifiedMarginCurrencyPairsRequest, UnifiedMarginCurrencyPair};
+use super::{
+    RestClient,
+    unified_margin::{UnifiedMarginCurrencyPair, UnifiedMarginCurrencyPairsRequest},
+};
 
 const MARGIN_UNI_CURRENCY_PAIRS_ENDPOINT: &str = "/margin/uni/currency_pairs";
 
@@ -25,7 +27,10 @@ mod tests {
 
     #[test]
     fn test_margin_uni_currency_pairs_endpoint() {
-        assert_eq!(MARGIN_UNI_CURRENCY_PAIRS_ENDPOINT, "/margin/uni/currency_pairs");
+        assert_eq!(
+            MARGIN_UNI_CURRENCY_PAIRS_ENDPOINT,
+            "/margin/uni/currency_pairs"
+        );
     }
 
     #[test]

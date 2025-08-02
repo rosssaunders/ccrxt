@@ -1,5 +1,7 @@
-use super::RestClient;
-use super::borrowable::{BatchBorrowableRequest, BatchBorrowableResponse};
+use super::{
+    RestClient,
+    borrowable::{BatchBorrowableRequest, BatchBorrowableResponse},
+};
 
 const BATCH_BORROWABLE_ENDPOINT: &str = "/unified/batch_borrowable";
 
@@ -62,9 +64,7 @@ mod tests {
 
     #[test]
     fn test_batch_borrowable_empty_currencies() {
-        let request = BatchBorrowableRequest {
-            currencies: vec![],
-        };
+        let request = BatchBorrowableRequest { currencies: vec![] };
 
         let json = serde_json::to_value(&request).unwrap();
         let currencies = json["currencies"].as_array().unwrap();
@@ -86,9 +86,9 @@ mod tests {
     #[test]
     fn test_batch_borrowable_many_currencies() {
         let currencies = vec![
-            "BTC", "ETH", "USDT", "BNB", "SOL", "ADA", "XRP", "DOT", "MATIC", "LINK"
+            "BTC", "ETH", "USDT", "BNB", "SOL", "ADA", "XRP", "DOT", "MATIC", "LINK",
         ];
-        
+
         let request = BatchBorrowableRequest {
             currencies: currencies.iter().map(|&c| c.to_string()).collect(),
         };
@@ -96,7 +96,7 @@ mod tests {
         let json = serde_json::to_value(&request).unwrap();
         let json_currencies = json["currencies"].as_array().unwrap();
         assert_eq!(json_currencies.len(), currencies.len());
-        
+
         for (i, currency) in currencies.iter().enumerate() {
             assert_eq!(json_currencies[i], *currency);
         }

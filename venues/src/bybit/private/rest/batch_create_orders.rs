@@ -102,11 +102,8 @@ impl RestClient {
         &self,
         request: BatchCreateOrdersRequest,
     ) -> RestResult<BatchCreateOrdersResponse> {
-        self.send_post_request(BATCH_CREATE_ORDERS_ENDPOINT,
-            request,
-            EndpointType::Trade,
-        )
-        .await
+        self.send_post_request(BATCH_CREATE_ORDERS_ENDPOINT, request, EndpointType::Trade)
+            .await
     }
 }
 

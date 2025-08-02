@@ -1,8 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::UsdmClient;
-use crate::binance::usdm::RestResult;
-use crate::binance::usdm::enums::MarginType;
+use crate::binance::usdm::{RestResult, enums::MarginType};
 
 /// Endpoint path for symbol configuration.
 const SYMBOL_CONFIG_ENDPOINT: &str = "/fapi/v1/symbolConfig";
@@ -66,20 +65,16 @@ impl UsdmClient {
         &self,
         params: GetSymbolConfigRequest,
     ) -> RestResult<Vec<SymbolConfigResponse>> {
-        self.send_get_signed_request(
-            SYMBOL_CONFIG_ENDPOINT,
-            Some(&params),
-            5,
-            false,
-        )
-        .await
+        self.send_get_signed_request(SYMBOL_CONFIG_ENDPOINT, Some(&params), 5, false)
+            .await
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use serde_json;
+
+    use super::*;
 
     #[test]
     fn test_request_serialization() {

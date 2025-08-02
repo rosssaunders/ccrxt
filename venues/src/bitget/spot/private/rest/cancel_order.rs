@@ -50,7 +50,9 @@ impl RestClient {
         &self,
         request: CancelOrderRequest,
     ) -> RestResult<CancelOrderResponse> {
-        self.send_post_signed_request(CANCEL_ORDER_ENDPOINT, request,
+        self.send_post_signed_request(
+            CANCEL_ORDER_ENDPOINT,
+            request,
             10,       // 10 requests per second rate limit
             true,     // This is an order-related endpoint
             Some(10), // Order-specific rate limit

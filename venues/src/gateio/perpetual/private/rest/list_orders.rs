@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::RestClient;
-use super::order::FuturesOrder;
+use super::{RestClient, order::FuturesOrder};
 
 /// Request to list futures orders
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
@@ -163,7 +162,7 @@ mod tests {
     #[test]
     fn test_time_range_filter() {
         let start_time = 1640995200; // 2022-01-01 00:00:00 UTC
-        let end_time = 1641081600;   // 2022-01-02 00:00:00 UTC
+        let end_time = 1641081600; // 2022-01-02 00:00:00 UTC
 
         let request = ListFuturesOrdersRequest {
             settle: "USDT".to_string(),
@@ -179,12 +178,7 @@ mod tests {
 
     #[test]
     fn test_contract_filter() {
-        let contracts = vec![
-            "BTC_USDT",
-            "ETH_USDT",
-            "SOL_USDT",
-            "MATIC_USDT",
-        ];
+        let contracts = vec!["BTC_USDT", "ETH_USDT", "SOL_USDT", "MATIC_USDT"];
 
         for contract in contracts {
             let request = ListFuturesOrdersRequest {

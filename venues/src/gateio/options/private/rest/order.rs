@@ -155,9 +155,10 @@ mod tests {
     #[test]
     fn test_options_order_status_values() {
         let statuses = vec!["open", "finished", "cancelled"];
-        
+
         for status in statuses {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "id": 12345,
                 "user": 67890,
                 "contract": "BTC-20240101-50000-C",
@@ -174,7 +175,9 @@ mod tests {
                 "is_close": false,
                 "fee": "0.001",
                 "rebate": "0"
-            }}"#, status);
+            }}"#,
+                status
+            );
 
             let order: OptionsOrder = serde_json::from_str(&json).unwrap();
             assert_eq!(order.status, status);
@@ -184,9 +187,10 @@ mod tests {
     #[test]
     fn test_options_order_finish_as_values() {
         let finish_as_values = vec!["filled", "cancelled", "ioc", "expired", "reduced"];
-        
+
         for finish_as in finish_as_values {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "id": 12345,
                 "user": 67890,
                 "contract": "BTC-20240101-50000-C",
@@ -205,7 +209,9 @@ mod tests {
                 "is_close": false,
                 "fee": "0.001",
                 "rebate": "0"
-            }}"#, finish_as);
+            }}"#,
+                finish_as
+            );
 
             let order: OptionsOrder = serde_json::from_str(&json).unwrap();
             assert_eq!(order.finish_as, Some(finish_as.to_string()));
@@ -215,9 +221,10 @@ mod tests {
     #[test]
     fn test_options_order_type_values() {
         let order_types = vec!["limit", "market"];
-        
+
         for order_type in order_types {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "id": 12345,
                 "user": 67890,
                 "contract": "BTC-20240101-50000-C",
@@ -234,7 +241,9 @@ mod tests {
                 "is_close": false,
                 "fee": "0",
                 "rebate": "0"
-            }}"#, order_type);
+            }}"#,
+                order_type
+            );
 
             let order: OptionsOrder = serde_json::from_str(&json).unwrap();
             assert_eq!(order.order_type, order_type);

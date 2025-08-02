@@ -1,5 +1,4 @@
-use super::RestClient;
-use super::position::FuturesPosition;
+use super::{RestClient, position::FuturesPosition};
 
 impl RestClient {
     /// Get a specific futures position

@@ -1,6 +1,7 @@
+use std::time::Duration;
+
 use async_trait::async_trait;
 use reqwest;
-use std::time::Duration;
 
 use crate::http_client::{HttpClient, HttpError, Method, Request, Response};
 
@@ -14,7 +15,7 @@ impl NativeHttpClient {
         let client = reqwest::Client::builder()
             .build()
             .map_err(|e| HttpError::Unknown(format!("Failed to create client: {}", e)))?;
-        
+
         Ok(Self { client })
     }
 
@@ -56,29 +57,21 @@ impl HttpClient for NativeHttpClient {
             builder = builder.timeout(timeout);
         }
 
-        let response = builder
-            .send()
-            .await
-            .map_err(|e| {
-                if e.is_timeout() {
-                    HttpError::Timeout
-                } else if e.is_connect() || e.is_request() {
-                    HttpError::Network(e.to_string())
-                } else {
-                    HttpError::Unknown(e.to_string())
-                }
-            })?;
+        let response = builder.send().await.map_err(|e| {
+            if e.is_timeout() {
+                HttpError::Timeout
+            } else if e.is_connect() || e.is_request() {
+                HttpError::Network(e.to_string())
+            } else {
+                HttpError::Unknown(e.to_string())
+            }
+        })?;
 
         let status = response.status().as_u16();
         let headers = response
             .headers()
             .iter()
-            .map(|(k, v)| {
-                (
-                    k.to_string(),
-                    v.to_str().unwrap_or("").to_string(),
-                )
-            })
+            .map(|(k, v)| (k.to_string(), v.to_str().unwrap_or("").to_string()))
             .collect();
 
         let body = response

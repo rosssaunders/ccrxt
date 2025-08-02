@@ -1,5 +1,4 @@
-use super::RestClient;
-use super::position::OptionsPosition;
+use super::{RestClient, position::OptionsPosition};
 
 const OPTIONS_POSITIONS_ENDPOINT: &str = "/options/positions";
 

@@ -1,7 +1,6 @@
 use std::{borrow::Cow, collections::HashMap, sync::Arc, time::Duration};
 
-use rest::{HttpClient, RequestBuilder, Method as HttpMethod};
-use rest::secrets::ExposableSecret;
+use rest::{HttpClient, Method as HttpMethod, RequestBuilder, secrets::ExposableSecret};
 use serde::{Deserialize, Serialize};
 use tokio::time::sleep;
 
@@ -159,7 +158,7 @@ impl PrivateBinanceHttpClient {
 
             // Build the request
             let mut builder = RequestBuilder::new(method, url.clone());
-            
+
             // Add API key header
             builder = builder.header("X-MBX-APIKEY", self.api_key.expose_secret());
 
@@ -172,12 +171,16 @@ impl PrivateBinanceHttpClient {
 
             let request = builder.build();
 
-            let response = self.http_client.execute(request).await
+            let response = self
+                .http_client
+                .execute(request)
+                .await
                 .map_err(|e| Errors::Error(format!("HTTP request failed: {e}")))?;
 
             let status = response.status;
             let headers = response.headers.clone();
-            let response_text = response.text()
+            let response_text = response
+                .text()
                 .map_err(|e| Errors::Error(format!("Failed to read response text: {e}")))?;
 
             // Handle HTTP status codes
@@ -275,9 +278,9 @@ pub struct PublicBinanceHttpClient {
 impl PublicBinanceHttpClient {
     /// Create a new public client with a custom HTTP client
     pub fn new(
-        base_url: Cow<'static, str>, 
-        http_client: Arc<dyn HttpClient>, 
-        rate_limiter: RateLimiter
+        base_url: Cow<'static, str>,
+        http_client: Arc<dyn HttpClient>,
+        rate_limiter: RateLimiter,
     ) -> Self {
         Self {
             base_url,
@@ -333,12 +336,16 @@ impl PublicBinanceHttpClient {
 
         // Build and send request
         let request = RequestBuilder::new(method, url).build();
-        let response = self.http_client.execute(request).await
+        let response = self
+            .http_client
+            .execute(request)
+            .await
             .map_err(|e| Errors::Error(format!("HTTP request failed: {e}")))?;
 
         let status = response.status;
         let headers = response.headers.clone();
-        let response_text = response.text()
+        let response_text = response
+            .text()
             .map_err(|e| Errors::Error(format!("Failed to read response text: {e}")))?;
 
         // Convert status to reqwest::StatusCode for compatibility

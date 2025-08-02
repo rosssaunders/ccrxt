@@ -3,7 +3,6 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
-
 const ACCOUNT_QUICK_MARGIN_BORROW_REPAY_ENDPOINT: &str = "api/v5/account/quick-margin-borrow-repay";
 /// Request to quick margin borrow repay
 #[derive(Debug, Clone, Serialize)]

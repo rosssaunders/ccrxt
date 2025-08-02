@@ -132,7 +132,7 @@ mod tests {
     #[test]
     fn test_options_tickers_request_different_underlyings() {
         let underlyings = vec!["BTC_USDT", "ETH_USDT", "BNB_USDT", "SOL_USDT", "ADA_USDT"];
-        
+
         for underlying in underlyings {
             let request = OptionsTickersRequest {
                 underlying: Some(underlying.to_string()),
@@ -374,15 +374,15 @@ mod tests {
 
         let tickers: Vec<OptionsTicker> = serde_json::from_str(json).unwrap();
         assert_eq!(tickers.len(), 3);
-        
+
         assert_eq!(tickers[0].name, "BTC-20240101-50000-C");
         assert_eq!(tickers[0].last, Some("0.08".to_string()));
         assert_eq!(tickers[0].delta, Some("0.65".to_string()));
-        
+
         assert_eq!(tickers[1].name, "ETH-20240101-3000-P");
         assert_eq!(tickers[1].last, Some("0.05".to_string()));
         assert_eq!(tickers[1].delta, Some("-0.35".to_string()));
-        
+
         assert_eq!(tickers[2].name, "BNB-20240201-400-C");
         assert_eq!(tickers[2].last, Some("0.02".to_string()));
         assert_eq!(tickers[2].delta, Some("0.45".to_string()));
@@ -544,7 +544,7 @@ mod tests {
 
         let json = serde_json::to_string(&original).unwrap();
         let deserialized: OptionsTicker = serde_json::from_str(&json).unwrap();
-        
+
         assert_eq!(deserialized.name, original.name);
         assert_eq!(deserialized.last, original.last);
         assert_eq!(deserialized.change_percentage, original.change_percentage);
@@ -563,19 +563,23 @@ mod tests {
             ("ETH-20240215-3000-P", "put"),
             ("BNB-20240301-400-C", "call"),
             ("SOL-20240315-150-P", "put"),
-            ("ADA-20240401-1-C", "call")
+            ("ADA-20240401-1-C", "call"),
         ];
-        
+
         for (contract, option_type) in contracts {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "name": "{}",
                 "last": "0.1",
                 "delta": "{}"
-            }}"#, contract, if option_type == "call" { "0.5" } else { "-0.3" });
+            }}"#,
+                contract,
+                if option_type == "call" { "0.5" } else { "-0.3" }
+            );
 
             let ticker: OptionsTicker = serde_json::from_str(&json).unwrap();
             assert_eq!(ticker.name, contract);
-            
+
             if option_type == "call" {
                 assert!(ticker.name.ends_with("-C"));
                 assert_eq!(ticker.delta, Some("0.5".to_string()));

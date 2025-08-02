@@ -47,8 +47,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use rust_decimal::prelude::FromPrimitive;
+
+    use super::*;
 
     #[test]
     fn test_avg_price_request_serialization() {

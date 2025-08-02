@@ -131,10 +131,12 @@ impl RestClient {
         &self,
         request: PlacePlanOrderRequest,
     ) -> RestResult<PlacePlanOrderResponse> {
-        self.send_post_signed_request(PLACE_PLAN_ORDER_ENDPOINT, request,
-            10,          // 10 requests per second rate limit
-            true,        // This is an order endpoint
-            Some(10),    // Order-specific rate limit
+        self.send_post_signed_request(
+            PLACE_PLAN_ORDER_ENDPOINT,
+            request,
+            10,       // 10 requests per second rate limit
+            true,     // This is an order endpoint
+            Some(10), // Order-specific rate limit
         )
         .await
     }

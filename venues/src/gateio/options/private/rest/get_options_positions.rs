@@ -1,7 +1,6 @@
 use serde::Serialize;
 
-use super::RestClient;
-use super::position::OptionsPosition;
+use super::{RestClient, position::OptionsPosition};
 
 const OPTIONS_POSITIONS_ENDPOINT: &str = "/options/positions";
 
@@ -40,7 +39,8 @@ impl RestClient {
         &self,
         params: OptionsPositionsRequest,
     ) -> crate::gateio::options::Result<Vec<OptionsPosition>> {
-        self.get_with_query(OPTIONS_POSITIONS_ENDPOINT, &params).await
+        self.get_with_query(OPTIONS_POSITIONS_ENDPOINT, &params)
+            .await
     }
 }
 
@@ -102,7 +102,7 @@ mod tests {
     #[test]
     fn test_options_positions_request_different_underlyings() {
         let underlyings = vec!["BTC_USDT", "ETH_USDT", "BNB_USDT", "SOL_USDT"];
-        
+
         for underlying in underlyings {
             let request = OptionsPositionsRequest {
                 underlying: Some(underlying.to_string()),
@@ -118,7 +118,7 @@ mod tests {
     #[test]
     fn test_options_positions_request_pagination_limits() {
         let limits = vec![1, 10, 50, 100, 500, 1000];
-        
+
         for limit in limits {
             let request = OptionsPositionsRequest {
                 underlying: None,
@@ -134,7 +134,7 @@ mod tests {
     #[test]
     fn test_options_positions_request_pagination_offsets() {
         let offsets = vec![0, 10, 50, 100, 500, 1000, 5000];
-        
+
         for offset in offsets {
             let request = OptionsPositionsRequest {
                 underlying: None,

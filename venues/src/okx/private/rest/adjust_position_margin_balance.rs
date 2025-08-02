@@ -3,7 +3,6 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
-
 const ACCOUNT_POSITION_MARGIN_BALANCE_ENDPOINT: &str = "api/v5/account/position/margin-balance";
 /// Request to adjust position margin balance
 #[derive(Debug, Clone, Serialize)]

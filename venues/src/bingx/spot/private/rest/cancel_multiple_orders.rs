@@ -1,8 +1,10 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::bingx::spot::enums::{OrderSide, OrderStatus, OrderType};
-use crate::bingx::spot::{EndpointType, RestResult};
+use crate::bingx::spot::{
+    EndpointType, RestResult,
+    enums::{OrderSide, OrderStatus, OrderType},
+};
 
 const CANCEL_MULTIPLE_ORDERS_ENDPOINT: &str = "/openApi/spot/v1/trade/cancelOrders";
 
@@ -104,7 +106,10 @@ impl RestClient {
         &self,
         request: &CancelMultipleOrdersRequest,
     ) -> RestResult<CancelMultipleOrdersResponse> {
-        self.send_post_signed_request(CANCEL_MULTIPLE_ORDERS_ENDPOINT, request, EndpointType::Trading,
+        self.send_post_signed_request(
+            CANCEL_MULTIPLE_ORDERS_ENDPOINT,
+            request,
+            EndpointType::Trading,
         )
         .await
     }

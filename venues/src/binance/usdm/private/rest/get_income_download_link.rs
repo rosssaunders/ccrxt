@@ -1,6 +1,7 @@
+use std::borrow::Cow;
+
 use reqwest::Method;
 use serde::{Deserialize, Serialize};
-use std::borrow::Cow;
 
 use super::UsdmClient;
 use crate::binance::usdm::RestResult;
@@ -93,21 +94,17 @@ impl UsdmClient {
         &self,
         request: GetIncomeDownloadLinkRequest,
     ) -> RestResult<GetIncomeDownloadLinkResponse> {
-        self.send_get_signed_request(
-            GET_INCOME_DOWNLOAD_LINK_ENDPOINT,
-            request,
-            10,
-            false,
-        )
-        .await
+        self.send_get_signed_request(GET_INCOME_DOWNLOAD_LINK_ENDPOINT, request, 10, false)
+            .await
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use serde_json;
     use serde_urlencoded;
+
+    use super::*;
 
     #[test]
     fn test_get_income_download_link_request_serialization() {

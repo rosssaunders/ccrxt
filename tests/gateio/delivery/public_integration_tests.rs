@@ -4,8 +4,7 @@
 //! Tests run against the live Gate.io API using real market data.
 
 use tokio;
-use venues::gateio::delivery::public::rest::RestClient;
-use venues::gateio::shared::enums::CandlestickInterval;
+use venues::gateio::{delivery::public::rest::RestClient, shared::enums::CandlestickInterval};
 
 /// Helper function to create a test client for delivery public endpoints
 fn create_delivery_test_client() -> RestClient {

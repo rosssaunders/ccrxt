@@ -1,8 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::binance::{
-    coinm::{RestResult, private::rest::client::RestClient},
-};
+use crate::binance::coinm::{RestResult, private::rest::client::RestClient};
 
 const OPEN_ORDERS_ENDPOINT: &str = "/dapi/v1/openOrders";
 
@@ -126,13 +124,8 @@ impl RestClient {
         } else {
             40
         };
-        self.send_get_signed_request(
-            OPEN_ORDERS_ENDPOINT,
-            params,
-            weight,
-            false,
-        )
-        .await
+        self.send_get_signed_request(OPEN_ORDERS_ENDPOINT, params, weight, false)
+            .await
     }
 }
 

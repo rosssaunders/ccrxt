@@ -1,10 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-use crate::binance::{
-    coinm::{
-        OrderSide, PriceMatch, RestResult,
-        private::rest::{client::RestClient, modify_order::ModifyOrderResponse},
-    },
+use crate::binance::coinm::{
+    OrderSide, PriceMatch, RestResult,
+    private::rest::{client::RestClient, modify_order::ModifyOrderResponse},
 };
 
 const BATCH_ORDERS_ENDPOINT: &str = "/dapi/v1/batchOrders";
@@ -102,13 +100,8 @@ impl RestClient {
         params: ModifyMultipleOrdersRequest,
     ) -> RestResult<ModifyMultipleOrdersResponse> {
         let weight = 5;
-        self.send_put_signed_request(
-            BATCH_ORDERS_ENDPOINT,
-            params,
-            weight,
-            true,
-        )
-        .await
+        self.send_put_signed_request(BATCH_ORDERS_ENDPOINT, params, weight, true)
+            .await
     }
 }
 

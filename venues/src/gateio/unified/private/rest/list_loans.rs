@@ -1,5 +1,7 @@
-use super::RestClient;
-use super::loan::{ListLoansRequest, LoanRecord};
+use super::{
+    RestClient,
+    loan::{ListLoansRequest, LoanRecord},
+};
 
 const UNIFIED_LOANS_ENDPOINT: &str = "/unified/loans";
 

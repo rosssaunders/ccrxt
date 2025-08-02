@@ -3,7 +3,6 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, InstrumentType, RestResult};
 
-
 const ACCOUNT_TRADE_FEE_ENDPOINT: &str = "api/v5/account/trade-fee";
 /// Request to get trade fee
 #[derive(Debug, Clone, Serialize)]

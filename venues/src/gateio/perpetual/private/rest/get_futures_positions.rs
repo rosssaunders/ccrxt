@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::RestClient;
-use super::position::FuturesPosition;
+use super::{RestClient, position::FuturesPosition};
 
 /// Request parameters for futures positions
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
@@ -120,12 +119,7 @@ mod tests {
 
     #[test]
     fn test_contract_filters() {
-        let contracts = vec![
-            "BTC_USDT",
-            "ETH_USDT",
-            "SOL_USDT",
-            "MATIC_USDT",
-        ];
+        let contracts = vec!["BTC_USDT", "ETH_USDT", "SOL_USDT", "MATIC_USDT"];
 
         for contract in contracts {
             let request = FuturesPositionsRequest {

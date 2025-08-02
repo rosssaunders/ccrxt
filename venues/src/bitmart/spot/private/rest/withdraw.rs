@@ -65,10 +65,8 @@ impl RestClient {
     /// # Returns
     /// Withdraw response with withdraw ID
     pub async fn withdraw(&self, request: WithdrawRequest) -> RestResult<WithdrawResponse> {
-        self.send_post_signed_request(WITHDRAW_ENDPOINT, request,
-            EndpointType::FundingAccount,
-        )
-        .await
+        self.send_post_signed_request(WITHDRAW_ENDPOINT, request, EndpointType::FundingAccount)
+            .await
     }
 }
 

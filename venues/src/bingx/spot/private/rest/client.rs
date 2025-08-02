@@ -265,13 +265,8 @@ impl RestClient {
         T: DeserializeOwned,
         P: Serialize,
     {
-        self.send_request(
-            endpoint,
-            reqwest::Method::GET,
-            Some(&params),
-            endpoint_type,
-        )
-        .await
+        self.send_request(endpoint, reqwest::Method::GET, Some(&params), endpoint_type)
+            .await
     }
 
     /// Send a signed POST request (high-performance)
@@ -321,13 +316,8 @@ impl RestClient {
         T: DeserializeOwned,
         P: Serialize,
     {
-        self.send_request(
-            endpoint,
-            reqwest::Method::PUT,
-            Some(&params),
-            endpoint_type,
-        )
-        .await
+        self.send_request(endpoint, reqwest::Method::PUT, Some(&params), endpoint_type)
+            .await
     }
 
     /// Send a signed DELETE request (high-performance)

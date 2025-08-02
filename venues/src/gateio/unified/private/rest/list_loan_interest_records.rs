@@ -1,5 +1,7 @@
-use super::RestClient;
-use super::loan::{ListLoanInterestRecordsRequest, LoanInterestRecord};
+use super::{
+    RestClient,
+    loan::{ListLoanInterestRecordsRequest, LoanInterestRecord},
+};
 
 const UNIFIED_INTEREST_RECORD_ENDPOINT: &str = "/unified/interest_record";
 
@@ -45,7 +47,7 @@ mod tests {
     #[test]
     fn test_list_loan_interest_records_request_default() {
         let request = ListLoanInterestRecordsRequest::default();
-        
+
         let json = serde_json::to_value(&request).unwrap();
         assert!(!json.as_object().unwrap().contains_key("currency"));
         assert!(!json.as_object().unwrap().contains_key("page"));
@@ -97,7 +99,7 @@ mod tests {
     fn test_list_loan_interest_records_pagination() {
         let pages = vec![1, 2, 5, 10];
         let limits = vec![10, 50, 100, 500];
-        
+
         for (page, limit) in pages.into_iter().zip(limits) {
             let request = ListLoanInterestRecordsRequest {
                 currency: Some("BTC".to_string()),

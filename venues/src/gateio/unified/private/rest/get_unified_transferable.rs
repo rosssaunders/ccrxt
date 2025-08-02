@@ -1,5 +1,7 @@
-use super::RestClient;
-use super::transferable::{UnifiedTransferableRequest, UnifiedTransferableResponse};
+use super::{
+    RestClient,
+    transferable::{UnifiedTransferableRequest, UnifiedTransferableResponse},
+};
 
 const UNIFIED_TRANSFERABLE_ENDPOINT: &str = "/unified/transferable";
 
@@ -14,7 +16,8 @@ impl RestClient {
         &self,
         params: UnifiedTransferableRequest,
     ) -> crate::gateio::unified::Result<UnifiedTransferableResponse> {
-        self.get_with_query(UNIFIED_TRANSFERABLE_ENDPOINT, &params).await
+        self.get_with_query(UNIFIED_TRANSFERABLE_ENDPOINT, &params)
+            .await
     }
 }
 
@@ -61,7 +64,7 @@ mod tests {
             ("futures", "spot"),
             ("margin", "spot"),
         ];
-        
+
         for (from, to) in account_pairs {
             let request = UnifiedTransferableRequest {
                 currency: "USDT".to_string(),

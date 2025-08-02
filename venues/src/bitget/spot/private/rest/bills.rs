@@ -139,7 +139,9 @@ impl RestClient {
     /// # Returns
     /// A result containing the bills response or an error
     pub async fn bills(&self, request: BillsRequest) -> RestResult<BillsResponse> {
-        self.send_get_signed_request(BILLS_ENDPOINT, request,
+        self.send_get_signed_request(
+            BILLS_ENDPOINT,
+            request,
             10,    // 10 requests per second rate limit
             false, // This is not an order placement endpoint
             None,  // No order-specific rate limit

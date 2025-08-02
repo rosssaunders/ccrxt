@@ -163,7 +163,7 @@ mod tests {
     #[test]
     fn test_list_orders_request_different_currency_pairs() {
         let pairs = vec!["BTC_USDT", "ETH_BTC", "BNB_USDT", "SOL_USDC", "ADA_USDT"];
-        
+
         for pair in pairs {
             let request = ListOrdersRequest {
                 currency_pair: Some(pair.to_string()),
@@ -182,7 +182,7 @@ mod tests {
             (OrderStatus::Closed, "closed"),
             (OrderStatus::Cancelled, "cancelled"),
         ];
-        
+
         for (status, expected) in statuses {
             let request = ListOrdersRequest {
                 status: Some(status),
@@ -196,11 +196,8 @@ mod tests {
 
     #[test]
     fn test_list_orders_request_different_sides() {
-        let sides = vec![
-            (OrderSide::Buy, "buy"),
-            (OrderSide::Sell, "sell"),
-        ];
-        
+        let sides = vec![(OrderSide::Buy, "buy"), (OrderSide::Sell, "sell")];
+
         for (side, expected) in sides {
             let request = ListOrdersRequest {
                 side: Some(side),
@@ -215,7 +212,7 @@ mod tests {
     #[test]
     fn test_list_orders_request_different_accounts() {
         let accounts = vec!["spot", "margin", "cross_margin", "unified"];
-        
+
         for account in accounts {
             let request = ListOrdersRequest {
                 account: Some(account.to_string()),
@@ -229,14 +226,8 @@ mod tests {
 
     #[test]
     fn test_list_orders_request_pagination_ranges() {
-        let pagination_tests = vec![
-            (1, 10),
-            (1, 100),
-            (5, 50),
-            (10, 25),
-            (100, 1000),
-        ];
-        
+        let pagination_tests = vec![(1, 10), (1, 100), (5, 50), (10, 25), (100, 1000)];
+
         for (page, limit) in pagination_tests {
             let request = ListOrdersRequest {
                 page: Some(page),
@@ -366,7 +357,7 @@ mod tests {
         let request = ListOrdersRequest::default();
 
         let json = serde_json::to_value(&request).unwrap();
-        
+
         // All fields should be omitted when None
         let obj = json.as_object().unwrap();
         assert!(!obj.contains_key("currency_pair"));
@@ -456,7 +447,7 @@ mod tests {
     #[test]
     fn test_list_orders_request_stablecoin_trading() {
         let stablecoin_pairs = vec!["USDC_USDT", "BUSD_USDT", "DAI_USDT"];
-        
+
         for pair in stablecoin_pairs {
             let request = ListOrdersRequest {
                 currency_pair: Some(pair.to_string()),
@@ -504,7 +495,7 @@ mod tests {
     #[test]
     fn test_list_orders_request_default_values() {
         let request = ListOrdersRequest::default();
-        
+
         assert_eq!(request.currency_pair, None);
         assert_eq!(request.status, None);
         assert_eq!(request.page, None);

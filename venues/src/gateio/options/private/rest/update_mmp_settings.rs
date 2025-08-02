@@ -1,5 +1,7 @@
-use super::RestClient;
-use super::mmp_settings::{MMPSettings, UpdateMMPRequest};
+use super::{
+    RestClient,
+    mmp_settings::{MMPSettings, UpdateMMPRequest},
+};
 
 const UPDATE_MMP_SETTINGS_ENDPOINT: &str = "/options/mmp";
 

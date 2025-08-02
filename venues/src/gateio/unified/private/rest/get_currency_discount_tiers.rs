@@ -1,5 +1,4 @@
-use super::RestClient;
-use super::discount_tiers::CurrencyDiscountTier;
+use super::{RestClient, discount_tiers::CurrencyDiscountTier};
 
 const CURRENCY_DISCOUNT_TIERS_ENDPOINT: &str = "/unified/currency_discount_tiers";
 
@@ -68,6 +67,9 @@ mod tests {
 
     #[test]
     fn test_currency_discount_tiers_endpoint() {
-        assert_eq!(CURRENCY_DISCOUNT_TIERS_ENDPOINT, "/unified/currency_discount_tiers");
+        assert_eq!(
+            CURRENCY_DISCOUNT_TIERS_ENDPOINT,
+            "/unified/currency_discount_tiers"
+        );
     }
 }

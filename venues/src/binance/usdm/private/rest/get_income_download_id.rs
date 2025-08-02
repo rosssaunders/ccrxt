@@ -1,7 +1,8 @@
-use super::UsdmClient;
-use crate::binance::usdm::RestResult;
 use reqwest::Method;
 use serde::{Deserialize, Serialize};
+
+use super::UsdmClient;
+use crate::binance::usdm::RestResult;
 
 /// Endpoint path for getting download ID for futures transaction history.
 const GET_INCOME_DOWNLOAD_ID_ENDPOINT: &str = "/fapi/v1/income/asyn";
@@ -63,13 +64,8 @@ impl UsdmClient {
         &self,
         request: GetIncomeDownloadIdRequest,
     ) -> RestResult<GetIncomeDownloadIdResponse> {
-        self.send_get_signed_request(
-            GET_INCOME_DOWNLOAD_ID_ENDPOINT,
-            request,
-            1000,
-            false,
-        )
-        .await
+        self.send_get_signed_request(GET_INCOME_DOWNLOAD_ID_ENDPOINT, request, 1000, false)
+            .await
     }
 }
 

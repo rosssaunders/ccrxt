@@ -3,7 +3,6 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, InstrumentType, RestResult};
 
-
 const ACCOUNT_INTEREST_LIMITS_ENDPOINT: &str = "api/v5/account/interest-limits";
 /// Request to get interest limits
 #[derive(Debug, Clone, Serialize)]

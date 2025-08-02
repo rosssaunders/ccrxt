@@ -3,7 +3,6 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
-
 const ACCOUNT_MMP_RESET_ENDPOINT: &str = "api/v5/account/mmp-reset";
 /// Request to reset MMP
 #[derive(Debug, Clone, Serialize)]

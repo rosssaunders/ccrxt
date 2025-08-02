@@ -180,7 +180,7 @@ mod tests {
     #[test]
     fn test_candlesticks_request_limit_edge_cases() {
         let limits = vec![1, 100, 500, 1000];
-        
+
         for limit in limits {
             let request = CandlesticksRequest {
                 currency_pair: "BTC_USDT".to_string(),
@@ -321,15 +321,15 @@ mod tests {
 
         let candlesticks: Vec<Vec<String>> = serde_json::from_str(json).unwrap();
         assert_eq!(candlesticks.len(), 3);
-        
+
         // First candlestick
         assert_eq!(candlesticks[0][0], "1640995200");
         assert_eq!(candlesticks[0][2], "48500.50");
-        
+
         // Second candlestick
         assert_eq!(candlesticks[1][0], "1640995260");
         assert_eq!(candlesticks[1][2], "48600.75");
-        
+
         // Third candlestick
         assert_eq!(candlesticks[2][0], "1640995320");
         assert_eq!(candlesticks[2][2], "48700.00");
@@ -440,7 +440,7 @@ mod tests {
 
         let json = serde_json::to_string(&original).unwrap();
         let deserialized: Candlestick = serde_json::from_str(&json).unwrap();
-        
+
         assert_eq!(deserialized.timestamp, original.timestamp);
         assert_eq!(deserialized.volume, original.volume);
         assert_eq!(deserialized.close, original.close);
@@ -484,20 +484,20 @@ mod tests {
 
         let candlesticks: Vec<Vec<String>> = serde_json::from_str(json).unwrap();
         assert_eq!(candlesticks.len(), 3);
-        
+
         // Check timestamps are 1 hour apart (3600 seconds)
         let ts1: i64 = candlesticks[0][0].parse().unwrap();
         let ts2: i64 = candlesticks[1][0].parse().unwrap();
         let ts3: i64 = candlesticks[2][0].parse().unwrap();
         assert_eq!(ts2 - ts1, 3600);
         assert_eq!(ts3 - ts2, 3600);
-        
+
         // Verify high >= low for each candlestick
         for candle in &candlesticks {
             let high: f64 = candle[3].parse().unwrap();
             let low: f64 = candle[4].parse().unwrap();
             assert!(high >= low);
-            
+
             // Verify open and close are within high-low range
             let open: f64 = candle[5].parse().unwrap();
             let close: f64 = candle[2].parse().unwrap();
@@ -519,11 +519,11 @@ mod tests {
         let serialized = serde_urlencoded::to_string(&request_10s).unwrap();
         assert!(serialized.contains("interval=10s"));
 
-        // 30 day candlesticks 
+        // 30 day candlesticks
         let request_30d = CandlesticksRequest {
             currency_pair: "BTC_USDT".to_string(),
             interval: CandlestickInterval::Days30,
-            limit: Some(12), // One year of data
+            limit: Some(12),        // One year of data
             from: Some(1609459200), // 2021-01-01
             to: Some(1640995200),   // 2022-01-01
         };

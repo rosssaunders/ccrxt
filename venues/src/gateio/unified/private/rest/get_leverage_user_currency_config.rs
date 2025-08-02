@@ -1,5 +1,4 @@
-use super::RestClient;
-use super::leverage::LeverageConfig;
+use super::{RestClient, leverage::LeverageConfig};
 
 const LEVERAGE_USER_CURRENCY_CONFIG_ENDPOINT: &str = "/unified/leverage/user_currency_config";
 
@@ -78,7 +77,13 @@ mod tests {
     #[test]
     fn test_leverage_config_endpoint_with_currency() {
         let currency = "BTC";
-        let endpoint = format!("{}?currency={}", LEVERAGE_USER_CURRENCY_CONFIG_ENDPOINT, currency);
-        assert_eq!(endpoint, "/unified/leverage/user_currency_config?currency=BTC");
+        let endpoint = format!(
+            "{}?currency={}",
+            LEVERAGE_USER_CURRENCY_CONFIG_ENDPOINT, currency
+        );
+        assert_eq!(
+            endpoint,
+            "/unified/leverage/user_currency_config?currency=BTC"
+        );
     }
 }

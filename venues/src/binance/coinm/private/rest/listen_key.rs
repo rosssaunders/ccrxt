@@ -1,8 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::binance::{
-    coinm::{RestResult, private::rest::client::RestClient},
-};
+use crate::binance::coinm::{RestResult, private::rest::client::RestClient};
 
 const LISTEN_KEY_ENDPOINT: &str = "/dapi/v1/listenKey";
 
@@ -64,13 +62,8 @@ impl RestClient {
         params: CreateListenKeyRequest,
     ) -> RestResult<CreateListenKeyResponse> {
         let weight = 1;
-        self.send_post_signed_request(
-            LISTEN_KEY_ENDPOINT,
-            params,
-            weight,
-            false,
-        )
-        .await
+        self.send_post_signed_request(LISTEN_KEY_ENDPOINT, params, weight, false)
+            .await
     }
 
     /// Extend a listen key for user data stream on Binance Coin-M Futures.
@@ -91,13 +84,8 @@ impl RestClient {
         params: ExtendListenKeyRequest,
     ) -> RestResult<ListenKeyResponse> {
         let weight = 1;
-        self.send_put_signed_request(
-            LISTEN_KEY_ENDPOINT,
-            params,
-            weight,
-            false,
-        )
-        .await
+        self.send_put_signed_request(LISTEN_KEY_ENDPOINT, params, weight, false)
+            .await
     }
 
     /// Delete a listen key for user data stream on Binance Coin-M Futures.
@@ -118,13 +106,8 @@ impl RestClient {
         params: DeleteListenKeyRequest,
     ) -> RestResult<ListenKeyResponse> {
         let weight = 1;
-        self.send_delete_signed_request(
-            LISTEN_KEY_ENDPOINT,
-            params,
-            weight,
-            false,
-        )
-        .await
+        self.send_delete_signed_request(LISTEN_KEY_ENDPOINT, params, weight, false)
+            .await
     }
 }
 

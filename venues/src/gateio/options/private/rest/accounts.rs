@@ -266,9 +266,10 @@ mod tests {
     #[test]
     fn test_options_account_different_currencies() {
         let currencies = vec!["USDT", "BTC", "ETH", "USDC", "DAI"];
-        
+
         for currency in currencies {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "total": "1000.00000000",
                 "unrealised_pnl": "50.00000000",
                 "init_margin": "100.00000000",
@@ -278,7 +279,9 @@ mod tests {
                 "point": "10.00000000",
                 "currency": "{}",
                 "portfolio_margin": "80.00000000"
-            }}"#, currency);
+            }}"#,
+                currency
+            );
 
             let account: OptionsAccount = serde_json::from_str(&json).unwrap();
             assert_eq!(account.currency, currency);

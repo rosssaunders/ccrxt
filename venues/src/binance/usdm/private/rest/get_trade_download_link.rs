@@ -1,9 +1,10 @@
 // No top-level comments per project instructions.
 
-use super::UsdmClient;
-use crate::binance::usdm::RestResult;
 use reqwest::Method;
 use serde::{Deserialize, Serialize};
+
+use super::UsdmClient;
+use crate::binance::usdm::RestResult;
 
 /// Endpoint path for Get Futures Trade Download Link by Id.
 const TRADE_DOWNLOAD_LINK_ENDPOINT: &str = "/fapi/v1/trade/asyn/id";
@@ -87,17 +88,16 @@ impl UsdmClient {
         &self,
         request: GetTradeDownloadLinkRequest,
     ) -> RestResult<TradeDownloadLinkResponse> {
-        self.send_get_signed_request(
-            TRADE_DOWNLOAD_LINK_ENDPOINT,
-            request, 10, true)
+        self.send_get_signed_request(TRADE_DOWNLOAD_LINK_ENDPOINT, request, 10, true)
             .await
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use serde_json::json;
+
+    use super::*;
 
     #[test]
     fn test_download_status_deserialize() {

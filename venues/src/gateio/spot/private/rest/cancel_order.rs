@@ -65,7 +65,7 @@ mod tests {
     #[test]
     fn test_cancel_order_request_different_pairs() {
         let pairs = vec!["BTC_USDT", "ETH_BTC", "BNB_USDT", "SOL_USDC", "ADA_USDT"];
-        
+
         for pair in pairs {
             let request = CancelOrderRequest {
                 currency_pair: pair.to_string(),
@@ -80,7 +80,7 @@ mod tests {
     #[test]
     fn test_cancel_order_request_different_accounts() {
         let accounts = vec!["spot", "margin", "cross_margin", "unified"];
-        
+
         for account in accounts {
             let request = CancelOrderRequest {
                 currency_pair: "BTC_USDT".to_string(),
@@ -156,13 +156,13 @@ mod tests {
     #[test]
     fn test_cancel_order_request_special_currency_pairs() {
         let special_pairs = vec![
-            "BTC3L_USDT",   // Leveraged token
-            "ETH3S_USDT",   // Short token
-            "wBTC_USDT",    // Wrapped token
-            "USDC_USDT",    // Stablecoin pair
-            "GT_USDT",      // Exchange token
+            "BTC3L_USDT", // Leveraged token
+            "ETH3S_USDT", // Short token
+            "wBTC_USDT",  // Wrapped token
+            "USDC_USDT",  // Stablecoin pair
+            "GT_USDT",    // Exchange token
         ];
-        
+
         for pair in special_pairs {
             let request = CancelOrderRequest {
                 currency_pair: pair.to_string(),
@@ -178,14 +178,17 @@ mod tests {
     #[test]
     fn test_cancel_order_endpoint_path_construction() {
         let order_ids = vec!["12345678", "87654321", "11111111", "99999999"];
-        
+
         for order_id in order_ids {
             let expected_endpoint = format!("/spot/orders/{}", order_id);
-            
+
             // Verify the path construction logic
             assert!(expected_endpoint.starts_with("/spot/orders/"));
             assert!(expected_endpoint.ends_with(order_id));
-            assert_eq!(expected_endpoint.len(), "/spot/orders/".len() + order_id.len());
+            assert_eq!(
+                expected_endpoint.len(),
+                "/spot/orders/".len() + order_id.len()
+            );
         }
     }
 
@@ -193,12 +196,12 @@ mod tests {
     fn test_cancel_order_endpoint_with_special_order_ids() {
         let special_order_ids = vec![
             "0",
-            "1", 
+            "1",
             "123456789012345678", // Very long ID
             "order_12345",        // With prefix
             "abc123def456",       // Alphanumeric
         ];
-        
+
         for order_id in special_order_ids {
             let endpoint = format!("/spot/orders/{}", order_id);
             assert!(endpoint.starts_with("/spot/orders/"));
@@ -213,9 +216,9 @@ mod tests {
             "BUSD_USDT",
             "DAI_USDT",
             "TUSD_USDT",
-            "FRAX_USDT"
+            "FRAX_USDT",
         ];
-        
+
         for pair in stablecoin_pairs {
             let request = CancelOrderRequest {
                 currency_pair: pair.to_string(),
@@ -234,27 +237,27 @@ mod tests {
             currency_pair: "BTC_USDT".to_string(),
             account: Some("spot".to_string()),
         };
-        
+
         let spot_serialized = serde_urlencoded::to_string(&spot_request).unwrap();
         assert!(spot_serialized.contains("account=spot"));
         assert!(spot_serialized.contains("currency_pair=BTC_USDT"));
-        
+
         // Scenario 2: Cancel margin order
         let margin_request = CancelOrderRequest {
             currency_pair: "ETH_BTC".to_string(),
             account: Some("margin".to_string()),
         };
-        
+
         let margin_serialized = serde_urlencoded::to_string(&margin_request).unwrap();
         assert!(margin_serialized.contains("account=margin"));
         assert!(margin_serialized.contains("currency_pair=ETH_BTC"));
-        
+
         // Scenario 3: Cancel with default account
         let default_request = CancelOrderRequest {
             currency_pair: "BNB_USDT".to_string(),
             account: None,
         };
-        
+
         let default_serialized = serde_urlencoded::to_string(&default_request).unwrap();
         assert!(!default_serialized.contains("account="));
         assert!(default_serialized.contains("currency_pair=BNB_USDT"));
@@ -263,10 +266,16 @@ mod tests {
     #[test]
     fn test_cancel_order_request_altcoin_pairs() {
         let altcoin_pairs = vec![
-            "SOL_USDT", "DOT_USDT", "MATIC_USDT", "LINK_USDT", 
-            "ADA_USDT", "AVAX_USDT", "ATOM_USDT", "FTM_USDT"
+            "SOL_USDT",
+            "DOT_USDT",
+            "MATIC_USDT",
+            "LINK_USDT",
+            "ADA_USDT",
+            "AVAX_USDT",
+            "ATOM_USDT",
+            "FTM_USDT",
         ];
-        
+
         for pair in altcoin_pairs {
             let request = CancelOrderRequest {
                 currency_pair: pair.to_string(),
@@ -282,10 +291,15 @@ mod tests {
     #[test]
     fn test_cancel_order_request_cross_pairs() {
         let cross_pairs = vec![
-            "ETH_BTC", "BNB_BTC", "ADA_BTC", "DOT_BTC",
-            "SOL_ETH", "MATIC_ETH", "LINK_ETH"
+            "ETH_BTC",
+            "BNB_BTC",
+            "ADA_BTC",
+            "DOT_BTC",
+            "SOL_ETH",
+            "MATIC_ETH",
+            "LINK_ETH",
         ];
-        
+
         for pair in cross_pairs {
             let request = CancelOrderRequest {
                 currency_pair: pair.to_string(),
@@ -305,11 +319,11 @@ mod tests {
         };
 
         let serialized = serde_urlencoded::to_string(&request).unwrap();
-        
+
         // Both orderings should be valid, test that both fields are present
         assert!(serialized.contains("currency_pair=BTC_USDT"));
         assert!(serialized.contains("account=spot"));
-        
+
         // Should be connected with &
         if serialized.starts_with("currency_pair") {
             assert!(serialized.contains("currency_pair=BTC_USDT&account=spot"));
@@ -370,7 +384,7 @@ mod tests {
     #[test]
     fn test_cancel_order_request_numeric_tokens() {
         let numeric_pairs = vec!["1INCH_USDT", "3CRV_USDT", "404_USDT"];
-        
+
         for pair in numeric_pairs {
             let request = CancelOrderRequest {
                 currency_pair: pair.to_string(),
@@ -390,7 +404,7 @@ mod tests {
             ("cross_margin", "BNB_USDT"),
             ("unified", "SOL_USDT"),
         ];
-        
+
         for (account, pair) in comprehensive_accounts {
             let request = CancelOrderRequest {
                 currency_pair: pair.to_string(),

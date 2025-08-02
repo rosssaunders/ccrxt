@@ -1,14 +1,12 @@
 use serde::{Deserialize, Serialize as SerdeSerialize, Serialize, ser::Serializer};
 
-use crate::binance::{
-    coinm::{
-        ErrorResponse, RestResult,
-        enums::{
-            OrderResponseType, OrderSide, OrderStatus, OrderType, PositionSide, PriceMatch,
-            SelfTradePreventionMode, TimeInForce, WorkingType,
-        },
-        private::rest::client::RestClient,
+use crate::binance::coinm::{
+    ErrorResponse, RestResult,
+    enums::{
+        OrderResponseType, OrderSide, OrderStatus, OrderType, PositionSide, PriceMatch,
+        SelfTradePreventionMode, TimeInForce, WorkingType,
     },
+    private::rest::client::RestClient,
 };
 
 const BATCH_ORDERS_ENDPOINT: &str = "/dapi/v1/batchOrders";

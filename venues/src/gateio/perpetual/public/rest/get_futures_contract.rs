@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::RestClient;
-use super::contract::FuturesContract;
+use super::{RestClient, contract::FuturesContract};
 
 /// Request parameters for single futures contract
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
@@ -137,10 +136,7 @@ mod tests {
         }
 
         // Inverse contracts
-        let inverse_contracts = vec![
-            "BTC_USD",
-            "ETH_USD",
-        ];
+        let inverse_contracts = vec!["BTC_USD", "ETH_USD"];
 
         for contract in inverse_contracts {
             let settle = contract.split('_').next().unwrap();

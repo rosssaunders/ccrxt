@@ -76,7 +76,10 @@ impl RestClient {
         &self,
         request: &GetSubAccountTransferHistoryRequest,
     ) -> RestResult<GetSubAccountTransferHistoryResponse> {
-        self.send_get_signed_request(SUB_ACCOUNT_TRANSFER_HISTORY_ENDPOINT, request, EndpointType::Account,
+        self.send_get_signed_request(
+            SUB_ACCOUNT_TRANSFER_HISTORY_ENDPOINT,
+            request,
+            EndpointType::Account,
         )
         .await
     }

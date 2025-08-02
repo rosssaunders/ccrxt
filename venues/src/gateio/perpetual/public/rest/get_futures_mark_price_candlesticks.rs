@@ -1,5 +1,7 @@
-use super::RestClient;
-use super::candlestick::{FuturesCandlestick, FuturesCandlesticksRequest};
+use super::{
+    RestClient,
+    candlestick::{FuturesCandlestick, FuturesCandlesticksRequest},
+};
 
 impl RestClient {
     /// Get futures mark price candlesticks

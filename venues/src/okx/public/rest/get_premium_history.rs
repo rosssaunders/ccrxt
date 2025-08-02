@@ -3,7 +3,6 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
-
 const PUBLIC_PREMIUM_HISTORY_ENDPOINT: &str = "api/v5/public/premium-history";
 /// Request parameters for getting premium history
 #[derive(Debug, Clone, Serialize, Deserialize)]

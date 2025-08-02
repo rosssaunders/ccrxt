@@ -422,7 +422,8 @@ impl RestClient {
         T: DeserializeOwned,
         P: serde::Serialize,
     {
-        self.send_get_request(endpoint, Some(&params), endpoint_type).await
+        self.send_get_request(endpoint, Some(&params), endpoint_type)
+            .await
     }
 
     /// High-performance POST request method that takes params by value
@@ -444,7 +445,8 @@ impl RestClient {
         T: DeserializeOwned,
         P: serde::Serialize,
     {
-        self.send_post_request(endpoint, Some(&params), endpoint_type).await
+        self.send_post_request(endpoint, Some(&params), endpoint_type)
+            .await
     }
 
     /// High-performance DELETE request method that takes params by value
@@ -466,7 +468,8 @@ impl RestClient {
         T: DeserializeOwned,
         P: serde::Serialize,
     {
-        self.send_delete_request(endpoint, Some(&params), endpoint_type).await
+        self.send_delete_request(endpoint, Some(&params), endpoint_type)
+            .await
     }
 
     /// High-performance PUT request method that takes params by value
@@ -488,7 +491,8 @@ impl RestClient {
         T: DeserializeOwned,
         P: serde::Serialize,
     {
-        self.send_put_request(endpoint, Some(&params), endpoint_type).await
+        self.send_put_request(endpoint, Some(&params), endpoint_type)
+            .await
     }
 }
 

@@ -91,8 +91,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use rust_decimal_macros::dec;
+
+    use super::*;
 
     #[test]
     fn test_mark_price_request_serialization_with_symbol() {
@@ -374,7 +375,7 @@ mod tests {
 
         let response: MarkPriceResponse = serde_json::from_str(json).unwrap();
         let cloned = response.clone();
-        
+
         assert_eq!(response.symbol, cloned.symbol);
         assert_eq!(response.mark_price, cloned.mark_price);
         assert_eq!(response.bid_iv, cloned.bid_iv);
@@ -408,7 +409,7 @@ mod tests {
 
         let response: MarkPriceResponse = serde_json::from_str(json).unwrap();
         let debug_output = format!("{:?}", response);
-        
+
         assert!(debug_output.contains("MarkPriceResponse"));
         assert!(debug_output.contains("BTC-240329-70000-C"));
         assert!(debug_output.contains("7150.50000000"));
@@ -426,7 +427,8 @@ mod tests {
         ];
 
         for (symbol, _description) in test_cases {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "symbol": "{}",
                 "markPrice": "1000.00000000",
                 "bidIV": "0.60000000",
@@ -439,7 +441,9 @@ mod tests {
                 "highPriceLimit": "1500.00000000",
                 "lowPriceLimit": "500.00000000",
                 "riskFreeInterest": "0.04000000"
-            }}"#, symbol);
+            }}"#,
+                symbol
+            );
 
             let response: MarkPriceResponse = serde_json::from_str(&json).unwrap();
             assert_eq!(response.symbol, symbol);
@@ -460,13 +464,14 @@ mod tests {
     #[test]
     fn test_mark_price_response_deserialization_edge_case_symbols() {
         let edge_symbols = vec![
-            "BTC-991231-999999-C",    // Far expiry, high strike
-            "ETH-000101-1-P",         // Low strike
-            "BNB-240229-100000-C",    // Leap year
+            "BTC-991231-999999-C", // Far expiry, high strike
+            "ETH-000101-1-P",      // Low strike
+            "BNB-240229-100000-C", // Leap year
         ];
 
         for symbol in edge_symbols {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "symbol": "{}",
                 "markPrice": "100.00000000",
                 "bidIV": "0.50000000",
@@ -479,7 +484,9 @@ mod tests {
                 "highPriceLimit": "200.00000000",
                 "lowPriceLimit": "50.00000000",
                 "riskFreeInterest": "0.03000000"
-            }}"#, symbol);
+            }}"#,
+                symbol
+            );
 
             let response: MarkPriceResponse = serde_json::from_str(&json).unwrap();
             assert_eq!(response.symbol, symbol);

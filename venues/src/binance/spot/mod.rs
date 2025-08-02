@@ -67,8 +67,9 @@ pub type RestResult<T> = Result<RestResponse<T>, Errors>;
 
 pub type SpotClient = crate::binance::shared::client::PrivateBinanceClient;
 
-use crate::binance::shared::venue_trait::{RateLimits, VenueConfig};
 use std::time::Duration;
+
+use crate::binance::shared::venue_trait::{RateLimits, VenueConfig};
 
 /// Spot trading venue configuration
 pub struct SpotConfig;

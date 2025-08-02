@@ -199,9 +199,10 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
+    use rust_decimal_macros::dec;
+
     use super::*;
     use crate::binance::options::OptionsContractType;
-    use rust_decimal_macros::dec;
 
     #[test]
     fn test_exchange_info_response_deserialization() {

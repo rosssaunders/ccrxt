@@ -49,7 +49,7 @@ mod tests {
 
         let json = serde_json::to_value(&request).unwrap();
         assert_eq!(json["timeout"], 300);
-        
+
         // currency_pair should be omitted when None
         let obj = json.as_object().unwrap();
         assert!(!obj.contains_key("currency_pair"));
@@ -81,12 +81,12 @@ mod tests {
     #[test]
     fn test_countdown_cancel_all_request_different_timeouts() {
         let timeouts = vec![
-            30,    // 30 seconds
-            60,    // 1 minute
-            300,   // 5 minutes
-            600,   // 10 minutes
-            1800,  // 30 minutes
-            3600,  // 1 hour
+            30,   // 30 seconds
+            60,   // 1 minute
+            300,  // 5 minutes
+            600,  // 10 minutes
+            1800, // 30 minutes
+            3600, // 1 hour
         ];
 
         for timeout in timeouts {
@@ -104,7 +104,7 @@ mod tests {
     fn test_countdown_cancel_all_request_different_currency_pairs() {
         let pairs = vec![
             "BTC_USDT",
-            "ETH_USDT", 
+            "ETH_USDT",
             "BNB_USDT",
             "SOL_USDC",
             "ETH_BTC",
@@ -163,7 +163,7 @@ mod tests {
 
         let json = serde_json::to_value(&request).unwrap();
         assert_eq!(json["timeout"], 30);
-        
+
         let obj = json.as_object().unwrap();
         assert!(!obj.contains_key("currency_pair"));
     }
@@ -185,7 +185,7 @@ mod tests {
     fn test_countdown_cancel_all_request_realistic_risk_management_scenario() {
         // Scenario: Risk management - auto-cancel positions before high volatility event
         let request = CountdownCancelAllRequest {
-            timeout: 1800, // 30 minutes before news release
+            timeout: 1800,       // 30 minutes before news release
             currency_pair: None, // All positions
         };
 
@@ -209,7 +209,7 @@ mod tests {
     fn test_countdown_cancel_all_request_realistic_disable_existing_countdown() {
         // Scenario: Disable existing countdown due to changed market conditions
         let request = CountdownCancelAllRequest {
-            timeout: 0, // Disable
+            timeout: 0,                                  // Disable
             currency_pair: Some("ETH_USDT".to_string()), // Specific pair
         };
 
@@ -311,7 +311,7 @@ mod tests {
 
         let json = serde_json::to_value(&response).unwrap();
         assert_eq!(json["trigger_time"], 1640995500);
-        
+
         let obj = json.as_object().unwrap();
         assert_eq!(obj.len(), 1); // Only trigger_time field
     }
@@ -325,7 +325,7 @@ mod tests {
 
         let json = serde_json::to_value(&request).unwrap();
         assert!(json.as_object().unwrap().contains_key("timeout"));
-        
+
         // Verify timeout is a number
         assert!(json["timeout"].is_number());
     }
@@ -338,7 +338,7 @@ mod tests {
 
         let json = serde_json::to_string(&original).unwrap();
         let deserialized: CountdownCancelAllResponse = serde_json::from_str(&json).unwrap();
-        
+
         assert_eq!(deserialized.trigger_time, original.trigger_time);
     }
 
@@ -351,7 +351,7 @@ mod tests {
 
         let json = serde_json::to_string(&original).unwrap();
         let deserialized: CountdownCancelAllRequest = serde_json::from_str(&json).unwrap();
-        
+
         assert_eq!(deserialized.timeout, original.timeout);
         assert_eq!(deserialized.currency_pair, original.currency_pair);
     }
@@ -395,33 +395,53 @@ mod tests {
     #[test]
     fn test_countdown_cancel_all_request_trading_session_scenarios() {
         let scenarios = vec![
-            (CountdownCancelAllRequest {
-                timeout: 1800,
-                currency_pair: None,
-            }, "End of trading session - cancel all orders"),
-            (CountdownCancelAllRequest {
-                timeout: 300,
-                currency_pair: Some("BTC_USDT".to_string()),
-            }, "Major news coming - cancel BTC orders"),
-            (CountdownCancelAllRequest {
-                timeout: 900,
-                currency_pair: Some("ETH_USDT".to_string()),
-            }, "High volatility expected - cancel ETH orders"),
-            (CountdownCancelAllRequest {
-                timeout: 0,
-                currency_pair: None,
-            }, "False alarm - disable countdown"),
+            (
+                CountdownCancelAllRequest {
+                    timeout: 1800,
+                    currency_pair: None,
+                },
+                "End of trading session - cancel all orders",
+            ),
+            (
+                CountdownCancelAllRequest {
+                    timeout: 300,
+                    currency_pair: Some("BTC_USDT".to_string()),
+                },
+                "Major news coming - cancel BTC orders",
+            ),
+            (
+                CountdownCancelAllRequest {
+                    timeout: 900,
+                    currency_pair: Some("ETH_USDT".to_string()),
+                },
+                "High volatility expected - cancel ETH orders",
+            ),
+            (
+                CountdownCancelAllRequest {
+                    timeout: 0,
+                    currency_pair: None,
+                },
+                "False alarm - disable countdown",
+            ),
         ];
 
         for (request, description) in scenarios {
             let json = serde_json::to_value(&request).unwrap();
             assert!(json["timeout"].is_number(), "Failed for: {}", description);
-            
+
             if request.currency_pair.is_some() {
-                assert!(json["currency_pair"].is_string(), "Failed for: {}", description);
+                assert!(
+                    json["currency_pair"].is_string(),
+                    "Failed for: {}",
+                    description
+                );
             } else {
                 let obj = json.as_object().unwrap();
-                assert!(!obj.contains_key("currency_pair"), "Failed for: {}", description);
+                assert!(
+                    !obj.contains_key("currency_pair"),
+                    "Failed for: {}",
+                    description
+                );
             }
         }
     }
@@ -431,12 +451,12 @@ mod tests {
         // Test that we can calculate time remaining from response
         let current_time = 1640995200; // Mock current time
         let trigger_time = 1640995500; // 5 minutes later
-        
+
         let json = format!(r#"{{"trigger_time": {}}}"#, trigger_time);
         let response: CountdownCancelAllResponse = serde_json::from_str(&json).unwrap();
-        
+
         assert_eq!(response.trigger_time, trigger_time);
-        
+
         // Calculate time remaining
         let time_remaining = response.trigger_time - current_time;
         assert_eq!(time_remaining, 300); // 5 minutes
@@ -473,10 +493,10 @@ mod tests {
     fn test_countdown_cancel_all_response_large_timestamp() {
         // Test with large timestamp (year 2038 problem)
         let large_timestamp = 2147483647_i64; // Max 32-bit signed integer
-        
+
         let json = format!(r#"{{"trigger_time": {}}}"#, large_timestamp);
         let response: CountdownCancelAllResponse = serde_json::from_str(&json).unwrap();
-        
+
         assert_eq!(response.trigger_time, large_timestamp);
     }
 

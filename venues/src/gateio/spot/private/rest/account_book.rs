@@ -180,8 +180,16 @@ mod tests {
     #[test]
     fn test_get_account_book_request_different_record_types() {
         let types = vec![
-            "trade", "deposit", "withdraw", "fee", "refund", 
-            "bonus", "transfer", "liquidation", "margin", "interest"
+            "trade",
+            "deposit",
+            "withdraw",
+            "fee",
+            "refund",
+            "bonus",
+            "transfer",
+            "liquidation",
+            "margin",
+            "interest",
         ];
 
         for record_type in types {
@@ -298,7 +306,8 @@ mod tests {
         ];
 
         for (entry_type, change, text) in types {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "id": "12345678",
                 "time": 1640995200,
                 "currency": "USDT",
@@ -306,7 +315,9 @@ mod tests {
                 "balance": "1000.0",
                 "type": "{}",
                 "text": "{}"
-            }}"#, change, entry_type, text);
+            }}"#,
+                change, entry_type, text
+            );
 
             let entry: AccountBookEntry = serde_json::from_str(&json).unwrap();
             assert_eq!(entry.entry_type, entry_type);
@@ -328,7 +339,8 @@ mod tests {
         ];
 
         for (change, description) in changes {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "id": "12345678",
                 "time": 1640995200,
                 "currency": "BTC",
@@ -336,7 +348,9 @@ mod tests {
                 "balance": "1.0",
                 "type": "trade",
                 "text": "{}"
-            }}"#, change, description);
+            }}"#,
+                change, description
+            );
 
             let entry: AccountBookEntry = serde_json::from_str(&json).unwrap();
             assert_eq!(entry.change, change);
@@ -349,7 +363,8 @@ mod tests {
         let currencies = vec!["BTC", "ETH", "USDT", "USDC", "BNB", "SOL"];
 
         for currency in currencies {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "id": "12345678",
                 "time": 1640995200,
                 "currency": "{}",
@@ -357,7 +372,9 @@ mod tests {
                 "balance": "10.0",
                 "type": "trade",
                 "text": "Test transaction"
-            }}"#, currency);
+            }}"#,
+                currency
+            );
 
             let entry: AccountBookEntry = serde_json::from_str(&json).unwrap();
             assert_eq!(entry.currency, currency);
@@ -428,7 +445,10 @@ mod tests {
         assert_eq!(entry.entry_type, "withdraw");
         assert_eq!(entry.change, "-2.5");
         assert_eq!(entry.balance, "7.5");
-        assert_eq!(entry.text.as_ref().unwrap(), "Withdrawal to external wallet");
+        assert_eq!(
+            entry.text.as_ref().unwrap(),
+            "Withdrawal to external wallet"
+        );
 
         // Verify withdrawal decreases balance
         let change: f64 = entry.change.parse().unwrap();
@@ -451,7 +471,10 @@ mod tests {
         assert_eq!(entry.entry_type, "fee");
         assert_eq!(entry.change, "-0.001");
         assert_eq!(entry.balance, "99.999");
-        assert_eq!(entry.text.as_ref().unwrap(), "Trading fee for BTC/USDT order");
+        assert_eq!(
+            entry.text.as_ref().unwrap(),
+            "Trading fee for BTC/USDT order"
+        );
 
         // Verify fee is negative
         let change: f64 = entry.change.parse().unwrap();
@@ -474,7 +497,10 @@ mod tests {
         assert_eq!(entry.entry_type, "transfer");
         assert_eq!(entry.change, "500.0");
         assert_eq!(entry.balance, "1500.0");
-        assert_eq!(entry.text.as_ref().unwrap(), "Transfer from margin to spot account");
+        assert_eq!(
+            entry.text.as_ref().unwrap(),
+            "Transfer from margin to spot account"
+        );
     }
 
     #[test]
@@ -516,7 +542,10 @@ mod tests {
         assert_eq!(entry.entry_type, "liquidation");
         assert_eq!(entry.change, "-0.05");
         assert_eq!(entry.balance, "0.45");
-        assert_eq!(entry.text.as_ref().unwrap(), "Margin position liquidated due to insufficient margin");
+        assert_eq!(
+            entry.text.as_ref().unwrap(),
+            "Margin position liquidated due to insufficient margin"
+        );
 
         // Verify liquidation decreases balance
         let change: f64 = entry.change.parse().unwrap();
@@ -870,16 +899,17 @@ mod tests {
     fn test_account_book_entry_balance_consistency() {
         // Test that balance changes are mathematically consistent
         let entries = vec![
-            ("100.0", "1000.0"),   // Initial
-            ("50.0", "1050.0"),    // Deposit
-            ("-25.0", "1025.0"),   // Trade
-            ("-1.0", "1024.0"),    // Fee
-            ("500.0", "1524.0"),   // Large deposit
+            ("100.0", "1000.0"), // Initial
+            ("50.0", "1050.0"),  // Deposit
+            ("-25.0", "1025.0"), // Trade
+            ("-1.0", "1024.0"),  // Fee
+            ("500.0", "1524.0"), // Large deposit
         ];
 
         let mut previous_balance = 1000.0;
         for (change, expected_balance) in entries {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "id": "test",
                 "time": 1640995200,
                 "currency": "USDT",
@@ -887,19 +917,27 @@ mod tests {
                 "balance": "{}",
                 "type": "trade",
                 "text": "Test"
-            }}"#, change, expected_balance);
+            }}"#,
+                change, expected_balance
+            );
 
             let entry: AccountBookEntry = serde_json::from_str(&json).unwrap();
             let change_val: f64 = entry.change.parse().unwrap();
             let balance_val: f64 = entry.balance.parse().unwrap();
-            
-            if change != "100.0" { // Skip first entry
+
+            if change != "100.0" {
+                // Skip first entry
                 let expected = previous_balance + change_val;
-                assert!((balance_val - expected).abs() < 0.001, 
-                    "Balance inconsistency: {} + {} should equal {}, got {}", 
-                    previous_balance, change_val, expected, balance_val);
+                assert!(
+                    (balance_val - expected).abs() < 0.001,
+                    "Balance inconsistency: {} + {} should equal {}, got {}",
+                    previous_balance,
+                    change_val,
+                    expected,
+                    balance_val
+                );
             }
-            
+
             previous_balance = balance_val;
         }
     }

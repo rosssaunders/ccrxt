@@ -1,8 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::binance::{
-    coinm::{RestResult, private::rest::client::RestClient},
-};
+use crate::binance::coinm::{RestResult, private::rest::client::RestClient};
 
 const ORDER_AMENDMENT_ENDPOINT: &str = "/dapi/v1/orderAmendment";
 
@@ -118,13 +116,8 @@ impl RestClient {
         params: GetOrderModifyHistoryRequest,
     ) -> RestResult<GetOrderModifyHistoryResponse> {
         let weight = 1;
-        self.send_get_signed_request(
-            ORDER_AMENDMENT_ENDPOINT,
-            params,
-            weight,
-            false,
-        )
-        .await
+        self.send_get_signed_request(ORDER_AMENDMENT_ENDPOINT, params, weight, false)
+            .await
     }
 }
 

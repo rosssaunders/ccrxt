@@ -119,19 +119,16 @@ impl RestClient {
     /// Weight: 4
     /// Security: TRADE
     pub async fn amend_order(&self, params: AmendOrderRequest) -> RestResult<AmendOrderResponse> {
-        self.send_put_signed_request(
-            AMEND_ORDER_ENDPOINT,
-            params,
-            4,
-            true,)
-        .await
+        self.send_put_signed_request(AMEND_ORDER_ENDPOINT, params, 4, true)
+            .await
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use rust_decimal_macros::dec;
+
+    use super::*;
 
     #[test]
     fn test_amend_order_request_with_order_id_serialization() {

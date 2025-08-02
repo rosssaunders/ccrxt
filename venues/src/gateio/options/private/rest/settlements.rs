@@ -78,7 +78,8 @@ impl RestClient {
         &self,
         request: OptionsSettlementsRequest,
     ) -> crate::gateio::options::Result<Vec<OptionsSettlement>> {
-        self.get_with_query(OPTIONS_SETTLEMENTS_ENDPOINT, &request).await
+        self.get_with_query(OPTIONS_SETTLEMENTS_ENDPOINT, &request)
+            .await
     }
 }
 
@@ -316,11 +317,12 @@ mod tests {
             "ETH-20240215-3000-P",
             "BNB-20240301-400-C",
             "SOL-20240315-150-P",
-            "ADA-20240401-1-C"
+            "ADA-20240401-1-C",
         ];
-        
+
         for contract in contracts {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "time": 1640995200,
                 "underlying": "BTC_USDT",
                 "contract": "{}",
@@ -329,7 +331,9 @@ mod tests {
                 "settle_price": "50000.00",
                 "strike_price": "45000.00",
                 "size": 1
-            }}"#, contract);
+            }}"#,
+                contract
+            );
 
             let settlement: OptionsSettlement = serde_json::from_str(&json).unwrap();
             assert_eq!(settlement.contract, contract);
@@ -340,9 +344,10 @@ mod tests {
     #[test]
     fn test_options_settlement_different_underlyings() {
         let underlyings = vec!["BTC_USDT", "ETH_USDT", "BNB_USDT", "SOL_USDT", "ADA_USDT"];
-        
+
         for underlying in underlyings {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "time": 1640995200,
                 "underlying": "{}",
                 "contract": "BTC-20240101-50000-C",
@@ -351,7 +356,9 @@ mod tests {
                 "settle_price": "52000.00",
                 "strike_price": "50000.00",
                 "size": 1
-            }}"#, underlying);
+            }}"#,
+                underlying
+            );
 
             let settlement: OptionsSettlement = serde_json::from_str(&json).unwrap();
             assert_eq!(settlement.underlying, underlying);
@@ -525,17 +532,17 @@ mod tests {
 
         let settlements: Vec<OptionsSettlement> = serde_json::from_str(json).unwrap();
         assert_eq!(settlements.len(), 3);
-        
+
         assert_eq!(settlements[0].time, 1640995200);
         assert_eq!(settlements[0].underlying, "BTC_USDT");
         assert_eq!(settlements[0].profit, "500.0");
         assert_eq!(settlements[0].size, 1);
-        
+
         assert_eq!(settlements[1].time, 1640995300);
         assert_eq!(settlements[1].underlying, "ETH_USDT");
         assert_eq!(settlements[1].profit, "-200.0");
         assert_eq!(settlements[1].size, -1);
-        
+
         assert_eq!(settlements[2].time, 1640995400);
         assert_eq!(settlements[2].underlying, "BNB_USDT");
         assert_eq!(settlements[2].profit, "0.0");

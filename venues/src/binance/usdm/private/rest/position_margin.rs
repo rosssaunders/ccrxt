@@ -1,10 +1,13 @@
-use reqwest::Method;
-use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
 
+use reqwest::Method;
+use serde::{Deserialize, Serialize};
+
 use super::UsdmClient;
-use crate::binance::usdm::RestResult;
-use crate::binance::usdm::enums::{MarginAction, PositionSide};
+use crate::binance::usdm::{
+    RestResult,
+    enums::{MarginAction, PositionSide},
+};
 
 const MODIFY_POSITION_MARGIN_ENDPOINT: &str = "/fapi/v1/positionMargin";
 
@@ -84,7 +87,8 @@ impl UsdmClient {
             MODIFY_POSITION_MARGIN_ENDPOINT,
             params,
             1, // Weight per docs
-            true,)
+            true,
+        )
         .await
     }
 }

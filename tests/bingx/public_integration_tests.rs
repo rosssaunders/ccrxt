@@ -6,12 +6,11 @@
 use chrono;
 use reqwest::Client;
 use tokio;
-use venues::bingx::spot::public::AggregationType;
 use venues::bingx::spot::{
     Get24hrTickerRequest, GetHistoricalKlineRequest, GetKlineRequest, GetOldTradeRequest,
     GetOrderBookAggregationRequest, GetOrderBookRequest, GetRecentTradesRequest,
     GetSymbolOrderBookTickerRequest, GetSymbolPriceTickerRequest, GetSymbolsRequest, Interval,
-    PublicRestClient, RateLimiter,
+    PublicRestClient, RateLimiter, public::AggregationType,
 };
 
 /// Helper function to create a test client for public endpoints

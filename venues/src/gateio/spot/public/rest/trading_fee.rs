@@ -104,7 +104,7 @@ mod tests {
     fn test_trading_fee_request_different_pairs() {
         let pairs = vec![
             "BTC_USDT",
-            "ETH_USDT", 
+            "ETH_USDT",
             "BNB_USDT",
             "SOL_USDT",
             "ADA_USDT",
@@ -273,14 +273,11 @@ mod tests {
 
     #[test]
     fn test_trading_fee_point_type_values() {
-        let point_types = vec![
-            (0, "GT"),
-            (1, "Point card"),
-            (2, "Disabled"),
-        ];
+        let point_types = vec![(0, "GT"), (1, "Point card"), (2, "Disabled")];
 
         for (point_type, _description) in point_types {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "currency_pair": "BTC_USDT",
                 "maker_fee": "0.002",
                 "taker_fee": "0.002",
@@ -289,7 +286,9 @@ mod tests {
                 "gt_maker_fee": "0.0015",
                 "loan_fee": "0.01",
                 "point_type": {}
-            }}"#, point_type);
+            }}"#,
+                point_type
+            );
 
             let fee: TradingFee = serde_json::from_str(&json).unwrap();
             assert_eq!(fee.point_type, point_type);
@@ -335,7 +334,7 @@ mod tests {
 
         let json = serde_json::to_string(&original).unwrap();
         let deserialized: TradingFee = serde_json::from_str(&json).unwrap();
-        
+
         assert_eq!(deserialized.currency_pair, original.currency_pair);
         assert_eq!(deserialized.maker_fee, original.maker_fee);
         assert_eq!(deserialized.taker_fee, original.taker_fee);
@@ -382,15 +381,15 @@ mod tests {
 
         let fees: Vec<BatchTradingFee> = serde_json::from_str(json).unwrap();
         assert_eq!(fees.len(), 3);
-        
+
         assert_eq!(fees[0].currency_pair, "BTC_USDT");
         assert_eq!(fees[0].maker_fee, "0.002");
         assert_eq!(fees[0].taker_fee, "0.002");
-        
+
         assert_eq!(fees[1].currency_pair, "ETH_USDT");
         assert_eq!(fees[1].maker_fee, "0.001");
         assert_eq!(fees[1].taker_fee, "0.002");
-        
+
         assert_eq!(fees[2].currency_pair, "USDC_USDT");
         assert_eq!(fees[2].maker_fee, "0.0002");
         assert_eq!(fees[2].taker_fee, "0.0005");
@@ -427,7 +426,7 @@ mod tests {
 
         let json = serde_json::to_string(&original).unwrap();
         let deserialized: BatchTradingFee = serde_json::from_str(&json).unwrap();
-        
+
         assert_eq!(deserialized.currency_pair, original.currency_pair);
         assert_eq!(deserialized.maker_fee, original.maker_fee);
         assert_eq!(deserialized.taker_fee, original.taker_fee);
@@ -450,7 +449,7 @@ mod tests {
         let vip_fee: TradingFee = serde_json::from_str(vip_json).unwrap();
         assert_eq!(vip_fee.maker_fee, "0.0008"); // VIP maker fee
         assert_eq!(vip_fee.taker_fee, "0.001"); // VIP taker fee
-        
+
         // Calculate discount percentage
         let maker_discount: f64 = 1.0 - (0.0006 / 0.0008);
         let taker_discount: f64 = 1.0 - (0.00075 / 0.001);
@@ -485,14 +484,17 @@ mod tests {
         ]"#;
 
         let fees: Vec<BatchTradingFee> = serde_json::from_str(json).unwrap();
-        
+
         // Verify stablecoin pairs have lower fees
-        let stablecoin_fee = fees.iter().find(|f| f.currency_pair == "USDC_USDT").unwrap();
+        let stablecoin_fee = fees
+            .iter()
+            .find(|f| f.currency_pair == "USDC_USDT")
+            .unwrap();
         let btc_fee = fees.iter().find(|f| f.currency_pair == "BTC_USDT").unwrap();
-        
+
         let stablecoin_maker: f64 = stablecoin_fee.maker_fee.parse().unwrap();
         let btc_maker: f64 = btc_fee.maker_fee.parse().unwrap();
-        
+
         assert!(stablecoin_maker < btc_maker); // Stablecoin pairs typically have lower fees
     }
 

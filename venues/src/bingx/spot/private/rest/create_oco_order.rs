@@ -91,9 +91,8 @@ impl RestClient {
         &self,
         request: &CreateOcoOrderRequest,
     ) -> RestResult<CreateOcoOrderResponse> {
-        self.send_post_signed_request(CREATE_OCO_ORDER_ENDPOINT, request, EndpointType::Trading,
-        )
-        .await
+        self.send_post_signed_request(CREATE_OCO_ORDER_ENDPOINT, request, EndpointType::Trading)
+            .await
     }
 }
 

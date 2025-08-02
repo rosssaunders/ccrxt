@@ -1,5 +1,6 @@
-use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
+
+use serde::{Deserialize, Serialize};
 
 use super::UsdmClient;
 use crate::binance::usdm::RestResult;
@@ -56,20 +57,16 @@ impl UsdmClient {
         &self,
         params: GetPortfolioMarginAccountRequest,
     ) -> RestResult<PortfolioMarginAccountResponse> {
-        self.send_get_signed_request(
-            PORTFOLIO_MARGIN_ENDPOINT,
-            params,
-            5,
-            false,
-        )
-        .await
+        self.send_get_signed_request(PORTFOLIO_MARGIN_ENDPOINT, params, 5, false)
+            .await
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use serde_json;
+
+    use super::*;
 
     #[test]
     fn test_portfolio_margin_account_response_deserialization() {

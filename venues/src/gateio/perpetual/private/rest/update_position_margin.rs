@@ -39,7 +39,10 @@ impl RestClient {
         &self,
         request: UpdatePositionMarginRequest,
     ) -> crate::gateio::perpetual::Result<PositionMarginResponse> {
-        let endpoint = format!("/futures/{}/positions/{}/margin", request.settle, request.contract);
+        let endpoint = format!(
+            "/futures/{}/positions/{}/margin",
+            request.settle, request.contract
+        );
         self.post(&endpoint, &request).await
     }
 }
@@ -79,14 +82,7 @@ mod tests {
     #[test]
     fn test_margin_change_amounts() {
         let change_amounts = vec![
-            "100.0",
-            "500.0",
-            "1000.0",
-            "5000.0",
-            "-100.0",
-            "-500.0",
-            "-1000.0",
-            "-5000.0",
+            "100.0", "500.0", "1000.0", "5000.0", "-100.0", "-500.0", "-1000.0", "-5000.0",
         ];
 
         for change in change_amounts {
@@ -177,13 +173,7 @@ mod tests {
     #[test]
     fn test_decimal_precision() {
         let precise_amounts = vec![
-            "100.1",
-            "100.01",
-            "100.001",
-            "100.0001",
-            "-50.5",
-            "-50.05",
-            "-50.005",
+            "100.1", "100.01", "100.001", "100.0001", "-50.5", "-50.05", "-50.005",
         ];
 
         for amount in precise_amounts {

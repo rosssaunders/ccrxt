@@ -41,7 +41,10 @@ impl RestClient {
         &self,
         request: UpdateDualModeMarginRequest,
     ) -> crate::gateio::perpetual::Result<DualModeMarginResponse> {
-        let endpoint = format!("/futures/{}/dual_positions/{}/margin", request.settle, request.contract);
+        let endpoint = format!(
+            "/futures/{}/dual_positions/{}/margin",
+            request.settle, request.contract
+        );
         self.post(&endpoint, &request).await
     }
 }

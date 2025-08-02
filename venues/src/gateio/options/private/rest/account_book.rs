@@ -70,7 +70,8 @@ impl RestClient {
         &self,
         request: OptionsAccountBookRequest,
     ) -> crate::gateio::options::Result<Vec<OptionsAccountBookEntry>> {
-        self.get_with_query(OPTIONS_ACCOUNT_BOOK_ENDPOINT, &request).await
+        self.get_with_query(OPTIONS_ACCOUNT_BOOK_ENDPOINT, &request)
+            .await
     }
 }
 
@@ -296,17 +297,27 @@ mod tests {
 
     #[test]
     fn test_options_account_book_entry_different_types() {
-        let types = vec!["trade", "fee", "deposit", "withdrawal", "settlement", "transfer"];
-        
+        let types = vec![
+            "trade",
+            "fee",
+            "deposit",
+            "withdrawal",
+            "settlement",
+            "transfer",
+        ];
+
         for entry_type in types {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "id": "test",
                 "time": 1640995200.0,
                 "change": "100.0",
                 "balance": "1000.0",
                 "type": "{}",
                 "text": "Test entry"
-            }}"#, entry_type);
+            }}"#,
+                entry_type
+            );
 
             let entry: OptionsAccountBookEntry = serde_json::from_str(&json).unwrap();
             assert_eq!(entry.entry_type, entry_type);
@@ -332,7 +343,7 @@ mod tests {
     #[test]
     fn test_options_account_book_request_serialization_different_entry_types() {
         let types = vec!["trade", "fee", "deposit", "withdrawal", "settlement"];
-        
+
         for entry_type in types {
             let request = OptionsAccountBookRequest {
                 limit: None,

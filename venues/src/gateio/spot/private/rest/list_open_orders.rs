@@ -204,7 +204,7 @@ mod tests {
     #[test]
     fn test_list_open_orders_request_different_currency_pairs() {
         let pairs = vec!["BTC_USDT", "ETH_BTC", "BNB_USDT", "SOL_USDC", "ADA_USDT"];
-        
+
         for pair in pairs {
             let request = ListOpenOrdersRequest {
                 currency_pair: Some(pair.to_string()),
@@ -219,7 +219,7 @@ mod tests {
     #[test]
     fn test_list_open_orders_request_different_sides() {
         let sides = vec!["buy", "sell"];
-        
+
         for side in sides {
             let request = ListOpenOrdersRequest {
                 side: Some(side.to_string()),
@@ -234,7 +234,7 @@ mod tests {
     #[test]
     fn test_list_open_orders_request_different_accounts() {
         let accounts = vec!["spot", "margin", "cross_margin"];
-        
+
         for account in accounts {
             let request = ListOpenOrdersRequest {
                 account: Some(account.to_string()),
@@ -248,14 +248,8 @@ mod tests {
 
     #[test]
     fn test_list_open_orders_request_pagination_ranges() {
-        let pagination_tests = vec![
-            (1, 1),
-            (1, 100),
-            (5, 50),
-            (10, 25),
-            (100, 10),
-        ];
-        
+        let pagination_tests = vec![(1, 1), (1, 100), (5, 50), (10, 25), (100, 10)];
+
         for (page, limit) in pagination_tests {
             let request = ListOpenOrdersRequest {
                 page: Some(page),
@@ -331,7 +325,7 @@ mod tests {
         let request = ListOpenOrdersRequest::default();
 
         let json = serde_json::to_value(&request).unwrap();
-        
+
         // All fields should be omitted when None
         let obj = json.as_object().unwrap();
         assert!(!obj.contains_key("currency_pair"));
@@ -450,7 +444,7 @@ mod tests {
         assert_eq!(order.filled_amount, "0.3");
         assert_eq!(order.left, "0.7");
         assert_eq!(order.avg_deal_price, "29950");
-        
+
         // Verify partial fill logic
         let amount: f64 = order.amount.parse().unwrap();
         let filled: f64 = order.filled_amount.parse().unwrap();
@@ -484,7 +478,7 @@ mod tests {
 
         let order: OpenOrder = serde_json::from_str(json).unwrap();
         assert_eq!(order.iceberg, Some("1.0".to_string()));
-        
+
         let iceberg_amount: f64 = order.iceberg.as_ref().unwrap().parse().unwrap();
         let total_amount: f64 = order.amount.parse().unwrap();
         assert!(iceberg_amount < total_amount); // Iceberg should be smaller than total
@@ -524,9 +518,10 @@ mod tests {
     #[test]
     fn test_open_order_different_order_types() {
         let order_types = vec!["limit", "market", "ioc", "fok"];
-        
+
         for order_type in order_types {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "id": "12345",
                 "currency_pair": "BTC_USDT",
                 "status": "open",
@@ -545,7 +540,9 @@ mod tests {
                 "gt_fee": "0",
                 "create_time": "1640995200",
                 "update_time": "1640995200"
-            }}"#, order_type);
+            }}"#,
+                order_type
+            );
 
             let order: OpenOrder = serde_json::from_str(&json).unwrap();
             assert_eq!(order.order_type, order_type);
@@ -555,9 +552,10 @@ mod tests {
     #[test]
     fn test_open_order_different_time_in_force() {
         let tif_values = vec!["gtc", "ioc", "fok"];
-        
+
         for tif in tif_values {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "id": "12345",
                 "currency_pair": "BTC_USDT",
                 "status": "open",
@@ -576,7 +574,9 @@ mod tests {
                 "gt_fee": "0",
                 "create_time": "1640995200",
                 "update_time": "1640995200"
-            }}"#, tif);
+            }}"#,
+                tif
+            );
 
             let order: OpenOrder = serde_json::from_str(&json).unwrap();
             assert_eq!(order.time_in_force, tif);
@@ -630,11 +630,11 @@ mod tests {
 
         let orders: Vec<OpenOrder> = serde_json::from_str(json).unwrap();
         assert_eq!(orders.len(), 2);
-        
+
         assert_eq!(orders[0].id, "12345678");
         assert_eq!(orders[0].currency_pair, "BTC_USDT");
         assert_eq!(orders[0].side, "buy");
-        
+
         assert_eq!(orders[1].id, "87654321");
         assert_eq!(orders[1].currency_pair, "ETH_USDT");
         assert_eq!(orders[1].side, "sell");
@@ -726,7 +726,7 @@ mod tests {
     #[test]
     fn test_list_open_orders_request_default_values() {
         let request = ListOpenOrdersRequest::default();
-        
+
         assert_eq!(request.currency_pair, None);
         assert_eq!(request.page, None);
         assert_eq!(request.limit, None);

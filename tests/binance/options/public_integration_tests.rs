@@ -3,18 +3,21 @@
 //! These tests verify the functionality of all public endpoints for Binance Options (EAPI)
 //! that don't require authentication. Tests run against the live Binance Options API.
 
+use std::time::Duration;
+
 use chrono::{Duration as ChronoDuration, Utc};
 use reqwest::Client;
-use std::time::Duration;
 use tokio;
-use venues::binance::options::{
-    PublicRestClient,
-    public::rest::{
-        klines::KlinesRequest, mark_price::MarkPriceRequest, order_book::OrderBookRequest,
-        recent_trades::RecentTradesRequest, ticker::TickerRequest,
+use venues::binance::{
+    options::{
+        PublicRestClient,
+        public::rest::{
+            klines::KlinesRequest, mark_price::MarkPriceRequest, order_book::OrderBookRequest,
+            recent_trades::RecentTradesRequest, ticker::TickerRequest,
+        },
     },
+    shared::{RateLimiter, RateLimits},
 };
-use venues::binance::shared::{RateLimiter, RateLimits};
 
 /// Helper function to create a test client for public endpoints
 fn create_public_test_client() -> PublicRestClient {

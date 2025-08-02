@@ -1,4 +1,4 @@
-use serde::{Deserialize};
+use serde::Deserialize;
 
 use crate::binance::coinm::{RestResult, public::rest::RestClient};
 

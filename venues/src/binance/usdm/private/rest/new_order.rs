@@ -1,10 +1,10 @@
-use reqwest::Method;
-use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
 
+use reqwest::Method;
+use serde::{Deserialize, Serialize};
+
 use super::UsdmClient;
-use crate::binance::usdm::RestResult;
-use crate::binance::usdm::enums::*;
+use crate::binance::usdm::{RestResult, enums::*};
 
 const NEW_ORDER_ENDPOINT: &str = "/fapi/v1/order";
 
@@ -227,12 +227,14 @@ impl UsdmClient {
 
 #[cfg(test)]
 mod tests {
+    use std::borrow::Cow;
+
+    use serde_json;
+
     use super::*;
     use crate::binance::usdm::enums::{
         NewOrderRespType, OrderSide, OrderType, PositionSide, TimeInForce, WorkingType,
     };
-    use serde_json;
-    use std::borrow::Cow;
 
     #[test]
     fn test_new_order_request_serialization() {

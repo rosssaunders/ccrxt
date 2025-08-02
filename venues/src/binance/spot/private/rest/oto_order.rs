@@ -199,19 +199,16 @@ impl RestClient {
     /// Weight: 1
     /// Security: TRADE
     pub async fn new_oto_order(&self, params: OtoOrderRequest) -> RestResult<OtoOrderResponse> {
-        self.send_post_signed_request(
-            CREATE_OTO_ORDER_ENDPOINT,
-            params,
-            1,
-            true,)
-        .await
+        self.send_post_signed_request(CREATE_OTO_ORDER_ENDPOINT, params, 1, true)
+            .await
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use rust_decimal_macros::dec;
+
+    use super::*;
 
     #[test]
     fn test_oto_order_request_minimal_serialization() {

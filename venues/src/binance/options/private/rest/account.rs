@@ -100,20 +100,16 @@ impl RestClient {
     /// Weight: 3
     /// Requires: API key and signature
     pub async fn get_account_info(&self, params: AccountRequest) -> RestResult<AccountResponse> {
-        self.send_get_signed_request(
-            GET_ACCOUNT_ENDPOINT,
-            params,
-            3,
-            false,
-        )
-        .await
+        self.send_get_signed_request(GET_ACCOUNT_ENDPOINT, params, 3, false)
+            .await
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use rust_decimal_macros::dec;
+
+    use super::*;
 
     #[test]
     fn test_account_request_minimal_serialization() {
@@ -125,7 +121,7 @@ mod tests {
 
         let json = serde_json::to_value(&request).unwrap();
         assert_eq!(json["timestamp"], 1640995200000u64);
-        
+
         // Ensure optional fields are not serialized when None
         assert!(json.get("recvWindow").is_none());
     }
@@ -483,12 +479,15 @@ mod tests {
         ];
 
         for (risk_str, expected_risk) in risk_levels {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "asset": [],
                 "greek": [],
                 "time": 1640995200000,
                 "riskLevel": "{}"
-            }}"#, risk_str);
+            }}"#,
+                risk_str
+            );
 
             let response: AccountResponse = serde_json::from_str(&json).unwrap();
             assert_eq!(response.risk_level, expected_risk);
@@ -661,7 +660,11 @@ mod tests {
         let response: AccountResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.greeks.len(), 3);
 
-        let underlying_assets: Vec<&str> = response.greeks.iter().map(|g| g.underlying.as_str()).collect();
+        let underlying_assets: Vec<&str> = response
+            .greeks
+            .iter()
+            .map(|g| g.underlying.as_str())
+            .collect();
         assert_eq!(underlying_assets, vec!["BTCUSDT", "ETHUSDT", "ADAUSDT"]);
     }
 
@@ -708,7 +711,7 @@ mod tests {
         }"#;
 
         let response: AccountResponse = serde_json::from_str(json).unwrap();
-        
+
         // Verify overall structure
         assert_eq!(response.assets.len(), 2);
         assert_eq!(response.greeks.len(), 2);

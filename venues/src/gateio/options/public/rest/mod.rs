@@ -14,11 +14,10 @@ pub mod underlyings;
 
 // Re-export candlestick types
 pub use candlestick::*;
-pub use get_options_candlesticks::*;
-pub use get_underlying_candlesticks::*;
-
 pub use client::RestClient;
 pub use contracts::OptionsContractsRequest;
+pub use get_options_candlesticks::*;
+pub use get_underlying_candlesticks::*;
 pub use order_book::OptionsOrderBookRequest;
 pub use settlements::OptionsSettlementsRequest;
 pub use tickers::OptionsTickersRequest;

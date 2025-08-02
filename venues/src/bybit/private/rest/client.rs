@@ -197,7 +197,8 @@ impl RestClient {
         T: serde::de::DeserializeOwned,
         R: Serialize,
     {
-        self.send_signed_request(endpoint, reqwest::Method::GET, request, endpoint_type).await
+        self.send_signed_request(endpoint, reqwest::Method::GET, request, endpoint_type)
+            .await
     }
 
     /// High-performance POST request method
@@ -219,7 +220,8 @@ impl RestClient {
         T: serde::de::DeserializeOwned,
         R: Serialize,
     {
-        self.send_signed_request(endpoint, reqwest::Method::POST, request, endpoint_type).await
+        self.send_signed_request(endpoint, reqwest::Method::POST, request, endpoint_type)
+            .await
     }
 
     /// High-performance PUT request method
@@ -241,7 +243,8 @@ impl RestClient {
         T: serde::de::DeserializeOwned,
         R: Serialize,
     {
-        self.send_signed_request(endpoint, reqwest::Method::PUT, request, endpoint_type).await
+        self.send_signed_request(endpoint, reqwest::Method::PUT, request, endpoint_type)
+            .await
     }
 
     /// High-performance DELETE request method
@@ -263,7 +266,8 @@ impl RestClient {
         T: serde::de::DeserializeOwned,
         R: Serialize,
     {
-        self.send_signed_request(endpoint, reqwest::Method::DELETE, request, endpoint_type).await
+        self.send_signed_request(endpoint, reqwest::Method::DELETE, request, endpoint_type)
+            .await
     }
 }
 

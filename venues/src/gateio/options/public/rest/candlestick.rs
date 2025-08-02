@@ -138,7 +138,7 @@ mod tests {
         let close: f64 = bullish.c.parse().unwrap();
         let high: f64 = bullish.h.parse().unwrap();
         let low: f64 = bullish.l.parse().unwrap();
-        
+
         assert!(close > open); // Bullish
         assert!(high >= close && high >= open); // High is highest
         assert!(low <= close && low <= open); // Low is lowest

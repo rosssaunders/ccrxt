@@ -121,7 +121,6 @@ async fn test_get_current_funding_rate() {
     }
 }
 
-
 /// Test client creation and basic functionality
 #[tokio::test]
 async fn test_futures_client_creation() {

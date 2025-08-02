@@ -3,7 +3,6 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, InstrumentType, RestResult};
 
-
 const ACCOUNT_POSITIONS_ENDPOINT: &str = "api/v5/account/positions";
 /// Request to get account positions
 #[derive(Debug, Clone, Serialize)]

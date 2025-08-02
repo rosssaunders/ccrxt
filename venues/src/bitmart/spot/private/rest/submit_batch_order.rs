@@ -90,7 +90,9 @@ impl RestClient {
             ));
         }
 
-        self.send_post_signed_request(SUBMIT_BATCH_ORDER_ENDPOINT, request,
+        self.send_post_signed_request(
+            SUBMIT_BATCH_ORDER_ENDPOINT,
+            request,
             EndpointType::SpotTrading,
         )
         .await

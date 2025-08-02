@@ -1,6 +1,7 @@
+use std::borrow::Cow;
+
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
-use std::borrow::Cow;
 
 use crate::binance::coinm::{
     RestResult,
@@ -92,8 +93,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use rust_decimal_macros::dec;
+
+    use super::*;
 
     #[test]
     fn test_open_interest_hist_request_serialization() {

@@ -1,8 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::binance::{
-    coinm::{RestResult, TransferType, PrivateRestClient as RestClient},
-};
+use crate::binance::coinm::{PrivateRestClient as RestClient, RestResult, TransferType};
 
 const UNIVERSAL_TRANSFER_ENDPOINT: &str = "/sapi/v1/asset/transfer";
 
@@ -59,13 +57,8 @@ impl RestClient {
         params: UniversalTransferRequest,
     ) -> RestResult<UniversalTransferResponse> {
         let weight = 900;
-        self.send_post_signed_request(
-            UNIVERSAL_TRANSFER_ENDPOINT,
-            params,
-            weight,
-            false,
-        )
-        .await
+        self.send_post_signed_request(UNIVERSAL_TRANSFER_ENDPOINT, params, weight, false)
+            .await
     }
 }
 

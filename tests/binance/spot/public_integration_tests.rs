@@ -3,16 +3,17 @@
 //! These tests verify the functionality of all public endpoints that don't require authentication.
 //! Tests run against the live Binance API using real market data.
 
+use std::time::Duration;
+
 use reqwest::Client;
 use tokio;
+use venues::binance::shared::{RateLimiter, RateLimits};
 // Import types from top-level venue exports as required by integration test standards
 use venues::binance::spot::{
     AggTradesRequest, AvgPriceRequest, DepthRequest, Errors, HistoricalTradesRequest,
-    KlinesRequest, PublicRestClient, Ticker24hrRequest, TickerBookRequest,
-    TickerPriceRequest, TickerRequest, TickerTradingDayRequest, TradesRequest, UiKlinesRequest,
+    KlinesRequest, PublicRestClient, Ticker24hrRequest, TickerBookRequest, TickerPriceRequest,
+    TickerRequest, TickerTradingDayRequest, TradesRequest, UiKlinesRequest,
 };
-use venues::binance::shared::{RateLimiter, RateLimits};
-use std::time::Duration;
 
 /// Helper function to create a test client for public endpoints
 fn create_public_test_client() -> PublicRestClient {

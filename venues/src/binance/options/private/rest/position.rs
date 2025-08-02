@@ -100,20 +100,16 @@ impl RestClient {
     /// Weight: 5
     /// Requires: API key and signature
     pub async fn get_position(&self, params: PositionRequest) -> RestResult<Vec<Position>> {
-        self.send_get_signed_request(
-            GET_POSITION_ENDPOINT,
-            params,
-            5,
-            false,
-        )
-        .await
+        self.send_get_signed_request(GET_POSITION_ENDPOINT, params, 5, false)
+            .await
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use rust_decimal_macros::dec;
+
+    use super::*;
 
     #[test]
     fn test_position_request_minimal_serialization() {
@@ -126,7 +122,7 @@ mod tests {
 
         let json = serde_json::to_value(&request).unwrap();
         assert_eq!(json["timestamp"], 1640995200000u64);
-        
+
         // Ensure optional fields are not serialized when None
         assert!(json.get("symbol").is_none());
         assert!(json.get("recvWindow").is_none());
@@ -615,7 +611,8 @@ mod tests {
         let quote_assets = vec!["USDT", "BUSD", "BNB"];
 
         for quote_asset in quote_assets {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "entryPrice": "1000.00000000",
                 "symbol": "BTC-240329-40000-C",
                 "side": "LONG",
@@ -632,7 +629,9 @@ mod tests {
                 "quantityScale": 4,
                 "optionSide": "CALL",
                 "quoteAsset": "{}"
-            }}"#, quote_asset);
+            }}"#,
+                quote_asset
+            );
 
             let position: Position = serde_json::from_str(&json).unwrap();
             assert_eq!(position.quote_asset, quote_asset);
@@ -651,7 +650,8 @@ mod tests {
         ];
 
         for (side_str, expected_side) in option_sides {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "entryPrice": "1000.00000000",
                 "symbol": "BTC-240329-40000-{}",
                 "side": "LONG",
@@ -668,7 +668,10 @@ mod tests {
                 "quantityScale": 4,
                 "optionSide": "{}",
                 "quoteAsset": "USDT"
-            }}"#, side_str.chars().next().unwrap(), side_str);
+            }}"#,
+                side_str.chars().next().unwrap(),
+                side_str
+            );
 
             let position: Position = serde_json::from_str(&json).unwrap();
             assert_eq!(position.option_side, expected_side);
@@ -684,7 +687,8 @@ mod tests {
         ];
 
         for (side_str, expected_side) in position_sides {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "entryPrice": "1000.00000000",
                 "symbol": "BTC-240329-40000-C",
                 "side": "{}",
@@ -701,7 +705,9 @@ mod tests {
                 "quantityScale": 4,
                 "optionSide": "CALL",
                 "quoteAsset": "USDT"
-            }}"#, side_str);
+            }}"#,
+                side_str
+            );
 
             let position: Position = serde_json::from_str(&json).unwrap();
             assert_eq!(position.side, expected_side);
@@ -786,7 +792,8 @@ mod tests {
         ];
 
         for expiry_date in expiry_dates {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "entryPrice": "1000.00000000",
                 "symbol": "BTC-240329-40000-C",
                 "side": "LONG",
@@ -803,7 +810,9 @@ mod tests {
                 "quantityScale": 4,
                 "optionSide": "CALL",
                 "quoteAsset": "USDT"
-            }}"#, expiry_date);
+            }}"#,
+                expiry_date
+            );
 
             let position: Position = serde_json::from_str(&json).unwrap();
             assert_eq!(position.expiry_date, expiry_date);
@@ -813,7 +822,7 @@ mod tests {
     #[test]
     fn test_position_real_world_trading_scenarios() {
         // Test real-world trading scenarios with realistic values
-        
+
         // Scenario 1: Deep ITM Call (In-The-Money)
         let deep_itm_call = r#"{
             "entryPrice": "10000.00000000",
@@ -921,15 +930,15 @@ mod tests {
         }"#;
 
         let position: Position = serde_json::from_str(json).unwrap();
-        
+
         // Verify consistency: mark_value should equal mark_price * quantity
         let expected_mark_value = position.mark_price * position.quantity;
         assert_eq!(position.mark_value, expected_mark_value);
-        
+
         // Verify consistency: unrealized_pnl should equal mark_value - position_cost
         let expected_unrealized_pnl = position.mark_value - position.position_cost;
         assert_eq!(position.unrealized_pnl, expected_unrealized_pnl);
-        
+
         // Verify consistency: ror should equal unrealized_pnl / position_cost
         let expected_ror = position.unrealized_pnl / position.position_cost;
         assert_eq!(position.ror, expected_ror);

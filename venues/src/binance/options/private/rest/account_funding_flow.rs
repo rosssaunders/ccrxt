@@ -75,12 +75,7 @@ impl RestClient {
         &self,
         params: AccountFundingFlowRequest,
     ) -> RestResult<Vec<FundingFlowRecord>> {
-        self.send_get_signed_request(
-            GET_ACCOUNT_FUNDING_FLOW_ENDPOINT,
-            params,
-            1,
-            false,
-        )
-        .await
+        self.send_get_signed_request(GET_ACCOUNT_FUNDING_FLOW_ENDPOINT, params, 1, false)
+            .await
     }
 }

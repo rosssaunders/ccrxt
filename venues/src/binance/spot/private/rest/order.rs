@@ -278,19 +278,16 @@ impl RestClient {
     /// Weight: 1
     /// Security: TRADE
     pub async fn new_order(&self, params: NewOrderRequest) -> RestResult<serde_json::Value> {
-        self.send_post_signed_request(
-            CREATE_ORDER_ENDPOINT,
-            params,
-            1,
-            true,)
-        .await
+        self.send_post_signed_request(CREATE_ORDER_ENDPOINT, params, 1, true)
+            .await
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use rust_decimal_macros::dec;
+
+    use super::*;
 
     #[test]
     fn test_new_order_request_minimal_serialization() {

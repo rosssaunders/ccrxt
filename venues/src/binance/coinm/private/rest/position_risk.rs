@@ -95,13 +95,8 @@ impl RestClient {
         params: PositionRiskRequest,
     ) -> RestResult<Vec<PositionRisk>> {
         let weight = 1;
-        self.send_get_signed_request(
-            POSITION_RISK_ENDPOINT,
-            params,
-            weight,
-            false,
-        )
-        .await
+        self.send_get_signed_request(POSITION_RISK_ENDPOINT, params, weight, false)
+            .await
     }
 }
 

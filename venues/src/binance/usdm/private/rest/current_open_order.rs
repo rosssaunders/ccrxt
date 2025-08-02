@@ -149,13 +149,8 @@ impl UsdmClient {
         &self,
         request: CurrentOpenOrderRequest,
     ) -> RestResult<CurrentOpenOrderResponse> {
-        self.send_get_signed_request(
-            CURRENT_OPEN_ORDER_ENDPOINT,
-            request,
-            1,
-            false,
-        )
-        .await
+        self.send_get_signed_request(CURRENT_OPEN_ORDER_ENDPOINT, request, 1, false)
+            .await
     }
 }
 

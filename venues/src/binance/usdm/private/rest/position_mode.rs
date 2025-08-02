@@ -1,10 +1,10 @@
 // No top-of-file comments per project instructions.
 
-use super::UsdmClient;
-use crate::binance::usdm::RestResult;
-use crate::binance::usdm::enums::PositionMode;
 use reqwest::Method;
 use serde::Serialize;
+
+use super::UsdmClient;
+use crate::binance::usdm::{RestResult, enums::PositionMode};
 
 /// Endpoint path for changing position mode.
 const CHANGE_POSITION_MODE_ENDPOINT: &str = "/fapi/v1/positionSide/dual";
@@ -55,13 +55,8 @@ impl UsdmClient {
     /// # Returns
     /// Empty response on success. If there is an error, it will be returned.
     pub async fn change_position_mode(&self, request: ChangePositionModeRequest) -> RestResult<()> {
-        self.send_post_signed_request(
-            CHANGE_POSITION_MODE_ENDPOINT,
-            request,
-            1,
-            false,
-        )
-        .await
+        self.send_post_signed_request(CHANGE_POSITION_MODE_ENDPOINT, request, 1, false)
+            .await
     }
 }
 

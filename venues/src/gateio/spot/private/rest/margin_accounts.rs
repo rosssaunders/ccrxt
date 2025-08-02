@@ -86,13 +86,7 @@ mod tests {
 
     #[test]
     fn test_margin_accounts_request_different_currency_pairs() {
-        let pairs = vec![
-            "BTC_USDT",
-            "ETH_USDT",
-            "LTC_BTC",
-            "XRP_USDT",
-            "DOT_USDT",
-        ];
+        let pairs = vec!["BTC_USDT", "ETH_USDT", "LTC_BTC", "XRP_USDT", "DOT_USDT"];
 
         for pair in pairs {
             let request = MarginAccountsRequest {
@@ -238,16 +232,16 @@ mod tests {
         }"#;
 
         let account: MarginAccount = serde_json::from_str(json).unwrap();
-        
+
         // Verify BTC is used as collateral (not borrowed)
         assert_eq!(account.base.borrowed, "0.0");
-        
+
         // Verify USDT is borrowed
         assert_eq!(account.quote.borrowed, "10000.0");
-        
+
         // Verify there's interest on the borrowed amount
         assert_eq!(account.quote.interest, "2.5");
-        
+
         // Verify risk level is moderate
         assert_eq!(account.risk, "0.4");
     }
@@ -261,7 +255,7 @@ mod tests {
             borrowed: "0.0".to_string(),
             interest: "0.0".to_string(),
         };
-        
+
         // Verify balance calculations
         let available: f64 = balance.available.parse().unwrap();
         let locked: f64 = balance.locked.parse().unwrap();
@@ -277,7 +271,7 @@ mod tests {
 
         let json = serde_json::to_value(&request).unwrap();
         let obj = json.as_object().unwrap();
-        
+
         // Verify that None values are not serialized
         assert!(!obj.contains_key("currency_pair"));
     }

@@ -1,8 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::binance::{
-    coinm::{RestResult, private::rest::client::RestClient},
-};
+use crate::binance::coinm::{RestResult, private::rest::client::RestClient};
 
 const COMMISSION_RATE_ENDPOINT: &str = "/dapi/v1/commissionRate";
 
@@ -56,13 +54,8 @@ impl RestClient {
         params: GetUserCommissionRateRequest,
     ) -> RestResult<GetUserCommissionRateResponse> {
         let weight = 20;
-        self.send_get_signed_request(
-            COMMISSION_RATE_ENDPOINT,
-            params,
-            weight,
-            false,
-        )
-        .await
+        self.send_get_signed_request(COMMISSION_RATE_ENDPOINT, params, weight, false)
+            .await
     }
 }
 

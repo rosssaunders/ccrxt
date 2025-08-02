@@ -1,6 +1,7 @@
+use std::borrow::Cow;
+
 use reqwest::Method;
 use serde::{Deserialize, Serialize};
-use std::borrow::Cow;
 
 use super::UsdmClient;
 use crate::binance::usdm::RestResult;
@@ -81,17 +82,16 @@ impl UsdmClient {
         &self,
         params: GetConvertQuoteRequest,
     ) -> RestResult<ConvertQuoteResponse> {
-        self.send_post_signed_request(
-            CONVERT_GET_QUOTE_ENDPOINT,
-            params, 50, false)
+        self.send_post_signed_request(CONVERT_GET_QUOTE_ENDPOINT, params, 50, false)
             .await
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use serde_json;
+
+    use super::*;
 
     #[test]
     fn test_convert_quote_response_deserialization() {

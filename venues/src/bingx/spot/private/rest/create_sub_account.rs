@@ -59,9 +59,8 @@ impl RestClient {
         &self,
         request: &CreateSubAccountRequest,
     ) -> RestResult<CreateSubAccountResponse> {
-        self.send_post_signed_request(CREATE_SUB_ACCOUNT_ENDPOINT, request, EndpointType::Account,
-        )
-        .await
+        self.send_post_signed_request(CREATE_SUB_ACCOUNT_ENDPOINT, request, EndpointType::Account)
+            .await
     }
 }
 

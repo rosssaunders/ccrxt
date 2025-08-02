@@ -7,19 +7,22 @@
 //! from a restricted location" errors when run from certain locations. This is expected behavior
 //! and indicates the tests are correctly configured to reach the live API.
 
-use reqwest::Client;
 use std::time::Duration;
+
+use reqwest::Client;
 use tokio;
-use venues::binance::coinm::{
-    AggregateTradesRequest, BasisRequest, BookTickerRequest, BookTickerRequestBySymbol,
-    ConstituentsRequest, ContinuousKlineRequest, ContractType, ContractTypeFilter,
-    FundingRateRequest, HistoricalTradesRequest, IndexPriceKlineRequest, KlineInterval,
-    KlineRequest, MarkPriceKlineRequest, OpenInterestHistRequest, OpenInterestRequest,
-    OrderBookRequest, Period, PremiumIndexKlineRequest, PremiumIndexRequest, RecentTradesRequest,
-    RestClient as PublicRestClient, TakerBuySellVolRequest, Ticker24hrParams, TickerPriceRequest,
-    TopLongShortPositionRatioParams,
+use venues::binance::{
+    coinm::{
+        AggregateTradesRequest, BasisRequest, BookTickerRequest, BookTickerRequestBySymbol,
+        ConstituentsRequest, ContinuousKlineRequest, ContractType, ContractTypeFilter,
+        FundingRateRequest, HistoricalTradesRequest, IndexPriceKlineRequest, KlineInterval,
+        KlineRequest, MarkPriceKlineRequest, OpenInterestHistRequest, OpenInterestRequest,
+        OrderBookRequest, Period, PremiumIndexKlineRequest, PremiumIndexRequest,
+        RecentTradesRequest, RestClient as PublicRestClient, TakerBuySellVolRequest,
+        Ticker24hrParams, TickerPriceRequest, TopLongShortPositionRatioParams,
+    },
+    shared::{RateLimiter, RateLimits},
 };
-use venues::binance::shared::{RateLimiter, RateLimits};
 
 /// Helper function to create a test client for public endpoints
 fn create_public_test_client() -> PublicRestClient {

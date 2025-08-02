@@ -1,5 +1,4 @@
-use super::RestClient;
-use super::order::OptionsOrder;
+use super::{RestClient, order::OptionsOrder};
 
 const OPTIONS_ORDERS_ENDPOINT: &str = "/options/orders";
 

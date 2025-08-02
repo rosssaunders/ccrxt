@@ -3,7 +3,6 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, InstrumentType, RestResult};
 
-
 const ACCOUNT_INSTRUMENTS_ENDPOINT: &str = "api/v5/account/instruments";
 /// Request to get account instruments
 #[derive(Debug, Clone, Serialize)]

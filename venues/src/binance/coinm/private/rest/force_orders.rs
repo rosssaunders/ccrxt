@@ -1,10 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-use crate::binance::{
-    coinm::{
-        AutoCloseType, OrderSide, OrderStatus, OrderType, PositionSide, RestResult, TimeInForce,
-        WorkingType, private::rest::client::RestClient,
-    },
+use crate::binance::coinm::{
+    AutoCloseType, OrderSide, OrderStatus, OrderType, PositionSide, RestResult, TimeInForce,
+    WorkingType, private::rest::client::RestClient,
 };
 
 const FORCE_ORDERS_ENDPOINT: &str = "/dapi/v1/forceOrders";
@@ -151,13 +149,8 @@ impl RestClient {
         params: GetForceOrdersRequest,
     ) -> RestResult<GetForceOrdersResponse> {
         let weight = if params.symbol.is_some() { 20 } else { 50 };
-        self.send_get_signed_request(
-            FORCE_ORDERS_ENDPOINT,
-            params,
-            weight,
-            false,
-        )
-        .await
+        self.send_get_signed_request(FORCE_ORDERS_ENDPOINT, params, weight, false)
+            .await
     }
 }
 

@@ -244,7 +244,7 @@ mod tests {
     #[test]
     fn test_get_my_trades_request_different_currency_pairs() {
         let pairs = vec!["BTC_USDT", "ETH_BTC", "BNB_USDT", "SOL_USDC", "ADA_USDT"];
-        
+
         for pair in pairs {
             let request = GetMyTradesRequest {
                 currency_pair: Some(pair.to_string()),
@@ -259,7 +259,7 @@ mod tests {
     #[test]
     fn test_get_my_trades_request_different_accounts() {
         let accounts = vec!["spot", "margin", "cross_margin", "unified"];
-        
+
         for account in accounts {
             let request = GetMyTradesRequest {
                 account: Some(account.to_string()),
@@ -273,14 +273,8 @@ mod tests {
 
     #[test]
     fn test_get_my_trades_request_pagination_ranges() {
-        let pagination_tests = vec![
-            (1, 10),
-            (1, 100),
-            (5, 50),
-            (10, 25),
-            (100, 1000),
-        ];
-        
+        let pagination_tests = vec![(1, 10), (1, 100), (5, 50), (10, 25), (100, 1000)];
+
         for (page, limit) in pagination_tests {
             let request = GetMyTradesRequest {
                 page: Some(page),
@@ -417,7 +411,7 @@ mod tests {
         assert_eq!(trade.fee, "0");
         assert_eq!(trade.gt_fee_deduction, false);
         assert_eq!(trade.rebated_fee, "0.75");
-        
+
         // Maker orders typically get rebates instead of paying fees
         let rebate: f64 = trade.rebated_fee.parse().unwrap();
         assert!(rebate > 0.0);
@@ -447,12 +441,12 @@ mod tests {
         let trade: MyTrade = serde_json::from_str(json).unwrap();
         assert_eq!(trade.gt_fee_deduction, true);
         assert_eq!(trade.gt_fee, "3.75");
-        
+
         // GT fee should be less than base fee (25% discount)
         let base_fee: f64 = trade.fee.parse().unwrap();
         let gt_fee: f64 = trade.gt_fee.parse().unwrap();
         assert!(gt_fee < base_fee);
-        
+
         let discount = 1.0 - (gt_fee / base_fee);
         assert!(discount > 0.2); // Should have significant discount
     }
@@ -486,9 +480,10 @@ mod tests {
     #[test]
     fn test_my_trade_different_roles() {
         let roles = vec!["maker", "taker"];
-        
+
         for role in roles {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "id": "12345",
                 "create_time": "1640995200",
                 "create_time_ms": "1640995200000",
@@ -505,7 +500,9 @@ mod tests {
                 "gt_fee_deduction": false,
                 "rebated_fee": "0",
                 "rebated_fee_currency": "USDT"
-            }}"#, role);
+            }}"#,
+                role
+            );
 
             let trade: MyTrade = serde_json::from_str(&json).unwrap();
             assert_eq!(trade.role, role);
@@ -515,9 +512,10 @@ mod tests {
     #[test]
     fn test_my_trade_different_sides() {
         let sides = vec!["buy", "sell"];
-        
+
         for side in sides {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "id": "12345",
                 "create_time": "1640995200",
                 "create_time_ms": "1640995200000",
@@ -534,7 +532,9 @@ mod tests {
                 "gt_fee_deduction": false,
                 "rebated_fee": "0",
                 "rebated_fee_currency": "USDT"
-            }}"#, side);
+            }}"#,
+                side
+            );
 
             let trade: MyTrade = serde_json::from_str(&json).unwrap();
             assert_eq!(trade.side, side);
@@ -584,11 +584,11 @@ mod tests {
 
         let trades: Vec<MyTrade> = serde_json::from_str(json).unwrap();
         assert_eq!(trades.len(), 2);
-        
+
         assert_eq!(trades[0].id, "123456789");
         assert_eq!(trades[0].side, "buy");
         assert_eq!(trades[0].role, "taker");
-        
+
         assert_eq!(trades[1].id, "987654321");
         assert_eq!(trades[1].side, "sell");
         assert_eq!(trades[1].role, "maker");
@@ -678,7 +678,7 @@ mod tests {
         // Test the helper function parameters
         let currency_pair = "BTC_USDT";
         let limit = Some(50);
-        
+
         let expected_request = GetMyTradesRequest {
             currency_pair: Some(currency_pair.to_string()),
             limit,
@@ -697,7 +697,7 @@ mod tests {
         // Test the helper function parameters
         let order_id = "12345678";
         let currency_pair = "ETH_USDT";
-        
+
         let expected_request = GetMyTradesRequest {
             currency_pair: Some(currency_pair.to_string()),
             order_id: Some(order_id.to_string()),
@@ -718,7 +718,7 @@ mod tests {
         let from = 1640995200;
         let to = 1641081600;
         let limit = Some(100);
-        
+
         let expected_request = GetMyTradesRequest {
             currency_pair: currency_pair.map(|s| s.to_string()),
             from: Some(from),
@@ -742,15 +742,15 @@ mod tests {
             .unwrap()
             .as_secs() as i64;
         let yesterday = now - 86400;
-        
+
         // Verify 24 hour calculation
         assert_eq!(now - yesterday, 86400);
         assert!(yesterday < now);
-        
+
         // Test that recent trades logic is correct
         let currency_pair = Some("BTC_USDT");
         let limit = Some(50);
-        
+
         let expected_request = GetMyTradesRequest {
             currency_pair: currency_pair.map(|s| s.to_string()),
             from: Some(yesterday),
@@ -769,7 +769,7 @@ mod tests {
     #[test]
     fn test_get_my_trades_request_default_values() {
         let request = GetMyTradesRequest::default();
-        
+
         assert_eq!(request.currency_pair, None);
         assert_eq!(request.limit, None);
         assert_eq!(request.page, None);
@@ -906,9 +906,10 @@ mod tests {
     #[test]
     fn test_my_trade_stablecoin_pairs() {
         let stablecoin_pairs = vec!["USDC_USDT", "BUSD_USDT", "DAI_USDT"];
-        
+
         for pair in stablecoin_pairs {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "id": "12345",
                 "create_time": "1640995200",
                 "create_time_ms": "1640995200000",
@@ -925,11 +926,13 @@ mod tests {
                 "gt_fee_deduction": false,
                 "rebated_fee": "0",
                 "rebated_fee_currency": "USDT"
-            }}"#, pair);
+            }}"#,
+                pair
+            );
 
             let trade: MyTrade = serde_json::from_str(&json).unwrap();
             assert_eq!(trade.currency_pair, pair);
-            
+
             // Stablecoin trades should have tight spreads
             let price: f64 = trade.price.parse().unwrap();
             assert!(price > 0.99 && price < 1.01); // Should be close to 1.0

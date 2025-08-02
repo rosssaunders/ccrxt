@@ -168,11 +168,11 @@ mod tests {
             let constituent: IndexConstituent = serde_json::from_str(&json).unwrap();
             assert_eq!(constituent.exchange, exchange);
             assert_eq!(constituent.symbol.unwrap(), symbol);
-            
+
             // Extract weight and price values before assertions
             let weight_str = constituent.weight.unwrap();
             let price_str = constituent.price.unwrap();
-            
+
             assert_eq!(&weight_str, weight);
             assert_eq!(&price_str, price);
 
@@ -219,10 +219,10 @@ mod tests {
             // Extract values before using them
             let weight_str = constituent.weight.unwrap();
             let price_str = constituent.price.unwrap();
-            
+
             assert_eq!(&weight_str, weight);
             assert_eq!(&price_str, price);
-            
+
             // Verify ETH price is reasonable
             let price_val: f64 = price_str.parse().unwrap();
             assert!(price_val > 2000.0 && price_val < 3000.0);

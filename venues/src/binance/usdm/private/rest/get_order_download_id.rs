@@ -109,13 +109,8 @@ impl UsdmClient {
         &self,
         request: GetOrderDownloadIdRequest,
     ) -> RestResult<GetOrderDownloadIdResponse> {
-        self.send_get_signed_request(
-            GET_ORDER_DOWNLOAD_ID_ENDPOINT,
-            request,
-            5,
-            false,
-        )
-        .await
+        self.send_get_signed_request(GET_ORDER_DOWNLOAD_ID_ENDPOINT, request, 5, false)
+            .await
     }
 
     /// Get Futures Order History Download Link by Id (USER_DATA)
@@ -135,13 +130,8 @@ impl UsdmClient {
         &self,
         request: GetOrderDownloadLinkByIdRequest,
     ) -> RestResult<GetOrderDownloadLinkByIdResponse> {
-        self.send_get_signed_request(
-            GET_ORDER_DOWNLOAD_LINK_BY_ID_ENDPOINT,
-            request,
-            10,
-            false,
-        )
-        .await
+        self.send_get_signed_request(GET_ORDER_DOWNLOAD_LINK_BY_ID_ENDPOINT, request, 10, false)
+            .await
     }
 }
 

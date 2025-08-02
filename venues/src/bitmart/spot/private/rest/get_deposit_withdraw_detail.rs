@@ -74,7 +74,9 @@ impl RestClient {
         &self,
         request: GetDepositWithdrawDetailRequest,
     ) -> RestResult<GetDepositWithdrawDetailResponse> {
-        self.send_get_signed_request(DEPOSIT_WITHDRAW_DETAIL_ENDPOINT, &request,
+        self.send_get_signed_request(
+            DEPOSIT_WITHDRAW_DETAIL_ENDPOINT,
+            &request,
             EndpointType::FundingAccount,
         )
         .await

@@ -243,7 +243,7 @@ mod tests {
         }"#;
 
         let ticker: FuturesTicker = serde_json::from_str(json).unwrap();
-        
+
         let last: f64 = ticker.last.parse().unwrap();
         let ask: f64 = ticker.lowest_ask.parse().unwrap();
         let bid: f64 = ticker.highest_bid.parse().unwrap();
@@ -251,7 +251,7 @@ mod tests {
         // Verify price relationships
         assert!(ask > bid); // Ask should be higher than bid
         assert!(last >= bid && last <= ask); // Last should be between bid and ask
-        
+
         let spread = ask - bid;
         assert!(spread > 0.0);
         assert!(spread < last * 0.01); // Spread should be reasonable (< 1% of price)
@@ -279,19 +279,19 @@ mod tests {
         }"#;
 
         let ticker: FuturesTicker = serde_json::from_str(json).unwrap();
-        
+
         // Verify BTC price is reasonable
         let last_price: f64 = ticker.last.parse().unwrap();
         assert!(last_price > 20000.0 && last_price < 100000.0);
-        
+
         // Verify positive change
         let change: f64 = ticker.change_percentage.parse().unwrap();
         assert!(change > 0.0);
-        
+
         // Verify funding rate is reasonable
         let funding: f64 = ticker.funding_rate.parse().unwrap();
         assert!(funding > 0.0 && funding < 0.001);
-        
+
         // Verify volumes are positive
         let volume: f64 = ticker.volume_24h.as_ref().unwrap().parse().unwrap();
         assert!(volume > 0.0);
@@ -314,15 +314,15 @@ mod tests {
         }"#;
 
         let ticker: FuturesTicker = serde_json::from_str(json).unwrap();
-        
+
         // Verify ETH price is reasonable
         let last_price: f64 = ticker.last.parse().unwrap();
         assert!(last_price > 1000.0 && last_price < 10000.0);
-        
+
         // Verify negative change
         let change: f64 = ticker.change_percentage.parse().unwrap();
         assert!(change < 0.0);
-        
+
         // Verify negative funding rate
         let funding: f64 = ticker.funding_rate.parse().unwrap();
         assert!(funding < 0.0);
@@ -339,7 +339,8 @@ mod tests {
         ];
 
         for (contract, price) in contracts {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "contract": "{}",
                 "last": "{}",
                 "lowest_ask": "{}",
@@ -347,7 +348,9 @@ mod tests {
                 "change_percentage": "1.5",
                 "funding_rate": "0.000075",
                 "funding_rate_indicative": "0.000082"
-            }}"#, contract, price, price, price);
+            }}"#,
+                contract, price, price, price
+            );
 
             let ticker: FuturesTicker = serde_json::from_str(&json).unwrap();
             assert_eq!(ticker.contract, contract);
@@ -366,7 +369,8 @@ mod tests {
         ];
 
         for (change, _scenario) in change_scenarios {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "contract": "BTC_USDT",
                 "last": "43250.8",
                 "lowest_ask": "43251.0",
@@ -374,11 +378,13 @@ mod tests {
                 "change_percentage": "{}",
                 "funding_rate": "0.000075",
                 "funding_rate_indicative": "0.000082"
-            }}"#, change);
+            }}"#,
+                change
+            );
 
             let ticker: FuturesTicker = serde_json::from_str(&json).unwrap();
             assert_eq!(ticker.change_percentage, change);
-            
+
             let change_val: f64 = ticker.change_percentage.parse().unwrap();
             assert!(change_val >= -20.0 && change_val <= 20.0); // Reasonable daily change
         }
@@ -395,7 +401,8 @@ mod tests {
         ];
 
         for (current, indicative, _scenario) in funding_scenarios {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "contract": "BTC_USDT",
                 "last": "43250.8",
                 "lowest_ask": "43251.0",
@@ -403,15 +410,17 @@ mod tests {
                 "change_percentage": "1.5",
                 "funding_rate": "{}",
                 "funding_rate_indicative": "{}"
-            }}"#, current, indicative);
+            }}"#,
+                current, indicative
+            );
 
             let ticker: FuturesTicker = serde_json::from_str(&json).unwrap();
             assert_eq!(ticker.funding_rate, current);
             assert_eq!(ticker.funding_rate_indicative, indicative);
-            
+
             let current_rate: f64 = ticker.funding_rate.parse().unwrap();
             let indicative_rate: f64 = ticker.funding_rate_indicative.parse().unwrap();
-            
+
             assert!(current_rate >= -0.375 && current_rate <= 0.375);
             assert!(indicative_rate >= -0.375 && indicative_rate <= 0.375);
         }
@@ -436,16 +445,16 @@ mod tests {
         }"#;
 
         let ticker: FuturesTicker = serde_json::from_str(json).unwrap();
-        
+
         // Check volume consistency
         let volume_24h: f64 = ticker.volume_24h.as_ref().unwrap().parse().unwrap();
         let volume_24h_usd: f64 = ticker.volume_24h_usd.as_ref().unwrap().parse().unwrap();
         let volume_24h_quote: f64 = ticker.volume_24h_quote.as_ref().unwrap().parse().unwrap();
-        
+
         // These should often be the same for USDT pairs
         assert_eq!(volume_24h, volume_24h_usd);
         assert_eq!(volume_24h, volume_24h_quote);
-        
+
         // Base volume should be smaller (BTC amount vs USDT amount)
         let volume_24h_base: f64 = ticker.volume_24h_base.as_ref().unwrap().parse().unwrap();
         assert!(volume_24h_base < volume_24h);
@@ -466,15 +475,15 @@ mod tests {
         }"#;
 
         let ticker: FuturesTicker = serde_json::from_str(json).unwrap();
-        
+
         let last: f64 = ticker.last.parse().unwrap();
         let mark: f64 = ticker.mark_price.as_ref().unwrap().parse().unwrap();
         let index: f64 = ticker.index_price.as_ref().unwrap().parse().unwrap();
-        
+
         // All prices should be close to each other
         let last_mark_diff = (last - mark).abs();
         let mark_index_diff = (mark - index).abs();
-        
+
         assert!(last_mark_diff < last * 0.01); // < 1% difference
         assert!(mark_index_diff < mark * 0.01); // < 1% difference
     }
@@ -496,7 +505,7 @@ mod tests {
         }"#;
 
         let ticker: FuturesTicker = serde_json::from_str(json).unwrap();
-        
+
         // Verify precision is maintained
         assert_eq!(ticker.last, "43250.123456789");
         assert_eq!(ticker.funding_rate, "0.000075123456");
@@ -521,10 +530,10 @@ mod tests {
         }"#;
 
         let ticker: FuturesTicker = serde_json::from_str(json).unwrap();
-        
+
         let total_size: i64 = ticker.total_size.as_ref().unwrap().parse().unwrap();
         let volume_24h: f64 = ticker.volume_24h.as_ref().unwrap().parse().unwrap();
-        
+
         assert_eq!(total_size, 999999999);
         assert!(volume_24h > 1e12); // Very large volume
     }
@@ -547,14 +556,15 @@ mod tests {
     #[test]
     fn test_funding_next_apply_scenarios() {
         let timestamps = vec![
-            1640995200,              // Fixed timestamp
-            1640995200 + 28800,      // 8 hours later
-            1640995200 + 86400,      // 24 hours later
-            1735689600,              // Future timestamp
+            1640995200,         // Fixed timestamp
+            1640995200 + 28800, // 8 hours later
+            1640995200 + 86400, // 24 hours later
+            1735689600,         // Future timestamp
         ];
 
         for timestamp in timestamps {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "contract": "BTC_USDT",
                 "last": "43250.8",
                 "lowest_ask": "43251.0",
@@ -563,7 +573,9 @@ mod tests {
                 "funding_rate": "0.000075",
                 "funding_rate_indicative": "0.000082",
                 "funding_next_apply": {}
-            }}"#, timestamp);
+            }}"#,
+                timestamp
+            );
 
             let ticker: FuturesTicker = serde_json::from_str(&json).unwrap();
             assert_eq!(ticker.funding_next_apply.unwrap(), timestamp);

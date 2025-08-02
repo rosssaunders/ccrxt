@@ -3,7 +3,6 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
-
 const PUBLIC_ECONOMIC_CALENDAR_ENDPOINT: &str = "api/v5/public/economic-calendar";
 /// Request parameters for getting economic calendar data
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]

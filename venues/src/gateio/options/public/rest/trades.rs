@@ -114,7 +114,7 @@ mod tests {
     #[test]
     fn test_options_trades_request_limit_ranges() {
         let limits = vec![1, 100, 500, 1000];
-        
+
         for limit in limits {
             let request = OptionsTradesRequest {
                 contract: "BTC-20240101-50000-C".to_string(),
@@ -158,9 +158,9 @@ mod tests {
             "ETH-20240215-3000-P",
             "BNB-20240301-400-C",
             "SOL-20240315-150-P",
-            "ADA-20240401-1-C"
+            "ADA-20240401-1-C",
         ];
-        
+
         for contract in contracts {
             let request = OptionsTradesRequest {
                 contract: contract.to_string(),
@@ -176,7 +176,7 @@ mod tests {
     #[test]
     fn test_options_trades_request_different_last_id_formats() {
         let last_ids = vec!["123", "abc123", "trade_456", "0000001", "999999999"];
-        
+
         for last_id in last_ids {
             let request = OptionsTradesRequest {
                 contract: "BTC-20240101-50000-C".to_string(),
@@ -308,13 +308,16 @@ mod tests {
 
     #[test]
     fn test_options_trade_extreme_values() {
-        let json = format!(r#"{{
+        let json = format!(
+            r#"{{
             "id": {},
             "create_time": 9999999999.999,
             "contract": "BTC-20240101-50000-C",
             "size": "999999999.999999999",
             "price": "999999.999999999"
-        }}"#, i64::MAX);
+        }}"#,
+            i64::MAX
+        );
 
         let trade: OptionsTrade = serde_json::from_str(&json).unwrap();
         assert_eq!(trade.id, i64::MAX);
@@ -331,21 +334,24 @@ mod tests {
             ("ETH-20240215-3000-P", "put"),
             ("BNB-20240301-400-C", "call"),
             ("SOL-20240315-150-P", "put"),
-            ("ADA-20240401-1-C", "call")
+            ("ADA-20240401-1-C", "call"),
         ];
-        
+
         for (contract, option_type) in contracts {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "id": 12345,
                 "create_time": 1640995200.0,
                 "contract": "{}",
                 "size": "1.0",
                 "price": "0.1"
-            }}"#, contract);
+            }}"#,
+                contract
+            );
 
             let trade: OptionsTrade = serde_json::from_str(&json).unwrap();
             assert_eq!(trade.contract, contract);
-            
+
             if option_type == "call" {
                 assert!(trade.contract.ends_with("-C"));
             } else {
@@ -384,15 +390,15 @@ mod tests {
 
         let trades: Vec<OptionsTrade> = serde_json::from_str(json).unwrap();
         assert_eq!(trades.len(), 3);
-        
+
         assert_eq!(trades[0].id, 1);
         assert_eq!(trades[0].contract, "BTC-20240101-50000-C");
         assert_eq!(trades[0].is_internal, Some(false));
-        
+
         assert_eq!(trades[1].id, 2);
         assert_eq!(trades[1].contract, "ETH-20240101-3000-P");
         assert_eq!(trades[1].is_internal, Some(true));
-        
+
         assert_eq!(trades[2].id, 3);
         assert_eq!(trades[2].contract, "BNB-20240201-400-C");
         assert_eq!(trades[2].is_internal, None);
@@ -458,7 +464,7 @@ mod tests {
 
         let json = serde_json::to_string(&original).unwrap();
         let deserialized: OptionsTrade = serde_json::from_str(&json).unwrap();
-        
+
         assert_eq!(deserialized.id, original.id);
         assert_eq!(deserialized.create_time, original.create_time);
         assert_eq!(deserialized.contract, original.contract);
@@ -510,17 +516,20 @@ mod tests {
             1640995200.1,
             1640995200.123,
             1640995200.123456,
-            1640995200.999999
+            1640995200.999999,
         ];
-        
+
         for expected_ts in timestamps {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "id": 12345,
                 "create_time": {},
                 "contract": "BTC-20240101-50000-C",
                 "size": "1.0",
                 "price": "0.1"
-            }}"#, expected_ts);
+            }}"#,
+                expected_ts
+            );
 
             let trade: OptionsTrade = serde_json::from_str(&json).unwrap();
             assert_eq!(trade.create_time, expected_ts);

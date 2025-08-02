@@ -185,19 +185,16 @@ impl RestClient {
         &self,
         params: OcoOrderListRequest,
     ) -> RestResult<OcoOrderListResponse> {
-        self.send_post_signed_request(
-            CREATE_OCO_ORDERLIST_ENDPOINT,
-            params,
-            1,
-            true,)
-        .await
+        self.send_post_signed_request(CREATE_OCO_ORDERLIST_ENDPOINT, params, 1, true)
+            .await
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use rust_decimal_macros::dec;
+
+    use super::*;
 
     #[test]
     fn test_oco_orderlist_request_minimal_serialization() {

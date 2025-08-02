@@ -1,5 +1,7 @@
-use super::RestClient;
-use super::loan::{BorrowOrRepayRequest, BorrowOrRepayResponse};
+use super::{
+    RestClient,
+    loan::{BorrowOrRepayRequest, BorrowOrRepayResponse},
+};
 
 const UNIFIED_BORROW_OR_REPAY_ENDPOINT: &str = "/unified/borrow_or_repay";
 

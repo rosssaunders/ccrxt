@@ -1,6 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-use crate::kucoin::spot::{OrderSide, OrderType, OrderStatus, ResponseHeaders, RestResponse, Result};
+use crate::kucoin::spot::{
+    OrderSide, OrderStatus, OrderType, ResponseHeaders, RestResponse, Result,
+};
 
 /// Get stop order list request
 #[derive(Debug, Clone, Serialize)]
@@ -132,7 +134,7 @@ mod tests {
             current_page: Some(1),
             page_size: Some(50),
         };
-        
+
         assert_eq!(request.symbol, Some("XBTUSDTM".to_string()));
         assert_eq!(request.side, Some(OrderSide::Buy));
         assert_eq!(request.order_type, Some(OrderType::Limit));

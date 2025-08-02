@@ -229,7 +229,10 @@ mod tests {
         assert_eq!(pair.min_base_amount, Some("0.00000001".to_string()));
         assert_eq!(pair.min_quote_amount, Some("0.00000001".to_string()));
         assert_eq!(pair.max_base_amount, Some("999999999.99999999".to_string()));
-        assert_eq!(pair.max_quote_amount, Some("999999999.99999999".to_string()));
+        assert_eq!(
+            pair.max_quote_amount,
+            Some("999999999.99999999".to_string())
+        );
         assert_eq!(pair.amount_precision, 8);
         assert_eq!(pair.precision, 8);
     }
@@ -318,7 +321,8 @@ mod tests {
 
     #[test]
     fn test_currency_pair_max_timestamps() {
-        let json = format!(r#"{{
+        let json = format!(
+            r#"{{
             "id": "FUTURE_USDT",
             "base": "FUTURE",
             "quote": "USDT",
@@ -328,7 +332,10 @@ mod tests {
             "trade_status": "tradable",
             "sell_start": {},
             "buy_start": {}
-        }}"#, i64::MAX, i64::MAX);
+        }}"#,
+            i64::MAX,
+            i64::MAX
+        );
 
         let pair: CurrencyPair = serde_json::from_str(&json).unwrap();
         assert_eq!(pair.sell_start, i64::MAX);
@@ -414,7 +421,7 @@ mod tests {
 
         let json = serde_json::to_string(&original).unwrap();
         let deserialized: CurrencyPair = serde_json::from_str(&json).unwrap();
-        
+
         assert_eq!(deserialized.id, original.id);
         assert_eq!(deserialized.base, original.base);
         assert_eq!(deserialized.quote, original.quote);

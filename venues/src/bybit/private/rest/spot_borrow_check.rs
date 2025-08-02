@@ -48,11 +48,8 @@ impl RestClient {
         &self,
         request: SpotBorrowCheckRequest,
     ) -> RestResult<SpotBorrowCheckResponse> {
-        self.send_get_request("/v5/order/spot-borrow-check",
-            request,
-            EndpointType::Trade,
-        )
-        .await
+        self.send_get_request("/v5/order/spot-borrow-check", request, EndpointType::Trade)
+            .await
     }
 }
 

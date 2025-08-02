@@ -145,7 +145,10 @@ mod tests {
             code: "400001".to_string(),
             msg: "Invalid API key".to_string(),
         };
-        assert_eq!(format!("{}", error), "KuCoin API Error 400001: Invalid API key");
+        assert_eq!(
+            format!("{}", error),
+            "KuCoin API Error 400001: Invalid API key"
+        );
     }
 
     #[test]
@@ -164,11 +167,14 @@ mod tests {
                 code: code.to_string(),
                 msg: msg.to_string(),
             };
-            
+
             let api_error = ApiError::from(error_response);
-            
+
             match api_error {
-                ApiError::AuthenticationError { code: err_code, message } => {
+                ApiError::AuthenticationError {
+                    code: err_code,
+                    message,
+                } => {
                     assert_eq!(err_code, code);
                     assert_eq!(message, msg);
                 }
@@ -183,9 +189,9 @@ mod tests {
             code: "400100".to_string(),
             msg: "Invalid parameter".to_string(),
         };
-        
+
         let api_error = ApiError::from(error_response);
-        
+
         match api_error {
             ApiError::BadRequest { code, message } => {
                 assert_eq!(code, "400100");
@@ -201,9 +207,9 @@ mod tests {
             code: "429000".to_string(),
             msg: "Too many requests".to_string(),
         };
-        
+
         let api_error = ApiError::from(error_response);
-        
+
         match api_error {
             ApiError::RateLimitExceeded { code, message } => {
                 assert_eq!(code, "429000");
@@ -219,9 +225,9 @@ mod tests {
             code: "500000".to_string(),
             msg: "Internal server error".to_string(),
         };
-        
+
         let api_error = ApiError::from(error_response);
-        
+
         match api_error {
             ApiError::ServerError { code, message } => {
                 assert_eq!(code, "500000");
@@ -237,9 +243,9 @@ mod tests {
             code: "200001".to_string(),
             msg: "Unknown error".to_string(),
         };
-        
+
         let api_error = ApiError::from(error_response);
-        
+
         match api_error {
             ApiError::Other { code, message } => {
                 assert_eq!(code, "200001");
@@ -264,25 +270,37 @@ mod tests {
             code: "400001".to_string(),
             message: "Invalid API key".to_string(),
         };
-        assert_eq!(format!("{}", error), "Authentication failed: Invalid API key (code: 400001)");
+        assert_eq!(
+            format!("{}", error),
+            "Authentication failed: Invalid API key (code: 400001)"
+        );
 
         let error = ApiError::BadRequest {
             code: "400100".to_string(),
             message: "Invalid parameter".to_string(),
         };
-        assert_eq!(format!("{}", error), "Bad request: Invalid parameter (code: 400100)");
+        assert_eq!(
+            format!("{}", error),
+            "Bad request: Invalid parameter (code: 400100)"
+        );
 
         let error = ApiError::RateLimitExceeded {
             code: "429000".to_string(),
             message: "Too many requests".to_string(),
         };
-        assert_eq!(format!("{}", error), "Rate limit exceeded: Too many requests (code: 429000)");
+        assert_eq!(
+            format!("{}", error),
+            "Rate limit exceeded: Too many requests (code: 429000)"
+        );
 
         let error = ApiError::ServerError {
             code: "500000".to_string(),
             message: "Internal server error".to_string(),
         };
-        assert_eq!(format!("{}", error), "Server error: Internal server error (code: 500000)");
+        assert_eq!(
+            format!("{}", error),
+            "Server error: Internal server error (code: 500000)"
+        );
 
         let error = ApiError::Http("Connection timeout".to_string());
         assert_eq!(format!("{}", error), "HTTP error: Connection timeout");

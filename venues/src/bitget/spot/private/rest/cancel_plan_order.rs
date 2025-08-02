@@ -59,10 +59,12 @@ impl RestClient {
         &self,
         request: CancelPlanOrderRequest,
     ) -> RestResult<CancelPlanOrderResponse> {
-        self.send_post_signed_request(CANCEL_PLAN_ORDER_ENDPOINT, request,
-            10,          // 10 requests per second rate limit
-            true,        // This is an order-related endpoint
-            Some(10),    // Order-specific rate limit
+        self.send_post_signed_request(
+            CANCEL_PLAN_ORDER_ENDPOINT,
+            request,
+            10,       // 10 requests per second rate limit
+            true,     // This is an order-related endpoint
+            Some(10), // Order-specific rate limit
         )
         .await
     }

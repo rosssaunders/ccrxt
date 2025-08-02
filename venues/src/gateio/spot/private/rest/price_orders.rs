@@ -140,7 +140,8 @@ impl RestClient {
         &self,
         params: ListPriceOrdersRequest,
     ) -> crate::gateio::spot::Result<Vec<PriceOrder>> {
-        self.get_with_query(SPOT_PRICE_ORDERS_ENDPOINT, &params).await
+        self.get_with_query(SPOT_PRICE_ORDERS_ENDPOINT, &params)
+            .await
     }
 
     /// Get a specific price order
@@ -483,7 +484,8 @@ mod tests {
         let statuses = vec!["open", "cancelled", "finished", "triggered"];
 
         for status in statuses {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "id": 12345678,
                 "user": 987654321,
                 "currency_pair": "BTC_USDT",
@@ -499,7 +501,9 @@ mod tests {
                 "expiration": 1640995200,
                 "create_time": 1640995100,
                 "put_time": 1640995110
-            }}"#, status);
+            }}"#,
+                status
+            );
 
             let order: PriceOrder = serde_json::from_str(&json).unwrap();
             assert_eq!(order.status, status);
@@ -787,12 +791,19 @@ mod tests {
     #[test]
     fn test_price_order_different_currency_pairs() {
         let pairs = vec![
-            "BTC_USDT", "ETH_USDT", "BNB_USDT", "SOL_USDC", 
-            "ETH_BTC", "USDC_USDT", "ADA_USDT", "DOT_USDT"
+            "BTC_USDT",
+            "ETH_USDT",
+            "BNB_USDT",
+            "SOL_USDC",
+            "ETH_BTC",
+            "USDC_USDT",
+            "ADA_USDT",
+            "DOT_USDT",
         ];
 
         for pair in pairs {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "id": 12345678,
                 "user": 987654321,
                 "currency_pair": "{}",
@@ -808,7 +819,9 @@ mod tests {
                 "expiration": 1640995200,
                 "create_time": 1640995100,
                 "put_time": 1640995110
-            }}"#, pair);
+            }}"#,
+                pair
+            );
 
             let order: PriceOrder = serde_json::from_str(&json).unwrap();
             assert_eq!(order.currency_pair, pair);

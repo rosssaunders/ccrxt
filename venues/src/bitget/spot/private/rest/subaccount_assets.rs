@@ -70,12 +70,8 @@ impl RestClient {
         &self,
         request: GetSubaccountAssetsRequest,
     ) -> RestResult<GetSubaccountAssetsResponse> {
-        self.send_get_signed_request(SUBACCOUNT_ASSETS_ENDPOINT, request,
-            10,
-            false,
-            None,
-        )
-        .await
+        self.send_get_signed_request(SUBACCOUNT_ASSETS_ENDPOINT, request, 10, false, None)
+            .await
     }
 }
 

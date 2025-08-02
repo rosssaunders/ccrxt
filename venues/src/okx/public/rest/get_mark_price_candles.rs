@@ -3,7 +3,6 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
-
 const MARKET_MARK_PRICE_CANDLES_ENDPOINT: &str = "api/v5/market/mark-price-candles";
 /// Request parameters for getting mark price candlesticks
 #[derive(Debug, Clone, Serialize, Deserialize)]

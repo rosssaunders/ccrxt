@@ -123,20 +123,16 @@ impl RestClient {
     /// Weight: 4
     /// Security: USER_DATA
     pub async fn query_order(&self, params: QueryOrderRequest) -> RestResult<QueryOrderResponse> {
-        self.send_get_signed_request(
-            GET_ORDER_ENDPOINT,
-            params,
-            4,
-            false,
-        )
-        .await
+        self.send_get_signed_request(GET_ORDER_ENDPOINT, params, 4, false)
+            .await
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use rust_decimal_macros::dec;
+
+    use super::*;
 
     #[test]
     fn test_query_order_request_with_order_id_serialization() {

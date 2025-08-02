@@ -3,8 +3,7 @@ use std::borrow::Cow;
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::binance::usdm::RestResult;
-use crate::binance::usdm::enums::Period;
+use crate::binance::usdm::{RestResult, enums::Period};
 
 const TOP_LONG_SHORT_POSITION_RATIO_ENDPOINT: &str = "/futures/data/topLongShortPositionRatio";
 

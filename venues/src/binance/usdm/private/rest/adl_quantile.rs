@@ -1,8 +1,9 @@
 // ...existing code...
 
+use std::borrow::Cow;
+
 use reqwest::Method;
 use serde::{Deserialize, Serialize};
-use std::borrow::Cow;
 
 use super::UsdmClient;
 use crate::binance::usdm::RestResult;
@@ -87,17 +88,16 @@ impl UsdmClient {
         &self,
         params: GetAdlQuantileRequest,
     ) -> RestResult<Vec<AdlQuantileResponse>> {
-        self.send_get_signed_request(
-            ADL_QUANTILE_ENDPOINT,
-            params, 5, false)
+        self.send_get_signed_request(ADL_QUANTILE_ENDPOINT, params, 5, false)
             .await
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use serde_json::json;
+
+    use super::*;
 
     #[test]
     fn test_deserialize_adl_quantile_response_oneway() {

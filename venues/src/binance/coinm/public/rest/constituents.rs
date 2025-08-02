@@ -74,8 +74,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use rust_decimal::prelude::FromPrimitive;
+
+    use super::*;
 
     #[test]
     fn test_constituents_request_serialization() {

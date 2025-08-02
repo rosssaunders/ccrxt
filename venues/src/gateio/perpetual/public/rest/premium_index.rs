@@ -132,8 +132,14 @@ mod tests {
     #[test]
     fn test_different_contract_pairs() {
         let contracts = vec![
-            "BTC_USDT", "ETH_USDT", "ADA_USDT", "SOL_USDT",
-            "MATIC_USDT", "DOT_USDT", "AVAX_USDT", "LINK_USDT"
+            "BTC_USDT",
+            "ETH_USDT",
+            "ADA_USDT",
+            "SOL_USDT",
+            "MATIC_USDT",
+            "DOT_USDT",
+            "AVAX_USDT",
+            "LINK_USDT",
         ];
 
         for contract in contracts {
@@ -253,7 +259,7 @@ mod tests {
         }"#;
 
         let premium_index: FuturesPremiumIndex = serde_json::from_str(json).unwrap();
-        
+
         let open: f64 = premium_index.o.parse().unwrap();
         let high: f64 = premium_index.h.parse().unwrap();
         let low: f64 = premium_index.l.parse().unwrap();
@@ -272,23 +278,50 @@ mod tests {
     fn test_positive_premium_scenarios() {
         // When mark price > index price (positive premium)
         let positive_premiums = vec![
-            ("0.000050", "0.000075", "0.000025", "0.000060", "Small positive premium"),
-            ("0.000100", "0.000150", "0.000080", "0.000130", "Medium positive premium"),
-            ("0.000200", "0.000300", "0.000150", "0.000280", "Large positive premium"),
-            ("0.000500", "0.000600", "0.000450", "0.000550", "Very high positive premium"),
+            (
+                "0.000050",
+                "0.000075",
+                "0.000025",
+                "0.000060",
+                "Small positive premium",
+            ),
+            (
+                "0.000100",
+                "0.000150",
+                "0.000080",
+                "0.000130",
+                "Medium positive premium",
+            ),
+            (
+                "0.000200",
+                "0.000300",
+                "0.000150",
+                "0.000280",
+                "Large positive premium",
+            ),
+            (
+                "0.000500",
+                "0.000600",
+                "0.000450",
+                "0.000550",
+                "Very high positive premium",
+            ),
         ];
 
         for (open, high, low, close, _description) in positive_premiums {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "t": 1640995200,
                 "c": "{}",
                 "h": "{}",
                 "l": "{}",
                 "o": "{}"
-            }}"#, close, high, low, open);
+            }}"#,
+                close, high, low, open
+            );
 
             let premium_index: FuturesPremiumIndex = serde_json::from_str(&json).unwrap();
-            
+
             let o: f64 = premium_index.o.parse().unwrap();
             let h: f64 = premium_index.h.parse().unwrap();
             let l: f64 = premium_index.l.parse().unwrap();
@@ -310,23 +343,50 @@ mod tests {
     fn test_negative_premium_scenarios() {
         // When mark price < index price (negative premium/discount)
         let negative_premiums = vec![
-            ("-0.000060", "-0.000025", "-0.000075", "-0.000050", "Small negative premium"),
-            ("-0.000130", "-0.000080", "-0.000150", "-0.000100", "Medium negative premium"),
-            ("-0.000280", "-0.000150", "-0.000300", "-0.000200", "Large negative premium"),
-            ("-0.000550", "-0.000450", "-0.000600", "-0.000500", "Very high negative premium"),
+            (
+                "-0.000060",
+                "-0.000025",
+                "-0.000075",
+                "-0.000050",
+                "Small negative premium",
+            ),
+            (
+                "-0.000130",
+                "-0.000080",
+                "-0.000150",
+                "-0.000100",
+                "Medium negative premium",
+            ),
+            (
+                "-0.000280",
+                "-0.000150",
+                "-0.000300",
+                "-0.000200",
+                "Large negative premium",
+            ),
+            (
+                "-0.000550",
+                "-0.000450",
+                "-0.000600",
+                "-0.000500",
+                "Very high negative premium",
+            ),
         ];
 
         for (open, high, low, close, _description) in negative_premiums {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "t": 1640995200,
                 "c": "{}",
                 "h": "{}",
                 "l": "{}",
                 "o": "{}"
-            }}"#, close, high, low, open);
+            }}"#,
+                close, high, low, open
+            );
 
             let premium_index: FuturesPremiumIndex = serde_json::from_str(&json).unwrap();
-            
+
             let o: f64 = premium_index.o.parse().unwrap();
             let h: f64 = premium_index.h.parse().unwrap();
             let l: f64 = premium_index.l.parse().unwrap();
@@ -348,23 +408,50 @@ mod tests {
     fn test_premium_crossing_zero() {
         // Premium index crossing from negative to positive or vice versa
         let crossing_scenarios = vec![
-            ("-0.000050", "0.000025", "-0.000075", "0.000010", "Negative to positive"),
-            ("0.000050", "0.000075", "-0.000025", "-0.000010", "Positive to negative"),
-            ("-0.000025", "0.000050", "-0.000060", "0.000030", "Wide swing positive"),
-            ("0.000025", "0.000060", "-0.000050", "-0.000030", "Wide swing negative"),
+            (
+                "-0.000050",
+                "0.000025",
+                "-0.000075",
+                "0.000010",
+                "Negative to positive",
+            ),
+            (
+                "0.000050",
+                "0.000075",
+                "-0.000025",
+                "-0.000010",
+                "Positive to negative",
+            ),
+            (
+                "-0.000025",
+                "0.000050",
+                "-0.000060",
+                "0.000030",
+                "Wide swing positive",
+            ),
+            (
+                "0.000025",
+                "0.000060",
+                "-0.000050",
+                "-0.000030",
+                "Wide swing negative",
+            ),
         ];
 
         for (open, high, low, close, _description) in crossing_scenarios {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "t": 1640995200,
                 "c": "{}",
                 "h": "{}",
                 "l": "{}",
                 "o": "{}"
-            }}"#, close, high, low, open);
+            }}"#,
+                close, high, low, open
+            );
 
             let premium_index: FuturesPremiumIndex = serde_json::from_str(&json).unwrap();
-            
+
             let o: f64 = premium_index.o.parse().unwrap();
             let h: f64 = premium_index.h.parse().unwrap();
             let l: f64 = premium_index.l.parse().unwrap();
@@ -382,23 +469,50 @@ mod tests {
     #[test]
     fn test_realistic_btc_premium_scenarios() {
         let btc_scenarios = vec![
-            ("0.000075", "0.000125", "0.000050", "0.000100", "Normal BTC premium"),
-            ("0.000200", "0.000350", "0.000150", "0.000300", "High demand period"),
-            ("-0.000100", "-0.000050", "-0.000150", "-0.000075", "Bearish sentiment"),
-            ("0.000025", "0.000075", "-0.000025", "0.000050", "Volatile period"),
+            (
+                "0.000075",
+                "0.000125",
+                "0.000050",
+                "0.000100",
+                "Normal BTC premium",
+            ),
+            (
+                "0.000200",
+                "0.000350",
+                "0.000150",
+                "0.000300",
+                "High demand period",
+            ),
+            (
+                "-0.000100",
+                "-0.000050",
+                "-0.000150",
+                "-0.000075",
+                "Bearish sentiment",
+            ),
+            (
+                "0.000025",
+                "0.000075",
+                "-0.000025",
+                "0.000050",
+                "Volatile period",
+            ),
         ];
 
         for (open, high, low, close, _description) in btc_scenarios {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "t": 1640995200,
                 "c": "{}",
                 "h": "{}",
                 "l": "{}",
                 "o": "{}"
-            }}"#, close, high, low, open);
+            }}"#,
+                close, high, low, open
+            );
 
             let premium_index: FuturesPremiumIndex = serde_json::from_str(&json).unwrap();
-            
+
             let o: f64 = premium_index.o.parse().unwrap();
             let h: f64 = premium_index.h.parse().unwrap();
             let l: f64 = premium_index.l.parse().unwrap();
@@ -415,23 +529,50 @@ mod tests {
     #[test]
     fn test_realistic_eth_premium_scenarios() {
         let eth_scenarios = vec![
-            ("0.000120", "0.000180", "0.000080", "0.000150", "Normal ETH premium"),
-            ("0.000300", "0.000450", "0.000250", "0.000400", "High activity"),
-            ("-0.000150", "-0.000080", "-0.000200", "-0.000120", "Discount period"),
-            ("0.000050", "0.000120", "-0.000030", "0.000080", "Mixed sentiment"),
+            (
+                "0.000120",
+                "0.000180",
+                "0.000080",
+                "0.000150",
+                "Normal ETH premium",
+            ),
+            (
+                "0.000300",
+                "0.000450",
+                "0.000250",
+                "0.000400",
+                "High activity",
+            ),
+            (
+                "-0.000150",
+                "-0.000080",
+                "-0.000200",
+                "-0.000120",
+                "Discount period",
+            ),
+            (
+                "0.000050",
+                "0.000120",
+                "-0.000030",
+                "0.000080",
+                "Mixed sentiment",
+            ),
         ];
 
         for (open, high, low, close, _description) in eth_scenarios {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "t": 1640995200,
                 "c": "{}",
                 "h": "{}",
                 "l": "{}",
                 "o": "{}"
-            }}"#, close, high, low, open);
+            }}"#,
+                close, high, low, open
+            );
 
             let premium_index: FuturesPremiumIndex = serde_json::from_str(&json).unwrap();
-            
+
             let o: f64 = premium_index.o.parse().unwrap();
             let h: f64 = premium_index.h.parse().unwrap();
             let l: f64 = premium_index.l.parse().unwrap();
@@ -456,7 +597,7 @@ mod tests {
         }"#;
 
         let premium_index: FuturesPremiumIndex = serde_json::from_str(json).unwrap();
-        
+
         // Verify precision is maintained
         assert_eq!(premium_index.c, "0.000123456789");
         assert_eq!(premium_index.h, "0.000234567890");
@@ -477,26 +618,29 @@ mod tests {
 
         let mut prev_timestamp = 0;
         for (timestamp, open, high, low, close) in time_series {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "t": {},
                 "c": "{}",
                 "h": "{}",
                 "l": "{}",
                 "o": "{}"
-            }}"#, timestamp, close, high, low, open);
+            }}"#,
+                timestamp, close, high, low, open
+            );
 
             let premium_index: FuturesPremiumIndex = serde_json::from_str(&json).unwrap();
-            
+
             // Verify timestamps are in ascending order
             assert!(premium_index.t > prev_timestamp);
             prev_timestamp = premium_index.t;
-            
+
             // Verify OHLC constraints
             let o: f64 = premium_index.o.parse().unwrap();
             let h: f64 = premium_index.h.parse().unwrap();
             let l: f64 = premium_index.l.parse().unwrap();
             let c: f64 = premium_index.c.parse().unwrap();
-            
+
             assert!(h >= o && h >= c && h >= l);
             assert!(l <= o && l <= c && l <= h);
         }
@@ -506,23 +650,50 @@ mod tests {
     fn test_extreme_premium_scenarios() {
         // Test extreme but possible premium scenarios
         let extreme_scenarios = vec![
-            ("0.001000", "0.001500", "0.000800", "0.001200", "Very high premium"),
-            ("-0.001200", "-0.000800", "-0.001500", "-0.001000", "Very high discount"),
-            ("0.000001", "0.000002", "0.000001", "0.000001", "Minimal premium"),
-            ("-0.000001", "-0.000001", "-0.000002", "-0.000001", "Minimal discount"),
+            (
+                "0.001000",
+                "0.001500",
+                "0.000800",
+                "0.001200",
+                "Very high premium",
+            ),
+            (
+                "-0.001200",
+                "-0.000800",
+                "-0.001500",
+                "-0.001000",
+                "Very high discount",
+            ),
+            (
+                "0.000001",
+                "0.000002",
+                "0.000001",
+                "0.000001",
+                "Minimal premium",
+            ),
+            (
+                "-0.000001",
+                "-0.000001",
+                "-0.000002",
+                "-0.000001",
+                "Minimal discount",
+            ),
         ];
 
         for (open, high, low, close, _description) in extreme_scenarios {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "t": 1640995200,
                 "c": "{}",
                 "h": "{}",
                 "l": "{}",
                 "o": "{}"
-            }}"#, close, high, low, open);
+            }}"#,
+                close, high, low, open
+            );
 
             let premium_index: FuturesPremiumIndex = serde_json::from_str(&json).unwrap();
-            
+
             let o: f64 = premium_index.o.parse().unwrap();
             let h: f64 = premium_index.h.parse().unwrap();
             let l: f64 = premium_index.l.parse().unwrap();
@@ -538,22 +709,43 @@ mod tests {
     fn test_zero_premium_scenarios() {
         // When mark price equals index price
         let zero_scenarios = vec![
-            ("0.000000", "0.000000", "0.000000", "0.000000", "Perfect zero"),
-            ("-0.000001", "0.000001", "-0.000001", "0.000000", "Hovering around zero"),
-            ("0.000000", "0.000005", "-0.000005", "0.000000", "Small fluctuation"),
+            (
+                "0.000000",
+                "0.000000",
+                "0.000000",
+                "0.000000",
+                "Perfect zero",
+            ),
+            (
+                "-0.000001",
+                "0.000001",
+                "-0.000001",
+                "0.000000",
+                "Hovering around zero",
+            ),
+            (
+                "0.000000",
+                "0.000005",
+                "-0.000005",
+                "0.000000",
+                "Small fluctuation",
+            ),
         ];
 
         for (open, high, low, close, _description) in zero_scenarios {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "t": 1640995200,
                 "c": "{}",
                 "h": "{}",
                 "l": "{}",
                 "o": "{}"
-            }}"#, close, high, low, open);
+            }}"#,
+                close, high, low, open
+            );
 
             let premium_index: FuturesPremiumIndex = serde_json::from_str(&json).unwrap();
-            
+
             let o: f64 = premium_index.o.parse().unwrap();
             let h: f64 = premium_index.h.parse().unwrap();
             let l: f64 = premium_index.l.parse().unwrap();
@@ -571,23 +763,50 @@ mod tests {
     fn test_premium_index_volatility_patterns() {
         // Test different volatility patterns in premium index
         let volatility_patterns = vec![
-            ("0.000100", "0.000105", "0.000095", "0.000102", "Low volatility"),
-            ("0.000100", "0.000150", "0.000050", "0.000120", "Medium volatility"),
-            ("0.000100", "0.000300", "-0.000100", "0.000200", "High volatility"),
-            ("-0.000100", "0.000200", "-0.000300", "0.000050", "Extreme volatility"),
+            (
+                "0.000100",
+                "0.000105",
+                "0.000095",
+                "0.000102",
+                "Low volatility",
+            ),
+            (
+                "0.000100",
+                "0.000150",
+                "0.000050",
+                "0.000120",
+                "Medium volatility",
+            ),
+            (
+                "0.000100",
+                "0.000300",
+                "-0.000100",
+                "0.000200",
+                "High volatility",
+            ),
+            (
+                "-0.000100",
+                "0.000200",
+                "-0.000300",
+                "0.000050",
+                "Extreme volatility",
+            ),
         ];
 
         for (open, high, low, close, _description) in volatility_patterns {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "t": 1640995200,
                 "c": "{}",
                 "h": "{}",
                 "l": "{}",
                 "o": "{}"
-            }}"#, close, high, low, open);
+            }}"#,
+                close, high, low, open
+            );
 
             let premium_index: FuturesPremiumIndex = serde_json::from_str(&json).unwrap();
-            
+
             let _o: f64 = premium_index.o.parse().unwrap();
             let h: f64 = premium_index.h.parse().unwrap();
             let l: f64 = premium_index.l.parse().unwrap();
@@ -596,7 +815,7 @@ mod tests {
             // Calculate volatility as range relative to midpoint
             let range = h - l;
             let midpoint = (h + l) / 2.0;
-            
+
             assert!(range >= 0.0);
             if midpoint.abs() > 0.0001 {
                 let volatility = range / midpoint.abs();
@@ -609,23 +828,50 @@ mod tests {
     fn test_premium_index_market_phases() {
         // Test premium index behavior in different market phases
         let market_phases = vec![
-            ("0.000200", "0.000250", "0.000180", "0.000230", "Bull market premium"),
-            ("-0.000150", "-0.000100", "-0.000180", "-0.000120", "Bear market discount"),
-            ("0.000050", "0.000080", "0.000020", "0.000060", "Sideways market"),
-            ("0.000100", "0.000300", "-0.000100", "0.000200", "Volatile/uncertain"),
+            (
+                "0.000200",
+                "0.000250",
+                "0.000180",
+                "0.000230",
+                "Bull market premium",
+            ),
+            (
+                "-0.000150",
+                "-0.000100",
+                "-0.000180",
+                "-0.000120",
+                "Bear market discount",
+            ),
+            (
+                "0.000050",
+                "0.000080",
+                "0.000020",
+                "0.000060",
+                "Sideways market",
+            ),
+            (
+                "0.000100",
+                "0.000300",
+                "-0.000100",
+                "0.000200",
+                "Volatile/uncertain",
+            ),
         ];
 
         for (open, high, low, close, _description) in market_phases {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "t": 1640995200,
                 "c": "{}",
                 "h": "{}",
                 "l": "{}",
                 "o": "{}"
-            }}"#, close, high, low, open);
+            }}"#,
+                close, high, low, open
+            );
 
             let premium_index: FuturesPremiumIndex = serde_json::from_str(&json).unwrap();
-            
+
             let o: f64 = premium_index.o.parse().unwrap();
             let h: f64 = premium_index.h.parse().unwrap();
             let l: f64 = premium_index.l.parse().unwrap();
@@ -649,13 +895,16 @@ mod tests {
         ];
 
         for (timestamp, _description) in timestamps {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "t": {},
                 "c": "0.000125",
                 "h": "0.000150",
                 "l": "0.000100",
                 "o": "0.000110"
-            }}"#, timestamp);
+            }}"#,
+                timestamp
+            );
 
             let premium_index: FuturesPremiumIndex = serde_json::from_str(&json).unwrap();
             assert_eq!(premium_index.t, timestamp);

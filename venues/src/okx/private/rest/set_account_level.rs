@@ -3,7 +3,6 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
-
 const ACCOUNT_SET_ACCOUNT_LEVEL_ENDPOINT: &str = "api/v5/account/set-account-level";
 /// Request to set account level
 #[derive(Debug, Clone, Serialize)]

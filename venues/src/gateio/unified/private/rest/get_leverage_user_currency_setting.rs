@@ -1,5 +1,4 @@
-use super::RestClient;
-use super::leverage::LeverageConfig;
+use super::{RestClient, leverage::LeverageConfig};
 
 const LEVERAGE_USER_CURRENCY_SETTING_ENDPOINT: &str = "/unified/leverage/user_currency_setting";
 
@@ -16,8 +15,7 @@ impl RestClient {
     ) -> crate::gateio::unified::Result<LeverageConfig> {
         let endpoint = format!(
             "{}?currency={}",
-            LEVERAGE_USER_CURRENCY_SETTING_ENDPOINT,
-            currency
+            LEVERAGE_USER_CURRENCY_SETTING_ENDPOINT, currency
         );
         self.get(&endpoint).await
     }
@@ -32,21 +30,22 @@ mod tests {
         let currency = "BTC";
         let endpoint = format!(
             "{}?currency={}",
-            LEVERAGE_USER_CURRENCY_SETTING_ENDPOINT,
-            currency
+            LEVERAGE_USER_CURRENCY_SETTING_ENDPOINT, currency
         );
-        assert_eq!(endpoint, "/unified/leverage/user_currency_setting?currency=BTC");
+        assert_eq!(
+            endpoint,
+            "/unified/leverage/user_currency_setting?currency=BTC"
+        );
     }
 
     #[test]
     fn test_leverage_setting_different_currencies() {
         let currencies = vec!["BTC", "ETH", "USDT", "BNB", "SOL"];
-        
+
         for currency in currencies {
             let endpoint = format!(
                 "{}?currency={}",
-                LEVERAGE_USER_CURRENCY_SETTING_ENDPOINT,
-                currency
+                LEVERAGE_USER_CURRENCY_SETTING_ENDPOINT, currency
             );
             assert!(endpoint.contains(currency));
             assert!(endpoint.starts_with("/unified/leverage/user_currency_setting?currency="));

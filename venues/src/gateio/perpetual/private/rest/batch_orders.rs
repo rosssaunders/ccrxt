@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::RestClient;
-use super::create_order::CreateFuturesOrderRequest;
+use super::{RestClient, create_order::CreateFuturesOrderRequest};
 
 /// Request to create batch orders
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -268,15 +267,15 @@ mod tests {
 
         let results: Vec<BatchOrderResult> = serde_json::from_str(results_json).unwrap();
         assert_eq!(results.len(), 3);
-        
+
         // First result: success
         assert!(results[0].succeeded);
         assert!(results[0].id.is_some());
-        
+
         // Second result: failure
         assert!(!results[1].succeeded);
         assert!(results[1].label.is_some());
-        
+
         // Third result: success
         assert!(results[2].succeeded);
         assert!(results[2].id.is_some());

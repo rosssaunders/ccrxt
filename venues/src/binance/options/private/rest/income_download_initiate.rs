@@ -52,12 +52,7 @@ impl RestClient {
         &self,
         request: IncomeDownloadInitiateRequest,
     ) -> RestResult<IncomeDownloadInitiateResponse> {
-        self.send_get_signed_request(
-            INCOME_DOWNLOAD_INITIATE_ENDPOINT,
-            request,
-            5,
-            false,
-        )
-        .await
+        self.send_get_signed_request(INCOME_DOWNLOAD_INITIATE_ENDPOINT, request, 5, false)
+            .await
     }
 }

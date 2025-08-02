@@ -6,8 +6,7 @@ use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
 use super::UsdmClient;
-use crate::binance::usdm::RestResult;
-use crate::binance::usdm::enums::*;
+use crate::binance::usdm::{RestResult, enums::*};
 
 /// Endpoint path for Position Risk V3.
 const POSITION_RISK_V3_ENDPOINT: &str = "/fapi/v3/positionRisk";
@@ -126,9 +125,7 @@ impl UsdmClient {
         &self,
         request: GetPositionRiskV3Request,
     ) -> RestResult<Vec<PositionRiskV3>> {
-        self.send_get_signed_request(
-            POSITION_RISK_V3_ENDPOINT,
-            request, 5, false)
+        self.send_get_signed_request(POSITION_RISK_V3_ENDPOINT, request, 5, false)
             .await
     }
 }

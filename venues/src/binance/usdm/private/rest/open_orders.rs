@@ -1,10 +1,11 @@
-use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
 
+use serde::{Deserialize, Serialize};
+
 use super::UsdmClient;
-use crate::binance::usdm::RestResult;
-use crate::binance::usdm::enums::{
-    OrderSide, OrderStatus, OrderType, PositionSide, TimeInForce, WorkingType,
+use crate::binance::usdm::{
+    RestResult,
+    enums::{OrderSide, OrderStatus, OrderType, PositionSide, TimeInForce, WorkingType},
 };
 
 /// Endpoint path for getting all open orders.
@@ -146,12 +147,8 @@ impl UsdmClient {
     ) -> RestResult<Vec<OpenOrder>> {
         // Determine rate limit based on whether a symbol is specified
         let rate_limit = if params.symbol.is_some() { 1 } else { 40 };
-        self.send_get_signed_request(
-            OPEN_ORDERS_ENDPOINT,
-            params,
-            rate_limit,
-            true,)
-        .await
+        self.send_get_signed_request(OPEN_ORDERS_ENDPOINT, params, rate_limit, true)
+            .await
     }
 }
 

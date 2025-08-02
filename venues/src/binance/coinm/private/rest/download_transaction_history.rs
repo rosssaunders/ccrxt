@@ -1,8 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::binance::{
-    coinm::{RestResult, enums::DownloadStatus, private::rest::client::RestClient},
-};
+use crate::binance::coinm::{RestResult, enums::DownloadStatus, private::rest::client::RestClient};
 
 const INCOME_ASYN_ENDPOINT: &str = "/dapi/v1/income/asyn";
 const INCOME_ASYN_ID_ENDPOINT: &str = "/dapi/v1/income/asyn/id";
@@ -83,13 +81,8 @@ impl RestClient {
         params: GetDownloadIdRequest,
     ) -> RestResult<GetDownloadIdResponse> {
         let weight = 5;
-        self.send_get_signed_request(
-            INCOME_ASYN_ENDPOINT,
-            params,
-            weight,
-            false,
-        )
-        .await
+        self.send_get_signed_request(INCOME_ASYN_ENDPOINT, params, weight, false)
+            .await
     }
 
     /// Get download link for transaction history on Binance Coin-M Futures.
@@ -110,13 +103,8 @@ impl RestClient {
         params: GetDownloadLinkRequest,
     ) -> RestResult<GetDownloadLinkResponse> {
         let weight = 5;
-        self.send_get_signed_request(
-            INCOME_ASYN_ID_ENDPOINT,
-            params,
-            weight,
-            false,
-        )
-        .await
+        self.send_get_signed_request(INCOME_ASYN_ID_ENDPOINT, params, weight, false)
+            .await
     }
 }
 

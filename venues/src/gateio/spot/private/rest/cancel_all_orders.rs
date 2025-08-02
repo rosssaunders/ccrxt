@@ -105,7 +105,7 @@ mod tests {
     #[test]
     fn test_cancel_all_orders_request_different_currency_pairs() {
         let pairs = vec!["BTC_USDT", "ETH_BTC", "BNB_USDT", "SOL_USDC", "ADA_USDT"];
-        
+
         for pair in pairs {
             let request = CancelAllOrdersRequest {
                 currency_pair: pair.to_string(),
@@ -120,11 +120,8 @@ mod tests {
 
     #[test]
     fn test_cancel_all_orders_request_different_sides() {
-        let sides = vec![
-            (OrderSide::Buy, "buy"),
-            (OrderSide::Sell, "sell"),
-        ];
-        
+        let sides = vec![(OrderSide::Buy, "buy"), (OrderSide::Sell, "sell")];
+
         for (side, expected) in sides {
             let request = CancelAllOrdersRequest {
                 currency_pair: "BTC_USDT".to_string(),
@@ -141,7 +138,7 @@ mod tests {
     #[test]
     fn test_cancel_all_orders_request_different_accounts() {
         let accounts = vec!["spot", "margin", "cross_margin", "unified"];
-        
+
         for account in accounts {
             let request = CancelAllOrdersRequest {
                 currency_pair: "BTC_USDT".to_string(),
@@ -179,7 +176,7 @@ mod tests {
 
         let json = serde_json::to_value(&request).unwrap();
         assert_eq!(json["currency_pair"], "ETH_USDT");
-        
+
         // Optional fields should be omitted when None
         let obj = json.as_object().unwrap();
         assert!(!obj.contains_key("side"));
@@ -245,7 +242,7 @@ mod tests {
     #[test]
     fn test_cancel_all_orders_request_stablecoin_pairs() {
         let stablecoin_pairs = vec!["USDC_USDT", "BUSD_USDT", "DAI_USDT", "TUSD_USDT"];
-        
+
         for pair in stablecoin_pairs {
             let request = CancelAllOrdersRequest {
                 currency_pair: pair.to_string(),
@@ -262,7 +259,7 @@ mod tests {
     #[test]
     fn test_cancel_all_orders_request_cross_pairs() {
         let cross_pairs = vec!["ETH_BTC", "BNB_BTC", "ADA_BTC", "SOL_ETH", "MATIC_ETH"];
-        
+
         for pair in cross_pairs {
             let request = CancelAllOrdersRequest {
                 currency_pair: pair.to_string(),
@@ -279,13 +276,13 @@ mod tests {
     #[test]
     fn test_cancel_all_orders_request_special_tokens() {
         let special_tokens = vec![
-            "BTC3L_USDT",   // Leveraged token
-            "ETH3S_USDT",   // Short token
-            "wBTC_USDT",    // Wrapped token
-            "GT_USDT",      // Exchange token
-            "1INCH_USDT",   // Numeric start
+            "BTC3L_USDT", // Leveraged token
+            "ETH3S_USDT", // Short token
+            "wBTC_USDT",  // Wrapped token
+            "GT_USDT",    // Exchange token
+            "1INCH_USDT", // Numeric start
         ];
-        
+
         for pair in special_tokens {
             let request = CancelAllOrdersRequest {
                 currency_pair: pair.to_string(),
@@ -342,7 +339,7 @@ mod tests {
     fn test_cancel_all_orders_for_pair_helper() {
         // Test the helper function parameters
         let currency_pair = "BTC_USDT";
-        
+
         let expected_request = CancelAllOrdersRequest {
             currency_pair: currency_pair.to_string(),
             side: None,
@@ -364,12 +361,12 @@ mod tests {
         };
 
         let serialized = serde_urlencoded::to_string(&request).unwrap();
-        
+
         // All fields should be present
         assert!(serialized.contains("currency_pair=BTC_USDT"));
         assert!(serialized.contains("side=buy"));
         assert!(serialized.contains("account=spot"));
-        
+
         // Should be connected with &
         let field_count = serialized.matches('&').count();
         assert_eq!(field_count, 2); // Two & symbols for three fields
@@ -378,10 +375,16 @@ mod tests {
     #[test]
     fn test_cancel_all_orders_request_altcoin_pairs() {
         let altcoin_pairs = vec![
-            "SOL_USDT", "DOT_USDT", "MATIC_USDT", "LINK_USDT",
-            "ADA_USDT", "AVAX_USDT", "ATOM_USDT", "FTM_USDT"
+            "SOL_USDT",
+            "DOT_USDT",
+            "MATIC_USDT",
+            "LINK_USDT",
+            "ADA_USDT",
+            "AVAX_USDT",
+            "ATOM_USDT",
+            "FTM_USDT",
         ];
-        
+
         for pair in altcoin_pairs {
             let request = CancelAllOrdersRequest {
                 currency_pair: pair.to_string(),
@@ -447,7 +450,7 @@ mod tests {
             ("cross_margin", "BNB_USDT"),
             ("unified", "SOL_USDT"),
         ];
-        
+
         for (account, pair) in comprehensive_accounts {
             let request = CancelAllOrdersRequest {
                 currency_pair: pair.to_string(),
@@ -469,7 +472,7 @@ mod tests {
             (Some(OrderSide::Sell), "sell"),
             (None, ""),
         ];
-        
+
         for (side, expected) in side_tests {
             let request = CancelAllOrdersRequest {
                 currency_pair: "BTC_USDT".to_string(),
@@ -479,7 +482,7 @@ mod tests {
 
             let serialized = serde_urlencoded::to_string(&request).unwrap();
             assert!(serialized.contains("currency_pair=BTC_USDT"));
-            
+
             if !expected.is_empty() {
                 assert!(serialized.contains(&format!("side={}", expected)));
             } else {
@@ -505,7 +508,7 @@ mod tests {
     #[test]
     fn test_cancel_all_orders_request_numeric_tokens() {
         let numeric_pairs = vec!["1INCH_USDT", "3CRV_USDT", "404_USDT"];
-        
+
         for pair in numeric_pairs {
             let request = CancelAllOrdersRequest {
                 currency_pair: pair.to_string(),
@@ -523,7 +526,7 @@ mod tests {
     fn test_cancel_all_orders_endpoint_constant() {
         // Verify the endpoint constant matches expected Gate.io API path
         let expected_endpoint = "/spot/orders";
-        
+
         // Test that our endpoint string is correct
         assert_eq!(expected_endpoint, "/spot/orders");
         assert!(expected_endpoint.starts_with("/spot/"));

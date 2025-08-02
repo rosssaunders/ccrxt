@@ -106,13 +106,8 @@ impl RestClient {
     pub async fn get_my_trades(&self, params: MyTradesRequest) -> RestResult<Vec<MyTrade>> {
         let weight = if params.order_id.is_some() { 5 } else { 20 };
 
-        self.send_get_signed_request(
-            GET_MY_TRADES_ENDPOINT,
-            params,
-            weight,
-            false,
-        )
-        .await
+        self.send_get_signed_request(GET_MY_TRADES_ENDPOINT, params, weight, false)
+            .await
     }
 }
 

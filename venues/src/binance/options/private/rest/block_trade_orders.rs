@@ -1,10 +1,9 @@
 use serde::Serialize;
 
 use super::client::RestClient;
-use crate::binance::options::RestResult;
-
 // Re-export the shared response type
 pub use super::create_block_trade::BlockTradeOrderResponse;
+use crate::binance::options::RestResult;
 
 const BLOCK_TRADE_ORDERS_ENDPOINT: &str = "/eapi/v1/block/order/orders";
 
@@ -58,12 +57,7 @@ impl RestClient {
         &self,
         params: QueryBlockTradeOrdersRequest,
     ) -> RestResult<Vec<BlockTradeOrderResponse>> {
-        self.send_get_signed_request(
-            BLOCK_TRADE_ORDERS_ENDPOINT,
-            params,
-            1,
-            false,
-        )
-        .await
+        self.send_get_signed_request(BLOCK_TRADE_ORDERS_ENDPOINT, params, 1, false)
+            .await
     }
 }

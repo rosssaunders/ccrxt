@@ -3,7 +3,6 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
-
 const PUBLIC_FUNDING_RATE_HISTORY_ENDPOINT: &str = "api/v5/public/funding-rate-history";
 /// Request parameters for getting funding rate history
 #[derive(Debug, Clone, Serialize, Deserialize)]

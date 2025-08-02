@@ -1,6 +1,7 @@
+use std::borrow::Cow;
+
 use reqwest::Method;
 use serde::{Deserialize, Serialize};
-use std::borrow::Cow;
 
 use super::UsdmClient;
 use crate::binance::usdm::RestResult;
@@ -63,21 +64,18 @@ impl UsdmClient {
         &self,
         params: CountdownCancelAllRequest,
     ) -> RestResult<CountdownCancelAllResponse> {
-        self.send_post_signed_request(
-            COUNTDOWN_CANCEL_ALL_ENDPOINT,
-            params,
-            10,
-            false,
-        )
-        .await
+        self.send_post_signed_request(COUNTDOWN_CANCEL_ALL_ENDPOINT, params, 10, false)
+            .await
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use serde_json;
     use std::borrow::Cow;
+
+    use serde_json;
+
+    use super::*;
 
     #[test]
     fn test_countdown_cancel_all_response_deserialization() {

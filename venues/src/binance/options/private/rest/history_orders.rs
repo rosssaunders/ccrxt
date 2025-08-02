@@ -146,12 +146,7 @@ impl RestClient {
         &self,
         params: HistoryOrdersRequest,
     ) -> RestResult<Vec<HistoryOrder>> {
-        self.send_get_signed_request(
-            GET_HISTORY_ORDERS_ENDPOINT,
-            params,
-            1,
-            false,
-        )
-        .await
+        self.send_get_signed_request(GET_HISTORY_ORDERS_ENDPOINT, params, 1, false)
+            .await
     }
 }

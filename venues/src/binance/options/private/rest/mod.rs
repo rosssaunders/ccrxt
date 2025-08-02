@@ -40,18 +40,16 @@ pub mod create_block_trade;
 pub mod execute_block_trade;
 pub mod extend_block_trade;
 
-pub use client::RestClient;
-
-// Re-export commonly used MMP types
-pub use get_mmp_config::{GetMmpConfigRequest, MmpConfigResponse};
-pub use reset_mmp::ResetMmpRequest;
-pub use set_mmp_config::SetMmpConfigRequest;
-
 // Re-export commonly used block trade types
 pub use block_trade_execution::QueryBlockTradeExecutionRequest;
 pub use block_trade_orders::QueryBlockTradeOrdersRequest;
 pub use block_user_trades::QueryBlockUserTradesRequest;
 pub use cancel_block_trade::CancelBlockTradeRequest;
+pub use client::RestClient;
 pub use create_block_trade::{BlockTradeOrderResponse, CreateBlockTradeRequest};
 pub use execute_block_trade::{BlockTradeExecution, ExecuteBlockTradeRequest};
 pub use extend_block_trade::ExtendBlockTradeRequest;
+// Re-export commonly used MMP types
+pub use get_mmp_config::{GetMmpConfigRequest, MmpConfigResponse};
+pub use reset_mmp::ResetMmpRequest;
+pub use set_mmp_config::SetMmpConfigRequest;

@@ -3,7 +3,6 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
-
 const ACCOUNT_MAX_SIZE_ENDPOINT: &str = "api/v5/account/max-size";
 /// Request to get max size
 #[derive(Debug, Clone, Serialize)]

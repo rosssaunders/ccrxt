@@ -133,7 +133,10 @@ impl RestClient {
         &self,
         request: CancelReplaceOrderRequest,
     ) -> RestResult<CancelReplaceOrderResponse> {
-        self.send_post_signed_request(CANCEL_REPLACE_ORDER_ENDPOINT, &request, EndpointType::Trading,
+        self.send_post_signed_request(
+            CANCEL_REPLACE_ORDER_ENDPOINT,
+            &request,
+            EndpointType::Trading,
         )
         .await
     }

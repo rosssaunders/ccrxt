@@ -3,7 +3,6 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
-
 const ACCOUNT_ADJUST_LEVERAGE_INFO_ENDPOINT: &str = "api/v5/account/adjust-leverage-info";
 /// Request to get adjust leverage info
 #[derive(Debug, Clone, Serialize)]

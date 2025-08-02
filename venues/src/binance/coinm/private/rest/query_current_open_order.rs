@@ -1,10 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-use crate::binance::{
-    coinm::{
-        OrderSide, OrderStatus, OrderType, PositionSide, PriceMatch, RestResult,
-        SelfTradePreventionMode, TimeInForce, WorkingType, private::rest::client::RestClient,
-    },
+use crate::binance::coinm::{
+    OrderSide, OrderStatus, OrderType, PositionSide, PriceMatch, RestResult,
+    SelfTradePreventionMode, TimeInForce, WorkingType, private::rest::client::RestClient,
 };
 
 const OPEN_ORDER_ENDPOINT: &str = "/dapi/v1/openOrder";
@@ -155,13 +153,8 @@ impl RestClient {
         params: QueryCurrentOpenOrderRequest,
     ) -> RestResult<QueryCurrentOpenOrderResponse> {
         let weight = 1;
-        self.send_get_signed_request(
-            OPEN_ORDER_ENDPOINT,
-            params,
-            weight,
-            false,
-        )
-        .await
+        self.send_get_signed_request(OPEN_ORDER_ENDPOINT, params, weight, false)
+            .await
     }
 }
 

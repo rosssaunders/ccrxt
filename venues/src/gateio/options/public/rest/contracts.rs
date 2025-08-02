@@ -146,7 +146,7 @@ mod tests {
     #[test]
     fn test_options_contracts_request_different_underlyings() {
         let underlyings = vec!["BTC_USDT", "ETH_USDT", "BNB_USDT", "SOL_USDT", "ADA_USDT"];
-        
+
         for underlying in underlyings {
             let request = OptionsContractsRequest {
                 underlying: Some(underlying.to_string()),
@@ -374,7 +374,10 @@ mod tests {
         let contract: OptionsContract = serde_json::from_str(json).unwrap();
         assert_eq!(contract.name, "BTC-20240315-55000-C");
         assert_eq!(contract.create_time, 1640995500.999999);
-        assert_eq!(contract.underlying_price, Some("42123.123456789".to_string()));
+        assert_eq!(
+            contract.underlying_price,
+            Some("42123.123456789".to_string())
+        );
         assert_eq!(contract.last_price, Some("0.123456789".to_string()));
         assert_eq!(contract.mark_price, Some("0.987654321".to_string()));
         assert_eq!(contract.index_price, Some("42123.123456789".to_string()));
@@ -392,11 +395,12 @@ mod tests {
             "ETH-20240215-3000-P",
             "BNB-20240301-400-C",
             "SOL-20240315-150-P",
-            "ADA-20240401-1-C"
+            "ADA-20240401-1-C",
         ];
-        
+
         for contract_name in contracts {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "name": "{}",
                 "tag": "TEST_USDT",
                 "create_time": 1640995200.0,
@@ -406,7 +410,9 @@ mod tests {
                 "is_call": true,
                 "multiplier": "0.01",
                 "orders_limit": 100
-            }}"#, contract_name);
+            }}"#,
+                contract_name
+            );
 
             let contract: OptionsContract = serde_json::from_str(&json).unwrap();
             assert_eq!(contract.name, contract_name);
@@ -419,11 +425,12 @@ mod tests {
             ("call", true),
             ("put", false),
             ("CALL", true),
-            ("PUT", false)
+            ("PUT", false),
         ];
-        
+
         for (type_str, is_call) in option_types {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "name": "BTC-20240101-50000-{}",
                 "tag": "BTC_USDT",
                 "create_time": 1640995200.0,
@@ -434,7 +441,11 @@ mod tests {
                 "is_call": {},
                 "multiplier": "0.0001",
                 "orders_limit": 200
-            }}"#, if is_call { "C" } else { "P" }, type_str, is_call);
+            }}"#,
+                if is_call { "C" } else { "P" },
+                type_str,
+                is_call
+            );
 
             let contract: OptionsContract = serde_json::from_str(&json).unwrap();
             assert_eq!(contract.option_type, Some(type_str.to_string()));
@@ -471,11 +482,11 @@ mod tests {
 
         let contracts: Vec<OptionsContract> = serde_json::from_str(json).unwrap();
         assert_eq!(contracts.len(), 2);
-        
+
         assert_eq!(contracts[0].name, "BTC-20240101-50000-C");
         assert_eq!(contracts[0].is_call, true);
         assert_eq!(contracts[0].strike_price, "50000");
-        
+
         assert_eq!(contracts[1].name, "ETH-20240101-3000-P");
         assert_eq!(contracts[1].is_call, false);
         assert_eq!(contracts[1].strike_price, "3000");
@@ -551,7 +562,7 @@ mod tests {
 
         let json = serde_json::to_string(&original).unwrap();
         let deserialized: OptionsContract = serde_json::from_str(&json).unwrap();
-        
+
         assert_eq!(deserialized.name, original.name);
         assert_eq!(deserialized.tag, original.tag);
         assert_eq!(deserialized.create_time, original.create_time);
@@ -597,7 +608,7 @@ mod tests {
         assert!(itm_call.name.ends_with("-C"));
         assert_eq!(itm_call.is_call, true);
         assert_eq!(itm_call.strike_price, "40000");
-        
+
         // Parse prices to verify ITM status
         let underlying: f64 = itm_call.underlying_price.as_ref().unwrap().parse().unwrap();
         let strike: f64 = itm_call.strike_price.parse().unwrap();
@@ -628,7 +639,7 @@ mod tests {
         assert!(otm_put.name.ends_with("-P"));
         assert_eq!(otm_put.is_call, false);
         assert_eq!(otm_put.strike_price, "2000");
-        
+
         // Parse prices to verify OTM status
         let underlying: f64 = otm_put.underlying_price.as_ref().unwrap().parse().unwrap();
         let strike: f64 = otm_put.strike_price.parse().unwrap();
@@ -652,7 +663,7 @@ mod tests {
 
         let near_term: OptionsContract = serde_json::from_str(near_term_json).unwrap();
         assert_eq!(near_term.expiration_time, 1704499200);
-        
+
         // Verify near-term (less than 1 week from creation)
         let time_to_expiry = near_term.expiration_time as f64 - near_term.create_time;
         assert!(time_to_expiry < 7.0 * 24.0 * 3600.0); // Less than 1 week
@@ -672,7 +683,7 @@ mod tests {
 
         let long_term: OptionsContract = serde_json::from_str(long_term_json).unwrap();
         assert_eq!(long_term.expiration_time, 1735689600);
-        
+
         // Verify long-term (more than 6 months from creation)
         let time_to_expiry = long_term.expiration_time as f64 - long_term.create_time;
         assert!(time_to_expiry > 180.0 * 24.0 * 3600.0); // More than 6 months
@@ -699,7 +710,8 @@ mod tests {
         assert_eq!(extreme_contract.orders_limit, 1);
 
         // Contract with very large position size
-        let large_position_json = format!(r#"{{
+        let large_position_json = format!(
+            r#"{{
             "name": "ETH-20240101-3000-P",
             "tag": "ETH_USDT",
             "create_time": 1640995200.0,
@@ -710,7 +722,10 @@ mod tests {
             "multiplier": "0.001",
             "position_size": {},
             "orders_limit": {}
-        }}"#, i64::MAX, i32::MAX);
+        }}"#,
+            i64::MAX,
+            i32::MAX
+        );
 
         let large_contract: OptionsContract = serde_json::from_str(&large_position_json).unwrap();
         assert_eq!(large_contract.position_size, Some(i64::MAX));

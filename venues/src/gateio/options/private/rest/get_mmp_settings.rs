@@ -1,5 +1,4 @@
-use super::RestClient;
-use super::mmp_settings::MMPSettings;
+use super::{RestClient, mmp_settings::MMPSettings};
 
 const OPTIONS_MMP_ENDPOINT: &str = "/options/mmp";
 

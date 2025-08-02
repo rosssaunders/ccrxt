@@ -214,18 +214,17 @@ impl UsdmClient {
         &self,
         request: BatchOrderRequest,
     ) -> RestResult<Vec<BatchOrderResponse>> {
-        self.send_post_signed_request(
-            BATCH_ORDERS_ENDPOINT,
-            request, 5, true)
+        self.send_post_signed_request(BATCH_ORDERS_ENDPOINT, request, 5, true)
             .await
     }
 }
 
 #[cfg(test)]
 mod tests {
+    use serde_json;
+
     use super::*;
     use crate::binance::usdm::enums::*;
-    use serde_json;
 
     #[test]
     fn test_batch_order_item_serialization() {

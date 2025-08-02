@@ -1,5 +1,7 @@
-use super::RestClient;
-use super::unified_margin::{UnifiedMarginLoansRequest, UnifiedMarginLoan};
+use super::{
+    RestClient,
+    unified_margin::{UnifiedMarginLoan, UnifiedMarginLoansRequest},
+};
 
 const MARGIN_UNI_LOANS_ENDPOINT: &str = "/margin/uni/loans";
 
@@ -14,7 +16,8 @@ impl RestClient {
         &self,
         params: UnifiedMarginLoansRequest,
     ) -> crate::gateio::unified::Result<Vec<UnifiedMarginLoan>> {
-        self.get_with_query(MARGIN_UNI_LOANS_ENDPOINT, &params).await
+        self.get_with_query(MARGIN_UNI_LOANS_ENDPOINT, &params)
+            .await
     }
 }
 

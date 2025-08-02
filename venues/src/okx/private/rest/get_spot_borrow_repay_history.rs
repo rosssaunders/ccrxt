@@ -3,7 +3,6 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
-
 const ACCOUNT_SPOT_BORROW_REPAY_HISTORY_ENDPOINT: &str = "api/v5/account/spot-borrow-repay-history";
 /// Request to get spot borrow repay history
 #[derive(Debug, Clone, Serialize)]

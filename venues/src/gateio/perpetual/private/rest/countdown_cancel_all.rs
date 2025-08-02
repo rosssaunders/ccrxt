@@ -96,12 +96,7 @@ mod tests {
 
     #[test]
     fn test_different_contracts() {
-        let contracts = vec![
-            "BTC_USDT",
-            "ETH_USDT",
-            "SOL_USDT",
-            "MATIC_USDT",
-        ];
+        let contracts = vec!["BTC_USDT", "ETH_USDT", "SOL_USDT", "MATIC_USDT"];
 
         for contract in contracts {
             let request = CountdownCancelRequest {

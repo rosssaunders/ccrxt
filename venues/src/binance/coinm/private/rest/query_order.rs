@@ -1,11 +1,12 @@
-use crate::binance::coinm::enums::{
-    OrderSide, OrderStatus, OrderType, PriceMatch, SelfTradePreventionMode, TimeInForce,
-    WorkingType,
-};
 use serde::{Deserialize, Serialize};
 
-use crate::binance::{
-    coinm::{RestResult, private::rest::client::RestClient},
+use crate::binance::coinm::{
+    RestResult,
+    enums::{
+        OrderSide, OrderStatus, OrderType, PriceMatch, SelfTradePreventionMode, TimeInForce,
+        WorkingType,
+    },
+    private::rest::client::RestClient,
 };
 
 const ORDER_ENDPOINT: &str = "/dapi/v1/order";
@@ -152,13 +153,8 @@ impl RestClient {
     ) -> RestResult<QueryOrderResponse> {
         let weight = 1;
         // HIGH PERFORMANCE: Use GET-specific function, no HTTP verb branching
-        self.send_get_signed_request(
-            ORDER_ENDPOINT,
-            params,
-            weight,
-            false,
-        )
-        .await
+        self.send_get_signed_request(ORDER_ENDPOINT, params, weight, false)
+            .await
     }
 }
 

@@ -63,9 +63,21 @@ impl<'de> Deserialize<'de> for MarkPriceKline {
     where
         D: serde::Deserializer<'de>,
     {
-        let array: (u64, Cow<'static, str>, Cow<'static, str>, Cow<'static, str>, Cow<'static, str>, Cow<'static, str>, u64, Cow<'static, str>, u64, Cow<'static, str>, Cow<'static, str>, Cow<'static, str>) = 
-            Deserialize::deserialize(deserializer)?;
-        
+        let array: (
+            u64,
+            Cow<'static, str>,
+            Cow<'static, str>,
+            Cow<'static, str>,
+            Cow<'static, str>,
+            Cow<'static, str>,
+            u64,
+            Cow<'static, str>,
+            u64,
+            Cow<'static, str>,
+            Cow<'static, str>,
+            Cow<'static, str>,
+        ) = Deserialize::deserialize(deserializer)?;
+
         Ok(MarkPriceKline {
             open_time: array.0,
             open: array.1,

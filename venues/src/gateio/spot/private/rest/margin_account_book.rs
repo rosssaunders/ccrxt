@@ -121,7 +121,7 @@ mod tests {
         assert_eq!(json["currency_pair"], "ETH_USDT");
         assert_eq!(json["from"], 1640995200);
         assert_eq!(json["limit"], 100);
-        
+
         // Fields that are None should be omitted
         let obj = json.as_object().unwrap();
         assert!(!obj.contains_key("currency"));
@@ -188,8 +188,8 @@ mod tests {
     fn test_margin_account_book_request_realistic_trade_history_scenario() {
         // Scenario: Get trade history for last week
         let from_time = 1640995200; // 1 week ago
-        let to_time = 1641600000;   // now
-        
+        let to_time = 1641600000; // now
+
         let request = MarginAccountBookRequest {
             currency_pair: Some("BTC_USDT".to_string()),
             currency: None,
@@ -316,7 +316,11 @@ mod tests {
             if from.is_some() {
                 assert!(obj.contains_key("from"), "Failed for case: {}", description);
             } else {
-                assert!(!obj.contains_key("from"), "Failed for case: {}", description);
+                assert!(
+                    !obj.contains_key("from"),
+                    "Failed for case: {}",
+                    description
+                );
             }
 
             if to.is_some() {

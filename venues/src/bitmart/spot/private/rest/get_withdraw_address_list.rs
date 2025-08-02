@@ -60,7 +60,9 @@ impl RestClient {
         &self,
         request: GetWithdrawAddressListRequest,
     ) -> RestResult<GetWithdrawAddressListResponse> {
-        self.send_get_signed_request(WITHDRAW_ADDRESS_LIST_ENDPOINT, &request,
+        self.send_get_signed_request(
+            WITHDRAW_ADDRESS_LIST_ENDPOINT,
+            &request,
             EndpointType::FundingAccount,
         )
         .await

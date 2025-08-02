@@ -3,7 +3,6 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, InstrumentType, OrderSide, RestResult};
 
-
 const TRADE_FILLS_ENDPOINT: &str = "api/v5/trade/fills";
 /// Request to get recent fills
 #[derive(Debug, Clone, Serialize)]

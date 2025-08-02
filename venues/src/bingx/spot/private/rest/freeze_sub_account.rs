@@ -65,9 +65,8 @@ impl RestClient {
         &self,
         request: &FreezeSubAccountRequest,
     ) -> RestResult<FreezeSubAccountResponse> {
-        self.send_post_signed_request(FREEZE_SUB_ACCOUNT_ENDPOINT, request, EndpointType::Account,
-        )
-        .await
+        self.send_post_signed_request(FREEZE_SUB_ACCOUNT_ENDPOINT, request, EndpointType::Account)
+            .await
     }
 }
 

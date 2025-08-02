@@ -2,8 +2,7 @@ use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
 use super::UsdmClient;
-use crate::binance::usdm::ConvertOrderStatus;
-use crate::binance::usdm::RestResult;
+use crate::binance::usdm::{ConvertOrderStatus, RestResult};
 
 /// Endpoint path for the accept convert quote API.
 const ACCEPT_CONVERT_QUOTE_ENDPOINT: &str = "/fapi/v1/convert/acceptQuote";
@@ -61,13 +60,8 @@ impl UsdmClient {
         &self,
         params: AcceptConvertQuoteRequest,
     ) -> RestResult<AcceptConvertQuoteResponse> {
-        self.send_post_signed_request(
-            ACCEPT_CONVERT_QUOTE_ENDPOINT,
-            params,
-            200,
-            false,
-        )
-        .await
+        self.send_post_signed_request(ACCEPT_CONVERT_QUOTE_ENDPOINT, params, 200, false)
+            .await
     }
 }
 

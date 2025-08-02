@@ -1,9 +1,9 @@
+use std::borrow::Cow;
+
 use serde::{Deserialize, Serialize};
 
 use super::UsdmClient;
-use crate::binance::usdm::RestResult;
-use crate::binance::usdm::enums::*;
-use std::borrow::Cow;
+use crate::binance::usdm::{RestResult, enums::*};
 
 const QUERY_ORDER_ENDPOINT: &str = "/fapi/v1/order";
 
@@ -135,13 +135,8 @@ impl UsdmClient {
     /// # Returns
     /// Returns a `QueryOrderResponse` containing order details.
     pub async fn query_order(&self, request: QueryOrderRequest) -> RestResult<QueryOrderResponse> {
-        self.send_get_signed_request(
-            QUERY_ORDER_ENDPOINT,
-            request,
-            2,
-            false,
-        )
-        .await
+        self.send_get_signed_request(QUERY_ORDER_ENDPOINT, request, 2, false)
+            .await
     }
 }
 

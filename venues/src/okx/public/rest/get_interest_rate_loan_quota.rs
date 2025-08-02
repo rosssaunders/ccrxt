@@ -3,7 +3,6 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
-
 const PUBLIC_INTEREST_RATE_LOAN_QUOTA_ENDPOINT: &str = "api/v5/public/interest-rate-loan-quota";
 /// Request parameters for getting interest rate and loan quota
 /// This endpoint does not require any parameters

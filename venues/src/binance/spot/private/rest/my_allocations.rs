@@ -107,13 +107,8 @@ impl RestClient {
         &self,
         params: MyAllocationsRequest,
     ) -> RestResult<Vec<MyAllocation>> {
-        self.send_get_signed_request(
-            GET_MY_ALLOCATIONS_ENDPOINT,
-            params,
-            20,
-            false,
-        )
-        .await
+        self.send_get_signed_request(GET_MY_ALLOCATIONS_ENDPOINT, params, 20, false)
+            .await
     }
 }
 

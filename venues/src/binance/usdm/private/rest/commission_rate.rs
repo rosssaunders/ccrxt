@@ -58,9 +58,7 @@ impl UsdmClient {
         &self,
         request: GetCommissionRateRequest,
     ) -> RestResult<CommissionRateResponse> {
-        self.send_get_signed_request(
-            COMMISSION_RATE_ENDPOINT,
-            request, 20, false)
+        self.send_get_signed_request(COMMISSION_RATE_ENDPOINT, request, 20, false)
             .await
     }
 }

@@ -252,7 +252,7 @@ mod tests {
     #[test]
     fn test_create_order_request_different_pairs() {
         let pairs = vec!["BTC_USDT", "ETH_BTC", "BNB_USDT", "SOL_USDC"];
-        
+
         for pair in pairs {
             let request = CreateOrderRequest {
                 currency_pair: pair.to_string(),
@@ -275,7 +275,7 @@ mod tests {
     #[test]
     fn test_create_order_request_different_amounts() {
         let amounts = vec!["0.001", "1.5", "100.0", "0.00000001", "999999.99999999"];
-        
+
         for amount in amounts {
             let request = CreateOrderRequest {
                 currency_pair: "BTC_USDT".to_string(),
@@ -298,7 +298,7 @@ mod tests {
     #[test]
     fn test_create_order_request_different_prices() {
         let prices = vec!["0.001", "30000", "100000.5", "0.00000001"];
-        
+
         for price in prices {
             let request = CreateOrderRequest {
                 currency_pair: "BTC_USDT".to_string(),
@@ -427,7 +427,7 @@ mod tests {
         assert_eq!(order.gt_discount, true);
         assert_eq!(order.gt_fee, "3.75");
         assert_eq!(order.fee, "15");
-        
+
         // Verify GT discount calculation
         let total_fee: f64 = order.fee.parse().unwrap();
         let gt_fee: f64 = order.gt_fee.parse().unwrap();
@@ -465,7 +465,7 @@ mod tests {
         let order: Order = serde_json::from_str(json).unwrap();
         assert_eq!(order.rebated_fee, "1.25");
         assert_eq!(order.rebated_fee_currency, "USDT");
-        
+
         // Verify rebate is positive
         let rebate: f64 = order.rebated_fee.parse().unwrap();
         assert!(rebate > 0.0);
@@ -504,7 +504,7 @@ mod tests {
         assert_eq!(order.amount, "1.0");
         assert_eq!(order.left, "0.8");
         assert_eq!(order.filled_amount, "0.2");
-        
+
         // Verify iceberg logic
         let total: f64 = order.amount.parse().unwrap();
         let filled: f64 = order.filled_amount.parse().unwrap();
@@ -557,7 +557,8 @@ mod tests {
         ];
 
         for (pair, _base, quote) in currencies {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "id": "12345",
                 "text": "test",
                 "create_time": "1640995200",
@@ -581,7 +582,9 @@ mod tests {
                 "gt_discount": false,
                 "rebated_fee": "0",
                 "rebated_fee_currency": "{}"
-            }}"#, pair, quote, quote);
+            }}"#,
+                pair, quote, quote
+            );
 
             let order: Order = serde_json::from_str(&json).unwrap();
             assert_eq!(order.currency_pair, pair);
@@ -662,7 +665,7 @@ mod tests {
 
         let json = serde_json::to_string(&original).unwrap();
         let deserialized: Order = serde_json::from_str(&json).unwrap();
-        
+
         assert_eq!(deserialized.id, original.id);
         assert_eq!(deserialized.text, original.text);
         assert_eq!(deserialized.amend_text, original.amend_text);

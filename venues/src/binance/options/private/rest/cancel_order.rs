@@ -145,11 +145,7 @@ impl RestClient {
             ));
         }
 
-        self.send_delete_signed_request(
-            CANCEL_ORDER_ENDPOINT,
-            params,
-            1,
-            true,)
-        .await
+        self.send_delete_signed_request(CANCEL_ORDER_ENDPOINT, params, 1, true)
+            .await
     }
 }

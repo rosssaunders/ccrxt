@@ -46,8 +46,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use rust_decimal_macros::dec;
+
+    use super::*;
 
     #[test]
     fn test_symbol_price_ticker_request_serialization() {
@@ -62,16 +63,8 @@ mod tests {
     #[test]
     fn test_symbol_price_ticker_request_serialization_different_underlyings() {
         let underlyings = vec![
-            "BTCUSDT",
-            "ETHUSDT",
-            "BNBUSDT",
-            "ADAUSDT",
-            "SOLUSDT",
-            "DOGEUSDT",
-            "XRPUSDT",
-            "DOTUSDT",
-            "LINKUSDT",
-            "UNIUSDT",
+            "BTCUSDT", "ETHUSDT", "BNBUSDT", "ADAUSDT", "SOLUSDT", "DOGEUSDT", "XRPUSDT",
+            "DOTUSDT", "LINKUSDT", "UNIUSDT",
         ];
 
         for underlying in underlyings {
@@ -423,7 +416,7 @@ mod tests {
 
         // Verify precision is preserved
         assert_eq!(response.index_price.to_string(), "35000.12345678");
-        
+
         // Verify decimal operations work correctly
         let doubled = response.index_price * dec!(2);
         assert_eq!(doubled.to_string(), "70000.24691356");
@@ -484,7 +477,8 @@ mod tests {
             "indexPrice": "1"
         }"#;
 
-        let response_minimal: SymbolPriceTickerResponse = serde_json::from_str(json_minimal).unwrap();
+        let response_minimal: SymbolPriceTickerResponse =
+            serde_json::from_str(json_minimal).unwrap();
         assert_eq!(response_minimal.index_price, dec!(1));
 
         // Test with maximum precision

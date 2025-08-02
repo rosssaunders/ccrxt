@@ -49,7 +49,9 @@ impl RestClient {
         &self,
         request: GetWithdrawQuotaRequest,
     ) -> RestResult<GetWithdrawQuotaResponse> {
-        self.send_get_signed_request(WITHDRAW_QUOTA_ENDPOINT, &request,
+        self.send_get_signed_request(
+            WITHDRAW_QUOTA_ENDPOINT,
+            &request,
             EndpointType::FundingAccount,
         )
         .await

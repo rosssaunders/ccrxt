@@ -40,9 +40,8 @@ impl RestClient {
     /// # API Documentation
     /// - [docs]: https://bingx-api.github.io/docs/#/en-us/spot/account-api.html#Query%20account%20uid
     pub async fn get_uid(&self, request: GetUidRequest) -> RestResult<GetUidResponse> {
-        self.send_get_signed_request(UID_ENDPOINT, &request, EndpointType::Account,
-        )
-        .await
+        self.send_get_signed_request(UID_ENDPOINT, &request, EndpointType::Account)
+            .await
     }
 }
 

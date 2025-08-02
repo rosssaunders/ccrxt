@@ -156,9 +156,10 @@ mod tests {
     #[test]
     fn test_currency_pair_different_fee_rates() {
         let fees = vec!["0", "0.001", "0.002", "0.005", "0.01", "0.1"];
-        
+
         for fee in fees {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "id": "PAIR_USDT",
                 "base": "PAIR",
                 "quote": "USDT",
@@ -168,7 +169,9 @@ mod tests {
                 "trade_status": "tradable",
                 "sell_start": 0,
                 "buy_start": 0
-            }}"#, fee);
+            }}"#,
+                fee
+            );
 
             let pair: CurrencyPair = serde_json::from_str(&json).unwrap();
             assert_eq!(pair.fee, fee);
@@ -178,9 +181,10 @@ mod tests {
     #[test]
     fn test_currency_pair_different_precisions() {
         let precisions = vec![(0, 0), (2, 2), (4, 4), (6, 6), (8, 8), (10, 10)];
-        
+
         for (amt_prec, price_prec) in precisions {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "id": "PAIR_USDT",
                 "base": "PAIR",
                 "quote": "USDT",
@@ -190,7 +194,9 @@ mod tests {
                 "trade_status": "tradable",
                 "sell_start": 0,
                 "buy_start": 0
-            }}"#, amt_prec, price_prec);
+            }}"#,
+                amt_prec, price_prec
+            );
 
             let pair: CurrencyPair = serde_json::from_str(&json).unwrap();
             assert_eq!(pair.amount_precision, amt_prec);
@@ -266,15 +272,15 @@ mod tests {
 
         let pairs: Vec<CurrencyPair> = serde_json::from_str(json).unwrap();
         assert_eq!(pairs.len(), 3);
-        
+
         assert_eq!(pairs[0].id, "BTC_USDT");
         assert_eq!(pairs[0].base, "BTC");
         assert_eq!(pairs[0].quote, "USDT");
-        
+
         assert_eq!(pairs[1].id, "ETH_USDT");
         assert_eq!(pairs[1].base, "ETH");
         assert_eq!(pairs[1].quote, "USDT");
-        
+
         assert_eq!(pairs[2].id, "BNB_USDT");
         assert_eq!(pairs[2].base, "BNB");
         assert_eq!(pairs[2].quote, "USDT");
@@ -366,7 +372,7 @@ mod tests {
 
         let json = serde_json::to_string(&original).unwrap();
         let deserialized: CurrencyPair = serde_json::from_str(&json).unwrap();
-        
+
         assert_eq!(deserialized.id, original.id);
         assert_eq!(deserialized.base, original.base);
         assert_eq!(deserialized.quote, original.quote);
@@ -385,9 +391,10 @@ mod tests {
     #[test]
     fn test_currency_pair_different_quote_currencies() {
         let quotes = vec!["USDT", "BTC", "ETH", "BUSD", "USDC"];
-        
+
         for quote in quotes {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "id": "TEST_{}",
                 "base": "TEST",
                 "quote": "{}",
@@ -397,7 +404,9 @@ mod tests {
                 "trade_status": "tradable",
                 "sell_start": 0,
                 "buy_start": 0
-            }}"#, quote, quote);
+            }}"#,
+                quote, quote
+            );
 
             let pair: CurrencyPair = serde_json::from_str(&json).unwrap();
             assert_eq!(pair.quote, quote);

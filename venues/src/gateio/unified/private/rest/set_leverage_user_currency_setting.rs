@@ -1,5 +1,7 @@
-use super::RestClient;
-use super::leverage::{LeverageConfig, SetLeverageConfigRequest};
+use super::{
+    RestClient,
+    leverage::{LeverageConfig, SetLeverageConfigRequest},
+};
 
 const LEVERAGE_USER_CURRENCY_SETTING_ENDPOINT: &str = "/unified/leverage/user_currency_setting";
 
@@ -38,7 +40,7 @@ mod tests {
     #[test]
     fn test_set_leverage_different_leverages() {
         let leverages = vec!["1", "2", "5", "10", "20", "50", "100"];
-        
+
         for leverage in leverages {
             let request = SetLeverageConfigRequest {
                 currency: "BTC".to_string(),
@@ -53,7 +55,7 @@ mod tests {
     #[test]
     fn test_set_leverage_different_currencies() {
         let currencies = vec!["BTC", "ETH", "USDT", "BNB", "SOL"];
-        
+
         for currency in currencies {
             let request = SetLeverageConfigRequest {
                 currency: currency.to_string(),
@@ -67,6 +69,9 @@ mod tests {
 
     #[test]
     fn test_leverage_user_currency_setting_endpoint() {
-        assert_eq!(LEVERAGE_USER_CURRENCY_SETTING_ENDPOINT, "/unified/leverage/user_currency_setting");
+        assert_eq!(
+            LEVERAGE_USER_CURRENCY_SETTING_ENDPOINT,
+            "/unified/leverage/user_currency_setting"
+        );
     }
 }

@@ -73,9 +73,7 @@ impl UsdmClient {
         &self,
         params: GetAccountConfigRequest,
     ) -> RestResult<AccountConfigResponse> {
-        self.send_get_signed_request(
-            ACCOUNT_CONFIG_ENDPOINT,
-            params, 5, false)
+        self.send_get_signed_request(ACCOUNT_CONFIG_ENDPOINT, params, 5, false)
             .await
     }
 }

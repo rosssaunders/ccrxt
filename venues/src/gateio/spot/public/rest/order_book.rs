@@ -125,7 +125,7 @@ mod tests {
     #[test]
     fn test_order_book_request_limit_edge_cases() {
         let limits = vec![1, 10, 50, 100];
-        
+
         for limit in limits {
             let request = OrderBookRequest {
                 currency_pair: "BTC_USDT".to_string(),
@@ -230,11 +230,11 @@ mod tests {
         assert_eq!(order_book.update, 1640995200000);
         assert_eq!(order_book.asks.len(), 3);
         assert_eq!(order_book.bids.len(), 3);
-        
+
         // Verify first ask
         assert_eq!(order_book.asks[0][0], "48500.50");
         assert_eq!(order_book.asks[0][1], "0.5");
-        
+
         // Verify first bid
         assert_eq!(order_book.bids[0][0], "48499.50");
         assert_eq!(order_book.bids[0][1], "0.5");
@@ -355,13 +355,16 @@ mod tests {
 
     #[test]
     fn test_order_book_max_id() {
-        let json = format!(r#"{{
+        let json = format!(
+            r#"{{
             "id": {},
             "current": 1640995900,
             "update": 1640995900000,
             "asks": [["100.00", "1.0"]],
             "bids": [["99.00", "1.0"]]
-        }}"#, i64::MAX);
+        }}"#,
+            i64::MAX
+        );
 
         let order_book: OrderBook = serde_json::from_str(&json).unwrap();
         assert_eq!(order_book.id, Some(i64::MAX));
@@ -441,17 +444,17 @@ mod tests {
 
         let json = serde_json::to_string(&original).unwrap();
         let deserialized: OrderBook = serde_json::from_str(&json).unwrap();
-        
+
         assert_eq!(deserialized.id, original.id);
         assert_eq!(deserialized.current, original.current);
         assert_eq!(deserialized.update, original.update);
         assert_eq!(deserialized.asks.len(), original.asks.len());
         assert_eq!(deserialized.bids.len(), original.bids.len());
-        
+
         for i in 0..original.asks.len() {
             assert_eq!(deserialized.asks[i], original.asks[i]);
         }
-        
+
         for i in 0..original.bids.len() {
             assert_eq!(deserialized.bids[i], original.bids[i]);
         }
@@ -483,23 +486,27 @@ mod tests {
         assert_eq!(order_book.id, Some(123456789));
         assert_eq!(order_book.asks.len(), 5);
         assert_eq!(order_book.bids.len(), 5);
-        
+
         // Verify asks are in ascending order
-        let ask_prices: Vec<f64> = order_book.asks.iter()
+        let ask_prices: Vec<f64> = order_book
+            .asks
+            .iter()
             .map(|level| level[0].parse::<f64>().unwrap())
             .collect();
         for i in 1..ask_prices.len() {
-            assert!(ask_prices[i] > ask_prices[i-1]);
+            assert!(ask_prices[i] > ask_prices[i - 1]);
         }
-        
+
         // Verify bids are in descending order
-        let bid_prices: Vec<f64> = order_book.bids.iter()
+        let bid_prices: Vec<f64> = order_book
+            .bids
+            .iter()
             .map(|level| level[0].parse::<f64>().unwrap())
             .collect();
         for i in 1..bid_prices.len() {
-            assert!(bid_prices[i] < bid_prices[i-1]);
+            assert!(bid_prices[i] < bid_prices[i - 1]);
         }
-        
+
         // Verify spread exists (best ask > best bid)
         assert!(ask_prices[0] > bid_prices[0]);
     }
@@ -522,12 +529,12 @@ mod tests {
         }"#;
 
         let order_book: OrderBook = serde_json::from_str(json).unwrap();
-        
+
         // Calculate spread
         let best_ask: f64 = order_book.asks[0][0].parse().unwrap();
         let best_bid: f64 = order_book.bids[0][0].parse().unwrap();
         let spread = best_ask - best_bid;
-        
+
         // Verify tight spread for stablecoin pair
         assert!(spread < 0.001);
         assert!(spread > 0.0);
@@ -537,19 +544,19 @@ mod tests {
     fn test_order_book_many_levels() {
         let mut asks = Vec::new();
         let mut bids = Vec::new();
-        
+
         // Generate 100 levels
         for i in 0..100 {
             asks.push(vec![
                 format!("{:.2}", 50000.0 + i as f64 * 0.01),
-                format!("{:.8}", 0.1 + i as f64 * 0.01)
+                format!("{:.8}", 0.1 + i as f64 * 0.01),
             ]);
             bids.push(vec![
                 format!("{:.2}", 49999.99 - i as f64 * 0.01),
-                format!("{:.8}", 0.1 + i as f64 * 0.01)
+                format!("{:.8}", 0.1 + i as f64 * 0.01),
             ]);
         }
-        
+
         let order_book = OrderBook {
             id: None,
             current: 1640995200,
@@ -557,7 +564,7 @@ mod tests {
             asks,
             bids,
         };
-        
+
         assert_eq!(order_book.asks.len(), 100);
         assert_eq!(order_book.bids.len(), 100);
     }

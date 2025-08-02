@@ -132,13 +132,8 @@ impl RestClient {
     /// Weight: 20
     /// Security: USER_DATA
     pub async fn get_account(&self, params: Option<AccountRequest>) -> RestResult<AccountResponse> {
-        self.send_get_signed_request(
-            GET_ACCOUNT_ENDPOINT,
-            params.unwrap_or_default(),
-            20,
-            false,
-        )
-        .await
+        self.send_get_signed_request(GET_ACCOUNT_ENDPOINT, params.unwrap_or_default(), 20, false)
+            .await
     }
 }
 

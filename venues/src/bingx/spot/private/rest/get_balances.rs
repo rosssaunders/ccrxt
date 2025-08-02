@@ -60,12 +60,8 @@ impl RestClient {
         &self,
         request: &GetBalancesRequest,
     ) -> RestResult<GetBalancesResponse> {
-        self.send_get_signed_request(
-            BALANCES_ENDPOINT,
-            request,
-            EndpointType::Account,
-        )
-        .await
+        self.send_get_signed_request(BALANCES_ENDPOINT, request, EndpointType::Account)
+            .await
     }
 }
 

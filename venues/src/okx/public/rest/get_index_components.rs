@@ -3,7 +3,6 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
-
 const MARKET_INDEX_COMPONENTS_ENDPOINT: &str = "api/v5/market/index-components";
 /// Request parameters for getting index components
 #[derive(Debug, Clone, Serialize, Deserialize)]

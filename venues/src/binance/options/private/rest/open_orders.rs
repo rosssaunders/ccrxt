@@ -142,12 +142,7 @@ impl RestClient {
     pub async fn get_open_orders(&self, params: OpenOrdersRequest) -> RestResult<Vec<OpenOrder>> {
         let weight = if params.symbol.is_some() { 1 } else { 40 };
 
-        self.send_get_signed_request(
-            GET_OPEN_ORDERS_ENDPOINT,
-            params,
-            weight,
-            false,
-        )
-        .await
+        self.send_get_signed_request(GET_OPEN_ORDERS_ENDPOINT, params, weight, false)
+            .await
     }
 }

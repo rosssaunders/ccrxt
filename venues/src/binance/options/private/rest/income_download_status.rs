@@ -62,12 +62,7 @@ impl RestClient {
         &self,
         request: IncomeDownloadStatusRequest,
     ) -> RestResult<IncomeDownloadStatusResponse> {
-        self.send_get_signed_request(
-            INCOME_DOWNLOAD_STATUS_ENDPOINT,
-            request,
-            5,
-            false,
-        )
-        .await
+        self.send_get_signed_request(INCOME_DOWNLOAD_STATUS_ENDPOINT, request, 5, false)
+            .await
     }
 }

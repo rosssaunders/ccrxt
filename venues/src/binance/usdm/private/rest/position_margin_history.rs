@@ -1,10 +1,10 @@
-use serde::{Deserialize, Serialize};
-use serde_repr::{Deserialize_repr, Serialize_repr};
 use std::borrow::Cow;
 
+use serde::{Deserialize, Serialize};
+use serde_repr::{Deserialize_repr, Serialize_repr};
+
 use super::UsdmClient;
-use crate::binance::usdm::RestResult;
-use crate::binance::usdm::enums::*;
+use crate::binance::usdm::{RestResult, enums::*};
 
 /// Endpoint path for position margin change history.
 const POSITION_MARGIN_HISTORY_ENDPOINT: &str = "/fapi/v1/positionMargin/history";
@@ -102,12 +102,8 @@ impl UsdmClient {
         &self,
         params: GetPositionMarginHistoryRequest,
     ) -> RestResult<Vec<PositionMarginHistoryEntry>> {
-        self.send_get_signed_request(
-            POSITION_MARGIN_HISTORY_ENDPOINT,
-            params,
-            1,
-            true,)
-        .await
+        self.send_get_signed_request(POSITION_MARGIN_HISTORY_ENDPOINT, params, 1, true)
+            .await
     }
 }
 

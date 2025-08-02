@@ -112,8 +112,14 @@ mod tests {
     #[test]
     fn test_different_contract_pairs() {
         let contracts = vec![
-            "BTC_USDT", "ETH_USDT", "ADA_USDT", "SOL_USDT",
-            "MATIC_USDT", "DOT_USDT", "AVAX_USDT", "LINK_USDT"
+            "BTC_USDT",
+            "ETH_USDT",
+            "ADA_USDT",
+            "SOL_USDT",
+            "MATIC_USDT",
+            "DOT_USDT",
+            "AVAX_USDT",
+            "LINK_USDT",
         ];
 
         for contract in contracts {
@@ -215,12 +221,15 @@ mod tests {
         ];
 
         for (tier, risk_limit, initial_rate, maintenance_rate, _description) in btc_tiers {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "tier": {},
                 "risk_limit": "{}",
                 "initial_rate": "{}",
                 "maintenance_rate": "{}"
-            }}"#, tier, risk_limit, initial_rate, maintenance_rate);
+            }}"#,
+                tier, risk_limit, initial_rate, maintenance_rate
+            );
 
             let tier_data: RiskLimitTier = serde_json::from_str(&json).unwrap();
             assert_eq!(tier_data.tier, tier);
@@ -248,12 +257,15 @@ mod tests {
         ];
 
         for (tier, risk_limit, initial_rate, maintenance_rate, _description) in eth_tiers {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "tier": {},
                 "risk_limit": "{}",
                 "initial_rate": "{}",
                 "maintenance_rate": "{}"
-            }}"#, tier, risk_limit, initial_rate, maintenance_rate);
+            }}"#,
+                tier, risk_limit, initial_rate, maintenance_rate
+            );
 
             let tier_data: RiskLimitTier = serde_json::from_str(&json).unwrap();
             assert_eq!(tier_data.tier, tier);
@@ -288,12 +300,15 @@ mod tests {
             let request_json = serde_json::to_value(&request).unwrap();
             assert_eq!(request_json["contract"], contract);
 
-            let tier_json = format!(r#"{{
+            let tier_json = format!(
+                r#"{{
                 "tier": {},
                 "risk_limit": "{}",
                 "initial_rate": "{}",
                 "maintenance_rate": "{}"
-            }}"#, tier, risk_limit, initial_rate, maintenance_rate);
+            }}"#,
+                tier, risk_limit, initial_rate, maintenance_rate
+            );
 
             let tier_data: RiskLimitTier = serde_json::from_str(&tier_json).unwrap();
             assert_eq!(tier_data.tier, tier);
@@ -320,15 +335,18 @@ mod tests {
         let mut prev_maintenance_rate = 0.0;
 
         for (tier, risk_limit, initial_rate, maintenance_rate) in progressive_tiers {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "tier": {},
                 "risk_limit": "{}",
                 "initial_rate": "{}",
                 "maintenance_rate": "{}"
-            }}"#, tier, risk_limit, initial_rate, maintenance_rate);
+            }}"#,
+                tier, risk_limit, initial_rate, maintenance_rate
+            );
 
             let tier_data: RiskLimitTier = serde_json::from_str(&json).unwrap();
-            
+
             let current_risk_limit: f64 = tier_data.risk_limit.parse().unwrap();
             let current_initial_rate: f64 = tier_data.initial_rate.parse().unwrap();
             let current_maintenance_rate: f64 = tier_data.maintenance_rate.parse().unwrap();
@@ -354,13 +372,17 @@ mod tests {
             (20, "1000000000", "1.0", "0.75", "Maximum tier"),
         ];
 
-        for (tier, risk_limit, initial_rate, maintenance_rate, _description) in high_tier_scenarios {
-            let json = format!(r#"{{
+        for (tier, risk_limit, initial_rate, maintenance_rate, _description) in high_tier_scenarios
+        {
+            let json = format!(
+                r#"{{
                 "tier": {},
                 "risk_limit": "{}",
                 "initial_rate": "{}",
                 "maintenance_rate": "{}"
-            }}"#, tier, risk_limit, initial_rate, maintenance_rate);
+            }}"#,
+                tier, risk_limit, initial_rate, maintenance_rate
+            );
 
             let tier_data: RiskLimitTier = serde_json::from_str(&json).unwrap();
             assert_eq!(tier_data.tier, tier);
@@ -387,15 +409,18 @@ mod tests {
         ];
 
         for (initial_rate, maintenance_rate, _description) in rate_scenarios {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "tier": 1,
                 "risk_limit": "1000000",
                 "initial_rate": "{}",
                 "maintenance_rate": "{}"
-            }}"#, initial_rate, maintenance_rate);
+            }}"#,
+                initial_rate, maintenance_rate
+            );
 
             let tier_data: RiskLimitTier = serde_json::from_str(&json).unwrap();
-            
+
             let initial: f64 = tier_data.initial_rate.parse().unwrap();
             let maintenance: f64 = tier_data.maintenance_rate.parse().unwrap();
 
@@ -414,19 +439,31 @@ mod tests {
             (1, "0", "0.01", "0.005", false, "Zero risk limit"),
             (1, "1000000", "0", "0.005", false, "Zero initial rate"),
             (1, "1000000", "0.01", "0", false, "Zero maintenance rate"),
-            (1, "1000000", "0.005", "0.01", false, "Maintenance > initial"),
+            (
+                1,
+                "1000000",
+                "0.005",
+                "0.01",
+                false,
+                "Maintenance > initial",
+            ),
         ];
 
-        for (tier, risk_limit, initial_rate, maintenance_rate, should_be_valid, _description) in validation_scenarios {
-            let json = format!(r#"{{
+        for (tier, risk_limit, initial_rate, maintenance_rate, should_be_valid, _description) in
+            validation_scenarios
+        {
+            let json = format!(
+                r#"{{
                 "tier": {},
                 "risk_limit": "{}",
                 "initial_rate": "{}",
                 "maintenance_rate": "{}"
-            }}"#, tier, risk_limit, initial_rate, maintenance_rate);
+            }}"#,
+                tier, risk_limit, initial_rate, maintenance_rate
+            );
 
             let tier_data: RiskLimitTier = serde_json::from_str(&json).unwrap();
-            
+
             let tier_num = tier_data.tier;
             let limit: f64 = tier_data.risk_limit.parse().unwrap();
             let initial: f64 = tier_data.initial_rate.parse().unwrap();
@@ -440,8 +477,11 @@ mod tests {
                 assert!(initial > maintenance);
             } else {
                 // For invalid scenarios, we can still parse but values are inappropriate
-                let is_valid = tier_num > 0 && limit > 0.0 && initial > 0.0 && 
-                               maintenance > 0.0 && initial > maintenance;
+                let is_valid = tier_num > 0
+                    && limit > 0.0
+                    && initial > 0.0
+                    && maintenance > 0.0
+                    && initial > maintenance;
                 assert!(!is_valid);
             }
         }
@@ -457,15 +497,18 @@ mod tests {
         ];
 
         for (tier, risk_limit, initial_rate, maintenance_rate, category) in tier_comparisons {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "tier": {},
                 "risk_limit": "{}",
                 "initial_rate": "{}",
                 "maintenance_rate": "{}"
-            }}"#, tier, risk_limit, initial_rate, maintenance_rate);
+            }}"#,
+                tier, risk_limit, initial_rate, maintenance_rate
+            );
 
             let tier_data: RiskLimitTier = serde_json::from_str(&json).unwrap();
-            
+
             let limit: f64 = tier_data.risk_limit.parse().unwrap();
             let initial: f64 = tier_data.initial_rate.parse().unwrap();
 
@@ -499,12 +542,15 @@ mod tests {
             let request_json = serde_json::to_value(&request).unwrap();
             assert_eq!(request_json["contract"], contract);
 
-            let tier_json = format!(r#"{{
+            let tier_json = format!(
+                r#"{{
                 "tier": {},
                 "risk_limit": "{}",
                 "initial_rate": "{}",
                 "maintenance_rate": "{}"
-            }}"#, tier, risk_limit, initial_rate, maintenance_rate);
+            }}"#,
+                tier, risk_limit, initial_rate, maintenance_rate
+            );
 
             let tier_data: RiskLimitTier = serde_json::from_str(&tier_json).unwrap();
             let limit: f64 = tier_data.risk_limit.parse().unwrap();
@@ -533,20 +579,23 @@ mod tests {
         ];
 
         for (initial_rate, expected_leverage, _description) in leverage_scenarios {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "tier": 1,
                 "risk_limit": "1000000",
                 "initial_rate": "{}",
                 "maintenance_rate": "0.005"
-            }}"#, initial_rate);
+            }}"#,
+                initial_rate
+            );
 
             let tier_data: RiskLimitTier = serde_json::from_str(&json).unwrap();
             let initial: f64 = tier_data.initial_rate.parse().unwrap();
-            
+
             // Calculate max leverage from initial margin rate
             let calculated_leverage = 1.0 / initial;
             let tolerance = 0.1; // 10% tolerance
-            
+
             assert!((calculated_leverage - expected_leverage).abs() < tolerance);
         }
     }
@@ -561,15 +610,18 @@ mod tests {
         ];
 
         for (tier, risk_limit, initial_rate, maintenance_rate, risk_level) in risk_scenarios {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "tier": {},
                 "risk_limit": "{}",
                 "initial_rate": "{}",
                 "maintenance_rate": "{}"
-            }}"#, tier, risk_limit, initial_rate, maintenance_rate);
+            }}"#,
+                tier, risk_limit, initial_rate, maintenance_rate
+            );
 
             let tier_data: RiskLimitTier = serde_json::from_str(&json).unwrap();
-            
+
             let limit: f64 = tier_data.risk_limit.parse().unwrap();
             let initial: f64 = tier_data.initial_rate.parse().unwrap();
             let maintenance: f64 = tier_data.maintenance_rate.parse().unwrap();
@@ -600,11 +652,11 @@ mod tests {
         }"#;
 
         let tier: RiskLimitTier = serde_json::from_str(json).unwrap();
-        
+
         // Verify precision is maintained
         assert_eq!(tier.initial_rate, "0.012345678");
         assert_eq!(tier.maintenance_rate, "0.006789123");
-        
+
         let initial: f64 = tier.initial_rate.parse().unwrap();
         let maintenance: f64 = tier.maintenance_rate.parse().unwrap();
         assert!(initial > maintenance);
@@ -620,16 +672,19 @@ mod tests {
         ];
 
         for (risk_limit, _description) in large_limits {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "tier": 10,
                 "risk_limit": "{}",
                 "initial_rate": "0.2",
                 "maintenance_rate": "0.1"
-            }}"#, risk_limit);
+            }}"#,
+                risk_limit
+            );
 
             let tier: RiskLimitTier = serde_json::from_str(&json).unwrap();
             assert_eq!(tier.risk_limit, risk_limit);
-            
+
             let limit: f64 = tier.risk_limit.parse().unwrap();
             assert!(limit >= 100000000.0);
         }
@@ -640,12 +695,15 @@ mod tests {
         let edge_tiers = vec![1, 5, 10, 15, 20, 25, 50, 100];
 
         for tier_num in edge_tiers {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "tier": {},
                 "risk_limit": "1000000",
                 "initial_rate": "0.01",
                 "maintenance_rate": "0.005"
-            }}"#, tier_num);
+            }}"#,
+                tier_num
+            );
 
             let tier: RiskLimitTier = serde_json::from_str(&json).unwrap();
             assert_eq!(tier.tier, tier_num);

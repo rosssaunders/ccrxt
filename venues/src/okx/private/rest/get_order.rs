@@ -3,7 +3,6 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, OrderSide, OrderType, RestResult};
 
-
 const TRADE_ORDER_ENDPOINT: &str = "api/v5/trade/order";
 /// Request to get order details
 #[derive(Debug, Clone, Serialize)]

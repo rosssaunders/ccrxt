@@ -1,8 +1,10 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::bingx::spot::enums::{OrderSide, OrderStatus, OrderType};
-use crate::bingx::spot::{EndpointType, RestResult};
+use crate::bingx::spot::{
+    EndpointType, RestResult,
+    enums::{OrderSide, OrderStatus, OrderType},
+};
 
 const OPEN_ORDERS_ENDPOINT: &str = "/openApi/spot/v1/trade/openOrders";
 
@@ -93,9 +95,8 @@ impl RestClient {
         &self,
         request: &GetOpenOrdersRequest,
     ) -> RestResult<GetOpenOrdersResponse> {
-        self.send_get_signed_request(OPEN_ORDERS_ENDPOINT, request, EndpointType::Trading,
-        )
-        .await
+        self.send_get_signed_request(OPEN_ORDERS_ENDPOINT, request, EndpointType::Trading)
+            .await
     }
 }
 

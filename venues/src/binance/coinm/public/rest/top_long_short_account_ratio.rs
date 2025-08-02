@@ -80,8 +80,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use rust_decimal::Decimal;
+
+    use super::*;
 
     #[test]
     fn test_request_serialization() {

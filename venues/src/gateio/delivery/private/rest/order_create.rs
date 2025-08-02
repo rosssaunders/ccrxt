@@ -1,6 +1,5 @@
 use super::RestClient;
-use crate::gateio::delivery::models::CreateDeliveryOrderRequest;
-use crate::gateio::delivery::models::DeliveryOrder;
+use crate::gateio::delivery::models::{CreateDeliveryOrderRequest, DeliveryOrder};
 
 const DELIVERY_ORDERS_ENDPOINT: &str = "/delivery/{}/orders";
 

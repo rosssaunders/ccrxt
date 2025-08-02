@@ -95,11 +95,8 @@ impl RestClient {
         &self,
         request: GetPositionInfoRequest,
     ) -> RestResult<GetPositionInfoResponse> {
-        self.send_get_request("/v5/position/list",
-            request,
-            EndpointType::Position,
-        )
-        .await
+        self.send_get_request("/v5/position/list", request, EndpointType::Position)
+            .await
     }
 }
 

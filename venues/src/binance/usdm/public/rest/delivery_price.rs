@@ -1,5 +1,6 @@
-use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
+
+use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 use crate::binance::usdm::RestResult;

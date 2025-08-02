@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
+use std::borrow::Cow;
+
 use reqwest::Method;
 use serde::{Deserialize, Serialize};
-use std::borrow::Cow;
 
 use super::UsdmClient;
 use crate::binance::usdm::RestResult;
@@ -88,19 +89,16 @@ impl UsdmClient {
         &self,
         request: GetTradeDownloadLinkByIdRequest,
     ) -> RestResult<TradeDownloadLinkByIdResponse> {
-        self.send_get_signed_request(
-            TRADE_DOWNLOAD_LINK_BY_ID_ENDPOINT,
-            request,
-            10,
-            true,)
-        .await
+        self.send_get_signed_request(TRADE_DOWNLOAD_LINK_BY_ID_ENDPOINT, request, 10, true)
+            .await
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use serde_json::json;
+
+    use super::*;
 
     #[test]
     fn test_request_serialization() {

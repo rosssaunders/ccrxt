@@ -81,12 +81,13 @@ impl RestClient {
         &mut self,
         trading_account_id: &str,
     ) -> RestResult<AssetBalancesResponse> {
-        let url = format!("{}?tradingAccountId={}", ASSET_BALANCES_ENDPOINT, trading_account_id);
+        let url = format!(
+            "{}?tradingAccountId={}",
+            ASSET_BALANCES_ENDPOINT, trading_account_id
+        );
 
-        self.send_get_authenticated_request(&url, (),
-            EndpointType::PrivateAssetBalances,
-        )
-        .await
+        self.send_get_authenticated_request(&url, (), EndpointType::PrivateAssetBalances)
+            .await
     }
 
     /// Get balance for a specific asset
@@ -106,13 +107,12 @@ impl RestClient {
     ) -> RestResult<SingleAssetBalanceResponse> {
         let url = format!(
             "{}?tradingAccountId={}",
-            SINGLE_ASSET_BALANCE_ENDPOINT.replace("{}", symbol), trading_account_id
+            SINGLE_ASSET_BALANCE_ENDPOINT.replace("{}", symbol),
+            trading_account_id
         );
 
-        self.send_get_authenticated_request(&url, (),
-            EndpointType::PrivateAssetBalances,
-        )
-        .await
+        self.send_get_authenticated_request(&url, (), EndpointType::PrivateAssetBalances)
+            .await
     }
 }
 

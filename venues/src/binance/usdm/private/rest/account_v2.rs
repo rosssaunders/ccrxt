@@ -1,8 +1,8 @@
-use super::UsdmClient;
-use crate::binance::usdm::RestResult;
-use crate::binance::usdm::enums::PositionSide;
 use reqwest::Method;
 use serde::{Deserialize, Serialize};
+
+use super::UsdmClient;
+use crate::binance::usdm::{RestResult, enums::PositionSide};
 
 /// Endpoint path for Account Information V2.
 const ACCOUNT_V2_ENDPOINT: &str = "/fapi/v2/account";
@@ -211,9 +211,7 @@ impl UsdmClient {
         &self,
         params: GetAccountV2Request,
     ) -> RestResult<AccountV2Response> {
-        self.send_get_signed_request(
-            ACCOUNT_V2_ENDPOINT,
-            params, 5, false)
+        self.send_get_signed_request(ACCOUNT_V2_ENDPOINT, params, 5, false)
             .await
     }
 }

@@ -3,7 +3,6 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::okx::{AdlType, EndpointType, InstrumentType, RestResult};
 
-
 const PUBLIC_INSURANCE_FUND_ENDPOINT: &str = "api/v5/public/insurance-fund";
 /// Insurance fund type for filtering insurance fund data
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]

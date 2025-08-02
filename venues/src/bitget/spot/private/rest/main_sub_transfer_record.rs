@@ -113,12 +113,8 @@ impl RestClient {
         params: GetMainSubTransferRecordRequest,
     ) -> RestResult<GetMainSubTransferRecordResponse> {
         let endpoint = "/api/v2/spot/account/sub-main-trans-record";
-        self.send_post_signed_request(endpoint, params,
-            20,
-            false,
-            None,
-        )
-        .await
+        self.send_post_signed_request(endpoint, params, 20, false, None)
+            .await
     }
 }
 

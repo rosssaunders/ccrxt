@@ -69,7 +69,10 @@ impl RestClient {
         &self,
         request: &EditSubAccountApiKeyRequest,
     ) -> RestResult<EditSubAccountApiKeyResponse> {
-        self.send_post_signed_request(EDIT_SUB_ACCOUNT_API_KEY_ENDPOINT, request, EndpointType::Account,
+        self.send_post_signed_request(
+            EDIT_SUB_ACCOUNT_API_KEY_ENDPOINT,
+            request,
+            EndpointType::Account,
         )
         .await
     }

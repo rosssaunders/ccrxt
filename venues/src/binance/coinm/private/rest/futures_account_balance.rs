@@ -1,8 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::binance::{
-    coinm::{RestResult, private::rest::client::RestClient},
-};
+use crate::binance::coinm::{RestResult, private::rest::client::RestClient};
 
 const BALANCE_ENDPOINT: &str = "/dapi/v1/balance";
 
@@ -75,13 +73,8 @@ impl RestClient {
         params: GetFuturesAccountBalanceRequest,
     ) -> RestResult<GetFuturesAccountBalanceResponse> {
         let weight = 1;
-        self.send_get_signed_request(
-            BALANCE_ENDPOINT,
-            params,
-            weight,
-            false,
-        )
-        .await
+        self.send_get_signed_request(BALANCE_ENDPOINT, params, weight, false)
+            .await
     }
 }
 

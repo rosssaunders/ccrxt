@@ -3,7 +3,6 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
-
 const ACCOUNT_MMP_CONFIG_ENDPOINT: &str = "api/v5/account/mmp-config";
 /// Request to get mmp config
 #[derive(Debug, Clone, Serialize)]

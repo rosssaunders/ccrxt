@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::RestClient;
-use super::order::FuturesOrder;
+use super::{RestClient, order::FuturesOrder};
 
 /// Request parameters for listing orders by time range
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
@@ -113,7 +112,10 @@ mod tests {
             let json = serde_json::to_value(&request).unwrap();
             let from_val = json["from"].as_i64().unwrap();
             let to_val = json["to"].as_i64().unwrap();
-            assert!(to_val > from_val, "To timestamp must be after from timestamp");
+            assert!(
+                to_val > from_val,
+                "To timestamp must be after from timestamp"
+            );
         }
     }
 
@@ -167,12 +169,7 @@ mod tests {
 
     #[test]
     fn test_contract_filters() {
-        let contracts = vec![
-            "BTC_USDT",
-            "ETH_USDT",
-            "SOL_USDT",
-            "MATIC_USDT",
-        ];
+        let contracts = vec!["BTC_USDT", "ETH_USDT", "SOL_USDT", "MATIC_USDT"];
 
         for contract in contracts {
             let request = ListOrdersByTimeRangeRequest {

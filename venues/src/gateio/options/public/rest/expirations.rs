@@ -43,7 +43,7 @@ mod tests {
     #[test]
     fn test_options_expirations_request_different_underlyings() {
         let underlyings = vec!["BTC_USDT", "ETH_USDT", "BNB_USDT", "SOL_USDT", "ADA_USDT"];
-        
+
         for underlying in underlyings {
             let request = OptionsExpirationsRequest {
                 underlying: underlying.to_string(),
@@ -81,19 +81,16 @@ mod tests {
         };
 
         let serialized = serde_urlencoded::to_string(&request).unwrap();
-        assert_eq!(serialized, "underlying=VERY_LONG_ASSET_NAME_WITH_MANY_CHARACTERS_USDT");
+        assert_eq!(
+            serialized,
+            "underlying=VERY_LONG_ASSET_NAME_WITH_MANY_CHARACTERS_USDT"
+        );
     }
 
     #[test]
     fn test_options_expirations_request_case_variations() {
-        let case_variations = vec![
-            "BTC_USDT",
-            "btc_usdt", 
-            "BTC_usdt",
-            "btc_USDT",
-            "Btc_Usdt"
-        ];
-        
+        let case_variations = vec!["BTC_USDT", "btc_usdt", "BTC_usdt", "btc_USDT", "Btc_Usdt"];
+
         for underlying in case_variations {
             let request = OptionsExpirationsRequest {
                 underlying: underlying.to_string(),
@@ -135,10 +132,10 @@ mod tests {
         let json = r#"[1640995200, 1641081600, 1641168000, 1641254400, 1641340800]"#;
         let expirations: Vec<i64> = serde_json::from_str(json).unwrap();
         assert_eq!(expirations.len(), 5);
-        
+
         // Verify timestamps are in ascending order
         for i in 1..expirations.len() {
-            assert!(expirations[i] > expirations[i-1]);
+            assert!(expirations[i] > expirations[i - 1]);
         }
     }
 
@@ -152,10 +149,10 @@ mod tests {
             1704326400,
             1705881600
         ]"#;
-        
+
         let expirations: Vec<i64> = serde_json::from_str(json).unwrap();
         assert_eq!(expirations.len(), 5);
-        
+
         // Verify all timestamps are in 2024 (reasonable for options expirations)
         for timestamp in &expirations {
             assert!(*timestamp >= 1704067200); // 2024-01-01
@@ -173,13 +170,13 @@ mod tests {
             1706313600,
             1706918400
         ]"#;
-        
+
         let expirations: Vec<i64> = serde_json::from_str(json).unwrap();
         assert_eq!(expirations.len(), 5);
-        
+
         // Verify weekly intervals (approximately 7 days = 604800 seconds)
         for i in 1..expirations.len() {
-            let interval = expirations[i] - expirations[i-1];
+            let interval = expirations[i] - expirations[i - 1];
             assert!(interval >= 604800 - 3600); // Allow 1 hour tolerance
             assert!(interval <= 604800 + 3600);
         }
@@ -195,13 +192,13 @@ mod tests {
             1714521600,
             1717200000
         ]"#;
-        
+
         let expirations: Vec<i64> = serde_json::from_str(json).unwrap();
         assert_eq!(expirations.len(), 5);
-        
+
         // Verify monthly-like intervals (28-31 days)
         for i in 1..expirations.len() {
-            let interval = expirations[i] - expirations[i-1];
+            let interval = expirations[i] - expirations[i - 1];
             assert!(interval >= 28 * 24 * 3600); // At least 28 days
             assert!(interval <= 31 * 24 * 3600); // At most 31 days
         }
@@ -248,7 +245,7 @@ mod tests {
             9223372036854775807,
             1700000000
         ]"#;
-        
+
         let expirations: Vec<i64> = serde_json::from_str(json).unwrap();
         assert_eq!(expirations.len(), 5);
         assert_eq!(expirations[0], 0);
@@ -277,17 +274,24 @@ mod tests {
         for i in 0..52 {
             timestamps.push(base_timestamp + i * 604800); // Add 1 week each time
         }
-        
-        let json = format!("[{}]", timestamps.iter().map(|t| t.to_string()).collect::<Vec<_>>().join(","));
+
+        let json = format!(
+            "[{}]",
+            timestamps
+                .iter()
+                .map(|t| t.to_string())
+                .collect::<Vec<_>>()
+                .join(",")
+        );
         let expirations: Vec<i64> = serde_json::from_str(&json).unwrap();
-        
+
         assert_eq!(expirations.len(), 52);
         assert_eq!(expirations[0], base_timestamp);
         assert_eq!(expirations[51], base_timestamp + 51 * 604800);
-        
+
         // Verify all are weekly intervals
         for i in 1..expirations.len() {
-            assert_eq!(expirations[i] - expirations[i-1], 604800);
+            assert_eq!(expirations[i] - expirations[i - 1], 604800);
         }
     }
 
@@ -305,15 +309,15 @@ mod tests {
             1708128000,
             1708732800
         ]"#;
-        
+
         let expirations: Vec<i64> = serde_json::from_str(json).unwrap();
         assert_eq!(expirations.len(), 9);
-        
+
         // Should be sorted
         for i in 1..expirations.len() {
-            assert!(expirations[i] > expirations[i-1]);
+            assert!(expirations[i] > expirations[i - 1]);
         }
-        
+
         // All should be reasonable future dates
         for timestamp in &expirations {
             assert!(*timestamp > 1700000000); // After Nov 2023
@@ -331,13 +335,13 @@ mod tests {
             1705708800,
             1706313600
         ]"#;
-        
+
         let expirations: Vec<i64> = serde_json::from_str(json).unwrap();
         assert_eq!(expirations.len(), 5);
-        
+
         // Verify chronological order
         for i in 1..expirations.len() {
-            assert!(expirations[i] > expirations[i-1]);
+            assert!(expirations[i] > expirations[i - 1]);
         }
     }
 
@@ -365,10 +369,10 @@ mod tests {
     #[test]
     fn test_options_expirations_serialization_round_trip() {
         let original_timestamps = vec![1640995200, 1641081600, 1641168000];
-        
+
         let json = serde_json::to_string(&original_timestamps).unwrap();
         let deserialized: Vec<i64> = serde_json::from_str(&json).unwrap();
-        
+
         assert_eq!(deserialized.len(), original_timestamps.len());
         for (i, timestamp) in original_timestamps.iter().enumerate() {
             assert_eq!(deserialized[i], *timestamp);
@@ -386,7 +390,7 @@ mod tests {
         let original = OptionsExpirationsRequest {
             underlying: "BTC_USDT".to_string(),
         };
-        
+
         let cloned = original.clone();
         assert_eq!(cloned.underlying, original.underlying);
     }
@@ -396,7 +400,7 @@ mod tests {
         let request = OptionsExpirationsRequest {
             underlying: "ETH_USDT".to_string(),
         };
-        
+
         let debug_str = format!("{:?}", request);
         assert!(debug_str.contains("ETH_USDT"));
         assert!(debug_str.contains("OptionsExpirationsRequest"));

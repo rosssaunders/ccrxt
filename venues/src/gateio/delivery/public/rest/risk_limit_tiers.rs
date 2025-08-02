@@ -147,13 +147,13 @@ mod tests {
 
         for (i, json_str) in btc_tiers.iter().enumerate() {
             let tier: DeliveryRiskLimitTier = serde_json::from_str(json_str).unwrap();
-            
+
             assert_eq!(tier.tier, (i + 1) as i32);
-            
+
             let risk_limit: f64 = tier.risk_limit.parse().unwrap();
             let initial_rate: f64 = tier.initial_rate.parse().unwrap();
             let maintenance_rate: f64 = tier.maintenance_rate.parse().unwrap();
-            
+
             // Risk limit should increase with tiers
             assert!(risk_limit > previous_risk_limit);
             // Initial rate should increase with tiers
@@ -162,7 +162,7 @@ mod tests {
             assert!(maintenance_rate < initial_rate);
             // Maintenance rate should be roughly half of initial rate
             assert!((maintenance_rate - initial_rate / 2.0).abs() < 0.001);
-            
+
             previous_risk_limit = risk_limit;
             previous_initial_rate = initial_rate;
         }
@@ -178,11 +178,11 @@ mod tests {
 
         for json_str in high_leverage_tiers {
             let tier: DeliveryRiskLimitTier = serde_json::from_str(json_str).unwrap();
-            
+
             let risk_limit: f64 = tier.risk_limit.parse().unwrap();
             let initial_rate: f64 = tier.initial_rate.parse().unwrap();
             let maintenance_rate: f64 = tier.maintenance_rate.parse().unwrap();
-            
+
             // High tier should have large risk limits
             assert!(risk_limit >= 50000000.0);
             // High tier should have higher margin rates
@@ -195,17 +195,26 @@ mod tests {
     #[test]
     fn test_altcoin_risk_limit_tiers() {
         let altcoin_tiers = vec![
-            (r#"{"tier": 1, "risk_limit": "50000", "initial_rate": "0.02", "maintenance_rate": "0.01"}"#, "ETH"),
-            (r#"{"tier": 1, "risk_limit": "100000", "initial_rate": "0.025", "maintenance_rate": "0.0125"}"#, "ADA"),
-            (r#"{"tier": 1, "risk_limit": "75000", "initial_rate": "0.03", "maintenance_rate": "0.015"}"#, "SOL"),
+            (
+                r#"{"tier": 1, "risk_limit": "50000", "initial_rate": "0.02", "maintenance_rate": "0.01"}"#,
+                "ETH",
+            ),
+            (
+                r#"{"tier": 1, "risk_limit": "100000", "initial_rate": "0.025", "maintenance_rate": "0.0125"}"#,
+                "ADA",
+            ),
+            (
+                r#"{"tier": 1, "risk_limit": "75000", "initial_rate": "0.03", "maintenance_rate": "0.015"}"#,
+                "SOL",
+            ),
         ];
 
         for (json_str, _coin) in altcoin_tiers {
             let tier: DeliveryRiskLimitTier = serde_json::from_str(json_str).unwrap();
-            
+
             let risk_limit: f64 = tier.risk_limit.parse().unwrap();
             let initial_rate: f64 = tier.initial_rate.parse().unwrap();
-            
+
             // Altcoins typically have lower risk limits than BTC
             assert!(risk_limit <= 100000.0);
             // Altcoins typically have higher initial margin requirements
@@ -216,11 +225,11 @@ mod tests {
     #[test]
     fn test_maximum_leverage_calculation() {
         let tiers = vec![
-            ("0.01", 100.0),    // 1% initial rate = 100x max leverage
-            ("0.02", 50.0),     // 2% initial rate = 50x max leverage
-            ("0.04", 25.0),     // 4% initial rate = 25x max leverage
-            ("0.05", 20.0),     // 5% initial rate = 20x max leverage
-            ("0.1", 10.0),      // 10% initial rate = 10x max leverage
+            ("0.01", 100.0), // 1% initial rate = 100x max leverage
+            ("0.02", 50.0),  // 2% initial rate = 50x max leverage
+            ("0.04", 25.0),  // 4% initial rate = 25x max leverage
+            ("0.05", 20.0),  // 5% initial rate = 20x max leverage
+            ("0.1", 10.0),   // 10% initial rate = 10x max leverage
         ];
 
         for (initial_rate_str, expected_max_leverage) in tiers {
@@ -233,7 +242,7 @@ mod tests {
 
             let initial_rate: f64 = tier.initial_rate.parse().unwrap();
             let max_leverage = 1.0 / initial_rate;
-            
+
             assert_eq!(max_leverage, expected_max_leverage);
         }
     }
@@ -257,11 +266,11 @@ mod tests {
             let curr_risk: f64 = tiers[i].risk_limit.parse().unwrap();
             let prev_initial: f64 = tiers[i - 1].initial_rate.parse().unwrap();
             let curr_initial: f64 = tiers[i].initial_rate.parse().unwrap();
-            
+
             // Each tier should have higher limits and rates
             assert!(curr_risk > prev_risk);
             assert!(curr_initial > prev_initial);
-            
+
             // Risk limit should increase more aggressively than rates
             let risk_increase = curr_risk / prev_risk;
             let rate_increase = curr_initial / prev_initial;
@@ -288,17 +297,17 @@ mod tests {
             let initial_rate: f64 = tier.initial_rate.parse().unwrap();
             let maintenance_rate: f64 = tier.maintenance_rate.parse().unwrap();
             let risk_limit: f64 = tier.risk_limit.parse().unwrap();
-            
+
             // Position should be within risk limit
             assert!(position_size <= risk_limit);
-            
+
             // Calculate margin requirements
             let initial_margin = position_size * initial_rate;
             let maintenance_margin = position_size * maintenance_rate;
-            
+
             // Initial margin should be higher than maintenance
             assert!(initial_margin > maintenance_margin);
-            
+
             // Verify reasonable margin amounts
             assert!(initial_margin >= position_size * 0.01); // At least 1%
             assert!(maintenance_margin >= position_size * 0.005); // At least 0.5%
@@ -325,10 +334,10 @@ mod tests {
 
         let cross_limit: f64 = cross_tier.risk_limit.parse().unwrap();
         let isolated_limit: f64 = isolated_tier.risk_limit.parse().unwrap();
-        
+
         // Cross margin should allow larger positions
         assert!(cross_limit > isolated_limit);
-        
+
         // But requires higher margin rates at high tiers
         let cross_rate: f64 = cross_tier.initial_rate.parse().unwrap();
         let isolated_rate: f64 = isolated_tier.initial_rate.parse().unwrap();
@@ -385,16 +394,16 @@ mod tests {
             };
 
             let maintenance_rate: f64 = tier.maintenance_rate.parse().unwrap();
-            
+
             // Lower maintenance rate means liquidation price is further from entry
             // Higher maintenance rate means liquidation price is closer to entry
             assert!(maintenance_rate > 0.0 && maintenance_rate < 1.0);
-            
+
             // For long position: liquidation_price = entry_price * (1 - maintenance_rate)
             // For short position: liquidation_price = entry_price * (1 + maintenance_rate)
             let long_liquidation_distance = maintenance_rate;
             let short_liquidation_distance = maintenance_rate;
-            
+
             assert_eq!(long_liquidation_distance, short_liquidation_distance);
         }
     }
@@ -445,12 +454,12 @@ mod tests {
 
         // Position at current tier limit
         let position_size = current_limit;
-        
+
         // If we want to increase position, we need to move to next tier
         let new_position_size = current_limit + 100000.0;
         assert!(new_position_size > current_limit);
         assert!(new_position_size <= next_limit);
-        
+
         // New tier requires higher margin
         let current_margin = position_size * current_initial;
         let new_margin = new_position_size * next_initial;
@@ -467,7 +476,7 @@ mod tests {
         };
 
         let risk_limit: f64 = tier.risk_limit.parse().unwrap();
-        
+
         // Positions close to risk limit
         let positions = vec![
             (risk_limit * 0.8, "80% of limit", true),
@@ -546,7 +555,7 @@ mod tests {
 
         let tiers: Vec<DeliveryRiskLimitTier> = serde_json::from_str(json).unwrap();
         assert_eq!(tiers.len(), 3);
-        
+
         // Verify tiers are in order
         for (i, tier) in tiers.iter().enumerate() {
             assert_eq!(tier.tier, (i + 1) as i32);

@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::RestClient;
-use super::order::FuturesOrder;
+use super::{RestClient, order::FuturesOrder};
 
 /// Request to amend a futures order
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -129,13 +128,7 @@ mod tests {
 
     #[test]
     fn test_amend_order_various_prices() {
-        let price_scenarios = vec![
-            "43000.0",
-            "43000.50",
-            "43000.25",
-            "0.001",
-            "999999.99",
-        ];
+        let price_scenarios = vec!["43000.0", "43000.50", "43000.25", "0.001", "999999.99"];
 
         for price in price_scenarios {
             let request = AmendFuturesOrderRequest {
@@ -207,7 +200,7 @@ mod tests {
         let improve_limit = AmendFuturesOrderRequest {
             settle: "USDT".to_string(),
             order_id: "lmt_11111".to_string(),
-            size: Some(2000), // Increase size
+            size: Some(2000),                   // Increase size
             price: Some("43100.0".to_string()), // Better price
             amend_text: Some("Improve order".to_string()),
         };

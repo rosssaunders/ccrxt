@@ -72,12 +72,7 @@ impl RestClient {
         &self,
         params: GetMmpConfigRequest,
     ) -> RestResult<MmpConfigResponse> {
-        self.send_get_signed_request(
-            GET_MMP_CONFIG_ENDPOINT,
-            params,
-            1,
-            false,
-        )
-        .await
+        self.send_get_signed_request(GET_MMP_CONFIG_ENDPOINT, params, 1, false)
+            .await
     }
 }

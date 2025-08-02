@@ -94,7 +94,9 @@ impl RestClient {
     /// # Returns
     /// Trading accounts information including balances, borrowing status, and fee rates
     pub async fn get_trading_accounts(&mut self) -> RestResult<TradingAccountsResponse> {
-        self.send_get_authenticated_request(TRADING_ACCOUNTS_ENDPOINT, (),
+        self.send_get_authenticated_request(
+            TRADING_ACCOUNTS_ENDPOINT,
+            (),
             EndpointType::PrivateTradingAccounts,
         )
         .await
@@ -115,10 +117,8 @@ impl RestClient {
     ) -> RestResult<TradingAccount> {
         let endpoint = SINGLE_TRADING_ACCOUNT_ENDPOINT.replace("{}", trading_account_id);
 
-        self.send_get_authenticated_request(&endpoint, (),
-            EndpointType::PrivateTradingAccounts,
-        )
-        .await
+        self.send_get_authenticated_request(&endpoint, (), EndpointType::PrivateTradingAccounts)
+            .await
     }
 }
 

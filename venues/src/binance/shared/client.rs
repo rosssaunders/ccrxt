@@ -216,10 +216,12 @@ impl PrivateBinanceClient {
     }
 
     /// ⚠️ DEPRECATED: Use verb-specific functions instead for better performance
-    /// 
+    ///
     /// This function remains for backward compatibility but creates branch prediction penalties.
     /// Use send_get_signed_request, send_post_signed_request, etc. instead.
-    #[deprecated(note = "Use verb-specific functions (send_get_signed_request, send_post_signed_request, etc.) for better performance")]
+    #[deprecated(
+        note = "Use verb-specific functions (send_get_signed_request, send_post_signed_request, etc.) for better performance"
+    )]
     pub async fn send_signed_request<T, R, E>(
         &self,
         endpoint: &str,
@@ -557,7 +559,7 @@ impl PublicBinanceClient {
     }
 
     /// Send an API-key-only request (MARKET_DATA security type)
-    /// 
+    ///
     /// This method is for endpoints that require an API key in the header
     /// but do not require request signing (like historical trades).
     pub async fn send_api_key_request<T, R, E>(
@@ -592,7 +594,8 @@ impl PublicBinanceClient {
             format!("{}{}", self.base_url, endpoint)
         };
 
-        let request_builder = self.client
+        let request_builder = self
+            .client
             .request(method, &url)
             .header("X-MBX-APIKEY", api_key.expose_secret()); // Add API key header
 

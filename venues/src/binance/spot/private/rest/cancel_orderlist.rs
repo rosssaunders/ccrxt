@@ -99,12 +99,8 @@ impl RestClient {
         &self,
         params: CancelOrderListRequest,
     ) -> RestResult<CancelOrderListResponse> {
-        self.send_delete_signed_request(
-            CANCEL_ORDERLIST_ENDPOINT,
-            params,
-            1,
-            true,)
-        .await
+        self.send_delete_signed_request(CANCEL_ORDERLIST_ENDPOINT, params, 1, true)
+            .await
     }
 }
 

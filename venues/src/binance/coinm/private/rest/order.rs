@@ -1,10 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-use crate::binance::{
-    coinm::{
-        OrderResponseType, OrderSide, OrderType, PositionSide, PriceMatch, RestResult,
-        SelfTradePreventionMode, TimeInForce, WorkingType, private::rest::client::RestClient,
-    },
+use crate::binance::coinm::{
+    OrderResponseType, OrderSide, OrderType, PositionSide, PriceMatch, RestResult,
+    SelfTradePreventionMode, TimeInForce, WorkingType, private::rest::client::RestClient,
 };
 
 const ORDER_ENDPOINT: &str = "/dapi/v1/order";
@@ -187,13 +185,8 @@ impl RestClient {
     pub async fn post_order(&self, params: NewOrderRequest) -> RestResult<NewOrderResponse> {
         let weight = 1;
         // HIGH PERFORMANCE: Use POST-specific function, no HTTP verb branching
-        self.send_post_signed_request(
-            ORDER_ENDPOINT,
-            params,
-            weight,
-            true,
-        )
-        .await
+        self.send_post_signed_request(ORDER_ENDPOINT, params, weight, true)
+            .await
     }
 }
 

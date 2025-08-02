@@ -115,12 +115,8 @@ impl RestClient {
     /// # API Documentation
     /// - [docs]: https://bingx-api.github.io/docs/#/en-us/spot/trade-api.html#Place%20order
     pub async fn place_order(&self, request: PlaceOrderRequest) -> RestResult<PlaceOrderResponse> {
-        self.send_post_signed_request(
-            PLACE_ORDER_ENDPOINT,
-            request,
-            EndpointType::Trading,
-        )
-        .await
+        self.send_post_signed_request(PLACE_ORDER_ENDPOINT, request, EndpointType::Trading)
+            .await
     }
 }
 

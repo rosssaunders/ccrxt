@@ -153,19 +153,16 @@ impl RestClient {
     /// Weight: 1
     /// Security: TRADE
     pub async fn new_oco_order(&self, params: OcoOrderRequest) -> RestResult<OcoOrderResponse> {
-        self.send_post_signed_request(
-            CREATE_OCO_ORDER_ENDPOINT,
-            params,
-            1,
-            true,)
-        .await
+        self.send_post_signed_request(CREATE_OCO_ORDER_ENDPOINT, params, 1, true)
+            .await
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use rust_decimal_macros::dec;
+
+    use super::*;
 
     #[test]
     fn test_oco_order_request_minimal_serialization() {

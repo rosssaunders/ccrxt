@@ -3,7 +3,6 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
-
 const MARKET_EXCHANGE_RATE_ENDPOINT: &str = "api/v5/market/exchange-rate";
 /// Exchange rate information
 #[derive(Debug, Clone, Serialize, Deserialize)]

@@ -179,7 +179,7 @@ mod tests {
     #[test]
     fn test_trades_request_limit_edge_cases() {
         let limits = vec![1, 100, 500, 1000];
-        
+
         for limit in limits {
             let request = TradesRequest {
                 currency_pair: "BTC_USDT".to_string(),
@@ -505,15 +505,15 @@ mod tests {
 
         let trades: Vec<Trade> = serde_json::from_str(json).unwrap();
         assert_eq!(trades.len(), 3);
-        
+
         assert_eq!(trades[0].id, "1");
         assert_eq!(trades[0].side, "buy");
         assert_eq!(trades[0].price, "48000.00");
-        
+
         assert_eq!(trades[1].id, "2");
         assert_eq!(trades[1].side, "sell");
         assert_eq!(trades[1].price, "48100.00");
-        
+
         assert_eq!(trades[2].id, "3");
         assert_eq!(trades[2].side, "buy");
         assert_eq!(trades[2].price, "48200.00");
@@ -607,7 +607,7 @@ mod tests {
 
         let json = serde_json::to_string(&original).unwrap();
         let deserialized: Trade = serde_json::from_str(&json).unwrap();
-        
+
         assert_eq!(deserialized.id, original.id);
         assert_eq!(deserialized.create_time, original.create_time);
         assert_eq!(deserialized.create_time_ms, original.create_time_ms);
@@ -646,13 +646,13 @@ mod tests {
         assert_eq!(trade.side, "buy");
         assert_eq!(trade.amount, "0.12345678"); // 8 decimal places for BTC
         assert_eq!(trade.price, "47234.56"); // 2 decimal places for USDT price
-        
+
         // Calculate trade value
         let amount: f64 = trade.amount.parse().unwrap();
         let price: f64 = trade.price.parse().unwrap();
         let trade_value = amount * price;
         assert!(trade_value > 5000.0 && trade_value < 6000.0); // ~$5,832
-        
+
         // Fee should be ~0.1% of amount for taker
         let fee: f64 = trade.fee.unwrap().parse().unwrap();
         let fee_percentage = fee / amount * 100.0;

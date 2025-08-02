@@ -161,12 +161,8 @@ impl RestClient {
     /// # Returns
     /// A result containing the trade fills or an error
     pub async fn get_fills(&self, request: GetFillsRequest) -> RestResult<GetFillsResponse> {
-        self.send_get_signed_request(GET_FILLS_ENDPOINT, request,
-            5,
-            false,
-            None,
-        )
-        .await
+        self.send_get_signed_request(GET_FILLS_ENDPOINT, request, 5, false, None)
+            .await
     }
 }
 

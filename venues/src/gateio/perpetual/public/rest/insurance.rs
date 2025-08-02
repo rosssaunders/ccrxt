@@ -126,15 +126,18 @@ mod tests {
         ];
 
         for (timestamp, balance, _description) in usdt_scenarios {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "t": {},
                 "b": {}
-            }}"#, timestamp, balance);
+            }}"#,
+                timestamp, balance
+            );
 
             let insurance: FuturesInsurance = serde_json::from_str(&json).unwrap();
             assert_eq!(insurance.t, timestamp);
             assert_eq!(insurance.b, balance);
-            
+
             // USDT insurance fund should be substantial
             assert!(insurance.b > 1000000.0); // > 1M USDT
             assert!(insurance.b < 100000000.0); // < 100M USDT
@@ -152,15 +155,18 @@ mod tests {
         ];
 
         for (timestamp, balance, _description) in btc_scenarios {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "t": {},
                 "b": {}
-            }}"#, timestamp, balance);
+            }}"#,
+                timestamp, balance
+            );
 
             let insurance: FuturesInsurance = serde_json::from_str(&json).unwrap();
             assert_eq!(insurance.t, timestamp);
             assert_eq!(insurance.b, balance);
-            
+
             // BTC insurance fund should be reasonable
             assert!(insurance.b > 100.0); // > 100 BTC
             assert!(insurance.b < 10000.0); // < 10K BTC
@@ -181,19 +187,22 @@ mod tests {
 
         let mut prev_timestamp = 0;
         for (timestamp, balance) in growth_pattern {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "t": {},
                 "b": {}
-            }}"#, timestamp, balance);
+            }}"#,
+                timestamp, balance
+            );
 
             let insurance: FuturesInsurance = serde_json::from_str(&json).unwrap();
             assert_eq!(insurance.t, timestamp);
             assert_eq!(insurance.b, balance);
-            
+
             // Verify timestamps are in ascending order
             assert!(insurance.t > prev_timestamp);
             prev_timestamp = insurance.t;
-            
+
             // Verify balance is positive
             assert!(insurance.b > 0.0);
         }
@@ -213,15 +222,18 @@ mod tests {
 
         let initial_balance = 12000000.0;
         for (timestamp, balance, _phase) in liquidation_event {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "t": {},
                 "b": {}
-            }}"#, timestamp, balance);
+            }}"#,
+                timestamp, balance
+            );
 
             let insurance: FuturesInsurance = serde_json::from_str(&json).unwrap();
             assert_eq!(insurance.t, timestamp);
             assert_eq!(insurance.b, balance);
-            
+
             // Verify balance doesn't drop too dramatically
             let drop_percentage = (initial_balance - insurance.b) / initial_balance;
             assert!(drop_percentage < 0.2); // < 20% drop
@@ -236,7 +248,7 @@ mod tests {
         }"#;
 
         let insurance: FuturesInsurance = serde_json::from_str(json).unwrap();
-        
+
         // Verify precision is maintained (within f64 precision limits)
         let expected = 15234567.123456789;
         let epsilon = 1e-7;
@@ -254,10 +266,13 @@ mod tests {
         ];
 
         for (balance, _description) in large_funds {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "t": 1640995200,
                 "b": {}
-            }}"#, balance);
+            }}"#,
+                balance
+            );
 
             let insurance: FuturesInsurance = serde_json::from_str(&json).unwrap();
             assert_eq!(insurance.b, balance);
@@ -275,10 +290,13 @@ mod tests {
         ];
 
         for (balance, _description) in small_funds {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "t": 1640995200,
                 "b": {}
-            }}"#, balance);
+            }}"#,
+                balance
+            );
 
             let insurance: FuturesInsurance = serde_json::from_str(&json).unwrap();
             assert_eq!(insurance.b, balance);
@@ -300,15 +318,18 @@ mod tests {
         ];
 
         for (timestamp, balance, _phase) in volatility_periods {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "t": {},
                 "b": {}
-            }}"#, timestamp, balance);
+            }}"#,
+                timestamp, balance
+            );
 
             let insurance: FuturesInsurance = serde_json::from_str(&json).unwrap();
             assert_eq!(insurance.t, timestamp);
             assert_eq!(insurance.b, balance);
-            
+
             // Even during stress, fund should remain substantial
             assert!(insurance.b > 10000000.0);
         }
@@ -332,10 +353,13 @@ mod tests {
             let request_json = serde_json::to_value(&request).unwrap();
             assert_eq!(request_json["settle"], settle);
 
-            let insurance_json = format!(r#"{{
+            let insurance_json = format!(
+                r#"{{
                 "t": 1640995200,
                 "b": {}
-            }}"#, balance);
+            }}"#,
+                balance
+            );
 
             let insurance: FuturesInsurance = serde_json::from_str(&insurance_json).unwrap();
             assert_eq!(insurance.b, balance);
@@ -353,10 +377,13 @@ mod tests {
         ];
 
         for (timestamp, _description) in timestamps {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "t": {},
                 "b": 15000000.0
-            }}"#, timestamp);
+            }}"#,
+                timestamp
+            );
 
             let insurance: FuturesInsurance = serde_json::from_str(&json).unwrap();
             assert_eq!(insurance.t, timestamp);
@@ -369,7 +396,7 @@ mod tests {
         let daily_snapshots = vec![
             (1640995200, 15000000.0), // Day 1
             (1641081600, 15125000.0), // Day 2
-            (1641168000, 15080000.0), // Day 3 
+            (1641168000, 15080000.0), // Day 3
             (1641254400, 15250000.0), // Day 4
             (1641340800, 15190000.0), // Day 5
             (1641427200, 15320000.0), // Day 6
@@ -377,15 +404,18 @@ mod tests {
         ];
 
         for (timestamp, balance) in daily_snapshots {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "t": {},
                 "b": {}
-            }}"#, timestamp, balance);
+            }}"#,
+                timestamp, balance
+            );
 
             let insurance: FuturesInsurance = serde_json::from_str(&json).unwrap();
             assert_eq!(insurance.t, timestamp);
             assert_eq!(insurance.b, balance);
-            
+
             // Fund should be stable day-to-day
             assert!(insurance.b > 14000000.0);
             assert!(insurance.b < 16000000.0);
@@ -406,14 +436,17 @@ mod tests {
 
         for (change, _description) in percentage_changes {
             let new_balance = base_balance * (1.0 + change);
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "t": 1640995200,
                 "b": {}
-            }}"#, new_balance);
+            }}"#,
+                new_balance
+            );
 
             let insurance: FuturesInsurance = serde_json::from_str(&json).unwrap();
             assert_eq!(insurance.b, new_balance);
-            
+
             // Verify the change is within reasonable bounds
             assert!(insurance.b > base_balance * 0.8); // > -20%
             assert!(insurance.b < base_balance * 1.2); // < +20%
@@ -430,10 +463,13 @@ mod tests {
         ];
 
         for (balance, _description) in minimal_balances {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "t": 1640995200,
                 "b": {}
-            }}"#, balance);
+            }}"#,
+                balance
+            );
 
             let insurance: FuturesInsurance = serde_json::from_str(&json).unwrap();
             assert_eq!(insurance.b, balance);
@@ -453,15 +489,18 @@ mod tests {
         ];
 
         for (timestamp, balance, _quarter) in seasonal_data {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "t": {},
                 "b": {}
-            }}"#, timestamp, balance);
+            }}"#,
+                timestamp, balance
+            );
 
             let insurance: FuturesInsurance = serde_json::from_str(&json).unwrap();
             assert_eq!(insurance.t, timestamp);
             assert_eq!(insurance.b, balance);
-            
+
             // Fund should show general growth trend
             assert!(insurance.b > 10000000.0);
         }
@@ -481,15 +520,18 @@ mod tests {
         ];
 
         for (timestamp, balance, _phase) in stress_scenarios {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "t": {},
                 "b": {}
-            }}"#, timestamp, balance);
+            }}"#,
+                timestamp, balance
+            );
 
             let insurance: FuturesInsurance = serde_json::from_str(&json).unwrap();
             assert_eq!(insurance.t, timestamp);
             assert_eq!(insurance.b, balance);
-            
+
             // Even in stress, fund should not be depleted
             assert!(insurance.b > 5000000.0);
         }
@@ -513,10 +555,13 @@ mod tests {
             let request_json = serde_json::to_value(&request).unwrap();
             assert_eq!(request_json["settle"], currency);
 
-            let insurance_json = format!(r#"{{
+            let insurance_json = format!(
+                r#"{{
                 "t": 1640995200,
                 "b": {}
-            }}"#, balance);
+            }}"#,
+                balance
+            );
 
             let insurance: FuturesInsurance = serde_json::from_str(&insurance_json).unwrap();
             assert_eq!(insurance.b, balance);

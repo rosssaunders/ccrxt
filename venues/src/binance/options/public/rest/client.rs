@@ -1,13 +1,13 @@
+use std::time::Instant;
+
 use crate::binance::{
     options::{Errors, RestResponse, RestResult},
-    shared::{client::PublicBinanceClient, Errors as SharedErrors},
+    shared::{Errors as SharedErrors, client::PublicBinanceClient},
 };
-use std::time::Instant;
 
 pub struct OptionsPublicRestClient(PublicBinanceClient);
 
 pub type RestClient = OptionsPublicRestClient;
-
 
 impl From<PublicBinanceClient> for OptionsPublicRestClient {
     fn from(client: PublicBinanceClient) -> Self {
@@ -17,10 +17,18 @@ impl From<PublicBinanceClient> for OptionsPublicRestClient {
 
 impl OptionsPublicRestClient {
     /// Create a new Options public REST client
-    pub fn new(base_url: impl Into<std::borrow::Cow<'static, str>>, client: reqwest::Client, rate_limiter: crate::binance::shared::RateLimiter) -> Self {
-        Self(PublicBinanceClient::new(base_url.into(), client, rate_limiter))
+    pub fn new(
+        base_url: impl Into<std::borrow::Cow<'static, str>>,
+        client: reqwest::Client,
+        rate_limiter: crate::binance::shared::RateLimiter,
+    ) -> Self {
+        Self(PublicBinanceClient::new(
+            base_url.into(),
+            client,
+            rate_limiter,
+        ))
     }
-    
+
     /// Send a public request with options-specific response type
     pub async fn send_public_request<T, R>(
         &self,
@@ -34,27 +42,26 @@ impl OptionsPublicRestClient {
         R: serde::Serialize,
     {
         let start = Instant::now();
-        
+
         // Call the shared client's send_public_request
         let shared_response = PublicBinanceClient::send_public_request::<T, R, SharedErrors>(
-            &self.0,
-            endpoint,
-            method,
-            params,
-            weight
+            &self.0, endpoint, method, params, weight,
         )
         .await
         .map_err(|e| match e {
             SharedErrors::ApiError(_) => Errors::Error("API error occurred".to_string()),
-            SharedErrors::RateLimitExceeded { retry_after } => {
-                Errors::Error(format!("Rate limit exceeded, retry after {:?}", retry_after))
-            },
+            SharedErrors::RateLimitExceeded { retry_after } => Errors::Error(format!(
+                "Rate limit exceeded, retry after {:?}",
+                retry_after
+            )),
             SharedErrors::InvalidApiKey() => Errors::InvalidApiKey(),
             SharedErrors::HttpError(err) => Errors::HttpError(err),
-            SharedErrors::SerializationError(msg) => Errors::Error(format!("Serialization error: {}", msg)),
+            SharedErrors::SerializationError(msg) => {
+                Errors::Error(format!("Serialization error: {}", msg))
+            }
             SharedErrors::Error(msg) => Errors::Error(msg),
         })?;
-        
+
         // Convert shared RestResponse to options RestResponse
         Ok(RestResponse {
             data: shared_response.data,

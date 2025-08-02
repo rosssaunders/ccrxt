@@ -1,8 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::binance::{
-    coinm::{RestResult, private::rest::client::RestClient},
-};
+use crate::binance::coinm::{RestResult, private::rest::client::RestClient};
 
 const ALL_OPEN_ORDERS_ENDPOINT: &str = "/dapi/v1/allOpenOrders";
 
@@ -48,13 +46,8 @@ impl RestClient {
         &self,
         params: CancelAllOpenOrdersRequest,
     ) -> RestResult<CancelAllOpenOrdersResponse> {
-        self.send_delete_signed_request(
-            ALL_OPEN_ORDERS_ENDPOINT,
-            params,
-            1,
-            true,
-        )
-        .await
+        self.send_delete_signed_request(ALL_OPEN_ORDERS_ENDPOINT, params, 1, true)
+            .await
     }
 }
 

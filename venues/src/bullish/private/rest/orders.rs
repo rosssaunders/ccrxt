@@ -183,12 +183,8 @@ impl RestClient {
     /// # Returns
     /// List of orders matching the filter criteria
     pub async fn get_orders(&mut self, params: GetOrdersParams) -> RestResult<Vec<Order>> {
-        self.send_get_authenticated_request(
-            ORDERS_ENDPOINT,
-            params,
-            EndpointType::PrivateOrders,
-        )
-        .await
+        self.send_get_authenticated_request(ORDERS_ENDPOINT, params, EndpointType::PrivateOrders)
+            .await
     }
 
     /// Create a new order
@@ -209,10 +205,8 @@ impl RestClient {
         &mut self,
         request: CreateOrderRequest,
     ) -> RestResult<CreateOrderResponse> {
-        self.send_post_signed_request(ORDERS_ENDPOINT, request,
-            EndpointType::PrivateOrders,
-        )
-        .await
+        self.send_post_signed_request(ORDERS_ENDPOINT, request, EndpointType::PrivateOrders)
+            .await
     }
 
     /// Get specific order by ID
@@ -235,18 +229,14 @@ impl RestClient {
             #[serde(rename = "tradingAccountId")]
             trading_account_id: String,
         }
-        
+
         let params = GetOrderParams {
             trading_account_id: trading_account_id.to_string(),
         };
         let endpoint = format!("{}{}", ORDERS_ENDPOINT, order_id);
-        
-        self.send_get_authenticated_request(
-            &endpoint,
-            params,
-            EndpointType::PrivateOrders,
-        )
-        .await
+
+        self.send_get_authenticated_request(&endpoint, params, EndpointType::PrivateOrders)
+            .await
     }
 }
 

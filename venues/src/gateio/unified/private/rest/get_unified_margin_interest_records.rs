@@ -1,5 +1,7 @@
-use super::RestClient;
-use super::unified_margin::{UnifiedMarginInterestRecordsRequest, UnifiedMarginInterestRecord};
+use super::{
+    RestClient,
+    unified_margin::{UnifiedMarginInterestRecord, UnifiedMarginInterestRecordsRequest},
+};
 
 const MARGIN_UNI_INTEREST_RECORDS_ENDPOINT: &str = "/margin/uni/interest_records";
 
@@ -25,7 +27,10 @@ mod tests {
 
     #[test]
     fn test_margin_uni_interest_records_endpoint() {
-        assert_eq!(MARGIN_UNI_INTEREST_RECORDS_ENDPOINT, "/margin/uni/interest_records");
+        assert_eq!(
+            MARGIN_UNI_INTEREST_RECORDS_ENDPOINT,
+            "/margin/uni/interest_records"
+        );
     }
 
     #[test]

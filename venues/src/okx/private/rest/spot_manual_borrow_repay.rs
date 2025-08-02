@@ -3,7 +3,6 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
-
 const ACCOUNT_SPOT_MANUAL_BORROW_REPAY_ENDPOINT: &str = "api/v5/account/spot-manual-borrow-repay";
 /// Request to spot manual borrow repay
 #[derive(Debug, Clone, Serialize)]

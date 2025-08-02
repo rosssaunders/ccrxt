@@ -340,7 +340,8 @@ impl RestClient {
         &self,
         params: LoanRecordsRequest,
     ) -> crate::gateio::spot::Result<Vec<LoanRecord>> {
-        self.get_with_query(MARGIN_LOAN_RECORDS_ENDPOINT, &params).await
+        self.get_with_query(MARGIN_LOAN_RECORDS_ENDPOINT, &params)
+            .await
     }
 
     /// Get a specific loan record
@@ -566,7 +567,8 @@ mod tests {
         let sides = vec!["lend", "borrow"];
 
         for side in sides {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "id": "12345678",
                 "side": "{}",
                 "currency": "USDT",
@@ -580,7 +582,9 @@ mod tests {
                 "status": "open",
                 "create_time": 1640995200,
                 "update_time": 1640995300
-            }}"#, side);
+            }}"#,
+                side
+            );
 
             let loan: Loan = serde_json::from_str(&json).unwrap();
             assert_eq!(loan.side, side);
@@ -592,7 +596,8 @@ mod tests {
         let statuses = vec!["open", "finished", "cancelled"];
 
         for status in statuses {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "id": "12345678",
                 "side": "borrow",
                 "currency": "USDT",
@@ -606,7 +611,9 @@ mod tests {
                 "status": "{}",
                 "create_time": 1640995200,
                 "update_time": 1640995300
-            }}"#, status);
+            }}"#,
+                status
+            );
 
             let loan: Loan = serde_json::from_str(&json).unwrap();
             assert_eq!(loan.status, status);
@@ -861,7 +868,7 @@ mod tests {
         let amount: f64 = loan.amount.parse().unwrap();
         let in_use: f64 = loan.in_use.parse().unwrap();
         let left: f64 = loan.left.parse().unwrap();
-        
+
         assert_eq!(amount, in_use + left);
         let utilization = in_use / amount;
         assert_eq!(utilization, 0.75); // 75% utilization
@@ -908,7 +915,7 @@ mod tests {
 
         let json = serde_json::to_value(&request).unwrap();
         assert_eq!(json["mode"], "all");
-        
+
         // No amount specified for full repayment
         let obj = json.as_object().unwrap();
         assert!(!obj.contains_key("amount"));
@@ -1013,16 +1020,16 @@ mod tests {
         }"#;
 
         let loan: Loan = serde_json::from_str(json).unwrap();
-        
+
         // Calculate expected annual interest
         let principal: f64 = loan.amount.parse().unwrap();
         let rate: f64 = loan.rate.parse().unwrap();
         let days = loan.days as f64;
-        
+
         let annual_interest = principal * rate;
         let daily_interest = annual_interest / 365.0;
         let total_interest = daily_interest * days;
-        
+
         assert_eq!(annual_interest, 1000.0); // 10% of 10,000
         assert_eq!(total_interest, 1000.0); // Full year
     }
@@ -1373,7 +1380,7 @@ mod tests {
         assert!(json.as_object().unwrap().contains_key("currency"));
         assert!(json.as_object().unwrap().contains_key("currency_pair"));
         assert!(json.as_object().unwrap().contains_key("amount"));
-        
+
         // Verify required fields are strings
         assert!(json["side"].is_string());
         assert!(json["currency"].is_string());
@@ -1394,7 +1401,7 @@ mod tests {
         assert!(json.as_object().unwrap().contains_key("currency"));
         assert!(json.as_object().unwrap().contains_key("currency_pair"));
         assert!(json.as_object().unwrap().contains_key("mode"));
-        
+
         // Verify required fields are strings
         assert!(json["currency"].is_string());
         assert!(json["currency_pair"].is_string());

@@ -1,8 +1,10 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::bingx::spot::enums::{OrderSide, OrderStatus, OrderType, TimeInForce};
-use crate::bingx::spot::{EndpointType, RestResult};
+use crate::bingx::spot::{
+    EndpointType, RestResult,
+    enums::{OrderSide, OrderStatus, OrderType, TimeInForce},
+};
 
 const PLACE_MULTIPLE_ORDERS_ENDPOINT: &str = "/openApi/spot/v1/trade/batchOrders";
 
@@ -109,7 +111,10 @@ impl RestClient {
         &self,
         request: &PlaceMultipleOrdersRequest,
     ) -> RestResult<PlaceMultipleOrdersResponse> {
-        self.send_post_signed_request(PLACE_MULTIPLE_ORDERS_ENDPOINT, request, EndpointType::Trading,
+        self.send_post_signed_request(
+            PLACE_MULTIPLE_ORDERS_ENDPOINT,
+            request,
+            EndpointType::Trading,
         )
         .await
     }

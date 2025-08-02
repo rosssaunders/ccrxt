@@ -165,8 +165,12 @@ impl RestClient {
         &self,
         request: GetAccountBalanceRequest,
     ) -> RestResult<OkxApiResponse<AccountBalance>> {
-        self.send_get_request(GET_ACCOUNT_BALANCE_ENDPOINT, request, EndpointType::PrivateAccount)
-            .await
+        self.send_get_request(
+            GET_ACCOUNT_BALANCE_ENDPOINT,
+            request,
+            EndpointType::PrivateAccount,
+        )
+        .await
     }
 }
 

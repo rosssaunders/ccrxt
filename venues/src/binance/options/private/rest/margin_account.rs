@@ -107,12 +107,7 @@ impl RestClient {
         &self,
         params: MarginAccountRequest,
     ) -> RestResult<MarginAccount> {
-        self.send_get_signed_request(
-            GET_MARGIN_ACCOUNT_ENDPOINT,
-            params,
-            1,
-            false,
-        )
-        .await
+        self.send_get_signed_request(GET_MARGIN_ACCOUNT_ENDPOINT, params, 1, false)
+            .await
     }
 }

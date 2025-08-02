@@ -110,7 +110,8 @@ impl RestClient {
         &self,
         params: TransferableRequest,
     ) -> crate::gateio::spot::Result<TransferableAmount> {
-        self.get_with_query(MARGIN_TRANSFERABLE_ENDPOINT, &params).await
+        self.get_with_query(MARGIN_TRANSFERABLE_ENDPOINT, &params)
+            .await
     }
 
     /// Get borrowable amount
@@ -121,7 +122,8 @@ impl RestClient {
         &self,
         params: BorrowableRequest,
     ) -> crate::gateio::spot::Result<BorrowableAmount> {
-        self.get_with_query(MARGIN_BORROWABLE_ENDPOINT, &params).await
+        self.get_with_query(MARGIN_BORROWABLE_ENDPOINT, &params)
+            .await
     }
 
     /// Get auto repay settings
@@ -207,13 +209,16 @@ mod tests {
         ];
 
         for (currency, available, locked, lent, total_lent) in currencies {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "currency": "{}",
                 "available": "{}",
                 "locked": "{}",
                 "lent": "{}",
                 "total_lent": "{}"
-            }}"#, currency, available, locked, lent, total_lent);
+            }}"#,
+                currency, available, locked, lent, total_lent
+            );
 
             let account: FundingAccount = serde_json::from_str(&json).unwrap();
             assert_eq!(account.currency, currency);
@@ -283,10 +288,13 @@ mod tests {
         ];
 
         for (currency, amount) in amounts {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "currency": "{}",
                 "amount": "{}"
-            }}"#, currency, amount);
+            }}"#,
+                currency, amount
+            );
 
             let transferable: TransferableAmount = serde_json::from_str(&json).unwrap();
             assert_eq!(transferable.currency, currency);
@@ -353,10 +361,13 @@ mod tests {
         ];
 
         for (currency, amount) in limits {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "currency": "{}",
                 "amount": "{}"
-            }}"#, currency, amount);
+            }}"#,
+                currency, amount
+            );
 
             let borrowable: BorrowableAmount = serde_json::from_str(&json).unwrap();
             assert_eq!(borrowable.currency, currency);
@@ -412,9 +423,12 @@ mod tests {
         let statuses = vec!["on", "off"];
 
         for status in statuses {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "status": "{}"
-            }}"#, status);
+            }}"#,
+                status
+            );
 
             let setting: AutoRepaySetting = serde_json::from_str(&json).unwrap();
             assert_eq!(setting.status, status);
@@ -424,9 +438,7 @@ mod tests {
     #[test]
     fn test_funding_accounts_request_realistic_all_currencies_scenario() {
         // Scenario: Get all funding accounts overview
-        let request = FundingAccountsRequest {
-            currency: None,
-        };
+        let request = FundingAccountsRequest { currency: None };
 
         let json = serde_json::to_value(&request).unwrap();
         let obj = json.as_object().unwrap();
@@ -456,7 +468,7 @@ mod tests {
 
         let account: FundingAccount = serde_json::from_str(json).unwrap();
         assert_eq!(account.currency, "USDT");
-        
+
         // Verify lending calculations
         let available: f64 = account.available.parse().unwrap();
         let locked: f64 = account.locked.parse().unwrap();
@@ -790,7 +802,7 @@ mod tests {
 
         let json = serde_json::to_value(&request).unwrap();
         assert!(json.as_object().unwrap().contains_key("currency"));
-        
+
         // Verify currency is a string
         assert!(json["currency"].is_string());
     }
@@ -805,7 +817,7 @@ mod tests {
         let json = serde_json::to_value(&request).unwrap();
         assert!(json.as_object().unwrap().contains_key("currency"));
         assert!(json.as_object().unwrap().contains_key("currency_pair"));
-        
+
         // Verify required fields are strings
         assert!(json["currency"].is_string());
         assert!(json["currency_pair"].is_string());
@@ -821,7 +833,7 @@ mod tests {
         let json = serde_json::to_value(&request).unwrap();
         assert!(json.as_object().unwrap().contains_key("currency"));
         assert!(json.as_object().unwrap().contains_key("currency_pair"));
-        
+
         // Verify required fields are strings
         assert!(json["currency"].is_string());
         assert!(json["currency_pair"].is_string());
@@ -835,7 +847,7 @@ mod tests {
 
         let json = serde_json::to_value(&request).unwrap();
         assert!(json.as_object().unwrap().contains_key("status"));
-        
+
         // Verify status is a string
         assert!(json["status"].is_string());
     }
@@ -908,9 +920,7 @@ mod tests {
         };
 
         // Test without currency
-        let request_without_currency = FundingAccountsRequest {
-            currency: None,
-        };
+        let request_without_currency = FundingAccountsRequest { currency: None };
 
         let json_with = serde_json::to_value(&request_with_currency).unwrap();
         let json_without = serde_json::to_value(&request_without_currency).unwrap();
@@ -934,9 +944,7 @@ mod tests {
         };
 
         // Test without status
-        let request_without_status = AutoRepayRequest {
-            status: None,
-        };
+        let request_without_status = AutoRepayRequest { status: None };
 
         let json_with = serde_json::to_value(&request_with_status).unwrap();
         let json_without = serde_json::to_value(&request_without_status).unwrap();
@@ -963,15 +971,15 @@ mod tests {
         }"#;
 
         let account: FundingAccount = serde_json::from_str(json).unwrap();
-        
+
         // Verify balance calculations
         let available: f64 = account.available.parse().unwrap();
         let locked: f64 = account.locked.parse().unwrap();
         let lent: f64 = account.lent.parse().unwrap();
-        
+
         let current_balance = available + locked + lent;
         assert_eq!(current_balance, 30000.0);
-        
+
         let total_lent: f64 = account.total_lent.parse().unwrap();
         assert_eq!(total_lent, 30000.0);
     }

@@ -65,11 +65,8 @@ impl RestClient {
         &self,
         request: GetOrderHistoryRequest,
     ) -> RestResult<GetOrderHistoryResponse> {
-        self.send_get_request("/v5/order/history",
-            request,
-            EndpointType::Trade,
-        )
-        .await
+        self.send_get_request("/v5/order/history", request, EndpointType::Trade)
+            .await
     }
 }
 

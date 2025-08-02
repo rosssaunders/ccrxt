@@ -490,8 +490,13 @@ impl RestClient {
         T: DeserializeOwned,
         P: Serialize,
     {
-        self.send_request(endpoint, reqwest::Method::POST, Some(&params), endpoint_type)
-            .await
+        self.send_request(
+            endpoint,
+            reqwest::Method::POST,
+            Some(&params),
+            endpoint_type,
+        )
+        .await
     }
 
     /// Send a PUT request to a private endpoint
@@ -536,8 +541,13 @@ impl RestClient {
         T: DeserializeOwned,
         P: Serialize,
     {
-        self.send_request(endpoint, reqwest::Method::DELETE, Some(&params), endpoint_type)
-            .await
+        self.send_request(
+            endpoint,
+            reqwest::Method::DELETE,
+            Some(&params),
+            endpoint_type,
+        )
+        .await
     }
 
     /// Send a GET request to a private endpoint with pagination
@@ -559,8 +569,13 @@ impl RestClient {
         T: DeserializeOwned,
         P: Serialize,
     {
-        self.send_request_with_pagination(endpoint, reqwest::Method::GET, Some(&params), endpoint_type)
-            .await
+        self.send_request_with_pagination(
+            endpoint,
+            reqwest::Method::GET,
+            Some(&params),
+            endpoint_type,
+        )
+        .await
     }
 
     /// Send a POST request to a private endpoint with pagination
@@ -582,8 +597,13 @@ impl RestClient {
         T: DeserializeOwned,
         P: Serialize,
     {
-        self.send_request_with_pagination(endpoint, reqwest::Method::POST, Some(&params), endpoint_type)
-            .await
+        self.send_request_with_pagination(
+            endpoint,
+            reqwest::Method::POST,
+            Some(&params),
+            endpoint_type,
+        )
+        .await
     }
 
     /// Send a GET request to a private endpoint with headers
@@ -628,8 +648,13 @@ impl RestClient {
         T: DeserializeOwned,
         P: Serialize,
     {
-        self.send_request_with_headers(endpoint, reqwest::Method::POST, Some(&params), endpoint_type)
-            .await
+        self.send_request_with_headers(
+            endpoint,
+            reqwest::Method::POST,
+            Some(&params),
+            endpoint_type,
+        )
+        .await
     }
 }
 

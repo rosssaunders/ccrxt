@@ -1,7 +1,7 @@
+use std::{collections::HashMap, time::Duration};
+
 use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
-use std::time::Duration;
 
 #[derive(Debug, Clone)]
 pub struct Request {
@@ -50,19 +50,19 @@ impl Response {
 pub enum HttpError {
     #[error("Network error: {0}")]
     Network(String),
-    
+
     #[error("Timeout error")]
     Timeout,
-    
+
     #[error("Invalid URL: {0}")]
     InvalidUrl(String),
-    
+
     #[error("Decode error: {0}")]
     Decode(String),
-    
+
     #[error("HTTP error: status {status}, body: {body}")]
     Http { status: u16, body: String },
-    
+
     #[error("Unknown error: {0}")]
     Unknown(String),
 }
@@ -113,20 +113,21 @@ impl RequestBuilder {
     pub fn query<T: Serialize>(mut self, params: &T) -> Result<Self, HttpError> {
         let query_string = serde_urlencoded::to_string(params)
             .map_err(|e| HttpError::Unknown(format!("Failed to serialize query params: {}", e)))?;
-        
+
         for pair in query_string.split('&') {
             if let Some((key, value)) = pair.split_once('=') {
                 self.query.push((key.to_string(), value.to_string()));
             }
         }
-        
+
         Ok(self)
     }
 
     pub fn json<T: Serialize>(mut self, json: &T) -> Result<Self, HttpError> {
         let body = serde_json::to_vec(json)
             .map_err(|e| HttpError::Unknown(format!("Failed to serialize JSON: {}", e)))?;
-        self.headers.insert("Content-Type".to_string(), "application/json".to_string());
+        self.headers
+            .insert("Content-Type".to_string(), "application/json".to_string());
         self.body = Some(body);
         Ok(self)
     }
@@ -143,21 +144,22 @@ impl RequestBuilder {
 
     pub fn build(self) -> Request {
         let mut url = self.url;
-        
+
         if !self.query.is_empty() {
-            let query_string = self.query
+            let query_string = self
+                .query
                 .into_iter()
                 .map(|(k, v)| format!("{}={}", k, v))
                 .collect::<Vec<_>>()
                 .join("&");
-            
+
             url = if url.contains('?') {
                 format!("{}&{}", url, query_string)
             } else {
                 format!("{}?{}", url, query_string)
             };
         }
-        
+
         Request {
             method: self.method,
             url,

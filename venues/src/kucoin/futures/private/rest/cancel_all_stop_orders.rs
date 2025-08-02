@@ -26,7 +26,7 @@ impl super::RestClient {
         request: CancelAllStopOrdersRequest,
     ) -> Result<(RestResponse<CancelAllStopOrdersResponse>, ResponseHeaders)> {
         const CANCEL_ALL_STOP_ORDERS_ENDPOINT: &str = "/api/v1/stopOrders";
-        
+
         let params = if let Some(symbol) = request.symbol {
             let mut params = std::collections::HashMap::new();
             params.insert("symbol".to_string(), symbol);
@@ -34,7 +34,7 @@ impl super::RestClient {
         } else {
             None
         };
-        
+
         self.delete(CANCEL_ALL_STOP_ORDERS_ENDPOINT, params).await
     }
 }
@@ -56,9 +56,7 @@ mod tests {
 
     #[test]
     fn test_cancel_all_stop_orders_request_serialization_without_symbol() {
-        let request = CancelAllStopOrdersRequest {
-            symbol: None,
-        };
+        let request = CancelAllStopOrdersRequest { symbol: None };
 
         let json = serde_json::to_string(&request).unwrap();
         let expected = r#"{}"#;

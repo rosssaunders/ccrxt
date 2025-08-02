@@ -123,19 +123,16 @@ impl RestClient {
         &self,
         params: CancelOrderRequest,
     ) -> RestResult<CancelOrderResponse> {
-        self.send_delete_signed_request(
-            CANCEL_ORDER_ENDPOINT,
-            params,
-            1,
-            true,)
-        .await
+        self.send_delete_signed_request(CANCEL_ORDER_ENDPOINT, params, 1, true)
+            .await
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use rust_decimal_macros::dec;
+
+    use super::*;
 
     #[test]
     fn test_cancel_order_request_with_order_id_serialization() {

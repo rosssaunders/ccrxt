@@ -1,7 +1,6 @@
 use serde::Serialize;
 
-use super::RestClient;
-use super::order::OptionsOrder;
+use super::{RestClient, order::OptionsOrder};
 
 const LIST_OPTIONS_ORDERS_ENDPOINT: &str = "/options/orders";
 

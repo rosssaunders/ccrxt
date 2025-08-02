@@ -273,19 +273,16 @@ impl RestClient {
         &self,
         params: OtocoOrderRequest,
     ) -> RestResult<OtocoOrderResponse> {
-        self.send_post_signed_request(
-            CREATE_OTOCO_ORDER_ENDPOINT,
-            params,
-            1,
-            true,)
-        .await
+        self.send_post_signed_request(CREATE_OTOCO_ORDER_ENDPOINT, params, 1, true)
+            .await
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use rust_decimal_macros::dec;
+
+    use super::*;
 
     #[test]
     fn test_otoco_order_request_minimal_serialization() {

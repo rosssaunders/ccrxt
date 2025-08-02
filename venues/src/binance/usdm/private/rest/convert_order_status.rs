@@ -101,13 +101,8 @@ impl UsdmClient {
         &self,
         params: GetConvertOrderStatusRequest,
     ) -> RestResult<ConvertOrderStatusResponse> {
-        self.send_get_signed_request(
-            CONVERT_ORDER_STATUS_ENDPOINT,
-            params,
-            50,
-            false,
-        )
-        .await
+        self.send_get_signed_request(CONVERT_ORDER_STATUS_ENDPOINT, params, 50, false)
+            .await
     }
 }
 

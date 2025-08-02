@@ -2,10 +2,9 @@ use rust_decimal::Decimal;
 use serde::Serialize;
 
 use super::client::RestClient;
-use crate::binance::options::RestResult;
-
 // Re-export the response type from get_mmp_config
 pub use super::get_mmp_config::MmpConfigResponse;
+use crate::binance::options::RestResult;
 
 const SET_MMP_CONFIG_ENDPOINT: &str = "/eapi/v1/mmpSet";
 
@@ -60,12 +59,7 @@ impl RestClient {
         &self,
         params: SetMmpConfigRequest,
     ) -> RestResult<MmpConfigResponse> {
-        self.send_post_signed_request(
-            SET_MMP_CONFIG_ENDPOINT,
-            params,
-            1,
-            false,
-        )
-        .await
+        self.send_post_signed_request(SET_MMP_CONFIG_ENDPOINT, params, 1, false)
+            .await
     }
 }

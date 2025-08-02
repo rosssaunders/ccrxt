@@ -1,5 +1,7 @@
-use super::RestClient;
-use super::loan::{ListLoansRequest, LoanRecord};
+use super::{
+    RestClient,
+    loan::{ListLoansRequest, LoanRecord},
+};
 
 impl RestClient {
     /// Get all loan history
@@ -28,7 +30,7 @@ mod tests {
     #[test]
     fn test_get_all_loan_history_request() {
         let limit = Some(100);
-        
+
         let request = ListLoansRequest {
             currency: None,
             limit,
@@ -56,7 +58,7 @@ mod tests {
     #[test]
     fn test_get_all_loan_history_different_limits() {
         let limits = vec![10, 50, 100, 500, 1000];
-        
+
         for limit in limits {
             let request = ListLoansRequest {
                 currency: None,

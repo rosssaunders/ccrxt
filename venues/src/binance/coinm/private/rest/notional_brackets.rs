@@ -1,8 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::binance::{
-    coinm::{RestResult, private::rest::client::RestClient},
-};
+use crate::binance::coinm::{RestResult, private::rest::client::RestClient};
 
 const LEVERAGE_BRACKET_ENDPOINT: &str = "/dapi/v1/leverageBracket";
 
@@ -72,13 +70,8 @@ impl RestClient {
         params: NotionalBracketRequest,
     ) -> RestResult<Vec<NotionalBracketResponse>> {
         let weight = if params.pair.is_some() { 1 } else { 40 };
-        self.send_get_signed_request(
-            LEVERAGE_BRACKET_ENDPOINT,
-            params,
-            weight,
-            false,
-        )
-        .await
+        self.send_get_signed_request(LEVERAGE_BRACKET_ENDPOINT, params, weight, false)
+            .await
     }
 }
 

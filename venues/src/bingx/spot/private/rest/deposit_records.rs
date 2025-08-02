@@ -100,7 +100,10 @@ impl RestClient {
         &self,
         request: &GetDepositRecordsRequest,
     ) -> RestResult<GetDepositRecordsResponse> {
-        self.send_get_signed_request(DEPOSIT_RECORDS_ENDPOINT, request, EndpointType::AccountApiGroup2,
+        self.send_get_signed_request(
+            DEPOSIT_RECORDS_ENDPOINT,
+            request,
+            EndpointType::AccountApiGroup2,
         )
         .await
     }

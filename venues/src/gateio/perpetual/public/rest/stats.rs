@@ -147,8 +147,14 @@ mod tests {
     #[test]
     fn test_different_contract_pairs() {
         let contracts = vec![
-            "BTC_USDT", "ETH_USDT", "ADA_USDT", "SOL_USDT",
-            "MATIC_USDT", "DOT_USDT", "AVAX_USDT", "LINK_USDT"
+            "BTC_USDT",
+            "ETH_USDT",
+            "ADA_USDT",
+            "SOL_USDT",
+            "MATIC_USDT",
+            "DOT_USDT",
+            "AVAX_USDT",
+            "LINK_USDT",
         ];
 
         for contract in contracts {
@@ -248,7 +254,7 @@ mod tests {
         assert_eq!(stats.lsr_account, 0.85);
         assert_eq!(stats.top_lsr_account, 1.15);
         assert_eq!(stats.top_lsr_size, 1.35);
-        
+
         // Verify JSON values can be extracted
         assert!(stats.long_liq_size.is_string());
         assert!(stats.open_interest.is_string());
@@ -274,13 +280,13 @@ mod tests {
         }"#;
 
         let stats: FuturesStats = serde_json::from_str(json).unwrap();
-        
+
         // In bullish markets, long ratios should be higher
         assert!(stats.lsr_taker > 1.0); // More longs than shorts
         assert!(stats.lsr_account > 1.0); // More long accounts
         assert!(stats.top_lsr_account > 1.0); // Top traders are long-biased
         assert!(stats.top_lsr_size > 1.0); // Top traders have larger long positions
-        
+
         // More short liquidations than long in bull market
         let long_liq: f64 = stats.long_liq_usd.as_str().unwrap().parse().unwrap();
         let short_liq: f64 = stats.short_liq_usd.as_str().unwrap().parse().unwrap();
@@ -306,13 +312,13 @@ mod tests {
         }"#;
 
         let stats: FuturesStats = serde_json::from_str(json).unwrap();
-        
+
         // In bearish markets, short ratios should be higher (ratios < 1.0)
         assert!(stats.lsr_taker < 1.0); // More shorts than longs
         assert!(stats.lsr_account < 1.0); // More short accounts
         assert!(stats.top_lsr_account < 1.0); // Top traders are short-biased
         assert!(stats.top_lsr_size < 1.0); // Top traders have larger short positions
-        
+
         // More long liquidations than short in bear market
         let long_liq: f64 = stats.long_liq_usd.as_str().unwrap().parse().unwrap();
         let short_liq: f64 = stats.short_liq_usd.as_str().unwrap().parse().unwrap();
@@ -338,13 +344,13 @@ mod tests {
         }"#;
 
         let stats: FuturesStats = serde_json::from_str(json).unwrap();
-        
+
         // In balanced markets, ratios should be close to 1.0
         assert!(stats.lsr_taker > 0.9 && stats.lsr_taker < 1.1);
         assert!(stats.lsr_account > 0.9 && stats.lsr_account < 1.1);
         assert!(stats.top_lsr_account > 0.9 && stats.top_lsr_account < 1.1);
         assert!(stats.top_lsr_size > 0.9 && stats.top_lsr_size < 1.1);
-        
+
         // Liquidations should be relatively balanced
         let long_liq: f64 = stats.long_liq_usd.as_str().unwrap().parse().unwrap();
         let short_liq: f64 = stats.short_liq_usd.as_str().unwrap().parse().unwrap();
@@ -371,17 +377,17 @@ mod tests {
         }"#;
 
         let stats: FuturesStats = serde_json::from_str(json).unwrap();
-        
+
         // High liquidation scenario (market crash)
         let long_liq: f64 = stats.long_liq_usd.as_str().unwrap().parse().unwrap();
         let short_liq: f64 = stats.short_liq_usd.as_str().unwrap().parse().unwrap();
         let open_interest: f64 = stats.open_interest.as_str().unwrap().parse().unwrap();
-        
+
         // Total liquidations should be significant relative to open interest
         let total_liq = long_liq + short_liq;
         let liq_percentage = total_liq / open_interest;
         assert!(liq_percentage > 2.0); // > 200% of open interest liquidated
-        
+
         // Long liquidations should dominate in crash scenario
         assert!(long_liq > short_liq * 1.5);
     }
@@ -405,17 +411,17 @@ mod tests {
         }"#;
 
         let stats: FuturesStats = serde_json::from_str(json).unwrap();
-        
+
         // Low liquidation scenario (stable market)
         let long_liq: f64 = stats.long_liq_usd.as_str().unwrap().parse().unwrap();
         let short_liq: f64 = stats.short_liq_usd.as_str().unwrap().parse().unwrap();
         let open_interest: f64 = stats.open_interest.as_str().unwrap().parse().unwrap();
-        
+
         // Total liquidations should be small relative to open interest
         let total_liq = long_liq + short_liq;
         let liq_percentage = total_liq / open_interest;
         assert!(liq_percentage < 0.1); // < 10% of open interest liquidated
-        
+
         // Liquidations should be relatively balanced
         let liq_ratio = long_liq / short_liq;
         assert!(liq_ratio > 0.6 && liq_ratio < 1.6);
@@ -431,7 +437,8 @@ mod tests {
         ];
 
         for (oi, _description) in oi_scenarios {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "time": 1640995200,
                 "lsr_taker": 1.05,
                 "lsr_account": 0.95,
@@ -445,7 +452,9 @@ mod tests {
                 "mark_price": "43000.0",
                 "top_lsr_account": 1.00,
                 "top_lsr_size": 1.05
-            }}"#, oi);
+            }}"#,
+                oi
+            );
 
             let stats: FuturesStats = serde_json::from_str(&json).unwrap();
             let open_interest: f64 = stats.open_interest.as_str().unwrap().parse().unwrap();
@@ -464,7 +473,8 @@ mod tests {
         ];
 
         for (price, _description) in price_scenarios {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "time": 1640995200,
                 "lsr_taker": 1.05,
                 "lsr_account": 0.95,
@@ -478,7 +488,9 @@ mod tests {
                 "mark_price": "{}",
                 "top_lsr_account": 1.00,
                 "top_lsr_size": 1.05
-            }}"#, price);
+            }}"#,
+                price
+            );
 
             let stats: FuturesStats = serde_json::from_str(&json).unwrap();
             let mark_price: f64 = stats.mark_price.as_str().unwrap().parse().unwrap();
@@ -496,8 +508,10 @@ mod tests {
             (50.0, 45.0, 55.0, 52.0, "Nearly all longs"),
         ];
 
-        for (lsr_taker, lsr_account, top_lsr_account, top_lsr_size, _description) in extreme_ratios {
-            let json = format!(r#"{{
+        for (lsr_taker, lsr_account, top_lsr_account, top_lsr_size, _description) in extreme_ratios
+        {
+            let json = format!(
+                r#"{{
                 "time": 1640995200,
                 "lsr_taker": {},
                 "lsr_account": {},
@@ -511,14 +525,16 @@ mod tests {
                 "mark_price": "43000.0",
                 "top_lsr_account": {},
                 "top_lsr_size": {}
-            }}"#, lsr_taker, lsr_account, top_lsr_account, top_lsr_size);
+            }}"#,
+                lsr_taker, lsr_account, top_lsr_account, top_lsr_size
+            );
 
             let stats: FuturesStats = serde_json::from_str(&json).unwrap();
             assert_eq!(stats.lsr_taker, lsr_taker);
             assert_eq!(stats.lsr_account, lsr_account);
             assert_eq!(stats.top_lsr_account, top_lsr_account);
             assert_eq!(stats.top_lsr_size, top_lsr_size);
-            
+
             // All ratios should be positive
             assert!(stats.lsr_taker > 0.0);
             assert!(stats.lsr_account > 0.0);
@@ -546,7 +562,7 @@ mod tests {
         }"#;
 
         let stats: FuturesStats = serde_json::from_str(json).unwrap();
-        
+
         // Verify zero liquidations
         assert_eq!(stats.long_liq_size.as_str().unwrap(), "0");
         assert_eq!(stats.long_liq_amount.as_str().unwrap(), "0");
@@ -554,7 +570,7 @@ mod tests {
         assert_eq!(stats.short_liq_size.as_str().unwrap(), "0");
         assert_eq!(stats.short_liq_amount.as_str().unwrap(), "0");
         assert_eq!(stats.short_liq_usd.as_str().unwrap(), "0");
-        
+
         // Open interest should still be positive
         let oi: f64 = stats.open_interest.as_str().unwrap().parse().unwrap();
         assert!(oi > 0.0);
@@ -579,26 +595,32 @@ mod tests {
         }"#;
 
         let stats: FuturesStats = serde_json::from_str(json).unwrap();
-        
+
         // Check consistency between size and amount
         let long_size: f64 = stats.long_liq_size.as_str().unwrap().parse().unwrap();
         let long_amount: f64 = stats.long_liq_amount.as_str().unwrap().parse().unwrap();
         let mark_price: f64 = stats.mark_price.as_str().unwrap().parse().unwrap();
-        
+
         // Amount should approximately equal size * price
         let expected_amount = long_size * mark_price;
         let difference = (long_amount - expected_amount).abs();
         let tolerance = expected_amount * 0.01; // 1% tolerance
-        assert!(difference <= tolerance, "Long liquidation amount inconsistent with size * price");
-        
+        assert!(
+            difference <= tolerance,
+            "Long liquidation amount inconsistent with size * price"
+        );
+
         // Same check for shorts
         let short_size: f64 = stats.short_liq_size.as_str().unwrap().parse().unwrap();
         let short_amount: f64 = stats.short_liq_amount.as_str().unwrap().parse().unwrap();
-        
+
         let expected_short_amount = short_size * mark_price;
         let short_difference = (short_amount - expected_short_amount).abs();
         let short_tolerance = expected_short_amount * 0.01;
-        assert!(short_difference <= short_tolerance, "Short liquidation amount inconsistent with size * price");
+        assert!(
+            short_difference <= short_tolerance,
+            "Short liquidation amount inconsistent with size * price"
+        );
     }
 
     #[test]
@@ -607,14 +629,22 @@ mod tests {
         let time_series = vec![
             (1640995200, 1.5, 1.3, "2150000", "5375000", "Bull phase"),
             (1640995500, 1.2, 1.1, "3225000", "4300000", "Cooling down"),
-            (1640995800, 0.9, 0.8, "5375000", "3225000", "Turning bearish"),
+            (
+                1640995800,
+                0.9,
+                0.8,
+                "5375000",
+                "3225000",
+                "Turning bearish",
+            ),
             (1640996100, 0.6, 0.5, "8600000", "2150000", "Bear phase"),
             (1640996400, 1.0, 0.9, "4300000", "4515000", "Stabilizing"),
         ];
 
         let mut prev_time = 0;
         for (time, lsr_taker, lsr_account, long_liq, short_liq, _phase) in time_series {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "time": {},
                 "lsr_taker": {},
                 "lsr_account": {},
@@ -628,14 +658,24 @@ mod tests {
                 "mark_price": "43000.0",
                 "top_lsr_account": {},
                 "top_lsr_size": {}
-            }}"#, time, lsr_taker, lsr_account, long_liq, long_liq, short_liq, short_liq, lsr_account, lsr_taker);
+            }}"#,
+                time,
+                lsr_taker,
+                lsr_account,
+                long_liq,
+                long_liq,
+                short_liq,
+                short_liq,
+                lsr_account,
+                lsr_taker
+            );
 
             let stats: FuturesStats = serde_json::from_str(&json).unwrap();
-            
+
             // Verify time progression
             assert!(stats.time > prev_time);
             prev_time = stats.time;
-            
+
             // Verify ratios are consistent with market phase
             if lsr_taker > 1.0 {
                 // Bullish phase - more long liquidations expected to be lower
@@ -668,14 +708,14 @@ mod tests {
         }"#;
 
         let stats: FuturesStats = serde_json::from_str(json).unwrap();
-        
+
         // Top traders are significantly more bullish than overall market
         assert!(stats.top_lsr_account > stats.lsr_account);
         assert!(stats.top_lsr_size > stats.lsr_taker);
-        
+
         // Top traders have larger positions relative to their account bias
         assert!(stats.top_lsr_size > stats.top_lsr_account);
-        
+
         // This suggests top traders are not only more bullish but also
         // sizing their positions accordingly
     }
@@ -699,13 +739,13 @@ mod tests {
         }"#;
 
         let stats: FuturesStats = serde_json::from_str(json).unwrap();
-        
+
         // Scenario where accounts are bullish but takers are bearish
         // This might suggest market makers are providing short liquidity
         // while retail (takers) are selling
         assert!(stats.lsr_account > 1.0); // More long accounts
         assert!(stats.lsr_taker < 1.0); // But more short takers
-        
+
         // Divergence suggests different behavior between market participants
         let divergence = (stats.lsr_account - stats.lsr_taker).abs();
         assert!(divergence > 0.3); // Significant divergence
@@ -730,16 +770,16 @@ mod tests {
         }"#;
 
         let stats: FuturesStats = serde_json::from_str(json).unwrap();
-        
+
         // Should handle null values
         assert!(stats.long_liq_size.is_null());
         assert!(stats.short_liq_amount.is_null());
-        
+
         // Should handle string values
         assert!(stats.long_liq_amount.is_string());
         assert!(stats.short_liq_usd.is_string());
         assert!(stats.mark_price.is_string());
-        
+
         // Should handle number values
         assert!(stats.long_liq_usd.is_number());
         assert!(stats.open_interest.is_number());

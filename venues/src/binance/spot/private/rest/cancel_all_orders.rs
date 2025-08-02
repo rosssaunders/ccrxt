@@ -106,19 +106,16 @@ impl RestClient {
         &self,
         params: CancelAllOrdersRequest,
     ) -> RestResult<Vec<CancelAllOrdersResponseItem>> {
-        self.send_delete_signed_request(
-            CANCEL_ALL_ORDERS_ENDPOINT,
-            params,
-            1,
-            true,)
-        .await
+        self.send_delete_signed_request(CANCEL_ALL_ORDERS_ENDPOINT, params, 1, true)
+            .await
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use rust_decimal_macros::dec;
+
+    use super::*;
 
     #[test]
     fn test_cancel_all_orders_request_with_required_field_only() {

@@ -149,7 +149,7 @@ mod tests {
 
         let json = serde_json::to_value(&request).unwrap();
         assert_eq!(json["underlying"], "BTC_USDT");
-        
+
         // Ensure optional fields are not serialized when None
         assert!(json.get("enable").is_none());
         assert!(json.get("window").is_none());
@@ -184,9 +184,10 @@ mod tests {
     #[test]
     fn test_mmp_settings_different_underlyings() {
         let underlyings = vec!["BTC_USDT", "ETH_USDT", "BNB_USDT", "SOL_USDT", "ADA_USDT"];
-        
+
         for underlying in underlyings {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "user": 12345,
                 "underlying": "{}",
                 "enable": true,
@@ -195,7 +196,9 @@ mod tests {
                 "trade_limit": 100,
                 "delta_limit": "1000.0",
                 "vega_limit": "500.0"
-            }}"#, underlying);
+            }}"#,
+                underlying
+            );
 
             let settings: MMPSettings = serde_json::from_str(&json).unwrap();
             assert_eq!(settings.underlying, underlying);

@@ -87,13 +87,8 @@ impl RestClient {
         &self,
         params: GetCountdownCancelRequest,
     ) -> RestResult<CountdownCancelResponse> {
-        self.send_get_signed_request(
-            COUNTDOWN_CANCEL_ALL_ENDPOINT,
-            params,
-            1,
-            false,
-        )
-        .await
+        self.send_get_signed_request(COUNTDOWN_CANCEL_ALL_ENDPOINT, params, 1, false)
+            .await
     }
 
     /// Set countdown cancel timer
@@ -109,13 +104,8 @@ impl RestClient {
         &self,
         params: CountdownCancelRequest,
     ) -> RestResult<CountdownCancelResponse> {
-        self.send_post_signed_request(
-            COUNTDOWN_CANCEL_ALL_ENDPOINT,
-            params,
-            1,
-            false,
-        )
-        .await
+        self.send_post_signed_request(COUNTDOWN_CANCEL_ALL_ENDPOINT, params, 1, false)
+            .await
     }
 
     /// Auto-cancel all open orders heartbeat
@@ -131,12 +121,7 @@ impl RestClient {
         &self,
         params: CountdownCancelHeartbeatRequest,
     ) -> RestResult<CountdownCancelResponse> {
-        self.send_post_signed_request(
-            COUNTDOWN_CANCEL_HEARTBEAT_ENDPOINT,
-            params,
-            1,
-            false,
-        )
-        .await
+        self.send_post_signed_request(COUNTDOWN_CANCEL_HEARTBEAT_ENDPOINT, params, 1, false)
+            .await
     }
 }

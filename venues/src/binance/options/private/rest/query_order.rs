@@ -144,12 +144,7 @@ impl RestClient {
             ));
         }
 
-        self.send_get_signed_request(
-            QUERY_ORDER_ENDPOINT,
-            params,
-            1,
-            false,
-        )
-        .await
+        self.send_get_signed_request(QUERY_ORDER_ENDPOINT, params, 1, false)
+            .await
     }
 }

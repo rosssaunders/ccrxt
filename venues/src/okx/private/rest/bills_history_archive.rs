@@ -3,7 +3,6 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
-
 const ACCOUNT_BILLS_HISTORY_ARCHIVE_ENDPOINT: &str = "api/v5/account/bills-history-archive";
 /// Request to post bills history archive
 #[derive(Debug, Clone, Serialize)]

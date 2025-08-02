@@ -142,10 +142,13 @@ mod tests {
 
     #[test]
     fn test_currency_different_chains() {
-        let chains = vec!["BTC", "ETH", "BSC", "TRC20", "POLYGON", "ARBITRUM", "OPTIMISM"];
-        
+        let chains = vec![
+            "BTC", "ETH", "BSC", "TRC20", "POLYGON", "ARBITRUM", "OPTIMISM",
+        ];
+
         for chain in chains {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "currency": "USDT",
                 "delisted": false,
                 "withdraw_disabled": false,
@@ -153,7 +156,9 @@ mod tests {
                 "deposit_disabled": false,
                 "trade_disabled": false,
                 "chain": "{}"
-            }}"#, chain);
+            }}"#,
+                chain
+            );
 
             let currency: Currency = serde_json::from_str(&json).unwrap();
             assert_eq!(currency.currency, "USDT");
@@ -163,10 +168,20 @@ mod tests {
 
     #[test]
     fn test_currency_different_fixed_rates() {
-        let rates = vec!["0", "0.0001", "0.001", "0.01", "0.1", "1", "10", "100.123456"];
-        
+        let rates = vec![
+            "0",
+            "0.0001",
+            "0.001",
+            "0.01",
+            "0.1",
+            "1",
+            "10",
+            "100.123456",
+        ];
+
         for rate in rates {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "currency": "TOKEN",
                 "delisted": false,
                 "withdraw_disabled": false,
@@ -174,7 +189,9 @@ mod tests {
                 "deposit_disabled": false,
                 "trade_disabled": false,
                 "fixed_rate": "{}"
-            }}"#, rate);
+            }}"#,
+                rate
+            );
 
             let currency: Currency = serde_json::from_str(&json).unwrap();
             assert_eq!(currency.currency, "TOKEN");
@@ -219,15 +236,15 @@ mod tests {
 
         let currencies: Vec<Currency> = serde_json::from_str(json).unwrap();
         assert_eq!(currencies.len(), 3);
-        
+
         assert_eq!(currencies[0].currency, "BTC");
         assert_eq!(currencies[0].fixed_rate, Some("0.0005".to_string()));
         assert_eq!(currencies[0].chain, Some("BTC".to_string()));
-        
+
         assert_eq!(currencies[1].currency, "ETH");
         assert_eq!(currencies[1].fixed_rate, Some("0.008".to_string()));
         assert_eq!(currencies[1].chain, Some("ETH".to_string()));
-        
+
         assert_eq!(currencies[2].currency, "USDT");
         assert_eq!(currencies[2].fixed_rate, Some("1".to_string()));
         assert_eq!(currencies[2].chain, Some("TRC20".to_string()));
@@ -297,7 +314,7 @@ mod tests {
 
         let json = serde_json::to_string(&original).unwrap();
         let deserialized: Currency = serde_json::from_str(&json).unwrap();
-        
+
         assert_eq!(deserialized.currency, original.currency);
         assert_eq!(deserialized.delisted, original.delisted);
         assert_eq!(deserialized.withdraw_disabled, original.withdraw_disabled);
@@ -311,16 +328,19 @@ mod tests {
     #[test]
     fn test_currency_special_names() {
         let special_names = vec!["USDT", "USDC", "DAI", "BUSD", "TUSD", "USDP", "GUSD"];
-        
+
         for name in special_names {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "currency": "{}",
                 "delisted": false,
                 "withdraw_disabled": false,
                 "withdraw_delayed": false,
                 "deposit_disabled": false,
                 "trade_disabled": false
-            }}"#, name);
+            }}"#,
+                name
+            );
 
             let currency: Currency = serde_json::from_str(&json).unwrap();
             assert_eq!(currency.currency, name);

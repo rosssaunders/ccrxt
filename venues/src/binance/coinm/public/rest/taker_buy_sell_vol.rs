@@ -1,8 +1,11 @@
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
-use crate::binance::coinm::enums::ContractTypeFilter;
-use crate::binance::coinm::{RestResult, enums::Period, public::rest::RestClient};
+use crate::binance::coinm::{
+    RestResult,
+    enums::{ContractTypeFilter, Period},
+    public::rest::RestClient,
+};
 
 const TAKER_BUY_SELL_VOL_ENDPOINT: &str = "/futures/data/takerBuySellVol";
 

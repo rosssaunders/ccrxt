@@ -183,12 +183,12 @@ mod tests {
         assert_eq!(order_book.update, 1641024000.456);
         assert_eq!(order_book.asks.len(), 3);
         assert_eq!(order_book.bids.len(), 3);
-        
+
         // Verify asks are sorted low to high
         assert_eq!(order_book.asks[0].p, "43300.0");
         assert_eq!(order_book.asks[1].p, "43300.5");
         assert_eq!(order_book.asks[2].p, "43301.0");
-        
+
         // Verify bids are sorted high to low
         assert_eq!(order_book.bids[0].p, "43299.5");
         assert_eq!(order_book.bids[1].p, "43299.0");
@@ -227,14 +227,14 @@ mod tests {
         }"#;
 
         let order_book: DeliveryOrderBook = serde_json::from_str(json).unwrap();
-        
+
         // Calculate total sizes
         let total_ask_size: i64 = order_book.asks.iter().map(|e| e.s).sum();
         let total_bid_size: i64 = order_book.bids.iter().map(|e| e.s).sum();
-        
+
         assert_eq!(total_ask_size, 4500);
         assert_eq!(total_bid_size, 4400);
-        
+
         // Roughly balanced book
         let imbalance = ((total_ask_size - total_bid_size).abs() as f64) / total_ask_size as f64;
         assert!(imbalance < 0.1); // Less than 10% imbalance
@@ -259,10 +259,10 @@ mod tests {
         }"#;
 
         let order_book: DeliveryOrderBook = serde_json::from_str(json).unwrap();
-        
+
         let total_ask_size: i64 = order_book.asks.iter().map(|e| e.s).sum();
         let total_bid_size: i64 = order_book.bids.iter().map(|e| e.s).sum();
-        
+
         assert_eq!(total_ask_size, 1500);
         assert_eq!(total_bid_size, 7500);
         assert!(total_bid_size > total_ask_size * 4); // Heavily bid-sided
@@ -287,10 +287,10 @@ mod tests {
         }"#;
 
         let order_book: DeliveryOrderBook = serde_json::from_str(json).unwrap();
-        
+
         let total_ask_size: i64 = order_book.asks.iter().map(|e| e.s).sum();
         let total_bid_size: i64 = order_book.bids.iter().map(|e| e.s).sum();
-        
+
         assert_eq!(total_ask_size, 7500);
         assert_eq!(total_bid_size, 1500);
         assert!(total_ask_size > total_bid_size * 4); // Heavily ask-sided
@@ -307,12 +307,12 @@ mod tests {
         }"#;
 
         let order_book: DeliveryOrderBook = serde_json::from_str(json).unwrap();
-        
+
         let best_ask: f64 = order_book.asks[0].p.parse().unwrap();
         let best_bid: f64 = order_book.bids[0].p.parse().unwrap();
         let spread = best_ask - best_bid;
         let spread_bps = (spread / best_bid) * 10000.0;
-        
+
         assert_eq!(spread, 0.5);
         assert!(spread_bps < 2.0); // Less than 2 basis points
     }
@@ -328,12 +328,12 @@ mod tests {
         }"#;
 
         let order_book: DeliveryOrderBook = serde_json::from_str(json).unwrap();
-        
+
         let best_ask: f64 = order_book.asks[0].p.parse().unwrap();
         let best_bid: f64 = order_book.bids[0].p.parse().unwrap();
         let spread = best_ask - best_bid;
         let spread_bps = (spread / best_bid) * 10000.0;
-        
+
         assert_eq!(spread, 100.0);
         assert!(spread_bps > 20.0); // More than 20 basis points
     }
@@ -342,7 +342,7 @@ mod tests {
     fn test_deep_order_book() {
         let mut asks = Vec::new();
         let mut bids = Vec::new();
-        
+
         // Create 50 levels
         for i in 0..50 {
             asks.push(DeliveryOrderBookEntry {
@@ -365,14 +365,14 @@ mod tests {
 
         assert_eq!(order_book.asks.len(), 50);
         assert_eq!(order_book.bids.len(), 50);
-        
+
         // Verify price ordering
         for i in 1..50 {
-            let prev_ask: f64 = order_book.asks[i-1].p.parse().unwrap();
+            let prev_ask: f64 = order_book.asks[i - 1].p.parse().unwrap();
             let curr_ask: f64 = order_book.asks[i].p.parse().unwrap();
             assert!(curr_ask > prev_ask);
-            
-            let prev_bid: f64 = order_book.bids[i-1].p.parse().unwrap();
+
+            let prev_bid: f64 = order_book.bids[i - 1].p.parse().unwrap();
             let curr_bid: f64 = order_book.bids[i].p.parse().unwrap();
             assert!(curr_bid < prev_bid);
         }
@@ -388,18 +388,21 @@ mod tests {
         ];
 
         for (_contract, ask_price, bid_price) in altcoin_books {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "id": 123456789,
                 "current": 1641024000.123,
                 "update": 1641024000.456,
                 "asks": [{{"p": "{}", "s": 1000}}],
                 "bids": [{{"p": "{}", "s": 1000}}]
-            }}"#, ask_price, bid_price);
+            }}"#,
+                ask_price, bid_price
+            );
 
             let order_book: DeliveryOrderBook = serde_json::from_str(&json).unwrap();
             assert_eq!(order_book.asks[0].p, ask_price);
             assert_eq!(order_book.bids[0].p, bid_price);
-            
+
             // Verify reasonable spread
             let ask: f64 = ask_price.parse().unwrap();
             let bid: f64 = bid_price.parse().unwrap();
@@ -426,7 +429,7 @@ mod tests {
         }"#;
 
         let order_book: DeliveryOrderBook = serde_json::from_str(json).unwrap();
-        
+
         // Verify large institutional-sized orders
         for ask in &order_book.asks {
             assert!(ask.s >= 50000);
@@ -455,29 +458,39 @@ mod tests {
         }"#;
 
         let order_book: DeliveryOrderBook = serde_json::from_str(json).unwrap();
-        
+
         // Detect ask wall at 43301.0
         // For a proper wall detection, we should exclude the potential wall from average calculation
         let ask_sizes: Vec<i64> = order_book.asks.iter().map(|e| e.s).collect();
         let max_ask_size = *ask_sizes.iter().max().unwrap() as f64;
-        let avg_ask_size: f64 = ask_sizes.iter()
+        let avg_ask_size: f64 = ask_sizes
+            .iter()
             .filter(|&&s| (s as f64) < max_ask_size)
             .map(|&s| s as f64)
-            .sum::<f64>() / (ask_sizes.len() - 1) as f64;
-        
-        let ask_wall = order_book.asks.iter().find(|e| e.s as f64 > avg_ask_size * 5.0);
+            .sum::<f64>()
+            / (ask_sizes.len() - 1) as f64;
+
+        let ask_wall = order_book
+            .asks
+            .iter()
+            .find(|e| e.s as f64 > avg_ask_size * 5.0);
         assert!(ask_wall.is_some());
         assert_eq!(ask_wall.unwrap().p, "43301.0");
-        
+
         // Detect bid wall at 43298.5
         let bid_sizes: Vec<i64> = order_book.bids.iter().map(|e| e.s).collect();
         let max_bid_size = *bid_sizes.iter().max().unwrap() as f64;
-        let avg_bid_size: f64 = bid_sizes.iter()
+        let avg_bid_size: f64 = bid_sizes
+            .iter()
             .filter(|&&s| (s as f64) < max_bid_size)
             .map(|&s| s as f64)
-            .sum::<f64>() / (bid_sizes.len() - 1) as f64;
-            
-        let bid_wall = order_book.bids.iter().find(|e| e.s as f64 > avg_bid_size * 5.0);
+            .sum::<f64>()
+            / (bid_sizes.len() - 1) as f64;
+
+        let bid_wall = order_book
+            .bids
+            .iter()
+            .find(|e| e.s as f64 > avg_bid_size * 5.0);
         assert!(bid_wall.is_some());
         assert_eq!(bid_wall.unwrap().p, "43298.5");
     }
@@ -493,10 +506,10 @@ mod tests {
         }"#;
 
         let order_book: DeliveryOrderBook = serde_json::from_str(json).unwrap();
-        
+
         // Current time should be >= update time
         assert!(order_book.current >= order_book.update);
-        
+
         // Timestamps should be reasonable
         assert!(order_book.current > 1600000000.0); // After Sept 2020
         assert!(order_book.update > 1600000000.0);
@@ -572,7 +585,7 @@ mod tests {
         }"#;
 
         let order_book: DeliveryOrderBook = serde_json::from_str(json).unwrap();
-        
+
         // Different precision levels
         assert_eq!(order_book.asks[0].p, "43300.0");
         assert_eq!(order_book.asks[1].p, "43300.1");

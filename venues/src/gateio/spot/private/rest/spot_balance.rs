@@ -97,20 +97,18 @@ mod tests {
     #[test]
     fn test_spot_account_balance_empty_list() {
         let accounts: Vec<SpotAccount> = vec![];
-        
+
         let missing = accounts.iter().find(|acc| acc.currency == "BTC");
         assert!(missing.is_none());
     }
 
     #[test]
     fn test_spot_account_balance_single_currency() {
-        let accounts = vec![
-            SpotAccount {
-                currency: "USDT".to_string(),
-                available: "10000.0".to_string(),
-                locked: "0.0".to_string(),
-            },
-        ];
+        let accounts = vec![SpotAccount {
+            currency: "USDT".to_string(),
+            available: "10000.0".to_string(),
+            locked: "0.0".to_string(),
+        }];
 
         // Find the only currency
         let usdt_result = accounts.iter().find(|acc| acc.currency == "USDT");
@@ -181,7 +179,7 @@ mod tests {
     fn test_spot_account_balance_various_currencies() {
         let currencies = vec!["BTC", "ETH", "USDT", "USDC", "BNB", "SOL", "ADA", "DOT"];
         let mut accounts = Vec::new();
-        
+
         for (i, currency) in currencies.iter().enumerate() {
             accounts.push(SpotAccount {
                 currency: currency.to_string(),
@@ -230,13 +228,11 @@ mod tests {
 
     #[test]
     fn test_spot_account_balance_precision_handling() {
-        let accounts = vec![
-            SpotAccount {
-                currency: "BTC".to_string(),
-                available: "1.23456789012345".to_string(),
-                locked: "0.98765432109876".to_string(),
-            },
-        ];
+        let accounts = vec![SpotAccount {
+            currency: "BTC".to_string(),
+            available: "1.23456789012345".to_string(),
+            locked: "0.98765432109876".to_string(),
+        }];
 
         let btc = accounts.iter().find(|acc| acc.currency == "BTC").unwrap();
         assert_eq!(btc.available, "1.23456789012345");
@@ -245,13 +241,11 @@ mod tests {
 
     #[test]
     fn test_spot_account_balance_large_numbers() {
-        let accounts = vec![
-            SpotAccount {
-                currency: "USDT".to_string(),
-                available: "999999999.99999999".to_string(),
-                locked: "123456789.12345678".to_string(),
-            },
-        ];
+        let accounts = vec![SpotAccount {
+            currency: "USDT".to_string(),
+            available: "999999999.99999999".to_string(),
+            locked: "123456789.12345678".to_string(),
+        }];
 
         let usdt = accounts.iter().find(|acc| acc.currency == "USDT").unwrap();
         assert_eq!(usdt.available, "999999999.99999999");
@@ -314,7 +308,8 @@ mod tests {
         assert!(btc_available > btc_locked);
 
         let usdt = accounts.iter().find(|acc| acc.currency == "USDT").unwrap();
-        let usdt_total: f64 = usdt.available.parse::<f64>().unwrap() + usdt.locked.parse::<f64>().unwrap();
+        let usdt_total: f64 =
+            usdt.available.parse::<f64>().unwrap() + usdt.locked.parse::<f64>().unwrap();
         assert!(usdt_total > 10000.0);
 
         let bnb = accounts.iter().find(|acc| acc.currency == "BNB").unwrap();
@@ -349,7 +344,7 @@ mod tests {
     fn test_spot_account_balance_stablecoin_currencies() {
         let stablecoins = vec!["USDT", "USDC", "BUSD", "DAI", "TUSD"];
         let mut accounts = Vec::new();
-        
+
         for stablecoin in &stablecoins {
             accounts.push(SpotAccount {
                 currency: stablecoin.to_string(),

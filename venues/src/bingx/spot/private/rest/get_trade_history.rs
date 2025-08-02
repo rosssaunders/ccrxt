@@ -117,9 +117,8 @@ impl RestClient {
         &self,
         request: &GetTradeHistoryRequest,
     ) -> RestResult<GetTradeHistoryResponse> {
-        self.send_get_signed_request(TRADE_HISTORY_ENDPOINT, request, EndpointType::Trading,
-        )
-        .await
+        self.send_get_signed_request(TRADE_HISTORY_ENDPOINT, request, EndpointType::Trading)
+            .await
     }
 }
 

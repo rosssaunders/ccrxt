@@ -1,10 +1,13 @@
-use reqwest::Method;
-use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
 
+use reqwest::Method;
+use serde::{Deserialize, Serialize};
+
 use super::UsdmClient;
-use crate::binance::usdm::RestResult;
-use crate::binance::usdm::enums::{AutoCloseType, OrderSide, OrderStatus, OrderType, TimeInForce};
+use crate::binance::usdm::{
+    RestResult,
+    enums::{AutoCloseType, OrderSide, OrderStatus, OrderType, TimeInForce},
+};
 
 const FORCE_ORDERS_ENDPOINT: &str = "/fapi/v1/forceOrders";
 
@@ -144,9 +147,7 @@ impl UsdmClient {
         params: GetForceOrdersRequest,
     ) -> RestResult<GetForceOrdersResponse> {
         let weight = if params.symbol.is_some() { 20 } else { 50 };
-        self.send_get_signed_request(
-            FORCE_ORDERS_ENDPOINT,
-            params, weight, false)
+        self.send_get_signed_request(FORCE_ORDERS_ENDPOINT, params, weight, false)
             .await
     }
 }

@@ -190,8 +190,9 @@ async fn test_get_underlying_ticker() {
 /// Test options order book endpoint
 #[tokio::test]
 async fn test_get_options_order_book() {
-    use venues::gateio::options::public::rest::contracts::OptionsContractsRequest;
-    use venues::gateio::options::public::rest::order_book::OptionsOrderBookRequest;
+    use venues::gateio::options::public::rest::{
+        contracts::OptionsContractsRequest, order_book::OptionsOrderBookRequest,
+    };
 
     let client = create_options_test_client();
 
@@ -248,8 +249,9 @@ async fn test_get_options_order_book() {
 /// Test options trades endpoint
 #[tokio::test]
 async fn test_get_options_trades() {
-    use venues::gateio::options::public::rest::contracts::OptionsContractsRequest;
-    use venues::gateio::options::public::rest::trades::OptionsTradesRequest;
+    use venues::gateio::options::public::rest::{
+        contracts::OptionsContractsRequest, trades::OptionsTradesRequest,
+    };
 
     let client = create_options_test_client();
 
@@ -304,8 +306,9 @@ async fn test_get_options_trades() {
 /// Test options candlesticks endpoint
 #[tokio::test]
 async fn test_get_options_candlesticks() {
-    use venues::gateio::options::public::rest::contracts::OptionsContractsRequest;
-    use venues::gateio::options::public::rest::get_options_candlesticks::OptionsCandlesticksRequest;
+    use venues::gateio::options::public::rest::{
+        contracts::OptionsContractsRequest, get_options_candlesticks::OptionsCandlesticksRequest,
+    };
 
     let client = create_options_test_client();
 

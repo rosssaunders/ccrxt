@@ -53,9 +53,7 @@ mod tests {
 
     #[test]
     fn test_list_spot_accounts_request_no_currency() {
-        let request = ListSpotAccountsRequest {
-            currency: None,
-        };
+        let request = ListSpotAccountsRequest { currency: None };
 
         let serialized = serde_urlencoded::to_string(&request).unwrap();
         assert_eq!(serialized, "");
@@ -74,7 +72,7 @@ mod tests {
     #[test]
     fn test_list_spot_accounts_request_different_currencies() {
         let currencies = vec!["BTC", "ETH", "USDT", "USDC", "BNB", "SOL", "ADA", "DOT"];
-        
+
         for currency in currencies {
             let request = ListSpotAccountsRequest {
                 currency: Some(currency.to_string()),
@@ -197,15 +195,15 @@ mod tests {
 
         let accounts: Vec<SpotAccount> = serde_json::from_str(json).unwrap();
         assert_eq!(accounts.len(), 3);
-        
+
         assert_eq!(accounts[0].currency, "BTC");
         assert_eq!(accounts[0].available, "0.5");
         assert_eq!(accounts[0].locked, "0.1");
-        
+
         assert_eq!(accounts[1].currency, "ETH");
         assert_eq!(accounts[1].available, "10.0");
         assert_eq!(accounts[1].locked, "2.0");
-        
+
         assert_eq!(accounts[2].currency, "USDT");
         assert_eq!(accounts[2].available, "5000.0");
         assert_eq!(accounts[2].locked, "1000.0");
@@ -220,14 +218,19 @@ mod tests {
 
     #[test]
     fn test_spot_account_different_currencies() {
-        let currencies = vec!["BTC", "ETH", "USDT", "USDC", "BNB", "SOL", "ADA", "DOT", "MATIC", "LINK"];
-        
+        let currencies = vec![
+            "BTC", "ETH", "USDT", "USDC", "BNB", "SOL", "ADA", "DOT", "MATIC", "LINK",
+        ];
+
         for currency in currencies {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "currency": "{}",
                 "available": "100.0",
                 "locked": "10.0"
-            }}"#, currency);
+            }}"#,
+                currency
+            );
 
             let account: SpotAccount = serde_json::from_str(&json).unwrap();
             assert_eq!(account.currency, currency);
@@ -258,7 +261,7 @@ mod tests {
 
         let json = serde_json::to_string(&original).unwrap();
         let deserialized: SpotAccount = serde_json::from_str(&json).unwrap();
-        
+
         assert_eq!(deserialized.currency, original.currency);
         assert_eq!(deserialized.available, original.available);
         assert_eq!(deserialized.locked, original.locked);
@@ -296,24 +299,25 @@ mod tests {
 
         let accounts: Vec<SpotAccount> = serde_json::from_str(json).unwrap();
         assert_eq!(accounts.len(), 5);
-        
+
         // Check BTC account - partial balance locked
         let btc = &accounts[0];
         assert_eq!(btc.currency, "BTC");
         let btc_available: f64 = btc.available.parse().unwrap();
         let btc_locked: f64 = btc.locked.parse().unwrap();
         assert!(btc_available > btc_locked);
-        
+
         // Check USDT account - stablecoin with large balance
         let usdt = &accounts[2];
         assert_eq!(usdt.currency, "USDT");
-        let usdt_total: f64 = usdt.available.parse::<f64>().unwrap() + usdt.locked.parse::<f64>().unwrap();
+        let usdt_total: f64 =
+            usdt.available.parse::<f64>().unwrap() + usdt.locked.parse::<f64>().unwrap();
         assert!(usdt_total > 10000.0);
-        
+
         // Check BNB account - all available
         let bnb = &accounts[3];
         assert_eq!(bnb.locked, "0");
-        
+
         // Check SOL account - all locked (in open orders)
         let sol = &accounts[4];
         assert_eq!(sol.available, "0");

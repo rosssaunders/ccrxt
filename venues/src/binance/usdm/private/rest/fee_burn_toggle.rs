@@ -48,9 +48,7 @@ impl UsdmClient {
         &self,
         request: ToggleFeeBurnRequest,
     ) -> RestResult<ToggleFeeBurnResponse> {
-        self.send_post_signed_request(
-            TOGGLE_FEE_BURN_ENDPOINT,
-            request, 1, false)
+        self.send_post_signed_request(TOGGLE_FEE_BURN_ENDPOINT, request, 1, false)
             .await
     }
 }

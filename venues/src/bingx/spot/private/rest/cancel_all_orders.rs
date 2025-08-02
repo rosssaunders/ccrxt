@@ -76,9 +76,8 @@ impl RestClient {
         &self,
         request: &CancelAllOrdersRequest,
     ) -> RestResult<CancelAllOrdersResponse> {
-        self.send_post_signed_request(CANCEL_ALL_ORDERS_ENDPOINT, request, EndpointType::Trading,
-        )
-        .await
+        self.send_post_signed_request(CANCEL_ALL_ORDERS_ENDPOINT, request, EndpointType::Trading)
+            .await
     }
 }
 

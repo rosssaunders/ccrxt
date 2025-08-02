@@ -59,7 +59,9 @@ impl RestClient {
         &self,
         request: SubmitMarginOrderRequest,
     ) -> RestResult<SubmitMarginOrderResponse> {
-        self.send_post_signed_request(SUBMIT_MARGIN_ORDER_ENDPOINT, request,
+        self.send_post_signed_request(
+            SUBMIT_MARGIN_ORDER_ENDPOINT,
+            request,
             EndpointType::SpotTrading,
         )
         .await

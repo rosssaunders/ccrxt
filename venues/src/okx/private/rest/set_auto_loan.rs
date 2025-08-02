@@ -3,7 +3,6 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
-
 const ACCOUNT_SET_AUTO_LOAN_ENDPOINT: &str = "api/v5/account/set-auto-loan";
 /// Request to set auto loan
 #[derive(Debug, Clone, Serialize)]

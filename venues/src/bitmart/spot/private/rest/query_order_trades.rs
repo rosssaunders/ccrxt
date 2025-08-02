@@ -40,7 +40,9 @@ impl RestClient {
         &self,
         request: QueryOrderTradesRequest,
     ) -> RestResult<QueryOrderTradesResponse> {
-        self.send_post_signed_request(QUERY_ORDER_TRADES_ENDPOINT, request,
+        self.send_post_signed_request(
+            QUERY_ORDER_TRADES_ENDPOINT,
+            request,
             EndpointType::SpotTrading,
         )
         .await

@@ -112,10 +112,8 @@ impl RestClient {
             url.push_str(&query_string.join("&"));
         }
 
-        self.send_get_authenticated_request(&url, (),
-            EndpointType::PrivateTrades,
-        )
-        .await
+        self.send_get_authenticated_request(&url, (), EndpointType::PrivateTrades)
+            .await
     }
 
     /// Get specific trade by ID
@@ -135,13 +133,12 @@ impl RestClient {
     ) -> RestResult<Trade> {
         let url = format!(
             "{}?tradingAccountId={}",
-            SINGLE_TRADE_ENDPOINT.replace("{}", trade_id), trading_account_id
+            SINGLE_TRADE_ENDPOINT.replace("{}", trade_id),
+            trading_account_id
         );
 
-        self.send_get_authenticated_request(&url, (),
-            EndpointType::PrivateTrades,
-        )
-        .await
+        self.send_get_authenticated_request(&url, (), EndpointType::PrivateTrades)
+            .await
     }
 }
 

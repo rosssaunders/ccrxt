@@ -1,6 +1,7 @@
+use std::borrow::Cow;
+
 use reqwest::Method;
 use serde::{Deserialize, Serialize};
-use std::borrow::Cow;
 
 use super::UsdmClient;
 use crate::binance::usdm::RestResult;
@@ -51,13 +52,8 @@ impl UsdmClient {
         &self,
         params: CancelAllOpenOrdersRequest,
     ) -> RestResult<CancelAllOpenOrdersResponse> {
-        self.send_delete_signed_request(
-            CANCEL_ALL_OPEN_ORDERS_ENDPOINT,
-            params,
-            1,
-            false,
-        )
-        .await
+        self.send_delete_signed_request(CANCEL_ALL_OPEN_ORDERS_ENDPOINT, params, 1, false)
+            .await
     }
 }
 

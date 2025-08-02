@@ -74,20 +74,16 @@ impl UsdmClient {
         &self,
         params: GetConvertExchangeInfoRequest,
     ) -> RestResult<ConvertExchangeInfoResponse> {
-        self.send_get_signed_request(
-            CONVERT_EXCHANGE_INFO_ENDPOINT,
-            params,
-            20,
-            false,
-        )
-        .await
+        self.send_get_signed_request(CONVERT_EXCHANGE_INFO_ENDPOINT, params, 20, false)
+            .await
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use serde_json;
+
+    use super::*;
 
     #[test]
     fn test_convert_exchange_info_response_deserialization() {

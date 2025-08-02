@@ -130,20 +130,16 @@ impl RestClient {
     /// Weight: 20
     /// Security: USER_DATA
     pub async fn get_all_orders(&self, params: AllOrdersRequest) -> RestResult<Vec<AllOrder>> {
-        self.send_get_signed_request(
-            GET_ALL_ORDERS_ENDPOINT,
-            params,
-            20,
-            false,
-        )
-        .await
+        self.send_get_signed_request(GET_ALL_ORDERS_ENDPOINT, params, 20, false)
+            .await
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use rust_decimal_macros::dec;
+
+    use super::*;
 
     #[test]
     fn test_all_orders_request_serialization_minimal() {

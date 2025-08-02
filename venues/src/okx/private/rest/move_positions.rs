@@ -3,7 +3,6 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
-
 const ACCOUNT_MOVE_POSITIONS_ENDPOINT: &str = "api/v5/account/move-positions";
 /// Request to move positions
 #[derive(Debug, Clone, Serialize)]

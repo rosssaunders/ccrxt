@@ -1,9 +1,9 @@
-use super::RestClient;
-use crate::binance::usdm::RestResult;
-
 use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
+
+use super::RestClient;
+use crate::binance::usdm::RestResult;
 
 const HISTORICAL_TRADES_ENDPOINT: &str = "/fapi/v1/historicalTrades";
 

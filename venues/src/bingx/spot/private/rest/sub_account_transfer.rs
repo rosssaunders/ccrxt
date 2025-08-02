@@ -53,7 +53,10 @@ impl RestClient {
         &self,
         request: &SubAccountTransferRequest,
     ) -> RestResult<SubAccountTransferResponse> {
-        self.send_post_signed_request(SUB_ACCOUNT_TRANSFER_ENDPOINT, request, EndpointType::Account,
+        self.send_post_signed_request(
+            SUB_ACCOUNT_TRANSFER_ENDPOINT,
+            request,
+            EndpointType::Account,
         )
         .await
     }

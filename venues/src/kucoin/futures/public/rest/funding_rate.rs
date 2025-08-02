@@ -28,7 +28,6 @@ pub struct CurrentFundingRate {
     pub predicted_value: Option<f64>,
 }
 
-
 impl super::RestClient {
     /// Get current funding rate for a specific symbol
     ///
@@ -46,7 +45,6 @@ impl super::RestClient {
         self.send_request(&endpoint, None::<&GetCurrentFundingRateRequest>)
             .await
     }
-
 }
 
 #[cfg(test)]
@@ -78,5 +76,4 @@ mod tests {
         assert_eq!(funding_rate.value, 0.000100);
         assert_eq!(funding_rate.predicted_value, None);
     }
-
 }

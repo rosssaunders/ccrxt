@@ -207,12 +207,8 @@ impl RestClient {
     /// Weight: 1
     /// Requires: API key and signature
     pub async fn new_order(&self, params: NewOrderRequest) -> RestResult<OrderAckResponse> {
-        self.send_post_signed_request(
-            NEW_ORDER_ENDPOINT,
-            params,
-            1,
-            true,)
-        .await
+        self.send_post_signed_request(NEW_ORDER_ENDPOINT, params, 1, true)
+            .await
     }
 
     /// Place a new option order with RESULT response
@@ -230,20 +226,18 @@ impl RestClient {
         // Force response type to RESULT
         params.new_order_resp_type = Some(OptionsOrderResponseType::Result);
 
-        self.send_post_signed_request(
-            NEW_ORDER_ENDPOINT,
-            params,
-            1,
-            true,)
-        .await
+        self.send_post_signed_request(NEW_ORDER_ENDPOINT, params, 1, true)
+            .await
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use rust_decimal::Decimal;
     use std::str::FromStr;
+
+    use rust_decimal::Decimal;
+
+    use super::*;
 
     #[test]
     fn test_new_order_request_serialization_basic() {
@@ -366,7 +360,7 @@ mod tests {
         assert!(serialized.contains("quantity=2.5"));
         assert!(serialized.contains("price=0.03"));
         assert!(serialized.contains("timestamp=1625097900000"));
-        
+
         // Check that optional fields are not serialized
         assert!(!serialized.contains("timeInForce"));
         assert!(!serialized.contains("reduceOnly"));
@@ -402,7 +396,7 @@ mod tests {
         assert!(serialized.contains("quantity=1"));
         assert!(serialized.contains("timeInForce=GTC"));
         assert!(serialized.contains("timestamp=1625098000000"));
-        
+
         // Check that price is not serialized when None
         assert!(!serialized.contains("price"));
     }

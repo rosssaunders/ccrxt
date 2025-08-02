@@ -65,7 +65,7 @@ mod tests {
     #[test]
     fn test_get_order_request_different_pairs() {
         let pairs = vec!["BTC_USDT", "ETH_BTC", "BNB_USDT", "SOL_USDC", "ADA_USDT"];
-        
+
         for pair in pairs {
             let request = GetOrderRequest {
                 currency_pair: pair.to_string(),
@@ -80,7 +80,7 @@ mod tests {
     #[test]
     fn test_get_order_request_different_accounts() {
         let accounts = vec!["spot", "margin", "cross_margin", "unified"];
-        
+
         for account in accounts {
             let request = GetOrderRequest {
                 currency_pair: "BTC_USDT".to_string(),
@@ -154,12 +154,12 @@ mod tests {
     fn test_get_order_request_stablecoin_pairs() {
         let stablecoin_pairs = vec![
             "USDC_USDT",
-            "BUSD_USDT", 
+            "BUSD_USDT",
             "DAI_USDT",
             "TUSD_USDT",
-            "FRAX_USDT"
+            "FRAX_USDT",
         ];
-        
+
         for pair in stablecoin_pairs {
             let request = GetOrderRequest {
                 currency_pair: pair.to_string(),
@@ -225,26 +225,29 @@ mod tests {
     fn test_get_order_endpoint_path_construction() {
         // Test that the endpoint format matches expected pattern
         let order_ids = vec!["12345678", "87654321", "11111111", "99999999"];
-        
+
         for order_id in order_ids {
             let expected_endpoint = format!("/spot/orders/{}", order_id);
-            
+
             // Verify the path construction logic
             assert!(expected_endpoint.starts_with("/spot/orders/"));
             assert!(expected_endpoint.ends_with(order_id));
-            assert_eq!(expected_endpoint.len(), "/spot/orders/".len() + order_id.len());
+            assert_eq!(
+                expected_endpoint.len(),
+                "/spot/orders/".len() + order_id.len()
+            );
         }
     }
 
     #[test]
     fn test_get_order_endpoint_with_special_order_ids() {
         let special_order_ids = vec![
-            "0", 
-            "1", 
+            "0",
+            "1",
             "123456789012345678", // Very long ID
-            "order_12345", // With prefix
+            "order_12345",        // With prefix
         ];
-        
+
         for order_id in special_order_ids {
             let endpoint = format!("/spot/orders/{}", order_id);
             assert!(endpoint.starts_with("/spot/orders/"));
@@ -260,11 +263,11 @@ mod tests {
         };
 
         let serialized = serde_urlencoded::to_string(&request).unwrap();
-        
+
         // Both orderings should be valid, test that both fields are present
         assert!(serialized.contains("currency_pair=BTC_USDT"));
         assert!(serialized.contains("account=spot"));
-        
+
         // Should be connected with &
         if serialized.starts_with("currency_pair") {
             assert!(serialized.contains("currency_pair=BTC_USDT&account=spot"));
@@ -280,25 +283,25 @@ mod tests {
             currency_pair: "BTC_USDT".to_string(),
             account: Some("spot".to_string()),
         };
-        
+
         let spot_serialized = serde_urlencoded::to_string(&spot_request).unwrap();
         assert!(spot_serialized.contains("account=spot"));
-        
+
         // Scenario 2: Margin trading
         let margin_request = GetOrderRequest {
             currency_pair: "ETH_BTC".to_string(),
             account: Some("margin".to_string()),
         };
-        
+
         let margin_serialized = serde_urlencoded::to_string(&margin_request).unwrap();
         assert!(margin_serialized.contains("account=margin"));
-        
+
         // Scenario 3: Default account (None)
         let default_request = GetOrderRequest {
             currency_pair: "BNB_USDT".to_string(),
             account: None,
         };
-        
+
         let default_serialized = serde_urlencoded::to_string(&default_request).unwrap();
         assert!(!default_serialized.contains("account="));
         assert!(default_serialized.contains("currency_pair=BNB_USDT"));
@@ -321,17 +324,25 @@ mod tests {
     fn test_get_order_request_comprehensive_currency_pairs() {
         let comprehensive_pairs = vec![
             // Major pairs
-            "BTC_USDT", "ETH_USDT", "BNB_USDT",
-            // Cross pairs  
-            "ETH_BTC", "BNB_BTC", "ADA_BTC",
+            "BTC_USDT",
+            "ETH_USDT",
+            "BNB_USDT",
+            // Cross pairs
+            "ETH_BTC",
+            "BNB_BTC",
+            "ADA_BTC",
             // Alt pairs
-            "SOL_USDT", "DOT_USDT", "MATIC_USDT",
+            "SOL_USDT",
+            "DOT_USDT",
+            "MATIC_USDT",
             // Stablecoin pairs
-            "USDC_USDT", "DAI_USDT",
+            "USDC_USDT",
+            "DAI_USDT",
             // Special tokens
-            "BTC3L_USDT", "ETH3S_USDT"
+            "BTC3L_USDT",
+            "ETH3S_USDT",
         ];
-        
+
         for pair in comprehensive_pairs {
             let request = GetOrderRequest {
                 currency_pair: pair.to_string(),

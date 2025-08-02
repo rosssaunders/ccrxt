@@ -134,7 +134,8 @@ mod tests {
         ];
 
         for (status, size, left, _description) in status_scenarios {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "id": 123456789,
                 "user": 987654,
                 "contract": "BTC_USDT",
@@ -147,7 +148,9 @@ mod tests {
                 "reduce_only": false,
                 "close": false,
                 "reject_post_only": false
-            }}"#, status, size, left);
+            }}"#,
+                status, size, left
+            );
 
             let order: FuturesOrder = serde_json::from_str(&json).unwrap();
             assert_eq!(order.status, status);
@@ -176,7 +179,8 @@ mod tests {
         ];
 
         for (finish_as, _description) in finish_scenarios {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "id": 123456789,
                 "user": 987654,
                 "contract": "BTC_USDT",
@@ -191,7 +195,9 @@ mod tests {
                 "reduce_only": false,
                 "close": false,
                 "reject_post_only": false
-            }}"#, finish_as);
+            }}"#,
+                finish_as
+            );
 
             let order: FuturesOrder = serde_json::from_str(&json).unwrap();
             assert_eq!(order.finish_as.unwrap(), finish_as);
@@ -208,7 +214,8 @@ mod tests {
         ];
 
         for (stp_act, _description) in stp_options {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "id": 123456789,
                 "user": 987654,
                 "contract": "BTC_USDT",
@@ -222,7 +229,9 @@ mod tests {
                 "close": false,
                 "reject_post_only": false,
                 "stp_act": "{}"
-            }}"#, stp_act);
+            }}"#,
+                stp_act
+            );
 
             let order: FuturesOrder = serde_json::from_str(&json).unwrap();
             assert_eq!(order.stp_act.unwrap(), stp_act);

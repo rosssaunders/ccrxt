@@ -78,12 +78,8 @@ impl RestClient {
     /// Weight: 1
     /// Security: TRADE
     pub async fn new_sor_order(&self, params: SorOrderRequest) -> RestResult<serde_json::Value> {
-        self.send_post_signed_request(
-            CREATE_SOR_ORDER_ENDPOINT,
-            params,
-            1,
-            true,)
-        .await
+        self.send_post_signed_request(CREATE_SOR_ORDER_ENDPOINT, params, 1, true)
+            .await
     }
 
     /// Test SOR order creation
@@ -122,12 +118,8 @@ impl RestClient {
             compute_commission_rates,
         };
 
-        self.send_post_signed_request(
-            TEST_SOR_ORDER_ENDPOINT,
-            test_request,
-            weight,
-            true,)
-        .await
+        self.send_post_signed_request(TEST_SOR_ORDER_ENDPOINT, test_request, weight, true)
+            .await
     }
 }
 

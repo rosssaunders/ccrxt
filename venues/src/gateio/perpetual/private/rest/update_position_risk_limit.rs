@@ -39,7 +39,10 @@ impl RestClient {
         &self,
         request: UpdateRiskLimitRequest,
     ) -> crate::gateio::perpetual::Result<RiskLimitResponse> {
-        let endpoint = format!("/futures/{}/positions/{}/risk_limit", request.settle, request.contract);
+        let endpoint = format!(
+            "/futures/{}/positions/{}/risk_limit",
+            request.settle, request.contract
+        );
         self.post(&endpoint, &request).await
     }
 }
@@ -65,14 +68,7 @@ mod tests {
     #[test]
     fn test_risk_limit_values() {
         let risk_limits = vec![
-            "100000",
-            "500000",
-            "1000000",
-            "2000000",
-            "5000000",
-            "10000000",
-            "20000000",
-            "50000000",
+            "100000", "500000", "1000000", "2000000", "5000000", "10000000", "20000000", "50000000",
         ];
 
         for limit in risk_limits {
@@ -123,13 +119,7 @@ mod tests {
     #[test]
     fn test_risk_limit_tiers() {
         // Common risk limit tiers for different contracts
-        let btc_tiers = vec![
-            "1000000",
-            "2000000",
-            "5000000",
-            "10000000",
-            "20000000",
-        ];
+        let btc_tiers = vec!["1000000", "2000000", "5000000", "10000000", "20000000"];
 
         for tier in btc_tiers {
             let request = UpdateRiskLimitRequest {
@@ -140,7 +130,7 @@ mod tests {
 
             let json = serde_json::to_value(&request).unwrap();
             assert_eq!(json["risk_limit"], tier);
-            
+
             // Verify it's a valid number
             let limit_val = json["risk_limit"].as_str().unwrap();
             assert!(limit_val.parse::<u64>().is_ok());
@@ -171,7 +161,10 @@ mod tests {
             risk_limit: "1000000".to_string(),
         };
 
-        let endpoint = format!("/futures/{}/positions/{}/risk_limit", request.settle, request.contract);
+        let endpoint = format!(
+            "/futures/{}/positions/{}/risk_limit",
+            request.settle, request.contract
+        );
         assert_eq!(endpoint, "/futures/USDT/positions/BTC_USDT/risk_limit");
     }
 }

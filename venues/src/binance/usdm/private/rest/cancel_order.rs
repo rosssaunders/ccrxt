@@ -1,8 +1,12 @@
-use super::UsdmClient;
-use crate::binance::usdm::RestResult;
-use crate::binance::usdm::enums::{OrderSide, OrderStatus, OrderType, PositionSide, TimeInForce};
-use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
+
+use serde::{Deserialize, Serialize};
+
+use super::UsdmClient;
+use crate::binance::usdm::{
+    RestResult,
+    enums::{OrderSide, OrderStatus, OrderType, PositionSide, TimeInForce},
+};
 
 /// Request parameters for the cancel order endpoint.
 #[derive(Debug, Clone, Serialize, Default)]
@@ -103,19 +107,15 @@ impl UsdmClient {
         &self,
         request: CancelOrderRequest,
     ) -> RestResult<CancelOrderResponse> {
-        self.send_delete_signed_request(
-            CANCEL_ORDER_ENDPOINT,
-            request,
-            1,
-            false,
-        )
-        .await
+        self.send_delete_signed_request(CANCEL_ORDER_ENDPOINT, request, 1, false)
+            .await
     }
 }
 #[cfg(test)]
 mod tests {
-    use super::*;
     use serde_json::json;
+
+    use super::*;
 
     #[test]
     fn test_cancel_order_request_default() {

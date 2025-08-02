@@ -3,7 +3,6 @@ use serde::{Deserialize, Serialize};
 use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
-
 const ACCOUNT_SET_ISOLATED_MODE_ENDPOINT: &str = "api/v5/account/set-isolated-mode";
 /// Request to set isolated mode
 #[derive(Debug, Clone, Serialize)]

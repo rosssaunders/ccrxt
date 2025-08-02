@@ -3,7 +3,6 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::okx::{EndpointType, InstrumentType, RestResult};
 
-
 const PUBLIC_UNDERLYING_ENDPOINT: &str = "api/v5/public/underlying";
 /// Request parameters for getting underlying assets
 #[derive(Debug, Clone, Serialize, Deserialize)]

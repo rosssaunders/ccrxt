@@ -1,5 +1,4 @@
-use super::RestClient;
-use super::transferable::UnifiedTransferableResponse;
+use super::{RestClient, transferable::UnifiedTransferableResponse};
 
 const UNIFIED_TRANSFERABLES_ENDPOINT: &str = "/unified/transferables";
 

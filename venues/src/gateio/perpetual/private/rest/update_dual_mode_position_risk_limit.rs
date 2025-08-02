@@ -41,7 +41,10 @@ impl RestClient {
         &self,
         request: UpdateDualModeRiskLimitRequest,
     ) -> crate::gateio::perpetual::Result<DualModeRiskLimitResponse> {
-        let endpoint = format!("/futures/{}/dual_positions/{}/risk_limit", request.settle, request.contract);
+        let endpoint = format!(
+            "/futures/{}/dual_positions/{}/risk_limit",
+            request.settle, request.contract
+        );
         self.post(&endpoint, &request).await
     }
 }
@@ -95,14 +98,7 @@ mod tests {
     #[test]
     fn test_risk_limit_values() {
         let risk_limits = vec![
-            "100000",
-            "500000",
-            "1000000",
-            "2000000",
-            "5000000",
-            "10000000",
-            "20000000",
-            "50000000",
+            "100000", "500000", "1000000", "2000000", "5000000", "10000000", "20000000", "50000000",
         ];
 
         for limit in risk_limits {
@@ -211,7 +207,10 @@ mod tests {
             side: "long".to_string(),
         };
 
-        let endpoint = format!("/futures/{}/dual_positions/{}/risk_limit", request.settle, request.contract);
+        let endpoint = format!(
+            "/futures/{}/dual_positions/{}/risk_limit",
+            request.settle, request.contract
+        );
         assert_eq!(endpoint, "/futures/USDT/dual_positions/BTC_USDT/risk_limit");
     }
 }

@@ -207,12 +207,8 @@ impl RestClient {
         &self,
         request: GetOrderInfoRequest,
     ) -> RestResult<GetOrderInfoResponse> {
-        self.send_get_signed_request(GET_ORDER_INFO_ENDPOINT, request,
-            10,
-            false,
-            None,
-        )
-        .await
+        self.send_get_signed_request(GET_ORDER_INFO_ENDPOINT, request, 10, false, None)
+            .await
     }
 }
 

@@ -1,8 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::binance::{
-    coinm::{RestResult, private::rest::client::RestClient},
-};
+use crate::binance::coinm::{RestResult, private::rest::client::RestClient};
 
 const LEVERAGE_ENDPOINT: &str = "/dapi/v1/leverage";
 
@@ -58,13 +56,8 @@ impl RestClient {
         &self,
         params: ChangeInitialLeverageRequest,
     ) -> RestResult<ChangeInitialLeverageResponse> {
-        self.send_post_signed_request(
-            LEVERAGE_ENDPOINT,
-            params,
-            1,
-            true,
-        )
-        .await
+        self.send_post_signed_request(LEVERAGE_ENDPOINT, params, 1, true)
+            .await
     }
 }
 

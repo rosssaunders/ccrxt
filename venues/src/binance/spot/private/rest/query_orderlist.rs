@@ -151,21 +151,17 @@ impl RestClient {
         &self,
         params: QueryOrderListRequest,
     ) -> RestResult<QueryOrderListResponse> {
-        self.send_get_signed_request(
-            GET_ORDERLIST_ENDPOINT,
-            params,
-            4,
-            false,
-        )
-        .await
+        self.send_get_signed_request(GET_ORDERLIST_ENDPOINT, params, 4, false)
+            .await
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use rust_decimal_macros::dec;
     use serde_json::json;
+
+    use super::*;
 
     #[test]
     fn test_query_orderlist_request_with_order_list_id_serialization() {

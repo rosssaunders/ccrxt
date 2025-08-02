@@ -79,8 +79,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use rust_decimal_macros::dec;
+
+    use super::*;
 
     #[test]
     fn test_historical_trades_request_serialization_basic() {
@@ -860,7 +861,7 @@ mod tests {
 
         // Serialize back
         let serialized = serde_json::to_string(&trade).unwrap();
-        
+
         // Deserialize again
         let trade2: HistoricalTrade = serde_json::from_str(&serialized).unwrap();
 

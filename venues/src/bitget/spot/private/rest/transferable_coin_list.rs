@@ -56,12 +56,8 @@ impl RestClient {
         &self,
         request: GetTransferableCoinListRequest,
     ) -> RestResult<GetTransferableCoinListResponse> {
-        self.send_get_signed_request(TRANSFERABLE_COIN_LIST_ENDPOINT, request,
-            10,
-            false,
-            None,
-        )
-        .await
+        self.send_get_signed_request(TRANSFERABLE_COIN_LIST_ENDPOINT, request, 10, false, None)
+            .await
     }
 }
 

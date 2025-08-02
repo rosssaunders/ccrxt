@@ -53,20 +53,16 @@ impl UsdmClient {
         &self,
         request: GetMultiAssetsMarginStatusRequest,
     ) -> RestResult<MultiAssetsMarginStatusResponse> {
-        self.send_get_signed_request(
-            MULTI_ASSETS_MARGIN_STATUS_ENDPOINT,
-            request,
-            30,
-            false,
-        )
-        .await
+        self.send_get_signed_request(MULTI_ASSETS_MARGIN_STATUS_ENDPOINT, request, 30, false)
+            .await
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use serde_json;
+
+    use super::*;
 
     #[test]
     fn test_get_multi_assets_margin_status_request_default() {

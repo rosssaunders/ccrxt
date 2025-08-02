@@ -1,5 +1,7 @@
-use super::RestClient;
-use super::loan::{GetMaxBorrowableRequest, MaxBorrowable};
+use super::{
+    RestClient,
+    loan::{GetMaxBorrowableRequest, MaxBorrowable},
+};
 
 const UNIFIED_BORROWABLE_ENDPOINT: &str = "/unified/borrowable";
 
@@ -17,7 +19,8 @@ impl RestClient {
         let request = GetMaxBorrowableRequest {
             currency: currency.to_string(),
         };
-        self.get_with_query(UNIFIED_BORROWABLE_ENDPOINT, &request).await
+        self.get_with_query(UNIFIED_BORROWABLE_ENDPOINT, &request)
+            .await
     }
 }
 
@@ -55,7 +58,7 @@ mod tests {
     #[test]
     fn test_get_max_borrowable_different_currencies() {
         let currencies = vec!["BTC", "ETH", "USDT", "BNB", "SOL"];
-        
+
         for currency in currencies {
             let request = GetMaxBorrowableRequest {
                 currency: currency.to_string(),

@@ -3,7 +3,6 @@ use serde::{Deserialize, Serialize};
 use super::client::RestClient;
 use crate::okx::{EndpointType, InstrumentType, RestResult};
 
-
 const PUBLIC_POSITION_TIERS_ENDPOINT: &str = "api/v5/public/position-tiers";
 /// Request parameters for getting position tiers
 #[derive(Debug, Clone, Serialize, Deserialize)]
