@@ -3,8 +3,9 @@ mod contracts;
 mod funding_rate;
 mod indices;
 mod klines;
+mod mark_price;
 mod orderbook;
-mod prices;
+mod spot_index_price;
 mod system;
 mod ticker;
 mod tokens;
@@ -20,13 +21,13 @@ pub use indices::{
     InterestRateIndexResponse, PremiumIndexItem, PremiumIndexResponse,
 };
 pub use klines::{GetKlinesRequest, GetKlinesResponse, Kline, KlineGranularity};
+pub use mark_price::{GetMarkPriceRequest, MarkPrice};
 pub use orderbook::{
     FullOrderBook, GetFullOrderBookRequest, GetPartOrderBookRequest, OrderBookDepth,
     OrderBookLevel, PartOrderBook,
 };
-pub use prices::{
-    DecompositionItem, GetMarkPriceRequest, GetSpotIndexPriceRequest, GetSpotIndexPriceResponse,
-    MarkPrice, SpotIndexPriceItem,
+pub use spot_index_price::{
+    DecompositionItem, GetSpotIndexPriceRequest, GetSpotIndexPriceResponse, SpotIndexPriceItem,
 };
 pub use system::{ServerTime, ServiceStatus};
 pub use ticker::{
