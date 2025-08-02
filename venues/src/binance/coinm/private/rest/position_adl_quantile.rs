@@ -85,9 +85,8 @@ impl RestClient {
         params: GetPositionAdlQuantileRequest,
     ) -> RestResult<GetPositionAdlQuantileResponse> {
         let weight = 5;
-        self.send_signed_request(
+        self.send_get_signed_request(
             ADL_QUANTILE_ENDPOINT,
-            reqwest::Method::GET,
             params,
             weight,
             false,

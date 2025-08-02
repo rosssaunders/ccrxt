@@ -75,9 +75,8 @@ impl RestClient {
         params: GetFuturesAccountBalanceRequest,
     ) -> RestResult<GetFuturesAccountBalanceResponse> {
         let weight = 1;
-        self.send_signed_request(
+        self.send_get_signed_request(
             BALANCE_ENDPOINT,
-            reqwest::Method::GET,
             params,
             weight,
             false,

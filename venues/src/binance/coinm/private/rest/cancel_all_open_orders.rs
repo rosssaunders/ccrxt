@@ -48,9 +48,8 @@ impl RestClient {
         &self,
         params: CancelAllOpenOrdersRequest,
     ) -> RestResult<CancelAllOpenOrdersResponse> {
-        self.send_signed_request(
+        self.send_delete_signed_request(
             ALL_OPEN_ORDERS_ENDPOINT,
-            reqwest::Method::DELETE,
             params,
             1,
             true,

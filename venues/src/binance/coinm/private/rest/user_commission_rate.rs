@@ -56,9 +56,8 @@ impl RestClient {
         params: GetUserCommissionRateRequest,
     ) -> RestResult<GetUserCommissionRateResponse> {
         let weight = 20;
-        self.send_signed_request(
+        self.send_get_signed_request(
             COMMISSION_RATE_ENDPOINT,
-            reqwest::Method::GET,
             params,
             weight,
             false,

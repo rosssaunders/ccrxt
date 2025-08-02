@@ -49,7 +49,6 @@ impl From<rest::error::RestError> for Errors {
             rest::error::RestError::ValidationError(msg) => {
                 Errors::Error(format!("Validation error: {}", msg))
             }
-            rest::error::RestError::HttpError(msg) => Errors::Error(format!("HTTP error: {}", msg)),
             rest::error::RestError::Unknown(msg) => Errors::Error(msg),
         }
     }

@@ -126,9 +126,8 @@ impl RestClient {
         } else {
             40
         };
-        self.send_signed_request(
+        self.send_get_signed_request(
             OPEN_ORDERS_ENDPOINT,
-            reqwest::Method::GET,
             params,
             weight,
             false,

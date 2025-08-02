@@ -300,9 +300,8 @@ impl RestClient {
         &self,
         request: PlaceBatchOrdersRequest,
     ) -> RestResult<Vec<BatchOrderResult>> {
-        self.send_signed_request(
+        self.send_post_signed_request(
             BATCH_ORDERS_ENDPOINT,
-            reqwest::Method::POST,
             request,
             5,    // weight
             true, // is_order

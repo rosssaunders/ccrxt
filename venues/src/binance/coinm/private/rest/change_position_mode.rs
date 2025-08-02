@@ -51,9 +51,8 @@ impl RestClient {
         &self,
         params: ChangePositionModeRequest,
     ) -> RestResult<ChangePositionModeResponse> {
-        self.send_signed_request(
+        self.send_post_signed_request(
             POSITION_SIDE_DUAL_ENDPOINT,
-            reqwest::Method::POST,
             params,
             1,
             true,

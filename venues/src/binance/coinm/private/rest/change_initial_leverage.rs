@@ -58,9 +58,8 @@ impl RestClient {
         &self,
         params: ChangeInitialLeverageRequest,
     ) -> RestResult<ChangeInitialLeverageResponse> {
-        self.send_signed_request(
+        self.send_post_signed_request(
             LEVERAGE_ENDPOINT,
-            reqwest::Method::POST,
             params,
             1,
             true,

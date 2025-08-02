@@ -128,9 +128,8 @@ impl RestClient {
         &self,
         params: CancelOrderRequest,
     ) -> RestResult<CancelOrderResponse> {
-        self.send_signed_request(
+        self.send_delete_signed_request(
             CANCEL_ORDER_ENDPOINT,
-            reqwest::Method::DELETE,
             params,
             1,
             false,

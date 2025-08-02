@@ -68,9 +68,8 @@ impl RestClient {
         &self,
         params: AutoCancelAllOpenOrdersRequest,
     ) -> RestResult<AutoCancelAllOpenOrdersResponse> {
-        self.send_signed_request(
+        self.send_post_signed_request(
             COUNTDOWN_CANCEL_ALL_ENDPOINT,
-            reqwest::Method::POST,
             params,
             10,
             true,

@@ -54,7 +54,7 @@ impl RestClient {
         &self,
         params: ChangeMarginTypeRequest,
     ) -> RestResult<ChangeMarginTypeResponse> {
-        self.send_signed_request(MARGIN_TYPE_ENDPOINT, reqwest::Method::POST, params, 1, true)
+        self.send_post_signed_request(MARGIN_TYPE_ENDPOINT, params, 1, true)
             .await
     }
 }

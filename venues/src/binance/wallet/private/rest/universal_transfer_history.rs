@@ -96,9 +96,8 @@ impl RestClient {
         params: UniversalTransferHistoryRequest,
     ) -> RestResult<UniversalTransferHistoryResponse> {
         let weight = 1;
-        self.send_signed_request(
+        self.send_get_signed_request(
             UNIVERSAL_TRANSFER_HISTORY_ENDPOINT,
-            reqwest::Method::GET,
             params,
             weight,
             false,

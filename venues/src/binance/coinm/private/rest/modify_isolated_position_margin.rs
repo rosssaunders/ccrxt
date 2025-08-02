@@ -70,9 +70,8 @@ impl RestClient {
         params: ModifyIsolatedPositionMarginRequest,
     ) -> RestResult<ModifyIsolatedPositionMarginResponse> {
         let weight = 1;
-        self.send_signed_request(
+        self.send_post_signed_request(
             POSITION_MARGIN_ENDPOINT,
-            reqwest::Method::POST,
             params,
             weight,
             true,

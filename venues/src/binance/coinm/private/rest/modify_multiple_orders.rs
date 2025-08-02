@@ -102,9 +102,8 @@ impl RestClient {
         params: ModifyMultipleOrdersRequest,
     ) -> RestResult<ModifyMultipleOrdersResponse> {
         let weight = 5;
-        self.send_signed_request(
+        self.send_put_signed_request(
             BATCH_ORDERS_ENDPOINT,
-            reqwest::Method::PUT,
             params,
             weight,
             true,

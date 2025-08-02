@@ -164,7 +164,7 @@ impl RestClient {
         params: ModifyOrderRequest,
     ) -> RestResult<ModifyOrderResponse> {
         let weight = 1;
-        self.send_signed_request(ORDER_ENDPOINT, reqwest::Method::PUT, params, weight, true)
+        self.send_put_signed_request(ORDER_ENDPOINT, params, weight, true)
             .await
     }
 }

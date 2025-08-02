@@ -59,9 +59,8 @@ impl RestClient {
         params: UniversalTransferRequest,
     ) -> RestResult<UniversalTransferResponse> {
         let weight = 900;
-        self.send_signed_request(
+        self.send_post_signed_request(
             UNIVERSAL_TRANSFER_ENDPOINT,
-            reqwest::Method::POST,
             params,
             weight,
             false,

@@ -155,9 +155,8 @@ impl RestClient {
         params: QueryCurrentOpenOrderRequest,
     ) -> RestResult<QueryCurrentOpenOrderResponse> {
         let weight = 1;
-        self.send_signed_request(
+        self.send_get_signed_request(
             OPEN_ORDER_ENDPOINT,
-            reqwest::Method::GET,
             params,
             weight,
             false,

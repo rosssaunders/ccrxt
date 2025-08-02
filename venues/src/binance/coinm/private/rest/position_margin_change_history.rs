@@ -82,9 +82,8 @@ impl RestClient {
         params: GetPositionMarginChangeHistoryRequest,
     ) -> RestResult<GetPositionMarginChangeHistoryResponse> {
         let weight = 1;
-        self.send_signed_request(
+        self.send_get_signed_request(
             POSITION_MARGIN_HISTORY_ENDPOINT,
-            reqwest::Method::GET,
             params,
             weight,
             false,

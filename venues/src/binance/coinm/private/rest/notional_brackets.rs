@@ -72,9 +72,8 @@ impl RestClient {
         params: NotionalBracketRequest,
     ) -> RestResult<Vec<NotionalBracketResponse>> {
         let weight = if params.pair.is_some() { 1 } else { 40 };
-        self.send_signed_request(
+        self.send_get_signed_request(
             LEVERAGE_BRACKET_ENDPOINT,
-            reqwest::Method::GET,
             params,
             weight,
             false,

@@ -86,9 +86,8 @@ impl RestClient {
         params: IncomeHistoryRequest,
     ) -> RestResult<Vec<IncomeHistoryEntry>> {
         let weight = 20;
-        self.send_signed_request(
+        self.send_get_signed_request(
             INCOME_ENDPOINT,
-            reqwest::Method::GET,
             params,
             weight,
             false,

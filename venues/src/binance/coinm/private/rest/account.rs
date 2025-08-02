@@ -1,11 +1,9 @@
 use serde::{Deserialize, Serialize};
 
-use crate::binance::{
-    coinm::{
-        RestResult,
-        enums::{MarginType, PositionSide},
-        private::rest::client::RestClient,
-    },
+use crate::binance::coinm::{
+    RestResult,
+    enums::{MarginType, PositionSide},
+    private::rest::client::RestClient,
 };
 
 const ACCOUNT_ENDPOINT: &str = "/dapi/v1/account";
@@ -239,14 +237,8 @@ impl RestClient {
     /// Requires API key authentication.
     /// Weight: 5
     pub async fn get_account(&self, request: AccountRequest) -> RestResult<AccountResponse> {
-        self.send_signed_request(
-            ACCOUNT_ENDPOINT,
-            reqwest::Method::GET,
-            request,
-            5,
-            false,
-        )
-        .await
+        self.send_get_signed_request(ACCOUNT_ENDPOINT, request, 5, false)
+            .await
     }
 }
 

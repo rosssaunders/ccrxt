@@ -46,9 +46,8 @@ impl RestClient {
         params: GetCurrentPositionModeRequest,
     ) -> RestResult<GetCurrentPositionModeResponse> {
         let weight = 30;
-        self.send_signed_request(
+        self.send_get_signed_request(
             POSITION_SIDE_DUAL_ENDPOINT,
-            reqwest::Method::GET,
             params,
             weight,
             false,

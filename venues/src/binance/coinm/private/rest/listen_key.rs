@@ -64,9 +64,8 @@ impl RestClient {
         params: CreateListenKeyRequest,
     ) -> RestResult<CreateListenKeyResponse> {
         let weight = 1;
-        self.send_signed_request(
+        self.send_post_signed_request(
             LISTEN_KEY_ENDPOINT,
-            reqwest::Method::POST,
             params,
             weight,
             false,
@@ -92,9 +91,8 @@ impl RestClient {
         params: ExtendListenKeyRequest,
     ) -> RestResult<ListenKeyResponse> {
         let weight = 1;
-        self.send_signed_request(
+        self.send_put_signed_request(
             LISTEN_KEY_ENDPOINT,
-            reqwest::Method::PUT,
             params,
             weight,
             false,
@@ -120,9 +118,8 @@ impl RestClient {
         params: DeleteListenKeyRequest,
     ) -> RestResult<ListenKeyResponse> {
         let weight = 1;
-        self.send_signed_request(
+        self.send_delete_signed_request(
             LISTEN_KEY_ENDPOINT,
-            reqwest::Method::DELETE,
             params,
             weight,
             false,

@@ -118,9 +118,8 @@ impl RestClient {
         params: GetOrderModifyHistoryRequest,
     ) -> RestResult<GetOrderModifyHistoryResponse> {
         let weight = 1;
-        self.send_signed_request(
+        self.send_get_signed_request(
             ORDER_AMENDMENT_ENDPOINT,
-            reqwest::Method::GET,
             params,
             weight,
             false,

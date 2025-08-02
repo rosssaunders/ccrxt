@@ -83,9 +83,8 @@ impl RestClient {
         params: GetDownloadIdRequest,
     ) -> RestResult<GetDownloadIdResponse> {
         let weight = 5;
-        self.send_signed_request(
+        self.send_get_signed_request(
             INCOME_ASYN_ENDPOINT,
-            reqwest::Method::GET,
             params,
             weight,
             false,
@@ -111,9 +110,8 @@ impl RestClient {
         params: GetDownloadLinkRequest,
     ) -> RestResult<GetDownloadLinkResponse> {
         let weight = 5;
-        self.send_signed_request(
+        self.send_get_signed_request(
             INCOME_ASYN_ID_ENDPOINT,
-            reqwest::Method::GET,
             params,
             weight,
             false,
