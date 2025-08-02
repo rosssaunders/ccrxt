@@ -378,16 +378,25 @@ mod tests {
         // Test that different limit values would result in correct weight calculations
         // Note: This tests the logic that would be used in the actual endpoint call
         let test_cases = vec![
-            (None, 500, 2),         // Default 500 -> weight 2
+            (None, 500, 5),         // Default 500 -> weight 5
             (Some(50), 50, 1),      // Under 100 -> weight 1
+            (Some(99), 99, 1),      // Edge case: 99 -> weight 1
             (Some(100), 100, 2),    // 100-499 -> weight 2
+            (Some(499), 499, 2),    // Edge case: 499 -> weight 2
             (Some(500), 500, 5),    // 500-1000 -> weight 5
+            (Some(1000), 1000, 5),  // Edge case: 1000 -> weight 5
+            (Some(1001), 1001, 10), // Just over 1000 -> weight 10
             (Some(1500), 1500, 10), // Over 1000 -> weight 10
         ];
 
-        for (limit_param, _, expected_weight) in test_cases {
-            let effective_limit = limit_param.unwrap_or(500);
-            let calculated_weight = match effective_limit {
+        for (limit_param, effective_limit, expected_weight) in test_cases {
+            let calculated_limit = limit_param.unwrap_or(500);
+            assert_eq!(
+                calculated_limit, effective_limit,
+                "Effective limit calculation failed"
+            );
+
+            let calculated_weight = match calculated_limit {
                 0..=99 => 1,
                 100..=499 => 2,
                 500..=1000 => 5,
@@ -396,8 +405,8 @@ mod tests {
 
             assert_eq!(
                 calculated_weight, expected_weight,
-                "Limit {} should have weight {}",
-                effective_limit, expected_weight
+                "Limit {} should have weight {}, got {}",
+                calculated_limit, expected_weight, calculated_weight
             );
         }
     }

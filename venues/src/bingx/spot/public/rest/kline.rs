@@ -211,6 +211,6 @@ mod tests {
 
         // Test that the method exists and can be called
         // Note: This will fail with network error since we're not making real requests
-        assert!(client.get_kline(&request).await.is_err());
+        assert!(client.get_kline(request).await.is_err());
     }
 }

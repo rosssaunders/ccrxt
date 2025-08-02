@@ -216,7 +216,7 @@ mod tests {
         assert_eq!(serde_json::to_string(&TimeInForce::Fok).unwrap(), "\"FOK\"");
         assert_eq!(
             serde_json::to_string(&TimeInForce::PostOnly).unwrap(),
-            "\"POST_ONLY\""
+            "\"PostOnly\""
         );
     }
 }

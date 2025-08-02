@@ -171,6 +171,6 @@ mod tests {
 
         // Test that the method exists and can be called
         // Note: This will fail with network error since we're not making real requests
-        assert!(client.get_symbols(&request).await.is_err());
+        assert!(client.get_symbols(request).await.is_err());
     }
 }

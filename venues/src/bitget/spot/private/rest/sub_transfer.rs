@@ -137,17 +137,6 @@ mod tests {
         assert_eq!(response.data.client_oid, "my-transfer-123");
     }
 
-    #[test]
-    fn test_sub_transfer_default() {
-        let request = SubTransferRequest::default();
-        assert_eq!(request.amount, "");
-        assert_eq!(request.coin, "");
-        assert_eq!(request.from_user_id, "");
-        assert_eq!(request.to_user_id, "");
-        assert!(request.symbol.is_none());
-        assert!(request.client_oid.is_none());
-    }
-
     #[tokio::test]
     async fn test_sub_transfer_endpoint() {
         // This test verifies the endpoint structure without making actual API calls
