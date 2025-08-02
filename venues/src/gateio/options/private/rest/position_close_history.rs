@@ -2,6 +2,8 @@ use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 
+const OPTIONS_POSITION_CLOSE_ENDPOINT: &str = "/options/position_close";
+
 /// Options position close history entry
 #[derive(Debug, Clone, Deserialize)]
 pub struct OptionsPositionCloseHistory {
@@ -71,7 +73,7 @@ impl RestClient {
         &self,
         request: OptionsPositionCloseHistoryRequest,
     ) -> crate::gateio::options::Result<Vec<OptionsPositionCloseHistory>> {
-        self.get_with_query("/options/position_close", &request)
+        self.get_with_query(OPTIONS_POSITION_CLOSE_ENDPOINT, &request)
             .await
     }
 }

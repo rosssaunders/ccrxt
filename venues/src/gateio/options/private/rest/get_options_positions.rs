@@ -3,6 +3,8 @@ use serde::Serialize;
 use super::RestClient;
 use super::position::OptionsPosition;
 
+const OPTIONS_POSITIONS_ENDPOINT: &str = "/options/positions";
+
 /// Request parameters for options positions
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct OptionsPositionsRequest {
@@ -38,7 +40,7 @@ impl RestClient {
         &self,
         params: OptionsPositionsRequest,
     ) -> crate::gateio::options::Result<Vec<OptionsPosition>> {
-        self.get_with_query("/options/positions", &params).await
+        self.get_with_query(OPTIONS_POSITIONS_ENDPOINT, &params).await
     }
 }
 

@@ -1,6 +1,8 @@
 use super::RestClient;
 use super::position::OptionsPosition;
 
+const OPTIONS_POSITIONS_ENDPOINT: &str = "/options/positions";
+
 impl RestClient {
     /// Get a specific options position
     ///
@@ -20,13 +22,14 @@ impl RestClient {
         &self,
         contract: &str,
     ) -> crate::gateio::options::Result<OptionsPosition> {
-        let endpoint = format!("/options/positions/{}", contract);
+        let endpoint = format!("{}/{}", OPTIONS_POSITIONS_ENDPOINT, contract);
         self.get(&endpoint).await
     }
 }
 
 #[cfg(test)]
 mod tests {
+    use super::*;
     #[test]
     fn test_get_options_position_endpoint() {
         let contracts = vec![
@@ -37,7 +40,7 @@ mod tests {
         ];
 
         for contract in contracts {
-            let endpoint = format!("/options/positions/{}", contract);
+            let endpoint = format!("{}/{}", OPTIONS_POSITIONS_ENDPOINT, contract);
             assert!(endpoint.starts_with("/options/positions/"));
             assert!(endpoint.ends_with(contract));
         }
@@ -61,7 +64,7 @@ mod tests {
         ];
 
         for contract in contracts {
-            let endpoint = format!("/options/positions/{}", contract);
+            let endpoint = format!("{}/{}", OPTIONS_POSITIONS_ENDPOINT, contract);
             assert_eq!(endpoint, format!("/options/positions/{}", contract));
         }
     }
@@ -76,7 +79,7 @@ mod tests {
         ];
 
         for contract in contracts {
-            let endpoint = format!("/options/positions/{}", contract);
+            let endpoint = format!("{}/{}", OPTIONS_POSITIONS_ENDPOINT, contract);
             assert!(endpoint.contains(contract));
         }
     }
@@ -92,7 +95,7 @@ mod tests {
         ];
 
         for contract in contracts {
-            let endpoint = format!("/options/positions/{}", contract);
+            let endpoint = format!("{}/{}", OPTIONS_POSITIONS_ENDPOINT, contract);
             assert!(endpoint.contains(contract));
         }
     }

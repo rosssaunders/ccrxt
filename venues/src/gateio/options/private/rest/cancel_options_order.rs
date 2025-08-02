@@ -1,6 +1,8 @@
 use super::RestClient;
 use super::order::OptionsOrder;
 
+const OPTIONS_ORDERS_ENDPOINT: &str = "/options/orders";
+
 impl RestClient {
     /// Cancel a specific options order
     ///
@@ -20,19 +22,20 @@ impl RestClient {
         &self,
         order_id: &str,
     ) -> crate::gateio::options::Result<OptionsOrder> {
-        let endpoint = format!("/options/orders/{}", order_id);
+        let endpoint = format!("{}/{}", OPTIONS_ORDERS_ENDPOINT, order_id);
         self.delete(&endpoint).await
     }
 }
 
 #[cfg(test)]
 mod tests {
+    use super::*;
     #[test]
     fn test_cancel_options_order_endpoint() {
         let order_ids = vec!["12345", "67890", "999999999", "1", "0"];
 
         for order_id in order_ids {
-            let endpoint = format!("/options/orders/{}", order_id);
+            let endpoint = format!("{}/{}", OPTIONS_ORDERS_ENDPOINT, order_id);
             assert!(endpoint.starts_with("/options/orders/"));
             assert!(endpoint.ends_with(order_id));
         }
@@ -41,7 +44,7 @@ mod tests {
     #[test]
     fn test_cancel_options_order_endpoint_format() {
         let order_id = "12345678";
-        let endpoint = format!("/options/orders/{}", order_id);
+        let endpoint = format!("{}/{}", OPTIONS_ORDERS_ENDPOINT, order_id);
         assert_eq!(endpoint, "/options/orders/12345678");
     }
 
@@ -50,7 +53,7 @@ mod tests {
         let long_ids = vec!["123456789012345", "999999999999999", "111111111111111"];
 
         for order_id in long_ids {
-            let endpoint = format!("/options/orders/{}", order_id);
+            let endpoint = format!("{}/{}", OPTIONS_ORDERS_ENDPOINT, order_id);
             assert_eq!(endpoint, format!("/options/orders/{}", order_id));
         }
     }
@@ -61,7 +64,7 @@ mod tests {
         let order_ids = vec!["abc123", "123-456", "order_789"];
 
         for order_id in order_ids {
-            let endpoint = format!("/options/orders/{}", order_id);
+            let endpoint = format!("{}/{}", OPTIONS_ORDERS_ENDPOINT, order_id);
             assert!(endpoint.contains(order_id));
             assert_eq!(endpoint, format!("/options/orders/{}", order_id));
         }

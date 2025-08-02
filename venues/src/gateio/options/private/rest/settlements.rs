@@ -2,6 +2,8 @@ use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 
+const OPTIONS_SETTLEMENTS_ENDPOINT: &str = "/options/settlements";
+
 /// Options settlement record
 #[derive(Debug, Clone, Deserialize)]
 pub struct OptionsSettlement {
@@ -76,7 +78,7 @@ impl RestClient {
         &self,
         request: OptionsSettlementsRequest,
     ) -> crate::gateio::options::Result<Vec<OptionsSettlement>> {
-        self.get_with_query("/options/settlements", &request).await
+        self.get_with_query(OPTIONS_SETTLEMENTS_ENDPOINT, &request).await
     }
 }
 

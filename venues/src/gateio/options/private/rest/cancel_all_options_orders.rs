@@ -1,6 +1,8 @@
 use super::RestClient;
 use super::order::OptionsOrder;
 
+const OPTIONS_ORDERS_ENDPOINT: &str = "/options/orders";
+
 impl RestClient {
     /// Cancel all options orders
     ///
@@ -22,7 +24,7 @@ impl RestClient {
         underlying: Option<&str>,
         contract: Option<&str>,
     ) -> crate::gateio::options::Result<Vec<OptionsOrder>> {
-        let mut endpoint = "/options/orders".to_string();
+        let mut endpoint = OPTIONS_ORDERS_ENDPOINT.to_string();
         let mut query_params = Vec::new();
 
         if let Some(underlying) = underlying {
@@ -43,16 +45,17 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
+    use super::*;
     #[test]
     fn test_cancel_all_options_orders_no_filters() {
-        let endpoint = "/options/orders".to_string();
+        let endpoint = OPTIONS_ORDERS_ENDPOINT.to_string();
         assert_eq!(endpoint, "/options/orders");
     }
 
     #[test]
     fn test_cancel_all_options_orders_with_underlying() {
         let underlying = Some("BTC_USDT");
-        let mut endpoint = "/options/orders".to_string();
+        let mut endpoint = OPTIONS_ORDERS_ENDPOINT.to_string();
         let mut query_params = Vec::new();
 
         if let Some(underlying) = underlying {
@@ -70,7 +73,7 @@ mod tests {
     #[test]
     fn test_cancel_all_options_orders_with_contract() {
         let contract = Some("BTC-20240101-50000-C");
-        let mut endpoint = "/options/orders".to_string();
+        let mut endpoint = OPTIONS_ORDERS_ENDPOINT.to_string();
         let mut query_params = Vec::new();
 
         if let Some(contract) = contract {
@@ -89,7 +92,7 @@ mod tests {
     fn test_cancel_all_options_orders_with_both_filters() {
         let underlying = Some("ETH_USDT");
         let contract = Some("ETH-20240101-3000-P");
-        let mut endpoint = "/options/orders".to_string();
+        let mut endpoint = OPTIONS_ORDERS_ENDPOINT.to_string();
         let mut query_params = Vec::new();
 
         if let Some(underlying) = underlying {
@@ -115,7 +118,7 @@ mod tests {
         let underlyings = vec!["BTC_USDT", "ETH_USDT", "SOL_USDT", "BNB_USDT"];
 
         for underlying in underlyings {
-            let mut endpoint = "/options/orders".to_string();
+            let mut endpoint = OPTIONS_ORDERS_ENDPOINT.to_string();
             let mut query_params = Vec::new();
             query_params.push(format!("underlying={}", underlying));
 
@@ -137,7 +140,7 @@ mod tests {
         ];
 
         for contract in contracts {
-            let mut endpoint = "/options/orders".to_string();
+            let mut endpoint = OPTIONS_ORDERS_ENDPOINT.to_string();
             let mut query_params = Vec::new();
             query_params.push(format!("contract={}", contract));
 
@@ -155,7 +158,7 @@ mod tests {
         let underlying = Some("BTC_USDT");
         let contract = Some("BTC-20240101-50000-C");
 
-        let mut endpoint = "/options/orders".to_string();
+        let mut endpoint = OPTIONS_ORDERS_ENDPOINT.to_string();
         let mut query_params = Vec::new();
 
         if let Some(underlying) = underlying {

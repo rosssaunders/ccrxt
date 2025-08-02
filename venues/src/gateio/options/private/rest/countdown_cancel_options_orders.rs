@@ -2,6 +2,8 @@ use serde::Serialize;
 
 use super::RestClient;
 
+const OPTIONS_COUNTDOWN_CANCEL_ALL_ENDPOINT: &str = "/options/countdown_cancel_all";
+
 /// Request for countdown cancel orders
 #[derive(Debug, Clone, Serialize)]
 pub struct CountdownCancelOptionsOrdersRequest {
@@ -39,7 +41,7 @@ impl RestClient {
             underlying: underlying.map(|s| s.to_string()),
         };
 
-        self.post("/options/countdown_cancel_all", &request).await
+        self.post(OPTIONS_COUNTDOWN_CANCEL_ALL_ENDPOINT, &request).await
     }
 }
 

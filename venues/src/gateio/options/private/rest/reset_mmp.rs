@@ -2,6 +2,8 @@ use serde::Serialize;
 
 use super::RestClient;
 
+const MMP_RESET_ENDPOINT: &str = "/options/mmp/reset";
+
 /// Request to reset MMP
 #[derive(Debug, Clone, Serialize)]
 pub struct ResetMMPRequest {
@@ -28,7 +30,7 @@ impl RestClient {
         let request = ResetMMPRequest {
             underlying: underlying.to_string(),
         };
-        self.post("/options/mmp/reset", &request).await
+        self.post(MMP_RESET_ENDPOINT, &request).await
     }
 }
 
