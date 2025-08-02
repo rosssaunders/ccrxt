@@ -152,17 +152,22 @@ pub struct Order {
 }
 
 /// Parameters for querying orders
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone, Default, Serialize)]
 pub struct GetOrdersParams {
     /// Trading account ID (required)
+    #[serde(rename = "tradingAccountId")]
     pub trading_account_id: String,
     /// Market symbol filter
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub symbol: Option<String>,
     /// Client order ID filter
+    #[serde(rename = "clientOrderId", skip_serializing_if = "Option::is_none")]
     pub client_order_id: Option<String>,
     /// Order side filter
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub side: Option<OrderSide>,
     /// Order status filter
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub status: Option<OrderStatus>,
 }
 
@@ -178,35 +183,9 @@ impl RestClient {
     /// # Returns
     /// List of orders matching the filter criteria
     pub async fn get_orders(&mut self, params: GetOrdersParams) -> RestResult<Vec<Order>> {
-        let mut query_params = vec![("tradingAccountId", params.trading_account_id)];
-
-        if let Some(symbol) = params.symbol {
-            query_params.push(("symbol", symbol));
-        }
-        if let Some(client_order_id) = params.client_order_id {
-            query_params.push(("clientOrderId", client_order_id));
-        }
-        if let Some(side) = params.side {
-            query_params.push(("side", format!("{:?}", side).to_uppercase()));
-        }
-        if let Some(status) = params.status {
-            query_params.push(("status", format!("{:?}", status).to_uppercase()));
-        }
-
-        let mut url = ORDERS_ENDPOINT.to_string();
-        if !query_params.is_empty() {
-            url.push('?');
-            let query_string: Vec<String> = query_params
-                .iter()
-                .map(|(k, v)| format!("{}={}", k, v))
-                .collect();
-            url.push_str(&query_string.join("&"));
-        }
-
-        self.send_authenticated_request(
-            &url,
-            reqwest::Method::GET,
-            None::<&()>,
+        self.send_get_authenticated_request(
+            ORDERS_ENDPOINT,
+            params,
             EndpointType::PrivateOrders,
         )
         .await
@@ -230,10 +209,7 @@ impl RestClient {
         &mut self,
         request: CreateOrderRequest,
     ) -> RestResult<CreateOrderResponse> {
-        self.send_signed_request(
-            ORDERS_ENDPOINT,
-            reqwest::Method::POST,
-            Some(&request),
+        self.send_post_signed_request(ORDERS_ENDPOINT, request,
             EndpointType::PrivateOrders,
         )
         .await
@@ -254,15 +230,20 @@ impl RestClient {
         order_id: &str,
         trading_account_id: &str,
     ) -> RestResult<Order> {
-        let url = format!(
-            "{}{}?tradingAccountId={}",
-            ORDERS_ENDPOINT, order_id, trading_account_id
-        );
-
-        self.send_authenticated_request(
-            &url,
-            reqwest::Method::GET,
-            None::<&()>,
+        #[derive(Serialize)]
+        struct GetOrderParams {
+            #[serde(rename = "tradingAccountId")]
+            trading_account_id: String,
+        }
+        
+        let params = GetOrderParams {
+            trading_account_id: trading_account_id.to_string(),
+        };
+        let endpoint = format!("{}{}", ORDERS_ENDPOINT, order_id);
+        
+        self.send_get_authenticated_request(
+            &endpoint,
+            params,
             EndpointType::PrivateOrders,
         )
         .await

@@ -112,10 +112,7 @@ impl RestClient {
             url.push_str(&query_string.join("&"));
         }
 
-        self.send_authenticated_request(
-            &url,
-            reqwest::Method::GET,
-            None::<&()>,
+        self.send_get_authenticated_request(&url, (),
             EndpointType::PrivateTrades,
         )
         .await
@@ -141,10 +138,7 @@ impl RestClient {
             SINGLE_TRADE_ENDPOINT.replace("{}", trade_id), trading_account_id
         );
 
-        self.send_authenticated_request(
-            &url,
-            reqwest::Method::GET,
-            None::<&()>,
+        self.send_get_authenticated_request(&url, (),
             EndpointType::PrivateTrades,
         )
         .await

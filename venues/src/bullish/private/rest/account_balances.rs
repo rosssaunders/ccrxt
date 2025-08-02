@@ -83,10 +83,7 @@ impl RestClient {
     ) -> RestResult<AssetBalancesResponse> {
         let url = format!("{}?tradingAccountId={}", ASSET_BALANCES_ENDPOINT, trading_account_id);
 
-        self.send_authenticated_request(
-            &url,
-            reqwest::Method::GET,
-            None::<&()>,
+        self.send_get_authenticated_request(&url, (),
             EndpointType::PrivateAssetBalances,
         )
         .await
@@ -112,10 +109,7 @@ impl RestClient {
             SINGLE_ASSET_BALANCE_ENDPOINT.replace("{}", symbol), trading_account_id
         );
 
-        self.send_authenticated_request(
-            &url,
-            reqwest::Method::GET,
-            None::<&()>,
+        self.send_get_authenticated_request(&url, (),
             EndpointType::PrivateAssetBalances,
         )
         .await

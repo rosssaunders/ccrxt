@@ -370,6 +370,138 @@ impl RestClient {
         let result: T = response.json().await?;
         Ok(result)
     }
+
+    /// High-performance GET request method for authenticated endpoints
+    ///
+    /// # Arguments
+    /// * `endpoint` - The API endpoint path
+    /// * `params` - Request parameters (will be serialized to query string)
+    /// * `endpoint_type` - The endpoint type for rate limiting
+    ///
+    /// # Returns
+    /// The deserialized response or an error
+    pub async fn send_get_authenticated_request<T, P>(
+        &mut self,
+        endpoint: &str,
+        params: P,
+        endpoint_type: EndpointType,
+    ) -> RestResult<T>
+    where
+        T: DeserializeOwned,
+        P: Serialize,
+    {
+        // Serialize params to query string
+        let query = serde_urlencoded::to_string(&params)
+            .map_err(|e| Errors::Error(format!("Failed to serialize params: {}", e)))?;
+        
+        let url_with_query = if query.is_empty() {
+            endpoint.to_string()
+        } else {
+            format!("{}?{}", endpoint, query)
+        };
+        
+        self.send_authenticated_request(
+            &url_with_query,
+            reqwest::Method::GET,
+            None::<&()>,
+            endpoint_type,
+        )
+        .await
+    }
+
+    /// High-performance POST request method for signed endpoints
+    ///
+    /// # Arguments
+    /// * `endpoint` - The API endpoint path
+    /// * `params` - Request parameters (will be serialized to JSON body)
+    /// * `endpoint_type` - The endpoint type for rate limiting
+    ///
+    /// # Returns
+    /// The deserialized response or an error
+    pub async fn send_post_signed_request<T, P>(
+        &mut self,
+        endpoint: &str,
+        params: P,
+        endpoint_type: EndpointType,
+    ) -> RestResult<T>
+    where
+        T: DeserializeOwned,
+        P: Serialize,
+    {
+        self.send_signed_request(
+            endpoint,
+            reqwest::Method::POST,
+            Some(&params),
+            endpoint_type,
+        )
+        .await
+    }
+
+    /// High-performance PUT request method for signed endpoints
+    ///
+    /// # Arguments
+    /// * `endpoint` - The API endpoint path
+    /// * `params` - Request parameters (will be serialized to JSON body)
+    /// * `endpoint_type` - The endpoint type for rate limiting
+    ///
+    /// # Returns
+    /// The deserialized response or an error
+    pub async fn send_put_signed_request<T, P>(
+        &mut self,
+        endpoint: &str,
+        params: P,
+        endpoint_type: EndpointType,
+    ) -> RestResult<T>
+    where
+        T: DeserializeOwned,
+        P: Serialize,
+    {
+        self.send_signed_request(
+            endpoint,
+            reqwest::Method::PUT,
+            Some(&params),
+            endpoint_type,
+        )
+        .await
+    }
+
+    /// High-performance DELETE request method for signed endpoints
+    ///
+    /// # Arguments
+    /// * `endpoint` - The API endpoint path
+    /// * `params` - Request parameters (will be serialized to query string)
+    /// * `endpoint_type` - The endpoint type for rate limiting
+    ///
+    /// # Returns
+    /// The deserialized response or an error
+    pub async fn send_delete_signed_request<T, P>(
+        &mut self,
+        endpoint: &str,
+        params: P,
+        endpoint_type: EndpointType,
+    ) -> RestResult<T>
+    where
+        T: DeserializeOwned,
+        P: Serialize,
+    {
+        // For DELETE, params go in query string
+        let query = serde_urlencoded::to_string(&params)
+            .map_err(|e| Errors::Error(format!("Failed to serialize params: {}", e)))?;
+        
+        let url_with_query = if query.is_empty() {
+            endpoint.to_string()
+        } else {
+            format!("{}?{}", endpoint, query)
+        };
+        
+        self.send_signed_request(
+            &url_with_query,
+            reqwest::Method::DELETE,
+            None::<&()>,
+            endpoint_type,
+        )
+        .await
+    }
 }
 
 #[cfg(test)]
