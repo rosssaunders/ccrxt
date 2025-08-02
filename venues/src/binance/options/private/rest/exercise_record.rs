@@ -99,7 +99,7 @@ impl RestClient {
     ///
     /// Returns exercise records for options.
     ///
-    /// See: [API Documentation](https://developers.binance.com/docs/derivatives/option/trade/Option-Exercise-Record)
+    /// [docs]: (https://developers.binance.com/docs/derivatives/option/trade/Option-Exercise-Record)
     /// Method: GET /eapi/v1/exerciseRecord
     /// Weight: 1
     /// Requires: API key and signature
@@ -107,9 +107,8 @@ impl RestClient {
         &self,
         params: ExerciseRecordRequest,
     ) -> RestResult<Vec<ExerciseRecord>> {
-        self.send_signed_request(
+        self.send_get_signed_request(
             GET_EXERCISE_RECORD_ENDPOINT,
-            reqwest::Method::GET,
             params,
             1,
             false,

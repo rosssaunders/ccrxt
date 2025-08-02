@@ -62,9 +62,8 @@ impl RestClient {
         &self,
         request: IncomeDownloadStatusRequest,
     ) -> RestResult<IncomeDownloadStatusResponse> {
-        self.send_signed_request(
+        self.send_get_signed_request(
             INCOME_DOWNLOAD_STATUS_ENDPOINT,
-            reqwest::Method::GET,
             request,
             5,
             false,

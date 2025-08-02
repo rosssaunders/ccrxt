@@ -146,13 +146,11 @@ impl UsdmClient {
     ) -> RestResult<Vec<OpenOrder>> {
         // Determine rate limit based on whether a symbol is specified
         let rate_limit = if params.symbol.is_some() { 1 } else { 40 };
-        self.send_signed_request(
+        self.send_get_signed_request(
             OPEN_ORDERS_ENDPOINT,
-            reqwest::Method::GET,
             params,
             rate_limit,
-            true,
-        )
+            true,)
         .await
     }
 }

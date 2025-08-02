@@ -47,7 +47,7 @@ impl RestClient {
     ///
     /// Best price/qty on the order book for a symbol or symbols.
     ///
-    /// See: [API Documentation](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#symbol-order-book-ticker)
+    /// [docs]: (https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#symbol-order-book-ticker)
     /// Method: GET /api/v3/ticker/bookTicker
     /// Weight: 2 for single symbol, 4 for multiple symbols
     /// Security: None

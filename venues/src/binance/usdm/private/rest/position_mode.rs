@@ -55,9 +55,8 @@ impl UsdmClient {
     /// # Returns
     /// Empty response on success. If there is an error, it will be returned.
     pub async fn change_position_mode(&self, request: ChangePositionModeRequest) -> RestResult<()> {
-        self.send_signed_request::<(), _>(
+        self.send_post_signed_request(
             CHANGE_POSITION_MODE_ENDPOINT,
-            Method::POST,
             request,
             1,
             false,

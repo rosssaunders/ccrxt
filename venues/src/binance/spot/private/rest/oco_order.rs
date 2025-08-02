@@ -148,18 +148,16 @@ impl RestClient {
     ///
     /// Send in a new OCO (One-Cancels-Other) order.
     ///
-    /// See: [API Documentation](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#new-oco--trade)
+    /// [docs]: (https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#new-oco--trade)
     /// Method: POST /api/v3/order/oco
     /// Weight: 1
     /// Security: TRADE
     pub async fn new_oco_order(&self, params: OcoOrderRequest) -> RestResult<OcoOrderResponse> {
-        self.send_signed_request(
+        self.send_post_signed_request(
             CREATE_OCO_ORDER_ENDPOINT,
-            reqwest::Method::POST,
             params,
             1,
-            true,
-        )
+            true,)
         .await
     }
 }

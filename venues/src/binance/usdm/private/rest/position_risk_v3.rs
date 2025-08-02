@@ -126,7 +126,9 @@ impl UsdmClient {
         &self,
         request: GetPositionRiskV3Request,
     ) -> RestResult<Vec<PositionRiskV3>> {
-        self.send_signed_request(POSITION_RISK_V3_ENDPOINT, Method::GET, request, 5, false)
+        self.send_get_signed_request(
+            POSITION_RISK_V3_ENDPOINT,
+            request, 5, false)
             .await
     }
 }

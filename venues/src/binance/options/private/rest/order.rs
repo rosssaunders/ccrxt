@@ -202,18 +202,16 @@ impl RestClient {
     ///
     /// Places a new limit order for options contracts. Currently only LIMIT orders are supported.
     ///
-    /// See: [API Documentation](https://developers.binance.com/docs/derivatives/option/trade)
+    /// [docs]: (https://developers.binance.com/docs/derivatives/option/trade)
     /// Method: POST /eapi/v1/order
     /// Weight: 1
     /// Requires: API key and signature
     pub async fn new_order(&self, params: NewOrderRequest) -> RestResult<OrderAckResponse> {
-        self.send_signed_request(
+        self.send_post_signed_request(
             NEW_ORDER_ENDPOINT,
-            reqwest::Method::POST,
             params,
             1,
-            true,
-        )
+            true,)
         .await
     }
 
@@ -221,7 +219,7 @@ impl RestClient {
     ///
     /// Places a new limit order for options contracts and returns detailed execution information.
     ///
-    /// See: [API Documentation](https://developers.binance.com/docs/derivatives/option/trade)
+    /// [docs]: (https://developers.binance.com/docs/derivatives/option/trade)
     /// Method: POST /eapi/v1/order
     /// Weight: 1
     /// Requires: API key and signature
@@ -232,13 +230,11 @@ impl RestClient {
         // Force response type to RESULT
         params.new_order_resp_type = Some(OptionsOrderResponseType::Result);
 
-        self.send_signed_request(
+        self.send_post_signed_request(
             NEW_ORDER_ENDPOINT,
-            reqwest::Method::POST,
             params,
             1,
-            true,
-        )
+            true,)
         .await
     }
 }

@@ -265,7 +265,7 @@ impl RestClient {
     ///
     /// Place an OTOCO (One-Triggers-One-Cancels-Other) order.
     ///
-    /// See: [API Documentation](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#new-otoco--trade)
+    /// [docs]: (https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#new-otoco--trade)
     /// Method: POST /api/v3/orderList/otoco
     /// Weight: 1
     /// Security: TRADE
@@ -273,13 +273,11 @@ impl RestClient {
         &self,
         params: OtocoOrderRequest,
     ) -> RestResult<OtocoOrderResponse> {
-        self.send_signed_request(
+        self.send_post_signed_request(
             CREATE_OTOCO_ORDER_ENDPOINT,
-            reqwest::Method::POST,
             params,
             1,
-            true,
-        )
+            true,)
         .await
     }
 }

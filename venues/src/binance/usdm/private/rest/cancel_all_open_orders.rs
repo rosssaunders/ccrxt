@@ -51,9 +51,8 @@ impl UsdmClient {
         &self,
         params: CancelAllOpenOrdersRequest,
     ) -> RestResult<CancelAllOpenOrdersResponse> {
-        self.send_signed_request(
+        self.send_delete_signed_request(
             CANCEL_ALL_OPEN_ORDERS_ENDPOINT,
-            Method::DELETE,
             params,
             1,
             false,

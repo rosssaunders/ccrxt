@@ -95,14 +95,13 @@ impl RestClient {
     ///
     /// Returns account balance, equity, available funds, Greeks, and risk level.
     ///
-    /// See: [API Documentation](https://developers.binance.com/docs/derivatives/option/account)
+    /// [docs]: (https://developers.binance.com/docs/derivatives/option/account)
     /// Method: GET /eapi/v1/account
     /// Weight: 3
     /// Requires: API key and signature
     pub async fn get_account_info(&self, params: AccountRequest) -> RestResult<AccountResponse> {
-        self.send_signed_request(
+        self.send_get_signed_request(
             GET_ACCOUNT_ENDPOINT,
-            reqwest::Method::GET,
             params,
             3,
             false,

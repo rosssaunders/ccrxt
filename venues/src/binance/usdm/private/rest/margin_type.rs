@@ -56,9 +56,8 @@ impl UsdmClient {
         &self,
         request: ChangeMarginTypeRequest,
     ) -> RestResult<ChangeMarginTypeResponse> {
-        self.send_signed_request(
+        self.send_post_signed_request(
             MARGIN_TYPE_ENDPOINT,
-            reqwest::Method::POST,
             request,
             1,
             false,

@@ -95,14 +95,13 @@ impl RestClient {
     ///
     /// Returns current position information for option contracts.
     ///
-    /// See: [API Documentation](https://developers.binance.com/docs/derivatives/option/trade/Option-Position-Information)
+    /// [docs]: (https://developers.binance.com/docs/derivatives/option/trade/Option-Position-Information)
     /// Method: GET /eapi/v1/position
     /// Weight: 5
     /// Requires: API key and signature
     pub async fn get_position(&self, params: PositionRequest) -> RestResult<Vec<Position>> {
-        self.send_signed_request(
+        self.send_get_signed_request(
             GET_POSITION_ENDPOINT,
-            reqwest::Method::GET,
             params,
             5,
             false,

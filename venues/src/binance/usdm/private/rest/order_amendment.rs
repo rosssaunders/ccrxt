@@ -126,7 +126,9 @@ impl UsdmClient {
         &self,
         request: OrderAmendmentRequest,
     ) -> RestResult<OrderAmendmentResponse> {
-        self.send_signed_request(ORDER_AMENDMENT_ENDPOINT, Method::GET, request, 1, false)
+        self.send_get_signed_request(
+            ORDER_AMENDMENT_ENDPOINT,
+            request, 1, false)
             .await
     }
 }

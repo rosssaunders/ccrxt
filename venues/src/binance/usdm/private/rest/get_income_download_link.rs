@@ -93,9 +93,8 @@ impl UsdmClient {
         &self,
         request: GetIncomeDownloadLinkRequest,
     ) -> RestResult<GetIncomeDownloadLinkResponse> {
-        self.send_signed_request(
+        self.send_get_signed_request(
             GET_INCOME_DOWNLOAD_LINK_ENDPOINT,
-            Method::GET,
             request,
             10,
             false,

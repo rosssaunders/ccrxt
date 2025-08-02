@@ -80,13 +80,11 @@ impl UsdmClient {
         &self,
         params: ModifyPositionMarginRequest,
     ) -> RestResult<ModifyPositionMarginResponse> {
-        self.send_signed_request(
+        self.send_post_signed_request(
             MODIFY_POSITION_MARGIN_ENDPOINT,
-            Method::POST,
             params,
             1, // Weight per docs
-            true,
-        )
+            true,)
         .await
     }
 }

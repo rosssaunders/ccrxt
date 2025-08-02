@@ -79,7 +79,7 @@ impl RestClient {
     ///
     /// Gets the current countdown cancel configuration for the specified underlying.
     ///
-    /// See: [API Documentation](https://developers.binance.com/docs/derivatives/option/market-maker-endpoints/Get-Auto-Cancel-All-Open-Orders-Config)
+    /// [docs]: (https://developers.binance.com/docs/derivatives/option/market-maker-endpoints/Get-Auto-Cancel-All-Open-Orders-Config)
     /// Method: GET /eapi/v1/countdownCancelAll
     /// Weight: 1
     /// Requires: API key and signature
@@ -87,9 +87,8 @@ impl RestClient {
         &self,
         params: GetCountdownCancelRequest,
     ) -> RestResult<CountdownCancelResponse> {
-        self.send_signed_request(
+        self.send_get_signed_request(
             COUNTDOWN_CANCEL_ALL_ENDPOINT,
-            reqwest::Method::GET,
             params,
             1,
             false,
@@ -102,7 +101,7 @@ impl RestClient {
     /// Sets a countdown timer to cancel all open orders for the specified underlying
     /// after the countdown period expires. Used as a safety mechanism.
     ///
-    /// See: [API Documentation](https://developers.binance.com/docs/derivatives/option/market-maker-endpoints/Set-Auto-Cancel-All-Open-Orders-Config)
+    /// [docs]: (https://developers.binance.com/docs/derivatives/option/market-maker-endpoints/Set-Auto-Cancel-All-Open-Orders-Config)
     /// Method: POST /eapi/v1/countdownCancelAll
     /// Weight: 1
     /// Requires: API key and signature
@@ -110,9 +109,8 @@ impl RestClient {
         &self,
         params: CountdownCancelRequest,
     ) -> RestResult<CountdownCancelResponse> {
-        self.send_signed_request(
+        self.send_post_signed_request(
             COUNTDOWN_CANCEL_ALL_ENDPOINT,
-            reqwest::Method::POST,
             params,
             1,
             false,
@@ -125,7 +123,7 @@ impl RestClient {
     /// Sends a heartbeat to reset the countdown timer. Must be called before the timer expires
     /// to prevent automatic cancellation of all orders.
     ///
-    /// See: [API Documentation](https://developers.binance.com/docs/derivatives/option/market-maker-endpoints/Auto-Cancel-All-Open-Orders-Heartbeat)
+    /// [docs]: (https://developers.binance.com/docs/derivatives/option/market-maker-endpoints/Auto-Cancel-All-Open-Orders-Heartbeat)
     /// Method: POST /eapi/v1/countdownCancelAllHeartBeat
     /// Weight: 1
     /// Requires: API key and signature
@@ -133,9 +131,8 @@ impl RestClient {
         &self,
         params: CountdownCancelHeartbeatRequest,
     ) -> RestResult<CountdownCancelResponse> {
-        self.send_signed_request(
+        self.send_post_signed_request(
             COUNTDOWN_CANCEL_HEARTBEAT_ENDPOINT,
-            reqwest::Method::POST,
             params,
             1,
             false,

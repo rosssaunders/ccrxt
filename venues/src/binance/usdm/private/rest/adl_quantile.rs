@@ -87,7 +87,9 @@ impl UsdmClient {
         &self,
         params: GetAdlQuantileRequest,
     ) -> RestResult<Vec<AdlQuantileResponse>> {
-        self.send_signed_request(ADL_QUANTILE_ENDPOINT, Method::GET, params, 5, false)
+        self.send_get_signed_request(
+            ADL_QUANTILE_ENDPOINT,
+            params, 5, false)
             .await
     }
 }

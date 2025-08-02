@@ -109,9 +109,8 @@ impl UsdmClient {
         &self,
         request: GetOrderDownloadIdRequest,
     ) -> RestResult<GetOrderDownloadIdResponse> {
-        self.send_signed_request(
+        self.send_get_signed_request(
             GET_ORDER_DOWNLOAD_ID_ENDPOINT,
-            Method::GET,
             request,
             5,
             false,
@@ -136,9 +135,8 @@ impl UsdmClient {
         &self,
         request: GetOrderDownloadLinkByIdRequest,
     ) -> RestResult<GetOrderDownloadLinkByIdResponse> {
-        self.send_signed_request(
+        self.send_get_signed_request(
             GET_ORDER_DOWNLOAD_LINK_BY_ID_ENDPOINT,
-            Method::GET,
             request,
             10,
             false,

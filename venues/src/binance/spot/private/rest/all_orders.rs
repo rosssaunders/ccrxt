@@ -125,14 +125,13 @@ impl RestClient {
     ///
     /// Get all account orders; active, canceled, or filled.
     ///
-    /// See: [API Documentation](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#all-orders--user_data)
+    /// [docs]: (https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#all-orders--user_data)
     /// Method: GET /api/v3/allOrders
     /// Weight: 20
     /// Security: USER_DATA
     pub async fn get_all_orders(&self, params: AllOrdersRequest) -> RestResult<Vec<AllOrder>> {
-        self.send_signed_request(
+        self.send_get_signed_request(
             GET_ALL_ORDERS_ENDPOINT,
-            reqwest::Method::GET,
             params,
             20,
             false,

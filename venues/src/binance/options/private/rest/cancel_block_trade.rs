@@ -50,9 +50,8 @@ impl RestClient {
         &self,
         params: CancelBlockTradeRequest,
     ) -> RestResult<BlockTradeOrderResponse> {
-        self.send_signed_request(
+        self.send_delete_signed_request(
             CANCEL_BLOCK_TRADE_ENDPOINT,
-            reqwest::Method::DELETE,
             params,
             1,
             true, // is_order = true for order endpoints

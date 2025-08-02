@@ -83,7 +83,7 @@ impl RestClient {
     ///
     /// Query all amendments of a single order.
     ///
-    /// See: [API Documentation](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#query-order-amendments--user_data)
+    /// [docs]: (https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#query-order-amendments--user_data)
     /// Method: GET /api/v3/order/amendments
     /// Weight: 4
     /// Security: USER_DATA
@@ -91,9 +91,8 @@ impl RestClient {
         &self,
         params: OrderAmendmentsRequest,
     ) -> RestResult<Vec<OrderAmendment>> {
-        self.send_signed_request(
+        self.send_get_signed_request(
             GET_ORDER_AMENDMENTS_ENDPOINT,
-            reqwest::Method::GET,
             params,
             4,
             false,

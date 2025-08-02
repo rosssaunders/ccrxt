@@ -127,14 +127,13 @@ impl RestClient {
     ///
     /// Get current account information.
     ///
-    /// See: [API Documentation](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#account-information--user_data)
+    /// [docs]: (https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#account-information--user_data)
     /// Method: GET /api/v3/account
     /// Weight: 20
     /// Security: USER_DATA
     pub async fn get_account(&self, params: Option<AccountRequest>) -> RestResult<AccountResponse> {
-        self.send_signed_request(
+        self.send_get_signed_request(
             GET_ACCOUNT_ENDPOINT,
-            reqwest::Method::GET,
             params.unwrap_or_default(),
             20,
             false,

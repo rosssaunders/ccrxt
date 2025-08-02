@@ -72,7 +72,9 @@ impl UsdmClient {
         &self,
         params: GetApiTradingStatusRequest,
     ) -> RestResult<ApiTradingStatusResponse> {
-        self.send_signed_request(API_TRADING_STATUS_ENDPOINT, Method::GET, params, 10, false)
+        self.send_get_signed_request(
+            API_TRADING_STATUS_ENDPOINT,
+            params, 10, false)
             .await
     }
 }

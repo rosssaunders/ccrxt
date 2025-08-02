@@ -143,7 +143,7 @@ impl RestClient {
     /// Retrieve a specific order list.
     /// Either orderListId or origClientOrderId must be provided.
     ///
-    /// See: [API Documentation](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#query-order-list--user_data)
+    /// [docs]: (https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#query-order-list--user_data)
     /// Method: GET /api/v3/orderList
     /// Weight: 4
     /// Security: USER_DATA
@@ -151,9 +151,8 @@ impl RestClient {
         &self,
         params: QueryOrderListRequest,
     ) -> RestResult<QueryOrderListResponse> {
-        self.send_signed_request(
+        self.send_get_signed_request(
             GET_ORDERLIST_ENDPOINT,
-            reqwest::Method::GET,
             params,
             4,
             false,

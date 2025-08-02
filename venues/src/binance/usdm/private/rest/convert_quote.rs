@@ -81,7 +81,9 @@ impl UsdmClient {
         &self,
         params: GetConvertQuoteRequest,
     ) -> RestResult<ConvertQuoteResponse> {
-        self.send_signed_request(CONVERT_GET_QUOTE_ENDPOINT, Method::POST, params, 50, false)
+        self.send_post_signed_request(
+            CONVERT_GET_QUOTE_ENDPOINT,
+            params, 50, false)
             .await
     }
 }

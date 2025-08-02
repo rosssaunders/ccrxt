@@ -93,7 +93,9 @@ impl UsdmClient {
         &self,
         params: GetRateLimitOrderRequest,
     ) -> RestResult<RateLimitOrderResponse> {
-        self.send_signed_request(RATE_LIMIT_ORDER_ENDPOINT, Method::GET, params, 1, true)
+        self.send_get_signed_request(
+            RATE_LIMIT_ORDER_ENDPOINT,
+            params, 1, true)
             .await
     }
 }

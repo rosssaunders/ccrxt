@@ -215,9 +215,8 @@ impl UsdmClient {
     /// # Returns
     /// Returns a `NewOrderResponse` containing order details.
     pub async fn new_order(&self, request: NewOrderRequest) -> RestResult<NewOrderResponse> {
-        self.send_signed_request::<NewOrderResponse, _>(
+        self.send_post_signed_request(
             NEW_ORDER_ENDPOINT,
-            Method::POST,
             request,
             1,    // weight
             true, // is_order

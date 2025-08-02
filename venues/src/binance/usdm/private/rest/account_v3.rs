@@ -179,7 +179,9 @@ impl UsdmClient {
         &self,
         params: GetAccountV3Request,
     ) -> RestResult<AccountV3Response> {
-        self.send_signed_request(ACCOUNT_INFO_ENDPOINT, Method::GET, params, 5, false)
+        self.send_get_signed_request(
+            ACCOUNT_INFO_ENDPOINT,
+            params, 5, false)
             .await
     }
 }

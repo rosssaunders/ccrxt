@@ -99,16 +99,15 @@ impl RestClient {
     ///
     /// Get trades for a specific account and symbol.
     ///
-    /// See: [API Documentation](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#account-trade-list--user_data)
+    /// [docs]: (https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#account-trade-list--user_data)
     /// Method: GET /api/v3/myTrades
     /// Weight: 20 (without orderId), 5 (with orderId)
     /// Security: USER_DATA
     pub async fn get_my_trades(&self, params: MyTradesRequest) -> RestResult<Vec<MyTrade>> {
         let weight = if params.order_id.is_some() { 5 } else { 20 };
 
-        self.send_signed_request(
+        self.send_get_signed_request(
             GET_MY_TRADES_ENDPOINT,
-            reqwest::Method::GET,
             params,
             weight,
             false,

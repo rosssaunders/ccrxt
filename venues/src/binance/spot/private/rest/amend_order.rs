@@ -114,18 +114,16 @@ impl RestClient {
     /// Reduce the quantity of an existing open order.
     /// Either orderId or origClientOrderId must be sent.
     ///
-    /// See: [API Documentation](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#amend-order--trade)
+    /// [docs]: (https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#amend-order--trade)
     /// Method: PUT /api/v3/order/amend/keepPriority
     /// Weight: 4
     /// Security: TRADE
     pub async fn amend_order(&self, params: AmendOrderRequest) -> RestResult<AmendOrderResponse> {
-        self.send_signed_request(
+        self.send_put_signed_request(
             AMEND_ORDER_ENDPOINT,
-            reqwest::Method::PUT,
             params,
             4,
-            true,
-        )
+            true,)
         .await
     }
 }

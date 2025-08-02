@@ -58,9 +58,8 @@ impl RestClient {
         &self,
         params: QueryBlockTradeOrdersRequest,
     ) -> RestResult<Vec<BlockTradeOrderResponse>> {
-        self.send_signed_request(
+        self.send_get_signed_request(
             BLOCK_TRADE_ORDERS_ENDPOINT,
-            reqwest::Method::GET,
             params,
             1,
             false,

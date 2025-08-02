@@ -91,7 +91,7 @@ impl RestClient {
     /// Cancel an entire order list.
     /// Either orderListId or listClientOrderId must be provided.
     ///
-    /// See: [API Documentation](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#cancel-order-list--trade)
+    /// [docs]: (https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#cancel-order-list--trade)
     /// Method: DELETE /api/v3/orderList
     /// Weight: 1
     /// Security: TRADE
@@ -99,13 +99,11 @@ impl RestClient {
         &self,
         params: CancelOrderListRequest,
     ) -> RestResult<CancelOrderListResponse> {
-        self.send_signed_request(
+        self.send_delete_signed_request(
             CANCEL_ORDERLIST_ENDPOINT,
-            reqwest::Method::DELETE,
             params,
             1,
-            true,
-        )
+            true,)
         .await
     }
 }

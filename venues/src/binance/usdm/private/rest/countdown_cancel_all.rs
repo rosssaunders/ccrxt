@@ -63,9 +63,8 @@ impl UsdmClient {
         &self,
         params: CountdownCancelAllRequest,
     ) -> RestResult<CountdownCancelAllResponse> {
-        self.send_signed_request(
+        self.send_post_signed_request(
             COUNTDOWN_CANCEL_ALL_ENDPOINT,
-            Method::POST,
             params,
             10,
             false,

@@ -98,7 +98,7 @@ impl RestClient {
     /// Cancels all active orders on a symbol.
     /// This includes OCO orders.
     ///
-    /// See: [API Documentation](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#cancel-all-open-orders-on-a-symbol--trade)
+    /// [docs]: (https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#cancel-all-open-orders-on-a-symbol--trade)
     /// Method: DELETE /api/v3/openOrders
     /// Weight: 1
     /// Security: TRADE
@@ -106,13 +106,11 @@ impl RestClient {
         &self,
         params: CancelAllOrdersRequest,
     ) -> RestResult<Vec<CancelAllOrdersResponseItem>> {
-        self.send_signed_request(
+        self.send_delete_signed_request(
             CANCEL_ALL_ORDERS_ENDPOINT,
-            reqwest::Method::DELETE,
             params,
             1,
-            true,
-        )
+            true,)
         .await
     }
 }

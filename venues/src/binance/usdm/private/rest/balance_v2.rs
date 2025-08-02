@@ -70,7 +70,9 @@ impl UsdmClient {
         &self,
         params: GetBalanceV2Request,
     ) -> RestResult<Vec<BalanceV2Response>> {
-        self.send_signed_request(BALANCE_V2_ENDPOINT, Method::GET, params, 5, false)
+        self.send_get_signed_request(
+            BALANCE_V2_ENDPOINT,
+            params, 5, false)
             .await
     }
 }

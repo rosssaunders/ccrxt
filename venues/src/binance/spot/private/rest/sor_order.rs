@@ -73,18 +73,16 @@ impl RestClient {
     ///
     /// Place an order using smart order routing.
     ///
-    /// See: [API Documentation](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#new-sor-order--trade)
+    /// [docs]: (https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#new-sor-order--trade)
     /// Method: POST /api/v3/sor/order
     /// Weight: 1
     /// Security: TRADE
     pub async fn new_sor_order(&self, params: SorOrderRequest) -> RestResult<serde_json::Value> {
-        self.send_signed_request(
+        self.send_post_signed_request(
             CREATE_SOR_ORDER_ENDPOINT,
-            reqwest::Method::POST,
             params,
             1,
-            true,
-        )
+            true,)
         .await
     }
 
@@ -92,7 +90,7 @@ impl RestClient {
     ///
     /// Test SOR order creation and signature/recvWindow.
     ///
-    /// See: [API Documentation](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#test-new-sor-order--trade)
+    /// [docs]: (https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#test-new-sor-order--trade)
     /// Method: POST /api/v3/sor/order/test
     /// Weight: 1 (without computeCommissionRates), 20 (with computeCommissionRates)
     /// Security: TRADE
@@ -124,13 +122,11 @@ impl RestClient {
             compute_commission_rates,
         };
 
-        self.send_signed_request(
+        self.send_post_signed_request(
             TEST_SOR_ORDER_ENDPOINT,
-            reqwest::Method::POST,
             test_request,
             weight,
-            true,
-        )
+            true,)
         .await
     }
 }

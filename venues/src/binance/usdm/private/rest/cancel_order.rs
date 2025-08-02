@@ -103,9 +103,8 @@ impl UsdmClient {
         &self,
         request: CancelOrderRequest,
     ) -> RestResult<CancelOrderResponse> {
-        self.send_signed_request(
+        self.send_delete_signed_request(
             CANCEL_ORDER_ENDPOINT,
-            reqwest::Method::DELETE,
             request,
             1,
             false,

@@ -149,9 +149,8 @@ impl UsdmClient {
         &self,
         request: CurrentOpenOrderRequest,
     ) -> RestResult<CurrentOpenOrderResponse> {
-        self.send_signed_request(
+        self.send_get_signed_request(
             CURRENT_OPEN_ORDER_ENDPOINT,
-            reqwest::Method::GET,
             request,
             1,
             false,

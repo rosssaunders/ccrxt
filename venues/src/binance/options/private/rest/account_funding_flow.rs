@@ -67,7 +67,7 @@ impl RestClient {
     ///
     /// Returns account funding flow records including fees, contract trades, and transfers.
     ///
-    /// See: [API Documentation](https://developers.binance.com/docs/derivatives/option/account/Account-Funding-Flow)
+    /// [docs]: (https://developers.binance.com/docs/derivatives/option/account/Account-Funding-Flow)
     /// Method: GET /eapi/v1/bill
     /// Weight: 1
     /// Requires: API key and signature
@@ -75,9 +75,8 @@ impl RestClient {
         &self,
         params: AccountFundingFlowRequest,
     ) -> RestResult<Vec<FundingFlowRecord>> {
-        self.send_signed_request(
+        self.send_get_signed_request(
             GET_ACCOUNT_FUNDING_FLOW_ENDPOINT,
-            reqwest::Method::GET,
             params,
             1,
             false,

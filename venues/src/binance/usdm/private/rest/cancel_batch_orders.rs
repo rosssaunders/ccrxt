@@ -168,13 +168,11 @@ impl UsdmClient {
         &self,
         request: CancelBatchOrdersRequest,
     ) -> RestResult<Vec<CancelBatchOrderResponse>> {
-        self.send_signed_request(
+        self.send_delete_signed_request(
             CANCEL_BATCH_ORDERS_ENDPOINT,
-            Method::DELETE,
             request,
             1,
-            true,
-        )
+            true,)
         .await
     }
 }

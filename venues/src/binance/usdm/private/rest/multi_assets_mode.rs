@@ -59,9 +59,8 @@ impl UsdmClient {
         &self,
         request: ChangeMultiAssetsModeRequest,
     ) -> RestResult<ChangeMultiAssetsModeResponse> {
-        self.send_signed_request(
+        self.send_post_signed_request(
             CHANGE_MULTI_ASSETS_MODE_ENDPOINT,
-            reqwest::Method::POST,
             request,
             1,
             false,

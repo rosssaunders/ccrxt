@@ -39,9 +39,8 @@ impl RestClient {
     /// # Returns
     /// MMP configuration after reset
     pub async fn reset_mmp(&self, params: ResetMmpRequest) -> RestResult<MmpConfigResponse> {
-        self.send_signed_request(
+        self.send_post_signed_request(
             RESET_MMP_ENDPOINT,
-            reqwest::Method::POST,
             params,
             1,
             false,

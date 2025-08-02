@@ -87,7 +87,9 @@ impl UsdmClient {
         &self,
         request: GetTradeDownloadLinkRequest,
     ) -> RestResult<TradeDownloadLinkResponse> {
-        self.send_signed_request(TRADE_DOWNLOAD_LINK_ENDPOINT, Method::GET, request, 10, true)
+        self.send_get_signed_request(
+            TRADE_DOWNLOAD_LINK_ENDPOINT,
+            request, 10, true)
             .await
     }
 }

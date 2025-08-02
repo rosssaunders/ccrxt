@@ -66,9 +66,8 @@ impl UsdmClient {
         &self,
         params: GetSymbolConfigRequest,
     ) -> RestResult<Vec<SymbolConfigResponse>> {
-        self.send_signed_request(
+        self.send_get_signed_request(
             SYMBOL_CONFIG_ENDPOINT,
-            reqwest::Method::GET,
             Some(&params),
             5,
             false,

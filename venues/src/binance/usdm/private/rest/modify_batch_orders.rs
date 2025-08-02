@@ -162,7 +162,9 @@ impl UsdmClient {
         &self,
         request: ModifyBatchOrdersRequest,
     ) -> RestResult<Vec<ModifyBatchOrderResponse>> {
-        self.send_signed_request(MODIFY_BATCH_ORDERS_ENDPOINT, Method::PUT, request, 5, true)
+        self.send_put_signed_request(
+            MODIFY_BATCH_ORDERS_ENDPOINT,
+            request, 5, true)
             .await
     }
 }

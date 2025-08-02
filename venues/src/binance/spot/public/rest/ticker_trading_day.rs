@@ -95,7 +95,7 @@ impl RestClient {
     ///
     /// Price change statistics for a trading day.
     ///
-    /// See: [API Documentation](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#trading-day-ticker)
+    /// [docs]: (https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#trading-day-ticker)
     /// Method: GET /api/v3/ticker/tradingDay
     /// Weight: 4 per symbol (max 200)
     /// Security: None

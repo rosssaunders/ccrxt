@@ -145,9 +145,8 @@ impl UsdmClient {
         &self,
         request: ModifyOrderRequest,
     ) -> RestResult<ModifyOrderResponse> {
-        self.send_signed_request(
+        self.send_put_signed_request(
             MODIFY_ORDER_ENDPOINT,
-            reqwest::Method::PUT,
             request,
             1,
             false,

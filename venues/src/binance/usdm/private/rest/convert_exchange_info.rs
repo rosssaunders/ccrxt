@@ -74,9 +74,8 @@ impl UsdmClient {
         &self,
         params: GetConvertExchangeInfoRequest,
     ) -> RestResult<ConvertExchangeInfoResponse> {
-        self.send_signed_request(
+        self.send_get_signed_request(
             CONVERT_EXCHANGE_INFO_ENDPOINT,
-            Method::GET,
             params,
             20,
             false,

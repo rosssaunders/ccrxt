@@ -91,9 +91,8 @@ impl UsdmClient {
         &self,
         request: GetIncomeHistoryRequest,
     ) -> RestResult<GetIncomeHistoryResponse> {
-        self.send_signed_request(
+        self.send_get_signed_request(
             INCOME_HISTORY_ENDPOINT,
-            reqwest::Method::GET,
             request,
             30,
             false,

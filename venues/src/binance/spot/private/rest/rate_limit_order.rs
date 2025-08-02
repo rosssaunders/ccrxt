@@ -42,7 +42,7 @@ impl RestClient {
     ///
     /// Display user's unfilled order count for all intervals.
     ///
-    /// See: [API Documentation](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#query-unfilled-order-count--user_data)
+    /// [docs]: (https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#query-unfilled-order-count--user_data)
     /// Method: GET /api/v3/rateLimit/order
     /// Weight: 40
     /// Security: USER_DATA
@@ -50,9 +50,8 @@ impl RestClient {
         &self,
         params: Option<RateLimitOrderRequest>,
     ) -> RestResult<Vec<RateLimitOrderResponse>> {
-        self.send_signed_request(
+        self.send_get_signed_request(
             GET_RATE_LIMIT_ORDER_ENDPOINT,
-            reqwest::Method::GET,
             params.unwrap_or_default(),
             40,
             false,

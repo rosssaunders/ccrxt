@@ -95,7 +95,7 @@ impl RestClient {
     ///
     /// Returns 24 hour rolling window price change statistics.
     ///
-    /// See: [API Documentation](https://developers.binance.com/docs/derivatives/option/market-data/24hr-Ticker-Price-Change-Statistics)
+    /// [docs]: (https://developers.binance.com/docs/derivatives/option/market-data/24hr-Ticker-Price-Change-Statistics)
     /// Method: GET /eapi/v1/ticker
     /// Weight: 5
     /// Security: None

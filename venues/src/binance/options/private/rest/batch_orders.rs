@@ -158,7 +158,7 @@ impl RestClient {
     ///
     /// Places multiple orders in a single request. Maximum 5 orders per request.
     ///
-    /// See: [API Documentation](https://developers.binance.com/docs/derivatives/option/trade/Option-Batch-Orders)
+    /// [docs]: (https://developers.binance.com/docs/derivatives/option/trade/Option-Batch-Orders)
     /// Method: POST /eapi/v1/batchOrders
     /// Weight: 5
     /// Requires: API key and signature
@@ -166,9 +166,8 @@ impl RestClient {
         &self,
         params: BatchOrdersRequest,
     ) -> RestResult<Vec<BatchOrderResponse>> {
-        self.send_signed_request(
+        self.send_post_signed_request(
             CREATE_BATCH_ORDERS_ENDPOINT,
-            reqwest::Method::POST,
             params,
             5,
             true, // is_order = true for order endpoints

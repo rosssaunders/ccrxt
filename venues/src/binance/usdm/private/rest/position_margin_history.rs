@@ -102,13 +102,11 @@ impl UsdmClient {
         &self,
         params: GetPositionMarginHistoryRequest,
     ) -> RestResult<Vec<PositionMarginHistoryEntry>> {
-        self.send_signed_request(
+        self.send_get_signed_request(
             POSITION_MARGIN_HISTORY_ENDPOINT,
-            reqwest::Method::GET,
             params,
             1,
-            true,
-        )
+            true,)
         .await
     }
 }

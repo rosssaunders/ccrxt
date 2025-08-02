@@ -99,7 +99,7 @@ impl RestClient {
     ///
     /// Retrieve allocations resulting from SOR order placement.
     ///
-    /// See: [API Documentation](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#query-allocations--user_data)
+    /// [docs]: (https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#query-allocations--user_data)
     /// Method: GET /api/v3/myAllocations
     /// Weight: 20
     /// Security: USER_DATA
@@ -107,9 +107,8 @@ impl RestClient {
         &self,
         params: MyAllocationsRequest,
     ) -> RestResult<Vec<MyAllocation>> {
-        self.send_signed_request(
+        self.send_get_signed_request(
             GET_MY_ALLOCATIONS_ENDPOINT,
-            reqwest::Method::GET,
             params,
             20,
             false,

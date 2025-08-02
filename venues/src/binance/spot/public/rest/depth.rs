@@ -39,7 +39,7 @@ impl RestClient {
     ///
     /// Returns the order book for a given symbol.
     ///
-    /// See: [API Documentation](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#order-book)
+    /// [docs]: (https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#order-book)
     /// Method: GET /api/v3/depth
     /// Weight: Variable based on limit (5-250)
     /// Security: None

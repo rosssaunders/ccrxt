@@ -83,7 +83,7 @@ impl RestClient {
     ///
     /// Get current account commission rates.
     ///
-    /// See: [API Documentation](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#account-commission-rates--user_data)
+    /// [docs]: (https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#account-commission-rates--user_data)
     /// Method: GET /api/v3/account/commission
     /// Weight: 20
     /// Security: USER_DATA
@@ -91,9 +91,8 @@ impl RestClient {
         &self,
         params: AccountCommissionRequest,
     ) -> RestResult<AccountCommissionResponse> {
-        self.send_signed_request(
+        self.send_get_signed_request(
             GET_ACCOUNT_COMMISSION_ENDPOINT,
-            reqwest::Method::GET,
             params,
             20,
             false,

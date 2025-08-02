@@ -28,9 +28,8 @@ impl UsdmClient {
     /// # Returns
     /// Empty response if successful
     pub async fn new_order_test(&self, request: NewOrderRequest) -> RestResult<TestOrderResponse> {
-        self.send_signed_request(
+        self.send_post_signed_request(
             TEST_ORDER_ENDPOINT,
-            reqwest::Method::POST,
             request,
             1,
             false,

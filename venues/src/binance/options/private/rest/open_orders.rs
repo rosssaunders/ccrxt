@@ -135,16 +135,15 @@ impl RestClient {
     /// Returns all current open orders with status ACCEPTED or PARTIALLY_FILLED.
     /// Weight: 1 for single symbol, 40 when symbol parameter is omitted.
     ///
-    /// See: [API Documentation](https://developers.binance.com/docs/derivatives/option/trade/Query-Current-Open-Option-Orders)
+    /// [docs]: (https://developers.binance.com/docs/derivatives/option/trade/Query-Current-Open-Option-Orders)
     /// Method: GET /eapi/v1/openOrders
     /// Weight: 1 (single symbol) or 40 (all symbols)
     /// Requires: API key and signature
     pub async fn get_open_orders(&self, params: OpenOrdersRequest) -> RestResult<Vec<OpenOrder>> {
         let weight = if params.symbol.is_some() { 1 } else { 40 };
 
-        self.send_signed_request(
+        self.send_get_signed_request(
             GET_OPEN_ORDERS_ENDPOINT,
-            reqwest::Method::GET,
             params,
             weight,
             false,

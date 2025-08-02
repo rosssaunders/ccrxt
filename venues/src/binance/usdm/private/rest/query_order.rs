@@ -135,9 +135,8 @@ impl UsdmClient {
     /// # Returns
     /// Returns a `QueryOrderResponse` containing order details.
     pub async fn query_order(&self, request: QueryOrderRequest) -> RestResult<QueryOrderResponse> {
-        self.send_signed_request(
+        self.send_get_signed_request(
             QUERY_ORDER_ENDPOINT,
-            reqwest::Method::GET,
             request,
             2,
             false,

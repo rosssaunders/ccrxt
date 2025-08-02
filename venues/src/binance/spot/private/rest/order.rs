@@ -273,18 +273,16 @@ impl RestClient {
     ///
     /// Send in a new order.
     ///
-    /// See: [API Documentation](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#new-order--trade)
+    /// [docs]: (https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#new-order--trade)
     /// Method: POST /api/v3/order
     /// Weight: 1
     /// Security: TRADE
     pub async fn new_order(&self, params: NewOrderRequest) -> RestResult<serde_json::Value> {
-        self.send_signed_request(
+        self.send_post_signed_request(
             CREATE_ORDER_ENDPOINT,
-            reqwest::Method::POST,
             params,
             1,
-            true,
-        )
+            true,)
         .await
     }
 }

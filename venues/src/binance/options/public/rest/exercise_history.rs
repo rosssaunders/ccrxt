@@ -69,7 +69,7 @@ impl RestClient {
     /// - REALISTIC_VALUE_STRICKEN -> Exercised
     /// - EXTRINSIC_VALUE_EXPIRED -> Expired OTM
     ///
-    /// See: [API Documentation](https://developers.binance.com/docs/derivatives/option/market-data/Historical-Exercise-Records)
+    /// [docs]: (https://developers.binance.com/docs/derivatives/option/market-data/Historical-Exercise-Records)
     /// Method: GET /eapi/v1/exerciseHistory
     /// Weight: 3
     /// Security: None

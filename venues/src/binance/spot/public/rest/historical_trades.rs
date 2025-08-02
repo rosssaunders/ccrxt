@@ -59,7 +59,7 @@ impl RestClient {
     ///
     /// Get older market trades.
     ///
-    /// See: [API Documentation](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#old-trade-lookup)
+    /// [docs]: (https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#old-trade-lookup)
     /// Method: GET /api/v3/historicalTrades
     /// Weight: 25
     /// Security: None

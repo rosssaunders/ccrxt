@@ -160,7 +160,7 @@ impl RestClient {
     /// Cancels multiple orders in a single request. Maximum 10 orders per request.
     /// Either orderIdList or origClientOrderIdList must be provided.
     ///
-    /// See: [API Documentation](https://developers.binance.com/docs/derivatives/option/trade/Cancel-Multiple-Option-Orders)
+    /// [docs]: (https://developers.binance.com/docs/derivatives/option/trade/Cancel-Multiple-Option-Orders)
     /// Method: DELETE /eapi/v1/batchOrders
     /// Weight: 1
     /// Requires: API key and signature
@@ -168,9 +168,8 @@ impl RestClient {
         &self,
         params: BatchCancelRequest,
     ) -> RestResult<Vec<CancelResponse>> {
-        self.send_signed_request(
+        self.send_delete_signed_request(
             BATCH_CANCEL_ORDERS_ENDPOINT,
-            reqwest::Method::DELETE,
             params,
             1,
             true, // is_order = true for order endpoints
@@ -182,7 +181,7 @@ impl RestClient {
     ///
     /// Cancels all open orders for the specified underlying asset.
     ///
-    /// See: [API Documentation](https://developers.binance.com/docs/derivatives/option/trade/Cancel-all-Active-Orders-on-Specified-Underlying)
+    /// [docs]: (https://developers.binance.com/docs/derivatives/option/trade/Cancel-all-Active-Orders-on-Specified-Underlying)
     /// Method: DELETE /eapi/v1/allOpenOrdersByUnderlying
     /// Weight: 1
     /// Requires: API key and signature
@@ -190,9 +189,8 @@ impl RestClient {
         &self,
         params: CancelAllByUnderlyingRequest,
     ) -> RestResult<Vec<CancelResponse>> {
-        self.send_signed_request(
+        self.send_delete_signed_request(
             CANCEL_ALL_BY_UNDERLYING_ENDPOINT,
-            reqwest::Method::DELETE,
             params,
             1,
             true, // is_order = true for order endpoints
@@ -204,7 +202,7 @@ impl RestClient {
     ///
     /// Cancels all open orders for the specified symbol.
     ///
-    /// See: [API Documentation](https://developers.binance.com/docs/derivatives/option/trade/Cancel-all-Active-Orders-on-a-Symbol)
+    /// [docs]: (https://developers.binance.com/docs/derivatives/option/trade/Cancel-all-Active-Orders-on-a-Symbol)
     /// Method: DELETE /eapi/v1/allOpenOrders
     /// Weight: 1
     /// Requires: API key and signature
@@ -212,9 +210,8 @@ impl RestClient {
         &self,
         params: CancelAllBySymbolRequest,
     ) -> RestResult<Vec<CancelResponse>> {
-        self.send_signed_request(
+        self.send_delete_signed_request(
             CANCEL_ALL_BY_SYMBOL_ENDPOINT,
-            reqwest::Method::DELETE,
             params,
             1,
             true, // is_order = true for order endpoints

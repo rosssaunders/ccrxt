@@ -139,14 +139,13 @@ impl RestClient {
     ///
     /// Returns user's trade history for the specified symbol.
     ///
-    /// See: [API Documentation](https://developers.binance.com/docs/derivatives/option/trade/Option-Trade-History)
+    /// [docs]: (https://developers.binance.com/docs/derivatives/option/trade/Option-Trade-History)
     /// Method: GET /eapi/v1/userTrades
     /// Weight: 5
     /// Requires: API key and signature
     pub async fn get_user_trades(&self, params: UserTradesRequest) -> RestResult<Vec<UserTrade>> {
-        self.send_signed_request(
+        self.send_get_signed_request(
             GET_USER_TRADES_ENDPOINT,
-            reqwest::Method::GET,
             params,
             5,
             false,

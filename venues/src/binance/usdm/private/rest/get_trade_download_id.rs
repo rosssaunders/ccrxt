@@ -88,13 +88,11 @@ impl UsdmClient {
         &self,
         request: GetTradeDownloadLinkByIdRequest,
     ) -> RestResult<TradeDownloadLinkByIdResponse> {
-        self.send_signed_request(
+        self.send_get_signed_request(
             TRADE_DOWNLOAD_LINK_BY_ID_ENDPOINT,
-            Method::GET,
             request,
             10,
-            true,
-        )
+            true,)
         .await
     }
 }

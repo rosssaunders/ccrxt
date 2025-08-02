@@ -116,9 +116,8 @@ impl RestClient {
         &self,
         params: CreateBlockTradeRequest,
     ) -> RestResult<BlockTradeOrderResponse> {
-        self.send_signed_request(
+        self.send_post_signed_request(
             CREATE_BLOCK_TRADE_ENDPOINT,
-            reqwest::Method::POST,
             params,
             1,
             true, // is_order = true for order endpoints

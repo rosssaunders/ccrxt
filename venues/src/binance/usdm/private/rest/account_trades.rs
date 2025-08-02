@@ -115,7 +115,9 @@ impl UsdmClient {
         &self,
         params: GetAccountTradesRequest,
     ) -> RestResult<Vec<AccountTrade>> {
-        self.send_signed_request(ACCOUNT_TRADES_ENDPOINT, Method::GET, params, 5, false)
+        self.send_get_signed_request(
+            ACCOUNT_TRADES_ENDPOINT,
+            params, 5, false)
             .await
     }
 }

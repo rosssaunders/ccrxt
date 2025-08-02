@@ -56,9 +56,8 @@ impl UsdmClient {
         &self,
         params: GetPortfolioMarginAccountRequest,
     ) -> RestResult<PortfolioMarginAccountResponse> {
-        self.send_signed_request(
+        self.send_get_signed_request(
             PORTFOLIO_MARGIN_ENDPOINT,
-            reqwest::Method::GET,
             params,
             5,
             false,

@@ -53,9 +53,8 @@ impl UsdmClient {
         &self,
         request: GetMultiAssetsMarginStatusRequest,
     ) -> RestResult<MultiAssetsMarginStatusResponse> {
-        self.send_signed_request(
+        self.send_get_signed_request(
             MULTI_ASSETS_MARGIN_STATUS_ENDPOINT,
-            reqwest::Method::GET,
             request,
             30,
             false,

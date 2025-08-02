@@ -214,7 +214,9 @@ impl UsdmClient {
         &self,
         request: BatchOrderRequest,
     ) -> RestResult<Vec<BatchOrderResponse>> {
-        self.send_signed_request(BATCH_ORDERS_ENDPOINT, Method::POST, request, 5, true)
+        self.send_post_signed_request(
+            BATCH_ORDERS_ENDPOINT,
+            request, 5, true)
             .await
     }
 }

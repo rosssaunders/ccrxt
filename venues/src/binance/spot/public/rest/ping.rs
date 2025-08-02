@@ -14,7 +14,7 @@ impl RestClient {
     ///
     /// Test connectivity to the Rest API.
     ///
-    /// See: [API Documentation](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#test-connectivity)
+    /// [docs]: (https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#test-connectivity)
     /// Method: GET /api/v3/ping
     /// Weight: 1
     /// Security: None

@@ -134,7 +134,7 @@ impl RestClient {
     ///
     /// Get all open order lists.
     ///
-    /// See: [API Documentation](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#query-open-order-lists--user_data)
+    /// [docs]: (https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#query-open-order-lists--user_data)
     /// Method: GET /api/v3/openOrderList
     /// Weight: 6
     /// Security: USER_DATA
@@ -142,9 +142,8 @@ impl RestClient {
         &self,
         params: Option<OpenOrderListRequest>,
     ) -> RestResult<Vec<OpenOrderList>> {
-        self.send_signed_request(
+        self.send_get_signed_request(
             GET_OPEN_ORDERLIST_ENDPOINT,
-            reqwest::Method::GET,
             params.unwrap_or_default(),
             6,
             false,

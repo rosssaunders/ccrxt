@@ -118,14 +118,13 @@ impl RestClient {
     /// Check an order's status.
     /// Either orderId or origClientOrderId must be sent.
     ///
-    /// See: [API Documentation](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#query-order--user_data)
+    /// [docs]: (https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#query-order--user_data)
     /// Method: GET /api/v3/order
     /// Weight: 4
     /// Security: USER_DATA
     pub async fn query_order(&self, params: QueryOrderRequest) -> RestResult<QueryOrderResponse> {
-        self.send_signed_request(
+        self.send_get_signed_request(
             GET_ORDER_ENDPOINT,
-            reqwest::Method::GET,
             params,
             4,
             false,

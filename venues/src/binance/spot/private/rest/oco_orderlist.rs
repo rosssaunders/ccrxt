@@ -177,7 +177,7 @@ impl RestClient {
     ///
     /// Place an OCO pair.
     ///
-    /// See: [API Documentation](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#new-oco-orderlist--trade)
+    /// [docs]: (https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#new-oco-orderlist--trade)
     /// Method: POST /api/v3/orderList/oco
     /// Weight: 1
     /// Security: TRADE
@@ -185,13 +185,11 @@ impl RestClient {
         &self,
         params: OcoOrderListRequest,
     ) -> RestResult<OcoOrderListResponse> {
-        self.send_signed_request(
+        self.send_post_signed_request(
             CREATE_OCO_ORDERLIST_ENDPOINT,
-            reqwest::Method::POST,
             params,
             1,
-            true,
-        )
+            true,)
         .await
     }
 }

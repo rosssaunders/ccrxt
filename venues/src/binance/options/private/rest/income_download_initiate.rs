@@ -52,9 +52,8 @@ impl RestClient {
         &self,
         request: IncomeDownloadInitiateRequest,
     ) -> RestResult<IncomeDownloadInitiateResponse> {
-        self.send_signed_request(
+        self.send_get_signed_request(
             INCOME_DOWNLOAD_INITIATE_ENDPOINT,
-            reqwest::Method::GET,
             request,
             5,
             false,

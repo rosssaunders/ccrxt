@@ -60,9 +60,8 @@ impl RestClient {
         &self,
         params: SetMmpConfigRequest,
     ) -> RestResult<MmpConfigResponse> {
-        self.send_signed_request(
+        self.send_post_signed_request(
             SET_MMP_CONFIG_ENDPOINT,
-            reqwest::Method::POST,
             params,
             1,
             false,

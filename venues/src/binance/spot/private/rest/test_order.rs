@@ -152,7 +152,7 @@ impl RestClient {
     /// Test new order creation and signature/recvWindow long.
     /// Creates and validates a new order but does not send it into the matching engine.
     ///
-    /// See: [API Documentation](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#test-new-order--trade)
+    /// [docs]: (https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#test-new-order--trade)
     /// Method: POST /api/v3/order/test
     /// Weight: 1 (without computeCommissionRates), 20 (with computeCommissionRates)
     /// Security: TRADE
@@ -166,13 +166,11 @@ impl RestClient {
             1
         };
 
-        self.send_signed_request(
+        self.send_post_signed_request(
             TEST_ORDER_ENDPOINT,
-            reqwest::Method::POST,
             params,
             weight,
-            true,
-        )
+            true,)
         .await
     }
 }

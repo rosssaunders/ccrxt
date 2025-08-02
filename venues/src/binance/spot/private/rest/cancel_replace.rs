@@ -118,7 +118,7 @@ impl RestClient {
     ///
     /// Cancel an existing order and place a new order on the same symbol.
     ///
-    /// See: [API Documentation](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#cancel-and-replace-order--trade)
+    /// [docs]: (https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#cancel-and-replace-order--trade)
     /// Method: POST /api/v3/order/cancelReplace
     /// Weight: 1
     /// Security: TRADE
@@ -126,13 +126,11 @@ impl RestClient {
         &self,
         params: CancelReplaceOrderRequest,
     ) -> RestResult<serde_json::Value> {
-        self.send_signed_request(
+        self.send_post_signed_request(
             CANCEL_REPLACE_ORDER_ENDPOINT,
-            reqwest::Method::POST,
             params,
             1,
-            true,
-        )
+            true,)
         .await
     }
 }

@@ -50,13 +50,11 @@ impl UsdmClient {
         &self,
         params: GetPositionModeStatusRequest,
     ) -> RestResult<PositionModeStatusResponse> {
-        self.send_signed_request(
+        self.send_get_signed_request(
             GET_POSITION_MODE_STATUS_ENDPOINT,
-            Method::GET,
             params,
             30,
-            true,
-        )
+            true,)
         .await
     }
 }

@@ -150,7 +150,9 @@ impl UsdmClient {
     /// # Returns
     /// Returns a list of all orders for the account.
     pub async fn get_all_orders(&self, params: GetAllOrdersRequest) -> RestResult<Vec<AllOrder>> {
-        self.send_signed_request(ALL_ORDERS_ENDPOINT, Method::GET, params, 5, false)
+        self.send_get_signed_request(
+            ALL_ORDERS_ENDPOINT,
+            params, 5, false)
             .await
     }
 }

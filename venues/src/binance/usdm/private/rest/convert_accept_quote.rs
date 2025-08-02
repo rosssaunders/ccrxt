@@ -61,9 +61,8 @@ impl UsdmClient {
         &self,
         params: AcceptConvertQuoteRequest,
     ) -> RestResult<AcceptConvertQuoteResponse> {
-        self.send_signed_request(
+        self.send_post_signed_request(
             ACCEPT_CONVERT_QUOTE_ENDPOINT,
-            Method::POST,
             params,
             200,
             false,

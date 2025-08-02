@@ -196,9 +196,8 @@ impl UsdmClient {
         params: GetLeverageBracketRequest,
     ) -> RestResult<Vec<LeverageBracketResponse>> {
         let weight = if params.symbol.is_some() { 1 } else { 40 };
-        self.send_signed_request(
+        self.send_get_signed_request(
             LEVERAGE_BRACKET_ENDPOINT,
-            reqwest::Method::GET,
             params,
             weight,
             false,

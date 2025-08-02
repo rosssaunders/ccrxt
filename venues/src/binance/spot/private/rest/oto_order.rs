@@ -194,18 +194,16 @@ impl RestClient {
     ///
     /// Place an OTO (One-Triggers-Other) order.
     ///
-    /// See: [API Documentation](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#new-oto--trade)
+    /// [docs]: (https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#new-oto--trade)
     /// Method: POST /api/v3/orderList/oto
     /// Weight: 1
     /// Security: TRADE
     pub async fn new_oto_order(&self, params: OtoOrderRequest) -> RestResult<OtoOrderResponse> {
-        self.send_signed_request(
+        self.send_post_signed_request(
             CREATE_OTO_ORDER_ENDPOINT,
-            reqwest::Method::POST,
             params,
             1,
-            true,
-        )
+            true,)
         .await
     }
 }

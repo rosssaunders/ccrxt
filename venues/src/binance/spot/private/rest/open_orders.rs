@@ -109,7 +109,7 @@ impl RestClient {
     ///
     /// Get all open orders on a symbol. Careful when accessing this with no symbol.
     ///
-    /// See: [API Documentation](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#current-open-orders--user_data)
+    /// [docs]: (https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#current-open-orders--user_data)
     /// Method: GET /api/v3/openOrders
     /// Weight: 6 (for one symbol), 80 (for all symbols)
     /// Security: USER_DATA
@@ -120,9 +120,8 @@ impl RestClient {
         let request = params.unwrap_or_default();
         let weight = if request.symbol.is_some() { 6 } else { 80 };
 
-        self.send_signed_request(
+        self.send_get_signed_request(
             GET_OPEN_ORDERS_ENDPOINT,
-            reqwest::Method::GET,
             request,
             weight,
             false,
