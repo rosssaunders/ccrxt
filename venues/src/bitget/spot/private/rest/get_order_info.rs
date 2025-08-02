@@ -207,18 +207,12 @@ impl RestClient {
         &self,
         request: &GetOrderInfoRequest,
     ) -> RestResult<GetOrderInfoResponse> {
-        let query_string = serde_urlencoded::to_string(request).map_err(|e| {
-            crate::bitget::spot::Errors::Error(format!("Failed to encode query: {e}"))
-        })?;
-
-        self.send_signed_request(
+        self.send_signed_get_request(
             GET_ORDER_INFO_ENDPOINT,
-            reqwest::Method::GET,
-            Some(&query_string),
-            None,  // No body for GET request
-            20,    // 20 requests per second rate limit
-            false, // Not an order placement endpoint
-            None,  // No order-specific rate limit
+            Some(&request),
+            10,
+            false,
+            None,
         )
         .await
     }

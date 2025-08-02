@@ -56,14 +56,9 @@ impl RestClient {
         &self,
         request: GetTransferableCoinListRequest,
     ) -> RestResult<GetTransferableCoinListResponse> {
-        let query_string = serde_urlencoded::to_string(&request)
-            .map_err(|e| crate::bitget::spot::Errors::Error(format!("Serialization error: {e}")))?;
-
-        self.send_signed_request(
+        self.send_signed_get_request(
             TRANSFERABLE_COIN_LIST_ENDPOINT,
-            reqwest::Method::GET,
-            Some(&query_string),
-            None,
+            Some(&request),
             10,
             false,
             None,

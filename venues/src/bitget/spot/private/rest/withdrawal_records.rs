@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::super::RestClient;
-use crate::bitget::spot::{Errors, RestResult};
+use crate::bitget::spot::RestResult;
 
 /// Endpoint for getting withdrawal records
 const WITHDRAWAL_RECORDS_ENDPOINT: &str = "/api/v2/spot/wallet/withdrawal-records";
@@ -127,14 +127,9 @@ impl RestClient {
         &self,
         request: GetWithdrawalRecordsRequest,
     ) -> RestResult<GetWithdrawalRecordsResponse> {
-        self.send_signed_request(
+        self.send_signed_get_request(
             WITHDRAWAL_RECORDS_ENDPOINT,
-            reqwest::Method::GET,
-            None,
-            Some(
-                &serde_json::to_string(&request)
-                    .map_err(|e| Errors::Error(format!("Serialization error: {e}")))?,
-            ),
+            Some(&request),
             10,
             false,
             None,

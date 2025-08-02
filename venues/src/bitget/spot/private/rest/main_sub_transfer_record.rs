@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::bitget::spot::{Errors, RestResult, enums::*};
+use crate::bitget::spot::{RestResult, enums::*};
 
 /// Get MainSub Transfer Record
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
@@ -113,13 +113,9 @@ impl RestClient {
         params: GetMainSubTransferRecordRequest,
     ) -> RestResult<GetMainSubTransferRecordResponse> {
         let endpoint = "/api/v2/spot/account/sub-main-trans-record";
-        let body = serde_json::to_string(&params)
-            .map_err(|e| Errors::Error(format!("Serialization error: {e}")))?;
-        self.send_signed_request::<GetMainSubTransferRecordResponse>(
+        self.send_signed_post_request(
             endpoint,
-            reqwest::Method::POST,
-            None,
-            Some(&body),
+            &params,
             20,
             false,
             None,

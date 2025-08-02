@@ -5,99 +5,140 @@ use crate::bitget::spot::RestResult;
 
 const ACCOUNT_INFO_ENDPOINT: &str = "/api/v2/spot/account/info";
 
-/// Request parameters for getting account information
-/// Request parameters for getting account information
+/// Account status enumeration
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum AccountStatus {
+    /// Normal account status
+    Normal,
+    /// Frozen account status
+    Frozen,
+}
+
+/// Account type enumeration
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum AccountType {
+    /// Main account
+    Main,
+    /// Sub account
+    Sub,
+}
+
+/// VIP level enumeration
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum VipLevel {
+    #[serde(rename = "VIP0")]
+    Vip0,
+    #[serde(rename = "VIP1")]
+    Vip1,
+    #[serde(rename = "VIP2")]
+    Vip2,
+    #[serde(rename = "VIP3")]
+    Vip3,
+    #[serde(rename = "VIP4")]
+    Vip4,
+    #[serde(rename = "VIP5")]
+    Vip5,
+    #[serde(rename = "VIP6")]
+    Vip6,
+    #[serde(rename = "VIP7")]
+    Vip7,
+    #[serde(rename = "VIP8")]
+    Vip8,
+    #[serde(rename = "VIP9")]
+    Vip9,
+}
+
+/// Request parameters for getting account information.
+/// This endpoint supports optional request timing parameters.
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct AccountInfoRequest {
-    /// Request timestamp (Unix milliseconds)
+    /// Request timestamp (Unix milliseconds).
     #[serde(rename = "requestTime", skip_serializing_if = "Option::is_none")]
     pub request_time: Option<i64>,
 
-    /// Valid time window (Unix milliseconds)
-    /// If set, request is valid only when server time is within receiveWindow
+    /// Valid time window (Unix milliseconds).
+    /// If set, request is valid only when server time is within receiveWindow.
     #[serde(rename = "receiveWindow", skip_serializing_if = "Option::is_none")]
     pub receive_window: Option<i64>,
 }
 
-/// Account VIP level information
+/// Account VIP level information containing level details and volume requirements.
 #[derive(Debug, Clone, Deserialize)]
 pub struct VipInfo {
-    /// VIP level
+    /// Current VIP level of the account.
     #[serde(rename = "level")]
-    pub level: String,
+    pub level: VipLevel,
 
-    /// Next VIP level
+    /// Next available VIP level if applicable.
     #[serde(rename = "nextLevel")]
-    pub next_level: Option<String>,
+    pub next_level: Option<VipLevel>,
 
-    /// Trading volume required for next level (30-day volume in USDT)
+    /// Trading volume required for next level (30-day volume in USDT).
     #[serde(rename = "nextLevelVolume")]
     pub next_level_volume: Option<String>,
 
-    /// Current 30-day trading volume in USDT
+    /// Current 30-day trading volume in USDT.
     #[serde(rename = "currentVolume")]
     pub current_volume: String,
 }
 
-/// Account information
+/// Account information containing all account details and permissions.
 #[derive(Debug, Clone, Deserialize)]
 pub struct AccountInfo {
-    /// User ID
+    /// Unique user identifier.
     #[serde(rename = "userId")]
     pub user_id: String,
 
-    /// Spot account ID
+    /// Spot trading account identifier.
     #[serde(rename = "spotAcctId")]
     pub spot_account_id: String,
 
-    /// Account status
-    /// - `normal`: Normal account
-    /// - `frozen`: Frozen account
-    pub status: String,
+    /// Current account status (normal/frozen).
+    pub status: AccountStatus,
 
-    /// Whether account can trade
+    /// Whether account is permitted to trade.
     #[serde(rename = "canTrade")]
     pub can_trade: bool,
 
-    /// Whether account can withdraw
+    /// Whether account is permitted to withdraw funds.
     #[serde(rename = "canWithdraw")]
     pub can_withdraw: bool,
 
-    /// Whether account can deposit
+    /// Whether account is permitted to deposit funds.
     #[serde(rename = "canDeposit")]
     pub can_deposit: bool,
 
-    /// Account update time (Unix milliseconds)
+    /// Last account update timestamp (Unix milliseconds).
     #[serde(rename = "updateTime")]
     pub update_time: i64,
 
-    /// VIP level information
+    /// VIP level information and volume details.
     #[serde(rename = "vipInfo")]
     pub vip_info: VipInfo,
 
-    /// Whether account has kyc verification
+    /// Whether account has completed KYC verification.
     #[serde(rename = "kycFlag")]
     pub kyc_flag: bool,
 
-    /// KYC level
+    /// KYC verification level if applicable.
     #[serde(rename = "kycLevel")]
     pub kyc_level: Option<String>,
 
-    /// Parent user ID (for sub-accounts)
+    /// Parent user ID for sub-accounts.
     #[serde(rename = "parentUserId")]
     pub parent_user_id: Option<String>,
 
-    /// Account type
-    /// - `main`: Main account
-    /// - `sub`: Sub account
+    /// Account type (main/sub).
     #[serde(rename = "accountType")]
-    pub account_type: String,
+    pub account_type: AccountType,
 }
 
-/// Response from the account info endpoint
+/// Response from the account info endpoint containing account details.
 #[derive(Debug, Clone, Deserialize)]
 pub struct AccountInfoResponse {
-    /// Account information
+    /// Complete account information.
     #[serde(flatten)]
     pub account_info: AccountInfo,
 }
@@ -120,21 +161,9 @@ impl RestClient {
         &self,
         request: AccountInfoRequest,
     ) -> RestResult<AccountInfoResponse> {
-        let query_params = serde_urlencoded::to_string(&request).map_err(|e| {
-            crate::bitget::spot::Errors::Error(format!("Failed to serialize query parameters: {e}"))
-        })?;
-
-        let query = if query_params.is_empty() {
-            None
-        } else {
-            Some(query_params.as_str())
-        };
-
-        self.send_signed_request(
+        self.send_signed_get_request(
             ACCOUNT_INFO_ENDPOINT,
-            reqwest::Method::GET,
-            query, // Query parameters
-            None,  // No body
+            Some(&request),
             10,    // 10 requests per second rate limit
             false, // This is not an order placement endpoint
             None,  // No order-specific rate limit
@@ -204,8 +233,8 @@ mod tests {
 
         let vip_info: VipInfo = serde_json::from_str(json).unwrap();
 
-        assert_eq!(vip_info.level, "VIP1");
-        assert_eq!(vip_info.next_level, Some("VIP2".to_string()));
+        assert_eq!(vip_info.level, VipLevel::Vip1);
+        assert_eq!(vip_info.next_level, Some(VipLevel::Vip2));
         assert_eq!(vip_info.next_level_volume, Some("1000000".to_string()));
         assert_eq!(vip_info.current_volume, "500000");
     }
@@ -236,16 +265,16 @@ mod tests {
 
         assert_eq!(account_info.user_id, "123456789");
         assert_eq!(account_info.spot_account_id, "spot_987654321");
-        assert_eq!(account_info.status, "normal");
+        assert_eq!(account_info.status, AccountStatus::Normal);
         assert!(account_info.can_trade);
         assert!(account_info.can_withdraw);
         assert!(account_info.can_deposit);
         assert_eq!(account_info.update_time, 1640995200000);
-        assert_eq!(account_info.vip_info.level, "VIP1");
+        assert_eq!(account_info.vip_info.level, VipLevel::Vip1);
         assert!(account_info.kyc_flag);
         assert_eq!(account_info.kyc_level, Some("2".to_string()));
         assert!(account_info.parent_user_id.is_none());
-        assert_eq!(account_info.account_type, "main");
+        assert_eq!(account_info.account_type, AccountType::Main);
     }
 
     #[test]
@@ -273,14 +302,14 @@ mod tests {
         let account_info: AccountInfo = serde_json::from_str(json).unwrap();
 
         assert_eq!(account_info.user_id, "123456789");
-        assert_eq!(account_info.status, "normal");
+        assert_eq!(account_info.status, AccountStatus::Normal);
         assert!(!account_info.can_trade);
         assert!(!account_info.can_withdraw);
         assert!(account_info.can_deposit);
         assert!(!account_info.kyc_flag);
         assert!(account_info.kyc_level.is_none());
         assert_eq!(account_info.parent_user_id, Some("987654321".to_string()));
-        assert_eq!(account_info.account_type, "sub");
+        assert_eq!(account_info.account_type, AccountType::Sub);
     }
 
     #[test]
@@ -308,6 +337,74 @@ mod tests {
         let response: AccountInfoResponse = serde_json::from_str(json).unwrap();
 
         assert_eq!(response.account_info.user_id, "123456789");
-        assert_eq!(response.account_info.account_type, "main");
+        assert_eq!(response.account_info.account_type, AccountType::Main);
+    }
+
+    #[test]
+    fn test_account_status_serialization() {
+        assert_eq!(
+            serde_json::to_string(&AccountStatus::Normal).unwrap(),
+            "\"normal\""
+        );
+        assert_eq!(
+            serde_json::to_string(&AccountStatus::Frozen).unwrap(),
+            "\"frozen\""
+        );
+    }
+
+    #[test]
+    fn test_account_status_deserialization() {
+        assert_eq!(
+            serde_json::from_str::<AccountStatus>("\"normal\"").unwrap(),
+            AccountStatus::Normal
+        );
+        assert_eq!(
+            serde_json::from_str::<AccountStatus>("\"frozen\"").unwrap(),
+            AccountStatus::Frozen
+        );
+    }
+
+    #[test]
+    fn test_account_type_serialization() {
+        assert_eq!(
+            serde_json::to_string(&AccountType::Main).unwrap(),
+            "\"main\""
+        );
+        assert_eq!(serde_json::to_string(&AccountType::Sub).unwrap(), "\"sub\"");
+    }
+
+    #[test]
+    fn test_account_type_deserialization() {
+        assert_eq!(
+            serde_json::from_str::<AccountType>("\"main\"").unwrap(),
+            AccountType::Main
+        );
+        assert_eq!(
+            serde_json::from_str::<AccountType>("\"sub\"").unwrap(),
+            AccountType::Sub
+        );
+    }
+
+    #[test]
+    fn test_vip_level_serialization() {
+        assert_eq!(serde_json::to_string(&VipLevel::Vip0).unwrap(), "\"VIP0\"");
+        assert_eq!(serde_json::to_string(&VipLevel::Vip1).unwrap(), "\"VIP1\"");
+        assert_eq!(serde_json::to_string(&VipLevel::Vip9).unwrap(), "\"VIP9\"");
+    }
+
+    #[test]
+    fn test_vip_level_deserialization() {
+        assert_eq!(
+            serde_json::from_str::<VipLevel>("\"VIP0\"").unwrap(),
+            VipLevel::Vip0
+        );
+        assert_eq!(
+            serde_json::from_str::<VipLevel>("\"VIP1\"").unwrap(),
+            VipLevel::Vip1
+        );
+        assert_eq!(
+            serde_json::from_str::<VipLevel>("\"VIP9\"").unwrap(),
+            VipLevel::Vip9
+        );
     }
 }

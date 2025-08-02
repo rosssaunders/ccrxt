@@ -161,30 +161,12 @@ impl RestClient {
     /// # Returns
     /// A result containing the trade fills or an error
     pub async fn get_fills(&self, request: &GetFillsRequest) -> RestResult<GetFillsResponse> {
-        // Only create query string if there are parameters to serialize
-        let has_params = request.symbol.is_some()
-            || request.order_id.is_some()
-            || request.start_time.is_some()
-            || request.end_time.is_some()
-            || request.limit.is_some()
-            || request.id_less_than.is_some();
-
-        let query_string = if has_params {
-            Some(serde_urlencoded::to_string(request).map_err(|e| {
-                crate::bitget::spot::Errors::Error(format!("Failed to encode query: {e}"))
-            })?)
-        } else {
-            None
-        };
-
-        self.send_signed_request(
+        self.send_signed_get_request(
             GET_FILLS_ENDPOINT,
-            reqwest::Method::GET,
-            query_string.as_deref(),
-            None,  // No body for GET request
-            10,    // 10 requests per second rate limit
-            false, // Not an order placement endpoint
-            None,  // No order-specific rate limit
+            Some(&request),
+            5,
+            false,
+            None,
         )
         .await
     }

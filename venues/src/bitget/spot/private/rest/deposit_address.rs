@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::bitget::spot::{Errors, RestResult};
+use crate::bitget::spot::RestResult;
 
 /// Get Deposit Address
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -58,18 +58,8 @@ impl RestClient {
         params: GetDepositAddressRequest,
     ) -> RestResult<GetDepositAddressResponse> {
         let endpoint = "/api/v2/spot/wallet/deposit-address";
-        let body = serde_json::to_string(&params)
-            .map_err(|e| Errors::Error(format!("Serialization error: {e}")))?;
-        self.send_signed_request::<GetDepositAddressResponse>(
-            endpoint,
-            reqwest::Method::POST,
-            None,
-            Some(&body),
-            10,
-            false,
-            None,
-        )
-        .await
+        self.send_signed_post_request(endpoint, &params, 10, false, None)
+            .await
     }
 }
 

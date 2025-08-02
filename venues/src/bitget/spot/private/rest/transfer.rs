@@ -107,15 +107,9 @@ impl RestClient {
     /// # Returns
     /// A result containing the transfer response or an error
     pub async fn transfer(&self, request: TransferRequest) -> RestResult<TransferResponse> {
-        let body = serde_json::to_string(&request).map_err(|e| {
-            crate::bitget::spot::Errors::Error(format!("Failed to serialize request: {e}"))
-        })?;
-
-        self.send_signed_request(
+        self.send_signed_post_request(
             TRANSFER_ENDPOINT,
-            reqwest::Method::POST,
-            None,        // No query parameters
-            Some(&body), // JSON body
+            &request,
             10,          // 10 requests per second rate limit
             false,       // This is not an order placement endpoint
             None,        // No order-specific rate limit

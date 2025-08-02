@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::bitget::spot::{Errors, RestResult, enums::*};
+use crate::bitget::spot::{RestResult, enums::*};
 
 /// Modify Deposit Account
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -39,18 +39,8 @@ impl RestClient {
         params: ModifyDepositAccountRequest,
     ) -> RestResult<ModifyDepositAccountResponse> {
         let endpoint = "/api/v2/spot/wallet/modify-deposit-account";
-        let body = serde_json::to_string(&params)
-            .map_err(|e| Errors::Error(format!("Serialization error: {e}")))?;
-        self.send_signed_request::<ModifyDepositAccountResponse>(
-            endpoint,
-            reqwest::Method::POST,
-            None,
-            Some(&body),
-            10,
-            false,
-            None,
-        )
-        .await
+        self.send_signed_post_request(endpoint, &params, 10, false, None)
+            .await
     }
 }
 
@@ -66,7 +56,6 @@ mod tests {
         };
 
         let serialized = serde_json::to_string(&request).unwrap();
-        println!("Serialized request: {}", serialized);
 
         assert!(serialized.contains("\"coin\":\"USDT\""));
         assert!(serialized.contains("\"accountType\""));
@@ -98,6 +87,6 @@ mod tests {
         // Uncomment the following lines to test with real API credentials:
         // let client = BitgetRestClient::new("api_key", "secret", "passphrase", false);
         // let response = client.modify_deposit_account(request).await.unwrap();
-        // println!("Response: {:?}", response);
+        // log::info!("Response: {:?}", response);
     }
 }

@@ -1,11 +1,3 @@
-//! Plan Sub Order endpoint for Bitget Spot API
-//!
-//! This endpoint allows querying details of a specific trigger/stop order (plan order).
-//!
-//! Reference: https://www.bitget.com/api-doc/spot/plan/Plan-Sub-Order
-//! Endpoint: GET /api/v2/spot/plan/plan-sub-order
-//! Rate limit: 20 requests/second/UID
-
 use serde::{Deserialize, Serialize};
 
 use super::{
@@ -16,6 +8,7 @@ use super::{
 use crate::bitget::spot::{OrderSide, OrderType, RestResult};
 
 const PLAN_SUB_ORDER_ENDPOINT: &str = "/api/v2/spot/plan/plan-sub-order";
+
 /// Request parameters for querying plan sub order details
 #[derive(Debug, Clone, Serialize)]
 pub struct PlanSubOrderRequest {
@@ -131,18 +124,12 @@ impl RestClient {
         &self,
         request: PlanSubOrderRequest,
     ) -> RestResult<PlanSubOrderResponse> {
-        let query_params = serde_urlencoded::to_string(&request).map_err(|e| {
-            crate::bitget::spot::Errors::Error(format!("Failed to serialize query parameters: {e}"))
-        })?;
-
-        self.send_signed_request(
+        self.send_signed_get_request(
             PLAN_SUB_ORDER_ENDPOINT,
-            reqwest::Method::GET,
-            Some(&query_params), // Query parameters
-            None,                // No body
-            20,                  // 20 requests per second rate limit
-            false,               // This is not an order placement endpoint
-            None,                // No order-specific rate limit
+            Some(&request),
+            20,    // 20 requests per second rate limit
+            false, // This is not an order placement endpoint
+            None,  // No order-specific rate limit
         )
         .await
     }

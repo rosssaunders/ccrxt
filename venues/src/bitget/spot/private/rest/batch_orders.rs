@@ -130,15 +130,9 @@ impl RestClient {
             ));
         }
 
-        let body = serde_json::to_string(&request).map_err(|e| {
-            crate::bitget::spot::Errors::Error(format!("Failed to serialize request: {e}"))
-        })?;
-
-        self.send_signed_request(
+        self.send_signed_post_request(
             BATCH_ORDERS_ENDPOINT,
-            reqwest::Method::POST,
-            None,        // No query parameters
-            Some(&body), // JSON body
+            &request,
             5,           // 5 requests per second rate limit
             true,        // This is an order endpoint
             Some(5),     // Order-specific rate limit

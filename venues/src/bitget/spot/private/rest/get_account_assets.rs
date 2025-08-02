@@ -73,19 +73,9 @@ impl RestClient {
         &self,
         request: GetAccountAssetsRequest,
     ) -> RestResult<GetAccountAssetsResponse> {
-        let query_string = if request.coin.is_some() || request.asset_type.is_some() {
-            Some(serde_urlencoded::to_string(&request).map_err(|e| {
-                crate::bitget::spot::Errors::Error(format!("Failed to encode query: {e}"))
-            })?)
-        } else {
-            None
-        };
-
-        self.send_signed_request(
+        self.send_signed_get_request(
             GET_ACCOUNT_ASSETS_ENDPOINT,
-            reqwest::Method::GET,
-            query_string.as_deref(),
-            None,  // No body for GET request
+            Some(&request),
             10,    // 10 requests per second rate limit
             false, // Not an order endpoint
             None,  // No order-specific rate limit

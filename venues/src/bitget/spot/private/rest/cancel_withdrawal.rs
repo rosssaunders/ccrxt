@@ -33,18 +33,14 @@ impl RestClient {
         params: CancelWithdrawalRequest,
     ) -> RestResult<CancelWithdrawalResponse> {
         let endpoint = "/api/v2/spot/wallet/cancel-withdrawal";
-        let body = serde_json::to_string(&params)
-            .map_err(|e| crate::bitget::spot::Errors::Error(format!("Serialization error: {e}")))?;
-        self.send_signed_request::<CancelWithdrawalResponse>(
+        self.send_signed_post_request(
             endpoint,
-            reqwest::Method::POST,
-            None,
-            Some(&body),
+            &params,
             5,
             false,
             None,
         )
-        .await
+            .await
     }
 }
 

@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::bitget::spot::{Errors, RestResult, enums::*};
+use crate::bitget::spot::{RestResult, enums::*};
 
 const WITHDRAW_ENDPOINT: &str = "/api/v2/spot/wallet/withdrawal";
 /// Withdraw
@@ -113,14 +113,9 @@ impl RestClient {
     ///
     /// Returns a `RestResult<WithdrawResponse>` containing the withdrawal result or an error.
     pub async fn withdraw(&self, request: WithdrawRequest) -> RestResult<WithdrawResponse> {
-        self.send_signed_request(
+        self.send_signed_post_request(
             WITHDRAW_ENDPOINT,
-            reqwest::Method::POST,
-            None,
-            Some(
-                &serde_json::to_string(&request)
-                    .map_err(|e| Errors::Error(format!("Serialization error: {e}")))?,
-            ),
+            &request,
             5,
             false,
             None,

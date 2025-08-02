@@ -139,21 +139,9 @@ impl RestClient {
     /// # Returns
     /// A result containing the bills response or an error
     pub async fn bills(&self, request: BillsRequest) -> RestResult<BillsResponse> {
-        let query_params = serde_urlencoded::to_string(&request).map_err(|e| {
-            crate::bitget::spot::Errors::Error(format!("Failed to serialize query parameters: {e}"))
-        })?;
-
-        let query = if query_params.is_empty() {
-            None
-        } else {
-            Some(query_params.as_str())
-        };
-
-        self.send_signed_request(
+        self.send_signed_get_request(
             BILLS_ENDPOINT,
-            reqwest::Method::GET,
-            query, // Query parameters
-            None,  // No body
+            Some(&request),
             10,    // 10 requests per second rate limit
             false, // This is not an order placement endpoint
             None,  // No order-specific rate limit

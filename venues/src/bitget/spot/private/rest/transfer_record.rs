@@ -1,14 +1,10 @@
 use serde::{Deserialize, Serialize};
 
 use super::super::RestClient;
-use crate::bitget::spot::{Errors, RestResult, enums::*};
+use crate::bitget::spot::{RestResult, enums::*};
 
 /// Endpoint for getting transfer records
 const TRANSFER_RECORD_ENDPOINT: &str = "/api/v2/spot/wallet/transfer-records";
-
-/// Get Transfer Record
-///
-/// Frequency limit: 20 times/1s (User ID)
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GetTransferRecordRequest {
@@ -111,19 +107,8 @@ impl RestClient {
         &self,
         request: GetTransferRecordRequest,
     ) -> RestResult<GetTransferRecordResponse> {
-        self.send_signed_request(
-            TRANSFER_RECORD_ENDPOINT,
-            reqwest::Method::GET,
-            None,
-            Some(
-                &serde_json::to_string(&request)
-                    .map_err(|e| Errors::Error(format!("Serialization error: {e}")))?,
-            ),
-            20,
-            false,
-            None,
-        )
-        .await
+        self.send_signed_get_request(TRANSFER_RECORD_ENDPOINT, Some(&request), 20, false, None)
+            .await
     }
 }
 

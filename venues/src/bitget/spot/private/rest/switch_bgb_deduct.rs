@@ -1,14 +1,9 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::bitget::spot::{Errors, RestResult, enums::*};
+use crate::bitget::spot::{RestResult, enums::*};
 
 const SWITCH_BGB_DEDUCT_ENDPOINT: &str = "/api/v2/spot/account/switch-deduct";
-/// Switch BGB Deduct
-///
-/// Switch the BGB deduct status for fee optimization.
-///
-/// Rate Limit: 1 req/sec/UID
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SwitchBgbDeductRequest {
@@ -34,19 +29,8 @@ impl RestClient {
         &self,
         request: SwitchBgbDeductRequest,
     ) -> RestResult<SwitchBgbDeductResponse> {
-        self.send_signed_request(
-            SWITCH_BGB_DEDUCT_ENDPOINT,
-            reqwest::Method::POST,
-            None,
-            Some(
-                &serde_json::to_string(&request)
-                    .map_err(|e| Errors::Error(format!("Serialization error: {e}")))?,
-            ),
-            1,
-            false,
-            None,
-        )
-        .await
+        self.send_signed_post_request(SWITCH_BGB_DEDUCT_ENDPOINT, &request, 1, false, None)
+            .await
     }
 }
 

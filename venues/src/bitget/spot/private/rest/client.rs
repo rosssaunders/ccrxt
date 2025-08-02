@@ -27,6 +27,7 @@ use chrono::Utc;
 use hmac::{Hmac, Mac};
 use reqwest::Client;
 use rest::secrets::ExposableSecret;
+use serde::Serialize;
 use sha2::Sha256;
 
 use crate::bitget::spot::{Errors, RestResult, rate_limit::RateLimiter};
@@ -124,46 +125,75 @@ impl RestClient {
 
     /// Sends a signed request to the Bitget API
     ///
-    /// This method automatically handles timestamp generation and request signing for private endpoints.
+    /// This method automatically handles timestamp generation, parameter serialization, and request signing for private endpoints.
     ///
     /// # Arguments
     /// * `endpoint` - The API endpoint path (e.g., "/api/v2/spot/account/assets")
     /// * `method` - The HTTP method to use  
-    /// * `query_string` - Optional query string parameters
-    /// * `body` - Optional JSON body for POST requests
+    /// * `query_params` - Optional query parameters to serialize
+    /// * `body_params` - Optional body parameters to serialize as JSON
     /// * `endpoint_limit_per_second` - The rate limit for this specific endpoint
     /// * `is_order` - Whether this is an order-related endpoint
     /// * `order_limit_per_second` - Order-specific rate limit if applicable
     ///
     /// # Returns
     /// A result containing the parsed response data and metadata, or an error
-    pub(super) async fn send_signed_request<T>(
+    pub(super) async fn send_signed_request<T, Q, B>(
         &self,
         endpoint: &str,
         method: reqwest::Method,
-        query_string: Option<&str>,
-        body: Option<&str>,
+        query_params: Option<&Q>,
+        body_params: Option<&B>,
         endpoint_limit_per_second: u32,
         is_order: bool,
         order_limit_per_second: Option<u32>,
     ) -> RestResult<T>
     where
         T: serde::de::DeserializeOwned,
+        Q: Serialize + ?Sized,
+        B: Serialize + ?Sized,
     {
         // Check rate limits before making the request
         self.rate_limiter
             .check_limits(endpoint_limit_per_second, is_order, order_limit_per_second)
             .await?;
 
+        // Serialize query parameters if provided
+        let query_string = if let Some(params) = query_params {
+            let serialized = serde_urlencoded::to_string(params)
+                .map_err(|e| Errors::Error(format!("Failed to serialize query parameters: {e}")))?;
+            if serialized.is_empty() {
+                None
+            } else {
+                Some(serialized)
+            }
+        } else {
+            None
+        };
+
+        // Serialize body parameters if provided
+        let body_string = if let Some(params) = body_params {
+            let serialized = serde_json::to_string(params)
+                .map_err(|e| Errors::Error(format!("Failed to serialize body parameters: {e}")))?;
+            Some(serialized)
+        } else {
+            None
+        };
+
         // Generate timestamp
         let timestamp = Utc::now().timestamp_millis();
 
         // Generate signature
-        let signature =
-            self.generate_signature(timestamp, method.as_str(), endpoint, query_string, body)?;
+        let signature = self.generate_signature(
+            timestamp,
+            method.as_str(),
+            endpoint,
+            query_string.as_deref(),
+            body_string.as_deref(),
+        )?;
 
         // Build URL
-        let url = match query_string {
+        let url = match &query_string {
             Some(q) if !q.is_empty() => format!("{}{}?{}", self.base_url, endpoint, q),
             _ => format!("{}{}", self.base_url, endpoint),
         };
@@ -179,10 +209,10 @@ impl RestClient {
             .header("locale", "en-US");
 
         // Add body if provided
-        if let Some(body_content) = body {
+        if let Some(body_content) = &body_string {
             request_builder = request_builder
                 .header("Content-Type", "application/json")
-                .body(body_content.to_owned());
+                .body(body_content.clone());
         }
 
         // Execute request
@@ -266,6 +296,80 @@ impl RestClient {
                 }
             }
         }
+    }
+
+    /// Convenience method for GET requests with query parameters only
+    pub(super) async fn send_signed_get_request<T, Q>(
+        &self,
+        endpoint: &str,
+        query_params: Option<&Q>,
+        endpoint_limit_per_second: u32,
+        is_order: bool,
+        order_limit_per_second: Option<u32>,
+    ) -> RestResult<T>
+    where
+        T: serde::de::DeserializeOwned,
+        Q: Serialize + ?Sized,
+    {
+        self.send_signed_request(
+            endpoint,
+            reqwest::Method::GET,
+            query_params,
+            None::<&()>,
+            endpoint_limit_per_second,
+            is_order,
+            order_limit_per_second,
+        )
+        .await
+    }
+
+    /// Convenience method for POST requests with body parameters only
+    pub(super) async fn send_signed_post_request<T, B>(
+        &self,
+        endpoint: &str,
+        body_params: &B,
+        endpoint_limit_per_second: u32,
+        is_order: bool,
+        order_limit_per_second: Option<u32>,
+    ) -> RestResult<T>
+    where
+        T: serde::de::DeserializeOwned,
+        B: Serialize + ?Sized,
+    {
+        self.send_signed_request(
+            endpoint,
+            reqwest::Method::POST,
+            None::<&()>,
+            Some(body_params),
+            endpoint_limit_per_second,
+            is_order,
+            order_limit_per_second,
+        )
+        .await
+    }
+
+    /// Convenience method for requests with no parameters
+    pub(super) async fn send_signed_request_no_params<T>(
+        &self,
+        endpoint: &str,
+        method: reqwest::Method,
+        endpoint_limit_per_second: u32,
+        is_order: bool,
+        order_limit_per_second: Option<u32>,
+    ) -> RestResult<T>
+    where
+        T: serde::de::DeserializeOwned,
+    {
+        self.send_signed_request(
+            endpoint,
+            method,
+            None::<&()>,
+            None::<&()>,
+            endpoint_limit_per_second,
+            is_order,
+            order_limit_per_second,
+        )
+        .await
     }
 }
 

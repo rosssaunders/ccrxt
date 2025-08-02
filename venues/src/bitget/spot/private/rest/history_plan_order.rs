@@ -159,21 +159,9 @@ impl RestClient {
         &self,
         request: HistoryPlanOrderRequest,
     ) -> RestResult<HistoryPlanOrderResponse> {
-        let query_params = serde_urlencoded::to_string(&request).map_err(|e| {
-            crate::bitget::spot::Errors::Error(format!("Failed to serialize query parameters: {e}"))
-        })?;
-
-        let query = if query_params.is_empty() {
-            None
-        } else {
-            Some(query_params.as_str())
-        };
-
-        self.send_signed_request(
+        self.send_signed_get_request(
             HISTORY_PLAN_ORDER_ENDPOINT,
-            reqwest::Method::GET,
-            query, // Query parameters
-            None,  // No body
+            Some(&request),
             20,    // 20 requests per second rate limit
             false, // This is not an order placement endpoint
             None,  // No order-specific rate limit

@@ -50,18 +50,12 @@ impl RestClient {
         &self,
         request: &CancelOrderRequest,
     ) -> RestResult<CancelOrderResponse> {
-        let body = serde_json::to_string(&request).map_err(|e| {
-            crate::bitget::spot::Errors::Error(format!("Failed to serialize request: {e}"))
-        })?;
-
-        self.send_signed_request(
+        self.send_signed_post_request(
             CANCEL_ORDER_ENDPOINT,
-            reqwest::Method::POST,
-            None,        // No query parameters
-            Some(&body), // JSON body
-            10,          // 10 requests per second rate limit
-            true,        // This is an order-related endpoint
-            Some(10),    // Order-specific rate limit
+            request,
+            10,       // 10 requests per second rate limit
+            true,     // This is an order-related endpoint
+            Some(10), // Order-specific rate limit
         )
         .await
     }
