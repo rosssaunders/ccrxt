@@ -6,6 +6,7 @@
 use chrono;
 use reqwest::Client;
 use tokio;
+use venues::bingx::spot::public::AggregationType;
 use venues::bingx::spot::{
     Get24hrTickerRequest, GetHistoricalKlineRequest, GetKlineRequest, GetOldTradeRequest,
     GetOrderBookAggregationRequest, GetOrderBookRequest, GetRecentTradesRequest,
@@ -53,7 +54,7 @@ async fn test_get_symbols() {
         timestamp: chrono::Utc::now().timestamp_millis(),
     };
 
-    let result = client.get_symbols(&request).await;
+    let result = client.get_symbols(request).await;
 
     // This test validates the endpoint is callable and returns a result
     match result {
@@ -146,10 +147,9 @@ async fn test_get_order_book() {
 async fn test_get_order_book_aggregation() {
     let client = create_public_test_client();
     let request = GetOrderBookAggregationRequest {
-        symbol: "BTC-USDT".to_string(),
-        limit: Some(10),
-        recv_window: None,
-        timestamp: chrono::Utc::now().timestamp_millis(),
+        symbol: "BTC_USDT".to_string(),
+        depth: 20,
+        aggregation_type: AggregationType::Step0,
     };
 
     let result = client.get_order_book_aggregation(&request).await;
@@ -160,7 +160,7 @@ async fn test_get_order_book_aggregation() {
     );
 
     let response = result.unwrap();
-    println!("Order book for BTC-USDT:");
+    println!("Order book aggregation for BTC_USDT:");
     println!("  Bids: {}", response.bids.len());
     println!("  Asks: {}", response.asks.len());
 
@@ -193,7 +193,7 @@ async fn test_get_kline() {
         timestamp: chrono::Utc::now().timestamp_millis(),
     };
 
-    let result = client.get_kline(&request).await;
+    let result = client.get_kline(request).await;
     assert!(
         result.is_ok(),
         "get_kline request should succeed: {:?}",
@@ -506,7 +506,7 @@ async fn test_endpoint_parameters() {
             timestamp: chrono::Utc::now().timestamp_millis(),
         };
 
-        let result = client.get_kline(&request).await;
+        let result = client.get_kline(request).await;
         assert!(
             result.is_ok(),
             "get_kline with {:?} interval should succeed: {:?}",

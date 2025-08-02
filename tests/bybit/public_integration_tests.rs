@@ -15,7 +15,7 @@ use venues::bybit::{
     // Risk management endpoints
     GetDeliveryPriceRequest, GetInsuranceRequest, GetRiskLimitRequest,
     // Margin & loan endpoints
-    GetVipMarginDataRequest, GetCollateralRatioRequest, GetInsMarginCoinInfoRequest,
+    GetVipMarginDataRequest, GetInsMarginCoinInfoRequest,
 };
 
 /// Helper function to create a test client with shared rate limiter

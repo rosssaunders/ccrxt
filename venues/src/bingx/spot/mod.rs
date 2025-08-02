@@ -6,7 +6,7 @@ pub mod rate_limit;
 pub mod public {
     pub mod rest;
     pub use self::rest::{
-        Get24hrTickerRequest, Get24hrTickerResponse, GetHistoricalKlineRequest,
+        AggregationType, Get24hrTickerRequest, Get24hrTickerResponse, GetHistoricalKlineRequest,
         GetHistoricalKlineResponse, GetKlineRequest, GetKlineResponse, GetOldTradeRequest,
         GetOldTradeResponse, GetOrderBookAggregationRequest, GetOrderBookAggregationResponse,
         GetOrderBookRequest, GetOrderBookResponse, GetRecentTradesRequest, GetRecentTradesResponse,

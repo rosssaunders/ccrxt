@@ -21,7 +21,7 @@ async fn test_perpetual_client_creation() {
 /// Test futures contracts endpoint
 #[tokio::test]
 async fn test_get_futures_contracts() {
-    use venues::gateio::perpetual::public::rest::contracts::FuturesContractsRequest;
+    use venues::gateio::perpetual::public::rest::get_futures_contracts::FuturesContractsRequest;
     
     let client = create_perpetual_test_client();
     let request = FuturesContractsRequest {
@@ -51,7 +51,7 @@ async fn test_get_futures_contracts() {
 /// Test single futures contract endpoint
 #[tokio::test]
 async fn test_get_futures_contract() {
-    use venues::gateio::perpetual::public::rest::contracts::FuturesContractRequest;
+    use venues::gateio::perpetual::public::rest::get_futures_contract::FuturesContractRequest;
     
     let client = create_perpetual_test_client();
     let request = FuturesContractRequest {
@@ -182,7 +182,7 @@ async fn test_get_futures_trades() {
 /// Test futures candlesticks endpoint
 #[tokio::test]
 async fn test_get_futures_candlesticks() {
-    use venues::gateio::perpetual::public::rest::candlesticks::FuturesCandlesticksRequest;
+    use venues::gateio::perpetual::public::rest::candlestick::FuturesCandlesticksRequest;
     
     let client = create_perpetual_test_client();
     let request = FuturesCandlesticksRequest {
@@ -218,7 +218,7 @@ async fn test_get_futures_candlesticks() {
 /// Test futures mark price candlesticks endpoint
 #[tokio::test]
 async fn test_get_futures_mark_price_candlesticks() {
-    use venues::gateio::perpetual::public::rest::candlesticks::FuturesCandlesticksRequest;
+    use venues::gateio::perpetual::public::rest::candlestick::FuturesCandlesticksRequest;
     
     let client = create_perpetual_test_client();
     let request = FuturesCandlesticksRequest {
@@ -253,7 +253,7 @@ async fn test_get_futures_mark_price_candlesticks() {
 /// Test futures index price candlesticks endpoint
 #[tokio::test]
 async fn test_get_futures_index_price_candlesticks() {
-    use venues::gateio::perpetual::public::rest::candlesticks::FuturesCandlesticksRequest;
+    use venues::gateio::perpetual::public::rest::candlestick::FuturesCandlesticksRequest;
     
     let client = create_perpetual_test_client();
     let request = FuturesCandlesticksRequest {

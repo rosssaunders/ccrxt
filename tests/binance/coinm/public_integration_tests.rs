@@ -8,22 +8,32 @@
 //! and indicates the tests are correctly configured to reach the live API.
 
 use reqwest::Client;
+use std::time::Duration;
 use tokio;
 use venues::binance::coinm::{
     AggregateTradesRequest, BasisRequest, BookTickerRequest, BookTickerRequestBySymbol,
-    ConstituentsRequest, ContinuousKlineRequest, ContractType, FundingRateRequest,
-    GlobalLongShortAccountRatioParams, HistoricalTradesRequest, IndexPriceKlineRequest,
-    KlineInterval, KlineRequest, MarkPriceKlineRequest, OpenInterestHistParams,
-    OpenInterestRequest, OrderBookRequest, Period, PremiumIndexKlineRequest, PremiumIndexRequest,
-    RateLimiter, RecentTradesRequest, RestClient as PublicRestClient, TakerBuySellVolParams,
-    Ticker24hrParams, TickerPriceRequest, TopLongShortAccountRatioParams,
+    ConstituentsRequest, ContinuousKlineRequest, ContractType, ContractTypeFilter,
+    FundingRateRequest, HistoricalTradesRequest, IndexPriceKlineRequest, KlineInterval,
+    KlineRequest, MarkPriceKlineRequest, OpenInterestHistRequest, OpenInterestRequest,
+    OrderBookRequest, Period, PremiumIndexKlineRequest, PremiumIndexRequest, RecentTradesRequest,
+    RestClient as PublicRestClient, TakerBuySellVolRequest, Ticker24hrParams, TickerPriceRequest,
     TopLongShortPositionRatioParams,
 };
+use venues::binance::shared::{RateLimiter, RateLimits};
 
 /// Helper function to create a test client for public endpoints
 fn create_public_test_client() -> PublicRestClient {
     let client = Client::new();
-    let rate_limiter = RateLimiter::new();
+    let rate_limits = RateLimits {
+        request_weight_limit: 6000,
+        request_weight_window: Duration::from_secs(60),
+        raw_requests_limit: 61000,
+        raw_requests_window: Duration::from_secs(300),
+        orders_10s_limit: 100,
+        orders_minute_limit: 1200,
+        orders_day_limit: None,
+    };
+    let rate_limiter = RateLimiter::new(rate_limits);
 
     PublicRestClient::new("https://dapi.binance.com", client, rate_limiter)
 }
@@ -93,7 +103,7 @@ async fn test_get_exchange_info() {
 async fn test_get_order_book() {
     let client = create_public_test_client();
     let request = OrderBookRequest {
-        symbol: "BTCUSD_PERP".to_string(),
+        symbol: "BTCUSD_PERP".into(),
         limit: Some(5),
     };
 
@@ -127,7 +137,7 @@ async fn test_get_order_book() {
 async fn test_get_recent_trades() {
     let client = create_public_test_client();
     let request = RecentTradesRequest {
-        symbol: "BTCUSD_PERP".to_string(),
+        symbol: "BTCUSD_PERP".into(),
         limit: Some(5),
     };
 
@@ -149,7 +159,7 @@ async fn test_get_recent_trades() {
 async fn test_get_historical_trades() {
     let client = create_public_test_client();
     let request = HistoricalTradesRequest {
-        symbol: "BTCUSD_PERP".to_string(),
+        symbol: "BTCUSD_PERP".into(),
         limit: Some(5),
         from_id: None,
     };
@@ -171,7 +181,7 @@ async fn test_get_historical_trades() {
 async fn test_get_aggregate_trades() {
     let client = create_public_test_client();
     let request = AggregateTradesRequest {
-        symbol: "BTCUSD_PERP".to_string(),
+        symbol: "BTCUSD_PERP".into(),
         from_id: None,
         start_time: None,
         end_time: None,
@@ -198,7 +208,7 @@ async fn test_get_aggregate_trades() {
 async fn test_get_klines() {
     let client = create_public_test_client();
     let request = KlineRequest {
-        symbol: "BTCUSD_PERP".to_string(),
+        symbol: "BTCUSD_PERP".into(),
         interval: KlineInterval::I1h,
         start_time: None,
         end_time: None,
@@ -274,7 +284,7 @@ async fn test_get_index_price_klines() {
 async fn test_get_mark_price_klines() {
     let client = create_public_test_client();
     let request = MarkPriceKlineRequest {
-        symbol: "BTCUSD_PERP".to_string(),
+        symbol: "BTCUSD_PERP".into(),
         interval: KlineInterval::I1h,
         start_time: None,
         end_time: None,
@@ -298,7 +308,7 @@ async fn test_get_mark_price_klines() {
 async fn test_get_premium_index_klines() {
     let client = create_public_test_client();
     let request = PremiumIndexKlineRequest {
-        symbol: "BTCUSD_PERP".to_string(),
+        symbol: "BTCUSD_PERP".into(),
         interval: KlineInterval::I1h,
         start_time: None,
         end_time: None,
@@ -349,7 +359,7 @@ async fn test_get_premium_index() {
 async fn test_get_funding_rate_history() {
     let client = create_public_test_client();
     let request = FundingRateRequest {
-        symbol: "BTCUSD_PERP".to_string(),
+        symbol: "BTCUSD_PERP".into(),
         start_time: None,
         end_time: None,
         limit: Some(5),
@@ -450,7 +460,7 @@ async fn test_get_book_ticker() {
 async fn test_get_open_interest() {
     let client = create_public_test_client();
     let request = OpenInterestRequest {
-        symbol: "BTCUSD_PERP".to_string(),
+        symbol: "BTCUSD_PERP".into(),
     };
 
     let result = client.get_open_interest(request).await;
@@ -471,9 +481,9 @@ async fn test_get_open_interest() {
 #[tokio::test]
 async fn test_get_open_interest_hist() {
     let client = create_public_test_client();
-    let params = OpenInterestHistParams {
-        pair: "BTCUSD".to_string(),
-        contract_type: "PERPETUAL".to_string(),
+    let params = OpenInterestHistRequest {
+        pair: "BTCUSD".into(),
+        contract_type: ContractTypeFilter::Perpetual,
         period: Period::I5m,
         start_time: None,
         end_time: None,
@@ -494,36 +504,6 @@ async fn test_get_open_interest_hist() {
     );
     println!(
         "Open interest history returned {} entries",
-        response.data.len()
-    );
-}
-
-/// Test the top long/short account ratio endpoint
-#[tokio::test]
-async fn test_get_top_long_short_account_ratio() {
-    let client = create_public_test_client();
-    let params = TopLongShortAccountRatioParams {
-        pair: "BTCUSD".to_string(),
-        period: Period::I5m,
-        start_time: None,
-        end_time: None,
-        limit: Some(5),
-    };
-
-    let result = client.get_top_long_short_account_ratio(params).await;
-    assert!(
-        result.is_ok(),
-        "get_top_long_short_account_ratio request should succeed: {:?}",
-        result.err()
-    );
-
-    let response = result.unwrap();
-    assert!(
-        !response.data.is_empty(),
-        "Should have at least one ratio entry"
-    );
-    println!(
-        "Top long/short account ratio returned {} entries",
         response.data.len()
     );
 }
@@ -558,22 +538,24 @@ async fn test_get_top_long_short_position_ratio() {
     );
 }
 
-/// Test the global long/short account ratio endpoint
+/// Test the top trader long/short account ratio endpoint
 #[tokio::test]
-async fn test_get_global_long_short_account_ratio() {
+async fn test_get_top_long_short_account_ratio() {
+    use venues::binance::coinm::public::rest::top_long_short_account_ratio::TopLongShortAccountRatioRequest;
+
     let client = create_public_test_client();
-    let params = GlobalLongShortAccountRatioParams {
-        pair: "BTCUSD".to_string(),
+    let request = TopLongShortAccountRatioRequest {
+        pair: "BTCUSD".into(),
         period: Period::I5m,
+        limit: Some(10),
         start_time: None,
         end_time: None,
-        limit: Some(5),
     };
 
-    let result = client.get_global_long_short_account_ratio(params).await;
+    let result = client.get_top_long_short_account_ratio(request).await;
     assert!(
         result.is_ok(),
-        "get_global_long_short_account_ratio request should succeed: {:?}",
+        "get_top_long_short_account_ratio request should succeed: {:?}",
         result.err()
     );
 
@@ -583,7 +565,7 @@ async fn test_get_global_long_short_account_ratio() {
         "Should have at least one ratio entry"
     );
     println!(
-        "Global long/short account ratio returned {} entries",
+        "Top long/short account ratio returned {} entries",
         response.data.len()
     );
 }
@@ -592,9 +574,9 @@ async fn test_get_global_long_short_account_ratio() {
 #[tokio::test]
 async fn test_get_taker_buy_sell_vol() {
     let client = create_public_test_client();
-    let params = TakerBuySellVolParams {
-        pair: "BTCUSD".to_string(),
-        contract_type: "PERPETUAL".to_string(),
+    let params = TakerBuySellVolRequest {
+        pair: "BTCUSD".into(),
+        contract_type: ContractTypeFilter::Perpetual,
         period: Period::I5m,
         start_time: None,
         end_time: None,

@@ -65,7 +65,7 @@ pub type RestResult<T> = Result<RestResponse<T>, Errors>;
 pub type CoinmClient = crate::binance::shared::client::PrivateBinanceClient;
 
 // Type aliases for backwards compatibility with integration tests  
-pub use TopLongShortAccountRatioRequest as TopLongShortAccountRatioParams;
+// Note: TopLongShortAccountRatio not available for CoinM futures
 pub use TopLongShortPositionRatioRequest as TopLongShortPositionRatioParams;
 pub use OpenInterestHistRequest as OpenInterestHistParams;
 pub use TakerBuySellVolRequest as TakerBuySellVolParams;

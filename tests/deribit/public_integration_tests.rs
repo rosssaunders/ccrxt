@@ -535,8 +535,10 @@ async fn test_get_last_settlements_by_currency() {
 
     let request = GetLastSettlementsByCurrencyRequest {
         currency: Currency::BTC,
-        kind: InstrumentKind::Future,
+        settlement_type: None,
         count: Some(10),
+        continuation: None,
+        search_start_timestamp: None,
     };
 
     let result = client.get_last_settlements_by_currency(request).await;
@@ -559,8 +561,8 @@ async fn test_get_last_settlements_by_currency() {
     if !response.result.settlements.is_empty() {
         for settlement in &response.result.settlements {
             println!(
-                "Settlement: {} at price {:?}",
-                settlement.instrument_name, settlement.settlement_price
+                "Settlement: {:?} - type: {:?}",
+                settlement.instrument_name, settlement.settlement_type
             );
         }
     }
@@ -927,8 +929,10 @@ async fn test_get_last_settlements_by_currency_various() {
     for currency in currencies {
         let request = GetLastSettlementsByCurrencyRequest {
             currency: currency.clone(),
-            kind: InstrumentKind::Future,
+            settlement_type: None,
             count: Some(5),
+            continuation: None,
+            search_start_timestamp: None,
         };
 
         let result = client.get_last_settlements_by_currency(request).await;
@@ -951,12 +955,12 @@ async fn test_get_last_settlements_by_currency_various() {
 
         // Verify structure of settlements
         for settlement in response.result.settlements.iter().take(3) {
-            assert!(!settlement.instrument_name.is_empty());
+            assert!(settlement.instrument_name.is_some());
             assert!(settlement.timestamp > 0);
 
             println!(
-                "  Settlement: {} at price {:?} (timestamp: {})",
-                settlement.instrument_name, settlement.settlement_price, settlement.timestamp
+                "  Settlement: {:?} - type: {:?} (timestamp: {})",
+                settlement.instrument_name, settlement.settlement_type, settlement.timestamp
             );
         }
     }
@@ -1382,8 +1386,10 @@ async fn test_large_count_parameters() {
     // Test with large count for settlements
     let large_settlements_request = GetLastSettlementsByCurrencyRequest {
         currency: Currency::BTC,
-        kind: InstrumentKind::Future,
+        settlement_type: None,
         count: Some(50), // Large count
+        continuation: None,
+        search_start_timestamp: None,
     };
 
     let result = client

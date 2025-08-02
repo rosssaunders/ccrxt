@@ -555,4 +555,133 @@ impl PublicBinanceClient {
             });
         }
     }
+
+    /// Send an API-key-only request (MARKET_DATA security type)
+    /// 
+    /// This method is for endpoints that require an API key in the header
+    /// but do not require request signing (like historical trades).
+    pub async fn send_api_key_request<T, R, E>(
+        &self,
+        endpoint: &str,
+        method: Method,
+        api_key: &dyn ExposableSecret,
+        params: Option<R>,
+        weight: u32,
+    ) -> Result<RestResponse<T>, E>
+    where
+        T: for<'de> Deserialize<'de> + Send + 'static,
+        R: Serialize,
+        E: From<Errors>,
+    {
+        // Encode query parameters if provided
+        let query_string = match params {
+            Some(p) => Some(serde_urlencoded::to_string(&p).map_err(Errors::from)?),
+            None => None,
+        };
+
+        // Rate limit check
+        self.rate_limiter
+            .check_limits(weight, false)
+            .await
+            .map_err(E::from)?;
+
+        // Build URL
+        let url = if let Some(query) = query_string {
+            format!("{}{}?{}", self.base_url, endpoint, query)
+        } else {
+            format!("{}{}", self.base_url, endpoint)
+        };
+
+        let request_builder = self.client
+            .request(method, &url)
+            .header("X-MBX-APIKEY", api_key.expose_secret()); // Add API key header
+
+        // Send request with retry logic
+        let mut attempts: u32 = 0;
+        const MAX_ATTEMPTS: u32 = 3;
+
+        loop {
+            attempts = attempts.saturating_add(1u32);
+            let response = request_builder
+                .try_clone()
+                .ok_or_else(|| Errors::Error("Failed to clone request".to_string()))?
+                .send()
+                .await
+                .map_err(Errors::from)?;
+
+            let status = response.status();
+
+            // Extract headers before consuming response
+            let mut headers_map = HashMap::new();
+            for (k, v) in response.headers() {
+                if let Ok(s) = v.to_str() {
+                    headers_map.insert(k.to_string(), s.to_string());
+                }
+            }
+
+            let text = response.text().await.map_err(Errors::from)?;
+
+            if status == reqwest::StatusCode::TOO_MANY_REQUESTS && attempts < MAX_ATTEMPTS {
+                let retry_secs = headers_map
+                    .get("retry-after")
+                    .and_then(|v| v.parse::<u64>().ok())
+                    .unwrap_or(1);
+                sleep(Duration::from_secs(retry_secs)).await;
+                continue;
+            }
+
+            handle_http_status(status, &text)?;
+
+            if text.trim().is_empty() {
+                return Err(Errors::Error("Empty response from server".to_string()).into());
+            }
+
+            // Try error response
+            if let Ok(err_resp) = serde_json::from_str::<ErrorResponse>(&text) {
+                let api_error = ApiError::from_code(err_resp.code, err_resp.msg);
+                return Err(Errors::ApiError(api_error).into());
+            }
+
+            // Parse as success
+            let data: T = serde_json::from_str(&text)
+                .map_err(|e| Errors::Error(format!("Failed to parse response: {}", e)))?;
+
+            // Record and update rate limiter
+            self.rate_limiter.record_usage(weight, false).await;
+            self.rate_limiter.update_from_headers(&headers_map).await;
+
+            let rate_limit_info = {
+                let mut weight_u = None;
+                let mut order_c = None;
+                let retry = headers_map
+                    .get("retry-after")
+                    .and_then(|s| s.parse().ok())
+                    .map(Duration::from_secs);
+                for (name, value) in &headers_map {
+                    if name.starts_with("x-mbx-used-weight") {
+                        weight_u = value.parse().ok();
+                    } else if name.starts_with("x-mbx-order-count") {
+                        order_c = value.parse().ok();
+                    }
+                }
+                if weight_u.is_some() || order_c.is_some() || retry.is_some() {
+                    Some(RateLimitInfo {
+                        weight_used: weight_u,
+                        order_count: order_c,
+                        retry_after: retry,
+                    })
+                } else {
+                    None
+                }
+            };
+
+            return Ok(RestResponse {
+                data,
+                headers: ResponseHeaders {
+                    headers: headers_map,
+                },
+                rate_limit_info,
+            });
+        }
+    }
 }

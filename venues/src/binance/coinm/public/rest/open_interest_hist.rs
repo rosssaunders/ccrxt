@@ -9,7 +9,7 @@ use crate::binance::coinm::{
 };
 
 /// Endpoint path for Open Interest Statistics.
-const OPEN_INTEREST_HIST_ENDPOINT: &str = "/dapi/v1/openInterestHist";
+const OPEN_INTEREST_HIST_ENDPOINT: &str = "/futures/data/openInterestHist";
 
 /// Request parameters for the Open Interest Statistics endpoint.
 #[derive(Debug, Clone, Serialize)]

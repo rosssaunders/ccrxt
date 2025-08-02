@@ -51,22 +51,28 @@ impl RestClient {
     ///
     /// Get older market historical trades.
     ///
+    /// **REQUIRES API KEY**: This endpoint requires an API key in the request header
+    /// but does not require request signing (MARKET_DATA security type).
+    ///
     /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Old-Trades-Lookup
     ///
     /// Rate limit: 20
     ///
     /// # Arguments
+    /// * `api_key` - Your Binance API key (required for MARKET_DATA endpoints)
     /// * `params` - The historical trades request parameters
     ///
     /// # Returns
     /// Vector of historical trades
     pub async fn get_historical_trades(
         &self,
+        api_key: &dyn rest::secrets::ExposableSecret,
         params: HistoricalTradesRequest,
     ) -> RestResult<Vec<HistoricalTrade>> {
-        self.send_public_request(
+        self.send_api_key_request::<Vec<HistoricalTrade>, _>(
             HISTORICAL_TRADES_ENDPOINT,
             reqwest::Method::GET,
+            api_key,
             Some(params),
             20,
         )

@@ -8,14 +8,25 @@ use tokio;
 // Import types from top-level venue exports as required by integration test standards
 use venues::binance::spot::{
     AggTradesRequest, AvgPriceRequest, DepthRequest, Errors, HistoricalTradesRequest,
-    KlinesRequest, PublicRestClient, RateLimiter, Ticker24hrRequest, TickerBookRequest,
+    KlinesRequest, PublicRestClient, Ticker24hrRequest, TickerBookRequest,
     TickerPriceRequest, TickerRequest, TickerTradingDayRequest, TradesRequest, UiKlinesRequest,
 };
+use venues::binance::shared::{RateLimiter, RateLimits};
+use std::time::Duration;
 
 /// Helper function to create a test client for public endpoints
 fn create_public_test_client() -> PublicRestClient {
     let client = Client::new();
-    let rate_limiter = RateLimiter::new();
+    let rate_limits = RateLimits {
+        request_weight_limit: 1200,
+        request_weight_window: Duration::from_secs(60),
+        raw_requests_limit: 6000,
+        raw_requests_window: Duration::from_secs(300),
+        orders_10s_limit: 100,
+        orders_minute_limit: 1000,
+        orders_day_limit: Some(1000),
+    };
+    let rate_limiter = RateLimiter::new(rate_limits);
 
     PublicRestClient::new("https://api.binance.com", client, rate_limiter)
 }
@@ -422,7 +433,7 @@ async fn test_get_price_ticker() {
         symbols: None,
     };
 
-    let result = client.get_price_ticker(Some(params)).await;
+    let result = client.ticker_price(params).await;
 
     if let Some(_response) = handle_result!(result, "get_price_ticker for BTCUSDT") {
         // The result could be a single price ticker or array

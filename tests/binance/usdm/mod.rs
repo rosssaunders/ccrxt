@@ -15,4 +15,5 @@
 //! All tests run against the live Binance USD-M API and may be subject to
 //! geographic restrictions or rate limits.
 
+pub mod public_api_key_integration_tests;
 pub mod public_integration_tests;

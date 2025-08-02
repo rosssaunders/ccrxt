@@ -18,7 +18,9 @@ pub use historical_kline::{
 pub use kline::{GetKlineRequest, GetKlineResponse, Kline};
 pub use old_trade_lookup::{GetOldTradeRequest, GetOldTradeResponse, OldTrade};
 pub use order_book::{GetOrderBookRequest, GetOrderBookResponse};
-pub use order_book_aggregation::{GetOrderBookAggregationRequest, GetOrderBookAggregationResponse};
+pub use order_book_aggregation::{
+    AggregationType, GetOrderBookAggregationRequest, GetOrderBookAggregationResponse,
+};
 pub use recent_trades::{GetRecentTradesRequest, GetRecentTradesResponse, Trade};
 pub use server_time::{GetServerTimeRequest, GetServerTimeResponse};
 pub use symbol_order_book_ticker::{

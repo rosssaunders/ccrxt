@@ -6,6 +6,7 @@ use crate::binance::{
     usdm::{Errors, rest::common::RestResponse},
     shared::{client::PublicBinanceClient, Errors as SharedErrors},
 };
+use rest::secrets::ExposableSecret;
 use std::time::Instant;
 
 pub struct UsdmPublicRestClient(PublicBinanceClient);
@@ -44,6 +45,49 @@ impl UsdmPublicRestClient {
             &self.0,
             endpoint,
             method,
+            params,
+            weight
+        )
+        .await
+        .map_err(|e| match e {
+            SharedErrors::ApiError(_) => Errors::Error("API error occurred".to_string()),
+            SharedErrors::RateLimitExceeded { retry_after } => {
+                Errors::Error(format!("Rate limit exceeded, retry after {:?}", retry_after))
+            },
+            SharedErrors::InvalidApiKey() => Errors::InvalidApiKey(),
+            SharedErrors::HttpError(err) => Errors::HttpError(err),
+            SharedErrors::SerializationError(msg) => Errors::Error(format!("Serialization error: {}", msg)),
+            SharedErrors::Error(msg) => Errors::Error(msg),
+        })?;
+        
+        // Convert shared RestResponse to usdm RestResponse
+        Ok(RestResponse {
+            data: shared_response.data,
+            headers: crate::binance::usdm::ResponseHeaders::from_shared(shared_response.headers),
+            request_duration: start.elapsed(),
+        })
+    }
+
+    /// Send a request with API key only (no signature) with usdm-specific response type
+    pub async fn send_api_key_request<T, R>(
+        &self,
+        endpoint: &str,
+        method: reqwest::Method,
+        api_key: &dyn ExposableSecret,
+        params: Option<R>,
+        weight: u32,
+    ) -> Result<RestResponse<T>, Errors>
+    where
+        T: serde::de::DeserializeOwned + Send + 'static,
+        R: serde::Serialize,
+    {
+        let start = Instant::now();
+        
+        // Call the shared client's send_api_key_request
+        let shared_response = self.0.send_api_key_request::<T, R, SharedErrors>(
+            endpoint,
+            method,
+            api_key,
             params,
             weight
         )

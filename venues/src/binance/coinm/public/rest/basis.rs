@@ -7,67 +7,85 @@ use crate::binance::coinm::{
     public::rest::RestClient,
 };
 
-/// Parameters for Basis
+const BASIS_ENDPOINT: &str = "/futures/data/basis";
+
+/// Request parameters for the basis endpoint.
+///
+/// Used to query futures basis data, which shows the difference between
+/// futures and index prices over time for specific contract types.
 #[derive(Debug, Clone, Serialize)]
 pub struct BasisRequest {
-    /// Pair name
+    /// Trading pair name (e.g., "BTCUSD", "ETHUSD").
     pub pair: String,
 
-    /// Contract type
+    /// Contract type for the futures position.
     #[serde(rename = "contractType")]
     pub contract_type: ContractType,
 
-    /// The time interval
+    /// Time interval for basis data aggregation.
     pub period: Period,
 
-    /// Maximum 500
+    /// Maximum number of data points to return. Default 30, maximum 500.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i32>,
 
-    /// Start time
+    /// Start time for filtering results (milliseconds since epoch).
     #[serde(rename = "startTime")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub start_time: Option<i64>,
 
-    /// End time
+    /// End time for filtering results (milliseconds since epoch).
     #[serde(rename = "endTime")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub end_time: Option<i64>,
 }
 
-/// Basis data
+/// Basis data point containing futures and index price information.
+///
+/// Represents a single data point from the basis endpoint, showing the
+/// relationship between futures and index prices at a specific timestamp.
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Basis {
-    /// Pair name
+    /// Trading pair name.
     pub pair: String,
 
-    /// Contract type
+    /// Contract type for this basis calculation.
     pub contract_type: ContractType,
 
-    /// Futures price
+    /// Current futures price for the contract.
     pub futures_price: Decimal,
 
-    /// Index price
+    /// Current index price for the underlying asset.
     pub index_price: Decimal,
 
-    /// Basis
+    /// Basis value (futures_price - index_price).
     pub basis: Decimal,
 
-    /// Basis rate
+    /// Basis rate as a decimal (basis / index_price).
     pub basis_rate: Decimal,
 
-    /// Timestamp
+    /// Timestamp when this basis data was recorded (milliseconds since epoch).
     pub timestamp: i64,
 }
 
 impl RestClient {
-    /// Get basis
+    /// Basis
     ///
-    /// Weight: 1
-    /// [docs]: (https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Basis)
+    /// Queries basis data for futures contracts, showing the difference between
+    /// futures and index prices over time.
+    ///
+    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Basis
+    ///
+    /// Rate limit: Weight 1
+    ///
+    /// # Arguments
+    /// * `params` - The request parameters including pair, contract type, and time range
+    ///
+    /// # Returns
+    /// A vector of basis data points with futures prices, index prices, and calculated basis values
     pub async fn get_basis(&self, params: BasisRequest) -> RestResult<Vec<Basis>> {
-        self.send_request("/dapi/v1/basis", reqwest::Method::GET, Some(params), 1)
+        self.send_request(BASIS_ENDPOINT, reqwest::Method::GET, Some(params), 1)
             .await
     }
 }

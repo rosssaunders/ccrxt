@@ -10,8 +10,9 @@ const TOP_LONG_SHORT_ACCOUNT_RATIO_ENDPOINT: &str = "/futures/data/topLongShortA
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct TopLongShortAccountRatioRequest {
-    /// Trading symbol (e.g., "BTCUSD"). Required.
-    pub symbol: String,
+    /// Trading pair (e.g., "BTCUSD"). Required.
+    /// The DOCS appear to be incorrect. They reference Symbol.
+    pub pair: String,
 
     /// Time interval for statistics. Required. Valid values: "5m", "15m", "30m", "1h", "2h", "4h", "6h", "12h", "1d".
     pub period: Period,
@@ -85,7 +86,7 @@ mod tests {
     #[test]
     fn test_request_serialization() {
         let req = TopLongShortAccountRatioRequest {
-            symbol: "BTCUSD".to_string(),
+            pair: "BTCUSD".to_string(),
             period: Period::I1h,
             limit: Some(100),
             start_time: Some(1591261042378),
