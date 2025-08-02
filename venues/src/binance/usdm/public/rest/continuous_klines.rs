@@ -5,59 +5,71 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::binance::usdm::{ContractType, KlineInterval, RestResult};
 
+const CONTINUOUS_KLINES_ENDPOINT: &str = "/fapi/v1/continuousKlines";
+
 /// Request parameters for continuous contract kline/candlestick data.
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ContinuousKlinesRequest {
-    /// Pair (e.g., "BTCUSDT").
+    /// Trading pair symbol (e.g., "BTCUSDT").
     pub pair: Cow<'static, str>,
 
-    /// Contract type (PERPETUAL, CURRENT_QUARTER, NEXT_QUARTER).
+    /// Contract type for the kline data.
     pub contract_type: ContractType,
 
-    /// Kline interval.
+    /// Kline interval/timeframe for the candlestick data.
     pub interval: KlineInterval,
 
-    /// Start time in ms.
+    /// Start time for filtering klines (milliseconds since epoch). If not provided, returns most recent klines.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub start_time: Option<u64>,
 
-    /// End time in ms.
+    /// End time for filtering klines (milliseconds since epoch). If not provided, returns most recent klines.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub end_time: Option<u64>,
 
-    /// Number of klines to return. Default 500; max 1500.
+    /// Number of klines to return. Default 500; maximum 1500.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<u16>,
 }
-const CONTINUOUS_KLINES_ENDPOINT: &str = "/fapi/v1/continuousKlines";
 
 /// Represents a single continuous contract kline/candlestick bar.
 #[derive(Debug, Clone)]
 pub struct ContinuousKline {
-    /// Open time in ms.
+    /// Open time of the kline (milliseconds since epoch).
     pub open_time: u64,
-    /// Open price.
+
+    /// Open price for the kline period.
     pub open: String,
-    /// High price.
+
+    /// High price for the kline period.
     pub high: String,
-    /// Low price.
+
+    /// Low price for the kline period.
     pub low: String,
-    /// Close price.
+
+    /// Close price for the kline period (or latest price if ongoing).
     pub close: String,
-    /// Volume.
+
+    /// Volume traded during the kline period.
     pub volume: String,
-    /// Close time in ms.
+
+    /// Close time of the kline (milliseconds since epoch).
     pub close_time: u64,
-    /// Quote asset volume.
+
+    /// Quote asset volume traded during the kline period.
     pub quote_asset_volume: String,
-    /// Number of trades.
+
+    /// Number of trades executed during the kline period.
     pub number_of_trades: u64,
-    /// Taker buy base asset volume.
+
+    /// Taker buy base asset volume during the kline period.
     pub taker_buy_base_asset_volume: String,
-    /// Taker buy quote asset volume.
+
+    /// Taker buy quote asset volume during the kline period.
     pub taker_buy_quote_asset_volume: String,
-    /// Ignore field.
+
+    /// Unused field, can be ignored.
     pub ignore: String,
 }
 
@@ -66,9 +78,21 @@ impl<'de> Deserialize<'de> for ContinuousKline {
     where
         D: serde::Deserializer<'de>,
     {
-        let array: (u64, String, String, String, String, String, u64, String, u64, String, String, String) = 
-            Deserialize::deserialize(deserializer)?;
-        
+        let array: (
+            u64,
+            String,
+            String,
+            String,
+            String,
+            String,
+            u64,
+            String,
+            u64,
+            String,
+            String,
+            String,
+        ) = Deserialize::deserialize(deserializer)?;
+
         Ok(ContinuousKline {
             open_time: array.0,
             open: array.1,
@@ -87,28 +111,36 @@ impl<'de> Deserialize<'de> for ContinuousKline {
 }
 
 impl RestClient {
-    /// Continuous Contract Kline/Candlestick Data (GET /fapi/v1/continuousKlines)
+    /// Continuous Contract Kline/Candlestick Data
     ///
-    /// Gets continuous contract kline/candlestick bars for USDS margined futures.
+    /// Kline/candlestick bars for a specific contract type. Klines are uniquely identified by their open time.
     ///
     /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Continuous-Contract-Kline-Candlestick-Data
     ///
-    /// Rate limit: 2 weight
+    /// Rate limit: Weight based on limit parameter: [1,100)=1, [100,500)=2, [500,1000]=5, >1000=10
     ///
     /// # Arguments
-    /// * `params` - Request parameters for continuous contract kline/candlestick data.
+    /// * `params` - Request parameters for continuous contract kline/candlestick data
     ///
     /// # Returns
-    /// A vector of [`ContinuousKline`] structs.
+    /// A vector of [`ContinuousKline`] structs containing the kline data
     pub async fn get_continuous_klines(
         &self,
         params: ContinuousKlinesRequest,
     ) -> RestResult<Vec<ContinuousKline>> {
+        // Calculate weight based on limit parameter
+        let weight = match params.limit.unwrap_or(500) {
+            0..=99 => 1,
+            100..=499 => 2,
+            500..=1000 => 5,
+            _ => 10,
+        };
+
         self.send_public_request(
-            "/fapi/v1/continuousKlines",
+            CONTINUOUS_KLINES_ENDPOINT,
             reqwest::Method::GET,
             Some(params),
-            2,
+            weight,
         )
         .await
     }
@@ -339,5 +371,72 @@ mod tests {
         assert_eq!(klines[0].open, "0.00001234");
         assert_eq!(klines[0].volume, "0.001");
         assert_eq!(klines[0].number_of_trades, 1);
+    }
+
+    #[test]
+    fn test_continuous_klines_rate_limit_weights() {
+        // Test that different limit values would result in correct weight calculations
+        // Note: This tests the logic that would be used in the actual endpoint call
+        let test_cases = vec![
+            (None, 500, 2),         // Default 500 -> weight 2
+            (Some(50), 50, 1),      // Under 100 -> weight 1
+            (Some(100), 100, 2),    // 100-499 -> weight 2
+            (Some(500), 500, 5),    // 500-1000 -> weight 5
+            (Some(1500), 1500, 10), // Over 1000 -> weight 10
+        ];
+
+        for (limit_param, _, expected_weight) in test_cases {
+            let effective_limit = limit_param.unwrap_or(500);
+            let calculated_weight = match effective_limit {
+                0..=99 => 1,
+                100..=499 => 2,
+                500..=1000 => 5,
+                _ => 10,
+            };
+
+            assert_eq!(
+                calculated_weight, expected_weight,
+                "Limit {} should have weight {}",
+                effective_limit, expected_weight
+            );
+        }
+    }
+
+    #[test]
+    fn test_continuous_klines_request_builder() {
+        let request = ContinuousKlinesRequest {
+            pair: "BTCUSDT".into(),
+            contract_type: ContractType::Perpetual,
+            interval: KlineInterval::I1m,
+            start_time: Some(1625184000000),
+            end_time: Some(1625270400000),
+            limit: Some(500),
+        };
+
+        assert_eq!(request.pair, "BTCUSDT");
+        assert_eq!(request.contract_type, ContractType::Perpetual);
+        assert_eq!(request.interval, KlineInterval::I1m);
+        assert_eq!(request.start_time, Some(1625184000000));
+        assert_eq!(request.end_time, Some(1625270400000));
+        assert_eq!(request.limit, Some(500));
+    }
+
+    #[test]
+    fn test_continuous_klines_request_builder_minimal() {
+        let request = ContinuousKlinesRequest {
+            pair: "ETHUSDT".into(),
+            contract_type: ContractType::CurrentQuarter,
+            interval: KlineInterval::I1h,
+            start_time: None,
+            end_time: None,
+            limit: None,
+        };
+
+        assert_eq!(request.pair, "ETHUSDT");
+        assert_eq!(request.contract_type, ContractType::CurrentQuarter);
+        assert_eq!(request.interval, KlineInterval::I1h);
+        assert_eq!(request.start_time, None);
+        assert_eq!(request.end_time, None);
+        assert_eq!(request.limit, None);
     }
 }

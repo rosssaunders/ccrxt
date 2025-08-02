@@ -1,9 +1,3 @@
-//! Kline/Candlestick Data endpoint for Binance USDM REST API.
-//!
-//! Implements GET /fapi/v1/klines
-//!
-//! [Binance API docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Kline-Candlestick-Data)
-
 use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
@@ -72,9 +66,21 @@ impl<'de> Deserialize<'de> for Kline {
     where
         D: serde::Deserializer<'de>,
     {
-        let array: (u64, String, String, String, String, String, u64, String, u64, String, String, String) = 
-            Deserialize::deserialize(deserializer)?;
-        
+        let array: (
+            u64,
+            String,
+            String,
+            String,
+            String,
+            String,
+            u64,
+            String,
+            u64,
+            String,
+            String,
+            String,
+        ) = Deserialize::deserialize(deserializer)?;
+
         Ok(Kline {
             open_time: array.0,
             open: array.1,
