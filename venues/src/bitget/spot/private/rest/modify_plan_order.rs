@@ -108,9 +108,7 @@ impl RestClient {
         &self,
         request: ModifyPlanOrderRequest,
     ) -> RestResult<ModifyPlanOrderResponse> {
-        self.send_signed_post_request(
-            MODIFY_PLAN_ORDER_ENDPOINT,
-            &request,
+        self.send_post_signed_request(MODIFY_PLAN_ORDER_ENDPOINT, request,
             10,          // 10 requests per second rate limit
             true,        // This is an order endpoint
             Some(10),    // Order-specific rate limit

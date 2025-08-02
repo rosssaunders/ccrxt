@@ -88,7 +88,7 @@ impl RestClient {
         &self,
         params: SubTransferRequest,
     ) -> RestResult<SubTransferResponse> {
-        self.send_signed_post_request(SUB_TRANSFER_ENDPOINT, &params, 10, false, None)
+        self.send_post_signed_request(SUB_TRANSFER_ENDPOINT, params, 10, false, None)
             .await
     }
 }

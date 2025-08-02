@@ -33,9 +33,7 @@ impl RestClient {
         params: CancelWithdrawalRequest,
     ) -> RestResult<CancelWithdrawalResponse> {
         let endpoint = "/api/v2/spot/wallet/cancel-withdrawal";
-        self.send_signed_post_request(
-            endpoint,
-            &params,
+        self.send_post_signed_request(endpoint, params,
             5,
             false,
             None,

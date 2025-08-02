@@ -127,9 +127,7 @@ impl RestClient {
         &self,
         request: GetWithdrawalRecordsRequest,
     ) -> RestResult<GetWithdrawalRecordsResponse> {
-        self.send_signed_get_request(
-            WITHDRAWAL_RECORDS_ENDPOINT,
-            Some(&request),
+        self.send_get_signed_request(WITHDRAWAL_RECORDS_ENDPOINT, request,
             10,
             false,
             None,

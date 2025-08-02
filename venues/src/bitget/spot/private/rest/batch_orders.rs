@@ -130,9 +130,7 @@ impl RestClient {
             ));
         }
 
-        self.send_signed_post_request(
-            BATCH_ORDERS_ENDPOINT,
-            &request,
+        self.send_post_signed_request(BATCH_ORDERS_ENDPOINT, request,
             5,           // 5 requests per second rate limit
             true,        // This is an order endpoint
             Some(5),     // Order-specific rate limit

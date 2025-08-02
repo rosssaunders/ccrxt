@@ -56,9 +56,7 @@ impl RestClient {
         &self,
         request: GetTransferableCoinListRequest,
     ) -> RestResult<GetTransferableCoinListResponse> {
-        self.send_signed_get_request(
-            TRANSFERABLE_COIN_LIST_ENDPOINT,
-            Some(&request),
+        self.send_get_signed_request(TRANSFERABLE_COIN_LIST_ENDPOINT, request,
             10,
             false,
             None,

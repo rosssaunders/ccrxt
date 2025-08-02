@@ -205,11 +205,9 @@ impl RestClient {
     /// A result containing the order information or an error
     pub async fn get_order_info(
         &self,
-        request: &GetOrderInfoRequest,
+        request: GetOrderInfoRequest,
     ) -> RestResult<GetOrderInfoResponse> {
-        self.send_signed_get_request(
-            GET_ORDER_INFO_ENDPOINT,
-            Some(&request),
+        self.send_get_signed_request(GET_ORDER_INFO_ENDPOINT, request,
             10,
             false,
             None,

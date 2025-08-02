@@ -113,9 +113,7 @@ impl RestClient {
     ///
     /// Returns a `RestResult<WithdrawResponse>` containing the withdrawal result or an error.
     pub async fn withdraw(&self, request: WithdrawRequest) -> RestResult<WithdrawResponse> {
-        self.send_signed_post_request(
-            WITHDRAW_ENDPOINT,
-            &request,
+        self.send_post_signed_request(WITHDRAW_ENDPOINT, request,
             5,
             false,
             None,

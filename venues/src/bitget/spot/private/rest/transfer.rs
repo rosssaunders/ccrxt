@@ -107,9 +107,7 @@ impl RestClient {
     /// # Returns
     /// A result containing the transfer response or an error
     pub async fn transfer(&self, request: TransferRequest) -> RestResult<TransferResponse> {
-        self.send_signed_post_request(
-            TRANSFER_ENDPOINT,
-            &request,
+        self.send_post_signed_request(TRANSFER_ENDPOINT, request,
             10,          // 10 requests per second rate limit
             false,       // This is not an order placement endpoint
             None,        // No order-specific rate limit

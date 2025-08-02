@@ -161,9 +161,7 @@ impl RestClient {
         &self,
         request: AccountInfoRequest,
     ) -> RestResult<AccountInfoResponse> {
-        self.send_signed_get_request(
-            ACCOUNT_INFO_ENDPOINT,
-            Some(&request),
+        self.send_get_signed_request(ACCOUNT_INFO_ENDPOINT, request,
             10,    // 10 requests per second rate limit
             false, // This is not an order placement endpoint
             None,  // No order-specific rate limit

@@ -299,22 +299,22 @@ impl RestClient {
     }
 
     /// Convenience method for GET requests with query parameters only
-    pub(super) async fn send_signed_get_request<T, Q>(
+    pub(super) async fn send_get_signed_request<T, Q>(
         &self,
         endpoint: &str,
-        query_params: Option<&Q>,
+        params: Q,
         endpoint_limit_per_second: u32,
         is_order: bool,
         order_limit_per_second: Option<u32>,
     ) -> RestResult<T>
     where
         T: serde::de::DeserializeOwned,
-        Q: Serialize + ?Sized,
+        Q: Serialize,
     {
         self.send_signed_request(
             endpoint,
             reqwest::Method::GET,
-            query_params,
+            Some(&params),
             None::<&()>,
             endpoint_limit_per_second,
             is_order,
@@ -324,23 +324,73 @@ impl RestClient {
     }
 
     /// Convenience method for POST requests with body parameters only
-    pub(super) async fn send_signed_post_request<T, B>(
+    pub(super) async fn send_post_signed_request<T, B>(
         &self,
         endpoint: &str,
-        body_params: &B,
+        params: B,
         endpoint_limit_per_second: u32,
         is_order: bool,
         order_limit_per_second: Option<u32>,
     ) -> RestResult<T>
     where
         T: serde::de::DeserializeOwned,
-        B: Serialize + ?Sized,
+        B: Serialize,
     {
         self.send_signed_request(
             endpoint,
             reqwest::Method::POST,
             None::<&()>,
-            Some(body_params),
+            Some(&params),
+            endpoint_limit_per_second,
+            is_order,
+            order_limit_per_second,
+        )
+        .await
+    }
+
+    /// Convenience method for PUT requests with body parameters only
+    pub(super) async fn send_put_signed_request<T, B>(
+        &self,
+        endpoint: &str,
+        params: B,
+        endpoint_limit_per_second: u32,
+        is_order: bool,
+        order_limit_per_second: Option<u32>,
+    ) -> RestResult<T>
+    where
+        T: serde::de::DeserializeOwned,
+        B: Serialize,
+    {
+        self.send_signed_request(
+            endpoint,
+            reqwest::Method::PUT,
+            None::<&()>,
+            Some(&params),
+            endpoint_limit_per_second,
+            is_order,
+            order_limit_per_second,
+        )
+        .await
+    }
+
+    /// Convenience method for DELETE requests with query parameters only
+    pub(super) async fn send_delete_signed_request<T, Q>(
+        &self,
+        endpoint: &str,
+        params: Q,
+        endpoint_limit_per_second: u32,
+        is_order: bool,
+        order_limit_per_second: Option<u32>,
+    ) -> RestResult<T>
+    where
+        T: serde::de::DeserializeOwned,
+        Q: Serialize,
+    {
+        self.send_signed_request(
+            endpoint,
+            reqwest::Method::DELETE,
+            Some(&params),
+            None::<&()>,
             endpoint_limit_per_second,
             is_order,
             order_limit_per_second,

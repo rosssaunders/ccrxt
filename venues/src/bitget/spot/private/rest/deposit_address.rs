@@ -58,7 +58,7 @@ impl RestClient {
         params: GetDepositAddressRequest,
     ) -> RestResult<GetDepositAddressResponse> {
         let endpoint = "/api/v2/spot/wallet/deposit-address";
-        self.send_signed_post_request(endpoint, &params, 10, false, None)
+        self.send_post_signed_request(endpoint, params, 10, false, None)
             .await
     }
 }

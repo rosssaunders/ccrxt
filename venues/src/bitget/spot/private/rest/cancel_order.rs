@@ -48,11 +48,9 @@ impl RestClient {
     /// A result containing the cancel order response or an error
     pub async fn cancel_order(
         &self,
-        request: &CancelOrderRequest,
+        request: CancelOrderRequest,
     ) -> RestResult<CancelOrderResponse> {
-        self.send_signed_post_request(
-            CANCEL_ORDER_ENDPOINT,
-            request,
+        self.send_post_signed_request(CANCEL_ORDER_ENDPOINT, request,
             10,       // 10 requests per second rate limit
             true,     // This is an order-related endpoint
             Some(10), // Order-specific rate limit

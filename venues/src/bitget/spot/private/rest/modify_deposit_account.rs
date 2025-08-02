@@ -39,7 +39,7 @@ impl RestClient {
         params: ModifyDepositAccountRequest,
     ) -> RestResult<ModifyDepositAccountResponse> {
         let endpoint = "/api/v2/spot/wallet/modify-deposit-account";
-        self.send_signed_post_request(endpoint, &params, 10, false, None)
+        self.send_post_signed_request(endpoint, params, 10, false, None)
             .await
     }
 }

@@ -208,11 +208,9 @@ impl RestClient {
     /// A result containing the order history or an error
     pub async fn get_order_history(
         &self,
-        request: &GetOrderHistoryRequest,
+        request: GetOrderHistoryRequest,
     ) -> RestResult<GetOrderHistoryResponse> {
-        self.send_signed_get_request(
-            ORDER_HISTORY_ENDPOINT,
-            Some(&request),
+        self.send_get_signed_request(ORDER_HISTORY_ENDPOINT, request,
             10,
             false,
             None,

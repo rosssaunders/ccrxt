@@ -107,7 +107,7 @@ impl RestClient {
         &self,
         request: GetTransferRecordRequest,
     ) -> RestResult<GetTransferRecordResponse> {
-        self.send_signed_get_request(TRANSFER_RECORD_ENDPOINT, Some(&request), 20, false, None)
+        self.send_get_signed_request(TRANSFER_RECORD_ENDPOINT, request, 20, false, None)
             .await
     }
 }

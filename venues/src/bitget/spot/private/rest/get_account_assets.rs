@@ -73,9 +73,9 @@ impl RestClient {
         &self,
         request: GetAccountAssetsRequest,
     ) -> RestResult<GetAccountAssetsResponse> {
-        self.send_signed_get_request(
+        self.send_get_signed_request(
             GET_ACCOUNT_ASSETS_ENDPOINT,
-            Some(&request),
+            request,
             10,    // 10 requests per second rate limit
             false, // Not an order endpoint
             None,  // No order-specific rate limit

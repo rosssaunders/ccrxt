@@ -29,7 +29,7 @@ impl RestClient {
         &self,
         request: SwitchBgbDeductRequest,
     ) -> RestResult<SwitchBgbDeductResponse> {
-        self.send_signed_post_request(SWITCH_BGB_DEDUCT_ENDPOINT, &request, 1, false, None)
+        self.send_post_signed_request(SWITCH_BGB_DEDUCT_ENDPOINT, request, 1, false, None)
             .await
     }
 }

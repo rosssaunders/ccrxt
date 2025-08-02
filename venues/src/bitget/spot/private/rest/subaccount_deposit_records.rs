@@ -81,9 +81,7 @@ impl RestClient {
         &self,
         request: GetSubaccountDepositRecordsRequest,
     ) -> RestResult<GetSubaccountDepositRecordsResponse> {
-        self.send_signed_get_request(
-            SUBACCOUNT_DEPOSIT_RECORDS_ENDPOINT,
-            Some(&request),
+        self.send_get_signed_request(SUBACCOUNT_DEPOSIT_RECORDS_ENDPOINT, request,
             10,
             false,
             None,
