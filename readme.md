@@ -14,32 +14,50 @@ Rust wrappers around cryptocurrency exchange APIs with a focus on low-latency, h
 
 ## Supported Exchanges
 
-| Exchange       | Type                   | Status         | Features                                                                                    |
-| -------------- | ---------------------- | -------------- | ------------------------------------------------------------------------------------------- |
-| **Binance**    | COIN-M Futures         | ✅ Complete    | Public & Private REST, Rate Limiting, WebSocket Support, Integration Tests                  |
-| **Binance**    | USD-M Futures (USDT-M) | ✅ Complete    | Public & Private REST, Rate Limiting, WebSocket Support                                     |
-| **Binance**    | Portfolio Margin       | ✅ Complete    | Public & Private REST, Rate Limiting, Error Handling, Request Signing                       |
-| **Binance**    | Options (EAPI)         | 🚧 In Progress | Rate Limiting Framework                                                                     |
-| **Crypto.com** | Spot Trading           | ✅ Complete    | Public & Private REST, Rate Limiting, Advanced Orders                                       |
-| **OKX**        | Spot & Derivatives     | ✅ Complete    | Public & Private REST, Rate Limiting, Integration Tests                                     |
-| **Deribit**    | Public API             | ✅ Complete    | Public REST & WebSocket, Rate Limiting, JSON-RPC 2.0, Full Test Coverage                    |
-| **Bitmart**    | Spot & Derivatives     | 🚧 In Progress | Error Handling, REST Integration                                                            |
-| **Coinbase**   | Exchange               | ✅ Complete    | Private REST, Rate Limiting, Cursor Pagination, Secure Auth, Error Mapping, Sandbox Support |
-| **BingX**      | Spot & Derivatives     | 🚧 In Progress | REST Integration                                                                            |
-| **Bitget**     | Spot & Derivatives     | 🚧 In Progress | REST Integration                                                                            |
-| **Bullish**    | Spot                   | 🚧 In Progress | REST Integration                                                                            |
-| **Bybit**      | Spot & Derivatives     | 🚧 In Progress | REST Integration                                                                            |
+| Exchange       | Type                   | Status         | Public Tests | Private Tests | REST | WebSocket |
+| -------------- | ---------------------- | -------------- | ------------ | ------------- | ---- | --------- |
+| **Binance**    | COIN-M Futures         | ✅ Complete    | ✅           | ❌            | ✅   | ❌        |
+| **Binance**    | USD-M Futures (USDT-M) | ✅ Complete    | ✅           | ❌            | ✅   | ❌        |
+| **Binance**    | Portfolio Margin       | ✅ Complete    | ❌           | ❌            | ✅   | ❌        |
+| **Binance**    | Options (EAPI)         | 🚧 In Progress | ❌           | ❌            | 🚧   | ❌        |
+| **Binance**    | Spot                   | ✅ Complete    | ✅           | ❌            | ✅   | ❌        |
+| **BingX**      | Spot                   | 🚧 In Progress | ✅           | ❌            | 🚧   | ❌        |
+| **Bitget**     | Spot                   | 🚧 In Progress | ✅           | ❌            | 🚧   | ❌        |
+| **Bitmart**    | Contract               | 🚧 In Progress | ✅           | ❌            | 🚧   | ❌        |
+| **Bitmart**    | Spot                   | 🚧 In Progress | ✅           | ❌            | 🚧   | ❌        |
+| **Bullish**    | Spot                   | 🚧 In Progress | ✅           | ❌            | 🚧   | ❌        |
+| **Bybit**      | Spot & Derivatives     | 🚧 In Progress | ✅           | ❌            | 🚧   | ❌        |
+| **Coinbase**   | Exchange               | ✅ Complete    | ✅           | ❌            | ✅   | ❌        |
+| **Crypto.com** | Spot Trading           | ✅ Complete    | ✅           | ❌            | ✅   | ❌        |
+| **Deribit**    | Public API             | ✅ Complete    | ✅           | ❌            | ✅   | ❌        |
+| **Gate.io**    | Delivery               | 🚧 In Progress | ✅           | ❌            | 🚧   | ❌        |
+| **Gate.io**    | Options                | 🚧 In Progress | ✅           | ❌            | 🚧   | ❌        |
+| **Gate.io**    | Perpetual              | 🚧 In Progress | ✅           | ❌            | 🚧   | ❌        |
+| **Gate.io**    | Spot                   | 🚧 In Progress | ✅           | ❌            | 🚧   | ❌        |
+| **Gate.io**    | Unified                | 🚧 In Progress | ✅           | ❌            | 🚧   | ❌        |
+| **KuCoin**     | Futures                | 🚧 In Progress | ✅           | ❌            | 🚧   | ❌        |
+| **KuCoin**     | Spot                   | 🚧 In Progress | ✅           | ❌            | 🚧   | ❌        |
+| **OKX**        | Spot & Derivatives     | ✅ Complete    | ✅           | ❌            | ✅   | ❌        |
 
 ### Exchange Features
 
 - **✅ Complete**: Full implementation with comprehensive API coverage
 - **🚧 In Progress**: Basic infrastructure in place, endpoints being added
-- **Public REST**: Market data, instrument info, order books
-- **Private REST**: Account management, trading, order management
-- **Rate Limiting**: Exchange-specific rate limit enforcement
-- **WebSocket Support**: Real-time data feeds (where available)
-- **Error Handling**: Consistent and robust error mapping per venue
-- **Test Coverage**: Unit and integration tests for all stable venues
+
+### Implementation Status
+
+- **REST**: Public and private REST API endpoints with rate limiting and error handling
+- **WebSocket**: Real-time data feeds and streaming APIs
+- **✅**: Fully implemented and tested
+- **🚧**: In development
+- **❌**: Not yet implemented
+
+### Testing Status
+
+- **Public Tests**: Integration tests for public API endpoints (market data, instrument info, etc.)
+- **Private Tests**: Integration tests for private API endpoints (account data, trading operations)
+- **✅**: Tests implemented and passing
+- **❌**: Tests not yet implemented
 
 ## Venue Documentation
 
