@@ -47,9 +47,7 @@ impl RestClient {
         &self,
         request: GetSpotWalletBalanceRequest,
     ) -> RestResult<GetSpotWalletBalanceResponse> {
-        self.send_get_request(
-            SPOT_WALLET_BALANCE_ENDPOINT,
-            Some(&request),
+        self.send_get_signed_request(SPOT_WALLET_BALANCE_ENDPOINT, &request,
             EndpointType::FundingAccount,
         )
         .await

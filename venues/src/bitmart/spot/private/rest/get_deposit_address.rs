@@ -45,9 +45,7 @@ impl RestClient {
         &self,
         request: GetDepositAddressRequest,
     ) -> RestResult<GetDepositAddressResponse> {
-        self.send_get_request(
-            DEPOSIT_ADDRESS_ENDPOINT,
-            Some(&request),
+        self.send_get_signed_request(DEPOSIT_ADDRESS_ENDPOINT, &request,
             EndpointType::FundingAccount,
         )
         .await

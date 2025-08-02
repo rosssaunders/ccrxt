@@ -67,9 +67,7 @@ impl RestClient {
         &self,
         request: CancelBatchOrderRequest,
     ) -> RestResult<CancelBatchOrderResponse> {
-        self.send_post_request(
-            CANCEL_BATCH_ORDER_ENDPOINT,
-            Some(&request),
+        self.send_post_signed_request(CANCEL_BATCH_ORDER_ENDPOINT, request,
             EndpointType::SpotTrading,
         )
         .await

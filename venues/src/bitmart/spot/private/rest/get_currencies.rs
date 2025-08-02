@@ -67,9 +67,7 @@ impl RestClient {
         &self,
         request: GetCurrenciesRequest,
     ) -> RestResult<GetCurrenciesResponse> {
-        self.send_get_request(
-            CURRENCIES_ENDPOINT,
-            Some(&request),
+        self.send_get_signed_request(CURRENCIES_ENDPOINT, &request,
             EndpointType::FundingAccount,
         )
         .await

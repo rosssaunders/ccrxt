@@ -91,9 +91,7 @@ impl RestClient {
     /// # Returns
     /// Order details response
     pub async fn query_order(&self, request: QueryOrderRequest) -> RestResult<QueryOrderResponse> {
-        self.send_post_request(
-            QUERY_ORDER_ENDPOINT,
-            Some(&request),
+        self.send_post_signed_request(QUERY_ORDER_ENDPOINT, request,
             EndpointType::SpotTrading,
         )
         .await

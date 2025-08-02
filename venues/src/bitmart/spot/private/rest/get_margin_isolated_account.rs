@@ -113,9 +113,7 @@ impl RestClient {
         &self,
         request: GetMarginIsolatedAccountRequest,
     ) -> RestResult<GetMarginIsolatedAccountResponse> {
-        self.send_get_request(
-            MARGIN_ISOLATED_ACCOUNT_ENDPOINT,
-            Some(&request),
+        self.send_get_signed_request(MARGIN_ISOLATED_ACCOUNT_ENDPOINT, &request,
             EndpointType::MarginLoan,
         )
         .await

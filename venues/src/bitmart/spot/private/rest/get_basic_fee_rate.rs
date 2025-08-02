@@ -55,9 +55,7 @@ impl RestClient {
         &self,
         request: GetBasicFeeRateRequest,
     ) -> RestResult<GetBasicFeeRateResponse> {
-        self.send_get_request(
-            BASIC_FEE_RATE_ENDPOINT,
-            Some(&request),
+        self.send_get_signed_request(BASIC_FEE_RATE_ENDPOINT, &request,
             EndpointType::FundingAccount,
         )
         .await

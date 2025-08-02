@@ -402,6 +402,94 @@ impl RestClient {
             .data
             .ok_or_else(|| Errors::Error("API response missing data field".to_string()))
     }
+
+    /// High-performance GET request method that takes params by value
+    ///
+    /// # Arguments
+    /// * `endpoint` - The API endpoint path
+    /// * `params` - The request parameters
+    /// * `endpoint_type` - The endpoint type for rate limiting
+    ///
+    /// # Returns
+    /// A result containing the parsed response data or an error
+    pub async fn send_get_signed_request<T, P>(
+        &self,
+        endpoint: &str,
+        params: P,
+        endpoint_type: EndpointType,
+    ) -> RestResult<T>
+    where
+        T: DeserializeOwned,
+        P: serde::Serialize,
+    {
+        self.send_get_request(endpoint, Some(&params), endpoint_type).await
+    }
+
+    /// High-performance POST request method that takes params by value
+    ///
+    /// # Arguments
+    /// * `endpoint` - The API endpoint path
+    /// * `params` - The request parameters
+    /// * `endpoint_type` - The endpoint type for rate limiting
+    ///
+    /// # Returns
+    /// A result containing the parsed response data or an error
+    pub async fn send_post_signed_request<T, P>(
+        &self,
+        endpoint: &str,
+        params: P,
+        endpoint_type: EndpointType,
+    ) -> RestResult<T>
+    where
+        T: DeserializeOwned,
+        P: serde::Serialize,
+    {
+        self.send_post_request(endpoint, Some(&params), endpoint_type).await
+    }
+
+    /// High-performance DELETE request method that takes params by value
+    ///
+    /// # Arguments
+    /// * `endpoint` - The API endpoint path
+    /// * `params` - The request parameters
+    /// * `endpoint_type` - The endpoint type for rate limiting
+    ///
+    /// # Returns
+    /// A result containing the parsed response data or an error
+    pub async fn send_delete_signed_request<T, P>(
+        &self,
+        endpoint: &str,
+        params: P,
+        endpoint_type: EndpointType,
+    ) -> RestResult<T>
+    where
+        T: DeserializeOwned,
+        P: serde::Serialize,
+    {
+        self.send_delete_request(endpoint, Some(&params), endpoint_type).await
+    }
+
+    /// High-performance PUT request method that takes params by value
+    ///
+    /// # Arguments
+    /// * `endpoint` - The API endpoint path
+    /// * `params` - The request parameters
+    /// * `endpoint_type` - The endpoint type for rate limiting
+    ///
+    /// # Returns
+    /// A result containing the parsed response data or an error
+    pub async fn send_put_signed_request<T, P>(
+        &self,
+        endpoint: &str,
+        params: P,
+        endpoint_type: EndpointType,
+    ) -> RestResult<T>
+    where
+        T: DeserializeOwned,
+        P: serde::Serialize,
+    {
+        self.send_put_request(endpoint, Some(&params), endpoint_type).await
+    }
 }
 
 #[cfg(test)]

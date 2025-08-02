@@ -45,9 +45,7 @@ impl RestClient {
         &self,
         request: GetActualTradeFeeRateRequest,
     ) -> RestResult<GetActualTradeFeeRateResponse> {
-        self.send_get_request(
-            ACTUAL_TRADE_FEE_RATE_ENDPOINT,
-            Some(&request),
+        self.send_get_signed_request(ACTUAL_TRADE_FEE_RATE_ENDPOINT, &request,
             EndpointType::FundingAccount,
         )
         .await
