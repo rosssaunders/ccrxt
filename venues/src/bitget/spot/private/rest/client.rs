@@ -348,55 +348,6 @@ impl RestClient {
         .await
     }
 
-    /// Convenience method for PUT requests with body parameters only
-    pub(super) async fn send_put_signed_request<T, B>(
-        &self,
-        endpoint: &str,
-        params: B,
-        endpoint_limit_per_second: u32,
-        is_order: bool,
-        order_limit_per_second: Option<u32>,
-    ) -> RestResult<T>
-    where
-        T: serde::de::DeserializeOwned,
-        B: Serialize,
-    {
-        self.send_signed_request(
-            endpoint,
-            reqwest::Method::PUT,
-            None::<&()>,
-            Some(&params),
-            endpoint_limit_per_second,
-            is_order,
-            order_limit_per_second,
-        )
-        .await
-    }
-
-    /// Convenience method for DELETE requests with query parameters only
-    pub(super) async fn send_delete_signed_request<T, Q>(
-        &self,
-        endpoint: &str,
-        params: Q,
-        endpoint_limit_per_second: u32,
-        is_order: bool,
-        order_limit_per_second: Option<u32>,
-    ) -> RestResult<T>
-    where
-        T: serde::de::DeserializeOwned,
-        Q: Serialize,
-    {
-        self.send_signed_request(
-            endpoint,
-            reqwest::Method::DELETE,
-            Some(&params),
-            None::<&()>,
-            endpoint_limit_per_second,
-            is_order,
-            order_limit_per_second,
-        )
-        .await
-    }
 
     /// Convenience method for requests with no parameters
     pub(super) async fn send_signed_request_no_params<T>(
@@ -429,6 +380,6 @@ struct BitgetResponse<T> {
     code: String,
     msg: String,
     #[serde(rename = "requestTime")]
-    request_time: i64,
+    _request_time: i64,
     data: T,
 }
