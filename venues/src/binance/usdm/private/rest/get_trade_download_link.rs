@@ -1,6 +1,5 @@
 // No top-level comments per project instructions.
 
-use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
 use super::UsdmClient;

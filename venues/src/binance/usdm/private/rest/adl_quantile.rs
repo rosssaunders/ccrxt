@@ -1,8 +1,5 @@
-// ...existing code...
-
 use std::borrow::Cow;
 
-use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
 use super::UsdmClient;
