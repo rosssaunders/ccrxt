@@ -4,6 +4,7 @@ use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
 const ACCOUNT_MAX_AVAIL_SIZE_ENDPOINT: &str = "api/v5/account/max-avail-size";
+
 /// Request to get max available size
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -55,6 +56,8 @@ pub struct MaxAvailSize {
 
 impl RestClient {
     /// Get max available size
+    ///
+    /// [docs]: https://www.okx.com/docs-v5/en/#trading-account-rest-api-get-maximum-available-tradable-amount
     ///
     /// # Arguments
     /// * `request` - The get max available size request

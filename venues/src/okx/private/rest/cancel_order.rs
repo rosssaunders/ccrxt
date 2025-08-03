@@ -4,6 +4,7 @@ use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
 const TRADE_CANCEL_ORDER_ENDPOINT: &str = "api/v5/trade/cancel-order";
+
 /// Request to cancel an existing order
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]

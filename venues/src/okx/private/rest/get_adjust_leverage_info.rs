@@ -4,6 +4,7 @@ use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
 const ACCOUNT_ADJUST_LEVERAGE_INFO_ENDPOINT: &str = "api/v5/account/adjust-leverage-info";
+
 /// Request to get adjust leverage info
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -51,6 +52,8 @@ pub struct AdjustLeverageInfo {
 
 impl RestClient {
     /// Get adjust leverage info
+    ///
+    /// [docs]: https://www.okx.com/docs-v5/en/#trading-account-rest-api-get-leverage-estimated-info
     ///
     /// # Arguments
     /// * `request` - The get adjust leverage info request

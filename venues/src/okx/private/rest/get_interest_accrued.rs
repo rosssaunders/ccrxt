@@ -4,6 +4,7 @@ use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, InstrumentType, RestResult};
 
 const ACCOUNT_INTEREST_ACCRUED_ENDPOINT: &str = "api/v5/account/interest-accrued";
+
 /// Request to get interest accrued
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -69,6 +70,8 @@ pub struct InterestAccrued {
 
 impl RestClient {
     /// Get interest accrued
+    ///
+    /// [docs]: https://www.okx.com/docs-v5/en/#trading-account-rest-api-get-interest-accrued-data
     ///
     /// # Arguments
     /// * `request` - The get interest accrued request

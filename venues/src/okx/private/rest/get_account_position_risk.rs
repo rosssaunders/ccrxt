@@ -118,6 +118,8 @@ pub struct PositionRiskData {
 impl RestClient {
     /// Get account position risk
     ///
+    /// [docs]: https://www.okx.com/docs-v5/en/#trading-account-rest-api-get-account-and-position-risk
+    ///
     /// # Arguments
     /// * `request` - The get account position risk request
     ///

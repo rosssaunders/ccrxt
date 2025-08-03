@@ -4,6 +4,7 @@ use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, InstrumentType, RestResult};
 
 const ACCOUNT_INTEREST_LIMITS_ENDPOINT: &str = "api/v5/account/interest-limits";
+
 /// Request to get interest limits
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -60,6 +61,8 @@ pub struct InterestLimits {
 
 impl RestClient {
     /// Get interest limits
+    ///
+    /// [docs]: https://www.okx.com/docs-v5/en/#trading-account-rest-api-get-interest-limits
     ///
     /// # Arguments
     /// * `request` - The get interest limits request

@@ -4,6 +4,7 @@ use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, InstrumentType, OrderSide, RestResult};
 
 const TRADE_FILLS_ENDPOINT: &str = "api/v5/trade/fills";
+
 /// Request to get recent fills
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -142,6 +143,8 @@ pub struct Fill {
 
 impl RestClient {
     /// Get recent fills
+    ///
+    /// [docs]: https://www.okx.com/docs-v5/en/#order-book-trading-trade-get-transaction-details-last-3-days
     ///
     /// # Arguments
     /// * `request` - The get fills request

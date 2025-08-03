@@ -4,6 +4,7 @@ use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
 const ACCOUNT_MAX_LOAN_ENDPOINT: &str = "api/v5/account/max-loan";
+
 /// Request to get max loan
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -46,6 +47,8 @@ pub struct MaxLoan {
 
 impl RestClient {
     /// Get max loan
+    ///
+    /// [docs]: https://www.okx.com/docs-v5/en/#trading-account-rest-api-get-the-maximum-loan-of-instrument
     ///
     /// # Arguments
     /// * `request` - The get max loan request

@@ -4,6 +4,7 @@ use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
 const ACCOUNT_BILLS_HISTORY_ARCHIVE_ENDPOINT: &str = "api/v5/account/bills-history-archive";
+
 /// Request to post bills history archive
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -56,6 +57,8 @@ pub struct GetBillsHistoryArchiveResponse {
 
 impl RestClient {
     /// Post bills history archive
+    ///
+    /// [docs]: https://www.okx.com/docs-v5/en/#trading-account-rest-api-get-bills-details-3-months
     ///
     /// # Arguments
     /// * `request` - The post bills history archive request

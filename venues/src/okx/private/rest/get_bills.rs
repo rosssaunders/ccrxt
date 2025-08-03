@@ -4,6 +4,7 @@ use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, InstrumentType, RestResult};
 
 const ACCOUNT_BILLS_ENDPOINT: &str = "api/v5/account/bills";
+
 /// Request to get account bills
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -148,6 +149,8 @@ pub struct Bill {
 
 impl RestClient {
     /// Get account bills
+    ///
+    /// [docs]: https://www.okx.com/docs-v5/en/#trading-account-rest-api-get-bills-details-last-7-days
     ///
     /// # Arguments
     /// * `request` - The get bills request

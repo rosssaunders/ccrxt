@@ -27,6 +27,8 @@ pub struct InterestRate {
 impl RestClient {
     /// Get interest rate
     ///
+    /// [docs]: https://www.okx.com/docs-v5/en/#trading-account-rest-api-get-interest-rate
+    ///
     /// # Arguments
     /// * `request` - The get interest rate request
     ///

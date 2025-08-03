@@ -4,6 +4,7 @@ use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
 const ACCOUNT_CONFIG_ENDPOINT: &str = "api/v5/account/config";
+
 /// Request to get account configuration
 #[derive(Debug, Clone, Serialize)]
 pub struct GetAccountConfigRequest {
@@ -111,6 +112,8 @@ pub struct IpRestriction {
 
 impl RestClient {
     /// Get account configuration
+    ///
+    /// [docs]: https://www.okx.com/docs-v5/en/#trading-account-rest-api-get-account-configuration
     ///
     /// # Returns
     /// A result containing the account configuration or an error

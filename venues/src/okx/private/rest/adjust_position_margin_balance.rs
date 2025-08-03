@@ -4,6 +4,7 @@ use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
 const ACCOUNT_POSITION_MARGIN_BALANCE_ENDPOINT: &str = "api/v5/account/position/margin-balance";
+
 /// Request to adjust position margin balance
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -54,6 +55,8 @@ pub struct AdjustPositionMarginBalanceResponse {
 
 impl RestClient {
     /// Adjust position margin balance
+    ///
+    /// [docs]: https://www.okx.com/docs-v5/en/#trading-account-rest-api-increase-decrease-margin
     ///
     /// # Arguments
     /// * `request` - The adjust position margin balance request

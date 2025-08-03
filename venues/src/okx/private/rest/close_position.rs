@@ -4,6 +4,7 @@ use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
 const TRADE_CLOSE_POSITION_ENDPOINT: &str = "api/v5/trade/close-position";
+
 /// Request to close a position
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -60,6 +61,8 @@ pub struct ClosePositionResponse {
 
 impl RestClient {
     /// Close a position
+    ///
+    /// [docs]: https://www.okx.com/docs-v5/en/#order-book-trading-trade-post-close-positions
     ///
     /// # Arguments
     /// * `request` - The close position request

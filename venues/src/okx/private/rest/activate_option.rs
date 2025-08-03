@@ -22,7 +22,9 @@ pub struct ActivateOptionResponse {
 impl RestClient {
     /// Activate option
     ///
-    /// # Arguments
+    /// [docs]: https://www.okx.com/docs-v5/en/#trading-account-rest-api-activate-option
+    ///
+    ///  # Arguments
     /// * `request` - The activate option request
     ///
     /// # Returns

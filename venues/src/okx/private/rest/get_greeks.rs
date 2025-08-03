@@ -4,6 +4,7 @@ use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
 const ACCOUNT_GREEKS_ENDPOINT: &str = "api/v5/account/greeks";
+
 /// Request to get account Greeks
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -50,6 +51,8 @@ pub struct Greeks {
 
 impl RestClient {
     /// Get account Greeks
+    ///
+    /// [docs]: https://www.okx.com/docs-v5/en/#trading-account-rest-api-get-greeks
     ///
     /// # Arguments
     /// * `request` - The get Greeks request

@@ -5,6 +5,7 @@ use crate::okx::{EndpointType, RestResult};
 
 const ACCOUNT_SET_ACCOUNT_SWITCH_PRECHECK_ENDPOINT: &str =
     "api/v5/account/set-account-switch-precheck";
+
 /// Request to get account switch precheck
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -26,6 +27,8 @@ pub struct AccountSwitchPrecheck {
 
 impl RestClient {
     /// Get account switch precheck
+    ///
+    /// [docs]: https://www.okx.com/docs-v5/en/#trading-account-rest-api-get-account-mode-switch-precheck
     ///
     /// # Arguments
     /// * `request` - The get account switch precheck request
