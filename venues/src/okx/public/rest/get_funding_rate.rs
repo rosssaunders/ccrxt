@@ -4,6 +4,7 @@ use super::client::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
 const PUBLIC_FUNDING_RATE_ENDPOINT: &str = "api/v5/public/funding-rate";
+
 /// Request parameters for getting funding rate
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]

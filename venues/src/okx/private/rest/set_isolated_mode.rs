@@ -33,6 +33,8 @@ pub struct SetIsolatedModeResponse {
 impl RestClient {
     /// Set isolated mode
     ///
+    /// [docs]: https://www.okx.com/docs-v5/en/#trading-account-rest-api-isolated-margin-trading-settings
+    ///
     /// # Arguments
     /// * `request` - The set isolated mode request
     ///

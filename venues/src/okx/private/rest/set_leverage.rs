@@ -45,6 +45,8 @@ pub struct SetLeverageResponse {
 impl RestClient {
     /// Set leverage
     ///
+    /// [docs]: https://www.okx.com/docs-v5/en/#trading-account-rest-api-set-leverage
+    ///
     /// # Arguments
     /// * `request` - The set leverage request
     ///

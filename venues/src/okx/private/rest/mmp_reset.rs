@@ -26,11 +26,14 @@ pub struct MmpResetResponse {
 impl RestClient {
     /// Reset MMP
     ///
+    /// [docs]: https://www.okx.com/docs-v5/en/#trading-account-rest-api-reset-mmp
+    ///
     /// # Arguments
     /// * `request` - The reset MMP request
     ///
     /// # Returns
     /// A result containing the reset MMP response or an error
+
     pub async fn mmp_reset(
         &self,
         request: &MmpResetRequest,

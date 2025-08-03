@@ -34,6 +34,8 @@ pub struct RiskState {
 impl RestClient {
     /// Get risk state
     ///
+    /// [docs]: https://www.okx.com/docs-v5/en/#trading-account-rest-api-get-account-risk-state
+    ///
     /// # Arguments
     /// * `request` - The get risk state request
     ///

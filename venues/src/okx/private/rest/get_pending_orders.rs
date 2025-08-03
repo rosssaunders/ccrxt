@@ -48,6 +48,8 @@ pub struct GetPendingOrdersRequest {
 impl RestClient {
     /// Get pending orders
     ///
+    /// [docs]: https://www.okx.com/docs-v5/en/#order-book-trading-trade-get-order-list
+    ///
     /// # Arguments
     /// * `request` - The get pending orders request
     ///

@@ -58,6 +58,8 @@ pub struct MaxSize {
 impl RestClient {
     /// Get max size
     ///
+    /// [docs]: https://www.okx.com/docs-v5/en/#trading-account-rest-api-get-maximum-buy-sell-amount-or-open-amount
+    ///
     /// # Arguments
     /// * `request` - The get max size request
     ///

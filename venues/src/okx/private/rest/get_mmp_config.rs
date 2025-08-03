@@ -33,6 +33,8 @@ pub struct MmpConfig {
 impl RestClient {
     /// Get MMP config
     ///
+    /// [docs]: https://www.okx.com/docs-v5/en/#trading-account-rest-api-get-mmp-config
+    ///
     /// # Arguments
     /// * `request` - The get MMP config request
     ///

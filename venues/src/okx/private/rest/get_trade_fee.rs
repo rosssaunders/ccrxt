@@ -68,6 +68,8 @@ pub struct TradeFee {
 impl RestClient {
     /// Get trade fee
     ///
+    /// [docs]: https://www.okx.com/docs-v5/en/#trading-account-rest-api-get-fee-rates
+    ///
     /// # Arguments
     /// * `request` - The get trade fee request
     ///

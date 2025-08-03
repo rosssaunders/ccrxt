@@ -85,6 +85,7 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the position tiers or an error
+
     pub async fn get_position_tiers(
         &self,
         request: &GetPositionTiersRequest,

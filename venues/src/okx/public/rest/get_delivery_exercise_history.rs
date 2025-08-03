@@ -79,6 +79,8 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing the list of delivery/exercise history entries
+    ///
+
     pub async fn get_delivery_exercise_history(
         &self,
         request: &GetDeliveryExerciseHistoryRequest,

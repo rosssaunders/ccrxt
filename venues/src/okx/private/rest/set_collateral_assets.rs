@@ -29,6 +29,8 @@ pub struct SetCollateralAssetsResponse {
 impl RestClient {
     /// Set collateral assets
     ///
+    /// [docs]: https://www.okx.com/docs-v5/en/#trading-account-rest-api-set-the-collateral-currency-in-portfolio-margin-mode
+    ///
     /// # Arguments
     /// * `request` - The set collateral assets request
     ///

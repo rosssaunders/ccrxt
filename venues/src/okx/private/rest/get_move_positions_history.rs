@@ -48,6 +48,8 @@ pub struct MovePositionsHistory {
 impl RestClient {
     /// Get move positions history
     ///
+    /// [docs]: https://www.okx.com/docs-v5/en/#trading-account-rest-api-get-move-position-history
+    ///
     /// # Arguments
     /// * `request` - The get move positions history request
     ///

@@ -25,6 +25,8 @@ pub struct SetPositionModeResponse {
 impl RestClient {
     /// Set position mode
     ///
+    /// [docs]: https://www.okx.com/docs-v5/en/#trading-account-rest-api-set-position-mode
+    ///
     /// # Arguments
     /// * `request` - The set position mode request
     ///

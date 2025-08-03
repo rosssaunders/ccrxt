@@ -25,6 +25,8 @@ pub struct SetGreeksResponse {
 impl RestClient {
     /// Set greeks
     ///
+    /// [docs]: https://www.okx.com/docs-v5/en/#trading-account-rest-api-set-greeks-pa-bs
+    ///
     /// # Arguments
     /// * `request` - The set greeks request
     ///

@@ -56,6 +56,8 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing the estimated delivery/exercise price
+    ///
+
     pub async fn get_estimated_price(
         &self,
         request: GetEstimatedPriceRequest,

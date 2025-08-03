@@ -60,6 +60,8 @@ pub struct GetOrderHistoryRequest {
 impl RestClient {
     /// Get order history
     ///
+    /// [docs]: https://www.okx.com/docs-v5/en/#order-book-trading-trade-get-order-history-last-7-days
+    ///
     /// # Arguments
     /// * `request` - The get order history request
     ///

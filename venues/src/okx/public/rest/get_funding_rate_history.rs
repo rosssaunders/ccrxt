@@ -75,6 +75,8 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing the list of funding rate history entries
+    ///
+
     pub async fn get_funding_rate_history(
         &self,
         request: &GetFundingRateHistoryRequest,

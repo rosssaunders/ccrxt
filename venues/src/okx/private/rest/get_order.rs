@@ -138,6 +138,8 @@ pub struct OrderDetails {
 impl RestClient {
     /// Get order details
     ///
+    /// [docs]: https://www.okx.com/docs-v5/en/#order-book-trading-trade-get-order-details
+    ///
     /// # Arguments
     /// * `request` - The get order request
     ///

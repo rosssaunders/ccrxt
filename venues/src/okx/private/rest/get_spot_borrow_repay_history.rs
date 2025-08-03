@@ -48,6 +48,8 @@ pub struct SpotBorrowRepayHistory {
 impl RestClient {
     /// Get spot borrow repay history
     ///
+    /// [docs]: https://www.okx.com/docs-v5/en/#trading-account-rest-api-vip-loans-borrow-and-repay-history
+    ///
     /// # Arguments
     /// * `request` - The get spot borrow repay history request
     ///
