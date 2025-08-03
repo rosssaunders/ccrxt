@@ -53,7 +53,3 @@ impl RestClient {
     }
 }
 
-// Convert BitmartError to Errors for RestResult
-fn bitmart_error_to_errors(e: crate::bitmart::error::BitmartError) -> Errors {
-    Errors::Error(e.to_string())
-}
