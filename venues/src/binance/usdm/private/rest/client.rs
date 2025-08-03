@@ -1,10 +1,9 @@
-use std::time::Instant;
 
 use serde::Serialize;
 
 use crate::binance::{
-    shared::{Errors as SharedErrors, client::PrivateBinanceClient},
-    usdm::{Errors, rest::common::RestResponse},
+    shared::{Errors as SharedErrors, client::PrivateBinanceClient, RestResponse},
+    usdm::Errors,
 };
 
 pub struct UsdmPrivateRestClient(PrivateBinanceClient);
@@ -30,7 +29,6 @@ impl UsdmPrivateRestClient {
         T: serde::de::DeserializeOwned + Send + 'static,
         R: Serialize,
     {
-        let start = Instant::now();
 
         // Call the shared client's high-performance GET function
         let shared_response = PrivateBinanceClient::send_get_signed_request::<T, R, SharedErrors>(
@@ -51,12 +49,8 @@ impl UsdmPrivateRestClient {
             SharedErrors::Error(msg) => Errors::Error(msg),
         })?;
 
-        // Convert shared RestResponse to usdm RestResponse
-        Ok(RestResponse {
-            data: shared_response.data,
-            headers: crate::binance::usdm::ResponseHeaders::from_shared(shared_response.headers),
-            request_duration: start.elapsed(),
-        })
+        // Return the shared RestResponse directly
+        Ok(shared_response)
     }
 
     /// Send a signed POST request with usdm-specific response type (high-performance)
@@ -71,7 +65,6 @@ impl UsdmPrivateRestClient {
         T: serde::de::DeserializeOwned + Send + 'static,
         R: Serialize,
     {
-        let start = Instant::now();
 
         // Call the shared client's high-performance POST function
         let shared_response = PrivateBinanceClient::send_post_signed_request::<T, R, SharedErrors>(
@@ -92,12 +85,8 @@ impl UsdmPrivateRestClient {
             SharedErrors::Error(msg) => Errors::Error(msg),
         })?;
 
-        // Convert shared RestResponse to usdm RestResponse
-        Ok(RestResponse {
-            data: shared_response.data,
-            headers: crate::binance::usdm::ResponseHeaders::from_shared(shared_response.headers),
-            request_duration: start.elapsed(),
-        })
+        // Return the shared RestResponse directly
+        Ok(shared_response)
     }
 
     /// Send a signed PUT request with usdm-specific response type (high-performance)
@@ -112,7 +101,6 @@ impl UsdmPrivateRestClient {
         T: serde::de::DeserializeOwned + Send + 'static,
         R: Serialize,
     {
-        let start = Instant::now();
 
         // Call the shared client's high-performance PUT function
         let shared_response = PrivateBinanceClient::send_put_signed_request::<T, R, SharedErrors>(
@@ -133,12 +121,8 @@ impl UsdmPrivateRestClient {
             SharedErrors::Error(msg) => Errors::Error(msg),
         })?;
 
-        // Convert shared RestResponse to usdm RestResponse
-        Ok(RestResponse {
-            data: shared_response.data,
-            headers: crate::binance::usdm::ResponseHeaders::from_shared(shared_response.headers),
-            request_duration: start.elapsed(),
-        })
+        // Return the shared RestResponse directly
+        Ok(shared_response)
     }
 
     /// Send a signed DELETE request with usdm-specific response type (high-performance)
@@ -153,7 +137,6 @@ impl UsdmPrivateRestClient {
         T: serde::de::DeserializeOwned + Send + 'static,
         R: Serialize,
     {
-        let start = Instant::now();
 
         // Call the shared client's high-performance DELETE function
         let shared_response =
@@ -175,12 +158,8 @@ impl UsdmPrivateRestClient {
                 SharedErrors::Error(msg) => Errors::Error(msg),
             })?;
 
-        // Convert shared RestResponse to usdm RestResponse
-        Ok(RestResponse {
-            data: shared_response.data,
-            headers: crate::binance::usdm::ResponseHeaders::from_shared(shared_response.headers),
-            request_duration: start.elapsed(),
-        })
+        // Return the shared RestResponse directly
+        Ok(shared_response)
     }
 
     /// Use send_get_signed_request, send_post_signed_request, etc. instead.
@@ -199,7 +178,6 @@ impl UsdmPrivateRestClient {
         T: serde::de::DeserializeOwned + Send + 'static,
         R: Serialize,
     {
-        let start = Instant::now();
 
         // Call the shared client's send_signed_request
         #[allow(deprecated)]
@@ -221,11 +199,7 @@ impl UsdmPrivateRestClient {
             SharedErrors::Error(msg) => Errors::Error(msg),
         })?;
 
-        // Convert shared RestResponse to usdm RestResponse
-        Ok(RestResponse {
-            data: shared_response.data,
-            headers: crate::binance::usdm::ResponseHeaders::from_shared(shared_response.headers),
-            request_duration: start.elapsed(),
-        })
+        // Return the shared RestResponse directly
+        Ok(shared_response)
     }
 }

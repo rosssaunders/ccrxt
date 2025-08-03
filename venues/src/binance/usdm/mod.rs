@@ -62,12 +62,11 @@ mod private {
 // Only expose RestClient at the usdm level, not via private::rest
 pub use enums::*;
 pub use errors::{ApiError, Errors};
-pub use private::*;
-pub use public::*;
+pub use private::PrivateRestClient;
+pub use public::{PublicRestClient, exchange_info};
 pub use rate_limit::{RateLimitHeader, RateLimiter};
 
 pub use crate::binance::usdm::errors::ErrorResponse;
-pub(crate) use crate::binance::usdm::request::execute_request;
 
 /// Represents the relevant response headers returned by the Binance API for rate limiting and order tracking.
 ///
@@ -106,11 +105,7 @@ impl ResponseHeaders {
 }
 
 /// Type alias for results returned by Binance API operations
-pub type RestResult<T> = Result<rest::common::RestResponse<T>, Errors>;
-
-pub mod rest {
-    pub mod common;
-}
+pub type RestResult<T> = Result<crate::binance::shared::RestResponse<T>, Errors>;
 
 pub struct UsdmConfig;
 

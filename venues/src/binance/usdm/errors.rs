@@ -56,6 +56,7 @@ pub enum Errors {
 }
 
 /// Result type alias for Binance USDM operations
+#[allow(dead_code)]
 pub type Result<T> = std::result::Result<T, Errors>;
 
 /// Represents an error response from the Binance API.

@@ -2,13 +2,12 @@
 //
 // Provides access to all public REST API endpoints for Binance USD-M Futures.
 // All requests are unauthenticated and do not require API credentials.
-use std::time::Instant;
 
 use rest::secrets::ExposableSecret;
 
 use crate::binance::{
-    shared::{Errors as SharedErrors, client::PublicBinanceClient},
-    usdm::{Errors, rest::common::RestResponse},
+    shared::{Errors as SharedErrors, client::PublicBinanceClient, RestResponse},
+    usdm::Errors,
 };
 
 pub struct UsdmPublicRestClient(PublicBinanceClient);
@@ -47,7 +46,6 @@ impl UsdmPublicRestClient {
         T: serde::de::DeserializeOwned + Send + 'static,
         R: serde::Serialize,
     {
-        let start = Instant::now();
 
         // Call the shared client's send_public_request
         let shared_response = PublicBinanceClient::send_public_request::<T, R, SharedErrors>(
@@ -68,12 +66,8 @@ impl UsdmPublicRestClient {
             SharedErrors::Error(msg) => Errors::Error(msg),
         })?;
 
-        // Convert shared RestResponse to usdm RestResponse
-        Ok(RestResponse {
-            data: shared_response.data,
-            headers: crate::binance::usdm::ResponseHeaders::from_shared(shared_response.headers),
-            request_duration: start.elapsed(),
-        })
+        // Return the shared RestResponse directly
+        Ok(shared_response)
     }
 
     /// Send a request with API key only (no signature) with usdm-specific response type
@@ -89,7 +83,6 @@ impl UsdmPublicRestClient {
         T: serde::de::DeserializeOwned + Send + 'static,
         R: serde::Serialize,
     {
-        let start = Instant::now();
 
         // Call the shared client's send_api_key_request
         let shared_response = self
@@ -110,11 +103,7 @@ impl UsdmPublicRestClient {
                 SharedErrors::Error(msg) => Errors::Error(msg),
             })?;
 
-        // Convert shared RestResponse to usdm RestResponse
-        Ok(RestResponse {
-            data: shared_response.data,
-            headers: crate::binance::usdm::ResponseHeaders::from_shared(shared_response.headers),
-            request_duration: start.elapsed(),
-        })
+        // Return the shared RestResponse directly
+        Ok(shared_response)
     }
 }
