@@ -41,13 +41,14 @@ mod query_oco_order;
 mod authorize_sub_account_transfer;
 mod batch_sub_account_assets;
 mod create_sub_account;
+mod create_sub_account_api_key;
 mod delete_sub_account_api_key;
 mod edit_sub_account_api_key;
 mod freeze_sub_account;
 mod get_sub_account_assets;
 mod get_sub_account_list;
 mod get_sub_account_transfer_history;
-mod sub_account_api_key;
+mod query_api_key;
 mod sub_account_transfer;
 
 // Sub-account exports

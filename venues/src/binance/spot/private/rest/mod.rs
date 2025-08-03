@@ -18,7 +18,8 @@ pub mod oto_order;
 pub mod otoco_order;
 
 // SOR endpoints
-pub mod sor_order;
+pub mod new_sor_order;
+pub mod test_sor_order;
 
 // Account information endpoints
 pub mod account;

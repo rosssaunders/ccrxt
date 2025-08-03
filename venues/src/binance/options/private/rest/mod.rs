@@ -14,8 +14,10 @@ pub mod income_download_status;
 pub mod margin_account;
 
 // Trading endpoints
-pub mod batch_cancel;
+pub mod batch_cancel_orders;
 pub mod batch_orders;
+pub mod cancel_all_orders_by_symbol;
+pub mod cancel_all_orders_by_underlying;
 pub mod cancel_order;
 pub mod exercise_record;
 pub mod history_orders;
