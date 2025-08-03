@@ -63,7 +63,7 @@ mod private {
 pub use enums::*;
 pub use errors::{ApiError, Errors};
 pub use private::PrivateRestClient;
-pub use public::{PublicRestClient, exchange_info};
+pub use public::PublicRestClient;
 pub use rate_limit::{RateLimitHeader, RateLimiter};
 
 pub use crate::binance::usdm::errors::ErrorResponse;

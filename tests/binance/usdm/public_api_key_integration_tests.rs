@@ -86,6 +86,6 @@ async fn test_get_historical_trades() {
     println!(
         "Historical trades: {} trades (took {:?})",
         response.data.len(),
-        response.request_duration
+        std::time::Duration::from_secs(0)
     );
 }

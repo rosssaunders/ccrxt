@@ -47,11 +47,11 @@ async fn test_ping() {
         result.err()
     );
 
-    let response = result.unwrap();
+    let _response = result.unwrap();
     // Ping response is empty, just verify we got a response
     println!(
         "Ping successful: request took {:?}",
-        response.request_duration
+        std::time::Duration::from_secs(0)
     );
 }
 
@@ -76,7 +76,8 @@ async fn test_server_time() {
     );
     println!(
         "Server time: {} (took {:?})",
-        response.data.server_time, response.request_duration
+        response.data.server_time,
+        std::time::Duration::from_secs(0)
     );
 }
 
@@ -116,7 +117,7 @@ async fn test_get_exchange_info() {
     println!(
         "Exchange info fetched successfully: {} symbols, took {:?}",
         response.data.symbols.len(),
-        response.request_duration
+        std::time::Duration::from_secs(0)
     );
 }
 /// Test basic functionality without relying on private request types
@@ -271,7 +272,7 @@ async fn test_get_order_book() {
         "Order book: {} bids, {} asks (took {:?})",
         response.data.bids.len(),
         response.data.asks.len(),
-        response.request_duration
+        std::time::Duration::from_secs(0)
     );
 }
 
@@ -304,7 +305,7 @@ async fn test_recent_trades() {
     println!(
         "Recent trades: {} trades (took {:?})",
         response.data.trades.len(),
-        response.request_duration
+        std::time::Duration::from_secs(0)
     );
 }
 
@@ -340,7 +341,7 @@ async fn test_get_klines() {
     println!(
         "Klines: {} candles (took {:?})",
         response.data.len(),
-        response.request_duration
+        std::time::Duration::from_secs(0)
     );
 }
 
@@ -383,7 +384,7 @@ async fn test_get_ticker_24hr() {
             assert!(!ticker.volume.is_empty(), "Should have volume");
             println!(
                 "24hr ticker: price={}, volume={} (took {:?})",
-                ticker.last_price, ticker.volume, response.request_duration
+                ticker.last_price, ticker.volume, std::time::Duration::from_secs(0)
             );
         }
         venues::binance::usdm::public::rest::ticker_24hr::Ticker24hrResult::Multiple(tickers) => {
@@ -391,7 +392,7 @@ async fn test_get_ticker_24hr() {
             assert!(!ticker.volume.is_empty(), "Should have volume");
             println!(
                 "24hr ticker: price={}, volume={} (took {:?})",
-                ticker.last_price, ticker.volume, response.request_duration
+                ticker.last_price, ticker.volume, std::time::Duration::from_secs(0)
             );
         }
     }
@@ -424,7 +425,7 @@ async fn test_get_ticker_price() {
 
             println!(
                 "Ticker price: {} = {} (took {:?})",
-                ticker.symbol, ticker.price, response.request_duration
+                ticker.symbol, ticker.price, std::time::Duration::from_secs(0)
             );
         }
         venues::binance::usdm::public::rest::ticker_price::TickerPriceResult::Multiple(tickers) => {
@@ -435,7 +436,7 @@ async fn test_get_ticker_price() {
 
             println!(
                 "Ticker price: {} = {} (took {:?})",
-                ticker.symbol, ticker.price, response.request_duration
+                ticker.symbol, ticker.price, std::time::Duration::from_secs(0)
             );
         }
     }
@@ -505,7 +506,7 @@ async fn test_get_mark_price() {
 
             println!(
                 "Mark price: {} = {} (took {:?})",
-                mark_price.symbol, mark_price.mark_price, response.request_duration
+                mark_price.symbol, mark_price.mark_price, std::time::Duration::from_secs(0)
             );
         }
         venues::binance::usdm::public::rest::mark_price::MarkPriceResult::Multiple(mark_prices) => {
@@ -516,7 +517,7 @@ async fn test_get_mark_price() {
 
             println!(
                 "Mark price: {} = {} (took {:?})",
-                mark_price.symbol, mark_price.mark_price, response.request_duration
+                mark_price.symbol, mark_price.mark_price, std::time::Duration::from_secs(0)
             );
         }
     }
@@ -555,7 +556,7 @@ async fn test_get_funding_rate_history() {
     println!(
         "Funding rate history: {} entries (took {:?})",
         response.data.len(),
-        response.request_duration
+        std::time::Duration::from_secs(0)
     );
 }
 
@@ -588,7 +589,7 @@ async fn test_get_open_interest() {
 
     println!(
         "Open interest: {} = {} (took {:?})",
-        response.data.symbol, response.data.open_interest, response.request_duration
+        response.data.symbol, response.data.open_interest, std::time::Duration::from_secs(0)
     );
 }
 
@@ -630,7 +631,7 @@ async fn test_get_agg_trades() {
     println!(
         "Aggregate trades: {} trades (took {:?})",
         response.data.len(),
-        response.request_duration
+        std::time::Duration::from_secs(0)
     );
 }
 
@@ -669,7 +670,7 @@ async fn test_get_continuous_klines() {
     println!(
         "Continuous klines: {} candles (took {:?})",
         response.data.len(),
-        response.request_duration
+        std::time::Duration::from_secs(0)
     );
 }
 
@@ -707,7 +708,7 @@ async fn test_get_index_price_klines() {
     println!(
         "Index price klines: {} candles (took {:?})",
         response.data.len(),
-        response.request_duration
+        std::time::Duration::from_secs(0)
     );
 }
 
@@ -745,7 +746,7 @@ async fn test_get_mark_price_klines() {
     println!(
         "Mark price klines: {} candles (took {:?})",
         response.data.len(),
-        response.request_duration
+        std::time::Duration::from_secs(0)
     );
 }
 
@@ -783,7 +784,7 @@ async fn test_premium_index_klines() {
     println!(
         "Premium index klines: {} candles (took {:?})",
         response.data.len(),
-        response.request_duration
+        std::time::Duration::from_secs(0)
     );
 }
 
@@ -824,7 +825,7 @@ async fn test_get_open_interest_hist() {
     println!(
         "Open interest history: {} entries (took {:?})",
         response.data.len(),
-        response.request_duration
+        std::time::Duration::from_secs(0)
     );
 }
 
@@ -865,7 +866,7 @@ async fn test_get_global_long_short_account_ratio() {
     println!(
         "Global long/short account ratio: {} entries (took {:?})",
         response.data.len(),
-        response.request_duration
+        std::time::Duration::from_secs(0)
     );
 }
 
@@ -906,7 +907,7 @@ async fn test_get_top_long_short_account_ratio() {
     println!(
         "Top long/short account ratio: {} entries (took {:?})",
         response.data.len(),
-        response.request_duration
+        std::time::Duration::from_secs(0)
     );
 }
 
@@ -947,7 +948,7 @@ async fn test_get_top_long_short_position_ratio() {
     println!(
         "Top long/short position ratio: {} entries (took {:?})",
         response.data.len(),
-        response.request_duration
+        std::time::Duration::from_secs(0)
     );
 }
 
@@ -984,7 +985,7 @@ async fn test_get_taker_long_short_ratio() {
     println!(
         "Taker long/short ratio: {} entries (took {:?})",
         response.data.len(),
-        response.request_duration
+        std::time::Duration::from_secs(0)
     );
 }
 
@@ -1020,7 +1021,7 @@ async fn test_get_basis() {
     println!(
         "Basis data: {} entries (took {:?})",
         response.data.len(),
-        response.request_duration
+        std::time::Duration::from_secs(0)
     );
 }
 
@@ -1050,7 +1051,7 @@ async fn test_get_delivery_price() {
     println!(
         "Delivery price: {} entries (took {:?})",
         response.data.len(),
-        response.request_duration
+        std::time::Duration::from_secs(0)
     );
 }
 
@@ -1096,7 +1097,7 @@ async fn test_get_asset_index() {
 
     println!(
         "Asset index: {} entries (took {:?})",
-        count, response.request_duration
+        count, std::time::Duration::from_secs(0)
     );
 }
 
@@ -1133,7 +1134,7 @@ async fn test_get_constituents() {
     println!(
         "Constituents: {} entries (took {:?})",
         response.data.constituents.len(),
-        response.request_duration
+        std::time::Duration::from_secs(0)
     );
 }
 
@@ -1175,7 +1176,7 @@ async fn test_get_index_info() {
         "Index info: {} with {} base assets (took {:?})",
         entry.symbol,
         entry.base_asset_list.len(),
-        response.request_duration
+        std::time::Duration::from_secs(0)
     );
 }
 
