@@ -54,22 +54,6 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn test_public_client_creation() {
-        // Create rate limits for testing
-        let rate_limits = crate::binance::shared::venue_trait::RateLimits {
-            request_weight_limit: 6000,
-            request_weight_window: std::time::Duration::from_secs(60),
-            raw_requests_limit: 61000,
-            raw_requests_window: std::time::Duration::from_secs(300),
-            orders_10s_limit: 100,
-            orders_minute_limit: 1200,
-            orders_day_limit: None,
-        };
-
-        // Test is successful if client is created without panic
-    }
-
-    #[tokio::test]
     async fn test_raw_request_limit() {
         let limiter = RateLimiter::new();
 
