@@ -4,6 +4,7 @@ use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
 const ACCOUNT_MOVE_POSITIONS_HISTORY_ENDPOINT: &str = "api/v5/account/move-positions-history";
+
 /// Request to get move positions history
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]

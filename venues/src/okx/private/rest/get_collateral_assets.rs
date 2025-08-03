@@ -4,6 +4,7 @@ use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
 const ACCOUNT_COLLATERAL_ASSETS_ENDPOINT: &str = "api/v5/account/collateral-assets";
+
 /// Request to get collateral assets
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]

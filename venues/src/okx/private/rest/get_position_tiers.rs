@@ -4,6 +4,7 @@ use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, InstrumentType, RestResult};
 
 const ACCOUNT_POSITION_TIERS_ENDPOINT: &str = "api/v5/account/position-tiers";
+
 /// Request to get position tiers
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]

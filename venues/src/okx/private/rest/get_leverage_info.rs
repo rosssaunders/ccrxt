@@ -4,6 +4,7 @@ use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
 const ACCOUNT_LEVERAGE_INFO_ENDPOINT: &str = "api/v5/account/leverage-info";
+
 /// Request to get leverage info
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]

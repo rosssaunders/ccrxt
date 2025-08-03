@@ -4,6 +4,7 @@ use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
 const ACCOUNT_ACTIVATE_OPTION_ENDPOINT: &str = "api/v5/account/activate-option";
+
 /// Request to activate option
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]

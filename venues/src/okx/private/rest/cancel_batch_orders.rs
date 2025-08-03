@@ -4,6 +4,7 @@ use super::{RestClient, cancel_order::CancelOrderRequest, common::OkxApiResponse
 use crate::okx::{EndpointType, RestResult};
 
 const TRADE_CANCEL_BATCH_ORDERS_ENDPOINT: &str = "api/v5/trade/cancel-batch-orders";
+
 /// Response from canceling multiple orders
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]

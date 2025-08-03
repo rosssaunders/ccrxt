@@ -4,6 +4,7 @@ use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
 const ACCOUNT_SET_AUTO_REPAY_ENDPOINT: &str = "api/v5/account/set-auto-repay";
+
 /// Request to set auto repay
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]

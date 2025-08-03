@@ -4,6 +4,7 @@ use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
 const ACCOUNT_SET_GREEKS_ENDPOINT: &str = "api/v5/account/set-greeks";
+
 /// Request to set greeks
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]

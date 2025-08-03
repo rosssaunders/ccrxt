@@ -4,6 +4,7 @@ use super::{RestClient, common::OkxApiResponse};
 use crate::okx::{EndpointType, RestResult};
 
 const TRADE_AMEND_ORDER_ENDPOINT: &str = "api/v5/trade/amend-order";
+
 /// Request to amend an existing order
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
