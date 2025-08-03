@@ -56,8 +56,6 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing the estimated settlement info
-    ///
-
     pub async fn get_estimated_settlement_info(
         &self,
         request: &GetEstimatedSettlementInfoRequest,

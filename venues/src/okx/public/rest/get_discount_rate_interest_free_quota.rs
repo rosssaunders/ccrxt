@@ -86,8 +86,6 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing the discount rate and interest-free quota information
-    ///
-
     pub async fn get_discount_rate_interest_free_quota(
         &self,
         request: &GetDiscountRateInterestFreeQuotaRequest,

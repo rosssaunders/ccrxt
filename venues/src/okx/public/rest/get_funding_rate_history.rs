@@ -4,6 +4,7 @@ use super::client::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
 const PUBLIC_FUNDING_RATE_HISTORY_ENDPOINT: &str = "api/v5/public/funding-rate-history";
+
 /// Request parameters for getting funding rate history
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -75,8 +76,6 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing the list of funding rate history entries
-    ///
-
     pub async fn get_funding_rate_history(
         &self,
         request: &GetFundingRateHistoryRequest,

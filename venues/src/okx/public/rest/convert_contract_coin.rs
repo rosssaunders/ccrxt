@@ -103,8 +103,6 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing the converted values
-    ///
-
     pub async fn convert_contract_coin(
         &self,
         request: ConvertContractCoinRequest,

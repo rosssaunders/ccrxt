@@ -35,8 +35,6 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing the exchange rate information
-    ///
-
     pub async fn get_exchange_rate(&self) -> RestResult<ExchangeRateResponse> {
         self.send_request(
             MARKET_EXCHANGE_RATE_ENDPOINT,
