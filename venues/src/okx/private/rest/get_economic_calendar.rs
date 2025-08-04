@@ -12,12 +12,15 @@ pub struct GetEconomicCalendarRequest {
     /// Country, region or entity filter
     #[serde(skip_serializing_if = "Option::is_none")]
     pub region: Option<String>,
+
     /// Level of importance filter ("1": low, "2": medium, "3": high)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub importance: Option<String>,
+
     /// Pagination of data to return records newer than the requested timestamp (Unix timestamp in milliseconds)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub before: Option<String>,
+
     /// Pagination of data to return records earlier than the requested timestamp (Unix timestamp in milliseconds)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub after: Option<String>,
@@ -29,24 +32,32 @@ pub struct GetEconomicCalendarRequest {
 pub struct EconomicEvent {
     /// Event date and time (Unix timestamp in milliseconds)
     pub date: String,
+
     /// Country or region
     pub region: String,
+
     /// Event importance level ("1": low, "2": medium, "3": high)
     pub importance: String,
+
     /// Event name/title
     pub event: String,
+
     /// Expected value/forecast
     #[serde(skip_serializing_if = "Option::is_none")]
     pub forecast: Option<String>,
+
     /// Previous value
     #[serde(skip_serializing_if = "Option::is_none")]
     pub previous: Option<String>,
+
     /// Actual value (if released)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub actual: Option<String>,
+
     /// Currency affected
     #[serde(skip_serializing_if = "Option::is_none")]
     pub currency: Option<String>,
+
     /// Event unit (e.g., "%", "K", "M")
     #[serde(skip_serializing_if = "Option::is_none")]
     pub unit: Option<String>,
@@ -57,8 +68,10 @@ pub struct EconomicEvent {
 pub struct GetEconomicCalendarResponse {
     /// Response code ("0" for success)
     pub code: String,
+
     /// Response message
     pub msg: String,
+
     /// Economic calendar event data
     pub data: Vec<EconomicEvent>,
 }

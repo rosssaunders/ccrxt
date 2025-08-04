@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::{RestClient, common::OkxApiResponse};
+use super::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
 const ACCOUNT_MMP_RESET_ENDPOINT: &str = "api/v5/account/mmp-reset";
@@ -35,10 +35,7 @@ impl RestClient {
     /// # Returns
     /// A result containing the reset MMP response or an error
 
-    pub async fn mmp_reset(
-        &self,
-        request: &MmpResetRequest,
-    ) -> RestResult<OkxApiResponse<MmpResetResponse>> {
+    pub async fn mmp_reset(&self, request: &MmpResetRequest) -> RestResult<MmpResetResponse> {
         self.send_request(
             ACCOUNT_MMP_RESET_ENDPOINT,
             reqwest::Method::POST,
@@ -52,6 +49,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::okx::response::OkxApiResponse;
 
     #[test]
     fn test_mmp_reset_request_serialization() {

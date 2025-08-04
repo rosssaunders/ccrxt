@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::{RestClient, common::OkxApiResponse};
+use super::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
 const ACCOUNT_QUICK_MARGIN_BORROW_REPAY_ENDPOINT: &str = "api/v5/account/quick-margin-borrow-repay";
@@ -55,7 +55,7 @@ impl RestClient {
     pub async fn quick_margin_borrow_repay(
         &self,
         request: &QuickMarginBorrowRepayRequest,
-    ) -> RestResult<OkxApiResponse<QuickMarginBorrowRepayResponse>> {
+    ) -> RestResult<QuickMarginBorrowRepayResponse> {
         self.send_request(
             ACCOUNT_QUICK_MARGIN_BORROW_REPAY_ENDPOINT,
             reqwest::Method::POST,
@@ -69,6 +69,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::okx::response::OkxApiResponse;
 
     #[test]
     fn test_quick_margin_borrow_repay_request_serialization() {

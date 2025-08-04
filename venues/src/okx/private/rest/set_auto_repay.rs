@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::{RestClient, common::OkxApiResponse};
+use super::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
 const ACCOUNT_SET_AUTO_REPAY_ENDPOINT: &str = "api/v5/account/set-auto-repay";
@@ -34,7 +34,7 @@ impl RestClient {
     pub async fn set_auto_repay(
         &self,
         request: &SetAutoRepayRequest,
-    ) -> RestResult<OkxApiResponse<SetAutoRepayResponse>> {
+    ) -> RestResult<SetAutoRepayResponse> {
         self.send_request(
             ACCOUNT_SET_AUTO_REPAY_ENDPOINT,
             reqwest::Method::POST,
@@ -48,6 +48,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::okx::response::OkxApiResponse;
 
     #[test]
     fn test_set_auto_repay_request_serialization() {

@@ -4,6 +4,7 @@ use super::client::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
 const PUBLIC_MARK_PRICE_ENDPOINT: &str = "api/v5/public/mark-price";
+
 /// Request parameters for getting mark price
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GetMarkPriceRequest {
@@ -11,14 +12,17 @@ pub struct GetMarkPriceRequest {
     /// MARGIN, SWAP, FUTURES, OPTION
     #[serde(rename = "instType")]
     pub inst_type: String,
+
     /// Underlying. Optional.
     /// Applicable to FUTURES/SWAP/OPTION
     #[serde(skip_serializing_if = "Option::is_none")]
     pub uly: Option<String>,
+
     /// Instrument family. Optional.
     /// Applicable to FUTURES/SWAP/OPTION
     #[serde(rename = "instFamily", skip_serializing_if = "Option::is_none")]
     pub inst_family: Option<String>,
+
     /// Instrument ID, e.g. "BTC-USD-SWAP". Optional.
     #[serde(rename = "instId", skip_serializing_if = "Option::is_none")]
     pub inst_id: Option<String>,
@@ -30,25 +34,17 @@ pub struct MarkPrice {
     /// Instrument type
     #[serde(rename = "instType")]
     pub inst_type: String,
+
     /// Instrument ID, e.g. "BTC-USD-200214"
     #[serde(rename = "instId")]
     pub inst_id: String,
+
     /// Mark price
     #[serde(rename = "markPx")]
     pub mark_px: String,
+
     /// Data return time, Unix timestamp format in milliseconds, e.g. "1597026383085"
     pub ts: String,
-}
-
-/// Response for getting mark price
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetMarkPriceResponse {
-    /// Response code ("0" for success)
-    pub code: String,
-    /// Response message
-    pub msg: String,
-    /// Mark price data
-    pub data: Vec<MarkPrice>,
 }
 
 impl RestClient {
@@ -73,10 +69,9 @@ impl RestClient {
     pub async fn get_mark_price(
         &self,
         request: &GetMarkPriceRequest,
-    ) -> RestResult<GetMarkPriceResponse> {
-        self.send_request(
+    ) -> RestResult<Vec<MarkPrice>> {
+        self.send_get_request(
             PUBLIC_MARK_PRICE_ENDPOINT,
-            reqwest::Method::GET,
             Some(request),
             EndpointType::PublicMarketDataHistory,
         )
@@ -86,9 +81,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use serde_json::json;
-
     use super::*;
+    use serde_json::json;
+    use crate::okx::response::OkxApiResponse;
 
     #[test]
     fn test_get_mark_price_request_minimal() {
@@ -177,7 +172,7 @@ mod tests {
             ]
         });
 
-        let response: GetMarkPriceResponse = serde_json::from_value(response_json).unwrap();
+        let response: OkxApiResponse<MarkPrice> = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.msg, "");
         assert_eq!(response.data.len(), 2);
@@ -238,7 +233,7 @@ mod tests {
             ]
         });
 
-        let response: GetMarkPriceResponse = serde_json::from_value(response_json).unwrap();
+        let response: OkxApiResponse<MarkPrice> = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 4);
 
@@ -263,7 +258,7 @@ mod tests {
             "data": []
         });
 
-        let response: GetMarkPriceResponse = serde_json::from_value(response_json).unwrap();
+        let response: OkxApiResponse<MarkPrice> = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.msg, "");
         assert_eq!(response.data.len(), 0);

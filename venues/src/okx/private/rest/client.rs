@@ -197,7 +197,7 @@ impl RestClient {
             let response_text = response.text().await?;
 
             // Parse the response
-            let parsed: T = serde_json::from_str(&response_text)
+            let parsed: crate::okx::response::OkxApiResponse<T> = serde_json::from_str(&response_text)
                 .map_err(|e| Errors::Error(format!("Failed to parse response: {e}")))?;
 
             Ok(parsed)

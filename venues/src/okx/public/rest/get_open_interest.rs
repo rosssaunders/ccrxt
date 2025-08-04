@@ -4,6 +4,7 @@ use super::client::RestClient;
 use crate::okx::{EndpointType, InstrumentType, RestResult};
 
 const PUBLIC_OPEN_INTEREST_ENDPOINT: &str = "api/v5/public/open-interest";
+
 /// Request parameters for getting open interest
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -11,14 +12,17 @@ pub struct GetOpenInterestRequest {
     /// Instrument type (required)
     #[serde(rename = "instType")]
     pub inst_type: InstrumentType,
+
     /// Underlying (for SWAP/FUTURES/OPTION)
     /// If instType is OPTION, either uly or instFamily is required
     #[serde(rename = "uly", skip_serializing_if = "Option::is_none")]
     pub underlying: Option<String>,
+
     /// Instrument family (for FUTURES/SWAP/OPTION)
     /// If instType is OPTION, either uly or instFamily is required
     #[serde(rename = "instFamily", skip_serializing_if = "Option::is_none")]
     pub inst_family: Option<String>,
+
     /// Instrument ID (optional)
     #[serde(rename = "instId", skip_serializing_if = "Option::is_none")]
     pub inst_id: Option<String>,
@@ -30,30 +34,24 @@ pub struct OpenInterest {
     /// Instrument type
     #[serde(rename = "instType")]
     pub inst_type: String,
+
     /// Instrument ID
     #[serde(rename = "instId")]
     pub inst_id: String,
+
     /// Open interest in number of contracts
     pub oi: String,
+
     /// Open interest in number of coin
     #[serde(rename = "oiCcy")]
     pub oi_ccy: String,
+
     /// Open interest in number of USD
     #[serde(rename = "oiUsd")]
     pub oi_usd: String,
+
     /// Data return time, Unix timestamp format in milliseconds
     pub ts: String,
-}
-
-/// Response for getting open interest
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetOpenInterestResponse {
-    /// Response code ("0" for success)
-    pub code: String,
-    /// Response message
-    pub msg: String,
-    /// Open interest data
-    pub data: Vec<OpenInterest>,
 }
 
 impl RestClient {
@@ -73,10 +71,9 @@ impl RestClient {
     pub async fn get_open_interest(
         &self,
         request: GetOpenInterestRequest,
-    ) -> RestResult<GetOpenInterestResponse> {
-        self.send_request(
+    ) -> RestResult<Vec<OpenInterest>> {
+        self.send_get_request(
             PUBLIC_OPEN_INTEREST_ENDPOINT,
-            reqwest::Method::GET,
             Some(&request),
             EndpointType::PublicMarketData,
         )
@@ -86,9 +83,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use serde_json::json;
-
     use super::*;
+    use serde_json::json;
+    use crate::okx::response::OkxApiResponse;
 
     #[test]
     fn test_get_open_interest_request_structure() {
@@ -176,7 +173,7 @@ mod tests {
             ]
         });
 
-        let response: GetOpenInterestResponse = serde_json::from_value(response_json).unwrap();
+        let response: OkxApiResponse<OpenInterest> = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.msg, "");
         assert_eq!(response.data.len(), 1);
@@ -253,7 +250,7 @@ mod tests {
             ]
         });
 
-        let response: GetOpenInterestResponse = serde_json::from_value(response_json).unwrap();
+        let response: OkxApiResponse<OpenInterest> = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 2);
 

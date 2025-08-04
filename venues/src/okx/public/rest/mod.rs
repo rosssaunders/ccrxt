@@ -28,66 +28,81 @@ mod get_settlement_history;
 mod get_time;
 mod get_underlying;
 
+use crate::okx::response::OkxApiResponse;
+
 pub use client::RestClient;
-pub use convert_contract_coin::{
-    ConvertContractCoinData, ConvertContractCoinRequest, ConvertContractCoinResponse,
-};
-pub use exchange_rate::{ExchangeRate, ExchangeRateResponse};
+pub use convert_contract_coin::{ConvertContractCoinData, ConvertContractCoinRequest};
+pub type ConvertContractCoinResponse = OkxApiResponse<ConvertContractCoinData>;
+pub use exchange_rate::ExchangeRate;
+pub type ExchangeRateResponse = OkxApiResponse<ExchangeRate>;
 pub use get_delivery_exercise_history::{
     DeliveryExerciseDetail, DeliveryExerciseHistory, GetDeliveryExerciseHistoryRequest,
-    GetDeliveryExerciseHistoryResponse,
 };
+pub type GetDeliveryExerciseHistoryResponse = OkxApiResponse<DeliveryExerciseHistory>;
 pub use get_discount_rate_interest_free_quota::{
     DiscountDetail, DiscountRateInterestFreeQuota, GetDiscountRateInterestFreeQuotaRequest,
-    GetDiscountRateInterestFreeQuotaResponse,
 };
-pub use get_estimated_price::{
-    EstimatedPriceData, GetEstimatedPriceRequest, GetEstimatedPriceResponse,
-};
+pub type GetDiscountRateInterestFreeQuotaResponse = OkxApiResponse<DiscountRateInterestFreeQuota>;
+pub use get_estimated_price::{EstimatedPriceData, GetEstimatedPriceRequest};
+pub type GetEstimatedPriceResponse = OkxApiResponse<EstimatedPriceData>;
 pub use get_estimated_settlement_info::{
-    EstimatedSettlementInfo, GetEstimatedSettlementInfoRequest, GetEstimatedSettlementInfoResponse,
+    EstimatedSettlementInfo, GetEstimatedSettlementInfoRequest,
 };
-pub use get_funding_rate::{FundingRate, GetFundingRateRequest, GetFundingRateResponse};
-pub use get_funding_rate_history::{
-    FundingRateHistory, GetFundingRateHistoryRequest, GetFundingRateHistoryResponse,
-};
-pub use get_history_index_candles::{
-    GetHistoryIndexCandlesRequest, GetHistoryIndexCandlesResponse,
-};
+pub type GetEstimatedSettlementInfoResponse = OkxApiResponse<EstimatedSettlementInfo>;
+pub use get_funding_rate::{FundingRate, GetFundingRateRequest};
+pub type GetFundingRateResponse = OkxApiResponse<FundingRate>;
+pub use get_funding_rate_history::{FundingRateHistory, GetFundingRateHistoryRequest};
+pub type GetFundingRateHistoryResponse = OkxApiResponse<FundingRateHistory>;
+pub use get_history_index_candles::GetHistoryIndexCandlesRequest;
+pub type GetHistoryIndexCandlesResponse = OkxApiResponse<IndexCandle>;
 pub use get_history_mark_price_candles::{
-    BarSize, GetHistoryMarkPriceCandlesRequest, GetHistoryMarkPriceCandlesResponse, MarkPriceCandle,
+    BarSize, GetHistoryMarkPriceCandlesRequest, MarkPriceCandle,
 };
-pub use get_index_candles::{GetIndexCandlesRequest, GetIndexCandlesResponse, IndexCandle};
+pub type GetHistoryMarkPriceCandlesResponse = OkxApiResponse<MarkPriceCandle>;
+pub use get_index_candles::{GetIndexCandlesRequest, IndexCandle};
+pub type GetIndexCandlesResponse = OkxApiResponse<IndexCandle>;
 pub use get_index_components::{
-    GetIndexComponentsRequest, GetIndexComponentsResponse, IndexComponent, IndexComponentData,
+    GetIndexComponentsRequest, IndexComponent, IndexComponentData,
 };
-pub use get_index_tickers::{GetIndexTickersRequest, GetIndexTickersResponse, IndexTicker};
+pub type GetIndexComponentsResponse = OkxApiResponse<IndexComponentData>;
+pub use get_index_tickers::{GetIndexTickersRequest, IndexTicker};
+pub type GetIndexTickersResponse = OkxApiResponse<IndexTicker>;
 pub use get_instrument_tick_bands::{
-    GetInstrumentTickBandsRequest, GetInstrumentTickBandsResponse, InstrumentTickBandData,
-    TickBand, TickBandInstrumentType,
+    GetInstrumentTickBandsRequest, InstrumentTickBandData, TickBand, TickBandInstrumentType,
 };
-pub use get_instruments::{GetInstrumentsRequest, GetInstrumentsResponse, Instrument};
+pub type GetInstrumentTickBandsResponse = OkxApiResponse<InstrumentTickBandData>;
+pub use get_instruments::{GetInstrumentsRequest, Instrument};
+pub type GetInstrumentsResponse = OkxApiResponse<Instrument>;
 pub use get_insurance_fund::{
-    GetInsuranceFundRequest, GetInsuranceFundResponse, InsuranceFundData, InsuranceFundDetail,
+    GetInsuranceFundRequest, InsuranceFundData, InsuranceFundDetail,
 };
+pub type GetInsuranceFundResponse = OkxApiResponse<InsuranceFundData>;
 pub use get_interest_rate_loan_quota::{
-    BasicInterestRate, GetInterestRateLoanQuotaRequest, GetInterestRateLoanQuotaResponse,
-    InterestRateLoanQuotaData, RegularInterestRate, VipInterestRate,
+    BasicInterestRate, GetInterestRateLoanQuotaRequest, InterestRateLoanQuotaData,
+    RegularInterestRate, VipInterestRate,
 };
-pub use get_mark_price::{GetMarkPriceRequest, GetMarkPriceResponse, MarkPrice};
-pub use get_mark_price_candles::{GetMarkPriceCandlesRequest, GetMarkPriceCandlesResponse};
-pub use get_mark_price_candles_history::{
-    GetMarkPriceCandlesHistoryRequest, GetMarkPriceCandlesHistoryResponse,
-};
-pub use get_open_interest::{GetOpenInterestRequest, GetOpenInterestResponse, OpenInterest};
-pub use get_opt_summary::{GetOptSummaryRequest, GetOptSummaryResponse, OptSummary};
-pub use get_position_tiers::{GetPositionTiersRequest, GetPositionTiersResponse, PositionTier};
-pub use get_premium_history::{
-    GetPremiumHistoryRequest, GetPremiumHistoryResponse, PremiumHistory,
-};
-pub use get_price_limit::{GetPriceLimitRequest, GetPriceLimitResponse, PriceLimit};
+pub type GetInterestRateLoanQuotaResponse = OkxApiResponse<InterestRateLoanQuotaData>;
+pub use get_mark_price::{GetMarkPriceRequest, MarkPrice};
+pub type GetMarkPriceResponse = OkxApiResponse<MarkPrice>;
+pub use get_mark_price_candles::GetMarkPriceCandlesRequest;
+pub type GetMarkPriceCandlesResponse = OkxApiResponse<MarkPriceCandle>;
+pub use get_mark_price_candles_history::GetMarkPriceCandlesHistoryRequest;
+pub type GetMarkPriceCandlesHistoryResponse = OkxApiResponse<MarkPriceCandle>;
+pub use get_open_interest::{GetOpenInterestRequest, OpenInterest};
+pub type GetOpenInterestResponse = OkxApiResponse<OpenInterest>;
+pub use get_opt_summary::{GetOptSummaryRequest, OptSummary};
+pub type GetOptSummaryResponse = OkxApiResponse<OptSummary>;
+pub use get_position_tiers::{GetPositionTiersRequest, PositionTier};
+pub type GetPositionTiersResponse = OkxApiResponse<PositionTier>;
+pub use get_premium_history::{GetPremiumHistoryRequest, PremiumHistory};
+pub type GetPremiumHistoryResponse = OkxApiResponse<PremiumHistory>;
+pub use get_price_limit::{GetPriceLimitRequest, PriceLimit};
+pub type GetPriceLimitResponse = OkxApiResponse<PriceLimit>;
 pub use get_settlement_history::{
-    GetSettlementHistoryRequest, GetSettlementHistoryResponse, SettlementDetail, SettlementHistory,
+    GetSettlementHistoryRequest, SettlementDetail, SettlementHistory,
 };
-pub use get_time::{GetTimeResponse, TimeData};
-pub use get_underlying::{GetUnderlyingRequest, GetUnderlyingResponse, UnderlyingData};
+pub type GetSettlementHistoryResponse = OkxApiResponse<SettlementHistory>;
+pub use get_time::TimeData;
+pub type GetTimeResponse = OkxApiResponse<TimeData>;
+pub use get_underlying::{GetUnderlyingRequest, UnderlyingData};
+pub type GetUnderlyingResponse = OkxApiResponse<UnderlyingData>;

@@ -4,6 +4,7 @@ use super::client::RestClient;
 use crate::okx::{EndpointType, InstrumentType, RestResult};
 
 const PUBLIC_UNDERLYING_ENDPOINT: &str = "api/v5/public/underlying";
+
 /// Request parameters for getting underlying assets
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -11,17 +12,6 @@ pub struct GetUnderlyingRequest {
     /// Instrument type (required)
     #[serde(rename = "instType")]
     pub inst_type: InstrumentType,
-}
-
-/// Response for getting underlying assets
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetUnderlyingResponse {
-    /// Response code ("0" for success)
-    pub code: String,
-    /// Response message
-    pub msg: String,
-    /// Underlying assets data
-    pub data: Vec<UnderlyingData>,
 }
 
 /// Individual underlying asset data - array of underlying asset names
@@ -49,10 +39,9 @@ impl RestClient {
     pub async fn get_underlying(
         &self,
         request: GetUnderlyingRequest,
-    ) -> RestResult<GetUnderlyingResponse> {
-        self.send_request(
+    ) -> RestResult<Vec<UnderlyingData>> {
+        self.send_get_request(
             PUBLIC_UNDERLYING_ENDPOINT,
-            reqwest::Method::GET,
             Some(&request),
             EndpointType::PublicMarketData,
         )
@@ -62,9 +51,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use serde_json::json;
-
     use super::*;
+    use serde_json::json;
+    use crate::okx::response::OkxApiResponse;
 
     #[test]
     fn test_get_underlying_request_structure() {
@@ -128,7 +117,7 @@ mod tests {
             ]
         });
 
-        let response: GetUnderlyingResponse = serde_json::from_value(response_json).unwrap();
+        let response: OkxApiResponse<UnderlyingData> = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.msg, "");
         assert_eq!(response.data.len(), 1);
@@ -158,7 +147,7 @@ mod tests {
             ]
         });
 
-        let response: GetUnderlyingResponse = serde_json::from_value(response_json).unwrap();
+        let response: OkxApiResponse<UnderlyingData> = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 1);
         assert_eq!(response.data[0].assets.len(), 0);

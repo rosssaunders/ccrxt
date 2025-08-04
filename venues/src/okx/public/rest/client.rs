@@ -19,7 +19,13 @@ pub struct RestClient {
     /// The base URL for the OKX public REST API (e.g., "https://www.okx.com")
     ///
     /// This is used as the prefix for all endpoint requests.
+    /// Guaranteed to end with no trailing slash for consistent URL building.
     pub base_url: Cow<'static, str>,
+
+    /// Pre-formatted base URL with trailing slash for fast concatenation
+    ///
+    /// This avoids runtime string formatting in the hot path.
+    formatted_base: String,
 
     /// The underlying HTTP client used for making requests.
     ///
@@ -44,27 +50,34 @@ impl RestClient {
         client: Client,
         rate_limiter: RateLimiter,
     ) -> Self {
+        let base_url = base_url.into();
+        // Pre-format the base URL with trailing slash for fast concatenation
+        let formatted_base = format!("{}/", base_url.trim_end_matches('/'));
+        
         Self {
-            base_url: base_url.into(),
+            base_url,
+            formatted_base,
             client,
             rate_limiter,
         }
     }
 
-    /// Send a request to a public endpoint
+    /// Send a GET request to a public endpoint (optimized for HFT)
     ///
     /// # Arguments
     /// * `endpoint` - The API endpoint path (e.g., "api/v5/public/instruments")
-    /// * `method` - The HTTP method to use
-    /// * `params` - Optional struct of query/body parameters (must implement Serialize)
+    /// * `params` - Optional struct of query parameters (must implement Serialize)
     /// * `endpoint_type` - The endpoint type for rate limiting
     ///
     /// # Returns
     /// A result containing the response data or an error
-    pub async fn send_request<T, P>(
+    ///
+    /// # Note
+    /// All OKX public endpoints use GET, so this method is optimized specifically
+    /// for GET requests with minimal branching for HFT performance.
+    pub async fn send_get_request<T, P>(
         &self,
         endpoint: &str,
-        method: reqwest::Method,
         params: Option<&P>,
         endpoint_type: EndpointType,
     ) -> RestResult<T>
@@ -72,43 +85,29 @@ impl RestClient {
         T: DeserializeOwned,
         P: serde::Serialize + ?Sized,
     {
+        
         // Check rate limits before making the request
         self.rate_limiter
             .check_limits(endpoint_type.clone())
             .await
             .map_err(|e| Errors::Error(e.to_string()))?;
 
-        // Build the URL
-        let url = if endpoint.starts_with("http") {
-            endpoint.to_string()
-        } else {
-            format!("{}/{}", self.base_url, endpoint)
-        };
+        // Build URL - branch-free for HFT optimization
+        // Since public endpoints never include full URLs, we can always concatenate
+        let url = format!("{}{}", self.formatted_base, endpoint);
 
-        // Build the request
-        let mut request_builder = self.client.request(method.clone(), &url);
+        // Build the request - always GET for public endpoints
+        let mut request_builder = self.client.get(&url);
 
-        // Add parameters based on method
+        // Optimized parameter handling - all public endpoints use GET with query params
+        // Single branch for params, no method checking needed
         if let Some(params) = params {
-            let params_value = serde_json::to_value(params)
+            // Serialize directly to query params using serde_urlencoded
+            // This avoids JSON conversion and iteration overhead
+            // Note: reqwest handles empty query strings correctly, so no need to check
+            let query_string = serde_urlencoded::to_string(params)
                 .map_err(|e| Errors::Error(format!("Failed to serialize params: {e}")))?;
-            if method == reqwest::Method::GET {
-                // For GET requests, add parameters as query string
-                if let Some(params_obj) = params_value.as_object() {
-                    for (key, value) in params_obj {
-                        let value_str = match value {
-                            serde_json::Value::String(s) => s.clone(),
-                            serde_json::Value::Number(n) => n.to_string(),
-                            serde_json::Value::Bool(b) => b.to_string(),
-                            _ => value.to_string(),
-                        };
-                        request_builder = request_builder.query(&[(key, value_str)]);
-                    }
-                }
-            } else {
-                // For POST requests, add parameters as JSON body
-                request_builder = request_builder.json(&params_value);
-            }
+            request_builder = request_builder.query(&query_string);
         }
 
         // Add required headers
@@ -120,20 +119,18 @@ impl RestClient {
         // Increment rate limiter counter after successful request
         self.rate_limiter.increment_request(endpoint_type).await;
 
-        // Check if the response was successful
-        if !response.status().is_success() {
-            let status = response.status();
-            let error_text = response.text().await.map_err(Errors::HttpError)?;
-            return Err(Errors::Error(format!("HTTP {status}: {error_text}")));
+        // Get response status and body in one go to avoid multiple awaits
+        let status = response.status();
+        let response_text = response.text().await.map_err(Errors::HttpError)?;
+
+        // Check status after getting text to avoid branching on success path
+        if !status.is_success() {
+            return Err(Errors::Error(format!("HTTP {status}: {response_text}")));
         }
 
         // Parse the response
-        let response_text = response.text().await.map_err(Errors::HttpError)?;
-
-        let parsed_response: T = serde_json::from_str(&response_text)
-            .map_err(|e| Errors::Error(format!("Failed to parse response: {e}")))?;
-
-        Ok(parsed_response)
+        serde_json::from_str(&response_text)
+            .map_err(|e| Errors::Error(format!("Failed to parse response: {e}")))
     }
 }
 
@@ -149,6 +146,7 @@ mod tests {
         let rest_client = RestClient::new("https://www.okx.com", client, rate_limiter);
 
         assert_eq!(rest_client.base_url, "https://www.okx.com");
+        assert_eq!(rest_client.formatted_base, "https://www.okx.com/");
     }
 
     #[test]
@@ -156,10 +154,11 @@ mod tests {
         let client = reqwest::Client::new();
         let rate_limiter = RateLimiter::new();
 
-        let rest_client = RestClient::new("https://www.okx.com", client, rate_limiter);
+        let rest_client = RestClient::new("https://www.okx.com/", client, rate_limiter);
 
-        // Test that the client is properly initialized
-        assert_eq!(rest_client.base_url, "https://www.okx.com");
+        // Test that the client properly handles trailing slashes
+        assert_eq!(rest_client.base_url, "https://www.okx.com/");
+        assert_eq!(rest_client.formatted_base, "https://www.okx.com/");
     }
 
     #[tokio::test]

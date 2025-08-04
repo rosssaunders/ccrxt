@@ -11,12 +11,15 @@ pub struct GetInstrumentsRequest {
     /// Instrument type (required)
     #[serde(rename = "instType")]
     pub inst_type: InstrumentType,
+
     /// Underlying (for SWAP/FUTURES/OPTION)
     #[serde(rename = "uly", skip_serializing_if = "Option::is_none")]
     pub underlying: Option<String>,
+
     /// Instrument family (for FUTURES/SWAP/OPTION)
     #[serde(rename = "instFamily", skip_serializing_if = "Option::is_none")]
     pub inst_family: Option<String>,
+
     /// Instrument ID
     #[serde(rename = "instId", skip_serializing_if = "Option::is_none")]
     pub inst_id: Option<String>,
@@ -29,115 +32,138 @@ pub struct Instrument {
     /// Instrument type
     #[serde(rename = "instType")]
     pub inst_type: InstrumentType,
+
     /// Instrument ID (e.g., "BTC-USDT")
     #[serde(rename = "instId")]
     pub inst_id: String,
+
     /// Underlying (e.g., "BTC-USD")
     #[serde(rename = "uly")]
     pub underlying: Option<String>,
+
     /// Instrument family (e.g., "BTC-USD")
     #[serde(rename = "instFamily")]
     pub inst_family: Option<String>,
+
     /// Category (e.g., "1")
     pub category: String,
+
     /// Base currency (e.g., "BTC")
     #[serde(rename = "baseCcy")]
     pub base_ccy: String,
+
     /// Quote currency (e.g., "USDT")
     #[serde(rename = "quoteCcy")]
     pub quote_ccy: String,
+
     /// Settlement currency (e.g., "BTC")
     #[serde(rename = "settleCcy")]
     pub settle_ccy: String,
+
     /// Contract value (for derivatives)
     #[serde(rename = "ctVal")]
     pub ct_val: Option<String>,
+
     /// Contract multiplier (for derivatives)
     #[serde(rename = "ctMult")]
     pub ct_mult: Option<String>,
+
     /// Contract value currency (for derivatives)
     #[serde(rename = "ctValCcy")]
     pub ct_val_ccy: Option<String>,
+
     /// Option type ("C" for call, "P" for put)
     #[serde(rename = "optType")]
     pub opt_type: Option<String>,
+
     /// Strike price (for options)
     #[serde(rename = "stk")]
     pub strike: Option<String>,
+
     /// Listing time (Unix timestamp in milliseconds)
     #[serde(rename = "listTime")]
     pub list_time: String,
+
     /// End time of call auction (Unix timestamp in milliseconds)
     #[serde(rename = "auctionEndTime")]
     pub auction_end_time: Option<String>,
+
     /// Continuous trading switch time (Unix timestamp in milliseconds)
     #[serde(rename = "contTdSwTime")]
     pub cont_td_sw_time: Option<String>,
+
     /// Open type ("fix_price", "pre_quote", "call_auction")
     #[serde(rename = "openType")]
     pub open_type: Option<String>,
+
     /// Expiry time (Unix timestamp in milliseconds)
     #[serde(rename = "expTime")]
     pub exp_time: Option<String>,
+
     /// Leverage (for margin trading)
     pub lever: Option<String>,
+
     /// Tick size
     #[serde(rename = "tickSz")]
     pub tick_sz: String,
+
     /// Lot size
     #[serde(rename = "lotSz")]
     pub lot_sz: String,
+
     /// Minimum order size
     #[serde(rename = "minSz")]
     pub min_sz: String,
+
     /// Contract type ("linear" or "inverse")
     #[serde(rename = "ctType")]
     pub ct_type: Option<String>,
+
     /// Alias ("this_week", "next_week", "quarter", "next_quarter")
     pub alias: Option<String>,
+
     /// Instrument state
     pub state: InstrumentState,
+
     /// Trading rule types ("normal", "pre_market")
     #[serde(rename = "ruleType")]
     pub rule_type: Option<String>,
+
     /// Maximum order quantity of a single limit order
     #[serde(rename = "maxLmtSz")]
     pub max_lmt_sz: Option<String>,
+
     /// Maximum order quantity of a single market order
     #[serde(rename = "maxMktSz")]
     pub max_mkt_sz: Option<String>,
+
     /// Max USD amount for a single limit order
     #[serde(rename = "maxLmtAmt")]
     pub max_lmt_amt: Option<String>,
+
     /// Max USD amount for a single market order
     #[serde(rename = "maxMktAmt")]
     pub max_mkt_amt: Option<String>,
+
     /// Maximum order quantity of a single TWAP order
     #[serde(rename = "maxTwapSz")]
     pub max_twap_sz: Option<String>,
+
     /// Maximum order quantity of a single iceberg order
     #[serde(rename = "maxIcebergSz")]
     pub max_iceberg_sz: Option<String>,
+
     /// Maximum order quantity of a single trigger order
     #[serde(rename = "maxTriggerSz")]
     pub max_trigger_sz: Option<String>,
+
     /// Maximum order quantity of a single stop market order
     #[serde(rename = "maxStopSz")]
     pub max_stop_sz: Option<String>,
+
     /// Whether daily settlement for expiry feature is enabled
     #[serde(rename = "futureSettlement")]
     pub future_settlement: Option<bool>,
-}
-
-/// Response for getting instruments
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetInstrumentsResponse {
-    /// Response code ("0" for success)
-    pub code: String,
-    /// Response message
-    pub msg: String,
-    /// Instrument data
-    pub data: Vec<Instrument>,
 }
 
 impl RestClient {
@@ -157,10 +183,9 @@ impl RestClient {
     pub async fn get_instruments(
         &self,
         request: GetInstrumentsRequest,
-    ) -> RestResult<GetInstrumentsResponse> {
-        self.send_request(
+    ) -> RestResult<Vec<Instrument>> {
+        self.send_get_request(
             PUBLIC_INSTRUMENTS_ENDPOINT,
-            reqwest::Method::GET,
             Some(&request),
             EndpointType::PublicMarketData,
         )
@@ -170,9 +195,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use serde_json::json;
-
     use super::*;
+    use serde_json::json;
+    use crate::okx::response::OkxApiResponse;
 
     #[test]
     fn test_get_instruments_request_structure() {
@@ -244,7 +269,7 @@ mod tests {
             ]
         });
 
-        let response: GetInstrumentsResponse = serde_json::from_value(response_json).unwrap();
+        let response: OkxApiResponse<Instrument> = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 1);
         assert_eq!(response.data.first().unwrap().inst_id, "BTC-USDT");

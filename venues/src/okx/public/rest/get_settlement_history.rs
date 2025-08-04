@@ -4,6 +4,7 @@ use super::client::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
 const PUBLIC_SETTLEMENT_HISTORY_ENDPOINT: &str = "api/v5/public/settlement-history";
+
 /// Request parameters for getting settlement history
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -11,12 +12,15 @@ pub struct GetSettlementHistoryRequest {
     /// Instrument family
     #[serde(rename = "instFamily")]
     pub inst_family: String,
+
     /// Pagination of data to return records earlier than the requested ts (not included)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub after: Option<String>,
+
     /// Pagination of data to return records newer than the requested ts (not included)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub before: Option<String>,
+
     /// Number of results per request. The maximum is 100. The default is 100.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<String>,
@@ -29,6 +33,7 @@ pub struct SettlementDetail {
     /// Instrument ID
     #[serde(rename = "instId")]
     pub inst_id: String,
+
     /// Settlement price
     #[serde(rename = "settlePx")]
     pub settle_px: String,
@@ -40,19 +45,9 @@ pub struct SettlementDetail {
 pub struct SettlementHistory {
     /// Settlement time, Unix timestamp format in milliseconds, e.g. "1597026383085"
     pub ts: String,
+
     /// Settlement info
     pub details: Vec<SettlementDetail>,
-}
-
-/// Response for getting settlement history
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetSettlementHistoryResponse {
-    /// Response code ("0" for success)
-    pub code: String,
-    /// Response message
-    pub msg: String,
-    /// Settlement history data
-    pub data: Vec<SettlementHistory>,
 }
 
 impl RestClient {
@@ -72,10 +67,9 @@ impl RestClient {
     pub async fn get_settlement_history(
         &self,
         request: &GetSettlementHistoryRequest,
-    ) -> RestResult<GetSettlementHistoryResponse> {
-        self.send_request(
+    ) -> RestResult<Vec<SettlementHistory>> {
+        self.send_get_request(
             PUBLIC_SETTLEMENT_HISTORY_ENDPOINT,
-            reqwest::Method::GET,
             Some(request),
             EndpointType::PublicMarketData,
         )
@@ -85,9 +79,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use serde_json::json;
-
     use super::*;
+    use serde_json::json;
+    use crate::okx::response::OkxApiResponse;
 
     #[test]
     fn test_get_settlement_history_request_structure() {
@@ -214,7 +208,7 @@ mod tests {
             ]
         });
 
-        let response: GetSettlementHistoryResponse = serde_json::from_value(response_json).unwrap();
+        let response: OkxApiResponse<SettlementHistory> = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.msg, "");
         assert_eq!(response.data.len(), 2);

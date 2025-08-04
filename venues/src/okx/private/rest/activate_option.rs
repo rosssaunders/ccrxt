@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::{RestClient, common::OkxApiResponse};
+use super::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
 const ACCOUNT_ACTIVATE_OPTION_ENDPOINT: &str = "api/v5/account/activate-option";
@@ -25,6 +25,8 @@ impl RestClient {
     ///
     /// [docs]: https://www.okx.com/docs-v5/en/#trading-account-rest-api-activate-option
     ///
+    /// Rate Limit: 5 requests per 2 seconds
+    ///
     ///  # Arguments
     /// * `request` - The activate option request
     ///
@@ -32,12 +34,11 @@ impl RestClient {
     /// A result containing the activate option response or an error
     pub async fn activate_option(
         &self,
-        request: &ActivateOptionRequest,
-    ) -> RestResult<OkxApiResponse<ActivateOptionResponse>> {
-        self.send_request(
+        request: ActivateOptionRequest,
+    ) -> RestResult<ActivateOptionResponse> {
+        self.send_post_request(
             ACCOUNT_ACTIVATE_OPTION_ENDPOINT,
-            reqwest::Method::POST,
-            Some(request),
+            request,
             EndpointType::PrivateAccount,
         )
         .await
@@ -47,6 +48,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::okx::response::OkxApiResponse;
 
     #[test]
     fn test_activate_option_request_serialization() {

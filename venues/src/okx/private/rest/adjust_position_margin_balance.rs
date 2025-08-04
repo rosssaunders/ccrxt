@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::{RestClient, common::OkxApiResponse};
+use super::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
 const ACCOUNT_POSITION_MARGIN_BALANCE_ENDPOINT: &str = "api/v5/account/position/margin-balance";
@@ -58,6 +58,8 @@ impl RestClient {
     ///
     /// [docs]: https://www.okx.com/docs-v5/en/#trading-account-rest-api-increase-decrease-margin
     ///
+    /// Rate Limit: 20 requests per 2 seconds
+    ///
     /// # Arguments
     /// * `request` - The adjust position margin balance request
     ///
@@ -66,7 +68,7 @@ impl RestClient {
     pub async fn adjust_position_margin_balance(
         &self,
         request: &AdjustPositionMarginBalanceRequest,
-    ) -> RestResult<OkxApiResponse<AdjustPositionMarginBalanceResponse>> {
+    ) -> RestResult<AdjustPositionMarginBalanceResponse> {
         self.send_request(
             ACCOUNT_POSITION_MARGIN_BALANCE_ENDPOINT,
             reqwest::Method::POST,
@@ -80,6 +82,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::okx::response::OkxApiResponse;
 
     #[test]
     fn test_adjust_position_margin_balance_request_serialization() {

@@ -5,6 +5,7 @@ use crate::okx::{EndpointType, RestResult};
 
 const PUBLIC_DISCOUNT_RATE_INTEREST_FREE_QUOTA_ENDPOINT: &str =
     "api/v5/public/discount-rate-interest-free-quota";
+
 /// Request parameters for getting discount rate and interest-free quota
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -12,6 +13,7 @@ pub struct GetDiscountRateInterestFreeQuotaRequest {
     /// Currency
     #[serde(skip_serializing_if = "Option::is_none")]
     pub ccy: Option<String>,
+
     /// Discount level (Deprecated)
     #[serde(rename = "discountLv", skip_serializing_if = "Option::is_none")]
     pub discount_lv: Option<String>,
@@ -24,17 +26,22 @@ pub struct DiscountDetail {
     /// Discount rate
     #[serde(rename = "discountRate")]
     pub discount_rate: String,
+
     /// Tier - upper bound. "" means positive infinity
     #[serde(rename = "maxAmt")]
     pub max_amt: String,
+
     /// Tier - lower bound. The minimum is 0
     #[serde(rename = "minAmt")]
     pub min_amt: String,
+
     /// Tiers
     pub tier: String,
+
     /// Liquidation penalty rate
     #[serde(rename = "liqPenaltyRate")]
     pub liq_penalty_rate: String,
+
     /// Discount equity in currency for quick calculation if your equity is the maxAmt
     #[serde(rename = "disCcyEq")]
     pub dis_ccy_eq: String,
@@ -46,30 +53,24 @@ pub struct DiscountDetail {
 pub struct DiscountRateInterestFreeQuota {
     /// Currency
     pub ccy: String,
+
     /// Platform level collateralized borrow restriction
     #[serde(rename = "collateralRestrict")]
     pub collateral_restrict: bool,
+
     /// Interest-free quota
     pub amt: String,
+
     /// Discount rate level (Deprecated)
     #[serde(rename = "discountLv")]
     pub discount_lv: String,
+
     /// Minimum discount rate when it exceeds the maximum amount of the last tier
     #[serde(rename = "minDiscountRate")]
     pub min_discount_rate: String,
+
     /// New discount details
     pub details: Vec<DiscountDetail>,
-}
-
-/// Response for getting discount rate and interest-free quota
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetDiscountRateInterestFreeQuotaResponse {
-    /// Response code ("0" for success)
-    pub code: String,
-    /// Response message
-    pub msg: String,
-    /// Discount rate and interest-free quota data
-    pub data: Vec<DiscountRateInterestFreeQuota>,
 }
 
 impl RestClient {
@@ -89,10 +90,9 @@ impl RestClient {
     pub async fn get_discount_rate_interest_free_quota(
         &self,
         request: &GetDiscountRateInterestFreeQuotaRequest,
-    ) -> RestResult<GetDiscountRateInterestFreeQuotaResponse> {
-        self.send_request(
+    ) -> RestResult<Vec<DiscountRateInterestFreeQuota>> {
+        self.send_get_request(
             PUBLIC_DISCOUNT_RATE_INTEREST_FREE_QUOTA_ENDPOINT,
-            reqwest::Method::GET,
             Some(request),
             EndpointType::PublicMarketData,
         )
@@ -105,6 +105,7 @@ mod tests {
     use serde_json::json;
 
     use super::*;
+    use crate::okx::response::OkxApiResponse;
 
     #[test]
     fn test_get_discount_rate_request_structure() {
@@ -223,7 +224,7 @@ mod tests {
             ]
         });
 
-        let response: GetDiscountRateInterestFreeQuotaResponse =
+        let response: OkxApiResponse<DiscountRateInterestFreeQuota> =
             serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.msg, "");
@@ -268,7 +269,7 @@ mod tests {
             ]
         });
 
-        let response: GetDiscountRateInterestFreeQuotaResponse =
+        let response: OkxApiResponse<DiscountRateInterestFreeQuota> =
             serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 2);

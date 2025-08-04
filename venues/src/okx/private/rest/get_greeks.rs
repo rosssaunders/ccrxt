@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::{RestClient, common::OkxApiResponse};
+use super::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
 const ACCOUNT_GREEKS_ENDPOINT: &str = "api/v5/account/greeks";
@@ -59,10 +59,7 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the Greeks information or an error
-    pub async fn get_greeks(
-        &self,
-        request: &GetGreeksRequest,
-    ) -> RestResult<OkxApiResponse<Greeks>> {
+    pub async fn get_greeks(&self, request: &GetGreeksRequest) -> RestResult<Greeks> {
         self.send_request(
             ACCOUNT_GREEKS_ENDPOINT,
             reqwest::Method::GET,
@@ -76,6 +73,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::okx::response::OkxApiResponse;
 
     #[test]
     fn test_get_greeks_request_serialization() {

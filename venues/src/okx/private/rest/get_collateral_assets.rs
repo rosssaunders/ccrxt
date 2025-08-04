@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::{RestClient, common::OkxApiResponse};
+use super::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
 const ACCOUNT_COLLATERAL_ASSETS_ENDPOINT: &str = "api/v5/account/collateral-assets";
@@ -38,7 +38,7 @@ impl RestClient {
     pub async fn get_collateral_assets(
         &self,
         request: &GetCollateralAssetsRequest,
-    ) -> RestResult<OkxApiResponse<CollateralAsset>> {
+    ) -> RestResult<CollateralAsset> {
         self.send_request(
             ACCOUNT_COLLATERAL_ASSETS_ENDPOINT,
             reqwest::Method::GET,
@@ -52,6 +52,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::okx::response::OkxApiResponse;
 
     #[test]
     fn test_get_collateral_assets_request_serialization() {

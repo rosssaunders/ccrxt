@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::{RestClient, common::OkxApiResponse, place_order::PlaceOrderRequest};
+use super::{RestClient, place_order::PlaceOrderRequest};
 use crate::okx::{EndpointType, RestResult};
 
 const TRADE_BATCH_ORDERS_ENDPOINT: &str = "api/v5/trade/batch-orders";
@@ -50,7 +50,7 @@ impl RestClient {
     pub async fn place_batch_orders(
         &self,
         orders: &[PlaceOrderRequest],
-    ) -> RestResult<OkxApiResponse<PlaceBatchOrdersResponse>> {
+    ) -> RestResult<PlaceBatchOrdersResponse> {
         self.send_request(
             TRADE_BATCH_ORDERS_ENDPOINT,
             reqwest::Method::POST,
@@ -64,6 +64,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::okx::response::OkxApiResponse;
     use crate::okx::{OrderSide, OrderType};
 
     #[test]

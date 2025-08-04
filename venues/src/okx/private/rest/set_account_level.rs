@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::{RestClient, common::OkxApiResponse};
+use super::{RestClient};
 use crate::okx::{EndpointType, RestResult};
 
 const ACCOUNT_SET_ACCOUNT_LEVEL_ENDPOINT: &str = "api/v5/account/set-account-level";
@@ -34,7 +34,7 @@ impl RestClient {
     pub async fn set_account_level(
         &self,
         request: &SetAccountLevelRequest,
-    ) -> RestResult<OkxApiResponse<SetAccountLevelResponse>> {
+    ) -> RestResult<SetAccountLevelResponse> {
         self.send_request(
             ACCOUNT_SET_ACCOUNT_LEVEL_ENDPOINT,
             reqwest::Method::POST,
@@ -48,6 +48,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::okx::response::OkxApiResponse;
 
     #[test]
     fn test_set_account_level_request_serialization() {

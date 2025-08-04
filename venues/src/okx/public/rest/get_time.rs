@@ -12,17 +12,6 @@ pub struct TimeData {
     pub ts: String,
 }
 
-/// Response for getting system time
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetTimeResponse {
-    /// Response code ("0" for success)
-    pub code: String,
-    /// Response message
-    pub msg: String,
-    /// Time data
-    pub data: Vec<TimeData>,
-}
-
 impl RestClient {
     /// Get server time
     ///
@@ -34,10 +23,9 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing the current system time as Unix timestamp in milliseconds
-    pub async fn get_time(&self) -> RestResult<GetTimeResponse> {
-        self.send_request(
+    pub async fn get_time(&self) -> RestResult<Vec<TimeData>> {
+        self.send_get_request(
             GET_TIME_ENDPOINT,
-            reqwest::Method::GET,
             None::<&()>,
             EndpointType::PublicMarketData,
         )
@@ -47,9 +35,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use serde_json::json;
-
     use super::*;
+    use crate::okx::response::OkxApiResponse;
+    use serde_json::json;
 
     #[test]
     fn test_time_data_structure() {
@@ -73,7 +61,7 @@ mod tests {
             ]
         });
 
-        let response: GetTimeResponse = serde_json::from_value(response_json).unwrap();
+        let response: OkxApiResponse<TimeData> = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.msg, "");
         assert_eq!(response.data.len(), 1);
@@ -100,7 +88,7 @@ mod tests {
             "data": []
         });
 
-        let response: GetTimeResponse = serde_json::from_value(response_json).unwrap();
+        let response: OkxApiResponse<TimeData> = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 0);
     }
@@ -113,7 +101,7 @@ mod tests {
             "data": []
         });
 
-        let response: GetTimeResponse = serde_json::from_value(response_json).unwrap();
+        let response: OkxApiResponse<TimeData> = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "50001");
         assert_eq!(response.msg, "System error");
         assert_eq!(response.data.len(), 0);

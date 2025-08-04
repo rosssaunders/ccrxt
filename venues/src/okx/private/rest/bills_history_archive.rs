@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::{RestClient, common::OkxApiResponse};
+use super::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
 const ACCOUNT_BILLS_HISTORY_ARCHIVE_ENDPOINT: &str = "api/v5/account/bills-history-archive";
@@ -67,12 +67,11 @@ impl RestClient {
     /// A result containing the response or an error
     pub async fn post_bills_history_archive(
         &self,
-        request: &PostBillsHistoryArchiveRequest,
-    ) -> RestResult<OkxApiResponse<PostBillsHistoryArchiveResponse>> {
-        self.send_request(
+        request: PostBillsHistoryArchiveRequest,
+    ) -> RestResult<PostBillsHistoryArchiveResponse> {
+        self.send_post_request(
             ACCOUNT_BILLS_HISTORY_ARCHIVE_ENDPOINT,
-            reqwest::Method::POST,
-            Some(request),
+            request,
             EndpointType::PrivateAccount,
         )
         .await
@@ -87,12 +86,11 @@ impl RestClient {
     /// A result containing the response or an error
     pub async fn get_bills_history_archive(
         &self,
-        request: &GetBillsHistoryArchiveRequest,
-    ) -> RestResult<OkxApiResponse<GetBillsHistoryArchiveResponse>> {
-        self.send_request(
+        request: GetBillsHistoryArchiveRequest,
+    ) -> RestResult<GetBillsHistoryArchiveResponse> {
+        self.send_get_request(
             ACCOUNT_BILLS_HISTORY_ARCHIVE_ENDPOINT,
-            reqwest::Method::GET,
-            Some(request),
+            request,
             EndpointType::PrivateAccount,
         )
         .await
@@ -102,6 +100,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::okx::response::OkxApiResponse;
 
     #[test]
     fn test_post_bills_history_archive_request_serialization() {

@@ -4,6 +4,7 @@ use super::client::RestClient;
 use crate::okx::{Bar, EndpointType, RestResult};
 
 const MARKET_INDEX_CANDLES_ENDPOINT: &str = "api/v5/market/index-candles";
+
 /// Request parameters for getting index candlesticks
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -35,27 +36,21 @@ pub struct GetIndexCandlesRequest {
 pub struct IndexCandle {
     /// Opening time of the candlestick, Unix timestamp format in milliseconds
     pub ts: String,
+
     /// Open price
     pub o: String,
+
     /// Highest price
     pub h: String,
+
     /// Lowest price
     pub l: String,
+
     /// Close price
     pub c: String,
+
     /// The state of candlesticks. 0: uncompleted, 1: completed
     pub confirm: String,
-}
-
-/// Response for getting index candlesticks
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetIndexCandlesResponse {
-    /// Response code ("0" for success)
-    pub code: String,
-    /// Response message
-    pub msg: String,
-    /// Candlestick data - array format [ts,o,h,l,c,confirm]
-    pub data: Vec<Vec<String>>,
 }
 
 impl RestClient {
@@ -76,10 +71,9 @@ impl RestClient {
     pub async fn get_index_candles(
         &self,
         request: GetIndexCandlesRequest,
-    ) -> RestResult<GetIndexCandlesResponse> {
-        self.send_request(
+    ) -> RestResult<Vec<Vec<String>>> {
+        self.send_get_request(
             MARKET_INDEX_CANDLES_ENDPOINT,
-            reqwest::Method::GET,
             Some(&request),
             EndpointType::PublicMarketData,
         )
@@ -89,9 +83,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use serde_json::json;
-
     use super::*;
+    use serde_json::json;
+    use crate::okx::response::OkxApiResponse;
 
     #[test]
     fn test_get_index_candles_request_structure() {
@@ -148,7 +142,7 @@ mod tests {
             ]
         });
 
-        let response: GetIndexCandlesResponse = serde_json::from_value(response_json).unwrap();
+        let response: OkxApiResponse<Vec<String>> = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 2);
         assert_eq!(response.data[0].len(), 6); // [ts,o,h,l,c,confirm]

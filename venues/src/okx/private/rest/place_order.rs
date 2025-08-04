@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::{RestClient, common::OkxApiResponse};
+use super::RestClient;
 use crate::okx::{EndpointType, OrderSide, OrderType, RestResult};
 
 /// Endpoint URL for placing orders
@@ -134,10 +134,7 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the order placement response with order ID and status
-    pub async fn place_order(
-        &self,
-        request: PlaceOrderRequest,
-    ) -> RestResult<OkxApiResponse<PlaceOrderResponse>> {
+    pub async fn place_order(&self, request: PlaceOrderRequest) -> RestResult<PlaceOrderResponse> {
         self.send_post_request(PLACE_ORDER_ENDPOINT, request, EndpointType::PrivateTrading)
             .await
     }
@@ -146,6 +143,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::okx::response::OkxApiResponse;
 
     #[test]
     fn test_place_order_request_serialization() {

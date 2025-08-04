@@ -4,6 +4,7 @@ use super::client::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
 const MARKET_INDEX_TICKERS_ENDPOINT: &str = "api/v5/market/index-tickers";
+
 /// Request parameters for getting index tickers
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -11,6 +12,7 @@ pub struct GetIndexTickersRequest {
     /// Quote currency filter (USD/USDT/BTC/USDC)
     #[serde(rename = "quoteCcy", skip_serializing_if = "Option::is_none")]
     pub quote_ccy: Option<String>,
+
     /// Index ID filter (e.g., "BTC-USD")
     #[serde(rename = "instId", skip_serializing_if = "Option::is_none")]
     pub inst_id: Option<String>,
@@ -23,37 +25,33 @@ pub struct IndexTicker {
     /// Index ID (e.g., "BTC-USD")
     #[serde(rename = "instId")]
     pub inst_id: String,
+
     /// Latest index price
     #[serde(rename = "idxPx")]
     pub idx_px: String,
+
     /// Highest price in the past 24 hours
     #[serde(rename = "high24h")]
     pub high_24h: String,
+
     /// Lowest price in the past 24 hours
     #[serde(rename = "low24h")]
     pub low_24h: String,
+
     /// Open price in the past 24 hours
     #[serde(rename = "open24h")]
     pub open_24h: String,
+
     /// Open price in the UTC 0
     #[serde(rename = "sodUtc0")]
     pub sod_utc0: String,
+
     /// Open price in the UTC 8
     #[serde(rename = "sodUtc8")]
     pub sod_utc8: String,
+
     /// Index price update time, Unix timestamp format in milliseconds
     pub ts: String,
-}
-
-/// Response for getting index tickers
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetIndexTickersResponse {
-    /// Response code ("0" for success)
-    pub code: String,
-    /// Response message
-    pub msg: String,
-    /// Index ticker data
-    pub data: Vec<IndexTicker>,
 }
 
 impl RestClient {
@@ -73,10 +71,9 @@ impl RestClient {
     pub async fn get_index_tickers(
         &self,
         request: Option<GetIndexTickersRequest>,
-    ) -> RestResult<GetIndexTickersResponse> {
-        self.send_request(
+    ) -> RestResult<Vec<IndexTicker>> {
+        self.send_get_request(
             MARKET_INDEX_TICKERS_ENDPOINT,
-            reqwest::Method::GET,
             request.as_ref(),
             EndpointType::PublicMarketData,
         )
@@ -86,9 +83,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use serde_json::json;
-
     use super::*;
+    use serde_json::json;
+    use crate::okx::response::OkxApiResponse;
 
     #[test]
     fn test_get_index_tickers_request_structure() {
@@ -163,7 +160,7 @@ mod tests {
             ]
         });
 
-        let response: GetIndexTickersResponse = serde_json::from_value(response_json).unwrap();
+        let response: OkxApiResponse<IndexTicker> = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 1);
         assert_eq!(response.data.first().unwrap().inst_id, "BTC-USD");
@@ -213,7 +210,7 @@ mod tests {
             ]
         });
 
-        let response: GetIndexTickersResponse = serde_json::from_value(response_json).unwrap();
+        let response: OkxApiResponse<IndexTicker> = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 2);
 

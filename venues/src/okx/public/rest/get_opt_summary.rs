@@ -4,6 +4,7 @@ use super::client::RestClient;
 use crate::okx::{EndpointType, InstrumentType, RestResult};
 
 const PUBLIC_OPT_SUMMARY_ENDPOINT: &str = "api/v5/public/opt-summary";
+
 /// Request parameters for getting option summary data
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -12,10 +13,12 @@ pub struct GetOptSummaryRequest {
     /// Either uly or instFamily is required. If both are passed, instFamily will be used.
     #[serde(rename = "uly", skip_serializing_if = "Option::is_none")]
     pub underlying: Option<String>,
+
     /// Instrument family, only applicable to OPTION
     /// Either uly or instFamily is required. If both are passed, instFamily will be used.
     #[serde(rename = "instFamily", skip_serializing_if = "Option::is_none")]
     pub inst_family: Option<String>,
+
     /// Contract expiry date, the format is "YYMMDD", e.g. "200527"
     #[serde(rename = "expTime", skip_serializing_if = "Option::is_none")]
     pub exp_time: Option<String>,
@@ -28,65 +31,72 @@ pub struct OptSummary {
     /// Instrument type (OPTION)
     #[serde(rename = "instType")]
     pub inst_type: InstrumentType,
+
     /// Instrument ID, e.g. BTC-USD-200103-5500-C
     #[serde(rename = "instId")]
     pub inst_id: String,
+
     /// Underlying
     #[serde(rename = "uly")]
     pub underlying: String,
+
     /// Sensitivity of option price to uly price
     pub delta: String,
+
     /// The delta is sensitivity to uly price
     pub gamma: String,
+
     /// Sensitivity of option price to implied volatility
     pub vega: String,
+
     /// Sensitivity of option price to remaining maturity
     pub theta: String,
+
     /// Sensitivity of option price to uly price in BS mode
     #[serde(rename = "deltaBS")]
     pub delta_bs: String,
+
     /// The delta is sensitivity to uly price in BS mode
     #[serde(rename = "gammaBS")]
     pub gamma_bs: String,
+
     /// Sensitivity of option price to implied volatility in BS mode
     #[serde(rename = "vegaBS")]
     pub vega_bs: String,
+
     /// Sensitivity of option price to remaining maturity in BS mode
     #[serde(rename = "thetaBS")]
     pub theta_bs: String,
+
     /// Leverage
     pub lever: String,
+
     /// Mark volatility
     #[serde(rename = "markVol")]
     pub mark_vol: String,
+
     /// Bid volatility
     #[serde(rename = "bidVol")]
     pub bid_vol: String,
+
     /// Ask volatility
     #[serde(rename = "askVol")]
     pub ask_vol: String,
+
     /// Realized volatility (not currently used)
     #[serde(rename = "realVol")]
     pub real_vol: String,
+
     /// Implied volatility of at-the-money options
     #[serde(rename = "volLv")]
     pub vol_lv: String,
+
     /// Forward price
     #[serde(rename = "fwdPx")]
     pub fwd_px: String,
+
     /// Data update time, Unix timestamp format in milliseconds, e.g. 1597026383085
     pub ts: String,
-}
-
-/// Response for getting option summary data
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetOptSummaryResponse {
-    /// Response code ("0" for success)
-    pub code: String,
-    /// Response message
-    pub msg: String,
-    /// Option summary data
-    pub data: Vec<OptSummary>,
 }
 
 impl RestClient {
@@ -106,10 +116,9 @@ impl RestClient {
     pub async fn get_opt_summary(
         &self,
         request: GetOptSummaryRequest,
-    ) -> RestResult<GetOptSummaryResponse> {
-        self.send_request(
+    ) -> RestResult<Vec<OptSummary>> {
+        self.send_get_request(
             PUBLIC_OPT_SUMMARY_ENDPOINT,
-            reqwest::Method::GET,
             Some(&request),
             EndpointType::PublicMarketData,
         )
@@ -119,9 +128,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use serde_json::json;
-
     use super::*;
+    use serde_json::json;
+    use crate::okx::response::OkxApiResponse;
 
     #[test]
     fn test_get_opt_summary_request_with_underlying() {
@@ -256,7 +265,7 @@ mod tests {
             ]
         });
 
-        let response: GetOptSummaryResponse = serde_json::from_value(response_json).unwrap();
+        let response: OkxApiResponse<OptSummary> = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.msg, "");
         assert_eq!(response.data.len(), 1);
@@ -333,7 +342,7 @@ mod tests {
             ]
         });
 
-        let response: GetOptSummaryResponse = serde_json::from_value(response_json).unwrap();
+        let response: OkxApiResponse<OptSummary> = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.data.len(), 2);
         assert_eq!(
             response.data.first().unwrap().inst_id,

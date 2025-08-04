@@ -4,60 +4,78 @@ use super::client::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
 const MARKET_HISTORY_MARK_PRICE_CANDLES_ENDPOINT: &str = "api/v5/market/history-mark-price-candles";
+
 /// Bar size/timeframe for candlesticks
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub enum BarSize {
     /// 1 minute
     #[serde(rename = "1m")]
     OneMinute,
+
     /// 3 minutes
     #[serde(rename = "3m")]
     ThreeMinutes,
+
     /// 5 minutes
     #[serde(rename = "5m")]
     FiveMinutes,
+
     /// 15 minutes
     #[serde(rename = "15m")]
     FifteenMinutes,
+
     /// 30 minutes
     #[serde(rename = "30m")]
     ThirtyMinutes,
+
     /// 1 hour
     #[serde(rename = "1H")]
     OneHour,
+
     /// 2 hours
     #[serde(rename = "2H")]
     TwoHours,
+
     /// 4 hours
     #[serde(rename = "4H")]
     FourHours,
+
     /// 6 hours (Hong Kong time)
     #[serde(rename = "6H")]
     SixHours,
+
     /// 12 hours (Hong Kong time)
     #[serde(rename = "12H")]
     TwelveHours,
+
     /// 1 day (Hong Kong time)
     #[serde(rename = "1D")]
     OneDay,
+
     /// 1 week (Hong Kong time)
     #[serde(rename = "1W")]
     OneWeek,
+
     /// 1 month (Hong Kong time)
     #[serde(rename = "1M")]
     OneMonth,
+
     /// 6 hours (UTC time)
     #[serde(rename = "6Hutc")]
     SixHoursUtc,
+
     /// 12 hours (UTC time)
     #[serde(rename = "12Hutc")]
     TwelveHoursUtc,
+
     /// 1 day (UTC time)
     #[serde(rename = "1Dutc")]
     OneDayUtc,
+
     /// 1 week (UTC time)
     #[serde(rename = "1Wutc")]
     OneWeekUtc,
+
     /// 1 month (UTC time)
     #[serde(rename = "1Mutc")]
     OneMonthUtc,
@@ -75,15 +93,19 @@ pub struct GetHistoryMarkPriceCandlesRequest {
     /// Instrument ID (e.g., "BTC-USD-SWAP")
     #[serde(rename = "instId")]
     pub inst_id: String,
+
     /// Pagination of data to return records earlier than the requested ts
     #[serde(rename = "after", skip_serializing_if = "Option::is_none")]
     pub after: Option<String>,
+
     /// Pagination of data to return records newer than the requested ts
     #[serde(rename = "before", skip_serializing_if = "Option::is_none")]
     pub before: Option<String>,
+
     /// Bar size, default is 1m
     #[serde(rename = "bar", skip_serializing_if = "Option::is_none")]
     pub bar: Option<BarSize>,
+
     /// Number of results per request. Max 100, default 100
     #[serde(rename = "limit", skip_serializing_if = "Option::is_none")]
     pub limit: Option<String>,
@@ -95,27 +117,21 @@ pub struct GetHistoryMarkPriceCandlesRequest {
 pub struct MarkPriceCandle {
     /// Opening time of the candlestick, Unix timestamp in milliseconds
     pub ts: String,
+
     /// Open price
     pub o: String,
+
     /// Highest price
     pub h: String,
+
     /// Lowest price
     pub l: String,
+
     /// Close price
     pub c: String,
+
     /// The state of candlesticks. 0: uncompleted, 1: completed
     pub confirm: String,
-}
-
-/// Response for getting mark price candlesticks history
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetHistoryMarkPriceCandlesResponse {
-    /// Response code ("0" for success)
-    pub code: String,
-    /// Response message
-    pub msg: String,
-    /// Mark price candle data as arrays: [ts, o, h, l, c, confirm]
-    pub data: Vec<[String; 6]>,
 }
 
 impl RestClient {
@@ -135,10 +151,9 @@ impl RestClient {
     pub async fn get_history_mark_price_candles(
         &self,
         request: GetHistoryMarkPriceCandlesRequest,
-    ) -> RestResult<GetHistoryMarkPriceCandlesResponse> {
-        self.send_request(
+    ) -> RestResult<Vec<[String; 6]>> {
+        self.send_get_request(
             MARKET_HISTORY_MARK_PRICE_CANDLES_ENDPOINT,
-            reqwest::Method::GET,
             Some(&request),
             EndpointType::PublicMarketData,
         )
@@ -151,6 +166,7 @@ mod tests {
     use serde_json::json;
 
     use super::*;
+    use crate::okx::response::OkxApiResponse;
 
     #[test]
     fn test_bar_size_serialization() {
@@ -252,8 +268,7 @@ mod tests {
             ]
         });
 
-        let response: GetHistoryMarkPriceCandlesResponse =
-            serde_json::from_value(response_json).unwrap();
+        let response: OkxApiResponse<[String; 6]> = serde_json::from_value(response_json).unwrap();
 
         assert_eq!(response.code, "0");
         assert_eq!(response.msg, "");

@@ -4,6 +4,7 @@ use super::client::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
 const PUBLIC_ESTIMATED_SETTLEMENT_INFO_ENDPOINT: &str = "api/v5/public/estimated-settlement-info";
+
 /// Request parameters for getting estimated settlement info
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -19,25 +20,17 @@ pub struct EstimatedSettlementInfo {
     /// Instrument ID, e.g. "XRP-USDT-250307"
     #[serde(rename = "instId")]
     pub inst_id: String,
+
     /// Next settlement time, Unix timestamp format in milliseconds, e.g. "1597026383085"
     #[serde(rename = "nextSettleTime")]
     pub next_settle_time: String,
+
     /// Estimated settlement price
     #[serde(rename = "estSettlePx")]
     pub est_settle_px: String,
+
     /// Data return time, Unix timestamp format in milliseconds, e.g. "1597026383085"
     pub ts: String,
-}
-
-/// Response for getting estimated settlement info
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetEstimatedSettlementInfoResponse {
-    /// Response code ("0" for success)
-    pub code: String,
-    /// Response message
-    pub msg: String,
-    /// Estimated settlement info data
-    pub data: Vec<EstimatedSettlementInfo>,
 }
 
 impl RestClient {
@@ -59,10 +52,9 @@ impl RestClient {
     pub async fn get_estimated_settlement_info(
         &self,
         request: &GetEstimatedSettlementInfoRequest,
-    ) -> RestResult<GetEstimatedSettlementInfoResponse> {
-        self.send_request(
+    ) -> RestResult<Vec<EstimatedSettlementInfo>> {
+        self.send_get_request(
             PUBLIC_ESTIMATED_SETTLEMENT_INFO_ENDPOINT,
-            reqwest::Method::GET,
             Some(request),
             EndpointType::PublicMarketData,
         )
@@ -72,9 +64,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use serde_json::json;
-
     use super::*;
+    use serde_json::json;
+    use crate::okx::response::OkxApiResponse;
 
     #[test]
     fn test_get_estimated_settlement_info_request_structure() {
@@ -120,7 +112,7 @@ mod tests {
             ]
         });
 
-        let response: GetEstimatedSettlementInfoResponse =
+        let response: OkxApiResponse<EstimatedSettlementInfo> =
             serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.msg, "");
@@ -155,7 +147,7 @@ mod tests {
             "data": []
         });
 
-        let response: GetEstimatedSettlementInfoResponse =
+        let response: OkxApiResponse<EstimatedSettlementInfo> =
             serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.msg, "");

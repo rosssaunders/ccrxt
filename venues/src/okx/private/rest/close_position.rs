@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::{RestClient, common::OkxApiResponse};
+use super::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
 const TRADE_CLOSE_POSITION_ENDPOINT: &str = "api/v5/trade/close-position";
@@ -72,7 +72,7 @@ impl RestClient {
     pub async fn close_position(
         &self,
         request: &ClosePositionRequest,
-    ) -> RestResult<OkxApiResponse<ClosePositionResponse>> {
+    ) -> RestResult<ClosePositionResponse> {
         self.send_request(
             TRADE_CLOSE_POSITION_ENDPOINT,
             reqwest::Method::POST,
@@ -86,6 +86,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::okx::response::OkxApiResponse;
 
     #[test]
     fn test_close_position_request_serialization() {

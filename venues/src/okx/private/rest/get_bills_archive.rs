@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use super::{RestClient, common::OkxApiResponse};
+use super::RestClient;
 use crate::okx::{EndpointType, InstrumentType, RestResult};
 
 const ACCOUNT_BILLS_ARCHIVE_ENDPOINT: &str = "api/v5/account/bills-archive";
@@ -74,7 +74,7 @@ impl RestClient {
     pub async fn get_bills_archive(
         &self,
         request: &GetBillsArchiveRequest,
-    ) -> RestResult<OkxApiResponse<BillArchive>> {
+    ) -> RestResult<BillArchive> {
         self.send_request(
             ACCOUNT_BILLS_ARCHIVE_ENDPOINT,
             reqwest::Method::GET,

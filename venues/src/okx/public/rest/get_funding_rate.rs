@@ -22,60 +22,64 @@ pub struct FundingRate {
     /// Instrument type (SWAP)
     #[serde(rename = "instType")]
     pub inst_type: String,
+
     /// Instrument ID, e.g. "BTC-USD-SWAP" or "ANY"
     #[serde(rename = "instId")]
     pub inst_id: String,
+
     /// Funding rate mechanism (current_period, next_period - no longer supported)
     pub method: String,
+
     /// Formula type (noRate: old funding rate formula, withRate: new funding rate formula)
     #[serde(rename = "formulaType")]
     pub formula_type: String,
+
     /// Current funding rate
     #[serde(rename = "fundingRate")]
     pub funding_rate: String,
+
     /// Forecasted funding rate for the next period (no longer supported, will be "")
     #[serde(rename = "nextFundingRate")]
     pub next_funding_rate: String,
+
     /// Settlement time, Unix timestamp format in milliseconds, e.g. "1597026383085"
     #[serde(rename = "fundingTime")]
     pub funding_time: String,
+
     /// Forecasted funding time for the next period, Unix timestamp format in milliseconds, e.g. "1597026383085"
     #[serde(rename = "nextFundingTime")]
     pub next_funding_time: String,
+
     /// The lower limit of the funding rate
     #[serde(rename = "minFundingRate")]
     pub min_funding_rate: String,
+
     /// The upper limit of the funding rate
     #[serde(rename = "maxFundingRate")]
     pub max_funding_rate: String,
+
     /// Interest rate
     #[serde(rename = "interestRate")]
     pub interest_rate: String,
+
     /// Depth weighted amount (in the unit of quote currency)
     #[serde(rename = "impactValue")]
     pub impact_value: String,
+
     /// Settlement state of funding rate (processing, settled)
     #[serde(rename = "settState")]
     pub sett_state: String,
+
     /// If settState = processing, it is the funding rate that is being used for current settlement cycle.
     /// If settState = settled, it is the funding rate that is being used for previous settlement cycle
     #[serde(rename = "settFundingRate")]
     pub sett_funding_rate: String,
+
     /// Premium index. Formula: [(Best bid + Best ask) / 2 – Index price] / Index price
     pub premium: String,
+
     /// Data return time, Unix timestamp format in milliseconds, e.g. "1597026383085"
     pub ts: String,
-}
-
-/// Response for getting funding rate
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetFundingRateResponse {
-    /// Response code ("0" for success)
-    pub code: String,
-    /// Response message
-    pub msg: String,
-    /// Funding rate data
-    pub data: Vec<FundingRate>,
 }
 
 impl RestClient {
@@ -95,10 +99,9 @@ impl RestClient {
     pub async fn get_funding_rate(
         &self,
         request: &GetFundingRateRequest,
-    ) -> RestResult<GetFundingRateResponse> {
-        self.send_request(
+    ) -> RestResult<Vec<FundingRate>> {
+        self.send_get_request(
             PUBLIC_FUNDING_RATE_ENDPOINT,
-            reqwest::Method::GET,
             Some(request),
             EndpointType::PublicMarketData,
         )
@@ -108,9 +111,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use serde_json::json;
-
     use super::*;
+    use serde_json::json;
+    use crate::okx::response::OkxApiResponse;
 
     #[test]
     fn test_get_funding_rate_request_structure() {
@@ -205,7 +208,7 @@ mod tests {
             ]
         });
 
-        let response: GetFundingRateResponse = serde_json::from_value(response_json).unwrap();
+        let response: OkxApiResponse<FundingRate> = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.msg, "");
         assert_eq!(response.data.len(), 1);
@@ -271,7 +274,7 @@ mod tests {
             ]
         });
 
-        let response: GetFundingRateResponse = serde_json::from_value(response_json).unwrap();
+        let response: OkxApiResponse<FundingRate> = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 2);
         assert_eq!(response.data.first().unwrap().inst_id, "BTC-USD-SWAP");

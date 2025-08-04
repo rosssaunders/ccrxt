@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::{RestClient, common::OkxApiResponse};
+use super::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
 const ACCOUNT_MAX_WITHDRAWAL_ENDPOINT: &str = "api/v5/account/max-withdrawal";
@@ -47,7 +47,7 @@ impl RestClient {
     pub async fn get_max_withdrawal(
         &self,
         request: &GetMaxWithdrawalRequest,
-    ) -> RestResult<OkxApiResponse<MaxWithdrawal>> {
+    ) -> RestResult<MaxWithdrawal> {
         self.send_request(
             ACCOUNT_MAX_WITHDRAWAL_ENDPOINT,
             reqwest::Method::GET,
@@ -61,6 +61,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::okx::response::OkxApiResponse;
 
     #[test]
     fn test_get_max_withdrawal_request_serialization() {

@@ -4,6 +4,7 @@ use super::client::RestClient;
 use crate::okx::{EndpointType, InstrumentType, RestResult};
 
 const PUBLIC_ESTIMATED_PRICE_ENDPOINT: &str = "api/v5/public/estimated-price";
+
 /// Request parameters for getting estimated delivery/exercise price
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GetEstimatedPriceRequest {
@@ -19,25 +20,17 @@ pub struct EstimatedPriceData {
     /// Instrument type (FUTURES/OPTION)
     #[serde(rename = "instType")]
     pub inst_type: InstrumentType,
+
     /// Instrument ID, e.g. "BTC-USD-200214"
     #[serde(rename = "instId")]
     pub inst_id: String,
+
     /// Estimated delivery/exercise price
     #[serde(rename = "settlePx")]
     pub settle_px: String,
+
     /// Data return time, Unix timestamp format in milliseconds
     pub ts: String,
-}
-
-/// Response for getting estimated delivery/exercise price
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetEstimatedPriceResponse {
-    /// Response code ("0" for success)
-    pub code: String,
-    /// Response message
-    pub msg: String,
-    /// Estimated price data
-    pub data: Vec<EstimatedPriceData>,
 }
 
 impl RestClient {
@@ -59,10 +52,9 @@ impl RestClient {
     pub async fn get_estimated_price(
         &self,
         request: GetEstimatedPriceRequest,
-    ) -> RestResult<GetEstimatedPriceResponse> {
-        self.send_request(
+    ) -> RestResult<Vec<EstimatedPriceData>> {
+        self.send_get_request(
             PUBLIC_ESTIMATED_PRICE_ENDPOINT,
-            reqwest::Method::GET,
             Some(&request),
             EndpointType::PublicMarketData,
         )
@@ -72,9 +64,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use serde_json::json;
-
     use super::*;
+    use serde_json::json;
+    use crate::okx::response::OkxApiResponse;
 
     #[test]
     fn test_get_estimated_price_request_structure() {
@@ -136,7 +128,7 @@ mod tests {
             ]
         });
 
-        let response: GetEstimatedPriceResponse = serde_json::from_value(response_json).unwrap();
+        let response: OkxApiResponse<EstimatedPriceData> = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.msg, "");
         assert_eq!(response.data.len(), 1);
@@ -152,7 +144,7 @@ mod tests {
             "data": []
         });
 
-        let response: GetEstimatedPriceResponse = serde_json::from_value(response_json).unwrap();
+        let response: OkxApiResponse<EstimatedPriceData> = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.msg, "");
         assert_eq!(response.data.len(), 0);
@@ -166,7 +158,7 @@ mod tests {
             "data": []
         });
 
-        let response: GetEstimatedPriceResponse = serde_json::from_value(response_json).unwrap();
+        let response: OkxApiResponse<EstimatedPriceData> = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "51000");
         assert_eq!(response.msg, "Parameter {instId} can not be empty");
         assert_eq!(response.data.len(), 0);

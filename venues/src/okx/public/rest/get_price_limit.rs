@@ -21,30 +21,24 @@ pub struct PriceLimit {
     /// Instrument type
     #[serde(rename = "instType")]
     pub inst_type: InstrumentType,
+
     /// Instrument ID
     #[serde(rename = "instId")]
     pub inst_id: String,
+
     /// Highest buy limit (empty string when enabled is false)
     #[serde(rename = "buyLmt")]
     pub buy_lmt: String,
+
     /// Lowest sell limit (empty string when enabled is false)
     #[serde(rename = "sellLmt")]
     pub sell_lmt: String,
+
     /// Data return time, Unix timestamp format in milliseconds
     pub ts: String,
+
     /// Whether price limit is effective
     pub enabled: bool,
-}
-
-/// Response for getting price limit
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetPriceLimitResponse {
-    /// Response code ("0" for success)
-    pub code: String,
-    /// Response message
-    pub msg: String,
-    /// Price limit data
-    pub data: Vec<PriceLimit>,
 }
 
 impl RestClient {
@@ -64,10 +58,9 @@ impl RestClient {
     pub async fn get_price_limit(
         &self,
         request: GetPriceLimitRequest,
-    ) -> RestResult<GetPriceLimitResponse> {
-        self.send_request(
+    ) -> RestResult<Vec<PriceLimit>> {
+        self.send_get_request(
             GET_PRICE_LIMIT_ENDPOINT,
-            reqwest::Method::GET,
             Some(&request),
             EndpointType::PublicMarketData,
         )
@@ -77,9 +70,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use serde_json::json;
-
     use super::*;
+    use serde_json::json;
+    use crate::okx::response::OkxApiResponse;
 
     #[test]
     fn test_get_price_limit_request_structure() {
@@ -151,7 +144,7 @@ mod tests {
             ]
         });
 
-        let response: GetPriceLimitResponse = serde_json::from_value(response_json).unwrap();
+        let response: OkxApiResponse<PriceLimit> = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.msg, "");
         assert_eq!(response.data.len(), 1);

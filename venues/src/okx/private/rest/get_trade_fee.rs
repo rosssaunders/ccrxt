@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::{RestClient, common::OkxApiResponse};
+use super::RestClient;
 use crate::okx::{EndpointType, InstrumentType, RestResult};
 
 const ACCOUNT_TRADE_FEE_ENDPOINT: &str = "api/v5/account/trade-fee";
@@ -76,10 +76,7 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the trade fee or an error
-    pub async fn get_trade_fee(
-        &self,
-        request: &GetTradeFeeRequest,
-    ) -> RestResult<OkxApiResponse<TradeFee>> {
+    pub async fn get_trade_fee(&self, request: &GetTradeFeeRequest) -> RestResult<TradeFee> {
         self.send_request(
             ACCOUNT_TRADE_FEE_ENDPOINT,
             reqwest::Method::GET,
@@ -93,6 +90,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::okx::response::OkxApiResponse;
 
     #[test]
     fn test_get_trade_fee_request_serialization() {

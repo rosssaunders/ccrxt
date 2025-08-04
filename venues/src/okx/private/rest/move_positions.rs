@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::{RestClient, common::OkxApiResponse};
+use super::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
 const ACCOUNT_MOVE_POSITIONS_ENDPOINT: &str = "api/v5/account/move-positions";
@@ -64,7 +64,7 @@ impl RestClient {
     pub async fn move_positions(
         &self,
         request: &MovePositionsRequest,
-    ) -> RestResult<OkxApiResponse<MovePositionsResponse>> {
+    ) -> RestResult<MovePositionsResponse> {
         self.send_request(
             ACCOUNT_MOVE_POSITIONS_ENDPOINT,
             reqwest::Method::POST,
@@ -78,6 +78,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::okx::response::OkxApiResponse;
 
     #[test]
     fn test_move_positions_request_serialization() {

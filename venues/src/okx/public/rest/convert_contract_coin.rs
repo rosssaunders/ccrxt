@@ -76,19 +76,6 @@ pub struct ConvertContractCoinData {
     pub unit: String,
 }
 
-/// Response for converting between contract and coin
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ConvertContractCoinResponse {
-    /// Response code ("0" for success)
-    pub code: String,
-
-    /// Response message
-    pub msg: String,
-
-    /// Convert data
-    pub data: Vec<ConvertContractCoinData>,
-}
-
 impl RestClient {
     /// Convert crypto value to number of contracts, or vice versa
     ///
@@ -106,10 +93,9 @@ impl RestClient {
     pub async fn convert_contract_coin(
         &self,
         request: ConvertContractCoinRequest,
-    ) -> RestResult<ConvertContractCoinResponse> {
-        self.send_request(
+    ) -> RestResult<ConvertContractCoinData> {
+        self.send_get_request(
             CONVERT_CONTRACT_COIN_ENDPOINT,
-            reqwest::Method::GET,
             Some(&request),
             EndpointType::PublicMarketData,
         )
@@ -119,9 +105,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use serde_json::json;
-
     use super::*;
+    use crate::okx::response::OkxApiResponse;
+    use serde_json::json;
 
     #[test]
     fn test_convert_contract_coin_request_minimal() {
@@ -212,7 +198,8 @@ mod tests {
             ]
         });
 
-        let response: ConvertContractCoinResponse = serde_json::from_value(response_json).unwrap();
+        let response: OkxApiResponse<ConvertContractCoinData> =
+            serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.msg, "");
         assert_eq!(response.data.len(), 1);

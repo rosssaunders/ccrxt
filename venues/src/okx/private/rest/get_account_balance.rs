@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::{RestClient, common::OkxApiResponse};
+use super::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
 /// Endpoint URL for getting account balance
@@ -164,7 +164,7 @@ impl RestClient {
     pub async fn get_account_balance(
         &self,
         request: GetAccountBalanceRequest,
-    ) -> RestResult<OkxApiResponse<AccountBalance>> {
+    ) -> RestResult<AccountBalance> {
         self.send_get_request(
             GET_ACCOUNT_BALANCE_ENDPOINT,
             request,
@@ -177,6 +177,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::okx::response::OkxApiResponse;
 
     #[test]
     fn test_get_account_balance_request_serialization() {

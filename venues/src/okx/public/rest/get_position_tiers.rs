@@ -4,6 +4,7 @@ use super::client::RestClient;
 use crate::okx::{EndpointType, InstrumentType, RestResult};
 
 const PUBLIC_POSITION_TIERS_ENDPOINT: &str = "api/v5/public/position-tiers";
+
 /// Request parameters for getting position tiers
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -102,17 +103,6 @@ pub struct PositionTier {
     pub base_max_loan: Option<String>,
 }
 
-/// Response for getting position tiers
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetPositionTiersResponse {
-    /// Response code ("0" for success)
-    pub code: String,
-    /// Response message
-    pub msg: String,
-    /// Position tier data
-    pub data: Vec<PositionTier>,
-}
-
 impl RestClient {
     /// Get position tiers
     ///
@@ -131,10 +121,9 @@ impl RestClient {
     pub async fn get_position_tiers(
         &self,
         request: GetPositionTiersRequest,
-    ) -> RestResult<GetPositionTiersResponse> {
-        self.send_request(
+    ) -> RestResult<Vec<PositionTier>> {
+        self.send_get_request(
             PUBLIC_POSITION_TIERS_ENDPOINT,
-            reqwest::Method::GET,
             Some(&request),
             EndpointType::PublicMarketData,
         )
@@ -144,9 +133,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use serde_json::json;
-
     use super::*;
+    use serde_json::json;
+    use crate::okx::response::OkxApiResponse;
 
     #[test]
     fn test_get_position_tiers_request_structure() {
@@ -296,7 +285,7 @@ mod tests {
             ]
         });
 
-        let response: GetPositionTiersResponse = serde_json::from_value(response_json).unwrap();
+        let response: OkxApiResponse<PositionTier> = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 2);
         assert_eq!(response.data.first().unwrap().inst_id, "BTC-USD-SWAP");

@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::{RestClient, common::OkxApiResponse};
+use super::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
 const ACCOUNT_SPOT_MANUAL_BORROW_REPAY_ENDPOINT: &str = "api/v5/account/spot-manual-borrow-repay";
@@ -49,7 +49,7 @@ impl RestClient {
     pub async fn spot_manual_borrow_repay(
         &self,
         request: &SpotManualBorrowRepayRequest,
-    ) -> RestResult<OkxApiResponse<SpotManualBorrowRepayResponse>> {
+    ) -> RestResult<SpotManualBorrowRepayResponse> {
         self.send_request(
             ACCOUNT_SPOT_MANUAL_BORROW_REPAY_ENDPOINT,
             reqwest::Method::POST,
@@ -63,6 +63,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::okx::response::OkxApiResponse;
 
     #[test]
     fn test_spot_manual_borrow_repay_request_serialization() {

@@ -4,6 +4,7 @@ use super::client::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
 const PUBLIC_INTEREST_RATE_LOAN_QUOTA_ENDPOINT: &str = "api/v5/public/interest-rate-loan-quota";
+
 /// Request parameters for getting interest rate and loan quota
 /// This endpoint does not require any parameters
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
@@ -17,8 +18,10 @@ pub struct GetInterestRateLoanQuotaRequest {
 pub struct BasicInterestRate {
     /// Currency
     pub ccy: String,
+
     /// Daily rate
     pub rate: String,
+
     /// Max borrow
     pub quota: String,
 }
@@ -29,9 +32,11 @@ pub struct BasicInterestRate {
 pub struct VipInterestRate {
     /// VIP Level (e.g., "VIP1")
     pub level: String,
+
     /// Loan quota coefficient. Loan quota = quota * level
     #[serde(rename = "loanQuotaCoef")]
     pub loan_quota_coef: String,
+
     /// Interest rate discount (deprecated)
     #[serde(rename = "irDiscount")]
     pub ir_discount: String,
@@ -43,9 +48,11 @@ pub struct VipInterestRate {
 pub struct RegularInterestRate {
     /// Regular user Level (e.g., "Lv1")
     pub level: String,
+
     /// Loan quota coefficient. Loan quota = quota * level
     #[serde(rename = "loanQuotaCoef")]
     pub loan_quota_coef: String,
+
     /// Interest rate discount (deprecated)
     #[serde(rename = "irDiscount")]
     pub ir_discount: String,
@@ -57,21 +64,12 @@ pub struct RegularInterestRate {
 pub struct InterestRateLoanQuotaData {
     /// Basic interest rate
     pub basic: Vec<BasicInterestRate>,
+
     /// Interest info for VIP users
     pub vip: Vec<VipInterestRate>,
+
     /// Interest info for regular users
     pub regular: Vec<RegularInterestRate>,
-}
-
-/// Response for getting interest rate and loan quota
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetInterestRateLoanQuotaResponse {
-    /// Response code ("0" for success)
-    pub code: String,
-    /// Response message
-    pub msg: String,
-    /// Interest rate and loan quota data
-    pub data: Vec<InterestRateLoanQuotaData>,
 }
 
 impl RestClient {
@@ -85,12 +83,9 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing interest rate and loan quota information
-    pub async fn get_interest_rate_loan_quota(
-        &self,
-    ) -> RestResult<GetInterestRateLoanQuotaResponse> {
-        self.send_request(
+    pub async fn get_interest_rate_loan_quota(&self) -> RestResult<Vec<InterestRateLoanQuotaData>> {
+        self.send_get_request(
             PUBLIC_INTEREST_RATE_LOAN_QUOTA_ENDPOINT,
-            reqwest::Method::GET,
             None::<&GetInterestRateLoanQuotaRequest>,
             EndpointType::PublicMarketData,
         )
@@ -103,6 +98,7 @@ mod tests {
     use serde_json::json;
 
     use super::*;
+    use crate::okx::response::OkxApiResponse;
 
     #[test]
     fn test_get_interest_rate_loan_quota_request_structure() {
@@ -229,7 +225,7 @@ mod tests {
             ]
         });
 
-        let response: GetInterestRateLoanQuotaResponse =
+        let response: OkxApiResponse<InterestRateLoanQuotaData> =
             serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.msg, "");

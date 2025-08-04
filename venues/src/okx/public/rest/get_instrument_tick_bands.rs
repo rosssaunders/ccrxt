@@ -21,6 +21,7 @@ pub struct GetInstrumentTickBandsRequest {
     /// Instrument type (required, only OPTION is supported)
     #[serde(rename = "instType")]
     pub inst_type: TickBandInstrumentType,
+
     /// Instrument family (optional, only applicable to OPTION)
     #[serde(rename = "instFamily", skip_serializing_if = "Option::is_none")]
     pub inst_family: Option<String>,
@@ -33,23 +34,14 @@ pub struct TickBand {
     /// Minimum price while placing an order
     #[serde(rename = "minPx")]
     pub min_px: String,
+
     /// Maximum price while placing an order
     #[serde(rename = "maxPx")]
     pub max_px: String,
+
     /// Tick size, e.g. 0.0001
     #[serde(rename = "tickSz")]
     pub tick_sz: String,
-}
-
-/// Response for getting instrument tick bands
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetInstrumentTickBandsResponse {
-    /// Response code ("0" for success)
-    pub code: String,
-    /// Response message
-    pub msg: String,
-    /// Tick band data
-    pub data: Vec<InstrumentTickBandData>,
 }
 
 /// Individual instrument tick band data
@@ -59,9 +51,11 @@ pub struct InstrumentTickBandData {
     /// Instrument type
     #[serde(rename = "instType")]
     pub inst_type: String,
+
     /// Instrument family
     #[serde(rename = "instFamily")]
     pub inst_family: String,
+
     /// Tick size band
     #[serde(rename = "tickBand")]
     pub tick_band: Vec<TickBand>,
@@ -84,10 +78,9 @@ impl RestClient {
     pub async fn get_instrument_tick_bands(
         &self,
         request: GetInstrumentTickBandsRequest,
-    ) -> RestResult<GetInstrumentTickBandsResponse> {
-        self.send_request(
+    ) -> RestResult<Vec<InstrumentTickBandData>> {
+        self.send_get_request(
             GET_INSTRUMENT_TICK_BANDS_ENDPOINT,
-            reqwest::Method::GET,
             Some(&request),
             EndpointType::PublicMarketData,
         )
@@ -100,6 +93,7 @@ mod tests {
     use serde_json::json;
 
     use super::*;
+    use crate::okx::response::OkxApiResponse;
 
     #[test]
     fn test_get_instrument_tick_bands_request_structure() {
@@ -173,12 +167,12 @@ mod tests {
             ]
         });
 
-        let response: GetInstrumentTickBandsResponse =
+        let response: OkxApiResponse<InstrumentTickBandData> =
             serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 1);
 
-        let data = response.data.first().unwrap();
+        let data = &response.data[0];
         assert_eq!(data.inst_type, "OPTION");
         assert_eq!(data.inst_family, "BTC-USD");
         assert_eq!(data.tick_band.len(), 2);

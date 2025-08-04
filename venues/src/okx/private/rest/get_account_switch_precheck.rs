@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::{RestClient, common::OkxApiResponse};
+use super::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
 const ACCOUNT_SET_ACCOUNT_SWITCH_PRECHECK_ENDPOINT: &str =
@@ -38,7 +38,7 @@ impl RestClient {
     pub async fn get_account_switch_precheck(
         &self,
         request: &GetAccountSwitchPrecheckRequest,
-    ) -> RestResult<OkxApiResponse<AccountSwitchPrecheck>> {
+    ) -> RestResult<AccountSwitchPrecheck> {
         self.send_request(
             ACCOUNT_SET_ACCOUNT_SWITCH_PRECHECK_ENDPOINT,
             reqwest::Method::GET,
@@ -52,6 +52,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::okx::response::OkxApiResponse;
 
     #[test]
     fn test_get_account_switch_precheck_request_serialization() {

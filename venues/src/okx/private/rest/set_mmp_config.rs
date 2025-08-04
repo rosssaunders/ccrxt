@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::{RestClient, common::OkxApiResponse};
+use super::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
 const ACCOUNT_MMP_CONFIG_ENDPOINT: &str = "api/v5/account/mmp-config";
@@ -52,7 +52,7 @@ impl RestClient {
     pub async fn set_mmp_config(
         &self,
         request: &SetMmpConfigRequest,
-    ) -> RestResult<OkxApiResponse<SetMmpConfigResponse>> {
+    ) -> RestResult<SetMmpConfigResponse> {
         self.send_request(
             ACCOUNT_MMP_CONFIG_ENDPOINT,
             reqwest::Method::POST,
@@ -66,6 +66,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::okx::response::OkxApiResponse;
 
     #[test]
     fn test_set_mmp_config_request_serialization() {

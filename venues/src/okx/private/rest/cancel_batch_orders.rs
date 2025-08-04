@@ -1,6 +1,6 @@
 use serde::Deserialize;
 
-use super::{RestClient, cancel_order::CancelOrderRequest, common::OkxApiResponse};
+use super::{RestClient, cancel_order::CancelOrderRequest};
 use crate::okx::{EndpointType, RestResult};
 
 const TRADE_CANCEL_BATCH_ORDERS_ENDPOINT: &str = "api/v5/trade/cancel-batch-orders";
@@ -39,7 +39,7 @@ impl RestClient {
     pub async fn cancel_batch_orders(
         &self,
         orders: &[CancelOrderRequest],
-    ) -> RestResult<OkxApiResponse<CancelBatchOrdersResponse>> {
+    ) -> RestResult<CancelBatchOrdersResponse> {
         self.send_request(
             TRADE_CANCEL_BATCH_ORDERS_ENDPOINT,
             reqwest::Method::POST,
@@ -53,6 +53,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::okx::response::OkxApiResponse;
 
     #[test]
     fn test_cancel_batch_orders_serialization() {

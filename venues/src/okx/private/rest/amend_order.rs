@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::{RestClient, common::OkxApiResponse};
+use super::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
 const TRADE_AMEND_ORDER_ENDPOINT: &str = "api/v5/trade/amend-order";
@@ -91,10 +91,9 @@ impl RestClient {
     pub async fn amend_order(
         &self,
         request: &AmendOrderRequest,
-    ) -> RestResult<OkxApiResponse<AmendOrderResponse>> {
-        self.send_request(
+    ) -> RestResult<AmendOrderResponse> {
+        self.send_post_request(
             TRADE_AMEND_ORDER_ENDPOINT,
-            reqwest::Method::POST,
             Some(request),
             EndpointType::PrivateTrading,
         )
@@ -105,6 +104,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::okx::response::OkxApiResponse;
 
     #[test]
     fn test_amend_order_request_serialization() {

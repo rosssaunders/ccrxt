@@ -12,12 +12,15 @@ pub struct GetFundingRateHistoryRequest {
     /// Instrument ID, e.g. "BTC-USD-SWAP". Only applicable to SWAP
     #[serde(rename = "instId")]
     pub inst_id: String,
+
     /// Pagination of data to return records newer than the requested fundingTime
     #[serde(skip_serializing_if = "Option::is_none")]
     pub before: Option<String>,
+
     /// Pagination of data to return records earlier than the requested fundingTime
     #[serde(skip_serializing_if = "Option::is_none")]
     pub after: Option<String>,
+
     /// Number of results per request. The maximum is 100. The default is 100.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<String>,
@@ -31,34 +34,29 @@ pub struct FundingRateHistory {
     /// Instrument type, should be "SWAP"
     #[serde(rename = "instType")]
     pub inst_type: String,
+
     /// Instrument ID, e.g. "BTC-USD-SWAP"
     #[serde(rename = "instId")]
     pub inst_id: String,
+
     /// Formula type: "noRate" (old funding rate formula) or "withRate" (new funding rate formula)
     #[serde(rename = "formulaType")]
     pub formula_type: String,
+
     /// Predicted funding rate
     #[serde(rename = "fundingRate")]
     pub funding_rate: String,
+
     /// Actual funding rate
     #[serde(rename = "realizedRate")]
     pub realized_rate: String,
+
     /// Settlement time, Unix timestamp format in milliseconds, e.g. "1597026383085"
     #[serde(rename = "fundingTime")]
     pub funding_time: String,
+
     /// Funding rate mechanism (current_period, next_period)
     pub method: String,
-}
-
-/// Response for getting funding rate history
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetFundingRateHistoryResponse {
-    /// Response code ("0" for success)
-    pub code: String,
-    /// Response message
-    pub msg: String,
-    /// Funding rate history data
-    pub data: Vec<FundingRateHistory>,
 }
 
 impl RestClient {
@@ -79,10 +77,9 @@ impl RestClient {
     pub async fn get_funding_rate_history(
         &self,
         request: &GetFundingRateHistoryRequest,
-    ) -> RestResult<GetFundingRateHistoryResponse> {
-        self.send_request(
+    ) -> RestResult<Vec<FundingRateHistory>> {
+        self.send_get_request(
             PUBLIC_FUNDING_RATE_HISTORY_ENDPOINT,
-            reqwest::Method::GET,
             Some(request),
             EndpointType::PublicMarketData,
         )
@@ -92,9 +89,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use serde_json::json;
-
     use super::*;
+    use serde_json::json;
+    use crate::okx::response::OkxApiResponse;
 
     #[test]
     fn test_get_funding_rate_history_request_structure() {
@@ -193,7 +190,7 @@ mod tests {
             ]
         });
 
-        let response: GetFundingRateHistoryResponse =
+        let response: OkxApiResponse<FundingRateHistory> =
             serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.msg, "");

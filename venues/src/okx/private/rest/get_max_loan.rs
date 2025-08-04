@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::{RestClient, common::OkxApiResponse};
+use super::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
 const ACCOUNT_MAX_LOAN_ENDPOINT: &str = "api/v5/account/max-loan";
@@ -55,10 +55,7 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the max loan or an error
-    pub async fn get_max_loan(
-        &self,
-        request: &GetMaxLoanRequest,
-    ) -> RestResult<OkxApiResponse<MaxLoan>> {
+    pub async fn get_max_loan(&self, request: &GetMaxLoanRequest) -> RestResult<MaxLoan> {
         self.send_request(
             ACCOUNT_MAX_LOAN_ENDPOINT,
             reqwest::Method::GET,
@@ -72,6 +69,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::okx::response::OkxApiResponse;
 
     #[test]
     fn test_get_max_loan_request_serialization() {

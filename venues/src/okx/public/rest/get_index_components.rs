@@ -18,13 +18,17 @@ pub struct GetIndexComponentsRequest {
 pub struct IndexComponent {
     /// Name of Exchange
     pub exch: String,
+
     /// Name of Exchange Trading Pairs
     pub symbol: String,
+
     /// Price of Exchange Trading Pairs
     #[serde(rename = "symPx")]
     pub sym_px: String,
+
     /// Weights
     pub wgt: String,
+
     /// Price converted to index
     #[serde(rename = "cnvPx")]
     pub cnv_px: String,
@@ -36,23 +40,15 @@ pub struct IndexComponent {
 pub struct IndexComponentData {
     /// Index
     pub index: String,
+
     /// Latest Index Price
     pub last: String,
+
     /// Data generation time, Unix timestamp format in milliseconds
     pub ts: String,
+
     /// Components
     pub components: Vec<IndexComponent>,
-}
-
-/// Response for getting index components
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetIndexComponentsResponse {
-    /// Response code ("0" for success)
-    pub code: String,
-    /// Response message
-    pub msg: String,
-    /// Index component data
-    pub data: IndexComponentData,
 }
 
 impl RestClient {
@@ -72,10 +68,9 @@ impl RestClient {
     pub async fn get_index_components(
         &self,
         request: &GetIndexComponentsRequest,
-    ) -> RestResult<GetIndexComponentsResponse> {
-        self.send_request(
+    ) -> RestResult<IndexComponentData> {
+        self.send_get_request(
             MARKET_INDEX_COMPONENTS_ENDPOINT,
-            reqwest::Method::GET,
             Some(request),
             EndpointType::PublicMarketData,
         )
@@ -85,9 +80,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use serde_json::json;
-
     use super::*;
+    use serde_json::json;
+    use crate::okx::response::OkxApiResponse;
 
     #[test]
     fn test_get_index_components_request_structure() {
@@ -151,7 +146,7 @@ mod tests {
         let response_json = json!({
             "code": "0",
             "msg": "",
-            "data": {
+            "data": [{
                 "index": "BTC-USDT",
                 "last": "50000.0",
                 "ts": "1597026383085",
@@ -171,17 +166,17 @@ mod tests {
                         "cnvPx": "49950.0"
                     }
                 ]
-            }
+            }]
         });
 
-        let response: GetIndexComponentsResponse = serde_json::from_value(response_json).unwrap();
+        let response: OkxApiResponse<IndexComponentData> = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
-        assert_eq!(response.data.index, "BTC-USDT");
-        assert_eq!(response.data.last, "50000.0");
-        assert_eq!(response.data.ts, "1597026383085");
-        assert_eq!(response.data.components.len(), 2);
-        assert_eq!(response.data.components[0].exch, "Binance");
-        assert_eq!(response.data.components[1].exch, "Coinbase");
+        assert_eq!(response.data[0].index, "BTC-USDT");
+        assert_eq!(response.data[0].last, "50000.0");
+        assert_eq!(response.data[0].ts, "1597026383085");
+        assert_eq!(response.data[0].components.len(), 2);
+        assert_eq!(response.data[0].components[0].exch, "Binance");
+        assert_eq!(response.data[0].components[1].exch, "Coinbase");
     }
 
     #[test]

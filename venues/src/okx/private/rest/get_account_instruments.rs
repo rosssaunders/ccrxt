@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::{RestClient, common::OkxApiResponse};
+use super::RestClient;
 use crate::okx::{EndpointType, InstrumentType, RestResult};
 
 const ACCOUNT_INSTRUMENTS_ENDPOINT: &str = "api/v5/account/instruments";
@@ -137,7 +137,7 @@ impl RestClient {
     pub async fn get_account_instruments(
         &self,
         request: &GetAccountInstrumentsRequest,
-    ) -> RestResult<OkxApiResponse<AccountInstrument>> {
+    ) -> RestResult<AccountInstrument> {
         self.send_request(
             ACCOUNT_INSTRUMENTS_ENDPOINT,
             reqwest::Method::GET,
@@ -151,6 +151,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::okx::response::OkxApiResponse;
 
     #[test]
     fn test_get_account_instruments_request_serialization() {

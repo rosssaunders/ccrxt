@@ -4,38 +4,32 @@ use super::client::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
 const MARKET_HISTORY_MARK_PRICE_CANDLES_ENDPOINT: &str = "api/v5/market/history-mark-price-candles";
+
 /// Request parameters for getting mark price candlesticks history
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GetMarkPriceCandlesHistoryRequest {
     /// Instrument ID (e.g., "BTC-USD-SWAP"). Required.
     #[serde(rename = "instId")]
     pub inst_id: String,
+
     /// Pagination of data to return records earlier than the requested ts. Optional.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub after: Option<String>,
+
     /// Pagination of data to return records newer than the requested ts. Optional.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub before: Option<String>,
+
     /// Bar size, default is "1m". Optional.
     /// e.g. [1m/3m/5m/15m/30m/1H/2H/4H]
     /// Hong Kong time opening price k-line: [6H/12H/1D/1W/1M]
     /// UTC time opening price k-line: [6Hutc/12Hutc/1Dutc/1Wutc/1Mutc]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub bar: Option<String>,
+
     /// Number of results per request. Maximum is 100; default is 100. Optional.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<String>,
-}
-
-/// Response for getting mark price candlesticks history
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetMarkPriceCandlesHistoryResponse {
-    /// Response code ("0" for success)
-    pub code: String,
-    /// Response message
-    pub msg: String,
-    /// Candlestick data - arrays of [ts,o,h,l,c,confirm]
-    pub data: Vec<[String; 6]>,
 }
 
 impl RestClient {
@@ -51,14 +45,13 @@ impl RestClient {
     /// * `request` - The mark price candles history request parameters
     ///
     /// # Returns
-    /// Response containing historical mark price candlestick data
+    /// Response containing historical mark price candlestick data - arrays of [ts,o,h,l,c,confirm]
     pub async fn get_mark_price_candles_history(
         &self,
         request: GetMarkPriceCandlesHistoryRequest,
-    ) -> RestResult<GetMarkPriceCandlesHistoryResponse> {
-        self.send_request(
+    ) -> RestResult<Vec<[String; 6]>> {
+        self.send_get_request(
             MARKET_HISTORY_MARK_PRICE_CANDLES_ENDPOINT,
-            reqwest::Method::GET,
             Some(&request),
             EndpointType::PublicMarketData,
         )
@@ -71,6 +64,7 @@ mod tests {
     use serde_json::json;
 
     use super::*;
+    use crate::okx::response::OkxApiResponse;
 
     #[test]
     fn test_get_mark_price_candles_history_request_structure() {
@@ -105,7 +99,7 @@ mod tests {
             ]
         });
 
-        let response: GetMarkPriceCandlesHistoryResponse =
+        let response: OkxApiResponse<[String; 6]> =
             serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.msg, "");

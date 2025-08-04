@@ -4,38 +4,32 @@ use super::client::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
 const MARKET_MARK_PRICE_CANDLES_ENDPOINT: &str = "api/v5/market/mark-price-candles";
+
 /// Request parameters for getting mark price candlesticks
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GetMarkPriceCandlesRequest {
     /// Instrument ID (e.g., "BTC-USD-SWAP"). Required.
     #[serde(rename = "instId")]
     pub inst_id: String,
+
     /// Pagination of data to return records earlier than the requested ts. Optional.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub after: Option<String>,
+
     /// Pagination of data to return records newer than the requested ts. Optional.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub before: Option<String>,
+
     /// Bar size, default is "1m". Optional.
     /// e.g. [1m/3m/5m/15m/30m/1H/2H/4H]
     /// Hong Kong time opening price k-line: [6H/12H/1D/1W/1M/3M]
     /// UTC time opening price k-line: [6Hutc/12Hutc/1Dutc/1Wutc/1Mutc/3Mutc]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub bar: Option<String>,
+
     /// Number of results per request. Maximum is 100; default is 100. Optional.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<String>,
-}
-
-/// Response for getting mark price candlesticks
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetMarkPriceCandlesResponse {
-    /// Response code ("0" for success)
-    pub code: String,
-    /// Response message
-    pub msg: String,
-    /// Candlestick data - arrays of [ts,o,h,l,c,confirm]
-    pub data: Vec<[String; 6]>,
 }
 
 impl RestClient {
@@ -53,14 +47,13 @@ impl RestClient {
     /// * `request` - The mark price candles request parameters
     ///
     /// # Returns
-    /// Response containing mark price candlestick data
+    /// Response containing mark price candlestick data - arrays of [ts,o,h,l,c,confirm]
     pub async fn get_mark_price_candles(
         &self,
         request: GetMarkPriceCandlesRequest,
-    ) -> RestResult<GetMarkPriceCandlesResponse> {
-        self.send_request(
+    ) -> RestResult<Vec<[String; 6]>> {
+        self.send_get_request(
             MARKET_MARK_PRICE_CANDLES_ENDPOINT,
-            reqwest::Method::GET,
             Some(&request),
             EndpointType::PublicMarketData,
         )
@@ -70,9 +63,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use serde_json::json;
-
     use super::*;
+    use serde_json::json;
+    use crate::okx::response::OkxApiResponse;
 
     #[test]
     fn test_get_mark_price_candles_request_structure() {
@@ -110,7 +103,7 @@ mod tests {
             ]
         });
 
-        let response: GetMarkPriceCandlesResponse = serde_json::from_value(response_json).unwrap();
+        let response: OkxApiResponse<Vec<String>> = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.msg, "");
         assert_eq!(response.data.len(), 2);

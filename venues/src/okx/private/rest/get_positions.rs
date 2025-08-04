@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::{RestClient, common::OkxApiResponse};
+use super::RestClient;
 use crate::okx::{EndpointType, InstrumentType, RestResult};
 
 const ACCOUNT_POSITIONS_ENDPOINT: &str = "api/v5/account/positions";
@@ -205,10 +205,7 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the positions or an error
-    pub async fn get_positions(
-        &self,
-        request: &GetPositionsRequest,
-    ) -> RestResult<OkxApiResponse<Position>> {
+    pub async fn get_positions(&self, request: &GetPositionsRequest) -> RestResult<Position> {
         self.send_request(
             ACCOUNT_POSITIONS_ENDPOINT,
             reqwest::Method::GET,
@@ -222,6 +219,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::okx::response::OkxApiResponse;
 
     #[test]
     fn test_get_positions_request_serialization() {

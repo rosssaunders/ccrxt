@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::{RestClient, common::OkxApiResponse};
+use super::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
 const ACCOUNT_SPOT_BORROW_REPAY_HISTORY_ENDPOINT: &str = "api/v5/account/spot-borrow-repay-history";
@@ -59,7 +59,7 @@ impl RestClient {
     pub async fn get_spot_borrow_repay_history(
         &self,
         request: &GetSpotBorrowRepayHistoryRequest,
-    ) -> RestResult<OkxApiResponse<SpotBorrowRepayHistory>> {
+    ) -> RestResult<SpotBorrowRepayHistory> {
         self.send_request(
             ACCOUNT_SPOT_BORROW_REPAY_HISTORY_ENDPOINT,
             reqwest::Method::GET,
@@ -73,6 +73,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::okx::response::OkxApiResponse;
 
     #[test]
     fn test_get_spot_borrow_repay_history_request_serialization() {

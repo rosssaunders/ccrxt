@@ -4,6 +4,7 @@ use super::client::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
 const PUBLIC_PREMIUM_HISTORY_ENDPOINT: &str = "api/v5/public/premium-history";
+
 /// Request parameters for getting premium history
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -11,12 +12,15 @@ pub struct GetPremiumHistoryRequest {
     /// Instrument ID, e.g. "BTC-USDT-SWAP". Applicable to SWAP
     #[serde(rename = "instId")]
     pub inst_id: String,
+
     /// Pagination of data to return records earlier than the requested ts (not included)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub after: Option<String>,
+
     /// Pagination of data to return records newer than the requested ts (not included)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub before: Option<String>,
+
     /// Number of results per request. The maximum is 100. The default is 100.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<String>,
@@ -29,21 +33,12 @@ pub struct PremiumHistory {
     /// Instrument ID, e.g. "BTC-USDT-SWAP"
     #[serde(rename = "instId")]
     pub inst_id: String,
+
     /// Premium index. Formula: [(Best bid + Best ask) / 2 – Index price] / Index price
     pub premium: String,
+
     /// Data generation time, Unix timestamp format in milliseconds, e.g. "1597026383085"
     pub ts: String,
-}
-
-/// Response for getting premium history
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetPremiumHistoryResponse {
-    /// Response code ("0" for success)
-    pub code: String,
-    /// Response message
-    pub msg: String,
-    /// Premium history data
-    pub data: Vec<PremiumHistory>,
 }
 
 impl RestClient {
@@ -63,10 +58,9 @@ impl RestClient {
     pub async fn get_premium_history(
         &self,
         request: &GetPremiumHistoryRequest,
-    ) -> RestResult<GetPremiumHistoryResponse> {
-        self.send_request(
+    ) -> RestResult<Vec<PremiumHistory>> {
+        self.send_get_request(
             PUBLIC_PREMIUM_HISTORY_ENDPOINT,
-            reqwest::Method::GET,
             Some(request),
             EndpointType::PublicMarketData,
         )
@@ -76,9 +70,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use serde_json::json;
-
     use super::*;
+    use serde_json::json;
+    use crate::okx::response::OkxApiResponse;
 
     #[test]
     fn test_get_premium_history_request_structure() {
@@ -160,7 +154,7 @@ mod tests {
             ]
         });
 
-        let response: GetPremiumHistoryResponse = serde_json::from_value(response_json).unwrap();
+        let response: OkxApiResponse<PremiumHistory> = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.msg, "");
         assert_eq!(response.data.len(), 2);

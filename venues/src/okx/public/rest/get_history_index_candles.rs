@@ -30,17 +30,6 @@ pub struct GetHistoryIndexCandlesRequest {
     pub limit: Option<String>,
 }
 
-/// Response for getting index candlesticks history
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetHistoryIndexCandlesResponse {
-    /// Response code ("0" for success)
-    pub code: String,
-    /// Response message
-    pub msg: String,
-    /// Candlestick data - array format [ts,o,h,l,c,confirm]
-    pub data: Vec<Vec<String>>,
-}
-
 impl RestClient {
     /// Get index candlesticks history
     ///
@@ -54,14 +43,13 @@ impl RestClient {
     /// * `request` - The index candlesticks history request parameters
     ///
     /// # Returns
-    /// Response containing the historical candlestick data
+    /// Response containing the historical candlestick data - array format [ts,o,h,l,c,confirm]
     pub async fn get_history_index_candles(
         &self,
         request: GetHistoryIndexCandlesRequest,
-    ) -> RestResult<GetHistoryIndexCandlesResponse> {
-        self.send_request(
+    ) -> RestResult<Vec<Vec<String>>> {
+        self.send_get_request(
             GET_HISTORY_INDEX_CANDLES_ENDPOINT,
-            reqwest::Method::GET,
             Some(&request),
             EndpointType::PublicMarketDataHistory,
         )
@@ -74,6 +62,7 @@ mod tests {
     use serde_json::json;
 
     use super::*;
+    use crate::okx::response::OkxApiResponse;
 
     #[test]
     fn test_get_history_index_candles_request_structure() {
@@ -130,8 +119,7 @@ mod tests {
             ]
         });
 
-        let response: GetHistoryIndexCandlesResponse =
-            serde_json::from_value(response_json).unwrap();
+        let response: OkxApiResponse<Vec<String>> = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 2);
         assert_eq!(response.data[0].len(), 6); // [ts,o,h,l,c,confirm]

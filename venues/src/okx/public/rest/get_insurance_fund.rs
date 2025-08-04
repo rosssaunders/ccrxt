@@ -4,18 +4,23 @@ use super::client::RestClient;
 use crate::okx::{AdlType, EndpointType, InstrumentType, RestResult};
 
 const PUBLIC_INSURANCE_FUND_ENDPOINT: &str = "api/v5/public/insurance-fund";
+
 /// Insurance fund type for filtering insurance fund data
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum InsuranceFundType {
     /// Regular update
     RegularUpdate,
+
     /// Liquidation balance deposit
     LiquidationBalanceDeposit,
+
     /// Bankruptcy loss
     BankruptcyLoss,
+
     /// Platform revenue
     PlatformRevenue,
+
     /// ADL historical data
     Adl,
 }
@@ -26,24 +31,31 @@ pub struct GetInsuranceFundRequest {
     /// Instrument type (required)
     #[serde(rename = "instType")]
     pub inst_type: InstrumentType,
+
     /// Type of insurance fund data (optional)
     #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
     pub fund_type: Option<InsuranceFundType>,
+
     /// Underlying (conditional - required for FUTURES/SWAP/OPTION)
     #[serde(rename = "uly", skip_serializing_if = "Option::is_none")]
     pub underlying: Option<String>,
+
     /// Instrument family (conditional - required for FUTURES/SWAP/OPTION)
     #[serde(rename = "instFamily", skip_serializing_if = "Option::is_none")]
     pub inst_family: Option<String>,
+
     /// Currency (conditional - only applicable to MARGIN)
     #[serde(rename = "ccy", skip_serializing_if = "Option::is_none")]
     pub currency: Option<String>,
+
     /// Pagination - records newer than the requested ts
     #[serde(rename = "before", skip_serializing_if = "Option::is_none")]
     pub before: Option<String>,
+
     /// Pagination - records earlier than the requested ts
     #[serde(rename = "after", skip_serializing_if = "Option::is_none")]
     pub after: Option<String>,
+
     /// Number of results per request (max 100, default 100)
     #[serde(rename = "limit", skip_serializing_if = "Option::is_none")]
     pub limit: Option<String>,
@@ -54,43 +66,40 @@ pub struct GetInsuranceFundRequest {
 pub struct InsuranceFundDetail {
     /// The balance of insurance fund
     pub balance: String,
+
     /// The change in the balance of insurance fund
     /// Applicable when type is liquidation_balance_deposit, bankruptcy_loss or platform_revenue
     pub amt: String,
+
     /// The currency of insurance fund
     pub ccy: String,
+
     /// The type of insurance fund
     #[serde(rename = "type")]
     pub fund_type: String,
+
     /// Maximum insurance fund balance in the past eight hours
     /// Only applicable when type is adl
     #[serde(rename = "maxBal", skip_serializing_if = "Option::is_none")]
     pub max_balance: Option<String>,
+
     /// Timestamp when insurance fund balance reached maximum in the past eight hours
     /// Only applicable when type is adl
     #[serde(rename = "maxBalTs", skip_serializing_if = "Option::is_none")]
     pub max_balance_timestamp: Option<String>,
+
     /// Real-time insurance fund decline rate (compare balance and maxBal)
     /// Only applicable when type is adl (Deprecated)
     #[serde(rename = "decRate", skip_serializing_if = "Option::is_none")]
     pub decline_rate: Option<String>,
+
     /// ADL related events
     /// Only applicable when type is adl
     #[serde(rename = "adlType", skip_serializing_if = "Option::is_none")]
     pub adl_type: Option<AdlType>,
+
     /// The update timestamp of insurance fund (Unix timestamp in milliseconds)
     pub ts: String,
-}
-
-/// Response for getting insurance fund
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetInsuranceFundResponse {
-    /// Response code ("0" for success)
-    pub code: String,
-    /// Response message
-    pub msg: String,
-    /// Insurance fund data
-    pub data: Vec<InsuranceFundData>,
 }
 
 /// Insurance fund data
@@ -98,12 +107,15 @@ pub struct GetInsuranceFundResponse {
 pub struct InsuranceFundData {
     /// The total balance of insurance fund, in USD
     pub total: String,
+
     /// Instrument family (applicable to FUTURES/SWAP/OPTION)
     #[serde(rename = "instFamily", skip_serializing_if = "Option::is_none")]
     pub inst_family: Option<String>,
+
     /// Instrument type
     #[serde(rename = "instType")]
     pub inst_type: InstrumentType,
+
     /// Insurance fund details
     pub details: Vec<InsuranceFundDetail>,
 }
@@ -125,10 +137,9 @@ impl RestClient {
     pub async fn get_insurance_fund(
         &self,
         request: GetInsuranceFundRequest,
-    ) -> RestResult<GetInsuranceFundResponse> {
-        self.send_request(
+    ) -> RestResult<Vec<InsuranceFundData>> {
+        self.send_get_request(
             PUBLIC_INSURANCE_FUND_ENDPOINT,
-            reqwest::Method::GET,
             Some(&request),
             EndpointType::PublicInsuranceFund,
         )
@@ -138,9 +149,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use serde_json::json;
-
     use super::*;
+    use serde_json::json;
+    use crate::okx::response::OkxApiResponse;
 
     #[test]
     fn test_get_insurance_fund_request_minimal() {
@@ -282,7 +293,7 @@ mod tests {
             ]
         });
 
-        let response: GetInsuranceFundResponse = serde_json::from_value(response_json).unwrap();
+        let response: OkxApiResponse<InsuranceFundData> = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.msg, "");
         assert_eq!(response.data.len(), 1);

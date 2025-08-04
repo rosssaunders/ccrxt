@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::{RestClient, common::OkxApiResponse};
+use super::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
 const ACCOUNT_MAX_SIZE_ENDPOINT: &str = "api/v5/account/max-size";
@@ -66,10 +66,7 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the max size or an error
-    pub async fn get_max_size(
-        &self,
-        request: &GetMaxSizeRequest,
-    ) -> RestResult<OkxApiResponse<MaxSize>> {
+    pub async fn get_max_size(&self, request: &GetMaxSizeRequest) -> RestResult<MaxSize> {
         self.send_request(
             ACCOUNT_MAX_SIZE_ENDPOINT,
             reqwest::Method::GET,
@@ -83,6 +80,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::okx::response::OkxApiResponse;
 
     #[test]
     fn test_get_max_size_request_serialization() {

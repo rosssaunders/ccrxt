@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::{RestClient, common::OkxApiResponse};
+use super::RestClient;
 use crate::okx::{EndpointType, InstrumentType, RestResult};
 
 const ACCOUNT_POSITIONS_HISTORY_ENDPOINT: &str = "api/v5/account/positions-history";
@@ -117,7 +117,7 @@ impl RestClient {
     pub async fn get_positions_history(
         &self,
         request: &GetPositionsHistoryRequest,
-    ) -> RestResult<OkxApiResponse<PositionHistory>> {
+    ) -> RestResult<PositionHistory> {
         self.send_request(
             ACCOUNT_POSITIONS_HISTORY_ENDPOINT,
             reqwest::Method::GET,
@@ -131,6 +131,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::okx::response::OkxApiResponse;
 
     #[test]
     fn test_get_positions_history_request_serialization() {

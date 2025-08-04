@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::{RestClient, common::OkxApiResponse};
+use super::RestClient;
 use crate::okx::{EndpointType, InstrumentType, RestResult};
 
 const ACCOUNT_POSITION_TIERS_ENDPOINT: &str = "api/v5/account/position-tiers";
@@ -90,7 +90,7 @@ impl RestClient {
     pub async fn get_position_tiers(
         &self,
         request: &GetPositionTiersRequest,
-    ) -> RestResult<OkxApiResponse<PositionTier>> {
+    ) -> RestResult<PositionTier> {
         self.send_request(
             ACCOUNT_POSITION_TIERS_ENDPOINT,
             reqwest::Method::GET,
@@ -104,6 +104,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::okx::response::OkxApiResponse;
 
     #[test]
     fn test_get_position_tiers_request_serialization() {

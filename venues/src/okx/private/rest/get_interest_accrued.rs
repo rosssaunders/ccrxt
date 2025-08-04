@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::{RestClient, common::OkxApiResponse};
+use super::RestClient;
 use crate::okx::{EndpointType, InstrumentType, RestResult};
 
 const ACCOUNT_INTEREST_ACCRUED_ENDPOINT: &str = "api/v5/account/interest-accrued";
@@ -81,7 +81,7 @@ impl RestClient {
     pub async fn get_interest_accrued(
         &self,
         request: &GetInterestAccruedRequest,
-    ) -> RestResult<OkxApiResponse<InterestAccrued>> {
+    ) -> RestResult<InterestAccrued> {
         self.send_request(
             ACCOUNT_INTEREST_ACCRUED_ENDPOINT,
             reqwest::Method::GET,
@@ -95,6 +95,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::okx::response::OkxApiResponse;
 
     #[test]
     fn test_get_interest_accrued_request_serialization() {

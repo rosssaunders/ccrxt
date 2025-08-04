@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::{RestClient, common::OkxApiResponse};
+use super::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
 const ACCOUNT_INTEREST_RATE_ENDPOINT: &str = "api/v5/account/interest-rate";
@@ -37,7 +37,7 @@ impl RestClient {
     pub async fn get_interest_rate(
         &self,
         request: &GetInterestRateRequest,
-    ) -> RestResult<OkxApiResponse<InterestRate>> {
+    ) -> RestResult<InterestRate> {
         self.send_request(
             ACCOUNT_INTEREST_RATE_ENDPOINT,
             reqwest::Method::GET,
@@ -51,6 +51,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::okx::response::OkxApiResponse;
 
     #[test]
     fn test_get_interest_rate_request_serialization() {

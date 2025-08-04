@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::{RestClient, common::OkxApiResponse};
+use super::RestClient;
 use crate::okx::{EndpointType, OrderSide, OrderType, RestResult};
 
 const TRADE_ORDER_ENDPOINT: &str = "api/v5/trade/order";
@@ -146,14 +146,10 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the order details or an error
-    pub async fn get_order(
-        &self,
-        request: &GetOrderRequest,
-    ) -> RestResult<OkxApiResponse<OrderDetails>> {
-        self.send_request(
+    pub async fn get_order(&self, request: GetOrderRequest) -> RestResult<OrderDetails> {
+        self.send_get_request(
             TRADE_ORDER_ENDPOINT,
-            reqwest::Method::GET,
-            Some(request),
+            request,
             EndpointType::PrivateTrading,
         )
         .await
@@ -163,6 +159,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::okx::response::OkxApiResponse;
 
     #[test]
     fn test_get_order_request_serialization() {

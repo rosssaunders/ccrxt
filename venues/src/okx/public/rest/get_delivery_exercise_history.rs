@@ -4,6 +4,7 @@ use super::client::RestClient;
 use crate::okx::{DeliveryExerciseType, EndpointType, InstrumentType, RestResult};
 
 const PUBLIC_DELIVERY_EXERCISE_HISTORY_ENDPOINT: &str = "api/v5/public/delivery-exercise-history";
+
 /// Request parameters for getting delivery/exercise history
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -11,20 +12,25 @@ pub struct GetDeliveryExerciseHistoryRequest {
     /// Instrument type (required)
     #[serde(rename = "instType")]
     pub inst_type: InstrumentType,
+
     /// Underlying, only applicable to FUTURES/OPTION
     /// Either uly or instFamily is required. If both are passed, instFamily will be used.
     #[serde(rename = "uly", skip_serializing_if = "Option::is_none")]
     pub underlying: Option<String>,
+
     /// Instrument family, only applicable to FUTURES/OPTION
     /// Either uly or instFamily is required. If both are passed, instFamily will be used.
     #[serde(rename = "instFamily", skip_serializing_if = "Option::is_none")]
     pub inst_family: Option<String>,
+
     /// Pagination of data to return records earlier than the requested ts
     #[serde(skip_serializing_if = "Option::is_none")]
     pub after: Option<String>,
+
     /// Pagination of data to return records newer than the requested ts
     #[serde(skip_serializing_if = "Option::is_none")]
     pub before: Option<String>,
+
     /// Number of results per request. The maximum is 100. The default is 100.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<String>,
@@ -37,8 +43,10 @@ pub struct DeliveryExerciseDetail {
     /// Delivery/exercise contract ID
     #[serde(rename = "insId")]
     pub ins_id: String,
+
     /// Delivery/exercise price
     pub px: String,
+
     /// Type (delivery, exercised, expired_otm)
     #[serde(rename = "type")]
     pub delivery_type: DeliveryExerciseType,
@@ -50,19 +58,9 @@ pub struct DeliveryExerciseDetail {
 pub struct DeliveryExerciseHistory {
     /// Delivery/exercise time, Unix timestamp format in milliseconds, e.g. "1597026383085"
     pub ts: String,
+
     /// Delivery/exercise details
     pub details: Vec<DeliveryExerciseDetail>,
-}
-
-/// Response for getting delivery/exercise history
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetDeliveryExerciseHistoryResponse {
-    /// Response code ("0" for success)
-    pub code: String,
-    /// Response message
-    pub msg: String,
-    /// Delivery/exercise history data
-    pub data: Vec<DeliveryExerciseHistory>,
 }
 
 impl RestClient {
@@ -82,10 +80,9 @@ impl RestClient {
     pub async fn get_delivery_exercise_history(
         &self,
         request: &GetDeliveryExerciseHistoryRequest,
-    ) -> RestResult<GetDeliveryExerciseHistoryResponse> {
-        self.send_request(
+    ) -> RestResult<DeliveryExerciseHistory> {
+        self.send_get_request(
             PUBLIC_DELIVERY_EXERCISE_HISTORY_ENDPOINT,
-            reqwest::Method::GET,
             Some(request),
             EndpointType::PublicMarketData,
         )
@@ -95,9 +92,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use serde_json::json;
-
     use super::*;
+    use crate::okx::response::OkxApiResponse;
+    use serde_json::json;
 
     #[test]
     fn test_get_delivery_exercise_history_request_with_underlying() {
@@ -295,7 +292,7 @@ mod tests {
             ]
         });
 
-        let response: GetDeliveryExerciseHistoryResponse =
+        let response: OkxApiResponse<DeliveryExerciseHistory> =
             serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.msg, "");

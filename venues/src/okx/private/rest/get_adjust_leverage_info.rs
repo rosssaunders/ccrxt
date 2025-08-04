@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::{RestClient, common::OkxApiResponse};
+use super::RestClient;
 use crate::okx::{EndpointType, RestResult};
 
 const ACCOUNT_ADJUST_LEVERAGE_INFO_ENDPOINT: &str = "api/v5/account/adjust-leverage-info";
@@ -63,7 +63,7 @@ impl RestClient {
     pub async fn get_adjust_leverage_info(
         &self,
         request: &GetAdjustLeverageInfoRequest,
-    ) -> RestResult<OkxApiResponse<AdjustLeverageInfo>> {
+    ) -> RestResult<AdjustLeverageInfo> {
         self.send_request(
             ACCOUNT_ADJUST_LEVERAGE_INFO_ENDPOINT,
             reqwest::Method::GET,
@@ -77,6 +77,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::okx::response::OkxApiResponse;
 
     #[test]
     fn test_get_adjust_leverage_info_request_serialization() {
