@@ -61,9 +61,8 @@ impl RestClient {
         &self,
         request: &GetPendingOrdersRequest,
     ) -> RestResult<OrderDetails> {
-        self.send_request(
+        self.send_get_request(
             TRADE_ORDERS_PENDING_ENDPOINT,
-            reqwest::Method::GET,
             Some(request),
             EndpointType::PrivateTrading,
         )

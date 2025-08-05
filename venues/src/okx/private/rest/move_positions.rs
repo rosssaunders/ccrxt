@@ -65,9 +65,8 @@ impl RestClient {
         &self,
         request: &MovePositionsRequest,
     ) -> RestResult<MovePositionsResponse> {
-        self.send_request(
+        self.send_post_request(
             ACCOUNT_MOVE_POSITIONS_ENDPOINT,
-            reqwest::Method::POST,
             Some(request),
             EndpointType::PrivateAccount,
         )

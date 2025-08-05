@@ -119,9 +119,8 @@ impl RestClient {
     /// A result containing the account configuration or an error
     pub async fn get_account_config(&self) -> RestResult<AccountConfig> {
         let request = GetAccountConfigRequest {};
-        self.send_request(
+        self.send_get_request(
             ACCOUNT_CONFIG_ENDPOINT,
-            reqwest::Method::GET,
             Some(&request),
             EndpointType::PrivateAccount,
         )

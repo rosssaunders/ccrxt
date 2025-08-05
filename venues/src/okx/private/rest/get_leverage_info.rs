@@ -48,9 +48,8 @@ impl RestClient {
         &self,
         request: &GetLeverageInfoRequest,
     ) -> RestResult<LeverageInfo> {
-        self.send_request(
+        self.send_get_request(
             ACCOUNT_LEVERAGE_INFO_ENDPOINT,
-            reqwest::Method::GET,
             Some(request),
             EndpointType::PrivateAccount,
         )

@@ -158,9 +158,8 @@ impl RestClient {
     /// # Returns
     /// A result containing the bills or an error
     pub async fn get_bills(&self, request: &GetBillsRequest) -> RestResult<Bill> {
-        self.send_request(
+        self.send_get_request(
             ACCOUNT_BILLS_ENDPOINT,
-            reqwest::Method::GET,
             Some(request),
             EndpointType::PrivateAccount,
         )

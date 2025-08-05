@@ -40,9 +40,8 @@ impl RestClient {
         &self,
         orders: &[CancelOrderRequest],
     ) -> RestResult<CancelBatchOrdersResponse> {
-        self.send_request(
+        self.send_post_request(
             TRADE_CANCEL_BATCH_ORDERS_ENDPOINT,
-            reqwest::Method::POST,
             Some(orders),
             EndpointType::PrivateTrading,
         )

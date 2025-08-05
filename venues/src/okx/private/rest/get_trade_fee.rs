@@ -77,9 +77,8 @@ impl RestClient {
     /// # Returns
     /// A result containing the trade fee or an error
     pub async fn get_trade_fee(&self, request: &GetTradeFeeRequest) -> RestResult<TradeFee> {
-        self.send_request(
+        self.send_get_request(
             ACCOUNT_TRADE_FEE_ENDPOINT,
-            reqwest::Method::GET,
             Some(request),
             EndpointType::PrivateAccount,
         )

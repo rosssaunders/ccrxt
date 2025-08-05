@@ -38,9 +38,8 @@ impl RestClient {
         &self,
         request: &GetInterestRateRequest,
     ) -> RestResult<InterestRate> {
-        self.send_request(
+        self.send_get_request(
             ACCOUNT_INTEREST_RATE_ENDPOINT,
-            reqwest::Method::GET,
             Some(request),
             EndpointType::PrivateAccount,
         )

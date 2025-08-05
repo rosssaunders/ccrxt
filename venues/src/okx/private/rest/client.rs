@@ -22,7 +22,12 @@ pub struct RestClient {
     /// The base URL for the OKX private REST API (e.g., "https://www.okx.com")
     ///
     /// This is used as the prefix for all endpoint requests.
-    pub base_url: Cow<'static, str>,
+    base_url: Cow<'static, str>,
+
+    /// Pre-formatted base URL with trailing slash for fast concatenation
+    ///
+    /// This avoids runtime string formatting in the hot path.
+    formatted_base: String,
 
     /// The underlying HTTP client used for making requests.
     ///
@@ -62,14 +67,24 @@ impl RestClient {
         client: Client,
         rate_limiter: RateLimiter,
     ) -> Self {
+        let base_url = base_url.into();
+        // Pre-format the base URL with trailing slash for fast concatenation
+        let formatted_base = format!("{}/", base_url.trim_end_matches('/'));
+        
         Self {
-            base_url: base_url.into(),
+            base_url,
+            formatted_base,
             client,
             rate_limiter,
             api_key,
             api_secret,
             api_passphrase,
         }
+    }
+
+    /// Get the base URL
+    pub fn base_url(&self) -> &str {
+        &self.base_url
     }
 
     /// Sign a request for OKX private endpoints
@@ -107,108 +122,8 @@ impl RestClient {
         Ok(general_purpose::STANDARD.encode(mac.finalize().into_bytes()))
     }
 
-    /// Send a request to a private endpoint
-    ///
-    /// # Arguments
-    /// * `endpoint` - The API endpoint path (e.g., "api/v5/trade/order")
-    /// * `method` - The HTTP method to use
-    /// * `params` - Optional struct of query/body parameters (must implement Serialize)
-    /// * `endpoint_type` - The endpoint type for rate limiting
-    ///
-    /// # Returns
-    /// A result containing the deserialized response or an error
-    pub async fn send_request<T, P>(
-        &self,
-        endpoint: &str,
-        method: reqwest::Method,
-        params: Option<&P>,
-        endpoint_type: EndpointType,
-    ) -> RestResult<T>
-    where
-        T: DeserializeOwned,
-        P: Serialize + ?Sized,
-    {
-        // Check rate limits
-        self.rate_limiter
-            .check_limits(endpoint_type.clone())
-            .await?;
 
-        // Build URL
-        let url = format!("{}/{}", self.base_url.trim_end_matches('/'), endpoint);
-
-        // Create timestamp
-        let timestamp = Utc::now().format("%Y-%m-%dT%H:%M:%S%.3fZ").to_string();
-
-        // Prepare request
-        let mut request_builder = self.client.request(method.clone(), &url);
-
-        // Handle query parameters for GET requests or body for POST/PUT/DELETE
-        let (request_path, body) = if method == reqwest::Method::GET {
-            if let Some(params) = params {
-                let query_string = serde_urlencoded::to_string(params).map_err(|e| {
-                    Errors::Error(format!("Failed to serialize query parameters: {e}"))
-                })?;
-                if !query_string.is_empty() {
-                    request_builder = request_builder.query(&query_string);
-                    (format!("/{endpoint}?{query_string}"), String::new())
-                } else {
-                    (format!("/{endpoint}"), String::new())
-                }
-            } else {
-                (format!("/{endpoint}"), String::new())
-            }
-        } else {
-            let body = if let Some(params) = params {
-                serde_json::to_string(params)
-                    .map_err(|e| Errors::Error(format!("Failed to serialize request body: {e}")))?
-            } else {
-                String::new()
-            };
-
-            if !body.is_empty() {
-                request_builder = request_builder.body(body.clone());
-                request_builder = request_builder.header("Content-Type", "application/json");
-            }
-
-            (format!("/{endpoint}"), body)
-        };
-
-        // Create signature
-        let signature = self.sign_request(&timestamp, method.as_str(), &request_path, &body)?;
-
-        // Add required headers
-        let api_key = self.api_key.expose_secret();
-        let api_passphrase = self.api_passphrase.expose_secret();
-
-        request_builder = request_builder
-            .header("OK-ACCESS-KEY", api_key.as_str())
-            .header("OK-ACCESS-SIGN", &signature)
-            .header("OK-ACCESS-TIMESTAMP", &timestamp)
-            .header("OK-ACCESS-PASSPHRASE", api_passphrase.as_str());
-
-        // Send request
-        let response = request_builder.send().await?;
-
-        // Record request for rate limiting
-        self.rate_limiter.increment_request(endpoint_type).await;
-
-        // Handle response
-        if response.status().is_success() {
-            let response_text = response.text().await?;
-
-            // Parse the response
-            let parsed: crate::okx::response::OkxApiResponse<T> = serde_json::from_str(&response_text)
-                .map_err(|e| Errors::Error(format!("Failed to parse response: {e}")))?;
-
-            Ok(parsed)
-        } else {
-            let status = response.status();
-            let error_text = response.text().await?;
-            Err(Errors::Error(format!("HTTP {status}: {error_text}")))
-        }
-    }
-
-    /// Send a GET request to a private endpoint
+    /// Send a GET request to a private endpoint (optimized for HFT)
     ///
     /// # Arguments
     /// * `endpoint` - The API endpoint path (e.g., "api/v5/account/balance")
@@ -227,11 +142,67 @@ impl RestClient {
         T: DeserializeOwned,
         P: Serialize,
     {
-        self.send_request(endpoint, reqwest::Method::GET, Some(&params), endpoint_type)
-            .await
+        // Check rate limits
+        self.rate_limiter
+            .check_limits(endpoint_type.clone())
+            .await?;
+
+        // Build URL - branch-free
+        let url = format!("{}{}", self.formatted_base, endpoint);
+
+        // Create timestamp
+        let timestamp = Utc::now().format("%Y-%m-%dT%H:%M:%S%.3fZ").to_string();
+
+        // Prepare request - always GET
+        let mut request_builder = self.client.get(&url);
+
+        // Handle query parameters for GET requests
+        let query_string = serde_urlencoded::to_string(&params).map_err(|e| {
+            Errors::Error(format!("Failed to serialize query parameters: {e}"))
+        })?;
+        let request_path = if !query_string.is_empty() {
+            request_builder = request_builder.query(&query_string);
+            format!("/{endpoint}?{query_string}")
+        } else {
+            format!("/{endpoint}")
+        };
+
+        // Create signature for GET (no body)
+        let signature = self.sign_request(&timestamp, "GET", &request_path, "")?;
+
+        // Add required headers
+        let api_key = self.api_key.expose_secret();
+        let api_passphrase = self.api_passphrase.expose_secret();
+
+        request_builder = request_builder
+            .header("OK-ACCESS-KEY", api_key.as_str())
+            .header("OK-ACCESS-SIGN", &signature)
+            .header("OK-ACCESS-TIMESTAMP", &timestamp)
+            .header("OK-ACCESS-PASSPHRASE", api_passphrase.as_str());
+
+        // Send request
+        let response = request_builder.send().await?;
+
+        // Record request for rate limiting
+        self.rate_limiter.increment_request(endpoint_type).await;
+
+        // Get response status and body in one go
+        let status = response.status();
+        let response_text = response.text().await?;
+
+        // Check status after getting text
+        if !status.is_success() {
+            return Err(Errors::Error(format!("HTTP {status}: {response_text}")));
+        }
+
+        // Parse the response
+        let parsed: crate::okx::response::OkxApiResponse<T> = serde_json::from_str(&response_text)
+            .map_err(|e| Errors::Error(format!("Failed to parse response: {e}")))?;
+
+        Ok(parsed)
     }
 
-    /// Send a POST request to a private endpoint
+    /// Send a POST request to a private endpoint (optimized for HFT)
     ///
     /// # Arguments
     /// * `endpoint` - The API endpoint path (e.g., "api/v5/trade/order")
@@ -250,65 +221,63 @@ impl RestClient {
         T: DeserializeOwned,
         P: Serialize,
     {
-        self.send_request(
-            endpoint,
-            reqwest::Method::POST,
-            Some(&params),
-            endpoint_type,
-        )
-        .await
+        // Check rate limits
+        self.rate_limiter
+            .check_limits(endpoint_type.clone())
+            .await?;
+
+        // Build URL - branch-free
+        let url = format!("{}{}", self.formatted_base, endpoint);
+
+        // Create timestamp
+        let timestamp = Utc::now().format("%Y-%m-%dT%H:%M:%S%.3fZ").to_string();
+
+        // Prepare request - always POST
+        let mut request_builder = self.client.post(&url);
+
+        // Handle body for POST requests - always serialize for POST
+        let body = serde_json::to_string(&params)
+            .map_err(|e| Errors::Error(format!("Failed to serialize request body: {e}")))?;
+        request_builder = request_builder.body(body.clone());
+        request_builder = request_builder.header("Content-Type", "application/json");
+
+        let request_path = format!("/{endpoint}");
+
+        // Create signature for POST
+        let signature = self.sign_request(&timestamp, "POST", &request_path, &body)?;
+
+        // Add required headers
+        let api_key = self.api_key.expose_secret();
+        let api_passphrase = self.api_passphrase.expose_secret();
+
+        request_builder = request_builder
+            .header("OK-ACCESS-KEY", api_key.as_str())
+            .header("OK-ACCESS-SIGN", &signature)
+            .header("OK-ACCESS-TIMESTAMP", &timestamp)
+            .header("OK-ACCESS-PASSPHRASE", api_passphrase.as_str());
+
+        // Send request
+        let response = request_builder.send().await?;
+
+        // Record request for rate limiting
+        self.rate_limiter.increment_request(endpoint_type).await;
+
+        // Get response status and body in one go
+        let status = response.status();
+        let response_text = response.text().await?;
+
+        // Check status after getting text
+        if !status.is_success() {
+            return Err(Errors::Error(format!("HTTP {status}: {response_text}")));
+        }
+
+        // Parse the response
+        let parsed: crate::okx::response::OkxApiResponse<T> = serde_json::from_str(&response_text)
+            .map_err(|e| Errors::Error(format!("Failed to parse response: {e}")))?;
+
+        Ok(parsed)
     }
 
-    /// Send a PUT request to a private endpoint
-    ///
-    /// # Arguments
-    /// * `endpoint` - The API endpoint path
-    /// * `params` - Request body parameters
-    /// * `endpoint_type` - The endpoint type for rate limiting
-    ///
-    /// # Returns
-    /// A result containing the deserialized response or an error
-    pub async fn send_put_request<T, P>(
-        &self,
-        endpoint: &str,
-        params: P,
-        endpoint_type: EndpointType,
-    ) -> RestResult<T>
-    where
-        T: DeserializeOwned,
-        P: Serialize,
-    {
-        self.send_request(endpoint, reqwest::Method::PUT, Some(&params), endpoint_type)
-            .await
-    }
-
-    /// Send a DELETE request to a private endpoint
-    ///
-    /// # Arguments
-    /// * `endpoint` - The API endpoint path
-    /// * `params` - Optional query parameters or request body
-    /// * `endpoint_type` - The endpoint type for rate limiting
-    ///
-    /// # Returns
-    /// A result containing the deserialized response or an error
-    pub async fn send_delete_request<T, P>(
-        &self,
-        endpoint: &str,
-        params: P,
-        endpoint_type: EndpointType,
-    ) -> RestResult<T>
-    where
-        T: DeserializeOwned,
-        P: Serialize,
-    {
-        self.send_request(
-            endpoint,
-            reqwest::Method::DELETE,
-            Some(&params),
-            endpoint_type,
-        )
-        .await
-    }
 }
 
 #[cfg(test)]
@@ -351,7 +320,7 @@ mod tests {
             rate_limiter,
         );
 
-        assert_eq!(rest_client.base_url, "https://www.okx.com");
+        assert_eq!(rest_client.base_url(), "https://www.okx.com");
     }
 
     #[test]

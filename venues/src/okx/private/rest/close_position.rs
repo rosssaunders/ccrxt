@@ -73,9 +73,8 @@ impl RestClient {
         &self,
         request: &ClosePositionRequest,
     ) -> RestResult<ClosePositionResponse> {
-        self.send_request(
+        self.send_post_request(
             TRADE_CLOSE_POSITION_ENDPOINT,
-            reqwest::Method::POST,
             Some(request),
             EndpointType::PrivateTrading,
         )

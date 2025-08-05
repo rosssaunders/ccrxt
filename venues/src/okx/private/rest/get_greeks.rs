@@ -60,9 +60,8 @@ impl RestClient {
     /// # Returns
     /// A result containing the Greeks information or an error
     pub async fn get_greeks(&self, request: &GetGreeksRequest) -> RestResult<Greeks> {
-        self.send_request(
+        self.send_get_request(
             ACCOUNT_GREEKS_ENDPOINT,
-            reqwest::Method::GET,
             Some(request),
             EndpointType::PrivateAccount,
         )

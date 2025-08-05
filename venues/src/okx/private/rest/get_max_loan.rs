@@ -56,9 +56,8 @@ impl RestClient {
     /// # Returns
     /// A result containing the max loan or an error
     pub async fn get_max_loan(&self, request: &GetMaxLoanRequest) -> RestResult<MaxLoan> {
-        self.send_request(
+        self.send_get_request(
             ACCOUNT_MAX_LOAN_ENDPOINT,
-            reqwest::Method::GET,
             Some(request),
             EndpointType::PrivateAccount,
         )

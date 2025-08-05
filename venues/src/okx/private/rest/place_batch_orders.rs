@@ -51,9 +51,8 @@ impl RestClient {
         &self,
         orders: &[PlaceOrderRequest],
     ) -> RestResult<PlaceBatchOrdersResponse> {
-        self.send_request(
+        self.send_post_request(
             TRADE_BATCH_ORDERS_ENDPOINT,
-            reqwest::Method::POST,
             Some(orders),
             EndpointType::PrivateTrading,
         )

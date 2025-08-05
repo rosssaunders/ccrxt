@@ -36,9 +36,8 @@ impl RestClient {
     /// A result containing the reset MMP response or an error
 
     pub async fn mmp_reset(&self, request: &MmpResetRequest) -> RestResult<MmpResetResponse> {
-        self.send_request(
+        self.send_post_request(
             ACCOUNT_MMP_RESET_ENDPOINT,
-            reqwest::Method::POST,
             Some(request),
             EndpointType::PrivateAccount,
         )

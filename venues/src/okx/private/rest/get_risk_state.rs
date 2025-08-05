@@ -43,9 +43,8 @@ impl RestClient {
     /// # Returns
     /// A result containing the risk state or an error
     pub async fn get_risk_state(&self, request: &GetRiskStateRequest) -> RestResult<RiskState> {
-        self.send_request(
+        self.send_get_request(
             ACCOUNT_RISK_STATE_ENDPOINT,
-            reqwest::Method::GET,
             Some(request),
             EndpointType::PrivateAccount,
         )

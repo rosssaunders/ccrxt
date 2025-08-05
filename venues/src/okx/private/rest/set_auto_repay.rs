@@ -35,9 +35,8 @@ impl RestClient {
         &self,
         request: &SetAutoRepayRequest,
     ) -> RestResult<SetAutoRepayResponse> {
-        self.send_request(
+        self.send_post_request(
             ACCOUNT_SET_AUTO_REPAY_ENDPOINT,
-            reqwest::Method::POST,
             Some(request),
             EndpointType::PrivateAccount,
         )

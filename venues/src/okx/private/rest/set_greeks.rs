@@ -34,9 +34,8 @@ impl RestClient {
     /// # Returns
     /// A result containing the greeks response or an error
     pub async fn set_greeks(&self, request: &SetGreeksRequest) -> RestResult<SetGreeksResponse> {
-        self.send_request(
+        self.send_post_request(
             ACCOUNT_SET_GREEKS_ENDPOINT,
-            reqwest::Method::POST,
             Some(request),
             EndpointType::PrivateAccount,
         )

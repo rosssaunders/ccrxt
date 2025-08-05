@@ -20,7 +20,7 @@ pub struct RestClient {
     ///
     /// This is used as the prefix for all endpoint requests.
     /// Guaranteed to end with no trailing slash for consistent URL building.
-    pub base_url: Cow<'static, str>,
+    base_url: Cow<'static, str>,
 
     /// Pre-formatted base URL with trailing slash for fast concatenation
     ///
@@ -60,6 +60,11 @@ impl RestClient {
             client,
             rate_limiter,
         }
+    }
+
+    /// Get the base URL
+    pub fn base_url(&self) -> &str {
+        &self.base_url
     }
 
     /// Send a GET request to a public endpoint (optimized for HFT)
@@ -145,7 +150,7 @@ mod tests {
 
         let rest_client = RestClient::new("https://www.okx.com", client, rate_limiter);
 
-        assert_eq!(rest_client.base_url, "https://www.okx.com");
+        assert_eq!(rest_client.base_url(), "https://www.okx.com");
         assert_eq!(rest_client.formatted_base, "https://www.okx.com/");
     }
 
@@ -157,7 +162,7 @@ mod tests {
         let rest_client = RestClient::new("https://www.okx.com/", client, rate_limiter);
 
         // Test that the client properly handles trailing slashes
-        assert_eq!(rest_client.base_url, "https://www.okx.com/");
+        assert_eq!(rest_client.base_url(), "https://www.okx.com/");
         assert_eq!(rest_client.formatted_base, "https://www.okx.com/");
     }
 

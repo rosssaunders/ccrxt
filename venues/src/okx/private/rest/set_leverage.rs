@@ -57,9 +57,8 @@ impl RestClient {
         &self,
         request: &SetLeverageRequest,
     ) -> RestResult<SetLeverageResponse> {
-        self.send_request(
+        self.send_post_request(
             ACCOUNT_SET_LEVERAGE_ENDPOINT,
-            reqwest::Method::POST,
             Some(request),
             EndpointType::PrivateAccount,
         )

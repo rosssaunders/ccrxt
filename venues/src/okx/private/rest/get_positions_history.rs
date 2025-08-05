@@ -118,9 +118,8 @@ impl RestClient {
         &self,
         request: &GetPositionsHistoryRequest,
     ) -> RestResult<PositionHistory> {
-        self.send_request(
+        self.send_get_request(
             ACCOUNT_POSITIONS_HISTORY_ENDPOINT,
-            reqwest::Method::GET,
             Some(request),
             EndpointType::PrivateAccount,
         )

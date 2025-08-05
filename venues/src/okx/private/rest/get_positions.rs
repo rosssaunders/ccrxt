@@ -206,9 +206,8 @@ impl RestClient {
     /// # Returns
     /// A result containing the positions or an error
     pub async fn get_positions(&self, request: &GetPositionsRequest) -> RestResult<Position> {
-        self.send_request(
+        self.send_get_request(
             ACCOUNT_POSITIONS_ENDPOINT,
-            reqwest::Method::GET,
             Some(request),
             EndpointType::PrivateAccount,
         )

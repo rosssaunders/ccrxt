@@ -45,9 +45,8 @@ impl RestClient {
         &self,
         request: &SetIsolatedModeRequest,
     ) -> RestResult<SetIsolatedModeResponse> {
-        self.send_request(
+        self.send_post_request(
             ACCOUNT_SET_ISOLATED_MODE_ENDPOINT,
-            reqwest::Method::POST,
             Some(request),
             EndpointType::PrivateAccount,
         )

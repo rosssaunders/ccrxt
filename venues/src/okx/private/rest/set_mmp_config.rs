@@ -53,9 +53,8 @@ impl RestClient {
         &self,
         request: &SetMmpConfigRequest,
     ) -> RestResult<SetMmpConfigResponse> {
-        self.send_request(
+        self.send_post_request(
             ACCOUNT_MMP_CONFIG_ENDPOINT,
-            reqwest::Method::POST,
             Some(request),
             EndpointType::PrivateAccount,
         )

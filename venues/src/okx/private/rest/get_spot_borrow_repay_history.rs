@@ -60,9 +60,8 @@ impl RestClient {
         &self,
         request: &GetSpotBorrowRepayHistoryRequest,
     ) -> RestResult<SpotBorrowRepayHistory> {
-        self.send_request(
+        self.send_get_request(
             ACCOUNT_SPOT_BORROW_REPAY_HISTORY_ENDPOINT,
-            reqwest::Method::GET,
             Some(request),
             EndpointType::PrivateAccount,
         )

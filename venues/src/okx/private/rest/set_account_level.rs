@@ -35,9 +35,8 @@ impl RestClient {
         &self,
         request: &SetAccountLevelRequest,
     ) -> RestResult<SetAccountLevelResponse> {
-        self.send_request(
+        self.send_post_request(
             ACCOUNT_SET_ACCOUNT_LEVEL_ENDPOINT,
-            reqwest::Method::POST,
             Some(request),
             EndpointType::PrivateAccount,
         )

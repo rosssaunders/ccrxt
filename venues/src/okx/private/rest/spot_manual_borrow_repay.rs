@@ -50,9 +50,8 @@ impl RestClient {
         &self,
         request: &SpotManualBorrowRepayRequest,
     ) -> RestResult<SpotManualBorrowRepayResponse> {
-        self.send_request(
+        self.send_post_request(
             ACCOUNT_SPOT_MANUAL_BORROW_REPAY_ENDPOINT,
-            reqwest::Method::POST,
             Some(request),
             EndpointType::PrivateAccount,
         )

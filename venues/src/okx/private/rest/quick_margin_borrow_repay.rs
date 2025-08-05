@@ -56,9 +56,8 @@ impl RestClient {
         &self,
         request: &QuickMarginBorrowRepayRequest,
     ) -> RestResult<QuickMarginBorrowRepayResponse> {
-        self.send_request(
+        self.send_post_request(
             ACCOUNT_QUICK_MARGIN_BORROW_REPAY_ENDPOINT,
-            reqwest::Method::POST,
             Some(request),
             EndpointType::PrivateAccount,
         )

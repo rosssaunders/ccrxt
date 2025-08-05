@@ -39,9 +39,8 @@ impl RestClient {
         &self,
         request: &GetAccountSwitchPrecheckRequest,
     ) -> RestResult<AccountSwitchPrecheck> {
-        self.send_request(
+        self.send_get_request(
             ACCOUNT_SET_ACCOUNT_SWITCH_PRECHECK_ENDPOINT,
-            reqwest::Method::GET,
             Some(request),
             EndpointType::PrivateAccount,
         )

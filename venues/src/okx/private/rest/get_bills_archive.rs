@@ -75,9 +75,8 @@ impl RestClient {
         &self,
         request: &GetBillsArchiveRequest,
     ) -> RestResult<BillArchive> {
-        self.send_request(
+        self.send_get_request(
             ACCOUNT_BILLS_ARCHIVE_ENDPOINT,
-            reqwest::Method::GET,
             Some(request),
             EndpointType::PrivateAccount,
         )

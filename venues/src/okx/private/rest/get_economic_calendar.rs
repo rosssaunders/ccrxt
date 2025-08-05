@@ -98,9 +98,8 @@ impl RestClient {
         &self,
         request: Option<GetEconomicCalendarRequest>,
     ) -> RestResult<GetEconomicCalendarResponse> {
-        self.send_request(
+        self.send_get_request(
             PUBLIC_ECONOMIC_CALENDAR_ENDPOINT,
-            reqwest::Method::GET,
             request.as_ref(),
             EndpointType::PublicMarketData,
         )

@@ -152,9 +152,8 @@ impl RestClient {
     /// # Returns
     /// A result containing the recent fills or an error
     pub async fn get_fills(&self, request: &GetFillsRequest) -> RestResult<Fill> {
-        self.send_request(
+        self.send_get_request(
             TRADE_FILLS_ENDPOINT,
-            reqwest::Method::GET,
             Some(request),
             EndpointType::PrivateTrading,
         )

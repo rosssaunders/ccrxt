@@ -73,9 +73,8 @@ impl RestClient {
         &self,
         request: &GetInterestLimitsRequest,
     ) -> RestResult<InterestLimits> {
-        self.send_request(
+        self.send_get_request(
             ACCOUNT_INTEREST_LIMITS_ENDPOINT,
-            reqwest::Method::GET,
             Some(request),
             EndpointType::PrivateAccount,
         )

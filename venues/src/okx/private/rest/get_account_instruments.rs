@@ -138,9 +138,8 @@ impl RestClient {
         &self,
         request: &GetAccountInstrumentsRequest,
     ) -> RestResult<AccountInstrument> {
-        self.send_request(
+        self.send_get_request(
             ACCOUNT_INSTRUMENTS_ENDPOINT,
-            reqwest::Method::GET,
             Some(request),
             EndpointType::PrivateAccount,
         )

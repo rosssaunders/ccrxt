@@ -72,9 +72,8 @@ impl RestClient {
         &self,
         request: &GetOrderHistoryRequest,
     ) -> RestResult<OrderDetails> {
-        self.send_request(
+        self.send_get_request(
             TRADE_ORDERS_HISTORY_ENDPOINT,
-            reqwest::Method::GET,
             Some(request),
             EndpointType::PrivateTrading,
         )

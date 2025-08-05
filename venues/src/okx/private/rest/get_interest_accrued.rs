@@ -82,9 +82,8 @@ impl RestClient {
         &self,
         request: &GetInterestAccruedRequest,
     ) -> RestResult<InterestAccrued> {
-        self.send_request(
+        self.send_get_request(
             ACCOUNT_INTEREST_ACCRUED_ENDPOINT,
-            reqwest::Method::GET,
             Some(request),
             EndpointType::PrivateAccount,
         )

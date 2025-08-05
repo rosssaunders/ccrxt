@@ -130,9 +130,8 @@ impl RestClient {
         &self,
         request: &GetAccountPositionRiskRequest,
     ) -> RestResult<AccountPositionRisk> {
-        self.send_request(
+        self.send_get_request(
             ACCOUNT_ACCOUNT_POSITION_RISK_ENDPOINT,
-            reqwest::Method::GET,
             Some(request),
             EndpointType::PrivateAccount,
         )

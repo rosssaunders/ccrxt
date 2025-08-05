@@ -68,9 +68,8 @@ impl RestClient {
         &self,
         request: &GetMaxAvailSizeRequest,
     ) -> RestResult<MaxAvailSize> {
-        self.send_request(
+        self.send_get_request(
             ACCOUNT_MAX_AVAIL_SIZE_ENDPOINT,
-            reqwest::Method::GET,
             Some(request),
             EndpointType::PrivateAccount,
         )

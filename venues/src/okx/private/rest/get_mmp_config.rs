@@ -42,9 +42,8 @@ impl RestClient {
     /// # Returns
     /// A result containing the MMP config or an error
     pub async fn get_mmp_config(&self, request: &GetMmpConfigRequest) -> RestResult<MmpConfig> {
-        self.send_request(
+        self.send_get_request(
             ACCOUNT_MMP_CONFIG_ENDPOINT,
-            reqwest::Method::GET,
             Some(request),
             EndpointType::PrivateAccount,
         )

@@ -67,9 +67,8 @@ impl RestClient {
     /// # Returns
     /// A result containing the max size or an error
     pub async fn get_max_size(&self, request: &GetMaxSizeRequest) -> RestResult<MaxSize> {
-        self.send_request(
+        self.send_get_request(
             ACCOUNT_MAX_SIZE_ENDPOINT,
-            reqwest::Method::GET,
             Some(request),
             EndpointType::PrivateAccount,
         )

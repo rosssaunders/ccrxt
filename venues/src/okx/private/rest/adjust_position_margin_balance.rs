@@ -69,9 +69,8 @@ impl RestClient {
         &self,
         request: &AdjustPositionMarginBalanceRequest,
     ) -> RestResult<AdjustPositionMarginBalanceResponse> {
-        self.send_request(
+        self.send_post_request(
             ACCOUNT_POSITION_MARGIN_BALANCE_ENDPOINT,
-            reqwest::Method::POST,
             Some(request),
             EndpointType::PrivateAccount,
         )

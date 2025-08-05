@@ -48,9 +48,8 @@ impl RestClient {
         &self,
         request: &GetMaxWithdrawalRequest,
     ) -> RestResult<MaxWithdrawal> {
-        self.send_request(
+        self.send_get_request(
             ACCOUNT_MAX_WITHDRAWAL_ENDPOINT,
-            reqwest::Method::GET,
             Some(request),
             EndpointType::PrivateAccount,
         )

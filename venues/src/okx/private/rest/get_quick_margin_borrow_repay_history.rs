@@ -83,9 +83,8 @@ impl RestClient {
         &self,
         request: &GetQuickMarginBorrowRepayHistoryRequest,
     ) -> RestResult<QuickMarginBorrowRepayHistory> {
-        self.send_request(
+        self.send_get_request(
             ACCOUNT_QUICK_MARGIN_BORROW_REPAY_HISTORY_ENDPOINT,
-            reqwest::Method::GET,
             Some(request),
             EndpointType::PrivateAccount,
         )

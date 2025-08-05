@@ -39,9 +39,8 @@ impl RestClient {
         &self,
         request: &GetCollateralAssetsRequest,
     ) -> RestResult<CollateralAsset> {
-        self.send_request(
+        self.send_get_request(
             ACCOUNT_COLLATERAL_ASSETS_ENDPOINT,
-            reqwest::Method::GET,
             Some(request),
             EndpointType::PrivateAccount,
         )

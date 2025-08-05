@@ -91,9 +91,8 @@ impl RestClient {
         &self,
         request: &GetPositionTiersRequest,
     ) -> RestResult<PositionTier> {
-        self.send_request(
+        self.send_get_request(
             ACCOUNT_POSITION_TIERS_ENDPOINT,
-            reqwest::Method::GET,
             Some(request),
             EndpointType::PrivateAccount,
         )
