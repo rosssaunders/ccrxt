@@ -1,41 +1,4 @@
-use serde::{Deserialize, Serialize};
-
-use super::{RestClient, order::FuturesOrder};
-
-/// Request to list futures orders
-#[derive(Debug, Clone, Serialize, Deserialize, Default)]
-pub struct ListFuturesOrdersRequest {
-    /// Settlement currency
-    pub settle: String,
-
-    /// Order status (open, finished)
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub status: Option<String>,
-
-    /// Contract filter
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub contract: Option<String>,
-
-    /// Start time (Unix timestamp in seconds)
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub from: Option<i64>,
-
-    /// End time (Unix timestamp in seconds)
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub to: Option<i64>,
-
-    /// Maximum number of records to return (1-1000, default: 100)
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub limit: Option<i32>,
-
-    /// Page offset
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub offset: Option<i32>,
-
-    /// Count total records
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub count_total: Option<i32>,
-}
+use super::{RestClient, order::{FuturesOrder, ListFuturesOrdersRequest}};
 
 impl RestClient {
     /// List futures orders

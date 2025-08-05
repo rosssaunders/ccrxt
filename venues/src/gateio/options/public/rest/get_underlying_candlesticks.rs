@@ -1,31 +1,6 @@
-use serde::Serialize;
-
-use super::{RestClient, candlestick::UnderlyingCandlestick};
+use super::{RestClient, candlestick::{UnderlyingCandlestick, UnderlyingCandlesticksRequest}};
 
 const OPTIONS_UNDERLYING_CANDLESTICKS_ENDPOINT: &str = "/options/underlying/candlesticks";
-
-/// Request parameters for underlying candlesticks
-#[derive(Debug, Clone, Serialize, Default)]
-pub struct UnderlyingCandlesticksRequest {
-    /// Underlying asset name
-    pub underlying: String,
-
-    /// Start time (Unix timestamp in seconds)
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub from: Option<i64>,
-
-    /// End time (Unix timestamp in seconds)
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub to: Option<i64>,
-
-    /// Maximum number of records to return (1-1000, default 100)
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub limit: Option<i32>,
-
-    /// Interval time frame (10s, 1m, 5m, 15m, 30m, 1h, 4h, 8h, 1d, 7d, 30d)
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub interval: Option<String>,
-}
 
 impl RestClient {
     /// Mark price candlesticks of an underlying

@@ -1,40 +1,6 @@
-use serde::Serialize;
-
-use super::{RestClient, order::OptionsOrder};
+use super::{RestClient, order::{OptionsOrder, ListOptionsOrdersRequest}};
 
 const LIST_OPTIONS_ORDERS_ENDPOINT: &str = "/options/orders";
-
-/// Request parameters for listing options orders
-#[derive(Debug, Clone, Serialize, Default)]
-pub struct ListOptionsOrdersRequest {
-    /// Order status (open, finished)
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub status: Option<String>,
-
-    /// Contract filter
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub contract: Option<String>,
-
-    /// Underlying filter
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub underlying: Option<String>,
-
-    /// Start time (Unix timestamp in seconds)
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub from: Option<i64>,
-
-    /// End time (Unix timestamp in seconds)
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub to: Option<i64>,
-
-    /// Maximum number of records to return (1-1000, default: 100)
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub limit: Option<i32>,
-
-    /// Page offset
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub offset: Option<i32>,
-}
 
 impl RestClient {
     /// List options orders
