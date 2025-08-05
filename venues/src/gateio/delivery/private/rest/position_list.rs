@@ -21,7 +21,7 @@ impl RestClient {
     pub async fn get_delivery_positions(
         &self,
         params: DeliveryPositionsRequest,
-    ) -> crate::gateio::delivery::Result<Vec<DeliveryPosition>> {
+    ) -> crate::gateio::delivery::RestResult<Vec<DeliveryPosition>> {
         let endpoint = DELIVERY_POSITIONS_ENDPOINT.replace("{}", &params.settle);
         self.get_with_query(&endpoint, &params).await
     }
@@ -44,7 +44,7 @@ impl RestClient {
         &self,
         settle: &str,
         contract: &str,
-    ) -> crate::gateio::delivery::Result<DeliveryPosition> {
+    ) -> crate::gateio::delivery::RestResult<DeliveryPosition> {
         let endpoint = DELIVERY_POSITION_ENDPOINT
             .replacen("{}", settle, 1)
             .replacen("{}", contract, 1);

@@ -78,7 +78,7 @@ impl RestClient {
     pub async fn get_delivery_liquidation_history(
         &self,
         params: DeliveryLiquidationHistoryRequest,
-    ) -> crate::gateio::delivery::Result<Vec<DeliveryLiquidation>> {
+    ) -> crate::gateio::delivery::RestResult<Vec<DeliveryLiquidation>> {
         let endpoint = DELIVERY_LIQUIDATES_ENDPOINT.replace("{}", &params.settle);
         self.get_with_query(&endpoint, &params).await
     }

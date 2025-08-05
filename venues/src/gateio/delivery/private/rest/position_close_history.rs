@@ -74,7 +74,7 @@ impl RestClient {
     pub async fn get_delivery_position_close_history(
         &self,
         params: DeliveryPositionCloseHistoryRequest,
-    ) -> crate::gateio::delivery::Result<Vec<DeliveryPositionClose>> {
+    ) -> crate::gateio::delivery::RestResult<Vec<DeliveryPositionClose>> {
         let endpoint = DELIVERY_POSITION_CLOSE_ENDPOINT.replace("{}", &params.settle);
         self.get_with_query(&endpoint, &params).await
     }

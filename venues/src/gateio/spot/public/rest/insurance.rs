@@ -46,7 +46,7 @@ impl RestClient {
     pub async fn get_insurance_history(
         &self,
         params: InsuranceHistoryRequest,
-    ) -> crate::gateio::spot::Result<Vec<InsuranceRecord>> {
+    ) -> crate::gateio::spot::RestResult<Vec<InsuranceRecord>> {
         self.get_with_query("/spot/insurance_history", Some(&params))
             .await
     }

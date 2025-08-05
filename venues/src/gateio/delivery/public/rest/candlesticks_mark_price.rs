@@ -20,7 +20,7 @@ impl RestClient {
     pub async fn get_delivery_mark_price_candlesticks(
         &self,
         params: DeliveryCandlesticksRequest,
-    ) -> crate::gateio::delivery::Result<Vec<DeliveryCandlestick>> {
+    ) -> crate::gateio::delivery::RestResult<Vec<DeliveryCandlestick>> {
         let endpoint = DELIVERY_MARK_PRICE_CANDLESTICKS_ENDPOINT.replace("{}", &params.settle);
         self.get_with_query(&endpoint, Some(&params)).await
     }

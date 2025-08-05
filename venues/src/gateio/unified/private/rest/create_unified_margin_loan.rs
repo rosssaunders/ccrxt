@@ -15,7 +15,7 @@ impl RestClient {
     pub async fn create_unified_margin_loan(
         &self,
         request: CreateUnifiedMarginLoanRequest,
-    ) -> crate::gateio::unified::Result<UnifiedMarginLoan> {
+    ) -> crate::gateio::unified::RestResult<UnifiedMarginLoan> {
         self.post(MARGIN_UNI_LOANS_ENDPOINT, &request).await
     }
 }

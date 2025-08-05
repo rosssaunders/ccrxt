@@ -11,7 +11,7 @@ impl RestClient {
     /// <https://www.gate.io/docs/developers/apiv4/#get-currency-discount-tiers>
     pub async fn get_currency_discount_tiers(
         &self,
-    ) -> crate::gateio::unified::Result<Vec<CurrencyDiscountTier>> {
+    ) -> crate::gateio::unified::RestResult<Vec<CurrencyDiscountTier>> {
         self.get(CURRENCY_DISCOUNT_TIERS_ENDPOINT).await
     }
 }

@@ -91,7 +91,7 @@ impl RestClient {
     pub async fn get_options_tickers(
         &self,
         params: OptionsTickersRequest,
-    ) -> crate::gateio::options::Result<Vec<OptionsTicker>> {
+    ) -> crate::gateio::options::RestResult<Vec<OptionsTicker>> {
         self.get_with_query("/options/tickers", Some(&params)).await
     }
 
@@ -101,7 +101,7 @@ impl RestClient {
     pub async fn get_underlying_ticker(
         &self,
         underlying: &str,
-    ) -> crate::gateio::options::Result<UnderlyingTicker> {
+    ) -> crate::gateio::options::RestResult<UnderlyingTicker> {
         let endpoint = format!("/options/underlying/tickers/{}", underlying);
         self.get(&endpoint).await
     }

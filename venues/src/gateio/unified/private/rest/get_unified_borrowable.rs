@@ -15,7 +15,7 @@ impl RestClient {
     pub async fn get_unified_borrowable(
         &self,
         params: UnifiedBorrowableRequest,
-    ) -> crate::gateio::unified::Result<UnifiedBorrowableResponse> {
+    ) -> crate::gateio::unified::RestResult<UnifiedBorrowableResponse> {
         self.get_with_query(UNIFIED_BORROWABLE_ENDPOINT, &params)
             .await
     }

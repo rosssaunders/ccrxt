@@ -62,7 +62,7 @@ impl RestClient {
     pub async fn get_total_balance(
         &self,
         params: TotalBalanceRequest,
-    ) -> crate::gateio::spot::Result<TotalBalance> {
+    ) -> crate::gateio::spot::RestResult<TotalBalance> {
         self.get_with_query(TOTAL_BALANCE_ENDPOINT, &params).await
     }
 }

@@ -11,7 +11,7 @@ impl RestClient {
     /// <https://www.gate.io/docs/developers/apiv4/#get-loan-margin-tiers>
     pub async fn get_loan_margin_tiers(
         &self,
-    ) -> crate::gateio::unified::Result<Vec<LoanMarginTier>> {
+    ) -> crate::gateio::unified::RestResult<Vec<LoanMarginTier>> {
         self.get(LOAN_MARGIN_TIERS_ENDPOINT).await
     }
 }

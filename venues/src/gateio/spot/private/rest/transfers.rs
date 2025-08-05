@@ -69,7 +69,7 @@ impl RestClient {
     pub async fn create_transfer(
         &self,
         request: CreateTransferRequest,
-    ) -> crate::gateio::spot::Result<TransferRecord> {
+    ) -> crate::gateio::spot::RestResult<TransferRecord> {
         self.post(TRANSFERS_ENDPOINT, &request).await
     }
 }

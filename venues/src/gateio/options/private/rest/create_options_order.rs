@@ -52,7 +52,7 @@ impl RestClient {
     pub async fn create_options_order(
         &self,
         request: CreateOptionsOrderRequest,
-    ) -> crate::gateio::options::Result<OptionsOrder> {
+    ) -> crate::gateio::options::RestResult<OptionsOrder> {
         self.post(CREATE_OPTIONS_ORDER_ENDPOINT, &request).await
     }
 }

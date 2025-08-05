@@ -59,7 +59,7 @@ impl RestClient {
     ///
     /// # API Documentation
     /// <https://www.gate.com/docs/developers/apiv4/#list-all-currency-pairs-supported>
-    pub async fn list_currency_pairs(&self) -> crate::gateio::spot::Result<Vec<CurrencyPair>> {
+    pub async fn list_currency_pairs(&self) -> crate::gateio::spot::RestResult<Vec<CurrencyPair>> {
         self.get(CURRENCY_PAIRS_ENDPOINT).await
     }
 }

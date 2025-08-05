@@ -23,7 +23,7 @@ impl RestClient {
         &self,
         settle: &str,
         contract: Option<&str>,
-    ) -> crate::gateio::delivery::Result<Vec<DeliveryOrder>> {
+    ) -> crate::gateio::delivery::RestResult<Vec<DeliveryOrder>> {
         let mut endpoint = DELIVERY_ORDERS_ENDPOINT.replace("{}", settle);
 
         if let Some(contract) = contract {
@@ -51,7 +51,7 @@ impl RestClient {
         &self,
         settle: &str,
         order_id: &str,
-    ) -> crate::gateio::delivery::Result<DeliveryOrder> {
+    ) -> crate::gateio::delivery::RestResult<DeliveryOrder> {
         let endpoint = DELIVERY_ORDER_ENDPOINT
             .replacen("{}", settle, 1)
             .replacen("{}", order_id, 1);

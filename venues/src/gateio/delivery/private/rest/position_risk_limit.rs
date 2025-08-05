@@ -20,7 +20,7 @@ impl RestClient {
     pub async fn update_delivery_position_risk_limit(
         &self,
         request: UpdateDeliveryRiskLimitRequest,
-    ) -> crate::gateio::delivery::Result<DeliveryRiskLimitResponse> {
+    ) -> crate::gateio::delivery::RestResult<DeliveryRiskLimitResponse> {
         let endpoint = DELIVERY_POSITION_RISK_LIMIT_ENDPOINT
             .replacen("{}", &request.settle, 1)
             .replacen("{}", &request.contract, 1);

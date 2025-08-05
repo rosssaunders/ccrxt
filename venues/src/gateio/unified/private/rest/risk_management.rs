@@ -75,7 +75,7 @@ impl RestClient {
     /// Get risk units
     ///
     /// This endpoint returns risk unit configuration.
-    pub async fn get_risk_units(&self) -> crate::gateio::unified::Result<Vec<RiskUnit>> {
+    pub async fn get_risk_units(&self) -> crate::gateio::unified::RestResult<Vec<RiskUnit>> {
         self.get(RISK_UNITS_ENDPOINT).await
     }
 
@@ -85,7 +85,7 @@ impl RestClient {
     pub async fn get_estimate_rate(
         &self,
         request: EstimateRateRequest,
-    ) -> crate::gateio::unified::Result<Vec<RateEstimate>> {
+    ) -> crate::gateio::unified::RestResult<Vec<RateEstimate>> {
         self.post(ESTIMATE_RATE_ENDPOINT, &request).await
     }
 
@@ -95,7 +95,7 @@ impl RestClient {
     pub async fn get_history_loan_rate(
         &self,
         params: HistoricalLoanRateRequest,
-    ) -> crate::gateio::unified::Result<Vec<HistoricalLoanRate>> {
+    ) -> crate::gateio::unified::RestResult<Vec<HistoricalLoanRate>> {
         self.get_with_query(HISTORY_LOAN_RATE_ENDPOINT, &params)
             .await
     }

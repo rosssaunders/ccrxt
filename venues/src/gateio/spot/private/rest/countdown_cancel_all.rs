@@ -31,7 +31,7 @@ impl RestClient {
     pub async fn countdown_cancel_all(
         &self,
         request: CountdownCancelAllRequest,
-    ) -> crate::gateio::spot::Result<CountdownCancelAllResponse> {
+    ) -> crate::gateio::spot::RestResult<CountdownCancelAllResponse> {
         self.post("/spot/countdown_cancel_all", &request).await
     }
 }

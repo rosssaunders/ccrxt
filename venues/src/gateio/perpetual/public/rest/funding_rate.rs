@@ -34,7 +34,7 @@ impl RestClient {
     pub async fn get_futures_funding_rate(
         &self,
         params: FuturesFundingRateRequest,
-    ) -> crate::gateio::perpetual::Result<Vec<FuturesFundingRate>> {
+    ) -> crate::gateio::perpetual::RestResult<Vec<FuturesFundingRate>> {
         let endpoint = format!("/futures/{}/funding_rate", params.settle);
         self.get_with_query(&endpoint, Some(&params)).await
     }

@@ -54,7 +54,7 @@ impl RestClient {
     pub async fn list_options_orders(
         &self,
         params: ListOptionsOrdersRequest,
-    ) -> crate::gateio::options::Result<Vec<OptionsOrder>> {
+    ) -> crate::gateio::options::RestResult<Vec<OptionsOrder>> {
         self.get_with_query(LIST_OPTIONS_ORDERS_ENDPOINT, &params)
             .await
     }

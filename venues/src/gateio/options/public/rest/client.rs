@@ -6,7 +6,7 @@ use std::sync::Arc;
 use reqwest::Client;
 use serde::{Serialize, de::DeserializeOwned};
 
-use crate::gateio::shared::{RateLimiter, Result};
+use crate::gateio::shared::{RateLimiter, RestResult};
 
 const LIVE_URL: &str = "https://api.gateio.ws/api/v4";
 const TESTNET_URL: &str = "https://api-testnet.gateapi.io/api/v4";
@@ -21,7 +21,7 @@ pub struct RestClient {
 
 impl RestClient {
     /// Create a new public REST client
-    pub fn new(testnet: bool) -> Result<Self> {
+    pub fn new(testnet: bool) -> RestResult<Self> {
         let client = Client::builder()
             .timeout(std::time::Duration::from_secs(30))
             .build()
@@ -40,7 +40,7 @@ impl RestClient {
     }
 
     /// Make a GET request to the API without query parameters
-    pub async fn get<T>(&self, endpoint: &str) -> Result<T>
+    pub async fn get<T>(&self, endpoint: &str) -> RestResult<T>
     where
         T: DeserializeOwned,
     {
@@ -48,7 +48,7 @@ impl RestClient {
     }
 
     /// Make a GET request to the API with query parameters
-    pub async fn get_with_query<T, Q>(&self, endpoint: &str, query: Option<&Q>) -> Result<T>
+    pub async fn get_with_query<T, Q>(&self, endpoint: &str, query: Option<&Q>) -> RestResult<T>
     where
         T: DeserializeOwned,
         Q: Serialize,

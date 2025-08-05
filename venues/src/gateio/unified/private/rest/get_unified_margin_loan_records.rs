@@ -15,7 +15,7 @@ impl RestClient {
     pub async fn get_unified_margin_loan_records(
         &self,
         params: UnifiedMarginLoanRecordsRequest,
-    ) -> crate::gateio::unified::Result<Vec<UnifiedMarginLoanRecord>> {
+    ) -> crate::gateio::unified::RestResult<Vec<UnifiedMarginLoanRecord>> {
         self.get_with_query(MARGIN_UNI_LOAN_RECORDS_ENDPOINT, &params)
             .await
     }

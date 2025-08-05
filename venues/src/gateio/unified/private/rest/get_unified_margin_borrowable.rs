@@ -15,7 +15,7 @@ impl RestClient {
     pub async fn get_unified_margin_borrowable(
         &self,
         params: UnifiedMarginBorrowableRequest,
-    ) -> crate::gateio::unified::Result<UnifiedMarginBorrowable> {
+    ) -> crate::gateio::unified::RestResult<UnifiedMarginBorrowable> {
         self.get_with_query(MARGIN_UNI_BORROWABLE_ENDPOINT, &params)
             .await
     }

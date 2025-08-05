@@ -21,7 +21,7 @@ impl RestClient {
     pub async fn list_delivery_orders(
         &self,
         params: ListDeliveryOrdersRequest,
-    ) -> crate::gateio::delivery::Result<Vec<DeliveryOrder>> {
+    ) -> crate::gateio::delivery::RestResult<Vec<DeliveryOrder>> {
         let endpoint = DELIVERY_ORDERS_ENDPOINT.replace("{}", &params.settle);
         self.get_with_query(&endpoint, &params).await
     }
@@ -44,7 +44,7 @@ impl RestClient {
         &self,
         settle: &str,
         order_id: &str,
-    ) -> crate::gateio::delivery::Result<DeliveryOrder> {
+    ) -> crate::gateio::delivery::RestResult<DeliveryOrder> {
         let endpoint = DELIVERY_ORDER_ENDPOINT
             .replacen("{}", settle, 1)
             .replacen("{}", order_id, 1);

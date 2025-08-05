@@ -14,7 +14,7 @@ impl RestClient {
         &self,
         currency: &str,
         amount: &str,
-    ) -> crate::gateio::unified::Result<BorrowOrRepayResponse> {
+    ) -> crate::gateio::unified::RestResult<BorrowOrRepayResponse> {
         let request = BorrowOrRepayRequest {
             currency: currency.to_string(),
             amount: amount.to_string(),

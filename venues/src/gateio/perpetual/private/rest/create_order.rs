@@ -61,7 +61,7 @@ impl RestClient {
     pub async fn create_futures_order(
         &self,
         request: CreateFuturesOrderRequest,
-    ) -> crate::gateio::perpetual::Result<FuturesOrder> {
+    ) -> crate::gateio::perpetual::RestResult<FuturesOrder> {
         let endpoint = format!("/futures/{}/orders", request.settle);
         self.post(&endpoint, &request).await
     }

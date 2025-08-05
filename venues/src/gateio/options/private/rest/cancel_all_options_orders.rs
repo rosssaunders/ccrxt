@@ -22,7 +22,7 @@ impl RestClient {
         &self,
         underlying: Option<&str>,
         contract: Option<&str>,
-    ) -> crate::gateio::options::Result<Vec<OptionsOrder>> {
+    ) -> crate::gateio::options::RestResult<Vec<OptionsOrder>> {
         let mut endpoint = OPTIONS_ORDERS_ENDPOINT.to_string();
         let mut query_params = Vec::new();
 

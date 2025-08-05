@@ -32,7 +32,7 @@ impl RestClient {
     pub async fn countdown_cancel_all_futures_orders(
         &self,
         request: CountdownCancelRequest,
-    ) -> crate::gateio::perpetual::Result<()> {
+    ) -> crate::gateio::perpetual::RestResult<()> {
         let endpoint = format!("/futures/{}/countdown_cancel_all", request.settle);
         self.post::<serde_json::Value>(&endpoint, &request).await?;
         Ok(())

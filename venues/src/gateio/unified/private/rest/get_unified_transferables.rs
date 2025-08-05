@@ -11,7 +11,7 @@ impl RestClient {
     /// <https://www.gate.io/docs/developers/apiv4/#get-unified-transferables>
     pub async fn get_unified_transferables(
         &self,
-    ) -> crate::gateio::unified::Result<Vec<UnifiedTransferableResponse>> {
+    ) -> crate::gateio::unified::RestResult<Vec<UnifiedTransferableResponse>> {
         self.get(UNIFIED_TRANSFERABLES_ENDPOINT).await
     }
 }

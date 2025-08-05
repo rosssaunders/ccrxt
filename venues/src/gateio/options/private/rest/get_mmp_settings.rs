@@ -20,7 +20,7 @@ impl RestClient {
     pub async fn get_mmp_settings(
         &self,
         underlying: &str,
-    ) -> crate::gateio::options::Result<MMPSettings> {
+    ) -> crate::gateio::options::RestResult<MMPSettings> {
         let endpoint = format!("{}?underlying={}", OPTIONS_MMP_ENDPOINT, underlying);
         self.get(&endpoint).await
     }

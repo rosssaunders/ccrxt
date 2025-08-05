@@ -46,7 +46,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Options account information including balances and margins
-    pub async fn get_options_accounts(&self) -> crate::gateio::options::Result<OptionsAccount> {
+    pub async fn get_options_accounts(&self) -> crate::gateio::options::RestResult<OptionsAccount> {
         self.get(OPTIONS_ACCOUNTS_ENDPOINT).await
     }
 }

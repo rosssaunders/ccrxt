@@ -118,7 +118,7 @@ impl RestClient {
     pub async fn amend_batch_orders(
         &self,
         request: AmendBatchOrdersRequest,
-    ) -> crate::gateio::spot::Result<Vec<AmendedOrder>> {
+    ) -> crate::gateio::spot::RestResult<Vec<AmendedOrder>> {
         self.post(AMEND_BATCH_ORDERS_ENDPOINT, &request).await
     }
 }

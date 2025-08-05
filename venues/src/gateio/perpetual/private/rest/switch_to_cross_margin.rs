@@ -27,7 +27,7 @@ impl RestClient {
     pub async fn switch_to_cross_margin(
         &self,
         settle: &str,
-    ) -> crate::gateio::perpetual::Result<()> {
+    ) -> crate::gateio::perpetual::RestResult<()> {
         let endpoint = format!("/futures/{}/cross_mode", settle);
         let request = CrossModeRequest {
             mode: "cross".to_string(),

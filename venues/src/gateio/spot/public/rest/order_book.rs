@@ -60,7 +60,7 @@ impl RestClient {
     pub async fn get_order_book(
         &self,
         params: OrderBookRequest,
-    ) -> crate::gateio::spot::Result<OrderBook> {
+    ) -> crate::gateio::spot::RestResult<OrderBook> {
         self.get_with_query("/spot/order_book", Some(&params)).await
     }
 }

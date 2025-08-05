@@ -31,7 +31,7 @@ impl RestClient {
         order_id: &str,
         currency_pair: &str,
         amendment: AmendOrderRequest,
-    ) -> crate::gateio::spot::Result<Order> {
+    ) -> crate::gateio::spot::RestResult<Order> {
         let endpoint = format!("/spot/orders/{}", order_id);
         #[allow(clippy::unwrap_used)]
         let mut body = serde_json::to_value(&amendment).unwrap();

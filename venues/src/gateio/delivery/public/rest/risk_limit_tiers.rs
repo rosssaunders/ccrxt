@@ -46,7 +46,7 @@ impl RestClient {
     pub async fn get_delivery_risk_limit_tiers(
         &self,
         params: DeliveryRiskLimitTiersRequest,
-    ) -> crate::gateio::delivery::Result<Vec<DeliveryRiskLimitTier>> {
+    ) -> crate::gateio::delivery::RestResult<Vec<DeliveryRiskLimitTier>> {
         let endpoint = DELIVERY_RISK_LIMIT_TIERS_ENDPOINT.replace("{}", &params.settle);
         self.get_with_query(&endpoint, Some(&params)).await
     }

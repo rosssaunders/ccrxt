@@ -38,7 +38,7 @@ impl RestClient {
     pub async fn update_position_risk_limit(
         &self,
         request: UpdateRiskLimitRequest,
-    ) -> crate::gateio::perpetual::Result<RiskLimitResponse> {
+    ) -> crate::gateio::perpetual::RestResult<RiskLimitResponse> {
         let endpoint = format!(
             "/futures/{}/positions/{}/risk_limit",
             request.settle, request.contract

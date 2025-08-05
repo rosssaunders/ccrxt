@@ -9,7 +9,9 @@ impl RestClient {
     ///
     /// # API Documentation
     /// <https://www.gate.io/docs/developers/apiv4/#get-unified-mode>
-    pub async fn get_unified_mode(&self) -> crate::gateio::unified::Result<UnifiedModeResponse> {
+    pub async fn get_unified_mode(
+        &self,
+    ) -> crate::gateio::unified::RestResult<UnifiedModeResponse> {
         self.get(UNIFIED_MODE_ENDPOINT).await
     }
 }

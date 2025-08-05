@@ -20,7 +20,7 @@ impl RestClient {
         &self,
         settle: &str,
         contract: &str,
-    ) -> crate::gateio::perpetual::Result<DualModePosition> {
+    ) -> crate::gateio::perpetual::RestResult<DualModePosition> {
         let endpoint = format!("/futures/{}/dual_positions/{}", settle, contract);
         self.get(&endpoint).await
     }

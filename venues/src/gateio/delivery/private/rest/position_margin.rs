@@ -22,7 +22,7 @@ impl RestClient {
     pub async fn update_delivery_position_margin(
         &self,
         request: UpdateDeliveryPositionMarginRequest,
-    ) -> crate::gateio::delivery::Result<DeliveryPositionMarginResponse> {
+    ) -> crate::gateio::delivery::RestResult<DeliveryPositionMarginResponse> {
         let endpoint = DELIVERY_POSITION_MARGIN_ENDPOINT
             .replacen("{}", &request.settle, 1)
             .replacen("{}", &request.contract, 1);

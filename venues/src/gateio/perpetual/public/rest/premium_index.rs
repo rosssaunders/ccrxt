@@ -54,7 +54,7 @@ impl RestClient {
     pub async fn get_futures_premium_index(
         &self,
         params: FuturesPremiumIndexRequest,
-    ) -> crate::gateio::perpetual::Result<Vec<FuturesPremiumIndex>> {
+    ) -> crate::gateio::perpetual::RestResult<Vec<FuturesPremiumIndex>> {
         let endpoint = format!("/futures/{}/premium_index", params.settle);
         self.get_with_query(&endpoint, Some(&params)).await
     }

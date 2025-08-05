@@ -60,7 +60,7 @@ impl RestClient {
     pub async fn get_currency_pair(
         &self,
         currency_pair: &str,
-    ) -> crate::gateio::spot::Result<CurrencyPair> {
+    ) -> crate::gateio::spot::RestResult<CurrencyPair> {
         let endpoint = format!("/spot/currency_pairs/{}", currency_pair);
         self.get(&endpoint).await
     }

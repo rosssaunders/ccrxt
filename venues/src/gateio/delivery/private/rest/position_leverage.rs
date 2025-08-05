@@ -20,7 +20,7 @@ impl RestClient {
     pub async fn set_delivery_position_leverage(
         &self,
         request: SetDeliveryLeverageRequest,
-    ) -> crate::gateio::delivery::Result<DeliveryLeverageResponse> {
+    ) -> crate::gateio::delivery::RestResult<DeliveryLeverageResponse> {
         let endpoint = DELIVERY_POSITION_LEVERAGE_ENDPOINT
             .replacen("{}", &request.settle, 1)
             .replacen("{}", &request.contract, 1);

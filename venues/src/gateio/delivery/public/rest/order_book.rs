@@ -61,7 +61,7 @@ impl RestClient {
     pub async fn get_delivery_order_book(
         &self,
         params: DeliveryOrderBookRequest,
-    ) -> crate::gateio::delivery::Result<DeliveryOrderBook> {
+    ) -> crate::gateio::delivery::RestResult<DeliveryOrderBook> {
         let endpoint = DELIVERY_ORDER_BOOK_ENDPOINT.replace("{}", &params.settle);
         self.get_with_query(&endpoint, Some(&params)).await
     }

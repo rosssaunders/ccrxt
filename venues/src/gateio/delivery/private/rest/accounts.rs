@@ -68,7 +68,7 @@ impl RestClient {
     pub async fn get_delivery_accounts(
         &self,
         params: DeliveryAccountsRequest,
-    ) -> crate::gateio::delivery::Result<DeliveryAccount> {
+    ) -> crate::gateio::delivery::RestResult<DeliveryAccount> {
         let endpoint = DELIVERY_ACCOUNTS_ENDPOINT.replace("{}", &params.settle);
         self.get(&endpoint).await
     }

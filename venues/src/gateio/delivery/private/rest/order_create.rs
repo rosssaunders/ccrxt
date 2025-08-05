@@ -20,7 +20,7 @@ impl RestClient {
     pub async fn create_delivery_order(
         &self,
         request: CreateDeliveryOrderRequest,
-    ) -> crate::gateio::delivery::Result<DeliveryOrder> {
+    ) -> crate::gateio::delivery::RestResult<DeliveryOrder> {
         let endpoint = DELIVERY_ORDERS_ENDPOINT.replace("{}", &request.settle);
         self.post(&endpoint, &request).await
     }

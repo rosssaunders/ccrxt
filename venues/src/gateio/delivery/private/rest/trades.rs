@@ -55,7 +55,7 @@ impl RestClient {
     pub async fn get_delivery_my_trades(
         &self,
         params: DeliveryMyTradesRequest,
-    ) -> crate::gateio::delivery::Result<Vec<DeliveryTrade>> {
+    ) -> crate::gateio::delivery::RestResult<Vec<DeliveryTrade>> {
         let endpoint = DELIVERY_MY_TRADES_ENDPOINT.replace("{}", &params.settle);
         self.get_with_query(&endpoint, &params).await
     }

@@ -109,7 +109,7 @@ impl RestClient {
     pub async fn get_withdrawals(
         &self,
         params: WithdrawalsRequest,
-    ) -> crate::gateio::spot::Result<Vec<WithdrawalRecord>> {
+    ) -> crate::gateio::spot::RestResult<Vec<WithdrawalRecord>> {
         self.get_with_query(WITHDRAWALS_ENDPOINT, &params).await
     }
 
@@ -129,7 +129,7 @@ impl RestClient {
     pub async fn get_withdrawal_fees(
         &self,
         params: WithdrawalFeesRequest,
-    ) -> crate::gateio::spot::Result<Vec<WithdrawalFee>> {
+    ) -> crate::gateio::spot::RestResult<Vec<WithdrawalFee>> {
         self.get_with_query(WITHDRAWAL_FEES_ENDPOINT, &params).await
     }
 }

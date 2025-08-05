@@ -42,7 +42,7 @@ impl RestClient {
     pub async fn get_funding_accounts(
         &self,
         params: FundingAccountsRequest,
-    ) -> crate::gateio::spot::Result<Vec<FundingAccount>> {
+    ) -> crate::gateio::spot::RestResult<Vec<FundingAccount>> {
         self.get_with_query(MARGIN_FUNDING_ACCOUNTS_ENDPOINT, &params)
             .await
     }

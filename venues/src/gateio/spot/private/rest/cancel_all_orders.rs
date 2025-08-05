@@ -28,7 +28,7 @@ impl RestClient {
     pub async fn cancel_all_orders(
         &self,
         request: CancelAllOrdersRequest,
-    ) -> crate::gateio::spot::Result<Vec<Order>> {
+    ) -> crate::gateio::spot::RestResult<Vec<Order>> {
         self.delete_with_query("/spot/orders", &request).await
     }
 
@@ -36,7 +36,7 @@ impl RestClient {
     pub async fn cancel_all_orders_for_pair(
         &self,
         currency_pair: &str,
-    ) -> crate::gateio::spot::Result<Vec<Order>> {
+    ) -> crate::gateio::spot::RestResult<Vec<Order>> {
         let request = CancelAllOrdersRequest {
             currency_pair: currency_pair.to_string(),
             side: None,

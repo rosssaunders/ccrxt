@@ -15,7 +15,7 @@ impl RestClient {
     pub async fn set_leverage_user_currency_setting(
         &self,
         request: SetLeverageConfigRequest,
-    ) -> crate::gateio::unified::Result<LeverageConfig> {
+    ) -> crate::gateio::unified::RestResult<LeverageConfig> {
         self.post(LEVERAGE_USER_CURRENCY_SETTING_ENDPOINT, &request)
             .await
     }

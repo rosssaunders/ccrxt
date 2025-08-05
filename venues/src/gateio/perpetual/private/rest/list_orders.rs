@@ -55,7 +55,7 @@ impl RestClient {
     pub async fn list_futures_orders(
         &self,
         params: ListFuturesOrdersRequest,
-    ) -> crate::gateio::perpetual::Result<Vec<FuturesOrder>> {
+    ) -> crate::gateio::perpetual::RestResult<Vec<FuturesOrder>> {
         let endpoint = format!("/futures/{}/orders", params.settle);
         self.get_with_query(&endpoint, &params).await
     }

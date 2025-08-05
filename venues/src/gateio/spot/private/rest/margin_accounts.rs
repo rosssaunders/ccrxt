@@ -56,7 +56,7 @@ impl RestClient {
     pub async fn get_margin_accounts(
         &self,
         params: MarginAccountsRequest,
-    ) -> crate::gateio::spot::Result<Vec<MarginAccount>> {
+    ) -> crate::gateio::spot::RestResult<Vec<MarginAccount>> {
         self.get_with_query("/margin/accounts", &params).await
     }
 }

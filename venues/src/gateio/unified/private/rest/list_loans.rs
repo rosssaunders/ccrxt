@@ -15,7 +15,7 @@ impl RestClient {
     pub async fn list_loans(
         &self,
         request: ListLoansRequest,
-    ) -> crate::gateio::unified::Result<Vec<LoanRecord>> {
+    ) -> crate::gateio::unified::RestResult<Vec<LoanRecord>> {
         self.get_with_query(UNIFIED_LOANS_ENDPOINT, &request).await
     }
 }

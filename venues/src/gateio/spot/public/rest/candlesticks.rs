@@ -68,7 +68,7 @@ impl RestClient {
     pub async fn get_candlesticks(
         &self,
         params: CandlesticksRequest,
-    ) -> crate::gateio::spot::Result<Vec<Vec<String>>> {
+    ) -> crate::gateio::spot::RestResult<Vec<Vec<String>>> {
         self.get_with_query("/spot/candlesticks", Some(&params))
             .await
     }

@@ -20,7 +20,7 @@ impl RestClient {
     pub async fn get_options_order(
         &self,
         order_id: &str,
-    ) -> crate::gateio::options::Result<OptionsOrder> {
+    ) -> crate::gateio::options::RestResult<OptionsOrder> {
         let endpoint = format!("{}/{}", OPTIONS_ORDERS_ENDPOINT, order_id);
         self.get(&endpoint).await
     }

@@ -44,7 +44,7 @@ impl RestClient {
         settle: &str,
         contract: Option<&str>,
         limit: Option<i32>,
-    ) -> crate::gateio::delivery::Result<Vec<DeliverySettlement>> {
+    ) -> crate::gateio::delivery::RestResult<Vec<DeliverySettlement>> {
         let mut endpoint = DELIVERY_SETTLEMENTS_ENDPOINT.replace("{}", settle);
         let mut query_params = Vec::new();
 

@@ -35,7 +35,7 @@ impl RestClient {
     pub async fn get_transferable(
         &self,
         params: TransferableRequest,
-    ) -> crate::gateio::spot::Result<TransferableAmount> {
+    ) -> crate::gateio::spot::RestResult<TransferableAmount> {
         self.get_with_query(MARGIN_TRANSFERABLE_ENDPOINT, &params)
             .await
     }

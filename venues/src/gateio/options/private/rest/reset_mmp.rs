@@ -26,7 +26,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Empty response indicating success
-    pub async fn reset_mmp(&self, underlying: &str) -> crate::gateio::options::Result<()> {
+    pub async fn reset_mmp(&self, underlying: &str) -> crate::gateio::options::RestResult<()> {
         let request = ResetMMPRequest {
             underlying: underlying.to_string(),
         };

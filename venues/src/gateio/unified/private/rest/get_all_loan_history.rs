@@ -13,7 +13,7 @@ impl RestClient {
     pub async fn get_all_loan_history(
         &self,
         limit: Option<u32>,
-    ) -> crate::gateio::unified::Result<Vec<LoanRecord>> {
+    ) -> crate::gateio::unified::RestResult<Vec<LoanRecord>> {
         let request = ListLoansRequest {
             currency: None,
             limit,

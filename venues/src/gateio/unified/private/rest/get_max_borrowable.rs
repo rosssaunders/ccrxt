@@ -15,7 +15,7 @@ impl RestClient {
     pub async fn get_max_borrowable(
         &self,
         currency: &str,
-    ) -> crate::gateio::unified::Result<MaxBorrowable> {
+    ) -> crate::gateio::unified::RestResult<MaxBorrowable> {
         let request = GetMaxBorrowableRequest {
             currency: currency.to_string(),
         };

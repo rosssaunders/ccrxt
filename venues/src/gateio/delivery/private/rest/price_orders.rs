@@ -107,7 +107,7 @@ impl RestClient {
     pub async fn create_delivery_price_triggered_order(
         &self,
         request: CreateDeliveryPriceOrderRequest,
-    ) -> crate::gateio::delivery::Result<DeliveryPriceOrder> {
+    ) -> crate::gateio::delivery::RestResult<DeliveryPriceOrder> {
         let endpoint = DELIVERY_PRICE_ORDERS_ENDPOINT.replace("{}", &request.settle);
         self.post(&endpoint, &request).await
     }
@@ -128,7 +128,7 @@ impl RestClient {
     pub async fn list_delivery_price_triggered_orders(
         &self,
         params: ListDeliveryPriceOrdersRequest,
-    ) -> crate::gateio::delivery::Result<Vec<DeliveryPriceOrder>> {
+    ) -> crate::gateio::delivery::RestResult<Vec<DeliveryPriceOrder>> {
         let endpoint = DELIVERY_PRICE_ORDERS_ENDPOINT.replace("{}", &params.settle);
         self.get_with_query(&endpoint, &params).await
     }
@@ -151,7 +151,7 @@ impl RestClient {
         &self,
         settle: &str,
         order_id: &str,
-    ) -> crate::gateio::delivery::Result<DeliveryPriceOrder> {
+    ) -> crate::gateio::delivery::RestResult<DeliveryPriceOrder> {
         let endpoint = DELIVERY_PRICE_ORDER_ENDPOINT
             .replacen("{}", settle, 1)
             .replacen("{}", order_id, 1);
@@ -176,7 +176,7 @@ impl RestClient {
         &self,
         settle: &str,
         order_id: &str,
-    ) -> crate::gateio::delivery::Result<DeliveryPriceOrder> {
+    ) -> crate::gateio::delivery::RestResult<DeliveryPriceOrder> {
         let endpoint = DELIVERY_PRICE_ORDER_ENDPOINT
             .replacen("{}", settle, 1)
             .replacen("{}", order_id, 1);
@@ -201,7 +201,7 @@ impl RestClient {
         &self,
         settle: &str,
         contract: Option<&str>,
-    ) -> crate::gateio::delivery::Result<Vec<DeliveryPriceOrder>> {
+    ) -> crate::gateio::delivery::RestResult<Vec<DeliveryPriceOrder>> {
         let endpoint = DELIVERY_PRICE_ORDERS_ENDPOINT.replace("{}", settle);
 
         #[derive(Serialize)]

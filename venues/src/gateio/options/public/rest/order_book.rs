@@ -63,7 +63,7 @@ impl RestClient {
     pub async fn get_options_order_book(
         &self,
         params: OptionsOrderBookRequest,
-    ) -> crate::gateio::options::Result<OptionsOrderBook> {
+    ) -> crate::gateio::options::RestResult<OptionsOrderBook> {
         self.get_with_query("/options/order_book", Some(&params))
             .await
     }

@@ -15,7 +15,7 @@ impl RestClient {
     pub async fn get_unified_currencies(
         &self,
         params: UnifiedCurrenciesRequest,
-    ) -> crate::gateio::unified::Result<Vec<UnifiedCurrency>> {
+    ) -> crate::gateio::unified::RestResult<Vec<UnifiedCurrency>> {
         self.get_with_query(UNIFIED_CURRENCIES_ENDPOINT, &params)
             .await
     }

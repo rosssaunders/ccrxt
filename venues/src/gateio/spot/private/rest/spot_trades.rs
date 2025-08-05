@@ -81,7 +81,7 @@ impl RestClient {
     pub async fn get_my_trades(
         &self,
         request: GetMyTradesRequest,
-    ) -> crate::gateio::spot::Result<Vec<MyTrade>> {
+    ) -> crate::gateio::spot::RestResult<Vec<MyTrade>> {
         self.get_with_query("/spot/my_trades", &request).await
     }
 
@@ -90,7 +90,7 @@ impl RestClient {
         &self,
         currency_pair: &str,
         limit: Option<u32>,
-    ) -> crate::gateio::spot::Result<Vec<MyTrade>> {
+    ) -> crate::gateio::spot::RestResult<Vec<MyTrade>> {
         let request = GetMyTradesRequest {
             currency_pair: Some(currency_pair.to_string()),
             limit,
@@ -104,7 +104,7 @@ impl RestClient {
         &self,
         order_id: &str,
         currency_pair: &str,
-    ) -> crate::gateio::spot::Result<Vec<MyTrade>> {
+    ) -> crate::gateio::spot::RestResult<Vec<MyTrade>> {
         let request = GetMyTradesRequest {
             currency_pair: Some(currency_pair.to_string()),
             order_id: Some(order_id.to_string()),
@@ -120,7 +120,7 @@ impl RestClient {
         from: i64,
         to: i64,
         limit: Option<u32>,
-    ) -> crate::gateio::spot::Result<Vec<MyTrade>> {
+    ) -> crate::gateio::spot::RestResult<Vec<MyTrade>> {
         let request = GetMyTradesRequest {
             currency_pair: currency_pair.map(|s| s.to_string()),
             from: Some(from),
@@ -136,7 +136,7 @@ impl RestClient {
         &self,
         currency_pair: Option<&str>,
         limit: Option<u32>,
-    ) -> crate::gateio::spot::Result<Vec<MyTrade>> {
+    ) -> crate::gateio::spot::RestResult<Vec<MyTrade>> {
         let now = std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
             .unwrap()
