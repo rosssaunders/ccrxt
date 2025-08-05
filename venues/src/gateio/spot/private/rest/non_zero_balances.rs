@@ -1,12 +1,17 @@
 use super::{RestClient, SpotAccount};
 
 impl RestClient {
-    /// Get all non-zero spot account balances
+    /// List spot accounts (showing only non-zero balances)
     ///
-    /// This endpoint returns all spot account balances with non-zero available or locked amounts.
+    /// Retrieve all spot account balances, filtering to only show accounts with non-zero available or locked amounts.
+    /// This endpoint provides a convenient way to view active balances without zero-balance currencies.
     ///
-    /// # API Documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#list-spot-accounts>
+    /// [docs]: https://www.gate.io/docs/developers/apiv4/#list-spot-accounts
+    ///
+    /// Rate limit: 100 requests per second
+    ///
+    /// # Returns
+    /// Vector of spot accounts with non-zero available or locked balances
     pub async fn get_non_zero_spot_balances(
         &self,
     ) -> crate::gateio::spot::RestResult<Vec<SpotAccount>> {
@@ -26,7 +31,7 @@ impl RestClient {
 mod tests {
     use super::*;
 
-    // Helper function to create a SpotAccount with the given parameters
+    /// Creates a test spot account for testing.
     fn create_spot_account(currency: &str, available: &str, locked: &str) -> SpotAccount {
         SpotAccount {
             currency: currency.to_string(),
@@ -35,7 +40,7 @@ mod tests {
         }
     }
 
-    // Helper function to test the filtering logic manually
+    /// Filters accounts to only include those with non-zero balances.
     fn filter_non_zero_accounts(accounts: Vec<SpotAccount>) -> Vec<SpotAccount> {
         accounts
             .into_iter()

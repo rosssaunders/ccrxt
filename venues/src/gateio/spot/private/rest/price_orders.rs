@@ -2,128 +2,206 @@ use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 
-/// Request parameters for listing price orders
-
 const SPOT_PRICE_ORDERS_ENDPOINT: &str = "/spot/price_orders";
 
+/// Request parameters for listing price orders with advanced filtering capabilities.
+///
+/// Used to retrieve conditional price orders that trigger when market prices reach
+/// specified thresholds. Supports comprehensive filtering by currency pair, order status,
+/// and pagination for efficient handling of large order sets and trading strategies.
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct ListPriceOrdersRequest {
-    /// Currency pair
+    /// Currency pair filter for price order queries (e.g., "BTC_USDT", "ETH_USDT").
     #[serde(skip_serializing_if = "Option::is_none")]
     pub currency_pair: Option<String>,
 
-    /// Status filter (open, cancelled, finished)
+    /// Order status filter for conditional order queries (e.g., "open", "cancelled", "finished").
     #[serde(skip_serializing_if = "Option::is_none")]
     pub status: Option<String>,
 
-    /// Page number (default: 1)
+    /// Page number for pagination navigation (starts from 1, default: 1).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub page: Option<i32>,
 
-    /// Maximum number of records to return (1-100, default: 100)
+    /// Maximum number of records per page (range: 1-100, default: 100).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i32>,
 }
 
-/// Request to create a price order
+/// Request parameters for creating conditional price orders with sophisticated trigger configurations.
+///
+/// Used to establish price-triggered orders that automatically execute when market conditions
+/// are met. Supports comprehensive order configurations including trigger rules, execution
+/// timing, and account-specific trading strategies for automated market participation.
 #[derive(Debug, Clone, Serialize)]
 pub struct CreatePriceOrderRequest {
-    /// Currency pair
+    /// Trading currency pair identifier (e.g., "BTC_USDT", "ETH_USDT").
+    /// 
+    /// Specifies the market for the conditional order trigger and subsequent execution.
     pub currency_pair: String,
 
-    /// Order type (limit, market)
+    /// Order execution type for triggered order ("limit", "market").
+    /// 
+    /// Determines pricing behavior when the trigger condition is satisfied.
+    /// Limit orders require price specification, market orders execute at current rates.
     #[serde(rename = "type")]
     pub order_type: String,
 
-    /// Account mode (spot, margin, cross_margin)
+    /// Trading account context for order execution ("spot", "margin", "cross_margin").
+    /// 
+    /// Defines the account environment and available balance for order fulfillment.
     pub account: String,
 
-    /// Order side (buy or sell)
+    /// Order direction for market participation ("buy", "sell").
+    /// 
+    /// Specifies whether to acquire or dispose of the base currency when triggered.
     pub side: String,
 
-    /// Order amount
+    /// Quantity specification for order execution in base currency units.
+    /// 
+    /// For limit orders: base currency amount. For market buy orders: quote currency amount.
+    /// Precision requirements vary by trading pair specifications.
     pub amount: String,
 
-    /// Order price (required for limit orders)
+    /// Execution price for limit orders when trigger condition is satisfied.
+    /// 
+    /// Required for limit order types, omitted for market orders.
+    /// Must comply with tick size requirements for the specified currency pair.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub price: Option<String>,
 
-    /// Time in force (gtc, ioc, poc, fok)
+    /// Order persistence policy after trigger activation ("gtc", "ioc", "poc", "fok").
+    /// 
+    /// Controls order lifecycle behavior: GTC (Good Till Canceled), IOC (Immediate or Cancel),
+    /// POC (Participate or Cancel), FOK (Fill or Kill). Affects execution guarantees.
     pub time_in_force: String,
 
-    /// Client order ID (optional)
+    /// User-defined order identifier for tracking and reference purposes.
+    /// 
+    /// Optional alphanumeric string (maximum 28 characters) for order correlation
+    /// and identification in trading records and notifications.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub text: Option<String>,
 
-    /// Trigger price for price orders
+    /// Market price threshold for conditional order activation.
+    /// 
+    /// Defines the price level that must be reached to trigger order execution.
+    /// Compared against market price using the specified trigger rule.
     pub trigger_price: String,
 
-    /// Rule for trigger (<=, >=)
+    /// Price comparison operator for trigger condition evaluation ("<=", ">=").
+    /// 
+    /// Determines trigger activation logic: "<=" for stop-loss scenarios (trigger when price
+    /// falls to or below threshold), ">=" for breakout scenarios (trigger when price rises).
     pub rule: String,
 
-    /// Trigger expiration time (seconds)
+    /// Conditional order expiration timestamp in Unix seconds format.
+    /// 
+    /// Optional deadline after which the trigger becomes invalid and order is canceled.
+    /// Provides time-bounded conditional execution for strategic trading scenarios.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub expiration: Option<i64>,
 }
 
-/// Price order information
+/// Comprehensive information for conditional price orders with execution tracking.
+///
+/// Contains complete order state including trigger conditions, execution status,
+/// timing information, and associated trade details. Used for monitoring conditional
+/// order lifecycle from creation through trigger activation and final settlement.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PriceOrder {
-    /// Order ID
+    /// Unique system identifier for the conditional price order.
+    /// 
+    /// Persistent reference for order tracking, status queries, and modification operations.
     pub id: i64,
 
-    /// User ID
+    /// Account owner identifier for order attribution and security validation.
+    /// 
+    /// Links the conditional order to the specific user account for access control.
     pub user: i64,
 
-    /// Currency pair
+    /// Trading market specification for the conditional order ("BTC_USDT", "ETH_USDT").
+    /// 
+    /// Defines the currency pair context for price monitoring and order execution.
     pub currency_pair: String,
 
-    /// Order status
+    /// Current lifecycle state of the conditional order ("open", "cancelled", "finished", "triggered").
+    /// 
+    /// Indicates order progression: open (waiting), triggered (activated), finished (completed),
+    /// cancelled (manually terminated). Affects available operations and state transitions.
     pub status: String,
 
-    /// Account mode
+    /// Trading account context for conditional order execution ("spot", "margin", "cross_margin").
+    /// 
+    /// Specifies the account type used for balance validation and order fulfillment.
     pub account: String,
 
-    /// Order side (buy or sell)
+    /// Market direction for conditional order execution ("buy", "sell").
+    /// 
+    /// Determines whether the triggered order will acquire or dispose of base currency.
     pub side: String,
 
-    /// Order amount
+    /// Quantity specification for conditional order execution in base currency units.
+    /// 
+    /// Amount to be traded when trigger condition is satisfied, subject to precision requirements.
     pub amount: String,
 
-    /// Order price
+    /// Execution price for the conditional order when triggered.
+    /// 
+    /// For limit orders: specified price level. For market orders: "0" or average execution price.
     pub price: String,
 
-    /// Order type
+    /// Order execution type applied when trigger condition is met ("limit", "market").
+    /// 
+    /// Determines pricing behavior: limit orders use specified price, market orders use current rates.
     #[serde(rename = "type")]
     pub order_type: String,
 
-    /// Time in force
+    /// Order persistence policy for triggered execution ("gtc", "ioc", "poc", "fok").
+    /// 
+    /// Controls order lifecycle after trigger: GTC (persistent), IOC (immediate), etc.
     pub time_in_force: String,
 
-    /// Trigger price
+    /// Price threshold for conditional order activation monitoring.
+    /// 
+    /// Market price level that must be reached to trigger order execution.
     pub trigger_price: String,
 
-    /// Trigger rule
+    /// Price comparison logic for trigger condition evaluation ("<=", ">=").
+    /// 
+    /// Defines activation rule: "<=" for stop scenarios, ">=" for breakout scenarios.
     pub rule: String,
 
-    /// Trigger expiration time
+    /// Conditional order expiration deadline as Unix timestamp.
+    /// 
+    /// Time limit after which the trigger becomes invalid and order is automatically cancelled.
     pub expiration: i64,
 
-    /// Order fired ID (when triggered)
+    /// Associated regular order identifier when trigger condition has been satisfied.
+    /// 
+    /// Links to the actual market order created upon trigger activation for execution tracking.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub fired_order_id: Option<String>,
 
-    /// Create time timestamp
+    /// Order creation timestamp in Unix seconds format.
+    /// 
+    /// Records when the conditional order was initially established in the system.
     pub create_time: i64,
 
-    /// Put time timestamp
+    /// Order placement timestamp in Unix seconds format.
+    /// 
+    /// Records when the conditional order became active for trigger monitoring.
     pub put_time: i64,
 
-    /// Client order id
+    /// User-defined order identifier for correlation and tracking purposes.
+    /// 
+    /// Optional custom reference string for order identification in trading workflows.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub text: Option<String>,
 
-    /// Reason for cancellation
+    /// Cancellation or failure explanation for terminated conditional orders.
+    /// 
+    /// Provides context when orders are cancelled, expired, or encounter execution failures.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reason: Option<String>,
 }
@@ -131,74 +209,117 @@ pub struct PriceOrder {
 impl RestClient {
     /// List price orders
     ///
-    /// This endpoint returns price orders (conditional orders) for the authenticated user.
-    /// Price orders are triggered when the market price reaches the specified trigger price.
+    /// Retrieves conditional price orders for the authenticated user with advanced filtering capabilities.
+    /// Price orders are triggered when market price reaches specified trigger conditions, enabling
+    /// automated trading strategies including stop-loss, take-profit, and breakout scenarios.
     ///
-    /// # API Documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#retrieve-running-auto-order-list>
+    /// [docs]: <https://www.gate.com/docs/developers/apiv4/#retrieve-running-auto-order-list>
+    ///
+    /// Rate limit: 100 requests per second
+    ///
+    /// # Arguments
+    /// * `params` - Filtering parameters including currency pair, status, and pagination options
+    ///
+    /// # Returns
+    /// Vector of price orders matching the specified criteria with complete order details
     pub async fn list_price_orders(
         &self,
         params: ListPriceOrdersRequest,
     ) -> crate::gateio::spot::RestResult<Vec<PriceOrder>> {
-        self.get_with_query(SPOT_PRICE_ORDERS_ENDPOINT, &params)
-            .await
+        self.send_get_request(SPOT_PRICE_ORDERS_ENDPOINT, Some(&params), crate::gateio::spot::EndpointType::Private).await
     }
 
     /// Get a specific price order
     ///
-    /// This endpoint returns details for a specific price order by ID.
+    /// Retrieves detailed information for a specific conditional price order by its unique identifier.
+    /// Provides complete order state including trigger conditions, execution status, and timing information
+    /// for comprehensive order lifecycle monitoring and management.
     ///
-    /// # API Documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#get-a-single-order>
+    /// [docs]: <https://www.gate.com/docs/developers/apiv4/#get-a-single-order>
+    ///
+    /// Rate limit: 100 requests per second
+    ///
+    /// # Arguments
+    /// * `order_id` - Unique identifier for the specific price order to retrieve
+    ///
+    /// # Returns
+    /// Complete price order information including current status and execution details
     pub async fn get_price_order(&self, order_id: &str) -> crate::gateio::spot::RestResult<PriceOrder> {
-        let endpoint = format!("/spot/price_orders/{}", order_id);
-        self.get(&endpoint).await
+        let endpoint = format!("{}/{}", SPOT_PRICE_ORDERS_ENDPOINT, order_id);
+        self.send_get_request(&endpoint, None::<&()>, crate::gateio::spot::EndpointType::Private).await
     }
 
     /// Create a price order
     ///
-    /// This endpoint creates a new price order (conditional order) that will be
-    /// triggered when the market price reaches the specified trigger price.
+    /// Creates a new conditional price order that triggers when market price reaches specified thresholds.
+    /// Enables sophisticated trading strategies including stop-loss protection, take-profit execution,
+    /// and breakout trading with comprehensive trigger rule configuration and timing controls.
     ///
-    /// # API Documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#create-a-price-triggered-order>
+    /// [docs]: <https://www.gate.com/docs/developers/apiv4/#create-a-price-triggered-order>
+    ///
+    /// Rate limit: 100 requests per second
+    ///
+    /// # Arguments
+    /// * `request` - Comprehensive price order configuration including trigger conditions and execution parameters
+    ///
+    /// # Returns
+    /// Created price order with assigned identifier and initial status for monitoring
     pub async fn create_price_order(
         &self,
         request: CreatePriceOrderRequest,
     ) -> crate::gateio::spot::RestResult<PriceOrder> {
-        self.post("/spot/price_orders", &request).await
+        self.send_post_request(SPOT_PRICE_ORDERS_ENDPOINT, Some(&request), crate::gateio::spot::EndpointType::Private).await
     }
 
     /// Cancel all price orders
     ///
-    /// This endpoint cancels all price orders for the specified currency pair.
+    /// Cancels all active conditional price orders for a specified currency pair and account type.
+    /// Provides bulk order management for strategy adjustments, risk management, and position
+    /// restructuring with immediate trigger deactivation and order termination.
     ///
-    /// # API Documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#cancel-all-open-orders-under-specified-currency-pair>
+    /// [docs]: <https://www.gate.com/docs/developers/apiv4/#cancel-all-open-orders-under-specified-currency-pair>
+    ///
+    /// Rate limit: 100 requests per second
+    ///
+    /// # Arguments
+    /// * `currency_pair` - Trading pair for which to cancel all price orders (e.g., "BTC_USDT")
+    /// * `account` - Account type context for order cancellation ("spot", "margin", "cross_margin")
+    ///
+    /// # Returns
+    /// Vector of cancelled price orders with updated status information
     pub async fn cancel_all_price_orders(
         &self,
         currency_pair: &str,
         account: &str,
     ) -> crate::gateio::spot::RestResult<Vec<PriceOrder>> {
         let endpoint = format!(
-            "/spot/price_orders?currency_pair={}&account={}",
-            currency_pair, account
+            "{}?currency_pair={}&account={}",
+            SPOT_PRICE_ORDERS_ENDPOINT, currency_pair, account
         );
-        self.delete(&endpoint).await
+        self.send_delete_request(&endpoint, None::<&()>, crate::gateio::spot::EndpointType::Private).await
     }
 
     /// Cancel a specific price order
     ///
-    /// This endpoint cancels a specific price order by ID.
+    /// Cancels an individual conditional price order by its unique identifier, immediately
+    /// deactivating trigger monitoring and removing the order from active status. Provides
+    /// precise order management for strategy modifications and risk control adjustments.
     ///
-    /// # API Documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#cancel-a-price-triggered-order>
+    /// [docs]: <https://www.gate.com/docs/developers/apiv4/#cancel-a-price-triggered-order>
+    ///
+    /// Rate limit: 100 requests per second
+    ///
+    /// # Arguments
+    /// * `order_id` - Unique identifier for the specific price order to cancel
+    ///
+    /// # Returns
+    /// Cancelled price order information with updated status and termination details
     pub async fn cancel_price_order(
         &self,
         order_id: &str,
     ) -> crate::gateio::spot::RestResult<PriceOrder> {
-        let endpoint = format!("/spot/price_orders/{}", order_id);
-        self.delete(&endpoint).await
+        let endpoint = format!("{}/{}", SPOT_PRICE_ORDERS_ENDPOINT, order_id);
+        self.send_delete_request(&endpoint, None::<&()>, crate::gateio::spot::EndpointType::Private).await
     }
 }
 

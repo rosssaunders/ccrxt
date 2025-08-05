@@ -5,140 +5,157 @@ use crate::gateio::spot::{OrderSide, OrderStatus, OrderType, StpMode, TimeInForc
 
 const CREATE_ORDER_ENDPOINT: &str = "/spot/orders";
 
-/// Order creation request
+/// Request parameters for creating a new spot order.
+///
+/// This request creates a new trading order with specified parameters including
+/// trading pair, order type, side, and amount. Supports various order configurations
+/// including limit orders, market orders, and iceberg orders.
 #[derive(Debug, Clone, Serialize)]
 pub struct CreateOrderRequest {
-    /// Currency pair
+    /// Trading currency pair (e.g., "BTC_USDT", "ETH_BTC").
     pub currency_pair: String,
 
-    /// Order type
+    /// Type of order to create (limit, market).
     #[serde(rename = "type")]
     pub order_type: OrderType,
 
-    /// Account type (spot, margin, cross_margin)
+    /// Account type for the order ("spot", "margin", "cross_margin"). If not specified, defaults to spot.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub account: Option<String>,
 
-    /// Order side
+    /// Side of the order (buy or sell).
     pub side: OrderSide,
 
-    /// Order amount
+    /// Amount to buy or sell in base currency. For buy market orders, amount is in quote currency.
     pub amount: String,
 
-    /// Order price (required for limit orders)
+    /// Price per unit for limit orders. Required for limit orders, omitted for market orders.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub price: Option<String>,
 
-    /// Time in force
+    /// Time in force policy for the order (GTC, IOC, POC, FOK). Defaults to GTC if not specified.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub time_in_force: Option<TimeInForce>,
 
-    /// Iceberg amount (0 for normal orders)
+    /// Iceberg order amount to display on order book. Set to "0" for normal orders, or specify amount for iceberg.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub iceberg: Option<String>,
 
-    /// Self-trade prevention mode
+    /// Self-trade prevention mode to handle orders that would trade with user's own orders.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub stp_mode: Option<StpMode>,
 
-    /// Client order ID
+    /// User-defined text identifier for the order. Maximum 28 characters, alphanumeric and underscore only.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub text: Option<String>,
 }
 
-/// Order information
+/// Detailed order information returned from the API.
+///
+/// Contains comprehensive order details including execution status, timing,
+/// fees, and trade information. Used for both newly created orders and
+/// queried order status.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Order {
-    /// Order ID
+    /// Unique order identifier assigned by the exchange.
     pub id: String,
 
-    /// User defined text
+    /// User-defined text identifier for the order. Limited to 28 characters.
     pub text: String,
 
-    /// Whether to cancel remaining orders, only used in batch orders
+    /// Amendment text for modified orders. Used only in batch order operations when canceling remaining orders.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub amend_text: Option<String>,
 
-    /// Order creation time
+    /// Unix timestamp when the order was created (seconds since epoch).
     pub create_time: String,
 
-    /// Order update time
+    /// Unix timestamp when the order was last updated (seconds since epoch).
     pub update_time: String,
 
-    /// Order status
+    /// Current status of the order (open, closed, cancelled, etc.).
     pub status: OrderStatus,
 
-    /// Currency pair
+    /// Trading currency pair for this order (e.g., "BTC_USDT").
     pub currency_pair: String,
 
-    /// Order type
+    /// Type of order (limit, market).
     #[serde(rename = "type")]
     pub order_type: OrderType,
 
-    /// Account type
+    /// Account type used for this order (spot, margin, cross_margin).
     pub account: String,
 
-    /// Order side
+    /// Side of the order (buy or sell).
     pub side: OrderSide,
 
-    /// Order amount
+    /// Original order amount in base currency.
     pub amount: String,
 
-    /// Order price
+    /// Order price per unit. For market orders, this may be "0" or average fill price.
     pub price: String,
 
-    /// Time in force
+    /// Time in force policy applied to this order (GTC, IOC, POC, FOK).
     pub time_in_force: TimeInForce,
 
-    /// Iceberg amount
+    /// Iceberg order display amount. "0" for normal orders, specific amount for iceberg orders.
     pub iceberg: String,
 
-    /// Amount to display
+    /// Remaining unfilled amount in base currency.
     pub left: String,
 
-    /// Executed amount
+    /// Total amount that has been executed/filled in base currency.
     pub filled_amount: String,
 
-    /// Executed value in quote currency
+    /// Average execution price for filled portions. Weighted average if multiple fills.
     pub fill_price: String,
 
-    /// Fee paid
+    /// Total trading fee paid for this order in fee currency.
     pub fee: String,
 
-    /// Fee currency
+    /// Currency in which the trading fee was charged (usually quote currency).
     pub fee_currency: String,
 
-    /// Point fee
+    /// Points fee charged for this order (loyalty program feature).
     pub point_fee: String,
 
-    /// GT fee
+    /// GT (GateToken) fee charged when using GT for fee discount.
     pub gt_fee: String,
 
-    /// GT discount
+    /// Whether GT fee discount was applied to this order.
     pub gt_discount: bool,
 
-    /// Rebated fee
+    /// Amount of fee rebated due to maker/loyalty programs.
     pub rebated_fee: String,
 
-    /// Rebated fee currency
+    /// Currency in which the rebated fee was credited.
     pub rebated_fee_currency: String,
 
-    /// Self-trade prevention mode
+    /// Self-trade prevention mode that was applied to this order.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub stp_mode: Option<StpMode>,
 
-    /// Self-trade prevention triggered
+    /// Action taken if self-trade prevention was triggered (cancel_newest, cancel_oldest, etc.).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub stp_act: Option<String>,
 }
 
 impl RestClient {
-    /// Create a new order
+    /// Create an order
     ///
-    /// This endpoint creates a new spot order.
+    /// Creates a new spot trading order with the specified parameters. Supports limit orders,
+    /// market orders, and various time-in-force options. Orders can be configured with iceberg
+    /// display amounts and self-trade prevention settings.
     ///
-    /// # API Documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#create-an-order>
+    /// [docs]: https://www.gate.io/docs/developers/apiv4/en/#create-an-order
+    ///
+    /// Rate limit: 100 requests per second
+    ///
+    /// # Arguments
+    /// * `order` - Order creation request with trading pair, amount, price, and other parameters
+    ///
+    /// # Returns
+    /// Created order details including order ID, status, and execution information
     pub async fn create_order(
         &self,
         order: CreateOrderRequest,

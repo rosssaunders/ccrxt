@@ -4,73 +4,74 @@ use super::RestClient;
 
 const TRANSFERS_ENDPOINT: &str = "/wallet/transfers";
 
-/// Request to create a transfer
+/// Request parameters for creating a transfer between trading accounts.
 #[derive(Debug, Clone, Serialize)]
 pub struct CreateTransferRequest {
-    /// Currency
+    /// Currency symbol to transfer (e.g., "USDT", "BTC", "ETH").
     pub currency: String,
 
-    /// From account (spot, margin, futures, delivery, cross_margin, options)
+    /// Source account type (spot, margin, futures, delivery, cross_margin, options).
     pub from: String,
 
-    /// To account (spot, margin, futures, delivery, cross_margin, options)
+    /// Destination account type (spot, margin, futures, delivery, cross_margin, options).
     pub to: String,
 
-    /// Transfer amount
+    /// Transfer amount in the specified currency.
     pub amount: String,
 
-    /// Currency pair (for margin transfers)
+    /// Currency pair for margin transfers (required for margin account transfers).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub currency_pair: Option<String>,
 
-    /// Settle currency (for futures/delivery transfers)
+    /// Settle currency for futures/delivery transfers (required for futures/delivery).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub settle: Option<String>,
 }
 
-/// Transfer record
+/// Transfer record representing a completed or pending transfer operation.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TransferRecord {
-    /// Currency
+    /// Currency symbol that was transferred.
     pub currency: String,
 
-    /// From account
+    /// Source account type (spot, margin, futures, delivery, cross_margin, options).
     pub from: String,
 
-    /// To account
+    /// Destination account type (spot, margin, futures, delivery, cross_margin, options).
     pub to: String,
 
-    /// Transfer amount
+    /// Transfer amount in the specified currency.
     pub amount: String,
 
-    /// Currency pair
+    /// Currency pair associated with margin transfers.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub currency_pair: Option<String>,
 
-    /// Settle currency
+    /// Settle currency for futures/delivery transfers.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub settle: Option<String>,
 }
 
 impl RestClient {
-    /// Create a transfer
+    /// Transfer between trading accounts
     ///
-    /// This endpoint creates a transfer between different accounts.
+    /// Transfer funds between different account types (spot, margin, futures, 
+    /// delivery, cross_margin, options) within the same user account.
     ///
     /// [docs]: https://www.gate.com/docs/developers/apiv4/#transfer-between-trading-accounts
     ///
-    /// Rate limit: varies by endpoint type
+    /// Rate limit: 100 requests per second
     ///
     /// # Arguments
-    /// * `request` - The transfer request parameters
+    /// * `request` - The transfer request parameters with source, destination, and amount
     ///
     /// # Returns
-    /// Transfer record confirming the created transfer
+    /// Transfer record confirming the completed or pending transfer operation
     pub async fn create_transfer(
         &self,
         request: CreateTransferRequest,
     ) -> crate::gateio::spot::RestResult<TransferRecord> {
-        self.post(TRANSFERS_ENDPOINT, &request).await
+        self.send_post_request(TRANSFERS_ENDPOINT, Some(&request), crate::gateio::spot::EndpointType::Private).await
     }
 }
 
@@ -232,6 +233,7 @@ mod tests {
         assert_eq!(cloned_transfer.to, transfer.to);
     }
 
+    /// Test that optional fields with None values are properly excluded from serialization.
     #[test]
     fn test_optional_field_serialization() {
         let request = CreateTransferRequest {

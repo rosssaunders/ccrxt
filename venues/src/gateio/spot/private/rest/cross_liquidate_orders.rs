@@ -2,80 +2,90 @@ use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 
-/// Request to create cross liquidate orders
+const CROSS_LIQUIDATE_ORDERS_ENDPOINT: &str = "/spot/cross_liquidate_orders";
+
+/// Request parameters for creating cross-margin liquidation orders.
+///
+/// Used to initiate liquidation actions in cross-margin trading mode when positions
+/// need to be closed automatically due to margin requirements or risk management.
+/// Supports different liquidation strategies including position closure and automatic borrowing/repayment.
 #[derive(Debug, Clone, Serialize)]
 pub struct CrossLiquidateOrdersRequest {
-    /// Currency pair to liquidate
+    /// Trading currency pair to liquidate (e.g., "BTC_USDT", "ETH_USDT").
     pub currency_pair: String,
 
-    /// Liquidation type (close_position, auto_borrow, auto_repay)
+    /// Type of liquidation action to perform ("close_position", "auto_borrow", "auto_repay").
     #[serde(rename = "type")]
     pub liquidation_type: String,
 
-    /// Client order ID (optional)
+    /// Optional client identifier for tracking the liquidation order. Maximum 64 characters.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub text: Option<String>,
 }
 
-/// Cross liquidate order response
+/// Response containing details of a cross-margin liquidation order.
+///
+/// Provides comprehensive information about liquidation orders executed in cross-margin mode,
+/// including order status, execution details, and fee information. Used to track the progress
+/// and results of automated liquidation actions.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CrossLiquidateOrder {
-    /// Order ID
+    /// Unique order identifier assigned by the exchange.
     pub id: String,
 
-    /// Currency pair
+    /// Trading currency pair for this liquidation order (e.g., "BTC_USDT").
     pub currency_pair: String,
 
-    /// Order status
+    /// Current status of the liquidation order ("open", "closed", "cancelled").
     pub status: String,
 
-    /// Account mode (cross_margin)
+    /// Account mode for this liquidation order (always "cross_margin" for cross liquidation).
     pub account: String,
 
-    /// Order side (buy or sell)
+    /// Order side indicating direction of liquidation ("buy" or "sell").
     pub side: String,
 
-    /// Order amount
+    /// Total amount of the liquidation order in base currency.
     pub amount: String,
 
-    /// Order price
+    /// Execution price for the liquidation order. May be "0" for market orders before execution.
     pub price: String,
 
-    /// Order type
+    /// Type of order used for liquidation ("market", "limit").
     #[serde(rename = "type")]
     pub order_type: String,
 
-    /// Time in force
+    /// Time in force policy applied to the liquidation order ("ioc", "gtc", etc.).
     pub time_in_force: String,
 
-    /// Filled amount
+    /// Amount that has been executed/filled during liquidation.
     pub filled_amount: String,
 
-    /// Left amount
+    /// Remaining unfilled amount of the liquidation order.
     pub left: String,
 
-    /// Average fill price
+    /// Average execution price for filled portions of the liquidation order.
     pub avg_deal_price: String,
 
-    /// Order fee
+    /// Total trading fee charged for this liquidation order.
     pub fee: String,
 
-    /// Fee currency
+    /// Currency in which the liquidation trading fee was charged.
     pub fee_currency: String,
 
-    /// Points used for fee
+    /// Points fee used for the liquidation order (loyalty program feature).
     pub points_fee: String,
 
-    /// GT discount fee
+    /// GT (GateToken) fee charged when using GT for fee discount during liquidation.
     pub gt_fee: String,
 
-    /// Create time timestamp
+    /// Unix timestamp when the liquidation order was created (seconds since epoch).
     pub create_time: String,
 
-    /// Update time timestamp
+    /// Unix timestamp when the liquidation order was last updated (seconds since epoch).
     pub update_time: String,
 
-    /// Client order id
+    /// Optional client identifier for tracking this liquidation order.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub text: Option<String>,
 }
@@ -83,13 +93,24 @@ pub struct CrossLiquidateOrder {
 impl RestClient {
     /// Create cross liquidate orders
     ///
-    /// This endpoint creates orders for cross margin liquidation.
-    /// Used to automatically close positions or handle margin calls.
+    /// Creates liquidation orders for cross-margin trading to automatically handle margin calls,
+    /// position closures, or risk management. Supports multiple liquidation strategies including
+    /// position closure, automatic borrowing for margin maintenance, and debt repayment.
+    ///
+    /// [docs]: https://www.gate.io/docs/developers/apiv4/en/#create-cross-liquidate-orders
+    ///
+    /// Rate limit: 100 requests per second
+    ///
+    /// # Arguments
+    /// * `request` - Liquidation request with currency pair, liquidation type, and optional client identifier
+    ///
+    /// # Returns
+    /// Details of the created liquidation order including execution status and trade information
     pub async fn cross_liquidate_orders(
         &self,
         request: CrossLiquidateOrdersRequest,
     ) -> crate::gateio::spot::RestResult<CrossLiquidateOrder> {
-        self.post("/spot/cross_liquidate_orders", &request).await
+        self.post(CROSS_LIQUIDATE_ORDERS_ENDPOINT, &request).await
     }
 }
 

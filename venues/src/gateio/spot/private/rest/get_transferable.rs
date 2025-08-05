@@ -4,34 +4,64 @@ use super::RestClient;
 
 const MARGIN_TRANSFERABLE_ENDPOINT: &str = "/margin/transferable";
 
-/// Request parameters for transferable amount
+/// Request parameters for querying transferable margin amounts.
+///
+/// Used to determine the maximum amount of a currency that can be transferred
+/// within margin trading contexts. Essential for managing margin positions
+/// and understanding available liquidity for transfers.
 #[derive(Debug, Clone, Serialize)]
 pub struct TransferableRequest {
-    /// Currency
+    /// Currency symbol to check transferable amount for.
+    /// 
+    /// Specifies which currency's transferable amount to query (e.g., "BTC", "USDT").
+    /// The amount returned represents the maximum that can be transferred for this currency.
     pub currency: String,
 
-    /// Currency pair
+    /// Trading pair context for the transferable calculation.
+    /// 
+    /// The currency pair context affects transferable amount calculations in margin trading.
+    /// Format should be "BASE_QUOTE" (e.g., "BTC_USDT", "ETH_BTC") matching the trading pair
+    /// where the currency is being used.
     pub currency_pair: String,
 }
 
-/// Transferable amount information
+/// Response containing transferable amount information for margin trading.
+///
+/// Provides the calculated maximum amount that can be transferred for the specified
+/// currency within the given trading pair context. Used for margin position management
+/// and transfer validation.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TransferableAmount {
-    /// Currency
+    /// Currency symbol for which the transferable amount is calculated.
+    /// 
+    /// Echoes back the currency from the request to confirm the response context.
     pub currency: String,
 
-    /// Available amount for transfer
+    /// Maximum transferable amount as a decimal string.
+    /// 
+    /// The calculated maximum amount that can be transferred for this currency
+    /// in the specified margin trading context. Returned as a string to preserve
+    /// precision for financial calculations.
     pub amount: String,
 }
 
 impl RestClient {
     /// Get transferable amount
     ///
-    /// This endpoint returns the amount that can be transferred for a specific
-    /// currency and currency pair in margin trading.
+    /// Retrieves the maximum amount of a specified currency that can be transferred
+    /// within margin trading contexts. This endpoint calculates transferable amounts
+    /// based on current margin positions, collateral requirements, and available balances.
+    /// Essential for margin position management and transfer planning.
     ///
-    /// # API Documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#get-transferable-amount>
+    /// [docs]: https://www.gate.io/docs/developers/apiv4/en/#get-transferable-amount
+    ///
+    /// Rate limit: 100 requests per second
+    ///
+    /// # Arguments
+    /// * `params` - Request parameters specifying currency and trading pair context
+    ///
+    /// # Returns
+    /// Transferable amount details including currency and maximum transferable amount
     pub async fn get_transferable(
         &self,
         params: TransferableRequest,

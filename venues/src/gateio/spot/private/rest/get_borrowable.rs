@@ -4,34 +4,50 @@ use super::RestClient;
 
 const MARGIN_BORROWABLE_ENDPOINT: &str = "/margin/borrowable";
 
-/// Request parameters for borrowable amount
+/// Request parameters for querying borrowable amount in margin trading.
+///
+/// Used to check how much of a specific currency can be borrowed for margin trading
+/// on a particular trading pair. Essential for calculating available leverage and
+/// managing margin positions.
 #[derive(Debug, Clone, Serialize)]
 pub struct BorrowableRequest {
-    /// Currency
+    /// Currency symbol to check borrowing capacity for (e.g., "USDT", "BTC", "ETH").
     pub currency: String,
 
-    /// Currency pair
+    /// Trading pair context for the borrowing query (e.g., "BTC_USDT", "ETH_USDT").
     pub currency_pair: String,
 }
 
-/// Borrowable amount information
+/// Information about borrowable amount for margin trading.
+///
+/// Contains the maximum amount of a specific currency that can be borrowed
+/// for margin trading purposes. Used to determine available leverage capacity
+/// and plan margin trading strategies.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct BorrowableAmount {
-    /// Currency
+    /// Currency symbol for which the borrowable amount is reported (e.g., "USDT", "BTC").
     pub currency: String,
 
-    /// Amount available for borrowing
+    /// Maximum amount available for borrowing in the specified currency as a string to preserve precision.
     pub amount: String,
 }
 
 impl RestClient {
-    /// Get borrowable amount
+    /// Query borrowable amount for margin trading
     ///
-    /// This endpoint returns the amount that can be borrowed for a specific
-    /// currency and currency pair in margin trading.
+    /// Retrieves the maximum amount of a specific currency that can be borrowed for margin
+    /// trading on a given trading pair. This information is essential for calculating
+    /// available leverage and managing risk in margin positions.
     ///
-    /// # API Documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#get-borrowable-amount>
+    /// [docs]: https://www.gate.io/docs/developers/apiv4/en/#query-borrowable-amount
+    ///
+    /// Rate limit: 100 requests per second
+    ///
+    /// # Arguments
+    /// * `params` - Currency and trading pair specification for borrowing capacity query
+    ///
+    /// # Returns
+    /// Borrowable amount information including currency and maximum available amount
     pub async fn get_borrowable(
         &self,
         params: BorrowableRequest,

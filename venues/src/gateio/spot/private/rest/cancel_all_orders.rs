@@ -3,36 +3,67 @@ use serde::Serialize;
 use super::RestClient;
 use crate::gateio::spot::{OrderSide, private::rest::create_order::Order};
 
-/// Cancel all orders request
+const CANCEL_ALL_ORDERS_ENDPOINT: &str = "/spot/orders";
+
+/// Request parameters for canceling all orders for a currency pair.
+///
+/// This request allows filtering by order side and account type to cancel specific subsets of orders.
 #[derive(Debug, Clone, Serialize)]
 pub struct CancelAllOrdersRequest {
-    /// Currency pair
+    /// The trading pair identifier for which to cancel orders (e.g., "BTC_USDT").
+    /// This field is required and specifies the exact currency pair.
     pub currency_pair: String,
 
-    /// Order side (optional, cancel all sides if not specified)
+    /// The order side to filter cancellations (optional).
+    /// If specified, only orders on the given side (buy/sell) will be canceled.
+    /// If omitted, orders on both sides will be canceled.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub side: Option<OrderSide>,
 
-    /// Account type (optional)
+    /// The account type to filter cancellations (optional).
+    /// Valid values include "spot", "margin", "cross_margin", "unified".
+    /// If omitted, orders from the default account type will be canceled.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub account: Option<String>,
 }
 
 impl RestClient {
-    /// Cancel all orders
+    /// Cancel all open orders in specified currency pair
     ///
-    /// This endpoint cancels all open orders for a currency pair.
+    /// Cancels all open orders for a specified currency pair. This endpoint allows optional
+    /// filtering by order side and account type to provide fine-grained control over which
+    /// orders are canceled.
     ///
-    /// # API Documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#cancel-all-open-orders-in-specified-currency-pair>
+    /// [docs]: https://www.gate.io/docs/developers/apiv4/#cancel-all-open-orders-in-specified-currency-pair
+    ///
+    /// Rate limit: 100 requests per second
+    ///
+    /// # Arguments
+    /// * `request` - The cancel all orders request parameters including currency pair and optional filters
+    ///
+    /// # Returns
+    /// A vector of canceled orders with their details
     pub async fn cancel_all_orders(
         &self,
         request: CancelAllOrdersRequest,
     ) -> crate::gateio::spot::RestResult<Vec<Order>> {
-        self.delete_with_query("/spot/orders", &request).await
+        self.delete_with_query(CANCEL_ALL_ORDERS_ENDPOINT, &request).await
     }
 
-    /// Cancel all orders for a currency pair
+    /// Cancel all orders for a currency pair (helper method)
+    ///
+    /// Convenience method to cancel all orders for a specific currency pair without
+    /// additional filtering by side or account type.
+    ///
+    /// [docs]: https://www.gate.io/docs/developers/apiv4/#cancel-all-open-orders-in-specified-currency-pair
+    ///
+    /// Rate limit: 100 requests per second
+    ///
+    /// # Arguments
+    /// * `currency_pair` - The trading pair identifier (e.g., "BTC_USDT")
+    ///
+    /// # Returns
+    /// A vector of canceled orders with their details
     pub async fn cancel_all_orders_for_pair(
         &self,
         currency_pair: &str,

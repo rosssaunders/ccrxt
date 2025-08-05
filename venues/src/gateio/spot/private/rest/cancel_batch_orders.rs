@@ -4,44 +4,67 @@ use super::RestClient;
 
 const CANCEL_BATCH_ORDERS_ENDPOINT: &str = "/spot/cancel_batch_orders";
 
-/// Request to cancel batch orders
+/// Request parameters for canceling multiple orders in a batch operation.
+///
+/// This request allows canceling multiple orders simultaneously by providing their order IDs.
 #[derive(Debug, Clone, Serialize)]
 pub struct CancelBatchOrdersRequest {
-    /// List of order IDs to cancel
+    /// The list of order IDs to cancel in this batch operation.
+    /// Each order ID should correspond to an existing order that can be canceled.
+    /// The API may have limits on the maximum number of orders that can be canceled in a single batch.
     pub order_ids: Vec<String>,
 }
 
-/// Cancel batch orders response
+/// Response from a batch order cancellation operation.
+///
+/// This response provides detailed information about which orders were successfully canceled
+/// and which orders failed to be canceled, including error details for failures.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CancelBatchOrdersResponse {
-    /// Successfully cancelled order IDs
+    /// The list of order IDs that were successfully canceled.
+    /// These orders have been removed from the order book and are no longer active.
     pub succeeded: Vec<String>,
 
-    /// Failed order cancellations with error details
+    /// The list of orders that failed to be canceled.
+    /// Each failed entry includes the order ID and detailed error information explaining why the cancellation failed.
     pub failed: Vec<CancelBatchOrderError>,
 }
 
-/// Failed batch order cancellation details
+/// Error details for orders that failed to be canceled in a batch operation.
+///
+/// This structure provides comprehensive information about why a specific order
+/// could not be canceled during the batch operation.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CancelBatchOrderError {
-    /// Order ID that failed to cancel
+    /// The order ID that failed to be canceled.
+    /// This corresponds to one of the order IDs provided in the original request.
     pub id: String,
 
-    /// Error message
+    /// A human-readable error message explaining why the cancellation failed.
+    /// This message provides detailed information about the specific failure reason.
     pub message: String,
 
-    /// Error code
+    /// The error code categorizing the type of failure.
+    /// Common codes include "ORDER_NOT_FOUND", "ORDER_FILLED", "ORDER_CANCELLED", etc.
     pub code: String,
 }
 
 impl RestClient {
-    /// Cancel multiple orders in batch
+    /// Cancel a batch of orders with an ID list
     ///
-    /// This endpoint allows cancelling multiple orders at once. It returns
-    /// information about which orders were successfully cancelled and which failed.
+    /// Cancels multiple orders at once by providing their order IDs. This endpoint is useful
+    /// for efficiently canceling many orders simultaneously, such as when clearing out all
+    /// open orders or implementing risk management strategies.
     ///
-    /// # API Documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#cancel-a-batch-of-orders-with-an-id-list>
+    /// [docs]: https://www.gate.io/docs/developers/apiv4/#cancel-a-batch-of-orders-with-an-id-list
+    ///
+    /// Rate limit: 100 requests per second
+    ///
+    /// # Arguments
+    /// * `request` - The batch cancel request containing the list of order IDs to cancel
+    ///
+    /// # Returns
+    /// A response containing lists of successfully canceled orders and failed cancellations with error details
     pub async fn cancel_batch_orders(
         &self,
         request: CancelBatchOrdersRequest,

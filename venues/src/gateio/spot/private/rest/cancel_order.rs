@@ -3,24 +3,40 @@ use serde::Serialize;
 use super::RestClient;
 use crate::gateio::spot::private::rest::create_order::Order;
 
-/// Cancel order request parameters
+/// Request parameters for canceling a single order.
+///
+/// This request is used to cancel a specific order by providing its order ID in the URL path
+/// along with the required currency pair and optional account type filters.
 #[derive(Debug, Clone, Serialize)]
 pub struct CancelOrderRequest {
-    /// Currency pair
+    /// The trading pair identifier for the order to cancel (e.g., "BTC_USDT").
+    /// This field is required and must match the currency pair of the order being canceled.
     pub currency_pair: String,
 
-    /// Account type (optional)
+    /// The account type where the order exists (optional).
+    /// Valid values include "spot", "margin", "cross_margin", "unified".
+    /// If omitted, the default account type will be used for the cancellation.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub account: Option<String>,
 }
 
 impl RestClient {
-    /// Cancel an order
+    /// Cancel a single order
     ///
-    /// This endpoint cancels a specific order.
+    /// Cancels a specific order by its order ID. The order must belong to the specified
+    /// currency pair and account type. Once canceled, the order will be removed from
+    /// the order book and any remaining quantity will not be executed.
     ///
-    /// # API Documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#cancel-a-single-order>
+    /// [docs]: https://www.gate.io/docs/developers/apiv4/#cancel-a-single-order
+    ///
+    /// Rate limit: 100 requests per second
+    ///
+    /// # Arguments
+    /// * `order_id` - The unique identifier of the order to cancel
+    /// * `currency_pair` - The trading pair identifier (e.g., "BTC_USDT")
+    ///
+    /// # Returns
+    /// The canceled order details including final status and execution information
     pub async fn cancel_order(
         &self,
         order_id: &str,

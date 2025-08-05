@@ -7,37 +7,60 @@ use super::RestClient;
 const MARGIN_LOAN_RECORDS_ENDPOINT: &str = "/margin/loan_records";
 const MARGIN_LOANS_ENDPOINT: &str = "/margin/loans";
 
+/// Request parameters for listing margin loans with comprehensive filtering options.
+///
+/// Used to query margin lending and borrowing history with extensive filtering
+/// capabilities for status, side, currency, and sorting options for detailed
+/// loan portfolio management and analysis.
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct ListLoansRequest {
-    /// Status filter (open, finished)
+    /// Loan status filter (e.g., "open", "finished", "cancelled").
+    ///
+    /// When specified, returns only loans with the matching status.
+    /// Common values include "open" for active loans, "finished" for completed loans.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub status: Option<String>,
 
-    /// Side filter (lend, borrow)
+    /// Side filter for loan operation type ("lend" for lending, "borrow" for borrowing).
+    ///
+    /// Allows filtering to show only lending operations or only borrowing operations.
+    /// Essential for separating loan portfolio by operation type.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub side: Option<String>,
 
-    /// Currency filter
+    /// Currency filter for specific asset loans (e.g., "BTC", "ETH", "USDT").
+    ///
+    /// When specified, returns only loans for the specified currency.
+    /// Useful for analyzing lending/borrowing activity for specific assets.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub currency: Option<String>,
 
-    /// Currency pair filter
+    /// Trading pair filter for loans tied to specific markets (e.g., "BTC_USDT").
+    ///
+    /// Filters loans to those associated with a particular trading pair.
+    /// Helpful for margin trading analysis on specific markets.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub currency_pair: Option<String>,
 
-    /// Sort direction (asc, desc)
+    /// Sort field for result ordering (e.g., "create_time", "amount", "rate").
+    ///
+    /// Determines the field used for sorting the returned loan records.
+    /// Common options include sorting by creation time or loan amount.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub sort_by: Option<String>,
 
-    /// Reverse sorting
+    /// Reverse sort order flag for descending order when true.
+    ///
+    /// When true, sorts results in descending order. When false or omitted,
+    /// sorts in ascending order based on the sort_by field.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reverse_sort: Option<bool>,
 
-    /// Page number (default: 1)
+    /// Page number for pagination (1-based indexing, default: 1).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub page: Option<i32>,
 
-    /// Maximum number of records to return (1-100, default: 100)
+    /// Maximum number of records to return per page (1-100, default: 100).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i32>,
 }
@@ -254,9 +277,21 @@ pub struct LoanRecord {
 }
 
 impl RestClient {
-    /// List margin loans
+    /// Margin Loans
     ///
-    /// This endpoint returns a list of margin loans (lending or borrowing) for the authenticated user.
+    /// Retrieve a list of margin loans for lending or borrowing with comprehensive
+    /// filtering options for status, side, currency, and sorting capabilities for
+    /// detailed loan portfolio management and analysis.
+    ///
+    /// [docs]: https://www.gate.io/docs/developers/apiv4/#list-margin-loans
+    ///
+    /// Rate limit: 100 requests per second
+    ///
+    /// # Arguments
+    /// * `params` - Request parameters for filtering margin loans
+    ///
+    /// # Returns
+    /// List of margin loan information matching the specified criteria
     pub async fn list_margin_loans(
         &self,
         params: ListLoansRequest,
@@ -376,6 +411,7 @@ impl RestClient {
 mod tests {
     use super::*;
 
+    /// Test margin loans request serialization with default parameters.
     #[test]
     fn test_list_loans_request_default() {
         let request = ListLoansRequest::default();

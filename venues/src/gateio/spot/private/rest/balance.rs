@@ -4,55 +4,64 @@ use super::RestClient;
 
 const TOTAL_BALANCE_ENDPOINT: &str = "/wallet/total_balance";
 
-/// Request parameters for total balance
+/// Request parameters for querying total balance across all accounts.
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct TotalBalanceRequest {
-    /// Currency filter
+    /// Currency filter to limit results to a specific currency.
+    /// If omitted, returns balance for all currencies.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub currency: Option<String>,
 }
 
-/// Total balance information
+/// Total balance information aggregated across all accounts.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TotalBalance {
-    /// Details of each currency
+    /// Balance details for each individual currency.
+    /// Maps currency symbols to their respective balance information.
     pub details: std::collections::HashMap<String, CurrencyBalance>,
 
-    /// Total balance in USDT
+    /// Aggregated total balance value.
+    /// Represents the sum of all balances converted to a common currency.
     pub total: TotalBalanceValue,
 }
 
-/// Currency balance details
+/// Balance details for a specific currency.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CurrencyBalance {
-    /// Available balance
+    /// Available balance amount for trading and withdrawal.
+    /// Represents funds that are not locked in orders or other operations.
     pub available: String,
 
-    /// Unrealized PnL
+    /// Unrealized profit and loss from open positions.
+    /// Positive values indicate profit, negative values indicate loss.
     pub unrealised_pnl: String,
 
-    /// Borrowed amount
+    /// Amount borrowed for margin trading.
+    /// Represents the debt that needs to be repaid.
     pub borrowed: String,
 }
 
-/// Total balance value
+/// Total balance value summary.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TotalBalanceValue {
-    /// Currency (usually USDT)
+    /// Currency used for the total balance calculation.
+    /// Typically "USDT" for USD-equivalent valuation.
     pub currency: String,
 
-    /// Total amount
+    /// Total balance amount in the specified currency.
+    /// Sum of all account balances converted to this currency.
     pub amount: String,
 }
 
 impl RestClient {
     /// Get total balance
     ///
-    /// This endpoint returns the total balance across all accounts.
+    /// Retrieves the total balance aggregated across all accounts.
+    /// Can be filtered to return balance for a specific currency only.
     ///
     /// [docs]: https://www.gate.com/docs/developers/apiv4/#query-account-book
     ///
-    /// Rate limit: varies by endpoint type
+    /// Rate limit: 10 requests per 2 seconds
     ///
     /// # Arguments
     /// * `params` - The total balance request parameters

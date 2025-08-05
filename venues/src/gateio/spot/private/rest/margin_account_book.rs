@@ -2,69 +2,88 @@ use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 
-/// Request parameters for margin account book
+/// Request parameters for retrieving margin account transaction history.
+///
+/// Used to query detailed margin account ledger entries including trading activity,
+/// loan operations, interest charges, and balance transfers with comprehensive
+/// filtering and pagination support for financial record keeping.
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct MarginAccountBookRequest {
-    /// Currency pair
+    /// Currency pair filter for trading-specific transactions (e.g., "BTC_USDT", "ETH_USDT").
     #[serde(skip_serializing_if = "Option::is_none")]
     pub currency_pair: Option<String>,
 
-    /// Currency
+    /// Currency filter for asset-specific balance changes (e.g., "BTC", "ETH", "USDT").
     #[serde(skip_serializing_if = "Option::is_none")]
     pub currency: Option<String>,
 
-    /// Start time (Unix timestamp in seconds)
+    /// Start time filter as Unix timestamp in seconds for transaction history range.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub from: Option<i64>,
 
-    /// End time (Unix timestamp in seconds)
+    /// End time filter as Unix timestamp in seconds for transaction history range.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub to: Option<i64>,
 
-    /// Page number (default: 1)
+    /// Page number for pagination through large transaction datasets (default: 1).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub page: Option<i32>,
 
-    /// Limit number of records (default: 10, max: 100)
+    /// Maximum number of records per page (default: 10, maximum: 100).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i32>,
 }
 
-/// Margin account book entry
+/// Comprehensive margin account transaction record with balance change details.
+///
+/// Represents individual entries in the margin account ledger including trading
+/// activity, loan operations, interest charges, and fund transfers with complete
+/// transaction context and resulting balance information.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct MarginAccountBookEntry {
-    /// Record ID
+    /// Unique transaction record identifier assigned by the exchange system.
     pub id: String,
 
-    /// Timestamp
+    /// Transaction timestamp as Unix timestamp in seconds.
     pub time: i64,
 
-    /// Currency
+    /// Currency code affected by this transaction (e.g., "BTC", "ETH", "USDT").
     pub currency: String,
 
-    /// Change amount
+    /// Balance change amount as string to preserve precision (positive for credits, negative for debits).
     pub change: String,
 
-    /// Balance after change
+    /// Account balance after this transaction as string to preserve precision.
     pub balance: String,
 
-    /// Change type
+    /// Transaction type classification (e.g., "trade", "loan", "repay", "interest", "transfer").
     #[serde(rename = "type")]
     pub change_type: String,
 
-    /// Account type
+    /// Account type where the transaction occurred (typically "margin").
     pub account: String,
 
-    /// Detail information
+    /// Additional transaction details as JSON object (optional, varies by transaction type).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub detail: Option<serde_json::Value>,
 }
 
 impl RestClient {
-    /// Get margin account book
+    /// Retrieve margin account transaction history
     ///
-    /// This endpoint returns the margin account ledger showing all balance changes
-    /// including trades, loans, repayments, and interest charges.
+    /// Retrieves detailed margin account ledger entries showing all balance changes
+    /// including trading activity, loan operations, repayments, interest charges,
+    /// and fund transfers. Essential for margin trading reconciliation and audit trails.
+    ///
+    /// [docs]: https://www.gate.io/docs/developers/apiv4/#margin-account-book
+    ///
+    /// Rate limit: 100 requests per second
+    ///
+    /// # Arguments
+    /// * `params` - Account book request parameters including optional currency filters, time range, and pagination
+    ///
+    /// # Returns
+    /// Vector of margin account book entries containing complete transaction history with balance details
     pub async fn get_margin_account_book(
         &self,
         params: MarginAccountBookRequest,
@@ -77,6 +96,7 @@ impl RestClient {
 mod tests {
     use super::*;
 
+    /// Test basic margin account book request serialization with default parameters.
     #[test]
     fn test_margin_account_book_request_default() {
         let request = MarginAccountBookRequest::default();

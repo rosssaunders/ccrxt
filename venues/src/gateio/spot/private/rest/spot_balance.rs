@@ -5,10 +5,18 @@ use super::{RestClient, SpotAccount};
 impl RestClient {
     /// Get spot account balance for a specific currency
     ///
-    /// This endpoint returns the spot account balance for a given currency.
+    /// Retrieve the spot trading account balance for a specified currency.
+    /// Returns balance information including available and locked amounts for the requested currency.
     ///
-    /// # API Documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#list-spot-accounts>
+    /// [docs]: https://www.gate.io/docs/developers/apiv4/#list-spot-accounts
+    ///
+    /// Rate limit: 100 requests per second
+    ///
+    /// # Arguments
+    /// * `currency` - Currency symbol to get balance for (e.g., "BTC", "ETH", "USDT")
+    ///
+    /// # Returns
+    /// Spot account balance for the specified currency
     pub async fn get_spot_account_balance(
         &self,
         currency: &str,
@@ -29,6 +37,8 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    /// Tests spot account balance logic with various scenarios.
 
     #[test]
     fn test_spot_account_balance_logic() {

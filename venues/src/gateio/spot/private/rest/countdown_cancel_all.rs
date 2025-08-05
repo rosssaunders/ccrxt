@@ -2,37 +2,58 @@ use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 
-/// Countdown cancel all request
+const COUNTDOWN_CANCEL_ALL_ENDPOINT: &str = "/spot/countdown_cancel_all";
+
+/// Request parameters for setting up automatic order cancellation countdown.
+///
+/// This request configures a countdown timer that will automatically cancel orders after
+/// a specified timeout period. This is useful for risk management and automated trading strategies.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CountdownCancelAllRequest {
-    /// Countdown time in seconds (0 to disable)
+    /// The countdown time in seconds before orders are automatically canceled.
+    /// Set to 0 to disable any existing countdown timer.
+    /// Valid range is typically 0 to 86400 (24 hours).
     pub timeout: u32,
 
-    /// Currency pair (optional, all pairs if not specified)
+    /// The specific currency pair to apply the countdown to (optional).
+    /// If not specified, the countdown will apply to all open orders across all trading pairs.
+    /// Format should be like "BTC_USDT", "ETH_USDT", etc.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub currency_pair: Option<String>,
 }
 
-/// Countdown cancel all response
+/// Response from setting up the countdown cancellation timer.
+///
+/// This response contains the calculated trigger time when the automatic cancellation will occur.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CountdownCancelAllResponse {
-    /// Trigger time (Unix timestamp)
+    /// The Unix timestamp when the automatic cancellation will be triggered.
+    /// This is calculated as current time + timeout seconds.
+    /// Will be 0 if the countdown was disabled (timeout = 0).
     pub trigger_time: i64,
 }
 
 impl RestClient {
-    /// Set up countdown cancel all
+    /// Countdown cancel orders
     ///
-    /// This endpoint sets up an automatic order cancellation after a specified timeout.
-    /// Setting timeout to 0 disables the countdown.
+    /// Sets up an automatic order cancellation countdown timer. After the specified timeout,
+    /// all matching orders will be automatically canceled. This is useful for risk management,
+    /// emergency stops, and automated trading strategies that need failsafe mechanisms.
     ///
-    /// # API Documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#countdown-cancel-orders>
+    /// [docs]: https://www.gate.io/docs/developers/apiv4/#countdown-cancel-orders
+    ///
+    /// Rate limit: 100 requests per second
+    ///
+    /// # Arguments
+    /// * `request` - The countdown configuration including timeout and optional currency pair filter
+    ///
+    /// # Returns
+    /// The trigger time when automatic cancellation will occur
     pub async fn countdown_cancel_all(
         &self,
         request: CountdownCancelAllRequest,
     ) -> crate::gateio::spot::RestResult<CountdownCancelAllResponse> {
-        self.post("/spot/countdown_cancel_all", &request).await
+        self.post(COUNTDOWN_CANCEL_ALL_ENDPOINT, &request).await
     }
 }
 

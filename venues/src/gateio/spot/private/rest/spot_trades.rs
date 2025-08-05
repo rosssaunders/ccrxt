@@ -3,86 +3,133 @@ use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 
-/// Request parameters for getting personal trading history
+const MY_TRADES_ENDPOINT: &str = "/spot/my_trades";
+
+/// Request parameters for getting personal trading history.
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct GetMyTradesRequest {
-    /// Currency pair
+    /// Currency pair filter (e.g., "BTC_USDT", "ETH_USDT").
+    /// When specified, only returns trades for this trading pair.
+    /// When omitted, returns trades for all trading pairs.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub currency_pair: Option<String>,
-    /// Limit the number of records
+
+    /// Maximum number of trades to return per request (1-1000).
+    /// Default behavior depends on API server implementation.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<u32>,
-    /// Page number
+
+    /// Page number for pagination, starting from 1.
+    /// Used in combination with limit for paginated results.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub page: Option<u32>,
-    /// Order ID
+
+    /// Order ID filter to get trades for a specific order.
+    /// When specified, returns only trades executed for this order.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub order_id: Option<String>,
-    /// Account type
+
+    /// Account type filter ("spot", "margin", "cross_margin", "unified").
+    /// Filters trades by the account type where they were executed.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub account: Option<String>,
-    /// Start timestamp
+
+    /// Start time filter (Unix timestamp in seconds).
+    /// Only returns trades executed at or after this time.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub from: Option<i64>,
-    /// End timestamp
+
+    /// End time filter (Unix timestamp in seconds).
+    /// Only returns trades executed before or at this time.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub to: Option<i64>,
 }
 
-/// Personal trade information
+/// Represents a completed trade from personal trading history.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct MyTrade {
-    /// Trade ID
+    /// Unique trade ID assigned by the exchange.
     pub id: String,
-    /// Trading time
+
+    /// Trade execution time (Unix timestamp in seconds).
     pub create_time: String,
-    /// Trading time in milliseconds
+
+    /// Trade execution time (Unix timestamp in milliseconds) for higher precision.
     pub create_time_ms: String,
-    /// Currency pair
+
+    /// Trading pair symbol (e.g., "BTC_USDT", "ETH_USDT").
     pub currency_pair: String,
-    /// Order ID
+
+    /// Order ID that generated this trade.
     pub order_id: String,
-    /// Trade side
+
+    /// Trade side indicating buy or sell direction ("buy" or "sell").
     pub side: String,
-    /// Trade role (taker/maker)
+
+    /// Trade role in the order book ("maker" or "taker").
+    /// Maker orders provide liquidity, taker orders consume liquidity.
     pub role: String,
-    /// Trade amount
+
+    /// Quantity of base currency traded.
+    /// Represented as string to preserve precision.
     pub amount: String,
-    /// Trade price
+
+    /// Execution price per unit of base currency.
+    /// Represented as string to preserve precision.
     pub price: String,
-    /// Trade fee
+
+    /// Trading fee charged for this trade.
+    /// Represented as string to preserve precision.
     pub fee: String,
-    /// Fee currency
+
+    /// Currency in which the trading fee was charged.
     pub fee_currency: String,
-    /// Point fee
+
+    /// Point fee amount (Gate.io loyalty program).
+    /// Usually "0" if no point discount applied.
     pub point_fee: String,
-    /// GT fee
+
+    /// GT (GateToken) fee amount used for fee discount.
+    /// GT tokens can be used to reduce trading fees.
     pub gt_fee: String,
-    /// Whether GT fee is used
+
+    /// Whether GT fee deduction was applied to reduce trading costs.
     pub gt_fee_deduction: bool,
-    /// Rebated fee
+
+    /// Fee rebate amount received (for market makers or referral programs).
+    /// Represented as string to preserve precision.
     pub rebated_fee: String,
-    /// Rebated fee currency
+
+    /// Currency in which the fee rebate was paid.
     pub rebated_fee_currency: String,
-    /// Text
+
+    /// Custom text identifier for the order that generated this trade.
+    /// Optional field used for order tracking and identification.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub text: Option<String>,
 }
 
 /// Implementation for the client
 impl RestClient {
-    /// Get personal trading history
+    /// List personal trading history
     ///
-    /// This endpoint returns your personal trading history.
-    /// You can filter by currency pair, time range, and other parameters.
+    /// Retrieve your personal trading history with comprehensive filtering options.
+    /// Returns executed trades with detailed information including fees, roles, and execution details.
     ///
-    /// # API Documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#list-personal-trading-history>
+    /// [docs]: https://www.gate.io/docs/developers/apiv4/#list-personal-trading-history
+    ///
+    /// Rate limit: 100 requests per second
+    ///
+    /// # Arguments
+    /// * `request` - Trading history request parameters with filtering options
+    ///
+    /// # Returns
+    /// Vector of personal trades matching the specified criteria
     pub async fn get_my_trades(
         &self,
         request: GetMyTradesRequest,
     ) -> crate::gateio::spot::RestResult<Vec<MyTrade>> {
-        self.get_with_query("/spot/my_trades", &request).await
+        self.get_with_query(MY_TRADES_ENDPOINT, &request).await
     }
 
     /// Get all personal trades for a currency pair
@@ -151,6 +198,8 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    /// Tests personal trading history request serialization and functionality.
 
     #[test]
     fn test_get_my_trades_request_minimal_serialization() {

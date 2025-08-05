@@ -4,38 +4,53 @@ use super::RestClient;
 
 const MARGIN_AUTO_REPAY_ENDPOINT: &str = "/margin/auto_repay";
 
-/// Request parameters for auto repay settings
+/// Request parameters for configuring auto repay settings.
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct AutoRepayRequest {
-    /// Status (on/off)
+    /// Auto repay status, either "on" or "off".
+    /// When enabled, margin loans will be automatically repaid.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub status: Option<String>,
 }
 
-/// Auto repay settings
+/// Auto repay settings configuration.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AutoRepaySetting {
-    /// Auto repay status
+    /// Current auto repay status ("on" or "off").
+    /// Indicates whether automatic loan repayment is enabled.
     pub status: String,
 }
 
 impl RestClient {
     /// Get auto repay settings
     ///
-    /// This endpoint returns the current auto repay settings for margin trading.
+    /// Retrieves the current auto repay configuration for margin trading.
+    /// Auto repay automatically repays margin loans when funds are available.
     ///
-    /// # API Documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#get-auto-repay-settings>
+    /// [docs]: https://www.gate.com/docs/developers/apiv4/#get-auto-repay-settings
+    ///
+    /// Rate limit: 10 requests per 2 seconds
+    ///
+    /// # Returns
+    /// Current auto repay settings configuration
     pub async fn get_auto_repay(&self) -> crate::gateio::spot::RestResult<AutoRepaySetting> {
         self.get(MARGIN_AUTO_REPAY_ENDPOINT).await
     }
 
     /// Update auto repay settings
     ///
-    /// This endpoint updates the auto repay settings for margin trading.
+    /// Modifies the auto repay configuration for margin trading.
+    /// When enabled, margin loans will be automatically repaid when funds are available.
     ///
-    /// # API Documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#update-auto-repay-settings>
+    /// [docs]: https://www.gate.com/docs/developers/apiv4/#update-auto-repay-settings
+    ///
+    /// Rate limit: 10 requests per 2 seconds
+    ///
+    /// # Arguments
+    /// * `params` - The auto repay configuration parameters
+    ///
+    /// # Returns
+    /// Updated auto repay settings configuration
     pub async fn update_auto_repay(
         &self,
         params: AutoRepayRequest,

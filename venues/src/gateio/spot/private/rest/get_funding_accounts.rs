@@ -4,41 +4,57 @@ use super::RestClient;
 
 const MARGIN_FUNDING_ACCOUNTS_ENDPOINT: &str = "/margin/funding_accounts";
 
-/// Request parameters for funding accounts
+/// Request parameters for querying funding accounts in margin trading.
+///
+/// Used to retrieve funding account balances that are available for lending
+/// in margin trading. Can optionally filter by specific currency to get
+/// targeted account information.
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct FundingAccountsRequest {
-    /// Currency filter
+    /// Optional currency filter to retrieve specific funding account (e.g., "BTC", "USDT"). If omitted, returns all currencies.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub currency: Option<String>,
 }
 
-/// Funding account information
+/// Comprehensive funding account information for margin trading.
+///
+/// Contains detailed balance information for assets available for lending
+/// in margin trading, including current lending status and total lending history.
+/// Used to track funding account capacity and lending activity.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FundingAccount {
-    /// Currency
+    /// Currency symbol for this funding account (e.g., "BTC", "ETH", "USDT").
     pub currency: String,
 
-    /// Available balance
+    /// Available balance that can be used for new lending or withdrawals as a string to preserve precision.
     pub available: String,
 
-    /// Locked balance
+    /// Locked balance that is temporarily unavailable (e.g., pending transactions) as a string.
     pub locked: String,
 
-    /// Lent amount
+    /// Currently lent amount that is actively earning interest as a string to preserve precision.
     pub lent: String,
 
-    /// Total lending balance
+    /// Total cumulative amount that has been lent out historically as a string to preserve precision.
     pub total_lent: String,
 }
 
 impl RestClient {
-    /// Get funding accounts
+    /// List funding accounts
     ///
-    /// This endpoint returns funding account balances for margin trading.
-    /// Funding accounts hold assets that can be lent out for margin trading.
+    /// Retrieves funding account balances that are available for margin trading lending.
+    /// Funding accounts contain assets that can be lent to margin traders for interest.
+    /// Can filter by specific currency or retrieve all funding accounts.
     ///
-    /// # API Documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#get-funding-accounts>
+    /// [docs]: https://www.gate.io/docs/developers/apiv4/en/#retrieve-funding-accounts
+    ///
+    /// Rate limit: 100 requests per second
+    ///
+    /// # Arguments
+    /// * `params` - Optional currency filter for targeted funding account query
+    ///
+    /// # Returns
+    /// List of funding accounts with balance details including available, locked, lent, and total lending amounts
     pub async fn get_funding_accounts(
         &self,
         params: FundingAccountsRequest,

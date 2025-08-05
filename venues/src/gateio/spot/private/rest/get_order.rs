@@ -3,24 +3,46 @@ use serde::Serialize;
 use super::RestClient;
 use crate::gateio::spot::private::rest::create_order::Order;
 
-/// Get order request parameters
+const GET_ORDER_ENDPOINT: &str = "/spot/orders";
+
+/// Request parameters for retrieving a specific order by ID.
+///
+/// Used to query details of an individual order using the order identifier,
+/// with optional account type specification for different trading contexts.
 #[derive(Debug, Clone, Serialize)]
 pub struct GetOrderRequest {
-    /// Currency pair
+    /// Trading pair identifier (e.g., "BTC_USDT", "ETH_BTC").
+    /// 
+    /// Specifies the currency pair for which to retrieve the order details.
     pub currency_pair: String,
 
-    /// Account type (optional)
+    /// Trading account type for the order query.
+    /// 
+    /// Optional parameter that specifies which account type to query from.
+    /// Common values include "spot", "margin", "cross_margin", or "unified".
+    /// If not specified, defaults to the main trading account.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub account: Option<String>,
 }
 
 impl RestClient {
-    /// Get a specific order
+    /// Get a single order
     ///
-    /// This endpoint returns details of a specific order.
+    /// Retrieves detailed information about a specific order by its ID and currency pair.
+    /// The endpoint returns comprehensive order details including status, execution data,
+    /// fees, and timing information. Supports querying orders from different account types
+    /// such as spot, margin, and unified accounts.
     ///
-    /// # API Documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#get-a-single-order>
+    /// [docs]: https://www.gate.io/docs/developers/apiv4/en/#get-a-single-order
+    ///
+    /// Rate limit: 100 requests per second
+    ///
+    /// # Arguments
+    /// * `order_id` - Unique identifier of the order to retrieve
+    /// * `currency_pair` - Trading pair for the order (e.g., "BTC_USDT")
+    ///
+    /// # Returns
+    /// Complete order details including execution status, fills, and metadata
     pub async fn get_order(
         &self,
         order_id: &str,
@@ -30,7 +52,7 @@ impl RestClient {
             currency_pair: currency_pair.to_string(),
             account: None,
         };
-        let endpoint = format!("/spot/orders/{}", order_id);
+        let endpoint = format!("{}/{}", GET_ORDER_ENDPOINT, order_id);
         self.get_with_query(&endpoint, &query).await
     }
 }

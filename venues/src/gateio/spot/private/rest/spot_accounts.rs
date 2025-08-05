@@ -4,22 +4,28 @@ use super::RestClient;
 
 const SPOT_ACCOUNTS_ENDPOINT: &str = "/spot/accounts";
 
-/// Request parameters for listing spot accounts
+/// Request parameters for listing spot accounts.
 #[derive(Debug, Clone, Default, Serialize)]
 pub struct ListSpotAccountsRequest {
-    /// Retrieve data of the specified currency
+    /// Currency filter for retrieving balance of a specific currency (e.g., "BTC", "ETH").
+    /// When specified, only returns the balance for this currency.
+    /// When omitted, returns balances for all currencies with non-zero amounts.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub currency: Option<String>,
 }
 
-/// Spot account balance
+/// Represents a spot trading account balance for a specific currency.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SpotAccount {
-    /// Currency name
+    /// Currency symbol (e.g., "BTC", "ETH", "USDT").
     pub currency: String,
-    /// Available balance
+
+    /// Available balance amount that can be used for trading or withdrawal.
+    /// Represented as a string to preserve precision for cryptocurrencies.
     pub available: String,
-    /// Locked balance
+
+    /// Locked balance amount that is currently reserved in open orders or pending operations.
+    /// This amount cannot be used for new trades until orders are completed or cancelled.
     pub locked: String,
 }
 
@@ -27,10 +33,18 @@ pub struct SpotAccount {
 impl RestClient {
     /// List spot accounts
     ///
-    /// This endpoint returns all spot account balances or a specific currency balance.
+    /// Retrieve spot trading account balances for all currencies or filter by a specific currency.
+    /// Returns balance information including available and locked amounts for spot trading.
     ///
-    /// # API Documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#list-spot-accounts>
+    /// [docs]: https://www.gate.io/docs/developers/apiv4/#list-spot-accounts
+    ///
+    /// Rate limit: 100 requests per second
+    ///
+    /// # Arguments
+    /// * `currency` - Optional currency filter (e.g., "BTC") to get balance for specific currency only
+    ///
+    /// # Returns
+    /// Vector of spot account balances, either for all currencies or filtered by currency
     pub async fn list_spot_accounts(
         &self,
         currency: Option<&str>,
@@ -50,6 +64,8 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    /// Tests list spot accounts request serialization without currency filter.
 
     #[test]
     fn test_list_spot_accounts_request_no_currency() {

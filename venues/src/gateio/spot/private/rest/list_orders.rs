@@ -3,38 +3,70 @@ use serde::Serialize;
 use super::RestClient;
 use crate::gateio::spot::{OrderSide, OrderStatus, private::rest::create_order::Order};
 
-/// List orders request
+const LIST_ORDERS_ENDPOINT: &str = "/spot/orders";
+
+/// Request parameters for listing historical and current orders.
+///
+/// Used to retrieve order history with comprehensive filtering options including
+/// currency pair, order status, time ranges, and account types. Supports pagination
+/// for efficient handling of large order histories and trading records.
 #[derive(Debug, Clone, Default, Serialize)]
 pub struct ListOrdersRequest {
-    /// Currency pair
+    /// Trading pair filter for order history query.
+    /// 
+    /// Optional filter to retrieve orders for a specific currency pair.
+    /// Format should be "BASE_QUOTE" (e.g., "BTC_USDT", "ETH_BTC"). If not specified,
+    /// returns orders for all trading pairs.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub currency_pair: Option<String>,
 
-    /// Order status
+    /// Order status filter for the query.
+    /// 
+    /// Filters orders by their current status. Options include open, closed, or cancelled.
+    /// If not specified, returns orders of all statuses.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub status: Option<OrderStatus>,
 
-    /// Page number
+    /// Page number for pagination (starting from 1).
+    /// 
+    /// Used for paginated results when there are many orders in the history.
+    /// Default is 1 if not specified. Page numbers start from 1, not 0.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub page: Option<u32>,
 
-    /// Number of records per page
+    /// Maximum number of orders to return per page.
+    /// 
+    /// Controls the number of orders returned in a single response. Larger limits
+    /// may improve efficiency but could increase response times. Typical range is 1-1000.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<u32>,
 
-    /// Account type
+    /// Account type filter for the order query.
+    /// 
+    /// Specifies which account type to query orders from. Common values include
+    /// "spot", "margin", "cross_margin", or "unified". If not specified, uses the
+    /// default account context.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub account: Option<String>,
 
-    /// Start timestamp
+    /// Start time filter as Unix timestamp.
+    /// 
+    /// Filters orders created on or after this timestamp. Used in combination with
+    /// 'to' parameter to define time ranges for historical order queries.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub from: Option<i64>,
 
-    /// End timestamp
+    /// End time filter as Unix timestamp.
+    /// 
+    /// Filters orders created on or before this timestamp. Used in combination with
+    /// 'from' parameter to define time ranges for historical order queries.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub to: Option<i64>,
 
-    /// Order side
+    /// Trading side filter for the order query.
+    /// 
+    /// Filters orders by trading direction. Options are buy or sell orders.
+    /// If not specified, returns orders for both sides.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub side: Option<OrderSide>,
 }
@@ -42,15 +74,25 @@ pub struct ListOrdersRequest {
 impl RestClient {
     /// List orders
     ///
-    /// This endpoint returns a list of orders based on the provided filters.
+    /// Retrieves a comprehensive list of historical and current orders with advanced filtering
+    /// capabilities. This endpoint supports querying orders by currency pair, status, time ranges,
+    /// and account types, making it essential for order management, trade history analysis, and
+    /// reconciliation processes. Results are paginated for efficient handling of large datasets.
     ///
-    /// # API Documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#list-orders>
+    /// [docs]: https://www.gate.io/docs/developers/apiv4/en/#list-orders
+    ///
+    /// Rate limit: 100 requests per second
+    ///
+    /// # Arguments
+    /// * `request` - Request parameters for filtering and pagination of order history
+    ///
+    /// # Returns
+    /// List of orders matching the specified criteria with detailed execution information
     pub async fn list_orders(
         &self,
         request: ListOrdersRequest,
     ) -> crate::gateio::spot::RestResult<Vec<Order>> {
-        self.get_with_query("/spot/orders", &request).await
+        self.get_with_query(LIST_ORDERS_ENDPOINT, &request).await
     }
 }
 

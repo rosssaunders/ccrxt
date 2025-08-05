@@ -4,117 +4,124 @@ use super::RestClient;
 
 const AMEND_BATCH_ORDERS_ENDPOINT: &str = "/spot/amend_batch_orders";
 
-/// Request to amend an order in batch
+/// Request parameters for amending an order in batch.
 #[derive(Debug, Clone, Serialize)]
 pub struct AmendOrderRequest {
-    /// Order ID to amend
+    /// Order ID to amend.
     pub id: String,
 
-    /// New price (optional)
+    /// New price for the order (optional). If provided, must be a valid decimal string.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub price: Option<String>,
 
-    /// New amount (optional)
+    /// New amount for the order (optional). If provided, must be a valid decimal string.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub amount: Option<String>,
 
-    /// Currency pair
+    /// Currency pair for the order (e.g., "BTC_USDT").
     pub currency_pair: String,
 
-    /// Account mode
+    /// Account mode (optional). Can be "spot", "margin", "cross_margin", etc.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub account: Option<String>,
 }
 
-/// Request to amend multiple orders in batch
+/// Request parameters for batch order amendment.
 #[derive(Debug, Clone, Serialize)]
 pub struct AmendBatchOrdersRequest {
-    /// List of orders to amend
+    /// List of orders to amend in the batch operation.
     pub orders: Vec<AmendOrderRequest>,
 }
 
-/// Amended order information
+/// Response information for an amended order.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AmendedOrder {
-    /// Order ID
+    /// Order ID.
     pub id: String,
 
-    /// Currency pair
+    /// Currency pair for the order.
     pub currency_pair: String,
 
-    /// Order status
+    /// Order status (e.g., "open", "closed", "cancelled").
     pub status: String,
 
-    /// Account mode
+    /// Account mode for the order.
     pub account: String,
 
-    /// Order side (buy or sell)
+    /// Order side ("buy" or "sell").
     pub side: String,
 
-    /// Order amount
+    /// Order amount as a decimal string.
     pub amount: String,
 
-    /// Order price
+    /// Order price as a decimal string.
     pub price: String,
 
-    /// Order type
+    /// Order type (e.g., "limit", "market").
     #[serde(rename = "type")]
     pub order_type: String,
 
-    /// Time in force
+    /// Time in force setting for the order.
     pub time_in_force: String,
 
-    /// Filled amount
+    /// Amount that has been filled as a decimal string.
     pub filled_amount: String,
 
-    /// Left amount
+    /// Remaining amount to be filled as a decimal string.
     pub left: String,
 
-    /// Average fill price
+    /// Average deal price as a decimal string.
     pub avg_deal_price: String,
 
-    /// Order fee
+    /// Fee paid for this order as a decimal string.
     pub fee: String,
 
-    /// Fee currency
+    /// Currency in which the fee is paid.
     pub fee_currency: String,
 
-    /// Points used for fee
+    /// Points fee as a decimal string.
     pub points_fee: String,
 
-    /// GT discount fee
+    /// GT fee as a decimal string.
     pub gt_fee: String,
 
-    /// Create time timestamp
+    /// Order creation timestamp as a string.
     pub create_time: String,
 
-    /// Update time timestamp
+    /// Order update timestamp as a string.
     pub update_time: String,
 
-    /// Client order id
+    /// Optional text identifier for the order.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub text: Option<String>,
 
-    /// Amendment succeeded
+    /// Whether the amendment was successful.
     pub succeeded: bool,
 
-    /// Error message if amendment failed
+    /// Error message if amendment failed (optional).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub message: Option<String>,
 
-    /// Error code if amendment failed
+    /// Error code if amendment failed (optional).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub code: Option<String>,
 }
 
 impl RestClient {
-    /// Amend multiple orders in batch
+    /// Batch modification of orders
     ///
-    /// This endpoint allows amending price and/or amount for multiple orders at once.
-    /// Returns information about each order amendment attempt.
+    /// Amend multiple orders in batch. Batch amendment can change the order price,
+    /// amount, and account mode. Returns information about each order amendment attempt.
     ///
-    /// # API Documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#batch-modification-of-orders>
+    /// [docs]: https://www.gate.com/docs/developers/apiv4/#batch-modification-of-orders
+    ///
+    /// Rate limit: 100 requests per second
+    ///
+    /// # Arguments
+    /// * `request` - The batch amendment request containing orders to modify
+    ///
+    /// # Returns
+    /// List of amended order results indicating success or failure for each order
     pub async fn amend_batch_orders(
         &self,
         request: AmendBatchOrdersRequest,

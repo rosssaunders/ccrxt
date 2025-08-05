@@ -2,126 +2,230 @@ use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 
-/// Request parameters for listing open orders
+const LIST_OPEN_ORDERS_ENDPOINT: &str = "/spot/open_orders";
+
+/// Request parameters for listing all active open orders.
+///
+/// Used to retrieve currently active orders that are waiting for execution,
+/// with optional filtering by currency pair, trading side, and account type.
+/// Supports pagination for handling large numbers of open orders.
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct ListOpenOrdersRequest {
-    /// Currency pair
+    /// Trading pair filter for open orders query.
+    /// 
+    /// Optional filter to retrieve open orders for a specific currency pair.
+    /// Format should be "BASE_QUOTE" (e.g., "BTC_USDT", "ETH_BTC"). If not specified,
+    /// returns open orders for all trading pairs.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub currency_pair: Option<String>,
 
-    /// Page number (default: 1)
+    /// Page number for pagination (starting from 1).
+    /// 
+    /// Used for paginated results when there are many open orders. Default is 1
+    /// if not specified. Page numbers start from 1, not 0.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub page: Option<i32>,
 
-    /// Maximum number of records to return (1-100, default: 100)
+    /// Maximum number of orders to return per page.
+    /// 
+    /// Controls the number of open orders returned in a single response. Valid range
+    /// is 1-100, with default being 100 if not specified. Larger limits may improve
+    /// efficiency but could increase response times.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i32>,
 
-    /// Order side filter (buy or sell)
+    /// Trading side filter for open orders.
+    /// 
+    /// Optional filter to retrieve only buy or sell orders. Valid values are "buy"
+    /// or "sell". If not specified, returns open orders for both sides.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub side: Option<String>,
 
-    /// Account mode (spot, margin, cross_margin)
+    /// Account type filter for the open orders query.
+    /// 
+    /// Specifies which account type to query open orders from. Common values include
+    /// "spot", "margin", "cross_margin", or "unified". If not specified, uses the
+    /// default account context.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub account: Option<String>,
 }
 
-/// Open order information
+/// Complete open order information returned from the API.
+///
+/// Represents an active order that is currently in the market waiting for execution
+/// or partially filled. Contains all relevant order details including execution status,
+/// fees, timing, and optional features like iceberg orders and auto-trading settings.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct OpenOrder {
-    /// Order ID
+    /// Unique order identifier assigned by the exchange.
+    /// 
+    /// System-generated unique ID for this order, used for tracking and management.
     pub id: String,
 
-    /// Currency pair
+    /// Trading pair for this order.
+    /// 
+    /// The currency pair being traded, formatted as "BASE_QUOTE" (e.g., "BTC_USDT").
     pub currency_pair: String,
 
-    /// Order status
+    /// Current order status.
+    /// 
+    /// Indicates the current state of the order (e.g., "open", "partial").
+    /// For this endpoint, typically "open" since only active orders are returned.
     pub status: String,
 
-    /// Account mode
+    /// Account type where the order was placed.
+    /// 
+    /// Identifies which account context this order belongs to (e.g., "spot", "margin").
     pub account: String,
 
-    /// Order side (buy or sell)
+    /// Order direction (buy or sell).
+    /// 
+    /// Indicates whether this is a buy order ("buy") or sell order ("sell").
     pub side: String,
 
-    /// Order amount
+    /// Total order quantity as a decimal string.
+    /// 
+    /// The original amount requested for this order, expressed in the base currency.
+    /// Preserved as string to maintain precision for financial calculations.
     pub amount: String,
 
-    /// Order price
+    /// Order price as a decimal string.
+    /// 
+    /// The price per unit for limit orders, or "0" for market orders.
+    /// Expressed in the quote currency and preserved as string for precision.
     pub price: String,
 
-    /// Order type
+    /// Order type specification.
+    /// 
+    /// Indicates the order type such as "limit", "market", "stop", etc.
     #[serde(rename = "type")]
     pub order_type: String,
 
-    /// Time in force
+    /// Time-in-force policy for this order.
+    /// 
+    /// Specifies how long the order remains active (e.g., "gtc" for Good Till Cancelled,
+    /// "ioc" for Immediate Or Cancel, "fok" for Fill Or Kill).
     pub time_in_force: String,
 
-    /// Filled amount
+    /// Amount already filled as a decimal string.
+    /// 
+    /// The portion of the order that has been executed, expressed in base currency.
+    /// For open orders, this may be "0" for unfilled or partial amount for partially filled.
     pub filled_amount: String,
 
-    /// Left amount
+    /// Remaining unfilled amount as a decimal string.
+    /// 
+    /// The portion of the order still waiting to be executed, expressed in base currency.
+    /// Calculated as original amount minus filled amount.
     pub left: String,
 
-    /// Average fill price
+    /// Average execution price as a decimal string.
+    /// 
+    /// The weighted average price of all fills for this order. "0" if no fills yet,
+    /// otherwise the average price of executed portions.
     pub avg_deal_price: String,
 
-    /// Order fee
+    /// Total fees paid for this order as a decimal string.
+    /// 
+    /// Cumulative fees charged for all executed portions of this order.
+    /// Amount depends on fee structure and trading volume.
     pub fee: String,
 
-    /// Fee currency
+    /// Currency in which fees are denominated.
+    /// 
+    /// The currency used for fee payment (e.g., "USDT", "BTC").
+    /// May differ from trading pair currencies based on fee structure.
     pub fee_currency: String,
 
-    /// Points used for fee
+    /// Points-based fee component as a decimal string.
+    /// 
+    /// Fee amount paid using loyalty points or similar reward systems.
+    /// "0" if no points were used for fee payment.
     pub points_fee: String,
 
-    /// GT discount fee
+    /// Gate Token (GT) discount fee as a decimal string.
+    /// 
+    /// Fee discount amount when using GT tokens for fee payment.
+    /// "0" if GT discount is not applicable or not used.
     pub gt_fee: String,
 
-    /// Create time timestamp
+    /// Order creation timestamp as a string.
+    /// 
+    /// Unix timestamp when the order was first created and submitted.
+    /// Formatted as string representation of seconds since epoch.
     pub create_time: String,
 
-    /// Update time timestamp
+    /// Last modification timestamp as a string.
+    /// 
+    /// Unix timestamp of the most recent update to this order (fills, amendments, etc.).
+    /// Initially equals create_time, updates with each change.
     pub update_time: String,
 
-    /// Client order id
+    /// Client-specified order identifier.
+    /// 
+    /// Optional custom order ID provided by the client for order tracking.
+    /// Useful for reconciliation and order management systems.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub text: Option<String>,
 
-    /// Iceberg order amount
+    /// Iceberg order display amount as a decimal string.
+    /// 
+    /// For iceberg orders, the amount visible in the order book at any time.
+    /// Allows large orders to be executed without revealing full size.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub iceberg: Option<String>,
 
-    /// Auto borrow enabled
+    /// Automatic borrowing enabled flag.
+    /// 
+    /// Indicates whether this order can automatically borrow funds if account
+    /// balance is insufficient. Applies to margin trading contexts.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub auto_borrow: Option<bool>,
 
-    /// Auto repay enabled
+    /// Automatic repayment enabled flag.
+    /// 
+    /// Indicates whether proceeds from this order will automatically repay
+    /// outstanding margin loans. Applies to margin trading contexts.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub auto_repay: Option<bool>,
 
-    /// STP action
+    /// Self-trade prevention action.
+    /// 
+    /// Specifies the action taken when this order would trade against another
+    /// order from the same account. Common values include "cancel_newest", "cancel_oldest".
     #[serde(skip_serializing_if = "Option::is_none")]
     pub stp_act: Option<String>,
 
-    /// Finish as
+    /// Order completion status.
+    /// 
+    /// Indicates how the order finished when it's no longer active.
+    /// Values include "filled", "cancelled", "expired", etc.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub finish_as: Option<String>,
 }
 
 impl RestClient {
-    /// List open orders
+    /// List all open orders
     ///
-    /// This endpoint returns all open (active) orders for the authenticated user.
-    /// You can filter by currency pair, side, and account type.
+    /// Retrieves all currently active orders that are waiting for execution or partially filled.
+    /// This endpoint returns comprehensive information about open orders including execution status,
+    /// fees, timing, and optional features. Supports filtering by currency pair, trading side,
+    /// and account type, with pagination for efficient handling of large result sets.
     ///
-    /// # API Documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#list-all-open-orders>
+    /// [docs]: https://www.gate.io/docs/developers/apiv4/en/#list-all-open-orders
+    ///
+    /// Rate limit: 100 requests per second
+    ///
+    /// # Arguments
+    /// * `params` - Request parameters for filtering and pagination of open orders
+    ///
+    /// # Returns
+    /// List of active open orders matching the specified criteria
     pub async fn list_open_orders(
         &self,
         params: ListOpenOrdersRequest,
     ) -> crate::gateio::spot::RestResult<Vec<OpenOrder>> {
-        self.get_with_query("/spot/open_orders", &params).await
+        self.get_with_query(LIST_OPEN_ORDERS_ENDPOINT, &params).await
     }
 }
 

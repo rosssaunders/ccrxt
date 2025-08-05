@@ -5,36 +5,57 @@ use crate::gateio::spot::private::rest::create_order::{CreateOrderRequest, Order
 
 const CREATE_BATCH_ORDERS_ENDPOINT: &str = "/spot/batch_orders";
 
-/// Batch order creation request
+/// Request parameters for creating multiple orders in a single batch operation.
+///
+/// This request allows submitting multiple order creation requests simultaneously,
+/// improving efficiency and reducing latency compared to individual order submissions.
 #[derive(Debug, Clone, Serialize)]
 pub struct CreateBatchOrdersRequest {
-    /// List of orders to create
+    /// The list of individual order creation requests to process in this batch.
+    /// Each order in the list will be processed according to its specific parameters.
+    /// The API typically limits the maximum number of orders per batch (commonly 10).
     pub orders: Vec<CreateOrderRequest>,
 }
 
-/// Batch order response
+/// Response from a single order creation within a batch operation.
+///
+/// Each order in the batch will have its own response indicating success or failure,
+/// allowing partial batch processing where some orders succeed while others may fail.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct BatchOrderResponse {
-    /// Whether the order was successfully created
+    /// Indicates whether this specific order was successfully created.
+    /// True means the order was accepted and is now active in the order book.
     pub succeeded: bool,
 
-    /// Order details if successful
+    /// The complete order details if the order was successfully created (optional).
+    /// This field contains all order information including assigned order ID, timestamps, and current status.
+    /// Will be None if the order creation failed.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub order: Option<Order>,
 
-    /// Error message if failed
+    /// Error message explaining why the order creation failed (optional).
+    /// This field provides detailed information about validation errors, insufficient balance,
+    /// or other issues that prevented the order from being created. Will be None for successful orders.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub message: Option<String>,
 }
 
 impl RestClient {
-    /// Create multiple orders in batch
+    /// Create a batch of orders
     ///
-    /// This endpoint creates multiple orders in a single request.
-    /// Maximum 10 orders per batch.
+    /// Creates multiple orders in a single API request for improved efficiency and reduced latency.
+    /// This endpoint is ideal for implementing trading strategies that require multiple simultaneous
+    /// orders, such as grid trading, arbitrage, or portfolio rebalancing.
     ///
-    /// # API Documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#create-a-batch-of-orders>
+    /// [docs]: https://www.gate.io/docs/developers/apiv4/#create-a-batch-of-orders
+    ///
+    /// Rate limit: 100 requests per second
+    ///
+    /// # Arguments
+    /// * `orders` - A vector of order creation requests to process in the batch (maximum 10 orders)
+    ///
+    /// # Returns
+    /// A vector of batch order responses, one for each order in the request, indicating success or failure
     pub async fn create_batch_orders(
         &self,
         orders: Vec<CreateOrderRequest>,

@@ -2,62 +2,114 @@ use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 
-/// Request parameters for margin accounts
+const MARGIN_ACCOUNTS_ENDPOINT: &str = "/margin/accounts";
+
+/// Request parameters for querying margin account information with optional currency pair filtering.
+///
+/// Used to retrieve margin account details including balances, borrowed amounts,
+/// risk levels, and currency-specific information for margin trading pairs with
+/// comprehensive account status and lending activity overview.
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct MarginAccountsRequest {
-    /// Currency pair filter
+    /// Optional trading pair filter for specific margin account (e.g., "BTC_USDT", "ETH_USDT").
+    ///
+    /// When specified, returns only the margin account for the requested trading pair.
+    /// When omitted, returns all margin accounts for all available trading pairs.
+    /// Format: "{BASE}_{QUOTE}" following Gate.io pair naming convention.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub currency_pair: Option<String>,
 }
 
-/// Margin account information
+/// Comprehensive margin account information with trading pair balance and risk details.
+///
+/// Represents complete margin account status including base and quote currency
+/// balances, borrowed amounts, interest charges, and risk assessment for a
+/// specific trading pair with locked status and leverage information.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct MarginAccount {
-    /// Currency pair
+    /// Trading pair identifier in "{BASE}_{QUOTE}" format (e.g., "BTC_USDT", "ETH_USDT").
     pub currency_pair: String,
 
-    /// Locked status
+    /// Account lock status indicating if trading is restricted due to high risk or liquidation.
+    ///
+    /// When true, the account may be restricted from new borrowing or trading activities
+    /// due to risk levels or margin requirements not being met.
     pub locked: bool,
 
-    /// Risk level
+    /// Current risk ratio as decimal string representing margin utilization level.
+    ///
+    /// Higher values (closer to 1.0) indicate higher risk of liquidation.
+    /// Typically ranges from 0.0 (low risk) to 1.0 (maximum risk before liquidation).
     pub risk: String,
 
-    /// Base currency information
+    /// Base currency balance details including available, locked, and borrowed amounts.
     pub base: MarginBalance,
 
-    /// Quote currency information
+    /// Quote currency balance details including available, locked, and borrowed amounts.
     pub quote: MarginBalance,
 }
 
-/// Margin balance information
+/// Detailed balance information for a single currency in margin trading account.
+///
+/// Contains comprehensive balance breakdown including available funds, locked amounts,
+/// borrowed balances, and accrued interest charges for margin trading operations
+/// with precision string formatting to preserve exact decimal values.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct MarginBalance {
-    /// Currency
+    /// Currency code identifier (e.g., "BTC", "ETH", "USDT").
     pub currency: String,
 
-    /// Available balance
+    /// Available balance that can be used for trading or withdrawal as decimal string.
+    ///
+    /// Represents the portion of balance not locked in orders or used as collateral.
+    /// This amount can be used to place new orders or transferred out of the account.
     pub available: String,
 
-    /// Locked balance
+    /// Balance currently locked in open orders or pending operations as decimal string.
+    ///
+    /// Includes funds reserved for open orders, pending transfers, or other operations
+    /// that temporarily restrict access to the balance until completion.
     pub locked: String,
 
-    /// Borrowed amount
+    /// Total amount borrowed for this currency as decimal string.
+    ///
+    /// Represents outstanding loan principal that must be repaid along with accrued
+    /// interest. Zero indicates no borrowing for this currency.
     pub borrowed: String,
 
-    /// Interest amount
+    /// Accrued interest charges on borrowed amount as decimal string.
+    ///
+    /// Interest accumulates over time on borrowed balances and must be repaid
+    /// along with the principal. Zero when no borrowing or fully paid interest.
     pub interest: String,
 }
 
 impl RestClient {
-    /// Get margin accounts
+    /// Margin Accounts
     ///
-    /// This endpoint returns margin account information including balances,
-    /// borrowed amounts, and risk levels for each currency pair.
+    /// Retrieve margin account information including balances, borrowed amounts,
+    /// and risk levels for all or specific currency pairs with comprehensive
+    /// account status and lending activity details.
+    ///
+    /// [docs]: https://www.gate.io/docs/developers/apiv4/#margin-accounts
+    ///
+    /// Rate limit: 100 requests per second
+    ///
+    /// # Arguments
+    /// * `params` - Request parameters for filtering margin accounts
+    ///
+    /// # Returns
+    /// List of margin account information for requested trading pairs
     pub async fn get_margin_accounts(
         &self,
         params: MarginAccountsRequest,
     ) -> crate::gateio::spot::RestResult<Vec<MarginAccount>> {
-        self.get_with_query("/margin/accounts", &params).await
+        self.send_get_request(
+            MARGIN_ACCOUNTS_ENDPOINT,
+            Some(&params),
+            crate::gateio::EndpointType::Private,
+        )
+        .await
     }
 }
 
@@ -65,6 +117,7 @@ impl RestClient {
 mod tests {
     use super::*;
 
+    /// Test margin accounts request serialization with default parameters.
     #[test]
     fn test_margin_accounts_request_default() {
         let request = MarginAccountsRequest::default();

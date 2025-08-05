@@ -3,18 +3,23 @@ use serde::Serialize;
 use super::RestClient;
 use crate::gateio::spot::private::rest::create_order::Order;
 
-/// Order amendment request
+const AMEND_ORDER_ENDPOINT: &str = "/spot/orders";
+
+/// Request parameters for amending an order.
 #[derive(Debug, Clone, Serialize)]
 pub struct AmendOrderRequest {
-    /// New order amount (optional)
+    /// New order amount to be set for this order.
+    /// Must be greater than zero if provided.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub amount: Option<String>,
 
-    /// New order price (optional)
+    /// New order price to be set for this order.
+    /// Must be greater than zero if provided.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub price: Option<String>,
 
-    /// Amendment text
+    /// Custom amendment text for tracking purposes.
+    /// Free text field for client use.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub amend_text: Option<String>,
 }
@@ -22,17 +27,27 @@ pub struct AmendOrderRequest {
 impl RestClient {
     /// Amend an order
     ///
-    /// This endpoint modifies the price and/or amount of an existing order.
+    /// Modifies the price and/or amount of an existing order.
+    /// At least one of amount or price must be provided in the amendment.
     ///
-    /// # API Documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#amend-an-order>
+    /// [docs]: https://www.gate.com/docs/developers/apiv4/#amend-an-order
+    ///
+    /// Rate limit: 100 requests per 2 seconds
+    ///
+    /// # Arguments
+    /// * `order_id` - The order ID to be amended
+    /// * `currency_pair` - Trading pair symbol (e.g., "BTC_USDT")
+    /// * `amendment` - The order amendment parameters
+    ///
+    /// # Returns
+    /// Updated order information after amendment
     pub async fn amend_order(
         &self,
         order_id: &str,
         currency_pair: &str,
         amendment: AmendOrderRequest,
     ) -> crate::gateio::spot::RestResult<Order> {
-        let endpoint = format!("/spot/orders/{}", order_id);
+        let endpoint = format!("{}/{}", AMEND_ORDER_ENDPOINT, order_id);
         #[allow(clippy::unwrap_used)]
         let mut body = serde_json::to_value(&amendment).unwrap();
         #[allow(clippy::indexing_slicing)]

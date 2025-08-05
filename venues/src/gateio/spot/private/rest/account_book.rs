@@ -2,24 +2,31 @@ use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 
+const ACCOUNT_BOOK_ENDPOINT: &str = "/spot/account_book";
+
 /// Request parameters for getting account book
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct GetAccountBookRequest {
     /// Retrieve data of the specified currency
     #[serde(skip_serializing_if = "Option::is_none")]
     pub currency: Option<String>,
+
     /// Start timestamp
     #[serde(skip_serializing_if = "Option::is_none")]
     pub from: Option<i64>,
+
     /// End timestamp
     #[serde(skip_serializing_if = "Option::is_none")]
     pub to: Option<i64>,
+
     /// Page number
     #[serde(skip_serializing_if = "Option::is_none")]
     pub page: Option<u32>,
+
     /// Number of records per page
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<u32>,
+
     /// Type of record
     #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(rename = "type")]
@@ -31,40 +38,59 @@ pub struct GetAccountBookRequest {
 pub struct AccountBookEntry {
     /// Entry ID
     pub id: String,
+
     /// Unix timestamp
     pub time: i64,
+
     /// Currency
     pub currency: String,
+
     /// Change amount (positive for income, negative for expenditure)
     pub change: String,
+
     /// Balance after change
     pub balance: String,
+
     /// Entry type
     #[serde(rename = "type")]
     pub entry_type: String,
+
     /// Additional text
     pub text: Option<String>,
 }
 
 impl RestClient {
-    /// Get account book
+    /// Query account book
     ///
-    /// This endpoint returns the account balance change history.
-    /// You can filter by currency, time range, and record type.
+    /// Retrieves account balance change history. You can filter by currency, time range,
+    /// and record type to analyze specific transactions such as trades, deposits,
+    /// withdrawals, fees, and transfers.
     ///
-    /// # API Documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#query-account-book>
+    /// [docs]: https://www.gate.com/docs/developers/apiv4/#query-account-book
+    ///
+    /// Rate limit: 100 requests per second
+    ///
+    /// # Arguments
+    /// * `request` - The account book request parameters
+    ///
+    /// # Returns
+    /// A vector of account book entries showing balance changes
     pub async fn get_account_book(
         &self,
         request: GetAccountBookRequest,
     ) -> crate::gateio::spot::RestResult<Vec<AccountBookEntry>> {
-        self.get_with_query("/spot/account_book", &request).await
+        self.get_with_query(ACCOUNT_BOOK_ENDPOINT, &request).await
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_account_book_endpoint_constant() {
+        assert_eq!(ACCOUNT_BOOK_ENDPOINT, "/spot/account_book");
+    }
 
     #[test]
     fn test_get_account_book_request_default() {
@@ -939,6 +965,268 @@ mod tests {
             }
 
             previous_balance = balance_val;
+        }
+    }
+
+    #[test]
+    fn test_account_book_comprehensive_transaction_types() {
+        // Test all major transaction types from API documentation
+        let transaction_types = vec![
+            "deposit",     // Bank deposits, crypto deposits
+            "withdraw",    // Withdrawals to external addresses
+            "trade",       // Trading transactions
+            "fee",         // Trading fees, withdrawal fees
+            "refund",      // Fee refunds, failed transaction refunds
+            "bonus",       // Referral bonuses, trading bonuses
+            "transfer",    // Internal transfers between accounts
+            "liquidation", // Forced liquidations
+            "margin",      // Margin related transactions
+            "interest",    // Interest payments and charges
+            "rebate",      // VIP rebates
+            "airdrop",     // Token airdrops
+            "staking",     // Staking rewards
+            "lending",     // Lending related transactions
+            "derivatives", // Derivatives trading
+        ];
+
+        for tx_type in transaction_types {
+            let json = format!(
+                r#"{{
+                "id": "type_test_{}",
+                "time": 1640995200,
+                "currency": "USDT",
+                "change": "10.0",
+                "balance": "100.0",
+                "type": "{}",
+                "text": "Test {} transaction"
+            }}"#,
+                tx_type, tx_type, tx_type
+            );
+
+            let entry: AccountBookEntry = serde_json::from_str(&json).unwrap();
+            assert_eq!(entry.entry_type, tx_type);
+            assert_eq!(entry.change, "10.0");
+            assert_eq!(entry.balance, "100.0");
+        }
+    }
+
+    #[test]
+    fn test_account_book_major_cryptocurrencies() {
+        // Test major cryptocurrencies from API documentation
+        let currencies = vec![
+            "BTC", "ETH", "USDT", "USDC", "BNB", "ADA", "SOL", "DOT", "AVAX", "MATIC", "LINK",
+            "UNI", "ATOM", "ALGO", "XRP", "LTC", "BCH", "ETC", "FIL", "AAVE",
+        ];
+
+        for currency in currencies {
+            let json = format!(
+                r#"{{
+                "id": "currency_test_{}",
+                "time": 1640995200,
+                "currency": "{}",
+                "change": "1.0",
+                "balance": "10.0",
+                "type": "trade",
+                "text": "Test {} transaction"
+            }}"#,
+                currency, currency, currency
+            );
+
+            let entry: AccountBookEntry = serde_json::from_str(&json).unwrap();
+            assert_eq!(entry.currency, currency);
+            assert_eq!(entry.change, "1.0");
+            assert_eq!(entry.balance, "10.0");
+        }
+    }
+
+    #[test]
+    fn test_account_book_request_comprehensive_scenarios() {
+        // Comprehensive test scenarios based on real-world usage
+        let scenarios = vec![
+            // Tax reporting scenario
+            (
+                GetAccountBookRequest {
+                    currency: None,
+                    from: Some(1609459200), // Start of year
+                    to: Some(1640995200),   // End of year
+                    page: Some(1),
+                    limit: Some(500),
+                    record_type: None,
+                },
+                "tax_reporting",
+            ),
+            // Trading performance analysis
+            (
+                GetAccountBookRequest {
+                    currency: Some("BTC".to_string()),
+                    from: Some(1640908800), // Last 24 hours
+                    to: Some(1640995200),
+                    page: Some(1),
+                    limit: Some(100),
+                    record_type: Some("trade".to_string()),
+                },
+                "trading_analysis",
+            ),
+            // Fee analysis
+            (
+                GetAccountBookRequest {
+                    currency: None,
+                    from: Some(1640995200),
+                    to: Some(1641081600),
+                    page: Some(1),
+                    limit: Some(200),
+                    record_type: Some("fee".to_string()),
+                },
+                "fee_analysis",
+            ),
+            // Deposit history
+            (
+                GetAccountBookRequest {
+                    currency: Some("USDT".to_string()),
+                    from: None,
+                    to: None,
+                    page: Some(1),
+                    limit: Some(50),
+                    record_type: Some("deposit".to_string()),
+                },
+                "deposit_history",
+            ),
+        ];
+
+        for (request, scenario_name) in scenarios {
+            let json = serde_json::to_value(&request).unwrap();
+            let obj = json.as_object().unwrap();
+
+            match scenario_name {
+                "tax_reporting" => {
+                    assert_eq!(json["from"], 1609459200);
+                    assert_eq!(json["to"], 1640995200);
+                    assert_eq!(json["limit"], 500);
+                    assert!(!obj.contains_key("currency"));
+                    assert!(!obj.contains_key("type"));
+                }
+                "trading_analysis" => {
+                    assert_eq!(json["currency"], "BTC");
+                    assert_eq!(json["type"], "trade");
+                    assert_eq!(json["limit"], 100);
+                }
+                "fee_analysis" => {
+                    assert_eq!(json["type"], "fee");
+                    assert_eq!(json["limit"], 200);
+                }
+                "deposit_history" => {
+                    assert_eq!(json["currency"], "USDT");
+                    assert_eq!(json["type"], "deposit");
+                    assert_eq!(json["limit"], 50);
+                }
+                _ => panic!("Unknown scenario: {}", scenario_name),
+            }
+        }
+    }
+
+    #[test]
+    fn test_account_book_request_edge_cases() {
+        // Test edge cases and boundary conditions
+        let edge_cases = vec![
+            // Maximum page number
+            GetAccountBookRequest {
+                currency: None,
+                from: None,
+                to: None,
+                page: Some(u32::MAX),
+                limit: Some(1000),
+                record_type: None,
+            },
+            // Maximum limit
+            GetAccountBookRequest {
+                currency: None,
+                from: None,
+                to: None,
+                page: Some(1),
+                limit: Some(1000),
+                record_type: None,
+            },
+            // Very old timestamp
+            GetAccountBookRequest {
+                currency: None,
+                from: Some(1000000000), // Year 2001
+                to: Some(2000000000),   // Year 2033
+                page: None,
+                limit: None,
+                record_type: None,
+            },
+        ];
+
+        for request in edge_cases {
+            let json = serde_json::to_value(&request).unwrap();
+            // Should serialize without errors
+            assert!(json.is_object());
+        }
+    }
+
+    #[test]
+    fn test_account_book_entry_negative_amounts() {
+        // Test various negative amounts (withdrawals, fees, losses)
+        let negative_amounts = vec![
+            "-0.00000001",    // Tiny negative
+            "-1.0",           // Small negative
+            "-1000.123456",   // Large negative
+            "-999999.999999", // Very large negative
+        ];
+
+        for amount in negative_amounts {
+            let json = format!(
+                r#"{{
+                "id": "negative_test",
+                "time": 1640995200,
+                "currency": "USDT",
+                "change": "{}",
+                "balance": "1000000.0",
+                "type": "withdraw",
+                "text": "Negative amount test"
+            }}"#,
+                amount
+            );
+
+            let entry: AccountBookEntry = serde_json::from_str(&json).unwrap();
+            assert_eq!(entry.change, amount);
+            let change_val: f64 = entry.change.parse().unwrap();
+            assert!(change_val < 0.0, "Amount should be negative: {}", amount);
+        }
+    }
+
+    #[test]
+    fn test_account_book_entry_large_balances() {
+        // Test handling of large balance amounts
+        let large_balances = vec![
+            "1000000.0",              // 1 million
+            "1000000000.0",           // 1 billion
+            "1000000000000.0",        // 1 trillion
+            "999999999999999.999999", // Very large with precision
+        ];
+
+        for balance in large_balances {
+            let json = format!(
+                r#"{{
+                "id": "large_balance_test",
+                "time": 1640995200,
+                "currency": "USDT",
+                "change": "1000.0",
+                "balance": "{}",
+                "type": "deposit",
+                "text": "Large balance test"
+            }}"#,
+                balance
+            );
+
+            let entry: AccountBookEntry = serde_json::from_str(&json).unwrap();
+            assert_eq!(entry.balance, balance);
+            let balance_val: f64 = entry.balance.parse().unwrap();
+            assert!(
+                balance_val >= 1000000.0,
+                "Balance should be large: {}",
+                balance
+            );
         }
     }
 }

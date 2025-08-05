@@ -5,107 +5,123 @@ use super::RestClient;
 const WITHDRAWALS_ENDPOINT: &str = "/wallet/withdrawals";
 const WITHDRAWAL_FEES_ENDPOINT: &str = "/wallet/fee";
 
-/// Request parameters for withdrawals
+/// Request parameters for retrieving withdrawal history.
+///
+/// Used to filter and paginate withdrawal records with support for currency-specific
+/// queries, time range filtering, and result pagination for efficient data retrieval.
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct WithdrawalsRequest {
-    /// Currency filter
+    /// Currency code filter for specific asset withdrawals (e.g., "BTC", "ETH", "USDT").
     #[serde(skip_serializing_if = "Option::is_none")]
     pub currency: Option<String>,
 
-    /// Start time (Unix timestamp in seconds)
+    /// Start time filter as Unix timestamp in seconds for withdrawal history range.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub from: Option<i64>,
 
-    /// End time (Unix timestamp in seconds)
+    /// End time filter as Unix timestamp in seconds for withdrawal history range.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub to: Option<i64>,
 
-    /// Maximum number of records to return (1-100, default: 100)
+    /// Maximum number of withdrawal records to return (valid range: 1-100, default: 100).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i32>,
 
-    /// Page offset
+    /// Page offset for pagination through large withdrawal datasets.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub offset: Option<i32>,
 }
 
-/// Withdrawal record
+/// Complete withdrawal transaction record with status and blockchain details.
+///
+/// Contains comprehensive withdrawal information including transaction identifiers,
+/// amounts, fees, destination addresses, and processing status for tracking
+/// and auditing withdrawal operations across different blockchain networks.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct WithdrawalRecord {
-    /// Withdrawal ID
+    /// Unique withdrawal identifier assigned by the exchange system.
     pub id: String,
 
-    /// Transaction ID
+    /// Blockchain transaction hash for on-chain withdrawals (available after confirmation).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub txid: Option<String>,
 
-    /// Currency
+    /// Currency code of the withdrawn asset (e.g., "BTC", "ETH", "USDT").
     pub currency: String,
 
-    /// Chain
+    /// Blockchain network or chain used for the withdrawal (e.g., "ETH", "TRC20", "BEP20").
     pub chain: String,
 
-    /// Amount
+    /// Withdrawal amount as string to preserve precision for all decimal places.
     pub amount: String,
 
-    /// Fee
+    /// Network fee charged for the withdrawal as string to preserve precision.
     pub fee: String,
 
-    /// Address
+    /// Destination address where the funds were sent.
     pub address: String,
 
-    /// Payment ID
+    /// Payment identifier or memo required by some blockchains (e.g., XRP tag, EOS memo).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub payment_id: Option<String>,
 
-    /// Status
+    /// Current withdrawal status (e.g., "pending", "processing", "completed", "failed", "cancelled").
     pub status: String,
 
-    /// Timestamp
+    /// Withdrawal creation timestamp as string representation of Unix timestamp.
     pub timestamp: String,
 }
 
-/// Request parameters for withdrawal fees
+/// Request parameters for retrieving withdrawal fee information.
+///
+/// Used to query withdrawal fees for specific currencies or all supported
+/// assets, providing cost estimation for withdrawal transactions.
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct WithdrawalFeesRequest {
-    /// Currency filter
+    /// Currency code filter for specific asset fee information (optional).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub currency: Option<String>,
 }
 
-/// Withdrawal fee information
+/// Comprehensive withdrawal fee structure for a specific currency.
+///
+/// Provides complete fee information including minimum and maximum withdrawal
+/// limits, fixed network fees, and percentage-based charges for accurate
+/// cost calculation and withdrawal planning.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct WithdrawalFee {
-    /// Currency
+    /// Currency code for which the fee information applies.
     pub currency: String,
 
-    /// Minimum withdrawal amount
+    /// Minimum withdrawal amount allowed for this currency as string to preserve precision.
     pub min_amount: String,
 
-    /// Maximum withdrawal amount
+    /// Maximum withdrawal amount allowed for this currency as string to preserve precision.
     pub max_amount: String,
 
-    /// Fixed fee amount
+    /// Fixed fee amount charged regardless of withdrawal size as string to preserve precision.
     pub fixed: String,
 
-    /// Percentage fee
+    /// Percentage fee rate applied to withdrawal amount as string to preserve precision.
     pub percent: String,
 }
 
 impl RestClient {
-    /// Get withdrawal history
+    /// Retrieve withdrawal history
     ///
-    /// This endpoint returns the withdrawal history for the authenticated user.
+    /// Retrieves historical withdrawal records for the authenticated user with support for
+    /// currency filtering, time range queries, and pagination. Provides comprehensive
+    /// withdrawal tracking including transaction status, fees, and blockchain confirmations.
     ///
-    /// [docs]: https://www.gate.com/docs/developers/apiv4/#retrieve-withdrawal-records
+    /// [docs]: https://www.gate.io/docs/developers/apiv4/#retrieve-withdrawal-records
     ///
-    /// Rate limit: varies by endpoint type
+    /// Rate limit: 100 requests per second
     ///
     /// # Arguments
-    /// * `params` - The withdrawals request parameters
+    /// * `params` - Withdrawal history request parameters including optional currency filter, time range, and pagination
     ///
     /// # Returns
-    /// List of withdrawal records matching the criteria
+    /// Vector of withdrawal records matching the specified criteria with complete transaction details
     pub async fn get_withdrawals(
         &self,
         params: WithdrawalsRequest,
@@ -113,19 +129,21 @@ impl RestClient {
         self.get_with_query(WITHDRAWALS_ENDPOINT, &params).await
     }
 
-    /// Get withdrawal fees
+    /// Retrieve withdrawal fee information
     ///
-    /// This endpoint returns withdrawal fee information for currencies.
+    /// Retrieves current withdrawal fee structures for supported currencies including
+    /// minimum and maximum withdrawal amounts, fixed network fees, and percentage charges.
+    /// Essential for cost calculation and withdrawal planning across different assets.
     ///
-    /// [docs]: https://www.gate.com/docs/developers/apiv4/#retrieve-withdrawal-status
+    /// [docs]: https://www.gate.io/docs/developers/apiv4/#retrieve-withdrawal-status
     ///
-    /// Rate limit: varies by endpoint type
+    /// Rate limit: 100 requests per second
     ///
     /// # Arguments
-    /// * `params` - The withdrawal fees request parameters
+    /// * `params` - Withdrawal fee request parameters with optional currency filter for specific asset information
     ///
     /// # Returns
-    /// List of withdrawal fee information for currencies
+    /// Vector of withdrawal fee structures containing complete cost information for each currency
     pub async fn get_withdrawal_fees(
         &self,
         params: WithdrawalFeesRequest,
@@ -138,6 +156,7 @@ impl RestClient {
 mod tests {
     use super::*;
 
+    /// Test basic withdrawal history request serialization with default parameters.
     #[test]
     fn test_withdrawals_request_default() {
         let request = WithdrawalsRequest::default();

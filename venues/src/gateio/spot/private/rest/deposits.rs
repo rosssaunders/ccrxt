@@ -5,118 +5,138 @@ use super::RestClient;
 const DEPOSIT_ADDRESS_ENDPOINT: &str = "/wallet/deposit_address";
 const DEPOSITS_ENDPOINT: &str = "/wallet/deposits";
 
-/// Request parameters for deposit address
+/// Request parameters for obtaining a deposit address.
+///
+/// Used to generate or retrieve deposit addresses for a specific cryptocurrency.
+/// Each currency may support multiple blockchain networks with different addresses.
 #[derive(Debug, Clone, Serialize)]
 pub struct DepositAddressRequest {
-    /// Currency
+    /// Cryptocurrency symbol for which to get the deposit address (e.g., "BTC", "ETH", "USDT").
     pub currency: String,
 }
 
-/// Deposit address information
+/// Comprehensive deposit address information for a cryptocurrency.
+///
+/// Contains the primary deposit address and additional multichain addresses
+/// for cryptocurrencies that support multiple blockchain networks. Includes
+/// any required payment IDs or memos for certain networks.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct DepositAddress {
-    /// Currency
+    /// Primary cryptocurrency symbol (e.g., "BTC", "ETH", "USDT").
     pub currency: String,
 
-    /// Deposit address
+    /// Primary deposit address for the default blockchain network.
     pub address: String,
 
-    /// Address name
+    /// List of all available blockchain addresses for this cryptocurrency across different networks.
     pub multichain_addresses: Vec<MultichainAddress>,
 }
 
-/// Multichain address information
+/// Individual blockchain network address information.
+///
+/// Represents a deposit address on a specific blockchain network for cryptocurrencies
+/// that support multiple chains. Includes network-specific requirements like payment IDs.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct MultichainAddress {
-    /// Chain name
+    /// Blockchain network name (e.g., "BTC", "ETH", "BSC", "TRON").
     pub chain: String,
 
-    /// Address
+    /// Deposit address on this specific blockchain network.
     pub address: String,
 
-    /// Payment ID
+    /// Payment ID or memo required for this network (used by some exchanges and tokens).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub payment_id: Option<String>,
 
-    /// Payment name
+    /// Human-readable name for the payment ID field (e.g., "Memo", "Tag", "Payment ID").
     #[serde(skip_serializing_if = "Option::is_none")]
     pub payment_name: Option<String>,
 
-    /// Obtain failed reason
+    /// Error message if address generation failed for this blockchain network.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub obtain_failed: Option<String>,
 }
 
-/// Request parameters for deposits
+/// Request parameters for querying deposit history.
+///
+/// Provides filtering options to retrieve deposit records within specific time ranges,
+/// for particular currencies, or with pagination controls. All parameters are optional
+/// to allow flexible querying of deposit history.
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct DepositsRequest {
-    /// Currency filter
+    /// Filter deposits by specific cryptocurrency symbol (e.g., "BTC", "ETH"). If omitted, returns all currencies.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub currency: Option<String>,
 
-    /// Start time (Unix timestamp in seconds)
+    /// Start time for filtering deposits (Unix timestamp in seconds). If omitted, returns from earliest available.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub from: Option<i64>,
 
-    /// End time (Unix timestamp in seconds)
+    /// End time for filtering deposits (Unix timestamp in seconds). If omitted, returns up to current time.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub to: Option<i64>,
 
-    /// Maximum number of records to return (1-100, default: 100)
+    /// Maximum number of deposit records to return (1-100, default: 100). Controls page size.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i32>,
 
-    /// Page offset
+    /// Number of records to skip for pagination. Used with limit for paginated results.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub offset: Option<i32>,
 }
 
-/// Deposit record
+/// Detailed record of a cryptocurrency deposit transaction.
+///
+/// Contains comprehensive information about a deposit including transaction details,
+/// network information, and current status. Used for tracking deposit history
+/// and transaction verification.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct DepositRecord {
-    /// Deposit ID
+    /// Unique deposit identifier assigned by the exchange.
     pub id: String,
 
-    /// Transaction ID
+    /// Blockchain transaction hash for verification on the network explorer.
     pub txid: String,
 
-    /// Currency
+    /// Cryptocurrency symbol that was deposited (e.g., "BTC", "ETH", "USDT").
     pub currency: String,
 
-    /// Chain
+    /// Blockchain network used for this deposit (e.g., "BTC", "ETH", "BSC", "TRON").
     pub chain: String,
 
-    /// Amount
+    /// Amount of cryptocurrency deposited as a string to preserve precision.
     pub amount: String,
 
-    /// Address
+    /// Deposit address where the funds were sent to.
     pub address: String,
 
-    /// Payment ID
+    /// Payment ID, memo, or tag if required by the network or exchange (e.g., for XRP, EOS).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub payment_id: Option<String>,
 
-    /// Status
+    /// Current status of the deposit ("pending", "confirmed", "failed", "cancelled").
     pub status: String,
 
-    /// Timestamp
+    /// Unix timestamp when the deposit was recorded (seconds since epoch).
     pub timestamp: String,
 }
 
 impl RestClient {
-    /// Get deposit address
+    /// Generate currency deposit address
     ///
-    /// This endpoint returns the deposit address for a specific currency.
+    /// Generates or retrieves the deposit address for a specific cryptocurrency. The response
+    /// includes addresses for all supported blockchain networks for that currency, allowing
+    /// deposits from multiple networks where applicable.
     ///
-    /// [docs]: https://www.gate.com/docs/developers/apiv4/#generate-currency-deposit-address
+    /// [docs]: https://www.gate.io/docs/developers/apiv4/en/#generate-currency-deposit-address
     ///
-    /// Rate limit: varies by endpoint type
+    /// Rate limit: 100 requests per second
     ///
     /// # Arguments
-    /// * `params` - The deposit address request parameters
+    /// * `params` - Currency specification for which to generate the deposit address
     ///
     /// # Returns
-    /// Deposit address information for the specified currency
+    /// Complete deposit address information including multichain addresses and payment requirements
     pub async fn get_deposit_address(
         &self,
         params: DepositAddressRequest,
@@ -124,19 +144,21 @@ impl RestClient {
         self.get_with_query(DEPOSIT_ADDRESS_ENDPOINT, &params).await
     }
 
-    /// Get deposit history
+    /// Retrieve deposit records
     ///
-    /// This endpoint returns the deposit history for the authenticated user.
+    /// Retrieves the deposit history for the authenticated user with optional filtering
+    /// by currency, time range, and pagination. Provides comprehensive transaction details
+    /// including blockchain information and current status.
     ///
-    /// [docs]: https://www.gate.com/docs/developers/apiv4/#retrieve-deposit-records
+    /// [docs]: https://www.gate.io/docs/developers/apiv4/en/#retrieve-deposit-records
     ///
-    /// Rate limit: varies by endpoint type
+    /// Rate limit: 100 requests per second
     ///
     /// # Arguments
-    /// * `params` - The deposits request parameters
+    /// * `params` - Filtering and pagination parameters for deposit history query
     ///
     /// # Returns
-    /// List of deposit records matching the criteria
+    /// List of deposit records matching the specified criteria with complete transaction details
     pub async fn get_deposits(
         &self,
         params: DepositsRequest,
