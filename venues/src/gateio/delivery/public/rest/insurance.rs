@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
+use crate::gateio::delivery::RestResult;
 
 const DELIVERY_INSURANCE_ENDPOINT: &str = "/delivery/{}/insurance";
 
@@ -41,9 +42,9 @@ impl RestClient {
     pub async fn get_delivery_insurance(
         &self,
         params: DeliveryInsuranceRequest,
-    ) -> crate::gateio::delivery::RestResult<Vec<DeliveryInsurance>> {
+    ) -> RestResult<Vec<DeliveryInsurance>> {
         let endpoint = DELIVERY_INSURANCE_ENDPOINT.replace("{}", &params.settle);
-        self.send_get_request(&endpoint, Some(&params), crate::gateio::EndpointType::Public).await
+        self.get_with_query(&endpoint, Some(&params)).await
     }
 }
 

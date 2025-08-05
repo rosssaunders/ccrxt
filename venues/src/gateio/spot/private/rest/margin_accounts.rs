@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
+use crate::gateio::spot::RestResult;
 
 const MARGIN_ACCOUNTS_ENDPOINT: &str = "/margin/accounts";
 
@@ -103,13 +104,8 @@ impl RestClient {
     pub async fn get_margin_accounts(
         &self,
         params: MarginAccountsRequest,
-    ) -> crate::gateio::spot::RestResult<Vec<MarginAccount>> {
-        self.send_get_request(
-            MARGIN_ACCOUNTS_ENDPOINT,
-            Some(&params),
-            crate::gateio::EndpointType::Private,
-        )
-        .await
+    ) -> RestResult<Vec<MarginAccount>> {
+        self.get_with_query(MARGIN_ACCOUNTS_ENDPOINT, &params).await
     }
 }
 

@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
+use crate::gateio::spot::RestResult;
 
 const SPOT_PRICE_ORDERS_ENDPOINT: &str = "/spot/price_orders";
 
@@ -36,67 +37,67 @@ pub struct ListPriceOrdersRequest {
 #[derive(Debug, Clone, Serialize)]
 pub struct CreatePriceOrderRequest {
     /// Trading currency pair identifier (e.g., "BTC_USDT", "ETH_USDT").
-    /// 
+    ///
     /// Specifies the market for the conditional order trigger and subsequent execution.
     pub currency_pair: String,
 
     /// Order execution type for triggered order ("limit", "market").
-    /// 
+    ///
     /// Determines pricing behavior when the trigger condition is satisfied.
     /// Limit orders require price specification, market orders execute at current rates.
     #[serde(rename = "type")]
     pub order_type: String,
 
     /// Trading account context for order execution ("spot", "margin", "cross_margin").
-    /// 
+    ///
     /// Defines the account environment and available balance for order fulfillment.
     pub account: String,
 
     /// Order direction for market participation ("buy", "sell").
-    /// 
+    ///
     /// Specifies whether to acquire or dispose of the base currency when triggered.
     pub side: String,
 
     /// Quantity specification for order execution in base currency units.
-    /// 
+    ///
     /// For limit orders: base currency amount. For market buy orders: quote currency amount.
     /// Precision requirements vary by trading pair specifications.
     pub amount: String,
 
     /// Execution price for limit orders when trigger condition is satisfied.
-    /// 
+    ///
     /// Required for limit order types, omitted for market orders.
     /// Must comply with tick size requirements for the specified currency pair.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub price: Option<String>,
 
     /// Order persistence policy after trigger activation ("gtc", "ioc", "poc", "fok").
-    /// 
+    ///
     /// Controls order lifecycle behavior: GTC (Good Till Canceled), IOC (Immediate or Cancel),
     /// POC (Participate or Cancel), FOK (Fill or Kill). Affects execution guarantees.
     pub time_in_force: String,
 
     /// User-defined order identifier for tracking and reference purposes.
-    /// 
+    ///
     /// Optional alphanumeric string (maximum 28 characters) for order correlation
     /// and identification in trading records and notifications.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub text: Option<String>,
 
     /// Market price threshold for conditional order activation.
-    /// 
+    ///
     /// Defines the price level that must be reached to trigger order execution.
     /// Compared against market price using the specified trigger rule.
     pub trigger_price: String,
 
     /// Price comparison operator for trigger condition evaluation ("<=", ">=").
-    /// 
+    ///
     /// Determines trigger activation logic: "<=" for stop-loss scenarios (trigger when price
     /// falls to or below threshold), ">=" for breakout scenarios (trigger when price rises).
     pub rule: String,
 
     /// Conditional order expiration timestamp in Unix seconds format.
-    /// 
+    ///
     /// Optional deadline after which the trigger becomes invalid and order is canceled.
     /// Provides time-bounded conditional execution for strategic trading scenarios.
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -111,96 +112,96 @@ pub struct CreatePriceOrderRequest {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PriceOrder {
     /// Unique system identifier for the conditional price order.
-    /// 
+    ///
     /// Persistent reference for order tracking, status queries, and modification operations.
     pub id: i64,
 
     /// Account owner identifier for order attribution and security validation.
-    /// 
+    ///
     /// Links the conditional order to the specific user account for access control.
     pub user: i64,
 
     /// Trading market specification for the conditional order ("BTC_USDT", "ETH_USDT").
-    /// 
+    ///
     /// Defines the currency pair context for price monitoring and order execution.
     pub currency_pair: String,
 
     /// Current lifecycle state of the conditional order ("open", "cancelled", "finished", "triggered").
-    /// 
+    ///
     /// Indicates order progression: open (waiting), triggered (activated), finished (completed),
     /// cancelled (manually terminated). Affects available operations and state transitions.
     pub status: String,
 
     /// Trading account context for conditional order execution ("spot", "margin", "cross_margin").
-    /// 
+    ///
     /// Specifies the account type used for balance validation and order fulfillment.
     pub account: String,
 
     /// Market direction for conditional order execution ("buy", "sell").
-    /// 
+    ///
     /// Determines whether the triggered order will acquire or dispose of base currency.
     pub side: String,
 
     /// Quantity specification for conditional order execution in base currency units.
-    /// 
+    ///
     /// Amount to be traded when trigger condition is satisfied, subject to precision requirements.
     pub amount: String,
 
     /// Execution price for the conditional order when triggered.
-    /// 
+    ///
     /// For limit orders: specified price level. For market orders: "0" or average execution price.
     pub price: String,
 
     /// Order execution type applied when trigger condition is met ("limit", "market").
-    /// 
+    ///
     /// Determines pricing behavior: limit orders use specified price, market orders use current rates.
     #[serde(rename = "type")]
     pub order_type: String,
 
     /// Order persistence policy for triggered execution ("gtc", "ioc", "poc", "fok").
-    /// 
+    ///
     /// Controls order lifecycle after trigger: GTC (persistent), IOC (immediate), etc.
     pub time_in_force: String,
 
     /// Price threshold for conditional order activation monitoring.
-    /// 
+    ///
     /// Market price level that must be reached to trigger order execution.
     pub trigger_price: String,
 
     /// Price comparison logic for trigger condition evaluation ("<=", ">=").
-    /// 
+    ///
     /// Defines activation rule: "<=" for stop scenarios, ">=" for breakout scenarios.
     pub rule: String,
 
     /// Conditional order expiration deadline as Unix timestamp.
-    /// 
+    ///
     /// Time limit after which the trigger becomes invalid and order is automatically cancelled.
     pub expiration: i64,
 
     /// Associated regular order identifier when trigger condition has been satisfied.
-    /// 
+    ///
     /// Links to the actual market order created upon trigger activation for execution tracking.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub fired_order_id: Option<String>,
 
     /// Order creation timestamp in Unix seconds format.
-    /// 
+    ///
     /// Records when the conditional order was initially established in the system.
     pub create_time: i64,
 
     /// Order placement timestamp in Unix seconds format.
-    /// 
+    ///
     /// Records when the conditional order became active for trigger monitoring.
     pub put_time: i64,
 
     /// User-defined order identifier for correlation and tracking purposes.
-    /// 
+    ///
     /// Optional custom reference string for order identification in trading workflows.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub text: Option<String>,
 
     /// Cancellation or failure explanation for terminated conditional orders.
-    /// 
+    ///
     /// Provides context when orders are cancelled, expired, or encounter execution failures.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reason: Option<String>,
@@ -225,8 +226,9 @@ impl RestClient {
     pub async fn list_price_orders(
         &self,
         params: ListPriceOrdersRequest,
-    ) -> crate::gateio::spot::RestResult<Vec<PriceOrder>> {
-        self.send_get_request(SPOT_PRICE_ORDERS_ENDPOINT, Some(&params), crate::gateio::spot::EndpointType::Private).await
+    ) -> RestResult<Vec<PriceOrder>> {
+        self.get_with_query(SPOT_PRICE_ORDERS_ENDPOINT, &params)
+            .await
     }
 
     /// Get a specific price order
@@ -244,9 +246,9 @@ impl RestClient {
     ///
     /// # Returns
     /// Complete price order information including current status and execution details
-    pub async fn get_price_order(&self, order_id: &str) -> crate::gateio::spot::RestResult<PriceOrder> {
+    pub async fn get_price_order(&self, order_id: &str) -> RestResult<PriceOrder> {
         let endpoint = format!("{}/{}", SPOT_PRICE_ORDERS_ENDPOINT, order_id);
-        self.send_get_request(&endpoint, None::<&()>, crate::gateio::spot::EndpointType::Private).await
+        self.get(&endpoint).await
     }
 
     /// Create a price order
@@ -267,8 +269,8 @@ impl RestClient {
     pub async fn create_price_order(
         &self,
         request: CreatePriceOrderRequest,
-    ) -> crate::gateio::spot::RestResult<PriceOrder> {
-        self.send_post_request(SPOT_PRICE_ORDERS_ENDPOINT, Some(&request), crate::gateio::spot::EndpointType::Private).await
+    ) -> RestResult<PriceOrder> {
+        self.post(SPOT_PRICE_ORDERS_ENDPOINT, &request).await
     }
 
     /// Cancel all price orders
@@ -291,12 +293,12 @@ impl RestClient {
         &self,
         currency_pair: &str,
         account: &str,
-    ) -> crate::gateio::spot::RestResult<Vec<PriceOrder>> {
+    ) -> RestResult<Vec<PriceOrder>> {
         let endpoint = format!(
             "{}?currency_pair={}&account={}",
             SPOT_PRICE_ORDERS_ENDPOINT, currency_pair, account
         );
-        self.send_delete_request(&endpoint, None::<&()>, crate::gateio::spot::EndpointType::Private).await
+        self.delete(&endpoint).await
     }
 
     /// Cancel a specific price order
@@ -314,12 +316,9 @@ impl RestClient {
     ///
     /// # Returns
     /// Cancelled price order information with updated status and termination details
-    pub async fn cancel_price_order(
-        &self,
-        order_id: &str,
-    ) -> crate::gateio::spot::RestResult<PriceOrder> {
+    pub async fn cancel_price_order(&self, order_id: &str) -> RestResult<PriceOrder> {
         let endpoint = format!("{}/{}", SPOT_PRICE_ORDERS_ENDPOINT, order_id);
-        self.send_delete_request(&endpoint, None::<&()>, crate::gateio::spot::EndpointType::Private).await
+        self.delete(&endpoint).await
     }
 }
 

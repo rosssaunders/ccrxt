@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
+use crate::gateio::spot::RestResult;
 
 const TRANSFERS_ENDPOINT: &str = "/wallet/transfers";
 
@@ -70,8 +71,8 @@ impl RestClient {
     pub async fn create_transfer(
         &self,
         request: CreateTransferRequest,
-    ) -> crate::gateio::spot::RestResult<TransferRecord> {
-        self.send_post_request(TRANSFERS_ENDPOINT, Some(&request), crate::gateio::spot::EndpointType::Private).await
+    ) -> RestResult<TransferRecord> {
+        self.post(TRANSFERS_ENDPOINT, &request).await
     }
 }
 

@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
+use crate::gateio::delivery::RestResult;
 
 const DELIVERY_TRADES_ENDPOINT: &str = "/delivery/{}/trades";
 
@@ -73,14 +74,9 @@ impl RestClient {
     pub async fn get_delivery_trades(
         &self,
         params: DeliveryTradesRequest,
-    ) -> crate::gateio::delivery::RestResult<Vec<DeliveryTrade>> {
+    ) -> RestResult<Vec<DeliveryTrade>> {
         let endpoint = DELIVERY_TRADES_ENDPOINT.replace("{}", &params.settle);
-        self.send_get_request(
-            &endpoint,
-            Some(&params),
-            crate::gateio::delivery::EndpointType::Public,
-        )
-        .await
+        self.get_with_query(&endpoint, Some(&params)).await
     }
 }
 

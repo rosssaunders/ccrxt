@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
+use crate::gateio::delivery::RestResult;
 
 const DELIVERY_RISK_LIMIT_TIERS_ENDPOINT: &str = "/delivery/{}/risk_limit_tiers";
 
@@ -56,9 +57,9 @@ impl RestClient {
     pub async fn get_delivery_risk_limit_tiers(
         &self,
         params: DeliveryRiskLimitTiersRequest,
-    ) -> crate::gateio::delivery::RestResult<Vec<DeliveryRiskLimitTier>> {
+    ) -> RestResult<Vec<DeliveryRiskLimitTier>> {
         let endpoint = DELIVERY_RISK_LIMIT_TIERS_ENDPOINT.replace("{}", &params.settle);
-        self.send_get_request(&endpoint, Some(&params), crate::gateio::EndpointType::Public).await
+        self.get_with_query(&endpoint, Some(&params)).await
     }
 }
 

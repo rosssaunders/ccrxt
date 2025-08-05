@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
+use crate::gateio::delivery::RestResult;
 
 const DELIVERY_ORDER_BOOK_ENDPOINT: &str = "/delivery/{}/order_book";
 
@@ -73,9 +74,9 @@ impl RestClient {
     pub async fn get_delivery_order_book(
         &self,
         params: DeliveryOrderBookRequest,
-    ) -> crate::gateio::delivery::RestResult<DeliveryOrderBook> {
+    ) -> RestResult<DeliveryOrderBook> {
         let endpoint = DELIVERY_ORDER_BOOK_ENDPOINT.replace("{}", &params.settle);
-        self.send_get_request(&endpoint, Some(&params), crate::gateio::EndpointType::Public).await
+        self.get_with_query(&endpoint, Some(&params)).await
     }
 }
 
