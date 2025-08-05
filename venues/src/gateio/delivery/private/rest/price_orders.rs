@@ -153,8 +153,8 @@ impl RestClient {
         order_id: &str,
     ) -> crate::gateio::delivery::Result<DeliveryPriceOrder> {
         let endpoint = DELIVERY_PRICE_ORDER_ENDPOINT
-            .replace("{}", settle)
-            .replace("{}", order_id);
+            .replacen("{}", settle, 1)
+            .replacen("{}", order_id, 1);
         self.get(&endpoint).await
     }
 
@@ -178,8 +178,8 @@ impl RestClient {
         order_id: &str,
     ) -> crate::gateio::delivery::Result<DeliveryPriceOrder> {
         let endpoint = DELIVERY_PRICE_ORDER_ENDPOINT
-            .replace("{}", settle)
-            .replace("{}", order_id);
+            .replacen("{}", settle, 1)
+            .replacen("{}", order_id, 1);
         self.delete(&endpoint).await
     }
 
@@ -212,5 +212,111 @@ impl RestClient {
 
         let params = CancelAllParams { contract };
         self.delete_with_query(&endpoint, &params).await
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_delivery_price_orders_endpoint() {
+        assert_eq!(DELIVERY_PRICE_ORDERS_ENDPOINT, "/delivery/{}/price_orders");
+    }
+
+    #[test]
+    fn test_delivery_price_order_endpoint() {
+        assert_eq!(DELIVERY_PRICE_ORDER_ENDPOINT, "/delivery/{}/price_orders/{}");
+    }
+
+    #[test]
+    fn test_price_orders_endpoint_construction() {
+        let settle = "BTC";
+        let endpoint = DELIVERY_PRICE_ORDERS_ENDPOINT.replace("{}", settle);
+        assert_eq!(endpoint, "/delivery/BTC/price_orders");
+    }
+
+    #[test]
+    fn test_price_order_endpoint_construction() {
+        let settle = "USDT";
+        let order_id = "12345678";
+        let endpoint = DELIVERY_PRICE_ORDER_ENDPOINT
+            .replacen("{}", settle, 1)
+            .replacen("{}", order_id, 1);
+        assert_eq!(endpoint, "/delivery/USDT/price_orders/12345678");
+    }
+
+    #[test]
+    fn test_delivery_trigger_condition_deserialization() {
+        let json = r#"{
+            "rule": 1,
+            "price": "45000.0",
+            "expiration": 1640995200
+        }"#;
+
+        let trigger: DeliveryTriggerCondition = serde_json::from_str(json).unwrap();
+        assert_eq!(trigger.rule, 1);
+        assert_eq!(trigger.price, "45000.0");
+        assert_eq!(trigger.expiration, Some(1640995200));
+    }
+
+    #[test]
+    fn test_list_delivery_price_orders_request_minimal() {
+        let request = ListDeliveryPriceOrdersRequest {
+            settle: "BTC".to_string(),
+            ..Default::default()
+        };
+
+        let json = serde_json::to_value(&request).unwrap();
+        assert_eq!(json["settle"], "BTC");
+
+        let obj = json.as_object().unwrap();
+        assert_eq!(obj.len(), 1);
+    }
+
+    #[test]
+    fn test_list_delivery_price_orders_request_full() {
+        let request = ListDeliveryPriceOrdersRequest {
+            settle: "USDT".to_string(),
+            status: Some("open".to_string()),
+            contract: Some("BTC_USDT_20240315".to_string()),
+            offset: Some(10),
+            limit: Some(50),
+        };
+
+        let json = serde_json::to_value(&request).unwrap();
+        assert_eq!(json["settle"], "USDT");
+        assert_eq!(json["status"], "open");
+        assert_eq!(json["contract"], "BTC_USDT_20240315");
+        assert_eq!(json["offset"], 10);
+        assert_eq!(json["limit"], 50);
+
+        let obj = json.as_object().unwrap();
+        assert_eq!(obj.len(), 5);
+    }
+
+    #[test]
+    fn test_endpoints_have_correct_placeholders() {
+        let orders_placeholder_count = DELIVERY_PRICE_ORDERS_ENDPOINT.matches("{}").count();
+        assert_eq!(orders_placeholder_count, 1);
+
+        let order_placeholder_count = DELIVERY_PRICE_ORDER_ENDPOINT.matches("{}").count();
+        assert_eq!(order_placeholder_count, 2);
+    }
+
+    #[test]
+    fn test_price_order_endpoint_different_params() {
+        let test_cases = vec![
+            ("BTC", "order123", "/delivery/BTC/price_orders/order123"),
+            ("USDT", "987654321", "/delivery/USDT/price_orders/987654321"),
+            ("ETH", "abc-def-123", "/delivery/ETH/price_orders/abc-def-123"),
+        ];
+
+        for (settle, order_id, expected) in test_cases {
+            let endpoint = DELIVERY_PRICE_ORDER_ENDPOINT
+                .replacen("{}", settle, 1)
+                .replacen("{}", order_id, 1);
+            assert_eq!(endpoint, expected, "Failed for settle: {}, order_id: {}", settle, order_id);
+        }
     }
 }

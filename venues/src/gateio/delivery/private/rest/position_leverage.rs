@@ -110,8 +110,8 @@ mod tests {
 
         for settle in settlements {
             let endpoint = DELIVERY_POSITION_LEVERAGE_ENDPOINT
-                .replace("{}", settle)
-                .replace("{}", contract);
+                .replacen("{}", settle, 1)
+                .replacen("{}", contract, 1);
             
             assert!(endpoint.contains(settle));
             assert!(endpoint.contains(contract));

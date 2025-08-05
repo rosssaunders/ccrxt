@@ -161,8 +161,8 @@ mod tests {
 
         for contract in contracts {
             let endpoint = DELIVERY_POSITION_ENDPOINT
-                .replace("{}", "USDT")
-                .replace("{}", contract);
+                .replacen("{}", "USDT", 1)
+                .replacen("{}", contract, 1);
             assert!(endpoint.contains(contract));
             assert_eq!(endpoint, format!("/delivery/USDT/positions/{}", contract));
         }
