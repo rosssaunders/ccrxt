@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
@@ -176,43 +174,8 @@ impl RestClient {
         &self,
         request: GetOrdersRequest,
     ) -> Result<(OrdersResponse, ResponseHeaders)> {
-        let mut params = HashMap::new();
-
-        if let Some(status) = request.status {
-            #[allow(clippy::unwrap_used)]
-            params.insert(
-                "status".to_string(),
-                serde_json::to_string(&status)
-                    .unwrap()
-                    .trim_matches('"')
-                    .to_string(),
-            );
-        }
-        if let Some(symbol) = request.symbol {
-            params.insert("symbol".to_string(), symbol);
-        }
-        if let Some(side) = request.side {
-            #[allow(clippy::unwrap_used)]
-            params.insert(
-                "side".to_string(),
-                serde_json::to_string(&side)
-                    .unwrap()
-                    .trim_matches('"')
-                    .to_string(),
-            );
-        }
-        if let Some(order_type) = request.order_type {
-            params.insert("type".to_string(), order_type);
-        }
-        if let Some(start_time) = request.start_time {
-            params.insert("startAt".to_string(), start_time.to_string());
-        }
-        if let Some(end_time) = request.end_time {
-            params.insert("endAt".to_string(), end_time.to_string());
-        }
-
         let (response, headers): (RestResponse<OrdersResponse>, ResponseHeaders) =
-            self.get(ORDERS_ENDPOINT, Some(params)).await?;
+            self.get_with_request(ORDERS_ENDPOINT, &request).await?;
 
         Ok((response.data, headers))
     }

@@ -93,19 +93,13 @@ impl super::RestClient {
     pub async fn get_recent_closed_orders(
         &self,
         request: GetRecentClosedOrdersRequest,
-    ) -> Result<(RestResponse<GetRecentClosedOrdersResponse>, ResponseHeaders)> {
+    ) -> Result<(GetRecentClosedOrdersResponse, ResponseHeaders)> {
         const GET_RECENT_CLOSED_ORDERS_ENDPOINT: &str = "/api/v1/recentDoneOrders";
 
-        let params = if let Some(symbol) = request.symbol {
-            let mut params = std::collections::HashMap::new();
-            params.insert("symbol".to_string(), symbol);
-            Some(params)
-        } else {
-            None
-        };
+        let (response, headers): (RestResponse<GetRecentClosedOrdersResponse>, ResponseHeaders) =
+            self.get_with_request(GET_RECENT_CLOSED_ORDERS_ENDPOINT, &request).await?;
 
-        self.get(GET_RECENT_CLOSED_ORDERS_ENDPOINT, params.as_ref())
-            .await
+        Ok((response.data, headers))
     }
 }
 

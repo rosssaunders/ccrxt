@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
@@ -11,6 +9,7 @@ const RECENT_FILLS_ENDPOINT: &str = "/api/v1/limit/fills";
 #[derive(Debug, Clone, Default, Serialize)]
 pub struct GetRecentFillsRequest {
     /// Symbol filter (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub symbol: Option<String>,
 }
 
@@ -86,14 +85,8 @@ impl RestClient {
         &self,
         request: GetRecentFillsRequest,
     ) -> Result<(Vec<Fill>, ResponseHeaders)> {
-        let mut params = HashMap::new();
-
-        if let Some(symbol) = request.symbol {
-            params.insert("symbol".to_string(), symbol);
-        }
-
         let (response, headers): (RestResponse<Vec<Fill>>, ResponseHeaders) =
-            self.get(RECENT_FILLS_ENDPOINT, Some(params)).await?;
+            self.get_with_request(RECENT_FILLS_ENDPOINT, &request).await?;
 
         Ok((response.data, headers))
     }

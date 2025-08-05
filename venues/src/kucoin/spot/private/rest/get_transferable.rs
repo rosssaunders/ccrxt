@@ -1,4 +1,3 @@
-use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
 
@@ -18,6 +17,7 @@ pub struct GetTransferableRequest {
     pub account_type: String,
 
     /// Transfer tag (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub tag: Option<String>,
 }
 
@@ -48,16 +48,8 @@ impl RestClient {
         &self,
         request: GetTransferableRequest,
     ) -> Result<(TransferableBalance, ResponseHeaders)> {
-        let mut params = HashMap::new();
-        params.insert("currency".to_string(), request.currency);
-        params.insert("type".to_string(), request.account_type);
-
-        if let Some(tag) = request.tag {
-            params.insert("tag".to_string(), tag);
-        }
-
         let (response, headers): (RestResponse<TransferableBalance>, ResponseHeaders) =
-            self.get(TRANSFERABLE_ENDPOINT, Some(params)).await?;
+            self.get_with_request(TRANSFERABLE_ENDPOINT, &request).await?;
 
         Ok((response.data, headers))
     }

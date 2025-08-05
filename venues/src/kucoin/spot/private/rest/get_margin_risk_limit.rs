@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
@@ -11,9 +9,11 @@ pub struct GetMarginRiskLimitRequest {
     /// True for isolated, false for cross
     #[serde(rename = "isIsolated", skip_serializing_if = "Option::is_none")]
     pub is_isolated: Option<bool>,
+
     /// Currency (for cross margin)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub currency: Option<String>,
+
     /// Symbol (for isolated margin)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub symbol: Option<String>,
@@ -23,29 +23,51 @@ pub struct GetMarginRiskLimitRequest {
 #[derive(Debug, Clone, Deserialize)]
 pub struct MarginRiskLimitInfo {
     pub timestamp: Option<i64>,
+
     // Cross margin fields
     pub currency: Option<String>,
+
     pub borrow_max_amount: Option<String>,
+
     pub buy_max_amount: Option<String>,
+
     pub hold_max_amount: Option<String>,
+
     pub borrow_coefficient: Option<String>,
+
     pub margin_coefficient: Option<String>,
+
     pub precision: Option<i32>,
+
     pub borrow_min_amount: Option<String>,
+
     pub borrow_min_unit: Option<String>,
+
     pub borrow_enabled: Option<bool>,
+
     // Isolated margin fields
     pub symbol: Option<String>,
+
     pub base_max_borrow_amount: Option<String>,
+
     pub quote_max_borrow_amount: Option<String>,
+
     pub base_max_buy_amount: Option<String>,
+
     pub quote_max_buy_amount: Option<String>,
+
     pub base_max_hold_amount: Option<String>,
+
     pub quote_max_hold_amount: Option<String>,
+
     pub base_precision: Option<i32>,
+
     pub quote_precision: Option<i32>,
+
     pub base_borrow_min_amount: Option<String>,
+
     pub quote_borrow_min_amount: Option<String>,
+
     pub base_borrow_min_unit: Option<String>,
 }
 
@@ -61,25 +83,8 @@ impl RestClient {
         &self,
         request: GetMarginRiskLimitRequest,
     ) -> Result<(GetMarginRiskLimitResponse, ResponseHeaders)> {
-        let mut params = HashMap::new();
-        if let Some(is_isolated) = request.is_isolated {
-            params.insert("isIsolated".to_string(), is_isolated.to_string());
-        }
-        if let Some(currency) = request.currency {
-            params.insert("currency".to_string(), currency);
-        }
-        if let Some(symbol) = request.symbol {
-            params.insert("symbol".to_string(), symbol);
-        }
         let (response, headers): (RestResponse<GetMarginRiskLimitResponse>, ResponseHeaders) = self
-            .get(
-                "/api/v3/margin/currencies",
-                if params.is_empty() {
-                    None
-                } else {
-                    Some(params)
-                },
-            )
+            .get_with_request("/api/v3/margin/currencies", &request)
             .await?;
         Ok((response.data, headers))
     }

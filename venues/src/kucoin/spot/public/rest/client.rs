@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use reqwest::Client;
-use serde::de::DeserializeOwned;
+use serde::{de::DeserializeOwned, Serialize};
 
 use crate::kucoin::spot::{ApiError, RateLimiter, ResponseHeaders, RestResponse, Result};
 
@@ -55,6 +55,73 @@ impl RestClient {
         }
 
         let response = request.send().await?;
+
+        let status = response.status();
+        let headers = response.headers().clone();
+
+        let text = response.text().await?;
+
+        if !status.is_success() {
+            // Try to parse as error response
+            if let Ok(error_response) =
+                serde_json::from_str::<super::super::super::ErrorResponse>(&text)
+            {
+                return Err(ApiError::from(error_response).into());
+            } else {
+                return Err(ApiError::Http(format!("HTTP {}: {}", status, text)).into());
+            }
+        }
+
+        // Parse successful response
+        let response: RestResponse<T> = serde_json::from_str(&text)
+            .map_err(|e| ApiError::JsonParsing(format!("Failed to parse response: {}", e)))?;
+
+        // Check if KuCoin indicates success
+        if !response.is_success() {
+            return Err(ApiError::Other {
+                code: response.code.clone(),
+                message: "KuCoin API returned non-success code".to_string(),
+            }
+            .into());
+        }
+
+        let rate_limit_headers = ResponseHeaders::from_headers(&headers);
+
+        Ok((response, rate_limit_headers))
+    }
+
+    /// Make a GET request to the public API with a serializable request
+    pub async fn get_with_request<P, T>(
+        &self,
+        endpoint: &str,
+        request: &P,
+    ) -> Result<(RestResponse<T>, ResponseHeaders)>
+    where
+        P: Serialize,
+        T: DeserializeOwned,
+    {
+        // Check rate limiter
+        if !self.rate_limiter.can_proceed().await {
+            return Err(ApiError::RateLimitExceeded {
+                code: "429000".to_string(),
+                message: "Rate limit exceeded".to_string(),
+            }
+            .into());
+        }
+
+        let url = format!("{}{}", self.base_url, endpoint);
+
+        let mut request_builder = self.client.get(&url);
+
+        // Serialize the request as query parameters
+        let params = serde_urlencoded::to_string(request)
+            .map_err(|e| ApiError::JsonParsing(format!("Failed to serialize request: {}", e)))?;
+        
+        if !params.is_empty() {
+            request_builder = request_builder.query(&request);
+        }
+
+        let response = request_builder.send().await?;
 
         let status = response.status();
         let headers = response.headers().clone();

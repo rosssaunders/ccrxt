@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
@@ -80,11 +78,8 @@ impl RestClient {
         &self,
         request: GetTickerRequest,
     ) -> Result<(TickerStatistics, ResponseHeaders)> {
-        let mut params = HashMap::new();
-        params.insert("symbol".to_string(), request.symbol);
-
         let (response, headers): (RestResponse<TickerStatistics>, ResponseHeaders) =
-            self.get("/api/v1/market/stats", Some(params)).await?;
+            self.get_with_request("/api/v1/market/stats", &request).await?;
 
         Ok((response.data, headers))
     }

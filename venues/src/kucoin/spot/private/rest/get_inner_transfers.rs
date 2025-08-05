@@ -1,4 +1,3 @@
-use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
 
@@ -11,24 +10,27 @@ const INNER_TRANSFERS_ENDPOINT: &str = "/api/v1/accounts/transferable";
 #[derive(Debug, Clone, Default, Serialize)]
 pub struct GetInnerTransfersRequest {
     /// Currency filter (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub currency: Option<String>,
 
     /// Transfer from account type filter (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub from: Option<String>,
 
     /// Transfer to account type filter (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub to: Option<String>,
 
     /// Order ID filter (optional)
-    #[serde(rename = "orderId")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "orderId")]
     pub order_id: Option<String>,
 
     /// Start time filter (optional, milliseconds)
-    #[serde(rename = "startAt")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "startAt")]
     pub start_time: Option<i64>,
 
     /// End time filter (optional, milliseconds)
-    #[serde(rename = "endAt")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "endAt")]
     pub end_time: Option<i64>,
 }
 
@@ -98,29 +100,8 @@ impl RestClient {
         &self,
         request: GetInnerTransfersRequest,
     ) -> Result<(InnerTransfersResponse, ResponseHeaders)> {
-        let mut params = HashMap::new();
-
-        if let Some(currency) = request.currency {
-            params.insert("currency".to_string(), currency);
-        }
-        if let Some(from) = request.from {
-            params.insert("from".to_string(), from);
-        }
-        if let Some(to) = request.to {
-            params.insert("to".to_string(), to);
-        }
-        if let Some(order_id) = request.order_id {
-            params.insert("orderId".to_string(), order_id);
-        }
-        if let Some(start_time) = request.start_time {
-            params.insert("startAt".to_string(), start_time.to_string());
-        }
-        if let Some(end_time) = request.end_time {
-            params.insert("endAt".to_string(), end_time.to_string());
-        }
-
         let (response, headers): (RestResponse<InnerTransfersResponse>, ResponseHeaders) =
-            self.get(INNER_TRANSFERS_ENDPOINT, Some(params)).await?;
+            self.get_with_request(INNER_TRANSFERS_ENDPOINT, &request).await?;
 
         Ok((response.data, headers))
     }

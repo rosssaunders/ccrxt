@@ -76,18 +76,13 @@ impl super::RestClient {
     pub async fn get_position_list(
         &self,
         request: GetPositionListRequest,
-    ) -> Result<(RestResponse<GetPositionListResponse>, ResponseHeaders)> {
+    ) -> Result<(GetPositionListResponse, ResponseHeaders)> {
         const GET_POSITION_LIST_ENDPOINT: &str = "/api/v1/positions";
 
-        let params = if let Some(currency) = request.currency {
-            let mut params = std::collections::HashMap::new();
-            params.insert("currency".to_string(), currency);
-            Some(params)
-        } else {
-            None
-        };
+        let (response, headers): (RestResponse<GetPositionListResponse>, ResponseHeaders) =
+            self.get_with_request(GET_POSITION_LIST_ENDPOINT, &request).await?;
 
-        self.get(GET_POSITION_LIST_ENDPOINT, params.as_ref()).await
+        Ok((response.data, headers))
     }
 }
 

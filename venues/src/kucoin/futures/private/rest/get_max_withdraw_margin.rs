@@ -26,12 +26,11 @@ impl super::RestClient {
     pub async fn get_max_withdraw_margin(
         &self,
         request: GetMaxWithdrawMarginRequest,
-    ) -> Result<(RestResponse<String>, ResponseHeaders)> {
-        let mut params = std::collections::HashMap::new();
-        params.insert("symbol".to_string(), request.symbol);
+    ) -> Result<(String, ResponseHeaders)> {
+        let (response, headers): (RestResponse<String>, ResponseHeaders) =
+            self.get_with_request(GET_MAX_WITHDRAW_MARGIN_ENDPOINT, &request).await?;
 
-        self.get(GET_MAX_WITHDRAW_MARGIN_ENDPOINT, Some(&params))
-            .await
+        Ok((response.data, headers))
     }
 }
 

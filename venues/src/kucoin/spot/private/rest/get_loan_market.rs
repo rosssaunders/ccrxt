@@ -45,6 +45,7 @@ pub struct LoanMarket {
 #[derive(Debug, Clone, Serialize)]
 pub struct GetLoanMarketRequest {
     /// Currency (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub currency: Option<String>,
 }
 
@@ -56,19 +57,8 @@ impl RestClient {
         &self,
         request: GetLoanMarketRequest,
     ) -> Result<(Vec<LoanMarket>, ResponseHeaders)> {
-        let mut params = std::collections::HashMap::new();
-        if let Some(currency) = &request.currency {
-            params.insert("currency".to_string(), currency.clone());
-        }
-
-        let params = if params.is_empty() {
-            None
-        } else {
-            Some(params)
-        };
-
         let (response, headers): (RestResponse<Vec<LoanMarket>>, ResponseHeaders) =
-            self.get(LOAN_MARKET_ENDPOINT, params).await?;
+            self.get_with_request(LOAN_MARKET_ENDPOINT, &request).await?;
 
         Ok((response.data, headers))
     }

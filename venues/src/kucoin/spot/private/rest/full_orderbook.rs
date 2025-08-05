@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
@@ -38,11 +36,8 @@ impl RestClient {
         &self,
         request: GetFullOrderBookRequest,
     ) -> Result<(FullOrderBookResponse, ResponseHeaders)> {
-        let mut params = HashMap::new();
-        params.insert("symbol".to_string(), request.symbol);
-
         let (response, headers): (RestResponse<FullOrderBookResponse>, ResponseHeaders) =
-            self.get(FULL_ORDERBOOK_ENDPOINT, Some(params)).await?;
+            self.get_with_request(FULL_ORDERBOOK_ENDPOINT, &request).await?;
 
         Ok((response.data, headers))
     }

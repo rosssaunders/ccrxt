@@ -1,4 +1,3 @@
-use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
 
@@ -53,20 +52,8 @@ impl RestClient {
         &self,
         request: GetMarginSymbolsRequest,
     ) -> Result<(GetMarginSymbolsResponse, ResponseHeaders)> {
-        let mut params = HashMap::new();
-        if let Some(symbol) = request.symbol {
-            params.insert("symbol".to_string(), symbol);
-        }
-        let (response, headers): (RestResponse<GetMarginSymbolsResponse>, ResponseHeaders) = self
-            .get(
-                "/api/v3/margin/symbols",
-                if params.is_empty() {
-                    None
-                } else {
-                    Some(params)
-                },
-            )
-            .await?;
+        let (response, headers): (RestResponse<GetMarginSymbolsResponse>, ResponseHeaders) =
+            self.get_with_request("/api/v3/margin/symbols", &request).await?;
         Ok((response.data, headers))
     }
 }

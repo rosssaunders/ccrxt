@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
@@ -91,19 +89,8 @@ impl RestClient {
         &self,
         request: GetAllSymbolsRequest,
     ) -> Result<(Vec<SymbolInfo>, ResponseHeaders)> {
-        let mut params = HashMap::new();
-        if let Some(market) = request.market {
-            params.insert("market".to_string(), serde_json::to_string(&market)?);
-        }
-
-        let params_option = if params.is_empty() {
-            None
-        } else {
-            Some(params)
-        };
-
         let (response, headers): (RestResponse<Vec<SymbolInfo>>, ResponseHeaders) =
-            self.get(ALL_SYMBOLS_ENDPOINT, params_option).await?;
+            self.get_with_request(ALL_SYMBOLS_ENDPOINT, &request).await?;
 
         Ok((response.data, headers))
     }

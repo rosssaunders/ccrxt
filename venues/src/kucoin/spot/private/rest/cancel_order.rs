@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
@@ -10,7 +8,8 @@ const CANCEL_ORDER_ENDPOINT: &str = "/api/v1/orders/{order_id}";
 /// Request for cancelling an order
 #[derive(Debug, Clone, Serialize)]
 pub struct CancelOrderRequest {
-    /// Order ID to cancel
+    /// Order ID to cancel (goes in path, not serialized)
+    #[serde(skip_serializing)]
     pub order_id: String,
 }
 
@@ -30,11 +29,10 @@ impl RestClient {
         &self,
         request: CancelOrderRequest,
     ) -> Result<(CancelOrderResponse, ResponseHeaders)> {
-        let mut params = HashMap::new();
-        params.insert("orderId".to_string(), request.order_id);
+        let endpoint = CANCEL_ORDER_ENDPOINT.replace("{order_id}", &request.order_id);
 
         let (response, headers): (RestResponse<CancelOrderResponse>, ResponseHeaders) =
-            self.delete(CANCEL_ORDER_ENDPOINT, Some(params)).await?;
+            self.delete_with_request(&endpoint, &request).await?;
 
         Ok((response.data, headers))
     }

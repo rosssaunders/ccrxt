@@ -1,4 +1,3 @@
-use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
 
@@ -11,17 +10,19 @@ const DEPOSIT_HISTORY_ENDPOINT: &str = "/api/v1/deposits";
 #[derive(Debug, Clone, Default, Serialize)]
 pub struct GetDepositsRequest {
     /// Currency filter (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub currency: Option<String>,
 
     /// Start time filter (optional, milliseconds)
-    #[serde(rename = "startAt")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "startAt")]
     pub start_time: Option<i64>,
 
     /// End time filter (optional, milliseconds)
-    #[serde(rename = "endAt")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "endAt")]
     pub end_time: Option<i64>,
 
     /// Status filter (optional): PROCESSING, SUCCESS, FAILURE
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub status: Option<String>,
 }
 
@@ -100,23 +101,8 @@ impl RestClient {
         &self,
         request: GetDepositsRequest,
     ) -> Result<(DepositsResponse, ResponseHeaders)> {
-        let mut params = HashMap::new();
-
-        if let Some(currency) = request.currency {
-            params.insert("currency".to_string(), currency);
-        }
-        if let Some(start_time) = request.start_time {
-            params.insert("startAt".to_string(), start_time.to_string());
-        }
-        if let Some(end_time) = request.end_time {
-            params.insert("endAt".to_string(), end_time.to_string());
-        }
-        if let Some(status) = request.status {
-            params.insert("status".to_string(), status);
-        }
-
         let (response, headers): (RestResponse<DepositsResponse>, ResponseHeaders) =
-            self.get(DEPOSIT_HISTORY_ENDPOINT, Some(params)).await?;
+            self.get_with_request(DEPOSIT_HISTORY_ENDPOINT, &request).await?;
 
         Ok((response.data, headers))
     }
