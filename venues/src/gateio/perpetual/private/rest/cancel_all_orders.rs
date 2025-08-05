@@ -22,7 +22,7 @@ impl RestClient {
         settle: &str,
         contract: Option<&str>,
         side: Option<&str>,
-    ) -> crate::gateio::perpetual::Result<Vec<FuturesOrder>> {
+    ) -> crate::gateio::perpetual::RestResult<Vec<FuturesOrder>> {
         let mut endpoint = format!("/futures/{}/orders", settle);
 
         let mut query_params = Vec::new();

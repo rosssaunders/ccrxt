@@ -38,7 +38,7 @@ impl RestClient {
     pub async fn get_options_positions(
         &self,
         params: OptionsPositionsRequest,
-    ) -> crate::gateio::options::Result<Vec<OptionsPosition>> {
+    ) -> crate::gateio::options::RestResult<Vec<OptionsPosition>> {
         self.get_with_query(OPTIONS_POSITIONS_ENDPOINT, &params)
             .await
     }

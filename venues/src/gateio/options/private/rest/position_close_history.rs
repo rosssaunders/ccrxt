@@ -72,7 +72,7 @@ impl RestClient {
     pub async fn get_options_position_close_history(
         &self,
         request: OptionsPositionCloseHistoryRequest,
-    ) -> crate::gateio::options::Result<Vec<OptionsPositionCloseHistory>> {
+    ) -> crate::gateio::options::RestResult<Vec<OptionsPositionCloseHistory>> {
         self.get_with_query(OPTIONS_POSITION_CLOSE_ENDPOINT, &request)
             .await
     }

@@ -40,7 +40,7 @@ impl RestClient {
     pub async fn update_dual_mode_position_risk_limit(
         &self,
         request: UpdateDualModeRiskLimitRequest,
-    ) -> crate::gateio::perpetual::Result<DualModeRiskLimitResponse> {
+    ) -> crate::gateio::perpetual::RestResult<DualModeRiskLimitResponse> {
         let endpoint = format!(
             "/futures/{}/dual_positions/{}/risk_limit",
             request.settle, request.contract

@@ -50,7 +50,7 @@ impl RestClient {
     pub async fn get_futures_index_constituents(
         &self,
         params: FuturesIndexConstituentsRequest,
-    ) -> crate::gateio::perpetual::Result<IndexConstituentsResponse> {
+    ) -> crate::gateio::perpetual::RestResult<IndexConstituentsResponse> {
         let endpoint = format!(
             "/futures/{}/index_constituents/{}",
             params.settle, params.index

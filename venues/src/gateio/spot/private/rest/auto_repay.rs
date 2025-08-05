@@ -26,7 +26,7 @@ impl RestClient {
     ///
     /// # API Documentation
     /// <https://www.gate.com/docs/developers/apiv4/#get-auto-repay-settings>
-    pub async fn get_auto_repay(&self) -> crate::gateio::spot::Result<AutoRepaySetting> {
+    pub async fn get_auto_repay(&self) -> crate::gateio::spot::RestResult<AutoRepaySetting> {
         self.get(MARGIN_AUTO_REPAY_ENDPOINT).await
     }
 
@@ -39,7 +39,7 @@ impl RestClient {
     pub async fn update_auto_repay(
         &self,
         params: AutoRepayRequest,
-    ) -> crate::gateio::spot::Result<AutoRepaySetting> {
+    ) -> crate::gateio::spot::RestResult<AutoRepaySetting> {
         self.post(MARGIN_AUTO_REPAY_ENDPOINT, &params).await
     }
 }

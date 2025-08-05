@@ -81,7 +81,7 @@ impl RestClient {
     pub async fn get_tickers(
         &self,
         params: TickersRequest,
-    ) -> crate::gateio::spot::Result<Vec<Ticker>> {
+    ) -> crate::gateio::spot::RestResult<Vec<Ticker>> {
         self.get_with_query("/spot/tickers", Some(&params)).await
     }
 }

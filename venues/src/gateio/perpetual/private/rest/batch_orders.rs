@@ -54,7 +54,7 @@ impl RestClient {
     pub async fn create_batch_futures_orders(
         &self,
         request: BatchOrdersRequest,
-    ) -> crate::gateio::perpetual::Result<Vec<BatchOrderResult>> {
+    ) -> crate::gateio::perpetual::RestResult<Vec<BatchOrderResult>> {
         let endpoint = format!("/futures/{}/batch_orders", request.settle);
         self.post(&endpoint, &request).await
     }
@@ -76,7 +76,7 @@ impl RestClient {
     pub async fn cancel_batch_futures_orders(
         &self,
         request: BatchCancelOrdersRequest,
-    ) -> crate::gateio::perpetual::Result<Vec<BatchOrderResult>> {
+    ) -> crate::gateio::perpetual::RestResult<Vec<BatchOrderResult>> {
         let endpoint = format!("/futures/{}/batch_orders", request.settle);
         self.delete_with_query(&endpoint, &request).await
     }

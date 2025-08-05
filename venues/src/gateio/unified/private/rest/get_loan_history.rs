@@ -14,7 +14,7 @@ impl RestClient {
         &self,
         currency: &str,
         limit: Option<u32>,
-    ) -> crate::gateio::unified::Result<Vec<LoanRecord>> {
+    ) -> crate::gateio::unified::RestResult<Vec<LoanRecord>> {
         let request = ListLoansRequest {
             currency: Some(currency.to_string()),
             limit,

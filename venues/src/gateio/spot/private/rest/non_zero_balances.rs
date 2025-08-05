@@ -9,7 +9,7 @@ impl RestClient {
     /// <https://www.gate.com/docs/developers/apiv4/#list-spot-accounts>
     pub async fn get_non_zero_spot_balances(
         &self,
-    ) -> crate::gateio::spot::Result<Vec<SpotAccount>> {
+    ) -> crate::gateio::spot::RestResult<Vec<SpotAccount>> {
         let accounts = self.list_spot_accounts(None).await?;
         Ok(accounts
             .into_iter()

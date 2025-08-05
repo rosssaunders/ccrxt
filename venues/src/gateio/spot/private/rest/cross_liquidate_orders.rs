@@ -88,7 +88,7 @@ impl RestClient {
     pub async fn cross_liquidate_orders(
         &self,
         request: CrossLiquidateOrdersRequest,
-    ) -> crate::gateio::spot::Result<CrossLiquidateOrder> {
+    ) -> crate::gateio::spot::RestResult<CrossLiquidateOrder> {
         self.post("/spot/cross_liquidate_orders", &request).await
     }
 }

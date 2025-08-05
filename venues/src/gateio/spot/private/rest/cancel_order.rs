@@ -25,7 +25,7 @@ impl RestClient {
         &self,
         order_id: &str,
         currency_pair: &str,
-    ) -> crate::gateio::spot::Result<Order> {
+    ) -> crate::gateio::spot::RestResult<Order> {
         let query = CancelOrderRequest {
             currency_pair: currency_pair.to_string(),
             account: None,

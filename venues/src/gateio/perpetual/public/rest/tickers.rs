@@ -96,7 +96,7 @@ impl RestClient {
     pub async fn get_futures_tickers(
         &self,
         params: FuturesTickersRequest,
-    ) -> crate::gateio::perpetual::Result<Vec<FuturesTicker>> {
+    ) -> crate::gateio::perpetual::RestResult<Vec<FuturesTicker>> {
         let endpoint = format!("/futures/{}/tickers", params.settle);
         self.get_with_query(&endpoint, Some(&params)).await
     }

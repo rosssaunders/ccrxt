@@ -66,7 +66,7 @@ impl RestClient {
     pub async fn portfolio_calculator(
         &self,
         request: PortfolioCalculatorRequest,
-    ) -> crate::gateio::unified::Result<PortfolioCalculationResult> {
+    ) -> crate::gateio::unified::RestResult<PortfolioCalculationResult> {
         self.post(PORTFOLIO_CALCULATOR_ENDPOINT, &request).await
     }
 }

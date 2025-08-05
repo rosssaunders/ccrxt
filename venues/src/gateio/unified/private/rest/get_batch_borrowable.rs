@@ -15,7 +15,7 @@ impl RestClient {
     pub async fn get_batch_borrowable(
         &self,
         request: BatchBorrowableRequest,
-    ) -> crate::gateio::unified::Result<Vec<BatchBorrowableResponse>> {
+    ) -> crate::gateio::unified::RestResult<Vec<BatchBorrowableResponse>> {
         self.post(BATCH_BORROWABLE_ENDPOINT, &request).await
     }
 }

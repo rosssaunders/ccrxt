@@ -34,7 +34,7 @@ impl RestClient {
     pub async fn get_delivery_insurance(
         &self,
         params: DeliveryInsuranceRequest,
-    ) -> crate::gateio::delivery::Result<Vec<DeliveryInsurance>> {
+    ) -> crate::gateio::delivery::RestResult<Vec<DeliveryInsurance>> {
         let endpoint = DELIVERY_INSURANCE_ENDPOINT.replace("{}", &params.settle);
         self.get_with_query(&endpoint, Some(&params)).await
     }

@@ -19,7 +19,7 @@ impl RestClient {
     pub async fn get_futures_index_price_candlesticks(
         &self,
         params: FuturesCandlesticksRequest,
-    ) -> crate::gateio::perpetual::Result<Vec<FuturesCandlestick>> {
+    ) -> crate::gateio::perpetual::RestResult<Vec<FuturesCandlestick>> {
         let mut index_params = params;
         index_params.contract = format!("index_{}", index_params.contract);
         let endpoint = format!("/futures/{}/candlesticks", index_params.settle);

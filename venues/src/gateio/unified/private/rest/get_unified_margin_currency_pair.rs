@@ -12,7 +12,7 @@ impl RestClient {
     pub async fn get_unified_margin_currency_pair(
         &self,
         currency_pair: &str,
-    ) -> crate::gateio::unified::Result<UnifiedMarginCurrencyPair> {
+    ) -> crate::gateio::unified::RestResult<UnifiedMarginCurrencyPair> {
         let endpoint = format!("{}/{}", MARGIN_UNI_CURRENCY_PAIRS_ENDPOINT, currency_pair);
         self.get(&endpoint).await
     }

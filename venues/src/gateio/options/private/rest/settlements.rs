@@ -77,7 +77,7 @@ impl RestClient {
     pub async fn get_options_settlements(
         &self,
         request: OptionsSettlementsRequest,
-    ) -> crate::gateio::options::Result<Vec<OptionsSettlement>> {
+    ) -> crate::gateio::options::RestResult<Vec<OptionsSettlement>> {
         self.get_with_query(OPTIONS_SETTLEMENTS_ENDPOINT, &request)
             .await
     }

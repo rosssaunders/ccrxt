@@ -37,7 +37,7 @@ impl RestClient {
     pub async fn get_options_candlesticks(
         &self,
         params: OptionsCandlesticksRequest,
-    ) -> crate::gateio::options::Result<Vec<OptionsCandlestick>> {
+    ) -> crate::gateio::options::RestResult<Vec<OptionsCandlestick>> {
         self.get_with_query(OPTIONS_CANDLESTICKS_ENDPOINT, Some(&params))
             .await
     }

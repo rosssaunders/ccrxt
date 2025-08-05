@@ -12,7 +12,7 @@ impl RestClient {
     pub async fn get_leverage_user_currency_setting(
         &self,
         currency: &str,
-    ) -> crate::gateio::unified::Result<LeverageConfig> {
+    ) -> crate::gateio::unified::RestResult<LeverageConfig> {
         let endpoint = format!(
             "{}?currency={}",
             LEVERAGE_USER_CURRENCY_SETTING_ENDPOINT, currency

@@ -20,7 +20,7 @@ impl RestClient {
         &self,
         settle: &str,
         order_id: &str,
-    ) -> crate::gateio::perpetual::Result<FuturesOrder> {
+    ) -> crate::gateio::perpetual::RestResult<FuturesOrder> {
         let endpoint = format!("/futures/{}/orders/{}", settle, order_id);
         self.delete(&endpoint).await
     }

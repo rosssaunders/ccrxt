@@ -15,7 +15,7 @@ impl RestClient {
     pub async fn get_unified_transferable(
         &self,
         params: UnifiedTransferableRequest,
-    ) -> crate::gateio::unified::Result<UnifiedTransferableResponse> {
+    ) -> crate::gateio::unified::RestResult<UnifiedTransferableResponse> {
         self.get_with_query(UNIFIED_TRANSFERABLE_ENDPOINT, &params)
             .await
     }

@@ -81,7 +81,7 @@ impl RestClient {
     pub async fn get_options_trades(
         &self,
         request: OptionsTradesRequest,
-    ) -> crate::gateio::options::Result<Vec<OptionsTrade>> {
+    ) -> crate::gateio::options::RestResult<Vec<OptionsTrade>> {
         self.get_with_query(OPTIONS_MY_TRADES_ENDPOINT, &request)
             .await
     }

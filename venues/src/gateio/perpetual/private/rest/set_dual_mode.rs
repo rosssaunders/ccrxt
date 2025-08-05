@@ -36,7 +36,7 @@ impl RestClient {
     pub async fn set_dual_mode(
         &self,
         request: DualModeRequest,
-    ) -> crate::gateio::perpetual::Result<DualModeResponse> {
+    ) -> crate::gateio::perpetual::RestResult<DualModeResponse> {
         let endpoint = format!("/futures/{}/dual_mode", request.settle);
         self.post(&endpoint, &request).await
     }

@@ -38,7 +38,7 @@ impl RestClient {
     pub async fn update_position_margin(
         &self,
         request: UpdatePositionMarginRequest,
-    ) -> crate::gateio::perpetual::Result<PositionMarginResponse> {
+    ) -> crate::gateio::perpetual::RestResult<PositionMarginResponse> {
         let endpoint = format!(
             "/futures/{}/positions/{}/margin",
             request.settle, request.contract

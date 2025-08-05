@@ -57,7 +57,7 @@ impl RestClient {
     pub async fn get_account_book(
         &self,
         request: GetAccountBookRequest,
-    ) -> crate::gateio::spot::Result<Vec<AccountBookEntry>> {
+    ) -> crate::gateio::spot::RestResult<Vec<AccountBookEntry>> {
         self.get_with_query("/spot/account_book", &request).await
     }
 }

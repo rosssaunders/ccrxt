@@ -20,7 +20,7 @@ impl RestClient {
     pub async fn get_options_expirations(
         &self,
         params: OptionsExpirationsRequest,
-    ) -> crate::gateio::options::Result<Vec<i64>> {
+    ) -> crate::gateio::options::RestResult<Vec<i64>> {
         self.get_with_query("/options/expirations", Some(&params))
             .await
     }

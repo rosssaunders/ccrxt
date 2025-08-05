@@ -15,7 +15,7 @@ impl RestClient {
     pub async fn get_unified_margin_currency_pairs(
         &self,
         params: UnifiedMarginCurrencyPairsRequest,
-    ) -> crate::gateio::unified::Result<Vec<UnifiedMarginCurrencyPair>> {
+    ) -> crate::gateio::unified::RestResult<Vec<UnifiedMarginCurrencyPair>> {
         self.get_with_query(MARGIN_UNI_CURRENCY_PAIRS_ENDPOINT, &params)
             .await
     }

@@ -20,7 +20,7 @@ impl RestClient {
     pub async fn get_options_position(
         &self,
         contract: &str,
-    ) -> crate::gateio::options::Result<OptionsPosition> {
+    ) -> crate::gateio::options::RestResult<OptionsPosition> {
         let endpoint = format!("{}/{}", OPTIONS_POSITIONS_ENDPOINT, contract);
         self.get(&endpoint).await
     }

@@ -85,7 +85,7 @@ impl RestClient {
     pub async fn get_trades(
         &self,
         params: TradesRequest,
-    ) -> crate::gateio::spot::Result<Vec<Trade>> {
+    ) -> crate::gateio::spot::RestResult<Vec<Trade>> {
         self.get_with_query("/spot/trades", Some(&params)).await
     }
 }

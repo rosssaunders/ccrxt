@@ -38,7 +38,7 @@ impl RestClient {
     pub async fn create_batch_orders(
         &self,
         orders: Vec<CreateOrderRequest>,
-    ) -> crate::gateio::spot::Result<Vec<BatchOrderResponse>> {
+    ) -> crate::gateio::spot::RestResult<Vec<BatchOrderResponse>> {
         let request = CreateBatchOrdersRequest { orders };
         self.post(CREATE_BATCH_ORDERS_ENDPOINT, &request).await
     }

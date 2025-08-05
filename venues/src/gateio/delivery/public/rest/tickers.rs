@@ -86,7 +86,7 @@ impl RestClient {
     pub async fn get_delivery_tickers(
         &self,
         params: DeliveryTickersRequest,
-    ) -> crate::gateio::delivery::Result<Vec<DeliveryTicker>> {
+    ) -> crate::gateio::delivery::RestResult<Vec<DeliveryTicker>> {
         let endpoint = DELIVERY_TICKERS_ENDPOINT.replace("{}", &params.settle);
         self.get_with_query(&endpoint, Some(&params)).await
     }

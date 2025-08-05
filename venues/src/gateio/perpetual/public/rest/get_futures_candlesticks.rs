@@ -19,7 +19,7 @@ impl RestClient {
     pub async fn get_futures_candlesticks(
         &self,
         params: FuturesCandlesticksRequest,
-    ) -> crate::gateio::perpetual::Result<Vec<FuturesCandlestick>> {
+    ) -> crate::gateio::perpetual::RestResult<Vec<FuturesCandlestick>> {
         let endpoint = format!("/futures/{}/candlesticks", params.settle);
         self.get_with_query(&endpoint, Some(&params)).await
     }

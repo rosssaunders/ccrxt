@@ -23,7 +23,7 @@ impl RestClient {
     pub async fn update_mmp_settings(
         &self,
         request: UpdateMMPRequest,
-    ) -> crate::gateio::options::Result<MMPSettings> {
+    ) -> crate::gateio::options::RestResult<MMPSettings> {
         self.post(UPDATE_MMP_SETTINGS_ENDPOINT, &request).await
     }
 }

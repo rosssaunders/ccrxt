@@ -10,7 +10,7 @@ impl RestClient {
     pub async fn repay_all(
         &self,
         currency: &str,
-    ) -> crate::gateio::unified::Result<BorrowOrRepayResponse> {
+    ) -> crate::gateio::unified::RestResult<BorrowOrRepayResponse> {
         let unified_account = self.get_unified_account(None).await?;
         let borrowed_amount = &unified_account.borrowed;
 

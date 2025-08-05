@@ -77,7 +77,7 @@ impl RestClient {
     pub async fn get_options_contracts(
         &self,
         params: OptionsContractsRequest,
-    ) -> crate::gateio::options::Result<Vec<OptionsContract>> {
+    ) -> crate::gateio::options::RestResult<Vec<OptionsContract>> {
         self.get_with_query("/options/contracts", Some(&params))
             .await
     }
@@ -91,7 +91,7 @@ impl RestClient {
     pub async fn get_options_contract(
         &self,
         contract: &str,
-    ) -> crate::gateio::options::Result<OptionsContract> {
+    ) -> crate::gateio::options::RestResult<OptionsContract> {
         let endpoint = format!("/options/contracts/{}", contract);
         self.get(&endpoint).await
     }

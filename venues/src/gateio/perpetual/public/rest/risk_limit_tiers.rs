@@ -44,7 +44,7 @@ impl RestClient {
     pub async fn get_futures_risk_limit_tiers(
         &self,
         params: FuturesRiskLimitTiersRequest,
-    ) -> crate::gateio::perpetual::Result<Vec<RiskLimitTier>> {
+    ) -> crate::gateio::perpetual::RestResult<Vec<RiskLimitTier>> {
         let endpoint = format!("/futures/{}/risk_limit_tiers", params.settle);
         self.get_with_query(&endpoint, Some(&params)).await
     }

@@ -40,7 +40,7 @@ impl RestClient {
     pub async fn update_dual_mode_position_leverage(
         &self,
         request: UpdateDualModeLeverageRequest,
-    ) -> crate::gateio::perpetual::Result<DualModeLeverageResponse> {
+    ) -> crate::gateio::perpetual::RestResult<DualModeLeverageResponse> {
         let endpoint = format!(
             "/futures/{}/dual_positions/{}/leverage",
             request.settle, request.contract

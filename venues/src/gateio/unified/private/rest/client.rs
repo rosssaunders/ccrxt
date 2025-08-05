@@ -8,7 +8,7 @@ use ring::hmac;
 use serde::{Serialize, de::DeserializeOwned};
 use sha2::{Digest, Sha512};
 
-use crate::gateio::unified::{Result, rate_limit::RateLimiter};
+use crate::gateio::unified::{RestResult, rate_limit::RateLimiter};
 
 const LIVE_URL: &str = "https://api.gateio.ws/api/v4";
 const TESTNET_URL: &str = "https://api-testnet.gateapi.io/api/v4";
@@ -25,7 +25,7 @@ pub struct RestClient {
 
 impl RestClient {
     /// Create a new private REST client
-    pub fn new(api_key: String, api_secret: String, testnet: bool) -> Result<Self> {
+    pub fn new(api_key: String, api_secret: String, testnet: bool) -> RestResult<Self> {
         let client = Client::builder()
             .timeout(std::time::Duration::from_secs(30))
             .build()
@@ -73,7 +73,7 @@ impl RestClient {
     }
 
     /// Make a GET request to the API without query parameters
-    pub async fn get<T>(&self, endpoint: &str) -> Result<T>
+    pub async fn get<T>(&self, endpoint: &str) -> RestResult<T>
     where
         T: DeserializeOwned,
     {
@@ -82,7 +82,7 @@ impl RestClient {
     }
 
     /// Make a GET request to the API with query parameters
-    pub async fn get_with_query<T, Q>(&self, endpoint: &str, query: &Q) -> Result<T>
+    pub async fn get_with_query<T, Q>(&self, endpoint: &str, query: &Q) -> RestResult<T>
     where
         T: DeserializeOwned,
         Q: Serialize,
@@ -92,7 +92,7 @@ impl RestClient {
     }
 
     /// Make a POST request to the API
-    pub async fn post<T>(&self, endpoint: &str, body: &impl Serialize) -> Result<T>
+    pub async fn post<T>(&self, endpoint: &str, body: &impl Serialize) -> RestResult<T>
     where
         T: DeserializeOwned,
     {
@@ -101,7 +101,7 @@ impl RestClient {
     }
 
     /// Make a PUT request to the API
-    pub async fn put<T>(&self, endpoint: &str, body: &impl Serialize) -> Result<T>
+    pub async fn put<T>(&self, endpoint: &str, body: &impl Serialize) -> RestResult<T>
     where
         T: DeserializeOwned,
     {
@@ -110,7 +110,7 @@ impl RestClient {
     }
 
     /// Make a DELETE request to the API without query parameters
-    pub async fn delete<T>(&self, endpoint: &str) -> Result<T>
+    pub async fn delete<T>(&self, endpoint: &str) -> RestResult<T>
     where
         T: DeserializeOwned,
     {
@@ -119,7 +119,7 @@ impl RestClient {
     }
 
     /// Make a DELETE request to the API with query parameters
-    pub async fn delete_with_query<T, Q>(&self, endpoint: &str, query: &Q) -> Result<T>
+    pub async fn delete_with_query<T, Q>(&self, endpoint: &str, query: &Q) -> RestResult<T>
     where
         T: DeserializeOwned,
         Q: Serialize,
@@ -129,7 +129,7 @@ impl RestClient {
     }
 
     /// Make a PATCH request to the API
-    pub async fn patch<T>(&self, endpoint: &str, body: &impl Serialize) -> Result<T>
+    pub async fn patch<T>(&self, endpoint: &str, body: &impl Serialize) -> RestResult<T>
     where
         T: DeserializeOwned,
     {
@@ -144,7 +144,7 @@ impl RestClient {
         endpoint: &str,
         query: Option<&impl Serialize>,
         body: Option<&impl Serialize>,
-    ) -> Result<T>
+    ) -> RestResult<T>
     where
         T: DeserializeOwned,
     {

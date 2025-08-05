@@ -120,7 +120,7 @@ impl RestClient {
     pub async fn list_open_orders(
         &self,
         params: ListOpenOrdersRequest,
-    ) -> crate::gateio::spot::Result<Vec<OpenOrder>> {
+    ) -> crate::gateio::spot::RestResult<Vec<OpenOrder>> {
         self.get_with_query("/spot/open_orders", &params).await
     }
 }

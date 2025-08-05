@@ -4,7 +4,7 @@ use serde::Deserialize;
 use thiserror::Error;
 
 /// Result type alias for Gate.io API operations
-pub type Result<T> = std::result::Result<T, GateIoError>;
+pub type RestResult<T> = std::result::Result<T, GateIoError>;
 
 /// Main error type for Gate.io API operations
 #[derive(Error, Debug)]

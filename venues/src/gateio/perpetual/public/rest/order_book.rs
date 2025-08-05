@@ -59,7 +59,7 @@ impl RestClient {
     pub async fn get_futures_order_book(
         &self,
         params: FuturesOrderBookRequest,
-    ) -> crate::gateio::perpetual::Result<FuturesOrderBook> {
+    ) -> crate::gateio::perpetual::RestResult<FuturesOrderBook> {
         let endpoint = format!("/futures/{}/order_book", params.settle);
         self.get_with_query(&endpoint, Some(&params)).await
     }

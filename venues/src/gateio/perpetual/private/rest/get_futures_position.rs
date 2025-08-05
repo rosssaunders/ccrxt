@@ -20,7 +20,7 @@ impl RestClient {
         &self,
         settle: &str,
         contract: &str,
-    ) -> crate::gateio::perpetual::Result<FuturesPosition> {
+    ) -> crate::gateio::perpetual::RestResult<FuturesPosition> {
         let endpoint = format!("/futures/{}/positions/{}", settle, contract);
         self.get(&endpoint).await
     }

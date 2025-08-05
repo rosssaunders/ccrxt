@@ -45,7 +45,7 @@ impl RestClient {
     pub async fn cancel_batch_orders(
         &self,
         request: CancelBatchOrdersRequest,
-    ) -> crate::gateio::spot::Result<CancelBatchOrdersResponse> {
+    ) -> crate::gateio::spot::RestResult<CancelBatchOrdersResponse> {
         self.post(CANCEL_BATCH_ORDERS_ENDPOINT, &request).await
     }
 }

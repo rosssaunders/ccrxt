@@ -11,5 +11,5 @@ pub mod rate_limit;
 pub use enums::{
     AccountType, CandlestickInterval, OrderSide, OrderStatus, OrderType, StpMode, TimeInForce,
 };
-pub use errors::{ApiError, ErrorResponse, GateIoError, Result};
+pub use errors::{ApiError, ErrorResponse, GateIoError, RestResult};
 pub use rate_limit::{RateLimitHeader, RateLimitStatus, RateLimiter, UsageInfo};

@@ -144,7 +144,7 @@ impl RestClient {
     pub async fn get_delivery_contracts(
         &self,
         params: DeliveryContractsRequest,
-    ) -> crate::gateio::delivery::Result<Vec<DeliveryContract>> {
+    ) -> crate::gateio::delivery::RestResult<Vec<DeliveryContract>> {
         let endpoint = DELIVERY_CONTRACTS_ENDPOINT.replace("{}", &params.settle);
         self.get(&endpoint).await
     }
@@ -158,7 +158,7 @@ impl RestClient {
     pub async fn get_delivery_contract(
         &self,
         params: DeliveryContractRequest,
-    ) -> crate::gateio::delivery::Result<DeliveryContract> {
+    ) -> crate::gateio::delivery::RestResult<DeliveryContract> {
         let endpoint = DELIVERY_CONTRACT_ENDPOINT
             .replace("{}", &params.settle)
             .replace("{}", &params.contract);

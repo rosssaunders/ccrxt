@@ -23,7 +23,7 @@ impl RestClient {
     /// <https://www.gate.com/docs/developers/apiv4/#list-all-underlyings>
     pub async fn get_options_underlyings(
         &self,
-    ) -> crate::gateio::options::Result<Vec<OptionsUnderlying>> {
+    ) -> crate::gateio::options::RestResult<Vec<OptionsUnderlying>> {
         self.get(OPTIONS_UNDERLYINGS_ENDPOINT).await
     }
 }

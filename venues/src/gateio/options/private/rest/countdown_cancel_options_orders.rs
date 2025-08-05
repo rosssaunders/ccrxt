@@ -35,7 +35,7 @@ impl RestClient {
         &self,
         timeout: i32,
         underlying: Option<&str>,
-    ) -> crate::gateio::options::Result<serde_json::Value> {
+    ) -> crate::gateio::options::RestResult<serde_json::Value> {
         let request = CountdownCancelOptionsOrdersRequest {
             timeout,
             underlying: underlying.map(|s| s.to_string()),

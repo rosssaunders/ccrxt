@@ -139,7 +139,7 @@ impl RestClient {
     pub async fn list_price_orders(
         &self,
         params: ListPriceOrdersRequest,
-    ) -> crate::gateio::spot::Result<Vec<PriceOrder>> {
+    ) -> crate::gateio::spot::RestResult<Vec<PriceOrder>> {
         self.get_with_query(SPOT_PRICE_ORDERS_ENDPOINT, &params)
             .await
     }
@@ -150,7 +150,7 @@ impl RestClient {
     ///
     /// # API Documentation
     /// <https://www.gate.com/docs/developers/apiv4/#get-a-single-order>
-    pub async fn get_price_order(&self, order_id: &str) -> crate::gateio::spot::Result<PriceOrder> {
+    pub async fn get_price_order(&self, order_id: &str) -> crate::gateio::spot::RestResult<PriceOrder> {
         let endpoint = format!("/spot/price_orders/{}", order_id);
         self.get(&endpoint).await
     }
@@ -165,7 +165,7 @@ impl RestClient {
     pub async fn create_price_order(
         &self,
         request: CreatePriceOrderRequest,
-    ) -> crate::gateio::spot::Result<PriceOrder> {
+    ) -> crate::gateio::spot::RestResult<PriceOrder> {
         self.post("/spot/price_orders", &request).await
     }
 
@@ -179,7 +179,7 @@ impl RestClient {
         &self,
         currency_pair: &str,
         account: &str,
-    ) -> crate::gateio::spot::Result<Vec<PriceOrder>> {
+    ) -> crate::gateio::spot::RestResult<Vec<PriceOrder>> {
         let endpoint = format!(
             "/spot/price_orders?currency_pair={}&account={}",
             currency_pair, account
@@ -196,7 +196,7 @@ impl RestClient {
     pub async fn cancel_price_order(
         &self,
         order_id: &str,
-    ) -> crate::gateio::spot::Result<PriceOrder> {
+    ) -> crate::gateio::spot::RestResult<PriceOrder> {
         let endpoint = format!("/spot/price_orders/{}", order_id);
         self.delete(&endpoint).await
     }

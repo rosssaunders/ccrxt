@@ -15,7 +15,7 @@ impl RestClient {
     pub async fn borrow_or_repay(
         &self,
         request: BorrowOrRepayRequest,
-    ) -> crate::gateio::unified::Result<BorrowOrRepayResponse> {
+    ) -> crate::gateio::unified::RestResult<BorrowOrRepayResponse> {
         self.post(UNIFIED_BORROW_OR_REPAY_ENDPOINT, &request).await
     }
 }

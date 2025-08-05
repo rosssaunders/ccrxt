@@ -142,7 +142,7 @@ impl RestClient {
     pub async fn create_order(
         &self,
         order: CreateOrderRequest,
-    ) -> crate::gateio::spot::Result<Order> {
+    ) -> crate::gateio::spot::RestResult<Order> {
         self.post(CREATE_ORDER_ENDPOINT, &order).await
     }
 }

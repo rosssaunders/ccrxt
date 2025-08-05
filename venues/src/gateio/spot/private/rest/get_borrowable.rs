@@ -35,7 +35,7 @@ impl RestClient {
     pub async fn get_borrowable(
         &self,
         params: BorrowableRequest,
-    ) -> crate::gateio::spot::Result<BorrowableAmount> {
+    ) -> crate::gateio::spot::RestResult<BorrowableAmount> {
         self.get_with_query(MARGIN_BORROWABLE_ENDPOINT, &params)
             .await
     }

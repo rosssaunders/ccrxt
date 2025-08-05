@@ -69,7 +69,7 @@ impl RestClient {
     pub async fn get_options_account_book(
         &self,
         request: OptionsAccountBookRequest,
-    ) -> crate::gateio::options::Result<Vec<OptionsAccountBookEntry>> {
+    ) -> crate::gateio::options::RestResult<Vec<OptionsAccountBookEntry>> {
         self.get_with_query(OPTIONS_ACCOUNT_BOOK_ENDPOINT, &request)
             .await
     }

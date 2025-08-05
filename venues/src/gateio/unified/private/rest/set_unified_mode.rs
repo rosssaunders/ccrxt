@@ -15,7 +15,7 @@ impl RestClient {
     pub async fn set_unified_mode(
         &self,
         request: UnifiedModeRequest,
-    ) -> crate::gateio::unified::Result<UnifiedModeResponse> {
+    ) -> crate::gateio::unified::RestResult<UnifiedModeResponse> {
         self.put(UNIFIED_MODE_ENDPOINT, &request).await
     }
 }

@@ -29,7 +29,7 @@ impl RestClient {
     pub async fn amend_batch_futures_orders(
         &self,
         request: BatchAmendOrdersRequest,
-    ) -> crate::gateio::perpetual::Result<Vec<BatchOrderResult>> {
+    ) -> crate::gateio::perpetual::RestResult<Vec<BatchOrderResult>> {
         let endpoint = format!("/futures/{}/batch_orders", request.settle);
         self.put(&endpoint, &request).await
     }

@@ -34,7 +34,7 @@ impl RestClient {
     pub async fn list_spot_accounts(
         &self,
         currency: Option<&str>,
-    ) -> crate::gateio::spot::Result<Vec<SpotAccount>> {
+    ) -> crate::gateio::spot::RestResult<Vec<SpotAccount>> {
         let request = ListSpotAccountsRequest {
             currency: currency.map(|s| s.to_string()),
         };

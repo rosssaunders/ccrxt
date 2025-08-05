@@ -40,7 +40,7 @@ impl RestClient {
     pub async fn list_futures_orders_by_time_range(
         &self,
         params: ListOrdersByTimeRangeRequest,
-    ) -> crate::gateio::perpetual::Result<Vec<FuturesOrder>> {
+    ) -> crate::gateio::perpetual::RestResult<Vec<FuturesOrder>> {
         let endpoint = format!("/futures/{}/orders_timerange", params.settle);
         self.get_with_query(&endpoint, &params).await
     }

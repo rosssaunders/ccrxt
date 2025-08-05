@@ -27,7 +27,7 @@ impl RestClient {
     pub async fn get_futures_contract(
         &self,
         params: FuturesContractRequest,
-    ) -> crate::gateio::perpetual::Result<FuturesContract> {
+    ) -> crate::gateio::perpetual::RestResult<FuturesContract> {
         let endpoint = format!("/futures/{}/contracts/{}", params.settle, params.contract);
         self.get(&endpoint).await
     }

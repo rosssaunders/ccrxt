@@ -48,7 +48,7 @@ impl RestClient {
     pub async fn set_position_leverage(
         &self,
         request: SetLeverageRequest,
-    ) -> crate::gateio::perpetual::Result<LeverageResponse> {
+    ) -> crate::gateio::perpetual::RestResult<LeverageResponse> {
         let endpoint = format!(
             "/futures/{}/positions/{}/leverage",
             request.settle, request.contract

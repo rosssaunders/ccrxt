@@ -32,7 +32,7 @@ impl RestClient {
     pub async fn get_futures_insurance(
         &self,
         params: FuturesInsuranceRequest,
-    ) -> crate::gateio::perpetual::Result<Vec<FuturesInsurance>> {
+    ) -> crate::gateio::perpetual::RestResult<Vec<FuturesInsurance>> {
         let endpoint = format!("/futures/{}/insurance", params.settle);
         self.get_with_query(&endpoint, Some(&params)).await
     }

@@ -120,7 +120,7 @@ impl RestClient {
     pub async fn get_deposit_address(
         &self,
         params: DepositAddressRequest,
-    ) -> crate::gateio::spot::Result<DepositAddress> {
+    ) -> crate::gateio::spot::RestResult<DepositAddress> {
         self.get_with_query(DEPOSIT_ADDRESS_ENDPOINT, &params).await
     }
 
@@ -140,7 +140,7 @@ impl RestClient {
     pub async fn get_deposits(
         &self,
         params: DepositsRequest,
-    ) -> crate::gateio::spot::Result<Vec<DepositRecord>> {
+    ) -> crate::gateio::spot::RestResult<Vec<DepositRecord>> {
         self.get_with_query(DEPOSITS_ENDPOINT, &params).await
     }
 }

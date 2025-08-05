@@ -19,7 +19,7 @@ impl RestClient {
     ///
     /// # API Documentation
     /// <https://www.gate.com/docs/developers/apiv4/#get-server-current-time>
-    pub async fn get_server_time(&self) -> crate::gateio::spot::Result<ServerTime> {
+    pub async fn get_server_time(&self) -> crate::gateio::spot::RestResult<ServerTime> {
         self.get(SERVER_TIME_ENDPOINT).await
     }
 }

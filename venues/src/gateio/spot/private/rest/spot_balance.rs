@@ -12,7 +12,7 @@ impl RestClient {
     pub async fn get_spot_account_balance(
         &self,
         currency: &str,
-    ) -> crate::gateio::spot::Result<SpotAccount> {
+    ) -> crate::gateio::spot::RestResult<SpotAccount> {
         let accounts = self.list_spot_accounts(Some(currency)).await?;
         accounts
             .into_iter()

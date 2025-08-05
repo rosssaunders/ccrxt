@@ -143,7 +143,7 @@ impl RestClient {
     pub async fn get_unified_account(
         &self,
         currency: Option<&str>,
-    ) -> crate::gateio::unified::Result<UnifiedAccount> {
+    ) -> crate::gateio::unified::RestResult<UnifiedAccount> {
         let request = GetUnifiedAccountRequest {
             currency: currency.map(|s| s.to_string()),
         };

@@ -260,14 +260,14 @@ impl RestClient {
     pub async fn list_margin_loans(
         &self,
         params: ListLoansRequest,
-    ) -> crate::gateio::spot::Result<Vec<Loan>> {
+    ) -> crate::gateio::spot::RestResult<Vec<Loan>> {
         self.get_with_query(MARGIN_LOANS_ENDPOINT, &params).await
     }
 
     /// Get a specific loan
     ///
     /// This endpoint returns details for a specific loan by ID.
-    pub async fn get_loan(&self, loan_id: &str) -> crate::gateio::spot::Result<Loan> {
+    pub async fn get_loan(&self, loan_id: &str) -> crate::gateio::spot::RestResult<Loan> {
         let endpoint = format!("/margin/loans/{}", loan_id);
         self.get(&endpoint).await
     }
@@ -278,7 +278,7 @@ impl RestClient {
     pub async fn create_loan(
         &self,
         request: CreateLoanRequest,
-    ) -> crate::gateio::spot::Result<Loan> {
+    ) -> crate::gateio::spot::RestResult<Loan> {
         self.post("/margin/loans", &request).await
     }
 
@@ -289,7 +289,7 @@ impl RestClient {
         &self,
         loan_id: &str,
         request: ModifyLoanRequest,
-    ) -> crate::gateio::spot::Result<Loan> {
+    ) -> crate::gateio::spot::RestResult<Loan> {
         let endpoint = format!("/margin/loans/{}", loan_id);
         self.patch(&endpoint, &request).await
     }
@@ -302,7 +302,7 @@ impl RestClient {
         loan_id: &str,
         currency: &str,
         currency_pair: &str,
-    ) -> crate::gateio::spot::Result<Loan> {
+    ) -> crate::gateio::spot::RestResult<Loan> {
         let endpoint = format!(
             "/margin/loans/{}?currency={}&currency_pair={}",
             loan_id, currency, currency_pair
@@ -317,7 +317,7 @@ impl RestClient {
         &self,
         loan_id: &str,
         request: RepayLoanRequest,
-    ) -> crate::gateio::spot::Result<Vec<LoanRepayment>> {
+    ) -> crate::gateio::spot::RestResult<Vec<LoanRepayment>> {
         let endpoint = format!("/margin/loans/{}/repayment", loan_id);
         self.post(&endpoint, &request).await
     }
@@ -328,7 +328,7 @@ impl RestClient {
     pub async fn get_repayment_records(
         &self,
         loan_id: &str,
-    ) -> crate::gateio::spot::Result<Vec<LoanRepayment>> {
+    ) -> crate::gateio::spot::RestResult<Vec<LoanRepayment>> {
         let endpoint = format!("/margin/loans/{}/repayment", loan_id);
         self.get(&endpoint).await
     }
@@ -339,7 +339,7 @@ impl RestClient {
     pub async fn get_loan_records(
         &self,
         params: LoanRecordsRequest,
-    ) -> crate::gateio::spot::Result<Vec<LoanRecord>> {
+    ) -> crate::gateio::spot::RestResult<Vec<LoanRecord>> {
         self.get_with_query(MARGIN_LOAN_RECORDS_ENDPOINT, &params)
             .await
     }
@@ -351,7 +351,7 @@ impl RestClient {
         &self,
         loan_record_id: &str,
         params: LoanRecordsRequest,
-    ) -> crate::gateio::spot::Result<LoanRecord> {
+    ) -> crate::gateio::spot::RestResult<LoanRecord> {
         let endpoint = format!("/margin/loan_records/{}", loan_record_id);
         self.get_with_query(&endpoint, &params).await
     }
@@ -363,7 +363,7 @@ impl RestClient {
         &self,
         loan_record_id: &str,
         auto_renew: bool,
-    ) -> crate::gateio::spot::Result<LoanRecord> {
+    ) -> crate::gateio::spot::RestResult<LoanRecord> {
         let endpoint = format!("/margin/loan_records/{}", loan_record_id);
         let request = serde_json::json!({
             "auto_renew": auto_renew

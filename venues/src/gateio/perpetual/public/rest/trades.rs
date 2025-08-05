@@ -59,7 +59,7 @@ impl RestClient {
     pub async fn get_futures_trades(
         &self,
         params: FuturesTradesRequest,
-    ) -> crate::gateio::perpetual::Result<Vec<FuturesTrade>> {
+    ) -> crate::gateio::perpetual::RestResult<Vec<FuturesTrade>> {
         let endpoint = format!("/futures/{}/trades", params.settle);
         self.get_with_query(&endpoint, Some(&params)).await
     }
