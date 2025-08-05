@@ -2,6 +2,8 @@ use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 
+const OPTIONS_CONTRACTS_ENDPOINT: &str = "/options/contracts";
+
 /// Request parameters for options contracts
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct OptionsContractsRequest {
@@ -78,7 +80,7 @@ impl RestClient {
         &self,
         params: OptionsContractsRequest,
     ) -> crate::gateio::options::Result<Vec<OptionsContract>> {
-        self.get_with_query("/options/contracts", Some(&params))
+        self.get_with_query(OPTIONS_CONTRACTS_ENDPOINT, Some(&params))
             .await
     }
 
@@ -92,7 +94,7 @@ impl RestClient {
         &self,
         contract: &str,
     ) -> crate::gateio::options::Result<OptionsContract> {
-        let endpoint = format!("/options/contracts/{}", contract);
+        let endpoint = format!("{}/{}", OPTIONS_CONTRACTS_ENDPOINT, contract);
         self.get(&endpoint).await
     }
 }

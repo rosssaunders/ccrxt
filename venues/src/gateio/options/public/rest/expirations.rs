@@ -2,6 +2,8 @@ use serde::Serialize;
 
 use super::RestClient;
 
+const OPTIONS_EXPIRATIONS_ENDPOINT: &str = "/options/expirations";
+
 /// Request parameters for options expirations
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct OptionsExpirationsRequest {
@@ -21,7 +23,7 @@ impl RestClient {
         &self,
         params: OptionsExpirationsRequest,
     ) -> crate::gateio::options::Result<Vec<i64>> {
-        self.get_with_query("/options/expirations", Some(&params))
+        self.get_with_query(OPTIONS_EXPIRATIONS_ENDPOINT, Some(&params))
             .await
     }
 }
