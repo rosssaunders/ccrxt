@@ -46,8 +46,107 @@ impl RestClient {
         order_id: &str,
     ) -> crate::gateio::delivery::Result<DeliveryOrder> {
         let endpoint = DELIVERY_ORDER_ENDPOINT
-            .replace("{}", settle)
-            .replace("{}", order_id);
+            .replacen("{}", settle, 1)
+            .replacen("{}", order_id, 1);
         self.get(&endpoint).await
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_delivery_orders_endpoint() {
+        assert_eq!(DELIVERY_ORDERS_ENDPOINT, "/delivery/{}/orders");
+    }
+
+    #[test]
+    fn test_delivery_order_endpoint() {
+        assert_eq!(DELIVERY_ORDER_ENDPOINT, "/delivery/{}/orders/{}");
+    }
+
+    #[test]
+    fn test_list_delivery_orders_endpoint_construction() {
+        let settle = "BTC";
+        let endpoint = DELIVERY_ORDERS_ENDPOINT.replace("{}", settle);
+        assert_eq!(endpoint, "/delivery/BTC/orders");
+    }
+
+    #[test]
+    fn test_get_delivery_order_endpoint_construction() {
+        let settle = "USDT";
+        let order_id = "12345678";
+        let endpoint = DELIVERY_ORDER_ENDPOINT
+            .replacen("{}", settle, 1)
+            .replacen("{}", order_id, 1);
+        assert_eq!(endpoint, "/delivery/USDT/orders/12345678");
+    }
+
+    #[test]
+    fn test_endpoint_different_settlements() {
+        let test_cases = vec![
+            ("BTC", "/delivery/BTC/orders"),
+            ("USDT", "/delivery/USDT/orders"),
+            ("ETH", "/delivery/ETH/orders"),
+        ];
+
+        for (settle, expected) in test_cases {
+            let endpoint = DELIVERY_ORDERS_ENDPOINT.replace("{}", settle);
+            assert_eq!(endpoint, expected, "Failed for settlement: {}", settle);
+        }
+    }
+
+    #[test]
+    fn test_get_order_endpoint_different_params() {
+        let test_cases = vec![
+            ("BTC", "order123", "/delivery/BTC/orders/order123"),
+            ("USDT", "987654321", "/delivery/USDT/orders/987654321"),
+            ("ETH", "abc-def-123", "/delivery/ETH/orders/abc-def-123"),
+        ];
+
+        for (settle, order_id, expected) in test_cases {
+            let endpoint = DELIVERY_ORDER_ENDPOINT
+                .replacen("{}", settle, 1)
+                .replacen("{}", order_id, 1);
+            assert_eq!(endpoint, expected, "Failed for settle: {}, order_id: {}", settle, order_id);
+        }
+    }
+
+    #[test]
+    fn test_endpoints_have_correct_placeholders() {
+        // Orders endpoint should have one placeholder
+        let orders_placeholder_count = DELIVERY_ORDERS_ENDPOINT.matches("{}").count();
+        assert_eq!(orders_placeholder_count, 1);
+
+        // Order endpoint should have two placeholders
+        let order_placeholder_count = DELIVERY_ORDER_ENDPOINT.matches("{}").count();
+        assert_eq!(order_placeholder_count, 2);
+    }
+
+    #[test]
+    fn test_endpoint_paths_structure() {
+        assert!(DELIVERY_ORDERS_ENDPOINT.starts_with("/delivery/"));
+        assert!(DELIVERY_ORDERS_ENDPOINT.ends_with("/orders"));
+        
+        assert!(DELIVERY_ORDER_ENDPOINT.starts_with("/delivery/"));
+        assert!(DELIVERY_ORDER_ENDPOINT.contains("/orders/"));
+    }
+
+    #[test]
+    fn test_endpoint_parameter_replacement_completeness() {
+        let settle = "BTC";
+        let order_id = "test123";
+
+        let orders_endpoint = DELIVERY_ORDERS_ENDPOINT.replace("{}", settle);
+        assert!(!orders_endpoint.contains("{}"));
+        assert!(orders_endpoint.contains(settle));
+
+        let order_endpoint = DELIVERY_ORDER_ENDPOINT
+            .replacen("{}", settle, 1)
+            .replacen("{}", order_id, 1);
+        assert!(!order_endpoint.contains("{}"));
+        assert!(order_endpoint.contains(settle));
+        assert!(order_endpoint.contains(order_id));
     }
 }
