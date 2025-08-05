@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
@@ -11,10 +9,11 @@ const ACCOUNTS_ENDPOINT: &str = "/api/v1/accounts";
 #[derive(Debug, Clone, Default, Serialize)]
 pub struct GetAccountsRequest {
     /// Currency code filter (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub currency: Option<String>,
 
     /// Account type filter (optional)
-    #[serde(rename = "type")]
+    #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
     pub account_type: Option<String>,
 }
 
@@ -49,17 +48,8 @@ impl RestClient {
         &self,
         request: GetAccountsRequest,
     ) -> Result<(Vec<Account>, ResponseHeaders)> {
-        let mut params = HashMap::new();
-
-        if let Some(currency) = request.currency {
-            params.insert("currency".to_string(), currency);
-        }
-        if let Some(account_type) = request.account_type {
-            params.insert("type".to_string(), account_type);
-        }
-
         let (response, headers): (RestResponse<Vec<Account>>, ResponseHeaders) =
-            self.get(ACCOUNTS_ENDPOINT, Some(params)).await?;
+            self.get_with_request(ACCOUNTS_ENDPOINT, &request).await?;
 
         Ok((response.data, headers))
     }

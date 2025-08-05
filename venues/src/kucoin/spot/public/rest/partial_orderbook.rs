@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
@@ -14,7 +12,15 @@ pub struct GetPartOrderBookRequest {
     pub symbol: String,
 
     /// Depth level (20 or 100)
+    #[serde(skip_serializing)]
     pub level: OrderBookLevel,
+}
+
+/// Query parameters for partial order book request (excludes level which goes in path)
+#[derive(Debug, Clone, Serialize)]
+struct PartOrderBookQueryParams {
+    /// Trading symbol (e.g., "BTC-USDT")
+    symbol: String,
 }
 
 /// Order book depth levels
@@ -50,9 +56,6 @@ impl RestClient {
         &self,
         request: GetPartOrderBookRequest,
     ) -> Result<(PartOrderBookResponse, ResponseHeaders)> {
-        let mut params = HashMap::new();
-        params.insert("symbol".to_string(), request.symbol);
-
         let level_str = match request.level {
             OrderBookLevel::Twenty => "20",
             OrderBookLevel::OneHundred => "100",
@@ -60,8 +63,12 @@ impl RestClient {
 
         let endpoint = PARTIAL_ORDERBOOK_ENDPOINT.replace("{level}", level_str);
 
+        let query_params = PartOrderBookQueryParams {
+            symbol: request.symbol,
+        };
+
         let (response, headers): (RestResponse<PartOrderBookResponse>, ResponseHeaders) =
-            self.get(&endpoint, Some(params)).await?;
+            self.get_with_request(&endpoint, &query_params).await?;
 
         Ok((response.data, headers))
     }

@@ -4,7 +4,6 @@ use crate::kucoin::spot::{MarginMode, ResponseHeaders, RestResponse, Result};
 
 /// Endpoint URL for get margin mode
 pub const GET_MARGIN_MODE_ENDPOINT: &str = "/api/v2/position/getMarginMode";
-use std::collections::HashMap;
 
 #[derive(Debug, Clone, Serialize)]
 pub struct GetMarginModeRequest {
@@ -27,11 +26,11 @@ impl super::RestClient {
     pub async fn get_margin_mode(
         &self,
         request: GetMarginModeRequest,
-    ) -> Result<(RestResponse<MarginModeResponse>, ResponseHeaders)> {
-        let endpoint = GET_MARGIN_MODE_ENDPOINT;
-        let mut params = HashMap::new();
-        params.insert("symbol".to_string(), request.symbol);
-        self.get(endpoint, Some(&params)).await
+    ) -> Result<(MarginModeResponse, ResponseHeaders)> {
+        let (response, headers): (RestResponse<MarginModeResponse>, ResponseHeaders) =
+            self.get_with_request(GET_MARGIN_MODE_ENDPOINT, &request).await?;
+
+        Ok((response.data, headers))
     }
 }
 

@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
@@ -14,6 +12,7 @@ pub struct GetDepositAddressRequest {
     pub currency: String,
 
     /// Chain name (optional, e.g., "eth", "bsc")
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub chain: Option<String>,
 }
 
@@ -42,15 +41,8 @@ impl RestClient {
         &self,
         request: GetDepositAddressRequest,
     ) -> Result<(DepositAddress, ResponseHeaders)> {
-        let mut params = HashMap::new();
-        params.insert("currency".to_string(), request.currency);
-
-        if let Some(chain) = request.chain {
-            params.insert("chain".to_string(), chain);
-        }
-
         let (response, headers): (RestResponse<DepositAddress>, ResponseHeaders) =
-            self.get(DEPOSIT_ADDRESS_ENDPOINT, Some(params)).await?;
+            self.get_with_request(DEPOSIT_ADDRESS_ENDPOINT, &request).await?;
 
         Ok((response.data, headers))
     }

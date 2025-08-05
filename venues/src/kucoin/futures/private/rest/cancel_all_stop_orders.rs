@@ -24,18 +24,13 @@ impl super::RestClient {
     pub async fn cancel_all_stop_orders(
         &self,
         request: CancelAllStopOrdersRequest,
-    ) -> Result<(RestResponse<CancelAllStopOrdersResponse>, ResponseHeaders)> {
+    ) -> Result<(CancelAllStopOrdersResponse, ResponseHeaders)> {
         const CANCEL_ALL_STOP_ORDERS_ENDPOINT: &str = "/api/v1/stopOrders";
 
-        let params = if let Some(symbol) = request.symbol {
-            let mut params = std::collections::HashMap::new();
-            params.insert("symbol".to_string(), symbol);
-            Some(params)
-        } else {
-            None
-        };
+        let (response, headers): (RestResponse<CancelAllStopOrdersResponse>, ResponseHeaders) =
+            self.delete_with_request(CANCEL_ALL_STOP_ORDERS_ENDPOINT, &request).await?;
 
-        self.delete(CANCEL_ALL_STOP_ORDERS_ENDPOINT, params).await
+        Ok((response.data, headers))
     }
 }
 

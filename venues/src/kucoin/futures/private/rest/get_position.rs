@@ -4,7 +4,6 @@ use crate::kucoin::spot::{AutoDepositStatus, PositionSide, ResponseHeaders, Rest
 
 /// Endpoint URL for get position
 pub const GET_POSITION_ENDPOINT: &str = "/api/v1/position";
-use std::collections::HashMap;
 
 #[derive(Debug, Clone, Serialize)]
 pub struct GetPositionRequest {
@@ -58,11 +57,11 @@ impl super::RestClient {
     pub async fn get_position(
         &self,
         request: GetPositionRequest,
-    ) -> Result<(RestResponse<Position>, ResponseHeaders)> {
-        let endpoint = GET_POSITION_ENDPOINT;
-        let mut params = HashMap::new();
-        params.insert("symbol".to_string(), request.symbol);
-        self.get(endpoint, Some(&params)).await
+    ) -> Result<(Position, ResponseHeaders)> {
+        let (response, headers): (RestResponse<Position>, ResponseHeaders) =
+            self.get_with_request(GET_POSITION_ENDPOINT, &request).await?;
+
+        Ok((response.data, headers))
     }
 }
 

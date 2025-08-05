@@ -1,4 +1,3 @@
-use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
 
@@ -26,18 +25,11 @@ impl super::RestClient {
     pub async fn cancel_all_orders(
         &self,
         request: CancelAllOrdersRequest,
-    ) -> Result<(RestResponse<CancelAllOrdersResponse>, ResponseHeaders)> {
-        let endpoint = CANCEL_ALL_ORDERS_ENDPOINT;
-        let mut params = HashMap::new();
-        if let Some(symbol) = request.symbol {
-            params.insert("symbol".to_string(), symbol);
-        }
-        let params = if params.is_empty() {
-            None
-        } else {
-            Some(params)
-        };
-        self.delete(endpoint, params).await
+    ) -> Result<(CancelAllOrdersResponse, ResponseHeaders)> {
+        let (response, headers): (RestResponse<CancelAllOrdersResponse>, ResponseHeaders) =
+            self.delete_with_request(CANCEL_ALL_ORDERS_ENDPOINT, &request).await?;
+
+        Ok((response.data, headers))
     }
 }
 

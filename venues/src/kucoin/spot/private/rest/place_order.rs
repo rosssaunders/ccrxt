@@ -109,15 +109,8 @@ impl RestClient {
         &self,
         request: PlaceOrderRequest,
     ) -> Result<(PlaceOrderResponse, ResponseHeaders)> {
-        let body = serde_json::to_string(&request).map_err(|e| {
-            crate::kucoin::spot::ApiError::JsonParsing(format!(
-                "Failed to serialize request: {}",
-                e
-            ))
-        })?;
-
         let (response, headers): (RestResponse<PlaceOrderResponse>, ResponseHeaders) =
-            self.post(PLACE_ORDER_ENDPOINT, &body).await?;
+            self.post_with_request(PLACE_ORDER_ENDPOINT, &request).await?;
 
         Ok((response.data, headers))
     }

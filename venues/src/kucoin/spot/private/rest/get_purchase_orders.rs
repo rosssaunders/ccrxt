@@ -21,15 +21,16 @@ pub struct GetPurchaseOrdersRequest {
     /// Order status (required)
     pub status: PurchaseOrderStatus,
     /// Currency (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub currency: Option<String>,
     /// Purchase order ID (optional)
-    #[serde(rename = "purchaseOrderNo")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "purchaseOrderNo")]
     pub purchase_order_no: Option<String>,
     /// Current page; default is 1
-    #[serde(rename = "currentPage")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "currentPage")]
     pub current_page: Option<i32>,
     /// Page size; 1<=pageSize<=50; default is 50
-    #[serde(rename = "pageSize")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "pageSize")]
     pub page_size: Option<i32>,
 }
 
@@ -90,27 +91,8 @@ impl RestClient {
         &self,
         request: GetPurchaseOrdersRequest,
     ) -> Result<(PurchaseOrdersResponse, ResponseHeaders)> {
-        let mut params = std::collections::HashMap::new();
-        params.insert(
-            "status".to_string(),
-            format!("{:?}", request.status).to_uppercase(),
-        );
-
-        if let Some(currency) = &request.currency {
-            params.insert("currency".to_string(), currency.clone());
-        }
-        if let Some(purchase_order_no) = &request.purchase_order_no {
-            params.insert("purchaseOrderNo".to_string(), purchase_order_no.clone());
-        }
-        if let Some(current_page) = &request.current_page {
-            params.insert("currentPage".to_string(), current_page.to_string());
-        }
-        if let Some(page_size) = &request.page_size {
-            params.insert("pageSize".to_string(), page_size.to_string());
-        }
-
         let (response, headers): (RestResponse<PurchaseOrdersResponse>, ResponseHeaders) =
-            self.get(PURCHASE_ORDERS_ENDPOINT, Some(params)).await?;
+            self.get_with_request(PURCHASE_ORDERS_ENDPOINT, &request).await?;
 
         Ok((response.data, headers))
     }

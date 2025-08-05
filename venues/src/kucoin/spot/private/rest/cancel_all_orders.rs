@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
@@ -34,24 +32,8 @@ impl RestClient {
         &self,
         request: CancelAllOrdersRequest,
     ) -> Result<(CancelAllOrdersResponse, ResponseHeaders)> {
-        let mut params = HashMap::new();
-
-        if let Some(symbol) = request.symbol {
-            params.insert("symbol".to_string(), symbol);
-        }
-
-        if let Some(trade_type) = request.trade_type {
-            params.insert("tradeType".to_string(), trade_type);
-        }
-
-        let params_option = if params.is_empty() {
-            None
-        } else {
-            Some(params)
-        };
-
         let (response, headers): (RestResponse<CancelAllOrdersResponse>, ResponseHeaders) = self
-            .delete(CANCEL_ALL_ORDERS_ENDPOINT, params_option)
+            .delete_with_request(CANCEL_ALL_ORDERS_ENDPOINT, &request)
             .await?;
 
         Ok((response.data, headers))

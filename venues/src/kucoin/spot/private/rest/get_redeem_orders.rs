@@ -21,15 +21,16 @@ pub struct GetRedeemOrdersRequest {
     /// Order status (required)
     pub status: RedeemOrderStatus,
     /// Currency (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub currency: Option<String>,
     /// Redeem order ID (optional)
-    #[serde(rename = "redeemOrderNo")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "redeemOrderNo")]
     pub redeem_order_no: Option<String>,
     /// Current page; default is 1
-    #[serde(rename = "currentPage")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "currentPage")]
     pub current_page: Option<i32>,
     /// Page size; 1<=pageSize<=50; default is 50
-    #[serde(rename = "pageSize")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "pageSize")]
     pub page_size: Option<i32>,
 }
 
@@ -84,27 +85,8 @@ impl RestClient {
         &self,
         request: GetRedeemOrdersRequest,
     ) -> Result<(RedeemOrdersResponse, ResponseHeaders)> {
-        let mut params = std::collections::HashMap::new();
-        params.insert(
-            "status".to_string(),
-            format!("{:?}", request.status).to_uppercase(),
-        );
-
-        if let Some(currency) = &request.currency {
-            params.insert("currency".to_string(), currency.clone());
-        }
-        if let Some(redeem_order_no) = &request.redeem_order_no {
-            params.insert("redeemOrderNo".to_string(), redeem_order_no.clone());
-        }
-        if let Some(current_page) = &request.current_page {
-            params.insert("currentPage".to_string(), current_page.to_string());
-        }
-        if let Some(page_size) = &request.page_size {
-            params.insert("pageSize".to_string(), page_size.to_string());
-        }
-
         let (response, headers): (RestResponse<RedeemOrdersResponse>, ResponseHeaders) =
-            self.get(REDEEM_ORDERS_ENDPOINT, Some(params)).await?;
+            self.get_with_request(REDEEM_ORDERS_ENDPOINT, &request).await?;
 
         Ok((response.data, headers))
     }

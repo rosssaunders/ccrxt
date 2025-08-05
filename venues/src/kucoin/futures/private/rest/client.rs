@@ -136,6 +136,45 @@ impl RestClient {
         self.get(endpoint, request).await
     }
 
+    /// Alias for get method to match spot client interface
+    pub async fn get_with_request<T, R>(
+        &self,
+        endpoint: &str,
+        request: &R,
+    ) -> Result<(RestResponse<T>, ResponseHeaders)>
+    where
+        T: DeserializeOwned,
+        R: serde::Serialize,
+    {
+        self.get(endpoint, Some(request)).await
+    }
+
+    /// Alias for post method to match spot client interface
+    pub async fn post_with_request<T, R>(
+        &self,
+        endpoint: &str,
+        request: &R,
+    ) -> Result<(RestResponse<T>, ResponseHeaders)>
+    where
+        T: DeserializeOwned,
+        R: serde::Serialize,
+    {
+        self.post(endpoint, request).await
+    }
+
+    /// Alias for delete method to match spot client interface
+    pub async fn delete_with_request<T, R>(
+        &self,
+        endpoint: &str,
+        request: &R,
+    ) -> Result<(RestResponse<T>, ResponseHeaders)>
+    where
+        T: DeserializeOwned,
+        R: serde::Serialize,
+    {
+        self.delete(endpoint, Some(request)).await
+    }
+
     /// Make a GET request to the private futures API
     pub async fn get<T, R>(
         &self,

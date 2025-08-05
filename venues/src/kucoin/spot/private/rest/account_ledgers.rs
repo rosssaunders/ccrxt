@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
@@ -11,21 +9,23 @@ const ACCOUNT_LEDGERS_ENDPOINT: &str = "/api/v1/accounts/ledgers";
 #[derive(Debug, Clone, Default, Serialize)]
 pub struct GetAccountLedgersRequest {
     /// Currency filter (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub currency: Option<String>,
 
     /// Direction (optional): in, out
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub direction: Option<String>,
 
     /// Business type filter (optional)
-    #[serde(rename = "bizType")]
+    #[serde(rename = "bizType", skip_serializing_if = "Option::is_none")]
     pub business_type: Option<String>,
 
     /// Start time (optional, milliseconds)
-    #[serde(rename = "startAt")]
+    #[serde(rename = "startAt", skip_serializing_if = "Option::is_none")]
     pub start_time: Option<i64>,
 
     /// End time (optional, milliseconds)
-    #[serde(rename = "endAt")]
+    #[serde(rename = "endAt", skip_serializing_if = "Option::is_none")]
     pub end_time: Option<i64>,
 }
 
@@ -97,26 +97,8 @@ impl RestClient {
         &self,
         request: GetAccountLedgersRequest,
     ) -> Result<(AccountLedgersResponse, ResponseHeaders)> {
-        let mut params = HashMap::new();
-
-        if let Some(currency) = request.currency {
-            params.insert("currency".to_string(), currency);
-        }
-        if let Some(direction) = request.direction {
-            params.insert("direction".to_string(), direction);
-        }
-        if let Some(business_type) = request.business_type {
-            params.insert("bizType".to_string(), business_type);
-        }
-        if let Some(start_time) = request.start_time {
-            params.insert("startAt".to_string(), start_time.to_string());
-        }
-        if let Some(end_time) = request.end_time {
-            params.insert("endAt".to_string(), end_time.to_string());
-        }
-
         let (response, headers): (RestResponse<AccountLedgersResponse>, ResponseHeaders) =
-            self.get(ACCOUNT_LEDGERS_ENDPOINT, Some(params)).await?;
+            self.get_with_request(ACCOUNT_LEDGERS_ENDPOINT, &request).await?;
 
         Ok((response.data, headers))
     }

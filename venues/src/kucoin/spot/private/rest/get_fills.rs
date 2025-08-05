@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
@@ -11,25 +9,27 @@ const FILLS_ENDPOINT: &str = "/api/v1/fills";
 #[derive(Debug, Clone, Default, Serialize)]
 pub struct GetFillsRequest {
     /// Trading symbol filter (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub symbol: Option<String>,
 
     /// Order ID filter (optional)
-    #[serde(rename = "orderId")]
+    #[serde(rename = "orderId", skip_serializing_if = "Option::is_none")]
     pub order_id: Option<String>,
 
     /// Trade side filter (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub side: Option<TradeSide>,
 
     /// Trade type filter (optional)
-    #[serde(rename = "type")]
+    #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
     pub trade_type: Option<String>,
 
     /// Start time filter (optional, milliseconds)
-    #[serde(rename = "startAt")]
+    #[serde(rename = "startAt", skip_serializing_if = "Option::is_none")]
     pub start_time: Option<i64>,
 
     /// End time filter (optional, milliseconds)
-    #[serde(rename = "endAt")]
+    #[serde(rename = "endAt", skip_serializing_if = "Option::is_none")]
     pub end_time: Option<i64>,
 }
 
@@ -128,36 +128,8 @@ impl RestClient {
         &self,
         request: GetFillsRequest,
     ) -> Result<(FillsResponse, ResponseHeaders)> {
-        let mut params = HashMap::new();
-
-        if let Some(symbol) = request.symbol {
-            params.insert("symbol".to_string(), symbol);
-        }
-        if let Some(order_id) = request.order_id {
-            params.insert("orderId".to_string(), order_id);
-        }
-        if let Some(side) = request.side {
-            #[allow(clippy::unwrap_used)]
-            params.insert(
-                "side".to_string(),
-                serde_json::to_string(&side)
-                    .unwrap()
-                    .trim_matches('"')
-                    .to_string(),
-            );
-        }
-        if let Some(trade_type) = request.trade_type {
-            params.insert("type".to_string(), trade_type);
-        }
-        if let Some(start_time) = request.start_time {
-            params.insert("startAt".to_string(), start_time.to_string());
-        }
-        if let Some(end_time) = request.end_time {
-            params.insert("endAt".to_string(), end_time.to_string());
-        }
-
         let (response, headers): (RestResponse<FillsResponse>, ResponseHeaders) =
-            self.get(FILLS_ENDPOINT, Some(params)).await?;
+            self.get_with_request(FILLS_ENDPOINT, &request).await?;
 
         Ok((response.data, headers))
     }

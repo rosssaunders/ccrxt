@@ -28,12 +28,8 @@ impl RestClient {
         &self,
         request: GetLoanMarketInterestRateRequest,
     ) -> Result<(Vec<MarketInterestRate>, ResponseHeaders)> {
-        let mut params = std::collections::HashMap::new();
-        params.insert("currency".to_string(), request.currency);
-
-        let (response, headers): (RestResponse<Vec<MarketInterestRate>>, ResponseHeaders) = self
-            .get("/api/v3/project/marketInterestRate", Some(params))
-            .await?;
+        let (response, headers): (RestResponse<Vec<MarketInterestRate>>, ResponseHeaders) =
+            self.get_with_request("/api/v3/project/marketInterestRate", &request).await?;
 
         Ok((response.data, headers))
     }

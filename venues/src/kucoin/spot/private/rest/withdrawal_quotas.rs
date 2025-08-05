@@ -1,4 +1,3 @@
-use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
 
@@ -14,6 +13,7 @@ pub struct GetWithdrawalQuotasRequest {
     pub currency: String,
 
     /// Chain name (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub chain: Option<String>,
 }
 
@@ -66,15 +66,8 @@ impl RestClient {
         &self,
         request: GetWithdrawalQuotasRequest,
     ) -> Result<(WithdrawalQuota, ResponseHeaders)> {
-        let mut params = HashMap::new();
-        params.insert("currency".to_string(), request.currency);
-
-        if let Some(chain) = request.chain {
-            params.insert("chain".to_string(), chain);
-        }
-
         let (response, headers): (RestResponse<WithdrawalQuota>, ResponseHeaders) =
-            self.get(WITHDRAWAL_QUOTAS_ENDPOINT, Some(params)).await?;
+            self.get_with_request(WITHDRAWAL_QUOTAS_ENDPOINT, &request).await?;
 
         Ok((response.data, headers))
     }

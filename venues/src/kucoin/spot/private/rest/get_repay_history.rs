@@ -1,4 +1,3 @@
-use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
 
@@ -11,12 +10,19 @@ const REPAY_HISTORY_ENDPOINT: &str = "/api/v3/margin/repay";
 #[derive(Debug, Clone, Serialize)]
 pub struct GetRepayHistoryRequest {
     pub currency: String,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "isIsolated")]
     pub is_isolated: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub symbol: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "orderNo")]
     pub order_no: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "startTime")]
     pub start_time: Option<i64>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "endTime")]
     pub end_time: Option<i64>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "currentPage")]
     pub current_page: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "pageSize")]
     pub page_size: Option<i32>,
 }
 
@@ -68,31 +74,8 @@ impl RestClient {
         &self,
         request: GetRepayHistoryRequest,
     ) -> Result<(RepayHistoryResponse, ResponseHeaders)> {
-        let mut params = HashMap::new();
-        params.insert("currency".to_string(), request.currency);
-        if let Some(is_isolated) = request.is_isolated {
-            params.insert("isIsolated".to_string(), is_isolated.to_string());
-        }
-        if let Some(symbol) = request.symbol {
-            params.insert("symbol".to_string(), symbol);
-        }
-        if let Some(order_no) = request.order_no {
-            params.insert("orderNo".to_string(), order_no);
-        }
-        if let Some(start_time) = request.start_time {
-            params.insert("startTime".to_string(), start_time.to_string());
-        }
-        if let Some(end_time) = request.end_time {
-            params.insert("endTime".to_string(), end_time.to_string());
-        }
-        if let Some(current_page) = request.current_page {
-            params.insert("currentPage".to_string(), current_page.to_string());
-        }
-        if let Some(page_size) = request.page_size {
-            params.insert("pageSize".to_string(), page_size.to_string());
-        }
         let (response, headers): (RestResponse<RepayHistoryResponse>, ResponseHeaders) =
-            self.get(REPAY_HISTORY_ENDPOINT, Some(params)).await?;
+            self.get_with_request(REPAY_HISTORY_ENDPOINT, &request).await?;
         Ok((response.data, headers))
     }
 }

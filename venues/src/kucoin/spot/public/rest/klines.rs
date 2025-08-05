@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
@@ -65,25 +63,8 @@ impl RestClient {
         &self,
         request: GetKlinesRequest,
     ) -> Result<(Vec<Kline>, ResponseHeaders)> {
-        let mut params = HashMap::new();
-        params.insert("symbol".to_string(), request.symbol);
-
-        // Serialize the interval enum to get the correct string representation
-        let interval_str = serde_json::to_string(&request.interval)?
-            .trim_matches('"')
-            .to_string();
-        params.insert("type".to_string(), interval_str);
-
-        if let Some(start_time) = request.start_time {
-            params.insert("startAt".to_string(), start_time.to_string());
-        }
-
-        if let Some(end_time) = request.end_time {
-            params.insert("endAt".to_string(), end_time.to_string());
-        }
-
         let (response, headers): (RestResponse<Vec<KlineArray>>, ResponseHeaders) =
-            self.get(KLINES_ENDPOINT, Some(params)).await?;
+            self.get_with_request(KLINES_ENDPOINT, &request).await?;
 
         let klines: Vec<Kline> = response.data.into_iter().map(Kline::from).collect();
 

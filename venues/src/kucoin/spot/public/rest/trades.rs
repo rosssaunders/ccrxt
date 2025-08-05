@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
@@ -31,15 +29,14 @@ pub struct Trade {
 
 impl RestClient {
     /// Get recent trades for a symbol
+    ///
+    /// Reference: https://docs.kucoin.com/#get-trade-histories
     pub async fn get_trades(
         &self,
         request: GetTradesRequest,
     ) -> Result<(Vec<Trade>, ResponseHeaders)> {
-        let mut params = HashMap::new();
-        params.insert("symbol".to_string(), request.symbol);
-
         let (response, headers): (RestResponse<Vec<Trade>>, ResponseHeaders) =
-            self.get(TRADES_ENDPOINT, Some(params)).await?;
+            self.get_with_request(TRADES_ENDPOINT, &request).await?;
 
         Ok((response.data, headers))
     }

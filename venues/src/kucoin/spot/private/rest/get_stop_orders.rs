@@ -1,4 +1,3 @@
-use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
 
@@ -11,26 +10,27 @@ const STOP_ORDERS_ENDPOINT: &str = "/api/v1/stop-order";
 #[derive(Debug, Clone, Default, Serialize)]
 pub struct GetStopOrdersRequest {
     /// Trading symbol filter (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub symbol: Option<String>,
 
     /// Order IDs filter (optional, comma-separated)
-    #[serde(rename = "orderIds")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "orderIds")]
     pub order_ids: Option<String>,
 
     /// Page number (optional, default 1)
-    #[serde(rename = "currentPage")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "currentPage")]
     pub current_page: Option<i32>,
 
     /// Page size (optional, default 50, max 500)
-    #[serde(rename = "pageSize")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "pageSize")]
     pub page_size: Option<i32>,
 
     /// Start time filter (optional, milliseconds)
-    #[serde(rename = "startAt")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "startAt")]
     pub start_time: Option<i64>,
 
     /// End time filter (optional, milliseconds)
-    #[serde(rename = "endAt")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "endAt")]
     pub end_time: Option<i64>,
 }
 
@@ -178,29 +178,8 @@ impl RestClient {
         &self,
         request: GetStopOrdersRequest,
     ) -> Result<(OrdersResponse, ResponseHeaders)> {
-        let mut params = HashMap::new();
-
-        if let Some(symbol) = request.symbol {
-            params.insert("symbol".to_string(), symbol);
-        }
-        if let Some(order_ids) = request.order_ids {
-            params.insert("orderIds".to_string(), order_ids);
-        }
-        if let Some(current_page) = request.current_page {
-            params.insert("currentPage".to_string(), current_page.to_string());
-        }
-        if let Some(page_size) = request.page_size {
-            params.insert("pageSize".to_string(), page_size.to_string());
-        }
-        if let Some(start_time) = request.start_time {
-            params.insert("startAt".to_string(), start_time.to_string());
-        }
-        if let Some(end_time) = request.end_time {
-            params.insert("endAt".to_string(), end_time.to_string());
-        }
-
         let (response, headers): (RestResponse<OrdersResponse>, ResponseHeaders) =
-            self.get(STOP_ORDERS_ENDPOINT, Some(params)).await?;
+            self.get_with_request(STOP_ORDERS_ENDPOINT, &request).await?;
 
         Ok((response.data, headers))
     }

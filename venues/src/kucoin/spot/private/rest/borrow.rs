@@ -50,18 +50,14 @@ impl RestClient {
     /// Borrow margin
     ///
     /// This API endpoint is used to initiate an application for cross or isolated margin borrowing.
+    ///
+    /// Reference: https://docs.kucoin.com/#borrowing
     pub async fn borrow(
         &self,
         request: BorrowRequest,
     ) -> Result<(BorrowResponse, ResponseHeaders)> {
-        let body = serde_json::to_string(&request).map_err(|e| {
-            crate::kucoin::spot::ApiError::JsonParsing(format!(
-                "Failed to serialize request: {}",
-                e
-            ))
-        })?;
         let (response, headers): (RestResponse<BorrowResponse>, ResponseHeaders) =
-            self.post(BORROW_ENDPOINT, &body).await?;
+            self.post_with_request(BORROW_ENDPOINT, &request).await?;
         Ok((response.data, headers))
     }
 }

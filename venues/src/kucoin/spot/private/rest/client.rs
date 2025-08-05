@@ -9,7 +9,7 @@ use chrono::Utc;
 use hmac::{Hmac, Mac};
 use reqwest::Client;
 use rest::secrets::ExposableSecret;
-use serde::de::DeserializeOwned;
+use serde::{de::DeserializeOwned, Serialize};
 use sha2::Sha256;
 
 use crate::kucoin::spot::{ApiError, RateLimiter, ResponseHeaders, RestResponse, Result};
@@ -197,6 +197,81 @@ impl RestClient {
         Ok((response, rate_limit_headers))
     }
 
+    /// Make a GET request to the private API with a serializable request
+    pub async fn get_with_request<P, T>(
+        &self,
+        endpoint: &str,
+        request: &P,
+    ) -> Result<(RestResponse<T>, ResponseHeaders)>
+    where
+        P: Serialize,
+        T: DeserializeOwned,
+    {
+        // Check rate limiter
+        if !self.rate_limiter.can_proceed().await {
+            return Err(ApiError::RateLimitExceeded {
+                code: "429000".to_string(),
+                message: "Rate limit exceeded".to_string(),
+            }
+            .into());
+        }
+
+        let timestamp = Utc::now().timestamp_millis();
+        let url = format!("{}{}", self.base_url, endpoint);
+
+        let mut request_builder = self.client.get(&url);
+
+        // Serialize the request as query parameters
+        let params = serde_urlencoded::to_string(request)
+            .map_err(|e| ApiError::JsonParsing(format!("Failed to serialize request: {}", e)))?;
+        
+        if !params.is_empty() {
+            request_builder = request_builder.query(&request);
+        }
+
+        // Create auth headers
+        let auth_headers = self.create_auth_headers("GET", endpoint, "", timestamp)?;
+
+        for (key, value) in auth_headers {
+            request_builder = request_builder.header(&key, &value);
+        }
+
+        let response = request_builder.send().await?;
+
+        let status = response.status();
+        let headers = response.headers().clone();
+
+        let text = response.text().await?;
+
+        if !status.is_success() {
+            // Try to parse as error response
+            if let Ok(error_response) =
+                serde_json::from_str::<super::super::super::ErrorResponse>(&text)
+            {
+                return Err(ApiError::from(error_response).into());
+            } else {
+                return Err(ApiError::Http(format!("HTTP {}: {}", status, text)).into());
+            }
+        }
+
+        // Parse successful response
+        let response: RestResponse<T> = serde_json::from_str(&text)
+            .map_err(|e| ApiError::JsonParsing(format!("Failed to parse response: {}", e)))?;
+
+        // Check if KuCoin indicates success
+        if !response.is_success() {
+            return Err(ApiError::Other {
+                code: response.code.clone(),
+                message: "KuCoin API returned non-success code".to_string(),
+            }
+            .into());
+        }
+
+        let rate_limit_headers = ResponseHeaders::from_headers(&headers);
+
+        Ok((response, rate_limit_headers))
+    }
+
     /// Make a POST request to the private API
     pub async fn post<T>(
         &self,
@@ -267,6 +342,80 @@ impl RestClient {
         Ok((response, rate_limit_headers))
     }
 
+    /// Make a POST request to the private API with a serializable request
+    pub async fn post_with_request<P, T>(
+        &self,
+        endpoint: &str,
+        request: &P,
+    ) -> Result<(RestResponse<T>, ResponseHeaders)>
+    where
+        P: Serialize,
+        T: DeserializeOwned,
+    {
+        // Check rate limiter
+        if !self.rate_limiter.can_proceed().await {
+            return Err(ApiError::RateLimitExceeded {
+                code: "429000".to_string(),
+                message: "Rate limit exceeded".to_string(),
+            }
+            .into());
+        }
+
+        let timestamp = Utc::now().timestamp_millis();
+        let url = format!("{}{}", self.base_url, endpoint);
+
+        let body = serde_json::to_string(request)
+            .map_err(|e| ApiError::JsonParsing(format!("Failed to serialize request: {}", e)))?;
+
+        let mut request_builder = self.client.post(&url);
+
+        // Create auth headers
+        let auth_headers = self.create_auth_headers("POST", endpoint, &body, timestamp)?;
+
+        for (key, value) in auth_headers {
+            request_builder = request_builder.header(&key, &value);
+        }
+
+        request_builder = request_builder
+            .header("Content-Type", "application/json")
+            .body(body);
+
+        let response = request_builder.send().await?;
+
+        let status = response.status();
+        let headers = response.headers().clone();
+
+        let text = response.text().await?;
+
+        if !status.is_success() {
+            // Try to parse as error response
+            if let Ok(error_response) =
+                serde_json::from_str::<super::super::super::ErrorResponse>(&text)
+            {
+                return Err(ApiError::from(error_response).into());
+            } else {
+                return Err(ApiError::Http(format!("HTTP {}: {}", status, text)).into());
+            }
+        }
+
+        // Parse successful response
+        let response: RestResponse<T> = serde_json::from_str(&text)
+            .map_err(|e| ApiError::JsonParsing(format!("Failed to parse response: {}", e)))?;
+
+        // Check if KuCoin indicates success
+        if !response.is_success() {
+            return Err(ApiError::Other {
+                code: response.code.clone(),
+                message: "KuCoin API returned non-success code".to_string(),
+            }
+            .into());
+        }
+
+        let rate_limit_headers = ResponseHeaders::from_headers(&headers);
+
+        Ok((response, rate_limit_headers))
+    }
+
     /// Make a DELETE request to the private API
     pub async fn delete<T>(
         &self,
@@ -302,6 +451,81 @@ impl RestClient {
         }
 
         let response = request.send().await?;
+
+        let status = response.status();
+        let headers = response.headers().clone();
+
+        let text = response.text().await?;
+
+        if !status.is_success() {
+            // Try to parse as error response
+            if let Ok(error_response) =
+                serde_json::from_str::<super::super::super::ErrorResponse>(&text)
+            {
+                return Err(ApiError::from(error_response).into());
+            } else {
+                return Err(ApiError::Http(format!("HTTP {}: {}", status, text)).into());
+            }
+        }
+
+        // Parse successful response
+        let response: RestResponse<T> = serde_json::from_str(&text)
+            .map_err(|e| ApiError::JsonParsing(format!("Failed to parse response: {}", e)))?;
+
+        // Check if KuCoin indicates success
+        if !response.is_success() {
+            return Err(ApiError::Other {
+                code: response.code.clone(),
+                message: "KuCoin API returned non-success code".to_string(),
+            }
+            .into());
+        }
+
+        let rate_limit_headers = ResponseHeaders::from_headers(&headers);
+
+        Ok((response, rate_limit_headers))
+    }
+
+    /// Make a DELETE request to the private API with a serializable request
+    pub async fn delete_with_request<P, T>(
+        &self,
+        endpoint: &str,
+        request: &P,
+    ) -> Result<(RestResponse<T>, ResponseHeaders)>
+    where
+        P: Serialize,
+        T: DeserializeOwned,
+    {
+        // Check rate limiter
+        if !self.rate_limiter.can_proceed().await {
+            return Err(ApiError::RateLimitExceeded {
+                code: "429000".to_string(),
+                message: "Rate limit exceeded".to_string(),
+            }
+            .into());
+        }
+
+        let timestamp = Utc::now().timestamp_millis();
+        let url = format!("{}{}", self.base_url, endpoint);
+
+        let mut request_builder = self.client.delete(&url);
+
+        // Serialize the request as query parameters
+        let params = serde_urlencoded::to_string(request)
+            .map_err(|e| ApiError::JsonParsing(format!("Failed to serialize request: {}", e)))?;
+        
+        if !params.is_empty() {
+            request_builder = request_builder.query(&request);
+        }
+
+        // Create auth headers
+        let auth_headers = self.create_auth_headers("DELETE", endpoint, "", timestamp)?;
+
+        for (key, value) in auth_headers {
+            request_builder = request_builder.header(&key, &value);
+        }
+
+        let response = request_builder.send().await?;
 
         let status = response.status();
         let headers = response.headers().clone();

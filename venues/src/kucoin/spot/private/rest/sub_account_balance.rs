@@ -1,4 +1,3 @@
-use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
 
@@ -11,11 +10,11 @@ const SUB_ACCOUNT_BALANCE_ENDPOINT: &str = "/api/v1/sub-accounts/{subUserId}";
 #[derive(Debug, Clone, Serialize)]
 pub struct GetSubAccountBalanceRequest {
     /// Sub-account user ID
-    #[serde(rename = "subUserId")]
+    #[serde(skip_serializing)]
     pub sub_user_id: String,
 
     /// Include sub-account details flag (optional)
-    #[serde(rename = "includeBaseAmount")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "includeBaseAmount")]
     pub include_base_amount: Option<bool>,
 }
 
@@ -74,16 +73,9 @@ impl RestClient {
         &self,
         request: GetSubAccountBalanceRequest,
     ) -> Result<(SubAccountBalance, ResponseHeaders)> {
-        let mut params = HashMap::new();
-        if let Some(include_base_amount) = request.include_base_amount {
-            params.insert(
-                "includeBaseAmount".to_string(),
-                include_base_amount.to_string(),
-            );
-        }
         let endpoint = SUB_ACCOUNT_BALANCE_ENDPOINT.replace("{subUserId}", &request.sub_user_id);
         let (response, headers): (RestResponse<SubAccountBalance>, ResponseHeaders) =
-            self.get(&endpoint, Some(params)).await?;
+            self.get_with_request(&endpoint, &request).await?;
         Ok((response.data, headers))
     }
 }
