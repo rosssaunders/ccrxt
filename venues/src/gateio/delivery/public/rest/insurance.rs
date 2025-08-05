@@ -29,14 +29,21 @@ impl RestClient {
     ///
     /// Retrieves historical insurance fund balance for the specified settlement currency.
     ///
-    /// # API Documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#futures-insurance-balance-history-2>
+    /// [docs]: https://www.gate.io/docs/developers/apiv4/en/#get-delivery-insurance-balance-history
+    ///
+    /// Rate limit: 10 requests per second
+    ///
+    /// # Arguments
+    /// * `params` - The delivery insurance request parameters
+    ///
+    /// # Returns
+    /// Historical insurance fund balance entries
     pub async fn get_delivery_insurance(
         &self,
         params: DeliveryInsuranceRequest,
     ) -> crate::gateio::delivery::RestResult<Vec<DeliveryInsurance>> {
         let endpoint = DELIVERY_INSURANCE_ENDPOINT.replace("{}", &params.settle);
-        self.get_with_query(&endpoint, Some(&params)).await
+        self.send_get_request(&endpoint, Some(&params), crate::gateio::EndpointType::Public).await
     }
 }
 

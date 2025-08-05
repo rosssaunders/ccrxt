@@ -8,7 +8,7 @@ impl RestClient {
     ///
     /// Retrieves index price candlestick data for a specific delivery contract.
     ///
-    /// See: Gate.io API documentation
+    /// [docs]: https://www.gate.io/docs/developers/apiv4/en/#get-delivery-index-price-candlesticks
     ///
     /// Rate limit: 10 requests per second
     ///

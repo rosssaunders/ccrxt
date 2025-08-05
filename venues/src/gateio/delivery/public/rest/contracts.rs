@@ -139,22 +139,36 @@ impl RestClient {
     ///
     /// Retrieves all available delivery contracts for the specified settlement currency.
     ///
-    /// # API Documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#list-all-futures-contracts-2>
+    /// [docs]: https://www.gate.io/docs/developers/apiv4/en/#list-all-futures-contracts-2
+    ///
+    /// Rate limit: 10 requests per second
+    ///
+    /// # Arguments
+    /// * `params` - The delivery contracts request parameters
+    ///
+    /// # Returns
+    /// List of delivery contracts for the specified settlement currency
     pub async fn get_delivery_contracts(
         &self,
         params: DeliveryContractsRequest,
     ) -> crate::gateio::delivery::RestResult<Vec<DeliveryContract>> {
         let endpoint = DELIVERY_CONTRACTS_ENDPOINT.replace("{}", &params.settle);
-        self.get(&endpoint).await
+        self.get_with_query(&endpoint, Some(&params)).await
     }
 
     /// Get a single delivery contract
     ///
     /// Retrieves detailed information about a specific delivery contract.
     ///
-    /// # API Documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#get-a-single-contract-2>
+    /// [docs]: https://www.gate.io/docs/developers/apiv4/en/#get-a-single-contract-2
+    ///
+    /// Rate limit: 10 requests per second
+    ///
+    /// # Arguments
+    /// * `params` - The delivery contract request parameters
+    ///
+    /// # Returns
+    /// Detailed information about the specific delivery contract
     pub async fn get_delivery_contract(
         &self,
         params: DeliveryContractRequest,
@@ -162,7 +176,7 @@ impl RestClient {
         let endpoint = DELIVERY_CONTRACT_ENDPOINT
             .replace("{}", &params.settle)
             .replace("{}", &params.contract);
-        self.get(&endpoint).await
+        self.get_with_query(&endpoint, Some(&params)).await
     }
 }
 

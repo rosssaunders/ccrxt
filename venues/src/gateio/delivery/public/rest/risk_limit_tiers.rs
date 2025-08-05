@@ -9,11 +9,14 @@ const DELIVERY_RISK_LIMIT_TIERS_ENDPOINT: &str = "/delivery/{}/risk_limit_tiers"
 pub struct DeliveryRiskLimitTiersRequest {
     /// Settlement currency
     pub settle: String,
+
     /// Contract name
     pub contract: String,
+
     /// List offset (default 0)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub offset: Option<i32>,
+
     /// Maximum number of records to return (1-500, default 10)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i32>,
@@ -39,16 +42,23 @@ impl RestClient {
     /// List delivery risk limit tiers
     ///
     /// Retrieves risk limit tiers for a specific delivery contract.
-    ///
-    /// # API Documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#list-risk-limit-tiers-2>
     /// Higher tiers require higher margin rates but allow larger positions.
+    ///
+    /// [docs]: https://www.gate.io/docs/developers/apiv4/en/#list-delivery-risk-limit-tiers
+    ///
+    /// Rate limit: 10 requests per second
+    ///
+    /// # Arguments
+    /// * `params` - The delivery risk limit tiers request parameters
+    ///
+    /// # Returns
+    /// List of delivery risk limit tiers
     pub async fn get_delivery_risk_limit_tiers(
         &self,
         params: DeliveryRiskLimitTiersRequest,
     ) -> crate::gateio::delivery::RestResult<Vec<DeliveryRiskLimitTier>> {
         let endpoint = DELIVERY_RISK_LIMIT_TIERS_ENDPOINT.replace("{}", &params.settle);
-        self.get_with_query(&endpoint, Some(&params)).await
+        self.send_get_request(&endpoint, Some(&params), crate::gateio::EndpointType::Public).await
     }
 }
 

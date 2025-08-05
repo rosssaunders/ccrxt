@@ -9,14 +9,18 @@ const DELIVERY_ORDER_BOOK_ENDPOINT: &str = "/delivery/{}/order_book";
 pub struct DeliveryOrderBookRequest {
     /// Settlement currency
     pub settle: String,
+
     /// Contract name
     pub contract: String,
+
     /// Order book level (1-100, default 10)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub interval: Option<String>,
+
     /// Order book depth limit (1-100, default 10)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i32>,
+
     /// Request UTC timestamp in milliseconds
     #[serde(skip_serializing_if = "Option::is_none")]
     pub with_id: Option<bool>,
@@ -27,6 +31,7 @@ pub struct DeliveryOrderBookRequest {
 pub struct DeliveryOrderBookEntry {
     /// Price
     pub p: String,
+
     /// Size
     pub s: i64,
 }
@@ -54,16 +59,23 @@ impl RestClient {
     /// Get delivery order book
     ///
     /// Retrieves the order book for a specific delivery contract.
-    ///
-    /// # API Documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#futures-order-book-2>
     /// Bids are sorted by price high to low, asks are sorted by price low to high.
+    ///
+    /// [docs]: https://www.gate.io/docs/developers/apiv4/en/#get-delivery-order-book
+    ///
+    /// Rate limit: 10 requests per second
+    ///
+    /// # Arguments
+    /// * `params` - The delivery order book request parameters
+    ///
+    /// # Returns
+    /// Delivery contract order book
     pub async fn get_delivery_order_book(
         &self,
         params: DeliveryOrderBookRequest,
     ) -> crate::gateio::delivery::RestResult<DeliveryOrderBook> {
         let endpoint = DELIVERY_ORDER_BOOK_ENDPOINT.replace("{}", &params.settle);
-        self.get_with_query(&endpoint, Some(&params)).await
+        self.send_get_request(&endpoint, Some(&params), crate::gateio::EndpointType::Public).await
     }
 }
 
