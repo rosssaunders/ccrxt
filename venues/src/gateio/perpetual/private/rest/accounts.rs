@@ -2,6 +2,8 @@ use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 
+const FUTURES_ACCOUNTS_ENDPOINT: &str = "/futures";
+
 /// Request parameters for futures accounts
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct FuturesAccountsRequest {
@@ -71,7 +73,7 @@ impl RestClient {
         &self,
         params: FuturesAccountsRequest,
     ) -> crate::gateio::perpetual::Result<FuturesAccount> {
-        let endpoint = format!("/futures/{}/accounts", params.settle);
+        let endpoint = format!("{}/{}/accounts", FUTURES_ACCOUNTS_ENDPOINT, params.settle);
         self.get(&endpoint).await
     }
 }
