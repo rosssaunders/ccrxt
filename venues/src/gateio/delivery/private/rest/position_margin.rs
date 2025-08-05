@@ -1,4 +1,5 @@
 use super::RestClient;
+use crate::gateio::delivery::RestResult;
 use crate::gateio::delivery::models::{
     DeliveryPositionMarginResponse, UpdateDeliveryPositionMarginRequest,
 };
@@ -10,7 +11,7 @@ impl RestClient {
     ///
     /// Adjusts the margin for a specific delivery position.
     ///
-    /// See: Gate.io API documentation
+    /// See: <https://www.gate.com/docs/developers/apiv4/#update-position-margin-2>
     ///
     /// Rate limit: 10 requests per second
     ///
@@ -22,7 +23,7 @@ impl RestClient {
     pub async fn update_delivery_position_margin(
         &self,
         request: UpdateDeliveryPositionMarginRequest,
-    ) -> crate::gateio::delivery::RestResult<DeliveryPositionMarginResponse> {
+    ) -> RestResult<DeliveryPositionMarginResponse> {
         let endpoint = DELIVERY_POSITION_MARGIN_ENDPOINT
             .replacen("{}", &request.settle, 1)
             .replacen("{}", &request.contract, 1);

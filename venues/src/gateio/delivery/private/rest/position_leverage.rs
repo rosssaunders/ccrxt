@@ -1,4 +1,5 @@
 use super::RestClient;
+use crate::gateio::delivery::RestResult;
 use crate::gateio::delivery::models::{DeliveryLeverageResponse, SetDeliveryLeverageRequest};
 
 const DELIVERY_POSITION_LEVERAGE_ENDPOINT: &str = "/delivery/{}/positions/{}/leverage";
@@ -8,7 +9,7 @@ impl RestClient {
     ///
     /// This endpoint sets the leverage for a specific delivery contract position.
     ///
-    /// See: Gate.io API documentation
+    /// See: <https://www.gate.com/docs/developers/apiv4/#update-position-leverage-2>
     ///
     /// Rate limit: 10 requests per second
     ///
@@ -20,7 +21,7 @@ impl RestClient {
     pub async fn set_delivery_position_leverage(
         &self,
         request: SetDeliveryLeverageRequest,
-    ) -> crate::gateio::delivery::RestResult<DeliveryLeverageResponse> {
+    ) -> RestResult<DeliveryLeverageResponse> {
         let endpoint = DELIVERY_POSITION_LEVERAGE_ENDPOINT
             .replacen("{}", &request.settle, 1)
             .replacen("{}", &request.contract, 1);

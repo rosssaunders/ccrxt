@@ -1,4 +1,5 @@
 use super::RestClient;
+use crate::gateio::delivery::RestResult;
 use crate::gateio::delivery::models::DeliveryOrder;
 
 const DELIVERY_ORDERS_ENDPOINT: &str = "/delivery/{}/orders";
@@ -9,7 +10,7 @@ impl RestClient {
     ///
     /// This endpoint cancels all delivery orders for a specific contract or all contracts.
     ///
-    /// See: Gate.io API documentation
+    /// See: <https://www.gate.com/docs/developers/apiv4/#cancel-single-order-3>
     ///
     /// Rate limit: 10 requests per second
     ///
@@ -23,7 +24,7 @@ impl RestClient {
         &self,
         settle: &str,
         contract: Option<&str>,
-    ) -> crate::gateio::delivery::RestResult<Vec<DeliveryOrder>> {
+    ) -> RestResult<Vec<DeliveryOrder>> {
         let mut endpoint = DELIVERY_ORDERS_ENDPOINT.replace("{}", settle);
 
         if let Some(contract) = contract {
@@ -37,7 +38,7 @@ impl RestClient {
     ///
     /// This endpoint cancels a specific delivery order.
     ///
-    /// See: Gate.io API documentation
+    /// See: <https://www.gate.com/docs/developers/apiv4/#cancel-single-order-3>
     ///
     /// Rate limit: 10 requests per second
     ///
@@ -51,7 +52,7 @@ impl RestClient {
         &self,
         settle: &str,
         order_id: &str,
-    ) -> crate::gateio::delivery::RestResult<DeliveryOrder> {
+    ) -> RestResult<DeliveryOrder> {
         let endpoint = DELIVERY_ORDER_ENDPOINT
             .replacen("{}", settle, 1)
             .replacen("{}", order_id, 1);

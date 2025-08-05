@@ -1,6 +1,7 @@
 use serde::Serialize;
 
 use super::RestClient;
+use crate::gateio::delivery::RestResult;
 
 const DELIVERY_MY_TRADES_ENDPOINT: &str = "/delivery/{}/my_trades";
 
@@ -43,7 +44,7 @@ impl RestClient {
     ///
     /// Retrieves the user's trading history for delivery contracts.
     ///
-    /// See: Gate.io API documentation
+    /// See: <https://www.gate.com/docs/developers/apiv4/#query-personal-trading-records-3>
     ///
     /// Rate limit: 10 requests per second
     ///
@@ -55,7 +56,7 @@ impl RestClient {
     pub async fn get_delivery_my_trades(
         &self,
         params: DeliveryMyTradesRequest,
-    ) -> crate::gateio::delivery::RestResult<Vec<DeliveryTrade>> {
+    ) -> RestResult<Vec<DeliveryTrade>> {
         let endpoint = DELIVERY_MY_TRADES_ENDPOINT.replace("{}", &params.settle);
         self.get_with_query(&endpoint, &params).await
     }

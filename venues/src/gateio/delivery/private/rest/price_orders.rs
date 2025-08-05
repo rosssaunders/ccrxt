@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
+use crate::gateio::delivery::RestResult;
 use crate::gateio::delivery::models::CreateDeliveryOrderRequest;
 
 const DELIVERY_PRICE_ORDERS_ENDPOINT: &str = "/delivery/{}/price_orders";
@@ -95,7 +96,7 @@ impl RestClient {
     ///
     /// Creates a conditional order that triggers when the market price reaches a specified level.
     ///
-    /// See: Gate.io API documentation
+    /// See: <https://www.gate.com/docs/developers/apiv4/#create-price-triggered-order-3>
     ///
     /// Rate limit: 10 requests per second
     ///
@@ -107,7 +108,7 @@ impl RestClient {
     pub async fn create_delivery_price_triggered_order(
         &self,
         request: CreateDeliveryPriceOrderRequest,
-    ) -> crate::gateio::delivery::RestResult<DeliveryPriceOrder> {
+    ) -> RestResult<DeliveryPriceOrder> {
         let endpoint = DELIVERY_PRICE_ORDERS_ENDPOINT.replace("{}", &request.settle);
         self.post(&endpoint, &request).await
     }
@@ -116,7 +117,7 @@ impl RestClient {
     ///
     /// Retrieves all price-triggered orders with optional filtering.
     ///
-    /// See: Gate.io API documentation
+    /// See: <https://www.gate.com/docs/developers/apiv4/#create-price-triggered-order-3>
     ///
     /// Rate limit: 10 requests per second
     ///
@@ -128,7 +129,7 @@ impl RestClient {
     pub async fn list_delivery_price_triggered_orders(
         &self,
         params: ListDeliveryPriceOrdersRequest,
-    ) -> crate::gateio::delivery::RestResult<Vec<DeliveryPriceOrder>> {
+    ) -> RestResult<Vec<DeliveryPriceOrder>> {
         let endpoint = DELIVERY_PRICE_ORDERS_ENDPOINT.replace("{}", &params.settle);
         self.get_with_query(&endpoint, &params).await
     }
@@ -137,7 +138,7 @@ impl RestClient {
     ///
     /// Retrieves a specific price-triggered order by its ID.
     ///
-    /// See: Gate.io API documentation
+    /// See: <https://www.gate.com/docs/developers/apiv4/#create-price-triggered-order-3>
     ///
     /// Rate limit: 10 requests per second
     ///
@@ -151,7 +152,7 @@ impl RestClient {
         &self,
         settle: &str,
         order_id: &str,
-    ) -> crate::gateio::delivery::RestResult<DeliveryPriceOrder> {
+    ) -> RestResult<DeliveryPriceOrder> {
         let endpoint = DELIVERY_PRICE_ORDER_ENDPOINT
             .replacen("{}", settle, 1)
             .replacen("{}", order_id, 1);
@@ -162,7 +163,7 @@ impl RestClient {
     ///
     /// Cancels a specific price-triggered order.
     ///
-    /// See: Gate.io API documentation
+    /// See: <https://www.gate.com/docs/developers/apiv4/#create-price-triggered-order-3>
     ///
     /// Rate limit: 10 requests per second
     ///
@@ -176,7 +177,7 @@ impl RestClient {
         &self,
         settle: &str,
         order_id: &str,
-    ) -> crate::gateio::delivery::RestResult<DeliveryPriceOrder> {
+    ) -> RestResult<DeliveryPriceOrder> {
         let endpoint = DELIVERY_PRICE_ORDER_ENDPOINT
             .replacen("{}", settle, 1)
             .replacen("{}", order_id, 1);
@@ -187,7 +188,7 @@ impl RestClient {
     ///
     /// Cancels all price-triggered orders with optional contract filtering.
     ///
-    /// See: Gate.io API documentation
+    /// See: <https://www.gate.com/docs/developers/apiv4/#create-price-triggered-order-3>
     ///
     /// Rate limit: 10 requests per second
     ///
@@ -201,7 +202,7 @@ impl RestClient {
         &self,
         settle: &str,
         contract: Option<&str>,
-    ) -> crate::gateio::delivery::RestResult<Vec<DeliveryPriceOrder>> {
+    ) -> RestResult<Vec<DeliveryPriceOrder>> {
         let endpoint = DELIVERY_PRICE_ORDERS_ENDPOINT.replace("{}", settle);
 
         #[derive(Serialize)]

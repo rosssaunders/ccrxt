@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
+use crate::gateio::delivery::RestResult;
 
 const DELIVERY_POSITION_CLOSE_ENDPOINT: &str = "/delivery/{}/position_close";
 
@@ -62,7 +63,7 @@ impl RestClient {
     ///
     /// Retrieves history of closed delivery positions.
     ///
-    /// See: Gate.io API documentation
+    /// See: <https://www.gate.com/docs/developers/apiv4/#query-position-close-history-2>
     ///
     /// Rate limit: 10 requests per second
     ///
@@ -74,7 +75,7 @@ impl RestClient {
     pub async fn get_delivery_position_close_history(
         &self,
         params: DeliveryPositionCloseHistoryRequest,
-    ) -> crate::gateio::delivery::RestResult<Vec<DeliveryPositionClose>> {
+    ) -> RestResult<Vec<DeliveryPositionClose>> {
         let endpoint = DELIVERY_POSITION_CLOSE_ENDPOINT.replace("{}", &params.settle);
         self.get_with_query(&endpoint, &params).await
     }

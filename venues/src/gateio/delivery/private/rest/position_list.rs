@@ -1,4 +1,5 @@
 use super::RestClient;
+use crate::gateio::delivery::RestResult;
 use crate::gateio::delivery::models::{DeliveryPosition, DeliveryPositionsRequest};
 
 const DELIVERY_POSITIONS_ENDPOINT: &str = "/delivery/{}/positions";
@@ -9,7 +10,7 @@ impl RestClient {
     ///
     /// This endpoint returns all delivery positions for the authenticated user.
     ///
-    /// See: Gate.io API documentation
+    /// See: <https://www.gate.com/docs/developers/apiv4/#get-user-position-list-2>
     ///
     /// Rate limit: 10 requests per second
     ///
@@ -21,7 +22,7 @@ impl RestClient {
     pub async fn get_delivery_positions(
         &self,
         params: DeliveryPositionsRequest,
-    ) -> crate::gateio::delivery::RestResult<Vec<DeliveryPosition>> {
+    ) -> RestResult<Vec<DeliveryPosition>> {
         let endpoint = DELIVERY_POSITIONS_ENDPOINT.replace("{}", &params.settle);
         self.get_with_query(&endpoint, &params).await
     }
@@ -30,7 +31,7 @@ impl RestClient {
     ///
     /// This endpoint returns details for a specific delivery position.
     ///
-    /// See: Gate.io API documentation
+    /// See: <https://www.gate.com/docs/developers/apiv4/#get-user-position-list-2>
     ///
     /// Rate limit: 10 requests per second
     ///
@@ -44,7 +45,7 @@ impl RestClient {
         &self,
         settle: &str,
         contract: &str,
-    ) -> crate::gateio::delivery::RestResult<DeliveryPosition> {
+    ) -> RestResult<DeliveryPosition> {
         let endpoint = DELIVERY_POSITION_ENDPOINT
             .replacen("{}", settle, 1)
             .replacen("{}", contract, 1);

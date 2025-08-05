@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
+use crate::gateio::delivery::RestResult;
 
 const DELIVERY_SETTLEMENTS_ENDPOINT: &str = "/delivery/{}/settlements";
 
@@ -28,7 +29,7 @@ impl RestClient {
     ///
     /// This endpoint returns settlement history for delivery contracts.
     ///
-    /// See: Gate.io API documentation
+    /// See: <https://www.gate.com/docs/developers/apiv4/#query-settlement-records>
     ///
     /// Rate limit: 10 requests per second
     ///
@@ -44,7 +45,7 @@ impl RestClient {
         settle: &str,
         contract: Option<&str>,
         limit: Option<i32>,
-    ) -> crate::gateio::delivery::RestResult<Vec<DeliverySettlement>> {
+    ) -> RestResult<Vec<DeliverySettlement>> {
         let mut endpoint = DELIVERY_SETTLEMENTS_ENDPOINT.replace("{}", settle);
         let mut query_params = Vec::new();
 

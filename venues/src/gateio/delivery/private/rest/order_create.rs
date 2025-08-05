@@ -1,4 +1,5 @@
 use super::RestClient;
+use crate::gateio::delivery::RestResult;
 use crate::gateio::delivery::models::{CreateDeliveryOrderRequest, DeliveryOrder};
 
 const DELIVERY_ORDERS_ENDPOINT: &str = "/delivery/{}/orders";
@@ -8,7 +9,7 @@ impl RestClient {
     ///
     /// This endpoint creates a new delivery order.
     ///
-    /// See: Gate.io API documentation
+    /// See: <https://www.gate.com/docs/developers/apiv4/#place-futures-order-2>
     ///
     /// Rate limit: 10 requests per second
     ///
@@ -20,7 +21,7 @@ impl RestClient {
     pub async fn create_delivery_order(
         &self,
         request: CreateDeliveryOrderRequest,
-    ) -> crate::gateio::delivery::RestResult<DeliveryOrder> {
+    ) -> RestResult<DeliveryOrder> {
         let endpoint = DELIVERY_ORDERS_ENDPOINT.replace("{}", &request.settle);
         self.post(&endpoint, &request).await
     }

@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
+use crate::gateio::delivery::RestResult;
 
 const DELIVERY_LIQUIDATES_ENDPOINT: &str = "/delivery/{}/liquidates";
 
@@ -66,7 +67,7 @@ impl RestClient {
     ///
     /// Retrieves the user's liquidation history for delivery contracts.
     ///
-    /// See: Gate.io API documentation
+    /// See: <https://www.gate.com/docs/developers/apiv4/#query-liquidation-history-2>
     ///
     /// Rate limit: 10 requests per second
     ///
@@ -78,7 +79,7 @@ impl RestClient {
     pub async fn get_delivery_liquidation_history(
         &self,
         params: DeliveryLiquidationHistoryRequest,
-    ) -> crate::gateio::delivery::RestResult<Vec<DeliveryLiquidation>> {
+    ) -> RestResult<Vec<DeliveryLiquidation>> {
         let endpoint = DELIVERY_LIQUIDATES_ENDPOINT.replace("{}", &params.settle);
         self.get_with_query(&endpoint, &params).await
     }

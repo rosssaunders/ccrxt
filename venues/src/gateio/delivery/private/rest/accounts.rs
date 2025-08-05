@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
+use crate::gateio::delivery::RestResult;
 
 const DELIVERY_ACCOUNTS_ENDPOINT: &str = "/delivery/{}/accounts";
 
@@ -56,7 +57,7 @@ impl RestClient {
     ///
     /// This endpoint returns delivery account balances and margin information.
     ///
-    /// See: Gate.io API documentation
+    /// See: <https://www.gate.com/docs/developers/apiv4/#get-futures-account-2>
     ///
     /// Rate limit: 10 requests per second
     ///
@@ -68,7 +69,7 @@ impl RestClient {
     pub async fn get_delivery_accounts(
         &self,
         params: DeliveryAccountsRequest,
-    ) -> crate::gateio::delivery::RestResult<DeliveryAccount> {
+    ) -> RestResult<DeliveryAccount> {
         let endpoint = DELIVERY_ACCOUNTS_ENDPOINT.replace("{}", &params.settle);
         self.get(&endpoint).await
     }

@@ -1,4 +1,5 @@
 use super::RestClient;
+use crate::gateio::delivery::RestResult;
 use crate::gateio::delivery::models::{DeliveryOrder, ListDeliveryOrdersRequest};
 
 const DELIVERY_ORDERS_ENDPOINT: &str = "/delivery/{}/orders";
@@ -9,7 +10,7 @@ impl RestClient {
     ///
     /// This endpoint returns delivery orders for the authenticated user.
     ///
-    /// See: Gate.io API documentation
+    /// See: <https://www.gate.com/docs/developers/apiv4/#query-futures-order-list-2>
     ///
     /// Rate limit: 10 requests per second
     ///
@@ -21,7 +22,7 @@ impl RestClient {
     pub async fn list_delivery_orders(
         &self,
         params: ListDeliveryOrdersRequest,
-    ) -> crate::gateio::delivery::RestResult<Vec<DeliveryOrder>> {
+    ) -> RestResult<Vec<DeliveryOrder>> {
         let endpoint = DELIVERY_ORDERS_ENDPOINT.replace("{}", &params.settle);
         self.get_with_query(&endpoint, &params).await
     }
@@ -30,7 +31,7 @@ impl RestClient {
     ///
     /// This endpoint returns details for a specific delivery order.
     ///
-    /// See: Gate.io API documentation
+    /// See: <https://www.gate.com/docs/developers/apiv4/#query-futures-order-list-2>
     ///
     /// Rate limit: 10 requests per second
     ///
@@ -44,7 +45,7 @@ impl RestClient {
         &self,
         settle: &str,
         order_id: &str,
-    ) -> crate::gateio::delivery::RestResult<DeliveryOrder> {
+    ) -> RestResult<DeliveryOrder> {
         let endpoint = DELIVERY_ORDER_ENDPOINT
             .replacen("{}", settle, 1)
             .replacen("{}", order_id, 1);

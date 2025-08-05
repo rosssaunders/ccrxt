@@ -1,4 +1,5 @@
 use super::RestClient;
+use crate::gateio::delivery::RestResult;
 use crate::gateio::delivery::models::{DeliveryRiskLimitResponse, UpdateDeliveryRiskLimitRequest};
 
 const DELIVERY_POSITION_RISK_LIMIT_ENDPOINT: &str = "/delivery/{}/positions/{}/risk_limit";
@@ -8,7 +9,7 @@ impl RestClient {
     ///
     /// Changes the risk limit for a specific delivery position.
     ///
-    /// See: Gate.io API documentation
+    /// See: <https://www.gate.com/docs/developers/apiv4/#update-position-risk-limit-2>
     ///
     /// Rate limit: 10 requests per second
     ///
@@ -20,7 +21,7 @@ impl RestClient {
     pub async fn update_delivery_position_risk_limit(
         &self,
         request: UpdateDeliveryRiskLimitRequest,
-    ) -> crate::gateio::delivery::RestResult<DeliveryRiskLimitResponse> {
+    ) -> RestResult<DeliveryRiskLimitResponse> {
         let endpoint = DELIVERY_POSITION_RISK_LIMIT_ENDPOINT
             .replacen("{}", &request.settle, 1)
             .replacen("{}", &request.contract, 1);

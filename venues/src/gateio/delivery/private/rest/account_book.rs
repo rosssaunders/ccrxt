@@ -63,7 +63,7 @@ impl RestClient {
     ///
     /// Retrieves detailed account transaction history for delivery trading.
     ///
-    /// See: Gate.io API documentation
+    /// See: <https://www.gate.com/docs/developers/apiv4/#query-futures-account-change-history-2>
     ///
     /// Rate limit: 10 requests per second
     ///
