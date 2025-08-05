@@ -1,6 +1,6 @@
 use super::{RestClient, order::FuturesOrder};
 
-const FUTURES_ORDERS_ENDPOINT: &str = "/futures";
+const FUTURES_ORDERS_ENDPOINT: &str = "/futures/{}/orders/{}";
 
 impl RestClient {
     /// Cancel a specific futures order
@@ -23,7 +23,9 @@ impl RestClient {
         settle: &str,
         order_id: &str,
     ) -> crate::gateio::perpetual::Result<FuturesOrder> {
-        let endpoint = format!("{}/{}/orders/{}", FUTURES_ORDERS_ENDPOINT, settle, order_id);
+        let endpoint = FUTURES_ORDERS_ENDPOINT
+            .replacen("{}", settle, 1)
+            .replacen("{}", order_id, 1);
         self.delete(&endpoint).await
     }
 }
@@ -41,7 +43,9 @@ mod tests {
         ];
 
         for (settle, order_id, expected) in test_cases {
-            let endpoint = format!("{}/{}/orders/{}", FUTURES_ORDERS_ENDPOINT, settle, order_id);
+            let endpoint = FUTURES_ORDERS_ENDPOINT
+                .replacen("{}", settle, 1)
+                .replacen("{}", order_id, 1);
             assert_eq!(endpoint, expected);
         }
     }
@@ -51,7 +55,9 @@ mod tests {
         let order_ids = vec!["12345", "9876543210", "1", "999999999999"];
 
         for order_id in order_ids {
-            let endpoint = format!("{}/USDT/orders/{}", FUTURES_ORDERS_ENDPOINT, order_id);
+            let endpoint = FUTURES_ORDERS_ENDPOINT
+                .replacen("{}", "USDT", 1)
+                .replacen("{}", order_id, 1);
             assert!(endpoint.contains(order_id));
             assert!(endpoint.ends_with(order_id));
         }
@@ -62,9 +68,11 @@ mod tests {
         let settlements = vec!["USDT", "BTC", "ETH"];
 
         for settle in settlements {
-            let endpoint = format!("{}/{}/orders/12345", FUTURES_ORDERS_ENDPOINT, settle);
+            let endpoint = FUTURES_ORDERS_ENDPOINT
+                .replacen("{}", settle, 1)
+                .replacen("{}", "12345", 1);
             assert!(endpoint.contains(settle));
-            assert!(endpoint.starts_with(&format!("{}/{}", FUTURES_ORDERS_ENDPOINT, settle)));
+            assert!(endpoint.starts_with(&format!("/futures/{}", settle)));
         }
     }
 }

@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 use super::{RestClient, order::FuturesOrder};
 
-const FUTURES_ORDERS_ENDPOINT: &str = "/futures";
+const FUTURES_ORDERS_ENDPOINT: &str = "/futures/{}/orders";
 
 /// Request to list futures orders
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
@@ -58,7 +58,7 @@ impl RestClient {
         &self,
         params: ListFuturesOrdersRequest,
     ) -> crate::gateio::perpetual::Result<Vec<FuturesOrder>> {
-        let endpoint = format!("{}/{}/orders", FUTURES_ORDERS_ENDPOINT, params.settle);
+        let endpoint = FUTURES_ORDERS_ENDPOINT.replace("{}", &params.settle);
         self.get_with_query(&endpoint, &params).await
     }
 }

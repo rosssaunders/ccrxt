@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 use super::{RestClient, position::FuturesPosition};
 
-const FUTURES_POSITIONS_ENDPOINT: &str = "/futures";
+const FUTURES_POSITIONS_ENDPOINT: &str = "/futures/{}/positions";
 
 /// Request parameters for futures positions
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
@@ -46,7 +46,7 @@ impl RestClient {
         &self,
         params: FuturesPositionsRequest,
     ) -> crate::gateio::perpetual::Result<Vec<FuturesPosition>> {
-        let endpoint = format!("{}/{}/positions", FUTURES_POSITIONS_ENDPOINT, params.settle);
+        let endpoint = FUTURES_POSITIONS_ENDPOINT.replace("{}", &params.settle);
         self.get_with_query(&endpoint, &params).await
     }
 }
