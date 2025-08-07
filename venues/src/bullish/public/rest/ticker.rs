@@ -1,6 +1,6 @@
 //! Ticker endpoint for Bullish Exchange API
 
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
 use crate::bullish::{EndpointType, RestResult};
@@ -8,52 +8,62 @@ use crate::bullish::{EndpointType, RestResult};
 /// Endpoint URL path for ticker
 const TICKER_ENDPOINT: &str = "/trading-api/v1/markets/{}/tick";
 
+/// Request parameters for getting ticker data
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct GetTickerRequest {
+    /// Market symbol
+    pub symbol: String,
+}
+
 /// 24-hour ticker statistics
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Ticker {
     /// Market symbol
     pub symbol: String,
+
     /// Last trade price
-    #[serde(rename = "lastPrice")]
     pub last_price: String,
+
     /// 24h price change
-    #[serde(rename = "priceChange")]
     pub price_change: String,
+
     /// 24h price change percentage
-    #[serde(rename = "priceChangePercent")]
     pub price_change_percent: String,
+
     /// 24h weighted average price
-    #[serde(rename = "weightedAvgPrice")]
     pub weighted_avg_price: String,
+
     /// 24h opening price
-    #[serde(rename = "openPrice")]
     pub open_price: String,
+
     /// 24h high price
-    #[serde(rename = "highPrice")]
     pub high_price: String,
+
     /// 24h low price
-    #[serde(rename = "low_price")]
     pub low_price: String,
+
     /// 24h volume in base asset
     pub volume: String,
+
     /// 24h volume in quote asset
-    #[serde(rename = "quoteVolume")]
     pub quote_volume: String,
+
     /// Best bid price
-    #[serde(rename = "bidPrice")]
     pub bid_price: String,
+
     /// Best bid quantity
-    #[serde(rename = "bidQty")]
     pub bid_qty: String,
+
     /// Best ask price
-    #[serde(rename = "askPrice")]
     pub ask_price: String,
+
     /// Best ask quantity
-    #[serde(rename = "askQty")]
     pub ask_qty: String,
+
     /// Number of trades in 24h
     pub count: u64,
+
     /// Ticker timestamp
     pub timestamp: u64,
 }
@@ -63,15 +73,15 @@ impl RestClient {
     ///
     /// Retrieve 24-hour price and volume statistics for a specific market.
     ///
+    /// [docs]: https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/markets/-symbol-/tick
+    ///
     /// # Arguments
-    /// * `symbol` - Market symbol
+    /// * `request` - Request parameters containing the market symbol
     ///
     /// # Returns
     /// 24-hour ticker statistics including price, volume, and order book data
-    ///
-    /// https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/markets/-symbol-/tick
-    pub async fn get_ticker(&self, symbol: &str) -> RestResult<Ticker> {
-        let url = TICKER_ENDPOINT.replace("{}", symbol);
+    pub async fn get_ticker(&self, request: &GetTickerRequest) -> RestResult<Ticker> {
+        let url = TICKER_ENDPOINT.replace("{}", &request.symbol);
 
         self.send_request(
             &url,
@@ -97,7 +107,7 @@ mod tests {
             "weightedAvgPrice": "29850.0",
             "openPrice": "29500.0",
             "highPrice": "30500.0",
-            "low_price": "29000.0",
+            "lowPrice": "29000.0",
             "volume": "1000.0",
             "quoteVolume": "29850000.0",
             "bidPrice": "29950.0",

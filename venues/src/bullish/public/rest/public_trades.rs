@@ -1,6 +1,6 @@
 //! Public trades endpoint for Bullish Exchange API
 
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
 use crate::bullish::{EndpointType, RestResult, enums::OrderSide};
@@ -13,38 +13,47 @@ const PUBLIC_TRADES_ENDPOINT: &str = "/trading-api/v1/markets/{}/trades";
 #[serde(rename_all = "camelCase")]
 pub struct PublicTrade {
     /// Unique trade ID
-    #[serde(rename = "tradeId")]
     pub trade_id: String,
+
     /// Market symbol
     pub symbol: String,
+
     /// Trade price
     pub price: String,
+
     /// Trade quantity
     pub quantity: String,
+
     /// Trade side (from the taker's perspective)
     pub side: OrderSide,
+
     /// Whether this is a taker trade
-    #[serde(rename = "isTaker")]
     pub is_taker: bool,
+
     /// Trade creation timestamp
-    #[serde(rename = "createdAtTimestamp")]
     pub timestamp: String,
+
     /// Trade creation datetime
-    #[serde(rename = "createdAtDatetime")]
     pub datetime: String,
+
     /// Published timestamp
-    #[serde(rename = "publishedAtTimestamp")]
     pub published_timestamp: String,
 }
 
-/// Parameters for querying public trades
-#[derive(Debug, Clone, Default)]
-pub struct PublicTradesParams {
+/// Request parameters for querying public trades
+#[derive(Debug, Clone, Serialize, Default)]
+#[serde(rename_all = "camelCase")]
+pub struct PublicTradesRequest {
     /// Start time filter (timestamp)
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub start_time: Option<u64>,
+
     /// End time filter (timestamp)
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub end_time: Option<u64>,
+
     /// Number of trades to return (default: 100, max: 1000)
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<u32>,
 }
 
@@ -53,37 +62,32 @@ impl RestClient {
     ///
     /// Retrieve a list of recent public trades for a specific market.
     ///
+    /// [docs]: https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/markets/-symbol-/trades
+    ///
     /// # Arguments
     /// * `symbol` - Market symbol
-    /// * `params` - Optional parameters for filtering trades
+    /// * `request` - Optional parameters for filtering trades
     ///
     /// # Returns
     /// List of recent public trades
-    ///
-    /// https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/markets/-symbol-/trades
     pub async fn get_public_trades(
         &self,
         symbol: &str,
-        params: Option<PublicTradesParams>,
+        request: Option<PublicTradesRequest>,
     ) -> RestResult<Vec<PublicTrade>> {
         let mut url = PUBLIC_TRADES_ENDPOINT.replace("{}", symbol);
 
-        if let Some(params) = params {
-            let mut query_params = Vec::new();
+        if let Some(request) = request {
+            let query_string = serde_urlencoded::to_string(&request).map_err(|e| {
+                crate::bullish::Errors::Error(format!(
+                    "Failed to serialize query parameters: {}",
+                    e
+                ))
+            })?;
 
-            if let Some(start_time) = params.start_time {
-                query_params.push(format!("startTime={}", start_time));
-            }
-            if let Some(end_time) = params.end_time {
-                query_params.push(format!("endTime={}", end_time));
-            }
-            if let Some(limit) = params.limit {
-                query_params.push(format!("limit={}", limit));
-            }
-
-            if !query_params.is_empty() {
+            if !query_string.is_empty() {
                 url.push('?');
-                url.push_str(&query_params.join("&"));
+                url.push_str(&query_string);
             }
         }
 
@@ -125,10 +129,10 @@ mod tests {
     }
 
     #[test]
-    fn test_public_trades_params_default() {
-        let params = PublicTradesParams::default();
-        assert!(params.start_time.is_none());
-        assert!(params.end_time.is_none());
-        assert!(params.limit.is_none());
+    fn test_public_trades_request_default() {
+        let request = PublicTradesRequest::default();
+        assert!(request.start_time.is_none());
+        assert!(request.end_time.is_none());
+        assert!(request.limit.is_none());
     }
 }

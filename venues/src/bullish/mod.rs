@@ -40,13 +40,13 @@ pub use public::rest::Ticker;
 // Re-export asset types for convenience
 pub use public::rest::{Asset, AssetNetwork, AssetStatus, AssetsResponse, SingleAssetResponse};
 // Re-export candle types for convenience
-pub use public::rest::{Candle, CandleParams};
+pub use public::rest::{Candle, GetCandlesRequest};
 // Re-export public orderbook types for convenience
-pub use public::rest::{HybridOrderbook, OrderbookEntry, OrderbookParams};
+pub use public::rest::{HybridOrderbook, OrderbookEntry, OrderbookRequest};
 // Re-export public market types for convenience
 pub use public::rest::{Market, MarketStatus, MarketType, MarketsResponse, SingleMarketResponse};
 // Re-export public trade types for convenience
-pub use public::rest::{PublicTrade, PublicTradesParams};
+pub use public::rest::{PublicTrade, PublicTradesRequest};
 pub use rate_limit::{EndpointType, RateLimit, RateLimitError, RateLimiter};
 
 /// Type alias for results returned by Bullish API operations

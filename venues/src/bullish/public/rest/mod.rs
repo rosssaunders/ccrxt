@@ -10,12 +10,12 @@ pub mod ticker;
 pub mod time;
 
 pub use assets::{Asset, AssetNetwork, AssetStatus, AssetsResponse, SingleAssetResponse};
-pub use candles::{Candle, CandleParams};
+pub use candles::{Candle, GetCandlesRequest};
 pub use client::RestClient;
 pub use index_prices::IndexPrice;
 pub use markets::{Market, MarketStatus, MarketType, MarketsResponse, SingleMarketResponse};
 pub use nonce::Nonce;
-pub use orderbook::{HybridOrderbook, OrderbookEntry, OrderbookParams};
-pub use public_trades::{PublicTrade, PublicTradesParams};
+pub use orderbook::{HybridOrderbook, OrderbookEntry, OrderbookRequest};
+pub use public_trades::{PublicTrade, PublicTradesRequest};
 pub use ticker::Ticker;
 pub use time::ServerTime;

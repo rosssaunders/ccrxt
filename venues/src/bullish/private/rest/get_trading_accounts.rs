@@ -82,6 +82,13 @@ pub struct TradingAccountsResponse {
     pub data: Vec<TradingAccount>,
 }
 
+/// Request parameters for getting a specific trading account
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct GetTradingAccountRequest {
+    /// The trading account ID to retrieve
+    pub trading_account_id: String,
+}
+
 impl RestClient {
     /// Get all trading accounts
     ///
@@ -107,15 +114,15 @@ impl RestClient {
     /// Gets details for a specific trading account by trading account ID.
     ///
     /// # Arguments
-    /// * `trading_account_id` - The trading account ID to retrieve
+    /// * `request` - Request parameters containing the trading account ID
     ///
     /// # Returns
     /// Trading account information for the specified account
     pub async fn get_trading_account(
         &mut self,
-        trading_account_id: &str,
+        request: &GetTradingAccountRequest,
     ) -> RestResult<TradingAccount> {
-        let endpoint = SINGLE_TRADING_ACCOUNT_ENDPOINT.replace("{}", trading_account_id);
+        let endpoint = SINGLE_TRADING_ACCOUNT_ENDPOINT.replace("{}", &request.trading_account_id);
 
         self.send_get_authenticated_request(&endpoint, (), EndpointType::PrivateTradingAccounts)
             .await
