@@ -72,6 +72,41 @@ pub struct FuturesOrder {
     pub amend_text: Option<String>,
 }
 
+/// Request to list futures orders
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+pub struct ListFuturesOrdersRequest {
+    /// Settlement currency
+    pub settle: String,
+
+    /// Order status (open, finished)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub status: Option<String>,
+
+    /// Contract filter
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub contract: Option<String>,
+
+    /// Start time (Unix timestamp in seconds)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub from: Option<i64>,
+
+    /// End time (Unix timestamp in seconds)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub to: Option<i64>,
+
+    /// Maximum number of records to return (1-1000, default: 100)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub limit: Option<i32>,
+
+    /// Page offset
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub offset: Option<i32>,
+
+    /// Count total records
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub count_total: Option<i32>,
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -302,5 +337,95 @@ mod tests {
         assert_eq!(deserialized.status, order.status);
         assert_eq!(deserialized.size, order.size);
         assert_eq!(deserialized.price, order.price);
+    }
+
+    #[test]
+    fn test_list_futures_orders_request_minimal() {
+        let request = ListFuturesOrdersRequest {
+            settle: "usdt".to_string(),
+            status: None,
+            contract: None,
+            from: None,
+            to: None,
+            limit: None,
+            offset: None,
+            count_total: None,
+        };
+
+        let json = serde_json::to_value(&request).unwrap();
+        assert_eq!(json["settle"], "usdt");
+        assert!(!json.as_object().unwrap().contains_key("status"));
+        assert!(!json.as_object().unwrap().contains_key("contract"));
+        assert!(!json.as_object().unwrap().contains_key("from"));
+        assert!(!json.as_object().unwrap().contains_key("to"));
+        assert!(!json.as_object().unwrap().contains_key("limit"));
+        assert!(!json.as_object().unwrap().contains_key("offset"));
+        assert!(!json.as_object().unwrap().contains_key("count_total"));
+    }
+
+    #[test]
+    fn test_list_futures_orders_request_with_filters() {
+        let request = ListFuturesOrdersRequest {
+            settle: "usdt".to_string(),
+            status: Some("open".to_string()),
+            contract: Some("BTC_USDT".to_string()),
+            from: Some(1640995200),
+            to: Some(1640995800),
+            limit: Some(50),
+            offset: Some(100),
+            count_total: Some(1),
+        };
+
+        let json = serde_json::to_value(&request).unwrap();
+        assert_eq!(json["settle"], "usdt");
+        assert_eq!(json["status"], "open");
+        assert_eq!(json["contract"], "BTC_USDT");
+        assert_eq!(json["from"], 1640995200);
+        assert_eq!(json["to"], 1640995800);
+        assert_eq!(json["limit"], 50);
+        assert_eq!(json["offset"], 100);
+        assert_eq!(json["count_total"], 1);
+    }
+
+    #[test]
+    fn test_list_futures_orders_request_status_values() {
+        let statuses = vec!["open", "finished"];
+
+        for status in statuses {
+            let request = ListFuturesOrdersRequest {
+                settle: "usdt".to_string(),
+                status: Some(status.to_string()),
+                contract: None,
+                from: None,
+                to: None,
+                limit: None,
+                offset: None,
+                count_total: None,
+            };
+
+            let json = serde_json::to_value(&request).unwrap();
+            assert_eq!(json["status"], status);
+        }
+    }
+
+    #[test]
+    fn test_list_futures_orders_request_settle_currencies() {
+        let settle_currencies = vec!["usdt", "btc"];
+
+        for settle in settle_currencies {
+            let request = ListFuturesOrdersRequest {
+                settle: settle.to_string(),
+                status: None,
+                contract: None,
+                from: None,
+                to: None,
+                limit: None,
+                offset: None,
+                count_total: None,
+            };
+
+            let json = serde_json::to_value(&request).unwrap();
+            assert_eq!(json["settle"], settle);
+        }
     }
 }

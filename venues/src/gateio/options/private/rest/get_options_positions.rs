@@ -1,24 +1,6 @@
-use serde::Serialize;
-
-use super::{RestClient, position::OptionsPosition};
+use super::{RestClient, position::{OptionsPosition, OptionsPositionsRequest}};
 
 const OPTIONS_POSITIONS_ENDPOINT: &str = "/options/positions";
-
-/// Request parameters for options positions
-#[derive(Debug, Clone, Serialize, Default)]
-pub struct OptionsPositionsRequest {
-    /// Underlying asset filter
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub underlying: Option<String>,
-
-    /// Maximum number of records to return
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub limit: Option<i32>,
-
-    /// Page offset
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub offset: Option<i32>,
-}
 
 impl RestClient {
     /// Get options positions

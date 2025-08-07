@@ -205,4 +205,26 @@ mod tests {
             assert_eq!(settings.user, 12345);
         }
     }
+
+    #[test]
+    fn test_update_mmp_request_serialization() {
+        let request = UpdateMMPRequest {
+            underlying: "BTC_USDT".to_string(),
+            enable: Some(true),
+            window: Some(60),
+            freeze_time: Some(30),
+            trade_limit: Some(100),
+            delta_limit: Some("1000.0".to_string()),
+            vega_limit: Some("500.0".to_string()),
+        };
+
+        let json = serde_json::to_string(&request).unwrap();
+        assert!(json.contains("BTC_USDT"));
+        assert!(json.contains("true"));
+        assert!(json.contains("60"));
+        assert!(json.contains("30"));
+        assert!(json.contains("100"));
+        assert!(json.contains("1000.0"));
+        assert!(json.contains("500.0"));
+    }
 }

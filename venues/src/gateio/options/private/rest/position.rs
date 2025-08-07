@@ -47,6 +47,22 @@ pub struct OptionsPosition {
     pub theta: String,
 }
 
+/// Request parameters for options positions
+#[derive(Debug, Clone, Serialize, Default)]
+pub struct OptionsPositionsRequest {
+    /// Underlying asset filter
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub underlying: Option<String>,
+
+    /// Maximum number of records to return
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub limit: Option<i32>,
+
+    /// Page offset
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub offset: Option<i32>,
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -214,5 +230,60 @@ mod tests {
         assert_eq!(position.gamma, "-0.018");
         assert_eq!(position.vega, "-0.10");
         assert_eq!(position.theta, "0.004"); // Positive theta for short positions (time decay benefits)
+    }
+
+    #[test]
+    fn test_options_positions_request_minimal() {
+        let request = OptionsPositionsRequest {
+            underlying: None,
+            limit: None,
+            offset: None,
+        };
+
+        let json = serde_json::to_value(&request).unwrap();
+        let obj = json.as_object().unwrap();
+        assert_eq!(obj.len(), 0); // All optional fields should be omitted
+    }
+
+    #[test]
+    fn test_options_positions_request_with_underlying() {
+        let request = OptionsPositionsRequest {
+            underlying: Some("BTC_USDT".to_string()),
+            limit: None,
+            offset: None,
+        };
+
+        let json = serde_json::to_value(&request).unwrap();
+        assert_eq!(json["underlying"], "BTC_USDT");
+        assert!(!json.as_object().unwrap().contains_key("limit"));
+        assert!(!json.as_object().unwrap().contains_key("offset"));
+    }
+
+    #[test]
+    fn test_options_positions_request_with_pagination() {
+        let request = OptionsPositionsRequest {
+            underlying: None,
+            limit: Some(50),
+            offset: Some(100),
+        };
+
+        let json = serde_json::to_value(&request).unwrap();
+        assert!(!json.as_object().unwrap().contains_key("underlying"));
+        assert_eq!(json["limit"], 50);
+        assert_eq!(json["offset"], 100);
+    }
+
+    #[test]
+    fn test_options_positions_request_full() {
+        let request = OptionsPositionsRequest {
+            underlying: Some("ETH_USDT".to_string()),
+            limit: Some(25),
+            offset: Some(50),
+        };
+
+        let json = serde_json::to_value(&request).unwrap();
+        assert_eq!(json["underlying"], "ETH_USDT");
+        assert_eq!(json["limit"], 25);
+        assert_eq!(json["offset"], 50);
     }
 }
