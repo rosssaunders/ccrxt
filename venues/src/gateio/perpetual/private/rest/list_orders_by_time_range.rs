@@ -2,6 +2,8 @@ use serde::{Deserialize, Serialize};
 
 use super::{RestClient, order::FuturesOrder};
 
+const ENDPOINT_FUTURES_PREFIX: &str = "/futures";
+
 /// Request parameters for listing orders by time range
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct ListOrdersByTimeRangeRequest {
@@ -41,7 +43,7 @@ impl RestClient {
         &self,
         params: ListOrdersByTimeRangeRequest,
     ) -> crate::gateio::perpetual::RestResult<Vec<FuturesOrder>> {
-        let endpoint = format!("/futures/{}/orders_timerange", params.settle);
+        let endpoint = format!("{}/{}/orders_timerange", ENDPOINT_FUTURES_PREFIX, params.settle);
         self.get_with_query(&endpoint, &params).await
     }
 }

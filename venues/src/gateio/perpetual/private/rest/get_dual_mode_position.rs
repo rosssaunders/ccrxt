@@ -1,5 +1,7 @@
 use super::{RestClient, position::DualModePosition};
 
+const ENDPOINT_FUTURES_PREFIX: &str = "/futures";
+
 impl RestClient {
     /// Get dual mode position
     ///
@@ -21,7 +23,7 @@ impl RestClient {
         settle: &str,
         contract: &str,
     ) -> crate::gateio::perpetual::RestResult<DualModePosition> {
-        let endpoint = format!("/futures/{}/dual_positions/{}", settle, contract);
+        let endpoint = format!("{}/{}/dual_positions/{}", ENDPOINT_FUTURES_PREFIX, settle, contract);
         self.get(&endpoint).await
     }
 }

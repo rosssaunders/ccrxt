@@ -1,5 +1,7 @@
 use super::{RestClient, order::FuturesOrder};
 
+const ENDPOINT_FUTURES_PREFIX: &str = "/futures";
+
 impl RestClient {
     /// Cancel all futures orders
     ///
@@ -23,7 +25,7 @@ impl RestClient {
         contract: Option<&str>,
         side: Option<&str>,
     ) -> crate::gateio::perpetual::RestResult<Vec<FuturesOrder>> {
-        let mut endpoint = format!("/futures/{}/orders", settle);
+        let mut endpoint = format!("{}/{}/orders", ENDPOINT_FUTURES_PREFIX, settle);
 
         let mut query_params = Vec::new();
         if let Some(contract) = contract {

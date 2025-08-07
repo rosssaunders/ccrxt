@@ -2,6 +2,8 @@ use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 
+const ENDPOINT_FUTURES_PREFIX: &str = "/futures";
+
 /// Request to update dual mode leverage
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct UpdateDualModeLeverageRequest {
@@ -42,8 +44,10 @@ impl RestClient {
         request: UpdateDualModeLeverageRequest,
     ) -> crate::gateio::perpetual::RestResult<DualModeLeverageResponse> {
         let endpoint = format!(
-            "/futures/{}/dual_positions/{}/leverage",
-            request.settle, request.contract
+            "{}/{}/dual_positions/{}/leverage",
+            ENDPOINT_FUTURES_PREFIX,
+            request.settle,
+            request.contract
         );
         self.post(&endpoint, &request).await
     }

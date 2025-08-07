@@ -2,6 +2,8 @@ use serde::{Deserialize, Serialize};
 
 use super::{RestClient, create_order::CreateFuturesOrderRequest};
 
+const ENDPOINT_FUTURES_PREFIX: &str = "/futures";
+
 /// Request to create batch orders
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct BatchOrdersRequest {
@@ -55,7 +57,7 @@ impl RestClient {
         &self,
         request: BatchOrdersRequest,
     ) -> crate::gateio::perpetual::RestResult<Vec<BatchOrderResult>> {
-        let endpoint = format!("/futures/{}/batch_orders", request.settle);
+        let endpoint = format!("{}/{}/batch_orders", ENDPOINT_FUTURES_PREFIX, request.settle);
         self.post(&endpoint, &request).await
     }
 
@@ -77,7 +79,7 @@ impl RestClient {
         &self,
         request: BatchCancelOrdersRequest,
     ) -> crate::gateio::perpetual::RestResult<Vec<BatchOrderResult>> {
-        let endpoint = format!("/futures/{}/batch_orders", request.settle);
+        let endpoint = format!("{}/{}/batch_orders", ENDPOINT_FUTURES_PREFIX, request.settle);
         self.delete_with_query(&endpoint, &request).await
     }
 }

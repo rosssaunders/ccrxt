@@ -2,6 +2,9 @@ use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 
+const ENDPOINT_OPTIONS_TICKERS: &str = "/options/tickers";
+const ENDPOINT_OPTIONS_UNDERLYING_TICKERS_PREFIX: &str = "/options/underlying/tickers";
+
 /// Request parameters for options tickers
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct OptionsTickersRequest {
@@ -92,7 +95,7 @@ impl RestClient {
         &self,
         params: OptionsTickersRequest,
     ) -> crate::gateio::options::RestResult<Vec<OptionsTicker>> {
-        self.get_with_query("/options/tickers", Some(&params)).await
+        self.get_with_query(ENDPOINT_OPTIONS_TICKERS, Some(&params)).await
     }
 
     /// Get underlying ticker
@@ -102,7 +105,7 @@ impl RestClient {
         &self,
         underlying: &str,
     ) -> crate::gateio::options::RestResult<UnderlyingTicker> {
-        let endpoint = format!("/options/underlying/tickers/{}", underlying);
+        let endpoint = format!("{}/{}", ENDPOINT_OPTIONS_UNDERLYING_TICKERS_PREFIX, underlying);
         self.get(&endpoint).await
     }
 }

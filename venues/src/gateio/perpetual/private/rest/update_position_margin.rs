@@ -2,6 +2,8 @@ use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 
+const ENDPOINT_FUTURES_PREFIX: &str = "/futures";
+
 /// Request to update position margin
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct UpdatePositionMarginRequest {
@@ -40,8 +42,10 @@ impl RestClient {
         request: UpdatePositionMarginRequest,
     ) -> crate::gateio::perpetual::RestResult<PositionMarginResponse> {
         let endpoint = format!(
-            "/futures/{}/positions/{}/margin",
-            request.settle, request.contract
+            "{}/{}/positions/{}/margin",
+            ENDPOINT_FUTURES_PREFIX,
+            request.settle,
+            request.contract
         );
         self.post(&endpoint, &request).await
     }

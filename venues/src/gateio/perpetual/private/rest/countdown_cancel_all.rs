@@ -2,6 +2,8 @@ use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 
+const ENDPOINT_FUTURES_PREFIX: &str = "/futures";
+
 /// Request for countdown cancel
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CountdownCancelRequest {
@@ -33,7 +35,7 @@ impl RestClient {
         &self,
         request: CountdownCancelRequest,
     ) -> crate::gateio::perpetual::RestResult<()> {
-        let endpoint = format!("/futures/{}/countdown_cancel_all", request.settle);
+        let endpoint = format!("{}/{}/countdown_cancel_all", ENDPOINT_FUTURES_PREFIX, request.settle);
         self.post::<serde_json::Value>(&endpoint, &request).await?;
         Ok(())
     }

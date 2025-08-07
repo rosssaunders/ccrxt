@@ -1,5 +1,7 @@
 use super::{RestClient, order::FuturesOrder};
 
+const ENDPOINT_FUTURES_PREFIX: &str = "/futures";
+
 impl RestClient {
     /// Get a specific futures order
     ///
@@ -21,7 +23,7 @@ impl RestClient {
         settle: &str,
         order_id: &str,
     ) -> crate::gateio::perpetual::RestResult<FuturesOrder> {
-        let endpoint = format!("/futures/{}/orders/{}", settle, order_id);
+        let endpoint = format!("{}/{}/orders/{}", ENDPOINT_FUTURES_PREFIX, settle, order_id);
         self.get(&endpoint).await
     }
 }

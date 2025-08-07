@@ -2,6 +2,8 @@ use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 
+const ENDPOINT_FUTURES_PREFIX: &str = "/futures";
+
 /// Request to update dual mode risk limit
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct UpdateDualModeRiskLimitRequest {
@@ -42,8 +44,10 @@ impl RestClient {
         request: UpdateDualModeRiskLimitRequest,
     ) -> crate::gateio::perpetual::RestResult<DualModeRiskLimitResponse> {
         let endpoint = format!(
-            "/futures/{}/dual_positions/{}/risk_limit",
-            request.settle, request.contract
+            "{}/{}/dual_positions/{}/risk_limit",
+            ENDPOINT_FUTURES_PREFIX,
+            request.settle,
+            request.contract
         );
         self.post(&endpoint, &request).await
     }

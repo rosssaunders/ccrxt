@@ -2,6 +2,8 @@ use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 
+const ENDPOINT_FUTURES_PREFIX: &str = "/futures";
+
 /// Request to update risk limit
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct UpdateRiskLimitRequest {
@@ -40,8 +42,10 @@ impl RestClient {
         request: UpdateRiskLimitRequest,
     ) -> crate::gateio::perpetual::RestResult<RiskLimitResponse> {
         let endpoint = format!(
-            "/futures/{}/positions/{}/risk_limit",
-            request.settle, request.contract
+            "{}/{}/positions/{}/risk_limit",
+            ENDPOINT_FUTURES_PREFIX,
+            request.settle,
+            request.contract
         );
         self.post(&endpoint, &request).await
     }
