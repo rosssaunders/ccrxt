@@ -8,7 +8,7 @@ use serde::Deserialize;
 use tokio;
 use venues::bullish::{
     Errors, PublicRestClient, RateLimiter,
-    public::rest::{OrderbookParams, PublicTradesParams},
+    public::rest::{GetAssetRequest, GetTickerRequest, OrderbookRequest, PublicTradesRequest},
 };
 
 /// Helper function to create a test client for public endpoints
@@ -256,7 +256,10 @@ async fn test_asset_specific() {
     let client = create_public_test_client();
     let asset_symbol = get_test_asset();
 
-    let result = client.get_asset(&asset_symbol).await;
+    let request = GetAssetRequest {
+        symbol: asset_symbol.clone(),
+    };
+    let result = client.get_asset(&request).await;
 
     if let Some(response) = handle_result!(result, "Asset (specific)") {
         let asset = &response;
@@ -371,7 +374,10 @@ async fn test_ticker() {
     let client = create_public_test_client();
     let symbol = get_test_symbol();
 
-    let result = client.get_ticker(&symbol).await;
+    let request = GetTickerRequest {
+        symbol: symbol.clone(),
+    };
+    let result = client.get_ticker(&request).await;
 
     if let Some(response) = handle_result!(result, "Ticker") {
         println!("  Symbol: {}", response.symbol);
@@ -405,7 +411,7 @@ async fn test_orderbook() {
     let client = create_public_test_client();
     let symbol = get_test_symbol();
 
-    let params = OrderbookParams {
+    let params = OrderbookRequest {
         depth: Some(50),
         aggregate: Some(true),
     };
@@ -534,7 +540,7 @@ async fn test_public_trades() {
     let client = create_public_test_client();
     let symbol = get_test_symbol();
 
-    let params = PublicTradesParams {
+    let params = PublicTradesRequest {
         start_time: None,
         end_time: None,
         limit: Some(50),
@@ -611,7 +617,10 @@ async fn test_error_handling_invalid_symbol() {
     let client = create_public_test_client();
     let invalid_symbol = "INVALID_SYMBOL_123".to_string();
 
-    let result = client.get_ticker(&invalid_symbol).await;
+    let request = GetTickerRequest {
+        symbol: invalid_symbol.clone(),
+    };
+    let result = client.get_ticker(&request).await;
 
     match result {
         Ok(_) => {
