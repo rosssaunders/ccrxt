@@ -35,45 +35,59 @@ pub struct DeliveryTicker {
     pub change_percentage: String,
 
     /// Change amount (24h)
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub change_utc0: Option<String>,
 
     /// Change amount (UTC 8)
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub change_utc8: Option<String>,
 
     /// Total trading volume (24h)
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub total_size: Option<String>,
 
     /// Trading volume (24h in quote currency)
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub volume_24h: Option<String>,
 
     /// Trading volume (24h in base currency)
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub volume_24h_btc: Option<String>,
 
     /// Trading volume (24h in quote currency)
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub volume_24h_usd: Option<String>,
 
     /// Trading volume (24h in base currency)
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub volume_24h_base: Option<String>,
 
     /// Trading volume (24h in quote currency)
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub volume_24h_quote: Option<String>,
 
     /// Trading volume (24h in settlement currency, BTC denominated)
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub volume_24h_settle: Option<String>,
 
     /// Mark price
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub mark_price: Option<String>,
 
     /// Index price
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub index_price: Option<String>,
 
     /// Trading enabled
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub quanto_base_rate: Option<String>,
 
     /// Basis rate
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub basis_rate: Option<String>,
 
     /// Basis value
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub basis_value: Option<String>,
 }
 

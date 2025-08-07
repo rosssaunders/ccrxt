@@ -12,8 +12,10 @@ const AUTHORIZE_SUB_ACCOUNT_TRANSFER_ENDPOINT: &str =
 pub struct AuthorizeSubAccountTransferRequest {
     /// Sub-account UID
     pub sub_uid: String,
+
     /// Whether to enable transfer authorization
     pub can_transfer: bool,
+
     /// Timestamp of initiating the request, Unit: milliseconds
     pub timestamp: i64,
 }
@@ -24,6 +26,7 @@ pub struct AuthorizeSubAccountTransferRequest {
 pub struct AuthorizeSubAccountTransferResponse {
     /// Success indicator
     pub success: bool,
+
     /// Sub-account transfer authorization data
     #[serde(skip_serializing_if = "Option::is_none")]
     pub data: Option<SubAccountTransferAuth>,
@@ -35,8 +38,10 @@ pub struct AuthorizeSubAccountTransferResponse {
 pub struct SubAccountTransferAuth {
     /// Sub-account UID
     pub sub_uid: String,
+
     /// Whether transfers are authorized
     pub can_transfer: bool,
+
     /// Authorization timestamp
     pub update_time: i64,
 }
