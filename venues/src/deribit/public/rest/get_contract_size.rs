@@ -38,7 +38,7 @@ impl RestClient {
         &self,
         params: GetContractSizeRequest,
     ) -> RestResult<GetContractSizeResponse> {
-        self.send_request(
+    self.send_post_request(
             CONTRACT_SIZE_ENDPOINT,
             Some(&params),
             EndpointType::NonMatchingEngine,

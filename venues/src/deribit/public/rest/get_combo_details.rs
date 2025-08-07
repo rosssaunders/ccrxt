@@ -36,7 +36,7 @@ impl RestClient {
         &self,
         params: GetComboDetailsRequest,
     ) -> RestResult<GetComboDetailsResponse> {
-        self.send_request(
+    self.send_post_request(
             COMBO_DETAILS_ENDPOINT,
             Some(&params),
             EndpointType::NonMatchingEngine,

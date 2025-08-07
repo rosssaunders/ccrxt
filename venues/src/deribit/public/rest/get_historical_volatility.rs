@@ -54,7 +54,7 @@ impl RestClient {
         &self,
         params: GetHistoricalVolatilityRequest,
     ) -> RestResult<GetHistoricalVolatilityResponse> {
-        self.send_request(
+    self.send_post_request(
             HISTORICAL_VOLATILITY_ENDPOINT,
             Some(&params),
             EndpointType::NonMatchingEngine,

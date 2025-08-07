@@ -59,7 +59,7 @@ impl RestClient {
         &self,
         params: GetMarkPriceHistoryRequest,
     ) -> RestResult<GetMarkPriceHistoryResponse> {
-        self.send_request(
+    self.send_post_request(
             MARK_PRICE_HISTORY_ENDPOINT,
             Some(&params),
             EndpointType::NonMatchingEngine,

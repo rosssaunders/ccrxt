@@ -75,7 +75,7 @@ impl RestClient {
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_currencies)
     pub async fn get_currencies(&self) -> RestResult<GetCurrenciesResponse> {
-        self.send_request(
+    self.send_post_request(
             CURRENCIES_ENDPOINT,
             None::<&()>,
             EndpointType::NonMatchingEngine,

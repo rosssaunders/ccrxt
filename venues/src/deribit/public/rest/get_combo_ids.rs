@@ -44,7 +44,7 @@ impl RestClient {
         &self,
         params: GetComboIdsRequest,
     ) -> RestResult<GetComboIdsResponse> {
-        self.send_request(
+    self.send_post_request(
             COMBO_IDS_ENDPOINT,
             Some(&params),
             EndpointType::NonMatchingEngine,

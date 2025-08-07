@@ -102,7 +102,7 @@ impl RestClient {
         &self,
         params: GetVolatilityIndexDataRequest,
     ) -> RestResult<GetVolatilityIndexDataResponse> {
-        self.send_request(
+    self.send_post_request(
             VOLATILITY_INDEX_DATA_ENDPOINT,
             Some(&params),
             EndpointType::NonMatchingEngine,

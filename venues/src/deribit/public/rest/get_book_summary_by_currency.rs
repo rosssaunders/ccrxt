@@ -132,7 +132,7 @@ impl RestClient {
         &self,
         params: GetBookSummaryByCurrencyRequest,
     ) -> RestResult<GetBookSummaryByCurrencyResponse> {
-        self.send_request(
+    self.send_post_request(
             BOOK_SUMMARY_BY_CURRENCY_ENDPOINT,
             Some(&params),
             EndpointType::NonMatchingEngine,

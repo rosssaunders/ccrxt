@@ -58,7 +58,7 @@ impl RestClient {
         &self,
         params: GetOrderBookRequest,
     ) -> RestResult<GetOrderBookResponse> {
-        self.send_request(
+    self.send_post_request(
             ORDER_BOOK_ENDPOINT,
             Some(&params),
             EndpointType::NonMatchingEngine,

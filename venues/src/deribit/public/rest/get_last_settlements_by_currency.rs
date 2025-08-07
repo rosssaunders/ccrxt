@@ -132,7 +132,7 @@ impl RestClient {
         &self,
         request: GetLastSettlementsByCurrencyRequest,
     ) -> RestResult<GetLastSettlementsByCurrencyResponse> {
-        self.send_request(
+    self.send_post_request(
             LAST_SETTLEMENTS_BY_CURRENCY_ENDPOINT,
             Some(&request),
             EndpointType::NonMatchingEngine,

@@ -17,7 +17,7 @@ impl RestClient {
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_supported_index_names)
     pub async fn get_supported_index_names(&self) -> RestResult<GetSupportedIndexNamesResponse> {
-        self.send_request(
+    self.send_post_request(
             SUPPORTED_INDEX_NAMES_ENDPOINT,
             None::<&()>,
             EndpointType::NonMatchingEngine,

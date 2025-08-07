@@ -38,7 +38,7 @@ impl RestClient {
     ///
     /// [Official API docs](https://docs.deribit.com/#public-status)
     pub async fn get_status(&self) -> RestResult<GetStatusResponse> {
-        self.send_request(
+    self.send_post_request(
             STATUS_ENDPOINT,
             None::<&()>,
             EndpointType::NonMatchingEngine,

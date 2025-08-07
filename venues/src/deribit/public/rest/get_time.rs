@@ -1,32 +1,41 @@
-//! Request and response structs for public/get_time endpoint
-//!
-//! Retrieves the current time (in milliseconds). This API endpoint can be used to
-//! check the clock skew between your software and Deribit's systems.
-
 use super::RestClient;
 use crate::deribit::{EndpointType, JsonRpcResult, RestResult};
 
-const TIME_ENDPOINT: &str = "public/get_time";
+// Endpoint constant
+const GET_TIME_ENDPOINT: &str = "public/get_time";
 
-/// Response for public/get_time endpoint following Deribit JSON-RPC 2.0 format.
+/// Request parameters for the public/get_time endpoint.
+///
+/// This endpoint does not require any parameters. The struct exists to satisfy the
+/// project rule that all endpoint methods take a single parameter struct.
+#[derive(Debug, Clone, serde::Serialize, Default)]
+pub struct GetTimeRequest {}
+
+/// Response payload for public/get_time containing the current server time in milliseconds.
 pub type GetTimeResponse = JsonRpcResult<i64>;
 
 impl RestClient {
-    /// Calls the public/get_time endpoint.
+    /// public/get_time
     ///
-    /// Retrieves the current time (in milliseconds). This API endpoint can be used to
-    /// check the clock skew between your software and Deribit's systems.
+    /// Returns the current Deribit server time in milliseconds since Unix epoch. Can be
+    /// used to measure clock skew between client and server.
+    ///
+    /// [docs]: https://docs.deribit.com/#public-get_time
+    ///
+    /// Rate limit: non-matching engine (500 credits)
     ///
     /// # Arguments
-    /// * `params` - The request parameters (empty for this endpoint)
+    /// * `request` - Empty request struct (no parameters required)
     ///
     /// # Returns
-    /// A result containing the response with the current timestamp or an error
-    ///
-    /// [Official API docs](https://docs.deribit.com/#public-get_time)
-    pub async fn get_time(&self) -> RestResult<GetTimeResponse> {
-        self.send_request(TIME_ENDPOINT, None::<&()>, EndpointType::NonMatchingEngine)
-            .await
+    /// Server time wrapped in JSON-RPC response container.
+    pub async fn get_time(&self, _request: GetTimeRequest) -> RestResult<GetTimeResponse> {
+        self.send_post_request::<GetTimeResponse, _>(
+            GET_TIME_ENDPOINT,
+            Some(&()), // Empty params map
+            EndpointType::NonMatchingEngine,
+        )
+        .await
     }
 }
 

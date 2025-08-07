@@ -51,17 +51,15 @@ impl RestClient {
         }
     }
 
-    /// Send a request to a public endpoint
+    /// Send a POST request to a public endpoint (Deribit JSON-RPC 2.0 over HTTP always uses POST)
+    ///
+    /// High-performance rule: verb-specific (POST) function without passing an HTTP method enum.
     ///
     /// # Arguments
-    /// * `endpoint` - The API endpoint path (e.g., "public/get_combo_ids")
-    /// * `method` - The HTTP method to use
-    /// * `params` - Optional struct of query/body parameters (must implement Serialize)
-    /// * `endpoint_type` - The endpoint type for rate limiting
-    ///
-    /// # Returns
-    /// A result containing the response data or an error
-    pub async fn send_request<T, P>(
+    /// * `endpoint` - API method name (e.g., "public/get_time")
+    /// * `params` - Optional params object (serialized into JSON-RPC envelope)
+    /// * `endpoint_type` - Endpoint classification for rate limiting
+    pub async fn send_post_request<T, P>(
         &self,
         endpoint: &str,
         params: Option<&P>,
@@ -85,10 +83,10 @@ impl RestClient {
         };
 
         // Build the request
-        let mut request_builder = self.client.request(reqwest::Method::POST, &url);
+        // All Deribit REST (JSON-RPC) calls are POST
+        let mut request_builder = self.client.post(&url);
 
-        // Add parameters based on method
-        // For POST requests, wrap in JSON-RPC envelope
+        // Wrap parameters in JSON-RPC envelope
         let params_value = if let Some(params) = params {
             serde_json::to_value(params)
                 .map_err(|e| Errors::Error(format!("Failed to serialize params: {e}")))?
