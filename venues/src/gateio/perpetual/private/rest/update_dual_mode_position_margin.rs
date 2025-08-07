@@ -2,6 +2,8 @@ use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 
+const ENDPOINT_FUTURES_PREFIX: &str = "/futures";
+
 /// Request to update dual mode margin
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct UpdateDualModeMarginRequest {
@@ -42,8 +44,10 @@ impl RestClient {
         request: UpdateDualModeMarginRequest,
     ) -> crate::gateio::perpetual::RestResult<DualModeMarginResponse> {
         let endpoint = format!(
-            "/futures/{}/dual_positions/{}/margin",
-            request.settle, request.contract
+            "{}/{}/dual_positions/{}/margin",
+            ENDPOINT_FUTURES_PREFIX,
+            request.settle,
+            request.contract
         );
         self.post(&endpoint, &request).await
     }

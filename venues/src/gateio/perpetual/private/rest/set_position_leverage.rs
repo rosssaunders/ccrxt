@@ -2,6 +2,8 @@ use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 
+const ENDPOINT_FUTURES_PREFIX: &str = "/futures";
+
 /// Request to set leverage
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SetLeverageRequest {
@@ -50,8 +52,10 @@ impl RestClient {
         request: SetLeverageRequest,
     ) -> crate::gateio::perpetual::RestResult<LeverageResponse> {
         let endpoint = format!(
-            "/futures/{}/positions/{}/leverage",
-            request.settle, request.contract
+            "{}/{}/positions/{}/leverage",
+            ENDPOINT_FUTURES_PREFIX,
+            request.settle,
+            request.contract
         );
         self.post(&endpoint, &request).await
     }

@@ -2,6 +2,8 @@ use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 
+const ENDPOINT_FUTURES_PREFIX: &str = "/futures";
+
 /// Request to set cross margin mode
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CrossModeRequest {
@@ -28,7 +30,7 @@ impl RestClient {
         &self,
         settle: &str,
     ) -> crate::gateio::perpetual::RestResult<()> {
-        let endpoint = format!("/futures/{}/cross_mode", settle);
+        let endpoint = format!("{}/{}/cross_mode", ENDPOINT_FUTURES_PREFIX, settle);
         let request = CrossModeRequest {
             mode: "cross".to_string(),
         };

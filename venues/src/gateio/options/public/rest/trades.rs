@@ -2,6 +2,8 @@ use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 
+const ENDPOINT_OPTIONS_TRADES: &str = "/options/trades";
+
 /// Request parameters for options trades
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct OptionsTradesRequest {
@@ -51,7 +53,7 @@ impl RestClient {
         &self,
         params: OptionsTradesRequest,
     ) -> crate::gateio::options::RestResult<Vec<OptionsTrade>> {
-        self.get_with_query("/options/trades", Some(&params)).await
+        self.get_with_query(ENDPOINT_OPTIONS_TRADES, Some(&params)).await
     }
 }
 

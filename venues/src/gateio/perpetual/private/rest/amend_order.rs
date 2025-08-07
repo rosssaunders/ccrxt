@@ -2,6 +2,8 @@ use serde::{Deserialize, Serialize};
 
 use super::{RestClient, order::FuturesOrder};
 
+const ENDPOINT_FUTURES_PREFIX: &str = "/futures";
+
 /// Request to amend a futures order
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AmendFuturesOrderRequest {
@@ -39,7 +41,12 @@ impl RestClient {
         &self,
         request: AmendFuturesOrderRequest,
     ) -> crate::gateio::perpetual::RestResult<FuturesOrder> {
-        let endpoint = format!("/futures/{}/orders/{}", request.settle, request.order_id);
+        let endpoint = format!(
+            "{}/{}/orders/{}",
+            ENDPOINT_FUTURES_PREFIX,
+            request.settle,
+            request.order_id
+        );
         self.put(&endpoint, &request).await
     }
 }

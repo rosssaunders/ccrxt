@@ -2,6 +2,8 @@ use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 
+const ENDPOINT_FUTURES_PREFIX: &str = "/futures";
+
 /// Request to enable/disable dual mode
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct DualModeRequest {
@@ -37,7 +39,7 @@ impl RestClient {
         &self,
         request: DualModeRequest,
     ) -> crate::gateio::perpetual::RestResult<DualModeResponse> {
-        let endpoint = format!("/futures/{}/dual_mode", request.settle);
+        let endpoint = format!("{}/{}/dual_mode", ENDPOINT_FUTURES_PREFIX, request.settle);
         self.post(&endpoint, &request).await
     }
 }

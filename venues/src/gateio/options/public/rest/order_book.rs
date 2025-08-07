@@ -2,6 +2,8 @@ use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 
+const ENDPOINT_OPTIONS_ORDER_BOOK: &str = "/options/order_book";
+
 /// Request parameters for options order book
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct OptionsOrderBookRequest {
@@ -64,7 +66,7 @@ impl RestClient {
         &self,
         params: OptionsOrderBookRequest,
     ) -> crate::gateio::options::RestResult<OptionsOrderBook> {
-        self.get_with_query("/options/order_book", Some(&params))
+        self.get_with_query(ENDPOINT_OPTIONS_ORDER_BOOK, Some(&params))
             .await
     }
 }
