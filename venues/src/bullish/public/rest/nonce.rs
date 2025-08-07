@@ -14,6 +14,7 @@ const NONCE_ENDPOINT: &str = "/trading-api/v1/nonce";
 pub struct Nonce {
     /// Lower bound of nonce range
     pub lower_bound: u64,
+
     /// Upper bound of nonce range
     pub upper_bound: u64,
 }
@@ -23,6 +24,8 @@ impl RestClient {
     ///
     /// The lower bound of nonce range is EPOCH start of day in microseconds,
     /// and upper bound of nonce range is EPOCH end of day in microseconds.
+    ///
+    /// [docs]: https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/nonce
     ///
     /// # Returns
     /// A `RestResult<Nonce>` containing the nonce range information

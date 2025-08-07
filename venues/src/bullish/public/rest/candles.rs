@@ -14,95 +14,104 @@ const CANDLES_ENDPOINT: &str = "/trading-api/v1/markets/{}/candles";
 pub struct Candle {
     /// Opening price
     pub open: String,
+
     /// Highest price
     pub high: String,
+
     /// Lowest price
     pub low: String,
+
     /// Closing price
     pub close: String,
+
     /// Volume
     pub volume: String,
+
     /// Quote volume
     pub quote_volume: String,
+
     /// Candle open time in ISO 8601 format
     pub open_time_datetime: String,
+
     /// Candle open time as timestamp
     pub open_time_timestamp: String,
+
     /// Candle close time in ISO 8601 format
     pub close_time_datetime: String,
+
     /// Candle close time as timestamp
     pub close_time_timestamp: String,
 }
 
-/// Parameters for candle requests
-#[derive(Debug, Clone, Default)]
-pub struct CandleParams {
+/// Request parameters for getting candles
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct GetCandlesRequest {
+    /// The market symbol to get candles for
+    pub symbol: String,
+
     /// Candlestick interval
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub interval: Option<CandleInterval>,
+
     /// Start time for historical data
+    #[serde(rename = "startTime", skip_serializing_if = "Option::is_none")]
     pub start_time: Option<String>,
+
     /// End time for historical data
+    #[serde(rename = "endTime", skip_serializing_if = "Option::is_none")]
     pub end_time: Option<String>,
+
     /// Number of candles to return (default: 500, max: 1000)
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<u32>,
 }
 
 impl RestClient {
     /// Get candlestick data for a market symbol
     ///
+    /// Retrieves historical candlestick data for a specific market.
+    ///
+    /// [docs]: https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/markets/-symbol-/candles
+    ///
     /// # Arguments
-    /// * `symbol` - The market symbol to get candles for
-    /// * `params` - Optional parameters for filtering candles
+    /// * `request` - Request parameters containing the market symbol and optional filters
     ///
     /// # Returns
     /// A `RestResult<Vec<Candle>>` containing the candlestick data
     ///
     /// # Errors
     /// Returns an error if the request fails or the response cannot be parsed
-    ///
-    /// https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/markets/-symbol-/candle
-    pub async fn get_candles(
-        &self,
-        symbol: &str,
-        params: Option<CandleParams>,
-    ) -> RestResult<Vec<Candle>> {
-        let mut query_params = Vec::new();
+    pub async fn get_candles(&self, request: &GetCandlesRequest) -> RestResult<Vec<Candle>> {
+        let endpoint = CANDLES_ENDPOINT.replace("{}", &request.symbol);
 
-        if let Some(params) = params {
-            if let Some(interval) = params.interval {
-                query_params.push(("interval".to_string(), interval.to_string()));
-            }
+        // Create query params from the request, excluding the symbol
+        let query_params = serde_urlencoded::to_string(
+            &[
+                (
+                    "interval",
+                    request.interval.as_ref().map(|i| i.to_string()).as_deref(),
+                ),
+                ("startTime", request.start_time.as_deref()),
+                ("endTime", request.end_time.as_deref()),
+                (
+                    "limit",
+                    request.limit.as_ref().map(|l| l.to_string()).as_deref(),
+                ),
+            ]
+            .into_iter()
+            .filter_map(|(k, v)| v.map(|val| (k, val)))
+            .collect::<Vec<_>>(),
+        )
+        .unwrap_or_default();
 
-            if let Some(start_time) = params.start_time {
-                query_params.push(("startTime".to_string(), start_time));
-            }
-
-            if let Some(end_time) = params.end_time {
-                query_params.push(("endTime".to_string(), end_time));
-            }
-
-            if let Some(limit) = params.limit {
-                query_params.push(("limit".to_string(), limit.to_string()));
-            }
-        }
-
-        let query_string = if query_params.is_empty() {
-            String::new()
+        let full_endpoint = if query_params.is_empty() {
+            endpoint
         } else {
-            format!(
-                "?{}",
-                query_params
-                    .iter()
-                    .map(|(k, v)| format!("{}={}", k, v))
-                    .collect::<Vec<_>>()
-                    .join("&")
-            )
+            format!("{}?{}", endpoint, query_params)
         };
 
-        let endpoint = format!("{}{}", CANDLES_ENDPOINT.replace("{}", symbol), query_string);
-
         self.send_request::<Vec<Candle>, ()>(
-            &endpoint,
+            &full_endpoint,
             reqwest::Method::GET,
             None,
             EndpointType::PublicCandles,

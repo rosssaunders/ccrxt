@@ -1,6 +1,6 @@
 //! Orderbook endpoint for Bullish Exchange API
 
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
 use crate::bullish::{EndpointType, RestResult};
@@ -13,9 +13,11 @@ const ORDERBOOK_ENDPOINT: &str = "/trading-api/v1/markets/{}/orderbook/hybrid";
 pub struct OrderbookEntry {
     /// Price level
     pub price: String,
+
     /// Quantity available at this price level
     #[serde(rename = "priceLevelQuantity")]
     pub quantity: String,
+
     /// Entry type (bid/ask)
     #[serde(rename = "type")]
     pub entry_type: String,
@@ -27,18 +29,24 @@ pub struct OrderbookEntry {
 pub struct HybridOrderbook {
     /// Market symbol
     pub symbol: String,
+
     /// Bid levels (buy orders)
     pub bids: Vec<OrderbookEntry>,
+
     /// Ask levels (sell orders)
     pub asks: Vec<OrderbookEntry>,
 }
 
-/// Parameters for orderbook query
-#[derive(Debug, Clone, Default)]
-pub struct OrderbookParams {
+/// Request parameters for orderbook query
+#[derive(Debug, Clone, Serialize, Default)]
+#[serde(rename_all = "camelCase")]
+pub struct OrderbookRequest {
     /// Number of levels to return (default: 100, max: 1000)
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub depth: Option<u32>,
+
     /// Whether to aggregate by price level
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub aggregate: Option<bool>,
 }
 
@@ -48,34 +56,32 @@ impl RestClient {
     /// Retrieve the current orderbook state for a specific market.
     /// The hybrid orderbook combines both limit orders and AMM liquidity.
     ///
+    /// [docs]: https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/markets/-symbol-/orderbook/hybrid
+    ///
     /// # Arguments
     /// * `symbol` - Market symbol
-    /// * `params` - Optional parameters for depth and aggregation
+    /// * `request` - Optional parameters for depth and aggregation
     ///
     /// # Returns
     /// Current orderbook state with bids and asks
-    ///
-    /// https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/markets/-symbol-/orderbook/hybrid
     pub async fn get_orderbook(
         &self,
         symbol: &str,
-        params: Option<OrderbookParams>,
+        request: Option<OrderbookRequest>,
     ) -> RestResult<HybridOrderbook> {
         let mut url = ORDERBOOK_ENDPOINT.replace("{}", symbol);
 
-        if let Some(params) = params {
-            let mut query_params = Vec::new();
+        if let Some(request) = request {
+            let query_string = serde_urlencoded::to_string(&request).map_err(|e| {
+                crate::bullish::Errors::Error(format!(
+                    "Failed to serialize query parameters: {}",
+                    e
+                ))
+            })?;
 
-            if let Some(depth) = params.depth {
-                query_params.push(format!("depth={}", depth));
-            }
-            if let Some(aggregate) = params.aggregate {
-                query_params.push(format!("aggregate={}", aggregate));
-            }
-
-            if !query_params.is_empty() {
+            if !query_string.is_empty() {
                 url.push('?');
-                url.push_str(&query_params.join("&"));
+                url.push_str(&query_string);
             }
         }
 
@@ -136,9 +142,9 @@ mod tests {
     }
 
     #[test]
-    fn test_orderbook_params_default() {
-        let params = OrderbookParams::default();
-        assert!(params.depth.is_none());
-        assert!(params.aggregate.is_none());
+    fn test_orderbook_request_default() {
+        let request = OrderbookRequest::default();
+        assert!(request.depth.is_none());
+        assert!(request.aggregate.is_none());
     }
 }
