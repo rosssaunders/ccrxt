@@ -1,5 +1,6 @@
 use super::RestClient;
 use crate::gateio::delivery::models::{DeliveryCandlestick, DeliveryCandlesticksRequest};
+use crate::gateio::delivery::RestResult;
 
 const DELIVERY_MARK_PRICE_CANDLESTICKS_ENDPOINT: &str = "/delivery/{}/mark_price_candlesticks";
 
@@ -20,7 +21,7 @@ impl RestClient {
     pub async fn get_delivery_mark_price_candlesticks(
         &self,
         params: DeliveryCandlesticksRequest,
-    ) -> crate::gateio::delivery::RestResult<Vec<DeliveryCandlestick>> {
+    ) -> RestResult<Vec<DeliveryCandlestick>> {
         let endpoint = DELIVERY_MARK_PRICE_CANDLESTICKS_ENDPOINT.replace("{}", &params.settle);
         self.get_with_query(&endpoint, Some(&params)).await
     }

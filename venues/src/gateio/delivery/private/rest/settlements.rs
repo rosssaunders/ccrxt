@@ -5,6 +5,23 @@ use crate::gateio::delivery::RestResult;
 
 const DELIVERY_SETTLEMENTS_ENDPOINT: &str = "/delivery/{}/settlements";
 
+/// Request parameters for the delivery settlements endpoint.
+#[derive(Debug, Clone, Serialize, Default)]
+#[serde(rename_all = "snake_case")]
+pub struct DeliverySettlementsRequest {
+    /// Settlement currency (part of URL path)
+    #[serde(skip)]
+    pub settle: String,
+
+    /// Contract name to filter settlements.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub contract: Option<String>,
+
+    /// Maximum number of records to return.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub limit: Option<i32>,
+}
+
 /// Delivery settlement record
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct DeliverySettlement {
@@ -29,45 +46,55 @@ impl RestClient {
     ///
     /// This endpoint returns settlement history for delivery contracts.
     ///
-    /// See: <https://www.gate.com/docs/developers/apiv4/#query-settlement-records>
+    /// [docs]: https://www.gate.com/docs/developers/apiv4/#query-settlement-records
     ///
     /// Rate limit: 10 requests per second
     ///
     /// # Arguments
-    /// * `settle` - Settlement currency
-    /// * `contract` - Optional contract filter
-    /// * `limit` - Optional limit for number of records
+    /// * `request` - The delivery settlements request parameters
     ///
     /// # Returns
     /// List of delivery settlement records
     pub async fn get_delivery_settlements(
         &self,
-        settle: &str,
-        contract: Option<&str>,
-        limit: Option<i32>,
+        request: DeliverySettlementsRequest,
     ) -> RestResult<Vec<DeliverySettlement>> {
-        let mut endpoint = DELIVERY_SETTLEMENTS_ENDPOINT.replace("{}", settle);
-        let mut query_params = Vec::new();
+        let endpoint = DELIVERY_SETTLEMENTS_ENDPOINT.replace("{}", &request.settle);
 
-        if let Some(contract) = contract {
-            query_params.push(format!("contract={}", contract));
-        }
-        if let Some(limit) = limit {
-            query_params.push(format!("limit={}", limit));
-        }
-
-        if !query_params.is_empty() {
-            endpoint.push('?');
-            endpoint.push_str(&query_params.join("&"));
-        }
-
-        self.get(&endpoint).await
+        self.get_with_query(&endpoint, &request).await
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_delivery_settlements_request_serialization() {
+        let request = DeliverySettlementsRequest {
+            settle: "BTC".to_string(),
+            contract: Some("BTC_USDT_20240315".to_string()),
+            limit: Some(100),
+        };
+
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        assert!(serialized.contains("contract=BTC_USDT_20240315"));
+        assert!(serialized.contains("limit=100"));
+        // settle should not be in query params since it's marked with #[serde(skip)]
+        assert!(!serialized.contains("settle"));
+    }
+
+    #[test]
+    fn test_delivery_settlements_request_default() {
+        let request = DeliverySettlementsRequest {
+            settle: "USDT".to_string(),
+            ..Default::default()
+        };
+
+        let serialized = serde_urlencoded::to_string(&request).unwrap();
+        // Only empty string should be returned since optional fields are None
+        assert_eq!(serialized, "");
+    }
 
     #[test]
     fn test_delivery_settlements_endpoint() {
