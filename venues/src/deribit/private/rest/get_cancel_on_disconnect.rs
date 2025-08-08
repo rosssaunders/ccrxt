@@ -20,6 +20,7 @@ pub struct GetCancelOnDisconnectRequest {
 pub struct CancelOnDisconnectResult {
     /// Current configuration status
     pub enabled: bool,
+
     /// Informs if Cancel on Disconnect was checked for the current connection or the account
     pub scope: String,
 }

@@ -1,7 +1,3 @@
-//! Retrieves the state of recent orders with a given label via /private/get_order_state_by_label
-//!
-//! This module defines the request/response types and logic for the Deribit private endpoint.
-
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;

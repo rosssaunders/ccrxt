@@ -1,7 +1,6 @@
 use serde::Serialize;
 
 use super::RestClient;
-// Reuse existing structures from withdraw.rs
 use super::withdraw::WithdrawResponse;
 use crate::deribit::{Currency, EndpointType, RestResult};
 
@@ -13,6 +12,7 @@ const CANCEL_WITHDRAWAL_ENDPOINT: &str = "private/cancel_withdrawal";
 pub struct CancelWithdrawalRequest {
     /// The currency symbol
     pub currency: Currency,
+
     /// The withdrawal id
     pub id: i64,
 }
@@ -26,7 +26,7 @@ impl RestClient {
     /// Cancels a pending withdrawal request identified by the withdrawal ID.
     /// This is a private method; it can only be used after authentication.
     ///
-    /// See: <https://docs.deribit.com/v2/#private-cancel_withdrawal>
+    /// [docs]: https://docs.deribit.com/v2/#private-cancel_withdrawal
     ///
     /// Rate limit: Non-matching engine endpoint
     /// Scope: wallet:read_write
@@ -44,7 +44,7 @@ impl RestClient {
         self.send_signed_request(
             CANCEL_WITHDRAWAL_ENDPOINT,
             &request,
-            EndpointType::MatchingEngine,
+            EndpointType::NonMatchingEngine,
         )
         .await
     }

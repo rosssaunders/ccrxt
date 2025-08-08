@@ -1,7 +1,3 @@
-//! Request and response structs for private/create_combo endpoint
-//!
-//! Verifies and creates a combo book or returns an existing combo matching given trades
-
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;

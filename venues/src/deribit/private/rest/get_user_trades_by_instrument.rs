@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-// Reuse the Trade struct from get_user_trades_by_currency since it's identical
 pub use super::get_user_trades_by_currency::Trade;
 use crate::deribit::{EndpointType, JsonRpcResult, RestResult, Sorting};
 
@@ -13,24 +12,31 @@ const GET_USER_TRADES_BY_INSTRUMENT_ENDPOINT: &str = "private/get_user_trades_by
 pub struct GetUserTradesByInstrumentRequest {
     /// Instrument name
     pub instrument_name: String,
+
     /// The sequence number of the first trade to be returned (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub start_seq: Option<i64>,
+
     /// The sequence number of the last trade to be returned (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub end_seq: Option<i64>,
+
     /// Number of requested items, default - 10 (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub count: Option<i32>,
+
     /// The earliest timestamp to return result from (milliseconds since the UNIX epoch) (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub start_timestamp: Option<i64>,
+
     /// The most recent timestamp to return result from (milliseconds since the UNIX epoch) (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub end_timestamp: Option<i64>,
+
     /// Determines whether historical trade and order records should be retrieved (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub historical: Option<bool>,
+
     /// Direction of results sorting (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub sorting: Option<Sorting>,
@@ -41,6 +47,7 @@ pub struct GetUserTradesByInstrumentRequest {
 pub struct GetUserTradesByInstrumentResult {
     /// Whether there are more trades available
     pub has_more: bool,
+
     /// Array of trades
     pub trades: Vec<Trade>,
 }
@@ -54,7 +61,7 @@ impl RestClient {
     /// This is a private method; it can only be used after authentication.
     /// Scope: trade:read
     ///
-    /// See: <https://docs.deribit.com/v2/#private-get_user_trades_by_instrument>
+    /// [docs]: https://docs.deribit.com/v2/#private-get_user_trades_by_instrument
     ///
     /// Rate limit: Non-matching engine rate limits apply (500 credits)
     ///
@@ -77,7 +84,7 @@ impl RestClient {
         self.send_signed_request(
             GET_USER_TRADES_BY_INSTRUMENT_ENDPOINT,
             &request,
-            EndpointType::MatchingEngine,
+            EndpointType::NonMatchingEngine,
         )
         .await
     }

@@ -23,7 +23,7 @@ impl RestClient {
     /// This endpoint requires wallet:read_write scope and creates a new deposit
     /// address for the specified currency.
     ///
-    /// See: <https://docs.deribit.com/v2/#private-create_deposit_address>
+    /// [docs]: https://docs.deribit.com/v2/#private-create_deposit_address
     ///
     /// Rate limit: 500 credits per request (non-matching engine)
     /// Scope: wallet:read_write
@@ -40,7 +40,7 @@ impl RestClient {
         self.send_signed_request(
             CREATE_DEPOSIT_ADDRESS_ENDPOINT,
             &request,
-            EndpointType::MatchingEngine,
+            EndpointType::NonMatchingEngine,
         )
         .await
     }
@@ -49,7 +49,6 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use rest::secrets::ExposableSecret;
-    /// REST API endpoint constant
     use serde_json::{Value, json};
 
     use super::*;

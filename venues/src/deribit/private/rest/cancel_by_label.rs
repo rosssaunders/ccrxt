@@ -11,6 +11,7 @@ const CANCEL_BY_LABEL_ENDPOINT: &str = "private/cancel_by_label";
 pub struct CancelByLabelRequest {
     /// User defined label for the order (maximum 64 characters) (required)
     pub label: String,
+
     /// The currency symbol (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub currency: Option<Currency>,

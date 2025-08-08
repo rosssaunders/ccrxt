@@ -12,9 +12,11 @@ pub struct GetMmpStatusRequest {
     /// Index identifier of derivative instrument on the platform
     #[serde(skip_serializing_if = "Option::is_none")]
     pub index_name: Option<IndexName>,
+
     /// Specifies the MMP group for which the status is being retrieved
     #[serde(skip_serializing_if = "Option::is_none")]
     pub mmp_group: Option<String>,
+
     /// If true, retrieves MMP status for Block RFQ
     #[serde(skip_serializing_if = "Option::is_none")]
     pub block_rfq: Option<bool>,
@@ -25,10 +27,13 @@ pub struct GetMmpStatusRequest {
 pub struct MmpStatus {
     /// If true, indicates that the MMP status is for Block RFQ
     pub block_rfq: bool,
+
     /// Timestamp (milliseconds since the UNIX epoch) until the user will be frozen - 0 means that the user is frozen until manual reset
     pub frozen_until: i64,
+
     /// Index identifier, matches (base) cryptocurrency with quote currency
     pub index_name: String,
+
     /// Triggered mmp group, this parameter is optional (appears only for Mass Quote orders trigger)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub mmp_group: Option<String>,

@@ -1,7 +1,6 @@
 use serde::Serialize;
 
 use super::RestClient;
-// Reuse the result structure from create_block_rfq since the API returns the same Block RFQ object
 use super::create_block_rfq::CreateBlockRfqResult;
 use crate::deribit::{EndpointType, JsonRpcResult, RestResult};
 
@@ -26,7 +25,7 @@ impl RestClient {
     ///
     /// This endpoint requires block_rfq:read_write scope.
     ///
-    /// See: <https://docs.deribit.com/v2/#private-cancel_block_rfq>
+    /// [docs]: https://docs.deribit.com/v2/#private-cancel_block_rfq
     ///
     /// Rate limit: Matching engine endpoint (tier-based rate limiting)
     /// Scope: block_rfq:read_write

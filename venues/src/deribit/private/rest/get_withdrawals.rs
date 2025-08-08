@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-// Re-export WithdrawalData from withdraw.rs to maintain consistency
 pub use super::withdraw::WithdrawalData;
 use crate::deribit::{Currency, EndpointType, JsonRpcResult, RestResult};
 
@@ -13,9 +12,11 @@ const GET_WITHDRAWALS_ENDPOINT: &str = "private/get_withdrawals";
 pub struct GetWithdrawalsRequest {
     /// The currency symbol
     pub currency: Currency,
+
     /// Number of requested items, default - 10
     #[serde(skip_serializing_if = "Option::is_none")]
     pub count: Option<i32>,
+
     /// The offset for pagination, default - 0
     #[serde(skip_serializing_if = "Option::is_none")]
     pub offset: Option<i32>,
@@ -26,6 +27,7 @@ pub struct GetWithdrawalsRequest {
 pub struct GetWithdrawalsResult {
     /// Total number of results available
     pub count: i32,
+
     /// Array of withdrawal entries
     pub data: Vec<WithdrawalData>,
 }
@@ -39,7 +41,7 @@ impl RestClient {
     /// This endpoint retrieves withdrawal history for the authenticated user.
     /// The endpoint requires wallet:read scope.
     ///
-    /// See: <https://docs.deribit.com/v2/#private-get_withdrawals>
+    /// [docs]: https://docs.deribit.com/v2/#private-get_withdrawals
     ///
     /// Rate limit: 500 credits per request (non-matching engine)
     /// Scope: wallet:read
@@ -58,7 +60,7 @@ impl RestClient {
         self.send_signed_request(
             GET_WITHDRAWALS_ENDPOINT,
             &request,
-            EndpointType::MatchingEngine,
+            EndpointType::NonMatchingEngine,
         )
         .await
     }
@@ -67,7 +69,6 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use rest::secrets::ExposableSecret;
-    /// REST API endpoint constant
     use serde_json::{Value, json};
 
     use super::*;

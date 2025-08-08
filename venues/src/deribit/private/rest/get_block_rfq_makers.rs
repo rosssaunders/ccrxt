@@ -21,7 +21,7 @@ impl RestClient {
     /// This method returns a list of all available Block RFQ makers.
     /// This endpoint requires block_rfq:read scope.
     ///
-    /// See: <https://docs.deribit.com/v2/#private-get_block_rfq_makers>
+    /// [docs]: https://docs.deribit.com/v2/#private-get_block_rfq_makers
     ///
     /// Rate limit: Depends on endpoint type (matching engine)
     /// Scope: block_rfq:read
@@ -47,7 +47,6 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use rest::secrets::ExposableSecret;
-    /// REST API endpoint constant
     use serde_json::{Value, json};
 
     use super::*;

@@ -13,35 +13,48 @@ const ADD_TO_ADDRESS_BOOK_ENDPOINT: &str = "private/add_to_address_book";
 pub struct AddToAddressBookRequest {
     /// The currency symbol
     pub currency: Currency,
+
     /// Address book type
     #[serde(rename = "type")]
     pub address_type: AddressBookType,
+
     /// Address in currency format
     pub address: String,
+
     /// Label of the address book entry
     pub label: String,
+
     /// Name of beneficiary VASP
     pub beneficiary_vasp_name: String,
+
     /// DID of beneficiary VASP
     pub beneficiary_vasp_did: String,
+
     /// Website of the beneficiary VASP
     #[serde(skip_serializing_if = "Option::is_none")]
     pub beneficiary_vasp_website: Option<String>,
+
     /// First name of beneficiary (if beneficiary is a person)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub beneficiary_first_name: Option<String>,
+
     /// Last name of beneficiary (if beneficiary is a person)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub beneficiary_last_name: Option<String>,
+
     /// Beneficiary company name (if beneficiary is a company)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub beneficiary_company_name: Option<String>,
+
     /// Geographical address of the beneficiary
     pub beneficiary_address: String,
+
     /// Indicates that the user agreed to share provided information with 3rd parties
     pub agreed: bool,
+
     /// The user confirms that he provided address belongs to him and he has access to it via an un-hosted wallet software
     pub personal: bool,
+
     /// The user can pass a list of currencies to add the address for
     #[serde(skip_serializing_if = "Option::is_none")]
     pub extra_currencies: Option<Vec<Currency>>,
@@ -52,45 +65,63 @@ pub struct AddToAddressBookRequest {
 pub struct AddressBookEntry {
     /// Address in proper format for currency
     pub address: String,
+
     /// Indicates that the user agreed to share provided information with 3rd parties
     pub agreed: bool,
+
     /// Geographical address of the beneficiary
     pub beneficiary_address: String,
+
     /// Beneficiary company name
     #[serde(skip_serializing_if = "Option::is_none")]
     pub beneficiary_company_name: Option<String>,
+
     /// First name of the beneficiary (if beneficiary is a person)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub beneficiary_first_name: Option<String>,
+
     /// Last name of the beneficiary (if beneficiary is a person)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub beneficiary_last_name: Option<String>,
+
     /// DID of beneficiary VASP
     pub beneficiary_vasp_did: String,
+
     /// Name of beneficiary VASP
     pub beneficiary_vasp_name: String,
+
     /// Website of the beneficiary VASP
     #[serde(skip_serializing_if = "Option::is_none")]
     pub beneficiary_vasp_website: Option<String>,
+
     /// The timestamp (milliseconds since the Unix epoch)
     pub creation_timestamp: i64,
+
     /// Currency, i.e "BTC", "ETH", "USDC"
     pub currency: String,
+
     /// Signalises that addition information regarding the beneficiary of the address is required
     pub info_required: bool,
+
     /// Label of the address book entry
     pub label: String,
+
     /// The user confirms that he provided address belongs to him and he has access to it via an un-hosted wallet software
     pub personal: bool,
+
     /// If address requires email confirmation for withdrawals
     pub requires_confirmation: bool,
+
     /// If email confirmation change is in progress
     pub requires_confirmation_change: bool,
+
     /// Wallet address status
     pub status: AddressStatus,
+
     /// Address book type
     #[serde(rename = "type")]
     pub address_type: AddressBookType,
+
     /// Timestamp when the address will be ready
     pub waiting_timestamp: Option<i64>,
 }
@@ -104,7 +135,7 @@ impl RestClient {
     /// Adds a new entry to the address book for the specified type and currency.
     /// The request requires wallet:read_write scope.
     ///
-    /// See: <https://docs.deribit.com/v2/#private-add-to-address-book>
+    /// [docs]: https://docs.deribit.com/v2/#private-add-to-address-book
     ///
     /// Rate limit: 500 credits per request (non-matching engine)
     /// Scope: wallet:read_write

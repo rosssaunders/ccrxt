@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-// Reuse the Side enum from send_rfq for direction fields
 pub use super::send_rfq::Side;
 use crate::deribit::{EndpointType, JsonRpcResult, RestResult};
 
@@ -25,10 +24,13 @@ pub enum ExecutionInstruction {
 pub struct BlockRfqLeg {
     /// Instrument name
     pub instrument_name: String,
+
     /// Price for trade
     pub price: f64,
+
     /// Ratio of amount between legs
     pub ratio: i32,
+
     /// Direction of selected leg (buy or sell)
     pub direction: Side,
 }
@@ -38,10 +40,13 @@ pub struct BlockRfqLeg {
 pub struct BlockRfqHedge {
     /// Instrument name
     pub instrument_name: String,
+
     /// Direction of selected leg (buy or sell)
     pub direction: Side,
+
     /// Hedge leg price
     pub price: f64,
+
     /// Trade size for hedge leg
     pub amount: f64,
 }
@@ -52,23 +57,31 @@ pub struct AddBlockRfqQuoteRequest {
     /// User defined label for the Block RFQ quote (maximum 64 characters)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub label: Option<String>,
+
     /// ID of the Block RFQ
     pub block_rfq_id: i64,
+
     /// This value multiplied by the ratio of a leg gives trade size on that leg
     pub amount: f64,
+
     /// Direction of trade from the maker perspective
     pub direction: Side,
+
     /// List of legs used for Block RFQ quote
     pub legs: Vec<BlockRfqLeg>,
+
     /// Hedge leg of the Block RFQ (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub hedge: Option<BlockRfqHedge>,
+
     /// Execution instruction of the quote
     #[serde(skip_serializing_if = "Option::is_none")]
     pub execution_instruction: Option<ExecutionInstruction>,
+
     /// Aggregated price used for quoting future spreads
     #[serde(skip_serializing_if = "Option::is_none")]
     pub price: Option<f64>,
+
     /// The timestamp when the quote expires (milliseconds since the Unix epoch)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub expires_at: Option<i64>,
@@ -79,10 +92,13 @@ pub struct AddBlockRfqQuoteRequest {
 pub struct ResponseLeg {
     /// Direction: buy or sell
     pub direction: Side,
+
     /// Unique instrument identifier
     pub instrument_name: String,
+
     /// Price for a leg
     pub price: f64,
+
     /// Ratio of amount between legs
     pub ratio: i32,
 }
@@ -92,10 +108,13 @@ pub struct ResponseLeg {
 pub struct ResponseHedge {
     /// Trade size for hedge leg
     pub amount: i64,
+
     /// Direction: buy or sell
     pub direction: Side,
+
     /// Unique instrument identifier
     pub instrument_name: String,
+
     /// Price for a hedge leg
     pub price: f64,
 }
@@ -105,38 +124,53 @@ pub struct ResponseHedge {
 pub struct AddBlockRfqQuoteResult {
     /// This value multiplied by the ratio of a leg gives trade size on that leg
     pub amount: f64,
+
     /// The name of the application that placed the quote on behalf of the user (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub app_name: Option<String>,
+
     /// ID of the Block RFQ
     pub block_rfq_id: i64,
+
     /// ID of the Block RFQ quote
     pub block_rfq_quote_id: i64,
+
     /// The timestamp when quote was created (milliseconds since the Unix epoch)
     pub creation_timestamp: i64,
+
     /// Direction of trade from the maker perspective
     pub direction: Side,
+
     /// Execution instruction of the quote
     pub execution_instruction: ExecutionInstruction,
+
     /// Filled amount of the quote
     pub filled_amount: f64,
+
     /// Hedge leg information (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub hedge: Option<ResponseHedge>,
+
     /// User defined label for the quote (maximum 64 characters)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub label: Option<String>,
+
     /// Timestamp of the last update of the quote (milliseconds since the UNIX epoch)
     pub last_update_timestamp: i64,
+
     /// List of legs in the quote
     pub legs: Vec<ResponseLeg>,
+
     /// Price of a quote
     pub price: f64,
+
     /// State of the quote
     pub quote_state: String,
+
     /// Reason of quote cancellation
     #[serde(skip_serializing_if = "Option::is_none")]
     pub quote_state_reason: Option<String>,
+
     /// true if the quote was edited
     pub replaced: bool,
 }

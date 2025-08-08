@@ -12,6 +12,7 @@ pub struct CancelAllBlockRfqQuotesRequest {
     /// ID of the Block RFQ (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub block_rfq_id: Option<i64>,
+
     /// When detailed is set to true output format is changed (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub detailed: Option<bool>,

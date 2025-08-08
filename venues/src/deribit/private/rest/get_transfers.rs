@@ -11,9 +11,11 @@ const GET_TRANSFERS_ENDPOINT: &str = "private/get_transfers";
 pub struct GetTransfersRequest {
     /// The currency symbol
     pub currency: Currency,
+
     /// Number of requested items, default - 10
     #[serde(skip_serializing_if = "Option::is_none")]
     pub count: Option<i32>,
+
     /// The offset for pagination, default - 0
     #[serde(skip_serializing_if = "Option::is_none")]
     pub offset: Option<i32>,
@@ -24,6 +26,7 @@ pub struct GetTransfersRequest {
 pub struct GetTransfersResult {
     /// Total number of results available
     pub count: i32,
+
     /// Array of transfer entries
     pub data: Vec<TransferData>,
 }

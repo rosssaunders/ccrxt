@@ -1,6 +1,5 @@
 use serde::{Deserialize, Serialize};
 
-// Reuse existing types from add_block_rfq_quote
 use super::RestClient;
 pub use super::add_block_rfq_quote::{BlockRfqHedge, Side};
 use crate::deribit::{EndpointType, JsonRpcResult, RestResult};
@@ -13,8 +12,10 @@ const CREATE_BLOCK_RFQ_ENDPOINT: &str = "private/create_block_rfq";
 pub struct CreateBlockRfqLeg {
     /// Instrument name
     pub instrument_name: String,
+
     /// Amount - represents the requested trade size
     pub amount: f64,
+
     /// Direction of selected leg (buy or sell)
     pub direction: Side,
 }
@@ -24,15 +25,19 @@ pub struct CreateBlockRfqLeg {
 pub struct CreateBlockRfqRequest {
     /// List of legs used to create Block RFQ
     pub legs: Vec<CreateBlockRfqLeg>,
+
     /// Hedge leg of the Block RFQ (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub hedge: Option<BlockRfqHedge>,
+
     /// User defined label for the Block RFQ (maximum 64 characters)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub label: Option<String>,
+
     /// List of targeted Block RFQ makers (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub makers: Option<Vec<String>>,
+
     /// Determines whether the RFQ is non-anonymous (default: true)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub disclosed: Option<bool>,
@@ -84,44 +89,62 @@ pub struct ResponseHedge {
 pub struct CreateBlockRfqResult {
     /// This value multiplied by the ratio of a leg gives trade size on that leg
     pub amount: f64,
+
     /// The name of the application that created the Block RFQ on behalf of the user (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub app_name: Option<String>,
+
     /// Ask quotes
     pub asks: Vec<Quote>,
+
     /// Bid quotes
     pub bids: Vec<Quote>,
+
     /// ID of the Block RFQ
     pub block_rfq_id: i64,
+
     /// Unique combo identifier
     pub combo_id: String,
+
     /// The timestamp when Block RFQ was created (milliseconds since the Unix epoch)
     pub creation_timestamp: i64,
+
     /// Indicates whether the RFQ was created as non-anonymous
     pub disclosed: bool,
+
     /// The timestamp when the Block RFQ will expire (milliseconds since the UNIX epoch)
     pub expiration_timestamp: i64,
+
     /// Hedge leg information (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub hedge: Option<ResponseHedge>,
+
     /// Indicates whether the RFQ is included in the taker's rating calculation (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub included_in_taker_rating: Option<bool>,
+
     /// A list of index prices for the underlying instrument(s) at the time of trade execution
     pub index_prices: Vec<f64>,
+
     /// User defined label for the Block RFQ (maximum 64 characters)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub label: Option<String>,
+
     /// List of legs in the Block RFQ
     pub legs: Vec<ResponseLeg>,
+
     /// List of targeted Block RFQ makers
     pub makers: Vec<String>,
+
     /// The mark price for the instrument
     pub mark_price: f64,
+
     /// Minimum amount for trading
     pub min_trade_amount: f64,
+
     /// Role of the user in Block RFQ
     pub role: String,
+
     /// State of the Block RFQ
     pub state: String,
 }
@@ -137,7 +160,7 @@ impl RestClient {
     ///
     /// This endpoint requires block_rfq:read_write scope.
     ///
-    /// See: <https://docs.deribit.com/v2/#private-create_block_rfq>
+    /// [docs]: https://docs.deribit.com/v2/#private-create_block_rfq
     ///
     /// Rate limit: Depends on endpoint type (matching engine)
     /// Scope: block_rfq:read_write

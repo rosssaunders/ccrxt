@@ -13,24 +13,34 @@ const GET_DEPOSITS_ENDPOINT: &str = "private/get_deposits";
 pub struct DepositData {
     /// Address in proper format for currency
     pub address: String,
+
     /// Amount of funds in given currency
     pub amount: f64,
+
     /// Clearance state
     pub clearance_state: ClearanceState,
+
     /// Currency, i.e "BTC", "ETH", "USDC"
     pub currency: String,
+
     /// Note
     pub note: String,
+
     /// The timestamp (milliseconds since the Unix epoch)
     pub received_timestamp: i64,
+
     /// Transaction id in proper format for currency, null if id is not available
     pub refund_transaction_id: Option<String>,
+
     /// Address in proper format for currency
     pub source_address: String,
+
     /// Deposit state
     pub state: DepositState,
+
     /// Transaction id in proper format for currency, null if id is not available
     pub transaction_id: Option<String>,
+
     /// The timestamp (milliseconds since the Unix epoch)
     pub updated_timestamp: i64,
 }
@@ -40,9 +50,11 @@ pub struct DepositData {
 pub struct GetDepositsRequest {
     /// The currency symbol
     pub currency: Currency,
+
     /// Number of requested items, default - 10
     #[serde(skip_serializing_if = "Option::is_none")]
     pub count: Option<i32>,
+
     /// The offset for pagination, default - 0
     #[serde(skip_serializing_if = "Option::is_none")]
     pub offset: Option<i32>,
@@ -53,6 +65,7 @@ pub struct GetDepositsRequest {
 pub struct GetDepositsResult {
     /// Total number of results available
     pub count: i32,
+
     /// Array of deposit entries
     pub data: Vec<DepositData>,
 }
@@ -66,7 +79,7 @@ impl RestClient {
     /// This endpoint retrieves deposit history for the authenticated user.
     /// The endpoint requires wallet:read scope.
     ///
-    /// See: <https://docs.deribit.com/v2/#private-get_deposits>
+    /// [docs]: https://docs.deribit.com/v2/#private-get_deposits
     ///
     /// Rate limit: 500 credits per request (non-matching engine)
     /// Scope: wallet:read
@@ -85,7 +98,7 @@ impl RestClient {
         self.send_signed_request(
             GET_DEPOSITS_ENDPOINT,
             &request,
-            EndpointType::MatchingEngine,
+            EndpointType::NonMatchingEngine,
         )
         .await
     }

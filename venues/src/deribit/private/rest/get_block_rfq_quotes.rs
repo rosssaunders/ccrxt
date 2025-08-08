@@ -1,6 +1,5 @@
 use serde::Serialize;
 
-// Reuse the result structure from add_block_rfq_quote since the API returns the same quote objects
 use super::RestClient;
 use super::add_block_rfq_quote::AddBlockRfqQuoteResult;
 use crate::deribit::{EndpointType, JsonRpcResult, RestResult};
@@ -14,9 +13,11 @@ pub struct GetBlockRfqQuotesRequest {
     /// ID of the Block RFQ (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub block_rfq_id: Option<i64>,
+
     /// User defined label for the Block RFQ quote (maximum 64 characters)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub label: Option<String>,
+
     /// ID of the Block RFQ quote (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub block_rfq_quote_id: Option<i64>,
@@ -44,7 +45,7 @@ impl RestClient {
     /// # Scope
     /// `block_rfq:read`
     ///
-    /// [Official API docs](https://docs.deribit.com/#private-get_block_rfq_quotes)
+    /// [docs]: https://docs.deribit.com/#private-get_block_rfq_quotes
     pub async fn get_block_rfq_quotes(
         &self,
         request: GetBlockRfqQuotesRequest,

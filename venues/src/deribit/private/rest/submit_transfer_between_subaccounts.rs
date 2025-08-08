@@ -1,7 +1,6 @@
 use serde::Serialize;
 
 use super::RestClient;
-// Reuse the TransferData struct from submit_transfer_to_user
 use super::submit_transfer_to_user::TransferData;
 use crate::deribit::{EndpointType, JsonRpcResult, RestResult};
 
@@ -14,10 +13,13 @@ const SUBMIT_TRANSFER_BETWEEN_SUBACCOUNTS_ENDPOINT: &str =
 pub struct SubmitTransferBetweenSubaccountsRequest {
     /// The currency symbol (BTC, ETH, USDC, USDT, EURR)
     pub currency: String,
+
     /// Amount of funds to be transferred
     pub amount: f64,
+
     /// Id of destination subaccount
     pub destination: i32,
+
     /// Id of the source (sub)account (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub source: Option<i32>,
@@ -34,7 +36,7 @@ impl RestClient {
     /// See: <https://docs.deribit.com/v2/#private-submit_transfer_between_subaccounts>
     ///
     /// Rate limit: 500 credits per request (non-matching engine)
-    /// Scope: wallets:read_write
+    /// Scope: wallet:read_write
     ///
     /// # Arguments
     /// * `params` - Parameters for the transfer (currency, amount, destination, optional source)

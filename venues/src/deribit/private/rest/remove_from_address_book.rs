@@ -11,9 +11,11 @@ const REMOVE_FROM_ADDRESS_BOOK_ENDPOINT: &str = "private/remove_from_address_boo
 pub struct RemoveFromAddressBookRequest {
     /// The currency symbol
     pub currency: Currency,
+
     /// Address book type
     #[serde(rename = "type")]
     pub address_type: AddressBookType,
+
     /// Address in currency format, it must be in address book
     pub address: String,
 }
@@ -27,7 +29,7 @@ impl RestClient {
     /// This endpoint requires wallet:read_write scope and removes the specified
     /// address from the address book of the given type and currency.
     ///
-    /// See: <https://docs.deribit.com/v2/#private-remove_from_address_book>
+    /// [docs]: https://docs.deribit.com/v2/#private-remove_from_address_book
     ///
     /// Rate limit: 500 credits per request (non-matching engine)
     /// Scope: wallet:read_write
@@ -53,7 +55,6 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use rest::secrets::ExposableSecret;
-    /// REST API endpoint constant
     use serde_json::{Value, json};
 
     use super::*;

@@ -15,6 +15,7 @@ const CANCEL_ALL_BY_KIND_OR_TYPE_ENDPOINT: &str = "private/cancel_all_by_kind_or
 pub enum CurrencySelection {
     /// Array of currencies  
     Multiple(Vec<Currency>),
+
     /// Single currency or the special "any" value for all currencies
     Single(Currency),
 }
@@ -66,15 +67,19 @@ impl<'de> Deserialize<'de> for CurrencySelection {
 pub struct CancelAllByKindOrTypeRequest {
     /// The currency symbol, list of currency symbols or "any" for all (required)
     pub currency: CurrencySelection,
+
     /// Instrument kind filter (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub kind: Option<InstrumentKind>,
+
     /// Order type filter (optional)
     #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
     pub order_type: Option<OrderType>,
+
     /// When detailed is set to true output format is changed (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub detailed: Option<bool>,
+
     /// Whether or not to reject incoming quotes for 1 second after cancelling (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub freeze_quotes: Option<bool>,

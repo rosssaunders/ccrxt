@@ -13,10 +13,13 @@ const WITHDRAW_ENDPOINT: &str = "private/withdraw";
 pub struct WithdrawRequest {
     /// The currency symbol
     pub currency: Currency,
+
     /// Address in currency format, must be in address book
     pub address: String,
+
     /// Amount of funds to be withdrawn
     pub amount: f64,
+
     /// Withdrawal priority, optional for BTC, default: high
     #[serde(skip_serializing_if = "Option::is_none")]
     pub priority: Option<WithdrawalPriority>,
@@ -27,24 +30,34 @@ pub struct WithdrawRequest {
 pub struct WithdrawalData {
     /// Address in proper format for currency
     pub address: String,
+
     /// Amount of funds in given currency
     pub amount: f64,
+
     /// The timestamp (milliseconds since the Unix epoch) of withdrawal confirmation, null when not confirmed
     pub confirmed_timestamp: Option<i64>,
+
     /// The timestamp (milliseconds since the Unix epoch)
     pub created_timestamp: i64,
+
     /// Currency, i.e "BTC", "ETH", "USDC"
     pub currency: String,
+
     /// Fee in currency
     pub fee: f64,
+
     /// Withdrawal id in Deribit system
     pub id: i64,
+
     /// Id of priority level
     pub priority: f64,
+
     /// Withdrawal state
     pub state: WithdrawalState,
+
     /// Transaction id in proper format for currency, null if id is not available
     pub transaction_id: Option<String>,
+
     /// The timestamp (milliseconds since the Unix epoch)
     pub updated_timestamp: i64,
 }

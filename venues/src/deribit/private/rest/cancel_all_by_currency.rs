@@ -13,15 +13,19 @@ const CANCEL_ALL_BY_CURRENCY_ENDPOINT: &str = "private/cancel_all_by_currency";
 pub struct CancelAllByCurrencyRequest {
     /// The currency symbol (required)
     pub currency: Currency,
+
     /// Instrument kind filter (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub kind: Option<InstrumentKind>,
+
     /// Order type filter (optional)
     #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
     pub order_type: Option<OrderType>,
+
     /// When detailed is set to true output format is changed (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub detailed: Option<bool>,
+
     /// Whether or not to reject incoming quotes for 1 second after cancelling (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub freeze_quotes: Option<bool>,

@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-// Reuse the Trade struct from get_user_trades_by_currency since it's identical
 pub use super::get_user_trades_by_currency::Trade;
 use crate::deribit::{EndpointType, JsonRpcResult, RestResult, Sorting};
 
@@ -13,9 +12,11 @@ const GET_USER_TRADES_BY_ORDER_ENDPOINT: &str = "private/get_user_trades_by_orde
 pub struct GetUserTradesByOrderRequest {
     /// The order id
     pub order_id: String,
+
     /// Direction of results sorting (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub sorting: Option<Sorting>,
+
     /// Determines whether historical trade and order records should be retrieved (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub historical: Option<bool>,
@@ -26,6 +27,7 @@ pub struct GetUserTradesByOrderRequest {
 pub struct GetUserTradesByOrderResult {
     /// Whether there are more trades available
     pub has_more: bool,
+
     /// Array of trades
     pub trades: Vec<Trade>,
 }
@@ -39,7 +41,7 @@ impl RestClient {
     /// This is a private method; it can only be used after authentication.
     /// Scope: trade:read
     ///
-    /// See: <https://docs.deribit.com/v2/#private-get_user_trades_by_order>
+    /// [docs]: https://docs.deribit.com/v2/#private-get_user_trades_by_order
     ///
     /// Rate limit: Non-matching engine rate limits apply (500 credits)
     ///
@@ -57,7 +59,7 @@ impl RestClient {
         self.send_signed_request(
             GET_USER_TRADES_BY_ORDER_ENDPOINT,
             &request,
-            EndpointType::MatchingEngine,
+            EndpointType::NonMatchingEngine,
         )
         .await
     }
@@ -66,7 +68,6 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use rest::secrets::ExposableSecret;
-    /// REST API endpoint constant
     use serde_json::{Value, json};
 
     use super::*;

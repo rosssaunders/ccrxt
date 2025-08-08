@@ -17,6 +17,7 @@ pub struct GetBlockRfqUserInfoRequest {
 pub struct ParentIdentity {
     /// Group-level alias identifying the account group as a whole
     pub identity: String,
+
     /// Indicates whether the Parent Identity has maker scope
     pub is_maker: bool,
 }
@@ -26,10 +27,13 @@ pub struct ParentIdentity {
 pub struct UserInfo {
     /// Specific alias identifying this account individually
     pub identity: String,
+
     /// Indicates whether this account has maker scope
     pub is_maker: bool,
+
     /// Taker rating associated with this account, if available
     pub taker_rating: f64,
+
     /// Unique user identifier
     pub user_id: i64,
 }
@@ -39,6 +43,7 @@ pub struct UserInfo {
 pub struct GetBlockRfqUserInfoResult {
     /// Parent Identity (group alias), representing the overall account group (main + subaccounts)
     pub parent: ParentIdentity,
+
     /// Array of user-specific identity and rating information
     pub users: Vec<UserInfo>,
 }

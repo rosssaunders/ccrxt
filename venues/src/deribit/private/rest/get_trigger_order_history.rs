@@ -13,12 +13,15 @@ const GET_TRIGGER_ORDER_HISTORY_ENDPOINT: &str = "private/get_trigger_order_hist
 pub struct GetTriggerOrderHistoryRequest {
     /// The currency symbol
     pub currency: Currency,
+
     /// Instrument name (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub instrument_name: Option<String>,
+
     /// Number of requested items, default - 20 (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub count: Option<i32>,
+
     /// Continuation token for pagination (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub continuation: Option<String>,
@@ -30,52 +33,71 @@ pub struct TriggerOrderEntry {
     /// It represents the requested order size. For perpetual and inverse futures the amount is in USD units.
     /// For options and linear futures and it is the underlying base currency coin.
     pub amount: f64,
+
     /// Direction: buy, or sell
     pub direction: OrderDirection,
+
     /// Unique instrument identifier
     pub instrument_name: String,
+
     /// true if the order is an order that can be triggered by another order, otherwise not present
     #[serde(skip_serializing_if = "Option::is_none")]
     pub is_secondary_oto: Option<bool>,
+
     /// User defined label (presented only when previously set for order by user)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub label: Option<String>,
+
     /// The timestamp (milliseconds since the Unix epoch)
     pub last_update_timestamp: i64,
+
     /// Unique reference that identifies a one_cancels_others (OCO) pair
     #[serde(skip_serializing_if = "Option::is_none")]
     pub oco_ref: Option<String>,
+
     /// Unique order identifier
     pub order_id: String,
+
     /// Order state: "triggered", "cancelled", or "rejected" with rejection reason
     pub order_state: String,
+
     /// Requested order type: "limit" or "market"
     pub order_type: TradeOrderType,
+
     /// true for post-only orders only
     #[serde(skip_serializing_if = "Option::is_none")]
     pub post_only: Option<bool>,
+
     /// Price in base currency
     pub price: f64,
+
     /// Optional (not added for spot). 'true for reduce-only orders only'
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reduce_only: Option<bool>,
+
     /// Type of last request performed on the trigger order by user or system.
     /// "cancel" - when order was cancelled, "trigger:order" - when trigger order spawned market or limit order after being triggered
     pub request: String,
+
     /// Source of the order that is linked to the trigger order
     #[serde(skip_serializing_if = "Option::is_none")]
     pub source: Option<String>,
+
     /// The timestamp (milliseconds since the Unix epoch)
     pub timestamp: i64,
+
     /// Trigger type (only for trigger orders). Allowed values: "index_price", "mark_price", "last_price"
     #[serde(skip_serializing_if = "Option::is_none")]
     pub trigger: Option<TriggerType>,
+
     /// The maximum deviation from the price peak beyond which the order will be triggered (Only for trailing trigger orders)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub trigger_offset: Option<f64>,
+
     /// Id of the user order used for the trigger-order reference before triggering
     #[serde(skip_serializing_if = "Option::is_none")]
     pub trigger_order_id: Option<String>,
+
     /// Trigger price (Only for future trigger orders)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub trigger_price: Option<f64>,
@@ -87,6 +109,7 @@ pub struct GetTriggerOrderHistoryResult {
     /// Continuation token for pagination
     #[serde(skip_serializing_if = "Option::is_none")]
     pub continuation: Option<String>,
+
     /// Array of trigger order entries
     pub entries: Vec<TriggerOrderEntry>,
 }

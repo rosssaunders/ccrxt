@@ -11,33 +11,45 @@ const UPDATE_IN_ADDRESS_BOOK_ENDPOINT: &str = "private/update_in_address_book";
 pub struct UpdateInAddressBookRequest {
     /// The currency symbol
     pub currency: Currency,
+
     /// Address book type
     #[serde(rename = "type")]
     pub address_type: AddressBookType,
+
     /// Address in currency format, it must be in address book
     pub address: String,
+
     /// Name of beneficiary VASP
     pub beneficiary_vasp_name: String,
+
     /// DID of beneficiary VASP
     pub beneficiary_vasp_did: String,
+
     /// Website of the beneficiary VASP
     #[serde(skip_serializing_if = "Option::is_none")]
     pub beneficiary_vasp_website: Option<String>,
+
     /// First name of beneficiary (if beneficiary is a person)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub beneficiary_first_name: Option<String>,
+
     /// Last name of beneficiary (if beneficiary is a person)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub beneficiary_last_name: Option<String>,
+
     /// Beneficiary company name (if beneficiary is a company)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub beneficiary_company_name: Option<String>,
+
     /// Geographical address of the beneficiary
     pub beneficiary_address: String,
+
     /// Indicates that the user agreed to share provided information with 3rd parties
     pub agreed: bool,
+
     /// The user confirms that he provided address belongs to him and he has access to it via an un-hosted wallet software
     pub personal: bool,
+
     /// Label of the address book entry
     pub label: String,
 }

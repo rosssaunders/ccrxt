@@ -31,11 +31,14 @@ pub enum Direction {
 pub struct Trade {
     /// Instrument name
     pub instrument_name: String,
+
     /// Price for trade
     pub price: f64,
+
     /// Trade size (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub amount: Option<f64>,
+
     /// Direction of trade from the maker perspective
     pub direction: Direction,
 }
@@ -46,6 +49,7 @@ pub struct SimulateBlockTradeRequest {
     /// Describes if user wants to be maker or taker of trades (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub role: Option<Role>,
+
     /// List of trades for block trade
     pub trades: Vec<Trade>,
 }

@@ -72,9 +72,11 @@ pub enum IndexName {
 pub struct ResetMmpRequest {
     /// Index identifier of derivative instrument on the platform
     pub index_name: IndexName,
+
     /// Specifies the MMP group for which limits are being reset
     #[serde(skip_serializing_if = "Option::is_none")]
     pub mmp_group: Option<String>,
+
     /// If true, resets MMP for Block RFQ
     #[serde(skip_serializing_if = "Option::is_none")]
     pub block_rfq: Option<bool>,

@@ -18,10 +18,13 @@ pub struct GetCurrentDepositAddressRequest {
 pub struct DepositAddress {
     /// Address in proper format for currency
     pub address: String,
+
     /// The timestamp (milliseconds since the Unix epoch)
     pub creation_timestamp: i64,
+
     /// Currency, i.e "BTC", "ETH", "USDC"
     pub currency: String,
+
     /// Address type/purpose
     #[serde(rename = "type")]
     pub address_type: String,
@@ -36,7 +39,7 @@ impl RestClient {
     /// This endpoint requires wallet:read scope and returns the current deposit
     /// address for the specified currency, or null if none exists.
     ///
-    /// See: <https://docs.deribit.com/v2/#private-get_current_deposit_address>
+    /// [docs]: https://docs.deribit.com/v2/#private-get_current_deposit_address
     ///
     /// Rate limit: 500 credits per request (non-matching engine)
     /// Scope: wallet:read
@@ -53,7 +56,7 @@ impl RestClient {
         self.send_signed_request(
             GET_CURRENT_DEPOSIT_ADDRESS_ENDPOINT,
             &request,
-            EndpointType::MatchingEngine,
+            EndpointType::NonMatchingEngine,
         )
         .await
     }
@@ -62,7 +65,6 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use rest::secrets::ExposableSecret;
-    /// REST API endpoint constant
     use serde_json::{Value, json};
 
     use super::*;

@@ -33,30 +33,39 @@ pub enum CancelType {
 pub struct CancelQuotesRequest {
     /// Type of cancel criteria (required)
     pub cancel_type: CancelType,
+
     /// When detailed is set to true output format is changed (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub detailed: Option<bool>,
+
     /// Whether or not to reject incoming quotes for 1 second after cancelling (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub freeze_quotes: Option<bool>,
+
     /// Min delta to cancel by delta (for cancel_type: delta)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub min_delta: Option<f64>,
+
     /// Max delta to cancel by delta (for cancel_type: delta)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub max_delta: Option<f64>,
+
     /// Unique identifier for the Quote set (for cancel_type: quote_set_id)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub quote_set_id: Option<String>,
+
     /// Instrument name (for cancel_type: instrument)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub instrument_name: Option<String>,
+
     /// Instrument kind (for cancel_type: instrument_kind)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub kind: Option<InstrumentKind>,
+
     /// The currency symbol (for cancel_type: currency)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub currency: Option<Currency>,
+
     /// The currency pair symbol (for cancel_type: currency_pair)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub currency_pair: Option<CurrencyPair>,

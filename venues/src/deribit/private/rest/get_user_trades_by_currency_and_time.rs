@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-// Reuse the Trade struct from get_user_trades_by_currency since it's identical
 pub use super::get_user_trades_by_currency::Trade;
 use crate::deribit::{Currency, EndpointType, InstrumentKind, JsonRpcResult, RestResult, Sorting};
 
@@ -14,19 +13,25 @@ const GET_USER_TRADES_BY_CURRENCY_AND_TIME_ENDPOINT: &str =
 pub struct GetUserTradesByCurrencyAndTimeRequest {
     /// The currency symbol
     pub currency: Currency,
+
     /// Instrument kind (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub kind: Option<InstrumentKind>,
+
     /// The earliest timestamp to return result from (milliseconds since the UNIX epoch)
     pub start_timestamp: i64,
+
     /// The most recent timestamp to return result from (milliseconds since the UNIX epoch)
     pub end_timestamp: i64,
+
     /// Number of requested items, default - 10 (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub count: Option<i32>,
+
     /// Direction of results sorting (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub sorting: Option<Sorting>,
+
     /// Determines whether historical trade and order records should be retrieved (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub historical: Option<bool>,
@@ -37,6 +42,7 @@ pub struct GetUserTradesByCurrencyAndTimeRequest {
 pub struct GetUserTradesByCurrencyAndTimeResult {
     /// Whether there are more trades available
     pub has_more: bool,
+
     /// Array of trades
     pub trades: Vec<Trade>,
 }
@@ -52,7 +58,7 @@ impl RestClient {
     /// This is a private method; it can only be used after authentication.
     /// Scope: trade:read
     ///
-    /// See: <https://docs.deribit.com/v2/#private-get_user_trades_by_currency_and_time>
+    /// [docs]: https://docs.deribit.com/v2/#private-get_user_trades_by_currency_and_time
     ///
     /// Rate limit: Non-matching engine rate limits apply (500 credits)
     ///
@@ -74,7 +80,7 @@ impl RestClient {
         self.send_signed_request(
             GET_USER_TRADES_BY_CURRENCY_AND_TIME_ENDPOINT,
             &request,
-            EndpointType::MatchingEngine,
+            EndpointType::NonMatchingEngine,
         )
         .await
     }
@@ -83,7 +89,6 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use rest::secrets::ExposableSecret;
-    /// REST API endpoint constant
     use serde_json::{Value, json};
 
     use super::*;

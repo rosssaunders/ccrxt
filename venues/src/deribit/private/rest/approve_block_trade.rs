@@ -21,8 +21,10 @@ pub enum Role {
 pub struct ApproveBlockTradeRequest {
     /// Timestamp, shared with other party (milliseconds since the UNIX epoch)
     pub timestamp: i64,
+
     /// Nonce, shared with other party
     pub nonce: String,
+
     /// Describes if user wants to be maker or taker of trades
     pub role: Role,
 }
@@ -43,7 +45,7 @@ impl RestClient {
     /// for the feature to be active. If the user wants to approve the trade, he has to
     /// approve it from different API key with doesn't have this feature enabled.
     ///
-    /// See: <https://docs.deribit.com/v2/#private-approve_block_trade>
+    /// [docs]: https://docs.deribit.com/v2/#private-approve_block_trade
     ///
     /// Rate limit: 500 credits per request (non-matching engine)
     /// Scope: block_trade:read_write
@@ -62,7 +64,7 @@ impl RestClient {
         self.send_signed_request(
             APPROVE_BLOCK_TRADE_ENDPOINT,
             &request,
-            EndpointType::MatchingEngine,
+            EndpointType::NonMatchingEngine,
         )
         .await
     }

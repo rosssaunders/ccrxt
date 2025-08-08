@@ -59,9 +59,11 @@ impl std::fmt::Display for OpenOrderType {
 pub struct GetOpenOrdersByCurrencyRequest {
     /// The currency symbol
     pub currency: Currency,
+
     /// Instrument kind, if not provided instruments of all kinds are considered
     #[serde(skip_serializing_if = "Option::is_none")]
     pub kind: Option<InstrumentKind>,
+
     /// Order type, default - all
     #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
     pub order_type: Option<OpenOrderType>,
@@ -73,147 +75,198 @@ pub struct OpenOrder {
     /// If order is a quote. Present only if true.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub quote: Option<bool>,
+
     /// Whether the trigger order has been triggered
     #[serde(skip_serializing_if = "Option::is_none")]
     pub triggered: Option<bool>,
+
     /// Optional field with value `true` added only when created with Mobile Application
     #[serde(skip_serializing_if = "Option::is_none")]
     pub mobile: Option<bool>,
+
     /// The name of the application that placed the order on behalf of the user (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub app_name: Option<String>,
+
     /// Implied volatility in percent. (Only if `advanced="implv"`)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub implv: Option<f64>,
+
     /// The initial display amount of iceberg order. Iceberg order display amount will be refreshed to that value after match consuming actual display amount. Absent for other types of orders
     #[serde(skip_serializing_if = "Option::is_none")]
     pub refresh_amount: Option<f64>,
+
     /// Option price in USD (Only if `advanced="usd"`)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub usd: Option<f64>,
+
     /// The Ids of the orders that will be triggered if the order is filled
     #[serde(skip_serializing_if = "Option::is_none")]
     pub oto_order_ids: Option<Vec<String>>,
+
     /// `true` if created with API
     #[serde(skip_serializing_if = "Option::is_none")]
     pub api: Option<bool>,
+
     /// Average fill price of the order
     #[serde(skip_serializing_if = "Option::is_none")]
     pub average_price: Option<f64>,
+
     /// advanced type: "usd" or "implv" (Only for options; field is omitted if not applicable).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub advanced: Option<AdvancedType>,
+
     /// Unique order identifier
     pub order_id: String,
+
     /// `true` for post-only orders only
     #[serde(skip_serializing_if = "Option::is_none")]
     pub post_only: Option<bool>,
+
     /// Filled amount of the order. For perpetual and futures the filled_amount is in USD units, for options - in units or corresponding cryptocurrency contracts, e.g., BTC or ETH.
     pub filled_amount: f64,
+
     /// Trigger type (only for trigger orders). Allowed values: "index_price", "mark_price", "last_price".
     #[serde(skip_serializing_if = "Option::is_none")]
     pub trigger: Option<TriggerType>,
+
     /// Id of the trigger order that created the order (Only for orders that were created by triggered orders).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub trigger_order_id: Option<String>,
+
     /// Direction: `buy`, or `sell`
     pub direction: OrderDirection,
+
     /// It represents the order size in contract units. (Optional, may be absent in historical data).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub contracts: Option<f64>,
+
     /// `true` if the order is an order that can be triggered by another order, otherwise not present.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub is_secondary_oto: Option<bool>,
+
     /// `true` if the order was edited (by user or - in case of advanced options orders - by pricing engine), otherwise `false`.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub replaced: Option<bool>,
+
     /// Name of the MMP group supplied in the `private/mass_quote` request.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub mmp_group: Option<String>,
+
     /// `true` if the order is a MMP order, otherwise `false`.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub mmp: Option<bool>,
+
     /// The timestamp (milliseconds since the Unix epoch)
     pub last_update_timestamp: i64,
+
     /// The timestamp (milliseconds since the Unix epoch)
     pub creation_timestamp: i64,
+
     /// Enumerated reason behind cancel `"user_request"`, `"autoliquidation"`, `"cancel_on_disconnect"`, `"risk_mitigation"`, `"pme_risk_reduction"` (portfolio margining risk reduction), `"pme_account_locked"` (portfolio margining account locked per currency), `"position_locked"`, `"mmp_trigger"` (market maker protection), `"mmp_config_curtailment"` (market maker configured quantity decreased), `"edit_post_only_reject"` (cancelled on edit because of `reject_post_only` setting), `"oco_other_closed"` (the oco order linked to this order was closed), `"oto_primary_closed"` (the oto primary order that was going to trigger this order was cancelled), `"settlement"` (closed because of a settlement)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub cancel_reason: Option<CancelReason>,
+
     /// `true` if order was cancelled by mmp trigger (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub mmp_cancelled: Option<bool>,
+
     /// The same QuoteID as supplied in the `private/mass_quote` request.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub quote_id: Option<String>,
+
     /// Order state: `"open"`, `"filled"`, `"rejected"`, `"cancelled"`, `"untriggered"`
     pub order_state: OrderState,
+
     /// Optional (only for spot). `true` if order was automatically created during cross-collateral balance restoration
     #[serde(skip_serializing_if = "Option::is_none")]
     pub is_rebalance: Option<bool>,
+
     /// `true` if order has `reject_post_only` flag (field is present only when `post_only` is `true`)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reject_post_only: Option<bool>,
+
     /// User defined label (up to 64 characters)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub label: Option<String>,
+
     /// Optional (not added for spot). `true` if order was automatically created during liquidation
     #[serde(skip_serializing_if = "Option::is_none")]
     pub is_liquidation: Option<bool>,
+
     /// Price in base currency or "market_price" in case of open trigger market orders
     pub price: serde_json::Value,
+
     /// `true` if created via Deribit frontend (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub web: Option<bool>,
+
     /// Order time in force: `"good_til_cancelled"`, `"good_til_day"`, `"fill_or_kill"` or `"immediate_or_cancel"`
     #[serde(skip_serializing_if = "Option::is_none")]
     pub time_in_force: Option<String>,
+
     /// The price of the given trigger at the time when the order was placed (Only for trailing trigger orders)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub trigger_reference_price: Option<f64>,
+
     /// The actual display amount of iceberg order. Absent for other types of orders.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub display_amount: Option<f64>,
+
     /// Order type: `"limit"`, `"market"`, `"stop_limit"`, `"stop_market"`
     #[serde(skip_serializing_if = "Option::is_none")]
     pub order_type: Option<String>,
+
     /// `true` if the order is an order that can trigger an OCO pair, otherwise not present.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub is_primary_otoco: Option<bool>,
+
     /// Original order type. Optional field
     #[serde(skip_serializing_if = "Option::is_none")]
     pub original_order_type: Option<String>,
+
     /// `true` if order made from block_trade trade, added only in that case.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub block_trade: Option<bool>,
+
     /// Trigger price (Only for future trigger orders)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub trigger_price: Option<f64>,
+
     /// Unique reference that identifies a one_cancels_others (OCO) pair.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub oco_ref: Option<String>,
+
     /// The maximum deviation from the price peak beyond which the order will be triggered (Only for trailing trigger orders)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub trigger_offset: Option<f64>,
+
     /// Identifier of the QuoteSet supplied in the `private/mass_quote` request.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub quote_set_id: Option<String>,
+
     /// Options, advanced orders only - `true` if last modification of the order was performed by the pricing engine, otherwise `false`.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub auto_replaced: Option<bool>,
+
     /// Optional (not added for spot). `true` for reduce-only orders only
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reduce_only: Option<bool>,
+
     /// It represents the requested order size. For perpetual and inverse futures the amount is in USD units. For options and linear futures and it is the underlying base currency coin.
     pub amount: f64,
+
     /// `true` if the order is marked by the platform as a risk reducing order (can apply only to orders placed by PM users), otherwise `false`.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub risk_reducing: Option<bool>,
+
     /// Unique instrument identifier
     pub instrument_name: String,
+
     /// The fill condition of the linked order (Only for linked order types), default: `first_hit`.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub trigger_fill_condition: Option<String>,
+
     /// Unique order identifier
     #[serde(skip_serializing_if = "Option::is_none")]
     pub primary_order_id: Option<String>,

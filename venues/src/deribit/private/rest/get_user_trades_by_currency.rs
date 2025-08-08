@@ -14,30 +14,39 @@ const GET_USER_TRADES_BY_CURRENCY_ENDPOINT: &str = "private/get_user_trades_by_c
 pub struct GetUserTradesByCurrencyRequest {
     /// The currency symbol
     pub currency: Currency,
+
     /// Instrument kind (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub kind: Option<InstrumentKind>,
+
     /// The ID of the first trade to be returned (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub start_id: Option<String>,
+
     /// The ID of the last trade to be returned (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub end_id: Option<String>,
+
     /// Number of requested items, default - 10 (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub count: Option<i32>,
+
     /// The earliest timestamp to return result from (milliseconds since the UNIX epoch) (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub start_timestamp: Option<i64>,
+
     /// The most recent timestamp to return result from (milliseconds since the UNIX epoch) (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub end_timestamp: Option<i64>,
+
     /// Direction of results sorting (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub sorting: Option<Sorting>,
+
     /// Determines whether historical trade and order records should be retrieved (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub historical: Option<bool>,
+
     /// The user id for the subaccount (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub subaccount_id: Option<i32>,
@@ -48,95 +57,131 @@ pub struct GetUserTradesByCurrencyRequest {
 pub struct Trade {
     /// Unique (per currency) trade identifier
     pub trade_id: String,
+
     /// Direction of the "tick"
     pub tick_direction: TickDirection,
+
     /// Currency for fees
     pub fee_currency: String,
+
     /// True if user order was created with API
     #[serde(skip_serializing_if = "Option::is_none")]
     pub api: Option<bool>,
+
     /// Advanced type of user order
     #[serde(skip_serializing_if = "Option::is_none")]
     pub advanced: Option<AdvancedType>,
+
     /// Id of the user order (maker or taker)
     pub order_id: String,
+
     /// Describes what was role of users order
     pub liquidity: Liquidity,
+
     /// True if user order is post-only
     #[serde(skip_serializing_if = "Option::is_none")]
     pub post_only: Option<bool>,
+
     /// Direction: buy, or sell
     pub direction: OrderDirection,
+
     /// Trade size in contract units (optional, may be absent in historical trades)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub contracts: Option<f64>,
+
     /// True if user order is MMP
     #[serde(skip_serializing_if = "Option::is_none")]
     pub mmp: Option<bool>,
+
     /// User's fee in units of the specified fee_currency
     pub fee: f64,
+
     /// QuoteID of the user order (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub quote_id: Option<String>,
+
     /// Index Price at the moment of trade
     pub index_price: f64,
+
     /// User defined label (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub label: Option<String>,
+
     /// Block trade id - when trade was part of a block trade (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub block_trade_id: Option<String>,
+
     /// Price in base currency
     pub price: f64,
+
     /// Optional field containing combo instrument name if the trade is a combo trade
     #[serde(skip_serializing_if = "Option::is_none")]
     pub combo_id: Option<String>,
+
     /// Always null
     #[serde(skip_serializing_if = "Option::is_none")]
     pub matching_id: Option<String>,
+
     /// Order type: "limit", "market", or "liquidation"
     pub order_type: TradeOrderType,
+
     /// Profit and loss in base currency
     pub profit_loss: f64,
+
     /// The timestamp of the trade (milliseconds since the UNIX epoch)
     pub timestamp: i64,
+
     /// Option implied volatility for the price (Option only)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub iv: Option<f64>,
+
     /// Order state
     pub state: OrderState,
+
     /// Underlying price for implied volatility calculations (Options only)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub underlying_price: Option<f64>,
+
     /// ID of the Block RFQ quote - when trade was part of the Block RFQ (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub block_rfq_quote_id: Option<i64>,
+
     /// QuoteSet of the user order (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub quote_set_id: Option<String>,
+
     /// Mark Price at the moment of trade
     pub mark_price: f64,
+
     /// ID of the Block RFQ - when trade was part of the Block RFQ (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub block_rfq_id: Option<i64>,
+
     /// Optional field containing combo trade identifier if the trade is a combo trade
     #[serde(skip_serializing_if = "Option::is_none")]
     pub combo_trade_id: Option<f64>,
+
     /// True if user order is reduce-only
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reduce_only: Option<bool>,
+
     /// Trade amount
     pub amount: f64,
+
     /// Optional field for liquidation info
     #[serde(skip_serializing_if = "Option::is_none")]
     pub liquidation: Option<LiquidationSide>,
+
     /// The sequence number of the trade within instrument
     pub trade_seq: i64,
+
     /// True if user order is marked by the platform as a risk reducing order
     #[serde(skip_serializing_if = "Option::is_none")]
     pub risk_reducing: Option<bool>,
+
     /// Unique instrument identifier
     pub instrument_name: String,
+
     /// Optional field containing leg trades if trade is a combo trade
     #[serde(skip_serializing_if = "Option::is_none")]
     pub legs: Option<Vec<serde_json::Value>>, // Using generic Value for legs as structure is complex

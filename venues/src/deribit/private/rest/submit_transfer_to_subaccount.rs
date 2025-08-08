@@ -11,8 +11,10 @@ const SUBMIT_TRANSFER_TO_SUBACCOUNT_ENDPOINT: &str = "private/submit_transfer_to
 pub struct SubmitTransferToSubaccountRequest {
     /// The currency symbol
     pub currency: Currency,
+
     /// Amount of funds to be transferred
     pub amount: f64,
+
     /// Id of destination subaccount
     pub destination: i64,
 }
@@ -22,21 +24,29 @@ pub struct SubmitTransferToSubaccountRequest {
 pub struct SubaccountTransferData {
     /// Amount of funds in given currency
     pub amount: f64,
+
     /// The timestamp (milliseconds since the Unix epoch)
     pub created_timestamp: i64,
+
     /// Currency, i.e "BTC", "ETH", "USDC"
     pub currency: String,
+
     /// Transfer direction
     pub direction: String,
+
     /// Id of transfer
     pub id: i64,
+
     /// For transfer to subaccount returns this subaccount name
     pub other_side: String,
+
     /// Transfer state
     pub state: String,
+
     /// Type of transfer: "user" - sent to user, "subaccount" - sent to subaccount
     #[serde(rename = "type")]
     pub transfer_type: String,
+
     /// The timestamp (milliseconds since the Unix epoch)
     pub updated_timestamp: i64,
 }
@@ -50,7 +60,7 @@ impl RestClient {
     /// This endpoint requires wallets:read_write scope and transfers funds
     /// to the specified subaccount.
     ///
-    /// See: <https://docs.deribit.com/v2/#private-submit_transfer_to_subaccount>
+    /// [docs]: https://docs.deribit.com/v2/#private-submit_transfer_to_subaccount
     ///
     /// Rate limit: 500 credits per request (non-matching engine)
     /// Scope: wallets:read_write

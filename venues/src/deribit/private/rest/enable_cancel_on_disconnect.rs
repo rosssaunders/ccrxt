@@ -12,6 +12,7 @@ const ENABLE_CANCEL_ON_DISCONNECT_ENDPOINT: &str = "private/enable_cancel_on_dis
 pub enum CancelOnDisconnectScope {
     /// Change applies to current connection only (websocket only)
     Connection,
+
     /// Change applies to the entire account
     Account,
 }

@@ -21,9 +21,11 @@ pub enum Side {
 pub struct SendRfqRequest {
     /// Instrument name
     pub instrument_name: String,
+
     /// Amount (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub amount: Option<f64>,
+
     /// Side - buy or sell (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub side: Option<Side>,

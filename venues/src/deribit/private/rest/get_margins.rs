@@ -1,10 +1,3 @@
-//! Implements the /private/get_margins endpoint for Deribit's REST API.
-//!
-//! Fetches margin requirements for a given instrument, amount, and price.
-//!
-//! Endpoint: /private/get_margins
-//! [Official Deribit Docs](https://docs.deribit.com/v2/#private-get_margins)
-
 use serde::{Deserialize, Serialize};
 
 use crate::deribit::{EndpointType, JsonRpcResult, RestResult};

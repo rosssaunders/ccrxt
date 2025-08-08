@@ -73,25 +73,33 @@ pub enum IndexName {
 pub struct SetMmpConfigRequest {
     /// Index identifier of derivative instrument on the platform
     pub index_name: IndexName,
+
     /// MMP Interval in seconds, if set to 0 MMP is removed
     pub interval: i32,
+
     /// MMP frozen time in seconds, if set to 0 manual reset is required
     pub frozen_time: i32,
+
     /// Designates the MMP group for which the configuration is being set
     #[serde(skip_serializing_if = "Option::is_none")]
     pub mmp_group: Option<String>,
+
     /// Quantity limit, positive value
     #[serde(skip_serializing_if = "Option::is_none")]
     pub quantity_limit: Option<f64>,
+
     /// Delta limit, positive value
     #[serde(skip_serializing_if = "Option::is_none")]
     pub delta_limit: Option<f64>,
+
     /// Vega limit, positive value
     #[serde(skip_serializing_if = "Option::is_none")]
     pub vega_limit: Option<f64>,
+
     /// If true, configures MMP for Block RFQ
     #[serde(skip_serializing_if = "Option::is_none")]
     pub block_rfq: Option<bool>,
+
     /// For Block RFQ only (block_rfq = true). Sets the maximum number of Block RFQ trades
     #[serde(skip_serializing_if = "Option::is_none")]
     pub trade_count_limit: Option<i32>,
@@ -102,20 +110,28 @@ pub struct SetMmpConfigRequest {
 pub struct MmpConfig {
     /// If true, indicates MMP configuration for Block RFQ
     pub block_rfq: bool,
+
     /// Delta limit
     pub delta_limit: f64,
+
     /// MMP frozen time in seconds, if set to 0 manual reset is required
     pub frozen_time: i32,
+
     /// Index identifier, matches (base) cryptocurrency with quote currency
     pub index_name: String,
+
     /// MMP Interval in seconds, if set to 0 MMP is disabled
     pub interval: i32,
+
     /// Specified MMP Group
     pub mmp_group: String,
+
     /// Quantity limit
     pub quantity_limit: f64,
+
     /// For Block RFQ only. The maximum number of Block RFQ trades allowed in the lookback window
     pub trade_count_limit: i32,
+
     /// Vega limit
     pub vega_limit: f64,
 }

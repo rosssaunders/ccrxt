@@ -11,10 +11,13 @@ const SET_CLEARANCE_ORIGINATOR_ENDPOINT: &str = "private/set_clearance_originato
 pub struct DepositId {
     /// The currency symbol (BTC, ETH, USDC, USDT, EURR)
     pub currency: String,
+
     /// Id of a (sub)account
     pub user_id: i64,
+
     /// Address in currency format
     pub address: String,
+
     /// Transaction id in proper format for the currency
     pub tx_hash: String,
 }
@@ -24,12 +27,16 @@ pub struct DepositId {
 pub struct Originator {
     /// If the user is the originator of the deposit
     pub is_personal: bool,
+
     /// Company name of the originator if the originator is a legal entity
     pub company_name: String,
+
     /// First name if the user is the originator of the deposit
     pub first_name: String,
+
     /// Last name of the originator if the originator is a person
     pub last_name: String,
+
     /// Geographical address of the originator
     pub address: String,
 }
@@ -39,6 +46,7 @@ pub struct Originator {
 pub struct SetClearanceOriginatorRequest {
     /// Id of the deposit
     pub deposit_id: DepositId,
+
     /// Information about the originator of the deposit
     pub originator: Originator,
 }
@@ -48,24 +56,34 @@ pub struct SetClearanceOriginatorRequest {
 pub struct SetClearanceOriginatorResult {
     /// Address in proper format for currency
     pub address: String,
+
     /// Amount of funds in given currency
     pub amount: f64,
+
     /// Clearance state
     pub clearance_state: String,
+
     /// Currency, i.e "BTC", "ETH", "USDC"
     pub currency: String,
+
     /// Note
     pub note: String,
+
     /// The timestamp (milliseconds since the Unix epoch)
     pub received_timestamp: i64,
+
     /// Transaction id in proper format for currency, null if id is not available
     pub refund_transaction_id: Option<String>,
+
     /// Address in proper format for currency
     pub source_address: String,
+
     /// Deposit state
     pub state: String,
+
     /// Transaction id in proper format for currency, null if id is not available
     pub transaction_id: Option<String>,
+
     /// The timestamp (milliseconds since the Unix epoch)
     pub updated_timestamp: i64,
 }

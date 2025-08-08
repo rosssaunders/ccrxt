@@ -12,6 +12,7 @@ const GET_ADDRESS_BOOK_ENDPOINT: &str = "private/get_address_book";
 pub struct GetAddressBookRequest {
     /// The currency symbol
     pub currency: Currency,
+
     /// Address book type
     #[serde(rename = "type")]
     pub address_type: AddressBookType,

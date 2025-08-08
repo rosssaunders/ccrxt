@@ -1,6 +1,5 @@
 use serde::Serialize;
 
-// Reuse the types from add_block_rfq_quote since the API uses the same structures
 use super::RestClient;
 use super::add_block_rfq_quote::{AddBlockRfqQuoteResult, BlockRfqHedge, BlockRfqLeg};
 use crate::deribit::{EndpointType, JsonRpcResult, RestResult};
@@ -13,20 +12,26 @@ const EDIT_BLOCK_RFQ_QUOTE_ENDPOINT: &str = "private/edit_block_rfq_quote";
 pub struct EditBlockRfqQuoteRequest {
     /// List of legs used for Block RFQ quote
     pub legs: Vec<BlockRfqLeg>,
+
     /// This value multiplied by the ratio of a leg gives trade size on that leg
     pub amount: f64,
+
     /// ID of the Block RFQ quote (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub block_rfq_quote_id: Option<i64>,
+
     /// User defined label for the Block RFQ quote (maximum 64 characters)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub label: Option<String>,
+
     /// Hedge leg of the Block RFQ (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub hedge: Option<BlockRfqHedge>,
+
     /// ID of the Block RFQ (optional, used with label to identify quote)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub block_rfq_id: Option<i64>,
+
     /// Aggregated price used for quoting future spreads
     #[serde(skip_serializing_if = "Option::is_none")]
     pub price: Option<f64>,
@@ -58,6 +63,8 @@ impl RestClient {
     ///
     /// # Returns
     /// Result containing the edited Block RFQ quote details
+    ///
+    /// [docs]: https://docs.deribit.com/#private-edit_block_rfq_quote
     pub async fn edit_block_rfq_quote(
         &self,
         request: EditBlockRfqQuoteRequest,

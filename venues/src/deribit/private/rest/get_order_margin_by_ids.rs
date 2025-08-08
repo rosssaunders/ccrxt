@@ -1,7 +1,3 @@
-//! Retrieves initial margins of given orders via /private/get_order_margin_by_ids
-//!
-//! This module defines the request/response types and logic for the Deribit private endpoint.
-
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
@@ -13,6 +9,7 @@ const GET_ORDER_MARGIN_BY_IDS_ENDPOINT: &str = "private/get_order_margin_by_ids"
 /// Request for /private/get_order_margin_by_ids
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GetOrderMarginByIdsRequest {
+    /// Order identifiers for which to retrieve initial margin information
     pub ids: Vec<String>,
 }
 
@@ -21,8 +18,13 @@ pub type GetOrderMarginByIdsResponse = JsonRpcResult<Vec<OrderMarginInfo>>;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct OrderMarginInfo {
+    /// Initial margin value required for the order
     pub initial_margin: f64,
+
+    /// Currency of the initial margin value
     pub initial_margin_currency: String,
+
+    /// Unique identifier of the order
     pub order_id: String,
 }
 

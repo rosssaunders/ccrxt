@@ -11,8 +11,10 @@ const SUBMIT_TRANSFER_TO_USER_ENDPOINT: &str = "private/submit_transfer_to_user"
 pub struct SubmitTransferToUserRequest {
     /// The currency symbol (BTC, ETH, USDC, USDT, EURR)
     pub currency: String,
+
     /// Amount of funds to be transferred
     pub amount: f64,
+
     /// Destination wallet's address taken from address book
     pub destination: String,
 }
@@ -22,21 +24,29 @@ pub struct SubmitTransferToUserRequest {
 pub struct TransferData {
     /// Amount of funds in given currency
     pub amount: f64,
+
     /// The timestamp (milliseconds since the Unix epoch)
     pub created_timestamp: i64,
+
     /// Currency, i.e "BTC", "ETH", "USDC"
     pub currency: String,
+
     /// Transfer direction
     pub direction: String,
+
     /// Id of transfer
     pub id: i64,
+
     /// For transfer from/to subaccount returns this subaccount name, for transfer to other account returns address, for transfer from other account returns that accounts username
     pub other_side: String,
+
     /// Transfer state
     pub state: String,
+
     /// Type of transfer: user - sent to user, subaccount - sent to subaccount
     #[serde(rename = "type")]
     pub transfer_type: String,
+
     /// The timestamp (milliseconds since the Unix epoch)
     pub updated_timestamp: i64,
 }
@@ -49,7 +59,7 @@ impl RestClient {
     ///
     /// Transfer funds to another user using their wallet address from address book.
     ///
-    /// See: <https://docs.deribit.com/v2/#private-submit_transfer_to_user>
+    /// [docs]: https://docs.deribit.com/v2/#private-submit_transfer_to_user
     ///
     /// Rate limit: 500 credits per request (non-matching engine)
     /// Scope: wallet:read_write and mainaccount

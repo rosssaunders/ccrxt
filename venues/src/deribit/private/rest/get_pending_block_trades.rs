@@ -85,6 +85,7 @@ pub struct PendingBlockTrade {
 pub enum PendingBlockTradeRole {
     #[serde(rename = "maker")]
     Maker,
+
     #[serde(rename = "taker")]
     Taker,
 }
