@@ -74,11 +74,7 @@ impl RestClient {
         &self,
         request: &GetProductVolumeSummaryRequest,
     ) -> RestResult<GetProductVolumeSummaryResponse> {
-        self.send_request(
-            PRODUCT_VOLUME_SUMMARY_ENDPOINT,
-            reqwest::Method::GET,
-            Some(request),
-        )
+        self.send_get_request(PRODUCT_VOLUME_SUMMARY_ENDPOINT, Some(request))
         .await
     }
 }

@@ -57,7 +57,7 @@ impl RestClient {
         request: &GetProductCandlesRequest,
     ) -> RestResult<GetProductCandlesResponse> {
         let endpoint = ENDPOINT_PATH.replace("{}", product_id);
-        self.send_request(&endpoint, reqwest::Method::GET, Some(request))
+        self.send_get_request(&endpoint, Some(request))
             .await
     }
 }

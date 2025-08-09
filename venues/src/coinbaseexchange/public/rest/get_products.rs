@@ -102,7 +102,7 @@ impl RestClient {
         &self,
         request: &GetProductsRequest,
     ) -> RestResult<GetProductsResponse> {
-        self.send_request(PRODUCTS_ENDPOINT, reqwest::Method::GET, Some(request))
+        self.send_get_request(PRODUCTS_ENDPOINT, Some(request))
             .await
     }
 }

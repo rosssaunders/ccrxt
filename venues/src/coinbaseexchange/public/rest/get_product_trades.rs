@@ -81,7 +81,7 @@ impl RestClient {
     ) -> RestResult<(GetProductTradesResponse, Option<PaginationInfo>)> {
         let endpoint = ENDPOINT_PATH.replace("{}", product_id);
         let (data, headers) = self
-            .send_request_with_headers(&endpoint, reqwest::Method::GET, Some(request))
+            .send_get_request_with_headers(&endpoint, Some(request))
             .await?;
 
         // Extract pagination headers
