@@ -21,6 +21,7 @@ use venues::deribit::{
     GetTradingviewChartDataRequest, GetVolatilityIndexDataRequest, InstrumentKind,
     PublicRestClient, RateLimiter, Resolution,
 };
+use venues::deribit::public::rest::get_time::GetTimeRequest;
 
 /// Helper function to create a test client for public endpoints
 fn create_public_test_client() -> PublicRestClient {
@@ -54,7 +55,7 @@ async fn test_get_status() {
 #[tokio::test]
 async fn test_get_time() {
     let client = create_public_test_client();
-    let result = client.get_time().await;
+    let result = client.get_time(GetTimeRequest {}).await;
     assert!(
         result.is_ok(),
         "get_time request should succeed: {:?}",
@@ -1062,7 +1063,7 @@ async fn test_rate_limiting_burst() {
     for i in 0..5 {
         let client_clone = client.clone();
         let handle = tokio::spawn(async move {
-            let result = client_clone.get_time().await;
+            let result = client_clone.get_time(GetTimeRequest {}).await;
             (i, result)
         });
         handles.push(handle);
@@ -1488,7 +1489,7 @@ async fn test_get_time_detailed() {
 
     let before_request = chrono::Utc::now().timestamp_millis();
 
-    let result = client.get_time().await;
+    let result = client.get_time(GetTimeRequest {}).await;
     assert!(
         result.is_ok(),
         "get_time request should succeed: {:?}",
