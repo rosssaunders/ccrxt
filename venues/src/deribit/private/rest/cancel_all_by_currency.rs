@@ -40,7 +40,7 @@ impl RestClient {
     /// This method cancels all orders by currency, optionally filtered by instrument kind and/or
     /// order type. This endpoint requires trade:read_write scope.
     ///
-    /// See: <https://docs.deribit.com/v2/#private-cancel_all_by_currency>
+    /// [docs]: https://docs.deribit.com/v2/#private-cancel_all_by_currency
     ///
     /// Rate limit: Matching engine endpoint (tier-based rate limiting)
     /// Scope: trade:read_write

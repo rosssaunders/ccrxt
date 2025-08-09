@@ -34,7 +34,7 @@ impl RestClient {
     /// After enabling Cancel On Disconnect all orders created by the connection will be removed
     /// when the connection is closed. This endpoint requires account:read_write scope.
     ///
-    /// See: <https://docs.deribit.com/v2/#private-enable_cancel_on_disconnect>
+    /// [docs]: https://docs.deribit.com/v2/#private-enable_cancel_on_disconnect
     ///
     /// Rate limit: 500 credits per request (non-matching engine)
     /// Scope: account:read_write

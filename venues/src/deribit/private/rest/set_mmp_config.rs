@@ -146,7 +146,7 @@ impl RestClient {
     /// This endpoint requires trade:read_write or block_rfq:read_write scope (when block_rfq = true).
     /// This is a matching engine method.
     ///
-    /// See: <https://docs.deribit.com/v2/#private-set_mmp_config>
+    /// [docs]: https://docs.deribit.com/v2/#private-set_mmp_config
     ///
     /// Rate limit: Matching engine endpoint (tier-based limits)
     /// Scope: trade:read_write or block_rfq:read_write (when block_rfq = true)

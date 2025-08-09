@@ -58,7 +58,7 @@ impl RestClient {
     /// subaccounts. Includes both group-level and individual user-level alias data, if available.
     /// This endpoint requires block_rfq:read scope.
     ///
-    /// See: <https://docs.deribit.com/v2/#private-get_block_rfq_user_info>
+    /// [docs]: https://docs.deribit.com/v2/#private-get_block_rfq_user_info
     ///
     /// Rate limit: Depends on endpoint type (matching engine)
     /// Scope: block_rfq:read

@@ -68,7 +68,7 @@ pub type WithdrawResponse = JsonRpcResult<WithdrawalData>;
 impl RestClient {
     /// Withdraw funds from your account to an address in your address book.
     ///
-    /// See: <https://docs.deribit.com/v2/#private-withdraw>
+    /// [docs]: https://docs.deribit.com/v2/#private-withdraw
     ///
     /// Rate limit: 500 credits per request (non-matching engine)
     /// Scope: wallet:read_write

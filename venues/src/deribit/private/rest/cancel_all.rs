@@ -27,7 +27,7 @@ impl RestClient {
     /// This method cancels all users orders and trigger orders within all currencies
     /// and instrument kinds. This endpoint requires trade:read_write scope.
     ///
-    /// See: <https://docs.deribit.com/v2/#private-cancel_all>
+    /// [docs]: https://docs.deribit.com/v2/#private-cancel_all
     ///
     /// Rate limit: Matching engine endpoint (tier-based rate limiting)
     /// Scope: trade:read_write

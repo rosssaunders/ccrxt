@@ -224,7 +224,7 @@ impl RestClient {
     /// This is a private method; it can only be used after authentication.
     /// This is a matching engine method.
     ///
-    /// See: <https://docs.deribit.com/v2/#private-cancel>
+    /// [docs]: https://docs.deribit.com/v2/#private-cancel
     ///
     /// Rate limit: Matching engine rate limits apply based on account tier
     /// Scope: trade:read_write

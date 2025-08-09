@@ -189,6 +189,8 @@ impl RestClient {
     /// Rate limit: Depends on endpoint type (matching engine)
     /// Scope: block_rfq:read_write
     ///
+    /// [docs]: https://docs.deribit.com/v2/#private-add_block_rfq_quote
+    ///
     /// # Arguments
     /// * `label` - Optional user defined label for the Block RFQ quote (maximum 64 characters)
     /// * `block_rfq_id` - ID of the Block RFQ

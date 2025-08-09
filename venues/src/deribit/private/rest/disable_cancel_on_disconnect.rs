@@ -24,7 +24,7 @@ impl RestClient {
     /// When change is applied for the account, every newly opened connection will start
     /// with inactive Cancel on Disconnect. This endpoint requires account:read_write scope.
     ///
-    /// See: <https://docs.deribit.com/v2/#private-disable_cancel_on_disconnect>
+    /// [docs]: https://docs.deribit.com/v2/#private-disable_cancel_on_disconnect
     ///
     /// Rate limit: 500 credits per request (non-matching engine)
     /// Scope: account:read_write

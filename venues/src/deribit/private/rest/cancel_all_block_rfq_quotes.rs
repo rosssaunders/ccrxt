@@ -29,7 +29,7 @@ impl RestClient {
     ///
     /// This endpoint requires block_rfq:read_write scope.
     ///
-    /// See: <https://docs.deribit.com/v2/#private-cancel_all_block_rfq_quotes>
+    /// [docs]: https://docs.deribit.com/v2/#private-cancel_all_block_rfq_quotes
     ///
     /// Rate limit: Matching engine endpoint (tier-based rate limiting)
     /// Scope: block_rfq:read_write

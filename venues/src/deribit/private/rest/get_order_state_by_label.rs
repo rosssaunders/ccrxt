@@ -235,7 +235,7 @@ pub struct OrderStateByLabelInfo {
 impl RestClient {
     /// Retrieve the state of recent orders with a given label.
     ///
-    /// [Deribit API docs](https://docs.deribit.com/#private-get_order_state_by_label)
+    /// [docs]: https://docs.deribit.com/v2/#private-get_order_state_by_label
     ///
     /// # Arguments
     /// * `params` - Parameters for the request (currency, optional label)

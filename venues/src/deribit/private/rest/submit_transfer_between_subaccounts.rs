@@ -33,7 +33,7 @@ impl RestClient {
     ///
     /// Transfer funds between two (sub)accounts.
     ///
-    /// See: <https://docs.deribit.com/v2/#private-submit_transfer_between_subaccounts>
+    /// [docs]: https://docs.deribit.com/v2/#private-submit_transfer_between_subaccounts
     ///
     /// Rate limit: 500 credits per request (non-matching engine)
     /// Scope: wallet:read_write

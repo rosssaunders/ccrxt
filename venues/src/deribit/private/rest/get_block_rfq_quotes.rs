@@ -45,7 +45,7 @@ impl RestClient {
     /// # Scope
     /// `block_rfq:read`
     ///
-    /// [docs]: https://docs.deribit.com/#private-get_block_rfq_quotes
+    /// [docs]: https://docs.deribit.com/v2/#private-get_block_rfq_quotes
     pub async fn get_block_rfq_quotes(
         &self,
         request: GetBlockRfqQuotesRequest,

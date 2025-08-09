@@ -49,7 +49,7 @@ impl RestClient {
     /// a list of all triggered MMP statuses is returned.
     /// This endpoint requires trade:read or block_rfq:read scope when block_rfq is true.
     ///
-    /// See: <https://docs.deribit.com/v2/#private-get_mmp_status>
+    /// [docs]: https://docs.deribit.com/v2/#private-get_mmp_status
     ///
     /// Rate limit: Matching engine endpoint (tier-based limits)
     /// Scope: trade:read or block_rfq:read (when block_rfq = true)

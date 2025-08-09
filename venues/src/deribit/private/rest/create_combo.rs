@@ -72,7 +72,7 @@ impl RestClient {
     ///
     /// This endpoint requires trade:read_write scope.
     ///
-    /// See: <https://docs.deribit.com/#private-create_combo>
+    /// [docs]: https://docs.deribit.com/v2/#private-create_combo
     ///
     /// Rate limit: Matching engine endpoint (tier-based limits)
     /// Scope: trade:read_write

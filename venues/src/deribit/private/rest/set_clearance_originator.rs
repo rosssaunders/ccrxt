@@ -94,7 +94,7 @@ pub type SetClearanceOriginatorResponse = JsonRpcResult<SetClearanceOriginatorRe
 impl RestClient {
     /// Sets the clearance originator for a deposit.
     ///
-    /// See: <https://docs.deribit.com/v2/#private-set_clearance_originator>
+    /// [docs]: https://docs.deribit.com/v2/#private-set_clearance_originator
     ///
     /// # Arguments
     /// * `params` - Parameters for the request (deposit_id, originator)

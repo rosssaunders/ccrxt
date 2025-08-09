@@ -205,7 +205,7 @@ impl RestClient {
     /// This is a private method; it can only be used after authentication.
     /// Scope: trade:read
     ///
-    /// See: <https://docs.deribit.com/v2/#private-get_user_trades_by_currency>
+    /// [docs]: https://docs.deribit.com/v2/#private-get_user_trades_by_currency
     ///
     /// Rate limit: Non-matching engine rate limits apply (500 credits)
     ///

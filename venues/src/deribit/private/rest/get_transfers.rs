@@ -40,7 +40,7 @@ impl RestClient {
     /// This endpoint retrieves transfer history for the authenticated user.
     /// The endpoint requires wallet:read scope.
     ///
-    /// See: <https://docs.deribit.com/v2/#private-get_transfers>
+    /// [docs]: https://docs.deribit.com/v2/#private-get_transfers
     ///
     /// Rate limit: 500 credits per request (non-matching engine)
     /// Scope: wallet:read

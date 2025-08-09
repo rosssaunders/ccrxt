@@ -27,7 +27,7 @@ impl RestClient {
     /// This endpoint requires wallet:read scope and returns all address book entries
     /// for the specified currency and address type.
     ///
-    /// See: <https://docs.deribit.com/v2/#private-get_address_book>
+    /// [docs]: https://docs.deribit.com/v2/#private-get_address_book
     ///
     /// Rate limit: 500 credits per request (non-matching engine)
     /// Scope: wallet:read

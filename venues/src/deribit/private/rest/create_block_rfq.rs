@@ -48,14 +48,19 @@ pub struct CreateBlockRfqRequest {
 pub struct Quote {
     /// Amount for the quote
     pub amount: f64,
+
     /// Execution instruction of the quote
     pub execution_instruction: String,
+
     /// The timestamp when the quote expires (milliseconds since the Unix epoch)
     pub expires_at: i64,
+
     /// Timestamp of the last update of the quote (milliseconds since the UNIX epoch)
     pub last_update_timestamp: i64,
+
     /// Makers of the quote
     pub makers: Vec<String>,
+
     /// Price of the quote
     pub price: f64,
 }
@@ -65,8 +70,10 @@ pub struct Quote {
 pub struct ResponseLeg {
     /// Direction: buy or sell
     pub direction: String,
+
     /// Unique instrument identifier
     pub instrument_name: String,
+
     /// Ratio of amount between legs
     pub ratio: i32,
 }
@@ -76,10 +83,13 @@ pub struct ResponseLeg {
 pub struct ResponseHedge {
     /// Amount for hedge leg
     pub amount: i64,
+
     /// Direction: buy or sell
     pub direction: String,
+
     /// Unique instrument identifier
     pub instrument_name: String,
+
     /// Price for hedge leg
     pub price: f64,
 }

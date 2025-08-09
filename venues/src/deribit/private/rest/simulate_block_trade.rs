@@ -60,7 +60,7 @@ pub type SimulateBlockTradeResponse = JsonRpcResult<bool>;
 impl RestClient {
     /// Simulate a block trade to check if it can be executed.
     ///
-    /// See: <https://docs.deribit.com/v2/#private-simulate_block_trade>
+    /// [docs]: https://docs.deribit.com/v2/#private-simulate_block_trade
     ///
     /// Rate limit: Matching engine endpoint (tier-based limits)
     /// Scope: block_trade:read

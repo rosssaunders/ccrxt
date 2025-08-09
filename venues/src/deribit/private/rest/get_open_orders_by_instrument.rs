@@ -232,6 +232,8 @@ pub type GetOpenOrdersByInstrumentResponse = JsonRpcResult<Vec<OpenOrder>>;
 impl RestClient {
     /// Retrieves user's open orders for a given instrument on Deribit.
     /// Endpoint: /private/get_open_orders_by_instrument
+    ///
+    /// [docs]: https://docs.deribit.com/v2/#private-get_open_orders_by_instrument
     pub async fn get_open_orders_by_instrument(
         &self,
         request: GetOpenOrdersByInstrumentRequest,
