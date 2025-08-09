@@ -8,7 +8,7 @@ use std::borrow::Cow;
 use hmac::{Hmac, Mac};
 use reqwest::Client;
 use rest::secrets::ExposableSecret;
-use serde::{Serialize, de::DeserializeOwned};
+use serde::Serialize;
 use sha2::Sha256;
 
 use crate::bybit::{EndpointType, Errors, RateLimiter, RestResult};
@@ -68,28 +68,34 @@ impl RestClient {
         }
     }
 
-    /// Sends a signed request to the ByBit V5 API
-    ///
-    /// This method automatically handles timestamp generation and request signing for private endpoints.
-    /// It follows ByBit V5 authentication requirements.
+    /// Generate HMAC-SHA256 signature for ByBit V5 API
+    fn sign_payload(&self, payload: &str) -> Result<String, Errors> {
+        let secret_key = self.api_secret.expose_secret();
+        let mut mac = Hmac::<Sha256>::new_from_slice(secret_key.as_bytes())
+            .map_err(|e| Errors::AuthError(format!("Invalid secret key: {e}")))?;
+
+        mac.update(payload.as_bytes());
+        let result = mac.finalize();
+        Ok(hex::encode(result.into_bytes()))
+    }
+
+    /// High-performance GET request method (optimized for HFT)
     ///
     /// # Arguments
-    /// * `endpoint` - The API endpoint path (e.g., "/v5/account/wallet-balance")
-    /// * `method` - The HTTP method to use
-    /// * `request` - The request parameters implementing Serialize
+    /// * `endpoint` - The API endpoint path
+    /// * `request` - The request parameters
     /// * `endpoint_type` - The endpoint type for rate limiting
     ///
     /// # Returns
-    /// A result containing the parsed response data, or an error
-    pub(super) async fn send_signed_request<T, R>(
+    /// The deserialized response or an error
+    pub async fn send_get_signed_request<T, R>(
         &self,
         endpoint: &str,
-        method: reqwest::Method,
         request: R,
         endpoint_type: EndpointType,
     ) -> RestResult<T>
     where
-        T: DeserializeOwned,
+        T: serde::de::DeserializeOwned,
         R: Serialize,
     {
         // Check rate limits before making request
@@ -100,14 +106,10 @@ impl RestClient {
         let timestamp = chrono::Utc::now().timestamp_millis().to_string();
         let recv_window = "5000"; // 5 seconds receive window
 
-        // Serialize query parameters
-        let query_string = if method == reqwest::Method::GET {
-            serde_urlencoded::to_string(&request)?
-        } else {
-            String::new()
-        };
+        // Serialize query parameters for GET
+        let query_string = serde_urlencoded::to_string(&request)?;
 
-        // Create signature payload: timestamp + api_key + recv_window + query_string (+ body for POST)
+        // Create signature payload: timestamp + api_key + recv_window + query_string
         let mut payload = format!(
             "{}{}{}",
             timestamp,
@@ -115,11 +117,8 @@ impl RestClient {
             recv_window
         );
 
-        if method == reqwest::Method::GET && !query_string.is_empty() {
+        if !query_string.is_empty() {
             payload.push_str(&query_string);
-        } else if method == reqwest::Method::POST {
-            let body = serde_json::to_string(&request)?;
-            payload.push_str(&body);
         }
 
         // Generate HMAC-SHA256 signature
@@ -127,7 +126,7 @@ impl RestClient {
 
         // Build the URL
         let url = format!("{}{}", self.base_url, endpoint);
-        let mut request_builder = self.client.request(method.clone(), &url);
+        let mut request_builder = self.client.get(&url);
 
         // Add headers
         request_builder = request_builder
@@ -137,11 +136,9 @@ impl RestClient {
             .header("X-BAPI-RECV-WINDOW", recv_window)
             .header("Content-Type", "application/json");
 
-        // Add query parameters for GET or body for POST
-        if method == reqwest::Method::GET && !query_string.is_empty() {
+        // Add query parameters
+        if !query_string.is_empty() {
             request_builder = request_builder.query(&[("", &query_string)]);
-        } else if method == reqwest::Method::POST {
-            request_builder = request_builder.json(&request);
         }
 
         // Send the request
@@ -167,18 +164,7 @@ impl RestClient {
         Ok(parsed_response)
     }
 
-    /// Generate HMAC-SHA256 signature for ByBit V5 API
-    fn sign_payload(&self, payload: &str) -> Result<String, Errors> {
-        let secret_key = self.api_secret.expose_secret();
-        let mut mac = Hmac::<Sha256>::new_from_slice(secret_key.as_bytes())
-            .map_err(|e| Errors::AuthError(format!("Invalid secret key: {e}")))?;
-
-        mac.update(payload.as_bytes());
-        let result = mac.finalize();
-        Ok(hex::encode(result.into_bytes()))
-    }
-
-    /// High-performance GET request method
+    /// High-performance POST request method (optimized for HFT)
     ///
     /// # Arguments
     /// * `endpoint` - The API endpoint path
@@ -187,7 +173,7 @@ impl RestClient {
     ///
     /// # Returns
     /// The deserialized response or an error
-    pub async fn send_get_request<T, R>(
+    pub async fn send_post_signed_request<T, R>(
         &self,
         endpoint: &str,
         request: R,
@@ -197,11 +183,66 @@ impl RestClient {
         T: serde::de::DeserializeOwned,
         R: Serialize,
     {
-        self.send_signed_request(endpoint, reqwest::Method::GET, request, endpoint_type)
-            .await
+        // Check rate limits before making request
+        self.rate_limiter
+            .check_limits(endpoint_type.clone())
+            .await?;
+
+        let timestamp = chrono::Utc::now().timestamp_millis().to_string();
+        let recv_window = "5000"; // 5 seconds receive window
+
+        // Serialize body for POST
+        let body = serde_json::to_string(&request)?;
+
+        // Create signature payload: timestamp + api_key + recv_window + body
+        let payload = format!(
+            "{}{}{}{}",
+            timestamp,
+            self.api_key.expose_secret(),
+            recv_window,
+            body
+        );
+
+        // Generate HMAC-SHA256 signature
+        let signature = self.sign_payload(&payload)?;
+
+        // Build the URL
+        let url = format!("{}{}", self.base_url, endpoint);
+        let mut request_builder = self.client.post(&url);
+
+        // Add headers
+        request_builder = request_builder
+            .header("X-BAPI-API-KEY", self.api_key.expose_secret())
+            .header("X-BAPI-TIMESTAMP", &timestamp)
+            .header("X-BAPI-SIGN", &signature)
+            .header("X-BAPI-RECV-WINDOW", recv_window)
+            .header("Content-Type", "application/json")
+            .json(&request);
+
+        // Send the request
+        let response = request_builder.send().await?;
+
+        // Record the request for rate limiting
+        self.rate_limiter.increment_request(endpoint_type).await;
+
+        // Check for HTTP errors
+        if !response.status().is_success() {
+            let status = response.status();
+            let error_text = response
+                .text()
+                .await
+                .unwrap_or_else(|_| "Unknown error".to_string());
+            return Err(Errors::ApiError(format!("HTTP {status}: {error_text}")));
+        }
+
+        // Parse the response
+        let response_text = response.text().await?;
+        let parsed_response: T = serde_json::from_str(&response_text)?;
+
+        Ok(parsed_response)
     }
 
-    /// High-performance POST request method
+    /// High-performance PUT request method (optimized for HFT)
     ///
     /// # Arguments
     /// * `endpoint` - The API endpoint path
@@ -210,7 +251,7 @@ impl RestClient {
     ///
     /// # Returns
     /// The deserialized response or an error
-    pub async fn send_post_request<T, R>(
+    pub async fn send_put_signed_request<T, R>(
         &self,
         endpoint: &str,
         request: R,
@@ -220,11 +261,66 @@ impl RestClient {
         T: serde::de::DeserializeOwned,
         R: Serialize,
     {
-        self.send_signed_request(endpoint, reqwest::Method::POST, request, endpoint_type)
-            .await
+        // Check rate limits before making request
+        self.rate_limiter
+            .check_limits(endpoint_type.clone())
+            .await?;
+
+        let timestamp = chrono::Utc::now().timestamp_millis().to_string();
+        let recv_window = "5000"; // 5 seconds receive window
+
+        // Serialize body for PUT
+        let body = serde_json::to_string(&request)?;
+
+        // Create signature payload: timestamp + api_key + recv_window + body
+        let payload = format!(
+            "{}{}{}{}",
+            timestamp,
+            self.api_key.expose_secret(),
+            recv_window,
+            body
+        );
+
+        // Generate HMAC-SHA256 signature
+        let signature = self.sign_payload(&payload)?;
+
+        // Build the URL
+        let url = format!("{}{}", self.base_url, endpoint);
+        let mut request_builder = self.client.put(&url);
+
+        // Add headers
+        request_builder = request_builder
+            .header("X-BAPI-API-KEY", self.api_key.expose_secret())
+            .header("X-BAPI-TIMESTAMP", &timestamp)
+            .header("X-BAPI-SIGN", &signature)
+            .header("X-BAPI-RECV-WINDOW", recv_window)
+            .header("Content-Type", "application/json")
+            .json(&request);
+
+        // Send the request
+        let response = request_builder.send().await?;
+
+        // Record the request for rate limiting
+        self.rate_limiter.increment_request(endpoint_type).await;
+
+        // Check for HTTP errors
+        if !response.status().is_success() {
+            let status = response.status();
+            let error_text = response
+                .text()
+                .await
+                .unwrap_or_else(|_| "Unknown error".to_string());
+            return Err(Errors::ApiError(format!("HTTP {status}: {error_text}")));
+        }
+
+        // Parse the response
+        let response_text = response.text().await?;
+        let parsed_response: T = serde_json::from_str(&response_text)?;
+
+        Ok(parsed_response)
     }
 
-    /// High-performance PUT request method
+    /// High-performance DELETE request method (optimized for HFT)
     ///
     /// # Arguments
     /// * `endpoint` - The API endpoint path
@@ -233,7 +329,7 @@ impl RestClient {
     ///
     /// # Returns
     /// The deserialized response or an error
-    pub async fn send_put_request<T, R>(
+    pub async fn send_delete_signed_request<T, R>(
         &self,
         endpoint: &str,
         request: R,
@@ -243,31 +339,70 @@ impl RestClient {
         T: serde::de::DeserializeOwned,
         R: Serialize,
     {
-        self.send_signed_request(endpoint, reqwest::Method::PUT, request, endpoint_type)
-            .await
-    }
+        // Check rate limits before making request
+        self.rate_limiter
+            .check_limits(endpoint_type.clone())
+            .await?;
 
-    /// High-performance DELETE request method
-    ///
-    /// # Arguments
-    /// * `endpoint` - The API endpoint path
-    /// * `request` - The request parameters
-    /// * `endpoint_type` - The endpoint type for rate limiting
-    ///
-    /// # Returns
-    /// The deserialized response or an error
-    pub async fn send_delete_request<T, R>(
-        &self,
-        endpoint: &str,
-        request: R,
-        endpoint_type: EndpointType,
-    ) -> RestResult<T>
-    where
-        T: serde::de::DeserializeOwned,
-        R: Serialize,
-    {
-        self.send_signed_request(endpoint, reqwest::Method::DELETE, request, endpoint_type)
-            .await
+        let timestamp = chrono::Utc::now().timestamp_millis().to_string();
+        let recv_window = "5000"; // 5 seconds receive window
+
+        // Serialize query parameters for DELETE
+        let query_string = serde_urlencoded::to_string(&request)?;
+
+        // Create signature payload: timestamp + api_key + recv_window + query_string
+        let mut payload = format!(
+            "{}{}{}",
+            timestamp,
+            self.api_key.expose_secret(),
+            recv_window
+        );
+
+        if !query_string.is_empty() {
+            payload.push_str(&query_string);
+        }
+
+        // Generate HMAC-SHA256 signature
+        let signature = self.sign_payload(&payload)?;
+
+        // Build the URL
+        let url = format!("{}{}", self.base_url, endpoint);
+        let mut request_builder = self.client.delete(&url);
+
+        // Add headers
+        request_builder = request_builder
+            .header("X-BAPI-API-KEY", self.api_key.expose_secret())
+            .header("X-BAPI-TIMESTAMP", &timestamp)
+            .header("X-BAPI-SIGN", &signature)
+            .header("X-BAPI-RECV-WINDOW", recv_window)
+            .header("Content-Type", "application/json");
+
+        // Add query parameters
+        if !query_string.is_empty() {
+            request_builder = request_builder.query(&[("", &query_string)]);
+        }
+
+        // Send the request
+        let response = request_builder.send().await?;
+
+        // Record the request for rate limiting
+        self.rate_limiter.increment_request(endpoint_type).await;
+
+        // Check for HTTP errors
+        if !response.status().is_success() {
+            let status = response.status();
+            let error_text = response
+                .text()
+                .await
+                .unwrap_or_else(|_| "Unknown error".to_string());
+            return Err(Errors::ApiError(format!("HTTP {status}: {error_text}")));
+        }
+
+        // Parse the response
+        let response_text = response.text().await?;
+        let parsed_response: T = serde_json::from_str(&response_text)?;
+
+        Ok(parsed_response)
     }
 }
 

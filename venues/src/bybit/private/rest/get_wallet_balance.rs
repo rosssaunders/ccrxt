@@ -146,7 +146,7 @@ impl RestClient {
         &self,
         request: GetWalletBalanceRequest,
     ) -> RestResult<GetWalletBalanceResponse> {
-        self.send_get_request("/v5/account/wallet-balance", request, EndpointType::Account)
+        self.send_get_signed_request("/v5/account/wallet-balance", request, EndpointType::Account)
             .await
     }
 }

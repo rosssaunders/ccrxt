@@ -125,7 +125,7 @@ impl RestClient {
     /// # Returns
     /// A result containing the amended order information with updated order ID and status
     pub async fn amend_order(&self, request: AmendOrderRequest) -> RestResult<AmendOrderResponse> {
-        self.send_post_request(AMEND_ORDER_ENDPOINT, request, EndpointType::Trade)
+        self.send_post_signed_request(AMEND_ORDER_ENDPOINT, request, EndpointType::Trade)
             .await
     }
 }

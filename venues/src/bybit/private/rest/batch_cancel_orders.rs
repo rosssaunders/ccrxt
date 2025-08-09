@@ -102,7 +102,7 @@ impl RestClient {
         &self,
         request: BatchCancelOrdersRequest,
     ) -> RestResult<BatchCancelOrdersResponse> {
-        self.send_post_request(BATCH_CANCEL_ORDERS_ENDPOINT, request, EndpointType::Trade)
+        self.send_post_signed_request(BATCH_CANCEL_ORDERS_ENDPOINT, request, EndpointType::Trade)
             .await
     }
 }
