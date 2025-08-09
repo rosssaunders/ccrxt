@@ -42,7 +42,8 @@ impl super::RestClient {
         request: CancelAllStopOrdersRequest,
     ) -> Result<(CancelAllStopOrdersResponse, ResponseHeaders)> {
         let (response, headers): (RestResponse<CancelAllStopOrdersResponse>, ResponseHeaders) =
-            self.delete_with_request(CANCEL_ALL_STOP_ORDERS_ENDPOINT, &request).await?;
+            self.delete_with_request(CANCEL_ALL_STOP_ORDERS_ENDPOINT, &request)
+                .await?;
 
         Ok((response.data, headers))
     }
@@ -110,8 +111,12 @@ mod tests {
     #[test]
     fn test_cancel_all_stop_orders_response_deserialization_large_list() {
         let order_ids: Vec<String> = (1..=50).map(|i| format!("stop_order_{}", i)).collect();
-        let order_ids_json: Vec<String> = order_ids.iter().map(|id| format!("\"{}\"", id)).collect();
-        let json = format!(r#"{{"cancelledOrderIds": [{}]}}"#, order_ids_json.join(", "));
+        let order_ids_json: Vec<String> =
+            order_ids.iter().map(|id| format!("\"{}\"", id)).collect();
+        let json = format!(
+            r#"{{"cancelledOrderIds": [{}]}}"#,
+            order_ids_json.join(", ")
+        );
 
         let response: CancelAllStopOrdersResponse = serde_json::from_str(&json).unwrap();
         assert_eq!(response.cancelled_order_ids.len(), 50);
@@ -132,7 +137,7 @@ mod tests {
 
         // Test field types and constraints
         assert_eq!(request.symbol, Some("ETHUSDTM".to_string()));
-        
+
         // Test that symbol can be None
         let minimal_request = CancelAllStopOrdersRequest { symbol: None };
         assert!(minimal_request.symbol.is_none());
@@ -145,11 +150,11 @@ mod tests {
         }"#;
 
         let response: CancelAllStopOrdersResponse = serde_json::from_str(json).unwrap();
-        
+
         // Test field types
         assert_eq!(response.cancelled_order_ids.len(), 2);
         assert!(response.cancelled_order_ids.iter().all(|id| id.len() > 0));
-        
+
         // Verify order ID format (typical KuCoin order ID length)
         for order_id in &response.cancelled_order_ids {
             assert!(order_id.len() >= 20); // KuCoin order IDs are typically 24 characters
@@ -158,13 +163,7 @@ mod tests {
 
     #[test]
     fn test_cancel_all_stop_orders_symbol_variations() {
-        let symbols = vec![
-            "XBTUSDTM",
-            "ETHUSDTM", 
-            "ADAUSDTM",
-            "DOTUSDTM",
-            "LINKUSDTM"
-        ];
+        let symbols = vec!["XBTUSDTM", "ETHUSDTM", "ADAUSDTM", "DOTUSDTM", "LINKUSDTM"];
 
         for symbol in symbols {
             let request = CancelAllStopOrdersRequest {
@@ -190,11 +189,27 @@ mod tests {
 
         let response: CancelAllStopOrdersResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.cancelled_order_ids.len(), 4);
-        
+
         // Verify all different stop order ID patterns are handled
-        assert!(response.cancelled_order_ids.contains(&"tp_order_001".to_string()));
-        assert!(response.cancelled_order_ids.contains(&"sl_order_002".to_string()));
-        assert!(response.cancelled_order_ids.contains(&"stop_order_003".to_string()));
-        assert!(response.cancelled_order_ids.contains(&"conditional_order_004".to_string()));
+        assert!(
+            response
+                .cancelled_order_ids
+                .contains(&"tp_order_001".to_string())
+        );
+        assert!(
+            response
+                .cancelled_order_ids
+                .contains(&"sl_order_002".to_string())
+        );
+        assert!(
+            response
+                .cancelled_order_ids
+                .contains(&"stop_order_003".to_string())
+        );
+        assert!(
+            response
+                .cancelled_order_ids
+                .contains(&"conditional_order_004".to_string())
+        );
     }
 }

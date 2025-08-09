@@ -56,7 +56,7 @@ pub struct TransferRecord {
 impl RestClient {
     /// Transfer between trading accounts
     ///
-    /// Transfer funds between different account types (spot, margin, futures, 
+    /// Transfer funds between different account types (spot, margin, futures,
     /// delivery, cross_margin, options) within the same user account.
     ///
     /// [docs]: https://www.gate.com/docs/developers/apiv4/#transfer-between-trading-accounts

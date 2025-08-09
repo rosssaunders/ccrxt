@@ -89,8 +89,9 @@ impl RestClient {
         &self,
         request: GetAllSymbolsRequest,
     ) -> Result<(Vec<SymbolInfo>, ResponseHeaders)> {
-        let (response, headers): (RestResponse<Vec<SymbolInfo>>, ResponseHeaders) =
-            self.get_with_request(ALL_SYMBOLS_ENDPOINT, &request).await?;
+        let (response, headers): (RestResponse<Vec<SymbolInfo>>, ResponseHeaders) = self
+            .get_with_request(ALL_SYMBOLS_ENDPOINT, &request)
+            .await?;
 
         Ok((response.data, headers))
     }

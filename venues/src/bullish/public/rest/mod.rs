@@ -9,7 +9,9 @@ pub mod public_trades;
 pub mod ticker;
 pub mod time;
 
-pub use assets::{Asset, AssetNetwork, AssetStatus, AssetsResponse, GetAssetRequest, SingleAssetResponse};
+pub use assets::{
+    Asset, AssetNetwork, AssetStatus, AssetsResponse, GetAssetRequest, SingleAssetResponse,
+};
 pub use candles::{Candle, GetCandlesRequest};
 pub use client::RestClient;
 pub use index_prices::{GetIndexPriceRequest, IndexPrice};

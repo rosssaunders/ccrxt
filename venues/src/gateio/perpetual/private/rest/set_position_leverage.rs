@@ -53,9 +53,7 @@ impl RestClient {
     ) -> crate::gateio::perpetual::RestResult<LeverageResponse> {
         let endpoint = format!(
             "{}/{}/positions/{}/leverage",
-            ENDPOINT_FUTURES_PREFIX,
-            request.settle,
-            request.contract
+            ENDPOINT_FUTURES_PREFIX, request.settle, request.contract
         );
         self.post(&endpoint, &request).await
     }

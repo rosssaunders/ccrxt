@@ -57,7 +57,7 @@ impl RestClient {
         &self,
         params: GetFundingChartDataRequest,
     ) -> RestResult<GetFundingChartDataResponse> {
-    self.send_post_request(
+        self.send_post_request(
             FUNDING_CHART_DATA_ENDPOINT,
             Some(&params),
             EndpointType::NonMatchingEngine,

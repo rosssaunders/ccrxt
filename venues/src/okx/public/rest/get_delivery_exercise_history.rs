@@ -92,9 +92,10 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
+    use serde_json::json;
+
     use super::*;
     use crate::okx::response::OkxApiResponse;
-    use serde_json::json;
 
     #[test]
     fn test_get_delivery_exercise_history_request_with_underlying() {

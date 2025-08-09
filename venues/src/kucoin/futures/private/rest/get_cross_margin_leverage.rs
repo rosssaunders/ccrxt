@@ -86,12 +86,15 @@ mod tests {
     #[test]
     fn test_response_with_various_leverage_values() {
         let leverage_values = ["1", "2", "3", "5", "10", "20", "50", "100"];
-        
+
         for leverage in leverage_values.iter() {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "symbol": "XBTUSDTM",
                 "leverage": "{}"
-            }}"#, leverage);
+            }}"#,
+                leverage
+            );
 
             let response: GetCrossMarginLeverageResponse = serde_json::from_str(&json).unwrap();
             assert_eq!(response.symbol, "XBTUSDTM");
@@ -102,7 +105,7 @@ mod tests {
     #[test]
     fn test_various_symbols() {
         let symbols = ["XBTUSDTM", "ETHUSDTM", "ADAUSDTM", "DOTUSDTM"];
-        
+
         for symbol in symbols.iter() {
             let request = GetCrossMarginLeverageRequest {
                 symbol: symbol.to_string(),
@@ -122,7 +125,7 @@ mod tests {
 
         let response: GetCrossMarginLeverageResponse = serde_json::from_str(json).unwrap();
         let serialized = serde_json::to_value(&response).unwrap();
-        
+
         assert!(serialized["symbol"].is_string());
         assert!(serialized["leverage"].is_string());
     }
@@ -137,7 +140,7 @@ mod tests {
 
         let response: GetCrossMarginLeverageResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.leverage, "25");
-        
+
         // Verify it's a string, not a number
         let parsed_value: serde_json::Value = serde_json::from_str(json).unwrap();
         assert!(parsed_value["leverage"].is_string());
@@ -162,7 +165,7 @@ mod tests {
 
         let response: GetCrossMarginLeverageResponse = serde_json::from_str(json).unwrap();
         let serialized = serde_json::to_value(&response).unwrap();
-        
+
         // Should have exactly 2 fields
         assert_eq!(serialized.as_object().unwrap().len(), 2);
         assert!(serialized.get("symbol").is_some());
@@ -172,12 +175,15 @@ mod tests {
     #[test]
     fn test_high_leverage_values() {
         let high_leverages = ["50", "75", "100", "125"];
-        
+
         for leverage in high_leverages.iter() {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "symbol": "XBTUSDTM",
                 "leverage": "{}"
-            }}"#, leverage);
+            }}"#,
+                leverage
+            );
 
             let response: GetCrossMarginLeverageResponse = serde_json::from_str(&json).unwrap();
             assert_eq!(response.leverage, *leverage);
@@ -187,12 +193,15 @@ mod tests {
     #[test]
     fn test_decimal_leverage_values() {
         let decimal_leverages = ["1.5", "2.5", "3.3", "4.7"];
-        
+
         for leverage in decimal_leverages.iter() {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "symbol": "XBTUSDTM",
                 "leverage": "{}"
-            }}"#, leverage);
+            }}"#,
+                leverage
+            );
 
             let response: GetCrossMarginLeverageResponse = serde_json::from_str(&json).unwrap();
             assert_eq!(response.leverage, *leverage);
@@ -201,7 +210,10 @@ mod tests {
 
     #[test]
     fn test_endpoint_constant() {
-        assert_eq!(GET_CROSS_MARGIN_LEVERAGE_ENDPOINT, "/api/v2/getCrossUserLeverage");
+        assert_eq!(
+            GET_CROSS_MARGIN_LEVERAGE_ENDPOINT,
+            "/api/v2/getCrossUserLeverage"
+        );
     }
 
     #[test]
@@ -216,8 +228,12 @@ mod tests {
 
     #[test]
     fn test_long_symbol_names() {
-        let long_symbols = ["VERYLONGSYMBOLNAME", "ANOTHERLONGSYMBOL123", "EXTREMELYLONGSYMBOLNAMEHERE"];
-        
+        let long_symbols = [
+            "VERYLONGSYMBOLNAME",
+            "ANOTHERLONGSYMBOL123",
+            "EXTREMELYLONGSYMBOLNAMEHERE",
+        ];
+
         for symbol in long_symbols.iter() {
             let request = GetCrossMarginLeverageRequest {
                 symbol: symbol.to_string(),

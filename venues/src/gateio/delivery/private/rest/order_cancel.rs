@@ -1,6 +1,5 @@
 use super::RestClient;
-use crate::gateio::delivery::RestResult;
-use crate::gateio::delivery::models::DeliveryOrder;
+use crate::gateio::delivery::{RestResult, models::DeliveryOrder};
 
 const DELIVERY_ORDERS_ENDPOINT: &str = "/delivery/{}/orders";
 const DELIVERY_ORDER_ENDPOINT: &str = "/delivery/{}/orders/{}";
@@ -88,7 +87,7 @@ mod tests {
         let contract = "BTC_USDT_20240315";
         let mut endpoint = DELIVERY_ORDERS_ENDPOINT.replace("{}", settle);
         endpoint.push_str(&format!("?contract={}", contract));
-        
+
         assert_eq!(endpoint, "/delivery/USDT/orders?contract=BTC_USDT_20240315");
     }
 
@@ -99,7 +98,7 @@ mod tests {
         let endpoint = DELIVERY_ORDER_ENDPOINT
             .replacen("{}", settle, 1)
             .replacen("{}", order_id, 1);
-        
+
         assert_eq!(endpoint, "/delivery/BTC/orders/12345678");
     }
 
@@ -115,7 +114,11 @@ mod tests {
             let endpoint = DELIVERY_ORDER_ENDPOINT
                 .replacen("{}", settle, 1)
                 .replacen("{}", order_id, 1);
-            assert_eq!(endpoint, expected, "Failed for settle: {}, order_id: {}", settle, order_id);
+            assert_eq!(
+                endpoint, expected,
+                "Failed for settle: {}, order_id: {}",
+                settle, order_id
+            );
         }
     }
 
@@ -124,18 +127,30 @@ mod tests {
         let test_cases = vec![
             ("BTC", None, "/delivery/BTC/orders"),
             ("USDT", None, "/delivery/USDT/orders"),
-            ("BTC", Some("BTC_USDT_20240315"), "/delivery/BTC/orders?contract=BTC_USDT_20240315"),
-            ("USDT", Some("ETH_USDT_20240415"), "/delivery/USDT/orders?contract=ETH_USDT_20240415"),
+            (
+                "BTC",
+                Some("BTC_USDT_20240315"),
+                "/delivery/BTC/orders?contract=BTC_USDT_20240315",
+            ),
+            (
+                "USDT",
+                Some("ETH_USDT_20240415"),
+                "/delivery/USDT/orders?contract=ETH_USDT_20240415",
+            ),
         ];
 
         for (settle, contract, expected) in test_cases {
             let mut endpoint = DELIVERY_ORDERS_ENDPOINT.replace("{}", settle);
-            
+
             if let Some(contract) = contract {
                 endpoint.push_str(&format!("?contract={}", contract));
             }
-            
-            assert_eq!(endpoint, expected, "Failed for settle: {}, contract: {:?}", settle, contract);
+
+            assert_eq!(
+                endpoint, expected,
+                "Failed for settle: {}, contract: {:?}",
+                settle, contract
+            );
         }
     }
 

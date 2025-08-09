@@ -1,4 +1,3 @@
-
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
@@ -100,8 +99,9 @@ impl RestClient {
         &self,
         request: GetInnerTransfersRequest,
     ) -> Result<(InnerTransfersResponse, ResponseHeaders)> {
-        let (response, headers): (RestResponse<InnerTransfersResponse>, ResponseHeaders) =
-            self.get_with_request(INNER_TRANSFERS_ENDPOINT, &request).await?;
+        let (response, headers): (RestResponse<InnerTransfersResponse>, ResponseHeaders) = self
+            .get_with_request(INNER_TRANSFERS_ENDPOINT, &request)
+            .await?;
 
         Ok((response.data, headers))
     }

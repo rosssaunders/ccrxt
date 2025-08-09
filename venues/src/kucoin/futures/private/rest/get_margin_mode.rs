@@ -48,8 +48,9 @@ impl super::RestClient {
         &self,
         request: GetMarginModeRequest,
     ) -> Result<(MarginModeResponse, ResponseHeaders)> {
-        let (response, headers): (RestResponse<MarginModeResponse>, ResponseHeaders) =
-            self.get_with_request(GET_MARGIN_MODE_ENDPOINT, &request).await?;
+        let (response, headers): (RestResponse<MarginModeResponse>, ResponseHeaders) = self
+            .get_with_request(GET_MARGIN_MODE_ENDPOINT, &request)
+            .await?;
 
         Ok((response.data, headers))
     }
@@ -118,7 +119,7 @@ mod tests {
     #[test]
     fn test_various_symbols() {
         let symbols = ["XBTUSDTM", "ETHUSDTM", "ADAUSDTM", "DOTUSDTM"];
-        
+
         for symbol in symbols.iter() {
             let request = GetMarginModeRequest {
                 symbol: symbol.to_string(),
@@ -135,14 +136,17 @@ mod tests {
             ("CROSS_MARGIN", MarginMode::CrossMargin),
             ("ISOLATED_MARGIN", MarginMode::IsolatedMargin),
         ];
-        
+
         for (mode_str, expected_mode) in modes.iter() {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "symbol": "XBTUSDTM",
                 "marginMode": "{}",
                 "crossMarginLeverage": "10",
                 "isolatedMarginLeverage": "20"
-            }}"#, mode_str);
+            }}"#,
+                mode_str
+            );
 
             let response: MarginModeResponse = serde_json::from_str(&json).unwrap();
             assert_eq!(response.margin_mode, *expected_mode);
@@ -152,14 +156,17 @@ mod tests {
     #[test]
     fn test_leverage_string_values() {
         let leverage_values = ["1", "3", "5", "10", "20", "50", "100"];
-        
+
         for leverage in leverage_values.iter() {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "symbol": "XBTUSDTM",
                 "marginMode": "CROSS_MARGIN",
                 "crossMarginLeverage": "{}",
                 "isolatedMarginLeverage": "{}"
-            }}"#, leverage, leverage);
+            }}"#,
+                leverage, leverage
+            );
 
             let response: MarginModeResponse = serde_json::from_str(&json).unwrap();
             assert_eq!(response.cross_margin_leverage, *leverage);
@@ -178,7 +185,7 @@ mod tests {
 
         let response: MarginModeResponse = serde_json::from_str(json).unwrap();
         let serialized = serde_json::to_value(&response).unwrap();
-        
+
         assert!(serialized["symbol"].is_string());
         assert!(serialized["marginMode"].is_string());
         assert!(serialized["crossMarginLeverage"].is_string());
@@ -196,12 +203,12 @@ mod tests {
 
         let response: MarginModeResponse = serde_json::from_str(json).unwrap();
         let serialized = serde_json::to_value(&response).unwrap();
-        
+
         // Verify camelCase field names
         assert!(serialized.get("marginMode").is_some());
         assert!(serialized.get("crossMarginLeverage").is_some());
         assert!(serialized.get("isolatedMarginLeverage").is_some());
-        
+
         // Verify snake_case fields don't exist
         assert!(serialized.get("margin_mode").is_none());
         assert!(serialized.get("cross_margin_leverage").is_none());
@@ -233,7 +240,7 @@ mod tests {
 
         let response: MarginModeResponse = serde_json::from_str(json).unwrap();
         let serialized = serde_json::to_value(&response).unwrap();
-        
+
         // Should have exactly 4 fields
         assert_eq!(serialized.as_object().unwrap().len(), 4);
         assert!(serialized.get("symbol").is_some());
@@ -255,7 +262,7 @@ mod tests {
     #[test]
     fn test_margin_mode_round_trip() {
         let modes = [MarginMode::CrossMargin, MarginMode::IsolatedMargin];
-        
+
         for mode in modes.iter() {
             let serialized = serde_json::to_string(mode).unwrap();
             let deserialized: MarginMode = serde_json::from_str(&serialized).unwrap();

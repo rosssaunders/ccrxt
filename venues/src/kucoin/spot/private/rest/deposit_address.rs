@@ -41,8 +41,9 @@ impl RestClient {
         &self,
         request: GetDepositAddressRequest,
     ) -> Result<(DepositAddress, ResponseHeaders)> {
-        let (response, headers): (RestResponse<DepositAddress>, ResponseHeaders) =
-            self.get_with_request(DEPOSIT_ADDRESS_ENDPOINT, &request).await?;
+        let (response, headers): (RestResponse<DepositAddress>, ResponseHeaders) = self
+            .get_with_request(DEPOSIT_ADDRESS_ENDPOINT, &request)
+            .await?;
 
         Ok((response.data, headers))
     }

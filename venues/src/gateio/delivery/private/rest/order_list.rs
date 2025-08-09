@@ -1,6 +1,8 @@
 use super::RestClient;
-use crate::gateio::delivery::RestResult;
-use crate::gateio::delivery::models::{DeliveryOrder, ListDeliveryOrdersRequest};
+use crate::gateio::delivery::{
+    RestResult,
+    models::{DeliveryOrder, ListDeliveryOrdersRequest},
+};
 
 const DELIVERY_ORDERS_ENDPOINT: &str = "/delivery/{}/orders";
 const DELIVERY_ORDER_ENDPOINT: &str = "/delivery/{}/orders/{}";
@@ -110,7 +112,11 @@ mod tests {
             let endpoint = DELIVERY_ORDER_ENDPOINT
                 .replacen("{}", settle, 1)
                 .replacen("{}", order_id, 1);
-            assert_eq!(endpoint, expected, "Failed for settle: {}, order_id: {}", settle, order_id);
+            assert_eq!(
+                endpoint, expected,
+                "Failed for settle: {}, order_id: {}",
+                settle, order_id
+            );
         }
     }
 
@@ -129,7 +135,7 @@ mod tests {
     fn test_endpoint_paths_structure() {
         assert!(DELIVERY_ORDERS_ENDPOINT.starts_with("/delivery/"));
         assert!(DELIVERY_ORDERS_ENDPOINT.ends_with("/orders"));
-        
+
         assert!(DELIVERY_ORDER_ENDPOINT.starts_with("/delivery/"));
         assert!(DELIVERY_ORDER_ENDPOINT.contains("/orders/"));
     }

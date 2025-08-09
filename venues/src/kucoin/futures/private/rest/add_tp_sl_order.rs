@@ -334,7 +334,7 @@ mod tests {
 
         // Verify field types through serialization
         let json = serde_json::to_value(&request).unwrap();
-        
+
         assert!(json["clientOid"].is_string());
         assert!(json["side"].is_string());
         assert!(json["symbol"].is_string());

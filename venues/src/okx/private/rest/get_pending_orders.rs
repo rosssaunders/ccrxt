@@ -1,7 +1,6 @@
 use serde::Serialize;
 
-use super::RestClient;
-use super::get_order::OrderDetails;
+use super::{RestClient, get_order::OrderDetails};
 use crate::okx::{EndpointType, InstrumentType, RestResult};
 
 const TRADE_ORDERS_PENDING_ENDPOINT: &str = "api/v5/trade/orders-pending";

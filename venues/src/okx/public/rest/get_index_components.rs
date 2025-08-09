@@ -80,8 +80,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use serde_json::json;
+
+    use super::*;
     use crate::okx::response::OkxApiResponse;
 
     #[test]
@@ -169,7 +170,8 @@ mod tests {
             }]
         });
 
-        let response: OkxApiResponse<IndexComponentData> = serde_json::from_value(response_json).unwrap();
+        let response: OkxApiResponse<IndexComponentData> =
+            serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data[0].index, "BTC-USDT");
         assert_eq!(response.data[0].last, "50000.0");

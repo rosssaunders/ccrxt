@@ -41,8 +41,9 @@ impl RestClient {
         &self,
         request: GetAccountBalanceRequest,
     ) -> Result<(Vec<AccountBalance>, ResponseHeaders)> {
-        let (response, headers): (RestResponse<Vec<AccountBalance>>, ResponseHeaders) =
-            self.get_with_request(ACCOUNT_BALANCE_ENDPOINT, &request).await?;
+        let (response, headers): (RestResponse<Vec<AccountBalance>>, ResponseHeaders) = self
+            .get_with_request(ACCOUNT_BALANCE_ENDPOINT, &request)
+            .await?;
 
         Ok((response.data, headers))
     }

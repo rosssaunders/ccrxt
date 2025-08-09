@@ -43,9 +43,7 @@ impl RestClient {
     ) -> crate::gateio::perpetual::RestResult<FuturesOrder> {
         let endpoint = format!(
             "{}/{}/orders/{}",
-            ENDPOINT_FUTURES_PREFIX,
-            request.settle,
-            request.order_id
+            ENDPOINT_FUTURES_PREFIX, request.settle, request.order_id
         );
         self.put(&endpoint, &request).await
     }

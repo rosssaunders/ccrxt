@@ -105,7 +105,7 @@ impl RestClient {
         &self,
         params: GetLastTradesByCurrencyRequest,
     ) -> RestResult<GetLastTradesByCurrencyResponse> {
-    self.send_post_request(
+        self.send_post_request(
             LAST_TRADES_BY_CURRENCY_ENDPOINT,
             Some(&params),
             EndpointType::NonMatchingEngine,

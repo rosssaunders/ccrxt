@@ -1,8 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::gateio::delivery::RestResult;
-use crate::gateio::delivery::models::CreateDeliveryOrderRequest;
+use crate::gateio::delivery::{RestResult, models::CreateDeliveryOrderRequest};
 
 const DELIVERY_PRICE_ORDERS_ENDPOINT: &str = "/delivery/{}/price_orders";
 const DELIVERY_PRICE_ORDER_ENDPOINT: &str = "/delivery/{}/price_orders/{}";
@@ -227,7 +226,10 @@ mod tests {
 
     #[test]
     fn test_delivery_price_order_endpoint() {
-        assert_eq!(DELIVERY_PRICE_ORDER_ENDPOINT, "/delivery/{}/price_orders/{}");
+        assert_eq!(
+            DELIVERY_PRICE_ORDER_ENDPOINT,
+            "/delivery/{}/price_orders/{}"
+        );
     }
 
     #[test]
@@ -310,14 +312,22 @@ mod tests {
         let test_cases = vec![
             ("BTC", "order123", "/delivery/BTC/price_orders/order123"),
             ("USDT", "987654321", "/delivery/USDT/price_orders/987654321"),
-            ("ETH", "abc-def-123", "/delivery/ETH/price_orders/abc-def-123"),
+            (
+                "ETH",
+                "abc-def-123",
+                "/delivery/ETH/price_orders/abc-def-123",
+            ),
         ];
 
         for (settle, order_id, expected) in test_cases {
             let endpoint = DELIVERY_PRICE_ORDER_ENDPOINT
                 .replacen("{}", settle, 1)
                 .replacen("{}", order_id, 1);
-            assert_eq!(endpoint, expected, "Failed for settle: {}, order_id: {}", settle, order_id);
+            assert_eq!(
+                endpoint, expected,
+                "Failed for settle: {}, order_id: {}",
+                settle, order_id
+            );
         }
     }
 }

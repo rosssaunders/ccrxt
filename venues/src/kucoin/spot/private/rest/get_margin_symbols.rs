@@ -1,4 +1,3 @@
-
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
@@ -52,8 +51,9 @@ impl RestClient {
         &self,
         request: GetMarginSymbolsRequest,
     ) -> Result<(GetMarginSymbolsResponse, ResponseHeaders)> {
-        let (response, headers): (RestResponse<GetMarginSymbolsResponse>, ResponseHeaders) =
-            self.get_with_request("/api/v3/margin/symbols", &request).await?;
+        let (response, headers): (RestResponse<GetMarginSymbolsResponse>, ResponseHeaders) = self
+            .get_with_request("/api/v3/margin/symbols", &request)
+            .await?;
         Ok((response.data, headers))
     }
 }

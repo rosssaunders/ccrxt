@@ -1,6 +1,8 @@
 use super::RestClient;
-use crate::gateio::delivery::RestResult;
-use crate::gateio::delivery::models::{DeliveryLeverageResponse, SetDeliveryLeverageRequest};
+use crate::gateio::delivery::{
+    RestResult,
+    models::{DeliveryLeverageResponse, SetDeliveryLeverageRequest},
+};
 
 const DELIVERY_POSITION_LEVERAGE_ENDPOINT: &str = "/delivery/{}/positions/{}/leverage";
 
@@ -35,7 +37,10 @@ mod tests {
 
     #[test]
     fn test_delivery_position_leverage_endpoint() {
-        assert_eq!(DELIVERY_POSITION_LEVERAGE_ENDPOINT, "/delivery/{}/positions/{}/leverage");
+        assert_eq!(
+            DELIVERY_POSITION_LEVERAGE_ENDPOINT,
+            "/delivery/{}/positions/{}/leverage"
+        );
     }
 
     #[test]
@@ -45,29 +50,51 @@ mod tests {
         let endpoint = DELIVERY_POSITION_LEVERAGE_ENDPOINT
             .replacen("{}", settle, 1)
             .replacen("{}", contract, 1);
-        assert_eq!(endpoint, "/delivery/USDT/positions/BTC_USDT_20240315/leverage");
+        assert_eq!(
+            endpoint,
+            "/delivery/USDT/positions/BTC_USDT_20240315/leverage"
+        );
     }
 
     #[test]
     fn test_leverage_endpoint_different_params() {
         let test_cases = vec![
-            ("BTC", "BTC_USDT_20240315", "/delivery/BTC/positions/BTC_USDT_20240315/leverage"),
-            ("USDT", "ETH_USDT_20240415", "/delivery/USDT/positions/ETH_USDT_20240415/leverage"),
-            ("ETH", "SOL_ETH_20240515", "/delivery/ETH/positions/SOL_ETH_20240515/leverage"),
+            (
+                "BTC",
+                "BTC_USDT_20240315",
+                "/delivery/BTC/positions/BTC_USDT_20240315/leverage",
+            ),
+            (
+                "USDT",
+                "ETH_USDT_20240415",
+                "/delivery/USDT/positions/ETH_USDT_20240415/leverage",
+            ),
+            (
+                "ETH",
+                "SOL_ETH_20240515",
+                "/delivery/ETH/positions/SOL_ETH_20240515/leverage",
+            ),
         ];
 
         for (settle, contract, expected) in test_cases {
             let endpoint = DELIVERY_POSITION_LEVERAGE_ENDPOINT
                 .replacen("{}", settle, 1)
                 .replacen("{}", contract, 1);
-            assert_eq!(endpoint, expected, "Failed for settle: {}, contract: {}", settle, contract);
+            assert_eq!(
+                endpoint, expected,
+                "Failed for settle: {}, contract: {}",
+                settle, contract
+            );
         }
     }
 
     #[test]
     fn test_leverage_endpoint_placeholders() {
         let placeholder_count = DELIVERY_POSITION_LEVERAGE_ENDPOINT.matches("{}").count();
-        assert_eq!(placeholder_count, 2, "Endpoint should have exactly two placeholders");
+        assert_eq!(
+            placeholder_count, 2,
+            "Endpoint should have exactly two placeholders"
+        );
     }
 
     #[test]
@@ -85,17 +112,26 @@ mod tests {
         let endpoint = DELIVERY_POSITION_LEVERAGE_ENDPOINT
             .replacen("{}", settle, 1)
             .replacen("{}", contract, 1);
-        
-        assert!(!endpoint.contains("{}"), "All placeholders should be replaced");
-        assert!(endpoint.contains(settle), "Endpoint should contain settlement currency");
-        assert!(endpoint.contains(contract), "Endpoint should contain contract name");
+
+        assert!(
+            !endpoint.contains("{}"),
+            "All placeholders should be replaced"
+        );
+        assert!(
+            endpoint.contains(settle),
+            "Endpoint should contain settlement currency"
+        );
+        assert!(
+            endpoint.contains(contract),
+            "Endpoint should contain contract name"
+        );
     }
 
     #[test]
     fn test_leverage_endpoint_path_components() {
         let endpoint = DELIVERY_POSITION_LEVERAGE_ENDPOINT;
         let parts: Vec<&str> = endpoint.split('/').collect();
-        
+
         assert_eq!(parts[0], ""); // Leading slash
         assert_eq!(parts[1], "delivery");
         assert_eq!(parts[2], "{}"); // Settlement placeholder
@@ -113,10 +149,13 @@ mod tests {
             let endpoint = DELIVERY_POSITION_LEVERAGE_ENDPOINT
                 .replacen("{}", settle, 1)
                 .replacen("{}", contract, 1);
-            
+
             assert!(endpoint.contains(settle));
             assert!(endpoint.contains(contract));
-            assert_eq!(endpoint, format!("/delivery/{}/positions/{}/leverage", settle, contract));
+            assert_eq!(
+                endpoint,
+                format!("/delivery/{}/positions/{}/leverage", settle, contract)
+            );
         }
     }
 }

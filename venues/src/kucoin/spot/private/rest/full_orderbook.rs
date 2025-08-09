@@ -36,8 +36,9 @@ impl RestClient {
         &self,
         request: GetFullOrderBookRequest,
     ) -> Result<(FullOrderBookResponse, ResponseHeaders)> {
-        let (response, headers): (RestResponse<FullOrderBookResponse>, ResponseHeaders) =
-            self.get_with_request(FULL_ORDERBOOK_ENDPOINT, &request).await?;
+        let (response, headers): (RestResponse<FullOrderBookResponse>, ResponseHeaders) = self
+            .get_with_request(FULL_ORDERBOOK_ENDPOINT, &request)
+            .await?;
 
         Ok((response.data, headers))
     }

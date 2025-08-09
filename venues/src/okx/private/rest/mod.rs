@@ -54,7 +54,6 @@ mod set_mmp_config;
 mod set_position_mode;
 mod spot_manual_borrow_repay;
 
-pub use crate::okx::response::OkxApiResponse;
 pub use amend_order::{AmendOrderRequest, AmendOrderResponse};
 pub use cancel_batch_orders::CancelBatchOrdersResponse;
 pub use cancel_order::{CancelOrderRequest, CancelOrderResponse};
@@ -69,3 +68,5 @@ pub use get_pending_orders::GetPendingOrdersRequest;
 pub use get_positions::{CloseOrderAlgo, GetPositionsRequest, Position};
 pub use place_batch_orders::{PlaceBatchOrdersRequest, PlaceBatchOrdersResponse};
 pub use place_order::{AttachedAlgoOrder, PlaceOrderRequest, PlaceOrderResponse};
+
+pub use crate::okx::response::OkxApiResponse;

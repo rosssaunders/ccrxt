@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use reqwest::Client;
-use serde::{de::DeserializeOwned, Serialize};
+use serde::{Serialize, de::DeserializeOwned};
 
 use crate::kucoin::spot::{ApiError, RateLimiter, ResponseHeaders, RestResponse, Result};
 
@@ -116,7 +116,7 @@ impl RestClient {
         // Serialize the request as query parameters
         let params = serde_urlencoded::to_string(request)
             .map_err(|e| ApiError::JsonParsing(format!("Failed to serialize request: {}", e)))?;
-        
+
         if !params.is_empty() {
             request_builder = request_builder.query(&request);
         }

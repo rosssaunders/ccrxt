@@ -67,7 +67,7 @@ impl RestClient {
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_combos)
     pub async fn get_combos(&self, params: GetCombosRequest) -> RestResult<GetCombosResponse> {
-    self.send_post_request(
+        self.send_post_request(
             COMBOS_ENDPOINT,
             Some(&params),
             EndpointType::PublicGetCombos,

@@ -1,6 +1,8 @@
 use super::RestClient;
-use crate::gateio::delivery::RestResult;
-use crate::gateio::delivery::models::{CreateDeliveryOrderRequest, DeliveryOrder};
+use crate::gateio::delivery::{
+    RestResult,
+    models::{CreateDeliveryOrderRequest, DeliveryOrder},
+};
 
 const DELIVERY_ORDERS_ENDPOINT: &str = "/delivery/{}/orders";
 
@@ -74,7 +76,10 @@ mod tests {
     fn test_endpoint_no_extra_placeholders() {
         // Ensure there's only one placeholder to replace
         let placeholder_count = DELIVERY_ORDERS_ENDPOINT.matches("{}").count();
-        assert_eq!(placeholder_count, 1, "Endpoint should have exactly one placeholder");
+        assert_eq!(
+            placeholder_count, 1,
+            "Endpoint should have exactly one placeholder"
+        );
     }
 
     #[test]

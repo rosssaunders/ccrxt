@@ -279,7 +279,8 @@ mod tests {
         let sides = [("long", PositionSide::Long), ("short", PositionSide::Short)];
 
         for (side_str, expected_side) in sides.iter() {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "symbol": "XBTUSDTM",
                 "crossMode": false,
                 "delevPercentage": 0.1,
@@ -312,7 +313,9 @@ mod tests {
                 "crossMargin": 0.0,
                 "isolatedMargin": 5000.0,
                 "availableBalance": 10000.0
-            }}"#, side_str);
+            }}"#,
+                side_str
+            );
 
             let position: Position = serde_json::from_str(&json).unwrap();
             assert_eq!(position.side, *expected_side);
@@ -327,7 +330,8 @@ mod tests {
         ];
 
         for (status_str, expected_status) in statuses.iter() {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "symbol": "XBTUSDTM",
                 "crossMode": false,
                 "delevPercentage": 0.1,
@@ -360,7 +364,9 @@ mod tests {
                 "crossMargin": 0.0,
                 "isolatedMargin": 5000.0,
                 "availableBalance": 10000.0
-            }}"#, status_str);
+            }}"#,
+                status_str
+            );
 
             let position: Position = serde_json::from_str(&json).unwrap();
             assert_eq!(position.auto_deposit_status, *expected_status);
@@ -372,7 +378,8 @@ mod tests {
         let cross_modes = [true, false];
 
         for cross_mode in cross_modes.iter() {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "symbol": "XBTUSDTM",
                 "crossMode": {},
                 "delevPercentage": 0.1,
@@ -405,7 +412,9 @@ mod tests {
                 "crossMargin": 0.0,
                 "isolatedMargin": 5000.0,
                 "availableBalance": 10000.0
-            }}"#, cross_mode);
+            }}"#,
+                cross_mode
+            );
 
             let position: Position = serde_json::from_str(&json).unwrap();
             assert_eq!(position.cross_mode, *cross_mode);
@@ -450,7 +459,7 @@ mod tests {
         }"#;
 
         let json_value = serde_json::from_str::<serde_json::Value>(json).unwrap();
-        
+
         // Verify field types in JSON
         assert!(json_value["symbol"].is_string());
         assert!(json_value["crossMode"].is_boolean());
@@ -463,7 +472,7 @@ mod tests {
         assert!(json_value["riskLimit"].is_number());
         assert!(json_value["realLeverage"].is_number());
         assert!(json_value["riskLimitLevel"].is_number());
-        
+
         // Verify deserialization works
         let position: Position = serde_json::from_str(json).unwrap();
         assert_eq!(position.symbol, "XBTUSDTM");
@@ -510,7 +519,7 @@ mod tests {
         }"#;
 
         let position: Position = serde_json::from_str(json).unwrap();
-        
+
         // Verify camelCase fields are properly converted to snake_case
         assert_eq!(position.cross_mode, false);
         assert_eq!(position.open_size, "1000");
@@ -626,7 +635,8 @@ mod tests {
         let leverages = ["1", "5", "10", "20", "50", "100"];
 
         for leverage in leverages.iter() {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "symbol": "XBTUSDTM",
                 "crossMode": false,
                 "delevPercentage": 0.1,
@@ -659,7 +669,9 @@ mod tests {
                 "crossMargin": 0.0,
                 "isolatedMargin": 5000.0,
                 "availableBalance": 10000.0
-            }}"#, leverage);
+            }}"#,
+                leverage
+            );
 
             let position: Position = serde_json::from_str(&json).unwrap();
             assert_eq!(position.leverage, *leverage);
@@ -704,7 +716,7 @@ mod tests {
         }"#;
 
         let position: Position = serde_json::from_str(json).unwrap();
-        
+
         // Validate numeric field ranges
         assert!(position.deleverage_percentage > 0.0);
         assert!(position.risk_limit > 0);

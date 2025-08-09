@@ -70,7 +70,7 @@ impl RestClient {
         &self,
         params: GetOrderBookByInstrumentIdRequest,
     ) -> RestResult<GetOrderBookByInstrumentIdResponse> {
-    self.send_post_request(
+        self.send_post_request(
             ORDER_BOOK_BY_INSTRUMENT_ID_ENDPOINT,
             Some(&params),
             EndpointType::NonMatchingEngine,

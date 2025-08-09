@@ -13,7 +13,7 @@ const LIST_ORDERS_ENDPOINT: &str = "/spot/orders";
 #[derive(Debug, Clone, Default, Serialize)]
 pub struct ListOrdersRequest {
     /// Trading pair filter for order history query.
-    /// 
+    ///
     /// Optional filter to retrieve orders for a specific currency pair.
     /// Format should be "BASE_QUOTE" (e.g., "BTC_USDT", "ETH_BTC"). If not specified,
     /// returns orders for all trading pairs.
@@ -21,28 +21,28 @@ pub struct ListOrdersRequest {
     pub currency_pair: Option<String>,
 
     /// Order status filter for the query.
-    /// 
+    ///
     /// Filters orders by their current status. Options include open, closed, or cancelled.
     /// If not specified, returns orders of all statuses.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub status: Option<OrderStatus>,
 
     /// Page number for pagination (starting from 1).
-    /// 
+    ///
     /// Used for paginated results when there are many orders in the history.
     /// Default is 1 if not specified. Page numbers start from 1, not 0.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub page: Option<u32>,
 
     /// Maximum number of orders to return per page.
-    /// 
+    ///
     /// Controls the number of orders returned in a single response. Larger limits
     /// may improve efficiency but could increase response times. Typical range is 1-1000.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<u32>,
 
     /// Account type filter for the order query.
-    /// 
+    ///
     /// Specifies which account type to query orders from. Common values include
     /// "spot", "margin", "cross_margin", or "unified". If not specified, uses the
     /// default account context.
@@ -50,21 +50,21 @@ pub struct ListOrdersRequest {
     pub account: Option<String>,
 
     /// Start time filter as Unix timestamp.
-    /// 
+    ///
     /// Filters orders created on or after this timestamp. Used in combination with
     /// 'to' parameter to define time ranges for historical order queries.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub from: Option<i64>,
 
     /// End time filter as Unix timestamp.
-    /// 
+    ///
     /// Filters orders created on or before this timestamp. Used in combination with
     /// 'from' parameter to define time ranges for historical order queries.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub to: Option<i64>,
 
     /// Trading side filter for the order query.
-    /// 
+    ///
     /// Filters orders by trading direction. Options are buy or sell orders.
     /// If not specified, returns orders for both sides.
     #[serde(skip_serializing_if = "Option::is_none")]

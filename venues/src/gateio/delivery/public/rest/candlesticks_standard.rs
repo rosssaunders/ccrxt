@@ -1,6 +1,8 @@
 use super::RestClient;
-use crate::gateio::delivery::models::{DeliveryCandlestick, DeliveryCandlesticksRequest};
-use crate::gateio::delivery::RestResult;
+use crate::gateio::delivery::{
+    RestResult,
+    models::{DeliveryCandlestick, DeliveryCandlesticksRequest},
+};
 
 const DELIVERY_CANDLESTICKS_ENDPOINT: &str = "/delivery/{}/candlesticks";
 

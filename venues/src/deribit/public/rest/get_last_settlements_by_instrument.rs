@@ -59,7 +59,7 @@ impl RestClient {
         &self,
         params: GetLastSettlementsByInstrumentRequest,
     ) -> RestResult<GetLastSettlementsByInstrumentResponse> {
-    self.send_post_request(
+        self.send_post_request(
             LAST_SETTLEMENTS_BY_INSTRUMENT_ENDPOINT,
             Some(&params),
             EndpointType::NonMatchingEngine,

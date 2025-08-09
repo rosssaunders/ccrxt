@@ -140,9 +140,7 @@ mod tests {
 
     #[test]
     fn test_get_position_list_request_without_currency() {
-        let request = GetPositionListRequest { 
-            currency: None 
-        };
+        let request = GetPositionListRequest { currency: None };
         assert!(request.currency.is_none());
     }
 
@@ -158,9 +156,7 @@ mod tests {
 
     #[test]
     fn test_request_serialization_no_currency() {
-        let request = GetPositionListRequest {
-            currency: None,
-        };
+        let request = GetPositionListRequest { currency: None };
 
         let json = serde_json::to_value(&request).unwrap();
         // currency should not be present when None
@@ -366,7 +362,7 @@ mod tests {
         }"#;
 
         let json_value = serde_json::from_str::<serde_json::Value>(json).unwrap();
-        
+
         // Verify field types in JSON
         assert!(json_value["id"].is_string());
         assert!(json_value["symbol"].is_string());
@@ -375,7 +371,7 @@ mod tests {
         assert!(json_value["openTimestamp"].is_number());
         assert!(json_value["maintMarginReq"].is_string());
         assert!(json_value["currentQty"].is_string());
-        
+
         // Verify deserialization works
         let position: PositionInfo = serde_json::from_str(json).unwrap();
         assert_eq!(position.id, "test_id");
@@ -415,7 +411,7 @@ mod tests {
         }"#;
 
         let position: PositionInfo = serde_json::from_str(json).unwrap();
-        
+
         // Verify camelCase fields are properly converted to snake_case
         assert_eq!(position.margin_mode, "ISOLATED");
         assert_eq!(position.auto_deposit, false);
@@ -447,7 +443,8 @@ mod tests {
         let modes = ["ISOLATED", "CROSS", "FIXED"];
 
         for mode in modes.iter() {
-            let json = format!(r#"{{
+            let json = format!(
+                r#"{{
                 "id": "test",
                 "symbol": "XBTUSDTM",
                 "marginMode": "{}",
@@ -473,7 +470,9 @@ mod tests {
                 "settleCurrency": "USDT",
                 "maintainMargin": "25.00",
                 "riskSize": "100"
-            }}"#, mode);
+            }}"#,
+                mode
+            );
 
             let position: PositionInfo = serde_json::from_str(&json).unwrap();
             assert_eq!(position.margin_mode, *mode);

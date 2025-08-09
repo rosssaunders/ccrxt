@@ -28,8 +28,9 @@ impl RestClient {
         &self,
         request: GetLoanMarketInterestRateRequest,
     ) -> Result<(Vec<MarketInterestRate>, ResponseHeaders)> {
-        let (response, headers): (RestResponse<Vec<MarketInterestRate>>, ResponseHeaders) =
-            self.get_with_request("/api/v3/project/marketInterestRate", &request).await?;
+        let (response, headers): (RestResponse<Vec<MarketInterestRate>>, ResponseHeaders) = self
+            .get_with_request("/api/v3/project/marketInterestRate", &request)
+            .await?;
 
         Ok((response.data, headers))
     }

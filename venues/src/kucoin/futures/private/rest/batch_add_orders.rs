@@ -226,30 +226,28 @@ mod tests {
 
     #[test]
     fn test_batch_add_orders_request_serialization_minimal() {
-        let orders = vec![
-            BatchOrderItem {
-                client_oid: None,
-                side: OrderSide::Buy,
-                symbol: "ADAUSDTM".to_string(),
-                order_type: OrderType::Market,
-                leverage: None,
-                reduce_only: Some(true),
-                close_order: None,
-                force_hold: None,
-                size: Some(100),
-                price: None,
-                time_in_force: None,
-                post_only: None,
-                hidden: None,
-                iceberg: None,
-                visible_size: None,
-                remark: None,
-                stop: None,
-                stop_price_type: None,
-                stop_price: None,
-                margin_mode: None,
-            },
-        ];
+        let orders = vec![BatchOrderItem {
+            client_oid: None,
+            side: OrderSide::Buy,
+            symbol: "ADAUSDTM".to_string(),
+            order_type: OrderType::Market,
+            leverage: None,
+            reduce_only: Some(true),
+            close_order: None,
+            force_hold: None,
+            size: Some(100),
+            price: None,
+            time_in_force: None,
+            post_only: None,
+            hidden: None,
+            iceberg: None,
+            visible_size: None,
+            remark: None,
+            stop: None,
+            stop_price_type: None,
+            stop_price: None,
+            margin_mode: None,
+        }];
 
         let request = BatchAddOrdersRequest { orders };
 
@@ -347,7 +345,7 @@ mod tests {
 
         // Verify field types through serialization
         let json = serde_json::to_value(&order).unwrap();
-        
+
         assert!(json["clientOid"].is_string());
         assert!(json["side"].is_string());
         assert!(json["symbol"].is_string());
@@ -380,9 +378,12 @@ mod tests {
         }"#;
 
         let result: BatchOrderResult = serde_json::from_str(json).unwrap();
-        
+
         // Verify deserialization and field types
-        assert_eq!(result.order_id, Some("5e8c8c2f1a3b4a001c5d8e31".to_string()));
+        assert_eq!(
+            result.order_id,
+            Some("5e8c8c2f1a3b4a001c5d8e31".to_string())
+        );
         assert_eq!(result.client_oid, Some("test-order-123".to_string()));
         assert_eq!(result.symbol, "XBTUSDTM");
         assert_eq!(result.code, "200000");

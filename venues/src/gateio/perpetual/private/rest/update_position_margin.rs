@@ -43,9 +43,7 @@ impl RestClient {
     ) -> crate::gateio::perpetual::RestResult<PositionMarginResponse> {
         let endpoint = format!(
             "{}/{}/positions/{}/margin",
-            ENDPOINT_FUTURES_PREFIX,
-            request.settle,
-            request.contract
+            ENDPOINT_FUTURES_PREFIX, request.settle, request.contract
         );
         self.post(&endpoint, &request).await
     }

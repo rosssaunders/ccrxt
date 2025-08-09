@@ -52,4 +52,3 @@ impl RestClient {
             .map_err(|e| Errors::Error(format!("JSON serialization error: {e}")))
     }
 }
-

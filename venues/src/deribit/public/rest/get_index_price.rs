@@ -38,7 +38,7 @@ impl RestClient {
         &self,
         params: GetIndexPriceRequest,
     ) -> RestResult<GetIndexPriceResponse> {
-    self.send_post_request(
+        self.send_post_request(
             INDEX_PRICE_ENDPOINT,
             Some(&params),
             EndpointType::NonMatchingEngine,

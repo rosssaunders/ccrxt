@@ -12,12 +12,12 @@ const GET_ORDER_ENDPOINT: &str = "/spot/orders";
 #[derive(Debug, Clone, Serialize)]
 pub struct GetOrderRequest {
     /// Trading pair identifier (e.g., "BTC_USDT", "ETH_BTC").
-    /// 
+    ///
     /// Specifies the currency pair for which to retrieve the order details.
     pub currency_pair: String,
 
     /// Trading account type for the order query.
-    /// 
+    ///
     /// Optional parameter that specifies which account type to query from.
     /// Common values include "spot", "margin", "cross_margin", or "unified".
     /// If not specified, defaults to the main trading account.

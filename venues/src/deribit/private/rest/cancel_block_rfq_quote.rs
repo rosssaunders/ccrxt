@@ -1,7 +1,6 @@
 use serde::Serialize;
 
-use super::RestClient;
-use super::add_block_rfq_quote::AddBlockRfqQuoteResult;
+use super::{RestClient, add_block_rfq_quote::AddBlockRfqQuoteResult};
 use crate::deribit::{EndpointType, JsonRpcResult, RestResult};
 
 /// REST API endpoint constant

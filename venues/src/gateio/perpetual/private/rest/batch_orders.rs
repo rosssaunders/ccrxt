@@ -57,7 +57,10 @@ impl RestClient {
         &self,
         request: BatchOrdersRequest,
     ) -> crate::gateio::perpetual::RestResult<Vec<BatchOrderResult>> {
-        let endpoint = format!("{}/{}/batch_orders", ENDPOINT_FUTURES_PREFIX, request.settle);
+        let endpoint = format!(
+            "{}/{}/batch_orders",
+            ENDPOINT_FUTURES_PREFIX, request.settle
+        );
         self.post(&endpoint, &request).await
     }
 
@@ -79,7 +82,10 @@ impl RestClient {
         &self,
         request: BatchCancelOrdersRequest,
     ) -> crate::gateio::perpetual::RestResult<Vec<BatchOrderResult>> {
-        let endpoint = format!("{}/{}/batch_orders", ENDPOINT_FUTURES_PREFIX, request.settle);
+        let endpoint = format!(
+            "{}/{}/batch_orders",
+            ENDPOINT_FUTURES_PREFIX, request.settle
+        );
         self.delete_with_query(&endpoint, &request).await
     }
 }

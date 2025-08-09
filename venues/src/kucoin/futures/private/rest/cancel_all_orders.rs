@@ -1,4 +1,3 @@
-
 use serde::{Deserialize, Serialize};
 
 use crate::kucoin::spot::{ResponseHeaders, RestResponse, Result};
@@ -42,8 +41,9 @@ impl super::RestClient {
         &self,
         request: CancelAllOrdersRequest,
     ) -> Result<(CancelAllOrdersResponse, ResponseHeaders)> {
-        let (response, headers): (RestResponse<CancelAllOrdersResponse>, ResponseHeaders) =
-            self.delete_with_request(CANCEL_ALL_ORDERS_ENDPOINT, &request).await?;
+        let (response, headers): (RestResponse<CancelAllOrdersResponse>, ResponseHeaders) = self
+            .delete_with_request(CANCEL_ALL_ORDERS_ENDPOINT, &request)
+            .await?;
 
         Ok((response.data, headers))
     }
@@ -111,8 +111,12 @@ mod tests {
     #[test]
     fn test_cancel_all_orders_response_deserialization_large_list() {
         let order_ids: Vec<String> = (1..=100).map(|i| format!("order_{}", i)).collect();
-        let order_ids_json: Vec<String> = order_ids.iter().map(|id| format!("\"{}\"", id)).collect();
-        let json = format!(r#"{{"cancelledOrderIds": [{}]}}"#, order_ids_json.join(", "));
+        let order_ids_json: Vec<String> =
+            order_ids.iter().map(|id| format!("\"{}\"", id)).collect();
+        let json = format!(
+            r#"{{"cancelledOrderIds": [{}]}}"#,
+            order_ids_json.join(", ")
+        );
 
         let response: CancelAllOrdersResponse = serde_json::from_str(&json).unwrap();
         assert_eq!(response.cancelled_order_ids.len(), 100);
@@ -133,7 +137,7 @@ mod tests {
 
         // Test field types and constraints
         assert_eq!(request.symbol, Some("ETHUSDTM".to_string()));
-        
+
         // Test that symbol can be None
         let minimal_request = CancelAllOrdersRequest { symbol: None };
         assert!(minimal_request.symbol.is_none());
@@ -146,11 +150,11 @@ mod tests {
         }"#;
 
         let response: CancelAllOrdersResponse = serde_json::from_str(json).unwrap();
-        
+
         // Test field types
         assert_eq!(response.cancelled_order_ids.len(), 2);
         assert!(response.cancelled_order_ids.iter().all(|id| id.len() > 0));
-        
+
         // Verify order ID format (typical KuCoin order ID length)
         for order_id in &response.cancelled_order_ids {
             assert!(order_id.len() >= 20); // KuCoin order IDs are typically 24 characters
@@ -159,13 +163,7 @@ mod tests {
 
     #[test]
     fn test_cancel_all_orders_symbol_variations() {
-        let symbols = vec![
-            "XBTUSDTM",
-            "ETHUSDTM", 
-            "ADAUSDTM",
-            "DOTUSDTM",
-            "LINKUSDTM"
-        ];
+        let symbols = vec!["XBTUSDTM", "ETHUSDTM", "ADAUSDTM", "DOTUSDTM", "LINKUSDTM"];
 
         for symbol in symbols {
             let request = CancelAllOrdersRequest {

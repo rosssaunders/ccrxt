@@ -42,7 +42,7 @@ impl RestClient {
     ///
     /// [Official API docs](https://docs.deribit.com/#public-get_index)
     pub async fn get_index(&self, params: GetIndexRequest) -> RestResult<GetIndexResponse> {
-    self.send_post_request(
+        self.send_post_request(
             INDEX_ENDPOINT,
             Some(&params),
             EndpointType::NonMatchingEngine,

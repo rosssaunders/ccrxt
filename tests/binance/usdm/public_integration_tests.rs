@@ -384,7 +384,9 @@ async fn test_get_ticker_24hr() {
             assert!(!ticker.volume.is_empty(), "Should have volume");
             println!(
                 "24hr ticker: price={}, volume={} (took {:?})",
-                ticker.last_price, ticker.volume, std::time::Duration::from_secs(0)
+                ticker.last_price,
+                ticker.volume,
+                std::time::Duration::from_secs(0)
             );
         }
         venues::binance::usdm::public::rest::ticker_24hr::Ticker24hrResult::Multiple(tickers) => {
@@ -392,7 +394,9 @@ async fn test_get_ticker_24hr() {
             assert!(!ticker.volume.is_empty(), "Should have volume");
             println!(
                 "24hr ticker: price={}, volume={} (took {:?})",
-                ticker.last_price, ticker.volume, std::time::Duration::from_secs(0)
+                ticker.last_price,
+                ticker.volume,
+                std::time::Duration::from_secs(0)
             );
         }
     }
@@ -425,7 +429,9 @@ async fn test_get_ticker_price() {
 
             println!(
                 "Ticker price: {} = {} (took {:?})",
-                ticker.symbol, ticker.price, std::time::Duration::from_secs(0)
+                ticker.symbol,
+                ticker.price,
+                std::time::Duration::from_secs(0)
             );
         }
         venues::binance::usdm::public::rest::ticker_price::TickerPriceResult::Multiple(tickers) => {
@@ -436,7 +442,9 @@ async fn test_get_ticker_price() {
 
             println!(
                 "Ticker price: {} = {} (took {:?})",
-                ticker.symbol, ticker.price, std::time::Duration::from_secs(0)
+                ticker.symbol,
+                ticker.price,
+                std::time::Duration::from_secs(0)
             );
         }
     }
@@ -506,7 +514,9 @@ async fn test_get_mark_price() {
 
             println!(
                 "Mark price: {} = {} (took {:?})",
-                mark_price.symbol, mark_price.mark_price, std::time::Duration::from_secs(0)
+                mark_price.symbol,
+                mark_price.mark_price,
+                std::time::Duration::from_secs(0)
             );
         }
         venues::binance::usdm::public::rest::mark_price::MarkPriceResult::Multiple(mark_prices) => {
@@ -517,7 +527,9 @@ async fn test_get_mark_price() {
 
             println!(
                 "Mark price: {} = {} (took {:?})",
-                mark_price.symbol, mark_price.mark_price, std::time::Duration::from_secs(0)
+                mark_price.symbol,
+                mark_price.mark_price,
+                std::time::Duration::from_secs(0)
             );
         }
     }
@@ -589,7 +601,9 @@ async fn test_get_open_interest() {
 
     println!(
         "Open interest: {} = {} (took {:?})",
-        response.data.symbol, response.data.open_interest, std::time::Duration::from_secs(0)
+        response.data.symbol,
+        response.data.open_interest,
+        std::time::Duration::from_secs(0)
     );
 }
 
@@ -1097,7 +1111,8 @@ async fn test_get_asset_index() {
 
     println!(
         "Asset index: {} entries (took {:?})",
-        count, std::time::Duration::from_secs(0)
+        count,
+        std::time::Duration::from_secs(0)
     );
 }
 

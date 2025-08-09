@@ -1,7 +1,6 @@
 use serde::Serialize;
 
-use super::RestClient;
-use super::withdraw::WithdrawResponse;
+use super::{RestClient, withdraw::WithdrawResponse};
 use crate::deribit::{Currency, EndpointType, RestResult};
 
 /// REST API endpoint constant

@@ -1,7 +1,6 @@
 use serde::Serialize;
 
-use super::batch_cancel_orders::CancelResponse;
-use super::client::RestClient;
+use super::{batch_cancel_orders::CancelResponse, client::RestClient};
 use crate::binance::options::RestResult;
 
 const CANCEL_ALL_BY_SYMBOL_ENDPOINT: &str = "/eapi/v1/allOpenOrders";

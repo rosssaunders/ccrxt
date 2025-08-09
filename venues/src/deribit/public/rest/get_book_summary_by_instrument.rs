@@ -125,7 +125,7 @@ impl RestClient {
         &self,
         params: GetBookSummaryByInstrumentRequest,
     ) -> RestResult<GetBookSummaryByInstrumentResponse> {
-    self.send_post_request(
+        self.send_post_request(
             BOOK_SUMMARY_BY_INSTRUMENT_ENDPOINT,
             Some(&params),
             EndpointType::NonMatchingEngine,

@@ -1,7 +1,6 @@
 use serde::Serialize;
 
-use super::RestClient;
-use super::submit_transfer_to_user::TransferData;
+use super::{RestClient, submit_transfer_to_user::TransferData};
 use crate::deribit::{EndpointType, JsonRpcResult, RestResult};
 
 /// REST API endpoint constant

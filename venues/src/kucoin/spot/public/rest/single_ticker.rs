@@ -78,8 +78,9 @@ impl RestClient {
         &self,
         request: GetTickerRequest,
     ) -> Result<(TickerStatistics, ResponseHeaders)> {
-        let (response, headers): (RestResponse<TickerStatistics>, ResponseHeaders) =
-            self.get_with_request("/api/v1/market/stats", &request).await?;
+        let (response, headers): (RestResponse<TickerStatistics>, ResponseHeaders) = self
+            .get_with_request("/api/v1/market/stats", &request)
+            .await?;
 
         Ok((response.data, headers))
     }

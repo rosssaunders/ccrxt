@@ -1,8 +1,7 @@
-
 use serde::Serialize;
 
 use crate::binance::{
-    shared::{Errors as SharedErrors, client::PrivateBinanceClient, RestResponse},
+    shared::{Errors as SharedErrors, RestResponse, client::PrivateBinanceClient},
     usdm::Errors,
 };
 
@@ -29,7 +28,6 @@ impl UsdmPrivateRestClient {
         T: serde::de::DeserializeOwned + Send + 'static,
         R: Serialize,
     {
-
         // Call the shared client's high-performance GET function
         let shared_response = PrivateBinanceClient::send_get_signed_request::<T, R, SharedErrors>(
             &self.0, endpoint, params, weight, is_order,
@@ -65,7 +63,6 @@ impl UsdmPrivateRestClient {
         T: serde::de::DeserializeOwned + Send + 'static,
         R: Serialize,
     {
-
         // Call the shared client's high-performance POST function
         let shared_response = PrivateBinanceClient::send_post_signed_request::<T, R, SharedErrors>(
             &self.0, endpoint, params, weight, is_order,
@@ -101,7 +98,6 @@ impl UsdmPrivateRestClient {
         T: serde::de::DeserializeOwned + Send + 'static,
         R: Serialize,
     {
-
         // Call the shared client's high-performance PUT function
         let shared_response = PrivateBinanceClient::send_put_signed_request::<T, R, SharedErrors>(
             &self.0, endpoint, params, weight, is_order,
@@ -137,7 +133,6 @@ impl UsdmPrivateRestClient {
         T: serde::de::DeserializeOwned + Send + 'static,
         R: Serialize,
     {
-
         // Call the shared client's high-performance DELETE function
         let shared_response =
             PrivateBinanceClient::send_delete_signed_request::<T, R, SharedErrors>(
@@ -178,7 +173,6 @@ impl UsdmPrivateRestClient {
         T: serde::de::DeserializeOwned + Send + 'static,
         R: Serialize,
     {
-
         // Call the shared client's send_signed_request
         #[allow(deprecated)]
         let shared_response = PrivateBinanceClient::send_signed_request::<T, R, SharedErrors>(

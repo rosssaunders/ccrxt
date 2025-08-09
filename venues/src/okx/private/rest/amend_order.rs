@@ -88,10 +88,7 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the order amendment response or an error
-    pub async fn amend_order(
-        &self,
-        request: &AmendOrderRequest,
-    ) -> RestResult<AmendOrderResponse> {
+    pub async fn amend_order(&self, request: &AmendOrderRequest) -> RestResult<AmendOrderResponse> {
         self.send_post_request(
             TRADE_AMEND_ORDER_ENDPOINT,
             Some(request),

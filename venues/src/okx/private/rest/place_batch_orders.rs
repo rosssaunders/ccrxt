@@ -63,8 +63,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::okx::response::OkxApiResponse;
-    use crate::okx::{OrderSide, OrderType};
+    use crate::okx::{OrderSide, OrderType, response::OkxApiResponse};
 
     #[test]
     fn test_place_batch_orders_serialization() {

@@ -78,7 +78,7 @@ impl RestClient {
         &self,
         params: GetExpirationsRequest,
     ) -> RestResult<GetExpirationsResponse> {
-    self.send_post_request(
+        self.send_post_request(
             EXPIRATIONS_ENDPOINT,
             Some(&params),
             EndpointType::NonMatchingEngine,

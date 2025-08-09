@@ -47,7 +47,8 @@ impl RestClient {
         &self,
         request: CancelAllOrdersRequest,
     ) -> crate::gateio::spot::RestResult<Vec<Order>> {
-        self.delete_with_query(CANCEL_ALL_ORDERS_ENDPOINT, &request).await
+        self.delete_with_query(CANCEL_ALL_ORDERS_ENDPOINT, &request)
+            .await
     }
 
     /// Cancel all orders for a currency pair (helper method)

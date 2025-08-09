@@ -54,7 +54,7 @@ impl RestClient {
         &self,
         params: GetTradeVolumesRequest,
     ) -> RestResult<GetTradeVolumesResponse> {
-    self.send_post_request(
+        self.send_post_request(
             TRADE_VOLUMES_ENDPOINT,
             Some(&params),
             EndpointType::NonMatchingEngine,

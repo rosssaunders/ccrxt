@@ -234,12 +234,22 @@ mod tests {
         assert_eq!(deserialized.asks.len(), original.asks.len());
         assert_eq!(deserialized.bids.len(), original.bids.len());
 
-        for (i, (orig, deser)) in original.asks.iter().zip(deserialized.asks.iter()).enumerate() {
+        for (i, (orig, deser)) in original
+            .asks
+            .iter()
+            .zip(deserialized.asks.iter())
+            .enumerate()
+        {
             assert_eq!(deser.p, orig.p, "Ask {} price mismatch", i);
             assert_eq!(deser.s, orig.s, "Ask {} size mismatch", i);
         }
 
-        for (i, (orig, deser)) in original.bids.iter().zip(deserialized.bids.iter()).enumerate() {
+        for (i, (orig, deser)) in original
+            .bids
+            .iter()
+            .zip(deserialized.bids.iter())
+            .enumerate()
+        {
             assert_eq!(deser.p, orig.p, "Bid {} price mismatch", i);
             assert_eq!(deser.s, orig.s, "Bid {} size mismatch", i);
         }
@@ -303,7 +313,7 @@ mod tests {
 
             assert_eq!(deserialized.p, price);
             assert_eq!(deserialized.s, size);
-            
+
             // Verify price can be parsed as a number
             assert!(price.parse::<f64>().is_ok());
         }

@@ -57,8 +57,9 @@ impl RestClient {
         &self,
         request: GetLoanMarketRequest,
     ) -> Result<(Vec<LoanMarket>, ResponseHeaders)> {
-        let (response, headers): (RestResponse<Vec<LoanMarket>>, ResponseHeaders) =
-            self.get_with_request(LOAN_MARKET_ENDPOINT, &request).await?;
+        let (response, headers): (RestResponse<Vec<LoanMarket>>, ResponseHeaders) = self
+            .get_with_request(LOAN_MARKET_ENDPOINT, &request)
+            .await?;
 
         Ok((response.data, headers))
     }

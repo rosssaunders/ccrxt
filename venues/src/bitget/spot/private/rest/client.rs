@@ -348,7 +348,6 @@ impl RestClient {
         .await
     }
 
-
     /// Convenience method for requests with no parameters
     pub(super) async fn send_signed_request_no_params<T>(
         &self,

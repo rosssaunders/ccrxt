@@ -42,8 +42,7 @@ impl super::RestClient {
         &self,
         request: AutoDepositMarginRequest,
     ) -> Result<(RestResponse<AutoDepositMarginResponse>, ResponseHeaders)> {
-        self.post(AUTO_DEPOSIT_MARGIN_ENDPOINT, &request)
-        .await
+        self.post(AUTO_DEPOSIT_MARGIN_ENDPOINT, &request).await
     }
 }
 

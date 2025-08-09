@@ -97,8 +97,9 @@ impl RestClient {
         &self,
         request: GetAccountLedgersRequest,
     ) -> Result<(AccountLedgersResponse, ResponseHeaders)> {
-        let (response, headers): (RestResponse<AccountLedgersResponse>, ResponseHeaders) =
-            self.get_with_request(ACCOUNT_LEDGERS_ENDPOINT, &request).await?;
+        let (response, headers): (RestResponse<AccountLedgersResponse>, ResponseHeaders) = self
+            .get_with_request(ACCOUNT_LEDGERS_ENDPOINT, &request)
+            .await?;
 
         Ok((response.data, headers))
     }

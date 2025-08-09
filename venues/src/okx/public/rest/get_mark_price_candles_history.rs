@@ -99,8 +99,7 @@ mod tests {
             ]
         });
 
-        let response: OkxApiResponse<[String; 6]> =
-            serde_json::from_value(response_json).unwrap();
+        let response: OkxApiResponse<[String; 6]> = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.msg, "");
         assert_eq!(response.data.len(), 2);

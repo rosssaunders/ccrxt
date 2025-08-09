@@ -1,4 +1,3 @@
-
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
@@ -178,8 +177,9 @@ impl RestClient {
         &self,
         request: GetStopOrdersRequest,
     ) -> Result<(OrdersResponse, ResponseHeaders)> {
-        let (response, headers): (RestResponse<OrdersResponse>, ResponseHeaders) =
-            self.get_with_request(STOP_ORDERS_ENDPOINT, &request).await?;
+        let (response, headers): (RestResponse<OrdersResponse>, ResponseHeaders) = self
+            .get_with_request(STOP_ORDERS_ENDPOINT, &request)
+            .await?;
 
         Ok((response.data, headers))
     }

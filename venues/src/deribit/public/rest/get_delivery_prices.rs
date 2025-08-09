@@ -62,7 +62,7 @@ impl RestClient {
         &self,
         params: GetDeliveryPricesRequest,
     ) -> RestResult<GetDeliveryPricesResponse> {
-    self.send_post_request(
+        self.send_post_request(
             DELIVERY_PRICES_ENDPOINT,
             Some(&params),
             EndpointType::NonMatchingEngine,

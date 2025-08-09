@@ -12,7 +12,7 @@ const LIST_OPEN_ORDERS_ENDPOINT: &str = "/spot/open_orders";
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct ListOpenOrdersRequest {
     /// Trading pair filter for open orders query.
-    /// 
+    ///
     /// Optional filter to retrieve open orders for a specific currency pair.
     /// Format should be "BASE_QUOTE" (e.g., "BTC_USDT", "ETH_BTC"). If not specified,
     /// returns open orders for all trading pairs.
@@ -20,14 +20,14 @@ pub struct ListOpenOrdersRequest {
     pub currency_pair: Option<String>,
 
     /// Page number for pagination (starting from 1).
-    /// 
+    ///
     /// Used for paginated results when there are many open orders. Default is 1
     /// if not specified. Page numbers start from 1, not 0.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub page: Option<i32>,
 
     /// Maximum number of orders to return per page.
-    /// 
+    ///
     /// Controls the number of open orders returned in a single response. Valid range
     /// is 1-100, with default being 100 if not specified. Larger limits may improve
     /// efficiency but could increase response times.
@@ -35,14 +35,14 @@ pub struct ListOpenOrdersRequest {
     pub limit: Option<i32>,
 
     /// Trading side filter for open orders.
-    /// 
+    ///
     /// Optional filter to retrieve only buy or sell orders. Valid values are "buy"
     /// or "sell". If not specified, returns open orders for both sides.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub side: Option<String>,
 
     /// Account type filter for the open orders query.
-    /// 
+    ///
     /// Specifies which account type to query open orders from. Common values include
     /// "spot", "margin", "cross_margin", or "unified". If not specified, uses the
     /// default account context.
@@ -58,146 +58,146 @@ pub struct ListOpenOrdersRequest {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct OpenOrder {
     /// Unique order identifier assigned by the exchange.
-    /// 
+    ///
     /// System-generated unique ID for this order, used for tracking and management.
     pub id: String,
 
     /// Trading pair for this order.
-    /// 
+    ///
     /// The currency pair being traded, formatted as "BASE_QUOTE" (e.g., "BTC_USDT").
     pub currency_pair: String,
 
     /// Current order status.
-    /// 
+    ///
     /// Indicates the current state of the order (e.g., "open", "partial").
     /// For this endpoint, typically "open" since only active orders are returned.
     pub status: String,
 
     /// Account type where the order was placed.
-    /// 
+    ///
     /// Identifies which account context this order belongs to (e.g., "spot", "margin").
     pub account: String,
 
     /// Order direction (buy or sell).
-    /// 
+    ///
     /// Indicates whether this is a buy order ("buy") or sell order ("sell").
     pub side: String,
 
     /// Total order quantity as a decimal string.
-    /// 
+    ///
     /// The original amount requested for this order, expressed in the base currency.
     /// Preserved as string to maintain precision for financial calculations.
     pub amount: String,
 
     /// Order price as a decimal string.
-    /// 
+    ///
     /// The price per unit for limit orders, or "0" for market orders.
     /// Expressed in the quote currency and preserved as string for precision.
     pub price: String,
 
     /// Order type specification.
-    /// 
+    ///
     /// Indicates the order type such as "limit", "market", "stop", etc.
     #[serde(rename = "type")]
     pub order_type: String,
 
     /// Time-in-force policy for this order.
-    /// 
+    ///
     /// Specifies how long the order remains active (e.g., "gtc" for Good Till Cancelled,
     /// "ioc" for Immediate Or Cancel, "fok" for Fill Or Kill).
     pub time_in_force: String,
 
     /// Amount already filled as a decimal string.
-    /// 
+    ///
     /// The portion of the order that has been executed, expressed in base currency.
     /// For open orders, this may be "0" for unfilled or partial amount for partially filled.
     pub filled_amount: String,
 
     /// Remaining unfilled amount as a decimal string.
-    /// 
+    ///
     /// The portion of the order still waiting to be executed, expressed in base currency.
     /// Calculated as original amount minus filled amount.
     pub left: String,
 
     /// Average execution price as a decimal string.
-    /// 
+    ///
     /// The weighted average price of all fills for this order. "0" if no fills yet,
     /// otherwise the average price of executed portions.
     pub avg_deal_price: String,
 
     /// Total fees paid for this order as a decimal string.
-    /// 
+    ///
     /// Cumulative fees charged for all executed portions of this order.
     /// Amount depends on fee structure and trading volume.
     pub fee: String,
 
     /// Currency in which fees are denominated.
-    /// 
+    ///
     /// The currency used for fee payment (e.g., "USDT", "BTC").
     /// May differ from trading pair currencies based on fee structure.
     pub fee_currency: String,
 
     /// Points-based fee component as a decimal string.
-    /// 
+    ///
     /// Fee amount paid using loyalty points or similar reward systems.
     /// "0" if no points were used for fee payment.
     pub points_fee: String,
 
     /// Gate Token (GT) discount fee as a decimal string.
-    /// 
+    ///
     /// Fee discount amount when using GT tokens for fee payment.
     /// "0" if GT discount is not applicable or not used.
     pub gt_fee: String,
 
     /// Order creation timestamp as a string.
-    /// 
+    ///
     /// Unix timestamp when the order was first created and submitted.
     /// Formatted as string representation of seconds since epoch.
     pub create_time: String,
 
     /// Last modification timestamp as a string.
-    /// 
+    ///
     /// Unix timestamp of the most recent update to this order (fills, amendments, etc.).
     /// Initially equals create_time, updates with each change.
     pub update_time: String,
 
     /// Client-specified order identifier.
-    /// 
+    ///
     /// Optional custom order ID provided by the client for order tracking.
     /// Useful for reconciliation and order management systems.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub text: Option<String>,
 
     /// Iceberg order display amount as a decimal string.
-    /// 
+    ///
     /// For iceberg orders, the amount visible in the order book at any time.
     /// Allows large orders to be executed without revealing full size.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub iceberg: Option<String>,
 
     /// Automatic borrowing enabled flag.
-    /// 
+    ///
     /// Indicates whether this order can automatically borrow funds if account
     /// balance is insufficient. Applies to margin trading contexts.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub auto_borrow: Option<bool>,
 
     /// Automatic repayment enabled flag.
-    /// 
+    ///
     /// Indicates whether proceeds from this order will automatically repay
     /// outstanding margin loans. Applies to margin trading contexts.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub auto_repay: Option<bool>,
 
     /// Self-trade prevention action.
-    /// 
+    ///
     /// Specifies the action taken when this order would trade against another
     /// order from the same account. Common values include "cancel_newest", "cancel_oldest".
     #[serde(skip_serializing_if = "Option::is_none")]
     pub stp_act: Option<String>,
 
     /// Order completion status.
-    /// 
+    ///
     /// Indicates how the order finished when it's no longer active.
     /// Values include "filled", "cancelled", "expired", etc.
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -225,7 +225,8 @@ impl RestClient {
         &self,
         params: ListOpenOrdersRequest,
     ) -> crate::gateio::spot::RestResult<Vec<OpenOrder>> {
-        self.get_with_query(LIST_OPEN_ORDERS_ENDPOINT, &params).await
+        self.get_with_query(LIST_OPEN_ORDERS_ENDPOINT, &params)
+            .await
     }
 }
 

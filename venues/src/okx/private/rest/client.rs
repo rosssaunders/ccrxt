@@ -70,7 +70,7 @@ impl RestClient {
         let base_url = base_url.into();
         // Pre-format the base URL with trailing slash for fast concatenation
         let formatted_base = format!("{}/", base_url.trim_end_matches('/'));
-        
+
         Self {
             base_url,
             formatted_base,
@@ -122,7 +122,6 @@ impl RestClient {
         Ok(general_purpose::STANDARD.encode(mac.finalize().into_bytes()))
     }
 
-
     /// Send a GET request to a private endpoint (optimized for HFT)
     ///
     /// # Arguments
@@ -157,9 +156,8 @@ impl RestClient {
         let mut request_builder = self.client.get(&url);
 
         // Handle query parameters for GET requests
-        let query_string = serde_urlencoded::to_string(&params).map_err(|e| {
-            Errors::Error(format!("Failed to serialize query parameters: {e}"))
-        })?;
+        let query_string = serde_urlencoded::to_string(&params)
+            .map_err(|e| Errors::Error(format!("Failed to serialize query parameters: {e}")))?;
         let request_path = if !query_string.is_empty() {
             request_builder = request_builder.query(&query_string);
             format!("/{endpoint}?{query_string}")
@@ -277,7 +275,6 @@ impl RestClient {
 
         Ok(parsed)
     }
-
 }
 
 #[cfg(test)]

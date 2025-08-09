@@ -1,4 +1,3 @@
-
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
@@ -66,8 +65,9 @@ impl RestClient {
         &self,
         request: GetWithdrawalQuotasRequest,
     ) -> Result<(WithdrawalQuota, ResponseHeaders)> {
-        let (response, headers): (RestResponse<WithdrawalQuota>, ResponseHeaders) =
-            self.get_with_request(WITHDRAWAL_QUOTAS_ENDPOINT, &request).await?;
+        let (response, headers): (RestResponse<WithdrawalQuota>, ResponseHeaders) = self
+            .get_with_request(WITHDRAWAL_QUOTAS_ENDPOINT, &request)
+            .await?;
 
         Ok((response.data, headers))
     }

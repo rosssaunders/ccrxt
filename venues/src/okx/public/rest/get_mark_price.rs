@@ -81,8 +81,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use serde_json::json;
+
+    use super::*;
     use crate::okx::response::OkxApiResponse;
 
     #[test]

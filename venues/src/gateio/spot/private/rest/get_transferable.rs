@@ -12,13 +12,13 @@ const MARGIN_TRANSFERABLE_ENDPOINT: &str = "/margin/transferable";
 #[derive(Debug, Clone, Serialize)]
 pub struct TransferableRequest {
     /// Currency symbol to check transferable amount for.
-    /// 
+    ///
     /// Specifies which currency's transferable amount to query (e.g., "BTC", "USDT").
     /// The amount returned represents the maximum that can be transferred for this currency.
     pub currency: String,
 
     /// Trading pair context for the transferable calculation.
-    /// 
+    ///
     /// The currency pair context affects transferable amount calculations in margin trading.
     /// Format should be "BASE_QUOTE" (e.g., "BTC_USDT", "ETH_BTC") matching the trading pair
     /// where the currency is being used.
@@ -33,12 +33,12 @@ pub struct TransferableRequest {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TransferableAmount {
     /// Currency symbol for which the transferable amount is calculated.
-    /// 
+    ///
     /// Echoes back the currency from the request to confirm the response context.
     pub currency: String,
 
     /// Maximum transferable amount as a decimal string.
-    /// 
+    ///
     /// The calculated maximum amount that can be transferred for this currency
     /// in the specified margin trading context. Returned as a string to preserve
     /// precision for financial calculations.

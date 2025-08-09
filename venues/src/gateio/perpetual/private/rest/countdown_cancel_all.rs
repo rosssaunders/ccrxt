@@ -35,7 +35,10 @@ impl RestClient {
         &self,
         request: CountdownCancelRequest,
     ) -> crate::gateio::perpetual::RestResult<()> {
-        let endpoint = format!("{}/{}/countdown_cancel_all", ENDPOINT_FUTURES_PREFIX, request.settle);
+        let endpoint = format!(
+            "{}/{}/countdown_cancel_all",
+            ENDPOINT_FUTURES_PREFIX, request.settle
+        );
         self.post::<serde_json::Value>(&endpoint, &request).await?;
         Ok(())
     }

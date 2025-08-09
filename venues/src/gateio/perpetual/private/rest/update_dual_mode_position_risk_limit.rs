@@ -45,9 +45,7 @@ impl RestClient {
     ) -> crate::gateio::perpetual::RestResult<DualModeRiskLimitResponse> {
         let endpoint = format!(
             "{}/{}/dual_positions/{}/risk_limit",
-            ENDPOINT_FUTURES_PREFIX,
-            request.settle,
-            request.contract
+            ENDPOINT_FUTURES_PREFIX, request.settle, request.contract
         );
         self.post(&endpoint, &request).await
     }

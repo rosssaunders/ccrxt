@@ -1,4 +1,3 @@
-
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
@@ -60,8 +59,9 @@ impl RestClient {
         &self,
         request: GetInterestHistoryRequest,
     ) -> Result<(InterestHistoryResponse, ResponseHeaders)> {
-        let (response, headers): (RestResponse<InterestHistoryResponse>, ResponseHeaders) =
-            self.get_with_request(INTEREST_HISTORY_ENDPOINT, &request).await?;
+        let (response, headers): (RestResponse<InterestHistoryResponse>, ResponseHeaders) = self
+            .get_with_request(INTEREST_HISTORY_ENDPOINT, &request)
+            .await?;
         Ok((response.data, headers))
     }
 }

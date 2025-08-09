@@ -91,8 +91,9 @@ impl RestClient {
         &self,
         request: GetPurchaseOrdersRequest,
     ) -> Result<(PurchaseOrdersResponse, ResponseHeaders)> {
-        let (response, headers): (RestResponse<PurchaseOrdersResponse>, ResponseHeaders) =
-            self.get_with_request(PURCHASE_ORDERS_ENDPOINT, &request).await?;
+        let (response, headers): (RestResponse<PurchaseOrdersResponse>, ResponseHeaders) = self
+            .get_with_request(PURCHASE_ORDERS_ENDPOINT, &request)
+            .await?;
 
         Ok((response.data, headers))
     }

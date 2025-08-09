@@ -85,8 +85,9 @@ impl RestClient {
         &self,
         request: GetRedeemOrdersRequest,
     ) -> Result<(RedeemOrdersResponse, ResponseHeaders)> {
-        let (response, headers): (RestResponse<RedeemOrdersResponse>, ResponseHeaders) =
-            self.get_with_request(REDEEM_ORDERS_ENDPOINT, &request).await?;
+        let (response, headers): (RestResponse<RedeemOrdersResponse>, ResponseHeaders) = self
+            .get_with_request(REDEEM_ORDERS_ENDPOINT, &request)
+            .await?;
 
         Ok((response.data, headers))
     }

@@ -53,7 +53,7 @@ impl RestClient {
         let base_url = base_url.into();
         // Pre-format the base URL with trailing slash for fast concatenation
         let formatted_base = format!("{}/", base_url.trim_end_matches('/'));
-        
+
         Self {
             base_url,
             formatted_base,
@@ -90,7 +90,6 @@ impl RestClient {
         T: DeserializeOwned,
         P: serde::Serialize + ?Sized,
     {
-        
         // Check rate limits before making the request
         self.rate_limiter
             .check_limits(endpoint_type.clone())

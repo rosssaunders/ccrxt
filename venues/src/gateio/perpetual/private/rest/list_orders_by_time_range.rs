@@ -43,7 +43,10 @@ impl RestClient {
         &self,
         params: ListOrdersByTimeRangeRequest,
     ) -> crate::gateio::perpetual::RestResult<Vec<FuturesOrder>> {
-        let endpoint = format!("{}/{}/orders_timerange", ENDPOINT_FUTURES_PREFIX, params.settle);
+        let endpoint = format!(
+            "{}/{}/orders_timerange",
+            ENDPOINT_FUTURES_PREFIX, params.settle
+        );
         self.get_with_query(&endpoint, &params).await
     }
 }

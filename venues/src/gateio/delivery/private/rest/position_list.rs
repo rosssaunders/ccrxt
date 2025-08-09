@@ -1,6 +1,8 @@
 use super::RestClient;
-use crate::gateio::delivery::RestResult;
-use crate::gateio::delivery::models::{DeliveryPosition, DeliveryPositionsRequest};
+use crate::gateio::delivery::{
+    RestResult,
+    models::{DeliveryPosition, DeliveryPositionsRequest},
+};
 
 const DELIVERY_POSITIONS_ENDPOINT: &str = "/delivery/{}/positions";
 const DELIVERY_POSITION_ENDPOINT: &str = "/delivery/{}/positions/{}";
@@ -101,16 +103,32 @@ mod tests {
     #[test]
     fn test_position_endpoint_different_params() {
         let test_cases = vec![
-            ("BTC", "BTC_USDT_20240315", "/delivery/BTC/positions/BTC_USDT_20240315"),
-            ("USDT", "ETH_USDT_20240415", "/delivery/USDT/positions/ETH_USDT_20240415"),
-            ("ETH", "SOL_ETH_20240515", "/delivery/ETH/positions/SOL_ETH_20240515"),
+            (
+                "BTC",
+                "BTC_USDT_20240315",
+                "/delivery/BTC/positions/BTC_USDT_20240315",
+            ),
+            (
+                "USDT",
+                "ETH_USDT_20240415",
+                "/delivery/USDT/positions/ETH_USDT_20240415",
+            ),
+            (
+                "ETH",
+                "SOL_ETH_20240515",
+                "/delivery/ETH/positions/SOL_ETH_20240515",
+            ),
         ];
 
         for (settle, contract, expected) in test_cases {
             let endpoint = DELIVERY_POSITION_ENDPOINT
                 .replacen("{}", settle, 1)
                 .replacen("{}", contract, 1);
-            assert_eq!(endpoint, expected, "Failed for settle: {}, contract: {}", settle, contract);
+            assert_eq!(
+                endpoint, expected,
+                "Failed for settle: {}, contract: {}",
+                settle, contract
+            );
         }
     }
 
@@ -129,7 +147,7 @@ mod tests {
     fn test_endpoint_paths_structure() {
         assert!(DELIVERY_POSITIONS_ENDPOINT.starts_with("/delivery/"));
         assert!(DELIVERY_POSITIONS_ENDPOINT.ends_with("/positions"));
-        
+
         assert!(DELIVERY_POSITION_ENDPOINT.starts_with("/delivery/"));
         assert!(DELIVERY_POSITION_ENDPOINT.contains("/positions/"));
     }
@@ -155,7 +173,7 @@ mod tests {
     fn test_contract_naming_patterns() {
         let contracts = vec![
             "BTC_USDT_20240315",
-            "ETH_USDT_20240415", 
+            "ETH_USDT_20240415",
             "SOL_USDT_20240515",
             "DOGE_USDT_20240615",
         ];

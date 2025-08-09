@@ -6,7 +6,7 @@
 use rest::secrets::ExposableSecret;
 
 use crate::binance::{
-    shared::{Errors as SharedErrors, client::PublicBinanceClient, RestResponse},
+    shared::{Errors as SharedErrors, RestResponse, client::PublicBinanceClient},
     usdm::Errors,
 };
 
@@ -46,7 +46,6 @@ impl UsdmPublicRestClient {
         T: serde::de::DeserializeOwned + Send + 'static,
         R: serde::Serialize,
     {
-
         // Call the shared client's send_public_request
         let shared_response = PublicBinanceClient::send_public_request::<T, R, SharedErrors>(
             &self.0, endpoint, method, params, weight,
@@ -83,7 +82,6 @@ impl UsdmPublicRestClient {
         T: serde::de::DeserializeOwned + Send + 'static,
         R: serde::Serialize,
     {
-
         // Call the shared client's send_api_key_request
         let shared_response = self
             .0

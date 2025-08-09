@@ -37,7 +37,7 @@ impl RestClient {
         &self,
         params: GetFundingRateValueRequest,
     ) -> RestResult<GetFundingRateValueResponse> {
-    self.send_post_request(
+        self.send_post_request(
             FUNDING_RATE_VALUE_ENDPOINT,
             Some(&params),
             EndpointType::NonMatchingEngine,

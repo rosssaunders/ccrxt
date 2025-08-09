@@ -74,7 +74,7 @@ impl RestClient {
         &self,
         params: &GetTradingviewChartDataRequest,
     ) -> Result<GetTradingviewChartDataResponse, DeribitError> {
-    self.send_post_request(
+        self.send_post_request(
             TRADINGVIEW_CHART_DATA_ENDPOINT,
             Some(params),
             EndpointType::NonMatchingEngine,

@@ -109,8 +109,9 @@ impl RestClient {
         &self,
         request: PlaceOrderRequest,
     ) -> Result<(PlaceOrderResponse, ResponseHeaders)> {
-        let (response, headers): (RestResponse<PlaceOrderResponse>, ResponseHeaders) =
-            self.post_with_request(PLACE_ORDER_ENDPOINT, &request).await?;
+        let (response, headers): (RestResponse<PlaceOrderResponse>, ResponseHeaders) = self
+            .post_with_request(PLACE_ORDER_ENDPOINT, &request)
+            .await?;
 
         Ok((response.data, headers))
     }

@@ -1,6 +1,8 @@
 use super::RestClient;
-use crate::gateio::delivery::RestResult;
-use crate::gateio::delivery::models::{DeliveryRiskLimitResponse, UpdateDeliveryRiskLimitRequest};
+use crate::gateio::delivery::{
+    RestResult,
+    models::{DeliveryRiskLimitResponse, UpdateDeliveryRiskLimitRequest},
+};
 
 const DELIVERY_POSITION_RISK_LIMIT_ENDPOINT: &str = "/delivery/{}/positions/{}/risk_limit";
 
@@ -35,7 +37,10 @@ mod tests {
 
     #[test]
     fn test_delivery_position_risk_limit_endpoint() {
-        assert_eq!(DELIVERY_POSITION_RISK_LIMIT_ENDPOINT, "/delivery/{}/positions/{}/risk_limit");
+        assert_eq!(
+            DELIVERY_POSITION_RISK_LIMIT_ENDPOINT,
+            "/delivery/{}/positions/{}/risk_limit"
+        );
     }
 
     #[test]
@@ -45,29 +50,51 @@ mod tests {
         let endpoint = DELIVERY_POSITION_RISK_LIMIT_ENDPOINT
             .replacen("{}", settle, 1)
             .replacen("{}", contract, 1);
-        assert_eq!(endpoint, "/delivery/USDT/positions/BTC_USDT_20240315/risk_limit");
+        assert_eq!(
+            endpoint,
+            "/delivery/USDT/positions/BTC_USDT_20240315/risk_limit"
+        );
     }
 
     #[test]
     fn test_risk_limit_endpoint_different_params() {
         let test_cases = vec![
-            ("BTC", "BTC_USDT_20240315", "/delivery/BTC/positions/BTC_USDT_20240315/risk_limit"),
-            ("USDT", "ETH_USDT_20240415", "/delivery/USDT/positions/ETH_USDT_20240415/risk_limit"),
-            ("ETH", "SOL_ETH_20240515", "/delivery/ETH/positions/SOL_ETH_20240515/risk_limit"),
+            (
+                "BTC",
+                "BTC_USDT_20240315",
+                "/delivery/BTC/positions/BTC_USDT_20240315/risk_limit",
+            ),
+            (
+                "USDT",
+                "ETH_USDT_20240415",
+                "/delivery/USDT/positions/ETH_USDT_20240415/risk_limit",
+            ),
+            (
+                "ETH",
+                "SOL_ETH_20240515",
+                "/delivery/ETH/positions/SOL_ETH_20240515/risk_limit",
+            ),
         ];
 
         for (settle, contract, expected) in test_cases {
             let endpoint = DELIVERY_POSITION_RISK_LIMIT_ENDPOINT
                 .replacen("{}", settle, 1)
                 .replacen("{}", contract, 1);
-            assert_eq!(endpoint, expected, "Failed for settle: {}, contract: {}", settle, contract);
+            assert_eq!(
+                endpoint, expected,
+                "Failed for settle: {}, contract: {}",
+                settle, contract
+            );
         }
     }
 
     #[test]
     fn test_risk_limit_endpoint_placeholders() {
         let placeholder_count = DELIVERY_POSITION_RISK_LIMIT_ENDPOINT.matches("{}").count();
-        assert_eq!(placeholder_count, 2, "Endpoint should have exactly two placeholders");
+        assert_eq!(
+            placeholder_count, 2,
+            "Endpoint should have exactly two placeholders"
+        );
     }
 
     #[test]
@@ -85,17 +112,26 @@ mod tests {
         let endpoint = DELIVERY_POSITION_RISK_LIMIT_ENDPOINT
             .replacen("{}", settle, 1)
             .replacen("{}", contract, 1);
-        
-        assert!(!endpoint.contains("{}"), "All placeholders should be replaced");
-        assert!(endpoint.contains(settle), "Endpoint should contain settlement currency");
-        assert!(endpoint.contains(contract), "Endpoint should contain contract name");
+
+        assert!(
+            !endpoint.contains("{}"),
+            "All placeholders should be replaced"
+        );
+        assert!(
+            endpoint.contains(settle),
+            "Endpoint should contain settlement currency"
+        );
+        assert!(
+            endpoint.contains(contract),
+            "Endpoint should contain contract name"
+        );
     }
 
     #[test]
     fn test_risk_limit_endpoint_path_components() {
         let endpoint = DELIVERY_POSITION_RISK_LIMIT_ENDPOINT;
         let parts: Vec<&str> = endpoint.split('/').collect();
-        
+
         assert_eq!(parts[0], ""); // Leading slash
         assert_eq!(parts[1], "delivery");
         assert_eq!(parts[2], "{}"); // Settlement placeholder
@@ -113,10 +149,13 @@ mod tests {
             let endpoint = DELIVERY_POSITION_RISK_LIMIT_ENDPOINT
                 .replacen("{}", settle, 1)
                 .replacen("{}", contract, 1);
-            
+
             assert!(endpoint.contains(settle));
             assert!(endpoint.contains(contract));
-            assert_eq!(endpoint, format!("/delivery/{}/positions/{}/risk_limit", settle, contract));
+            assert_eq!(
+                endpoint,
+                format!("/delivery/{}/positions/{}/risk_limit", settle, contract)
+            );
         }
     }
 
@@ -124,7 +163,7 @@ mod tests {
     fn test_risk_limit_endpoint_with_different_contracts() {
         let contracts = vec![
             "BTC_USDT_20240315",
-            "ETH_USDT_20240415", 
+            "ETH_USDT_20240415",
             "SOL_USDT_20240515",
             "DOGE_USDT_20240615",
         ];
@@ -134,10 +173,13 @@ mod tests {
             let endpoint = DELIVERY_POSITION_RISK_LIMIT_ENDPOINT
                 .replacen("{}", settle, 1)
                 .replacen("{}", contract, 1);
-            
+
             assert!(endpoint.contains(settle));
             assert!(endpoint.contains(contract));
-            assert_eq!(endpoint, format!("/delivery/{}/positions/{}/risk_limit", settle, contract));
+            assert_eq!(
+                endpoint,
+                format!("/delivery/{}/positions/{}/risk_limit", settle, contract)
+            );
         }
     }
 }

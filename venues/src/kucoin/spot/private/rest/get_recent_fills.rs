@@ -85,8 +85,9 @@ impl RestClient {
         &self,
         request: GetRecentFillsRequest,
     ) -> Result<(Vec<Fill>, ResponseHeaders)> {
-        let (response, headers): (RestResponse<Vec<Fill>>, ResponseHeaders) =
-            self.get_with_request(RECENT_FILLS_ENDPOINT, &request).await?;
+        let (response, headers): (RestResponse<Vec<Fill>>, ResponseHeaders) = self
+            .get_with_request(RECENT_FILLS_ENDPOINT, &request)
+            .await?;
 
         Ok((response.data, headers))
     }

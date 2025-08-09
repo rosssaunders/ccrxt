@@ -184,7 +184,7 @@ impl RestClient {
         &self,
         params: GetInstrumentsRequest,
     ) -> RestResult<GetInstrumentsResponse> {
-    self.send_post_request(
+        self.send_post_request(
             INSTRUMENTS_ENDPOINT,
             Some(&params),
             EndpointType::NonMatchingEngine,

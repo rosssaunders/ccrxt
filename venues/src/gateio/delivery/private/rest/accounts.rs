@@ -173,9 +173,15 @@ mod tests {
         assert_eq!(deserialized.point, original.point);
         assert_eq!(deserialized.currency, original.currency);
         assert_eq!(deserialized.enable_credit, original.enable_credit);
-        assert_eq!(deserialized.position_cross_margin, original.position_cross_margin);
+        assert_eq!(
+            deserialized.position_cross_margin,
+            original.position_cross_margin
+        );
         assert_eq!(deserialized.order_cross_margin, original.order_cross_margin);
-        assert_eq!(deserialized.available_cross_margin, original.available_cross_margin);
+        assert_eq!(
+            deserialized.available_cross_margin,
+            original.available_cross_margin
+        );
         assert_eq!(deserialized.total_cross_margin, original.total_cross_margin);
     }
 

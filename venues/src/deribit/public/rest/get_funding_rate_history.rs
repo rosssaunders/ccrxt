@@ -68,7 +68,7 @@ impl RestClient {
         &self,
         params: GetFundingRateHistoryRequest,
     ) -> RestResult<GetFundingRateHistoryResponse> {
-    self.send_post_request(
+        self.send_post_request(
             FUNDING_RATE_HISTORY_ENDPOINT,
             Some(&params),
             EndpointType::NonMatchingEngine,

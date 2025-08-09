@@ -87,7 +87,10 @@ mod tests {
 
     #[test]
     fn test_delivery_position_close_endpoint() {
-        assert_eq!(DELIVERY_POSITION_CLOSE_ENDPOINT, "/delivery/{}/position_close");
+        assert_eq!(
+            DELIVERY_POSITION_CLOSE_ENDPOINT,
+            "/delivery/{}/position_close"
+        );
     }
 
     #[test]

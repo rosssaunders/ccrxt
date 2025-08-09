@@ -1,4 +1,3 @@
-
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
@@ -48,8 +47,9 @@ impl RestClient {
         &self,
         request: GetTransferableRequest,
     ) -> Result<(TransferableBalance, ResponseHeaders)> {
-        let (response, headers): (RestResponse<TransferableBalance>, ResponseHeaders) =
-            self.get_with_request(TRANSFERABLE_ENDPOINT, &request).await?;
+        let (response, headers): (RestResponse<TransferableBalance>, ResponseHeaders) = self
+            .get_with_request(TRANSFERABLE_ENDPOINT, &request)
+            .await?;
 
         Ok((response.data, headers))
     }

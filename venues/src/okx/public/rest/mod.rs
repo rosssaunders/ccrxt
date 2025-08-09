@@ -28,10 +28,10 @@ mod get_settlement_history;
 mod get_time;
 mod get_underlying;
 
-use crate::okx::response::OkxApiResponse;
-
 pub use client::RestClient;
 pub use convert_contract_coin::{ConvertContractCoinData, ConvertContractCoinRequest};
+
+use crate::okx::response::OkxApiResponse;
 pub type ConvertContractCoinResponse = OkxApiResponse<ConvertContractCoinData>;
 pub use exchange_rate::ExchangeRate;
 pub type ExchangeRateResponse = OkxApiResponse<ExchangeRate>;
@@ -61,9 +61,7 @@ pub use get_history_mark_price_candles::{
 pub type GetHistoryMarkPriceCandlesResponse = OkxApiResponse<MarkPriceCandle>;
 pub use get_index_candles::{GetIndexCandlesRequest, IndexCandle};
 pub type GetIndexCandlesResponse = OkxApiResponse<IndexCandle>;
-pub use get_index_components::{
-    GetIndexComponentsRequest, IndexComponent, IndexComponentData,
-};
+pub use get_index_components::{GetIndexComponentsRequest, IndexComponent, IndexComponentData};
 pub type GetIndexComponentsResponse = OkxApiResponse<IndexComponentData>;
 pub use get_index_tickers::{GetIndexTickersRequest, IndexTicker};
 pub type GetIndexTickersResponse = OkxApiResponse<IndexTicker>;
@@ -73,9 +71,7 @@ pub use get_instrument_tick_bands::{
 pub type GetInstrumentTickBandsResponse = OkxApiResponse<InstrumentTickBandData>;
 pub use get_instruments::{GetInstrumentsRequest, Instrument};
 pub type GetInstrumentsResponse = OkxApiResponse<Instrument>;
-pub use get_insurance_fund::{
-    GetInsuranceFundRequest, InsuranceFundData, InsuranceFundDetail,
-};
+pub use get_insurance_fund::{GetInsuranceFundRequest, InsuranceFundData, InsuranceFundDetail};
 pub type GetInsuranceFundResponse = OkxApiResponse<InsuranceFundData>;
 pub use get_interest_rate_loan_quota::{
     BasicInterestRate, GetInterestRateLoanQuotaRequest, InterestRateLoanQuotaData,

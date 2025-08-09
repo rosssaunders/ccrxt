@@ -32,7 +32,10 @@ impl RestClient {
         &self,
         request: BatchAmendOrdersRequest,
     ) -> crate::gateio::perpetual::RestResult<Vec<BatchOrderResult>> {
-        let endpoint = format!("{}/{}/batch_orders", ENDPOINT_FUTURES_PREFIX, request.settle);
+        let endpoint = format!(
+            "{}/{}/batch_orders",
+            ENDPOINT_FUTURES_PREFIX, request.settle
+        );
         self.put(&endpoint, &request).await
     }
 }

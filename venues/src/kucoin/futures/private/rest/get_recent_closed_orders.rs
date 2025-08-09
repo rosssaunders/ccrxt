@@ -97,7 +97,8 @@ impl super::RestClient {
         const GET_RECENT_CLOSED_ORDERS_ENDPOINT: &str = "/api/v1/recentDoneOrders";
 
         let (response, headers): (RestResponse<GetRecentClosedOrdersResponse>, ResponseHeaders) =
-            self.get_with_request(GET_RECENT_CLOSED_ORDERS_ENDPOINT, &request).await?;
+            self.get_with_request(GET_RECENT_CLOSED_ORDERS_ENDPOINT, &request)
+                .await?;
 
         Ok((response.data, headers))
     }
