@@ -121,13 +121,8 @@ impl RestClient {
             1000 => 20,
             _ => 10, // Default weight for unspecified limit
         };
-        self.send_request(
-            ORDER_BOOK_ENDPOINT,
-            reqwest::Method::GET,
-            Some(params),
-            weight,
-        )
-        .await
+        self.send_get_request(ORDER_BOOK_ENDPOINT, Some(params), weight)
+            .await
     }
 }
 

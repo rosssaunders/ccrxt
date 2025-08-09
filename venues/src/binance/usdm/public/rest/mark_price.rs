@@ -70,7 +70,7 @@ impl RestClient {
     /// # Returns
     /// Mark price result that can be either a single mark price or multiple mark prices
     pub async fn get_mark_price(&self, params: MarkPriceRequest) -> RestResult<MarkPriceResult> {
-        self.send_public_request(MARK_PRICE_ENDPOINT, reqwest::Method::GET, Some(params), 1)
+        self.send_get_request(MARK_PRICE_ENDPOINT, Some(params), 1)
             .await
     }
 }

@@ -63,7 +63,7 @@ impl RestClient {
         &self,
         params: RecentTradesRequest,
     ) -> RestResult<Vec<RecentTrade>> {
-        self.send_public_request(TRADES_ENDPOINT, reqwest::Method::GET, Some(params), 5)
+        self.send_get_request(TRADES_ENDPOINT, Some(params), 5)
             .await
     }
 }

@@ -62,13 +62,8 @@ impl RestClient {
     /// # Returns
     /// A vector of `Trade` structs representing recent trades for the symbol.
     pub async fn get_recent_trades(&self, params: RecentTradesRequest) -> RestResult<Vec<Trade>> {
-        self.send_request(
-            RECENT_TRADES_ENDPOINT,
-            reqwest::Method::GET,
-            Some(params),
-            5,
-        )
-        .await
+        self.send_get_request(RECENT_TRADES_ENDPOINT, Some(params), 5)
+            .await
     }
 }
 

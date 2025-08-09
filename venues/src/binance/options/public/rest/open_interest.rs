@@ -51,13 +51,8 @@ impl RestClient {
         &self,
         params: OpenInterestRequest,
     ) -> RestResult<Vec<OpenInterestResponse>> {
-        self.send_public_request(
-            OPEN_INTEREST_ENDPOINT,
-            reqwest::Method::GET,
-            Some(params),
-            0,
-        )
-        .await
+        self.send_get_request(OPEN_INTEREST_ENDPOINT, Some(params), 0)
+            .await
     }
 }
 

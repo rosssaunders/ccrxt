@@ -75,23 +75,13 @@ impl RestClient {
         match params {
             BookTickerRequest::BySymbol(by_symbol) => {
                 let weight = if by_symbol.symbol.is_some() { 2 } else { 5 };
-                self.send_request(
-                    BOOK_TICKER_ENDPOINT,
-                    reqwest::Method::GET,
-                    Some(by_symbol),
-                    weight,
-                )
-                .await
+                self.send_get_request(BOOK_TICKER_ENDPOINT, Some(by_symbol), weight)
+                    .await
             }
             BookTickerRequest::ByPair(by_pair) => {
                 let weight = if by_pair.pair.is_some() { 2 } else { 5 };
-                self.send_request(
-                    BOOK_TICKER_ENDPOINT,
-                    reqwest::Method::GET,
-                    Some(by_pair),
-                    weight,
-                )
-                .await
+                self.send_get_request(BOOK_TICKER_ENDPOINT, Some(by_pair), weight)
+                    .await
             }
         }
     }

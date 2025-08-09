@@ -80,11 +80,9 @@ impl RestClient {
         params: MarkPriceRequest,
     ) -> RestResult<Vec<MarkPriceResponse>> {
         if params.symbol.is_none() {
-            self.send_public_request(MARK_ENDPOINT, reqwest::Method::GET, None::<()>, 5)
-                .await
+            self.send_get_request(MARK_ENDPOINT, None::<()>, 5).await
         } else {
-            self.send_public_request(MARK_ENDPOINT, reqwest::Method::GET, Some(params), 5)
-                .await
+            self.send_get_request(MARK_ENDPOINT, Some(params), 5).await
         }
     }
 }

@@ -294,7 +294,7 @@ impl RestClient {
         &self,
         params: Option<ExchangeInfoRequest>,
     ) -> RestResult<ExchangeInfoResponse> {
-        self.send_public_request(EXCHANGE_INFO_ENDPOINT, reqwest::Method::GET, params, 20)
+        self.send_get_request(EXCHANGE_INFO_ENDPOINT, params, 20)
             .await
     }
 }

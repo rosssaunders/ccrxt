@@ -1,6 +1,5 @@
 use std::borrow::Cow;
 
-use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
 const PREMIUM_INDEX_KLINES_ENDPOINT: &str = "/fapi/v1/premiumIndexKlines";
@@ -121,7 +120,7 @@ impl RestClient {
         &self,
         request: PremiumIndexKlinesRequest,
     ) -> RestResult<Vec<PremiumIndexKline>> {
-        self.send_public_request(PREMIUM_INDEX_KLINES_ENDPOINT, Method::GET, Some(request), 2)
+        self.send_get_request(PREMIUM_INDEX_KLINES_ENDPOINT, Some(request), 2)
             .await
     }
 }

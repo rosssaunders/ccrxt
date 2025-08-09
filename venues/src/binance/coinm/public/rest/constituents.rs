@@ -67,7 +67,7 @@ impl RestClient {
     /// # Returns
     /// A `Constituents` object containing the symbol, timestamp, and list of constituents.
     pub async fn get_constituents(&self, params: ConstituentsRequest) -> RestResult<Constituents> {
-        self.send_request(CONSTITUENTS_ENDPOINT, reqwest::Method::GET, Some(params), 2)
+        self.send_get_request(CONSTITUENTS_ENDPOINT, Some(params), 2)
             .await
     }
 }

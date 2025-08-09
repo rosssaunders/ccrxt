@@ -117,7 +117,7 @@ impl RestClient {
     /// # Returns
     /// Vector of kline data arrays containing OHLCV and additional trading data
     pub async fn get_klines(&self, params: KlinesRequest) -> RestResult<Vec<Kline>> {
-        self.send_public_request(KLINES_ENDPOINT, reqwest::Method::GET, Some(params), 2)
+        self.send_get_request(KLINES_ENDPOINT, Some(params), 2)
             .await
     }
 }

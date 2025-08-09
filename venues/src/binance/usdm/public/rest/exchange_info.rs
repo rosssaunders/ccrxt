@@ -338,7 +338,7 @@ impl RestClient {
     /// # Returns
     /// ExchangeInfoResponse - contains exchange rules, assets, symbols, and rate limits.
     pub async fn get_exchange_info(&self) -> RestResult<ExchangeInfoResponse> {
-        self.send_public_request(EXCHANGE_INFO_ENDPOINT, reqwest::Method::GET, Some(()), 1)
+        self.send_get_request(EXCHANGE_INFO_ENDPOINT, Some(()), 1)
             .await
     }
 }

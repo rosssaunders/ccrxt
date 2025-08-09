@@ -42,7 +42,7 @@ impl RestClient {
     /// # Returns
     /// List of funding rate info for symbols with adjustments
     pub async fn get_funding_info(&self) -> RestResult<FundingInfoResponse> {
-        self.send_request(FUNDING_INFO_ENDPOINT, reqwest::Method::GET, None::<()>, 1)
+        self.send_get_request(FUNDING_INFO_ENDPOINT, None::<()>, 1)
             .await
     }
 }

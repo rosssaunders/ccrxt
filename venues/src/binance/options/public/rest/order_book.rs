@@ -60,7 +60,7 @@ impl RestClient {
             _ => 5, // Default to 100 weight
         };
 
-        self.send_public_request(DEPTH_ENDPOINT, reqwest::Method::GET, Some(params), weight)
+        self.send_get_request(DEPTH_ENDPOINT, Some(params), weight)
             .await
     }
 }

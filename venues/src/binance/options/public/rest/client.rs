@@ -29,11 +29,10 @@ impl OptionsPublicRestClient {
         ))
     }
 
-    /// Send a public request with options-specific response type
-    pub async fn send_public_request<T, R>(
+    /// Send GET request - optimized for query parameters
+    pub async fn send_get_request<T, R>(
         &self,
         endpoint: &str,
-        method: reqwest::Method,
         params: Option<R>,
         weight: u32,
     ) -> RestResult<T>
@@ -42,10 +41,12 @@ impl OptionsPublicRestClient {
         R: serde::Serialize,
     {
         let start = Instant::now();
-
-        // Call the shared client's send_public_request
         let shared_response = PublicBinanceClient::send_public_request::<T, R, SharedErrors>(
-            &self.0, endpoint, method, params, weight,
+            &self.0,
+            endpoint,
+            reqwest::Method::GET,
+            params,
+            weight,
         )
         .await
         .map_err(|e| match e {
@@ -62,12 +63,97 @@ impl OptionsPublicRestClient {
             SharedErrors::Error(msg) => Errors::Error(msg),
         })?;
 
-        // Convert shared RestResponse to options RestResponse
         Ok(RestResponse {
             data: shared_response.data,
             request_duration: start.elapsed(),
             headers: crate::binance::options::ResponseHeaders {
-                values: std::collections::HashMap::new(), // TODO: Convert headers properly
+                values: std::collections::HashMap::new(),
+            },
+        })
+    }
+
+    /// Send POST request - placeholder for public POST endpoints if any
+    pub async fn send_post_request<T, R>(
+        &self,
+        endpoint: &str,
+        params: Option<R>,
+        weight: u32,
+    ) -> RestResult<T>
+    where
+        T: serde::de::DeserializeOwned + Send + 'static,
+        R: serde::Serialize,
+    {
+        let start = Instant::now();
+        let shared_response = PublicBinanceClient::send_public_request::<T, R, SharedErrors>(
+            &self.0,
+            endpoint,
+            reqwest::Method::POST,
+            params,
+            weight,
+        )
+        .await
+        .map_err(|e| match e {
+            SharedErrors::ApiError(_) => Errors::Error("API error occurred".to_string()),
+            SharedErrors::RateLimitExceeded { retry_after } => Errors::Error(format!(
+                "Rate limit exceeded, retry after {:?}",
+                retry_after
+            )),
+            SharedErrors::InvalidApiKey() => Errors::InvalidApiKey(),
+            SharedErrors::HttpError(err) => Errors::HttpError(err),
+            SharedErrors::SerializationError(msg) => {
+                Errors::Error(format!("Serialization error: {}", msg))
+            }
+            SharedErrors::Error(msg) => Errors::Error(msg),
+        })?;
+
+        Ok(RestResponse {
+            data: shared_response.data,
+            request_duration: start.elapsed(),
+            headers: crate::binance::options::ResponseHeaders {
+                values: std::collections::HashMap::new(),
+            },
+        })
+    }
+
+    /// Send DELETE request - placeholder for public DELETE endpoints if any
+    pub async fn send_delete_request<T, R>(
+        &self,
+        endpoint: &str,
+        params: Option<R>,
+        weight: u32,
+    ) -> RestResult<T>
+    where
+        T: serde::de::DeserializeOwned + Send + 'static,
+        R: serde::Serialize,
+    {
+        let start = Instant::now();
+        let shared_response = PublicBinanceClient::send_public_request::<T, R, SharedErrors>(
+            &self.0,
+            endpoint,
+            reqwest::Method::DELETE,
+            params,
+            weight,
+        )
+        .await
+        .map_err(|e| match e {
+            SharedErrors::ApiError(_) => Errors::Error("API error occurred".to_string()),
+            SharedErrors::RateLimitExceeded { retry_after } => Errors::Error(format!(
+                "Rate limit exceeded, retry after {:?}",
+                retry_after
+            )),
+            SharedErrors::InvalidApiKey() => Errors::InvalidApiKey(),
+            SharedErrors::HttpError(err) => Errors::HttpError(err),
+            SharedErrors::SerializationError(msg) => {
+                Errors::Error(format!("Serialization error: {}", msg))
+            }
+            SharedErrors::Error(msg) => Errors::Error(msg),
+        })?;
+
+        Ok(RestResponse {
+            data: shared_response.data,
+            request_duration: start.elapsed(),
+            headers: crate::binance::options::ResponseHeaders {
+                values: std::collections::HashMap::new(),
             },
         })
     }

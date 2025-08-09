@@ -101,10 +101,9 @@ impl RestClient {
     /// Security: None
     pub async fn get_ticker(&self, params: TickerRequest) -> RestResult<Vec<TickerResponse>> {
         if params.symbol.is_none() {
-            self.send_public_request(TICKER_ENDPOINT, reqwest::Method::GET, None::<()>, 5)
-                .await
+            self.send_get_request(TICKER_ENDPOINT, None::<()>, 5).await
         } else {
-            self.send_public_request(TICKER_ENDPOINT, reqwest::Method::GET, Some(params), 5)
+            self.send_get_request(TICKER_ENDPOINT, Some(params), 5)
                 .await
         }
     }

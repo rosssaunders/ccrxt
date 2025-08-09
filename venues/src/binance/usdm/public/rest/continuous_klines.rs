@@ -136,13 +136,8 @@ impl RestClient {
             _ => 10,
         };
 
-        self.send_public_request(
-            CONTINUOUS_KLINES_ENDPOINT,
-            reqwest::Method::GET,
-            Some(params),
-            weight,
-        )
-        .await
+        self.send_get_request(CONTINUOUS_KLINES_ENDPOINT, Some(params), weight)
+            .await
     }
 }
 

@@ -69,7 +69,7 @@ impl RestClient {
     /// # Returns
     /// `BookTickerResult` in a `RestResult`.
     pub async fn get_book_ticker(&self, params: BookTickerRequest) -> RestResult<BookTickerResult> {
-        self.send_public_request(BOOK_TICKER_ENDPOINT, reqwest::Method::GET, Some(params), 2)
+        self.send_get_request(BOOK_TICKER_ENDPOINT, Some(params), 2)
             .await
     }
 }

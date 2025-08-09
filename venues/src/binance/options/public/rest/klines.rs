@@ -92,7 +92,7 @@ impl RestClient {
     /// Weight: 1
     /// Security: None
     pub async fn get_klines(&self, params: KlinesRequest) -> RestResult<Vec<KlineResponse>> {
-        self.send_public_request(KLINES_ENDPOINT, reqwest::Method::GET, Some(params), 1)
+        self.send_get_request(KLINES_ENDPOINT, Some(params), 1)
             .await
     }
 }

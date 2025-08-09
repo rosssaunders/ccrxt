@@ -68,10 +68,10 @@ impl RestClient {
         params: BlockTradesRequest,
     ) -> RestResult<Vec<BlockTrade>> {
         if params.symbol.is_none() && params.limit.is_none() {
-            self.send_public_request(BLOCK_TRADES_ENDPOINT, reqwest::Method::GET, None::<()>, 5)
+            self.send_get_request(BLOCK_TRADES_ENDPOINT, None::<()>, 5)
                 .await
         } else {
-            self.send_public_request(BLOCK_TRADES_ENDPOINT, reqwest::Method::GET, Some(params), 5)
+            self.send_get_request(BLOCK_TRADES_ENDPOINT, Some(params), 5)
                 .await
         }
     }

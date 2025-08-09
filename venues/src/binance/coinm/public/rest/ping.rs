@@ -31,8 +31,7 @@ impl RestClient {
     /// # Returns
     /// `PingResponse` - An empty struct if connectivity is successful.
     pub async fn ping(&self) -> RestResult<PingResponse> {
-        self.send_request(PING_ENDPOINT, reqwest::Method::GET, None::<()>, 1)
-            .await
+        self.send_get_request(PING_ENDPOINT, None::<()>, 1).await
     }
 }
 

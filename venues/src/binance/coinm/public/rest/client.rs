@@ -29,11 +29,10 @@ impl CoinmPublicRestClient {
         ))
     }
 
-    /// Helper method to match the existing CoinM public endpoint interface
-    pub async fn send_request<Req, Resp>(
+    /// Send GET request - optimized for query parameters
+    pub async fn send_get_request<Req, Resp>(
         &self,
         endpoint: &str,
-        method: reqwest::Method,
         params: Option<Req>,
         weight: u32,
     ) -> RestResult<Resp>
@@ -43,9 +42,12 @@ impl CoinmPublicRestClient {
     {
         let start = Instant::now();
 
-        // Call the shared client's send_public_request
         let shared_response = PublicBinanceClient::send_public_request::<Resp, Req, SharedErrors>(
-            &self.0, endpoint, method, params, weight,
+            &self.0,
+            endpoint,
+            reqwest::Method::GET,
+            params,
+            weight,
         )
         .await
         .map_err(|e| match e {
@@ -62,12 +64,187 @@ impl CoinmPublicRestClient {
             SharedErrors::Error(msg) => Errors::Error(msg),
         })?;
 
-        // Convert shared RestResponse to coinm RestResponse
         Ok(RestResponse {
             data: shared_response.data,
             request_duration: start.elapsed(),
             headers: crate::binance::coinm::ResponseHeaders {
-                values: std::collections::HashMap::new(), // TODO: Convert headers properly
+                values: std::collections::HashMap::new(),
+            },
+        })
+    }
+
+    /// Send POST request - placeholder for venues with public POST endpoints
+    pub async fn send_post_request<Req, Resp>(
+        &self,
+        endpoint: &str,
+        params: Option<Req>,
+        weight: u32,
+    ) -> RestResult<Resp>
+    where
+        Req: serde::ser::Serialize,
+        Resp: serde::de::DeserializeOwned + Send + 'static,
+    {
+        let start = Instant::now();
+
+        let shared_response = PublicBinanceClient::send_public_request::<Resp, Req, SharedErrors>(
+            &self.0,
+            endpoint,
+            reqwest::Method::POST,
+            params,
+            weight,
+        )
+        .await
+        .map_err(|e| match e {
+            SharedErrors::ApiError(_) => Errors::Error("API error occurred".to_string()),
+            SharedErrors::RateLimitExceeded { retry_after } => Errors::Error(format!(
+                "Rate limit exceeded, retry after {:?}",
+                retry_after
+            )),
+            SharedErrors::InvalidApiKey() => Errors::InvalidApiKey(),
+            SharedErrors::HttpError(err) => Errors::HttpError(err),
+            SharedErrors::SerializationError(msg) => {
+                Errors::Error(format!("Serialization error: {}", msg))
+            }
+            SharedErrors::Error(msg) => Errors::Error(msg),
+        })?;
+
+        Ok(RestResponse {
+            data: shared_response.data,
+            request_duration: start.elapsed(),
+            headers: crate::binance::coinm::ResponseHeaders {
+                values: std::collections::HashMap::new(),
+            },
+        })
+    }
+
+    /// Send PUT request - placeholder for venues with public PUT endpoints
+    pub async fn send_put_request<Req, Resp>(
+        &self,
+        endpoint: &str,
+        params: Option<Req>,
+        weight: u32,
+    ) -> RestResult<Resp>
+    where
+        Req: serde::ser::Serialize,
+        Resp: serde::de::DeserializeOwned + Send + 'static,
+    {
+        let start = Instant::now();
+
+        let shared_response = PublicBinanceClient::send_public_request::<Resp, Req, SharedErrors>(
+            &self.0,
+            endpoint,
+            reqwest::Method::PUT,
+            params,
+            weight,
+        )
+        .await
+        .map_err(|e| match e {
+            SharedErrors::ApiError(_) => Errors::Error("API error occurred".to_string()),
+            SharedErrors::RateLimitExceeded { retry_after } => Errors::Error(format!(
+                "Rate limit exceeded, retry after {:?}",
+                retry_after
+            )),
+            SharedErrors::InvalidApiKey() => Errors::InvalidApiKey(),
+            SharedErrors::HttpError(err) => Errors::HttpError(err),
+            SharedErrors::SerializationError(msg) => {
+                Errors::Error(format!("Serialization error: {}", msg))
+            }
+            SharedErrors::Error(msg) => Errors::Error(msg),
+        })?;
+
+        Ok(RestResponse {
+            data: shared_response.data,
+            request_duration: start.elapsed(),
+            headers: crate::binance::coinm::ResponseHeaders {
+                values: std::collections::HashMap::new(),
+            },
+        })
+    }
+
+    /// Send DELETE request - placeholder for venues with public DELETE endpoints
+    pub async fn send_delete_request<Req, Resp>(
+        &self,
+        endpoint: &str,
+        params: Option<Req>,
+        weight: u32,
+    ) -> RestResult<Resp>
+    where
+        Req: serde::ser::Serialize,
+        Resp: serde::de::DeserializeOwned + Send + 'static,
+    {
+        let start = Instant::now();
+
+        let shared_response = PublicBinanceClient::send_public_request::<Resp, Req, SharedErrors>(
+            &self.0,
+            endpoint,
+            reqwest::Method::DELETE,
+            params,
+            weight,
+        )
+        .await
+        .map_err(|e| match e {
+            SharedErrors::ApiError(_) => Errors::Error("API error occurred".to_string()),
+            SharedErrors::RateLimitExceeded { retry_after } => Errors::Error(format!(
+                "Rate limit exceeded, retry after {:?}",
+                retry_after
+            )),
+            SharedErrors::InvalidApiKey() => Errors::InvalidApiKey(),
+            SharedErrors::HttpError(err) => Errors::HttpError(err),
+            SharedErrors::SerializationError(msg) => {
+                Errors::Error(format!("Serialization error: {}", msg))
+            }
+            SharedErrors::Error(msg) => Errors::Error(msg),
+        })?;
+
+        Ok(RestResponse {
+            data: shared_response.data,
+            request_duration: start.elapsed(),
+            headers: crate::binance::coinm::ResponseHeaders {
+                values: std::collections::HashMap::new(),
+            },
+        })
+    }
+
+    /// Send PATCH request - placeholder for venues with public PATCH endpoints
+    pub async fn send_patch_request<Req, Resp>(
+        &self,
+        endpoint: &str,
+        params: Option<Req>,
+        weight: u32,
+    ) -> RestResult<Resp>
+    where
+        Req: serde::ser::Serialize,
+        Resp: serde::de::DeserializeOwned + Send + 'static,
+    {
+        let start = Instant::now();
+
+        let shared_response = PublicBinanceClient::send_public_request::<Resp, Req, SharedErrors>(
+            &self.0,
+            endpoint,
+            reqwest::Method::PATCH,
+            params,
+            weight,
+        )
+        .await
+        .map_err(|e| match e {
+            SharedErrors::ApiError(_) => Errors::Error("API error occurred".to_string()),
+            SharedErrors::RateLimitExceeded { retry_after } => Errors::Error(format!(
+                "Rate limit exceeded, retry after {:?}",
+                retry_after
+            )),
+            SharedErrors::InvalidApiKey() => Errors::InvalidApiKey(),
+            SharedErrors::HttpError(err) => Errors::HttpError(err),
+            SharedErrors::SerializationError(msg) => {
+                Errors::Error(format!("Serialization error: {}", msg))
+            }
+            SharedErrors::Error(msg) => Errors::Error(msg),
+        })?;
+
+        Ok(RestResponse {
+            data: shared_response.data,
+            request_duration: start.elapsed(),
+            headers: crate::binance::coinm::ResponseHeaders {
+                values: std::collections::HashMap::new(),
             },
         })
     }

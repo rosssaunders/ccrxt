@@ -82,21 +82,11 @@ impl RestClient {
             && params.end_time.is_none()
             && params.limit.is_none()
         {
-            self.send_public_request(
-                EXERCISE_HISTORY_ENDPOINT,
-                reqwest::Method::GET,
-                None::<()>,
-                3,
-            )
-            .await
+            self.send_get_request(EXERCISE_HISTORY_ENDPOINT, None::<()>, 3)
+                .await
         } else {
-            self.send_public_request(
-                EXERCISE_HISTORY_ENDPOINT,
-                reqwest::Method::GET,
-                Some(params),
-                3,
-            )
-            .await
+            self.send_get_request(EXERCISE_HISTORY_ENDPOINT, Some(params), 3)
+                .await
         }
     }
 }

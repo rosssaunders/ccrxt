@@ -28,7 +28,7 @@ impl RestClient {
     /// # Returns
     /// * `ServerTimeResponse` - Contains the current server time in milliseconds since epoch.
     pub async fn get_server_time(&self) -> RestResult<ServerTimeResponse> {
-        self.send_request(SERVER_TIME_ENDPOINT, reqwest::Method::GET, None::<()>, 1)
+        self.send_get_request(SERVER_TIME_ENDPOINT, None::<()>, 1)
             .await
     }
 }

@@ -71,13 +71,8 @@ impl RestClient {
         &self,
         params: OpenInterestHistRequest<'a>,
     ) -> crate::binance::usdm::RestResult<Vec<OpenInterestHistResponse<'a>>> {
-        self.send_public_request(
-            OPEN_INTEREST_HIST_ENDPOINT,
-            reqwest::Method::GET,
-            Some(params),
-            0,
-        )
-        .await
+        self.send_get_request(OPEN_INTEREST_HIST_ENDPOINT, Some(params), 0)
+            .await
     }
 }
 

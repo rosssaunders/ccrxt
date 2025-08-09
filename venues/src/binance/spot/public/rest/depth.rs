@@ -53,7 +53,7 @@ impl RestClient {
             _ => 250, // Use max weight for any value above 5000
         };
 
-        self.send_public_request(DEPTH_ENDPOINT, reqwest::Method::GET, Some(params), weight)
+        self.send_get_request(DEPTH_ENDPOINT, Some(params), weight)
             .await
     }
 }

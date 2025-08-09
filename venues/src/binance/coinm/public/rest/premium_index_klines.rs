@@ -100,13 +100,8 @@ impl RestClient {
             _ => 10,
         };
 
-        self.send_request(
-            PREMIUM_INDEX_KLINES_ENDPOINT,
-            reqwest::Method::GET,
-            Some(params),
-            weight,
-        )
-        .await
+        self.send_get_request(PREMIUM_INDEX_KLINES_ENDPOINT, Some(params), weight)
+            .await
     }
 }
 

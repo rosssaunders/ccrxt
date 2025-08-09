@@ -65,13 +65,8 @@ impl RestClient {
         &self,
         params: HistoricalTradesRequest,
     ) -> RestResult<Vec<HistoricalTrade>> {
-        self.send_request(
-            HISTORICAL_TRADES_ENDPOINT,
-            reqwest::Method::GET,
-            Some(params),
-            20,
-        )
-        .await
+        self.send_get_request(HISTORICAL_TRADES_ENDPOINT, Some(params), 20)
+            .await
     }
 }
 

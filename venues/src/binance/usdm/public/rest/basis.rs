@@ -79,8 +79,7 @@ impl RestClient {
     /// # Returns
     /// Vec<BasisResponse> - list of basis data points
     pub async fn basis<'a>(&self, params: BasisRequest<'a>) -> RestResult<Vec<BasisResponse<'a>>> {
-        self.send_public_request(BASIS_ENDPOINT, reqwest::Method::GET, Some(params), 1)
-            .await
+        self.send_get_request(BASIS_ENDPOINT, Some(params), 1).await
     }
 }
 

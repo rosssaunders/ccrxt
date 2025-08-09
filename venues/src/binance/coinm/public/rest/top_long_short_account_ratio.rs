@@ -68,13 +68,8 @@ impl RestClient {
         &self,
         request: TopLongShortAccountRatioRequest,
     ) -> RestResult<Vec<TopLongShortAccountRatio>> {
-        self.send_request(
-            TOP_LONG_SHORT_ACCOUNT_RATIO_ENDPOINT,
-            reqwest::Method::GET,
-            Some(request),
-            1,
-        )
-        .await
+        self.send_get_request(TOP_LONG_SHORT_ACCOUNT_RATIO_ENDPOINT, Some(request), 1)
+            .await
     }
 }
 

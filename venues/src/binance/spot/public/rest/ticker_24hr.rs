@@ -188,7 +188,7 @@ impl RestClient {
             80 // All symbols
         };
 
-        self.send_public_request(TICKER_24HR_ENDPOINT, reqwest::Method::GET, params, weight)
+        self.send_get_request(TICKER_24HR_ENDPOINT, params, weight)
             .await
     }
 }

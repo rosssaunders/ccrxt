@@ -192,7 +192,7 @@ impl RestClient {
     /// Weight: 1
     /// Security: None
     pub async fn get_exchange_info(&self) -> RestResult<ExchangeInfoResponse> {
-        self.send_public_request(EXCHANGE_INFO_ENDPOINT, reqwest::Method::GET, None::<()>, 1)
+        self.send_get_request(EXCHANGE_INFO_ENDPOINT, None::<()>, 1)
             .await
     }
 }

@@ -76,7 +76,7 @@ impl RestClient {
     /// Weight: 2
     /// Security: None
     pub async fn get_agg_trades(&self, params: AggTradesRequest) -> RestResult<Vec<AggTrade>> {
-        self.send_public_request(AGG_TRADES_ENDPOINT, reqwest::Method::GET, Some(params), 2)
+        self.send_get_request(AGG_TRADES_ENDPOINT, Some(params), 2)
             .await
     }
 }

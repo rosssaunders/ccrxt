@@ -37,13 +37,8 @@ impl RestClient {
     /// # Returns
     /// A vector of `FundingRateInfo` records wrapped in `RestResult`.
     pub async fn get_funding_rate_info(&self) -> RestResult<Vec<FundingRateInfo>> {
-        self.send_public_request(
-            FUNDING_RATE_INFO_ENDPOINT,
-            reqwest::Method::GET,
-            Some(()),
-            1,
-        )
-        .await
+        self.send_get_request(FUNDING_RATE_INFO_ENDPOINT, Some(()), 1)
+            .await
     }
 }
 

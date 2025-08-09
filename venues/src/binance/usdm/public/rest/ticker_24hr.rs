@@ -94,7 +94,7 @@ impl RestClient {
     /// # Returns
     /// Single ticker statistics or multiple ticker statistics depending on whether a symbol is specified
     pub async fn get_ticker_24hr(&self, params: Ticker24hrRequest) -> RestResult<Ticker24hrResult> {
-        self.send_public_request(TICKER_24HR_ENDPOINT, reqwest::Method::GET, Some(params), 1)
+        self.send_get_request(TICKER_24HR_ENDPOINT, Some(params), 1)
             .await
     }
 }

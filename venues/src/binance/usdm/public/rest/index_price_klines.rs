@@ -123,13 +123,8 @@ impl RestClient {
         &self,
         params: IndexPriceKlinesRequest,
     ) -> RestResult<Vec<IndexPriceKline>> {
-        self.send_public_request(
-            INDEX_PRICE_KLINES_ENDPOINT,
-            reqwest::Method::GET,
-            Some(params),
-            2,
-        )
-        .await
+        self.send_get_request(INDEX_PRICE_KLINES_ENDPOINT, Some(params), 2)
+            .await
     }
 }
 

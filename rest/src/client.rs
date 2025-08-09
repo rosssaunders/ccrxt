@@ -55,7 +55,7 @@ impl Client {
         let mut builder = RequestBuilder::new(Method::Get, url);
 
         if let Some(params) = params {
-            builder = builder.query(params).map_err(|e| RestError::from(e))?;
+            builder = builder.query(params).map_err(RestError::from)?;
         }
 
         let request = builder.build();
@@ -63,7 +63,7 @@ impl Client {
             .http_client
             .execute(request)
             .await
-            .map_err(|e| RestError::from(e))?;
+            .map_err(RestError::from)?;
 
         if !response.is_success() {
             return Err(RestError::HttpError(format!(
@@ -93,7 +93,7 @@ impl Client {
         let mut builder = RequestBuilder::new(Method::Post, url);
 
         if let Some(params) = params {
-            builder = builder.json(params).map_err(|e| RestError::from(e))?;
+            builder = builder.json(params).map_err(RestError::from)?;
         }
 
         let request = builder.build();
@@ -101,7 +101,7 @@ impl Client {
             .http_client
             .execute(request)
             .await
-            .map_err(|e| RestError::from(e))?;
+            .map_err(RestError::from)?;
 
         if !response.is_success() {
             return Err(RestError::HttpError(format!(

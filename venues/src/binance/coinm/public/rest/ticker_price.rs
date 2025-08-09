@@ -60,13 +60,8 @@ impl RestClient {
         let weight = if params.symbol.is_some() { 1 } else { 2 };
 
         // The API always returns an array, even for single symbols
-        self.send_request(
-            SYMBOL_PRICE_TICKER_ENDPOINT,
-            reqwest::Method::GET,
-            Some(params),
-            weight,
-        )
-        .await
+        self.send_get_request(SYMBOL_PRICE_TICKER_ENDPOINT, Some(params), weight)
+            .await
     }
 }
 

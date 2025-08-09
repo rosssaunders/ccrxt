@@ -69,13 +69,8 @@ impl RestClient {
         &self,
         params: TopLongShortPositionRatioRequest<'a>,
     ) -> RestResult<Vec<TopLongShortPositionRatioResponse<'a>>> {
-        self.send_public_request(
-            TOP_LONG_SHORT_POSITION_RATIO_ENDPOINT,
-            reqwest::Method::GET,
-            Some(params),
-            1,
-        )
-        .await
+        self.send_get_request(TOP_LONG_SHORT_POSITION_RATIO_ENDPOINT, Some(params), 1)
+            .await
     }
 }
 

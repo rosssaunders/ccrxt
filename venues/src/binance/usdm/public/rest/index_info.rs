@@ -75,7 +75,7 @@ impl RestClient {
     /// # Returns
     /// Index information - either single or multiple objects depending on query
     pub async fn get_index_info(&self, request: IndexInfoRequest) -> RestResult<IndexInfoResponse> {
-        self.send_public_request(INDEX_INFO_ENDPOINT, reqwest::Method::GET, Some(request), 1)
+        self.send_get_request(INDEX_INFO_ENDPOINT, Some(request), 1)
             .await
     }
 }

@@ -40,7 +40,7 @@ impl RestClient {
     /// Weight: 2
     /// Security: None
     pub async fn get_avg_price(&self, params: AvgPriceRequest) -> RestResult<AvgPriceResponse> {
-        self.send_public_request(AVG_PRICE_ENDPOINT, reqwest::Method::GET, Some(params), 2)
+        self.send_get_request(AVG_PRICE_ENDPOINT, Some(params), 2)
             .await
     }
 }

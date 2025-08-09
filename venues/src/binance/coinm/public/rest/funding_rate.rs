@@ -59,7 +59,7 @@ impl RestClient {
         &self,
         params: FundingRateRequest,
     ) -> RestResult<FundingRateResponse> {
-        self.send_request(FUNDING_RATE_ENDPOINT, reqwest::Method::GET, Some(params), 1)
+        self.send_get_request(FUNDING_RATE_ENDPOINT, Some(params), 1)
             .await
     }
 }

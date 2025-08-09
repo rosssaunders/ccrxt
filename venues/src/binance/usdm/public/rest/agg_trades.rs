@@ -1,6 +1,5 @@
 use std::borrow::Cow;
 
-use reqwest::Method;
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
@@ -80,7 +79,7 @@ impl RestClient {
     /// # Returns
     /// A list of [`AggTrade`] instances representing compressed aggregate trades.
     pub async fn get_agg_trades(&self, params: AggTradesRequest) -> RestResult<Vec<AggTrade>> {
-        self.send_public_request(AGG_TRADES_ENDPOINT, Method::GET, Some(&params), 20)
+        self.send_get_request(AGG_TRADES_ENDPOINT, Some(params), 20)
             .await
     }
 }

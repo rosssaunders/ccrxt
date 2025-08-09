@@ -85,8 +85,7 @@ impl RestClient {
     /// # Returns
     /// A vector of basis data points with futures prices, index prices, and calculated basis values
     pub async fn get_basis(&self, params: BasisRequest) -> RestResult<Vec<Basis>> {
-        self.send_request(BASIS_ENDPOINT, reqwest::Method::GET, Some(params), 1)
-            .await
+        self.send_get_request(BASIS_ENDPOINT, Some(params), 1).await
     }
 }
 

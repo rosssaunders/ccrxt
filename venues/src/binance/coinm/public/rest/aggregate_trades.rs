@@ -2,6 +2,9 @@ use serde::{Deserialize, Serialize};
 
 use crate::binance::coinm::{RestResult, public::rest::RestClient};
 
+/// Endpoint path for the aggregate trades API.
+const AGGREGATE_TRADES_ENDPOINT: &str = "/dapi/v1/aggTrades";
+
 /// Request parameters for the aggregate trades endpoint.
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct AggregateTradesRequest {
@@ -83,7 +86,7 @@ impl RestClient {
         &self,
         params: AggregateTradesRequest,
     ) -> RestResult<Vec<AggregateTrade>> {
-        self.send_request("/dapi/v1/aggTrades", reqwest::Method::GET, Some(params), 20)
+        self.send_get_request(AGGREGATE_TRADES_ENDPOINT, Some(params), 20)
             .await
     }
 }

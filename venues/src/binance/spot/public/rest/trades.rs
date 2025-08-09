@@ -60,7 +60,7 @@ impl RestClient {
     /// Weight: 25
     /// Security: None
     pub async fn get_recent_trades(&self, params: TradesRequest) -> RestResult<Vec<Trade>> {
-        self.send_public_request(TRADES_ENDPOINT, reqwest::Method::GET, Some(params), 25)
+        self.send_get_request(TRADES_ENDPOINT, Some(params), 25)
             .await
     }
 }

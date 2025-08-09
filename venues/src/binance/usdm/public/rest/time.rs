@@ -34,7 +34,7 @@ impl RestClient {
     /// # Returns
     /// A result containing the server time response.
     pub async fn server_time(&self, request: ServerTimeRequest) -> RestResult<ServerTimeResponse> {
-        self.send_public_request(SERVER_TIME_ENDPOINT, reqwest::Method::GET, Some(request), 1)
+        self.send_get_request(SERVER_TIME_ENDPOINT, Some(request), 1)
             .await
     }
 }

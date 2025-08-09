@@ -96,7 +96,7 @@ impl RestClient {
             None
         };
 
-        self.send_request(PREMIUM_INDEX_ENDPOINT, reqwest::Method::GET, params_opt, 10)
+        self.send_get_request(PREMIUM_INDEX_ENDPOINT, params_opt, 10)
             .await
     }
 }

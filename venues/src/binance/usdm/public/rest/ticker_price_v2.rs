@@ -56,13 +56,8 @@ impl RestClient {
         &self,
         params: TickerPriceV2Request,
     ) -> RestResult<TickerPriceV2Result> {
-        self.send_public_request(
-            TICKER_PRICE_V2_ENDPOINT,
-            reqwest::Method::GET,
-            Some(params),
-            1,
-        )
-        .await
+        self.send_get_request(TICKER_PRICE_V2_ENDPOINT, Some(params), 1)
+            .await
     }
 }
 

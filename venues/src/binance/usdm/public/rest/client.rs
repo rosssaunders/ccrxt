@@ -34,11 +34,10 @@ impl UsdmPublicRestClient {
         ))
     }
 
-    /// Send a public request with usdm-specific response type
-    pub async fn send_public_request<T, R>(
+    /// Send GET request - optimized for query parameters
+    pub async fn send_get_request<T, R>(
         &self,
         endpoint: &str,
-        method: reqwest::Method,
         params: Option<R>,
         weight: u32,
     ) -> Result<RestResponse<T>, Errors>
@@ -46,9 +45,12 @@ impl UsdmPublicRestClient {
         T: serde::de::DeserializeOwned + Send + 'static,
         R: serde::Serialize,
     {
-        // Call the shared client's send_public_request
         let shared_response = PublicBinanceClient::send_public_request::<T, R, SharedErrors>(
-            &self.0, endpoint, method, params, weight,
+            &self.0,
+            endpoint,
+            reqwest::Method::GET,
+            params,
+            weight,
         )
         .await
         .map_err(|e| match e {
@@ -65,15 +67,85 @@ impl UsdmPublicRestClient {
             SharedErrors::Error(msg) => Errors::Error(msg),
         })?;
 
-        // Return the shared RestResponse directly
+        Ok(shared_response)
+    }
+
+    /// Send POST request - placeholder for public POST endpoints if any
+    pub async fn send_post_request<T, R>(
+        &self,
+        endpoint: &str,
+        params: Option<R>,
+        weight: u32,
+    ) -> Result<RestResponse<T>, Errors>
+    where
+        T: serde::de::DeserializeOwned + Send + 'static,
+        R: serde::Serialize,
+    {
+        let shared_response = PublicBinanceClient::send_public_request::<T, R, SharedErrors>(
+            &self.0,
+            endpoint,
+            reqwest::Method::POST,
+            params,
+            weight,
+        )
+        .await
+        .map_err(|e| match e {
+            SharedErrors::ApiError(_) => Errors::Error("API error occurred".to_string()),
+            SharedErrors::RateLimitExceeded { retry_after } => Errors::Error(format!(
+                "Rate limit exceeded, retry after {:?}",
+                retry_after
+            )),
+            SharedErrors::InvalidApiKey() => Errors::InvalidApiKey(),
+            SharedErrors::HttpError(err) => Errors::HttpError(err),
+            SharedErrors::SerializationError(msg) => {
+                Errors::Error(format!("Serialization error: {}", msg))
+            }
+            SharedErrors::Error(msg) => Errors::Error(msg),
+        })?;
+
+        Ok(shared_response)
+    }
+
+    /// Send DELETE request - placeholder for public DELETE endpoints if any
+    pub async fn send_delete_request<T, R>(
+        &self,
+        endpoint: &str,
+        params: Option<R>,
+        weight: u32,
+    ) -> Result<RestResponse<T>, Errors>
+    where
+        T: serde::de::DeserializeOwned + Send + 'static,
+        R: serde::Serialize,
+    {
+        let shared_response = PublicBinanceClient::send_public_request::<T, R, SharedErrors>(
+            &self.0,
+            endpoint,
+            reqwest::Method::DELETE,
+            params,
+            weight,
+        )
+        .await
+        .map_err(|e| match e {
+            SharedErrors::ApiError(_) => Errors::Error("API error occurred".to_string()),
+            SharedErrors::RateLimitExceeded { retry_after } => Errors::Error(format!(
+                "Rate limit exceeded, retry after {:?}",
+                retry_after
+            )),
+            SharedErrors::InvalidApiKey() => Errors::InvalidApiKey(),
+            SharedErrors::HttpError(err) => Errors::HttpError(err),
+            SharedErrors::SerializationError(msg) => {
+                Errors::Error(format!("Serialization error: {}", msg))
+            }
+            SharedErrors::Error(msg) => Errors::Error(msg),
+        })?;
+
         Ok(shared_response)
     }
 
     /// Send a request with API key only (no signature) with usdm-specific response type
-    pub async fn send_api_key_request<T, R>(
+    pub async fn send_api_key_get_request<T, R>(
         &self,
         endpoint: &str,
-        method: reqwest::Method,
         api_key: &dyn ExposableSecret,
         params: Option<R>,
         weight: u32,
@@ -85,7 +157,13 @@ impl UsdmPublicRestClient {
         // Call the shared client's send_api_key_request
         let shared_response = self
             .0
-            .send_api_key_request::<T, R, SharedErrors>(endpoint, method, api_key, params, weight)
+            .send_api_key_request::<T, R, SharedErrors>(
+                endpoint,
+                reqwest::Method::GET,
+                api_key,
+                params,
+                weight,
+            )
             .await
             .map_err(|e| match e {
                 SharedErrors::ApiError(_) => Errors::Error("API error occurred".to_string()),

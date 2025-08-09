@@ -51,13 +51,8 @@ impl RestClient {
     /// # Returns
     /// Open interest data for the specified symbol
     pub async fn get_open_interest(&self, params: OpenInterestRequest) -> RestResult<OpenInterest> {
-        self.send_request(
-            OPEN_INTEREST_ENDPOINT,
-            reqwest::Method::GET,
-            Some(params),
-            1,
-        )
-        .await
+        self.send_get_request(OPEN_INTEREST_ENDPOINT, Some(params), 1)
+            .await
     }
 }
 

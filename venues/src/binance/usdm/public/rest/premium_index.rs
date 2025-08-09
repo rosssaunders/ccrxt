@@ -79,13 +79,8 @@ impl RestClient {
         &self,
         params: PremiumIndexRequest,
     ) -> RestResult<PremiumIndexResult> {
-        self.send_public_request(
-            PREMIUM_INDEX_ENDPOINT,
-            reqwest::Method::GET,
-            Some(params),
-            1,
-        )
-        .await
+        self.send_get_request(PREMIUM_INDEX_ENDPOINT, Some(params), 1)
+            .await
     }
 }
 

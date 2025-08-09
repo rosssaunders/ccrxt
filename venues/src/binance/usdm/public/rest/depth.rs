@@ -74,13 +74,8 @@ impl RestClient {
             1000 => 20,
             _ => 2,
         };
-        self.send_public_request(
-            ORDER_BOOK_ENDPOINT,
-            reqwest::Method::GET,
-            Some(params),
-            weight,
-        )
-        .await
+        self.send_get_request(ORDER_BOOK_ENDPOINT, Some(params), weight)
+            .await
     }
 }
 

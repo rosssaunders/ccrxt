@@ -64,13 +64,8 @@ impl RestClient {
         &self,
         params: FundingRateHistoryRequest,
     ) -> RestResult<Vec<FundingRateHistory>> {
-        self.send_public_request(
-            FUNDING_RATE_HISTORY_ENDPOINT,
-            reqwest::Method::GET,
-            Some(params),
-            1,
-        )
-        .await
+        self.send_get_request(FUNDING_RATE_HISTORY_ENDPOINT, Some(params), 1)
+            .await
     }
 }
 

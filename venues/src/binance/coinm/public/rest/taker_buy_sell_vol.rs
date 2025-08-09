@@ -84,12 +84,7 @@ impl RestClient {
         &self,
         request: TakerBuySellVolRequest,
     ) -> RestResult<Vec<TakerBuySellVol>> {
-        self.send_request(
-            TAKER_BUY_SELL_VOL_ENDPOINT,
-            reqwest::Method::GET,
-            Some(request),
-            1,
-        )
-        .await
+        self.send_get_request(TAKER_BUY_SELL_VOL_ENDPOINT, Some(request), 1)
+            .await
     }
 }

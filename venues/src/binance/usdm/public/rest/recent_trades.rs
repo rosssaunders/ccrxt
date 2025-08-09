@@ -75,13 +75,8 @@ impl RestClient {
         &self,
         params: RecentTradesRequest,
     ) -> RestResult<RecentTradesResult> {
-        self.send_public_request(
-            RECENT_TRADES_ENDPOINT,
-            reqwest::Method::GET,
-            Some(params),
-            5,
-        )
-        .await
+        self.send_get_request(RECENT_TRADES_ENDPOINT, Some(params), 20)
+            .await
     }
 }
 

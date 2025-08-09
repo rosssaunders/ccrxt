@@ -69,13 +69,8 @@ impl RestClient {
         &self,
         params: GlobalLongShortAccountRatioRequest<'a>,
     ) -> crate::binance::usdm::RestResult<Vec<GlobalLongShortAccountRatioResponse<'a>>> {
-        self.send_public_request(
-            GLOBAL_LONG_SHORT_ACCOUNT_RATIO_ENDPOINT,
-            reqwest::Method::GET,
-            Some(params),
-            1,
-        )
-        .await
+        self.send_get_request(GLOBAL_LONG_SHORT_ACCOUNT_RATIO_ENDPOINT, Some(params), 1)
+            .await
     }
 }
 

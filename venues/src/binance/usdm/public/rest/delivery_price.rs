@@ -47,13 +47,8 @@ impl RestClient {
         &self,
         params: DeliveryPriceRequest<'_>,
     ) -> RestResult<Vec<DeliveryPriceResponse>> {
-        self.send_public_request(
-            DELIVERY_PRICE_ENDPOINT,
-            reqwest::Method::GET,
-            Some(params),
-            0,
-        )
-        .await
+        self.send_get_request(DELIVERY_PRICE_ENDPOINT, Some(params), 1)
+            .await
     }
 }
 

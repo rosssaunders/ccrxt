@@ -114,13 +114,8 @@ impl RestClient {
         &self,
         params: MarkPriceKlinesRequest,
     ) -> RestResult<Vec<MarkPriceKline>> {
-        self.send_public_request(
-            MARK_PRICE_KLINES_ENDPOINT,
-            reqwest::Method::GET,
-            Some(params),
-            2,
-        )
-        .await
+        self.send_get_request(MARK_PRICE_KLINES_ENDPOINT, Some(params), 2)
+            .await
     }
 }
 

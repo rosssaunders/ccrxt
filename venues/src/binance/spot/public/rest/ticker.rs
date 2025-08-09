@@ -104,7 +104,7 @@ impl RestClient {
         // Weight is 4 per symbol, max 200 for multiple symbols
         let weight = if params.symbols.is_some() { 200 } else { 4 };
 
-        self.send_public_request(TICKER_ENDPOINT, reqwest::Method::GET, Some(params), weight)
+        self.send_get_request(TICKER_ENDPOINT, Some(params), weight)
             .await
     }
 }

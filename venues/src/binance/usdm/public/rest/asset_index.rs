@@ -90,7 +90,7 @@ impl RestClient {
     /// # Returns
     /// AssetIndexResult - single or multiple asset indices
     pub async fn get_asset_index(&self, params: AssetIndexRequest) -> RestResult<AssetIndexResult> {
-        self.send_public_request(ASSET_INDEX_ENDPOINT, reqwest::Method::GET, Some(params), 1)
+        self.send_get_request(ASSET_INDEX_ENDPOINT, Some(params), 1)
             .await
     }
 }

@@ -69,9 +69,8 @@ impl RestClient {
         api_key: &dyn rest::secrets::ExposableSecret,
         params: HistoricalTradesRequest,
     ) -> RestResult<Vec<HistoricalTrade>> {
-        self.send_api_key_request::<Vec<HistoricalTrade>, _>(
+        self.send_api_key_get_request::<Vec<HistoricalTrade>, _>(
             HISTORICAL_TRADES_ENDPOINT,
-            reqwest::Method::GET,
             api_key,
             Some(params),
             20,

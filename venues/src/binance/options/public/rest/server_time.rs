@@ -23,8 +23,7 @@ impl RestClient {
     /// Weight: 1
     /// Security: None
     pub async fn get_server_time(&self) -> RestResult<ServerTimeResponse> {
-        self.send_public_request(TIME_ENDPOINT, reqwest::Method::GET, None::<()>, 1)
-            .await
+        self.send_get_request(TIME_ENDPOINT, None::<()>, 1).await
     }
 }
 

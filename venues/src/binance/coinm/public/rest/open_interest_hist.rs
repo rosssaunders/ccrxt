@@ -81,13 +81,8 @@ impl RestClient {
         &self,
         request: OpenInterestHistRequest,
     ) -> RestResult<Vec<OpenInterestHist>> {
-        self.send_request(
-            OPEN_INTEREST_HIST_ENDPOINT,
-            reqwest::Method::GET,
-            Some(request),
-            1,
-        )
-        .await
+        self.send_get_request(OPEN_INTEREST_HIST_ENDPOINT, Some(request), 1)
+            .await
     }
 }
 

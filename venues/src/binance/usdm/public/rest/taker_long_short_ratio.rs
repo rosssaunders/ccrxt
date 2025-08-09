@@ -77,13 +77,8 @@ impl RestClient {
         &self,
         params: TakerLongShortRatioRequest<'a>,
     ) -> RestResult<Vec<TakerLongShortRatioResponse<'a>>> {
-        self.send_public_request(
-            TAKER_LONG_SHORT_RATIO_ENDPOINT,
-            reqwest::Method::GET,
-            Some(params),
-            0,
-        )
-        .await
+        self.send_get_request(TAKER_LONG_SHORT_RATIO_ENDPOINT, Some(params), 1)
+            .await
     }
 }
 

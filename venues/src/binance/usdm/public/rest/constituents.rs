@@ -69,13 +69,8 @@ impl RestClient {
         &self,
         params: ConstituentsRequest,
     ) -> RestResult<ConstituentsResponse> {
-        self.send_public_request(
-            INDEX_CONSTITUENTS_ENDPOINT,
-            reqwest::Method::GET,
-            Some(params),
-            2,
-        )
-        .await
+        self.send_get_request(INDEX_CONSTITUENTS_ENDPOINT, Some(params), 2)
+            .await
     }
 }
 

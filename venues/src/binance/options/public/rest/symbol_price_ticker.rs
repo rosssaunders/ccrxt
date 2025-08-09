@@ -39,8 +39,7 @@ impl RestClient {
         &self,
         params: SymbolPriceTickerRequest,
     ) -> RestResult<SymbolPriceTickerResponse> {
-        self.send_public_request(INDEX_ENDPOINT, reqwest::Method::GET, Some(params), 1)
-            .await
+        self.send_get_request(INDEX_ENDPOINT, Some(params), 1).await
     }
 }
 

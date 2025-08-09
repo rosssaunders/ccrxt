@@ -88,7 +88,7 @@ impl RestClient {
             _ => 10,
         };
 
-        self.send_request(KLINES_ENDPOINT, reqwest::Method::GET, Some(params), weight)
+        self.send_get_request(KLINES_ENDPOINT, Some(params), weight)
             .await
     }
 }

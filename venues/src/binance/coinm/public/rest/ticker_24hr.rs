@@ -121,13 +121,8 @@ impl RestClient {
         };
 
         // The API always returns an array, even for single symbols
-        self.send_request(
-            TICKER_24HR_ENDPOINT,
-            reqwest::Method::GET,
-            Some(params),
-            weight,
-        )
-        .await
+        self.send_get_request(TICKER_24HR_ENDPOINT, Some(params), weight)
+            .await
     }
 }
 

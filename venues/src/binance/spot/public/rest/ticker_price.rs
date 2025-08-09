@@ -59,13 +59,8 @@ impl RestClient {
         // Calculate weight: 2 for single symbol, 4 for multiple symbols or all symbols
         let weight = if params.symbol.is_some() { 2 } else { 4 };
 
-        self.send_public_request(
-            TICKER_PRICE_ENDPOINT,
-            reqwest::Method::GET,
-            Some(params),
-            weight,
-        )
-        .await
+        self.send_get_request(TICKER_PRICE_ENDPOINT, Some(params), weight)
+            .await
     }
 }
 

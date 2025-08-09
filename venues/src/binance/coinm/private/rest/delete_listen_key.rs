@@ -1,7 +1,9 @@
 use serde::Serialize;
 
-use crate::binance::coinm::{RestResult, private::rest::client::RestClient};
-use crate::binance::coinm::private::rest::extend_listen_key::ListenKeyResponse;
+use crate::binance::coinm::{
+    RestResult,
+    private::rest::{client::RestClient, extend_listen_key::ListenKeyResponse},
+};
 
 const LISTEN_KEY_ENDPOINT: &str = "/dapi/v1/listenKey";
 
