@@ -42,22 +42,61 @@ impl RestClient {
         }
     }
 
-    /// Send a public request to the Bullish API
+    /// Send a GET request to the Bullish API
     ///
-    /// This method handles rate limiting and error handling for public endpoints.
+    /// This method handles rate limiting and error handling for public GET endpoints.
     ///
     /// # Arguments
     /// * `endpoint` - The API endpoint path
-    /// * `method` - The HTTP method
-    /// * `body` - Optional request body for POST/PUT requests
     /// * `endpoint_type` - The endpoint type for rate limiting
     ///
     /// # Returns
     /// The deserialized response or an error
-    pub async fn send_request<T, B>(
+    pub async fn send_get_request<T>(
         &self,
         endpoint: &str,
-        method: reqwest::Method,
+        endpoint_type: EndpointType,
+    ) -> RestResult<T>
+    where
+        T: DeserializeOwned,
+    {
+        // Check rate limits
+        self.rate_limiter
+            .check_limits(endpoint_type)
+            .await
+            .map_err(|e| crate::bullish::Errors::RateLimitError(e.to_string()))?;
+
+        let url = format!("{}{}", self.base_url, endpoint);
+
+        let response = self.client.get(&url).send().await?;
+
+        self.rate_limiter.increment_request(endpoint_type).await;
+
+        if !response.status().is_success() {
+            let error_text = response.text().await?;
+            return Err(crate::bullish::Errors::Error(format!(
+                "Request failed: {error_text}"
+            )));
+        }
+
+        let result: T = response.json().await?;
+        Ok(result)
+    }
+
+    /// Send a POST request to the Bullish API
+    ///
+    /// This method handles rate limiting and error handling for public POST endpoints.
+    ///
+    /// # Arguments
+    /// * `endpoint` - The API endpoint path
+    /// * `body` - Optional request body
+    /// * `endpoint_type` - The endpoint type for rate limiting
+    ///
+    /// # Returns
+    /// The deserialized response or an error
+    pub async fn send_post_request<T, B>(
+        &self,
+        endpoint: &str,
         body: Option<&B>,
         endpoint_type: EndpointType,
     ) -> RestResult<T>
@@ -73,7 +112,7 @@ impl RestClient {
 
         let url = format!("{}{}", self.base_url, endpoint);
 
-        let mut request = self.client.request(method, &url);
+        let mut request = self.client.post(&url);
 
         if let Some(body_data) = body {
             request = request.json(body_data);

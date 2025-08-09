@@ -48,12 +48,7 @@ impl RestClient {
     /// # Errors
     /// Returns an error if the request fails or the response cannot be parsed
     pub async fn get_index_prices(&self) -> RestResult<Vec<IndexPrice>> {
-        self.send_request::<Vec<IndexPrice>, ()>(
-            INDEX_PRICES_ENDPOINT,
-            reqwest::Method::GET,
-            None,
-            EndpointType::PublicOther,
-        )
+        self.send_get_request(INDEX_PRICES_ENDPOINT, EndpointType::PublicOther)
         .await
     }
 
@@ -76,12 +71,7 @@ impl RestClient {
         request: &GetIndexPriceRequest,
     ) -> RestResult<IndexPrice> {
         let endpoint = SINGLE_INDEX_PRICE_ENDPOINT.replace("{}", &request.asset_symbol);
-        self.send_request::<IndexPrice, ()>(
-            &endpoint,
-            reqwest::Method::GET,
-            None,
-            EndpointType::PublicOther,
-        )
+        self.send_get_request(&endpoint, EndpointType::PublicOther)
         .await
     }
 }

@@ -31,13 +31,13 @@ pub struct PublicTrade {
     pub is_taker: bool,
 
     /// Trade creation timestamp
-    pub timestamp: String,
+    pub created_at_timestamp: String,
 
     /// Trade creation datetime
-    pub datetime: String,
+    pub created_at_datetime: String,
 
     /// Published timestamp
-    pub published_timestamp: String,
+    pub published_at_timestamp: String,
 }
 
 /// Request parameters for querying public trades
@@ -91,12 +91,7 @@ impl RestClient {
             }
         }
 
-        self.send_request(
-            &url,
-            reqwest::Method::GET,
-            None::<&()>,
-            EndpointType::PublicTrades,
-        )
+        self.send_get_request(&url, EndpointType::PublicTrades)
         .await
     }
 }
@@ -124,7 +119,7 @@ mod tests {
         assert_eq!(trade.symbol, "BTCUSDC");
         assert_eq!(trade.price, "30000.0");
         assert_eq!(trade.side, OrderSide::Buy);
-        assert_eq!(trade.timestamp, "1640995200000");
+        assert_eq!(trade.created_at_timestamp, "1640995200000");
         assert_eq!(trade.is_taker, true);
     }
 

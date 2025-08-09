@@ -30,12 +30,7 @@ impl RestClient {
     /// # Returns
     /// Current server timestamp and datetime
     pub async fn get_server_time(&self) -> RestResult<ServerTime> {
-        self.send_request(
-            SERVER_TIME_ENDPOINT,
-            reqwest::Method::GET,
-            None::<&()>,
-            EndpointType::PublicTime,
-        )
+        self.send_get_request(SERVER_TIME_ENDPOINT, EndpointType::PublicTime)
         .await
     }
 }

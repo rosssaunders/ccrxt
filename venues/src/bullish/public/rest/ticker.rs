@@ -83,12 +83,7 @@ impl RestClient {
     pub async fn get_ticker(&self, request: &GetTickerRequest) -> RestResult<Ticker> {
         let url = TICKER_ENDPOINT.replace("{}", &request.symbol);
 
-        self.send_request(
-            &url,
-            reqwest::Method::GET,
-            None::<&()>,
-            EndpointType::PublicTicker,
-        )
+        self.send_get_request(&url, EndpointType::PublicTicker)
         .await
     }
 }

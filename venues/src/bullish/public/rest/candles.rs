@@ -110,12 +110,7 @@ impl RestClient {
             format!("{}?{}", endpoint, query_params)
         };
 
-        self.send_request::<Vec<Candle>, ()>(
-            &full_endpoint,
-            reqwest::Method::GET,
-            None,
-            EndpointType::PublicCandles,
-        )
+        self.send_get_request(&full_endpoint, EndpointType::PublicCandles)
         .await
     }
 }

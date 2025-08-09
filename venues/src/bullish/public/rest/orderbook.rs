@@ -85,12 +85,7 @@ impl RestClient {
             }
         }
 
-        self.send_request(
-            &url,
-            reqwest::Method::GET,
-            None::<&()>,
-            EndpointType::PublicOrderbook,
-        )
+        self.send_get_request(&url, EndpointType::PublicOrderbook)
         .await
     }
 }

@@ -43,12 +43,7 @@ impl RestClient {
     /// # }
     /// ```
     pub async fn get_nonce(&self) -> RestResult<Nonce> {
-        self.send_request::<Nonce, ()>(
-            NONCE_ENDPOINT,
-            reqwest::Method::GET,
-            None,
-            EndpointType::PublicOther,
-        )
+        self.send_get_request(NONCE_ENDPOINT, EndpointType::PublicOther)
         .await
     }
 }

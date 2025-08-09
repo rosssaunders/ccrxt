@@ -112,9 +112,11 @@ pub struct UnderlyingAsset {
     pub market_risk_floor_pct_end: String,
 
     /// BPM transition datetime start
+    #[serde(rename = "bpmTransitionDateTimeStart")]
     pub bpm_transition_datetime_start: String,
 
     /// BPM transition datetime end
+    #[serde(rename = "bpmTransitionDateTimeEnd")]
     pub bpm_transition_datetime_end: String,
 }
 
@@ -173,12 +175,7 @@ impl RestClient {
     ///
     /// [docs]: https://docs.bullish.com/trading-api/resources/assets
     pub async fn get_assets(&self) -> RestResult<Vec<Asset>> {
-        self.send_request(
-            ASSETS_ENDPOINT,
-            reqwest::Method::GET,
-            None::<&()>,
-            EndpointType::PublicAssets,
-        )
+        self.send_get_request(ASSETS_ENDPOINT, EndpointType::PublicAssets)
         .await
     }
 
@@ -196,12 +193,7 @@ impl RestClient {
     pub async fn get_asset(&self, request: &GetAssetRequest) -> RestResult<Asset> {
         let url = SINGLE_ASSET_ENDPOINT.replace("{}", &request.symbol);
 
-        self.send_request(
-            &url,
-            reqwest::Method::GET,
-            None::<&()>,
-            EndpointType::PublicAssets,
-        )
+        self.send_get_request(&url, EndpointType::PublicAssets)
         .await
     }
 }

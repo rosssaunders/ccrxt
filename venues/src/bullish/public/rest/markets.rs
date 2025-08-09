@@ -189,12 +189,7 @@ impl RestClient {
     /// # Returns
     /// List of all markets with their trading parameters and statistics
     pub async fn get_markets(&self) -> RestResult<Vec<Market>> {
-        self.send_request(
-            MARKETS_ENDPOINT,
-            reqwest::Method::GET,
-            None::<&()>,
-            EndpointType::PublicMarkets,
-        )
+        self.send_get_request(MARKETS_ENDPOINT, EndpointType::PublicMarkets)
         .await
     }
 
@@ -212,12 +207,7 @@ impl RestClient {
     pub async fn get_market(&self, symbol: &str) -> RestResult<Market> {
         let url = SINGLE_MARKET_ENDPOINT.replace("{}", symbol);
 
-        self.send_request(
-            &url,
-            reqwest::Method::GET,
-            None::<&()>,
-            EndpointType::PublicMarkets,
-        )
+        self.send_get_request(&url, EndpointType::PublicMarkets)
         .await
     }
 }
