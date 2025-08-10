@@ -559,7 +559,10 @@ async fn test_public_trades() {
             println!("    Price: {}", first_trade.price);
             println!("    Quantity: {}", first_trade.quantity);
             println!("    Side: {:?}", first_trade.side);
-            println!("    Timestamp: {}", first_trade.timestamp);
+            println!(
+                "    Published timestamp: {}",
+                first_trade.published_at_timestamp
+            );
 
             // Validate trade structure
             assert!(
@@ -572,7 +575,10 @@ async fn test_public_trades() {
                 "Quantity should not be empty"
             );
             // Timestamp is a string, check if it's a valid number
-            let timestamp_num: u64 = first_trade.timestamp.parse().unwrap_or(0);
+            let timestamp_num: u64 = first_trade
+                .published_at_timestamp
+                .parse()
+                .unwrap_or(0);
             assert!(timestamp_num > 0, "Timestamp should be greater than 0");
         }
     }

@@ -86,33 +86,11 @@ impl RestClient {
         Ok(hex::encode(mac.finalize().into_bytes()))
     }
 
-    /// Send a request to a private endpoint
-    ///
-    /// # Arguments
-    /// * `endpoint` - The API endpoint path (e.g., "/openApi/spot/v1/account/balance")
-    /// * `method` - The HTTP method to use
-    /// * `params` - Optional parameters to include in the request
-    /// * `endpoint_type` - The type of endpoint for rate limiting
-    ///
-    /// # Returns
-    /// A result containing the parsed response data or an error
-    pub async fn send_request<T, P>(
-        &self,
-        endpoint: &str,
-        method: reqwest::Method,
-        params: Option<&P>,
-        endpoint_type: EndpointType,
-    ) -> RestResult<T>
+    /// Build a signed URL (querystring) for BingX private endpoints
+    fn build_signed_url<P>(&self, endpoint: &str, params: Option<&P>) -> Result<String, Errors>
     where
-        T: DeserializeOwned,
         P: Serialize + ?Sized,
     {
-        // Check rate limits
-        self.rate_limiter
-            .check_limits(endpoint_type.clone())
-            .await
-            .map_err(|e| Errors::RateLimitExceeded(e.to_string()))?;
-
         // Build query string with required parameters
         let timestamp = chrono::Utc::now().timestamp_millis();
         let mut query_params = vec![("timestamp".to_string(), timestamp.to_string())];
@@ -149,17 +127,29 @@ impl RestClient {
             .collect::<Vec<_>>()
             .join("&");
 
-        // Build URL
-        let url = format!("{}{}?{}", self.base_url, endpoint, final_query_string);
+        Ok(format!("{}{}?{}", self.base_url, endpoint, final_query_string))
+    }
 
-        // Prepare request
-        let mut request_builder = self.client.request(method, &url);
-
+    /// Execute a prepared request and parse ApiResponse wrapper
+    async fn execute<T>(
+        &self,
+        request_builder: reqwest::RequestBuilder,
+        endpoint_type: EndpointType,
+    ) -> RestResult<T>
+    where
+        T: DeserializeOwned,
+    {
         // Add required headers
         let api_key = self.api_key.expose_secret();
-        request_builder = request_builder
+        let request_builder = request_builder
             .header("X-BX-APIKEY", api_key)
             .header("Content-Type", "application/json");
+
+        // Check rate limits
+        self.rate_limiter
+            .check_limits(endpoint_type.clone())
+            .await
+            .map_err(|e| Errors::RateLimitExceeded(e.to_string()))?;
 
         // Send request
         let response = request_builder.send().await?;
@@ -205,47 +195,6 @@ impl RestClient {
         }
     }
 
-    /// Send a signed request to a private endpoint
-    ///
-    /// # Arguments
-    /// * `method` - The HTTP method as a string (e.g., "GET", "POST")
-    /// * `endpoint` - The API endpoint path
-    /// * `params` - Optional parameters to include in the request
-    ///
-    /// # Returns
-    /// A result containing the parsed response data or an error
-    pub async fn send_signed_request<T, P>(
-        &self,
-        method: &str,
-        endpoint: &str,
-        params: Option<&P>,
-    ) -> RestResult<T>
-    where
-        T: DeserializeOwned,
-        P: Serialize + ?Sized,
-    {
-        let reqwest_method = match method {
-            "GET" => reqwest::Method::GET,
-            "POST" => reqwest::Method::POST,
-            "PUT" => reqwest::Method::PUT,
-            "DELETE" => reqwest::Method::DELETE,
-            _ => {
-                return Err(Errors::Error(format!(
-                    "Unsupported HTTP method: {}",
-                    method
-                )));
-            }
-        };
-
-        self.send_request(
-            endpoint,
-            reqwest_method,
-            params,
-            EndpointType::AccountApiGroup2,
-        )
-        .await
-    }
-
     /// Send a signed GET request (high-performance)
     ///
     /// # Arguments
@@ -265,8 +214,8 @@ impl RestClient {
         T: DeserializeOwned,
         P: Serialize,
     {
-        self.send_request(endpoint, reqwest::Method::GET, Some(&params), endpoint_type)
-            .await
+    let url = self.build_signed_url(endpoint, Some(&params))?;
+    self.execute(self.client.get(&url), endpoint_type).await
     }
 
     /// Send a signed POST request (high-performance)
@@ -288,13 +237,8 @@ impl RestClient {
         T: DeserializeOwned,
         P: Serialize,
     {
-        self.send_request(
-            endpoint,
-            reqwest::Method::POST,
-            Some(&params),
-            endpoint_type,
-        )
-        .await
+    let url = self.build_signed_url(endpoint, Some(&params))?;
+    self.execute(self.client.post(&url), endpoint_type).await
     }
 
     /// Send a signed PUT request (high-performance)
@@ -316,8 +260,8 @@ impl RestClient {
         T: DeserializeOwned,
         P: Serialize,
     {
-        self.send_request(endpoint, reqwest::Method::PUT, Some(&params), endpoint_type)
-            .await
+    let url = self.build_signed_url(endpoint, Some(&params))?;
+    self.execute(self.client.put(&url), endpoint_type).await
     }
 
     /// Send a signed DELETE request (high-performance)
@@ -339,13 +283,8 @@ impl RestClient {
         T: DeserializeOwned,
         P: Serialize,
     {
-        self.send_request(
-            endpoint,
-            reqwest::Method::DELETE,
-            Some(&params),
-            endpoint_type,
-        )
-        .await
+    let url = self.build_signed_url(endpoint, Some(&params))?;
+    self.execute(self.client.delete(&url), endpoint_type).await
     }
 }
 

@@ -38,27 +38,23 @@ impl SpotPublicRestClient {
         T: serde::de::DeserializeOwned + Send + 'static,
         R: serde::Serialize,
     {
-        let shared_response = PublicBinanceClient::send_public_request::<T, R, SharedErrors>(
-            &self.0,
-            endpoint,
-            reqwest::Method::GET,
-            params,
-            weight,
-        )
-        .await
-        .map_err(|e| match e {
-            SharedErrors::ApiError(_) => Errors::Error("API error occurred".to_string()),
-            SharedErrors::RateLimitExceeded { retry_after } => Errors::Error(format!(
-                "Rate limit exceeded, retry after {:?}",
-                retry_after
-            )),
-            SharedErrors::InvalidApiKey() => Errors::InvalidApiKey(),
-            SharedErrors::HttpError(err) => Errors::HttpError(err),
-            SharedErrors::SerializationError(msg) => {
-                Errors::Error(format!("Serialization error: {}", msg))
-            }
-            SharedErrors::Error(msg) => Errors::Error(msg),
-        })?;
+        let shared_response = self
+            .0
+            .send_public_get::<T, R, SharedErrors>(endpoint, params, weight)
+            .await
+            .map_err(|e| match e {
+                SharedErrors::ApiError(_) => Errors::Error("API error occurred".to_string()),
+                SharedErrors::RateLimitExceeded { retry_after } => Errors::Error(format!(
+                    "Rate limit exceeded, retry after {:?}",
+                    retry_after
+                )),
+                SharedErrors::InvalidApiKey() => Errors::InvalidApiKey(),
+                SharedErrors::HttpError(err) => Errors::HttpError(err),
+                SharedErrors::SerializationError(msg) => {
+                    Errors::Error(format!("Serialization error: {}", msg))
+                }
+                SharedErrors::Error(msg) => Errors::Error(msg),
+            })?;
 
         Ok(RestResponse {
             data: shared_response.data,
@@ -79,27 +75,23 @@ impl SpotPublicRestClient {
         T: serde::de::DeserializeOwned + Send + 'static,
         R: serde::Serialize,
     {
-        let shared_response = PublicBinanceClient::send_public_request::<T, R, SharedErrors>(
-            &self.0,
-            endpoint,
-            reqwest::Method::POST,
-            params,
-            weight,
-        )
-        .await
-        .map_err(|e| match e {
-            SharedErrors::ApiError(_) => Errors::Error("API error occurred".to_string()),
-            SharedErrors::RateLimitExceeded { retry_after } => Errors::Error(format!(
-                "Rate limit exceeded, retry after {:?}",
-                retry_after
-            )),
-            SharedErrors::InvalidApiKey() => Errors::InvalidApiKey(),
-            SharedErrors::HttpError(err) => Errors::HttpError(err),
-            SharedErrors::SerializationError(msg) => {
-                Errors::Error(format!("Serialization error: {}", msg))
-            }
-            SharedErrors::Error(msg) => Errors::Error(msg),
-        })?;
+        let shared_response = self
+            .0
+            .send_public_post::<T, R, SharedErrors>(endpoint, params, weight)
+            .await
+            .map_err(|e| match e {
+                SharedErrors::ApiError(_) => Errors::Error("API error occurred".to_string()),
+                SharedErrors::RateLimitExceeded { retry_after } => Errors::Error(format!(
+                    "Rate limit exceeded, retry after {:?}",
+                    retry_after
+                )),
+                SharedErrors::InvalidApiKey() => Errors::InvalidApiKey(),
+                SharedErrors::HttpError(err) => Errors::HttpError(err),
+                SharedErrors::SerializationError(msg) => {
+                    Errors::Error(format!("Serialization error: {}", msg))
+                }
+                SharedErrors::Error(msg) => Errors::Error(msg),
+            })?;
 
         Ok(RestResponse {
             data: shared_response.data,
@@ -120,27 +112,23 @@ impl SpotPublicRestClient {
         T: serde::de::DeserializeOwned + Send + 'static,
         R: serde::Serialize,
     {
-        let shared_response = PublicBinanceClient::send_public_request::<T, R, SharedErrors>(
-            &self.0,
-            endpoint,
-            reqwest::Method::DELETE,
-            params,
-            weight,
-        )
-        .await
-        .map_err(|e| match e {
-            SharedErrors::ApiError(_) => Errors::Error("API error occurred".to_string()),
-            SharedErrors::RateLimitExceeded { retry_after } => Errors::Error(format!(
-                "Rate limit exceeded, retry after {:?}",
-                retry_after
-            )),
-            SharedErrors::InvalidApiKey() => Errors::InvalidApiKey(),
-            SharedErrors::HttpError(err) => Errors::HttpError(err),
-            SharedErrors::SerializationError(msg) => {
-                Errors::Error(format!("Serialization error: {}", msg))
-            }
-            SharedErrors::Error(msg) => Errors::Error(msg),
-        })?;
+        let shared_response = self
+            .0
+            .send_public_delete::<T, R, SharedErrors>(endpoint, params, weight)
+            .await
+            .map_err(|e| match e {
+                SharedErrors::ApiError(_) => Errors::Error("API error occurred".to_string()),
+                SharedErrors::RateLimitExceeded { retry_after } => Errors::Error(format!(
+                    "Rate limit exceeded, retry after {:?}",
+                    retry_after
+                )),
+                SharedErrors::InvalidApiKey() => Errors::InvalidApiKey(),
+                SharedErrors::HttpError(err) => Errors::HttpError(err),
+                SharedErrors::SerializationError(msg) => {
+                    Errors::Error(format!("Serialization error: {}", msg))
+                }
+                SharedErrors::Error(msg) => Errors::Error(msg),
+            })?;
 
         Ok(RestResponse {
             data: shared_response.data,

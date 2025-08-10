@@ -42,13 +42,9 @@ impl CoinmPublicRestClient {
     {
         let start = Instant::now();
 
-        let shared_response = PublicBinanceClient::send_public_request::<Resp, Req, SharedErrors>(
-            &self.0,
-            endpoint,
-            reqwest::Method::GET,
-            params,
-            weight,
-        )
+        let shared_response = self
+            .0
+            .send_public_get::<Resp, Req, SharedErrors>(endpoint, params, weight)
         .await
         .map_err(|e| match e {
             SharedErrors::ApiError(_) => Errors::Error("API error occurred".to_string()),
@@ -86,13 +82,9 @@ impl CoinmPublicRestClient {
     {
         let start = Instant::now();
 
-        let shared_response = PublicBinanceClient::send_public_request::<Resp, Req, SharedErrors>(
-            &self.0,
-            endpoint,
-            reqwest::Method::POST,
-            params,
-            weight,
-        )
+        let shared_response = self
+            .0
+            .send_public_post::<Resp, Req, SharedErrors>(endpoint, params, weight)
         .await
         .map_err(|e| match e {
             SharedErrors::ApiError(_) => Errors::Error("API error occurred".to_string()),
@@ -130,13 +122,9 @@ impl CoinmPublicRestClient {
     {
         let start = Instant::now();
 
-        let shared_response = PublicBinanceClient::send_public_request::<Resp, Req, SharedErrors>(
-            &self.0,
-            endpoint,
-            reqwest::Method::PUT,
-            params,
-            weight,
-        )
+        let shared_response = self
+            .0
+            .send_public_put::<Resp, Req, SharedErrors>(endpoint, params, weight)
         .await
         .map_err(|e| match e {
             SharedErrors::ApiError(_) => Errors::Error("API error occurred".to_string()),
@@ -174,13 +162,9 @@ impl CoinmPublicRestClient {
     {
         let start = Instant::now();
 
-        let shared_response = PublicBinanceClient::send_public_request::<Resp, Req, SharedErrors>(
-            &self.0,
-            endpoint,
-            reqwest::Method::DELETE,
-            params,
-            weight,
-        )
+        let shared_response = self
+            .0
+            .send_public_delete::<Resp, Req, SharedErrors>(endpoint, params, weight)
         .await
         .map_err(|e| match e {
             SharedErrors::ApiError(_) => Errors::Error("API error occurred".to_string()),
@@ -218,13 +202,9 @@ impl CoinmPublicRestClient {
     {
         let start = Instant::now();
 
-        let shared_response = PublicBinanceClient::send_public_request::<Resp, Req, SharedErrors>(
-            &self.0,
-            endpoint,
-            reqwest::Method::PATCH,
-            params,
-            weight,
-        )
+        let shared_response = self
+            .0
+            .send_public_patch::<Resp, Req, SharedErrors>(endpoint, params, weight)
         .await
         .map_err(|e| match e {
             SharedErrors::ApiError(_) => Errors::Error("API error occurred".to_string()),

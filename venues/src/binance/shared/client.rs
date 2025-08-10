@@ -687,4 +687,168 @@ impl PublicBinanceClient {
             });
         }
     }
+
+    /// API-key-only GET wrapper
+    pub async fn send_api_key_get<T, R, E>(
+        &self,
+        endpoint: &str,
+        api_key: &dyn ExposableSecret,
+        params: Option<R>,
+        weight: u32,
+    ) -> Result<RestResponse<T>, E>
+    where
+        T: for<'de> Deserialize<'de> + Send + 'static,
+        R: Serialize,
+        E: From<Errors>,
+    {
+        self.send_api_key_request::<T, R, E>(endpoint, Method::GET, api_key, params, weight)
+            .await
+    }
+
+    /// API-key-only POST wrapper
+    pub async fn send_api_key_post<T, R, E>(
+        &self,
+        endpoint: &str,
+        api_key: &dyn ExposableSecret,
+        params: Option<R>,
+        weight: u32,
+    ) -> Result<RestResponse<T>, E>
+    where
+        T: for<'de> Deserialize<'de> + Send + 'static,
+        R: Serialize,
+        E: From<Errors>,
+    {
+        self.send_api_key_request::<T, R, E>(endpoint, Method::POST, api_key, params, weight)
+            .await
+    }
+
+    /// API-key-only DELETE wrapper
+    pub async fn send_api_key_delete<T, R, E>(
+        &self,
+        endpoint: &str,
+        api_key: &dyn ExposableSecret,
+        params: Option<R>,
+        weight: u32,
+    ) -> Result<RestResponse<T>, E>
+    where
+        T: for<'de> Deserialize<'de> + Send + 'static,
+        R: Serialize,
+        E: From<Errors>,
+    {
+        self.send_api_key_request::<T, R, E>(endpoint, Method::DELETE, api_key, params, weight)
+            .await
+    }
+
+    /// API-key-only PUT wrapper
+    pub async fn send_api_key_put<T, R, E>(
+        &self,
+        endpoint: &str,
+        api_key: &dyn ExposableSecret,
+        params: Option<R>,
+        weight: u32,
+    ) -> Result<RestResponse<T>, E>
+    where
+        T: for<'de> Deserialize<'de> + Send + 'static,
+        R: Serialize,
+        E: From<Errors>,
+    {
+        self.send_api_key_request::<T, R, E>(endpoint, Method::PUT, api_key, params, weight)
+            .await
+    }
+
+    /// API-key-only PATCH wrapper
+    pub async fn send_api_key_patch<T, R, E>(
+        &self,
+        endpoint: &str,
+        api_key: &dyn ExposableSecret,
+        params: Option<R>,
+        weight: u32,
+    ) -> Result<RestResponse<T>, E>
+    where
+        T: for<'de> Deserialize<'de> + Send + 'static,
+        R: Serialize,
+        E: From<Errors>,
+    {
+        self.send_api_key_request::<T, R, E>(endpoint, Method::PATCH, api_key, params, weight)
+            .await
+    }
+    /// Method-specific GET wrapper to avoid passing HTTP method from call sites
+    pub async fn send_public_get<T, R, E>(
+        &self,
+        endpoint: &str,
+        params: Option<R>,
+        weight: u32,
+    ) -> Result<RestResponse<T>, E>
+    where
+        T: for<'de> Deserialize<'de> + Send + 'static,
+        R: Serialize,
+        E: From<Errors>,
+    {
+        self.send_public_request::<T, R, E>(endpoint, Method::GET, params, weight)
+            .await
+    }
+
+    /// Method-specific POST wrapper to avoid passing HTTP method from call sites
+    pub async fn send_public_post<T, R, E>(
+        &self,
+        endpoint: &str,
+        params: Option<R>,
+        weight: u32,
+    ) -> Result<RestResponse<T>, E>
+    where
+        T: for<'de> Deserialize<'de> + Send + 'static,
+        R: Serialize,
+        E: From<Errors>,
+    {
+        self.send_public_request::<T, R, E>(endpoint, Method::POST, params, weight)
+            .await
+    }
+
+    /// Method-specific DELETE wrapper to avoid passing HTTP method from call sites
+    pub async fn send_public_delete<T, R, E>(
+        &self,
+        endpoint: &str,
+        params: Option<R>,
+        weight: u32,
+    ) -> Result<RestResponse<T>, E>
+    where
+        T: for<'de> Deserialize<'de> + Send + 'static,
+        R: Serialize,
+        E: From<Errors>,
+    {
+        self.send_public_request::<T, R, E>(endpoint, Method::DELETE, params, weight)
+            .await
+    }
+
+    /// Method-specific PUT wrapper to avoid passing HTTP method from call sites
+    pub async fn send_public_put<T, R, E>(
+        &self,
+        endpoint: &str,
+        params: Option<R>,
+        weight: u32,
+    ) -> Result<RestResponse<T>, E>
+    where
+        T: for<'de> Deserialize<'de> + Send + 'static,
+        R: Serialize,
+        E: From<Errors>,
+    {
+        self.send_public_request::<T, R, E>(endpoint, Method::PUT, params, weight)
+            .await
+    }
+
+    /// Method-specific PATCH wrapper to avoid passing HTTP method from call sites
+    pub async fn send_public_patch<T, R, E>(
+        &self,
+        endpoint: &str,
+        params: Option<R>,
+        weight: u32,
+    ) -> Result<RestResponse<T>, E>
+    where
+        T: for<'de> Deserialize<'de> + Send + 'static,
+        R: Serialize,
+        E: From<Errors>,
+    {
+        self.send_public_request::<T, R, E>(endpoint, Method::PATCH, params, weight)
+            .await
+    }
 }
