@@ -84,7 +84,7 @@ impl RestClient {
         let url = TICKER_ENDPOINT.replace("{}", &request.symbol);
 
         self.send_get_request(&url, EndpointType::PublicTicker)
-        .await
+            .await
     }
 }
 

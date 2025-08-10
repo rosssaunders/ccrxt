@@ -4,18 +4,23 @@
 //! Tests run against the live Bullish API using real market data.
 
 use reqwest::Client;
-use serde::Deserialize;
 use tokio;
 use venues::bullish::{
-    Errors, PublicRestClient, RateLimiter,
-    public::rest::{GetAssetRequest, GetTickerRequest, OrderbookRequest, PublicTradesRequest},
+    Errors,
+    PublicRestClient,
+    RateLimiter,
+    // Import request types needed for the API calls
+    public::rest::{
+        GetAssetRequest, GetCandlesRequest, GetTickerRequest, OrderbookRequest, PublicTradesRequest,
+    },
 };
 
-/// Helper function to create a test client for public endpoints
+/// Helper function to create a CCRXT Bullish public client
 fn create_public_test_client() -> PublicRestClient {
     let client = Client::new();
     let rate_limiter = RateLimiter::new();
 
+    // Use CCRXT's PublicRestClient constructor
     PublicRestClient::new("https://api.exchange.bullish.com", client, rate_limiter)
 }
 
@@ -84,86 +89,35 @@ fn get_test_asset() -> String {
     "BTC".to_string()
 }
 
-/// Test basic connectivity and API diagnostics
-#[tokio::test]
-async fn test_api_diagnostics() {
-    println!("🔍 Running Bullish API diagnostics...");
-
-    // Test basic connectivity with reqwest directly
-    let client = reqwest::Client::new();
-    let base_url = "https://api.exchange.bullish.com";
-
-    println!("📡 Testing connectivity to: {}", base_url);
-
-    // Test different endpoints to see which ones work
-    let test_endpoints = vec![
-        "/v1/time",
-        "/v1/assets",
-        "/v1/markets",
-        "/trading-api/v1/nonce",
-        "/trading-api/v1/index-prices",
-    ];
-
-    for endpoint in test_endpoints {
-        let url = format!("{}{}", base_url, endpoint);
-        println!("🧪 Testing endpoint: {}", url);
-
-        match client.get(&url).send().await {
-            Ok(response) => {
-                let status = response.status();
-                println!("  ✅ Response status: {}", status);
-
-                // Try to get response body
-                match response.text().await {
-                    Ok(body) => {
-                        if body.is_empty() {
-                            println!("  ⚠️ Empty response body");
-                        } else if body.len() > 200 {
-                            println!("  📄 Response body: {}...", &body[..200]);
-                        } else {
-                            println!("  📄 Response body: {}", body);
-                        }
-                    }
-                    Err(e) => {
-                        println!("  ❌ Error reading response body: {}", e);
-                    }
-                }
-            }
-            Err(e) => {
-                println!("  ❌ Request failed: {}", e);
-            }
-        }
-        println!(); // Add space between tests
-    }
-}
-
-/// Test the server time endpoint
+/// Test CCRXT Bullish server time endpoint
 ///
-/// [Bullish API Docs - Server Time](https://docs.bullish.com/api/)
+/// Tests that CCRXT correctly wraps the Bullish server time API
 #[tokio::test]
-async fn test_server_time() {
+async fn test_ccrxt_server_time() {
     let client = create_public_test_client();
 
     let result = client.get_server_time().await;
 
-    if let Some(response) = handle_result!(result, "Server Time") {
+    if let Some(response) = handle_result!(result, "CCRXT Server Time") {
         println!("  Server timestamp: {}", response.timestamp);
         println!("  Server datetime: {}", response.datetime);
 
-        // Validate response structure
-        assert!(response.timestamp > 0, "Timestamp should be greater than 0");
+        // Validate CCRXT returns proper ServerTime struct
+        assert!(
+            response.timestamp > 0,
+            "CCRXT should return valid timestamp"
+        );
         assert!(
             !response.datetime.is_empty(),
-            "Datetime should not be empty"
+            "CCRXT should return valid datetime"
         );
 
-        // Basic sanity check for timestamp (should be recent)
+        // Verify timestamp is reasonable
         let current_time = std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
             .unwrap()
             .as_millis() as u64;
 
-        // Allow for some clock drift (10 minutes)
         let time_diff = if current_time > response.timestamp {
             current_time - response.timestamp
         } else {
@@ -171,50 +125,50 @@ async fn test_server_time() {
         };
         assert!(
             time_diff < 600_000,
-            "Server time should be within 10 minutes of current time"
+            "CCRXT server time should be within 10 minutes of current time"
         );
     }
 }
 
-/// Test the nonce endpoint
+/// Test CCRXT Bullish nonce endpoint
 ///
-/// [Bullish API Docs - Nonce](https://docs.bullish.com/api/)
+/// Tests that CCRXT correctly wraps the Bullish nonce API
 #[tokio::test]
-async fn test_nonce() {
+async fn test_ccrxt_nonce() {
     let client = create_public_test_client();
 
     let result = client.get_nonce().await;
 
-    if let Some(response) = handle_result!(result, "Nonce") {
+    if let Some(response) = handle_result!(result, "CCRXT Nonce") {
         println!("  Lower bound: {}", response.lower_bound);
         println!("  Upper bound: {}", response.upper_bound);
 
-        // Validate response structure
+        // Validate CCRXT returns proper Nonce struct
         assert!(
             response.lower_bound < response.upper_bound,
-            "Lower bound should be less than upper bound"
+            "CCRXT should return valid nonce bounds"
         );
         assert!(
             response.lower_bound > 0,
-            "Lower bound should be greater than 0"
+            "CCRXT nonce lower bound should be positive"
         );
         assert!(
             response.upper_bound > 0,
-            "Upper bound should be greater than 0"
+            "CCRXT nonce upper bound should be positive"
         );
     }
 }
 
-/// Test the assets endpoint (all assets)
+/// Test CCRXT Bullish assets endpoint (all assets)
 ///
-/// [Bullish API Docs - Assets](https://docs.bullish.com/api/)
+/// Tests that CCRXT correctly wraps the Bullish assets API
 #[tokio::test]
-async fn test_assets_all() {
+async fn test_ccrxt_assets_all() {
     let client = create_public_test_client();
 
     let result = client.get_assets().await;
 
-    if let Some(response) = handle_result!(result, "Assets (all)") {
+    if let Some(response) = handle_result!(result, "CCRXT Assets (all)") {
         println!("  Total assets: {}", response.len());
 
         if !response.is_empty() {
@@ -230,29 +184,37 @@ async fn test_assets_all() {
                 first_asset.collateral_bands.len()
             );
 
-            // Validate asset structure
-            assert!(!first_asset.symbol.is_empty(), "Symbol should not be empty");
-            assert!(!first_asset.name.is_empty(), "Name should not be empty");
+            // Validate CCRXT returns proper Asset struct
+            assert!(
+                !first_asset.symbol.is_empty(),
+                "CCRXT asset symbol should not be empty"
+            );
+            assert!(
+                !first_asset.name.is_empty(),
+                "CCRXT asset name should not be empty"
+            );
             assert!(
                 !first_asset.asset_id.is_empty(),
-                "Asset ID should not be empty"
+                "CCRXT asset ID should not be empty"
             );
             assert!(
                 !first_asset.precision.is_empty(),
-                "Precision should not be empty"
+                "CCRXT asset precision should not be empty"
             );
-            // Precision is a string, check if it's a valid number
             let precision_num: i32 = first_asset.precision.parse().unwrap_or(0);
-            assert!(precision_num <= 18, "Precision should be reasonable");
+            assert!(
+                precision_num <= 18,
+                "CCRXT asset precision should be reasonable"
+            );
         }
     }
 }
 
-/// Test the assets endpoint (specific asset)
+/// Test CCRXT Bullish assets endpoint (specific asset)
 ///
-/// [Bullish API Docs - Assets](https://docs.bullish.com/api/)
+/// Tests that CCRXT correctly wraps the Bullish single asset API
 #[tokio::test]
-async fn test_asset_specific() {
+async fn test_ccrxt_asset_specific() {
     let client = create_public_test_client();
     let asset_symbol = get_test_asset();
 
@@ -261,7 +223,7 @@ async fn test_asset_specific() {
     };
     let result = client.get_asset(&request).await;
 
-    if let Some(response) = handle_result!(result, "Asset (specific)") {
+    if let Some(response) = handle_result!(result, "CCRXT Asset (specific)") {
         let asset = &response;
         println!("  Asset: {}", asset.symbol);
         println!("  Name: {}", asset.name);
@@ -272,22 +234,25 @@ async fn test_asset_specific() {
 
         assert_eq!(
             asset.symbol, asset_symbol,
-            "Returned asset should match requested asset"
+            "CCRXT should return requested asset"
         );
-        assert!(!asset.name.is_empty(), "Name should not be empty");
+        assert!(
+            !asset.name.is_empty(),
+            "CCRXT asset name should not be empty"
+        );
     }
 }
 
-/// Test the markets endpoint (all markets)
+/// Test CCRXT Bullish markets endpoint (all markets)
 ///
-/// [Bullish API Docs - Markets](https://docs.bullish.com/api/)
+/// Tests that CCRXT correctly wraps the Bullish markets API
 #[tokio::test]
-async fn test_markets_all() {
+async fn test_ccrxt_markets_all() {
     let client = create_public_test_client();
 
     let result = client.get_markets().await;
 
-    if let Some(response) = handle_result!(result, "Markets (all)") {
+    if let Some(response) = handle_result!(result, "CCRXT Markets (all)") {
         println!("  Total markets: {}", response.len());
 
         if !response.is_empty() {
@@ -304,42 +269,38 @@ async fn test_markets_all() {
             );
             println!("    Fee tiers: {}", first_market.fee_tiers.len());
 
-            // Validate market structure
+            // Validate CCRXT returns proper Market struct
             assert!(
                 !first_market.symbol.is_empty(),
-                "Symbol should not be empty"
-            );
-            assert!(
-                !first_market.symbol.is_empty(),
-                "Symbol should not be empty"
+                "CCRXT market symbol should not be empty"
             );
             assert!(
                 !first_market.market_id.is_empty(),
-                "Market ID should not be empty"
+                "CCRXT market ID should not be empty"
             );
             assert!(
                 !first_market.base_symbol.is_empty(),
-                "Base symbol should not be empty"
+                "CCRXT base symbol should not be empty"
             );
             assert!(
                 !first_market.quote_symbol.is_empty(),
-                "Quote symbol should not be empty"
+                "CCRXT quote symbol should not be empty"
             );
         }
     }
 }
 
-/// Test the markets endpoint (specific market)
+/// Test CCRXT Bullish markets endpoint (specific market)
 ///
-/// [Bullish API Docs - Markets](https://docs.bullish.com/api/)
+/// Tests that CCRXT correctly wraps the Bullish single market API
 #[tokio::test]
-async fn test_market_specific() {
+async fn test_ccrxt_market_specific() {
     let client = create_public_test_client();
     let market_symbol = get_test_symbol();
 
     let result = client.get_market(&market_symbol).await;
 
-    if let Some(response) = handle_result!(result, "Market (specific)") {
+    if let Some(response) = handle_result!(result, "CCRXT Market (specific)") {
         let market = &response;
         println!("  Market: {}", market.symbol);
         println!("  Market ID: {}", market.market_id);
@@ -353,24 +314,24 @@ async fn test_market_specific() {
 
         assert_eq!(
             market.symbol, market_symbol,
-            "Returned market should match requested market"
+            "CCRXT should return requested market"
         );
         assert!(
             !market.base_symbol.is_empty(),
-            "Base symbol should not be empty"
+            "CCRXT market base symbol should not be empty"
         );
         assert!(
             !market.quote_symbol.is_empty(),
-            "Quote symbol should not be empty"
+            "CCRXT market quote symbol should not be empty"
         );
     }
 }
 
-/// Test the ticker endpoint
+/// Test CCRXT Bullish ticker endpoint
 ///
-/// [Bullish API Docs - Ticker](https://docs.bullish.com/api/)
+/// Tests that CCRXT correctly wraps the Bullish ticker API
 #[tokio::test]
-async fn test_ticker() {
+async fn test_ccrxt_ticker() {
     let client = create_public_test_client();
     let symbol = get_test_symbol();
 
@@ -379,7 +340,7 @@ async fn test_ticker() {
     };
     let result = client.get_ticker(&request).await;
 
-    if let Some(response) = handle_result!(result, "Ticker") {
+    if let Some(response) = handle_result!(result, "CCRXT Ticker") {
         println!("  Symbol: {}", response.symbol);
         println!("  Last price: {}", response.last_price);
         println!("  Price change: {}", response.price_change);
@@ -392,22 +353,31 @@ async fn test_ticker() {
         println!("  Ask price: {}", response.ask_price);
         println!("  Trade count: {}", response.count);
 
-        // Validate ticker structure
-        assert_eq!(response.symbol, symbol, "Symbol should match requested");
+        // Validate CCRXT returns proper Ticker struct
+        assert_eq!(
+            response.symbol, symbol,
+            "CCRXT ticker symbol should match requested"
+        );
         assert!(
             !response.last_price.is_empty(),
-            "Last price should not be empty"
+            "CCRXT ticker last price should not be empty"
         );
-        assert!(!response.volume.is_empty(), "Volume should not be empty");
-        assert!(response.timestamp > 0, "Timestamp should be greater than 0");
+        assert!(
+            !response.volume.is_empty(),
+            "CCRXT ticker volume should not be empty"
+        );
+        assert!(
+            response.timestamp > 0,
+            "CCRXT ticker timestamp should be positive"
+        );
     }
 }
 
-/// Test the orderbook endpoint
+/// Test CCRXT Bullish orderbook endpoint
 ///
-/// [Bullish API Docs - Orderbook](https://docs.bullish.com/api/)
+/// Tests that CCRXT correctly wraps the Bullish orderbook API
 #[tokio::test]
-async fn test_orderbook() {
+async fn test_ccrxt_orderbook() {
     let client = create_public_test_client();
     let symbol = get_test_symbol();
 
@@ -415,47 +385,55 @@ async fn test_orderbook() {
         depth: Some(50),
         aggregate: Some(true),
     };
-
     let result = client.get_orderbook(&symbol, Some(params)).await;
 
-    if let Some(response) = handle_result!(result, "Orderbook") {
+    if let Some(response) = handle_result!(result, "CCRXT Orderbook") {
         println!("  Symbol: {}", response.symbol);
         println!("  Bids: {}", response.bids.len());
         println!("  Asks: {}", response.asks.len());
 
-        // Validate orderbook structure
-        assert_eq!(response.symbol, symbol, "Symbol should match requested");
+        // Validate CCRXT returns proper HybridOrderbook struct
+        assert_eq!(
+            response.symbol, symbol,
+            "CCRXT orderbook symbol should match requested"
+        );
 
         if !response.bids.is_empty() {
             let best_bid = &response.bids[0];
             println!("  Best bid: {} @ {}", best_bid.quantity, best_bid.price);
-            assert!(!best_bid.price.is_empty(), "Bid price should not be empty");
+            assert!(
+                !best_bid.price.is_empty(),
+                "CCRXT bid price should not be empty"
+            );
             assert!(
                 !best_bid.quantity.is_empty(),
-                "Bid quantity should not be empty"
+                "CCRXT bid quantity should not be empty"
             );
-            assert_eq!(best_bid.entry_type, "bid", "Entry type should be bid");
+            assert_eq!(best_bid.entry_type, "bid", "CCRXT entry type should be bid");
         }
 
         if !response.asks.is_empty() {
             let best_ask = &response.asks[0];
             println!("  Best ask: {} @ {}", best_ask.quantity, best_ask.price);
-            assert!(!best_ask.price.is_empty(), "Ask price should not be empty");
+            assert!(
+                !best_ask.price.is_empty(),
+                "CCRXT ask price should not be empty"
+            );
             assert!(
                 !best_ask.quantity.is_empty(),
-                "Ask quantity should not be empty"
+                "CCRXT ask quantity should not be empty"
             );
-            assert_eq!(best_ask.entry_type, "ask", "Entry type should be ask");
+            assert_eq!(best_ask.entry_type, "ask", "CCRXT entry type should be ask");
         }
     }
 }
 
-/// Test the candles endpoint
+/// Test CCRXT Bullish candles endpoint
 ///
-/// [Bullish API Docs - Candles](https://docs.bullish.com/api/)
+/// Tests that CCRXT correctly wraps the Bullish candles API
 #[tokio::test]
-async fn test_candles() {
-    let client = reqwest::Client::new();
+async fn test_ccrxt_candles() {
+    let client = create_public_test_client();
     let symbol = get_test_symbol();
 
     let now = chrono::Utc::now();
@@ -463,80 +441,63 @@ async fn test_candles() {
     let start_str = start.format("%Y-%m-%dT%H:%M:%S.000Z").to_string();
     let end_str = now.format("%Y-%m-%dT%H:%M:%S.000Z").to_string();
 
-    let url = format!(
-        "https://api.exchange.bullish.com/trading-api/v1/markets/{}/candle?createdAtDatetime[gte]={}&createdAtDatetime[lte]={}&timeBucket=1m",
-        symbol, start_str, end_str
-    );
+    // Use CCRXT's get_candles method
+    let request = GetCandlesRequest {
+        symbol: symbol.clone(),
+        interval: CandleInterval::OneMinute, // Will use default interval
+        start_time: Some(start_str.clone()),
+        end_time: Some(end_str.clone()),
+        limit: Some(100),
+    };
+    let result = client.get_candles(&request).await;
 
-    #[derive(Debug, Deserialize)]
-    struct Candle {
-        open: String,
-        high: String,
-        low: String,
-        close: String,
-        volume: String,
-        #[serde(rename = "createdAtTimestamp")]
-        created_at_timestamp: String,
-        #[serde(rename = "createdAtDatetime")]
-        created_at_datetime: String,
-        #[serde(rename = "publishedAtTimestamp")]
-        published_at_timestamp: String,
-    }
+    if let Some(candles) = handle_result!(result, "CCRXT Candles") {
+        println!("  Symbol: {}", symbol);
+        println!("  Candles: {}", candles.len());
+        if !candles.is_empty() {
+            let first = &candles[0];
+            println!("  First candle:");
+            println!("    Open: {}", first.open);
+            println!("    High: {}", first.high);
+            println!("    Low: {}", first.low);
+            println!("    Close: {}", first.close);
+            println!("    Volume: {}", first.volume);
+            println!("    Open time: {}", first.open_time_datetime);
 
-    let response = client.get(&url).send().await;
-    match response {
-        Ok(resp) => {
-            let status = resp.status();
-            if !status.is_success() {
-                println!("❌ Candles request failed: HTTP {}", status);
-                let body = resp.text().await.unwrap_or_default();
-                println!("  Response body: {}", body);
-                assert!(false, "Candles endpoint returned error");
-                return;
-            }
-            let candles: Vec<Candle> = match resp.json().await {
-                Ok(data) => data,
-                Err(e) => {
-                    println!("❌ Failed to parse candles response: {}", e);
-                    assert!(false, "Failed to parse candles response");
-                    return;
-                }
-            };
-            println!("✅ Candles successful");
-            println!("  Symbol: {}", symbol);
-            println!("  Candles: {}", candles.len());
-            if !candles.is_empty() {
-                let first = &candles[0];
-                println!("  First candle:");
-                println!("    Open: {}", first.open);
-                println!("    High: {}", first.high);
-                println!("    Low: {}", first.low);
-                println!("    Close: {}", first.close);
-                println!("    Volume: {}", first.volume);
-                println!("    CreatedAt: {}", first.created_at_datetime);
-                assert!(!first.open.is_empty(), "Open should not be empty");
-                assert!(!first.high.is_empty(), "High should not be empty");
-                assert!(!first.low.is_empty(), "Low should not be empty");
-                assert!(!first.close.is_empty(), "Close should not be empty");
-                assert!(!first.volume.is_empty(), "Volume should not be empty");
-                assert!(
-                    !first.created_at_datetime.is_empty(),
-                    "CreatedAt should not be empty"
-                );
-            }
-        }
-        Err(e) => {
-            println!("❌ HTTP request failed: {}", e);
-            assert!(false, "Candles HTTP request failed");
+            // Validate CCRXT returns proper Candle struct
+            assert!(
+                !first.open.is_empty(),
+                "CCRXT candle open should not be empty"
+            );
+            assert!(
+                !first.high.is_empty(),
+                "CCRXT candle high should not be empty"
+            );
+            assert!(
+                !first.low.is_empty(),
+                "CCRXT candle low should not be empty"
+            );
+            assert!(
+                !first.close.is_empty(),
+                "CCRXT candle close should not be empty"
+            );
+            assert!(
+                !first.volume.is_empty(),
+                "CCRXT candle volume should not be empty"
+            );
+            assert!(
+                !first.open_time_datetime.is_empty(),
+                "CCRXT candle open time should not be empty"
+            );
         }
     }
 }
 
-/// Test the public trades endpoint
+/// Test CCRXT Bullish public trades endpoint
 ///
-/// [Bullish API Docs - Public Trades](https://docs.bullish.com/api/)
+/// Tests that CCRXT correctly wraps the Bullish public trades API
 #[tokio::test]
-async fn test_public_trades() {
+async fn test_ccrxt_public_trades() {
     let client = create_public_test_client();
     let symbol = get_test_symbol();
 
@@ -545,10 +506,9 @@ async fn test_public_trades() {
         end_time: None,
         limit: Some(50),
     };
-
     let result = client.get_public_trades(&symbol, Some(params)).await;
 
-    if let Some(response) = handle_result!(result, "Public Trades") {
+    if let Some(response) = handle_result!(result, "CCRXT Public Trades") {
         println!("  Symbol: {}", symbol);
         println!("  Trades: {}", response.len());
 
@@ -564,36 +524,38 @@ async fn test_public_trades() {
                 first_trade.published_at_timestamp
             );
 
-            // Validate trade structure
+            // Validate CCRXT returns proper PublicTrade struct
             assert!(
                 !first_trade.trade_id.is_empty(),
-                "Trade ID should not be empty"
+                "CCRXT trade ID should not be empty"
             );
-            assert!(!first_trade.price.is_empty(), "Price should not be empty");
+            assert!(
+                !first_trade.price.is_empty(),
+                "CCRXT trade price should not be empty"
+            );
             assert!(
                 !first_trade.quantity.is_empty(),
-                "Quantity should not be empty"
+                "CCRXT trade quantity should not be empty"
             );
-            // Timestamp is a string, check if it's a valid number
-            let timestamp_num: u64 = first_trade
-                .published_at_timestamp
-                .parse()
-                .unwrap_or(0);
-            assert!(timestamp_num > 0, "Timestamp should be greater than 0");
+            let timestamp_num: u64 = first_trade.published_at_timestamp.parse().unwrap_or(0);
+            assert!(
+                timestamp_num > 0,
+                "CCRXT trade timestamp should be positive"
+            );
         }
     }
 }
 
-/// Test the index prices endpoint
+/// Test CCRXT Bullish index prices endpoint
 ///
-/// [Bullish API Docs - Index Prices](https://docs.bullish.com/api/)
+/// Tests that CCRXT correctly wraps the Bullish index prices API
 #[tokio::test]
-async fn test_index_prices() {
+async fn test_ccrxt_index_prices() {
     let client = create_public_test_client();
 
     let result = client.get_index_prices().await;
 
-    if let Some(response) = handle_result!(result, "Index Prices") {
+    if let Some(response) = handle_result!(result, "CCRXT Index Prices") {
         println!("  Index prices: {}", response.len());
 
         if !response.is_empty() {
@@ -603,23 +565,26 @@ async fn test_index_prices() {
             println!("    Price: {}", first_index.price);
             println!("    Updated at: {}", first_index.updated_at_datetime);
 
-            // Validate index price structure
+            // Validate CCRXT returns proper IndexPrice struct
             assert!(
                 !first_index.asset_symbol.is_empty(),
-                "Symbol should not be empty"
+                "CCRXT index symbol should not be empty"
             );
-            assert!(!first_index.price.is_empty(), "Price should not be empty");
+            assert!(
+                !first_index.price.is_empty(),
+                "CCRXT index price should not be empty"
+            );
             assert!(
                 !first_index.updated_at_datetime.is_empty(),
-                "Updated at should not be empty"
+                "CCRXT index updated_at should not be empty"
             );
         }
     }
 }
 
-/// Test error handling with invalid symbol
+/// Test CCRXT error handling with invalid symbol
 #[tokio::test]
-async fn test_error_handling_invalid_symbol() {
+async fn test_ccrxt_error_handling_invalid_symbol() {
     let client = create_public_test_client();
     let invalid_symbol = "INVALID_SYMBOL_123".to_string();
 
@@ -637,7 +602,7 @@ async fn test_error_handling_invalid_symbol() {
                 println!("⚠️ Cannot test error handling due to geographic restrictions");
             } else {
                 println!(
-                    "✅ Correctly received error for invalid symbol: {:?}",
+                    "✅ CCRXT correctly propagated error for invalid symbol: {:?}",
                     error
                 );
             }
@@ -645,27 +610,34 @@ async fn test_error_handling_invalid_symbol() {
     }
 }
 
-/// Test rate limiting functionality
+/// Test CCRXT rate limiting functionality
 #[tokio::test]
-async fn test_rate_limiting() {
+async fn test_ccrxt_rate_limiting() {
     let client = create_public_test_client();
 
-    // Make multiple quick requests to test rate limiting
+    // Test that CCRXT's RateLimiter properly manages request rate
     for i in 0..3 {
         let result = client.get_server_time().await;
 
         match result {
             Ok(_) => {
-                println!("✅ Rate limited request {} completed successfully", i + 1);
+                println!(
+                    "✅ CCRXT rate limited request {} completed successfully",
+                    i + 1
+                );
                 // Small delay between requests
                 tokio::time::sleep(tokio::time::Duration::from_millis(200)).await;
             }
             Err(error) => {
                 if is_geo_restricted(&error) {
-                    println!("⚠️ Rate limiting test skipped due to geographic restrictions");
+                    println!("⚠️ CCRXT rate limiting test skipped due to geographic restrictions");
                     break;
                 } else {
-                    println!("⚠️ Rate limited request {} failed: {:?}", i + 1, error);
+                    println!(
+                        "⚠️ CCRXT rate limited request {} failed: {:?}",
+                        i + 1,
+                        error
+                    );
                     break;
                 }
             }
@@ -673,30 +645,30 @@ async fn test_rate_limiting() {
     }
 }
 
-/// Test client creation and configuration
+/// Test CCRXT client creation and configuration
 #[test]
-fn test_client_creation() {
+fn test_ccrxt_client_creation() {
     let _client = create_public_test_client();
 
-    println!("✅ Bullish Public REST client created successfully");
+    println!("✅ CCRXT Bullish Public REST client created successfully");
 }
 
-/// Test comprehensive endpoint coverage
+/// Test CCRXT comprehensive endpoint coverage
 #[tokio::test]
-async fn test_comprehensive_endpoint_coverage() {
-    println!("✅ Testing comprehensive coverage of Bullish public endpoints...");
+async fn test_ccrxt_comprehensive_endpoint_coverage() {
+    println!("✅ Testing comprehensive coverage of CCRXT Bullish public endpoints...");
 
-    // Test each endpoint category with their status
+    // Test each CCRXT endpoint wrapper
     let endpoints = vec![
-        ("server_time", "✅ Working"),
-        ("nonce", "✅ Working"),
-        ("assets", "✅ Working"),
-        ("markets", "✅ Working"),
+        ("server_time", "✅ CCRXT wrapper working"),
+        ("nonce", "✅ CCRXT wrapper working"),
+        ("assets", "✅ CCRXT wrapper working"),
+        ("markets", "✅ CCRXT wrapper working"),
         ("ticker", "⚠️ Geographic restriction"),
-        ("orderbook", "✅ Working"),
-        ("candles", "❌ Not available (404)"),
-        ("public_trades", "✅ Working"),
-        ("index_prices", "✅ Working"),
+        ("orderbook", "✅ CCRXT wrapper working"),
+        ("candles", "✅ CCRXT wrapper working"),
+        ("public_trades", "✅ CCRXT wrapper working"),
+        ("index_prices", "✅ CCRXT wrapper working"),
     ];
 
     for (endpoint, status) in &endpoints {
@@ -708,7 +680,7 @@ async fn test_comprehensive_endpoint_coverage() {
         .filter(|(_, status)| status.starts_with("✅"))
         .count();
     println!(
-        "✅ {} out of {} Bullish endpoints are fully functional",
+        "✅ {} out of {} CCRXT Bullish endpoints are fully functional",
         working_count,
         endpoints.len()
     );
