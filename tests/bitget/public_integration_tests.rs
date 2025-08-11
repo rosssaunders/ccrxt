@@ -3,7 +3,7 @@
 //! These tests verify the functionality of all public endpoints that don't require authentication.
 //! Tests run against the live Bitget API using real market data.
 
-use reqwest::Client;
+use std::sync::Arc;
 use tokio;
 use venues::bitget::spot::{
     ApiError, CandlestickGranularity, DepthType, PricePrecision, PublicRestClient, RateLimiter,
@@ -16,10 +16,10 @@ use venues::bitget::spot::{
 
 /// Helper function to create a test client for public endpoints
 fn create_public_test_client() -> PublicRestClient {
-    let client = Client::new();
+    let http_client = Arc::new(rest::native::NativeHttpClient::default());
     let rate_limiter = RateLimiter::new();
 
-    PublicRestClient::new("https://api.bitget.com", rate_limiter, client)
+    PublicRestClient::new("https://api.bitget.com", rate_limiter, http_client)
 }
 
 /// Helper function to check if an error is due to geographic restrictions

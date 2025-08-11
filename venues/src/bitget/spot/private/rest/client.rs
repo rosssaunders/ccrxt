@@ -20,13 +20,16 @@
 //! - Endpoint-specific limits: varies (3-20 requests per second)
 //! - UID-based limits for private endpoints
 
-use std::borrow::Cow;
+use std::{borrow::Cow, sync::Arc};
 
 use base64::{Engine, engine::general_purpose::STANDARD as BASE64};
 use chrono::Utc;
 use hmac::{Hmac, Mac};
-use reqwest::Client;
-use rest::secrets::ExposableSecret;
+use rest::{
+    HttpClient,
+    http_client::{Method as HttpMethod, RequestBuilder},
+    secrets::ExposableSecret,
+};
 use serde::Serialize;
 use sha2::Sha256;
 
@@ -39,7 +42,7 @@ use crate::bitget::spot::{Errors, RestResult, rate_limit::RateLimiter};
 #[non_exhaustive]
 pub struct RestClient {
     /// The underlying HTTP client used for making requests.
-    pub(crate) client: Client,
+    pub(crate) http_client: Arc<dyn HttpClient>,
     /// The rate limiter for this client.
     pub(crate) rate_limiter: RateLimiter,
     /// The encrypted API key.
@@ -61,7 +64,7 @@ impl RestClient {
     /// * `api_passphrase` - The encrypted API passphrase
     /// * `base_url` - The base URL for the API
     /// * `rate_limiter` - The rate limiter instance
-    /// * `client` - The HTTP client to use
+    /// * `http_client` - The HTTP client to use
     ///
     /// # Returns
     /// A new RestClient instance
@@ -71,10 +74,10 @@ impl RestClient {
         api_passphrase: Box<dyn ExposableSecret>,
         base_url: impl Into<Cow<'static, str>>,
         rate_limiter: RateLimiter,
-        client: Client,
+        http_client: Arc<dyn HttpClient>,
     ) -> Self {
         Self {
-            client,
+            http_client,
             rate_limiter,
             api_key,
             api_secret,
@@ -141,7 +144,7 @@ impl RestClient {
     pub(super) async fn send_signed_request<T, Q, B>(
         &self,
         endpoint: &str,
-        method: reqwest::Method,
+        method: HttpMethod,
         query_params: Option<&Q>,
         body_params: Option<&B>,
         endpoint_limit_per_second: u32,
@@ -184,9 +187,18 @@ impl RestClient {
         let timestamp = Utc::now().timestamp_millis();
 
         // Generate signature
+        let method_str = match method {
+            HttpMethod::Get => "GET",
+            HttpMethod::Post => "POST",
+            HttpMethod::Put => "PUT",
+            HttpMethod::Delete => "DELETE",
+            HttpMethod::Patch => "PATCH",
+            HttpMethod::Head => "HEAD",
+            HttpMethod::Options => "OPTIONS",
+        };
         let signature = self.generate_signature(
             timestamp,
-            method.as_str(),
+            method_str,
             endpoint,
             query_string.as_deref(),
             body_string.as_deref(),
@@ -199,25 +211,25 @@ impl RestClient {
         };
 
         // Build request
-        let mut request_builder = self
-            .client
-            .request(method, &url)
-            .header("ACCESS-KEY", self.api_key.expose_secret())
-            .header("ACCESS-SIGN", signature)
-            .header("ACCESS-TIMESTAMP", timestamp.to_string())
-            .header("ACCESS-PASSPHRASE", self.api_passphrase.expose_secret())
+        let mut builder = RequestBuilder::new(method, url)
+            .header("ACCESS-KEY", &self.api_key.expose_secret())
+            .header("ACCESS-SIGN", &signature)
+            .header("ACCESS-TIMESTAMP", &timestamp.to_string())
+            .header("ACCESS-PASSPHRASE", &self.api_passphrase.expose_secret())
             .header("locale", "en-US");
 
         // Add body if provided
-        if let Some(body_content) = &body_string {
-            request_builder = request_builder
+        if let Some(body_content) = body_string {
+            builder = builder
                 .header("Content-Type", "application/json")
-                .body(body_content.clone());
+                .body(body_content.into_bytes());
         }
 
         // Execute request
         let start_time = std::time::Instant::now();
-        let response = request_builder.send().await.map_err(Errors::HttpError)?;
+        let request = builder.build();
+        let response = self.http_client.execute(request).await
+            .map_err(|e| Errors::HttpError(format!("HTTP request failed: {e}")))?;
         let _request_duration = start_time.elapsed();
 
         // Update rate limiter counters
@@ -227,11 +239,12 @@ impl RestClient {
         }
 
         // Handle HTTP status codes
-        let status = response.status();
-        let response_text = response.text().await.map_err(Errors::HttpError)?;
+        let status = response.status;
+        let response_text = response.text()
+            .map_err(|e| Errors::HttpError(format!("Failed to read response: {e}")))?;
 
         // Parse response
-        if status.is_success() {
+        if status == 200 || status == 201 {
             // Try to parse as successful response
             match serde_json::from_str::<BitgetResponse<T>>(&response_text) {
                 Ok(bitget_response) => {
@@ -258,7 +271,7 @@ impl RestClient {
             }
         } else {
             // Handle HTTP error status codes
-            match status.as_u16() {
+            match status {
                 429 => {
                     Err(Errors::ApiError(
                         crate::bitget::spot::errors::ApiError::RateLimitExceeded {
@@ -289,7 +302,7 @@ impl RestClient {
                         Ok(error_response) => Err(Errors::ApiError(error_response.into())),
                         Err(_) => Err(Errors::Error(format!(
                             "HTTP {} error: {}",
-                            status.as_u16(),
+                            status,
                             response_text
                         ))),
                     }
@@ -313,7 +326,7 @@ impl RestClient {
     {
         self.send_signed_request(
             endpoint,
-            reqwest::Method::GET,
+            HttpMethod::Get,
             Some(&params),
             None::<&()>,
             endpoint_limit_per_second,
@@ -338,7 +351,7 @@ impl RestClient {
     {
         self.send_signed_request(
             endpoint,
-            reqwest::Method::POST,
+            HttpMethod::Post,
             None::<&()>,
             Some(&params),
             endpoint_limit_per_second,
@@ -361,7 +374,7 @@ impl RestClient {
     {
         self.send_signed_request(
             endpoint,
-            reqwest::Method::GET,
+            HttpMethod::Get,
             None::<&()>,
             None::<&()>,
             endpoint_limit_per_second,
