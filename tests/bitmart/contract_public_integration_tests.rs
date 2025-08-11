@@ -7,7 +7,9 @@ use venues::bitmart::contract::public::rest::{GetContractDetailsRequest, RestCli
 
 /// Helper function to create a test client
 fn create_contract_test_client() -> RestClient {
-    RestClient::default()
+    use std::sync::Arc;
+    let http_client = Arc::new(rest::native::NativeHttpClient::default());
+    RestClient::new(http_client)
 }
 
 /// Test get contract details endpoint with no symbol (get all contracts)

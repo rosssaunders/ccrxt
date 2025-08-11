@@ -12,9 +12,12 @@
 //! - **Rate Limiting**: BitMart public endpoints have specific rate limits per IP
 //! - **Base URL**: Uses https://api-cloud.bitmart.com for public endpoints
 
-use std::borrow::Cow;
+use std::{borrow::Cow, sync::Arc};
 
-use reqwest::Client;
+use rest::{
+    HttpClient,
+    http_client::{Method as HttpMethod, RequestBuilder},
+};
 use serde::{Deserialize, de::DeserializeOwned};
 
 use crate::bitmart::{
@@ -27,7 +30,7 @@ pub struct RestClient {
     /// The base URL for the BitMart public REST API
     base_url: Cow<'static, str>,
     /// HTTP client for making requests
-    client: Client,
+    http_client: Arc<dyn HttpClient>,
     /// Rate limiter for managing API limits
     rate_limiter: RateLimiter,
 }
@@ -48,16 +51,16 @@ impl RestClient {
     /// # Arguments
     ///
     /// * `base_url` - The base URL for the BitMart public API (e.g., "https://api-cloud.bitmart.com")
-    /// * `client` - HTTP client for making requests
+    /// * `http_client` - HTTP client for making requests
     /// * `rate_limiter` - Rate limiter for managing API limits
     pub fn new(
         base_url: impl Into<Cow<'static, str>>,
-        client: Client,
+        http_client: Arc<dyn HttpClient>,
         rate_limiter: RateLimiter,
     ) -> Self {
         Self {
             base_url: base_url.into(),
-            client,
+            http_client,
             rate_limiter,
         }
     }
@@ -107,16 +110,18 @@ impl RestClient {
         };
 
         // Build request
-        let request_builder = self.client.get(&final_url);
+        let request = RequestBuilder::new(HttpMethod::Get, final_url).build();
 
         // Send request
-        let response = request_builder.send().await?;
+        let response = self.http_client.execute(request).await
+            .map_err(|e| Errors::NetworkError(format!("HTTP request failed: {e}")))?;
 
         // Record the request for rate limiting
         self.rate_limiter.increment_request(endpoint_type).await;
 
         // Parse response
-        let response_text = response.text().await?;
+        let response_text = response.text()
+            .map_err(|e| Errors::NetworkError(format!("Failed to read response: {e}")))?;
         let bitmart_response: BitMartResponse<T> =
             serde_json::from_str(&response_text).map_err(|e| {
                 Errors::Error(format!(
@@ -147,10 +152,10 @@ mod tests {
 
     #[test]
     fn test_public_client_creation() {
-        let client = Client::new();
+        let http_client = std::sync::Arc::new(rest::native::NativeHttpClient::default());
         let rate_limiter = RateLimiter::new();
 
-        let rest_client = RestClient::new("https://api-cloud.bitmart.com", client, rate_limiter);
+        let rest_client = RestClient::new("https://api-cloud.bitmart.com", http_client, rate_limiter);
 
         assert_eq!(rest_client.base_url, "https://api-cloud.bitmart.com");
     }
