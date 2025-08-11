@@ -134,9 +134,8 @@ impl RestClient {
         &self,
         params: GetAnnouncementsRequest,
     ) -> RestResult<GetAnnouncementsResponse> {
-        self.send_request(
+        self.send_get_request(
             ANNOUNCEMENTS_ENDPOINT,
-            reqwest::Method::GET,
             Some(&params),
             crate::cryptocom::EndpointType::PublicGetAnnouncements,
         )

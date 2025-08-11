@@ -72,9 +72,8 @@ impl RestClient {
     ///
     /// [Official API docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#public-get-book)
     pub async fn get_book(&self, params: GetBookRequest) -> RestResult<GetBookResponse> {
-        self.send_request(
+        self.send_get_request(
             GET_BOOK_ENDPOINT,
-            reqwest::Method::GET,
             Some(&params),
             EndpointType::PublicGetBook,
         )

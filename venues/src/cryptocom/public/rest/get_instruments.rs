@@ -103,9 +103,8 @@ impl RestClient {
         &self,
         params: GetInstrumentsRequest,
     ) -> RestResult<GetInstrumentsResponse> {
-        self.send_request(
+        self.send_get_request(
             GET_INSTRUMENTS_ENDPOINT,
-            reqwest::Method::GET,
             Some(&params),
             EndpointType::PublicGetInstruments,
         )

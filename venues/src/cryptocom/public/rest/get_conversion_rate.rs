@@ -1,5 +1,4 @@
 use serde::{Deserialize, Serialize};
-use serde_json;
 
 use super::client::RestClient;
 use crate::cryptocom::{ApiResult, RestResult, rate_limit::EndpointType};
@@ -44,16 +43,8 @@ impl RestClient {
         &self,
         params: GetConversionRateRequest,
     ) -> RestResult<ConversionRateResponse> {
-        let params_value = serde_json::to_value(&params)
-            .map_err(|e| crate::cryptocom::Errors::Error(format!("Serialization error: {e}")))?;
-
-        self.send_request(
-            CONVERSION_RATE_ENDPOINT,
-            reqwest::Method::POST,
-            Some(&params_value),
-            EndpointType::PublicStaking,
-        )
-        .await
+        self.send_post_request(CONVERSION_RATE_ENDPOINT, Some(&params), EndpointType::PublicStaking)
+            .await
     }
 }
 

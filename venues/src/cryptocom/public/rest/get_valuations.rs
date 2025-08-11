@@ -75,9 +75,8 @@ impl RestClient {
         &self,
         params: GetValuationsRequest,
     ) -> RestResult<GetValuationsResponse> {
-        self.send_request(
+        self.send_get_request(
             VALUATIONS_ENDPOINT,
-            reqwest::Method::GET,
             Some(&params),
             EndpointType::PublicGetValuations,
         )

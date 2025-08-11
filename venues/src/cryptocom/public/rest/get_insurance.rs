@@ -55,9 +55,8 @@ impl RestClient {
         &self,
         params: GetInsuranceRequest,
     ) -> RestResult<GetInsuranceResponse> {
-        self.send_request(
+        self.send_get_request(
             INSURANCE_ENDPOINT,
-            reqwest::Method::GET,
             Some(&params),
             EndpointType::PublicGetInsurance,
         )

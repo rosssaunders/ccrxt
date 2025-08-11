@@ -95,9 +95,8 @@ impl RestClient {
         &self,
         params: GetCandlestickRequest,
     ) -> RestResult<GetCandlestickResponse> {
-        self.send_request(
+        self.send_get_request(
             GET_CANDLESTICK_ENDPOINT,
-            reqwest::Method::GET,
             Some(&params),
             EndpointType::PublicGetCandlestick,
         )

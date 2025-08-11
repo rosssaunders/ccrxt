@@ -51,20 +51,18 @@ impl RestClient {
         }
     }
 
-    /// Send a request to a public endpoint
+    /// Send a GET request to a public endpoint
     ///
     /// # Arguments
     /// * `endpoint` - The API endpoint path (e.g., "public/get-instruments")
-    /// * `method` - The HTTP method to use
-    /// * `params` - Optional struct of query/body parameters (must implement Serialize)
+    /// * `params` - Optional struct of query parameters (must implement Serialize)
     /// * `endpoint_type` - The endpoint type for rate limiting
     ///
     /// # Returns
     /// A result containing the response data or an error
-    pub async fn send_request<T, P>(
+    pub async fn send_get_request<T, P>(
         &self,
         endpoint: &str,
-        method: reqwest::Method,
         params: Option<&P>,
         endpoint_type: EndpointType,
     ) -> RestResult<T>
@@ -86,29 +84,90 @@ impl RestClient {
         };
 
         // Build the request
-        let mut request_builder = self.client.request(method.clone(), &url);
+        let mut request_builder = self.client.get(&url);
 
-        // Add parameters based on method
+        // Add parameters as query string
         if let Some(params) = params {
             let params_value = serde_json::to_value(params)
                 .map_err(|e| Errors::Error(format!("Failed to serialize params: {e}")))?;
-            if method == reqwest::Method::GET {
-                // For GET requests, add parameters as query string
-                if let Some(params_obj) = params_value.as_object() {
-                    for (key, value) in params_obj {
-                        let value_str = match value {
-                            serde_json::Value::String(s) => s.clone(),
-                            serde_json::Value::Number(n) => n.to_string(),
-                            serde_json::Value::Bool(b) => b.to_string(),
-                            _ => value.to_string(),
-                        };
-                        request_builder = request_builder.query(&[(key, value_str)]);
-                    }
+            if let Some(params_obj) = params_value.as_object() {
+                for (key, value) in params_obj {
+                    let value_str = match value {
+                        serde_json::Value::String(s) => s.clone(),
+                        serde_json::Value::Number(n) => n.to_string(),
+                        serde_json::Value::Bool(b) => b.to_string(),
+                        _ => value.to_string(),
+                    };
+                    request_builder = request_builder.query(&[(key, value_str)]);
                 }
-            } else {
-                // For POST requests, add parameters as JSON body
-                request_builder = request_builder.json(&params_value);
             }
+        }
+
+        // Add required headers
+        request_builder = request_builder.header("Content-Type", "application/json");
+
+        // Send the request
+        let response = request_builder.send().await.map_err(Errors::HttpError)?;
+
+        // Increment rate limiter counter after successful request
+        self.rate_limiter.increment_request(endpoint_type).await;
+
+        // Check if the response was successful
+        if !response.status().is_success() {
+            let status = response.status();
+            let error_text = response.text().await.map_err(Errors::HttpError)?;
+            return Err(Errors::Error(format!("HTTP {status}: {error_text}")));
+        }
+
+        // Parse the response
+        let response_text = response.text().await.map_err(Errors::HttpError)?;
+
+        let parsed_response: T = serde_json::from_str(&response_text)
+            .map_err(|e| Errors::Error(format!("Failed to parse response: {e}")))?;
+
+        Ok(parsed_response)
+    }
+
+    /// Send a POST request to a public endpoint
+    ///
+    /// # Arguments
+    /// * `endpoint` - The API endpoint path (e.g., "public/staking/get-conversion-rate")
+    /// * `params` - Optional struct of body parameters (must implement Serialize)
+    /// * `endpoint_type` - The endpoint type for rate limiting
+    ///
+    /// # Returns
+    /// A result containing the response data or an error
+    pub async fn send_post_request<T, P>(
+        &self,
+        endpoint: &str,
+        params: Option<&P>,
+        endpoint_type: EndpointType,
+    ) -> RestResult<T>
+    where
+        T: DeserializeOwned,
+        P: serde::Serialize + ?Sized,
+    {
+        // Check rate limits before making the request
+        self.rate_limiter
+            .check_limits(endpoint_type)
+            .await
+            .map_err(|e| Errors::Error(e.to_string()))?;
+
+        // Build the URL
+        let url = if endpoint.starts_with("http") {
+            endpoint.to_string()
+        } else {
+            format!("{}/v1/{}", self.base_url, endpoint)
+        };
+
+        // Build the request
+        let mut request_builder = self.client.post(&url);
+
+        // Add parameters as JSON body
+        if let Some(params) = params {
+            let params_value = serde_json::to_value(params)
+                .map_err(|e| Errors::Error(format!("Failed to serialize params: {e}")))?;
+            request_builder = request_builder.json(&params_value);
         }
 
         // Add required headers
