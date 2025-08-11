@@ -348,11 +348,10 @@ impl RestClient {
         .await
     }
 
-    /// Convenience method for requests with no parameters
-    pub(super) async fn send_signed_request_no_params<T>(
+    /// Convenience method for GET requests with no parameters
+    pub(super) async fn send_get_signed_request_no_params<T>(
         &self,
         endpoint: &str,
-        method: reqwest::Method,
         endpoint_limit_per_second: u32,
         is_order: bool,
         order_limit_per_second: Option<u32>,
@@ -362,7 +361,7 @@ impl RestClient {
     {
         self.send_signed_request(
             endpoint,
-            method,
+            reqwest::Method::GET,
             None::<&()>,
             None::<&()>,
             endpoint_limit_per_second,
