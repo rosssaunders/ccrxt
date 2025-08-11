@@ -77,7 +77,6 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use reqwest::Client;
 
     use super::*;
     use crate::bingx::spot::RateLimiter;
@@ -128,7 +127,7 @@ mod tests {
     async fn test_get_symbol_price_ticker_method_exists() {
         let client = RestClient::new(
             "http://127.0.0.1:0", // Invalid URL to guarantee error
-            Client::new(),
+            std::sync::Arc::new(rest::native::NativeHttpClient::default()),
             RateLimiter::new(),
         );
 

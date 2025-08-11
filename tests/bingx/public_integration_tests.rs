@@ -4,7 +4,7 @@
 //! Tests run against the live BingX API using real market data.
 
 use chrono;
-use reqwest::Client;
+use std::sync::Arc;
 use tokio;
 use venues::bingx::spot::{
     Get24hrTickerRequest, GetHistoricalKlineRequest, GetKlineRequest, GetOldTradeRequest,
@@ -15,10 +15,10 @@ use venues::bingx::spot::{
 
 /// Helper function to create a test client for public endpoints
 fn create_public_test_client() -> PublicRestClient {
-    let client = Client::new();
+    let http_client = Arc::new(rest::native::NativeHttpClient::default());
     let rate_limiter = RateLimiter::new();
 
-    PublicRestClient::new("https://open-api.bingx.com", client, rate_limiter)
+    PublicRestClient::new("https://open-api.bingx.com", http_client, rate_limiter)
 }
 
 /// Test the get_server_time endpoint

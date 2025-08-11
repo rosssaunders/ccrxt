@@ -39,11 +39,6 @@ pub struct ErrorResponse {
     pub msg: String,
 }
 
-impl From<reqwest::Error> for Errors {
-    fn from(err: reqwest::Error) -> Self {
-        Errors::NetworkError(err.to_string())
-    }
-}
 
 impl From<serde_json::Error> for Errors {
     fn from(err: serde_json::Error) -> Self {
@@ -77,18 +72,23 @@ pub type BingXError = Errors;
 pub struct ApiResponse<T> {
     /// Response code (0 for success, non-zero for errors)
     pub code: i32,
+    
     /// Error message (empty string for successful responses)
     #[serde(default)]
     pub msg: String,
+    
     /// Debug message for troubleshooting
     #[serde(default)]
     pub debug_msg: String,
+    
     /// Whether the request can be retried
     #[serde(default)]
     pub retryable: i32,
+    
     /// The actual response data (only present for successful responses)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub data: Option<T>,
+    
     /// Timestamp (always present)
     #[serde(default)]
     pub timestamp: i64,
