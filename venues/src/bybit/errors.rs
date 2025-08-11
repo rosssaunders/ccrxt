@@ -32,8 +32,8 @@ pub enum Errors {
     #[error("ByBit API error: {0}")]
     ApiError(String),
 
-    #[error("HTTP request failed: {0}")]
-    HttpError(#[from] reqwest::Error),
+    #[error("Network error: {0}")]
+    NetworkError(String),
 
     #[error("JSON serialization/deserialization error: {0}")]
     SerdeError(#[from] serde_json::Error),
