@@ -1,3 +1,5 @@
+pub mod credentials;
+pub use credentials::Credentials;
 mod account_balance;
 mod account_ledgers;
 mod accounts;
