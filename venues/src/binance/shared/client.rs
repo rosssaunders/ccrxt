@@ -370,10 +370,8 @@ impl PrivateBinanceClient {
             .text()
             .map_err(|e| Errors::Error(format!("Failed to read response text: {e}")))?;
 
-        // Convert status to reqwest::StatusCode for compatibility
-        let status_code = reqwest::StatusCode::from_u16(status)
-            .unwrap_or(reqwest::StatusCode::INTERNAL_SERVER_ERROR);
-        handle_http_status(status_code, &response_text)?;
+        // Handle HTTP status codes
+        handle_http_status(status, &response_text)?;
 
         // Parse response
         if response_text.trim().is_empty() {
@@ -475,10 +473,8 @@ impl PrivateBinanceClient {
                 continue;
             }
 
-            // Convert status to reqwest::StatusCode for compatibility
-            let status_code = reqwest::StatusCode::from_u16(status)
-                .unwrap_or(reqwest::StatusCode::INTERNAL_SERVER_ERROR);
-            handle_http_status(status_code, &response_text)?;
+            // Handle HTTP status codes
+            handle_http_status(status, &response_text)?;
 
             // Parse response
             if response_text.trim().is_empty() {
@@ -752,10 +748,8 @@ impl PublicBinanceClient {
             .text()
             .map_err(|e| Errors::Error(format!("Failed to read response text: {e}")))?;
 
-        // Convert status to reqwest::StatusCode for compatibility
-        let status_code = reqwest::StatusCode::from_u16(status)
-            .unwrap_or(reqwest::StatusCode::INTERNAL_SERVER_ERROR);
-        handle_http_status(status_code, &response_text)?;
+        // Handle HTTP status codes
+        handle_http_status(status, &response_text)?;
 
         // Parse response
         if response_text.trim().is_empty() {
@@ -822,10 +816,8 @@ impl PublicBinanceClient {
             .text()
             .map_err(|e| Errors::Error(format!("Failed to read response text: {e}")))?;
 
-        // Convert status to reqwest::StatusCode for compatibility
-        let status_code = reqwest::StatusCode::from_u16(status)
-            .unwrap_or(reqwest::StatusCode::INTERNAL_SERVER_ERROR);
-        handle_http_status(status_code, &response_text)?;
+        // Handle HTTP status codes
+        handle_http_status(status, &response_text)?;
 
         // Parse response
         if response_text.trim().is_empty() {

@@ -36,7 +36,7 @@ pub enum Errors {
     /// It can be used to wrap any error that occurs during the request process.
     /// This variant is not used for errors returned by the Binance API itself.
     #[error("HTTP error: {0}")]
-    HttpError(#[from] reqwest::Error),
+    HttpError(String),
 
     /// An error returned by the Binance API
     #[error("API error: {0}")]
