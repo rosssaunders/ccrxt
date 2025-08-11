@@ -37,9 +37,8 @@ impl RestClient {
         &self,
         _request: GetTradingPairsListRequest,
     ) -> RestResult<GetTradingPairsListResponse> {
-        self.send_request(
+        self.send_get_request(
             TRADING_PAIRS_LIST_ENDPOINT,
-            reqwest::Method::GET,
             Option::<&()>::None, // No query parameters
             EndpointType::SpotPublicMarket,
         )

@@ -50,9 +50,8 @@ impl RestClient {
         &self,
         _request: GetCurrencyListRequest,
     ) -> RestResult<GetCurrencyListResponse> {
-        self.send_request(
+        self.send_get_request(
             CURRENCY_LIST_ENDPOINT,
-            reqwest::Method::GET,
             Option::<&()>::None, // No query parameters
             EndpointType::SpotPublicMarket,
         )

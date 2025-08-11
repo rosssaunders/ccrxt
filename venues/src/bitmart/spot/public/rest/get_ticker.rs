@@ -69,13 +69,8 @@ impl RestClient {
     /// 1. If no corresponding trading pair is found, this trading pair has been delisted.
     /// 2. For frequent query needs, we recommend using this endpoint to obtain aggregated ticker for a single trading pair.
     pub async fn get_ticker(&self, request: GetTickerRequest) -> RestResult<GetTickerResponse> {
-        self.send_request(
-            TICKER_ENDPOINT,
-            reqwest::Method::GET,
-            Some(&request),
-            EndpointType::SpotPublicMarket,
-        )
-        .await
+        self.send_get_request(TICKER_ENDPOINT, Some(&request), EndpointType::SpotPublicMarket)
+            .await
     }
 }
 

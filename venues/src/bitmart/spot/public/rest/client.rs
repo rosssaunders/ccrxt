@@ -14,7 +14,7 @@
 
 use std::borrow::Cow;
 
-use reqwest::{Client, Method};
+use reqwest::Client;
 use serde::{Deserialize, de::DeserializeOwned};
 
 use crate::bitmart::{
@@ -62,22 +62,20 @@ impl RestClient {
         }
     }
 
-    /// Send a request to the BitMart public API
+    /// Send a GET request to the BitMart public API
     ///
     /// # Arguments
     ///
     /// * `endpoint` - The API endpoint (e.g., "/spot/v1/currencies")
-    /// * `method` - HTTP method to use
-    /// * `request` - Optional request body (will be serialized to JSON for POST/PUT)
+    /// * `request` - Optional request parameters (will be serialized as query parameters)
     /// * `endpoint_type` - The type of endpoint for rate limiting
     ///
     /// # Returns
     ///
     /// The parsed response data
-    pub async fn send_request<R, T>(
+    pub async fn send_get_request<R, T>(
         &self,
         endpoint: &str,
-        method: Method,
         request: Option<&R>,
         endpoint_type: EndpointType,
     ) -> RestResult<T>
@@ -93,18 +91,11 @@ impl RestClient {
         // Build URL
         let url = format!("{}{}", self.base_url, endpoint);
 
-        // Build URL with query parameters for GET requests
-        let final_url = if method == Method::GET && request.is_some() {
-            let query_params = match request {
-                Some(req) => serde_urlencoded::to_string(req).map_err(|e| {
-                    Errors::Error(format!("Failed to serialize query parameters: {e}"))
-                })?,
-                None => {
-                    return Err(Errors::Error(
-                        "Request parameters missing for GET method".to_string(),
-                    ));
-                }
-            };
+        // Build URL with query parameters
+        let final_url = if let Some(req) = request {
+            let query_params = serde_urlencoded::to_string(req).map_err(|e| {
+                Errors::Error(format!("Failed to serialize query parameters: {e}"))
+            })?;
 
             if query_params.is_empty() {
                 url
@@ -116,17 +107,7 @@ impl RestClient {
         };
 
         // Build request
-        let mut request_builder = self.client.request(method.clone(), &final_url);
-
-        // Add body for non-GET requests
-        if method != Method::GET && request.is_some() {
-            // Using expect here as the condition guarantees request is Some
-            #[allow(clippy::expect_used)]
-            let req = request.expect("Request body must be Some for non-GET methods");
-            request_builder = request_builder
-                .header("Content-Type", "application/json")
-                .json(req);
-        }
+        let request_builder = self.client.get(&final_url);
 
         // Send request
         let response = request_builder.send().await?;

@@ -59,9 +59,8 @@ impl RestClient {
         &self,
         request: GetLatestKlineRequest,
     ) -> RestResult<GetLatestKlineResponse> {
-        self.send_request(
+        self.send_get_request(
             LATEST_KLINE_ENDPOINT,
-            reqwest::Method::GET,
             Some(&request),
             EndpointType::SpotPublicMarket,
         )

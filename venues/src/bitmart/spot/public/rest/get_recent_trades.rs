@@ -43,9 +43,8 @@ impl RestClient {
         &self,
         request: GetRecentTradesRequest,
     ) -> RestResult<GetRecentTradesResponse> {
-        self.send_request(
+        self.send_get_request(
             RECENT_TRADES_ENDPOINT,
-            reqwest::Method::GET,
             Some(&request),
             EndpointType::SpotPublicMarket,
         )
