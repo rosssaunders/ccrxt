@@ -247,7 +247,7 @@ impl RestClient {
         const ERROR_TABLE_SIZE: usize = 501;
         let mut error_table = [None; ERROR_TABLE_SIZE];
         
-        // Initialize error table (done once at compile time in real impl)
+        // Initialize error table c
         error_table[400] = Some(0); // BadRequest
         error_table[401] = Some(1); // Unauthorized
         error_table[403] = Some(2); // Forbidden

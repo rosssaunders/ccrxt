@@ -672,6 +672,122 @@ impl PublicBinanceClient {
             .await
     }
 
+    /// Send a GET request with API key only (no signature) - for MARKET_DATA endpoints
+    pub async fn send_api_key_get<T, R, E>(
+        &self,
+        endpoint: &str,
+        api_key: &dyn ExposableSecret,
+        params: Option<R>,
+        weight: u32,
+    ) -> Result<RestResponse<T>, E>
+    where
+        T: for<'de> Deserialize<'de> + Send + 'static,
+        R: Serialize,
+        E: From<Errors>,
+    {
+        let query_string = if let Some(p) = params {
+            Some(serde_urlencoded::to_string(&p).map_err(Errors::from)?)
+        } else {
+            None
+        };
+
+        self.send_api_key_request_internal(
+            endpoint,
+            HttpMethod::Get,
+            api_key,
+            query_string.as_deref(),
+            None,
+            weight,
+        )
+        .await
+        .map_err(E::from)
+    }
+
+    /// Internal method to send API-key-only requests (no signature)
+    async fn send_api_key_request_internal<T>(
+        &self,
+        endpoint: &str,
+        method: HttpMethod,
+        api_key: &dyn ExposableSecret,
+        query_string: Option<&str>,
+        body: Option<&str>,
+        weight: u32,
+    ) -> Result<RestResponse<T>, Errors>
+    where
+        T: for<'de> Deserialize<'de> + Send + 'static,
+    {
+        // Check rate limits before making request
+        self.rate_limiter.check_limits(weight, false).await?;
+
+        let url = if let Some(query) = query_string {
+            format!("{}{endpoint}?{query}", self.base_url)
+        } else {
+            format!("{}{endpoint}", self.base_url)
+        };
+
+        // Build the request with API key header
+        let mut builder = RequestBuilder::new(method, url.clone());
+        
+        // Add API key header for MARKET_DATA endpoints
+        builder = builder.header("X-MBX-APIKEY", api_key.expose_secret());
+
+        // Add body for non-GET requests
+        if let Some(body_content) = body {
+            builder = builder
+                .header("Content-Type", "application/x-www-form-urlencoded")
+                .body(body_content.as_bytes().to_vec());
+        }
+
+        let request = builder.build();
+
+        let response = self
+            .http_client
+            .execute(request)
+            .await
+            .map_err(|e| Errors::Error(format!("HTTP request failed: {e}")))?;
+
+        let status = response.status;
+        let headers = response.headers.clone();
+        let response_text = response
+            .text()
+            .map_err(|e| Errors::Error(format!("Failed to read response text: {e}")))?;
+
+        // Convert status to reqwest::StatusCode for compatibility
+        let status_code = reqwest::StatusCode::from_u16(status)
+            .unwrap_or(reqwest::StatusCode::INTERNAL_SERVER_ERROR);
+        handle_http_status(status_code, &response_text)?;
+
+        // Parse response
+        if response_text.trim().is_empty() {
+            return Err(Errors::Error("Empty response from server".to_string()));
+        }
+
+        // Try to parse as error first
+        if let Ok(error_response) = serde_json::from_str::<ErrorResponse>(&response_text) {
+            let api_error = ApiError::from_code(error_response.code, error_response.msg);
+            return Err(Errors::ApiError(api_error));
+        }
+
+        // Parse as successful response
+        let data: T = serde_json::from_str(&response_text)
+            .map_err(|e| Errors::Error(format!("Failed to parse response: {e}")))?;
+
+        // Record successful usage
+        self.rate_limiter.record_usage(weight, false).await;
+
+        // Update rate limiter from response headers
+        self.rate_limiter.update_from_headers(&headers).await;
+
+        // Extract rate limit info
+        let rate_limit_info = self.extract_rate_limit_info(&headers);
+
+        Ok(RestResponse {
+            data,
+            headers: ResponseHeaders { headers },
+            rate_limit_info,
+        })
+    }
+
     /// Internal method to send public HTTP requests
     async fn send_request_internal<T>(
         &self,

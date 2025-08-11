@@ -128,15 +128,11 @@ impl UsdmPublicRestClient {
         Ok(shared_response)
     }
 
-    // TODO: Implement API-key-only endpoints
-    // Some USDM endpoints require API key but no signature (MARKET_DATA security type)
-    // This should be moved to a separate client or use PrivateBinanceClient
-    // For now, commenting out to complete WASM migration
-    /*
+    /// Send a request with API key only (no signature) - for MARKET_DATA security type endpoints
     pub async fn send_api_key_get_request<T, R>(
         &self,
         endpoint: &str,
-        api_key: &dyn ExposableSecret,
+        api_key: &dyn rest::secrets::ExposableSecret,
         params: Option<R>,
         weight: u32,
     ) -> Result<RestResponse<T>, Errors>
@@ -144,7 +140,26 @@ impl UsdmPublicRestClient {
         T: serde::de::DeserializeOwned + Send + 'static,
         R: serde::Serialize,
     {
-        unimplemented!("API-key-only endpoints need to be migrated to use PrivateBinanceClient")
+        // Call the shared client's API-key GET wrapper
+        let shared_response = self
+            .0
+            .send_api_key_get::<T, R, SharedErrors>(endpoint, api_key, params, weight)
+            .await
+            .map_err(|e| match e {
+                SharedErrors::ApiError(_) => Errors::Error("API error occurred".to_string()),
+                SharedErrors::RateLimitExceeded { retry_after } => Errors::Error(format!(
+                    "Rate limit exceeded, retry after {:?}",
+                    retry_after
+                )),
+                SharedErrors::InvalidApiKey() => Errors::InvalidApiKey(),
+                SharedErrors::HttpError(err) => Errors::HttpError(err),
+                SharedErrors::SerializationError(msg) => {
+                    Errors::Error(format!("Serialization error: {}", msg))
+                }
+                SharedErrors::Error(msg) => Errors::Error(msg),
+            })?;
+
+        // Return the shared RestResponse directly
+        Ok(shared_response)
     }
-    */
 }
