@@ -1,5 +1,6 @@
 use serde::Serialize;
 
+use rest::http_client::Method as HttpMethod;
 use crate::binance::{
     shared::{Errors as SharedErrors, client::PrivateBinanceClient},
     spot::{Errors, RestResponse, RestResult},
@@ -184,7 +185,7 @@ impl SpotPrivateRestClient {
     pub async fn send_signed_request<T, R>(
         &self,
         endpoint: &str,
-        method: reqwest::Method,
+        method: HttpMethod,
         params: R,
         weight: u32,
         is_order: bool,
@@ -193,32 +194,13 @@ impl SpotPrivateRestClient {
         T: serde::de::DeserializeOwned + Send + 'static,
         R: Serialize,
     {
-        // Call the shared client's send_signed_request
-        #[allow(deprecated)]
-        let shared_response = PrivateBinanceClient::send_signed_request::<T, R, SharedErrors>(
-            &self.0, endpoint, method, params, weight, is_order,
-        )
-        .await
-        .map_err(|e| match e {
-            SharedErrors::ApiError(_) => Errors::Error("API error occurred".to_string()),
-            SharedErrors::RateLimitExceeded { retry_after } => Errors::Error(format!(
-                "Rate limit exceeded, retry after {:?}",
-                retry_after
-            )),
-            SharedErrors::InvalidApiKey() => Errors::InvalidApiKey(),
-            SharedErrors::HttpError(err) => Errors::HttpError(err),
-            SharedErrors::SerializationError(msg) => {
-                Errors::Error(format!("Serialization error: {}", msg))
-            }
-            SharedErrors::Error(msg) => Errors::Error(msg),
-        })?;
-
-        // Convert shared RestResponse to spot RestResponse
-        Ok(RestResponse {
-            data: shared_response.data,
-            headers: crate::binance::spot::ResponseHeaders {
-                values: std::collections::HashMap::new(), // TODO: Convert headers properly
-            },
-        })
+        // Route to appropriate verb-specific method based on HTTP method
+        match method {
+            HttpMethod::Get => self.send_get_signed_request(endpoint, params, weight, is_order).await,
+            HttpMethod::Post => self.send_post_signed_request(endpoint, params, weight, is_order).await,
+            HttpMethod::Put => self.send_put_signed_request(endpoint, params, weight, is_order).await,
+            HttpMethod::Delete => self.send_delete_signed_request(endpoint, params, weight, is_order).await,
+            _ => Err(Errors::Error(format!("Unsupported HTTP method: {:?}", method))),
+        }
     }
 }

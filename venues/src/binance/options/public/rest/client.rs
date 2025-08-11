@@ -19,12 +19,12 @@ impl OptionsPublicRestClient {
     /// Create a new Options public REST client
     pub fn new(
         base_url: impl Into<std::borrow::Cow<'static, str>>,
-        client: reqwest::Client,
+        http_client: std::sync::Arc<dyn rest::HttpClient>,
         rate_limiter: crate::binance::shared::RateLimiter,
     ) -> Self {
         Self(PublicBinanceClient::new(
             base_url.into(),
-            client,
+            http_client,
             rate_limiter,
         ))
     }

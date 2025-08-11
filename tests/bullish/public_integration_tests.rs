@@ -444,7 +444,7 @@ async fn test_ccrxt_candles() {
     // Use CCRXT's get_candles method
     let request = GetCandlesRequest {
         symbol: symbol.clone(),
-        interval: CandleInterval::OneMinute, // Will use default interval
+        interval: Some(venues::bullish::CandleInterval::OneMinute), // Will use default interval
         start_time: Some(start_str.clone()),
         end_time: Some(end_str.clone()),
         limit: Some(100),
