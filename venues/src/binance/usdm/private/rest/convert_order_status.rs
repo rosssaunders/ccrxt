@@ -30,7 +30,7 @@ pub struct GetConvertOrderStatusRequest {
 
 /// Status of a convert order.
 ///
-/// See [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/convert/Order-Status
+/// See [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/convert/Order-Status)
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum ConvertOrderStatus {
     /// Order is being processed.
@@ -87,7 +87,7 @@ impl UsdmClient {
     ///
     /// Query order status by order ID or quote ID.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/convert/Order-Status
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/convert/Order-Status)
     ///
     /// Rate limit: 50 (IP)
     ///

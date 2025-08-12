@@ -11,7 +11,7 @@ const CHANGE_MULTI_ASSETS_MODE_ENDPOINT: &str = "/fapi/v1/multiAssetsMargin";
 /// Request parameters for the Change Multi-Assets Mode endpoint.
 ///
 /// Changes the user's margin mode between Multi-Assets Mode and Single-Asset Mode.
-/// See [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Change-Multi-Assets-Mode
+/// See [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Change-Multi-Assets-Mode)
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ChangeMultiAssetsModeRequest {
@@ -47,7 +47,7 @@ impl UsdmClient {
     /// Change user's multi-assets margin mode between Multi-Assets Mode and Single-Asset Mode.
     /// This setting affects how margin is calculated and isolated across different assets.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Change-Multi-Assets-Mode
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Change-Multi-Assets-Mode)
     ///
     /// Rate limit: 1
     ///

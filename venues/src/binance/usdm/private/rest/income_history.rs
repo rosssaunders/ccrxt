@@ -78,7 +78,7 @@ impl UsdmClient {
     ///
     /// Query income history
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Get-Income-History
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Get-Income-History)
     ///
     /// Rate limit: 30
     ///

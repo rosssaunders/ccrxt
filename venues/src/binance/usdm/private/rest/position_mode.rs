@@ -13,7 +13,7 @@ const CHANGE_POSITION_MODE_ENDPOINT: &str = "/fapi/v1/positionSide/dual";
 /// Changes the user's position mode (Hedge Mode or One-way Mode) for all symbols.
 /// All fields are required by the Binance USDM API.
 ///
-/// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Change-Position-Mode
+/// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Change-Position-Mode)
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ChangePositionModeRequest {
@@ -44,7 +44,7 @@ impl UsdmClient {
     /// Changes the user's position mode (Hedge Mode or One-way Mode) for all symbols.
     /// This operation is not allowed when there are open positions.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Change-Position-Mode
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Change-Position-Mode)
     ///
     /// Rate limit: 1
     ///

@@ -43,7 +43,7 @@ impl UsdmClient {
     /// Changes the margin type for a specific symbol. For Hedge Mode, LONG and SHORT positions of one symbol use the same margin type.
     /// With ISOLATED margin type, margins of the LONG and SHORT positions are isolated from each other.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Change-Margin-Type
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Change-Margin-Type)
     ///
     /// Rate limit: 1
     ///

@@ -38,7 +38,7 @@ impl UsdmClient {
     ///
     /// Cancels all open orders for the specified symbol.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Cancel-All-Open-Orders
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Cancel-All-Open-Orders)
     ///
     /// Rate limit: 1
     ///

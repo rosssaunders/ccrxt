@@ -10,7 +10,7 @@ const FEE_BURN_STATUS_ENDPOINT: &str = "/fapi/v1/feeBurn";
 ///
 /// Used to query the current BNB burn status for futures trading fees and margin interest.
 ///
-/// See [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Get-BNB-Burn-Status
+/// See [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Get-BNB-Burn-Status)
 #[derive(Debug, Clone, Serialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct GetFeeBurnStatusRequest {
@@ -41,7 +41,7 @@ impl UsdmClient {
     ///
     /// Get user's BNB Fee Discount (Fee Discount On or Fee Discount Off).
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Get-BNB-Burn-Status
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Get-BNB-Burn-Status)
     ///
     /// Rate limit: 30
     ///

@@ -149,7 +149,7 @@ impl UsdmClient {
     ///
     /// Modifies multiple orders in a single batch for USDM futures.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Modify-Multiple-Orders
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Modify-Multiple-Orders)
     ///
     /// Rate limit: 5 weight
     ///

@@ -17,7 +17,7 @@ const FORCE_ORDERS_ENDPOINT: &str = "/fapi/v1/forceOrders";
 ///
 /// Parameters for retrieving force orders (liquidation and ADL orders).
 ///
-/// See [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Users-Force-Orders
+/// See [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Users-Force-Orders)
 #[derive(Debug, Clone, Serialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct GetForceOrdersRequest {
@@ -132,7 +132,7 @@ impl UsdmClient {
     ///
     /// Query user's Force Orders (liquidation and ADL orders).
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Users-Force-Orders
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Users-Force-Orders)
     ///
     /// Rate limit: 20 with symbol, 50 without symbol
     ///

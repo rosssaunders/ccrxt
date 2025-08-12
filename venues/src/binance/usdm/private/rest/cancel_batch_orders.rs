@@ -16,9 +16,7 @@ const CANCEL_BATCH_ORDERS_ENDPOINT: &str = "/fapi/v1/batchOrders";
 
 /// Request parameters for cancelling multiple orders in a single batch for USDM futures.
 ///
-/// See the [Binance API documentation][docs] for details.
-///
-/// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Cancel-Multiple-Orders
+/// See the [Binance API documentation](https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Cancel-Multiple-Orders) for details.
 #[derive(Debug, Clone, Serialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct CancelBatchOrdersRequest {
@@ -157,7 +155,7 @@ impl UsdmClient {
     ///
     /// Cancels multiple orders in a single batch for USDM futures.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Cancel-Multiple-Orders
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Cancel-Multiple-Orders)
     ///
     /// Rate limit: 1
     ///

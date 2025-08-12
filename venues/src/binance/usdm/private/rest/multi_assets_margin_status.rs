@@ -40,7 +40,7 @@ impl UsdmClient {
     ///
     /// Check user's Multi-Assets mode (Multi-Assets Mode or Single-Asset Mode) on every symbol.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Get-Current-Multi-Assets-Mode
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Get-Current-Multi-Assets-Mode)
     ///
     /// Rate limit: 30
     ///

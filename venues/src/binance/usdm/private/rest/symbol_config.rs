@@ -52,7 +52,7 @@ impl UsdmClient {
     ///
     /// Get current account symbol configuration.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Symbol-Config
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Symbol-Config)
     ///
     /// Rate limit: 5
     ///

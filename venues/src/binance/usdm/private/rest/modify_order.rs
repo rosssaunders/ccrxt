@@ -132,7 +132,7 @@ impl UsdmClient {
     ///
     /// Modifies an existing order on Binance USDM Futures.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Modify-Order
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Modify-Order)
     ///
     /// Rate limit: 1 on 10s order rate limit (X-MBX-ORDER-COUNT-10S); 1 on 1min order rate limit (X-MBX-ORDER-COUNT-1M); 1 on IP rate limit (x-mbx-used-weight-1m)
     ///

@@ -7,8 +7,6 @@ use crate::binance::usdm::{RestResult, enums::PositionSide};
 const ACCOUNT_INFO_ENDPOINT: &str = "/fapi/v3/account";
 
 /// Request parameters for the Account Information V3 endpoint.
-///
-/// See [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Account-Information-V3
 #[derive(Debug, Clone, Serialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct GetAccountV3Request {
@@ -23,8 +21,6 @@ pub struct GetAccountV3Request {
 }
 
 /// Asset information for a single asset in Account Information V3 response.
-///
-/// All fields are returned as strings per Binance API. See [docs].
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct AssetV3 {
@@ -113,8 +109,6 @@ pub struct PositionV3 {
 }
 
 /// Response for Account Information V3 endpoint.
-///
-/// See [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Account-Information-V3
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct AccountV3Response {
@@ -164,7 +158,7 @@ impl UsdmClient {
     ///
     /// Retrieves current account information for a Binance USDM futures account, including balances, positions, and trading permissions.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Account-Information-V3
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Account-Information-V3)
     ///
     /// Rate limit: 5
     ///

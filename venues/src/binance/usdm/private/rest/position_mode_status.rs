@@ -35,7 +35,7 @@ impl UsdmClient {
     ///
     /// Retrieves the current position mode (Hedge Mode or One-way Mode) for the account.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Get-Current-Position-Mode
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Get-Current-Position-Mode)
     ///
     /// Request weight: 30
     /// Rate limit: 5 requests per second

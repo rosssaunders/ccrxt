@@ -10,7 +10,7 @@ const ORDER_AMENDMENT_ENDPOINT: &str = "/fapi/v1/orderAmendment";
 
 /// Request parameters for the Get Order Modify History endpoint.
 ///
-/// See [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Get-Order-Modify-History
+/// See [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Get-Order-Modify-History)
 #[derive(Debug, Clone, Serialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct OrderAmendmentRequest {
@@ -112,7 +112,7 @@ impl UsdmClient {
     /// Either `order_id` or `orig_client_order_id` must be sent; if both are sent, `order_id` prevails.
     /// Order modify history longer than 3 months is not available.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Get-Order-Modify-History
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Get-Order-Modify-History)
     ///
     /// Rate limit: 1
     ///

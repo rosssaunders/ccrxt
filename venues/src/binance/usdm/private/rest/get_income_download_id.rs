@@ -10,7 +10,7 @@ const GET_INCOME_DOWNLOAD_ID_ENDPOINT: &str = "/fapi/v1/income/asyn";
 ///
 /// Retrieves a download ID for futures transaction history. The time between `start_time` and `end_time` cannot be longer than 1 year.
 ///
-/// All fields are required except `recv_window`, which is optional. See [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Get-Download-Id-For-Futures-Transaction-History
+/// All fields are required except `recv_window`, which is optional. See [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Get-Download-Id-For-Futures-Transaction-History)
 #[derive(Debug, Clone, Serialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct GetIncomeDownloadIdRequest {
@@ -50,7 +50,7 @@ impl UsdmClient {
     ///
     /// Retrieves a download ID for futures transaction history.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Get-Download-Id-For-Futures-Transaction-History
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Get-Download-Id-For-Futures-Transaction-History)
     ///
     /// Rate limit: 1000
     ///

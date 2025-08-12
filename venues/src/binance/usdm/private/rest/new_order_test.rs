@@ -18,7 +18,7 @@ impl UsdmClient {
     ///
     /// Test endpoint for placing a new order (does not create an order).
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/New-Order-Test
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/New-Order-Test)
     ///
     /// Rate limit: 1 request per second
     ///
