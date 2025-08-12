@@ -32,7 +32,7 @@ impl RestClient {
     ///
     /// Latest settlement price for the specified quarterly contract pair.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Delivery-Price
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Delivery-Price)
     ///
     /// Rate limit: 0
     ///

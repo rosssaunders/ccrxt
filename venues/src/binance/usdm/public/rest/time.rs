@@ -24,7 +24,7 @@ impl RestClient {
     ///
     /// Test connectivity to the Rest API and get the current server time.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Check-Server-Time
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Check-Server-Time)
     ///
     /// Rate limit: 1
     ///

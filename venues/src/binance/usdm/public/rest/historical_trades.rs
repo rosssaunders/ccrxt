@@ -54,7 +54,7 @@ impl RestClient {
     /// **REQUIRES API KEY**: This endpoint requires an API key in the request header
     /// but does not require request signing (MARKET_DATA security type).
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Old-Trades-Lookup
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Old-Trades-Lookup)
     ///
     /// Rate limit: 20
     ///

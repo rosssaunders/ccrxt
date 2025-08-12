@@ -56,7 +56,7 @@ impl RestClient {
     /// The proportion of net long and net short positions to total open positions of
     /// the top 20% users with the highest margin balance.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Top-Trader-Long-Short-Ratio
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Top-Trader-Long-Short-Ratio)
     ///
     /// Rate limit: 1000 requests/5min per IP
     ///

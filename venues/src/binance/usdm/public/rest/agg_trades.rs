@@ -69,7 +69,7 @@ impl RestClient {
     ///
     /// Retrieves compressed aggregate trades for a symbol.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Compressed-Aggregate-Trades-List
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Compressed-Aggregate-Trades-List)
     ///
     /// Rate limit: 20 weight per minute
     ///

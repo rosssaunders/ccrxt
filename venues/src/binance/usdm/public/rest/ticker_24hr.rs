@@ -84,7 +84,7 @@ impl RestClient {
     ///
     /// 24 hour rolling window price change statistics. Careful when accessing this with no symbol.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/24hr-Ticker-Price-Change-Statistics
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/24hr-Ticker-Price-Change-Statistics)
     ///
     /// Rate limit: 1 for a single symbol; 40 when the symbol parameter is omitted
     ///

@@ -268,8 +268,6 @@ pub enum QuoteAsset {
 /// Response for the Exchange Information endpoint.
 ///
 /// Contains exchange rules, assets, symbols, and rate limits.
-///
-/// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Exchange-Information
 #[derive(Debug, Clone, Deserialize)]
 pub struct ExchangeInfoResponse {
     /// The timezone of the exchange (e.g., "UTC").
@@ -328,7 +326,7 @@ impl RestClient {
     ///
     /// Fetches current exchange trading rules and symbol information.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Exchange-Information
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Exchange-Information)
     ///
     /// Rate limit: 1
     ///

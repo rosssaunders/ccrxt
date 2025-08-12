@@ -63,7 +63,7 @@ impl<'de> Deserialize<'de> for MarkPriceKline {
     where
         D: serde::Deserializer<'de>,
     {
-        let array: (
+        type RawKline = (
             u64,
             Cow<'static, str>,
             Cow<'static, str>,
@@ -76,7 +76,8 @@ impl<'de> Deserialize<'de> for MarkPriceKline {
             Cow<'static, str>,
             Cow<'static, str>,
             Cow<'static, str>,
-        ) = Deserialize::deserialize(deserializer)?;
+        );
+        let array: RawKline = Deserialize::deserialize(deserializer)?;
 
         Ok(MarkPriceKline {
             open_time: array.0,
@@ -101,9 +102,9 @@ impl RestClient {
     /// Kline/candlestick bars for the mark price of a symbol. Klines are uniquely
     /// identified by their open time.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Mark-Price-Kline-Candlestick-Data
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Mark-Price-Kline-Candlestick-Data)
     ///
-    /// Rate limit: based on parameter LIMIT - [1,100): 1, [100,500): 2, [500,1000]: 5, >1000: 10
+    /// Rate limit: based on parameter LIMIT - [1,100)[]: 1, [100,500)[]: 2, [500,1000][]: 5, >1000: 10
     ///
     /// # Arguments
     /// * `params` - The mark price klines request parameters

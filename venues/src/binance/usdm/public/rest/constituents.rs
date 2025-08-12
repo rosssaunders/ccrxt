@@ -54,7 +54,7 @@ impl RestClient {
     ///
     /// Query index price constituents.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Index-Constituents
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Index-Constituents)
     ///
     /// Rate limit: 2 weight
     ///

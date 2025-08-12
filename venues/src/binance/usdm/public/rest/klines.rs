@@ -103,12 +103,12 @@ impl RestClient {
     ///
     /// Kline/candlestick bars for a symbol. Klines are uniquely identified by their open time.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Kline-Candlestick-Data
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Kline-Candlestick-Data)
     ///
     /// Rate limit:
     /// - [1,100) klines: 1 weight
-    /// - [100, 500) klines: 2 weight  
-    /// - [500, 1000] klines: 5 weight
+    /// - [100, 500)[] klines: 2 weight  
+    /// - [500, 1000][] klines: 5 weight
     /// - >1000 klines: 10 weight
     ///
     /// # Arguments

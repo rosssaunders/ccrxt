@@ -33,7 +33,7 @@ impl RestClient {
     ///
     /// Get present open interest of a specific symbol.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Open-Interest
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Open-Interest)
     ///
     /// Rate limit: 1
     ///

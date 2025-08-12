@@ -65,7 +65,7 @@ impl RestClient {
     ///
     /// Query composite index symbol information.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Composite-Index-Symbol-Information
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Composite-Index-Symbol-Information)
     ///
     /// Rate limit: 1
     ///

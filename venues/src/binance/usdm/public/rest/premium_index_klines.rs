@@ -107,7 +107,7 @@ impl RestClient {
     ///
     /// Premium index kline bars of a symbol. Klines are uniquely identified by their open time.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Premium-Index-Kline-Data
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Premium-Index-Kline-Data)
     ///
     /// Rate limit: based on `limit` parameter - [1,100): 1, [100,500): 2, [500,1000]: 5, >1000: 10
     ///
