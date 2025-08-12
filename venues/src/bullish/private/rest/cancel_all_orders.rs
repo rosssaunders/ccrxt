@@ -6,16 +6,13 @@ const COMMAND_ENDPOINT: &str = "/v2/command";
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
+#[derive(Default)]
 pub enum CommandType {
     #[serde(rename = "V1CancelAllOrders")]
+    #[default]
     V1CancelAllOrders,
 }
 
-impl Default for CommandType {
-    fn default() -> Self {
-        CommandType::V1CancelAllOrders
-    }
-}
 
 /// Request parameters for cancelling all orders for a trading account.
 #[derive(Debug, Clone, Serialize)]

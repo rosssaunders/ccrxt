@@ -80,7 +80,7 @@ mod tests {
             "dualSidePosition": true
         }"#;
         let response: GetCurrentPositionModeResponse = serde_json::from_str(json).unwrap();
-        assert_eq!(response.dual_side_position, true);
+        assert!(response.dual_side_position);
     }
 
     #[test]
@@ -89,6 +89,6 @@ mod tests {
             "dualSidePosition": false
         }"#;
         let response: GetCurrentPositionModeResponse = serde_json::from_str(json).unwrap();
-        assert_eq!(response.dual_side_position, false);
+        assert!(!response.dual_side_position);
     }
 }

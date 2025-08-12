@@ -171,7 +171,7 @@ mod tests {
 
         // Test field type
         assert_eq!(request.order_id, "test_order_123");
-        assert!(request.order_id.len() > 0);
+        assert!(!request.order_id.is_empty());
 
         // Test that order_id is a String type
         let _: String = request.order_id;
@@ -187,7 +187,7 @@ mod tests {
 
         // Test field types
         assert_eq!(response.cancelled_order_ids.len(), 2);
-        assert!(response.cancelled_order_ids.iter().all(|id| id.len() > 0));
+        assert!(response.cancelled_order_ids.iter().all(|id| !id.is_empty()));
 
         // Verify order ID format (typical KuCoin order ID length)
         for order_id in &response.cancelled_order_ids {
@@ -204,7 +204,7 @@ mod tests {
         let short_request = CancelOrderRequest {
             order_id: "a".to_string(),
         };
-        assert!(short_request.order_id.len() >= 1);
+        assert!(!short_request.order_id.is_empty());
 
         // Test typical KuCoin order ID length
         let typical_request = CancelOrderRequest {

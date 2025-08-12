@@ -211,7 +211,7 @@ mod tests {
         assert_eq!(position.id, "615ba79f5f7a3a001b9bafde");
         assert_eq!(position.symbol, "XBTUSDTM");
         assert_eq!(position.margin_mode, "ISOLATED");
-        assert_eq!(position.auto_deposit, false);
+        assert!(!position.auto_deposit);
         assert_eq!(position.current_qty, "10");
         assert_eq!(position.avg_entry_price, "52799");
         assert_eq!(position.settle_currency, "USDT");
@@ -251,8 +251,8 @@ mod tests {
         let position: PositionInfo = serde_json::from_str(json).unwrap();
         assert_eq!(position.symbol, "ETHUSDTM");
         assert_eq!(position.margin_mode, "CROSS");
-        assert_eq!(position.auto_deposit, true);
-        assert_eq!(position.cross_mode, true);
+        assert!(position.auto_deposit);
+        assert!(position.cross_mode);
         assert_eq!(position.deleverage_rank, Some("75".to_string()));
     }
 
@@ -321,13 +321,13 @@ mod tests {
         let btc_position = &positions[0];
         assert_eq!(btc_position.symbol, "XBTUSDTM");
         assert_eq!(btc_position.margin_mode, "ISOLATED");
-        assert_eq!(btc_position.cross_mode, false);
+        assert!(!btc_position.cross_mode);
         assert!(btc_position.deleverage_rank.is_none());
 
         let eth_position = &positions[1];
         assert_eq!(eth_position.symbol, "ETHUSDTM");
         assert_eq!(eth_position.margin_mode, "CROSS");
-        assert_eq!(eth_position.cross_mode, true);
+        assert!(eth_position.cross_mode);
         assert_eq!(eth_position.deleverage_rank, Some("50".to_string()));
     }
 
@@ -375,8 +375,8 @@ mod tests {
         // Verify deserialization works
         let position: PositionInfo = serde_json::from_str(json).unwrap();
         assert_eq!(position.id, "test_id");
-        assert_eq!(position.auto_deposit, false);
-        assert_eq!(position.cross_mode, false);
+        assert!(!position.auto_deposit);
+        assert!(!position.cross_mode);
         assert_eq!(position.open_timestamp, 1633372575000);
     }
 
@@ -414,11 +414,11 @@ mod tests {
 
         // Verify camelCase fields are properly converted to snake_case
         assert_eq!(position.margin_mode, "ISOLATED");
-        assert_eq!(position.auto_deposit, false);
+        assert!(!position.auto_deposit);
         assert_eq!(position.maint_margin_req, "0.005");
         assert_eq!(position.risk_limit, "200000");
         assert_eq!(position.real_leverage, "10.0");
-        assert_eq!(position.cross_mode, false);
+        assert!(!position.cross_mode);
         assert_eq!(position.deleverage_rank, None);
         assert_eq!(position.open_timestamp, 1633372575000);
         assert_eq!(position.current_qty, "100");

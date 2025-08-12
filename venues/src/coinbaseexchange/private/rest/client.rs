@@ -367,7 +367,7 @@ impl RestClient {
 
         // Create pagination info without explicit branching
         let has_pagination = before.is_some() | after.is_some();
-        let pagination = has_pagination.then(|| PaginationInfo { before, after });
+        let pagination = has_pagination.then_some(PaginationInfo { before, after });
 
         Ok((data, pagination))
     }

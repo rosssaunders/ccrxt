@@ -120,7 +120,7 @@ mod tests {
         assert_eq!(trade.price, "30000.0");
         assert_eq!(trade.side, OrderSide::Buy);
         assert_eq!(trade.created_at_timestamp, "1640995200000");
-        assert_eq!(trade.is_taker, true);
+        assert!(trade.is_taker);
     }
 
     #[test]

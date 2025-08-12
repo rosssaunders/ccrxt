@@ -306,7 +306,7 @@ mod tests {
         assert_eq!(amended_order.price, "31000");
         assert_eq!(amended_order.order_type, "limit");
         assert_eq!(amended_order.time_in_force, "gtc");
-        assert_eq!(amended_order.succeeded, true);
+        assert!(amended_order.succeeded);
         assert!(amended_order.message.is_none());
         assert!(amended_order.code.is_none());
     }
@@ -339,7 +339,7 @@ mod tests {
 
         let amended_order: AmendedOrder = serde_json::from_str(json).unwrap();
         assert_eq!(amended_order.id, "87654321");
-        assert_eq!(amended_order.succeeded, false);
+        assert!(!amended_order.succeeded);
         assert_eq!(amended_order.message.as_ref().unwrap(), "Invalid price");
         assert_eq!(amended_order.code.as_ref().unwrap(), "INVALID_PRICE");
     }

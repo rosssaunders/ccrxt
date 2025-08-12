@@ -74,8 +74,7 @@ mod tests {
 
     #[test]
     fn test_spot_account_balance_filtering() {
-        let accounts = vec![
-            SpotAccount {
+        let accounts = [SpotAccount {
                 currency: "BTC".to_string(),
                 available: "0.1".to_string(),
                 locked: "0.0".to_string(),
@@ -84,8 +83,7 @@ mod tests {
                 currency: "ETH".to_string(),
                 available: "2.5".to_string(),
                 locked: "0.5".to_string(),
-            },
-        ];
+            }];
 
         // Test finding BTC
         let btc_result = accounts.iter().find(|acc| acc.currency == "BTC");
@@ -114,7 +112,7 @@ mod tests {
 
     #[test]
     fn test_spot_account_balance_single_currency() {
-        let accounts = vec![SpotAccount {
+        let accounts = [SpotAccount {
             currency: "USDT".to_string(),
             available: "10000.0".to_string(),
             locked: "0.0".to_string(),
@@ -136,8 +134,7 @@ mod tests {
     #[test]
     fn test_spot_account_balance_duplicate_currencies() {
         // This shouldn't happen in practice, but test the logic
-        let accounts = vec![
-            SpotAccount {
+        let accounts = [SpotAccount {
                 currency: "BTC".to_string(),
                 available: "1.0".to_string(),
                 locked: "0.0".to_string(),
@@ -146,8 +143,7 @@ mod tests {
                 currency: "BTC".to_string(),
                 available: "2.0".to_string(),
                 locked: "0.1".to_string(),
-            },
-        ];
+            }];
 
         // Should find the first match
         let btc_result = accounts.iter().find(|acc| acc.currency == "BTC");
@@ -158,8 +154,7 @@ mod tests {
 
     #[test]
     fn test_spot_account_balance_case_sensitivity() {
-        let accounts = vec![
-            SpotAccount {
+        let accounts = [SpotAccount {
                 currency: "btc".to_string(),
                 available: "1.0".to_string(),
                 locked: "0.0".to_string(),
@@ -168,8 +163,7 @@ mod tests {
                 currency: "BTC".to_string(),
                 available: "2.0".to_string(),
                 locked: "0.1".to_string(),
-            },
-        ];
+            }];
 
         // Case sensitive search
         let lowercase = accounts.iter().find(|acc| acc.currency == "btc");
@@ -187,7 +181,7 @@ mod tests {
 
     #[test]
     fn test_spot_account_balance_various_currencies() {
-        let currencies = vec!["BTC", "ETH", "USDT", "USDC", "BNB", "SOL", "ADA", "DOT"];
+        let currencies = ["BTC", "ETH", "USDT", "USDC", "BNB", "SOL", "ADA", "DOT"];
         let mut accounts = Vec::new();
 
         for (i, currency) in currencies.iter().enumerate() {
@@ -214,8 +208,7 @@ mod tests {
 
     #[test]
     fn test_spot_account_balance_zero_balances() {
-        let accounts = vec![
-            SpotAccount {
+        let accounts = [SpotAccount {
                 currency: "BTC".to_string(),
                 available: "0".to_string(),
                 locked: "0".to_string(),
@@ -224,8 +217,7 @@ mod tests {
                 currency: "ETH".to_string(),
                 available: "0.0".to_string(),
                 locked: "0.0".to_string(),
-            },
-        ];
+            }];
 
         let btc = accounts.iter().find(|acc| acc.currency == "BTC").unwrap();
         assert_eq!(btc.available, "0");
@@ -238,7 +230,7 @@ mod tests {
 
     #[test]
     fn test_spot_account_balance_precision_handling() {
-        let accounts = vec![SpotAccount {
+        let accounts = [SpotAccount {
             currency: "BTC".to_string(),
             available: "1.23456789012345".to_string(),
             locked: "0.98765432109876".to_string(),
@@ -251,7 +243,7 @@ mod tests {
 
     #[test]
     fn test_spot_account_balance_large_numbers() {
-        let accounts = vec![SpotAccount {
+        let accounts = [SpotAccount {
             currency: "USDT".to_string(),
             available: "999999999.99999999".to_string(),
             locked: "123456789.12345678".to_string(),
@@ -264,8 +256,7 @@ mod tests {
 
     #[test]
     fn test_spot_account_balance_mixed_case_currency() {
-        let accounts = vec![
-            SpotAccount {
+        let accounts = [SpotAccount {
                 currency: "wBTC".to_string(),
                 available: "0.5".to_string(),
                 locked: "0.1".to_string(),
@@ -274,8 +265,7 @@ mod tests {
                 currency: "WETH".to_string(),
                 available: "2.0".to_string(),
                 locked: "0.5".to_string(),
-            },
-        ];
+            }];
 
         let wbtc = accounts.iter().find(|acc| acc.currency == "wBTC");
         assert!(wbtc.is_some());

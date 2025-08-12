@@ -85,9 +85,7 @@ mod tests {
 
     #[test]
     fn test_batch_borrowable_many_currencies() {
-        let currencies = vec![
-            "BTC", "ETH", "USDT", "BNB", "SOL", "ADA", "XRP", "DOT", "MATIC", "LINK",
-        ];
+        let currencies = ["BTC", "ETH", "USDT", "BNB", "SOL", "ADA", "XRP", "DOT", "MATIC", "LINK"];
 
         let request = BatchBorrowableRequest {
             currencies: currencies.iter().map(|&c| c.to_string()).collect(),

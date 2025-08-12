@@ -212,10 +212,10 @@ impl RestClient {
 
         // Build request
         let mut builder = RequestBuilder::new(method, url)
-            .header("ACCESS-KEY", &self.api_key.expose_secret())
+            .header("ACCESS-KEY", self.api_key.expose_secret())
             .header("ACCESS-SIGN", &signature)
-            .header("ACCESS-TIMESTAMP", &timestamp.to_string())
-            .header("ACCESS-PASSPHRASE", &self.api_passphrase.expose_secret())
+            .header("ACCESS-TIMESTAMP", timestamp.to_string())
+            .header("ACCESS-PASSPHRASE", self.api_passphrase.expose_secret())
             .header("locale", "en-US");
 
         // Add body if provided

@@ -167,7 +167,7 @@ mod tests {
 
             let json = serde_json::to_value(&request).unwrap();
             assert_eq!(json["limit"], limit);
-            assert!(limit >= 1 && limit <= 500);
+            assert!((1..=500).contains(&limit));
         }
     }
 

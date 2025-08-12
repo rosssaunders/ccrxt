@@ -218,7 +218,7 @@ mod tests {
 
         let position: Position = serde_json::from_str(json).unwrap();
         assert_eq!(position.symbol, "XBTUSDTM");
-        assert_eq!(position.cross_mode, false);
+        assert!(!position.cross_mode);
         assert_eq!(position.deleverage_percentage, 0.1);
         assert_eq!(position.open_size, "1000");
         assert_eq!(position.value, "50000");
@@ -476,7 +476,7 @@ mod tests {
         // Verify deserialization works
         let position: Position = serde_json::from_str(json).unwrap();
         assert_eq!(position.symbol, "XBTUSDTM");
-        assert_eq!(position.cross_mode, false);
+        assert!(!position.cross_mode);
         assert_eq!(position.open_time, 1234567890000);
         assert_eq!(position.risk_limit, 200000);
     }
@@ -521,7 +521,7 @@ mod tests {
         let position: Position = serde_json::from_str(json).unwrap();
 
         // Verify camelCase fields are properly converted to snake_case
-        assert_eq!(position.cross_mode, false);
+        assert!(!position.cross_mode);
         assert_eq!(position.open_size, "1000");
         assert_eq!(position.unrealized_pnl, "50");
         assert_eq!(position.unrealized_cost, "5000");

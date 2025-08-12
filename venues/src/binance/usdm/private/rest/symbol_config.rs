@@ -101,7 +101,7 @@ mod tests {
         let resp: SymbolConfigResponse = serde_json::from_str(json).unwrap();
         assert_eq!(resp.symbol, "BTCUSDT");
         assert_eq!(resp.margin_type, MarginType::Cross);
-        assert_eq!(resp.is_auto_add_margin, false);
+        assert!(!resp.is_auto_add_margin);
         assert_eq!(resp.leverage, 21);
         assert_eq!(resp.max_notional_value, "1000000");
     }
@@ -118,7 +118,7 @@ mod tests {
         let resp: SymbolConfigResponse = serde_json::from_str(json).unwrap();
         assert_eq!(resp.symbol, "ETHUSDT");
         assert_eq!(resp.margin_type, MarginType::Isolated);
-        assert_eq!(resp.is_auto_add_margin, true);
+        assert!(resp.is_auto_add_margin);
         assert_eq!(resp.leverage, 10);
         assert_eq!(resp.max_notional_value, "500000");
     }

@@ -386,7 +386,7 @@ mod tests {
             assert_eq!(ticker.change_percentage, change);
 
             let change_val: f64 = ticker.change_percentage.parse().unwrap();
-            assert!(change_val >= -20.0 && change_val <= 20.0); // Reasonable daily change
+            assert!((-20.0..=20.0).contains(&change_val)); // Reasonable daily change
         }
     }
 
@@ -421,8 +421,8 @@ mod tests {
             let current_rate: f64 = ticker.funding_rate.parse().unwrap();
             let indicative_rate: f64 = ticker.funding_rate_indicative.parse().unwrap();
 
-            assert!(current_rate >= -0.375 && current_rate <= 0.375);
-            assert!(indicative_rate >= -0.375 && indicative_rate <= 0.375);
+            assert!((-0.375..=0.375).contains(&current_rate));
+            assert!((-0.375..=0.375).contains(&indicative_rate));
         }
     }
 

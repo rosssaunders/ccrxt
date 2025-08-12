@@ -6,8 +6,10 @@ const COMMAND_ENDPOINT: &str = "/v2/command";
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
+#[derive(Default)]
 pub enum CommandType {
     #[serde(rename = "V1DelayedCancelAllOrders")]
+    #[default]
     V1DelayedCancelAllOrders,
 
     #[serde(rename = "V1UnsetDelayedCancelAllOrders")]
@@ -36,11 +38,6 @@ pub enum DelaySeconds {
     Sixty,
 }
 
-impl Default for CommandType {
-    fn default() -> Self {
-        CommandType::V1DelayedCancelAllOrders
-    }
-}
 
 /// Request parameters for delayed cancel all orders.
 #[derive(Debug, Clone, Serialize)]

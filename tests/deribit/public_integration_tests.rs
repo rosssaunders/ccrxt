@@ -1054,7 +1054,8 @@ async fn test_get_book_summary_by_instrument_various() {
 /// Test rate limiting with burst requests
 #[tokio::test]
 async fn test_rate_limiting_burst() {
-    let client = create_public_test_client();
+    // Wrap client in Arc for cheap cloning across tasks
+    let client = Arc::new(create_public_test_client());
 
     // Make a burst of requests to test rate limiting
     let mut handles = vec![];
@@ -1288,7 +1289,8 @@ async fn test_error_handling_edge_cases() {
 /// Test simultaneous API calls for rate limiting
 #[tokio::test]
 async fn test_concurrent_api_calls() {
-    let client = create_public_test_client();
+    // Wrap client in Arc for cheap cloning across tasks
+    let client = Arc::new(create_public_test_client());
 
     // Create multiple concurrent API calls
     let mut handles = vec![];

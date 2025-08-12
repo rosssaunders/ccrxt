@@ -136,7 +136,7 @@ impl RestClient {
 
         // Build request
         let request = RequestBuilder::new(HttpMethod::Get, url)
-            .header("X-BAPI-API-KEY", &self.api_key.expose_secret())
+            .header("X-BAPI-API-KEY", self.api_key.expose_secret())
             .header("X-BAPI-TIMESTAMP", &timestamp)
             .header("X-BAPI-SIGN", &signature)
             .header("X-BAPI-RECV-WINDOW", recv_window)
@@ -218,7 +218,7 @@ impl RestClient {
 
         // Build request
         let request_obj = RequestBuilder::new(HttpMethod::Post, url)
-            .header("X-BAPI-API-KEY", &self.api_key.expose_secret())
+            .header("X-BAPI-API-KEY", self.api_key.expose_secret())
             .header("X-BAPI-TIMESTAMP", &timestamp)
             .header("X-BAPI-SIGN", &signature)
             .header("X-BAPI-RECV-WINDOW", recv_window)
@@ -301,7 +301,7 @@ impl RestClient {
 
         // Build request
         let request_obj = RequestBuilder::new(HttpMethod::Put, url)
-            .header("X-BAPI-API-KEY", &self.api_key.expose_secret())
+            .header("X-BAPI-API-KEY", self.api_key.expose_secret())
             .header("X-BAPI-TIMESTAMP", &timestamp)
             .header("X-BAPI-SIGN", &signature)
             .header("X-BAPI-RECV-WINDOW", recv_window)
@@ -391,7 +391,7 @@ impl RestClient {
 
         // Build request
         let request = RequestBuilder::new(HttpMethod::Delete, url)
-            .header("X-BAPI-API-KEY", &self.api_key.expose_secret())
+            .header("X-BAPI-API-KEY", self.api_key.expose_secret())
             .header("X-BAPI-TIMESTAMP", &timestamp)
             .header("X-BAPI-SIGN", &signature)
             .header("X-BAPI-RECV-WINDOW", recv_window)

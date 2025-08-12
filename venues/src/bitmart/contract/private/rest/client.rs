@@ -38,7 +38,7 @@ impl RestClient {
     ) -> RestResult<T> {
         let url = format!("{}{}", self.base_url, path);
         let request = RequestBuilder::new(HttpMethod::Get, url)
-            .header("X-BM-KEY", &self.api_key.expose_secret().to_string())
+            .header("X-BM-KEY", self.api_key.expose_secret().to_string())
             .build();
 
         let response = self

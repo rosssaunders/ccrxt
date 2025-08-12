@@ -590,7 +590,7 @@ mod tests {
         assert_eq!(loan.rate, "0.05");
         assert_eq!(loan.amount, "10000.0");
         assert_eq!(loan.days, 30);
-        assert_eq!(loan.auto_renew, false);
+        assert!(!loan.auto_renew);
         assert_eq!(loan.in_use, "5000.0");
         assert_eq!(loan.left, "5000.0");
         assert_eq!(loan.status, "open");
@@ -930,7 +930,7 @@ mod tests {
 
         let loan: Loan = serde_json::from_str(json).unwrap();
         assert_eq!(loan.side, "lend");
-        assert_eq!(loan.auto_renew, true);
+        assert!(loan.auto_renew);
 
         // Verify fully utilized lending
         let in_use: f64 = loan.in_use.parse().unwrap();

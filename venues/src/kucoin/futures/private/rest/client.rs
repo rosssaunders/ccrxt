@@ -416,7 +416,7 @@ mod tests {
         );
 
         assert_eq!(client.base_url, "https://api-futures.kucoin.com");
-        assert_eq!(client.is_sandbox, false);
+        assert!(!client.is_sandbox);
     }
 
     #[test]
@@ -428,7 +428,7 @@ mod tests {
         );
 
         assert_eq!(client.base_url, "https://api-futures.kucoin.com");
-        assert_eq!(client.is_sandbox, false);
+        assert!(!client.is_sandbox);
     }
 
     #[test]
@@ -440,7 +440,7 @@ mod tests {
         );
 
         assert_eq!(client.base_url, "https://api-sandbox-futures.kucoin.com");
-        assert_eq!(client.is_sandbox, true);
+        assert!(client.is_sandbox);
     }
 
     #[test]

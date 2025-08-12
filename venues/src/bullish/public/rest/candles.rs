@@ -93,7 +93,7 @@ impl RestClient {
         let endpoint = CANDLES_ENDPOINT.replace("{}", &request.symbol);
 
         // Serialize the entire request (minus symbol) into query parameters.
-        let query_params = serde_urlencoded::to_string(&request).unwrap_or_default();
+        let query_params = serde_urlencoded::to_string(request).unwrap_or_default();
 
         let full_endpoint = if query_params.is_empty() {
             endpoint

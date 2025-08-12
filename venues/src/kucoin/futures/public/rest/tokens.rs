@@ -60,7 +60,7 @@ mod tests {
         let server: InstanceServer = serde_json::from_str(json).unwrap();
         assert_eq!(server.endpoint, "wss://push1.kucoin.com/endpoint");
         assert_eq!(server.protocol, "wss");
-        assert_eq!(server.encrypt, true);
+        assert!(server.encrypt);
         assert_eq!(server.ping_interval, 18000);
         assert_eq!(server.ping_timeout, 10000);
     }

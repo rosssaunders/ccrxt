@@ -170,7 +170,7 @@ impl RestClient {
 
         // Build GET request
         let request = RequestBuilder::new(HttpMethod::Get, url)
-            .header("X-BM-KEY", &self.api_key.expose_secret())
+            .header("X-BM-KEY", self.api_key.expose_secret())
             .header("X-BM-SIGN", &signature)
             .header("X-BM-TIMESTAMP", &timestamp)
             .header("Content-Type", "application/json")
@@ -230,7 +230,7 @@ impl RestClient {
 
         // Build POST request
         let request = RequestBuilder::new(HttpMethod::Post, url)
-            .header("X-BM-KEY", &self.api_key.expose_secret())
+            .header("X-BM-KEY", self.api_key.expose_secret())
             .header("X-BM-SIGN", &signature)
             .header("X-BM-TIMESTAMP", &timestamp)
             .header("Content-Type", "application/json")
@@ -302,7 +302,7 @@ impl RestClient {
 
         // Build DELETE request
         let request = RequestBuilder::new(HttpMethod::Delete, url)
-            .header("X-BM-KEY", &self.api_key.expose_secret())
+            .header("X-BM-KEY", self.api_key.expose_secret())
             .header("X-BM-SIGN", &signature)
             .header("X-BM-TIMESTAMP", &timestamp)
             .header("Content-Type", "application/json")
@@ -362,7 +362,7 @@ impl RestClient {
 
         // Build PUT request
         let request = RequestBuilder::new(HttpMethod::Put, url)
-            .header("X-BM-KEY", &self.api_key.expose_secret())
+            .header("X-BM-KEY", self.api_key.expose_secret())
             .header("X-BM-SIGN", &signature)
             .header("X-BM-TIMESTAMP", &timestamp)
             .header("Content-Type", "application/json")

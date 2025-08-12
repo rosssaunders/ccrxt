@@ -428,7 +428,7 @@ mod tests {
         assert_eq!(trade.fee_currency, "USDT");
         assert_eq!(trade.point_fee, "0");
         assert_eq!(trade.gt_fee, "0.0075");
-        assert_eq!(trade.gt_fee_deduction, true);
+        assert!(trade.gt_fee_deduction);
         assert_eq!(trade.rebated_fee, "0");
         assert_eq!(trade.rebated_fee_currency, "USDT");
     }
@@ -458,7 +458,7 @@ mod tests {
         assert_eq!(trade.role, "maker");
         assert_eq!(trade.side, "sell");
         assert_eq!(trade.fee, "0");
-        assert_eq!(trade.gt_fee_deduction, false);
+        assert!(!trade.gt_fee_deduction);
         assert_eq!(trade.rebated_fee, "0.75");
 
         // Maker orders typically get rebates instead of paying fees
@@ -488,7 +488,7 @@ mod tests {
         }"#;
 
         let trade: MyTrade = serde_json::from_str(json).unwrap();
-        assert_eq!(trade.gt_fee_deduction, true);
+        assert!(trade.gt_fee_deduction);
         assert_eq!(trade.gt_fee, "3.75");
 
         // GT fee should be less than base fee (25% discount)

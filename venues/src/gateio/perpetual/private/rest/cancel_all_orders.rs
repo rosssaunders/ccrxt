@@ -124,7 +124,7 @@ mod tests {
         ];
 
         for (side, _description) in sides {
-            let mut endpoint = format!("/futures/USDT/orders");
+            let mut endpoint = "/futures/USDT/orders".to_string();
             endpoint.push_str(&format!("?side={}", side));
             assert!(endpoint.contains(side));
         }
@@ -135,7 +135,7 @@ mod tests {
         let contracts = vec!["BTC_USDT", "ETH_USDT", "SOL_USDT", "MATIC_USDT"];
 
         for contract in contracts {
-            let mut endpoint = format!("/futures/USDT/orders");
+            let mut endpoint = "/futures/USDT/orders".to_string();
             endpoint.push_str(&format!("?contract={}", contract));
             assert!(endpoint.contains(contract));
         }
@@ -144,17 +144,17 @@ mod tests {
     #[test]
     fn test_cancel_all_scenarios() {
         // Scenario 1: Cancel all orders
-        let endpoint = format!("/futures/USDT/orders");
+        let endpoint = "/futures/USDT/orders".to_string();
         assert_eq!(endpoint, "/futures/USDT/orders");
 
         // Scenario 2: Cancel all BTC buy orders
-        let mut endpoint = format!("/futures/USDT/orders");
+        let mut endpoint = "/futures/USDT/orders".to_string();
         endpoint.push_str("?contract=BTC_USDT&side=buy");
         assert!(endpoint.contains("BTC_USDT"));
         assert!(endpoint.contains("buy"));
 
         // Scenario 3: Cancel all sell orders across all contracts
-        let mut endpoint = format!("/futures/USDT/orders");
+        let mut endpoint = "/futures/USDT/orders".to_string();
         endpoint.push_str("?side=sell");
         assert!(endpoint.contains("sell"));
         assert!(!endpoint.contains("contract"));
