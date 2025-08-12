@@ -42,7 +42,7 @@ impl RestClient {
     /// Note that the interface is not real-time data, if you need real-time data,
     /// please use websocket to subscribe Depth channel
     ///
-    /// [docs]: https://developer-pro.bitmart.com/en/spot/#get-depth-v3
+    /// [docs](https://developer-pro.bitmart.com/en/spot/#get-depth-v3)
     ///
     /// Rate limit: 10 times/2sec per IP
     ///
