@@ -91,7 +91,7 @@ impl RestClient {
     /// Cancel an entire order list.
     /// Either orderListId or listClientOrderId must be provided.
     ///
-    /// [docs]: (https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#cancel-order-list--trade)
+    /// [docs](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#cancel-order-list--trade)
     /// Method: DELETE /api/v3/orderList
     /// Weight: 1
     /// Security: TRADE

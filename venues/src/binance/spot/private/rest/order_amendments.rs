@@ -83,7 +83,7 @@ impl RestClient {
     ///
     /// Query all amendments of a single order.
     ///
-    /// [docs]: (https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#query-order-amendments--user_data)
+    /// [docs](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#query-order-amendments--user_data)
     /// Method: GET /api/v3/order/amendments
     /// Weight: 4
     /// Security: USER_DATA

@@ -118,7 +118,7 @@ impl RestClient {
     ///
     /// Cancel an existing order and place a new order on the same symbol.
     ///
-    /// [docs]: (https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#cancel-and-replace-order--trade)
+    /// [docs](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#cancel-and-replace-order--trade)
     /// Method: POST /api/v3/order/cancelReplace
     /// Weight: 1
     /// Security: TRADE

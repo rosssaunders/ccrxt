@@ -42,7 +42,7 @@ impl RestClient {
     ///
     /// Display user's unfilled order count for all intervals.
     ///
-    /// [docs]: (https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#query-unfilled-order-count--user_data)
+    /// [docs](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#query-unfilled-order-count--user_data)
     /// Method: GET /api/v3/rateLimit/order
     /// Weight: 40
     /// Security: USER_DATA

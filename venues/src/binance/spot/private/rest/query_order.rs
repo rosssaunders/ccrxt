@@ -118,7 +118,7 @@ impl RestClient {
     /// Check an order's status.
     /// Either orderId or origClientOrderId must be sent.
     ///
-    /// [docs]: (https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#query-order--user_data)
+    /// [docs](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#query-order--user_data)
     /// Method: GET /api/v3/order
     /// Weight: 4
     /// Security: USER_DATA

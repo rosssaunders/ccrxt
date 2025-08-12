@@ -98,7 +98,7 @@ impl RestClient {
     /// Cancels all active orders on a symbol.
     /// This includes OCO orders.
     ///
-    /// [docs]: (https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#cancel-all-open-orders-on-a-symbol--trade)
+    /// [docs](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#cancel-all-open-orders-on-a-symbol--trade)
     /// Method: DELETE /api/v3/openOrders
     /// Weight: 1
     /// Security: TRADE

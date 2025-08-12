@@ -194,7 +194,7 @@ impl RestClient {
     ///
     /// Place an OTO (One-Triggers-Other) order.
     ///
-    /// [docs]: (https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#new-oto--trade)
+    /// [docs](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#new-oto--trade)
     /// Method: POST /api/v3/orderList/oto
     /// Weight: 1
     /// Security: TRADE
