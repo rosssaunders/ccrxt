@@ -10,6 +10,7 @@ use rest::{
 use serde_json::{Value, json};
 use sha2::Sha256;
 
+use super::credentials::Credentials;
 use crate::cryptocom::Errors;
 
 /// Signs a request using the Crypto.com signing algorithm
@@ -94,10 +95,8 @@ fn params_to_string(value: &Value) -> String {
 pub struct RestClient {
     /// The underlying HTTP client used for making requests.
     pub(crate) http_client: Arc<dyn HttpClient>,
-    /// The encrypted API key.
-    pub(crate) api_key: Box<dyn ExposableSecret>,
-    /// The encrypted API secret.
-    pub(crate) api_secret: Box<dyn ExposableSecret>,
+    /// The API credentials for authentication.
+    pub(crate) credentials: Credentials,
     /// The base URL for the API.
     pub(crate) base_url: Cow<'static, str>,
 }
@@ -106,23 +105,20 @@ impl RestClient {
     /// Creates a new RestClient with encrypted API credentials
     ///
     /// # Arguments
-    /// * `api_key` - The encrypted API key
-    /// * `api_secret` - The encrypted API secret
+    /// * `credentials` - The API credentials for authentication
     /// * `base_url` - The base URL for the API
     /// * `http_client` - The HTTP client to use
     ///
     /// # Returns
     /// A new RestClient instance
     pub fn new(
-        api_key: Box<dyn ExposableSecret>,
-        api_secret: Box<dyn ExposableSecret>,
+        credentials: Credentials,
         base_url: impl Into<Cow<'static, str>>,
         http_client: Arc<dyn HttpClient>,
     ) -> Self {
         Self {
             http_client,
-            api_key,
-            api_secret,
+            credentials,
             base_url: base_url.into(),
         }
     }
@@ -144,9 +140,9 @@ impl RestClient {
         params: &Value,
         nonce: u64,
     ) -> Result<String, Errors> {
-        let api_key = self.api_key.expose_secret();
+        let api_key = self.credentials.api_key.expose_secret();
         sign_request(
-            self.api_secret.as_ref(),
+            &self.credentials.api_secret,
             method,
             id,
             &api_key,
@@ -211,7 +207,7 @@ impl RestClient {
             "params": params,
             "nonce": nonce,
             "sig": signature,
-            "api_key": self.api_key.expose_secret(),
+            "api_key": self.credentials.api_key.expose_secret(),
         });
 
         let url = format!("{}/v1/{}", self.base_url, method);
@@ -397,28 +393,28 @@ mod tests {
 
     #[test]
     fn test_client_creation() {
-        let api_key =
-            Box::new(PlainTextSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret =
-            Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let credentials = Credentials {
+            api_key: rest::secrets::SecretString::from("test_key".to_string()),
+            api_secret: rest::secrets::SecretString::from("test_secret".to_string()),
+        };
         let http_client = Arc::new(rest::native::NativeHttpClient::default());
 
         let rest_client =
-            RestClient::new(api_key, api_secret, "https://api.crypto.com", http_client);
+            RestClient::new(credentials, "https://api.crypto.com", http_client);
 
         assert_eq!(rest_client.base_url, "https://api.crypto.com");
     }
 
     #[test]
     fn test_client_sign_request() {
-        let api_key =
-            Box::new(PlainTextSecret::new("test_api_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret =
-            Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let credentials = Credentials {
+            api_key: rest::secrets::SecretString::from("test_api_key".to_string()),
+            api_secret: rest::secrets::SecretString::from("test_secret".to_string()),
+        };
         let http_client = Arc::new(rest::native::NativeHttpClient::default());
 
         let rest_client =
-            RestClient::new(api_key, api_secret, "https://api.crypto.com", http_client);
+            RestClient::new(credentials, "https://api.crypto.com", http_client);
 
         let params = json!({
             "order_id": 53287421324_u64

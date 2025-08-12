@@ -324,6 +324,7 @@ dependencies = [
 name = "ccrxt"
 version = "0.1.0"
 dependencies = [
+ "async-trait",
  "chrono",
  "proc-macro2",
  "quote",

@@ -8,6 +8,7 @@ use rest::secrets::ExposableSecret;
 use serde::de::DeserializeOwned;
 use sha2::Sha256;
 
+use super::credentials::Credentials;
 use crate::kucoin::spot::{ApiError, RateLimiter, ResponseHeaders, RestResponse, Result};
 
 /// Private REST client for KuCoin futures market
@@ -15,9 +16,7 @@ pub struct RestClient {
     pub base_url: String,
     pub http_client: Arc<dyn HttpClient>,
     pub rate_limiter: RateLimiter,
-    api_key: Box<dyn ExposableSecret>,
-    api_secret: Box<dyn ExposableSecret>,
-    api_passphrase: Box<dyn ExposableSecret>,
+    pub credentials: Credentials,
     #[allow(dead_code)]
     is_sandbox: bool,
 }
@@ -28,54 +27,42 @@ impl RestClient {
         base_url: impl Into<String>,
         rate_limiter: RateLimiter,
         http_client: Arc<dyn HttpClient>,
-        api_key: impl Into<Box<dyn ExposableSecret>>,
-        api_secret: impl Into<Box<dyn ExposableSecret>>,
-        api_passphrase: impl Into<Box<dyn ExposableSecret>>,
+        credentials: Credentials,
         is_sandbox: bool,
     ) -> Self {
         Self {
             base_url: base_url.into(),
             http_client,
             rate_limiter,
-            api_key: api_key.into(),
-            api_secret: api_secret.into(),
-            api_passphrase: api_passphrase.into(),
+            credentials,
             is_sandbox,
         }
     }
 
     /// Create a new private futures REST client with default production settings
     pub fn new_with_credentials(
-        api_key: impl Into<Box<dyn ExposableSecret>>,
-        api_secret: impl Into<Box<dyn ExposableSecret>>,
-        api_passphrase: impl Into<Box<dyn ExposableSecret>>,
+        credentials: Credentials,
         http_client: Arc<dyn HttpClient>,
     ) -> Self {
         Self::new(
             "https://api-futures.kucoin.com",
             RateLimiter::new(),
             http_client,
-            api_key,
-            api_secret,
-            api_passphrase,
+            credentials,
             false,
         )
     }
 
     /// Create a new private futures REST client for sandbox environment
     pub fn new_sandbox(
-        api_key: impl Into<Box<dyn ExposableSecret>>,
-        api_secret: impl Into<Box<dyn ExposableSecret>>,
-        api_passphrase: impl Into<Box<dyn ExposableSecret>>,
+        credentials: Credentials,
         http_client: Arc<dyn HttpClient>,
     ) -> Self {
         Self::new(
             "https://api-sandbox-futures.kucoin.com",
             RateLimiter::new(),
             http_client,
-            api_key,
-            api_secret,
-            api_passphrase,
+            credentials,
             true,
         )
     }
@@ -88,9 +75,9 @@ impl RestClient {
         body: &str,
         timestamp: i64,
     ) -> Result<HashMap<String, String>> {
-        let api_key = self.api_key.expose_secret();
-        let api_secret = self.api_secret.expose_secret();
-        let api_passphrase = self.api_passphrase.expose_secret();
+        let api_key = self.credentials.api_key.expose_secret();
+        let api_secret = self.credentials.api_secret.expose_secret();
+        let api_passphrase = self.credentials.api_passphrase.expose_secret();
 
         // Create the string to sign: timestamp + method + endpoint + body
         let str_to_sign = format!("{}{}{}{}", timestamp, method, endpoint, body);
@@ -374,29 +361,28 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use rest::NativeHttpClient;
-
-    struct MockSecret(String);
-
-    impl ExposableSecret for MockSecret {
-        fn expose_secret(&self) -> String {
-            self.0.clone()
-        }
-    }
+    use rest::{NativeHttpClient, secrets::SecretString};
 
     fn mock_http_client() -> Arc<dyn HttpClient> {
         Arc::new(NativeHttpClient::new().unwrap())
     }
 
+    fn mock_credentials() -> Credentials {
+        Credentials {
+            api_key: SecretString::from("test_key".to_string()),
+            api_secret: SecretString::from("test_secret".to_string()),
+            api_passphrase: SecretString::from("test_passphrase".to_string()),
+        }
+    }
+
     #[test]
     fn test_rest_client_creation() {
+        let credentials = mock_credentials();
         let client = RestClient::new(
             "https://api-futures.kucoin.com",
             RateLimiter::new(),
             mock_http_client(),
-            Box::new(MockSecret("test_key".to_string())) as Box<dyn ExposableSecret>,
-            Box::new(MockSecret("test_secret".to_string())) as Box<dyn ExposableSecret>,
-            Box::new(MockSecret("test_passphrase".to_string())) as Box<dyn ExposableSecret>,
+            credentials,
             false,
         );
 
@@ -406,10 +392,9 @@ mod tests {
 
     #[test]
     fn test_rest_client_new_with_credentials() {
+        let credentials = mock_credentials();
         let client = RestClient::new_with_credentials(
-            Box::new(MockSecret("test_key".to_string())) as Box<dyn ExposableSecret>,
-            Box::new(MockSecret("test_secret".to_string())) as Box<dyn ExposableSecret>,
-            Box::new(MockSecret("test_passphrase".to_string())) as Box<dyn ExposableSecret>,
+            credentials,
             mock_http_client(),
         );
 
@@ -419,10 +404,9 @@ mod tests {
 
     #[test]
     fn test_rest_client_new_sandbox() {
+        let credentials = mock_credentials();
         let client = RestClient::new_sandbox(
-            Box::new(MockSecret("test_key".to_string())) as Box<dyn ExposableSecret>,
-            Box::new(MockSecret("test_secret".to_string())) as Box<dyn ExposableSecret>,
-            Box::new(MockSecret("test_passphrase".to_string())) as Box<dyn ExposableSecret>,
+            credentials,
             mock_http_client(),
         );
 
@@ -432,13 +416,12 @@ mod tests {
 
     #[test]
     fn test_create_auth_headers() {
+        let credentials = mock_credentials();
         let client = RestClient::new(
             "https://api-futures.kucoin.com",
             RateLimiter::new(),
             mock_http_client(),
-            Box::new(MockSecret("test_key".to_string())) as Box<dyn ExposableSecret>,
-            Box::new(MockSecret("test_secret".to_string())) as Box<dyn ExposableSecret>,
-            Box::new(MockSecret("test_passphrase".to_string())) as Box<dyn ExposableSecret>,
+            credentials,
             false,
         );
 
@@ -456,13 +439,12 @@ mod tests {
 
     #[test]
     fn test_auth_signature_generation() {
+        let credentials = mock_credentials();
         let client = RestClient::new(
             "https://api-futures.kucoin.com",
             RateLimiter::new(),
             mock_http_client(),
-            Box::new(MockSecret("api_key".to_string())) as Box<dyn ExposableSecret>,
-            Box::new(MockSecret("api_secret".to_string())) as Box<dyn ExposableSecret>,
-            Box::new(MockSecret("api_passphrase".to_string())) as Box<dyn ExposableSecret>,
+            credentials,
             false,
         );
 
@@ -484,7 +466,19 @@ mod tests {
         assert!(headers.contains_key("KC-API-KEY-VERSION"));
 
         // The signature should be deterministic for the same inputs
-        let headers2 = client
+        let credentials2 = Credentials {
+            api_key: SecretString::from("api_key".to_string()),
+            api_secret: SecretString::from("api_secret".to_string()),
+            api_passphrase: SecretString::from("api_passphrase".to_string()),
+        };
+        let client2 = RestClient::new(
+            "https://api-futures.kucoin.com",
+            RateLimiter::new(),
+            mock_http_client(),
+            credentials2,
+            false,
+        );
+        let headers2 = client2
             .create_auth_headers(
                 "POST",
                 "/api/v1/orders",

@@ -29,14 +29,13 @@ use sha2::Sha256;
 use crate::bitmart::{
     Errors, RestResult,
     rate_limit::{EndpointType, RateLimiter},
+    shared::Credentials,
 };
 
 /// BitMart private REST client
 pub struct RestClient {
-    /// The encrypted API key
-    api_key: Box<dyn ExposableSecret>,
-    /// The encrypted API secret for signing requests
-    api_secret: Box<dyn ExposableSecret>,
+    /// The credentials for API authentication
+    credentials: Credentials,
     /// The base URL for the BitMart private REST API
     base_url: Cow<'static, str>,
     /// HTTP client for making requests
@@ -59,8 +58,7 @@ impl RestClient {
     /// Creates a new RestClient with encrypted API credentials
     ///
     /// # Arguments
-    /// * `api_key` - The encrypted API key
-    /// * `api_secret` - The encrypted API secret
+    /// * `credentials` - The encrypted API credentials
     /// * `base_url` - The base URL for the API
     /// * `http_client` - The HTTP client to use for requests
     /// * `rate_limiter` - The rate limiter for managing API limits
@@ -68,15 +66,13 @@ impl RestClient {
     /// # Returns
     /// A new RestClient instance
     pub fn new(
-        api_key: Box<dyn ExposableSecret>,
-        api_secret: Box<dyn ExposableSecret>,
+        credentials: Credentials,
         base_url: impl Into<Cow<'static, str>>,
         http_client: Arc<dyn HttpClient>,
         rate_limiter: RateLimiter,
     ) -> Self {
         Self {
-            api_key,
-            api_secret,
+            credentials,
             base_url: base_url.into(),
             http_client,
             rate_limiter,
@@ -109,7 +105,7 @@ impl RestClient {
         let message = format!("{timestamp}{method}{request_path}{body}");
 
         // Sign with HMAC SHA256
-        let api_secret = self.api_secret.expose_secret();
+        let api_secret = self.credentials.api_secret.expose_secret();
         let mut mac = Hmac::<Sha256>::new_from_slice(api_secret.as_bytes())
             .map_err(|_| Errors::InvalidApiKey())?;
         mac.update(message.as_bytes());
@@ -170,7 +166,7 @@ impl RestClient {
 
         // Build GET request
         let request = RequestBuilder::new(HttpMethod::Get, url)
-            .header("X-BM-KEY", self.api_key.expose_secret())
+            .header("X-BM-KEY", self.credentials.api_key.expose_secret())
             .header("X-BM-SIGN", &signature)
             .header("X-BM-TIMESTAMP", &timestamp)
             .header("Content-Type", "application/json")
@@ -230,7 +226,7 @@ impl RestClient {
 
         // Build POST request
         let request = RequestBuilder::new(HttpMethod::Post, url)
-            .header("X-BM-KEY", self.api_key.expose_secret())
+            .header("X-BM-KEY", self.credentials.api_key.expose_secret())
             .header("X-BM-SIGN", &signature)
             .header("X-BM-TIMESTAMP", &timestamp)
             .header("Content-Type", "application/json")
@@ -302,7 +298,7 @@ impl RestClient {
 
         // Build DELETE request
         let request = RequestBuilder::new(HttpMethod::Delete, url)
-            .header("X-BM-KEY", self.api_key.expose_secret())
+            .header("X-BM-KEY", self.credentials.api_key.expose_secret())
             .header("X-BM-SIGN", &signature)
             .header("X-BM-TIMESTAMP", &timestamp)
             .header("Content-Type", "application/json")
@@ -362,7 +358,7 @@ impl RestClient {
 
         // Build PUT request
         let request = RequestBuilder::new(HttpMethod::Put, url)
-            .header("X-BM-KEY", self.api_key.expose_secret())
+            .header("X-BM-KEY", self.credentials.api_key.expose_secret())
             .header("X-BM-SIGN", &signature)
             .header("X-BM-TIMESTAMP", &timestamp)
             .header("Content-Type", "application/json")
@@ -515,39 +511,17 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use rest::secrets::ExposableSecret;
-
     use super::*;
     use crate::bitmart::rate_limit::RateLimiter;
 
-    #[derive(Clone)]
-    struct TestSecret {
-        value: String,
-    }
-
-    impl TestSecret {
-        fn new(value: String) -> Self {
-            Self { value }
-        }
-    }
-
-    impl ExposableSecret for TestSecret {
-        fn expose_secret(&self) -> String {
-            self.value.clone()
-        }
-    }
-
     #[test]
     fn test_private_client_creation() {
-        let api_key = Box::new(TestSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret =
-            Box::new(TestSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let credentials = Credentials::new("test_key", "test_secret");
         let http_client = Arc::new(rest::native::NativeHttpClient::default());
         let rate_limiter = RateLimiter::new();
 
         let rest_client = RestClient::new(
-            api_key,
-            api_secret,
+            credentials,
             "https://api-cloud.bitmart.com",
             http_client,
             rate_limiter,
@@ -558,15 +532,12 @@ mod tests {
 
     #[test]
     fn test_signature_generation() {
-        let api_key = Box::new(TestSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret =
-            Box::new(TestSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let credentials = Credentials::new("test_key", "test_secret");
         let http_client = Arc::new(rest::native::NativeHttpClient::default());
         let rate_limiter = RateLimiter::new();
 
         let rest_client = RestClient::new(
-            api_key,
-            api_secret,
+            credentials,
             "https://api-cloud.bitmart.com",
             http_client,
             rate_limiter,

@@ -172,29 +172,15 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use std::sync::Arc;
-    use rest::secrets::ExposableSecret;
-    use serde_json::{Value, json};
+use serde_json::{Value, json};
 
     use super::*;
     use crate::deribit::AccountTier;
 
-    // Test secret implementation
-    #[derive(Clone)]
-    struct PlainTextSecret {
-        secret: String,
-    }
+    
+    use crate::deribit::private::rest::credentials::Credentials;
+    use rest::secrets::SecretString;
 
-    impl PlainTextSecret {
-        fn new(secret: String) -> Self {
-            Self { secret }
-        }
-    }
-
-    impl ExposableSecret for PlainTextSecret {
-        fn expose_secret(&self) -> String {
-            self.secret.clone()
-        }
-    }
 
     #[test]
     fn test_index_name_serialization() {
@@ -434,16 +420,15 @@ mod tests {
     #[tokio::test]
     async fn test_set_mmp_config_method_exists() {
         // Test that the method exists and compiles without needing to call it
-        let api_key =
-            Box::new(PlainTextSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret =
-            Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let credentials = Credentials {
+            api_key: SecretString::from("test_key".to_string()),
+            api_secret: SecretString::from("test_secret".to_string()),
+        };
         let http_client = Arc::new(rest::native::NativeHttpClient::default());
         let rate_limiter = crate::deribit::RateLimiter::new(AccountTier::Tier4);
 
         let rest_client = RestClient::new(
-            api_key,
-            api_secret,
+            credentials,
             "https://test.deribit.com",
             rate_limiter,
             http_client,

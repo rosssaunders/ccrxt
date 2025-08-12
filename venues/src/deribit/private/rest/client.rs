@@ -7,6 +7,7 @@ use serde::{Serialize, de::DeserializeOwned};
 use serde_json::json;
 use sha2::Sha256;
 
+use super::credentials::Credentials;
 use crate::deribit::{EndpointType, Errors, RateLimiter, RestResult};
 
 /// Private REST client for Deribit exchange
@@ -23,19 +24,15 @@ pub struct RestClient {
     /// The rate limiter used to manage request rates
     pub rate_limiter: RateLimiter,
 
-    /// The encrypted API key
-    pub(crate) api_key: Box<dyn ExposableSecret>,
-
-    /// The encrypted API secret
-    pub(crate) api_secret: Box<dyn ExposableSecret>,
+    /// The API credentials for authentication
+    pub(crate) credentials: Credentials,
 }
 
 impl RestClient {
     /// Creates a new RestClient with encrypted API credentials
     ///
     /// # Arguments
-    /// * `api_key` - The encrypted API key
-    /// * `api_secret` - The encrypted API secret
+    /// * `credentials` - The API credentials for authentication
     /// * `base_url` - The base URL for the API
     /// * `rate_limiter` - The rate limiter instance
     /// * `http_client` - The HTTP client instance
@@ -43,8 +40,7 @@ impl RestClient {
     /// # Returns
     /// A new RestClient instance
     pub fn new(
-        api_key: Box<dyn ExposableSecret>,
-        api_secret: Box<dyn ExposableSecret>,
+        credentials: Credentials,
         base_url: impl Into<Cow<'static, str>>,
         rate_limiter: RateLimiter,
         http_client: Arc<dyn HttpClient>,
@@ -53,8 +49,7 @@ impl RestClient {
             base_url: base_url.into(),
             http_client,
             rate_limiter,
-            api_key,
-            api_secret,
+            credentials,
         }
     }
 
@@ -82,7 +77,7 @@ impl RestClient {
         let sig_payload = format!("{request_data}{nonce}{request_id}");
 
         // Sign with HMAC-SHA256
-        let api_secret = self.api_secret.expose_secret();
+        let api_secret = self.credentials.api_secret.expose_secret();
         let mut mac = Hmac::<Sha256>::new_from_slice(api_secret.as_bytes())
             .map_err(|_| Errors::InvalidApiKey())?;
         mac.update(sig_payload.as_bytes());
@@ -126,7 +121,7 @@ impl RestClient {
             "params": params,
             "sig": signature,
             "nonce": nonce,
-            "api_key": self.api_key.expose_secret(),
+            "api_key": self.credentials.api_key.expose_secret(),
         });
 
         // Send HTTP request
@@ -169,36 +164,19 @@ mod tests {
     use std::sync::Arc;
     use super::*;
     use crate::deribit::AccountTier;
-
-    // Test secret implementation
-    #[derive(Clone)]
-    struct TestSecret {
-        secret: String,
-    }
-
-    impl TestSecret {
-        fn new(secret: String) -> Self {
-            Self { secret }
-        }
-    }
-
-    impl ExposableSecret for TestSecret {
-        fn expose_secret(&self) -> String {
-            self.secret.clone()
-        }
-    }
+    use rest::secrets::SecretString;
 
     #[test]
     fn test_private_client_creation() {
-        let api_key = Box::new(TestSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret =
-            Box::new(TestSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let credentials = Credentials {
+            api_key: SecretString::from("test_key".to_string()),
+            api_secret: SecretString::from("test_secret".to_string()),
+        };
         let http_client = Arc::new(rest::native::NativeHttpClient::default());
         let rate_limiter = RateLimiter::new(AccountTier::Tier4);
 
         let rest_client = RestClient::new(
-            api_key,
-            api_secret,
+            credentials,
             "https://test.deribit.com",
             rate_limiter,
             http_client,
@@ -209,15 +187,15 @@ mod tests {
 
     #[test]
     fn test_signature_generation() {
-        let api_key = Box::new(TestSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret =
-            Box::new(TestSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let credentials = Credentials {
+            api_key: SecretString::from("test_key".to_string()),
+            api_secret: SecretString::from("test_secret".to_string()),
+        };
         let http_client = Arc::new(rest::native::NativeHttpClient::default());
         let rate_limiter = RateLimiter::new(AccountTier::Tier4);
 
         let rest_client = RestClient::new(
-            api_key,
-            api_secret,
+            credentials,
             "https://test.deribit.com",
             rate_limiter,
             http_client,

@@ -9,6 +9,8 @@ use serde::{Serialize, de::DeserializeOwned};
 use sha2::{Digest, Sha512};
 
 use crate::gateio::unified::{RestResult, rate_limit::RateLimiter};
+use crate::gateio::shared::credentials::Credentials;
+use rest::secrets::ExposableSecret;
 
 const LIVE_URL: &str = "https://api.gateio.ws/api/v4";
 const TESTNET_URL: &str = "https://api-testnet.gateapi.io/api/v4";
@@ -18,19 +20,17 @@ const TESTNET_URL: &str = "https://api-testnet.gateapi.io/api/v4";
 pub struct RestClient {
     http_client: Arc<dyn HttpClient>,
     base_url: String,
-    api_key: String,
-    api_secret: String,
+    credentials: Credentials,
     rate_limiter: Arc<RateLimiter>,
 }
 
 impl RestClient {
     /// Create a new private REST client
-    pub fn new(http_client: Arc<dyn HttpClient>, api_key: String, api_secret: String, testnet: bool) -> RestResult<Self> {
+    pub fn new(http_client: Arc<dyn HttpClient>, credentials: Credentials, testnet: bool) -> RestResult<Self> {
         Ok(Self {
             http_client,
             base_url: if testnet { TESTNET_URL } else { LIVE_URL }.to_string(),
-            api_key,
-            api_secret,
+            credentials,
             rate_limiter: Arc::new(RateLimiter::new()),
         })
     }
@@ -61,7 +61,7 @@ impl RestClient {
         );
 
         // Generate HMAC-SHA512 signature
-        let key = hmac::Key::new(hmac::HMAC_SHA512, self.api_secret.as_bytes());
+        let key = hmac::Key::new(hmac::HMAC_SHA512, self.credentials.api_secret.expose_secret().as_bytes());
         let signature = hmac::sign(&key, signature_string.as_bytes());
 
         hex::encode(signature.as_ref())
@@ -196,7 +196,7 @@ impl RestClient {
 
         // Build request
         let mut request = RequestBuilder::new(method, full_url)
-            .header("KEY", &self.api_key)
+            .header("KEY", self.credentials.api_key.expose_secret())
             .header("Timestamp", &timestamp)
             .header("SIGN", signature);
 

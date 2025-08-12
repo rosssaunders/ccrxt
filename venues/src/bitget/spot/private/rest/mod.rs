@@ -11,6 +11,7 @@ mod cancel_replace_order;
 mod cancel_symbol_order;
 mod cancel_withdrawal;
 mod client;
+mod credentials;
 mod current_plan_order;
 mod deposit_address;
 mod deposit_records;
@@ -46,6 +47,7 @@ pub use bgb_deduct_info::{BgbDeductInfo, GetBgbDeductInfoRequest, GetBgbDeductIn
 pub use bills::{BillInfo, BillsRequest, BillsResponse};
 pub use cancel_withdrawal::{CancelWithdrawalRequest, CancelWithdrawalResponse};
 pub use client::RestClient;
+pub use credentials::Credentials;
 pub use deposit_address::{
     DepositAddressInfo, GetDepositAddressRequest, GetDepositAddressResponse,
 };

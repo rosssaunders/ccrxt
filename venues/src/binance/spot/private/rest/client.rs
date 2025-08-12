@@ -1,9 +1,10 @@
-use rest::http_client::Method as HttpMethod;
+use rest::{http_client::Method as HttpMethod, HttpClient};
 use serde::Serialize;
+use std::{borrow::Cow, sync::Arc};
 
 use crate::binance::{
-    shared::{Errors as SharedErrors, client::PrivateBinanceClient},
-    spot::{Errors, RestResponse, RestResult},
+    shared::{Errors as SharedErrors, client::PrivateBinanceClient, credentials::Credentials, rate_limiter::RateLimiter, venue_trait::VenueConfig},
+    spot::{Errors, RestResponse, RestResult, SpotConfig},
 };
 
 pub struct SpotPrivateRestClient(PrivateBinanceClient);
@@ -17,6 +18,56 @@ impl From<PrivateBinanceClient> for SpotPrivateRestClient {
 }
 
 impl SpotPrivateRestClient {
+    /// Create a new SpotPrivateRestClient with credentials and HTTP client
+    ///
+    /// Creates a new private REST client for Binance Spot using the provided credentials
+    /// and HTTP client implementation.
+    ///
+    /// # Arguments
+    /// * `credentials` - API credentials containing key and secret
+    /// * `http_client` - HTTP client implementation to use for requests
+    ///
+    /// # Returns
+    /// A new `SpotPrivateRestClient` instance configured for Spot trading
+    ///
+    /// # Example
+    /// ```no_run
+    /// use std::sync::Arc;
+    /// use rest::{secrets::SecretString, HttpClient};
+    /// use venues::binance::spot::private::rest::{RestClient, Credentials};
+    ///
+    /// # #[derive(Debug)]
+    /// # struct MyHttpClient;
+    /// # #[async_trait::async_trait]
+    /// # impl HttpClient for MyHttpClient {
+    /// #     async fn execute(&self, _: rest::Request) -> Result<rest::Response, rest::HttpError> {
+    /// #         unimplemented!()
+    /// #     }
+    /// # }
+    ///
+    /// let credentials = Credentials {
+    ///     api_key: SecretString::new("your_api_key".to_string().into()),
+    ///     api_secret: SecretString::new("your_api_secret".to_string().into()),
+    /// };
+    ///
+    /// let http_client: Arc<dyn HttpClient> = Arc::new(MyHttpClient);
+    /// let client = RestClient::new(credentials, http_client);
+    /// ```
+    pub fn new(credentials: Credentials, http_client: Arc<dyn HttpClient>) -> Self {
+        let config = SpotConfig;
+        let rate_limiter = RateLimiter::new(config.rate_limits());
+        
+        let private_client = PrivateBinanceClient::new(
+            Cow::Owned(config.base_url().to_string()),
+            http_client,
+            rate_limiter,
+            Box::new(credentials.api_key.clone()),
+            Box::new(credentials.api_secret.clone()),
+        );
+        
+        SpotPrivateRestClient(private_client)
+    }
+
     /// Send a signed GET request with spot-specific response type (high-performance)
     pub async fn send_get_signed_request<T, R>(
         &self,

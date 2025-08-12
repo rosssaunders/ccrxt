@@ -9,6 +9,7 @@ use rest::secrets::ExposableSecret;
 use sha2::Sha256;
 
 pub mod client;
+pub mod credentials;
 pub mod errors;
 pub mod rate_limiter;
 pub mod venue_trait;
@@ -17,6 +18,7 @@ pub mod venue_trait;
 pub use client::{
     PrivateBinanceClient, PublicBinanceClient, RateLimitInfo, ResponseHeaders, RestResponse,
 };
+pub use credentials::Credentials;
 pub use errors::{ApiError, ErrorResponse, Errors};
 pub use rate_limiter::{RateLimiter, UsageStats};
 pub use venue_trait::{RateLimits, VenueConfig};

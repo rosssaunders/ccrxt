@@ -20,11 +20,11 @@ pub use public::RestClient as PublicRestClient;
 
 pub mod private {
     pub mod rest;
-    pub use self::rest::RestClient;
+    pub use self::rest::{Credentials, RestClient};
 }
 
 pub use errors::ErrorResponse;
-pub use private::RestClient as PrivateRestClient;
+pub use private::{Credentials, RestClient as PrivateRestClient};
 // Alias for backward compatibility
 pub use rate_limit::{RateLimitHeader, RateLimiter};
 
