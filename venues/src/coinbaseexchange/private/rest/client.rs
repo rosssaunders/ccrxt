@@ -121,7 +121,9 @@ impl RestClient {
         let (request_path, query_string) = params
             .map(|p| {
                 serde_urlencoded::to_string(p)
-                    .map_err(|e| Errors::Error(format!("Failed to serialize query parameters: {e}")))
+                    .map_err(|e| {
+                        Errors::Error(format!("Failed to serialize query parameters: {e}"))
+                    })
                     .map(|qs| {
                         let empty = qs.is_empty();
                         // Always compute both branches to avoid branching
@@ -177,21 +179,15 @@ impl RestClient {
         let timestamp = Utc::now().timestamp().to_string();
 
         // Use function pointers to avoid branching on method type
-        type ParamBuilder<P> = fn(
-            &RestClient,
-            &str,
-            Option<&P>,
-        ) -> Result<(String, String, String), Errors>;
+        type ParamBuilder<P> =
+            fn(&RestClient, &str, Option<&P>) -> Result<(String, String, String), Errors>;
 
         // Create lookup table for method handlers (computed at compile time)
         let method_index = ((method != HttpMethod::Get) as u8).min(1);
-        let builders: [ParamBuilder<P>; 2] = [
-            Self::build_get_params,
-            Self::build_body_params,
-        ];
+        let builders: [ParamBuilder<P>; 2] = [Self::build_get_params, Self::build_body_params];
 
         // Call the appropriate builder without branching
-        let (request_path, body, query_or_body) = 
+        let (request_path, body, query_or_body) =
             builders[method_index as usize](self, endpoint, params)?;
 
         // Create signature
@@ -217,7 +213,7 @@ impl RestClient {
         // Build request
         let api_key = self.api_key.expose_secret();
         let api_passphrase = self.api_passphrase.expose_secret();
-        
+
         let mut builder = RequestBuilder::new(method, url)
             .header("CB-ACCESS-KEY", &api_key)
             .header("CB-ACCESS-SIGN", &signature)
@@ -233,7 +229,10 @@ impl RestClient {
         }
 
         // Send request
-        let response = self.http_client.execute(builder.build()).await
+        let response = self
+            .http_client
+            .execute(builder.build())
+            .await
             .map_err(|e| Errors::NetworkError(format!("HTTP request failed: {e}")))?;
 
         // Process response
@@ -243,17 +242,19 @@ impl RestClient {
         } else {
             None
         };
-        let response_text = response.text()
+        let response_text = response
+            .text()
             .map_err(|e| Errors::NetworkError(format!("Failed to read response: {e}")))?;
 
         // Use lookup table for error handling to avoid branching
         let parse_result = serde_json::from_str::<T>(&response_text);
-        let error_result = serde_json::from_str::<crate::coinbaseexchange::ErrorResponse>(&response_text);
+        let error_result =
+            serde_json::from_str::<crate::coinbaseexchange::ErrorResponse>(&response_text);
 
         // Branchless status code to error conversion using array indexing
         const ERROR_TABLE_SIZE: usize = 501;
         let mut error_table = [None; ERROR_TABLE_SIZE];
-        
+
         // Initialize error table c
         error_table[400] = Some(0); // BadRequest
         error_table[401] = Some(1); // Unauthorized
@@ -270,24 +271,35 @@ impl RestClient {
             (true, Ok(data), _) => Ok((data, headers_map)),
             (false, _, Ok(error_response)) => {
                 // Use lookup table to determine error type
-                let error_index = status_code
-                    .min(ERROR_TABLE_SIZE - 1);
+                let error_index = status_code.min(ERROR_TABLE_SIZE - 1);
                 let error_type = error_table.get(error_index).and_then(|&x| x).unwrap_or(6);
-                
+
                 // Create error based on type
                 let api_errors = [
-                    crate::coinbaseexchange::ApiError::BadRequest { msg: error_response.message.clone() },
-                    crate::coinbaseexchange::ApiError::Unauthorized { msg: error_response.message.clone() },
-                    crate::coinbaseexchange::ApiError::Forbidden { msg: error_response.message.clone() },
-                    crate::coinbaseexchange::ApiError::NotFound { msg: error_response.message.clone() },
-                    crate::coinbaseexchange::ApiError::TooManyRequests { msg: error_response.message.clone() },
-                    crate::coinbaseexchange::ApiError::InternalServerError { msg: error_response.message.clone() },
-                    crate::coinbaseexchange::ApiError::UnknownApiError { 
-                        code: Some(status_code as i32), 
-                        msg: error_response.message.clone() 
+                    crate::coinbaseexchange::ApiError::BadRequest {
+                        msg: error_response.message.clone(),
+                    },
+                    crate::coinbaseexchange::ApiError::Unauthorized {
+                        msg: error_response.message.clone(),
+                    },
+                    crate::coinbaseexchange::ApiError::Forbidden {
+                        msg: error_response.message.clone(),
+                    },
+                    crate::coinbaseexchange::ApiError::NotFound {
+                        msg: error_response.message.clone(),
+                    },
+                    crate::coinbaseexchange::ApiError::TooManyRequests {
+                        msg: error_response.message.clone(),
+                    },
+                    crate::coinbaseexchange::ApiError::InternalServerError {
+                        msg: error_response.message.clone(),
+                    },
+                    crate::coinbaseexchange::ApiError::UnknownApiError {
+                        code: Some(status_code as i32),
+                        msg: error_response.message.clone(),
                     },
                 ];
-                
+
                 Err(Errors::ApiError(api_errors[error_type.min(6)].clone()))
             }
             _ => Err(Errors::Error(format!("HTTP {status}: {response_text}"))),
@@ -429,13 +441,8 @@ impl RestClient {
         T: DeserializeOwned,
         P: Serialize,
     {
-        self.send_request(
-            endpoint,
-            HttpMethod::Post,
-            Some(&params),
-            endpoint_type,
-        )
-        .await
+        self.send_request(endpoint, HttpMethod::Post, Some(&params), endpoint_type)
+            .await
     }
 
     /// Send a PUT request to a private endpoint
@@ -480,13 +487,8 @@ impl RestClient {
         T: DeserializeOwned,
         P: Serialize,
     {
-        self.send_request(
-            endpoint,
-            HttpMethod::Delete,
-            Some(&params),
-            endpoint_type,
-        )
-        .await
+        self.send_request(endpoint, HttpMethod::Delete, Some(&params), endpoint_type)
+            .await
     }
 
     /// Send a GET request to a private endpoint with headers
@@ -544,14 +546,14 @@ mod tests {
     fn test_signature_generation() {
         // Test based on Coinbase documentation example
         // https://docs.cloud.coinbase.com/exchange/docs/authorization-and-authentication
-        
+
         // Create a mock client with test credentials
         let api_secret = Box::new(rest::secrets::SecretString::from(
             "TEST_SECRET_BASE64_ENCODED",
         ));
         let api_key = Box::new(rest::secrets::SecretString::from("test_key"));
         let api_passphrase = Box::new(rest::secrets::SecretString::from("test_passphrase"));
-        
+
         let rest_client = RestClient::new(
             api_key,
             api_secret,
@@ -563,7 +565,7 @@ mod tests {
 
         // Test signature generation with known inputs
         let result = rest_client.sign_request("1640995200", "GET", "/accounts", "");
-        
+
         // Should not error even with invalid base64 secret
         assert!(result.is_err());
     }
@@ -573,7 +575,7 @@ mod tests {
         let api_secret = Box::new(rest::secrets::SecretString::from("secret"));
         let api_key = Box::new(rest::secrets::SecretString::from("key"));
         let api_passphrase = Box::new(rest::secrets::SecretString::from("passphrase"));
-        
+
         let rest_client = RestClient::new(
             api_key,
             api_secret,

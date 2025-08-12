@@ -19,9 +19,8 @@ use venues::deribit::{
     GetLastTradesByInstrumentRequest, GetMarkPriceHistoryRequest,
     GetOrderBookByInstrumentIdRequest, GetOrderBookRequest, GetRfqsRequest, GetTradeVolumesRequest,
     GetTradingviewChartDataRequest, GetVolatilityIndexDataRequest, InstrumentKind,
-    PublicRestClient, RateLimiter, Resolution,
+    PublicRestClient, RateLimiter, Resolution, public::rest::get_time::GetTimeRequest,
 };
-use venues::deribit::public::rest::get_time::GetTimeRequest;
 
 /// Helper function to create a test client for public endpoints
 fn create_public_test_client() -> PublicRestClient {

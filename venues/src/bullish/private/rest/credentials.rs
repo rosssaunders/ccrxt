@@ -1,10 +1,11 @@
+use std::fmt;
+
 use rest::secrets::SecretString;
-use serde::ser::SerializeStruct;
 use serde::{
     Deserialize, Deserializer, Serialize, Serializer,
     de::{MapAccess, Visitor},
+    ser::SerializeStruct,
 };
-use std::fmt;
 
 /// Credentials for Bullish private REST API authentication.
 ///

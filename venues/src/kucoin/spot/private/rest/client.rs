@@ -1,5 +1,5 @@
-use super::credentials::Credentials;
-use crate::kucoin::spot::{ApiError, RateLimiter, ResponseHeaders, RestResponse, Result};
+use std::collections::HashMap;
+
 use base64::{Engine as _, engine::general_purpose};
 use chrono::Utc;
 use hmac::{Hmac, Mac};
@@ -7,7 +7,9 @@ use reqwest::Client;
 use rest::secrets::ExposableSecret;
 use serde::{Serialize, de::DeserializeOwned};
 use sha2::Sha256;
-use std::collections::HashMap;
+
+use super::credentials::Credentials;
+use crate::kucoin::spot::{ApiError, RateLimiter, ResponseHeaders, RestResponse, Result};
 
 #[derive(Debug, Clone)]
 pub struct RestClient {
@@ -327,8 +329,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use rest::secrets::SecretString;
+
+    use super::*;
     fn creds() -> Credentials {
         Credentials {
             api_key: SecretString::new("test_key".into()),

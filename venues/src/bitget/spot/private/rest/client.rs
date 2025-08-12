@@ -228,7 +228,10 @@ impl RestClient {
         // Execute request
         let start_time = std::time::Instant::now();
         let request = builder.build();
-        let response = self.http_client.execute(request).await
+        let response = self
+            .http_client
+            .execute(request)
+            .await
             .map_err(|e| Errors::HttpError(format!("HTTP request failed: {e}")))?;
         let _request_duration = start_time.elapsed();
 
@@ -240,7 +243,8 @@ impl RestClient {
 
         // Handle HTTP status codes
         let status = response.status;
-        let response_text = response.text()
+        let response_text = response
+            .text()
             .map_err(|e| Errors::HttpError(format!("Failed to read response: {e}")))?;
 
         // Parse response
@@ -302,8 +306,7 @@ impl RestClient {
                         Ok(error_response) => Err(Errors::ApiError(error_response.into())),
                         Err(_) => Err(Errors::Error(format!(
                             "HTTP {} error: {}",
-                            status,
-                            response_text
+                            status, response_text
                         ))),
                     }
                 }

@@ -92,7 +92,7 @@ impl RestClient {
         }
 
         self.send_get_request(&url, EndpointType::PublicTrades)
-        .await
+            .await
     }
 }
 

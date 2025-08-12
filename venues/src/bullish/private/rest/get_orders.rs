@@ -1,9 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-use crate::bullish::enums::OrderSide;
-use crate::bullish::private::rest::client::RestClient;
 use crate::bullish::{
-    DataOrPaginated, EndpointType, PaginatedResult, PaginationParams, RestResult,
+    DataOrPaginated, EndpointType, PaginatedResult, PaginationParams, RestResult, enums::OrderSide,
+    private::rest::client::RestClient,
 };
 
 /// Endpoint URL for orders operations

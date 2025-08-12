@@ -1,8 +1,10 @@
 use serde::{Deserialize, Serialize};
 
-use crate::bullish::enums::{OrderSide, OrderType, TimeInForce};
-use crate::bullish::private::rest::client::RestClient;
-use crate::bullish::{EndpointType, RestResult};
+use crate::bullish::{
+    EndpointType, RestResult,
+    enums::{OrderSide, OrderType, TimeInForce},
+    private::rest::client::RestClient,
+};
 
 /// Endpoint URL for orders operations
 const ORDERS_ENDPOINT: &str = "/v2/orders";

@@ -96,7 +96,10 @@ impl RestClient {
         let request = RequestBuilder::new(HttpMethod::Get, url).build();
 
         // Send the request
-        let response = self.http_client.execute(request).await
+        let response = self
+            .http_client
+            .execute(request)
+            .await
             .map_err(|e| Errors::NetworkError(format!("HTTP request failed: {e}")))?;
 
         // Record the request for rate limiting
@@ -112,7 +115,8 @@ impl RestClient {
         }
 
         // Parse the response
-        let response_text = response.text()
+        let response_text = response
+            .text()
             .map_err(|e| Errors::NetworkError(format!("Failed to read response: {e}")))?;
         let parsed_response: T = serde_json::from_str(&response_text)?;
 

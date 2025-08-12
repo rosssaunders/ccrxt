@@ -34,8 +34,7 @@ impl RestClient {
         request: &GetProductRequest,
     ) -> RestResult<GetProductResponse> {
         let endpoint = ENDPOINT_PATH.replace("{}", product_id);
-        self.send_get_request(&endpoint, Some(request))
-            .await
+        self.send_get_request(&endpoint, Some(request)).await
     }
 }
 

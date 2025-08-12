@@ -1,8 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::bullish::RestResult;
-use crate::bullish::private::rest::RestClient;
-use crate::bullish::{EndpointType, Errors};
+use crate::bullish::{EndpointType, Errors, RestResult, private::rest::RestClient};
 
 /// Endpoint constant for login
 const LOGIN_ENDPOINT: &str = "/v2/users/login";

@@ -167,7 +167,7 @@ pub struct SingleAssetResponse {
 
 impl RestClient {
     /// Get all assets
-    /// 
+    ///
     /// Retrieve information for all assets available on the exchange.
     ///
     /// [docs]: https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/assets
@@ -176,7 +176,7 @@ impl RestClient {
     /// List of all assets with their properties and trading parameters
     pub async fn get_assets(&self) -> RestResult<Vec<Asset>> {
         self.send_get_request(ASSETS_ENDPOINT, EndpointType::PublicAssets)
-        .await
+            .await
     }
 
     /// Get specific asset by symbol
@@ -194,7 +194,7 @@ impl RestClient {
         let url = SINGLE_ASSET_ENDPOINT.replace("{}", &request.symbol);
 
         self.send_get_request(&url, EndpointType::PublicAssets)
-        .await
+            .await
     }
 }
 

@@ -723,7 +723,7 @@ impl PublicBinanceClient {
 
         // Build the request with API key header
         let mut builder = RequestBuilder::new(method, url.clone());
-        
+
         // Add API key header for MARKET_DATA endpoints
         builder = builder.header("X-MBX-APIKEY", api_key.expose_secret());
 

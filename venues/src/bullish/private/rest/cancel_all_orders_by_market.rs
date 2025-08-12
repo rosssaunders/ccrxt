@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::bullish::private::rest::client::RestClient;
-use crate::bullish::{EndpointType, RestResult};
+use crate::bullish::{EndpointType, RestResult, private::rest::client::RestClient};
 
 const COMMAND_ENDPOINT: &str = "/v2/command";
 
@@ -52,8 +51,7 @@ impl RestClient {
         &mut self,
         request: CancelAllOrdersByMarketRequest,
     ) -> RestResult<CancelAllOrdersByMarketResponse> {
-        self
-            .send_post_request(COMMAND_ENDPOINT, request, EndpointType::PrivateOrders)
+        self.send_post_request(COMMAND_ENDPOINT, request, EndpointType::PrivateOrders)
             .await
     }
 }

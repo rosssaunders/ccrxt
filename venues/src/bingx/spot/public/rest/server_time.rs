@@ -51,7 +51,11 @@ mod tests {
 
     #[tokio::test]
     async fn test_get_server_time_request_structure() {
-        let client = RestClient::new("http://127.0.0.1:0", std::sync::Arc::new(rest::native::NativeHttpClient::default()), RateLimiter::new());
+        let client = RestClient::new(
+            "http://127.0.0.1:0",
+            std::sync::Arc::new(rest::native::NativeHttpClient::default()),
+            RateLimiter::new(),
+        );
 
         // Test that the method exists and can be called
         // Note: This is a structure test, not an actual API call

@@ -4,6 +4,7 @@
 //! Tests run against the live Bitget API using real market data.
 
 use std::sync::Arc;
+
 use tokio;
 use venues::bitget::spot::{
     ApiError, CandlestickGranularity, DepthType, PricePrecision, PublicRestClient, RateLimiter,

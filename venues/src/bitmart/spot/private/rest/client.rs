@@ -177,7 +177,10 @@ impl RestClient {
             .build();
 
         // Send request
-        let response = self.http_client.execute(request).await
+        let response = self
+            .http_client
+            .execute(request)
+            .await
             .map_err(|e| Errors::NetworkError(format!("HTTP request failed: {e}")))?;
 
         // Record the request for rate limiting
@@ -235,7 +238,10 @@ impl RestClient {
             .build();
 
         // Send request
-        let response = self.http_client.execute(request).await
+        let response = self
+            .http_client
+            .execute(request)
+            .await
             .map_err(|e| Errors::NetworkError(format!("HTTP request failed: {e}")))?;
 
         // Record the request for rate limiting
@@ -303,7 +309,10 @@ impl RestClient {
             .build();
 
         // Send request
-        let response = self.http_client.execute(request).await
+        let response = self
+            .http_client
+            .execute(request)
+            .await
             .map_err(|e| Errors::NetworkError(format!("HTTP request failed: {e}")))?;
 
         // Record the request for rate limiting
@@ -361,7 +370,10 @@ impl RestClient {
             .build();
 
         // Send request
-        let response = self.http_client.execute(request).await
+        let response = self
+            .http_client
+            .execute(request)
+            .await
             .map_err(|e| Errors::NetworkError(format!("HTTP request failed: {e}")))?;
 
         // Record the request for rate limiting
@@ -382,7 +394,8 @@ impl RestClient {
         T: DeserializeOwned,
     {
         // Parse response
-        let response_text = response.text()
+        let response_text = response
+            .text()
             .map_err(|e| Errors::NetworkError(format!("Failed to read response: {e}")))?;
         let bitmart_response: BitMartResponse<T> =
             serde_json::from_str(&response_text).map_err(|e| {

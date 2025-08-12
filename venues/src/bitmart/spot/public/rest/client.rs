@@ -96,9 +96,8 @@ impl RestClient {
 
         // Build URL with query parameters
         let final_url = if let Some(req) = request {
-            let query_params = serde_urlencoded::to_string(req).map_err(|e| {
-                Errors::Error(format!("Failed to serialize query parameters: {e}"))
-            })?;
+            let query_params = serde_urlencoded::to_string(req)
+                .map_err(|e| Errors::Error(format!("Failed to serialize query parameters: {e}")))?;
 
             if query_params.is_empty() {
                 url
@@ -113,14 +112,18 @@ impl RestClient {
         let request = RequestBuilder::new(HttpMethod::Get, final_url).build();
 
         // Send request
-        let response = self.http_client.execute(request).await
+        let response = self
+            .http_client
+            .execute(request)
+            .await
             .map_err(|e| Errors::NetworkError(format!("HTTP request failed: {e}")))?;
 
         // Record the request for rate limiting
         self.rate_limiter.increment_request(endpoint_type).await;
 
         // Parse response
-        let response_text = response.text()
+        let response_text = response
+            .text()
             .map_err(|e| Errors::NetworkError(format!("Failed to read response: {e}")))?;
         let bitmart_response: BitMartResponse<T> =
             serde_json::from_str(&response_text).map_err(|e| {
@@ -155,7 +158,8 @@ mod tests {
         let http_client = std::sync::Arc::new(rest::native::NativeHttpClient::default());
         let rate_limiter = RateLimiter::new();
 
-        let rest_client = RestClient::new("https://api-cloud.bitmart.com", http_client, rate_limiter);
+        let rest_client =
+            RestClient::new("https://api-cloud.bitmart.com", http_client, rate_limiter);
 
         assert_eq!(rest_client.base_url, "https://api-cloud.bitmart.com");
     }

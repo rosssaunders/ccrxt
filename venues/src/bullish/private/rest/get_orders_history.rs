@@ -1,9 +1,9 @@
 use serde::Serialize;
 
-use crate::bullish::enums::{OrderSide, OrderStatus};
-use crate::bullish::private::rest::client::RestClient;
 use crate::bullish::{
     DataOrPaginated, EndpointType, PaginatedResult, PaginationParams, RestResult,
+    enums::{OrderSide, OrderStatus},
+    private::rest::client::RestClient,
 };
 
 /// Endpoint URL for historical orders operations

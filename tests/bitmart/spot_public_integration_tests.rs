@@ -12,6 +12,7 @@ use venues::bitmart::spot::public::rest::{
 /// Helper function to create a test client
 fn create_spot_test_client() -> RestClient {
     use std::sync::Arc;
+
     use venues::bitmart::rate_limit::RateLimiter;
 
     let http_client = Arc::new(rest::native::NativeHttpClient::default());

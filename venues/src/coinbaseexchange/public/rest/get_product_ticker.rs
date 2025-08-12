@@ -70,8 +70,7 @@ impl RestClient {
         request: &GetProductTickerRequest,
     ) -> RestResult<GetProductTickerResponse> {
         let endpoint = ENDPOINT_PATH.replace("{}", product_id);
-        self.send_get_request(&endpoint, Some(request))
-            .await
+        self.send_get_request(&endpoint, Some(request)).await
     }
 }
 

@@ -52,8 +52,12 @@ impl RestClient {
     /// # Returns
     /// Full depth data for the specified trading pair
     pub async fn get_depth(&self, request: GetDepthRequest) -> RestResult<GetDepthResponse> {
-        self.send_get_request(DEPTH_ENDPOINT, Some(&request), EndpointType::SpotPublicMarket)
-            .await
+        self.send_get_request(
+            DEPTH_ENDPOINT,
+            Some(&request),
+            EndpointType::SpotPublicMarket,
+        )
+        .await
     }
 }
 

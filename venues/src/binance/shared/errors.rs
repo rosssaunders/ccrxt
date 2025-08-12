@@ -43,7 +43,6 @@ impl fmt::Display for Errors {
 
 impl std::error::Error for Errors {}
 
-
 impl From<serde_urlencoded::ser::Error> for Errors {
     fn from(err: serde_urlencoded::ser::Error) -> Self {
         Errors::SerializationError(err.to_string())

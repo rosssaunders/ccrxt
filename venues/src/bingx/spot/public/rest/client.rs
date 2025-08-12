@@ -79,7 +79,7 @@ impl RestClient {
 
         // Build the full URL
         let mut url = format!("{}{}", self.base_url, endpoint);
-        
+
         // Add query parameters if provided
         if let Some(params) = params {
             let query_string = serde_urlencoded::to_string(params)
@@ -92,14 +92,18 @@ impl RestClient {
 
         // Build and send the request
         let request = RequestBuilder::new(HttpMethod::Get, url).build();
-        let response = self.http_client.execute(request).await
+        let response = self
+            .http_client
+            .execute(request)
+            .await
             .map_err(|e| Errors::NetworkError(format!("HTTP request failed: {e}")))?;
 
         // Record the request for rate limiting
         self.rate_limiter.increment_request(endpoint_type).await;
 
         // Get response text
-        let response_text = response.text()
+        let response_text = response
+            .text()
             .map_err(|e| Errors::NetworkError(format!("Failed to read response: {e}")))?;
 
         // Check if request was successful
@@ -130,7 +134,10 @@ impl RestClient {
             {
                 Err(Errors::from(error_response))
             } else {
-                Err(Errors::Error(format!("HTTP {}: {}", response.status, response_text)))
+                Err(Errors::Error(format!(
+                    "HTTP {}: {}",
+                    response.status, response_text
+                )))
             }
         }
     }

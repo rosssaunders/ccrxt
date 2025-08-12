@@ -1,6 +1,4 @@
-use crate::bullish::Errors;
-use crate::bullish::private::rest::RestClient;
-use crate::bullish::{EndpointType, RestResult};
+use crate::bullish::{EndpointType, Errors, RestResult, private::rest::RestClient};
 
 /// Endpoint constant for logout
 const LOGOUT_ENDPOINT: &str = "/v1/users/logout";
