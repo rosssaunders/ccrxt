@@ -85,15 +85,8 @@ impl RestClient {
             .await?;
 
         // Extract pagination headers
-        let before = headers
-            .get("CB-BEFORE")
-            .and_then(|value| value.to_str().ok())
-            .map(|s| s.to_string());
-
-        let after = headers
-            .get("CB-AFTER")
-            .and_then(|value| value.to_str().ok())
-            .map(|s| s.to_string());
+        let before = headers.get("CB-BEFORE").cloned();
+        let after = headers.get("CB-AFTER").cloned();
 
         let pagination = if before.is_some() || after.is_some() {
             Some(PaginationInfo { before, after })

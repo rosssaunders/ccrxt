@@ -63,9 +63,8 @@ impl RestClient {
         &self,
         params: GetExpiredSettlementPriceRequest,
     ) -> RestResult<GetExpiredSettlementPriceResponse> {
-        self.send_request(
+        self.send_get_request(
             EXPIRED_SETTLEMENT_PRICE_ENDPOINT,
-            reqwest::Method::GET,
             Some(&params),
             EndpointType::PublicGetExpiredSettlementPrice,
         )

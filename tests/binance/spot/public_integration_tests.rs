@@ -5,7 +5,6 @@
 
 use std::time::Duration;
 
-use reqwest::Client;
 use tokio;
 use venues::binance::shared::{RateLimiter, RateLimits};
 // Import types from top-level venue exports as required by integration test standards
@@ -17,7 +16,7 @@ use venues::binance::spot::{
 
 /// Helper function to create a test client for public endpoints
 fn create_public_test_client() -> PublicRestClient {
-    let client = Client::new();
+    let http_client = std::sync::Arc::new(rest::native::NativeHttpClient::default());
     let rate_limits = RateLimits {
         request_weight_limit: 1200,
         request_weight_window: Duration::from_secs(60),
@@ -29,7 +28,7 @@ fn create_public_test_client() -> PublicRestClient {
     };
     let rate_limiter = RateLimiter::new(rate_limits);
 
-    PublicRestClient::new("https://api.binance.com", client, rate_limiter)
+    PublicRestClient::new("https://api.binance.com", http_client, rate_limiter)
 }
 
 /// Helper function to check if an error is due to geographic restrictions

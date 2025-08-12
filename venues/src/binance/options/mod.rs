@@ -167,25 +167,4 @@ mod tests {
         let (_, _, _, weight) = limiter.test_get_stats().await;
         assert_eq!(weight, 2500);
     }
-
-    #[tokio::test]
-    async fn test_response_headers_from_reqwest() {
-        let mut headers = reqwest::header::HeaderMap::new();
-        headers.insert("x-mbx-used-weight-1m", "2500".parse().unwrap());
-        headers.insert("x-mbx-order-count-10s", "5".parse().unwrap());
-
-        let response_headers = ResponseHeaders::from_reqwest_headers(&headers);
-
-        // Check that we have parsed values
-        assert!(!response_headers.values.is_empty());
-
-        // Find the weight header
-        let weight_header = RateLimitHeader {
-            kind: RateLimitHeaderKind::UsedWeight,
-            interval_value: 1,
-            interval_unit: IntervalUnit::Minute,
-        };
-
-        assert_eq!(response_headers.values.get(&weight_header), Some(&2500));
-    }
 }

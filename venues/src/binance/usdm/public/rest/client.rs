@@ -3,8 +3,6 @@
 // Provides access to all public REST API endpoints for Binance USD-M Futures.
 // All requests are unauthenticated and do not require API credentials.
 
-use rest::secrets::ExposableSecret;
-
 use crate::binance::{
     shared::{Errors as SharedErrors, RestResponse, client::PublicBinanceClient},
     usdm::Errors,
@@ -24,12 +22,12 @@ impl UsdmPublicRestClient {
     /// Create a new USDM public REST client
     pub fn new(
         base_url: impl Into<std::borrow::Cow<'static, str>>,
-        client: reqwest::Client,
+        http_client: std::sync::Arc<dyn rest::HttpClient>,
         rate_limiter: crate::binance::shared::RateLimiter,
     ) -> Self {
         Self(PublicBinanceClient::new(
             base_url.into(),
-            client,
+            http_client,
             rate_limiter,
         ))
     }
@@ -130,11 +128,11 @@ impl UsdmPublicRestClient {
         Ok(shared_response)
     }
 
-    /// Send a request with API key only (no signature) with usdm-specific response type
+    /// Send a request with API key only (no signature) - for MARKET_DATA security type endpoints
     pub async fn send_api_key_get_request<T, R>(
         &self,
         endpoint: &str,
-        api_key: &dyn ExposableSecret,
+        api_key: &dyn rest::secrets::ExposableSecret,
         params: Option<R>,
         weight: u32,
     ) -> Result<RestResponse<T>, Errors>

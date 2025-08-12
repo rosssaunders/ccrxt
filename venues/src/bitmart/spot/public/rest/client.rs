@@ -12,9 +12,12 @@
 //! - **Rate Limiting**: BitMart public endpoints have specific rate limits per IP
 //! - **Base URL**: Uses https://api-cloud.bitmart.com for public endpoints
 
-use std::borrow::Cow;
+use std::{borrow::Cow, sync::Arc};
 
-use reqwest::{Client, Method};
+use rest::{
+    HttpClient,
+    http_client::{Method as HttpMethod, RequestBuilder},
+};
 use serde::{Deserialize, de::DeserializeOwned};
 
 use crate::bitmart::{
@@ -27,7 +30,7 @@ pub struct RestClient {
     /// The base URL for the BitMart public REST API
     base_url: Cow<'static, str>,
     /// HTTP client for making requests
-    client: Client,
+    http_client: Arc<dyn HttpClient>,
     /// Rate limiter for managing API limits
     rate_limiter: RateLimiter,
 }
@@ -48,36 +51,34 @@ impl RestClient {
     /// # Arguments
     ///
     /// * `base_url` - The base URL for the BitMart public API (e.g., "https://api-cloud.bitmart.com")
-    /// * `client` - HTTP client for making requests
+    /// * `http_client` - HTTP client for making requests
     /// * `rate_limiter` - Rate limiter for managing API limits
     pub fn new(
         base_url: impl Into<Cow<'static, str>>,
-        client: Client,
+        http_client: Arc<dyn HttpClient>,
         rate_limiter: RateLimiter,
     ) -> Self {
         Self {
             base_url: base_url.into(),
-            client,
+            http_client,
             rate_limiter,
         }
     }
 
-    /// Send a request to the BitMart public API
+    /// Send a GET request to the BitMart public API
     ///
     /// # Arguments
     ///
     /// * `endpoint` - The API endpoint (e.g., "/spot/v1/currencies")
-    /// * `method` - HTTP method to use
-    /// * `request` - Optional request body (will be serialized to JSON for POST/PUT)
+    /// * `request` - Optional request parameters (will be serialized as query parameters)
     /// * `endpoint_type` - The type of endpoint for rate limiting
     ///
     /// # Returns
     ///
     /// The parsed response data
-    pub async fn send_request<R, T>(
+    pub async fn send_get_request<R, T>(
         &self,
         endpoint: &str,
-        method: Method,
         request: Option<&R>,
         endpoint_type: EndpointType,
     ) -> RestResult<T>
@@ -93,18 +94,11 @@ impl RestClient {
         // Build URL
         let url = format!("{}{}", self.base_url, endpoint);
 
-        // Build URL with query parameters for GET requests
-        let final_url = if method == Method::GET && request.is_some() {
-            let query_params = match request {
-                Some(req) => serde_urlencoded::to_string(req).map_err(|e| {
-                    Errors::Error(format!("Failed to serialize query parameters: {e}"))
-                })?,
-                None => {
-                    return Err(Errors::Error(
-                        "Request parameters missing for GET method".to_string(),
-                    ));
-                }
-            };
+        // Build URL with query parameters
+        let final_url = if let Some(req) = request {
+            let query_params = serde_urlencoded::to_string(req).map_err(|e| {
+                Errors::Error(format!("Failed to serialize query parameters: {e}"))
+            })?;
 
             if query_params.is_empty() {
                 url
@@ -116,26 +110,18 @@ impl RestClient {
         };
 
         // Build request
-        let mut request_builder = self.client.request(method.clone(), &final_url);
-
-        // Add body for non-GET requests
-        if method != Method::GET && request.is_some() {
-            // Using expect here as the condition guarantees request is Some
-            #[allow(clippy::expect_used)]
-            let req = request.expect("Request body must be Some for non-GET methods");
-            request_builder = request_builder
-                .header("Content-Type", "application/json")
-                .json(req);
-        }
+        let request = RequestBuilder::new(HttpMethod::Get, final_url).build();
 
         // Send request
-        let response = request_builder.send().await?;
+        let response = self.http_client.execute(request).await
+            .map_err(|e| Errors::NetworkError(format!("HTTP request failed: {e}")))?;
 
         // Record the request for rate limiting
         self.rate_limiter.increment_request(endpoint_type).await;
 
         // Parse response
-        let response_text = response.text().await?;
+        let response_text = response.text()
+            .map_err(|e| Errors::NetworkError(format!("Failed to read response: {e}")))?;
         let bitmart_response: BitMartResponse<T> =
             serde_json::from_str(&response_text).map_err(|e| {
                 Errors::Error(format!(
@@ -166,10 +152,10 @@ mod tests {
 
     #[test]
     fn test_public_client_creation() {
-        let client = Client::new();
+        let http_client = std::sync::Arc::new(rest::native::NativeHttpClient::default());
         let rate_limiter = RateLimiter::new();
 
-        let rest_client = RestClient::new("https://api-cloud.bitmart.com", client, rate_limiter);
+        let rest_client = RestClient::new("https://api-cloud.bitmart.com", http_client, rate_limiter);
 
         assert_eq!(rest_client.base_url, "https://api-cloud.bitmart.com");
     }

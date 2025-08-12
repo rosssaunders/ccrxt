@@ -11,13 +11,13 @@ use venues::bitmart::spot::public::rest::{
 
 /// Helper function to create a test client
 fn create_spot_test_client() -> RestClient {
-    use reqwest::Client;
+    use std::sync::Arc;
     use venues::bitmart::rate_limit::RateLimiter;
 
-    let client = Client::new();
+    let http_client = Arc::new(rest::native::NativeHttpClient::default());
     let rate_limiter = RateLimiter::default();
 
-    RestClient::new("https://api-cloud.bitmart.com", client, rate_limiter)
+    RestClient::new("https://api-cloud.bitmart.com", http_client, rate_limiter)
 }
 
 /// Test get currency list endpoint

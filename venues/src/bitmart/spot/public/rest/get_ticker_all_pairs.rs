@@ -39,9 +39,8 @@ impl RestClient {
         &self,
         _request: GetTickerAllPairsRequest,
     ) -> RestResult<GetTickerAllPairsResponse> {
-        self.send_request(
+        self.send_get_request(
             TICKER_ALL_PAIRS_ENDPOINT,
-            reqwest::Method::GET,
             Option::<&()>::None, // No query parameters
             EndpointType::SpotPublicMarket,
         )

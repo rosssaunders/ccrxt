@@ -35,7 +35,7 @@
 //! All tests follow integration test best practices by validating response structure
 //! without asserting on dynamic market data values.
 
-use reqwest::Client;
+use std::sync::Arc;
 use tokio;
 use venues::cryptocom::{
     AnnouncementCategory, GetAnnouncementsRequest, GetBookRequest, GetCandlestickRequest,
@@ -46,10 +46,10 @@ use venues::cryptocom::{
 
 /// Helper function to create a test client for public endpoints
 fn create_public_test_client() -> PublicRestClient {
-    let client = Client::new();
+    let http_client = Arc::new(rest::native::NativeHttpClient::default());
     let rate_limiter = RateLimiter::new();
 
-    PublicRestClient::new("https://api.crypto.com/exchange", client, rate_limiter)
+    PublicRestClient::new("https://api.crypto.com/exchange", http_client, rate_limiter)
 }
 
 /// Test the get_instruments endpoint

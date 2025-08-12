@@ -68,9 +68,8 @@ impl RestClient {
     ///
     /// [Official API docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#public-get-risk-parameters)
     pub async fn get_risk_parameters(&self) -> RestResult<GetRiskParametersResponse> {
-        self.send_request(
+        self.send_get_request(
             RISK_PARAMETERS_ENDPOINT,
-            reqwest::Method::GET,
             None::<&()>,
             EndpointType::PublicGetRiskParameters,
         )

@@ -97,9 +97,8 @@ impl RestClient {
     ///
     /// [Official API docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#public-get-trades)
     pub async fn get_trades(&self, params: GetTradesRequest) -> RestResult<GetTradesResponse> {
-        self.send_request(
+        self.send_get_request(
             GET_TRADES_ENDPOINT,
-            reqwest::Method::GET,
             Some(&params),
             EndpointType::PublicGetTrades,
         )

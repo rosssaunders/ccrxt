@@ -3,11 +3,14 @@
 // Provides access to all private REST API endpoints for ByBit Exchange.
 // All requests are authenticated and require API credentials.
 
-use std::borrow::Cow;
+use std::{borrow::Cow, sync::Arc};
 
 use hmac::{Hmac, Mac};
-use reqwest::Client;
-use rest::secrets::ExposableSecret;
+use rest::{
+    HttpClient,
+    http_client::{Method as HttpMethod, RequestBuilder},
+    secrets::ExposableSecret,
+};
 use serde::Serialize;
 use sha2::Sha256;
 
@@ -26,7 +29,7 @@ pub struct RestClient {
     /// The underlying HTTP client used for making requests.
     ///
     /// This is reused for connection pooling and performance.
-    pub client: Client,
+    pub http_client: Arc<dyn HttpClient>,
 
     /// The rate limiter used to manage request rates and prevent hitting API limits.
     ///
@@ -48,7 +51,7 @@ impl RestClient {
     /// * `api_secret` - The encrypted API secret
     /// * `base_url` - The base URL for the API
     /// * `rate_limiter` - The rate limiter instance
-    /// * `client` - The HTTP client instance
+    /// * `http_client` - The HTTP client instance
     ///
     /// # Returns
     /// A new RestClient instance
@@ -57,14 +60,14 @@ impl RestClient {
         api_secret: Box<dyn ExposableSecret>,
         base_url: impl Into<Cow<'static, str>>,
         rate_limiter: RateLimiter,
-        client: Client,
+        http_client: Arc<dyn HttpClient>,
     ) -> Self {
         Self {
             api_key,
             api_secret,
             base_url: base_url.into(),
             rate_limiter,
-            client,
+            http_client,
         }
     }
 
@@ -124,41 +127,41 @@ impl RestClient {
         // Generate HMAC-SHA256 signature
         let signature = self.sign_payload(&payload)?;
 
-        // Build the URL
-        let url = format!("{}{}", self.base_url, endpoint);
-        let mut request_builder = self.client.get(&url);
+        // Build the URL with query parameters
+        let url = if query_string.is_empty() {
+            format!("{}{}", self.base_url, endpoint)
+        } else {
+            format!("{}{}?{}", self.base_url, endpoint, query_string)
+        };
 
-        // Add headers
-        request_builder = request_builder
-            .header("X-BAPI-API-KEY", self.api_key.expose_secret())
+        // Build request
+        let request = RequestBuilder::new(HttpMethod::Get, url)
+            .header("X-BAPI-API-KEY", &self.api_key.expose_secret())
             .header("X-BAPI-TIMESTAMP", &timestamp)
             .header("X-BAPI-SIGN", &signature)
             .header("X-BAPI-RECV-WINDOW", recv_window)
-            .header("Content-Type", "application/json");
-
-        // Add query parameters
-        if !query_string.is_empty() {
-            request_builder = request_builder.query(&[("", &query_string)]);
-        }
+            .header("Content-Type", "application/json")
+            .build();
 
         // Send the request
-        let response = request_builder.send().await?;
+        let response = self.http_client.execute(request).await
+            .map_err(|e| Errors::NetworkError(format!("HTTP request failed: {e}")))?;
 
         // Record the request for rate limiting
         self.rate_limiter.increment_request(endpoint_type).await;
 
         // Check for HTTP errors
-        if !response.status().is_success() {
-            let status = response.status();
+        let status = response.status;
+        if status != 200 && status != 201 {
             let error_text = response
                 .text()
-                .await
                 .unwrap_or_else(|_| "Unknown error".to_string());
             return Err(Errors::ApiError(format!("HTTP {status}: {error_text}")));
         }
 
         // Parse the response
-        let response_text = response.text().await?;
+        let response_text = response.text()
+            .map_err(|e| Errors::NetworkError(format!("Failed to read response: {e}")))?;
         let parsed_response: T = serde_json::from_str(&response_text)?;
 
         Ok(parsed_response)
@@ -208,35 +211,36 @@ impl RestClient {
 
         // Build the URL
         let url = format!("{}{}", self.base_url, endpoint);
-        let mut request_builder = self.client.post(&url);
 
-        // Add headers
-        request_builder = request_builder
-            .header("X-BAPI-API-KEY", self.api_key.expose_secret())
+        // Build request
+        let request_obj = RequestBuilder::new(HttpMethod::Post, url)
+            .header("X-BAPI-API-KEY", &self.api_key.expose_secret())
             .header("X-BAPI-TIMESTAMP", &timestamp)
             .header("X-BAPI-SIGN", &signature)
             .header("X-BAPI-RECV-WINDOW", recv_window)
             .header("Content-Type", "application/json")
-            .json(&request);
+            .body(body.into_bytes())
+            .build();
 
         // Send the request
-        let response = request_builder.send().await?;
+        let response = self.http_client.execute(request_obj).await
+            .map_err(|e| Errors::NetworkError(format!("HTTP request failed: {e}")))?;
 
         // Record the request for rate limiting
         self.rate_limiter.increment_request(endpoint_type).await;
 
         // Check for HTTP errors
-        if !response.status().is_success() {
-            let status = response.status();
+        let status = response.status;
+        if status != 200 && status != 201 {
             let error_text = response
                 .text()
-                .await
                 .unwrap_or_else(|_| "Unknown error".to_string());
             return Err(Errors::ApiError(format!("HTTP {status}: {error_text}")));
         }
 
         // Parse the response
-        let response_text = response.text().await?;
+        let response_text = response.text()
+            .map_err(|e| Errors::NetworkError(format!("Failed to read response: {e}")))?;
         let parsed_response: T = serde_json::from_str(&response_text)?;
 
         Ok(parsed_response)
@@ -286,35 +290,36 @@ impl RestClient {
 
         // Build the URL
         let url = format!("{}{}", self.base_url, endpoint);
-        let mut request_builder = self.client.put(&url);
 
-        // Add headers
-        request_builder = request_builder
-            .header("X-BAPI-API-KEY", self.api_key.expose_secret())
+        // Build request
+        let request_obj = RequestBuilder::new(HttpMethod::Put, url)
+            .header("X-BAPI-API-KEY", &self.api_key.expose_secret())
             .header("X-BAPI-TIMESTAMP", &timestamp)
             .header("X-BAPI-SIGN", &signature)
             .header("X-BAPI-RECV-WINDOW", recv_window)
             .header("Content-Type", "application/json")
-            .json(&request);
+            .body(body.into_bytes())
+            .build();
 
         // Send the request
-        let response = request_builder.send().await?;
+        let response = self.http_client.execute(request_obj).await
+            .map_err(|e| Errors::NetworkError(format!("HTTP request failed: {e}")))?;
 
         // Record the request for rate limiting
         self.rate_limiter.increment_request(endpoint_type).await;
 
         // Check for HTTP errors
-        if !response.status().is_success() {
-            let status = response.status();
+        let status = response.status;
+        if status != 200 && status != 201 {
             let error_text = response
                 .text()
-                .await
                 .unwrap_or_else(|_| "Unknown error".to_string());
             return Err(Errors::ApiError(format!("HTTP {status}: {error_text}")));
         }
 
         // Parse the response
-        let response_text = response.text().await?;
+        let response_text = response.text()
+            .map_err(|e| Errors::NetworkError(format!("Failed to read response: {e}")))?;
         let parsed_response: T = serde_json::from_str(&response_text)?;
 
         Ok(parsed_response)
@@ -365,41 +370,41 @@ impl RestClient {
         // Generate HMAC-SHA256 signature
         let signature = self.sign_payload(&payload)?;
 
-        // Build the URL
-        let url = format!("{}{}", self.base_url, endpoint);
-        let mut request_builder = self.client.delete(&url);
+        // Build the URL with query parameters
+        let url = if query_string.is_empty() {
+            format!("{}{}", self.base_url, endpoint)
+        } else {
+            format!("{}{}?{}", self.base_url, endpoint, query_string)
+        };
 
-        // Add headers
-        request_builder = request_builder
-            .header("X-BAPI-API-KEY", self.api_key.expose_secret())
+        // Build request
+        let request = RequestBuilder::new(HttpMethod::Delete, url)
+            .header("X-BAPI-API-KEY", &self.api_key.expose_secret())
             .header("X-BAPI-TIMESTAMP", &timestamp)
             .header("X-BAPI-SIGN", &signature)
             .header("X-BAPI-RECV-WINDOW", recv_window)
-            .header("Content-Type", "application/json");
-
-        // Add query parameters
-        if !query_string.is_empty() {
-            request_builder = request_builder.query(&[("", &query_string)]);
-        }
+            .header("Content-Type", "application/json")
+            .build();
 
         // Send the request
-        let response = request_builder.send().await?;
+        let response = self.http_client.execute(request).await
+            .map_err(|e| Errors::NetworkError(format!("HTTP request failed: {e}")))?;
 
         // Record the request for rate limiting
         self.rate_limiter.increment_request(endpoint_type).await;
 
         // Check for HTTP errors
-        if !response.status().is_success() {
-            let status = response.status();
+        let status = response.status;
+        if status != 200 && status != 201 {
             let error_text = response
                 .text()
-                .await
                 .unwrap_or_else(|_| "Unknown error".to_string());
             return Err(Errors::ApiError(format!("HTTP {status}: {error_text}")));
         }
 
         // Parse the response
-        let response_text = response.text().await?;
+        let response_text = response.text()
+            .map_err(|e| Errors::NetworkError(format!("Failed to read response: {e}")))?;
         let parsed_response: T = serde_json::from_str(&response_text)?;
 
         Ok(parsed_response)
@@ -433,7 +438,7 @@ mod tests {
         let api_key = Box::new(TestSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
         let api_secret =
             Box::new(TestSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
-        let client = Client::new();
+        let http_client = Arc::new(rest::native::NativeHttpClient::default());
         let rate_limiter = RateLimiter::new();
 
         let rest_client = RestClient::new(
@@ -441,7 +446,7 @@ mod tests {
             api_secret,
             "https://api.bybit.com",
             rate_limiter,
-            client,
+            http_client,
         );
 
         assert_eq!(rest_client.base_url, "https://api.bybit.com");
@@ -452,7 +457,7 @@ mod tests {
         let api_key = Box::new(TestSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
         let api_secret =
             Box::new(TestSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
-        let client = Client::new();
+        let http_client = Arc::new(rest::native::NativeHttpClient::default());
         let rate_limiter = RateLimiter::new();
 
         let rest_client = RestClient::new(
@@ -460,7 +465,7 @@ mod tests {
             api_secret,
             "https://api.bybit.com",
             rate_limiter,
-            client,
+            http_client,
         );
 
         let payload = "test_payload";

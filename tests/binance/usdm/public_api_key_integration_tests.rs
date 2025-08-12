@@ -13,7 +13,6 @@
 
 use std::time::Duration;
 
-use reqwest::Client;
 use tokio;
 use venues::binance::{
     shared::{RateLimiter, RateLimits},
@@ -22,7 +21,7 @@ use venues::binance::{
 
 /// Helper function to create a test client for API key endpoints
 fn create_api_key_test_client() -> PublicRestClient {
-    let client = Client::new();
+    let http_client = std::sync::Arc::new(rest::native::NativeHttpClient::default());
     let rate_limits = RateLimits {
         request_weight_limit: 2400,
         request_weight_window: Duration::from_secs(60),
@@ -34,7 +33,7 @@ fn create_api_key_test_client() -> PublicRestClient {
     };
     let rate_limiter = RateLimiter::new(rate_limits);
 
-    PublicRestClient::new("https://fapi.binance.com", client, rate_limiter)
+    PublicRestClient::new("https://fapi.binance.com", http_client, rate_limiter)
 }
 
 /// Helper function to get API key from environment

@@ -96,7 +96,6 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use reqwest::Client;
 
     use super::*;
     use crate::bingx::spot::RateLimiter;
@@ -159,7 +158,7 @@ mod tests {
     async fn test_get_symbols_method_exists() {
         let client = RestClient::new(
             "https://open-api.bingx.com",
-            Client::new(),
+            std::sync::Arc::new(rest::native::NativeHttpClient::default()),
             RateLimiter::new(),
         );
 

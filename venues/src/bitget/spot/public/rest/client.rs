@@ -1,24 +1,27 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, sync::Arc};
 
-use reqwest::Client;
+use rest::{
+    HttpClient,
+    http_client::{Method as HttpMethod, RequestBuilder},
+};
 use serde::de::DeserializeOwned;
 
 use crate::bitget::spot::{ApiError, RateLimiter, ResponseHeaders, RestResponse};
 
 /// Public REST client for Bitget spot market
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub struct RestClient {
     pub base_url: String,
-    pub client: Client,
+    pub http_client: Arc<dyn HttpClient>,
     pub rate_limiter: RateLimiter,
 }
 
 impl RestClient {
     /// Create a new public REST client
-    pub fn new(base_url: impl Into<String>, rate_limiter: RateLimiter, client: Client) -> Self {
+    pub fn new(base_url: impl Into<String>, rate_limiter: RateLimiter, http_client: Arc<dyn HttpClient>) -> Self {
         Self {
             base_url: base_url.into(),
-            client,
+            http_client,
             rate_limiter,
         }
     }
@@ -32,48 +35,45 @@ impl RestClient {
     where
         T: DeserializeOwned,
     {
-        let url = format!("{}{}", self.base_url, endpoint);
+        let mut url = format!("{}{}", self.base_url, endpoint);
 
-        let mut request = self.client.get(&url);
-
+        // Add query parameters if provided
         if let Some(params) = params {
-            request = request.query(&params);
+            if !params.is_empty() {
+                let query_string = params.iter()
+                    .map(|(k, v)| format!("{}={}", k, v))
+                    .collect::<Vec<_>>()
+                    .join("&");
+                url.push('?');
+                url.push_str(&query_string);
+            }
         }
 
-        let response = request
-            .send()
-            .await
-            .map_err(|e| ApiError::Http(e.to_string()))?;
+        // Build and execute request
+        let request = RequestBuilder::new(HttpMethod::Get, url).build();
+        let response = self.http_client.execute(request).await
+            .map_err(|e| ApiError::Http(format!("HTTP request failed: {e}")))?;
 
-        let status = response.status();
-        let headers = response.headers().clone();
-
+        let status = response.status;
+        
         // Extract rate limit headers
         let mut response_headers = ResponseHeaders::default();
-        for (name, value) in headers.iter() {
+        for (name, value) in response.headers.iter() {
             if let Some(header_type) =
                 crate::bitget::spot::rate_limit::RateLimitHeader::from_str(name.as_str())
             {
-                if let Ok(value_str) = value.to_str() {
-                    if let Ok(value_u32) = value_str.parse::<u32>() {
-                        response_headers.values.insert(header_type, value_u32);
-                    }
+                if let Ok(value_u32) = value.parse::<u32>() {
+                    response_headers.values.insert(header_type, value_u32);
                 }
             }
         }
 
-        if !status.is_success() {
-            let error_text = response
-                .text()
-                .await
-                .map_err(|e| ApiError::Http(e.to_string()))?;
-            return Err(ApiError::Http(format!("HTTP {}: {}", status, error_text)));
-        }
+        let body = response.text()
+            .map_err(|e| ApiError::Http(format!("Failed to read response: {e}")))?;
 
-        let body = response
-            .text()
-            .await
-            .map_err(|e| ApiError::Http(e.to_string()))?;
+        if status != 200 && status != 201 {
+            return Err(ApiError::Http(format!("HTTP {}: {}", status, body)));
+        }
 
         let parsed: serde_json::Value = serde_json::from_str(&body)
             .map_err(|e| ApiError::Parse(format!("Failed to parse JSON: {}", e)))?;

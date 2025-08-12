@@ -10,7 +10,7 @@ pub enum Errors {
     InvalidApiKey(),
 
     /// Http error occurred while making a request
-    HttpError(reqwest::Error),
+    HttpError(String),
 
     /// An error returned by the Binance Options API
     ApiError(ApiError),

@@ -59,9 +59,8 @@ impl RestClient {
         &self,
         request: GetHistoryKlineRequest,
     ) -> RestResult<GetHistoryKlineResponse> {
-        self.send_request(
+        self.send_get_request(
             HISTORY_KLINE_ENDPOINT,
-            reqwest::Method::GET,
             Some(&request),
             EndpointType::SpotPublicMarket,
         )

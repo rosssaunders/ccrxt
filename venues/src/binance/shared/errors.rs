@@ -10,7 +10,7 @@ pub enum Errors {
     InvalidApiKey(),
 
     /// Http error occurred while making a request
-    HttpError(reqwest::Error),
+    HttpError(String),
 
     /// An error returned by the Binance API
     ApiError(ApiError),
@@ -43,11 +43,6 @@ impl fmt::Display for Errors {
 
 impl std::error::Error for Errors {}
 
-impl From<reqwest::Error> for Errors {
-    fn from(err: reqwest::Error) -> Self {
-        Errors::HttpError(err)
-    }
-}
 
 impl From<serde_urlencoded::ser::Error> for Errors {
     fn from(err: serde_urlencoded::ser::Error) -> Self {
@@ -520,14 +515,14 @@ impl ApiError {
 }
 
 /// Convert HTTP status codes to appropriate errors
-pub fn handle_http_status(status: reqwest::StatusCode, response_text: &str) -> Result<(), Errors> {
+pub fn handle_http_status(status: u16, response_text: &str) -> Result<(), Errors> {
     match status {
-        reqwest::StatusCode::OK => Ok(()),
-        reqwest::StatusCode::TOO_MANY_REQUESTS => {
+        200 => Ok(()),
+        429 => {
             // Extract retry-after header if available
             Err(Errors::RateLimitExceeded { retry_after: None })
         }
-        reqwest::StatusCode::FORBIDDEN => {
+        403 => {
             if response_text.contains("banned") {
                 Err(Errors::ApiError(ApiError::IpBanned {
                     msg: "IP banned".to_string(),
@@ -538,13 +533,13 @@ pub fn handle_http_status(status: reqwest::StatusCode, response_text: &str) -> R
                 }))
             }
         }
-        reqwest::StatusCode::UNAUTHORIZED => Err(Errors::ApiError(ApiError::Unauthorized {
+        401 => Err(Errors::ApiError(ApiError::Unauthorized {
             msg: "Unauthorized".to_string(),
         })),
-        reqwest::StatusCode::IM_A_TEAPOT => Err(Errors::ApiError(ApiError::IpBanned {
+        418 => Err(Errors::ApiError(ApiError::IpBanned {
             msg: "IP banned (418)".to_string(),
         })),
-        status if status.is_server_error() => Err(Errors::ApiError(ApiError::InnerFailure {
+        500..=599 => Err(Errors::ApiError(ApiError::InnerFailure {
             msg: format!("Server error: {status}"),
         })),
         _ => Ok(()),

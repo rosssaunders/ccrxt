@@ -88,9 +88,8 @@ impl RestClient {
     ///
     /// [Official API docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#public-get-tickers)
     pub async fn get_tickers(&self, params: GetTickersRequest) -> RestResult<GetTickersResponse> {
-        self.send_request(
+        self.send_get_request(
             GET_TICKERS_ENDPOINT,
-            reqwest::Method::GET,
             Some(&params),
             EndpointType::PublicGetTickers,
         )

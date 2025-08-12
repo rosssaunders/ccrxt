@@ -42,19 +42,7 @@ pub struct ResponseHeaders {
     pub values: std::collections::HashMap<rate_limit::RateLimitHeader, u32>,
 }
 
-impl ResponseHeaders {
-    /// Create ResponseHeaders from reqwest::HeaderMap by parsing rate limit headers
-    pub fn from_reqwest_headers(headers: &reqwest::header::HeaderMap) -> Self {
-        let values = headers
-            .iter()
-            .filter_map(|(name, val)| {
-                rate_limit::RateLimitHeader::parse(name.as_str())
-                    .and_then(|hdr| val.to_str().ok()?.parse::<u32>().ok().map(|v| (hdr, v)))
-            })
-            .collect();
-        Self { values }
-    }
-}
+impl ResponseHeaders {}
 
 #[derive(Debug, Clone)]
 pub struct RestResponse<T> {
