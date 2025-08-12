@@ -557,7 +557,7 @@ mod tests {
             api_secret,
             api_passphrase,
             "https://api.exchange.coinbase.com",
-            reqwest::Client::new(),
+            Arc::new(rest::native::NativeHttpClient::default()),
             RateLimiter::new(),
         );
 
@@ -579,7 +579,7 @@ mod tests {
             api_secret,
             api_passphrase,
             "https://api.exchange.coinbase.com",
-            reqwest::Client::new(),
+            Arc::new(rest::native::NativeHttpClient::default()),
             RateLimiter::new(),
         );
 
