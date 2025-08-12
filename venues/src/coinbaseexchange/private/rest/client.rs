@@ -3,13 +3,16 @@
 //! Provides access to all private REST API endpoints for Coinbase Exchange.
 //! All requests are authenticated and require API credentials.
 
-use std::borrow::Cow;
+use std::{borrow::Cow, sync::Arc};
 
 use base64::{Engine as _, engine::general_purpose};
 use chrono::Utc;
 use hmac::{Hmac, Mac};
-use reqwest::Client;
-use rest::secrets::ExposableSecret;
+use rest::{
+    HttpClient,
+    http_client::{Method as HttpMethod, RequestBuilder},
+    secrets::ExposableSecret,
+};
 use serde::{Serialize, de::DeserializeOwned};
 use sha2::Sha256;
 
@@ -25,7 +28,7 @@ pub struct RestClient {
     pub base_url: Cow<'static, str>,
 
     /// The underlying HTTP client used for making requests
-    pub client: Client,
+    pub http_client: Arc<dyn HttpClient>,
 
     /// The rate limiter used to manage request rates and prevent hitting API limits
     pub rate_limiter: RateLimiter,
@@ -48,19 +51,19 @@ impl RestClient {
     /// * `api_secret` - Your Coinbase Exchange API secret (base64 encoded)
     /// * `api_passphrase` - Your Coinbase Exchange API passphrase
     /// * `base_url` - The base URL for the Coinbase Exchange API
-    /// * `client` - HTTP client for making requests
+    /// * `http_client` - HTTP client for making requests
     /// * `rate_limiter` - Rate limiter for managing request frequency
     pub fn new(
         api_key: Box<dyn ExposableSecret>,
         api_secret: Box<dyn ExposableSecret>,
         api_passphrase: Box<dyn ExposableSecret>,
         base_url: impl Into<Cow<'static, str>>,
-        client: Client,
+        http_client: Arc<dyn HttpClient>,
         rate_limiter: RateLimiter,
     ) -> Self {
         Self {
             base_url: base_url.into(),
-            client,
+            http_client,
             rate_limiter,
             api_key,
             api_secret,
@@ -114,8 +117,7 @@ impl RestClient {
         &self,
         endpoint: &str,
         params: Option<&P>,
-        request_builder: reqwest::RequestBuilder,
-    ) -> Result<(String, String, reqwest::RequestBuilder), Errors> {
+    ) -> Result<(String, String, String), Errors> {
         let (request_path, query_string) = params
             .map(|p| {
                 serde_urlencoded::to_string(p)
@@ -133,18 +135,7 @@ impl RestClient {
             .transpose()?
             .unwrap_or_else(|| (format!("/{endpoint}"), String::new()));
 
-        // Add query parameters to request builder
-        let final_builder = query_string
-            .split('&')
-            .filter(|s| !s.is_empty())
-            .fold(request_builder, |builder, param| {
-                let mut parts = param.splitn(2, '=');
-                let key = parts.next().unwrap_or("");
-                let value = parts.next().unwrap_or("");
-                builder.query(&[(key, value)])
-            });
-
-        Ok((request_path, String::new(), final_builder))
+        Ok((request_path, String::new(), query_string))
     }
 
     /// Build request parameters for non-GET methods
@@ -153,8 +144,7 @@ impl RestClient {
         &self,
         endpoint: &str,
         params: Option<&P>,
-        mut request_builder: reqwest::RequestBuilder,
-    ) -> Result<(String, String, reqwest::RequestBuilder), Errors> {
+    ) -> Result<(String, String, String), Errors> {
         let body = params
             .map(|p| {
                 serde_json::to_string(p)
@@ -163,15 +153,7 @@ impl RestClient {
             .transpose()?
             .unwrap_or_default();
 
-        // Always add headers to avoid branching
-        let body_len = body.len();
-        request_builder = request_builder.body(body.clone());
-        // Add Content-Type only if body is non-empty (branchless)
-        let content_type = ["", "application/json"];
-        let header_value = content_type[(body_len > 0) as usize];
-        request_builder = request_builder.header("Content-Type", header_value);
-
-        Ok((format!("/{endpoint}"), body, request_builder))
+        Ok((format!("/{endpoint}"), body.clone(), body))
     }
 
     /// Core request sending logic optimized for HFT
@@ -179,11 +161,11 @@ impl RestClient {
     async fn send_request_internal<T, P>(
         &self,
         endpoint: &str,
-        method: reqwest::Method,
+        method: HttpMethod,
         params: Option<&P>,
         endpoint_type: EndpointType,
         with_headers: bool,
-    ) -> RestResult<(T, Option<reqwest::header::HeaderMap>)>
+    ) -> RestResult<(T, Option<std::collections::HashMap<String, String>>)>
     where
         T: DeserializeOwned,
         P: Serialize + ?Sized,
@@ -194,50 +176,75 @@ impl RestClient {
         // Create timestamp
         let timestamp = Utc::now().timestamp().to_string();
 
-        // Build URL and request
-        let url = format!("{}/{}", self.base_url, endpoint);
-        let request_builder = self.client.request(method.clone(), &url);
-
         // Use function pointers to avoid branching on method type
         type ParamBuilder<P> = fn(
             &RestClient,
             &str,
             Option<&P>,
-            reqwest::RequestBuilder,
-        ) -> Result<(String, String, reqwest::RequestBuilder), Errors>;
+        ) -> Result<(String, String, String), Errors>;
 
         // Create lookup table for method handlers (computed at compile time)
-        let method_index = ((method != reqwest::Method::GET) as u8).min(1);
+        let method_index = ((method != HttpMethod::Get) as u8).min(1);
         let builders: [ParamBuilder<P>; 2] = [
             Self::build_get_params,
             Self::build_body_params,
         ];
 
         // Call the appropriate builder without branching
-        let (request_path, body, mut request_builder) = 
-            builders[method_index as usize](self, endpoint, params, request_builder)?;
+        let (request_path, body, query_or_body) = 
+            builders[method_index as usize](self, endpoint, params)?;
 
         // Create signature
-        let signature = self.sign_request(&timestamp, method.as_str(), &request_path, &body)?;
+        let method_str = match method {
+            HttpMethod::Get => "GET",
+            HttpMethod::Post => "POST",
+            HttpMethod::Put => "PUT",
+            HttpMethod::Delete => "DELETE",
+            HttpMethod::Patch => "PATCH",
+            HttpMethod::Head => "HEAD",
+            HttpMethod::Options => "OPTIONS",
+        };
+        let signature = self.sign_request(&timestamp, method_str, &request_path, &body)?;
 
-        // Add required headers
+        // Build URL
+        let base_url = format!("{}/{}", self.base_url, endpoint);
+        let url = if method == HttpMethod::Get && !query_or_body.is_empty() {
+            format!("{}?{}", base_url, query_or_body)
+        } else {
+            base_url
+        };
+
+        // Build request
         let api_key = self.api_key.expose_secret();
         let api_passphrase = self.api_passphrase.expose_secret();
-
-        request_builder = request_builder
-            .header("CB-ACCESS-KEY", api_key)
-            .header("CB-ACCESS-SIGN", signature)
-            .header("CB-ACCESS-TIMESTAMP", timestamp)
-            .header("CB-ACCESS-PASSPHRASE", api_passphrase)
+        
+        let mut builder = RequestBuilder::new(method, url)
+            .header("CB-ACCESS-KEY", &api_key)
+            .header("CB-ACCESS-SIGN", &signature)
+            .header("CB-ACCESS-TIMESTAMP", &timestamp)
+            .header("CB-ACCESS-PASSPHRASE", &api_passphrase)
             .header("User-Agent", "ccrxt/0.1.0");
 
+        // Add body for non-GET methods
+        if method != HttpMethod::Get && !query_or_body.is_empty() {
+            builder = builder
+                .header("Content-Type", "application/json")
+                .body(query_or_body.into_bytes());
+        }
+
         // Send request
-        let response = request_builder.send().await?;
+        let response = self.http_client.execute(builder.build()).await
+            .map_err(|e| Errors::NetworkError(format!("HTTP request failed: {e}")))?;
 
         // Process response
-        let status = response.status();
-        let headers = with_headers.then(|| response.headers().clone());
-        let response_text = response.text().await?;
+        let status = response.status;
+        let headers_map = if with_headers {
+            Some(response.headers.clone())
+        } else {
+            None
+        };
+        let response_text = response.text()
+            .map_err(|e| Errors::NetworkError(format!("Failed to read response: {e}")))?;
 
         // Use lookup table for error handling to avoid branching
         let parse_result = serde_json::from_str::<T>(&response_text);
@@ -255,12 +262,12 @@ impl RestClient {
         error_table[429] = Some(4); // TooManyRequests
         error_table[500] = Some(5); // InternalServerError
 
-        let status_code = status.as_u16() as usize;
-        let is_success = status.is_success();
+        let status_code = status as usize;
+        let is_success = status == 200 || status == 201;
 
         // Process response without branching on success/failure
         match (is_success, parse_result, error_result) {
-            (true, Ok(data), _) => Ok((data, headers)),
+            (true, Ok(data), _) => Ok((data, headers_map)),
             (false, _, Ok(error_response)) => {
                 // Use lookup table to determine error type
                 let error_index = status_code
@@ -300,10 +307,10 @@ impl RestClient {
     pub async fn send_request_with_headers<T, P>(
         &self,
         endpoint: &str,
-        method: reqwest::Method,
+        method: HttpMethod,
         params: Option<&P>,
         endpoint_type: EndpointType,
-    ) -> RestResult<(T, reqwest::header::HeaderMap)>
+    ) -> RestResult<(T, std::collections::HashMap<String, String>)>
     where
         T: DeserializeOwned,
         P: Serialize + ?Sized,
@@ -330,7 +337,7 @@ impl RestClient {
     pub async fn send_request_with_pagination<T, P>(
         &self,
         endpoint: &str,
-        method: reqwest::Method,
+        method: HttpMethod,
         params: Option<&P>,
         endpoint_type: EndpointType,
     ) -> RestResult<(T, Option<PaginationInfo>)>
@@ -343,15 +350,8 @@ impl RestClient {
             .await?;
 
         // Extract pagination headers without branching
-        let before = headers
-            .get("CB-BEFORE")
-            .and_then(|value| value.to_str().ok())
-            .map(|s| s.to_string());
-
-        let after = headers
-            .get("CB-AFTER")
-            .and_then(|value| value.to_str().ok())
-            .map(|s| s.to_string());
+        let before = headers.get("CB-BEFORE").cloned();
+        let after = headers.get("CB-AFTER").cloned();
 
         // Create pagination info without explicit branching
         let has_pagination = before.is_some() | after.is_some();
@@ -373,7 +373,7 @@ impl RestClient {
     pub async fn send_request<T, P>(
         &self,
         endpoint: &str,
-        method: reqwest::Method,
+        method: HttpMethod,
         params: Option<&P>,
         endpoint_type: EndpointType,
     ) -> RestResult<T>
@@ -406,7 +406,7 @@ impl RestClient {
         T: DeserializeOwned,
         P: Serialize,
     {
-        self.send_request(endpoint, reqwest::Method::GET, Some(&params), endpoint_type)
+        self.send_request(endpoint, HttpMethod::Get, Some(&params), endpoint_type)
             .await
     }
 
@@ -431,7 +431,7 @@ impl RestClient {
     {
         self.send_request(
             endpoint,
-            reqwest::Method::POST,
+            HttpMethod::Post,
             Some(&params),
             endpoint_type,
         )
@@ -457,7 +457,7 @@ impl RestClient {
         T: DeserializeOwned,
         P: Serialize,
     {
-        self.send_request(endpoint, reqwest::Method::PUT, Some(&params), endpoint_type)
+        self.send_request(endpoint, HttpMethod::Put, Some(&params), endpoint_type)
             .await
     }
 
@@ -482,7 +482,7 @@ impl RestClient {
     {
         self.send_request(
             endpoint,
-            reqwest::Method::DELETE,
+            HttpMethod::Delete,
             Some(&params),
             endpoint_type,
         )
@@ -503,12 +503,12 @@ impl RestClient {
         endpoint: &str,
         params: P,
         endpoint_type: EndpointType,
-    ) -> RestResult<(T, reqwest::header::HeaderMap)>
+    ) -> RestResult<(T, std::collections::HashMap<String, String>)>
     where
         T: DeserializeOwned,
         P: Serialize,
     {
-        self.send_request_with_headers(endpoint, reqwest::Method::GET, Some(&params), endpoint_type)
+        self.send_request_with_headers(endpoint, HttpMethod::Get, Some(&params), endpoint_type)
             .await
     }
 
@@ -531,7 +531,7 @@ impl RestClient {
         T: DeserializeOwned,
         P: Serialize,
     {
-        self.send_request_with_pagination(endpoint, reqwest::Method::GET, Some(&params), endpoint_type)
+        self.send_request_with_pagination(endpoint, HttpMethod::Get, Some(&params), endpoint_type)
             .await
     }
 }
