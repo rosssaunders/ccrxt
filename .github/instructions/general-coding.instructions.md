@@ -17,3 +17,9 @@ applyTo: "venues/src/**"
 - Avoid code duplication: extract helpers for repeated logic (e.g., window trimming, error message extraction, client request logic).
 - Use `Cow<'static, str>` for struct fields that may be either static or owned strings.
 - Accept `serde::Serialize` for request bodies where possible, rather than raw strings.
+
+- DTO struct formatting (request/response types):
+	- Insert exactly one blank line between each field in DTO structs to maximize diff readability and reduce merge conflicts.
+	- A “field” means the complete block of its doc comment(s), attributes (e.g., serde), and the field declaration line; the blank line goes between these blocks, not inside them.
+	- Applies to all structs that represent wire types (typically those with `Serialize`/`Deserialize` derives) across venues.
+	- Do not add extra blank lines above the first field or below the last field.
