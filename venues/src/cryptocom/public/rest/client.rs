@@ -2,9 +2,9 @@
 //
 // Provides access to all public REST API endpoints for Crypto.com Exchange.
 // All requests are unauthenticated and do not require API credentials.
-use std::borrow::Cow;
+use std::{borrow::Cow, sync::Arc};
 
-use reqwest::Client;
+use rest::{HttpClient, http_client::{Method as HttpMethod, RequestBuilder}};
 use serde::de::DeserializeOwned;
 
 use crate::cryptocom::{EndpointType, Errors, RateLimiter, RestResult};
@@ -14,7 +14,6 @@ use crate::cryptocom::{EndpointType, Errors, RateLimiter, RestResult};
 /// This client handles all public API endpoints that don't require authentication.
 /// It provides automatic rate limiting and error handling.
 #[non_exhaustive]
-#[derive(Debug, Clone)]
 pub struct RestClient {
     /// The base URL for the Crypto.com public REST API (e.g., "<https://api.crypto.com>")
     ///
@@ -24,7 +23,7 @@ pub struct RestClient {
     /// The underlying HTTP client used for making requests.
     ///
     /// This is reused for connection pooling and performance.
-    pub client: Client,
+    pub http_client: Arc<dyn HttpClient>,
 
     /// The rate limiter used to manage request rates and prevent hitting API limits.
     ///
@@ -41,12 +40,12 @@ impl RestClient {
     /// * `rate_limiter` - The rate limiter for managing API limits
     pub fn new(
         base_url: impl Into<Cow<'static, str>>,
-        client: Client,
+        http_client: Arc<dyn HttpClient>,
         rate_limiter: RateLimiter,
     ) -> Self {
         Self {
             base_url: base_url.into(),
-            client,
+            http_client,
             rate_limiter,
         }
     }
@@ -84,13 +83,15 @@ impl RestClient {
         };
 
         // Build the request
-        let mut request_builder = self.client.get(&url);
+        let mut builder = RequestBuilder::new(HttpMethod::Get, url.clone());
+        builder = builder.header("Content-Type", "application/json");
 
         // Add parameters as query string
         if let Some(params) = params {
             let params_value = serde_json::to_value(params)
                 .map_err(|e| Errors::Error(format!("Failed to serialize params: {e}")))?;
             if let Some(params_obj) = params_value.as_object() {
+                let mut query_params = Vec::new();
                 for (key, value) in params_obj {
                     let value_str = match value {
                         serde_json::Value::String(s) => s.clone(),
@@ -98,29 +99,35 @@ impl RestClient {
                         serde_json::Value::Bool(b) => b.to_string(),
                         _ => value.to_string(),
                     };
-                    request_builder = request_builder.query(&[(key, value_str)]);
+                    query_params.push(format!("{}={}", key, value_str));
+                }
+                if !query_params.is_empty() {
+                    let query_string = query_params.join("&");
+                    let url_with_query = format!("{}?{}", url, query_string);
+                    builder = RequestBuilder::new(HttpMethod::Get, url_with_query);
+                    builder = builder.header("Content-Type", "application/json");
                 }
             }
         }
 
-        // Add required headers
-        request_builder = request_builder.header("Content-Type", "application/json");
-
         // Send the request
-        let response = request_builder.send().await.map_err(Errors::HttpError)?;
+        let response = self.http_client.execute(builder.build()).await
+            .map_err(|e| Errors::NetworkError(format!("HTTP request failed: {e}")))?;
 
         // Increment rate limiter counter after successful request
         self.rate_limiter.increment_request(endpoint_type).await;
 
         // Check if the response was successful
-        if !response.status().is_success() {
-            let status = response.status();
-            let error_text = response.text().await.map_err(Errors::HttpError)?;
+        if !(response.status >= 200 && response.status < 300) {
+            let status = response.status;
+            let error_text = response.text()
+                .map_err(|e| Errors::NetworkError(format!("Failed to read response: {e}")))?;
             return Err(Errors::Error(format!("HTTP {status}: {error_text}")));
         }
 
         // Parse the response
-        let response_text = response.text().await.map_err(Errors::HttpError)?;
+        let response_text = response.text()
+            .map_err(|e| Errors::NetworkError(format!("Failed to read response: {e}")))?;
 
         let parsed_response: T = serde_json::from_str(&response_text)
             .map_err(|e| Errors::Error(format!("Failed to parse response: {e}")))?;
@@ -161,33 +168,36 @@ impl RestClient {
         };
 
         // Build the request
-        let mut request_builder = self.client.post(&url);
+        let mut builder = RequestBuilder::new(HttpMethod::Post, url);
+        builder = builder.header("Content-Type", "application/json");
 
         // Add parameters as JSON body
         if let Some(params) = params {
             let params_value = serde_json::to_value(params)
                 .map_err(|e| Errors::Error(format!("Failed to serialize params: {e}")))?;
-            request_builder = request_builder.json(&params_value);
+            let body = serde_json::to_string(&params_value)
+                .map_err(|e| Errors::Error(format!("Failed to serialize body: {e}")))?;
+            builder = builder.body(body.into_bytes());
         }
 
-        // Add required headers
-        request_builder = request_builder.header("Content-Type", "application/json");
-
         // Send the request
-        let response = request_builder.send().await.map_err(Errors::HttpError)?;
+        let response = self.http_client.execute(builder.build()).await
+            .map_err(|e| Errors::NetworkError(format!("HTTP request failed: {e}")))?;
 
         // Increment rate limiter counter after successful request
         self.rate_limiter.increment_request(endpoint_type).await;
 
         // Check if the response was successful
-        if !response.status().is_success() {
-            let status = response.status();
-            let error_text = response.text().await.map_err(Errors::HttpError)?;
+        if !(response.status >= 200 && response.status < 300) {
+            let status = response.status;
+            let error_text = response.text()
+                .map_err(|e| Errors::NetworkError(format!("Failed to read response: {e}")))?;
             return Err(Errors::Error(format!("HTTP {status}: {error_text}")));
         }
 
         // Parse the response
-        let response_text = response.text().await.map_err(Errors::HttpError)?;
+        let response_text = response.text()
+            .map_err(|e| Errors::NetworkError(format!("Failed to read response: {e}")))?;
 
         let parsed_response: T = serde_json::from_str(&response_text)
             .map_err(|e| Errors::Error(format!("Failed to parse response: {e}")))?;
@@ -202,20 +212,20 @@ mod tests {
 
     #[test]
     fn test_public_client_creation() {
-        let client = reqwest::Client::new();
+        let http_client = Arc::new(rest::native::NativeHttpClient::default());
         let rate_limiter = RateLimiter::new();
 
-        let rest_client = RestClient::new("https://api.crypto.com", client, rate_limiter);
+        let rest_client = RestClient::new("https://api.crypto.com", http_client, rate_limiter);
 
         assert_eq!(rest_client.base_url, "https://api.crypto.com");
     }
 
     #[test]
     fn test_url_building() {
-        let client = reqwest::Client::new();
+        let http_client = Arc::new(rest::native::NativeHttpClient::default());
         let rate_limiter = RateLimiter::new();
 
-        let rest_client = RestClient::new("https://api.crypto.com", client, rate_limiter);
+        let rest_client = RestClient::new("https://api.crypto.com", http_client, rate_limiter);
 
         // Test that the client is properly initialized
         assert_eq!(rest_client.base_url, "https://api.crypto.com");
@@ -223,10 +233,10 @@ mod tests {
 
     #[tokio::test]
     async fn test_rate_limiting_integration() {
-        let client = reqwest::Client::new();
+        let http_client = Arc::new(rest::native::NativeHttpClient::default());
         let rate_limiter = RateLimiter::new();
 
-        let rest_client = RestClient::new("https://api.crypto.com", client, rate_limiter);
+        let rest_client = RestClient::new("https://api.crypto.com", http_client, rate_limiter);
 
         // Test that rate limiting works (this shouldn't fail since we're not actually hitting limits)
         let result = rest_client
