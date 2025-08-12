@@ -4,9 +4,11 @@ use std::{
 };
 
 use rest::{HttpClient, http_client::{Method as HttpMethod, RequestBuilder}};
-use ring::hmac;
-use serde::{Serialize, de::DeserializeOwned};
+use hmac::{Hmac, Mac};
 use sha2::{Digest, Sha512};
+use serde::{Serialize, de::DeserializeOwned};
+
+type HmacSha512 = Hmac<Sha512>;
 
 use crate::gateio::perpetual::{RestResult, rate_limit::RateLimiter};
 use crate::gateio::shared::credentials::Credentials;
@@ -61,10 +63,12 @@ impl RestClient {
         );
 
         // Generate HMAC-SHA512 signature
-        let key = hmac::Key::new(hmac::HMAC_SHA512, self.credentials.api_secret.expose_secret().as_bytes());
-        let signature = hmac::sign(&key, signature_string.as_bytes());
+        let mut mac = HmacSha512::new_from_slice(self.credentials.api_secret.expose_secret().as_bytes())
+            .expect("HMAC can take key of any size");
+        mac.update(signature_string.as_bytes());
+        let signature = mac.finalize();
 
-        hex::encode(signature.as_ref())
+        hex::encode(signature.into_bytes())
     }
 
     /// Make a GET request to the API without query parameters
