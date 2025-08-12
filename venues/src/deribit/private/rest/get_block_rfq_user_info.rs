@@ -202,7 +202,7 @@ mod tests {
             Box::new(PlainTextSecret::new("test_secret")),
             "https://test.deribit.com",
             rate_limiter,
-            reqwest::Client::new(),
+            std::sync::Arc::new(rest::native::NativeHttpClient::default()),
         );
 
         // Test method signature - this ensures the method compiles correctly

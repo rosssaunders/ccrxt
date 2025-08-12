@@ -46,6 +46,7 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
+    use std::sync::Arc;
     use rest::secrets::ExposableSecret;
     use serde_json::{Value, json};
 
@@ -123,7 +124,7 @@ mod tests {
             Box::new(PlainTextSecret::new("test_secret")),
             "https://test.deribit.com",
             rate_limiter,
-            reqwest::Client::new(),
+            Arc::new(rest::native::NativeHttpClient::default()),
         );
 
         // Test method signature - this ensures the method compiles correctly

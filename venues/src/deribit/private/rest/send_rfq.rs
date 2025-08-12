@@ -58,6 +58,7 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
+    use std::sync::Arc;
     use rest::secrets::ExposableSecret;
     use serde_json::{Value, json};
 
@@ -157,7 +158,7 @@ mod tests {
             Box::new(PlainTextSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
         let api_secret =
             Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
-        let client = reqwest::Client::new();
+        let http_client = Arc::new(rest::native::NativeHttpClient::default());
         let rate_limiter = crate::deribit::RateLimiter::new(AccountTier::Tier4);
 
         let rest_client = RestClient::new(
@@ -165,7 +166,7 @@ mod tests {
             api_secret,
             "https://test.deribit.com",
             rate_limiter,
-            client,
+            http_client,
         );
 
         // Test that we can get a function reference to the method

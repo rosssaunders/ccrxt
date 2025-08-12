@@ -305,6 +305,7 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
+    use std::sync::Arc;
     use rest::secrets::ExposableSecret;
     /// REST API endpoint constant
     use serde_json::{Value, json};
@@ -387,14 +388,14 @@ mod tests {
         let api_key = Box::new(PlainTextSecret::new("key".to_string())) as Box<dyn ExposableSecret>;
         let api_secret =
             Box::new(PlainTextSecret::new("secret".to_string())) as Box<dyn ExposableSecret>;
-        let client = reqwest::Client::new();
+        let http_client = Arc::new(rest::native::NativeHttpClient::default());
         let limiter = crate::deribit::RateLimiter::new(AccountTier::Tier4);
         let rest_client = RestClient::new(
             api_key,
             api_secret,
             "https://test.deribit.com",
             limiter,
-            client,
+            http_client,
         );
         let _ = RestClient::get_open_orders_by_currency;
         let _ = &rest_client;
