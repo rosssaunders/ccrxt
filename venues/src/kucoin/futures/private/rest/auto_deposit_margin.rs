@@ -82,14 +82,14 @@ mod tests {
     fn test_auto_deposit_margin_response_deserialization_success() {
         let json = r#"{"result":true}"#;
         let response: AutoDepositMarginResponse = serde_json::from_str(json).unwrap();
-        assert_eq!(response.result, true);
+        assert!(response.result);
     }
 
     #[test]
     fn test_auto_deposit_margin_response_deserialization_failure() {
         let json = r#"{"result":false}"#;
         let response: AutoDepositMarginResponse = serde_json::from_str(json).unwrap();
-        assert_eq!(response.result, false);
+        assert!(!response.result);
     }
 
     #[test]
@@ -140,12 +140,12 @@ mod tests {
         // Test true response
         let json_true = r#"{"result":true}"#;
         let response_true: AutoDepositMarginResponse = serde_json::from_str(json_true).unwrap();
-        assert_eq!(response_true.result, true);
+        assert!(response_true.result);
 
         // Test false response
         let json_false = r#"{"result":false}"#;
         let response_false: AutoDepositMarginResponse = serde_json::from_str(json_false).unwrap();
-        assert_eq!(response_false.result, false);
+        assert!(!response_false.result);
 
         // Verify field type
         let json_value = serde_json::to_value(&response_true).unwrap();

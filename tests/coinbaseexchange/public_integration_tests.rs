@@ -4,6 +4,7 @@
 //! Tests run against the live Coinbase Exchange API using real market data.
 
 use std::sync::Arc;
+
 use tokio;
 use venues::coinbaseexchange::{
     GetProductBookRequest, GetProductCandlesRequest, GetProductRequest, GetProductStatsRequest,
@@ -16,7 +17,11 @@ fn create_public_test_client() -> PublicRestClient {
     let http_client = Arc::new(rest::native::NativeHttpClient::default());
     let rate_limiter = RateLimiter::new();
 
-    PublicRestClient::new("https://api.exchange.coinbase.com", http_client, rate_limiter)
+    PublicRestClient::new(
+        "https://api.exchange.coinbase.com",
+        http_client,
+        rate_limiter,
+    )
 }
 
 /// Test the get_products endpoint

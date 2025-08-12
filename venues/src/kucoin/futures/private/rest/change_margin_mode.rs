@@ -77,14 +77,14 @@ mod tests {
     fn test_change_margin_mode_response_deserialization_success() {
         let json = r#"{"result":true}"#;
         let response: ChangeMarginModeResponse = serde_json::from_str(json).unwrap();
-        assert_eq!(response.result, true);
+        assert!(response.result);
     }
 
     #[test]
     fn test_change_margin_mode_response_deserialization_failure() {
         let json = r#"{"result":false}"#;
         let response: ChangeMarginModeResponse = serde_json::from_str(json).unwrap();
-        assert_eq!(response.result, false);
+        assert!(!response.result);
     }
 
     #[test]

@@ -291,7 +291,7 @@ mod tests {
         assert_eq!(contract.trade_size, 5000000);
         assert_eq!(contract.position_size, 1000000);
         assert_eq!(contract.config_change_time, 1640995200.0);
-        assert_eq!(contract.in_delisting, false);
+        assert!(!contract.in_delisting);
         assert_eq!(contract.orders_limit, 100);
         assert_eq!(contract.enable_bonus, Some(true));
         assert_eq!(contract.enable_credit, Some(false));
@@ -810,7 +810,7 @@ mod tests {
         }"#;
 
         let contract: DeliveryContract = serde_json::from_str(json).unwrap();
-        assert_eq!(contract.in_delisting, true);
+        assert!(contract.in_delisting);
         assert_eq!(contract.position_size, 0);
         assert_eq!(contract.orders_limit, 0);
         assert_eq!(contract.settle_price, Some("42800.0".to_string()));

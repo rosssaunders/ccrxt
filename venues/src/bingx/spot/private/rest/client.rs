@@ -130,7 +130,10 @@ impl RestClient {
             .collect::<Vec<_>>()
             .join("&");
 
-        Ok(format!("{}{}?{}", self.base_url, endpoint, final_query_string))
+        Ok(format!(
+            "{}{}?{}",
+            self.base_url, endpoint, final_query_string
+        ))
     }
 
     /// Execute a prepared request and parse ApiResponse wrapper
@@ -157,14 +160,18 @@ impl RestClient {
             .build();
 
         // Send request
-        let response = self.http_client.execute(request).await
+        let response = self
+            .http_client
+            .execute(request)
+            .await
             .map_err(|e| Errors::NetworkError(format!("HTTP request failed: {e}")))?;
 
         // Record the request for rate limiting
         self.rate_limiter.increment_request(endpoint_type).await;
 
         // Get response text
-        let response_text = response.text()
+        let response_text = response
+            .text()
             .map_err(|e| Errors::NetworkError(format!("Failed to read response: {e}")))?;
 
         // Check if request was successful
@@ -192,7 +199,10 @@ impl RestClient {
             {
                 Err(Errors::from(error_response))
             } else {
-                Err(Errors::Error(format!("HTTP {}: {}", response.status, response_text)))
+                Err(Errors::Error(format!(
+                    "HTTP {}: {}",
+                    response.status, response_text
+                )))
             }
         }
     }

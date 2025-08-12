@@ -1,9 +1,8 @@
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::bullish::enums::OrderSide;
 use crate::bullish::{
-    DataOrPaginated, EndpointType, PaginatedResult, PaginationParams, RestResult,
+    DataOrPaginated, EndpointType, PaginatedResult, PaginationParams, RestResult, enums::OrderSide,
 };
 
 /// Endpoint URL for historical trades operations

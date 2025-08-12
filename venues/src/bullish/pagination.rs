@@ -58,9 +58,9 @@ pub enum DataOrPaginated<T> {
     Wrapped(PaginatedResponse<T>),
 }
 
-impl<T> Into<Vec<T>> for DataOrPaginated<T> {
-    fn into(self) -> Vec<T> {
-        match self {
+impl<T> From<DataOrPaginated<T>> for Vec<T> {
+    fn from(val: DataOrPaginated<T>) -> Self {
+        match val {
             DataOrPaginated::Direct(v) => v,
             DataOrPaginated::Wrapped(w) => w.data,
         }
@@ -74,9 +74,9 @@ pub struct ListResponse<T> {
     pub links: Option<PaginationLinks>,
 }
 
-impl<T> Into<ListResponse<T>> for DataOrPaginated<T> {
-    fn into(self) -> ListResponse<T> {
-        match self {
+impl<T> From<DataOrPaginated<T>> for ListResponse<T> {
+    fn from(val: DataOrPaginated<T>) -> Self {
+        match val {
             DataOrPaginated::Direct(v) => ListResponse {
                 data: v,
                 links: None,

@@ -121,7 +121,7 @@ mod tests {
 
     #[test]
     fn test_batch_amend_various_prices() {
-        let price_scenarios = vec!["43000.0", "43000.50", "43000.25", "43000.125", "43000.0625"];
+        let price_scenarios = ["43000.0", "43000.50", "43000.25", "43000.125", "43000.0625"];
 
         let mut amendments = Vec::new();
         for (i, price) in price_scenarios.iter().enumerate() {

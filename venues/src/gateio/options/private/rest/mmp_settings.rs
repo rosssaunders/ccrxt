@@ -79,7 +79,7 @@ mod tests {
         let settings: MMPSettings = serde_json::from_str(json).unwrap();
         assert_eq!(settings.user, 12345);
         assert_eq!(settings.underlying, "BTC_USDT");
-        assert_eq!(settings.enable, true);
+        assert!(settings.enable);
         assert_eq!(settings.window, 60);
         assert_eq!(settings.freeze_time, 30);
         assert_eq!(settings.trade_limit, 100);
@@ -103,7 +103,7 @@ mod tests {
         let settings: MMPSettings = serde_json::from_str(json).unwrap();
         assert_eq!(settings.user, 67890);
         assert_eq!(settings.underlying, "ETH_USDT");
-        assert_eq!(settings.enable, false);
+        assert!(!settings.enable);
         assert_eq!(settings.window, 120);
         assert_eq!(settings.freeze_time, 60);
         assert_eq!(settings.trade_limit, 50);
@@ -127,7 +127,7 @@ mod tests {
         let settings: MMPSettings = serde_json::from_str(json).unwrap();
         assert_eq!(settings.user, 9223372036854775807);
         assert_eq!(settings.underlying, "BTC_USDT");
-        assert_eq!(settings.enable, true);
+        assert!(settings.enable);
         assert_eq!(settings.window, 2147483647);
         assert_eq!(settings.freeze_time, 2147483647);
         assert_eq!(settings.trade_limit, 2147483647);

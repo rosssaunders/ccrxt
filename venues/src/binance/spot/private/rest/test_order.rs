@@ -819,8 +819,8 @@ mod tests {
         assert_eq!(response.tax_commission.seller.to_string(), "0.00000000");
 
         // Test discount
-        assert_eq!(response.discount.enabled_for_account, true);
-        assert_eq!(response.discount.enabled_for_symbol, true);
+        assert!(response.discount.enabled_for_account);
+        assert!(response.discount.enabled_for_symbol);
         assert_eq!(response.discount.discount_asset, "BNB");
         assert_eq!(response.discount.discount.to_string(), "0.25000000");
     }
@@ -851,8 +851,8 @@ mod tests {
         }"#;
 
         let discount: Discount = serde_json::from_str(json).unwrap();
-        assert_eq!(discount.enabled_for_account, false);
-        assert_eq!(discount.enabled_for_symbol, false);
+        assert!(!discount.enabled_for_account);
+        assert!(!discount.enabled_for_symbol);
         assert_eq!(discount.discount_asset, "USDT");
         assert_eq!(discount.discount.to_string(), "0.00000000");
     }

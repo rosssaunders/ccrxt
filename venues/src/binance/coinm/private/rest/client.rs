@@ -212,11 +212,26 @@ impl CoinmRestClient {
     {
         // Route to appropriate verb-specific method based on HTTP method
         match method {
-            rest::http_client::Method::Get => self.send_get_signed_request(endpoint, params, weight, is_order).await,
-            rest::http_client::Method::Post => self.send_post_signed_request(endpoint, params, weight, is_order).await,
-            rest::http_client::Method::Put => self.send_put_signed_request(endpoint, params, weight, is_order).await,
-            rest::http_client::Method::Delete => self.send_delete_signed_request(endpoint, params, weight, is_order).await,
-            _ => Err(Errors::Error(format!("Unsupported HTTP method: {:?}", method))),
+            rest::http_client::Method::Get => {
+                self.send_get_signed_request(endpoint, params, weight, is_order)
+                    .await
+            }
+            rest::http_client::Method::Post => {
+                self.send_post_signed_request(endpoint, params, weight, is_order)
+                    .await
+            }
+            rest::http_client::Method::Put => {
+                self.send_put_signed_request(endpoint, params, weight, is_order)
+                    .await
+            }
+            rest::http_client::Method::Delete => {
+                self.send_delete_signed_request(endpoint, params, weight, is_order)
+                    .await
+            }
+            _ => Err(Errors::Error(format!(
+                "Unsupported HTTP method: {:?}",
+                method
+            ))),
         }
     }
 }

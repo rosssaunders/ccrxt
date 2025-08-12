@@ -3,8 +3,9 @@
 //! These tests verify the functionality of all public endpoints that don't require authentication.
 //! Tests run against the live BingX API using real market data.
 
-use chrono;
 use std::sync::Arc;
+
+use chrono;
 use tokio;
 use venues::bingx::spot::{
     Get24hrTickerRequest, GetHistoricalKlineRequest, GetKlineRequest, GetOldTradeRequest,

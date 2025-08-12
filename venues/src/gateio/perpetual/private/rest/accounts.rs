@@ -135,8 +135,8 @@ mod tests {
         assert_eq!(account.available, "9750.25");
         assert_eq!(account.point, "100.0");
         assert_eq!(account.currency, "USDT");
-        assert_eq!(account.in_dual_mode, false);
-        assert_eq!(account.enable_credit, true);
+        assert!(!account.in_dual_mode);
+        assert!(account.enable_credit);
         assert_eq!(account.position_cross_margin, "1500.0");
         assert_eq!(account.order_cross_margin, "300.0");
         assert_eq!(account.available_cross_margin, "8450.25");

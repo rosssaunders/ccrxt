@@ -3,8 +3,9 @@
 //! These tests verify the functionality of all public endpoints that don't require authentication.
 //! Tests run against the live Bullish API using real market data.
 
-use reqwest::Client;
 use std::error::Error as StdError;
+
+use reqwest::Client;
 use tokio;
 use venues::bullish::{
     CandleInterval, Errors, PaginatedResult, PaginationParams, PublicRestClient, RateLimiter,

@@ -170,14 +170,17 @@ impl RestClient {
 
         // Build GET request
         let request = RequestBuilder::new(HttpMethod::Get, url)
-            .header("X-BM-KEY", &self.api_key.expose_secret())
+            .header("X-BM-KEY", self.api_key.expose_secret())
             .header("X-BM-SIGN", &signature)
             .header("X-BM-TIMESTAMP", &timestamp)
             .header("Content-Type", "application/json")
             .build();
 
         // Send request
-        let response = self.http_client.execute(request).await
+        let response = self
+            .http_client
+            .execute(request)
+            .await
             .map_err(|e| Errors::NetworkError(format!("HTTP request failed: {e}")))?;
 
         // Record the request for rate limiting
@@ -227,7 +230,7 @@ impl RestClient {
 
         // Build POST request
         let request = RequestBuilder::new(HttpMethod::Post, url)
-            .header("X-BM-KEY", &self.api_key.expose_secret())
+            .header("X-BM-KEY", self.api_key.expose_secret())
             .header("X-BM-SIGN", &signature)
             .header("X-BM-TIMESTAMP", &timestamp)
             .header("Content-Type", "application/json")
@@ -235,7 +238,10 @@ impl RestClient {
             .build();
 
         // Send request
-        let response = self.http_client.execute(request).await
+        let response = self
+            .http_client
+            .execute(request)
+            .await
             .map_err(|e| Errors::NetworkError(format!("HTTP request failed: {e}")))?;
 
         // Record the request for rate limiting
@@ -296,14 +302,17 @@ impl RestClient {
 
         // Build DELETE request
         let request = RequestBuilder::new(HttpMethod::Delete, url)
-            .header("X-BM-KEY", &self.api_key.expose_secret())
+            .header("X-BM-KEY", self.api_key.expose_secret())
             .header("X-BM-SIGN", &signature)
             .header("X-BM-TIMESTAMP", &timestamp)
             .header("Content-Type", "application/json")
             .build();
 
         // Send request
-        let response = self.http_client.execute(request).await
+        let response = self
+            .http_client
+            .execute(request)
+            .await
             .map_err(|e| Errors::NetworkError(format!("HTTP request failed: {e}")))?;
 
         // Record the request for rate limiting
@@ -353,7 +362,7 @@ impl RestClient {
 
         // Build PUT request
         let request = RequestBuilder::new(HttpMethod::Put, url)
-            .header("X-BM-KEY", &self.api_key.expose_secret())
+            .header("X-BM-KEY", self.api_key.expose_secret())
             .header("X-BM-SIGN", &signature)
             .header("X-BM-TIMESTAMP", &timestamp)
             .header("Content-Type", "application/json")
@@ -361,7 +370,10 @@ impl RestClient {
             .build();
 
         // Send request
-        let response = self.http_client.execute(request).await
+        let response = self
+            .http_client
+            .execute(request)
+            .await
             .map_err(|e| Errors::NetworkError(format!("HTTP request failed: {e}")))?;
 
         // Record the request for rate limiting
@@ -382,7 +394,8 @@ impl RestClient {
         T: DeserializeOwned,
     {
         // Parse response
-        let response_text = response.text()
+        let response_text = response
+            .text()
             .map_err(|e| Errors::NetworkError(format!("Failed to read response: {e}")))?;
         let bitmart_response: BitMartResponse<T> =
             serde_json::from_str(&response_text).map_err(|e| {

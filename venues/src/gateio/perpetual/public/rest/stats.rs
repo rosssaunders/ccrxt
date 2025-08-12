@@ -204,7 +204,7 @@ mod tests {
 
             let json = serde_json::to_value(&request).unwrap();
             assert_eq!(json["limit"], limit);
-            assert!(limit >= 1 && limit <= 200);
+            assert!((1..=200).contains(&limit));
         }
     }
 

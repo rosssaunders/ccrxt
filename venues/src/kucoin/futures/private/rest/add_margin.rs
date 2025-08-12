@@ -236,11 +236,11 @@ mod tests {
         let response: AddMarginResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.id, "6200c9b83aecfb000152ddcd");
         assert_eq!(response.symbol, "XBTUSDTM");
-        assert_eq!(response.auto_deposit, false);
+        assert!(!response.auto_deposit);
         assert_eq!(response.maint_margin_req, 0.005);
         assert_eq!(response.risk_limit, 500000);
         assert_eq!(response.real_leverage, 18.72);
-        assert_eq!(response.cross_mode, false);
+        assert!(!response.cross_mode);
         assert_eq!(response.deleverage_percentage, 0.66);
         assert_eq!(response.opening_timestamp, 1646287090131);
         assert_eq!(response.current_timestamp, 1646295055021);
@@ -250,7 +250,7 @@ mod tests {
         assert_eq!(response.unrealised_cost, 43.388);
         assert_eq!(response.realised_gross_cost, 0.0);
         assert_eq!(response.realised_cost, 0.0260328);
-        assert_eq!(response.is_open, true);
+        assert!(response.is_open);
         assert_eq!(response.mark_price, 43536.65);
         assert_eq!(response.mark_value, 43.53665);
         assert_eq!(response.pos_cost, 43.388);

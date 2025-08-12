@@ -2,12 +2,8 @@ use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
 use crate::bullish::{
+    DataOrPaginated, EndpointType, PaginatedResult, PaginationParams, RestResult,
     enums::CandleInterval,
-    EndpointType,
-    PaginationParams,
-    RestResult,
-    PaginatedResult,
-    DataOrPaginated,
 };
 
 /// Endpoint URL path for candles (singular per API docs)
@@ -90,11 +86,14 @@ impl RestClient {
     ///
     /// # Errors
     /// Returns an error if the request fails or the response cannot be parsed
-    pub async fn get_market_candle(&self, request: &GetCandlesRequest) -> RestResult<PaginatedResult<Candle>> {
+    pub async fn get_market_candle(
+        &self,
+        request: &GetCandlesRequest,
+    ) -> RestResult<PaginatedResult<Candle>> {
         let endpoint = CANDLES_ENDPOINT.replace("{}", &request.symbol);
 
         // Serialize the entire request (minus symbol) into query parameters.
-        let query_params = serde_urlencoded::to_string(&request).unwrap_or_default();
+        let query_params = serde_urlencoded::to_string(request).unwrap_or_default();
 
         let full_endpoint = if query_params.is_empty() {
             endpoint
@@ -105,8 +104,8 @@ impl RestClient {
         // The API may return either a direct array or a paginated wrapper.
         // Parse flexibly and return data + optional links.
         let wire: DataOrPaginated<Candle> = self
-                .send_get_request(&full_endpoint, EndpointType::PublicCandles)
-                .await?;
+            .send_get_request(&full_endpoint, EndpointType::PublicCandles)
+            .await?;
 
         Ok(PaginatedResult::from(wire))
     }

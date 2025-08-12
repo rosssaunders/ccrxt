@@ -126,7 +126,7 @@ mod tests {
         assert_eq!(resp.download_id, "545923594199212032");
         assert_eq!(resp.status, TradeDownloadStatus::Completed);
         assert_eq!(resp.url, "www.binance.com");
-        assert_eq!(resp.notified, true);
+        assert!(resp.notified);
         assert_eq!(resp.expiration_timestamp, 1645009771000u64);
         assert_eq!(resp.is_expired, None);
     }
@@ -144,6 +144,6 @@ mod tests {
         let resp: TradeDownloadLinkByIdResponse = serde_json::from_value(data).unwrap();
         assert_eq!(resp.status, TradeDownloadStatus::Processing);
         assert_eq!(resp.url, "");
-        assert_eq!(resp.notified, false);
+        assert!(!resp.notified);
     }
 }

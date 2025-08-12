@@ -18,7 +18,11 @@ pub struct RestClient {
 
 impl RestClient {
     /// Create a new public REST client
-    pub fn new(base_url: impl Into<String>, rate_limiter: RateLimiter, http_client: Arc<dyn HttpClient>) -> Self {
+    pub fn new(
+        base_url: impl Into<String>,
+        rate_limiter: RateLimiter,
+        http_client: Arc<dyn HttpClient>,
+    ) -> Self {
         Self {
             base_url: base_url.into(),
             http_client,
@@ -40,7 +44,8 @@ impl RestClient {
         // Add query parameters if provided
         if let Some(params) = params {
             if !params.is_empty() {
-                let query_string = params.iter()
+                let query_string = params
+                    .iter()
                     .map(|(k, v)| format!("{}={}", k, v))
                     .collect::<Vec<_>>()
                     .join("&");
@@ -51,11 +56,14 @@ impl RestClient {
 
         // Build and execute request
         let request = RequestBuilder::new(HttpMethod::Get, url).build();
-        let response = self.http_client.execute(request).await
+        let response = self
+            .http_client
+            .execute(request)
+            .await
             .map_err(|e| ApiError::Http(format!("HTTP request failed: {e}")))?;
 
         let status = response.status;
-        
+
         // Extract rate limit headers
         let mut response_headers = ResponseHeaders::default();
         for (name, value) in response.headers.iter() {
@@ -68,7 +76,8 @@ impl RestClient {
             }
         }
 
-        let body = response.text()
+        let body = response
+            .text()
             .map_err(|e| ApiError::Http(format!("Failed to read response: {e}")))?;
 
         if status != 200 && status != 201 {

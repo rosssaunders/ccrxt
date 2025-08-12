@@ -55,11 +55,7 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the deserialized response or an error
-    pub async fn send_get_request<T, P>(
-        &self,
-        endpoint: &str,
-        params: Option<&P>,
-    ) -> RestResult<T>
+    pub async fn send_get_request<T, P>(&self, endpoint: &str, params: Option<&P>) -> RestResult<T>
     where
         T: DeserializeOwned,
         P: Serialize + ?Sized,
@@ -70,9 +66,8 @@ impl RestClient {
         // Build URL with query parameters
         let mut url = format!("{}/{}", self.base_url, endpoint);
         if let Some(params) = params {
-            let query_string = serde_urlencoded::to_string(params).map_err(|e| {
-                Errors::Error(format!("Failed to serialize query parameters: {e}"))
-            })?;
+            let query_string = serde_urlencoded::to_string(params)
+                .map_err(|e| Errors::Error(format!("Failed to serialize query parameters: {e}")))?;
             if !query_string.is_empty() {
                 url.push('?');
                 url.push_str(&query_string);
@@ -85,12 +80,16 @@ impl RestClient {
             .build();
 
         // Send request
-        let response = self.http_client.execute(request).await
+        let response = self
+            .http_client
+            .execute(request)
+            .await
             .map_err(|e| Errors::NetworkError(format!("HTTP request failed: {e}")))?;
 
         // Check response status
         let status = response.status;
-        let response_text = response.text()
+        let response_text = response
+            .text()
             .map_err(|e| Errors::NetworkError(format!("Failed to read response: {e}")))?;
 
         if status == 200 || status == 201 {
@@ -170,9 +169,8 @@ impl RestClient {
         // Build URL with query parameters
         let mut url = format!("{}/{}", self.base_url, endpoint);
         if let Some(params) = params {
-            let query_string = serde_urlencoded::to_string(params).map_err(|e| {
-                Errors::Error(format!("Failed to serialize query parameters: {e}"))
-            })?;
+            let query_string = serde_urlencoded::to_string(params)
+                .map_err(|e| Errors::Error(format!("Failed to serialize query parameters: {e}")))?;
             if !query_string.is_empty() {
                 url.push('?');
                 url.push_str(&query_string);
@@ -185,13 +183,17 @@ impl RestClient {
             .build();
 
         // Send request
-        let response = self.http_client.execute(request).await
+        let response = self
+            .http_client
+            .execute(request)
+            .await
             .map_err(|e| Errors::NetworkError(format!("HTTP request failed: {e}")))?;
 
         // Check response status and capture headers
         let status = response.status;
         let headers = response.headers.clone();
-        let response_text = response.text()
+        let response_text = response
+            .text()
             .map_err(|e| Errors::NetworkError(format!("Failed to read response: {e}")))?;
 
         if status == 200 || status == 201 {

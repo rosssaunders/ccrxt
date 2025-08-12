@@ -453,7 +453,7 @@ mod tests {
         let grid_size = 200;
 
         for i in 0..6 {
-            let price = base_price + ((i as i32 - 3) * grid_size);
+            let price = base_price + ((i - 3) * grid_size);
             let side = if i < 3 {
                 OrderSide::Buy
             } else {
@@ -583,7 +583,7 @@ mod tests {
         };
 
         let cloned = response.clone();
-        assert_eq!(cloned.succeeded, true);
+        assert!(cloned.succeeded);
         assert_eq!(cloned.message, Some("Test message".to_string()));
         assert!(cloned.order.is_none());
     }

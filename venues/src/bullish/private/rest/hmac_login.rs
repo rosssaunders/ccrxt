@@ -1,14 +1,13 @@
 //! HMAC Login endpoint for Bullish
 
-use crate::bullish::Errors;
-use crate::bullish::private::rest::RestClient;
-use crate::bullish::{EndpointType, RestResult};
 use base64::{Engine as _, engine::general_purpose};
 use hmac::{Hmac, Mac};
 use secrecy::ExposeSecret;
 use serde::Deserialize;
 use serde_json::Value;
 use sha2::Sha256;
+
+use crate::bullish::{EndpointType, Errors, RestResult, private::rest::RestClient};
 
 /// Endpoint constant for HMAC login
 const HMAC_LOGIN_ENDPOINT: &str = "/v1/users/hmac/login";

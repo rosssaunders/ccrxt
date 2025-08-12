@@ -1,8 +1,10 @@
 use serde::{Deserialize, Serialize};
 
-use crate::bullish::enums::{OrderSide, OrderType, TimeInForce};
-use crate::bullish::private::rest::client::RestClient;
-use crate::bullish::{EndpointType, RestResult};
+use crate::bullish::{
+    EndpointType, RestResult,
+    enums::{OrderSide, OrderType, TimeInForce},
+    private::rest::client::RestClient,
+};
 
 /// Endpoint URL for orders operations
 const ORDERS_ENDPOINT: &str = "/v2/orders";
@@ -10,16 +12,13 @@ const ORDERS_ENDPOINT: &str = "/v2/orders";
 /// Command type for order creation (currently only "V3CreateOrder" is supported)
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
+#[derive(Default)]
 pub enum CommandType {
     #[serde(rename = "V3CreateOrder")]
+    #[default]
     V3CreateOrder,
 }
 
-impl Default for CommandType {
-    fn default() -> Self {
-        CommandType::V3CreateOrder
-    }
-}
 
 /// Request parameters for creating a new order.
 ///

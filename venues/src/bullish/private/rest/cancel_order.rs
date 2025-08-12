@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::bullish::private::rest::client::RestClient;
-use crate::bullish::{EndpointType, RestResult};
+use crate::bullish::{EndpointType, RestResult, private::rest::client::RestClient};
 
 /// Endpoint URL for order-related commands (cancellations, amend, etc.)
 const COMMAND_ENDPOINT: &str = "/v2/command";
@@ -9,16 +8,13 @@ const COMMAND_ENDPOINT: &str = "/v2/command";
 /// Command type for cancelling an order
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
+#[derive(Default)]
 pub enum CommandType {
     #[serde(rename = "V3CancelOrder")]
+    #[default]
     V3CancelOrder,
 }
 
-impl Default for CommandType {
-    fn default() -> Self {
-        CommandType::V3CancelOrder
-    }
-}
 
 /// Request parameters for cancelling an order.
 ///

@@ -205,7 +205,7 @@ mod tests {
         assert_eq!(order.time_in_force, Some(TimeInForce::GoodTillCanceled));
         assert_eq!(order.status, OrderStatus::Active);
         assert_eq!(order.client_oid, Some("my-order-123".to_string()));
-        assert_eq!(order.reduce_only, false);
+        assert!(!order.reduce_only);
     }
 
     #[test]
@@ -246,7 +246,7 @@ mod tests {
         assert!(order.time_in_force.is_none());
         assert!(order.client_oid.is_none());
         assert_eq!(order.status, OrderStatus::Done);
-        assert_eq!(order.reduce_only, true);
+        assert!(order.reduce_only);
     }
 
     #[test]

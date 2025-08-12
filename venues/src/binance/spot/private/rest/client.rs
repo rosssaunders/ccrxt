@@ -1,6 +1,6 @@
+use rest::http_client::Method as HttpMethod;
 use serde::Serialize;
 
-use rest::http_client::Method as HttpMethod;
 use crate::binance::{
     shared::{Errors as SharedErrors, client::PrivateBinanceClient},
     spot::{Errors, RestResponse, RestResult},
@@ -196,11 +196,26 @@ impl SpotPrivateRestClient {
     {
         // Route to appropriate verb-specific method based on HTTP method
         match method {
-            HttpMethod::Get => self.send_get_signed_request(endpoint, params, weight, is_order).await,
-            HttpMethod::Post => self.send_post_signed_request(endpoint, params, weight, is_order).await,
-            HttpMethod::Put => self.send_put_signed_request(endpoint, params, weight, is_order).await,
-            HttpMethod::Delete => self.send_delete_signed_request(endpoint, params, weight, is_order).await,
-            _ => Err(Errors::Error(format!("Unsupported HTTP method: {:?}", method))),
+            HttpMethod::Get => {
+                self.send_get_signed_request(endpoint, params, weight, is_order)
+                    .await
+            }
+            HttpMethod::Post => {
+                self.send_post_signed_request(endpoint, params, weight, is_order)
+                    .await
+            }
+            HttpMethod::Put => {
+                self.send_put_signed_request(endpoint, params, weight, is_order)
+                    .await
+            }
+            HttpMethod::Delete => {
+                self.send_delete_signed_request(endpoint, params, weight, is_order)
+                    .await
+            }
+            _ => Err(Errors::Error(format!(
+                "Unsupported HTTP method: {:?}",
+                method
+            ))),
         }
     }
 }

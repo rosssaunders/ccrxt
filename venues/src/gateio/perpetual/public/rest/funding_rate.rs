@@ -132,7 +132,7 @@ mod tests {
 
             let json = serde_json::to_value(&request).unwrap();
             assert_eq!(json["limit"], limit);
-            assert!(limit >= 1 && limit <= 1000);
+            assert!((1..=1000).contains(&limit));
         }
     }
 
@@ -238,7 +238,7 @@ mod tests {
             assert_eq!(funding_rate.r, rate);
 
             let rate_val: f64 = funding_rate.r.parse().unwrap();
-            assert!(rate_val >= -0.375 && rate_val <= 0.375);
+            assert!((-0.375..=0.375).contains(&rate_val));
         }
     }
 

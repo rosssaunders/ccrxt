@@ -54,6 +54,6 @@ mod tests {
     fn test_modify_cross_margin_leverage_response_deserialization() {
         let json = r#"true"#;
         let response: bool = serde_json::from_str(json).unwrap();
-        assert_eq!(response, true);
+        assert!(response);
     }
 }

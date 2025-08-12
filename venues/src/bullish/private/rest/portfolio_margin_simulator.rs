@@ -1,11 +1,11 @@
 // Portfolio Margin Simulator endpoint implementation for Bullish
 // See: https://api.exchange.bullish.com/trading-api/v1/simulate-portfolio-margin
 
-use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
 
-use crate::bullish::private::rest::client::RestClient;
-use crate::bullish::{EndpointType, RestResult};
+use serde::{Deserialize, Serialize};
+
+use crate::bullish::{EndpointType, RestResult, private::rest::client::RestClient};
 
 const SIMULATE_PORTFOLIO_MARGIN_ENDPOINT: &str = "/trading-api/v1/simulate-portfolio-margin";
 

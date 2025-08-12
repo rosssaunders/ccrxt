@@ -9,8 +9,7 @@ use secrecy::ExposeSecret;
 use serde::{Serialize, de::DeserializeOwned};
 use sha2::Sha256;
 
-use crate::bullish::private::rest::Credentials;
-use crate::bullish::{EndpointType, Errors, RateLimiter, RestResult};
+use crate::bullish::{EndpointType, Errors, RateLimiter, RestResult, private::rest::Credentials};
 
 /// Private REST client for Bullish exchange
 ///
@@ -480,8 +479,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use rest::secrets::SecretString;
+
+    use super::*;
 
     /// A plain text implementation of ExposableSecret for testing purposes.
     #[derive(Clone)]

@@ -153,7 +153,7 @@ mod tests {
 
         // Test field types
         assert_eq!(response.cancelled_order_ids.len(), 2);
-        assert!(response.cancelled_order_ids.iter().all(|id| id.len() > 0));
+        assert!(response.cancelled_order_ids.iter().all(|id| !id.is_empty()));
 
         // Verify order ID format (typical KuCoin order ID length)
         for order_id in &response.cancelled_order_ids {

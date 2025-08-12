@@ -173,7 +173,7 @@ mod tests {
         assert_eq!(response.data_list.len(), 2);
         assert_eq!(response.data_list[0].symbol, ".XBTINT8H");
         assert_eq!(response.data_list[0].value, 0.0001);
-        assert_eq!(response.has_more, true);
+        assert!(response.has_more);
     }
 
     #[test]
@@ -215,6 +215,6 @@ mod tests {
         assert_eq!(response.data_list.len(), 2);
         assert_eq!(response.data_list[0].symbol, ".XBTUSDTMPI");
         assert_eq!(response.data_list[0].value, 0.0002);
-        assert_eq!(response.has_more, false);
+        assert!(!response.has_more);
     }
 }

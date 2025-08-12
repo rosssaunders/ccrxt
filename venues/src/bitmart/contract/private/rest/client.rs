@@ -19,7 +19,11 @@ pub struct RestClient {
 }
 
 impl RestClient {
-    pub fn new(api_key: impl Into<SecretString>, api_secret: impl Into<SecretString>, http_client: Arc<dyn HttpClient>) -> Self {
+    pub fn new(
+        api_key: impl Into<SecretString>,
+        api_secret: impl Into<SecretString>,
+        http_client: Arc<dyn HttpClient>,
+    ) -> Self {
         Self {
             api_key: api_key.into(),
             api_secret: api_secret.into(),
@@ -34,16 +38,20 @@ impl RestClient {
     ) -> RestResult<T> {
         let url = format!("{}{}", self.base_url, path);
         let request = RequestBuilder::new(HttpMethod::Get, url)
-            .header("X-BM-KEY", &self.api_key.expose_secret().to_string())
+            .header("X-BM-KEY", self.api_key.expose_secret().to_string())
             .build();
-        
-        let response = self.http_client.execute(request).await
+
+        let response = self
+            .http_client
+            .execute(request)
+            .await
             .map_err(|e| Errors::NetworkError(format!("HTTP request failed: {e}")))?;
-        
+
         let status = response.status;
-        let text = response.text()
+        let text = response
+            .text()
             .map_err(|e| Errors::NetworkError(format!("Failed to read response: {e}")))?;
-        
+
         if status != 200 && status != 201 {
             let err: crate::bitmart::spot::error::ErrorResponse = serde_json::from_str(&text)
                 .unwrap_or_else(|_| crate::bitmart::spot::error::ErrorResponse {

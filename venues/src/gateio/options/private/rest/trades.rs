@@ -515,7 +515,7 @@ mod tests {
         }"#;
 
         let precise_trade: OptionsTrade = serde_json::from_str(precise_time_json).unwrap();
-        assert_eq!(precise_trade.create_time, 1640995200.123456789);
+        assert_eq!(precise_trade.create_time, 1_640_995_200.123_456_7);
     }
 
     #[test]

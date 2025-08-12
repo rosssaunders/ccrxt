@@ -18,6 +18,7 @@ pub struct GetConversionRateRequest {
 pub struct ConversionRateResult {
     /// CDCETH
     pub instrument_name: String,
+
     /// Conversion rate between staked token (ETH.staked) and liquid staking token (CDCETH)
     pub conversion_rate: String,
 }
@@ -30,7 +31,7 @@ impl RestClient {
     ///
     /// Returns the current conversion rate for liquid staking tokens.
     ///
-    /// See: <https://exchange-docs.crypto.com/exchange/index.html>
+    /// See: <https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#public-staking-get-conversion-rate>
     ///
     /// Rate limit: 50 requests per second
     ///
@@ -43,8 +44,12 @@ impl RestClient {
         &self,
         params: GetConversionRateRequest,
     ) -> RestResult<ConversionRateResponse> {
-        self.send_post_request(CONVERSION_RATE_ENDPOINT, Some(&params), EndpointType::PublicStaking)
-            .await
+        self.send_post_request(
+            CONVERSION_RATE_ENDPOINT,
+            Some(&params),
+            EndpointType::PublicStaking,
+        )
+        .await
     }
 }
 

@@ -255,7 +255,7 @@ mod tests {
         let position = &response[0];
 
         // Validate key field types
-        assert!(position.cross_mode == false);
+        assert!(!position.cross_mode);
         assert!(position.deleverage_percentage > 0.0);
         assert!(position.risk_limit > 0);
         assert!(position.real_leverage > 0.0);

@@ -2,7 +2,11 @@ use std::{borrow::Cow, collections::BTreeMap, sync::Arc};
 
 use chrono::Utc;
 use hmac::{Hmac, Mac};
-use rest::{HttpClient, http_client::{Method as HttpMethod, RequestBuilder}, secrets::ExposableSecret};
+use rest::{
+    HttpClient,
+    http_client::{Method as HttpMethod, RequestBuilder},
+    secrets::ExposableSecret,
+};
 use serde_json::{Value, json};
 use sha2::Sha256;
 
@@ -211,31 +215,38 @@ impl RestClient {
         });
 
         let url = format!("{}/v1/{}", self.base_url, method);
-        let body = serde_json::to_string(&request_body)
-            .map_err(|e| crate::cryptocom::Errors::Error(format!("Failed to serialize body: {e}")))?;
-        
+        let body = serde_json::to_string(&request_body).map_err(|e| {
+            crate::cryptocom::Errors::Error(format!("Failed to serialize body: {e}"))
+        })?;
+
         let request = RequestBuilder::new(HttpMethod::Post, url)
             .header("Content-Type", "application/json")
             .body(body.into_bytes())
             .build();
-        
-        let response = self.http_client.execute(request).await
-            .map_err(|e| crate::cryptocom::Errors::NetworkError(format!("HTTP request failed: {e}")))?;
-        
+
+        let response = self.http_client.execute(request).await.map_err(|e| {
+            crate::cryptocom::Errors::NetworkError(format!("HTTP request failed: {e}"))
+        })?;
+
         // Check if the response was successful
         if !(response.status >= 200 && response.status < 300) {
             let status = response.status;
-            let error_text = response.text()
-                .map_err(|e| crate::cryptocom::Errors::NetworkError(format!("Failed to read response: {e}")))?;
-            return Err(crate::cryptocom::Errors::Error(format!("HTTP {status}: {error_text}")));
+            let error_text = response.text().map_err(|e| {
+                crate::cryptocom::Errors::NetworkError(format!("Failed to read response: {e}"))
+            })?;
+            return Err(crate::cryptocom::Errors::Error(format!(
+                "HTTP {status}: {error_text}"
+            )));
         }
-        
-        let response_text = response.text()
-            .map_err(|e| crate::cryptocom::Errors::NetworkError(format!("Failed to read response: {e}")))?;
-        
-        let result: T = serde_json::from_str(&response_text)
-            .map_err(|e| crate::cryptocom::Errors::Error(format!("Failed to parse response: {e}")))?;
-        
+
+        let response_text = response.text().map_err(|e| {
+            crate::cryptocom::Errors::NetworkError(format!("Failed to read response: {e}"))
+        })?;
+
+        let result: T = serde_json::from_str(&response_text).map_err(|e| {
+            crate::cryptocom::Errors::Error(format!("Failed to parse response: {e}"))
+        })?;
+
         Ok(result)
     }
 }
@@ -392,7 +403,8 @@ mod tests {
             Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
         let http_client = Arc::new(rest::native::NativeHttpClient::default());
 
-        let rest_client = RestClient::new(api_key, api_secret, "https://api.crypto.com", http_client);
+        let rest_client =
+            RestClient::new(api_key, api_secret, "https://api.crypto.com", http_client);
 
         assert_eq!(rest_client.base_url, "https://api.crypto.com");
     }
@@ -405,7 +417,8 @@ mod tests {
             Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
         let http_client = Arc::new(rest::native::NativeHttpClient::default());
 
-        let rest_client = RestClient::new(api_key, api_secret, "https://api.crypto.com", http_client);
+        let rest_client =
+            RestClient::new(api_key, api_secret, "https://api.crypto.com", http_client);
 
         let params = json!({
             "order_id": 53287421324_u64

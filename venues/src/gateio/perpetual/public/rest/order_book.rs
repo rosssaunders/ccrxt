@@ -189,7 +189,7 @@ mod tests {
 
             let json = serde_json::to_value(&request).unwrap();
             assert_eq!(json["limit"], limit);
-            assert!(limit >= 1 && limit <= 100);
+            assert!((1..=100).contains(&limit));
         }
     }
 
@@ -532,8 +532,8 @@ mod tests {
         // For timestamps (f64), use epsilon comparison due to floating-point precision limits
         // With large numbers like Unix timestamps, we need a larger epsilon
         let epsilon = 1e-6;
-        assert!((order_book.current - 1640995200.123456789).abs() < epsilon);
-        assert!((order_book.update - 1640995200.987654321).abs() < epsilon);
+        assert!((order_book.current - 1_640_995_200.123_456_7).abs() < epsilon);
+        assert!((order_book.update - 1_640_995_200.987_654_2).abs() < epsilon);
     }
 
     #[test]
@@ -651,7 +651,7 @@ mod tests {
 
             let json = serde_json::to_value(&request).unwrap();
             assert_eq!(json["limit"], depth);
-            assert!(depth >= 1 && depth <= 100);
+            assert!((1..=100).contains(&depth));
         }
     }
 

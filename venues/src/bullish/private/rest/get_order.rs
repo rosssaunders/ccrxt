@@ -1,7 +1,6 @@
 use serde::Serialize;
 
-use crate::bullish::private::rest::client::RestClient;
-use crate::bullish::{EndpointType, RestResult};
+use crate::bullish::{EndpointType, RestResult, private::rest::client::RestClient};
 
 /// Endpoint URL for orders operations
 const ORDERS_ENDPOINT: &str = "/v2/orders";

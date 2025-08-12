@@ -184,7 +184,7 @@ mod tests {
 
     #[test]
     fn test_batch_create_multiple_contracts() {
-        let contracts = vec!["BTC_USDT", "ETH_USDT", "SOL_USDT", "MATIC_USDT"];
+        let contracts = ["BTC_USDT", "ETH_USDT", "SOL_USDT", "MATIC_USDT"];
         let mut orders = Vec::new();
 
         for (i, contract) in contracts.iter().enumerate() {

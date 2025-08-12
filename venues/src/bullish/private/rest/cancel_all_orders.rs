@@ -1,22 +1,18 @@
 use serde::{Deserialize, Serialize};
 
-use crate::bullish::private::rest::client::RestClient;
-use crate::bullish::{EndpointType, RestResult};
+use crate::bullish::{EndpointType, RestResult, private::rest::client::RestClient};
 
 const COMMAND_ENDPOINT: &str = "/v2/command";
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
+#[derive(Default)]
 pub enum CommandType {
     #[serde(rename = "V1CancelAllOrders")]
+    #[default]
     V1CancelAllOrders,
 }
 
-impl Default for CommandType {
-    fn default() -> Self {
-        CommandType::V1CancelAllOrders
-    }
-}
 
 /// Request parameters for cancelling all orders for a trading account.
 #[derive(Debug, Clone, Serialize)]
@@ -35,7 +31,7 @@ pub struct CancelAllOrdersRequest {
 #[serde(rename_all = "camelCase")]
 pub struct CancelAllOrdersResponse {
     pub message: String,
-    
+
     #[serde(rename = "requestId")]
     pub request_id: String,
 }
@@ -50,8 +46,7 @@ impl RestClient {
         &mut self,
         request: CancelAllOrdersRequest,
     ) -> RestResult<CancelAllOrdersResponse> {
-        self
-            .send_post_request(COMMAND_ENDPOINT, request, EndpointType::PrivateOrders)
+        self.send_post_request(COMMAND_ENDPOINT, request, EndpointType::PrivateOrders)
             .await
     }
 }

@@ -1,22 +1,18 @@
 use serde::{Deserialize, Serialize};
 
-use crate::bullish::private::rest::client::RestClient;
-use crate::bullish::{EndpointType, RestResult};
+use crate::bullish::{EndpointType, RestResult, private::rest::client::RestClient};
 
 const COMMAND_ENDPOINT: &str = "/v2/command";
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
+#[derive(Default)]
 pub enum CommandType {
     #[serde(rename = "V1AmendOrder")]
+    #[default]
     V1AmendOrder,
 }
 
-impl Default for CommandType {
-    fn default() -> Self {
-        CommandType::V1AmendOrder
-    }
-}
 
 /// Request parameters for amending an order.
 #[derive(Debug, Clone, Serialize, Default)]

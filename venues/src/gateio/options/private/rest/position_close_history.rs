@@ -582,7 +582,7 @@ mod tests {
         }"#;
 
         let entry: OptionsPositionCloseHistory = serde_json::from_str(json).unwrap();
-        assert_eq!(entry.time, 1640995200.123456789);
+        assert_eq!(entry.time, 1_640_995_200.123_456_7);
         assert_eq!(entry.pnl, "100.0");
         assert_eq!(entry.side, "long");
         assert_eq!(entry.contract, "BTC-20240101-50000-C");

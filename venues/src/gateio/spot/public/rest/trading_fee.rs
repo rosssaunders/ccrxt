@@ -147,7 +147,7 @@ mod tests {
         assert_eq!(fee.currency_pair, "BTC_USDT");
         assert_eq!(fee.maker_fee, "0.002");
         assert_eq!(fee.taker_fee, "0.002");
-        assert_eq!(fee.gt_deduction, true);
+        assert!(fee.gt_deduction);
         assert_eq!(fee.gt_taker_fee, "0.0015");
         assert_eq!(fee.gt_maker_fee, "0.0015");
         assert_eq!(fee.loan_fee, "0.01");
@@ -171,7 +171,7 @@ mod tests {
         assert_eq!(fee.currency_pair, "ETH_USDT");
         assert_eq!(fee.maker_fee, "0.001");
         assert_eq!(fee.taker_fee, "0.002");
-        assert_eq!(fee.gt_deduction, false);
+        assert!(!fee.gt_deduction);
         assert_eq!(fee.gt_taker_fee, "0");
         assert_eq!(fee.gt_maker_fee, "0");
         assert_eq!(fee.loan_fee, "0.02");

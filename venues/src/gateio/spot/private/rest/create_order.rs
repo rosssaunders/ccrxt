@@ -372,7 +372,7 @@ mod tests {
         assert_eq!(order.price, "30000");
         assert_eq!(order.left, "0.001");
         assert_eq!(order.filled_amount, "0");
-        assert_eq!(order.gt_discount, false);
+        assert!(!order.gt_discount);
     }
 
     #[test]
@@ -441,7 +441,7 @@ mod tests {
         }"#;
 
         let order: Order = serde_json::from_str(json).unwrap();
-        assert_eq!(order.gt_discount, true);
+        assert!(order.gt_discount);
         assert_eq!(order.gt_fee, "3.75");
         assert_eq!(order.fee, "15");
 

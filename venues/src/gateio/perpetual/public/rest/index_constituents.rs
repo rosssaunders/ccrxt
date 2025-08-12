@@ -493,10 +493,10 @@ mod tests {
             let weight_val: f64 = constituent.weight.unwrap().parse().unwrap();
 
             if should_be_valid {
-                assert!(weight_val >= 0.0 && weight_val <= 1.0);
+                assert!((0.0..=1.0).contains(&weight_val));
             } else {
                 // Weight is outside valid range
-                assert!(weight_val < 0.0 || weight_val > 1.0);
+                assert!(!(0.0..=1.0).contains(&weight_val));
             }
         }
     }

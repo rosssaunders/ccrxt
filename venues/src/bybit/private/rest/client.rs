@@ -136,7 +136,7 @@ impl RestClient {
 
         // Build request
         let request = RequestBuilder::new(HttpMethod::Get, url)
-            .header("X-BAPI-API-KEY", &self.api_key.expose_secret())
+            .header("X-BAPI-API-KEY", self.api_key.expose_secret())
             .header("X-BAPI-TIMESTAMP", &timestamp)
             .header("X-BAPI-SIGN", &signature)
             .header("X-BAPI-RECV-WINDOW", recv_window)
@@ -144,7 +144,10 @@ impl RestClient {
             .build();
 
         // Send the request
-        let response = self.http_client.execute(request).await
+        let response = self
+            .http_client
+            .execute(request)
+            .await
             .map_err(|e| Errors::NetworkError(format!("HTTP request failed: {e}")))?;
 
         // Record the request for rate limiting
@@ -160,7 +163,8 @@ impl RestClient {
         }
 
         // Parse the response
-        let response_text = response.text()
+        let response_text = response
+            .text()
             .map_err(|e| Errors::NetworkError(format!("Failed to read response: {e}")))?;
         let parsed_response: T = serde_json::from_str(&response_text)?;
 
@@ -214,7 +218,7 @@ impl RestClient {
 
         // Build request
         let request_obj = RequestBuilder::new(HttpMethod::Post, url)
-            .header("X-BAPI-API-KEY", &self.api_key.expose_secret())
+            .header("X-BAPI-API-KEY", self.api_key.expose_secret())
             .header("X-BAPI-TIMESTAMP", &timestamp)
             .header("X-BAPI-SIGN", &signature)
             .header("X-BAPI-RECV-WINDOW", recv_window)
@@ -223,7 +227,10 @@ impl RestClient {
             .build();
 
         // Send the request
-        let response = self.http_client.execute(request_obj).await
+        let response = self
+            .http_client
+            .execute(request_obj)
+            .await
             .map_err(|e| Errors::NetworkError(format!("HTTP request failed: {e}")))?;
 
         // Record the request for rate limiting
@@ -239,7 +246,8 @@ impl RestClient {
         }
 
         // Parse the response
-        let response_text = response.text()
+        let response_text = response
+            .text()
             .map_err(|e| Errors::NetworkError(format!("Failed to read response: {e}")))?;
         let parsed_response: T = serde_json::from_str(&response_text)?;
 
@@ -293,7 +301,7 @@ impl RestClient {
 
         // Build request
         let request_obj = RequestBuilder::new(HttpMethod::Put, url)
-            .header("X-BAPI-API-KEY", &self.api_key.expose_secret())
+            .header("X-BAPI-API-KEY", self.api_key.expose_secret())
             .header("X-BAPI-TIMESTAMP", &timestamp)
             .header("X-BAPI-SIGN", &signature)
             .header("X-BAPI-RECV-WINDOW", recv_window)
@@ -302,7 +310,10 @@ impl RestClient {
             .build();
 
         // Send the request
-        let response = self.http_client.execute(request_obj).await
+        let response = self
+            .http_client
+            .execute(request_obj)
+            .await
             .map_err(|e| Errors::NetworkError(format!("HTTP request failed: {e}")))?;
 
         // Record the request for rate limiting
@@ -318,7 +329,8 @@ impl RestClient {
         }
 
         // Parse the response
-        let response_text = response.text()
+        let response_text = response
+            .text()
             .map_err(|e| Errors::NetworkError(format!("Failed to read response: {e}")))?;
         let parsed_response: T = serde_json::from_str(&response_text)?;
 
@@ -379,7 +391,7 @@ impl RestClient {
 
         // Build request
         let request = RequestBuilder::new(HttpMethod::Delete, url)
-            .header("X-BAPI-API-KEY", &self.api_key.expose_secret())
+            .header("X-BAPI-API-KEY", self.api_key.expose_secret())
             .header("X-BAPI-TIMESTAMP", &timestamp)
             .header("X-BAPI-SIGN", &signature)
             .header("X-BAPI-RECV-WINDOW", recv_window)
@@ -387,7 +399,10 @@ impl RestClient {
             .build();
 
         // Send the request
-        let response = self.http_client.execute(request).await
+        let response = self
+            .http_client
+            .execute(request)
+            .await
             .map_err(|e| Errors::NetworkError(format!("HTTP request failed: {e}")))?;
 
         // Record the request for rate limiting
@@ -403,7 +418,8 @@ impl RestClient {
         }
 
         // Parse the response
-        let response_text = response.text()
+        let response_text = response
+            .text()
             .map_err(|e| Errors::NetworkError(format!("Failed to read response: {e}")))?;
         let parsed_response: T = serde_json::from_str(&response_text)?;
 

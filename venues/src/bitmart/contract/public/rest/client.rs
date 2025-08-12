@@ -26,14 +26,22 @@ impl RestClient {
     pub async fn get<T: serde::de::DeserializeOwned>(&self, path: &str) -> Result<T> {
         let url = format!("{}{}", self.base_url, path);
         let request = RequestBuilder::new(HttpMethod::Get, url).build();
-        
-        let response = self.http_client.execute(request).await
-            .map_err(|e| crate::bitmart::spot::error::BitmartError::Other(0, format!("HTTP request failed: {e}").into()))?;
-        
+
+        let response = self.http_client.execute(request).await.map_err(|e| {
+            crate::bitmart::spot::error::BitmartError::Other(
+                0,
+                format!("HTTP request failed: {e}").into(),
+            )
+        })?;
+
         let status = response.status;
-        let text = response.text()
-            .map_err(|e| crate::bitmart::spot::error::BitmartError::Other(0, format!("Failed to read response: {e}").into()))?;
-        
+        let text = response.text().map_err(|e| {
+            crate::bitmart::spot::error::BitmartError::Other(
+                0,
+                format!("Failed to read response: {e}").into(),
+            )
+        })?;
+
         if status != 200 && status != 201 {
             let err: crate::bitmart::spot::error::ErrorResponse = serde_json::from_str(&text)
                 .unwrap_or_else(|_| crate::bitmart::spot::error::ErrorResponse {

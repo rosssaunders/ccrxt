@@ -123,7 +123,7 @@ mod tests {
             let json = serde_json::to_value(&request).unwrap();
             assert_eq!(json["offset"], offset);
             assert_eq!(json["limit"], limit);
-            assert!(limit >= 1 && limit <= 500);
+            assert!((1..=500).contains(&limit));
         }
     }
 
@@ -145,13 +145,11 @@ mod tests {
 
     #[test]
     fn test_btc_risk_limit_tiers() {
-        let btc_tiers = vec![
-            r#"{"tier": 1, "risk_limit": "1000000", "initial_rate": "0.01", "maintenance_rate": "0.005"}"#,
+        let btc_tiers = [r#"{"tier": 1, "risk_limit": "1000000", "initial_rate": "0.01", "maintenance_rate": "0.005"}"#,
             r#"{"tier": 2, "risk_limit": "2000000", "initial_rate": "0.015", "maintenance_rate": "0.0075"}"#,
             r#"{"tier": 3, "risk_limit": "5000000", "initial_rate": "0.02", "maintenance_rate": "0.01"}"#,
             r#"{"tier": 4, "risk_limit": "10000000", "initial_rate": "0.025", "maintenance_rate": "0.0125"}"#,
-            r#"{"tier": 5, "risk_limit": "20000000", "initial_rate": "0.03", "maintenance_rate": "0.015"}"#,
-        ];
+            r#"{"tier": 5, "risk_limit": "20000000", "initial_rate": "0.03", "maintenance_rate": "0.015"}"#];
 
         let mut previous_risk_limit = 0.0;
         let mut previous_initial_rate = 0.0;

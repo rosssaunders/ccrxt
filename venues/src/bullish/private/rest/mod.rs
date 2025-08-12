@@ -49,6 +49,12 @@ pub use create_amm_instruction::{
 };
 pub use create_order::{CreateOrderRequest, CreateOrderResponse};
 pub use credentials::Credentials;
+// Custody re-exports
+pub use custody_deposit_instructions_crypto::CustodyCryptoDepositInstructions;
+pub use custody_deposit_instructions_fiat::{CustodyFiatDepositInstructions, CustodyFiatNetwork};
+pub use custody_history::{CustodyHistory, CustodyHistoryParams};
+pub use custody_limits::CustodyLimits;
+pub use custody_withdrawal_instructions_crypto::CustodyCryptoWithdrawalInstructions;
 pub use delayed_cancel_all_orders::{
     DelayedCancelAllOrdersRequest, DelayedCancelAllOrdersResponse,
 };
@@ -72,6 +78,10 @@ pub use terminate_amm_instruction::{
     TerminateAmmCommandType, TerminateAmmInstructionRequest, TerminateAmmInstructionResponseV3,
 };
 pub use trades::{GetTradesParams, Trade};
+// Transfers
+pub use transfer_asset::{
+    TransferAssetCommand, TransferAssetRequest, TransferAssetResponse, TransferCommandType,
+};
 pub use types::Order;
 pub use unset_delayed_cancel_all_orders::{
     UnsetDelayedCancelAllOrdersRequest, UnsetDelayedCancelAllOrdersResponse,
@@ -80,15 +90,3 @@ pub use wallet_transactions::{
     GetWalletTransactionsParams, TransactionStatus, TransactionType, WalletTransaction,
     WalletTransactionsResponse,
 };
-
-// Transfers
-pub use transfer_asset::{
-    TransferAssetCommand, TransferAssetRequest, TransferAssetResponse, TransferCommandType,
-};
-
-// Custody re-exports
-pub use custody_deposit_instructions_crypto::CustodyCryptoDepositInstructions;
-pub use custody_deposit_instructions_fiat::{CustodyFiatDepositInstructions, CustodyFiatNetwork};
-pub use custody_history::{CustodyHistory, CustodyHistoryParams};
-pub use custody_limits::CustodyLimits;
-pub use custody_withdrawal_instructions_crypto::CustodyCryptoWithdrawalInstructions;
