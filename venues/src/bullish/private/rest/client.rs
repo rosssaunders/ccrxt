@@ -5,11 +5,11 @@ use std::borrow::Cow;
 use base64::{Engine as _, engine::general_purpose};
 use hmac::{Hmac, Mac};
 use reqwest::Client;
-use rest::secrets::ExposableSecret;
+use secrecy::ExposeSecret;
 use serde::{Serialize, de::DeserializeOwned};
-use serde_json::Value;
 use sha2::Sha256;
 
+use crate::bullish::private::rest::Credentials;
 use crate::bullish::{EndpointType, Errors, RateLimiter, RestResult};
 
 /// Private REST client for Bullish exchange
@@ -19,14 +19,16 @@ use crate::bullish::{EndpointType, Errors, RateLimiter, RestResult};
 pub struct RestClient {
     /// The underlying HTTP client used for making requests
     pub(crate) client: Client,
-    /// The API key for authentication
-    pub(crate) api_key: Box<dyn ExposableSecret>,
-    /// The API secret for HMAC signing
-    pub(crate) api_secret: Box<dyn ExposableSecret>,
+
+    /// Venue credentials (API key and secret)
+    pub(crate) credentials: Credentials,
+
     /// The base URL for the API
     pub(crate) base_url: Cow<'static, str>,
+
     /// Rate limiter for API requests
     pub(crate) rate_limiter: RateLimiter,
+
     /// Current JWT token (cached)
     pub(crate) jwt_token: Option<String>,
 }
@@ -35,8 +37,7 @@ impl RestClient {
     /// Creates a new RestClient with API credentials
     ///
     /// # Arguments
-    /// * `api_key` - The API key for authentication
-    /// * `api_secret` - The API secret for HMAC signing
+    /// * `credentials` - The Bullish API credentials (secure)
     /// * `base_url` - The base URL for the API
     /// * `client` - The HTTP client to use
     /// * `rate_limiter` - Rate limiter for requests
@@ -44,101 +45,24 @@ impl RestClient {
     /// # Returns
     /// A new RestClient instance
     pub fn new(
-        api_key: Box<dyn ExposableSecret>,
-        api_secret: Box<dyn ExposableSecret>,
+        credentials: Credentials,
         base_url: impl Into<Cow<'static, str>>,
         client: Client,
         rate_limiter: RateLimiter,
     ) -> Self {
         Self {
             client,
-            api_key,
-            api_secret,
+            credentials,
             base_url: base_url.into(),
             rate_limiter,
             jwt_token: None,
         }
     }
 
-    /// Generate JWT token for HMAC authentication
-    ///
-    /// This method makes a request to the `/v1/users/hmac/login` endpoint
-    /// to obtain a JWT token that can be used for authenticated requests.
-    ///
-    /// # Returns
-    /// A JWT token valid for 24 hours
-    pub async fn get_jwt_token(&mut self) -> RestResult<String> {
-        // Check rate limits
-        self.rate_limiter
-            .check_limits(EndpointType::PrivateLogin)
-            .await
-            .map_err(|e| Errors::RateLimitError(e.to_string()))?;
-
-        let nonce = chrono::Utc::now().timestamp();
-        let message = format!("GET/trading-api/v1/users/hmac/login{nonce}");
-
-        // Sign the message with HMAC-SHA256
-        let mut mac = Hmac::<Sha256>::new_from_slice(self.api_secret.expose_secret().as_bytes())
-            .map_err(|_| Errors::InvalidApiKey())?;
-        mac.update(message.as_bytes());
-        let signature = general_purpose::STANDARD.encode(mac.finalize().into_bytes());
-
-        let url = format!("{}/trading-api/v1/users/hmac/login", self.base_url);
-
-        let response = self
-            .client
-            .get(&url)
-            .header("BX-KEY", self.api_key.expose_secret())
-            .header("BX-SIGNATURE", signature)
-            .header("BX-NONCE", nonce.to_string())
-            .send()
-            .await?;
-
-        self.rate_limiter
-            .increment_request(EndpointType::PrivateLogin)
-            .await;
-
-        if !response.status().is_success() {
-            let error_text = response.text().await?;
-            return Err(Errors::AuthenticationError(format!(
-                "Login failed: {error_text}"
-            )));
-        }
-
-        let result: Value = response.json().await?;
-
-        if let Some(token) = result.get("token").and_then(|t| t.as_str()) {
-            self.jwt_token = Some(token.to_string());
-            Ok(token.to_string())
-        } else {
-            Err(Errors::AuthenticationError(
-                "No token in response".to_string(),
-            ))
-        }
-    }
-
-    /// Send an authenticated request to the Bullish API
-    ///
-    /// This method handles JWT token management, rate limiting, and error handling.
-    ///
-    /// # Arguments
-    /// * `endpoint` - The API endpoint path
-    /// * `method` - The HTTP method
-    /// * `body` - Optional request body for POST/PUT requests
-    /// * `endpoint_type` - The endpoint type for rate limiting
-    ///
-    /// # Returns
-    /// The deserialized response or an error
-    pub async fn send_authenticated_request<T, B>(
-        &mut self,
-        endpoint: &str,
-        method: reqwest::Method,
-        body: Option<&B>,
-        endpoint_type: EndpointType,
-    ) -> RestResult<T>
+    /// Low-level: perform GET with JWT auth and error mapping.
+    async fn do_get<T>(&mut self, endpoint: &str, endpoint_type: EndpointType) -> RestResult<T>
     where
         T: DeserializeOwned,
-        B: Serialize,
     {
         // Check rate limits
         self.rate_limiter
@@ -148,7 +72,9 @@ impl RestClient {
 
         // Ensure we have a valid JWT token
         if self.jwt_token.is_none() {
-            self.get_jwt_token().await?;
+            return Err(Errors::AuthenticationError(
+                "JWT token missing, please authenticate with hmac_login or login".to_string(),
+            ));
         }
 
         let url = format!("{}/trading-api{}", self.base_url, endpoint);
@@ -156,85 +82,37 @@ impl RestClient {
             Errors::AuthenticationError("JWT token missing after login attempt".to_owned())
         })?;
 
-        let mut request = self
+        let response = self
             .client
-            .request(method.clone(), &url)
+            .get(&url)
             .header("Authorization", format!("Bearer {token}"))
-            .header("Content-Type", "application/json");
-
-        if let Some(body_data) = body {
-            request = request.json(body_data);
-        }
-
-        let response = request.send().await?;
+            .header("Content-Type", "application/json")
+            .send()
+            .await?;
 
         self.rate_limiter.increment_request(endpoint_type).await;
 
         // Handle 401 Unauthorized - token might be expired
         if response.status() == reqwest::StatusCode::UNAUTHORIZED {
-            // Try to refresh token once
             self.jwt_token = None;
-            self.get_jwt_token().await?;
-
-            let token = self.jwt_token.as_ref().ok_or_else(|| {
-                Errors::AuthenticationError("JWT token missing after refresh attempt".to_owned())
-            })?;
-            let mut retry_request = self
-                .client
-                .request(method, &url)
-                .header("Authorization", format!("Bearer {token}"))
-                .header("Content-Type", "application/json");
-
-            if let Some(body_data) = body {
-                retry_request = retry_request.json(body_data);
-            }
-
-            let retry_response = retry_request.send().await?;
-            self.rate_limiter.increment_request(endpoint_type).await;
-
-            if !retry_response.status().is_success() {
-                let error_text = retry_response.text().await?;
-                return Err(Errors::Error(format!(
-                    "Request failed after token refresh: {error_text}"
-                )));
-            }
-
-            let result: T = retry_response.json().await?;
-            return Ok(result);
+            return Err(Errors::AuthenticationError(
+                "JWT token expired or unauthorized. Please refresh token via hmac_login or login."
+                    .to_string(),
+            ));
         }
 
-        if !response.status().is_success() {
-            let error_text = response.text().await?;
-            return Err(Errors::Error(format!("Request failed: {error_text}")));
-        }
-
-        let result: T = response.json().await?;
-        Ok(result)
+        Self::map_json_or_error(response).await
     }
 
-    /// Send a signed request to the Bullish API
-    ///
-    /// This method handles JWT token management, HMAC signing, rate limiting, and error handling.
-    /// Used for endpoints that require both JWT authentication and HMAC signatures.
-    ///
-    /// # Arguments
-    /// * `endpoint` - The API endpoint path
-    /// * `method` - The HTTP method
-    /// * `body` - Optional request body for POST/PUT requests
-    /// * `endpoint_type` - The endpoint type for rate limiting
-    ///
-    /// # Returns
-    /// The deserialized response or an error
-    pub async fn send_signed_request<T, B>(
+    /// Low-level: POST with JWT + HMAC signing and error mapping.
+    async fn do_post_signed<T>(
         &mut self,
         endpoint: &str,
-        method: reqwest::Method,
-        body: Option<&B>,
+        body_str: String,
         endpoint_type: EndpointType,
     ) -> RestResult<T>
     where
         T: DeserializeOwned,
-        B: Serialize,
     {
         // Check rate limits
         self.rate_limiter
@@ -244,7 +122,9 @@ impl RestClient {
 
         // Ensure we have a valid JWT token
         if self.jwt_token.is_none() {
-            self.get_jwt_token().await?;
+            return Err(Errors::AuthenticationError(
+                "JWT token missing, please authenticate with hmac_login or login".to_string(),
+            ));
         }
 
         #[allow(clippy::unwrap_used)]
@@ -260,32 +140,21 @@ impl RestClient {
             Errors::AuthenticationError("JWT token missing after login attempt".to_owned())
         })?;
 
-        // Serialize body to string for signing
-        let body_str = if let Some(body_data) = body {
-            serde_json::to_string(body_data)?
-        } else {
-            String::new()
-        };
+        // body_str is already serialized for signing
 
         // Create signature data: timestamp + nonce + method + endpoint + body
-        let signature_data = format!(
-            "{}{}{}{}{}",
-            timestamp,
-            nonce,
-            method.as_str().to_uppercase(),
-            endpoint,
-            body_str
-        );
+        let signature_data = format!("{}{}{}{}{}", timestamp, nonce, "POST", endpoint, body_str);
 
         // Create HMAC signature
-        let mut mac = Hmac::<Sha256>::new_from_slice(self.api_secret.expose_secret().as_bytes())
-            .map_err(|e| Errors::AuthenticationError(format!("HMAC key error: {}", e)))?;
+        let mut mac =
+            Hmac::<Sha256>::new_from_slice(self.credentials.api_secret.expose_secret().as_bytes())
+                .map_err(|e| Errors::AuthenticationError(format!("HMAC key error: {}", e)))?;
         mac.update(signature_data.as_bytes());
         let signature = general_purpose::STANDARD.encode(mac.finalize().into_bytes());
 
         let mut request = self
             .client
-            .request(method.clone(), &url)
+            .post(&url)
             .header("Authorization", format!("Bearer {token}"))
             .header("Content-Type", "application/json")
             .header("BX-TIMESTAMP", timestamp.to_string())
@@ -302,84 +171,258 @@ impl RestClient {
 
         // Handle 401 Unauthorized - token might be expired
         if response.status() == reqwest::StatusCode::UNAUTHORIZED {
-            // Try to refresh token once
             self.jwt_token = None;
-            self.get_jwt_token().await?;
+            return Err(Errors::AuthenticationError(
+                "JWT token expired or unauthorized. Please refresh token via hmac_login or login."
+                    .to_string(),
+            ));
+        }
 
-            let token = self.jwt_token.as_ref().ok_or_else(|| {
-                Errors::AuthenticationError("JWT token missing after refresh attempt".to_owned())
-            })?;
+        Self::map_json_or_error(response).await
+    }
 
-            // Create new signature with refreshed token
-            #[allow(clippy::unwrap_used)]
-            let new_timestamp = std::time::SystemTime::now()
-                .duration_since(std::time::UNIX_EPOCH)
-                .unwrap()
-                .as_millis() as u64;
-            let new_nonce = new_timestamp;
+    /// Low-level: PUT with JWT + HMAC signing and error mapping.
+    async fn do_put_signed<T>(
+        &mut self,
+        endpoint: &str,
+        body_str: String,
+        endpoint_type: EndpointType,
+    ) -> RestResult<T>
+    where
+        T: DeserializeOwned,
+    {
+        // Reuse POST logic by only changing method-specific segments
+        // Check rate limits
+        self.rate_limiter
+            .check_limits(endpoint_type)
+            .await
+            .map_err(|e| Errors::RateLimitError(e.to_string()))?;
 
-            let new_signature_data = format!(
-                "{}{}{}{}{}",
-                new_timestamp,
-                new_nonce,
-                method.as_str().to_uppercase(),
-                endpoint,
-                body_str
-            );
+        if self.jwt_token.is_none() {
+            return Err(Errors::AuthenticationError(
+                "JWT token missing, please authenticate with hmac_login or login".to_string(),
+            ));
+        }
 
-            let mut new_mac =
-                Hmac::<Sha256>::new_from_slice(self.api_secret.expose_secret().as_bytes())
-                    .map_err(|e| Errors::AuthenticationError(format!("HMAC key error: {}", e)))?;
-            new_mac.update(new_signature_data.as_bytes());
-            let new_signature = general_purpose::STANDARD.encode(new_mac.finalize().into_bytes());
+        #[allow(clippy::unwrap_used)]
+        let timestamp = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_millis() as u64;
+        let nonce = timestamp;
 
-            let mut retry_request = self
-                .client
-                .request(method, &url)
-                .header("Authorization", format!("Bearer {token}"))
-                .header("Content-Type", "application/json")
-                .header("BX-TIMESTAMP", new_timestamp.to_string())
-                .header("BX-NONCE", new_nonce.to_string())
-                .header("BX-SIGNATURE", new_signature);
+        let url = format!("{}/trading-api{}", self.base_url, endpoint);
+        let token = self.jwt_token.as_ref().ok_or_else(|| {
+            Errors::AuthenticationError("JWT token missing after login attempt".to_owned())
+        })?;
 
-            if !body_str.is_empty() {
-                retry_request = retry_request.body(body_str.clone());
-            }
+        let signature_data = format!("{}{}{}{}{}", timestamp, nonce, "PUT", endpoint, body_str);
+        let mut mac =
+            Hmac::<Sha256>::new_from_slice(self.credentials.api_secret.expose_secret().as_bytes())
+                .map_err(|e| Errors::AuthenticationError(format!("HMAC key error: {}", e)))?;
+        mac.update(signature_data.as_bytes());
+        let signature = general_purpose::STANDARD.encode(mac.finalize().into_bytes());
 
-            let retry_response = retry_request.send().await?;
-            self.rate_limiter.increment_request(endpoint_type).await;
+        let request = self
+            .client
+            .put(&url)
+            .header("Authorization", format!("Bearer {token}"))
+            .header("Content-Type", "application/json")
+            .header("BX-TIMESTAMP", timestamp.to_string())
+            .header("BX-NONCE", nonce.to_string())
+            .header("BX-SIGNATURE", signature)
+            .body(body_str.clone());
 
-            if !retry_response.status().is_success() {
-                let error_text = retry_response.text().await?;
-                return Err(Errors::Error(format!(
-                    "Signed request failed after token refresh: {error_text}"
-                )));
-            }
+        let response = request.send().await?;
+        self.rate_limiter.increment_request(endpoint_type).await;
 
-            let result: T = retry_response.json().await?;
+        if response.status() == reqwest::StatusCode::UNAUTHORIZED {
+            self.jwt_token = None;
+            return Err(Errors::AuthenticationError(
+                "JWT token expired or unauthorized. Please refresh token via hmac_login or login."
+                    .to_string(),
+            ));
+        }
+
+        Self::map_json_or_error(response).await
+    }
+
+    /// Low-level: DELETE with JWT + HMAC signing and error mapping.
+    async fn do_delete_signed<T>(
+        &mut self,
+        endpoint: &str,
+        endpoint_type: EndpointType,
+    ) -> RestResult<T>
+    where
+        T: DeserializeOwned,
+    {
+        self.rate_limiter
+            .check_limits(endpoint_type)
+            .await
+            .map_err(|e| Errors::RateLimitError(e.to_string()))?;
+
+        if self.jwt_token.is_none() {
+            return Err(Errors::AuthenticationError(
+                "JWT token missing, please authenticate with hmac_login or login".to_string(),
+            ));
+        }
+
+        #[allow(clippy::unwrap_used)]
+        let timestamp = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_millis() as u64;
+        let nonce = timestamp;
+        let url = format!("{}/trading-api{}", self.base_url, endpoint);
+        let token = self.jwt_token.as_ref().ok_or_else(|| {
+            Errors::AuthenticationError("JWT token missing after login attempt".to_owned())
+        })?;
+
+        let signature_data = format!("{}{}{}{}", timestamp, nonce, "DELETE", endpoint);
+        let mut mac =
+            Hmac::<Sha256>::new_from_slice(self.credentials.api_secret.expose_secret().as_bytes())
+                .map_err(|e| Errors::AuthenticationError(format!("HMAC key error: {}", e)))?;
+        mac.update(signature_data.as_bytes());
+        let signature = general_purpose::STANDARD.encode(mac.finalize().into_bytes());
+
+        let response = self
+            .client
+            .delete(&url)
+            .header("Authorization", format!("Bearer {token}"))
+            .header("Content-Type", "application/json")
+            .header("BX-TIMESTAMP", timestamp.to_string())
+            .header("BX-NONCE", nonce.to_string())
+            .header("BX-SIGNATURE", signature)
+            .send()
+            .await?;
+
+        self.rate_limiter.increment_request(endpoint_type).await;
+
+        if response.status() == reqwest::StatusCode::UNAUTHORIZED {
+            self.jwt_token = None;
+            return Err(Errors::AuthenticationError(
+                "JWT token expired or unauthorized. Please refresh token via hmac_login or login."
+                    .to_string(),
+            ));
+        }
+
+        Self::map_json_or_error(response).await
+    }
+
+    /// Helper: map non-success responses to venue errors, parse body when possible
+    async fn map_json_or_error<T>(response: reqwest::Response) -> RestResult<T>
+    where
+        T: DeserializeOwned,
+    {
+        if response.status().is_success() {
+            let result: T = response.json().await?;
             return Ok(result);
         }
 
-        if !response.status().is_success() {
-            let error_text = response.text().await?;
-            return Err(Errors::Error(format!(
-                "Signed request failed: {error_text}"
-            )));
+        let status = response.status();
+        let text = response.text().await.unwrap_or_default();
+        if let Ok(err_resp) = serde_json::from_str::<crate::bullish::ErrorResponse>(&text) {
+            let api_err = err_resp.error;
+            return match status {
+                reqwest::StatusCode::UNAUTHORIZED => {
+                    Err(crate::bullish::Errors::AuthenticationError(api_err.message))
+                }
+                reqwest::StatusCode::FORBIDDEN => Err(crate::bullish::Errors::ApiError(api_err)),
+                reqwest::StatusCode::TOO_MANY_REQUESTS => Err(
+                    crate::bullish::Errors::RateLimitError("Too Many Requests".to_string()),
+                ),
+                _ => Err(crate::bullish::Errors::ApiError(api_err)),
+            };
         }
 
-        let result: T = response.json().await?;
-        Ok(result)
+        let err = match status {
+            reqwest::StatusCode::UNAUTHORIZED => {
+                crate::bullish::Errors::AuthenticationError("Unauthorized".to_string())
+            }
+            reqwest::StatusCode::FORBIDDEN => {
+                crate::bullish::Errors::Error("Forbidden".to_string())
+            }
+            reqwest::StatusCode::TOO_MANY_REQUESTS => {
+                crate::bullish::Errors::RateLimitError("Too Many Requests".to_string())
+            }
+            reqwest::StatusCode::INTERNAL_SERVER_ERROR => {
+                crate::bullish::Errors::Error("Internal Server Error".to_string())
+            }
+            _ => crate::bullish::Errors::Error(format!("HTTP {}: {}", status.as_u16(), text)),
+        };
+        Err(err)
     }
 
-    /// High-performance GET request method for authenticated endpoints
-    ///
-    /// # Arguments
-    /// * `endpoint` - The API endpoint path
-    /// * `params` - Request parameters (will be serialized to query string)
-    /// * `endpoint_type` - The endpoint type for rate limiting
-    ///
-    /// # Returns
-    /// The deserialized response or an error
+    // Public high-performance, verb-specific wrappers required by repository rules
+    pub async fn send_get_request<T, P>(
+        &mut self,
+        endpoint: &str,
+        params: P,
+        endpoint_type: EndpointType,
+    ) -> RestResult<T>
+    where
+        T: DeserializeOwned,
+        P: Serialize,
+    {
+        let query = serde_urlencoded::to_string(&params)
+            .map_err(|e| Errors::Error(format!("Failed to serialize params: {}", e)))?;
+        let url_with_query = if query.is_empty() {
+            endpoint.to_string()
+        } else {
+            format!("{}?{}", endpoint, query)
+        };
+        self.do_get(&url_with_query, endpoint_type).await
+    }
+
+    pub async fn send_post_request<T, P>(
+        &mut self,
+        endpoint: &str,
+        params: P,
+        endpoint_type: EndpointType,
+    ) -> RestResult<T>
+    where
+        T: DeserializeOwned,
+        P: Serialize,
+    {
+        let body_str = serde_json::to_string(&params)?;
+        self.do_post_signed(endpoint, body_str, endpoint_type).await
+    }
+
+    pub async fn send_put_request<T, P>(
+        &mut self,
+        endpoint: &str,
+        params: P,
+        endpoint_type: EndpointType,
+    ) -> RestResult<T>
+    where
+        T: DeserializeOwned,
+        P: Serialize,
+    {
+        let body_str = serde_json::to_string(&params)?;
+        self.do_put_signed(endpoint, body_str, endpoint_type).await
+    }
+
+    pub async fn send_delete_request<T, P>(
+        &mut self,
+        endpoint: &str,
+        params: P,
+        endpoint_type: EndpointType,
+    ) -> RestResult<T>
+    where
+        T: DeserializeOwned,
+        P: Serialize,
+    {
+        let query = serde_urlencoded::to_string(&params)
+            .map_err(|e| Errors::Error(format!("Failed to serialize params: {}", e)))?;
+        let url_with_query = if query.is_empty() {
+            endpoint.to_string()
+        } else {
+            format!("{}?{}", endpoint, query)
+        };
+        self.do_delete_signed(&url_with_query, endpoint_type).await
+    }
+
+    // Back-compat convenience wrappers (can be removed later)
     pub async fn send_get_authenticated_request<T, P>(
         &mut self,
         endpoint: &str,
@@ -390,34 +433,9 @@ impl RestClient {
         T: DeserializeOwned,
         P: Serialize,
     {
-        // Serialize params to query string
-        let query = serde_urlencoded::to_string(&params)
-            .map_err(|e| Errors::Error(format!("Failed to serialize params: {}", e)))?;
-
-        let url_with_query = if query.is_empty() {
-            endpoint.to_string()
-        } else {
-            format!("{}?{}", endpoint, query)
-        };
-
-        self.send_authenticated_request(
-            &url_with_query,
-            reqwest::Method::GET,
-            None::<&()>,
-            endpoint_type,
-        )
-        .await
+        self.send_get_request(endpoint, params, endpoint_type).await
     }
 
-    /// High-performance POST request method for signed endpoints
-    ///
-    /// # Arguments
-    /// * `endpoint` - The API endpoint path
-    /// * `params` - Request parameters (will be serialized to JSON body)
-    /// * `endpoint_type` - The endpoint type for rate limiting
-    ///
-    /// # Returns
-    /// The deserialized response or an error
     pub async fn send_post_signed_request<T, P>(
         &mut self,
         endpoint: &str,
@@ -428,24 +446,10 @@ impl RestClient {
         T: DeserializeOwned,
         P: Serialize,
     {
-        self.send_signed_request(
-            endpoint,
-            reqwest::Method::POST,
-            Some(&params),
-            endpoint_type,
-        )
-        .await
+        self.send_post_request(endpoint, params, endpoint_type)
+            .await
     }
 
-    /// High-performance PUT request method for signed endpoints
-    ///
-    /// # Arguments
-    /// * `endpoint` - The API endpoint path
-    /// * `params` - Request parameters (will be serialized to JSON body)
-    /// * `endpoint_type` - The endpoint type for rate limiting
-    ///
-    /// # Returns
-    /// The deserialized response or an error
     pub async fn send_put_signed_request<T, P>(
         &mut self,
         endpoint: &str,
@@ -456,19 +460,9 @@ impl RestClient {
         T: DeserializeOwned,
         P: Serialize,
     {
-        self.send_signed_request(endpoint, reqwest::Method::PUT, Some(&params), endpoint_type)
-            .await
+        self.send_put_request(endpoint, params, endpoint_type).await
     }
 
-    /// High-performance DELETE request method for signed endpoints
-    ///
-    /// # Arguments
-    /// * `endpoint` - The API endpoint path
-    /// * `params` - Request parameters (will be serialized to query string)
-    /// * `endpoint_type` - The endpoint type for rate limiting
-    ///
-    /// # Returns
-    /// The deserialized response or an error
     pub async fn send_delete_signed_request<T, P>(
         &mut self,
         endpoint: &str,
@@ -479,59 +473,33 @@ impl RestClient {
         T: DeserializeOwned,
         P: Serialize,
     {
-        // For DELETE, params go in query string
-        let query = serde_urlencoded::to_string(&params)
-            .map_err(|e| Errors::Error(format!("Failed to serialize params: {}", e)))?;
-
-        let url_with_query = if query.is_empty() {
-            endpoint.to_string()
-        } else {
-            format!("{}?{}", endpoint, query)
-        };
-
-        self.send_signed_request(
-            &url_with_query,
-            reqwest::Method::DELETE,
-            None::<&()>,
-            endpoint_type,
-        )
-        .await
+        self.send_delete_request(endpoint, params, endpoint_type)
+            .await
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use rest::secrets::SecretString;
 
     /// A plain text implementation of ExposableSecret for testing purposes.
     #[derive(Clone)]
-    struct TestSecret {
-        secret: String,
-    }
-
-    impl ExposableSecret for TestSecret {
-        fn expose_secret(&self) -> String {
-            self.secret.clone()
-        }
-    }
-
-    impl TestSecret {
-        fn new(secret: String) -> Self {
-            Self { secret }
-        }
-    }
+    struct TestSecret(String);
 
     #[test]
     fn test_private_client_creation() {
-        let api_key = Box::new(TestSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret =
-            Box::new(TestSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let api_key = SecretString::new("test_key".to_string().into_boxed_str());
+        let api_secret = SecretString::new("test_secret".to_string().into_boxed_str());
         let client = Client::new();
         let rate_limiter = RateLimiter::new();
 
-        let rest_client = RestClient::new(
+        let creds = Credentials {
             api_key,
             api_secret,
+        };
+        let rest_client = RestClient::new(
+            creds,
             "https://api.exchange.bullish.com",
             client,
             rate_limiter,
@@ -551,15 +519,17 @@ mod tests {
 
     #[tokio::test]
     async fn test_rate_limiting_integration() {
-        let api_key = Box::new(TestSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret =
-            Box::new(TestSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let api_key = SecretString::new("test_key".to_string().into_boxed_str());
+        let api_secret = SecretString::new("test_secret".to_string().into_boxed_str());
         let client = Client::new();
         let rate_limiter = RateLimiter::new();
 
-        let _rest_client = RestClient::new(
+        let creds = Credentials {
             api_key,
             api_secret,
+        };
+        let _rest_client = RestClient::new(
+            creds,
             "https://api.exchange.bullish.com",
             client,
             rate_limiter,

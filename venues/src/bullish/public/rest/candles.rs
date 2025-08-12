@@ -1,14 +1,49 @@
-//! Candles endpoint for Bullish Exchange API
-
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
-use crate::bullish::{EndpointType, RestResult, enums::CandleInterval};
+use crate::bullish::{
+    enums::CandleInterval,
+    EndpointType,
+    PaginationParams,
+    RestResult,
+    PaginatedResult,
+    DataOrPaginated,
+};
 
-/// Endpoint URL path for candles
-const CANDLES_ENDPOINT: &str = "/trading-api/v1/markets/{}/candles";
+/// Endpoint URL path for candles (singular per API docs)
+const CANDLES_ENDPOINT: &str = "/trading-api/v1/markets/{}/candle";
 
-/// Candlestick data
+/// Request parameters for getting candles
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+pub struct GetCandlesRequest {
+    /// The market symbol to get candles for
+    #[serde(skip_serializing)]
+    pub symbol: String,
+
+    /// Candlestick interval
+    #[serde(rename = "timeBucket", skip_serializing_if = "Option::is_none")]
+    pub interval: Option<CandleInterval>,
+
+    /// Filter start datetime (maps to createdAtDatetime[gte])
+    #[serde(
+        rename = "createdAtDatetime[gte]",
+        skip_serializing_if = "Option::is_none"
+    )]
+    pub created_at_datetime_gte: Option<String>,
+
+    /// Filter end datetime (maps to createdAtDatetime[lte])
+    #[serde(
+        rename = "createdAtDatetime[lte]",
+        skip_serializing_if = "Option::is_none"
+    )]
+    pub created_at_datetime_lte: Option<String>,
+
+    /// Pagination parameters (flattened into top-level query)
+    #[serde(flatten)]
+    pub pagination: PaginationParams,
+}
+
+/// Candlestick data as returned by Bullish
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Candle {
@@ -27,43 +62,17 @@ pub struct Candle {
     /// Volume
     pub volume: String,
 
-    /// Quote volume
-    pub quote_volume: String,
+    /// Candle created time as timestamp (ms since epoch) as string
+    #[serde(rename = "createdAtTimestamp")]
+    pub created_at_timestamp: String,
 
-    /// Candle open time in ISO 8601 format
-    pub open_time_datetime: String,
+    /// Candle created time in ISO 8601 format with millis
+    #[serde(rename = "createdAtDatetime")]
+    pub created_at_datetime: String,
 
-    /// Candle open time as timestamp
-    pub open_time_timestamp: String,
-
-    /// Candle close time in ISO 8601 format
-    pub close_time_datetime: String,
-
-    /// Candle close time as timestamp
-    pub close_time_timestamp: String,
-}
-
-/// Request parameters for getting candles
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GetCandlesRequest {
-    /// The market symbol to get candles for
-    pub symbol: String,
-
-    /// Candlestick interval
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub interval: Option<CandleInterval>,
-
-    /// Start time for historical data
-    #[serde(rename = "startTime", skip_serializing_if = "Option::is_none")]
-    pub start_time: Option<String>,
-
-    /// End time for historical data
-    #[serde(rename = "endTime", skip_serializing_if = "Option::is_none")]
-    pub end_time: Option<String>,
-
-    /// Number of candles to return (default: 500, max: 1000)
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub limit: Option<u32>,
+    /// Time the candle was published (ms since epoch) as string
+    #[serde(rename = "publishedAtTimestamp")]
+    pub published_at_timestamp: String,
 }
 
 impl RestClient {
@@ -71,7 +80,7 @@ impl RestClient {
     ///
     /// Retrieves historical candlestick data for a specific market.
     ///
-    /// [docs]: https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/markets/-symbol-/candles
+    /// [docs]: https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/markets/-symbol-/tick
     ///
     /// # Arguments
     /// * `request` - Request parameters containing the market symbol and optional filters
@@ -81,28 +90,11 @@ impl RestClient {
     ///
     /// # Errors
     /// Returns an error if the request fails or the response cannot be parsed
-    pub async fn get_candles(&self, request: &GetCandlesRequest) -> RestResult<Vec<Candle>> {
+    pub async fn get_market_candle(&self, request: &GetCandlesRequest) -> RestResult<PaginatedResult<Candle>> {
         let endpoint = CANDLES_ENDPOINT.replace("{}", &request.symbol);
 
-        // Create query params from the request, excluding the symbol
-        let query_params = serde_urlencoded::to_string(
-            &[
-                (
-                    "interval",
-                    request.interval.as_ref().map(|i| i.to_string()).as_deref(),
-                ),
-                ("startTime", request.start_time.as_deref()),
-                ("endTime", request.end_time.as_deref()),
-                (
-                    "limit",
-                    request.limit.as_ref().map(|l| l.to_string()).as_deref(),
-                ),
-            ]
-            .into_iter()
-            .filter_map(|(k, v)| v.map(|val| (k, val)))
-            .collect::<Vec<_>>(),
-        )
-        .unwrap_or_default();
+        // Serialize the entire request (minus symbol) into query parameters.
+        let query_params = serde_urlencoded::to_string(&request).unwrap_or_default();
 
         let full_endpoint = if query_params.is_empty() {
             endpoint
@@ -110,8 +102,13 @@ impl RestClient {
             format!("{}?{}", endpoint, query_params)
         };
 
-        self.send_get_request(&full_endpoint, EndpointType::PublicCandles)
-        .await
+        // The API may return either a direct array or a paginated wrapper.
+        // Parse flexibly and return data + optional links.
+        let wire: DataOrPaginated<Candle> = self
+                .send_get_request(&full_endpoint, EndpointType::PublicCandles)
+                .await?;
+
+        Ok(PaginatedResult::from(wire))
     }
 }
 
@@ -128,11 +125,9 @@ mod tests {
             "low": "49000.00",
             "close": "50500.00",
             "volume": "100.50000000",
-            "quoteVolume": "5025000.00000000",
-            "openTimeDatetime": "2024-01-01T00:00:00.000Z",
-            "openTimeTimestamp": "1704067200000",
-            "closeTimeDatetime": "2024-01-01T01:00:00.000Z",
-            "closeTimeTimestamp": "1704070800000"
+            "createdAtTimestamp": "1704067200000",
+            "createdAtDatetime": "2024-01-01T00:00:00.000Z",
+            "publishedAtTimestamp": "1704067260000"
         }
         "#;
 
@@ -157,5 +152,36 @@ mod tests {
             serde_json::to_string(&CandleInterval::OneDay).unwrap(),
             "\"1d\""
         );
+    }
+
+    #[test]
+    fn test_get_candles_request_query_serialization() {
+        let mut req = GetCandlesRequest {
+            symbol: "BTCUSD".to_string(),
+            interval: Some(CandleInterval::OneMinute),
+            created_at_datetime_gte: Some("2024-01-01T00:00:00.000Z".to_string()),
+            created_at_datetime_lte: Some("2024-01-01T01:00:00.000Z".to_string()),
+            pagination: PaginationParams {
+                page_size: Some(50),
+                meta_data: Some(true),
+                next_page: Some("cursor123".to_string()),
+                previous_page: None,
+            },
+        };
+
+        // Ensure symbol is skipped and flattened pagination fields appear
+        let qs = serde_urlencoded::to_string(&req).unwrap_or_else(|_| String::new());
+        assert!(!qs.contains("symbol="));
+        assert!(qs.contains("timeBucket=1m"));
+        assert!(qs.contains("createdAtDatetime%5Bgte%5D=2024-01-01T00%3A00%3A00.000Z"));
+        assert!(qs.contains("createdAtDatetime%5Blte%5D=2024-01-01T01%3A00%3A00.000Z"));
+        assert!(qs.contains("_pageSize=50"));
+        assert!(qs.contains("_metaData=true"));
+        assert!(qs.contains("_nextPage=cursor123"));
+
+        // Now ensure previous_page can appear
+        req.pagination.previous_page = Some("cursorPrev".to_string());
+        let qs2 = serde_urlencoded::to_string(&req).unwrap_or_else(|_| String::new());
+        assert!(qs2.contains("_previousPage=cursorPrev"));
     }
 }

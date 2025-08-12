@@ -4,12 +4,10 @@
 //! Tests run against the live Bullish API using real market data.
 
 use reqwest::Client;
+use std::error::Error as StdError;
 use tokio;
 use venues::bullish::{
-    Errors,
-    PublicRestClient,
-    RateLimiter,
-    // Import request types needed for the API calls
+    CandleInterval, Errors, PaginatedResult, PaginationParams, PublicRestClient, RateLimiter,
     public::rest::{
         GetAssetRequest, GetCandlesRequest, GetTickerRequest, OrderbookRequest, PublicTradesRequest,
     },
@@ -58,22 +56,40 @@ fn print_error_details(err: &Errors, endpoint_name: &str) {
 macro_rules! handle_result {
     ($result:expr, $endpoint_name:expr) => {
         match $result {
-            Ok(response) => {
-                println!("✅ {} successful", $endpoint_name);
-                Some(response)
-            }
+            Ok(val) => Some(val),
             Err(err) => {
-                if is_geo_restricted(&err) {
-                    println!(
-                        "⚠️ {} skipped due to geographic restrictions (HTTP 451)",
-                        $endpoint_name
-                    );
-                    None
-                } else {
-                    print_error_details(&err, $endpoint_name);
-                    // Don't panic, just return None so we can continue testing
-                    None
+                // Print the high-level error
+                print_error_details(&err, $endpoint_name);
+
+                // Try to surface more details depending on variant
+                match &err {
+                    Errors::HttpError(e) => {
+                        // reqwest::Error often has a source chain; print it
+                        if let Some(src) = e.source() {
+                            println!("  Caused by: {}", src);
+                        }
+                        println!("  Is status: {}", e.is_status());
+                        println!("  Is timeout: {}", e.is_timeout());
+                        println!("  Is connect: {}", e.is_connect());
+                    }
+                    Errors::ApiError(api) => {
+                        println!("  API code: {}", api.code);
+                        println!("  API message: {}", api.message);
+                        if let Some(details) = &api.details {
+                            println!("  API details: {}", details);
+                        }
+                    }
+                    Errors::Error(msg) => {
+                        // Often contains our formatted HTTP status/URL/body
+                        println!("  Details: {}", msg);
+                    }
+                    _ => {}
                 }
+
+                if is_geo_restricted(&err) {
+                    println!("  → Skipping assertions due to geo-restrictions");
+                }
+                None
             }
         }
     };
@@ -96,7 +112,7 @@ fn get_test_asset() -> String {
 async fn test_ccrxt_server_time() {
     let client = create_public_test_client();
 
-    let result = client.get_server_time().await;
+    let result = client.get_time().await;
 
     if let Some(response) = handle_result!(result, "CCRXT Server Time") {
         println!("  Server timestamp: {}", response.timestamp);
@@ -259,9 +275,15 @@ async fn test_ccrxt_markets_all() {
             let first_market = &response[0];
             println!("  First market: {}", first_market.symbol);
             println!("    Market ID: {}", first_market.market_id);
-            println!("    Base symbol: {}", first_market.base_symbol);
-            println!("    Quote symbol: {}", first_market.quote_symbol);
-            println!("    Market type: {}", first_market.market_type);
+            println!(
+                "    Base symbol: {}",
+                first_market.base_symbol.as_deref().unwrap_or("N/A")
+            );
+            println!(
+                "    Quote symbol: {}",
+                first_market.quote_symbol.as_deref().unwrap_or("N/A")
+            );
+            println!("    Market type: {:?}", first_market.market_type);
             println!("    Market enabled: {}", first_market.market_enabled);
             println!(
                 "    Spot trading enabled: {}",
@@ -278,13 +300,34 @@ async fn test_ccrxt_markets_all() {
                 !first_market.market_id.is_empty(),
                 "CCRXT market ID should not be empty"
             );
+            // At least one of base or underlying symbols should be present
+            let has_base = first_market
+                .base_symbol
+                .as_deref()
+                .map(|s| !s.is_empty())
+                .unwrap_or(false)
+                || first_market
+                    .underlying_base_symbol
+                    .as_deref()
+                    .map(|s| !s.is_empty())
+                    .unwrap_or(false);
             assert!(
-                !first_market.base_symbol.is_empty(),
-                "CCRXT base symbol should not be empty"
+                has_base,
+                "CCRXT market should have a base or underlying base symbol"
             );
+            let has_quote = first_market
+                .quote_symbol
+                .as_deref()
+                .map(|s| !s.is_empty())
+                .unwrap_or(false)
+                || first_market
+                    .underlying_quote_symbol
+                    .as_deref()
+                    .map(|s| !s.is_empty())
+                    .unwrap_or(false);
             assert!(
-                !first_market.quote_symbol.is_empty(),
-                "CCRXT quote symbol should not be empty"
+                has_quote,
+                "CCRXT market should have a quote or underlying quote symbol"
             );
         }
     }
@@ -304,25 +347,51 @@ async fn test_ccrxt_market_specific() {
         let market = &response;
         println!("  Market: {}", market.symbol);
         println!("  Market ID: {}", market.market_id);
-        println!("  Base symbol: {}", market.base_symbol);
-        println!("  Quote symbol: {}", market.quote_symbol);
+        println!(
+            "  Base symbol: {}",
+            market.base_symbol.as_deref().unwrap_or("N/A")
+        );
+        println!(
+            "  Quote symbol: {}",
+            market.quote_symbol.as_deref().unwrap_or("N/A")
+        );
         println!("  Min quantity limit: {}", market.min_quantity_limit);
         println!("  Max quantity limit: {}", market.max_quantity_limit);
         println!("  Tick size: {}", market.tick_size);
-        println!("  Maker fee: {}", market.maker_fee);
-        println!("  Taker fee: {}", market.taker_fee);
+        println!("  Fee group: {}", market.fee_group_id);
+        println!("  Fee tiers: {}", market.fee_tiers.len());
 
         assert_eq!(
             market.symbol, market_symbol,
             "CCRXT should return requested market"
         );
+        let has_base = market
+            .base_symbol
+            .as_deref()
+            .map(|s| !s.is_empty())
+            .unwrap_or(false)
+            || market
+                .underlying_base_symbol
+                .as_deref()
+                .map(|s| !s.is_empty())
+                .unwrap_or(false);
         assert!(
-            !market.base_symbol.is_empty(),
-            "CCRXT market base symbol should not be empty"
+            has_base,
+            "CCRXT market should have a base or underlying base symbol"
         );
+        let has_quote = market
+            .quote_symbol
+            .as_deref()
+            .map(|s| !s.is_empty())
+            .unwrap_or(false)
+            || market
+                .underlying_quote_symbol
+                .as_deref()
+                .map(|s| !s.is_empty())
+                .unwrap_or(false);
         assert!(
-            !market.quote_symbol.is_empty(),
-            "CCRXT market quote symbol should not be empty"
+            has_quote,
+            "CCRXT market should have a quote or underlying quote symbol"
         );
     }
 }
@@ -444,25 +513,47 @@ async fn test_ccrxt_candles() {
     // Use CCRXT's get_candles method
     let request = GetCandlesRequest {
         symbol: symbol.clone(),
-        interval: Some(venues::bullish::CandleInterval::OneMinute), // Will use default interval
-        start_time: Some(start_str.clone()),
-        end_time: Some(end_str.clone()),
-        limit: Some(100),
+        interval: Some(CandleInterval::OneMinute),
+        created_at_datetime_gte: Some(start_str.clone()),
+        created_at_datetime_lte: Some(end_str.clone()),
+        pagination: PaginationParams {
+            page_size: Some(25),
+            meta_data: Some(false),
+            next_page: None,
+            previous_page: None,
+        },
     };
-    let result = client.get_candles(&request).await;
+    let result = client.get_market_candle(&request).await;
 
-    if let Some(candles) = handle_result!(result, "CCRXT Candles") {
+    if let Some(resp) = handle_result!(result, "CCRXT Candles") {
         println!("  Symbol: {}", symbol);
-        println!("  Candles: {}", candles.len());
-        if !candles.is_empty() {
-            let first = &candles[0];
+        let data = match &resp {
+            PaginatedResult::Direct(d) => d,
+            PaginatedResult::Paginated { data, links } => {
+                println!(
+                    "  Links: next={:?}, previous={:?}",
+                    links.next, links.previous
+                );
+                data
+            }
+            PaginatedResult::Token {
+                data,
+                next_page_token,
+            } => {
+                println!("  Next page token: {:?}", next_page_token);
+                data
+            }
+        };
+        println!("  Candles: {}", data.len());
+        if !data.is_empty() {
+            let first = &data[0];
             println!("  First candle:");
             println!("    Open: {}", first.open);
             println!("    High: {}", first.high);
             println!("    Low: {}", first.low);
             println!("    Close: {}", first.close);
             println!("    Volume: {}", first.volume);
-            println!("    Open time: {}", first.open_time_datetime);
+            println!("    Created at: {}", first.created_at_datetime);
 
             // Validate CCRXT returns proper Candle struct
             assert!(
@@ -486,10 +577,72 @@ async fn test_ccrxt_candles() {
                 "CCRXT candle volume should not be empty"
             );
             assert!(
-                !first.open_time_datetime.is_empty(),
+                !first.created_at_datetime.is_empty(),
                 "CCRXT candle open time should not be empty"
             );
         }
+    }
+}
+
+/// Test CCRXT Bullish candles endpoint with pagination parameters
+///
+/// Ensures the endpoint supports `_pageSize` and `_metaData` and still returns candle data.
+#[tokio::test]
+async fn test_ccrxt_candles_with_pagination() {
+    let client = create_public_test_client();
+    let symbol = get_test_symbol();
+
+    let now = chrono::Utc::now();
+    let start = now - chrono::Duration::hours(2);
+    let start_str = start.format("%Y-%m-%dT%H:%M:%S.000Z").to_string();
+    let end_str = now.format("%Y-%m-%dT%H:%M:%S.000Z").to_string();
+
+    // Request a small page with metadata (links may be omitted by venue for this endpoint, but request shouldn't fail)
+    let request = GetCandlesRequest {
+        symbol: symbol.clone(),
+        interval: Some(CandleInterval::OneMinute),
+        created_at_datetime_gte: Some(start_str.clone()),
+        created_at_datetime_lte: Some(end_str.clone()),
+        pagination: PaginationParams {
+            page_size: Some(5),
+            meta_data: Some(true),
+            next_page: None,
+            previous_page: None,
+        },
+    };
+
+    let result = client.get_market_candle(&request).await;
+
+    if let Some(resp) = handle_result!(result, "CCRXT Candles (pagination)") {
+        println!("  Symbol: {}", symbol);
+        let data = match &resp {
+            PaginatedResult::Direct(d) => d,
+            PaginatedResult::Paginated { data, links } => {
+                println!(
+                    "  Links: next={:?}, previous={:?}",
+                    links.next, links.previous
+                );
+                data
+            }
+            PaginatedResult::Token {
+                data,
+                next_page_token,
+            } => {
+                println!("  Next page token: {:?}", next_page_token);
+                data
+            }
+        };
+        println!("  Candles (page): {}", data.len());
+        assert!(!data.is_empty(), "CCRXT candle page should not be empty");
+
+        let first = &data[0];
+        println!("  First candle (page):");
+        println!("    Open: {}", first.open);
+        println!("    Created at: {}", first.created_at_datetime);
+        assert!(
+            !first.created_at_datetime.is_empty(),
+            "CCRXT candle created_at should not be empty"
+        );
     }
 }
 
@@ -617,7 +770,7 @@ async fn test_ccrxt_rate_limiting() {
 
     // Test that CCRXT's RateLimiter properly manages request rate
     for i in 0..3 {
-        let result = client.get_server_time().await;
+        let result = client.get_time().await;
 
         match result {
             Ok(_) => {
