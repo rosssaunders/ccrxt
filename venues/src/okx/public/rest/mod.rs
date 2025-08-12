@@ -100,5 +100,5 @@ pub use get_settlement_history::{
 pub type GetSettlementHistoryResponse = OkxApiResponse<SettlementHistory>;
 pub use get_time::TimeData;
 pub type GetTimeResponse = OkxApiResponse<TimeData>;
-pub use get_underlying::{GetUnderlyingRequest, UnderlyingData};
-pub type GetUnderlyingResponse = OkxApiResponse<UnderlyingData>;
+pub use get_underlying::GetUnderlyingRequest;
+pub type GetUnderlyingResponse = OkxApiResponse<Vec<String>>;

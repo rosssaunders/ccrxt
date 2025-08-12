@@ -67,7 +67,7 @@ impl RestClient {
     pub async fn get_settlement_history(
         &self,
         request: &GetSettlementHistoryRequest,
-    ) -> RestResult<Vec<SettlementHistory>> {
+    ) -> RestResult<SettlementHistory> {
         self.send_get_request(
             PUBLIC_SETTLEMENT_HISTORY_ENDPOINT,
             Some(request),

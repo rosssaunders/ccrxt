@@ -33,7 +33,7 @@ pub mod public {
         InstrumentTickBandData, InsuranceFundData, InsuranceFundDetail, InterestRateLoanQuotaData,
         MarkPrice, MarkPriceCandle, OpenInterest, OptSummary, PositionTier, PremiumHistory,
         PriceLimit, RegularInterestRate, RestClient, SettlementDetail, SettlementHistory, TickBand,
-        TickBandInstrumentType, TimeData, UnderlyingData, VipInterestRate,
+    TickBandInstrumentType, TimeData, VipInterestRate,
     };
 }
 
@@ -87,7 +87,6 @@ pub use public::{
     InsuranceFundDetail, InterestRateLoanQuotaData, MarkPrice, MarkPriceCandle, OpenInterest,
     OptSummary, PositionTier, PremiumHistory, PriceLimit, RestClient as PublicRestClient,
     SettlementDetail, SettlementHistory, TickBand, TickBandInstrumentType, TimeData,
-    UnderlyingData,
 };
 pub use rate_limit::{EndpointType, RateLimit, RateLimitError, RateLimiter};
 

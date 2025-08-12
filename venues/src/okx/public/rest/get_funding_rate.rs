@@ -99,7 +99,7 @@ impl RestClient {
     pub async fn get_funding_rate(
         &self,
         request: &GetFundingRateRequest,
-    ) -> RestResult<Vec<FundingRate>> {
+    ) -> RestResult<FundingRate> {
         self.send_get_request(
             PUBLIC_FUNDING_RATE_ENDPOINT,
             Some(request),

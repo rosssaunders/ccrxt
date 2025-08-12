@@ -47,7 +47,7 @@ impl RestClient {
     pub async fn get_history_index_candles(
         &self,
         request: GetHistoryIndexCandlesRequest,
-    ) -> RestResult<Vec<Vec<String>>> {
+    ) -> RestResult<Vec<String>> {
         self.send_get_request(
             GET_HISTORY_INDEX_CANDLES_ENDPOINT,
             Some(&request),

@@ -78,7 +78,7 @@ impl RestClient {
     pub async fn get_instrument_tick_bands(
         &self,
         request: GetInstrumentTickBandsRequest,
-    ) -> RestResult<Vec<InstrumentTickBandData>> {
+    ) -> RestResult<InstrumentTickBandData> {
         self.send_get_request(
             GET_INSTRUMENT_TICK_BANDS_ENDPOINT,
             Some(&request),

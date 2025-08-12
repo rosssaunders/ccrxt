@@ -52,7 +52,7 @@ impl RestClient {
     pub async fn get_estimated_settlement_info(
         &self,
         request: &GetEstimatedSettlementInfoRequest,
-    ) -> RestResult<Vec<EstimatedSettlementInfo>> {
+    ) -> RestResult<EstimatedSettlementInfo> {
         self.send_get_request(
             PUBLIC_ESTIMATED_SETTLEMENT_INFO_ENDPOINT,
             Some(request),

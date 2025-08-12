@@ -52,7 +52,7 @@ impl RestClient {
     pub async fn get_estimated_price(
         &self,
         request: GetEstimatedPriceRequest,
-    ) -> RestResult<Vec<EstimatedPriceData>> {
+    ) -> RestResult<EstimatedPriceData> {
         self.send_get_request(
             PUBLIC_ESTIMATED_PRICE_ENDPOINT,
             Some(&request),

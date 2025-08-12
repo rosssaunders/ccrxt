@@ -137,7 +137,7 @@ impl RestClient {
     pub async fn get_insurance_fund(
         &self,
         request: GetInsuranceFundRequest,
-    ) -> RestResult<Vec<InsuranceFundData>> {
+    ) -> RestResult<InsuranceFundData> {
         self.send_get_request(
             PUBLIC_INSURANCE_FUND_ENDPOINT,
             Some(&request),

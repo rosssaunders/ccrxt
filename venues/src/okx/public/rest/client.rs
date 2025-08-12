@@ -106,12 +106,8 @@ impl RestClient {
         // Optimized parameter handling - all public endpoints use GET with query params
         // Single branch for params, no method checking needed
         if let Some(params) = params {
-            // Serialize directly to query params using serde_urlencoded
-            // This avoids JSON conversion and iteration overhead
-            // Note: reqwest handles empty query strings correctly, so no need to check
-            let query_string = serde_urlencoded::to_string(params)
-                .map_err(|e| Errors::Error(format!("Failed to serialize params: {e}")))?;
-            request_builder = request_builder.query(&query_string);
+            // Pass params directly; the HTTP layer encodes serializable maps/structs into the query string
+            request_builder = request_builder.query(params);
         }
 
         // Add required headers

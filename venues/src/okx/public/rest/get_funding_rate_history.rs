@@ -77,7 +77,7 @@ impl RestClient {
     pub async fn get_funding_rate_history(
         &self,
         request: &GetFundingRateHistoryRequest,
-    ) -> RestResult<Vec<FundingRateHistory>> {
+    ) -> RestResult<FundingRateHistory> {
         self.send_get_request(
             PUBLIC_FUNDING_RATE_HISTORY_ENDPOINT,
             Some(request),

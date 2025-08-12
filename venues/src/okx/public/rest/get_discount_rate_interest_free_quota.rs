@@ -90,7 +90,7 @@ impl RestClient {
     pub async fn get_discount_rate_interest_free_quota(
         &self,
         request: &GetDiscountRateInterestFreeQuotaRequest,
-    ) -> RestResult<Vec<DiscountRateInterestFreeQuota>> {
+    ) -> RestResult<DiscountRateInterestFreeQuota> {
         self.send_get_request(
             PUBLIC_DISCOUNT_RATE_INTEREST_FREE_QUOTA_ENDPOINT,
             Some(request),

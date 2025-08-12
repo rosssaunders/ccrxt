@@ -71,7 +71,7 @@ impl RestClient {
     pub async fn get_index_tickers(
         &self,
         request: Option<GetIndexTickersRequest>,
-    ) -> RestResult<Vec<IndexTicker>> {
+    ) -> RestResult<IndexTicker> {
         self.send_get_request(
             MARKET_INDEX_TICKERS_ENDPOINT,
             request.as_ref(),

@@ -121,7 +121,7 @@ impl RestClient {
     pub async fn get_position_tiers(
         &self,
         request: GetPositionTiersRequest,
-    ) -> RestResult<Vec<PositionTier>> {
+    ) -> RestResult<PositionTier> {
         self.send_get_request(
             PUBLIC_POSITION_TIERS_ENDPOINT,
             Some(&request),

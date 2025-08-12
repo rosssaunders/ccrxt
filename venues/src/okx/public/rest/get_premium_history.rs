@@ -58,7 +58,7 @@ impl RestClient {
     pub async fn get_premium_history(
         &self,
         request: &GetPremiumHistoryRequest,
-    ) -> RestResult<Vec<PremiumHistory>> {
+    ) -> RestResult<PremiumHistory> {
         self.send_get_request(
             PUBLIC_PREMIUM_HISTORY_ENDPOINT,
             Some(request),

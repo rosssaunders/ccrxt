@@ -180,10 +180,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing the list of available instruments
-    pub async fn get_instruments(
-        &self,
-        request: GetInstrumentsRequest,
-    ) -> RestResult<Vec<Instrument>> {
+    pub async fn get_instruments(&self, request: GetInstrumentsRequest) -> RestResult<Instrument> {
         self.send_get_request(
             PUBLIC_INSTRUMENTS_ENDPOINT,
             Some(&request),

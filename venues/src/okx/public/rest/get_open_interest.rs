@@ -71,7 +71,7 @@ impl RestClient {
     pub async fn get_open_interest(
         &self,
         request: GetOpenInterestRequest,
-    ) -> RestResult<Vec<OpenInterest>> {
+    ) -> RestResult<OpenInterest> {
         self.send_get_request(
             PUBLIC_OPEN_INTEREST_ENDPOINT,
             Some(&request),

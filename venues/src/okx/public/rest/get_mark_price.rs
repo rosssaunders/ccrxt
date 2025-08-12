@@ -66,10 +66,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing mark price data
-    pub async fn get_mark_price(
-        &self,
-        request: &GetMarkPriceRequest,
-    ) -> RestResult<Vec<MarkPrice>> {
+    pub async fn get_mark_price(&self, request: &GetMarkPriceRequest) -> RestResult<MarkPrice> {
         self.send_get_request(
             PUBLIC_MARK_PRICE_ENDPOINT,
             Some(request),

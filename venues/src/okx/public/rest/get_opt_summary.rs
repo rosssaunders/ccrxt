@@ -116,7 +116,7 @@ impl RestClient {
     pub async fn get_opt_summary(
         &self,
         request: GetOptSummaryRequest,
-    ) -> RestResult<Vec<OptSummary>> {
+    ) -> RestResult<OptSummary> {
         self.send_get_request(
             PUBLIC_OPT_SUMMARY_ENDPOINT,
             Some(&request),

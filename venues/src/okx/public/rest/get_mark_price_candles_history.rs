@@ -49,7 +49,7 @@ impl RestClient {
     pub async fn get_mark_price_candles_history(
         &self,
         request: GetMarkPriceCandlesHistoryRequest,
-    ) -> RestResult<Vec<[String; 6]>> {
+    ) -> RestResult<[String; 6]> {
         self.send_get_request(
             MARKET_HISTORY_MARK_PRICE_CANDLES_ENDPOINT,
             Some(&request),

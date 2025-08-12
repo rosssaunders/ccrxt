@@ -23,7 +23,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing the current system time as Unix timestamp in milliseconds
-    pub async fn get_time(&self) -> RestResult<Vec<TimeData>> {
+    pub async fn get_time(&self) -> RestResult<TimeData> {
         self.send_get_request(
             GET_TIME_ENDPOINT,
             None::<&()>,
