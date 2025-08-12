@@ -54,7 +54,7 @@ pub struct NotionalBracketResponse {
 impl RestClient {
     /// Get notional and leverage brackets on Binance Coin-M Futures.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/account/rest-api/Notional-Bracket-for-Pair
+    /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/account/rest-api/Notional-Bracket-for-Pair)
     ///
     /// GET /dapi/v1/leverageBracket
     /// Weight: 1 if pair provided, 40 otherwise

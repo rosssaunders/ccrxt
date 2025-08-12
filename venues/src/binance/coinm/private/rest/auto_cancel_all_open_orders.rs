@@ -37,7 +37,7 @@ pub struct AutoCancelAllOpenOrdersResponse {
 impl RestClient {
     /// Sets up auto-cancel for all open orders (TRADE) on Binance Coin-M Futures.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Auto-Cancel-All-Open-Orders
+    /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Auto-Cancel-All-Open-Orders)
     ///
     /// POST /dapi/v1/countdownCancelAll
     /// Weight: 10

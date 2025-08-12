@@ -79,7 +79,7 @@ pub type ModifyMultipleOrdersResponse = Vec<BatchModifyOrderResponseItem>;
 impl RestClient {
     /// Modifies multiple orders (TRADE) on Binance Coin-M Futures.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Modify-Multiple-Orders
+    /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Modify-Multiple-Orders)
     ///
     /// PUT /dapi/v1/batchOrders
     /// Weight: 5

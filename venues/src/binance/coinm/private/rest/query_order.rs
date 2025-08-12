@@ -142,7 +142,7 @@ impl RestClient {
     /// order status is CANCELED or EXPIRED AND order has NO filled trade AND created time + 3 days < current time
     /// order create time + 90 days < current time
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Query-Order
+    /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Query-Order)
     ///
     /// GET /dapi/v1/order
     /// Weight: 1

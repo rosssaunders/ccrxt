@@ -134,7 +134,7 @@ pub struct QueryCurrentOpenOrderResponse {
 impl RestClient {
     /// Queries a current open order (USER_DATA) on Binance Coin-M Futures.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Query-Current-Open-Order
+    /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Query-Current-Open-Order)
     ///
     /// GET /dapi/v1/openOrder
     /// Weight: 1

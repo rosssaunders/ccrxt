@@ -24,7 +24,7 @@ pub struct CreateListenKeyResponse {
 impl RestClient {
     /// Create a listen key for user data stream on Binance Coin-M Futures.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/user-data-streams/Start-User-Data-Stream
+    /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/user-data-streams/Start-User-Data-Stream)
     ///
     /// POST /dapi/v1/listenKey
     /// Weight: 1

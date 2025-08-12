@@ -143,7 +143,7 @@ pub struct ModifyOrderResponse {
 impl RestClient {
     /// Modifies an existing order (TRADE) on Binance Coin-M Futures.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Modify-Order
+    /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Modify-Order)
     ///
     /// PUT /dapi/v1/order
     /// Weight: 1

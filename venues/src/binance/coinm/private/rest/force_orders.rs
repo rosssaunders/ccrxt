@@ -130,7 +130,7 @@ pub type GetForceOrdersResponse = Vec<ForceOrder>;
 impl RestClient {
     /// Gets user's force orders (USER_DATA) on Binance Coin-M Futures.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Users-Force-Orders
+    /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Users-Force-Orders)
     ///
     /// GET /dapi/v1/forceOrders
     /// Weight: 20 with symbol, 50 without symbol
