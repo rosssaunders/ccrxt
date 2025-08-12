@@ -15,7 +15,7 @@
 //!     let limiter = RateLimiter::new(AccountTier::Tier3);
 //!    
 //!     // Create a public REST client
-//!     let client = reqwest::Client::new();
+//!     let http_client = Arc::new(rest::native::NativeHttpClient::default());
 //!     let rest_client = PublicRestClient::new("https://www.deribit.com", client, limiter);
 //!    
 //!     // Get combo IDs for BTC

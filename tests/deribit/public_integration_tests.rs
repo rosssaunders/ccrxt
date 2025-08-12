@@ -4,7 +4,7 @@
 //! Tests run against the live Deribit API using real market data.
 
 use chrono;
-use reqwest::Client;
+use std::sync::Arc;
 use tokio;
 use venues::deribit::{
     AccountTier, Currency, CurrencyPair, ExpirationsCurrency, ExpirationsInstrumentKind,
@@ -24,10 +24,10 @@ use venues::deribit::{
 
 /// Helper function to create a test client for public endpoints
 fn create_public_test_client() -> PublicRestClient {
-    let client = Client::new();
+    let http_client = Arc::new(rest::native::NativeHttpClient::default());
     let rate_limiter = RateLimiter::new(AccountTier::Tier1);
 
-    PublicRestClient::new("https://www.deribit.com", client, rate_limiter)
+    PublicRestClient::new("https://www.deribit.com", http_client, rate_limiter)
 }
 
 /// Test the get_status endpoint

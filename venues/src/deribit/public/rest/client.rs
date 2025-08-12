@@ -2,9 +2,9 @@
 //
 // Provides access to all public REST API endpoints for Deribit.
 // All requests are unauthenticated and do not require API credentials.
-use std::borrow::Cow;
+use std::{borrow::Cow, sync::Arc};
 
-use reqwest::Client;
+use rest::{HttpClient, http_client::{Method as HttpMethod, RequestBuilder}};
 use serde::de::DeserializeOwned;
 
 use crate::deribit::{EndpointType, Errors, RateLimiter, RestResult};
@@ -14,7 +14,6 @@ use crate::deribit::{EndpointType, Errors, RateLimiter, RestResult};
 /// This client handles all public API endpoints that don't require authentication.
 /// It provides automatic rate limiting and error handling.
 #[non_exhaustive]
-#[derive(Debug, Clone)]
 pub struct RestClient {
     /// The base URL for the Deribit public REST API (e.g., "https://www.deribit.com")
     ///
@@ -24,7 +23,7 @@ pub struct RestClient {
     /// The underlying HTTP client used for making requests.
     ///
     /// This is reused for connection pooling and performance.
-    pub client: Client,
+    pub http_client: Arc<dyn HttpClient>,
 
     /// The rate limiter used to manage request rates and prevent hitting API limits.
     ///
@@ -41,12 +40,12 @@ impl RestClient {
     /// * `rate_limiter` - The rate limiter for managing API limits
     pub fn new(
         base_url: impl Into<Cow<'static, str>>,
-        client: Client,
+        http_client: Arc<dyn HttpClient>,
         rate_limiter: RateLimiter,
     ) -> Self {
         Self {
             base_url: base_url.into(),
-            client,
+            http_client,
             rate_limiter,
         }
     }
@@ -82,10 +81,6 @@ impl RestClient {
             format!("{}/api/v2/{}", self.base_url, endpoint)
         };
 
-        // Build the request
-        // All Deribit REST (JSON-RPC) calls are POST
-        let mut request_builder = self.client.post(&url);
-
         // Wrap parameters in JSON-RPC envelope
         let params_value = if let Some(params) = params {
             serde_json::to_value(params)
@@ -100,26 +95,35 @@ impl RestClient {
             "jsonrpc": "2.0",
             "id": 1
         });
-        request_builder = request_builder.json(&jsonrpc_body);
-
-        // Add required headers
-        request_builder = request_builder.header("Content-Type", "application/json");
+        
+        let body = serde_json::to_string(&jsonrpc_body)
+            .map_err(|e| Errors::Error(format!("Failed to serialize body: {e}")))?;
+        
+        // Build the request
+        // All Deribit REST (JSON-RPC) calls are POST
+        let request = RequestBuilder::new(HttpMethod::Post, url)
+            .header("Content-Type", "application/json")
+            .body(body.into_bytes())
+            .build();
 
         // Send the request
-        let response = request_builder.send().await.map_err(Errors::HttpError)?;
+        let response = self.http_client.execute(request).await
+            .map_err(|e| Errors::NetworkError(format!("HTTP request failed: {e}")))?;
 
         // Record the request after successful send
         self.rate_limiter.record_request(endpoint_type).await;
 
         // Check if the response was successful
-        if !response.status().is_success() {
-            let status = response.status();
-            let error_text = response.text().await.map_err(Errors::HttpError)?;
+        if !(response.status >= 200 && response.status < 300) {
+            let status = response.status;
+            let error_text = response.text()
+                .map_err(|e| Errors::NetworkError(format!("Failed to read response: {e}")))?;
             return Err(Errors::Error(format!("HTTP {status}: {error_text}")));
         }
 
         // Parse the response
-        let response_text = response.text().await.map_err(Errors::HttpError)?;
+        let response_text = response.text()
+            .map_err(|e| Errors::NetworkError(format!("Failed to read response: {e}")))?;
 
         let parsed_response: T = serde_json::from_str(&response_text)
             .map_err(|e| Errors::Error(format!("Failed to parse response: {e}")))?;
@@ -131,24 +135,25 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::sync::Arc;
     use crate::deribit::AccountTier;
 
     #[test]
     fn test_public_client_creation() {
-        let client = reqwest::Client::new();
+        let http_client = Arc::new(rest::native::NativeHttpClient::default());
         let rate_limiter = RateLimiter::new(AccountTier::Tier4);
 
-        let rest_client = RestClient::new("https://www.deribit.com", client, rate_limiter);
+        let rest_client = RestClient::new("https://www.deribit.com", http_client, rate_limiter);
 
         assert_eq!(rest_client.base_url, "https://www.deribit.com");
     }
 
     #[test]
     fn test_url_building() {
-        let client = reqwest::Client::new();
+        let http_client = Arc::new(rest::native::NativeHttpClient::default());
         let rate_limiter = RateLimiter::new(AccountTier::Tier4);
 
-        let rest_client = RestClient::new("https://www.deribit.com", client, rate_limiter);
+        let rest_client = RestClient::new("https://www.deribit.com", http_client, rate_limiter);
 
         // Test that the client is properly initialized
         assert_eq!(rest_client.base_url, "https://www.deribit.com");
@@ -156,10 +161,10 @@ mod tests {
 
     #[tokio::test]
     async fn test_rate_limiting_integration() {
-        let client = reqwest::Client::new();
+        let http_client = Arc::new(rest::native::NativeHttpClient::default());
         let rate_limiter = RateLimiter::new(AccountTier::Tier4);
 
-        let rest_client = RestClient::new("https://www.deribit.com", client, rate_limiter);
+        let rest_client = RestClient::new("https://www.deribit.com", http_client, rate_limiter);
 
         // Test that rate limiting works (this shouldn't fail since we're not actually hitting limits)
         let result = rest_client

@@ -1,9 +1,8 @@
-use std::borrow::Cow;
+use std::{borrow::Cow, sync::Arc};
 
 use chrono::Utc;
 use hmac::{Hmac, Mac};
-use reqwest::Client;
-use rest::secrets::ExposableSecret;
+use rest::{HttpClient, http_client::{Method as HttpMethod, RequestBuilder}, secrets::ExposableSecret};
 use serde::{Serialize, de::DeserializeOwned};
 use serde_json::json;
 use sha2::Sha256;
@@ -19,7 +18,7 @@ pub struct RestClient {
     pub base_url: Cow<'static, str>,
 
     /// The underlying HTTP client used for making requests
-    pub client: Client,
+    pub http_client: Arc<dyn HttpClient>,
 
     /// The rate limiter used to manage request rates
     pub rate_limiter: RateLimiter,
@@ -39,7 +38,7 @@ impl RestClient {
     /// * `api_secret` - The encrypted API secret
     /// * `base_url` - The base URL for the API
     /// * `rate_limiter` - The rate limiter instance
-    /// * `client` - The HTTP client instance
+    /// * `http_client` - The HTTP client instance
     ///
     /// # Returns
     /// A new RestClient instance
@@ -48,11 +47,11 @@ impl RestClient {
         api_secret: Box<dyn ExposableSecret>,
         base_url: impl Into<Cow<'static, str>>,
         rate_limiter: RateLimiter,
-        client: Client,
+        http_client: Arc<dyn HttpClient>,
     ) -> Self {
         Self {
             base_url: base_url.into(),
-            client,
+            http_client,
             rate_limiter,
             api_key,
             api_secret,
@@ -131,24 +130,43 @@ impl RestClient {
         });
 
         // Send HTTP request
-        let resp = self
-            .client
-            .post(format!("{}/api/v2/{}", self.base_url, method))
-            .json(&authenticated_request)
-            .send()
-            .await?;
+        let url = format!("{}/api/v2/{}", self.base_url, method);
+        let body = serde_json::to_string(&authenticated_request)
+            .map_err(|e| Errors::Error(format!("Failed to serialize body: {e}")))?;
+        
+        let request = RequestBuilder::new(HttpMethod::Post, url)
+            .header("Content-Type", "application/json")
+            .body(body.into_bytes())
+            .build();
+        
+        let response = self.http_client.execute(request).await
+            .map_err(|e| Errors::NetworkError(format!("HTTP request failed: {e}")))?;
 
         // Record request for rate limiting
         self.rate_limiter.record_request(endpoint_type).await;
-
-        // Deserialize response
-        let result = resp.json::<T>().await?;
+        
+        // Check if the response was successful
+        if !(response.status >= 200 && response.status < 300) {
+            let status = response.status;
+            let error_text = response.text()
+                .map_err(|e| Errors::NetworkError(format!("Failed to read response: {e}")))?;
+            return Err(Errors::Error(format!("HTTP {status}: {error_text}")));
+        }
+        
+        // Parse the response
+        let response_text = response.text()
+            .map_err(|e| Errors::NetworkError(format!("Failed to read response: {e}")))?;
+        
+        let result: T = serde_json::from_str(&response_text)
+            .map_err(|e| Errors::Error(format!("Failed to parse response: {e}")))?;
+        
         Ok(result)
     }
 }
 
 #[cfg(test)]
 mod tests {
+    use std::sync::Arc;
     use super::*;
     use crate::deribit::AccountTier;
 
@@ -175,7 +193,7 @@ mod tests {
         let api_key = Box::new(TestSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
         let api_secret =
             Box::new(TestSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
-        let client = Client::new();
+        let http_client = Arc::new(rest::native::NativeHttpClient::default());
         let rate_limiter = RateLimiter::new(AccountTier::Tier4);
 
         let rest_client = RestClient::new(
@@ -183,7 +201,7 @@ mod tests {
             api_secret,
             "https://test.deribit.com",
             rate_limiter,
-            client,
+            http_client,
         );
 
         assert_eq!(rest_client.base_url, "https://test.deribit.com");
@@ -194,7 +212,7 @@ mod tests {
         let api_key = Box::new(TestSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
         let api_secret =
             Box::new(TestSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
-        let client = Client::new();
+        let http_client = Arc::new(rest::native::NativeHttpClient::default());
         let rate_limiter = RateLimiter::new(AccountTier::Tier4);
 
         let rest_client = RestClient::new(
@@ -202,7 +220,7 @@ mod tests {
             api_secret,
             "https://test.deribit.com",
             rate_limiter,
-            client,
+            http_client,
         );
 
         let result = rest_client.sign_request("test_data", 1234567890, 1);
