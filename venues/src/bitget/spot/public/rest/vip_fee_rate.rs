@@ -31,7 +31,7 @@ impl RestClient {
     ///
     /// Returns VIP fee rate information for all levels.
     ///
-    /// [docs]: https://www.bitget.com/api-doc/spot/market/Get-VIP-Fee-Rate
+    /// [docs](https://www.bitget.com/api-doc/spot/market/Get-VIP-Fee-Rate)
     ///
     /// Rate limit: see official docs
     ///

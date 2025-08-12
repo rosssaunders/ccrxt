@@ -83,7 +83,7 @@ impl RestClient {
     /// Cancels multiple orders for spot trading with the specified parameters.
     /// Maximum 20 orders per batch.
     ///
-    /// [docs]: https://www.bitget.com/api-doc/spot/trade/Batch-Cancel-Orders
+    /// [docs](https://www.bitget.com/api-doc/spot/trade/Batch-Cancel-Orders)
     /// Endpoint: POST /api/v2/spot/trade/batch-cancel-order
     /// * `request` - The batch order cancellation request parameters
     ///
