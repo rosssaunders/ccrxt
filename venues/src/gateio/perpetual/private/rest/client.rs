@@ -3,7 +3,7 @@ use std::{
     time::{SystemTime, UNIX_EPOCH},
 };
 
-use reqwest::{Client, Method};
+use rest::{HttpClient, http_client::{Method as HttpMethod, RequestBuilder}};
 use ring::hmac;
 use serde::{Serialize, de::DeserializeOwned};
 use sha2::{Digest, Sha512};
@@ -16,7 +16,7 @@ const TESTNET_URL: &str = "https://api-testnet.gateapi.io/api/v4";
 /// Private REST API client for Gate.io
 #[derive(Clone)]
 pub struct RestClient {
-    client: Client,
+    http_client: Arc<dyn HttpClient>,
     base_url: String,
     api_key: String,
     api_secret: String,
@@ -25,14 +25,9 @@ pub struct RestClient {
 
 impl RestClient {
     /// Create a new private REST client
-    pub fn new(api_key: String, api_secret: String, testnet: bool) -> RestResult<Self> {
-        let client = Client::builder()
-            .timeout(std::time::Duration::from_secs(30))
-            .build()
-            .map_err(crate::gateio::perpetual::GateIoError::Http)?;
-
+    pub fn new(http_client: Arc<dyn HttpClient>, api_key: String, api_secret: String, testnet: bool) -> RestResult<Self> {
         Ok(Self {
-            client,
+            http_client,
             base_url: if testnet { TESTNET_URL } else { LIVE_URL }.to_string(),
             api_key,
             api_secret,
@@ -77,7 +72,7 @@ impl RestClient {
     where
         T: DeserializeOwned,
     {
-        self.request(Method::GET, endpoint, None::<&()>, None::<&()>)
+        self.request(HttpMethod::Get, endpoint, None::<&()>, None::<&()>)
             .await
     }
 
@@ -87,7 +82,7 @@ impl RestClient {
         T: DeserializeOwned,
         Q: Serialize,
     {
-        self.request(Method::GET, endpoint, Some(query), None::<&()>)
+        self.request(HttpMethod::Get, endpoint, Some(query), None::<&()>)
             .await
     }
 
@@ -96,7 +91,7 @@ impl RestClient {
     where
         T: DeserializeOwned,
     {
-        self.request(Method::POST, endpoint, None::<&()>, Some(body))
+        self.request(HttpMethod::Post, endpoint, None::<&()>, Some(body))
             .await
     }
 
@@ -105,7 +100,7 @@ impl RestClient {
     where
         T: DeserializeOwned,
     {
-        self.request(Method::PUT, endpoint, None::<&()>, Some(body))
+        self.request(HttpMethod::Put, endpoint, None::<&()>, Some(body))
             .await
     }
 
@@ -114,7 +109,7 @@ impl RestClient {
     where
         T: DeserializeOwned,
     {
-        self.request(Method::DELETE, endpoint, None::<&()>, None::<&()>)
+        self.request(HttpMethod::Delete, endpoint, None::<&()>, None::<&()>)
             .await
     }
 
@@ -124,7 +119,7 @@ impl RestClient {
         T: DeserializeOwned,
         Q: Serialize,
     {
-        self.request(Method::DELETE, endpoint, Some(query), None::<&()>)
+        self.request(HttpMethod::Delete, endpoint, Some(query), None::<&()>)
             .await
     }
 
@@ -133,14 +128,14 @@ impl RestClient {
     where
         T: DeserializeOwned,
     {
-        self.request(Method::PATCH, endpoint, None::<&()>, Some(body))
+        self.request(HttpMethod::Patch, endpoint, None::<&()>, Some(body))
             .await
     }
 
     /// Make a request to the API with authentication
     async fn request<T>(
         &self,
-        method: Method,
+        method: HttpMethod,
         endpoint: &str,
         query: Option<&impl Serialize>,
         body: Option<&impl Serialize>,
@@ -156,7 +151,14 @@ impl RestClient {
         })?;
 
         let url = format!("{}{}", self.base_url, endpoint);
-        let method_str = method.as_str();
+        let method_str = match method {
+            HttpMethod::Get => "GET",
+            HttpMethod::Post => "POST",
+            HttpMethod::Put => "PUT",
+            HttpMethod::Delete => "DELETE",
+            HttpMethod::Patch => "PATCH",
+            _ => "GET",
+        };
 
         // Generate timestamp
         #[allow(clippy::unwrap_used)]
@@ -185,35 +187,34 @@ impl RestClient {
         let signature =
             self.generate_signature(method_str, endpoint, &query_string, &body_str, &timestamp);
 
-        let mut request_builder = self
-            .client
-            .request(method, &url)
+        // Build URL with query parameters
+        let full_url = if !query_string.is_empty() {
+            format!("{}?{}", url, query_string)
+        } else {
+            url
+        };
+
+        // Build request
+        let mut request = RequestBuilder::new(method, full_url)
             .header("KEY", &self.api_key)
             .header("Timestamp", &timestamp)
             .header("SIGN", signature);
 
-        // Add query parameters
-        if !query_string.is_empty() {
-            if let Some(params) = query {
-                request_builder = request_builder.query(params);
-            }
-        }
-
         // Add body if present
         if !body_str.is_empty() {
-            request_builder = request_builder
+            request = request
                 .header("Content-Type", "application/json")
-                .body(body_str);
+                .body(body_str.into_bytes());
         }
 
-        let response = request_builder
-            .send()
+        let response = self.http_client
+            .execute(request.build())
             .await
-            .map_err(crate::gateio::perpetual::GateIoError::Http)?;
+            .map_err(|e| crate::gateio::perpetual::GateIoError::Network(format!("HTTP request failed: {}", e)))?;
 
-        let status = response.status();
+        let status = response.status;
         let headers =
-            crate::gateio::perpetual::rate_limit::RateLimitHeader::from_headers(response.headers());
+            crate::gateio::perpetual::rate_limit::RateLimitHeader::from_headers(&response.headers);
 
         // Update rate limiter with response headers
         if let Some(rate_status) = self.rate_limiter.update_from_headers(&headers, endpoint) {
@@ -222,10 +223,9 @@ impl RestClient {
 
         let response_text = response
             .text()
-            .await
-            .map_err(crate::gateio::perpetual::GateIoError::Http)?;
+            .map_err(|e| crate::gateio::perpetual::GateIoError::Network(format!("Failed to read response: {}", e)))?;
 
-        if status.is_success() {
+        if status >= 200 && status < 300 {
             let data: T = serde_json::from_str(&response_text)
                 .map_err(crate::gateio::perpetual::GateIoError::Json)?;
             Ok(data)

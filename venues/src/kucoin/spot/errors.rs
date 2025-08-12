@@ -13,9 +13,9 @@ pub enum KucoinError {
     #[error("Invalid API key or signature")]
     InvalidApiKey,
 
-    /// HTTP error occurred while making a request
-    #[error("HTTP error: {0}")]
-    HttpError(#[from] reqwest::Error),
+    /// Network error occurred while making a request
+    #[error("Network error: {0}")]
+    NetworkError(String),
 
     /// An error returned by the KuCoin API
     #[error("API error: {0}")]

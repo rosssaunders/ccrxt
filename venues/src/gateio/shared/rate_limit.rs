@@ -1,9 +1,9 @@
 use std::{
+    collections::HashMap,
     sync::Arc,
     time::{Duration, Instant},
 };
 
-use reqwest::header::HeaderMap;
 use tokio::sync::{Mutex, Semaphore};
 
 /// Rate limit header information from Gate.io API responses
@@ -19,19 +19,16 @@ pub struct RateLimitHeader {
 
 impl RateLimitHeader {
     /// Parse rate limit headers from response
-    pub fn from_headers(headers: &HeaderMap) -> Self {
+    pub fn from_headers(headers: &HashMap<String, String>) -> Self {
         Self {
             requests_remain: headers
                 .get("X-Gate-RateLimit-Requests-Remain")
-                .and_then(|v| v.to_str().ok())
                 .and_then(|v| v.parse().ok()),
             limit: headers
                 .get("X-Gate-RateLimit-Limit")
-                .and_then(|v| v.to_str().ok())
                 .and_then(|v| v.parse().ok()),
             reset_timestamp: headers
                 .get("X-Gate-RateLimit-Reset-Timestamp")
-                .and_then(|v| v.to_str().ok())
                 .and_then(|v| v.parse().ok()),
         }
     }
@@ -304,24 +301,22 @@ impl Default for RateLimiter {
 
 #[cfg(test)]
 mod tests {
-    use reqwest::header::{HeaderMap, HeaderName, HeaderValue};
-
     use super::*;
 
     #[test]
     fn test_rate_limit_header_parsing() {
-        let mut headers = HeaderMap::new();
+        let mut headers = HashMap::new();
         headers.insert(
-            HeaderName::from_static("x-gate-ratelimit-requests-remain"),
-            HeaderValue::from_static("5"),
+            "X-Gate-RateLimit-Requests-Remain".to_string(),
+            "5".to_string(),
         );
         headers.insert(
-            HeaderName::from_static("x-gate-ratelimit-limit"),
-            HeaderValue::from_static("100"),
+            "X-Gate-RateLimit-Limit".to_string(),
+            "100".to_string(),
         );
         headers.insert(
-            HeaderName::from_static("x-gate-ratelimit-reset-timestamp"),
-            HeaderValue::from_static("1640995200"),
+            "X-Gate-RateLimit-Reset-Timestamp".to_string(),
+            "1640995200".to_string(),
         );
 
         let rate_limit = RateLimitHeader::from_headers(&headers);

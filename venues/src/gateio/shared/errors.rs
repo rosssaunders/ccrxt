@@ -12,8 +12,8 @@ pub enum GateIoError {
     #[error("API error: {0}")]
     Api(#[from] ApiError),
 
-    #[error("HTTP error: {0}")]
-    Http(#[from] reqwest::Error),
+    #[error("Network error: {0}")]
+    Network(String),
 
     #[error("JSON parsing error: {0}")]
     Json(#[from] serde_json::Error),
@@ -113,7 +113,7 @@ impl GateIoError {
     pub fn is_retryable(&self) -> bool {
         matches!(
             self,
-            Self::Http(_)
+            Self::Network(_)
                 | Self::Connection(_)
                 | Self::Timeout(_)
                 | Self::RateLimitExceeded { .. }

@@ -3,16 +3,17 @@ use crate::kucoin::spot::{ApiError, RateLimiter, ResponseHeaders, RestResponse, 
 use base64::{Engine as _, engine::general_purpose};
 use chrono::Utc;
 use hmac::{Hmac, Mac};
-use reqwest::Client;
+use rest::{HttpClient, HttpError, Method, RequestBuilder};
 use rest::secrets::ExposableSecret;
 use serde::{Serialize, de::DeserializeOwned};
 use sha2::Sha256;
 use std::collections::HashMap;
+use std::sync::Arc;
 
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub struct RestClient {
     pub base_url: String,
-    pub client: Client,
+    pub http_client: Arc<dyn HttpClient>,
     pub rate_limiter: RateLimiter,
     pub credentials: Credentials,
     pub is_sandbox: bool,
@@ -22,32 +23,32 @@ impl RestClient {
     pub fn new(
         base_url: impl Into<String>,
         rate_limiter: RateLimiter,
-        client: Client,
+        http_client: Arc<dyn HttpClient>,
         credentials: Credentials,
         is_sandbox: bool,
     ) -> Self {
         Self {
             base_url: base_url.into(),
-            client,
+            http_client,
             rate_limiter,
             credentials,
             is_sandbox,
         }
     }
-    pub fn new_with_credentials(credentials: Credentials) -> Self {
+    pub fn new_with_credentials(credentials: Credentials, http_client: Arc<dyn HttpClient>) -> Self {
         Self::new(
             "https://api.kucoin.com",
             RateLimiter::new(),
-            Client::new(),
+            http_client,
             credentials,
             false,
         )
     }
-    pub fn new_sandbox(credentials: Credentials) -> Self {
+    pub fn new_sandbox(credentials: Credentials, http_client: Arc<dyn HttpClient>) -> Self {
         Self::new(
             "https://openapi-sandbox.kucoin.com",
             RateLimiter::new(),
-            Client::new(),
+            http_client,
             credentials,
             true,
         )
@@ -90,24 +91,32 @@ impl RestClient {
 
     async fn execute<T>(
         &self,
-        rb: reqwest::RequestBuilder,
+        request: rest::Request,
     ) -> Result<(RestResponse<T>, ResponseHeaders)>
     where
         T: DeserializeOwned,
     {
-        let resp = rb.send().await?;
-        let status = resp.status();
-        let headers = resp.headers().clone();
-        let text = resp.text().await?;
-        if !status.is_success() {
+        let resp = self.http_client.execute(request).await.map_err(|e| match e {
+            HttpError::Network(msg) => ApiError::Http(format!("Network error: {}", msg)),
+            HttpError::Timeout => ApiError::Http("Request timeout".into()),
+            HttpError::Http { status, body } => ApiError::Http(format!("HTTP {}: {}", status, body)),
+            other => ApiError::Http(format!("HTTP error: {}", other)),
+        })?;
+        
+        let status = resp.status;
+        let text = resp.text().map_err(|e| ApiError::Http(format!("Failed to decode response: {}", e)))?;
+        
+        if status < 200 || status >= 300 {
             if let Ok(err_resp) = serde_json::from_str::<super::super::super::ErrorResponse>(&text)
             {
                 return Err(ApiError::from(err_resp).into());
             }
             return Err(ApiError::Http(format!("HTTP {}: {}", status, text)).into());
         }
+        
         let parsed: RestResponse<T> = serde_json::from_str(&text)
             .map_err(|e| ApiError::JsonParsing(format!("Failed to parse response: {e}")))?;
+            
         if !parsed.is_success() {
             return Err(ApiError::Other {
                 code: parsed.code.clone(),
@@ -115,7 +124,8 @@ impl RestClient {
             }
             .into());
         }
-        let rl = ResponseHeaders::from_headers(&headers);
+        
+        let rl = ResponseHeaders::from_headers(&resp.headers);
         Ok((parsed, rl))
     }
 
@@ -134,30 +144,34 @@ impl RestClient {
             }
             .into());
         }
+        
         let ts = Utc::now().timestamp_millis();
-        let url = format!("{}{}", self.base_url, endpoint);
-        let mut rb = self.client.get(&url);
+        let mut url = format!("{}{}", self.base_url, endpoint);
         let endpoint_sign = if let Some(map) = params.clone() {
             if !map.is_empty() {
-                rb = rb.query(&map);
                 let mut v: Vec<(String, String)> = map.into_iter().collect();
                 v.sort_by(|a, b| a.0.cmp(&b.0));
-                let q = v
-                    .into_iter()
-                    .map(|(k, v)| format!("{}={}", k, v))
-                    .collect::<Vec<_>>()
-                    .join("&");
-                format!("{}?{}", endpoint, q)
+                let query_string = serde_urlencoded::to_string(&v)
+                    .map_err(|e| ApiError::JsonParsing(format!("Failed to serialize query params: {}", e)))?;
+                url = format!("{}?{}", url, query_string);
+                format!("{}?{}", endpoint, query_string)
             } else {
                 endpoint.to_string()
             }
         } else {
             endpoint.to_string()
         };
+        
+        let mut headers = HashMap::new();
         for (k, v) in self.create_auth_headers("GET", &endpoint_sign, "", ts)? {
-            rb = rb.header(&k, &v);
+            headers.insert(k, v);
         }
-        self.execute(rb).await
+        
+        let request = RequestBuilder::new(Method::Get, url)
+            .headers(headers)
+            .build();
+        
+        self.execute(request).await
     }
 
     pub async fn get_with_request<P, T>(
@@ -176,20 +190,28 @@ impl RestClient {
             }
             .into());
         }
+        
         let ts = Utc::now().timestamp_millis();
-        let url = format!("{}{}", self.base_url, endpoint);
-        let mut rb = self.client.get(&url);
+        let mut url = format!("{}{}", self.base_url, endpoint);
         let params = serde_urlencoded::to_string(request)
             .map_err(|e| ApiError::JsonParsing(format!("Failed to serialize request: {e}")))?;
-        let mut endpoint_sign = endpoint.to_string();
-        if !params.is_empty() {
-            rb = rb.query(&request);
-            endpoint_sign = format!("{}?{}", endpoint, params);
-        }
+        let endpoint_sign = if !params.is_empty() {
+            url = format!("{}?{}", url, params);
+            format!("{}?{}", endpoint, params)
+        } else {
+            endpoint.to_string()
+        };
+        
+        let mut headers = HashMap::new();
         for (k, v) in self.create_auth_headers("GET", &endpoint_sign, "", ts)? {
-            rb = rb.header(&k, &v);
+            headers.insert(k, v);
         }
-        self.execute(rb).await
+        
+        let request = RequestBuilder::new(Method::Get, url)
+            .headers(headers)
+            .build();
+        
+        self.execute(request).await
     }
 
     pub async fn post<T>(
@@ -207,17 +229,22 @@ impl RestClient {
             }
             .into());
         }
+        
         let ts = Utc::now().timestamp_millis();
         let url = format!("{}{}", self.base_url, endpoint);
-        let mut rb = self
-            .client
-            .post(&url)
-            .header("Content-Type", "application/json")
-            .body(body.to_string());
+        
+        let mut headers = HashMap::new();
+        headers.insert("Content-Type".to_string(), "application/json".to_string());
         for (k, v) in self.create_auth_headers("POST", endpoint, body, ts)? {
-            rb = rb.header(&k, &v);
+            headers.insert(k, v);
         }
-        self.execute(rb).await
+        
+        let request = RequestBuilder::new(Method::Post, url)
+            .headers(headers)
+            .body(body.as_bytes().to_vec())
+            .build();
+        
+        self.execute(request).await
     }
 
     pub async fn post_with_request<P, T>(
@@ -236,19 +263,24 @@ impl RestClient {
             }
             .into());
         }
+        
         let ts = Utc::now().timestamp_millis();
         let body = serde_json::to_string(request)
             .map_err(|e| ApiError::JsonParsing(format!("Failed to serialize request: {e}")))?;
         let url = format!("{}{}", self.base_url, endpoint);
-        let mut rb = self
-            .client
-            .post(&url)
-            .header("Content-Type", "application/json")
-            .body(body.clone());
+        
+        let mut headers = HashMap::new();
+        headers.insert("Content-Type".to_string(), "application/json".to_string());
         for (k, v) in self.create_auth_headers("POST", endpoint, &body, ts)? {
-            rb = rb.header(&k, &v);
+            headers.insert(k, v);
         }
-        self.execute(rb).await
+        
+        let request = RequestBuilder::new(Method::Post, url)
+            .headers(headers)
+            .body(body.as_bytes().to_vec())
+            .build();
+        
+        self.execute(request).await
     }
 
     pub async fn delete<T>(
@@ -266,30 +298,34 @@ impl RestClient {
             }
             .into());
         }
+        
         let ts = Utc::now().timestamp_millis();
-        let url = format!("{}{}", self.base_url, endpoint);
-        let mut rb = self.client.delete(&url);
+        let mut url = format!("{}{}", self.base_url, endpoint);
         let endpoint_sign = if let Some(map) = params.clone() {
             if !map.is_empty() {
-                rb = rb.query(&map);
                 let mut v: Vec<(String, String)> = map.into_iter().collect();
                 v.sort_by(|a, b| a.0.cmp(&b.0));
-                let q = v
-                    .into_iter()
-                    .map(|(k, v)| format!("{}={}", k, v))
-                    .collect::<Vec<_>>()
-                    .join("&");
-                format!("{}?{}", endpoint, q)
+                let query_string = serde_urlencoded::to_string(&v)
+                    .map_err(|e| ApiError::JsonParsing(format!("Failed to serialize query params: {}", e)))?;
+                url = format!("{}?{}", url, query_string);
+                format!("{}?{}", endpoint, query_string)
             } else {
                 endpoint.to_string()
             }
         } else {
             endpoint.to_string()
         };
+        
+        let mut headers = HashMap::new();
         for (k, v) in self.create_auth_headers("DELETE", &endpoint_sign, "", ts)? {
-            rb = rb.header(&k, &v);
+            headers.insert(k, v);
         }
-        self.execute(rb).await
+        
+        let request = RequestBuilder::new(Method::Delete, url)
+            .headers(headers)
+            .build();
+        
+        self.execute(request).await
     }
 
     pub async fn delete_with_request<P, T>(
@@ -308,20 +344,28 @@ impl RestClient {
             }
             .into());
         }
+        
         let ts = Utc::now().timestamp_millis();
-        let url = format!("{}{}", self.base_url, endpoint);
-        let mut rb = self.client.delete(&url);
+        let mut url = format!("{}{}", self.base_url, endpoint);
         let params = serde_urlencoded::to_string(request)
             .map_err(|e| ApiError::JsonParsing(format!("Failed to serialize request: {e}")))?;
-        let mut endpoint_sign = endpoint.to_string();
-        if !params.is_empty() {
-            rb = rb.query(&request);
-            endpoint_sign = format!("{}?{}", endpoint, params);
-        }
+        let endpoint_sign = if !params.is_empty() {
+            url = format!("{}?{}", url, params);
+            format!("{}?{}", endpoint, params)
+        } else {
+            endpoint.to_string()
+        };
+        
+        let mut headers = HashMap::new();
         for (k, v) in self.create_auth_headers("DELETE", &endpoint_sign, "", ts)? {
-            rb = rb.header(&k, &v);
+            headers.insert(k, v);
         }
-        self.execute(rb).await
+        
+        let request = RequestBuilder::new(Method::Delete, url)
+            .headers(headers)
+            .build();
+        
+        self.execute(request).await
     }
 }
 
@@ -329,6 +373,8 @@ impl RestClient {
 mod tests {
     use super::*;
     use rest::secrets::SecretString;
+    use rest::NativeHttpClient;
+    
     fn creds() -> Credentials {
         Credentials {
             api_key: SecretString::new("test_key".into()),
@@ -336,19 +382,26 @@ mod tests {
             api_passphrase: SecretString::new("passphrase123".into()),
         }
     }
+    
+    fn mock_http_client() -> Arc<dyn HttpClient> {
+        Arc::new(NativeHttpClient::new().unwrap())
+    }
+    
     #[test]
     fn construction() {
-        let c = RestClient::new_with_credentials(creds());
+        let c = RestClient::new_with_credentials(creds(), mock_http_client());
         assert_eq!(c.base_url, "https://api.kucoin.com");
     }
+    
     #[test]
     fn sandbox() {
-        let c = RestClient::new_sandbox(creds());
+        let c = RestClient::new_sandbox(creds(), mock_http_client());
         assert!(c.is_sandbox);
     }
+    
     #[test]
     fn auth_headers_basic() {
-        let c = RestClient::new_with_credentials(creds());
+        let c = RestClient::new_with_credentials(creds(), mock_http_client());
         let ts = 1234567890123i64;
         let h = c
             .create_auth_headers("GET", "/api/v1/accounts", "", ts)
