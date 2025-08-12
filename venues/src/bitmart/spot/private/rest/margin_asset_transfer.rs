@@ -32,7 +32,7 @@ impl RestClient {
     ///
     /// For fund transfers between a margin account and spot account
     ///
-    /// [docs]: https://developer-pro.bitmart.com/en/spot/#margin-asset-transfer-signed
+    /// [docs](https://developer-pro.bitmart.com/en/spot/#margin-asset-transfer-signed)
     ///
     /// Rate limit: 12 times/2 sec per API key
     ///

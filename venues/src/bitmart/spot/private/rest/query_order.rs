@@ -81,7 +81,7 @@ impl RestClient {
     ///
     /// Retrieves details for a specific order.
     ///
-    /// [docs]: https://developer-pro.bitmart.com/en/spot/#query-order-by-id-v4-signed
+    /// [docs](https://developer-pro.bitmart.com/en/spot/#query-order-by-id-v4-signed)
     ///
     /// Rate limit: varies by endpoint type
     ///

@@ -32,7 +32,7 @@ impl RestClient {
     ///
     /// For the actual fee rate of the trading pairs
     ///
-    /// [docs]: https://developer-pro.bitmart.com/en/spot/#get-actual-trade-fee-rate-keyed
+    /// [docs](https://developer-pro.bitmart.com/en/spot/#get-actual-trade-fee-rate-keyed)
     ///
     /// Rate limit: 12 times/2 sec per API key
     ///

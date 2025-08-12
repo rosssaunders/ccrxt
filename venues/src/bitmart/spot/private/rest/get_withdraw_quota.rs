@@ -36,7 +36,7 @@ impl RestClient {
     ///
     /// Note: This interface is not available for sub-account
     ///
-    /// [docs]: https://developer-pro.bitmart.com/en/spot/#withdraw-quota-keyed
+    /// [docs](https://developer-pro.bitmart.com/en/spot/#withdraw-quota-keyed)
     ///
     /// Rate limit: 12 times/2 sec per API key
     ///

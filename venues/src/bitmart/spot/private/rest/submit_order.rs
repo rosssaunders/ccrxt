@@ -48,7 +48,7 @@ impl RestClient {
     ///
     /// Places a new order on the BitMart exchange.
     ///
-    /// [docs]: https://developer-pro.bitmart.com/en/spot/#new-orderv2-signed
+    /// [docs](https://developer-pro.bitmart.com/en/spot/#new-orderv2-signed)
     ///
     /// Rate limit: varies by endpoint type
     ///

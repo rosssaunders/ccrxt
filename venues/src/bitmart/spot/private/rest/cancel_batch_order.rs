@@ -54,7 +54,7 @@ impl RestClient {
     /// Cancels multiple orders by order IDs or client order IDs. Maximum 10 orders per batch.
     /// Must specify either order_ids or client_order_ids, but not both.
     ///
-    /// [docs]: https://developer-pro.bitmart.com/en/spot/#cancel-batch-order-v4-signed
+    /// [docs](https://developer-pro.bitmart.com/en/spot/#cancel-batch-order-v4-signed)
     ///
     /// Rate limit: UID-based, 40 times/2 sec
     ///

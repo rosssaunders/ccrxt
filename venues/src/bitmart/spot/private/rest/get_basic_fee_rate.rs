@@ -42,7 +42,7 @@ impl RestClient {
     ///
     /// For querying the base rate of the current user
     ///
-    /// [docs]: https://developer-pro.bitmart.com/en/spot/#get-basic-fee-rate-keyed
+    /// [docs](https://developer-pro.bitmart.com/en/spot/#get-basic-fee-rate-keyed)
     ///
     /// Rate limit: 12 times/2 sec per API key
     ///

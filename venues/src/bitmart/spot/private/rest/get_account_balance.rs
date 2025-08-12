@@ -47,7 +47,7 @@ impl RestClient {
     ///
     /// Gets the user's wallet balance. Only assets with a balance greater than 0 will be returned.
     ///
-    /// [docs]: https://developer-pro.bitmart.com/en/spot/#get-account-balance-keyed
+    /// [docs](https://developer-pro.bitmart.com/en/spot/#get-account-balance-keyed)
     ///
     /// Rate limit: 12 times/2 sec per API key
     ///

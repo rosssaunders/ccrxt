@@ -73,7 +73,7 @@ impl RestClient {
     ///
     /// Search for all existed withdraws and deposits and return their latest status.
     ///
-    /// [docs]: https://developer-pro.bitmart.com/en/spot/#get-deposit-and-withdraw-history-keyed
+    /// [docs](https://developer-pro.bitmart.com/en/spot/#get-deposit-and-withdraw-history-keyed)
     ///
     /// Rate limit: 12 times/2 sec per API key
     ///

@@ -54,7 +54,7 @@ impl RestClient {
     ///
     /// Gets the currency of the asset for withdrawal
     ///
-    /// [docs]: https://developer-pro.bitmart.com/en/spot/#get-currencies
+    /// [docs](https://developer-pro.bitmart.com/en/spot/#get-currencies)
     ///
     /// Rate limit: 12 times/2 sec per API key
     ///

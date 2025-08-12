@@ -27,7 +27,7 @@ impl RestClient {
     ///
     /// Retrieves the trade list for a specific order.
     ///
-    /// [docs]: https://developer-pro.bitmart.com/en/spot/#order-trade-listv4-signed
+    /// [docs](https://developer-pro.bitmart.com/en/spot/#order-trade-listv4-signed)
     ///
     /// Rate limit: varies by endpoint type
     ///
