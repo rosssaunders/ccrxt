@@ -52,7 +52,7 @@ impl RestClient {
     ///
     /// Retrieves recent market trades for a given symbol. Only trades filled in the order book are returned; insurance fund trades and ADL trades are excluded.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Recent-Trades-List
+    /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Recent-Trades-List)
     ///
     /// Rate limit: 5
     ///

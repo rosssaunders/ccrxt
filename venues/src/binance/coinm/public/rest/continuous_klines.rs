@@ -64,7 +64,7 @@ impl RestClient {
     ///
     /// Kline/candlestick bars for a specific contract type. Klines are uniquely identified by their open time.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Continuous-Contract-Kline-Candlestick-Data
+    /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Continuous-Contract-Kline-Candlestick-Data)
     ///
     /// Rate limit: Weight based on parameter LIMIT:
     /// - [1,100): 1

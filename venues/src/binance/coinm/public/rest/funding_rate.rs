@@ -46,7 +46,7 @@ impl RestClient {
     ///
     /// Empty array will be returned for delivery symbols.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Get-Funding-Rate-History-of-Perpetual-Futures
+    /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Get-Funding-Rate-History-of-Perpetual-Futures)
     ///
     /// Rate limit: 1
     ///

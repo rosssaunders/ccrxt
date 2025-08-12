@@ -71,7 +71,7 @@ impl RestClient {
     ///
     /// Returns the total volume of buy and sell orders filled by takers within the specified period.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Taker-Buy-Sell-Volume
+    /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Taker-Buy-Sell-Volume)
     ///
     /// Rate limit: 1 request per second
     ///

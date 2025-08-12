@@ -77,7 +77,7 @@ impl RestClient {
     ///
     /// Query index price and mark price for coin-margined futures.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Index-Price-and-Mark-Price
+    /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Index-Price-and-Mark-Price)
     ///
     /// Rate limit: 10
     ///

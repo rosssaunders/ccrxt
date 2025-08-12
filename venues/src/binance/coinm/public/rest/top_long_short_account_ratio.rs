@@ -55,7 +55,7 @@ impl RestClient {
     ///
     /// Retrieves the proportion of net long and net short accounts to total accounts of the top 20% users with the highest margin balance.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Top-Long-Short-Account-Ratio
+    /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Top-Long-Short-Account-Ratio)
     ///
     /// Rate limit: 1 request per second
     ///

@@ -61,7 +61,7 @@ impl RestClient {
     ///
     /// Kline/candlestick bars for the mark price of a symbol. Klines are uniquely identified by their open time.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Mark-Price-Kline-Candlestick-Data
+    /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Mark-Price-Kline-Candlestick-Data)
     ///
     /// Weight based on parameter `limit`:
     /// - [1,100): 1

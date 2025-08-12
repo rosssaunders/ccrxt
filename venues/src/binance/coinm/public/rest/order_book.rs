@@ -100,7 +100,7 @@ impl RestClient {
     ///
     /// Query orderbook on specific symbol.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Order-Book
+    /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Order-Book)
     ///
     /// Weight varies based on limit:
     /// - 5, 10, 20, 50: 2

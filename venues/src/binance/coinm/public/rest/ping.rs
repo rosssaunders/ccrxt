@@ -21,7 +21,7 @@ impl RestClient {
     ///
     /// Sends a GET request to `/dapi/v1/ping` to verify API connectivity.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api#test-connectivity
+    /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api#test-connectivity)
     ///
     /// Weight: 1
     ///

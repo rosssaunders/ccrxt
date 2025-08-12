@@ -57,7 +57,7 @@ impl RestClient {
     ///
     /// Retrieves the list of constituents that make up an index price for a given symbol.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Index-Constituents
+    /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Index-Constituents)
     ///
     /// Rate limit: 2
     ///
