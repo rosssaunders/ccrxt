@@ -59,7 +59,7 @@ impl RestClient {
     ///
     /// Returns older market historical trades.
     ///
-    /// [docs]: (https://developers.binance.com/docs/derivatives/option/market-data/Old-Trades-Lookup)
+    /// [docs](https://developers.binance.com/docs/derivatives/option/market-data/Old-Trades-Lookup)
     /// Method: GET /eapi/v1/historicalTrades
     /// Weight: 20
     /// Security: MARKET_DATA

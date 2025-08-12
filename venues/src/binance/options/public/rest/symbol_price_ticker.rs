@@ -31,7 +31,7 @@ impl RestClient {
     ///
     /// Returns spot index price for option underlying.
     ///
-    /// [docs]: (https://developers.binance.com/docs/derivatives/option/market-data/Symbol-Price-Ticker)
+    /// [docs](https://developers.binance.com/docs/derivatives/option/market-data/Symbol-Price-Ticker)
     /// Method: GET /eapi/v1/index
     /// Weight: 1
     /// Security: None

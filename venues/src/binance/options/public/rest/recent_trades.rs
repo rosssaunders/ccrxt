@@ -55,7 +55,7 @@ impl RestClient {
     ///
     /// Returns recent market trades.
     ///
-    /// [docs]: (https://developers.binance.com/docs/derivatives/option/market-data/Recent-Trades-List)
+    /// [docs](https://developers.binance.com/docs/derivatives/option/market-data/Recent-Trades-List)
     /// Method: GET /eapi/v1/trades
     /// Weight: 5
     /// Security: None

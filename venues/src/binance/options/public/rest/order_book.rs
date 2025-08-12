@@ -47,7 +47,7 @@ impl RestClient {
     ///
     /// Returns orderbook depth for the specified symbol.
     ///
-    /// [docs]: (https://developers.binance.com/docs/derivatives/option/market-data/Order-Book)
+    /// [docs](https://developers.binance.com/docs/derivatives/option/market-data/Order-Book)
     /// Method: GET /eapi/v1/depth
     /// Weight: 2 (for 5,10,20,50), 5 (for 100), 10 (for 500), 20 (for 1000)
     /// Security: None

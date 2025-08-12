@@ -187,7 +187,7 @@ impl RestClient {
     ///
     /// Returns current exchange trading rules and symbol information.
     ///
-    /// [docs]: (https://developers.binance.com/docs/derivatives/option/market-data/Exchange-Information)
+    /// [docs](https://developers.binance.com/docs/derivatives/option/market-data/Exchange-Information)
     /// Method: GET /eapi/v1/exchangeInfo
     /// Weight: 1
     /// Security: None

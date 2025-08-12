@@ -87,7 +87,7 @@ impl RestClient {
     ///
     /// Returns kline/candlestick bars for an option symbol. Klines are uniquely identified by their open time.
     ///
-    /// [docs]: (https://developers.binance.com/docs/derivatives/option/market-data/Kline-Candlestick-Data)
+    /// [docs](https://developers.binance.com/docs/derivatives/option/market-data/Kline-Candlestick-Data)
     /// Method: GET /eapi/v1/klines
     /// Weight: 1
     /// Security: None
