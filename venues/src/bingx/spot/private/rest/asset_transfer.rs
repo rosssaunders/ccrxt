@@ -39,7 +39,7 @@ impl RestClient {
     ///
     /// Transfers assets between different account types (fund, futures, etc.).
     ///
-    /// [docs]: https://bingx-api.github.io/docs/#/en-us/common/account-api.html#Asset%20Transfer
+    /// [docs](https://bingx-api.github.io/docs/#/en-us/common/account-api.html#Asset%20Transfer)
     ///
     /// Rate limit: UID 2/s, IP rate limit group 3
     ///

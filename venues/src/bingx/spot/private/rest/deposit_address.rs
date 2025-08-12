@@ -56,6 +56,8 @@ impl RestClient {
     /// This endpoint is used for a mother account to query the deposit address
     /// of a specific coin in the blockchain it belongs to. Only available for mother accounts.
     ///
+    /// [docs](https://bingx-api.github.io/docs/#/en-us/spot/wallet-api.html#Main%20Account%20Deposit%20Address)
+    ///
     /// # Arguments
     /// * `request` - The deposit address request parameters
     ///
@@ -68,9 +70,6 @@ impl RestClient {
     ///
     /// # API Permissions
     /// - Read permission required
-    ///
-    /// # API Documentation
-    /// - [docs]: https://bingx-api.github.io/docs/#/en-us/spot/wallet-api.html#Main%20Account%20Deposit%20Address
     pub async fn get_deposit_address(
         &self,
         request: &GetDepositAddressRequest,

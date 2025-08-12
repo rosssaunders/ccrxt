@@ -95,6 +95,9 @@ impl RestClient {
     /// Query order details
     ///
     /// Retrieves detailed information about a specific order.
+    ///
+    /// [docs](https://bingx-api.github.io/docs/#/en-us/spot/trade-api.html#Query%20Order%20details)
+    ///
     /// Rate limit: 10/s by UID
     ///
     /// # Arguments
@@ -106,9 +109,6 @@ impl RestClient {
     /// # Notes
     /// - Either orderId or clientOrderId must be provided
     /// - Only supports a query range of 2 hours for client order IDs
-    ///
-    /// # API Documentation
-    /// - [docs]: https://bingx-api.github.io/docs/#/en-us/spot/trade-api.html#Query%20Order%20details
     pub async fn query_order(&self, request: QueryOrderRequest) -> RestResult<OrderDetails> {
         self.send_get_signed_request(QUERY_ORDER_ENDPOINT, &request, EndpointType::Trading)
             .await

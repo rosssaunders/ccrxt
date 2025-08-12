@@ -42,10 +42,12 @@ impl RestClient {
     /// Create a new asset transfer between accounts
     ///
     /// Transfer assets between different account types within the same user account.
+    ///
+    /// [docs](https://bingx-api.github.io/docs/#/en-us/common/account-api.html#Asset%20Transfer%20New)
+    ///
     /// Rate limit: 2/s by UID & 2 by IP in group
     ///
-    /// [docs]: https://bingx-api.github.io/docs/#/en-us/common/account-api.html#Asset%20Transfer%20New
-    ///
+
     /// # Arguments
     /// * `request` - The asset transfer request
     ///

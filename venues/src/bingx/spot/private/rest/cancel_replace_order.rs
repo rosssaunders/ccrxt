@@ -120,7 +120,7 @@ impl RestClient {
     /// This endpoint allows users to cancel an existing order and place a new order
     /// in a single atomic operation, ensuring better price execution.
     ///
-    /// [docs]: https://bingx-api.github.io/docs/#/en-us/spot/trade-api.html#Cancel%20an%20existing%20order%20and%20send%20a%20new%20order
+    /// [docs](https://bingx-api.github.io/docs/#/en-us/spot/trade-api.html#Cancel%20an%20existing%20order%20and%20send%20a%20new%20order)
     ///
     /// Rate limit: 1000 requests per 10 seconds total, 100 per interface (Group 2)
     ///

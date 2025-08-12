@@ -98,6 +98,9 @@ impl RestClient {
     /// Place a new order
     ///
     /// Places a new order on the spot market.
+    ///
+    /// [docs](https://bingx-api.github.io/docs/#/en-us/spot/trade-api.html#Place%20order)
+    ///
     /// Rate limit: 5/s by UID
     ///
     /// # Arguments
@@ -111,9 +114,6 @@ impl RestClient {
     /// - For limit orders, either quantity or quoteOrderQty is required
     /// - For buy-side market orders, quoteOrderQty is required
     /// - For sell-side market orders, quantity is required
-    ///
-    /// # API Documentation
-    /// - [docs]: https://bingx-api.github.io/docs/#/en-us/spot/trade-api.html#Place%20order
     pub async fn place_order(&self, request: PlaceOrderRequest) -> RestResult<PlaceOrderResponse> {
         self.send_post_signed_request(PLACE_ORDER_ENDPOINT, request, EndpointType::Trading)
             .await

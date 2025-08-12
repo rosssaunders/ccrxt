@@ -29,6 +29,9 @@ impl RestClient {
     /// Get account UID
     ///
     /// Retrieves the User ID (UID) for the current account.
+    ///
+    /// [docs](https://bingx-api.github.io/docs/#/en-us/spot/account-api.html#Query%20account%20uid)
+    ///
     /// Rate limit: 5/s by UID
     ///
     /// # Arguments
@@ -36,9 +39,6 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the account UID or an error
-    ///
-    /// # API Documentation
-    /// - [docs]: https://bingx-api.github.io/docs/#/en-us/spot/account-api.html#Query%20account%20uid
     pub async fn get_uid(&self, request: GetUidRequest) -> RestResult<GetUidResponse> {
         self.send_get_signed_request(UID_ENDPOINT, &request, EndpointType::Account)
             .await

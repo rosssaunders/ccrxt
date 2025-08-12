@@ -46,7 +46,7 @@ impl RestClient {
     ///
     /// Retrieves the asset balances for the spot account.
     ///
-    /// [docs]: https://bingx-api.github.io/docs/#/en-us/spot/account-api.html#Query%20Assets
+    /// [docs](https://bingx-api.github.io/docs/#/en-us/spot/account-api.html#Query%20Assets)
     ///
     /// Rate limit: 5/s by UID & rate limitation by IP in group Number: 3
     ///
