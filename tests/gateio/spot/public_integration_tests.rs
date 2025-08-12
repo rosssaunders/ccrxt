@@ -3,6 +3,8 @@
 //! These tests verify the functionality of all public endpoints that don't require authentication.
 //! Tests run against the live Gate.io API using real market data.
 
+use rest::native::NativeHttpClient;
+use std::sync::Arc;
 use tokio;
 use venues::gateio::spot::{
     CandlestickInterval,
@@ -14,7 +16,8 @@ use venues::gateio::spot::{
 
 /// Helper function to create a test client for public endpoints
 fn create_public_test_client() -> RestClient {
-    RestClient::new(false).expect("Failed to create Gate.io REST client")
+    let http_client = Arc::new(NativeHttpClient::default());
+    RestClient::new(http_client, false).expect("Failed to create Gate.io REST client")
 }
 
 /// Test the get_server_time endpoint

@@ -3,6 +3,8 @@
 //! These tests verify that the KuCoin futures public REST API client can successfully
 //! communicate with the live API and receive valid responses.
 
+use rest::native::NativeHttpClient;
+use std::sync::Arc;
 use venues::kucoin::futures::public::rest::{
     GetAllContractsRequest, GetContractRequest, GetCurrentFundingRateRequest,
     RestClient as PublicRestClient,
@@ -10,7 +12,8 @@ use venues::kucoin::futures::public::rest::{
 
 /// Helper function to create a test client with shared rate limiter
 fn create_futures_test_client() -> PublicRestClient {
-    PublicRestClient::new_default()
+    let http_client = Arc::new(NativeHttpClient::default());
+    PublicRestClient::new_default(http_client)
 }
 
 /// Test get all contracts endpoint
