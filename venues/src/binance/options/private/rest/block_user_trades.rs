@@ -44,7 +44,7 @@ impl RestClient {
     ///
     /// Returns block trade history for the current account.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/option/block-trade/Get-Block-Trades-for-a-Specific-Account
+    /// [docs](https://developers.binance.com/docs/derivatives/option/block-trade/Get-Block-Trades-for-a-Specific-Account)
     ///
     /// Rate limit: 1
     ///

@@ -126,7 +126,8 @@ impl RestClient {
     /// Cancels multiple orders in a single request. Maximum 10 orders per request.
     /// Either orderIdList or origClientOrderIdList must be provided.
     ///
-    /// [docs]: (https://developers.binance.com/docs/derivatives/option/trade/Cancel-Multiple-Option-Orders)
+    /// [docs](https://developers.binance.com/docs/derivatives/option/trade/Cancel-Multiple-Option-Orders)
+    ///
     /// Method: DELETE /eapi/v1/batchOrders
     /// Weight: 1
     /// Requires: API key and signature

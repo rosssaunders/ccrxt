@@ -46,7 +46,7 @@ impl RestClient {
     /// Sets the MMP configuration for the specified underlying. MMP is a protection
     /// mechanism for option market makers to prevent mass trading in short periods.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/option/market-maker-endpoints/Set-Market-Maker-Protection-Config
+    /// [docs](https://developers.binance.com/docs/derivatives/option/market-maker-endpoints/Set-Market-Maker-Protection-Config)
     ///
     /// Rate limit: 1
     ///

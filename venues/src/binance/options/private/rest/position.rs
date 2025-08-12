@@ -95,7 +95,8 @@ impl RestClient {
     ///
     /// Returns current position information for option contracts.
     ///
-    /// [docs]: (https://developers.binance.com/docs/derivatives/option/trade/Option-Position-Information)
+    /// [docs](https://developers.binance.com/docs/derivatives/option/trade/Option-Position-Information)
+    ///
     /// Method: GET /eapi/v1/position
     /// Weight: 5
     /// Requires: API key and signature

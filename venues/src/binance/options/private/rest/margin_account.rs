@@ -99,7 +99,8 @@ impl RestClient {
     ///
     /// Returns margin account information including balance, margins, and asset details.
     ///
-    /// [docs]: (https://developers.binance.com/docs/derivatives/option/account/Option-Margin-Account-Information)
+    /// [docs](https://developers.binance.com/docs/derivatives/option/account/Option-Margin-Account-Information)
+    ///
     /// Method: GET /eapi/v1/marginAccount
     /// Weight: 1
     /// Requires: API key and signature

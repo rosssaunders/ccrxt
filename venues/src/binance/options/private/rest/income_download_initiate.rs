@@ -39,7 +39,7 @@ impl RestClient {
     ///
     /// Starts the process of generating a downloadable income file for the specified time period.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/option/account/Account-Income-Download
+    /// [docs](https://developers.binance.com/docs/derivatives/option/account/Account-Income-Download)
     ///
     /// Rate limit: Weight 5
     ///

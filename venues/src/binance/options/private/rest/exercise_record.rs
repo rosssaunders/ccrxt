@@ -99,7 +99,8 @@ impl RestClient {
     ///
     /// Returns exercise records for options.
     ///
-    /// [docs]: (https://developers.binance.com/docs/derivatives/option/trade/Option-Exercise-Record)
+    /// [docs](https://developers.binance.com/docs/derivatives/option/trade/Option-Exercise-Record)
+    ///
     /// Method: GET /eapi/v1/exerciseRecord
     /// Weight: 1
     /// Requires: API key and signature

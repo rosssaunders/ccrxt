@@ -28,7 +28,7 @@ impl RestClient {
     ///
     /// Resets MMP and allows MMP orders to start again.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/option/market-maker-endpoints/Reset-Market-Maker-Protection-Config
+    /// [docs](https://developers.binance.com/docs/derivatives/option/market-maker-endpoints/Reset-Market-Maker-Protection-Config)
     ///
     /// Rate limit: 1
     ///

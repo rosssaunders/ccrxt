@@ -36,7 +36,7 @@ impl RestClient {
     ///
     /// Cancels an existing block trade order.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/option/block-trade/Cancel-a-Block-Trade-Order
+    /// [docs](https://developers.binance.com/docs/derivatives/option/block-trade/Cancel-a-Block-Trade-Order)
     ///
     /// Rate limit: 1
     ///

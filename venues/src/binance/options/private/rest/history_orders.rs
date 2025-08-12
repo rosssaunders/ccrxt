@@ -138,7 +138,8 @@ impl RestClient {
     ///
     /// Returns historical orders that have been filled or canceled within the last 5 days.
     ///
-    /// [docs]: (https://developers.binance.com/docs/derivatives/option/trade/Query-All-Finished-Orders-Within-5-Days)
+    /// [docs](https://developers.binance.com/docs/derivatives/option/trade/Query-All-Finished-Orders-Within-5-Days)
+    ///
     /// Method: GET /eapi/v1/historyOrders
     /// Weight: 1
     /// Requires: API key and signature

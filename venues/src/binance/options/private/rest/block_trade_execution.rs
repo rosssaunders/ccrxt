@@ -44,7 +44,7 @@ impl RestClient {
     ///
     /// Returns details of block trade executions.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/option/block-trade/Query-Block-Trade-Details
+    /// [docs](https://developers.binance.com/docs/derivatives/option/block-trade/Query-Block-Trade-Details)
     ///
     /// Rate limit: 1
     ///

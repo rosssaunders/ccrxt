@@ -49,7 +49,7 @@ impl RestClient {
     ///
     /// Checks the status of a previously initiated income download.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/option/account/Get-Income-Download-Id-Info
+    /// [docs](https://developers.binance.com/docs/derivatives/option/account/Get-Income-Download-Id-Info)
     ///
     /// Rate limit: Weight 5
     ///

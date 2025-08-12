@@ -135,7 +135,8 @@ impl RestClient {
     /// Returns all current open orders with status ACCEPTED or PARTIALLY_FILLED.
     /// Weight: 1 for single symbol, 40 when symbol parameter is omitted.
     ///
-    /// [docs]: (https://developers.binance.com/docs/derivatives/option/trade/Query-Current-Open-Option-Orders)
+    /// [docs](https://developers.binance.com/docs/derivatives/option/trade/Query-Current-Open-Option-Orders)
+    ///
     /// Method: GET /eapi/v1/openOrders
     /// Weight: 1 (single symbol) or 40 (all symbols)
     /// Requires: API key and signature
