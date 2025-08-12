@@ -58,6 +58,8 @@ impl RestClient {
     ///
     /// Get current order book depth for a symbol.
     ///
+    /// [docs](https://bingx-api.github.io/docs/#/en-us/spot/market-api.html#Order%20Book)
+    ///
     /// # Arguments
     /// * `request` - The order book request parameters
     ///
@@ -66,11 +68,6 @@ impl RestClient {
     ///
     /// # Rate Limit
     /// - IP: 100 requests per 10 seconds (Group 1)
-    ///
-    /// # API Documentation
-    /// - Endpoint: GET /openApi/spot/v1/market/depth
-    /// - Content-Type: request body(application/json)
-    /// - [docs]: https://bingx-api.github.io/docs/#/en-us/spot/market-api.html#Order%20Book
     pub async fn get_order_book(
         &self,
         request: &GetOrderBookRequest,

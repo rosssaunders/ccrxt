@@ -45,6 +45,8 @@ impl RestClient {
     ///
     /// Query historical K-line data for transaction prices.
     ///
+    /// [docs](https://bingx-api.github.io/docs/#/en-us/spot/market-api.html#Historical%20K-line)
+    ///
     /// # Arguments
     /// * `request` - The historical K-line request parameters
     ///
@@ -53,12 +55,7 @@ impl RestClient {
     ///
     /// # Rate Limit
     /// - IP: 100 requests per 10 seconds (Group 1)
-    ///
-    /// # API Documentation
-    /// - Endpoint: GET /openApi/market/his/v1/kline
-    /// - Content-Type: request body(application/json)
-    /// - [docs]: https://bingx-api.github.io/docs/#/en-us/spot/market-api.html#Historical%20K-line
-    ///
+    //
     /// # Time Rules
     /// - If startTime and endTime are not sent, the latest K-line data is returned by default
     /// - If startTime and endTime are sent, the latest K-line data up to endTime is returned by default
