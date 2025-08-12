@@ -43,7 +43,8 @@ pub enum EndpointType {
     PrivateTrades,
     PrivatePositions,
     PrivateAssetBalances,
-    PrivateWalletTransactions,
+    /// All custody endpoints under /v1/wallets/* share a combined limit
+    PrivateCustody,
     PrivateOther,
 }
 
@@ -68,7 +69,8 @@ impl EndpointType {
             EndpointType::PrivateTrades => RateLimit::new(50, Duration::from_secs(1)),
             EndpointType::PrivatePositions => RateLimit::new(50, Duration::from_secs(1)),
             EndpointType::PrivateAssetBalances => RateLimit::new(50, Duration::from_secs(1)),
-            EndpointType::PrivateWalletTransactions => RateLimit::new(50, Duration::from_secs(1)),
+            // Custody endpoints: 40 requests per minute across all /wallets/* endpoints
+            EndpointType::PrivateCustody => RateLimit::new(40, Duration::from_secs(60)),
             EndpointType::PrivateOther => RateLimit::new(50, Duration::from_secs(1)),
         }
     }
@@ -99,12 +101,17 @@ impl EndpointType {
                 EndpointType::PrivateTradingAccounts
             }
             path if path.contains("/v2/orders") => EndpointType::PrivateOrders,
+            path if path.contains("/v2/history/orders") => EndpointType::PrivateOrders,
             path if path.contains("/v1/trades") => EndpointType::PrivateTrades,
+            path if path.contains("/v1/history/trades") => EndpointType::PrivateTrades,
             path if path.contains("/v1/positions") => EndpointType::PrivatePositions,
-            path if path.contains("/v1/accounts/asset") => EndpointType::PrivateAssetBalances,
-            path if path.contains("/v1/wallets/transactions") => {
-                EndpointType::PrivateWalletTransactions
+            path if path.contains("/v1/derivatives-positions") => EndpointType::PrivatePositions,
+            path if path.contains("/v1/history/derivatives-settlement") => {
+                EndpointType::PrivatePositions
             }
+            path if path.contains("/v1/accounts/asset") => EndpointType::PrivateAssetBalances,
+            // Any custody path groups under the same limiter
+            path if path.contains("/v1/wallets/") => EndpointType::PrivateCustody,
 
             // Default based on whether it's a public or private path
             path if path.starts_with("/trading-api/v1/")

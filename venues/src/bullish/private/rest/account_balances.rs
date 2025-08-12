@@ -1,117 +1,115 @@
-//! Account asset balances endpoint for Bullish Exchange API
+//! Account asset endpoints for Bullish Exchange API
 
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
 use crate::bullish::{EndpointType, RestResult};
 
-/// Endpoint URL path for asset balances
-const ASSET_BALANCES_ENDPOINT: &str = "/v1/accounts/asset";
+/// Endpoint URL path for asset accounts
+const ASSET_ACCOUNTS_ENDPOINT: &str = "/v1/accounts/asset";
 
-/// Endpoint URL path for single asset balance (with parameter)
-const SINGLE_ASSET_BALANCE_ENDPOINT: &str = "/v1/accounts/asset/{}";
+/// Endpoint URL path for single asset account (with parameter)
+const SINGLE_ASSET_ACCOUNT_ENDPOINT: &str = "/v1/accounts/asset/{}";
 
-/// Asset balance information
-#[derive(Debug, Clone, Deserialize)]
+/// Query params for asset account endpoints
+#[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct AssetBalance {
-    /// Asset symbol
-    pub symbol: String,
-    /// Total balance
-    pub balance: String,
-    /// Available balance (not locked in orders)
-    #[serde(rename = "availableBalance")]
-    pub available_balance: String,
-    /// Balance locked in open orders
-    #[serde(rename = "lockedBalance")]
-    pub locked_balance: String,
-    /// Borrowed amount
-    #[serde(rename = "borrowedBalance")]
-    pub borrowed_balance: String,
-    /// Interest owed on borrowed amount
-    #[serde(rename = "interestOwed")]
-    pub interest_owed: String,
-    /// Net balance (balance - borrowed - interest)
-    #[serde(rename = "netBalance")]
-    pub net_balance: String,
-    /// USD value of the balance
-    #[serde(rename = "usdValue")]
-    pub usd_value: String,
-    /// Whether this asset can be borrowed
-    #[serde(rename = "canBorrow")]
-    pub can_borrow: bool,
-    /// Whether this asset can be used as collateral
-    #[serde(rename = "canCollateralize")]
-    pub can_collateralize: bool,
-    /// Collateral factor for this asset
-    #[serde(rename = "collateralFactor")]
-    pub collateral_factor: String,
-    /// Maximum borrowing limit for this asset
-    #[serde(rename = "borrowLimit")]
-    pub borrow_limit: String,
+struct TradingAccountIdParam {
+    #[serde(rename = "tradingAccountId")]
+    trading_account_id: String,
 }
 
-/// Response for asset balances query
+/// Asset account information
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct AssetBalancesResponse {
-    /// List of asset balances
-    pub data: Vec<AssetBalance>,
-}
+pub struct AssetAccount {
+    /// unique trading account ID
+    #[serde(rename = "tradingAccountId")]
+    pub trading_account_id: String,
 
-/// Single asset balance response
-#[derive(Debug, Clone, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct SingleAssetBalanceResponse {
-    /// Asset balance details
-    pub data: AssetBalance,
+    /// unique asset ID
+    #[serde(rename = "assetId")]
+    pub asset_id: String,
+
+    /// asset symbol as denoted in the world
+    #[serde(rename = "assetSymbol")]
+    pub asset_symbol: String,
+
+    /// the assets that are available to use on the account
+    #[serde(rename = "availableQuantity")]
+    pub available_quantity: String,
+
+    /// the assets on the account that are borrowed
+    #[serde(rename = "borrowedQuantity")]
+    pub borrowed_quantity: String,
+
+    /// the assets on the account that are locked in orders, loans and AMM instructions
+    #[serde(rename = "lockedQuantity")]
+    pub locked_quantity: String,
+
+    /// the assets on the account that are being loaned
+    #[serde(rename = "loanedQuantity")]
+    pub loaned_quantity: String,
+
+    /// ISO 8601 with millisecond as string
+    #[serde(rename = "updatedAtDatetime")]
+    pub updated_at_datetime: String,
+
+    /// unsigned 64 bit integer value which is the number of milliseconds since EPOCH expressed as string
+    #[serde(rename = "updatedAtTimestamp")]
+    pub updated_at_timestamp: String,
 }
 
 impl RestClient {
-    /// Get all asset balances
+    /// Get asset accounts
     ///
-    /// Retrieve balance information for all assets in a trading account.
+    /// Gets the asset accounts for a trading account.
+    ///
+    /// [docs]: https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/accounts/asset
     ///
     /// # Arguments
-    /// * `trading_account_id` - Trading account ID
+    /// * `trading_account_id` - Id of the trading account
     ///
     /// # Returns
-    /// List of all asset balances
-    pub async fn get_asset_balances(
+    /// Vector of asset accounts
+    pub async fn get_asset_accounts(
         &mut self,
         trading_account_id: &str,
-    ) -> RestResult<AssetBalancesResponse> {
-        let url = format!(
-            "{}?tradingAccountId={}",
-            ASSET_BALANCES_ENDPOINT, trading_account_id
-        );
+    ) -> RestResult<Vec<AssetAccount>> {
+        let params = TradingAccountIdParam {
+            trading_account_id: trading_account_id.to_string(),
+        };
 
-        self.send_get_authenticated_request(&url, (), EndpointType::PrivateAssetBalances)
-            .await
+        self.send_get_authenticated_request(
+            ASSET_ACCOUNTS_ENDPOINT,
+            params,
+            EndpointType::PrivateAssetBalances,
+        )
+        .await
     }
 
-    /// Get balance for a specific asset
+    /// Get asset account by symbol
     ///
-    /// Retrieve balance information for a specific asset in a trading account.
+    /// Gets the asset account for a specific symbol.
     ///
+    /// [docs]: https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/accounts/asset/-symbol-
     /// # Arguments
-    /// * `symbol` - Asset symbol
-    /// * `trading_account_id` - Trading account ID
+    /// * `symbol` - Asset symbol (e.g., BTC)
+    /// * `trading_account_id` - Id of the trading account
     ///
     /// # Returns
-    /// Balance information for the specified asset
-    pub async fn get_asset_balance(
+    /// Asset account for the symbol
+    pub async fn get_asset_account_by_symbol(
         &mut self,
         symbol: &str,
         trading_account_id: &str,
-    ) -> RestResult<SingleAssetBalanceResponse> {
-        let url = format!(
-            "{}?tradingAccountId={}",
-            SINGLE_ASSET_BALANCE_ENDPOINT.replace("{}", symbol),
-            trading_account_id
-        );
+    ) -> RestResult<AssetAccount> {
+        let endpoint = SINGLE_ASSET_ACCOUNT_ENDPOINT.replace("{}", symbol);
+        let params = TradingAccountIdParam {
+            trading_account_id: trading_account_id.to_string(),
+        };
 
-        self.send_get_authenticated_request(&url, (), EndpointType::PrivateAssetBalances)
+        self.send_get_authenticated_request(&endpoint, params, EndpointType::PrivateAssetBalances)
             .await
     }
 }
@@ -121,54 +119,44 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_asset_balance_deserialization() {
+    fn test_asset_account_deserialization() {
         let json = r#"{
-            "symbol": "BTC",
-            "balance": "1.0",
-            "availableBalance": "0.8",
-            "lockedBalance": "0.2",
-            "borrowedBalance": "0.0",
-            "interestOwed": "0.0",
-            "netBalance": "1.0",
-            "usdValue": "30000.0",
-            "canBorrow": true,
-            "canCollateralize": true,
-            "collateralFactor": "0.8",
-            "borrowLimit": "10.0"
+            "tradingAccountId": "111000000000001",
+            "assetId": "1",
+            "assetSymbol": "BTC",
+            "availableQuantity": "1.00000000",
+            "borrowedQuantity": "0.00000000",
+            "lockedQuantity": "0.00000000",
+            "loanedQuantity": "0.00000000",
+            "updatedAtDatetime": "2025-05-20T01:01:01.000Z",
+            "updatedAtTimestamp": "1621490985000"
         }"#;
 
-        let balance: AssetBalance = serde_json::from_str(json).unwrap();
-        assert_eq!(balance.symbol, "BTC");
-        assert_eq!(balance.balance, "1.0");
-        assert_eq!(balance.available_balance, "0.8");
-        assert_eq!(balance.locked_balance, "0.2");
-        assert!(balance.can_borrow);
-        assert!(balance.can_collateralize);
+        let account: AssetAccount = serde_json::from_str(json).unwrap();
+        assert_eq!(account.trading_account_id, "111000000000001");
+        assert_eq!(account.asset_symbol, "BTC");
+        assert_eq!(account.available_quantity, "1.00000000");
+        assert_eq!(account.locked_quantity, "0.00000000");
     }
 
     #[test]
-    fn test_asset_balances_response_deserialization() {
-        let json = r#"{
-            "data": [
-                {
-                    "symbol": "BTC",
-                    "balance": "1.0",
-                    "availableBalance": "1.0",
-                    "lockedBalance": "0.0",
-                    "borrowedBalance": "0.0",
-                    "interestOwed": "0.0",
-                    "netBalance": "1.0",
-                    "usdValue": "30000.0",
-                    "canBorrow": true,
-                    "canCollateralize": true,
-                    "collateralFactor": "0.8",
-                    "borrowLimit": "10.0"
-                }
-            ]
-        }"#;
+    fn test_asset_accounts_array_deserialization() {
+        let json = r#"[
+            {
+                "tradingAccountId": "111000000000001",
+                "assetId": "1",
+                "assetSymbol": "BTC",
+                "availableQuantity": "1.00000000",
+                "borrowedQuantity": "0.00000000",
+                "lockedQuantity": "0.00000000",
+                "loanedQuantity": "0.00000000",
+                "updatedAtDatetime": "2025-05-20T01:01:01.000Z",
+                "updatedAtTimestamp": "1621490985000"
+            }
+        ]"#;
 
-        let response: AssetBalancesResponse = serde_json::from_str(json).unwrap();
-        assert_eq!(response.data.len(), 1);
-        assert_eq!(response.data[0].symbol, "BTC");
+        let accounts: Vec<AssetAccount> = serde_json::from_str(json).unwrap();
+        assert_eq!(accounts.len(), 1);
+        assert_eq!(accounts[0].asset_symbol, "BTC");
     }
 }

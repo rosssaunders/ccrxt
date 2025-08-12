@@ -1,6 +1,6 @@
 //! Markets endpoint for Bullish Exchange API
 
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Deserializer, Serialize, de::Error as DeError};
 
 use super::client::RestClient;
 use crate::bullish::{EndpointType, RestResult};
@@ -25,20 +25,32 @@ pub enum MarketStatus {
 #[serde(rename_all = "UPPERCASE")]
 pub enum MarketType {
     Spot,
-    Futures,
-    Options,
     Perpetual,
+    #[serde(alias = "DATED_FUTURE")] // Accept both DATEDFUTURE and DATED_FUTURE from API
+    DatedFuture,
 }
 
 /// Market information
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Market {
-    /// Market ID
+    /// Unique market ID
     pub market_id: String,
 
     /// Market symbol
     pub symbol: String,
+
+    /// Base asset symbol (only for spot markets)
+    pub base_symbol: Option<String>,
+
+    /// Underlying base asset symbol (only for derivative markets)
+    pub underlying_base_symbol: Option<String>,
+
+    /// Quote asset symbol (only for spot markets)
+    pub quote_symbol: Option<String>,
+
+    /// Underlying quote asset symbol (only for derivative markets)
+    pub underlying_quote_symbol: Option<String>,
 
     /// Quote asset ID
     pub quote_asset_id: String,
@@ -46,26 +58,28 @@ pub struct Market {
     /// Base asset ID
     pub base_asset_id: String,
 
-    /// Quote symbol
-    pub quote_symbol: String,
+    /// Quote precision (API may return number or string)
+    #[serde(deserialize_with = "de_u32_from_string_or_number")]
+    pub quote_precision: u32,
 
-    /// Base symbol
-    pub base_symbol: String,
+    /// Base precision (API may return number or string)
+    #[serde(deserialize_with = "de_u32_from_string_or_number")]
+    pub base_precision: u32,
 
-    /// Quote precision
-    pub quote_precision: String,
+    /// Price precision (number or string)
+    #[serde(deserialize_with = "de_u32_from_string_or_number")]
+    pub price_precision: u32,
 
-    /// Base precision
-    pub base_precision: String,
+    /// Quantity precision (number or string)
+    #[serde(deserialize_with = "de_u32_from_string_or_number")]
+    pub quantity_precision: u32,
 
-    /// Price precision
-    pub price_precision: String,
+    /// Cost precision (number or string)
+    #[serde(deserialize_with = "de_u32_from_string_or_number")]
+    pub cost_precision: u32,
 
-    /// Quantity precision
-    pub quantity_precision: String,
-
-    /// Cost precision
-    pub cost_precision: String,
+    /// Buffer range of limit price from the last traded price
+    pub price_buffer: String,
 
     /// Minimum quantity limit
     pub min_quantity_limit: String,
@@ -94,59 +108,67 @@ pub struct Market {
     /// Liquidity tick size
     pub liquidity_tick_size: String,
 
-    /// Liquidity precision
-    pub liquidity_precision: String,
+    /// Liquidity precision (number or string)
+    #[serde(deserialize_with = "de_u32_from_string_or_number")]
+    pub liquidity_precision: u32,
 
-    /// Maker fee
-    pub maker_fee: String,
-
-    /// Taker fee
-    pub taker_fee: String,
-
-    /// Rounding correction factor
+    /// Rounding correction factor for market
     pub rounding_correction_factor: String,
 
-    /// Maker minimum liquidity addition
+    /// Minimum amount required to invest liquidity to market
     pub maker_min_liquidity_addition: String,
 
-    /// Order types
+    /// Order types (e.g. "LMT", "MKT", "STOP_LIMIT", "POST_ONLY")
     pub order_types: Vec<String>,
 
-    /// Whether spot trading is enabled
+    /// Spot trading enabled (only for spot markets)
     pub spot_trading_enabled: bool,
 
-    /// Whether margin trading is enabled
+    /// Margin trading enabled (only for spot markets)
     pub margin_trading_enabled: bool,
 
-    /// Whether market is enabled
+    /// Market enabled
     pub market_enabled: bool,
 
-    /// Whether create order is enabled
+    /// Able to create order
     pub create_order_enabled: bool,
 
-    /// Whether cancel order is enabled
+    /// Able to cancel order
     pub cancel_order_enabled: bool,
 
-    /// Whether amend order is enabled
-    pub amend_order_enabled: bool,
-
-    /// Whether liquidity invest is enabled
+    /// Able to invest liquidity to market
     pub liquidity_invest_enabled: bool,
 
-    /// Whether liquidity withdraw is enabled
+    /// Able to withdraw liquidity from market
     pub liquidity_withdraw_enabled: bool,
 
-    /// Fee tiers
+    /// Identifier to the trade fee assigned to this market (can be a string like "default")
+    pub fee_group_id: String,
+
+    /// All available fee tiers
     pub fee_tiers: Vec<FeeTier>,
 
-    /// Market type
-    pub market_type: String,
+    /// Market type (SPOT, PERPETUAL, DATED_FUTURE)
+    pub market_type: MarketType,
 
-    /// Price buffer
-    pub price_buffer: String,
+    /// Contract multiplier (only for perpetual markets, number or string)
+    #[serde(default, deserialize_with = "de_opt_u32_from_string_or_number")]
+    pub contract_multiplier: Option<u32>,
 
-    /// Fee group ID
-    pub fee_group_id: String,
+    /// Settlement asset symbol (only for perpetual markets)
+    pub settlement_asset_symbol: Option<String>,
+
+    /// Cumulative notional value of all open interest for a specific derivative contract
+    pub open_interest_usd: Option<String>,
+
+    /// Open interest notional of an account for a specific derivative contract
+    pub concentration_risk_threshold_usd: Option<String>,
+
+    /// Percentage of the total open interest for a specific derivative contract
+    pub concentration_risk_percentage: Option<String>,
+
+    /// Expiry datetime in ISO 8601 with millisecond format as string
+    pub expiry_datetime: Option<String>,
 }
 
 /// Fee tier information
@@ -179,6 +201,69 @@ pub struct SingleMarketResponse {
     pub data: Market,
 }
 
+// Helper deserializers: Bullish may send numeric fields as numbers or strings.
+fn de_u32_from_string_or_number<'de, D>(deserializer: D) -> Result<u32, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    #[derive(Deserialize)]
+    #[serde(untagged)]
+    enum U32OrString {
+        U32(u32),
+        U64(u64),
+        I64(i64),
+        String(String),
+    }
+
+    match U32OrString::deserialize(deserializer)? {
+        U32OrString::U32(v) => Ok(v),
+        U32OrString::U64(v) => {
+            u32::try_from(v).map_err(|_| DeError::custom("value out of range for u32"))
+        }
+        U32OrString::I64(v) => {
+            u32::try_from(v).map_err(|_| DeError::custom("negative or out of range for u32"))
+        }
+        U32OrString::String(s) => s
+            .parse::<u32>()
+            .map_err(|_| DeError::custom("invalid u32 string")),
+    }
+}
+
+fn de_opt_u32_from_string_or_number<'de, D>(deserializer: D) -> Result<Option<u32>, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    #[derive(Deserialize)]
+    #[serde(untagged)]
+    enum U32OrString {
+        U32(u32),
+        U64(u64),
+        I64(i64),
+        String(String),
+    }
+
+    let v = Option::<U32OrString>::deserialize(deserializer)?;
+    match v {
+        None => Ok(None),
+        Some(U32OrString::U32(v)) => Ok(Some(v)),
+        Some(U32OrString::U64(v)) => u32::try_from(v)
+            .map(Some)
+            .map_err(|_| DeError::custom("value out of range for u32")),
+        Some(U32OrString::I64(v)) => u32::try_from(v)
+            .map(Some)
+            .map_err(|_| DeError::custom("negative or out of range for u32")),
+        Some(U32OrString::String(s)) => {
+            if s.is_empty() {
+                Ok(None)
+            } else {
+                s.parse::<u32>()
+                    .map(Some)
+                    .map_err(|_| DeError::custom("invalid u32 string"))
+            }
+        }
+    }
+}
+
 impl RestClient {
     /// Get all markets
     ///
@@ -190,7 +275,7 @@ impl RestClient {
     /// List of all markets with their trading parameters and statistics
     pub async fn get_markets(&self) -> RestResult<Vec<Market>> {
         self.send_get_request(MARKETS_ENDPOINT, EndpointType::PublicMarkets)
-        .await
+            .await
     }
 
     /// Get specific market by symbol
@@ -208,7 +293,7 @@ impl RestClient {
         let url = SINGLE_MARKET_ENDPOINT.replace("{}", symbol);
 
         self.send_get_request(&url, EndpointType::PublicMarkets)
-        .await
+            .await
     }
 }
 
@@ -222,10 +307,7 @@ mod tests {
             serde_json::to_string(&MarketType::Spot).unwrap(),
             "\"SPOT\""
         );
-        assert_eq!(
-            serde_json::to_string(&MarketType::Futures).unwrap(),
-            "\"FUTURES\""
-        );
+        // No "Futures" variant exists; only test existing variants.
         assert_eq!(
             serde_json::to_string(&MarketType::Perpetual).unwrap(),
             "\"PERPETUAL\""
@@ -295,7 +377,7 @@ mod tests {
         assert_eq!(market.symbol, "BTCUSDC");
         assert_eq!(market.base_asset_id, "BTC");
         assert_eq!(market.quote_asset_id, "USDC");
-        assert_eq!(market.market_type, "SPOT");
+        assert_eq!(market.market_type, MarketType::Spot);
         assert!(market.market_enabled);
         assert!(market.spot_trading_enabled);
     }

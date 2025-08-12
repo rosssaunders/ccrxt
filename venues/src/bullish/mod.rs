@@ -1,10 +1,11 @@
 pub mod enums;
 mod errors;
+pub mod pagination;
 mod rate_limit;
 
 pub mod private {
     pub mod rest;
-    pub use self::rest::RestClient;
+    pub use self::rest::{Credentials, RestClient};
 }
 
 pub mod public {
@@ -14,20 +15,42 @@ pub mod public {
 
 pub use enums::*;
 pub use errors::{ApiError, ErrorResponse, Errors};
+pub use pagination::{
+    DataOrPaginated, ListResponse, PaginatedResponse, PaginatedResult, PaginationLinks,
+    PaginationParams,
+};
 pub use private::RestClient as PrivateRestClient;
+// Re-export credentials at the top-level for convenience
+pub use private::Credentials;
 // Re-export balance types for convenience
-pub use private::rest::{AssetBalance, AssetBalancesResponse, SingleAssetBalanceResponse};
+pub use private::rest::AssetAccount;
 // Re-export order types for convenience
-pub use private::rest::{CreateOrderRequest, CreateOrderResponse, GetOrdersParams, Order};
+pub use private::rest::{
+    CreateOrderRequest, CreateOrderResponse, GetOrdersHistoryParams, GetOrdersParams, Order,
+};
 // Re-export trade types for convenience
 pub use private::rest::{GetTradesParams, Trade};
+// Re-export history - orders, trades, derivatives settlement
+pub use private::rest::{DerivativesSettlementResponse, GetDerivativesSettlementHistoryParams};
+pub use private::rest::{GetTradesHistoryParams, HistoryTrade};
+// Re-export derivatives positions types for convenience
+pub use private::rest::{DerivativesPosition, GetDerivativesPositionsParams};
 // Re-export wallet transaction types for convenience
 pub use private::rest::{
     GetWalletTransactionsParams, TransactionStatus, TransactionType, WalletTransaction,
     WalletTransactionsResponse,
 };
+// Re-export custody types for convenience
+pub use private::rest::{
+    CustodyCryptoDepositInstructions, CustodyCryptoWithdrawalInstructions,
+    CustodyFiatDepositInstructions, CustodyFiatNetwork, CustodyHistory, CustodyHistoryParams,
+    CustodyLimits,
+};
 // Re-export trading account types for convenience
-pub use private::rest::{TradingAccount, TradingAccountsResponse};
+pub use private::rest::{
+    GetTradingAccountRequest, TradingAccount, TradingAccountsResponse, TransferAssetCommand,
+    TransferAssetRequest, TransferAssetResponse, TransferCommandType,
+};
 pub use public::RestClient as PublicRestClient;
 // Re-export index price types for convenience
 pub use public::rest::IndexPrice;

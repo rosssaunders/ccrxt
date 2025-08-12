@@ -1,6 +1,6 @@
 //! Trades endpoint for Bullish Exchange API
 
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
 use crate::bullish::{EndpointType, RestResult, enums::*};
@@ -11,69 +11,103 @@ const TRADES_ENDPOINT: &str = "/v1/trades";
 /// Endpoint URL path for single trade (with parameter)
 const SINGLE_TRADE_ENDPOINT: &str = "/v1/trades/{}";
 
-/// Trade execution details
-#[derive(Debug, Clone, Deserialize)]
+/// Trade execution details (matches Bullish API spec)
+#[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Trade {
     /// Unique trade ID
     #[serde(rename = "tradeId")]
     pub trade_id: String,
+
     /// Order ID associated with this trade
     #[serde(rename = "orderId")]
     pub order_id: String,
-    /// Client order ID
-    #[serde(rename = "clientOrderId")]
-    pub client_order_id: String,
+
     /// Market symbol
     pub symbol: String,
+
     /// Execution price
     pub price: String,
+
     /// Executed quantity
     pub quantity: String,
+
     /// Quote amount
     #[serde(rename = "quoteAmount")]
     pub quote_amount: String,
-    /// Trade side
-    pub side: OrderSide,
+
     /// Base asset fee
     #[serde(rename = "baseFee")]
     pub base_fee: String,
+
     /// Quote asset fee
     #[serde(rename = "quoteFee")]
     pub quote_fee: String,
-    /// Whether this was a liquidation trade
-    #[serde(rename = "isLiquidation")]
-    pub is_liquidation: bool,
-    /// Whether this was a market maker trade
-    #[serde(rename = "isMaker")]
-    pub is_maker: bool,
-    /// Trade execution timestamp
-    #[serde(rename = "createdAtTimestamp")]
-    pub created_at_timestamp: u64,
-    /// Trade execution datetime
+
+    /// Trade side
+    pub side: OrderSide,
+
+    /// Whether this is the taker side of the trade
+    #[serde(rename = "isTaker")]
+    pub is_taker: bool,
+
+    /// Amount of rebate credited for this trade
+    #[serde(rename = "tradeRebateAmount")]
+    pub trade_rebate_amount: String,
+
+    /// Asset symbol in which rebate is paid
+    #[serde(rename = "tradeRebateAssetSymbol")]
+    pub trade_rebate_asset_symbol: String,
+
+    /// Trade execution datetime, ISO 8601 with milliseconds
     #[serde(rename = "createdAtDatetime")]
     pub created_at_datetime: String,
+
+    /// Trade execution timestamp (ms since epoch, as string)
+    #[serde(rename = "createdAtTimestamp")]
+    pub created_at_timestamp: String,
 }
 
 /// Parameters for querying trades
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone, Default, Serialize)]
 pub struct GetTradesParams {
     /// Trading account ID (required)
+    #[serde(rename = "tradingAccountId")]
     pub trading_account_id: String,
+
     /// Market symbol filter
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub symbol: Option<String>,
+
     /// Order ID filter
+    #[serde(rename = "orderId", skip_serializing_if = "Option::is_none")]
     pub order_id: Option<String>,
+
     /// Trade side filter
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub side: Option<OrderSide>,
+
     /// Start time filter (timestamp)
-    pub start_time: Option<u64>,
+    #[serde(
+        rename = "createdAtTimestamp[gte]",
+        skip_serializing_if = "Option::is_none"
+    )]
+    pub created_at_timestamp_gte: Option<u64>,
+
     /// End time filter (timestamp)
-    pub end_time: Option<u64>,
+    #[serde(
+        rename = "createdAtTimestamp[lte]",
+        skip_serializing_if = "Option::is_none"
+    )]
+    pub created_at_timestamp_lte: Option<u64>,
+
+    /// Pagination
+    #[serde(flatten)]
+    pub pagination: crate::bullish::PaginationParams,
 }
 
 impl RestClient {
-    /// Get trades with optional filters
+    /// Get trades with optional filters (paginated)
     ///
     /// Retrieve a list of trade executions for a trading account.
     /// Only the last 24 hours of data is available for querying.
@@ -82,37 +116,12 @@ impl RestClient {
     /// * `params` - Query parameters for filtering trades
     ///
     /// # Returns
-    /// List of trades matching the filter criteria
-    pub async fn get_trades(&mut self, params: GetTradesParams) -> RestResult<Vec<Trade>> {
-        let mut query_params = vec![("tradingAccountId", params.trading_account_id)];
-
-        if let Some(symbol) = params.symbol {
-            query_params.push(("symbol", symbol));
-        }
-        if let Some(order_id) = params.order_id {
-            query_params.push(("orderId", order_id));
-        }
-        if let Some(side) = params.side {
-            query_params.push(("side", format!("{:?}", side).to_uppercase()));
-        }
-        if let Some(start_time) = params.start_time {
-            query_params.push(("startTime", start_time.to_string()));
-        }
-        if let Some(end_time) = params.end_time {
-            query_params.push(("endTime", end_time.to_string()));
-        }
-
-        let mut url = TRADES_ENDPOINT.to_string();
-        if !query_params.is_empty() {
-            url.push('?');
-            let query_string: Vec<String> = query_params
-                .iter()
-                .map(|(k, v)| format!("{}={}", k, v))
-                .collect();
-            url.push_str(&query_string.join("&"));
-        }
-
-        self.send_get_authenticated_request(&url, (), EndpointType::PrivateTrades)
+    /// Paginated response of trades matching the filter criteria
+    pub async fn get_trades(
+        &mut self,
+        params: GetTradesParams,
+    ) -> RestResult<crate::bullish::ListResponse<Trade>> {
+        self.send_get_authenticated_request(TRADES_ENDPOINT, params, EndpointType::PrivateTrades)
             .await
     }
 
@@ -131,14 +140,19 @@ impl RestClient {
         trade_id: &str,
         trading_account_id: &str,
     ) -> RestResult<Trade> {
-        let url = format!(
-            "{}?tradingAccountId={}",
-            SINGLE_TRADE_ENDPOINT.replace("{}", trade_id),
-            trading_account_id
-        );
+        #[derive(Serialize)]
+        struct Query<'a> {
+            #[serde(rename = "tradingAccountId")]
+            trading_account_id: &'a str,
+        }
 
-        self.send_get_authenticated_request(&url, (), EndpointType::PrivateTrades)
-            .await
+        let url = SINGLE_TRADE_ENDPOINT.replace("{}", trade_id);
+        self.send_get_authenticated_request(
+            &url,
+            Query { trading_account_id },
+            EndpointType::PrivateTrades,
+        )
+        .await
     }
 }
 
@@ -153,8 +167,35 @@ mod tests {
         assert!(params.symbol.is_none());
         assert!(params.order_id.is_none());
         assert!(params.side.is_none());
-        assert!(params.start_time.is_none());
-        assert!(params.end_time.is_none());
+        assert!(params.created_at_timestamp_gte.is_none());
+        assert!(params.created_at_timestamp_lte.is_none());
+    }
+
+    #[test]
+    fn test_get_trades_query_serialization() {
+        let params = GetTradesParams {
+            trading_account_id: "acc-1".into(),
+            symbol: Some("BTCUSDC".into()),
+            order_id: Some("ord-1".into()),
+            side: Some(OrderSide::Buy),
+            created_at_timestamp_gte: Some(1700000000000),
+            created_at_timestamp_lte: Some(1700000100000),
+            pagination: crate::bullish::PaginationParams {
+                page_size: Some(25),
+                meta_data: Some(true),
+                next_page: None,
+                previous_page: None,
+            },
+        };
+        let qs = serde_urlencoded::to_string(&params).unwrap();
+        assert!(qs.contains("tradingAccountId=acc-1"));
+        assert!(qs.contains("symbol=BTCUSDC"));
+        assert!(qs.contains("orderId=ord-1"));
+        assert!(qs.contains("side=BUY"));
+        assert!(qs.contains("createdAtTimestamp%5Bgte%5D=1700000000000"));
+        assert!(qs.contains("createdAtTimestamp%5Blte%5D=1700000100000"));
+        assert!(qs.contains("_pageSize=25"));
+        assert!(qs.contains("_metaData=true"));
     }
 
     #[test]
@@ -162,25 +203,26 @@ mod tests {
         let json = r#"{
             "tradeId": "123456789",
             "orderId": "987654321",
-            "clientOrderId": "client123",
             "symbol": "BTCUSDC",
             "price": "30000.0",
             "quantity": "1.0",
             "quoteAmount": "30000.0",
-            "side": "BUY",
             "baseFee": "0.001",
             "quoteFee": "30.0",
-            "isLiquidation": false,
-            "isMaker": true,
-            "createdAtTimestamp": 1640995200000,
-            "createdAtDatetime": "2022-01-01T00:00:00Z"
+            "side": "BUY",
+            "isTaker": true,
+            "tradeRebateAmount": "0.0",
+            "tradeRebateAssetSymbol": "USDC",
+            "createdAtDatetime": "2022-01-01T00:00:00.000Z",
+            "createdAtTimestamp": "1640995200000"
         }"#;
 
         let trade: Trade = serde_json::from_str(json).unwrap();
         assert_eq!(trade.trade_id, "123456789");
         assert_eq!(trade.symbol, "BTCUSDC");
         assert_eq!(trade.side, OrderSide::Buy);
-        assert!(trade.is_maker);
-        assert!(!trade.is_liquidation);
+        assert!(trade.is_taker);
+        assert_eq!(trade.trade_rebate_asset_symbol, "USDC");
+        assert_eq!(trade.created_at_timestamp, "1640995200000");
     }
 }

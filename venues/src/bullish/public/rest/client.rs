@@ -73,9 +73,36 @@ impl RestClient {
         self.rate_limiter.increment_request(endpoint_type).await;
 
         if !response.status().is_success() {
-            let error_text = response.text().await?;
+            let status = response.status();
+            let error_text = response.text().await.unwrap_or_default();
+
+            // Try to parse a structured error from the body first
+            let detailed = if let Ok(err_resp) =
+                serde_json::from_str::<crate::bullish::ErrorResponse>(&error_text)
+            {
+                format!(
+                    "HTTP {} from {} - {}: {}{}",
+                    status,
+                    url,
+                    err_resp.error.code,
+                    err_resp.error.message,
+                    err_resp
+                        .error
+                        .details
+                        .as_ref()
+                        .map(|d| format!(" (details: {})", d))
+                        .unwrap_or_default()
+                )
+            } else if error_text.trim().is_empty() {
+                // No body; at least report status and URL
+                format!("HTTP {} from {} (empty body)", status, url)
+            } else {
+                // Unstructured body; include it verbatim
+                format!("HTTP {} from {} - body: {}", status, url, error_text)
+            };
+
             return Err(crate::bullish::Errors::Error(format!(
-                "Request failed: {error_text}"
+                "Request failed: {detailed}"
             )));
         }
 
@@ -123,9 +150,36 @@ impl RestClient {
         self.rate_limiter.increment_request(endpoint_type).await;
 
         if !response.status().is_success() {
-            let error_text = response.text().await?;
+            let status = response.status();
+            let error_text = response.text().await.unwrap_or_default();
+
+            // Try to parse a structured error from the body first
+            let detailed = if let Ok(err_resp) =
+                serde_json::from_str::<crate::bullish::ErrorResponse>(&error_text)
+            {
+                format!(
+                    "HTTP {} from {} - {}: {}{}",
+                    status,
+                    url,
+                    err_resp.error.code,
+                    err_resp.error.message,
+                    err_resp
+                        .error
+                        .details
+                        .as_ref()
+                        .map(|d| format!(" (details: {})", d))
+                        .unwrap_or_default()
+                )
+            } else if error_text.trim().is_empty() {
+                // No body; at least report status and URL
+                format!("HTTP {} from {} (empty body)", status, url)
+            } else {
+                // Unstructured body; include it verbatim
+                format!("HTTP {} from {} - body: {}", status, url, error_text)
+            };
+
             return Err(crate::bullish::Errors::Error(format!(
-                "Request failed: {error_text}"
+                "Request failed: {detailed}"
             )));
         }
 

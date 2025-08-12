@@ -56,7 +56,7 @@ impl RestClient {
     ///
     /// Retrieves the index price of a specified asset
     ///
-    /// [docs]: https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/index-prices/-asset_symbol-
+    /// [docs]: https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/index-prices
     ///
     /// # Arguments
     /// * `request` - Request parameters containing the asset symbol
