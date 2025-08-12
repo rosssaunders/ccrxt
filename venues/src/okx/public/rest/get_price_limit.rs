@@ -46,7 +46,7 @@ impl RestClient {
     ///
     /// Retrieve the highest buy limit and lowest sell limit of the instrument.
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-price-limit
+    /// [docs](https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-price-limit)
     ///
     /// Rate limit: 20 requests per 2 seconds
     ///

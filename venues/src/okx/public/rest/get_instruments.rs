@@ -171,7 +171,7 @@ impl RestClient {
     ///
     /// Retrieve a list of instruments with open contracts.
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-instruments
+    /// [docs](https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-instruments)
     ///
     /// Rate limit: 20 requests per 2 seconds
     ///

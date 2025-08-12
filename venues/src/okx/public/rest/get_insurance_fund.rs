@@ -125,7 +125,7 @@ impl RestClient {
     ///
     /// Retrieve insurance fund balance information for different instrument types.
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-insurance-fund
+    /// [docs](https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-insurance-fund)
     ///
     /// Rate limit: 10 requests per 2 seconds
     ///

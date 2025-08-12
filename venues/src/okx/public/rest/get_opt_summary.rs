@@ -104,7 +104,7 @@ impl RestClient {
     ///
     /// Retrieve option market data.
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-option-market-data
+    /// [docs](https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-option-market-data)
     ///
     /// Rate limit: 20 requests per 2 seconds
     ///
@@ -113,10 +113,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing option market data
-    pub async fn get_opt_summary(
-        &self,
-        request: GetOptSummaryRequest,
-    ) -> RestResult<OptSummary> {
+    pub async fn get_opt_summary(&self, request: GetOptSummaryRequest) -> RestResult<OptSummary> {
         self.send_get_request(
             PUBLIC_OPT_SUMMARY_ENDPOINT,
             Some(&request),

@@ -22,7 +22,7 @@ impl RestClient {
     ///
     /// Retrieve underlying assets for specified instrument type.
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-underlying
+    /// [docs](https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-underlying)
     ///
     /// Rate limit: 20 requests per 2 seconds
     ///
@@ -31,10 +31,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing the list of underlying assets
-    pub async fn get_underlying(
-        &self,
-        request: GetUnderlyingRequest,
-    ) -> RestResult<Vec<String>> {
+    pub async fn get_underlying(&self, request: GetUnderlyingRequest) -> RestResult<Vec<String>> {
         self.send_get_request(
             PUBLIC_UNDERLYING_ENDPOINT,
             Some(&request),
@@ -100,8 +97,7 @@ mod tests {
             ]
         });
 
-        let response: OkxApiResponse<Vec<String>> =
-            serde_json::from_value(response_json).unwrap();
+        let response: OkxApiResponse<Vec<String>> = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.msg, "");
         assert_eq!(response.data.len(), 1);
@@ -128,8 +124,7 @@ mod tests {
             "data": []
         });
 
-        let response: OkxApiResponse<Vec<String>> =
-            serde_json::from_value(response_json).unwrap();
+        let response: OkxApiResponse<Vec<String>> = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.data.len(), 0);
     }
