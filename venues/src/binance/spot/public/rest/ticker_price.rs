@@ -43,7 +43,7 @@ impl RestClient {
     ///
     /// Latest price for a symbol or symbols.
     ///
-    /// [docs]: https://developers.binance.com/docs/binance-spot-api-docs/testnet/rest-api/market-data-endpoints#symbol-price-ticker
+    /// [docs](https://developers.binance.com/docs/binance-spot-api-docs/testnet/rest-api/market-data-endpoints#symbol-price-ticker)
     ///
     /// Rate limit: 2 for single symbol, 4 for multiple symbols or all symbols
     ///

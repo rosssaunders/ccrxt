@@ -55,7 +55,7 @@ impl RestClient {
     ///
     /// Get recent trades for a given symbol.
     ///
-    /// [docs]: (https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#recent-trades-list)
+    /// [docs](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#recent-trades-list)
     /// Method: GET /api/v3/trades
     /// Weight: 25
     /// Security: None

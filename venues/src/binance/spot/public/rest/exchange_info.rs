@@ -286,7 +286,7 @@ impl RestClient {
     ///
     /// Returns current exchange trading rules and symbol information.
     ///
-    /// [docs]: (https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#exchange-information)
+    /// [docs](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#exchange-information)
     /// Method: GET /api/v3/exchangeInfo
     /// Weight: 20
     /// Security: None

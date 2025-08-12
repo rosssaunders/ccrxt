@@ -71,7 +71,7 @@ impl RestClient {
     ///
     /// Trades that fill at the time, from the same order, with the same price will have the quantity aggregated.
     ///
-    /// [docs]: (https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#compressed-aggregate-trades-list)
+    /// [docs](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#compressed-aggregate-trades-list)
     /// Method: GET /api/v3/aggTrades
     /// Weight: 2
     /// Security: None

@@ -18,7 +18,7 @@ impl RestClient {
     ///
     /// Test connectivity to the Rest API and get the current server time.
     ///
-    /// [docs]: (https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#check-server-time)
+    /// [docs](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#check-server-time)
     /// Method: GET /api/v3/time
     /// Weight: 1
     /// Security: None
