@@ -6,8 +6,6 @@ use crate::binance::usdm::{RestResult, enums::*};
 const CURRENT_OPEN_ORDER_ENDPOINT: &str = "/fapi/v1/openOrder";
 
 /// Request parameters for the Query Current Open Order endpoint.
-///
-/// See the [Binance API documentation](https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Query-Current-Open-Order) for details.
 #[derive(Debug, Clone, Serialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct CurrentOpenOrderRequest {
@@ -37,8 +35,6 @@ pub struct CurrentOpenOrderRequest {
 }
 
 /// Response for the Query Current Open Order endpoint.
-///
-/// See the [Binance API documentation](https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Query-Current-Open-Order) for field details and valid values.
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct CurrentOpenOrderResponse {

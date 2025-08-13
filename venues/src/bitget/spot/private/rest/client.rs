@@ -33,6 +33,7 @@ use rest::{
 use serde::Serialize;
 use sha2::Sha256;
 
+use super::credentials::Credentials;
 use crate::bitget::spot::{Errors, RestResult, rate_limit::RateLimiter};
 
 /// A client for interacting with the Bitget private REST API
@@ -45,12 +46,8 @@ pub struct RestClient {
     pub(crate) http_client: Arc<dyn HttpClient>,
     /// The rate limiter for this client.
     pub(crate) rate_limiter: RateLimiter,
-    /// The encrypted API key.
-    pub(crate) api_key: Box<dyn ExposableSecret>,
-    /// The encrypted API secret.
-    pub(crate) api_secret: Box<dyn ExposableSecret>,
-    /// The encrypted API passphrase.
-    pub(crate) api_passphrase: Box<dyn ExposableSecret>,
+    /// The credentials for authenticating with Bitget API.
+    pub(crate) credentials: Credentials,
     /// The base URL for the API.
     pub(crate) base_url: Cow<'static, str>,
 }
@@ -59,9 +56,7 @@ impl RestClient {
     /// Creates a new RestClient with encrypted API credentials
     ///
     /// # Arguments
-    /// * `api_key` - The encrypted API key
-    /// * `api_secret` - The encrypted API secret  
-    /// * `api_passphrase` - The encrypted API passphrase
+    /// * `credentials` - The credentials for authentication
     /// * `base_url` - The base URL for the API
     /// * `rate_limiter` - The rate limiter instance
     /// * `http_client` - The HTTP client to use
@@ -69,9 +64,7 @@ impl RestClient {
     /// # Returns
     /// A new RestClient instance
     pub fn new(
-        api_key: Box<dyn ExposableSecret>,
-        api_secret: Box<dyn ExposableSecret>,
-        api_passphrase: Box<dyn ExposableSecret>,
+        credentials: Credentials,
         base_url: impl Into<Cow<'static, str>>,
         rate_limiter: RateLimiter,
         http_client: Arc<dyn HttpClient>,
@@ -79,9 +72,7 @@ impl RestClient {
         Self {
             http_client,
             rate_limiter,
-            api_key,
-            api_secret,
-            api_passphrase,
+            credentials,
             base_url: base_url.into(),
         }
     }
@@ -116,7 +107,7 @@ impl RestClient {
             body_part
         );
 
-        let mut mac = Hmac::<Sha256>::new_from_slice(self.api_secret.expose_secret().as_bytes())
+        let mut mac = Hmac::<Sha256>::new_from_slice(self.credentials.api_secret.expose_secret().as_bytes())
             .map_err(|e| Errors::Error(format!("Failed to create HMAC: {e}")))?;
 
         mac.update(sign_string.as_bytes());
@@ -212,10 +203,10 @@ impl RestClient {
 
         // Build request
         let mut builder = RequestBuilder::new(method, url)
-            .header("ACCESS-KEY", self.api_key.expose_secret())
+            .header("ACCESS-KEY", self.credentials.api_key.expose_secret())
             .header("ACCESS-SIGN", &signature)
             .header("ACCESS-TIMESTAMP", timestamp.to_string())
-            .header("ACCESS-PASSPHRASE", self.api_passphrase.expose_secret())
+            .header("ACCESS-PASSPHRASE", self.credentials.api_passphrase.expose_secret())
             .header("locale", "en-US");
 
         // Add body if provided

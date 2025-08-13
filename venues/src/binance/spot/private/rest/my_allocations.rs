@@ -100,6 +100,7 @@ impl RestClient {
     /// Retrieve allocations resulting from SOR order placement.
     ///
     /// [docs](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#query-allocations--user_data)
+    ///
     /// Method: GET /api/v3/myAllocations
     /// Weight: 20
     /// Security: USER_DATA

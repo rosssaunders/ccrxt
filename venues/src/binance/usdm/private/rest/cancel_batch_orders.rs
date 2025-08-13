@@ -15,8 +15,6 @@ use crate::binance::usdm::{
 const CANCEL_BATCH_ORDERS_ENDPOINT: &str = "/fapi/v1/batchOrders";
 
 /// Request parameters for cancelling multiple orders in a single batch for USDM futures.
-///
-/// See the [Binance API documentation](https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Cancel-Multiple-Orders) for details.
 #[derive(Debug, Clone, Serialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct CancelBatchOrdersRequest {

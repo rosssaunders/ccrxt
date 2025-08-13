@@ -8,6 +8,8 @@ use std::time::Duration;
 pub mod errors;
 pub mod rate_limit;
 
+use crate::binance::shared::venue_trait::{RateLimits, VenueConfig};
+
 pub use errors::*;
 pub use rate_limit::{
     IntervalUnit, RateLimitHeader, RateLimitHeaderKind, RateLimitUsage, RateLimiter,
@@ -42,6 +44,43 @@ pub struct RestResponse<T> {
 
 /// Type alias for results returned by Binance Options API operations
 pub type RestResult<T> = Result<RestResponse<T>, Errors>;
+
+/// Options venue configuration
+pub struct OptionsConfig;
+
+impl VenueConfig for OptionsConfig {
+    fn base_url(&self) -> &str {
+        "https://eapi.binance.com"
+    }
+
+    fn venue_name(&self) -> &str {
+        "options"
+    }
+
+    fn rate_limits(&self) -> RateLimits {
+        RateLimits {
+            request_weight_limit: 6000,
+            request_weight_window: Duration::from_secs(60),
+            raw_requests_limit: 61000,
+            raw_requests_window: Duration::from_secs(300), // 5 minutes
+            orders_10s_limit: 100,
+            orders_minute_limit: 1200,
+            orders_day_limit: None,
+        }
+    }
+
+    fn supports_futures(&self) -> bool {
+        false
+    }
+
+    fn supports_options(&self) -> bool {
+        true
+    }
+
+    fn supports_margin(&self) -> bool {
+        false
+    }
+}
 
 #[cfg(test)]
 mod tests {

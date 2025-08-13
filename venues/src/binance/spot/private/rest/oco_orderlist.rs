@@ -178,6 +178,7 @@ impl RestClient {
     /// Place an OCO pair.
     ///
     /// [docs](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#new-oco-orderlist--trade)
+    ///
     /// Method: POST /api/v3/orderList/oco
     /// Weight: 1
     /// Security: TRADE

@@ -14,6 +14,7 @@ pub mod cancel_order;
 pub mod cancel_quotes;
 pub mod cancel_withdrawal;
 pub mod client;
+pub mod credentials;
 pub mod create_block_rfq;
 pub mod create_combo;
 pub mod create_deposit_address;
@@ -85,6 +86,7 @@ pub use cancel_order::{CancelOrderRequest, CancelOrderResponse, CancelledOrder};
 pub use cancel_quotes::{CancelQuotesRequest, CancelQuotesResponse, CancelType};
 pub use cancel_withdrawal::{CancelWithdrawalRequest, CancelWithdrawalResponse};
 pub use client::RestClient;
+pub use credentials::Credentials;
 pub use create_block_rfq::{
     CreateBlockRfqLeg, CreateBlockRfqRequest, CreateBlockRfqResponse, CreateBlockRfqResult, Quote,
     ResponseHedge as CreateBlockRfqResponseHedge, ResponseLeg as CreateBlockRfqResponseLeg,

@@ -58,6 +58,7 @@ impl RestClient {
     /// Klines are uniquely identified by their open time.
     ///
     /// [docs](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#klinecandlestick-data)
+    ///
     /// Method: GET /api/v3/klines
     /// Weight: 2
     /// Security: None

@@ -58,6 +58,7 @@ impl RestClient {
     /// uiKlines return modified kline data, optimized for presentation of candlestick charts.
     ///
     /// [docs](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#uiklines)
+    ///
     /// Method: GET /api/v3/uiKlines
     /// Weight: 2
     /// Security: None

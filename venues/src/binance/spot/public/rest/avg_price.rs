@@ -36,6 +36,7 @@ impl RestClient {
     /// Current average price for a symbol.
     ///
     /// [docs](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#current-average-price)
+    ///
     /// Method: GET /api/v3/avgPrice
     /// Weight: 2
     /// Security: None

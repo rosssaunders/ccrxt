@@ -115,6 +115,7 @@ impl RestClient {
     /// Either orderId or origClientOrderId must be sent.
     ///
     /// [docs](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#amend-order--trade)
+    ///
     /// Method: PUT /api/v3/order/amend/keepPriority
     /// Weight: 4
     /// Security: TRADE

@@ -3,6 +3,7 @@ mod asset_transfer;
 mod cancel_multiple_orders;
 mod cancel_order;
 mod client;
+mod credentials;
 mod currency_config;
 mod deposit_address;
 mod deposit_records;
@@ -55,5 +56,6 @@ mod sub_account_transfer;
 // Trading exports
 // OCO exports
 pub use client::RestClient;
+pub use credentials::Credentials;
 // Wallet/Fund exports
 pub use get_balances::{Balance, GetBalancesRequest, GetBalancesResponse};

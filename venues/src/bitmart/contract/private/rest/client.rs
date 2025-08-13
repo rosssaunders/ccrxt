@@ -6,27 +6,23 @@ use rest::{
     http_client::{Method as HttpMethod, RequestBuilder},
     secrets::ExposableSecret,
 };
-use secrecy::SecretString;
 
-use crate::bitmart::{Errors, RestResult};
+use crate::bitmart::{Errors, RestResult, shared::Credentials};
 
 #[derive(Clone)]
 pub struct RestClient {
-    pub api_key: SecretString,
-    pub api_secret: SecretString,
+    pub credentials: Credentials,
     pub http_client: Arc<dyn HttpClient>,
     pub base_url: String,
 }
 
 impl RestClient {
     pub fn new(
-        api_key: impl Into<SecretString>,
-        api_secret: impl Into<SecretString>,
+        credentials: Credentials,
         http_client: Arc<dyn HttpClient>,
     ) -> Self {
         Self {
-            api_key: api_key.into(),
-            api_secret: api_secret.into(),
+            credentials,
             http_client,
             base_url: "https://api-cloud-v2.bitmart.com".to_string(),
         }
@@ -38,7 +34,7 @@ impl RestClient {
     ) -> RestResult<T> {
         let url = format!("{}{}", self.base_url, path);
         let request = RequestBuilder::new(HttpMethod::Get, url)
-            .header("X-BM-KEY", self.api_key.expose_secret().to_string())
+            .header("X-BM-KEY", self.credentials.api_key.expose_secret())
             .build();
 
         let response = self

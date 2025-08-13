@@ -19,7 +19,7 @@ pub mod public {
 
 pub mod private {
     mod rest;
-    pub use self::rest::{Balance, GetBalancesRequest, GetBalancesResponse, RestClient};
+    pub use self::rest::{Balance, Credentials, GetBalancesRequest, GetBalancesResponse, RestClient};
 }
 
 pub use enums::*;
@@ -27,7 +27,7 @@ pub use errors::{ApiResponse, BingXError, ErrorResponse, Errors};
 // Alias for backward compatibility
 pub use private::RestClient as BingXRestClient;
 pub use private::{
-    Balance, GetBalancesRequest, GetBalancesResponse, RestClient as PrivateRestClient,
+    Balance, Credentials, GetBalancesRequest, GetBalancesResponse, RestClient as PrivateRestClient,
 };
 pub use public::{
     Get24hrTickerRequest, Get24hrTickerResponse, GetHistoricalKlineRequest,

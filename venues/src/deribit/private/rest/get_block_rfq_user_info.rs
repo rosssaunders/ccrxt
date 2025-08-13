@@ -80,32 +80,12 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use rest::secrets::ExposableSecret;
-    /// REST API endpoint constant
     use serde_json::{Value, json};
 
     use super::*;
     use crate::deribit::AccountTier;
-
-    // Test secret implementation
-    #[derive(Clone)]
-    struct PlainTextSecret {
-        secret: String,
-    }
-
-    impl PlainTextSecret {
-        fn new(secret: impl Into<String>) -> Self {
-            Self {
-                secret: secret.into(),
-            }
-        }
-    }
-
-    impl ExposableSecret for PlainTextSecret {
-        fn expose_secret(&self) -> String {
-            self.secret.clone()
-        }
-    }
+    use crate::deribit::private::rest::credentials::Credentials;
+    use rest::secrets::SecretString;
 
     #[test]
     fn test_request_serialization() {
@@ -197,9 +177,12 @@ mod tests {
     fn test_endpoint_method_signature() {
         // Test that we can create a mock client
         let rate_limiter = crate::deribit::RateLimiter::new(AccountTier::Tier1);
+        let credentials = Credentials {
+            api_key: SecretString::from("test_key".to_string()),
+            api_secret: SecretString::from("test_secret".to_string()),
+        };
         let client = RestClient::new(
-            Box::new(PlainTextSecret::new("test_key")),
-            Box::new(PlainTextSecret::new("test_secret")),
+            credentials,
             "https://test.deribit.com",
             rate_limiter,
             std::sync::Arc::new(rest::native::NativeHttpClient::default()),

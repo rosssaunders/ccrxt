@@ -29,8 +29,6 @@ pub struct GetConvertOrderStatusRequest {
 }
 
 /// Status of a convert order.
-///
-/// See [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/convert/Order-Status)
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum ConvertOrderStatus {
     /// Order is being processed.

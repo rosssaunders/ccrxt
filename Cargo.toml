@@ -66,6 +66,8 @@ venues = { path = "venues" }
 serde = { workspace = true }
 serde_json = { workspace = true }
 chrono = { workspace = true }
+async-trait.workspace = true
+ring = "0.17.14"
 
 [dev-dependencies]
 rest = { path = "rest" }

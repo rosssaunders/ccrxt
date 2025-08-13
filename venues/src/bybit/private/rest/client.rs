@@ -14,6 +14,7 @@ use rest::{
 use serde::Serialize;
 use sha2::Sha256;
 
+use super::credentials::Credentials;
 use crate::bybit::{EndpointType, Errors, RateLimiter, RestResult};
 
 /// Private REST client for ByBit V5 exchange
@@ -36,19 +37,15 @@ pub struct RestClient {
     /// This is used to ensure compliance with ByBit's rate limits for private endpoints.
     pub rate_limiter: RateLimiter,
 
-    /// The encrypted API key.
-    pub(crate) api_key: Box<dyn ExposableSecret>,
-
-    /// The encrypted API secret.
-    pub(crate) api_secret: Box<dyn ExposableSecret>,
+    /// The API credentials for authentication.
+    pub(crate) credentials: Credentials,
 }
 
 impl RestClient {
-    /// Creates a new RestClient with encrypted API credentials
+    /// Creates a new RestClient with API credentials
     ///
     /// # Arguments
-    /// * `api_key` - The encrypted API key
-    /// * `api_secret` - The encrypted API secret
+    /// * `credentials` - The API credentials
     /// * `base_url` - The base URL for the API
     /// * `rate_limiter` - The rate limiter instance
     /// * `http_client` - The HTTP client instance
@@ -56,15 +53,13 @@ impl RestClient {
     /// # Returns
     /// A new RestClient instance
     pub fn new(
-        api_key: Box<dyn ExposableSecret>,
-        api_secret: Box<dyn ExposableSecret>,
+        credentials: Credentials,
         base_url: impl Into<Cow<'static, str>>,
         rate_limiter: RateLimiter,
         http_client: Arc<dyn HttpClient>,
     ) -> Self {
         Self {
-            api_key,
-            api_secret,
+            credentials,
             base_url: base_url.into(),
             rate_limiter,
             http_client,
@@ -73,7 +68,7 @@ impl RestClient {
 
     /// Generate HMAC-SHA256 signature for ByBit V5 API
     fn sign_payload(&self, payload: &str) -> Result<String, Errors> {
-        let secret_key = self.api_secret.expose_secret();
+        let secret_key = self.credentials.api_secret.expose_secret();
         let mut mac = Hmac::<Sha256>::new_from_slice(secret_key.as_bytes())
             .map_err(|e| Errors::AuthError(format!("Invalid secret key: {e}")))?;
 
@@ -116,7 +111,7 @@ impl RestClient {
         let mut payload = format!(
             "{}{}{}",
             timestamp,
-            self.api_key.expose_secret(),
+            self.credentials.api_key.expose_secret(),
             recv_window
         );
 
@@ -136,7 +131,7 @@ impl RestClient {
 
         // Build request
         let request = RequestBuilder::new(HttpMethod::Get, url)
-            .header("X-BAPI-API-KEY", self.api_key.expose_secret())
+            .header("X-BAPI-API-KEY", self.credentials.api_key.expose_secret())
             .header("X-BAPI-TIMESTAMP", &timestamp)
             .header("X-BAPI-SIGN", &signature)
             .header("X-BAPI-RECV-WINDOW", recv_window)
@@ -205,7 +200,7 @@ impl RestClient {
         let payload = format!(
             "{}{}{}{}",
             timestamp,
-            self.api_key.expose_secret(),
+            self.credentials.api_key.expose_secret(),
             recv_window,
             body
         );
@@ -218,7 +213,7 @@ impl RestClient {
 
         // Build request
         let request_obj = RequestBuilder::new(HttpMethod::Post, url)
-            .header("X-BAPI-API-KEY", self.api_key.expose_secret())
+            .header("X-BAPI-API-KEY", self.credentials.api_key.expose_secret())
             .header("X-BAPI-TIMESTAMP", &timestamp)
             .header("X-BAPI-SIGN", &signature)
             .header("X-BAPI-RECV-WINDOW", recv_window)
@@ -288,7 +283,7 @@ impl RestClient {
         let payload = format!(
             "{}{}{}{}",
             timestamp,
-            self.api_key.expose_secret(),
+            self.credentials.api_key.expose_secret(),
             recv_window,
             body
         );
@@ -301,7 +296,7 @@ impl RestClient {
 
         // Build request
         let request_obj = RequestBuilder::new(HttpMethod::Put, url)
-            .header("X-BAPI-API-KEY", self.api_key.expose_secret())
+            .header("X-BAPI-API-KEY", self.credentials.api_key.expose_secret())
             .header("X-BAPI-TIMESTAMP", &timestamp)
             .header("X-BAPI-SIGN", &signature)
             .header("X-BAPI-RECV-WINDOW", recv_window)
@@ -371,7 +366,7 @@ impl RestClient {
         let mut payload = format!(
             "{}{}{}",
             timestamp,
-            self.api_key.expose_secret(),
+            self.credentials.api_key.expose_secret(),
             recv_window
         );
 
@@ -391,7 +386,7 @@ impl RestClient {
 
         // Build request
         let request = RequestBuilder::new(HttpMethod::Delete, url)
-            .header("X-BAPI-API-KEY", self.api_key.expose_secret())
+            .header("X-BAPI-API-KEY", self.credentials.api_key.expose_secret())
             .header("X-BAPI-TIMESTAMP", &timestamp)
             .header("X-BAPI-SIGN", &signature)
             .header("X-BAPI-RECV-WINDOW", recv_window)
@@ -429,37 +424,21 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use rest::secrets::ExposableSecret;
+    use rest::secrets::SecretString;
 
     use super::*;
 
-    struct TestSecret {
-        secret: String,
-    }
-
-    impl TestSecret {
-        fn new(secret: String) -> Self {
-            Self { secret }
-        }
-    }
-
-    impl ExposableSecret for TestSecret {
-        fn expose_secret(&self) -> String {
-            self.secret.clone()
-        }
-    }
-
     #[test]
     fn test_private_client_creation() {
-        let api_key = Box::new(TestSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret =
-            Box::new(TestSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let credentials = Credentials {
+            api_key: SecretString::new("test_key".to_string().into_boxed_str()),
+            api_secret: SecretString::new("test_secret".to_string().into_boxed_str()),
+        };
         let http_client = Arc::new(rest::native::NativeHttpClient::default());
         let rate_limiter = RateLimiter::new();
 
         let rest_client = RestClient::new(
-            api_key,
-            api_secret,
+            credentials,
             "https://api.bybit.com",
             rate_limiter,
             http_client,
@@ -470,15 +449,15 @@ mod tests {
 
     #[test]
     fn test_sign_payload() {
-        let api_key = Box::new(TestSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret =
-            Box::new(TestSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
+        let credentials = Credentials {
+            api_key: SecretString::new("test_key".to_string().into_boxed_str()),
+            api_secret: SecretString::new("test_secret".to_string().into_boxed_str()),
+        };
         let http_client = Arc::new(rest::native::NativeHttpClient::default());
         let rate_limiter = RateLimiter::new();
 
         let rest_client = RestClient::new(
-            api_key,
-            api_secret,
+            credentials,
             "https://api.bybit.com",
             rate_limiter,
             http_client,

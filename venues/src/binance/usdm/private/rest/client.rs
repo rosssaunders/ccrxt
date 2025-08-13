@@ -1,8 +1,10 @@
+use rest::HttpClient;
 use serde::Serialize;
+use std::{borrow::Cow, sync::Arc};
 
 use crate::binance::{
-    shared::{Errors as SharedErrors, RestResponse, client::PrivateBinanceClient},
-    usdm::Errors,
+    shared::{Errors as SharedErrors, RestResponse, client::PrivateBinanceClient, credentials::Credentials, rate_limiter::RateLimiter, venue_trait::VenueConfig},
+    usdm::{Errors, UsdmConfig},
 };
 
 pub struct UsdmPrivateRestClient(PrivateBinanceClient);
@@ -16,6 +18,55 @@ impl From<PrivateBinanceClient> for UsdmPrivateRestClient {
 }
 
 impl UsdmPrivateRestClient {
+    /// Create a new UsdmPrivateRestClient with credentials and HTTP client
+    ///
+    /// Creates a new private REST client for Binance USD-M Futures using the provided credentials
+    /// and HTTP client implementation.
+    ///
+    /// # Arguments
+    /// * `credentials` - API credentials containing key and secret
+    /// * `http_client` - HTTP client implementation to use for requests
+    ///
+    /// # Returns
+    /// A new `UsdmPrivateRestClient` instance configured for USD-M Futures trading
+    ///
+    /// # Example
+    /// ```no_run
+    /// use std::sync::Arc;
+    /// use rest::{secrets::SecretString, HttpClient};
+    /// use venues::binance::usdm::private::rest::{UsdmClient, Credentials};
+    ///
+    /// # #[derive(Debug)]
+    /// # struct MyHttpClient;
+    /// # #[async_trait::async_trait]
+    /// # impl HttpClient for MyHttpClient {
+    /// #     async fn execute(&self, _: rest::Request) -> Result<rest::Response, rest::HttpError> {
+    /// #         unimplemented!()
+    /// #     }
+    /// # }
+    ///
+    /// let credentials = Credentials {
+    ///     api_key: SecretString::new("your_api_key".to_string().into()),
+    ///     api_secret: SecretString::new("your_api_secret".to_string().into()),
+    /// };
+    ///
+    /// let http_client: Arc<dyn HttpClient> = Arc::new(MyHttpClient);
+    /// let client = UsdmClient::new(credentials, http_client);
+    /// ```
+    pub fn new(credentials: Credentials, http_client: Arc<dyn HttpClient>) -> Self {
+        let config = UsdmConfig;
+        let rate_limiter = RateLimiter::new(config.rate_limits());
+        
+        let private_client = PrivateBinanceClient::new(
+            Cow::Owned(config.base_url().to_string()),
+            http_client,
+            rate_limiter,
+            Box::new(credentials.api_key.clone()),
+            Box::new(credentials.api_secret.clone()),
+        );
+        
+        UsdmPrivateRestClient(private_client)
+    }
     /// Send a signed GET request with usdm-specific response type (high-performance)
     pub async fn send_get_signed_request<T, R>(
         &self,

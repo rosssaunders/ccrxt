@@ -144,6 +144,7 @@ impl RestClient {
     /// Either orderListId or origClientOrderId must be provided.
     ///
     /// [docs](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#query-order-list--user_data)
+    ///
     /// Method: GET /api/v3/orderList
     /// Weight: 4
     /// Security: USER_DATA

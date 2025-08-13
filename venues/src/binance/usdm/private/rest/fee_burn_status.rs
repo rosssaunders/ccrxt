@@ -9,8 +9,6 @@ const FEE_BURN_STATUS_ENDPOINT: &str = "/fapi/v1/feeBurn";
 /// Request parameters for the Get BNB Burn Status endpoint.
 ///
 /// Used to query the current BNB burn status for futures trading fees and margin interest.
-///
-/// See [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Get-BNB-Burn-Status)
 #[derive(Debug, Clone, Serialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct GetFeeBurnStatusRequest {

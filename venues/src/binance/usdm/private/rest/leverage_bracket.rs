@@ -121,8 +121,6 @@ use crate::binance::usdm::RestResult;
 const LEVERAGE_BRACKET_ENDPOINT: &str = "/fapi/v1/leverageBracket";
 
 /// Request parameters for the Notional and Leverage Brackets endpoint.
-///
-/// All fields are optional. See [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Notional-and-Leverage-Brackets)
 #[derive(Debug, Clone, Serialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct GetLeverageBracketRequest {

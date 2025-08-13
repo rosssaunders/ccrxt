@@ -15,6 +15,7 @@ impl RestClient {
     /// Test connectivity to the Rest API.
     ///
     /// [docs](https://developers.binance.com/docs/derivatives/option/market-data/Test-Connectivity)
+    ///
     /// Method: GET /eapi/v1/ping
     /// Weight: 1
     /// Security: None

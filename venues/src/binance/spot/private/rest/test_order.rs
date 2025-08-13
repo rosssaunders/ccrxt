@@ -153,6 +153,7 @@ impl RestClient {
     /// Creates and validates a new order but does not send it into the matching engine.
     ///
     /// [docs](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#test-new-order--trade)
+    ///
     /// Method: POST /api/v3/order/test
     /// Weight: 1 (without computeCommissionRates), 20 (with computeCommissionRates)
     /// Security: TRADE

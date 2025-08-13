@@ -72,6 +72,7 @@ impl RestClient {
     /// Returns option mark price and Greek info.
     ///
     /// [docs](https://developers.binance.com/docs/derivatives/option/market-data/Option-Mark-Price)
+    ///
     /// Method: GET /eapi/v1/mark
     /// Weight: 5
     /// Security: None

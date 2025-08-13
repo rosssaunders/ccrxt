@@ -3,15 +3,19 @@ use std::{
     time::{SystemTime, UNIX_EPOCH},
 };
 
+use hmac::{Hmac, Mac};
 use rest::{
     HttpClient,
     http_client::{Method as HttpMethod, RequestBuilder},
 };
-use ring::hmac;
 use serde::{Serialize, de::DeserializeOwned};
 use sha2::{Digest, Sha512};
 
+type HmacSha512 = Hmac<Sha512>;
+
+use crate::gateio::shared::credentials::Credentials;
 use crate::gateio::spot::{RestResult, rate_limit::RateLimiter};
+use rest::secrets::ExposableSecret;
 
 const LIVE_URL: &str = "https://api.gateio.ws/api/v4";
 const TESTNET_URL: &str = "https://api-testnet.gateapi.io/api/v4";
@@ -21,8 +25,7 @@ const TESTNET_URL: &str = "https://api-testnet.gateapi.io/api/v4";
 pub struct RestClient {
     http_client: Arc<dyn HttpClient>,
     base_url: String,
-    api_key: String,
-    api_secret: String,
+    credentials: Credentials,
     rate_limiter: Arc<RateLimiter>,
 }
 
@@ -30,15 +33,13 @@ impl RestClient {
     /// Create a new private REST client
     pub fn new(
         http_client: Arc<dyn HttpClient>,
-        api_key: String,
-        api_secret: String,
+        credentials: Credentials,
         testnet: bool,
     ) -> RestResult<Self> {
         Ok(Self {
             http_client,
             base_url: if testnet { TESTNET_URL } else { LIVE_URL }.to_string(),
-            api_key,
-            api_secret,
+            credentials,
             rate_limiter: Arc::new(RateLimiter::new()),
         })
     }
@@ -69,10 +70,13 @@ impl RestClient {
         );
 
         // Generate HMAC-SHA512 signature
-        let key = hmac::Key::new(hmac::HMAC_SHA512, self.api_secret.as_bytes());
-        let signature = hmac::sign(&key, signature_string.as_bytes());
+        let mut mac =
+            HmacSha512::new_from_slice(self.credentials.api_secret.expose_secret().as_bytes())
+                .expect("HMAC can take key of any size");
+        mac.update(signature_string.as_bytes());
+        let signature = mac.finalize();
 
-        hex::encode(signature.as_ref())
+        hex::encode(signature.into_bytes())
     }
 
     /// Make a GET request to the API without query parameters
@@ -204,7 +208,7 @@ impl RestClient {
 
         // Build request
         let mut request = RequestBuilder::new(method, full_url)
-            .header("KEY", &self.api_key)
+            .header("KEY", self.credentials.api_key.expose_secret())
             .header("Timestamp", &timestamp)
             .header("SIGN", signature);
 

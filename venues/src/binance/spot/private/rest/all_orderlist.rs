@@ -87,6 +87,7 @@ impl RestClient {
     /// Retrieve all order lists.
     ///
     /// [docs](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#query-all-order-lists--user_data)
+    ///
     /// Method: GET /api/v3/allOrderList
     /// Weight: 20
     /// Security: USER_DATA

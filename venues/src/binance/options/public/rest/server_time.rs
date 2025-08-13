@@ -19,6 +19,7 @@ impl RestClient {
     /// Test connectivity to the Rest API and get the current server time.
     ///
     /// [docs](https://developers.binance.com/docs/derivatives/option/market-data)
+    ///
     /// Method: GET /eapi/v1/time
     /// Weight: 1
     /// Security: None

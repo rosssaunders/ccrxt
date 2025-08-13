@@ -16,6 +16,7 @@ use rest::{
 use serde::{Serialize, de::DeserializeOwned};
 use sha2::Sha256;
 
+use super::credentials::Credentials;
 use super::get_account_balances::PaginationInfo;
 use crate::coinbaseexchange::{EndpointType, Errors, RateLimiter, RestResult};
 
@@ -33,30 +34,20 @@ pub struct RestClient {
     /// The rate limiter used to manage request rates and prevent hitting API limits
     pub rate_limiter: RateLimiter,
 
-    /// The encrypted API key
-    pub(crate) api_key: Box<dyn ExposableSecret>,
-
-    /// The encrypted API secret (base64 encoded)
-    pub(crate) api_secret: Box<dyn ExposableSecret>,
-
-    /// The encrypted API passphrase
-    pub(crate) api_passphrase: Box<dyn ExposableSecret>,
+    /// The API credentials for authentication
+    pub(crate) credentials: Credentials,
 }
 
 impl RestClient {
     /// Create a new REST client for Coinbase Exchange private endpoints
     ///
     /// # Arguments
-    /// * `api_key` - Your Coinbase Exchange API key
-    /// * `api_secret` - Your Coinbase Exchange API secret (base64 encoded)
-    /// * `api_passphrase` - Your Coinbase Exchange API passphrase
+    /// * `credentials` - API credentials for authentication
     /// * `base_url` - The base URL for the Coinbase Exchange API
     /// * `http_client` - HTTP client for making requests
     /// * `rate_limiter` - Rate limiter for managing request frequency
     pub fn new(
-        api_key: Box<dyn ExposableSecret>,
-        api_secret: Box<dyn ExposableSecret>,
-        api_passphrase: Box<dyn ExposableSecret>,
+        credentials: Credentials,
         base_url: impl Into<Cow<'static, str>>,
         http_client: Arc<dyn HttpClient>,
         rate_limiter: RateLimiter,
@@ -65,9 +56,7 @@ impl RestClient {
             base_url: base_url.into(),
             http_client,
             rate_limiter,
-            api_key,
-            api_secret,
-            api_passphrase,
+            credentials,
         }
     }
 
@@ -97,7 +86,7 @@ impl RestClient {
         let prehash = format!("{timestamp}{method}{request_path}{body}");
 
         // Decode the base64 API secret
-        let api_secret = self.api_secret.expose_secret();
+        let api_secret = self.credentials.api_secret.expose_secret();
         let secret_bytes = general_purpose::STANDARD
             .decode(&api_secret)
             .map_err(|e| Errors::Error(format!("Failed to decode API secret: {e}")))?;
@@ -220,8 +209,8 @@ impl RestClient {
         };
 
         // Build request
-        let api_key = self.api_key.expose_secret();
-        let api_passphrase = self.api_passphrase.expose_secret();
+        let api_key = self.credentials.api_key.expose_secret();
+        let api_passphrase = self.credentials.api_passphrase.expose_secret();
 
         let mut builder = RequestBuilder::new(method, url)
             .header("CB-ACCESS-KEY", &api_key)
@@ -558,6 +547,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use rest::secrets::SecretString;
 
     #[test]
     fn test_signature_generation() {
@@ -565,16 +555,14 @@ mod tests {
         // https://docs.cloud.coinbase.com/exchange/docs/authorization-and-authentication
 
         // Create a mock client with test credentials
-        let api_secret = Box::new(rest::secrets::SecretString::from(
-            "TEST_SECRET_BASE64_ENCODED",
-        ));
-        let api_key = Box::new(rest::secrets::SecretString::from("test_key"));
-        let api_passphrase = Box::new(rest::secrets::SecretString::from("test_passphrase"));
+        let credentials = Credentials {
+            api_key: SecretString::from("test_key"),
+            api_secret: SecretString::from("TEST_SECRET_BASE64_ENCODED"),
+            api_passphrase: SecretString::from("test_passphrase"),
+        };
 
         let rest_client = RestClient::new(
-            api_key,
-            api_secret,
-            api_passphrase,
+            credentials,
             "https://api.exchange.coinbase.com",
             Arc::new(rest::native::NativeHttpClient::default()),
             RateLimiter::new(),
@@ -589,14 +577,14 @@ mod tests {
 
     #[test]
     fn test_base_url_handling() {
-        let api_secret = Box::new(rest::secrets::SecretString::from("secret"));
-        let api_key = Box::new(rest::secrets::SecretString::from("key"));
-        let api_passphrase = Box::new(rest::secrets::SecretString::from("passphrase"));
+        let credentials = Credentials {
+            api_key: SecretString::from("key"),
+            api_secret: SecretString::from("secret"),
+            api_passphrase: SecretString::from("passphrase"),
+        };
 
         let rest_client = RestClient::new(
-            api_key,
-            api_secret,
-            api_passphrase,
+            credentials,
             "https://api.exchange.coinbase.com",
             Arc::new(rest::native::NativeHttpClient::default()),
             RateLimiter::new(),

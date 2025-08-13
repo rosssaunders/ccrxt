@@ -50,7 +50,9 @@ impl RestClient {
     /// Get BGB Deduct Info
     ///
     /// Get the current BGB deduct status for fee optimization.
+    ///
     /// [docs](https://www.bitget.com/api-doc/spot/account/Get-BGB-Deduct-Info)
+    ///
     ///
     /// Rate limit: 5 req/sec/UID
     ///

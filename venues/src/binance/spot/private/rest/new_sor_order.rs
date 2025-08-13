@@ -73,6 +73,7 @@ impl RestClient {
     /// Place an order using smart order routing.
     ///
     /// [docs](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#new-sor-order--trade)
+    ///
     /// Method: POST /api/v3/sor/order
     /// Weight: 1
     /// Security: TRADE

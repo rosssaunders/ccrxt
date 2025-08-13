@@ -135,6 +135,7 @@ impl RestClient {
     /// Get all open order lists.
     ///
     /// [docs](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#query-open-order-lists--user_data)
+    ///
     /// Method: GET /api/v3/openOrderList
     /// Weight: 6
     /// Security: USER_DATA

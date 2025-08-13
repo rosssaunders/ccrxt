@@ -308,28 +308,12 @@ mod tests {
     use std::sync::Arc;
 
     use rest::secrets::ExposableSecret;
-    /// REST API endpoint constant
     use serde_json::{Value, json};
 
     use super::*;
     use crate::deribit::AccountTier;
-
-    #[derive(Clone)]
-    struct PlainTextSecret {
-        secret: String,
-    }
-
-    impl PlainTextSecret {
-        fn new(secret: String) -> Self {
-            Self { secret }
-        }
-    }
-
-    impl ExposableSecret for PlainTextSecret {
-        fn expose_secret(&self) -> String {
-            self.secret.clone()
-        }
-    }
+    use crate::deribit::private::rest::credentials::Credentials;
+    use rest::secrets::SecretString;
 
     #[test]
     fn test_request_serialization_minimal() {
@@ -386,14 +370,14 @@ mod tests {
 
     #[tokio::test]
     async fn test_method_exists() {
-        let api_key = Box::new(PlainTextSecret::new("key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret =
-            Box::new(PlainTextSecret::new("secret".to_string())) as Box<dyn ExposableSecret>;
+        let credentials = Credentials {
+            api_key: SecretString::from("key".to_string()),
+            api_secret: SecretString::from("secret".to_string()),
+        };
         let http_client = Arc::new(rest::native::NativeHttpClient::default());
         let limiter = crate::deribit::RateLimiter::new(AccountTier::Tier4);
         let rest_client = RestClient::new(
-            api_key,
-            api_secret,
+            credentials,
             "https://test.deribit.com",
             limiter,
             http_client,
