@@ -113,7 +113,7 @@ pub struct IpRestriction {
 impl RestClient {
     /// Get account configuration
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#trading-account-rest-api-get-account-configuration
+    /// [docs](https://www.okx.com/docs-v5/en/#trading-account-rest-api-get-account-configuration)
     ///
     /// # Returns
     /// A result containing the account configuration or an error

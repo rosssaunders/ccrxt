@@ -37,7 +37,7 @@ pub struct MaxWithdrawal {
 impl RestClient {
     /// Get max withdrawal
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#trading-account-rest-api-get-maximum-withdrawals
+    /// [docs](https://www.okx.com/docs-v5/en/#trading-account-rest-api-get-maximum-withdrawals)
     ///
     /// # Arguments
     /// * `request` - The get max withdrawal request

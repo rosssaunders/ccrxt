@@ -23,7 +23,7 @@ pub struct ActivateOptionResponse {
 impl RestClient {
     /// Activate option
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#trading-account-rest-api-activate-option
+    /// [docs](https://www.okx.com/docs-v5/en/#trading-account-rest-api-activate-option)
     ///
     /// Rate Limit: 5 requests per 2 seconds
     ///

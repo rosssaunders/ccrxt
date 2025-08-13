@@ -196,7 +196,7 @@ impl RestClient {
     ///
     /// Retrieve information on your current positions. When there are no positions, an empty array will be returned.
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-account-rest-api-get-positions
+    /// [docs](https://www.okx.com/docs-v5/en/#rest-api-account-rest-api-get-positions)
     ///
     /// Rate limit: 10 requests per 2 seconds
     ///

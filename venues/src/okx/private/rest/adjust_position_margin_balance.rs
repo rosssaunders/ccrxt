@@ -56,7 +56,7 @@ pub struct AdjustPositionMarginBalanceResponse {
 impl RestClient {
     /// Adjust position margin balance
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#trading-account-rest-api-increase-decrease-margin
+    /// [docs](https://www.okx.com/docs-v5/en/#trading-account-rest-api-increase-decrease-margin)
     ///
     /// Rate Limit: 20 requests per 2 seconds
     ///

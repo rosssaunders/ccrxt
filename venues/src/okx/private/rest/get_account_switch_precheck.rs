@@ -28,7 +28,7 @@ pub struct AccountSwitchPrecheck {
 impl RestClient {
     /// Get account switch precheck
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#trading-account-rest-api-get-account-mode-switch-precheck
+    /// [docs](https://www.okx.com/docs-v5/en/#trading-account-rest-api-get-account-mode-switch-precheck)
     ///
     /// # Arguments
     /// * `request` - The get account switch precheck request

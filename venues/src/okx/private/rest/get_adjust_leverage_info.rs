@@ -53,7 +53,7 @@ pub struct AdjustLeverageInfo {
 impl RestClient {
     /// Get adjust leverage info
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#trading-account-rest-api-get-leverage-estimated-info
+    /// [docs](https://www.okx.com/docs-v5/en/#trading-account-rest-api-get-leverage-estimated-info)
     ///
     /// # Arguments
     /// * `request` - The get adjust leverage info request

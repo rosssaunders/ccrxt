@@ -42,7 +42,7 @@ pub struct SetMmpConfigResponse {
 impl RestClient {
     /// Set MMP config
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#trading-account-rest-api-set-mmp-config
+    /// [docs](https://www.okx.com/docs-v5/en/#trading-account-rest-api-set-mmp-config)
     ///
     /// # Arguments
     /// * `request` - The set MMP config request

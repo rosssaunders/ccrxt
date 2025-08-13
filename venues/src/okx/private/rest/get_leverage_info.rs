@@ -37,7 +37,7 @@ pub struct LeverageInfo {
 impl RestClient {
     /// Get leverage info
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#trading-account-rest-api-get-leverage
+    /// [docs](https://www.okx.com/docs-v5/en/#trading-account-rest-api-get-leverage)
     ///
     /// # Arguments
     /// * `request` - The get leverage info request

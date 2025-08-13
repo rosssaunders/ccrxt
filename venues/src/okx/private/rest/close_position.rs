@@ -62,7 +62,7 @@ pub struct ClosePositionResponse {
 impl RestClient {
     /// Close a position
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#order-book-trading-trade-post-close-positions
+    /// [docs](https://www.okx.com/docs-v5/en/#order-book-trading-trade-post-close-positions)
     ///
     /// # Arguments
     /// * `request` - The close position request

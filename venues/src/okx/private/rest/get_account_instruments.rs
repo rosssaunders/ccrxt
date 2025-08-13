@@ -127,7 +127,7 @@ pub struct AccountInstrument {
 impl RestClient {
     /// Get account instruments
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#trading-account-rest-api-get-instruments
+    /// [docs](https://www.okx.com/docs-v5/en/#trading-account-rest-api-get-instruments)
     ///
     /// # Arguments
     /// * `request` - The get account instruments request

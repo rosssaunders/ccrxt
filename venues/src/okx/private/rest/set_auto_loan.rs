@@ -24,7 +24,7 @@ pub struct SetAutoLoanResponse {
 impl RestClient {
     /// Set auto loan
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#trading-account-rest-api-set-auto-loan
+    /// [docs](https://www.okx.com/docs-v5/en/#trading-account-rest-api-set-auto-loan)
     ///
     /// # Arguments
     /// * `request` - The set auto loan request

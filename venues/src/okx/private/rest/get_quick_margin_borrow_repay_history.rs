@@ -72,7 +72,7 @@ pub struct QuickMarginBorrowRepayHistory {
 impl RestClient {
     /// Get quick margin borrow repay history
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#trading-account-rest-api-get-borrow-and-repay-history-in-quick-margin-mode
+    /// [docs](https://www.okx.com/docs-v5/en/#trading-account-rest-api-get-borrow-and-repay-history-in-quick-margin-mode)
     ///
     /// # Arguments
     /// * `request` - The get quick margin borrow repay history request
