@@ -9,23 +9,19 @@ use serde::{Serialize, de::DeserializeOwned};
 use crate::bingx::spot::{ApiResponse, EndpointType, Errors, RateLimiter, RestResult};
 
 /// Public REST client for BingX exchange
-///
 /// This client handles all public API endpoints that do not require authentication.
 /// It provides automatic rate limiting and error handling for public market data.
 #[derive(Clone)]
 pub struct RestClient {
     /// The base URL for the BingX public REST API (e.g., "https://open-api.bingx.com")
-    ///
     /// This is used as the prefix for all endpoint requests.
     pub base_url: Cow<'static, str>,
 
     /// The underlying HTTP client used for making requests.
-    ///
     /// This is reused for connection pooling and performance.
     pub http_client: Arc<dyn HttpClient>,
 
     /// The rate limiter used to manage request rates and prevent hitting API limits.
-    ///
     /// This is used to ensure compliance with BingX's rate limits for public endpoints.
     pub rate_limiter: RateLimiter,
 }

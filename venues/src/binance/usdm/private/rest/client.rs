@@ -38,7 +38,9 @@ impl UsdmPrivateRestClient {
     /// ```no_run
     /// use std::sync::Arc;
     /// use rest::{secrets::SecretString, HttpClient};
-    /// use venues::binance::usdm::private::rest::{UsdmClient, Credentials};
+    /// // Use public re-exports instead of private module paths
+    /// use venues::binance::shared::credentials::Credentials;
+    /// use venues::binance::usdm::PrivateRestClient as UsdmClient;
     ///
     /// # #[derive(Debug)]
     /// # struct MyHttpClient;

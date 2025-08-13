@@ -38,7 +38,9 @@ impl CoinmRestClient {
     /// ```no_run
     /// use std::sync::Arc;
     /// use rest::{secrets::SecretString, HttpClient};
-    /// use venues::binance::coinm::private::rest::{RestClient, Credentials};
+    /// // Use public re-exports instead of private module paths
+    /// use venues::binance::shared::credentials::Credentials;
+    /// use venues::binance::coinm::PrivateRestClient as RestClient;
     ///
     /// # #[derive(Debug)]
     /// # struct MyHttpClient;

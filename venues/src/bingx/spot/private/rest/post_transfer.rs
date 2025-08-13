@@ -47,7 +47,6 @@ impl RestClient {
     ///
     /// Rate limit: 2/s by UID & 2 by IP in group
     ///
-
     /// # Arguments
     /// * `request` - The asset transfer request
     ///

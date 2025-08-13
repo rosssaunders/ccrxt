@@ -19,6 +19,7 @@ pub mod spot_borrow_check;
 pub mod get_position_info;
 
 pub use client::RestClient;
+#[allow(unused_imports)]
 pub use credentials::Credentials;
 pub use get_wallet_balance::{
     BalanceData, GetWalletBalanceRequest, GetWalletBalanceResponse, WalletBalance,

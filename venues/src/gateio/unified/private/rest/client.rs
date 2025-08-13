@@ -60,7 +60,7 @@ impl RestClient {
         query: &str,
         body: &str,
         timestamp: &str,
-    ) -> String {
+    ) -> RestResult<String> {
         // Calculate body hash
         let mut hasher = Sha512::new();
         hasher.update(body.as_bytes());
@@ -75,11 +75,16 @@ impl RestClient {
         // Generate HMAC-SHA512 signature
         let mut mac =
             HmacSha512::new_from_slice(self.credentials.api_secret.expose_secret().as_bytes())
-                .expect("HMAC can take key of any size");
+                .map_err(|e| {
+                    crate::gateio::unified::GateIoError::Internal(format!(
+                        "failed to create HMAC: {}",
+                        e
+                    ))
+                })?;
         mac.update(signature_string.as_bytes());
         let signature = mac.finalize();
 
-        hex::encode(signature.into_bytes())
+        Ok(hex::encode(signature.into_bytes()))
     }
 
     /// Make a GET request to the API without query parameters
@@ -200,7 +205,7 @@ impl RestClient {
 
         // Generate signature
         let signature =
-            self.generate_signature(method_str, endpoint, &query_string, &body_str, &timestamp);
+            self.generate_signature(method_str, endpoint, &query_string, &body_str, &timestamp)?;
 
         // Build URL with query parameters
         let full_url = if !query_string.is_empty() {

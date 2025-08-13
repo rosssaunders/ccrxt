@@ -55,6 +55,7 @@ pub use create_oco_order::CreateOcoOrderResponse;
 pub use create_order_list::{
     CreateOrderListRequest, CreateOrderListResponse, OrderCreationResult, OrderListItem,
 };
+#[allow(unused_imports)]
 pub use credentials::Credentials;
 pub use get_order_history_by_currency::{
     GetOrderHistoryByCurrencyRequest, GetOrderHistoryByCurrencyResponse,

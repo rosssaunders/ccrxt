@@ -368,7 +368,7 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use rest::NativeHttpClient;
+    use rest::{NativeHttpClient, secrets::SecretString};
 
     use super::*;
 
@@ -477,11 +477,8 @@ mod tests {
         assert!(headers.contains_key("KC-API-KEY-VERSION"));
 
         // The signature should be deterministic for the same inputs
-        let credentials2 = Credentials {
-            api_key: SecretString::from("api_key".to_string()),
-            api_secret: SecretString::from("api_secret".to_string()),
-            api_passphrase: SecretString::from("api_passphrase".to_string()),
-        };
+        // Use the same credentials again to verify determinism
+        let credentials2 = mock_credentials();
         let client2 = RestClient::new(
             "https://api-futures.kucoin.com",
             RateLimiter::new(),

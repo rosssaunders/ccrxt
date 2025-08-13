@@ -60,6 +60,7 @@ pub use cancel_batch_orders::CancelBatchOrdersResponse;
 pub use cancel_order::{CancelOrderRequest, CancelOrderResponse};
 pub use client::RestClient;
 pub use close_position::{ClosePositionRequest, ClosePositionResponse};
+#[allow(unused_imports)]
 pub use credentials::Credentials;
 pub use get_account_balance::{AccountBalance, BalanceDetail, GetAccountBalanceRequest};
 pub use get_account_config::{AccountConfig, GetAccountConfigRequest, IpRestriction};
