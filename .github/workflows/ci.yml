@@ -6,6 +6,10 @@ on:
 env:
   CARGO_TERM_COLOR: always
 
+# Restrict defaults; escalate per job as needed
+permissions:
+  contents: read
+
 jobs:
   linux-core:
     runs-on: ubuntu-latest
@@ -28,10 +32,22 @@ jobs:
 
   security:
     runs-on: ubuntu-latest
+    # Needs to create Check Runs when not from forks
+    permissions:
+      checks: write
+      contents: read
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
+      # Use audit-check with PR check annotations only when the PR is not from a fork
       - uses: actions-rs/audit-check@v1
+        if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork == false }}
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+      # Fallback for forked PRs where the token cannot create check runs
+      - name: Cargo audit (fork-safe)
+        if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == true }}
+        run: |
+          cargo install cargo-audit
+          cargo audit --json
       - uses: EmbarkStudios/cargo-deny-action@v1
