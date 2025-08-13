@@ -37,7 +37,7 @@ parking_lot.workspace = true
 tracing.workspace = true
 ratatui = { workspace = true }
 # Align crossterm with ratatui's transitive dependency to avoid duplicates
-crossterm = "0.28.1"
+crossterm = "0.29.0"
 rust_decimal.workspace = true
 rust_decimal_macros = "1.36.0"
 clap.workspace = true
@@ -51,8 +51,8 @@ url.workspace = true
 num_enum = "0.7.3"
 secrecy = "0.10.3"
 urlencoding = "2.1"
-strum = "0.26.3"
-strum_macros = "0.26.4"
+strum = "0.27.2"
+strum_macros = "0.27.2"
 ring = "0.17.14"
 
 [lints]
