@@ -268,8 +268,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use rest::secrets::SecretString;
+
+    use super::*;
 
     #[test]
     fn test_private_client_creation() {
@@ -281,12 +282,7 @@ mod tests {
         let client = Client::new();
         let rate_limiter = RateLimiter::new();
 
-        let rest_client = RestClient::new(
-            credentials,
-            "https://www.okx.com",
-            client,
-            rate_limiter,
-        );
+        let rest_client = RestClient::new(credentials, "https://www.okx.com", client, rate_limiter);
 
         assert_eq!(rest_client.base_url(), "https://www.okx.com");
     }
@@ -301,12 +297,7 @@ mod tests {
         let client = Client::new();
         let rate_limiter = RateLimiter::new();
 
-        let rest_client = RestClient::new(
-            credentials,
-            "https://www.okx.com",
-            client,
-            rate_limiter,
-        );
+        let rest_client = RestClient::new(credentials, "https://www.okx.com", client, rate_limiter);
 
         let timestamp = "2020-12-08T09:08:57.715Z";
         let method = "GET";
@@ -331,12 +322,7 @@ mod tests {
         let client = Client::new();
         let rate_limiter = RateLimiter::new();
 
-        let rest_client = RestClient::new(
-            credentials,
-            "https://www.okx.com",
-            client,
-            rate_limiter,
-        );
+        let rest_client = RestClient::new(credentials, "https://www.okx.com", client, rate_limiter);
 
         // Verify rate limiting works
         let result = rest_client

@@ -172,9 +172,10 @@ impl RestClient {
 mod tests {
     use std::sync::Arc;
 
+    use rest::secrets::SecretString;
+
     use super::*;
     use crate::deribit::AccountTier;
-    use rest::secrets::SecretString;
 
     #[test]
     fn test_private_client_creation() {

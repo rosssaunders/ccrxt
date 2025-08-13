@@ -109,7 +109,7 @@ impl RestClient {
     ///
     /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Premium-Index-Kline-Data)
     ///
-    /// Rate limit: based on `limit` parameter - [1,100): 1, [100,500): 2, [500,1000]: 5, >1000: 10
+    /// Rate limit: based on `limit` parameter - \[1,100): 1, \[100,500): 2, \[500,1000]: 5, >1000: 10
     ///
     /// # Arguments
     /// * `request` - Parameters for the premium index kline data endpoint

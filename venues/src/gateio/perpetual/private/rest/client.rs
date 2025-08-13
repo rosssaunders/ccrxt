@@ -13,9 +13,12 @@ use sha2::{Digest, Sha512};
 
 type HmacSha512 = Hmac<Sha512>;
 
-use crate::gateio::perpetual::{RestResult, rate_limit::RateLimiter};
-use crate::gateio::shared::credentials::Credentials;
 use rest::secrets::ExposableSecret;
+
+use crate::gateio::{
+    perpetual::{RestResult, rate_limit::RateLimiter},
+    shared::credentials::Credentials,
+};
 
 const LIVE_URL: &str = "https://api.gateio.ws/api/v4";
 const TESTNET_URL: &str = "https://api-testnet.gateapi.io/api/v4";

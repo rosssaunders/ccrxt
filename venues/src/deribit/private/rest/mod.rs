@@ -14,10 +14,10 @@ pub mod cancel_order;
 pub mod cancel_quotes;
 pub mod cancel_withdrawal;
 pub mod client;
-pub mod credentials;
 pub mod create_block_rfq;
 pub mod create_combo;
 pub mod create_deposit_address;
+pub mod credentials;
 pub mod disable_cancel_on_disconnect;
 pub mod edit_block_rfq_quote;
 pub mod enable_cancel_on_disconnect;
@@ -86,7 +86,6 @@ pub use cancel_order::{CancelOrderRequest, CancelOrderResponse, CancelledOrder};
 pub use cancel_quotes::{CancelQuotesRequest, CancelQuotesResponse, CancelType};
 pub use cancel_withdrawal::{CancelWithdrawalRequest, CancelWithdrawalResponse};
 pub use client::RestClient;
-pub use credentials::Credentials;
 pub use create_block_rfq::{
     CreateBlockRfqLeg, CreateBlockRfqRequest, CreateBlockRfqResponse, CreateBlockRfqResult, Quote,
     ResponseHedge as CreateBlockRfqResponseHedge, ResponseLeg as CreateBlockRfqResponseLeg,
@@ -95,6 +94,7 @@ pub use create_combo::{
     CreateComboLeg, CreateComboRequest, CreateComboResponse, CreateComboResult, CreateComboTrade,
 };
 pub use create_deposit_address::{CreateDepositAddressRequest, CreateDepositAddressResponse};
+pub use credentials::Credentials;
 pub use disable_cancel_on_disconnect::{
     DisableCancelOnDisconnectRequest, DisableCancelOnDisconnectResponse,
 };

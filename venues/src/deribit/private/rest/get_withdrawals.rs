@@ -70,13 +70,11 @@ impl RestClient {
 mod tests {
     use std::sync::Arc;
 
-    use rest::secrets::ExposableSecret;
+    use rest::secrets::{ExposableSecret, SecretString};
     use serde_json::{Value, json};
 
     use super::*;
-    use crate::deribit::private::rest::credentials::Credentials;
-    use crate::deribit::{AccountTier, WithdrawalState};
-    use rest::secrets::SecretString;
+    use crate::deribit::{AccountTier, WithdrawalState, private::rest::credentials::Credentials};
 
     #[test]
     fn test_request_parameters_serialization_required_only() {

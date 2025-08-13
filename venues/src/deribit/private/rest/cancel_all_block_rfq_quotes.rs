@@ -55,13 +55,13 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use serde_json::{Value, json};
     use std::sync::Arc;
 
-    use super::*;
-    use crate::deribit::AccountTier;
-    use crate::deribit::private::rest::credentials::Credentials;
     use rest::secrets::SecretString;
+    use serde_json::{Value, json};
+
+    use super::*;
+    use crate::deribit::{AccountTier, private::rest::credentials::Credentials};
 
     #[test]
     fn test_request_parameters_serialization_minimal() {

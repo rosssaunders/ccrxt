@@ -399,8 +399,7 @@ mod tests {
         };
         let http_client = Arc::new(rest::native::NativeHttpClient::default());
 
-        let rest_client =
-            RestClient::new(credentials, "https://api.crypto.com", http_client);
+        let rest_client = RestClient::new(credentials, "https://api.crypto.com", http_client);
 
         assert_eq!(rest_client.base_url, "https://api.crypto.com");
     }
@@ -413,8 +412,7 @@ mod tests {
         };
         let http_client = Arc::new(rest::native::NativeHttpClient::default());
 
-        let rest_client =
-            RestClient::new(credentials, "https://api.crypto.com", http_client);
+        let rest_client = RestClient::new(credentials, "https://api.crypto.com", http_client);
 
         let params = json!({
             "order_id": 53287421324_u64

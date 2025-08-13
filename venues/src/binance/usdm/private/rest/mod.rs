@@ -1,5 +1,6 @@
 pub mod client;
 pub use client::UsdmClient;
+
 pub use crate::binance::shared::credentials::Credentials;
 
 // Order management endpoints

@@ -104,7 +104,7 @@ impl RestClient {
     ///
     /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Mark-Price-Kline-Candlestick-Data)
     ///
-    /// Rate limit: based on parameter LIMIT - [1,100)[]: 1, [100,500)[]: 2, [500,1000][]: 5, >1000: 10
+    /// Rate limit: based on parameter LIMIT - \[1,100): 1, \[100,500): 2, \[500,1000]: 5, >1000: 10
     ///
     /// # Arguments
     /// * `params` - The mark price klines request parameters

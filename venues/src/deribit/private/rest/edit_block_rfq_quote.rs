@@ -84,14 +84,12 @@ impl RestClient {
 mod tests {
     use std::sync::Arc;
 
-    use rest::secrets::ExposableSecret;
+    use rest::secrets::{ExposableSecret, SecretString};
     /// REST API endpoint constant
     use serde_json::{Value, json};
 
     use super::{super::add_block_rfq_quote::Side, *};
-    use crate::deribit::AccountTier;
-    use crate::deribit::private::rest::credentials::Credentials;
-    use rest::secrets::SecretString;
+    use crate::deribit::{AccountTier, private::rest::credentials::Credentials};
 
     #[test]
     fn test_request_serialization_minimal() {

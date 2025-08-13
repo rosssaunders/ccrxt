@@ -79,9 +79,9 @@ impl RestClient {
     /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Premium-Index-Kline-Data)
     ///
     /// Weight: Based on parameter LIMIT:
-    /// - [1, 100): 1
-    /// - [100, 500): 2
-    /// - [500, 1000]: 5
+    /// - \[1, 100): 1
+    /// - \[100, 500): 2
+    /// - \[500, 1000]: 5
     /// - >1000: 10
     ///
     /// # Arguments

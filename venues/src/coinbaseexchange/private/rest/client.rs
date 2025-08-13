@@ -16,8 +16,7 @@ use rest::{
 use serde::{Serialize, de::DeserializeOwned};
 use sha2::Sha256;
 
-use super::credentials::Credentials;
-use super::get_account_balances::PaginationInfo;
+use super::{credentials::Credentials, get_account_balances::PaginationInfo};
 use crate::coinbaseexchange::{EndpointType, Errors, RateLimiter, RestResult};
 
 /// Private REST client for Coinbase Exchange
@@ -546,8 +545,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use rest::secrets::SecretString;
+
+    use super::*;
 
     #[test]
     fn test_signature_generation() {

@@ -67,9 +67,9 @@ impl RestClient {
     /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Continuous-Contract-Kline-Candlestick-Data)
     ///
     /// Rate limit: Weight based on parameter LIMIT:
-    /// - [1,100): 1
-    /// - [100, 500): 2
-    /// - [500, 1000]: 5
+    /// - \[1,100): 1
+    /// - \[100, 500): 2
+    /// - \[500, 1000]: 5
     /// - > 1000: 10
     ///
     /// # Arguments
