@@ -189,7 +189,7 @@ impl RestClient {
     ///
     /// Gets details for all trading accounts accessible by the API key used in the request.
     ///
-    /// [docs]: https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/accounts/trading-accounts
+    /// [docs](https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/accounts/trading-accounts)
     ///
     /// # Returns
     /// Array of trading account information

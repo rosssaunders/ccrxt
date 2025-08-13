@@ -56,7 +56,7 @@ impl RestClient {
     /// Retrieve the current orderbook state for a specific market.
     /// The hybrid orderbook combines both limit orders and AMM liquidity.
     ///
-    /// [docs]: https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/markets/-symbol-/orderbook/hybrid
+    /// [docs](https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/markets/-symbol-/orderbook/hybrid)
     ///
     /// # Arguments
     /// * `symbol` - Market symbol

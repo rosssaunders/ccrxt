@@ -25,7 +25,7 @@ impl RestClient {
     /// The lower bound of nonce range is EPOCH start of day in microseconds,
     /// and upper bound of nonce range is EPOCH end of day in microseconds.
     ///
-    /// [docs]: https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/nonce
+    /// [docs](https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/nonce)
     ///
     /// # Returns
     /// A `RestResult<Nonce>` containing the nonce range information

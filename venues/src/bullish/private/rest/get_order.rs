@@ -22,7 +22,7 @@ impl RestClient {
     ///
     /// Retrieve details for a specific order by its order ID.
     ///
-    /// [docs]: https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v2/orders/-orderId-
+    /// [docs](https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v2/orders/-orderId-)
     ///
     /// Rate limit: per private trading endpoints
     ///

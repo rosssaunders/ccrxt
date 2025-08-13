@@ -86,7 +86,7 @@ impl RestClient {
     /// Retrieve a list of orders placed by a trading account with specified filters.
     /// Only the last 24 hours of data is available for querying.
     ///
-    /// [docs]: https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v2/orders
+    /// [docs](https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v2/orders)
     ///
     /// # Arguments
     /// * `params` - Query parameters for filtering orders

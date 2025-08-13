@@ -62,7 +62,7 @@ impl RestClient {
     ///
     /// Retrieve a list of recent public trades for a specific market.
     ///
-    /// [docs]: https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/markets/-symbol-/trades
+    /// [docs](https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/markets/-symbol-/trades)
     ///
     /// # Arguments
     /// * `symbol` - Market symbol

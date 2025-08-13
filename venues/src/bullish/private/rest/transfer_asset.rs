@@ -78,7 +78,7 @@ impl RestClient {
     /// Sends a command to transfer asset between two trading accounts.
     /// Requires JWT (Authorization) and BX-* signature headers are handled by the client.
     ///
-    /// [docs]: https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#post-/v1/command
+    /// [docs](https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#post-/v1/command)
     pub async fn transfer_asset(
         &mut self,
         request: TransferAssetRequest,

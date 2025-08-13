@@ -15,7 +15,6 @@ pub enum CommandType {
     V3CancelOrder,
 }
 
-
 /// Request parameters for cancelling an order.
 ///
 /// Exactly one of `order_id` or `client_order_id` should be provided.
@@ -67,7 +66,7 @@ impl RestClient {
     ///
     /// Submits a cancel command for a specific order by `orderId` or `clientOrderId`.
     ///
-    /// [docs]: https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#post-/v2/command#cancellations
+    /// [docs](https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#post-/v2/command#cancellations)
     ///
     /// Rate limit: private orders category
     ///

@@ -16,7 +16,6 @@ pub enum CommandType {
     V1UnsetDelayedCancelAllOrders,
 }
 
-
 /// Request parameters for unsetting delayed cancel all orders.
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -44,7 +43,7 @@ impl RestClient {
     ///
     /// Cancels the scheduled cancel-all operation.
     ///
-    /// [docs]: https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#post-/v2/command#cancellations
+    /// [docs](https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#post-/v2/command#cancellations)
     pub async fn unset_delayed_cancel_all_orders(
         &mut self,
         request: UnsetDelayedCancelAllOrdersRequest,

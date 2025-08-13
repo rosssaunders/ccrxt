@@ -170,7 +170,7 @@ impl RestClient {
     ///
     /// Retrieve information for all assets available on the exchange.
     ///
-    /// [docs]: https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/assets
+    /// [docs](https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/assets)
     ///
     /// # Returns
     /// List of all assets with their properties and trading parameters
@@ -183,7 +183,7 @@ impl RestClient {
     ///
     /// Retrieve detailed information for a specific asset.
     ///
-    /// [docs]: https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/assets/-symbol-
+    /// [docs](https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/assets/-symbol-)
     ///
     /// # Arguments
     /// * `request` - Asset request parameters

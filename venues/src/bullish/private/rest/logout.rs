@@ -8,7 +8,7 @@ impl RestClient {
     ///
     /// Logout of the session associated with the JWT. Requires bearer token in authorization header.
     ///
-    /// [docs]: https://api.exchange.bullish.com/trading-api/v1/users/logout
+    /// [docs](https://api.exchange.bullish.com/trading-api/v1/users/logout)
     ///
     /// Rate limit: True
     ///

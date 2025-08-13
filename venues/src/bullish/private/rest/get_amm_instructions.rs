@@ -34,7 +34,7 @@ impl RestClient {
     /// Returns active and/or historical AMM instructions for a trading account, optionally filtered by symbol.
     /// Supports Bullish-style cursor pagination via PaginationParams.
     ///
-    /// [docs]: https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v2/amm-instructions
+    /// [docs](https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v2/amm-instructions)
     pub async fn get_amm_instructions(
         &mut self,
         params: GetAmmInstructionsParams,

@@ -13,7 +13,6 @@ pub enum CommandType {
     V1CancelAllOrdersByMarket,
 }
 
-
 /// Request parameters for cancelling all orders for a specific market.
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -43,7 +42,7 @@ impl RestClient {
     ///
     /// Cancels all outstanding orders for the given market and trading account.
     ///
-    /// [docs]: https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#post-/v2/command#cancellations
+    /// [docs](https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#post-/v2/command#cancellations)
     pub async fn cancel_all_orders_by_market(
         &mut self,
         request: CancelAllOrdersByMarketRequest,

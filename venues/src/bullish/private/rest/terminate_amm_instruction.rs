@@ -53,7 +53,7 @@ pub struct TerminateAmmInstructionResponseV3 {
 impl RestClient {
     /// Terminate AMM Instruction (V3TerminateAMMInstruction)
     ///
-    /// [docs]: https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#post-/v2/amm-instructions
+    /// [docs](https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#post-/v2/amm-instructions)
     pub async fn terminate_amm_instruction(
         &mut self,
         request: TerminateAmmInstructionRequest,

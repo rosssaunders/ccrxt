@@ -76,7 +76,7 @@ impl RestClient {
     ///
     /// Retrieves historical candlestick data for a specific market.
     ///
-    /// [docs]: https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/markets/-symbol-/tick
+    /// [docs](https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/markets/-symbol-/tick)
     ///
     /// # Arguments
     /// * `request` - Request parameters containing the market symbol and optional filters

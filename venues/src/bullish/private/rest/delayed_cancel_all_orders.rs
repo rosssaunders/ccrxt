@@ -38,7 +38,6 @@ pub enum DelaySeconds {
     Sixty,
 }
 
-
 /// Request parameters for delayed cancel all orders.
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -73,7 +72,7 @@ impl RestClient {
     ///
     /// Schedules a cancel-all within a delay window.
     ///
-    /// [docs]: https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#post-/v2/command#cancellations
+    /// [docs](https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#post-/v2/command#cancellations)
     pub async fn delayed_cancel_all_orders(
         &mut self,
         request: DelayedCancelAllOrdersRequest,
