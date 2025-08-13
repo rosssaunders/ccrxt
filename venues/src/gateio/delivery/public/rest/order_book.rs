@@ -62,7 +62,7 @@ impl RestClient {
     /// Retrieves the order book for a specific delivery contract.
     /// Bids are sorted by price high to low, asks are sorted by price low to high.
     ///
-    /// [docs]: https://www.gate.io/docs/developers/apiv4/en/#get-delivery-order-book
+    /// [docs](https://www.gate.io/docs/developers/apiv4/en/#get-delivery-order-book)
     ///
     /// Rate limit: 10 requests per second
     ///

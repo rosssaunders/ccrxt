@@ -36,7 +36,7 @@ impl RestClient {
     /// Retrieve spot trading account balances for all currencies or filter by a specific currency.
     /// Returns balance information including available and locked amounts for spot trading.
     ///
-    /// [docs]: https://www.gate.io/docs/developers/apiv4/#list-spot-accounts
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#list-spot-accounts)
     ///
     /// Rate limit: 100 requests per second
     ///

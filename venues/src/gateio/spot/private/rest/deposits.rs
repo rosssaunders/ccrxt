@@ -128,7 +128,7 @@ impl RestClient {
     /// includes addresses for all supported blockchain networks for that currency, allowing
     /// deposits from multiple networks where applicable.
     ///
-    /// [docs]: https://www.gate.io/docs/developers/apiv4/en/#generate-currency-deposit-address
+    /// [docs](https://www.gate.io/docs/developers/apiv4/en/#generate-currency-deposit-address)
     ///
     /// Rate limit: 100 requests per second
     ///
@@ -150,7 +150,7 @@ impl RestClient {
     /// by currency, time range, and pagination. Provides comprehensive transaction details
     /// including blockchain information and current status.
     ///
-    /// [docs]: https://www.gate.io/docs/developers/apiv4/en/#retrieve-deposit-records
+    /// [docs](https://www.gate.io/docs/developers/apiv4/en/#retrieve-deposit-records)
     ///
     /// Rate limit: 100 requests per second
     ///

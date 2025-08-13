@@ -97,7 +97,7 @@ impl RestClient {
     /// position closures, or risk management. Supports multiple liquidation strategies including
     /// position closure, automatic borrowing for margin maintenance, and debt repayment.
     ///
-    /// [docs]: https://www.gate.io/docs/developers/apiv4/en/#create-cross-liquidate-orders
+    /// [docs](https://www.gate.io/docs/developers/apiv4/en/#create-cross-liquidate-orders)
     ///
     /// Rate limit: 100 requests per second
     ///

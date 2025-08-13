@@ -46,7 +46,7 @@ impl RestClient {
     ///
     /// This endpoint returns settlement history for delivery contracts.
     ///
-    /// [docs]: https://www.gate.com/docs/developers/apiv4/#query-settlement-records
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#query-settlement-records)
     ///
     /// Rate limit: 10 requests per second
     ///

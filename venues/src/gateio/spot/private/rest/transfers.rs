@@ -59,7 +59,7 @@ impl RestClient {
     /// Transfer funds between different account types (spot, margin, futures,
     /// delivery, cross_margin, options) within the same user account.
     ///
-    /// [docs]: https://www.gate.com/docs/developers/apiv4/#transfer-between-trading-accounts
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#transfer-between-trading-accounts)
     ///
     /// Rate limit: 100 requests per second
     ///

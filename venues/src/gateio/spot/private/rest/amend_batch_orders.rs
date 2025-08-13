@@ -113,7 +113,7 @@ impl RestClient {
     /// Amend multiple orders in batch. Batch amendment can change the order price,
     /// amount, and account mode. Returns information about each order amendment attempt.
     ///
-    /// [docs]: https://www.gate.com/docs/developers/apiv4/#batch-modification-of-orders
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#batch-modification-of-orders)
     ///
     /// Rate limit: 100 requests per second
     ///

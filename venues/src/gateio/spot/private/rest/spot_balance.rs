@@ -8,7 +8,7 @@ impl RestClient {
     /// Retrieve the spot trading account balance for a specified currency.
     /// Returns balance information including available and locked amounts for the requested currency.
     ///
-    /// [docs]: https://www.gate.io/docs/developers/apiv4/#list-spot-accounts
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#list-spot-accounts)
     ///
     /// Rate limit: 100 requests per second
     ///
@@ -74,7 +74,8 @@ mod tests {
 
     #[test]
     fn test_spot_account_balance_filtering() {
-        let accounts = [SpotAccount {
+        let accounts = [
+            SpotAccount {
                 currency: "BTC".to_string(),
                 available: "0.1".to_string(),
                 locked: "0.0".to_string(),
@@ -83,7 +84,8 @@ mod tests {
                 currency: "ETH".to_string(),
                 available: "2.5".to_string(),
                 locked: "0.5".to_string(),
-            }];
+            },
+        ];
 
         // Test finding BTC
         let btc_result = accounts.iter().find(|acc| acc.currency == "BTC");
@@ -134,7 +136,8 @@ mod tests {
     #[test]
     fn test_spot_account_balance_duplicate_currencies() {
         // This shouldn't happen in practice, but test the logic
-        let accounts = [SpotAccount {
+        let accounts = [
+            SpotAccount {
                 currency: "BTC".to_string(),
                 available: "1.0".to_string(),
                 locked: "0.0".to_string(),
@@ -143,7 +146,8 @@ mod tests {
                 currency: "BTC".to_string(),
                 available: "2.0".to_string(),
                 locked: "0.1".to_string(),
-            }];
+            },
+        ];
 
         // Should find the first match
         let btc_result = accounts.iter().find(|acc| acc.currency == "BTC");
@@ -154,7 +158,8 @@ mod tests {
 
     #[test]
     fn test_spot_account_balance_case_sensitivity() {
-        let accounts = [SpotAccount {
+        let accounts = [
+            SpotAccount {
                 currency: "btc".to_string(),
                 available: "1.0".to_string(),
                 locked: "0.0".to_string(),
@@ -163,7 +168,8 @@ mod tests {
                 currency: "BTC".to_string(),
                 available: "2.0".to_string(),
                 locked: "0.1".to_string(),
-            }];
+            },
+        ];
 
         // Case sensitive search
         let lowercase = accounts.iter().find(|acc| acc.currency == "btc");
@@ -208,7 +214,8 @@ mod tests {
 
     #[test]
     fn test_spot_account_balance_zero_balances() {
-        let accounts = [SpotAccount {
+        let accounts = [
+            SpotAccount {
                 currency: "BTC".to_string(),
                 available: "0".to_string(),
                 locked: "0".to_string(),
@@ -217,7 +224,8 @@ mod tests {
                 currency: "ETH".to_string(),
                 available: "0.0".to_string(),
                 locked: "0.0".to_string(),
-            }];
+            },
+        ];
 
         let btc = accounts.iter().find(|acc| acc.currency == "BTC").unwrap();
         assert_eq!(btc.available, "0");
@@ -256,7 +264,8 @@ mod tests {
 
     #[test]
     fn test_spot_account_balance_mixed_case_currency() {
-        let accounts = [SpotAccount {
+        let accounts = [
+            SpotAccount {
                 currency: "wBTC".to_string(),
                 available: "0.5".to_string(),
                 locked: "0.1".to_string(),
@@ -265,7 +274,8 @@ mod tests {
                 currency: "WETH".to_string(),
                 available: "2.0".to_string(),
                 locked: "0.5".to_string(),
-            }];
+            },
+        ];
 
         let wbtc = accounts.iter().find(|acc| acc.currency == "wBTC");
         assert!(wbtc.is_some());

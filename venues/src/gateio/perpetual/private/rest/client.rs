@@ -3,7 +3,10 @@ use std::{
     time::{SystemTime, UNIX_EPOCH},
 };
 
-use rest::{HttpClient, http_client::{Method as HttpMethod, RequestBuilder}};
+use rest::{
+    HttpClient,
+    http_client::{Method as HttpMethod, RequestBuilder},
+};
 use ring::hmac;
 use serde::{Serialize, de::DeserializeOwned};
 use sha2::{Digest, Sha512};
@@ -25,7 +28,12 @@ pub struct RestClient {
 
 impl RestClient {
     /// Create a new private REST client
-    pub fn new(http_client: Arc<dyn HttpClient>, api_key: String, api_secret: String, testnet: bool) -> RestResult<Self> {
+    pub fn new(
+        http_client: Arc<dyn HttpClient>,
+        api_key: String,
+        api_secret: String,
+        testnet: bool,
+    ) -> RestResult<Self> {
         Ok(Self {
             http_client,
             base_url: if testnet { TESTNET_URL } else { LIVE_URL }.to_string(),
@@ -207,10 +215,16 @@ impl RestClient {
                 .body(body_str.into_bytes());
         }
 
-        let response = self.http_client
+        let response = self
+            .http_client
             .execute(request.build())
             .await
-            .map_err(|e| crate::gateio::perpetual::GateIoError::Network(format!("HTTP request failed: {}", e)))?;
+            .map_err(|e| {
+                crate::gateio::perpetual::GateIoError::Network(format!(
+                    "HTTP request failed: {}",
+                    e
+                ))
+            })?;
 
         let status = response.status;
         let headers =
@@ -221,11 +235,14 @@ impl RestClient {
             tracing::debug!("Rate limit status for {}: {:?}", endpoint, rate_status);
         }
 
-        let response_text = response
-            .text()
-            .map_err(|e| crate::gateio::perpetual::GateIoError::Network(format!("Failed to read response: {}", e)))?;
+        let response_text = response.text().map_err(|e| {
+            crate::gateio::perpetual::GateIoError::Network(format!(
+                "Failed to read response: {}",
+                e
+            ))
+        })?;
 
-        if status >= 200 && status < 300 {
+        if (200..300).contains(&status) {
             let data: T = serde_json::from_str(&response_text)
                 .map_err(crate::gateio::perpetual::GateIoError::Json)?;
             Ok(data)

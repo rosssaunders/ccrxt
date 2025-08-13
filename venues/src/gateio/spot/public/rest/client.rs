@@ -3,7 +3,10 @@
 
 use std::sync::Arc;
 
-use rest::{HttpClient, http_client::{Method as HttpMethod, RequestBuilder}};
+use rest::{
+    HttpClient,
+    http_client::{Method as HttpMethod, RequestBuilder},
+};
 use serde::{Serialize, de::DeserializeOwned};
 
 use crate::gateio::spot::{RestResult, rate_limit::RateLimiter};
@@ -56,11 +59,15 @@ impl RestClient {
         })?;
 
         let url = format!("{}{}", self.base_url, endpoint);
-        
+
         // Build URL with query parameters
         let full_url = if let Some(params) = query {
-            let query_string = serde_urlencoded::to_string(params)
-                .map_err(|e| crate::gateio::spot::GateIoError::InvalidParameter(format!("Failed to serialize query: {}", e)))?;
+            let query_string = serde_urlencoded::to_string(params).map_err(|e| {
+                crate::gateio::spot::GateIoError::InvalidParameter(format!(
+                    "Failed to serialize query: {}",
+                    e
+                ))
+            })?;
             if query_string.is_empty() {
                 url
             } else {
@@ -71,10 +78,9 @@ impl RestClient {
         };
 
         let request = RequestBuilder::new(HttpMethod::Get, full_url).build();
-        let response = self.http_client
-            .execute(request)
-            .await
-            .map_err(|e| crate::gateio::spot::GateIoError::Network(format!("HTTP request failed: {}", e)))?;
+        let response = self.http_client.execute(request).await.map_err(|e| {
+            crate::gateio::spot::GateIoError::Network(format!("HTTP request failed: {}", e))
+        })?;
 
         let status = response.status;
         let headers =
@@ -85,11 +91,11 @@ impl RestClient {
             tracing::debug!("Rate limit status for {}: {:?}", endpoint, status);
         }
 
-        let body = response
-            .text()
-            .map_err(|e| crate::gateio::spot::GateIoError::Network(format!("Failed to read response: {}", e)))?;
+        let body = response.text().map_err(|e| {
+            crate::gateio::spot::GateIoError::Network(format!("Failed to read response: {}", e))
+        })?;
 
-        if status >= 200 && status < 300 {
+        if (200..300).contains(&status) {
             let data: T = serde_json::from_str(&body)
                 .map_err(|e| crate::gateio::spot::GateIoError::Json(e))?;
             Ok(data)
