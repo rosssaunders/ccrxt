@@ -3,8 +3,9 @@
 //! These tests verify the functionality of perpetual futures endpoints.
 //! Tests run against the live Gate.io API using real market data.
 
-use rest::native::NativeHttpClient;
 use std::sync::Arc;
+
+use rest::native::NativeHttpClient;
 use tokio;
 use venues::gateio::{perpetual::public::rest::RestClient, shared::enums::CandlestickInterval};
 

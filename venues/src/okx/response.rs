@@ -28,7 +28,7 @@ where
             .map(|item| T::deserialize(item).map_err(serde::de::Error::custom))
             .collect(),
         other => Ok(vec![
-            T::deserialize(other).map_err(serde::de::Error::custom)?
+            T::deserialize(other).map_err(serde::de::Error::custom)?,
         ]),
     }
 }

@@ -10,6 +10,14 @@ applyTo: "venues/src/**"
 - Supporting code (e.g., websockets) must be clean, generic, and venue-agnostic.
 - **CRITICAL**: All HTTP wrappers around REST API endpoints MUST NOT pass HTTP verbs as parameters to avoid branch prediction penalties. Use verb-specific functions (send_get_request, send_post_request, etc.) instead of generic functions that take HTTP method as parameter. See `http-performance.instructions.md` for detailed requirements.
 - **Respect the repository's clippy rules** as defined in `clippy.toml`. All code must pass clippy checks with the project's configured settings.
+- Doc comment links:
+	- For external URLs in Rust doc comments, always use inline Markdown links `[label](url)`.
+	- Do NOT use reference-style link definitions like `[label]: url` inside doc comments (especially inside list items); rustdoc won’t render them there and Clippy will warn with `doc_nested_refdefs`.
+	- Example (preferred):
+    
+		/// - [docs](https://bingx-api.github.io/docs/#/en-us/spot/trade-api.html#Cancel%20all%20Open%20Orders%20on%20a%20Symbol)
+    
+	- Use rustdoc intra-doc links for items within the crate (e.g., `[Type]`, `[module::Type]`); reserve the inline form above for external links.
 - All logging and debugging output MUST use a structured logging facade (`log` or `tracing`). DO NOT use `println!` or `eprintln!` for debugging or production code.
 - **Import and Namespace Usage**: All types and functions MUST be imported at the top of the file and used by their short names throughout the code. DO NOT use fully qualified paths (e.g., `crate::module::Type`) when the type is already imported. Instead of `crate::binance::coinm::ResponseHeaders::default()`, import `ResponseHeaders` and use `ResponseHeaders::default()`.
 - Prefer idiomatic Rust constructs: use iterator adapters (e.g., `filter_map`, `collect`) over manual loops, implement `Display` instead of custom `to_string` methods, and use `#[derive(...)]` for trivial trait implementations (e.g., `Debug`, `Clone`, `Copy`).

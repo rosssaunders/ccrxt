@@ -2,6 +2,7 @@
 name = "venues"
 version = "0.1.0"
 edition = "2024"
+license.workspace = true
 
 [dependencies]
 # Internal dependencies
@@ -11,12 +12,12 @@ rest = { path = "../rest" }
 # External dependencies
 anyhow = "1.0"
 tokio = { version = "1.0", features = ["full"] }
-tokio-tungstenite = { version = "0.27.0", features = ["native-tls"] }
+tokio-tungstenite = { version = "0.27.0", features = ["rustls-tls-native-roots"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 serde_urlencoded = "0.7"
 serde_repr = "0.1"
-reqwest = { version = "0.12.15", features = ["json"] }
+reqwest = { version = "0.12.15", default-features = false, features = ["json", "rustls-tls"] }
 hmac = "0.12"
 sha2 = "0.10"
 hex = "0.4"
@@ -28,10 +29,10 @@ thiserror = "2.0.12"
 parking_lot.workspace = true
 tracing.workspace = true
 ratatui = { workspace = true }
-crossterm = { workspace = true }
+# Align crossterm with ratatui's transitive dependency to avoid duplicates
+crossterm = "0.28.1"
 rust_decimal.workspace = true
 rust_decimal_macros = "1.36.0"
-dotenv = "0.15"
 clap.workspace = true
 aes-gcm = "0.10.3"
 base64 = "0.22.1"
@@ -43,8 +44,8 @@ url.workspace = true
 num_enum = "0.7.3"
 secrecy = "0.10.3"
 urlencoding = "2.1"
-strum = "0.27.1"
-strum_macros = "0.27.1"
+strum = "0.26.3"
+strum_macros = "0.26.4"
 
 [lints]
 workspace = true

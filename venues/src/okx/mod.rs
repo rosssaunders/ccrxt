@@ -33,7 +33,7 @@ pub mod public {
         InstrumentTickBandData, InsuranceFundData, InsuranceFundDetail, InterestRateLoanQuotaData,
         MarkPrice, MarkPriceCandle, OpenInterest, OptSummary, PositionTier, PremiumHistory,
         PriceLimit, RegularInterestRate, RestClient, SettlementDetail, SettlementHistory, TickBand,
-    TickBandInstrumentType, TimeData, VipInterestRate,
+        TickBandInstrumentType, TimeData, VipInterestRate,
     };
 }
 

@@ -18,7 +18,7 @@ thiserror = "2.0.12"
 secrecy = "0.10.3"
 
 # Native dependencies
-reqwest = { version = "0.12.15", features = ["json"], optional = true }
+reqwest = { version = "0.12.15", default-features = false, features = ["json", "rustls-tls"], optional = true }
 tokio = { version = "1.0", features = ["full"], optional = true }
 
 [[example]]

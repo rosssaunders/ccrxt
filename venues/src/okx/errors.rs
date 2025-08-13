@@ -64,7 +64,7 @@ pub struct ErrorResponse {
 }
 
 /// OKX API error codes as documented in their REST API specification
-/// [docs]: https://www.okx.com/docs-v5/en/#overview-error-code
+/// [docs](https://www.okx.com/docs-v5/en/#overview-error-code)
 #[derive(Error, Debug, Clone, Deserialize)]
 pub enum ApiError {
     // Success

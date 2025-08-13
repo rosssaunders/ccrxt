@@ -46,8 +46,7 @@ macro_rules! handle_result {
                     );
                     None
                 } else {
-                    assert!(false, "{} should succeed: {:?}", $endpoint_name, err);
-                    None
+                    panic!("{} should succeed: {:?}", $endpoint_name, err);
                 }
             }
         }

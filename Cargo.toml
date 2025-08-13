@@ -17,7 +17,7 @@ description = "Rust wrappers around crypto exchanges"
 [workspace.dependencies]
 # Async runtime
 tokio = { version = "1.47.0", features = ["full"] }
-tokio-tungstenite = { version = "0.26.2", features = ["native-tls"] }
+tokio-tungstenite = { version = "0.27.0", features = ["rustls-tls-native-roots"] }
 
 # Serialization
 serde = { version = "1.0", features = ["derive"] }
@@ -29,7 +29,7 @@ thiserror = "2.0.12"
 anyhow = "1.0"
 
 # HTTP client
-reqwest = { version = "0.12.22", features = ["json", "native-tls"] }
+reqwest = { version = "0.12.22", default-features = false, features = ["json", "rustls-tls"] }
 
 # Crypto and auth
 hmac = "0.12"
@@ -51,13 +51,13 @@ tracing-subscriber = "0.3"
 
 # New dependencies
 ratatui = "0.29.0"
-crossterm = "0.29.0"
 
 # Build configuration
 [package]
 name = "ccrxt"
 version = "0.1.0"
 edition = "2024"
+license.workspace = true
 
 [dependencies]
 tokio = { workspace = true }
@@ -90,3 +90,4 @@ unimplemented = "deny"                  # No unimplemented!() in production
 indexing_slicing = "deny"               # No direct indexing - could panic
 arithmetic_side_effects = "warn"        # Be careful with integer overflow in financial calculations
 float_arithmetic = "warn"               # Be careful with float precision in financial calculations
+

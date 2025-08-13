@@ -498,7 +498,7 @@ async fn test_endpoint_parameters() {
     for interval in intervals {
         let request = GetKlineRequest {
             symbol: "BTC-USDT".to_string(),
-            interval: interval,
+            interval,
             limit: Some(5),
             start_time: None,
             end_time: None,
