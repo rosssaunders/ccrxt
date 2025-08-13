@@ -353,7 +353,8 @@ impl RateLimiter {
 
         for (header_name, header_value) in headers {
             if let Some(rate_limit_header) = RateLimitHeader::parse(header_name)
-                && let Ok(current_usage) = header_value.parse::<u32>() {
+                && let Ok(current_usage) = header_value.parse::<u32>()
+            {
                 match rate_limit_header.kind {
                     RateLimitHeaderKind::UsedWeight => {
                         // Update our tracking to match server's view

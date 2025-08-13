@@ -43,7 +43,8 @@ impl RestClient {
 
         // Add query parameters if provided
         if let Some(params) = params
-            && !params.is_empty() {
+            && !params.is_empty()
+        {
             let query_string = params
                 .iter()
                 .map(|(k, v)| format!("{}={}", k, v))
@@ -68,7 +69,8 @@ impl RestClient {
         for (name, value) in response.headers.iter() {
             if let Some(header_type) =
                 crate::bitget::spot::rate_limit::RateLimitHeader::from_str(name.as_str())
-                && let Ok(value_u32) = value.parse::<u32>() {
+                && let Ok(value_u32) = value.parse::<u32>()
+            {
                 response_headers.values.insert(header_type, value_u32);
             }
         }
@@ -86,7 +88,8 @@ impl RestClient {
 
         // Check for API error in response
         if let Some(code) = parsed.get("code").and_then(|c| c.as_str())
-            && code != "00000" {
+            && code != "00000"
+        {
             let message = parsed
                 .get("msg")
                 .and_then(|m| m.as_str())

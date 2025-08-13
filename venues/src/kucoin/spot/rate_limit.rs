@@ -489,7 +489,8 @@ impl RateLimiter {
 
         // If not, wait for the next reset window
         if let Some(status) = self.get_status(pool).await
-            && status.reset_time_ms > 0 {
+            && status.reset_time_ms > 0
+        {
             tokio::time::sleep(Duration::from_millis(status.reset_time_ms + 100)).await; // Add small buffer
         }
 
