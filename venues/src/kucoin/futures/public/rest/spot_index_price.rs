@@ -55,7 +55,7 @@ impl super::RestClient {
     /// Returns the spot index price data for the specified index symbols, including
     /// the decomposition showing how the price is calculated from multiple exchanges.
     ///
-    /// [docs]: https://www.kucoin.com/docs-new/rest/futures-trading/market-data/get-spot-index-price
+    /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/market-data/get-spot-index-price)
     ///
     /// Rate limit: varies by endpoint type
     ///

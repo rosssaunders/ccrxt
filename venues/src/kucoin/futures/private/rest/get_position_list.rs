@@ -103,7 +103,7 @@ impl super::RestClient {
     ///
     /// Get the position list for the current user with optional currency filtering.
     ///
-    /// [docs]: https://www.kucoin.com/docs-new/rest/futures-trading/positions/get-position-list
+    /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/positions/get-position-list)
     ///
     /// Rate limit: 9
     ///

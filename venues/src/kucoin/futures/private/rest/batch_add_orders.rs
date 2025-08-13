@@ -140,7 +140,7 @@ impl super::RestClient {
     /// Place multiple orders in a single request with up to 20 orders per batch.
     /// Each order in the batch is processed independently.
     ///
-    /// [docs]: https://www.kucoin.com/docs-new/rest/futures-trading/orders/batch-add-orders
+    /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/orders/batch-add-orders)
     ///
     /// Rate limit: 20
     ///

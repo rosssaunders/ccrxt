@@ -57,7 +57,7 @@ impl super::RestClient {
     ///
     /// Retrieve the funding history of the current user.
     ///
-    /// [docs]: https://www.kucoin.com/docs-new/rest/futures-trading/funding-fees/get-private-funding-history
+    /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/funding-fees/get-private-funding-history)
     ///
     /// Rate limit: 9
     ///

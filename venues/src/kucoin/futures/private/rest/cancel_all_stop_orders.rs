@@ -28,7 +28,7 @@ impl super::RestClient {
     /// Cancel all untriggered stop orders for the account. Optionally filter by symbol
     /// to cancel stop orders for a specific trading pair only.
     ///
-    /// [docs]: https://www.kucoin.com/docs-new/rest/futures-trading/orders/cancel-all-stop-orders
+    /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/orders/cancel-all-stop-orders)
     ///
     /// Rate limit: 40
     ///

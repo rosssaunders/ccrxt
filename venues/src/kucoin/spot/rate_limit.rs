@@ -672,18 +672,9 @@ mod tests {
     #[test]
     fn test_rate_limit_header() {
         let mut headers = HashMap::new();
-        headers.insert(
-            "gw-ratelimit-limit".to_string(),
-            "500".to_string(),
-        );
-        headers.insert(
-            "gw-ratelimit-remaining".to_string(),
-            "300".to_string(),
-        );
-        headers.insert(
-            "gw-ratelimit-reset".to_string(),
-            "1489".to_string(),
-        );
+        headers.insert("gw-ratelimit-limit".to_string(), "500".to_string());
+        headers.insert("gw-ratelimit-remaining".to_string(), "300".to_string());
+        headers.insert("gw-ratelimit-reset".to_string(), "1489".to_string());
 
         let rate_limit_header = RateLimitHeader::from_headers(&headers);
         assert_eq!(rate_limit_header.limit, Some(500));

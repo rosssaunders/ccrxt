@@ -3,8 +3,7 @@ use std::{collections::HashMap, sync::Arc};
 use base64::{Engine, engine::general_purpose::STANDARD as BASE64};
 use chrono::Utc;
 use hmac::{Hmac, Mac};
-use rest::{HttpClient, HttpError, Method as HttpMethod, RequestBuilder};
-use rest::secrets::ExposableSecret;
+use rest::{HttpClient, HttpError, Method as HttpMethod, RequestBuilder, secrets::ExposableSecret};
 use serde::de::DeserializeOwned;
 use sha2::Sha256;
 
@@ -126,27 +125,31 @@ impl RestClient {
     }
 
     /// Execute an HTTP request and handle the response
-    async fn execute<T>(
-        &self,
-        request: rest::Request,
-    ) -> Result<(RestResponse<T>, ResponseHeaders)>
+    async fn execute<T>(&self, request: rest::Request) -> Result<(RestResponse<T>, ResponseHeaders)>
     where
         T: DeserializeOwned,
     {
-        let response = self.http_client.execute(request).await.map_err(|e| match e {
-            HttpError::Network(msg) => ApiError::Http(format!("Network error: {}", msg)),
-            HttpError::Timeout => ApiError::Http("Request timeout".to_string()),
-            HttpError::Http { status, body } => ApiError::Http(format!("HTTP {}: {}", status, body)),
-            other => ApiError::Http(format!("HTTP error: {}", other)),
-        })?;
+        let response = self
+            .http_client
+            .execute(request)
+            .await
+            .map_err(|e| match e {
+                HttpError::Network(msg) => ApiError::Http(format!("Network error: {}", msg)),
+                HttpError::Timeout => ApiError::Http("Request timeout".to_string()),
+                HttpError::Http { status, body } => {
+                    ApiError::Http(format!("HTTP {}: {}", status, body))
+                }
+                other => ApiError::Http(format!("HTTP error: {}", other)),
+            })?;
 
         let status = response.status;
         let headers = response.headers.clone();
 
-        let text = response.text()
+        let text = response
+            .text()
             .map_err(|e| ApiError::Http(format!("Failed to read response: {}", e)))?;
 
-        if !(status >= 200 && status < 300) {
+        if !(200..300).contains(&status) {
             // Try to parse as error response
             if let Ok(error_response) =
                 serde_json::from_str::<crate::kucoin::spot::ErrorResponse>(&text)
@@ -251,10 +254,14 @@ impl RestClient {
 
         // Build URL with query parameters
         let (full_url, endpoint_sign) = if let Some(req_data) = request {
-            let params = serde_urlencoded::to_string(req_data)
-                .map_err(|e| ApiError::JsonParsing(format!("Failed to serialize request: {}", e)))?;
+            let params = serde_urlencoded::to_string(req_data).map_err(|e| {
+                ApiError::JsonParsing(format!("Failed to serialize request: {}", e))
+            })?;
             if !params.is_empty() {
-                (format!("{}?{}", url, params), format!("{}?{}", endpoint, params))
+                (
+                    format!("{}?{}", url, params),
+                    format!("{}?{}", endpoint, params),
+                )
             } else {
                 (url, endpoint.to_string())
             }
@@ -344,10 +351,14 @@ impl RestClient {
 
         // Build URL with query parameters
         let (full_url, endpoint_sign) = if let Some(params) = &params {
-            let query_params = serde_urlencoded::to_string(params)
-                .map_err(|e| ApiError::JsonParsing(format!("Failed to serialize query params: {}", e)))?;
+            let query_params = serde_urlencoded::to_string(params).map_err(|e| {
+                ApiError::JsonParsing(format!("Failed to serialize query params: {}", e))
+            })?;
             if !query_params.is_empty() {
-                (format!("{}?{}", url, query_params), format!("{}?{}", endpoint, query_params))
+                (
+                    format!("{}?{}", url, query_params),
+                    format!("{}?{}", endpoint, query_params),
+                )
             } else {
                 (url, endpoint.to_string())
             }
@@ -373,8 +384,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use rest::NativeHttpClient;
+
+    use super::*;
 
     struct MockSecret(String);
 

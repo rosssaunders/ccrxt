@@ -28,7 +28,7 @@ impl super::RestClient {
     ///
     /// Switch the margin mode of a symbol between cross margin and isolated margin.
     ///
-    /// [docs]: https://www.kucoin.com/docs-new/rest/futures-trading/positions/switch-margin-mode
+    /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/positions/switch-margin-mode)
     ///
     /// Rate limit: 20
     ///

@@ -28,7 +28,7 @@ impl super::RestClient {
     /// Cancel all outstanding orders for the account. Optionally filter by symbol
     /// to cancel orders for a specific trading pair only.
     ///
-    /// [docs]: https://www.kucoin.com/docs-new/rest/futures-trading/orders/cancel-all-orders
+    /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/orders/cancel-all-orders)
     ///
     /// Rate limit: 40
     ///

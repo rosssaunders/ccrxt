@@ -29,7 +29,7 @@ impl super::RestClient {
     /// Enable or disable auto deposit margin for a specific futures position.
     /// When enabled, the system will automatically deposit margin to prevent liquidation.
     ///
-    /// [docs]: https://www.kucoin.com/docs-new/rest/futures-trading/positions/auto-deposit-margin
+    /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/positions/auto-deposit-margin)
     ///
     /// Rate limit: 4
     ///

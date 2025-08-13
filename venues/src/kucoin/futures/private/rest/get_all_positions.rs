@@ -23,7 +23,7 @@ impl super::RestClient {
     ///
     /// Get the position list of all positions for the current user.
     ///
-    /// [docs]: https://www.kucoin.com/docs-new/rest/futures-trading/positions/get-position-list
+    /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/positions/get-position-list)
     ///
     /// Rate limit: 9
     ///

@@ -126,7 +126,7 @@ impl super::RestClient {
     ///
     /// Retrieve detailed information about a specific order by its ID.
     ///
-    /// [docs]: https://www.kucoin.com/docs-new/rest/futures-trading/orders/get-order-by-orderld
+    /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/orders/get-order-by-orderld)
     ///
     /// Rate limit: 9
     ///

@@ -69,7 +69,7 @@ impl super::RestClient {
     ///
     /// Retrieve a paginated list of orders with optional filtering.
     ///
-    /// [docs]: https://www.kucoin.com/docs-new/rest/futures-trading/orders/get-order-list
+    /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/orders/get-order-list)
     ///
     /// Rate limit: 9
     ///
