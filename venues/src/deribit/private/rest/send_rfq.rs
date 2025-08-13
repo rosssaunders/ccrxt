@@ -40,7 +40,7 @@ impl RestClient {
     /// Sends Request for Quote (RFQ) on the specified instrument.
     /// This endpoint requires trade:read_write scope.
     ///
-    /// [docs]: https://docs.deribit.com/v2/#private-send_rfq
+    /// [docs](https://docs.deribit.com/v2/#private-send_rfq)
     ///
     /// Rate limit: 500 credits per request (non-matching engine)
     /// Scope: trade:read_write
@@ -59,6 +59,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use std::sync::Arc;
+
     use rest::secrets::ExposableSecret;
     use serde_json::{Value, json};
 

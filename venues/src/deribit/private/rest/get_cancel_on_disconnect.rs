@@ -34,7 +34,7 @@ impl RestClient {
     /// This endpoint requires account:read scope and allows checking the current
     /// Cancel On Disconnect configuration for either the connection or account.
     ///
-    /// [docs]: https://docs.deribit.com/v2/#private-get_cancel_on_disconnect
+    /// [docs](https://docs.deribit.com/v2/#private-get_cancel_on_disconnect)
     ///
     /// Rate limit: 500 credits per request (non-matching engine)
     /// Scope: account:read
@@ -60,6 +60,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use std::sync::Arc;
+
     use rest::secrets::ExposableSecret;
     /// REST API endpoint constant
     use serde_json::{Value, json};

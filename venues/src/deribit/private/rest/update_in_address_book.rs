@@ -60,7 +60,7 @@ pub type UpdateInAddressBookResponse = JsonRpcResult<String>;
 impl RestClient {
     /// Update an entry in the address book.
     ///
-    /// [docs]: https://docs.deribit.com/v2/#private-update_in_address_book
+    /// [docs](https://docs.deribit.com/v2/#private-update_in_address_book)
     ///
     /// Rate limit: 500 credits per request (non-matching engine)
     /// Scope: wallet:read_write
@@ -86,6 +86,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use std::sync::Arc;
+
     use rest::secrets::ExposableSecret;
     use serde_json::{Value, json};
 

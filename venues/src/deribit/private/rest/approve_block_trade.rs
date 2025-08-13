@@ -45,7 +45,7 @@ impl RestClient {
     /// for the feature to be active. If the user wants to approve the trade, he has to
     /// approve it from different API key with doesn't have this feature enabled.
     ///
-    /// [docs]: https://docs.deribit.com/v2/#private-approve_block_trade
+    /// [docs](https://docs.deribit.com/v2/#private-approve_block_trade)
     ///
     /// Rate limit: 500 credits per request (non-matching engine)
     /// Scope: block_trade:read_write
@@ -73,6 +73,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use std::sync::Arc;
+
     use rest::secrets::ExposableSecret;
     use serde_json::{Value, json};
 

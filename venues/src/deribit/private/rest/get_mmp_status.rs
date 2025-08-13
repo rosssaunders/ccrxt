@@ -49,7 +49,7 @@ impl RestClient {
     /// a list of all triggered MMP statuses is returned.
     /// This endpoint requires trade:read or block_rfq:read scope when block_rfq is true.
     ///
-    /// [docs]: https://docs.deribit.com/v2/#private-get_mmp_status
+    /// [docs](https://docs.deribit.com/v2/#private-get_mmp_status)
     ///
     /// Rate limit: Matching engine endpoint (tier-based limits)
     /// Scope: trade:read or block_rfq:read (when block_rfq = true)
@@ -77,6 +77,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use std::sync::Arc;
+
     use rest::secrets::ExposableSecret;
     /// REST API endpoint constant
     use serde_json::{Value, json};

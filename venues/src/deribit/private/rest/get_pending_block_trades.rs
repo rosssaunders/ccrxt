@@ -96,7 +96,7 @@ pub type GetPendingBlockTradesResponse = JsonRpcResult<Vec<PendingBlockTrade>>;
 impl RestClient {
     /// Provides a list of pending block trade approvals.
     ///
-    /// [docs]: https://docs.deribit.com/v2/#private-get_pending_block_trades
+    /// [docs](https://docs.deribit.com/v2/#private-get_pending_block_trades)
     ///
     /// This endpoint requires authentication and the `block_trade:read` scope.
     pub async fn get_pending_block_trades(

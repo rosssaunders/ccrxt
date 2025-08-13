@@ -22,7 +22,7 @@ impl RestClient {
     /// User at any time (before the private/execute_block_trade is called) can
     /// invalidate its own signature effectively cancelling block trade.
     ///
-    /// [docs]: https://docs.deribit.com/v2/#private-invalidate_block_trade_signature
+    /// [docs](https://docs.deribit.com/v2/#private-invalidate_block_trade_signature)
     ///
     /// Rate limit: 500 credits per request (non-matching engine)
     /// Scope: block_trade:read_write
@@ -48,6 +48,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use std::sync::Arc;
+
     use rest::secrets::ExposableSecret;
     /// REST API endpoint constant
     use serde_json::{Value, json};

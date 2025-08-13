@@ -123,7 +123,7 @@ impl RestClient {
     /// This is a private method; it can only be used after authentication.
     /// Scope: trade:read
     ///
-    /// [docs]: https://docs.deribit.com/v2/#private-get_trigger_order_history
+    /// [docs](https://docs.deribit.com/v2/#private-get_trigger_order_history)
     ///
     /// Rate limit: Non-matching engine rate limits apply (500 credits)
     ///
@@ -151,6 +151,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use std::sync::Arc;
+
     use rest::secrets::ExposableSecret;
     /// REST API endpoint constant
     use serde_json::{Value, json};

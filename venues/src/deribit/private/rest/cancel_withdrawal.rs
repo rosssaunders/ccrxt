@@ -25,7 +25,7 @@ impl RestClient {
     /// Cancels a pending withdrawal request identified by the withdrawal ID.
     /// This is a private method; it can only be used after authentication.
     ///
-    /// [docs]: https://docs.deribit.com/v2/#private-cancel_withdrawal
+    /// [docs](https://docs.deribit.com/v2/#private-cancel_withdrawal)
     ///
     /// Rate limit: Non-matching engine endpoint
     /// Scope: wallet:read_write
@@ -52,6 +52,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use std::sync::Arc;
+
     use rest::secrets::ExposableSecret;
     /// REST API endpoint constant
     use serde_json::{Value, json};

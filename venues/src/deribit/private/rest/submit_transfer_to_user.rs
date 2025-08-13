@@ -59,7 +59,7 @@ impl RestClient {
     ///
     /// Transfer funds to another user using their wallet address from address book.
     ///
-    /// [docs]: https://docs.deribit.com/v2/#private-submit_transfer_to_user
+    /// [docs](https://docs.deribit.com/v2/#private-submit_transfer_to_user)
     ///
     /// Rate limit: 500 credits per request (non-matching engine)
     /// Scope: wallet:read_write and mainaccount
@@ -85,6 +85,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use std::sync::Arc;
+
     use rest::secrets::ExposableSecret;
     use serde_json::{Value, json};
 

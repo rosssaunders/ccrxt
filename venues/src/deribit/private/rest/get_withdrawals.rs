@@ -41,7 +41,7 @@ impl RestClient {
     /// This endpoint retrieves withdrawal history for the authenticated user.
     /// The endpoint requires wallet:read scope.
     ///
-    /// [docs]: https://docs.deribit.com/v2/#private-get_withdrawals
+    /// [docs](https://docs.deribit.com/v2/#private-get_withdrawals)
     ///
     /// Rate limit: 500 credits per request (non-matching engine)
     /// Scope: wallet:read
@@ -69,6 +69,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use std::sync::Arc;
+
     use rest::secrets::ExposableSecret;
     use serde_json::{Value, json};
 

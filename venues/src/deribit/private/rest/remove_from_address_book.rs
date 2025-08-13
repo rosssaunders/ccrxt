@@ -29,7 +29,7 @@ impl RestClient {
     /// This endpoint requires wallet:read_write scope and removes the specified
     /// address from the address book of the given type and currency.
     ///
-    /// [docs]: https://docs.deribit.com/v2/#private-remove_from_address_book
+    /// [docs](https://docs.deribit.com/v2/#private-remove_from_address_book)
     ///
     /// Rate limit: 500 credits per request (non-matching engine)
     /// Scope: wallet:read_write
@@ -55,6 +55,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use std::sync::Arc;
+
     use rest::secrets::ExposableSecret;
     use serde_json::{Value, json};
 

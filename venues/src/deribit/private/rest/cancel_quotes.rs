@@ -86,7 +86,7 @@ impl RestClient {
     ///
     /// This endpoint requires trade:read_write scope.
     ///
-    /// [docs]: https://docs.deribit.com/v2/#private-cancel_quotes
+    /// [docs](https://docs.deribit.com/v2/#private-cancel_quotes)
     ///
     /// Rate limit: Matching engine endpoint (tier-based rate limiting)
     /// Scope: trade:read_write
@@ -121,6 +121,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use std::sync::Arc;
+
     use rest::secrets::ExposableSecret;
     /// REST API endpoint constant
     use serde_json::{Value, json};

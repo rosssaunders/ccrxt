@@ -135,7 +135,7 @@ impl RestClient {
     /// Adds a new entry to the address book for the specified type and currency.
     /// The request requires wallet:read_write scope.
     ///
-    /// [docs]: https://docs.deribit.com/v2/#private-add_to_address_book
+    /// [docs](https://docs.deribit.com/v2/#private-add_to_address_book)
     ///
     /// Rate limit: 500 credits per request (non-matching engine)
     /// Scope: wallet:read_write
@@ -174,6 +174,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use std::sync::Arc;
+
     use rest::secrets::ExposableSecret;
     use serde_json::{Value, json};
 

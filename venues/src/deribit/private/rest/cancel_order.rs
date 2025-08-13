@@ -224,7 +224,7 @@ impl RestClient {
     /// This is a private method; it can only be used after authentication.
     /// This is a matching engine method.
     ///
-    /// [docs]: https://docs.deribit.com/v2/#private-cancel
+    /// [docs](https://docs.deribit.com/v2/#private-cancel)
     ///
     /// Rate limit: Matching engine rate limits apply based on account tier
     /// Scope: trade:read_write
@@ -250,6 +250,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use std::sync::Arc;
+
     use rest::secrets::ExposableSecret;
     use serde_json::{Value, json};
 

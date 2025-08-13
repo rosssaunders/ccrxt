@@ -89,7 +89,7 @@ impl RestClient {
     /// Reset MMP (Market Maker Protection) for the specified index and optional MMP group.
     /// This endpoint requires trade:read_write or block_rfq:read_write scope when block_rfq is true.
     ///
-    /// [docs]: https://docs.deribit.com/v2/#private-reset_mmp
+    /// [docs](https://docs.deribit.com/v2/#private-reset_mmp)
     ///
     /// Rate limit: Matching engine endpoint (tier-based limits)
     /// Scope: trade:read_write or block_rfq:read_write (when block_rfq = true)
@@ -108,6 +108,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use std::sync::Arc;
+
     use rest::secrets::ExposableSecret;
     use serde_json::{Value, json};
 

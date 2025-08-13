@@ -24,7 +24,7 @@ impl RestClient {
     ///
     /// This endpoint requires block_rfq:read_write scope.
     ///
-    /// [docs]: https://docs.deribit.com/v2/#private-cancel_block_rfq
+    /// [docs](https://docs.deribit.com/v2/#private-cancel_block_rfq)
     ///
     /// Rate limit: Matching engine endpoint (tier-based rate limiting)
     /// Scope: block_rfq:read_write
@@ -50,6 +50,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use std::sync::Arc;
+
     use rest::secrets::ExposableSecret;
     use serde_json::{Value, json};
 

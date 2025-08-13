@@ -60,7 +60,7 @@ impl RestClient {
     /// This endpoint requires wallets:read_write scope and transfers funds
     /// to the specified subaccount.
     ///
-    /// [docs]: https://docs.deribit.com/v2/#private-submit_transfer_to_subaccount
+    /// [docs](https://docs.deribit.com/v2/#private-submit_transfer_to_subaccount)
     ///
     /// Rate limit: 500 credits per request (non-matching engine)
     /// Scope: wallets:read_write
@@ -86,6 +86,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use std::sync::Arc;
+
     use rest::secrets::ExposableSecret;
     use serde_json::{Value, json};
 
