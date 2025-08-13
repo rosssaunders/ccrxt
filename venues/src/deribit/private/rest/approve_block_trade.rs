@@ -74,7 +74,7 @@ impl RestClient {
 mod tests {
     use std::sync::Arc;
 
-    use rest::secrets::{ExposableSecret, SecretString};
+    use rest::secrets::SecretString;
     use serde_json::{Value, json};
 
     use super::*;
