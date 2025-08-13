@@ -4,7 +4,10 @@
 // All requests are unauthenticated and do not require API credentials.
 use std::{borrow::Cow, sync::Arc};
 
-use rest::{HttpClient, http_client::{Method as HttpMethod, RequestBuilder}};
+use rest::{
+    HttpClient,
+    http_client::{Method as HttpMethod, RequestBuilder},
+};
 use serde::de::DeserializeOwned;
 
 use crate::deribit::{EndpointType, Errors, RateLimiter, RestResult};
@@ -95,10 +98,10 @@ impl RestClient {
             "jsonrpc": "2.0",
             "id": 1
         });
-        
+
         let body = serde_json::to_string(&jsonrpc_body)
             .map_err(|e| Errors::Error(format!("Failed to serialize body: {e}")))?;
-        
+
         // Build the request
         // All Deribit REST (JSON-RPC) calls are POST
         let request = RequestBuilder::new(HttpMethod::Post, url)
@@ -107,7 +110,10 @@ impl RestClient {
             .build();
 
         // Send the request
-        let response = self.http_client.execute(request).await
+        let response = self
+            .http_client
+            .execute(request)
+            .await
             .map_err(|e| Errors::NetworkError(format!("HTTP request failed: {e}")))?;
 
         // Record the request after successful send
@@ -116,13 +122,15 @@ impl RestClient {
         // Check if the response was successful
         if !(response.status >= 200 && response.status < 300) {
             let status = response.status;
-            let error_text = response.text()
+            let error_text = response
+                .text()
                 .map_err(|e| Errors::NetworkError(format!("Failed to read response: {e}")))?;
             return Err(Errors::Error(format!("HTTP {status}: {error_text}")));
         }
 
         // Parse the response
-        let response_text = response.text()
+        let response_text = response
+            .text()
             .map_err(|e| Errors::NetworkError(format!("Failed to read response: {e}")))?;
 
         let parsed_response: T = serde_json::from_str(&response_text)
@@ -134,8 +142,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use std::sync::Arc;
+
+    use super::*;
     use crate::deribit::AccountTier;
 
     #[test]

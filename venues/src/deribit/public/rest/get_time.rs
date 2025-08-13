@@ -20,7 +20,7 @@ impl RestClient {
     /// Returns the current Deribit server time in milliseconds since Unix epoch. Can be
     /// used to measure clock skew between client and server.
     ///
-    /// [docs]: https://docs.deribit.com/#public-get_time
+    /// [docs](https://docs.deribit.com/#public-get_time)
     ///
     /// Rate limit: non-matching engine (500 credits)
     ///
@@ -42,6 +42,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use std::sync::Arc;
+
     use serde_json::json;
 
     use super::*;

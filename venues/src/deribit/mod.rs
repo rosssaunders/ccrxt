@@ -7,6 +7,7 @@
 //! # Example Usage
 //!
 //! ```rust,no_run
+//! use std::sync::Arc;
 //! use venues::deribit::{RateLimiter, AccountTier, EndpointType, PublicRestClient, GetComboIdsRequest, Currency};
 //!
 //! #[tokio::main]
@@ -16,7 +17,7 @@
 //!    
 //!     // Create a public REST client
 //!     let http_client = Arc::new(rest::native::NativeHttpClient::default());
-//!     let rest_client = PublicRestClient::new("https://www.deribit.com", client, limiter);
+//!     let rest_client = PublicRestClient::new("https://www.deribit.com", http_client, limiter);
 //!    
 //!     // Get combo IDs for BTC
 //!     let request = GetComboIdsRequest {

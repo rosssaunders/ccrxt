@@ -56,6 +56,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use std::sync::Arc;
+
     use serde_json::json;
 
     use super::*;
