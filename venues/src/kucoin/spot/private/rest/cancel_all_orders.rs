@@ -27,7 +27,7 @@ pub struct CancelAllOrdersResponse {
 impl RestClient {
     /// Cancel all orders (optionally filtered by symbol)
     ///
-    /// Reference: https://docs.kucoin.com/#cancel-all-hf-orders-by-symbol
+    /// [docs](https://docs.kucoin.com/#cancel-all-hf-orders-by-symbol)
     pub async fn cancel_all_orders(
         &self,
         request: CancelAllOrdersRequest,

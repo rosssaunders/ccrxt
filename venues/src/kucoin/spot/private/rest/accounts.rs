@@ -43,7 +43,7 @@ pub struct Account {
 impl RestClient {
     /// Get all accounts
     ///
-    /// Reference: https://docs.kucoin.com/#list-accounts
+    /// [docs](https://docs.kucoin.com/#list-accounts)
     pub async fn get_accounts(
         &self,
         request: GetAccountsRequest,

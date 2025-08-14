@@ -9,9 +9,13 @@ const REPAY_ENDPOINT: &str = "/api/v3/margin/repay";
 #[derive(Debug, Clone, Serialize)]
 pub struct RepayRequest {
     pub currency: String,
+
     pub size: String,
+
     pub symbol: Option<String>,
+
     pub is_isolated: Option<bool>,
+
     pub is_hf: Option<bool>,
 }
 

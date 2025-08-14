@@ -169,7 +169,7 @@ pub struct OrdersResponse {
 impl RestClient {
     /// Get list of orders
     ///
-    /// Reference: https://docs.kucoin.com/#list-orders
+    /// [docs](https://docs.kucoin.com/#list-orders)
     pub async fn get_orders(
         &self,
         request: GetOrdersRequest,

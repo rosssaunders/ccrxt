@@ -24,7 +24,7 @@ pub struct CancelOrderResponse {
 impl RestClient {
     /// Cancel an order by order ID
     ///
-    /// Reference: https://docs.kucoin.com/#cancel-hf-order-by-orderid
+    /// [docs](https://docs.kucoin.com/#cancel-hf-order-by-orderid)
     pub async fn cancel_order(
         &self,
         request: CancelOrderRequest,

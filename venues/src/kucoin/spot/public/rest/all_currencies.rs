@@ -44,7 +44,7 @@ pub struct Currency {
 impl RestClient {
     /// Get information for all available currencies
     ///
-    /// Reference: https://docs.kucoin.com/#get-currencies
+    /// [docs](https://docs.kucoin.com/#get-currencies)
     pub async fn get_all_currencies(
         &self,
         _request: GetAllCurrenciesRequest,

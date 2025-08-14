@@ -80,7 +80,7 @@ pub struct Fill {
 impl RestClient {
     /// Get recent fills
     ///
-    /// Reference: https://docs.kucoin.com/#recent-fills
+    /// [docs](https://docs.kucoin.com/#recent-fills)
     pub async fn get_recent_fills(
         &self,
         request: GetRecentFillsRequest,

@@ -15,22 +15,32 @@ pub struct GetMarginSymbolsRequest {
 #[derive(Debug, Clone, Deserialize)]
 pub struct MarginSymbolInfo {
     pub symbol: String,
+
     pub name: String,
+
     #[serde(rename = "enableTrading")]
     pub enable_trading: bool,
+
     pub market: String,
+
     #[serde(rename = "baseCurrency")]
     pub base_currency: String,
+
     #[serde(rename = "quoteCurrency")]
     pub quote_currency: String,
+
     #[serde(rename = "baseIncrement")]
     pub base_increment: String,
+
     #[serde(rename = "baseMinSize")]
     pub base_min_size: String,
+
     #[serde(rename = "quoteIncrement")]
     pub quote_increment: String,
+
     #[serde(rename = "quoteMinSize")]
     pub quote_min_size: String,
+
     #[serde(rename = "baseMaxSize")]
     pub base_max_size: String,
 }
@@ -39,6 +49,7 @@ pub struct MarginSymbolInfo {
 #[derive(Debug, Clone, Deserialize)]
 pub struct GetMarginSymbolsResponse {
     pub timestamp: i64,
+
     pub items: Vec<MarginSymbolInfo>,
 }
 

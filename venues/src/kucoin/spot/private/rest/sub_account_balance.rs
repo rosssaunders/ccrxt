@@ -67,7 +67,7 @@ pub struct SubAccountBalance {
 impl RestClient {
     /// Get sub-account balance (for main accounts)
     ///
-    /// Reference: https://docs.kucoin.com/#get-sub-account-balance
+    /// [docs](https://docs.kucoin.com/#get-sub-account-balance)
     pub async fn get_sub_account_balance(
         &self,
         request: GetSubAccountBalanceRequest,

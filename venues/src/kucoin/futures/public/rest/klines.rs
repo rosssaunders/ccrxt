@@ -39,12 +39,15 @@ pub enum KlineGranularity {
 pub struct GetKlinesRequest {
     /// Symbol of the contract (can also be index symbols like .KXBTUSDT, .XBTUSDTMPI, .XBTUSDTMPI8H)
     pub symbol: String,
+
     /// Kline granularity
     #[serde(serialize_with = "serialize_granularity")]
     pub granularity: KlineGranularity,
+
     /// Start time (milliseconds)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub from: Option<i64>,
+
     /// End time (milliseconds)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub to: Option<i64>,

@@ -18,12 +18,16 @@ pub struct GetCurrentFundingRateRequest {
 pub struct CurrentFundingRate {
     /// Symbol of the contract
     pub symbol: String,
+
     /// Granularity (funding rate interval in milliseconds)
     pub granularity: i64,
+
     /// Time point (milliseconds)
     pub time_point: i64,
+
     /// Funding rate
     pub value: f64,
+
     /// Predicted funding rate
     pub predicted_value: Option<f64>,
 }

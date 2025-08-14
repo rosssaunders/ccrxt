@@ -84,7 +84,7 @@ pub struct SymbolInfo {
 impl RestClient {
     /// Get information for a specific symbol
     ///
-    /// Reference: https://docs.kucoin.com/#get-symbol-list
+    /// [docs](https://docs.kucoin.com/#get-symbol-list)
     pub async fn get_symbol(
         &self,
         request: GetSymbolRequest,

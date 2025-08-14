@@ -128,7 +128,7 @@ pub struct Order {
 impl RestClient {
     /// Get order details by order ID
     ///
-    /// Reference: https://docs.kucoin.com/#get-single-order-info
+    /// [docs](https://docs.kucoin.com/#get-single-order-info)
     pub async fn get_order(&self, request: GetOrderRequest) -> Result<(Order, ResponseHeaders)> {
         let endpoint = GET_ORDER_ENDPOINT.replace("{order_id}", &request.order_id);
         let (response, headers): (RestResponse<Order>, ResponseHeaders) =

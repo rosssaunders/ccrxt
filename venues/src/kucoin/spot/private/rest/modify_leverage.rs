@@ -24,7 +24,9 @@ use crate::kucoin::spot::{ResponseHeaders, RestResponse, Result};
 #[derive(Debug, Clone, Serialize)]
 pub struct ModifyLeverageRequest {
     pub symbol: Option<String>,
+
     pub is_isolated: Option<bool>,
+
     pub leverage: String,
 }
 

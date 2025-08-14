@@ -10,8 +10,10 @@ const PURCHASE_ENDPOINT: &str = "/api/v3/purchase";
 pub struct PurchaseRequest {
     /// Currency
     pub currency: String,
+
     /// Purchase amount
     pub size: String,
+
     /// Purchase interest rate
     #[serde(rename = "interestRate")]
     pub interest_rate: String,
@@ -28,7 +30,7 @@ pub struct PurchaseResponse {
 impl RestClient {
     /// Invest credit in the market and earn interest
     ///
-    /// Reference: https://docs.kucoin.com/margin-credit#purchase
+    /// [docs](https://docs.kucoin.com/margin-credit#purchase)
     pub async fn purchase(
         &self,
         request: PurchaseRequest,

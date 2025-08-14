@@ -92,7 +92,7 @@ pub struct AccountLedgersResponse {
 impl RestClient {
     /// Get account ledgers (transaction history)
     ///
-    /// Reference: https://docs.kucoin.com/#get-account-ledgers
+    /// [docs](https://docs.kucoin.com/#get-account-ledgers)
     pub async fn get_account_ledgers(
         &self,
         request: GetAccountLedgersRequest,

@@ -4,44 +4,64 @@ use crate::kucoin::spot::{
     OrderSide, OrderType, ResponseHeaders, RestResponse, Result, StopType, TimeInForce,
 };
 
+const PLACE_ORDER_ENDPOINT: &str = "/api/v1/orders";
+
 /// Place order request for futures
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct PlaceOrderRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub client_oid: Option<String>,
+
     pub side: OrderSide,
+
     pub symbol: String,
+
     #[serde(rename = "type")]
     pub order_type: OrderType,
+
     #[serde(skip_serializing_if = "Option::is_none")]
     pub leverage: Option<String>,
+
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reduce_only: Option<bool>,
+
     #[serde(skip_serializing_if = "Option::is_none")]
     pub close_order: Option<bool>,
+
     #[serde(skip_serializing_if = "Option::is_none")]
     pub force_hold: Option<bool>,
+
     #[serde(skip_serializing_if = "Option::is_none")]
     pub size: Option<i64>,
+
     #[serde(skip_serializing_if = "Option::is_none")]
     pub price: Option<String>,
+
     #[serde(skip_serializing_if = "Option::is_none")]
     pub time_in_force: Option<TimeInForce>,
+
     #[serde(skip_serializing_if = "Option::is_none")]
     pub post_only: Option<bool>,
+
     #[serde(skip_serializing_if = "Option::is_none")]
     pub hidden: Option<bool>,
+
     #[serde(skip_serializing_if = "Option::is_none")]
     pub iceberg: Option<bool>,
+
     #[serde(skip_serializing_if = "Option::is_none")]
     pub visible_size: Option<i64>,
+
     #[serde(skip_serializing_if = "Option::is_none")]
     pub remark: Option<String>,
+
     #[serde(skip_serializing_if = "Option::is_none")]
     pub stop: Option<StopType>,
+
     #[serde(skip_serializing_if = "Option::is_none")]
     pub stop_price_type: Option<String>,
+
     #[serde(skip_serializing_if = "Option::is_none")]
     pub stop_price: Option<String>,
 }
@@ -55,12 +75,11 @@ pub struct PlaceOrderResponse {
 impl super::RestClient {
     /// Place a new order
     ///
-    /// Reference: <https://www.kucoin.com/docs-new/rest/futures-trading/orders/add-order>
+    /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/orders/add-order)
     pub async fn place_order(
         &self,
         request: PlaceOrderRequest,
     ) -> Result<(RestResponse<PlaceOrderResponse>, ResponseHeaders)> {
-        const PLACE_ORDER_ENDPOINT: &str = "/api/v1/orders";
         self.post(PLACE_ORDER_ENDPOINT, &request).await
     }
 }

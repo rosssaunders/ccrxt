@@ -46,7 +46,7 @@ pub struct WithdrawalResponse {
 impl RestClient {
     /// Create a withdrawal
     ///
-    /// Reference: https://docs.kucoin.com/#apply-withdraw-v1
+    /// [docs](https://docs.kucoin.com/#apply-withdraw-v1)
     pub async fn create_withdrawal(
         &self,
         request: CreateWithdrawalRequest,

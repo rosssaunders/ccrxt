@@ -9,18 +9,25 @@ const BORROW_HISTORY_ENDPOINT: &str = "/api/v3/margin/borrow";
 #[derive(Debug, Clone, Serialize)]
 pub struct GetBorrowHistoryRequest {
     pub currency: String,
+
     #[serde(skip_serializing_if = "Option::is_none", rename = "isIsolated")]
     pub is_isolated: Option<bool>,
+
     #[serde(skip_serializing_if = "Option::is_none")]
     pub symbol: Option<String>,
+
     #[serde(skip_serializing_if = "Option::is_none", rename = "orderNo")]
     pub order_no: Option<String>,
+
     #[serde(skip_serializing_if = "Option::is_none", rename = "startTime")]
     pub start_time: Option<i64>,
+
     #[serde(skip_serializing_if = "Option::is_none", rename = "endTime")]
     pub end_time: Option<i64>,
+
     #[serde(skip_serializing_if = "Option::is_none", rename = "currentPage")]
     pub current_page: Option<i32>,
+
     #[serde(skip_serializing_if = "Option::is_none", rename = "pageSize")]
     pub page_size: Option<i32>,
 }
@@ -29,12 +36,19 @@ pub struct GetBorrowHistoryRequest {
 #[derive(Debug, Clone, Deserialize)]
 pub struct BorrowHistoryItem {
     pub order_no: String,
+
     pub symbol: String,
+
     pub currency: String,
+
     pub size: String,
+
     pub principal: String,
+
     pub interest: String,
+
     pub status: OrderStatus,
+
     #[serde(rename = "createdTime")]
     pub created_time: i64,
 }
@@ -43,14 +57,19 @@ pub struct BorrowHistoryItem {
 #[derive(Debug, Clone, Deserialize)]
 pub struct BorrowHistoryResponse {
     pub timestamp: i64,
+
     #[serde(rename = "currentPage")]
     pub current_page: i32,
+
     #[serde(rename = "pageSize")]
     pub page_size: i32,
+
     #[serde(rename = "totalNum")]
     pub total_num: i32,
+
     #[serde(rename = "totalPage")]
     pub total_page: i32,
+
     pub items: Vec<BorrowHistoryItem>,
 }
 

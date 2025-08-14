@@ -52,22 +52,32 @@ pub enum MarginOrderTimeInForce {
 pub struct AddMarginOrderRequest {
     #[serde(rename = "clientOid")]
     pub client_oid: String,
+
     pub side: MarginOrderSide,
+
     pub symbol: String,
+
     #[serde(skip_serializing_if = "Option::is_none")]
     pub r#type: Option<MarginOrderType>,
+
     #[serde(skip_serializing_if = "Option::is_none")]
     pub stp: Option<MarginOrderStp>,
+
     #[serde(skip_serializing_if = "Option::is_none")]
     pub price: Option<String>,
+
     #[serde(skip_serializing_if = "Option::is_none")]
     pub size: Option<String>,
+
     #[serde(rename = "timeInForce", skip_serializing_if = "Option::is_none")]
     pub time_in_force: Option<MarginOrderTimeInForce>,
+
     #[serde(rename = "postOnly", skip_serializing_if = "Option::is_none")]
     pub post_only: Option<bool>,
+
     #[serde(skip_serializing_if = "Option::is_none")]
     pub hidden: Option<bool>,
+
     #[serde(skip_serializing_if = "Option::is_none")]
     pub iceberg: Option<bool>,
 }

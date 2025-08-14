@@ -11,12 +11,16 @@ const PUBLIC_TOKEN_ENDPOINT: &str = "/api/v1/bullet-public";
 pub struct InstanceServer {
     /// WebSocket endpoint URL
     pub endpoint: String,
+
     /// Encryption protocol (usually "wss")
     pub protocol: String,
+
     /// Whether encryption is enabled
     pub encrypt: bool,
+
     /// Ping interval (milliseconds)
     pub ping_interval: i64,
+
     /// Ping timeout (milliseconds)
     pub ping_timeout: i64,
 }
@@ -27,6 +31,7 @@ pub struct InstanceServer {
 pub struct WebSocketToken {
     /// WebSocket connection token
     pub token: String,
+
     /// List of available instance servers
     pub instance_servers: Vec<InstanceServer>,
 }

@@ -60,7 +60,7 @@ pub struct WithdrawalQuota {
 impl RestClient {
     /// Get withdrawal quotas for a currency
     ///
-    /// Reference: https://docs.kucoin.com/#get-withdrawal-quotas
+    /// [docs](https://docs.kucoin.com/#get-withdrawal-quotas)
     pub async fn get_withdrawal_quotas(
         &self,
         request: GetWithdrawalQuotasRequest,

@@ -51,7 +51,7 @@ pub struct PartOrderBookResponse {
 impl RestClient {
     /// Get partial order book (20 or 100 levels)
     ///
-    /// Reference: https://docs.kucoin.com/#get-part-order-book-aggregated
+    /// [docs](https://docs.kucoin.com/#get-part-order-book-aggregated)
     pub async fn get_part_order_book(
         &self,
         request: GetPartOrderBookRequest,
