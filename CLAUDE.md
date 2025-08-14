@@ -94,6 +94,7 @@ Detailed instruction files in `.github/instructions/`:
 - `general-coding.instructions.md` - General coding standards and practices
 - `venue.instructions.md` - Venue implementation guidelines
 - `websocket.instructions.md` - WebSocket implementation patterns
+- `websocket-implementation.instructions.md` - WebSocket implementation specification for native/WASM
 - `rest.instructions.md` - REST API implementation guidelines
 - `error-handling.instructions.md` - Error handling patterns
 - `rate-limiting.instructions.md` - Rate limiting implementation
