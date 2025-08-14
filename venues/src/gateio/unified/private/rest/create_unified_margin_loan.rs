@@ -10,8 +10,7 @@ impl RestClient {
     ///
     /// This endpoint creates a new unified margin loan.
     ///
-    /// # API Documentation
-    /// <https://www.gate.io/docs/developers/apiv4/#create-unified-margin-loan>
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#create-unified-margin-loan)
     pub async fn create_unified_margin_loan(
         &self,
         request: CreateUnifiedMarginLoanRequest,

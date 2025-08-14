@@ -89,7 +89,7 @@ impl RestClient {
     /// Amend multiple orders in a single request for improved efficiency.
     /// Maximum 20 orders per batch. Supports all order types and markets.
     ///
-    /// [API Documentation](https://bybit-exchange.github.io/docs/v5/order/batch-amend)
+    /// [docs](https://bybit-exchange.github.io/docs/v5/order/batch-amend)
     ///
     /// Rate limit: 10 requests per second per UID
     ///

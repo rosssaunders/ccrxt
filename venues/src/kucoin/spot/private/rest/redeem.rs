@@ -10,8 +10,10 @@ const REDEEM_ENDPOINT: &str = "/api/v3/redeem";
 pub struct RedeemRequest {
     /// Currency
     pub currency: String,
+
     /// Redemption amount
     pub size: String,
+
     /// Purchase order ID
     #[serde(rename = "purchaseOrderNo")]
     pub purchase_order_no: String,
@@ -28,7 +30,7 @@ pub struct RedeemResponse {
 impl RestClient {
     /// Redeem your loan order
     ///
-    /// Reference: https://docs.kucoin.com/margin-credit#redeem
+    /// [docs](https://docs.kucoin.com/margin-credit#redeem)
     pub async fn redeem(
         &self,
         request: RedeemRequest,

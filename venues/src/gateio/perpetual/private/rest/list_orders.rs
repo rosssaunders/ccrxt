@@ -44,8 +44,7 @@ impl RestClient {
     ///
     /// This endpoint returns futures orders for the authenticated user.
     ///
-    /// See: Gate.io API documentation
-    /// <https://www.gate.io/docs/developers/apiv4/#list-futures-orders>
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#list-futures-orders)
     ///
     /// Rate limit: 100 requests per second
     ///

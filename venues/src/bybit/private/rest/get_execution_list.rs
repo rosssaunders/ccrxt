@@ -90,7 +90,7 @@ impl RestClient {
     /// Query execution records (trade fills) sorted by execution time in descending order.
     /// Supports filtering by symbol, order ID, time range, and execution type.
     ///
-    /// [API Documentation](https://bybit-exchange.github.io/docs/v5/position/execution)
+    /// [docs](https://bybit-exchange.github.io/docs/v5/position/execution)
     ///
     /// Rate limit: 10 requests per second per UID
     ///

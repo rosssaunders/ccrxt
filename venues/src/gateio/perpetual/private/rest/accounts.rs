@@ -59,8 +59,7 @@ impl RestClient {
     ///
     /// This endpoint returns futures account information for the authenticated user.
     ///
-    /// See: Gate.io API documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#query-futures-account>
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#query-futures-account)
     ///
     /// Rate limit: 100 requests per second
     ///

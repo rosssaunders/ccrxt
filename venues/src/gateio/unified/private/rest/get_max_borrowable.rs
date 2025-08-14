@@ -10,8 +10,7 @@ impl RestClient {
     ///
     /// This endpoint returns the maximum borrowable amount for a specific currency.
     ///
-    /// # API Documentation
-    /// <https://www.gate.io/docs/developers/apiv4/#get-max-borrowable>
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#get-max-borrowable)
     pub async fn get_max_borrowable(
         &self,
         currency: &str,

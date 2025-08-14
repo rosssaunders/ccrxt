@@ -18,7 +18,7 @@ impl RestClient {
     ///
     /// Get information on a single product.
     ///
-    /// [API Documentation](https://docs.cdp.coinbase.com/exchange/reference/exchangerestapi_getproduct)
+    /// [docs](https://docs.cdp.coinbase.com/exchange/reference/exchangerestapi_getproduct)
     ///
     /// Rate limit: 10 requests per second
     ///

@@ -44,7 +44,7 @@ impl RestClient {
     ///
     /// Retrieves the user's trading history for delivery contracts.
     ///
-    /// See: <https://www.gate.com/docs/developers/apiv4/#query-personal-trading-records-3>
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#query-personal-trading-records-3)
     ///
     /// Rate limit: 10 requests per second
     ///

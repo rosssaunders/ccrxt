@@ -40,7 +40,7 @@ impl RestClient {
     ///
     /// Retrieves the current index price for a given index name.
     ///
-    /// [Official API docs](https://docs.deribit.com/#public-get_index)
+    /// [docs](https://docs.deribit.com/#public-get_index)
     pub async fn get_index(&self, params: GetIndexRequest) -> RestResult<GetIndexResponse> {
         self.send_post_request(
             INDEX_ENDPOINT,

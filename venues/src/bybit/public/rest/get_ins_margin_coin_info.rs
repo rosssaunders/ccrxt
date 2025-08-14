@@ -77,7 +77,7 @@ impl RestClient {
     /// Query for institutional loan product margin coin information, including margin coin list,
     /// conversion rate, and liquidation order.
     ///
-    /// [API Documentation](https://bybit-exchange.github.io/docs/v5/otc/margin-coin-convert-info)
+    /// [docs](https://bybit-exchange.github.io/docs/v5/otc/margin-coin-convert-info)
     ///
     /// Rate limit: 10 requests per second
     ///

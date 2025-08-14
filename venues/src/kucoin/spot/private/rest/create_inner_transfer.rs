@@ -44,7 +44,7 @@ pub struct InnerTransferResponse {
 impl RestClient {
     /// Create an inner transfer between accounts
     ///
-    /// Reference: https://docs.kucoin.com/#inner-transfer
+    /// [docs](https://docs.kucoin.com/#inner-transfer)
     pub async fn create_inner_transfer(
         &self,
         request: CreateInnerTransferRequest,

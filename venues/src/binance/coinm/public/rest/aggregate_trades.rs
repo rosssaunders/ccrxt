@@ -79,7 +79,7 @@ impl RestClient {
     /// - Sending both startTime/endTime and fromId might cause response timeout,
     ///   please send either fromId or startTime/endTime
     ///
-    /// [Official API docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Compressed-Aggregate-Trades-List)
+    /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Compressed-Aggregate-Trades-List)
     ///
     /// Weight: 20
     pub async fn get_aggregate_trades(

@@ -120,7 +120,7 @@ impl RestClient {
     ///
     /// Retrieves the summary information such as open interest, 24h volume, etc. for a specific instrument.
     ///
-    /// [Official API docs](https://docs.deribit.com/#public-get_book_summary_by_instrument)
+    /// [docs](https://docs.deribit.com/#public-get_book_summary_by_instrument)
     pub async fn get_book_summary_by_instrument(
         &self,
         params: GetBookSummaryByInstrumentRequest,

@@ -112,7 +112,7 @@ impl RestClient {
     /// # API Permissions
     /// - Read permission required
     ///
-    /// https://bingx-api.github.io/docs/#/en-us/spot/wallet-api.html#Withdraw%20records
+    /// [docs](https://bingx-api.github.io/docs/#/en-us/spot/wallet-api.html#Withdraw%20records)
     pub async fn get_withdraw_records(
         &self,
         request: &GetWithdrawRecordsRequest,

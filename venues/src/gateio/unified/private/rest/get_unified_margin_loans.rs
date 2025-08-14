@@ -10,8 +10,7 @@ impl RestClient {
     ///
     /// This endpoint returns unified margin loans for the authenticated user.
     ///
-    /// # API Documentation
-    /// <https://www.gate.io/docs/developers/apiv4/#get-unified-margin-loans>
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#get-unified-margin-loans)
     pub async fn get_unified_margin_loans(
         &self,
         params: UnifiedMarginLoansRequest,

@@ -60,8 +60,7 @@ impl RestClient {
     ///
     /// Retrieves order book for a specific options contract.
     ///
-    /// # API Documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#options-order-book>
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#options-order-book)
     pub async fn get_options_order_book(
         &self,
         params: OptionsOrderBookRequest,

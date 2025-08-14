@@ -50,7 +50,7 @@ impl RestClient {
     ///
     /// Fetches balance of Insurance Fund for a particular currency.
     ///
-    /// [Official API docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#public-get-insurance)
+    /// [docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#public-get-insurance)
     pub async fn get_insurance(
         &self,
         params: GetInsuranceRequest,

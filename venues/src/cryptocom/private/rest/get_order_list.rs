@@ -4,13 +4,16 @@ use super::client::RestClient;
 use crate::cryptocom::{ApiResult, RestResult, enums::*};
 
 const ORDER_LIST_ENDPOINT: &str = "private/get-order-list";
+
 /// Request for getting OCO order details
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GetOrderListRequest {
     /// Contingency type (must be OCO)
     pub contingency_type: ContingencyType,
+
     /// List ID of the OCO order
     pub list_id: String,
+
     /// Instrument name
     pub instrument_name: String,
 }
@@ -20,57 +23,82 @@ pub struct GetOrderListRequest {
 pub struct OrderDetails {
     /// Account ID
     pub account_id: String,
+
     /// Order ID
     pub order_id: String,
+
     /// Client order ID
     #[serde(skip_serializing_if = "Option::is_none")]
     pub client_oid: Option<String>,
+
     /// Order type
     #[serde(rename = "type")]
     pub order_type: OrderType,
+
     /// Time in force
     pub time_in_force: TimeInForce,
+
     /// Order side
     pub side: OrderSide,
+
     /// Execution instructions
     pub exec_inst: Vec<ExecInst>,
+
     /// Order quantity
     pub quantity: String,
+
     /// Order price
     #[serde(skip_serializing_if = "Option::is_none")]
     pub price: Option<String>,
+
     /// Order value
     pub order_value: String,
+
     /// Average price
     pub avg_price: String,
+
     /// Trigger price
     pub trigger_price: String,
+
     /// Cumulative quantity
     pub cumulative_quantity: String,
+
     /// Cumulative value
     pub cumulative_value: String,
+
     /// Cumulative fee
     pub cumulative_fee: String,
+
     /// Order status
     pub status: String,
+
     /// Update user ID
     pub update_user_id: String,
+
     /// Order date
     pub order_date: String,
+
     /// Instrument name
     pub instrument_name: String,
+
     /// Fee instrument name
     pub fee_instrument_name: String,
+
     /// List ID
     pub list_id: String,
+
     /// Contingency type
     pub contingency_type: ContingencyType,
+
     /// Trigger price type
     pub trigger_price_type: String,
+
     /// Create time (milliseconds)
     pub create_time: u64,
+
     /// Create time (nanoseconds)
     pub create_time_ns: String,
+
     /// Update time (milliseconds)
     pub update_time: u64,
 }
@@ -90,7 +118,7 @@ impl RestClient {
     ///
     /// Gets the details of an outstanding (not executed) contingency order on Exchange.
     ///
-    /// See: <https://exchange-docs.crypto.com/derivatives/index.html>
+    /// [docs](https://exchange-docs.crypto.com/derivatives/index.html)
     ///
     /// Rate limit: 10 requests per second per user
     ///

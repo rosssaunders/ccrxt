@@ -190,7 +190,7 @@ impl RestClient {
     /// Place a new order on the Coinbase Exchange. Orders can be limit, market, or stop orders.
     /// Each profile can place a maximum of 500 open orders on a product.
     ///
-    /// [API Documentation](https://docs.cdp.coinbase.com/exchange/reference/exchangerestapi_postorders)
+    /// [docs](https://docs.cdp.coinbase.com/exchange/reference/exchangerestapi_postorders)
     ///
     /// Rate limit: 100 requests per second
     ///

@@ -114,7 +114,7 @@ impl RestClient {
     /// Query for historical premium index klines. This endpoint is only available for USDT and USDC
     /// perpetual contracts.
     ///
-    /// [API Documentation](https://bybit-exchange.github.io/docs/v5/market/preimum-index-kline)
+    /// [docs](https://bybit-exchange.github.io/docs/v5/market/premium-index-price-kline)
     ///
     /// Rate limit: 10 requests per second
     ///

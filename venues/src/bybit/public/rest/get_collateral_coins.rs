@@ -66,7 +66,7 @@ impl RestClient {
     /// Query the list of coins that can be used as collateral for crypto loans including
     /// their collateral ratios and liquidation thresholds.
     ///
-    /// [API Documentation](https://bybit-exchange.github.io/docs/v5/crypto-loan/collateral-coin)
+    /// [docs](https://bybit-exchange.github.io/docs/v5/crypto-loan/collateral-coin)
     ///
     /// Rate limit: 10 requests per second
     ///

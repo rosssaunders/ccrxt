@@ -61,7 +61,7 @@ impl RestClient {
     ///
     /// Gets 30day and 24hour volume for all products and market types.
     ///
-    /// [API Documentation](https://docs.cdp.coinbase.com/exchange/reference/exchangerestapi_getproductvolumesummary)
+    /// [docs](https://docs.cdp.coinbase.com/exchange/reference/exchangerestapi_getproductvolumesummary)
     ///
     /// Rate limit: 10 requests per second
     ///

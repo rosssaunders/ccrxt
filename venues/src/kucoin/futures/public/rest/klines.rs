@@ -70,7 +70,7 @@ pub type GetKlinesResponse = Vec<Kline>;
 impl super::RestClient {
     /// Get kline/candlestick data for a symbol
     ///
-    /// <https://www.kucoin.com/docs-new/rest/futures-trading/market-data/get-klines>
+    /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/market-data/get-klines)
     pub async fn get_klines(
         &self,
         request: GetKlinesRequest,

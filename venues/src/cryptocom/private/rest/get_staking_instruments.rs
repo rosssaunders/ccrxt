@@ -4,6 +4,7 @@ use super::client::RestClient;
 use crate::cryptocom::{ApiResult, RestResult};
 
 const STAKING_INSTRUMENTS_ENDPOINT: &str = "private/staking/get-staking-instruments";
+
 /// Additional reward information
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AdditionalReward {
@@ -16,32 +17,46 @@ pub struct AdditionalReward {
 pub struct StakingInstrument {
     /// Staking instrument name, e.g. SOL.staked
     pub instrument_name: String,
+
     /// Underlying instrument name, e.g. SOL
     pub underlying_inst_name: String,
+
     /// Reward instrument name, e.g. SOL.staked
     pub reward_inst_name: String,
+
     /// Disabled stake - true or false
     pub out_of_stock: bool,
+
     /// Disabled unstake - true or false
     pub block_unstake: bool,
+
     /// Estimated rewards
     pub est_rewards: String,
+
     /// Estimated rewards unit - APR or APY
     pub apr_y: String,
+
     /// Minimum stake amount
     pub min_stake_amt: String,
+
     /// Estimated reward frequency (day)
     pub reward_frequency: String,
+
     /// Estimated lock up period (day)
     pub lock_up_period: String,
+
     /// Is reward compounded - true or false
     pub is_compound_reward: bool,
+
     /// Is pre stake charge applied - true or false
     pub pre_stake_charge_enable: bool,
+
     /// Pre stake charge rate in basis point
     pub pre_stake_charge_rate_in_bps: String,
+
     /// Is restaked instrument - true or false
     pub is_restaked: bool,
+
     /// Additional rewards
     pub additional_rewards: Vec<AdditionalReward>,
 }
@@ -61,7 +76,7 @@ impl RestClient {
     ///
     /// Returns information about available staking instruments including rates, limits, and conditions.
     ///
-    /// See: <https://exchange-docs.crypto.com/exchange/index.html>
+    /// [docs](https://exchange-docs.crypto.com/exchange/index.html)
     ///
     /// Rate limit: 50 requests per second
     ///

@@ -1,7 +1,3 @@
-//! Request and response structs for public/get-candlestick endpoint
-//!
-//! Retrieves candlesticks (k-line data history) over a given period for an instrument.
-
 use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
@@ -90,7 +86,7 @@ impl RestClient {
     ///
     /// Retrieves candlestick (k-line) data for a given instrument and timeframe.
     ///
-    /// [Official API docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#public-get-candlestick)
+    /// [docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#public-get-candlestick)
     pub async fn get_candlestick(
         &self,
         params: GetCandlestickRequest,

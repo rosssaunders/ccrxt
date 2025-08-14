@@ -15,7 +15,7 @@ impl RestClient {
     ///
     /// Retrieves the list of supported index names.
     ///
-    /// [Official API docs](https://docs.deribit.com/#public-get_supported_index_names)
+    /// [docs](https://docs.deribit.com/#public-get_supported_index_names)
     pub async fn get_supported_index_names(&self) -> RestResult<GetSupportedIndexNamesResponse> {
         self.send_post_request(
             SUPPORTED_INDEX_NAMES_ENDPOINT,

@@ -16,8 +16,7 @@ impl RestClient {
     ///
     /// Retrieves detailed information about a specific futures contract.
     ///
-    /// # API Documentation
-    /// <https://www.gate.io/docs/developers/apiv4/#get-a-single-contract>
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#get-a-single-contract)
     ///
     /// # Arguments
     /// * `params` - The contract query parameters

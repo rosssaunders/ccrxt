@@ -2,12 +2,15 @@ use serde::{Deserialize, Serialize};
 
 use crate::kucoin::spot::{ResponseHeaders, RestResponse, Result};
 
+const REMOVE_ISOLATED_MARGIN_ENDPOINT: &str = "/api/v1/margin/withdrawMargin";
+
 /// Remove isolated margin request
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct RemoveIsolatedMarginRequest {
     /// Symbol of the contract
     pub symbol: String,
+
     /// Amount of margin to withdraw
     pub withdraw_amount: String,
 }
@@ -23,12 +26,11 @@ pub struct RemoveIsolatedMarginResponse {
 impl super::RestClient {
     /// Remove isolated margin from a position
     ///
-    /// <https://www.kucoin.com/docs-new/rest/futures-trading/positions/remove-isolated-margin>
+    /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/positions/remove-isolated-margin)
     pub async fn remove_isolated_margin(
         &self,
         request: RemoveIsolatedMarginRequest,
     ) -> Result<(RestResponse<RemoveIsolatedMarginResponse>, ResponseHeaders)> {
-        const REMOVE_ISOLATED_MARGIN_ENDPOINT: &str = "/api/v1/margin/withdrawMargin";
         self.post(REMOVE_ISOLATED_MARGIN_ENDPOINT, &request).await
     }
 }

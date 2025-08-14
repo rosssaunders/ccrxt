@@ -50,8 +50,7 @@ impl RestClient {
     ///
     /// This endpoint creates a new futures order for the authenticated user.
     ///
-    /// See: Gate.io API documentation
-    /// <https://www.gate.io/docs/developers/apiv4/#create-a-futures-order>
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#create-a-futures-order)
     ///
     /// Rate limit: 100 requests per second
     ///

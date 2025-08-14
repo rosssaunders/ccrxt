@@ -48,7 +48,7 @@ impl RestClient {
     ///
     /// Returns the current server time in seconds and nanoseconds.
     ///
-    /// [API Documentation](https://bybit-exchange.github.io/docs/v5/market/time)
+    /// [docs](https://bybit-exchange.github.io/docs/v5/market/time)
     ///
     /// Rate limit: 10 requests per second
     ///

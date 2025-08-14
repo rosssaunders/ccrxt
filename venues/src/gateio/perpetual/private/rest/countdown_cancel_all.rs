@@ -21,8 +21,7 @@ impl RestClient {
     ///
     /// Sets a countdown timer to cancel all orders after a specified timeout.
     ///
-    /// See: Gate.io API documentation
-    /// <https://www.gate.io/docs/developers/apiv4/#countdown-cancel-all-open-orders-of-specified-contract>
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#countdown-cancel-all-open-orders-of-specified-contract)
     ///
     /// Rate limit: 100 requests per second
     ///

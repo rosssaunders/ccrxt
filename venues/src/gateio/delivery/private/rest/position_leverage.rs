@@ -11,7 +11,7 @@ impl RestClient {
     ///
     /// This endpoint sets the leverage for a specific delivery contract position.
     ///
-    /// See: <https://www.gate.com/docs/developers/apiv4/#update-position-leverage-2>
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#update-position-leverage-2)
     ///
     /// Rate limit: 10 requests per second
     ///

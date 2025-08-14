@@ -51,7 +51,7 @@ impl RestClient {
     ///
     /// Cancels multiple orders in a single request using the LIST contingency type.
     ///
-    /// See: <https://exchange-docs.crypto.com/derivatives/index.html>
+    /// [docs](https://exchange-docs.crypto.com/derivatives/index.html)
     ///
     /// Rate limit: 10 requests per second per user
     ///

@@ -179,7 +179,7 @@ impl RestClient {
     ///
     /// Retrieves a list of instruments for a given currency and kind.
     ///
-    /// [Official API docs](https://docs.deribit.com/#public-get_instruments)
+    /// [docs](https://docs.deribit.com/#public-get_instruments)
     pub async fn get_instruments(
         &self,
         params: GetInstrumentsRequest,

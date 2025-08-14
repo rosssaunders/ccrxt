@@ -31,7 +31,7 @@ pub struct CurrentFundingRate {
 impl super::RestClient {
     /// Get current funding rate for a specific symbol
     ///
-    /// <https://www.kucoin.com/docs-new/rest/futures-trading/funding-fees/get-current-funding-rate>
+    /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/funding-fees/get-current-funding-rate)
     pub async fn get_current_funding_rate(
         &self,
         request: GetCurrentFundingRateRequest,

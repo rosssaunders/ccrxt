@@ -89,7 +89,7 @@ impl RestClient {
     ///
     /// Gets a list of available currency pairs for trading.
     ///
-    /// [API Documentation](https://docs.cdp.coinbase.com/exchange/reference/exchangerestapi_getproducts)
+    /// [docs](https://docs.cdp.coinbase.com/exchange/reference/exchangerestapi_getproducts)
     ///
     /// Rate limit: 10 requests per second
     ///

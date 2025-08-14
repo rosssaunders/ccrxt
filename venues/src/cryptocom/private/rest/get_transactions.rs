@@ -76,7 +76,7 @@ impl RestClient {
     ///
     /// Fetches recent transactions.
     ///
-    /// See: <https://exchange-docs.crypto.com/derivatives/index.html>
+    /// [docs](https://exchange-docs.crypto.com/derivatives/index.html)
     ///
     /// Rate limit: 1 request per second
     ///

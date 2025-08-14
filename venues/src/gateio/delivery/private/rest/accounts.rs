@@ -57,7 +57,7 @@ impl RestClient {
     ///
     /// This endpoint returns delivery account balances and margin information.
     ///
-    /// See: <https://www.gate.com/docs/developers/apiv4/#get-futures-account-2>
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#get-futures-account-2)
     ///
     /// Rate limit: 10 requests per second
     ///

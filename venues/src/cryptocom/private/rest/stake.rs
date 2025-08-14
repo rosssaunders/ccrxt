@@ -4,11 +4,13 @@ use super::client::RestClient;
 use crate::cryptocom::RestResult;
 
 const STAKE_ENDPOINT: &str = "private/staking/stake";
+
 /// Request parameters for stake
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct StakeRequest {
     /// Staking instrument name, e.g. SOL.staked
     pub instrument_name: String,
+
     /// Stake quantity
     pub quantity: String,
 }
@@ -18,18 +20,25 @@ pub struct StakeRequest {
 pub struct StakeResponse {
     /// Request id
     pub staking_id: String,
+
     /// Staking instrument name, e.g. SOL.staked
     pub instrument_name: String,
+
     /// Request status: NEW, PENDING, STAKED, COMPLETED, REJECTED
     pub status: String,
+
     /// Stake quantity
     pub quantity: String,
+
     /// Underlying instrument name of staking, e.g. SOL
     pub underlying_inst_name: String,
+
     /// Pre stake charge rate in basis point
     pub pre_stake_charge_rate_in_bps: String,
+
     /// Pre stake charge value
     pub pre_stake_charge: String,
+
     /// Reason for the status, e.g. "NO_ERROR"
     pub reason: String,
 }
@@ -39,7 +48,7 @@ impl RestClient {
     ///
     /// Creates a staking request for the specified instrument and quantity.
     ///
-    /// See: <https://exchange-docs.crypto.com/exchange/index.html>
+    /// [docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#private-staking-stake)
     ///
     /// Rate limit: 50 requests per second
     ///

@@ -10,9 +10,11 @@ const MODIFY_PURCHASE_ENDPOINT: &str = "/api/v1/otc/loan/purchase";
 pub struct ModifyPurchaseRequest {
     /// Currency
     pub currency: String,
+
     /// Modified purchase interest rate
     #[serde(rename = "interestRate")]
     pub interest_rate: String,
+
     /// Purchase order ID
     #[serde(rename = "purchaseOrderNo")]
     pub purchase_order_no: String,
@@ -21,7 +23,7 @@ pub struct ModifyPurchaseRequest {
 impl RestClient {
     /// Update the interest rates of subscription orders
     ///
-    /// Reference: https://docs.kucoin.com/margin-credit#modify-purchase
+    /// [docs](https://docs.kucoin.com/margin-credit#modify-purchase)
     pub async fn modify_purchase(
         &self,
         request: ModifyPurchaseRequest,

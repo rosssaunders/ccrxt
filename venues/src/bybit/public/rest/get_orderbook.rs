@@ -105,7 +105,7 @@ impl RestClient {
     /// - Spot: 200-level orderbook data  
     /// - Option: 25-level orderbook data
     ///
-    /// [API Documentation](https://bybit-exchange.github.io/docs/v5/market/orderbook)
+    /// [docs](https://bybit-exchange.github.io/docs/v5/market/orderbook)
     ///
     /// Rate limit: 10 requests per second
     ///

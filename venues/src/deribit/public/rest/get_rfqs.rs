@@ -1,7 +1,3 @@
-//! Implements the /public/get_rfqs endpoint for Deribit.
-//!
-//! Retrieves active RFQs for instruments in given currency.
-
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
@@ -53,7 +49,7 @@ impl RestClient {
     ///
     /// Retrieves active RFQs for instruments in given currency.
     ///
-    /// [Official API docs](https://docs.deribit.com/#public-get_rfqs)
+    /// [docs](https://docs.deribit.com/#public-get_rfqs)
     pub async fn get_rfqs(&self, params: GetRfqsRequest) -> RestResult<GetRfqsResponse> {
         self.send_post_request(
             RFQS_ENDPOINT,

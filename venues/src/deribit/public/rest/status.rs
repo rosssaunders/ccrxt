@@ -1,7 +1,3 @@
-//! Request and response structs for public/status endpoint
-//!
-//! Method used to get information about locked currencies
-
 use serde::Deserialize;
 
 use super::RestClient;
@@ -36,7 +32,7 @@ impl RestClient {
     /// # Returns
     /// A result containing the response with status information or an error
     ///
-    /// [Official API docs](https://docs.deribit.com/#public-status)
+    /// [docs](https://docs.deribit.com/#public-status)
     pub async fn get_status(&self) -> RestResult<GetStatusResponse> {
         self.send_post_request(
             STATUS_ENDPOINT,

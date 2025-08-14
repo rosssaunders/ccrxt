@@ -80,7 +80,7 @@ impl RestClient {
     /// Query for historical funding rates. This endpoint is only available for USDT/USDC perpetual
     /// and Inverse perpetual contracts.
     ///
-    /// [API Documentation](https://bybit-exchange.github.io/docs/v5/market/funding-rate)
+    /// [docs](https://bybit-exchange.github.io/docs/v5/market/funding-rate)
     ///
     /// Rate limit: 10 requests per second
     ///

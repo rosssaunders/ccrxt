@@ -32,8 +32,7 @@ impl RestClient {
     ///
     /// Retrieves candlestick data for a specific options contract.
     ///
-    /// # API Documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#get-options-candlesticks>
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#get-options-candlesticks)
     pub async fn get_options_candlesticks(
         &self,
         params: OptionsCandlesticksRequest,

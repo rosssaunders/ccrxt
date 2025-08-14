@@ -1,11 +1,3 @@
-//! Get Order History endpoint for Bitget Spot API
-//!
-//! This endpoint allows retrieving historical orders (completed/cancelled).
-//!
-//! Reference: https://www.bitget.com/api-doc/spot/trade/Get-History-Orders
-//! Endpoint: GET /api/v2/spot/trade/history-orders
-//! Rate limit: 20 times/1s (UID)
-
 use serde::{Deserialize, Serialize};
 
 use super::{
@@ -197,6 +189,8 @@ impl RestClient {
     ///
     /// Retrieves order history for the authenticated account with optional filters.
     /// Only supports data within 90 days. Older data can be downloaded from the web.
+    ///
+    /// [docs](https://www.bitget.com/api-doc/spot/trade/Get-History-Orders)
     ///
     /// # Arguments
     /// * `request` - The request parameters with optional filters

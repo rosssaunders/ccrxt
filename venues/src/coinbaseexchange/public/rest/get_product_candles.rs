@@ -41,7 +41,7 @@ impl RestClient {
     /// Historic rates for a product. Rates are returned in grouped buckets.
     /// Candle schema is of the form [timestamp, price_low, price_high, price_open, price_close, volume].
     ///
-    /// [API Documentation](https://docs.cdp.coinbase.com/exchange/reference/exchangerestapi_getproductcandles)
+    /// [docs](https://docs.cdp.coinbase.com/exchange/reference/exchangerestapi_getproductcandles)
     ///
     /// Rate limit: 10 requests per second
     ///

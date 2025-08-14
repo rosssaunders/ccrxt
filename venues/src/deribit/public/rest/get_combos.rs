@@ -65,7 +65,7 @@ impl RestClient {
     /// # Returns
     /// A result containing the response with combo information or an error
     ///
-    /// [Official API docs](https://docs.deribit.com/#public-get_combos)
+    /// [docs](https://docs.deribit.com/#public-get_combos)
     pub async fn get_combos(&self, params: GetCombosRequest) -> RestResult<GetCombosResponse> {
         self.send_post_request(
             COMBOS_ENDPOINT,

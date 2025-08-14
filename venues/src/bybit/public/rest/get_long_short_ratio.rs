@@ -78,7 +78,7 @@ impl RestClient {
     /// Query for account long/short ratio. This endpoint is only available for USDT perpetual
     /// and Inverse contracts.
     ///
-    /// [API Documentation](https://bybit-exchange.github.io/docs/v5/market/long-short-ratio)
+    /// [docs](https://bybit-exchange.github.io/docs/v5/market/long-short-ratio)
     ///
     /// Rate limit: 10 requests per second
     ///

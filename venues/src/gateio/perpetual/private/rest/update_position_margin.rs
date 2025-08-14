@@ -27,8 +27,7 @@ impl RestClient {
     ///
     /// This endpoint updates the margin for a futures position.
     ///
-    /// See: Gate.io API documentation
-    /// <https://www.gate.io/docs/developers/apiv4/#update-position-margin>
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#update-position-margin)
     ///
     /// Rate limit: 100 requests per second
     ///

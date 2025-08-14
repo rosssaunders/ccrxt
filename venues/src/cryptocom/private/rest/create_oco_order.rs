@@ -10,8 +10,6 @@ const CREATE_OCO_ORDER_ENDPOINT: &str = "private/create-order-list";
 ///
 /// This endpoint allows users to place two orders at the same time (a limit order and a stop order).
 /// When either order is executed, the other is automatically canceled. Only available for Spot and Perpetual/Futures pairs.
-///
-/// See: https://exchange-docs.crypto.com/derivatives/index.html#private-create-order-list
 #[derive(Debug, Clone, Serialize)]
 pub struct CreateOcoOrderRequest {
     /// Contingency type. Must be "OCO" for this endpoint.
@@ -61,7 +59,7 @@ impl RestClient {
     ///
     /// Creates a pair of orders (limit and stop) that are linked so that the execution of one cancels the other.
     ///
-    /// See: https://exchange-docs.crypto.com/derivatives/index.html#private-create-order-list
+    /// [docs](https://exchange-docs.crypto.com/derivatives/index.html#private-create-order-list)
     ///
     /// Rate limit: 10 requests per second per user
     ///

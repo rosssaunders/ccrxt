@@ -57,7 +57,7 @@ impl RestClient {
     ///
     /// Retrieves historical APR data for specified currency. Only applicable to yield-generating tokens (`USDE`, `STETH`).
     ///
-    /// [Official API docs](https://docs.deribit.com/#public-get_apr_history)
+    /// [docs](https://docs.deribit.com/#public-get_apr_history)
     pub async fn get_apr_history(
         &self,
         params: GetAprHistoryRequest,

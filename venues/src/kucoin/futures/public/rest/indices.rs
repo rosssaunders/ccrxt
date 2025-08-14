@@ -11,21 +11,27 @@ const PREMIUM_INDEX_ENDPOINT: &str = "/api/v1/premium/query";
 pub struct GetInterestRateIndexRequest {
     /// Symbol of the contract (e.g., .XBTINT8H, .USDTINT8H, .XBTINT, .USDTINT)
     pub symbol: String,
+
     /// Start time (milliseconds)
     #[serde(rename = "startAt", skip_serializing_if = "Option::is_none")]
     pub start_at: Option<i64>,
+
     /// End time (milliseconds)
     #[serde(rename = "endAt", skip_serializing_if = "Option::is_none")]
     pub end_at: Option<i64>,
+
     /// Whether to reverse the results
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reverse: Option<bool>,
+
     /// Start offset
     #[serde(skip_serializing_if = "Option::is_none")]
     pub offset: Option<i64>,
+
     /// Whether to search forward
     #[serde(skip_serializing_if = "Option::is_none")]
     pub forward: Option<bool>,
+
     /// Max record count (default: 10, max: 100)
     #[serde(rename = "maxCount", skip_serializing_if = "Option::is_none")]
     pub max_count: Option<i64>,
@@ -37,10 +43,13 @@ pub struct GetInterestRateIndexRequest {
 pub struct InterestRateIndexItem {
     /// Symbol of the contract
     pub symbol: String,
+
     /// Granularity (milliseconds)
     pub granularity: i64,
+
     /// Timestamp (milliseconds)
     pub time_point: i64,
+
     /// Interest rate value
     pub value: f64,
 }
@@ -51,6 +60,7 @@ pub struct InterestRateIndexItem {
 pub struct InterestRateIndexResponse {
     /// List of interest rate index data
     pub data_list: Vec<InterestRateIndexItem>,
+
     /// Whether there are more pages
     pub has_more: bool,
 }
@@ -60,21 +70,27 @@ pub struct InterestRateIndexResponse {
 pub struct GetPremiumIndexRequest {
     /// Symbol of the contract (e.g., .XBTUSDTMPI, .XBTUSDTMPI8H)
     pub symbol: String,
+
     /// Start time (milliseconds)
     #[serde(rename = "startAt", skip_serializing_if = "Option::is_none")]
     pub start_at: Option<i64>,
+
     /// End time (milliseconds)
     #[serde(rename = "endAt", skip_serializing_if = "Option::is_none")]
     pub end_at: Option<i64>,
+
     /// Whether to reverse the results
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reverse: Option<bool>,
+
     /// Start offset
     #[serde(skip_serializing_if = "Option::is_none")]
     pub offset: Option<i64>,
+
     /// Whether to search forward
     #[serde(skip_serializing_if = "Option::is_none")]
     pub forward: Option<bool>,
+
     /// Max record count (default: 10, max: 100)
     #[serde(rename = "maxCount", skip_serializing_if = "Option::is_none")]
     pub max_count: Option<i64>,
@@ -86,10 +102,13 @@ pub struct GetPremiumIndexRequest {
 pub struct PremiumIndexItem {
     /// Symbol of the contract
     pub symbol: String,
+
     /// Granularity (milliseconds)
     pub granularity: i64,
+
     /// Timestamp (milliseconds)
     pub time_point: i64,
+
     /// Premium index value
     pub value: f64,
 }
@@ -100,6 +119,7 @@ pub struct PremiumIndexItem {
 pub struct PremiumIndexResponse {
     /// List of premium index data
     pub data_list: Vec<PremiumIndexItem>,
+
     /// Whether there are more pages
     pub has_more: bool,
 }
@@ -107,7 +127,7 @@ pub struct PremiumIndexResponse {
 impl super::RestClient {
     /// Get interest rate index data
     ///
-    /// <https://www.kucoin.com/docs-new/rest/futures-trading/market-data/get-interest-rate-index>
+    /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/market-data/get-interest-rate-index)
     pub async fn get_interest_rate_index(
         &self,
         request: GetInterestRateIndexRequest,
@@ -118,7 +138,7 @@ impl super::RestClient {
 
     /// Get premium index data
     ///
-    /// <https://www.kucoin.com/docs-new/rest/futures-trading/market-data/get-premium-index>
+    /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/market-data/get-premium-index)
     pub async fn get_premium_index(
         &self,
         request: GetPremiumIndexRequest,

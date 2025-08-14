@@ -7,8 +7,7 @@ impl RestClient {
     ///
     /// This endpoint returns dual mode position information for a specific contract.
     ///
-    /// See: Gate.io API documentation
-    /// <https://www.gate.io/docs/developers/apiv4/#retrieve-position-detail-in-dual-mode>
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#retrieve-position-detail-in-dual-mode)
     ///
     /// Rate limit: 100 requests per second
     ///

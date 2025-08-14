@@ -35,7 +35,7 @@ impl RestClient {
     ///
     /// Creates an unstaking request for the specified instrument and quantity.
     ///
-    /// See: <https://exchange-docs.crypto.com/exchange/index.html>
+    /// [docs](https://exchange-docs.crypto.com/exchange/index.html)
     ///
     /// Rate limit: 50 requests per second
     ///

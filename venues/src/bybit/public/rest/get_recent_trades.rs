@@ -111,7 +111,7 @@ impl RestClient {
     ///
     /// Query recent public trading history in Bybit.
     ///
-    /// [API Documentation](https://bybit-exchange.github.io/docs/v5/market/recent-trade)
+    /// [docs](https://bybit-exchange.github.io/docs/v5/market/recent-trade)
     ///
     /// Rate limit: 10 requests per second
     ///

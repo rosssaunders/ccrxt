@@ -86,7 +86,7 @@ impl RestClient {
     ///
     /// Fetches the public tickers for all or a particular instrument.
     ///
-    /// [Official API docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#public-get-tickers)
+    /// [docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#public-get-tickers)
     pub async fn get_tickers(&self, params: GetTickersRequest) -> RestResult<GetTickersResponse> {
         self.send_get_request(
             GET_TICKERS_ENDPOINT,

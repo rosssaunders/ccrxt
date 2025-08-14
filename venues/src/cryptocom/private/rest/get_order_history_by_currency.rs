@@ -4,32 +4,41 @@ use super::{client::RestClient, get_order_history_by_instrument::OrderHistoryByI
 use crate::cryptocom::RestResult;
 
 const ORDER_HISTORY_BY_CURRENCY_ENDPOINT: &str = "private/get_order_history_by_currency";
+
 /// Parameters for get order history by currency request
 #[derive(Debug, Clone, Serialize)]
 pub struct GetOrderHistoryByCurrencyRequest {
     /// The currency symbol (required)
     pub currency: String,
+
     /// Instrument kind filter (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub kind: Option<String>,
+
     /// Number of requested items, default - 20
     #[serde(skip_serializing_if = "Option::is_none")]
     pub count: Option<i32>,
+
     /// The offset for pagination, default - 0
     #[serde(skip_serializing_if = "Option::is_none")]
     pub offset: Option<i32>,
+
     /// Include in result orders older than 2 days, default - false
     #[serde(skip_serializing_if = "Option::is_none")]
     pub include_old: Option<bool>,
+
     /// Include in result fully unfilled closed orders, default - false
     #[serde(skip_serializing_if = "Option::is_none")]
     pub include_unfilled: Option<bool>,
+
     /// When set to true, the API response format changes from a simple list of orders to an object containing the orders and a continuation token
     #[serde(skip_serializing_if = "Option::is_none")]
     pub with_continuation: Option<bool>,
+
     /// Continuation token for pagination
     #[serde(skip_serializing_if = "Option::is_none")]
     pub continuation: Option<String>,
+
     /// Determines whether historical trade and order records should be retrieved
     #[serde(skip_serializing_if = "Option::is_none")]
     pub historical: Option<bool>,
@@ -47,6 +56,7 @@ pub struct GetOrderHistoryByCurrencyResponse {
 pub struct GetOrderHistoryByCurrencyWithContinuationResponse {
     /// Array of order history data  
     pub result: Vec<OrderHistoryByInstrumentEntry>,
+
     /// Continuation token for pagination
     #[serde(skip_serializing_if = "Option::is_none")]
     pub continuation: Option<String>,
@@ -60,7 +70,7 @@ impl RestClient {
     ///
     /// Scope: trade:read
     ///
-    /// See: <https://exchange-docs.crypto.com/derivatives/index.html>
+    /// [docs](https://exchange-docs.crypto.com/derivatives/index.html)
     ///
     /// Rate limit: Not specified in documentation
     ///

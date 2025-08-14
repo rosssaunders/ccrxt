@@ -72,7 +72,7 @@ pub type ConvertResponse = ApiResult<ConvertResult>;
 impl RestClient {
     /// Create a request to convert between staked token and liquid staking token.
     ///
-    /// See: <https://exchange-docs.crypto.com/exchange/index.html>
+    /// [docs](https://exchange-docs.crypto.com/exchange/index.html)
     ///
     /// Rate limit: 50 requests per second
     ///

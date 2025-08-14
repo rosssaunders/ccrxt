@@ -4,29 +4,37 @@ use super::client::RestClient;
 use crate::cryptocom::RestResult;
 
 const ORDER_HISTORY_BY_INSTRUMENT_ENDPOINT: &str = "private/get_order_history_by_instrument";
+
 /// Parameters for get order history by instrument request
 #[derive(Debug, Clone, Serialize)]
 pub struct GetOrderHistoryByInstrumentRequest {
     /// Instrument name (required)
     pub instrument_name: String,
+
     /// Number of requested items, default - 20
     #[serde(skip_serializing_if = "Option::is_none")]
     pub count: Option<i32>,
+
     /// The offset for pagination, default - 0
     #[serde(skip_serializing_if = "Option::is_none")]
     pub offset: Option<i32>,
+
     /// Include in result orders older than 2 days, default - false
     #[serde(skip_serializing_if = "Option::is_none")]
     pub include_old: Option<bool>,
+
     /// Include in result fully unfilled closed orders, default - false
     #[serde(skip_serializing_if = "Option::is_none")]
     pub include_unfilled: Option<bool>,
+
     /// When set to true, the API response format changes from a simple list of orders to an object containing the orders and a continuation token
     #[serde(skip_serializing_if = "Option::is_none")]
     pub with_continuation: Option<bool>,
+
     /// Continuation token for pagination
     #[serde(skip_serializing_if = "Option::is_none")]
     pub continuation: Option<String>,
+
     /// Determines whether historical trade and order records should be retrieved
     #[serde(skip_serializing_if = "Option::is_none")]
     pub historical: Option<bool>,
@@ -38,90 +46,122 @@ pub struct OrderHistoryByInstrumentEntry {
     /// If order is a quote. Present only if true.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub quote: Option<bool>,
+
     /// Whether the trigger order has been triggered
     #[serde(skip_serializing_if = "Option::is_none")]
     pub triggered: Option<bool>,
+
     /// Optional field with value true added only when created with Mobile Application
     #[serde(skip_serializing_if = "Option::is_none")]
     pub mobile: Option<bool>,
+
     /// The name of the application that placed the order on behalf of the user (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub app_name: Option<String>,
+
     /// Implied volatility in percent. (Only if advanced="implv")
     #[serde(skip_serializing_if = "Option::is_none")]
     pub implv: Option<f64>,
+
     /// The initial display amount of iceberg order
     #[serde(skip_serializing_if = "Option::is_none")]
     pub refresh_amount: Option<f64>,
+
     /// Option price in USD (Only if advanced="usd")
     #[serde(skip_serializing_if = "Option::is_none")]
     pub usd: Option<f64>,
+
     /// The Ids of the orders that will be triggered if the order is filled
     #[serde(skip_serializing_if = "Option::is_none")]
     pub oto_order_ids: Option<Vec<String>>,
+
     /// true if created with API
     #[serde(skip_serializing_if = "Option::is_none")]
     pub api: Option<bool>,
+
     /// Average fill price of the order
     #[serde(skip_serializing_if = "Option::is_none")]
     pub average_price: Option<f64>,
+
     /// Advanced type: "usd" or "implv" (Only for options; field is omitted if not applicable)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub advanced: Option<String>,
+
     /// Unique order identifier
     pub order_id: String,
+
     /// true for post-only orders only
     #[serde(skip_serializing_if = "Option::is_none")]
     pub post_only: Option<bool>,
+
     /// Filled amount of the order
     #[serde(skip_serializing_if = "Option::is_none")]
     pub filled_amount: Option<f64>,
+
     /// Trigger type (only for trigger orders)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub trigger: Option<String>,
+
     /// Id of the trigger order that created the order
     #[serde(skip_serializing_if = "Option::is_none")]
     pub trigger_order_id: Option<String>,
+
     /// Direction: buy, or sell
     pub direction: String,
+
     /// Order size in contract units
     #[serde(skip_serializing_if = "Option::is_none")]
     pub contracts: Option<f64>,
+
     /// true if the order is an order that can be triggered by another order
     #[serde(skip_serializing_if = "Option::is_none")]
     pub is_secondary_oto: Option<bool>,
+
     /// true if the order was edited
     #[serde(skip_serializing_if = "Option::is_none")]
     pub replaced: Option<bool>,
+
     /// Name of the MMP group supplied in the private/mass_quote request
     #[serde(skip_serializing_if = "Option::is_none")]
     pub mmp_group: Option<String>,
+
     /// true if the order is a MMP order
     #[serde(skip_serializing_if = "Option::is_none")]
     pub mmp: Option<bool>,
+
     /// The timestamp (milliseconds since the Unix epoch)
     pub last_update_timestamp: i64,
+
     /// The timestamp when order was created (milliseconds since the Unix epoch)
     pub creation_timestamp: i64,
+
     /// Order state
     pub order_state: String,
+
     /// Order type
     pub order_type: String,
+
     /// Price level of the order
     #[serde(skip_serializing_if = "Option::is_none")]
     pub price: Option<f64>,
+
     /// Time in force
     pub time_in_force: String,
+
     /// Amount of the order
     pub amount: f64,
+
     /// Instrument name
     pub instrument_name: String,
+
     /// Cumulative amount filled
     #[serde(skip_serializing_if = "Option::is_none")]
     pub cumulative_amount: Option<f64>,
+
     /// Total fees paid by this order
     #[serde(skip_serializing_if = "Option::is_none")]
     pub cumulative_fee: Option<f64>,
+
     /// Client order ID if available
     #[serde(skip_serializing_if = "Option::is_none")]
     pub client_oid: Option<String>,
@@ -139,6 +179,7 @@ pub struct GetOrderHistoryByInstrumentResponse {
 pub struct GetOrderHistoryByInstrumentWithContinuationResponse {
     /// Array of order history data  
     pub result: Vec<OrderHistoryByInstrumentEntry>,
+
     /// Continuation token for pagination
     #[serde(skip_serializing_if = "Option::is_none")]
     pub continuation: Option<String>,
@@ -152,7 +193,7 @@ impl RestClient {
     ///
     /// Scope: trade:read
     ///
-    /// See: <https://exchange-docs.crypto.com/derivatives/index.html>
+    /// [docs](https://exchange-docs.crypto.com/derivatives/index.html)
     ///
     /// Rate limit: Not specified in documentation
     ///

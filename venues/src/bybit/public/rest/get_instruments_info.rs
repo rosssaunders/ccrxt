@@ -186,7 +186,7 @@ impl RestClient {
     ///
     /// Query for the instrument specification of online trading pairs.
     ///
-    /// [API Documentation](https://bybit-exchange.github.io/docs/v5/market/instrument)
+    /// [docs](https://bybit-exchange.github.io/docs/v5/market/instrument)
     ///
     /// Rate limit: 10 requests per second
     ///

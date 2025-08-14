@@ -1,6 +1,3 @@
-// Portfolio Margin Simulator endpoint implementation for Bullish
-// See: https://api.exchange.bullish.com/trading-api/v1/simulate-portfolio-margin
-
 use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};

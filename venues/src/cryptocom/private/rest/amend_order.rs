@@ -45,7 +45,7 @@ impl RestClient {
     /// cancel and then create behind the scene. The new order will lose queue priority, except
     /// if the amend is only to amend down order quantity.
     ///
-    /// See: <https://exchange-docs.crypto.com/derivatives/index.html>
+    /// [docs](https://exchange-docs.crypto.com/derivatives/index.html)
     ///
     /// Rate limit: 100 requests per second
     ///

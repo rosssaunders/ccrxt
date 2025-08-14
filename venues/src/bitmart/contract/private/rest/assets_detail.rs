@@ -64,7 +64,7 @@ impl RestClient {
     ///
     /// Retrieves user contract asset details for BitMart Futures accounts.
     ///
-    /// [Official API Documentation](https://developer-pro.bitmart.com/en/futuresv2/#get-contract-assets-keyed)
+    /// [docs](https://developer-pro.bitmart.com/en/futuresv2/#get-contract-assets-keyed)
     ///
     /// # Rate Limit
     /// See BitMart API documentation for detailed rate limits.

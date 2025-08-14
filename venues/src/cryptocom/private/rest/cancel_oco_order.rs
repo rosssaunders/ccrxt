@@ -34,7 +34,7 @@ impl RestClient {
     ///
     /// Cancels a contingency order (OCO) using the list ID.
     ///
-    /// See: <https://exchange-docs.crypto.com/derivatives/index.html>
+    /// [docs](https://exchange-docs.crypto.com/derivatives/index.html)
     ///
     /// Rate limit: 10 requests per second per user
     ///

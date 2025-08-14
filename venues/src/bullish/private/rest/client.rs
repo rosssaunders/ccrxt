@@ -483,10 +483,6 @@ mod tests {
 
     use super::*;
 
-    /// A plain text implementation of ExposableSecret for testing purposes.
-    #[derive(Clone)]
-    struct TestSecret(String);
-
     #[test]
     fn test_private_client_creation() {
         let api_key = SecretString::new("test_key".to_string().into_boxed_str());

@@ -7,8 +7,7 @@ impl RestClient {
     ///
     /// This endpoint cancels all futures orders for a specific contract or all contracts.
     ///
-    /// See: Gate.io API documentation
-    /// <https://www.gate.io/docs/developers/apiv4/#cancel-all-open-orders-matched>
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#cancel-all-open-orders-matched)
     ///
     /// Rate limit: 100 requests per second
     ///

@@ -98,7 +98,7 @@ pub struct WithdrawalsResponse {
 impl RestClient {
     /// Get withdrawal history
     ///
-    /// Reference: https://docs.kucoin.com/#get-v1-withdrawals
+    /// [docs](https://docs.kucoin.com/#get-v1-withdrawals)
     pub async fn get_withdrawals(
         &self,
         request: GetWithdrawalsRequest,

@@ -7,8 +7,7 @@ impl RestClient {
     ///
     /// This endpoint returns transferable amounts for all currencies.
     ///
-    /// # API Documentation
-    /// <https://www.gate.io/docs/developers/apiv4/#get-unified-transferables>
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#get-unified-transferables)
     pub async fn get_unified_transferables(
         &self,
     ) -> crate::gateio::unified::RestResult<Vec<UnifiedTransferableResponse>> {

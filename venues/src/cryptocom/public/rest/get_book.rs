@@ -59,8 +59,10 @@ pub struct BookData {
     /// Optional: timestamp fields, sequence numbers, etc.
     #[serde(rename = "t", default)]
     pub t: Option<u64>,
+
     #[serde(rename = "tt", default)]
     pub tt: Option<u64>,
+
     #[serde(rename = "u", default)]
     pub u: Option<u64>,
 }
@@ -70,7 +72,7 @@ impl RestClient {
     ///
     /// Fetches the public order book for a particular instrument and depth.
     ///
-    /// [Official API docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#public-get-book)
+    /// [docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#public-get-book)
     pub async fn get_book(&self, params: GetBookRequest) -> RestResult<GetBookResponse> {
         self.send_get_request(
             GET_BOOK_ENDPOINT,

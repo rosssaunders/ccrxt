@@ -91,8 +91,7 @@ impl RestClient {
     /// Retrieves ticker information for futures contracts.
     /// If contract is not specified, returns tickers for all contracts in the settlement currency.
     ///
-    /// # API Documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#list-futures-tickers>
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#list-futures-tickers)
     pub async fn get_futures_tickers(
         &self,
         params: FuturesTickersRequest,

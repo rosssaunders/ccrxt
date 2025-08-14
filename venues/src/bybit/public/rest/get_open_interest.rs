@@ -90,7 +90,7 @@ impl RestClient {
     ///
     /// Query for historical open interest data of a symbol.
     ///
-    /// [API Documentation](https://bybit-exchange.github.io/docs/v5/market/open-interest)
+    /// [docs](https://bybit-exchange.github.io/docs/v5/market/open-interest)
     ///
     /// Rate limit: 10 requests per second
     ///

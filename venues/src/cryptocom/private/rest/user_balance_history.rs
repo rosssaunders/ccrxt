@@ -4,11 +4,13 @@ use super::client::RestClient;
 use crate::cryptocom::{ApiResult, RestResult};
 
 const USER_BALANCE_HISTORY_ENDPOINT: &str = "private/user-balance-history";
+
 /// Balance history entry
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct BalanceHistoryEntry {
     /// timestamp
     pub t: u64,
+
     /// total cash balance
     pub c: String,
 }
@@ -34,6 +36,7 @@ pub struct GetUserBalanceHistoryRequest {
 pub struct GetUserBalanceHistoryResult {
     /// Instrument name (typically "USD")
     pub instrument_name: String,
+
     /// Array of balance history entries
     pub data: Vec<BalanceHistoryEntry>,
 }
@@ -47,7 +50,7 @@ impl RestClient {
     /// Returns the user's balance history with optional timeframe filtering (H1/D1).
     /// This call may temporarily have discrepancies with that shown on the GUI.
     ///
-    /// [Official API docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#private-user-balance-history)
+    /// [docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#private-user-balance-history)
     ///
     /// Rate limit: No rate limit
     ///

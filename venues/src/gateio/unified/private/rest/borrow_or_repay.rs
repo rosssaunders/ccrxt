@@ -10,8 +10,7 @@ impl RestClient {
     ///
     /// This endpoint allows borrowing or repaying funds.
     ///
-    /// # API Documentation
-    /// <https://www.gate.io/docs/developers/apiv4/#borrow-or-repay>
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#borrow-or-repay)
     pub async fn borrow_or_repay(
         &self,
         request: BorrowOrRepayRequest,

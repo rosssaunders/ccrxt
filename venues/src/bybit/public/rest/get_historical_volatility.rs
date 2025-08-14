@@ -78,7 +78,7 @@ impl RestClient {
     ///
     /// Query for historical volatility data. This endpoint is only available for Option contracts.
     ///
-    /// [API Documentation](https://bybit-exchange.github.io/docs/v5/market/iv)
+    /// [docs](https://bybit-exchange.github.io/docs/v5/market/iv)
     ///
     /// Rate limit: 10 requests per second
     ///

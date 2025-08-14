@@ -1,7 +1,3 @@
-//! Request and response structs for public/get-expired-settlement-price endpoint
-//!
-//! Fetches settlement price of expired instruments.
-
 use serde::{Deserialize, Serialize};
 
 use super::client::RestClient;
@@ -59,7 +55,7 @@ impl RestClient {
     ///
     /// Fetches settlement price of expired instruments.
     ///
-    /// [Official API docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#public-get-expired-settlement-price)
+    /// [docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#public-get-expired-settlement-price)
     pub async fn get_expired_settlement_price(
         &self,
         params: GetExpiredSettlementPriceRequest,

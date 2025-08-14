@@ -8,8 +8,7 @@ impl RestClient {
     ///
     /// This is a convenience method that calls borrow_or_repay with type set to "borrow".
     ///
-    /// # API Documentation
-    /// <https://www.gate.io/docs/developers/apiv4/#borrow-funds>
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#borrow-funds)
     pub async fn borrow(
         &self,
         currency: &str,

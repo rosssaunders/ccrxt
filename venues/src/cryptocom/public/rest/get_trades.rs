@@ -1,7 +1,3 @@
-//! Request and response structs for public/get-trades endpoint
-//!
-//! Fetches the public trades for a particular instrument.
-
 use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
@@ -95,7 +91,7 @@ impl RestClient {
     ///
     /// Fetches the public trades for a particular instrument.
     ///
-    /// [Official API docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#public-get-trades)
+    /// [docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#public-get-trades)
     pub async fn get_trades(&self, params: GetTradesRequest) -> RestResult<GetTradesResponse> {
         self.send_get_request(
             GET_TRADES_ENDPOINT,

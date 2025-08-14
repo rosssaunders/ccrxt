@@ -29,8 +29,7 @@ impl RestClient {
     ///
     /// Returns orders within a specific time range for better performance.
     ///
-    /// See: Gate.io API documentation
-    /// <https://www.gate.io/docs/developers/apiv4/#query-futures-orders-by-time-range>
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#query-futures-orders-by-time-range)
     ///
     /// Rate limit: 100 requests per second
     ///

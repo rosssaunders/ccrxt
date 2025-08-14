@@ -1,7 +1,3 @@
-//! Request and response structs for public/get-instruments endpoint
-//!
-//! Provides information on all supported instruments (e.g. BTCUSD-PERP).
-
 use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
@@ -98,7 +94,7 @@ impl RestClient {
     ///
     /// Provides information on all supported instruments.
     ///
-    /// [Official API docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#public-get-instruments)
+    /// [docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#public-get-instruments)
     pub async fn get_instruments(
         &self,
         params: GetInstrumentsRequest,

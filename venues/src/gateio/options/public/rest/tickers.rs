@@ -89,8 +89,7 @@ impl RestClient {
     ///
     /// Retrieves ticker information for options contracts.
     ///
-    /// # API Documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#list-tickers-of-options-contracts>
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#list-tickers-of-options-contracts)
     pub async fn get_options_tickers(
         &self,
         params: OptionsTickersRequest,

@@ -8,7 +8,7 @@ impl RestClient {
     /// This endpoint returns details for a specific options order.
     ///
     /// See: Gate.io API documentation
-    /// <https://www.gate.io/docs/developers/apiv4/#get-a-single-options-order>
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#get-a-single-options-order)
     ///
     /// Rate limit: 10 requests per second
     ///

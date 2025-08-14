@@ -71,7 +71,7 @@ impl RestClient {
     ///
     /// Returns historical convert requests that have been completed or rejected.
     ///
-    /// See: <https://exchange-docs.crypto.com/exchange/index.html>
+    /// [docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#private-staking-get-convert-history)
     ///
     /// Rate limit: 50 requests per second
     ///

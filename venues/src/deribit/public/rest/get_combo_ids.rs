@@ -1,8 +1,3 @@
-//! Request and response structs for public/get_combo_ids endpoint
-//!
-//! Retrieves available combos. This method can be used to get the list of all
-//! combos, or only the list of combos in the given state.
-
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
@@ -39,7 +34,7 @@ impl RestClient {
     /// # Returns
     /// A result containing the response with combo IDs or an error
     ///
-    /// [Official API docs](https://docs.deribit.com/#public-get_combo_ids)
+    /// [docs](https://docs.deribit.com/#public-get_combo_ids)
     pub async fn get_combo_ids(
         &self,
         params: GetComboIdsRequest,

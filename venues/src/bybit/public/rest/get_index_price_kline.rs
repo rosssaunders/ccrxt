@@ -114,7 +114,7 @@ impl RestClient {
     /// Query for historical index price klines. This endpoint is only available for USDT/USDC perpetual
     /// and Inverse perpetual contracts.
     ///
-    /// [API Documentation](https://bybit-exchange.github.io/docs/v5/market/index-kline)
+    /// [docs](https://bybit-exchange.github.io/docs/v5/market/index-price-kline)
     ///
     /// Rate limit: 10 requests per second
     ///

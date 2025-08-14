@@ -7,8 +7,7 @@ impl RestClient {
     ///
     /// This endpoint returns the current unified mode status.
     ///
-    /// # API Documentation
-    /// <https://www.gate.io/docs/developers/apiv4/#get-unified-mode>
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#get-unified-mode)
     pub async fn get_unified_mode(
         &self,
     ) -> crate::gateio::unified::RestResult<UnifiedModeResponse> {

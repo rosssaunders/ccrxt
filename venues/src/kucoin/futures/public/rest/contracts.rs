@@ -109,7 +109,7 @@ pub type GetAllContractsResponse = Vec<ContractInfo>;
 impl super::RestClient {
     /// Get contract information for a specific symbol
     ///
-    /// <https://www.kucoin.com/docs-new/rest/futures-trading/market-data/get-symbol>
+    /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/market-data/get-symbol)
     pub async fn get_contract(
         &self,
         request: GetContractRequest,
@@ -121,7 +121,7 @@ impl super::RestClient {
 
     /// Get all contract information
     ///
-    /// <https://www.kucoin.com/docs-new/rest/futures-trading/market-data/get-all-symbols>
+    /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/market-data/get-all-symbols)
     pub async fn get_all_contracts(
         &self,
         _request: GetAllContractsRequest,

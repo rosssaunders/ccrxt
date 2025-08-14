@@ -18,8 +18,7 @@ impl RestClient {
     ///
     /// Modifies multiple orders in a single request.
     ///
-    /// See: Gate.io API documentation
-    /// <https://www.gate.io/docs/developers/apiv4/#amend-multiple-open-orders-in-batch>
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#amend-multiple-open-orders-in-batch)
     ///
     /// Rate limit: 100 requests per second
     ///

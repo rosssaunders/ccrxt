@@ -10,8 +10,7 @@ impl RestClient {
     ///
     /// This endpoint sets the leverage for a specific currency.
     ///
-    /// # API Documentation
-    /// <https://www.gate.io/docs/developers/apiv4/#set-leverage-user-currency-setting>
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#set-leverage-user-currency-setting)
     pub async fn set_leverage_user_currency_setting(
         &self,
         request: SetLeverageConfigRequest,

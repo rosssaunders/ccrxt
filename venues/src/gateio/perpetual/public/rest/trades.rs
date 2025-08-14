@@ -7,20 +7,26 @@ use super::RestClient;
 pub struct FuturesTradesRequest {
     /// Settlement currency
     pub settle: String,
+
     /// Contract name
     pub contract: String,
+
     /// Maximum number of records to return (1-1000, default 100)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i32>,
+
     /// Specify list offset (default 0)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub offset: Option<i32>,
+
     /// Specify the starting point for this list
     #[serde(skip_serializing_if = "Option::is_none")]
     pub last_id: Option<String>,
+
     /// Specify starting time in Unix seconds
     #[serde(skip_serializing_if = "Option::is_none")]
     pub from: Option<i64>,
+
     /// Specify ending time in Unix seconds  
     #[serde(skip_serializing_if = "Option::is_none")]
     pub to: Option<i64>,
@@ -54,7 +60,7 @@ impl RestClient {
     /// Retrieves recent trades for a specific futures contract.
     ///
     /// # API Documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#futures-trading-history>
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#futures-trading-history)
     /// Maximum of 1000 records can be returned per request.
     pub async fn get_futures_trades(
         &self,

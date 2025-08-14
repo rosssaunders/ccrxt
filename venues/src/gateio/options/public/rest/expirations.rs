@@ -16,8 +16,9 @@ impl RestClient {
     ///
     /// Retrieves all available expiration times for options contracts.
     ///
-    /// # API Documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#list-all-expiration-times>
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#list-all-expiration-times)
+    ///
+
     /// Returns Unix timestamps.
     pub async fn get_options_expirations(
         &self,

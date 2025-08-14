@@ -4,18 +4,22 @@ use super::client::RestClient;
 use crate::cryptocom::RestResult;
 
 const ORDER_HISTORY_ENDPOINT: &str = "private/get-order-history";
+
 /// Parameters for get order history request
 #[derive(Debug, Clone, Serialize)]
 pub struct GetOrderHistoryRequest {
     /// e.g. BTCUSD-PERP. Omit for 'all'
     #[serde(skip_serializing_if = "Option::is_none")]
     pub instrument_name: Option<String>,
+
     /// Start time in Unix time format (inclusive). Default: end_time - 1 day. Nanosecond is recommended for accurate pagination
     #[serde(skip_serializing_if = "Option::is_none")]
     pub start_time: Option<String>,
+
     /// End time in Unix time format (exclusive). Default: current system timestamp. Nanosecond is recommended for accurate pagination
     #[serde(skip_serializing_if = "Option::is_none")]
     pub end_time: Option<String>,
+
     /// The maximum number of orders to be retrieved before the end_time. Default: 100. Max: 100.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i32>,
@@ -26,52 +30,76 @@ pub struct GetOrderHistoryRequest {
 pub struct OrderHistoryEntry {
     /// Account ID
     pub account_id: String,
+
     /// Order ID
     pub order_id: String,
+
     /// Client Order ID
     pub client_oid: String,
+
     /// Order type: MARKET, LIMIT, STOP_LOSS, STOP_LIMIT, TAKE_PROFIT, TAKE_PROFIT_LIMIT
     pub order_type: String,
+
     /// Time in force: GOOD_TILL_CANCEL, IMMEDIATE_OR_CANCEL, FILL_OR_KILL
     pub time_in_force: String,
+
     /// Side: BUY or SELL
     pub side: String,
+
     /// Execution instructions: POST_ONLY, SMART_POST_ONLY, LIQUIDATION
     pub exec_inst: Vec<String>,
+
     /// Quantity specified in the order
     pub quantity: String,
+
     /// Limit price specified in the order
     pub limit_price: String,
+
     /// Order value
     pub order_value: String,
+
     /// User's maker fee rate
     pub maker_fee_rate: String,
+
     /// User's taker fee rate
     pub taker_fee_rate: String,
+
     /// Average price
     pub avg_price: String,
+
     /// Cumulative executed quantity
     pub cumulative_quantity: String,
+
     /// Cumulative executed value
     pub cumulative_value: String,
+
     /// Cumulative executed fee
     pub cumulative_fee: String,
+
     /// Order status: REJECTED, CANCELED, FILLED, EXPIRED
     pub status: String,
+
     /// Updated user
     pub update_user_id: String,
+
     /// Order creation date
     pub order_date: String,
+
     /// Order creation timestamp
     pub create_time: u64,
+
     /// Order creation timestamp (nanosecond)
     pub create_time_ns: String,
+
     /// Order update timestamp
     pub update_time: u64,
+
     /// Instrument name e.g. BTCUSD-PERP
     pub instrument_name: String,
+
     /// Currency used for the fees
     pub fee_instrument_name: String,
+
     /// Reason code (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reason: Option<u32>,
@@ -92,7 +120,7 @@ impl RestClient {
     /// and private/get-order-history should primarily be used for recovery;
     /// typically when the websocket is disconnected.
     ///
-    /// See: <https://exchange-docs.crypto.com/derivatives/index.html>
+    /// [docs](https://exchange-docs.crypto.com/derivatives/index.html)
     ///
     /// Rate limit: 1 request per second
     ///

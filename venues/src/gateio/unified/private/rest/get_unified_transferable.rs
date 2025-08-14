@@ -10,8 +10,7 @@ impl RestClient {
     ///
     /// This endpoint returns the amount that can be transferred between accounts.
     ///
-    /// # API Documentation
-    /// <https://www.gate.io/docs/developers/apiv4/#get-unified-transferable>
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#get-unified-transferable)
     pub async fn get_unified_transferable(
         &self,
         params: UnifiedTransferableRequest,

@@ -43,8 +43,7 @@ impl RestClient {
     ///
     /// Creates multiple orders in a single request for improved efficiency.
     ///
-    /// See: Gate.io API documentation
-    /// <https://www.gate.io/docs/developers/apiv4/#create-a-batch-of-futures-orders>
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#create-a-batch-of-futures-orders)
     ///
     /// Rate limit: 100 requests per second
     ///
@@ -68,8 +67,7 @@ impl RestClient {
     ///
     /// Cancels multiple orders in a single request.
     ///
-    /// See: Gate.io API documentation
-    /// <https://www.gate.io/docs/developers/apiv4/#cancel-a-batch-of-open-orders>
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#cancel-a-batch-of-open-orders)
     ///
     /// Rate limit: 100 requests per second
     ///

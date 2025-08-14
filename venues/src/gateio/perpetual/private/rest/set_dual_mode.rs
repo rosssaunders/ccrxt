@@ -25,8 +25,7 @@ impl RestClient {
     ///
     /// This endpoint enables or disables dual mode for futures positions.
     ///
-    /// See: Gate.io API documentation
-    /// <https://www.gate.io/docs/developers/apiv4/#enable-or-disable-dual-mode>
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#enable-or-disable-dual-mode)
     ///
     /// Rate limit: 100 requests per second
     ///

@@ -103,7 +103,7 @@ impl RestClient {
     /// Get a list of open orders for a product. The amount of detail shown can be
     /// customized with the level parameter.
     ///
-    /// [API Documentation](https://docs.cdp.coinbase.com/exchange/reference/exchangerestapi_getproductbook)
+    /// [docs](https://docs.cdp.coinbase.com/exchange/reference/exchangerestapi_getproductbook)
     ///
     /// Rate limit: 10 requests per second
     ///

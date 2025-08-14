@@ -83,7 +83,7 @@ impl RestClient {
     ///
     /// Query for the risk limit table for Linear/Inverse perpetual and futures contracts.
     ///
-    /// [API Documentation](https://bybit-exchange.github.io/docs/v5/market/risk-limit)
+    /// [docs](https://bybit-exchange.github.io/docs/v5/market/risk-limit)
     ///
     /// Rate limit: 10 requests per second
     ///

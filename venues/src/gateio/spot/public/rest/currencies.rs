@@ -40,8 +40,7 @@ impl RestClient {
     /// This endpoint returns a list of all supported currencies with their
     /// trading status, withdrawal/deposit status, and fee information.
     ///
-    /// # API Documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#list-all-currencies-details>
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#list-all-currencies-details)
     pub async fn list_currencies(&self) -> crate::gateio::spot::RestResult<Vec<Currency>> {
         self.get(CURRENCIES_ENDPOINT).await
     }

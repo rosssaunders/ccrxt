@@ -86,7 +86,7 @@ impl RestClient {
     /// Cancel all open orders that match the specified criteria. You can filter by
     /// symbol, base coin, settle coin, order type, and stop order type.
     ///
-    /// [API Documentation](https://bybit-exchange.github.io/docs/v5/order/cancel-all)
+    /// [docs](https://bybit-exchange.github.io/docs/v5/order/cancel-all)
     ///
     /// Rate limit: 10 requests per second per UID
     ///

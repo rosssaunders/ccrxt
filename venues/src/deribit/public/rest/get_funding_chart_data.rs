@@ -52,7 +52,7 @@ impl RestClient {
     ///
     /// Retrieves funding chart data for a given instrument name.
     ///
-    /// [Official API docs](https://docs.deribit.com/#public-get_funding_chart_data)
+    /// [docs](https://docs.deribit.com/#public-get_funding_chart_data)
     pub async fn get_funding_chart_data(
         &self,
         params: GetFundingChartDataRequest,

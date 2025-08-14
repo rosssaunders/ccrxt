@@ -67,7 +67,7 @@ impl RestClient {
     /// Creates a withdrawal request. Withdrawal setting must be enabled for your API Key.
     /// If you do not see the option when viewing your API Key, this feature is not yet available for you.
     ///
-    /// See: <https://exchange-docs.crypto.com/derivatives/index.html>
+    /// [docs](https://exchange-docs.crypto.com/derivatives/index.html)
     ///
     /// # Arguments
     /// * `request` - Parameters for creating a withdrawal

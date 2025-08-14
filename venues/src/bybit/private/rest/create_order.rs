@@ -172,7 +172,7 @@ impl RestClient {
     /// Create orders for Spot, Margin trading, USDT perpetual, USDT futures, USDC perpetual,
     /// USDC futures, Inverse Futures and Options.
     ///
-    /// [API Documentation](https://bybit-exchange.github.io/docs/v5/order/create-order)
+    /// [docs](https://bybit-exchange.github.io/docs/v5/order/create-order)
     ///
     /// Rate limit: 10 requests per second per UID
     ///

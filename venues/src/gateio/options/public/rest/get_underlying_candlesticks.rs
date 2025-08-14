@@ -32,8 +32,7 @@ impl RestClient {
     ///
     /// Retrieves mark price candlestick data for an underlying asset.
     ///
-    /// # API Documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#mark-price-candlesticks-of-underlying>
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#mark-price-candlesticks-of-underlying)
     pub async fn get_underlying_candlesticks(
         &self,
         params: UnderlyingCandlesticksRequest,

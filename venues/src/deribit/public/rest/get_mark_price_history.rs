@@ -54,7 +54,7 @@ impl RestClient {
     ///
     /// Retrieves historical mark prices for a given instrument.
     ///
-    /// [Official API docs](https://docs.deribit.com/#public-get_mark_price_history)
+    /// [docs](https://docs.deribit.com/#public-get_mark_price_history)
     pub async fn get_mark_price_history(
         &self,
         params: GetMarkPriceHistoryRequest,

@@ -27,8 +27,7 @@ impl RestClient {
     ///
     /// Modifies the price and/or size of an existing order.
     ///
-    /// See: Gate.io API documentation
-    /// <https://www.gate.io/docs/developers/apiv4/#amend-an-order>
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#amend-an-order)
     ///
     /// Rate limit: 100 requests per second
     ///

@@ -352,32 +352,32 @@ impl RateLimiter {
         let mut usage = self.usage.write().await;
 
         for (header_name, header_value) in headers {
-            if let Some(rate_limit_header) = RateLimitHeader::parse(header_name)
-                && let Ok(current_usage) = header_value.parse::<u32>()
-            {
-                match rate_limit_header.kind {
-                    RateLimitHeaderKind::UsedWeight => {
-                        // Update our tracking to match server's view
-                        let key = (
-                            rate_limit_header.interval_value,
-                            rate_limit_header.interval_unit,
-                        );
-                        let entries = usage.weight_usage.entry(key).or_default();
-                        entries.clear();
-                        if current_usage > 0 {
-                            entries.push_back((Instant::now(), current_usage));
+            if let Some(rate_limit_header) = RateLimitHeader::parse(header_name) {
+                if let Ok(current_usage) = header_value.parse::<u32>() {
+                    match rate_limit_header.kind {
+                        RateLimitHeaderKind::UsedWeight => {
+                            // Update our tracking to match server's view
+                            let key = (
+                                rate_limit_header.interval_value,
+                                rate_limit_header.interval_unit,
+                            );
+                            let entries = usage.weight_usage.entry(key).or_default();
+                            entries.clear();
+                            if current_usage > 0 {
+                                entries.push_back((Instant::now(), current_usage));
+                            }
                         }
-                    }
-                    RateLimitHeaderKind::OrderCount => {
-                        // Update order count tracking
-                        let key = (
-                            rate_limit_header.interval_value,
-                            rate_limit_header.interval_unit,
-                        );
-                        let entries = usage.order_usage.entry(key).or_default();
-                        entries.clear();
-                        for _ in 0..current_usage {
-                            entries.push_back(Instant::now());
+                        RateLimitHeaderKind::OrderCount => {
+                            // Update order count tracking
+                            let key = (
+                                rate_limit_header.interval_value,
+                                rate_limit_header.interval_unit,
+                            );
+                            let entries = usage.order_usage.entry(key).or_default();
+                            entries.clear();
+                            for _ in 0..current_usage {
+                                entries.push_back(Instant::now());
+                            }
                         }
                     }
                 }

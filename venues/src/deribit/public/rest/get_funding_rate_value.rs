@@ -32,7 +32,7 @@ impl RestClient {
     ///
     /// Retrieves the current funding rate value for a given instrument.
     ///
-    /// [Official API docs](https://docs.deribit.com/#public-get_funding_rate_value)
+    /// [docs](https://docs.deribit.com/#public-get_funding_rate_value)
     pub async fn get_funding_rate_value(
         &self,
         params: GetFundingRateValueRequest,

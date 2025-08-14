@@ -45,7 +45,7 @@ pub struct SubTransferResponse {
 impl RestClient {
     /// Create a sub-account transfer (main account only)
     ///
-    /// Reference: https://docs.kucoin.com/#sub-account-transfer
+    /// [docs](https://docs.kucoin.com/#sub-account-transfer)
     pub async fn create_sub_transfer(
         &self,
         request: CreateSubTransferRequest,

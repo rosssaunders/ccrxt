@@ -19,24 +19,34 @@ pub struct GetTickerRequest {
 pub struct TickerInfo {
     /// Sequence number, used to judge whether the messages pushed by Websocket are continuous
     pub sequence: i64,
+
     /// Symbol of the contract
     pub symbol: String,
+
     /// Trade side (taker order side)
     pub side: OrderSide,
+
     /// Filled quantity
     pub size: i64,
+
     /// Transaction ID
     pub trade_id: String,
+
     /// Filled price
     pub price: String,
+
     /// Best bid price
     pub best_bid_price: String,
+
     /// Best bid size
     pub best_bid_size: i64,
+
     /// Best ask price
     pub best_ask_price: String,
+
     /// Best ask size
     pub best_ask_size: i64,
+
     /// Filled time (nanoseconds)
     pub ts: i64,
 }
@@ -51,20 +61,28 @@ pub struct GetAllTickersRequest;
 pub struct AllTickersItem {
     /// Symbol of the contract
     pub symbol: String,
+
     /// Best bid price
     pub best_bid_price: String,
+
     /// Best bid size
     pub best_bid_size: i64,
+
     /// Best ask price
     pub best_ask_price: String,
+
     /// Best ask size
     pub best_ask_size: i64,
+
     /// Last traded price
     pub price: String,
+
     /// Sequence number
     pub sequence: i64,
+
     /// Last traded size
     pub size: i64,
+
     /// Last trade time (nanoseconds)
     pub ts: i64,
 }
@@ -84,24 +102,34 @@ pub struct Get24HrStatsRequest {
 pub struct Stats24Hr {
     /// Symbol of the contract
     pub symbol: String,
+
     /// 24h volume of contracts (buy side)
     pub volume_buy: f64,
+
     /// 24h volume of contracts (sell side)
     pub volume_sell: f64,
+
     /// 24h volume of contracts
     pub volume: f64,
+
     /// 24h turnover value
     pub turnover: f64,
+
     /// Last traded price
     pub last: String,
+
     /// 24h lowest price
     pub low_price: String,
+
     /// 24h highest price
     pub high_price: String,
+
     /// 24h price change
     pub price_chg: String,
+
     /// 24h price change percentage
     pub price_chg_pct: String,
+
     /// Current open interest
     pub open_interest: f64,
 }
@@ -109,7 +137,7 @@ pub struct Stats24Hr {
 impl super::RestClient {
     /// Get ticker information for a specific symbol
     ///
-    /// <https://www.kucoin.com/docs-new/rest/futures-trading/market-data/get-ticker>
+    /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/market-data/get-ticker)
     pub async fn get_ticker(
         &self,
         request: GetTickerRequest,
@@ -119,7 +147,7 @@ impl super::RestClient {
 
     /// Get all ticker information
     ///
-    /// <https://www.kucoin.com/docs-new/rest/futures-trading/market-data/get-all-tickers>
+    /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/market-data/get-all-tickers)
     pub async fn get_all_tickers(
         &self,
         _request: GetAllTickersRequest,
@@ -130,7 +158,7 @@ impl super::RestClient {
 
     /// Get 24hr stats for a specific symbol
     ///
-    /// <https://www.kucoin.com/docs-new/rest/futures-trading/market-data/get-24hr-stats>
+    /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/market-data/get-24hr-stats)
     pub async fn get_24hr_stats(
         &self,
         request: Get24HrStatsRequest,

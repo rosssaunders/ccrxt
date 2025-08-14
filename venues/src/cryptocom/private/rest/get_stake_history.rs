@@ -4,18 +4,22 @@ use super::client::RestClient;
 use crate::cryptocom::{ApiResult, RestResult};
 
 const STAKE_HISTORY_ENDPOINT: &str = "private/staking/get-stake-history";
+
 /// Request parameters for get stake history
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GetStakeHistoryRequest {
     /// Staking instrument name, e.g. SOL.staked (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub instrument_name: Option<String>,
+
     /// Start time in Unix time format (inclusive) (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub start_time: Option<u64>,
+
     /// End time in Unix time format (inclusive) (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub end_time: Option<u64>,
+
     /// The maximum number of requests returned (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<String>,
@@ -26,20 +30,28 @@ pub struct GetStakeHistoryRequest {
 pub struct StakeHistoryEntry {
     /// Staking instrument name, e.g. SOL.staked
     pub instrument_name: String,
+
     /// Underlying instrument name, e.g. SOL
     pub underlying_inst_name: String,
+
     /// Cycle id
     pub cycle_id: String,
+
     /// Request id
     pub staking_id: String,
+
     /// Request status: COMPLETED, REJECTED
     pub status: String,
+
     /// Account id
     pub account: String,
+
     /// Stake/unstake quantity
     pub quantity: String,
+
     /// Stake or Unstake
     pub side: String,
+
     /// Request creation timestamp in milliseconds in Unix time format
     pub create_timestamp_ms: String,
 }
@@ -59,7 +71,7 @@ impl RestClient {
     ///
     /// Returns historical stake and unstake requests that have been completed or rejected.
     ///
-    /// See: <https://exchange-docs.crypto.com/exchange/index.html>
+    /// [docs](https://exchange-docs.crypto.com/exchange/index.html)
     ///
     /// Rate limit: 50 requests per second
     ///

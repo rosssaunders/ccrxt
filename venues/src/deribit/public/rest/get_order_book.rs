@@ -1,7 +1,3 @@
-//! Implements the /public/get_order_book endpoint for Deribit.
-//!
-//! Retrieves the current order book for a given instrument.
-
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
@@ -53,7 +49,7 @@ impl RestClient {
     ///
     /// Retrieves the current order book for a given instrument.
     ///
-    /// [Official API docs](https://docs.deribit.com/#public-get_order_book)
+    /// [docs](https://docs.deribit.com/#public-get_order_book)
     pub async fn get_order_book(
         &self,
         params: GetOrderBookRequest,

@@ -34,7 +34,7 @@ pub struct WebSocketToken {
 impl super::RestClient {
     /// Get public WebSocket token for futures
     ///
-    /// <https://www.kucoin.com/docs-new/websocket-api/base-info/get-public-token-futures>
+    /// [docs](https://www.kucoin.com/docs-new/websocket-api/base-info/get-public-token-futures)
     pub async fn get_public_token(
         &self,
     ) -> Result<(RestResponse<WebSocketToken>, ResponseHeaders)> {

@@ -16,8 +16,7 @@ impl RestClient {
     ///
     /// This endpoint switches the user's margin mode to cross margin.
     ///
-    /// See: Gate.io API documentation
-    /// <https://www.gate.io/docs/developers/apiv4/#switch-between-cross-margin-and-isolated-margin>
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#switch-between-cross-margin-and-isolated-margin)
     ///
     /// Rate limit: 100 requests per second
     ///

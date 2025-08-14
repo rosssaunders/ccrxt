@@ -1,11 +1,3 @@
-//! Modify Plan Order endpoint for Bitget Spot API
-//!
-//! This endpoint allows modifying existing trigger/stop orders (plan orders) for spot trading.
-//!
-//! Reference: https://www.bitget.com/api-doc/spot/trade/Modify-Plan-Order
-//! Endpoint: POST /api/v2/spot/plan/modify-plan-order
-//! Rate limit: 10 requests/second/UID
-
 use serde::{Deserialize, Serialize};
 
 use super::{
@@ -95,6 +87,8 @@ impl RestClient {
     ///
     /// Modifies an existing plan order for spot trading with the specified parameters.
     /// Only the provided fields will be updated.
+    ///
+    /// [docs](https://www.bitget.com/api-doc/spot/trade/Modify-Plan-Order)
     ///
     /// # Arguments
     /// * `request` - The plan order modification request parameters

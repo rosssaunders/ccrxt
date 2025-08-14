@@ -64,7 +64,7 @@ impl RestClient {
     /// A buy side indicates a down-tick because the maker was a buy order and their order was removed.
     /// A sell side indicates an up-tick.
     ///
-    /// [API Documentation](https://docs.cdp.coinbase.com/exchange/reference/exchangerestapi_getproducttrades)
+    /// [docs](https://docs.cdp.coinbase.com/exchange/reference/exchangerestapi_getproducttrades)
     ///
     /// Rate limit: 10 requests per second
     ///

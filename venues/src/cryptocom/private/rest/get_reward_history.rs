@@ -4,18 +4,22 @@ use super::client::RestClient;
 use crate::cryptocom::{ApiResult, RestResult};
 
 const REWARD_HISTORY_ENDPOINT: &str = "private/staking/get-reward-history";
+
 /// Request parameters for get reward history
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GetRewardHistoryRequest {
     /// Staking instrument name, e.g. SOL.staked (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub instrument_name: Option<String>,
+
     /// Start time in Unix time format (inclusive) (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub start_time: Option<u64>,
+
     /// End time in Unix time format (inclusive) (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub end_time: Option<u64>,
+
     /// The maximum number of requests returned (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<String>,
@@ -26,14 +30,19 @@ pub struct GetRewardHistoryRequest {
 pub struct RewardHistoryEntry {
     /// Staking instrument name, e.g. SOL.staked
     pub staking_inst_name: String,
+
     /// Underlying instrument name, e.g. SOL
     pub underlying_inst_name: String,
+
     /// Reward instrument name, e.g. SOL.staked
     pub reward_inst_name: String,
+
     /// Reward quantity
     pub reward_quantity: String,
+
     /// Staked balance
     pub staked_balance: String,
+
     /// Event timestamp in milliseconds in Unix time format
     pub event_timestamp_ms: String,
 }
@@ -53,7 +62,7 @@ impl RestClient {
     ///
     /// Returns historical staking rewards earned over time.
     ///
-    /// See: <https://exchange-docs.crypto.com/exchange/index.html>
+    /// [docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#private-staking-get-reward-history)
     ///
     /// Rate limit: 50 requests per second
     ///

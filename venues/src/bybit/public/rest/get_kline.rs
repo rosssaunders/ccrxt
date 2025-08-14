@@ -122,7 +122,7 @@ impl RestClient {
     ///
     /// Query for historical klines. Charts are returned in groups based on the requested interval.
     ///
-    /// [API Documentation](https://bybit-exchange.github.io/docs/v5/market/kline)
+    /// [docs](https://bybit-exchange.github.io/docs/v5/market/kline)
     ///
     /// Rate limit: 10 requests per second
     ///

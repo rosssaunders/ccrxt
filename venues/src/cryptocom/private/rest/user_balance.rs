@@ -5,23 +5,31 @@ use super::client::RestClient;
 use crate::cryptocom::{ApiResult, RestResult};
 
 const USER_BALANCE_ENDPOINT: &str = "private/user-balance";
+
 /// Position balance information
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PositionBalance {
     /// Instrument name of the collateral e.g. USD, CRO, USDT, or DAI
     pub instrument_name: String,
+
     /// Quantity of the collateral
     pub quantity: String,
+
     /// Market value of the collateral
     pub market_value: String,
+
     /// true or false
     pub collateral_eligible: String,
+
     /// Show haircut for eligible collateral token
     pub haircut: String,
+
     /// Collateral amount derived by market_value minus haircut
     pub collateral_amount: String,
+
     /// Max withdrawal balance of the collateral
     pub max_withdrawal_balance: String,
+
     /// Fund/balance in use, not available for new orders or additional trading activities
     pub reserved_qty: String,
 }
@@ -31,36 +39,52 @@ pub struct PositionBalance {
 pub struct UserBalance {
     /// Balance that user can open new order (Margin Balance - Initial Margin)
     pub total_available_balance: String,
+
     /// Positive cash balance on eligible collateral tokens + Negative balance on all tokens + Unrealised PnL - Fee reserves
     pub total_margin_balance: String,
+
     /// Total margin requirement to support positions and all open orders IM and haircut from risk asset holdings
     pub total_initial_margin: String,
+
     /// initial margin requirement to support open positions and orders
     pub total_position_im: String,
+
     /// the total haircut on eligible collateral token assets
     pub total_haircut: String,
+
     /// Total maintenance margin requirement for all positions
     pub total_maintenance_margin: String,
+
     /// Position value in USD
     pub total_position_cost: String,
+
     /// Wallet Balance (Deposits - Withdrawals + Realized PnL - Fees)
     pub total_cash_balance: String,
+
     /// Collateral Value
     pub total_collateral_value: String,
+
     /// Current unrealized profit and loss from all open positions
     pub total_session_unrealized_pnl: String,
+
     /// Instrument name of the balance e.g. USD
     pub instrument_name: String,
+
     /// Current realized profit and loss from all open positions
     pub total_session_realized_pnl: String,
+
     /// Describes whether the account is under liquidation
     pub is_liquidating: bool,
+
     /// The actual leverage used (all open positions combined)
     pub total_effective_leverage: String,
+
     /// Maximum position size allowed (for all open positions combined)
     pub position_limit: String,
+
     /// Combined position size of all open positions + order exposure on all instruments
     pub used_position_limit: String,
+
     /// Collateral balances
     pub position_balances: Vec<PositionBalance>,
 }
@@ -80,7 +104,7 @@ impl RestClient {
     ///
     /// Returns the user's wallet balance with margin details and position balances.
     ///
-    /// [Official API docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#private-user-balance)
+    /// [docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#private-user-balance)
     ///
     /// Rate limit: No rate limit
     ///

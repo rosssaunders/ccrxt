@@ -10,8 +10,7 @@ impl RestClient {
     ///
     /// This endpoint enables or disables unified account mode.
     ///
-    /// # API Documentation
-    /// <https://www.gate.io/docs/developers/apiv4/#set-unified-mode>
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#set-unified-mode)
     pub async fn set_unified_mode(
         &self,
         request: UnifiedModeRequest,

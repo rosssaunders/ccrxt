@@ -10,8 +10,7 @@ impl RestClient {
     ///
     /// This endpoint returns the amount that can be borrowed for a currency.
     ///
-    /// # API Documentation
-    /// <https://www.gate.io/docs/developers/apiv4/#get-unified-borrowable>
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#get-unified-borrowable)
     pub async fn get_unified_borrowable(
         &self,
         params: UnifiedBorrowableRequest,

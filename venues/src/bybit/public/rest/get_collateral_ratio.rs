@@ -89,7 +89,7 @@ impl RestClient {
     /// Query the collateral ratios and borrowing information for various currencies
     /// in spot margin trading.
     ///
-    /// [API Documentation](https://bybit-exchange.github.io/docs/v5/spot-margin-trade/collateral-info)
+    /// [docs](https://bybit-exchange.github.io/docs/v5/spot-margin-trade/collateral-info)
     ///
     /// Rate limit: 50 requests per second
     ///

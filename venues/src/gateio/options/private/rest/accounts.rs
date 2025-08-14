@@ -40,7 +40,7 @@ impl RestClient {
     ///
     /// This endpoint returns options account balances and margin information.
     ///
-    /// See: Gate.io API documentation
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#query-options-account)
     ///
     /// Rate limit: 10 requests per second
     ///

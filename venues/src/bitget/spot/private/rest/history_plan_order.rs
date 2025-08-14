@@ -1,11 +1,3 @@
-//! History Plan Order endpoint for Bitget Spot API
-//!
-//! This endpoint allows querying historical trigger/stop orders (plan orders).
-//!
-//! Reference: https://www.bitget.com/api-doc/spot/trade/History-Plan-Order
-//! Endpoint: GET /api/v2/spot/plan/history-plan-order
-//! Rate limit: 20 requests/second/UID
-
 use serde::{Deserialize, Serialize};
 
 use super::super::RestClient;
@@ -147,6 +139,8 @@ impl RestClient {
     /// Retrieves information about historical plan orders that have been triggered,
     /// cancelled, or failed.
     ///
+    /// [docs](https://www.bitget.com/api-doc/spot/trade/History-Plan-Order)
+    ///
     /// # Arguments
     /// * `request` - The historical plan orders query parameters
     ///
@@ -159,7 +153,9 @@ impl RestClient {
         &self,
         request: HistoryPlanOrderRequest,
     ) -> RestResult<HistoryPlanOrderResponse> {
-        self.send_get_signed_request(HISTORY_PLAN_ORDER_ENDPOINT, request,
+        self.send_get_signed_request(
+            HISTORY_PLAN_ORDER_ENDPOINT,
+            request,
             20,    // 20 requests per second rate limit
             false, // This is not an order placement endpoint
             None,  // No order-specific rate limit

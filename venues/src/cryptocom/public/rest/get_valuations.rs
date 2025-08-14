@@ -70,7 +70,7 @@ impl RestClient {
     ///
     /// Fetches certain valuation type data for a particular instrument.
     ///
-    /// [Official API docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#public-get-valuations)
+    /// [docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#public-get-valuations)
     pub async fn get_valuations(
         &self,
         params: GetValuationsRequest,

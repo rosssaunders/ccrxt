@@ -95,7 +95,7 @@ impl RestClient {
     ///
     /// Creates a conditional order that triggers when the market price reaches a specified level.
     ///
-    /// See: <https://www.gate.com/docs/developers/apiv4/#create-price-triggered-order-3>
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#create-price-triggered-order-3)
     ///
     /// Rate limit: 10 requests per second
     ///
@@ -116,7 +116,7 @@ impl RestClient {
     ///
     /// Retrieves all price-triggered orders with optional filtering.
     ///
-    /// See: <https://www.gate.com/docs/developers/apiv4/#create-price-triggered-order-3>
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#create-price-triggered-order-3)
     ///
     /// Rate limit: 10 requests per second
     ///
@@ -137,7 +137,7 @@ impl RestClient {
     ///
     /// Retrieves a specific price-triggered order by its ID.
     ///
-    /// See: <https://www.gate.com/docs/developers/apiv4/#create-price-triggered-order-3>
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#create-price-triggered-order-3)
     ///
     /// Rate limit: 10 requests per second
     ///
@@ -162,7 +162,7 @@ impl RestClient {
     ///
     /// Cancels a specific price-triggered order.
     ///
-    /// See: <https://www.gate.com/docs/developers/apiv4/#create-price-triggered-order-3>
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#create-price-triggered-order-3)
     ///
     /// Rate limit: 10 requests per second
     ///
@@ -187,7 +187,7 @@ impl RestClient {
     ///
     /// Cancels all price-triggered orders with optional contract filtering.
     ///
-    /// See: <https://www.gate.com/docs/developers/apiv4/#create-price-triggered-order-3>
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#create-price-triggered-order-3)
     ///
     /// Rate limit: 10 requests per second
     ///

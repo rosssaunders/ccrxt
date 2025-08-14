@@ -86,7 +86,7 @@ impl RestClient {
     ///
     /// Query for Bybit VIP margin data including borrowing rates, collateral ratios, and liquidation ratios.
     ///
-    /// [API Documentation](https://bybit-exchange.github.io/docs/v5/spot-margin-uta/vip-margin)
+    /// [docs](https://bybit-exchange.github.io/docs/v5/spot-margin-uta/vip-margin)
     ///
     /// Rate limit: 10 requests per second
     ///

@@ -73,7 +73,7 @@ impl RestClient {
     ///
     /// Retrieves available expiration timestamps for a given currency and instrument kind.
     ///
-    /// [Official API docs](https://docs.deribit.com/#public-get_expirations)
+    /// [docs](https://docs.deribit.com/#public-get_expirations)
     pub async fn get_expirations(
         &self,
         params: GetExpirationsRequest,
