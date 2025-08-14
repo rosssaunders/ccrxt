@@ -214,7 +214,7 @@ impl RestClient {
     /// Price orders are triggered when market price reaches specified trigger conditions, enabling
     /// automated trading strategies including stop-loss, take-profit, and breakout scenarios.
     ///
-    /// [docs]: <https://www.gate.com/docs/developers/apiv4/#retrieve-running-auto-order-list>
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#retrieve-running-auto-order-list)
     ///
     /// Rate limit: 100 requests per second
     ///
@@ -237,7 +237,7 @@ impl RestClient {
     /// Provides complete order state including trigger conditions, execution status, and timing information
     /// for comprehensive order lifecycle monitoring and management.
     ///
-    /// [docs]: <https://www.gate.com/docs/developers/apiv4/#get-a-single-order>
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#get-a-single-order)
     ///
     /// Rate limit: 100 requests per second
     ///
@@ -257,7 +257,7 @@ impl RestClient {
     /// Enables sophisticated trading strategies including stop-loss protection, take-profit execution,
     /// and breakout trading with comprehensive trigger rule configuration and timing controls.
     ///
-    /// [docs]: <https://www.gate.com/docs/developers/apiv4/#create-a-price-triggered-order>
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#create-a-price-triggered-order)
     ///
     /// Rate limit: 100 requests per second
     ///
@@ -279,7 +279,7 @@ impl RestClient {
     /// Provides bulk order management for strategy adjustments, risk management, and position
     /// restructuring with immediate trigger deactivation and order termination.
     ///
-    /// [docs]: <https://www.gate.com/docs/developers/apiv4/#cancel-all-open-orders-under-specified-currency-pair>
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#cancel-all-open-orders-under-specified-currency-pair)
     ///
     /// Rate limit: 100 requests per second
     ///
@@ -307,7 +307,7 @@ impl RestClient {
     /// deactivating trigger monitoring and removing the order from active status. Provides
     /// precise order management for strategy modifications and risk control adjustments.
     ///
-    /// [docs]: <https://www.gate.com/docs/developers/apiv4/#cancel-a-price-triggered-order>
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#cancel-a-price-triggered-order)
     ///
     /// Rate limit: 100 requests per second
     ///

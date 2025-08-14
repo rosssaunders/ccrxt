@@ -64,7 +64,7 @@ pub use super::get_bills::Bill as BillArchive;
 impl RestClient {
     /// Get bills archive
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#trading-account-rest-api-get-bills-details-last-3-months
+    /// [docs](https://www.okx.com/docs-v5/en/#trading-account-rest-api-get-bills-details-last-3-months)
     ///
     /// # Arguments
     /// * `request` - The get bills archive request

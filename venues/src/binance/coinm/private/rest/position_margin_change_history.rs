@@ -66,7 +66,7 @@ pub type GetPositionMarginChangeHistoryResponse = Vec<PositionMarginChangeHistor
 impl RestClient {
     /// Gets position margin change history (TRADE) on Binance Coin-M Futures.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Get-Position-Margin-Change-History
+    /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Get-Position-Margin-Change-History)
     ///
     /// GET /dapi/v1/positionMargin/history
     /// Weight: 1

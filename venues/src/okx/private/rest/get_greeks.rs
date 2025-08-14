@@ -52,7 +52,7 @@ pub struct Greeks {
 impl RestClient {
     /// Get account Greeks
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#trading-account-rest-api-get-greeks
+    /// [docs](https://www.okx.com/docs-v5/en/#trading-account-rest-api-get-greeks)
     ///
     /// # Arguments
     /// * `request` - The get Greeks request

@@ -13,7 +13,6 @@ use super::credentials::Credentials;
 use crate::bingx::spot::{ApiResponse, EndpointType, Errors, RateLimiter, RestResult};
 
 /// Private REST client for BingX exchange
-///
 /// This client handles all private API endpoints that require authentication.
 /// It provides automatic rate limiting, error handling, and request signing.
 pub struct RestClient {

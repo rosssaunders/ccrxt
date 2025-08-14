@@ -284,7 +284,7 @@ pub enum BatchOrderResult {
 impl RestClient {
     /// Places multiple orders in a single batch.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Place-Multiple-Orders
+    /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Place-Multiple-Orders)
     ///
     /// POST /dapi/v1/batchOrders
     /// Weight: 5

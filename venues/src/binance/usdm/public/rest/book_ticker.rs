@@ -59,7 +59,7 @@ impl RestClient {
     ///
     /// Get best price/quantity on the order book for a symbol or symbols.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Symbol-Order-Book-Ticker
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Symbol-Order-Book-Ticker)
     ///
     /// Rate limit: 2
     ///

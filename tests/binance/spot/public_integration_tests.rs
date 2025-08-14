@@ -54,8 +54,7 @@ macro_rules! handle_result {
                     );
                     None
                 } else {
-                    assert!(false, "{} should succeed: {:?}", $endpoint_name, err);
-                    None
+                    panic!("{} should succeed: {:?}", $endpoint_name, err);
                 }
             }
         }
@@ -120,7 +119,7 @@ async fn test_get_exchange_info() {
             if is_geo_restricted(&err) {
                 println!("⚠️ Test skipped due to geographic restrictions (HTTP 451)");
             } else {
-                assert!(false, "get_exchange_info should succeed: {:?}", err);
+                panic!("get_exchange_info should succeed: {:?}", err);
             }
         }
     }
@@ -195,7 +194,7 @@ async fn test_get_recent_trades() {
             if is_geo_restricted(&err) {
                 println!("⚠️ Test skipped due to geographic restrictions (HTTP 451)");
             } else {
-                assert!(false, "get_recent_trades should succeed: {:?}", err);
+                panic!("get_recent_trades should succeed: {:?}", err);
             }
         }
     }
@@ -307,7 +306,7 @@ async fn test_error_handling_invalid_symbol() {
     match result {
         Ok(_) => {
             println!("⚠️ Unexpected success with invalid symbol");
-            assert!(false, "Expected error for invalid symbol but got success");
+            panic!("Expected error for invalid symbol but got success");
         }
         Err(err) => {
             if is_geo_restricted(&err) {

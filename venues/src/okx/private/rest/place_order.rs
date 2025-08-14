@@ -125,7 +125,7 @@ impl RestClient {
     ///
     /// Place orders for spot, margin, futures, perpetual swap, and options.
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-trade-rest-api-post-order
+    /// [docs](https://www.okx.com/docs-v5/en/#rest-api-trade-rest-api-post-order)
     ///
     /// Rate limit: 60 requests per 2 seconds
     ///

@@ -7,8 +7,6 @@ use crate::binance::usdm::RestResult;
 const COMMISSION_RATE_ENDPOINT: &str = "/fapi/v1/commissionRate";
 
 /// Request parameters for the user commission rate endpoint.
-///
-/// See the [Binance USDT-margined Futures API documentation][docs] for details.
 #[derive(Debug, Clone, Serialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct GetCommissionRateRequest {
@@ -44,7 +42,7 @@ impl UsdmClient {
     ///
     /// Get User Commission Rate.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/User-Commission-Rate
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/User-Commission-Rate)
     ///
     /// Rate limit: 20
     ///

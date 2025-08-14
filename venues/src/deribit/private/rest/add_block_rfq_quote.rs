@@ -189,7 +189,7 @@ impl RestClient {
     /// Rate limit: Depends on endpoint type (matching engine)
     /// Scope: block_rfq:read_write
     ///
-    /// [docs]: https://docs.deribit.com/v2/#private-add_block_rfq_quote
+    /// [docs](https://docs.deribit.com/v2/#private-add_block_rfq_quote)
     ///
     /// # Arguments
     /// * `label` - Optional user defined label for the Block RFQ quote (maximum 64 characters)
@@ -220,15 +220,12 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use std::sync::Arc;
-use serde_json::{Value, json};
+
+    use rest::secrets::SecretString;
+    use serde_json::{Value, json};
 
     use super::*;
-    use crate::deribit::AccountTier;
-
-    
-    use crate::deribit::private::rest::credentials::Credentials;
-    use rest::secrets::SecretString;
-
+    use crate::deribit::{AccountTier, private::rest::credentials::Credentials};
 
     #[test]
     fn test_execution_instruction_serialization() {

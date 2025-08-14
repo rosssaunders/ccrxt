@@ -87,7 +87,7 @@ impl RestClient {
     ///
     /// Retrieve derivatives positions for a trading account with an optional symbol filter.
     ///
-    /// [docs]: https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/derivatives-positions
+    /// [docs](https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/derivatives-positions)
     ///
     /// # Arguments
     /// * `params` - Query parameters

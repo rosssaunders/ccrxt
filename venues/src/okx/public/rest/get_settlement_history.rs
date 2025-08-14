@@ -55,7 +55,7 @@ impl RestClient {
     ///
     /// Retrieve settlement records of futures in the last 3 months.
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-futures-settlement-history
+    /// [docs](https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-futures-settlement-history)
     ///
     /// Rate limit: 40 requests per 2 seconds
     ///

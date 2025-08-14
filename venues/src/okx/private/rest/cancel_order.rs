@@ -44,7 +44,7 @@ impl RestClient {
     ///
     /// Cancels an incomplete order.
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-trade-rest-api-post-cancel-order
+    /// [docs](https://www.okx.com/docs-v5/en/#rest-api-trade-rest-api-post-cancel-order)
     ///
     /// Rate limit: 60 requests per 2 seconds
     ///

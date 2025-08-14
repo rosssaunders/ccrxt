@@ -72,7 +72,7 @@ impl UsdmClient {
     ///
     /// Retrieves ADL quantile estimation for positions.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Position-ADL-Quantile-Estimation
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Position-ADL-Quantile-Estimation)
     ///
     /// Rate limit: 5
     ///

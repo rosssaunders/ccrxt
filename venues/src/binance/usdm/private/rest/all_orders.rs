@@ -140,7 +140,7 @@ impl UsdmClient {
     ///
     /// Get all account orders; active, canceled, or filled.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/All-Orders
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/All-Orders)
     ///
     /// Rate limit: 5
     ///

@@ -94,7 +94,7 @@ pub type SetClearanceOriginatorResponse = JsonRpcResult<SetClearanceOriginatorRe
 impl RestClient {
     /// Sets the clearance originator for a deposit.
     ///
-    /// [docs]: https://docs.deribit.com/v2/#private-set_clearance_originator
+    /// [docs](https://docs.deribit.com/v2/#private-set_clearance_originator)
     ///
     /// # Arguments
     /// * `params` - Parameters for the request (deposit_id, originator)
@@ -117,16 +117,13 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use std::sync::Arc;
-/// REST API endpoint constant
+
+    use rest::secrets::SecretString;
+    /// REST API endpoint constant
     use serde_json::{Value, json};
 
     use super::*;
-    use crate::deribit::AccountTier;
-
-    
-    use crate::deribit::private::rest::credentials::Credentials;
-    use rest::secrets::SecretString;
-
+    use crate::deribit::{AccountTier, private::rest::credentials::Credentials};
 
     #[test]
     fn test_deposit_id_serialization() {

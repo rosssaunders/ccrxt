@@ -7,10 +7,6 @@ use crate::binance::usdm::{ConvertOrderStatus, RestResult};
 const ACCEPT_CONVERT_QUOTE_ENDPOINT: &str = "/fapi/v1/convert/acceptQuote";
 
 /// Request parameters for accepting a convert quote.
-///
-/// See the [Binance USDT-margined Futures API documentation][docs] for details.
-///
-/// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/convert/Accept-Quote
 #[derive(Debug, Clone, Serialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct AcceptConvertQuoteRequest {
@@ -46,7 +42,7 @@ impl UsdmClient {
     ///
     /// Accept the offered quote by quote ID.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/convert/Accept-Quote
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/convert/Accept-Quote)
     ///
     /// Rate limit: 200
     ///

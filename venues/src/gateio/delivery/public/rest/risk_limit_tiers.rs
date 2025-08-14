@@ -45,7 +45,7 @@ impl RestClient {
     /// Retrieves risk limit tiers for a specific delivery contract.
     /// Higher tiers require higher margin rates but allow larger positions.
     ///
-    /// [docs]: https://www.gate.io/docs/developers/apiv4/en/#list-delivery-risk-limit-tiers
+    /// [docs](https://www.gate.io/docs/developers/apiv4/en/#list-delivery-risk-limit-tiers)
     ///
     /// Rate limit: 10 requests per second
     ///
@@ -145,11 +145,13 @@ mod tests {
 
     #[test]
     fn test_btc_risk_limit_tiers() {
-        let btc_tiers = [r#"{"tier": 1, "risk_limit": "1000000", "initial_rate": "0.01", "maintenance_rate": "0.005"}"#,
+        let btc_tiers = [
+            r#"{"tier": 1, "risk_limit": "1000000", "initial_rate": "0.01", "maintenance_rate": "0.005"}"#,
             r#"{"tier": 2, "risk_limit": "2000000", "initial_rate": "0.015", "maintenance_rate": "0.0075"}"#,
             r#"{"tier": 3, "risk_limit": "5000000", "initial_rate": "0.02", "maintenance_rate": "0.01"}"#,
             r#"{"tier": 4, "risk_limit": "10000000", "initial_rate": "0.025", "maintenance_rate": "0.0125"}"#,
-            r#"{"tier": 5, "risk_limit": "20000000", "initial_rate": "0.03", "maintenance_rate": "0.015"}"#];
+            r#"{"tier": 5, "risk_limit": "20000000", "initial_rate": "0.03", "maintenance_rate": "0.015"}"#,
+        ];
 
         let mut previous_risk_limit = 0.0;
         let mut previous_initial_rate = 0.0;

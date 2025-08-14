@@ -18,7 +18,7 @@ impl RestClient {
     ///
     /// Gets details for a specific trading account by trading account ID.
     ///
-    /// [docs]: https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/accounts/trading-accounts/-tradingAccountId-
+    /// [docs](https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/accounts/trading-accounts/-tradingAccountId-)
     ///
     /// # Arguments
     /// * `request` - Request parameters containing the trading account ID

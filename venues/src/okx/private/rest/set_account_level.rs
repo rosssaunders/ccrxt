@@ -24,7 +24,7 @@ pub struct SetAccountLevelResponse {
 impl RestClient {
     /// Set account level
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#trading-account-rest-api-set-account-mode
+    /// [docs](https://www.okx.com/docs-v5/en/#trading-account-rest-api-set-account-mode)
     ///
     /// # Arguments
     /// * `request` - The set account level request

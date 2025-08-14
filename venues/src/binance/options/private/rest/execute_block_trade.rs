@@ -87,7 +87,7 @@ impl RestClient {
     ///
     /// Executes (accepts) a block trade order.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/option/block-trade/Accept-a-Block-Trade-Order
+    /// [docs](https://developers.binance.com/docs/derivatives/option/block-trade/Accept-a-Block-Trade-Order)
     ///
     /// Rate limit: 1
     ///

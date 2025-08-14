@@ -16,8 +16,7 @@ use rest::{
 use serde::{Serialize, de::DeserializeOwned};
 use sha2::Sha256;
 
-use super::credentials::Credentials;
-use super::get_account_balances::PaginationInfo;
+use super::{credentials::Credentials, get_account_balances::PaginationInfo};
 use crate::coinbaseexchange::{EndpointType, Errors, RateLimiter, RestResult};
 
 /// Private REST client for Coinbase Exchange
@@ -120,7 +119,12 @@ impl RestClient {
                         let without_query = format!("/{endpoint}");
                         // Use bitwise operations to select without branching
                         let path = [without_query, with_query];
-                        (path[(!empty) as usize].clone(), qs)
+                        let idx = (!empty) as usize;
+                        let selected = path
+                            .get(idx)
+                            .cloned()
+                            .unwrap_or_else(|| format!("/{endpoint}"));
+                        (selected, qs)
                     })
             })
             .transpose()?
@@ -177,7 +181,11 @@ impl RestClient {
 
         // Call the appropriate builder without branching
         let (request_path, body, query_or_body) =
-            builders[method_index as usize](self, endpoint, params)?;
+            if let Some(builder) = builders.get(method_index as usize) {
+                builder(self, endpoint, params)?
+            } else {
+                Self::build_get_params(self, endpoint, params)?
+            };
 
         // Create signature
         let method_str = match method {
@@ -289,7 +297,15 @@ impl RestClient {
                     },
                 ];
 
-                Err(Errors::ApiError(api_errors[error_type.min(6)].clone()))
+                let idx = error_type.min(6);
+                Err(Errors::ApiError(
+                    api_errors.get(idx).cloned().unwrap_or_else(|| {
+                        crate::coinbaseexchange::ApiError::UnknownApiError {
+                            code: Some(status_code as i32),
+                            msg: error_response.message.clone(),
+                        }
+                    }),
+                ))
             }
             _ => Err(Errors::Error(format!("HTTP {status}: {response_text}"))),
         }
@@ -319,7 +335,7 @@ impl RestClient {
         let (data, headers) = self
             .send_request_internal(endpoint, method, params, endpoint_type, true)
             .await?;
-        Ok((data, headers.unwrap()))
+        Ok((data, headers.unwrap_or_default()))
     }
 
     /// Send a request to a private endpoint and return data with extracted pagination info
@@ -529,8 +545,9 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use rest::secrets::SecretString;
+
+    use super::*;
 
     #[test]
     fn test_signature_generation() {

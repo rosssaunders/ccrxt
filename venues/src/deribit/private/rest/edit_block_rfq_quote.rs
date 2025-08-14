@@ -66,7 +66,7 @@ impl RestClient {
     /// # Returns
     /// Result containing the edited Block RFQ quote details
     ///
-    /// [docs]: https://docs.deribit.com/v2/#private-edit_block_rfq_quote
+    /// [docs](https://docs.deribit.com/v2/#private-edit_block_rfq_quote)
     pub async fn edit_block_rfq_quote(
         &self,
         request: EditBlockRfqQuoteRequest,
@@ -83,12 +83,13 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use std::sync::Arc;
+
+    use rest::secrets::SecretString;
+    /// REST API endpoint constant
     use serde_json::{Value, json};
 
     use super::{super::add_block_rfq_quote::Side, *};
-    use crate::deribit::AccountTier;
-    use crate::deribit::private::rest::credentials::Credentials;
-    use rest::secrets::SecretString;
+    use crate::deribit::{AccountTier, private::rest::credentials::Credentials};
 
     #[test]
     fn test_request_serialization_minimal() {

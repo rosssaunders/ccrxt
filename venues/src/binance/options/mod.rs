@@ -8,13 +8,13 @@ use std::time::Duration;
 pub mod errors;
 pub mod rate_limit;
 
-use crate::binance::shared::venue_trait::{RateLimits, VenueConfig};
-
 pub use errors::*;
 pub use rate_limit::{
     IntervalUnit, RateLimitHeader, RateLimitHeaderKind, RateLimitUsage, RateLimiter,
     ResponseHeaders,
 };
+
+use crate::binance::shared::venue_trait::{RateLimits, VenueConfig};
 
 mod enums;
 

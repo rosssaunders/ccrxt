@@ -87,7 +87,7 @@ impl RestClient {
     ///
     /// Returns merged orderbook depth for a symbol.
     ///
-    /// [docs]: https://www.bitget.com/api-doc/spot/market/Get-Merge-Depth
+    /// [docs](https://www.bitget.com/api-doc/spot/market/Get-Merge-Depth)
     ///
     /// Rate limit: see official docs
     ///

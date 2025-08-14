@@ -140,7 +140,7 @@ impl RestClient {
     ///
     /// Retrieves all available delivery contracts for the specified settlement currency.
     ///
-    /// [docs]: https://www.gate.io/docs/developers/apiv4/en/#list-all-futures-contracts-2
+    /// [docs](https://www.gate.io/docs/developers/apiv4/en/#list-all-futures-contracts-2)
     ///
     /// Rate limit: 10 requests per second
     ///
@@ -161,7 +161,7 @@ impl RestClient {
     ///
     /// Retrieves detailed information about a specific delivery contract.
     ///
-    /// [docs]: https://www.gate.io/docs/developers/apiv4/en/#get-a-single-contract-2
+    /// [docs](https://www.gate.io/docs/developers/apiv4/en/#get-a-single-contract-2)
     ///
     /// Rate limit: 10 requests per second
     ///

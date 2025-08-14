@@ -19,7 +19,6 @@ pub enum CommandType {
     V3CreateOrder,
 }
 
-
 /// Request parameters for creating a new order.
 ///
 /// Fields marked with * are required.
@@ -100,7 +99,7 @@ impl RestClient {
     /// Creates an order using the V3CreateOrder command type.
     /// Supports market, limit, and stop orders with various time-in-force options.
     ///
-    /// [docs]: https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#post-/v2/orders
+    /// [docs](https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#post-/v2/orders)
     ///
     /// Rate limit: per private trading endpoints
     ///

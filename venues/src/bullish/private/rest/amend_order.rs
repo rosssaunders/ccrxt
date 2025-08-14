@@ -13,7 +13,6 @@ pub enum CommandType {
     V1AmendOrder,
 }
 
-
 /// Request parameters for amending an order.
 #[derive(Debug, Clone, Serialize, Default)]
 #[serde(rename_all = "camelCase")]
@@ -70,7 +69,7 @@ impl RestClient {
     ///
     /// Ability to amend price/quantity/type on eligible orders.
     ///
-    /// [docs]: https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#post-/v2/command#amend
+    /// [docs](https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#post-/v2/command#amend)
     pub async fn amend_order(
         &mut self,
         request: AmendOrderRequest,

@@ -56,7 +56,7 @@ impl UsdmClient {
     ///
     /// Retrieves the current account balance for all assets, including cross wallet balance and unrealized PnL.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Futures-Account-Balance-V2
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Futures-Account-Balance-V2)
     ///
     /// Rate limit: 5
     ///

@@ -46,7 +46,7 @@ impl RestClient {
     /// Funding accounts contain assets that can be lent to margin traders for interest.
     /// Can filter by specific currency or retrieve all funding accounts.
     ///
-    /// [docs]: https://www.gate.io/docs/developers/apiv4/en/#retrieve-funding-accounts
+    /// [docs](https://www.gate.io/docs/developers/apiv4/en/#retrieve-funding-accounts)
     ///
     /// Rate limit: 100 requests per second
     ///

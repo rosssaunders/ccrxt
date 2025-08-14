@@ -43,7 +43,7 @@ impl RestClient {
     ///
     /// Latest price for a symbol or symbols.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Symbol-Price-Ticker-v2
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Symbol-Price-Ticker-v2)
     ///
     /// Rate limit: 1 for a single symbol; 2 when the symbol parameter is omitted
     ///

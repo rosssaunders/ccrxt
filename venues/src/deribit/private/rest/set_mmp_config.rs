@@ -146,7 +146,7 @@ impl RestClient {
     /// This endpoint requires trade:read_write or block_rfq:read_write scope (when block_rfq = true).
     /// This is a matching engine method.
     ///
-    /// [docs]: https://docs.deribit.com/v2/#private-set_mmp_config
+    /// [docs](https://docs.deribit.com/v2/#private-set_mmp_config)
     ///
     /// Rate limit: Matching engine endpoint (tier-based limits)
     /// Scope: trade:read_write or block_rfq:read_write (when block_rfq = true)
@@ -172,15 +172,12 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use std::sync::Arc;
-use serde_json::{Value, json};
+
+    use rest::secrets::SecretString;
+    use serde_json::{Value, json};
 
     use super::*;
-    use crate::deribit::AccountTier;
-
-    
-    use crate::deribit::private::rest::credentials::Credentials;
-    use rest::secrets::SecretString;
-
+    use crate::deribit::{AccountTier, private::rest::credentials::Credentials};
 
     #[test]
     fn test_index_name_serialization() {

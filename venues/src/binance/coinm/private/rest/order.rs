@@ -171,7 +171,7 @@ pub struct NewOrderResponse {
 impl RestClient {
     /// Places a new order (TRADE) on Binance Coin-M Futures.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api
+    /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api)
     ///
     /// POST /dapi/v1/order
     /// Weight: 1 (order rate limit)

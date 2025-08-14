@@ -24,7 +24,7 @@ pub struct SetAutoRepayResponse {
 impl RestClient {
     /// Set auto repay
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#trading-account-rest-api-set-auto-repay
+    /// [docs](https://www.okx.com/docs-v5/en/#trading-account-rest-api-set-auto-repay)
     ///
     /// # Arguments
     /// * `request` - The set auto repay request

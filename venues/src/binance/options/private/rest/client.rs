@@ -1,12 +1,14 @@
-use std::time::Instant;
-use std::{borrow::Cow, sync::Arc};
+use std::{borrow::Cow, sync::Arc, time::Instant};
 
 use rest::HttpClient;
 use serde::Serialize;
 
 use crate::binance::{
-    options::{Errors, RestResponse, RestResult, OptionsConfig},
-    shared::{Errors as SharedErrors, client::PrivateBinanceClient, credentials::Credentials, rate_limiter::RateLimiter, venue_trait::VenueConfig},
+    options::{Errors, OptionsConfig, RestResponse, RestResult},
+    shared::{
+        Errors as SharedErrors, client::PrivateBinanceClient, credentials::Credentials,
+        rate_limiter::RateLimiter, venue_trait::VenueConfig,
+    },
 };
 
 pub struct OptionsPrivateRestClient(PrivateBinanceClient);
@@ -58,7 +60,7 @@ impl OptionsPrivateRestClient {
     pub fn new(credentials: Credentials, http_client: Arc<dyn HttpClient>) -> Self {
         let config = OptionsConfig;
         let rate_limiter = RateLimiter::new(config.rate_limits());
-        
+
         let private_client = PrivateBinanceClient::new(
             Cow::Owned(config.base_url().to_string()),
             http_client,
@@ -66,7 +68,7 @@ impl OptionsPrivateRestClient {
             Box::new(credentials.api_key.clone()),
             Box::new(credentials.api_secret.clone()),
         );
-        
+
         OptionsPrivateRestClient(private_client)
     }
     /// Send a signed GET request with options-specific response type (high-performance)

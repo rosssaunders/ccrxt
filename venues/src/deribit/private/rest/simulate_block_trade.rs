@@ -60,7 +60,7 @@ pub type SimulateBlockTradeResponse = JsonRpcResult<bool>;
 impl RestClient {
     /// Simulate a block trade to check if it can be executed.
     ///
-    /// [docs]: https://docs.deribit.com/v2/#private-simulate_block_trade
+    /// [docs](https://docs.deribit.com/v2/#private-simulate_block_trade)
     ///
     /// Rate limit: Matching engine endpoint (tier-based limits)
     /// Scope: block_trade:read
@@ -86,15 +86,12 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use std::sync::Arc;
-use serde_json::{Value, json};
+
+    use rest::secrets::SecretString;
+    use serde_json::{Value, json};
 
     use super::*;
-    use crate::deribit::AccountTier;
-
-    
-    use crate::deribit::private::rest::credentials::Credentials;
-    use rest::secrets::SecretString;
-
+    use crate::deribit::{AccountTier, private::rest::credentials::Credentials};
 
     #[test]
     fn test_role_serialization() {

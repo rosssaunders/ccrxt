@@ -33,7 +33,7 @@ impl RestClient {
     /// fees, and timing information. Supports querying orders from different account types
     /// such as spot, margin, and unified accounts.
     ///
-    /// [docs]: https://www.gate.io/docs/developers/apiv4/en/#get-a-single-order
+    /// [docs](https://www.gate.io/docs/developers/apiv4/en/#get-a-single-order)
     ///
     /// Rate limit: 100 requests per second
     ///

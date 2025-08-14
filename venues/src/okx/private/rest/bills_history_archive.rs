@@ -58,7 +58,7 @@ pub struct GetBillsHistoryArchiveResponse {
 impl RestClient {
     /// Post bills history archive
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#trading-account-rest-api-get-bills-details-3-months
+    /// [docs](https://www.okx.com/docs-v5/en/#trading-account-rest-api-get-bills-details-3-months)
     ///
     /// # Arguments
     /// * `request` - The post bills history archive request

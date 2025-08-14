@@ -40,7 +40,7 @@ impl RestClient {
     /// all matching orders will be automatically canceled. This is useful for risk management,
     /// emergency stops, and automated trading strategies that need failsafe mechanisms.
     ///
-    /// [docs]: https://www.gate.io/docs/developers/apiv4/#countdown-cancel-orders
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#countdown-cancel-orders)
     ///
     /// Rate limit: 100 requests per second
     ///

@@ -36,7 +36,7 @@ impl RestClient {
     ///
     /// Extends the expiration time of a block trade order.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/option/block-trade/Extend-Block-Trade-Expire-Time
+    /// [docs](https://developers.binance.com/docs/derivatives/option/block-trade/Extend-Block-Trade-Expire-Time)
     ///
     /// Rate limit: 1
     ///

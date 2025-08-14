@@ -80,7 +80,7 @@ impl RestClient {
     ///
     /// Retrieves the asset index for Multi-Assets mode.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Multi-Assets-Mode-Asset-Index
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Multi-Assets-Mode-Asset-Index)
     ///
     /// Rate limit: 1 request per second
     ///

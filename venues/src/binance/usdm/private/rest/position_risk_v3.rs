@@ -111,7 +111,7 @@ impl UsdmClient {
     ///
     /// Get current position information (only symbols with position or open orders will be returned).
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Position-Information-V3
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Position-Information-V3)
     ///
     /// Rate limit: 5
     ///

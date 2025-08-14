@@ -20,7 +20,7 @@ impl super::RestClient {
     ///
     /// Get the maximum withdrawable margin amount for a given symbol.
     ///
-    /// [docs]: https://www.kucoin.com/docs-new/rest/futures-trading/positions/get-maximum-withdraw-margin
+    /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/positions/get-maximum-withdraw-margin)
     ///
     /// Rate limit: 9
     ///

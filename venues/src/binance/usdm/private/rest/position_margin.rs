@@ -60,7 +60,7 @@ impl UsdmClient {
     ///
     /// Adds or reduces margin for an isolated position. This operation is only available for symbols in isolated margin mode and requires an existing position.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Modify-Isolated-Position-Margin
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Modify-Isolated-Position-Margin)
     ///
     /// Weight: 1
     ///

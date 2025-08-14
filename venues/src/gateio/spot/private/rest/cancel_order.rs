@@ -27,7 +27,7 @@ impl RestClient {
     /// currency pair and account type. Once canceled, the order will be removed from
     /// the order book and any remaining quantity will not be executed.
     ///
-    /// [docs]: https://www.gate.io/docs/developers/apiv4/#cancel-a-single-order
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#cancel-a-single-order)
     ///
     /// Rate limit: 100 requests per second
     ///

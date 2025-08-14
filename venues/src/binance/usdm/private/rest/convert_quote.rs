@@ -68,7 +68,7 @@ impl UsdmClient {
     ///
     /// Request a quote for the requested token pairs.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/convert/Send-quote-request
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/convert/Send-quote-request)
     ///
     /// Rate limit: 50 (IP)
     ///

@@ -1,6 +1,9 @@
 use std::sync::Arc;
 
-use rest::{HttpClient, http_client::{Method as HttpMethod, RequestBuilder}};
+use rest::{
+    HttpClient,
+    http_client::{Method as HttpMethod, RequestBuilder},
+};
 use serde::de::DeserializeOwned;
 
 use crate::kucoin::spot::{ApiError, RateLimiter, ResponseHeaders, RestResponse, Result};
@@ -15,7 +18,11 @@ pub struct RestClient {
 
 impl RestClient {
     /// Create a new public futures REST client
-    pub fn new(base_url: impl Into<String>, rate_limiter: RateLimiter, http_client: Arc<dyn HttpClient>) -> Self {
+    pub fn new(
+        base_url: impl Into<String>,
+        rate_limiter: RateLimiter,
+        http_client: Arc<dyn HttpClient>,
+    ) -> Self {
         Self {
             base_url: base_url.into(),
             http_client,
@@ -55,8 +62,9 @@ impl RestClient {
 
         // Build URL with query parameters
         let full_url = if let Some(req_data) = request {
-            let params = serde_urlencoded::to_string(req_data)
-                .map_err(|e| ApiError::JsonParsing(format!("Failed to serialize request: {}", e)))?;
+            let params = serde_urlencoded::to_string(req_data).map_err(|e| {
+                ApiError::JsonParsing(format!("Failed to serialize request: {}", e))
+            })?;
             if !params.is_empty() {
                 format!("{}?{}", url, params)
             } else {
@@ -67,16 +75,28 @@ impl RestClient {
         };
 
         let request_builder = RequestBuilder::new(HttpMethod::Get, full_url).build();
-        let response = self.http_client.execute(request_builder).await
-            .map_err(|e| crate::kucoin::spot::KucoinError::NetworkError(format!("HTTP request failed: {}", e)))?;
+        let response = self
+            .http_client
+            .execute(request_builder)
+            .await
+            .map_err(|e| {
+                crate::kucoin::spot::KucoinError::NetworkError(format!(
+                    "HTTP request failed: {}",
+                    e
+                ))
+            })?;
 
         let status = response.status;
         let headers = response.headers.clone();
 
-        let text = response.text()
-            .map_err(|e| crate::kucoin::spot::KucoinError::NetworkError(format!("Failed to read response: {}", e)))?;
+        let text = response.text().map_err(|e| {
+            crate::kucoin::spot::KucoinError::NetworkError(format!(
+                "Failed to read response: {}",
+                e
+            ))
+        })?;
 
-        if !(status >= 200 && status < 300) {
+        if !(200..300).contains(&status) {
             // Try to parse as error response
             if let Ok(error_response) =
                 serde_json::from_str::<crate::kucoin::spot::ErrorResponse>(&text)

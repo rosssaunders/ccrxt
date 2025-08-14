@@ -13,7 +13,6 @@ pub enum CommandType {
     V1CancelAllOrders,
 }
 
-
 /// Request parameters for cancelling all orders for a trading account.
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -41,7 +40,7 @@ impl RestClient {
     ///
     /// Cancels all outstanding orders for the trading account.
     ///
-    /// [docs]: https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#post-/v2/command#cancellations
+    /// [docs](https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#post-/v2/command#cancellations)
     pub async fn cancel_all_orders(
         &mut self,
         request: CancelAllOrdersRequest,

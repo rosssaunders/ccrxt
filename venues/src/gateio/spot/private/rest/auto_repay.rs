@@ -27,7 +27,7 @@ impl RestClient {
     /// Retrieves the current auto repay configuration for margin trading.
     /// Auto repay automatically repays margin loans when funds are available.
     ///
-    /// [docs]: https://www.gate.com/docs/developers/apiv4/#get-auto-repay-settings
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#get-auto-repay-settings)
     ///
     /// Rate limit: 10 requests per 2 seconds
     ///
@@ -42,7 +42,7 @@ impl RestClient {
     /// Modifies the auto repay configuration for margin trading.
     /// When enabled, margin loans will be automatically repaid when funds are available.
     ///
-    /// [docs]: https://www.gate.com/docs/developers/apiv4/#update-auto-repay-settings
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#update-auto-repay-settings)
     ///
     /// Rate limit: 10 requests per 2 seconds
     ///

@@ -212,7 +212,7 @@ impl RestClient {
     /// fees, timing, and optional features. Supports filtering by currency pair, trading side,
     /// and account type, with pagination for efficient handling of large result sets.
     ///
-    /// [docs]: https://www.gate.io/docs/developers/apiv4/en/#list-all-open-orders
+    /// [docs](https://www.gate.io/docs/developers/apiv4/en/#list-all-open-orders)
     ///
     /// Rate limit: 100 requests per second
     ///

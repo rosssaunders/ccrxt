@@ -139,7 +139,7 @@ impl RestClient {
     ///
     /// Retrieve the candlestick charts of mark price from recent years.
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-mark-price-candlesticks-history
+    /// [docs](https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-mark-price-candlesticks-history)
     ///
     /// Rate limit: 20 requests per 2 seconds
     ///

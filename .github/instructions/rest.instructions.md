@@ -7,6 +7,7 @@ applyTo: "venues/src/**/rest/**"
 ## File Header and Documentation Link Rules
 
 - **Do NOT put comments at the top of endpoint files** (except for license headers if required by the project).
+- For external documentation URLs in Rust doc comments, always use inline links `[label](url)`; do not use reference-style definitions like `[label]: url` inside doc comments, as they won’t render in lists and trigger Clippy's `doc_nested_refdefs`.
 
 ## Overview
 
@@ -142,7 +143,7 @@ It also details documentation and code style requirements for all structs and fi
   - Title of the endpoints MATCHING the exchange docs EXACTLY.
   - Any additional details that the exchange docs provide.
   - Link to the official API documentation in the format:
-    `[docs]: <FULL URL>`
+    `[docs](<FULL URL>)`
   - Rate limit information.
   - Arguments (with a brief description for each).
   - Return value (with a brief description).
@@ -161,7 +162,7 @@ It also details documentation and code style requirements for all structs and fi
 ///
 /// Cancels all outstanding orders for a symbol and/or side.
 ///
-/// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Get-Funding-Info
+/// - [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Get-Funding-Info)
 ///
 /// Rate limit: varies by endpoint type
 ///

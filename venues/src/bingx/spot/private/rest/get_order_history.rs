@@ -116,6 +116,9 @@ impl RestClient {
     /// Get order history
     ///
     /// Retrieves historical orders for the account.
+    ///
+    /// [docs](https://bingx-api.github.io/docs/#/en-us/spot/trade-api.html#Query%20Order%20history)
+    ///
     /// Rate limit: 10/s by UID
     ///
     /// # Arguments
@@ -128,9 +131,6 @@ impl RestClient {
     /// - If orderId is set, orders >= orderId will be returned
     /// - If startTime and endTime are provided, orderId is not required
     /// - Max page size is 100, and pageIndex * pageSize <= 10,000
-    ///
-    /// # API Documentation
-    /// - [docs]: https://bingx-api.github.io/docs/#/en-us/spot/trade-api.html#Query%20Order%20history
     pub async fn get_order_history(
         &self,
         request: &GetOrderHistoryRequest,

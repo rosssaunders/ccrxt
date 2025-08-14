@@ -44,7 +44,7 @@ impl RestClient {
     ///
     /// Queries the status of block trade orders.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/option/block-trade/Check-Block-Trade-Order-Status
+    /// [docs](https://developers.binance.com/docs/derivatives/option/block-trade/Check-Block-Trade-Order-Status)
     ///
     /// Rate limit: 1
     ///

@@ -94,7 +94,7 @@ impl RestClient {
     /// This method cancels all orders in currency(currencies), optionally filtered by instrument
     /// kind and/or order type. This endpoint requires trade:read_write scope.
     ///
-    /// [docs]: https://docs.deribit.com/v2/#private-cancel_all_by_kind_or_type
+    /// [docs](https://docs.deribit.com/v2/#private-cancel_all_by_kind_or_type)
     ///
     /// Rate limit: Matching engine endpoint (tier-based rate limiting)
     /// Scope: trade:read_write
@@ -124,15 +124,12 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use std::sync::Arc;
-use serde_json::{Value, json};
+
+    use rest::secrets::SecretString;
+    use serde_json::{Value, json};
 
     use super::*;
-    use crate::deribit::AccountTier;
-
-    
-    use crate::deribit::private::rest::credentials::Credentials;
-    use rest::secrets::SecretString;
-
+    use crate::deribit::{AccountTier, private::rest::credentials::Credentials};
 
     #[test]
     fn test_currency_selection_single() {

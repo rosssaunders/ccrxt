@@ -135,11 +135,7 @@ async fn test_ccrxt_server_time() {
             .unwrap()
             .as_millis() as u64;
 
-        let time_diff = if current_time > response.timestamp {
-            current_time - response.timestamp
-        } else {
-            response.timestamp - current_time
-        };
+        let time_diff = current_time.abs_diff(response.timestamp);
         assert!(
             time_diff < 600_000,
             "CCRXT server time should be within 10 minutes of current time"

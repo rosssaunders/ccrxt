@@ -2,7 +2,11 @@ use std::{borrow::Cow, sync::Arc};
 
 use chrono::Utc;
 use hmac::{Hmac, Mac};
-use rest::{HttpClient, http_client::{Method as HttpMethod, RequestBuilder}, secrets::ExposableSecret};
+use rest::{
+    HttpClient,
+    http_client::{Method as HttpMethod, RequestBuilder},
+    secrets::ExposableSecret,
+};
 use serde::{Serialize, de::DeserializeOwned};
 use serde_json::json;
 use sha2::Sha256;
@@ -128,33 +132,38 @@ impl RestClient {
         let url = format!("{}/api/v2/{}", self.base_url, method);
         let body = serde_json::to_string(&authenticated_request)
             .map_err(|e| Errors::Error(format!("Failed to serialize body: {e}")))?;
-        
+
         let request = RequestBuilder::new(HttpMethod::Post, url)
             .header("Content-Type", "application/json")
             .body(body.into_bytes())
             .build();
-        
-        let response = self.http_client.execute(request).await
+
+        let response = self
+            .http_client
+            .execute(request)
+            .await
             .map_err(|e| Errors::NetworkError(format!("HTTP request failed: {e}")))?;
 
         // Record request for rate limiting
         self.rate_limiter.record_request(endpoint_type).await;
-        
+
         // Check if the response was successful
         if !(response.status >= 200 && response.status < 300) {
             let status = response.status;
-            let error_text = response.text()
+            let error_text = response
+                .text()
                 .map_err(|e| Errors::NetworkError(format!("Failed to read response: {e}")))?;
             return Err(Errors::Error(format!("HTTP {status}: {error_text}")));
         }
-        
+
         // Parse the response
-        let response_text = response.text()
+        let response_text = response
+            .text()
             .map_err(|e| Errors::NetworkError(format!("Failed to read response: {e}")))?;
-        
+
         let result: T = serde_json::from_str(&response_text)
             .map_err(|e| Errors::Error(format!("Failed to parse response: {e}")))?;
-        
+
         Ok(result)
     }
 }
@@ -162,9 +171,11 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use std::sync::Arc;
+
+    use rest::secrets::SecretString;
+
     use super::*;
     use crate::deribit::AccountTier;
-    use rest::secrets::SecretString;
 
     #[test]
     fn test_private_client_creation() {

@@ -3,14 +3,22 @@ use std::{
     time::{SystemTime, UNIX_EPOCH},
 };
 
-use rest::{HttpClient, http_client::{Method as HttpMethod, RequestBuilder}};
-use ring::hmac;
+use hmac::{Hmac, Mac};
+use rest::{
+    HttpClient,
+    http_client::{Method as HttpMethod, RequestBuilder},
+};
 use serde::{Serialize, de::DeserializeOwned};
 use sha2::{Digest, Sha512};
 
-use crate::gateio::options::{RestResult, rate_limit::RateLimiter};
-use crate::gateio::shared::credentials::Credentials;
+type HmacSha512 = Hmac<Sha512>;
+
 use rest::secrets::ExposableSecret;
+
+use crate::gateio::{
+    options::{RestResult, rate_limit::RateLimiter},
+    shared::credentials::Credentials,
+};
 
 const LIVE_URL: &str = "https://api.gateio.ws/api/v4";
 const TESTNET_URL: &str = "https://api-testnet.gateapi.io/api/v4";
@@ -26,7 +34,11 @@ pub struct RestClient {
 
 impl RestClient {
     /// Create a new private REST client
-    pub fn new(http_client: Arc<dyn HttpClient>, credentials: Credentials, testnet: bool) -> RestResult<Self> {
+    pub fn new(
+        http_client: Arc<dyn HttpClient>,
+        credentials: Credentials,
+        testnet: bool,
+    ) -> RestResult<Self> {
         Ok(Self {
             http_client,
             base_url: if testnet { TESTNET_URL } else { LIVE_URL }.to_string(),
@@ -48,7 +60,7 @@ impl RestClient {
         query: &str,
         body: &str,
         timestamp: &str,
-    ) -> String {
+    ) -> RestResult<String> {
         // Calculate body hash
         let mut hasher = Sha512::new();
         hasher.update(body.as_bytes());
@@ -61,10 +73,18 @@ impl RestClient {
         );
 
         // Generate HMAC-SHA512 signature
-        let key = hmac::Key::new(hmac::HMAC_SHA512, self.credentials.api_secret.expose_secret().as_bytes());
-        let signature = hmac::sign(&key, signature_string.as_bytes());
+        let mut mac =
+            HmacSha512::new_from_slice(self.credentials.api_secret.expose_secret().as_bytes())
+                .map_err(|e| {
+                    crate::gateio::options::GateIoError::Internal(format!(
+                        "failed to create HMAC: {}",
+                        e
+                    ))
+                })?;
+        mac.update(signature_string.as_bytes());
+        let signature = mac.finalize();
 
-        hex::encode(signature.as_ref())
+        Ok(hex::encode(signature.into_bytes()))
     }
 
     /// Make a GET request to the API without query parameters
@@ -185,7 +205,7 @@ impl RestClient {
 
         // Generate signature
         let signature =
-            self.generate_signature(method_str, endpoint, &query_string, &body_str, &timestamp);
+            self.generate_signature(method_str, endpoint, &query_string, &body_str, &timestamp)?;
 
         // Build URL with query parameters
         let full_url = if !query_string.is_empty() {
@@ -207,10 +227,13 @@ impl RestClient {
                 .body(body_str.into_bytes());
         }
 
-        let response = self.http_client
+        let response = self
+            .http_client
             .execute(request.build())
             .await
-            .map_err(|e| crate::gateio::options::GateIoError::Network(format!("HTTP request failed: {}", e)))?;
+            .map_err(|e| {
+                crate::gateio::options::GateIoError::Network(format!("HTTP request failed: {}", e))
+            })?;
 
         let status = response.status;
         let headers =
@@ -221,11 +244,11 @@ impl RestClient {
             tracing::debug!("Rate limit status for {}: {:?}", endpoint, rate_status);
         }
 
-        let response_text = response
-            .text()
-            .map_err(|e| crate::gateio::options::GateIoError::Network(format!("Failed to read response: {}", e)))?;
+        let response_text = response.text().map_err(|e| {
+            crate::gateio::options::GateIoError::Network(format!("Failed to read response: {}", e))
+        })?;
 
-        if status >= 200 && status < 300 {
+        if (200..300).contains(&status) {
             let data: T = serde_json::from_str(&response_text)
                 .map_err(crate::gateio::options::GateIoError::Json)?;
             Ok(data)

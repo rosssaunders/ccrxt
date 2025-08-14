@@ -62,7 +62,7 @@ pub struct InterestLimits {
 impl RestClient {
     /// Get interest limits
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#trading-account-rest-api-get-interest-limits
+    /// [docs](https://www.okx.com/docs-v5/en/#trading-account-rest-api-get-interest-limits)
     ///
     /// # Arguments
     /// * `request` - The get interest limits request

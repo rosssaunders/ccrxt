@@ -224,7 +224,7 @@ impl RestClient {
     /// This is a private method; it can only be used after authentication.
     /// This is a matching engine method.
     ///
-    /// [docs]: https://docs.deribit.com/v2/#private-cancel
+    /// [docs](https://docs.deribit.com/v2/#private-cancel)
     ///
     /// Rate limit: Matching engine rate limits apply based on account tier
     /// Scope: trade:read_write
@@ -250,15 +250,12 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use std::sync::Arc;
-use serde_json::{Value, json};
+
+    use rest::secrets::SecretString;
+    use serde_json::{Value, json};
 
     use super::*;
-    use crate::deribit::AccountTier;
-
-    
-    use crate::deribit::private::rest::credentials::Credentials;
-    use rest::secrets::SecretString;
-
+    use crate::deribit::{AccountTier, private::rest::credentials::Credentials};
 
     #[test]
     fn test_request_parameters_serialization() {

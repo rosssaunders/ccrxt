@@ -40,7 +40,7 @@ impl RestClient {
     ///
     /// Retrieves the index prices for all supported assets
     ///
-    /// [docs]: https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/index-prices
+    /// [docs](https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/index-prices)
     ///
     /// # Returns
     /// A `RestResult<Vec<IndexPrice>>` containing all index prices
@@ -56,7 +56,7 @@ impl RestClient {
     ///
     /// Retrieves the index price of a specified asset
     ///
-    /// [docs]: https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/index-prices
+    /// [docs](https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/index-prices)
     ///
     /// # Arguments
     /// * `request` - Request parameters containing the asset symbol

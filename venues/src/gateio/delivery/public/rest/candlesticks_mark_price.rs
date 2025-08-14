@@ -11,7 +11,7 @@ impl RestClient {
     ///
     /// Retrieves mark price candlestick data for a specific delivery contract.
     ///
-    /// [docs]: https://www.gate.io/docs/developers/apiv4/en/#get-delivery-mark-price-candlesticks
+    /// [docs](https://www.gate.io/docs/developers/apiv4/en/#get-delivery-mark-price-candlesticks)
     ///
     /// Rate limit: 10 requests per second
     ///

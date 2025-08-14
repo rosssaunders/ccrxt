@@ -34,7 +34,7 @@ impl RestClient {
     ///
     /// Get the user's wallet balance for all currencies
     ///
-    /// [docs]: https://developer-pro.bitmart.com/en/spot/#get-spot-wallet-balance-keyed
+    /// [docs](https://developer-pro.bitmart.com/en/spot/#get-spot-wallet-balance-keyed)
     ///
     /// Rate limit: 12 times/2 sec per API key
     ///

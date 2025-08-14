@@ -107,8 +107,9 @@ impl RestClient {
             body_part
         );
 
-        let mut mac = Hmac::<Sha256>::new_from_slice(self.credentials.api_secret.expose_secret().as_bytes())
-            .map_err(|e| Errors::Error(format!("Failed to create HMAC: {e}")))?;
+        let mut mac =
+            Hmac::<Sha256>::new_from_slice(self.credentials.api_secret.expose_secret().as_bytes())
+                .map_err(|e| Errors::Error(format!("Failed to create HMAC: {e}")))?;
 
         mac.update(sign_string.as_bytes());
         let result = mac.finalize();
@@ -206,7 +207,10 @@ impl RestClient {
             .header("ACCESS-KEY", self.credentials.api_key.expose_secret())
             .header("ACCESS-SIGN", &signature)
             .header("ACCESS-TIMESTAMP", timestamp.to_string())
-            .header("ACCESS-PASSPHRASE", self.credentials.api_passphrase.expose_secret())
+            .header(
+                "ACCESS-PASSPHRASE",
+                self.credentials.api_passphrase.expose_secret(),
+            )
             .header("locale", "en-US");
 
         // Add body if provided

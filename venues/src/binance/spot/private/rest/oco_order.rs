@@ -148,7 +148,8 @@ impl RestClient {
     ///
     /// Send in a new OCO (One-Cancels-Other) order.
     ///
-    /// [docs]: (https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#new-oco--trade)
+    /// [docs](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#new-oco--trade)
+    ///
     /// Method: POST /api/v3/order/oco
     /// Weight: 1
     /// Security: TRADE

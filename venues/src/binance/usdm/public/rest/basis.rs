@@ -69,7 +69,7 @@ impl RestClient {
     ///
     /// Returns futures basis data for a symbol and contract type over a period.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Basis
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Basis)
     ///
     /// Rate limit: 1 request per second
     ///

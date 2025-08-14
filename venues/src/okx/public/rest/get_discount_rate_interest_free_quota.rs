@@ -78,7 +78,7 @@ impl RestClient {
     ///
     /// Retrieve discount rate level and interest-free quota.
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-discount-rate-and-interest-free-quota
+    /// [docs](https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-discount-rate-and-interest-free-quota)
     ///
     /// Rate limit: 2 requests per 2 seconds
     ///

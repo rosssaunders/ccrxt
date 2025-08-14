@@ -132,7 +132,8 @@ impl RestClient {
     /// Orders that are CANCELED or REJECTED with no filled trades and created more than
     /// 3 days ago will not be found.
     ///
-    /// [docs]: (https://developers.binance.com/docs/derivatives/option/trade/Query-Single-Order)
+    /// [docs](https://developers.binance.com/docs/derivatives/option/trade/Query-Single-Order)
+    ///
     /// Method: GET /eapi/v1/order
     /// Weight: 1
     /// Requires: API key and signature

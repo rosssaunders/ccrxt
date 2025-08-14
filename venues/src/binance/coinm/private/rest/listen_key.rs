@@ -46,7 +46,7 @@ pub struct ListenKeyResponse {}
 impl RestClient {
     /// Create a listen key for user data stream on Binance Coin-M Futures.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/user-data-streams/Start-User-Data-Stream
+    /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/user-data-streams/Start-User-Data-Stream)
     ///
     /// POST /dapi/v1/listenKey
     /// Weight: 1
@@ -68,7 +68,7 @@ impl RestClient {
 
     /// Extend a listen key for user data stream on Binance Coin-M Futures.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/user-data-streams/Keepalive-User-Data-Stream
+    /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/user-data-streams/Keepalive-User-Data-Stream)
     ///
     /// PUT /dapi/v1/listenKey
     /// Weight: 1
@@ -90,7 +90,7 @@ impl RestClient {
 
     /// Delete a listen key for user data stream on Binance Coin-M Futures.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/user-data-streams/Close-User-Data-Stream
+    /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/user-data-streams/Close-User-Data-Stream)
     ///
     /// DELETE /dapi/v1/listenKey
     /// Weight: 1

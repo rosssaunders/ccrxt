@@ -125,7 +125,8 @@ impl RestClient {
     ///
     /// Get all account orders; active, canceled, or filled.
     ///
-    /// [docs]: (https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#all-orders--user_data)
+    /// [docs](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#all-orders--user_data)
+    ///
     /// Method: GET /api/v3/allOrders
     /// Weight: 20
     /// Security: USER_DATA

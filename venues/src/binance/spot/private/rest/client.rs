@@ -1,9 +1,13 @@
-use rest::{http_client::Method as HttpMethod, HttpClient};
-use serde::Serialize;
 use std::{borrow::Cow, sync::Arc};
 
+use rest::{HttpClient, http_client::Method as HttpMethod};
+use serde::Serialize;
+
 use crate::binance::{
-    shared::{Errors as SharedErrors, client::PrivateBinanceClient, credentials::Credentials, rate_limiter::RateLimiter, venue_trait::VenueConfig},
+    shared::{
+        Errors as SharedErrors, client::PrivateBinanceClient, credentials::Credentials,
+        rate_limiter::RateLimiter, venue_trait::VenueConfig,
+    },
     spot::{Errors, RestResponse, RestResult, SpotConfig},
 };
 
@@ -56,7 +60,7 @@ impl SpotPrivateRestClient {
     pub fn new(credentials: Credentials, http_client: Arc<dyn HttpClient>) -> Self {
         let config = SpotConfig;
         let rate_limiter = RateLimiter::new(config.rate_limits());
-        
+
         let private_client = PrivateBinanceClient::new(
             Cow::Owned(config.base_url().to_string()),
             http_client,
@@ -64,7 +68,7 @@ impl SpotPrivateRestClient {
             Box::new(credentials.api_key.clone()),
             Box::new(credentials.api_secret.clone()),
         );
-        
+
         SpotPrivateRestClient(private_client)
     }
 

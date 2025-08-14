@@ -79,7 +79,7 @@ impl RestClient {
     /// and account types, making it essential for order management, trade history analysis, and
     /// reconciliation processes. Results are paginated for efficient handling of large datasets.
     ///
-    /// [docs]: https://www.gate.io/docs/developers/apiv4/en/#list-orders
+    /// [docs](https://www.gate.io/docs/developers/apiv4/en/#list-orders)
     ///
     /// Rate limit: 100 requests per second
     ///

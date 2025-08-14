@@ -89,7 +89,7 @@ impl UsdmClient {
     ///
     /// Retrieves position margin change history for a given symbol on Binance USDM Futures.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Get-Position-Margin-Change-History
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Get-Position-Margin-Change-History)
     ///
     /// Rate limit: 1 request per second
     ///

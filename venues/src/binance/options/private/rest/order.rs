@@ -202,7 +202,8 @@ impl RestClient {
     ///
     /// Places a new limit order for options contracts. Currently only LIMIT orders are supported.
     ///
-    /// [docs]: (https://developers.binance.com/docs/derivatives/option/trade)
+    /// [docs](https://developers.binance.com/docs/derivatives/option/trade)
+    ///
     /// Method: POST /eapi/v1/order
     /// Weight: 1
     /// Requires: API key and signature
@@ -215,7 +216,8 @@ impl RestClient {
     ///
     /// Places a new limit order for options contracts and returns detailed execution information.
     ///
-    /// [docs]: (https://developers.binance.com/docs/derivatives/option/trade)
+    /// [docs](https://developers.binance.com/docs/derivatives/option/trade)
+    ///
     /// Method: POST /eapi/v1/order
     /// Weight: 1
     /// Requires: API key and signature

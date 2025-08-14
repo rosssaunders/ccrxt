@@ -72,7 +72,7 @@ impl RestClient {
     /// IP, the same IP must be used for the duration of the session for any subsequent
     /// requests.
     ///
-    /// [docs]: https://api.exchange.bullish.com/trading-api/v2/users/login
+    /// [docs](https://api.exchange.bullish.com/trading-api/v2/users/login)
     ///
     /// Rate limit: True
     ///

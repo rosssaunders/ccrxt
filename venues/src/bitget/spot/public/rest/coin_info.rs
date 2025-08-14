@@ -100,7 +100,7 @@ impl RestClient {
     ///
     /// Returns information about supported coins.
     ///
-    /// [docs]: https://www.bitget.com/api-doc/spot/public/Get-Coin-Info
+    /// [docs](https://www.bitget.com/api-doc/spot/public/Get-Coin-Info)
     ///
     /// Rate limit: see official docs
     ///

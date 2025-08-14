@@ -38,7 +38,7 @@ pub struct ChangeInitialLeverageResponse {
 impl RestClient {
     /// Changes user's initial leverage (TRADE) for a specific symbol on Binance Coin-M Futures.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Change-Initial-Leverage
+    /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Change-Initial-Leverage)
     ///
     /// POST /dapi/v1/leverage
     /// Weight: 1

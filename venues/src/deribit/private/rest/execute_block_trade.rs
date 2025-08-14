@@ -224,7 +224,7 @@ impl RestClient {
     /// assures that even if unintentionally both sides execute given block trade with
     /// valid counterparty_signature, the given block trade will be executed only once.
     ///
-    /// [docs]: https://docs.deribit.com/v2/#private-execute_block_trade
+    /// [docs](https://docs.deribit.com/v2/#private-execute_block_trade)
     ///
     /// Rate limit: Matching engine endpoint (tier-based limits)
     /// Scope: block_trade:read_write
@@ -254,16 +254,13 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use std::sync::Arc;
-/// REST API endpoint constant
+
+    use rest::secrets::SecretString;
+    /// REST API endpoint constant
     use serde_json::{Value, json};
 
     use super::*;
-    use crate::deribit::AccountTier;
-
-    
-    use crate::deribit::private::rest::credentials::Credentials;
-    use rest::secrets::SecretString;
-
+    use crate::deribit::{AccountTier, private::rest::credentials::Credentials};
 
     #[test]
     fn test_role_serialization() {

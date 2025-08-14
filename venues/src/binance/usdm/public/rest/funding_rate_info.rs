@@ -30,7 +30,7 @@ impl RestClient {
     ///
     /// Retrieves funding rate cap, floor, and interval settings for USDM futures.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Get-Funding-Rate-Info
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Get-Funding-Rate-Info)
     ///
     /// Rate limit: share 500/5min/IP rate limit with GET /fapi/v1/fundingInfo
     ///

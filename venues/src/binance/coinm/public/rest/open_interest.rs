@@ -41,7 +41,7 @@ impl RestClient {
     ///
     /// Retrieves the present open interest of a specific symbol.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Open-Interest
+    /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Open-Interest)
     ///
     /// Rate limit: 1 request weight per call
     ///

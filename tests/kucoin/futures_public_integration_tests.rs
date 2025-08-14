@@ -3,8 +3,9 @@
 //! These tests verify that the KuCoin futures public REST API client can successfully
 //! communicate with the live API and receive valid responses.
 
-use rest::native::NativeHttpClient;
 use std::sync::Arc;
+
+use rest::native::NativeHttpClient;
 use venues::kucoin::futures::public::rest::{
     GetAllContractsRequest, GetContractRequest, GetCurrentFundingRateRequest,
     RestClient as PublicRestClient,

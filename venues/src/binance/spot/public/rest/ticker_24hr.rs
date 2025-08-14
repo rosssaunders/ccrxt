@@ -168,7 +168,8 @@ impl RestClient {
     /// Returns 24 hour rolling window price change statistics.
     /// Careful when accessing this with no symbol.
     ///
-    /// [docs]: (https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#24hr-ticker-price-change-statistics)
+    /// [docs](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#24hr-ticker-price-change-statistics)
+    ///
     /// Method: GET /api/v3/ticker/24hr
     /// Weight: Variable (2-80 based on symbols count)
     /// Security: None

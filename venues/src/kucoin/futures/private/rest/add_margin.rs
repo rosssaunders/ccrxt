@@ -144,7 +144,7 @@ impl super::RestClient {
     /// Add isolated margin manually to a position to increase the margin and reduce
     /// the risk of liquidation.
     ///
-    /// [docs]: https://www.kucoin.com/docs-new/rest/futures-trading/positions/add-isolated-margin
+    /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/positions/add-isolated-margin)
     ///
     /// Rate limit: 4
     ///

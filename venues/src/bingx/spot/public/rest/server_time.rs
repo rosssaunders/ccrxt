@@ -23,16 +23,13 @@ impl RestClient {
     /// This endpoint returns the current server time in milliseconds.
     /// No authentication required.
     ///
+    /// [docs](https://bingx-api.github.io/docs/#/en-us/spot/base-info.html#Server%20time)
+    ///
     /// # Returns
     /// The server time response containing the current timestamp
     ///
     /// # Rate Limit
     /// - IP: 100 requests per 10 seconds (Group 1)
-    ///
-    /// # API Documentation
-    /// - Endpoint: GET /openApi/spot/v1/server/time
-    /// - No parameters required
-    /// - [docs]: https://bingx-api.github.io/docs/#/en-us/spot/base-info.html#Server%20time
     pub async fn get_server_time(&self) -> RestResult<GetServerTimeResponse> {
         self.send_request::<GetServerTimeResponse, GetServerTimeRequest>(
             SERVER_TIME_ENDPOINT,

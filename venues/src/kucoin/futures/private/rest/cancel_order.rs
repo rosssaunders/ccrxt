@@ -26,7 +26,7 @@ impl super::RestClient {
     /// Cancel a specific order by its order ID. This will cancel the order immediately
     /// if it's still active and has not been filled.
     ///
-    /// [docs]: https://www.kucoin.com/docs-new/rest/futures-trading/orders/cancel-order-by-orderld
+    /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/orders/cancel-order-by-orderld)
     ///
     /// Rate limit: 40
     ///

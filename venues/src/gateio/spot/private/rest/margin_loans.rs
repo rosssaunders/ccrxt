@@ -2,8 +2,6 @@ use serde::{Deserialize, Serialize};
 
 use super::RestClient;
 
-/// Request parameters for listing loans
-
 const MARGIN_LOAN_RECORDS_ENDPOINT: &str = "/margin/loan_records";
 const MARGIN_LOANS_ENDPOINT: &str = "/margin/loans";
 
@@ -283,7 +281,7 @@ impl RestClient {
     /// filtering options for status, side, currency, and sorting capabilities for
     /// detailed loan portfolio management and analysis.
     ///
-    /// [docs]: https://www.gate.io/docs/developers/apiv4/#list-margin-loans
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#list-margin-loans)
     ///
     /// Rate limit: 100 requests per second
     ///

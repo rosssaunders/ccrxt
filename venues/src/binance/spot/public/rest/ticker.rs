@@ -96,7 +96,8 @@ impl RestClient {
     /// Returns rolling window price change statistics.
     /// The window used to compute statistics is typically slightly wider than requested windowSize.
     ///
-    /// [docs]: (https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#rolling-window-price-change-statistics)
+    /// [docs](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#rolling-window-price-change-statistics)
+    ///
     /// Method: GET /api/v3/ticker
     /// Weight: 4 per symbol (max 200)
     /// Security: None

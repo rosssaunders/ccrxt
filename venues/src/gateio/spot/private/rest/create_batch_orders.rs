@@ -47,7 +47,7 @@ impl RestClient {
     /// This endpoint is ideal for implementing trading strategies that require multiple simultaneous
     /// orders, such as grid trading, arbitrage, or portfolio rebalancing.
     ///
-    /// [docs]: https://www.gate.io/docs/developers/apiv4/#create-a-batch-of-orders
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#create-a-batch-of-orders)
     ///
     /// Rate limit: 100 requests per second
     ///

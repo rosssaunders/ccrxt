@@ -1,9 +1,13 @@
-use rest::HttpClient;
-use serde::Serialize;
 use std::{borrow::Cow, sync::Arc};
 
+use rest::HttpClient;
+use serde::Serialize;
+
 use crate::binance::{
-    shared::{Errors as SharedErrors, RestResponse, client::PrivateBinanceClient, credentials::Credentials, rate_limiter::RateLimiter, venue_trait::VenueConfig},
+    shared::{
+        Errors as SharedErrors, RestResponse, client::PrivateBinanceClient,
+        credentials::Credentials, rate_limiter::RateLimiter, venue_trait::VenueConfig,
+    },
     usdm::{Errors, UsdmConfig},
 };
 
@@ -34,7 +38,9 @@ impl UsdmPrivateRestClient {
     /// ```no_run
     /// use std::sync::Arc;
     /// use rest::{secrets::SecretString, HttpClient};
-    /// use venues::binance::usdm::private::rest::{UsdmClient, Credentials};
+    /// // Use public re-exports instead of private module paths
+    /// use venues::binance::shared::credentials::Credentials;
+    /// use venues::binance::usdm::PrivateRestClient as UsdmClient;
     ///
     /// # #[derive(Debug)]
     /// # struct MyHttpClient;
@@ -56,7 +62,7 @@ impl UsdmPrivateRestClient {
     pub fn new(credentials: Credentials, http_client: Arc<dyn HttpClient>) -> Self {
         let config = UsdmConfig;
         let rate_limiter = RateLimiter::new(config.rate_limits());
-        
+
         let private_client = PrivateBinanceClient::new(
             Cow::Owned(config.base_url().to_string()),
             http_client,
@@ -64,7 +70,7 @@ impl UsdmPrivateRestClient {
             Box::new(credentials.api_key.clone()),
             Box::new(credentials.api_secret.clone()),
         );
-        
+
         UsdmPrivateRestClient(private_client)
     }
     /// Send a signed GET request with usdm-specific response type (high-performance)

@@ -3,8 +3,9 @@
 //! These tests verify the functionality of delivery endpoints.
 //! Tests run against the live Gate.io API using real market data.
 
-use rest::native::NativeHttpClient;
 use std::sync::Arc;
+
+use rest::native::NativeHttpClient;
 use tokio;
 use venues::gateio::{delivery::public::rest::RestClient, shared::enums::CandlestickInterval};
 
@@ -300,8 +301,7 @@ async fn test_get_delivery_mark_price_candlesticks() {
                         );
                     } else {
                         // Re-raise unexpected errors
-                        assert!(
-                            false,
+                        panic!(
                             "Unexpected error from get_delivery_mark_price_candlesticks: {:?}",
                             e
                         );
@@ -363,8 +363,7 @@ async fn test_get_delivery_index_price_candlesticks() {
                         );
                     } else {
                         // Re-raise unexpected errors
-                        assert!(
-                            false,
+                        panic!(
                             "Unexpected error from get_delivery_index_price_candlesticks: {:?}",
                             e
                         );

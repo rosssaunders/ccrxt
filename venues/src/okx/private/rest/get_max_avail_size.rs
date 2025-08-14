@@ -57,7 +57,7 @@ pub struct MaxAvailSize {
 impl RestClient {
     /// Get max available size
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#trading-account-rest-api-get-maximum-available-tradable-amount
+    /// [docs](https://www.okx.com/docs-v5/en/#trading-account-rest-api-get-maximum-available-tradable-amount)
     ///
     /// # Arguments
     /// * `request` - The get max available size request

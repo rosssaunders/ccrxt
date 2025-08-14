@@ -27,7 +27,7 @@ impl RestClient {
     /// label are cancelled in all currencies or in one given currency (in this case
     /// currency queue is used). This endpoint requires trade:read_write scope.
     ///
-    /// [docs]: https://docs.deribit.com/v2/#private-cancel_by_label
+    /// [docs](https://docs.deribit.com/v2/#private-cancel_by_label)
     ///
     /// Rate limit: Matching engine endpoint (tier-based rate limiting)
     /// Scope: trade:read_write
@@ -54,16 +54,13 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use std::sync::Arc;
-/// REST API endpoint constant
+
+    use rest::secrets::SecretString;
+    /// REST API endpoint constant
     use serde_json::{Value, json};
 
     use super::*;
-    use crate::deribit::AccountTier;
-
-    
-    use crate::deribit::private::rest::credentials::Credentials;
-    use rest::secrets::SecretString;
-
+    use crate::deribit::{AccountTier, private::rest::credentials::Credentials};
 
     #[test]
     fn test_request_parameters_serialization_minimal() {

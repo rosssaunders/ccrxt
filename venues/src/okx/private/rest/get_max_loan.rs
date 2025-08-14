@@ -48,7 +48,7 @@ pub struct MaxLoan {
 impl RestClient {
     /// Get max loan
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#trading-account-rest-api-get-the-maximum-loan-of-instrument
+    /// [docs](https://www.okx.com/docs-v5/en/#trading-account-rest-api-get-the-maximum-loan-of-instrument)
     ///
     /// # Arguments
     /// * `request` - The get max loan request

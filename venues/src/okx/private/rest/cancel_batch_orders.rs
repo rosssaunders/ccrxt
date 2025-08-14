@@ -27,7 +27,7 @@ impl RestClient {
     ///
     /// Cancels multiple orders in a single request. Maximum 20 orders can be canceled per request.
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#order-book-trading-trade-post-cancel-multiple-orders
+    /// [docs](https://www.okx.com/docs-v5/en/#order-book-trading-trade-post-cancel-multiple-orders)
     ///
     /// Rate limit: 300 orders per 2 seconds
     ///

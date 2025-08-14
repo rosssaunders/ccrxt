@@ -90,7 +90,8 @@ impl RestClient {
     ///
     /// Display orders that were expired due to STP (Self-Trade Prevention).
     ///
-    /// [docs]: (https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#query-prevented-matches--user_data)
+    /// [docs](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#query-prevented-matches--user_data)
+    ///
     /// Method: GET /api/v3/myPreventedMatches
     /// Weight: 20
     /// Security: USER_DATA

@@ -116,7 +116,7 @@ impl RestClient {
     /// Retrieve your personal trading history with comprehensive filtering options.
     /// Returns executed trades with detailed information including fees, roles, and execution details.
     ///
-    /// [docs]: https://www.gate.io/docs/developers/apiv4/#list-personal-trading-history
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#list-personal-trading-history)
     ///
     /// Rate limit: 100 requests per second
     ///
@@ -184,11 +184,11 @@ impl RestClient {
         currency_pair: Option<&str>,
         limit: Option<u32>,
     ) -> crate::gateio::spot::RestResult<Vec<MyTrade>> {
-        let now = std::time::SystemTime::now()
-            .duration_since(std::time::UNIX_EPOCH)
-            .unwrap()
-            .as_secs() as i64;
-        let yesterday = now - 86400; // 24 hours ago
+        let now = match std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH) {
+            Ok(dur) => dur.as_secs() as i64,
+            Err(_) => 0,
+        };
+        let yesterday = now.saturating_sub(86_400); // 24 hours ago
 
         self.get_my_trades_in_range(currency_pair, yesterday, now, limit)
             .await

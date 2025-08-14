@@ -215,16 +215,15 @@ impl RateLimiter {
             headers.limit,
             headers.reset_timestamp,
         ) {
-            #[allow(clippy::unwrap_used)]
-            #[allow(clippy::arithmetic_side_effects)]
-            let current_timestamp = std::time::SystemTime::now()
-                .duration_since(std::time::UNIX_EPOCH)
-                .unwrap()
-                .as_secs();
+            let current_timestamp =
+                match std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH) {
+                    Ok(dur) => dur.as_secs(),
+                    Err(_) => 0,
+                };
 
             // Handle case where reset timestamp is in the past by using a default duration
             let reset_duration = if reset > current_timestamp {
-                Duration::from_secs(reset - current_timestamp)
+                Duration::from_secs(reset.saturating_sub(current_timestamp))
             } else {
                 // If reset time is in the past, assume a 10-second window
                 Duration::from_secs(10)
@@ -310,10 +309,7 @@ mod tests {
             "X-Gate-RateLimit-Requests-Remain".to_string(),
             "5".to_string(),
         );
-        headers.insert(
-            "X-Gate-RateLimit-Limit".to_string(),
-            "100".to_string(),
-        );
+        headers.insert("X-Gate-RateLimit-Limit".to_string(), "100".to_string());
         headers.insert(
             "X-Gate-RateLimit-Reset-Timestamp".to_string(),
             "1640995200".to_string(),

@@ -124,7 +124,7 @@ impl super::RestClient {
     ///
     /// Get detailed position information for a specific symbol.
     ///
-    /// [docs]: https://www.kucoin.com/docs-new/rest/futures-trading/positions/get-position-details
+    /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/positions/get-position-details)
     ///
     /// Rate limit: 9
     ///

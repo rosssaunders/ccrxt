@@ -23,7 +23,7 @@ impl RestClient {
     ///
     /// Get a list of all trading pairs on the platform
     ///
-    /// [docs]: https://developer-pro.bitmart.com/en/spot/#get-trading-pairs-list-v1
+    /// [docs](https://developer-pro.bitmart.com/en/spot/#get-trading-pairs-list-v1)
     ///
     /// Rate limit: 10 times/2sec per IP
     ///

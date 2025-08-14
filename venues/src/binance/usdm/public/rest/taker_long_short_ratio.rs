@@ -64,7 +64,7 @@ impl RestClient {
     ///
     /// Taker Buy/Sell Volume
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Taker-BuySell-Volume
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Taker-BuySell-Volume)
     ///
     /// Rate limit: IP rate limit 1000 requests/5min
     ///

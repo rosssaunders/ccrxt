@@ -96,7 +96,7 @@ impl RestClient {
     ///
     /// Retrieve trading info for delivery contracts
     ///
-    /// [docs]: https://www.gate.io/docs/developers/apiv4/en/#list-futures-tickers-2
+    /// [docs](https://www.gate.io/docs/developers/apiv4/en/#list-futures-tickers-2)
     ///
     /// Rate limit: 10 requests per second
     ///

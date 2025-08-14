@@ -59,6 +59,8 @@ impl RestClient {
     ///
     /// Initiates a withdrawal from the user's account to an external address.
     ///
+    /// [docs](https://bingx-api.github.io/docs/#/en-us/spot/wallet-api.html#Withdraw)
+    ///
     /// # Arguments
     /// * `request` - The withdrawal request parameters
     ///
@@ -71,9 +73,6 @@ impl RestClient {
     ///
     /// # API Permissions
     /// - Withdraw permission required
-    ///
-    /// # API Documentation
-    /// - [docs]: https://bingx-api.github.io/docs/#/en-us/spot/wallet-api.html#Withdraw
     pub async fn withdraw(&self, request: WithdrawRequest) -> RestResult<WithdrawResponse> {
         self.send_post_signed_request(WITHDRAW_ENDPOINT, &request, EndpointType::AccountApiGroup2)
             .await

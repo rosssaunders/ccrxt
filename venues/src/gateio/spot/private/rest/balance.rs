@@ -59,7 +59,7 @@ impl RestClient {
     /// Retrieves the total balance aggregated across all accounts.
     /// Can be filtered to return balance for a specific currency only.
     ///
-    /// [docs]: https://www.gate.com/docs/developers/apiv4/#query-account-book
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#query-account-book)
     ///
     /// Rate limit: 10 requests per 2 seconds
     ///

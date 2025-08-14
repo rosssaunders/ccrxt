@@ -75,7 +75,7 @@ impl RestClient {
     /// Retrieve a list of historical orders placed by a trading account with specified filters.
     /// Only the last 90 days of data is available for querying. Supports cursor pagination.
     ///
-    /// [docs]: https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v2/history/orders
+    /// [docs](https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v2/history/orders)
     ///
     /// # Arguments
     /// * `params` - Query parameters for filtering historical orders

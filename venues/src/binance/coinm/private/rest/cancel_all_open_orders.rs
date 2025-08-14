@@ -31,7 +31,7 @@ pub struct CancelAllOpenOrdersResponse {
 impl RestClient {
     /// Cancels all open orders (TRADE) for a symbol on Binance Coin-M Futures.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Cancel-All-Open-Orders
+    /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Cancel-All-Open-Orders)
     ///
     /// DELETE /dapi/v1/allOpenOrders
     /// Weight: 1

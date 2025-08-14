@@ -25,7 +25,7 @@ impl RestClient {
     /// Cancels a pending withdrawal request identified by the withdrawal ID.
     /// This is a private method; it can only be used after authentication.
     ///
-    /// [docs]: https://docs.deribit.com/v2/#private-cancel_withdrawal
+    /// [docs](https://docs.deribit.com/v2/#private-cancel_withdrawal)
     ///
     /// Rate limit: Non-matching engine endpoint
     /// Scope: wallet:read_write
@@ -52,12 +52,13 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use std::sync::Arc;
+
+    use rest::secrets::SecretString;
+    /// REST API endpoint constant
     use serde_json::{Value, json};
 
     use super::*;
-    use crate::deribit::{AccountTier, WithdrawalState};
-    use crate::deribit::private::rest::credentials::Credentials;
-    use rest::secrets::SecretString;
+    use crate::deribit::{AccountTier, WithdrawalState, private::rest::credentials::Credentials};
 
     #[test]
     fn test_cancel_withdrawal_request_serialization() {

@@ -150,7 +150,7 @@ pub struct Bill {
 impl RestClient {
     /// Get account bills
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#trading-account-rest-api-get-bills-details-last-7-days
+    /// [docs](https://www.okx.com/docs-v5/en/#trading-account-rest-api-get-bills-details-last-7-days)
     ///
     /// # Arguments
     /// * `request` - The get bills request

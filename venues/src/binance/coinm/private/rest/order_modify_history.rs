@@ -97,7 +97,7 @@ pub type GetOrderModifyHistoryResponse = Vec<OrderModifyHistoryEntry>;
 impl RestClient {
     /// Gets order modification history (USER_DATA) for Binance Coin-M Futures.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Get-Order-Modify-History
+    /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Get-Order-Modify-History)
     ///
     /// GET /dapi/v1/orderAmendment
     /// Weight: 1

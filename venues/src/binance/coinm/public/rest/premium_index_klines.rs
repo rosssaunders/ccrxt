@@ -76,12 +76,12 @@ impl RestClient {
     ///
     /// Retrieves premium index kline bars for a given symbol and interval. Klines are uniquely identified by their open time.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Premium-Index-Kline-Data
+    /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Premium-Index-Kline-Data)
     ///
     /// Weight: Based on parameter LIMIT:
-    /// - [1, 100): 1
-    /// - [100, 500): 2
-    /// - [500, 1000]: 5
+    /// - \[1, 100): 1
+    /// - \[100, 500): 2
+    /// - \[500, 1000]: 5
     /// - >1000: 10
     ///
     /// # Arguments

@@ -147,7 +147,7 @@ impl RestClient {
     /// market orders, and various time-in-force options. Orders can be configured with iceberg
     /// display amounts and self-trade prevention settings.
     ///
-    /// [docs]: https://www.gate.io/docs/developers/apiv4/en/#create-an-order
+    /// [docs](https://www.gate.io/docs/developers/apiv4/en/#create-an-order)
     ///
     /// Rate limit: 100 requests per second
     ///

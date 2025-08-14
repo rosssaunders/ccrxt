@@ -265,7 +265,7 @@ impl RestClient {
     ///
     /// Fetches current exchange trading rules and symbol information.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Exchange-Information
+    /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Exchange-Information)
     ///
     /// Rate limit: 1
     ///

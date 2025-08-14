@@ -38,7 +38,7 @@ impl RestClient {
     ///
     /// Place orders in batches. Maximum 20 orders can be placed per request.
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-trade-rest-api-post-batch-orders
+    /// [docs](https://www.okx.com/docs-v5/en/#rest-api-trade-rest-api-post-batch-orders)
     ///
     /// Rate limit: 300 orders per 2 seconds
     ///

@@ -1,12 +1,11 @@
+use std::{collections::HashMap, sync::Arc};
+
 use base64::{Engine as _, engine::general_purpose};
 use chrono::Utc;
 use hmac::{Hmac, Mac};
-use rest::secrets::ExposableSecret;
-use rest::{HttpClient, HttpError, Method, RequestBuilder};
+use rest::{HttpClient, HttpError, Method, RequestBuilder, secrets::ExposableSecret};
 use serde::{Serialize, de::DeserializeOwned};
 use sha2::Sha256;
-use std::collections::HashMap;
-use std::sync::Arc;
 
 use super::credentials::Credentials;
 use crate::kucoin::spot::{ApiError, RateLimiter, ResponseHeaders, RestResponse, Result};
@@ -115,7 +114,7 @@ impl RestClient {
             .text()
             .map_err(|e| ApiError::Http(format!("Failed to decode response: {}", e)))?;
 
-        if status < 200 || status >= 300 {
+        if !(200..300).contains(&status) {
             if let Ok(err_resp) = serde_json::from_str::<super::super::super::ErrorResponse>(&text)
             {
                 return Err(ApiError::from(err_resp).into());
@@ -382,8 +381,7 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use rest::NativeHttpClient;
-    use rest::secrets::SecretString;
+    use rest::{NativeHttpClient, secrets::SecretString};
 
     use super::*;
     fn creds() -> Credentials {

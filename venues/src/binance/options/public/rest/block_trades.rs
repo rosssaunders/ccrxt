@@ -59,7 +59,8 @@ impl RestClient {
     ///
     /// Returns recent block trades.
     ///
-    /// [docs]: (https://developers.binance.com/docs/derivatives/option/market-data/Recent-Block-Trade-List)
+    /// [docs](https://developers.binance.com/docs/derivatives/option/market-data/Recent-Block-Trade-List)
+    ///
     /// Method: GET /eapi/v1/blockTrades
     /// Weight: 5
     /// Security: None

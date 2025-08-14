@@ -39,7 +39,7 @@ impl RestClient {
     /// trading on a given trading pair. This information is essential for calculating
     /// available leverage and managing risk in margin positions.
     ///
-    /// [docs]: https://www.gate.io/docs/developers/apiv4/en/#query-borrowable-amount
+    /// [docs](https://www.gate.io/docs/developers/apiv4/en/#query-borrowable-amount)
     ///
     /// Rate limit: 100 requests per second
     ///

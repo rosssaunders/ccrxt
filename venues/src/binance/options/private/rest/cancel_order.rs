@@ -130,7 +130,8 @@ impl RestClient {
     ///
     /// Cancels an active order. Either order_id or client_order_id must be provided.
     ///
-    /// [docs]: (https://developers.binance.com/docs/derivatives/option/trade/Cancel-Option-Order)
+    /// [docs](https://developers.binance.com/docs/derivatives/option/trade/Cancel-Option-Order)
+    ///
     /// Method: DELETE /eapi/v1/order
     /// Weight: 1
     /// Requires: API key and signature

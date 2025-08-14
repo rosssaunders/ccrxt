@@ -36,7 +36,7 @@ impl RestClient {
     ///
     /// Use Portfolio margin simulator to determine your margin requirements and risk levels based on your current portfolio balances. You can also append position details on top of your portfolio specifics to see simulated results.
     ///
-    /// [docs]: https://api.exchange.bullish.com/trading-api/v1/simulate-portfolio-margin
+    /// [docs](https://api.exchange.bullish.com/trading-api/v1/simulate-portfolio-margin)
     ///
     /// Rate limit: see Bullish API docs
     ///

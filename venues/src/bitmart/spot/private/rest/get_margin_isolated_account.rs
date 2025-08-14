@@ -100,7 +100,7 @@ impl RestClient {
     ///
     /// Applicable for isolated margin account inquiries
     ///
-    /// [docs]: https://developer-pro.bitmart.com/en/spot/#get-margin-account-detailsisolated-keyed
+    /// [docs](https://developer-pro.bitmart.com/en/spot/#get-margin-account-detailsisolated-keyed)
     ///
     /// Rate limit: 12 times/2 sec per API key
     ///

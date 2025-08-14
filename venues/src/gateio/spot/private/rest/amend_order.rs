@@ -30,7 +30,7 @@ impl RestClient {
     /// Modifies the price and/or amount of an existing order.
     /// At least one of amount or price must be provided in the amendment.
     ///
-    /// [docs]: https://www.gate.com/docs/developers/apiv4/#amend-an-order
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#amend-an-order)
     ///
     /// Rate limit: 100 requests per 2 seconds
     ///

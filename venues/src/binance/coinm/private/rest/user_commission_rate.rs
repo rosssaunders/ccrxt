@@ -36,7 +36,7 @@ pub struct GetUserCommissionRateResponse {
 impl RestClient {
     /// Gets user commission rate (USER_DATA) on Binance Coin-M Futures.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/account/rest-api/User-Commission-Rate
+    /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/account/rest-api/User-Commission-Rate)
     ///
     /// GET /dapi/v1/commissionRate
     /// Weight: 20

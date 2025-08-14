@@ -43,7 +43,8 @@ impl RestClient {
     ///
     /// Returns open interest for specific underlying asset on specific expiration date.
     ///
-    /// [docs]: (https://developers.binance.com/docs/derivatives/option/market-data/Open-Interest)
+    /// [docs](https://developers.binance.com/docs/derivatives/option/market-data/Open-Interest)
+    ///
     /// Method: GET /eapi/v1/openInterest
     /// Weight: 0
     /// Security: None

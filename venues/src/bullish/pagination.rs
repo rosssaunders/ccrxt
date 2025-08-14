@@ -7,7 +7,7 @@
 //! Response wrappers:
 //! - Generic paginated response container with optional links.
 //!
-//! [docs] https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#overview--pagination-support
+//! [docs](https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#overview--pagination-support)
 
 use serde::{Deserialize, Serialize};
 

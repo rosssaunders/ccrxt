@@ -19,7 +19,9 @@ pub mod public {
 
 pub mod private {
     mod rest;
-    pub use self::rest::{Balance, Credentials, GetBalancesRequest, GetBalancesResponse, RestClient};
+    pub use self::rest::{
+        Balance, Credentials, GetBalancesRequest, GetBalancesResponse, RestClient,
+    };
 }
 
 pub use enums::*;

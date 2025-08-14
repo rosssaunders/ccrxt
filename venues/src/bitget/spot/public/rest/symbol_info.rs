@@ -63,7 +63,7 @@ impl RestClient {
     ///
     /// Returns information about trading pairs (symbols).
     ///
-    /// [docs]: https://www.bitget.com/api-doc/spot/public/Get-Symbol-Info
+    /// [docs](https://www.bitget.com/api-doc/spot/public/Get-Symbol-Info)
     ///
     /// Rate limit: see official docs
     ///

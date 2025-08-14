@@ -68,7 +68,7 @@ pub struct IncomeHistoryEntry {
 impl RestClient {
     /// Get income history on Binance Coin-M Futures.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/account/rest-api/Get-Income-History
+    /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/account/rest-api/Get-Income-History)
     ///
     /// GET /dapi/v1/income
     /// Weight: 20

@@ -273,7 +273,8 @@ impl RestClient {
     ///
     /// Send in a new order.
     ///
-    /// [docs]: (https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#new-order--trade)
+    /// [docs](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#new-order--trade)
+    ///
     /// Method: POST /api/v3/order
     /// Weight: 1
     /// Security: TRADE

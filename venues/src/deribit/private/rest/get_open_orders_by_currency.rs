@@ -281,7 +281,7 @@ impl RestClient {
     /// This is a private method; it can only be used after authentication.
     /// Scope: `trade:read`
     ///
-    /// [docs]: https://docs.deribit.com/v2/#private-get_open_orders_by_currency
+    /// [docs](https://docs.deribit.com/v2/#private-get_open_orders_by_currency)
     ///
     /// Rate limit: Non-matching engine rate limits apply (500 credits)
     ///
@@ -306,16 +306,12 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use std::sync::Arc;
-/// REST API endpoint constant
+
+    use rest::secrets::SecretString;
     use serde_json::{Value, json};
 
     use super::*;
-    use crate::deribit::AccountTier;
-
-    
-    use crate::deribit::private::rest::credentials::Credentials;
-    use rest::secrets::SecretString;
-
+    use crate::deribit::{AccountTier, private::rest::credentials::Credentials};
 
     #[test]
     fn test_request_serialization_minimal() {

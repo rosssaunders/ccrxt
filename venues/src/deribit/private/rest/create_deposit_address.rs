@@ -23,7 +23,7 @@ impl RestClient {
     /// This endpoint requires wallet:read_write scope and creates a new deposit
     /// address for the specified currency.
     ///
-    /// [docs]: https://docs.deribit.com/v2/#private-create_deposit_address
+    /// [docs](https://docs.deribit.com/v2/#private-create_deposit_address)
     ///
     /// Rate limit: 500 credits per request (non-matching engine)
     /// Scope: wallet:read_write
@@ -49,15 +49,12 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use std::sync::Arc;
-use serde_json::{Value, json};
+
+    use rest::secrets::SecretString;
+    use serde_json::{Value, json};
 
     use super::*;
-    use crate::deribit::AccountTier;
-
-    
-    use crate::deribit::private::rest::credentials::Credentials;
-    use rest::secrets::SecretString;
-
+    use crate::deribit::{AccountTier, private::rest::credentials::Credentials};
 
     #[test]
     fn test_request_parameters_serialization_btc() {

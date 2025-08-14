@@ -40,29 +40,6 @@ impl<'de> Deserialize<'de> for Credentials {
     where
         D: Deserializer<'de>,
     {
-        enum Field {
-            ApiKey,
-            ApiSecret,
-        }
-
-        struct FieldVisitor;
-        impl<'de> Visitor<'de> for FieldVisitor {
-            type Value = Field;
-            fn expecting(&self, f: &mut fmt::Formatter) -> fmt::Result {
-                f.write_str("`apiKey` or `apiSecret`")
-            }
-            fn visit_str<E>(self, v: &str) -> Result<Self::Value, E>
-            where
-                E: serde::de::Error,
-            {
-                match v {
-                    "apiKey" => Ok(Field::ApiKey),
-                    "apiSecret" => Ok(Field::ApiSecret),
-                    _ => Err(E::unknown_field(v, &["apiKey", "apiSecret"])),
-                }
-            }
-        }
-
         struct CredsVisitor;
         impl<'de> Visitor<'de> for CredsVisitor {
             type Value = Credentials;

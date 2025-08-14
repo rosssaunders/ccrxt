@@ -35,7 +35,7 @@ async fn test_get_time() {
     let response = result.unwrap();
     assert_eq!(response.code, "0");
     assert!(!response.data.is_empty());
-    if let Some(first) = response.data.get(0) {
+    if let Some(first) = response.data.first() {
         println!("Current server time: {:?}", first.ts);
     }
 }
@@ -83,7 +83,7 @@ async fn test_get_mark_price() {
     let response = result.unwrap();
     assert_eq!(response.code, "0");
     assert!(!response.data.is_empty());
-    if let Some(first) = response.data.get(0) {
+    if let Some(first) = response.data.first() {
         println!("Mark price for BTC-USD-SWAP: {:?}", first.mark_px);
     }
 }
@@ -105,7 +105,7 @@ async fn test_get_funding_rate() {
     let response = result.unwrap();
     assert_eq!(response.code, "0");
     assert!(!response.data.is_empty());
-    if let Some(first) = response.data.get(0) {
+    if let Some(first) = response.data.first() {
         println!("Funding rate for BTC-USD-SWAP: {:?}", first.funding_rate);
     }
 }
@@ -152,7 +152,7 @@ async fn test_get_open_interest() {
     let response = result.unwrap();
     assert_eq!(response.code, "0");
     assert!(!response.data.is_empty());
-    if let Some(first) = response.data.get(0) {
+    if let Some(first) = response.data.first() {
         println!("Open interest for BTC-USD-SWAP: {:?}", first.oi);
     }
 }
@@ -174,7 +174,7 @@ async fn test_get_price_limit() {
     let response = result.unwrap();
     assert_eq!(response.code, "0");
     assert!(!response.data.is_empty());
-    if let Some(first) = response.data.get(0) {
+    if let Some(first) = response.data.first() {
         println!(
             "Price limits for BTC-USD-SWAP - Buy: {:?}, Sell: {:?}",
             first.buy_lmt, first.sell_lmt
@@ -234,7 +234,7 @@ async fn test_get_estimated_price() {
     if result.is_ok() {
         let response = result.unwrap();
         assert_eq!(response.code, "0");
-        if let Some(first) = response.data.get(0) {
+        if let Some(first) = response.data.first() {
             println!("Estimated price: {:?}", first.settle_px);
         } else {
             println!("No estimated price data available for this instrument");
@@ -278,7 +278,7 @@ async fn test_get_estimated_settlement_info() {
     if result.is_ok() {
         let response = result.unwrap();
         assert_eq!(response.code, "0");
-        if let Some(first) = response.data.get(0) {
+        if let Some(first) = response.data.first() {
             println!(
                 "Estimated settlement info: inst_id={}, est_settle_px={}, next_settle_time= {}",
                 first.inst_id, first.est_settle_px, first.next_settle_time
@@ -334,7 +334,7 @@ async fn test_get_index_tickers() {
     let response = result.unwrap();
     assert_eq!(response.code, "0");
     assert!(!response.data.is_empty());
-    if let Some(first) = response.data.get(0) {
+    if let Some(first) = response.data.first() {
         println!("Index ticker for BTC-USD: {:?}", first.idx_px);
     }
 }
@@ -553,7 +553,7 @@ async fn test_get_index_components() {
         "Found {} index components",
         response
             .data
-            .get(0)
+            .first()
             .map(|d| d.components.len())
             .unwrap_or(0)
     );

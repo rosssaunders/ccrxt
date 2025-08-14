@@ -48,7 +48,6 @@ pub use block_trade_orders::QueryBlockTradeOrdersRequest;
 pub use block_user_trades::QueryBlockUserTradesRequest;
 pub use cancel_block_trade::CancelBlockTradeRequest;
 pub use client::RestClient;
-pub use crate::binance::shared::credentials::Credentials;
 pub use create_block_trade::{BlockTradeOrderResponse, CreateBlockTradeRequest};
 pub use execute_block_trade::{BlockTradeExecution, ExecuteBlockTradeRequest};
 pub use extend_block_trade::ExtendBlockTradeRequest;
@@ -56,3 +55,5 @@ pub use extend_block_trade::ExtendBlockTradeRequest;
 pub use get_mmp_config::{GetMmpConfigRequest, MmpConfigResponse};
 pub use reset_mmp::ResetMmpRequest;
 pub use set_mmp_config::SetMmpConfigRequest;
+
+pub use crate::binance::shared::credentials::Credentials;

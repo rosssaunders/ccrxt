@@ -17,10 +17,7 @@ pub struct RestClient {
 }
 
 impl RestClient {
-    pub fn new(
-        credentials: Credentials,
-        http_client: Arc<dyn HttpClient>,
-    ) -> Self {
+    pub fn new(credentials: Credentials, http_client: Arc<dyn HttpClient>) -> Self {
         Self {
             credentials,
             http_client,

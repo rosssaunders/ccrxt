@@ -28,7 +28,7 @@ pub struct CollateralAsset {
 impl RestClient {
     /// Get collateral assets
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#trading-account-rest-api-get-the-collateral-currencies-in-portfolio-margin-mode
+    /// [docs](https://www.okx.com/docs-v5/en/#trading-account-rest-api-get-the-collateral-currencies-in-portfolio-margin-mode)
     ///
     /// # Arguments
     /// * `request` - The get collateral assets request

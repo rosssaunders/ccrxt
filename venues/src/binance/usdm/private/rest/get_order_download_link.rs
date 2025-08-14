@@ -78,7 +78,7 @@ impl UsdmClient {
     ///
     /// Retrieves the download link for a previously requested order history download.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Get-Futures-Order-History-Download-Link-by-Id
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Get-Futures-Order-History-Download-Link-by-Id)
     ///
     /// Rate limit: 10
     ///

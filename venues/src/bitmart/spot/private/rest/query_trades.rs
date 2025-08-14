@@ -86,7 +86,7 @@ impl RestClient {
     ///
     /// Retrieves the account's trade history based on filtering criteria.
     ///
-    /// [docs]: https://developer-pro.bitmart.com/en/spot/#account-trade-listv4-signed
+    /// [docs](https://developer-pro.bitmart.com/en/spot/#account-trade-listv4-signed)
     ///
     /// Rate limit: varies by endpoint type
     ///

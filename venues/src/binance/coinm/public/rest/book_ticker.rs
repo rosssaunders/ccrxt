@@ -62,7 +62,7 @@ impl RestClient {
     ///
     /// Retrieves the best bid and ask price and quantity for a given symbol or pair.
     ///
-    /// [docs]:  https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Symbol-Order-Book-Ticker
+    /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Symbol-Order-Book-Ticker)
     ///
     /// Rate limit: 2 (single symbol/pair), 5 (all symbols/pairs)
     ///

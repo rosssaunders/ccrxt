@@ -112,7 +112,7 @@ impl super::RestClient {
     /// Add a take profit and stop loss order for futures trading. This allows setting
     /// both profit-taking and loss-limiting triggers on a position.
     ///
-    /// [docs]: https://www.kucoin.com/docs-new/rest/futures-trading/orders/add-take-profit-and-stop-loss-order
+    /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/orders/add-take-profit-and-stop-loss-order)
     ///
     /// Rate limit: 3
     ///

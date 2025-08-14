@@ -65,7 +65,7 @@ impl RestClient {
     ///
     /// Gets the asset accounts for a trading account.
     ///
-    /// [docs]: https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/accounts/asset
+    /// [docs](https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/accounts/asset)
     ///
     /// # Arguments
     /// * `trading_account_id` - Id of the trading account
@@ -92,7 +92,7 @@ impl RestClient {
     ///
     /// Gets the asset account for a specific symbol.
     ///
-    /// [docs]: https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/accounts/asset/-symbol-
+    /// [docs](https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/accounts/asset/-symbol-)
     /// # Arguments
     /// * `symbol` - Asset symbol (e.g., BTC)
     /// * `trading_account_id` - Id of the trading account

@@ -75,7 +75,7 @@ impl UsdmClient {
     ///
     /// Retrieves the download link for futures trade history using a previously obtained download ID.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Get-Futures-Trade-Download-Link-by-Id
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Get-Futures-Trade-Download-Link-by-Id)
     ///
     /// Rate limit: 10 requests per minute
     ///

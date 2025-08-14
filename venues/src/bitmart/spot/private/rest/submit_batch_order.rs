@@ -71,7 +71,7 @@ impl RestClient {
     ///
     /// Places multiple orders in a single request. Maximum 10 orders per batch.
     ///
-    /// [docs]: https://developer-pro.bitmart.com/en/spot/#new-batch-orderv4-signed
+    /// [docs](https://developer-pro.bitmart.com/en/spot/#new-batch-orderv4-signed)
     ///
     /// Rate limit: varies by endpoint type
     ///

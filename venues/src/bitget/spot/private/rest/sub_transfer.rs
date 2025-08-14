@@ -75,7 +75,7 @@ impl RestClient {
     /// This endpoint supports parent-to-sub, sub-to-parent, sub-to-sub, and internal sub-account transfers.
     /// Only parent account API keys can use this endpoint and must bind IP.
     ///
-    /// [docs]: https://www.bitget.com/api-doc/spot/account/Sub-Transfer
+    /// [docs](https://www.bitget.com/api-doc/spot/account/Sub-Transfer)
     ///
     /// Rate limit: 10 req/sec/UID
     ///

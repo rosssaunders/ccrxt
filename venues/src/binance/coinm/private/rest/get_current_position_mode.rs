@@ -26,7 +26,7 @@ pub struct GetCurrentPositionModeResponse {
 impl RestClient {
     /// Gets user's current position mode (USER_DATA) on Binance Coin-M Futures.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/account/rest-api/Get-Current-Position-Mode
+    /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/account/rest-api/Get-Current-Position-Mode)
     ///
     /// GET /dapi/v1/positionSide/dual
     /// Weight: 30

@@ -27,7 +27,7 @@ impl RestClient {
     /// This endpoint requires wallet:read scope and returns all address book entries
     /// for the specified currency and address type.
     ///
-    /// [docs]: https://docs.deribit.com/v2/#private-get_address_book
+    /// [docs](https://docs.deribit.com/v2/#private-get_address_book)
     ///
     /// Rate limit: 500 credits per request (non-matching engine)
     /// Scope: wallet:read
@@ -54,12 +54,12 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use std::sync::Arc;
+
+    use rest::secrets::SecretString;
     use serde_json::{Value, json};
 
     use super::*;
-    use crate::deribit::{AccountTier, AddressStatus};
-    use crate::deribit::private::rest::credentials::Credentials;
-    use rest::secrets::SecretString;
+    use crate::deribit::{AccountTier, AddressStatus, private::rest::credentials::Credentials};
 
     #[test]
     fn test_request_parameters_serialization() {

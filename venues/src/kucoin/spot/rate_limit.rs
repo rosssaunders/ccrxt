@@ -488,10 +488,10 @@ impl RateLimiter {
         }
 
         // If not, wait for the next reset window
-        if let Some(status) = self.get_status(pool).await {
-            if status.reset_time_ms > 0 {
-                tokio::time::sleep(Duration::from_millis(status.reset_time_ms + 100)).await; // Add small buffer
-            }
+        if let Some(status) = self.get_status(pool).await
+            && status.reset_time_ms > 0
+        {
+            tokio::time::sleep(Duration::from_millis(status.reset_time_ms + 100)).await; // Add small buffer
         }
 
         // Try again after waiting
@@ -672,18 +672,9 @@ mod tests {
     #[test]
     fn test_rate_limit_header() {
         let mut headers = HashMap::new();
-        headers.insert(
-            "gw-ratelimit-limit".to_string(),
-            "500".to_string(),
-        );
-        headers.insert(
-            "gw-ratelimit-remaining".to_string(),
-            "300".to_string(),
-        );
-        headers.insert(
-            "gw-ratelimit-reset".to_string(),
-            "1489".to_string(),
-        );
+        headers.insert("gw-ratelimit-limit".to_string(), "500".to_string());
+        headers.insert("gw-ratelimit-remaining".to_string(), "300".to_string());
+        headers.insert("gw-ratelimit-reset".to_string(), "1489".to_string());
 
         let rate_limit_header = RateLimitHeader::from_headers(&headers);
         assert_eq!(rate_limit_header.limit, Some(500));

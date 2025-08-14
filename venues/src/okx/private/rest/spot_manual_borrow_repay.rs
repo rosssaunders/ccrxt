@@ -39,7 +39,7 @@ pub struct SpotManualBorrowRepayResponse {
 impl RestClient {
     /// Spot manual borrow repay
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#trading-account-rest-api-manual-borrow-and-repay-in-quick-margin-mode
+    /// [docs](https://www.okx.com/docs-v5/en/#trading-account-rest-api-manual-borrow-and-repay-in-quick-margin-mode)
     ///
     /// # Arguments
     /// * `request` - The spot manual borrow repay request

@@ -125,7 +125,7 @@ impl UsdmClient {
     ///
     /// Retrieves information about a specific order on Binance USDM Futures.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Query-Order
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Query-Order)
     ///
     /// Rate limit: 2 requests per second
     ///

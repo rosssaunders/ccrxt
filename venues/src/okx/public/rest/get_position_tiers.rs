@@ -109,7 +109,7 @@ impl RestClient {
     /// Retrieve position tiers information, maximum leverage depends on your borrowings
     /// and Maintenance margin ratio.
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-position-tiers
+    /// [docs](https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-position-tiers)
     ///
     /// Rate limit: 10 requests per 2 seconds
     ///

@@ -11,7 +11,7 @@ impl RestClient {
     ///
     /// Returns details for a specific AMM instruction.
     ///
-    /// [docs]: https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v2/amm-instructions/-instructionId-
+    /// [docs](https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v2/amm-instructions/-instructionId-)
     pub async fn get_amm_instruction(
         &mut self,
         instruction_id: &str,

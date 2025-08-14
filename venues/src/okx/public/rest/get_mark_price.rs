@@ -56,7 +56,7 @@ impl RestClient {
     /// prevent individual users from manipulating the market and causing the contract
     /// price to fluctuate.
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-mark-price
+    /// [docs](https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-mark-price)
     ///
     /// Rate limit: 10 requests per 2 seconds
     /// Rate limit rule: IP + Instrument ID

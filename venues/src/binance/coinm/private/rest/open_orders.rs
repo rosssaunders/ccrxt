@@ -108,7 +108,7 @@ pub struct OpenOrder {
 impl RestClient {
     /// Fetches all open orders for a symbol or all symbols.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Current-All-Open-Orders
+    /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Current-All-Open-Orders)
     ///
     /// GET /dapi/v1/openOrders
     /// Weight: 1 for single symbol, 40 for multiple symbols

@@ -269,7 +269,7 @@ impl RestClient {
     ///
     /// Retrieve information for all available markets on the exchange.
     ///
-    /// [docs]: https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/markets
+    /// [docs](https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/markets)
     ///
     /// # Returns
     /// List of all markets with their trading parameters and statistics
@@ -282,7 +282,7 @@ impl RestClient {
     ///
     /// Retrieve detailed information for a specific market.
     ///
-    /// [docs]: https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/markets/-symbol-
+    /// [docs](https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/markets/-symbol-)
     ///
     /// # Arguments
     /// * `symbol` - Market symbol

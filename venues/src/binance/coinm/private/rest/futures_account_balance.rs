@@ -55,7 +55,7 @@ pub type GetFuturesAccountBalanceResponse = Vec<FuturesAccountBalanceEntry>;
 impl RestClient {
     /// Gets futures account balance (USER_DATA) on Binance Coin-M Futures.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/account/rest-api/Futures-Account-Balance
+    /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/account/rest-api/Futures-Account-Balance)
     ///
     /// GET /dapi/v1/balance
     /// Weight: 1

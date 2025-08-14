@@ -10,7 +10,8 @@ impl RestClient {
     ///
     /// Test SOR order creation and signature/recvWindow.
     ///
-    /// [docs]: (https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#test-new-sor-order--trade)
+    /// [docs](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#test-new-sor-order--trade)
+    ///
     /// Method: POST /api/v3/sor/order/test
     /// Weight: 1 (without computeCommissionRates), 20 (with computeCommissionRates)
     /// Security: TRADE

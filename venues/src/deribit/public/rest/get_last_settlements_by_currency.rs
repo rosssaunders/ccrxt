@@ -119,7 +119,7 @@ impl RestClient {
     ///
     /// Retrieves historical settlement, delivery and bankruptcy events coming from all instruments within a given currency.
     ///
-    /// [docs]: https://docs.deribit.com/#public-get_last_settlements_by_currency
+    /// [docs](https://docs.deribit.com/#public-get_last_settlements_by_currency)
     ///
     /// Rate limit: Non-matching engine endpoint
     ///

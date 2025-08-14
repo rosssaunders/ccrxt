@@ -58,7 +58,7 @@ impl RestClient {
     /// subaccounts. Includes both group-level and individual user-level alias data, if available.
     /// This endpoint requires block_rfq:read scope.
     ///
-    /// [docs]: https://docs.deribit.com/v2/#private-get_block_rfq_user_info
+    /// [docs](https://docs.deribit.com/v2/#private-get_block_rfq_user_info)
     ///
     /// Rate limit: Depends on endpoint type (matching engine)
     /// Scope: block_rfq:read
@@ -80,12 +80,11 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
+    use rest::secrets::SecretString;
     use serde_json::{Value, json};
 
     use super::*;
-    use crate::deribit::AccountTier;
-    use crate::deribit::private::rest::credentials::Credentials;
-    use rest::secrets::SecretString;
+    use crate::deribit::{AccountTier, private::rest::credentials::Credentials};
 
     #[test]
     fn test_request_serialization() {

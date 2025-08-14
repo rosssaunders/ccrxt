@@ -69,7 +69,7 @@ pub struct CreateAmmInstructionResponseV3 {
 impl RestClient {
     /// Create AMM Instruction (V3CreateAMMInstruction)
     ///
-    /// [docs]: https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#post-/v2/amm-instructions
+    /// [docs](https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#post-/v2/amm-instructions)
     pub async fn create_amm_instruction(
         &mut self,
         request: CreateAmmInstructionRequest,

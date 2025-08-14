@@ -48,7 +48,7 @@ pub type GetMarginsResponse = JsonRpcResult<GetMarginsResult>;
 impl super::client::RestClient {
     /// Fetches margin requirements for a given instrument, amount, and price.
     ///
-    /// [docs]: https://docs.deribit.com/v2/#private-get_margins
+    /// [docs](https://docs.deribit.com/v2/#private-get_margins)
     pub async fn get_margins(&self, request: GetMarginsRequest) -> RestResult<GetMarginsResponse> {
         self.send_signed_request(GET_MARGINS_ENDPOINT, &request, EndpointType::MatchingEngine)
             .await
