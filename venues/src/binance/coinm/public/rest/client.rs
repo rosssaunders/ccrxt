@@ -1,4 +1,4 @@
-use std::time::Instant;
+use crate::time_compat::Instant;
 
 use crate::binance::{
     coinm::{Errors, RestResponse, RestResult},

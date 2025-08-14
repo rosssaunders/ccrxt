@@ -1,8 +1,9 @@
 use std::{
     collections::{HashMap, VecDeque},
     sync::Arc,
-    time::{Duration, Instant},
 };
+
+use crate::time_compat::{Duration, Instant};
 
 use serde::Deserialize;
 use tokio::sync::RwLock;

@@ -3,8 +3,9 @@
 
 use std::{
     collections::HashMap,
-    time::{Duration, Instant},
 };
+
+use crate::time_compat::{Duration, Instant};
 
 use serde::{Deserialize, Serialize};
 use thiserror::Error;

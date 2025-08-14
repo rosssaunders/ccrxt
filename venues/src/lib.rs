@@ -1,3 +1,6 @@
+pub mod time_compat;
+pub mod rate_limit_compat;
+
 pub mod binance;
 pub mod bingx;
 pub mod bitget;

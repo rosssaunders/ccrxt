@@ -22,6 +22,8 @@
 
 use std::{borrow::Cow, sync::Arc};
 
+use crate::time_compat::Instant;
+
 use base64::{Engine, engine::general_purpose::STANDARD as BASE64};
 use chrono::Utc;
 use hmac::{Hmac, Mac};
@@ -217,7 +219,7 @@ impl RestClient {
         }
 
         // Execute request
-        let start_time = std::time::Instant::now();
+        let start_time = Instant::now();
         let request = builder.build();
         let response = self
             .http_client

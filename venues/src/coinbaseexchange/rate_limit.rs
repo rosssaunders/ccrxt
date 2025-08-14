@@ -1,7 +1,8 @@
 use std::{
     collections::HashMap,
-    time::{Duration, Instant},
 };
+
+use crate::time_compat::{Duration, Instant};
 
 use thiserror::Error;
 use tokio::sync::RwLock;
