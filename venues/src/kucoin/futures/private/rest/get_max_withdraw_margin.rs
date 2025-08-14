@@ -33,7 +33,7 @@ impl super::RestClient {
         &self,
         request: GetMaxWithdrawMarginRequest,
     ) -> Result<(RestResponse<GetMaxWithdrawMarginResponse>, ResponseHeaders)> {
-        self.get(GET_MAX_WITHDRAW_MARGIN_ENDPOINT, Some(&request))
+        self.get_with_request(GET_MAX_WITHDRAW_MARGIN_ENDPOINT, &request)
             .await
     }
 }

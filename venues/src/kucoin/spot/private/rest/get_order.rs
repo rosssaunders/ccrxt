@@ -132,7 +132,7 @@ impl RestClient {
     pub async fn get_order(&self, request: GetOrderRequest) -> Result<(Order, ResponseHeaders)> {
         let endpoint = GET_ORDER_ENDPOINT.replace("{order_id}", &request.order_id);
         let (response, headers): (RestResponse<Order>, ResponseHeaders) =
-            self.get(&endpoint, None).await?;
+            self.get_with_request(&endpoint, &()).await?;
         Ok((response.data, headers))
     }
 }

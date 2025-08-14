@@ -35,15 +35,8 @@ impl RestClient {
         &self,
         request: RedeemRequest,
     ) -> Result<(RedeemResponse, ResponseHeaders)> {
-        let body = serde_json::to_string(&request).map_err(|e| {
-            crate::kucoin::spot::ApiError::JsonParsing(format!(
-                "Failed to serialize request: {}",
-                e
-            ))
-        })?;
-
         let (response, headers): (RestResponse<RedeemResponse>, ResponseHeaders) =
-            self.post(REDEEM_ENDPOINT, &body).await?;
+            self.post_with_request(REDEEM_ENDPOINT, &request).await?;
 
         Ok((response.data, headers))
     }

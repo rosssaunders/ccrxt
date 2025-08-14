@@ -80,7 +80,7 @@ impl super::RestClient {
         &self,
         request: PlaceOrderRequest,
     ) -> Result<(RestResponse<PlaceOrderResponse>, ResponseHeaders)> {
-        self.post(PLACE_ORDER_ENDPOINT, &request).await
+        self.post_with_request(PLACE_ORDER_ENDPOINT, &request).await
     }
 }
 

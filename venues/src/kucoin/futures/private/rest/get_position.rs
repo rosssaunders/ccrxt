@@ -137,7 +137,7 @@ impl super::RestClient {
         &self,
         request: GetPositionRequest,
     ) -> Result<(RestResponse<Position>, ResponseHeaders)> {
-        self.get(GET_POSITION_ENDPOINT, Some(&request)).await
+        self.get_with_request(GET_POSITION_ENDPOINT, &request).await
     }
 }
 

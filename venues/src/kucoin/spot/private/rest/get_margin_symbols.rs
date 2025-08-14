@@ -3,6 +3,9 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::kucoin::spot::{ResponseHeaders, RestResponse, Result};
 
+/// Endpoint URL for cross margin symbols configuration
+const GET_MARGIN_SYMBOLS_ENDPOINT: &str = "/api/v3/margin/symbols";
+
 /// Request for getting cross margin symbols
 #[derive(Debug, Clone, Serialize)]
 pub struct GetMarginSymbolsRequest {
@@ -54,16 +57,26 @@ pub struct GetMarginSymbolsResponse {
 }
 
 impl RestClient {
-    /// Get cross margin symbols configuration
+    /// Get Cross Margin Symbols Configuration
     ///
-    /// This endpoint allows querying the configuration of cross margin symbols.
-    /// If `symbol` is provided, only the specified symbol will be queried.
+    /// Query the configuration of cross margin symbols. If `symbol` is provided,
+    /// only the specified symbol will be queried.
+    ///
+    /// - [docs](https://www.kucoin.com/docs-new/rest/margin-trading/market-data/get-symbols-cross-margin)
+    ///
+    /// Rate limit: weight 3 (Public)
+    ///
+    /// # Arguments
+    /// * `request` - Optional symbol for filtering
+    ///
+    /// # Returns
+    /// Cross margin symbols configuration and response headers
     pub async fn get_margin_symbols(
         &self,
         request: GetMarginSymbolsRequest,
     ) -> Result<(GetMarginSymbolsResponse, ResponseHeaders)> {
         let (response, headers): (RestResponse<GetMarginSymbolsResponse>, ResponseHeaders) = self
-            .get_with_request("/api/v3/margin/symbols", &request)
+            .get_with_request(GET_MARGIN_SYMBOLS_ENDPOINT, &request)
             .await?;
         Ok((response.data, headers))
     }
@@ -72,6 +85,11 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_endpoint_constant() {
+        assert_eq!(GET_MARGIN_SYMBOLS_ENDPOINT, "/api/v3/margin/symbols");
+    }
 
     #[test]
     fn test_get_margin_symbols_request_creation() {
@@ -98,5 +116,36 @@ mod tests {
         };
         assert_eq!(info.symbol, "BTC-USDT");
         assert!(info.enable_trading);
+    }
+
+    #[test]
+    fn test_response_deserialization_sample() {
+        let json = r#"{
+            "code": "200000",
+            "data": {
+                "timestamp": 1700000000000,
+                "items": [
+                    {
+                        "symbol": "BTC-USDT",
+                        "name": "BTC/USDT",
+                        "enableTrading": true,
+                        "market": "spot",
+                        "baseCurrency": "BTC",
+                        "quoteCurrency": "USDT",
+                        "baseIncrement": "0.0000001",
+                        "baseMinSize": "0.001",
+                        "quoteIncrement": "0.000001",
+                        "quoteMinSize": "1",
+                        "baseMaxSize": "1000"
+                    }
+                ]
+            }
+        }"#;
+
+        let resp: RestResponse<GetMarginSymbolsResponse> = serde_json::from_str(json).unwrap();
+        assert_eq!(resp.code, "200000");
+        assert_eq!(resp.data.items.len(), 1);
+        assert_eq!(resp.data.items[0].symbol, "BTC-USDT");
+        assert!(resp.data.items[0].enable_trading);
     }
 }

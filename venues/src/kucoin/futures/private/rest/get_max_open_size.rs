@@ -50,7 +50,8 @@ impl super::RestClient {
         &self,
         request: GetMaxOpenSizeRequest,
     ) -> Result<(RestResponse<GetMaxOpenSizeResponse>, ResponseHeaders)> {
-        self.get(GET_MAX_OPEN_SIZE_ENDPOINT, Some(&request)).await
+        self.get_with_request(GET_MAX_OPEN_SIZE_ENDPOINT, &request)
+            .await
     }
 }
 

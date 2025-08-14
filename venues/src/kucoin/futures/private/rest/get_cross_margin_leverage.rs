@@ -43,7 +43,7 @@ impl super::RestClient {
         RestResponse<GetCrossMarginLeverageResponse>,
         ResponseHeaders,
     )> {
-        self.get(GET_CROSS_MARGIN_LEVERAGE_ENDPOINT, Some(&request))
+        self.get_with_request(GET_CROSS_MARGIN_LEVERAGE_ENDPOINT, &request)
             .await
     }
 }

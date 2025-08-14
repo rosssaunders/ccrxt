@@ -40,7 +40,7 @@ impl super::RestClient {
         request: CancelOrderRequest,
     ) -> Result<(RestResponse<CancelOrderResponse>, ResponseHeaders)> {
         let endpoint = format!("{}{}", CANCEL_ORDER_ENDPOINT, request.order_id);
-        self.delete(&endpoint, None::<Option<()>>).await
+        self.delete_with_request(&endpoint, &()).await
     }
 }
 

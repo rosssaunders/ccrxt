@@ -3,6 +3,9 @@ use serde::{Deserialize, Serialize};
 use super::RestClient;
 use crate::kucoin::spot::{ResponseHeaders, RestResponse, Result};
 
+/// Endpoint URL for margin risk limit
+const GET_MARGIN_RISK_LIMIT_ENDPOINT: &str = "/api/v3/margin/currencies";
+
 /// Request for getting margin risk limit info
 #[derive(Debug, Clone, Serialize)]
 pub struct GetMarginRiskLimitRequest {
@@ -19,8 +22,9 @@ pub struct GetMarginRiskLimitRequest {
     pub symbol: Option<String>,
 }
 
-/// Margin risk limit info (cross or isolated)
+/// Margin risk limit info (cross or isolated).
 #[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct MarginRiskLimitInfo {
     pub timestamp: Option<i64>,
 
@@ -71,20 +75,35 @@ pub struct MarginRiskLimitInfo {
     pub base_borrow_min_unit: Option<String>,
 }
 
-/// Response for getting margin risk limit info
+/// Response for getting margin risk limit info.
+///
+/// The API returns an array directly; use a transparent wrapper to map it.
 #[derive(Debug, Clone, Deserialize)]
+#[serde(transparent)]
 pub struct GetMarginRiskLimitResponse {
     pub data: Vec<MarginRiskLimitInfo>,
 }
 
 impl RestClient {
-    /// Get margin risk limit info (cross or isolated)
+    /// Get Margin Risk Limit
+    ///
+    /// Request configure and risk limit info of the margin via this endpoint.
+    ///
+    /// - [docs](https://www.kucoin.com/docs-new/rest/margin-trading/risk-limit/get-margin-risk-limit)
+    ///
+    /// Rate limit: weight 20 (Private)
+    ///
+    /// # Arguments
+    /// * `request` - The query containing one of `isIsolated=true`+symbol or `isIsolated=false`+currency
+    ///
+    /// # Returns
+    /// A list of risk limit infos for cross or isolated margin and response headers
     pub async fn get_margin_risk_limit(
         &self,
         request: GetMarginRiskLimitRequest,
     ) -> Result<(GetMarginRiskLimitResponse, ResponseHeaders)> {
         let (response, headers): (RestResponse<GetMarginRiskLimitResponse>, ResponseHeaders) = self
-            .get_with_request("/api/v3/margin/currencies", &request)
+            .get_with_request(GET_MARGIN_RISK_LIMIT_ENDPOINT, &request)
             .await?;
         Ok((response.data, headers))
     }
@@ -93,6 +112,11 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_endpoint_constant() {
+        assert_eq!(GET_MARGIN_RISK_LIMIT_ENDPOINT, "/api/v3/margin/currencies");
+    }
 
     #[test]
     fn test_get_margin_risk_limit_request_creation() {
@@ -134,5 +158,35 @@ mod tests {
         };
         assert_eq!(info.currency, Some("USDT".to_string()));
         assert_eq!(info.borrow_enabled, Some(true));
+    }
+
+    #[test]
+    fn test_response_deserialization_cross_sample() {
+        let json = r#"{
+            "code": "200000",
+            "data": [
+                {
+                    "timestamp": 1729678659275,
+                    "currency": "BTC",
+                    "borrowMaxAmount": "75.15",
+                    "buyMaxAmount": "217.12",
+                    "holdMaxAmount": "217.12",
+                    "borrowCoefficient": "1",
+                    "marginCoefficient": "1",
+                    "precision": 8,
+                    "borrowMinAmount": "0.001",
+                    "borrowMinUnit": "0.0001",
+                    "borrowEnabled": true
+                }
+            ]
+        }"#;
+
+        let resp: RestResponse<GetMarginRiskLimitResponse> = serde_json::from_str(json).unwrap();
+        assert_eq!(resp.code, "200000");
+        assert_eq!(resp.data.data.len(), 1);
+        let item = &resp.data.data[0];
+        assert_eq!(item.currency.as_deref(), Some("BTC"));
+        assert_eq!(item.precision, Some(8));
+        assert_eq!(item.borrow_enabled, Some(true));
     }
 }

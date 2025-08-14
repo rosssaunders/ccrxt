@@ -51,15 +51,9 @@ impl RestClient {
         &self,
         request: CreateWithdrawalRequest,
     ) -> Result<(WithdrawalResponse, ResponseHeaders)> {
-        let body = serde_json::to_string(&request).map_err(|e| {
-            crate::kucoin::spot::ApiError::JsonParsing(format!(
-                "Failed to serialize request: {}",
-                e
-            ))
-        })?;
-
-        let (response, headers): (RestResponse<WithdrawalResponse>, ResponseHeaders) =
-            self.post(CREATE_WITHDRAWAL_ENDPOINT, &body).await?;
+        let (response, headers): (RestResponse<WithdrawalResponse>, ResponseHeaders) = self
+            .post_with_request(CREATE_WITHDRAWAL_ENDPOINT, &request)
+            .await?;
 
         Ok((response.data, headers))
     }

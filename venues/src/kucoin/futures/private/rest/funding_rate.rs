@@ -71,7 +71,7 @@ impl super::RestClient {
         request: GetFundingRateHistoryRequest,
     ) -> Result<(RestResponse<GetFundingRateHistoryResponse>, ResponseHeaders)> {
         let endpoint = FUNDING_RATE_HISTORY_ENDPOINT.replace("{symbol}", &request.symbol);
-        self.send_request(&endpoint, Some(&request)).await
+        self.get_with_request(&endpoint, &request).await
     }
 }
 

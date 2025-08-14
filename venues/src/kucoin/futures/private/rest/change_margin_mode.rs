@@ -41,7 +41,8 @@ impl super::RestClient {
         &self,
         request: ChangeMarginModeRequest,
     ) -> Result<(RestResponse<ChangeMarginModeResponse>, ResponseHeaders)> {
-        self.post(CHANGE_MARGIN_MODE_ENDPOINT, &request).await
+        self.post_with_request(CHANGE_MARGIN_MODE_ENDPOINT, &request)
+            .await
     }
 }
 

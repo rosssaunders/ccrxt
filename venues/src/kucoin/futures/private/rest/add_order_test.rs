@@ -118,7 +118,8 @@ impl super::RestClient {
         &self,
         request: AddOrderTestRequest,
     ) -> Result<(RestResponse<AddOrderTestResponse>, ResponseHeaders)> {
-        self.post(ADD_ORDER_TEST_ENDPOINT, &request).await
+        self.post_with_request(ADD_ORDER_TEST_ENDPOINT, &request)
+            .await
     }
 }
 

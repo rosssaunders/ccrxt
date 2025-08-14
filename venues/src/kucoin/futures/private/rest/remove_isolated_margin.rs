@@ -31,7 +31,8 @@ impl super::RestClient {
         &self,
         request: RemoveIsolatedMarginRequest,
     ) -> Result<(RestResponse<RemoveIsolatedMarginResponse>, ResponseHeaders)> {
-        self.post(REMOVE_ISOLATED_MARGIN_ENDPOINT, &request).await
+        self.post_with_request(REMOVE_ISOLATED_MARGIN_ENDPOINT, &request)
+            .await
     }
 }
 

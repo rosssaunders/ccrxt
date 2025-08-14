@@ -157,7 +157,7 @@ impl super::RestClient {
         &self,
         request: AddMarginRequest,
     ) -> Result<(RestResponse<AddMarginResponse>, ResponseHeaders)> {
-        self.post(ADD_MARGIN_ENDPOINT, &request).await
+        self.post_with_request(ADD_MARGIN_ENDPOINT, &request).await
     }
 }
 

@@ -116,7 +116,8 @@ impl super::RestClient {
         &self,
         request: GetPositionListRequest,
     ) -> Result<(RestResponse<GetPositionListResponse>, ResponseHeaders)> {
-        self.get(GET_POSITION_LIST_ENDPOINT, Some(&request)).await
+        self.get_with_request(GET_POSITION_LIST_ENDPOINT, &request)
+            .await
     }
 }
 

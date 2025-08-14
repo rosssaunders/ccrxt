@@ -140,7 +140,7 @@ impl super::RestClient {
         request: GetOrderRequest,
     ) -> Result<(RestResponse<OrderDetails>, ResponseHeaders)> {
         let endpoint = GET_ORDER_ENDPOINT.replace("{orderId}", &request.order_id);
-        self.get(&endpoint, None::<&()>).await
+        self.get_with_request(&endpoint, &()).await
     }
 }
 

@@ -153,7 +153,8 @@ impl super::RestClient {
         &self,
         request: BatchAddOrdersRequest,
     ) -> Result<(RestResponse<BatchAddOrdersResponse>, ResponseHeaders)> {
-        self.post(BATCH_ADD_ORDERS_ENDPOINT, &request).await
+        self.post_with_request(BATCH_ADD_ORDERS_ENDPOINT, &request)
+            .await
     }
 }
 

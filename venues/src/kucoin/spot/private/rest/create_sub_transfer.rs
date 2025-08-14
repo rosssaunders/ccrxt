@@ -50,15 +50,9 @@ impl RestClient {
         &self,
         request: CreateSubTransferRequest,
     ) -> Result<(SubTransferResponse, ResponseHeaders)> {
-        let body = serde_json::to_string(&request).map_err(|e| {
-            crate::kucoin::spot::ApiError::JsonParsing(format!(
-                "Failed to serialize request: {}",
-                e
-            ))
-        })?;
-
-        let (response, headers): (RestResponse<SubTransferResponse>, ResponseHeaders) =
-            self.post(CREATE_SUB_TRANSFER_ENDPOINT, &body).await?;
+        let (response, headers): (RestResponse<SubTransferResponse>, ResponseHeaders) = self
+            .post_with_request(CREATE_SUB_TRANSFER_ENDPOINT, &request)
+            .await?;
 
         Ok((response.data, headers))
     }

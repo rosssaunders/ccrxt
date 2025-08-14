@@ -30,7 +30,7 @@ impl super::RestClient {
         &self,
         request: ModifyCrossMarginLeverageRequest,
     ) -> Result<(RestResponse<bool>, ResponseHeaders)> {
-        self.post(MODIFY_CROSS_MARGIN_LEVERAGE_ENDPOINT, &request)
+        self.post_with_request(MODIFY_CROSS_MARGIN_LEVERAGE_ENDPOINT, &request)
             .await
     }
 }

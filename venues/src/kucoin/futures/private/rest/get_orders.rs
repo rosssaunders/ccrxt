@@ -82,7 +82,7 @@ impl super::RestClient {
         &self,
         request: GetOrdersRequest,
     ) -> Result<(RestResponse<PaginatedOrdersResponse>, ResponseHeaders)> {
-        self.get(GET_ORDERS_ENDPOINT, Some(&request)).await
+        self.get_with_request(GET_ORDERS_ENDPOINT, &request).await
     }
 }
 

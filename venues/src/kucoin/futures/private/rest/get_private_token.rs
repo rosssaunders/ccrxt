@@ -47,7 +47,7 @@ impl super::RestClient {
         &self,
     ) -> Result<(RestResponse<WebSocketPrivateToken>, ResponseHeaders)> {
         // POST requests use empty params for private endpoints
-        self.post(PRIVATE_TOKEN_ENDPOINT, &GetPrivateTokenRequest::default())
+        self.post_with_request(PRIVATE_TOKEN_ENDPOINT, &GetPrivateTokenRequest::default())
             .await
     }
 }

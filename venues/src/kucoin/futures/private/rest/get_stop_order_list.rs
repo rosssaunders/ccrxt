@@ -151,7 +151,8 @@ impl super::RestClient {
         &self,
         request: GetStopOrderListRequest,
     ) -> Result<(RestResponse<GetStopOrderListResponse>, ResponseHeaders)> {
-        self.get(GET_STOP_ORDER_LIST_ENDPOINT, Some(&request)).await
+        self.get_with_request(GET_STOP_ORDER_LIST_ENDPOINT, &request)
+            .await
     }
 }
 

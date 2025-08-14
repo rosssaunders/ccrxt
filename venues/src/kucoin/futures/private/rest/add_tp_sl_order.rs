@@ -125,7 +125,8 @@ impl super::RestClient {
         &self,
         request: AddTpSlOrderRequest,
     ) -> Result<(RestResponse<AddTpSlOrderResponse>, ResponseHeaders)> {
-        self.post(ADD_TP_SL_ORDER_ENDPOINT, &request).await
+        self.post_with_request(ADD_TP_SL_ORDER_ENDPOINT, &request)
+            .await
     }
 }
 
