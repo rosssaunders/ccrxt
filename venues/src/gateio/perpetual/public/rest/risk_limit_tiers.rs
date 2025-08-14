@@ -7,11 +7,14 @@ use super::RestClient;
 pub struct FuturesRiskLimitTiersRequest {
     /// Settlement currency
     pub settle: String,
+
     /// Contract name
     pub contract: String,
+
     /// List offset (default 0)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub offset: Option<i32>,
+
     /// Maximum number of records to return (1-500, default 10)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i32>,

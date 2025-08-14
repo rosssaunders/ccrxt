@@ -7,17 +7,22 @@ use crate::gateio::shared::enums::CandlestickInterval;
 pub struct FuturesCandlesticksRequest {
     /// Settlement currency
     pub settle: String,
+
     /// Contract name
     pub contract: String,
+
     /// Interval time between data points
     #[serde(skip_serializing_if = "Option::is_none")]
     pub interval: Option<CandlestickInterval>,
+
     /// Start time for the query
     #[serde(skip_serializing_if = "Option::is_none")]
     pub from: Option<i64>,
+
     /// End time for the query
     #[serde(skip_serializing_if = "Option::is_none")]
     pub to: Option<i64>,
+
     /// Maximum number of records to return (1-1000, default 100)  
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i32>,

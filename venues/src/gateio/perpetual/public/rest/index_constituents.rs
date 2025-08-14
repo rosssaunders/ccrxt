@@ -7,6 +7,7 @@ use super::RestClient;
 pub struct FuturesIndexConstituentsRequest {
     /// Settlement currency
     pub settle: String,
+
     /// Index name
     pub index: String,
 }

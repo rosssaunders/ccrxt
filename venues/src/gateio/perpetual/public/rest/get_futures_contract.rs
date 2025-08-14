@@ -7,6 +7,7 @@ use super::{RestClient, contract::FuturesContract};
 pub struct FuturesContractRequest {
     /// Settlement currency
     pub settle: String,
+
     /// Contract name
     pub contract: String,
 }

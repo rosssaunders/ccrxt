@@ -7,6 +7,7 @@ use super::RestClient;
 pub struct FuturesTickersRequest {
     /// Settlement currency
     pub settle: String,
+
     /// Contract name (optional - if not provided, returns all contracts)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub contract: Option<String>,

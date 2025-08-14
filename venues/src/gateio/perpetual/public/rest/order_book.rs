@@ -7,14 +7,18 @@ use super::RestClient;
 pub struct FuturesOrderBookRequest {
     /// Settlement currency
     pub settle: String,
+
     /// Contract name
     pub contract: String,
+
     /// Order book level (1-100, default 10)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub interval: Option<String>,
+
     /// Order book depth limit (1-100, default 10)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i32>,
+
     /// Request UTC timestamp in milliseconds
     #[serde(skip_serializing_if = "Option::is_none")]
     pub with_id: Option<bool>,
@@ -25,6 +29,7 @@ pub struct FuturesOrderBookRequest {
 pub struct OrderBookEntry {
     /// Price
     pub p: String,
+
     /// Size
     pub s: i64,
 }

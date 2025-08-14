@@ -7,14 +7,18 @@ use super::RestClient;
 pub struct FuturesStatsRequest {
     /// Settlement currency
     pub settle: String,
+
     /// Contract name
     pub contract: String,
+
     /// Start time in Unix seconds
     #[serde(skip_serializing_if = "Option::is_none")]
     pub from: Option<i64>,
+
     /// Interval time between data points (default 5m)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub interval: Option<String>,
+
     /// Maximum number of records to return (1-200, default 30)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i32>,
