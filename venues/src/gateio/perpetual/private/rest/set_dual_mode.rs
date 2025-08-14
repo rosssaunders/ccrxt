@@ -9,6 +9,7 @@ const ENDPOINT_FUTURES_PREFIX: &str = "/futures";
 pub struct DualModeRequest {
     /// Settlement currency
     pub settle: String,
+
     /// Enable dual mode
     pub dual_mode: bool,
 }

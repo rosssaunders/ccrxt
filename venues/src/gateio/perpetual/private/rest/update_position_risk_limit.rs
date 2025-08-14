@@ -9,8 +9,10 @@ const ENDPOINT_FUTURES_PREFIX: &str = "/futures";
 pub struct UpdateRiskLimitRequest {
     /// Settlement currency
     pub settle: String,
+
     /// Contract name
     pub contract: String,
+
     /// Risk limit value
     pub risk_limit: String,
 }

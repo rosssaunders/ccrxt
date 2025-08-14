@@ -9,8 +9,10 @@ const ENDPOINT_FUTURES_PREFIX: &str = "/futures";
 pub struct UpdatePositionMarginRequest {
     /// Settlement currency
     pub settle: String,
+
     /// Contract name
     pub contract: String,
+
     /// Change amount (positive to add, negative to remove)
     pub change: String,
 }

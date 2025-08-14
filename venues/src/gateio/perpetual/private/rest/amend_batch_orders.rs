@@ -9,6 +9,7 @@ const ENDPOINT_FUTURES_PREFIX: &str = "/futures";
 pub struct BatchAmendOrdersRequest {
     /// Settlement currency
     pub settle: String,
+
     /// List of order amendments
     pub orders: Vec<AmendFuturesOrderRequest>,
 }

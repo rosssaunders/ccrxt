@@ -9,10 +9,13 @@ const ENDPOINT_FUTURES_PREFIX: &str = "/futures";
 pub struct UpdateDualModeLeverageRequest {
     /// Settlement currency
     pub settle: String,
+
     /// Contract name
     pub contract: String,
+
     /// Leverage value
     pub leverage: String,
+
     /// Position side ("long" or "short")
     pub side: String,
 }

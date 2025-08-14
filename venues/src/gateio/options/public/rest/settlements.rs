@@ -40,7 +40,7 @@ impl RestClient {
     ///
     /// Retrieves settlement history for options contracts.
     ///
-    /// [docs](https://www.gate.com/docs/developers/apiv4/#list-settlement-history-2)
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#list-settlement-history)
     pub async fn get_options_settlements(
         &self,
         params: OptionsSettlementsRequest,

@@ -18,6 +18,7 @@ pub struct DeliveryContractsRequest {
 pub struct DeliveryContractRequest {
     /// Settlement currency
     pub settle: String,
+
     /// Contract name
     pub contract: String,
 }

@@ -9,10 +9,13 @@ const ENDPOINT_FUTURES_PREFIX: &str = "/futures";
 pub struct UpdateDualModeMarginRequest {
     /// Settlement currency
     pub settle: String,
+
     /// Contract name
     pub contract: String,
+
     /// Change amount
     pub change: String,
+
     /// Position side ("long" or "short")
     pub side: String,
 }

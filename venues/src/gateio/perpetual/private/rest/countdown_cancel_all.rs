@@ -9,8 +9,10 @@ const ENDPOINT_FUTURES_PREFIX: &str = "/futures";
 pub struct CountdownCancelRequest {
     /// Settlement currency
     pub settle: String,
+
     /// Timeout in seconds
     pub timeout: i32,
+
     /// Contract filter
     #[serde(skip_serializing_if = "Option::is_none")]
     pub contract: Option<String>,

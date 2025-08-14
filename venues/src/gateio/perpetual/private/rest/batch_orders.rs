@@ -9,6 +9,7 @@ const ENDPOINT_FUTURES_PREFIX: &str = "/futures";
 pub struct BatchOrdersRequest {
     /// Settlement currency
     pub settle: String,
+
     /// List of orders to create
     pub orders: Vec<CreateFuturesOrderRequest>,
 }
@@ -18,6 +19,7 @@ pub struct BatchOrdersRequest {
 pub struct BatchCancelOrdersRequest {
     /// Settlement currency
     pub settle: String,
+
     /// List of order IDs to cancel
     pub order_ids: Vec<String>,
 }
@@ -28,11 +30,14 @@ pub struct BatchOrderResult {
     /// Order ID
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
+
     /// Success status
     pub succeeded: bool,
+
     /// Error label if failed
     #[serde(skip_serializing_if = "Option::is_none")]
     pub label: Option<String>,
+
     /// Error message if failed
     #[serde(skip_serializing_if = "Option::is_none")]
     pub message: Option<String>,
