@@ -32,8 +32,18 @@ jobs:
           components: llvm-tools-preview
 
       - name: Install cargo-llvm-cov
-        # Pin to a known stable cargo-llvm-cov version to avoid CI breakages
-        run: cargo install cargo-llvm-cov --version 0.21.0
+        # Try the release version v0.6.18 first (https://github.com/taiki-e/cargo-llvm-cov/releases/tag/v0.6.18)
+        # Fall back to latest if the pinned version is not available on crates.io
+        run: |
+          set -e
+          PINNED_VERSION=0.6.18
+          echo "Attempting to install cargo-llvm-cov v${PINNED_VERSION} (pinned)..."
+          if cargo install cargo-llvm-cov --version ${PINNED_VERSION}; then
+            echo "Installed cargo-llvm-cov v${PINNED_VERSION}"
+          else
+            echo "Pinned version not available; installing latest cargo-llvm-cov..."
+            cargo install cargo-llvm-cov
+          fi
 
       - name: Generate source code coverage report
         run: |
