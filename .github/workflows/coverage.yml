@@ -17,45 +17,44 @@ jobs:
       pull-requests: write
     steps:
       - uses: actions/checkout@v4
-      
+
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: llvm-tools-preview
-          
-      - name: Install cargo-tarpaulin
-        run: cargo install cargo-tarpaulin
-        
+
+      - name: Install cargo-llvm-cov
+        # Pin to a known stable cargo-llvm-cov version to avoid CI breakages
+        run: cargo install cargo-llvm-cov --version 0.21.0
+
       - name: Generate source code coverage report
         run: |
-          cargo tarpaulin --verbose --all-features --workspace --timeout 120 \
-            --exclude-files 'venues/examples/*' \
-            --exclude-files 'tests/*' \
-            --out xml json html \
-            --output-dir ./coverage/source
-            
+          # Run library/unit tests coverage using cargo-llvm-cov and write outputs to coverage/source
+          cargo llvm-cov --workspace --all-features --lib \
+            --output-path ./coverage/source \
+            --cobertura --json --lcov \
+            --ignore-filename-regex 'venues/examples|tests' \
+            --quiet
+
       - name: Generate integration tests coverage report
         run: |
-          cargo tarpaulin --verbose --all-features --workspace --timeout 120 \
-            --exclude-files 'venues/examples/*' \
-            --exclude-files 'venues/src/*' \
-            --exclude-files 'rest/src/*' \
-            --exclude-files 'websockets/src/*' \
-            --exclude-files 'binance_macros/src/*' \
-            --exclude-files 'src/*' \
-            --out xml json html \
-            --output-dir ./coverage/integration
-            
+          # Run integration tests coverage using cargo-llvm-cov and write outputs to coverage/integration
+          cargo llvm-cov --workspace --all-features --tests \
+            --output-path ./coverage/integration \
+            --cobertura --json --lcov \
+            --ignore-filename-regex 'venues/examples' \
+            --quiet
+
       - name: Parse coverage and generate badges
         id: coverage
         run: |
           # Parse source coverage
           SOURCE_COVERAGE=$(grep -o 'line-rate="[^"]*"' coverage/source/cobertura.xml | head -1 | sed 's/line-rate="//;s/"//')
           SOURCE_PERCENT=$(echo "$SOURCE_COVERAGE * 100" | bc -l | xargs printf "%.0f")
-          
+
           # Parse integration coverage  
           INTEGRATION_COVERAGE=$(grep -o 'line-rate="[^"]*"' coverage/integration/cobertura.xml | head -1 | sed 's/line-rate="//;s/"//')
           INTEGRATION_PERCENT=$(echo "$INTEGRATION_COVERAGE * 100" | bc -l | xargs printf "%.0f")
-          
+
           # Determine source badge color
           if [ "$SOURCE_PERCENT" -ge 80 ]; then
             SOURCE_COLOR="brightgreen"
@@ -64,7 +63,7 @@ jobs:
           else
             SOURCE_COLOR="red"
           fi
-          
+
           # Determine integration badge color
           if [ "$INTEGRATION_PERCENT" -ge 80 ]; then
             INTEGRATION_COLOR="brightgreen"
@@ -73,12 +72,12 @@ jobs:
           else
             INTEGRATION_COLOR="red"
           fi
-          
+
           echo "source_coverage=$SOURCE_PERCENT" >> $GITHUB_OUTPUT
           echo "source_color=$SOURCE_COLOR" >> $GITHUB_OUTPUT
           echo "integration_coverage=$INTEGRATION_PERCENT" >> $GITHUB_OUTPUT
           echo "integration_color=$INTEGRATION_COLOR" >> $GITHUB_OUTPUT
-          
+
           # Create coverage summary
           echo "## Coverage Report" > coverage/summary.md
           echo "" >> coverage/summary.md
@@ -88,11 +87,11 @@ jobs:
           echo "[![Source Coverage](https://img.shields.io/badge/Source%20Coverage-${SOURCE_PERCENT}%25-${SOURCE_COLOR})](https://github.com/${{ github.repository }}/actions/workflows/coverage.yml)" >> coverage/summary.md
           echo "" >> coverage/summary.md
           echo "[![Integration Coverage](https://img.shields.io/badge/Integration%20Coverage-${INTEGRATION_PERCENT}%25-${INTEGRATION_COLOR})](https://github.com/${{ github.repository }}/actions/workflows/coverage.yml)" >> coverage/summary.md
-          
+
       - name: Generate coverage badge JSONs
         run: |
           mkdir -p badges
-          
+
           # Source coverage badge
           cat > badges/source-coverage.json << EOF
           {
@@ -102,7 +101,7 @@ jobs:
             "color": "${{ steps.coverage.outputs.source_color }}"
           }
           EOF
-          
+
           # Integration coverage badge
           cat > badges/integration-coverage.json << EOF
           {
@@ -112,7 +111,7 @@ jobs:
             "color": "${{ steps.coverage.outputs.integration_color }}"
           }
           EOF
-          
+
       - name: Deploy coverage badge to GitHub Pages
         if: github.ref == 'refs/heads/main'
         uses: peaceiris/actions-gh-pages@v3
@@ -121,7 +120,7 @@ jobs:
           publish_dir: ./badges
           destination_dir: badges
           keep_files: true
-          
+
       - name: Archive coverage results
         uses: actions/upload-artifact@v4
         with:
@@ -129,14 +128,14 @@ jobs:
           path: |
             coverage/
             !coverage/*.profraw
-            
+
       - name: Comment coverage on PR
         if: github.event_name == 'pull_request'
         uses: actions/github-script@v7
         with:
           script: |
             const fs = require('fs');
-            
+
             try {
               const summaryContent = fs.readFileSync('coverage/summary.md', 'utf8');
               
