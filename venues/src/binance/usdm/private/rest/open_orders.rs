@@ -132,7 +132,7 @@ impl UsdmClient {
     ///
     /// Get all open orders for a symbol, or all symbols if none is specified, on Binance USDM Futures.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Current-All-Open-Orders
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Current-All-Open-Orders)
     ///
     /// Rate limit: 1 for single symbol, 40 if symbol omitted
     ///

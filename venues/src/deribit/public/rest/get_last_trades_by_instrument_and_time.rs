@@ -103,7 +103,7 @@ impl RestClient {
     ///
     /// Retrieves the most recent trades for a given instrument, filtered by start and end timestamps.
     ///
-    /// [Official API docs](https://docs.deribit.com/#public-get_last_trades_by_instrument_and_time)
+    /// [docs](https://docs.deribit.com/#public-get_last_trades_by_instrument_and_time)
     pub async fn get_last_trades_by_instrument_and_time(
         &self,
         params: GetLastTradesByInstrumentAndTimeRequest,

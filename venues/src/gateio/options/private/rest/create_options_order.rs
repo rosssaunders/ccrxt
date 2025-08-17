@@ -40,7 +40,7 @@ impl RestClient {
     /// This endpoint creates a new options order.
     ///
     /// See: Gate.io API documentation
-    /// <https://www.gate.io/docs/developers/apiv4/#create-an-options-order>
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#create-an-options-order)
     ///
     /// Rate limit: 10 requests per second
     ///

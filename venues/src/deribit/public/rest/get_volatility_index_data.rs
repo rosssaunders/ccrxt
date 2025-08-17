@@ -1,9 +1,3 @@
-//! Implements the /public/get_volatility_index_data endpoint for Deribit.
-//!
-//! Retrieves volatility index data for a given index name.
-//!
-//! [Official API docs](https://docs.deribit.com/#public-get_volatility_index_data)
-
 use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
@@ -97,7 +91,7 @@ impl RestClient {
     ///
     /// Retrieves volatility index data for a given index name.
     ///
-    /// [Official API docs](https://docs.deribit.com/#public-get_volatility_index_data)
+    /// [docs](https://docs.deribit.com/#public-get_volatility_index_data)
     pub async fn get_volatility_index_data(
         &self,
         params: GetVolatilityIndexDataRequest,

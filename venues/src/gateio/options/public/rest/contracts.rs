@@ -75,7 +75,7 @@ impl RestClient {
     /// Retrieves options contracts with optional filtering by underlying and expiration.
     ///
     /// # API Documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#list-all-the-contracts-with-specified-underlying-and-expiration-time>
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#list-all-the-contracts-with-specified-underlying-and-expiration-time)
     pub async fn get_options_contracts(
         &self,
         params: OptionsContractsRequest,
@@ -89,7 +89,7 @@ impl RestClient {
     /// Retrieves detailed information for a specific options contract.
     ///
     /// # API Documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#query-specified-contract-detail>
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#query-specified-contract-detail)
     pub async fn get_options_contract(
         &self,
         contract: &str,
@@ -216,7 +216,7 @@ mod tests {
         assert_eq!(contract.mark_iv, Some("0.25".to_string()));
         assert_eq!(contract.option_type, Some("call".to_string()));
         assert_eq!(contract.strike_price, "50000");
-        assert_eq!(contract.is_call, true);
+        assert!(contract.is_call);
         assert_eq!(contract.multiplier, "0.0001");
         assert_eq!(contract.position_size, Some(1000));
         assert_eq!(contract.orders_limit, 200);
@@ -256,7 +256,7 @@ mod tests {
         assert_eq!(contract.mark_iv, Some("0.35".to_string()));
         assert_eq!(contract.option_type, Some("put".to_string()));
         assert_eq!(contract.strike_price, "3000");
-        assert_eq!(contract.is_call, false);
+        assert!(!contract.is_call);
         assert_eq!(contract.multiplier, "0.001");
         assert_eq!(contract.position_size, Some(500));
         assert_eq!(contract.orders_limit, 150);
@@ -289,7 +289,7 @@ mod tests {
         assert_eq!(contract.mark_iv, None);
         assert_eq!(contract.option_type, None);
         assert_eq!(contract.strike_price, "400");
-        assert_eq!(contract.is_call, true);
+        assert!(contract.is_call);
         assert_eq!(contract.multiplier, "0.01");
         assert_eq!(contract.position_size, None);
         assert_eq!(contract.orders_limit, 100);
@@ -486,11 +486,11 @@ mod tests {
         assert_eq!(contracts.len(), 2);
 
         assert_eq!(contracts[0].name, "BTC-20240101-50000-C");
-        assert_eq!(contracts[0].is_call, true);
+        assert!(contracts[0].is_call);
         assert_eq!(contracts[0].strike_price, "50000");
 
         assert_eq!(contracts[1].name, "ETH-20240101-3000-P");
-        assert_eq!(contracts[1].is_call, false);
+        assert!(!contracts[1].is_call);
         assert_eq!(contracts[1].strike_price, "3000");
     }
 
@@ -608,7 +608,7 @@ mod tests {
         let itm_call: OptionsContract = serde_json::from_str(itm_call_json).unwrap();
         assert_eq!(itm_call.name, "BTC-20240101-40000-C");
         assert!(itm_call.name.ends_with("-C"));
-        assert_eq!(itm_call.is_call, true);
+        assert!(itm_call.is_call);
         assert_eq!(itm_call.strike_price, "40000");
 
         // Parse prices to verify ITM status
@@ -639,7 +639,7 @@ mod tests {
         let otm_put: OptionsContract = serde_json::from_str(otm_put_json).unwrap();
         assert_eq!(otm_put.name, "ETH-20240101-2000-P");
         assert!(otm_put.name.ends_with("-P"));
-        assert_eq!(otm_put.is_call, false);
+        assert!(!otm_put.is_call);
         assert_eq!(otm_put.strike_price, "2000");
 
         // Parse prices to verify OTM status

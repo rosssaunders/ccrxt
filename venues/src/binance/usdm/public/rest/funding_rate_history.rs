@@ -51,7 +51,7 @@ impl RestClient {
     ///
     /// Retrieves historical funding rates for USDM futures.
     ///
-    /// [API docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Get-Funding-Rate-History)
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Get-Funding-Rate-History)
     ///
     /// Request Weight: share 500/5min/IP rate limit with GET /fapi/v1/fundingInfo
     ///

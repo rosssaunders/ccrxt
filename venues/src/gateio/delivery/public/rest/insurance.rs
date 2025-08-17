@@ -10,6 +10,7 @@ const DELIVERY_INSURANCE_ENDPOINT: &str = "/delivery/{}/insurance";
 pub struct DeliveryInsuranceRequest {
     /// Settlement currency
     pub settle: String,
+
     /// Maximum number of records to return (1-1000, default 100)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i32>,
@@ -30,7 +31,7 @@ impl RestClient {
     ///
     /// Retrieves historical insurance fund balance for the specified settlement currency.
     ///
-    /// [docs]: https://www.gate.io/docs/developers/apiv4/en/#get-delivery-insurance-balance-history
+    /// [docs](https://www.gate.io/docs/developers/apiv4/en/#get-delivery-insurance-balance-history)
     ///
     /// Rate limit: 10 requests per second
     ///
@@ -91,7 +92,7 @@ mod tests {
 
             let json = serde_json::to_value(&request).unwrap();
             assert_eq!(json["limit"], limit);
-            assert!(limit >= 1 && limit <= 1000);
+            assert!((1..=1000).contains(&limit));
         }
     }
 
@@ -124,7 +125,7 @@ mod tests {
 
     #[test]
     fn test_insurance_fund_growth_scenario() {
-        let entries = vec![
+        let entries = [
             r#"{"t": 1641024000, "b": 5000000.0}"#,
             r#"{"t": 1641027600, "b": 5050000.0}"#,
             r#"{"t": 1641031200, "b": 5100000.0}"#,
@@ -148,7 +149,7 @@ mod tests {
 
     #[test]
     fn test_insurance_fund_drawdown_scenario() {
-        let entries = vec![
+        let entries = [
             r#"{"t": 1641024000, "b": 10000000.0}"#,
             r#"{"t": 1641027600, "b": 9500000.0}"#,
             r#"{"t": 1641031200, "b": 9000000.0}"#,
@@ -234,7 +235,7 @@ mod tests {
 
     #[test]
     fn test_hourly_snapshots() {
-        let hourly_entries = vec![
+        let hourly_entries = [
             (1641024000, 5000000.0, "00:00"),
             (1641027600, 5010000.0, "01:00"),
             (1641031200, 5020000.0, "02:00"),
@@ -261,7 +262,7 @@ mod tests {
 
     #[test]
     fn test_daily_snapshots() {
-        let daily_entries = vec![
+        let daily_entries = [
             (1640995200, 20000000.0, "2022-01-01"),
             (1641081600, 20100000.0, "2022-01-02"),
             (1641168000, 20200000.0, "2022-01-03"),
@@ -374,7 +375,7 @@ mod tests {
 
         let insurance: DeliveryInsurance = serde_json::from_str(json).unwrap();
         assert_eq!(insurance.t, 1641024000);
-        assert!((insurance.b - 12345678.123456789).abs() < 0.000001);
+        assert!((insurance.b - 12_345_678.123_456_79).abs() < 0.000001);
     }
 
     #[test]
@@ -392,7 +393,7 @@ mod tests {
 
     #[test]
     fn test_timestamp_ordering() {
-        let entries = vec![
+        let entries = [
             DeliveryInsurance {
                 t: 1641024000,
                 b: 5000000.0,

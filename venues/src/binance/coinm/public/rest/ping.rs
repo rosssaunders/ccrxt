@@ -9,8 +9,6 @@ const PING_ENDPOINT: &str = "/dapi/v1/ping";
 ///
 /// This struct represents the response from the Binance Coin-Margined Futures REST API `/dapi/v1/ping` endpoint.
 /// The endpoint returns an empty JSON object to verify API connectivity.
-///
-/// [Official API docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api#test-connectivity
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PingResponse {
     // No fields; response is always an empty object.
@@ -21,7 +19,7 @@ impl RestClient {
     ///
     /// Sends a GET request to `/dapi/v1/ping` to verify API connectivity.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api#test-connectivity
+    /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api#test-connectivity)
     ///
     /// Weight: 1
     ///

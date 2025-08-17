@@ -65,7 +65,7 @@ impl RestClient {
     /// # Returns
     /// A result containing the response with combo information or an error
     ///
-    /// [Official API docs](https://docs.deribit.com/#public-get_combos)
+    /// [docs](https://docs.deribit.com/#public-get_combos)
     pub async fn get_combos(&self, params: GetCombosRequest) -> RestResult<GetCombosResponse> {
         self.send_post_request(
             COMBOS_ENDPOINT,
@@ -78,6 +78,8 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
+    use std::sync::Arc;
+
     use serde_json::json;
 
     use super::*;
@@ -170,10 +172,10 @@ mod tests {
 
     #[tokio::test]
     async fn test_endpoint_type_usage() {
-        let client = reqwest::Client::new();
+        let http_client = Arc::new(rest::native::NativeHttpClient::default());
         let rate_limiter = RateLimiter::new(AccountTier::Tier4);
 
-        let rest_client = RestClient::new("https://test.deribit.com", client, rate_limiter);
+        let rest_client = RestClient::new("https://test.deribit.com", http_client, rate_limiter);
 
         // Test that we can create a request - this doesn't actually call the API
         let _request = GetCombosRequest {

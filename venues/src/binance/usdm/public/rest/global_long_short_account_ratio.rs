@@ -56,7 +56,7 @@ impl RestClient {
     ///
     /// Query symbol Long/Short Ratio
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Long-Short-Ratio
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Long-Short-Ratio)
     ///
     /// Rate limit: IP rate limit 1000 requests/5min
     ///

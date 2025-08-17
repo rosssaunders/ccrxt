@@ -30,7 +30,7 @@ impl RestClient {
     ///
     /// Returns historical candlestick (kline) data for a symbol and interval.
     ///
-    /// [docs]: https://www.bitget.com/api-doc/spot/market/Get-Historical-Candlestick-Data
+    /// [docs](https://www.bitget.com/api-doc/spot/market/Get-Historical-Candlestick-Data)
     ///
     /// Rate limit: see official docs
     ///

@@ -7,8 +7,7 @@ impl RestClient {
     ///
     /// This endpoint returns a specific futures position for the authenticated user.
     ///
-    /// See: Gate.io API documentation
-    /// <https://www.gate.io/docs/developers/apiv4/#get-single-position>
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#get-single-position)
     ///
     /// Rate limit: 100 requests per second
     ///

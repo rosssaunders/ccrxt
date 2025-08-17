@@ -1,28 +1,27 @@
-use std::borrow::Cow;
+use std::{borrow::Cow, sync::Arc};
 
-use reqwest::Client;
+use rest::{
+    HttpClient,
+    http_client::{Method as HttpMethod, RequestBuilder},
+};
 use serde::{Serialize, de::DeserializeOwned};
 
 use crate::bingx::spot::{ApiResponse, EndpointType, Errors, RateLimiter, RestResult};
 
 /// Public REST client for BingX exchange
-///
 /// This client handles all public API endpoints that do not require authentication.
 /// It provides automatic rate limiting and error handling for public market data.
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub struct RestClient {
     /// The base URL for the BingX public REST API (e.g., "https://open-api.bingx.com")
-    ///
     /// This is used as the prefix for all endpoint requests.
     pub base_url: Cow<'static, str>,
 
     /// The underlying HTTP client used for making requests.
-    ///
     /// This is reused for connection pooling and performance.
-    pub client: Client,
+    pub http_client: Arc<dyn HttpClient>,
 
     /// The rate limiter used to manage request rates and prevent hitting API limits.
-    ///
     /// This is used to ensure compliance with BingX's rate limits for public endpoints.
     pub rate_limiter: RateLimiter,
 }
@@ -32,19 +31,19 @@ impl RestClient {
     ///
     /// # Arguments
     /// * `base_url` - The base URL for the BingX API (e.g., "https://open-api.bingx.com")
-    /// * `client` - The HTTP client to use for requests
+    /// * `http_client` - The HTTP client to use for requests
     /// * `rate_limiter` - The rate limiter to use for request throttling
     ///
     /// # Returns
     /// A new RestClient instance
     pub fn new(
         base_url: impl Into<Cow<'static, str>>,
-        client: Client,
+        http_client: Arc<dyn HttpClient>,
         rate_limiter: RateLimiter,
     ) -> Self {
         Self {
             base_url: base_url.into(),
-            client,
+            http_client,
             rate_limiter,
         }
     }
@@ -75,26 +74,36 @@ impl RestClient {
             .map_err(|e| Errors::RateLimitExceeded(e.to_string()))?;
 
         // Build the full URL
-        let url = format!("{}{}", self.base_url, endpoint);
-
-        // Build the request
-        let mut request = self.client.get(&url);
+        let mut url = format!("{}{}", self.base_url, endpoint);
 
         // Add query parameters if provided
         if let Some(params) = params {
-            request = request.query(params);
+            let query_string = serde_urlencoded::to_string(params)
+                .map_err(|e| Errors::Error(format!("Failed to serialize parameters: {e}")))?;
+            if !query_string.is_empty() {
+                url.push('?');
+                url.push_str(&query_string);
+            }
         }
 
-        // Send the request
-        let response = request.send().await?;
+        // Build and send the request
+        let request = RequestBuilder::new(HttpMethod::Get, url).build();
+        let response = self
+            .http_client
+            .execute(request)
+            .await
+            .map_err(|e| Errors::NetworkError(format!("HTTP request failed: {e}")))?;
 
         // Record the request for rate limiting
         self.rate_limiter.increment_request(endpoint_type).await;
 
-        // Check if request was successful
-        if response.status().is_success() {
-            let response_text = response.text().await?;
+        // Get response text
+        let response_text = response
+            .text()
+            .map_err(|e| Errors::NetworkError(format!("Failed to read response: {e}")))?;
 
+        // Check if request was successful
+        if response.status == 200 {
             // Parse the API response wrapper
             match serde_json::from_str::<ApiResponse<T>>(&response_text) {
                 Ok(api_response) => {
@@ -115,19 +124,16 @@ impl RestClient {
                 Err(e) => Err(Errors::ParseError(e.to_string())),
             }
         } else {
-            let status = response.status();
-            let error_text = response
-                .text()
-                .await
-                .unwrap_or_else(|_| "Unknown error".to_string());
-
             // Try to parse as BingX error response
             if let Ok(error_response) =
-                serde_json::from_str::<crate::bingx::spot::ErrorResponse>(&error_text)
+                serde_json::from_str::<crate::bingx::spot::ErrorResponse>(&response_text)
             {
                 Err(Errors::from(error_response))
             } else {
-                Err(Errors::Error(format!("HTTP {status}: {error_text}")))
+                Err(Errors::Error(format!(
+                    "HTTP {}: {}",
+                    response.status, response_text
+                )))
             }
         }
     }
@@ -139,9 +145,10 @@ mod tests {
 
     #[test]
     fn test_client_creation() {
+        let http_client = std::sync::Arc::new(rest::native::NativeHttpClient::default());
         let client = RestClient::new(
             "https://open-api.bingx.com",
-            Client::new(),
+            http_client,
             RateLimiter::new(),
         );
 

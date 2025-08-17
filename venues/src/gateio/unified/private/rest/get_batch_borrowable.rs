@@ -10,8 +10,7 @@ impl RestClient {
     ///
     /// This endpoint returns borrowable amounts for multiple currencies.
     ///
-    /// # API Documentation
-    /// <https://www.gate.io/docs/developers/apiv4/#get-batch-borrowable>
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#get-batch-borrowable)
     pub async fn get_batch_borrowable(
         &self,
         request: BatchBorrowableRequest,
@@ -85,7 +84,7 @@ mod tests {
 
     #[test]
     fn test_batch_borrowable_many_currencies() {
-        let currencies = vec![
+        let currencies = [
             "BTC", "ETH", "USDT", "BNB", "SOL", "ADA", "XRP", "DOT", "MATIC", "LINK",
         ];
 

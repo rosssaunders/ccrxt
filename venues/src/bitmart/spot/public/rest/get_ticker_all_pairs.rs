@@ -29,7 +29,7 @@ impl RestClient {
     /// Note that the interface is not real-time data, if you need real-time data,
     /// please use websocket to subscribe Ticker channel
     ///
-    /// [docs]: https://developer-pro.bitmart.com/en/spot/#get-ticker-of-all-pairs-v3
+    /// [docs](https://developer-pro.bitmart.com/en/spot/#get-ticker-of-all-pairs-v3)
     ///
     /// Rate limit: 10 times/2sec per IP
     ///
@@ -39,9 +39,8 @@ impl RestClient {
         &self,
         _request: GetTickerAllPairsRequest,
     ) -> RestResult<GetTickerAllPairsResponse> {
-        self.send_request(
+        self.send_get_request(
             TICKER_ALL_PAIRS_ENDPOINT,
-            reqwest::Method::GET,
             Option::<&()>::None, // No query parameters
             EndpointType::SpotPublicMarket,
         )

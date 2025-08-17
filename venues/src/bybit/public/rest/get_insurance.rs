@@ -65,7 +65,7 @@ impl RestClient {
     /// Query for Bybit insurance pool data. The insurance pool is used to cover losses from
     /// liquidated positions to ensure counterparty risks are minimized.
     ///
-    /// [API Documentation](https://bybit-exchange.github.io/docs/v5/market/insurance)
+    /// [docs](https://bybit-exchange.github.io/docs/v5/market/insurance)
     ///
     /// Rate limit: 10 requests per second
     ///

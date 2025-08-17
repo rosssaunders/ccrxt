@@ -11,12 +11,16 @@ const PUBLIC_TOKEN_ENDPOINT: &str = "/api/v1/bullet-public";
 pub struct InstanceServer {
     /// WebSocket endpoint URL
     pub endpoint: String,
+
     /// Encryption protocol (usually "wss")
     pub protocol: String,
+
     /// Whether encryption is enabled
     pub encrypt: bool,
+
     /// Ping interval (milliseconds)
     pub ping_interval: i64,
+
     /// Ping timeout (milliseconds)
     pub ping_timeout: i64,
 }
@@ -27,6 +31,7 @@ pub struct InstanceServer {
 pub struct WebSocketToken {
     /// WebSocket connection token
     pub token: String,
+
     /// List of available instance servers
     pub instance_servers: Vec<InstanceServer>,
 }
@@ -34,7 +39,7 @@ pub struct WebSocketToken {
 impl super::RestClient {
     /// Get public WebSocket token for futures
     ///
-    /// <https://www.kucoin.com/docs-new/websocket-api/base-info/get-public-token-futures>
+    /// [docs](https://www.kucoin.com/docs-new/websocket-api/base-info/get-public-token-futures)
     pub async fn get_public_token(
         &self,
     ) -> Result<(RestResponse<WebSocketToken>, ResponseHeaders)> {
@@ -60,7 +65,7 @@ mod tests {
         let server: InstanceServer = serde_json::from_str(json).unwrap();
         assert_eq!(server.endpoint, "wss://push1.kucoin.com/endpoint");
         assert_eq!(server.protocol, "wss");
-        assert_eq!(server.encrypt, true);
+        assert!(server.encrypt);
         assert_eq!(server.ping_interval, 18000);
         assert_eq!(server.ping_timeout, 10000);
     }

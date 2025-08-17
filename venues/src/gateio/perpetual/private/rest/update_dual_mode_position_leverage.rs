@@ -9,10 +9,13 @@ const ENDPOINT_FUTURES_PREFIX: &str = "/futures";
 pub struct UpdateDualModeLeverageRequest {
     /// Settlement currency
     pub settle: String,
+
     /// Contract name
     pub contract: String,
+
     /// Leverage value
     pub leverage: String,
+
     /// Position side ("long" or "short")
     pub side: String,
 }
@@ -29,8 +32,7 @@ impl RestClient {
     ///
     /// This endpoint updates the leverage for a dual mode position.
     ///
-    /// See: Gate.io API documentation
-    /// <https://www.gate.io/docs/developers/apiv4/#update-position-leverage-in-dual-mode>
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#update-position-leverage-in-dual-mode)
     ///
     /// Rate limit: 100 requests per second
     ///

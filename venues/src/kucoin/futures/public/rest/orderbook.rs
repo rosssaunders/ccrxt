@@ -16,6 +16,7 @@ pub struct GetFullOrderBookRequest {
 #[derive(Debug, Clone, Serialize)]
 pub struct GetPartOrderBookRequest {
     pub symbol: String,
+
     /// Depth size (20 or 100)
     pub depth: OrderBookDepth,
 }
@@ -46,12 +47,16 @@ pub type OrderBookLevel = [f64; 2];
 pub struct FullOrderBook {
     /// Sequence number
     pub sequence: i64,
+
     /// Symbol of the contract
     pub symbol: String,
+
     /// Bid levels (price, size) from high to low
     pub bids: Vec<OrderBookLevel>,
+
     /// Ask levels (price, size) from low to high
     pub asks: Vec<OrderBookLevel>,
+
     /// Timestamp (nanoseconds)
     pub ts: i64,
 }
@@ -62,10 +67,13 @@ pub struct FullOrderBook {
 pub struct PartOrderBook {
     /// Symbol of the contract
     pub symbol: String,
+
     /// Bid levels (price, size) from high to low
     pub bids: Vec<OrderBookLevel>,
+
     /// Ask levels (price, size) from low to high
     pub asks: Vec<OrderBookLevel>,
+
     /// Timestamp (milliseconds)
     pub ts: i64,
 }
@@ -73,7 +81,7 @@ pub struct PartOrderBook {
 impl super::RestClient {
     /// Get full orderbook depth data
     ///
-    /// <https://www.kucoin.com/docs-new/rest/futures-trading/market-data/get-full-orderbook>
+    /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/market-data/get-full-orderbook)
     pub async fn get_full_orderbook(
         &self,
         request: GetFullOrderBookRequest,
@@ -84,7 +92,7 @@ impl super::RestClient {
 
     /// Get part orderbook depth data (20 or 100 levels)
     ///
-    /// <https://www.kucoin.com/docs-new/rest/futures-trading/market-data/get-part-orderbook>
+    /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/market-data/get-part-orderbook)
     pub async fn get_part_orderbook(
         &self,
         request: GetPartOrderBookRequest,

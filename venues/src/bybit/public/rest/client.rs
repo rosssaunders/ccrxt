@@ -3,9 +3,12 @@
 // Provides access to all public REST API endpoints for ByBit Exchange.
 // These endpoints do not require authentication.
 
-use std::borrow::Cow;
+use std::{borrow::Cow, sync::Arc};
 
-use reqwest::Client;
+use rest::{
+    HttpClient,
+    http_client::{Method as HttpMethod, RequestBuilder},
+};
 use serde::de::DeserializeOwned;
 
 use crate::bybit::{EndpointType, Errors, RateLimiter, RestResult};
@@ -23,7 +26,7 @@ pub struct RestClient {
     /// The underlying HTTP client used for making requests.
     ///
     /// This is reused for connection pooling and performance.
-    pub client: Client,
+    pub http_client: Arc<dyn HttpClient>,
 
     /// The rate limiter used to manage request rates and prevent hitting API limits.
     ///
@@ -37,19 +40,19 @@ impl RestClient {
     /// # Arguments
     /// * `base_url` - The base URL for the API
     /// * `rate_limiter` - The rate limiter instance
-    /// * `client` - The HTTP client instance
+    /// * `http_client` - The HTTP client instance
     ///
     /// # Returns
     /// A new RestClient instance
     pub fn new(
         base_url: impl Into<Cow<'static, str>>,
         rate_limiter: RateLimiter,
-        client: Client,
+        http_client: Arc<dyn HttpClient>,
     ) -> Self {
         Self {
             base_url: base_url.into(),
             rate_limiter,
-            client,
+            http_client,
         }
     }
 
@@ -79,33 +82,42 @@ impl RestClient {
             .check_limits(endpoint_type.clone())
             .await?;
 
-        // Build the URL
-        let url = format!("{}{}", self.base_url, endpoint);
-        let mut request_builder = self.client.get(&url);
-
-        // Add query parameters if provided
+        // Build the URL with query parameters
+        let mut url = format!("{}{}", self.base_url, endpoint);
         if let Some(params) = query_params {
-            request_builder = request_builder.query(&params);
+            let query_string = serde_urlencoded::to_string(&params)?;
+            if !query_string.is_empty() {
+                url.push('?');
+                url.push_str(&query_string);
+            }
         }
 
+        // Build request
+        let request = RequestBuilder::new(HttpMethod::Get, url).build();
+
         // Send the request
-        let response = request_builder.send().await?;
+        let response = self
+            .http_client
+            .execute(request)
+            .await
+            .map_err(|e| Errors::NetworkError(format!("HTTP request failed: {e}")))?;
 
         // Record the request for rate limiting
         self.rate_limiter.increment_request(endpoint_type).await;
 
         // Check for HTTP errors
-        if !response.status().is_success() {
-            let status = response.status();
+        let status = response.status;
+        if status != 200 && status != 201 {
             let error_text = response
                 .text()
-                .await
                 .unwrap_or_else(|_| "Unknown error".to_string());
             return Err(Errors::ApiError(format!("HTTP {status}: {error_text}")));
         }
 
         // Parse the response
-        let response_text = response.text().await?;
+        let response_text = response
+            .text()
+            .map_err(|e| Errors::NetworkError(format!("Failed to read response: {e}")))?;
         let parsed_response: T = serde_json::from_str(&response_text)?;
 
         Ok(parsed_response)
@@ -118,10 +130,10 @@ mod tests {
 
     #[test]
     fn test_public_client_creation() {
-        let client = Client::new();
+        let http_client = Arc::new(rest::native::NativeHttpClient::default());
         let rate_limiter = RateLimiter::new();
 
-        let rest_client = RestClient::new("https://api.bybit.com", rate_limiter, client);
+        let rest_client = RestClient::new("https://api.bybit.com", rate_limiter, http_client);
 
         assert_eq!(rest_client.base_url, "https://api.bybit.com");
     }

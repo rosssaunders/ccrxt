@@ -123,7 +123,7 @@ pub struct FillsResponse {
 impl RestClient {
     /// Get fills (trade history)
     ///
-    /// Reference: https://docs.kucoin.com/#list-fills
+    /// [docs](https://docs.kucoin.com/#list-fills)
     pub async fn get_fills(
         &self,
         request: GetFillsRequest,

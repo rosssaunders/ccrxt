@@ -52,22 +52,32 @@ pub enum MarginOrderTimeInForce {
 pub struct AddMarginOrderRequest {
     #[serde(rename = "clientOid")]
     pub client_oid: String,
+
     pub side: MarginOrderSide,
+
     pub symbol: String,
+
     #[serde(skip_serializing_if = "Option::is_none")]
     pub r#type: Option<MarginOrderType>,
+
     #[serde(skip_serializing_if = "Option::is_none")]
     pub stp: Option<MarginOrderStp>,
+
     #[serde(skip_serializing_if = "Option::is_none")]
     pub price: Option<String>,
+
     #[serde(skip_serializing_if = "Option::is_none")]
     pub size: Option<String>,
+
     #[serde(rename = "timeInForce", skip_serializing_if = "Option::is_none")]
     pub time_in_force: Option<MarginOrderTimeInForce>,
+
     #[serde(rename = "postOnly", skip_serializing_if = "Option::is_none")]
     pub post_only: Option<bool>,
+
     #[serde(skip_serializing_if = "Option::is_none")]
     pub hidden: Option<bool>,
+
     #[serde(skip_serializing_if = "Option::is_none")]
     pub iceberg: Option<bool>,
 }
@@ -87,14 +97,9 @@ impl RestClient {
         &self,
         request: AddMarginOrderRequest,
     ) -> Result<(AddMarginOrderResponse, ResponseHeaders)> {
-        let body = serde_json::to_string(&request).map_err(|e| {
-            crate::kucoin::spot::ApiError::JsonParsing(format!(
-                "Failed to serialize request: {}",
-                e
-            ))
-        })?;
-        let (response, headers): (RestResponse<AddMarginOrderResponse>, ResponseHeaders) =
-            self.post(ADD_MARGIN_ORDER_ENDPOINT, &body).await?;
+        let (response, headers): (RestResponse<AddMarginOrderResponse>, ResponseHeaders) = self
+            .post_with_request(ADD_MARGIN_ORDER_ENDPOINT, &request)
+            .await?;
         Ok((response.data, headers))
     }
 }

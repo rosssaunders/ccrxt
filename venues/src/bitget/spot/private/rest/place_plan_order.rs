@@ -1,11 +1,3 @@
-//! Place Plan Order endpoint for Bitget Spot API
-//!
-//! This endpoint allows placing trigger/stop orders (plan orders) for spot trading.
-//!
-//! Reference: https://www.bitget.com/api-doc/spot/trade/Place-Plan-Order
-//! Endpoint: POST /api/v2/spot/plan/place-plan-order
-//! Rate limit: 10 requests/second/UID
-
 use serde::{Deserialize, Serialize};
 
 use super::{
@@ -118,6 +110,8 @@ impl RestClient {
     ///
     /// Places a new plan order for spot trading that will be triggered when the specified
     /// trigger conditions are met.
+    ///
+    /// [docs](https://www.bitget.com/api-doc/spot/trade/Place-Plan-Order)
     ///
     /// # Arguments
     /// * `request` - The plan order placement request parameters

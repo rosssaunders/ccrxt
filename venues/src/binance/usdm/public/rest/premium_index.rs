@@ -66,7 +66,7 @@ impl RestClient {
     ///
     /// Mark Price and Funding Rate
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Mark-Price
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Mark-Price)
     ///
     /// Rate limit: 1 request per second
     ///

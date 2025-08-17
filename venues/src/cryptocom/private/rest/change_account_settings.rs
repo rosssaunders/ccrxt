@@ -40,7 +40,7 @@ pub type ChangeAccountSettingsResponse = ApiResult<ChangeAccountSettingsResult>;
 impl RestClient {
     /// Change the account STP settings
     ///
-    /// See: <https://exchange-docs.crypto.com/derivatives/index.html>
+    /// [docs](https://exchange-docs.crypto.com/derivatives/index.html)
     ///
     /// Rate limit: 2 requests per second
     ///

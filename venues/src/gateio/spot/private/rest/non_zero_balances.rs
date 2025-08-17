@@ -6,7 +6,7 @@ impl RestClient {
     /// Retrieve all spot account balances, filtering to only show accounts with non-zero available or locked amounts.
     /// This endpoint provides a convenient way to view active balances without zero-balance currencies.
     ///
-    /// [docs]: https://www.gate.io/docs/developers/apiv4/#list-spot-accounts
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#list-spot-accounts)
     ///
     /// Rate limit: 100 requests per second
     ///

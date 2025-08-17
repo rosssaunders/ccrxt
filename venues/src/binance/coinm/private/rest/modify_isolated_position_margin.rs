@@ -52,7 +52,7 @@ pub struct ModifyIsolatedPositionMarginResponse {
 impl RestClient {
     /// Modifies isolated position margin (TRADE) on Binance Coin-M Futures.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Modify-Isolated-Position-Margin
+    /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Modify-Isolated-Position-Margin)
     ///
     /// POST /dapi/v1/positionMargin
     /// Weight: 1

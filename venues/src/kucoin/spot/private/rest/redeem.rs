@@ -10,8 +10,10 @@ const REDEEM_ENDPOINT: &str = "/api/v3/redeem";
 pub struct RedeemRequest {
     /// Currency
     pub currency: String,
+
     /// Redemption amount
     pub size: String,
+
     /// Purchase order ID
     #[serde(rename = "purchaseOrderNo")]
     pub purchase_order_no: String,
@@ -28,20 +30,13 @@ pub struct RedeemResponse {
 impl RestClient {
     /// Redeem your loan order
     ///
-    /// Reference: https://docs.kucoin.com/margin-credit#redeem
+    /// [docs](https://docs.kucoin.com/margin-credit#redeem)
     pub async fn redeem(
         &self,
         request: RedeemRequest,
     ) -> Result<(RedeemResponse, ResponseHeaders)> {
-        let body = serde_json::to_string(&request).map_err(|e| {
-            crate::kucoin::spot::ApiError::JsonParsing(format!(
-                "Failed to serialize request: {}",
-                e
-            ))
-        })?;
-
         let (response, headers): (RestResponse<RedeemResponse>, ResponseHeaders) =
-            self.post(REDEEM_ENDPOINT, &body).await?;
+            self.post_with_request(REDEEM_ENDPOINT, &request).await?;
 
         Ok((response.data, headers))
     }

@@ -55,3 +55,5 @@ pub use extend_block_trade::ExtendBlockTradeRequest;
 pub use get_mmp_config::{GetMmpConfigRequest, MmpConfigResponse};
 pub use reset_mmp::ResetMmpRequest;
 pub use set_mmp_config::SetMmpConfigRequest;
+
+pub use crate::binance::shared::credentials::Credentials;

@@ -66,7 +66,7 @@ impl RestClient {
     ///
     /// Get option tick bands information
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-option-tick-bands
+    /// [docs](https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-option-tick-bands)
     ///
     /// Rate limit: 5 requests per 2 seconds
     ///
@@ -78,7 +78,7 @@ impl RestClient {
     pub async fn get_instrument_tick_bands(
         &self,
         request: GetInstrumentTickBandsRequest,
-    ) -> RestResult<Vec<InstrumentTickBandData>> {
+    ) -> RestResult<InstrumentTickBandData> {
         self.send_get_request(
             GET_INSTRUMENT_TICK_BANDS_ENDPOINT,
             Some(&request),

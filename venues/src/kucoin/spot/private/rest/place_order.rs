@@ -104,7 +104,7 @@ impl Default for PlaceOrderRequest {
 impl RestClient {
     /// Place a new order
     ///
-    /// Reference: https://docs.kucoin.com/#place-hf-order
+    /// [docs](https://docs.kucoin.com/#place-hf-order)
     pub async fn place_order(
         &self,
         request: PlaceOrderRequest,

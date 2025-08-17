@@ -7,8 +7,7 @@ impl RestClient {
     ///
     /// This endpoint returns leverage configuration for currencies.
     ///
-    /// # API Documentation
-    /// <https://www.gate.io/docs/developers/apiv4/#get-leverage-user-currency-config>
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#get-leverage-user-currency-config)
     pub async fn get_leverage_user_currency_config(
         &self,
         currency: Option<&str>,

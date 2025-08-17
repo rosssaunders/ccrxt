@@ -20,15 +20,19 @@ pub enum PurchaseOrderStatus {
 pub struct GetPurchaseOrdersRequest {
     /// Order status (required)
     pub status: PurchaseOrderStatus,
+
     /// Currency (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub currency: Option<String>,
+
     /// Purchase order ID (optional)
     #[serde(skip_serializing_if = "Option::is_none", rename = "purchaseOrderNo")]
     pub purchase_order_no: Option<String>,
+
     /// Current page; default is 1
     #[serde(skip_serializing_if = "Option::is_none", rename = "currentPage")]
     pub current_page: Option<i32>,
+
     /// Page size; 1<=pageSize<=50; default is 50
     #[serde(skip_serializing_if = "Option::is_none", rename = "pageSize")]
     pub page_size: Option<i32>,
@@ -39,27 +43,35 @@ pub struct GetPurchaseOrdersRequest {
 pub struct PurchaseOrder {
     /// Currency
     pub currency: String,
+
     /// Purchase order ID
     #[serde(rename = "purchaseOrderNo")]
     pub purchase_order_no: String,
+
     /// Purchase amount
     #[serde(rename = "purchaseSize")]
     pub purchase_size: String,
+
     /// Matched amount
     #[serde(rename = "matchSize")]
     pub match_size: String,
+
     /// Redemption size
     #[serde(rename = "redeemSize")]
     pub redeem_size: String,
+
     /// Purchase interest rate
     #[serde(rename = "interestRate")]
     pub interest_rate: String,
+
     /// Incomes(Interest)
     #[serde(rename = "incomeSize")]
     pub income_size: String,
+
     /// Time of purchase
     #[serde(rename = "applyTime")]
     pub apply_time: String,
+
     /// Status
     pub status: String,
 }
@@ -70,15 +82,19 @@ pub struct PurchaseOrdersResponse {
     /// Current page
     #[serde(rename = "currentPage")]
     pub current_page: i32,
+
     /// Page size
     #[serde(rename = "pageSize")]
     pub page_size: i32,
+
     /// Total number
     #[serde(rename = "totalNum")]
     pub total_num: i32,
+
     /// Total pages
     #[serde(rename = "totalPage")]
     pub total_page: i32,
+
     /// Purchase order items
     pub items: Vec<PurchaseOrder>,
 }
@@ -86,7 +102,7 @@ pub struct PurchaseOrdersResponse {
 impl RestClient {
     /// Get purchase orders with pagination
     ///
-    /// Reference: https://docs.kucoin.com/margin-credit#get-purchase-orders
+    /// [docs](https://docs.kucoin.com/margin-credit#get-purchase-orders)
     pub async fn get_purchase_orders(
         &self,
         request: GetPurchaseOrdersRequest,

@@ -56,7 +56,7 @@ impl RestClient {
     /// With best effort, cancel all open orders. This may require you to make the
     /// request multiple times until all of the open orders are deleted.
     ///
-    /// [API Documentation](https://docs.cdp.coinbase.com/exchange/reference/exchangerestapi_deleteorders)
+    /// [docs](https://docs.cdp.coinbase.com/exchange/reference/exchangerestapi_deleteorders)
     ///
     /// Rate limit: 100 requests per second
     ///
@@ -81,7 +81,7 @@ impl RestClient {
     /// Cancel a single open order by ID. Orders can be canceled using either the exchange assigned ID
     /// or the client assigned client_oid. When using client_oid it must be preceded by the "client:" namespace.
     ///
-    /// [API Documentation](https://docs.cdp.coinbase.com/exchange/reference/exchangerestapi_deleteorder)
+    /// [docs](https://docs.cdp.coinbase.com/exchange/reference/exchangerestapi_deleteorder)
     ///
     /// Rate limit: 100 requests per second
     ///

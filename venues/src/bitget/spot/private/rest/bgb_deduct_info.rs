@@ -50,7 +50,9 @@ impl RestClient {
     /// Get BGB Deduct Info
     ///
     /// Get the current BGB deduct status for fee optimization.
-    /// [docs]: https://www.bitget.com/api-doc/spot/account/Get-BGB-Deduct-Info
+    ///
+    /// [docs](https://www.bitget.com/api-doc/spot/account/Get-BGB-Deduct-Info)
+    ///
     ///
     /// Rate limit: 5 req/sec/UID
     ///
@@ -59,14 +61,8 @@ impl RestClient {
         &self,
         _request: GetBgbDeductInfoRequest,
     ) -> crate::bitget::spot::RestResult<GetBgbDeductInfoResponse> {
-        self.send_signed_request_no_params(
-            BGB_DEDUCT_INFO_ENDPOINT,
-            reqwest::Method::GET,
-            5,
-            false,
-            None,
-        )
-        .await
+        self.send_get_signed_request_no_params(BGB_DEDUCT_INFO_ENDPOINT, 5, false, None)
+            .await
     }
 }
 

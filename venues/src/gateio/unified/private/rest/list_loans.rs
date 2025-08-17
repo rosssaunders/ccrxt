@@ -10,8 +10,7 @@ impl RestClient {
     ///
     /// This endpoint returns the borrowing history.
     ///
-    /// # API Documentation
-    /// <https://www.gate.io/docs/developers/apiv4/#list-loans>
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#list-loans)
     pub async fn list_loans(
         &self,
         request: ListLoansRequest,

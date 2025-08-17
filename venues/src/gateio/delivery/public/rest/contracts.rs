@@ -18,6 +18,7 @@ pub struct DeliveryContractsRequest {
 pub struct DeliveryContractRequest {
     /// Settlement currency
     pub settle: String,
+
     /// Contract name
     pub contract: String,
 }
@@ -140,7 +141,7 @@ impl RestClient {
     ///
     /// Retrieves all available delivery contracts for the specified settlement currency.
     ///
-    /// [docs]: https://www.gate.io/docs/developers/apiv4/en/#list-all-futures-contracts-2
+    /// [docs](https://www.gate.io/docs/developers/apiv4/en/#list-all-futures-contracts-2)
     ///
     /// Rate limit: 10 requests per second
     ///
@@ -161,7 +162,7 @@ impl RestClient {
     ///
     /// Retrieves detailed information about a specific delivery contract.
     ///
-    /// [docs]: https://www.gate.io/docs/developers/apiv4/en/#get-a-single-contract-2
+    /// [docs](https://www.gate.io/docs/developers/apiv4/en/#get-a-single-contract-2)
     ///
     /// Rate limit: 10 requests per second
     ///
@@ -291,7 +292,7 @@ mod tests {
         assert_eq!(contract.trade_size, 5000000);
         assert_eq!(contract.position_size, 1000000);
         assert_eq!(contract.config_change_time, 1640995200.0);
-        assert_eq!(contract.in_delisting, false);
+        assert!(!contract.in_delisting);
         assert_eq!(contract.orders_limit, 100);
         assert_eq!(contract.enable_bonus, Some(true));
         assert_eq!(contract.enable_credit, Some(false));
@@ -810,7 +811,7 @@ mod tests {
         }"#;
 
         let contract: DeliveryContract = serde_json::from_str(json).unwrap();
-        assert_eq!(contract.in_delisting, true);
+        assert!(contract.in_delisting);
         assert_eq!(contract.position_size, 0);
         assert_eq!(contract.orders_limit, 0);
         assert_eq!(contract.settle_price, Some("42800.0".to_string()));

@@ -64,7 +64,7 @@ impl RestClient {
     /// A buy side indicates a down-tick because the maker was a buy order and their order was removed.
     /// A sell side indicates an up-tick.
     ///
-    /// [API Documentation](https://docs.cdp.coinbase.com/exchange/reference/exchangerestapi_getproducttrades)
+    /// [docs](https://docs.cdp.coinbase.com/exchange/reference/exchangerestapi_getproducttrades)
     ///
     /// Rate limit: 10 requests per second
     ///
@@ -85,15 +85,8 @@ impl RestClient {
             .await?;
 
         // Extract pagination headers
-        let before = headers
-            .get("CB-BEFORE")
-            .and_then(|value| value.to_str().ok())
-            .map(|s| s.to_string());
-
-        let after = headers
-            .get("CB-AFTER")
-            .and_then(|value| value.to_str().ok())
-            .map(|s| s.to_string());
+        let before = headers.get("CB-BEFORE").cloned();
+        let after = headers.get("CB-AFTER").cloned();
 
         let pagination = if before.is_some() || after.is_some() {
             Some(PaginationInfo { before, after })

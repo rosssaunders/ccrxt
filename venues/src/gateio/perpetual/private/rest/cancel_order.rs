@@ -7,8 +7,7 @@ impl RestClient {
     ///
     /// This endpoint cancels a specific futures order.
     ///
-    /// See: Gate.io API documentation
-    /// <https://www.gate.io/docs/developers/apiv4/#cancel-a-single-order>
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#cancel-a-single-order)
     ///
     /// Rate limit: 100 requests per second
     ///

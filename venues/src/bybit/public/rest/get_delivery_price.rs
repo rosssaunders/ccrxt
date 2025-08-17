@@ -84,7 +84,7 @@ impl RestClient {
     ///
     /// Query the delivery price of futures/options that have been delivered in the past.
     ///
-    /// [API Documentation](https://bybit-exchange.github.io/docs/v5/market/delivery-price)
+    /// [docs](https://bybit-exchange.github.io/docs/v5/market/delivery-price)
     ///
     /// Rate limit: 10 requests per second
     ///

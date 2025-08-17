@@ -1,7 +1,3 @@
-//! Request and response structs for public/get_combo_details endpoint
-//!
-//! Retrieves information about a combo
-
 use serde::{Deserialize, Serialize};
 
 use super::{RestClient, get_combos::ComboInfo};
@@ -31,7 +27,7 @@ impl RestClient {
     /// # Returns
     /// A result containing the response with combo information or an error
     ///
-    /// [Official API docs](https://docs.deribit.com/#public-get_combo_details)
+    /// [docs](https://docs.deribit.com/#public-get_combo_details)
     pub async fn get_combo_details(
         &self,
         params: GetComboDetailsRequest,
@@ -47,6 +43,8 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
+    use std::sync::Arc;
+
     use serde_json::json;
 
     use super::*;
@@ -141,10 +139,10 @@ mod tests {
 
     #[tokio::test]
     async fn test_endpoint_type_usage() {
-        let client = reqwest::Client::new();
+        let http_client = Arc::new(rest::native::NativeHttpClient::default());
         let rate_limiter = RateLimiter::new(AccountTier::Tier4);
 
-        let rest_client = RestClient::new("https://test.deribit.com", client, rate_limiter);
+        let rest_client = RestClient::new("https://test.deribit.com", http_client, rate_limiter);
 
         // Test that we can create a request - this doesn't actually call the API
         let _request = GetComboDetailsRequest {

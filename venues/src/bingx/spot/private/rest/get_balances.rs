@@ -46,6 +46,9 @@ impl RestClient {
     /// Get account balances
     ///
     /// Retrieves the account balance for all assets in the spot/fund account.
+    ///
+    /// [docs](https://bingx-api.github.io/docs/#/en-us/spot/account-api.html#Query%20Assets)
+    ///
     /// Rate limit: 5/s by UID
     ///
     /// # Arguments
@@ -53,9 +56,6 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the account balances or an error
-    ///
-    /// # API Documentation
-    /// - [docs]: https://bingx-api.github.io/docs/#/en-us/spot/account-api.html#Query%20Assets
     pub async fn get_balances(
         &self,
         request: &GetBalancesRequest,

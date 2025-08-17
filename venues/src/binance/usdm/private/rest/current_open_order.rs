@@ -6,10 +6,6 @@ use crate::binance::usdm::{RestResult, enums::*};
 const CURRENT_OPEN_ORDER_ENDPOINT: &str = "/fapi/v1/openOrder";
 
 /// Request parameters for the Query Current Open Order endpoint.
-///
-/// See the [Binance API documentation][docs] for details.
-///
-/// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Query-Current-Open-Order
 #[derive(Debug, Clone, Serialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct CurrentOpenOrderRequest {
@@ -39,10 +35,6 @@ pub struct CurrentOpenOrderRequest {
 }
 
 /// Response for the Query Current Open Order endpoint.
-///
-/// See the [Binance API documentation][docs] for field details and valid values.
-///
-/// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Query-Current-Open-Order
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct CurrentOpenOrderResponse {
@@ -136,7 +128,7 @@ impl UsdmClient {
     /// Check an order's status. Either `orderId` or `origClientOrderId` must be sent.
     /// If the queried order has been filled or cancelled, the error message "Order does not exist" will be returned.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Query-Current-Open-Order
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Query-Current-Open-Order)
     ///
     /// Rate limit: 1
     ///

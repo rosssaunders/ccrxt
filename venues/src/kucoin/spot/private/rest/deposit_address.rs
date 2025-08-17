@@ -36,7 +36,7 @@ pub struct DepositAddress {
 impl RestClient {
     /// Get deposit address for a currency
     ///
-    /// Reference: https://docs.kucoin.com/#get-deposit-addresses-v2
+    /// [docs](https://docs.kucoin.com/#get-deposit-addresses-v2)
     pub async fn get_deposit_address(
         &self,
         request: GetDepositAddressRequest,

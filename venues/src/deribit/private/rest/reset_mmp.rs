@@ -89,7 +89,7 @@ impl RestClient {
     /// Reset MMP (Market Maker Protection) for the specified index and optional MMP group.
     /// This endpoint requires trade:read_write or block_rfq:read_write scope when block_rfq is true.
     ///
-    /// [docs]: https://docs.deribit.com/v2/#private-reset_mmp
+    /// [docs](https://docs.deribit.com/v2/#private-reset_mmp)
     ///
     /// Rate limit: Matching engine endpoint (tier-based limits)
     /// Scope: trade:read_write or block_rfq:read_write (when block_rfq = true)
@@ -107,29 +107,13 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use rest::secrets::ExposableSecret;
+    use std::sync::Arc;
+
+    use rest::secrets::SecretString;
     use serde_json::{Value, json};
 
     use super::*;
-    use crate::deribit::AccountTier;
-
-    // Test secret implementation
-    #[derive(Clone)]
-    struct PlainTextSecret {
-        secret: String,
-    }
-
-    impl PlainTextSecret {
-        fn new(secret: String) -> Self {
-            Self { secret }
-        }
-    }
-
-    impl ExposableSecret for PlainTextSecret {
-        fn expose_secret(&self) -> String {
-            self.secret.clone()
-        }
-    }
+    use crate::deribit::{AccountTier, private::rest::credentials::Credentials};
 
     #[test]
     fn test_index_name_serialization() {
@@ -230,19 +214,18 @@ mod tests {
     #[tokio::test]
     async fn test_reset_mmp_method_exists() {
         // Test that the method exists and compiles without needing to call it
-        let api_key =
-            Box::new(PlainTextSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret =
-            Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
-        let client = reqwest::Client::new();
+        let credentials = Credentials {
+            api_key: SecretString::from("test_key".to_string()),
+            api_secret: SecretString::from("test_secret".to_string()),
+        };
+        let http_client = Arc::new(rest::native::NativeHttpClient::default());
         let rate_limiter = crate::deribit::RateLimiter::new(AccountTier::Tier4);
 
         let rest_client = RestClient::new(
-            api_key,
-            api_secret,
+            credentials,
             "https://test.deribit.com",
             rate_limiter,
-            client,
+            http_client,
         );
 
         // Test that we can get a function reference to the method
@@ -303,19 +286,18 @@ mod tests {
         // This test demonstrates that the endpoint is properly integrated
         // and all types are accessible from the top-level module
 
-        let api_key =
-            Box::new(PlainTextSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret =
-            Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
-        let client = reqwest::Client::new();
+        let credentials = Credentials {
+            api_key: SecretString::from("test_key".to_string()),
+            api_secret: SecretString::from("test_secret".to_string()),
+        };
+        let http_client = Arc::new(rest::native::NativeHttpClient::default());
         let rate_limiter = crate::deribit::RateLimiter::new(AccountTier::Tier4);
 
         let rest_client = RestClient::new(
-            api_key,
-            api_secret,
+            credentials,
             "https://test.deribit.com",
             rate_limiter,
-            client,
+            http_client,
         );
 
         // Test that we can access all the types from the module

@@ -40,6 +40,8 @@ impl RestClient {
     ///
     /// Get the best bid and ask prices and volumes for a symbol.
     ///
+    /// [docs](https://bingx-api.github.io/docs/#/en-us/spot/market-api.html#Symbol%20Order%20Book%20Ticker)
+    ///
     /// # Arguments
     /// * `request` - The symbol order book ticker request parameters
     ///
@@ -48,11 +50,6 @@ impl RestClient {
     ///
     /// # Rate Limit
     /// - IP: 100 requests per 10 seconds (Group 1)
-    ///
-    /// # API Documentation
-    /// - Endpoint: GET /openApi/spot/v1/ticker/bookTicker
-    /// - Content-Type: request body(application/json)
-    /// - [docs]: https://bingx-api.github.io/docs/#/en-us/spot/market-api.html#Symbol%20Order%20Book%20Ticker
     pub async fn get_symbol_order_book_ticker(
         &self,
         request: &GetSymbolOrderBookTickerRequest,
@@ -68,7 +65,6 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use reqwest::Client;
 
     use super::*;
     use crate::bingx::spot::RateLimiter;
@@ -118,7 +114,7 @@ mod tests {
     async fn test_get_symbol_order_book_ticker_method_exists() {
         let client = RestClient::new(
             "http://127.0.0.1:0", // Invalid URL to guarantee error
-            Client::new(),
+            std::sync::Arc::new(rest::native::NativeHttpClient::default()),
             RateLimiter::new(),
         );
 

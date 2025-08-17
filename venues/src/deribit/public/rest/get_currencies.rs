@@ -1,7 +1,3 @@
-//! Implements the /public/get_currencies endpoint for Deribit.
-//!
-//! Retrieves all cryptocurrencies supported by the API.
-
 use serde::Deserialize;
 
 use super::RestClient;
@@ -73,7 +69,7 @@ impl RestClient {
     ///
     /// Retrieves all cryptocurrencies supported by the API.
     ///
-    /// [Official API docs](https://docs.deribit.com/#public-get_currencies)
+    /// [docs](https://docs.deribit.com/#public-get_currencies)
     pub async fn get_currencies(&self) -> RestResult<GetCurrenciesResponse> {
         self.send_post_request(
             CURRENCIES_ENDPOINT,

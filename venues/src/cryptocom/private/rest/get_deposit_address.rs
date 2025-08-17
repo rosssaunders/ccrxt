@@ -4,6 +4,7 @@ use super::client::RestClient;
 use crate::cryptocom::RestResult;
 
 const DEPOSIT_ADDRESS_ENDPOINT: &str = "private/get-deposit-address";
+
 /// Request parameters for get deposit address
 #[derive(Debug, Clone, Serialize)]
 pub struct GetDepositAddressRequest {
@@ -16,14 +17,19 @@ pub struct GetDepositAddressRequest {
 pub struct DepositAddress {
     /// Deposit address ID
     pub id: String,
+
     /// Currency symbol e.g. BTC, CRO
     pub currency: String,
+
     /// Network e.g. ETH, CRO
     pub network: String,
+
     /// Deposit address with Address Tag (if any)
     pub address: String,
+
     /// Creation timestamp
     pub create_time: u64,
+
     /// Address status: "0" - Inactive, "1" - Active
     pub status: String,
 }
@@ -41,7 +47,7 @@ impl RestClient {
     /// Fetches deposit address. Withdrawal setting must be enabled for your API Key.
     /// If you do not see the option when viewing your API Keys, this feature is not yet available for you.
     ///
-    /// See: <>
+    /// [docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#private-get-deposit-address)
     ///
     /// # Arguments
     /// * `params` - Request parameters including currency

@@ -56,7 +56,7 @@ impl RestClient {
     ///
     /// Get the index component information data on the market.
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-index-components
+    /// [docs](https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-index-components)
     ///
     /// Rate limit: 20 requests per 2 seconds
     ///

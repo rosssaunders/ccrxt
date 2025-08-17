@@ -14,7 +14,7 @@ pub enum Errors {
     /// such as network issues or HTTP errors.
     /// It can be used to wrap any error that occurs during the request process.
     /// This variant is not used for errors returned by the Binance API itself.
-    HttpError(reqwest::Error),
+    HttpError(String),
 
     /// An error returned by the Binance API
     ApiError(ApiError),

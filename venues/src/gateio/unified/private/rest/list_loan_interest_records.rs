@@ -10,8 +10,7 @@ impl RestClient {
     ///
     /// This endpoint returns the interest records for loans.
     ///
-    /// # API Documentation
-    /// <https://www.gate.io/docs/developers/apiv4/#list-loan-interest-records>
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#list-loan-interest-records)
     pub async fn list_loan_interest_records(
         &self,
         request: ListLoanInterestRecordsRequest,

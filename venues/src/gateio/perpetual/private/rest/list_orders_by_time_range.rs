@@ -9,16 +9,21 @@ const ENDPOINT_FUTURES_PREFIX: &str = "/futures";
 pub struct ListOrdersByTimeRangeRequest {
     /// Settlement currency
     pub settle: String,
+
     /// Contract filter
     #[serde(skip_serializing_if = "Option::is_none")]
     pub contract: Option<String>,
+
     /// Start time (Unix timestamp in seconds)
     pub from: i64,
+
     /// End time (Unix timestamp in seconds)
     pub to: i64,
+
     /// Maximum number of records to return (1-1000, default: 100)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i32>,
+
     /// Page offset
     #[serde(skip_serializing_if = "Option::is_none")]
     pub offset: Option<i32>,
@@ -29,8 +34,7 @@ impl RestClient {
     ///
     /// Returns orders within a specific time range for better performance.
     ///
-    /// See: Gate.io API documentation
-    /// <https://www.gate.io/docs/developers/apiv4/#query-futures-orders-by-time-range>
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#query-futures-orders-by-time-range)
     ///
     /// Rate limit: 100 requests per second
     ///

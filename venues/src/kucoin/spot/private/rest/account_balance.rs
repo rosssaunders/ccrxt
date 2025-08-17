@@ -36,7 +36,7 @@ pub struct AccountBalance {
 impl RestClient {
     /// Get account balance for a specific currency or all currencies
     ///
-    /// Reference: https://docs.kucoin.com/#list-accounts
+    /// [docs](https://docs.kucoin.com/#list-accounts)
     pub async fn get_account_balance(
         &self,
         request: GetAccountBalanceRequest,

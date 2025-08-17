@@ -14,30 +14,32 @@
 //!   - `X-BM-RateLimit-Limit`: Max number of requests in current window  
 //!   - `X-BM-RateLimit-Reset`: Current time window in seconds
 
-use std::borrow::Cow;
+use std::{borrow::Cow, sync::Arc};
 
 use base64::{Engine as _, engine::general_purpose};
 use hmac::{Hmac, Mac};
-use reqwest::Client;
-use rest::secrets::ExposableSecret;
+use rest::{
+    HttpClient,
+    http_client::{Method as HttpMethod, RequestBuilder},
+    secrets::ExposableSecret,
+};
 use serde::{Deserialize, de::DeserializeOwned};
 use sha2::Sha256;
 
 use crate::bitmart::{
     Errors, RestResult,
     rate_limit::{EndpointType, RateLimiter},
+    shared::Credentials,
 };
 
 /// BitMart private REST client
 pub struct RestClient {
-    /// The encrypted API key
-    api_key: Box<dyn ExposableSecret>,
-    /// The encrypted API secret for signing requests
-    api_secret: Box<dyn ExposableSecret>,
+    /// The credentials for API authentication
+    credentials: Credentials,
     /// The base URL for the BitMart private REST API
     base_url: Cow<'static, str>,
     /// HTTP client for making requests
-    client: Client,
+    http_client: Arc<dyn HttpClient>,
     /// Rate limiter for managing API limits
     rate_limiter: RateLimiter,
 }
@@ -56,26 +58,23 @@ impl RestClient {
     /// Creates a new RestClient with encrypted API credentials
     ///
     /// # Arguments
-    /// * `api_key` - The encrypted API key
-    /// * `api_secret` - The encrypted API secret
+    /// * `credentials` - The encrypted API credentials
     /// * `base_url` - The base URL for the API
-    /// * `client` - The HTTP client to use for requests
+    /// * `http_client` - The HTTP client to use for requests
     /// * `rate_limiter` - The rate limiter for managing API limits
     ///
     /// # Returns
     /// A new RestClient instance
     pub fn new(
-        api_key: Box<dyn ExposableSecret>,
-        api_secret: Box<dyn ExposableSecret>,
+        credentials: Credentials,
         base_url: impl Into<Cow<'static, str>>,
-        client: Client,
+        http_client: Arc<dyn HttpClient>,
         rate_limiter: RateLimiter,
     ) -> Self {
         Self {
-            api_key,
-            api_secret,
+            credentials,
             base_url: base_url.into(),
-            client,
+            http_client,
             rate_limiter,
         }
     }
@@ -106,7 +105,7 @@ impl RestClient {
         let message = format!("{timestamp}{method}{request_path}{body}");
 
         // Sign with HMAC SHA256
-        let api_secret = self.api_secret.expose_secret();
+        let api_secret = self.credentials.api_secret.expose_secret();
         let mut mac = Hmac::<Sha256>::new_from_slice(api_secret.as_bytes())
             .map_err(|_| Errors::InvalidApiKey())?;
         mac.update(message.as_bytes());
@@ -166,16 +165,19 @@ impl RestClient {
         let signature = self.sign_request(&timestamp, "GET", &request_path, "")?;
 
         // Build GET request
-        let request_builder = self
-            .client
-            .get(&url)
-            .header("X-BM-KEY", self.api_key.expose_secret())
-            .header("X-BM-SIGN", signature)
-            .header("X-BM-TIMESTAMP", timestamp)
-            .header("Content-Type", "application/json");
+        let request = RequestBuilder::new(HttpMethod::Get, url)
+            .header("X-BM-KEY", self.credentials.api_key.expose_secret())
+            .header("X-BM-SIGN", &signature)
+            .header("X-BM-TIMESTAMP", &timestamp)
+            .header("Content-Type", "application/json")
+            .build();
 
         // Send request
-        let response = request_builder.send().await?;
+        let response = self
+            .http_client
+            .execute(request)
+            .await
+            .map_err(|e| Errors::NetworkError(format!("HTTP request failed: {e}")))?;
 
         // Record the request for rate limiting
         self.rate_limiter.increment_request(endpoint_type).await;
@@ -223,17 +225,20 @@ impl RestClient {
         let signature = self.sign_request(&timestamp, "POST", endpoint, &body)?;
 
         // Build POST request
-        let request_builder = self
-            .client
-            .post(&url)
-            .header("X-BM-KEY", self.api_key.expose_secret())
-            .header("X-BM-SIGN", signature)
-            .header("X-BM-TIMESTAMP", timestamp)
+        let request = RequestBuilder::new(HttpMethod::Post, url)
+            .header("X-BM-KEY", self.credentials.api_key.expose_secret())
+            .header("X-BM-SIGN", &signature)
+            .header("X-BM-TIMESTAMP", &timestamp)
             .header("Content-Type", "application/json")
-            .body(body);
+            .body(body.into_bytes())
+            .build();
 
         // Send request
-        let response = request_builder.send().await?;
+        let response = self
+            .http_client
+            .execute(request)
+            .await
+            .map_err(|e| Errors::NetworkError(format!("HTTP request failed: {e}")))?;
 
         // Record the request for rate limiting
         self.rate_limiter.increment_request(endpoint_type).await;
@@ -292,16 +297,19 @@ impl RestClient {
         let signature = self.sign_request(&timestamp, "DELETE", &request_path, "")?;
 
         // Build DELETE request
-        let request_builder = self
-            .client
-            .delete(&url)
-            .header("X-BM-KEY", self.api_key.expose_secret())
-            .header("X-BM-SIGN", signature)
-            .header("X-BM-TIMESTAMP", timestamp)
-            .header("Content-Type", "application/json");
+        let request = RequestBuilder::new(HttpMethod::Delete, url)
+            .header("X-BM-KEY", self.credentials.api_key.expose_secret())
+            .header("X-BM-SIGN", &signature)
+            .header("X-BM-TIMESTAMP", &timestamp)
+            .header("Content-Type", "application/json")
+            .build();
 
         // Send request
-        let response = request_builder.send().await?;
+        let response = self
+            .http_client
+            .execute(request)
+            .await
+            .map_err(|e| Errors::NetworkError(format!("HTTP request failed: {e}")))?;
 
         // Record the request for rate limiting
         self.rate_limiter.increment_request(endpoint_type).await;
@@ -349,17 +357,20 @@ impl RestClient {
         let signature = self.sign_request(&timestamp, "PUT", endpoint, &body)?;
 
         // Build PUT request
-        let request_builder = self
-            .client
-            .put(&url)
-            .header("X-BM-KEY", self.api_key.expose_secret())
-            .header("X-BM-SIGN", signature)
-            .header("X-BM-TIMESTAMP", timestamp)
+        let request = RequestBuilder::new(HttpMethod::Put, url)
+            .header("X-BM-KEY", self.credentials.api_key.expose_secret())
+            .header("X-BM-SIGN", &signature)
+            .header("X-BM-TIMESTAMP", &timestamp)
             .header("Content-Type", "application/json")
-            .body(body);
+            .body(body.into_bytes())
+            .build();
 
         // Send request
-        let response = request_builder.send().await?;
+        let response = self
+            .http_client
+            .execute(request)
+            .await
+            .map_err(|e| Errors::NetworkError(format!("HTTP request failed: {e}")))?;
 
         // Record the request for rate limiting
         self.rate_limiter.increment_request(endpoint_type).await;
@@ -374,12 +385,14 @@ impl RestClient {
     ///
     /// # Returns
     /// A result containing the parsed response data or an error
-    async fn parse_response<T>(&self, response: reqwest::Response) -> RestResult<T>
+    async fn parse_response<T>(&self, response: rest::http_client::Response) -> RestResult<T>
     where
         T: DeserializeOwned,
     {
         // Parse response
-        let response_text = response.text().await?;
+        let response_text = response
+            .text()
+            .map_err(|e| Errors::NetworkError(format!("Failed to read response: {e}")))?;
         let bitmart_response: BitMartResponse<T> =
             serde_json::from_str(&response_text).map_err(|e| {
                 Errors::Error(format!(
@@ -498,41 +511,19 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use rest::secrets::ExposableSecret;
-
     use super::*;
     use crate::bitmart::rate_limit::RateLimiter;
 
-    #[derive(Clone)]
-    struct TestSecret {
-        value: String,
-    }
-
-    impl TestSecret {
-        fn new(value: String) -> Self {
-            Self { value }
-        }
-    }
-
-    impl ExposableSecret for TestSecret {
-        fn expose_secret(&self) -> String {
-            self.value.clone()
-        }
-    }
-
     #[test]
     fn test_private_client_creation() {
-        let api_key = Box::new(TestSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret =
-            Box::new(TestSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
-        let client = Client::new();
+        let credentials = Credentials::new("test_key", "test_secret");
+        let http_client = Arc::new(rest::native::NativeHttpClient::default());
         let rate_limiter = RateLimiter::new();
 
         let rest_client = RestClient::new(
-            api_key,
-            api_secret,
+            credentials,
             "https://api-cloud.bitmart.com",
-            client,
+            http_client,
             rate_limiter,
         );
 
@@ -541,17 +532,14 @@ mod tests {
 
     #[test]
     fn test_signature_generation() {
-        let api_key = Box::new(TestSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret =
-            Box::new(TestSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
-        let client = Client::new();
+        let credentials = Credentials::new("test_key", "test_secret");
+        let http_client = Arc::new(rest::native::NativeHttpClient::default());
         let rate_limiter = RateLimiter::new();
 
         let rest_client = RestClient::new(
-            api_key,
-            api_secret,
+            credentials,
             "https://api-cloud.bitmart.com",
-            client,
+            http_client,
             rate_limiter,
         );
 

@@ -18,83 +18,122 @@ pub struct GetContractRequest {
 pub struct ContractInfo {
     /// Symbol of the contract
     pub symbol: String,
+
     /// Root symbol of the contract
     pub root_symbol: String,
+
     /// Type of the contract
     #[serde(rename = "type")]
     pub contract_type: ContractType,
+
     /// First open date
     pub first_open_date: i64,
+
     /// Expiry date
     pub expire_date: Option<i64>,
+
     /// Settlement date
     pub settle_date: Option<i64>,
+
     /// Base currency
     pub base_currency: String,
+
     /// Quote currency
     pub quote_currency: String,
+
     /// Settlement currency
     pub settle_currency: String,
+
     /// Maximum order quantity
     pub max_order_qty: f64,
+
     /// Maximum price
     pub max_price: f64,
+
     /// Lot size
     pub lot_size: f64,
+
     /// Tick size
     pub tick_size: f64,
+
     /// Index price tick size
     pub index_price_tick_size: f64,
+
     /// Multiplier
     pub multiplier: f64,
+
     /// Initial margin
     pub initial_margin: f64,
+
     /// Maintenance margin
     pub maintenance_margin: Option<f64>,
+
     /// Maximum risk limit
     pub max_risk_limit: f64,
+
     /// Minimum risk limit
     pub min_risk_limit: f64,
+
     /// Risk limit step
     pub risk_limit_step: Option<f64>,
+
     /// Maker fee rate
     pub maker_fee_rate: f64,
+
     /// Taker fee rate
     pub taker_fee_rate: f64,
+
     /// Taker fixed fee
     pub taker_fixed_fee: Option<f64>,
+
     /// Maker fixed fee
     pub maker_fixed_fee: Option<f64>,
+
     /// Settlement fee
     pub settlement_fee: Option<f64>,
+
     /// Is quanto
     pub is_quanto: bool,
+
     /// Is inverse
     pub is_inverse: bool,
+
     /// Mark method
     pub mark_method: Option<String>,
+
     /// Fair method
     pub fair_method: Option<String>,
+
     /// Funding base symbol
     pub funding_base_symbol: Option<String>,
+
     /// Funding quote symbol
     pub funding_quote_symbol: Option<String>,
+
     /// Funding rate symbol
     pub funding_rate_symbol: Option<String>,
+
     /// Index symbol
     pub index_symbol: Option<String>,
+
     /// Settlement symbol
     pub settlement_symbol: Option<String>,
+
     /// Status
     pub status: ContractStatus,
+
     /// Fund fee begin time
     pub fund_fee_begin_time: Option<i64>,
+
     /// Fund fee end time
     pub fund_fee_end_time: Option<i64>,
+
     /// Fund interval
     pub fund_interval: Option<i64>,
+
     /// Delivery fee
     pub delivery_fee: Option<f64>,
+
     /// Position limit
     pub position_limit: Option<f64>,
 }
@@ -109,7 +148,7 @@ pub type GetAllContractsResponse = Vec<ContractInfo>;
 impl super::RestClient {
     /// Get contract information for a specific symbol
     ///
-    /// <https://www.kucoin.com/docs-new/rest/futures-trading/market-data/get-symbol>
+    /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/market-data/get-symbol)
     pub async fn get_contract(
         &self,
         request: GetContractRequest,
@@ -121,7 +160,7 @@ impl super::RestClient {
 
     /// Get all contract information
     ///
-    /// <https://www.kucoin.com/docs-new/rest/futures-trading/market-data/get-all-symbols>
+    /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/market-data/get-all-symbols)
     pub async fn get_all_contracts(
         &self,
         _request: GetAllContractsRequest,

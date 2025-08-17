@@ -79,7 +79,8 @@ impl RestClient {
     ///
     /// Gets the current countdown cancel configuration for the specified underlying.
     ///
-    /// [docs]: (https://developers.binance.com/docs/derivatives/option/market-maker-endpoints/Get-Auto-Cancel-All-Open-Orders-Config)
+    /// [docs](https://developers.binance.com/docs/derivatives/option/market-maker-endpoints/Get-Auto-Cancel-All-Open-Orders-Config)
+    ///
     /// Method: GET /eapi/v1/countdownCancelAll
     /// Weight: 1
     /// Requires: API key and signature
@@ -96,7 +97,8 @@ impl RestClient {
     /// Sets a countdown timer to cancel all open orders for the specified underlying
     /// after the countdown period expires. Used as a safety mechanism.
     ///
-    /// [docs]: (https://developers.binance.com/docs/derivatives/option/market-maker-endpoints/Set-Auto-Cancel-All-Open-Orders-Config)
+    /// [docs](https://developers.binance.com/docs/derivatives/option/market-maker-endpoints/Set-Auto-Cancel-All-Open-Orders-Config)
+    ///
     /// Method: POST /eapi/v1/countdownCancelAll
     /// Weight: 1
     /// Requires: API key and signature
@@ -113,7 +115,7 @@ impl RestClient {
     /// Sends a heartbeat to reset the countdown timer. Must be called before the timer expires
     /// to prevent automatic cancellation of all orders.
     ///
-    /// [docs]: (https://developers.binance.com/docs/derivatives/option/market-maker-endpoints/Auto-Cancel-All-Open-Orders-Heartbeat)
+    /// [docs](https://developers.binance.com/docs/derivatives/option/market-maker-endpoints/Auto-Cancel-All-Open-Orders-Heartbeat)
     /// Method: POST /eapi/v1/countdownCancelAllHeartBeat
     /// Weight: 1
     /// Requires: API key and signature

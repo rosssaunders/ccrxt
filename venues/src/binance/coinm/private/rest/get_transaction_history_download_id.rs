@@ -33,7 +33,7 @@ pub struct GetDownloadIdResponse {
 impl RestClient {
     /// Get download ID for transaction history on Binance Coin-M Futures.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/account/rest-api/Get-Futures-Transaction-History-Download-Link-by-Id
+    /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/account/rest-api/Get-Futures-Transaction-History-Download-Link-by-Id)
     ///
     /// GET /dapi/v1/income/asyn
     /// Weight: 5

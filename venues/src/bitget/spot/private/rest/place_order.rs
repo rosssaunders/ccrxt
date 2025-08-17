@@ -1,11 +1,3 @@
-//! Place Order endpoint for Bitget Spot API
-//!
-//! This endpoint allows placing spot trading orders.
-//!
-//! Reference: https://www.bitget.com/api-doc/spot/trade/Place-Order
-//! Endpoint: POST /api/v2/spot/trade/place-order
-//! Rate limit: 10 requests/second/UID
-
 use serde::{Deserialize, Serialize};
 
 use super::super::RestClient;
@@ -113,6 +105,8 @@ impl RestClient {
     /// Place a spot trading order
     ///
     /// Places a new order for spot trading with the specified parameters.
+    ///
+    /// [docs](https://www.bitget.com/api-doc/spot/trade/Place-Order)
     ///
     /// # Arguments
     /// * `request` - The order placement request parameters

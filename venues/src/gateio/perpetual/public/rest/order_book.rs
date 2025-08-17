@@ -7,14 +7,18 @@ use super::RestClient;
 pub struct FuturesOrderBookRequest {
     /// Settlement currency
     pub settle: String,
+
     /// Contract name
     pub contract: String,
+
     /// Order book level (1-100, default 10)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub interval: Option<String>,
+
     /// Order book depth limit (1-100, default 10)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i32>,
+
     /// Request UTC timestamp in milliseconds
     #[serde(skip_serializing_if = "Option::is_none")]
     pub with_id: Option<bool>,
@@ -25,6 +29,7 @@ pub struct FuturesOrderBookRequest {
 pub struct OrderBookEntry {
     /// Price
     pub p: String,
+
     /// Size
     pub s: i64,
 }
@@ -54,8 +59,7 @@ impl RestClient {
     /// Retrieves the order book for a specific futures contract.
     /// Bids are sorted by price high to low, asks are sorted by price low to high.
     ///
-    /// # API Documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#futures-order-book>
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#futures-order-book)
     pub async fn get_futures_order_book(
         &self,
         params: FuturesOrderBookRequest,
@@ -189,7 +193,7 @@ mod tests {
 
             let json = serde_json::to_value(&request).unwrap();
             assert_eq!(json["limit"], limit);
-            assert!(limit >= 1 && limit <= 100);
+            assert!((1..=100).contains(&limit));
         }
     }
 
@@ -532,8 +536,8 @@ mod tests {
         // For timestamps (f64), use epsilon comparison due to floating-point precision limits
         // With large numbers like Unix timestamps, we need a larger epsilon
         let epsilon = 1e-6;
-        assert!((order_book.current - 1640995200.123456789).abs() < epsilon);
-        assert!((order_book.update - 1640995200.987654321).abs() < epsilon);
+        assert!((order_book.current - 1_640_995_200.123_456_7).abs() < epsilon);
+        assert!((order_book.update - 1_640_995_200.987_654_2).abs() < epsilon);
     }
 
     #[test]
@@ -651,7 +655,7 @@ mod tests {
 
             let json = serde_json::to_value(&request).unwrap();
             assert_eq!(json["limit"], depth);
-            assert!(depth >= 1 && depth <= 100);
+            assert!((1..=100).contains(&depth));
         }
     }
 

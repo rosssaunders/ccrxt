@@ -101,7 +101,7 @@ impl UsdmClient {
     ///
     /// Returns a list of trades for the account and symbol.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Account-Trade-List
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Account-Trade-List)
     ///
     /// Rate limit: 5
     ///

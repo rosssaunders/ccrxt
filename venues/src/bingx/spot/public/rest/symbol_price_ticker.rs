@@ -49,6 +49,8 @@ impl RestClient {
     ///
     /// Get the latest price for a symbol.
     ///
+    /// [docs](https://bingx-api.github.io/docs/#/en-us/spot/market-api.html#Symbol%20Price%20Ticker)
+    ///
     /// # Arguments
     /// * `request` - The symbol price ticker request parameters
     ///
@@ -57,11 +59,6 @@ impl RestClient {
     ///
     /// # Rate Limit
     /// - IP: 100 requests per 10 seconds (Group 1)
-    ///
-    /// # API Documentation
-    /// - Endpoint: GET /openApi/spot/v1/ticker/price
-    /// - Content-Type: request body(application/json)
-    /// - [docs]: https://bingx-api.github.io/docs/#/en-us/spot/market-api.html#Symbol%20Price%20Ticker
     pub async fn get_symbol_price_ticker(
         &self,
         request: &GetSymbolPriceTickerRequest,
@@ -77,7 +74,6 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use reqwest::Client;
 
     use super::*;
     use crate::bingx::spot::RateLimiter;
@@ -128,7 +124,7 @@ mod tests {
     async fn test_get_symbol_price_ticker_method_exists() {
         let client = RestClient::new(
             "http://127.0.0.1:0", // Invalid URL to guarantee error
-            Client::new(),
+            std::sync::Arc::new(rest::native::NativeHttpClient::default()),
             RateLimiter::new(),
         );
 

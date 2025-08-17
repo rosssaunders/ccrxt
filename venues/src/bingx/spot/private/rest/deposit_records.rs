@@ -81,6 +81,8 @@ impl RestClient {
     ///
     /// Retrieves the deposit history for the account.
     ///
+    /// [docs](https://bingx-api.github.io/docs/#/en-us/spot/wallet-api.html#Deposit%20records)
+    ///
     /// # Arguments
     /// * `request` - The deposit records request parameters
     ///
@@ -93,9 +95,6 @@ impl RestClient {
     ///
     /// # API Permissions
     /// - Read permission required
-    ///
-    /// # API Documentation
-    /// - [docs]: https://bingx-api.github.io/docs/#/en-us/spot/wallet-api.html#Deposit%20records
     pub async fn get_deposit_records(
         &self,
         request: &GetDepositRecordsRequest,

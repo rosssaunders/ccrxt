@@ -7,8 +7,7 @@ impl RestClient {
     ///
     /// This endpoint returns details for a specific unified margin currency pair.
     ///
-    /// # API Documentation
-    /// <https://www.gate.io/docs/developers/apiv4/#get-unified-margin-currency-pair>
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#get-unified-margin-currency-pair)
     pub async fn get_unified_margin_currency_pair(
         &self,
         currency_pair: &str,

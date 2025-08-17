@@ -4,40 +4,56 @@ use super::{client::RestClient, user_balance::PositionBalance};
 use crate::cryptocom::{ApiResult, RestResult};
 
 const SUBACCOUNT_BALANCES_ENDPOINT: &str = "private/get-subaccount-balances";
+
 /// Subaccount balance information
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SubaccountBalance {
     /// Sub account ID
     pub account: String,
+
     /// Instrument name of the balance e.g. USD
     #[serde(skip_serializing_if = "Option::is_none")]
     pub instrument_name: Option<String>,
+
     /// Balance that user can open new order (Margin Balance - Initial Margin)
     pub total_available_balance: String,
+
     /// Positive cash balance on eligible collateral tokens + Negative balance on all tokens + Unrealised PnL - Fee reserves
     pub total_margin_balance: String,
+
     /// Total margin requirement to support positions and all open orders IM and haircut from risk asset holdings
     pub total_initial_margin: String,
+
     /// Total maintenance margin requirement for all positions
     pub total_maintenance_margin: String,
+
     /// Position value in USD
     pub total_position_cost: String,
+
     /// Wallet Balance (Deposits - Withdrawals + Realized PnL - Fees)
     pub total_cash_balance: String,
+
     /// Collateral Value
     pub total_collateral_value: String,
+
     /// Current unrealized profit and loss from all open positions
     pub total_session_unrealized_pnl: String,
+
     /// Current realized profit and loss from all open positions
     pub total_session_realized_pnl: String,
+
     /// The actual leverage used (all open positions combined)
     pub total_effective_leverage: String,
+
     /// Maximum position size allowed (for all open positions combined)
     pub position_limit: String,
+
     /// Combined position size of all open positions + order exposure on all instruments
     pub used_position_limit: String,
+
     /// Describes whether the account is under liquidation
     pub is_liquidating: bool,
+
     /// Collateral balances
     pub position_balances: Vec<PositionBalance>,
 }
@@ -57,7 +73,7 @@ impl RestClient {
     ///
     /// Returns the user's wallet balances for all sub-accounts.
     ///
-    /// [Official API docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#private-get-subaccount-balances)
+    /// [docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#private-get-subaccount-balances)
     ///
     /// Rate limit: No rate limit
     ///

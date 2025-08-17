@@ -9,8 +9,10 @@ const ENDPOINT_FUTURES_PREFIX: &str = "/futures";
 pub struct UpdateRiskLimitRequest {
     /// Settlement currency
     pub settle: String,
+
     /// Contract name
     pub contract: String,
+
     /// Risk limit value
     pub risk_limit: String,
 }
@@ -27,8 +29,7 @@ impl RestClient {
     ///
     /// This endpoint updates the risk limit for a futures position.
     ///
-    /// See: Gate.io API documentation
-    /// <https://www.gate.io/docs/developers/apiv4/#update-position-risk-limit>
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#update-position-risk-limit)
     ///
     /// Rate limit: 100 requests per second
     ///

@@ -19,15 +19,18 @@
 //! # Example
 //!
 //! ```rust
-//! use venues::binance::usdm::{PublicRestClient, RateLimiter};
-//! use reqwest::Client;
+//! use std::sync::Arc;
+//! use venues::binance::usdm::{PublicRestClient, UsdmConfig};
+//! use venues::binance::shared::{RateLimiter, VenueConfig};
 //!
 //! #[tokio::main]
 //! async fn main() -> Result<(), Box<dyn std::error::Error>> {
-//!     let rate_limiter = RateLimiter::new();
+//!     let http_client = Arc::new(rest::native::NativeHttpClient::default());
+//!     let config = UsdmConfig;
+//!     let rate_limiter = RateLimiter::new(config.rate_limits());
 //!     let client = PublicRestClient::new(
 //!         "https://fapi.binance.com",
-//!         Client::new(),
+//!         http_client,
 //!         rate_limiter,
 //!     );
 //!     

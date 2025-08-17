@@ -35,11 +35,8 @@ async fn test_get_time() {
     let response = result.unwrap();
     assert_eq!(response.code, "0");
     assert!(!response.data.is_empty());
-    // data is Vec<Vec<TimeData>> due to API wrapper; print first if present
-    if let Some(first_vec) = response.data.get(0) {
-        if let Some(first) = first_vec.get(0) {
-            println!("Current server time: {:?}", first.ts);
-        }
+    if let Some(first) = response.data.first() {
+        println!("Current server time: {:?}", first.ts);
     }
 }
 
@@ -86,11 +83,8 @@ async fn test_get_mark_price() {
     let response = result.unwrap();
     assert_eq!(response.code, "0");
     assert!(!response.data.is_empty());
-    // data is Vec<Vec<MarkPrice>>
-    if let Some(first_vec) = response.data.get(0) {
-        if let Some(first) = first_vec.get(0) {
-            println!("Mark price for BTC-USD-SWAP: {:?}", first.mark_px);
-        }
+    if let Some(first) = response.data.first() {
+        println!("Mark price for BTC-USD-SWAP: {:?}", first.mark_px);
     }
 }
 
@@ -111,11 +105,8 @@ async fn test_get_funding_rate() {
     let response = result.unwrap();
     assert_eq!(response.code, "0");
     assert!(!response.data.is_empty());
-    // data is Vec<Vec<FundingRate>>
-    if let Some(first_vec) = response.data.get(0) {
-        if let Some(first) = first_vec.get(0) {
-            println!("Funding rate for BTC-USD-SWAP: {:?}", first.funding_rate);
-        }
+    if let Some(first) = response.data.first() {
+        println!("Funding rate for BTC-USD-SWAP: {:?}", first.funding_rate);
     }
 }
 
@@ -161,11 +152,8 @@ async fn test_get_open_interest() {
     let response = result.unwrap();
     assert_eq!(response.code, "0");
     assert!(!response.data.is_empty());
-    // data is Vec<Vec<OpenInterest>>
-    if let Some(first_vec) = response.data.get(0) {
-        if let Some(first) = first_vec.get(0) {
-            println!("Open interest for BTC-USD-SWAP: {:?}", first.oi);
-        }
+    if let Some(first) = response.data.first() {
+        println!("Open interest for BTC-USD-SWAP: {:?}", first.oi);
     }
 }
 
@@ -186,14 +174,11 @@ async fn test_get_price_limit() {
     let response = result.unwrap();
     assert_eq!(response.code, "0");
     assert!(!response.data.is_empty());
-    // data is Vec<Vec<PriceLimit>>
-    if let Some(first_vec) = response.data.get(0) {
-        if let Some(first) = first_vec.get(0) {
-            println!(
-                "Price limits for BTC-USD-SWAP - Buy: {:?}, Sell: {:?}",
-                first.buy_lmt, first.sell_lmt
-            );
-        }
+    if let Some(first) = response.data.first() {
+        println!(
+            "Price limits for BTC-USD-SWAP - Buy: {:?}, Sell: {:?}",
+            first.buy_lmt, first.sell_lmt
+        );
     }
 }
 
@@ -233,11 +218,10 @@ async fn test_get_estimated_price() {
         .await
         .expect("get_instruments failed");
     assert_eq!(instruments_resp.code, "0");
-    // instruments_resp.data is Vec<Vec<Instrument>>; flatten to find a live instrument
+    // find a live instrument
     let inst_id = instruments_resp
         .data
         .iter()
-        .flat_map(|v| v.iter())
         .find(|inst| inst.state == InstrumentState::Live)
         .map(|inst| inst.inst_id.clone())
         .expect("No live futures instrument found");
@@ -250,12 +234,8 @@ async fn test_get_estimated_price() {
     if result.is_ok() {
         let response = result.unwrap();
         assert_eq!(response.code, "0");
-        if let Some(first_vec) = response.data.get(0) {
-            if let Some(first) = first_vec.get(0) {
-                println!("Estimated price: {:?}", first.settle_px);
-            } else {
-                println!("No estimated price data available for this instrument");
-            }
+        if let Some(first) = response.data.first() {
+            println!("Estimated price: {:?}", first.settle_px);
         } else {
             println!("No estimated price data available for this instrument");
         }
@@ -285,7 +265,6 @@ async fn test_get_estimated_settlement_info() {
     let inst_id = instruments_resp
         .data
         .iter()
-        .flat_map(|v| v.iter())
         .find(|inst| inst.state == InstrumentState::Live)
         .map(|inst| inst.inst_id.clone())
         .expect("No live futures instrument found");
@@ -299,17 +278,11 @@ async fn test_get_estimated_settlement_info() {
     if result.is_ok() {
         let response = result.unwrap();
         assert_eq!(response.code, "0");
-        if let Some(first_vec) = response.data.get(0) {
-            if let Some(first) = first_vec.get(0) {
-                println!(
-                    "Estimated settlement info: inst_id={}, est_settle_px={}, next_settle_time={}",
-                    first.inst_id, first.est_settle_px, first.next_settle_time
-                );
-            } else {
-                println!(
-                    "No estimated settlement info available for this instrument (likely not near settlement time)"
-                );
-            }
+        if let Some(first) = response.data.first() {
+            println!(
+                "Estimated settlement info: inst_id={}, est_settle_px={}, next_settle_time= {}",
+                first.inst_id, first.est_settle_px, first.next_settle_time
+            );
         } else {
             println!(
                 "No estimated settlement info available for this instrument (likely not near settlement time)"
@@ -361,11 +334,8 @@ async fn test_get_index_tickers() {
     let response = result.unwrap();
     assert_eq!(response.code, "0");
     assert!(!response.data.is_empty());
-    // data is Vec<Vec<IndexTicker>>
-    if let Some(first_vec) = response.data.get(0) {
-        if let Some(first) = first_vec.get(0) {
-            println!("Index ticker for BTC-USD: {:?}", first.idx_px);
-        }
+    if let Some(first) = response.data.first() {
+        println!("Index ticker for BTC-USD: {:?}", first.idx_px);
     }
 }
 
@@ -583,7 +553,7 @@ async fn test_get_index_components() {
         "Found {} index components",
         response
             .data
-            .get(0)
+            .first()
             .map(|d| d.components.len())
             .unwrap_or(0)
     );

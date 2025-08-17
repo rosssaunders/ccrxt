@@ -9,14 +9,18 @@ const ENDPOINT_FUTURES_PREFIX: &str = "/futures";
 pub struct AmendFuturesOrderRequest {
     /// Settlement currency
     pub settle: String,
+
     /// Order ID to amend
     pub order_id: String,
+
     /// New order size
     #[serde(skip_serializing_if = "Option::is_none")]
     pub size: Option<i64>,
+
     /// New order price
     #[serde(skip_serializing_if = "Option::is_none")]
     pub price: Option<String>,
+
     /// Amendment text
     #[serde(skip_serializing_if = "Option::is_none")]
     pub amend_text: Option<String>,
@@ -27,8 +31,7 @@ impl RestClient {
     ///
     /// Modifies the price and/or size of an existing order.
     ///
-    /// See: Gate.io API documentation
-    /// <https://www.gate.io/docs/developers/apiv4/#amend-an-order>
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#amend-an-order)
     ///
     /// Rate limit: 100 requests per second
     ///

@@ -118,7 +118,8 @@ impl RestClient {
     /// Check an order's status.
     /// Either orderId or origClientOrderId must be sent.
     ///
-    /// [docs]: (https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#query-order--user_data)
+    /// [docs](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#query-order--user_data)
+    ///
     /// Method: GET /api/v3/order
     /// Weight: 4
     /// Security: USER_DATA
@@ -254,7 +255,7 @@ mod tests {
         assert_eq!(response.side, OrderSide::Buy);
         assert_eq!(response.time, 1684804350000);
         assert_eq!(response.update_time, 1684804350068);
-        assert_eq!(response.is_working, true);
+        assert!(response.is_working);
         assert_eq!(response.working_time, 1684804350000);
         assert_eq!(response.orig_quote_order_qty.to_string(), "50000.00000000");
         assert_eq!(
@@ -297,7 +298,7 @@ mod tests {
             response.self_trade_prevention_mode,
             SelfTradePreventionMode::ExpireTaker
         );
-        assert_eq!(response.is_working, false);
+        assert!(!response.is_working);
         assert_eq!(response.working_time, 0);
     }
 
@@ -564,7 +565,7 @@ mod tests {
 
         let response: QueryOrderResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.status, OrderStatus::Expired);
-        assert_eq!(response.is_working, false);
+        assert!(!response.is_working);
         assert_eq!(response.executed_qty, dec!(0));
     }
 }

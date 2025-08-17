@@ -92,7 +92,7 @@ impl RestClient {
     /// and risk levels for all or specific currency pairs with comprehensive
     /// account status and lending activity details.
     ///
-    /// [docs]: https://www.gate.io/docs/developers/apiv4/#margin-accounts
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#margin-accounts)
     ///
     /// Rate limit: 100 requests per second
     ///

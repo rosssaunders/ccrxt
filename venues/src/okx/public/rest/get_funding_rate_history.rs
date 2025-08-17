@@ -64,7 +64,7 @@ impl RestClient {
     ///
     /// Retrieve funding rate history. This endpoint can retrieve data from the last 3 months.
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-funding-rate-history
+    /// [docs](https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-funding-rate-history)
     ///
     /// Rate limit: 10 requests per 2 seconds
     /// Rate limit rule: IP + Instrument ID
@@ -77,7 +77,7 @@ impl RestClient {
     pub async fn get_funding_rate_history(
         &self,
         request: &GetFundingRateHistoryRequest,
-    ) -> RestResult<Vec<FundingRateHistory>> {
+    ) -> RestResult<FundingRateHistory> {
         self.send_get_request(
             PUBLIC_FUNDING_RATE_HISTORY_ENDPOINT,
             Some(request),

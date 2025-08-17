@@ -8,7 +8,7 @@ impl RestClient {
     /// Retrieve the spot trading account balance for a specified currency.
     /// Returns balance information including available and locked amounts for the requested currency.
     ///
-    /// [docs]: https://www.gate.io/docs/developers/apiv4/#list-spot-accounts
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#list-spot-accounts)
     ///
     /// Rate limit: 100 requests per second
     ///
@@ -74,7 +74,7 @@ mod tests {
 
     #[test]
     fn test_spot_account_balance_filtering() {
-        let accounts = vec![
+        let accounts = [
             SpotAccount {
                 currency: "BTC".to_string(),
                 available: "0.1".to_string(),
@@ -114,7 +114,7 @@ mod tests {
 
     #[test]
     fn test_spot_account_balance_single_currency() {
-        let accounts = vec![SpotAccount {
+        let accounts = [SpotAccount {
             currency: "USDT".to_string(),
             available: "10000.0".to_string(),
             locked: "0.0".to_string(),
@@ -136,7 +136,7 @@ mod tests {
     #[test]
     fn test_spot_account_balance_duplicate_currencies() {
         // This shouldn't happen in practice, but test the logic
-        let accounts = vec![
+        let accounts = [
             SpotAccount {
                 currency: "BTC".to_string(),
                 available: "1.0".to_string(),
@@ -158,7 +158,7 @@ mod tests {
 
     #[test]
     fn test_spot_account_balance_case_sensitivity() {
-        let accounts = vec![
+        let accounts = [
             SpotAccount {
                 currency: "btc".to_string(),
                 available: "1.0".to_string(),
@@ -187,7 +187,7 @@ mod tests {
 
     #[test]
     fn test_spot_account_balance_various_currencies() {
-        let currencies = vec!["BTC", "ETH", "USDT", "USDC", "BNB", "SOL", "ADA", "DOT"];
+        let currencies = ["BTC", "ETH", "USDT", "USDC", "BNB", "SOL", "ADA", "DOT"];
         let mut accounts = Vec::new();
 
         for (i, currency) in currencies.iter().enumerate() {
@@ -214,7 +214,7 @@ mod tests {
 
     #[test]
     fn test_spot_account_balance_zero_balances() {
-        let accounts = vec![
+        let accounts = [
             SpotAccount {
                 currency: "BTC".to_string(),
                 available: "0".to_string(),
@@ -238,7 +238,7 @@ mod tests {
 
     #[test]
     fn test_spot_account_balance_precision_handling() {
-        let accounts = vec![SpotAccount {
+        let accounts = [SpotAccount {
             currency: "BTC".to_string(),
             available: "1.23456789012345".to_string(),
             locked: "0.98765432109876".to_string(),
@@ -251,7 +251,7 @@ mod tests {
 
     #[test]
     fn test_spot_account_balance_large_numbers() {
-        let accounts = vec![SpotAccount {
+        let accounts = [SpotAccount {
             currency: "USDT".to_string(),
             available: "999999999.99999999".to_string(),
             locked: "123456789.12345678".to_string(),
@@ -264,7 +264,7 @@ mod tests {
 
     #[test]
     fn test_spot_account_balance_mixed_case_currency() {
-        let accounts = vec![
+        let accounts = [
             SpotAccount {
                 currency: "wBTC".to_string(),
                 available: "0.5".to_string(),

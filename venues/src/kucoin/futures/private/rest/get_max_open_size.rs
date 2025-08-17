@@ -37,7 +37,7 @@ impl super::RestClient {
     ///
     /// Retrieve the maximum open position size for a given symbol at a specified price and leverage.
     ///
-    /// [docs]: https://www.kucoin.com/docs-new/rest/futures-trading/positions/get-max-open-size
+    /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/positions/get-max-open-size)
     ///
     /// Rate limit: 9
     ///
@@ -50,7 +50,8 @@ impl super::RestClient {
         &self,
         request: GetMaxOpenSizeRequest,
     ) -> Result<(RestResponse<GetMaxOpenSizeResponse>, ResponseHeaders)> {
-        self.get(GET_MAX_OPEN_SIZE_ENDPOINT, Some(&request)).await
+        self.get_with_request(GET_MAX_OPEN_SIZE_ENDPOINT, &request)
+            .await
     }
 }
 

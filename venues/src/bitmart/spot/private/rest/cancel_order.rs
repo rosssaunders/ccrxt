@@ -36,7 +36,7 @@ impl RestClient {
     ///
     /// Cancels a specified unfinished order.
     ///
-    /// [docs]: https://developer-pro.bitmart.com/en/spot/#cancel-orderv3-signed
+    /// [docs](https://developer-pro.bitmart.com/en/spot/#cancel-orderv3-signed)
     ///
     /// Rate limit: varies by endpoint type
     ///

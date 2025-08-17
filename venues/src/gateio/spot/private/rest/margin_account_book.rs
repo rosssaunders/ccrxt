@@ -75,7 +75,7 @@ impl RestClient {
     /// including trading activity, loan operations, repayments, interest charges,
     /// and fund transfers. Essential for margin trading reconciliation and audit trails.
     ///
-    /// [docs]: https://www.gate.io/docs/developers/apiv4/#margin-account-book
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#margin-account-book)
     ///
     /// Rate limit: 100 requests per second
     ///

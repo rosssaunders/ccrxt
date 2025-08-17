@@ -9,7 +9,7 @@ impl RestClient {
     ///
     /// This endpoint cancels all delivery orders for a specific contract or all contracts.
     ///
-    /// See: <https://www.gate.com/docs/developers/apiv4/#cancel-single-order-3>
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#cancel-single-order-3)
     ///
     /// Rate limit: 10 requests per second
     ///
@@ -37,7 +37,7 @@ impl RestClient {
     ///
     /// This endpoint cancels a specific delivery order.
     ///
-    /// See: <https://www.gate.com/docs/developers/apiv4/#cancel-single-order-3>
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#cancel-single-order-3)
     ///
     /// Rate limit: 10 requests per second
     ///

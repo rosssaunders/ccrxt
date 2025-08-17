@@ -29,7 +29,7 @@ impl RestClient {
     ///
     /// Modify the auto-transfer account type of deposit.
     ///
-    /// [API Documentation](https://www.bitget.com/api-doc/spot/asset/Modify-Deposit-Account)
+    /// [docs](https://www.bitget.com/api-doc/spot/asset/Modify-Deposit-Account)
     ///
     /// Frequency limit: 10 times/1s (User ID)
     ///

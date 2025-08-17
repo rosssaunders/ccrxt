@@ -1,31 +1,38 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, sync::Arc};
 
-use reqwest::Client;
+use rest::{
+    HttpClient,
+    http_client::{Method as HttpMethod, RequestBuilder},
+};
 use serde::{Serialize, de::DeserializeOwned};
 
 use crate::kucoin::spot::{ApiError, RateLimiter, ResponseHeaders, RestResponse, Result};
 
 /// Public REST client for KuCoin spot market
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub struct RestClient {
     pub base_url: String,
-    pub client: Client,
+    pub http_client: Arc<dyn HttpClient>,
     pub rate_limiter: RateLimiter,
 }
 
 impl RestClient {
     /// Create a new public REST client
-    pub fn new(base_url: impl Into<String>, rate_limiter: RateLimiter, client: Client) -> Self {
+    pub fn new(
+        base_url: impl Into<String>,
+        rate_limiter: RateLimiter,
+        http_client: Arc<dyn HttpClient>,
+    ) -> Self {
         Self {
             base_url: base_url.into(),
-            client,
+            http_client,
             rate_limiter,
         }
     }
 
     /// Create a new public REST client with default settings
-    pub fn new_default() -> Self {
-        Self::new("https://api.kucoin.com", RateLimiter::new(), Client::new())
+    pub fn new_default(http_client: Arc<dyn HttpClient>) -> Self {
+        Self::new("https://api.kucoin.com", RateLimiter::new(), http_client)
     }
 
     /// Make a GET request to the public API
@@ -48,20 +55,38 @@ impl RestClient {
 
         let url = format!("{}{}", self.base_url, endpoint);
 
-        let mut request = self.client.get(&url);
+        // Build URL with query parameters
+        let full_url = if let Some(ref params) = params {
+            if params.is_empty() {
+                url
+            } else {
+                let query_string = params
+                    .iter()
+                    .map(|(k, v)| format!("{}={}", k, v))
+                    .collect::<Vec<_>>()
+                    .join("&");
+                format!("{}?{}", url, query_string)
+            }
+        } else {
+            url
+        };
 
-        if let Some(params) = params {
-            request = request.query(&params);
-        }
+        let request = RequestBuilder::new(HttpMethod::Get, full_url).build();
+        let response = self.http_client.execute(request).await.map_err(|e| {
+            crate::kucoin::spot::KucoinError::NetworkError(format!("HTTP request failed: {}", e))
+        })?;
 
-        let response = request.send().await?;
+        let status = response.status;
+        let headers = response.headers.clone();
 
-        let status = response.status();
-        let headers = response.headers().clone();
+        let text = response.text().map_err(|e| {
+            crate::kucoin::spot::KucoinError::NetworkError(format!(
+                "Failed to read response: {}",
+                e
+            ))
+        })?;
 
-        let text = response.text().await?;
-
-        if !status.is_success() {
+        if !(200..300).contains(&status) {
             // Try to parse as error response
             if let Ok(error_response) =
                 serde_json::from_str::<super::super::super::ErrorResponse>(&text)
@@ -111,24 +136,39 @@ impl RestClient {
 
         let url = format!("{}{}", self.base_url, endpoint);
 
-        let mut request_builder = self.client.get(&url);
-
         // Serialize the request as query parameters
         let params = serde_urlencoded::to_string(request)
             .map_err(|e| ApiError::JsonParsing(format!("Failed to serialize request: {}", e)))?;
 
-        if !params.is_empty() {
-            request_builder = request_builder.query(&request);
-        }
+        let full_url = if !params.is_empty() {
+            format!("{}?{}", url, params)
+        } else {
+            url
+        };
 
-        let response = request_builder.send().await?;
+        let request_builder = RequestBuilder::new(HttpMethod::Get, full_url).build();
+        let response = self
+            .http_client
+            .execute(request_builder)
+            .await
+            .map_err(|e| {
+                crate::kucoin::spot::KucoinError::NetworkError(format!(
+                    "HTTP request failed: {}",
+                    e
+                ))
+            })?;
 
-        let status = response.status();
-        let headers = response.headers().clone();
+        let status = response.status;
+        let headers = response.headers.clone();
 
-        let text = response.text().await?;
+        let text = response.text().map_err(|e| {
+            crate::kucoin::spot::KucoinError::NetworkError(format!(
+                "Failed to read response: {}",
+                e
+            ))
+        })?;
 
-        if !status.is_success() {
+        if !(200..300).contains(&status) {
             // Try to parse as error response
             if let Ok(error_response) =
                 serde_json::from_str::<super::super::super::ErrorResponse>(&text)

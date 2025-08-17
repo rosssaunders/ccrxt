@@ -14,6 +14,8 @@ pub use rate_limit::{
     ResponseHeaders,
 };
 
+use crate::binance::shared::venue_trait::{RateLimits, VenueConfig};
+
 mod enums;
 
 // Re-export enums for public use
@@ -42,6 +44,43 @@ pub struct RestResponse<T> {
 
 /// Type alias for results returned by Binance Options API operations
 pub type RestResult<T> = Result<RestResponse<T>, Errors>;
+
+/// Options venue configuration
+pub struct OptionsConfig;
+
+impl VenueConfig for OptionsConfig {
+    fn base_url(&self) -> &str {
+        "https://eapi.binance.com"
+    }
+
+    fn venue_name(&self) -> &str {
+        "options"
+    }
+
+    fn rate_limits(&self) -> RateLimits {
+        RateLimits {
+            request_weight_limit: 6000,
+            request_weight_window: Duration::from_secs(60),
+            raw_requests_limit: 61000,
+            raw_requests_window: Duration::from_secs(300), // 5 minutes
+            orders_10s_limit: 100,
+            orders_minute_limit: 1200,
+            orders_day_limit: None,
+        }
+    }
+
+    fn supports_futures(&self) -> bool {
+        false
+    }
+
+    fn supports_options(&self) -> bool {
+        true
+    }
+
+    fn supports_margin(&self) -> bool {
+        false
+    }
+}
 
 #[cfg(test)]
 mod tests {
@@ -166,26 +205,5 @@ mod tests {
         // Check that the weight was updated
         let (_, _, _, weight) = limiter.test_get_stats().await;
         assert_eq!(weight, 2500);
-    }
-
-    #[tokio::test]
-    async fn test_response_headers_from_reqwest() {
-        let mut headers = reqwest::header::HeaderMap::new();
-        headers.insert("x-mbx-used-weight-1m", "2500".parse().unwrap());
-        headers.insert("x-mbx-order-count-10s", "5".parse().unwrap());
-
-        let response_headers = ResponseHeaders::from_reqwest_headers(&headers);
-
-        // Check that we have parsed values
-        assert!(!response_headers.values.is_empty());
-
-        // Find the weight header
-        let weight_header = RateLimitHeader {
-            kind: RateLimitHeaderKind::UsedWeight,
-            interval_value: 1,
-            interval_unit: IntervalUnit::Minute,
-        };
-
-        assert_eq!(response_headers.values.get(&weight_header), Some(&2500));
     }
 }

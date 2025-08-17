@@ -57,7 +57,7 @@ impl RestClient {
     /// Gets 30day and 24hour stats for a product.
     /// The volume property is in base currency units. Properties open, high, low are in quote currency units.
     ///
-    /// [API Documentation](https://docs.cdp.coinbase.com/exchange/reference/exchangerestapi_getproductstats)
+    /// [docs](https://docs.cdp.coinbase.com/exchange/reference/exchangerestapi_getproductstats)
     ///
     /// Rate limit: 10 requests per second
     ///
@@ -73,8 +73,7 @@ impl RestClient {
         request: &GetProductStatsRequest,
     ) -> RestResult<GetProductStatsResponse> {
         let endpoint = ENDPOINT_PATH.replace("{}", product_id);
-        self.send_get_request(&endpoint, Some(request))
-            .await
+        self.send_get_request(&endpoint, Some(request)).await
     }
 }
 

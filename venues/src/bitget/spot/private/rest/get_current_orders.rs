@@ -1,11 +1,3 @@
-//! Get Current Orders endpoint for Bitget Spot API
-//!
-//! This endpoint allows retrieving current unfilled orders.
-//!
-//! Reference: https://www.bitget.com/api-doc/spot/trade/Get-Unfilled-Orders
-//! Endpoint: GET /api/v2/spot/trade/unfilled-orders
-//! Rate limit: 20 times/1s (UID)
-
 use serde::{Deserialize, Serialize};
 
 use super::{
@@ -169,6 +161,8 @@ impl RestClient {
     /// Get current unfilled orders
     ///
     /// Retrieves all unfilled orders for the authenticated account with optional filters.
+    ///
+    /// [docs](https://www.bitget.com/api-doc/spot/trade/Get-Unfilled-Orders)
     ///
     /// # Arguments
     /// * `request` - The request parameters with optional filters

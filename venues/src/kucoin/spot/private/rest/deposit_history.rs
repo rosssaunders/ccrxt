@@ -95,7 +95,7 @@ pub struct DepositsResponse {
 impl RestClient {
     /// Get deposit history
     ///
-    /// Reference: https://docs.kucoin.com/#get-v1-deposits
+    /// [docs](https://docs.kucoin.com/#get-v1-deposits)
     pub async fn get_deposits(
         &self,
         request: GetDepositsRequest,

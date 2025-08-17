@@ -281,7 +281,7 @@ impl RestClient {
     /// This is a private method; it can only be used after authentication.
     /// Scope: `trade:read`
     ///
-    /// [docs]: https://docs.deribit.com/v2/#private-get_open_orders_by_currency
+    /// [docs](https://docs.deribit.com/v2/#private-get_open_orders_by_currency)
     ///
     /// Rate limit: Non-matching engine rate limits apply (500 credits)
     ///
@@ -305,29 +305,13 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use rest::secrets::ExposableSecret;
-    /// REST API endpoint constant
+    use std::sync::Arc;
+
+    use rest::secrets::SecretString;
     use serde_json::{Value, json};
 
     use super::*;
-    use crate::deribit::AccountTier;
-
-    #[derive(Clone)]
-    struct PlainTextSecret {
-        secret: String,
-    }
-
-    impl PlainTextSecret {
-        fn new(secret: String) -> Self {
-            Self { secret }
-        }
-    }
-
-    impl ExposableSecret for PlainTextSecret {
-        fn expose_secret(&self) -> String {
-            self.secret.clone()
-        }
-    }
+    use crate::deribit::{AccountTier, private::rest::credentials::Credentials};
 
     #[test]
     fn test_request_serialization_minimal() {
@@ -384,17 +368,17 @@ mod tests {
 
     #[tokio::test]
     async fn test_method_exists() {
-        let api_key = Box::new(PlainTextSecret::new("key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret =
-            Box::new(PlainTextSecret::new("secret".to_string())) as Box<dyn ExposableSecret>;
-        let client = reqwest::Client::new();
+        let credentials = Credentials {
+            api_key: SecretString::from("key".to_string()),
+            api_secret: SecretString::from("secret".to_string()),
+        };
+        let http_client = Arc::new(rest::native::NativeHttpClient::default());
         let limiter = crate::deribit::RateLimiter::new(AccountTier::Tier4);
         let rest_client = RestClient::new(
-            api_key,
-            api_secret,
+            credentials,
             "https://test.deribit.com",
             limiter,
-            client,
+            http_client,
         );
         let _ = RestClient::get_open_orders_by_currency;
         let _ = &rest_client;

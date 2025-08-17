@@ -65,7 +65,7 @@ impl RestClient {
     ///
     /// Returns the latest ticker information for a symbol or all symbols.
     ///
-    /// [docs]: https://www.bitget.com/api-doc/spot/market/Get-Ticker-Information
+    /// [docs](https://www.bitget.com/api-doc/spot/market/Get-Ticker-Information)
     ///
     /// Rate limit: see official docs
     ///

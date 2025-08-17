@@ -100,7 +100,7 @@ impl RestClient {
     ///
     /// Retrieves the most recent trades for a given currency and instrument kind.
     ///
-    /// [Official API docs](https://docs.deribit.com/#public-get_last_trades_by_currency)
+    /// [docs](https://docs.deribit.com/#public-get_last_trades_by_currency)
     pub async fn get_last_trades_by_currency(
         &self,
         params: GetLastTradesByCurrencyRequest,

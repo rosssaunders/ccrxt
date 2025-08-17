@@ -25,7 +25,7 @@ impl RestClient {
     ///
     /// Retrieves the list of all supported index price names.
     ///
-    /// [Official API docs](https://docs.deribit.com/#public-get_index_price_names)
+    /// [docs](https://docs.deribit.com/#public-get_index_price_names)
     pub async fn get_index_price_names(
         &self,
         params: GetIndexPriceNamesRequest,

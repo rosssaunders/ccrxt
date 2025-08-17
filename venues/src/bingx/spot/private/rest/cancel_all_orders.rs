@@ -16,9 +16,11 @@ pub struct CancelAllOrdersRequest {
     /// Trading symbol, e.g., BTC-USDT. If not filled, cancel all orders
     #[serde(skip_serializing_if = "Option::is_none")]
     pub symbol: Option<String>,
+
     /// Request valid time window value in milliseconds
     #[serde(skip_serializing_if = "Option::is_none")]
     pub recv_window: Option<u64>,
+
     /// Request timestamp in milliseconds
     pub timestamp: u64,
 }
@@ -37,26 +39,36 @@ pub struct CancelAllOrdersResponse {
 pub struct CanceledOrderInfo {
     /// Trading symbol
     pub symbol: String,
+
     /// Order ID
     pub order_id: i64,
+
     /// Order price
     pub price: String,
+
     /// Original quantity
     pub orig_qty: String,
+
     /// Executed quantity
     pub executed_qty: String,
+
     /// Cumulative quote asset transacted quantity
     pub cummulative_quote_qty: String,
+
     /// Order status
     pub status: OrderStatus,
+
     /// Order type
     #[serde(rename = "type")]
     pub order_type: OrderType,
+
     /// Order side
     pub side: OrderSide,
+
     /// Custom order ID
     #[serde(rename = "clientOrderID")]
     pub client_order_id: String,
+
     /// Trigger price
     pub stop_price: String,
 }
@@ -71,7 +83,7 @@ impl RestClient {
     /// * `RestResult<CancelAllOrdersResponse>` - The canceled orders response or error
     ///
     /// # API Documentation
-    /// - [docs]: https://bingx-api.github.io/docs/#/en-us/spot/trade-api.html#Cancel%20all%20Open%20Orders%20on%20a%20Symbol
+    /// - [docs](https://bingx-api.github.io/docs/#/en-us/spot/trade-api.html#Cancel%20all%20Open%20Orders%20on%20a%20Symbol)
     pub async fn cancel_all_orders(
         &self,
         request: &CancelAllOrdersRequest,

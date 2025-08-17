@@ -37,8 +37,7 @@ impl RestClient {
     ///
     /// This endpoint sets the leverage for a futures position.
     ///
-    /// See: Gate.io API documentation
-    /// <https://www.gate.io/docs/developers/apiv4/#update-position-leverage>
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#update-position-leverage)
     ///
     /// Rate limit: 100 requests per second
     ///

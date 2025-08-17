@@ -113,7 +113,7 @@ impl RestClient {
     /// Amend multiple orders in batch. Batch amendment can change the order price,
     /// amount, and account mode. Returns information about each order amendment attempt.
     ///
-    /// [docs]: https://www.gate.com/docs/developers/apiv4/#batch-modification-of-orders
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#batch-modification-of-orders)
     ///
     /// Rate limit: 100 requests per second
     ///
@@ -306,7 +306,7 @@ mod tests {
         assert_eq!(amended_order.price, "31000");
         assert_eq!(amended_order.order_type, "limit");
         assert_eq!(amended_order.time_in_force, "gtc");
-        assert_eq!(amended_order.succeeded, true);
+        assert!(amended_order.succeeded);
         assert!(amended_order.message.is_none());
         assert!(amended_order.code.is_none());
     }
@@ -339,7 +339,7 @@ mod tests {
 
         let amended_order: AmendedOrder = serde_json::from_str(json).unwrap();
         assert_eq!(amended_order.id, "87654321");
-        assert_eq!(amended_order.succeeded, false);
+        assert!(!amended_order.succeeded);
         assert_eq!(amended_order.message.as_ref().unwrap(), "Invalid price");
         assert_eq!(amended_order.code.as_ref().unwrap(), "INVALID_PRICE");
     }

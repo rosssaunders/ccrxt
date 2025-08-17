@@ -34,9 +34,10 @@ use venues::bybit::{
 
 /// Helper function to create a test client with shared rate limiter
 fn create_public_test_client() -> PublicRestClient {
+    use std::sync::Arc;
     let rate_limiter = RateLimiter::new();
-    let client = reqwest::Client::new();
-    PublicRestClient::new("https://api.bybit.com", rate_limiter, client)
+    let http_client = Arc::new(rest::native::NativeHttpClient::default());
+    PublicRestClient::new("https://api.bybit.com", rate_limiter, http_client)
 }
 
 #[tokio::test]

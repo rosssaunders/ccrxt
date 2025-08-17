@@ -124,7 +124,7 @@ impl super::RestClient {
     ///
     /// Get detailed position information for a specific symbol.
     ///
-    /// [docs]: https://www.kucoin.com/docs-new/rest/futures-trading/positions/get-position-details
+    /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/positions/get-position-details)
     ///
     /// Rate limit: 9
     ///
@@ -137,7 +137,7 @@ impl super::RestClient {
         &self,
         request: GetPositionRequest,
     ) -> Result<(RestResponse<Position>, ResponseHeaders)> {
-        self.get(GET_POSITION_ENDPOINT, Some(&request)).await
+        self.get_with_request(GET_POSITION_ENDPOINT, &request).await
     }
 }
 
@@ -218,7 +218,7 @@ mod tests {
 
         let position: Position = serde_json::from_str(json).unwrap();
         assert_eq!(position.symbol, "XBTUSDTM");
-        assert_eq!(position.cross_mode, false);
+        assert!(!position.cross_mode);
         assert_eq!(position.deleverage_percentage, 0.1);
         assert_eq!(position.open_size, "1000");
         assert_eq!(position.value, "50000");
@@ -476,7 +476,7 @@ mod tests {
         // Verify deserialization works
         let position: Position = serde_json::from_str(json).unwrap();
         assert_eq!(position.symbol, "XBTUSDTM");
-        assert_eq!(position.cross_mode, false);
+        assert!(!position.cross_mode);
         assert_eq!(position.open_time, 1234567890000);
         assert_eq!(position.risk_limit, 200000);
     }
@@ -521,7 +521,7 @@ mod tests {
         let position: Position = serde_json::from_str(json).unwrap();
 
         // Verify camelCase fields are properly converted to snake_case
-        assert_eq!(position.cross_mode, false);
+        assert!(!position.cross_mode);
         assert_eq!(position.open_size, "1000");
         assert_eq!(position.unrealized_pnl, "50");
         assert_eq!(position.unrealized_cost, "5000");

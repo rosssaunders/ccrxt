@@ -60,7 +60,7 @@ impl UsdmClient {
     ///
     /// Query for all convertible token pairs and the tokens' respective upper/lower limits.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/convert
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/convert)
     ///
     /// Rate limit: 20 (IP)
     ///

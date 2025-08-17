@@ -39,7 +39,7 @@ impl RestClient {
     /// Retrieve the estimated settlement price which will only have a return value one
     /// hour before the settlement.
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-estimated-future-settlement-price
+    /// [docs](https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-estimated-future-settlement-price)
     ///
     /// Rate limit: 10 requests per 2 seconds
     /// Rate limit rule: IP + Instrument ID
@@ -52,7 +52,7 @@ impl RestClient {
     pub async fn get_estimated_settlement_info(
         &self,
         request: &GetEstimatedSettlementInfoRequest,
-    ) -> RestResult<Vec<EstimatedSettlementInfo>> {
+    ) -> RestResult<EstimatedSettlementInfo> {
         self.send_get_request(
             PUBLIC_ESTIMATED_SETTLEMENT_INFO_ENDPOINT,
             Some(request),

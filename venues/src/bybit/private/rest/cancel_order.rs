@@ -70,7 +70,7 @@ impl RestClient {
     /// Cancel unfilled or partially filled orders. You must specify either order_id
     /// or order_link_id to identify the order to cancel.
     ///
-    /// [API Documentation](https://bybit-exchange.github.io/docs/v5/order/cancel-order)
+    /// [docs](https://bybit-exchange.github.io/docs/v5/order/cancel-order)
     ///
     /// Rate limit: 10 requests per second per UID
     ///

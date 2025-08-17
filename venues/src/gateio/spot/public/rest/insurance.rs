@@ -41,8 +41,7 @@ impl RestClient {
     /// This endpoint returns the history of the insurance fund, showing
     /// liquidation and fee contributions over time.
     ///
-    /// # API Documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#spot-insurance-balance-history>
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#spot-insurance-balance-history)
     pub async fn get_insurance_history(
         &self,
         params: InsuranceHistoryRequest,

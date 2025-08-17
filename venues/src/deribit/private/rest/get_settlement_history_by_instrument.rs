@@ -93,7 +93,7 @@ pub type GetSettlementHistoryByInstrumentResponse =
 impl RestClient {
     /// Retrieves public settlement, delivery and bankruptcy events filtered by instrument name.
     ///
-    /// [docs]: https://docs.deribit.com/v2/#private-get_settlement_history_by_instrument
+    /// [docs](https://docs.deribit.com/v2/#private-get_settlement_history_by_instrument)
     ///
     /// Rate limit: varies by endpoint type
     ///

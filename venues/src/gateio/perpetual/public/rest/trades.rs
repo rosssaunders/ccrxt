@@ -7,20 +7,26 @@ use super::RestClient;
 pub struct FuturesTradesRequest {
     /// Settlement currency
     pub settle: String,
+
     /// Contract name
     pub contract: String,
+
     /// Maximum number of records to return (1-1000, default 100)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i32>,
+
     /// Specify list offset (default 0)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub offset: Option<i32>,
+
     /// Specify the starting point for this list
     #[serde(skip_serializing_if = "Option::is_none")]
     pub last_id: Option<String>,
+
     /// Specify starting time in Unix seconds
     #[serde(skip_serializing_if = "Option::is_none")]
     pub from: Option<i64>,
+
     /// Specify ending time in Unix seconds  
     #[serde(skip_serializing_if = "Option::is_none")]
     pub to: Option<i64>,
@@ -54,7 +60,7 @@ impl RestClient {
     /// Retrieves recent trades for a specific futures contract.
     ///
     /// # API Documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#futures-trading-history>
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#futures-trading-history)
     /// Maximum of 1000 records can be returned per request.
     pub async fn get_futures_trades(
         &self,
@@ -185,7 +191,7 @@ mod tests {
 
             let json = serde_json::to_value(&request).unwrap();
             assert_eq!(json["limit"], limit);
-            assert!(limit >= 1 && limit <= 1000);
+            assert!((1..=1000).contains(&limit));
         }
     }
 
@@ -300,7 +306,7 @@ mod tests {
         assert_eq!(trade.contract, "BTC_USDT");
         assert_eq!(trade.size, 1500);
         assert_eq!(trade.price, "43250.8");
-        assert_eq!(trade.is_internal.unwrap(), false);
+        assert!(!trade.is_internal.unwrap());
     }
 
     #[test]
@@ -446,7 +452,7 @@ mod tests {
 
         // Verify precision is maintained
         assert_eq!(trade.price, "43251.123456789");
-        assert_eq!(trade.create_time, 1640995200.123456789);
+        assert_eq!(trade.create_time, 1_640_995_200.123_456_7);
     }
 
     #[test]
@@ -656,7 +662,7 @@ mod tests {
             assert_eq!(trade.price, price);
 
             // Large trades should be marked as external
-            assert_eq!(trade.is_internal.unwrap(), false);
+            assert!(!trade.is_internal.unwrap());
         }
     }
 

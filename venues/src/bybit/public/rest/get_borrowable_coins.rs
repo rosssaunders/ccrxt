@@ -66,7 +66,7 @@ impl RestClient {
     /// Query the list of coins that are available for crypto loans including their
     /// borrowing rates and limits.
     ///
-    /// [API Documentation](https://bybit-exchange.github.io/docs/v5/crypto-loan/loanable-coin)
+    /// [docs](https://bybit-exchange.github.io/docs/v5/crypto-loan/loanable-coin)
     ///
     /// Rate limit: 10 requests per second
     ///

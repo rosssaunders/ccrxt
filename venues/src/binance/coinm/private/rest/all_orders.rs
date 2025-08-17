@@ -119,7 +119,7 @@ pub struct AllOrder {
 impl RestClient {
     /// Get all account orders (active, canceled, or filled) on Binance Coin-M Futures.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/All-Orders
+    /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/All-Orders)
     ///
     /// GET /dapi/v1/allOrders
     /// Weight: 20 with symbol, 40 with pair

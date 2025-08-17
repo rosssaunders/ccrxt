@@ -12,7 +12,7 @@ impl RestClient {
     ///
     /// This endpoint returns delivery orders for the authenticated user.
     ///
-    /// See: <https://www.gate.com/docs/developers/apiv4/#query-futures-order-list-2>
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#query-futures-order-list-2)
     ///
     /// Rate limit: 10 requests per second
     ///
@@ -33,7 +33,7 @@ impl RestClient {
     ///
     /// This endpoint returns details for a specific delivery order.
     ///
-    /// See: <https://www.gate.com/docs/developers/apiv4/#query-futures-order-list-2>
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#query-futures-order-list-2)
     ///
     /// Rate limit: 10 requests per second
     ///

@@ -1,11 +1,3 @@
-//! Get Order Info endpoint for Bitget Spot API
-//!
-//! This endpoint allows retrieving detailed information about a specific order.
-//!
-//! Reference: https://www.bitget.com/api-doc/spot/trade/Get-Order-Info
-//! Endpoint: GET /api/v2/spot/trade/orderInfo
-//! Rate limit: 20 times/1s (UID)
-
 use serde::{Deserialize, Serialize};
 
 use super::super::RestClient;
@@ -194,6 +186,8 @@ impl RestClient {
     ///
     /// Retrieves comprehensive order information including fill status,
     /// fees, and timestamps.
+    ///
+    /// [docs](https://www.bitget.com/api-doc/spot/trade/Get-Order-Info)
     ///
     /// # Arguments
     /// * `request` - The order info request (by order ID or client order ID)

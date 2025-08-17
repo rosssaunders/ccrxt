@@ -2,11 +2,14 @@ use serde::{Deserialize, Serialize};
 
 use crate::kucoin::spot::{ResponseHeaders, RestResponse, Result};
 
+const MODIFY_CROSS_MARGIN_LEVERAGE_ENDPOINT: &str = "/api/v2/changeCrossUserLeverage";
+
 /// Modify cross margin leverage request
 #[derive(Debug, Clone, Serialize)]
 pub struct ModifyCrossMarginLeverageRequest {
     /// Symbol of the contract
     pub symbol: String,
+
     /// New leverage value
     pub leverage: String,
 }
@@ -22,13 +25,12 @@ pub struct ModifyCrossMarginLeverageResponse {
 impl super::RestClient {
     /// Modify cross margin leverage for a symbol
     ///
-    /// <https://www.kucoin.com/docs-new/rest/futures-trading/positions/modify-cross-margin-leverage>
+    /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/positions/modify-cross-margin-leverage)
     pub async fn modify_cross_margin_leverage(
         &self,
         request: ModifyCrossMarginLeverageRequest,
     ) -> Result<(RestResponse<bool>, ResponseHeaders)> {
-        const MODIFY_CROSS_MARGIN_LEVERAGE_ENDPOINT: &str = "/api/v2/changeCrossUserLeverage";
-        self.post(MODIFY_CROSS_MARGIN_LEVERAGE_ENDPOINT, &request)
+        self.post_with_request(MODIFY_CROSS_MARGIN_LEVERAGE_ENDPOINT, &request)
             .await
     }
 }
@@ -54,6 +56,6 @@ mod tests {
     fn test_modify_cross_margin_leverage_response_deserialization() {
         let json = r#"true"#;
         let response: bool = serde_json::from_str(json).unwrap();
-        assert_eq!(response, true);
+        assert!(response);
     }
 }

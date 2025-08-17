@@ -11,7 +11,7 @@ impl RestClient {
     ///
     /// This endpoint creates a new delivery order.
     ///
-    /// See: <https://www.gate.com/docs/developers/apiv4/#place-futures-order-2>
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#place-futures-order-2)
     ///
     /// Rate limit: 10 requests per second
     ///

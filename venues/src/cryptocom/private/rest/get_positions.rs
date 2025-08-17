@@ -51,7 +51,7 @@ impl RestClient {
     ///
     /// Returns the user's positions with optional filtering by instrument.
     ///
-    /// [Official API docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#private-get-positions)
+    /// [docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#private-get-positions)
     ///
     /// Rate limit: No rate limit
     ///

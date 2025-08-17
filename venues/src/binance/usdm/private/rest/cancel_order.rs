@@ -94,7 +94,7 @@ impl UsdmClient {
     ///
     /// Cancels an existing order on Binance USDM Futures.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Cancel-Order
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Cancel-Order)
     ///
     /// Rate limit: 1 request per second
     ///

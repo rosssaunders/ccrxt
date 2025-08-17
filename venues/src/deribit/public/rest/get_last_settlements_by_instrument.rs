@@ -54,7 +54,7 @@ impl RestClient {
     ///
     /// Retrieves the most recent settlements for a given instrument.
     ///
-    /// [Official API docs](https://docs.deribit.com/#public-get_last_settlements_by_instrument)
+    /// [docs](https://docs.deribit.com/#public-get_last_settlements_by_instrument)
     pub async fn get_last_settlements_by_instrument(
         &self,
         params: GetLastSettlementsByInstrumentRequest,

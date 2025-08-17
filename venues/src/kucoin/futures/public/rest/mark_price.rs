@@ -37,7 +37,7 @@ impl super::RestClient {
     ///
     /// Returns the current mark price for the specified futures contract symbol.
     ///
-    /// [docs]: https://www.kucoin.com/docs-new/rest/futures-trading/market-data/get-mark-price
+    /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/market-data/get-mark-price)
     ///
     /// Rate limit: varies by endpoint type
     ///

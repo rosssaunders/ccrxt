@@ -3,7 +3,10 @@
 
 use std::sync::Arc;
 
-use reqwest::Client;
+use rest::{
+    HttpClient,
+    http_client::{Method as HttpMethod, RequestBuilder},
+};
 use serde::{Serialize, de::DeserializeOwned};
 
 use crate::gateio::shared::{RateLimiter, RestResult};
@@ -14,21 +17,16 @@ const TESTNET_URL: &str = "https://api-testnet.gateapi.io/api/v4";
 /// Public REST API client for Gate.io
 #[derive(Clone)]
 pub struct RestClient {
-    client: Client,
+    http_client: Arc<dyn HttpClient>,
     base_url: String,
     rate_limiter: Arc<RateLimiter>,
 }
 
 impl RestClient {
     /// Create a new public REST client
-    pub fn new(testnet: bool) -> RestResult<Self> {
-        let client = Client::builder()
-            .timeout(std::time::Duration::from_secs(30))
-            .build()
-            .map_err(|e| crate::gateio::options::GateIoError::Http(e))?;
-
+    pub fn new(http_client: Arc<dyn HttpClient>, testnet: bool) -> RestResult<Self> {
         Ok(Self {
-            client,
+            http_client,
             base_url: if testnet { TESTNET_URL } else { LIVE_URL }.to_string(),
             rate_limiter: Arc::new(RateLimiter::new()),
         })
@@ -61,33 +59,43 @@ impl RestClient {
         })?;
 
         let url = format!("{}{}", self.base_url, endpoint);
-        let mut request_builder = self.client.get(&url);
 
-        // Add query parameters
-        if let Some(params) = query {
-            request_builder = request_builder.query(params);
-        }
+        // Build URL with query parameters
+        let full_url = if let Some(params) = query {
+            let query_string = serde_urlencoded::to_string(params).map_err(|e| {
+                crate::gateio::options::GateIoError::InvalidParameter(format!(
+                    "Failed to serialize query: {}",
+                    e
+                ))
+            })?;
+            if query_string.is_empty() {
+                url
+            } else {
+                format!("{}?{}", url, query_string)
+            }
+        } else {
+            url
+        };
 
-        let response = request_builder
-            .send()
-            .await
-            .map_err(|e| crate::gateio::options::GateIoError::Http(e))?;
+        let request = RequestBuilder::new(HttpMethod::Get, full_url).build();
+        let response = self.http_client.execute(request).await.map_err(|e| {
+            crate::gateio::options::GateIoError::Network(format!("HTTP request failed: {}", e))
+        })?;
 
-        let status = response.status();
+        let status = response.status;
         let headers =
-            crate::gateio::options::rate_limit::RateLimitHeader::from_headers(response.headers());
+            crate::gateio::options::rate_limit::RateLimitHeader::from_headers(&response.headers);
 
         // Update rate limiter with response headers
         if let Some(status) = self.rate_limiter.update_from_headers(&headers, endpoint) {
             tracing::debug!("Rate limit status for {}: {:?}", endpoint, status);
         }
 
-        let body = response
-            .text()
-            .await
-            .map_err(|e| crate::gateio::options::GateIoError::Http(e))?;
+        let body = response.text().map_err(|e| {
+            crate::gateio::options::GateIoError::Network(format!("Failed to read response: {}", e))
+        })?;
 
-        if status.is_success() {
+        if (200..300).contains(&status) {
             let data: T = serde_json::from_str(&body)
                 .map_err(|e| crate::gateio::options::GateIoError::Json(e))?;
             Ok(data)

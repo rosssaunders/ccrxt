@@ -118,7 +118,8 @@ impl RestClient {
     ///
     /// Cancel an existing order and place a new order on the same symbol.
     ///
-    /// [docs]: (https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#cancel-and-replace-order--trade)
+    /// [docs](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#cancel-and-replace-order--trade)
+    ///
     /// Method: POST /api/v3/order/cancelReplace
     /// Weight: 1
     /// Security: TRADE
@@ -448,11 +449,11 @@ mod tests {
     #[test]
     fn test_cancel_replace_mode_serialization() {
         assert_eq!(
-            serde_json::to_value(&CancelReplaceMode::StopOnFailure).unwrap(),
+            serde_json::to_value(CancelReplaceMode::StopOnFailure).unwrap(),
             json!("STOP_ON_FAILURE")
         );
         assert_eq!(
-            serde_json::to_value(&CancelReplaceMode::AllowFailure).unwrap(),
+            serde_json::to_value(CancelReplaceMode::AllowFailure).unwrap(),
             json!("ALLOW_FAILURE")
         );
     }
@@ -460,11 +461,11 @@ mod tests {
     #[test]
     fn test_cancel_restrictions_serialization() {
         assert_eq!(
-            serde_json::to_value(&CancelRestrictions::OnlyNew).unwrap(),
+            serde_json::to_value(CancelRestrictions::OnlyNew).unwrap(),
             json!("ONLY_NEW")
         );
         assert_eq!(
-            serde_json::to_value(&CancelRestrictions::OnlyPartiallyFilled).unwrap(),
+            serde_json::to_value(CancelRestrictions::OnlyPartiallyFilled).unwrap(),
             json!("ONLY_PARTIALLY_FILLED")
         );
     }
@@ -472,11 +473,11 @@ mod tests {
     #[test]
     fn test_order_rate_limit_exceeded_mode_serialization() {
         assert_eq!(
-            serde_json::to_value(&OrderRateLimitExceededMode::DoNothing).unwrap(),
+            serde_json::to_value(OrderRateLimitExceededMode::DoNothing).unwrap(),
             json!("DO_NOTHING")
         );
         assert_eq!(
-            serde_json::to_value(&OrderRateLimitExceededMode::CancelOnly).unwrap(),
+            serde_json::to_value(OrderRateLimitExceededMode::CancelOnly).unwrap(),
             json!("CANCEL_ONLY")
         );
     }

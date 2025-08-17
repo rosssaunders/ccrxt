@@ -3,12 +3,16 @@
 //! These tests verify the functionality of options endpoints.
 //! Tests run against the live Gate.io API using real market data.
 
+use std::sync::Arc;
+
+use rest::native::NativeHttpClient;
 use tokio;
 use venues::gateio::options::public::rest::RestClient;
 
 /// Helper function to create a test client for options public endpoints
 fn create_options_test_client() -> RestClient {
-    RestClient::new(false).expect("Failed to create Gate.io options REST client")
+    let http_client = Arc::new(NativeHttpClient::default());
+    RestClient::new(http_client, false).expect("Failed to create Gate.io options REST client")
 }
 
 #[tokio::test]

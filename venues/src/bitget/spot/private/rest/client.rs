@@ -20,16 +20,20 @@
 //! - Endpoint-specific limits: varies (3-20 requests per second)
 //! - UID-based limits for private endpoints
 
-use std::borrow::Cow;
+use std::{borrow::Cow, sync::Arc};
 
 use base64::{Engine, engine::general_purpose::STANDARD as BASE64};
 use chrono::Utc;
 use hmac::{Hmac, Mac};
-use reqwest::Client;
-use rest::secrets::ExposableSecret;
+use rest::{
+    HttpClient,
+    http_client::{Method as HttpMethod, RequestBuilder},
+    secrets::ExposableSecret,
+};
 use serde::Serialize;
 use sha2::Sha256;
 
+use super::credentials::Credentials;
 use crate::bitget::spot::{Errors, RestResult, rate_limit::RateLimiter};
 
 /// A client for interacting with the Bitget private REST API
@@ -39,15 +43,11 @@ use crate::bitget::spot::{Errors, RestResult, rate_limit::RateLimiter};
 #[non_exhaustive]
 pub struct RestClient {
     /// The underlying HTTP client used for making requests.
-    pub(crate) client: Client,
+    pub(crate) http_client: Arc<dyn HttpClient>,
     /// The rate limiter for this client.
     pub(crate) rate_limiter: RateLimiter,
-    /// The encrypted API key.
-    pub(crate) api_key: Box<dyn ExposableSecret>,
-    /// The encrypted API secret.
-    pub(crate) api_secret: Box<dyn ExposableSecret>,
-    /// The encrypted API passphrase.
-    pub(crate) api_passphrase: Box<dyn ExposableSecret>,
+    /// The credentials for authenticating with Bitget API.
+    pub(crate) credentials: Credentials,
     /// The base URL for the API.
     pub(crate) base_url: Cow<'static, str>,
 }
@@ -56,29 +56,23 @@ impl RestClient {
     /// Creates a new RestClient with encrypted API credentials
     ///
     /// # Arguments
-    /// * `api_key` - The encrypted API key
-    /// * `api_secret` - The encrypted API secret  
-    /// * `api_passphrase` - The encrypted API passphrase
+    /// * `credentials` - The credentials for authentication
     /// * `base_url` - The base URL for the API
     /// * `rate_limiter` - The rate limiter instance
-    /// * `client` - The HTTP client to use
+    /// * `http_client` - The HTTP client to use
     ///
     /// # Returns
     /// A new RestClient instance
     pub fn new(
-        api_key: Box<dyn ExposableSecret>,
-        api_secret: Box<dyn ExposableSecret>,
-        api_passphrase: Box<dyn ExposableSecret>,
+        credentials: Credentials,
         base_url: impl Into<Cow<'static, str>>,
         rate_limiter: RateLimiter,
-        client: Client,
+        http_client: Arc<dyn HttpClient>,
     ) -> Self {
         Self {
-            client,
+            http_client,
             rate_limiter,
-            api_key,
-            api_secret,
-            api_passphrase,
+            credentials,
             base_url: base_url.into(),
         }
     }
@@ -113,8 +107,9 @@ impl RestClient {
             body_part
         );
 
-        let mut mac = Hmac::<Sha256>::new_from_slice(self.api_secret.expose_secret().as_bytes())
-            .map_err(|e| Errors::Error(format!("Failed to create HMAC: {e}")))?;
+        let mut mac =
+            Hmac::<Sha256>::new_from_slice(self.credentials.api_secret.expose_secret().as_bytes())
+                .map_err(|e| Errors::Error(format!("Failed to create HMAC: {e}")))?;
 
         mac.update(sign_string.as_bytes());
         let result = mac.finalize();
@@ -141,7 +136,7 @@ impl RestClient {
     pub(super) async fn send_signed_request<T, Q, B>(
         &self,
         endpoint: &str,
-        method: reqwest::Method,
+        method: HttpMethod,
         query_params: Option<&Q>,
         body_params: Option<&B>,
         endpoint_limit_per_second: u32,
@@ -184,9 +179,18 @@ impl RestClient {
         let timestamp = Utc::now().timestamp_millis();
 
         // Generate signature
+        let method_str = match method {
+            HttpMethod::Get => "GET",
+            HttpMethod::Post => "POST",
+            HttpMethod::Put => "PUT",
+            HttpMethod::Delete => "DELETE",
+            HttpMethod::Patch => "PATCH",
+            HttpMethod::Head => "HEAD",
+            HttpMethod::Options => "OPTIONS",
+        };
         let signature = self.generate_signature(
             timestamp,
-            method.as_str(),
+            method_str,
             endpoint,
             query_string.as_deref(),
             body_string.as_deref(),
@@ -199,25 +203,31 @@ impl RestClient {
         };
 
         // Build request
-        let mut request_builder = self
-            .client
-            .request(method, &url)
-            .header("ACCESS-KEY", self.api_key.expose_secret())
-            .header("ACCESS-SIGN", signature)
+        let mut builder = RequestBuilder::new(method, url)
+            .header("ACCESS-KEY", self.credentials.api_key.expose_secret())
+            .header("ACCESS-SIGN", &signature)
             .header("ACCESS-TIMESTAMP", timestamp.to_string())
-            .header("ACCESS-PASSPHRASE", self.api_passphrase.expose_secret())
+            .header(
+                "ACCESS-PASSPHRASE",
+                self.credentials.api_passphrase.expose_secret(),
+            )
             .header("locale", "en-US");
 
         // Add body if provided
-        if let Some(body_content) = &body_string {
-            request_builder = request_builder
+        if let Some(body_content) = body_string {
+            builder = builder
                 .header("Content-Type", "application/json")
-                .body(body_content.clone());
+                .body(body_content.into_bytes());
         }
 
         // Execute request
         let start_time = std::time::Instant::now();
-        let response = request_builder.send().await.map_err(Errors::HttpError)?;
+        let request = builder.build();
+        let response = self
+            .http_client
+            .execute(request)
+            .await
+            .map_err(|e| Errors::HttpError(format!("HTTP request failed: {e}")))?;
         let _request_duration = start_time.elapsed();
 
         // Update rate limiter counters
@@ -227,11 +237,13 @@ impl RestClient {
         }
 
         // Handle HTTP status codes
-        let status = response.status();
-        let response_text = response.text().await.map_err(Errors::HttpError)?;
+        let status = response.status;
+        let response_text = response
+            .text()
+            .map_err(|e| Errors::HttpError(format!("Failed to read response: {e}")))?;
 
         // Parse response
-        if status.is_success() {
+        if status == 200 || status == 201 {
             // Try to parse as successful response
             match serde_json::from_str::<BitgetResponse<T>>(&response_text) {
                 Ok(bitget_response) => {
@@ -258,7 +270,7 @@ impl RestClient {
             }
         } else {
             // Handle HTTP error status codes
-            match status.as_u16() {
+            match status {
                 429 => {
                     Err(Errors::ApiError(
                         crate::bitget::spot::errors::ApiError::RateLimitExceeded {
@@ -289,8 +301,7 @@ impl RestClient {
                         Ok(error_response) => Err(Errors::ApiError(error_response.into())),
                         Err(_) => Err(Errors::Error(format!(
                             "HTTP {} error: {}",
-                            status.as_u16(),
-                            response_text
+                            status, response_text
                         ))),
                     }
                 }
@@ -313,7 +324,7 @@ impl RestClient {
     {
         self.send_signed_request(
             endpoint,
-            reqwest::Method::GET,
+            HttpMethod::Get,
             Some(&params),
             None::<&()>,
             endpoint_limit_per_second,
@@ -338,7 +349,7 @@ impl RestClient {
     {
         self.send_signed_request(
             endpoint,
-            reqwest::Method::POST,
+            HttpMethod::Post,
             None::<&()>,
             Some(&params),
             endpoint_limit_per_second,
@@ -348,11 +359,10 @@ impl RestClient {
         .await
     }
 
-    /// Convenience method for requests with no parameters
-    pub(super) async fn send_signed_request_no_params<T>(
+    /// Convenience method for GET requests with no parameters
+    pub(super) async fn send_get_signed_request_no_params<T>(
         &self,
         endpoint: &str,
-        method: reqwest::Method,
         endpoint_limit_per_second: u32,
         is_order: bool,
         order_limit_per_second: Option<u32>,
@@ -362,7 +372,7 @@ impl RestClient {
     {
         self.send_signed_request(
             endpoint,
-            method,
+            HttpMethod::Get,
             None::<&()>,
             None::<&()>,
             endpoint_limit_per_second,

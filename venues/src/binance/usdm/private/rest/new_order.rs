@@ -204,7 +204,7 @@ impl UsdmClient {
     ///
     /// Send in a new order.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api#new-ordertrade
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api#new-ordertrade)
     ///
     /// Rate limit: 1 on 10s order rate limit (X-MBX-ORDER-COUNT-10S); 1 on 1min order rate limit (X-MBX-ORDER-COUNT-1M); 0 on IP rate limit (x-mbx-used-weight-1m)
     ///

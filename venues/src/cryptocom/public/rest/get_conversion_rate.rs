@@ -1,5 +1,4 @@
 use serde::{Deserialize, Serialize};
-use serde_json;
 
 use super::client::RestClient;
 use crate::cryptocom::{ApiResult, RestResult, rate_limit::EndpointType};
@@ -19,6 +18,7 @@ pub struct GetConversionRateRequest {
 pub struct ConversionRateResult {
     /// CDCETH
     pub instrument_name: String,
+
     /// Conversion rate between staked token (ETH.staked) and liquid staking token (CDCETH)
     pub conversion_rate: String,
 }
@@ -31,7 +31,7 @@ impl RestClient {
     ///
     /// Returns the current conversion rate for liquid staking tokens.
     ///
-    /// See: <https://exchange-docs.crypto.com/exchange/index.html>
+    /// [docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#public-staking-get-conversion-rate)
     ///
     /// Rate limit: 50 requests per second
     ///
@@ -44,13 +44,9 @@ impl RestClient {
         &self,
         params: GetConversionRateRequest,
     ) -> RestResult<ConversionRateResponse> {
-        let params_value = serde_json::to_value(&params)
-            .map_err(|e| crate::cryptocom::Errors::Error(format!("Serialization error: {e}")))?;
-
-        self.send_request(
+        self.send_post_request(
             CONVERSION_RATE_ENDPOINT,
-            reqwest::Method::POST,
-            Some(&params_value),
+            Some(&params),
             EndpointType::PublicStaking,
         )
         .await

@@ -39,7 +39,7 @@ impl RestClient {
     /// latest 1,440 data entries. Charts are returned in groups based on the requested
     /// bar.
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-mark-price-candlesticks
+    /// [docs](https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-mark-price-candlesticks)
     ///
     /// Rate limit: 20 requests per 2 seconds
     ///
@@ -51,7 +51,7 @@ impl RestClient {
     pub async fn get_mark_price_candles(
         &self,
         request: GetMarkPriceCandlesRequest,
-    ) -> RestResult<Vec<[String; 6]>> {
+    ) -> RestResult<[String; 6]> {
         self.send_get_request(
             MARKET_MARK_PRICE_CANDLES_ENDPOINT,
             Some(&request),

@@ -14,8 +14,7 @@ impl RestClient {
     ///
     /// Retrieves all available futures contracts for the specified settlement currency.
     ///
-    /// # API Documentation
-    /// <https://www.gate.io/docs/developers/apiv4/#list-all-futures-contracts>
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#list-all-futures-contracts)
     ///
     /// # Arguments
     /// * `params` - The contracts query parameters

@@ -152,7 +152,7 @@ impl RestClient {
     ///
     /// Retrieve the balances of assets and the amount that is available or on hold.
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-account-rest-api-get-balance
+    /// [docs](https://www.okx.com/docs-v5/en/#rest-api-account-rest-api-get-balance)
     ///
     /// Rate limit: 10 requests per 2 seconds
     ///

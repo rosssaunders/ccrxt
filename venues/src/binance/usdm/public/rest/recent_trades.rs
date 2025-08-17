@@ -62,7 +62,7 @@ impl RestClient {
     /// Get recent market trades. Market trades means trades filled in the order book.
     /// Only market trades will be returned, which means the insurance fund trades and ADL trades won't be returned.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Recent-Trades-List
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Recent-Trades-List)
     ///
     /// Rate limit: Weight 5
     ///

@@ -54,7 +54,7 @@ pub struct MovePositionsResponse {
 impl RestClient {
     /// Move positions
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#trading-account-rest-api-move-positions
+    /// [docs](https://www.okx.com/docs-v5/en/#trading-account-rest-api-move-positions)
     ///
     /// # Arguments
     /// * `request` - The move positions request

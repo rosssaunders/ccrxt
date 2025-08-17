@@ -59,8 +59,7 @@ impl RestClient {
     ///
     /// This endpoint returns futures account information for the authenticated user.
     ///
-    /// See: Gate.io API documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#query-futures-account>
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#query-futures-account)
     ///
     /// Rate limit: 100 requests per second
     ///
@@ -135,8 +134,8 @@ mod tests {
         assert_eq!(account.available, "9750.25");
         assert_eq!(account.point, "100.0");
         assert_eq!(account.currency, "USDT");
-        assert_eq!(account.in_dual_mode, false);
-        assert_eq!(account.enable_credit, true);
+        assert!(!account.in_dual_mode);
+        assert!(account.enable_credit);
         assert_eq!(account.position_cross_margin, "1500.0");
         assert_eq!(account.order_cross_margin, "300.0");
         assert_eq!(account.available_cross_margin, "8450.25");

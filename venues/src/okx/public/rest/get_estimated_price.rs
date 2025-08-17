@@ -39,7 +39,7 @@ impl RestClient {
     /// Retrieve the estimated delivery price which will only have a return value one
     /// hour before the delivery/exercise.
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-estimated-delivery-exercise-price
+    /// [docs](https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-estimated-delivery-exercise-price)
     ///
     /// Rate limit: 10 requests per 2 seconds
     /// Rate limit rule: IP + Instrument ID
@@ -52,7 +52,7 @@ impl RestClient {
     pub async fn get_estimated_price(
         &self,
         request: GetEstimatedPriceRequest,
-    ) -> RestResult<Vec<EstimatedPriceData>> {
+    ) -> RestResult<EstimatedPriceData> {
         self.send_get_request(
             PUBLIC_ESTIMATED_PRICE_ENDPOINT,
             Some(&request),

@@ -75,6 +75,8 @@ impl RestClient {
     /// Get information about trading pairs, including price/quantity steps,
     /// minimum/maximum transaction amounts, and trading status.
     ///
+    /// [docs](https://bingx-api.github.io/docs/#/en-us/spot/market-api.html#Spot%20trading%20symbols)
+    ///
     /// # Arguments
     /// * `request` - The symbols request parameters
     ///
@@ -83,11 +85,6 @@ impl RestClient {
     ///
     /// # Rate Limit
     /// - IP: 100 requests per 10 seconds (Group 1)
-    ///
-    /// # API Documentation
-    /// - Endpoint: GET /openApi/spot/v1/common/symbols
-    /// - For price reference, check GET /openApi/spot/v1/ticker/24hr
-    /// - [docs]: https://bingx-api.github.io/docs/#/en-us/spot/market-api.html#Spot%20trading%20symbols
     pub async fn get_symbols(&self, request: GetSymbolsRequest) -> RestResult<GetSymbolsResponse> {
         self.send_request(SYMBOLS_ENDPOINT, Some(&request), EndpointType::PublicMarket)
             .await
@@ -96,7 +93,6 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use reqwest::Client;
 
     use super::*;
     use crate::bingx::spot::RateLimiter;
@@ -159,7 +155,7 @@ mod tests {
     async fn test_get_symbols_method_exists() {
         let client = RestClient::new(
             "https://open-api.bingx.com",
-            Client::new(),
+            std::sync::Arc::new(rest::native::NativeHttpClient::default()),
             RateLimiter::new(),
         );
 

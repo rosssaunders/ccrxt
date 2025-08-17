@@ -28,7 +28,7 @@ impl super::RestClient {
     ///
     /// Switch the margin mode of a symbol between cross margin and isolated margin.
     ///
-    /// [docs]: https://www.kucoin.com/docs-new/rest/futures-trading/positions/switch-margin-mode
+    /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/positions/switch-margin-mode)
     ///
     /// Rate limit: 20
     ///
@@ -41,7 +41,8 @@ impl super::RestClient {
         &self,
         request: ChangeMarginModeRequest,
     ) -> Result<(RestResponse<ChangeMarginModeResponse>, ResponseHeaders)> {
-        self.post(CHANGE_MARGIN_MODE_ENDPOINT, &request).await
+        self.post_with_request(CHANGE_MARGIN_MODE_ENDPOINT, &request)
+            .await
     }
 }
 
@@ -77,14 +78,14 @@ mod tests {
     fn test_change_margin_mode_response_deserialization_success() {
         let json = r#"{"result":true}"#;
         let response: ChangeMarginModeResponse = serde_json::from_str(json).unwrap();
-        assert_eq!(response.result, true);
+        assert!(response.result);
     }
 
     #[test]
     fn test_change_margin_mode_response_deserialization_failure() {
         let json = r#"{"result":false}"#;
         let response: ChangeMarginModeResponse = serde_json::from_str(json).unwrap();
-        assert_eq!(response.result, false);
+        assert!(!response.result);
     }
 
     #[test]

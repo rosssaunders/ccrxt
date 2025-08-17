@@ -37,8 +37,7 @@ impl RestClient {
     ///
     /// This endpoint returns details for a specific currency, including trading status, withdrawal/deposit status, and fee information.
     ///
-    /// # API Documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#get-details-of-a-specific-currency>
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#get-details-of-a-specific-currency)
     pub async fn get_currency(&self, currency: &str) -> crate::gateio::spot::RestResult<Currency> {
         let endpoint = format!("/spot/currencies/{}", currency);
         self.get(&endpoint).await
@@ -64,11 +63,11 @@ mod tests {
 
         let currency: Currency = serde_json::from_str(json).unwrap();
         assert_eq!(currency.currency, "BTC");
-        assert_eq!(currency.delisted, false);
-        assert_eq!(currency.withdraw_disabled, false);
-        assert_eq!(currency.withdraw_delayed, false);
-        assert_eq!(currency.deposit_disabled, false);
-        assert_eq!(currency.trade_disabled, false);
+        assert!(!currency.delisted);
+        assert!(!currency.withdraw_disabled);
+        assert!(!currency.withdraw_delayed);
+        assert!(!currency.deposit_disabled);
+        assert!(!currency.trade_disabled);
         assert_eq!(currency.fixed_rate, Some("0.0005".to_string()));
         assert_eq!(currency.chain, Some("BTC".to_string()));
     }
@@ -88,7 +87,7 @@ mod tests {
 
         let currency: Currency = serde_json::from_str(json).unwrap();
         assert_eq!(currency.currency, "ETH");
-        assert_eq!(currency.delisted, false);
+        assert!(!currency.delisted);
         assert_eq!(currency.fixed_rate, Some("0.008".to_string()));
         assert_eq!(currency.chain, Some("ETH".to_string()));
     }
@@ -127,10 +126,10 @@ mod tests {
 
         let currency: Currency = serde_json::from_str(json).unwrap();
         assert_eq!(currency.currency, "ALGO");
-        assert_eq!(currency.withdraw_disabled, true);
-        assert_eq!(currency.withdraw_delayed, true);
-        assert_eq!(currency.deposit_disabled, true);
-        assert_eq!(currency.trade_disabled, false); // Can still trade during maintenance
+        assert!(currency.withdraw_disabled);
+        assert!(currency.withdraw_delayed);
+        assert!(currency.deposit_disabled);
+        assert!(!currency.trade_disabled); // Can still trade during maintenance
     }
 
     #[test]
@@ -146,10 +145,10 @@ mod tests {
 
         let currency: Currency = serde_json::from_str(json).unwrap();
         assert_eq!(currency.currency, "LUNA");
-        assert_eq!(currency.delisted, true);
-        assert_eq!(currency.withdraw_disabled, true);
-        assert_eq!(currency.deposit_disabled, true);
-        assert_eq!(currency.trade_disabled, true);
+        assert!(currency.delisted);
+        assert!(currency.withdraw_disabled);
+        assert!(currency.deposit_disabled);
+        assert!(currency.trade_disabled);
         assert_eq!(currency.fixed_rate, None);
         assert_eq!(currency.chain, None);
     }

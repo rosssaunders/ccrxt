@@ -59,7 +59,7 @@ impl UsdmClient {
     ///
     /// Retrieves the current account configuration including fee tier, trading permissions, margin settings, and other account flags.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Account-Config
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Account-Config)
     ///
     /// Rate limit: 5
     ///

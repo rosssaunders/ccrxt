@@ -20,6 +20,12 @@ pub enum OrderType {
     /// Market order
     #[serde(rename = "MKT")]
     Market,
+    /// Stop limit order
+    #[serde(rename = "STOP_LIMIT")]
+    StopLimit,
+    /// Post only limit order
+    #[serde(rename = "POST_ONLY")]
+    PostOnly,
 }
 
 /// Time in force for orders

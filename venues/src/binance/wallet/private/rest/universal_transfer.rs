@@ -42,7 +42,7 @@ pub struct UniversalTransferResponse {
 impl RestClient {
     /// Perform universal transfer on Binance.
     ///
-    /// See: <https://binance-docs.github.io/apidocs/spot/en/>
+    /// [docs](https://binance-docs.github.io/apidocs/spot/en/)
     /// POST /sapi/v1/asset/transfer
     /// Weight: 900
     /// Requires API key and signature.

@@ -61,7 +61,7 @@ impl RestClient {
     ///
     /// Gets 30day and 24hour volume for all products and market types.
     ///
-    /// [API Documentation](https://docs.cdp.coinbase.com/exchange/reference/exchangerestapi_getproductvolumesummary)
+    /// [docs](https://docs.cdp.coinbase.com/exchange/reference/exchangerestapi_getproductvolumesummary)
     ///
     /// Rate limit: 10 requests per second
     ///
@@ -75,7 +75,7 @@ impl RestClient {
         request: &GetProductVolumeSummaryRequest,
     ) -> RestResult<GetProductVolumeSummaryResponse> {
         self.send_get_request(PRODUCT_VOLUME_SUMMARY_ENDPOINT, Some(request))
-        .await
+            .await
     }
 }
 

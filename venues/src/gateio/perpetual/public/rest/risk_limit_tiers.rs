@@ -7,11 +7,14 @@ use super::RestClient;
 pub struct FuturesRiskLimitTiersRequest {
     /// Settlement currency
     pub settle: String,
+
     /// Contract name
     pub contract: String,
+
     /// List offset (default 0)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub offset: Option<i32>,
+
     /// Maximum number of records to return (1-500, default 10)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i32>,
@@ -38,8 +41,8 @@ impl RestClient {
     ///
     /// Retrieves risk limit tiers for a specific futures contract.
     ///
-    /// # API Documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#list-risk-limit-tiers>
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#list-risk-limit-tiers)
+    ///
     /// Higher tiers require higher margin rates but allow larger positions.
     pub async fn get_futures_risk_limit_tiers(
         &self,
@@ -167,7 +170,7 @@ mod tests {
 
             let json = serde_json::to_value(&request).unwrap();
             assert_eq!(json["limit"], limit);
-            assert!(limit >= 1 && limit <= 500);
+            assert!((1..=500).contains(&limit));
         }
     }
 

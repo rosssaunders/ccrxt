@@ -69,7 +69,7 @@ impl super::RestClient {
     ///
     /// Retrieve a paginated list of orders with optional filtering.
     ///
-    /// [docs]: https://www.kucoin.com/docs-new/rest/futures-trading/orders/get-order-list
+    /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/orders/get-order-list)
     ///
     /// Rate limit: 9
     ///
@@ -82,7 +82,7 @@ impl super::RestClient {
         &self,
         request: GetOrdersRequest,
     ) -> Result<(RestResponse<PaginatedOrdersResponse>, ResponseHeaders)> {
-        self.get(GET_ORDERS_ENDPOINT, Some(&request)).await
+        self.get_with_request(GET_ORDERS_ENDPOINT, &request).await
     }
 }
 

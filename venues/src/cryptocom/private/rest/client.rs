@@ -1,11 +1,16 @@
-use std::{borrow::Cow, collections::BTreeMap};
+use std::{borrow::Cow, collections::BTreeMap, sync::Arc};
 
 use chrono::Utc;
 use hmac::{Hmac, Mac};
-use rest::secrets::ExposableSecret;
+use rest::{
+    HttpClient,
+    http_client::{Method as HttpMethod, RequestBuilder},
+    secrets::ExposableSecret,
+};
 use serde_json::{Value, json};
 use sha2::Sha256;
 
+use super::credentials::Credentials;
 use crate::cryptocom::Errors;
 
 /// Signs a request using the Crypto.com signing algorithm
@@ -89,11 +94,9 @@ fn params_to_string(value: &Value) -> String {
 /// The API key and secret are stored in encrypted form and only decrypted when needed.
 pub struct RestClient {
     /// The underlying HTTP client used for making requests.
-    pub(crate) client: reqwest::Client,
-    /// The encrypted API key.
-    pub(crate) api_key: Box<dyn ExposableSecret>,
-    /// The encrypted API secret.
-    pub(crate) api_secret: Box<dyn ExposableSecret>,
+    pub(crate) http_client: Arc<dyn HttpClient>,
+    /// The API credentials for authentication.
+    pub(crate) credentials: Credentials,
     /// The base URL for the API.
     pub(crate) base_url: Cow<'static, str>,
 }
@@ -102,23 +105,20 @@ impl RestClient {
     /// Creates a new RestClient with encrypted API credentials
     ///
     /// # Arguments
-    /// * `api_key` - The encrypted API key
-    /// * `api_secret` - The encrypted API secret
+    /// * `credentials` - The API credentials for authentication
     /// * `base_url` - The base URL for the API
-    /// * `client` - The HTTP client to use
+    /// * `http_client` - The HTTP client to use
     ///
     /// # Returns
     /// A new RestClient instance
     pub fn new(
-        api_key: Box<dyn ExposableSecret>,
-        api_secret: Box<dyn ExposableSecret>,
+        credentials: Credentials,
         base_url: impl Into<Cow<'static, str>>,
-        client: reqwest::Client,
+        http_client: Arc<dyn HttpClient>,
     ) -> Self {
         Self {
-            client,
-            api_key,
-            api_secret,
+            http_client,
+            credentials,
             base_url: base_url.into(),
         }
     }
@@ -140,9 +140,9 @@ impl RestClient {
         params: &Value,
         nonce: u64,
     ) -> Result<String, Errors> {
-        let api_key = self.api_key.expose_secret();
+        let api_key = self.credentials.api_key.expose_secret();
         sign_request(
-            self.api_secret.as_ref(),
+            &self.credentials.api_secret,
             method,
             id,
             &api_key,
@@ -207,17 +207,42 @@ impl RestClient {
             "params": params,
             "nonce": nonce,
             "sig": signature,
-            "api_key": self.api_key.expose_secret(),
+            "api_key": self.credentials.api_key.expose_secret(),
         });
 
-        let response = self
-            .client
-            .post(format!("{}/v1/{}", self.base_url, method))
-            .json(&request_body)
-            .send()
-            .await?;
+        let url = format!("{}/v1/{}", self.base_url, method);
+        let body = serde_json::to_string(&request_body).map_err(|e| {
+            crate::cryptocom::Errors::Error(format!("Failed to serialize body: {e}"))
+        })?;
 
-        let result = response.json().await?;
+        let request = RequestBuilder::new(HttpMethod::Post, url)
+            .header("Content-Type", "application/json")
+            .body(body.into_bytes())
+            .build();
+
+        let response = self.http_client.execute(request).await.map_err(|e| {
+            crate::cryptocom::Errors::NetworkError(format!("HTTP request failed: {e}"))
+        })?;
+
+        // Check if the response was successful
+        if !(response.status >= 200 && response.status < 300) {
+            let status = response.status;
+            let error_text = response.text().map_err(|e| {
+                crate::cryptocom::Errors::NetworkError(format!("Failed to read response: {e}"))
+            })?;
+            return Err(crate::cryptocom::Errors::Error(format!(
+                "HTTP {status}: {error_text}"
+            )));
+        }
+
+        let response_text = response.text().map_err(|e| {
+            crate::cryptocom::Errors::NetworkError(format!("Failed to read response: {e}"))
+        })?;
+
+        let result: T = serde_json::from_str(&response_text).map_err(|e| {
+            crate::cryptocom::Errors::Error(format!("Failed to parse response: {e}"))
+        })?;
+
         Ok(result)
     }
 }
@@ -368,26 +393,26 @@ mod tests {
 
     #[test]
     fn test_client_creation() {
-        let api_key =
-            Box::new(PlainTextSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret =
-            Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
-        let client = reqwest::Client::new();
+        let credentials = Credentials {
+            api_key: rest::secrets::SecretString::from("test_key".to_string()),
+            api_secret: rest::secrets::SecretString::from("test_secret".to_string()),
+        };
+        let http_client = Arc::new(rest::native::NativeHttpClient::default());
 
-        let rest_client = RestClient::new(api_key, api_secret, "https://api.crypto.com", client);
+        let rest_client = RestClient::new(credentials, "https://api.crypto.com", http_client);
 
         assert_eq!(rest_client.base_url, "https://api.crypto.com");
     }
 
     #[test]
     fn test_client_sign_request() {
-        let api_key =
-            Box::new(PlainTextSecret::new("test_api_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret =
-            Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
-        let client = reqwest::Client::new();
+        let credentials = Credentials {
+            api_key: rest::secrets::SecretString::from("test_api_key".to_string()),
+            api_secret: rest::secrets::SecretString::from("test_secret".to_string()),
+        };
+        let http_client = Arc::new(rest::native::NativeHttpClient::default());
 
-        let rest_client = RestClient::new(api_key, api_secret, "https://api.crypto.com", client);
+        let rest_client = RestClient::new(credentials, "https://api.crypto.com", http_client);
 
         let params = json!({
             "order_id": 53287421324_u64

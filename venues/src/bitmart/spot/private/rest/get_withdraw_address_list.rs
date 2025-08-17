@@ -47,7 +47,7 @@ impl RestClient {
     ///
     /// Gets the user's withdraw address list
     ///
-    /// [docs]: https://developer-pro.bitmart.com/en/spot/#withdraw-address-keyed
+    /// [docs](https://developer-pro.bitmart.com/en/spot/#withdraw-address-keyed)
     ///
     /// Rate limit: 12 times/2 sec per API key
     ///

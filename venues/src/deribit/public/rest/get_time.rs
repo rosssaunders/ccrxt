@@ -20,7 +20,7 @@ impl RestClient {
     /// Returns the current Deribit server time in milliseconds since Unix epoch. Can be
     /// used to measure clock skew between client and server.
     ///
-    /// [docs]: https://docs.deribit.com/#public-get_time
+    /// [docs](https://docs.deribit.com/#public-get_time)
     ///
     /// Rate limit: non-matching engine (500 credits)
     ///
@@ -41,6 +41,8 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
+    use std::sync::Arc;
+
     use serde_json::json;
 
     use super::*;
@@ -105,10 +107,10 @@ mod tests {
 
     #[tokio::test]
     async fn test_endpoint_type_usage() {
-        let client = reqwest::Client::new();
+        let http_client = Arc::new(rest::native::NativeHttpClient::default());
         let rate_limiter = RateLimiter::new(AccountTier::Tier4);
 
-        let rest_client = RestClient::new("https://test.deribit.com", client, rate_limiter);
+        let rest_client = RestClient::new("https://test.deribit.com", http_client, rate_limiter);
 
         // Test that rate limiting works for this endpoint type
         let result = rest_client

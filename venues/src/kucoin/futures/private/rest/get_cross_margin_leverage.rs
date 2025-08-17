@@ -27,7 +27,7 @@ impl super::RestClient {
     ///
     /// Get the current cross margin leverage for a specific symbol.
     ///
-    /// [docs]: https://www.kucoin.com/docs-new/rest/futures-trading/positions/get-cross-margin-leverage
+    /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/positions/get-cross-margin-leverage)
     ///
     /// Rate limit: 9
     ///
@@ -43,7 +43,7 @@ impl super::RestClient {
         RestResponse<GetCrossMarginLeverageResponse>,
         ResponseHeaders,
     )> {
-        self.get(GET_CROSS_MARGIN_LEVERAGE_ENDPOINT, Some(&request))
+        self.get_with_request(GET_CROSS_MARGIN_LEVERAGE_ENDPOINT, &request)
             .await
     }
 }

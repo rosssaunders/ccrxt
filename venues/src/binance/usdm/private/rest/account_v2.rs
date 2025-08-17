@@ -197,7 +197,7 @@ impl UsdmClient {
     ///
     /// Retrieves current account information for a Binance USDM futures account, including balances, positions, and trading permissions.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Futures-Account-Balance-V2
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Futures-Account-Balance-V2)
     ///
     /// Rate limit: 5
     ///

@@ -57,7 +57,7 @@ impl RestClient {
     ///
     /// This endpoint returns delivery account balances and margin information.
     ///
-    /// See: <https://www.gate.com/docs/developers/apiv4/#get-futures-account-2>
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#get-futures-account-2)
     ///
     /// Rate limit: 10 requests per second
     ///
@@ -138,7 +138,7 @@ mod tests {
         assert_eq!(account.available, "840.25");
         assert_eq!(account.point, "0");
         assert_eq!(account.currency, "BTC");
-        assert_eq!(account.enable_credit, true);
+        assert!(account.enable_credit);
         assert_eq!(account.position_cross_margin, "75.0");
         assert_eq!(account.order_cross_margin, "25.0");
         assert_eq!(account.available_cross_margin, "900.5");

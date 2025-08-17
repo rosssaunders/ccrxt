@@ -2,6 +2,8 @@ use serde::{Deserialize, Serialize};
 
 use crate::kucoin::spot::{ResponseHeaders, RestResponse, Result};
 
+const PRIVATE_TOKEN_ENDPOINT: &str = "/api/v1/bullet-private";
+
 /// Get private WebSocket token request (no parameters needed)
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct GetPrivateTokenRequest {}
@@ -12,12 +14,16 @@ pub struct GetPrivateTokenRequest {}
 pub struct InstanceServer {
     /// WebSocket endpoint URL
     pub endpoint: String,
+
     /// Encryption flag
     pub encrypt: bool,
+
     /// Protocol type
     pub protocol: String,
+
     /// Ping interval in milliseconds
     pub ping_interval: i64,
+
     /// Ping timeout in milliseconds
     pub ping_timeout: i64,
 }
@@ -28,6 +34,7 @@ pub struct InstanceServer {
 pub struct WebSocketPrivateToken {
     /// Token for WebSocket authentication
     pub token: String,
+
     /// List of available instance servers
     pub instance_servers: Vec<InstanceServer>,
 }
@@ -35,13 +42,12 @@ pub struct WebSocketPrivateToken {
 impl super::RestClient {
     /// Get private WebSocket token for futures
     ///
-    /// <https://www.kucoin.com/docs-new/websocket-api/base-info/get-private-token-futures>
+    /// [docs](https://www.kucoin.com/docs-new/websocket-api/base-info/get-private-token-futures)
     pub async fn get_private_token(
         &self,
     ) -> Result<(RestResponse<WebSocketPrivateToken>, ResponseHeaders)> {
-        const PRIVATE_TOKEN_ENDPOINT: &str = "/api/v1/bullet-private";
         // POST requests use empty params for private endpoints
-        self.post(PRIVATE_TOKEN_ENDPOINT, &GetPrivateTokenRequest::default())
+        self.post_with_request(PRIVATE_TOKEN_ENDPOINT, &GetPrivateTokenRequest::default())
             .await
     }
 }
@@ -62,7 +68,7 @@ mod tests {
 
         let server: InstanceServer = serde_json::from_str(json).unwrap();
         assert_eq!(server.endpoint, "wss://ws-api-futures.kucoin.com/");
-        assert_eq!(server.encrypt, true);
+        assert!(server.encrypt);
         assert_eq!(server.protocol, "websocket");
         assert_eq!(server.ping_interval, 18000);
         assert_eq!(server.ping_timeout, 10000);

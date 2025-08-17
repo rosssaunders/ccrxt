@@ -1,11 +1,3 @@
-//! Current Plan Order endpoint for Bitget Spot API
-//!
-//! This endpoint allows querying current (active) trigger/stop orders (plan orders).
-//!
-//! Reference: https://www.bitget.com/api-doc/spot/trade/Current-Plan-Order
-//! Endpoint: GET /api/v2/spot/plan/current-plan-order
-//! Rate limit: 20 requests/second/UID
-
 use serde::{Deserialize, Serialize};
 
 use super::{
@@ -149,6 +141,8 @@ impl RestClient {
     /// Get current (active) spot plan orders
     ///
     /// Retrieves information about current plan orders that are waiting to be triggered.
+    ///
+    /// [docs](https://www.bitget.com/api-doc/spot/trade/Current-Plan-Order)
     ///
     /// # Arguments
     /// * `request` - The current plan orders query parameters

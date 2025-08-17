@@ -104,7 +104,7 @@ impl RestClient {
     ///
     /// Returns 24 hour rolling window price change statistics for coin-margined futures.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/24hr-Ticker-Price-Change-Statistics
+    /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/24hr-Ticker-Price-Change-Statistics)
     ///
     /// Weight: 1 for a single symbol; 40 when the symbol parameter is omitted
     ///

@@ -52,7 +52,7 @@ impl RestClient {
     /// returned, which means the insurance fund trades and ADL trades won't be
     /// returned.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Old-Trades-Lookup
+    /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Old-Trades-Lookup)
     ///
     /// Rate limit: Weight 20
     ///

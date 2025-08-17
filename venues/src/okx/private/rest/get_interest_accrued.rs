@@ -71,7 +71,7 @@ pub struct InterestAccrued {
 impl RestClient {
     /// Get interest accrued
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#trading-account-rest-api-get-interest-accrued-data
+    /// [docs](https://www.okx.com/docs-v5/en/#trading-account-rest-api-get-interest-accrued-data)
     ///
     /// # Arguments
     /// * `request` - The get interest accrued request

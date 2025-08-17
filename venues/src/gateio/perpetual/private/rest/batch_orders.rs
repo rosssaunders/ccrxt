@@ -9,6 +9,7 @@ const ENDPOINT_FUTURES_PREFIX: &str = "/futures";
 pub struct BatchOrdersRequest {
     /// Settlement currency
     pub settle: String,
+
     /// List of orders to create
     pub orders: Vec<CreateFuturesOrderRequest>,
 }
@@ -18,6 +19,7 @@ pub struct BatchOrdersRequest {
 pub struct BatchCancelOrdersRequest {
     /// Settlement currency
     pub settle: String,
+
     /// List of order IDs to cancel
     pub order_ids: Vec<String>,
 }
@@ -28,11 +30,14 @@ pub struct BatchOrderResult {
     /// Order ID
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
+
     /// Success status
     pub succeeded: bool,
+
     /// Error label if failed
     #[serde(skip_serializing_if = "Option::is_none")]
     pub label: Option<String>,
+
     /// Error message if failed
     #[serde(skip_serializing_if = "Option::is_none")]
     pub message: Option<String>,
@@ -43,8 +48,7 @@ impl RestClient {
     ///
     /// Creates multiple orders in a single request for improved efficiency.
     ///
-    /// See: Gate.io API documentation
-    /// <https://www.gate.io/docs/developers/apiv4/#create-a-batch-of-futures-orders>
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#create-a-batch-of-futures-orders)
     ///
     /// Rate limit: 100 requests per second
     ///
@@ -68,8 +72,7 @@ impl RestClient {
     ///
     /// Cancels multiple orders in a single request.
     ///
-    /// See: Gate.io API documentation
-    /// <https://www.gate.io/docs/developers/apiv4/#cancel-a-batch-of-open-orders>
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#cancel-a-batch-of-open-orders)
     ///
     /// Rate limit: 100 requests per second
     ///
@@ -184,7 +187,7 @@ mod tests {
 
     #[test]
     fn test_batch_create_multiple_contracts() {
-        let contracts = vec!["BTC_USDT", "ETH_USDT", "SOL_USDT", "MATIC_USDT"];
+        let contracts = ["BTC_USDT", "ETH_USDT", "SOL_USDT", "MATIC_USDT"];
         let mut orders = Vec::new();
 
         for (i, contract) in contracts.iter().enumerate() {

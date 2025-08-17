@@ -7,6 +7,7 @@ use super::RestClient;
 pub struct FuturesIndexConstituentsRequest {
     /// Settlement currency
     pub settle: String,
+
     /// Index name
     pub index: String,
 }
@@ -45,8 +46,7 @@ impl RestClient {
     ///
     /// Retrieves the constituent exchanges and their weights for a specific index.
     ///
-    /// # API Documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#get-index-constituents>
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#get-index-constituents)
     pub async fn get_futures_index_constituents(
         &self,
         params: FuturesIndexConstituentsRequest,
@@ -493,10 +493,10 @@ mod tests {
             let weight_val: f64 = constituent.weight.unwrap().parse().unwrap();
 
             if should_be_valid {
-                assert!(weight_val >= 0.0 && weight_val <= 1.0);
+                assert!((0.0..=1.0).contains(&weight_val));
             } else {
                 // Weight is outside valid range
-                assert!(weight_val < 0.0 || weight_val > 1.0);
+                assert!(!(0.0..=1.0).contains(&weight_val));
             }
         }
     }

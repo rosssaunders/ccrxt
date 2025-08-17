@@ -67,7 +67,8 @@ impl RestClient {
     ///
     /// Returns account funding flow records including fees, contract trades, and transfers.
     ///
-    /// [docs]: (https://developers.binance.com/docs/derivatives/option/account/Account-Funding-Flow)
+    /// [docs](https://developers.binance.com/docs/derivatives/option/account/Account-Funding-Flow)
+    ///
     /// Method: GET /eapi/v1/bill
     /// Weight: 1
     /// Requires: API key and signature

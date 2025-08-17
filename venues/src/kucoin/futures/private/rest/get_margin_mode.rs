@@ -35,7 +35,7 @@ impl super::RestClient {
     /// Get the margin mode of a symbol and check the leverage of cross margin
     /// and isolated margin.
     ///
-    /// [docs]: https://www.kucoin.com/docs-new/rest/futures-trading/positions/get-margin-mode
+    /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/positions/get-margin-mode)
     ///
     /// Rate limit: 9
     ///

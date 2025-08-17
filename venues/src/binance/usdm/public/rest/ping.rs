@@ -19,7 +19,7 @@ impl RestClient {
     ///
     /// Test connectivity to the Rest API.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/#test-connectivity
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/#test-connectivity)
     ///
     /// Rate limit: 1 weight
     ///

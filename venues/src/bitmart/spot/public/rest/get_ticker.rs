@@ -55,7 +55,7 @@ impl RestClient {
     /// Note that the interface is not real-time data, if you need real-time data,
     /// please use websocket to subscribe Ticker channel
     ///
-    /// [docs]: https://developer-pro.bitmart.com/en/spot/#get-ticker-of-a-trading-pair-v3
+    /// [docs](https://developer-pro.bitmart.com/en/spot/#get-ticker-of-a-trading-pair-v3)
     ///
     /// Rate limit: 10 times/2sec per IP
     ///
@@ -69,9 +69,8 @@ impl RestClient {
     /// 1. If no corresponding trading pair is found, this trading pair has been delisted.
     /// 2. For frequent query needs, we recommend using this endpoint to obtain aggregated ticker for a single trading pair.
     pub async fn get_ticker(&self, request: GetTickerRequest) -> RestResult<GetTickerResponse> {
-        self.send_request(
+        self.send_get_request(
             TICKER_ENDPOINT,
-            reqwest::Method::GET,
             Some(&request),
             EndpointType::SpotPublicMarket,
         )

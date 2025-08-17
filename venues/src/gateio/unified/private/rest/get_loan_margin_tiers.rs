@@ -7,8 +7,7 @@ impl RestClient {
     ///
     /// This endpoint returns loan margin tier information.
     ///
-    /// # API Documentation
-    /// <https://www.gate.io/docs/developers/apiv4/#get-loan-margin-tiers>
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#get-loan-margin-tiers)
     pub async fn get_loan_margin_tiers(
         &self,
     ) -> crate::gateio::unified::RestResult<Vec<LoanMarginTier>> {

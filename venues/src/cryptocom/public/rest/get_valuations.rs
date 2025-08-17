@@ -70,14 +70,13 @@ impl RestClient {
     ///
     /// Fetches certain valuation type data for a particular instrument.
     ///
-    /// [Official API docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#public-get-valuations)
+    /// [docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#public-get-valuations)
     pub async fn get_valuations(
         &self,
         params: GetValuationsRequest,
     ) -> RestResult<GetValuationsResponse> {
-        self.send_request(
+        self.send_get_request(
             VALUATIONS_ENDPOINT,
-            reqwest::Method::GET,
             Some(&params),
             EndpointType::PublicGetValuations,
         )

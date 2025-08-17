@@ -21,7 +21,7 @@ impl RestClient {
     /// This method returns a list of all available Block RFQ makers.
     /// This endpoint requires block_rfq:read scope.
     ///
-    /// [docs]: https://docs.deribit.com/v2/#private-get_block_rfq_makers
+    /// [docs](https://docs.deribit.com/v2/#private-get_block_rfq_makers)
     ///
     /// Rate limit: Depends on endpoint type (matching engine)
     /// Scope: block_rfq:read
@@ -46,31 +46,13 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use rest::secrets::ExposableSecret;
+    use std::sync::Arc;
+
+    use rest::secrets::SecretString;
     use serde_json::{Value, json};
 
     use super::*;
-    use crate::deribit::AccountTier;
-
-    // Test secret implementation
-    #[derive(Clone)]
-    struct PlainTextSecret {
-        secret: String,
-    }
-
-    impl PlainTextSecret {
-        fn new(secret: impl Into<String>) -> Self {
-            Self {
-                secret: secret.into(),
-            }
-        }
-    }
-
-    impl ExposableSecret for PlainTextSecret {
-        fn expose_secret(&self) -> String {
-            self.secret.clone()
-        }
-    }
+    use crate::deribit::{AccountTier, private::rest::credentials::Credentials};
 
     #[test]
     fn test_request_serialization() {
@@ -118,12 +100,15 @@ mod tests {
     fn test_endpoint_method_signature() {
         // Test that we can create a mock client
         let rate_limiter = crate::deribit::RateLimiter::new(AccountTier::Tier1);
+        let credentials = Credentials {
+            api_key: SecretString::from("test_key".to_string()),
+            api_secret: SecretString::from("test_secret".to_string()),
+        };
         let client = RestClient::new(
-            Box::new(PlainTextSecret::new("test_key")),
-            Box::new(PlainTextSecret::new("test_secret")),
+            credentials,
             "https://test.deribit.com",
             rate_limiter,
-            reqwest::Client::new(),
+            Arc::new(rest::native::NativeHttpClient::default()),
         );
 
         // Test method signature - this ensures the method compiles correctly

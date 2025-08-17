@@ -9,6 +9,7 @@ const ENDPOINT_FUTURES_PREFIX: &str = "/futures";
 pub struct BatchAmendOrdersRequest {
     /// Settlement currency
     pub settle: String,
+
     /// List of order amendments
     pub orders: Vec<AmendFuturesOrderRequest>,
 }
@@ -18,8 +19,7 @@ impl RestClient {
     ///
     /// Modifies multiple orders in a single request.
     ///
-    /// See: Gate.io API documentation
-    /// <https://www.gate.io/docs/developers/apiv4/#amend-multiple-open-orders-in-batch>
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#amend-multiple-open-orders-in-batch)
     ///
     /// Rate limit: 100 requests per second
     ///
@@ -121,7 +121,7 @@ mod tests {
 
     #[test]
     fn test_batch_amend_various_prices() {
-        let price_scenarios = vec!["43000.0", "43000.50", "43000.25", "43000.125", "43000.0625"];
+        let price_scenarios = ["43000.0", "43000.50", "43000.25", "43000.125", "43000.0625"];
 
         let mut amendments = Vec::new();
         for (i, price) in price_scenarios.iter().enumerate() {

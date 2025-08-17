@@ -79,7 +79,7 @@ pub type MovePositionsResponse = Vec<MovePositionTradeResult>;
 impl RestClient {
     /// Move positions between subaccounts.
     ///
-    /// [docs]: https://docs.deribit.com/v2/#private-move_positions
+    /// [docs](https://docs.deribit.com/v2/#private-move_positions)
     ///
     /// This endpoint allows moving open positions from one subaccount to another.
     /// Requires authentication and appropriate permissions.

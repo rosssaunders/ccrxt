@@ -77,13 +77,13 @@ impl RestClient {
     ///
     /// Retrieve interest rate and loan quota information for basic, VIP, and regular users.
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-interest-rate-and-loan-quota
+    /// [docs](https://www.okx.com/docs-v5/en/#public-data-rest-api-get-interest-rate-and-loan-quota)
     ///
     /// Rate limit: 2 requests per 2 seconds
     ///
     /// # Returns
     /// Response containing interest rate and loan quota information
-    pub async fn get_interest_rate_loan_quota(&self) -> RestResult<Vec<InterestRateLoanQuotaData>> {
+    pub async fn get_interest_rate_loan_quota(&self) -> RestResult<InterestRateLoanQuotaData> {
         self.send_get_request(
             PUBLIC_INTEREST_RATE_LOAN_QUOTA_ENDPOINT,
             None::<&GetInterestRateLoanQuotaRequest>,

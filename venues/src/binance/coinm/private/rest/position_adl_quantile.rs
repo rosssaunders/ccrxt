@@ -56,7 +56,7 @@ pub type GetPositionAdlQuantileResponse = Vec<PositionAdlQuantileEntry>;
 impl RestClient {
     /// Gets position ADL quantile estimation (USER_DATA) on Binance Coin-M Futures.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Position-ADL-Quantile-Estimation
+    /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Position-ADL-Quantile-Estimation)
     ///
     /// GET /dapi/v1/adlQuantile
     /// Weight: 5

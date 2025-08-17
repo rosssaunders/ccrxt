@@ -68,7 +68,7 @@ impl RestClient {
     ///
     /// Queries open interest statistics for a given trading pair, contract type, and period.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Open-Interest-Statistics
+    /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Open-Interest-Statistics)
     ///
     /// Rate limit: 1 request per second
     ///

@@ -126,7 +126,7 @@ impl super::RestClient {
     ///
     /// Retrieve detailed information about a specific order by its ID.
     ///
-    /// [docs]: https://www.kucoin.com/docs-new/rest/futures-trading/orders/get-order-by-orderld
+    /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/orders/get-order-by-orderld)
     ///
     /// Rate limit: 9
     ///
@@ -140,7 +140,7 @@ impl super::RestClient {
         request: GetOrderRequest,
     ) -> Result<(RestResponse<OrderDetails>, ResponseHeaders)> {
         let endpoint = GET_ORDER_ENDPOINT.replace("{orderId}", &request.order_id);
-        self.get(&endpoint, None::<&()>).await
+        self.get_with_request(&endpoint, &()).await
     }
 }
 
@@ -205,7 +205,7 @@ mod tests {
         assert_eq!(order.time_in_force, Some(TimeInForce::GoodTillCanceled));
         assert_eq!(order.status, OrderStatus::Active);
         assert_eq!(order.client_oid, Some("my-order-123".to_string()));
-        assert_eq!(order.reduce_only, false);
+        assert!(!order.reduce_only);
     }
 
     #[test]
@@ -246,7 +246,7 @@ mod tests {
         assert!(order.time_in_force.is_none());
         assert!(order.client_oid.is_none());
         assert_eq!(order.status, OrderStatus::Done);
-        assert_eq!(order.reduce_only, true);
+        assert!(order.reduce_only);
     }
 
     #[test]

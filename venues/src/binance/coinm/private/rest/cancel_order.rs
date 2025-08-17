@@ -111,7 +111,7 @@ pub struct CancelOrderResponse {
 impl RestClient {
     /// Cancels an active order on Binance Coin-M Futures.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Cancel-Order
+    /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Cancel-Order)
     ///
     /// DELETE /dapi/v1/order
     /// Weight: 1 (order rate limit)

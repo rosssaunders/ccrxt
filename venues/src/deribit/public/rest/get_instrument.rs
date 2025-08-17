@@ -1,7 +1,3 @@
-//! Implements the /public/get_instrument endpoint for Deribit.
-//!
-//! Retrieves instrument data for a given instrument name.
-
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
@@ -163,7 +159,7 @@ impl RestClient {
     ///
     /// Retrieves instrument data for a given instrument name.
     ///
-    /// [Official API docs](https://docs.deribit.com/#public-get_instrument)
+    /// [docs](https://docs.deribit.com/#public-get_instrument)
     pub async fn get_instrument(
         &self,
         params: GetInstrumentRequest,

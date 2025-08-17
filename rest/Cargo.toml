@@ -1,7 +1,7 @@
 [package]
 name = "rest"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 description = "Common REST client traits and types for crypto exchange wrappers"
 license = "MIT"
 
@@ -18,7 +18,7 @@ thiserror = "2.0.12"
 secrecy = "0.10.3"
 
 # Native dependencies
-reqwest = { version = "0.12.15", features = ["json"], optional = true }
+reqwest = { version = "0.12.15", default-features = false, features = ["json", "rustls-tls"], optional = true }
 tokio = { version = "1.0", features = ["full"], optional = true }
 
 [[example]]

@@ -64,7 +64,7 @@ impl RestClient {
     ///
     /// Applicable to query contract details.
     ///
-    /// [docs]: https://developer-pro.bitmart.com/en/futuresv2/#get-contract-details
+    /// [docs](https://developer-pro.bitmart.com/en/futuresv2/#get-contract-details)
     ///
     /// Rate limit: 12 times/2 sec
     ///

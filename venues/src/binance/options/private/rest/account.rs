@@ -95,7 +95,8 @@ impl RestClient {
     ///
     /// Returns account balance, equity, available funds, Greeks, and risk level.
     ///
-    /// [docs]: (https://developers.binance.com/docs/derivatives/option/account)
+    /// [docs](https://developers.binance.com/docs/derivatives/option/account)
+    ///
     /// Method: GET /eapi/v1/account
     /// Weight: 3
     /// Requires: API key and signature

@@ -4,20 +4,26 @@ use super::client::RestClient;
 use crate::cryptocom::RestResult;
 
 const FEE_RATE_ENDPOINT: &str = "private/get-fee-rate";
+
 /// Fee rate information for user's account
 #[derive(Debug, Clone, Deserialize)]
 #[allow(dead_code)]
 pub struct FeeRate {
     /// 30-day spot trading volume tier
     pub spot_tier: String,
+
     /// 30-day derivatives trading volume tier
     pub deriv_tier: String,
+
     /// 30-day spot maker rate in basis points
     pub effective_spot_maker_rate_bps: String,
+
     /// 30-day spot taker rate in basis points
     pub effective_spot_taker_rate_bps: String,
+
     /// 30-day derivatives maker rate in basis points
     pub effective_deriv_maker_rate_bps: String,
+
     /// 30-day derivatives taker rate in basis points
     pub effective_deriv_taker_rate_bps: String,
 }
@@ -25,7 +31,7 @@ pub struct FeeRate {
 impl RestClient {
     /// Get fee rates for user's account
     ///
-    /// See: <https://exchange-docs.crypto.com/derivatives/index.html>
+    /// [docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#private-get-fee-rate)
     ///
     /// Rate limit: 2 requests per second
     ///

@@ -20,7 +20,7 @@ pub struct ListenKeyResponse {}
 impl RestClient {
     /// Extend a listen key for user data stream on Binance Coin-M Futures.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/user-data-streams/Keepalive-User-Data-Stream
+    /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/user-data-streams/Keepalive-User-Data-Stream)
     ///
     /// PUT /dapi/v1/listenKey
     /// Weight: 1

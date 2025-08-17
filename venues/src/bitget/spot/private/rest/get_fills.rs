@@ -1,11 +1,3 @@
-//! Get Fills endpoint for Bitget Spot API
-//!
-//! This endpoint allows retrieving trade fill information.
-//!
-//! Reference: https://www.bitget.com/api-doc/spot/trade/Get-Fills
-//! Endpoint: GET /api/v2/spot/trade/fills
-//! Rate limit: 10 times/1s (UID)
-
 use serde::{Deserialize, Serialize};
 
 use super::super::RestClient;
@@ -151,6 +143,8 @@ impl RestClient {
     ///
     /// Retrieves trade execution details for the authenticated account.
     /// Only supports data within 90 days. Older data can be downloaded from the web.
+    ///
+    /// [docs](https://www.bitget.com/api-doc/spot/trade/Get-Fills)
     ///
     /// # Arguments
     /// * `request` - The request parameters with optional filters

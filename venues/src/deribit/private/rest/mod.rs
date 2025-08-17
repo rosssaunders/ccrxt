@@ -17,6 +17,7 @@ pub mod client;
 pub mod create_block_rfq;
 pub mod create_combo;
 pub mod create_deposit_address;
+pub mod credentials;
 pub mod disable_cancel_on_disconnect;
 pub mod edit_block_rfq_quote;
 pub mod enable_cancel_on_disconnect;
@@ -93,6 +94,7 @@ pub use create_combo::{
     CreateComboLeg, CreateComboRequest, CreateComboResponse, CreateComboResult, CreateComboTrade,
 };
 pub use create_deposit_address::{CreateDepositAddressRequest, CreateDepositAddressResponse};
+pub use credentials::Credentials;
 pub use disable_cancel_on_disconnect::{
     DisableCancelOnDisconnectRequest, DisableCancelOnDisconnectResponse,
 };

@@ -57,7 +57,7 @@ impl super::RestClient {
     ///
     /// Retrieve the funding history of the current user.
     ///
-    /// [docs]: https://www.kucoin.com/docs-new/rest/futures-trading/funding-fees/get-private-funding-history
+    /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/funding-fees/get-private-funding-history)
     ///
     /// Rate limit: 9
     ///
@@ -71,7 +71,7 @@ impl super::RestClient {
         request: GetFundingRateHistoryRequest,
     ) -> Result<(RestResponse<GetFundingRateHistoryResponse>, ResponseHeaders)> {
         let endpoint = FUNDING_RATE_HISTORY_ENDPOINT.replace("{symbol}", &request.symbol);
-        self.send_request(&endpoint, Some(&request)).await
+        self.get_with_request(&endpoint, &request).await
     }
 }
 

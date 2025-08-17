@@ -265,7 +265,8 @@ impl RestClient {
     ///
     /// Place an OTOCO (One-Triggers-One-Cancels-Other) order.
     ///
-    /// [docs]: (https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#new-otoco--trade)
+    /// [docs](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#new-otoco--trade)
+    ///
     /// Method: POST /api/v3/orderList/otoco
     /// Weight: 1
     /// Security: TRADE

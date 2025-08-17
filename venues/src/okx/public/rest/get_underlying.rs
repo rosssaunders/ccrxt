@@ -14,20 +14,15 @@ pub struct GetUnderlyingRequest {
     pub inst_type: InstrumentType,
 }
 
-/// Individual underlying asset data - array of underlying asset names
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(transparent)]
-pub struct UnderlyingData {
-    /// Underlying assets array
-    pub assets: Vec<String>,
-}
+// The OKX API returns data as an array of strings within OkxApiResponse<T>,
+// so the element type here is simply String.
 
 impl RestClient {
     /// Get underlying assets
     ///
     /// Retrieve underlying assets for specified instrument type.
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-underlying
+    /// [docs](https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-underlying)
     ///
     /// Rate limit: 20 requests per 2 seconds
     ///
@@ -36,10 +31,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing the list of underlying assets
-    pub async fn get_underlying(
-        &self,
-        request: GetUnderlyingRequest,
-    ) -> RestResult<Vec<UnderlyingData>> {
+    pub async fn get_underlying(&self, request: GetUnderlyingRequest) -> RestResult<Vec<String>> {
         self.send_get_request(
             PUBLIC_UNDERLYING_ENDPOINT,
             Some(&request),
@@ -96,35 +88,20 @@ mod tests {
     }
 
     #[test]
-    fn test_underlying_data_structure() {
-        let underlying_json = json!(["BTC-USD", "ETH-USD", "LTC-USD"]);
-
-        let underlying_data: UnderlyingData = serde_json::from_value(underlying_json).unwrap();
-        assert_eq!(underlying_data.assets.len(), 3);
-        assert_eq!(underlying_data.assets[0], "BTC-USD");
-        assert_eq!(underlying_data.assets[1], "ETH-USD");
-        assert_eq!(underlying_data.assets[2], "LTC-USD");
-    }
-
-    #[test]
     fn test_get_underlying_response_structure() {
         let response_json = json!({
             "code": "0",
             "msg": "",
             "data": [
-                [
-                    "BTC-USD", "ETH-USD", "LTC-USD"
-                ]
+                ["BTC-USD", "ETH-USD", "LTC-USD"]
             ]
         });
 
-        let response: OkxApiResponse<UnderlyingData> =
-            serde_json::from_value(response_json).unwrap();
+        let response: OkxApiResponse<Vec<String>> = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
         assert_eq!(response.msg, "");
         assert_eq!(response.data.len(), 1);
-        assert_eq!(response.data[0].assets.len(), 3);
-        assert_eq!(response.data[0].assets[0], "BTC-USD");
+        assert_eq!(response.data[0][0], "BTC-USD");
     }
 
     #[test]
@@ -144,15 +121,11 @@ mod tests {
         let response_json = json!({
             "code": "0",
             "msg": "",
-            "data": [
-                []
-            ]
+            "data": []
         });
 
-        let response: OkxApiResponse<UnderlyingData> =
-            serde_json::from_value(response_json).unwrap();
+        let response: OkxApiResponse<Vec<String>> = serde_json::from_value(response_json).unwrap();
         assert_eq!(response.code, "0");
-        assert_eq!(response.data.len(), 1);
-        assert_eq!(response.data[0].assets.len(), 0);
+        assert_eq!(response.data.len(), 0);
     }
 }

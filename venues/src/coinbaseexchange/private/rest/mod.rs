@@ -1,6 +1,7 @@
 mod cancel_orders;
 mod client;
 mod create_order;
+mod credentials;
 mod get_account_balances;
 mod get_fills;
 mod get_orders;
@@ -10,6 +11,7 @@ pub use cancel_orders::{
 };
 pub use client::RestClient;
 pub use create_order::{CreateOrderRequest, CreateOrderResponse};
+pub use credentials::Credentials;
 pub use get_account_balances::{
     AccountBalance, GetAccountBalancesRequest, GetAccountBalancesResponse, PaginationInfo,
 };

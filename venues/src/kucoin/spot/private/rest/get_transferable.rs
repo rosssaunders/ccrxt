@@ -42,7 +42,7 @@ pub struct TransferableBalance {
 impl RestClient {
     /// Get transferable balance for a currency and account type
     ///
-    /// Reference: https://docs.kucoin.com/#get-transferable-balance
+    /// [docs](https://docs.kucoin.com/#get-transferable-balance)
     pub async fn get_transferable(
         &self,
         request: GetTransferableRequest,

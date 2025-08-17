@@ -72,7 +72,7 @@ impl RestClient {
     /// Returns a list of all accounts and their balances for the authenticated user.
     /// This endpoint requires the "view" permission.
     ///
-    /// See: https://docs.cloud.coinbase.com/exchange/reference/exchangerestapi_getaccounts
+    /// [docs](https://docs.cloud.coinbase.com/exchange/reference/exchangerestapi_getaccounts)
     ///
     /// Rate limit: 15 requests/second (private endpoint)
     ///

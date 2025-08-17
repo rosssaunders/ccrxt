@@ -299,7 +299,7 @@ pub enum ContractType {
 
 /// Represents the contract status (`contractStatus`, `status`).
 ///
-/// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/common-definition#enum-definitions
+/// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/common-definition#enum-definitions)
 ///
 /// Variants:
 /// - `PendingTrading`

@@ -19,12 +19,12 @@ impl CoinmPublicRestClient {
     /// Create a new CoinM public REST client
     pub fn new(
         base_url: impl Into<std::borrow::Cow<'static, str>>,
-        client: reqwest::Client,
+        http_client: std::sync::Arc<dyn rest::HttpClient>,
         rate_limiter: crate::binance::shared::RateLimiter,
     ) -> Self {
         Self(PublicBinanceClient::new(
             base_url.into(),
-            client,
+            http_client,
             rate_limiter,
         ))
     }
@@ -45,20 +45,20 @@ impl CoinmPublicRestClient {
         let shared_response = self
             .0
             .send_public_get::<Resp, Req, SharedErrors>(endpoint, params, weight)
-        .await
-        .map_err(|e| match e {
-            SharedErrors::ApiError(_) => Errors::Error("API error occurred".to_string()),
-            SharedErrors::RateLimitExceeded { retry_after } => Errors::Error(format!(
-                "Rate limit exceeded, retry after {:?}",
-                retry_after
-            )),
-            SharedErrors::InvalidApiKey() => Errors::InvalidApiKey(),
-            SharedErrors::HttpError(err) => Errors::HttpError(err),
-            SharedErrors::SerializationError(msg) => {
-                Errors::Error(format!("Serialization error: {}", msg))
-            }
-            SharedErrors::Error(msg) => Errors::Error(msg),
-        })?;
+            .await
+            .map_err(|e| match e {
+                SharedErrors::ApiError(_) => Errors::Error("API error occurred".to_string()),
+                SharedErrors::RateLimitExceeded { retry_after } => Errors::Error(format!(
+                    "Rate limit exceeded, retry after {:?}",
+                    retry_after
+                )),
+                SharedErrors::InvalidApiKey() => Errors::InvalidApiKey(),
+                SharedErrors::HttpError(err) => Errors::HttpError(err),
+                SharedErrors::SerializationError(msg) => {
+                    Errors::Error(format!("Serialization error: {}", msg))
+                }
+                SharedErrors::Error(msg) => Errors::Error(msg),
+            })?;
 
         Ok(RestResponse {
             data: shared_response.data,
@@ -85,20 +85,20 @@ impl CoinmPublicRestClient {
         let shared_response = self
             .0
             .send_public_post::<Resp, Req, SharedErrors>(endpoint, params, weight)
-        .await
-        .map_err(|e| match e {
-            SharedErrors::ApiError(_) => Errors::Error("API error occurred".to_string()),
-            SharedErrors::RateLimitExceeded { retry_after } => Errors::Error(format!(
-                "Rate limit exceeded, retry after {:?}",
-                retry_after
-            )),
-            SharedErrors::InvalidApiKey() => Errors::InvalidApiKey(),
-            SharedErrors::HttpError(err) => Errors::HttpError(err),
-            SharedErrors::SerializationError(msg) => {
-                Errors::Error(format!("Serialization error: {}", msg))
-            }
-            SharedErrors::Error(msg) => Errors::Error(msg),
-        })?;
+            .await
+            .map_err(|e| match e {
+                SharedErrors::ApiError(_) => Errors::Error("API error occurred".to_string()),
+                SharedErrors::RateLimitExceeded { retry_after } => Errors::Error(format!(
+                    "Rate limit exceeded, retry after {:?}",
+                    retry_after
+                )),
+                SharedErrors::InvalidApiKey() => Errors::InvalidApiKey(),
+                SharedErrors::HttpError(err) => Errors::HttpError(err),
+                SharedErrors::SerializationError(msg) => {
+                    Errors::Error(format!("Serialization error: {}", msg))
+                }
+                SharedErrors::Error(msg) => Errors::Error(msg),
+            })?;
 
         Ok(RestResponse {
             data: shared_response.data,
@@ -125,20 +125,20 @@ impl CoinmPublicRestClient {
         let shared_response = self
             .0
             .send_public_put::<Resp, Req, SharedErrors>(endpoint, params, weight)
-        .await
-        .map_err(|e| match e {
-            SharedErrors::ApiError(_) => Errors::Error("API error occurred".to_string()),
-            SharedErrors::RateLimitExceeded { retry_after } => Errors::Error(format!(
-                "Rate limit exceeded, retry after {:?}",
-                retry_after
-            )),
-            SharedErrors::InvalidApiKey() => Errors::InvalidApiKey(),
-            SharedErrors::HttpError(err) => Errors::HttpError(err),
-            SharedErrors::SerializationError(msg) => {
-                Errors::Error(format!("Serialization error: {}", msg))
-            }
-            SharedErrors::Error(msg) => Errors::Error(msg),
-        })?;
+            .await
+            .map_err(|e| match e {
+                SharedErrors::ApiError(_) => Errors::Error("API error occurred".to_string()),
+                SharedErrors::RateLimitExceeded { retry_after } => Errors::Error(format!(
+                    "Rate limit exceeded, retry after {:?}",
+                    retry_after
+                )),
+                SharedErrors::InvalidApiKey() => Errors::InvalidApiKey(),
+                SharedErrors::HttpError(err) => Errors::HttpError(err),
+                SharedErrors::SerializationError(msg) => {
+                    Errors::Error(format!("Serialization error: {}", msg))
+                }
+                SharedErrors::Error(msg) => Errors::Error(msg),
+            })?;
 
         Ok(RestResponse {
             data: shared_response.data,
@@ -165,20 +165,20 @@ impl CoinmPublicRestClient {
         let shared_response = self
             .0
             .send_public_delete::<Resp, Req, SharedErrors>(endpoint, params, weight)
-        .await
-        .map_err(|e| match e {
-            SharedErrors::ApiError(_) => Errors::Error("API error occurred".to_string()),
-            SharedErrors::RateLimitExceeded { retry_after } => Errors::Error(format!(
-                "Rate limit exceeded, retry after {:?}",
-                retry_after
-            )),
-            SharedErrors::InvalidApiKey() => Errors::InvalidApiKey(),
-            SharedErrors::HttpError(err) => Errors::HttpError(err),
-            SharedErrors::SerializationError(msg) => {
-                Errors::Error(format!("Serialization error: {}", msg))
-            }
-            SharedErrors::Error(msg) => Errors::Error(msg),
-        })?;
+            .await
+            .map_err(|e| match e {
+                SharedErrors::ApiError(_) => Errors::Error("API error occurred".to_string()),
+                SharedErrors::RateLimitExceeded { retry_after } => Errors::Error(format!(
+                    "Rate limit exceeded, retry after {:?}",
+                    retry_after
+                )),
+                SharedErrors::InvalidApiKey() => Errors::InvalidApiKey(),
+                SharedErrors::HttpError(err) => Errors::HttpError(err),
+                SharedErrors::SerializationError(msg) => {
+                    Errors::Error(format!("Serialization error: {}", msg))
+                }
+                SharedErrors::Error(msg) => Errors::Error(msg),
+            })?;
 
         Ok(RestResponse {
             data: shared_response.data,
@@ -205,20 +205,20 @@ impl CoinmPublicRestClient {
         let shared_response = self
             .0
             .send_public_patch::<Resp, Req, SharedErrors>(endpoint, params, weight)
-        .await
-        .map_err(|e| match e {
-            SharedErrors::ApiError(_) => Errors::Error("API error occurred".to_string()),
-            SharedErrors::RateLimitExceeded { retry_after } => Errors::Error(format!(
-                "Rate limit exceeded, retry after {:?}",
-                retry_after
-            )),
-            SharedErrors::InvalidApiKey() => Errors::InvalidApiKey(),
-            SharedErrors::HttpError(err) => Errors::HttpError(err),
-            SharedErrors::SerializationError(msg) => {
-                Errors::Error(format!("Serialization error: {}", msg))
-            }
-            SharedErrors::Error(msg) => Errors::Error(msg),
-        })?;
+            .await
+            .map_err(|e| match e {
+                SharedErrors::ApiError(_) => Errors::Error("API error occurred".to_string()),
+                SharedErrors::RateLimitExceeded { retry_after } => Errors::Error(format!(
+                    "Rate limit exceeded, retry after {:?}",
+                    retry_after
+                )),
+                SharedErrors::InvalidApiKey() => Errors::InvalidApiKey(),
+                SharedErrors::HttpError(err) => Errors::HttpError(err),
+                SharedErrors::SerializationError(msg) => {
+                    Errors::Error(format!("Serialization error: {}", msg))
+                }
+                SharedErrors::Error(msg) => Errors::Error(msg),
+            })?;
 
         Ok(RestResponse {
             data: shared_response.data,

@@ -96,7 +96,7 @@ impl RestClient {
     /// This call is asynchronous, so the response is simply a confirmation of the request.
     /// The user.order subscription can be used to check when the order is successfully created.
     ///
-    /// See: <https://exchange-docs.crypto.com/derivatives/index.html>
+    /// [docs](https://exchange-docs.crypto.com/derivatives/index.html)
     ///
     /// Rate limit: 100 requests per second
     ///

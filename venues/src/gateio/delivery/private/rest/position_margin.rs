@@ -11,7 +11,7 @@ impl RestClient {
     ///
     /// Adjusts the margin for a specific delivery position.
     ///
-    /// See: <https://www.gate.com/docs/developers/apiv4/#update-position-margin-2>
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#update-position-margin-2)
     ///
     /// Rate limit: 10 requests per second
     ///

@@ -7,8 +7,7 @@ impl RestClient {
     ///
     /// This endpoint returns discount tier information for currencies.
     ///
-    /// # API Documentation
-    /// <https://www.gate.io/docs/developers/apiv4/#get-currency-discount-tiers>
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#get-currency-discount-tiers)
     pub async fn get_currency_discount_tiers(
         &self,
     ) -> crate::gateio::unified::RestResult<Vec<CurrencyDiscountTier>> {

@@ -65,7 +65,7 @@ impl RestClient {
     /// If you do not see the option when viewing your API Keys, this feature is not yet available for you.
     /// Note: It works for master account only, not for sub-accounts.
     ///
-    /// See: <>
+    /// [docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#private-get-deposit-history)
     ///
     /// # Arguments
     /// * `request` - Parameters for retrieving deposit history

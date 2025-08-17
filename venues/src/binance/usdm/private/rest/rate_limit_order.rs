@@ -79,7 +79,7 @@ impl UsdmClient {
     ///
     /// Queries the current order count usage in the current time window for the account.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Query-Rate-Limit
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Query-Rate-Limit)
     ///
     /// Rate limit: 1 request per second
     ///

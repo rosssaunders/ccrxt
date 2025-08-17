@@ -3,12 +3,16 @@
 //! These tests verify the functionality of perpetual futures endpoints.
 //! Tests run against the live Gate.io API using real market data.
 
+use std::sync::Arc;
+
+use rest::native::NativeHttpClient;
 use tokio;
 use venues::gateio::{perpetual::public::rest::RestClient, shared::enums::CandlestickInterval};
 
 /// Helper function to create a test client for perpetual public endpoints
 fn create_perpetual_test_client() -> RestClient {
-    RestClient::new(false).expect("Failed to create Gate.io perpetual REST client")
+    let http_client = Arc::new(NativeHttpClient::default());
+    RestClient::new(http_client, false).expect("Failed to create Gate.io perpetual REST client")
 }
 
 #[tokio::test]

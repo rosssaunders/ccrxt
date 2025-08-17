@@ -58,7 +58,7 @@ impl RestClient {
     ///
     /// Gets open interest statistics for a symbol over time periods.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Open-Interest-Statistics
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Open-Interest-Statistics)
     ///
     /// Rate limit: 0 (no weight)
     ///

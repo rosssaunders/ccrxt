@@ -9,8 +9,10 @@ const ENDPOINT_FUTURES_PREFIX: &str = "/futures";
 pub struct UpdatePositionMarginRequest {
     /// Settlement currency
     pub settle: String,
+
     /// Contract name
     pub contract: String,
+
     /// Change amount (positive to add, negative to remove)
     pub change: String,
 }
@@ -27,8 +29,7 @@ impl RestClient {
     ///
     /// This endpoint updates the margin for a futures position.
     ///
-    /// See: Gate.io API documentation
-    /// <https://www.gate.io/docs/developers/apiv4/#update-position-margin>
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#update-position-margin)
     ///
     /// Rate limit: 100 requests per second
     ///

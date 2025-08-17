@@ -32,7 +32,7 @@ impl RestClient {
     ///
     /// Query funding rate info for symbols that had FundingRateCap/FundingRateFloor/fundingIntervalHours adjustment.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Get-Funding-Info
+    /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Get-Funding-Info)
     ///
     /// Rate limit: 1
     ///

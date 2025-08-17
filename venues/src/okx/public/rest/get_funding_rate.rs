@@ -87,7 +87,7 @@ impl RestClient {
     ///
     /// Retrieve funding rate.
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-funding-rate
+    /// [docs](https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-funding-rate)
     ///
     /// Rate limit: 10 requests per 2 seconds
     ///
@@ -99,7 +99,7 @@ impl RestClient {
     pub async fn get_funding_rate(
         &self,
         request: &GetFundingRateRequest,
-    ) -> RestResult<Vec<FundingRate>> {
+    ) -> RestResult<FundingRate> {
         self.send_get_request(
             PUBLIC_FUNDING_RATE_ENDPOINT,
             Some(request),

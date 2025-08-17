@@ -8,8 +8,7 @@ impl RestClient {
     ///
     /// This is a convenience method that calls list_loans without a currency filter.
     ///
-    /// # API Documentation
-    /// <https://www.gate.io/docs/developers/apiv4/#get-all-loan-history>
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#get-all-loan-history)
     pub async fn get_all_loan_history(
         &self,
         limit: Option<u32>,

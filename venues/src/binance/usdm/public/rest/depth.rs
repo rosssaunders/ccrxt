@@ -51,7 +51,7 @@ impl RestClient {
     ///
     /// Query symbol orderbook.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Order-Book
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Order-Book)
     ///
     /// Rate limit: Adjusted based on the `limit` parameter:
     /// * 5, 10, 20, 50 => 2

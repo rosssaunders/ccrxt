@@ -143,7 +143,8 @@ impl RestClient {
     /// Retrieve a specific order list.
     /// Either orderListId or origClientOrderId must be provided.
     ///
-    /// [docs]: (https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#query-order-list--user_data)
+    /// [docs](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#query-order-list--user_data)
+    ///
     /// Method: GET /api/v3/orderList
     /// Weight: 4
     /// Security: USER_DATA
@@ -311,7 +312,7 @@ mod tests {
         assert_eq!(first_order.side, OrderSide::Sell);
         assert_eq!(first_order.time, 1684804350000);
         assert_eq!(first_order.update_time, 1684804350000);
-        assert_eq!(first_order.is_working, true);
+        assert!(first_order.is_working);
         assert_eq!(
             first_order.orig_quote_order_qty.to_string(),
             "50000.00000000"
@@ -342,7 +343,7 @@ mod tests {
         );
         assert_eq!(second_order.time, 1684804350000);
         assert_eq!(second_order.update_time, 1684804350000);
-        assert_eq!(second_order.is_working, false);
+        assert!(!second_order.is_working);
         assert_eq!(
             second_order.orig_quote_order_qty.to_string(),
             "45000.00000000"
@@ -517,7 +518,7 @@ mod tests {
         for order in &response.orders {
             assert_eq!(order.status, OrderStatus::Rejected);
             assert_eq!(order.executed_qty.to_string(), "0.00000000");
-            assert_eq!(order.is_working, false);
+            assert!(!order.is_working);
         }
 
         // Check stop order has stop price
@@ -596,7 +597,7 @@ mod tests {
         );
         assert_eq!(iceberg_order.status, OrderStatus::PartiallyFilled);
         assert_eq!(iceberg_order.executed_qty.to_string(), "20.00000000");
-        assert_eq!(iceberg_order.is_working, true);
+        assert!(iceberg_order.is_working);
         assert_eq!(
             iceberg_order.self_trade_prevention_mode,
             SelfTradePreventionMode::ExpireMaker
@@ -643,7 +644,7 @@ mod tests {
         assert_eq!(order.iceberg_qty, Some(dec!(0.10000000)));
         assert_eq!(order.time, 1684804390000);
         assert_eq!(order.update_time, 1684804391000);
-        assert_eq!(order.is_working, false);
+        assert!(!order.is_working);
         assert_eq!(order.orig_quote_order_qty, dec!(50000.00000000));
         assert_eq!(
             order.self_trade_prevention_mode,

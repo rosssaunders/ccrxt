@@ -9,12 +9,12 @@ pub enum Errors {
     /// Invalid API key or signature
     InvalidApiKey(),
 
-    /// Http error occurred while making a request
+    /// Network error occurred while making a request
     /// This variant is used to represent errors that are not specific to the Crypto.com API,
     /// such as network issues or HTTP errors.
     /// It can be used to wrap any error that occurs during the request process.
     /// This variant is not used for errors returned by the Crypto.com API itself.
-    HttpError(reqwest::Error),
+    NetworkError(String),
 
     /// An error returned by the Crypto.com API
     ApiError(ApiError),
@@ -27,7 +27,7 @@ impl fmt::Display for Errors {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Errors::InvalidApiKey() => write!(f, "Invalid API key or signature"),
-            Errors::HttpError(err) => write!(f, "HTTP error: {err}"),
+            Errors::NetworkError(err) => write!(f, "Network error: {err}"),
             Errors::ApiError(err) => write!(f, "API error: {err}"),
             Errors::Error(msg) => write!(f, "Error: {msg}"),
         }
@@ -35,12 +35,6 @@ impl fmt::Display for Errors {
 }
 
 impl std::error::Error for Errors {}
-
-impl From<reqwest::Error> for Errors {
-    fn from(err: reqwest::Error) -> Self {
-        Errors::HttpError(err)
-    }
-}
 
 impl From<serde_json::Error> for Errors {
     fn from(err: serde_json::Error) -> Self {
@@ -58,7 +52,7 @@ pub struct ErrorResponse {
 }
 
 /// Crypto.com API error codes as documented in their REST API specification
-/// <https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#response-and-reason-codes>
+/// [docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#response-and-reason-codes)
 #[derive(Error, Debug, Clone, Deserialize)]
 pub enum ApiError {
     // Success

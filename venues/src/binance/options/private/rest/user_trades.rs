@@ -139,7 +139,8 @@ impl RestClient {
     ///
     /// Returns user's trade history for the specified symbol.
     ///
-    /// [docs]: (https://developers.binance.com/docs/derivatives/option/trade/Option-Trade-History)
+    /// [docs](https://developers.binance.com/docs/derivatives/option/trade/Option-Trade-History)
+    ///
     /// Method: GET /eapi/v1/userTrades
     /// Weight: 5
     /// Requires: API key and signature

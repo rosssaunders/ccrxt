@@ -26,7 +26,8 @@ impl RestClient {
     ///
     /// Cancels all open orders for the specified underlying asset.
     ///
-    /// [docs]: (https://developers.binance.com/docs/derivatives/option/trade/Cancel-all-Active-Orders-on-Specified-Underlying)
+    /// [docs](https://developers.binance.com/docs/derivatives/option/trade/Cancel-all-Active-Orders-on-Specified-Underlying)
+    ///
     /// Method: DELETE /eapi/v1/allOpenOrdersByUnderlying
     /// Weight: 1
     /// Requires: API key and signature

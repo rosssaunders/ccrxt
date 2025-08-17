@@ -64,7 +64,7 @@ pub struct AllTickersResponse {
 impl RestClient {
     /// Get 24hr ticker statistics for all symbols
     ///
-    /// Reference: https://docs.kucoin.com/#get-all-tickers
+    /// [docs](https://docs.kucoin.com/#get-all-tickers)
     pub async fn get_all_tickers(
         &self,
         _request: GetAllTickersRequest,

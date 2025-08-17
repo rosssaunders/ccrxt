@@ -81,7 +81,7 @@ pub struct AmendOrderResponse {
 impl RestClient {
     /// Amend an existing order
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#order-book-trading-trade-post-amend-order
+    /// [docs](https://www.okx.com/docs-v5/en/#order-book-trading-trade-post-amend-order)
     ///
     /// # Arguments
     /// * `request` - The order amendment request

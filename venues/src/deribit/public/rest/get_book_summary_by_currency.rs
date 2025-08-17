@@ -1,7 +1,3 @@
-//! Implements the /public/get_book_summary_by_currency endpoint for Deribit.
-//!
-//! Retrieves the summary information such as open interest, 24h volume, etc. for all instruments for the currency (optionally filtered by kind).
-
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
@@ -127,7 +123,7 @@ impl RestClient {
     ///
     /// Retrieves the summary information such as open interest, 24h volume, etc. for all instruments for the currency (optionally filtered by kind).
     ///
-    /// [Official API docs](https://docs.deribit.com/#public-get_book_summary_by_currency)
+    /// [docs](https://docs.deribit.com/#public-get_book_summary_by_currency)
     pub async fn get_book_summary_by_currency(
         &self,
         params: GetBookSummaryByCurrencyRequest,

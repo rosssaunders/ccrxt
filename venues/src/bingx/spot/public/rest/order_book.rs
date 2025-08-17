@@ -58,6 +58,8 @@ impl RestClient {
     ///
     /// Get current order book depth for a symbol.
     ///
+    /// [docs](https://bingx-api.github.io/docs/#/en-us/spot/market-api.html#Order%20Book)
+    ///
     /// # Arguments
     /// * `request` - The order book request parameters
     ///
@@ -66,11 +68,6 @@ impl RestClient {
     ///
     /// # Rate Limit
     /// - IP: 100 requests per 10 seconds (Group 1)
-    ///
-    /// # API Documentation
-    /// - Endpoint: GET /openApi/spot/v1/market/depth
-    /// - Content-Type: request body(application/json)
-    /// - [docs]: https://bingx-api.github.io/docs/#/en-us/spot/market-api.html#Order%20Book
     pub async fn get_order_book(
         &self,
         request: &GetOrderBookRequest,
@@ -86,7 +83,6 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use reqwest::Client;
 
     use super::*;
     use crate::bingx::spot::RateLimiter;
@@ -179,7 +175,7 @@ mod tests {
     async fn test_get_order_book_method_exists() {
         let client = RestClient::new(
             "http://127.0.0.1:0", // Invalid URL to guarantee error
-            Client::new(),
+            std::sync::Arc::new(rest::native::NativeHttpClient::default()),
             RateLimiter::new(),
         );
 

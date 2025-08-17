@@ -80,7 +80,7 @@ impl UsdmClient {
     ///
     /// Retrieves position risk information for a symbol or all positions on Binance USDM Futures.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Position-Information-V2
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Position-Information-V2)
     ///
     /// Rate limit: 5 requests per minute
     ///

@@ -3,6 +3,9 @@
 //! These tests verify that the Kucoin public REST API client can successfully
 //! communicate with the live API and receive valid responses.
 
+use std::sync::Arc;
+
+use rest::native::NativeHttpClient;
 use venues::kucoin::spot::{
     GetAllCurrenciesRequest, GetAllSymbolsRequest, GetAllTickersRequest, GetCurrencyRequest,
     GetKlinesRequest, GetPartOrderBookRequest, GetServerTimeRequest, GetSymbolRequest,
@@ -13,8 +16,8 @@ use venues::kucoin::spot::{
 /// Helper function to create a test client with shared rate limiter
 fn create_public_test_client() -> PublicRestClient {
     let rate_limiter = RateLimiter::new();
-    let client = reqwest::Client::new();
-    PublicRestClient::new("https://api.kucoin.com", rate_limiter, client)
+    let http_client = Arc::new(NativeHttpClient::default());
+    PublicRestClient::new("https://api.kucoin.com", rate_limiter, http_client)
 }
 
 #[tokio::test]

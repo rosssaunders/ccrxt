@@ -30,7 +30,7 @@ impl RestClient {
     /// Note that the interface is not real-time data, if you need real-time data,
     /// please use websocket to subscribe Trade channel
     ///
-    /// [docs]: https://developer-pro.bitmart.com/en/spot/#get-recent-trades-v3
+    /// [docs](https://developer-pro.bitmart.com/en/spot/#get-recent-trades-v3)
     ///
     /// Rate limit: 10 times/2sec per IP
     ///
@@ -43,9 +43,8 @@ impl RestClient {
         &self,
         request: GetRecentTradesRequest,
     ) -> RestResult<GetRecentTradesResponse> {
-        self.send_request(
+        self.send_get_request(
             RECENT_TRADES_ENDPOINT,
-            reqwest::Method::GET,
             Some(&request),
             EndpointType::SpotPublicMarket,
         )

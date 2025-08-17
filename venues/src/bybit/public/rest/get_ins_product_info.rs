@@ -68,7 +68,7 @@ impl RestClient {
     /// Query for all available institutional loan products, including loan amount,
     /// borrow rate, and loan period information.
     ///
-    /// [API Documentation](https://bybit-exchange.github.io/docs/v5/otc/margin-product-info)
+    /// [docs](https://bybit-exchange.github.io/docs/v5/otc/margin-product-info)
     ///
     /// Rate limit: 10 requests per second
     ///

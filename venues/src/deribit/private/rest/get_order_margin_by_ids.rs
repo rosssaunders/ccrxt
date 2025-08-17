@@ -31,7 +31,7 @@ pub struct OrderMarginInfo {
 impl RestClient {
     /// Retrieves initial margins of given orders.
     ///
-    /// [docs]: https://docs.deribit.com/v2/#private-get_order_margin_by_ids
+    /// [docs](https://docs.deribit.com/v2/#private-get_order_margin_by_ids)
     pub async fn get_order_margin_by_ids(
         &self,
         request: GetOrderMarginByIdsRequest,

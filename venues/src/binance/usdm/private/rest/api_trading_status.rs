@@ -58,7 +58,7 @@ impl UsdmClient {
     ///
     /// Retrieves the quantitative rules indicators for the account or a specific symbol.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Futures-Trading-Quantitative-Rules-Indicators
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Futures-Trading-Quantitative-Rules-Indicators)
     ///
     /// Rate limit: 1 (single symbol), 10 (all symbols)
     ///

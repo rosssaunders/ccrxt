@@ -49,7 +49,7 @@ impl RestClient {
     ///
     /// Retrieves historical volatility data for a given currency.
     ///
-    /// [Official API docs](https://docs.deribit.com/#public-get_historical_volatility)
+    /// [docs](https://docs.deribit.com/#public-get_historical_volatility)
     pub async fn get_historical_volatility(
         &self,
         params: GetHistoricalVolatilityRequest,

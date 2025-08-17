@@ -35,7 +35,8 @@
 //! All tests follow integration test best practices by validating response structure
 //! without asserting on dynamic market data values.
 
-use reqwest::Client;
+use std::sync::Arc;
+
 use tokio;
 use venues::cryptocom::{
     AnnouncementCategory, GetAnnouncementsRequest, GetBookRequest, GetCandlestickRequest,
@@ -46,10 +47,10 @@ use venues::cryptocom::{
 
 /// Helper function to create a test client for public endpoints
 fn create_public_test_client() -> PublicRestClient {
-    let client = Client::new();
+    let http_client = Arc::new(rest::native::NativeHttpClient::default());
     let rate_limiter = RateLimiter::new();
 
-    PublicRestClient::new("https://api.crypto.com/exchange", client, rate_limiter)
+    PublicRestClient::new("https://api.crypto.com/exchange", http_client, rate_limiter)
 }
 
 /// Test the get_instruments endpoint
@@ -515,15 +516,14 @@ async fn test_get_risk_parameters() {
 ///
 /// [API docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#public-get-announcements)
 ///
-/// **NOTE**: This endpoint returns HTTP 404 Not Found, indicating it may have been
-/// moved or deprecated.
+/// This endpoint lives on a different base url to the rest.
 #[tokio::test]
 #[ignore = "Endpoint returns HTTP 404 Not Found"]
 async fn test_get_announcements() {
-    let client = Client::new();
+    let http_client = Arc::new(rest::native::NativeHttpClient::default());
     let rate_limiter = RateLimiter::new();
 
-    let client = PublicRestClient::new("https://api.crypto.com/", client, rate_limiter);
+    let client = PublicRestClient::new("https://api.crypto.com/", http_client, rate_limiter);
 
     let request = GetAnnouncementsRequest {
         category: Some(AnnouncementCategory::System),
@@ -554,6 +554,54 @@ async fn test_get_announcements() {
     }
 }
 
+/// Test the get_expired_settlement_price endpoint
+#[tokio::test]
+async fn test_get_expired_settlement_price() {
+    let client = create_public_test_client();
+    let request = GetExpiredSettlementPriceRequest {
+        instrument_type: InstrumentType::Future,
+        page: Some(1),
+    };
+
+    let result = client.get_expired_settlement_price(request).await;
+    assert!(
+        result.is_ok(),
+        "get_expired_settlement_price request should succeed: {:?}",
+        result.err()
+    );
+
+    let response = result.unwrap();
+    assert_eq!(response.code, 0); // 0 means success in the Crypto.com API
+
+    println!(
+        "Found {} expired settlement prices",
+        response.result.data.len()
+    );
+
+    // Validate settlement price structure
+    for price in &response.result.data {
+        assert!(price.timestamp_ms > 0);
+        assert!(price.expiry_timestamp_ms > 0);
+        assert!(!price.instrument_name.is_empty());
+        let v: f64 = price
+            .settlement_value
+            .parse()
+            .expect("settlement_value should parse as f64");
+        assert!(v >= 0.0);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_client_creation() {
+        let _client = create_public_test_client();
+        // Test passes if no panic occurs during client creation
+    }
+}
+
 /// Test the get_conversion_rate endpoint
 ///
 /// **NOTE**: This endpoint returns HTTP 415 Unsupported Media Type, indicating
@@ -581,53 +629,4 @@ async fn test_get_conversion_rate() {
         "Conversion rate for {}: {}",
         response.result.instrument_name, response.result.conversion_rate
     );
-}
-
-/// Test the get_expired_settlement_price endpoint
-///
-/// **NOTE**: This endpoint appears to return a different response format than expected.
-/// The test is included for completeness but may fail due to API response format changes.
-#[tokio::test]
-#[ignore = "API response format differs from expected structure"]
-async fn test_get_expired_settlement_price() {
-    let client = create_public_test_client();
-    let request = GetExpiredSettlementPriceRequest {
-        instrument_type: Some(InstrumentType::Future),
-        instrument_name: None,
-    };
-
-    let result = client.get_expired_settlement_price(request).await;
-    assert!(
-        result.is_ok(),
-        "get_expired_settlement_price request should succeed: {:?}",
-        result.err()
-    );
-
-    let response = result.unwrap();
-    assert_eq!(response.code, 0); // 0 means success in the Crypto.com API
-
-    println!(
-        "Found {} expired settlement prices",
-        response.result.data.len()
-    );
-
-    // Validate settlement price structure
-    for price in &response.result.data {
-        assert!(price.settlement_time > 0);
-        assert!(price.settlement_price >= 0.0);
-        if let Some(instrument_name) = &price.instrument_name {
-            assert!(!instrument_name.is_empty());
-        }
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_client_creation() {
-        let _client = create_public_test_client();
-        // Test passes if no panic occurs during client creation
-    }
 }

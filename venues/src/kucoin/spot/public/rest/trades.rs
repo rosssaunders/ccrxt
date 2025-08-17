@@ -17,12 +17,16 @@ pub struct GetTradesRequest {
 pub struct Trade {
     /// Trade sequence number
     pub sequence: String,
+
     /// Trade price
     pub price: String,
+
     /// Trade size/quantity
     pub size: String,
+
     /// Trade side (buy/sell)
     pub side: TradeSide,
+
     /// Trade timestamp (milliseconds)
     pub time: i64,
 }
@@ -30,7 +34,7 @@ pub struct Trade {
 impl RestClient {
     /// Get recent trades for a symbol
     ///
-    /// Reference: https://docs.kucoin.com/#get-trade-histories
+    /// [docs](https://docs.kucoin.com/#get-trade-histories)
     pub async fn get_trades(
         &self,
         request: GetTradesRequest,

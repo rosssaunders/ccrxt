@@ -1,23 +1,21 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, sync::Arc};
 
 use base64::{Engine, engine::general_purpose::STANDARD as BASE64};
 use chrono::Utc;
 use hmac::{Hmac, Mac};
-use reqwest::Client;
-use rest::secrets::ExposableSecret;
+use rest::{HttpClient, HttpError, Method as HttpMethod, RequestBuilder, secrets::ExposableSecret};
 use serde::de::DeserializeOwned;
 use sha2::Sha256;
 
+use super::credentials::Credentials;
 use crate::kucoin::spot::{ApiError, RateLimiter, ResponseHeaders, RestResponse, Result};
 
 /// Private REST client for KuCoin futures market
 pub struct RestClient {
     pub base_url: String,
-    pub client: Client,
+    pub http_client: Arc<dyn HttpClient>,
     pub rate_limiter: RateLimiter,
-    api_key: Box<dyn ExposableSecret>,
-    api_secret: Box<dyn ExposableSecret>,
-    api_passphrase: Box<dyn ExposableSecret>,
+    pub credentials: Credentials,
     #[allow(dead_code)]
     is_sandbox: bool,
 }
@@ -27,53 +25,40 @@ impl RestClient {
     pub fn new(
         base_url: impl Into<String>,
         rate_limiter: RateLimiter,
-        client: Client,
-        api_key: impl Into<Box<dyn ExposableSecret>>,
-        api_secret: impl Into<Box<dyn ExposableSecret>>,
-        api_passphrase: impl Into<Box<dyn ExposableSecret>>,
+        http_client: Arc<dyn HttpClient>,
+        credentials: Credentials,
         is_sandbox: bool,
     ) -> Self {
         Self {
             base_url: base_url.into(),
-            client,
+            http_client,
             rate_limiter,
-            api_key: api_key.into(),
-            api_secret: api_secret.into(),
-            api_passphrase: api_passphrase.into(),
+            credentials,
             is_sandbox,
         }
     }
 
     /// Create a new private futures REST client with default production settings
     pub fn new_with_credentials(
-        api_key: impl Into<Box<dyn ExposableSecret>>,
-        api_secret: impl Into<Box<dyn ExposableSecret>>,
-        api_passphrase: impl Into<Box<dyn ExposableSecret>>,
+        credentials: Credentials,
+        http_client: Arc<dyn HttpClient>,
     ) -> Self {
         Self::new(
             "https://api-futures.kucoin.com",
             RateLimiter::new(),
-            Client::new(),
-            api_key,
-            api_secret,
-            api_passphrase,
+            http_client,
+            credentials,
             false,
         )
     }
 
     /// Create a new private futures REST client for sandbox environment
-    pub fn new_sandbox(
-        api_key: impl Into<Box<dyn ExposableSecret>>,
-        api_secret: impl Into<Box<dyn ExposableSecret>>,
-        api_passphrase: impl Into<Box<dyn ExposableSecret>>,
-    ) -> Self {
+    pub fn new_sandbox(credentials: Credentials, http_client: Arc<dyn HttpClient>) -> Self {
         Self::new(
             "https://api-sandbox-futures.kucoin.com",
             RateLimiter::new(),
-            Client::new(),
-            api_key,
-            api_secret,
-            api_passphrase,
+            http_client,
+            credentials,
             true,
         )
     }
@@ -86,9 +71,9 @@ impl RestClient {
         body: &str,
         timestamp: i64,
     ) -> Result<HashMap<String, String>> {
-        let api_key = self.api_key.expose_secret();
-        let api_secret = self.api_secret.expose_secret();
-        let api_passphrase = self.api_passphrase.expose_secret();
+        let api_key = self.credentials.api_key.expose_secret();
+        let api_secret = self.credentials.api_secret.expose_secret();
+        let api_passphrase = self.credentials.api_passphrase.expose_secret();
 
         // Create the string to sign: timestamp + method + endpoint + body
         let str_to_sign = format!("{}{}{}{}", timestamp, method, endpoint, body);
@@ -123,20 +108,61 @@ impl RestClient {
         Ok(headers)
     }
 
-    /// Send a GET request to the private futures API
-    pub async fn send_request<T, R>(
-        &self,
-        endpoint: &str,
-        request: Option<&R>,
-    ) -> Result<(RestResponse<T>, ResponseHeaders)>
+    /// Execute an HTTP request and handle the response
+    async fn execute<T>(&self, request: rest::Request) -> Result<(RestResponse<T>, ResponseHeaders)>
     where
         T: DeserializeOwned,
-        R: serde::Serialize,
     {
-        self.get(endpoint, request).await
+        let response = self
+            .http_client
+            .execute(request)
+            .await
+            .map_err(|e| match e {
+                HttpError::Network(msg) => ApiError::Http(format!("Network error: {}", msg)),
+                HttpError::Timeout => ApiError::Http("Request timeout".to_string()),
+                HttpError::Http { status, body } => {
+                    ApiError::Http(format!("HTTP {}: {}", status, body))
+                }
+                other => ApiError::Http(format!("HTTP error: {}", other)),
+            })?;
+
+        let status = response.status;
+        let headers = response.headers.clone();
+
+        let text = response
+            .text()
+            .map_err(|e| ApiError::Http(format!("Failed to read response: {}", e)))?;
+
+        if !(200..300).contains(&status) {
+            // Try to parse as error response
+            if let Ok(error_response) =
+                serde_json::from_str::<crate::kucoin::spot::ErrorResponse>(&text)
+            {
+                return Err(ApiError::from(error_response).into());
+            } else {
+                return Err(ApiError::Http(format!("HTTP {}: {}", status, text)).into());
+            }
+        }
+
+        // Parse successful response
+        let response: RestResponse<T> = serde_json::from_str(&text)
+            .map_err(|e| ApiError::JsonParsing(format!("Failed to parse response: {}", e)))?;
+
+        // Check if KuCoin indicates success
+        if !response.is_success() {
+            return Err(ApiError::Other {
+                code: response.code.clone(),
+                message: "KuCoin API returned non-success code".to_string(),
+            }
+            .into());
+        }
+
+        let rate_limit_headers = ResponseHeaders::from_headers(&headers);
+
+        Ok((response, rate_limit_headers))
     }
 
-    /// Alias for get method to match spot client interface
+    /// Alias for get method to match spot client interface; always serialize in client
     pub async fn get_with_request<T, R>(
         &self,
         endpoint: &str,
@@ -149,7 +175,7 @@ impl RestClient {
         self.get(endpoint, Some(request)).await
     }
 
-    /// Alias for post method to match spot client interface
+    /// Alias for post method to match spot client interface; always serialize in client
     pub async fn post_with_request<T, R>(
         &self,
         endpoint: &str,
@@ -162,7 +188,7 @@ impl RestClient {
         self.post(endpoint, request).await
     }
 
-    /// Alias for delete method to match spot client interface
+    /// Alias for delete method to match spot client interface; always serialize in client
     pub async fn delete_with_request<T, R>(
         &self,
         endpoint: &str,
@@ -197,53 +223,36 @@ impl RestClient {
         let timestamp = Utc::now().timestamp_millis();
         let url = format!("{}{}", self.base_url, endpoint);
 
-        let mut req = self.client.get(&url);
-
-        if let Some(req_data) = request {
-            req = req.query(req_data);
-        }
+        // Build URL with query parameters
+        let (full_url, endpoint_sign) = if let Some(req_data) = request {
+            let params = serde_urlencoded::to_string(req_data).map_err(|e| {
+                ApiError::JsonParsing(format!("Failed to serialize request: {}", e))
+            })?;
+            if !params.is_empty() {
+                (
+                    format!("{}?{}", url, params),
+                    format!("{}?{}", endpoint, params),
+                )
+            } else {
+                (url, endpoint.to_string())
+            }
+        } else {
+            (url, endpoint.to_string())
+        };
 
         // Create auth headers
-        let auth_headers = self.create_auth_headers("GET", endpoint, "", timestamp)?;
+        let auth_headers = self.create_auth_headers("GET", &endpoint_sign, "", timestamp)?;
 
+        let mut headers = HashMap::new();
         for (key, value) in auth_headers {
-            req = req.header(&key, &value);
+            headers.insert(key, value);
         }
 
-        let response = req.send().await?;
+        let request = RequestBuilder::new(HttpMethod::Get, full_url)
+            .headers(headers)
+            .build();
 
-        let status = response.status();
-        let headers = response.headers().clone();
-
-        let text = response.text().await?;
-
-        if !status.is_success() {
-            // Try to parse as error response
-            if let Ok(error_response) =
-                serde_json::from_str::<crate::kucoin::spot::ErrorResponse>(&text)
-            {
-                return Err(ApiError::from(error_response).into());
-            } else {
-                return Err(ApiError::Http(format!("HTTP {}: {}", status, text)).into());
-            }
-        }
-
-        // Parse successful response
-        let response: RestResponse<T> = serde_json::from_str(&text)
-            .map_err(|e| ApiError::JsonParsing(format!("Failed to parse response: {}", e)))?;
-
-        // Check if KuCoin indicates success
-        if !response.is_success() {
-            return Err(ApiError::Other {
-                code: response.code.clone(),
-                message: "KuCoin API returned non-success code".to_string(),
-            }
-            .into());
-        }
-
-        let rate_limit_headers = ResponseHeaders::from_headers(&headers);
-
-        Ok((response, rate_limit_headers))
+        self.execute(request).await
     }
 
     /// Make a POST request to the private futures API
@@ -275,48 +284,18 @@ impl RestClient {
         // Create auth headers
         let auth_headers = self.create_auth_headers("POST", endpoint, &body_str, timestamp)?;
 
-        let mut request = self.client.post(&url).body(body_str);
-
+        let mut headers = HashMap::new();
+        headers.insert("Content-Type".to_string(), "application/json".to_string());
         for (key, value) in auth_headers {
-            request = request.header(&key, &value);
+            headers.insert(key, value);
         }
 
-        request = request.header("Content-Type", "application/json");
+        let request = RequestBuilder::new(HttpMethod::Post, url)
+            .headers(headers)
+            .body(body_str.as_bytes().to_vec())
+            .build();
 
-        let response = request.send().await?;
-
-        let status = response.status();
-        let headers = response.headers().clone();
-
-        let text = response.text().await?;
-
-        if !status.is_success() {
-            // Try to parse as error response
-            if let Ok(error_response) =
-                serde_json::from_str::<crate::kucoin::spot::ErrorResponse>(&text)
-            {
-                return Err(ApiError::from(error_response).into());
-            } else {
-                return Err(ApiError::Http(format!("HTTP {}: {}", status, text)).into());
-            }
-        }
-
-        // Parse successful response
-        let response: RestResponse<T> = serde_json::from_str(&text)
-            .map_err(|e| ApiError::JsonParsing(format!("Failed to parse response: {}", e)))?;
-
-        // Check if KuCoin indicates success
-        if !response.is_success() {
-            return Err(ApiError::Other {
-                code: response.code.clone(),
-                message: "KuCoin API returned non-success code".to_string(),
-            }
-            .into());
-        }
-
-        let rate_limit_headers = ResponseHeaders::from_headers(&headers);
-
-        Ok((response, rate_limit_headers))
+        self.execute(request).await
     }
 
     /// Make a DELETE request to the private futures API
@@ -341,58 +320,43 @@ impl RestClient {
         let timestamp = Utc::now().timestamp_millis();
         let url = format!("{}{}", self.base_url, endpoint);
 
-        let mut request = self.client.delete(&url);
-
-        if let Some(params) = &params {
-            request = request.query(params);
-        }
+        // Build URL with query parameters
+        let (full_url, endpoint_sign) = if let Some(params) = &params {
+            let query_params = serde_urlencoded::to_string(params).map_err(|e| {
+                ApiError::JsonParsing(format!("Failed to serialize query params: {}", e))
+            })?;
+            if !query_params.is_empty() {
+                (
+                    format!("{}?{}", url, query_params),
+                    format!("{}?{}", endpoint, query_params),
+                )
+            } else {
+                (url, endpoint.to_string())
+            }
+        } else {
+            (url, endpoint.to_string())
+        };
 
         // Create auth headers
-        let auth_headers = self.create_auth_headers("DELETE", endpoint, "", timestamp)?;
+        let auth_headers = self.create_auth_headers("DELETE", &endpoint_sign, "", timestamp)?;
 
+        let mut headers = HashMap::new();
         for (key, value) in auth_headers {
-            request = request.header(&key, &value);
+            headers.insert(key, value);
         }
 
-        let response = request.send().await?;
+        let request = RequestBuilder::new(HttpMethod::Delete, full_url)
+            .headers(headers)
+            .build();
 
-        let status = response.status();
-        let headers = response.headers().clone();
-
-        let text = response.text().await?;
-
-        if !status.is_success() {
-            // Try to parse as error response
-            if let Ok(error_response) =
-                serde_json::from_str::<crate::kucoin::spot::ErrorResponse>(&text)
-            {
-                return Err(ApiError::from(error_response).into());
-            } else {
-                return Err(ApiError::Http(format!("HTTP {}: {}", status, text)).into());
-            }
-        }
-
-        // Parse successful response
-        let response: RestResponse<T> = serde_json::from_str(&text)
-            .map_err(|e| ApiError::JsonParsing(format!("Failed to parse response: {}", e)))?;
-
-        // Check if KuCoin indicates success
-        if !response.is_success() {
-            return Err(ApiError::Other {
-                code: response.code.clone(),
-                message: "KuCoin API returned non-success code".to_string(),
-            }
-            .into());
-        }
-
-        let rate_limit_headers = ResponseHeaders::from_headers(&headers);
-
-        Ok((response, rate_limit_headers))
+        self.execute(request).await
     }
 }
 
 #[cfg(test)]
 mod tests {
+    use rest::{NativeHttpClient, secrets::SecretString};
+
     use super::*;
 
     struct MockSecret(String);
@@ -403,55 +367,59 @@ mod tests {
         }
     }
 
+    fn mock_http_client() -> Arc<dyn HttpClient> {
+        Arc::new(NativeHttpClient::new().unwrap())
+    }
+
+    fn mock_credentials() -> Credentials {
+        Credentials {
+            api_key: SecretString::from("test_key".to_string()),
+            api_secret: SecretString::from("test_secret".to_string()),
+            api_passphrase: SecretString::from("test_passphrase".to_string()),
+        }
+    }
+
     #[test]
     fn test_rest_client_creation() {
+        let credentials = mock_credentials();
         let client = RestClient::new(
             "https://api-futures.kucoin.com",
             RateLimiter::new(),
-            Client::new(),
-            Box::new(MockSecret("test_key".to_string())) as Box<dyn ExposableSecret>,
-            Box::new(MockSecret("test_secret".to_string())) as Box<dyn ExposableSecret>,
-            Box::new(MockSecret("test_passphrase".to_string())) as Box<dyn ExposableSecret>,
+            mock_http_client(),
+            credentials,
             false,
         );
 
         assert_eq!(client.base_url, "https://api-futures.kucoin.com");
-        assert_eq!(client.is_sandbox, false);
+        assert!(!client.is_sandbox);
     }
 
     #[test]
     fn test_rest_client_new_with_credentials() {
-        let client = RestClient::new_with_credentials(
-            Box::new(MockSecret("test_key".to_string())) as Box<dyn ExposableSecret>,
-            Box::new(MockSecret("test_secret".to_string())) as Box<dyn ExposableSecret>,
-            Box::new(MockSecret("test_passphrase".to_string())) as Box<dyn ExposableSecret>,
-        );
+        let credentials = mock_credentials();
+        let client = RestClient::new_with_credentials(credentials, mock_http_client());
 
         assert_eq!(client.base_url, "https://api-futures.kucoin.com");
-        assert_eq!(client.is_sandbox, false);
+        assert!(!client.is_sandbox);
     }
 
     #[test]
     fn test_rest_client_new_sandbox() {
-        let client = RestClient::new_sandbox(
-            Box::new(MockSecret("test_key".to_string())) as Box<dyn ExposableSecret>,
-            Box::new(MockSecret("test_secret".to_string())) as Box<dyn ExposableSecret>,
-            Box::new(MockSecret("test_passphrase".to_string())) as Box<dyn ExposableSecret>,
-        );
+        let credentials = mock_credentials();
+        let client = RestClient::new_sandbox(credentials, mock_http_client());
 
         assert_eq!(client.base_url, "https://api-sandbox-futures.kucoin.com");
-        assert_eq!(client.is_sandbox, true);
+        assert!(client.is_sandbox);
     }
 
     #[test]
     fn test_create_auth_headers() {
+        let credentials = mock_credentials();
         let client = RestClient::new(
             "https://api-futures.kucoin.com",
             RateLimiter::new(),
-            Client::new(),
-            Box::new(MockSecret("test_key".to_string())) as Box<dyn ExposableSecret>,
-            Box::new(MockSecret("test_secret".to_string())) as Box<dyn ExposableSecret>,
-            Box::new(MockSecret("test_passphrase".to_string())) as Box<dyn ExposableSecret>,
+            mock_http_client(),
+            credentials,
             false,
         );
 
@@ -469,13 +437,12 @@ mod tests {
 
     #[test]
     fn test_auth_signature_generation() {
+        let credentials = mock_credentials();
         let client = RestClient::new(
             "https://api-futures.kucoin.com",
             RateLimiter::new(),
-            Client::new(),
-            Box::new(MockSecret("api_key".to_string())) as Box<dyn ExposableSecret>,
-            Box::new(MockSecret("api_secret".to_string())) as Box<dyn ExposableSecret>,
-            Box::new(MockSecret("api_passphrase".to_string())) as Box<dyn ExposableSecret>,
+            mock_http_client(),
+            credentials,
             false,
         );
 
@@ -497,7 +464,16 @@ mod tests {
         assert!(headers.contains_key("KC-API-KEY-VERSION"));
 
         // The signature should be deterministic for the same inputs
-        let headers2 = client
+        // Use the same credentials again to verify determinism
+        let credentials2 = mock_credentials();
+        let client2 = RestClient::new(
+            "https://api-futures.kucoin.com",
+            RateLimiter::new(),
+            mock_http_client(),
+            credentials2,
+            false,
+        );
+        let headers2 = client2
             .create_auth_headers(
                 "POST",
                 "/api/v1/orders",

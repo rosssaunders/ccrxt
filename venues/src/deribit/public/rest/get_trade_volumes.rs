@@ -49,7 +49,7 @@ impl RestClient {
     ///
     /// Retrieves the trade volumes for all supported currencies.
     ///
-    /// [Official API docs](https://docs.deribit.com/#public-get_trade_volumes)
+    /// [docs](https://docs.deribit.com/#public-get_trade_volumes)
     pub async fn get_trade_volumes(
         &self,
         params: GetTradeVolumesRequest,

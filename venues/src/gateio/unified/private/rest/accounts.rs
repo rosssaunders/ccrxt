@@ -20,34 +20,49 @@ pub struct GetUnifiedAccountRequest {
 pub struct UnifiedAccount {
     /// User ID
     pub user_id: i64,
+
     /// Refresh timestamp in milliseconds
     pub refresh_time: i64,
+
     /// Whether account is locked
     pub locked: bool,
+
     /// Balances by currency
     pub balances: HashMap<String, CurrencyBalance>,
+
     /// Total balance in USDT
     pub total: String,
+
     /// Total borrowed in USDT
     pub borrowed: String,
+
     /// Total interest in USDT
     pub interest: String,
+
     /// Risk ratio
     pub risk: String,
+
     /// Total initial margin in USDT
     pub total_initial_margin: String,
+
     /// Total margin balance in USDT
     pub total_margin_balance: String,
+
     /// Total maintenance margin in USDT
     pub total_maintenance_margin: String,
+
     /// Total initial margin rate
     pub total_initial_margin_rate: String,
+
     /// Total maintenance margin rate
     pub total_maintenance_margin_rate: String,
+
     /// Total available margin in USDT
     pub total_available_margin: String,
+
     /// Total position initial margin in USDT
     pub total_position_initial_margin: String,
+
     /// Total order initial margin in USDT
     pub total_order_initial_margin: String,
 }
@@ -57,10 +72,13 @@ pub struct UnifiedAccount {
 pub struct CurrencyBalance {
     /// Available balance
     pub available: String,
+
     /// Freeze balance
     pub freeze: String,
+
     /// Borrowed balance
     pub borrowed: String,
+
     /// Interest
     pub interest: String,
 }
@@ -70,9 +88,11 @@ pub struct CurrencyBalance {
 pub struct BorrowOrRepayRequest {
     /// Currency
     pub currency: String,
+
     /// Type: borrow or repay
     #[serde(rename = "type")]
     pub operation_type: String,
+
     /// Amount
     pub amount: String,
 }
@@ -82,11 +102,14 @@ pub struct BorrowOrRepayRequest {
 pub struct BorrowOrRepayResponse {
     /// Currency
     pub currency: String,
+
     /// Type: borrow or repay
     #[serde(rename = "type")]
     pub operation_type: String,
+
     /// Amount
     pub amount: String,
+
     /// Transaction ID
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
@@ -104,6 +127,7 @@ pub struct GetBorrowableRequest {
 pub struct BorrowableResponse {
     /// Currency
     pub currency: String,
+
     /// Maximum borrowable amount
     pub borrowable: String,
 }
@@ -120,6 +144,7 @@ pub struct GetTransferablesRequest {
 pub struct TransferableResponse {
     /// Currency
     pub currency: String,
+
     /// Transferable amount
     pub amount: String,
 }
@@ -129,8 +154,10 @@ pub struct TransferableResponse {
 pub struct SupportedCurrency {
     /// Currency name
     pub currency: String,
+
     /// Interest rate
     pub rate: String,
+
     /// Status
     pub status: String,
 }

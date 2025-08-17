@@ -44,6 +44,8 @@ impl RestClient {
     ///
     /// Get the most recent trades for a symbol.
     ///
+    /// [docs](https://bingx-api.github.io/docs/#/en-us/spot/market-api.html#Recent%20Trades%20List)
+    ///
     /// # Arguments
     /// * `request` - The recent trades request parameters
     ///
@@ -52,11 +54,6 @@ impl RestClient {
     ///
     /// # Rate Limit
     /// - IP: 100 requests per 10 seconds (Group 1)
-    ///
-    /// # API Documentation
-    /// - Endpoint: GET /openApi/spot/v1/market/trades
-    /// - Content-Type: request body(application/json)
-    /// - [docs]: https://bingx-api.github.io/docs/#/en-us/spot/market-api.html#Recent%20Trades%20List
     pub async fn get_recent_trades(
         &self,
         request: &GetRecentTradesRequest,
@@ -72,7 +69,6 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use reqwest::Client;
 
     use super::*;
     use crate::bingx::spot::RateLimiter;
@@ -163,7 +159,7 @@ mod tests {
     async fn test_get_recent_trades_method_exists() {
         let client = RestClient::new(
             "http://127.0.0.1:0", // Invalid URL to guarantee error
-            Client::new(),
+            std::sync::Arc::new(rest::native::NativeHttpClient::default()),
             RateLimiter::new(),
         );
 

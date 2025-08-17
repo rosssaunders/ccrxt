@@ -70,7 +70,7 @@ impl RestClient {
     /// net short positions / Total accounts of top traders with open positions.
     /// Long/Short Ratio (Accounts) = Long Account % / Short Account %.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Top-Long-Short-Account-Ratio
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Top-Long-Short-Account-Ratio)
     ///
     /// Rate limit: 1000 requests/5min per IP
     ///

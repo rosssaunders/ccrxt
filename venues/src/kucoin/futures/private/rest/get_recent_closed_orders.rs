@@ -4,6 +4,8 @@ use crate::kucoin::spot::{
     OrderSide, OrderStatus, OrderType, ResponseHeaders, RestResponse, Result,
 };
 
+const GET_RECENT_CLOSED_ORDERS_ENDPOINT: &str = "/api/v1/recentDoneOrders";
+
 /// Get recent closed orders request
 #[derive(Debug, Clone, Serialize)]
 pub struct GetRecentClosedOrdersRequest {
@@ -18,67 +20,98 @@ pub struct GetRecentClosedOrdersRequest {
 pub struct RecentClosedOrderItem {
     /// Order ID
     pub id: String,
+
     /// Contract symbol
     pub symbol: String,
+
     /// Order type
     #[serde(rename = "type")]
     pub order_type: OrderType,
+
     /// Order side
     pub side: OrderSide,
+
     /// Order amount
     pub size: String,
+
     /// Order value
     pub value: String,
+
     /// Deal value
     pub deal_value: String,
+
     /// Deal size
     pub deal_size: String,
+
     /// Taker fee rate
     pub taker_fee_rate: String,
+
     /// Maker fee rate
     pub maker_fee_rate: String,
+
     /// Taker fixed fee
     pub taker_fixed_fee: String,
+
     /// Maker fixed fee  
     pub maker_fixed_fee: String,
+
     /// Order price
     pub price: String,
+
     /// Stop type
     pub stop: String,
+
     /// Order time
     pub created_at: i64,
+
     /// Update time
     pub updated_at: i64,
+
     /// End time
     pub end_at: Option<i64>,
+
     /// Order status
     pub status: OrderStatus,
+
     /// Time in force
     pub time_in_force: String,
+
     /// Post only flag
     pub post_only: bool,
+
     /// Hidden flag
     pub hidden: bool,
+
     /// Iceberg flag
     pub iceberg: bool,
+
     /// Leverage
     pub leverage: String,
+
     /// Force hold flag
     pub force_hold: bool,
+
     /// Close order flag
     pub close_order: bool,
+
     /// Visible size
     pub visible_size: String,
+
     /// Client order ID
     pub client_oid: String,
+
     /// Remark
     pub remark: String,
+
     /// Tags
     pub tags: String,
+
     /// Reduce only flag
     pub reduce_only: bool,
+
     /// Stop price type
     pub stop_price_type: String,
+
     /// Settlement currency
     pub settle_currency: String,
 }
@@ -89,13 +122,11 @@ pub type GetRecentClosedOrdersResponse = Vec<RecentClosedOrderItem>;
 impl super::RestClient {
     /// Get recent closed orders (last 1000 orders in 24 hours)
     ///
-    /// <https://www.kucoin.com/docs-new/rest/futures-trading/orders/get-recent-closed-orders>
+    /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/orders/get-recent-closed-orders)
     pub async fn get_recent_closed_orders(
         &self,
         request: GetRecentClosedOrdersRequest,
     ) -> Result<(GetRecentClosedOrdersResponse, ResponseHeaders)> {
-        const GET_RECENT_CLOSED_ORDERS_ENDPOINT: &str = "/api/v1/recentDoneOrders";
-
         let (response, headers): (RestResponse<GetRecentClosedOrdersResponse>, ResponseHeaders) =
             self.get_with_request(GET_RECENT_CLOSED_ORDERS_ENDPOINT, &request)
                 .await?;

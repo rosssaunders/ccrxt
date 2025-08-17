@@ -1,6 +1,3 @@
-//! Request and response structs for public/get-announcements endpoint
-//!
-//! Fetches all announcements in Crypto.com Exchange.
 use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
@@ -129,14 +126,13 @@ impl RestClient {
     ///
     /// Fetches all announcements in Crypto.com Exchange.
     ///
-    /// [Official API docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#public-get-announcements)
+    /// [docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#public-get-announcements)
     pub async fn get_announcements(
         &self,
         params: GetAnnouncementsRequest,
     ) -> RestResult<GetAnnouncementsResponse> {
-        self.send_request(
+        self.send_get_request(
             ANNOUNCEMENTS_ENDPOINT,
-            reqwest::Method::GET,
             Some(&params),
             crate::cryptocom::EndpointType::PublicGetAnnouncements,
         )

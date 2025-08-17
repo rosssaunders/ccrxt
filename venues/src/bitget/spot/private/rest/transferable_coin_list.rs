@@ -43,7 +43,7 @@ impl RestClient {
     ///
     /// Get transferable coin list.
     ///
-    /// [docs]: https://www.bitget.com/api-doc/spot/account/Get-Transfer-Coins
+    /// [docs](https://www.bitget.com/api-doc/spot/account/Get-Transfer-Coins)
     ///
     /// Rate limit: 10 times/1s (User ID)
     ///

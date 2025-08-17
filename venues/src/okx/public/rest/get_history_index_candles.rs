@@ -35,7 +35,7 @@ impl RestClient {
     ///
     /// Retrieve the candlestick charts of the index from recent years.
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-index-candlesticks-history
+    /// [docs](https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-index-candlesticks-history)
     ///
     /// Rate limit: 10 requests per 2 seconds
     ///
@@ -47,7 +47,7 @@ impl RestClient {
     pub async fn get_history_index_candles(
         &self,
         request: GetHistoryIndexCandlesRequest,
-    ) -> RestResult<Vec<Vec<String>>> {
+    ) -> RestResult<Vec<String>> {
         self.send_get_request(
             GET_HISTORY_INDEX_CANDLES_ENDPOINT,
             Some(&request),

@@ -115,7 +115,8 @@ impl RestClient {
     /// Cancel an active order.
     /// Either orderId or origClientOrderId must be sent.
     ///
-    /// [docs]: (https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#cancel-order--trade)
+    /// [docs](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/public-api-endpoints#cancel-order--trade)
+    ///
     /// Method: DELETE /api/v3/order
     /// Weight: 1
     /// Security: TRADE

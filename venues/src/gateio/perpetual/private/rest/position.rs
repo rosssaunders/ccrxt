@@ -54,28 +54,40 @@ pub struct FuturesPosition {
 pub struct DualModePosition {
     /// User ID
     pub user: i64,
+
     /// Contract name
     pub contract: String,
+
     /// Long position size
     pub long_size: i64,
+
     /// Short position size
     pub short_size: i64,
+
     /// Long position entry price
     pub long_entry_price: String,
+
     /// Short position entry price
     pub short_entry_price: String,
+
     /// Long position leverage
     pub long_leverage: String,
+
     /// Short position leverage
     pub short_leverage: String,
+
     /// Long position margin
     pub long_margin: String,
+
     /// Short position margin
     pub short_margin: String,
+
     /// Long position PnL
     pub long_pnl: String,
+
     /// Short position PnL
     pub short_pnl: String,
+
     /// Mark price
     pub mark_price: String,
 }

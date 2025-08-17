@@ -40,7 +40,7 @@ impl RestClient {
     /// Sends Request for Quote (RFQ) on the specified instrument.
     /// This endpoint requires trade:read_write scope.
     ///
-    /// [docs]: https://docs.deribit.com/v2/#private-send_rfq
+    /// [docs](https://docs.deribit.com/v2/#private-send_rfq)
     ///
     /// Rate limit: 500 credits per request (non-matching engine)
     /// Scope: trade:read_write
@@ -58,29 +58,13 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use rest::secrets::ExposableSecret;
+    use std::sync::Arc;
+
+    use rest::secrets::SecretString;
     use serde_json::{Value, json};
 
     use super::*;
-    use crate::deribit::AccountTier;
-
-    // Test secret implementation
-    #[derive(Clone)]
-    struct PlainTextSecret {
-        secret: String,
-    }
-
-    impl PlainTextSecret {
-        fn new(secret: String) -> Self {
-            Self { secret }
-        }
-    }
-
-    impl ExposableSecret for PlainTextSecret {
-        fn expose_secret(&self) -> String {
-            self.secret.clone()
-        }
-    }
+    use crate::deribit::{AccountTier, private::rest::credentials::Credentials};
 
     #[test]
     fn test_side_serialization() {
@@ -153,19 +137,18 @@ mod tests {
     #[tokio::test]
     async fn test_send_rfq_method_exists() {
         // Test that the method exists and compiles without needing to call it
-        let api_key =
-            Box::new(PlainTextSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret =
-            Box::new(PlainTextSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
-        let client = reqwest::Client::new();
+        let credentials = Credentials {
+            api_key: SecretString::from("test_key".to_string()),
+            api_secret: SecretString::from("test_secret".to_string()),
+        };
+        let http_client = Arc::new(rest::native::NativeHttpClient::default());
         let rate_limiter = crate::deribit::RateLimiter::new(AccountTier::Tier4);
 
         let rest_client = RestClient::new(
-            api_key,
-            api_secret,
+            credentials,
             "https://test.deribit.com",
             rate_limiter,
-            client,
+            http_client,
         );
 
         // Test that we can get a function reference to the method

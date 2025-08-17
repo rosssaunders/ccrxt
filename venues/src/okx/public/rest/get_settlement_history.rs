@@ -55,7 +55,7 @@ impl RestClient {
     ///
     /// Retrieve settlement records of futures in the last 3 months.
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-futures-settlement-history
+    /// [docs](https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-futures-settlement-history)
     ///
     /// Rate limit: 40 requests per 2 seconds
     ///
@@ -67,7 +67,7 @@ impl RestClient {
     pub async fn get_settlement_history(
         &self,
         request: &GetSettlementHistoryRequest,
-    ) -> RestResult<Vec<SettlementHistory>> {
+    ) -> RestResult<SettlementHistory> {
         self.send_get_request(
             PUBLIC_SETTLEMENT_HISTORY_ENDPOINT,
             Some(request),

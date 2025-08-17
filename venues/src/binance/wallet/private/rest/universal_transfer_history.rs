@@ -79,9 +79,12 @@ pub struct UniversalTransferHistoryResponse {
 impl RestClient {
     /// Get universal transfer history on Binance.
     ///
-    /// See: <https://binance-docs.github.io/apidocs/spot/en/>
+    /// [docs](https://binance-docs.github.io/apidocs/spot/en/)
+    ///
     /// GET /sapi/v1/asset/transfer
+    ///
     /// Weight: 1
+    ///
     /// Requires API key and signature.
     ///
     /// # Arguments

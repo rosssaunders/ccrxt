@@ -34,7 +34,7 @@ impl RestClient {
     /// filtering by order side and account type to provide fine-grained control over which
     /// orders are canceled.
     ///
-    /// [docs]: https://www.gate.io/docs/developers/apiv4/#cancel-all-open-orders-in-specified-currency-pair
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#cancel-all-open-orders-in-specified-currency-pair)
     ///
     /// Rate limit: 100 requests per second
     ///
@@ -56,7 +56,7 @@ impl RestClient {
     /// Convenience method to cancel all orders for a specific currency pair without
     /// additional filtering by side or account type.
     ///
-    /// [docs]: https://www.gate.io/docs/developers/apiv4/#cancel-all-open-orders-in-specified-currency-pair
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#cancel-all-open-orders-in-specified-currency-pair)
     ///
     /// Rate limit: 100 requests per second
     ///

@@ -107,7 +107,7 @@ pub struct PositionHistory {
 impl RestClient {
     /// Get account positions history
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#trading-account-rest-api-get-positions-history
+    /// [docs](https://www.okx.com/docs-v5/en/#trading-account-rest-api-get-positions-history)
     ///
     /// # Arguments
     /// * `request` - The get positions history request

@@ -4,6 +4,7 @@ use super::client::RestClient;
 use crate::cryptocom::{ApiResult, RestResult};
 
 const STAKING_POSITION_ENDPOINT: &str = "private/staking/get-staking-position";
+
 /// Request parameters for get staking position
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GetStakingPositionRequest {
@@ -17,14 +18,19 @@ pub struct GetStakingPositionRequest {
 pub struct StakingPosition {
     /// Staking instrument name, e.g. SOL.staked
     pub instrument_name: String,
+
     /// Underlying instrument name, e.g. SOL
     pub underlying_inst_name: String,
+
     /// Total staked quantity
     pub staked_quantity: String,
+
     /// Total pending staked quantity
     pub pending_staked_quantity: String,
+
     /// Total pending unstaked quantity
     pub pending_unstaked_quantity: String,
+
     /// Total reward eligible quantity, quantity can be unstaked/convert
     pub reward_eligible_quantity: String,
 }
@@ -44,7 +50,7 @@ impl RestClient {
     ///
     /// Returns the user's staking positions including staked, pending, and reward eligible quantities.
     ///
-    /// See: <https://exchange-docs.crypto.com/exchange/index.html>
+    /// [docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#private-staking-get-staking-position)
     ///
     /// Rate limit: 50 requests per second
     ///

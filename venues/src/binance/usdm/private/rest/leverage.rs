@@ -50,7 +50,7 @@ impl UsdmClient {
     /// Changes user's initial leverage in the specific symbol market.
     /// For Hedge Mode, LONG and SHORT positions of one symbol use the same initial leverage and share a total notional value.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Change-Initial-Leverage
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Change-Initial-Leverage)
     ///
     /// Rate limit: 1
     ///

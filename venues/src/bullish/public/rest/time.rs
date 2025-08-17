@@ -25,13 +25,13 @@ impl RestClient {
     /// Retrieve the current server time. This endpoint can be used to synchronize
     /// client time with the exchange server time.
     ///
-    /// [docs]: https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/time
+    /// [docs](https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/time)
     ///
     /// # Returns
     /// Current server timestamp and datetime
-    pub async fn get_server_time(&self) -> RestResult<ServerTime> {
+    pub async fn get_time(&self) -> RestResult<ServerTime> {
         self.send_get_request(SERVER_TIME_ENDPOINT, EndpointType::PublicTime)
-        .await
+            .await
     }
 }
 

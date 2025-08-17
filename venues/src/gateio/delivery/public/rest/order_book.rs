@@ -62,7 +62,7 @@ impl RestClient {
     /// Retrieves the order book for a specific delivery contract.
     /// Bids are sorted by price high to low, asks are sorted by price low to high.
     ///
-    /// [docs]: https://www.gate.io/docs/developers/apiv4/en/#get-delivery-order-book
+    /// [docs](https://www.gate.io/docs/developers/apiv4/en/#get-delivery-order-book)
     ///
     /// Rate limit: 10 requests per second
     ///
@@ -156,7 +156,7 @@ mod tests {
 
             let json = serde_json::to_value(&request).unwrap();
             assert_eq!(json["limit"], limit);
-            assert!(limit >= 1 && limit <= 100);
+            assert!((1..=100).contains(&limit));
         }
     }
 

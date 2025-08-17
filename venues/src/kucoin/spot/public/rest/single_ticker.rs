@@ -73,7 +73,7 @@ pub struct TickerStatistics {
 impl RestClient {
     /// Get 24hr ticker statistics for a specific symbol
     ///
-    /// Reference: https://www.kucoin.com/docs-new/rest/spot-trading/market-data/get-ticker
+    /// [docs](https://www.kucoin.com/docs-new/rest/spot-trading/market-data/get-ticker)
     pub async fn get_ticker(
         &self,
         request: GetTickerRequest,

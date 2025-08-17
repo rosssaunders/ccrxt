@@ -57,10 +57,9 @@ impl RestClient {
     /// Get trading fee information for a currency pair
     ///
     /// This endpoint returns the current trading fees for a specific currency pair
-    ///
-    /// # API Documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#query-user-trading-fee-rates>
     /// or all pairs if no pair is specified.
+    ///
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#query-user-trading-fee-rates)
     pub async fn get_trading_fee(
         &self,
         params: TradingFeeRequest,
@@ -147,7 +146,7 @@ mod tests {
         assert_eq!(fee.currency_pair, "BTC_USDT");
         assert_eq!(fee.maker_fee, "0.002");
         assert_eq!(fee.taker_fee, "0.002");
-        assert_eq!(fee.gt_deduction, true);
+        assert!(fee.gt_deduction);
         assert_eq!(fee.gt_taker_fee, "0.0015");
         assert_eq!(fee.gt_maker_fee, "0.0015");
         assert_eq!(fee.loan_fee, "0.01");
@@ -171,7 +170,7 @@ mod tests {
         assert_eq!(fee.currency_pair, "ETH_USDT");
         assert_eq!(fee.maker_fee, "0.001");
         assert_eq!(fee.taker_fee, "0.002");
-        assert_eq!(fee.gt_deduction, false);
+        assert!(!fee.gt_deduction);
         assert_eq!(fee.gt_taker_fee, "0");
         assert_eq!(fee.gt_maker_fee, "0");
         assert_eq!(fee.loan_fee, "0.02");

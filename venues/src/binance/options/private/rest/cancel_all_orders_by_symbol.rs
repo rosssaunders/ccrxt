@@ -26,7 +26,8 @@ impl RestClient {
     ///
     /// Cancels all open orders for the specified symbol.
     ///
-    /// [docs]: (https://developers.binance.com/docs/derivatives/option/trade/Cancel-all-Active-Orders-on-a-Symbol)
+    /// [docs](https://developers.binance.com/docs/derivatives/option/trade/Cancel-all-Active-Orders-on-a-Symbol)
+    ///
     /// Method: DELETE /eapi/v1/allOpenOrders
     /// Weight: 1
     /// Requires: API key and signature

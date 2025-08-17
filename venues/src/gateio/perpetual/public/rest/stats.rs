@@ -7,14 +7,18 @@ use super::RestClient;
 pub struct FuturesStatsRequest {
     /// Settlement currency
     pub settle: String,
+
     /// Contract name
     pub contract: String,
+
     /// Start time in Unix seconds
     #[serde(skip_serializing_if = "Option::is_none")]
     pub from: Option<i64>,
+
     /// Interval time between data points (default 5m)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub interval: Option<String>,
+
     /// Maximum number of records to return (1-200, default 30)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i32>,
@@ -68,8 +72,8 @@ impl RestClient {
     ///
     /// Retrieves statistical data for a specific futures contract including
     ///
-    /// # API Documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#futures-stats>
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#futures-stats)
+    ///
     /// liquidation data, position ratios, and open interest.
     pub async fn get_futures_stats(
         &self,
@@ -204,7 +208,7 @@ mod tests {
 
             let json = serde_json::to_value(&request).unwrap();
             assert_eq!(json["limit"], limit);
-            assert!(limit >= 1 && limit <= 200);
+            assert!((1..=200).contains(&limit));
         }
     }
 

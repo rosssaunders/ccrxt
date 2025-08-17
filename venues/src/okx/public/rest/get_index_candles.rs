@@ -59,7 +59,7 @@ impl RestClient {
     /// Retrieve the candlestick charts of the index. This endpoint can retrieve the
     /// latest 1,440 data entries. Charts are returned in groups based on the requested bar.
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-index-candlesticks
+    /// [docs](https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-index-candlesticks)
     ///
     /// Rate limit: 20 requests per 2 seconds
     ///
@@ -71,7 +71,7 @@ impl RestClient {
     pub async fn get_index_candles(
         &self,
         request: GetIndexCandlesRequest,
-    ) -> RestResult<Vec<Vec<String>>> {
+    ) -> RestResult<Vec<String>> {
         self.send_get_request(
             MARKET_INDEX_CANDLES_ENDPOINT,
             Some(&request),

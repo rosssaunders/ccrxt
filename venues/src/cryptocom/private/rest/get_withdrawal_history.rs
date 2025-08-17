@@ -72,7 +72,7 @@ impl RestClient {
     /// If you do not see the option when viewing your API Keys, this feature is not yet available for you.
     /// Note: It works for master account only, not for sub-accounts.
     ///
-    /// See: <https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#private-get-withdrawal-history>
+    /// [docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#private-get-withdrawal-history)
     ///
     /// # Arguments
     /// * `params` - Request parameters including optional currency, start_ts, end_ts, page_size, page, and status

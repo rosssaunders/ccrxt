@@ -26,7 +26,7 @@ pub struct GetCurrentPositionModeResponse {
 impl RestClient {
     /// Gets user's current position mode (USER_DATA) on Binance Coin-M Futures.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/account/rest-api/Get-Current-Position-Mode
+    /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/account/rest-api/Get-Current-Position-Mode)
     ///
     /// GET /dapi/v1/positionSide/dual
     /// Weight: 30
@@ -80,7 +80,7 @@ mod tests {
             "dualSidePosition": true
         }"#;
         let response: GetCurrentPositionModeResponse = serde_json::from_str(json).unwrap();
-        assert_eq!(response.dual_side_position, true);
+        assert!(response.dual_side_position);
     }
 
     #[test]
@@ -89,6 +89,6 @@ mod tests {
             "dualSidePosition": false
         }"#;
         let response: GetCurrentPositionModeResponse = serde_json::from_str(json).unwrap();
-        assert_eq!(response.dual_side_position, false);
+        assert!(!response.dual_side_position);
     }
 }

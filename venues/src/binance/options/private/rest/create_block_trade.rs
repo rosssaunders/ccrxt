@@ -103,7 +103,7 @@ impl RestClient {
     ///
     /// Creates a new block trade order for institutional trading.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/option/block-trade/Send-in-a-New-Block-Trade-Order
+    /// [docs](https://developers.binance.com/docs/derivatives/option/block-trade/Send-in-a-New-Block-Trade-Order)
     ///
     /// Rate limit: 1
     ///

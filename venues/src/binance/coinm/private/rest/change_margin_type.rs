@@ -35,7 +35,7 @@ pub struct ChangeMarginTypeResponse {
 impl RestClient {
     /// Changes user's margin type (TRADE) for a specific symbol on Binance Coin-M Futures.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Change-Margin-Type
+    /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Change-Margin-Type)
     ///
     /// POST /dapi/v1/marginType
     /// Weight: 1

@@ -76,8 +76,7 @@ impl RestClient {
     /// volumes, and current bid/ask prices. You can get all tickers or filter
     /// by a specific currency pair and timezone.
     ///
-    /// # API Documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#retrieve-ticker-information>
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#retrieve-ticker-information)
     pub async fn get_tickers(
         &self,
         params: TickersRequest,

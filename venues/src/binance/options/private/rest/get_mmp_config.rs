@@ -59,7 +59,7 @@ impl RestClient {
     ///
     /// Returns the current MMP configuration for the specified underlying.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/option/market-maker-endpoints/Get-Market-Maker-Protection-Config
+    /// [docs](https://developers.binance.com/docs/derivatives/option/market-maker-endpoints/Get-Market-Maker-Protection-Config)
     ///
     /// Rate limit: 1
     ///

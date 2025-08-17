@@ -63,7 +63,7 @@ impl RestClient {
     ///
     /// Retrieves history of closed delivery positions.
     ///
-    /// See: <https://www.gate.com/docs/developers/apiv4/#query-position-close-history-2>
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#query-position-close-history-2)
     ///
     /// Rate limit: 10 requests per second
     ///

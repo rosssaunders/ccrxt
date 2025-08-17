@@ -4,18 +4,22 @@ use super::client::RestClient;
 use crate::cryptocom::RestResult;
 
 const TRADES_ENDPOINT: &str = "private/get-trades";
+
 /// Parameters for get trades request
 #[derive(Debug, Clone, Serialize)]
 pub struct GetTradesRequest {
     /// e.g. BTCUSD-PERP. Omit for 'all'
     #[serde(skip_serializing_if = "Option::is_none")]
     pub instrument_name: Option<String>,
+
     /// Start time in Unix time format (inclusive). Default: end_time - 1 day. Nanosecond is recommended for accurate pagination
     #[serde(skip_serializing_if = "Option::is_none")]
     pub start_time: Option<String>,
+
     /// End time in Unix time format (exclusive). Default: current system timestamp. Nanosecond is recommended for accurate pagination
     #[serde(skip_serializing_if = "Option::is_none")]
     pub end_time: Option<String>,
+
     /// The maximum number of trades to be retrieved before the end_time. Default: 100. Max: 100.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i32>,
@@ -26,41 +30,59 @@ pub struct GetTradesRequest {
 pub struct TradeEntry {
     /// Account ID
     pub account_id: String,
+
     /// Event date
     pub event_date: String,
+
     /// Journal type would be TRADING
     pub journal_type: String,
+
     /// Trade quantity
     pub traded_quantity: String,
+
     /// Trade price
     pub traded_price: String,
+
     /// Trade fees, the negative sign means a deduction on balance
     pub fees: String,
+
     /// Order ID
     pub order_id: String,
+
     /// Trade ID
     pub trade_id: String,
+
     /// Trade match ID
     pub trade_match_id: String,
+
     /// Client Order ID
     pub client_oid: String,
+
     /// MAKER or TAKER or empty
     pub taker_side: String,
+
     /// BUY or SELL
     pub side: String,
+
     /// e.g. BTCUSD-PERP
     pub instrument_name: String,
+
     /// e.g. USD
     pub fee_instrument_name: String,
+
     /// Create timestamp in milliseconds
     pub create_time: u64,
+
     /// Create timestamp in nanoseconds
     pub create_time_ns: String,
+
     /// Trade transaction time in nanoseconds
     pub transact_time_ns: String,
+
     /// Number of orders matched for this trade execution (Optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub match_count: Option<String>,
+
     /// Order entry index of corresponding price level was matched (Optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub match_index: Option<String>,
@@ -81,7 +103,7 @@ impl RestClient {
     /// and private/get-trades should primarily be used for recovery;
     /// typically when the websocket is disconnected.
     ///
-    /// See: <https://exchange-docs.crypto.com/derivatives/index.html>
+    /// [docs](https://exchange-docs.crypto.com/derivatives/index.html)
     ///
     /// Rate limit: 1 request per second
     ///

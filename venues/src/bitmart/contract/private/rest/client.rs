@@ -1,25 +1,26 @@
 //! BitMart Futures Private REST Client
 use std::sync::Arc;
 
-use reqwest::Client;
-use secrecy::{ExposeSecret, SecretString};
+use rest::{
+    HttpClient,
+    http_client::{Method as HttpMethod, RequestBuilder},
+    secrets::ExposableSecret,
+};
 
-use crate::bitmart::{Errors, RestResult};
+use crate::bitmart::{Errors, RestResult, shared::Credentials};
 
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub struct RestClient {
-    pub api_key: SecretString,
-    pub api_secret: SecretString,
-    pub client: Arc<Client>,
+    pub credentials: Credentials,
+    pub http_client: Arc<dyn HttpClient>,
     pub base_url: String,
 }
 
 impl RestClient {
-    pub fn new(api_key: impl Into<SecretString>, api_secret: impl Into<SecretString>) -> Self {
+    pub fn new(credentials: Credentials, http_client: Arc<dyn HttpClient>) -> Self {
         Self {
-            api_key: api_key.into(),
-            api_secret: api_secret.into(),
-            client: Arc::new(Client::new()),
+            credentials,
+            http_client,
             base_url: "https://api-cloud-v2.bitmart.com".to_string(),
         }
     }
@@ -29,23 +30,29 @@ impl RestClient {
         path: &str,
     ) -> RestResult<T> {
         let url = format!("{}{}", self.base_url, path);
-        let resp = self
-            .client
-            .get(&url)
-            .header("X-BM-KEY", self.api_key.expose_secret().to_string())
-            .send()
+        let request = RequestBuilder::new(HttpMethod::Get, url)
+            .header("X-BM-KEY", self.credentials.api_key.expose_secret())
+            .build();
+
+        let response = self
+            .http_client
+            .execute(request)
             .await
-            .map_err(Errors::HttpError)?;
-        let status = resp.status();
-        let text = resp.text().await.map_err(Errors::HttpError)?;
-        if !status.is_success() {
-            let err: crate::bitmart::error::ErrorResponse = serde_json::from_str(&text)
-                .unwrap_or_else(|_| crate::bitmart::error::ErrorResponse {
-                    code: status.as_u16() as i32,
+            .map_err(|e| Errors::NetworkError(format!("HTTP request failed: {e}")))?;
+
+        let status = response.status;
+        let text = response
+            .text()
+            .map_err(|e| Errors::NetworkError(format!("Failed to read response: {e}")))?;
+
+        if status != 200 && status != 201 {
+            let err: crate::bitmart::spot::error::ErrorResponse = serde_json::from_str(&text)
+                .unwrap_or_else(|_| crate::bitmart::spot::error::ErrorResponse {
+                    code: status as i32,
                     message: text.into(),
                 });
             return Err(Errors::Error(
-                crate::bitmart::error::BitmartError::from(err).to_string(),
+                crate::bitmart::spot::error::BitmartError::from(err).to_string(),
             ));
         }
         serde_json::from_str(&text)

@@ -8,8 +8,7 @@ impl RestClient {
     ///
     /// Retrieves index price candlestick data for a specific futures contract.
     ///
-    /// # API Documentation
-    /// <https://www.gate.io/docs/developers/apiv4/#get-futures-candlesticks>
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#get-futures-candlesticks)
     ///
     /// # Arguments
     /// * `params` - The candlestick query parameters

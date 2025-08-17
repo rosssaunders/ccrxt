@@ -23,16 +23,13 @@ impl RestClient {
     /// This endpoint returns the current server time in milliseconds.
     /// No authentication required.
     ///
+    /// [docs](https://bingx-api.github.io/docs/#/en-us/spot/base-info.html#Server%20time)
+    ///
     /// # Returns
     /// The server time response containing the current timestamp
     ///
     /// # Rate Limit
     /// - IP: 100 requests per 10 seconds (Group 1)
-    ///
-    /// # API Documentation
-    /// - Endpoint: GET /openApi/spot/v1/server/time
-    /// - No parameters required
-    /// - [docs]: https://bingx-api.github.io/docs/#/en-us/spot/base-info.html#Server%20time
     pub async fn get_server_time(&self) -> RestResult<GetServerTimeResponse> {
         self.send_request::<GetServerTimeResponse, GetServerTimeRequest>(
             SERVER_TIME_ENDPOINT,
@@ -45,14 +42,17 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use reqwest::Client;
 
     use super::*;
     use crate::bingx::spot::RateLimiter;
 
     #[tokio::test]
     async fn test_get_server_time_request_structure() {
-        let client = RestClient::new("http://127.0.0.1:0", Client::new(), RateLimiter::new());
+        let client = RestClient::new(
+            "http://127.0.0.1:0",
+            std::sync::Arc::new(rest::native::NativeHttpClient::default()),
+            RateLimiter::new(),
+        );
 
         // Test that the method exists and can be called
         // Note: This is a structure test, not an actual API call

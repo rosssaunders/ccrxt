@@ -9,9 +9,13 @@ const REPAY_ENDPOINT: &str = "/api/v3/margin/repay";
 #[derive(Debug, Clone, Serialize)]
 pub struct RepayRequest {
     pub currency: String,
+
     pub size: String,
+
     pub symbol: Option<String>,
+
     pub is_isolated: Option<bool>,
+
     pub is_hf: Option<bool>,
 }
 
@@ -27,14 +31,8 @@ impl RestClient {
     ///
     /// This API endpoint is used to initiate an application for cross or isolated margin repayment.
     pub async fn repay(&self, request: RepayRequest) -> Result<(RepayResponse, ResponseHeaders)> {
-        let body = serde_json::to_string(&request).map_err(|e| {
-            crate::kucoin::spot::ApiError::JsonParsing(format!(
-                "Failed to serialize request: {}",
-                e
-            ))
-        })?;
         let (response, headers): (RestResponse<RepayResponse>, ResponseHeaders) =
-            self.post(REPAY_ENDPOINT, &body).await?;
+            self.post_with_request(REPAY_ENDPOINT, &request).await?;
         Ok((response.data, headers))
     }
 }

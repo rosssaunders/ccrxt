@@ -5,8 +5,7 @@ impl RestClient {
     ///
     /// This method fetches the current borrowed amount and repays it in full.
     ///
-    /// # API Documentation
-    /// <https://www.gate.io/docs/developers/apiv4/#repay-all>
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#repay-all)
     pub async fn repay_all(
         &self,
         currency: &str,

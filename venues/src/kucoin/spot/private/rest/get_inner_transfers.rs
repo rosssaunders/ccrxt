@@ -94,7 +94,7 @@ pub struct InnerTransfersResponse {
 impl RestClient {
     /// Get inner transfer history
     ///
-    /// Reference: https://docs.kucoin.com/#get-inner-transfer-records
+    /// [docs](https://docs.kucoin.com/#get-inner-transfer-records)
     pub async fn get_inner_transfers(
         &self,
         request: GetInnerTransfersRequest,

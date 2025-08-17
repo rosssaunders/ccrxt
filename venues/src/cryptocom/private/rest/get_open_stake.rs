@@ -59,7 +59,7 @@ impl RestClient {
     ///
     /// Returns open stake and unstake requests that are still pending or in progress.
     ///
-    /// See: <https://exchange-docs.crypto.com/exchange/index.html>
+    /// [docs](https://exchange-docs.crypto.com/exchange/index.html)
     ///
     /// Rate limit: 50 requests per second
     ///

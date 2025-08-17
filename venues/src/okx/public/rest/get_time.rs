@@ -17,13 +17,13 @@ impl RestClient {
     ///
     /// Retrieve API server time.
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-time
+    /// [docs](https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-time)
     ///
     /// Rate limit: 10 requests per 2 seconds
     ///
     /// # Returns
     /// Response containing the current system time as Unix timestamp in milliseconds
-    pub async fn get_time(&self) -> RestResult<Vec<TimeData>> {
+    pub async fn get_time(&self) -> RestResult<TimeData> {
         self.send_get_request(
             GET_TIME_ENDPOINT,
             None::<&()>,

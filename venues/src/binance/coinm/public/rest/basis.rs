@@ -75,7 +75,7 @@ impl RestClient {
     /// Queries basis data for futures contracts, showing the difference between
     /// futures and index prices over time.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Basis
+    /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Basis)
     ///
     /// Rate limit: Weight 1
     ///

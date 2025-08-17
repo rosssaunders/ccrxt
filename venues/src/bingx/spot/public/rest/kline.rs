@@ -50,6 +50,8 @@ impl RestClient {
     ///
     /// Get candlestick chart data for a symbol within specified time intervals.
     ///
+    /// [docs](https://bingx-api.github.io/docs/#/en-us/spot/market-api.html#Kline/Candlestick%20Data)
+    ///
     /// # Arguments
     /// * `request` - The kline request parameters
     ///
@@ -58,11 +60,6 @@ impl RestClient {
     ///
     /// # Rate Limit
     /// - IP: 100 requests per 10 seconds (Group 1)
-    ///
-    /// # API Documentation
-    /// - Endpoint: GET /openApi/spot/v2/market/kline
-    /// - Content-Type: request body(application/json)
-    /// - [docs]: https://bingx-api.github.io/docs/#/en-us/spot/market-api.html#Kline/Candlestick%20Data
     ///
     /// # Time Interval Rules
     /// - If startTime and endTime are not provided, the latest candlestick chart data will be returned by default
@@ -77,7 +74,6 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use reqwest::Client;
 
     use super::*;
     use crate::bingx::spot::RateLimiter;
@@ -195,7 +191,7 @@ mod tests {
     async fn test_get_kline_method_exists() {
         let client = RestClient::new(
             "http://127.0.0.1:0", // Invalid URL to guarantee error
-            Client::new(),
+            std::sync::Arc::new(rest::native::NativeHttpClient::default()),
             RateLimiter::new(),
         );
 

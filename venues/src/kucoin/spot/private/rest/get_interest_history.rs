@@ -10,16 +10,22 @@ const INTEREST_HISTORY_ENDPOINT: &str = "/api/v3/margin/interest";
 pub struct GetInterestHistoryRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub currency: Option<String>,
+
     #[serde(skip_serializing_if = "Option::is_none", rename = "isIsolated")]
     pub is_isolated: Option<bool>,
+
     #[serde(skip_serializing_if = "Option::is_none")]
     pub symbol: Option<String>,
+
     #[serde(skip_serializing_if = "Option::is_none", rename = "startTime")]
     pub start_time: Option<i64>,
+
     #[serde(skip_serializing_if = "Option::is_none", rename = "endTime")]
     pub end_time: Option<i64>,
+
     #[serde(skip_serializing_if = "Option::is_none", rename = "currentPage")]
     pub current_page: Option<i32>,
+
     #[serde(skip_serializing_if = "Option::is_none", rename = "pageSize")]
     pub page_size: Option<i32>,
 }
@@ -28,10 +34,13 @@ pub struct GetInterestHistoryRequest {
 #[derive(Debug, Clone, Deserialize)]
 pub struct InterestHistoryItem {
     pub currency: String,
+
     #[serde(rename = "dayRatio")]
     pub day_ratio: String,
+
     #[serde(rename = "interestAmount")]
     pub interest_amount: String,
+
     #[serde(rename = "createdTime")]
     pub created_time: i64,
 }
@@ -40,14 +49,19 @@ pub struct InterestHistoryItem {
 #[derive(Debug, Clone, Deserialize)]
 pub struct InterestHistoryResponse {
     pub timestamp: i64,
+
     #[serde(rename = "currentPage")]
     pub current_page: i32,
+
     #[serde(rename = "pageSize")]
     pub page_size: i32,
+
     #[serde(rename = "totalNum")]
     pub total_num: i32,
+
     #[serde(rename = "totalPage")]
     pub total_page: i32,
+
     pub items: Vec<InterestHistoryItem>,
 }
 

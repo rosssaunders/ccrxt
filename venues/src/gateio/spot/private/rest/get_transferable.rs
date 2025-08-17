@@ -53,7 +53,7 @@ impl RestClient {
     /// based on current margin positions, collateral requirements, and available balances.
     /// Essential for margin position management and transfer planning.
     ///
-    /// [docs]: https://www.gate.io/docs/developers/apiv4/en/#get-transferable-amount
+    /// [docs](https://www.gate.io/docs/developers/apiv4/en/#get-transferable-amount)
     ///
     /// Rate limit: 100 requests per second
     ///

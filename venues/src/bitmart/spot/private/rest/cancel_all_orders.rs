@@ -28,7 +28,7 @@ impl RestClient {
     ///
     /// Cancels all outstanding orders for a symbol and/or side.
     ///
-    /// [docs]: https://developer-pro.bitmart.com/en/spot/#cancel-all-order-v4-signed
+    /// [docs](https://developer-pro.bitmart.com/en/spot/#cancel-all-order-v4-signed)
     ///
     /// Rate limit: UID-based, 1 times/3 sec
     ///

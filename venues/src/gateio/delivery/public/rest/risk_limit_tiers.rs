@@ -45,7 +45,7 @@ impl RestClient {
     /// Retrieves risk limit tiers for a specific delivery contract.
     /// Higher tiers require higher margin rates but allow larger positions.
     ///
-    /// [docs]: https://www.gate.io/docs/developers/apiv4/en/#list-delivery-risk-limit-tiers
+    /// [docs](https://www.gate.io/docs/developers/apiv4/en/#list-delivery-risk-limit-tiers)
     ///
     /// Rate limit: 10 requests per second
     ///
@@ -123,7 +123,7 @@ mod tests {
             let json = serde_json::to_value(&request).unwrap();
             assert_eq!(json["offset"], offset);
             assert_eq!(json["limit"], limit);
-            assert!(limit >= 1 && limit <= 500);
+            assert!((1..=500).contains(&limit));
         }
     }
 
@@ -145,7 +145,7 @@ mod tests {
 
     #[test]
     fn test_btc_risk_limit_tiers() {
-        let btc_tiers = vec![
+        let btc_tiers = [
             r#"{"tier": 1, "risk_limit": "1000000", "initial_rate": "0.01", "maintenance_rate": "0.005"}"#,
             r#"{"tier": 2, "risk_limit": "2000000", "initial_rate": "0.015", "maintenance_rate": "0.0075"}"#,
             r#"{"tier": 3, "risk_limit": "5000000", "initial_rate": "0.02", "maintenance_rate": "0.01"}"#,

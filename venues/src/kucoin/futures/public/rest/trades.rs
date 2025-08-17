@@ -17,20 +17,28 @@ pub struct GetTradeHistoryRequest {
 pub struct TradeHistoryItem {
     /// Sequence number
     pub sequence: i64,
+
     /// Deprecated param
     pub contract_id: i64,
+
     /// Transaction ID
     pub trade_id: String,
+
     /// Maker order ID
     pub maker_order_id: String,
+
     /// Taker order ID
     pub taker_order_id: String,
+
     /// Filled timestamp (nanosecond)
     pub ts: i64,
+
     /// Filled amount
     pub size: i64,
+
     /// Filled price
     pub price: String,
+
     /// Trade side (taker order side)
     pub side: OrderSide,
 }
@@ -41,7 +49,7 @@ pub type GetTradeHistoryResponse = Vec<TradeHistoryItem>;
 impl super::RestClient {
     /// Get trade history for a specific symbol (last 100 records)
     ///
-    /// <https://www.kucoin.com/docs-new/rest/futures-trading/market-data/get-trade-history>
+    /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/market-data/get-trade-history)
     pub async fn get_trade_history(
         &self,
         request: GetTradeHistoryRequest,

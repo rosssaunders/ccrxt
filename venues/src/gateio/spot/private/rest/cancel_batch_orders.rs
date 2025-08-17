@@ -56,7 +56,7 @@ impl RestClient {
     /// for efficiently canceling many orders simultaneously, such as when clearing out all
     /// open orders or implementing risk management strategies.
     ///
-    /// [docs]: https://www.gate.io/docs/developers/apiv4/#cancel-a-batch-of-orders-with-an-id-list
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#cancel-a-batch-of-orders-with-an-id-list)
     ///
     /// Rate limit: 100 requests per second
     ///

@@ -10,12 +10,15 @@ const KLINES_ENDPOINT: &str = "/api/v1/market/candles";
 pub struct GetKlinesRequest {
     /// Trading symbol (e.g., "BTC-USDT")
     pub symbol: String,
+
     /// Kline interval
     #[serde(rename = "type")]
     pub interval: KlineInterval,
+
     /// Start time (Unix timestamp in seconds, optional)
     #[serde(rename = "startAt")]
     pub start_time: Option<i64>,
+
     /// End time (Unix timestamp in seconds, optional)
     #[serde(rename = "endAt")]
     pub end_time: Option<i64>,
@@ -26,16 +29,22 @@ pub struct GetKlinesRequest {
 pub struct Kline {
     /// Open time (Unix timestamp)
     pub open_time: i64,
+
     /// Open price
     pub open: String,
+
     /// Close price
     pub close: String,
+
     /// High price
     pub high: String,
+
     /// Low price
     pub low: String,
+
     /// Volume
     pub volume: String,
+
     /// Quote volume
     pub quote_volume: String,
 }

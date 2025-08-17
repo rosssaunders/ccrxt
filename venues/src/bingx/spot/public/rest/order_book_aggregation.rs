@@ -70,7 +70,7 @@ impl RestClient {
     ///
     /// Used to query aggregated depth for a trading pair.
     ///
-    /// [docs]: https://bingx-api.github.io/docs/#/en-us/spot/market-api.html#Order%20Book%20aggregation
+    /// [docs](https://bingx-api.github.io/docs/#/en-us/spot/market-api.html#Order%20Book%20aggregation)
     ///
     /// Rate limit: IP - 100 requests per 10 seconds (Group 1)
     ///

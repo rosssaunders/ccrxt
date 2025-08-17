@@ -7,6 +7,7 @@ use super::RestClient;
 pub struct FuturesTickersRequest {
     /// Settlement currency
     pub settle: String,
+
     /// Contract name (optional - if not provided, returns all contracts)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub contract: Option<String>,
@@ -91,8 +92,7 @@ impl RestClient {
     /// Retrieves ticker information for futures contracts.
     /// If contract is not specified, returns tickers for all contracts in the settlement currency.
     ///
-    /// # API Documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#list-futures-tickers>
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#list-futures-tickers)
     pub async fn get_futures_tickers(
         &self,
         params: FuturesTickersRequest,
@@ -386,7 +386,7 @@ mod tests {
             assert_eq!(ticker.change_percentage, change);
 
             let change_val: f64 = ticker.change_percentage.parse().unwrap();
-            assert!(change_val >= -20.0 && change_val <= 20.0); // Reasonable daily change
+            assert!((-20.0..=20.0).contains(&change_val)); // Reasonable daily change
         }
     }
 
@@ -421,8 +421,8 @@ mod tests {
             let current_rate: f64 = ticker.funding_rate.parse().unwrap();
             let indicative_rate: f64 = ticker.funding_rate_indicative.parse().unwrap();
 
-            assert!(current_rate >= -0.375 && current_rate <= 0.375);
-            assert!(indicative_rate >= -0.375 && indicative_rate <= 0.375);
+            assert!((-0.375..=0.375).contains(&current_rate));
+            assert!((-0.375..=0.375).contains(&indicative_rate));
         }
     }
 

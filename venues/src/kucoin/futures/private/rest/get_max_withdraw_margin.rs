@@ -20,7 +20,7 @@ impl super::RestClient {
     ///
     /// Get the maximum withdrawable margin amount for a given symbol.
     ///
-    /// [docs]: https://www.kucoin.com/docs-new/rest/futures-trading/positions/get-maximum-withdraw-margin
+    /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/positions/get-maximum-withdraw-margin)
     ///
     /// Rate limit: 9
     ///
@@ -33,7 +33,7 @@ impl super::RestClient {
         &self,
         request: GetMaxWithdrawMarginRequest,
     ) -> Result<(RestResponse<GetMaxWithdrawMarginResponse>, ResponseHeaders)> {
-        self.get(GET_MAX_WITHDRAW_MARGIN_ENDPOINT, Some(&request))
+        self.get_with_request(GET_MAX_WITHDRAW_MARGIN_ENDPOINT, &request)
             .await
     }
 }

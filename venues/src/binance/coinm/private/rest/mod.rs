@@ -35,3 +35,6 @@ pub mod query_order;
 pub mod user_commission_rate;
 
 pub use client::RestClient;
+
+#[allow(unused_imports)]
+pub use crate::binance::shared::credentials::Credentials;

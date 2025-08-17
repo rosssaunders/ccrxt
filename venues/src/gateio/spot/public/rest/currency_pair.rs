@@ -55,8 +55,7 @@ impl RestClient {
     /// This endpoint returns detailed information about a specific currency pair
     /// including trading fees, precision, and trading status.
     ///
-    /// # API Documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#get-details-of-a-specifc-currency-pair>
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#get-details-of-a-specifc-currency-pair)
     pub async fn get_currency_pair(
         &self,
         currency_pair: &str,

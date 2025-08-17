@@ -45,7 +45,7 @@ pub struct QuickMarginBorrowRepayResponse {
 impl RestClient {
     /// Quick margin borrow repay
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#trading-account-rest-api-quick-margin-borrow-repay
+    /// [docs](https://www.okx.com/docs-v5/en/#trading-account-rest-api-quick-margin-borrow-repay)
     ///
     /// # Arguments
     /// * `request` - The quick margin borrow repay request

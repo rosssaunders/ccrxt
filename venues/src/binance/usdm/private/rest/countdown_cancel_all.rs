@@ -50,7 +50,7 @@ impl UsdmClient {
     ///
     /// Cancel all open orders of the specified symbol at the end of the specified countdown.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Auto-Cancel-All-Open-Orders
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Auto-Cancel-All-Open-Orders)
     ///
     /// Rate limit: 10
     ///

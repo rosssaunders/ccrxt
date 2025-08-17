@@ -113,7 +113,7 @@ impl RestClient {
     /// currency filtering, time range queries, and pagination. Provides comprehensive
     /// withdrawal tracking including transaction status, fees, and blockchain confirmations.
     ///
-    /// [docs]: https://www.gate.io/docs/developers/apiv4/#retrieve-withdrawal-records
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#retrieve-withdrawal-records)
     ///
     /// Rate limit: 100 requests per second
     ///
@@ -135,7 +135,7 @@ impl RestClient {
     /// minimum and maximum withdrawal amounts, fixed network fees, and percentage charges.
     /// Essential for cost calculation and withdrawal planning across different assets.
     ///
-    /// [docs]: https://www.gate.io/docs/developers/apiv4/#retrieve-withdrawal-status
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#retrieve-withdrawal-status)
     ///
     /// Rate limit: 100 requests per second
     ///

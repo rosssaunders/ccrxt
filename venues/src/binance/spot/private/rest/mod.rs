@@ -41,3 +41,5 @@ pub mod order_amendments;
 pub mod rate_limit_order;
 
 pub use client::RestClient;
+
+pub use crate::binance::shared::credentials::Credentials;

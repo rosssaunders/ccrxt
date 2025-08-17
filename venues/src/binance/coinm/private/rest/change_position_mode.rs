@@ -32,7 +32,7 @@ pub struct ChangePositionModeResponse {
 impl RestClient {
     /// Changes user's position mode (TRADE) on Binance Coin-M Futures.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Change-Position-Mode
+    /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Change-Position-Mode)
     ///
     /// POST /dapi/v1/positionSide/dual
     /// Weight: 1

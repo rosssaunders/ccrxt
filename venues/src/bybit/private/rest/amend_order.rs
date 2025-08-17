@@ -115,7 +115,7 @@ impl RestClient {
     /// Modify unfilled or partially filled orders. At least one amendable field must be provided.
     /// You can amend order price, quantity, trigger price, and take profit/stop loss settings.
     ///
-    /// [API Documentation](https://bybit-exchange.github.io/docs/v5/order/amend-order)
+    /// [docs](https://bybit-exchange.github.io/docs/v5/order/amend-order)
     ///
     /// Rate limit: 10 requests per second per UID
     ///

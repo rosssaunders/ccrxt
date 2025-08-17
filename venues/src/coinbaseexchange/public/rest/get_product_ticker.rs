@@ -54,7 +54,7 @@ impl RestClient {
     /// For real-time updates, Coinbase recommends connecting with the WebSocket stream
     /// and listening for match messages, rather than polling.
     ///
-    /// [API Documentation](https://docs.cdp.coinbase.com/exchange/reference/exchangerestapi_getproductticker)
+    /// [docs](https://docs.cdp.coinbase.com/exchange/reference/exchangerestapi_getproductticker)
     ///
     /// Rate limit: 10 requests per second
     ///
@@ -70,8 +70,7 @@ impl RestClient {
         request: &GetProductTickerRequest,
     ) -> RestResult<GetProductTickerResponse> {
         let endpoint = ENDPOINT_PATH.replace("{}", product_id);
-        self.send_get_request(&endpoint, Some(request))
-            .await
+        self.send_get_request(&endpoint, Some(request)).await
     }
 }
 

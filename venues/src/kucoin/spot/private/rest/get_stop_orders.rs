@@ -172,7 +172,7 @@ pub struct OrdersResponse {
 impl RestClient {
     /// Get stop orders
     ///
-    /// Reference: https://docs.kucoin.com/#list-stop-orders
+    /// [docs](https://docs.kucoin.com/#list-stop-orders)
     pub async fn get_stop_orders(
         &self,
         request: GetStopOrdersRequest,

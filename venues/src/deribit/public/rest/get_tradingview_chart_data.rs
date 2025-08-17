@@ -1,9 +1,3 @@
-//! Implements the /public/get_tradingview_chart_data endpoint for Deribit.
-//!
-//! Retrieves TradingView-compatible OHLCV chart data for a given instrument and time range.
-//!
-//! [Official API docs](https://docs.deribit.com/#public-get_tradingview_chart_data)
-
 use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
@@ -69,7 +63,7 @@ impl RestClient {
     ///
     /// Retrieves TradingView-compatible OHLCV chart data for a given instrument and time range.
     ///
-    /// [Official API docs](https://docs.deribit.com/#public-get_tradingview_chart_data)
+    /// [docs](https://docs.deribit.com/#public-get_tradingview_chart_data)
     pub async fn get_tradingview_chart_data(
         &self,
         params: &GetTradingviewChartDataRequest,

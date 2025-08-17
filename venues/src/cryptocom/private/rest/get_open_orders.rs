@@ -89,7 +89,7 @@ pub type GetOpenOrdersResponse = ApiResult<GetOpenOrdersResult>;
 impl RestClient {
     /// Gets all open orders for a particular instrument
     ///
-    /// See: <https://exchange-docs.crypto.com/derivatives/index.html>
+    /// [docs](https://exchange-docs.crypto.com/derivatives/index.html)
     ///
     /// Rate limit: 10 requests per second
     ///

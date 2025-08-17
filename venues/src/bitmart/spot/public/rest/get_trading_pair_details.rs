@@ -54,7 +54,7 @@ impl RestClient {
     ///
     /// Get a detailed list of all trading pairs on the platform
     ///
-    /// [docs]: https://developer-pro.bitmart.com/en/spot/#get-trading-pair-details-v1
+    /// [docs](https://developer-pro.bitmart.com/en/spot/#get-trading-pair-details-v1)
     ///
     /// Rate limit: 10 times/2sec per IP
     ///
@@ -64,9 +64,8 @@ impl RestClient {
         &self,
         _request: GetTradingPairDetailsRequest,
     ) -> RestResult<GetTradingPairDetailsResponse> {
-        self.send_request(
+        self.send_get_request(
             TRADING_PAIR_DETAILS_ENDPOINT,
-            reqwest::Method::GET,
             Option::<&()>::None, // No query parameters
             EndpointType::SpotPublicMarket,
         )

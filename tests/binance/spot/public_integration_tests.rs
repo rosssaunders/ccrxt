@@ -5,7 +5,6 @@
 
 use std::time::Duration;
 
-use reqwest::Client;
 use tokio;
 use venues::binance::shared::{RateLimiter, RateLimits};
 // Import types from top-level venue exports as required by integration test standards
@@ -17,7 +16,7 @@ use venues::binance::spot::{
 
 /// Helper function to create a test client for public endpoints
 fn create_public_test_client() -> PublicRestClient {
-    let client = Client::new();
+    let http_client = std::sync::Arc::new(rest::native::NativeHttpClient::default());
     let rate_limits = RateLimits {
         request_weight_limit: 1200,
         request_weight_window: Duration::from_secs(60),
@@ -29,7 +28,7 @@ fn create_public_test_client() -> PublicRestClient {
     };
     let rate_limiter = RateLimiter::new(rate_limits);
 
-    PublicRestClient::new("https://api.binance.com", client, rate_limiter)
+    PublicRestClient::new("https://api.binance.com", http_client, rate_limiter)
 }
 
 /// Helper function to check if an error is due to geographic restrictions
@@ -55,8 +54,7 @@ macro_rules! handle_result {
                     );
                     None
                 } else {
-                    assert!(false, "{} should succeed: {:?}", $endpoint_name, err);
-                    None
+                    panic!("{} should succeed: {:?}", $endpoint_name, err);
                 }
             }
         }
@@ -121,7 +119,7 @@ async fn test_get_exchange_info() {
             if is_geo_restricted(&err) {
                 println!("⚠️ Test skipped due to geographic restrictions (HTTP 451)");
             } else {
-                assert!(false, "get_exchange_info should succeed: {:?}", err);
+                panic!("get_exchange_info should succeed: {:?}", err);
             }
         }
     }
@@ -196,7 +194,7 @@ async fn test_get_recent_trades() {
             if is_geo_restricted(&err) {
                 println!("⚠️ Test skipped due to geographic restrictions (HTTP 451)");
             } else {
-                assert!(false, "get_recent_trades should succeed: {:?}", err);
+                panic!("get_recent_trades should succeed: {:?}", err);
             }
         }
     }
@@ -308,7 +306,7 @@ async fn test_error_handling_invalid_symbol() {
     match result {
         Ok(_) => {
             println!("⚠️ Unexpected success with invalid symbol");
-            assert!(false, "Expected error for invalid symbol but got success");
+            panic!("Expected error for invalid symbol but got success");
         }
         Err(err) => {
             if is_geo_restricted(&err) {

@@ -10,17 +10,22 @@ const BORROW_ENDPOINT: &str = "/api/v3/margin/borrow";
 pub struct BorrowRequest {
     /// Currency to borrow
     pub currency: String,
+
     /// Borrow amount
     pub size: String,
+
     /// Time in force: IOC or FOK
     #[serde(rename = "timeInForce")]
     pub time_in_force: TimeInForce,
+
     /// Symbol, mandatory for isolated margin account
     #[serde(skip_serializing_if = "Option::is_none")]
     pub symbol: Option<String>,
+
     /// true-isolated, false-cross; default is false
     #[serde(rename = "isIsolated", skip_serializing_if = "Option::is_none")]
     pub is_isolated: Option<bool>,
+
     /// true: high frequency borrowing, false: low frequency borrowing; default false
     #[serde(rename = "isHf", skip_serializing_if = "Option::is_none")]
     pub is_hf: Option<bool>,
@@ -32,6 +37,7 @@ pub struct BorrowResponse {
     /// Borrow Order ID
     #[serde(rename = "orderNo")]
     pub order_no: String,
+
     /// Actual borrowed amount
     #[serde(rename = "actualSize")]
     pub actual_size: String,
@@ -51,7 +57,7 @@ impl RestClient {
     ///
     /// This API endpoint is used to initiate an application for cross or isolated margin borrowing.
     ///
-    /// Reference: https://docs.kucoin.com/#borrowing
+    /// [docs](https://docs.kucoin.com/#borrowing)
     pub async fn borrow(
         &self,
         request: BorrowRequest,

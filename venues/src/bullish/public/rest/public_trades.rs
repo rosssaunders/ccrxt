@@ -62,7 +62,7 @@ impl RestClient {
     ///
     /// Retrieve a list of recent public trades for a specific market.
     ///
-    /// [docs]: https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/markets/-symbol-/trades
+    /// [docs](https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/markets/-symbol-/trades)
     ///
     /// # Arguments
     /// * `symbol` - Market symbol
@@ -92,7 +92,7 @@ impl RestClient {
         }
 
         self.send_get_request(&url, EndpointType::PublicTrades)
-        .await
+            .await
     }
 }
 
@@ -120,7 +120,7 @@ mod tests {
         assert_eq!(trade.price, "30000.0");
         assert_eq!(trade.side, OrderSide::Buy);
         assert_eq!(trade.created_at_timestamp, "1640995200000");
-        assert_eq!(trade.is_taker, true);
+        assert!(trade.is_taker);
     }
 
     #[test]

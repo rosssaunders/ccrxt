@@ -85,7 +85,7 @@ pub struct PositionRisk {
 impl RestClient {
     /// Get current account position risk information on Binance Coin-M Futures.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Position-Information
+    /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Position-Information)
     ///
     /// GET /dapi/v1/positionRisk
     /// Weight: 1

@@ -6,19 +6,25 @@ use super::client::RestClient;
 use crate::cryptocom::RestResult;
 
 const CURRENCY_NETWORKS_ENDPOINT: &str = "private/get-currency-networks";
+
 /// Network information for a currency
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct NetworkInfo {
     /// The network ID, can be used in create-withdrawal
     pub network_id: String,
+
     /// Whether withdrawals are enabled for this network
     pub withdraw_enabled: bool,
+
     /// Whether deposits are enabled for this network
     pub deposit_enabled: bool,
+
     /// Withdrawal fee for this network
     pub withdrawal_fee: Option<f64>,
+
     /// Minimum withdrawal amount for this network
     pub min_withdrawal_amount: f64,
+
     /// Confirmation blocks count required
     pub confirmation_required: u32,
 }
@@ -28,8 +34,10 @@ pub struct NetworkInfo {
 pub struct CurrencyInfo {
     /// Full name of the currency e.g. "SHIBA INU"
     pub full_name: String,
+
     /// Default network if not provided in create-withdrawal
     pub default_network: Option<String>,
+
     /// List of available networks for this currency
     pub network_list: Vec<NetworkInfo>,
 }
@@ -39,6 +47,7 @@ pub struct CurrencyInfo {
 pub struct GetCurrencyNetworksResponse {
     /// Last update timestamp
     pub update_time: u64,
+
     /// Map of currency symbol to currency information
     pub currency_map: HashMap<String, CurrencyInfo>,
 }
@@ -49,7 +58,7 @@ impl RestClient {
     /// Returns the symbol network mapping for all supported currencies.
     /// Works for master account only, not for sub-accounts.
     ///
-    /// See: <>
+    /// [docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#private-get-currency-networks)
     ///
     /// # Returns
     /// Currency network mapping information for all supported currencies

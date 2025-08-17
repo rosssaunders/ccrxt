@@ -144,7 +144,7 @@ pub struct Fill {
 impl RestClient {
     /// Get recent fills
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#order-book-trading-trade-get-transaction-details-last-3-days
+    /// [docs](https://www.okx.com/docs-v5/en/#order-book-trading-trade-get-transaction-details-last-3-days)
     ///
     /// # Arguments
     /// * `request` - The get fills request

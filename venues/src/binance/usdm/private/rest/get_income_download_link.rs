@@ -80,7 +80,7 @@ impl UsdmClient {
     ///
     /// Get futures transaction history download link by Id.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Get-Futures-Transaction-History-Download-Link-by-Id
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Get-Futures-Transaction-History-Download-Link-by-Id)
     ///
     /// Rate limit: 10
     ///

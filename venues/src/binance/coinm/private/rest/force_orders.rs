@@ -130,7 +130,7 @@ pub type GetForceOrdersResponse = Vec<ForceOrder>;
 impl RestClient {
     /// Gets user's force orders (USER_DATA) on Binance Coin-M Futures.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Users-Force-Orders
+    /// [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/trade/rest-api/Users-Force-Orders)
     ///
     /// GET /dapi/v1/forceOrders
     /// Weight: 20 with symbol, 50 without symbol
@@ -253,13 +253,13 @@ mod tests {
         assert_eq!(order.cum_base, "0.00001");
         assert_eq!(order.time_in_force, TimeInForce::IOC);
         assert_eq!(order.order_type, OrderType::Limit);
-        assert_eq!(order.reduce_only, true);
-        assert_eq!(order.close_position, false);
+        assert!(order.reduce_only);
+        assert!(!order.close_position);
         assert_eq!(order.side, OrderSide::Sell);
         assert_eq!(order.position_side, PositionSide::Both);
         assert_eq!(order.stop_price, "0");
         assert_eq!(order.working_type, WorkingType::ContractPrice);
-        assert_eq!(order.price_protect, false);
+        assert!(!order.price_protect);
         assert_eq!(order.orig_type, OrderType::Limit);
         assert_eq!(order.time, 1625097600000);
         assert_eq!(order.update_time, 1625097600001);

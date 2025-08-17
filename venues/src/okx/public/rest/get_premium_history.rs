@@ -46,7 +46,7 @@ impl RestClient {
     ///
     /// Returns premium data in the past 6 months.
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-premium-history
+    /// [docs](https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-premium-history)
     ///
     /// Rate limit: 20 requests per 2 seconds
     ///
@@ -58,7 +58,7 @@ impl RestClient {
     pub async fn get_premium_history(
         &self,
         request: &GetPremiumHistoryRequest,
-    ) -> RestResult<Vec<PremiumHistory>> {
+    ) -> RestResult<PremiumHistory> {
         self.send_get_request(
             PUBLIC_PREMIUM_HISTORY_ENDPOINT,
             Some(request),

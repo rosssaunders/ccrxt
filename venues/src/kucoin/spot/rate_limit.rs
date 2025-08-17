@@ -510,7 +510,7 @@ impl RateLimiter {
     }
 
     /// Backward compatibility: Update from headers (extracts rate limit info but doesn't change limits)
-    pub fn update_from_headers(&mut self, headers: &reqwest::header::HeaderMap) {
+    pub fn update_from_headers(&mut self, headers: &HashMap<String, String>) {
         // For backward compatibility, we extract the headers but don't modify the rate limiter state
         // This is because KuCoin's rate limiting is client-side based on known limits
         let _rate_limit_header = RateLimitHeader::from_headers(headers);
@@ -555,20 +555,17 @@ pub struct RateLimitHeader {
 
 impl RateLimitHeader {
     /// Extract rate limit headers from response headers
-    pub fn from_headers(headers: &reqwest::header::HeaderMap) -> Self {
+    pub fn from_headers(headers: &HashMap<String, String>) -> Self {
         let limit = headers
             .get("gw-ratelimit-limit")
-            .and_then(|v| v.to_str().ok())
             .and_then(|s| s.parse().ok());
 
         let remaining = headers
             .get("gw-ratelimit-remaining")
-            .and_then(|v| v.to_str().ok())
             .and_then(|s| s.parse().ok());
 
         let reset = headers
             .get("gw-ratelimit-reset")
-            .and_then(|v| v.to_str().ok())
             .and_then(|s| s.parse().ok());
 
         Self {
@@ -674,21 +671,10 @@ mod tests {
 
     #[test]
     fn test_rate_limit_header() {
-        use reqwest::header::{HeaderMap, HeaderName, HeaderValue};
-
-        let mut headers = HeaderMap::new();
-        headers.insert(
-            HeaderName::from_static("gw-ratelimit-limit"),
-            HeaderValue::from_static("500"),
-        );
-        headers.insert(
-            HeaderName::from_static("gw-ratelimit-remaining"),
-            HeaderValue::from_static("300"),
-        );
-        headers.insert(
-            HeaderName::from_static("gw-ratelimit-reset"),
-            HeaderValue::from_static("1489"),
-        );
+        let mut headers = HashMap::new();
+        headers.insert("gw-ratelimit-limit".to_string(), "500".to_string());
+        headers.insert("gw-ratelimit-remaining".to_string(), "300".to_string());
+        headers.insert("gw-ratelimit-reset".to_string(), "1489".to_string());
 
         let rate_limit_header = RateLimitHeader::from_headers(&headers);
         assert_eq!(rate_limit_header.limit, Some(500));

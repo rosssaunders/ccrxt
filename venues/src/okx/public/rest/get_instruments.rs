@@ -171,7 +171,7 @@ impl RestClient {
     ///
     /// Retrieve a list of instruments with open contracts.
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-instruments
+    /// [docs](https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-instruments)
     ///
     /// Rate limit: 20 requests per 2 seconds
     ///
@@ -180,10 +180,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Response containing the list of available instruments
-    pub async fn get_instruments(
-        &self,
-        request: GetInstrumentsRequest,
-    ) -> RestResult<Vec<Instrument>> {
+    pub async fn get_instruments(&self, request: GetInstrumentsRequest) -> RestResult<Instrument> {
         self.send_get_request(
             PUBLIC_INSTRUMENTS_ENDPOINT,
             Some(&request),

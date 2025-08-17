@@ -9,7 +9,6 @@
 
 use std::time::Duration;
 
-use reqwest::Client;
 use tokio;
 use venues::binance::{
     coinm::{
@@ -26,7 +25,7 @@ use venues::binance::{
 
 /// Helper function to create a test client for public endpoints
 fn create_public_test_client() -> PublicRestClient {
-    let client = Client::new();
+    let http_client = std::sync::Arc::new(rest::native::NativeHttpClient::default());
     let rate_limits = RateLimits {
         request_weight_limit: 6000,
         request_weight_window: Duration::from_secs(60),
@@ -38,7 +37,7 @@ fn create_public_test_client() -> PublicRestClient {
     };
     let rate_limiter = RateLimiter::new(rate_limits);
 
-    PublicRestClient::new("https://dapi.binance.com", client, rate_limiter)
+    PublicRestClient::new("https://dapi.binance.com", http_client, rate_limiter)
 }
 
 /// Test the ping endpoint - test connectivity

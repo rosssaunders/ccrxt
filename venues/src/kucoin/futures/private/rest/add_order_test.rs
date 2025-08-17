@@ -105,7 +105,7 @@ impl super::RestClient {
     /// the order parameters and returns what the order ID would be without
     /// actually placing the order on the order book.
     ///
-    /// [docs]: https://www.kucoin.com/docs-new/rest/futures-trading/orders/add-order-test
+    /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/orders/add-order-test)
     ///
     /// Rate limit: 3
     ///
@@ -118,7 +118,8 @@ impl super::RestClient {
         &self,
         request: AddOrderTestRequest,
     ) -> Result<(RestResponse<AddOrderTestResponse>, ResponseHeaders)> {
-        self.post(ADD_ORDER_TEST_ENDPOINT, &request).await
+        self.post_with_request(ADD_ORDER_TEST_ENDPOINT, &request)
+            .await
     }
 }
 

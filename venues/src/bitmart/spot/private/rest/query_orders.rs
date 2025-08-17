@@ -40,7 +40,7 @@ impl RestClient {
     ///
     /// Retrieves a list of orders based on filtering criteria.
     ///
-    /// [docs]: https://developer-pro.bitmart.com/en/spot/#account-ordersv4-signed
+    /// [docs](https://developer-pro.bitmart.com/en/spot/#account-ordersv4-signed)
     ///
     /// Rate limit: varies by endpoint type
     ///

@@ -170,31 +170,31 @@ impl RestClient {
     ///
     /// Retrieve information for all assets available on the exchange.
     ///
+    /// [docs](https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/assets)
+    ///
     /// # Returns
     /// List of all assets with their properties and trading parameters
-    ///
-    /// [docs]: https://docs.bullish.com/trading-api/resources/assets
     pub async fn get_assets(&self) -> RestResult<Vec<Asset>> {
         self.send_get_request(ASSETS_ENDPOINT, EndpointType::PublicAssets)
-        .await
+            .await
     }
 
     /// Get specific asset by symbol
     ///
     /// Retrieve detailed information for a specific asset.
     ///
+    /// [docs](https://api.exchange.bullish.com/docs/api/rest/trading-api/v2/#get-/v1/assets/-symbol-)
+    ///
     /// # Arguments
     /// * `request` - Asset request parameters
     ///
     /// # Returns
     /// Detailed asset information including network details and trading parameters
-    ///
-    /// [docs]: https://docs.bullish.com/trading-api/resources/assets
     pub async fn get_asset(&self, request: &GetAssetRequest) -> RestResult<Asset> {
         let url = SINGLE_ASSET_ENDPOINT.replace("{}", &request.symbol);
 
         self.send_get_request(&url, EndpointType::PublicAssets)
-        .await
+            .await
     }
 }
 

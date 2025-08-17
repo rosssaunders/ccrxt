@@ -10,8 +10,7 @@ impl RestClient {
     ///
     /// This endpoint returns currency information for unified accounts.
     ///
-    /// # API Documentation
-    /// <https://www.gate.io/docs/developers/apiv4/#get-unified-currencies>
+    /// [docs](https://www.gate.io/docs/developers/apiv4/#get-unified-currencies)
     pub async fn get_unified_currencies(
         &self,
         params: UnifiedCurrenciesRequest,

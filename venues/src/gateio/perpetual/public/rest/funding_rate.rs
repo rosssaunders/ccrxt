@@ -7,8 +7,10 @@ use super::RestClient;
 pub struct FuturesFundingRateRequest {
     /// Settlement currency
     pub settle: String,
+
     /// Contract name
     pub contract: String,
+
     /// Maximum number of records to return (1-1000, default 100)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i32>,
@@ -29,8 +31,7 @@ impl RestClient {
     ///
     /// Retrieves historical funding rates for a specific futures contract.
     ///
-    /// # API Documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#funding-rate-history>
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#funding-rate-history)
     pub async fn get_futures_funding_rate(
         &self,
         params: FuturesFundingRateRequest,
@@ -132,7 +133,7 @@ mod tests {
 
             let json = serde_json::to_value(&request).unwrap();
             assert_eq!(json["limit"], limit);
-            assert!(limit >= 1 && limit <= 1000);
+            assert!((1..=1000).contains(&limit));
         }
     }
 
@@ -238,7 +239,7 @@ mod tests {
             assert_eq!(funding_rate.r, rate);
 
             let rate_val: f64 = funding_rate.r.parse().unwrap();
-            assert!(rate_val >= -0.375 && rate_val <= 0.375);
+            assert!((-0.375..=0.375).contains(&rate_val));
         }
     }
 

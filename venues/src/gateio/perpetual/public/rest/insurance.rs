@@ -7,6 +7,7 @@ use super::RestClient;
 pub struct FuturesInsuranceRequest {
     /// Settlement currency
     pub settle: String,
+
     /// Maximum number of records to return (1-1000, default 100)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i32>,
@@ -27,8 +28,7 @@ impl RestClient {
     ///
     /// Retrieves historical insurance fund balance for the specified settlement currency.
     ///
-    /// # API Documentation
-    /// <https://www.gate.com/docs/developers/apiv4/#futures-insurance-balance-history>
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#futures-insurance-balance-history)
     pub async fn get_futures_insurance(
         &self,
         params: FuturesInsuranceRequest,
@@ -99,7 +99,7 @@ mod tests {
 
             let json = serde_json::to_value(&request).unwrap();
             assert_eq!(json["limit"], limit);
-            assert!(limit >= 1 && limit <= 1000);
+            assert!((1..=1000).contains(&limit));
         }
     }
 
@@ -250,7 +250,7 @@ mod tests {
         let insurance: FuturesInsurance = serde_json::from_str(json).unwrap();
 
         // Verify precision is maintained (within f64 precision limits)
-        let expected = 15234567.123456789;
+        let expected = 15_234_567.123_456_79;
         let epsilon = 1e-7;
         assert!((insurance.b - expected).abs() < epsilon);
         assert_eq!(insurance.t, 1640995200);

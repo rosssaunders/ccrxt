@@ -178,7 +178,7 @@ impl RestClient {
     ///
     /// Query for the latest price snapshot, best bid/ask price, and trading volume in the last 24 hours.
     ///
-    /// [API Documentation](https://bybit-exchange.github.io/docs/v5/market/tickers)
+    /// [docs](https://bybit-exchange.github.io/docs/v5/market/tickers)
     ///
     /// Rate limit: 10 requests per second
     ///

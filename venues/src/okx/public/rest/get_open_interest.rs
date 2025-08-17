@@ -59,7 +59,7 @@ impl RestClient {
     ///
     /// Retrieve the total open interest for contracts on OKX.
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-open-interest
+    /// [docs](https://www.okx.com/docs-v5/en/#rest-api-public-rest-api-get-open-interest)
     ///
     /// Rate limit: 20 requests per 2 seconds
     ///
@@ -71,7 +71,7 @@ impl RestClient {
     pub async fn get_open_interest(
         &self,
         request: GetOpenInterestRequest,
-    ) -> RestResult<Vec<OpenInterest>> {
+    ) -> RestResult<OpenInterest> {
         self.send_get_request(
             PUBLIC_OPEN_INTEREST_ENDPOINT,
             Some(&request),

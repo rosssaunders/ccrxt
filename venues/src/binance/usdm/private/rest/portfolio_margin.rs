@@ -44,7 +44,7 @@ impl UsdmClient {
     ///
     /// Get Classic Portfolio Margin current account information.
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/portfolio-margin-endpoints/Classic-Portfolio-Margin-Account-Information
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/portfolio-margin-endpoints/Classic-Portfolio-Margin-Account-Information)
     ///
     /// Rate limit: 5 requests per second
     ///

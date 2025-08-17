@@ -57,7 +57,7 @@ impl RestClient {
     ///
     /// Retrieves delivery prices for the given index.
     ///
-    /// [Official API docs](https://docs.deribit.com/#public-get_delivery_prices)
+    /// [docs](https://docs.deribit.com/#public-get_delivery_prices)
     pub async fn get_delivery_prices(
         &self,
         params: GetDeliveryPricesRequest,

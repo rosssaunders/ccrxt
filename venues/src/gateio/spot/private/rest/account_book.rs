@@ -66,7 +66,7 @@ impl RestClient {
     /// and record type to analyze specific transactions such as trades, deposits,
     /// withdrawals, fees, and transfers.
     ///
-    /// [docs]: https://www.gate.com/docs/developers/apiv4/#query-account-book
+    /// [docs](https://www.gate.com/docs/developers/apiv4/#query-account-book)
     ///
     /// Rate limit: 100 requests per second
     ///

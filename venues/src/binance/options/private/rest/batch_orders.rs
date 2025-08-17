@@ -158,7 +158,8 @@ impl RestClient {
     ///
     /// Places multiple orders in a single request. Maximum 5 orders per request.
     ///
-    /// [docs]: (https://developers.binance.com/docs/derivatives/option/trade/Option-Batch-Orders)
+    /// [docs](https://developers.binance.com/docs/derivatives/option/trade/Option-Batch-Orders)
+    ///
     /// Method: POST /eapi/v1/batchOrders
     /// Weight: 5
     /// Requires: API key and signature

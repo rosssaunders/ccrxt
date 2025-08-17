@@ -54,7 +54,7 @@ impl RestClient {
     /// **REQUIRES API KEY**: This endpoint requires an API key in the request header
     /// but does not require request signing (MARKET_DATA security type).
     ///
-    /// [docs]: https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Old-Trades-Lookup
+    /// [docs](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Old-Trades-Lookup)
     ///
     /// Rate limit: 20
     ///
@@ -136,7 +136,7 @@ mod tests {
         assert_eq!(trade.qty, "12.00000000");
         assert_eq!(trade.quote_qty, "8000.00");
         assert_eq!(trade.time, 1499865549590);
-        assert_eq!(trade.is_buyer_maker, true);
+        assert!(trade.is_buyer_maker);
     }
 
     #[test]
@@ -164,8 +164,8 @@ mod tests {
         assert_eq!(trades.len(), 2);
         assert_eq!(trades[0].id, 28457);
         assert_eq!(trades[1].id, 28458);
-        assert_eq!(trades[0].is_buyer_maker, true);
-        assert_eq!(trades[1].is_buyer_maker, false);
+        assert!(trades[0].is_buyer_maker);
+        assert!(!trades[1].is_buyer_maker);
     }
 
     #[test]

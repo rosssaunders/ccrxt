@@ -1,15 +1,18 @@
-use std::borrow::Cow;
+use std::{borrow::Cow, sync::Arc};
 
 use hmac::{Hmac, Mac};
-use reqwest::Client;
-use rest::secrets::ExposableSecret;
+use rest::{
+    HttpClient,
+    http_client::{Method as HttpMethod, RequestBuilder},
+    secrets::ExposableSecret,
+};
 use serde::{Serialize, de::DeserializeOwned};
 use sha2::Sha256;
 
+use super::credentials::Credentials;
 use crate::bingx::spot::{ApiResponse, EndpointType, Errors, RateLimiter, RestResult};
 
 /// Private REST client for BingX exchange
-///
 /// This client handles all private API endpoints that require authentication.
 /// It provides automatic rate limiting, error handling, and request signing.
 pub struct RestClient {
@@ -21,44 +24,38 @@ pub struct RestClient {
     /// The underlying HTTP client used for making requests.
     ///
     /// This is reused for connection pooling and performance.
-    pub client: Client,
+    pub http_client: Arc<dyn HttpClient>,
 
     /// The rate limiter used to manage request rates and prevent hitting API limits.
     ///
     /// This is used to ensure compliance with BingX's rate limits for private endpoints.
     pub rate_limiter: RateLimiter,
 
-    /// The encrypted API key.
-    pub(crate) api_key: Box<dyn ExposableSecret>,
-
-    /// The encrypted API secret.
-    pub(crate) api_secret: Box<dyn ExposableSecret>,
+    /// The credentials for authenticating with BingX API.
+    pub(crate) credentials: Credentials,
 }
 
 impl RestClient {
     /// Create a new BingX private REST client
     ///
     /// # Arguments
-    /// * `api_key` - The API key for authentication
-    /// * `api_secret` - The API secret for signing requests
+    /// * `credentials` - The credentials for authentication
     /// * `base_url` - The base URL for the BingX API (e.g., "https://open-api.bingx.com")
-    /// * `client` - The HTTP client to use for requests
+    /// * `http_client` - The HTTP client to use for requests
     /// * `rate_limiter` - The rate limiter to use for request throttling
     ///
     /// # Returns
     /// A new RestClient instance
     pub fn new(
-        api_key: Box<dyn ExposableSecret>,
-        api_secret: Box<dyn ExposableSecret>,
+        credentials: Credentials,
         base_url: &str,
-        client: Client,
+        http_client: Arc<dyn HttpClient>,
         rate_limiter: RateLimiter,
     ) -> Self {
         Self {
-            api_key,
-            api_secret,
+            credentials,
             base_url: Cow::Owned(base_url.to_string()),
-            client,
+            http_client,
             rate_limiter,
         }
     }
@@ -77,7 +74,7 @@ impl RestClient {
     /// A result containing the signature as a hex string or an error
     pub fn sign_request(&self, query_string: &str) -> Result<String, Errors> {
         // Sign with HMAC SHA256
-        let api_secret = self.api_secret.expose_secret();
+        let api_secret = self.credentials.api_secret.expose_secret();
         let mut mac = Hmac::<Sha256>::new_from_slice(api_secret.as_bytes())
             .map_err(|_| Errors::InvalidApiKey)?;
         mac.update(query_string.as_bytes());
@@ -127,40 +124,52 @@ impl RestClient {
             .collect::<Vec<_>>()
             .join("&");
 
-        Ok(format!("{}{}?{}", self.base_url, endpoint, final_query_string))
+        Ok(format!(
+            "{}{}?{}",
+            self.base_url, endpoint, final_query_string
+        ))
     }
 
     /// Execute a prepared request and parse ApiResponse wrapper
     async fn execute<T>(
         &self,
-        request_builder: reqwest::RequestBuilder,
+        method: HttpMethod,
+        url: String,
         endpoint_type: EndpointType,
     ) -> RestResult<T>
     where
         T: DeserializeOwned,
     {
-        // Add required headers
-        let api_key = self.api_key.expose_secret();
-        let request_builder = request_builder
-            .header("X-BX-APIKEY", api_key)
-            .header("Content-Type", "application/json");
-
         // Check rate limits
         self.rate_limiter
             .check_limits(endpoint_type.clone())
             .await
             .map_err(|e| Errors::RateLimitExceeded(e.to_string()))?;
 
+        // Build the request
+        let api_key = self.credentials.api_key.expose_secret();
+        let request = RequestBuilder::new(method, url)
+            .header("X-BX-APIKEY", &api_key)
+            .header("Content-Type", "application/json")
+            .build();
+
         // Send request
-        let response = request_builder.send().await?;
+        let response = self
+            .http_client
+            .execute(request)
+            .await
+            .map_err(|e| Errors::NetworkError(format!("HTTP request failed: {e}")))?;
 
         // Record the request for rate limiting
         self.rate_limiter.increment_request(endpoint_type).await;
 
-        // Check if request was successful
-        if response.status().is_success() {
-            let response_text = response.text().await?;
+        // Get response text
+        let response_text = response
+            .text()
+            .map_err(|e| Errors::NetworkError(format!("Failed to read response: {e}")))?;
 
+        // Check if request was successful
+        if response.status == 200 {
             // Parse the API response wrapper
             let api_response: ApiResponse<T> = serde_json::from_str(&response_text)?;
 
@@ -178,19 +187,16 @@ impl RestClient {
                 None => Err(Errors::ParseError("Response data is missing".to_string())),
             }
         } else {
-            let status = response.status();
-            let error_text = response
-                .text()
-                .await
-                .unwrap_or_else(|_| "Unknown error".to_string());
-
             // Try to parse as BingX error response
             if let Ok(error_response) =
-                serde_json::from_str::<crate::bingx::spot::ErrorResponse>(&error_text)
+                serde_json::from_str::<crate::bingx::spot::ErrorResponse>(&response_text)
             {
                 Err(Errors::from(error_response))
             } else {
-                Err(Errors::Error(format!("HTTP {status}: {error_text}")))
+                Err(Errors::Error(format!(
+                    "HTTP {}: {}",
+                    response.status, response_text
+                )))
             }
         }
     }
@@ -214,8 +220,8 @@ impl RestClient {
         T: DeserializeOwned,
         P: Serialize,
     {
-    let url = self.build_signed_url(endpoint, Some(&params))?;
-    self.execute(self.client.get(&url), endpoint_type).await
+        let url = self.build_signed_url(endpoint, Some(&params))?;
+        self.execute(HttpMethod::Get, url, endpoint_type).await
     }
 
     /// Send a signed POST request (high-performance)
@@ -237,8 +243,8 @@ impl RestClient {
         T: DeserializeOwned,
         P: Serialize,
     {
-    let url = self.build_signed_url(endpoint, Some(&params))?;
-    self.execute(self.client.post(&url), endpoint_type).await
+        let url = self.build_signed_url(endpoint, Some(&params))?;
+        self.execute(HttpMethod::Post, url, endpoint_type).await
     }
 
     /// Send a signed PUT request (high-performance)
@@ -260,8 +266,8 @@ impl RestClient {
         T: DeserializeOwned,
         P: Serialize,
     {
-    let url = self.build_signed_url(endpoint, Some(&params))?;
-    self.execute(self.client.put(&url), endpoint_type).await
+        let url = self.build_signed_url(endpoint, Some(&params))?;
+        self.execute(HttpMethod::Put, url, endpoint_type).await
     }
 
     /// Send a signed DELETE request (high-performance)
@@ -283,47 +289,30 @@ impl RestClient {
         T: DeserializeOwned,
         P: Serialize,
     {
-    let url = self.build_signed_url(endpoint, Some(&params))?;
-    self.execute(self.client.delete(&url), endpoint_type).await
+        let url = self.build_signed_url(endpoint, Some(&params))?;
+        self.execute(HttpMethod::Delete, url, endpoint_type).await
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use rest::secrets::ExposableSecret;
+    use rest::secrets::SecretString;
 
     use super::*;
 
-    #[derive(Debug)]
-    struct TestSecret {
-        secret: String,
-    }
-
-    impl TestSecret {
-        fn new(secret: String) -> Self {
-            Self { secret }
-        }
-    }
-
-    impl ExposableSecret for TestSecret {
-        fn expose_secret(&self) -> String {
-            self.secret.clone()
-        }
-    }
-
     #[test]
     fn test_private_client_creation() {
-        let api_key = Box::new(TestSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret =
-            Box::new(TestSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
-        let client = Client::new();
+        let credentials = Credentials {
+            api_key: SecretString::from("test_key".to_string()),
+            api_secret: SecretString::from("test_secret".to_string()),
+        };
+        let http_client = std::sync::Arc::new(rest::native::NativeHttpClient::default());
         let rate_limiter = RateLimiter::new();
 
         let rest_client = RestClient::new(
-            api_key,
-            api_secret,
+            credentials,
             "https://open-api.bingx.com",
-            client,
+            http_client,
             rate_limiter,
         );
 
@@ -332,17 +321,17 @@ mod tests {
 
     #[test]
     fn test_sign_request() {
-        let api_key = Box::new(TestSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret =
-            Box::new(TestSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
-        let client = Client::new();
+        let credentials = Credentials {
+            api_key: SecretString::from("test_key".to_string()),
+            api_secret: SecretString::from("test_secret".to_string()),
+        };
+        let http_client = std::sync::Arc::new(rest::native::NativeHttpClient::default());
         let rate_limiter = RateLimiter::new();
 
         let rest_client = RestClient::new(
-            api_key,
-            api_secret,
+            credentials,
             "https://open-api.bingx.com",
-            client,
+            http_client,
             rate_limiter,
         );
 

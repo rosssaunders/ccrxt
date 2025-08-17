@@ -12,6 +12,7 @@ use rest::secrets::ExposableSecret;
 use serde::{Serialize, de::DeserializeOwned};
 use sha2::Sha256;
 
+use super::credentials::Credentials;
 use crate::okx::{EndpointType, Errors, RateLimiter, RestResult};
 
 /// Private REST client for OKX exchange
@@ -39,30 +40,20 @@ pub struct RestClient {
     /// This is used to ensure compliance with OKX's rate limits for private endpoints.
     pub rate_limiter: RateLimiter,
 
-    /// The encrypted API key.
-    pub(crate) api_key: Box<dyn ExposableSecret>,
-
-    /// The encrypted API secret.
-    pub(crate) api_secret: Box<dyn ExposableSecret>,
-
-    /// The encrypted API passphrase.
-    pub(crate) api_passphrase: Box<dyn ExposableSecret>,
+    /// The API credentials for authentication.
+    pub(crate) credentials: Credentials,
 }
 
 impl RestClient {
     /// Creates a new OKX private REST client.
     ///
     /// # Arguments
-    /// * `api_key` - The encrypted API key
-    /// * `api_secret` - The encrypted API secret  
-    /// * `api_passphrase` - The encrypted API passphrase
+    /// * `credentials` - The API credentials for authentication
     /// * `base_url` - The base URL for the OKX private REST API (e.g., "https://www.okx.com")
     /// * `client` - The HTTP client to use for requests
     /// * `rate_limiter` - The rate limiter for managing API limits
     pub fn new(
-        api_key: Box<dyn ExposableSecret>,
-        api_secret: Box<dyn ExposableSecret>,
-        api_passphrase: Box<dyn ExposableSecret>,
+        credentials: Credentials,
         base_url: impl Into<Cow<'static, str>>,
         client: Client,
         rate_limiter: RateLimiter,
@@ -76,9 +67,7 @@ impl RestClient {
             formatted_base,
             client,
             rate_limiter,
-            api_key,
-            api_secret,
-            api_passphrase,
+            credentials,
         }
     }
 
@@ -113,7 +102,7 @@ impl RestClient {
         let pre_hash = format!("{timestamp}{method}{request_path}{body}");
 
         // Sign with HMAC SHA256
-        let api_secret = self.api_secret.expose_secret();
+        let api_secret = self.credentials.api_secret.expose_secret();
         let mut mac = Hmac::<Sha256>::new_from_slice(api_secret.as_bytes())
             .map_err(|_| Errors::InvalidApiKey())?;
         mac.update(pre_hash.as_bytes());
@@ -169,8 +158,8 @@ impl RestClient {
         let signature = self.sign_request(&timestamp, "GET", &request_path, "")?;
 
         // Add required headers
-        let api_key = self.api_key.expose_secret();
-        let api_passphrase = self.api_passphrase.expose_secret();
+        let api_key = self.credentials.api_key.expose_secret();
+        let api_passphrase = self.credentials.api_passphrase.expose_secret();
 
         request_builder = request_builder
             .header("OK-ACCESS-KEY", api_key.as_str())
@@ -245,8 +234,8 @@ impl RestClient {
         let signature = self.sign_request(&timestamp, "POST", &request_path, &body)?;
 
         // Add required headers
-        let api_key = self.api_key.expose_secret();
-        let api_passphrase = self.api_passphrase.expose_secret();
+        let api_key = self.credentials.api_key.expose_secret();
+        let api_passphrase = self.credentials.api_passphrase.expose_secret();
 
         request_builder = request_builder
             .header("OK-ACCESS-KEY", api_key.as_str())
@@ -279,65 +268,36 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
+    use rest::secrets::SecretString;
+
     use super::*;
-
-    #[derive(Clone)]
-    struct TestSecret {
-        secret: String,
-    }
-
-    impl ExposableSecret for TestSecret {
-        fn expose_secret(&self) -> String {
-            self.secret.clone()
-        }
-    }
-
-    impl TestSecret {
-        fn new(secret: String) -> Self {
-            Self { secret }
-        }
-    }
 
     #[test]
     fn test_private_client_creation() {
-        let api_key = Box::new(TestSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret =
-            Box::new(TestSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
-        let api_passphrase =
-            Box::new(TestSecret::new("test_passphrase".to_string())) as Box<dyn ExposableSecret>;
+        let credentials = Credentials {
+            api_key: SecretString::from("test_key".to_string()),
+            api_secret: SecretString::from("test_secret".to_string()),
+            api_passphrase: SecretString::from("test_passphrase".to_string()),
+        };
         let client = Client::new();
         let rate_limiter = RateLimiter::new();
 
-        let rest_client = RestClient::new(
-            api_key,
-            api_secret,
-            api_passphrase,
-            "https://www.okx.com",
-            client,
-            rate_limiter,
-        );
+        let rest_client = RestClient::new(credentials, "https://www.okx.com", client, rate_limiter);
 
         assert_eq!(rest_client.base_url(), "https://www.okx.com");
     }
 
     #[test]
     fn test_signature_generation() {
-        let api_key = Box::new(TestSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret =
-            Box::new(TestSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
-        let api_passphrase =
-            Box::new(TestSecret::new("test_passphrase".to_string())) as Box<dyn ExposableSecret>;
+        let credentials = Credentials {
+            api_key: SecretString::from("test_key".to_string()),
+            api_secret: SecretString::from("test_secret".to_string()),
+            api_passphrase: SecretString::from("test_passphrase".to_string()),
+        };
         let client = Client::new();
         let rate_limiter = RateLimiter::new();
 
-        let rest_client = RestClient::new(
-            api_key,
-            api_secret,
-            api_passphrase,
-            "https://www.okx.com",
-            client,
-            rate_limiter,
-        );
+        let rest_client = RestClient::new(credentials, "https://www.okx.com", client, rate_limiter);
 
         let timestamp = "2020-12-08T09:08:57.715Z";
         let method = "GET";
@@ -354,22 +314,15 @@ mod tests {
 
     #[tokio::test]
     async fn test_rate_limiting_integration() {
-        let api_key = Box::new(TestSecret::new("test_key".to_string())) as Box<dyn ExposableSecret>;
-        let api_secret =
-            Box::new(TestSecret::new("test_secret".to_string())) as Box<dyn ExposableSecret>;
-        let api_passphrase =
-            Box::new(TestSecret::new("test_passphrase".to_string())) as Box<dyn ExposableSecret>;
+        let credentials = Credentials {
+            api_key: SecretString::from("test_key".to_string()),
+            api_secret: SecretString::from("test_secret".to_string()),
+            api_passphrase: SecretString::from("test_passphrase".to_string()),
+        };
         let client = Client::new();
         let rate_limiter = RateLimiter::new();
 
-        let rest_client = RestClient::new(
-            api_key,
-            api_secret,
-            api_passphrase,
-            "https://www.okx.com",
-            client,
-            rate_limiter,
-        );
+        let rest_client = RestClient::new(credentials, "https://www.okx.com", client, rate_limiter);
 
         // Verify rate limiting works
         let result = rest_client

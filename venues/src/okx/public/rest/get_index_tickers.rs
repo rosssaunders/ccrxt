@@ -59,7 +59,7 @@ impl RestClient {
     ///
     /// Retrieve index tickers.
     ///
-    /// [docs]: https://www.okx.com/docs-v5/en/#rest-api-market-data-rest-api-get-index-tickers
+    /// [docs](https://www.okx.com/docs-v5/en/#rest-api-market-data-rest-api-get-index-tickers)
     ///
     /// Rate limit: 20 requests per 2 seconds
     ///
@@ -71,7 +71,7 @@ impl RestClient {
     pub async fn get_index_tickers(
         &self,
         request: Option<GetIndexTickersRequest>,
-    ) -> RestResult<Vec<IndexTicker>> {
+    ) -> RestResult<IndexTicker> {
         self.send_get_request(
             MARKET_INDEX_TICKERS_ENDPOINT,
             request.as_ref(),
