@@ -55,6 +55,24 @@ strum = "0.27.2"
 strum_macros = "0.27.2"
 ring = "0.17.14"
 
+[features]
+default = ["native"]
+native = ["tokio/rt-multi-thread", "tokio/sync"]
+wasm = ["dep:wasm-bindgen", "dep:web-sys", "dep:js-sys"]
+
+# WASM-specific dependencies
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+wasm-bindgen = { version = "0.2", optional = true }
+wasm-bindgen-futures = { version = "0.4", optional = true }
+web-sys = { version = "0.3", optional = true, features = [
+  "console",
+  "Window",
+  "Performance",
+  "Storage",
+  "Document",
+] }
+js-sys = { version = "0.3", optional = true }
+
 [lints]
 workspace = true
 

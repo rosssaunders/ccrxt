@@ -11,7 +11,7 @@
 //! from a restricted location" errors when run from certain locations. This is expected behavior
 //! and indicates the tests are correctly configured to reach the live API.
 
-use std::time::Duration;
+use std::{sync::Arc, time::Duration};
 
 use tokio;
 use venues::binance::{
@@ -33,7 +33,11 @@ fn create_api_key_test_client() -> PublicRestClient {
     };
     let rate_limiter = RateLimiter::new(rate_limits);
 
-    PublicRestClient::new("https://fapi.binance.com", http_client, rate_limiter)
+    PublicRestClient::new(
+        "https://fapi.binance.com",
+        http_client,
+        Arc::new(rate_limiter),
+    )
 }
 
 /// Helper function to get API key from environment

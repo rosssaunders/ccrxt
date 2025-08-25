@@ -7,6 +7,7 @@ pub mod credentials;
 pub mod enums;
 pub mod errors;
 pub mod rate_limit;
+pub mod rate_limiter_trait;
 
 // Re-export commonly used items
 pub use credentials::Credentials;
@@ -15,3 +16,4 @@ pub use enums::{
 };
 pub use errors::{ApiError, ErrorResponse, GateIoError, RestResult};
 pub use rate_limit::{RateLimitHeader, RateLimitStatus, RateLimiter, UsageInfo};
+pub use rate_limiter_trait::GateioRateLimiter;

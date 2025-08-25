@@ -6,7 +6,7 @@ use serde::Serialize;
 use crate::binance::{
     shared::{
         Errors as SharedErrors, client::PrivateBinanceClient, credentials::Credentials,
-        rate_limiter::RateLimiter, venue_trait::VenueConfig,
+        rate_limiter_trait::BinanceRateLimiter, venue_trait::VenueConfig,
     },
     spot::{Errors, RestResponse, RestResult, SpotConfig},
 };
@@ -22,14 +22,15 @@ impl From<PrivateBinanceClient> for SpotPrivateRestClient {
 }
 
 impl SpotPrivateRestClient {
-    /// Create a new SpotPrivateRestClient with credentials and HTTP client
+    /// Create a new SpotPrivateRestClient with credentials, HTTP client, and rate limiter
     ///
-    /// Creates a new private REST client for Binance Spot using the provided credentials
-    /// and HTTP client implementation.
+    /// Creates a new private REST client for Binance Spot using the provided credentials,
+    /// HTTP client implementation, and rate limiter.
     ///
     /// # Arguments
     /// * `credentials` - API credentials containing key and secret
     /// * `http_client` - HTTP client implementation to use for requests
+    /// * `rate_limiter` - Rate limiter implementation for request throttling
     ///
     /// # Returns
     /// A new `SpotPrivateRestClient` instance configured for Spot trading
@@ -38,7 +39,8 @@ impl SpotPrivateRestClient {
     /// ```no_run
     /// use std::sync::Arc;
     /// use rest::{secrets::SecretString, HttpClient};
-    /// use venues::binance::spot::private::rest::{RestClient, Credentials};
+    /// use venues::binance::shared::{credentials::Credentials, rate_limiter::RateLimiter, venue_trait::VenueConfig};
+    /// use venues::binance::spot::{private::rest::RestClient, SpotConfig};
     ///
     /// # #[derive(Debug)]
     /// # struct MyHttpClient;
@@ -55,11 +57,16 @@ impl SpotPrivateRestClient {
     /// };
     ///
     /// let http_client: Arc<dyn HttpClient> = Arc::new(MyHttpClient);
-    /// let client = RestClient::new(credentials, http_client);
+    /// let config = SpotConfig;
+    /// let rate_limiter = Box::new(RateLimiter::new(config.rate_limits()));
+    /// let client = RestClient::new(credentials, http_client, rate_limiter);
     /// ```
-    pub fn new(credentials: Credentials, http_client: Arc<dyn HttpClient>) -> Self {
+    pub fn new(
+        credentials: Credentials,
+        http_client: Arc<dyn HttpClient>,
+        rate_limiter: Arc<dyn BinanceRateLimiter>,
+    ) -> Self {
         let config = SpotConfig;
-        let rate_limiter = RateLimiter::new(config.rate_limits());
 
         let private_client = PrivateBinanceClient::new(
             Cow::Owned(config.base_url().to_string()),

@@ -18,7 +18,6 @@ impl RestClient {
     ///
     /// [docs](https://www.gate.com/docs/developers/apiv4/#list-all-expiration-times)
     ///
-
     /// Returns Unix timestamps.
     pub async fn get_options_expirations(
         &self,

@@ -4,10 +4,15 @@ use std::{
     time::{Duration, Instant},
 };
 
+use async_trait::async_trait;
 use serde::Deserialize;
 use tokio::sync::RwLock;
 
-use crate::bitget::spot::{Errors, ResponseHeaders, errors::ApiError};
+use crate::bitget::spot::{
+    Errors, ResponseHeaders,
+    errors::ApiError,
+    rate_limiter_trait::{BitGetRateLimiter, BitGetUsageStats},
+};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
@@ -238,6 +243,47 @@ impl RateLimiter {
         }
 
         Ok(())
+    }
+
+    /// Get current usage statistics
+    pub async fn get_usage_stats(&self) -> BitGetUsageStats {
+        let usage = self.usage.read().await;
+        BitGetUsageStats {
+            requests_per_minute: usage.request_timestamps_1m.len() as u32,
+            requests_per_second: usage.request_timestamps_1s.len() as u32,
+            orders_per_second: usage.order_timestamps_1s.len() as u32,
+        }
+    }
+}
+
+// Implement the BitGet-specific trait
+#[async_trait]
+impl BitGetRateLimiter for RateLimiter {
+    async fn check_limits(
+        &self,
+        endpoint_limit_per_second: u32,
+        is_order: bool,
+        order_limit_per_second: Option<u32>,
+    ) -> Result<(), Errors> {
+        self.check_limits(endpoint_limit_per_second, is_order, order_limit_per_second)
+            .await
+    }
+
+    async fn record_request(&self) {
+        self.increment_request().await;
+    }
+
+    async fn record_order_request(&self) {
+        self.increment_request().await;
+        self.increment_order().await;
+    }
+
+    async fn update_from_headers(&self, headers: &ResponseHeaders) {
+        self.update_from_headers(headers).await;
+    }
+
+    async fn get_usage_stats(&self) -> BitGetUsageStats {
+        self.get_usage_stats().await
     }
 }
 

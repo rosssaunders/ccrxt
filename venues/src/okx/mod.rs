@@ -3,6 +3,8 @@ mod errors;
 mod response;
 
 pub mod rate_limit;
+pub mod rate_limiter_trait;
+
 pub mod public {
     mod rest;
     pub use self::rest::{
@@ -89,6 +91,7 @@ pub use public::{
     SettlementDetail, SettlementHistory, TickBand, TickBandInstrumentType, TimeData,
 };
 pub use rate_limit::{EndpointType, RateLimit, RateLimitError, RateLimiter};
+pub use rate_limiter_trait::OkxRateLimiter;
 
 /// Type alias for results returned by OKX API operations
 pub type RestResult<T> = Result<response::OkxApiResponse<T>, Errors>;

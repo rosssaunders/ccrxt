@@ -10,7 +10,7 @@ use tokio::time::sleep;
 
 use super::{
     errors::{ApiError, ErrorResponse, Errors, handle_http_status},
-    rate_limiter::RateLimiter,
+    rate_limiter_trait::BinanceRateLimiter,
     sign_request,
 };
 
@@ -40,17 +40,17 @@ pub struct RateLimitInfo {
 pub struct PrivateBinanceClient {
     base_url: Cow<'static, str>,
     http_client: Arc<dyn HttpClient>,
-    rate_limiter: RateLimiter,
+    rate_limiter: Arc<dyn BinanceRateLimiter>,
     api_key: Box<dyn ExposableSecret>,
     api_secret: Box<dyn ExposableSecret>,
 }
 
 impl PrivateBinanceClient {
-    /// Create a new private Binance client with a custom HTTP client
+    /// Create a new private Binance client with a custom rate limiter
     pub fn new(
         base_url: Cow<'static, str>,
         http_client: Arc<dyn HttpClient>,
-        rate_limiter: RateLimiter,
+        rate_limiter: Arc<dyn BinanceRateLimiter>,
         api_key: Box<dyn ExposableSecret>,
         api_secret: Box<dyn ExposableSecret>,
     ) -> Self {
@@ -335,7 +335,9 @@ impl PrivateBinanceClient {
         T: for<'de> Deserialize<'de> + Send + 'static,
     {
         // Check rate limits before making request
-        self.rate_limiter.check_limits(weight, false).await?;
+        self.rate_limiter
+            .check_limits_with_weight(weight, false)
+            .await?;
 
         let url = if let Some(query) = query_string {
             format!("{}{endpoint}?{query}", self.base_url)
@@ -389,7 +391,9 @@ impl PrivateBinanceClient {
             .map_err(|e| Errors::Error(format!("Failed to parse response: {e}")))?;
 
         // Record successful usage
-        self.rate_limiter.record_usage(weight, false).await;
+        self.rate_limiter
+            .record_request_with_weight(weight, false)
+            .await;
 
         // Update rate limiter from response headers
         self.rate_limiter.update_from_headers(&headers).await;
@@ -418,7 +422,9 @@ impl PrivateBinanceClient {
         T: for<'de> Deserialize<'de> + Send + 'static,
     {
         // Check rate limits before making request
-        self.rate_limiter.check_limits(weight, is_order).await?;
+        self.rate_limiter
+            .check_limits_with_weight(weight, is_order)
+            .await?;
 
         let url = if let Some(query) = query_string {
             format!("{}{endpoint}?{query}", self.base_url)
@@ -492,7 +498,9 @@ impl PrivateBinanceClient {
                 .map_err(|e| Errors::Error(format!("Failed to parse response: {e}")))?;
 
             // Record successful usage
-            self.rate_limiter.record_usage(weight, is_order).await;
+            self.rate_limiter
+                .record_request_with_weight(weight, is_order)
+                .await;
 
             // Update rate limiter from response headers
             self.rate_limiter.update_from_headers(&headers).await;
@@ -539,7 +547,7 @@ impl PrivateBinanceClient {
 
     /// Get current rate limit usage statistics
     pub async fn get_usage_stats(&self) -> super::rate_limiter::UsageStats {
-        self.rate_limiter.get_usage_stats().await
+        self.rate_limiter.get_detailed_usage_stats().await
     }
 }
 
@@ -547,15 +555,15 @@ impl PrivateBinanceClient {
 pub struct PublicBinanceClient {
     base_url: Cow<'static, str>,
     http_client: Arc<dyn HttpClient>,
-    rate_limiter: RateLimiter,
+    rate_limiter: Arc<dyn BinanceRateLimiter>,
 }
 
 impl PublicBinanceClient {
-    /// Create a new public client with a custom HTTP client
+    /// Create a new public client with a custom rate limiter
     pub fn new(
         base_url: Cow<'static, str>,
         http_client: Arc<dyn HttpClient>,
-        rate_limiter: RateLimiter,
+        rate_limiter: Arc<dyn BinanceRateLimiter>,
     ) -> Self {
         Self {
             base_url,
@@ -713,7 +721,9 @@ impl PublicBinanceClient {
         T: for<'de> Deserialize<'de> + Send + 'static,
     {
         // Check rate limits before making request
-        self.rate_limiter.check_limits(weight, false).await?;
+        self.rate_limiter
+            .check_limits_with_weight(weight, false)
+            .await?;
 
         let url = if let Some(query) = query_string {
             format!("{}{endpoint}?{query}", self.base_url)
@@ -767,7 +777,9 @@ impl PublicBinanceClient {
             .map_err(|e| Errors::Error(format!("Failed to parse response: {e}")))?;
 
         // Record successful usage
-        self.rate_limiter.record_usage(weight, false).await;
+        self.rate_limiter
+            .record_request_with_weight(weight, false)
+            .await;
 
         // Update rate limiter from response headers
         self.rate_limiter.update_from_headers(&headers).await;
@@ -794,7 +806,9 @@ impl PublicBinanceClient {
         T: for<'de> Deserialize<'de> + Send + 'static,
     {
         // Check rate limits before making request
-        self.rate_limiter.check_limits(weight, false).await?;
+        self.rate_limiter
+            .check_limits_with_weight(weight, false)
+            .await?;
 
         let url = if let Some(query) = query_string {
             format!("{}{endpoint}?{query}", self.base_url)
@@ -835,7 +849,9 @@ impl PublicBinanceClient {
             .map_err(|e| Errors::Error(format!("Failed to parse response: {e}")))?;
 
         // Record successful usage
-        self.rate_limiter.record_usage(weight, false).await;
+        self.rate_limiter
+            .record_request_with_weight(weight, false)
+            .await;
 
         // Update rate limiter from response headers
         self.rate_limiter.update_from_headers(&headers).await;
@@ -881,6 +897,6 @@ impl PublicBinanceClient {
 
     /// Get current rate limit usage statistics
     pub async fn get_usage_stats(&self) -> super::rate_limiter::UsageStats {
-        self.rate_limiter.get_usage_stats().await
+        self.rate_limiter.get_detailed_usage_stats().await
     }
 }

@@ -12,6 +12,8 @@ pub mod client;
 pub mod credentials;
 pub mod errors;
 pub mod rate_limiter;
+pub mod rate_limiter_trait;
+
 pub mod venue_trait;
 
 // Re-export commonly used items
@@ -21,6 +23,7 @@ pub use client::{
 pub use credentials::Credentials;
 pub use errors::{ApiError, ErrorResponse, Errors};
 pub use rate_limiter::{RateLimiter, UsageStats};
+pub use rate_limiter_trait::BinanceRateLimiter;
 pub use venue_trait::{RateLimits, VenueConfig};
 
 /// Signs a query string using the decrypted API secret and returns the signature as a hex string.

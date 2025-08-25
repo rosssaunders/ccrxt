@@ -7,7 +7,7 @@ use crate::binance::{
     coinm::{CoinmConfig, Errors, ResponseHeaders, RestResponse, RestResult},
     shared::{
         Errors as SharedErrors, client::PrivateBinanceClient, credentials::Credentials,
-        rate_limiter::RateLimiter, venue_trait::VenueConfig,
+        rate_limiter_trait::BinanceRateLimiter, venue_trait::VenueConfig,
     },
 };
 
@@ -22,14 +22,15 @@ impl From<PrivateBinanceClient> for CoinmRestClient {
 }
 
 impl CoinmRestClient {
-    /// Create a new CoinmRestClient with credentials and HTTP client
+    /// Create a new CoinmRestClient with credentials, HTTP client, and rate limiter
     ///
-    /// Creates a new private REST client for Binance Coin-M Futures using the provided credentials
-    /// and HTTP client implementation.
+    /// Creates a new private REST client for Binance Coin-M Futures using the provided credentials,
+    /// HTTP client implementation, and rate limiter.
     ///
     /// # Arguments
     /// * `credentials` - API credentials containing key and secret
     /// * `http_client` - HTTP client implementation to use for requests
+    /// * `rate_limiter` - Rate limiter implementation for request throttling
     ///
     /// # Returns
     /// A new `CoinmRestClient` instance configured for Coin-M Futures trading
@@ -39,8 +40,8 @@ impl CoinmRestClient {
     /// use std::sync::Arc;
     /// use rest::{secrets::SecretString, HttpClient};
     /// // Use public re-exports instead of private module paths
-    /// use venues::binance::shared::credentials::Credentials;
-    /// use venues::binance::coinm::PrivateRestClient as RestClient;
+    /// use venues::binance::shared::{credentials::Credentials, rate_limiter::RateLimiter, venue_trait::VenueConfig};
+    /// use venues::binance::coinm::{PrivateRestClient as RestClient, CoinmConfig};
     ///
     /// # #[derive(Debug)]
     /// # struct MyHttpClient;
@@ -57,11 +58,16 @@ impl CoinmRestClient {
     /// };
     ///
     /// let http_client: Arc<dyn HttpClient> = Arc::new(MyHttpClient);
-    /// let client = RestClient::new(credentials, http_client);
+    /// let config = CoinmConfig;
+    /// let rate_limiter = Box::new(RateLimiter::new(config.rate_limits()));
+    /// let client = RestClient::new(credentials, http_client, rate_limiter);
     /// ```
-    pub fn new(credentials: Credentials, http_client: Arc<dyn HttpClient>) -> Self {
+    pub fn new(
+        credentials: Credentials,
+        http_client: Arc<dyn HttpClient>,
+        rate_limiter: Arc<dyn BinanceRateLimiter>,
+    ) -> Self {
         let config = CoinmConfig;
-        let rate_limiter = RateLimiter::new(config.rate_limits());
 
         let private_client = PrivateBinanceClient::new(
             Cow::Owned(config.base_url().to_string()),

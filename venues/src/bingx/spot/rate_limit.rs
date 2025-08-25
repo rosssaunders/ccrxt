@@ -3,8 +3,11 @@ use std::{
     time::{Duration, Instant},
 };
 
+use async_trait::async_trait;
 use thiserror::Error;
 use tokio::sync::RwLock;
+
+use super::{errors::BingXError, rate_limiter_trait::BingXRateLimiter};
 
 /// Types of endpoints for rate limiting based on BingX API documentation
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -107,6 +110,49 @@ impl RateLimiter {
 impl Default for RateLimiter {
     fn default() -> Self {
         Self::new()
+    }
+}
+
+// Implement the BingX-specific trait
+#[async_trait]
+impl BingXRateLimiter for RateLimiter {
+    async fn check_limits_for_endpoint(
+        &self,
+        endpoint_type: EndpointType,
+    ) -> Result<(), BingXError> {
+        self.check_limits(endpoint_type).await.map_err(|e| match e {
+            RateLimitError::Exceeded { endpoint_type } => BingXError::RateLimitExceeded(format!(
+                "Rate limit exceeded for {:?}",
+                endpoint_type
+            )),
+        })
+    }
+
+    async fn record_request_for_endpoint(&self, endpoint_type: EndpointType) {
+        self.increment_request(endpoint_type).await;
+    }
+
+    async fn get_endpoint_usage_stats(&self) -> HashMap<EndpointType, (u32, u32)> {
+        let history = self.request_history.read().await;
+        let mut stats = HashMap::new();
+
+        for endpoint_type in [
+            EndpointType::Account,
+            EndpointType::Trading,
+            EndpointType::General,
+            EndpointType::PublicMarket,
+            EndpointType::AccountApiGroup2,
+            EndpointType::AccountApiGroup3,
+        ] {
+            let rate_limit = Self::get_rate_limit(&endpoint_type);
+            let current_count = history
+                .get(&endpoint_type)
+                .map(|timestamps| timestamps.len() as u32)
+                .unwrap_or(0);
+            stats.insert(endpoint_type, (current_count, rate_limit.max_requests));
+        }
+
+        stats
     }
 }
 

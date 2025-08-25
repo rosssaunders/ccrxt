@@ -1,7 +1,10 @@
 use std::time::{Duration, Instant};
 
+use async_trait::async_trait;
 use thiserror::Error;
 use tokio::sync::RwLock;
+
+use super::{Errors, rate_limiter_trait::OkxRateLimiter};
 
 /// Types of endpoints for rate limiting
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -104,6 +107,37 @@ impl RateLimiter {
 impl Default for RateLimiter {
     fn default() -> Self {
         Self::new()
+    }
+}
+
+// Implement the OKX-specific trait
+#[async_trait]
+impl OkxRateLimiter for RateLimiter {
+    async fn check_limits_for_endpoint(&self, endpoint_type: EndpointType) -> Result<(), Errors> {
+        self.check_limits(endpoint_type).await.map_err(|e| match e {
+            RateLimitError::Exceeded { endpoint_type } => {
+                Errors::Error(format!("Rate limit exceeded for {:?}", endpoint_type))
+            }
+        })
+    }
+
+    async fn record_request_for_endpoint(&self, endpoint_type: EndpointType) {
+        self.increment_request(endpoint_type).await;
+    }
+
+    async fn get_endpoint_usage_stats(
+        &self,
+    ) -> std::collections::HashMap<EndpointType, (u32, u32)> {
+        let history = self.request_history.read().await;
+        let mut stats = std::collections::HashMap::new();
+        for (endpoint_type, timestamps) in history.iter() {
+            let rate_limit = Self::get_rate_limit(endpoint_type);
+            stats.insert(
+                endpoint_type.clone(),
+                (timestamps.len() as u32, rate_limit.max_requests),
+            );
+        }
+        stats
     }
 }
 

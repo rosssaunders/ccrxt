@@ -3,8 +3,13 @@
 // Provides access to all public REST API endpoints for Binance USD-M Futures.
 // All requests are unauthenticated and do not require API credentials.
 
+use std::sync::Arc;
+
 use crate::binance::{
-    shared::{Errors as SharedErrors, RestResponse, client::PublicBinanceClient},
+    shared::{
+        Errors as SharedErrors, RestResponse, client::PublicBinanceClient,
+        rate_limiter_trait::BinanceRateLimiter,
+    },
     usdm::Errors,
 };
 
@@ -23,7 +28,7 @@ impl UsdmPublicRestClient {
     pub fn new(
         base_url: impl Into<std::borrow::Cow<'static, str>>,
         http_client: std::sync::Arc<dyn rest::HttpClient>,
-        rate_limiter: crate::binance::shared::RateLimiter,
+        rate_limiter: Arc<dyn BinanceRateLimiter>,
     ) -> Self {
         Self(PublicBinanceClient::new(
             base_url.into(),

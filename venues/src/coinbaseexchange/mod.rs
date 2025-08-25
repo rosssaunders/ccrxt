@@ -1,6 +1,7 @@
 pub mod enums;
 mod errors;
 mod rate_limit;
+pub mod rate_limiter_trait;
 
 pub use enums::*;
 pub use errors::{ApiError, ErrorResponse, Errors};

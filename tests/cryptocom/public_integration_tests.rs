@@ -400,7 +400,7 @@ async fn test_get_candlestick() {
 /// **NOTE**: This endpoint appears to return a different response format than expected.
 /// The test is included for completeness but may fail due to API response format changes.
 #[tokio::test]
-#[ignore = "API response format differs from expected structure"]
+// Fixed: Updated structs to match actual API response format
 async fn test_get_valuations() {
     let client = create_public_test_client();
     let request = GetValuationsRequest {
@@ -411,27 +411,29 @@ async fn test_get_valuations() {
         end_ts: None,
     };
 
+    // Test the get_valuations endpoint
     let result = client.get_valuations(request).await;
-    assert!(
-        result.is_ok(),
-        "get_valuations request should succeed: {:?}",
-        result.err()
-    );
-
-    let response = result.unwrap();
-    assert_eq!(response.code, 0);
-    // id can be -1 for public endpoints; do not assert on id
-
-    println!("Found {} valuations", response.result.data.len());
-
-    // Validate valuation structure
-    for valuation in &response.result.data {
-        assert!(valuation.value >= 0.0);
-        if let Some(instrument_name) = &valuation.instrument_name {
-            assert!(!instrument_name.is_empty());
+    match result {
+        Ok(response) => {
+            assert_eq!(response.code, 0);
+            
+            // Check that we have data
+            assert!(!response.result.data.is_empty(), "Should have valuation data points");
+            
+            // Check that instrument name is correct
+            assert!(!response.result.instrument_name.is_empty(), "Instrument name should not be empty");
+            
+            // Validate each data point
+            for data_point in &response.result.data {
+                assert!(data_point.timestamp > 0, "Timestamp should be positive");
+                assert!(!data_point.value.is_empty(), "Value should not be empty");
+                
+                // Try to parse value as float to ensure it's a valid number
+                data_point.value.parse::<f64>().expect("Value should be a valid number");
+            }
         }
-        if let Some(valuation_type) = &valuation.valuation_type {
-            assert_eq!(*valuation_type, ValuationType::IndexPrice);
+        Err(err) => {
+            panic!("get_valuations request should succeed: {:?}", err);
         }
     }
 }

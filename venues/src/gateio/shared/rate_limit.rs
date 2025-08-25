@@ -4,7 +4,10 @@ use std::{
     time::{Duration, Instant},
 };
 
+use async_trait::async_trait;
 use tokio::sync::{Mutex, Semaphore};
+
+use super::rate_limiter_trait::GateioRateLimiter;
 
 /// Rate limit header information from Gate.io API responses
 #[derive(Debug, Clone, Default)]
@@ -295,6 +298,41 @@ impl RateLimiter {
 impl Default for RateLimiter {
     fn default() -> Self {
         Self::new()
+    }
+}
+
+// Implement the Gate.io-specific trait
+#[async_trait]
+impl GateioRateLimiter for RateLimiter {
+    async fn get_permit(
+        &self,
+        endpoint: &str,
+    ) -> Result<tokio::sync::SemaphorePermit<'_>, tokio::sync::AcquireError> {
+        self.get_permit(endpoint).await
+    }
+
+    fn update_from_headers(
+        &self,
+        headers: &RateLimitHeader,
+        endpoint: &str,
+    ) -> Option<RateLimitStatus> {
+        self.update_from_headers(headers, endpoint)
+    }
+
+    async fn get_category_usage_stats(&self) -> HashMap<String, UsageInfo> {
+        self.get_usage_stats().await
+    }
+
+    async fn get_rate_limit_warnings(&self) -> Vec<String> {
+        self.get_rate_limit_warnings().await
+    }
+
+    async fn reset_category(&self, category: &str) {
+        self.reset_category(category).await;
+    }
+
+    async fn reset_all(&self) {
+        self.reset_all().await;
     }
 }
 

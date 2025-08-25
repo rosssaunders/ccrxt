@@ -2,6 +2,7 @@ pub mod enums;
 mod errors;
 
 pub mod rate_limit;
+pub mod rate_limiter_trait;
 pub mod public {
     pub mod rest;
     pub use self::rest::{

@@ -4,10 +4,11 @@ use std::{
     time::{Duration, Instant},
 };
 
+use async_trait::async_trait;
 use serde::Deserialize;
 use tokio::sync::RwLock;
 
-use super::{errors::Errors, venue_trait::RateLimits};
+use super::{errors::Errors, rate_limiter_trait::BinanceRateLimiter, venue_trait::RateLimits};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
@@ -433,4 +434,24 @@ pub struct UsageStats {
     pub orders_1m_limit: u32,
     pub orders_1d_used: u32,
     pub orders_1d_limit: Option<u32>,
+}
+
+// Implement the Binance-specific trait
+#[async_trait]
+impl BinanceRateLimiter for RateLimiter {
+    async fn check_limits_with_weight(&self, weight: u32, is_order: bool) -> Result<(), Errors> {
+        self.check_limits(weight, is_order).await
+    }
+
+    async fn record_request_with_weight(&self, weight: u32, is_order: bool) {
+        self.record_usage(weight, is_order).await;
+    }
+
+    async fn update_from_headers(&self, headers: &HashMap<String, String>) {
+        self.update_from_headers(headers).await;
+    }
+
+    async fn get_detailed_usage_stats(&self) -> UsageStats {
+        self.get_usage_stats().await
+    }
 }

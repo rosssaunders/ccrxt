@@ -1,8 +1,10 @@
-use std::time::Instant;
+use std::{sync::Arc, time::Instant};
 
 use crate::binance::{
     options::{Errors, RestResponse, RestResult},
-    shared::{Errors as SharedErrors, client::PublicBinanceClient},
+    shared::{
+        Errors as SharedErrors, client::PublicBinanceClient, rate_limiter_trait::BinanceRateLimiter,
+    },
 };
 
 pub struct OptionsPublicRestClient(PublicBinanceClient);
@@ -20,7 +22,7 @@ impl OptionsPublicRestClient {
     pub fn new(
         base_url: impl Into<std::borrow::Cow<'static, str>>,
         http_client: std::sync::Arc<dyn rest::HttpClient>,
-        rate_limiter: crate::binance::shared::RateLimiter,
+        rate_limiter: Arc<dyn BinanceRateLimiter>,
     ) -> Self {
         Self(PublicBinanceClient::new(
             base_url.into(),

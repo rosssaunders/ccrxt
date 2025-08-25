@@ -1,6 +1,7 @@
 pub mod enums;
 pub mod errors;
 pub mod rate_limit;
+pub mod rate_limiter_trait;
 
 pub mod private {
     mod rest;

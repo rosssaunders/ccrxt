@@ -44,25 +44,25 @@ pub type GetValuationsResponse = ApiResult<ValuationsResult>;
 /// Result data for valuations.
 #[derive(Debug, Clone, Deserialize)]
 pub struct ValuationsResult {
-    /// List of valuation data.
+    /// List of valuation data points.
     #[serde(rename = "data")]
-    pub data: Vec<Valuation>,
+    pub data: Vec<ValuationDataPoint>,
+    
+    /// Instrument name for all data points.
+    #[serde(rename = "instrument_name")]
+    pub instrument_name: String,
 }
 
-/// Valuation data for an instrument.
+/// Individual valuation data point.
 #[derive(Debug, Clone, Deserialize)]
-pub struct Valuation {
-    /// Instrument name (may not be present in response).
-    #[serde(rename = "instrument_name", skip_serializing_if = "Option::is_none")]
-    pub instrument_name: Option<Cow<'static, str>>,
+pub struct ValuationDataPoint {
+    /// Timestamp (Unix timestamp in milliseconds).
+    #[serde(rename = "t")]
+    pub timestamp: i64,
 
-    /// Valuation type (may not be present in response).
-    #[serde(rename = "valuation_type", skip_serializing_if = "Option::is_none")]
-    pub valuation_type: Option<ValuationType>,
-
-    /// Valuation value.
-    #[serde(rename = "value")]
-    pub value: f64,
+    /// Valuation value as string.
+    #[serde(rename = "v")]
+    pub value: String,
 }
 
 impl RestClient {
@@ -82,6 +82,7 @@ impl RestClient {
         )
         .await
     }
+
 }
 
 #[cfg(test)]

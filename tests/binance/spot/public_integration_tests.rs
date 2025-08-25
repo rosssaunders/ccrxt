@@ -3,7 +3,7 @@
 //! These tests verify the functionality of all public endpoints that don't require authentication.
 //! Tests run against the live Binance API using real market data.
 
-use std::time::Duration;
+use std::{sync::Arc, time::Duration};
 
 use tokio;
 use venues::binance::shared::{RateLimiter, RateLimits};
@@ -28,7 +28,11 @@ fn create_public_test_client() -> PublicRestClient {
     };
     let rate_limiter = RateLimiter::new(rate_limits);
 
-    PublicRestClient::new("https://api.binance.com", http_client, rate_limiter)
+    PublicRestClient::new(
+        "https://api.binance.com",
+        http_client,
+        Arc::new(rate_limiter),
+    )
 }
 
 /// Helper function to check if an error is due to geographic restrictions

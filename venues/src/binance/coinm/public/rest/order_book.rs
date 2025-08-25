@@ -135,7 +135,9 @@ mod tests {
     async fn test_get_order_book_parameters() {
         let http_client = std::sync::Arc::new(rest::native::NativeHttpClient::default());
         let config = crate::binance::coinm::CoinmConfig;
-        let rate_limiter = crate::binance::shared::RateLimiter::new(config.rate_limits());
+        let rate_limiter = std::sync::Arc::new(crate::binance::shared::RateLimiter::new(
+            config.rate_limits(),
+        ));
         let _rest_client = RestClient::new("https://dapi.binance.com", http_client, rate_limiter);
 
         let request = OrderBookRequest {

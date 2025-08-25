@@ -3,7 +3,7 @@
 //! These tests verify the functionality of all public endpoints for Binance Options (EAPI)
 //! that don't require authentication. Tests run against the live Binance Options API.
 
-use std::time::Duration;
+use std::{sync::Arc, time::Duration};
 
 use chrono::{Duration as ChronoDuration, Utc};
 use tokio;
@@ -32,7 +32,11 @@ fn create_public_test_client() -> PublicRestClient {
     };
     let rate_limiter = RateLimiter::new(rate_limits);
 
-    PublicRestClient::new("https://eapi.binance.com", http_client, rate_limiter)
+    PublicRestClient::new(
+        "https://eapi.binance.com",
+        http_client,
+        Arc::new(rate_limiter),
+    )
 }
 
 /// Helper function to get a valid BTC option symbol for testing

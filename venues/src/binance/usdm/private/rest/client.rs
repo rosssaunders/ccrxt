@@ -6,7 +6,7 @@ use serde::Serialize;
 use crate::binance::{
     shared::{
         Errors as SharedErrors, RestResponse, client::PrivateBinanceClient,
-        credentials::Credentials, rate_limiter::RateLimiter, venue_trait::VenueConfig,
+        credentials::Credentials, rate_limiter_trait::BinanceRateLimiter, venue_trait::VenueConfig,
     },
     usdm::{Errors, UsdmConfig},
 };
@@ -22,14 +22,15 @@ impl From<PrivateBinanceClient> for UsdmPrivateRestClient {
 }
 
 impl UsdmPrivateRestClient {
-    /// Create a new UsdmPrivateRestClient with credentials and HTTP client
+    /// Create a new UsdmPrivateRestClient with credentials, HTTP client, and rate limiter
     ///
-    /// Creates a new private REST client for Binance USD-M Futures using the provided credentials
-    /// and HTTP client implementation.
+    /// Creates a new private REST client for Binance USD-M Futures using the provided credentials,
+    /// HTTP client implementation, and rate limiter.
     ///
     /// # Arguments
     /// * `credentials` - API credentials containing key and secret
     /// * `http_client` - HTTP client implementation to use for requests
+    /// * `rate_limiter` - Rate limiter implementation for request throttling
     ///
     /// # Returns
     /// A new `UsdmPrivateRestClient` instance configured for USD-M Futures trading
@@ -38,9 +39,8 @@ impl UsdmPrivateRestClient {
     /// ```no_run
     /// use std::sync::Arc;
     /// use rest::{secrets::SecretString, HttpClient};
-    /// // Use public re-exports instead of private module paths
-    /// use venues::binance::shared::credentials::Credentials;
-    /// use venues::binance::usdm::PrivateRestClient as UsdmClient;
+    /// use venues::binance::shared::{credentials::Credentials, rate_limiter::RateLimiter, venue_trait::VenueConfig};
+    /// use venues::binance::usdm::{PrivateRestClient as UsdmClient, UsdmConfig};
     ///
     /// # #[derive(Debug)]
     /// # struct MyHttpClient;
@@ -57,11 +57,16 @@ impl UsdmPrivateRestClient {
     /// };
     ///
     /// let http_client: Arc<dyn HttpClient> = Arc::new(MyHttpClient);
-    /// let client = UsdmClient::new(credentials, http_client);
+    /// let config = UsdmConfig;
+    /// let rate_limiter = Box::new(RateLimiter::new(config.rate_limits()));
+    /// let client = UsdmClient::new(credentials, http_client, rate_limiter);
     /// ```
-    pub fn new(credentials: Credentials, http_client: Arc<dyn HttpClient>) -> Self {
+    pub fn new(
+        credentials: Credentials,
+        http_client: Arc<dyn HttpClient>,
+        rate_limiter: Arc<dyn BinanceRateLimiter>,
+    ) -> Self {
         let config = UsdmConfig;
-        let rate_limiter = RateLimiter::new(config.rate_limits());
 
         let private_client = PrivateBinanceClient::new(
             Cow::Owned(config.base_url().to_string()),

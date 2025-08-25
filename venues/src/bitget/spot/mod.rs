@@ -1,6 +1,7 @@
 mod enums;
 mod errors;
 mod rate_limit;
+mod rate_limiter_trait;
 
 // Re-export key components
 pub use enums::*;
@@ -27,6 +28,7 @@ pub use errors::ErrorResponse;
 pub use private::{Credentials, RestClient as PrivateRestClient};
 // Alias for backward compatibility
 pub use rate_limit::{RateLimitHeader, RateLimiter};
+pub use rate_limiter_trait::{BitGetRateLimiter, BitGetUsageStats};
 
 /// Represents the relevant response headers returned by the Bitget API for rate limiting.
 ///

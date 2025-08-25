@@ -2,6 +2,7 @@ pub mod enums;
 mod errors;
 
 pub mod rate_limit;
+pub mod rate_limiter_trait;
 
 pub mod public {
     pub mod rest;
@@ -42,6 +43,7 @@ pub use public::{
     Symbol, Ticker24hr, Trade,
 };
 pub use rate_limit::{EndpointType, RateLimit, RateLimitError, RateLimiter};
+pub use rate_limiter_trait::BingXRateLimiter;
 
 /// Type alias for results returned by BingX API operations
 pub type RestResult<T> = Result<T, Errors>;

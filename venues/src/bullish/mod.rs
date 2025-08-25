@@ -2,6 +2,7 @@ pub mod enums;
 mod errors;
 pub mod pagination;
 mod rate_limit;
+pub mod rate_limiter_trait;
 
 pub mod private {
     pub mod rest;

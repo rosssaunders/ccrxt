@@ -342,6 +342,7 @@ pub enum ContractStatus {
 pub enum UnderlyingType {
     Coin,
     Index,
+    Premarket,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]

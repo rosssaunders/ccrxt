@@ -3,6 +3,7 @@ mod errors;
 pub mod message;
 
 pub mod rate_limit;
+pub mod rate_limiter_trait;
 pub mod private {
     mod rest;
     pub use self::rest::{

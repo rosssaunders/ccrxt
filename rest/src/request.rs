@@ -2,7 +2,7 @@ use std::time::Duration;
 
 use async_trait::async_trait;
 
-use crate::{error::RestError, http_client::Method, rate_limiter::RateLimiter};
+use crate::{error::RestError, http_client::Method};
 
 /// Common trait for venue-specific HTTP headers
 pub trait VenueHeaders: Send + Sync + std::fmt::Debug {}
@@ -58,7 +58,4 @@ where
 
     /// Get the base URL for the REST API
     fn base_url(&self) -> &str;
-
-    /// Get the rate limiter for the client
-    fn rate_limiter(&self) -> &dyn RateLimiter;
 }
