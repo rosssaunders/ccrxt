@@ -58,6 +58,24 @@ ring = "0.17.14"
 [lints]
 workspace = true
 
+[[example]]
+name = "binance_spot_websocket"
+
+[[example]]
+name = "binance_depth_stream"
+
+[[example]]
+name = "binance_raw_debug"
+
+[[example]]
+name = "binance_orderbook_test"
+
+[[example]]
+name = "binance_depth_cli"
+
+[[example]]
+name = "binance_reconnection_example"
+
 [dev-dependencies]
 tokio-test = "0.4"
 tracing-subscriber = { workspace = true }

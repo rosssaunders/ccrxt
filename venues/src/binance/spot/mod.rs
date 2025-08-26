@@ -2,6 +2,9 @@ mod enums;
 mod errors;
 mod rate_limit;
 
+// WebSocket module
+pub mod websocket;
+
 // Private module with re-exports
 pub mod private {
     pub mod rest;

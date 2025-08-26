@@ -7,22 +7,19 @@
 
 use std::{
     collections::HashMap,
-    pin::Pin,
     sync::{
         Arc,
         atomic::{AtomicBool, AtomicU64, Ordering},
     },
 };
 
-use async_trait::async_trait;
 use futures::SinkExt;
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 use tokio::{net::TcpStream, sync::Mutex};
-use tokio_tungstenite::{MaybeTlsStream, WebSocketStream, connect_async};
-use websockets::{BoxResult, WebSocketConnection};
+use tokio_tungstenite::{MaybeTlsStream, WebSocketStream};
 
-use crate::deribit::{message::DeribitMessage, rate_limit::RateLimiter};
+use crate::deribit::rate_limit::RateLimiter;
 
 /// Errors specific to Deribit WebSocket operations
 #[derive(Error, Debug)]
@@ -153,40 +150,41 @@ impl PrivateWebSocketClient {
     }
 }
 
-#[async_trait]
-impl WebSocketConnection<DeribitMessage> for PrivateWebSocketClient {
-    async fn connect(&mut self) -> BoxResult<()> {
-        let (ws_stream, _) = connect_async(&self.url).await?;
-        self.websocket = Some(ws_stream);
-        self.connected.store(true, Ordering::SeqCst);
-        Ok(())
-    }
+// TODO: Update Deribit to use the new WebSocketConnection trait
+// #[async_trait]
+// impl WebSocketConnection<DeribitMessage> for PrivateWebSocketClient {
+//     async fn connect(&mut self) -> BoxResult<()> {
+//         let (ws_stream, _) = connect_async(&self.url).await?;
+//         self.websocket = Some(ws_stream);
+//         self.connected.store(true, Ordering::SeqCst);
+//         Ok(())
+//     }
 
-    async fn disconnect(&mut self) -> BoxResult<()> {
-        if let Some(mut ws) = self.websocket.take() {
-            ws.close(None).await?;
-        }
-        self.connected.store(false, Ordering::SeqCst);
-        Ok(())
-    }
+//     async fn disconnect(&mut self) -> BoxResult<()> {
+//         if let Some(mut ws) = self.websocket.take() {
+//             ws.close(None).await?;
+//         }
+//         self.connected.store(false, Ordering::SeqCst);
+//         Ok(())
+//     }
 
-    fn is_connected(&self) -> bool {
-        self.connected.load(Ordering::SeqCst)
-    }
+//     fn is_connected(&self) -> bool {
+//         self.connected.load(Ordering::SeqCst)
+//     }
 
-    fn message_stream(
-        &mut self,
-    ) -> Pin<Box<dyn futures::Stream<Item = websockets::BoxResult<DeribitMessage>> + Send>> {
-        // Not implemented for public client (not used in this context)
-        // Removed unused futures imports
+//     fn message_stream(
+//         &mut self,
+//     ) -> Pin<Box<dyn futures::Stream<Item = websockets::BoxResult<DeribitMessage>> + Send>> {
+//         // Not implemented for public client (not used in this context)
+//         // Removed unused futures imports
 
-        let error_stream = futures::stream::iter(std::iter::once(Err(
-            Box::new(std::io::Error::new(
-                std::io::ErrorKind::Unsupported,
-                "message_stream is not implemented for DeribitWebSocketClient public client",
-            )) as Box<dyn std::error::Error + Send + Sync>,
-        )));
+//         let error_stream = futures::stream::iter(std::iter::once(Err(
+//             Box::new(std::io::Error::new(
+//                 std::io::ErrorKind::Unsupported,
+//                 "message_stream is not implemented for DeribitWebSocketClient public client",
+//             )) as Box<dyn std::error::Error + Send + Sync>,
+//         )));
 
-        Box::pin(error_stream)
-    }
-}
+//         Box::pin(error_stream)
+//     }
+// }
