@@ -16,9 +16,8 @@ pub struct CurrencyInfo {
 
 impl RestClient {
     /// List supported currencies for multi-collateral loan
-    pub async fn list_multi_collateral_currencies(
-        &self,
-    ) -> RestResult<Vec<CurrencyInfo>> {
-        self.send_get_request::<Vec<CurrencyInfo>, ()>(CURRENCIES_ENDPOINT, None).await
+    pub async fn list_multi_collateral_currencies(&self) -> RestResult<Vec<CurrencyInfo>> {
+        self.send_get_request::<Vec<CurrencyInfo>, ()>(CURRENCIES_ENDPOINT, None)
+            .await
     }
 }

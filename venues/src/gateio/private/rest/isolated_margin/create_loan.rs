@@ -79,10 +79,7 @@ impl RestClient {
     /// Create a loan
     ///
     /// This endpoint creates a new loan for lending or borrowing.
-    pub async fn spot_create_loan(
-        &self,
-        request: CreateLoanRequest,
-    ) -> RestResult<Loan> {
+    pub async fn spot_create_loan(&self, request: CreateLoanRequest) -> RestResult<Loan> {
         self.post(MARGIN_LOANS_ENDPOINT, &request).await
     }
 }

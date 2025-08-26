@@ -7,13 +7,14 @@ use std::sync::Arc;
 
 use rest::native::NativeHttpClient;
 use tokio;
-use venues::gateio::{PublicRestClient, CandlestickInterval};
+use venues::gateio::{CandlestickInterval, PublicRestClient};
 
 /// Helper function to create a test client for perpetual public endpoints
 fn create_perpetual_test_client() -> PublicRestClient {
     let http_client = Arc::new(NativeHttpClient::default());
     let rate_limiter = Arc::new(venues::gateio::RateLimiter::default());
-    PublicRestClient::new(http_client, rate_limiter, false).expect("Failed to create Gate.io perpetual REST client")
+    PublicRestClient::new(http_client, rate_limiter, false)
+        .expect("Failed to create Gate.io perpetual REST client")
 }
 
 #[tokio::test]

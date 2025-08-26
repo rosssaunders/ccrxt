@@ -100,14 +100,16 @@ impl RestClient {
         &self,
         request: ListCollateralLoanRepayRecordsRequest,
     ) -> RestResult<Vec<CollateralLoanRepayRecord>> {
-        self.send_get_request(REPAY_RECORDS_ENDPOINT, Some(&request)).await
+        self.send_get_request(REPAY_RECORDS_ENDPOINT, Some(&request))
+            .await
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use serde_json;
+
+    use super::*;
 
     #[test]
     fn test_serialize_request() {

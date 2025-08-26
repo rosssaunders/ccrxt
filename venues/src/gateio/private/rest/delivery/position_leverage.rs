@@ -1,5 +1,7 @@
-use super::models::{DeliveryLeverageResponse, SetDeliveryLeverageRequest};
-use super::{RestClient, RestResult};
+use super::{
+    RestClient, RestResult,
+    models::{DeliveryLeverageResponse, SetDeliveryLeverageRequest},
+};
 
 const DELIVERY_POSITION_LEVERAGE_ENDPOINT: &str = "/delivery/{}/positions/{}/leverage";
 

@@ -9,12 +9,13 @@ use sha2::{Digest, Sha512};
 
 type HmacSha512 = Hmac<Sha512>;
 
-use crate::gateio::{Credentials, ErrorResponse, GateIoError, GateIoRateLimiter, RestResult};
-use rest::secrets::ExposableSecret;
 use rest::{
     HttpClient,
     http_client::{Method as HttpMethod, RequestBuilder},
+    secrets::ExposableSecret,
 };
+
+use crate::gateio::{Credentials, ErrorResponse, GateIoError, GateIoRateLimiter, RestResult};
 
 const LIVE_URL: &str = "https://api.gateio.ws/api/v4";
 const TESTNET_URL: &str = "https://api-testnet.gateapi.io/api/v4";
@@ -271,7 +272,9 @@ impl PrivateRestClient {
             .await
             .map_err(|e| GateIoError::Network(format!("HTTP request failed: {}", e)))?;
         let status = response.status;
-        self.rate_limiter.update_from_headers(&response.headers, endpoint).await;
+        self.rate_limiter
+            .update_from_headers(&response.headers, endpoint)
+            .await;
 
         let response_text = response
             .text()

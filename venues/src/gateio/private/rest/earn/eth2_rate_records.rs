@@ -1,5 +1,6 @@
-use super::{RestClient, RestResult};
 use serde::Deserialize;
+
+use super::{RestClient, RestResult};
 
 const ETH2_RATE_RECORDS_ENDPOINT: &str = "/earn/staking/eth2/rate_records";
 

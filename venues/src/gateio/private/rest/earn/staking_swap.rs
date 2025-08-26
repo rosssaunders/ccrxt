@@ -1,5 +1,6 @@
-use super::{RestClient, RestResult};
 use serde::{Deserialize, Serialize};
+
+use super::{RestClient, RestResult};
 
 const STAKING_SWAP_ENDPOINT: &str = "/earn/staking/swap";
 

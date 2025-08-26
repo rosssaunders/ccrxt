@@ -47,7 +47,7 @@ pub struct ValuationsResult {
     /// List of valuation data points.
     #[serde(rename = "data")]
     pub data: Vec<ValuationDataPoint>,
-    
+
     /// Instrument name for all data points.
     #[serde(rename = "instrument_name")]
     pub instrument_name: String,
@@ -82,7 +82,6 @@ impl RestClient {
         )
         .await
     }
-
 }
 
 #[cfg(test)]

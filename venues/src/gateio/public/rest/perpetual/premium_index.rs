@@ -1,8 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::RestClient;
-use crate::gateio::enums::CandlestickInterval;
-use crate::gateio::RestResult;
+use crate::gateio::{RestResult, enums::CandlestickInterval};
 
 /// Request parameters for futures premium index
 #[derive(Debug, Clone, Serialize, Default)]

@@ -1,5 +1,6 @@
-use super::{RestClient, RestResult};
 use serde::Serialize;
+
+use super::{RestClient, RestResult};
 
 const PLACE_STRUCTURED_ORDER_ENDPOINT: &str = "/earn/structured/orders";
 

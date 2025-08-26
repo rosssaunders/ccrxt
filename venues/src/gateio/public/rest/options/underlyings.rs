@@ -21,9 +21,7 @@ impl RestClient {
     /// Retrieves all available underlying assets for options trading.
     ///
     /// [docs](https://www.gate.io/docs/developers/apiv4/en/#list-all-underlyings)
-    pub async fn get_options_underlyings(
-        &self,
-    ) -> RestResult<Vec<OptionsUnderlying>> {
+    pub async fn get_options_underlyings(&self) -> RestResult<Vec<OptionsUnderlying>> {
         self.get(OPTIONS_UNDERLYINGS_ENDPOINT).await
     }
 }

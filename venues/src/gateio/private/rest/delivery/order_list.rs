@@ -1,5 +1,7 @@
-use super::models::{DeliveryOrder, ListDeliveryOrdersRequest};
-use super::{RestClient, RestResult};
+use super::{
+    RestClient, RestResult,
+    models::{DeliveryOrder, ListDeliveryOrdersRequest},
+};
 
 const DELIVERY_ORDERS_ENDPOINT: &str = "/delivery/{}/orders";
 const DELIVERY_ORDER_ENDPOINT: &str = "/delivery/{}/orders/{}";

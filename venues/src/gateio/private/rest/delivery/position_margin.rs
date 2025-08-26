@@ -1,5 +1,7 @@
-use super::models::{DeliveryPositionMarginResponse, UpdateDeliveryPositionMarginRequest};
-use super::{RestClient, RestResult};
+use super::{
+    RestClient, RestResult,
+    models::{DeliveryPositionMarginResponse, UpdateDeliveryPositionMarginRequest},
+};
 
 const DELIVERY_POSITION_MARGIN_ENDPOINT: &str = "/delivery/{}/positions/{}/margin";
 

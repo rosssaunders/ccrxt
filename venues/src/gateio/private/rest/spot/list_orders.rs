@@ -1,8 +1,6 @@
 use serde::Serialize;
 
-use super::{RestClient, RestResult};
-
-use super::{OrderSide, OrderStatus, create_order::Order};
+use super::{OrderSide, OrderStatus, RestClient, RestResult, create_order::Order};
 
 const LIST_ORDERS_ENDPOINT: &str = "/spot/orders";
 

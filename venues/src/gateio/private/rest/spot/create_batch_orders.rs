@@ -1,8 +1,9 @@
 use serde::{Deserialize, Serialize};
 
-use super::create_order::{CreateOrderRequest, Order};
-use super::{OrderSide, OrderType, StpMode, TimeInForce};
-use super::{RestClient, RestResult};
+use super::{
+    RestClient, RestResult,
+    create_order::{CreateOrderRequest, Order},
+};
 
 const CREATE_BATCH_ORDERS_ENDPOINT: &str = "/spot/batch_orders";
 

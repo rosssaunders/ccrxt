@@ -1,5 +1,6 @@
-use super::{RestClient, RestResult};
 use serde::{Deserialize, Serialize};
+
+use super::{RestClient, RestResult};
 
 /// STP user group information returned by Gate.io
 #[derive(Debug, Clone, Deserialize)]

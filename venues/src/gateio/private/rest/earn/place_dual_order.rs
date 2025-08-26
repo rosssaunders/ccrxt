@@ -1,5 +1,6 @@
-use super::{RestClient, RestResult};
 use serde::Serialize;
+
+use super::{RestClient, RestResult};
 
 const PLACE_DUAL_ORDER_ENDPOINT: &str = "/earn/dual/orders";
 

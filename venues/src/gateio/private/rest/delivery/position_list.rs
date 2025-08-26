@@ -1,5 +1,7 @@
-use super::models::{DeliveryPosition, DeliveryPositionsRequest};
-use super::{RestClient, RestResult};
+use super::{
+    RestClient, RestResult,
+    models::{DeliveryPosition, DeliveryPositionsRequest},
+};
 
 const DELIVERY_POSITIONS_ENDPOINT: &str = "/delivery/{}/positions";
 const DELIVERY_POSITION_ENDPOINT: &str = "/delivery/{}/positions/{}";

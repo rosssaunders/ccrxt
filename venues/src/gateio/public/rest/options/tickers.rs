@@ -102,10 +102,7 @@ impl RestClient {
     /// Get underlying ticker
     ///
     /// Retrieves ticker information for a specific underlying asset.
-    pub async fn get_underlying_ticker(
-        &self,
-        underlying: &str,
-    ) -> RestResult<UnderlyingTicker> {
+    pub async fn get_underlying_ticker(&self, underlying: &str) -> RestResult<UnderlyingTicker> {
         let endpoint = format!(
             "{}/{}",
             ENDPOINT_OPTIONS_UNDERLYING_TICKERS_PREFIX, underlying

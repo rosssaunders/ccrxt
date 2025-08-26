@@ -25,10 +25,7 @@ impl RestClient {
     ///
     /// # Returns
     /// Empty response indicating success
-    pub async fn switch_to_cross_margin(
-        &self,
-        settle: &str,
-    ) -> RestResult<()> {
+    pub async fn switch_to_cross_margin(&self, settle: &str) -> RestResult<()> {
         let endpoint = format!("{}/{}/cross_mode", ENDPOINT_FUTURES_PREFIX, settle);
         let request = CrossModeRequest {
             mode: "cross".to_string(),

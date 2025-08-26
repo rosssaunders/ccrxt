@@ -1,5 +1,6 @@
-use super::{RestClient, RestResult};
 use serde::Serialize;
+
+use super::{RestClient, RestResult};
 
 const ETH2_SWAP_ENDPOINT: &str = "/earn/staking/eth2/swap";
 

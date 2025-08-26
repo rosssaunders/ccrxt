@@ -1,5 +1,6 @@
-use super::{RestClient, RestResult};
 use serde::{Deserialize, Serialize};
+
+use super::{RestClient, RestResult};
 
 const STRUCTURED_PRODUCTS_ENDPOINT: &str = "/earn/structured/products";
 

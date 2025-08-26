@@ -35,8 +35,12 @@ impl RestClient {
     /// GET /earn/uni/interest_records
     ///
     /// Gate.io docs: https://www.gate.io/docs/developers/apiv4/en/#query-user-dividend-records
-    pub async fn list_earnuni_interest_records(&self, params: InterestRecordsRequest) -> RestResult<Vec<InterestRecord>> {
-        self.get_with_query(INTEREST_RECORDS_ENDPOINT, &params).await
+    pub async fn list_earnuni_interest_records(
+        &self,
+        params: InterestRecordsRequest,
+    ) -> RestResult<Vec<InterestRecord>> {
+        self.get_with_query(INTEREST_RECORDS_ENDPOINT, &params)
+            .await
     }
 }
 

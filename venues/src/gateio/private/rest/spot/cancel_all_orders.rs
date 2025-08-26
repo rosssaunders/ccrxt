@@ -1,7 +1,6 @@
 use serde::Serialize;
 
-use super::{OrderSide, create_order::Order};
-use super::{RestClient, RestResult};
+use super::{OrderSide, RestClient, RestResult, create_order::Order};
 
 const CANCEL_ALL_ORDERS_ENDPOINT: &str = "/spot/orders";
 

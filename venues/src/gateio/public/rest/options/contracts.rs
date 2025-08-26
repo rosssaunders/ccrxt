@@ -91,10 +91,7 @@ impl RestClient {
     ///
     /// # API Documentation
     /// [docs](https://www.gate.io/docs/developers/apiv4/en/#query-specified-contract-detail)
-    pub async fn get_options_contract(
-        &self,
-        contract: &str,
-    ) -> RestResult<OptionsContract> {
+    pub async fn get_options_contract(&self, contract: &str) -> RestResult<OptionsContract> {
         let endpoint = format!("{}/{}", ENDPOINT_OPTIONS_CONTRACTS, contract);
         self.get(&endpoint).await
     }

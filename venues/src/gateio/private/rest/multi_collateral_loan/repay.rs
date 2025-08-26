@@ -22,10 +22,7 @@ pub struct RepayResponse {
 
 impl RestClient {
     /// Repay a multi-collateral order
-    pub async fn repay_multi_collateral(
-        &self,
-        req: RepayRequest,
-    ) -> RestResult<RepayResponse> {
+    pub async fn repay_multi_collateral(&self, req: RepayRequest) -> RestResult<RepayResponse> {
         self.send_post_request(REPAY_ENDPOINT, Some(&req)).await
     }
 }

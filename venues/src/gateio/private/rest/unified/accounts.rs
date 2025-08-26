@@ -167,10 +167,7 @@ impl RestClient {
     /// Get unified account information
     ///
     /// This endpoint returns the unified account information.
-    pub async fn get_unified_account(
-        &self,
-        currency: Option<&str>,
-    ) -> RestResult<UnifiedAccount> {
+    pub async fn get_unified_account(&self, currency: Option<&str>) -> RestResult<UnifiedAccount> {
         let request = GetUnifiedAccountRequest {
             currency: currency.map(|s| s.to_string()),
         };

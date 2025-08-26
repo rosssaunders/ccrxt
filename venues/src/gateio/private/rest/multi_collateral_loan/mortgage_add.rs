@@ -28,10 +28,7 @@ pub struct AddMortgageResponse {
 
 impl RestClient {
     /// Add collateral assets (mortgage) to a multi-collateral order
-    pub async fn add_mortgage(
-        &self,
-        req: AddMortgageRequest,
-    ) -> RestResult<AddMortgageResponse> {
+    pub async fn add_mortgage(&self, req: AddMortgageRequest) -> RestResult<AddMortgageResponse> {
         self.send_post_request(MORTGAGE_ENDPOINT, Some(&req)).await
     }
 }

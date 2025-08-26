@@ -23,5 +23,4 @@ pub mod update_dual_mode_position_risk_limit;
 pub mod update_position_margin;
 pub mod update_position_risk_limit;
 
-pub use crate::gateio::PrivateRestClient as RestClient;
-pub use crate::gateio::RestResult;
+pub use crate::gateio::{PrivateRestClient as RestClient, RestResult};

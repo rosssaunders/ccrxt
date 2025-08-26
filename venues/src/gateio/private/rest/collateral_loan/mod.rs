@@ -9,5 +9,4 @@ pub mod repay;
 pub mod repay_records;
 pub mod total_amount;
 
-pub use crate::gateio::PrivateRestClient as RestClient;
-pub use crate::gateio::RestResult;
+pub use crate::gateio::{PrivateRestClient as RestClient, RestResult};

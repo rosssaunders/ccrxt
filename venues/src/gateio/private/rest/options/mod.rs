@@ -16,5 +16,4 @@ pub mod settlements;
 pub mod trades;
 pub mod update_mmp_settings;
 
-pub use crate::gateio::PrivateRestClient as RestClient;
-pub use crate::gateio::RestResult;
+pub use crate::gateio::{PrivateRestClient as RestClient, RestResult};

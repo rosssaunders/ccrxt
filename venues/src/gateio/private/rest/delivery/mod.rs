@@ -25,6 +25,4 @@ pub mod price_orders;
 pub mod settlements;
 pub mod trades;
 
-pub use crate::gateio::PrivateRestClient as RestClient;
-pub use crate::gateio::RestResult;
-pub use crate::gateio::enums::CandlestickInterval;
+pub use crate::gateio::{PrivateRestClient as RestClient, RestResult, enums::CandlestickInterval};

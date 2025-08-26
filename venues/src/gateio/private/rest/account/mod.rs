@@ -3,5 +3,4 @@ pub mod detail;
 pub mod rate_limit;
 pub mod stp_groups;
 
-pub use crate::gateio::PrivateRestClient as RestClient;
-pub use crate::gateio::RestResult;
+pub use crate::gateio::{PrivateRestClient as RestClient, RestResult};

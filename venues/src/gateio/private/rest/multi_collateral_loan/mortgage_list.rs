@@ -29,10 +29,7 @@ pub struct MortgageEntry {
 
 impl RestClient {
     /// List mortgages
-    pub async fn list_mortgages(
-        &self,
-        query: ListMortgageQuery,
-    ) -> RestResult<Vec<MortgageEntry>> {
+    pub async fn list_mortgages(&self, query: ListMortgageQuery) -> RestResult<Vec<MortgageEntry>> {
         self.send_get_request(MORTGAGE_ENDPOINT, Some(&query)).await
     }
 }

@@ -1,5 +1,7 @@
-use super::models::{DeliveryRiskLimitResponse, UpdateDeliveryRiskLimitRequest};
-use super::{RestClient, RestResult};
+use super::{
+    RestClient, RestResult,
+    models::{DeliveryRiskLimitResponse, UpdateDeliveryRiskLimitRequest},
+};
 
 const DELIVERY_POSITION_RISK_LIMIT_ENDPOINT: &str = "/delivery/{}/positions/{}/risk_limit";
 

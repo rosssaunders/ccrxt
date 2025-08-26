@@ -369,7 +369,10 @@ mod tests {
         let rate_limiter = RateLimiter::new();
 
         // Get permit and check usage
-        let _permit = rate_limiter.get_permit_internal("/spot/tickers").await.unwrap();
+        let _permit = rate_limiter
+            .get_permit_internal("/spot/tickers")
+            .await
+            .unwrap();
 
         let stats = rate_limiter.get_usage_stats().await;
         assert!(stats.contains_key("spot_other"));
@@ -384,7 +387,10 @@ mod tests {
 
         // Simulate high usage
         for _ in 0..9 {
-            let _permit = rate_limiter.get_permit_internal("/spot/orders").await.unwrap();
+            let _permit = rate_limiter
+                .get_permit_internal("/spot/orders")
+                .await
+                .unwrap();
         }
 
         let warnings = rate_limiter.get_rate_limit_warnings().await;

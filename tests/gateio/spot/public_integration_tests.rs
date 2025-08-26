@@ -8,10 +8,10 @@ use std::sync::Arc;
 use rest::native::NativeHttpClient;
 use tokio;
 use venues::gateio::{
-    PublicRestClient, CandlestickInterval,
+    CandlestickInterval, PublicRestClient,
     public::rest::spot::{
-        candlesticks::CandlesticksRequest, order_book::OrderBookRequest,
-        tickers::TickersRequest, trades::TradesRequest,
+        candlesticks::CandlesticksRequest, order_book::OrderBookRequest, tickers::TickersRequest,
+        trades::TradesRequest,
     },
 };
 
@@ -19,7 +19,8 @@ use venues::gateio::{
 fn create_public_test_client() -> PublicRestClient {
     let http_client = Arc::new(NativeHttpClient::default());
     let rate_limiter = Arc::new(venues::gateio::RateLimiter::default());
-    PublicRestClient::new(http_client, rate_limiter, false).expect("Failed to create Gate.io REST client")
+    PublicRestClient::new(http_client, rate_limiter, false)
+        .expect("Failed to create Gate.io REST client")
 }
 
 /// Test the get_server_time endpoint

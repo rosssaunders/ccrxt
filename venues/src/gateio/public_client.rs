@@ -1,11 +1,12 @@
-use serde::{Serialize, de::DeserializeOwned};
 use std::sync::Arc;
 
-use crate::gateio::{GateIoError, GateIoRateLimiter, RestResult};
 use rest::{
     HttpClient,
     http_client::{Method as HttpMethod, RequestBuilder},
 };
+use serde::{Serialize, de::DeserializeOwned};
+
+use crate::gateio::{GateIoError, GateIoRateLimiter, RestResult};
 
 const LIVE_URL: &str = "https://api.gateio.ws/api/v4";
 const TESTNET_URL: &str = "https://api-testnet.gateapi.io/api/v4";

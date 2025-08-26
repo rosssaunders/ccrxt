@@ -1,7 +1,6 @@
 use serde::Serialize;
 
-use super::create_order::Order;
-use super::{RestClient, RestResult};
+use super::{RestClient, RestResult, create_order::Order};
 
 /// Request parameters for canceling a single order.
 ///

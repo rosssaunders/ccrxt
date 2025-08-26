@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::models::CreateDeliveryOrderRequest;
-use super::{RestClient, RestResult};
+use super::{RestClient, RestResult, models::CreateDeliveryOrderRequest};
 
 const DELIVERY_PRICE_ORDERS_ENDPOINT: &str = "/delivery/{}/price_orders";
 const DELIVERY_PRICE_ORDER_ENDPOINT: &str = "/delivery/{}/price_orders/{}";

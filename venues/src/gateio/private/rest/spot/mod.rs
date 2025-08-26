@@ -15,6 +15,7 @@ pub mod price_orders;
 pub mod spot_accounts;
 pub mod spot_trades;
 
-pub use crate::gateio::PrivateRestClient as RestClient;
-pub use crate::gateio::RestResult;
-pub use crate::gateio::{OrderSide, OrderStatus, OrderType, StpMode, TimeInForce};
+pub use crate::gateio::{
+    OrderSide, OrderStatus, OrderType, PrivateRestClient as RestClient, RestResult, StpMode,
+    TimeInForce,
+};

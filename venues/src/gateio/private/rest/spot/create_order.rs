@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::{OrderSide, OrderStatus, OrderType, StpMode, TimeInForce};
-use super::{RestClient, RestResult};
+use super::{OrderSide, OrderStatus, OrderType, RestClient, RestResult, StpMode, TimeInForce};
 
 const CREATE_ORDER_ENDPOINT: &str = "/spot/orders";
 

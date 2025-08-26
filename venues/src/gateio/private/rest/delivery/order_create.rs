@@ -1,5 +1,4 @@
-use super::{CreateDeliveryOrderRequest, DeliveryOrder};
-use super::{RestClient, RestResult};
+use super::{CreateDeliveryOrderRequest, DeliveryOrder, RestClient, RestResult};
 
 const DELIVERY_ORDERS_ENDPOINT: &str = "/delivery/{}/orders";
 

@@ -12,5 +12,4 @@ pub mod repay;
 pub mod repay_records;
 
 // Use the centralized root PrivateRestClient for this module's endpoints.
-pub use crate::gateio::PrivateRestClient as RestClient;
-pub use crate::gateio::RestResult;
+pub use crate::gateio::{PrivateRestClient as RestClient, RestResult};

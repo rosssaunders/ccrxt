@@ -24,11 +24,9 @@ pub struct OrderDetail {
 
 impl RestClient {
     /// Get multi-collateral order by id
-    pub async fn get_multi_collateral_order(
-        &self,
-        order_id: &str,
-    ) -> RestResult<OrderDetail> {
+    pub async fn get_multi_collateral_order(&self, order_id: &str) -> RestResult<OrderDetail> {
         let endpoint = format!("{}/{}", ORDERS_ENDPOINT, order_id);
-        self.send_get_request::<OrderDetail, ()>(&endpoint, None).await
+        self.send_get_request::<OrderDetail, ()>(&endpoint, None)
+            .await
     }
 }
