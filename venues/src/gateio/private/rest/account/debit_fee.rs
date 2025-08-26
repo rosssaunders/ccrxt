@@ -64,18 +64,4 @@ mod tests {
         // Default should be false (Rust default for bool)
         assert!(!cfg.enabled);
     }
-
-    // Unit test for error handling: simulate error response
-    // This is a stub; actual error handling is tested in integration tests.
-    #[test]
-    fn test_set_debit_fee_error_handling() {
-        // This test is illustrative; actual network errors require integration tests.
-        // Here we just ensure the function signature is correct and returns RestResult.
-        fn accepts_rest_result(result: RestResult<()>) {
-            match result {
-                Ok(_) => {}
-                Err(_e) => {}
-            }
-        }
-    }
 }
