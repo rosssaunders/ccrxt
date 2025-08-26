@@ -70,6 +70,7 @@ impl RestClient {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::gateio::{OrderSide, OrderType, StpMode, TimeInForce};
 
     fn create_sample_order(
         currency_pair: &str,
