@@ -8,10 +8,13 @@ const LENDS_ENDPOINT: &str = "/earn/uni/lends";
 #[derive(Debug, Clone, Serialize)]
 pub struct CreateLendRequest {
     pub currency: String,
+
     pub amount: String,
+
     /// Optional target rate per hour (string decimal)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub rate: Option<String>,
+
     /// Optional flag to use best available rate
     #[serde(skip_serializing_if = "Option::is_none")]
     pub use_best_rate: Option<bool>,
@@ -21,10 +24,15 @@ pub struct CreateLendRequest {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct LendInfo {
     pub order_id: Option<String>,
+
     pub currency: String,
+
     pub amount: String,
+
     pub rate: Option<String>,
+
     pub status: Option<String>,
+
     /// timestamp in ms
     pub create_time: Option<i64>,
 }
@@ -32,14 +40,14 @@ pub struct LendInfo {
 impl RestClient {
     /// Create a lending order (POST /earn/uni/lends)
     ///
-    /// Gate.io docs: https://www.gate.io/docs/developers/apiv4/en/#create-lending-or-redemption
+    /// [docs](https://www.gate.io/docs/developers/apiv4/en/#create-lending-or-redemption)
     pub async fn create_earnuni_lend(&self, req: CreateLendRequest) -> RestResult<LendInfo> {
         self.send_post_request(LENDS_ENDPOINT, Some(&req)).await
     }
 
     /// List current lends (GET /earn/uni/lends)
     ///
-    /// Gate.io docs: https://www.gate.io/docs/developers/apiv4/en/#query-user-s-lending-order-list
+    /// [docs](https://www.gate.io/docs/developers/apiv4/en/#query-user-s-lending-order-list)
     pub async fn list_earnuni_lends(&self) -> RestResult<Vec<LendInfo>> {
         self.send_get_request(LENDS_ENDPOINT, Option::<&()>::None)
             .await

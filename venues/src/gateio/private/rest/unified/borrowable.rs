@@ -1,35 +1,43 @@
 use serde::{Deserialize, Serialize};
 
-/// Request parameters for unified borrowable
+use super::{RestClient, RestResult};
+
+const BORROWABLE_ENDPOINT: &str = "/unified/borrowable";
+
+/// Request parameters for getting maximum borrowable amount
 #[derive(Debug, Clone, Serialize)]
-pub struct UnifiedBorrowableRequest {
-    /// Currency to borrow
+pub struct GetBorrowableRequest {
+    /// Currency to check borrowable amount for
     pub currency: String,
 }
 
-/// Unified borrowable response
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct UnifiedBorrowableResponse {
+/// Maximum borrowable amount response
+#[derive(Debug, Clone, Deserialize)]
+pub struct BorrowableResponse {
     /// Currency
     pub currency: String,
-
-    /// Borrowable amount
+    /// Maximum borrowable amount
     pub borrowable: String,
 }
 
-/// Request parameters for batch borrowable
-#[derive(Debug, Clone, Serialize)]
-pub struct BatchBorrowableRequest {
-    /// Currencies to check
-    pub currencies: Vec<String>,
-}
-
-/// Batch borrowable response
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct BatchBorrowableResponse {
-    /// Currency
-    pub currency: String,
-
-    /// Borrowable amount
-    pub borrowable: String,
+impl RestClient {
+    /// Query Maximum Borrowable Amount
+    ///
+    /// Query the maximum borrowable amount for a specific currency in unified account.
+    ///
+    /// [docs](https://www.gate.io/docs/apiv4/en/index.html#query-maximum-borrowable-amount-for-unified-account)
+    ///
+    /// Rate limit: 100 requests per second
+    ///
+    /// # Arguments
+    /// * `req` - Request with currency to check borrowable amount for
+    ///
+    /// # Returns
+    /// Maximum borrowable amount for the specified currency
+    pub async fn get_unified_borrowable(
+        &self,
+        req: GetBorrowableRequest,
+    ) -> RestResult<BorrowableResponse> {
+        self.send_get_request(BORROWABLE_ENDPOINT, Some(&req)).await
+    }
 }

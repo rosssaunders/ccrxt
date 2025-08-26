@@ -5,8 +5,6 @@ use super::{RestClient, RestResult};
 const LTV_ENDPOINT: &str = "/loan/collateral/ltv";
 
 /// Query parameters for user's collateralization ratio and remaining borrowable currencies.
-///
-/// See [docs](https://www.gate.io/docs/developers/apiv4/en/#query-user-s-collateralization-ratio-and-remaining-borrowable-currencies)
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "snake_case")]
 pub struct CollateralLoanLtvRequest {
@@ -18,8 +16,6 @@ pub struct CollateralLoanLtvRequest {
 }
 
 /// Response for user's collateralization ratio and remaining borrowable currencies.
-///
-/// See [docs](https://www.gate.io/docs/developers/apiv4/en/#query-user-s-collateralization-ratio-and-remaining-borrowable-currencies)
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub struct CollateralLoanLtvResponse {

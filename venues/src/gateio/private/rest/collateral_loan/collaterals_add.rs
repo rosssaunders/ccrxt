@@ -5,8 +5,6 @@ use super::{RestClient, RestResult};
 const COLLATERALS_ENDPOINT: &str = "/loan/collateral/collaterals";
 
 /// Request to increase or redeem collateral for a loan order.
-///
-/// See [docs](https://www.gate.io/docs/developers/apiv4/en/#increase-or-redeem-collateral)
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "snake_case")]
 pub struct CollateralOperationRequest {
@@ -24,8 +22,6 @@ pub struct CollateralOperationRequest {
 }
 
 /// No content response for successful collateral operation.
-///
-/// See [docs](https://www.gate.io/docs/developers/apiv4/en/#increase-or-redeem-collateral)
 #[derive(Debug, Clone, Deserialize)]
 pub struct CollateralOperationResponse;
 

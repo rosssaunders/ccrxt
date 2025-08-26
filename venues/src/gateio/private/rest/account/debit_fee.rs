@@ -17,7 +17,7 @@ impl RestClient {
     ///
     /// Enables or disables GT fee deduction for the current account.
     ///
-    /// - [API docs](https://www.gate.io/docs/developers/apiv4/en/#configure-gt-fee-deduction)
+    /// [docs](https://www.gate.io/docs/developers/apiv4/en/#configure-gt-fee-deduction)
     ///
     /// # Arguments
     /// * `config` - The GT fee deduction configuration to set.

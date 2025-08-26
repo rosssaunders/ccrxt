@@ -9,12 +9,16 @@ const CURRENCY_ENDPOINT: &str = "/earn/uni/currencies"; // append /{currency}
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct CurrencyInfo {
     pub currency: String,
+
     pub name: Option<String>,
+
     /// Display precision for the currency
     pub precision: Option<i32>,
+
     /// Minimum withdraw amount (string because many amounts are decimals)
     #[serde(rename = "min_withdraw_amount", default)]
     pub min_withdraw_amount: Option<String>,
+
     /// Whether the currency is currently enabled for Earn
     #[serde(default)]
     pub enabled: Option<bool>,
@@ -23,7 +27,7 @@ pub struct CurrencyInfo {
 impl RestClient {
     /// GET /earn/uni/currencies
     ///
-    /// Gate.io docs: https://www.gate.io/docs/developers/apiv4/en/#query-lending-currency-list
+    /// [docs](https://www.gate.io/docs/developers/apiv4/en/#query-lending-currency-list)
     pub async fn list_earnuni_currencies(&self) -> RestResult<Vec<CurrencyInfo>> {
         self.send_get_request(CURRENCIES_ENDPOINT, Option::<&()>::None)
             .await
@@ -31,7 +35,7 @@ impl RestClient {
 
     /// GET /earn/uni/currencies/{currency}
     ///
-    /// Gate.io docs: https://www.gate.io/docs/developers/apiv4/en/#query-single-lending-currency-details
+    /// [docs](https://www.gate.io/docs/developers/apiv4/en/#query-single-lending-currency-details)
     pub async fn get_earnuni_currency(&self, currency: &str) -> RestResult<CurrencyInfo> {
         let endpoint = format!("{}/{}", CURRENCY_ENDPOINT, currency);
         self.send_get_request(&endpoint, Option::<&()>::None).await

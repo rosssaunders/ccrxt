@@ -21,7 +21,7 @@ pub struct ModifyLoanRequest {
 impl RestClient {
     /// Amend user lending information (PATCH /earn/uni/lends)
     ///
-    /// Gate.io docs: https://www.gate.io/docs/developers/apiv4/en/#amend-user-lending-information
+    /// [docs](https://www.gate.io/docs/developers/apiv4/en/#amend-user-lending-information)
     ///
     /// Currently only supports amending minimum interest rate (hourly).
     ///

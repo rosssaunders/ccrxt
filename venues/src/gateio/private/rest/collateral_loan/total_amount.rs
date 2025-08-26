@@ -5,14 +5,10 @@ use super::{RestClient, RestResult};
 const TOTAL_AMOUNT_ENDPOINT: &str = "/loan/collateral/total_amount";
 
 /// No parameters required for querying user's total borrowing and collateral amount.
-///
-/// See [docs](https://www.gate.io/docs/developers/apiv4/en/#query-user-s-total-borrowing-and-collateral-amount)
 #[derive(Debug, Clone, Default)]
 pub struct QueryUserTotalBorrowingAndCollateralAmountRequest;
 
 /// Response for user's total borrowing and collateral amount.
-///
-/// See [docs](https://www.gate.io/docs/developers/apiv4/en/#query-user-s-total-borrowing-and-collateral-amount)
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub struct UserTotalBorrowingAndCollateralAmountResponse {

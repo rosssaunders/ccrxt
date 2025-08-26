@@ -9,12 +9,16 @@ const INTEREST_RECORDS_ENDPOINT: &str = "/earn/uni/interest_records";
 pub struct InterestRecordsRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub currency: Option<String>,
+
     #[serde(skip_serializing_if = "Option::is_none")]
     pub page: Option<i32>,
+
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i32>,
+
     #[serde(skip_serializing_if = "Option::is_none")]
     pub from: Option<i64>,
+
     #[serde(skip_serializing_if = "Option::is_none")]
     pub to: Option<i64>,
 }
@@ -22,10 +26,14 @@ pub struct InterestRecordsRequest {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct InterestRecord {
     pub id: Option<String>,
+
     pub currency: String,
+
     pub amount: String,
+
     /// timestamp in ms
     pub create_time: i64,
+
     /// optional description
     #[serde(default)]
     pub note: Option<String>,
@@ -34,7 +42,7 @@ pub struct InterestRecord {
 impl RestClient {
     /// GET /earn/uni/interest_records
     ///
-    /// Gate.io docs: https://www.gate.io/docs/developers/apiv4/en/#query-user-dividend-records
+    /// [docs](https://www.gate.io/docs/developers/apiv4/en/#query-user-dividend-records)
     pub async fn list_earnuni_interest_records(
         &self,
         params: InterestRecordsRequest,

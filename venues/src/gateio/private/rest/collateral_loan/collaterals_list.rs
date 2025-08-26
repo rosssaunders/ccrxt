@@ -5,8 +5,6 @@ use super::{RestClient, RestResult};
 const COLLATERALS_ENDPOINT: &str = "/loan/collateral/collaterals";
 
 /// Query parameters for listing collateral adjustment records.
-///
-/// See [docs](https://www.gate.io/docs/developers/apiv4/en/#query-collateral-adjustment-records)
 #[derive(Debug, Clone, Serialize, Default)]
 #[serde(rename_all = "snake_case")]
 pub struct ListCollateralAdjustmentRecordsRequest {
@@ -36,8 +34,6 @@ pub struct ListCollateralAdjustmentRecordsRequest {
 }
 
 /// Collateral adjustment record item.
-///
-/// See [docs](https://www.gate.io/docs/developers/apiv4/en/#query-collateral-adjustment-records)
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub struct CollateralAdjustmentRecord {

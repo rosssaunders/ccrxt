@@ -26,20 +26,25 @@ pub struct SpotAccount {
 }
 
 impl RestClient {
-    /// List spot accounts
-    pub async fn spot_list_spot_accounts(
+    /// List Spot Trading Accounts
+    ///
+    /// Retrieve balances for all currencies or filter by specific currency.
+    /// Returns available and locked amounts for each currency.
+    ///
+    /// [docs](https://www.gate.io/docs/apiv4/en/index.html#list-spot-accounts)
+    ///
+    /// Rate limit: 100 requests per second
+    ///
+    /// # Arguments
+    /// * `req` - Optional request parameters including currency filter
+    ///
+    /// # Returns
+    /// List of spot account balances with available and locked amounts
+    pub async fn get_spot_accounts(
         &self,
-        currency: Option<&str>,
+        req: Option<ListSpotAccountsRequest>,
     ) -> RestResult<Vec<SpotAccount>> {
-        let request = ListSpotAccountsRequest {
-            currency: currency.map(|s| s.to_string()),
-        };
-
-        if currency.is_some() {
-            self.get_with_query(SPOT_ACCOUNTS_ENDPOINT, &request).await
-        } else {
-            self.get(SPOT_ACCOUNTS_ENDPOINT).await
-        }
+        self.send_get_request(SPOT_ACCOUNTS_ENDPOINT, req.as_ref()).await
     }
 }
 

@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-// moved to root private client
+use super::{RestClient, RestResult};
 
 const DEPOSIT_ADDRESS_ENDPOINT: &str = "/wallet/deposit_address";
 const DEPOSITS_ENDPOINT: &str = "/wallet/deposits";
@@ -122,48 +122,45 @@ pub struct DepositRecord {
 }
 
 impl RestClient {
-    /// Generate currency deposit address
+    /// Generate Currency Deposit Address
     ///
-    /// Generates or retrieves the deposit address for a specific cryptocurrency. The response
-    /// includes addresses for all supported blockchain networks for that currency, allowing
-    /// deposits from multiple networks where applicable.
+    /// Generate or retrieve deposit address for a specific cryptocurrency with multichain support.
     ///
-    /// [docs](https://www.gate.io/docs/developers/apiv4/en/#generate-currency-deposit-address)
+    /// [docs](https://www.gate.io/docs/apiv4/en/index.html#generate-currency-deposit-address)
     ///
     /// Rate limit: 100 requests per second
     ///
     /// # Arguments
-    /// * `params` - Currency specification for which to generate the deposit address
+    /// * `req` - Request with currency to generate deposit address for
     ///
     /// # Returns
-    /// Complete deposit address information including multichain addresses and payment requirements
-    pub async fn spot_get_deposit_address(
+    /// Deposit address information including multichain addresses and payment requirements
+    pub async fn get_deposit_address(
         &self,
-        params: DepositAddressRequest,
+        req: DepositAddressRequest,
     ) -> RestResult<DepositAddress> {
-        self.get_with_query(DEPOSIT_ADDRESS_ENDPOINT, &params).await
+        self.send_get_request(DEPOSIT_ADDRESS_ENDPOINT, Some(&req))
+            .await
     }
 
-    /// Retrieve deposit records
+    /// Get Deposit Records
     ///
-    /// Retrieves the deposit history for the authenticated user with optional filtering
-    /// by currency, time range, and pagination. Provides comprehensive transaction details
-    /// including blockchain information and current status.
+    /// Retrieve deposit transaction history with filtering and pagination support.
     ///
-    /// [docs](https://www.gate.io/docs/developers/apiv4/en/#retrieve-deposit-records)
+    /// [docs](https://www.gate.io/docs/apiv4/en/index.html#get-deposit-records)
     ///
     /// Rate limit: 100 requests per second
     ///
     /// # Arguments
-    /// * `params` - Filtering and pagination parameters for deposit history query
+    /// * `req` - Optional filtering and pagination parameters for deposit history query
     ///
     /// # Returns
-    /// List of deposit records matching the specified criteria with complete transaction details
-    pub async fn spot_get_deposits(
+    /// List of deposit records with complete transaction details and status
+    pub async fn get_deposits(
         &self,
-        params: DepositsRequest,
+        req: Option<DepositsRequest>,
     ) -> RestResult<Vec<DepositRecord>> {
-        self.get_with_query(DEPOSITS_ENDPOINT, &params).await
+        self.send_get_request(DEPOSITS_ENDPOINT, req.as_ref()).await
     }
 }
 

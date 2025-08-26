@@ -69,7 +69,7 @@ impl RestClient {
     /// Query lending transaction records
     /// Query lending transaction records (GET /earn/uni/lend_records)
     ///
-    /// Gate.io docs: https://www.gate.io/docs/developers/apiv4/en/#query-lending-transaction-records
+    /// [docs](https://www.gate.io/docs/developers/apiv4/en/#query-lending-transaction-records)
     pub async fn spot_get_loan_records(
         &self,
         params: LoanRecordsRequest,
@@ -79,10 +79,10 @@ impl RestClient {
     }
 
     /// Get a specific lending transaction record by ID.
+    ///
+    /// [docs](https://www.gate.io/docs/developers/apiv4/en/#query-lending-transaction-records)
     pub async fn spot_get_loan_record(&self, loan_record_id: &str) -> RestResult<LoanRecord> {
         let endpoint = format!("{}/{}", LEND_RECORDS_ENDPOINT, loan_record_id);
-        // Gate.io docs for single record retrieval are under the general loan records section
-        // See: https://www.gate.io/docs/developers/apiv4/en/#query-lending-transaction-records
         self.send_get_request(&endpoint, Option::<&()>::None).await
     }
 }

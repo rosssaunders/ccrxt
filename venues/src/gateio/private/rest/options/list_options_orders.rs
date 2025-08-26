@@ -37,12 +37,11 @@ pub struct ListOptionsOrdersRequest {
 }
 
 impl RestClient {
-    /// List options orders
+    /// List Options Orders
     ///
     /// This endpoint returns options orders for the authenticated user.
     ///
-    /// See: Gate.io API documentation
-    /// <https://www.gate.io/docs/developers/apiv4/en/#list-options-orders>
+    /// [docs](https://www.gate.io/docs/apiv4/en/index.html#list-options-orders)
     ///
     /// Rate limit: 10 requests per second
     ///

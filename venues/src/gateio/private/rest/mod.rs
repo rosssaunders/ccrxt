@@ -12,4 +12,14 @@ pub mod rebate;
 pub mod spot;
 pub mod subaccount;
 pub mod unified;
+pub mod wallet;
 pub mod withdrawal;
+
+// Re-export delivery types for easier access
+pub use delivery::{
+    CreateDeliveryOrderRequest, DeliveryCandlestick, DeliveryCandlesticksRequest,
+    DeliveryLeverageResponse, DeliveryOrder, DeliveryPosition, DeliveryPositionMarginResponse,
+    DeliveryPositionsRequest, DeliveryRiskLimitResponse, ListDeliveryOrdersRequest,
+    SetDeliveryLeverageRequest, UpdateDeliveryPositionMarginRequest,
+    UpdateDeliveryRiskLimitRequest,
+};

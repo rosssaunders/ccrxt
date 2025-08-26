@@ -7,11 +7,14 @@ const RATE_ENDPOINT: &str = "/earn/uni/rate";
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct RateInfo {
     pub currency: String,
+
     /// Current annualized rate (string decimal)
     pub annualized_rate: Option<String>,
+
     /// Hourly rate if returned
     #[serde(default)]
     pub hourly_rate: Option<String>,
+
     /// timestamp ms
     #[serde(default)]
     pub timestamp: Option<i64>,
@@ -20,7 +23,7 @@ pub struct RateInfo {
 impl RestClient {
     /// GET /earn/uni/rate/{currency}
     ///
-    /// Gate.io docs: https://www.gate.io/docs/developers/apiv4/en/#currency-estimated-annualized-interest-rate
+    /// [docs](https://www.gate.io/docs/developers/apiv4/en/#currency-estimated-annualized-interest-rate)
     pub async fn get_earnuni_rate(&self, currency: &str) -> RestResult<RateInfo> {
         let endpoint = format!("{}/{}", RATE_ENDPOINT, currency);
         self.send_get_request(&endpoint, Option::<&()>::None).await

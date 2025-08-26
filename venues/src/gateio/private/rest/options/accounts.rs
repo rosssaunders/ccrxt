@@ -36,11 +36,11 @@ pub struct OptionsAccount {
 }
 
 impl RestClient {
-    /// Get options account information
+    /// Query Options Account
     ///
     /// This endpoint returns options account balances and margin information.
     ///
-    /// [docs](https://www.gate.io/docs/developers/apiv4/en/#query-options-account)
+    /// [docs](https://www.gate.io/docs/apiv4/en/index.html#query-account-3)
     ///
     /// Rate limit: 10 requests per second
     ///

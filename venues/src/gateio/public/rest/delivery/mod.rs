@@ -9,3 +9,11 @@ pub mod tickers;
 pub mod trades;
 
 pub use crate::gateio::public_client::PublicRestClient as RestClient;
+
+// Re-export delivery types for easier access
+pub use contracts::{DeliveryContract, DeliveryContractRequest, DeliveryContractsRequest};
+pub use insurance::{DeliveryInsurance, DeliveryInsuranceRequest};
+pub use order_book::{DeliveryOrderBook, DeliveryOrderBookEntry, DeliveryOrderBookRequest};
+pub use risk_limit_tiers::{DeliveryRiskLimitTier, DeliveryRiskLimitTiersRequest};
+pub use tickers::{DeliveryTicker, DeliveryTickersRequest};
+pub use trades::{DeliveryTrade, DeliveryTradesRequest};

@@ -1,4 +1,4 @@
-use super::{RestClient, RestResult, unified_mode::UnifiedModeResponse};
+use super::{RestClient, RestResult, unified_mode_types::UnifiedModeResponse};
 
 const UNIFIED_MODE_ENDPOINT: &str = "/unified/unified_mode";
 

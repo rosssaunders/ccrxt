@@ -56,11 +56,11 @@ pub struct OptionsPositionCloseHistoryRequest {
 }
 
 impl RestClient {
-    /// Get options position close history
+    /// List Position Close History
     ///
     /// This endpoint returns the position close history for options trading.
     ///
-    /// See: Gate.io API documentation
+    /// [docs](https://www.gate.io/docs/apiv4/en/index.html#list-position-close-history-2)
     ///
     /// Rate limit: 100 requests per second
     ///

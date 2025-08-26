@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use super::{RestClient, order::OptionsOrder};
+use super::{RestClient, RestResult, order::OptionsOrder};
 
 const CREATE_OPTIONS_ORDER_ENDPOINT: &str = "/options/orders";
 
@@ -35,12 +35,11 @@ pub struct CreateOptionsOrderRequest {
 }
 
 impl RestClient {
-    /// Create an options order
+    /// Create an Options Order
     ///
     /// This endpoint creates a new options order.
     ///
-    /// See: Gate.io API documentation
-    /// [docs](https://www.gate.io/docs/developers/apiv4/en/#create-an-options-order)
+    /// [docs](https://www.gate.io/docs/apiv4/en/index.html#create-an-options-order)
     ///
     /// Rate limit: 10 requests per second
     ///

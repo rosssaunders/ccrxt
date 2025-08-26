@@ -7,8 +7,7 @@ impl RestClient {
     ///
     /// This endpoint returns Market Maker Protection settings for options trading.
     ///
-    /// See: Gate.io API documentation
-    /// <https://www.gate.io/docs/developers/apiv4/en/#get-mmp-settings>
+    /// [docs](https://www.gate.io/docs/apiv4/en/index.html#get-mmp-settings)
     ///
     /// Rate limit: 10 requests per second
     ///

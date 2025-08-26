@@ -2,40 +2,58 @@ use serde::{Deserialize, Serialize};
 
 use super::{RestClient, RestResult};
 
-const WITHDRAWAL_ENDPOINT: &str = "/withdrawal/withdrawals";
+const WITHDRAWALS_ENDPOINT: &str = "/withdrawals";
 
-/// Create a withdrawal
+/// Request to withdraw tokens from account
 #[derive(Debug, Clone, Serialize)]
-pub struct CreateWithdrawalRequest {
+pub struct WithdrawRequest {
+    /// User-defined order number for tracking (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub withdraw_order_id: Option<String>,
+
+    /// Token name to withdraw
     pub currency: String,
 
+    /// Withdrawal destination address
     pub address: String,
 
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub chain: Option<String>,
-
+    /// Token amount to withdraw
     pub amount: String,
 
-    /// Optional memo/tag
+    /// Blockchain network name (required)
+    pub chain: String,
+
+    /// Memo or tag for certain networks (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub memo: Option<String>,
 }
 
-/// Withdrawal response
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct WithdrawalResponse {
+/// Withdrawal creation response
+#[derive(Debug, Clone, Deserialize)]
+pub struct WithdrawResponse {
+    /// Withdrawal record ID
     pub id: String,
 
+    /// Initial withdrawal status
     pub status: String,
 }
 
 impl RestClient {
-    /// Create a withdrawal request
-    pub async fn create_withdrawal(
-        &self,
-        req: CreateWithdrawalRequest,
-    ) -> RestResult<WithdrawalResponse> {
-        self.send_post_request(WITHDRAWAL_ENDPOINT, Some(&req))
+    /// Withdraw
+    ///
+    /// Withdraw tokens from account to external address.
+    ///
+    /// [docs](https://www.gate.io/docs/apiv4/en/index.html#withdraw)
+    ///
+    /// Rate limit: 10 requests per second
+    ///
+    /// # Arguments
+    /// * `req` - Withdrawal request with currency, address, amount, and chain
+    ///
+    /// # Returns
+    /// Withdrawal response with ID and initial status
+    pub async fn withdraw(&self, req: WithdrawRequest) -> RestResult<WithdrawResponse> {
+        self.send_post_request(WITHDRAWALS_ENDPOINT, Some(&req))
             .await
     }
 }

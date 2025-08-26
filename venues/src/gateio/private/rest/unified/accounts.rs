@@ -1,7 +1,5 @@
-//! Unified account functionality
-use std::collections::HashMap;
-
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
 use super::{RestClient, RestResult};
 
@@ -10,13 +8,13 @@ const UNIFIED_ACCOUNTS_ENDPOINT: &str = "/unified/accounts";
 /// Request parameters for getting unified account info
 #[derive(Debug, Clone, Default, Serialize)]
 pub struct GetUnifiedAccountRequest {
-    /// Currency to retrieve
+    /// Currency to retrieve account info for (optional filter)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub currency: Option<String>,
 }
 
 /// Unified account information
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct UnifiedAccount {
     /// User ID
     pub user_id: i64,
@@ -68,7 +66,7 @@ pub struct UnifiedAccount {
 }
 
 /// Currency balance in unified account
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct CurrencyBalance {
     /// Available balance
     pub available: String,
@@ -83,95 +81,25 @@ pub struct CurrencyBalance {
     pub interest: String,
 }
 
-/// Request to borrow or repay
-#[derive(Debug, Clone, Serialize)]
-pub struct BorrowOrRepayRequest {
-    /// Currency
-    pub currency: String,
-
-    /// Type: borrow or repay
-    #[serde(rename = "type")]
-    pub operation_type: String,
-
-    /// Amount
-    pub amount: String,
-}
-
-/// Borrow/repay response
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct BorrowOrRepayResponse {
-    /// Currency
-    pub currency: String,
-
-    /// Type: borrow or repay
-    #[serde(rename = "type")]
-    pub operation_type: String,
-
-    /// Amount
-    pub amount: String,
-
-    /// Transaction ID
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub id: Option<String>,
-}
-
-/// Request parameters for getting max borrowable amount
-#[derive(Debug, Clone, Serialize)]
-pub struct GetBorrowableRequest {
-    /// Currency to check
-    pub currency: String,
-}
-
-/// Borrowable amount response
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct BorrowableResponse {
-    /// Currency
-    pub currency: String,
-
-    /// Maximum borrowable amount
-    pub borrowable: String,
-}
-
-/// Request parameters for getting transferable amounts
-#[derive(Debug, Clone, Serialize)]
-pub struct GetTransferablesRequest {
-    /// Currencies to check (comma-separated)
-    pub currency: String,
-}
-
-/// Transferable amount response
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct TransferableResponse {
-    /// Currency
-    pub currency: String,
-
-    /// Transferable amount
-    pub amount: String,
-}
-
-/// Supported loan currencies response
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct SupportedCurrency {
-    /// Currency name
-    pub currency: String,
-
-    /// Interest rate
-    pub rate: String,
-
-    /// Status
-    pub status: String,
-}
-
-/// Implementation for the client
 impl RestClient {
-    /// Get unified account information
+    /// Get Unified Account Information
     ///
-    /// This endpoint returns the unified account information.
-    pub async fn get_unified_account(&self, currency: Option<&str>) -> RestResult<UnifiedAccount> {
-        let request = GetUnifiedAccountRequest {
-            currency: currency.map(|s| s.to_string()),
-        };
-        self.get_with_query(UNIFIED_ACCOUNTS_ENDPOINT, &request)
+    /// Get unified account information with optional currency filter.
+    ///
+    /// [docs](https://www.gate.io/docs/apiv4/en/index.html#get-unified-account-information)
+    ///
+    /// Rate limit: 100 requests per second
+    ///
+    /// # Arguments
+    /// * `req` - Optional request parameters for filtering by currency
+    ///
+    /// # Returns
+    /// Unified account information including balances and margin details
+    pub async fn get_unified_accounts(
+        &self,
+        req: Option<GetUnifiedAccountRequest>,
+    ) -> RestResult<UnifiedAccount> {
+        self.send_get_request(UNIFIED_ACCOUNTS_ENDPOINT, req.as_ref())
             .await
     }
 }

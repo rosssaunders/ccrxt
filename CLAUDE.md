@@ -64,29 +64,50 @@ The project is a Rust workspace with three main crates:
 - `websockets/`: Common WebSocket traits and utilities
 - `rest/`: Common REST client traits and utilities
 
-### File Organization
+### Venue Structure (Reference: Gate.io)
 
-Each venue follows a strict file structure:
+**`venues/src/gateio/` is the reference implementation that all venues MUST follow.**
+
+Each venue follows this exact structure:
 ```
-venues/src/<exchange>/<product>/
-├── mod.rs                    # Module exports and re-exports
-├── enums.rs                  # All enums for the venue
-├── errors.rs                 # Error types and handling
-├── client.rs                 # Main client struct(s)
-├── public_*.rs              # Public REST endpoints
-├── private_*.rs             # Private REST endpoints  
-├── ws_public_*.rs           # Public WebSocket endpoints
-├── ws_private_*.rs          # Private WebSocket endpoints
-└── common/                  # Common code (rate limiting, auth, etc.)
+venues/src/<exchange>/
+├── mod.rs                          # Main module exports and re-exports
+├── credentials.rs                  # Venue-specific credentials struct
+├── enums.rs                        # All venue enums (OrderType, etc.)
+├── errors.rs                       # Error types and handling
+├── rate_limit.rs                   # Rate limiting implementation
+├── rate_limiter_trait.rs           # Rate limiter trait definition
+├── private_client.rs               # Private API client
+├── public_client.rs                # Public API client
+├── public/                         # Public endpoints
+│   ├── mod.rs
+│   └── rest/
+│       ├── mod.rs
+│       └── <product>/              # Product-specific endpoints
+│           ├── mod.rs
+│           ├── endpoint1.rs
+│           └── endpoint2.rs
+└── private/                        # Private endpoints
+    ├── mod.rs
+    └── rest/
+        ├── mod.rs
+        └── <product>/              # Product-specific endpoints
+            ├── mod.rs
+            ├── endpoint1.rs
+            └── endpoint2.rs
 ```
 
-### Critical Patterns
+### Critical Implementation Patterns
 
-1. **No Subdirectories for Endpoints**: All endpoint files must be directly under the venue directory
-2. **Pure Wrappers**: Endpoint implementations are pure - no fix-up logic or helpers
-3. **Top-Level Exports**: Integration tests must use only top-level exports from venue modules
-4. **SecretString for Credentials**: All API keys/secrets use `SecretString` type, never plain `String`
-5. **Enums for Fixed Values**: All fields with fixed sets of values must use enums, not strings
+1. **Endpoint Organization**: Each endpoint MUST be in its own file under `public/rest/<product>/` or `private/rest/<product>/`
+2. **Product Categorization**: Group endpoints by product/service (spot, delivery, options, unified, wallet, etc.)
+3. **Documentation Format**: All endpoint functions MUST use `[docs](URL)` format with rate limits
+4. **Pure Wrappers**: Endpoint implementations are pure - no fix-up logic or helpers
+5. **Parameter Structs**: All endpoint functions MUST take a single struct parameter (except URL path params)
+6. **Rate Limiting**: Implement venue-specific rate limiting at root level (`rate_limit.rs`, `rate_limiter_trait.rs`)
+7. **SecretString for Credentials**: All API keys/secrets use `SecretString` type, never plain `String`
+8. **Enums for Fixed Values**: All fields with fixed sets of values must use enums, not strings
+9. **HTTP Verb Functions**: Use verb-specific functions (`send_get_request`, `send_post_request`) not generic methods
 
 ### Architecture & Coding Standards
 
@@ -106,12 +127,32 @@ Detailed instruction files in `.github/instructions/`:
 
 ## Important Implementation Rules
 
+### Documentation and Formatting (from .github/instructions/):
+- **Documentation links**: Use inline format `[docs](URL)` in function doc comments, never reference-style
+- **Endpoint functions MUST include**:
+  - Title matching exchange docs exactly
+  - Link to official API documentation: `[docs](URL)`
+  - Rate limit information
+  - Arguments with descriptions
+  - Return value description
+- **All struct fields MUST have doc comments** with purpose, valid values, constraints
+- **Blank line required between each struct field**
+- **Field names in serde attributes MUST exactly match API documentation**
+
+### Performance Requirements (CRITICAL):
+- **HTTP verbs MUST NOT be passed as parameters** - use verb-specific functions
+- **MUST use**: `send_get_request()`, `send_post_request()`, `send_put_request()`, etc.
+- **MUST NOT use**: generic `send_request()` with method parameter
+- **All endpoint functions MUST take single struct for parameters** (except URL path params)
+
+### File Structure Rules:
+- **Each endpoint MUST be in its own file** - no combining endpoints
+- **Endpoint URL paths MUST be defined as constants** (SCREAMING_SNAKE_CASE)
+- **Each mod import MUST be on its own line** to avoid merge conflicts
+
 ### From .cursorrules:
 - Code prioritizes performance over cleanliness (while maintaining correctness)
 - URL encoding must use `serde_urlencoded`, never manual concatenation
-- All struct fields must have doc comments with clear descriptions
-- Field names in serde attributes must exactly match API documentation
-- All endpoint functions must include a link to official API documentation
 - Error handling must preserve original error codes and messages
 - Never use regex for error parsing - use direct string matching
 

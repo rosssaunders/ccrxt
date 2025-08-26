@@ -24,5 +24,22 @@ pub use public_client::*;
 pub use rate_limit::{RateLimitHeader, RateLimitStatus, RateLimiter, UsageInfo};
 pub use rate_limiter_trait::GateIoRateLimiter;
 
+// Re-export delivery types for easier access
+pub use public::{
+    DeliveryContract, DeliveryContractRequest, DeliveryContractsRequest,
+    DeliveryInsurance, DeliveryInsuranceRequest,
+    DeliveryOrderBook, DeliveryOrderBookEntry, DeliveryOrderBookRequest,
+    DeliveryRiskLimitTier, DeliveryRiskLimitTiersRequest,
+    DeliveryTicker, DeliveryTickersRequest,
+    DeliveryTrade, DeliveryTradesRequest,
+};
+pub use private::{
+    CreateDeliveryOrderRequest, DeliveryCandlestick, DeliveryCandlesticksRequest,
+    DeliveryLeverageResponse, DeliveryOrder, DeliveryPosition, DeliveryPositionMarginResponse,
+    DeliveryPositionsRequest, DeliveryRiskLimitResponse, ListDeliveryOrdersRequest,
+    SetDeliveryLeverageRequest, UpdateDeliveryPositionMarginRequest,
+    UpdateDeliveryRiskLimitRequest,
+};
+
 /// Result type alias for Gate.io API operations
 pub type RestResult<T> = std::result::Result<T, GateIoError>;

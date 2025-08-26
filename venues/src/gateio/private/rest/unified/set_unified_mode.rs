@@ -1,6 +1,6 @@
 use super::{
     RestClient, RestResult,
-    unified_mode::{UnifiedModeRequest, UnifiedModeResponse},
+    unified_mode_types::{UnifiedModeRequest, UnifiedModeResponse},
 };
 
 const UNIFIED_MODE_ENDPOINT: &str = "/unified/unified_mode";

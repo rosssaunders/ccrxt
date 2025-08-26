@@ -7,8 +7,7 @@ impl RestClient {
     ///
     /// This endpoint returns details for a specific options position.
     ///
-    /// See: Gate.io API documentation
-    /// <https://www.gate.io/docs/developers/apiv4/en/#get-single-position>
+    /// [docs](https://www.gate.io/docs/apiv4/en/index.html#get-single-position)
     ///
     /// Rate limit: 10 requests per second
     ///

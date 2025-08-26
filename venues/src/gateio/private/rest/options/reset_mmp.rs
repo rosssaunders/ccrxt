@@ -16,8 +16,7 @@ impl RestClient {
     ///
     /// This endpoint resets the Market Maker Protection state.
     ///
-    /// See: Gate.io API documentation
-    /// <https://www.gate.io/docs/developers/apiv4/en/#reset-mmp>
+    /// [docs](https://www.gate.io/docs/apiv4/en/index.html#reset-mmp)
     ///
     /// Rate limit: 10 requests per second
     ///

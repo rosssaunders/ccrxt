@@ -10,8 +10,7 @@ impl RestClient {
     ///
     /// This endpoint updates Market Maker Protection settings.
     ///
-    /// See: Gate.io API documentation
-    /// <https://www.gate.io/docs/developers/apiv4/en/#update-mmp-settings>
+    /// [docs](https://www.gate.io/docs/apiv4/en/index.html#update-mmp-settings)
     ///
     /// Rate limit: 10 requests per second
     ///

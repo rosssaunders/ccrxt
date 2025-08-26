@@ -13,7 +13,20 @@ pub struct FixedRateResponse {
 }
 
 impl RestClient {
-    /// Get fixed borrowing rate for a currency
+    /// Get Fixed Borrowing Rate for Multi-Currency Collateral Loan
+    ///
+    /// Retrieves the fixed borrowing interest rate for a specific currency in multi-currency
+    /// collateral loans. Fixed rates remain constant for the loan duration, providing rate certainty.
+    ///
+    /// [docs](https://www.gate.io/docs/apiv4/en/index.html#get-fixed-rate-multi-currency-collateral-loan)
+    ///
+    /// Rate limit: 100 requests per second
+    ///
+    /// # Arguments
+    /// * `borrow_currency` - Currency code for which to retrieve the fixed borrowing rate
+    ///
+    /// # Returns
+    /// Fixed rate response containing the daily borrowing rate for fixed-rate loans
     pub async fn get_fixed_rate(&self, borrow_currency: &str) -> RestResult<FixedRateResponse> {
         #[derive(Serialize)]
         struct Q {

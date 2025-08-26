@@ -5,8 +5,6 @@ use super::{RestClient, RestResult};
 const REPAY_RECORDS_ENDPOINT: &str = "/loan/collateral/repay_records";
 
 /// Query parameters for listing collateral loan repayment records.
-///
-/// See [docs](https://www.gate.io/docs/developers/apiv4/en/#query-collateral-loan-repayment-records)
 #[derive(Debug, Clone, Serialize, Default)]
 #[serde(rename_all = "snake_case")]
 pub struct ListCollateralLoanRepayRecordsRequest {
@@ -39,8 +37,6 @@ pub struct ListCollateralLoanRepayRecordsRequest {
 }
 
 /// Collateral loan repayment record item.
-///
-/// See [docs](https://www.gate.io/docs/developers/apiv4/en/#query-collateral-loan-repayment-records)
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub struct CollateralLoanRepayRecord {

@@ -65,11 +65,11 @@ pub struct OptionsTradesRequest {
 }
 
 impl RestClient {
-    /// Get options trades
+    /// List Personal Trading History
     ///
     /// This endpoint returns a list of options trades.
     ///
-    /// See: Gate.io API documentation
+    /// [docs](https://www.gate.io/docs/apiv4/en/index.html#list-personal-trading-history-2)
     ///
     /// Rate limit: 100 requests per second
     ///

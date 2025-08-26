@@ -30,7 +30,20 @@ pub struct RepayRecord {
 }
 
 impl RestClient {
-    /// List repay records
+    /// Get Repayment Records for Multi-Currency Collateral Loan
+    ///
+    /// Retrieves historical repayment records for multi-currency collateral loans
+    /// with optional filtering by order ID and pagination support for large datasets.
+    ///
+    /// [docs](https://www.gate.io/docs/apiv4/en/index.html#get-repay-records-multi-currency-collateral-loan)
+    ///
+    /// Rate limit: 100 requests per second
+    ///
+    /// # Arguments
+    /// * `query` - Repay records query with optional order ID filter and pagination parameters
+    ///
+    /// # Returns
+    /// List of repayment records with amounts, interest, and timestamps
     pub async fn list_multi_collateral_repay_records(
         &self,
         query: RepayRecordsQuery,

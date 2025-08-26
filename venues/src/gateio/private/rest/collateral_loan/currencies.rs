@@ -5,8 +5,6 @@ use super::{RestClient, RestResult};
 const CURRENCIES_ENDPOINT: &str = "/loan/collateral/currencies";
 
 /// Supported borrowing and collateral currency information.
-///
-/// See [docs](https://www.gate.io/docs/developers/apiv4/en/#query-supported-borrowing-and-collateral-currencies)
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub struct CollateralLoanCurrencyInfo {

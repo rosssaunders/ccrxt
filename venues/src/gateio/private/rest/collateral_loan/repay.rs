@@ -5,8 +5,6 @@ use super::{RestClient, RestResult};
 const REPAY_ENDPOINT: &str = "/loan/collateral/repay";
 
 /// Request to repay a collateral loan order.
-///
-/// See [docs](https://www.gate.io/docs/developers/apiv4/en/#collateral-loan-repayment)
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "snake_case")]
 pub struct CollateralLoanRepayRequest {
@@ -22,8 +20,6 @@ pub struct CollateralLoanRepayRequest {
 }
 
 /// Response for collateral loan repayment.
-///
-/// See [docs](https://www.gate.io/docs/developers/apiv4/en/#collateral-loan-repayment)
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub struct CollateralLoanRepayResponse {

@@ -5,8 +5,6 @@ use super::{RestClient, RestResult};
 const ORDERS_ENDPOINT: &str = "/loan/collateral/orders";
 
 /// Detailed collateral loan order information.
-///
-/// See [docs](https://www.gate.io/docs/developers/apiv4/en/#query-single-order-details-5)
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub struct CollateralLoanOrderDetail {

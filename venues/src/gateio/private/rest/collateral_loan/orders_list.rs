@@ -5,8 +5,6 @@ use super::{RestClient, RestResult};
 const ORDERS_ENDPOINT: &str = "/loan/collateral/orders";
 
 /// Query parameters for listing collateral loan orders.
-///
-/// See [docs](https://www.gate.io/docs/developers/apiv4/en/#query-collateral-loan-order-list)
 #[derive(Debug, Clone, Serialize, Default)]
 #[serde(rename_all = "snake_case")]
 pub struct ListCollateralLoanOrdersRequest {
@@ -28,8 +26,6 @@ pub struct ListCollateralLoanOrdersRequest {
 }
 
 /// Collateral loan order summary item.
-///
-/// See [docs](https://www.gate.io/docs/developers/apiv4/en/#query-collateral-loan-order-list)
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub struct CollateralLoanOrderSummary {

@@ -7,8 +7,10 @@ const INTEREST_STATUS_ENDPOINT: &str = "/earn/uni/interest_status"; // append /{
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct InterestStatus {
     pub currency: String,
+
     /// Whether interest has been enabled for this currency
     pub enabled: bool,
+
     /// Optional reason or message
     #[serde(default)]
     pub message: Option<String>,
@@ -17,7 +19,7 @@ pub struct InterestStatus {
 impl RestClient {
     /// GET /earn/uni/interest_status/{currency}
     ///
-    /// Gate.io docs: https://www.gate.io/docs/developers/apiv4/en/#query-currency-interest-compounding-status
+    /// [docs](https://www.gate.io/docs/developers/apiv4/en/#query-currency-interest-compounding-status)
     pub async fn get_earnuni_interest_status(&self, currency: &str) -> RestResult<InterestStatus> {
         let endpoint = format!("{}/{}", INTEREST_STATUS_ENDPOINT, currency);
         self.send_get_request(&endpoint, Option::<&()>::None).await

@@ -61,11 +61,11 @@ pub struct OptionsSettlementsRequest {
 }
 
 impl RestClient {
-    /// Get options settlements
+    /// List Settlement History
     ///
     /// This endpoint returns a list of options settlement records.
     ///
-    /// See: Gate.io API documentation
+    /// [docs](https://www.gate.io/docs/apiv4/en/index.html#list-settlement-history-2)
     ///
     /// Rate limit: 100 requests per second
     ///

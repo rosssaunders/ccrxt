@@ -20,7 +20,7 @@ pub struct ChartPoint {
 impl RestClient {
     /// GET /earn/uni/chart
     ///
-    /// Gate.io docs: https://www.gate.io/docs/developers/apiv4/en/#uniloan-currency-annualized-trend-chart
+    /// [docs](https://www.gate.io/docs/developers/apiv4/en/#uniloan-currency-annualized-trend-chart)
     pub async fn get_earnuni_chart(&self) -> RestResult<Vec<ChartPoint>> {
         self.send_get_request(CHART_ENDPOINT, Option::<&()>::None)
             .await

@@ -7,8 +7,7 @@ impl RestClient {
     ///
     /// This endpoint cancels all options orders for a specific underlying or contract.
     ///
-    /// See: Gate.io API documentation
-    /// <https://www.gate.io/docs/developers/apiv4/en/#cancel-all-open-options-orders>
+    /// [docs](https://www.gate.io/docs/apiv4/en/index.html#cancel-all-open-options-orders)
     ///
     /// Rate limit: 10 requests per second
     ///

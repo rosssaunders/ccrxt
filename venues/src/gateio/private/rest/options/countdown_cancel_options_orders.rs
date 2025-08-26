@@ -20,8 +20,7 @@ impl RestClient {
     ///
     /// Sets a countdown timer to cancel all open options orders after specified time.
     ///
-    /// See: Gate.io API documentation
-    /// <https://www.gate.io/docs/developers/apiv4/en/#options-countdown-cancel>
+    /// [docs](https://www.gate.io/docs/apiv4/en/index.html#options-countdown-cancel)
     ///
     /// Rate limit: 10 requests per second
     ///

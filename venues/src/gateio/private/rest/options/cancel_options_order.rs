@@ -7,8 +7,7 @@ impl RestClient {
     ///
     /// This endpoint cancels a specific options order.
     ///
-    /// See: Gate.io API documentation
-    /// <https://www.gate.io/docs/developers/apiv4/en/#cancel-a-single-options-order>
+    /// [docs](https://www.gate.io/docs/apiv4/en/index.html#cancel-a-single-options-order)
     ///
     /// Rate limit: 10 requests per second
     ///

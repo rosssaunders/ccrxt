@@ -7,12 +7,15 @@ const INTERESTS_ENDPOINT: &str = "/earn/uni/interests"; // append /{currency}
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct InterestInfo {
     pub currency: String,
+
     /// Current daily interest (string decimal)
     #[serde(default)]
     pub daily_interest: Option<String>,
+
     /// Annualized APY if provided
     #[serde(default)]
     pub apy: Option<String>,
+
     /// Timestamp of the rate (ms)
     #[serde(default)]
     pub timestamp: Option<i64>,
@@ -21,7 +24,7 @@ pub struct InterestInfo {
 impl RestClient {
     /// GET /earn/uni/interests/{currency}
     ///
-    /// Gate.io docs: https://www.gate.io/docs/developers/apiv4/en/#query-user-s-total-interest-income-for-specified-currency
+    /// [docs](https://www.gate.io/docs/developers/apiv4/en/#query-user-s-total-interest-income-for-specified-currency)
     pub async fn get_earnuni_interests(&self, currency: &str) -> RestResult<InterestInfo> {
         let endpoint = format!("{}/{}", INTERESTS_ENDPOINT, currency);
         self.send_get_request(&endpoint, Option::<&()>::None).await

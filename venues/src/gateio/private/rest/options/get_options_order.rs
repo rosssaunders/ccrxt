@@ -1,4 +1,4 @@
-use super::{RestClient, order::OptionsOrder};
+use super::{RestClient, RestResult, order::OptionsOrder};
 
 const OPTIONS_ORDERS_ENDPOINT: &str = "/options/orders";
 
@@ -7,8 +7,7 @@ impl RestClient {
     ///
     /// This endpoint returns details for a specific options order.
     ///
-    /// See: Gate.io API documentation
-    /// [docs](https://www.gate.io/docs/developers/apiv4/en/#get-a-single-options-order)
+    /// [docs](https://www.gate.io/docs/apiv4/en/index.html#get-a-single-options-order)
     ///
     /// Rate limit: 10 requests per second
     ///

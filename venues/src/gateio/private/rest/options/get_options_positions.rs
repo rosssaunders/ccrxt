@@ -21,12 +21,11 @@ pub struct OptionsPositionsRequest {
 }
 
 impl RestClient {
-    /// Get options positions
+    /// List Options Positions
     ///
     /// This endpoint returns all options positions for the authenticated user.
     ///
-    /// See: Gate.io API documentation
-    /// <https://www.gate.io/docs/developers/apiv4/en/#list-options-positions>
+    /// [docs](https://www.gate.io/docs/apiv4/en/index.html#list-options-positions)
     ///
     /// Rate limit: 10 requests per second
     ///

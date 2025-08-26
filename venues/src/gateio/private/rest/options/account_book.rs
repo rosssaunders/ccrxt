@@ -53,11 +53,11 @@ pub struct OptionsAccountBookRequest {
 }
 
 impl RestClient {
-    /// Get options account book
+    /// Query Account Change History
     ///
     /// This endpoint returns the options account book with balance change records.
     ///
-    /// See: Gate.io API documentation
+    /// [docs](https://www.gate.io/docs/apiv4/en/index.html#query-account-change-history-2)
     ///
     /// Rate limit: 100 requests per second
     ///
