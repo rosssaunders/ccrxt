@@ -7,12 +7,14 @@ use std::sync::Arc;
 
 use rest::native::NativeHttpClient;
 use tokio;
-use venues::gateio::unified::public::rest::RestClient;
+use venues::gateio::PublicRestClient;
 
 /// Helper function to create a test client for unified public endpoints
-fn create_unified_test_client() -> RestClient {
+fn create_unified_test_client() -> PublicRestClient {
     let http_client = Arc::new(NativeHttpClient::default());
-    RestClient::new(http_client, false).expect("Failed to create Gate.io unified REST client")
+    let rate_limiter = Arc::new(venues::gateio::RateLimiter::default());
+    PublicRestClient::new(http_client, rate_limiter, false)
+        .expect("Failed to create Gate.io unified REST client")
 }
 
 #[tokio::test]

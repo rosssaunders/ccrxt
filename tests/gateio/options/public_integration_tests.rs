@@ -7,12 +7,14 @@ use std::sync::Arc;
 
 use rest::native::NativeHttpClient;
 use tokio;
-use venues::gateio::options::public::rest::RestClient;
+use venues::gateio::PublicRestClient;
 
 /// Helper function to create a test client for options public endpoints
-fn create_options_test_client() -> RestClient {
+fn create_options_test_client() -> PublicRestClient {
     let http_client = Arc::new(NativeHttpClient::default());
-    RestClient::new(http_client, false).expect("Failed to create Gate.io options REST client")
+    let rate_limiter = Arc::new(venues::gateio::RateLimiter::default());
+    PublicRestClient::new(http_client, rate_limiter, false)
+        .expect("Failed to create Gate.io options REST client")
 }
 
 #[tokio::test]
@@ -48,7 +50,7 @@ async fn test_get_options_underlyings() {
 /// Test options expirations endpoint
 #[tokio::test]
 async fn test_get_options_expirations() {
-    use venues::gateio::options::public::rest::expirations::OptionsExpirationsRequest;
+    use venues::gateio::public::rest::options::expirations::OptionsExpirationsRequest;
 
     let client = create_options_test_client();
     let request = OptionsExpirationsRequest {
@@ -71,7 +73,7 @@ async fn test_get_options_expirations() {
 /// Test options contracts endpoint
 #[tokio::test]
 async fn test_get_options_contracts() {
-    use venues::gateio::options::public::rest::contracts::OptionsContractsRequest;
+    use venues::gateio::public::rest::options::contracts::OptionsContractsRequest;
 
     let client = create_options_test_client();
 
@@ -98,7 +100,7 @@ async fn test_get_options_contracts() {
 /// Test options contracts filtering by expiration
 #[tokio::test]
 async fn test_get_options_contracts_filtered() {
-    use venues::gateio::options::public::rest::contracts::OptionsContractsRequest;
+    use venues::gateio::public::rest::options::contracts::OptionsContractsRequest;
 
     let client = create_options_test_client();
 
@@ -125,7 +127,7 @@ async fn test_get_options_contracts_filtered() {
 /// Test options tickers endpoint
 #[tokio::test]
 async fn test_get_options_tickers() {
-    use venues::gateio::options::public::rest::tickers::OptionsTickersRequest;
+    use venues::gateio::public::rest::options::tickers::OptionsTickersRequest;
 
     let client = create_options_test_client();
 
@@ -194,7 +196,7 @@ async fn test_get_underlying_ticker() {
 /// Test options order book endpoint
 #[tokio::test]
 async fn test_get_options_order_book() {
-    use venues::gateio::options::public::rest::{
+    use venues::gateio::public::rest::options::{
         contracts::OptionsContractsRequest, order_book::OptionsOrderBookRequest,
     };
 
@@ -253,7 +255,7 @@ async fn test_get_options_order_book() {
 /// Test options trades endpoint
 #[tokio::test]
 async fn test_get_options_trades() {
-    use venues::gateio::options::public::rest::{
+    use venues::gateio::public::rest::options::{
         contracts::OptionsContractsRequest, trades::OptionsTradesRequest,
     };
 
@@ -310,7 +312,7 @@ async fn test_get_options_trades() {
 /// Test options candlesticks endpoint
 #[tokio::test]
 async fn test_get_options_candlesticks() {
-    use venues::gateio::options::public::rest::{
+    use venues::gateio::public::rest::options::{
         contracts::OptionsContractsRequest, get_options_candlesticks::OptionsCandlesticksRequest,
     };
 
@@ -369,7 +371,7 @@ async fn test_get_options_candlesticks() {
 /// Test underlying candlesticks endpoint
 #[tokio::test]
 async fn test_get_underlying_candlesticks() {
-    use venues::gateio::options::public::rest::get_underlying_candlesticks::UnderlyingCandlesticksRequest;
+    use venues::gateio::public::rest::options::get_underlying_candlesticks::UnderlyingCandlesticksRequest;
 
     let client = create_options_test_client();
 
@@ -409,7 +411,7 @@ async fn test_get_underlying_candlesticks() {
 /// Test options settlements endpoint
 #[tokio::test]
 async fn test_get_options_settlements() {
-    use venues::gateio::options::public::rest::settlements::OptionsSettlementsRequest;
+    use venues::gateio::public::rest::options::settlements::OptionsSettlementsRequest;
 
     let client = create_options_test_client();
 
@@ -447,7 +449,7 @@ async fn test_get_options_settlements() {
 #[tokio::test]
 async fn test_get_options_contract_settlement() {
     // OptionsContractSettlement doesn't need a request struct - uses contract name directly
-    use venues::gateio::options::public::rest::contracts::OptionsContractsRequest;
+    use venues::gateio::public::rest::options::contracts::OptionsContractsRequest;
 
     let client = create_options_test_client();
 

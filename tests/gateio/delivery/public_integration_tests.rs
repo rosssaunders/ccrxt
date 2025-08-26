@@ -7,12 +7,14 @@ use std::sync::Arc;
 
 use rest::native::NativeHttpClient;
 use tokio;
-use venues::gateio::{delivery::public::rest::RestClient, shared::enums::CandlestickInterval};
+use venues::gateio::{CandlestickInterval, PublicRestClient};
 
 /// Helper function to create a test client for delivery public endpoints
-fn create_delivery_test_client() -> RestClient {
+fn create_delivery_test_client() -> PublicRestClient {
     let http_client = Arc::new(NativeHttpClient::default());
-    RestClient::new(http_client, false).expect("Failed to create Gate.io delivery REST client")
+    let rate_limiter = Arc::new(venues::gateio::RateLimiter::default());
+    PublicRestClient::new(http_client, rate_limiter, false)
+        .expect("Failed to create Gate.io delivery REST client")
 }
 
 #[tokio::test]
@@ -24,7 +26,7 @@ async fn test_delivery_client_creation() {
 /// Test delivery contracts endpoint
 #[tokio::test]
 async fn test_get_delivery_contracts() {
-    use venues::gateio::delivery::public::rest::contracts::DeliveryContractsRequest;
+    use venues::gateio::DeliveryContractsRequest;
 
     let client = create_delivery_test_client();
     let request = DeliveryContractsRequest {
@@ -54,7 +56,7 @@ async fn test_get_delivery_contracts() {
 /// Test single delivery contract endpoint
 #[tokio::test]
 async fn test_get_delivery_contract() {
-    use venues::gateio::delivery::public::rest::contracts::DeliveryContractRequest;
+    use venues::gateio::DeliveryContractRequest;
 
     let client = create_delivery_test_client();
     let request = DeliveryContractRequest {
@@ -83,7 +85,7 @@ async fn test_get_delivery_contract() {
 /// Test delivery tickers endpoint
 #[tokio::test]
 async fn test_get_delivery_tickers() {
-    use venues::gateio::delivery::public::rest::tickers::DeliveryTickersRequest;
+    use venues::gateio::DeliveryTickersRequest;
 
     let client = create_delivery_test_client();
     let request = DeliveryTickersRequest {
@@ -114,15 +116,14 @@ async fn test_get_delivery_tickers() {
 /// Test delivery order book endpoint
 #[tokio::test]
 async fn test_get_delivery_order_book() {
-    use venues::gateio::delivery::public::rest::order_book::DeliveryOrderBookRequest;
+    use venues::gateio::DeliveryOrderBookRequest;
 
     let client = create_delivery_test_client();
 
     // First get available contracts to test with
-    let contracts_request =
-        venues::gateio::delivery::public::rest::contracts::DeliveryContractsRequest {
-            settle: "usdt".to_string(),
-        };
+    let contracts_request = venues::gateio::DeliveryContractsRequest {
+        settle: "usdt".to_string(),
+    };
 
     let contracts_result = client.get_delivery_contracts(contracts_request).await;
     if let Ok(contracts) = contracts_result {
@@ -161,15 +162,14 @@ async fn test_get_delivery_order_book() {
 /// Test delivery trades endpoint
 #[tokio::test]
 async fn test_get_delivery_trades() {
-    use venues::gateio::delivery::public::rest::trades::DeliveryTradesRequest;
+    use venues::gateio::DeliveryTradesRequest;
 
     let client = create_delivery_test_client();
 
     // First get available contracts to test with
-    let contracts_request =
-        venues::gateio::delivery::public::rest::contracts::DeliveryContractsRequest {
-            settle: "usdt".to_string(),
-        };
+    let contracts_request = venues::gateio::DeliveryContractsRequest {
+        settle: "usdt".to_string(),
+    };
 
     let contracts_result = client.get_delivery_contracts(contracts_request).await;
     if let Ok(contracts) = contracts_result {
@@ -208,15 +208,14 @@ async fn test_get_delivery_trades() {
 /// Test delivery candlesticks endpoint
 #[tokio::test]
 async fn test_get_delivery_candlesticks() {
-    use venues::gateio::delivery::models::DeliveryCandlesticksRequest;
+    use venues::gateio::DeliveryCandlesticksRequest;
 
     let client = create_delivery_test_client();
 
     // First get available contracts to test with
-    let contracts_request =
-        venues::gateio::delivery::public::rest::contracts::DeliveryContractsRequest {
-            settle: "usdt".to_string(),
-        };
+    let contracts_request = venues::gateio::DeliveryContractsRequest {
+        settle: "usdt".to_string(),
+    };
 
     let contracts_result = client.get_delivery_contracts(contracts_request).await;
     if let Ok(contracts) = contracts_result {
@@ -254,15 +253,14 @@ async fn test_get_delivery_candlesticks() {
 /// Test delivery mark price candlesticks endpoint
 #[tokio::test]
 async fn test_get_delivery_mark_price_candlesticks() {
-    use venues::gateio::delivery::models::DeliveryCandlesticksRequest;
+    use venues::gateio::DeliveryCandlesticksRequest;
 
     let client = create_delivery_test_client();
 
     // First get available contracts to test with
-    let contracts_request =
-        venues::gateio::delivery::public::rest::contracts::DeliveryContractsRequest {
-            settle: "usdt".to_string(),
-        };
+    let contracts_request = venues::gateio::DeliveryContractsRequest {
+        settle: "usdt".to_string(),
+    };
 
     let contracts_result = client.get_delivery_contracts(contracts_request).await;
     if let Ok(contracts) = contracts_result {
@@ -317,15 +315,14 @@ async fn test_get_delivery_mark_price_candlesticks() {
 /// Test delivery index price candlesticks endpoint
 #[tokio::test]
 async fn test_get_delivery_index_price_candlesticks() {
-    use venues::gateio::delivery::models::DeliveryCandlesticksRequest;
+    use venues::gateio::DeliveryCandlesticksRequest;
 
     let client = create_delivery_test_client();
 
     // First get available contracts to test with
-    let contracts_request =
-        venues::gateio::delivery::public::rest::contracts::DeliveryContractsRequest {
-            settle: "usdt".to_string(),
-        };
+    let contracts_request = venues::gateio::DeliveryContractsRequest {
+        settle: "usdt".to_string(),
+    };
 
     let contracts_result = client.get_delivery_contracts(contracts_request).await;
     if let Ok(contracts) = contracts_result {
@@ -379,7 +376,7 @@ async fn test_get_delivery_index_price_candlesticks() {
 /// Test delivery insurance endpoint
 #[tokio::test]
 async fn test_get_delivery_insurance() {
-    use venues::gateio::delivery::public::rest::insurance::DeliveryInsuranceRequest;
+    use venues::gateio::DeliveryInsuranceRequest;
 
     let client = create_delivery_test_client();
     let request = DeliveryInsuranceRequest {
@@ -407,15 +404,14 @@ async fn test_get_delivery_insurance() {
 /// Test delivery risk limit tiers endpoint
 #[tokio::test]
 async fn test_get_delivery_risk_limit_tiers() {
-    use venues::gateio::delivery::public::rest::risk_limit_tiers::DeliveryRiskLimitTiersRequest;
+    use venues::gateio::DeliveryRiskLimitTiersRequest;
 
     let client = create_delivery_test_client();
 
     // First get available contracts to test with
-    let contracts_request =
-        venues::gateio::delivery::public::rest::contracts::DeliveryContractsRequest {
-            settle: "usdt".to_string(),
-        };
+    let contracts_request = venues::gateio::DeliveryContractsRequest {
+        settle: "usdt".to_string(),
+    };
 
     let contracts_result = client.get_delivery_contracts(contracts_request).await;
     if let Ok(contracts) = contracts_result {

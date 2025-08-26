@@ -158,25 +158,26 @@ It also details documentation and code style requirements for all structs and fi
 
 #### Correct Pattern (High Performance):
 ```rust
-/// Cancel all orders (v4)
+/// List Spot Trading Accounts
 ///
-/// Cancels all outstanding orders for a symbol and/or side.
+/// Retrieve balances for all currencies or filter by specific currency.
+/// Returns available and locked amounts for each currency.
 ///
-/// - [docs](https://developers.binance.com/docs/derivatives/coin-margined-futures/market-data/rest-api/Get-Funding-Info)
+/// [docs](https://www.gate.io/docs/apiv4/en/index.html#list-spot-accounts)
 ///
-/// Rate limit: varies by endpoint type
+/// Rate limit: 100 requests per second
 ///
 /// # Arguments
-/// * `request` - The cancel all request parameters
+/// * `req` - Optional request parameters including currency filter
 ///
 /// # Returns
-/// Empty response - success indicated by HTTP status
-pub async fn cancel_all_orders(
+/// List of spot account balances with available and locked amounts
+pub async fn get_spot_accounts(
     &self,
-    request: CancelAllOrdersRequest,
-) -> RestResult<CancelAllOrdersResponse> {
+    req: Option<ListSpotAccountsRequest>,
+) -> RestResult<Vec<SpotAccount>> {
     // Use verb-specific function - NO method parameter
-    self.send_post_request(CANCEL_ALL_ORDERS_ENDPOINT, &request, endpoint_type).await
+    self.send_get_request(SPOT_ACCOUNTS_ENDPOINT, req.as_ref()).await
 }
 ```
 

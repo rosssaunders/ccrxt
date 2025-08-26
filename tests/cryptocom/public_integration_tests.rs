@@ -416,20 +416,29 @@ async fn test_get_valuations() {
     match result {
         Ok(response) => {
             assert_eq!(response.code, 0);
-            
+
             // Check that we have data
-            assert!(!response.result.data.is_empty(), "Should have valuation data points");
-            
+            assert!(
+                !response.result.data.is_empty(),
+                "Should have valuation data points"
+            );
+
             // Check that instrument name is correct
-            assert!(!response.result.instrument_name.is_empty(), "Instrument name should not be empty");
-            
+            assert!(
+                !response.result.instrument_name.is_empty(),
+                "Instrument name should not be empty"
+            );
+
             // Validate each data point
             for data_point in &response.result.data {
                 assert!(data_point.timestamp > 0, "Timestamp should be positive");
                 assert!(!data_point.value.is_empty(), "Value should not be empty");
-                
+
                 // Try to parse value as float to ensure it's a valid number
-                data_point.value.parse::<f64>().expect("Value should be a valid number");
+                data_point
+                    .value
+                    .parse::<f64>()
+                    .expect("Value should be a valid number");
             }
         }
         Err(err) => {

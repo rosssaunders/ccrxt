@@ -7,12 +7,14 @@ use std::sync::Arc;
 
 use rest::native::NativeHttpClient;
 use tokio;
-use venues::gateio::{perpetual::public::rest::RestClient, shared::enums::CandlestickInterval};
+use venues::gateio::{CandlestickInterval, PublicRestClient};
 
 /// Helper function to create a test client for perpetual public endpoints
-fn create_perpetual_test_client() -> RestClient {
+fn create_perpetual_test_client() -> PublicRestClient {
     let http_client = Arc::new(NativeHttpClient::default());
-    RestClient::new(http_client, false).expect("Failed to create Gate.io perpetual REST client")
+    let rate_limiter = Arc::new(venues::gateio::RateLimiter::default());
+    PublicRestClient::new(http_client, rate_limiter, false)
+        .expect("Failed to create Gate.io perpetual REST client")
 }
 
 #[tokio::test]
@@ -24,7 +26,7 @@ async fn test_perpetual_client_creation() {
 /// Test futures contracts endpoint
 #[tokio::test]
 async fn test_get_futures_contracts() {
-    use venues::gateio::perpetual::public::rest::get_futures_contracts::FuturesContractsRequest;
+    use venues::gateio::public::rest::perpetual::get_futures_contracts::FuturesContractsRequest;
 
     let client = create_perpetual_test_client();
     let request = FuturesContractsRequest {
@@ -54,7 +56,7 @@ async fn test_get_futures_contracts() {
 /// Test single futures contract endpoint
 #[tokio::test]
 async fn test_get_futures_contract() {
-    use venues::gateio::perpetual::public::rest::get_futures_contract::FuturesContractRequest;
+    use venues::gateio::public::rest::perpetual::get_futures_contract::FuturesContractRequest;
 
     let client = create_perpetual_test_client();
     let request = FuturesContractRequest {
@@ -88,7 +90,7 @@ async fn test_get_futures_contract() {
 /// Test futures tickers endpoint
 #[tokio::test]
 async fn test_get_futures_tickers() {
-    use venues::gateio::perpetual::public::rest::tickers::FuturesTickersRequest;
+    use venues::gateio::public::rest::perpetual::tickers::FuturesTickersRequest;
 
     let client = create_perpetual_test_client();
     let request = FuturesTickersRequest {
@@ -121,7 +123,7 @@ async fn test_get_futures_tickers() {
 /// Test futures order book endpoint
 #[tokio::test]
 async fn test_get_futures_order_book() {
-    use venues::gateio::perpetual::public::rest::order_book::FuturesOrderBookRequest;
+    use venues::gateio::public::rest::perpetual::order_book::FuturesOrderBookRequest;
 
     let client = create_perpetual_test_client();
     let request = FuturesOrderBookRequest {
@@ -153,7 +155,7 @@ async fn test_get_futures_order_book() {
 /// Test futures trades endpoint
 #[tokio::test]
 async fn test_get_futures_trades() {
-    use venues::gateio::perpetual::public::rest::trades::FuturesTradesRequest;
+    use venues::gateio::public::rest::perpetual::trades::FuturesTradesRequest;
 
     let client = create_perpetual_test_client();
     let request = FuturesTradesRequest {
@@ -187,7 +189,7 @@ async fn test_get_futures_trades() {
 /// Test futures candlesticks endpoint
 #[tokio::test]
 async fn test_get_futures_candlesticks() {
-    use venues::gateio::perpetual::public::rest::candlestick::FuturesCandlesticksRequest;
+    use venues::gateio::public::rest::perpetual::candlestick::FuturesCandlesticksRequest;
 
     let client = create_perpetual_test_client();
     let request = FuturesCandlesticksRequest {
@@ -220,7 +222,7 @@ async fn test_get_futures_candlesticks() {
 /// Test futures mark price candlesticks endpoint
 #[tokio::test]
 async fn test_get_futures_mark_price_candlesticks() {
-    use venues::gateio::perpetual::public::rest::candlestick::FuturesCandlesticksRequest;
+    use venues::gateio::public::rest::perpetual::candlestick::FuturesCandlesticksRequest;
 
     let client = create_perpetual_test_client();
     let request = FuturesCandlesticksRequest {
@@ -258,7 +260,7 @@ async fn test_get_futures_mark_price_candlesticks() {
 /// Test futures index price candlesticks endpoint
 #[tokio::test]
 async fn test_get_futures_index_price_candlesticks() {
-    use venues::gateio::perpetual::public::rest::candlestick::FuturesCandlesticksRequest;
+    use venues::gateio::public::rest::perpetual::candlestick::FuturesCandlesticksRequest;
 
     let client = create_perpetual_test_client();
     let request = FuturesCandlesticksRequest {
@@ -296,7 +298,7 @@ async fn test_get_futures_index_price_candlesticks() {
 /// Test futures funding rate endpoint
 #[tokio::test]
 async fn test_get_futures_funding_rate() {
-    use venues::gateio::perpetual::public::rest::funding_rate::FuturesFundingRateRequest;
+    use venues::gateio::public::rest::perpetual::funding_rate::FuturesFundingRateRequest;
 
     let client = create_perpetual_test_client();
     let request = FuturesFundingRateRequest {
@@ -325,7 +327,7 @@ async fn test_get_futures_funding_rate() {
 /// Test futures insurance endpoint
 #[tokio::test]
 async fn test_get_futures_insurance() {
-    use venues::gateio::perpetual::public::rest::insurance::FuturesInsuranceRequest;
+    use venues::gateio::public::rest::perpetual::insurance::FuturesInsuranceRequest;
 
     let client = create_perpetual_test_client();
     let request = FuturesInsuranceRequest {
@@ -353,7 +355,7 @@ async fn test_get_futures_insurance() {
 /// Test futures stats endpoint
 #[tokio::test]
 async fn test_get_futures_stats() {
-    use venues::gateio::perpetual::public::rest::stats::FuturesStatsRequest;
+    use venues::gateio::public::rest::perpetual::stats::FuturesStatsRequest;
 
     let client = create_perpetual_test_client();
     let request = FuturesStatsRequest {
@@ -383,7 +385,7 @@ async fn test_get_futures_stats() {
 /// Test futures risk limit tiers endpoint
 #[tokio::test]
 async fn test_get_futures_risk_limit_tiers() {
-    use venues::gateio::perpetual::public::rest::risk_limit_tiers::FuturesRiskLimitTiersRequest;
+    use venues::gateio::public::rest::perpetual::risk_limit_tiers::FuturesRiskLimitTiersRequest;
 
     let client = create_perpetual_test_client();
     let request = FuturesRiskLimitTiersRequest {
@@ -413,7 +415,7 @@ async fn test_get_futures_risk_limit_tiers() {
 /// Test futures premium index endpoint
 #[tokio::test]
 async fn test_get_futures_premium_index() {
-    use venues::gateio::perpetual::public::rest::premium_index::FuturesPremiumIndexRequest;
+    use venues::gateio::public::rest::perpetual::premium_index::FuturesPremiumIndexRequest;
 
     let client = create_perpetual_test_client();
     let request = FuturesPremiumIndexRequest {
@@ -444,7 +446,7 @@ async fn test_get_futures_premium_index() {
 /// Test futures index constituents endpoint
 #[tokio::test]
 async fn test_get_futures_index_constituents() {
-    use venues::gateio::perpetual::public::rest::index_constituents::FuturesIndexConstituentsRequest;
+    use venues::gateio::public::rest::perpetual::index_constituents::FuturesIndexConstituentsRequest;
 
     let client = create_perpetual_test_client();
     let request = FuturesIndexConstituentsRequest {
