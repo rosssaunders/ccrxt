@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
+use crate::binance::usdm::PrivateRestClient as RestClient;
 use crate::binance::usdm::RestResult;
 
 /// Endpoint for querying rate limit order usage.
@@ -74,7 +74,7 @@ pub struct RateLimitOrderResponse {
     pub rate_limits: Vec<RateLimitOrderData>,
 }
 
-impl UsdmClient {
+impl RestClient {
     /// Query User Rate Limit
     ///
     /// Queries the current order count usage in the current time window for the account.

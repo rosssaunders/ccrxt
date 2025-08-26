@@ -1,7 +1,7 @@
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
+use crate::binance::spot::PrivateRestClient as RestClient;
 use crate::binance::spot::{
     OrderResponseType, OrderSide, OrderType, RestResult, SelfTradePreventionMode, TimeInForce,
 };

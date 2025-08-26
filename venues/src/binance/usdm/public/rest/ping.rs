@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::RestClient;
+use crate::binance::usdm::PublicRestClient as RestClient;
 use crate::binance::usdm::RestResult;
 
 // Request path constant

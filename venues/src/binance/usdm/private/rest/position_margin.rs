@@ -2,7 +2,7 @@ use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
+use crate::binance::usdm::PrivateRestClient as RestClient;
 use crate::binance::usdm::{
     RestResult,
     enums::{MarginAction, PositionSide},
@@ -55,7 +55,7 @@ pub struct ModifyPositionMarginResponse {
     pub action: MarginAction,
 }
 
-impl UsdmClient {
+impl RestClient {
     /// Modify Isolated Position Margin
     ///
     /// Adds or reduces margin for an isolated position. This operation is only available for symbols in isolated margin mode and requires an existing position.

@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
+use crate::binance::usdm::PrivateRestClient as RestClient;
 use crate::binance::usdm::{RestResult, enums::PositionSide};
 
 /// Endpoint path for Account Information V2.
@@ -192,7 +192,7 @@ pub struct AccountV2Response {
     pub positions: Vec<PositionV2>,
 }
 
-impl UsdmClient {
+impl RestClient {
     /// Account Information V2 (GET /fapi/v2/account)
     ///
     /// Retrieves current account information for a Binance USDM futures account, including balances, positions, and trading permissions.

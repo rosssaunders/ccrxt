@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 
 const PREMIUM_INDEX_KLINES_ENDPOINT: &str = "/fapi/v1/premiumIndexKlines";
 
-use super::RestClient;
+use crate::binance::usdm::PublicRestClient as RestClient;
 use crate::binance::usdm::{KlineInterval, RestResult};
 
 /// Request parameters for the premium index kline data endpoint.

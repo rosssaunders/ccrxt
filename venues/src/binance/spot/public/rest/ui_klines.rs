@@ -1,7 +1,7 @@
 use rust_decimal::Decimal;
 use serde::Serialize;
 
-use super::client::RestClient;
+use crate::binance::spot::PublicRestClient as RestClient;
 use crate::binance::spot::RestResult;
 
 const UI_KLINES_ENDPOINT: &str = "/api/v3/uiKlines";

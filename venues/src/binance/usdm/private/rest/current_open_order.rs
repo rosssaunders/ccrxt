@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
+use crate::binance::usdm::PrivateRestClient as RestClient;
 use crate::binance::usdm::{RestResult, enums::*};
 
 const CURRENT_OPEN_ORDER_ENDPOINT: &str = "/fapi/v1/openOrder";
@@ -122,7 +122,7 @@ pub struct CurrentOpenOrderResponse {
     pub price_rate: Option<String>,
 }
 
-impl UsdmClient {
+impl RestClient {
     /// Query Current Open Order (USER_DATA)
     ///
     /// Check an order's status. Either `orderId` or `origClientOrderId` must be sent.

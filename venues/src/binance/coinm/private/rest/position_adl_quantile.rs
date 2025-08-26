@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::binance::coinm::{RestResult, private::rest::client::RestClient};
+use super::{RestClient, RestResult};
 
 const ADL_QUANTILE_ENDPOINT: &str = "/dapi/v1/adlQuantile";
 

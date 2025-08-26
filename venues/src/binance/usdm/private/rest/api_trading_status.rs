@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
+use crate::binance::usdm::PrivateRestClient as RestClient;
 use crate::binance::usdm::RestResult;
 
 const API_TRADING_STATUS_ENDPOINT: &str = "/fapi/v1/apiTradingStatus";
@@ -53,7 +53,7 @@ pub struct ApiTradingStatusResponse {
     pub update_time: u64,
 }
 
-impl UsdmClient {
+impl RestClient {
     /// Futures Trading Quantitative Rules Indicators
     ///
     /// Retrieves the quantitative rules indicators for the account or a specific symbol.

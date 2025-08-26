@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
+use crate::binance::usdm::PrivateRestClient as RestClient;
 use crate::binance::usdm::RestResult;
 
 /// Endpoint path for the user commission rate API.
@@ -37,7 +37,7 @@ pub struct CommissionRateResponse {
     pub taker_commission_rate: String,
 }
 
-impl UsdmClient {
+impl RestClient {
     /// User Commission Rate (USER_DATA)
     ///
     /// Get User Commission Rate.

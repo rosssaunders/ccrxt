@@ -2,7 +2,7 @@ use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
 
-use super::RestClient;
+use crate::binance::usdm::PublicRestClient as RestClient;
 use crate::binance::usdm::{RestResult, enums::Period};
 
 const TOP_LONG_SHORT_ACCOUNT_RATIO_ENDPOINT: &str = "/futures/data/topLongShortAccountRatio";

@@ -1,12 +1,9 @@
 use serde::{Deserialize, Serialize};
 
-use crate::binance::coinm::{
-    RestResult,
-    enums::{
-        OrderSide, OrderStatus, OrderType, PriceMatch, SelfTradePreventionMode, TimeInForce,
-        WorkingType,
-    },
-    private::rest::client::RestClient,
+use super::{RestClient, RestResult};
+use crate::binance::coinm::enums::{
+    OrderSide, OrderStatus, OrderType, PriceMatch, SelfTradePreventionMode, TimeInForce,
+    WorkingType,
 };
 
 const ORDER_ENDPOINT: &str = "/dapi/v1/order";

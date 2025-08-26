@@ -1,11 +1,8 @@
-// REST client for Binance USD-M public endpoints.
-//
-// Provides access to all public REST API endpoints for Binance USD-M Futures.
-// All requests are unauthenticated and do not require API credentials.
+use std::time::Instant;
 
 use crate::binance::{
-    shared::{Errors as SharedErrors, RestResponse, client::PublicBinanceClient},
-    usdm::Errors,
+    usdm::{Errors, RestResult},
+    shared::{Errors as SharedErrors, client::PublicBinanceClient},
 };
 
 pub struct UsdmPublicRestClient(PublicBinanceClient);
@@ -33,19 +30,21 @@ impl UsdmPublicRestClient {
     }
 
     /// Send GET request - optimized for query parameters
-    pub async fn send_get_request<T, R>(
+    pub async fn send_get_request<Req, Resp>(
         &self,
         endpoint: &str,
-        params: Option<R>,
+        params: Option<Req>,
         weight: u32,
-    ) -> Result<RestResponse<T>, Errors>
+    ) -> RestResult<Resp>
     where
-        T: serde::de::DeserializeOwned + Send + 'static,
-        R: serde::Serialize,
+        Req: serde::ser::Serialize,
+        Resp: serde::de::DeserializeOwned + Send + 'static,
     {
+        let _start = Instant::now();
+
         let shared_response = self
             .0
-            .send_public_get::<T, R, SharedErrors>(endpoint, params, weight)
+            .send_public_get::<Resp, Req, SharedErrors>(endpoint, params, weight)
             .await
             .map_err(|e| match e {
                 SharedErrors::ApiError(_) => Errors::Error("API error occurred".to_string()),
@@ -64,20 +63,22 @@ impl UsdmPublicRestClient {
         Ok(shared_response)
     }
 
-    /// Send POST request - placeholder for public POST endpoints if any
-    pub async fn send_post_request<T, R>(
+    /// Send POST request - placeholder for venues with public POST endpoints
+    pub async fn send_post_request<Req, Resp>(
         &self,
         endpoint: &str,
-        params: Option<R>,
+        params: Option<Req>,
         weight: u32,
-    ) -> Result<RestResponse<T>, Errors>
+    ) -> RestResult<Resp>
     where
-        T: serde::de::DeserializeOwned + Send + 'static,
-        R: serde::Serialize,
+        Req: serde::ser::Serialize,
+        Resp: serde::de::DeserializeOwned + Send + 'static,
     {
+        let _start = Instant::now();
+
         let shared_response = self
             .0
-            .send_public_post::<T, R, SharedErrors>(endpoint, params, weight)
+            .send_public_post::<Resp, Req, SharedErrors>(endpoint, params, weight)
             .await
             .map_err(|e| match e {
                 SharedErrors::ApiError(_) => Errors::Error("API error occurred".to_string()),
@@ -96,20 +97,22 @@ impl UsdmPublicRestClient {
         Ok(shared_response)
     }
 
-    /// Send DELETE request - placeholder for public DELETE endpoints if any
-    pub async fn send_delete_request<T, R>(
+    /// Send PUT request - placeholder for venues with public PUT endpoints
+    pub async fn send_put_request<Req, Resp>(
         &self,
         endpoint: &str,
-        params: Option<R>,
+        params: Option<Req>,
         weight: u32,
-    ) -> Result<RestResponse<T>, Errors>
+    ) -> RestResult<Resp>
     where
-        T: serde::de::DeserializeOwned + Send + 'static,
-        R: serde::Serialize,
+        Req: serde::ser::Serialize,
+        Resp: serde::de::DeserializeOwned + Send + 'static,
     {
+        let _start = Instant::now();
+
         let shared_response = self
             .0
-            .send_public_delete::<T, R, SharedErrors>(endpoint, params, weight)
+            .send_public_put::<Resp, Req, SharedErrors>(endpoint, params, weight)
             .await
             .map_err(|e| match e {
                 SharedErrors::ApiError(_) => Errors::Error("API error occurred".to_string()),
@@ -128,22 +131,22 @@ impl UsdmPublicRestClient {
         Ok(shared_response)
     }
 
-    /// Send a request with API key only (no signature) - for MARKET_DATA security type endpoints
-    pub async fn send_api_key_get_request<T, R>(
+    /// Send DELETE request - placeholder for venues with public DELETE endpoints
+    pub async fn send_delete_request<Req, Resp>(
         &self,
         endpoint: &str,
-        api_key: &dyn rest::secrets::ExposableSecret,
-        params: Option<R>,
+        params: Option<Req>,
         weight: u32,
-    ) -> Result<RestResponse<T>, Errors>
+    ) -> RestResult<Resp>
     where
-        T: serde::de::DeserializeOwned + Send + 'static,
-        R: serde::Serialize,
+        Req: serde::ser::Serialize,
+        Resp: serde::de::DeserializeOwned + Send + 'static,
     {
-        // Call the shared client's API-key GET wrapper
+        let _start = Instant::now();
+
         let shared_response = self
             .0
-            .send_api_key_get::<T, R, SharedErrors>(endpoint, api_key, params, weight)
+            .send_public_delete::<Resp, Req, SharedErrors>(endpoint, params, weight)
             .await
             .map_err(|e| match e {
                 SharedErrors::ApiError(_) => Errors::Error("API error occurred".to_string()),
@@ -159,7 +162,40 @@ impl UsdmPublicRestClient {
                 SharedErrors::Error(msg) => Errors::Error(msg),
             })?;
 
-        // Return the shared RestResponse directly
+        Ok(shared_response)
+    }
+
+    /// Send PATCH request - placeholder for venues with public PATCH endpoints
+    pub async fn send_patch_request<Req, Resp>(
+        &self,
+        endpoint: &str,
+        params: Option<Req>,
+        weight: u32,
+    ) -> RestResult<Resp>
+    where
+        Req: serde::ser::Serialize,
+        Resp: serde::de::DeserializeOwned + Send + 'static,
+    {
+        let _start = Instant::now();
+
+        let shared_response = self
+            .0
+            .send_public_patch::<Resp, Req, SharedErrors>(endpoint, params, weight)
+            .await
+            .map_err(|e| match e {
+                SharedErrors::ApiError(_) => Errors::Error("API error occurred".to_string()),
+                SharedErrors::RateLimitExceeded { retry_after } => Errors::Error(format!(
+                    "Rate limit exceeded, retry after {:?}",
+                    retry_after
+                )),
+                SharedErrors::InvalidApiKey() => Errors::InvalidApiKey(),
+                SharedErrors::HttpError(err) => Errors::HttpError(err),
+                SharedErrors::SerializationError(msg) => {
+                    Errors::Error(format!("Serialization error: {}", msg))
+                }
+                SharedErrors::Error(msg) => Errors::Error(msg),
+            })?;
+
         Ok(shared_response)
     }
 }

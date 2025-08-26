@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use crate::binance::coinm::{RestResult, enums::KlineInterval, public::rest::RestClient};
+use super::{RestClient, RestResult};
+use crate::binance::coinm::enums::KlineInterval;
 
 const INDEX_PRICE_KLINES_ENDPOINT: &str = "/dapi/v1/indexPriceKlines";
 

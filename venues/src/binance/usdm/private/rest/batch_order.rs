@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
+use crate::binance::usdm::PrivateRestClient as RestClient;
 use crate::binance::usdm::{
     OrderStatus, PriceMatch, RestResult, SelfTradePreventionMode,
     enums::{NewOrderRespType, OrderSide, OrderType, PositionSide, TimeInForce, WorkingType},
@@ -195,7 +195,7 @@ pub struct BatchOrderResponse {
     pub orig_type: Option<OrderType>,
 }
 
-impl UsdmClient {
+impl RestClient {
     /// Place Multiple Orders
     ///
     /// Places multiple orders in a single batch for USDM futures.

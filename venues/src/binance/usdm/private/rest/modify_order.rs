@@ -2,7 +2,7 @@ use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
+use crate::binance::usdm::PrivateRestClient as RestClient;
 use crate::binance::usdm::{RestResult, enums::*};
 
 /// Endpoint path for modifying an order on Binance USDM Futures.
@@ -127,7 +127,7 @@ pub struct ModifyOrderResponse {
     pub update_time: u64,
 }
 
-impl UsdmClient {
+impl RestClient {
     /// Modify Order
     ///
     /// Modifies an existing order on Binance USDM Futures.

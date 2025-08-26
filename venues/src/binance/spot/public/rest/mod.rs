@@ -3,7 +3,6 @@
 //! This module provides access to all public endpoints for the Binance Spot API,
 //! including market data, trading information, and exchange details.
 
-pub mod client;
 
 // Core endpoints
 pub mod exchange_info;
@@ -29,7 +28,6 @@ pub mod ticker_trading_day;
 // Re-export all request types for integration tests
 pub use agg_trades::AggTradesRequest;
 pub use avg_price::AvgPriceRequest;
-pub use client::RestClient;
 pub use depth::DepthRequest;
 pub use exchange_info::ExchangeInfoRequest;
 pub use historical_trades::HistoricalTradesRequest;

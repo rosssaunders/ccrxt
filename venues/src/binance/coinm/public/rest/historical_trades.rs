@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::binance::coinm::{RestResult, public::rest::RestClient};
+use super::{RestClient, RestResult};
 
 const HISTORICAL_TRADES_ENDPOINT: &str = "/dapi/v1/historicalTrades";
 

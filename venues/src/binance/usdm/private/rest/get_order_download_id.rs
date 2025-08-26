@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
+use crate::binance::usdm::PrivateRestClient as RestClient;
 use crate::binance::usdm::RestResult;
 
 const GET_ORDER_DOWNLOAD_ID_ENDPOINT: &str = "/fapi/v1/order/asyn";
@@ -90,7 +90,7 @@ pub struct GetOrderDownloadLinkByIdResponse {
     pub is_expired: Option<bool>,
 }
 
-impl UsdmClient {
+impl RestClient {
     /// Get Download Id For Order History (USER_DATA)
     ///
     /// Get download id for order history.

@@ -5,8 +5,13 @@
 
 use std::time::Duration;
 
-pub mod errors;
-pub mod rate_limit;
+mod enums;
+mod errors;
+mod private;
+mod private_client;
+mod public;
+mod public_client;
+mod rate_limit;
 
 pub use errors::*;
 pub use rate_limit::{
@@ -16,21 +21,15 @@ pub use rate_limit::{
 
 use crate::binance::shared::venue_trait::{RateLimits, VenueConfig};
 
-mod enums;
-
 // Re-export enums for public use
 pub use enums::*;
 
 // Re-export compatible enums from coinm where appropriate
 pub use crate::binance::coinm::{KlineInterval, OrderResponseType, OrderSide, TimeInForce};
 
-// Public module
-pub mod public;
-
+pub use private_client::RestClient as PrivateRestClient;
 pub use public::PublicRestClient;
-
-// Private module
-pub mod private;
+pub use public_client::RestClient as PublicRestClient;
 
 pub type OptionsClient = crate::binance::shared::client::PrivateBinanceClient;
 
@@ -53,10 +52,6 @@ impl VenueConfig for OptionsConfig {
         "https://eapi.binance.com"
     }
 
-    fn venue_name(&self) -> &str {
-        "options"
-    }
-
     fn rate_limits(&self) -> RateLimits {
         RateLimits {
             request_weight_limit: 6000,
@@ -67,18 +62,6 @@ impl VenueConfig for OptionsConfig {
             orders_minute_limit: 1200,
             orders_day_limit: None,
         }
-    }
-
-    fn supports_futures(&self) -> bool {
-        false
-    }
-
-    fn supports_options(&self) -> bool {
-        true
-    }
-
-    fn supports_margin(&self) -> bool {
-        false
     }
 }
 

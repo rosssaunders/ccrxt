@@ -1,7 +1,7 @@
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
-use crate::binance::coinm::{RestResult, public::rest::RestClient};
+use super::{RestClient, RestResult};
 
 /// Endpoint path for 24hr Ticker Price Change Statistics.
 const TICKER_24HR_ENDPOINT: &str = "/dapi/v1/ticker/24hr";

@@ -1,7 +1,7 @@
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
+use crate::binance::options::PrivateRestClient as RestClient;
 use crate::binance::options::{OptionsContractType, OptionsOrderSide, RestResult};
 
 const GET_USER_TRADES_ENDPOINT: &str = "/eapi/v1/userTrades";

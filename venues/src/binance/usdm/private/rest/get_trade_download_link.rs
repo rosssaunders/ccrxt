@@ -2,7 +2,7 @@
 
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
+use crate::binance::usdm::PrivateRestClient as RestClient;
 use crate::binance::usdm::RestResult;
 
 /// Endpoint path for Get Futures Trade Download Link by Id.
@@ -69,7 +69,7 @@ pub struct TradeDownloadLinkResponse {
     pub is_expired: Option<bool>,
 }
 
-impl UsdmClient {
+impl RestClient {
     /// Get Futures Trade Download Link by Id
     ///
     /// Retrieves the download link for futures trade history using the previously obtained download ID.

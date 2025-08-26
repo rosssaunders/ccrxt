@@ -3,11 +3,8 @@ use std::borrow::Cow;
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
-use crate::binance::coinm::{
-    RestResult,
-    enums::{ContractTypeFilter, Period},
-    public::rest::RestClient,
-};
+use super::{RestClient, RestResult};
+use crate::binance::coinm::enums::{ContractTypeFilter, Period};
 
 /// Endpoint path for Open Interest Statistics.
 const OPEN_INTEREST_HIST_ENDPOINT: &str = "/futures/data/openInterestHist";

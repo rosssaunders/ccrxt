@@ -2,7 +2,7 @@
 
 use serde::Serialize;
 
-use super::UsdmClient;
+use crate::binance::usdm::PrivateRestClient as RestClient;
 use crate::binance::usdm::{RestResult, enums::PositionMode};
 
 /// Endpoint path for changing position mode.
@@ -36,7 +36,7 @@ pub struct ChangePositionModeRequest {
     pub timestamp: u64,
 }
 
-impl UsdmClient {
+impl RestClient {
     /// Change Position Mode (TRADE)
     ///
     /// Changes the user's position mode (Hedge Mode or One-way Mode) for all symbols.

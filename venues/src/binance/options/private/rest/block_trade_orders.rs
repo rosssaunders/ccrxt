@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use super::client::RestClient;
+use crate::binance::options::PrivateRestClient as RestClient;
 // Re-export the shared response type
 pub use super::create_block_trade::BlockTradeOrderResponse;
 use crate::binance::options::RestResult;

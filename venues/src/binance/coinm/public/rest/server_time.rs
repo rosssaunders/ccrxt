@@ -1,6 +1,6 @@
 use serde::Deserialize;
 
-use crate::binance::coinm::{RestResult, public::rest::RestClient};
+use super::{RestClient, RestResult};
 
 /// Endpoint path for the server time API.
 const SERVER_TIME_ENDPOINT: &str = "/dapi/v1/time";

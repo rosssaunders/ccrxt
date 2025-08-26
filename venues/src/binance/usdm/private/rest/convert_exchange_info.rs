@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
+use crate::binance::usdm::PrivateRestClient as RestClient;
 use crate::binance::usdm::RestResult;
 
 const CONVERT_EXCHANGE_INFO_ENDPOINT: &str = "/fapi/v1/convert/exchangeInfo";
@@ -55,7 +55,7 @@ pub struct ConvertExchangeInfo {
 #[serde(transparent)]
 pub struct ConvertExchangeInfoResponse(pub Vec<ConvertExchangeInfo>);
 
-impl UsdmClient {
+impl RestClient {
     /// List All Convert Pairs
     ///
     /// Query for all convertible token pairs and the tokens' respective upper/lower limits.

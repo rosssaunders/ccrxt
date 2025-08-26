@@ -1,6 +1,6 @@
 use serde::Deserialize;
 
-use super::client::RestClient;
+use crate::binance::options::PublicRestClient as RestClient;
 use crate::binance::options::RestResult;
 
 const TIME_ENDPOINT: &str = "/eapi/v1/time";

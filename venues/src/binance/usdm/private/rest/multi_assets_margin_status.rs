@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
+use crate::binance::usdm::PrivateRestClient as RestClient;
 use crate::binance::usdm::RestResult;
 
 /// Endpoint path for getting current multi-assets mode status.
@@ -35,7 +35,7 @@ pub struct MultiAssetsMarginStatusResponse {
     pub multi_assets_margin: bool,
 }
 
-impl UsdmClient {
+impl RestClient {
     /// Get Current Multi-Assets Mode
     ///
     /// Check user's Multi-Assets mode (Multi-Assets Mode or Single-Asset Mode) on every symbol.

@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use crate::binance::coinm::{MarginType, RestResult, private::rest::client::RestClient};
+use super::{RestClient, RestResult};
+use crate::binance::coinm::MarginType;
 
 const MARGIN_TYPE_ENDPOINT: &str = "/dapi/v1/marginType";
 

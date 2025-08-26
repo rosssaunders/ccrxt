@@ -1,8 +1,8 @@
 use serde::{Deserialize, Serialize};
 
+use super::{RestClient, RestResult};
 use crate::binance::coinm::{
-    AutoCloseType, OrderSide, OrderStatus, OrderType, PositionSide, RestResult, TimeInForce,
-    WorkingType, private::rest::client::RestClient,
+    AutoCloseType, OrderSide, OrderStatus, OrderType, PositionSide, TimeInForce, WorkingType,
 };
 
 const FORCE_ORDERS_ENDPOINT: &str = "/dapi/v1/forceOrders";

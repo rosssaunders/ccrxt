@@ -1,30 +1,30 @@
-use std::{borrow::Cow, sync::Arc};
+use std::{borrow::Cow, sync::Arc, time::Instant};
 
 use rest::HttpClient;
 use serde::Serialize;
 
 use crate::binance::{
+    spot::{SpotConfig, Errors, ResponseHeaders, RestResponse, RestResult},
     shared::{
-        Errors as SharedErrors, RestResponse, client::PrivateBinanceClient,
-        credentials::Credentials, rate_limiter::RateLimiter, venue_trait::VenueConfig,
+        Errors as SharedErrors, client::PrivateBinanceClient, credentials::Credentials,
+        rate_limiter::RateLimiter, venue_trait::VenueConfig,
     },
-    usdm::{Errors, UsdmConfig},
 };
 
-pub struct UsdmPrivateRestClient(PrivateBinanceClient);
+pub struct SpotRestClient(PrivateBinanceClient);
 
-pub type UsdmClient = UsdmPrivateRestClient;
+pub type RestClient = SpotRestClient;
 
-impl From<PrivateBinanceClient> for UsdmPrivateRestClient {
+impl From<PrivateBinanceClient> for SpotRestClient {
     fn from(client: PrivateBinanceClient) -> Self {
-        UsdmPrivateRestClient(client)
+        SpotRestClient(client)
     }
 }
 
-impl UsdmPrivateRestClient {
-    /// Create a new UsdmPrivateRestClient with credentials and HTTP client
+impl SpotRestClient {
+    /// Create a new SpotRestClient with credentials and HTTP client
     ///
-    /// Creates a new private REST client for Binance USD-M Futures using the provided credentials
+    /// Creates a new private REST client for Binance Spot using the provided credentials
     /// and HTTP client implementation.
     ///
     /// # Arguments
@@ -32,7 +32,7 @@ impl UsdmPrivateRestClient {
     /// * `http_client` - HTTP client implementation to use for requests
     ///
     /// # Returns
-    /// A new `UsdmPrivateRestClient` instance configured for USD-M Futures trading
+    /// A new `SpotRestClient` instance configured for Spot trading
     ///
     /// # Example
     /// ```no_run
@@ -40,7 +40,7 @@ impl UsdmPrivateRestClient {
     /// use rest::{secrets::SecretString, HttpClient};
     /// // Use public re-exports instead of private module paths
     /// use venues::binance::shared::credentials::Credentials;
-    /// use venues::binance::usdm::PrivateRestClient as UsdmClient;
+    /// use venues::binance::spot::PrivateRestClient as RestClient;
     ///
     /// # #[derive(Debug)]
     /// # struct MyHttpClient;
@@ -57,10 +57,10 @@ impl UsdmPrivateRestClient {
     /// };
     ///
     /// let http_client: Arc<dyn HttpClient> = Arc::new(MyHttpClient);
-    /// let client = UsdmClient::new(credentials, http_client);
+    /// let client = RestClient::new(credentials, http_client);
     /// ```
     pub fn new(credentials: Credentials, http_client: Arc<dyn HttpClient>) -> Self {
-        let config = UsdmConfig;
+        let config = SpotConfig;
         let rate_limiter = RateLimiter::new(config.rate_limits());
 
         let private_client = PrivateBinanceClient::new(
@@ -71,20 +71,22 @@ impl UsdmPrivateRestClient {
             Box::new(credentials.api_secret.clone()),
         );
 
-        UsdmPrivateRestClient(private_client)
+        SpotRestClient(private_client)
     }
-    /// Send a signed GET request with usdm-specific response type (high-performance)
+    /// Send a signed GET request with spot-specific response type (high-performance)
     pub async fn send_get_signed_request<T, R>(
         &self,
         endpoint: &str,
         params: R,
         weight: u32,
         is_order: bool,
-    ) -> Result<RestResponse<T>, Errors>
+    ) -> RestResult<T>
     where
         T: serde::de::DeserializeOwned + Send + 'static,
         R: Serialize,
     {
+        let start = Instant::now();
+
         // Call the shared client's high-performance GET function
         let shared_response = PrivateBinanceClient::send_get_signed_request::<T, R, SharedErrors>(
             &self.0, endpoint, params, weight, is_order,
@@ -96,30 +98,37 @@ impl UsdmPrivateRestClient {
                 "Rate limit exceeded, retry after {:?}",
                 retry_after
             )),
-            SharedErrors::InvalidApiKey() => Errors::InvalidApiKey(),
-            SharedErrors::HttpError(err) => Errors::HttpError(err),
+            SharedErrors::HttpError(msg) => Errors::Error(format!("HTTP error: {msg}")),
+            SharedErrors::InvalidApiKey() => Errors::Error("Invalid API key".to_string()),
             SharedErrors::SerializationError(msg) => {
-                Errors::Error(format!("Serialization error: {}", msg))
+                Errors::Error(format!("Serialization error: {msg}"))
             }
             SharedErrors::Error(msg) => Errors::Error(msg),
         })?;
 
-        // Return the shared RestResponse directly
-        Ok(shared_response)
+        let duration = start.elapsed();
+        tracing::debug!("Request to {endpoint} took {duration:?}");
+
+        Ok(RestResponse {
+            data: shared_response.data,
+            headers: ResponseHeaders::default(), // TODO: Convert headers properly
+        })
     }
 
-    /// Send a signed POST request with usdm-specific response type (high-performance)
+    /// Send a signed POST request with spot-specific response type (high-performance)
     pub async fn send_post_signed_request<T, R>(
         &self,
         endpoint: &str,
         params: R,
         weight: u32,
         is_order: bool,
-    ) -> Result<RestResponse<T>, Errors>
+    ) -> RestResult<T>
     where
         T: serde::de::DeserializeOwned + Send + 'static,
         R: Serialize,
     {
+        let start = Instant::now();
+
         // Call the shared client's high-performance POST function
         let shared_response = PrivateBinanceClient::send_post_signed_request::<T, R, SharedErrors>(
             &self.0, endpoint, params, weight, is_order,
@@ -131,30 +140,37 @@ impl UsdmPrivateRestClient {
                 "Rate limit exceeded, retry after {:?}",
                 retry_after
             )),
-            SharedErrors::InvalidApiKey() => Errors::InvalidApiKey(),
-            SharedErrors::HttpError(err) => Errors::HttpError(err),
+            SharedErrors::HttpError(msg) => Errors::Error(format!("HTTP error: {msg}")),
+            SharedErrors::InvalidApiKey() => Errors::Error("Invalid API key".to_string()),
             SharedErrors::SerializationError(msg) => {
-                Errors::Error(format!("Serialization error: {}", msg))
+                Errors::Error(format!("Serialization error: {msg}"))
             }
             SharedErrors::Error(msg) => Errors::Error(msg),
         })?;
 
-        // Return the shared RestResponse directly
-        Ok(shared_response)
+        let duration = start.elapsed();
+        tracing::debug!("Request to {endpoint} took {duration:?}");
+
+        Ok(RestResponse {
+            data: shared_response.data,
+            headers: ResponseHeaders::default(), // TODO: Convert headers properly
+        })
     }
 
-    /// Send a signed PUT request with usdm-specific response type (high-performance)
+    /// Send a signed PUT request with spot-specific response type (high-performance)
     pub async fn send_put_signed_request<T, R>(
         &self,
         endpoint: &str,
         params: R,
         weight: u32,
         is_order: bool,
-    ) -> Result<RestResponse<T>, Errors>
+    ) -> RestResult<T>
     where
         T: serde::de::DeserializeOwned + Send + 'static,
         R: Serialize,
     {
+        let start = Instant::now();
+
         // Call the shared client's high-performance PUT function
         let shared_response = PrivateBinanceClient::send_put_signed_request::<T, R, SharedErrors>(
             &self.0, endpoint, params, weight, is_order,
@@ -166,30 +182,37 @@ impl UsdmPrivateRestClient {
                 "Rate limit exceeded, retry after {:?}",
                 retry_after
             )),
-            SharedErrors::InvalidApiKey() => Errors::InvalidApiKey(),
-            SharedErrors::HttpError(err) => Errors::HttpError(err),
+            SharedErrors::HttpError(msg) => Errors::Error(format!("HTTP error: {msg}")),
+            SharedErrors::InvalidApiKey() => Errors::Error("Invalid API key".to_string()),
             SharedErrors::SerializationError(msg) => {
-                Errors::Error(format!("Serialization error: {}", msg))
+                Errors::Error(format!("Serialization error: {msg}"))
             }
             SharedErrors::Error(msg) => Errors::Error(msg),
         })?;
 
-        // Return the shared RestResponse directly
-        Ok(shared_response)
+        let duration = start.elapsed();
+        tracing::debug!("Request to {endpoint} took {duration:?}");
+
+        Ok(RestResponse {
+            data: shared_response.data,
+            headers: ResponseHeaders::default(), // TODO: Convert headers properly
+        })
     }
 
-    /// Send a signed DELETE request with usdm-specific response type (high-performance)
+    /// Send a signed DELETE request with spot-specific response type (high-performance)
     pub async fn send_delete_signed_request<T, R>(
         &self,
         endpoint: &str,
         params: R,
         weight: u32,
         is_order: bool,
-    ) -> Result<RestResponse<T>, Errors>
+    ) -> RestResult<T>
     where
         T: serde::de::DeserializeOwned + Send + 'static,
         R: Serialize,
     {
+        let start = Instant::now();
+
         // Call the shared client's high-performance DELETE function
         let shared_response =
             PrivateBinanceClient::send_delete_signed_request::<T, R, SharedErrors>(
@@ -202,18 +225,26 @@ impl UsdmPrivateRestClient {
                     "Rate limit exceeded, retry after {:?}",
                     retry_after
                 )),
-                SharedErrors::InvalidApiKey() => Errors::InvalidApiKey(),
-                SharedErrors::HttpError(err) => Errors::HttpError(err),
+                SharedErrors::HttpError(msg) => Errors::Error(format!("HTTP error: {msg}")),
+                SharedErrors::InvalidApiKey() => Errors::Error("Invalid API key".to_string()),
                 SharedErrors::SerializationError(msg) => {
-                    Errors::Error(format!("Serialization error: {}", msg))
+                    Errors::Error(format!("Serialization error: {msg}"))
                 }
                 SharedErrors::Error(msg) => Errors::Error(msg),
             })?;
 
-        // Return the shared RestResponse directly
-        Ok(shared_response)
+        let duration = start.elapsed();
+        tracing::debug!("Request to {endpoint} took {duration:?}");
+
+        Ok(RestResponse {
+            data: shared_response.data,
+            headers: ResponseHeaders::default(), // TODO: Convert headers properly
+        })
     }
 
+    /// ⚠️ DEPRECATED: Use verb-specific functions instead for better performance
+    ///
+    /// This function remains for backward compatibility but creates branch prediction penalties.
     /// Use send_get_signed_request, send_post_signed_request, etc. instead.
     #[deprecated(
         note = "Use verb-specific functions (send_get_signed_request, send_post_signed_request, etc.) for better performance"
@@ -225,7 +256,7 @@ impl UsdmPrivateRestClient {
         params: R,
         weight: u32,
         is_order: bool,
-    ) -> Result<RestResponse<T>, Errors>
+    ) -> RestResult<T>
     where
         T: serde::de::DeserializeOwned + Send + 'static,
         R: Serialize,

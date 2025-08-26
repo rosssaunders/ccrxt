@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
+use crate::binance::usdm::PrivateRestClient as RestClient;
 use crate::binance::usdm::RestResult;
 
 /// Endpoint path for getting download ID for futures transaction history.
@@ -43,7 +43,7 @@ pub struct GetIncomeDownloadIdResponse {
     pub download_id: String,
 }
 
-impl UsdmClient {
+impl RestClient {
     /// Get Download Id For Futures Transaction History (USER_DATA)
     ///
     /// Retrieves a download ID for futures transaction history.

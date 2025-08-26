@@ -2,7 +2,7 @@ use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
+use crate::binance::usdm::PrivateRestClient as RestClient;
 use crate::binance::usdm::{
     RestResult,
     enums::{AutoCloseType, OrderSide, OrderStatus, OrderType, TimeInForce},
@@ -125,7 +125,7 @@ pub struct ForceOrder {
     pub auto_close_type: AutoCloseType,
 }
 
-impl UsdmClient {
+impl RestClient {
     /// User's Force Orders (USER_DATA)
     ///
     /// Query user's Force Orders (liquidation and ADL orders).

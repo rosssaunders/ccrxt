@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
+use crate::binance::usdm::PrivateRestClient as RestClient;
 use crate::binance::usdm::{RestResult, enums::*};
 
 /// Endpoint path for Position Information V2.
@@ -75,7 +75,7 @@ pub struct PositionRisk {
     pub update_time: u64,
 }
 
-impl UsdmClient {
+impl RestClient {
     /// Position Information V2
     ///
     /// Retrieves position risk information for a symbol or all positions on Binance USDM Futures.

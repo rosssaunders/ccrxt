@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::binance::coinm::{RestResult, public::rest::RestClient};
+use super::{RestClient, RestResult};
 
 /// Endpoint path for querying premium index.
 const PREMIUM_INDEX_ENDPOINT: &str = "/dapi/v1/premiumIndex";

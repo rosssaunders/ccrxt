@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use crate::binance::coinm::{RestResult, enums::IncomeType, private::rest::client::RestClient};
+use super::{RestClient, RestResult};
+use crate::binance::coinm::enums::IncomeType;
 
 const INCOME_ENDPOINT: &str = "/dapi/v1/income";
 

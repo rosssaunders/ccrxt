@@ -2,11 +2,13 @@ use std::time::Duration;
 
 mod enums;
 mod errors;
+mod private_client;
+mod public_client;
 mod rate_limit;
 
 // Re-export modules for new structure
-pub mod public {
-    pub mod rest;
+mod public {
+    mod rest;
     pub use self::rest::*;
 }
 
@@ -14,14 +16,14 @@ mod private {
     mod rest;
     // Re-export RestClient so it can be re-exported by the parent
     pub use self::rest::{
-        RestClient as PrivateRestClient, account::*, account_trades::*, all_orders::*,
-        auto_cancel_all_open_orders::*, batch_order::*, cancel_all_open_orders::*, cancel_order::*,
-        change_initial_leverage::*, change_margin_type::*, change_position_mode::*,
-        create_listen_key::*, delete_listen_key::*, extend_listen_key::*, force_orders::*,
-        futures_account_balance::*, get_current_position_mode::*,
-        get_transaction_history_download_id::*, get_transaction_history_download_link::*,
-        income_history::*, modify_isolated_position_margin::*, modify_multiple_orders::*,
-        modify_order::*, notional_brackets::*, open_orders::*, order::*, order_modify_history::*,
+        account::*, account_trades::*, all_orders::*, auto_cancel_all_open_orders::*,
+        batch_order::*, cancel_all_open_orders::*, cancel_order::*, change_initial_leverage::*,
+        change_margin_type::*, change_position_mode::*, create_listen_key::*, delete_listen_key::*,
+        extend_listen_key::*, force_orders::*, futures_account_balance::*,
+        get_current_position_mode::*, get_transaction_history_download_id::*,
+        get_transaction_history_download_link::*, income_history::*,
+        modify_isolated_position_margin::*, modify_multiple_orders::*, modify_order::*,
+        notional_brackets::*, open_orders::*, order::*, order_modify_history::*,
         position_adl_quantile::*, position_margin_change_history::*, position_risk::*,
         query_current_open_order::*, query_order::*, user_commission_rate::*,
     };
@@ -35,6 +37,8 @@ pub use public::*;
 pub use rate_limit::{RateLimitHeader, RateLimiter};
 
 pub use crate::binance::coinm::errors::ErrorResponse;
+pub use private_client::RestClient as PrivateRestClient;
+pub use public_client::RestClient as PublicRestClient;
 
 /// Represents the relevant response headers returned by the Binance API for rate limiting and order tracking.
 ///
@@ -65,12 +69,6 @@ pub type RestResult<T> = Result<RestResponse<T>, Errors>;
 /// Type alias for the CoinmClient
 pub type CoinmClient = crate::binance::shared::client::PrivateBinanceClient;
 
-// Type aliases for backwards compatibility with integration tests
-// Note: TopLongShortAccountRatio not available for CoinM futures
-pub use OpenInterestHistRequest as OpenInterestHistParams;
-pub use TakerBuySellVolRequest as TakerBuySellVolParams;
-pub use TopLongShortPositionRatioRequest as TopLongShortPositionRatioParams;
-
 use crate::binance::shared::venue_trait::{RateLimits, VenueConfig};
 
 /// Coin-Margined Futures venue configuration
@@ -79,9 +77,6 @@ pub struct CoinmConfig;
 impl VenueConfig for CoinmConfig {
     fn base_url(&self) -> &str {
         "https://dapi.binance.com"
-    }
-    fn venue_name(&self) -> &str {
-        "coinm"
     }
     fn rate_limits(&self) -> RateLimits {
         RateLimits {
@@ -93,14 +88,5 @@ impl VenueConfig for CoinmConfig {
             orders_minute_limit: 1200,
             orders_day_limit: None,
         }
-    }
-    fn supports_futures(&self) -> bool {
-        true
-    }
-    fn supports_options(&self) -> bool {
-        false
-    }
-    fn supports_margin(&self) -> bool {
-        false
     }
 }

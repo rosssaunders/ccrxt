@@ -2,7 +2,7 @@ use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
+use crate::binance::usdm::PrivateRestClient as RestClient;
 use crate::binance::usdm::{
     RestResult,
     enums::{OrderSide, OrderStatus, OrderType, PositionSide, TimeInForce},
@@ -89,7 +89,7 @@ pub struct CancelOrderResponse {
 /// Endpoint path for cancelling an order.
 const CANCEL_ORDER_ENDPOINT: &str = "/fapi/v1/order";
 
-impl UsdmClient {
+impl RestClient {
     /// Cancel Order
     ///
     /// Cancels an existing order on Binance USDM Futures.

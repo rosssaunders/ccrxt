@@ -2,7 +2,7 @@ use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
+use crate::binance::usdm::PrivateRestClient as RestClient;
 use crate::binance::usdm::{
     RestResult,
     enums::{OrderSide, OrderStatus, OrderType, PositionSide, TimeInForce, WorkingType},
@@ -127,7 +127,7 @@ pub struct OpenOrder {
     pub good_till_date: Option<u64>,
 }
 
-impl UsdmClient {
+impl RestClient {
     /// Current All Open Orders
     ///
     /// Get all open orders for a symbol, or all symbols if none is specified, on Binance USDM Futures.

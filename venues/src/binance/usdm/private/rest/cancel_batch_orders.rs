@@ -2,7 +2,7 @@ use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
+use crate::binance::usdm::PrivateRestClient as RestClient;
 use crate::binance::usdm::{
     RestResult,
     enums::{
@@ -148,7 +148,7 @@ pub struct CancelBatchOrderSuccess {
     pub good_till_date: Option<u64>,
 }
 
-impl UsdmClient {
+impl RestClient {
     /// Cancel Multiple Orders (TRADE)
     ///
     /// Cancels multiple orders in a single batch for USDM futures.

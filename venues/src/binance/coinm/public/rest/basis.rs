@@ -1,11 +1,8 @@
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
-use crate::binance::coinm::{
-    RestResult,
-    enums::{ContractType, Period},
-    public::rest::RestClient,
-};
+use super::{RestClient, RestResult};
+use crate::binance::coinm::enums::{ContractType, Period};
 
 const BASIS_ENDPOINT: &str = "/futures/data/basis";
 

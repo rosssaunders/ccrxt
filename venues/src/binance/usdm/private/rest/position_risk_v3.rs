@@ -4,7 +4,7 @@ use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
+use crate::binance::usdm::PrivateRestClient as RestClient;
 use crate::binance::usdm::{RestResult, enums::*};
 
 /// Endpoint path for Position Risk V3.
@@ -106,7 +106,7 @@ pub struct PositionRiskV3 {
     pub is_auto_add_margin: bool,
 }
 
-impl UsdmClient {
+impl RestClient {
     /// Position Information V3
     ///
     /// Get current position information (only symbols with position or open orders will be returned).

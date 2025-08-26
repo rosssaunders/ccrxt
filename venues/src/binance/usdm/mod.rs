@@ -43,6 +43,8 @@
 
 mod enums;
 mod errors;
+mod private_client;
+mod public_client;
 mod rate_limit;
 mod request;
 mod signing;
@@ -51,22 +53,21 @@ use std::time::Duration;
 // Re-export modules for new structure
 pub mod public {
     pub mod rest;
-    pub use self::rest::{RestClient as PublicRestClient, exchange_info::*};
+    pub use self::rest::exchange_info::*;
 }
 
 use crate::binance::shared::{RateLimits, VenueConfig};
 
 mod private {
     pub mod rest;
-    // Re-export RestClient so it can be re-exported by the parent
-    pub use self::rest::UsdmClient as PrivateRestClient;
 }
 
 // Only expose RestClient at the usdm level, not via private::rest
 pub use enums::*;
 pub use errors::{ApiError, Errors};
-pub use private::PrivateRestClient;
+pub use private_client::RestClient as PrivateRestClient;
 pub use public::PublicRestClient;
+pub use public_client::RestClient as PublicRestClient;
 pub use rate_limit::{RateLimitHeader, RateLimiter};
 
 pub use crate::binance::usdm::errors::ErrorResponse;
@@ -117,10 +118,6 @@ impl VenueConfig for UsdmConfig {
         "https://fapi.binance.com"
     }
 
-    fn venue_name(&self) -> &str {
-        "usdm"
-    }
-
     fn rate_limits(&self) -> RateLimits {
         RateLimits {
             request_weight_limit: 2400,
@@ -131,18 +128,6 @@ impl VenueConfig for UsdmConfig {
             orders_minute_limit: 1200,
             orders_day_limit: None,
         }
-    }
-
-    fn supports_futures(&self) -> bool {
-        true
-    }
-
-    fn supports_options(&self) -> bool {
-        false
-    }
-
-    fn supports_margin(&self) -> bool {
-        false
     }
 }
 

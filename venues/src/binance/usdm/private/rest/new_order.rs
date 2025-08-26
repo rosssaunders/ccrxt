@@ -2,7 +2,7 @@ use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
+use crate::binance::usdm::PrivateRestClient as RestClient;
 use crate::binance::usdm::{RestResult, enums::*};
 
 const NEW_ORDER_ENDPOINT: &str = "/fapi/v1/order";
@@ -199,7 +199,7 @@ pub struct NewOrderResponse {
     pub working_time: Option<u64>,
 }
 
-impl UsdmClient {
+impl RestClient {
     /// New Order (TRADE)
     ///
     /// Send in a new order.

@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::binance::coinm::{RestResult, private::rest::client::RestClient};
+use super::{RestClient, RestResult};
 
 const POSITION_SIDE_DUAL_ENDPOINT: &str = "/dapi/v1/positionSide/dual";
 

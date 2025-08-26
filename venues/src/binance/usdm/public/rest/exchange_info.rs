@@ -1,7 +1,7 @@
 use serde::{Deserialize, Deserializer, Serialize};
 
 /// Endpoint for Binance USD-M Exchange Information
-use super::RestClient;
+use crate::binance::usdm::PublicRestClient as RestClient;
 use crate::binance::usdm::{
     ContractStatus, ContractType, MarginAsset, OrderType, RestResult, TimeInForce, UnderlyingType,
     rate_limit::{RateLimitInterval, RateLimitType},

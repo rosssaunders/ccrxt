@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
+use crate::binance::usdm::PrivateRestClient as RestClient;
 use crate::binance::usdm::RestResult;
 
 /// Endpoint path for getting BNB burn status.
@@ -34,7 +34,7 @@ pub struct FeeBurnStatusResponse {
     pub fee_burn: bool,
 }
 
-impl UsdmClient {
+impl RestClient {
     /// Get BNB Burn Status (USER_DATA)
     ///
     /// Get user's BNB Fee Discount (Fee Discount On or Fee Discount Off).

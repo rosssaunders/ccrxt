@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
+use crate::binance::usdm::PrivateRestClient as RestClient;
 use crate::binance::usdm::{ConvertOrderStatus, RestResult};
 
 /// Endpoint path for the accept convert quote API.
@@ -37,7 +37,7 @@ pub struct AcceptConvertQuoteResponse {
     pub order_status: ConvertOrderStatus,
 }
 
-impl UsdmClient {
+impl RestClient {
     /// Accept the offered quote (USER_DATA)
     ///
     /// Accept the offered quote by quote ID.

@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
+use crate::binance::usdm::PrivateRestClient as RestClient;
 use crate::binance::usdm::RestResult;
 
 const TOGGLE_FEE_BURN_ENDPOINT: &str = "/fapi/v1/feeBurn";
@@ -29,7 +29,7 @@ pub struct ToggleFeeBurnResponse {
     pub msg: String,
 }
 
-impl UsdmClient {
+impl RestClient {
     /// Toggle BNB Burn On Futures Trading And Margin Interest (USER_DATA)
     ///
     /// Toggle BNB burn on futures trading and margin interest.

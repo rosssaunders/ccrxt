@@ -4,25 +4,25 @@ use rest::HttpClient;
 use serde::Serialize;
 
 use crate::binance::{
-    options::{Errors, OptionsConfig, RestResponse, RestResult},
+    options::{OptionsConfig, Errors, RestResponse, RestResult},
     shared::{
         Errors as SharedErrors, client::PrivateBinanceClient, credentials::Credentials,
         rate_limiter::RateLimiter, venue_trait::VenueConfig,
     },
 };
 
-pub struct OptionsPrivateRestClient(PrivateBinanceClient);
+pub struct OptionsRestClient(PrivateBinanceClient);
 
-pub type RestClient = OptionsPrivateRestClient;
+pub type RestClient = OptionsRestClient;
 
-impl From<PrivateBinanceClient> for OptionsPrivateRestClient {
+impl From<PrivateBinanceClient> for OptionsRestClient {
     fn from(client: PrivateBinanceClient) -> Self {
-        OptionsPrivateRestClient(client)
+        OptionsRestClient(client)
     }
 }
 
-impl OptionsPrivateRestClient {
-    /// Create a new OptionsPrivateRestClient with credentials and HTTP client
+impl OptionsRestClient {
+    /// Create a new OptionsRestClient with credentials and HTTP client
     ///
     /// Creates a new private REST client for Binance Options using the provided credentials
     /// and HTTP client implementation.
@@ -32,13 +32,15 @@ impl OptionsPrivateRestClient {
     /// * `http_client` - HTTP client implementation to use for requests
     ///
     /// # Returns
-    /// A new `OptionsPrivateRestClient` instance configured for Options trading
+    /// A new `OptionsRestClient` instance configured for Options trading
     ///
     /// # Example
     /// ```no_run
     /// use std::sync::Arc;
     /// use rest::{secrets::SecretString, HttpClient};
-    /// use venues::binance::options::private::rest::{RestClient, Credentials};
+    /// // Use public re-exports instead of private module paths
+    /// use venues::binance::shared::credentials::Credentials;
+    /// use venues::binance::options::PrivateRestClient as RestClient;
     ///
     /// # #[derive(Debug)]
     /// # struct MyHttpClient;
@@ -69,7 +71,7 @@ impl OptionsPrivateRestClient {
             Box::new(credentials.api_secret.clone()),
         );
 
-        OptionsPrivateRestClient(private_client)
+        OptionsRestClient(private_client)
     }
     /// Send a signed GET request with options-specific response type (high-performance)
     pub async fn send_get_signed_request<T, R>(
@@ -96,21 +98,21 @@ impl OptionsPrivateRestClient {
                 "Rate limit exceeded, retry after {:?}",
                 retry_after
             )),
-            SharedErrors::InvalidApiKey() => Errors::InvalidApiKey(),
-            SharedErrors::HttpError(err) => Errors::HttpError(err),
+            SharedErrors::HttpError(msg) => Errors::Error(format!("HTTP error: {msg}")),
+            SharedErrors::InvalidApiKey() => Errors::Error("Invalid API key".to_string()),
             SharedErrors::SerializationError(msg) => {
-                Errors::Error(format!("Serialization error: {}", msg))
+                Errors::Error(format!("Serialization error: {msg}"))
             }
             SharedErrors::Error(msg) => Errors::Error(msg),
         })?;
 
-        // Convert shared RestResponse to options RestResponse
+        let duration = start.elapsed();
+        tracing::debug!("Request to {endpoint} took {duration:?}");
+
         Ok(RestResponse {
             data: shared_response.data,
-            request_duration: start.elapsed(),
-            headers: crate::binance::options::ResponseHeaders {
-                values: std::collections::HashMap::new(), // TODO: Convert headers properly
-            },
+            request_duration: duration,
+            headers: crate::binance::options::ResponseHeaders::default(), // TODO: Convert headers properly
         })
     }
 
@@ -139,21 +141,21 @@ impl OptionsPrivateRestClient {
                 "Rate limit exceeded, retry after {:?}",
                 retry_after
             )),
-            SharedErrors::InvalidApiKey() => Errors::InvalidApiKey(),
-            SharedErrors::HttpError(err) => Errors::HttpError(err),
+            SharedErrors::HttpError(msg) => Errors::Error(format!("HTTP error: {msg}")),
+            SharedErrors::InvalidApiKey() => Errors::Error("Invalid API key".to_string()),
             SharedErrors::SerializationError(msg) => {
-                Errors::Error(format!("Serialization error: {}", msg))
+                Errors::Error(format!("Serialization error: {msg}"))
             }
             SharedErrors::Error(msg) => Errors::Error(msg),
         })?;
 
-        // Convert shared RestResponse to options RestResponse
+        let duration = start.elapsed();
+        tracing::debug!("Request to {endpoint} took {duration:?}");
+
         Ok(RestResponse {
             data: shared_response.data,
-            request_duration: start.elapsed(),
-            headers: crate::binance::options::ResponseHeaders {
-                values: std::collections::HashMap::new(), // TODO: Convert headers properly
-            },
+            request_duration: duration,
+            headers: crate::binance::options::ResponseHeaders::default(), // TODO: Convert headers properly
         })
     }
 
@@ -182,21 +184,21 @@ impl OptionsPrivateRestClient {
                 "Rate limit exceeded, retry after {:?}",
                 retry_after
             )),
-            SharedErrors::InvalidApiKey() => Errors::InvalidApiKey(),
-            SharedErrors::HttpError(err) => Errors::HttpError(err),
+            SharedErrors::HttpError(msg) => Errors::Error(format!("HTTP error: {msg}")),
+            SharedErrors::InvalidApiKey() => Errors::Error("Invalid API key".to_string()),
             SharedErrors::SerializationError(msg) => {
-                Errors::Error(format!("Serialization error: {}", msg))
+                Errors::Error(format!("Serialization error: {msg}"))
             }
             SharedErrors::Error(msg) => Errors::Error(msg),
         })?;
 
-        // Convert shared RestResponse to options RestResponse
+        let duration = start.elapsed();
+        tracing::debug!("Request to {endpoint} took {duration:?}");
+
         Ok(RestResponse {
             data: shared_response.data,
-            request_duration: start.elapsed(),
-            headers: crate::binance::options::ResponseHeaders {
-                values: std::collections::HashMap::new(), // TODO: Convert headers properly
-            },
+            request_duration: duration,
+            headers: crate::binance::options::ResponseHeaders::default(), // TODO: Convert headers properly
         })
     }
 
@@ -226,24 +228,27 @@ impl OptionsPrivateRestClient {
                     "Rate limit exceeded, retry after {:?}",
                     retry_after
                 )),
-                SharedErrors::InvalidApiKey() => Errors::InvalidApiKey(),
-                SharedErrors::HttpError(err) => Errors::HttpError(err),
+                SharedErrors::HttpError(msg) => Errors::Error(format!("HTTP error: {msg}")),
+                SharedErrors::InvalidApiKey() => Errors::Error("Invalid API key".to_string()),
                 SharedErrors::SerializationError(msg) => {
-                    Errors::Error(format!("Serialization error: {}", msg))
+                    Errors::Error(format!("Serialization error: {msg}"))
                 }
                 SharedErrors::Error(msg) => Errors::Error(msg),
             })?;
 
-        // Convert shared RestResponse to options RestResponse
+        let duration = start.elapsed();
+        tracing::debug!("Request to {endpoint} took {duration:?}");
+
         Ok(RestResponse {
             data: shared_response.data,
-            request_duration: start.elapsed(),
-            headers: crate::binance::options::ResponseHeaders {
-                values: std::collections::HashMap::new(), // TODO: Convert headers properly
-            },
+            request_duration: duration,
+            headers: crate::binance::options::ResponseHeaders::default(), // TODO: Convert headers properly
         })
     }
 
+    /// ⚠️ DEPRECATED: Use verb-specific functions instead for better performance
+    ///
+    /// This function remains for backward compatibility but creates branch prediction penalties.
     /// Use send_get_signed_request, send_post_signed_request, etc. instead.
     #[deprecated(
         note = "Use verb-specific functions (send_get_signed_request, send_post_signed_request, etc.) for better performance"

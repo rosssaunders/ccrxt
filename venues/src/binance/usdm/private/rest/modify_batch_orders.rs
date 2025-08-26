@@ -2,7 +2,7 @@ use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
+use crate::binance::usdm::PrivateRestClient as RestClient;
 use crate::binance::usdm::{
     RestResult,
     enums::{
@@ -144,7 +144,7 @@ pub struct ModifyBatchOrderSuccess {
     pub transact_time: u64,
 }
 
-impl UsdmClient {
+impl RestClient {
     /// Modify multiple orders (PUT /fapi/v1/batchOrders)
     ///
     /// Modifies multiple orders in a single batch for USDM futures.

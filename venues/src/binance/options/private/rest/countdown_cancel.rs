@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
+use crate::binance::options::PrivateRestClient as RestClient;
 use crate::binance::options::RestResult;
 
 const COUNTDOWN_CANCEL_ALL_ENDPOINT: &str = "/eapi/v1/countdownCancelAll";

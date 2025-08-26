@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
+use crate::binance::usdm::PrivateRestClient as RestClient;
 use crate::binance::usdm::{MarginType, RestResult};
 
 const MARGIN_TYPE_ENDPOINT: &str = "/fapi/v1/marginType";
@@ -37,7 +37,7 @@ pub struct ChangeMarginTypeResponse {
     pub msg: String,
 }
 
-impl UsdmClient {
+impl RestClient {
     /// Change Margin Type (TRADE)
     ///
     /// Changes the margin type for a specific symbol. For Hedge Mode, LONG and SHORT positions of one symbol use the same margin type.

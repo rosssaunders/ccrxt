@@ -2,7 +2,7 @@ use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
+use crate::binance::usdm::PrivateRestClient as RestClient;
 use crate::binance::usdm::RestResult;
 
 /// Endpoint path for the convert get quote API.
@@ -63,7 +63,7 @@ pub struct ConvertQuoteResponse {
     pub from_amount: Cow<'static, str>,
 }
 
-impl UsdmClient {
+impl RestClient {
     /// Send Quote Request
     ///
     /// Request a quote for the requested token pairs.

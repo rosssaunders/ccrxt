@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
+use crate::binance::spot::PrivateRestClient as RestClient;
 use crate::binance::spot::{ContingencyType, OrderListOrderStatus, OrderListStatus, RestResult};
 
 const GET_ALL_ORDERLIST_ENDPOINT: &str = "/api/v3/allOrderList";

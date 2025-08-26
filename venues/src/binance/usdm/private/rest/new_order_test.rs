@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use super::{UsdmClient, new_order::NewOrderRequest};
+use crate::binance::usdm::PrivateRestClient as RestClient;
+use super::new_order::NewOrderRequest;
 use crate::binance::usdm::RestResult;
 
 /// Endpoint path for Binance USDM Test Order
@@ -13,7 +14,7 @@ const TEST_ORDER_ENDPOINT: &str = "/fapi/v1/order/test";
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
 pub struct TestOrderResponse {}
 
-impl UsdmClient {
+impl RestClient {
     /// New Order Test
     ///
     /// Test endpoint for placing a new order (does not create an order).

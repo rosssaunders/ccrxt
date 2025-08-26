@@ -1,8 +1,9 @@
 use serde::{Deserialize, Serialize};
 
+use super::{RestClient, RestResult};
 use crate::binance::coinm::{
-    OrderSide, OrderType, PositionSide, PriceMatch, RestResult, SelfTradePreventionMode,
-    TimeInForce, WorkingType, private::rest::client::RestClient,
+    OrderSide, OrderType, PositionSide, PriceMatch, SelfTradePreventionMode, TimeInForce,
+    WorkingType,
 };
 
 const CANCEL_ORDER_ENDPOINT: &str = "/dapi/v1/order";

@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use super::client::RestClient;
+use crate::binance::options::PrivateRestClient as RestClient;
 // Re-export the response type from get_mmp_config
 pub use super::get_mmp_config::MmpConfigResponse;
 use crate::binance::options::RestResult;

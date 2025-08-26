@@ -2,7 +2,7 @@ use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
+use crate::binance::usdm::PrivateRestClient as RestClient;
 use crate::binance::usdm::RestResult;
 
 /// Endpoint path for ADL quantile estimation.
@@ -67,7 +67,7 @@ pub struct AdlQuantileResponse {
     pub adl_quantile: AdlQuantileValues,
 }
 
-impl UsdmClient {
+impl RestClient {
     /// Position ADL Quantile Estimation
     ///
     /// Retrieves ADL quantile estimation for positions.

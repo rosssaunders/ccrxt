@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
+use crate::binance::usdm::PrivateRestClient as RestClient;
 use crate::binance::usdm::RestResult;
 
 const GET_POSITION_MODE_STATUS_ENDPOINT: &str = "/fapi/v1/positionSide/dual";
@@ -30,7 +30,7 @@ pub struct PositionModeStatusResponse {
     pub dual_side_position: bool,
 }
 
-impl UsdmClient {
+impl RestClient {
     /// Get Current Position Mode
     ///
     /// Retrieves the current position mode (Hedge Mode or One-way Mode) for the account.

@@ -2,7 +2,7 @@ use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
+use crate::binance::usdm::PrivateRestClient as RestClient;
 use crate::binance::usdm::RestResult;
 
 /// Endpoint path for auto-cancel all open orders.
@@ -45,7 +45,7 @@ pub struct CountdownCancelAllResponse {
     pub countdown_time: u64,
 }
 
-impl UsdmClient {
+impl RestClient {
     /// Auto-Cancel All Open Orders (POST /fapi/v1/countdownCancelAll)
     ///
     /// Cancel all open orders of the specified symbol at the end of the specified countdown.

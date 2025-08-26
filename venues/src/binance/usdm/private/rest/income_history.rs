@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
+use crate::binance::usdm::PrivateRestClient as RestClient;
 use crate::binance::usdm::{RestResult, enums::IncomeType};
 
 const INCOME_HISTORY_ENDPOINT: &str = "/fapi/v1/income";
@@ -73,7 +73,7 @@ pub struct IncomeHistoryEntry {
 /// Response wrapper for income history endpoint
 pub type GetIncomeHistoryResponse = Vec<IncomeHistoryEntry>;
 
-impl UsdmClient {
+impl RestClient {
     /// Get Income History (USER_DATA)
     ///
     /// Query income history

@@ -2,7 +2,7 @@ use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
 
-use super::RestClient;
+use crate::binance::usdm::PublicRestClient as RestClient;
 use crate::binance::usdm::RestResult;
 
 const OPEN_INTEREST_ENDPOINT: &str = "/fapi/v1/openInterest";

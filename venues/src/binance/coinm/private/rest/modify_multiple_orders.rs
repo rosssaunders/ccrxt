@@ -1,9 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-use crate::binance::coinm::{
-    OrderSide, PriceMatch, RestResult,
-    private::rest::{client::RestClient, modify_order::ModifyOrderResponse},
-};
+use super::modify_order::ModifyOrderResponse;
+use super::{RestClient, RestResult};
+use crate::binance::coinm::{OrderSide, PriceMatch};
 
 const BATCH_ORDERS_ENDPOINT: &str = "/dapi/v1/batchOrders";
 

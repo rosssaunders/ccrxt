@@ -2,7 +2,7 @@ use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
+use crate::binance::usdm::PrivateRestClient as RestClient;
 use crate::binance::usdm::RestResult;
 
 const CANCEL_ALL_OPEN_ORDERS_ENDPOINT: &str = "/fapi/v1/allOpenOrders";
@@ -33,7 +33,7 @@ pub struct CancelAllOpenOrdersResponse {
     pub msg: Cow<'static, str>,
 }
 
-impl UsdmClient {
+impl RestClient {
     /// Cancel All Open Orders
     ///
     /// Cancels all open orders for the specified symbol.

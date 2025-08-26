@@ -1,19 +1,17 @@
 mod enums;
 mod errors;
+mod private_client;
+mod public_client;
 mod rate_limit;
 
 // Private module with re-exports
-pub mod private {
+mod private {
     pub mod rest;
-    // Re-export RestClient so it can be re-exported by the parent
-    pub use self::rest::RestClient as PrivateRestClient;
 }
 
 // Public module with re-exports
-pub mod public {
+mod public {
     pub mod rest;
-    // Re-export RestClient so it can be re-exported by the parent
-    pub use self::rest::RestClient as PublicRestClient;
 }
 
 // Re-export the RestClients at the spot level
@@ -22,7 +20,9 @@ pub use enums::*;
 pub use errors::{ApiError, Errors};
 // Re-export for backward compatibility
 pub use private::PrivateRestClient;
+pub use private_client::RestClient as PrivateRestClient;
 pub use public::PublicRestClient;
+pub use public_client::RestClient as PublicRestClient;
 // Re-export all public request types for integration tests
 pub use public::rest::{
     AggTradesRequest, AvgPriceRequest, DepthRequest, ExchangeInfoRequest, HistoricalTradesRequest,
@@ -66,9 +66,7 @@ impl VenueConfig for SpotConfig {
     fn base_url(&self) -> &str {
         "https://api.binance.com"
     }
-    fn venue_name(&self) -> &str {
-        "spot"
-    }
+
     fn rate_limits(&self) -> RateLimits {
         RateLimits {
             request_weight_limit: 1200,
@@ -79,14 +77,5 @@ impl VenueConfig for SpotConfig {
             orders_minute_limit: 1000,
             orders_day_limit: Some(1000),
         }
-    }
-    fn supports_futures(&self) -> bool {
-        false
-    }
-    fn supports_options(&self) -> bool {
-        false
-    }
-    fn supports_margin(&self) -> bool {
-        true
     }
 }

@@ -2,7 +2,7 @@ use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
 
-use crate::binance::coinm::{RestResult, public::rest::RestClient};
+use super::{RestClient, RestResult};
 
 /// Endpoint path for the order book API.
 const ORDER_BOOK_ENDPOINT: &str = "/dapi/v1/depth";

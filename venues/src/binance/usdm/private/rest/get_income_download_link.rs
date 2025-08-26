@@ -2,7 +2,7 @@ use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
+use crate::binance::usdm::PrivateRestClient as RestClient;
 use crate::binance::usdm::RestResult;
 
 /// Endpoint path for getting the futures transaction history download link by ID.
@@ -75,7 +75,7 @@ pub struct GetIncomeDownloadLinkResponse {
     pub is_expired: Option<bool>,
 }
 
-impl UsdmClient {
+impl RestClient {
     /// Get Futures Transaction History Download Link by Id (USER_DATA)
     ///
     /// Get futures transaction history download link by Id.

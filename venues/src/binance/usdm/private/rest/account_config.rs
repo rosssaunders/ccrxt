@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
+use crate::binance::usdm::PrivateRestClient as RestClient;
 use crate::binance::usdm::RestResult;
 
 const ACCOUNT_CONFIG_ENDPOINT: &str = "/fapi/v1/accountConfig";
@@ -54,7 +54,7 @@ pub struct AccountConfigResponse {
     pub update_time: u64,
 }
 
-impl UsdmClient {
+impl RestClient {
     /// Get Account Configuration (GET /fapi/v1/accountConfig)
     ///
     /// Retrieves the current account configuration including fee tier, trading permissions, margin settings, and other account flags.

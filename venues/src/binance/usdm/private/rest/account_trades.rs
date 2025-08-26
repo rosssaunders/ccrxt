@@ -2,7 +2,7 @@ use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
+use crate::binance::usdm::PrivateRestClient as RestClient;
 use crate::binance::usdm::{RestResult, enums::*};
 
 const ACCOUNT_TRADES_ENDPOINT: &str = "/fapi/v1/userTrades";
@@ -96,7 +96,7 @@ pub struct AccountTrade {
     pub maker: bool,
 }
 
-impl UsdmClient {
+impl RestClient {
     /// Account Trade List (GET /fapi/v1/userTrades)
     ///
     /// Returns a list of trades for the account and symbol.

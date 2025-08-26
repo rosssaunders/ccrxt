@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::binance::coinm::{RestResult, private::rest::client::RestClient};
+use super::{RestClient, RestResult};
 
 const LEVERAGE_BRACKET_ENDPOINT: &str = "/dapi/v1/leverageBracket";
 

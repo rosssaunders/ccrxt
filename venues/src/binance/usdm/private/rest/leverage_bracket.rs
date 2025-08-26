@@ -115,7 +115,7 @@ mod tests {
 }
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
+use crate::binance::usdm::PrivateRestClient as RestClient;
 use crate::binance::usdm::RestResult;
 
 const LEVERAGE_BRACKET_ENDPOINT: &str = "/fapi/v1/leverageBracket";
@@ -175,7 +175,7 @@ pub struct LeverageBracketResponse {
     pub brackets: Vec<LeverageBracket>,
 }
 
-impl UsdmClient {
+impl RestClient {
     /// Notional and Leverage Brackets (USER_DATA)
     ///
     /// Get notional and leverage bracket for symbols.

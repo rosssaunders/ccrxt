@@ -1,9 +1,8 @@
 use serde::Deserialize;
 
+use super::{RestClient, RestResult};
 use crate::binance::coinm::{
-    RestResult,
     enums::{ContractStatus, ContractType, OrderType, TimeInForce, UnderlyingType},
-    public::rest::RestClient,
     rate_limit::{RateLimitInterval, RateLimitType},
 };
 

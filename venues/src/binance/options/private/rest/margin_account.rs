@@ -1,7 +1,7 @@
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
+use crate::binance::options::PrivateRestClient as RestClient;
 use crate::binance::options::RestResult;
 
 const GET_MARGIN_ACCOUNT_ENDPOINT: &str = "/eapi/v1/marginAccount";

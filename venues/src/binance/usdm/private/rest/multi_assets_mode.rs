@@ -2,7 +2,7 @@ use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
+use crate::binance::usdm::PrivateRestClient as RestClient;
 use crate::binance::usdm::{BooleanStatus, RestResult};
 
 /// Endpoint path for changing multi-assets margin mode.
@@ -40,7 +40,7 @@ pub struct ChangeMultiAssetsModeResponse {
     pub msg: Cow<'static, str>,
 }
 
-impl UsdmClient {
+impl RestClient {
     /// Change Multi-Assets Mode (TRADE)
     ///
     /// Change user's multi-assets margin mode between Multi-Assets Mode and Single-Asset Mode.

@@ -2,7 +2,7 @@ use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
+use crate::binance::usdm::PrivateRestClient as RestClient;
 use crate::binance::usdm::RestResult;
 
 /// Endpoint path for Classic Portfolio Margin Account Information.
@@ -39,7 +39,7 @@ pub struct PortfolioMarginAccountResponse {
     pub max_withdraw_amount_usd: Cow<'static, str>,
 }
 
-impl UsdmClient {
+impl RestClient {
     /// Classic Portfolio Margin Account Information
     ///
     /// Get Classic Portfolio Margin current account information.

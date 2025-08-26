@@ -2,7 +2,7 @@ use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
+use crate::binance::usdm::PrivateRestClient as RestClient;
 use crate::binance::usdm::RestResult;
 
 /// Endpoint path for order amendment history.
@@ -103,7 +103,7 @@ pub struct AmendmentField {
 /// The API returns a direct array of order amendments.
 pub type OrderAmendmentResponse = Vec<OrderAmendment>;
 
-impl UsdmClient {
+impl RestClient {
     /// Get Order Modify History (USER_DATA)
     ///
     /// Retrieves order modification history for a specific order or symbol.

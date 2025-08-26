@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
+use crate::binance::usdm::PrivateRestClient as RestClient;
 use crate::binance::usdm::{RestResult, enums::MarginType};
 
 /// Endpoint path for symbol configuration.
@@ -47,7 +47,7 @@ pub struct SymbolConfigResponse {
     pub max_notional_value: String,
 }
 
-impl UsdmClient {
+impl RestClient {
     /// Symbol Configuration (USER_DATA)
     ///
     /// Get current account symbol configuration.

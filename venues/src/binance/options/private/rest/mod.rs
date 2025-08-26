@@ -4,7 +4,6 @@
 //! including account information, order management, position queries, market maker
 //! functionality, and block trading.
 
-pub mod client;
 
 // Account endpoints
 pub mod account;
@@ -47,7 +46,6 @@ pub use block_trade_execution::QueryBlockTradeExecutionRequest;
 pub use block_trade_orders::QueryBlockTradeOrdersRequest;
 pub use block_user_trades::QueryBlockUserTradesRequest;
 pub use cancel_block_trade::CancelBlockTradeRequest;
-pub use client::RestClient;
 pub use create_block_trade::{BlockTradeOrderResponse, CreateBlockTradeRequest};
 pub use execute_block_trade::{BlockTradeExecution, ExecuteBlockTradeRequest};
 pub use extend_block_trade::ExtendBlockTradeRequest;

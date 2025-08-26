@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
+use crate::binance::usdm::PrivateRestClient as RestClient;
 use crate::binance::usdm::RestResult;
 
 const CHANGE_LEVERAGE_ENDPOINT: &str = "/fapi/v1/leverage";
@@ -44,7 +44,7 @@ pub struct ChangeLeverageResponse {
     pub symbol: String,
 }
 
-impl UsdmClient {
+impl RestClient {
     /// Change Initial Leverage (USER_DATA)
     ///
     /// Changes user's initial leverage in the specific symbol market.

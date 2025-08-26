@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::RestClient;
+use crate::binance::usdm::PublicRestClient as RestClient;
 use crate::binance::usdm::RestResult;
 
 const TICKER_PRICE_V2_ENDPOINT: &str = "/fapi/v2/ticker/price";

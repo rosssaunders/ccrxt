@@ -17,8 +17,9 @@ use venues::binance::{
         FundingRateRequest, HistoricalTradesRequest, IndexPriceKlineRequest, KlineInterval,
         KlineRequest, MarkPriceKlineRequest, OpenInterestHistRequest, OpenInterestRequest,
         OrderBookRequest, Period, PremiumIndexKlineRequest, PremiumIndexRequest,
-        RecentTradesRequest, RestClient as PublicRestClient, TakerBuySellVolRequest,
-        Ticker24hrParams, TickerPriceRequest, TopLongShortPositionRatioParams,
+        RecentTradesRequest, PublicRestClient, TakerBuySellVolRequest,
+        Ticker24hrParams, TickerPriceRequest, TopLongShortAccountRatioRequest,
+        TopLongShortPositionRatioRequest,
     },
     shared::{RateLimiter, RateLimits},
 };
@@ -514,7 +515,7 @@ async fn test_get_open_interest_hist() {
 #[tokio::test]
 async fn test_get_top_long_short_position_ratio() {
     let client = create_public_test_client();
-    let params = TopLongShortPositionRatioParams {
+    let params = TopLongShortPositionRatioRequest {
         pair: "BTCUSD".to_string(),
         period: Period::I5m,
         start_time: None,
@@ -543,7 +544,7 @@ async fn test_get_top_long_short_position_ratio() {
 /// Test the top trader long/short account ratio endpoint
 #[tokio::test]
 async fn test_get_top_long_short_account_ratio() {
-    use venues::binance::coinm::public::rest::top_long_short_account_ratio::TopLongShortAccountRatioRequest;
+    use TopLongShortAccountRatioRequest;
 
     let client = create_public_test_client();
     let request = TopLongShortAccountRatioRequest {

@@ -2,7 +2,7 @@ use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
+use crate::binance::usdm::PrivateRestClient as RestClient;
 use crate::binance::usdm::{
     RestResult,
     enums::{OrderSide, OrderStatus, OrderType, PositionSide, TimeInForce, WorkingType},
@@ -135,7 +135,7 @@ pub struct AllOrder {
     pub orig_type: OrderType,
 }
 
-impl UsdmClient {
+impl RestClient {
     /// All Orders (USER_DATA)
     ///
     /// Get all account orders; active, canceled, or filled.

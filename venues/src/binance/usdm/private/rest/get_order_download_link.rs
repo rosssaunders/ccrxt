@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
+use crate::binance::usdm::PrivateRestClient as RestClient;
 use crate::binance::usdm::RestResult;
 
 /// Endpoint path for Get Futures Order History Download Link by Id.
@@ -73,7 +73,7 @@ pub struct GetOrderDownloadLinkResponse {
     pub is_expired: Option<bool>,
 }
 
-impl UsdmClient {
+impl RestClient {
     /// Get Futures Order History Download Link by Id (USER_DATA)
     ///
     /// Retrieves the download link for a previously requested order history download.

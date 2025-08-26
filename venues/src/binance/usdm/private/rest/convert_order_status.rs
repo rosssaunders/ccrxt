@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
+use crate::binance::usdm::PrivateRestClient as RestClient;
 use crate::binance::usdm::RestResult;
 
 /// Endpoint path for the convert order status API.
@@ -80,7 +80,7 @@ pub struct ConvertOrderStatusResponse {
     pub create_time: u64,
 }
 
-impl UsdmClient {
+impl RestClient {
     /// Order status
     ///
     /// Query order status by order ID or quote ID.

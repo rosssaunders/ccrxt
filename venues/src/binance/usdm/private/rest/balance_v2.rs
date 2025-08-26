@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
+use crate::binance::usdm::PrivateRestClient as RestClient;
 use crate::binance::usdm::RestResult;
 
 const BALANCE_V2_ENDPOINT: &str = "/fapi/v2/balance";
@@ -51,7 +51,7 @@ pub struct BalanceV2Response {
     pub update_time: u64,
 }
 
-impl UsdmClient {
+impl RestClient {
     /// Futures Account Balance V2
     ///
     /// Retrieves the current account balance for all assets, including cross wallet balance and unrealized PnL.

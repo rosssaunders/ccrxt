@@ -3,7 +3,7 @@ use std::borrow::Cow;
 use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
-use super::UsdmClient;
+use crate::binance::usdm::PrivateRestClient as RestClient;
 use crate::binance::usdm::{RestResult, enums::*};
 
 /// Endpoint path for position margin change history.
@@ -84,7 +84,7 @@ pub struct PositionMarginHistoryEntry {
     pub position_side: PositionSide,
 }
 
-impl UsdmClient {
+impl RestClient {
     /// Get Position Margin Change History (TRADE)
     ///
     /// Retrieves position margin change history for a given symbol on Binance USDM Futures.

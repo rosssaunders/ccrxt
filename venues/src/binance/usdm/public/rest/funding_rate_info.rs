@@ -2,7 +2,7 @@ use std::borrow::Cow;
 
 use serde::Deserialize;
 
-use super::RestClient;
+use crate::binance::usdm::PublicRestClient as RestClient;
 use crate::binance::usdm::RestResult;
 /// Endpoint for Funding Rate Info
 const FUNDING_RATE_INFO_ENDPOINT: &str = "/fapi/v1/fundingInfo";

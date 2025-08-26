@@ -1,7 +1,7 @@
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
+use crate::binance::spot::PublicRestClient as RestClient;
 use crate::binance::spot::RestResult;
 
 const TICKER_PRICE_ENDPOINT: &str = "/api/v3/ticker/price";
