@@ -54,7 +54,11 @@ impl RestClient {
     /// Margin Account List
     ///
     /// [docs](https://www.gate.io/docs/apiv4/en/index.html#margin-accounts)
-    pub async fn get_margin_accounts(&self, req: Option<MarginAccountsRequest>) -> RestResult<Vec<MarginAccount>> {
-        self.send_get_request(MARGIN_ACCOUNTS_ENDPOINT, req.as_ref()).await
+    pub async fn get_margin_accounts(
+        &self,
+        req: Option<MarginAccountsRequest>,
+    ) -> RestResult<Vec<MarginAccount>> {
+        self.send_get_request(MARGIN_ACCOUNTS_ENDPOINT, req.as_ref())
+            .await
     }
 }

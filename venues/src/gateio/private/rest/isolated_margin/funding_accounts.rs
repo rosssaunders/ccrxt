@@ -35,7 +35,11 @@ impl RestClient {
     /// Funding Account List
     ///
     /// [docs](https://www.gate.io/docs/apiv4/en/index.html#funding-accounts)
-    pub async fn get_margin_funding_accounts(&self, req: Option<FundingAccountsRequest>) -> RestResult<Vec<FundingAccount>> {
-        self.send_get_request(MARGIN_FUNDING_ACCOUNTS_ENDPOINT, req.as_ref()).await
+    pub async fn get_margin_funding_accounts(
+        &self,
+        req: Option<FundingAccountsRequest>,
+    ) -> RestResult<Vec<FundingAccount>> {
+        self.send_get_request(MARGIN_FUNDING_ACCOUNTS_ENDPOINT, req.as_ref())
+            .await
     }
 }

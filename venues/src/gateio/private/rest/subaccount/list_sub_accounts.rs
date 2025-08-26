@@ -56,6 +56,7 @@ impl RestClient {
         &self,
         req: Option<ListSubAccountsRequest>,
     ) -> RestResult<Vec<SubAccount>> {
-        self.send_get_request(SUB_ACCOUNTS_ENDPOINT, req.as_ref()).await
+        self.send_get_request(SUB_ACCOUNTS_ENDPOINT, req.as_ref())
+            .await
     }
 }

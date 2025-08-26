@@ -19,20 +19,6 @@ pub use enums::{
     AccountType, CandlestickInterval, OrderSide, OrderStatus, OrderType, StpMode, TimeInForce,
 };
 pub use errors::{ApiError, ErrorResponse, GateIoError};
-pub use private_client::*;
-pub use public_client::*;
-pub use rate_limit::{RateLimitHeader, RateLimitStatus, RateLimiter, UsageInfo};
-pub use rate_limiter_trait::GateIoRateLimiter;
-
-// Re-export delivery types for easier access
-pub use public::{
-    DeliveryContract, DeliveryContractRequest, DeliveryContractsRequest,
-    DeliveryInsurance, DeliveryInsuranceRequest,
-    DeliveryOrderBook, DeliveryOrderBookEntry, DeliveryOrderBookRequest,
-    DeliveryRiskLimitTier, DeliveryRiskLimitTiersRequest,
-    DeliveryTicker, DeliveryTickersRequest,
-    DeliveryTrade, DeliveryTradesRequest,
-};
 pub use private::{
     CreateDeliveryOrderRequest, DeliveryCandlestick, DeliveryCandlesticksRequest,
     DeliveryLeverageResponse, DeliveryOrder, DeliveryPosition, DeliveryPositionMarginResponse,
@@ -40,6 +26,17 @@ pub use private::{
     SetDeliveryLeverageRequest, UpdateDeliveryPositionMarginRequest,
     UpdateDeliveryRiskLimitRequest,
 };
+pub use private_client::*;
+// Re-export delivery types for easier access
+pub use public::{
+    DeliveryContract, DeliveryContractRequest, DeliveryContractsRequest, DeliveryInsurance,
+    DeliveryInsuranceRequest, DeliveryOrderBook, DeliveryOrderBookEntry, DeliveryOrderBookRequest,
+    DeliveryRiskLimitTier, DeliveryRiskLimitTiersRequest, DeliveryTicker, DeliveryTickersRequest,
+    DeliveryTrade, DeliveryTradesRequest,
+};
+pub use public_client::*;
+pub use rate_limit::{RateLimitHeader, RateLimitStatus, RateLimiter, UsageInfo};
+pub use rate_limiter_trait::GateIoRateLimiter;
 
 /// Result type alias for Gate.io API operations
 pub type RestResult<T> = std::result::Result<T, GateIoError>;

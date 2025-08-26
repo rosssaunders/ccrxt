@@ -111,7 +111,8 @@ impl RestClient {
         &self,
         request: Option<GetMyTradesRequest>,
     ) -> RestResult<Vec<MyTrade>> {
-        self.send_get_request(MY_TRADES_ENDPOINT, request.as_ref()).await
+        self.send_get_request(MY_TRADES_ENDPOINT, request.as_ref())
+            .await
     }
 }
 

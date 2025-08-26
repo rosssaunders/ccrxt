@@ -68,7 +68,11 @@ impl RestClient {
     /// Margin Account Balance Change History
     ///
     /// [docs](https://www.gate.io/docs/apiv4/en/index.html#margin-account-book)
-    pub async fn get_margin_account_book(&self, req: MarginAccountBookRequest) -> RestResult<Vec<MarginAccountBookEntry>> {
-        self.send_get_request(MARGIN_ACCOUNT_BOOK_ENDPOINT, Some(&req)).await
+    pub async fn get_margin_account_book(
+        &self,
+        req: MarginAccountBookRequest,
+    ) -> RestResult<Vec<MarginAccountBookEntry>> {
+        self.send_get_request(MARGIN_ACCOUNT_BOOK_ENDPOINT, Some(&req))
+            .await
     }
 }

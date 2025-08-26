@@ -121,10 +121,9 @@ async fn test_get_delivery_order_book() {
     let client = create_delivery_test_client();
 
     // First get available contracts to test with
-    let contracts_request =
-        venues::gateio::DeliveryContractsRequest {
-            settle: "usdt".to_string(),
-        };
+    let contracts_request = venues::gateio::DeliveryContractsRequest {
+        settle: "usdt".to_string(),
+    };
 
     let contracts_result = client.get_delivery_contracts(contracts_request).await;
     if let Ok(contracts) = contracts_result {
@@ -168,10 +167,9 @@ async fn test_get_delivery_trades() {
     let client = create_delivery_test_client();
 
     // First get available contracts to test with
-    let contracts_request =
-        venues::gateio::DeliveryContractsRequest {
-            settle: "usdt".to_string(),
-        };
+    let contracts_request = venues::gateio::DeliveryContractsRequest {
+        settle: "usdt".to_string(),
+    };
 
     let contracts_result = client.get_delivery_contracts(contracts_request).await;
     if let Ok(contracts) = contracts_result {
@@ -215,10 +213,9 @@ async fn test_get_delivery_candlesticks() {
     let client = create_delivery_test_client();
 
     // First get available contracts to test with
-    let contracts_request =
-        venues::gateio::DeliveryContractsRequest {
-            settle: "usdt".to_string(),
-        };
+    let contracts_request = venues::gateio::DeliveryContractsRequest {
+        settle: "usdt".to_string(),
+    };
 
     let contracts_result = client.get_delivery_contracts(contracts_request).await;
     if let Ok(contracts) = contracts_result {
@@ -261,10 +258,9 @@ async fn test_get_delivery_mark_price_candlesticks() {
     let client = create_delivery_test_client();
 
     // First get available contracts to test with
-    let contracts_request =
-        venues::gateio::DeliveryContractsRequest {
-            settle: "usdt".to_string(),
-        };
+    let contracts_request = venues::gateio::DeliveryContractsRequest {
+        settle: "usdt".to_string(),
+    };
 
     let contracts_result = client.get_delivery_contracts(contracts_request).await;
     if let Ok(contracts) = contracts_result {
@@ -324,10 +320,9 @@ async fn test_get_delivery_index_price_candlesticks() {
     let client = create_delivery_test_client();
 
     // First get available contracts to test with
-    let contracts_request =
-        venues::gateio::DeliveryContractsRequest {
-            settle: "usdt".to_string(),
-        };
+    let contracts_request = venues::gateio::DeliveryContractsRequest {
+        settle: "usdt".to_string(),
+    };
 
     let contracts_result = client.get_delivery_contracts(contracts_request).await;
     if let Ok(contracts) = contracts_result {
@@ -414,10 +409,9 @@ async fn test_get_delivery_risk_limit_tiers() {
     let client = create_delivery_test_client();
 
     // First get available contracts to test with
-    let contracts_request =
-        venues::gateio::DeliveryContractsRequest {
-            settle: "usdt".to_string(),
-        };
+    let contracts_request = venues::gateio::DeliveryContractsRequest {
+        settle: "usdt".to_string(),
+    };
 
     let contracts_result = client.get_delivery_contracts(contracts_request).await;
     if let Ok(contracts) = contracts_result {

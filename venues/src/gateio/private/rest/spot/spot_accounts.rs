@@ -44,7 +44,8 @@ impl RestClient {
         &self,
         req: Option<ListSpotAccountsRequest>,
     ) -> RestResult<Vec<SpotAccount>> {
-        self.send_get_request(SPOT_ACCOUNTS_ENDPOINT, req.as_ref()).await
+        self.send_get_request(SPOT_ACCOUNTS_ENDPOINT, req.as_ref())
+            .await
     }
 }
 

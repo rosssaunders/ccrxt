@@ -61,6 +61,7 @@ impl RestClient {
         &self,
         req: CreateSubAccountRequest,
     ) -> RestResult<CreateSubAccountResponse> {
-        self.send_post_request(SUB_ACCOUNTS_ENDPOINT, Some(&req)).await
+        self.send_post_request(SUB_ACCOUNTS_ENDPOINT, Some(&req))
+            .await
     }
 }

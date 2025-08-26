@@ -96,14 +96,19 @@ impl RestClient {
     /// Borrow or Repay
     ///
     /// [docs](https://www.gate.io/docs/apiv4/en/index.html#borrow-or-repay)
-    pub async fn borrow_or_repay_margin(&self, req: BorrowOrRepayRequest) -> RestResult<BorrowOrRepayResponse> {
-        self.send_post_request(MARGIN_UNI_LOANS_ENDPOINT, Some(&req)).await
+    pub async fn borrow_or_repay_margin(
+        &self,
+        req: BorrowOrRepayRequest,
+    ) -> RestResult<BorrowOrRepayResponse> {
+        self.send_post_request(MARGIN_UNI_LOANS_ENDPOINT, Some(&req))
+            .await
     }
 
     /// Query Loans
     ///
     /// [docs](https://www.gate.io/docs/apiv4/en/index.html#query-loans)
     pub async fn get_margin_loans(&self, req: Option<QueryLoansRequest>) -> RestResult<Vec<Loan>> {
-        self.send_get_request(MARGIN_UNI_LOANS_ENDPOINT, req.as_ref()).await
+        self.send_get_request(MARGIN_UNI_LOANS_ENDPOINT, req.as_ref())
+            .await
     }
 }
