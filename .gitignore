@@ -19,3 +19,4 @@ release/
 .github/prompts
 .github/chatmodes
 coverage
+docs
