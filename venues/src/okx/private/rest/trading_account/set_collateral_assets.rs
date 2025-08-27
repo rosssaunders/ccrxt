@@ -1,0 +1,95 @@
+use serde::{Deserialize, Serialize};
+
+use super::RestClient;
+use crate::okx::{EndpointType, RestResult};
+
+const ACCOUNT_SET_COLLATERAL_ASSETS_ENDPOINT: &str = "api/v5/account/set-collateral-assets";
+
+/// Request to set collateral assets
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct SetCollateralAssetsRequest {
+    /// Currency
+    pub ccy: String,
+
+    /// Collateral assets: true, false
+    pub coll_assets: bool,
+}
+
+/// Response for set collateral assets
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct SetCollateralAssetsResponse {
+    /// Currency
+    pub ccy: String,
+
+    /// Collateral assets status
+    pub coll_assets: bool,
+}
+
+impl RestClient {
+    /// Set collateral assets
+    ///
+    /// [docs](https://www.okx.com/docs-v5/en/#trading-account-rest-api-set-the-collateral-currency-in-portfolio-margin-mode)
+    ///
+    /// # Arguments
+    /// * `request` - The set collateral assets request
+    ///
+    /// # Returns
+    /// A result containing the set collateral assets response or an error
+    pub async fn set_collateral_assets(
+        &self,
+        request: &SetCollateralAssetsRequest,
+    ) -> RestResult<SetCollateralAssetsResponse> {
+        self.send_post_request(
+            ACCOUNT_SET_COLLATERAL_ASSETS_ENDPOINT,
+            Some(request),
+            EndpointType::PrivateAccount,
+        )
+        .await
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::okx::response::ApiResponse;
+
+    #[test]
+    fn test_set_collateral_assets_request_serialization() {
+        let request = SetCollateralAssetsRequest {
+            ccy: "BTC".to_string(),
+            coll_assets: true,
+        };
+
+        let json = serde_json::to_string(&request).unwrap();
+        assert!(json.contains("\"ccy\":\"BTC\""));
+        assert!(json.contains("\"collAssets\":true"));
+    }
+
+    #[test]
+    fn test_set_collateral_assets_response_deserialization() {
+        let response_json = r#"
+        {
+            "code": "0",
+            "msg": "",
+            "data": [
+                {
+                    "ccy": "BTC",
+                    "collAssets": true
+                }
+            ]
+        }"#;
+
+        let response: ApiResponse<SetCollateralAssetsResponse> =
+            serde_json::from_str(response_json).unwrap();
+        assert_eq!(response.code, "0");
+        assert_eq!(response.data.len(), 1);
+
+        let result = response.data.first();
+        assert!(result.is_some(), "Expected at least one result in response");
+        let result = result.unwrap();
+        assert_eq!(result.ccy, "BTC");
+        assert!(result.coll_assets);
+    }
+}

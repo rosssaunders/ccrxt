@@ -149,6 +149,7 @@ Detailed instruction files in `.github/instructions/`:
 - **Each endpoint MUST be in its own file** - no combining endpoints
 - **Endpoint URL paths MUST be defined as constants** (SCREAMING_SNAKE_CASE)
 - **Each mod import MUST be on its own line** to avoid merge conflicts
+- **DO NOT implement helper methods** on request/response structs (e.g., `new()`, `with_*()`, constructors, utility methods). Users should construct these structs directly. Only implement the essential RestClient API methods.
 
 ### From .cursorrules:
 - Code prioritizes performance over cleanliness (while maintaining correctness)

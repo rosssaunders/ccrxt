@@ -473,10 +473,10 @@ async fn test_multiple_symbols() {
         );
 
         let response = result.unwrap();
-        if let Some(first_ticker) = response.first() {
-            if let Some(first_trade) = first_ticker.trades.first() {
-                println!("Price ticker for {}: {}", symbol, first_trade.price);
-            }
+        if let Some(first_ticker) = response.first()
+            && let Some(first_trade) = first_ticker.trades.first()
+        {
+            println!("Price ticker for {}: {}", symbol, first_trade.price);
         }
 
         // Small delay between requests

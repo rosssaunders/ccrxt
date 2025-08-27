@@ -1,24 +1,104 @@
 //! Integration tests for OKX public REST API endpoints
 
+use std::sync::Arc;
+
+use async_trait::async_trait;
+use rest::{HttpClient, HttpError, Response};
 use venues::okx::{
-    Bar, BarSize, ConvertContractCoinRequest, GetDeliveryExerciseHistoryRequest,
-    GetDiscountRateInterestFreeQuotaRequest, GetEstimatedPriceRequest,
-    GetEstimatedSettlementInfoRequest, GetFundingRateHistoryRequest, GetFundingRateRequest,
-    GetHistoryIndexCandlesRequest, GetHistoryMarkPriceCandlesRequest, GetIndexCandlesRequest,
-    GetIndexComponentsRequest, GetIndexTickersRequest, GetInstrumentTickBandsRequest,
-    GetInstrumentsRequest, GetInsuranceFundRequest, GetMarkPriceCandlesHistoryRequest,
-    GetMarkPriceCandlesRequest, GetMarkPriceRequest, GetOpenInterestRequest, GetOptSummaryRequest,
-    GetPositionTiersRequest, GetPremiumHistoryRequest, GetPriceLimitRequest,
-    GetSettlementHistoryRequest, GetUnderlyingRequest, InstrumentState, InstrumentType,
-    PublicRestClient, RateLimiter, TickBandInstrumentType,
+    // Existing imports
+    Bar,
+    BarSize,
+    ConvertContractCoinRequest,
+    GetDeliveryExerciseHistoryRequest,
+    GetDiscountRateInterestFreeQuotaRequest,
+    GetEstimatedPriceRequest,
+    GetEstimatedSettlementInfoRequest,
+    GetFundingRateHistoryRequest,
+    GetFundingRateRequest,
+    GetHistoryIndexCandlesRequest,
+    GetHistoryMarkPriceCandlesRequest,
+    GetIndexCandlesRequest,
+    GetIndexComponentsRequest,
+    GetIndexTickersRequest,
+    GetInstrumentTickBandsRequest,
+    GetInstrumentsRequest,
+    GetInsuranceFundRequest,
+    GetMarkPriceCandlesHistoryRequest,
+    GetMarkPriceCandlesRequest,
+    GetMarkPriceRequest,
+    GetOpenInterestRequest,
+    GetOptSummaryRequest,
+    GetPositionTiersRequest,
+    GetPremiumHistoryRequest,
+    GetPriceLimitRequest,
+    GetSettlementHistoryRequest,
+    GetUnderlyingRequest,
+    InstrumentState,
+    InstrumentType,
+    PublicRestClient,
+    RateLimiter,
+    TickBandInstrumentType,
 };
+
+#[derive(Debug)]
+struct TestHttpClient;
+
+#[async_trait]
+impl HttpClient for TestHttpClient {
+    async fn execute(&self, request: rest::Request) -> Result<Response, HttpError> {
+        // Use reqwest internally for actual HTTP requests in integration tests
+        let client = reqwest::Client::new();
+
+        let mut req_builder = match request.method {
+            rest::Method::Get => client.get(&request.url),
+            rest::Method::Post => client.post(&request.url),
+            rest::Method::Put => client.put(&request.url),
+            rest::Method::Delete => client.delete(&request.url),
+            _ => return Err(HttpError::Network("Unsupported HTTP method".to_string())),
+        };
+
+        // Add headers
+        for (key, value) in request.headers {
+            req_builder = req_builder.header(&key, &value);
+        }
+
+        // Add body if present
+        if let Some(body) = request.body {
+            req_builder = req_builder.body(body);
+        }
+
+        // Execute request
+        let response = req_builder
+            .send()
+            .await
+            .map_err(|e| HttpError::Network(e.to_string()))?;
+
+        let status = response.status().as_u16();
+        let headers = response
+            .headers()
+            .iter()
+            .map(|(k, v)| (k.to_string(), v.to_str().unwrap_or("").to_string()))
+            .collect();
+        let body = response
+            .bytes()
+            .await
+            .map_err(|e| HttpError::Network(e.to_string()))?
+            .to_vec();
+
+        Ok(Response {
+            status,
+            headers,
+            body,
+        })
+    }
+}
 
 /// Helper function to create a test client with rate limiting
 fn create_public_test_client() -> PublicRestClient {
     let base_url = "https://www.okx.com".to_string();
-    let client = reqwest::Client::new();
+    let http_client: Arc<dyn HttpClient> = Arc::new(TestHttpClient);
     let rate_limiter = RateLimiter::new();
-    PublicRestClient::new(base_url, client, rate_limiter)
+    PublicRestClient::new(base_url, http_client, rate_limiter)
 }
 
 #[tokio::test]
@@ -229,21 +309,19 @@ async fn test_get_estimated_price() {
     let request = GetEstimatedPriceRequest { inst_id };
 
     let result = client.get_estimated_price(request).await;
+    assert!(
+        result.is_ok(),
+        "get_estimated_price should succeed: {:?}",
+        result.err()
+    );
 
+    let response = result.unwrap();
+    assert_eq!(response.code, "0");
     // This endpoint might return empty data if the instrument is not near settlement
-    if result.is_ok() {
-        let response = result.unwrap();
-        assert_eq!(response.code, "0");
-        if let Some(first) = response.data.first() {
-            println!("Estimated price: {:?}", first.settle_px);
-        } else {
-            println!("No estimated price data available for this instrument");
-        }
+    if let Some(first) = response.data.first() {
+        println!("Estimated price: {:?}", first.settle_px);
     } else {
-        println!(
-            "Estimated price endpoint returned error: {:?}",
-            result.err()
-        );
+        println!("No estimated price data available for this instrument");
     }
 }
 
@@ -272,26 +350,24 @@ async fn test_get_estimated_settlement_info() {
     let request = GetEstimatedSettlementInfoRequest { inst_id };
 
     let result = client.get_estimated_settlement_info(&request).await;
+    assert!(
+        result.is_ok(),
+        "get_estimated_settlement_info should succeed: {:?}",
+        result.err()
+    );
 
+    let response = result.unwrap();
+    assert_eq!(response.code, "0");
     // This endpoint might return empty data if the instrument is not near settlement
     // (only has data one hour before settlement)
-    if result.is_ok() {
-        let response = result.unwrap();
-        assert_eq!(response.code, "0");
-        if let Some(first) = response.data.first() {
-            println!(
-                "Estimated settlement info: inst_id={}, est_settle_px={}, next_settle_time= {}",
-                first.inst_id, first.est_settle_px, first.next_settle_time
-            );
-        } else {
-            println!(
-                "No estimated settlement info available for this instrument (likely not near settlement time)"
-            );
-        }
+    if let Some(first) = response.data.first() {
+        println!(
+            "Estimated settlement info: inst_id={}, est_settle_px={}, next_settle_time= {}",
+            first.inst_id, first.est_settle_px, first.next_settle_time
+        );
     } else {
         println!(
-            "Estimated settlement info endpoint returned error: {:?}",
-            result.err()
+            "No estimated settlement info available for this instrument (likely not near settlement time)"
         );
     }
 }
@@ -716,3 +792,231 @@ async fn test_get_discount_rate_interest_free_quota() {
     assert!(!response.data.is_empty());
     println!("Found {} discount rate records", response.data.len());
 }
+
+// =============================================================================
+// Block Trading Integration Tests
+// =============================================================================
+
+// test_get_counterparties removed - endpoint requires authentication and moved to private client
+
+#[tokio::test]
+async fn test_get_block_tickers() {
+    use venues::okx::GetBlockTickersRequest;
+
+    let client = create_public_test_client();
+    let request = GetBlockTickersRequest {
+        inst_type: InstrumentType::Swap,
+        inst_family: Some("BTC-USD".to_string()),
+    };
+
+    let result = client.get_block_tickers(request).await;
+    assert!(
+        result.is_ok(),
+        "get_block_tickers should succeed: {:?}",
+        result.err()
+    );
+
+    let response = result.unwrap();
+    assert_eq!(response.code, "0");
+    println!("Found {} block tickers", response.data.len());
+}
+
+#[tokio::test]
+async fn test_get_block_ticker() {
+    use venues::okx::GetBlockTickerRequest;
+
+    let client = create_public_test_client();
+    let request = GetBlockTickerRequest {
+        inst_id: "BTC-USD-SWAP".to_string(),
+    };
+
+    let result = client.get_block_ticker(request).await;
+    assert!(
+        result.is_ok(),
+        "get_block_ticker should succeed: {:?}",
+        result.err()
+    );
+
+    let response = result.unwrap();
+    assert_eq!(response.code, "0");
+    // Block ticker endpoint might return empty data if no block trading activity
+    if response.data.is_empty() {
+        println!("No block ticker data available for BTC-USD-SWAP");
+    } else {
+        println!("Found {} block ticker entries", response.data.len());
+    }
+}
+
+// =============================================================================
+// Trading Statistics Integration Tests
+// =============================================================================
+
+#[tokio::test]
+async fn test_get_support_coin() {
+    let client = create_public_test_client();
+
+    let result = client.get_support_coin().await;
+    assert!(
+        result.is_ok(),
+        "get_support_coin should succeed: {:?}",
+        result.err()
+    );
+
+    let response = result.unwrap();
+    assert_eq!(response.code, "0");
+    assert!(!response.data.is_empty());
+    println!(
+        "Found {} supported coins for trading statistics",
+        response.data.len()
+    );
+}
+
+// =============================================================================
+// Financial Product Integration Tests
+// =============================================================================
+
+#[tokio::test]
+async fn test_get_eth_staking_apy_history() {
+    use venues::okx::GetEthStakingApyHistoryRequest;
+
+    let client = create_public_test_client();
+    let request = GetEthStakingApyHistoryRequest {
+        days: "30".to_string(),
+    };
+
+    let result = client.get_eth_staking_apy_history(request).await;
+    assert!(
+        result.is_ok(),
+        "get_eth_staking_apy_history should succeed: {:?}",
+        result.err()
+    );
+
+    let response = result.unwrap();
+    assert_eq!(response.code, "0");
+    println!(
+        "Found {} ETH staking APY history records",
+        response.data.len()
+    );
+}
+
+#[tokio::test]
+async fn test_get_sol_staking_apy_history() {
+    use venues::okx::GetSolStakingApyHistoryRequest;
+
+    let client = create_public_test_client();
+    let request = GetSolStakingApyHistoryRequest {
+        days: "30".to_string(),
+    };
+
+    let result = client.get_sol_staking_apy_history(request).await;
+    assert!(
+        result.is_ok(),
+        "get_sol_staking_apy_history should succeed: {:?}",
+        result.err()
+    );
+
+    let response = result.unwrap();
+    assert_eq!(response.code, "0");
+    println!(
+        "Found {} SOL staking APY history records",
+        response.data.len()
+    );
+}
+
+// =============================================================================
+// Spread Trading Integration Tests
+// =============================================================================
+
+#[tokio::test]
+async fn test_get_spreads() {
+    use venues::okx::get_spreads::GetSpreadsRequest;
+
+    let client = create_public_test_client();
+    let request = GetSpreadsRequest {
+        base_ccy: Some("BTC".to_string()),
+        sprd_id: None,
+        state: None,
+    };
+
+    let result = client.get_spreads(Some(request)).await;
+    assert!(
+        result.is_ok(),
+        "get_spreads should succeed: {:?}",
+        result.err()
+    );
+
+    let response = result.unwrap();
+    assert_eq!(response.code, "0");
+    println!("Found {} spreads", response.data.len());
+}
+
+#[tokio::test]
+async fn test_get_spread_ticker() {
+    use venues::okx::get_ticker::GetSpreadTickerRequest;
+
+    let client = create_public_test_client();
+
+    // First get available spreads to use in ticker request
+    let spreads_result = client.get_spreads(None).await;
+    assert!(
+        spreads_result.is_ok(),
+        "get_spreads should succeed for ticker test: {:?}",
+        spreads_result.err()
+    );
+
+    let spreads_response = spreads_result.unwrap();
+    assert_eq!(spreads_response.code, "0");
+    assert!(
+        !spreads_response.data.is_empty(),
+        "At least one spread should be available for ticker test"
+    );
+
+    let sprd_id = spreads_response.data[0].sprd_id.clone();
+    let request = GetSpreadTickerRequest { sprd_id };
+
+    let result = client.get_spread_ticker(request).await;
+    assert!(
+        result.is_ok(),
+        "get_spread_ticker should succeed: {:?}",
+        result.err()
+    );
+
+    let response = result.unwrap();
+    assert_eq!(response.code, "0");
+    println!("Found {} spread ticker entries", response.data.len());
+}
+
+// =============================================================================
+// Additional Trading Statistics Tests
+// =============================================================================
+
+#[tokio::test]
+async fn test_get_taker_volume() {
+    use venues::okx::get_taker_volume::GetTakerVolumeRequest;
+
+    let client = create_public_test_client();
+    let request = GetTakerVolumeRequest {
+        ccy: "BTC".to_string(),
+        inst_type: "SPOT".to_string(),
+        begin: None,
+        end: None,
+        period: Some("1D".to_string()),
+    };
+
+    let result = client.get_taker_volume(request).await;
+    assert!(
+        result.is_ok(),
+        "get_taker_volume should succeed: {:?}",
+        result.err()
+    );
+
+    let response = result.unwrap();
+    assert_eq!(response.code, "0");
+    println!("Found {} taker volume records", response.data.len());
+}
+
+// =============================================================================
+// Economic Calendar Integration Test
+// =============================================================================
+
+// test_get_economic_calendar removed - endpoint requires authentication and moved to private client

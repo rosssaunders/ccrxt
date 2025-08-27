@@ -4,7 +4,7 @@ use serde_json::Value;
 /// Standard OKX API response wrapper
 #[derive(Debug, Clone, Deserialize)]
 #[serde(bound(deserialize = "T: serde::Deserialize<'de>"))]
-pub struct OkxApiResponse<T> {
+pub struct ApiResponse<T> {
     /// Response code: "0" for success
     pub code: String,
 

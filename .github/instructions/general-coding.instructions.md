@@ -25,6 +25,7 @@ applyTo: "venues/src/**"
 - Avoid code duplication: extract helpers for repeated logic (e.g., window trimming, error message extraction, client request logic).
 - Use `Cow<'static, str>` for struct fields that may be either static or owned strings.
 - Accept `serde::Serialize` for request bodies where possible, rather than raw strings.
+- **DO NOT implement helper methods** on request/response structs (e.g., `new()`, `with_*()`, constructors). Users should construct these structs directly using the serde-derived structures. Only implement the essential RestClient API methods.
 
 - DTO struct formatting (request/response types):
 	- Insert exactly one blank line between each field in DTO structs to maximize diff readability and reduce merge conflicts.

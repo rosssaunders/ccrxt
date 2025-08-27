@@ -154,3 +154,57 @@ pub enum DeliveryExerciseType {
     #[serde(rename = "expired_otm")]
     ExpiredOtm,
 }
+
+/// Trade mode for positions
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub enum TradeMode {
+    /// Cash mode (non-margin)
+    Cash,
+    /// Cross margin
+    Cross,
+    /// Isolated margin
+    Isolated,
+}
+
+/// Position side for futures and swaps
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub enum PositionSide {
+    /// Net mode (default)
+    Net,
+    /// Long position
+    Long,
+    /// Short position
+    Short,
+}
+
+/// RFQ state
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum RfqState {
+    /// Active RFQ
+    Active,
+    /// Canceled RFQ
+    Canceled,
+    /// Pending fill
+    PendingFill,
+    /// Filled RFQ
+    Filled,
+    /// Expired RFQ
+    Expired,
+    /// Traded away (only applies to Maker)
+    TradedAway,
+    /// Failed RFQ
+    Failed,
+}
+
+/// Target currency for size specification
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum TargetCurrency {
+    /// Base currency
+    BaseCcy,
+    /// Quote currency
+    QuoteCcy,
+}

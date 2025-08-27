@@ -1,75 +1,36 @@
-mod activate_option;
-mod adjust_position_margin_balance;
-mod amend_order;
-mod bills_history_archive;
-mod cancel_batch_orders;
-mod cancel_order;
-mod client;
-mod close_position;
-mod credentials;
-mod get_account_balance;
-mod get_account_config;
-mod get_account_instruments;
-mod get_account_position_risk;
-mod get_account_switch_precheck;
-mod get_adjust_leverage_info;
-mod get_bills;
-mod get_bills_archive;
-mod get_collateral_assets;
-mod get_economic_calendar;
-mod get_fills;
-mod get_greeks;
-mod get_interest_accrued;
-mod get_interest_limits;
-mod get_interest_rate;
-mod get_leverage_info;
-mod get_max_avail_size;
-mod get_max_loan;
-mod get_max_size;
-mod get_max_withdrawal;
-mod get_mmp_config;
-mod get_move_positions_history;
-mod get_order;
-mod get_order_history;
-mod get_pending_orders;
-mod get_position_tiers;
-mod get_positions;
-mod get_positions_history;
-mod get_quick_margin_borrow_repay_history;
-mod get_risk_state;
-mod get_spot_borrow_repay_history;
-mod get_trade_fee;
-mod mmp_reset;
-mod move_positions;
-mod place_batch_orders;
-mod place_order;
-mod quick_margin_borrow_repay;
-mod set_account_level;
-mod set_auto_loan;
-mod set_auto_repay;
-mod set_collateral_assets;
-mod set_greeks;
-mod set_isolated_mode;
-mod set_leverage;
-mod set_mmp_config;
-mod set_position_mode;
-mod spot_manual_borrow_repay;
+// Product-specific modules organized by OKX API documentation structure
+pub mod affiliate; // Affiliate program
+pub mod block_trading; // Block trading
+pub mod financial_product; // Financial products (staking, earning)
+pub mod funding; // Funding Account
+pub mod funding_account; // Funding Account endpoints
+pub mod public_data; // Public data that requires authentication
+pub mod spread_trading; // Spread trading
+pub mod subaccount; // Sub-account management
+pub mod trade; // Order Book Trading - Trade
+pub mod trading_account; // Trading Account endpoints (previously account)
 
-pub use amend_order::{AmendOrderRequest, AmendOrderResponse};
-pub use cancel_batch_orders::CancelBatchOrdersResponse;
-pub use cancel_order::{CancelOrderRequest, CancelOrderResponse};
-pub use client::RestClient;
-pub use close_position::{ClosePositionRequest, ClosePositionResponse};
-#[allow(unused_imports)]
-pub use credentials::Credentials;
-pub use get_account_balance::{AccountBalance, BalanceDetail, GetAccountBalanceRequest};
-pub use get_account_config::{AccountConfig, GetAccountConfigRequest, IpRestriction};
-pub use get_fills::{Fill, GetFillsRequest};
-pub use get_order::{GetOrderRequest, OrderDetails};
-pub use get_order_history::GetOrderHistoryRequest;
-pub use get_pending_orders::GetPendingOrdersRequest;
-pub use get_positions::{CloseOrderAlgo, GetPositionsRequest, Position};
-pub use place_batch_orders::{PlaceBatchOrdersRequest, PlaceBatchOrdersResponse};
-pub use place_order::{AttachedAlgoOrder, PlaceOrderRequest, PlaceOrderResponse};
+// Re-export key types from trading_account module
+// Re-export key types from trade module
+// Re-export key types from block_trading and public_data modules
+pub use block_trading::get_counterparties::Counterparty;
+pub use public_data::get_economic_calendar::{EconomicCalendarEvent, GetEconomicCalendarRequest};
+pub use trade::{
+    amend_order::{AmendOrderRequest, AmendOrderResponse},
+    cancel_batch_orders::CancelBatchOrdersResponse,
+    cancel_order::{CancelOrderRequest, CancelOrderResponse},
+    close_position::{ClosePositionRequest, ClosePositionResponse},
+    get_fills::{Fill, GetFillsRequest},
+    get_order::{GetOrderRequest, OrderDetails},
+    get_order_history::GetOrderHistoryRequest,
+    get_pending_orders::GetPendingOrdersRequest,
+    place_batch_orders::{PlaceBatchOrdersRequest, PlaceBatchOrdersResponse},
+    place_order::{AttachedAlgoOrder, PlaceOrderRequest, PlaceOrderResponse},
+};
+pub use trading_account::{
+    get_account_balance::{AccountBalance, BalanceDetail, GetAccountBalanceRequest},
+    get_account_config::{AccountConfig, GetAccountConfigRequest, IpRestriction},
+    get_positions::{CloseOrderAlgo, GetPositionsRequest, Position},
+};
 
-pub use crate::okx::response::OkxApiResponse;
+pub use crate::okx::{private_client::RestClient, response::ApiResponse};
