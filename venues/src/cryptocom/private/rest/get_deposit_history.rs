@@ -1,27 +1,32 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::cryptocom::RestResult;
+use crate::cryptocom::{PrivateRestClient as RestClient, RestResult};
 
-const DEPOSIT_HISTORY_ENDPOINT: &str = "private/get-deposit-history";
+const DEPOSIT_HISTORY_ENDPOINT: &str = "exchange/v1/private/get-deposit-history";
+
 /// Request parameters for get deposit history
 #[derive(Debug, Clone, Serialize)]
 pub struct GetDepositHistoryRequest {
     /// Currency symbol e.g. BTC, CRO (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub currency: Option<String>,
+
     /// Start timestamp (optional, default is 90 days from current timestamp)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub start_ts: Option<u64>,
+
     /// End timestamp (optional, default is current timestamp)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub end_ts: Option<u64>,
+
     /// Page size (optional, default: 20, max: 200)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub page_size: Option<u32>,
+
     /// Page number, 0-based (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub page: Option<u32>,
+
     /// Deposit status filter (optional)
     /// "0" - Not Arrived, "1" - Arrived, "2" - Failed, "3" - Pending
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -33,19 +38,26 @@ pub struct GetDepositHistoryRequest {
 pub struct DepositHistoryEntry {
     /// Deposit ID
     pub id: String,
+
     /// Currency symbol e.g. BTC, CRO
     pub currency: String,
+
     /// Deposit amount
     pub amount: f64,
+
     /// Deposit fee
     pub fee: f64,
+
     /// Deposit address with Address Tag (if any)
     pub address: String,
+
     /// Creation timestamp
     pub create_time: u64,
+
     /// Update timestamp
     #[serde(skip_serializing_if = "Option::is_none")]
     pub update_time: Option<u64>,
+
     /// Deposit status
     /// "0" - Not Arrived, "1" - Arrived, "2" - Failed, "3" - Pending
     pub status: String,

@@ -6,11 +6,12 @@ use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::cryptocom::{ApiResult, EndpointType, RestResult, ValuationType};
+use crate::cryptocom::{
+    ApiResult, EndpointType, PublicRestClient as RestClient, RestResult, ValuationType,
+};
 
 /// Endpoint path for the get-valuations API
-const VALUATIONS_ENDPOINT: &str = "public/get-valuations";
+const VALUATIONS_ENDPOINT: &str = "exchange/v1/public/get-valuations";
 
 /// Request parameters for the public/get-valuations endpoint.
 ///

@@ -1,10 +1,9 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::cryptocom::{ApiResult, RestResult};
+use crate::cryptocom::{ApiResult, PrivateRestClient as RestClient, RestResult};
 
 /// Endpoint path for the change-account-leverage API
-const CHANGE_ACCOUNT_LEVERAGE_ENDPOINT: &str = "private/change-account-leverage";
+const CHANGE_ACCOUNT_LEVERAGE_ENDPOINT: &str = "exchange/v1/private/change-account-leverage";
 
 /// Request parameters for changing account leverage
 #[derive(Debug, Clone, Serialize)]

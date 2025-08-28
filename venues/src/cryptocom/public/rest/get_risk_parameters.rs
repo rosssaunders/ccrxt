@@ -4,11 +4,10 @@
 
 use serde::Deserialize;
 
-use super::client::RestClient;
-use crate::cryptocom::{ApiResult, EndpointType, RestResult};
+use crate::cryptocom::{ApiResult, EndpointType, PublicRestClient as RestClient, RestResult};
 
 /// Endpoint path for the get-risk-parameters API
-const RISK_PARAMETERS_ENDPOINT: &str = "public/get-risk-parameters";
+const RISK_PARAMETERS_ENDPOINT: &str = "exchange/v1/public/get-risk-parameters";
 
 /// Response for public/get-risk-parameters endpoint.
 pub type GetRiskParametersResponse = ApiResult<RiskParametersResult>;

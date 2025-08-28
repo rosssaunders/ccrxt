@@ -5,14 +5,12 @@ pub mod cancel_order;
 pub mod cancel_order_list;
 pub mod change_account_leverage;
 pub mod change_account_settings;
-pub mod client;
 pub mod close_position;
 pub mod create_oco_order;
 pub mod create_order;
 pub mod create_order_list;
 pub mod create_subaccount_transfer;
 pub mod create_withdrawal;
-pub mod credentials;
 pub mod get_account_settings;
 pub mod get_accounts;
 pub mod get_currency_networks;
@@ -50,13 +48,10 @@ pub use cancel_oco_order::CancelOcoOrderRequest;
 pub use cancel_order_list::{
     CancelOrderListItem, CancelOrderListRequest, CancelOrderListResponse, OrderCancellationResult,
 };
-pub use client::RestClient;
 pub use create_oco_order::CreateOcoOrderResponse;
 pub use create_order_list::{
     CreateOrderListRequest, CreateOrderListResponse, OrderCreationResult, OrderListItem,
 };
-#[allow(unused_imports)]
-pub use credentials::Credentials;
 pub use get_order_history_by_currency::{
     GetOrderHistoryByCurrencyRequest, GetOrderHistoryByCurrencyResponse,
     GetOrderHistoryByCurrencyWithContinuationResponse,

@@ -1,10 +1,9 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::cryptocom::RestResult;
+use crate::cryptocom::{PrivateRestClient as RestClient, RestResult};
 
 /// Endpoint path for the get-accounts API
-const ACCOUNTS_ENDPOINT: &str = "private/get-accounts";
+const ACCOUNTS_ENDPOINT: &str = "exchange/v1/private/get-accounts";
 
 /// Account information
 #[derive(Debug, Clone, Serialize, Deserialize)]

@@ -1,27 +1,32 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::cryptocom::{RestResult, enums::WithdrawalStatus};
+use crate::cryptocom::{PrivateRestClient as RestClient, RestResult, enums::WithdrawalStatus};
 
-const WITHDRAWAL_HISTORY_ENDPOINT: &str = "private/get-withdrawal-history";
+const WITHDRAWAL_HISTORY_ENDPOINT: &str = "exchange/v1/private/get-withdrawal-history";
+
 /// Request parameters for get withdrawal history
 #[derive(Debug, Clone, Serialize)]
 pub struct GetWithdrawalHistoryRequest {
     /// Currency symbol e.g. BTC, CRO (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub currency: Option<String>,
+
     /// Start timestamp (optional, default is 90 days from current timestamp)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub start_ts: Option<u64>,
+
     /// End timestamp (optional, default is current timestamp)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub end_ts: Option<u64>,
+
     /// Page size (optional, default: 20, max: 200)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub page_size: Option<u32>,
+
     /// Page number, 0-based (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub page: Option<u32>,
+
     /// Withdrawal status filter (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub status: Option<WithdrawalStatus>,
@@ -32,27 +37,37 @@ pub struct GetWithdrawalHistoryRequest {
 pub struct WithdrawalHistoryEntry {
     /// Withdrawal ID
     pub id: String,
+
     /// Currency symbol e.g. BTC, CRO
     pub currency: String,
+
     /// Withdrawal amount
     pub amount: f64,
+
     /// Withdrawal fee
     pub fee: f64,
+
     /// Withdrawal address with Address Tag (if any)
     pub address: String,
+
     /// Creation timestamp
     pub create_time: u64,
+
     /// Update timestamp
     #[serde(skip_serializing_if = "Option::is_none")]
     pub update_time: Option<u64>,
+
     /// Withdrawal status
     pub status: WithdrawalStatus,
+
     /// Optional Client withdrawal ID if provided in request
     #[serde(skip_serializing_if = "Option::is_none")]
     pub client_wid: Option<String>,
+
     /// Transaction hash
     #[serde(skip_serializing_if = "Option::is_none")]
     pub txid: Option<String>,
+
     /// Network for the transaction - please see get-currency-networks
     #[serde(skip_serializing_if = "Option::is_none")]
     pub network_id: Option<String>,

@@ -1,10 +1,9 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::cryptocom::{ApiResult, RestResult};
+use crate::cryptocom::{ApiResult, PrivateRestClient as RestClient, RestResult};
 
 /// Endpoint path for the cancel-oco-order API
-const CANCEL_OCO_ORDER_ENDPOINT: &str = "private/cancel-order-list";
+const CANCEL_OCO_ORDER_ENDPOINT: &str = "exchange/v1/private/cancel-order-list";
 
 /// Request for canceling OCO orders
 #[derive(Debug, Clone, Serialize, Deserialize)]

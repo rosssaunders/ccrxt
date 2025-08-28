@@ -2,10 +2,9 @@ use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::cryptocom::RestResult;
+use crate::cryptocom::{PrivateRestClient as RestClient, RestResult};
 
-const CURRENCY_NETWORKS_ENDPOINT: &str = "private/get-currency-networks";
+const CURRENCY_NETWORKS_ENDPOINT: &str = "exchange/v1/private/get-currency-networks";
 
 /// Network information for a currency
 #[derive(Debug, Clone, Serialize, Deserialize)]

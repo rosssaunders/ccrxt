@@ -1,14 +1,14 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::cryptocom::RestResult;
+use crate::cryptocom::{PrivateRestClient as RestClient, RestResult};
 
-const UNSTAKE_ENDPOINT: &str = "private/staking/unstake";
+const UNSTAKE_ENDPOINT: &str = "exchange/v1/private/staking/unstake";
 /// Request parameters for unstake
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct UnstakeRequest {
     /// Staking instrument name, e.g. SOL.staked
     pub instrument_name: String,
+
     /// Unstake quantity
     pub quantity: String,
 }
@@ -18,14 +18,19 @@ pub struct UnstakeRequest {
 pub struct UnstakeResponse {
     /// Request id
     pub staking_id: String,
+
     /// Staking instrument name, e.g. SOL.staked
     pub instrument_name: String,
+
     /// Request status: NEW, PENDING, PENDING_WITHDRAWAL, PENDING_UNSTAKING, COMPLETED, REJECTED
     pub status: String,
+
     /// Unstake quantity
     pub quantity: String,
+
     /// Underlying instrument name, e.g. SOL
     pub underlying_inst_name: String,
+
     /// Reason for the status, e.g. "NO_ERROR"
     pub reason: String,
 }

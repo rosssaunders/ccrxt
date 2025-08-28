@@ -1,6 +1,9 @@
+mod credentials;
 pub mod enums;
 mod errors;
 pub mod message;
+mod private_client;
+mod public_client;
 
 pub mod rate_limit;
 pub mod rate_limiter_trait;
@@ -12,7 +15,7 @@ pub mod private {
         CreateOrderListResponse, GetOrderHistoryByCurrencyRequest,
         GetOrderHistoryByCurrencyResponse, GetOrderHistoryByCurrencyWithContinuationResponse,
         GetOrderListRequest, GetOrderListResponse, OrderCancellationResult, OrderCreationResult,
-        OrderDetails, OrderListItem, RestClient,
+        OrderDetails, OrderListItem,
     };
 }
 
@@ -24,14 +27,14 @@ pub mod public {
         GetExpiredSettlementPriceRequest, GetExpiredSettlementPriceResponse, GetInstrumentsRequest,
         GetInstrumentsResponse, GetInsuranceRequest, GetInsuranceResponse,
         GetRiskParametersResponse, GetTickersRequest, GetTickersResponse, GetTradesRequest,
-        GetTradesResponse, GetValuationsRequest, GetValuationsResponse, RestClient,
+        GetTradesResponse, GetValuationsRequest, GetValuationsResponse,
     };
 }
 
+pub use credentials::Credentials;
 pub use enums::*;
 pub use errors::{ApiError, ErrorResponse, Errors};
 pub use message::ApiResult;
-pub use private::RestClient as PrivateRestClient;
 // Re-export the advanced order trading types
 pub use private::{
     CancelOcoOrderRequest, CancelOrderListItem, CancelOrderListRequest, CancelOrderListResponse,
@@ -40,14 +43,16 @@ pub use private::{
     GetOrderHistoryByCurrencyWithContinuationResponse, GetOrderListRequest, GetOrderListResponse,
     OrderCancellationResult, OrderCreationResult, OrderDetails, OrderListItem,
 };
+pub use private_client::RestClient as PrivateRestClient;
 pub use public::{
     ConversionRateResponse, GetAnnouncementsRequest, GetAnnouncementsResponse, GetBookRequest,
     GetBookResponse, GetCandlestickRequest, GetCandlestickResponse, GetConversionRateRequest,
     GetExpiredSettlementPriceRequest, GetExpiredSettlementPriceResponse, GetInstrumentsRequest,
     GetInstrumentsResponse, GetInsuranceRequest, GetInsuranceResponse, GetRiskParametersResponse,
     GetTickersRequest, GetTickersResponse, GetTradesRequest, GetTradesResponse,
-    GetValuationsRequest, GetValuationsResponse, RestClient as PublicRestClient,
+    GetValuationsRequest, GetValuationsResponse,
 };
+pub use public_client::RestClient as PublicRestClient;
 pub use rate_limit::{EndpointType, RateLimit, RateLimitError, RateLimiter};
 
 /// Type alias for results returned by Crypto.com API operations

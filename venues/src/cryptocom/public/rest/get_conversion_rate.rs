@@ -1,10 +1,11 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::cryptocom::{ApiResult, RestResult, rate_limit::EndpointType};
+use crate::cryptocom::{
+    ApiResult, PublicRestClient as RestClient, RestResult, rate_limit::EndpointType,
+};
 
 /// Endpoint path for the get-conversion-rate API
-const CONVERSION_RATE_ENDPOINT: &str = "public/staking/get-conversion-rate";
+const CONVERSION_RATE_ENDPOINT: &str = "exchange/v1/public/staking/get-conversion-rate";
 
 /// Request parameters for get conversion rate
 #[derive(Debug, Clone, Serialize, Deserialize)]

@@ -1,10 +1,9 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::cryptocom::{RestResult, enums::*};
+use crate::cryptocom::{PrivateRestClient as RestClient, RestResult, enums::*};
 
 /// Endpoint path for the create-order-list API
-const CREATE_ORDER_LIST_ENDPOINT: &str = "private/create-order-list";
+const CREATE_ORDER_LIST_ENDPOINT: &str = "exchange/v1/private/create-order-list";
 
 /// Individual order in an order list
 #[derive(Debug, Clone, Serialize, Deserialize)]

@@ -2,11 +2,10 @@ use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::cryptocom::{ApiResult, EndpointType, RestResult};
+use crate::cryptocom::{ApiResult, EndpointType, PublicRestClient as RestClient, RestResult};
 
 /// Endpoint for getting trades
-const GET_TRADES_ENDPOINT: &str = "public/get-trades";
+const GET_TRADES_ENDPOINT: &str = "exchange/v1/public/get-trades";
 
 /// Request parameters for the public/get-trades endpoint.
 ///

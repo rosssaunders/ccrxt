@@ -2,11 +2,12 @@ use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::cryptocom::{ApiResult, EndpointType, InstrumentType, RestResult};
+use crate::cryptocom::{
+    ApiResult, EndpointType, InstrumentType, PublicRestClient as RestClient, RestResult,
+};
 
 /// Endpoint for getting instruments
-const GET_INSTRUMENTS_ENDPOINT: &str = "public/get-instruments";
+const GET_INSTRUMENTS_ENDPOINT: &str = "exchange/v1/public/get-instruments";
 
 /// Request parameters for the public/get-instruments endpoint.
 ///

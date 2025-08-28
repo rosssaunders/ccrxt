@@ -1,10 +1,9 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::cryptocom::RestResult;
+use crate::cryptocom::{PrivateRestClient as RestClient, RestResult};
 
 /// Endpoint path for the amend-order API
-const AMEND_ORDER_ENDPOINT: &str = "private/amend-order";
+const AMEND_ORDER_ENDPOINT: &str = "exchange/v1/private/amend-order";
 
 /// Request parameters for amending an existing order
 #[derive(Debug, Clone, Serialize)]

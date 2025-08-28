@@ -1,9 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::cryptocom::{ApiResult, RestResult};
+use crate::cryptocom::{ApiResult, PrivateRestClient as RestClient, RestResult};
 
-const STAKING_INSTRUMENTS_ENDPOINT: &str = "private/staking/get-staking-instruments";
+const STAKING_INSTRUMENTS_ENDPOINT: &str = "exchange/v1/private/staking/get-staking-instruments";
 
 /// Additional reward information
 #[derive(Debug, Clone, Serialize, Deserialize)]

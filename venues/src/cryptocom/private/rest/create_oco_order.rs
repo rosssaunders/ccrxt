@@ -1,10 +1,9 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::cryptocom::{ApiResult, RestResult};
+use crate::cryptocom::{ApiResult, PrivateRestClient as RestClient, RestResult};
 
 /// Endpoint path for the create-oco-order API
-const CREATE_OCO_ORDER_ENDPOINT: &str = "private/create-order-list";
+const CREATE_OCO_ORDER_ENDPOINT: &str = "exchange/v1/private/create-order-list";
 
 /// Request parameters for creating an OCO order list (One-Cancels-the-Other).
 ///

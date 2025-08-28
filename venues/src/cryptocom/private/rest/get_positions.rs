@@ -1,28 +1,35 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::cryptocom::{ApiResult, RestResult};
+use crate::cryptocom::{ApiResult, PrivateRestClient as RestClient, RestResult};
 
-const POSITIONS_ENDPOINT: &str = "private/get-positions";
+const POSITIONS_ENDPOINT: &str = "exchange/v1/private/get-positions";
 /// Position information
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Position {
     /// Account ID
     pub account_id: String,
+
     /// Position quantity
     pub quantity: String,
+
     /// Position cost or value in USD
     pub cost: String,
+
     /// Profit and loss for the open position
     pub open_position_pnl: String,
+
     /// Open position cost
     pub open_pos_cost: String,
+
     /// Profit and loss in the current trading session
     pub session_pnl: String,
+
     /// Updated time (Unix timestamp)
     pub update_timestamp_ms: u64,
+
     /// e.g. BTCUSD-PERP
     pub instrument_name: String,
+
     /// e.g. Perpetual Swap
     #[serde(rename = "type")]
     pub position_type: String,

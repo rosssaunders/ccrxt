@@ -1,9 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::cryptocom::RestResult;
+use crate::cryptocom::{PrivateRestClient as RestClient, RestResult};
 
-const FEE_RATE_ENDPOINT: &str = "private/get-fee-rate";
+const FEE_RATE_ENDPOINT: &str = "exchange/v1/private/get-fee-rate";
 
 /// Fee rate information for user's account
 #[derive(Debug, Clone, Deserialize)]

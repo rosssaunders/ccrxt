@@ -1,9 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::cryptocom::{ApiResult, RestResult, enums::*};
+use crate::cryptocom::{ApiResult, PrivateRestClient as RestClient, RestResult, enums::*};
 
-const ORDER_LIST_ENDPOINT: &str = "private/get-order-list";
+const ORDER_LIST_ENDPOINT: &str = "exchange/v1/private/get-order-list";
 
 /// Request for getting OCO order details
 #[derive(Debug, Clone, Serialize, Deserialize)]

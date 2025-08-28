@@ -1,9 +1,9 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::cryptocom::RestResult;
+use crate::cryptocom::{PrivateRestClient as RestClient, RestResult};
 
-const ORDER_HISTORY_BY_INSTRUMENT_ENDPOINT: &str = "private/get_order_history_by_instrument";
+const ORDER_HISTORY_BY_INSTRUMENT_ENDPOINT: &str =
+    "exchange/v1/private/get_order_history_by_instrument";
 
 /// Parameters for get order history by instrument request
 #[derive(Debug, Clone, Serialize)]

@@ -1,10 +1,9 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::cryptocom::RestResult;
+use crate::cryptocom::{PrivateRestClient as RestClient, RestResult};
 
 /// Endpoint path for the create-withdrawal API
-const CREATE_WITHDRAWAL_ENDPOINT: &str = "private/create-withdrawal";
+const CREATE_WITHDRAWAL_ENDPOINT: &str = "exchange/v1/private/create-withdrawal";
 
 /// Request parameters for create withdrawal
 #[derive(Debug, Clone, Serialize)]

@@ -1,10 +1,11 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::cryptocom::{ApiResult, RestResult, enums::ResponseCode};
+use crate::cryptocom::{
+    ApiResult, PrivateRestClient as RestClient, RestResult, enums::ResponseCode,
+};
 
 /// Endpoint path for the create-subaccount-transfer API
-const CREATE_SUBACCOUNT_TRANSFER_ENDPOINT: &str = "private/create-subaccount-transfer";
+const CREATE_SUBACCOUNT_TRANSFER_ENDPOINT: &str = "exchange/v1/private/create-subaccount-transfer";
 
 /// Request parameters for creating a subaccount transfer.
 #[derive(Debug, Clone, Serialize)]

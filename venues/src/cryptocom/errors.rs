@@ -48,6 +48,7 @@ impl From<serde_json::Error> for Errors {
 #[derive(Debug, Clone, Deserialize)]
 pub struct ErrorResponse {
     pub code: i32,
+
     pub message: String,
 }
 

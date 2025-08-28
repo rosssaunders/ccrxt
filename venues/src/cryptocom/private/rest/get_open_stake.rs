@@ -1,21 +1,24 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::cryptocom::{ApiResult, RestResult};
+use crate::cryptocom::{ApiResult, PrivateRestClient as RestClient, RestResult};
 
-const OPEN_STAKE_ENDPOINT: &str = "private/staking/get-open-stake";
+const OPEN_STAKE_ENDPOINT: &str = "exchange/v1/private/staking/get-open-stake";
+
 /// Request parameters for get open stake
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GetOpenStakeRequest {
     /// Staking instrument name, e.g. SOL.staked (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub instrument_name: Option<String>,
+
     /// Start time in Unix time format (inclusive) (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub start_time: Option<u64>,
+
     /// End time in Unix time format (inclusive) (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub end_time: Option<u64>,
+
     /// The maximum number of requests returned (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<String>,
@@ -26,20 +29,28 @@ pub struct GetOpenStakeRequest {
 pub struct OpenStakeEntry {
     /// Staking instrument name, e.g. SOL.staked
     pub instrument_name: String,
+
     /// Underlying instrument name, e.g. SOL
     pub underlying_inst_name: String,
+
     /// Cycle id
     pub cycle_id: String,
+
     /// Request id
     pub staking_id: String,
+
     /// Request status: NEW, PENDING, PENDING_WITHDRAWAL, PENDING_UNSTAKING, STAKED
     pub status: String,
+
     /// Account id
     pub account: String,
+
     /// Stake/unstake quantity
     pub quantity: String,
+
     /// Stake or Unstake
     pub side: String,
+
     /// Request creation timestamp in milliseconds in Unix time format
     pub create_timestamp_ms: String,
 }

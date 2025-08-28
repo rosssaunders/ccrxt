@@ -1,9 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::cryptocom::{ApiResult, RestResult};
+use crate::cryptocom::{ApiResult, PrivateRestClient as RestClient, RestResult};
 
-const USER_BALANCE_HISTORY_ENDPOINT: &str = "private/user-balance-history";
+const USER_BALANCE_HISTORY_ENDPOINT: &str = "exchange/v1/private/user-balance-history";
 
 /// Balance history entry
 #[derive(Debug, Clone, Serialize, Deserialize)]

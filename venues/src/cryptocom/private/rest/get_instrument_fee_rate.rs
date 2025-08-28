@@ -1,9 +1,9 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::cryptocom::{ApiResult, RestResult};
+use crate::cryptocom::{ApiResult, PrivateRestClient as RestClient, RestResult};
 
-const INSTRUMENT_FEE_RATE_ENDPOINT: &str = "private/get-instrument-fee-rate";
+const INSTRUMENT_FEE_RATE_ENDPOINT: &str = "exchange/v1/private/get-instrument-fee-rate";
+
 /// Request parameters for getting instrument fee rate
 #[derive(Debug, Clone, Serialize)]
 pub struct GetInstrumentFeeRateRequest {
@@ -16,8 +16,10 @@ pub struct GetInstrumentFeeRateRequest {
 pub struct InstrumentFeeRate {
     /// Instrument name e.g. BTC_USD
     pub instrument_name: String,
+
     /// Maker rate in basis points
     pub effective_maker_rate_bps: String,
+
     /// Taker rate in basis points
     pub effective_taker_rate_bps: String,
 }

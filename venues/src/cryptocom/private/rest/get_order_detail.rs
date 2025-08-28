@@ -1,9 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::cryptocom::RestResult;
+use crate::cryptocom::{PrivateRestClient as RestClient, RestResult};
 
-const ORDER_DETAIL_ENDPOINT: &str = "private/get-order-detail";
+const ORDER_DETAIL_ENDPOINT: &str = "exchange/v1/private/get-order-detail";
 
 /// Request parameters for getting order detail
 #[derive(Debug, Clone, Serialize)]

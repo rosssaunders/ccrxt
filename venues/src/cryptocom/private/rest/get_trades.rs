@@ -1,9 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::cryptocom::RestResult;
+use crate::cryptocom::{PrivateRestClient as RestClient, RestResult};
 
-const TRADES_ENDPOINT: &str = "private/get-trades";
+const TRADES_ENDPOINT: &str = "exchange/v1/private/get-trades";
 
 /// Parameters for get trades request
 #[derive(Debug, Clone, Serialize)]

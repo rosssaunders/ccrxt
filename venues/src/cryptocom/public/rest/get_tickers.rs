@@ -6,11 +6,10 @@ use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::cryptocom::{ApiResult, EndpointType, RestResult};
+use crate::cryptocom::{ApiResult, EndpointType, PublicRestClient as RestClient, RestResult};
 
 /// Endpoint for getting tickers
-const GET_TICKERS_ENDPOINT: &str = "public/get-tickers";
+const GET_TICKERS_ENDPOINT: &str = "exchange/v1/public/get-tickers";
 
 /// Request parameters for the public/get-tickers endpoint.
 ///

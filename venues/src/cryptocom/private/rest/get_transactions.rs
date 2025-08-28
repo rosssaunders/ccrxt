@@ -1,24 +1,27 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::cryptocom::RestResult;
+use crate::cryptocom::{PrivateRestClient as RestClient, RestResult};
 
-const TRANSACTIONS_ENDPOINT: &str = "private/get-transactions";
+const TRANSACTIONS_ENDPOINT: &str = "exchange/v1/private/get-transactions";
 /// Parameters for get transactions request
 #[derive(Debug, Clone, Serialize)]
 pub struct GetTransactionsRequest {
     /// e.g. BTCUSD-PERP. Omit for 'all'
     #[serde(skip_serializing_if = "Option::is_none")]
     pub instrument_name: Option<String>,
+
     /// Refer to the journal_type in Response Attributes
     #[serde(skip_serializing_if = "Option::is_none")]
     pub journal_type: Option<String>,
+
     /// Start time in Unix time format (inclusive). Default: end_time - 1 day. Nanosecond is recommended for accurate pagination
     #[serde(skip_serializing_if = "Option::is_none")]
     pub start_time: Option<String>,
+
     /// End time in Unix time format (exclusive). Default: current system timestamp. Nanosecond is recommended for accurate pagination
     #[serde(skip_serializing_if = "Option::is_none")]
     pub end_time: Option<String>,
+
     /// The maximum number of transactions to be retrieved before the end_time. Default: 100. Max: 100.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<i32>,
@@ -29,37 +32,52 @@ pub struct GetTransactionsRequest {
 pub struct TransactionEntry {
     /// Account ID
     pub account_id: String,
+
     /// Event date
     pub event_date: String,
+
     /// Journal type: TRADING, TRADE_FEE, ONCHAIN_WITHDRAW, ONCHAIN_DEPOSIT, etc.
     pub journal_type: String,
+
     /// Journal ID
     pub journal_id: String,
+
     /// Transaction quantity
     pub transaction_qty: String,
+
     /// Transaction cost
     pub transaction_cost: String,
+
     /// Realized PNL
     pub realized_pnl: String,
+
     /// Order ID (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub order_id: Option<String>,
+
     /// Trade ID (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub trade_id: Option<String>,
+
     /// Trade match ID applicable to trades only. Non-trade related transactions will have zero or null value.
     pub trade_match_id: String,
+
     /// Event timestamp in milliseconds
     pub event_timestamp_ms: u64,
+
     /// Event timestamp in nanoseconds
     pub event_timestamp_ns: String,
+
     /// Client Order ID (can be empty)
     pub client_oid: String,
+
     /// MAKER or TAKER or empty
     pub taker_side: String,
+
     /// BUY or SELL
     #[serde(skip_serializing_if = "Option::is_none")]
     pub side: Option<String>,
+
     /// e.g. BTCUSD-PERP
     pub instrument_name: String,
 }

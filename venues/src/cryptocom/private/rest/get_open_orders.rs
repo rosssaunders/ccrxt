@@ -1,9 +1,9 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::cryptocom::{ApiResult, RestResult};
+use crate::cryptocom::{ApiResult, PrivateRestClient as RestClient, RestResult};
 
-const OPEN_ORDERS_ENDPOINT: &str = "private/get-open-orders";
+const OPEN_ORDERS_ENDPOINT: &str = "exchange/v1/private/get-open-orders";
+
 /// Enum representing the status of an order
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
@@ -27,50 +27,73 @@ pub struct GetOpenOrdersRequest {
 pub struct OpenOrder {
     /// Account ID
     pub account_id: String,
+
     /// Order ID
     pub order_id: String,
+
     /// Client Order ID
     pub client_oid: String,
+
     /// Order type: MARKET, LIMIT, STOP_LOSS, STOP_LIMIT, TAKE_PROFIT, TAKE_PROFIT_LIMIT
     pub order_type: String,
+
     /// Time in force: GOOD_TILL_CANCEL, IMMEDIATE_OR_CANCEL, FILL_OR_KILL
     pub time_in_force: String,
+
     /// Order side: BUY or SELL
     pub side: String,
+
     /// Execution instructions: POST_ONLY, SMART_POST_ONLY, LIQUIDATION
     pub exec_inst: Vec<String>,
+
     /// Quantity specified in the order
     pub quantity: String,
+
     /// Limit price specified in the order
     pub limit_price: String,
+
     /// Order value
     pub order_value: String,
+
     /// User's maker fee rate
     pub maker_fee_rate: String,
+
     /// User's taker fee rate
     pub taker_fee_rate: String,
+
     /// Average price
     pub avg_price: String,
+
     /// Cumulative executed quantity
     pub cumulative_quantity: String,
+
     /// Cumulative executed value
     pub cumulative_value: String,
+
     /// Cumulative executed fee
     pub cumulative_fee: String,
+
     /// Order status: NEW, PENDING, ACTIVE
     pub status: String,
+
     /// Updated user ID
     pub update_user_id: String,
+
     /// Order creation date
     pub order_date: String,
+
     /// Order creation timestamp
     pub create_time: u64,
+
     /// Order creation timestamp (nanosecond)
     pub create_time_ns: String,
+
     /// Order update timestamp
     pub update_time: u64,
+
     /// Instrument name
     pub instrument_name: String,
+
     /// Currency used for the fees
     pub fee_instrument_name: String,
 }

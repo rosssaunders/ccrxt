@@ -1,10 +1,9 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::cryptocom::{ApiResult, RestResult};
+use crate::cryptocom::{ApiResult, PrivateRestClient as RestClient, RestResult};
 
 /// Endpoint path for the convert API
-const CONVERT_ENDPOINT: &str = "private/staking/convert";
+const CONVERT_ENDPOINT: &str = "exchange/v1/private/staking/convert";
 
 /// Request parameters for the convert endpoint.
 ///

@@ -10,8 +10,7 @@ use rest::{
 use serde_json::{Value, json};
 use sha2::Sha256;
 
-use super::credentials::Credentials;
-use crate::cryptocom::Errors;
+use super::{Errors, credentials::Credentials};
 
 /// Signs a request using the Crypto.com signing algorithm
 ///
@@ -210,7 +209,8 @@ impl RestClient {
             "api_key": self.credentials.api_key.expose_secret(),
         });
 
-        let url = format!("{}/v1/{}", self.base_url, method);
+        // Build URL - method now contains complete relative path
+        let url = format!("{}/{}", self.base_url, method);
         let body = serde_json::to_string(&request_body).map_err(|e| {
             crate::cryptocom::Errors::Error(format!("Failed to serialize body: {e}"))
         })?;

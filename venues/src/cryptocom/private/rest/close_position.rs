@@ -1,10 +1,9 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::cryptocom::RestResult;
+use crate::cryptocom::{PrivateRestClient as RestClient, RestResult};
 
 /// Endpoint path for the close-position API
-const CLOSE_POSITION_ENDPOINT: &str = "private/close-position";
+const CLOSE_POSITION_ENDPOINT: &str = "exchange/v1/private/close-position";
 
 /// Position close order type
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]

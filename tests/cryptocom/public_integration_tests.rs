@@ -14,8 +14,8 @@
 //! 1. **Response ID Field**: The API returns `-1` for ID fields causing parsing errors when
 //!    expecting `u64`. This may require updating response struct definitions.
 //!
-//! 2. **Base URL**: Currently using `https://api.crypto.com/exchange`. This may need adjustment
-//!    based on the actual Crypto.com Exchange API documentation.
+//! 2. **Base URL**: Now correctly using `https://api.crypto.com` as FQDN only. The `/exchange`
+//!    path prefix is handled internally by the client implementations.
 //!
 //! ## Test Coverage
 //!
@@ -50,7 +50,7 @@ fn create_public_test_client() -> PublicRestClient {
     let http_client = Arc::new(rest::native::NativeHttpClient::default());
     let rate_limiter = RateLimiter::new();
 
-    PublicRestClient::new("https://api.crypto.com/exchange", http_client, rate_limiter)
+    PublicRestClient::new("https://api.crypto.com", http_client, rate_limiter)
 }
 
 /// Test the get_instruments endpoint
@@ -527,14 +527,14 @@ async fn test_get_risk_parameters() {
 ///
 /// [API docs](https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html#public-get-announcements)
 ///
-/// This endpoint lives on a different base url to the rest.
+/// This endpoint uses a different path structure than most other endpoints.
 #[tokio::test]
 #[ignore = "Endpoint returns HTTP 404 Not Found"]
 async fn test_get_announcements() {
     let http_client = Arc::new(rest::native::NativeHttpClient::default());
     let rate_limiter = RateLimiter::new();
 
-    let client = PublicRestClient::new("https://api.crypto.com/", http_client, rate_limiter);
+    let client = PublicRestClient::new("https://api.crypto.com", http_client, rate_limiter);
 
     let request = GetAnnouncementsRequest {
         category: Some(AnnouncementCategory::System),

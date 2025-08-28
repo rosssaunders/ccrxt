@@ -6,11 +6,10 @@ use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::cryptocom::{ApiResult, EndpointType, RestResult};
+use crate::cryptocom::{ApiResult, EndpointType, PublicRestClient as RestClient, RestResult};
 
 /// Endpoint path for the get-insurance API
-const INSURANCE_ENDPOINT: &str = "public/get-insurance";
+const INSURANCE_ENDPOINT: &str = "exchange/v1/public/get-insurance";
 
 /// Request parameters for the public/get-insurance endpoint.
 ///

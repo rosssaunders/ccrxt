@@ -1,9 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::cryptocom::{ApiResult, RestResult};
+use crate::cryptocom::{ApiResult, PrivateRestClient as RestClient, RestResult};
 
-const REWARD_HISTORY_ENDPOINT: &str = "private/staking/get-reward-history";
+const REWARD_HISTORY_ENDPOINT: &str = "exchange/v1/private/staking/get-reward-history";
 
 /// Request parameters for get reward history
 #[derive(Debug, Clone, Serialize, Deserialize)]

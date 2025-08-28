@@ -1,10 +1,9 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::cryptocom::{ApiResult, RestResult, StpInst, StpScope};
+use crate::cryptocom::{ApiResult, PrivateRestClient as RestClient, RestResult, StpInst, StpScope};
 
 /// Endpoint path for the change-account-settings API
-const CHANGE_ACCOUNT_SETTINGS_ENDPOINT: &str = "private/change-account-settings";
+const CHANGE_ACCOUNT_SETTINGS_ENDPOINT: &str = "exchange/v1/private/change-account-settings";
 
 /// Request parameters for changing account settings
 #[derive(Debug, Clone, Serialize)]

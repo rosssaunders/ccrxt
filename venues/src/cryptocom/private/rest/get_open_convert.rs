@@ -1,18 +1,20 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::cryptocom::{ApiResult, RestResult};
+use crate::cryptocom::{ApiResult, PrivateRestClient as RestClient, RestResult};
 
-const OPEN_CONVERT_ENDPOINT: &str = "private/get-open-convert";
+const OPEN_CONVERT_ENDPOINT: &str = "exchange/v1/private/get-open-convert";
+
 /// Request parameters for get open convert
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GetOpenConvertRequest {
     /// Start time in Unix time format (inclusive) (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub start_time: Option<u64>,
+
     /// End time in Unix time format (inclusive) (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub end_time: Option<u64>,
+
     /// The maximum number of requests returned (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<String>,
@@ -23,22 +25,31 @@ pub struct GetOpenConvertRequest {
 pub struct OpenConvertEntry {
     /// Instrument name to convert from: ETH.staked or CDCETH
     pub from_instrument_name: String,
+
     /// Instrument name to convert to, e.g. CDCETH
     pub to_instrument_name: String,
+
     /// Expected conversion rate
     pub expected_rate: String,
+
     /// Quantity to be converted in from_instrument_name
     pub from_quantity: String,
+
     /// Maximum slippage allowed in basis point
     pub slippage_tolerance_bps: String,
+
     /// Actual conversion rate
     pub actual_rate: String,
+
     /// Quantity converted to to_instrument_name
     pub to_quantity: String,
+
     /// Convert request id
     pub convert_id: u64,
+
     /// Request status: NEW
     pub status: String,
+
     /// Request creation timestamp in milliseconds in Unix time format
     pub create_timestamp_ms: String,
 }

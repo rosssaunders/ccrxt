@@ -1,9 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::cryptocom::RestResult;
+use crate::cryptocom::{PrivateRestClient as RestClient, RestResult};
 
-const DEPOSIT_ADDRESS_ENDPOINT: &str = "private/get-deposit-address";
+const DEPOSIT_ADDRESS_ENDPOINT: &str = "exchange/v1/private/get-deposit-address";
 
 /// Request parameters for get deposit address
 #[derive(Debug, Clone, Serialize)]

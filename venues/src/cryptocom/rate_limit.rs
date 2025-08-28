@@ -85,34 +85,38 @@ impl EndpointType {
     /// This can be used to automatically determine the correct rate limit based on the API path
     pub fn from_path(path: &str) -> Self {
         match path {
-            // Private REST endpoints
-            "private/create-order" => EndpointType::PrivateCreateOrder,
-            "private/cancel-order" => EndpointType::PrivateCancelOrder,
-            "private/cancel-all-orders" => EndpointType::PrivateCancelAllOrders,
-            "private/get-order-detail" => EndpointType::PrivateGetOrderDetail,
-            "private/get-trades" => EndpointType::PrivateGetTrades,
-            "private/get-order-history" => EndpointType::PrivateGetOrderHistory,
-            "private/get-transactions" => EndpointType::PrivateGetTransactions,
+            // Private REST endpoints (with full paths)
+            "exchange/v1/private/create-order" => EndpointType::PrivateCreateOrder,
+            "exchange/v1/private/cancel-order" => EndpointType::PrivateCancelOrder,
+            "exchange/v1/private/cancel-all-orders" => EndpointType::PrivateCancelAllOrders,
+            "exchange/v1/private/get-order-detail" => EndpointType::PrivateGetOrderDetail,
+            "exchange/v1/private/get-trades" => EndpointType::PrivateGetTrades,
+            "exchange/v1/private/get-order-history" => EndpointType::PrivateGetOrderHistory,
+            "exchange/v1/private/get-transactions" => EndpointType::PrivateGetTransactions,
 
-            // Public REST endpoints
-            "public/get-announcements" => EndpointType::PublicGetAnnouncements,
-            "public/get-risk-parameters" => EndpointType::PublicGetRiskParameters,
-            "public/get-instruments" => EndpointType::PublicGetInstruments,
-            "public/get-book" => EndpointType::PublicGetBook,
-            "public/get-ticker" => EndpointType::PublicGetTicker,
-            "public/get-tickers" => EndpointType::PublicGetTickers,
-            "public/get-trades" => EndpointType::PublicGetTrades,
-            "public/get-valuations" => EndpointType::PublicGetValuations,
-            "public/get-candlestick" => EndpointType::PublicGetCandlestick,
-            "public/get-expired-settlement-price" => EndpointType::PublicGetExpiredSettlementPrice,
-            "public/get-insurance" => EndpointType::PublicGetInsurance,
+            // Public REST endpoints (with full paths)
+            "v1/public/get-announcements" => EndpointType::PublicGetAnnouncements,
+            "exchange/v1/public/get-risk-parameters" => EndpointType::PublicGetRiskParameters,
+            "exchange/v1/public/get-instruments" => EndpointType::PublicGetInstruments,
+            "exchange/v1/public/get-book" => EndpointType::PublicGetBook,
+            "exchange/v1/public/get-ticker" => EndpointType::PublicGetTicker,
+            "exchange/v1/public/get-tickers" => EndpointType::PublicGetTickers,
+            "exchange/v1/public/get-trades" => EndpointType::PublicGetTrades,
+            "exchange/v1/public/get-valuations" => EndpointType::PublicGetValuations,
+            "exchange/v1/public/get-candlestick" => EndpointType::PublicGetCandlestick,
+            "exchange/v1/public/get-expired-settlement-price" => {
+                EndpointType::PublicGetExpiredSettlementPrice
+            }
+            "exchange/v1/public/get-insurance" => EndpointType::PublicGetInsurance,
 
-            // Staking endpoints
-            path if path.starts_with("public/staking/") => EndpointType::PublicStaking,
-            path if path.starts_with("private/staking/") => EndpointType::PrivateStaking,
+            // Staking endpoints (with full paths)
+            path if path.starts_with("exchange/v1/public/staking/") => EndpointType::PublicStaking,
+            path if path.starts_with("exchange/v1/private/staking/") => {
+                EndpointType::PrivateStaking
+            }
 
             // Default cases
-            path if path.starts_with("private/") => EndpointType::PrivateOther,
+            path if path.starts_with("exchange/v1/private/") => EndpointType::PrivateOther,
             _ => EndpointType::PrivateOther, // Conservative default
         }
     }
@@ -122,6 +126,7 @@ impl EndpointType {
 #[derive(Debug, Clone, Copy)]
 pub struct RateLimit {
     pub max_requests: u32,
+
     pub window: Duration,
 }
 

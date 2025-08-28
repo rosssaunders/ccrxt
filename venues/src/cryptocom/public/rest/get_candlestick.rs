@@ -2,11 +2,12 @@ use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::cryptocom::{ApiResult, EndpointType, RestResult, Timeframe};
+use crate::cryptocom::{
+    ApiResult, EndpointType, PublicRestClient as RestClient, RestResult, Timeframe,
+};
 
 /// Endpoint for getting candlestick data
-const GET_CANDLESTICK_ENDPOINT: &str = "public/get-candlestick";
+const GET_CANDLESTICK_ENDPOINT: &str = "exchange/v1/public/get-candlestick";
 
 /// Request parameters for the public/get-candlestick endpoint.
 ///

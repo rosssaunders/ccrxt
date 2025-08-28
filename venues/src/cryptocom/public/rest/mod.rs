@@ -1,4 +1,3 @@
-pub mod client;
 pub mod get_announcements;
 pub mod get_book;
 pub mod get_candlestick;
@@ -11,7 +10,6 @@ pub mod get_tickers;
 pub mod get_trades;
 pub mod get_valuations;
 
-pub use client::RestClient;
 pub use get_announcements::{GetAnnouncementsRequest, GetAnnouncementsResponse};
 pub use get_book::{GetBookRequest, GetBookResponse};
 pub use get_candlestick::{GetCandlestickRequest, GetCandlestickResponse};

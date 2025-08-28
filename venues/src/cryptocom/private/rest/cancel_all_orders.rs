@@ -1,10 +1,9 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::cryptocom::{ApiResult, RestResult};
+use crate::cryptocom::{ApiResult, PrivateRestClient as RestClient, RestResult};
 
 /// Endpoint path for the cancel-all-orders API
-const CANCEL_ALL_ORDERS_ENDPOINT: &str = "private/cancel-all-orders";
+const CANCEL_ALL_ORDERS_ENDPOINT: &str = "exchange/v1/private/cancel-all-orders";
 
 /// Order type filter for cancel all orders
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]

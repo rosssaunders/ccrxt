@@ -1,9 +1,9 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
+use crate::cryptocom::PrivateRestClient as RestClient;
 
 /// Endpoint path for the cancel-order-list API
-const CANCEL_ORDER_LIST_ENDPOINT: &str = "private/cancel-order-list";
+const CANCEL_ORDER_LIST_ENDPOINT: &str = "exchange/v1/private/cancel-order-list";
 
 /// Individual order to cancel in a list
 #[derive(Debug, Clone, Serialize, Deserialize)]

@@ -1,10 +1,9 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::cryptocom::{ApiResult, RestResult};
+use crate::cryptocom::{ApiResult, PrivateRestClient as RestClient, RestResult};
 
 /// Endpoint path for the get-convert-history API
-const CONVERT_HISTORY_ENDPOINT: &str = "private/staking/get-convert-history";
+const CONVERT_HISTORY_ENDPOINT: &str = "exchange/v1/private/staking/get-convert-history";
 
 /// Request parameters for get convert history
 #[derive(Debug, Clone, Serialize, Deserialize)]

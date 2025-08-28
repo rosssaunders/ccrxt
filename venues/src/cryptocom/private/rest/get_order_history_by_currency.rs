@@ -1,9 +1,10 @@
 use serde::{Deserialize, Serialize};
 
-use super::{client::RestClient, get_order_history_by_instrument::OrderHistoryByInstrumentEntry};
-use crate::cryptocom::RestResult;
+use super::get_order_history_by_instrument::OrderHistoryByInstrumentEntry;
+use crate::cryptocom::{PrivateRestClient as RestClient, RestResult};
 
-const ORDER_HISTORY_BY_CURRENCY_ENDPOINT: &str = "private/get_order_history_by_currency";
+const ORDER_HISTORY_BY_CURRENCY_ENDPOINT: &str =
+    "exchange/v1/private/get_order_history_by_currency";
 
 /// Parameters for get order history by currency request
 #[derive(Debug, Clone, Serialize)]

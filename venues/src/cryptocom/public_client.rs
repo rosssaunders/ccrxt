@@ -78,11 +78,11 @@ impl RestClient {
             .await
             .map_err(|e| Errors::Error(e.to_string()))?;
 
-        // Build the URL
+        // Build the URL - endpoint now contains complete relative path
         let url = if endpoint.starts_with("http") {
             endpoint.to_string()
         } else {
-            format!("{}/v1/{}", self.base_url, endpoint)
+            format!("{}/{}", self.base_url, endpoint)
         };
 
         // Build the request
@@ -168,11 +168,11 @@ impl RestClient {
             .await
             .map_err(|e| Errors::Error(e.to_string()))?;
 
-        // Build the URL
+        // Build the URL - endpoint now contains complete relative path
         let url = if endpoint.starts_with("http") {
             endpoint.to_string()
         } else {
-            format!("{}/v1/{}", self.base_url, endpoint)
+            format!("{}/{}", self.base_url, endpoint)
         };
 
         // Build the request

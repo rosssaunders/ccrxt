@@ -1,10 +1,11 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::cryptocom::{ApiResult, EndpointType, InstrumentType, RestResult};
+use crate::cryptocom::{
+    ApiResult, EndpointType, InstrumentType, PublicRestClient as RestClient, RestResult,
+};
 
 /// Endpoint path for the get-expired-settlement-price API
-const EXPIRED_SETTLEMENT_PRICE_ENDPOINT: &str = "public/get-expired-settlement-price";
+const EXPIRED_SETTLEMENT_PRICE_ENDPOINT: &str = "exchange/v1/public/get-expired-settlement-price";
 
 /// Request parameters for the public/get-expired-settlement-price endpoint.
 ///

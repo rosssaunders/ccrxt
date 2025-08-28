@@ -1,9 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::cryptocom::{ApiResult, RestResult};
+use crate::cryptocom::{ApiResult, PrivateRestClient as RestClient, RestResult};
 
-const STAKING_POSITION_ENDPOINT: &str = "private/staking/get-staking-position";
+const STAKING_POSITION_ENDPOINT: &str = "exchange/v1/private/staking/get-staking-position";
 
 /// Request parameters for get staking position
 #[derive(Debug, Clone, Serialize, Deserialize)]
