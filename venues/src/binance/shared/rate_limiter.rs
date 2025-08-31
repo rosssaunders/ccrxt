@@ -353,8 +353,8 @@ impl RateLimiter {
         let mut usage = self.usage.write().await;
 
         for (header_name, header_value) in headers {
-            if let Some(rate_limit_header) = RateLimitHeader::parse(header_name)
-                && let Ok(current_usage) = header_value.parse::<u32>()
+            if let (Some(rate_limit_header), Ok(current_usage)) = 
+                (RateLimitHeader::parse(header_name), header_value.parse::<u32>())
             {
                 match rate_limit_header.kind {
                     RateLimitHeaderKind::UsedWeight => {

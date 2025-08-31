@@ -1,3 +1,5 @@
+#![feature(let_chains)]
+
 pub mod binance;
 pub mod bingx;
 pub mod bitget;

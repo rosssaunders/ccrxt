@@ -11,7 +11,7 @@ use rest::{
 };
 use serde::{Serialize, de::DeserializeOwned};
 
-use crate::coinbaseexchange::{EndpointType, Errors, RateLimiter, RestResult};
+use crate::coinbaseexchange::{EndpointType, Errors, RestResult, rate_limiter_trait::CoinbaseRateLimiter};
 
 /// Public REST client for Coinbase Exchange
 ///
@@ -25,7 +25,7 @@ pub struct RestClient {
     pub http_client: Arc<dyn HttpClient>,
 
     /// The rate limiter used to manage request rates and prevent hitting API limits
-    pub rate_limiter: RateLimiter,
+    pub rate_limiter: Arc<dyn CoinbaseRateLimiter>,
 }
 
 impl RestClient {
@@ -38,7 +38,7 @@ impl RestClient {
     pub fn new(
         base_url: impl Into<Cow<'static, str>>,
         http_client: Arc<dyn HttpClient>,
-        rate_limiter: RateLimiter,
+        rate_limiter: Arc<dyn CoinbaseRateLimiter>,
     ) -> Self {
         Self {
             base_url: base_url.into(),
@@ -61,7 +61,7 @@ impl RestClient {
         P: Serialize + ?Sized,
     {
         // Check rate limit before making request
-        self.rate_limiter.check_limit(EndpointType::Public).await?;
+        self.rate_limiter.check_limits(false).await?;
 
         // Build URL with query parameters
         let mut url = format!("{}/{}", self.base_url, endpoint);
@@ -164,7 +164,7 @@ impl RestClient {
         P: Serialize + ?Sized,
     {
         // Check rate limit before making request
-        self.rate_limiter.check_limit(EndpointType::Public).await?;
+        self.rate_limiter.check_limits(false).await?;
 
         // Build URL with query parameters
         let mut url = format!("{}/{}", self.base_url, endpoint);

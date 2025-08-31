@@ -7,17 +7,15 @@ license.workspace = true
 [dependencies]
 # Internal dependencies
 websockets = { path = "../websockets" }
-rest = { path = "../rest" }
+rest = { path = "../rest", default-features = false }
 
 # External dependencies
 anyhow = "1.0"
-tokio = { version = "1.0", features = [
+tokio = { version = "1.0", default-features = false, features = [
     "sync",
     "time",
     "macros",
-    "rt-multi-thread",
 ] }
-tokio-tungstenite = { version = "0.27.0", features = ["native-tls"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 serde_urlencoded = "0.7"
@@ -35,9 +33,9 @@ async-trait = "0.1"
 thiserror = "2.0.12"
 parking_lot.workspace = true
 tracing.workspace = true
-ratatui = { workspace = true }
+ratatui = { workspace = true, optional = true }
 # Align crossterm with ratatui's transitive dependency to avoid duplicates
-crossterm = "0.29.0"
+crossterm = { version = "0.29.0", optional = true }
 rust_decimal.workspace = true
 rust_decimal_macros = "1.36.0"
 clap.workspace = true
@@ -53,25 +51,11 @@ secrecy = "0.10.3"
 urlencoding = "2.1"
 strum = "0.27.2"
 strum_macros = "0.27.2"
-ring = "0.17.14"
+getrandom = "0.2"
 
 [features]
 default = ["native"]
-native = ["tokio/rt-multi-thread", "tokio/sync"]
-wasm = ["dep:wasm-bindgen", "dep:web-sys", "dep:js-sys"]
-
-# WASM-specific dependencies
-[target.'cfg(target_arch = "wasm32")'.dependencies]
-wasm-bindgen = { version = "0.2", optional = true }
-wasm-bindgen-futures = { version = "0.4", optional = true }
-web-sys = { version = "0.3", optional = true, features = [
-  "console",
-  "Window",
-  "Performance",
-  "Storage",
-  "Document",
-] }
-js-sys = { version = "0.3", optional = true }
+native = ["tokio/rt-multi-thread", "tokio/sync", "rest/native", "ratatui", "crossterm"]
 
 [lints]
 workspace = true

@@ -19,7 +19,7 @@ secrecy = "0.10.3"
 
 # Native dependencies
 reqwest = { version = "0.12.15", default-features = false, features = ["json", "rustls-tls"], optional = true }
-tokio = { version = "1.0", features = ["full"], optional = true }
+tokio = { version = "1.0", default-features = false, features = ["rt", "sync", "time", "macros"], optional = true }
 
 [[example]]
 name = "http_client_example"

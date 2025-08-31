@@ -69,9 +69,10 @@ impl RestClient {
         for (name, value) in response.headers.iter() {
             if let Some(header_type) =
                 crate::bitget::rate_limit::RateLimitHeader::from_str(name.as_str())
-                && let Ok(value_u32) = value.parse::<u32>()
             {
-                response_headers.values.insert(header_type, value_u32);
+                if let Ok(value_u32) = value.parse::<u32>() {
+                    response_headers.values.insert(header_type, value_u32);
+                }
             }
         }
 
