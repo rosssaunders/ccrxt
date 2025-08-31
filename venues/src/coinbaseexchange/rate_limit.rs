@@ -3,8 +3,8 @@ use std::{
     time::{Duration, Instant},
 };
 
+use parking_lot::RwLock;
 use thiserror::Error;
-use tokio::sync::RwLock;
 
 /// Types of endpoints for rate limiting based on Coinbase documentation
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -162,7 +162,7 @@ impl RateLimiter {
                     endpoint_type: endpoint_type.clone(),
                 })?;
 
-        let mut trackers = self.trackers.write().await;
+        let mut trackers = self.trackers.write();
         let tracker = trackers
             .entry(endpoint_type.clone())
             .or_insert_with(RequestTracker::new);
@@ -190,5 +190,48 @@ impl RateLimiter {
 impl Default for RateLimiter {
     fn default() -> Self {
         Self::new()
+    }
+}
+
+// CoinbaseRateLimiter trait implementation
+use async_trait::async_trait;
+
+use super::{errors::Errors, rate_limiter_trait::CoinbaseRateLimiter};
+
+#[async_trait]
+impl CoinbaseRateLimiter for RateLimiter {
+    async fn check_limits(&self, is_private: bool) -> Result<(), Errors> {
+        let endpoint_type = if is_private {
+            EndpointType::Private
+        } else {
+            EndpointType::Public
+        };
+        self.check_limit(endpoint_type).await.map_err(Errors::from)
+    }
+
+    async fn record_request(&self, is_private: bool) {
+        let _ = self.check_limits(is_private).await;
+    }
+
+    async fn update_from_headers(&self, _headers: &std::collections::HashMap<String, String>) {
+        // No dynamic header updates presently.
+    }
+
+    async fn get_usage_stats(&self) -> (u32, u32, u32) {
+        let trackers = self.trackers.read();
+        let public = trackers
+            .get(&EndpointType::Public)
+            .map(|t| t.request_times.len() as u32)
+            .unwrap_or(0);
+        let private = trackers
+            .get(&EndpointType::Private)
+            .map(|t| t.request_times.len() as u32)
+            .unwrap_or(0);
+        let tier_limit = self
+            .rate_limits
+            .get(&EndpointType::Public)
+            .map(|r| r.max_requests_per_second)
+            .unwrap_or(0);
+        (public, private, tier_limit)
     }
 }

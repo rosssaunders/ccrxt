@@ -1,8 +1,8 @@
 use std::time::{Duration, Instant};
 
 use async_trait::async_trait;
+use parking_lot::RwLock;
 use thiserror::Error;
-use tokio::sync::RwLock;
 
 use super::{Errors, rate_limiter_trait::OkxRateLimiter};
 
@@ -81,7 +81,7 @@ impl RateLimiter {
     /// Check if a request can be made
     pub async fn check_limits(&self, endpoint_type: EndpointType) -> Result<(), RateLimitError> {
         let rate_limit = Self::get_rate_limit(&endpoint_type);
-        let mut history = self.request_history.write().await;
+        let mut history = self.request_history.write();
         let now = Instant::now();
 
         // Get or create history for this endpoint type
@@ -100,7 +100,7 @@ impl RateLimiter {
 
     /// Record a request
     pub async fn increment_request(&self, endpoint_type: EndpointType) {
-        let mut history = self.request_history.write().await;
+        let mut history = self.request_history.write();
         let timestamps = history.entry(endpoint_type).or_default();
         timestamps.push(Instant::now());
     }
@@ -130,7 +130,7 @@ impl OkxRateLimiter for RateLimiter {
     async fn get_endpoint_usage_stats(
         &self,
     ) -> std::collections::HashMap<EndpointType, (u32, u32)> {
-        let history = self.request_history.read().await;
+        let history = self.request_history.read();
         let mut stats = std::collections::HashMap::new();
         for (endpoint_type, timestamps) in history.iter() {
             let rate_limit = Self::get_rate_limit(endpoint_type);

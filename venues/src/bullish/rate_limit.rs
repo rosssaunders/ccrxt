@@ -6,8 +6,8 @@ use std::{
     time::{Duration, Instant},
 };
 
+use parking_lot::RwLock;
 use thiserror::Error;
-use tokio::sync::RwLock;
 
 /// Rate limit error
 #[derive(Error, Debug)]
@@ -166,7 +166,7 @@ impl RateLimiter {
     /// Check if a request can be made for the given endpoint type
     pub async fn check_limits(&self, endpoint_type: EndpointType) -> Result<(), RateLimitError> {
         let rate_limit = endpoint_type.rate_limit();
-        let mut history = self.request_history.write().await;
+        let mut history = self.request_history.write();
 
         let timestamps = history.entry(endpoint_type).or_default();
         let now = Instant::now();
@@ -189,7 +189,7 @@ impl RateLimiter {
 
     /// Record a request for the given endpoint type
     pub async fn increment_request(&self, endpoint_type: EndpointType) {
-        let mut history = self.request_history.write().await;
+        let mut history = self.request_history.write();
         let timestamps = history.entry(endpoint_type).or_default();
         timestamps.push(Instant::now());
     }
@@ -197,7 +197,7 @@ impl RateLimiter {
     /// Get current usage statistics for an endpoint type
     pub async fn get_usage(&self, endpoint_type: EndpointType) -> (u32, u32) {
         let rate_limit = endpoint_type.rate_limit();
-        let history = self.request_history.read().await;
+        let history = self.request_history.read();
 
         if let Some(timestamps) = history.get(&endpoint_type) {
             let now = Instant::now();

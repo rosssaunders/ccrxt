@@ -5,8 +5,8 @@ use std::{
 };
 
 use async_trait::async_trait;
+use parking_lot::RwLock;
 use serde::Deserialize;
-use tokio::sync::RwLock;
 
 use crate::bitget::{
     Errors, ResponseHeaders,
@@ -169,7 +169,7 @@ impl RateLimiter {
 
     /// Call this after every REST call to increment request counters
     pub async fn increment_request(&self) {
-        let mut usage = self.usage.write().await;
+        let mut usage = self.usage.write();
         let now = Instant::now();
 
         // Track for 1-second window (endpoint-specific limits)
@@ -191,7 +191,7 @@ impl RateLimiter {
 
     /// Call this after every order-related REST call to increment order counters
     pub async fn increment_order(&self) {
-        let mut usage = self.usage.write().await;
+        let mut usage = self.usage.write();
         let now = Instant::now();
         usage.order_timestamps_1s.push_back(now);
         // Remove timestamps older than 1 second
@@ -215,7 +215,7 @@ impl RateLimiter {
         is_order: bool,
         order_limit_per_second: Option<u32>,
     ) -> Result<(), Errors> {
-        let usage = self.usage.read().await;
+        let usage = self.usage.read();
 
         // Overall IP limit: 6,000 per minute
         if usage.request_timestamps_1m.len() >= 6000 {
@@ -232,14 +232,13 @@ impl RateLimiter {
         }
 
         // Order-specific limits (UID-based)
-        if is_order {
-            if let Some(order_limit) = order_limit_per_second {
-                if usage.order_timestamps_1s.len() >= order_limit as usize {
-                    return Err(Errors::ApiError(ApiError::TooManyRequests {
-                        msg: format!("Order rate limit ({order_limit}/1s) exceeded"),
-                    }));
-                }
-            }
+        if is_order
+            && let Some(order_limit) = order_limit_per_second
+            && usage.order_timestamps_1s.len() >= order_limit as usize
+        {
+            return Err(Errors::ApiError(ApiError::TooManyRequests {
+                msg: format!("Order rate limit ({order_limit}/1s) exceeded"),
+            }));
         }
 
         Ok(())
@@ -247,7 +246,7 @@ impl RateLimiter {
 
     /// Get current usage statistics
     pub async fn get_usage_stats(&self) -> BitGetUsageStats {
-        let usage = self.usage.read().await;
+        let usage = self.usage.read();
         BitGetUsageStats {
             requests_per_minute: usage.request_timestamps_1m.len() as u32,
             requests_per_second: usage.request_timestamps_1s.len() as u32,

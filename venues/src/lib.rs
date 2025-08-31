@@ -1,4 +1,4 @@
-#![feature(let_chains)]
+// Removed unstable feature gate `let_chains` (stabilized) to allow building on stable compiler.
 
 pub mod binance;
 pub mod bingx;

@@ -15,7 +15,7 @@ use venues::coinbaseexchange::{
 /// Helper function to create a test client for public endpoints
 fn create_public_test_client() -> PublicRestClient {
     let http_client = Arc::new(rest::native::NativeHttpClient::default());
-    let rate_limiter = RateLimiter::new();
+    let rate_limiter = Arc::new(RateLimiter::new());
 
     PublicRestClient::new(
         "https://api.exchange.coinbase.com",

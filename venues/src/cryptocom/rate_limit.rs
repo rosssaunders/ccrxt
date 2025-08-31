@@ -4,7 +4,7 @@ use std::{
     time::{Duration, Instant},
 };
 
-use tokio::sync::RwLock;
+use parking_lot::RwLock;
 
 /// Represents different types of crypto.com API endpoints for rate limiting
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -209,7 +209,7 @@ impl RateLimiter {
     /// Check if a request can be made for the given endpoint type
     pub async fn check_limits(&self, endpoint_type: EndpointType) -> Result<(), RateLimitError> {
         let rate_limit = endpoint_type.rate_limit();
-        let usage = self.usage.read().await;
+        let usage = self.usage.read();
 
         // Check if this endpoint type has usage tracking
         if let Some(endpoint_usage) = usage.endpoints.get(&endpoint_type) {
@@ -231,7 +231,7 @@ impl RateLimiter {
     /// Increment the request counter for the given endpoint type
     pub async fn increment_request(&self, endpoint_type: EndpointType) {
         let rate_limit = endpoint_type.rate_limit();
-        let mut usage = self.usage.write().await;
+        let mut usage = self.usage.write();
         let now = Instant::now();
 
         let endpoint_usage = usage.get_or_create_endpoint(endpoint_type);
@@ -241,7 +241,7 @@ impl RateLimiter {
     /// Get current usage statistics for an endpoint type
     pub async fn get_usage(&self, endpoint_type: EndpointType) -> (u32, u32) {
         let rate_limit = endpoint_type.rate_limit();
-        let usage = self.usage.read().await;
+        let usage = self.usage.read();
 
         if let Some(endpoint_usage) = usage.endpoints.get(&endpoint_type) {
             (
@@ -256,7 +256,7 @@ impl RateLimiter {
     /// Clean up old timestamps for all endpoints
     #[allow(clippy::arithmetic_side_effects)]
     pub async fn cleanup_old_timestamps(&self) {
-        let mut usage = self.usage.write().await;
+        let mut usage = self.usage.write();
         let now = Instant::now();
 
         for (endpoint_type, endpoint_usage) in usage.endpoints.iter_mut() {

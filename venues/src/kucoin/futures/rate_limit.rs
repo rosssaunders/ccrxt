@@ -6,9 +6,9 @@ use std::{
     time::{Duration, Instant},
 };
 
+use parking_lot::RwLock;
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
-use tokio::sync::RwLock;
 
 /// VIP levels for KuCoin users, affecting rate limits
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
@@ -376,7 +376,7 @@ impl RateLimiter {
         pool: ResourcePool,
         weight: u32,
     ) -> Result<(), RateLimitError> {
-        let mut trackers = self.trackers.write().await;
+        let mut trackers = self.trackers.write();
 
         if let Some(tracker) = trackers.get_mut(&pool) {
             tracker.consume(weight).map_err(|mut e| {
@@ -409,7 +409,7 @@ impl RateLimiter {
         }
 
         self.vip_level = new_vip_level;
-        let mut trackers = self.trackers.write().await;
+        let mut trackers = self.trackers.write();
         let limits = new_vip_level.limits();
 
         // Update max weights for existing trackers while preserving current usage
@@ -435,7 +435,7 @@ impl RateLimiter {
 
     /// Get current rate limit status for a resource pool
     pub async fn get_status(&self, pool: ResourcePool) -> Option<RateLimitStatus> {
-        let mut trackers = self.trackers.write().await;
+        let mut trackers = self.trackers.write();
 
         trackers.get_mut(&pool).map(|tracker| RateLimitStatus {
             limit: tracker.max_weight,
@@ -447,7 +447,7 @@ impl RateLimiter {
 
     /// Get all resource pool statuses
     pub async fn get_all_statuses(&self) -> HashMap<ResourcePool, RateLimitStatus> {
-        let mut trackers = self.trackers.write().await;
+        let mut trackers = self.trackers.write();
         let mut statuses = HashMap::new();
 
         for (pool, tracker) in trackers.iter_mut() {
@@ -467,7 +467,7 @@ impl RateLimiter {
 
     /// Check if a request can be made without consuming quota
     pub async fn check_can_proceed(&self, pool: ResourcePool, weight: u32) -> bool {
-        let mut trackers = self.trackers.write().await;
+        let mut trackers = self.trackers.write();
 
         if let Some(tracker) = trackers.get_mut(&pool) {
             tracker.can_consume(weight)

@@ -83,7 +83,6 @@ pub mod public {
         GetVolatilityIndexDataResponse, GetVolatilityIndexDataResult, InstrumentData,
         MarkPriceEntry, RfqEntry, SettlementEntry, TradeEntry, TradeVolumeEntry,
     };
-
 }
 
 pub mod private {
@@ -192,7 +191,6 @@ pub use public::{
     GetVolatilityIndexDataRequest, GetVolatilityIndexDataResponse, GetVolatilityIndexDataResult,
     InstrumentData, MarkPriceEntry, RfqEntry, SettlementEntry, TradeEntry, TradeVolumeEntry,
 };
-
 pub use public_client::RestClient as PublicRestClient;
 pub use rate_limit::*;
 pub use rate_limiter_trait::DeribitRateLimiter;

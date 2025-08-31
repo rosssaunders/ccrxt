@@ -1,7 +1,7 @@
 use std::time::{Duration, Instant};
 
+use parking_lot::RwLock;
 use thiserror::Error;
-use tokio::sync::RwLock;
 
 /// Account tiers for Deribit matching engine rate limits based on 7-day trading volume
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
@@ -326,11 +326,11 @@ impl RateLimiter {
             | EndpointType::PublicGetCombos
             | EndpointType::PublicGetComboDetails
             | EndpointType::PublicGetStatus => {
-                let mut pool = self.credit_pool.write().await;
+                let mut pool = self.credit_pool.write();
                 pool.consume_credits(endpoint_type.credit_cost())
             }
             EndpointType::MatchingEngine => {
-                let mut history = self.matching_engine_history.write().await;
+                let mut history = self.matching_engine_history.write();
                 history.check_limit().map_err(|requests_in_window| {
                     RateLimitError::MatchingEngineRateExceeded {
                         tier: self.account_tier,
@@ -339,7 +339,7 @@ impl RateLimiter {
                 })
             }
             EndpointType::PublicGetInstruments => {
-                let mut history = self.get_instruments_history.write().await;
+                let mut history = self.get_instruments_history.write();
                 history.check_limit().map_err(|requests_in_window| {
                     RateLimitError::SpecialEndpointRateExceeded {
                         endpoint: "public/get_instruments".to_string(),
@@ -365,11 +365,11 @@ impl RateLimiter {
                 // Credits are already consumed in check_limits
             }
             EndpointType::MatchingEngine => {
-                let mut history = self.matching_engine_history.write().await;
+                let mut history = self.matching_engine_history.write();
                 history.record_request();
             }
             EndpointType::PublicGetInstruments => {
-                let mut history = self.get_instruments_history.write().await;
+                let mut history = self.get_instruments_history.write();
                 history.record_request();
             }
             EndpointType::PublicHello => {
@@ -380,12 +380,12 @@ impl RateLimiter {
 
     /// Get current rate limit status for debugging/monitoring
     pub async fn get_status(&self) -> RateLimitStatus {
-        let pool = self.credit_pool.read().await;
+        let pool = self.credit_pool.read();
         let mut pool_clone = pool.clone();
         pool_clone.refill(); // Get current state after refill
 
-        let matching_history = self.matching_engine_history.read().await;
-        let instruments_history = self.get_instruments_history.read().await;
+        let matching_history = self.matching_engine_history.read();
+        let instruments_history = self.get_instruments_history.read();
 
         RateLimitStatus {
             available_credits: pool_clone.available_credits,
@@ -400,7 +400,7 @@ impl RateLimiter {
     /// Update account tier (e.g., when trading volume changes)
     pub async fn update_account_tier(&self, new_tier: AccountTier) {
         if new_tier != self.account_tier {
-            let mut history = self.matching_engine_history.write().await;
+            let mut history = self.matching_engine_history.write();
             *history = RequestHistory::new(Duration::from_secs(1), new_tier.sustained_rate());
         }
     }

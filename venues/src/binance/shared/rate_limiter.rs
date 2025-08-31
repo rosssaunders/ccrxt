@@ -5,8 +5,8 @@ use std::{
 };
 
 use async_trait::async_trait;
+use parking_lot::RwLock;
 use serde::Deserialize;
-use tokio::sync::RwLock;
 
 use super::{errors::Errors, rate_limiter_trait::BinanceRateLimiter, venue_trait::RateLimits};
 
@@ -251,7 +251,7 @@ impl RateLimiter {
 
     /// Check if a request with given weight and order flag would exceed rate limits
     pub async fn check_limits(&self, weight: u32, is_order: bool) -> Result<(), Errors> {
-        let mut usage = self.usage.write().await;
+        let mut usage = self.usage.write();
 
         // Convert time windows to interval units for checking
         let weight_window_minutes = self.limits.request_weight_window.as_secs() / 60;
@@ -312,7 +312,7 @@ impl RateLimiter {
 
     /// Record usage after a successful request
     pub async fn record_usage(&self, weight: u32, is_order: bool) {
-        let mut usage = self.usage.write().await;
+        let mut usage = self.usage.write();
 
         let weight_window_minutes = self.limits.request_weight_window.as_secs() / 60;
         let raw_window_seconds = self.limits.raw_requests_window.as_secs();
@@ -339,7 +339,7 @@ impl RateLimiter {
 
     /// Update usage from response headers
     pub async fn update_from_headers(&self, headers: &HashMap<String, String>) {
-        let mut usage = self.usage.write().await;
+        let mut usage = self.usage.write();
 
         for (header_name, header_value) in headers {
             let Some(rate_limit_header) = RateLimitHeader::parse(header_name) else {
@@ -372,7 +372,7 @@ impl RateLimiter {
 
     /// Get current usage statistics
     pub async fn get_usage_stats(&self) -> UsageStats {
-        let mut usage = self.usage.write().await;
+        let mut usage = self.usage.write();
 
         let weight_window_minutes = self.limits.request_weight_window.as_secs() / 60;
         let raw_window_seconds = self.limits.raw_requests_window.as_secs();

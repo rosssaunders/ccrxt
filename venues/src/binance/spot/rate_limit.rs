@@ -4,8 +4,8 @@ use std::{
     time::{Duration, Instant},
 };
 
+use parking_lot::RwLock;
 use serde::Deserialize;
-use tokio::sync::RwLock;
 
 use crate::binance::spot::{Errors, ResponseHeaders, errors::ApiError};
 
@@ -162,7 +162,7 @@ impl RateLimiter {
 
     /// Call this after every REST call to increment raw_request (5min window, 6,000 cap for Spot)
     pub async fn increment_raw_request(&self) {
-        let mut usage = self.usage.write().await;
+        let mut usage = self.usage.write();
         let now = Instant::now();
         usage.raw_request_timestamps.push_back(now);
         // Remove timestamps older than 5 minutes
@@ -175,7 +175,7 @@ impl RateLimiter {
 
     /// Call this after every order-related REST call to increment order counters
     pub async fn increment_order(&self) {
-        let mut usage = self.usage.write().await;
+        let mut usage = self.usage.write();
         let now = Instant::now();
         usage.order_timestamps_10s.push_back(now);
         usage.order_timestamps_1d.push_back(now);
@@ -194,7 +194,7 @@ impl RateLimiter {
 
     /// Call this after every response to update counters from headers (authoritative)
     pub async fn update_from_headers(&self, headers: &ResponseHeaders) {
-        let mut usage = self.usage.write().await;
+        let mut usage = self.usage.write();
         // Use a strongly-typed RateLimitHeader as the key
         use crate::binance::spot::rate_limit::{
             IntervalUnit, RateLimitHeader, RateLimitHeaderKind,
@@ -214,7 +214,7 @@ impl RateLimiter {
     /// - weight: request weight for this endpoint
     /// - is_order: whether this is an order-related endpoint
     pub async fn check_limits(&self, weight: u32, is_order: bool) -> Result<(), Errors> {
-        let usage = self.usage.read().await;
+        let usage = self.usage.read();
 
         // Raw requests: 6,000 per 5 min (Spot limit)
         if usage.raw_request_timestamps.len() >= 6000 {
@@ -346,7 +346,7 @@ mod tests {
         limiter.update_from_headers(&headers).await;
 
         // Check that internal state was updated
-        let usage = limiter.usage.read().await;
+        let usage = limiter.usage.read();
         assert_eq!(usage.used_weight_1m, 500);
     }
 }

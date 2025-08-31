@@ -4,7 +4,7 @@ use std::{
     time::{Duration, Instant},
 };
 
-use tokio::sync::RwLock;
+use parking_lot::RwLock;
 
 /// Represents different types of BitMart API endpoints for rate limiting
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -94,7 +94,7 @@ impl RateLimiter {
     /// Check if a request can be made
     pub async fn check_limits(&self, endpoint_type: EndpointType) -> Result<(), RateLimitError> {
         let rate_limit = Self::get_rate_limit(&endpoint_type);
-        let mut history = self.request_history.write().await;
+        let mut history = self.request_history.write();
         let now = Instant::now();
 
         // Get or create history for this endpoint type
@@ -113,7 +113,7 @@ impl RateLimiter {
 
     /// Record a request
     pub async fn increment_request(&self, endpoint_type: EndpointType) {
-        let mut history = self.request_history.write().await;
+        let mut history = self.request_history.write();
         let timestamps = history.entry(endpoint_type).or_default();
         timestamps.push(Instant::now());
     }

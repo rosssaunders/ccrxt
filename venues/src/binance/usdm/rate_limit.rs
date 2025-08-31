@@ -4,8 +4,8 @@ use std::{
     time::{Duration, Instant},
 };
 
+use parking_lot::RwLock;
 use serde::Deserialize;
-use tokio::sync::RwLock;
 
 use crate::binance::usdm::{Errors, ResponseHeaders, errors::ApiError};
 
@@ -212,7 +212,7 @@ impl RateLimiter {
     /// Call this after every REST call to increment raw_request (1min window, 1,200 cap for USDM)
     #[allow(clippy::arithmetic_side_effects)]
     pub async fn increment_raw_request(&self) {
-        let mut usage = self.usage.write().await;
+        let mut usage = self.usage.write();
         let now = Instant::now();
         usage.raw_request_timestamps.push_back(now);
         // Remove timestamps older than 1 minute for USDM
@@ -225,7 +225,7 @@ impl RateLimiter {
     /// Call this after every order-related REST call to increment order counters
     #[allow(clippy::arithmetic_side_effects)]
     pub async fn increment_order(&self) {
-        let mut usage = self.usage.write().await;
+        let mut usage = self.usage.write();
         let now = Instant::now();
         usage.order_timestamps_10s.push_back(now);
         usage.order_timestamps_1m.push_back(now);
@@ -247,7 +247,7 @@ impl RateLimiter {
 
     /// Call this after every response to update counters from headers (authoritative)
     pub async fn update_from_headers(&self, headers: &ResponseHeaders) {
-        let mut usage = self.usage.write().await;
+        let mut usage = self.usage.write();
         // Use a strongly-typed RateLimitHeader as the key
         use crate::binance::usdm::rate_limit::{
             IntervalUnit, RateLimitHeader, RateLimitHeaderKind,
@@ -282,7 +282,7 @@ impl RateLimiter {
     /// - is_order: whether this is an order-related endpoint
     #[allow(clippy::arithmetic_side_effects)]
     pub async fn check_limits(&self, weight: u32, is_order: bool) -> Result<(), Errors> {
-        let usage = self.usage.read().await;
+        let usage = self.usage.read();
 
         // Raw requests: 1,200 per 1 min for USDM (different from COINM)
         if usage.raw_request_timestamps.len() >= 1200 {

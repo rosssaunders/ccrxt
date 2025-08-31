@@ -4,8 +4,8 @@ use std::{
 };
 
 use async_trait::async_trait;
+use parking_lot::RwLock;
 use thiserror::Error;
-use tokio::sync::RwLock;
 
 use super::{errors::BingXError, rate_limiter_trait::BingXRateLimiter};
 
@@ -87,7 +87,7 @@ impl RateLimiter {
         let now = Instant::now();
         let cutoff = now.checked_sub(rate_limit.window).unwrap_or(now);
 
-        let mut history = self.request_history.write().await;
+        let mut history = self.request_history.write();
         let timestamps = history.entry(endpoint_type.clone()).or_default();
 
         // Remove old timestamps
@@ -103,7 +103,7 @@ impl RateLimiter {
 
     /// Record a request
     pub async fn increment_request(&self, endpoint_type: EndpointType) {
-        let mut history = self.request_history.write().await;
+        let mut history = self.request_history.write();
         let timestamps = history.entry(endpoint_type).or_default();
         timestamps.push(Instant::now());
     }
@@ -135,7 +135,7 @@ impl BingXRateLimiter for RateLimiter {
     }
 
     async fn get_endpoint_usage_stats(&self) -> HashMap<EndpointType, (u32, u32)> {
-        let history = self.request_history.read().await;
+        let history = self.request_history.read();
         let mut stats = HashMap::new();
 
         for endpoint_type in [

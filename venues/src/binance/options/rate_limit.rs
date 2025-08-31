@@ -4,8 +4,8 @@ use std::{
     time::{Duration, Instant},
 };
 
+use parking_lot::RwLock;
 use serde::Deserialize;
-use tokio::sync::RwLock;
 
 use crate::binance::options::{Errors, errors::ApiError};
 
@@ -167,7 +167,7 @@ impl RateLimiter {
 
     /// Call this after every REST call to increment raw_request (5min window, 61,000 cap)
     pub async fn increment_raw_request(&self) {
-        let mut usage = self.usage.write().await;
+        let mut usage = self.usage.write();
         let now = Instant::now();
         usage.raw_request_timestamps.push_back(now);
         // Remove timestamps older than 5 minutes
@@ -180,7 +180,7 @@ impl RateLimiter {
 
     /// Call this after every order-related REST call to increment order counters
     pub async fn increment_order(&self) {
-        let mut usage = self.usage.write().await;
+        let mut usage = self.usage.write();
         let now = Instant::now();
         usage.order_timestamps_10s.push_back(now);
         usage.order_timestamps_1m.push_back(now);
@@ -206,7 +206,7 @@ impl RateLimiter {
 
     /// Call this after every response to update counters from headers (authoritative)
     pub async fn update_from_headers(&self, headers: &ResponseHeaders) {
-        let mut usage = self.usage.write().await;
+        let mut usage = self.usage.write();
         // Use a strongly-typed RateLimitHeader as the key
         let key = RateLimitHeader {
             kind: RateLimitHeaderKind::UsedWeight,
@@ -224,7 +224,7 @@ impl RateLimiter {
     /// - is_order: whether this is an order-related endpoint
     #[allow(clippy::arithmetic_side_effects)]
     pub async fn check_limits(&self, weight: u32, is_order: bool) -> Result<(), Errors> {
-        let usage = self.usage.read().await;
+        let usage = self.usage.read();
         // Raw requests: 61,000 per 5 min (similar to other Binance APIs)
         if usage.raw_request_timestamps.len() >= 61000 {
             return Err(Errors::ApiError(ApiError::TooManyRequests {
@@ -259,7 +259,7 @@ impl RateLimiter {
     /// Test helper method to set raw request count for testing
     #[cfg(test)]
     pub async fn test_set_raw_requests(&self, count: usize) {
-        let mut usage = self.usage.write().await;
+        let mut usage = self.usage.write();
         usage.raw_request_timestamps.clear();
         for _ in 0..count {
             usage
@@ -271,14 +271,14 @@ impl RateLimiter {
     /// Test helper method to set request weight for testing
     #[cfg(test)]
     pub async fn test_set_weight(&self, weight: u32) {
-        let mut usage = self.usage.write().await;
+        let mut usage = self.usage.write();
         usage.used_weight_1m = weight;
     }
 
     /// Test helper method to set order count for testing
     #[cfg(test)]
     pub async fn test_set_orders_10s(&self, count: usize) {
-        let mut usage = self.usage.write().await;
+        let mut usage = self.usage.write();
         usage.order_timestamps_10s.clear();
         for _ in 0..count {
             usage
@@ -290,7 +290,7 @@ impl RateLimiter {
     /// Test helper method to set order count for testing
     #[cfg(test)]
     pub async fn test_set_orders_1m(&self, count: usize) {
-        let mut usage = self.usage.write().await;
+        let mut usage = self.usage.write();
         usage.order_timestamps_1m.clear();
         for _ in 0..count {
             usage
@@ -302,7 +302,7 @@ impl RateLimiter {
     /// Test helper method to get current statistics
     #[cfg(test)]
     pub async fn test_get_stats(&self) -> (usize, usize, usize, u32) {
-        let usage = self.usage.read().await;
+        let usage = self.usage.read();
         (
             usage.raw_request_timestamps.len(),
             usage.order_timestamps_10s.len(),

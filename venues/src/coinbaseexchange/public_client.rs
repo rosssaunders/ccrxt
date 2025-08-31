@@ -11,7 +11,7 @@ use rest::{
 };
 use serde::{Serialize, de::DeserializeOwned};
 
-use crate::coinbaseexchange::{EndpointType, Errors, RestResult, rate_limiter_trait::CoinbaseRateLimiter};
+use crate::coinbaseexchange::{Errors, RestResult, rate_limiter_trait::CoinbaseRateLimiter};
 
 /// Public REST client for Coinbase Exchange
 ///

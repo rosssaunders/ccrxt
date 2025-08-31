@@ -1,7 +1,7 @@
 use std::time::{Duration, Instant};
 
+use parking_lot::RwLock;
 use thiserror::Error;
-use tokio::sync::RwLock;
 
 /// Types of endpoints for rate limiting in ByBit V5 API
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -113,7 +113,7 @@ impl RateLimiter {
 
         // Check endpoint-specific limit
         let rate_limit = Self::get_rate_limit(&endpoint_type);
-        let mut history = self.request_history.write().await;
+        let mut history = self.request_history.write();
         let now = Instant::now();
 
         // Get or create history for this endpoint type
@@ -132,7 +132,7 @@ impl RateLimiter {
 
     /// Check IP-level rate limits (600 requests per 5 seconds)
     async fn check_ip_limits(&self) -> Result<(), RateLimitError> {
-        let mut ip_history = self.ip_request_history.write().await;
+        let mut ip_history = self.ip_request_history.write();
         let now = Instant::now();
         let window = Duration::from_secs(5);
 
@@ -152,12 +152,12 @@ impl RateLimiter {
         let now = Instant::now();
 
         // Record endpoint-specific request
-        let mut history = self.request_history.write().await;
+        let mut history = self.request_history.write();
         let timestamps = history.entry(endpoint_type).or_default();
         timestamps.push(now);
 
         // Record IP-level request
-        let mut ip_history = self.ip_request_history.write().await;
+        let mut ip_history = self.ip_request_history.write();
         ip_history.push(now);
     }
 }
