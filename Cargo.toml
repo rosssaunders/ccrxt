@@ -58,6 +58,7 @@ name = "ccrxt"
 version = "0.1.0"
 edition = "2024"
 license.workspace = true
+rust-version = "1.89" # Track current latest stable; bump promptly after each release
 
 [dependencies]
 tokio = { workspace = true }
@@ -81,15 +82,15 @@ proc-macro2 = "1.0.97"
 
 [workspace.lints.rust]
 unsafe_code = "forbid"
+unused_must_use = "deny"              # Enforce handling of #[must_use] results
 
 [workspace.lints.clippy]
 # Critical lints for financial applications - these break builds
 unwrap_used = "deny"                    # No unwrap() - could panic in production
-expect_used = "warn"                    # Discourage expect() - prefer proper error handling
+expect_used = "deny"                    # Escalated: expect() now denied; use error propagation instead
 panic = "deny"                          # No panic!() - crashes are unacceptable
 todo = "deny"                           # No TODO in production code
 unimplemented = "deny"                  # No unimplemented!() in production
 indexing_slicing = "deny"               # No direct indexing - could panic
 arithmetic_side_effects = "warn"        # Be careful with integer overflow in financial calculations
 float_arithmetic = "warn"               # Be careful with float precision in financial calculations
-

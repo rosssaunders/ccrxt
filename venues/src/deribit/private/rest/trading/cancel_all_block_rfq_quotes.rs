@@ -102,7 +102,13 @@ mod tests {
         let json_value: Value = serde_json::from_str(&json_str).unwrap();
 
         assert!(json_value.get("block_rfq_id").is_none());
-        assert_eq!(json_value.get("detailed").unwrap(), true);
+        assert!(
+            json_value
+                .get("detailed")
+                .unwrap()
+                .as_bool()
+                .unwrap_or(false)
+        );
     }
 
     #[test]
@@ -116,7 +122,13 @@ mod tests {
         let json_value: Value = serde_json::from_str(&json_str).unwrap();
 
         assert_eq!(json_value.get("block_rfq_id").unwrap(), 456);
-        assert_eq!(json_value.get("detailed").unwrap(), false);
+        assert!(
+            !json_value
+                .get("detailed")
+                .unwrap()
+                .as_bool()
+                .unwrap_or(true)
+        );
     }
 
     #[test]

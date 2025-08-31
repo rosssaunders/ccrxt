@@ -62,7 +62,7 @@ mod tests {
 
         let json = serde_json::to_value(&request).unwrap();
         assert_eq!(json["underlying"], "ETH_USDT");
-        assert_eq!(json["enable"], true);
+        assert!(json["enable"].as_bool().unwrap_or(false));
 
         let obj = json.as_object().unwrap();
         assert_eq!(obj.len(), 2); // underlying and enable
@@ -82,7 +82,7 @@ mod tests {
 
         let json = serde_json::to_value(&request).unwrap();
         assert_eq!(json["underlying"], "BTC_USDT");
-        assert_eq!(json["enable"], false);
+        assert!(!json["enable"].as_bool().unwrap_or(true));
         assert_eq!(json["window"], 120);
         assert_eq!(json["freeze_time"], 60);
         assert!(json.get("trade_limit").is_none());
@@ -104,7 +104,7 @@ mod tests {
 
         let json = serde_json::to_value(&request).unwrap();
         assert_eq!(json["underlying"], "ETH_USDT");
-        assert_eq!(json["enable"], true);
+        assert!(json["enable"].as_bool().unwrap_or(false));
         assert_eq!(json["window"], 90);
         assert_eq!(json["freeze_time"], 45);
         assert_eq!(json["trade_limit"], 150);
@@ -129,7 +129,7 @@ mod tests {
 
         let json = serde_json::to_value(&request).unwrap();
         assert_eq!(json["underlying"], "ETH_USDT");
-        assert_eq!(json["enable"], false);
+        assert!(!json["enable"].as_bool().unwrap_or(true));
         assert_eq!(json["window"], 0);
         assert_eq!(json["freeze_time"], 0);
         assert_eq!(json["trade_limit"], 0);
@@ -168,7 +168,7 @@ mod tests {
 
         let json = serde_json::to_value(&request).unwrap();
         assert_eq!(json["underlying"], "BTC_USDT");
-        assert_eq!(json["enable"], false);
+        assert!(!json["enable"].as_bool().unwrap_or(true));
 
         let obj = json.as_object().unwrap();
         assert_eq!(obj.len(), 2); // Only underlying and enable
@@ -191,7 +191,7 @@ mod tests {
 
             let json = serde_json::to_value(&request).unwrap();
             assert_eq!(json["underlying"], underlying);
-            assert_eq!(json["enable"], true);
+            assert!(json["enable"].as_bool().unwrap_or(false));
         }
     }
 }

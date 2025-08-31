@@ -149,7 +149,7 @@ mod tests {
         // Verify the field is boolean
         let serialized = serde_json::to_value(&response).unwrap();
         assert!(serialized["result"].is_boolean());
-        assert_eq!(serialized["result"], true);
+        assert!(serialized["result"].as_bool().unwrap_or(false));
     }
 
     #[test]

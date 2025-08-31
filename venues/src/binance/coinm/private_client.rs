@@ -99,17 +99,20 @@ impl CoinmRestClient {
         )
         .await
         .map_err(|e| match e {
-            SharedErrors::ApiError(_) => Errors::Error("API error occurred".to_string()),
+            SharedErrors::Api(_) => Errors::Error("API error occurred".to_string()),
             SharedErrors::RateLimitExceeded { retry_after } => Errors::Error(format!(
                 "Rate limit exceeded, retry after {:?}",
                 retry_after
             )),
-            SharedErrors::HttpError(msg) => Errors::Error(format!("HTTP error: {msg}")),
-            SharedErrors::InvalidApiKey() => Errors::Error("Invalid API key".to_string()),
-            SharedErrors::SerializationError(msg) => {
+            SharedErrors::Http { message: msg } => Errors::Error(format!("HTTP error: {msg}")),
+            SharedErrors::InvalidApiKey => Errors::Error("Invalid API key".to_string()),
+            SharedErrors::Serialize { message: msg } => {
                 Errors::Error(format!("Serialization error: {msg}"))
             }
-            SharedErrors::Error(msg) => Errors::Error(msg),
+            SharedErrors::Deserialize { message: msg } => {
+                Errors::Error(format!("Deserialization error: {msg}"))
+            }
+            SharedErrors::Generic { message: msg } => Errors::Error(msg),
         })?;
 
         let duration = start.elapsed();
@@ -142,17 +145,20 @@ impl CoinmRestClient {
         )
         .await
         .map_err(|e| match e {
-            SharedErrors::ApiError(_) => Errors::Error("API error occurred".to_string()),
+            SharedErrors::Api(_) => Errors::Error("API error occurred".to_string()),
             SharedErrors::RateLimitExceeded { retry_after } => Errors::Error(format!(
                 "Rate limit exceeded, retry after {:?}",
                 retry_after
             )),
-            SharedErrors::HttpError(msg) => Errors::Error(format!("HTTP error: {msg}")),
-            SharedErrors::InvalidApiKey() => Errors::Error("Invalid API key".to_string()),
-            SharedErrors::SerializationError(msg) => {
+            SharedErrors::Http { message: msg } => Errors::Error(format!("HTTP error: {msg}")),
+            SharedErrors::InvalidApiKey => Errors::Error("Invalid API key".to_string()),
+            SharedErrors::Serialize { message: msg } => {
                 Errors::Error(format!("Serialization error: {msg}"))
             }
-            SharedErrors::Error(msg) => Errors::Error(msg),
+            SharedErrors::Deserialize { message: msg } => {
+                Errors::Error(format!("Deserialization error: {msg}"))
+            }
+            SharedErrors::Generic { message: msg } => Errors::Error(msg),
         })?;
 
         let duration = start.elapsed();
@@ -185,17 +191,20 @@ impl CoinmRestClient {
         )
         .await
         .map_err(|e| match e {
-            SharedErrors::ApiError(_) => Errors::Error("API error occurred".to_string()),
+            SharedErrors::Api(_) => Errors::Error("API error occurred".to_string()),
             SharedErrors::RateLimitExceeded { retry_after } => Errors::Error(format!(
                 "Rate limit exceeded, retry after {:?}",
                 retry_after
             )),
-            SharedErrors::HttpError(msg) => Errors::Error(format!("HTTP error: {msg}")),
-            SharedErrors::InvalidApiKey() => Errors::Error("Invalid API key".to_string()),
-            SharedErrors::SerializationError(msg) => {
+            SharedErrors::Http { message: msg } => Errors::Error(format!("HTTP error: {msg}")),
+            SharedErrors::InvalidApiKey => Errors::Error("Invalid API key".to_string()),
+            SharedErrors::Serialize { message: msg } => {
                 Errors::Error(format!("Serialization error: {msg}"))
             }
-            SharedErrors::Error(msg) => Errors::Error(msg),
+            SharedErrors::Deserialize { message: msg } => {
+                Errors::Error(format!("Deserialization error: {msg}"))
+            }
+            SharedErrors::Generic { message: msg } => Errors::Error(msg),
         })?;
 
         let duration = start.elapsed();
@@ -229,17 +238,20 @@ impl CoinmRestClient {
             )
             .await
             .map_err(|e| match e {
-                SharedErrors::ApiError(_) => Errors::Error("API error occurred".to_string()),
+                SharedErrors::Api(_) => Errors::Error("API error occurred".to_string()),
                 SharedErrors::RateLimitExceeded { retry_after } => Errors::Error(format!(
                     "Rate limit exceeded, retry after {:?}",
                     retry_after
                 )),
-                SharedErrors::HttpError(msg) => Errors::Error(format!("HTTP error: {msg}")),
-                SharedErrors::InvalidApiKey() => Errors::Error("Invalid API key".to_string()),
-                SharedErrors::SerializationError(msg) => {
+                SharedErrors::Http { message: msg } => Errors::Error(format!("HTTP error: {msg}")),
+                SharedErrors::InvalidApiKey => Errors::Error("Invalid API key".to_string()),
+                SharedErrors::Serialize { message: msg } => {
                     Errors::Error(format!("Serialization error: {msg}"))
                 }
-                SharedErrors::Error(msg) => Errors::Error(msg),
+                SharedErrors::Deserialize { message: msg } => {
+                    Errors::Error(format!("Deserialization error: {msg}"))
+                }
+                SharedErrors::Generic { message: msg } => Errors::Error(msg),
             })?;
 
         let duration = start.elapsed();

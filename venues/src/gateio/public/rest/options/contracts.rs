@@ -533,7 +533,7 @@ mod tests {
         assert_eq!(json["mark_iv"], "0.25");
         assert_eq!(json["type"], "call");
         assert_eq!(json["strike_price"], "50000");
-        assert_eq!(json["is_call"], true);
+        assert!(json["is_call"].as_bool().unwrap_or(false));
         assert_eq!(json["multiplier"], "0.0001");
         assert_eq!(json["position_size"], 1000);
         assert_eq!(json["orders_limit"], 200);

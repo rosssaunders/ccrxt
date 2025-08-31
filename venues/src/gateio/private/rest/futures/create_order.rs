@@ -121,8 +121,8 @@ mod tests {
         assert_eq!(json["price"], "2650.50");
         assert_eq!(json["tif"], "gtc");
         assert_eq!(json["text"], "test-order-123");
-        assert_eq!(json["reduce_only"], false);
-        assert_eq!(json["close"], false);
+        assert!(!json["reduce_only"].as_bool().unwrap_or(true));
+        assert!(!json["close"].as_bool().unwrap_or(true));
         assert_eq!(json["iceberg"], 500);
         assert_eq!(json["auto_size"], "close_short");
     }
@@ -261,7 +261,7 @@ mod tests {
         };
 
         let json = serde_json::to_value(&request).unwrap();
-        assert_eq!(json["reduce_only"], true);
+        assert!(json["reduce_only"].as_bool().unwrap_or(false));
     }
 
     #[test]
@@ -280,7 +280,7 @@ mod tests {
         };
 
         let json = serde_json::to_value(&request).unwrap();
-        assert_eq!(json["close"], true);
+        assert!(json["close"].as_bool().unwrap_or(false));
         assert_eq!(json["size"], 0);
     }
 
@@ -366,7 +366,7 @@ mod tests {
 
         let json = serde_json::to_value(&limit_sell_reduce).unwrap();
         assert_eq!(json["price"], "2700.0");
-        assert_eq!(json["reduce_only"], true);
+        assert!(json["reduce_only"].as_bool().unwrap_or(false));
         assert!(json["size"].as_i64().unwrap() < 0);
 
         // Scenario 3: Close entire position
@@ -384,7 +384,7 @@ mod tests {
         };
 
         let json = serde_json::to_value(&close_position).unwrap();
-        assert_eq!(json["close"], true);
+        assert!(json["close"].as_bool().unwrap_or(false));
         assert_eq!(json["size"], 0);
     }
 

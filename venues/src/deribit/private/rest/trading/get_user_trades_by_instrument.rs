@@ -122,7 +122,13 @@ mod tests {
         assert_eq!(json_value.get("count").unwrap(), 50);
         assert_eq!(json_value.get("start_timestamp").unwrap(), 1640995200000i64);
         assert_eq!(json_value.get("end_timestamp").unwrap(), 1640995260000i64);
-        assert_eq!(json_value.get("historical").unwrap(), false);
+        assert!(
+            !json_value
+                .get("historical")
+                .unwrap()
+                .as_bool()
+                .unwrap_or(true)
+        );
         assert_eq!(json_value.get("sorting").unwrap(), "desc");
     }
 

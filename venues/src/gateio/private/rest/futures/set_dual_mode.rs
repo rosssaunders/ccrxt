@@ -54,7 +54,7 @@ mod tests {
 
         let json = serde_json::to_value(&request).unwrap();
         assert_eq!(json["settle"], "USDT");
-        assert_eq!(json["dual_mode"], true);
+        assert!(json["dual_mode"].as_bool().unwrap_or(false));
     }
 
     #[test]
@@ -66,7 +66,7 @@ mod tests {
 
         let json = serde_json::to_value(&request).unwrap();
         assert_eq!(json["settle"], "USDT");
-        assert_eq!(json["dual_mode"], false);
+        assert!(!json["dual_mode"].as_bool().unwrap_or(true));
     }
 
     #[test]

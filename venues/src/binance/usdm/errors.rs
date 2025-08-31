@@ -5,20 +5,23 @@ use thiserror::Error;
 impl From<crate::binance::shared::errors::Errors> for Errors {
     fn from(err: crate::binance::shared::errors::Errors) -> Self {
         match err {
-            crate::binance::shared::errors::Errors::InvalidApiKey() => Errors::InvalidApiKey(),
-            crate::binance::shared::errors::Errors::ApiError(e) => {
+            crate::binance::shared::errors::Errors::InvalidApiKey => Errors::InvalidApiKey(),
+            crate::binance::shared::errors::Errors::Api(e) => {
                 Errors::ApiError(ApiError::UnknownApiError { msg: e.to_string() })
             }
-            crate::binance::shared::errors::Errors::HttpError(e) => Errors::HttpError(e),
+            crate::binance::shared::errors::Errors::Http { message: e } => Errors::HttpError(e),
             crate::binance::shared::errors::Errors::RateLimitExceeded { retry_after } => {
                 Errors::RateLimitExceeded {
                     retry_after: retry_after.map(|d| d.as_secs()),
                 }
             }
-            crate::binance::shared::errors::Errors::SerializationError(msg) => {
+            crate::binance::shared::errors::Errors::Serialize { message: msg } => {
                 Errors::SerializationError(msg)
             }
-            crate::binance::shared::errors::Errors::Error(msg) => Errors::Error(msg),
+            crate::binance::shared::errors::Errors::Deserialize { message: msg } => {
+                Errors::Error(format!("Deserialization error: {}", msg))
+            }
+            crate::binance::shared::errors::Errors::Generic { message: msg } => Errors::Error(msg),
         }
     }
 }

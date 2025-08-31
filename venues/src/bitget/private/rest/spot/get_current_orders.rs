@@ -219,8 +219,10 @@ mod tests {
 
     #[test]
     fn test_get_current_orders_request_limit_enforcement() {
-        let mut request = GetCurrentOrdersRequest::default();
-        request.limit = Some(200);
+        let request = GetCurrentOrdersRequest {
+            limit: Some(200),
+            ..Default::default()
+        };
 
         // Without builder methods, no automatic capping occurs
         assert_eq!(request.limit, Some(200));

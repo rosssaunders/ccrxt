@@ -161,7 +161,13 @@ mod tests {
         let json_str = serde_json::to_string(&originator).unwrap();
         let json_value: Value = serde_json::from_str(&json_str).unwrap();
 
-        assert_eq!(json_value.get("is_personal").unwrap(), true);
+        assert!(
+            json_value
+                .get("is_personal")
+                .unwrap()
+                .as_bool()
+                .unwrap_or(false)
+        );
         assert_eq!(json_value.get("company_name").unwrap(), "");
         assert_eq!(json_value.get("first_name").unwrap(), "John");
         assert_eq!(json_value.get("last_name").unwrap(), "Doe");
@@ -205,7 +211,12 @@ mod tests {
         assert_eq!(deposit_id_value.get("user_id").unwrap(), 98765);
 
         let originator_value = json_value.get("originator").unwrap();
-        assert_eq!(originator_value.get("is_personal").unwrap(), false);
+        assert!(
+            !originator_value
+                .get("is_personal")
+                .and_then(|v| v.as_bool())
+                .unwrap_or(true)
+        );
         assert_eq!(originator_value.get("company_name").unwrap(), "Acme Corp");
     }
 

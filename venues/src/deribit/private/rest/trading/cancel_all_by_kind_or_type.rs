@@ -139,7 +139,7 @@ mod tests {
         let deserialized: CurrencySelection = serde_json::from_str(&json_str).unwrap();
         match deserialized {
             CurrencySelection::Single(curr) => assert_eq!(curr, Currency::BTC),
-            _ => assert_eq!(true, false, "Expected Single variant"),
+            _ => unreachable!("Expected Single variant"),
         }
     }
 
@@ -156,7 +156,7 @@ mod tests {
                 assert_eq!(currencies[0], Currency::BTC);
                 assert_eq!(currencies[1], Currency::ETH);
             }
-            _ => assert_eq!(true, false, "Expected Multiple variant"),
+            _ => unreachable!("Expected Multiple variant"),
         }
     }
 
@@ -169,7 +169,7 @@ mod tests {
         let deserialized: CurrencySelection = serde_json::from_str(&json_str).unwrap();
         match deserialized {
             CurrencySelection::Single(Currency::Any) => (), // This is what we expect
-            _ => assert_eq!(true, false, "Expected Single(Currency::Any) variant"),
+            _ => unreachable!("Expected Single(Currency::Any) variant"),
         }
     }
 
@@ -239,8 +239,20 @@ mod tests {
         assert_eq!(json_value.get("currency").unwrap(), "any");
         assert_eq!(json_value.get("kind").unwrap(), "option");
         assert_eq!(json_value.get("type").unwrap(), "limit");
-        assert_eq!(json_value.get("detailed").unwrap(), true);
-        assert_eq!(json_value.get("freeze_quotes").unwrap(), false);
+        assert!(
+            json_value
+                .get("detailed")
+                .unwrap()
+                .as_bool()
+                .unwrap_or(false)
+        );
+        assert!(
+            !json_value
+                .get("freeze_quotes")
+                .unwrap()
+                .as_bool()
+                .unwrap_or(true)
+        );
     }
 
     #[test]

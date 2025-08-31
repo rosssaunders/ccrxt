@@ -162,7 +162,6 @@ impl From<ErrorResponse> for ApiError {
 }
 
 #[cfg(test)]
-#[allow(clippy::assertions_on_constants)]
 mod tests {
     use super::*;
 
@@ -196,12 +195,11 @@ mod tests {
         };
 
         let api_error: ApiError = error_response.into();
-        match api_error {
-            ApiError::UnmappedApiError { code, msg } => {
-                assert_eq!(code, "99999");
-                assert_eq!(msg, "Unknown error");
-            }
-            _ => assert_eq!(true, false, "Expected UnmappedApiError"),
+        if let ApiError::UnmappedApiError { code, msg } = api_error {
+            assert_eq!(code, "99999");
+            assert_eq!(msg, "Unknown error");
+        } else {
+            unreachable!("Expected UnmappedApiError");
         }
     }
 

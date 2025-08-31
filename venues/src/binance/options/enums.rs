@@ -80,6 +80,7 @@ impl fmt::Display for OptionsOrderStatus {
 /// Rate limiters (rateLimitType)
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+#[non_exhaustive]
 pub enum RateLimitType {
     RequestWeight,
     Orders,
@@ -97,6 +98,7 @@ impl fmt::Display for RateLimitType {
 /// Rate limit intervals (interval)
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+#[non_exhaustive]
 pub enum RateLimitInterval {
     Minute,
 }

@@ -431,7 +431,7 @@ mod tests {
         assert_eq!(json["contract"], "BTC-20240101-50000-C");
         assert_eq!(json["size"], "1.5");
         assert_eq!(json["price"], "0.08");
-        assert_eq!(json["is_internal"], false);
+        assert!(!json["is_internal"].as_bool().unwrap_or(true));
     }
 
     #[test]

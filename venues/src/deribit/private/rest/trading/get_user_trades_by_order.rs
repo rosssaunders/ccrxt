@@ -87,7 +87,13 @@ mod tests {
 
         assert_eq!(json_value.get("order_id").unwrap(), "ETH-12345");
         assert_eq!(json_value.get("sorting").unwrap(), "desc");
-        assert_eq!(json_value.get("historical").unwrap(), false);
+        assert!(
+            !json_value
+                .get("historical")
+                .unwrap()
+                .as_bool()
+                .unwrap_or(true)
+        );
     }
 
     #[test]

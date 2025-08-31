@@ -105,7 +105,7 @@ mod tests {
         assert_eq!(json["contract"], "ETH_USDT-20240315-3000-P");
         assert_eq!(json["interval"], "0.1");
         assert_eq!(json["limit"], 50);
-        assert_eq!(json["with_id"], true);
+        assert!(json["with_id"].as_bool().unwrap_or(false));
 
         let obj = json.as_object().unwrap();
         assert_eq!(obj.len(), 4);

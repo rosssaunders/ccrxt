@@ -137,7 +137,7 @@ mod tests {
         assert_eq!(json["from"], 1700000000000i64);
         assert_eq!(json["to"], 1700100000000i64);
         assert_eq!(json["offset"], 10);
-        assert_eq!(json["forward"], true);
+        assert!(json["forward"].as_bool().unwrap_or(false));
         assert_eq!(json["maxCount"], 50);
     }
 

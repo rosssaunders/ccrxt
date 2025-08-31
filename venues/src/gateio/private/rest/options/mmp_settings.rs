@@ -173,7 +173,7 @@ mod tests {
 
         let json = serde_json::to_value(&request).unwrap();
         assert_eq!(json["underlying"], "ETH_USDT");
-        assert_eq!(json["enable"], true);
+        assert!(json["enable"].as_bool().unwrap_or(false));
         assert_eq!(json["window"], 90);
         assert_eq!(json["freeze_time"], 45);
         assert_eq!(json["trade_limit"], 150);

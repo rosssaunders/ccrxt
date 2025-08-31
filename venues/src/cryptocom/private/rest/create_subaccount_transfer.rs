@@ -159,7 +159,7 @@ mod tests {
         if let ResponseCode::Error(code) = response.result.code {
             assert_eq!(code, 10002);
         } else {
-            assert!(false, "Expected Error variant");
+            unreachable!("Expected Error variant");
         }
     }
 

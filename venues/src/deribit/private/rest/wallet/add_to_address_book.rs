@@ -228,8 +228,14 @@ mod tests {
             json_value.get("beneficiary_address").unwrap(),
             "123 Main St, Anytown, USA"
         );
-        assert_eq!(json_value.get("agreed").unwrap(), true);
-        assert_eq!(json_value.get("personal").unwrap(), true);
+        assert!(json_value.get("agreed").unwrap().as_bool().unwrap_or(false));
+        assert!(
+            json_value
+                .get("personal")
+                .unwrap()
+                .as_bool()
+                .unwrap_or(false)
+        );
         assert!(json_value.get("beneficiary_company_name").is_none());
 
         let extra_currencies = json_value
@@ -270,7 +276,13 @@ mod tests {
             json_value.get("beneficiary_company_name").unwrap(),
             "ACME Corp"
         );
-        assert_eq!(json_value.get("personal").unwrap(), false);
+        assert!(
+            !json_value
+                .get("personal")
+                .unwrap()
+                .as_bool()
+                .unwrap_or(true)
+        );
         assert!(json_value.get("beneficiary_vasp_website").is_none());
         assert!(json_value.get("beneficiary_first_name").is_none());
         assert!(json_value.get("beneficiary_last_name").is_none());

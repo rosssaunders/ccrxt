@@ -90,7 +90,7 @@ mod tests {
         let response = CancelAllOrdersResponse {};
 
         // This is an empty struct, just test it can be constructed
-        drop(response);
+        let _ = response; // compile-time construction check
     }
 
     #[test]
@@ -108,6 +108,6 @@ mod tests {
         let cloned_response = response.clone();
 
         // Just verify the clone works
-        drop(cloned_response);
+        let _ = cloned_response; // ensure variable used
     }
 }

@@ -5,6 +5,7 @@ use thiserror::Error;
 
 /// Main error type for Gate.io API operations
 #[derive(Error, Debug)]
+#[non_exhaustive]
 pub enum GateIoError {
     #[error("API error: {0}")]
     Api(#[from] ApiError),

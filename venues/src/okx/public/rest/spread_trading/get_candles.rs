@@ -207,7 +207,7 @@ mod tests {
     fn test_candle_array_format_documentation() {
         // The API returns data as [ts,o,h,l,c,vol,confirm]
         // This test documents the expected order of fields
-        let candle_array = vec![
+        let candle_array = [
             "1597026383085".to_string(), // ts
             "50000".to_string(),         // o (open)
             "51000".to_string(),         // h (high)
@@ -229,7 +229,7 @@ mod tests {
 
     #[test]
     fn test_limit_values() {
-        let limits = vec!["1", "10", "50", "100", "200", "300"];
+        let limits = ["1", "10", "50", "100", "200", "300"];
 
         for limit in limits {
             let request = GetSpreadCandlesRequest {

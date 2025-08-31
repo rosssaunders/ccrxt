@@ -8,6 +8,7 @@ use super::{Errors, rate_limiter_trait::OkxRateLimiter};
 
 /// Types of endpoints for rate limiting
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[non_exhaustive]
 pub enum EndpointType {
     /// Public market data endpoints
     PublicMarketData,
@@ -44,6 +45,7 @@ impl RateLimit {
 
 /// Rate limiting errors
 #[derive(Error, Debug)]
+#[non_exhaustive]
 pub enum RateLimitError {
     #[error("Rate limit exceeded for endpoint type: {endpoint_type:?}")]
     Exceeded { endpoint_type: EndpointType },

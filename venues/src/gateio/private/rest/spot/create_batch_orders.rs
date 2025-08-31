@@ -533,7 +533,7 @@ mod tests {
         };
 
         let json = serde_json::to_value(&response).unwrap();
-        assert_eq!(json["succeeded"], true);
+        assert!(json["succeeded"].as_bool().unwrap_or(false));
         assert_eq!(json["message"], "Order queued");
 
         // Order should be omitted when None

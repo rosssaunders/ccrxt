@@ -272,11 +272,11 @@ mod tests {
 
         let json = serde_json::to_value(&currency).unwrap();
         assert_eq!(json["currency"], "BTC");
-        assert_eq!(json["delisted"], false);
-        assert_eq!(json["withdraw_disabled"], false);
-        assert_eq!(json["withdraw_delayed"], false);
-        assert_eq!(json["deposit_disabled"], false);
-        assert_eq!(json["trade_disabled"], false);
+        assert!(!json["delisted"].as_bool().unwrap_or(true));
+        assert!(!json["withdraw_disabled"].as_bool().unwrap_or(true));
+        assert!(!json["withdraw_delayed"].as_bool().unwrap_or(true));
+        assert!(!json["deposit_disabled"].as_bool().unwrap_or(true));
+        assert!(!json["trade_disabled"].as_bool().unwrap_or(true));
         assert_eq!(json["fixed_rate"], "0.0005");
         assert_eq!(json["chain"], "BTC");
     }

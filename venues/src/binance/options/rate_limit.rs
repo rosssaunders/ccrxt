@@ -11,6 +11,7 @@ use crate::binance::options::{Errors, errors::ApiError};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+#[non_exhaustive]
 pub enum RateLimitType {
     RequestWeight,
     Orders,
@@ -19,6 +20,7 @@ pub enum RateLimitType {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+#[non_exhaustive]
 pub enum RateLimitInterval {
     Second,
     Minute,
@@ -27,6 +29,7 @@ pub enum RateLimitInterval {
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
 /// Represents the interval unit for Binance rate limit headers (e.g., '1m', '1h').
+#[non_exhaustive]
 pub enum IntervalUnit {
     Second,
     Minute,
@@ -81,32 +84,20 @@ impl RateLimitHeader {
     /// Attempt to parse a Binance rate limit/order count header name into a RateLimitHeader struct.
     /// E.g., "x-mbx-used-weight-1m" or "x-mbx-order-count-1d".
     pub fn parse(header: &str) -> Option<Self> {
-        fn ascii_starts_with(haystack: &str, needle: &str) -> bool {
-            haystack.len() >= needle.len()
-                && haystack
-                    .chars()
-                    .zip(needle.chars())
-                    .all(|(a, b)| a.eq_ignore_ascii_case(&b))
-        }
-        let (kind, rest) = if ascii_starts_with(header, "x-mbx-used-weight-") {
-            (
-                RateLimitHeaderKind::UsedWeight,
-                &header["x-mbx-used-weight-".len()..],
-            )
-        } else if ascii_starts_with(header, "x-mbx-order-count-") {
-            (
-                RateLimitHeaderKind::OrderCount,
-                &header["x-mbx-order-count-".len()..],
-            )
+        let lower = header.to_ascii_lowercase();
+        const USED: &str = "x-mbx-used-weight-";
+        const COUNT: &str = "x-mbx-order-count-";
+        let (kind, rest) = if lower.starts_with(USED) {
+            (RateLimitHeaderKind::UsedWeight, header.get(USED.len()..)?)
+        } else if lower.starts_with(COUNT) {
+            (RateLimitHeaderKind::OrderCount, header.get(COUNT.len()..)?)
         } else {
             return None;
         };
-        if rest.len() < 2 {
-            return None;
-        }
-        let (num, unit) = rest.split_at(rest.len().saturating_sub(1));
-        let interval_value = num.parse::<u32>().ok()?;
-        let interval_unit = IntervalUnit::from_char(unit.chars().next()?)?;
+        let last_char = rest.chars().last()?;
+        let interval_unit = IntervalUnit::from_char(last_char)?;
+        let num_part = rest.strip_suffix(last_char)?;
+        let interval_value = num_part.parse().ok()?;
         Some(RateLimitHeader {
             kind,
             interval_value,

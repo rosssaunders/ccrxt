@@ -11,6 +11,7 @@ use tokio::sync::RwLock;
 
 /// Rate limit error
 #[derive(Error, Debug)]
+#[non_exhaustive]
 pub enum RateLimitError {
     #[error(
         "Rate limit exceeded for endpoint {endpoint:?}: {current}/{max} requests in {window:?}"
@@ -25,6 +26,7 @@ pub enum RateLimitError {
 
 /// Represents different types of Bullish API endpoints for rate limiting
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[non_exhaustive]
 pub enum EndpointType {
     // Public endpoints
     PublicMarkets,

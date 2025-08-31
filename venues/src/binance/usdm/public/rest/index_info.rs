@@ -182,7 +182,7 @@ mod tests {
             assert_eq!(info.symbol, "DEFIUSDT");
             assert_eq!(info.base_asset_list.len(), 1);
         } else {
-            assert!(false, "Expected Single variant");
+            unreachable!("Expected Single variant");
         }
     }
 
@@ -231,7 +231,7 @@ mod tests {
             assert_eq!(indices[1].symbol, "NFTUSDT");
             assert_eq!(indices[1].component, "NFT Index");
         } else {
-            assert!(false, "Expected Multiple variant");
+            unreachable!("Expected Multiple variant");
         }
     }
 

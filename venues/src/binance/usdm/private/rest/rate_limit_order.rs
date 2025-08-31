@@ -10,6 +10,7 @@ const RATE_LIMIT_ORDER_ENDPOINT: &str = "/fapi/v1/rateLimit/order";
 /// Valid values: "ORDERS", "REQUESTS".
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+#[non_exhaustive]
 pub enum RateLimitType {
     Orders,
     Requests,
@@ -20,6 +21,7 @@ pub enum RateLimitType {
 /// Valid values: "SECOND", "MINUTE", "HOUR", "DAY".
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+#[non_exhaustive]
 pub enum IntervalType {
     Second,
     Minute,

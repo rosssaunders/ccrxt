@@ -11,6 +11,7 @@ use super::{errors::BingXError, rate_limiter_trait::BingXRateLimiter};
 
 /// Types of endpoints for rate limiting based on BingX API documentation
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[non_exhaustive]
 pub enum EndpointType {
     /// Account-related endpoints (like balance queries) - 5/s
     Account,
@@ -47,6 +48,7 @@ impl RateLimit {
 
 /// Rate limiting errors
 #[derive(Error, Debug)]
+#[non_exhaustive]
 pub enum RateLimitError {
     #[error("Rate limit exceeded for endpoint type: {endpoint_type:?}")]
     Exceeded { endpoint_type: EndpointType },

@@ -97,12 +97,10 @@ impl ResponseHeaders {
 
         // Iterate through all headers from the shared response
         for (header_name, header_value) in shared.headers.iter() {
-            // Try to parse the header name as a RateLimitHeader
-            if let Some(rate_limit_header) = RateLimitHeader::parse(header_name) {
-                // Try to parse the header value as a u32
-                if let Ok(value) = header_value.parse::<u32>() {
-                    values.insert(rate_limit_header, value);
-                }
+            if let Some(rate_limit_header) = RateLimitHeader::parse(header_name)
+                && let Ok(value) = header_value.parse::<u32>()
+            {
+                values.insert(rate_limit_header, value);
             }
         }
 

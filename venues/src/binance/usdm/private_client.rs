@@ -97,17 +97,20 @@ impl UsdmPrivateRestClient {
         )
         .await
         .map_err(|e| match e {
-            SharedErrors::ApiError(_) => Errors::Error("API error occurred".to_string()),
+            SharedErrors::Api(_) => Errors::Error("API error occurred".to_string()),
             SharedErrors::RateLimitExceeded { retry_after } => Errors::Error(format!(
                 "Rate limit exceeded, retry after {:?}",
                 retry_after
             )),
-            SharedErrors::InvalidApiKey() => Errors::InvalidApiKey(),
-            SharedErrors::HttpError(err) => Errors::HttpError(err),
-            SharedErrors::SerializationError(msg) => {
+            SharedErrors::InvalidApiKey => Errors::InvalidApiKey(),
+            SharedErrors::Http { message: err } => Errors::HttpError(err),
+            SharedErrors::Serialize { message: msg } => {
                 Errors::Error(format!("Serialization error: {}", msg))
             }
-            SharedErrors::Error(msg) => Errors::Error(msg),
+            SharedErrors::Deserialize { message: msg } => {
+                Errors::Error(format!("Deserialization error: {}", msg))
+            }
+            SharedErrors::Generic { message: msg } => Errors::Error(msg),
         })?;
 
         // Return the shared RestResponse directly
@@ -132,17 +135,20 @@ impl UsdmPrivateRestClient {
         )
         .await
         .map_err(|e| match e {
-            SharedErrors::ApiError(_) => Errors::Error("API error occurred".to_string()),
+            SharedErrors::Api(_) => Errors::Error("API error occurred".to_string()),
             SharedErrors::RateLimitExceeded { retry_after } => Errors::Error(format!(
                 "Rate limit exceeded, retry after {:?}",
                 retry_after
             )),
-            SharedErrors::InvalidApiKey() => Errors::InvalidApiKey(),
-            SharedErrors::HttpError(err) => Errors::HttpError(err),
-            SharedErrors::SerializationError(msg) => {
+            SharedErrors::InvalidApiKey => Errors::InvalidApiKey(),
+            SharedErrors::Http { message: err } => Errors::HttpError(err),
+            SharedErrors::Serialize { message: msg } => {
                 Errors::Error(format!("Serialization error: {}", msg))
             }
-            SharedErrors::Error(msg) => Errors::Error(msg),
+            SharedErrors::Deserialize { message: msg } => {
+                Errors::Error(format!("Deserialization error: {}", msg))
+            }
+            SharedErrors::Generic { message: msg } => Errors::Error(msg),
         })?;
 
         // Return the shared RestResponse directly
@@ -167,17 +173,20 @@ impl UsdmPrivateRestClient {
         )
         .await
         .map_err(|e| match e {
-            SharedErrors::ApiError(_) => Errors::Error("API error occurred".to_string()),
+            SharedErrors::Api(_) => Errors::Error("API error occurred".to_string()),
             SharedErrors::RateLimitExceeded { retry_after } => Errors::Error(format!(
                 "Rate limit exceeded, retry after {:?}",
                 retry_after
             )),
-            SharedErrors::InvalidApiKey() => Errors::InvalidApiKey(),
-            SharedErrors::HttpError(err) => Errors::HttpError(err),
-            SharedErrors::SerializationError(msg) => {
+            SharedErrors::InvalidApiKey => Errors::InvalidApiKey(),
+            SharedErrors::Http { message: err } => Errors::HttpError(err),
+            SharedErrors::Serialize { message: msg } => {
                 Errors::Error(format!("Serialization error: {}", msg))
             }
-            SharedErrors::Error(msg) => Errors::Error(msg),
+            SharedErrors::Deserialize { message: msg } => {
+                Errors::Error(format!("Deserialization error: {}", msg))
+            }
+            SharedErrors::Generic { message: msg } => Errors::Error(msg),
         })?;
 
         // Return the shared RestResponse directly
@@ -203,17 +212,20 @@ impl UsdmPrivateRestClient {
             )
             .await
             .map_err(|e| match e {
-                SharedErrors::ApiError(_) => Errors::Error("API error occurred".to_string()),
+                SharedErrors::Api(_) => Errors::Error("API error occurred".to_string()),
                 SharedErrors::RateLimitExceeded { retry_after } => Errors::Error(format!(
                     "Rate limit exceeded, retry after {:?}",
                     retry_after
                 )),
-                SharedErrors::InvalidApiKey() => Errors::InvalidApiKey(),
-                SharedErrors::HttpError(err) => Errors::HttpError(err),
-                SharedErrors::SerializationError(msg) => {
+                SharedErrors::InvalidApiKey => Errors::InvalidApiKey(),
+                SharedErrors::Http { message: err } => Errors::HttpError(err),
+                SharedErrors::Serialize { message: msg } => {
                     Errors::Error(format!("Serialization error: {}", msg))
                 }
-                SharedErrors::Error(msg) => Errors::Error(msg),
+                SharedErrors::Deserialize { message: msg } => {
+                    Errors::Error(format!("Deserialization error: {}", msg))
+                }
+                SharedErrors::Generic { message: msg } => Errors::Error(msg),
             })?;
 
         // Return the shared RestResponse directly

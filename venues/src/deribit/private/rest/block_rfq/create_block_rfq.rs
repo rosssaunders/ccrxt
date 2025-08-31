@@ -277,7 +277,13 @@ mod tests {
         assert!(json_value.get("hedge").is_some());
         assert_eq!(json_value.get("label").unwrap(), "test_rfq");
         assert!(json_value.get("makers").is_some());
-        assert_eq!(json_value.get("disclosed").unwrap(), false);
+        assert!(
+            !json_value
+                .get("disclosed")
+                .unwrap()
+                .as_bool()
+                .unwrap_or(true)
+        );
 
         let legs_array = json_value.get("legs").unwrap().as_array().unwrap();
         assert_eq!(legs_array.len(), 2);

@@ -88,7 +88,7 @@ mod tests {
 
     #[test]
     fn test_order_book_entry_parsing() {
-        let entry = vec![
+        let entry = [
             "31012.44".to_string(),    // price
             "69994.75267".to_string(), // amount
         ];

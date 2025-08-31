@@ -88,8 +88,7 @@ impl PrivateBinanceClient {
         ));
 
         // Sign the request using the secret trait object
-        let signature = sign_request(&*self.api_secret, &params_with_timestamp)
-            .map_err(|e| Errors::Error(format!("Signing failed: {e}")))?;
+        let signature = sign_request(&*self.api_secret, &params_with_timestamp)?;
 
         let signed_params = format!("{params_with_timestamp}&signature={signature}");
 
@@ -131,8 +130,7 @@ impl PrivateBinanceClient {
         ));
 
         // Sign the request using the secret trait object
-        let signature = sign_request(&*self.api_secret, &params_with_timestamp)
-            .map_err(|e| Errors::Error(format!("Signing failed: {e}")))?;
+        let signature = sign_request(&*self.api_secret, &params_with_timestamp)?;
 
         let signed_params = format!("{params_with_timestamp}&signature={signature}");
 
@@ -174,8 +172,7 @@ impl PrivateBinanceClient {
         ));
 
         // Sign the request using the secret trait object
-        let signature = sign_request(&*self.api_secret, &params_with_timestamp)
-            .map_err(|e| Errors::Error(format!("Signing failed: {e}")))?;
+        let signature = sign_request(&*self.api_secret, &params_with_timestamp)?;
 
         let signed_params = format!("{params_with_timestamp}&signature={signature}");
 
@@ -217,8 +214,7 @@ impl PrivateBinanceClient {
         ));
 
         // Sign the request using the secret trait object
-        let signature = sign_request(&*self.api_secret, &params_with_timestamp)
-            .map_err(|e| Errors::Error(format!("Signing failed: {e}")))?;
+        let signature = sign_request(&*self.api_secret, &params_with_timestamp)?;
 
         let signed_params = format!("{params_with_timestamp}&signature={signature}");
 
@@ -364,31 +360,36 @@ impl PrivateBinanceClient {
             .http_client
             .execute(request)
             .await
-            .map_err(|e| Errors::Error(format!("HTTP request failed: {e}")))?;
+            .map_err(|e| Errors::Http {
+                message: format!("HTTP request failed: {e}"),
+            })?;
 
         let status = response.status;
         let headers = response.headers.clone();
-        let response_text = response
-            .text()
-            .map_err(|e| Errors::Error(format!("Failed to read response text: {e}")))?;
+        let response_text = response.text().map_err(|e| Errors::Generic {
+            message: format!("Failed to read response text: {e}"),
+        })?;
 
         // Handle HTTP status codes
         handle_http_status(status, &response_text)?;
 
         // Parse response
         if response_text.trim().is_empty() {
-            return Err(Errors::Error("Empty response from server".to_string()));
+            return Err(Errors::Generic {
+                message: "Empty response from server".to_string(),
+            });
         }
 
         // Try to parse as error first
         if let Ok(error_response) = serde_json::from_str::<ErrorResponse>(&response_text) {
             let api_error = ApiError::from_code(error_response.code, error_response.msg);
-            return Err(Errors::ApiError(api_error));
+            return Err(Errors::Api(api_error));
         }
 
         // Parse as successful response
-        let data: T = serde_json::from_str(&response_text)
-            .map_err(|e| Errors::Error(format!("Failed to parse response: {e}")))?;
+        let data: T = serde_json::from_str(&response_text).map_err(|e| Errors::Deserialize {
+            message: format!("Failed to parse response: {e}"),
+        })?;
 
         // Record successful usage
         self.rate_limiter
@@ -458,13 +459,15 @@ impl PrivateBinanceClient {
                 .http_client
                 .execute(request)
                 .await
-                .map_err(|e| Errors::Error(format!("HTTP request failed: {e}")))?;
+                .map_err(|e| Errors::Http {
+                    message: format!("HTTP request failed: {e}"),
+                })?;
 
             let status = response.status;
             let headers = response.headers.clone();
-            let response_text = response
-                .text()
-                .map_err(|e| Errors::Error(format!("Failed to read response text: {e}")))?;
+            let response_text = response.text().map_err(|e| Errors::Generic {
+                message: format!("Failed to read response text: {e}"),
+            })?;
 
             // Handle HTTP status codes
             if status == 429 && attempts < MAX_ATTEMPTS {
@@ -484,18 +487,22 @@ impl PrivateBinanceClient {
 
             // Parse response
             if response_text.trim().is_empty() {
-                return Err(Errors::Error("Empty response from server".to_string()));
+                return Err(Errors::Generic {
+                    message: "Empty response from server".to_string(),
+                });
             }
 
             // Try to parse as error first
             if let Ok(error_response) = serde_json::from_str::<ErrorResponse>(&response_text) {
                 let api_error = ApiError::from_code(error_response.code, error_response.msg);
-                return Err(Errors::ApiError(api_error));
+                return Err(Errors::Api(api_error));
             }
 
             // Parse as successful response
-            let data: T = serde_json::from_str(&response_text)
-                .map_err(|e| Errors::Error(format!("Failed to parse response: {e}")))?;
+            let data: T =
+                serde_json::from_str(&response_text).map_err(|e| Errors::Deserialize {
+                    message: format!("Failed to parse response: {e}"),
+                })?;
 
             // Record successful usage
             self.rate_limiter
@@ -750,31 +757,36 @@ impl PublicBinanceClient {
             .http_client
             .execute(request)
             .await
-            .map_err(|e| Errors::Error(format!("HTTP request failed: {e}")))?;
+            .map_err(|e| Errors::Http {
+                message: format!("HTTP request failed: {e}"),
+            })?;
 
         let status = response.status;
         let headers = response.headers.clone();
-        let response_text = response
-            .text()
-            .map_err(|e| Errors::Error(format!("Failed to read response text: {e}")))?;
+        let response_text = response.text().map_err(|e| Errors::Generic {
+            message: format!("Failed to read response text: {e}"),
+        })?;
 
         // Handle HTTP status codes
         handle_http_status(status, &response_text)?;
 
         // Parse response
         if response_text.trim().is_empty() {
-            return Err(Errors::Error("Empty response from server".to_string()));
+            return Err(Errors::Generic {
+                message: "Empty response from server".to_string(),
+            });
         }
 
         // Try to parse as error first
         if let Ok(error_response) = serde_json::from_str::<ErrorResponse>(&response_text) {
             let api_error = ApiError::from_code(error_response.code, error_response.msg);
-            return Err(Errors::ApiError(api_error));
+            return Err(Errors::Api(api_error));
         }
 
         // Parse as successful response
-        let data: T = serde_json::from_str(&response_text)
-            .map_err(|e| Errors::Error(format!("Failed to parse response: {e}")))?;
+        let data: T = serde_json::from_str(&response_text).map_err(|e| Errors::Deserialize {
+            message: format!("Failed to parse response: {e}"),
+        })?;
 
         // Record successful usage
         self.rate_limiter
@@ -822,31 +834,36 @@ impl PublicBinanceClient {
             .http_client
             .execute(request)
             .await
-            .map_err(|e| Errors::Error(format!("HTTP request failed: {e}")))?;
+            .map_err(|e| Errors::Http {
+                message: format!("HTTP request failed: {e}"),
+            })?;
 
         let status = response.status;
         let headers = response.headers.clone();
-        let response_text = response
-            .text()
-            .map_err(|e| Errors::Error(format!("Failed to read response text: {e}")))?;
+        let response_text = response.text().map_err(|e| Errors::Generic {
+            message: format!("Failed to read response text: {e}"),
+        })?;
 
         // Handle HTTP status codes
         handle_http_status(status, &response_text)?;
 
         // Parse response
         if response_text.trim().is_empty() {
-            return Err(Errors::Error("Empty response from server".to_string()));
+            return Err(Errors::Generic {
+                message: "Empty response from server".to_string(),
+            });
         }
 
         // Try to parse as error first
         if let Ok(error_response) = serde_json::from_str::<ErrorResponse>(&response_text) {
             let api_error = ApiError::from_code(error_response.code, error_response.msg);
-            return Err(Errors::ApiError(api_error));
+            return Err(Errors::Api(api_error));
         }
 
         // Parse as successful response
-        let data: T = serde_json::from_str(&response_text)
-            .map_err(|e| Errors::Error(format!("Failed to parse response: {e}")))?;
+        let data: T = serde_json::from_str(&response_text).map_err(|e| Errors::Deserialize {
+            message: format!("Failed to parse response: {e}"),
+        })?;
 
         // Record successful usage
         self.rate_limiter

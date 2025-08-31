@@ -67,12 +67,15 @@ impl RestClient {
         // Extract rate limit headers
         let mut response_headers = ResponseHeaders::default();
         for (name, value) in response.headers.iter() {
-            if let Some(header_type) =
+            let Some(header_type) =
                 crate::bitget::rate_limit::RateLimitHeader::from_str(name.as_str())
-                && let Ok(value_u32) = value.parse::<u32>()
-            {
-                response_headers.values.insert(header_type, value_u32);
-            }
+            else {
+                continue;
+            };
+            let Ok(value_u32) = value.parse::<u32>() else {
+                continue;
+            };
+            response_headers.values.insert(header_type, value_u32);
         }
 
         let body = response

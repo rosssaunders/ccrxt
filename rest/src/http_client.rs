@@ -47,6 +47,7 @@ impl Response {
 }
 
 #[derive(Debug, thiserror::Error)]
+#[non_exhaustive]
 pub enum HttpError {
     #[error("Network error: {0}")]
     Network(String),

@@ -434,7 +434,6 @@ impl From<ErrorResponse> for ApiError {
 }
 
 #[cfg(test)]
-#[allow(clippy::assertions_on_constants)]
 mod tests {
     use super::*;
 
@@ -446,10 +445,10 @@ mod tests {
         };
 
         let api_error: ApiError = error_response.into();
-        match api_error {
-            ApiError::Success => {}
-            _ => assert_eq!(true, false, "Expected Success variant"),
-        }
+        assert!(
+            matches!(api_error, ApiError::Success),
+            "Expected Success variant"
+        );
     }
 
     #[test]

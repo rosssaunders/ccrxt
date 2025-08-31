@@ -1,41 +1,40 @@
 use std::fmt;
 
 use serde::Deserialize;
+use thiserror::Error;
 
 /// Represents all possible errors that can occur when interacting with the Coinbase API
-#[derive(Debug)]
+#[derive(Debug, Error)]
+#[non_exhaustive]
 pub enum Errors {
     /// Invalid API key or signature
+    #[error("Invalid API key or signature")]
     InvalidApiKey(),
 
     /// Network error occurred while making a request
     /// This variant is used to represent errors that are not specific to the Coinbase API,
     /// such as network issues or HTTP errors.
+    #[error("Network error: {0}")]
     NetworkError(String),
 
     /// An error returned by the Coinbase API
+    #[error("API error: {0}")]
     ApiError(ApiError),
 
     /// Rate limit error
+    #[error("Rate limit error: {0}")]
     RateLimitError(crate::coinbaseexchange::rate_limit::RateLimitError),
 
     /// A general error with a descriptive message
+    #[error("Error: {0}")]
     Error(String),
+
+    /// Failed to decode API secret from base64
+    #[error("Failed to decode API secret: {0}")]
+    ApiSecretDecodeError(#[from] base64::DecodeError),
 }
 
-impl fmt::Display for Errors {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            Errors::InvalidApiKey() => write!(f, "Invalid API key or signature"),
-            Errors::NetworkError(err) => write!(f, "Network error: {err}"),
-            Errors::ApiError(err) => write!(f, "API error: {err}"),
-            Errors::RateLimitError(err) => write!(f, "Rate limit error: {err}"),
-            Errors::Error(msg) => write!(f, "Error: {msg}"),
-        }
-    }
-}
-
-impl std::error::Error for Errors {}
+// Display automatically derived by thiserror using the #[error(...)] attributes below.
 
 impl From<serde_json::Error> for Errors {
     fn from(err: serde_json::Error) -> Self {
@@ -58,6 +57,7 @@ pub struct ErrorResponse {
 
 /// API errors that can be returned by the Coinbase Exchange API
 #[derive(Debug, Clone)]
+#[non_exhaustive]
 pub enum ApiError {
     /// Bad Request - Invalid request format
     BadRequest { msg: String },

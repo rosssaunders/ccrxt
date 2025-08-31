@@ -254,7 +254,7 @@ mod tests {
         assert_eq!(response["executedQty"], "0.5");
         assert_eq!(response["status"], "FILLED");
         assert_eq!(response["selfTradePreventionMode"], "EXPIRE_TAKER");
-        assert_eq!(response["usedSor"], true);
+        assert!(response["usedSor"].as_bool().unwrap_or(false));
 
         // Check fills array
         assert!(response["fills"].is_array());

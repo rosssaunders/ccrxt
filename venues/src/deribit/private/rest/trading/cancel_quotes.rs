@@ -197,8 +197,20 @@ mod tests {
         let json_value: Value = serde_json::from_str(&json_str).unwrap();
 
         assert_eq!(json_value.get("cancel_type").unwrap(), "delta");
-        assert_eq!(json_value.get("detailed").unwrap(), true);
-        assert_eq!(json_value.get("freeze_quotes").unwrap(), false);
+        assert!(
+            json_value
+                .get("detailed")
+                .unwrap()
+                .as_bool()
+                .unwrap_or(false)
+        );
+        assert!(
+            !json_value
+                .get("freeze_quotes")
+                .unwrap()
+                .as_bool()
+                .unwrap_or(true)
+        );
         assert_eq!(json_value.get("min_delta").unwrap(), 0.1);
         assert_eq!(json_value.get("max_delta").unwrap(), 0.9);
         assert!(json_value.get("quote_set_id").is_none());
@@ -344,8 +356,20 @@ mod tests {
         let json_value: Value = serde_json::from_str(&json_str).unwrap();
 
         assert_eq!(json_value.get("cancel_type").unwrap(), "all");
-        assert_eq!(json_value.get("detailed").unwrap(), false);
-        assert_eq!(json_value.get("freeze_quotes").unwrap(), true);
+        assert!(
+            !json_value
+                .get("detailed")
+                .unwrap()
+                .as_bool()
+                .unwrap_or(true)
+        );
+        assert!(
+            json_value
+                .get("freeze_quotes")
+                .unwrap()
+                .as_bool()
+                .unwrap_or(false)
+        );
     }
 
     #[test]

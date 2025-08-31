@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@1.89.0
       - run: cargo check --workspace --all-features
       - run: cargo fmt --all -- --check
       - run: cargo clippy --all-targets --all-features -- -D warnings
@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@1.89.0
       - run: cargo install cargo-deadlinks
       - run: cargo doc --no-deps
       - run: cargo deadlinks --check-http
@@ -38,10 +38,11 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@1.89.0
       # Use audit-check with PR check annotations only when the PR is not from a fork
-      - uses: actions-rs/audit-check@v1
+      - name: Audit (with check annotations)
         if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork == false }}
+        uses: actions-rs/audit-check@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
       # Fallback for forked PRs where the token cannot create check runs

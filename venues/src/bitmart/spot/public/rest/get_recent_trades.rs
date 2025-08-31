@@ -79,7 +79,7 @@ mod tests {
 
     #[test]
     fn test_trade_data_parsing() {
-        let trade_data = vec![
+        let trade_data = [
             "BMX_ETH".to_string(),       // symbol
             "1691743270994".to_string(), // ts
             "1.00000000".to_string(),    // price

@@ -11,6 +11,7 @@ use crate::binance::spot::{Errors, ResponseHeaders, errors::ApiError};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+#[non_exhaustive]
 pub enum RateLimitType {
     RequestWeight,
     Orders,
@@ -19,6 +20,7 @@ pub enum RateLimitType {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+#[non_exhaustive]
 pub enum RateLimitInterval {
     Second,
     Minute,
@@ -27,6 +29,7 @@ pub enum RateLimitInterval {
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
 /// Represents the interval unit for Binance rate limit headers (e.g., '1m', '1h').
+#[non_exhaustive]
 pub enum IntervalUnit {
     Second,
     Minute,
@@ -72,6 +75,7 @@ pub struct RateLimitHeader {
 
 /// The type of rate limit header (used weight, order count, etc.).
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[non_exhaustive]
 pub enum RateLimitHeaderKind {
     UsedWeight,
     OrderCount,
@@ -81,32 +85,20 @@ impl RateLimitHeader {
     /// Attempt to parse a Binance rate limit/order count header name into a RateLimitHeader struct.
     /// E.g., "x-mbx-used-weight-1m" or "x-mbx-order-count-1d".
     pub fn parse(header: &str) -> Option<Self> {
-        fn ascii_starts_with(haystack: &str, needle: &str) -> bool {
-            haystack.len() >= needle.len()
-                && haystack
-                    .chars()
-                    .zip(needle.chars())
-                    .all(|(a, b)| a.eq_ignore_ascii_case(&b))
-        }
-        let (kind, rest) = if ascii_starts_with(header, "x-mbx-used-weight-") {
-            (
-                RateLimitHeaderKind::UsedWeight,
-                &header["x-mbx-used-weight-".len()..],
-            )
-        } else if ascii_starts_with(header, "x-mbx-order-count-") {
-            (
-                RateLimitHeaderKind::OrderCount,
-                &header["x-mbx-order-count-".len()..],
-            )
+        let lower = header.to_ascii_lowercase();
+        const USED: &str = "x-mbx-used-weight-";
+        const COUNT: &str = "x-mbx-order-count-";
+        let (kind, rest) = if lower.starts_with(USED) {
+            (RateLimitHeaderKind::UsedWeight, header.get(USED.len()..)?)
+        } else if lower.starts_with(COUNT) {
+            (RateLimitHeaderKind::OrderCount, header.get(COUNT.len()..)?)
         } else {
             return None;
         };
-        if rest.len() < 2 {
-            return None;
-        }
-        let (num, unit) = rest.split_at(rest.len().saturating_sub(1));
-        let interval_value = num.parse::<u32>().ok()?;
-        let interval_unit = IntervalUnit::from_char(unit.chars().next()?)?;
+        let last_char = rest.chars().last()?;
+        let interval_unit = IntervalUnit::from_char(last_char)?;
+        let num_part = rest.strip_suffix(last_char)?;
+        let interval_value = num_part.parse().ok()?;
         Some(RateLimitHeader {
             kind,
             interval_value,
@@ -226,14 +218,14 @@ impl RateLimiter {
 
         // Raw requests: 6,000 per 5 min (Spot limit)
         if usage.raw_request_timestamps.len() >= 6000 {
-            return Err(Errors::ApiError(ApiError::TooManyRequests {
+            return Err(Errors::Api(ApiError::TooManyRequests {
                 msg: "Raw request cap (6,000/5min) exceeded".to_string(),
             }));
         }
 
         // Request weight: 1,200 per 1 min (Spot limit)
         if usage.used_weight_1m.saturating_add(weight) > 1200 {
-            return Err(Errors::ApiError(ApiError::TooManyRequests {
+            return Err(Errors::Api(ApiError::TooManyRequests {
                 msg: format!(
                     "Request weight {} would exceed limit of 1,200",
                     usage.used_weight_1m.saturating_add(weight)
@@ -244,12 +236,12 @@ impl RateLimiter {
         // Orders: 100 per 10s, 1,000 per 24h (Spot limits)
         if is_order {
             if usage.order_timestamps_10s.len() >= 100 {
-                return Err(Errors::ApiError(ApiError::TooManyOrders {
+                return Err(Errors::Api(ApiError::TooManyOrders {
                     msg: "Order cap (100/10s) exceeded".to_string(),
                 }));
             }
             if usage.order_timestamps_1d.len() >= 1000 {
-                return Err(Errors::ApiError(ApiError::TooManyOrders {
+                return Err(Errors::Api(ApiError::TooManyOrders {
                     msg: "Order cap (1,000/24h) exceeded".to_string(),
                 }));
             }
@@ -277,10 +269,10 @@ mod tests {
         let result = limiter.check_limits(1201, false).await;
         assert!(result.is_err());
 
-        if let Err(Errors::ApiError(ApiError::TooManyRequests { msg })) = result {
+        if let Err(Errors::Api(ApiError::TooManyRequests { msg })) = result {
             assert!(msg.contains("1,200"));
         } else {
-            assert_eq!(true, false, "Expected TooManyRequests error");
+            unreachable!("Expected TooManyRequests error");
         }
     }
 
@@ -297,10 +289,10 @@ mod tests {
         let result = limiter.check_limits(1, true).await;
         assert!(result.is_err());
 
-        if let Err(Errors::ApiError(ApiError::TooManyOrders { msg })) = result {
+        if let Err(Errors::Api(ApiError::TooManyOrders { msg })) = result {
             assert!(msg.contains("100/10s"));
         } else {
-            assert_eq!(true, false, "Expected TooManyOrders error for 10s limit");
+            unreachable!("Expected TooManyOrders error for 10s limit");
         }
     }
 
@@ -317,7 +309,7 @@ mod tests {
         let result = limiter.check_limits(1, false).await;
         assert!(result.is_err());
 
-        if let Err(Errors::ApiError(ApiError::TooManyRequests { msg })) = result {
+        if let Err(Errors::Api(ApiError::TooManyRequests { msg })) = result {
             assert!(msg.contains("6,000/5min"));
         } else {
             unreachable!("Expected TooManyRequests error for raw request limit");

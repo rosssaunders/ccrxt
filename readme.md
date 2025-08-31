@@ -77,6 +77,18 @@ See the [venues](venues/) directory for details.
 4. All WebSocket clients implement the common WebSocket trait.
 5. File and module structure follows strict conventions for maintainability and clarity.
 
+## Rust Version Policy
+
+This project targets ONLY the latest stable Rust release.
+
+- `rust-toolchain.toml` pins the toolchain to `stable` so builds automatically track the newest stable once installed.
+- `Cargo.toml` `rust-version` field is updated to the most recent stable (currently 1.89.0) and will be bumped promptly after each stable release.
+- No nightly feature gates (`#![feature(...)]`) are permitted.
+- Patterns that previously required nightly (e.g., `let_chains` before stabilization in 1.88) may now use the stable syntax where it improves clarity.
+- CI enforces these rules via a verification script.
+
+If you need a feature that is only on nightly, open an issue to discuss alternatives before proposing nightly usage.
+
 ## Testing
 
 - Unit tests are colocated with the code they test and do not require credentials or network access.

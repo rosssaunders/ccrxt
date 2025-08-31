@@ -8,6 +8,7 @@ use tokio::sync::RwLock;
 
 /// Represents different types of BitMart API endpoints for rate limiting
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[non_exhaustive]
 pub enum EndpointType {
     /// System endpoints (time, service status) - 10 times/sec per IP
     System,
@@ -43,6 +44,7 @@ impl RateLimit {
 
 /// Error type for rate limiting
 #[derive(Debug, Clone)]
+#[non_exhaustive]
 pub enum RateLimitError {
     /// Rate limit exceeded for the given endpoint type
     Exceeded { endpoint_type: EndpointType },

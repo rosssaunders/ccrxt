@@ -186,7 +186,7 @@ mod tests {
 
     #[test]
     fn test_history_candle_confirmation_states() {
-        let states = vec!["0", "1"];
+        let states = ["0", "1"];
 
         for state in states {
             let candle = SpreadHistoryCandleData {
@@ -208,7 +208,7 @@ mod tests {
     fn test_history_candle_array_format_documentation() {
         // The API returns data as [ts,o,h,l,c,vol,confirm]
         // This test documents the expected order of fields
-        let candle_array = vec![
+        let candle_array = [
             "1597026383085".to_string(), // ts
             "45000".to_string(),         // o (open)
             "46000".to_string(),         // h (high)
@@ -230,7 +230,7 @@ mod tests {
 
     #[test]
     fn test_history_limit_values() {
-        let limits = vec!["1", "10", "25", "50", "100"];
+        let limits = ["1", "10", "25", "50", "100"];
 
         for limit in limits {
             let request = GetSpreadHistoryCandlesRequest {

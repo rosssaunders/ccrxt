@@ -7,6 +7,7 @@ use thiserror::Error;
 
 /// Comprehensive error type for Bullish API operations
 #[derive(Error, Debug)]
+#[non_exhaustive]
 pub enum Errors {
     #[error("API Error: {0}")]
     ApiError(#[from] ApiError),

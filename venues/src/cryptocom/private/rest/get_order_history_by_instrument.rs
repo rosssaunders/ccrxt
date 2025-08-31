@@ -322,11 +322,35 @@ mod tests {
         assert_eq!(json_value.get("instrument_name").unwrap(), "BTCUSD-PERP");
         assert_eq!(json_value.get("count").unwrap(), 20);
         assert_eq!(json_value.get("offset").unwrap(), 5);
-        assert_eq!(json_value.get("include_old").unwrap(), true);
-        assert_eq!(json_value.get("include_unfilled").unwrap(), false);
-        assert_eq!(json_value.get("with_continuation").unwrap(), true);
+        assert!(
+            json_value
+                .get("include_old")
+                .unwrap()
+                .as_bool()
+                .unwrap_or(false)
+        );
+        assert!(
+            !json_value
+                .get("include_unfilled")
+                .unwrap()
+                .as_bool()
+                .unwrap_or(true)
+        );
+        assert!(
+            json_value
+                .get("with_continuation")
+                .unwrap()
+                .as_bool()
+                .unwrap_or(false)
+        );
         assert_eq!(json_value.get("continuation").unwrap(), "some_token");
-        assert_eq!(json_value.get("historical").unwrap(), false);
+        assert!(
+            !json_value
+                .get("historical")
+                .unwrap()
+                .as_bool()
+                .unwrap_or(true)
+        );
     }
 
     #[test]

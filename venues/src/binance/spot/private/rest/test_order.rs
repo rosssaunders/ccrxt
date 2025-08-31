@@ -453,7 +453,7 @@ mod tests {
         };
 
         let json = serde_json::to_value(&request).unwrap();
-        assert_eq!(json["computeCommissionRates"], true);
+        assert!(json["computeCommissionRates"].as_bool().unwrap_or(false));
     }
 
     #[test]

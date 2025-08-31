@@ -177,9 +177,7 @@ mod tests {
                 assert_eq!(ticker.symbol, "BTCUSDT");
                 assert_eq!(ticker.last_price, "45384.10000000");
             }
-            Ticker24hrResult::Multiple(_) => {
-                assert!(false, "Expected Single variant");
-            }
+            Ticker24hrResult::Multiple(_) => unreachable!("Expected Single variant"),
         }
     }
 
@@ -233,9 +231,7 @@ mod tests {
                 assert_eq!(tickers[1].symbol, "ETHUSDT");
                 assert_eq!(tickers[1].price_change_percent, "-3.862");
             }
-            Ticker24hrResult::Single(_) => {
-                assert!(false, "Expected Multiple variant");
-            }
+            Ticker24hrResult::Single(_) => unreachable!("Expected Multiple variant"),
         }
     }
 

@@ -119,7 +119,7 @@ mod tests {
                 assert!(msg.contains("10001"));
                 assert!(msg.contains("Invalid API key"));
             }
-            _ => assert_eq!(true, false, "Expected ApiError"),
+            _ => unreachable!("Expected ApiError"),
         }
     }
 }

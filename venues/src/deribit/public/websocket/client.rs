@@ -94,11 +94,14 @@ impl PrivateWebSocketClient {
 
     /// Receive a response for a sent request (used internally by endpoint modules)
     pub(crate) async fn receive_response(&mut self) -> Result<String, DeribitWebSocketError> {
-        let mut pending = self.pending_requests.lock().await;
-        let (tx, rx) = tokio::sync::oneshot::channel();
-        let id = self.next_request_id();
-        pending.insert(id, tx);
-        drop(pending);
+        // Lock scope limited so the mutex is released before awaiting the response
+        let (id, rx) = {
+            let mut pending = self.pending_requests.lock().await;
+            let (tx, rx) = tokio::sync::oneshot::channel();
+            let id = self.next_request_id();
+            pending.insert(id, tx);
+            (id, rx)
+        }; // mutex guard dropped here
         // Wait for the response or timeout
         let response: serde_json::Value = tokio::select! {
             res = rx => res.map_err(|_| DeribitWebSocketError::Timeout { id })?,

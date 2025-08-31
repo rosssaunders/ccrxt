@@ -8,6 +8,7 @@ use tokio::sync::RwLock;
 
 /// Represents different types of crypto.com API endpoints for rate limiting
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[non_exhaustive]
 pub enum EndpointType {
     // Private REST endpoints
     PrivateCreateOrder,
@@ -188,6 +189,7 @@ pub struct RateLimiter {
 
 /// Errors that can occur during rate limiting
 #[derive(Debug, thiserror::Error)]
+#[non_exhaustive]
 pub enum RateLimitError {
     #[error("Rate limit exceeded for {endpoint:?}: {current}/{max} requests in {window:?}")]
     RateLimitExceeded {
@@ -265,7 +267,6 @@ impl RateLimiter {
 }
 
 #[cfg(test)]
-#[allow(clippy::assertions_on_constants)]
 mod tests {
     use tokio::time::{Duration, sleep};
 
@@ -323,7 +324,7 @@ mod tests {
         if let Err(RateLimitError::RateLimitExceeded { current, max, .. }) = result {
             assert!(current >= max);
         } else {
-            assert_eq!(true, false, "Expected RateLimitExceeded error");
+            unreachable!("Expected RateLimitExceeded error");
         }
     }
 

@@ -5,6 +5,7 @@ use thiserror::Error;
 
 /// Represents all possible errors that can occur when interacting with the BitMart API
 #[derive(Debug)]
+#[non_exhaustive]
 pub enum Errors {
     /// Invalid API key or signature
     InvalidApiKey(),
@@ -63,6 +64,7 @@ pub struct ErrorResponse {
 ///
 /// For complete error code documentation, see the BitMart API documentation.
 #[derive(Error, Debug, Clone, Deserialize)]
+#[non_exhaustive]
 pub enum ApiError {
     // Success
     #[error("Success")]
@@ -239,7 +241,7 @@ mod tests {
                 assert_eq!(code, 99999);
                 assert_eq!(message, "Unknown error");
             }
-            _ => assert_eq!(true, false, "Expected UnmappedApiError"),
+            _ => unreachable!("Expected UnmappedApiError"),
         }
     }
 

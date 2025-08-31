@@ -102,8 +102,8 @@ mod tests {
         assert_eq!(json["price"], "0.05");
         assert_eq!(json["tif"], "gtc");
         assert_eq!(json["text"], "test order");
-        assert_eq!(json["reduce_only"], true);
-        assert_eq!(json["close"], false);
+        assert!(json["reduce_only"].as_bool().unwrap_or(false));
+        assert!(!json["close"].as_bool().unwrap_or(true));
     }
 
     #[test]
@@ -184,7 +184,7 @@ mod tests {
         };
 
         let json = serde_json::to_value(&request).unwrap();
-        assert_eq!(json["reduce_only"], true);
+        assert!(json["reduce_only"].as_bool().unwrap_or(false));
     }
 
     #[test]
@@ -200,7 +200,7 @@ mod tests {
         };
 
         let json = serde_json::to_value(&request).unwrap();
-        assert_eq!(json["close"], true);
+        assert!(json["close"].as_bool().unwrap_or(false));
     }
 
     #[test]

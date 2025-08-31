@@ -28,7 +28,7 @@ mod tests {
         let request = UnifiedModeRequest { unified: true };
 
         let json = serde_json::to_value(&request).unwrap();
-        assert_eq!(json["unified"], true);
+        assert!(json["unified"].as_bool().unwrap_or(false));
     }
 
     #[test]
@@ -36,7 +36,7 @@ mod tests {
         let request = UnifiedModeRequest { unified: false };
 
         let json = serde_json::to_value(&request).unwrap();
-        assert_eq!(json["unified"], false);
+        assert!(!json["unified"].as_bool().unwrap_or(true));
     }
 
     #[test]
@@ -44,7 +44,7 @@ mod tests {
         let request = UnifiedModeRequest::default();
 
         let json = serde_json::to_value(&request).unwrap();
-        assert_eq!(json["unified"], false); // Default is false
+        assert!(!json["unified"].as_bool().unwrap_or(true)); // Default is false
     }
 
     #[test]

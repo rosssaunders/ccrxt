@@ -107,7 +107,7 @@ mod tests {
 
     #[test]
     fn test_kline_data_parsing() {
-        let kline_data = vec![
+        let kline_data = [
             "1689736680".to_string(),        // t
             "3.721".to_string(),             // o
             "3.743".to_string(),             // h

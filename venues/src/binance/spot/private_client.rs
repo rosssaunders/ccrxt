@@ -97,17 +97,21 @@ impl SpotPrivateRestClient {
         )
         .await
         .map_err(|e| match e {
-            SharedErrors::ApiError(_) => Errors::Error("API error occurred".to_string()),
-            SharedErrors::RateLimitExceeded { retry_after } => Errors::Error(format!(
-                "Rate limit exceeded, retry after {:?}",
-                retry_after
-            )),
-            SharedErrors::InvalidApiKey() => Errors::InvalidApiKey(),
-            SharedErrors::HttpError(err) => Errors::HttpError(err),
-            SharedErrors::SerializationError(msg) => {
-                Errors::Error(format!("Serialization error: {}", msg))
-            }
-            SharedErrors::Error(msg) => Errors::Error(msg),
+            SharedErrors::Api(_) => Errors::Generic {
+                message: "API error occurred".to_string(),
+            },
+            SharedErrors::RateLimitExceeded { retry_after } => Errors::Generic {
+                message: format!("Rate limit exceeded, retry after {:?}", retry_after),
+            },
+            SharedErrors::InvalidApiKey => Errors::InvalidApiKey,
+            SharedErrors::Http { message } => Errors::Http { message },
+            SharedErrors::Serialize { message } => Errors::Generic {
+                message: format!("Serialization error: {}", message),
+            },
+            SharedErrors::Deserialize { message } => Errors::Generic {
+                message: format!("Deserialization error: {}", message),
+            },
+            SharedErrors::Generic { message } => Errors::Generic { message },
         })?;
 
         // Convert shared RestResponse to spot RestResponse
@@ -137,17 +141,21 @@ impl SpotPrivateRestClient {
         )
         .await
         .map_err(|e| match e {
-            SharedErrors::ApiError(_) => Errors::Error("API error occurred".to_string()),
-            SharedErrors::RateLimitExceeded { retry_after } => Errors::Error(format!(
-                "Rate limit exceeded, retry after {:?}",
-                retry_after
-            )),
-            SharedErrors::InvalidApiKey() => Errors::InvalidApiKey(),
-            SharedErrors::HttpError(err) => Errors::HttpError(err),
-            SharedErrors::SerializationError(msg) => {
-                Errors::Error(format!("Serialization error: {}", msg))
-            }
-            SharedErrors::Error(msg) => Errors::Error(msg),
+            SharedErrors::Api(_) => Errors::Generic {
+                message: "API error occurred".to_string(),
+            },
+            SharedErrors::RateLimitExceeded { retry_after } => Errors::Generic {
+                message: format!("Rate limit exceeded, retry after {:?}", retry_after),
+            },
+            SharedErrors::InvalidApiKey => Errors::InvalidApiKey,
+            SharedErrors::Http { message } => Errors::Http { message },
+            SharedErrors::Serialize { message } => Errors::Generic {
+                message: format!("Serialization error: {}", message),
+            },
+            SharedErrors::Deserialize { message } => Errors::Generic {
+                message: format!("Deserialization error: {}", message),
+            },
+            SharedErrors::Generic { message } => Errors::Generic { message },
         })?;
 
         // Convert shared RestResponse to spot RestResponse
@@ -177,17 +185,21 @@ impl SpotPrivateRestClient {
         )
         .await
         .map_err(|e| match e {
-            SharedErrors::ApiError(_) => Errors::Error("API error occurred".to_string()),
-            SharedErrors::RateLimitExceeded { retry_after } => Errors::Error(format!(
-                "Rate limit exceeded, retry after {:?}",
-                retry_after
-            )),
-            SharedErrors::InvalidApiKey() => Errors::InvalidApiKey(),
-            SharedErrors::HttpError(err) => Errors::HttpError(err),
-            SharedErrors::SerializationError(msg) => {
-                Errors::Error(format!("Serialization error: {}", msg))
-            }
-            SharedErrors::Error(msg) => Errors::Error(msg),
+            SharedErrors::Api(_) => Errors::Generic {
+                message: "API error occurred".to_string(),
+            },
+            SharedErrors::RateLimitExceeded { retry_after } => Errors::Generic {
+                message: format!("Rate limit exceeded, retry after {:?}", retry_after),
+            },
+            SharedErrors::InvalidApiKey => Errors::InvalidApiKey,
+            SharedErrors::Http { message } => Errors::Http { message },
+            SharedErrors::Serialize { message } => Errors::Generic {
+                message: format!("Serialization error: {}", message),
+            },
+            SharedErrors::Deserialize { message } => Errors::Generic {
+                message: format!("Deserialization error: {}", message),
+            },
+            SharedErrors::Generic { message } => Errors::Generic { message },
         })?;
 
         // Convert shared RestResponse to spot RestResponse
@@ -218,17 +230,21 @@ impl SpotPrivateRestClient {
             )
             .await
             .map_err(|e| match e {
-                SharedErrors::ApiError(_) => Errors::Error("API error occurred".to_string()),
-                SharedErrors::RateLimitExceeded { retry_after } => Errors::Error(format!(
-                    "Rate limit exceeded, retry after {:?}",
-                    retry_after
-                )),
-                SharedErrors::InvalidApiKey() => Errors::InvalidApiKey(),
-                SharedErrors::HttpError(err) => Errors::HttpError(err),
-                SharedErrors::SerializationError(msg) => {
-                    Errors::Error(format!("Serialization error: {}", msg))
-                }
-                SharedErrors::Error(msg) => Errors::Error(msg),
+                SharedErrors::Api(_) => Errors::Generic {
+                    message: "API error occurred".to_string(),
+                },
+                SharedErrors::RateLimitExceeded { retry_after } => Errors::Generic {
+                    message: format!("Rate limit exceeded, retry after {:?}", retry_after),
+                },
+                SharedErrors::InvalidApiKey => Errors::InvalidApiKey,
+                SharedErrors::Http { message } => Errors::Http { message },
+                SharedErrors::Serialize { message } => Errors::Generic {
+                    message: format!("Serialization error: {}", message),
+                },
+                SharedErrors::Deserialize { message } => Errors::Generic {
+                    message: format!("Deserialization error: {}", message),
+                },
+                SharedErrors::Generic { message } => Errors::Generic { message },
             })?;
 
         // Convert shared RestResponse to spot RestResponse
@@ -274,10 +290,9 @@ impl SpotPrivateRestClient {
                 self.send_delete_signed_request(endpoint, params, weight, is_order)
                     .await
             }
-            _ => Err(Errors::Error(format!(
-                "Unsupported HTTP method: {:?}",
-                method
-            ))),
+            _ => Err(Errors::Generic {
+                message: format!("Unsupported HTTP method: {:?}", method),
+            }),
         }
     }
 }

@@ -30,10 +30,10 @@ pub use venue_trait::{RateLimits, VenueConfig};
 pub fn sign_request(
     api_secret: &dyn ExposableSecret,
     query_string: &str,
-) -> Result<String, String> {
+) -> Result<String, errors::Errors> {
     let api_secret = api_secret.expose_secret();
     let mut mac = Hmac::<Sha256>::new_from_slice(api_secret.as_bytes())
-        .map_err(|_| "Invalid API key/secret".to_string())?;
+        .map_err(|_| errors::Errors::InvalidApiKey)?;
     mac.update(query_string.as_bytes());
     Ok(hex::encode(mac.finalize().into_bytes()))
 }

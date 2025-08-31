@@ -8,6 +8,7 @@ use tokio::sync::RwLock;
 
 /// Types of endpoints for rate limiting based on Coinbase documentation
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[non_exhaustive]
 pub enum EndpointType {
     /// Public endpoints: 10 requests/second per IP (bursts up to 15)
     Public,
@@ -43,6 +44,7 @@ impl RateLimit {
 
 /// Rate limiting errors
 #[derive(Error, Debug)]
+#[non_exhaustive]
 pub enum RateLimitError {
     #[error("Rate limit exceeded for endpoint type: {endpoint_type:?}")]
     Exceeded { endpoint_type: EndpointType },

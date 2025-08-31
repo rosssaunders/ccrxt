@@ -151,8 +151,20 @@ mod tests {
         assert_eq!(json_value.get("currency_pair").unwrap(), "eth_btc");
         assert_eq!(json_value.get("kind").unwrap(), "option");
         assert_eq!(json_value.get("type").unwrap(), "stop");
-        assert_eq!(json_value.get("detailed").unwrap(), true);
-        assert_eq!(json_value.get("freeze_quotes").unwrap(), false);
+        assert!(
+            json_value
+                .get("detailed")
+                .unwrap()
+                .as_bool()
+                .unwrap_or(false)
+        );
+        assert!(
+            !json_value
+                .get("freeze_quotes")
+                .unwrap()
+                .as_bool()
+                .unwrap_or(true)
+        );
     }
 
     #[test]

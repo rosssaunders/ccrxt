@@ -829,7 +829,7 @@ mod tests {
         assert_eq!(json["id"], "12345678");
         assert_eq!(json["currency_pair"], "BTC_USDT");
         assert_eq!(json["type"], "limit");
-        assert_eq!(json["succeeded"], true);
+        assert!(json["succeeded"].as_bool().unwrap_or(false));
         assert_eq!(json["text"], "test_order");
 
         // Optional fields that are None should be omitted

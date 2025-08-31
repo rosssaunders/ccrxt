@@ -256,7 +256,13 @@ mod tests {
         assert_eq!(json_value.get("quantity_limit").unwrap(), 100.0);
         assert_eq!(json_value.get("delta_limit").unwrap(), 50.0);
         assert_eq!(json_value.get("vega_limit").unwrap(), 25.0);
-        assert_eq!(json_value.get("block_rfq").unwrap(), true);
+        assert!(
+            json_value
+                .get("block_rfq")
+                .unwrap()
+                .as_bool()
+                .unwrap_or(false)
+        );
         assert_eq!(json_value.get("trade_count_limit").unwrap(), 10);
     }
 
@@ -280,7 +286,13 @@ mod tests {
         assert_eq!(json_value.get("index_name").unwrap(), "all");
         assert_eq!(json_value.get("interval").unwrap(), 0);
         assert_eq!(json_value.get("frozen_time").unwrap(), 0);
-        assert_eq!(json_value.get("block_rfq").unwrap(), true);
+        assert!(
+            json_value
+                .get("block_rfq")
+                .unwrap()
+                .as_bool()
+                .unwrap_or(false)
+        );
         assert_eq!(json_value.get("trade_count_limit").unwrap(), 5);
     }
 

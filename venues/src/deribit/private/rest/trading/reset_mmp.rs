@@ -176,7 +176,13 @@ mod tests {
 
         assert_eq!(json_value.get("index_name").unwrap(), "eth_usdc");
         assert_eq!(json_value.get("mmp_group").unwrap(), "group1");
-        assert_eq!(json_value.get("block_rfq").unwrap(), true);
+        assert!(
+            json_value
+                .get("block_rfq")
+                .unwrap()
+                .as_bool()
+                .unwrap_or(false)
+        );
     }
 
     #[test]
@@ -192,7 +198,13 @@ mod tests {
 
         assert_eq!(json_value.get("index_name").unwrap(), "all");
         assert_eq!(json_value.get("mmp_group").unwrap(), "main");
-        assert_eq!(json_value.get("block_rfq").unwrap(), false);
+        assert!(
+            !json_value
+                .get("block_rfq")
+                .unwrap()
+                .as_bool()
+                .unwrap_or(true)
+        );
     }
 
     #[test]

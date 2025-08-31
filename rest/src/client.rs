@@ -46,6 +46,7 @@ impl Client {
     }
 
     /// Make a GET request
+    #[must_use = "The request future must be awaited and its Result handled to avoid silently discarding HTTP / parsing errors"]
     pub async fn get<T, P>(&self, endpoint: &str, params: Option<&P>) -> Result<T, RestError>
     where
         T: DeserializeOwned,
@@ -80,6 +81,7 @@ impl Client {
     }
 
     /// Make a POST request with authentication
+    #[must_use = "The request future must be awaited and its Result handled to avoid silently discarding HTTP / parsing errors"]
     pub async fn post_signed<T, P>(
         &self,
         endpoint: &str,
@@ -118,6 +120,7 @@ impl Client {
     }
 
     /// Make a GET request with authentication  
+    #[must_use = "The request future must be awaited and its Result handled to avoid silently discarding HTTP / parsing errors"]
     pub async fn get_signed<T, P>(&self, endpoint: &str, params: Option<&P>) -> Result<T, RestError>
     where
         T: DeserializeOwned,

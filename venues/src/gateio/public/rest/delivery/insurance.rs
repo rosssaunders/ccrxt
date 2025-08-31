@@ -319,7 +319,7 @@ mod tests {
     #[test]
     fn test_fund_recovery_scenario() {
         // Insurance fund recovery after market event
-        let recovery_entries = vec![
+        let recovery_entries = [
             r#"{"t": 1641024000, "b": 40000000.0}"#, // Post-crash low
             r#"{"t": 1641110400, "b": 41000000.0}"#, // Day 2
             r#"{"t": 1641196800, "b": 42500000.0}"#, // Day 3
@@ -341,7 +341,7 @@ mod tests {
 
     #[test]
     fn test_multiple_currency_funds() {
-        let currency_funds = vec![
+        let currency_funds = [
             ("USDT", 50000000.0, "USDT fund"),
             ("BTC", 500.0, "BTC fund"),
         ];

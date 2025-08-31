@@ -48,17 +48,20 @@ impl OptionsPublicRestClient {
             .send_public_get::<T, R, SharedErrors>(endpoint, params, weight)
             .await
             .map_err(|e| match e {
-                SharedErrors::ApiError(_) => Errors::Error("API error occurred".to_string()),
+                SharedErrors::Api(_) => Errors::Error("API error occurred".to_string()),
                 SharedErrors::RateLimitExceeded { retry_after } => Errors::Error(format!(
                     "Rate limit exceeded, retry after {:?}",
                     retry_after
                 )),
-                SharedErrors::InvalidApiKey() => Errors::InvalidApiKey(),
-                SharedErrors::HttpError(err) => Errors::HttpError(err),
-                SharedErrors::SerializationError(msg) => {
+                SharedErrors::InvalidApiKey => Errors::InvalidApiKey(),
+                SharedErrors::Http { message: err } => Errors::HttpError(err),
+                SharedErrors::Serialize { message: msg } => {
                     Errors::Error(format!("Serialization error: {}", msg))
                 }
-                SharedErrors::Error(msg) => Errors::Error(msg),
+                SharedErrors::Deserialize { message: msg } => {
+                    Errors::Error(format!("Deserialization error: {}", msg))
+                }
+                SharedErrors::Generic { message: msg } => Errors::Error(msg),
             })?;
 
         Ok(RestResponse {
@@ -87,17 +90,20 @@ impl OptionsPublicRestClient {
             .send_public_post::<T, R, SharedErrors>(endpoint, params, weight)
             .await
             .map_err(|e| match e {
-                SharedErrors::ApiError(_) => Errors::Error("API error occurred".to_string()),
+                SharedErrors::Api(_) => Errors::Error("API error occurred".to_string()),
                 SharedErrors::RateLimitExceeded { retry_after } => Errors::Error(format!(
                     "Rate limit exceeded, retry after {:?}",
                     retry_after
                 )),
-                SharedErrors::InvalidApiKey() => Errors::InvalidApiKey(),
-                SharedErrors::HttpError(err) => Errors::HttpError(err),
-                SharedErrors::SerializationError(msg) => {
+                SharedErrors::InvalidApiKey => Errors::InvalidApiKey(),
+                SharedErrors::Http { message: err } => Errors::HttpError(err),
+                SharedErrors::Serialize { message: msg } => {
                     Errors::Error(format!("Serialization error: {}", msg))
                 }
-                SharedErrors::Error(msg) => Errors::Error(msg),
+                SharedErrors::Deserialize { message: msg } => {
+                    Errors::Error(format!("Deserialization error: {}", msg))
+                }
+                SharedErrors::Generic { message: msg } => Errors::Error(msg),
             })?;
 
         Ok(RestResponse {
@@ -126,17 +132,20 @@ impl OptionsPublicRestClient {
             .send_public_delete::<T, R, SharedErrors>(endpoint, params, weight)
             .await
             .map_err(|e| match e {
-                SharedErrors::ApiError(_) => Errors::Error("API error occurred".to_string()),
+                SharedErrors::Api(_) => Errors::Error("API error occurred".to_string()),
                 SharedErrors::RateLimitExceeded { retry_after } => Errors::Error(format!(
                     "Rate limit exceeded, retry after {:?}",
                     retry_after
                 )),
-                SharedErrors::InvalidApiKey() => Errors::InvalidApiKey(),
-                SharedErrors::HttpError(err) => Errors::HttpError(err),
-                SharedErrors::SerializationError(msg) => {
+                SharedErrors::InvalidApiKey => Errors::InvalidApiKey(),
+                SharedErrors::Http { message: err } => Errors::HttpError(err),
+                SharedErrors::Serialize { message: msg } => {
                     Errors::Error(format!("Serialization error: {}", msg))
                 }
-                SharedErrors::Error(msg) => Errors::Error(msg),
+                SharedErrors::Deserialize { message: msg } => {
+                    Errors::Error(format!("Deserialization error: {}", msg))
+                }
+                SharedErrors::Generic { message: msg } => Errors::Error(msg),
             })?;
 
         Ok(RestResponse {

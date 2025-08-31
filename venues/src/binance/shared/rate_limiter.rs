@@ -12,6 +12,7 @@ use super::{errors::Errors, rate_limiter_trait::BinanceRateLimiter, venue_trait:
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+#[non_exhaustive]
 pub enum RateLimitType {
     RequestWeight,
     Orders,
@@ -20,6 +21,7 @@ pub enum RateLimitType {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+#[non_exhaustive]
 pub enum RateLimitInterval {
     Second,
     Minute,
@@ -27,6 +29,7 @@ pub enum RateLimitInterval {
 }
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
+#[non_exhaustive]
 pub enum IntervalUnit {
     Second,
     Minute,
@@ -72,6 +75,7 @@ pub struct RateLimitHeader {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[non_exhaustive]
 pub enum RateLimitHeaderKind {
     UsedWeight,
     OrderCount,
@@ -79,38 +83,23 @@ pub enum RateLimitHeaderKind {
 
 impl RateLimitHeader {
     pub fn parse(header: &str) -> Option<Self> {
-        fn ascii_starts_with(haystack: &str, needle: &str) -> bool {
-            haystack.len() >= needle.len()
-                && haystack
-                    .chars()
-                    .zip(needle.chars())
-                    .all(|(a, b)| a.eq_ignore_ascii_case(&b))
-        }
-
-        let (kind, rest) = if ascii_starts_with(header, "x-mbx-used-weight-") {
-            (
-                RateLimitHeaderKind::UsedWeight,
-                &header["x-mbx-used-weight-".len()..],
-            )
-        } else if ascii_starts_with(header, "x-mbx-order-count-") {
-            (
-                RateLimitHeaderKind::OrderCount,
-                &header["x-mbx-order-count-".len()..],
-            )
+        let lower = header.to_ascii_lowercase();
+        const USED: &str = "x-mbx-used-weight-";
+        const COUNT: &str = "x-mbx-order-count-";
+        let rest = if lower.starts_with(USED) {
+            let r = header.get(USED.len()..)?;
+            (RateLimitHeaderKind::UsedWeight, r)
+        } else if lower.starts_with(COUNT) {
+            let r = header.get(COUNT.len()..)?;
+            (RateLimitHeaderKind::OrderCount, r)
         } else {
             return None;
         };
-
-        if rest.is_empty() {
-            return None;
-        }
-
-        let unit_char = rest.chars().last()?;
-        let interval_unit = IntervalUnit::from_char(unit_char)?;
-
-        let interval_str = &rest[..rest.len().saturating_sub(1)];
-        let interval_value: u32 = interval_str.parse().ok()?;
-
+        let (kind, rest) = rest;
+        let last_char = rest.chars().last()?;
+        let interval_unit = IntervalUnit::from_char(last_char)?;
+        let num_part = rest.strip_suffix(last_char)?;
+        let interval_value = num_part.parse().ok()?;
         Some(RateLimitHeader {
             kind,
             interval_value,
@@ -353,34 +342,29 @@ impl RateLimiter {
         let mut usage = self.usage.write().await;
 
         for (header_name, header_value) in headers {
-            if let Some(rate_limit_header) = RateLimitHeader::parse(header_name)
-                && let Ok(current_usage) = header_value.parse::<u32>()
-            {
-                match rate_limit_header.kind {
-                    RateLimitHeaderKind::UsedWeight => {
-                        // Update our tracking to match server's view
-                        let key = (
-                            rate_limit_header.interval_value,
-                            rate_limit_header.interval_unit,
-                        );
-                        let entries = usage.weight_usage.entry(key).or_default();
-                        entries.clear();
-                        if current_usage > 0 {
-                            entries.push_back((Instant::now(), current_usage));
-                        }
+            let Some(rate_limit_header) = RateLimitHeader::parse(header_name) else {
+                continue;
+            };
+            let Ok(current_usage) = header_value.parse::<u32>() else {
+                continue;
+            };
+            match rate_limit_header.kind {
+                RateLimitHeaderKind::UsedWeight => {
+                    // Update our tracking to match server's view
+                    let key = (
+                        rate_limit_header.interval_value,
+                        rate_limit_header.interval_unit,
+                    );
+                    let entries = usage.weight_usage.entry(key).or_default();
+                    entries.clear();
+                    if current_usage > 0 {
+                        entries.push_back((Instant::now(), current_usage));
                     }
-                    RateLimitHeaderKind::OrderCount => {
-                        // Update order count tracking
-                        let key = (
-                            rate_limit_header.interval_value,
-                            rate_limit_header.interval_unit,
-                        );
-                        let entries = usage.order_usage.entry(key).or_default();
-                        entries.clear();
-                        for _ in 0..current_usage {
-                            entries.push_back(Instant::now());
-                        }
-                    }
+                }
+                RateLimitHeaderKind::OrderCount => {
+                    // We cannot reconstruct individual order timestamps from a count.
+                    // For now, we ignore header-based synchronization for orders.
+                    // (Could add heuristic logic here in future.)
                 }
             }
         }

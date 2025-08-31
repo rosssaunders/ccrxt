@@ -3,33 +3,38 @@ use std::fmt;
 use serde::Deserialize;
 use thiserror::Error;
 
-/// Represents all possible errors that can occur when interacting with the Binance API
+/// High-level spot specific error wrapper.
 #[derive(Debug)]
+#[non_exhaustive]
 pub enum Errors {
     /// Invalid API key or signature
-    InvalidApiKey(),
+    InvalidApiKey,
 
-    /// Http error occurred while making a request
-    /// This variant is used to represent errors that are not specific to the Binance API,
-    /// such as network issues or HTTP errors.
-    /// It can be used to wrap any error that occurs during the request process.
-    /// This variant is not used for errors returned by the Binance API itself.
-    HttpError(String),
+    /// Balance too low or insufficient funds
+    InsufficientFunds,
 
-    /// An error returned by the Binance API
-    ApiError(ApiError),
+    /// HTTP layer error (network / status)
+    Http { message: String },
 
-    /// A general error with a descriptive message
-    Error(String),
+    /// API error returned directly by Binance
+    Api(ApiError),
+
+    /// Timestamp / clock related API error
+    Timestamp(ApiError),
+
+    /// Generic catch‑all (to be reduced over time)
+    Generic { message: String },
 }
 
 impl fmt::Display for Errors {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Errors::InvalidApiKey() => write!(f, "Invalid API key or signature"),
-            Errors::HttpError(err) => write!(f, "HTTP error: {err}"),
-            Errors::ApiError(err) => write!(f, "API error: {err}"),
-            Errors::Error(msg) => write!(f, "Error: {msg}"),
+            Errors::InvalidApiKey => write!(f, "Invalid API key or signature"),
+            Errors::InsufficientFunds => write!(f, "Insufficient funds"),
+            Errors::Http { message } => write!(f, "HTTP error: {message}"),
+            Errors::Api(err) => write!(f, "API error: {err}"),
+            Errors::Timestamp(err) => write!(f, "Timestamp error: {err}"),
+            Errors::Generic { message } => write!(f, "Error: {message}"),
         }
     }
 }
@@ -53,36 +58,25 @@ pub struct ErrorResponse {
 /// -5000 to -5999: System errors
 #[derive(Error, Debug, Clone, Deserialize)]
 pub enum ApiError {
+    // -1000 to -1999: General Server or Network issues
     #[error("{msg}")]
     UnknownApiError { msg: String },
-
     #[error("{msg}")]
     Disconnected { msg: String },
-
     #[error("{msg}")]
     Unauthorized { msg: String },
-
     #[error("{msg}")]
     TooManyRequests { msg: String },
-
-    #[error("{msg}")]
-    IpBanned { msg: String },
-
     #[error("{msg}")]
     DuplicateIp { msg: String },
-
     #[error("{msg}")]
     NoSuchIp { msg: String },
-
     #[error("{msg}")]
     UnexpectedResponse { msg: String },
-
     #[error("{msg}")]
     Timeout { msg: String },
-
     #[error("{msg}")]
     ErrorMsgReceived { msg: String },
-
     #[error("{msg}")]
     NonWhiteList { msg: String },
 

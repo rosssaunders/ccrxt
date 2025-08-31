@@ -118,8 +118,16 @@ mod tests {
 
         // Check discount structure
         assert!(response["discount"].is_object());
-        assert_eq!(response["discount"]["enabledForAccount"], true);
-        assert_eq!(response["discount"]["enabledForSymbol"], true);
+        assert!(
+            response["discount"]["enabledForAccount"]
+                .as_bool()
+                .unwrap_or(false)
+        );
+        assert!(
+            response["discount"]["enabledForSymbol"]
+                .as_bool()
+                .unwrap_or(false)
+        );
         assert_eq!(response["discount"]["discountAsset"], "BNB");
         assert_eq!(response["discount"]["discount"], "0.25000000");
     }
@@ -174,7 +182,11 @@ mod tests {
 
         let json_with_rates = serde_json::to_value(&test_request_with_rates).unwrap();
         assert_eq!(json_with_rates["symbol"], "BTCUSDT");
-        assert_eq!(json_with_rates["computeCommissionRates"], true);
+        assert!(
+            json_with_rates["computeCommissionRates"]
+                .as_bool()
+                .unwrap_or(false)
+        );
 
         // Test with commission rates disabled
         let test_request_rates_false = TestSorOrderRequest {
@@ -183,7 +195,11 @@ mod tests {
         };
 
         let json_rates_false = serde_json::to_value(&test_request_rates_false).unwrap();
-        assert_eq!(json_rates_false["computeCommissionRates"], false);
+        assert!(
+            !json_rates_false["computeCommissionRates"]
+                .as_bool()
+                .unwrap_or(true)
+        );
     }
 
     #[test]
@@ -245,7 +261,7 @@ mod tests {
         assert_eq!(json["quantity"], "0.5");
         assert_eq!(json["price"], "3000.50");
         assert_eq!(json["newClientOrderId"], "test-sor-limit");
-        assert_eq!(json["computeCommissionRates"], true);
+        assert!(json["computeCommissionRates"].as_bool().unwrap_or(false));
         assert_eq!(json["recvWindow"], 5000);
     }
 }

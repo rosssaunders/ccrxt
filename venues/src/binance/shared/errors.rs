@@ -5,38 +5,43 @@ use thiserror::Error;
 
 /// Represents all possible errors that can occur when interacting with Binance APIs
 #[derive(Debug)]
+#[non_exhaustive]
 pub enum Errors {
     /// Invalid API key or signature
-    InvalidApiKey(),
+    InvalidApiKey,
 
-    /// Http error occurred while making a request
-    HttpError(String),
+    /// HTTP layer error (network, status handling etc.)
+    Http { message: String },
 
     /// An error returned by the Binance API
-    ApiError(ApiError),
+    Api(ApiError),
 
-    /// Rate limit exceeded with retry after duration
+    /// Rate limit exceeded with optional retry-after duration
     RateLimitExceeded { retry_after: Option<Duration> },
 
-    /// Serialization/Deserialization error
-    SerializationError(String),
+    /// Serialization error when preparing a request
+    Serialize { message: String },
 
-    /// A general error with a descriptive message
-    Error(String),
+    /// Deserialization error when parsing a response
+    Deserialize { message: String },
+
+    /// Generic catch‑all (should be phased out over time)
+    Generic { message: String },
 }
 
 impl fmt::Display for Errors {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Errors::InvalidApiKey() => write!(f, "Invalid API key or signature"),
-            Errors::HttpError(err) => write!(f, "HTTP error: {err}"),
-            Errors::ApiError(err) => write!(f, "API error: {err}"),
+            Errors::InvalidApiKey => write!(f, "Invalid API key or signature"),
+            Errors::Http { message } => write!(f, "HTTP error: {message}"),
+            Errors::Api(err) => write!(f, "API error: {err}"),
             Errors::RateLimitExceeded { retry_after } => match retry_after {
                 Some(duration) => write!(f, "Rate limit exceeded, retry after {duration:?}"),
                 None => write!(f, "Rate limit exceeded"),
             },
-            Errors::SerializationError(msg) => write!(f, "Serialization error: {msg}"),
-            Errors::Error(msg) => write!(f, "Error: {msg}"),
+            Errors::Serialize { message } => write!(f, "Serialization error: {message}"),
+            Errors::Deserialize { message } => write!(f, "Deserialization error: {message}"),
+            Errors::Generic { message } => write!(f, "Error: {message}"),
         }
     }
 }
@@ -45,7 +50,9 @@ impl std::error::Error for Errors {}
 
 impl From<serde_urlencoded::ser::Error> for Errors {
     fn from(err: serde_urlencoded::ser::Error) -> Self {
-        Errors::SerializationError(err.to_string())
+        Errors::Serialize {
+            message: err.to_string(),
+        }
     }
 }
 
@@ -64,6 +71,7 @@ pub struct ErrorResponse {
 /// -4000 to -4999: Futures/Derivatives specific errors
 /// -5000 to -5999: Filters and advanced features
 #[derive(Error, Debug, Clone)]
+#[non_exhaustive]
 pub enum ApiError {
     // -1000 to -1999: General Server or Network issues
     #[error("{msg}")]
@@ -513,7 +521,8 @@ impl ApiError {
     }
 }
 
-/// Convert HTTP status codes to appropriate errors
+/// Convert HTTP status codes to appropriate errors. Must be used so callers do not ignore rate limit / auth failures.
+#[must_use = "You must check the returned Result to propagate HTTP / rate limit / auth errors"]
 pub fn handle_http_status(status: u16, response_text: &str) -> Result<(), Errors> {
     match status {
         200 => Ok(()),
@@ -523,22 +532,22 @@ pub fn handle_http_status(status: u16, response_text: &str) -> Result<(), Errors
         }
         403 => {
             if response_text.contains("banned") {
-                Err(Errors::ApiError(ApiError::IpBanned {
+                Err(Errors::Api(ApiError::IpBanned {
                     msg: "IP banned".to_string(),
                 }))
             } else {
-                Err(Errors::ApiError(ApiError::Unauthorized {
+                Err(Errors::Api(ApiError::Unauthorized {
                     msg: "Forbidden".to_string(),
                 }))
             }
         }
-        401 => Err(Errors::ApiError(ApiError::Unauthorized {
+        401 => Err(Errors::Api(ApiError::Unauthorized {
             msg: "Unauthorized".to_string(),
         })),
-        418 => Err(Errors::ApiError(ApiError::IpBanned {
+        418 => Err(Errors::Api(ApiError::IpBanned {
             msg: "IP banned (418)".to_string(),
         })),
-        500..=599 => Err(Errors::ApiError(ApiError::InnerFailure {
+        500..=599 => Err(Errors::Api(ApiError::InnerFailure {
             msg: format!("Server error: {status}"),
         })),
         _ => Ok(()),

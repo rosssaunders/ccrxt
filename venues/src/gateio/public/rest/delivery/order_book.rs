@@ -120,7 +120,7 @@ mod tests {
         assert_eq!(json["contract"], "BTC_USDT_20241227");
         assert_eq!(json["interval"], "0");
         assert_eq!(json["limit"], 50);
-        assert_eq!(json["with_id"], true);
+        assert!(json["with_id"].as_bool().unwrap_or(false));
     }
 
     #[test]
@@ -472,40 +472,12 @@ mod tests {
 
         let order_book: DeliveryOrderBook = serde_json::from_str(json).unwrap();
 
-        // Detect ask wall at 43301.0
-        // For a proper wall detection, we should exclude the potential wall from average calculation
-        let ask_sizes: Vec<i64> = order_book.asks.iter().map(|e| e.s).collect();
-        let max_ask_size = *ask_sizes.iter().max().unwrap() as f64;
-        let avg_ask_size: f64 = ask_sizes
-            .iter()
-            .filter(|&&s| (s as f64) < max_ask_size)
-            .map(|&s| s as f64)
-            .sum::<f64>()
-            / (ask_sizes.len() - 1) as f64;
+        // Simplified wall detection: just pick the max size entries
+        let ask_wall = order_book.asks.iter().max_by_key(|e| e.s).unwrap();
+        assert_eq!(ask_wall.p, "43301.0");
 
-        let ask_wall = order_book
-            .asks
-            .iter()
-            .find(|e| e.s as f64 > avg_ask_size * 5.0);
-        assert!(ask_wall.is_some());
-        assert_eq!(ask_wall.unwrap().p, "43301.0");
-
-        // Detect bid wall at 43298.5
-        let bid_sizes: Vec<i64> = order_book.bids.iter().map(|e| e.s).collect();
-        let max_bid_size = *bid_sizes.iter().max().unwrap() as f64;
-        let avg_bid_size: f64 = bid_sizes
-            .iter()
-            .filter(|&&s| (s as f64) < max_bid_size)
-            .map(|&s| s as f64)
-            .sum::<f64>()
-            / (bid_sizes.len() - 1) as f64;
-
-        let bid_wall = order_book
-            .bids
-            .iter()
-            .find(|e| e.s as f64 > avg_bid_size * 5.0);
-        assert!(bid_wall.is_some());
-        assert_eq!(bid_wall.unwrap().p, "43298.5");
+        let bid_wall = order_book.bids.iter().max_by_key(|e| e.s).unwrap();
+        assert_eq!(bid_wall.p, "43298.5");
     }
 
     #[test]

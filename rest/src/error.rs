@@ -2,6 +2,7 @@ use thiserror::Error;
 
 /// Common error type for REST clients
 #[derive(Error, Debug)]
+#[non_exhaustive]
 pub enum RestError {
     #[error("Rate limit exceeded")]
     RateLimitExceeded,

@@ -1,2 +1,5 @@
 [toolchain]
-channel = "stable"
+# Pinned to the same version declared in Cargo.toml (rust-version = "1.89").
+# Bump both this file and Cargo.toml together immediately after each new stable release
+# once the project is validated against the new compiler.
+channel = "1.89.0"

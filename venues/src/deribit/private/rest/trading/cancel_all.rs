@@ -77,7 +77,13 @@ mod tests {
         let json_str = serde_json::to_string(&request).unwrap();
         let json_value: Value = serde_json::from_str(&json_str).unwrap();
 
-        assert_eq!(json_value.get("detailed").unwrap(), true);
+        assert!(
+            json_value
+                .get("detailed")
+                .unwrap()
+                .as_bool()
+                .unwrap_or(false)
+        );
         assert!(json_value.get("freeze_quotes").is_none());
     }
 
@@ -92,7 +98,13 @@ mod tests {
         let json_value: Value = serde_json::from_str(&json_str).unwrap();
 
         assert!(json_value.get("detailed").is_none());
-        assert_eq!(json_value.get("freeze_quotes").unwrap(), true);
+        assert!(
+            json_value
+                .get("freeze_quotes")
+                .unwrap()
+                .as_bool()
+                .unwrap_or(false)
+        );
     }
 
     #[test]
@@ -105,8 +117,20 @@ mod tests {
         let json_str = serde_json::to_string(&request).unwrap();
         let json_value: Value = serde_json::from_str(&json_str).unwrap();
 
-        assert_eq!(json_value.get("detailed").unwrap(), false);
-        assert_eq!(json_value.get("freeze_quotes").unwrap(), true);
+        assert!(
+            !json_value
+                .get("detailed")
+                .unwrap()
+                .as_bool()
+                .unwrap_or(true)
+        );
+        assert!(
+            json_value
+                .get("freeze_quotes")
+                .unwrap()
+                .as_bool()
+                .unwrap_or(false)
+        );
     }
 
     #[test]

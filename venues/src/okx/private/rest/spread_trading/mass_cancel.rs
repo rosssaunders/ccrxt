@@ -81,7 +81,7 @@ mod tests {
         }"#;
 
         let response: MassCancelSpreadOrdersResponse = serde_json::from_str(json_response).unwrap();
-        assert_eq!(response.result, true);
+        assert!(response.result);
     }
 
     #[test]
@@ -91,7 +91,7 @@ mod tests {
         }"#;
 
         let response: MassCancelSpreadOrdersResponse = serde_json::from_str(json_response).unwrap();
-        assert_eq!(response.result, false);
+        assert!(!response.result);
     }
 
     #[test]

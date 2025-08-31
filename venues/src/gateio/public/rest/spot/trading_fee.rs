@@ -309,7 +309,7 @@ mod tests {
         assert_eq!(json["currency_pair"], "BTC_USDT");
         assert_eq!(json["maker_fee"], "0.002");
         assert_eq!(json["taker_fee"], "0.002");
-        assert_eq!(json["gt_deduction"], true);
+        assert!(json["gt_deduction"].as_bool().unwrap_or(false));
         assert_eq!(json["gt_taker_fee"], "0.0015");
         assert_eq!(json["gt_maker_fee"], "0.0015");
         assert_eq!(json["loan_fee"], "0.01");

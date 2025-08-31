@@ -88,7 +88,7 @@ impl RestClient {
         let api_secret = self.credentials.api_secret.expose_secret();
         let secret_bytes = general_purpose::STANDARD
             .decode(&api_secret)
-            .map_err(|e| Errors::Error(format!("Failed to decode API secret: {e}")))?;
+            .map_err(Errors::ApiSecretDecodeError)?;
 
         // Sign with HMAC SHA256
         let mut mac =

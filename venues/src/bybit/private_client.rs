@@ -469,7 +469,7 @@ mod tests {
         if let Ok(sig) = signature {
             assert!(!sig.is_empty());
         } else {
-            assert_eq!(true, false, "Signature should be Ok");
+            unreachable!("Signature should be Ok");
         }
     }
 }

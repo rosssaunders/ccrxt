@@ -139,8 +139,14 @@ mod tests {
             json_value.get("beneficiary_address").unwrap(),
             "123 Main St, Anytown, USA"
         );
-        assert_eq!(json_value.get("agreed").unwrap(), true);
-        assert_eq!(json_value.get("personal").unwrap(), true);
+        assert!(json_value.get("agreed").unwrap().as_bool().unwrap_or(false));
+        assert!(
+            json_value
+                .get("personal")
+                .unwrap()
+                .as_bool()
+                .unwrap_or(false)
+        );
         assert_eq!(json_value.get("label").unwrap(), "Updated BTC Wallet");
         assert!(json_value.get("beneficiary_company_name").is_none());
     }
@@ -172,8 +178,14 @@ mod tests {
             json_value.get("beneficiary_company_name").unwrap(),
             "ACME Corp"
         );
-        assert_eq!(json_value.get("agreed").unwrap(), false);
-        assert_eq!(json_value.get("personal").unwrap(), false);
+        assert!(!json_value.get("agreed").unwrap().as_bool().unwrap_or(true));
+        assert!(
+            !json_value
+                .get("personal")
+                .unwrap()
+                .as_bool()
+                .unwrap_or(true)
+        );
         assert!(json_value.get("beneficiary_vasp_website").is_none());
         assert!(json_value.get("beneficiary_first_name").is_none());
         assert!(json_value.get("beneficiary_last_name").is_none());
@@ -214,8 +226,14 @@ mod tests {
             json_value.get("beneficiary_address").unwrap(),
             "Minimal Address"
         );
-        assert_eq!(json_value.get("agreed").unwrap(), true);
-        assert_eq!(json_value.get("personal").unwrap(), false);
+        assert!(json_value.get("agreed").unwrap().as_bool().unwrap_or(false));
+        assert!(
+            !json_value
+                .get("personal")
+                .unwrap()
+                .as_bool()
+                .unwrap_or(true)
+        );
         assert_eq!(json_value.get("label").unwrap(), "Minimal Label");
         assert!(json_value.get("beneficiary_vasp_website").is_none());
         assert!(json_value.get("beneficiary_first_name").is_none());

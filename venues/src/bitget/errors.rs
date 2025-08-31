@@ -50,6 +50,7 @@ impl From<rest::error::RestError> for Errors {
                 Errors::Error(format!("Validation error: {}", msg))
             }
             rest::error::RestError::Unknown(msg) => Errors::Error(msg),
+            _ => Errors::Error("Unhandled REST error".to_string()),
         }
     }
 }

@@ -518,7 +518,7 @@ mod tests {
         };
 
         let json = serde_json::to_value(&ticker).unwrap();
-        assert_eq!(json["trade_enabled"], true);
+        assert!(json["trade_enabled"].as_bool().unwrap_or(false));
         assert_eq!(json["index_price"], "42000.50");
         assert_eq!(json["trade_put"], 150);
         assert_eq!(json["trade_call"], 250);

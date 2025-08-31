@@ -132,7 +132,13 @@ mod tests {
         let json_value: Value = serde_json::from_str(&json_str).unwrap();
 
         assert_eq!(json_value.get("instrument_name").unwrap(), "BTC-PERPETUAL");
-        assert_eq!(json_value.get("include_combos").unwrap(), true);
+        assert!(
+            json_value
+                .get("include_combos")
+                .unwrap()
+                .as_bool()
+                .unwrap_or(false)
+        );
         assert!(json_value.get("type").is_none());
         assert!(json_value.get("detailed").is_none());
     }
@@ -155,9 +161,27 @@ mod tests {
             "SOL-29MAR24-180-P"
         );
         assert_eq!(json_value.get("type").unwrap(), "stop");
-        assert_eq!(json_value.get("detailed").unwrap(), true);
-        assert_eq!(json_value.get("include_combos").unwrap(), false);
-        assert_eq!(json_value.get("freeze_quotes").unwrap(), true);
+        assert!(
+            json_value
+                .get("detailed")
+                .unwrap()
+                .as_bool()
+                .unwrap_or(false)
+        );
+        assert!(
+            !json_value
+                .get("include_combos")
+                .unwrap()
+                .as_bool()
+                .unwrap_or(true)
+        );
+        assert!(
+            json_value
+                .get("freeze_quotes")
+                .unwrap()
+                .as_bool()
+                .unwrap_or(false)
+        );
     }
 
     #[test]
@@ -198,9 +222,27 @@ mod tests {
             "ETH-28JUN24-3500-C"
         );
         assert_eq!(json_value.get("type").unwrap(), "trailing_stop");
-        assert_eq!(json_value.get("detailed").unwrap(), false);
-        assert_eq!(json_value.get("include_combos").unwrap(), true);
-        assert_eq!(json_value.get("freeze_quotes").unwrap(), false);
+        assert!(
+            !json_value
+                .get("detailed")
+                .unwrap()
+                .as_bool()
+                .unwrap_or(true)
+        );
+        assert!(
+            json_value
+                .get("include_combos")
+                .unwrap()
+                .as_bool()
+                .unwrap_or(false)
+        );
+        assert!(
+            !json_value
+                .get("freeze_quotes")
+                .unwrap()
+                .as_bool()
+                .unwrap_or(true)
+        );
     }
 
     #[test]
