@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::coinbaseexchange::{EndpointType, RestResult};
+use crate::coinbaseexchange::{EndpointType, RestResult, private_client::RestClient};
 
 const ACCOUNTS_ENDPOINT: &str = "accounts";
 

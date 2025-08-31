@@ -1,7 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-use super::RestClient;
-use crate::kucoin::spot::{ResponseHeaders, RestResponse, Result, TradeSide};
+use crate::kucoin::spot::{
+    ResponseHeaders, RestResponse, Result, TradeSide, private_client::RestClient,
+};
 
 const RECENT_FILLS_ENDPOINT: &str = "/api/v1/limit/fills";
 

@@ -1,7 +1,7 @@
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
-use crate::binance::coinm::{RestResult, public::rest::RestClient};
+use crate::binance::coinm::{RestResult, public_client::RestClient};
 
 /// Endpoint path for Open Interest
 const OPEN_INTEREST_ENDPOINT: &str = "/dapi/v1/openInterest";

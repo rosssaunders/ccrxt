@@ -1,8 +1,7 @@
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::binance::options::{OptionsContractType, RestResult};
+use crate::binance::options::{OptionsContractType, RestResult, private_client::RestClient};
 
 const GET_EXERCISE_RECORD_ENDPOINT: &str = "/eapi/v1/exerciseRecord";
 

@@ -1,9 +1,8 @@
 use serde::Serialize;
 
-use super::client::RestClient;
 // Re-export the shared response type
 pub use super::execute_block_trade::BlockTradeExecution;
-use crate::binance::options::RestResult;
+use crate::binance::options::{RestResult, private_client::RestClient};
 
 const BLOCK_TRADE_EXECUTION_ENDPOINT: &str = "/eapi/v1/block/order/execute";
 

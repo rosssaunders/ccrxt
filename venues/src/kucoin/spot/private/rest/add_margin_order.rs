@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::RestClient;
-use crate::kucoin::spot::{ResponseHeaders, RestResponse, Result};
+use crate::kucoin::spot::{ResponseHeaders, RestResponse, Result, private_client::RestClient};
 
 const ADD_MARGIN_ORDER_ENDPOINT: &str = "/api/v3/hf/margin/order";
 
@@ -10,6 +9,7 @@ const ADD_MARGIN_ORDER_ENDPOINT: &str = "/api/v3/hf/margin/order";
 pub enum MarginOrderSide {
     #[serde(rename = "buy")]
     Buy,
+
     #[serde(rename = "sell")]
     Sell,
 }
@@ -19,6 +19,7 @@ pub enum MarginOrderSide {
 pub enum MarginOrderType {
     #[serde(rename = "limit")]
     Limit,
+
     #[serde(rename = "market")]
     Market,
 }
@@ -28,10 +29,13 @@ pub enum MarginOrderType {
 pub enum MarginOrderStp {
     #[serde(rename = "CN")]
     CancelNewest,
+
     #[serde(rename = "CO")]
     CancelOldest,
+
     #[serde(rename = "CB")]
     CancelBoth,
+
     #[serde(rename = "DC")]
     DecrementAndCancel,
 }
@@ -41,8 +45,10 @@ pub enum MarginOrderStp {
 pub enum MarginOrderTimeInForce {
     #[serde(rename = "GTC")]
     GoodTillCancelled,
+
     #[serde(rename = "IOC")]
     ImmediateOrCancel,
+
     #[serde(rename = "FOK")]
     FillOrKill,
 }

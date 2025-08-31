@@ -7,7 +7,7 @@ use std::sync::Arc;
 
 use chrono;
 use tokio;
-use venues::bingx::spot::{
+use venues::bingx::{
     Get24hrTickerRequest, GetHistoricalKlineRequest, GetKlineRequest, GetOldTradeRequest,
     GetOrderBookAggregationRequest, GetOrderBookRequest, GetRecentTradesRequest,
     GetSymbolOrderBookTickerRequest, GetSymbolPriceTickerRequest, GetSymbolsRequest, Interval,

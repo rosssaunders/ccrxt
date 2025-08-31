@@ -6,7 +6,7 @@
 use std::sync::Arc;
 
 use tokio;
-use venues::bitget::spot::{
+use venues::bitget::{
     ApiError, CandlestickGranularity, DepthType, PricePrecision, PublicRestClient, RateLimiter,
     public::rest::{
         GetCandlestickRequest, GetCoinInfoRequest, GetHistoryCandlestickRequest,

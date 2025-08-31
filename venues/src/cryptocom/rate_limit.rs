@@ -419,89 +419,89 @@ mod tests {
     async fn test_endpoint_from_path() {
         // Test private endpoints
         assert_eq!(
-            EndpointType::from_path("private/create-order"),
+            EndpointType::from_path("exchange/v1/private/create-order"),
             EndpointType::PrivateCreateOrder
         );
         assert_eq!(
-            EndpointType::from_path("private/cancel-order"),
+            EndpointType::from_path("exchange/v1/private/cancel-order"),
             EndpointType::PrivateCancelOrder
         );
         assert_eq!(
-            EndpointType::from_path("private/cancel-all-orders"),
+            EndpointType::from_path("exchange/v1/private/cancel-all-orders"),
             EndpointType::PrivateCancelAllOrders
         );
         assert_eq!(
-            EndpointType::from_path("private/get-order-detail"),
+            EndpointType::from_path("exchange/v1/private/get-order-detail"),
             EndpointType::PrivateGetOrderDetail
         );
         assert_eq!(
-            EndpointType::from_path("private/get-trades"),
+            EndpointType::from_path("exchange/v1/private/get-trades"),
             EndpointType::PrivateGetTrades
         );
         assert_eq!(
-            EndpointType::from_path("private/get-order-history"),
+            EndpointType::from_path("exchange/v1/private/get-order-history"),
             EndpointType::PrivateGetOrderHistory
         );
 
         // Test public endpoints
         assert_eq!(
-            EndpointType::from_path("public/get-announcements"),
+            EndpointType::from_path("v1/public/get-announcements"),
             EndpointType::PublicGetAnnouncements
         );
         assert_eq!(
-            EndpointType::from_path("public/get-risk-parameters"),
+            EndpointType::from_path("exchange/v1/public/get-risk-parameters"),
             EndpointType::PublicGetRiskParameters
         );
         assert_eq!(
-            EndpointType::from_path("public/get-instruments"),
+            EndpointType::from_path("exchange/v1/public/get-instruments"),
             EndpointType::PublicGetInstruments
         );
         assert_eq!(
-            EndpointType::from_path("public/get-book"),
+            EndpointType::from_path("exchange/v1/public/get-book"),
             EndpointType::PublicGetBook
         );
         assert_eq!(
-            EndpointType::from_path("public/get-ticker"),
+            EndpointType::from_path("exchange/v1/public/get-ticker"),
             EndpointType::PublicGetTicker
         );
         assert_eq!(
-            EndpointType::from_path("public/get-tickers"),
+            EndpointType::from_path("exchange/v1/public/get-tickers"),
             EndpointType::PublicGetTickers
         );
         assert_eq!(
-            EndpointType::from_path("public/get-trades"),
+            EndpointType::from_path("exchange/v1/public/get-trades"),
             EndpointType::PublicGetTrades
         );
         assert_eq!(
-            EndpointType::from_path("public/get-valuations"),
+            EndpointType::from_path("exchange/v1/public/get-valuations"),
             EndpointType::PublicGetValuations
         );
         assert_eq!(
-            EndpointType::from_path("public/get-candlestick"),
+            EndpointType::from_path("exchange/v1/public/get-candlestick"),
             EndpointType::PublicGetCandlestick
         );
         assert_eq!(
-            EndpointType::from_path("public/get-expired-settlement-price"),
+            EndpointType::from_path("exchange/v1/public/get-expired-settlement-price"),
             EndpointType::PublicGetExpiredSettlementPrice
         );
         assert_eq!(
-            EndpointType::from_path("public/get-insurance"),
+            EndpointType::from_path("exchange/v1/public/get-insurance"),
             EndpointType::PublicGetInsurance
         );
 
         // Test staking endpoints
         assert_eq!(
-            EndpointType::from_path("public/staking/get-products"),
+            EndpointType::from_path("exchange/v1/public/staking/get-products"),
             EndpointType::PublicStaking
         );
         assert_eq!(
-            EndpointType::from_path("private/staking/get-stakes"),
+            EndpointType::from_path("exchange/v1/private/staking/get-stakes"),
             EndpointType::PrivateStaking
         );
 
         // Test default cases
         assert_eq!(
-            EndpointType::from_path("private/some-other-endpoint"),
+            EndpointType::from_path("exchange/v1/private/some-other-endpoint"),
             EndpointType::PrivateOther
         );
         assert_eq!(

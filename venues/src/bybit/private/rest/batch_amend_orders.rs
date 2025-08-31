@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use super::{amend_order::AmendOrderRequest, client::RestClient};
-use crate::bybit::{EndpointType, RestResult, enums::*};
+use super::amend_order::AmendOrderRequest;
+use crate::bybit::{EndpointType, RestResult, enums::*, private_client::RestClient};
 
 /// Endpoint URL for batch amending orders
 const BATCH_AMEND_ORDERS_ENDPOINT: &str = "/v5/order/amend-batch";

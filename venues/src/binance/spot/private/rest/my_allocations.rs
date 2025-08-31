@@ -1,8 +1,7 @@
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::binance::spot::{AllocationType, RestResult};
+use crate::binance::spot::{AllocationType, RestResult, private_client::RestClient};
 
 const GET_MY_ALLOCATIONS_ENDPOINT: &str = "/api/v3/myAllocations";
 

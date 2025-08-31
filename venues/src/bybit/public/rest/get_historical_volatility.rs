@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::bybit::{EndpointType, RestResult, enums::*};
+use crate::bybit::{EndpointType, PublicRestClient, RestResult, enums::*};
 
 const HISTORICAL_VOLATILITY_ENDPOINT: &str = "/v5/market/historical-volatility";
 
@@ -73,7 +72,7 @@ pub struct GetHistoricalVolatilityResponse {
     pub time: u64,
 }
 
-impl RestClient {
+impl PublicRestClient {
     /// Get historical volatility
     ///
     /// Query for historical volatility data. This endpoint is only available for Option contracts.

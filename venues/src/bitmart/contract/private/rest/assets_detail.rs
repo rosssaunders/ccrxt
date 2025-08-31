@@ -2,8 +2,7 @@ use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
 
-use super::RestClient;
-use crate::bitmart::RestResult;
+use crate::bitmart::{RestResult, contract::private_client::RestClient};
 
 /// Request parameters for the BitMart "Get Contract Assets" endpoint.
 #[derive(Debug, Clone, Serialize, Deserialize)]

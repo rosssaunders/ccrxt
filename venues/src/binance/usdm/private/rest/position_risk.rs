@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
-use crate::binance::usdm::{RestResult, enums::*};
+use crate::binance::usdm::{RestResult, enums::*, private_client::UsdmClient};
 
 /// Endpoint path for Position Information V2.
 const POSITION_RISK_ENDPOINT: &str = "/fapi/v2/positionRisk";

@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
-use crate::binance::usdm::RestResult;
+use crate::binance::usdm::{RestResult, private_client::UsdmClient};
 
 /// Endpoint path for the user commission rate API.
 const COMMISSION_RATE_ENDPOINT: &str = "/fapi/v1/commissionRate";

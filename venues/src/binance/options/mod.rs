@@ -8,6 +8,10 @@ use std::time::Duration;
 pub mod errors;
 pub mod rate_limit;
 
+// Root level clients
+pub mod private_client;
+pub mod public_client;
+
 pub use errors::*;
 pub use rate_limit::{
     IntervalUnit, RateLimitHeader, RateLimitHeaderKind, RateLimitUsage, RateLimiter,
@@ -27,7 +31,9 @@ pub use crate::binance::coinm::{KlineInterval, OrderResponseType, OrderSide, Tim
 // Public module
 pub mod public;
 
-pub use public::PublicRestClient;
+// Re-export root level clients for backward compatibility
+pub use private_client::RestClient as PrivateRestClient;
+pub use public_client::RestClient as PublicRestClient;
 
 // Private module
 pub mod private;

@@ -2,10 +2,10 @@ use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
 use crate::binance::usdm::{
     RestResult,
     enums::{AutoCloseType, OrderSide, OrderStatus, OrderType, TimeInForce},
+    private_client::UsdmClient,
 };
 
 const FORCE_ORDERS_ENDPOINT: &str = "/fapi/v1/forceOrders";

@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::binance::coinm::{RestResult, private::rest::client::RestClient};
+use crate::binance::coinm::{RestResult, private_client::RestClient};
 
 const OPEN_ORDERS_ENDPOINT: &str = "/dapi/v1/openOrders";
 

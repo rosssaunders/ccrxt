@@ -1,6 +1,6 @@
 use serde::Deserialize;
 
-use crate::kucoin::spot::{ResponseHeaders, RestResponse, Result};
+use crate::kucoin::futures::{ResponseHeaders, RestResponse, Result, public_client::RestClient};
 
 // API endpoints
 const SERVER_TIME_ENDPOINT: &str = "/api/v1/timestamp";
@@ -25,12 +25,12 @@ pub struct ServiceStatus {
     pub msg: String,
 }
 
-impl super::RestClient {
+impl RestClient {
     /// Get server time
     ///
     /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/market-data/get-server-time)
     pub async fn get_server_time(&self) -> Result<(RestResponse<ServerTime>, ResponseHeaders)> {
-        self.send_request(SERVER_TIME_ENDPOINT, None::<&()>).await
+        self.get(SERVER_TIME_ENDPOINT, None).await
     }
 
     /// Get service status
@@ -39,8 +39,7 @@ impl super::RestClient {
     pub async fn get_service_status(
         &self,
     ) -> Result<(RestResponse<ServiceStatus>, ResponseHeaders)> {
-        self.send_request(SERVICE_STATUS_ENDPOINT, None::<&()>)
-            .await
+        self.get(SERVICE_STATUS_ENDPOINT, None).await
     }
 }
 

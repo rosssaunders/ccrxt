@@ -2,8 +2,7 @@ use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
-use crate::binance::usdm::{RestResult, enums::*};
+use crate::binance::usdm::{RestResult, enums::*, private_client::UsdmClient};
 
 const ACCOUNT_TRADES_ENDPOINT: &str = "/fapi/v1/userTrades";
 

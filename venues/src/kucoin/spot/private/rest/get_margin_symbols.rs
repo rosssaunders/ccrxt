@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::RestClient;
-use crate::kucoin::spot::{ResponseHeaders, RestResponse, Result};
+use crate::kucoin::spot::{ResponseHeaders, RestResponse, Result, private_client::RestClient};
 
 /// Endpoint URL for cross margin symbols configuration
 const GET_MARGIN_SYMBOLS_ENDPOINT: &str = "/api/v3/margin/symbols";

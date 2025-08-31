@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::bybit::{EndpointType, RestResult, enums::*};
+use crate::bybit::{EndpointType, PublicRestClient, RestResult, enums::*};
 
 /// Endpoint URL path for tickers
 const ENDPOINT_PATH: &str = "/v5/market/tickers";
@@ -173,7 +172,7 @@ pub struct GetTickersResponse {
     pub time: u64,
 }
 
-impl RestClient {
+impl PublicRestClient {
     /// Get tickers
     ///
     /// Query for the latest price snapshot, best bid/ask price, and trading volume in the last 24 hours.

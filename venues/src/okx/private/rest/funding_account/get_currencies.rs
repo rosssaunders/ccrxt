@@ -214,7 +214,7 @@ mod tests {
             "minWdUnlockConfirm": "6",
             "depQuotaFixed": "",
             "usedDepQuotaFixed": "",
-            "depQuoteDailyLayer2": ""
+            "depQuotaDailyLayer2": ""
         });
 
         let currency: Currency = serde_json::from_value(currency_json).unwrap();
@@ -261,7 +261,7 @@ mod tests {
                     "minWdUnlockConfirm": "6",
                     "depQuotaFixed": "",
                     "usedDepQuotaFixed": "",
-                    "depQuoteDailyLayer2": ""
+                    "depQuotaDailyLayer2": ""
                 }
             ]
         });

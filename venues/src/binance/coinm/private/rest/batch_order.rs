@@ -6,7 +6,7 @@ use crate::binance::coinm::{
         OrderResponseType, OrderSide, OrderStatus, OrderType, PositionSide, PriceMatch,
         SelfTradePreventionMode, TimeInForce, WorkingType,
     },
-    private::rest::client::RestClient,
+    private_client::RestClient,
 };
 
 const BATCH_ORDERS_ENDPOINT: &str = "/dapi/v1/batchOrders";

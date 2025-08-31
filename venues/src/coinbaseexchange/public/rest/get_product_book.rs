@@ -5,8 +5,7 @@
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 
-use super::RestClient;
-use crate::coinbaseexchange::RestResult;
+use crate::coinbaseexchange::{PublicRestClient, RestResult};
 
 /// Endpoint URL path for getting product book
 const ENDPOINT_PATH: &str = "products/{}/book";
@@ -97,7 +96,7 @@ pub struct GetProductBookResponse {
     pub time: DateTime<Utc>,
 }
 
-impl RestClient {
+impl PublicRestClient {
     /// Get product book
     ///
     /// Get a list of open orders for a product. The amount of detail shown can be

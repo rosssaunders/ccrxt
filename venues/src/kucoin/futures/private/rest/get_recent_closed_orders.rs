@@ -1,7 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-use crate::kucoin::spot::{
+use crate::kucoin::futures::{
     OrderSide, OrderStatus, OrderType, ResponseHeaders, RestResponse, Result,
+    private_client::RestClient,
 };
 
 const GET_RECENT_CLOSED_ORDERS_ENDPOINT: &str = "/api/v1/recentDoneOrders";
@@ -119,7 +120,7 @@ pub struct RecentClosedOrderItem {
 /// Response for getting recent closed orders
 pub type GetRecentClosedOrdersResponse = Vec<RecentClosedOrderItem>;
 
-impl super::RestClient {
+impl RestClient {
     /// Get recent closed orders (last 1000 orders in 24 hours)
     ///
     /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/orders/get-recent-closed-orders)

@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use crate::binance::coinm::{
     RestResult,
     enums::{ContractType, Period},
-    public::rest::RestClient,
+    public_client::RestClient,
 };
 
 const BASIS_ENDPOINT: &str = "/futures/data/basis";

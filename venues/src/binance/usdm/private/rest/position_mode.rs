@@ -2,8 +2,7 @@
 
 use serde::Serialize;
 
-use super::UsdmClient;
-use crate::binance::usdm::{RestResult, enums::PositionMode};
+use crate::binance::usdm::{RestResult, enums::PositionMode, private_client::UsdmClient};
 
 /// Endpoint path for changing position mode.
 const CHANGE_POSITION_MODE_ENDPOINT: &str = "/fapi/v1/positionSide/dual";

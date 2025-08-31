@@ -27,7 +27,7 @@
 //! async fn main() -> Result<(), Box<dyn std::error::Error>> {
 //!     let http_client = Arc::new(rest::native::NativeHttpClient::default());
 //!     let config = UsdmConfig;
-//!     let rate_limiter = RateLimiter::new(config.rate_limits());
+//!     let rate_limiter = Arc::new(RateLimiter::new(config.rate_limits()));
 //!     let client = PublicRestClient::new(
 //!         "https://fapi.binance.com",
 //!         http_client,
@@ -46,27 +46,30 @@ mod errors;
 mod rate_limit;
 mod request;
 mod signing;
+
+// Root level clients
+pub mod private_client;
+pub mod public_client;
 use std::time::Duration;
 
 // Re-export modules for new structure
 pub mod public {
     pub mod rest;
-    pub use self::rest::{RestClient as PublicRestClient, exchange_info::*};
+    pub use self::rest::exchange_info::*;
 }
 
 use crate::binance::shared::{RateLimits, VenueConfig};
 
 mod private {
     pub mod rest;
-    // Re-export RestClient so it can be re-exported by the parent
-    pub use self::rest::UsdmClient as PrivateRestClient;
 }
 
 // Only expose RestClient at the usdm level, not via private::rest
 pub use enums::*;
 pub use errors::{ApiError, Errors};
-pub use private::PrivateRestClient;
-pub use public::PublicRestClient;
+// Re-export root level clients
+pub use private_client::RestClient as PrivateRestClient;
+pub use public_client::RestClient as PublicRestClient;
 pub use rate_limit::{RateLimitHeader, RateLimiter};
 
 pub use crate::binance::usdm::errors::ErrorResponse;

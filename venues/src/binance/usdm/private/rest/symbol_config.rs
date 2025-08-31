@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
-use crate::binance::usdm::{RestResult, enums::MarginType};
+use crate::binance::usdm::{RestResult, enums::MarginType, private_client::UsdmClient};
 
 /// Endpoint path for symbol configuration.
 const SYMBOL_CONFIG_ENDPOINT: &str = "/fapi/v1/symbolConfig";

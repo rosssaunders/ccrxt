@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::RestClient;
-use crate::kucoin::spot::{ResponseHeaders, RestResponse, Result};
+use crate::kucoin::spot::{ResponseHeaders, RestResponse, Result, private_client::RestClient};
 
 const CANCEL_ALL_ORDERS_ENDPOINT: &str = "/api/v1/hf/orders";
 

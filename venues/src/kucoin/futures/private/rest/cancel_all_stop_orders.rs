@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::kucoin::spot::{ResponseHeaders, RestResponse, Result};
+use crate::kucoin::futures::{ResponseHeaders, RestResponse, Result, private_client::RestClient};
 
 /// Endpoint URL for Cancel All Stop Orders
 const CANCEL_ALL_STOP_ORDERS_ENDPOINT: &str = "/api/v1/stopOrders";
@@ -22,7 +22,7 @@ pub struct CancelAllStopOrdersResponse {
     pub cancelled_order_ids: Vec<String>,
 }
 
-impl super::RestClient {
+impl RestClient {
     /// Cancel All Stop Orders
     ///
     /// Cancel all untriggered stop orders for the account. Optionally filter by symbol

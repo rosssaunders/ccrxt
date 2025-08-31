@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::kucoin::spot::{ResponseHeaders, RestResponse, Result};
+use crate::kucoin::futures::{ResponseHeaders, RestResponse, Result, public_client::RestClient};
 
 // API endpoints
 const FULL_ORDERBOOK_ENDPOINT: &str = "/api/v1/level2/snapshot";
@@ -78,7 +78,7 @@ pub struct PartOrderBook {
     pub ts: i64,
 }
 
-impl super::RestClient {
+impl RestClient {
     /// Get full orderbook depth data
     ///
     /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/market-data/get-full-orderbook)
@@ -86,7 +86,7 @@ impl super::RestClient {
         &self,
         request: GetFullOrderBookRequest,
     ) -> Result<(RestResponse<FullOrderBook>, ResponseHeaders)> {
-        self.send_request(FULL_ORDERBOOK_ENDPOINT, Some(&request))
+        self.get_with_request(FULL_ORDERBOOK_ENDPOINT, &request)
             .await
     }
 
@@ -103,7 +103,7 @@ impl super::RestClient {
             request.depth.as_str()
         );
 
-        self.send_request(&endpoint, Some(&request)).await
+        self.get_with_request(&endpoint, &request).await
     }
 }
 

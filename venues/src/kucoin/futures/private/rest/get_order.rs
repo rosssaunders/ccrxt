@@ -1,7 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-use crate::kucoin::spot::{
+use crate::kucoin::futures::{
     OrderSide, OrderStatus, OrderType, ResponseHeaders, RestResponse, Result, TimeInForce,
+    private_client::RestClient,
 };
 
 /// Endpoint URL for get order (format string)
@@ -121,7 +122,7 @@ pub struct OrderDetails {
     pub reduce_only: bool,
 }
 
-impl super::RestClient {
+impl RestClient {
     /// Get Order Details
     ///
     /// Retrieve detailed information about a specific order by its ID.

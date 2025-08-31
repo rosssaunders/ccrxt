@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::kucoin::spot::{ResponseHeaders, RestResponse, Result};
+use crate::kucoin::futures::{ResponseHeaders, RestResponse, Result, private_client::RestClient};
 
 /// Endpoint URL for Cancel Order (format string)
 const CANCEL_ORDER_ENDPOINT: &str = "/api/v1/orders/";
@@ -20,7 +20,7 @@ pub struct CancelOrderResponse {
     pub cancelled_order_ids: Vec<String>,
 }
 
-impl super::RestClient {
+impl RestClient {
     /// Cancel Order
     ///
     /// Cancel a specific order by its order ID. This will cancel the order immediately

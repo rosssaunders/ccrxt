@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::kucoin::spot::{ResponseHeaders, RestResponse, Result};
+use crate::kucoin::futures::{ResponseHeaders, RestResponse, Result, private_client::RestClient};
 
 /// Endpoint URL for Add Margin
 const ADD_MARGIN_ENDPOINT: &str = "/api/v1/position/margin/deposit-margin";
@@ -138,7 +138,7 @@ pub struct AddMarginResponse {
     pub settle_currency: String,
 }
 
-impl super::RestClient {
+impl RestClient {
     /// Add Isolated Margin Manually
     ///
     /// Add isolated margin manually to a position to increase the margin and reduce

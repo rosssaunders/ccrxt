@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::bybit::{EndpointType, RestResult, enums::*};
+use crate::bybit::{EndpointType, PublicRestClient, RestResult, enums::*};
 
 /// Endpoint URL path for kline data
 const ENDPOINT_PATH: &str = "/v5/market/kline";
@@ -117,7 +116,7 @@ pub struct GetKlineResponse {
     pub time: u64,
 }
 
-impl RestClient {
+impl PublicRestClient {
     /// Get kline (candlestick) data
     ///
     /// Query for historical klines. Charts are returned in groups based on the requested interval.

@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::bybit::{EndpointType, RestResult};
+use crate::bybit::{EndpointType, PublicRestClient, RestResult};
 
 const INS_MARGIN_COIN_INFO_ENDPOINT: &str = "/v5/ins-loan/ensure-tokens-convert";
 
@@ -71,7 +70,7 @@ pub struct GetInsMarginCoinInfoResponse {
     pub time: u64,
 }
 
-impl RestClient {
+impl PublicRestClient {
     /// Get institutional loan margin coin info
     ///
     /// Query for institutional loan product margin coin information, including margin coin list,

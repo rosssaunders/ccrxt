@@ -1,6 +1,6 @@
 use async_trait::async_trait;
 
-use super::errors::Errors;
+use crate::deribit::errors::Errors;
 
 /// Deribit-specific rate limiter trait
 ///

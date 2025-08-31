@@ -1,7 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-use super::RestClient;
-use crate::kucoin::spot::{Market, ResponseHeaders, RestResponse, Result};
+use crate::kucoin::spot::{
+    Market, ResponseHeaders, RestResponse, Result, public_client::RestClient,
+};
 
 const ALL_SYMBOLS_ENDPOINT: &str = "/api/v1/symbols";
 

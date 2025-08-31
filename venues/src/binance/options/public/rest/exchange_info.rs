@@ -1,8 +1,7 @@
 use rust_decimal::Decimal;
 use serde::Deserialize;
 
-use super::client::RestClient;
-use crate::binance::options::{OptionsContractType, RestResult};
+use crate::binance::options::{OptionsContractType, RestResult, public_client::RestClient};
 
 const EXCHANGE_INFO_ENDPOINT: &str = "/eapi/v1/exchangeInfo";
 

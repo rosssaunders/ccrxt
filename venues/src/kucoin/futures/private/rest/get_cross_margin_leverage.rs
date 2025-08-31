@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::kucoin::spot::{ResponseHeaders, RestResponse, Result};
+use crate::kucoin::futures::{ResponseHeaders, RestResponse, Result, private_client::RestClient};
 
 /// Endpoint URL for get cross margin leverage
 const GET_CROSS_MARGIN_LEVERAGE_ENDPOINT: &str = "/api/v2/getCrossUserLeverage";
@@ -22,7 +22,7 @@ pub struct GetCrossMarginLeverageResponse {
     pub leverage: String,
 }
 
-impl super::RestClient {
+impl RestClient {
     /// Get Cross Margin Leverage
     ///
     /// Get the current cross margin leverage for a specific symbol.

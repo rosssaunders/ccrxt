@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
-use crate::binance::usdm::{MarginType, RestResult};
+use crate::binance::usdm::{MarginType, RestResult, private_client::UsdmClient};
 
 const MARGIN_TYPE_ENDPOINT: &str = "/fapi/v1/marginType";
 

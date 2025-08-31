@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::bitmart::{RestResult, rate_limit::EndpointType};
+use crate::bitmart::{RestResult, rate_limit::EndpointType, spot::public_client::RestClient};
 
 const CURRENCY_LIST_ENDPOINT: &str = "/spot/v1/currencies";
 

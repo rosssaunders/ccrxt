@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::RestClient;
-use crate::kucoin::spot::{ResponseHeaders, RestResponse, Result};
+use crate::kucoin::spot::{ResponseHeaders, RestResponse, Result, public_client::RestClient};
 
 /// Request for getting 24hr ticker statistics for a symbol
 #[derive(Debug, Clone, Serialize)]

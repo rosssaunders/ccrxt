@@ -1,7 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-use crate::kucoin::spot::{
+use crate::kucoin::futures::{
     OrderSide, OrderType, ResponseHeaders, RestResponse, Result, StopType, TimeInForce,
+    private_client::RestClient,
 };
 
 /// Endpoint URL for Add Order Test
@@ -98,7 +99,7 @@ pub struct AddOrderTestResponse {
     pub client_oid: Option<String>,
 }
 
-impl super::RestClient {
+impl RestClient {
     /// Add Order Test
     ///
     /// Test placing a new order without executing it. This endpoint validates

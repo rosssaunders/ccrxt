@@ -7,8 +7,7 @@ mod cancel_all_orders;
 mod cancel_all_stop_orders;
 mod cancel_order;
 mod change_margin_mode;
-mod client;
-mod credentials;
+
 mod funding_rate;
 mod get_all_positions;
 mod get_cross_margin_leverage;
@@ -35,8 +34,6 @@ pub use cancel_all_orders::*;
 pub use cancel_all_stop_orders::*;
 pub use cancel_order::*;
 pub use change_margin_mode::*;
-pub use client::RestClient;
-pub use credentials::Credentials;
 pub use funding_rate::*;
 pub use get_all_positions::*;
 pub use get_cross_margin_leverage::*;

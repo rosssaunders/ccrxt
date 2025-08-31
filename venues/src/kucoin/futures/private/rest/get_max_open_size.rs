@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::kucoin::spot::{ResponseHeaders, RestResponse, Result};
+use crate::kucoin::futures::{ResponseHeaders, RestResponse, Result, private_client::RestClient};
 
 /// Endpoint URL for getting maximum open size
 const GET_MAX_OPEN_SIZE_ENDPOINT: &str = "/api/v2/getMaxOpenSize";
@@ -32,7 +32,7 @@ pub struct GetMaxOpenSizeResponse {
     pub max_sell_open_size: i64,
 }
 
-impl super::RestClient {
+impl RestClient {
     /// Get Maximum Open Size
     ///
     /// Retrieve the maximum open position size for a given symbol at a specified price and leverage.

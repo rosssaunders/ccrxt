@@ -1,4 +1,3 @@
-mod client;
 mod contracts;
 mod funding_rate;
 mod indices;
@@ -11,7 +10,6 @@ mod ticker;
 mod tokens;
 mod trades;
 
-pub use client::RestClient;
 pub use contracts::{
     ContractInfo, GetAllContractsRequest, GetAllContractsResponse, GetContractRequest,
 };

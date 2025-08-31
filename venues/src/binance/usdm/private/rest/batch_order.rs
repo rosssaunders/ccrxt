@@ -1,9 +1,9 @@
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
 use crate::binance::usdm::{
     OrderStatus, PriceMatch, RestResult, SelfTradePreventionMode,
     enums::{NewOrderRespType, OrderSide, OrderType, PositionSide, TimeInForce, WorkingType},
+    private_client::UsdmClient,
 };
 
 const BATCH_ORDERS_ENDPOINT: &str = "/fapi/v1/batchOrders";

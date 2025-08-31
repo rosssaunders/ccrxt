@@ -1,7 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-use crate::kucoin::spot::{
+use crate::kucoin::futures::{
     OrderSide, OrderType, ResponseHeaders, RestResponse, Result, StopType, TimeInForce,
+    private_client::RestClient,
 };
 
 const PLACE_ORDER_ENDPOINT: &str = "/api/v1/orders";
@@ -72,7 +73,7 @@ pub struct PlaceOrderResponse {
     pub order_id: String,
 }
 
-impl super::RestClient {
+impl RestClient {
     /// Place a new order
     ///
     /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/orders/add-order)
@@ -87,7 +88,7 @@ impl super::RestClient {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::kucoin::spot::{OrderSide, OrderType, TimeInForce};
+    use crate::kucoin::futures::{OrderSide, OrderType, TimeInForce};
 
     #[test]
     fn test_place_order_request_serialization() {

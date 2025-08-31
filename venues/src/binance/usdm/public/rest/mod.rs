@@ -2,7 +2,6 @@ pub mod agg_trades;
 pub mod asset_index;
 pub mod basis;
 pub mod book_ticker;
-pub mod client;
 pub mod constituents;
 pub mod continuous_klines;
 pub mod delivery_price;
@@ -30,5 +29,3 @@ pub mod ticker_price_v2;
 pub mod time;
 pub mod top_long_short_account_ratio;
 pub mod top_long_short_position_ratio;
-
-pub use client::RestClient;

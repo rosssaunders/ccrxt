@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::bybit::{EndpointType, RestResult};
+use crate::bybit::{EndpointType, PublicRestClient, RestResult};
 
 const COLLATERAL_COINS_ENDPOINT: &str = "/v5/crypto-loan/collateral-data";
 
@@ -60,7 +59,7 @@ pub struct GetCollateralCoinsResponse {
     pub time: u64,
 }
 
-impl RestClient {
+impl PublicRestClient {
     /// Get collateral coins
     ///
     /// Query the list of coins that can be used as collateral for crypto loans including

@@ -1,7 +1,6 @@
 mod cancel_all_orders;
 mod cancel_batch_order;
 mod cancel_order;
-mod client;
 mod get_account_balance;
 mod get_actual_trade_fee_rate;
 mod get_basic_fee_rate;
@@ -26,7 +25,6 @@ mod withdraw;
 pub use cancel_all_orders::{CancelAllOrdersRequest, CancelAllOrdersResponse};
 pub use cancel_batch_order::{CancelBatchOrderRequest, CancelBatchOrderResponse};
 pub use cancel_order::{CancelOrderRequest, CancelOrderResponse};
-pub use client::RestClient;
 pub use get_account_balance::{GetAccountBalanceRequest, GetAccountBalanceResponse, WalletBalance};
 pub use get_actual_trade_fee_rate::{GetActualTradeFeeRateRequest, GetActualTradeFeeRateResponse};
 pub use get_basic_fee_rate::{GetBasicFeeRateRequest, GetBasicFeeRateResponse};

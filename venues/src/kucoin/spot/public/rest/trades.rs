@@ -1,7 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-use super::RestClient;
-use crate::kucoin::spot::{ResponseHeaders, RestResponse, Result, TradeSide};
+use crate::kucoin::spot::{
+    ResponseHeaders, RestResponse, Result, TradeSide, public_client::RestClient,
+};
 
 const TRADES_ENDPOINT: &str = "/api/v1/market/histories";
 

@@ -1,10 +1,9 @@
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
 use crate::binance::options::{
     OptionsContractType, OptionsOrderResponseType, OptionsOrderSide, OptionsOrderStatus,
-    OptionsOrderType, OptionsTimeInForce, RestResult,
+    OptionsOrderType, OptionsTimeInForce, RestResult, private_client::RestClient,
 };
 
 const NEW_ORDER_ENDPOINT: &str = "/eapi/v1/order";

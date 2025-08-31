@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::bitmart::{RestResult, rate_limit::EndpointType};
+use crate::bitmart::{RestResult, rate_limit::EndpointType, spot::public_client::RestClient};
 
 const RECENT_TRADES_ENDPOINT: &str = "/spot/quotation/v3/trades";
 

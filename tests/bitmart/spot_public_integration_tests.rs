@@ -3,10 +3,13 @@
 //! These tests verify that the Bitmart spot public REST API client can successfully
 //! communicate with the live API and receive valid responses.
 
-use venues::bitmart::spot::public::rest::{
-    GetCurrencyListRequest, GetDepthRequest, GetHistoryKlineRequest, GetLatestKlineRequest,
-    GetRecentTradesRequest, GetTickerAllPairsRequest, GetTickerRequest,
-    GetTradingPairDetailsRequest, GetTradingPairsListRequest, RestClient,
+use venues::bitmart::spot::{
+    public::rest::{
+        GetCurrencyListRequest, GetDepthRequest, GetHistoryKlineRequest, GetLatestKlineRequest,
+        GetRecentTradesRequest, GetTickerAllPairsRequest, GetTickerRequest,
+        GetTradingPairDetailsRequest, GetTradingPairsListRequest,
+    },
+    public_client::RestClient,
 };
 
 /// Helper function to create a test client

@@ -1,8 +1,7 @@
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::binance::options::{OptionsRiskLevel, RestResult};
+use crate::binance::options::{OptionsRiskLevel, RestResult, private_client::RestClient};
 
 const GET_ACCOUNT_ENDPOINT: &str = "/eapi/v1/account";
 

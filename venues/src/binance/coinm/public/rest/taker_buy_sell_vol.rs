@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use crate::binance::coinm::{
     RestResult,
     enums::{ContractTypeFilter, Period},
-    public::rest::RestClient,
+    public_client::RestClient,
 };
 
 const TAKER_BUY_SELL_VOL_ENDPOINT: &str = "/futures/data/takerBuySellVol";

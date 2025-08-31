@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::binance::coinm::{RestResult, public::rest::RestClient};
+use crate::binance::coinm::{RestResult, public_client::RestClient};
 
 const FUNDING_RATE_ENDPOINT: &str = "/dapi/v1/fundingRate";
 

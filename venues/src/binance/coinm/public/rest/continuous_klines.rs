@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use crate::binance::coinm::{
     RestResult,
     enums::{ContractType, KlineInterval},
-    public::rest::RestClient,
+    public_client::RestClient,
 };
 
 const CONTINUOUS_KLINES_ENDPOINT: &str = "/dapi/v1/continuousKlines";

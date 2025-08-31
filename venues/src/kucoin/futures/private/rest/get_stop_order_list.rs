@@ -1,7 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-use crate::kucoin::spot::{
+use crate::kucoin::futures::{
     OrderSide, OrderStatus, OrderType, ResponseHeaders, RestResponse, Result,
+    private_client::RestClient,
 };
 
 const GET_STOP_ORDER_LIST_ENDPOINT: &str = "/api/v1/stopOrders";
@@ -143,7 +144,7 @@ pub struct GetStopOrderListResponse {
     pub items: Vec<StopOrderItem>,
 }
 
-impl super::RestClient {
+impl RestClient {
     /// Get stop order list with optional filtering and pagination
     ///
     /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/orders/get-stop-order-list)

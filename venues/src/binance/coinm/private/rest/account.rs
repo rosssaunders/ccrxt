@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use crate::binance::coinm::{
     RestResult,
     enums::{MarginType, PositionSide},
-    private::rest::client::RestClient,
+    private_client::RestClient,
 };
 
 const ACCOUNT_ENDPOINT: &str = "/dapi/v1/account";

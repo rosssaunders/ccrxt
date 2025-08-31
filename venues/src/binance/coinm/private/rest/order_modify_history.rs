@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::binance::coinm::{RestResult, private::rest::client::RestClient};
+use crate::binance::coinm::{RestResult, private_client::RestClient};
 
 const ORDER_AMENDMENT_ENDPOINT: &str = "/dapi/v1/orderAmendment";
 

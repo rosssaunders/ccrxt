@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::kucoin::spot::{ResponseHeaders, RestResponse, Result};
+use crate::kucoin::futures::{ResponseHeaders, RestResponse, Result, private_client::RestClient};
 
 /// Endpoint URL for getting position list
 const GET_POSITION_LIST_ENDPOINT: &str = "/api/v1/positions";
@@ -98,7 +98,7 @@ pub struct PositionInfo {
 /// Response type for position list endpoint.
 pub type GetPositionListResponse = Vec<PositionInfo>;
 
-impl super::RestClient {
+impl RestClient {
     /// Get Position List
     ///
     /// Get the position list for the current user with optional currency filtering.

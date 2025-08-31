@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use super::{UsdmClient, new_order::NewOrderRequest};
-use crate::binance::usdm::RestResult;
+use super::new_order::NewOrderRequest;
+use crate::binance::usdm::{RestResult, private_client::UsdmClient};
 
 /// Endpoint path for Binance USDM Test Order
 const TEST_ORDER_ENDPOINT: &str = "/fapi/v1/order/test";

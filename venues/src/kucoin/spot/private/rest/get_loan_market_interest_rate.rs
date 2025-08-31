@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::RestClient;
-use crate::kucoin::spot::{ResponseHeaders, RestResponse, Result};
+use crate::kucoin::spot::{ResponseHeaders, RestResponse, Result, private_client::RestClient};
 
 /// Endpoint URL for loan market interest rate (past 7 days)
 const GET_LOAN_MARKET_INTEREST_RATE_ENDPOINT: &str = "/api/v3/project/marketInterestRate";

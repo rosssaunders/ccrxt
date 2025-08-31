@@ -35,10 +35,15 @@
 //! }
 //! ```
 
+pub mod credentials;
 mod enums;
 mod errors;
 pub mod rate_limit;
 pub mod rate_limiter_trait;
+
+// Root-level clients
+pub mod private_client;
+pub mod public_client;
 
 pub mod public {
     pub mod rest;
@@ -80,7 +85,7 @@ pub mod public {
             GetTradeVolumesRequest, GetTradeVolumesResponse, GetTradingviewChartDataRequest,
             GetTradingviewChartDataResponse, GetTradingviewChartDataResult,
             GetVolatilityIndexDataRequest, GetVolatilityIndexDataResponse,
-            GetVolatilityIndexDataResult, InstrumentData, MarkPriceEntry, RestClient, RfqEntry,
+            GetVolatilityIndexDataResult, InstrumentData, MarkPriceEntry, RfqEntry,
             SettlementEntry, TradeEntry, TradeVolumeEntry,
         },
         websocket::{
@@ -111,24 +116,24 @@ pub mod private {
         GetOpenOrdersByCurrencyResponse, GetOrderMarginByIdsRequest, GetOrderMarginByIdsResponse,
         GetUserTradesByCurrencyAndTimeRequest, GetUserTradesByCurrencyAndTimeResponse,
         GetUserTradesByCurrencyAndTimeResult, GetUserTradesByCurrencyRequest,
-        GetUserTradesByCurrencyResponse, GetUserTradesByCurrencyResult, IndexName,
+        GetUserTradesByCurrencyResponse, GetUserTradesByCurrencyResult,
         InvalidateBlockTradeSignatureRequest, InvalidateBlockTradeSignatureResponse, MmpConfig,
         MovePositionTrade, MovePositionTradeResult, MovePositionsRequest, MovePositionsResponse,
-        OpenOrder, OpenOrderType, OrderMarginInfo, Originator, RemoveFromAddressBookRequest,
-        RemoveFromAddressBookResponse, ResetMmpRequest, ResetMmpResponse, RestClient,
-        SendRfqRequest, SendRfqResponse, SetClearanceOriginatorRequest,
-        SetClearanceOriginatorResponse, SetClearanceOriginatorResult, SetMmpConfigRequest,
-        SetMmpConfigResponse, Side, SubaccountTransferData,
-        SubmitTransferBetweenSubaccountsRequest, SubmitTransferBetweenSubaccountsResponse,
-        SubmitTransferToSubaccountRequest, SubmitTransferToSubaccountResponse,
-        SubmitTransferToUserRequest, SubmitTransferToUserResponse, Trade, TransferData,
-        UpdateInAddressBookRequest, UpdateInAddressBookResponse, WithdrawRequest, WithdrawResponse,
-        WithdrawalData,
+        OpenOrderType, OrderMarginInfo, Originator, RemoveFromAddressBookRequest,
+        RemoveFromAddressBookResponse, ResetMmpRequest, ResetMmpResponse, SendRfqRequest,
+        SendRfqResponse, SetClearanceOriginatorRequest, SetClearanceOriginatorResponse,
+        SetClearanceOriginatorResult, SetMmpConfigRequest, SetMmpConfigResponse, Side,
+        SubaccountTransferData, SubmitTransferBetweenSubaccountsRequest,
+        SubmitTransferBetweenSubaccountsResponse, SubmitTransferToSubaccountRequest,
+        SubmitTransferToSubaccountResponse, SubmitTransferToUserRequest,
+        SubmitTransferToUserResponse, Trade, TransferData, UpdateInAddressBookRequest,
+        UpdateInAddressBookResponse, WithdrawRequest, WithdrawResponse, WithdrawalData,
     };
 }
 
 pub mod message;
 
+pub use credentials::Credentials;
 pub use enums::*;
 pub use errors::{ApiError, ErrorResponse, Errors};
 pub use message::{JsonRpcResult, *};
@@ -149,18 +154,19 @@ pub use private::{
     GetOpenOrdersByCurrencyResponse, GetUserTradesByCurrencyAndTimeRequest,
     GetUserTradesByCurrencyAndTimeResponse, GetUserTradesByCurrencyAndTimeResult,
     GetUserTradesByCurrencyRequest, GetUserTradesByCurrencyResponse, GetUserTradesByCurrencyResult,
-    IndexName, InvalidateBlockTradeSignatureRequest, InvalidateBlockTradeSignatureResponse,
-    MovePositionTrade, MovePositionTradeResult, MovePositionsRequest, MovePositionsResponse,
-    OpenOrder, OpenOrderType, Originator, RemoveFromAddressBookRequest,
-    RemoveFromAddressBookResponse, ResetMmpRequest, ResetMmpResponse,
-    RestClient as PrivateRestClient, SendRfqRequest, SendRfqResponse,
-    SetClearanceOriginatorRequest, SetClearanceOriginatorResponse, SetClearanceOriginatorResult,
-    Side, SubaccountTransferData, SubmitTransferBetweenSubaccountsRequest,
-    SubmitTransferBetweenSubaccountsResponse, SubmitTransferToSubaccountRequest,
-    SubmitTransferToSubaccountResponse, SubmitTransferToUserRequest, SubmitTransferToUserResponse,
-    Trade, TransferData, UpdateInAddressBookRequest, UpdateInAddressBookResponse, WithdrawRequest,
-    WithdrawResponse, WithdrawalData,
+    InvalidateBlockTradeSignatureRequest, InvalidateBlockTradeSignatureResponse, MovePositionTrade,
+    MovePositionTradeResult, MovePositionsRequest, MovePositionsResponse, OpenOrderType,
+    Originator, RemoveFromAddressBookRequest, RemoveFromAddressBookResponse, ResetMmpRequest,
+    ResetMmpResponse, SendRfqRequest, SendRfqResponse, SetClearanceOriginatorRequest,
+    SetClearanceOriginatorResponse, SetClearanceOriginatorResult, Side, SubaccountTransferData,
+    SubmitTransferBetweenSubaccountsRequest, SubmitTransferBetweenSubaccountsResponse,
+    SubmitTransferToSubaccountRequest, SubmitTransferToSubaccountResponse,
+    SubmitTransferToUserRequest, SubmitTransferToUserResponse, Trade, TransferData,
+    UpdateInAddressBookRequest, UpdateInAddressBookResponse, WithdrawRequest, WithdrawResponse,
+    WithdrawalData,
 };
+// Re-export root-level clients
+pub use private_client::RestClient as PrivateRestClient;
 // Re-export specialized types from get_expirations
 pub use public::rest::get_expirations::{ExpirationsCurrency, ExpirationsInstrumentKind};
 pub use public::{
@@ -194,11 +200,12 @@ pub use public::{
     GetTradingviewChartDataRequest, GetTradingviewChartDataResponse, GetTradingviewChartDataResult,
     GetVolatilityIndexDataRequest, GetVolatilityIndexDataResponse, GetVolatilityIndexDataResult,
     HelloRequest, HelloResponse, HelloResult, InstrumentData, MarkPriceEntry,
-    PrivateWebSocketClient, RestClient as PublicRestClient, RfqEntry, SettlementEntry,
-    SubscribeRequest, SubscribeResponse, TradeEntry, TradeVolumeEntry,
-    websocket::client::DeribitWebSocketError,
+    PrivateWebSocketClient, RfqEntry, SettlementEntry, SubscribeRequest, SubscribeResponse,
+    TradeEntry, TradeVolumeEntry, websocket::client::DeribitWebSocketError,
 };
+pub use public_client::RestClient as PublicRestClient;
 pub use rate_limit::*;
+pub use rate_limiter_trait::DeribitRateLimiter;
 
 /// Type alias for results returned by Deribit API operations
 pub type RestResult<T> = Result<T, Errors>;

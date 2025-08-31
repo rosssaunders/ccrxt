@@ -1,4 +1,3 @@
-pub mod client;
 pub mod credentials;
 pub mod get_wallet_balance;
 
@@ -18,7 +17,6 @@ pub mod spot_borrow_check;
 // Position endpoints
 pub mod get_position_info;
 
-pub use client::RestClient;
 #[allow(unused_imports)]
 pub use credentials::Credentials;
 pub use get_wallet_balance::{

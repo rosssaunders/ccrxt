@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::bitmart::{RestResult, rate_limit::EndpointType};
+use crate::bitmart::{RestResult, rate_limit::EndpointType, spot::private_client::RestClient};
 
 const DEPOSIT_WITHDRAW_HISTORY_ENDPOINT: &str = "/account/v2/deposit-withdraw/history";
 

@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::binance::coinm::{RestResult, public::rest::RestClient};
+use crate::binance::coinm::{RestResult, public_client::RestClient};
 
 /// Endpoint path for the aggregate trades API.
 const AGGREGATE_TRADES_ENDPOINT: &str = "/dapi/v1/aggTrades";

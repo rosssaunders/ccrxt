@@ -2,8 +2,7 @@ use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
 
-use super::RestClient;
-use crate::binance::usdm::RestResult;
+use crate::binance::usdm::{RestResult, public_client::RestClient};
 
 /// Endpoint constant for Binance Delivery Price.
 const DELIVERY_PRICE_ENDPOINT: &str = "/futures/data/delivery-price";

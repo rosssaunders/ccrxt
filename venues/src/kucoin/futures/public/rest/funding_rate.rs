@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::kucoin::spot::{ResponseHeaders, RestResponse, Result};
+use crate::kucoin::futures::{ResponseHeaders, RestResponse, Result, public_client::RestClient};
 
 // API endpoints
 const CURRENT_FUNDING_RATE_ENDPOINT_PREFIX: &str = "/api/v1/funding-rate/";
@@ -32,7 +32,7 @@ pub struct CurrentFundingRate {
     pub predicted_value: Option<f64>,
 }
 
-impl super::RestClient {
+impl RestClient {
     /// Get current funding rate for a specific symbol
     ///
     /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/funding-fees/get-current-funding-rate)
@@ -46,8 +46,7 @@ impl super::RestClient {
             request.symbol,
             CURRENT_FUNDING_RATE_ENDPOINT_SUFFIX
         );
-        self.send_request(&endpoint, None::<&GetCurrentFundingRateRequest>)
-            .await
+        self.get(&endpoint, None).await
     }
 }
 

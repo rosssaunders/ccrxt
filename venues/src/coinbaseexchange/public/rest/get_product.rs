@@ -1,7 +1,7 @@
 use serde::Serialize;
 
-use super::{Product, RestClient};
-use crate::coinbaseexchange::RestResult;
+use super::Product;
+use crate::coinbaseexchange::{PublicRestClient, RestResult};
 
 /// Endpoint URL path for getting a single product
 const ENDPOINT_PATH: &str = "products/{}";
@@ -13,7 +13,7 @@ pub struct GetProductRequest {}
 /// Response from getting a single product
 pub type GetProductResponse = Product;
 
-impl RestClient {
+impl PublicRestClient {
     /// Get single product
     ///
     /// Get information on a single product.

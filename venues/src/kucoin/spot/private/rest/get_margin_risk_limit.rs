@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::RestClient;
-use crate::kucoin::spot::{ResponseHeaders, RestResponse, Result};
+use crate::kucoin::spot::{ResponseHeaders, RestResponse, Result, private_client::RestClient};
 
 /// Endpoint URL for margin risk limit
 const GET_MARGIN_RISK_LIMIT_ENDPOINT: &str = "/api/v3/margin/currencies";

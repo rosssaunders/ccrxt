@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::bybit::{EndpointType, RestResult};
+use crate::bybit::{EndpointType, PublicRestClient, RestResult};
 
 const INS_PRODUCT_INFO_ENDPOINT: &str = "/v5/ins-loan/product-infos";
 
@@ -62,7 +61,7 @@ pub struct GetInsProductInfoResponse {
     pub time: u64,
 }
 
-impl RestClient {
+impl PublicRestClient {
     /// Get institutional loan product info
     ///
     /// Query for all available institutional loan products, including loan amount,

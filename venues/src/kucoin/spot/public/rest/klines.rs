@@ -1,7 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-use super::RestClient;
-use crate::kucoin::spot::{KlineInterval, ResponseHeaders, RestResponse, Result};
+use crate::kucoin::spot::{
+    KlineInterval, ResponseHeaders, RestResponse, Result, public_client::RestClient,
+};
 
 const KLINES_ENDPOINT: &str = "/api/v1/market/candles";
 

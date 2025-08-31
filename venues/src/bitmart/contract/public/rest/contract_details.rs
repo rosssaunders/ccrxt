@@ -57,7 +57,7 @@ pub struct ContractDetails {
 }
 
 // RestClient implementation for this endpoint
-use crate::bitmart::{contract::public::rest::client::RestClient, spot::error::Result};
+use crate::bitmart::{contract::public_client::RestClient, spot::error::Result};
 
 impl RestClient {
     /// Get Contract Details

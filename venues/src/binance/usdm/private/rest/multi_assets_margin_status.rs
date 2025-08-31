@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
-use crate::binance::usdm::RestResult;
+use crate::binance::usdm::{RestResult, private_client::UsdmClient};
 
 /// Endpoint path for getting current multi-assets mode status.
 const MULTI_ASSETS_MARGIN_STATUS_ENDPOINT: &str = "/fapi/v1/multiAssetsMargin";

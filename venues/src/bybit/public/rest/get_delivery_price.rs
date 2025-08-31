@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::bybit::{EndpointType, RestResult, enums::*};
+use crate::bybit::{EndpointType, PublicRestClient, RestResult, enums::*};
 
 const DELIVERY_PRICE_ENDPOINT: &str = "/v5/market/delivery-price";
 
@@ -79,7 +78,7 @@ pub struct GetDeliveryPriceResponse {
     pub time: u64,
 }
 
-impl RestClient {
+impl PublicRestClient {
     /// Get delivery price
     ///
     /// Query the delivery price of futures/options that have been delivered in the past.

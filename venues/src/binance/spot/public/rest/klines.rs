@@ -1,8 +1,7 @@
 use rust_decimal::Decimal;
 use serde::Serialize;
 
-use super::client::RestClient;
-use crate::binance::spot::RestResult;
+use crate::binance::spot::{RestResult, public_client::RestClient};
 
 const KLINES_ENDPOINT: &str = "/api/v3/klines";
 

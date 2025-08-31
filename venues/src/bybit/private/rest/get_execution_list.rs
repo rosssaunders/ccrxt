@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::bybit::{EndpointType, RestResult, enums::*};
+use crate::bybit::{EndpointType, RestResult, enums::*, private_client::RestClient};
 
 /// Endpoint URL for getting execution list
 const GET_EXECUTION_LIST_ENDPOINT: &str = "/v5/execution/list";

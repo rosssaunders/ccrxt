@@ -2,8 +2,7 @@ use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
 
-use super::RestClient;
-use crate::binance::usdm::{ContractType, Period, RestResult};
+use crate::binance::usdm::{ContractType, Period, RestResult, public_client::RestClient};
 
 /// Endpoint path for futures basis data
 const BASIS_ENDPOINT: &str = "/futures/data/basis";

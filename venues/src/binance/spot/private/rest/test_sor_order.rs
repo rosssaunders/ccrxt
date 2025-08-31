@@ -1,7 +1,8 @@
 use serde::Serialize;
 
-use super::{client::RestClient, new_sor_order::SorOrderRequest};
-use crate::binance::spot::RestResult;
+use crate::binance::spot::{
+    RestResult, private::rest::new_sor_order::SorOrderRequest, private_client::RestClient,
+};
 
 const TEST_SOR_ORDER_ENDPOINT: &str = "/api/v3/sor/order/test";
 

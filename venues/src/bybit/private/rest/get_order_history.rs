@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use super::{client::RestClient, get_open_orders::OrderInfo};
-use crate::bybit::{EndpointType, RestResult, enums::*};
+use super::get_open_orders::OrderInfo;
+use crate::bybit::{EndpointType, RestResult, enums::*, private_client::RestClient};
 
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]

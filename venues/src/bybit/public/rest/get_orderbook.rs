@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::bybit::{EndpointType, RestResult, enums::*};
+use crate::bybit::{EndpointType, PublicRestClient, RestResult, enums::*};
 
 /// Endpoint URL path for orderbook
 const ENDPOINT_PATH: &str = "/v5/market/orderbook";
@@ -97,7 +96,7 @@ pub struct GetOrderbookResponse {
     pub time: u64,
 }
 
-impl RestClient {
+impl PublicRestClient {
     /// Get orderbook data
     ///
     /// Query for orderbook depth data.

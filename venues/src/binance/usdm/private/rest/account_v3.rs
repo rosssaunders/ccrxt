@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
-use crate::binance::usdm::{RestResult, enums::PositionSide};
+use crate::binance::usdm::{RestResult, enums::PositionSide, private_client::UsdmClient};
 
 /// Endpoint path for Account Information V3.
 const ACCOUNT_INFO_ENDPOINT: &str = "/fapi/v3/account";

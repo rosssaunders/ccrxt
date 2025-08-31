@@ -1,8 +1,7 @@
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::binance::options::{OptionsBillType, RestResult};
+use crate::binance::options::{OptionsBillType, RestResult, private_client::RestClient};
 
 const GET_ACCOUNT_FUNDING_FLOW_ENDPOINT: &str = "/eapi/v1/bill";
 

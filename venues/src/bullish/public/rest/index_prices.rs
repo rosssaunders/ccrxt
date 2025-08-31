@@ -2,8 +2,7 @@
 
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::bullish::{EndpointType, RestResult};
+use crate::bullish::{EndpointType, PublicRestClient, RestResult};
 
 /// Endpoint URL path for index prices
 const INDEX_PRICES_ENDPOINT: &str = "/trading-api/v1/index-prices";
@@ -35,7 +34,7 @@ pub struct GetIndexPriceRequest {
     pub asset_symbol: String,
 }
 
-impl RestClient {
+impl PublicRestClient {
     /// Get all index prices
     ///
     /// Retrieves the index prices for all supported assets

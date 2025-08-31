@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::bybit::{EndpointType, RestResult, enums::*};
+use crate::bybit::{EndpointType, RestResult, enums::*, private_client::RestClient};
 
 /// Endpoint URL for cancelling all orders
 const CANCEL_ALL_ORDERS_ENDPOINT: &str = "/v5/order/cancel-all";

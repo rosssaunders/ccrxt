@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::RestClient;
-use crate::kucoin::spot::{ResponseHeaders, RestResponse, Result};
+use crate::kucoin::spot::{ResponseHeaders, RestResponse, Result, public_client::RestClient};
 
 const CURRENCY_ENDPOINT: &str = "/api/v1/currencies/{currency}";
 

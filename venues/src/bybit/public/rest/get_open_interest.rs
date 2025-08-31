@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::bybit::{EndpointType, RestResult, enums::*};
+use crate::bybit::{EndpointType, PublicRestClient, RestResult, enums::*};
 
 const OPEN_INTEREST_ENDPOINT: &str = "/v5/market/open-interest";
 
@@ -85,7 +84,7 @@ pub struct GetOpenInterestResponse {
     pub time: u64,
 }
 
-impl RestClient {
+impl PublicRestClient {
     /// Get open interest
     ///
     /// Query for historical open interest data of a symbol.

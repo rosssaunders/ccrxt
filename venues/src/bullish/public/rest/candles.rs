@@ -1,8 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
 use crate::bullish::{
-    DataOrPaginated, EndpointType, PaginatedResult, PaginationParams, RestResult,
+    DataOrPaginated, EndpointType, PaginatedResult, PaginationParams, PublicRestClient, RestResult,
     enums::CandleInterval,
 };
 
@@ -71,7 +70,7 @@ pub struct Candle {
     pub published_at_timestamp: String,
 }
 
-impl RestClient {
+impl PublicRestClient {
     /// Get candlestick data for a market symbol
     ///
     /// Retrieves historical candlestick data for a specific market.

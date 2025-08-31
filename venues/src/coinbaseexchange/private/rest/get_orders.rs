@@ -5,10 +5,11 @@
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 
-use super::{RestClient, get_account_balances::PaginationInfo};
+use super::get_account_balances::PaginationInfo;
 use crate::coinbaseexchange::{
     EndpointType, RestResult,
     enums::{OrderSide, OrderStatus, OrderType, StopDirection, TimeInForce},
+    private_client::RestClient,
 };
 
 const ORDERS_ENDPOINT: &str = "orders";

@@ -7,10 +7,14 @@ use std::sync::Arc;
 
 use rest::native::NativeHttpClient;
 use venues::kucoin::spot::{
-    GetAllCurrenciesRequest, GetAllSymbolsRequest, GetAllTickersRequest, GetCurrencyRequest,
-    GetKlinesRequest, GetPartOrderBookRequest, GetServerTimeRequest, GetSymbolRequest,
-    GetTickerRequest, GetTradesRequest, KlineInterval, OrderBookLevel, PublicRestClient,
-    RateLimiter,
+    KlineInterval,
+    public::rest::{
+        GetAllCurrenciesRequest, GetAllSymbolsRequest, GetAllTickersRequest, GetCurrencyRequest,
+        GetKlinesRequest, GetPartOrderBookRequest, GetServerTimeRequest, GetSymbolRequest,
+        GetTickerRequest, GetTradesRequest, OrderBookLevel,
+    },
+    public_client::RestClient as PublicRestClient,
+    rate_limit::RateLimiter,
 };
 
 /// Helper function to create a test client with shared rate limiter

@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::bybit::{EndpointType, RestResult};
+use crate::bybit::{EndpointType, PublicRestClient, RestResult};
 
 /// Endpoint URL path for server time
 const ENDPOINT_PATH: &str = "/v5/market/time";
@@ -43,7 +42,7 @@ pub struct GetServerTimeResponse {
     pub time: u64,
 }
 
-impl RestClient {
+impl PublicRestClient {
     /// Get Bybit server time
     ///
     /// Returns the current server time in seconds and nanoseconds.

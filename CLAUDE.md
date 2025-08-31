@@ -7,6 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 CCRXT is a Rust library providing low-latency wrappers around cryptocurrency exchange APIs. The project prioritizes performance for high-frequency trading applications while maintaining strict adherence to exchange-specific rate limits and API behaviors.
 
 Key principles:
+
 - All venues implement low-latency APIs (WebSocket preferred over REST when available)
 - Rate limiting is implemented exactly as specified by each exchange
 - Wrappers are pure - no helper or fix-up logic
@@ -16,14 +17,16 @@ Key principles:
 ## Build and Run Commands
 
 ### Core Build Commands
+
 - **Build the entire project**: `cargo build`
-- **Build with release optimizations**: `cargo build --release` 
+- **Build with release optimizations**: `cargo build --release`
 - **Format code**: `cargo fmt`
 - **Run linter**: `cargo clippy`
 - **Check without building**: `cargo check`
 - **Generate documentation**: `cargo doc --no-deps --open`
 
 ### Testing Commands
+
 - **Run all tests**: `cargo test`
 - **Run a specific test**: `cargo test test_name`
 - **Run tests for a specific venue**: `cargo test binance::`
@@ -33,6 +36,7 @@ Key principles:
 - **Run private integration tests**: `RUN_PRIVATE_TESTS=true cargo test`
 
 ### Example Commands
+
 - **List all examples**: `cargo run --example` (will show available examples)
 - **Run a specific example**:
   - Coinbase market data: `cargo run --example coinbase_market_data -- --products "BTC-USD,ETH-USD" --orderbook --ticker`
@@ -58,6 +62,7 @@ For examples and tests requiring API authentication:
 ### Workspace Structure
 
 The project is a Rust workspace with three main crates:
+
 - `venues/`: Implementation of specific exchange APIs
   - Each exchange has its own module (e.g., `binance/`, `coinbase/`)
   - Submodules for different products (e.g., `spot/`, `coinm/`, `usdm/`)
@@ -69,6 +74,7 @@ The project is a Rust workspace with three main crates:
 **`venues/src/gateio/` is the reference implementation that all venues MUST follow.**
 
 Each venue follows this exact structure:
+
 ```
 venues/src/<exchange>/
 ├── mod.rs                          # Main module exports and re-exports
@@ -112,6 +118,7 @@ venues/src/<exchange>/
 ### Architecture & Coding Standards
 
 Detailed instruction files in `.github/instructions/`:
+
 - `general-coding.instructions.md` - General coding standards and practices
 - `venue.instructions.md` - Venue implementation guidelines
 - `websocket.instructions.md` - WebSocket implementation patterns
@@ -128,6 +135,7 @@ Detailed instruction files in `.github/instructions/`:
 ## Important Implementation Rules
 
 ### Documentation and Formatting (from .github/instructions/):
+
 - **Documentation links**: Use inline format `[docs](URL)` in function doc comments, never reference-style
 - **Endpoint functions MUST include**:
   - Title matching exchange docs exactly
@@ -140,26 +148,46 @@ Detailed instruction files in `.github/instructions/`:
 - **Field names in serde attributes MUST exactly match API documentation**
 
 ### Performance Requirements (CRITICAL):
+
 - **HTTP verbs MUST NOT be passed as parameters** - use verb-specific functions
 - **MUST use**: `send_get_request()`, `send_post_request()`, `send_put_request()`, etc.
 - **MUST NOT use**: generic `send_request()` with method parameter
 - **All endpoint functions MUST take single struct for parameters** (except URL path params)
 
 ### File Structure Rules:
+
 - **Each endpoint MUST be in its own file** - no combining endpoints
 - **Endpoint URL paths MUST be defined as constants** (SCREAMING_SNAKE_CASE)
 - **Each mod import MUST be on its own line** to avoid merge conflicts
 - **DO NOT implement helper methods** on request/response structs (e.g., `new()`, `with_*()`, constructors, utility methods). Users should construct these structs directly. Only implement the essential RestClient API methods.
 
 ### From .cursorrules:
+
 - Code prioritizes performance over cleanliness (while maintaining correctness)
 - URL encoding must use `serde_urlencoded`, never manual concatenation
 - Error handling must preserve original error codes and messages
 - Never use regex for error parsing - use direct string matching
 
 ### Linting Rules (from Cargo.toml):
+
 - `unsafe_code = "forbid"` - No unsafe code allowed
 - `unwrap_used = "deny"` - No `.unwrap()` - could panic in production
 - `panic = "deny"` - No `panic!()` - crashes are unacceptable
 - `indexing_slicing = "deny"` - No direct indexing - could panic
 - `todo = "deny"` - No TODO in production code
+
+### Forward-Compatible Enums (CRITICAL)
+
+Remote exchanges frequently add new enum values. Deserialization MUST NOT fail because of an unexpected string. For any enum that reflects exchange-provided values:
+
+1. Include a catch-all variant: `Other(String)` (name stays `Other` unless venue docs require `Unknown`).
+2. Implement custom `Serialize` / `Deserialize` (or use the shared macro if added) mapping known strings to variants and unknown strings to `Other(raw)`. NEVER use `#[serde(other)]` because it discards the original value.
+3. Do not derive `Copy` on enums with an owned catch-all variant.
+4. Provide an `as_str(&self) -> &str` (or `impl AsRef<str>`) helper for ergonomic string access.
+5. Add unit tests that: (a) parse a known value, (b) parse an unknown value preserving the string, (c) round-trip both via serialize+deserialize.
+
+Only treat an enum as closed (no `Other`) and derive `Copy` when the value space is guaranteed stable AND controlled (internal-only or explicitly version-locked by the venue). When in doubt, include the catch-all.
+
+Incorrect patterns to avoid: panicking / erroring on unknown variants, collapsing unknown values to a generic `Unknown` without retaining the raw string, or relying on `#[serde(other)]` which loses data.
+
+This rule prevents breaking changes when exchanges silently add features.

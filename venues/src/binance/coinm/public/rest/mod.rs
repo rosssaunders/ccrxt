@@ -3,7 +3,6 @@
 pub mod aggregate_trades;
 pub mod basis;
 pub mod book_ticker;
-pub mod client;
 pub mod constituents;
 pub mod continuous_klines;
 pub mod exchange_info;
@@ -31,7 +30,6 @@ pub mod top_long_short_position_ratio;
 pub use aggregate_trades::*;
 pub use basis::*;
 pub use book_ticker::*;
-pub use client::RestClient;
 pub use constituents::*;
 pub use continuous_klines::*;
 pub use exchange_info::*;

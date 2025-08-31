@@ -1,8 +1,7 @@
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 
-use super::RestClient;
-use crate::coinbaseexchange::RestResult;
+use crate::coinbaseexchange::{PublicRestClient, RestResult};
 
 /// Endpoint URL path for getting product ticker
 const ENDPOINT_PATH: &str = "products/{}/ticker";
@@ -47,7 +46,7 @@ pub struct ProductTicker {
 /// Response from getting product ticker
 pub type GetProductTickerResponse = ProductTicker;
 
-impl RestClient {
+impl PublicRestClient {
     /// Get product ticker
     ///
     /// Gets snapshot information about the last trade (tick), best bid/ask and 24h volume.

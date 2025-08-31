@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::RestClient;
-use crate::coinbaseexchange::RestResult;
+use crate::coinbaseexchange::{PublicRestClient, RestResult};
 
 /// Endpoint URL path for getting product stats
 const ENDPOINT_PATH: &str = "products/{}/stats";
@@ -51,7 +50,7 @@ pub struct ProductStats {
 /// Response from getting product stats
 pub type GetProductStatsResponse = ProductStats;
 
-impl RestClient {
+impl PublicRestClient {
     /// Get product stats
     ///
     /// Gets 30day and 24hour stats for a product.

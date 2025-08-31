@@ -1,10 +1,9 @@
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
 use crate::binance::spot::{
     ContingencyType, OrderListOrderStatus, OrderListStatus, OrderSide, OrderStatus, OrderType,
-    RestResult, SelfTradePreventionMode, TimeInForce,
+    RestResult, SelfTradePreventionMode, TimeInForce, private_client::RestClient,
 };
 
 const GET_ORDERLIST_ENDPOINT: &str = "/api/v3/orderList";

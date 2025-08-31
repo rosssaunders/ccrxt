@@ -1,7 +1,6 @@
 use serde::Serialize;
 
-use super::RestClient;
-use crate::kucoin::spot::{ResponseHeaders, RestResponse, Result};
+use crate::kucoin::spot::{ResponseHeaders, RestResponse, Result, private_client::RestClient};
 
 const MODIFY_PURCHASE_ENDPOINT: &str = "/api/v3/lend/purchase/update";
 

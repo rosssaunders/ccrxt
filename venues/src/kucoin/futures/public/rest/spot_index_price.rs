@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::kucoin::spot::{ResponseHeaders, RestResponse, Result};
+use crate::kucoin::futures::{ResponseHeaders, RestResponse, Result, public_client::RestClient};
 
 const SPOT_INDEX_PRICE_ENDPOINT: &str = "/api/v1/index/query";
 
@@ -49,7 +49,7 @@ pub struct DecompositionItem {
 /// Response for getting spot index prices.
 pub type GetSpotIndexPriceResponse = Vec<SpotIndexPriceItem>;
 
-impl super::RestClient {
+impl RestClient {
     /// Get spot index price for one or more index symbols
     ///
     /// Returns the spot index price data for the specified index symbols, including
@@ -68,7 +68,7 @@ impl super::RestClient {
         &self,
         request: GetSpotIndexPriceRequest,
     ) -> Result<(RestResponse<GetSpotIndexPriceResponse>, ResponseHeaders)> {
-        self.send_request(SPOT_INDEX_PRICE_ENDPOINT, Some(&request))
+        self.get_with_request(SPOT_INDEX_PRICE_ENDPOINT, &request)
             .await
     }
 }

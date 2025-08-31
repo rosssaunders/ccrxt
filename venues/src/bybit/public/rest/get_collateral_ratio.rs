@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::bybit::{EndpointType, RestResult};
+use crate::bybit::{EndpointType, PublicRestClient, RestResult};
 
 const COLLATERAL_RATIO_ENDPOINT: &str = "/v5/spot-margin-trade/collateral";
 
@@ -83,7 +82,7 @@ pub struct GetCollateralRatioResponse {
     pub time: u64,
 }
 
-impl RestClient {
+impl PublicRestClient {
     /// Get collateral ratio information
     ///
     /// Query the collateral ratios and borrowing information for various currencies

@@ -4,8 +4,10 @@
 
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::bitmart::{OrderSide, OrderType, RestResult, StpMode, rate_limit::EndpointType};
+use crate::bitmart::{
+    OrderSide, OrderType, RestResult, StpMode, rate_limit::EndpointType,
+    spot::private_client::RestClient,
+};
 
 const SUBMIT_BATCH_ORDER_ENDPOINT: &str = "/spot/v4/batch_orders";
 

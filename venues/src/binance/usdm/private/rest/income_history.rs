@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
-use crate::binance::usdm::{RestResult, enums::IncomeType};
+use crate::binance::usdm::{RestResult, enums::IncomeType, private_client::UsdmClient};
 
 const INCOME_HISTORY_ENDPOINT: &str = "/fapi/v1/income";
 

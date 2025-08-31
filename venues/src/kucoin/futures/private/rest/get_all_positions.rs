@@ -1,7 +1,7 @@
 use serde::Serialize;
 
 use super::Position;
-use crate::kucoin::spot::{ResponseHeaders, RestResponse, Result};
+use crate::kucoin::futures::{ResponseHeaders, RestResponse, Result, private_client::RestClient};
 
 /// Endpoint URL for get all positions
 const GET_ALL_POSITIONS_ENDPOINT: &str = "/api/v1/positions";
@@ -18,7 +18,7 @@ pub struct GetAllPositionsRequest {}
 /// Response type containing a list of all positions.
 pub type GetAllPositionsResponse = Vec<Position>;
 
-impl super::RestClient {
+impl RestClient {
     /// Get Position List
     ///
     /// Get the position list of all positions for the current user.
@@ -36,7 +36,7 @@ impl super::RestClient {
         &self,
         _request: GetAllPositionsRequest,
     ) -> Result<(RestResponse<GetAllPositionsResponse>, ResponseHeaders)> {
-        self.get::<GetAllPositionsResponse, ()>(GET_ALL_POSITIONS_ENDPOINT, None)
+        self.get::<GetAllPositionsResponse>(GET_ALL_POSITIONS_ENDPOINT, None)
             .await
     }
 }
@@ -44,7 +44,7 @@ impl super::RestClient {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::kucoin::spot::{AutoDepositStatus, PositionSide};
+    use crate::kucoin::futures::{AutoDepositStatus, PositionSide};
 
     #[test]
     fn test_get_all_positions_request_default() {

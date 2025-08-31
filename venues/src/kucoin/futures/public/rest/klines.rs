@@ -1,7 +1,7 @@
 use serde::Serialize;
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
-use crate::kucoin::spot::{ResponseHeaders, RestResponse, Result};
+use crate::kucoin::futures::{ResponseHeaders, RestResponse, Result, public_client::RestClient};
 
 // API endpoints
 const KLINES_ENDPOINT: &str = "/api/v1/kline/query";
@@ -70,7 +70,7 @@ pub type Kline = [f64; 6];
 /// Response for getting klines
 pub type GetKlinesResponse = Vec<Kline>;
 
-impl super::RestClient {
+impl RestClient {
     /// Get kline/candlestick data for a symbol
     ///
     /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/market-data/get-klines)
@@ -78,7 +78,7 @@ impl super::RestClient {
         &self,
         request: GetKlinesRequest,
     ) -> Result<(RestResponse<GetKlinesResponse>, ResponseHeaders)> {
-        self.send_request(KLINES_ENDPOINT, Some(&request)).await
+        self.get_with_request(KLINES_ENDPOINT, &request).await
     }
 }
 

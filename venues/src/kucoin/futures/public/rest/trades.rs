@@ -1,6 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-use crate::kucoin::spot::{OrderSide, ResponseHeaders, RestResponse, Result};
+use crate::kucoin::futures::{
+    OrderSide, ResponseHeaders, RestResponse, Result, public_client::RestClient,
+};
 
 // API endpoints
 const TRADE_HISTORY_ENDPOINT: &str = "/api/v1/trade/history";
@@ -46,7 +48,7 @@ pub struct TradeHistoryItem {
 /// Response for getting trade history
 pub type GetTradeHistoryResponse = Vec<TradeHistoryItem>;
 
-impl super::RestClient {
+impl RestClient {
     /// Get trade history for a specific symbol (last 100 records)
     ///
     /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/market-data/get-trade-history)
@@ -54,7 +56,7 @@ impl super::RestClient {
         &self,
         request: GetTradeHistoryRequest,
     ) -> Result<(RestResponse<GetTradeHistoryResponse>, ResponseHeaders)> {
-        self.send_request(TRADE_HISTORY_ENDPOINT, Some(&request))
+        self.get_with_request(TRADE_HISTORY_ENDPOINT, &request)
             .await
     }
 }

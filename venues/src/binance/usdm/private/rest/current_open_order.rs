@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
-use crate::binance::usdm::{RestResult, enums::*};
+use crate::binance::usdm::{RestResult, enums::*, private_client::UsdmClient};
 
 const CURRENT_OPEN_ORDER_ENDPOINT: &str = "/fapi/v1/openOrder";
 

@@ -161,7 +161,7 @@ mod tests {
     #[test]
     fn test_conversion_rate_endpoint_type() {
         // Verify that the endpoint uses the correct endpoint type for rate limiting
-        let endpoint_type = EndpointType::from_path("public/staking/get-conversion-rate");
+        let endpoint_type = EndpointType::from_path(CONVERSION_RATE_ENDPOINT);
         assert_eq!(endpoint_type, EndpointType::PublicStaking);
     }
 }

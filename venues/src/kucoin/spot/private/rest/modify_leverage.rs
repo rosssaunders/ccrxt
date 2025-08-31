@@ -1,7 +1,6 @@
 use serde::Serialize;
 
-use super::RestClient;
-use crate::kucoin::spot::{ResponseHeaders, RestResponse, Result};
+use crate::kucoin::spot::{ResponseHeaders, RestResponse, Result, private_client::RestClient};
 
 // Endpoint constant for Modify Leverage
 const MODIFY_LEVERAGE_ENDPOINT: &str = "/api/v3/position/update-user-leverage";

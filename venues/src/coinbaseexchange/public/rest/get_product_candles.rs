@@ -4,8 +4,7 @@
 
 use serde::{Deserialize, Serialize};
 
-use super::RestClient;
-use crate::coinbaseexchange::RestResult;
+use crate::coinbaseexchange::{PublicRestClient, RestResult};
 
 /// Endpoint URL path for getting product candles
 const ENDPOINT_PATH: &str = "products/{}/candles";
@@ -35,7 +34,7 @@ pub struct Candle(pub u64, pub f64, pub f64, pub f64, pub f64, pub f64);
 /// Response from getting product candles
 pub type GetProductCandlesResponse = Vec<Candle>;
 
-impl RestClient {
+impl PublicRestClient {
     /// Get product candles
     ///
     /// Historic rates for a product. Rates are returned in grouped buckets.

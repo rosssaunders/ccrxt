@@ -1,8 +1,9 @@
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::binance::options::{OptionsContractType, OptionsOrderSide, RestResult};
+use crate::binance::options::{
+    OptionsContractType, OptionsOrderSide, RestResult, private_client::RestClient,
+};
 
 const CREATE_BLOCK_TRADE_ENDPOINT: &str = "/eapi/v1/block/order/create";
 

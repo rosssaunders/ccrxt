@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
-use crate::binance::usdm::{ConvertOrderStatus, RestResult};
+use crate::binance::usdm::{ConvertOrderStatus, RestResult, private_client::UsdmClient};
 
 /// Endpoint path for the accept convert quote API.
 const ACCEPT_CONVERT_QUOTE_ENDPOINT: &str = "/fapi/v1/convert/acceptQuote";

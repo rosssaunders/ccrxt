@@ -1,4 +1,3 @@
-mod client;
 mod get_currency_list;
 mod get_depth;
 mod get_history_kline;
@@ -9,7 +8,6 @@ mod get_ticker_all_pairs;
 mod get_trading_pair_details;
 mod get_trading_pairs_list;
 
-pub use client::RestClient;
 pub use get_currency_list::{Currency, GetCurrencyListRequest, GetCurrencyListResponse};
 pub use get_depth::{DepthData, GetDepthRequest, GetDepthResponse, OrderBookEntry};
 pub use get_history_kline::{

@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
-use crate::binance::usdm::RestResult;
+use crate::binance::usdm::{RestResult, private_client::UsdmClient};
 
 /// Endpoint for querying rate limit order usage.
 const RATE_LIMIT_ORDER_ENDPOINT: &str = "/fapi/v1/rateLimit/order";

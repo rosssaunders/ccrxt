@@ -4,6 +4,10 @@ pub mod pagination;
 mod rate_limit;
 pub mod rate_limiter_trait;
 
+// Client modules
+pub mod private_client;
+pub mod public_client;
+
 pub mod private {
     pub mod rest;
     pub use self::rest::{Credentials, RestClient};
@@ -38,6 +42,7 @@ pub use private::rest::{
 pub use private::rest::{DerivativesPosition, GetDerivativesPositionsParams};
 // Re-export history - orders, trades, derivatives settlement
 pub use private::rest::{DerivativesSettlementResponse, GetDerivativesSettlementHistoryParams};
+pub use private::rest::{GetTradesHistoryParams, HistoryTrade};
 // Re-export trade types for convenience
 pub use private::rest::{GetTradesParams, Trade};
 // Re-export trading account types for convenience
@@ -50,11 +55,8 @@ pub use private::rest::{
     GetWalletTransactionsParams, TransactionStatus, TransactionType, WalletTransaction,
     WalletTransactionsResponse,
 };
-pub use private::{
-    RestClient as PrivateRestClient,
-    rest::{GetTradesHistoryParams, HistoryTrade},
-};
-pub use public::RestClient as PublicRestClient;
+// Re-export clients (new locations take precedence)
+pub use private_client::RestClient as PrivateRestClient;
 // Re-export index price types for convenience
 pub use public::rest::IndexPrice;
 // Re-export nonce types for convenience
@@ -73,6 +75,7 @@ pub use public::rest::{HybridOrderbook, OrderbookEntry, OrderbookRequest};
 pub use public::rest::{Market, MarketStatus, MarketType, MarketsResponse, SingleMarketResponse};
 // Re-export public trade types for convenience
 pub use public::rest::{PublicTrade, PublicTradesRequest};
+pub use public_client::RestClient as PublicRestClient;
 pub use rate_limit::{EndpointType, RateLimit, RateLimitError, RateLimiter};
 
 /// Type alias for results returned by Bullish API operations

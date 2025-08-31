@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::RestClient;
-use crate::coinbaseexchange::RestResult;
+use crate::coinbaseexchange::{PublicRestClient, RestResult};
 
 const PRODUCT_VOLUME_SUMMARY_ENDPOINT: &str = "products/volume-summary";
 
@@ -56,7 +55,7 @@ pub struct ProductVolumeSummary {
 /// Response from getting product volume summary
 pub type GetProductVolumeSummaryResponse = Vec<ProductVolumeSummary>;
 
-impl RestClient {
+impl PublicRestClient {
     /// Get all product volume summary
     ///
     /// Gets 30day and 24hour volume for all products and market types.

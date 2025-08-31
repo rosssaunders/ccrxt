@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use crate::binance::coinm::{
-    MarginModificationType, PositionSide, RestResult, private::rest::client::RestClient,
+    MarginModificationType, PositionSide, RestResult, private_client::RestClient,
 };
 
 const POSITION_MARGIN_ENDPOINT: &str = "/dapi/v1/positionMargin";

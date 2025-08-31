@@ -1,7 +1,5 @@
 // Private REST endpoints module for Binance Spot
 
-pub mod client;
-
 // Trading endpoints
 pub mod amend_order;
 pub mod cancel_all_orders;
@@ -39,7 +37,5 @@ pub mod my_allocations;
 pub mod my_prevented_matches;
 pub mod order_amendments;
 pub mod rate_limit_order;
-
-pub use client::RestClient;
 
 pub use crate::binance::shared::credentials::Credentials;

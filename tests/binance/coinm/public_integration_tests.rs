@@ -16,9 +16,9 @@ use venues::binance::{
         ConstituentsRequest, ContinuousKlineRequest, ContractType, ContractTypeFilter,
         FundingRateRequest, HistoricalTradesRequest, IndexPriceKlineRequest, KlineInterval,
         KlineRequest, MarkPriceKlineRequest, OpenInterestHistRequest, OpenInterestRequest,
-        OrderBookRequest, Period, PremiumIndexKlineRequest, PremiumIndexRequest,
-        RecentTradesRequest, RestClient as PublicRestClient, TakerBuySellVolRequest,
-        Ticker24hrParams, TickerPriceRequest, TopLongShortPositionRatioParams,
+        OrderBookRequest, Period, PremiumIndexKlineRequest, PremiumIndexRequest, PublicRestClient,
+        RecentTradesRequest, TakerBuySellVolRequest, Ticker24hrParams, TickerPriceRequest,
+        TopLongShortPositionRatioParams,
     },
     shared::{RateLimiter, RateLimits},
 };

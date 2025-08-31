@@ -2,10 +2,10 @@ use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
 use crate::binance::usdm::{
     RestResult,
     enums::{MarginAction, PositionSide},
+    private_client::UsdmClient,
 };
 
 const MODIFY_POSITION_MARGIN_ENDPOINT: &str = "/fapi/v1/positionMargin";

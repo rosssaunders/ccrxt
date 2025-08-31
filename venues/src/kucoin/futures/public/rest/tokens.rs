@@ -1,6 +1,6 @@
 use serde::Deserialize;
 
-use crate::kucoin::spot::{ResponseHeaders, RestResponse, Result};
+use crate::kucoin::futures::{ResponseHeaders, RestResponse, Result, public_client::RestClient};
 
 // API endpoints
 const PUBLIC_TOKEN_ENDPOINT: &str = "/api/v1/bullet-public";
@@ -36,7 +36,7 @@ pub struct WebSocketToken {
     pub instance_servers: Vec<InstanceServer>,
 }
 
-impl super::RestClient {
+impl RestClient {
     /// Get public WebSocket token for futures
     ///
     /// [docs](https://www.kucoin.com/docs-new/websocket-api/base-info/get-public-token-futures)
@@ -44,7 +44,7 @@ impl super::RestClient {
         &self,
     ) -> Result<(RestResponse<WebSocketToken>, ResponseHeaders)> {
         // POST requests use empty params for public endpoints
-        self.send_request(PUBLIC_TOKEN_ENDPOINT, None::<&()>).await
+        self.get(PUBLIC_TOKEN_ENDPOINT, None).await
     }
 }
 

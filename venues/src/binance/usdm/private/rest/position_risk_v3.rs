@@ -4,8 +4,7 @@ use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
-use crate::binance::usdm::{RestResult, enums::*};
+use crate::binance::usdm::{RestResult, enums::*, private_client::UsdmClient};
 
 /// Endpoint path for Position Risk V3.
 const POSITION_RISK_V3_ENDPOINT: &str = "/fapi/v3/positionRisk";

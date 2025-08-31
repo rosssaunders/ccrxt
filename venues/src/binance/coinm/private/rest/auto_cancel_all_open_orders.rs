@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::binance::coinm::{RestResult, private::rest::client::RestClient};
+use crate::binance::coinm::{RestResult, private_client::RestClient};
 
 const COUNTDOWN_CANCEL_ALL_ENDPOINT: &str = "/dapi/v1/countdownCancelAll";
 

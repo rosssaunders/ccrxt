@@ -2,8 +2,7 @@
 
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
-use crate::binance::usdm::RestResult;
+use crate::binance::usdm::{RestResult, private_client::UsdmClient};
 
 /// Endpoint path for Get Futures Trade Download Link by Id.
 const TRADE_DOWNLOAD_LINK_ENDPOINT: &str = "/fapi/v1/trade/asyn/id";

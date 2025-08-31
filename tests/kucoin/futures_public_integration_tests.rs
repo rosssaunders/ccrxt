@@ -6,9 +6,9 @@
 use std::sync::Arc;
 
 use rest::native::NativeHttpClient;
-use venues::kucoin::futures::public::rest::{
-    GetAllContractsRequest, GetContractRequest, GetCurrentFundingRateRequest,
-    RestClient as PublicRestClient,
+use venues::kucoin::futures::{
+    public::rest::{GetAllContractsRequest, GetContractRequest, GetCurrentFundingRateRequest},
+    public_client::RestClient as PublicRestClient,
 };
 
 /// Helper function to create a test client with shared rate limiter

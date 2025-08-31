@@ -2,8 +2,7 @@ use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
 
-use super::RestClient;
-use crate::binance::usdm::{ContractType, KlineInterval, RestResult};
+use crate::binance::usdm::{ContractType, KlineInterval, RestResult, public_client::RestClient};
 
 const CONTINUOUS_KLINES_ENDPOINT: &str = "/fapi/v1/continuousKlines";
 

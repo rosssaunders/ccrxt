@@ -1,5 +1,3 @@
-pub mod credentials;
-pub use credentials::Credentials;
 mod account_balance;
 mod account_ledgers;
 mod accounts;
@@ -7,7 +5,6 @@ mod add_margin_order;
 mod borrow;
 mod cancel_all_orders;
 mod cancel_order;
-mod client;
 mod create_inner_transfer;
 mod create_sub_transfer;
 mod create_withdrawal;
@@ -50,7 +47,6 @@ pub use add_margin_order::{
 pub use borrow::{BorrowRequest, BorrowResponse, TimeInForce};
 pub use cancel_all_orders::{CancelAllOrdersRequest, CancelAllOrdersResponse};
 pub use cancel_order::{CancelOrderRequest, CancelOrderResponse};
-pub use client::RestClient;
 pub use create_inner_transfer::{CreateInnerTransferRequest, InnerTransferResponse};
 pub use create_sub_transfer::{CreateSubTransferRequest, SubTransferResponse};
 pub use create_withdrawal::{CreateWithdrawalRequest, WithdrawalResponse};

@@ -1,4 +1,3 @@
-mod client;
 mod get_product;
 mod get_product_book;
 mod get_product_candles;
@@ -8,7 +7,6 @@ mod get_product_trades;
 mod get_product_volume_summary;
 mod get_products;
 
-pub use client::RestClient;
 pub use get_product::{GetProductRequest, GetProductResponse};
 pub use get_product_book::{
     AuctionInfo, GetProductBookRequest, GetProductBookResponse, OrderBookLevel,

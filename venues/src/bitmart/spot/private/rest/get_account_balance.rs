@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::bitmart::{RestResult, rate_limit::EndpointType};
+use crate::bitmart::{RestResult, rate_limit::EndpointType, spot::private_client::RestClient};
 
 const ACCOUNT_BALANCE_ENDPOINT: &str = "/account/v1/wallet";
 

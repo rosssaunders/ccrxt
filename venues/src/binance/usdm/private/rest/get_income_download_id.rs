@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
-use crate::binance::usdm::RestResult;
+use crate::binance::usdm::{RestResult, private_client::UsdmClient};
 
 /// Endpoint path for getting download ID for futures transaction history.
 const GET_INCOME_DOWNLOAD_ID_ENDPOINT: &str = "/fapi/v1/income/asyn";

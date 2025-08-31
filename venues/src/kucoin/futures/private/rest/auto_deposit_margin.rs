@@ -1,6 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-use crate::kucoin::spot::{AutoDepositStatus, ResponseHeaders, RestResponse, Result};
+use crate::kucoin::futures::{
+    AutoDepositStatus, ResponseHeaders, RestResponse, Result, private_client::RestClient,
+};
 
 /// Endpoint URL for Auto Deposit Margin
 const AUTO_DEPOSIT_MARGIN_ENDPOINT: &str = "/api/v1/position/margin/auto-deposit-status";
@@ -23,7 +25,7 @@ pub struct AutoDepositMarginResponse {
     pub result: bool,
 }
 
-impl super::RestClient {
+impl RestClient {
     /// Enable/Disable Auto Deposit Margin
     ///
     /// Enable or disable auto deposit margin for a specific futures position.

@@ -1,7 +1,7 @@
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
-use crate::binance::coinm::{RestResult, enums::Period, public::rest::RestClient};
+use crate::binance::coinm::{RestResult, enums::Period, public_client::RestClient};
 
 /// Endpoint path for Top Trader Long/Short Ratio (Positions)
 const TOP_LONG_SHORT_POSITION_RATIO_ENDPOINT: &str = "/futures/data/topLongShortPositionRatio";

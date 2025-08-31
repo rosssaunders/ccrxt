@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::kucoin::spot::{ResponseHeaders, RestResponse, Result};
+use crate::kucoin::futures::{ResponseHeaders, RestResponse, Result, private_client::RestClient};
 
 const MODIFY_CROSS_MARGIN_LEVERAGE_ENDPOINT: &str = "/api/v2/changeCrossUserLeverage";
 
@@ -22,7 +22,7 @@ pub struct ModifyCrossMarginLeverageResponse {
     pub success: bool,
 }
 
-impl super::RestClient {
+impl RestClient {
     /// Modify cross margin leverage for a symbol
     ///
     /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/positions/modify-cross-margin-leverage)

@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::binance::coinm::{RestResult, public::rest::RestClient};
+use crate::binance::coinm::{RestResult, public_client::RestClient};
 
 /// Endpoint path for recent trades list.
 const RECENT_TRADES_ENDPOINT: &str = "/dapi/v1/trades";

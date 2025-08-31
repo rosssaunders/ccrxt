@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use super::{cancel_order::CancelOrderRequest, client::RestClient};
-use crate::bybit::{EndpointType, RestResult, enums::*};
+use super::cancel_order::CancelOrderRequest;
+use crate::bybit::{EndpointType, RestResult, enums::*, private_client::RestClient};
 
 /// Endpoint URL for batch cancelling orders
 const BATCH_CANCEL_ORDERS_ENDPOINT: &str = "/v5/order/cancel-batch";

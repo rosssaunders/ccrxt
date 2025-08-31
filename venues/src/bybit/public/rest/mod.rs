@@ -1,5 +1,3 @@
-pub mod client;
-
 // Market Data endpoints
 pub mod get_kline;
 pub mod get_orderbook;
@@ -38,7 +36,6 @@ pub mod get_collateral_coins;
 pub mod get_ins_margin_coin_info;
 pub mod get_ins_product_info;
 
-pub use client::RestClient;
 // Re-export margin & loan endpoints
 pub use get_borrowable_coins::{
     GetBorrowableCoinsData, GetBorrowableCoinsRequest, GetBorrowableCoinsResponse,

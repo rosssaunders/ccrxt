@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::binance::spot::RestResult;
+use crate::binance::spot::{RestResult, private_client::RestClient};
 
 const GET_RATE_LIMIT_ORDER_ENDPOINT: &str = "/api/v3/rateLimit/order";
 

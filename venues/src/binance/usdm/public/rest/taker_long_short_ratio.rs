@@ -2,8 +2,7 @@ use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
 
-use super::RestClient;
-use crate::binance::usdm::{RestResult, enums::Period};
+use crate::binance::usdm::{RestResult, enums::Period, public_client::RestClient};
 
 /// Endpoint path for Taker Buy/Sell Volume.
 const TAKER_LONG_SHORT_RATIO_ENDPOINT: &str = "/futures/data/takerlongshortRatio";

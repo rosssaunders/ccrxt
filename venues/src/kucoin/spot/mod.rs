@@ -1,39 +1,29 @@
-mod enums;
-mod errors;
-mod rate_limit;
-pub mod rate_limiter_trait;
-
-// Private API modules
+pub mod enums;
+pub mod errors;
 pub mod private;
-// Public API modules
+pub mod private_client;
 pub mod public;
+pub mod public_client;
+pub mod rate_limit;
 
-// Re-export key components
+// Re-export commonly used types
 pub use enums::*;
-pub use errors::{ApiError, KucoinError, Result};
-pub use private::RestClient as PrivateRestClient;
-pub use public::RestClient as PublicRestClient;
-// Re-export public REST types for integration tests
-pub use public::rest::{
-    AllCurrenciesCurrency, AllSymbolsInfo, AllTickersResponse, AllTickersStatistics, Currency,
-    GetAllCurrenciesRequest, GetAllSymbolsRequest, GetAllTickersRequest, GetCurrencyRequest,
-    GetKlinesRequest, GetPartOrderBookRequest, GetServerTimeRequest, GetServerTimeResponse,
-    GetSymbolRequest, GetTickerRequest, GetTradesRequest, Kline, OrderBookLevel,
-    PartOrderBookResponse, SymbolInfo, TickerStatistics, Trade,
-};
-pub use rate_limit::{RateLimitHeader, RateLimitStatus, RateLimiter, ResourcePool, VipLevel};
+pub use errors::{ApiError, ErrorResponse, KucoinError, Result};
+// Import shared types from rate_limit module
+pub use rate_limit::RateLimitHeader;
 
-pub use crate::kucoin::spot::errors::ErrorResponse;
+// Import shared credentials from shared module
+pub use super::shared::credentials::Credentials;
 
-// Futures are accessible through public::futures and private::futures
-
-/// Represents the relevant response headers returned by the KuCoin API for rate limiting.
+// Type aliases for compatibility
 pub type ResponseHeaders = RateLimitHeader;
 
-/// A general response wrapper for KuCoin API responses
+/// Standard REST API response structure for KuCoin Spot
 #[derive(Debug, Clone, serde::Deserialize)]
 pub struct RestResponse<T> {
+    /// Response code from KuCoin API
     pub code: String,
+    /// Response data
     pub data: T,
 }
 

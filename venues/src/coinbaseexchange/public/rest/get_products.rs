@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::RestClient;
-use crate::coinbaseexchange::RestResult;
+use crate::coinbaseexchange::{PublicRestClient, RestResult};
 
 const PRODUCTS_ENDPOINT: &str = "products";
 
@@ -84,7 +83,7 @@ pub struct Product {
 /// Response from getting all products
 pub type GetProductsResponse = Vec<Product>;
 
-impl RestClient {
+impl PublicRestClient {
     /// Get all known trading pairs
     ///
     /// Gets a list of available currency pairs for trading.

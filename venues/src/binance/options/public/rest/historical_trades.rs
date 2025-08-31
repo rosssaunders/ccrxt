@@ -1,8 +1,7 @@
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::binance::options::RestResult;
+use crate::binance::options::{RestResult, public_client::RestClient};
 
 const HISTORICAL_TRADES_ENDPOINT: &str = "/eapi/v1/historicalTrades";
 

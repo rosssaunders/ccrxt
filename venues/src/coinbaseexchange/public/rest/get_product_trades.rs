@@ -1,8 +1,7 @@
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 
-use super::RestClient;
-use crate::coinbaseexchange::{RestResult, enums::OrderSide};
+use crate::coinbaseexchange::{PublicRestClient, RestResult, enums::OrderSide};
 
 /// Endpoint URL path for getting product trades
 const ENDPOINT_PATH: &str = "products/{}/trades";
@@ -56,7 +55,7 @@ pub struct PaginationInfo {
 /// Response from getting product trades
 pub type GetProductTradesResponse = Vec<Trade>;
 
-impl RestClient {
+impl PublicRestClient {
     /// Get product trades
     ///
     /// Gets a list of the latest trades for a product.

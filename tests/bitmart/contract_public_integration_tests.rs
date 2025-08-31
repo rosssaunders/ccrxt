@@ -3,7 +3,9 @@
 //! These tests verify that the Bitmart contract public REST API client can successfully
 //! communicate with the live API and receive valid responses.
 
-use venues::bitmart::contract::public::rest::{GetContractDetailsRequest, RestClient};
+use venues::bitmart::contract::{
+    public::rest::GetContractDetailsRequest, public_client::RestClient,
+};
 
 /// Helper function to create a test client
 fn create_contract_test_client() -> RestClient {

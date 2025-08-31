@@ -3,17 +3,20 @@ pub mod errors;
 pub mod rate_limit;
 pub mod rate_limiter_trait;
 
+// Client modules
+pub mod private_client;
+pub mod public_client;
+
 pub mod private {
-    mod rest;
+    pub mod rest;
 
     pub use self::rest::{
-        BalanceData, GetWalletBalanceRequest, GetWalletBalanceResponse,
-        RestClient as PrivateRestClient, WalletBalance,
+        BalanceData, GetWalletBalanceRequest, GetWalletBalanceResponse, WalletBalance,
     };
 }
 
 pub mod public {
-    mod rest;
+    pub mod rest;
 
     pub use self::rest::{
         GetBorrowableCoinsData,
@@ -89,7 +92,6 @@ pub mod public {
         InstrumentInfo,
         Kline,
         OrderbookLevel,
-        RestClient as PublicRestClient,
         ServerTimeData,
         TickerInfo,
         TradeInfo,
@@ -99,10 +101,10 @@ pub mod public {
 // Re-export public modules
 pub use enums::*;
 pub use errors::{ApiError, Errors};
-// Export clients
-pub use private::PrivateRestClient;
+// Keep backwards compatibility for other types
 pub use private::{BalanceData, GetWalletBalanceRequest, GetWalletBalanceResponse, WalletBalance};
-pub use public::PublicRestClient;
+// Export clients (new locations take precedence)
+pub use private_client::RestClient as PrivateRestClient;
 // Re-export public REST types for integration tests
 pub use public::{
     GetBorrowableCoinsData,
@@ -181,6 +183,7 @@ pub use public::{
     TickerInfo,
     TradeInfo,
 };
+pub use public_client::RestClient as PublicRestClient;
 // Note: Trade and Position endpoint types are available via the private module
 // Example usage: bybit::private::CreateOrderRequest
 pub use rate_limit::{EndpointType, RateLimit, RateLimitError, RateLimiter};

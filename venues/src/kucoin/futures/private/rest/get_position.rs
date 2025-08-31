@@ -1,6 +1,9 @@
 use serde::{Deserialize, Serialize};
 
-use crate::kucoin::spot::{AutoDepositStatus, PositionSide, ResponseHeaders, RestResponse, Result};
+use crate::kucoin::futures::{
+    AutoDepositStatus, PositionSide, ResponseHeaders, RestResponse, Result,
+    private_client::RestClient,
+};
 
 /// Endpoint URL for getting position details
 const GET_POSITION_ENDPOINT: &str = "/api/v1/position";
@@ -119,7 +122,7 @@ pub struct Position {
     pub available_balance: f64,
 }
 
-impl super::RestClient {
+impl RestClient {
     /// Get Position Details
     ///
     /// Get detailed position information for a specific symbol.
@@ -144,7 +147,7 @@ impl super::RestClient {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::kucoin::spot::{AutoDepositStatus, PositionSide};
+    use crate::kucoin::futures::{AutoDepositStatus, PositionSide};
 
     #[test]
     fn test_get_position_request_creation() {

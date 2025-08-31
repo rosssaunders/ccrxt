@@ -2,8 +2,7 @@ use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
 
-use super::RestClient;
-use crate::binance::usdm::{RestResult, enums::KlineInterval};
+use crate::binance::usdm::{RestResult, enums::KlineInterval, public_client::RestClient};
 
 const MARK_PRICE_KLINES_ENDPOINT: &str = "/fapi/v1/markPriceKlines";
 

@@ -1,5 +1,6 @@
 use std::fmt;
 
+use rest::HttpError;
 use serde::Deserialize;
 use thiserror::Error;
 
@@ -25,6 +26,9 @@ pub enum Errors {
 
     /// Error during JSON serialization or deserialization
     SerdeJsonError(serde_json::Error),
+
+    /// HTTP client error
+    HttpError(HttpError),
 }
 
 impl fmt::Display for Errors {
@@ -36,6 +40,7 @@ impl fmt::Display for Errors {
             Errors::Error(msg) => write!(f, "General error: {msg}"),
             Errors::RateLimitError(err) => write!(f, "Rate limit error: {err}"),
             Errors::SerdeJsonError(err) => write!(f, "JSON error: {err}"),
+            Errors::HttpError(err) => write!(f, "HTTP error: {err}"),
         }
     }
 }
@@ -51,6 +56,12 @@ impl From<serde_json::Error> for Errors {
 impl From<crate::deribit::rate_limit::RateLimitError> for Errors {
     fn from(err: crate::deribit::rate_limit::RateLimitError) -> Self {
         Errors::RateLimitError(err)
+    }
+}
+
+impl From<HttpError> for Errors {
+    fn from(err: HttpError) -> Self {
+        Errors::HttpError(err)
     }
 }
 

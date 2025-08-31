@@ -2,8 +2,7 @@ use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
-use crate::binance::usdm::{RestResult, enums::*};
+use crate::binance::usdm::{RestResult, enums::*, private_client::UsdmClient};
 
 /// Endpoint path for modifying an order on Binance USDM Futures.
 const MODIFY_ORDER_ENDPOINT: &str = "/fapi/v1/order";

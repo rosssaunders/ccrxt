@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::kucoin::spot::{ResponseHeaders, RestResponse, Result};
+use crate::kucoin::futures::{ResponseHeaders, RestResponse, Result, public_client::RestClient};
 
 const MARK_PRICE_ENDPOINT_PREFIX: &str = "/api/v1/mark-price/";
 const MARK_PRICE_ENDPOINT_SUFFIX: &str = "/current";
@@ -32,7 +32,7 @@ pub struct MarkPrice {
     pub index_price: f64,
 }
 
-impl super::RestClient {
+impl RestClient {
     /// Get current mark price for a symbol
     ///
     /// Returns the current mark price for the specified futures contract symbol.
@@ -54,8 +54,7 @@ impl super::RestClient {
             "{}{}{}",
             MARK_PRICE_ENDPOINT_PREFIX, request.symbol, MARK_PRICE_ENDPOINT_SUFFIX
         );
-        self.send_request(&endpoint, None::<&GetMarkPriceRequest>)
-            .await
+        self.get(&endpoint, None).await
     }
 }
 

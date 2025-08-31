@@ -1,7 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-use crate::kucoin::spot::{
+use crate::kucoin::futures::{
     OrderSide, OrderType, ResponseHeaders, RestResponse, Result, StopType, TimeInForce,
+    private_client::RestClient,
 };
 
 /// Endpoint URL for Add Take Profit and Stop Loss Order
@@ -106,7 +107,7 @@ pub struct AddTpSlOrderResponse {
     pub client_oid: Option<String>,
 }
 
-impl super::RestClient {
+impl RestClient {
     /// Add Take Profit and Stop Loss Order
     ///
     /// Add a take profit and stop loss order for futures trading. This allows setting

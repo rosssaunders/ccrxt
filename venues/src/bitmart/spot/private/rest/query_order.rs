@@ -4,9 +4,9 @@
 
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
 use crate::bitmart::{
     OrderMode, OrderSide, OrderStatus, OrderType, RestResult, rate_limit::EndpointType,
+    spot::private_client::RestClient,
 };
 
 const QUERY_ORDER_ENDPOINT: &str = "/spot/v4/query/order";

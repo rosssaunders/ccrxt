@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::bybit::{EndpointType, RestResult, enums::*};
+use crate::bybit::{EndpointType, PublicRestClient, RestResult, enums::*};
 
 const INDEX_PRICE_KLINE_ENDPOINT: &str = "/v5/market/index-price-kline";
 
@@ -108,7 +107,7 @@ pub struct GetIndexPriceKlineResponse {
     pub time: u64,
 }
 
-impl RestClient {
+impl PublicRestClient {
     /// Get index price kline data
     ///
     /// Query for historical index price klines. This endpoint is only available for USDT/USDC perpetual

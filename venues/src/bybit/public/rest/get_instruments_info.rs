@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::bybit::{EndpointType, RestResult, enums::*};
+use crate::bybit::{EndpointType, PublicRestClient, RestResult, enums::*};
 
 const INSTRUMENTS_INFO_ENDPOINT: &str = "/v5/market/instruments-info";
 
@@ -181,7 +180,7 @@ pub struct GetInstrumentsInfoResponse {
     pub time: u64,
 }
 
-impl RestClient {
+impl PublicRestClient {
     /// Get instruments info
     ///
     /// Query for the instrument specification of online trading pairs.

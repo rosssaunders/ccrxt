@@ -1,7 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-use crate::kucoin::spot::{
+use crate::kucoin::futures::{
     OrderSide, OrderType, ResponseHeaders, RestResponse, Result, StopType, TimeInForce,
+    private_client::RestClient,
 };
 
 /// Endpoint URL for Batch Add Orders
@@ -134,7 +135,7 @@ pub struct BatchOrderResult {
     pub msg: String,
 }
 
-impl super::RestClient {
+impl RestClient {
     /// Place Multiple Orders (Batch)
     ///
     /// Place multiple orders in a single request with up to 20 orders per batch.
@@ -161,7 +162,7 @@ impl super::RestClient {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::kucoin::spot::{OrderSide, OrderType};
+    use crate::kucoin::futures::{OrderSide, OrderType};
 
     #[test]
     fn test_batch_add_orders_request_serialization() {

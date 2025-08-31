@@ -1,9 +1,9 @@
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
 use crate::binance::spot::{
     OrderResponseType, OrderSide, OrderType, RestResult, SelfTradePreventionMode, TimeInForce,
+    private_client::RestClient,
 };
 
 const TEST_ORDER_ENDPOINT: &str = "/api/v3/order/test";

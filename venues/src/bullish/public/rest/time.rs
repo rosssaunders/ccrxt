@@ -2,8 +2,7 @@
 
 use serde::Deserialize;
 
-use super::client::RestClient;
-use crate::bullish::{EndpointType, RestResult};
+use crate::bullish::{EndpointType, PublicRestClient, RestResult};
 
 /// Endpoint URL path for server time
 const SERVER_TIME_ENDPOINT: &str = "/trading-api/v1/time";
@@ -19,7 +18,7 @@ pub struct ServerTime {
     pub datetime: String,
 }
 
-impl RestClient {
+impl PublicRestClient {
     /// Get server time
     ///
     /// Retrieve the current server time. This endpoint can be used to synchronize

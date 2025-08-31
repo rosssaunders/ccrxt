@@ -2,8 +2,7 @@ use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
 
-use super::RestClient;
-use crate::binance::usdm::enums::Period;
+use crate::binance::usdm::{enums::Period, public_client::RestClient};
 
 const OPEN_INTEREST_HIST_ENDPOINT: &str = "/futures/data/openInterestHist";
 

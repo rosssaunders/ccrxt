@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::bybit::{EndpointType, RestResult};
+use crate::bybit::{EndpointType, PublicRestClient, RestResult};
 
 const VIP_MARGIN_DATA_ENDPOINT: &str = "/v5/spot-margin-trade/data";
 
@@ -81,7 +80,7 @@ pub struct GetVipMarginDataResponse {
     pub time: u64,
 }
 
-impl RestClient {
+impl PublicRestClient {
     /// Get VIP margin data
     ///
     /// Query for Bybit VIP margin data including borrowing rates, collateral ratios, and liquidation ratios.

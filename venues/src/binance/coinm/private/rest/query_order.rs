@@ -6,7 +6,7 @@ use crate::binance::coinm::{
         OrderSide, OrderStatus, OrderType, PriceMatch, SelfTradePreventionMode, TimeInForce,
         WorkingType,
     },
-    private::rest::client::RestClient,
+    private_client::RestClient,
 };
 
 const ORDER_ENDPOINT: &str = "/dapi/v1/order";

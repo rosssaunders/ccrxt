@@ -1,7 +1,6 @@
 use serde::Deserialize;
 
-use super::client::RestClient;
-use crate::binance::options::RestResult;
+use crate::binance::options::{RestResult, public_client::RestClient};
 
 const PING_ENDPOINT: &str = "/eapi/v1/ping";
 

@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::bybit::{EndpointType, RestResult, enums::*};
+use crate::bybit::{EndpointType, RestResult, enums::*, private_client::RestClient};
 
 /// Endpoint URL for creating orders
 const CREATE_ORDER_ENDPOINT: &str = "/v5/order/create";

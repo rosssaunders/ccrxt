@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::kucoin::spot::{ResponseHeaders, RestResponse, Result};
+use crate::kucoin::futures::{ResponseHeaders, RestResponse, Result, private_client::RestClient};
 
 /// Endpoint URL for funding rate history
 const FUNDING_RATE_HISTORY_ENDPOINT: &str = "/api/v1/funding-rate/{symbol}/history";
@@ -52,7 +52,7 @@ pub struct FundingRateHistoryItem {
 /// Response type for funding rate history.
 pub type GetFundingRateHistoryResponse = Vec<FundingRateHistoryItem>;
 
-impl super::RestClient {
+impl RestClient {
     /// Get Private Funding History
     ///
     /// Retrieve the funding history of the current user.

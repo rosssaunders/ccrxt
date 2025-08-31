@@ -2,13 +2,13 @@ use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
 use crate::binance::usdm::{
     RestResult,
     enums::{
         OrderSide, OrderStatus, OrderType, PositionSide, PriceMatch, SelfTradePreventionMode,
         TimeInForce, WorkingType,
     },
+    private_client::UsdmClient,
 };
 
 /// Endpoint path for cancelling multiple orders in a single batch for USDM futures.

@@ -1,9 +1,8 @@
 use serde::Serialize;
 
-use super::client::RestClient;
 // Re-export the response type from get_mmp_config
 pub use super::get_mmp_config::MmpConfigResponse;
-use crate::binance::options::RestResult;
+use crate::binance::options::{RestResult, private_client::RestClient};
 
 const RESET_MMP_ENDPOINT: &str = "/eapi/v1/mmpReset";
 

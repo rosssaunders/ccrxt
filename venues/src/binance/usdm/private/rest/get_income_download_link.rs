@@ -2,8 +2,7 @@ use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
-use crate::binance::usdm::RestResult;
+use crate::binance::usdm::{RestResult, private_client::UsdmClient};
 
 /// Endpoint path for getting the futures transaction history download link by ID.
 const GET_INCOME_DOWNLOAD_LINK_ENDPOINT: &str = "/fapi/v1/income/asyn/id";

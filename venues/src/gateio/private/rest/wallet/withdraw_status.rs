@@ -185,7 +185,7 @@ mod tests {
 
         // Verify precision is maintained
         assert_eq!(status.amount.len(), 20); // 18 decimal places + "0."
-        assert_eq!(status.fee.len(), 19); // 15 decimal places + "0.00"
+        assert_eq!(status.fee.len(), 20); // 18 decimal places + "0."
     }
 
     #[test]

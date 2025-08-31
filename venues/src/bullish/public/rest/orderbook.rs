@@ -2,8 +2,7 @@
 
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::bullish::{EndpointType, RestResult};
+use crate::bullish::{EndpointType, PublicRestClient, RestResult};
 
 /// Endpoint URL path for orderbook
 const ORDERBOOK_ENDPOINT: &str = "/trading-api/v1/markets/{}/orderbook/hybrid";
@@ -50,7 +49,7 @@ pub struct OrderbookRequest {
     pub aggregate: Option<bool>,
 }
 
-impl RestClient {
+impl PublicRestClient {
     /// Get hybrid orderbook for a market
     ///
     /// Retrieve the current orderbook state for a specific market.

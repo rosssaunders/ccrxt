@@ -2,18 +2,18 @@ mod enums;
 mod errors;
 mod rate_limit;
 
+// Root level clients
+pub mod private_client;
+pub mod public_client;
+
 // Private module with re-exports
 pub mod private {
     pub mod rest;
-    // Re-export RestClient so it can be re-exported by the parent
-    pub use self::rest::RestClient as PrivateRestClient;
 }
 
 // Public module with re-exports
 pub mod public {
     pub mod rest;
-    // Re-export RestClient so it can be re-exported by the parent
-    pub use self::rest::RestClient as PublicRestClient;
 }
 
 // Re-export the RestClients at the spot level
@@ -21,14 +21,14 @@ pub mod public {
 pub use enums::*;
 pub use errors::{ApiError, Errors};
 // Re-export for backward compatibility
-pub use private::PrivateRestClient;
-pub use public::PublicRestClient;
+pub use private_client::RestClient as PrivateRestClient;
 // Re-export all public request types for integration tests
 pub use public::rest::{
     AggTradesRequest, AvgPriceRequest, DepthRequest, ExchangeInfoRequest, HistoricalTradesRequest,
     KlinesRequest, Ticker24hrRequest, TickerBookRequest, TickerPriceRequest, TickerRequest,
     TickerTradingDayRequest, TradesRequest, UiKlinesRequest,
 };
+pub use public_client::RestClient as PublicRestClient;
 pub use rate_limit::{RateLimitHeader, RateLimiter};
 
 pub use crate::binance::spot::errors::ErrorResponse;

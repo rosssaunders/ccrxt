@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::kucoin::spot::{ResponseHeaders, RestResponse, Result};
+use crate::kucoin::futures::{ResponseHeaders, RestResponse, Result, private_client::RestClient};
 
 const PRIVATE_TOKEN_ENDPOINT: &str = "/api/v1/bullet-private";
 
@@ -39,7 +39,7 @@ pub struct WebSocketPrivateToken {
     pub instance_servers: Vec<InstanceServer>,
 }
 
-impl super::RestClient {
+impl RestClient {
     /// Get private WebSocket token for futures
     ///
     /// [docs](https://www.kucoin.com/docs-new/websocket-api/base-info/get-private-token-futures)

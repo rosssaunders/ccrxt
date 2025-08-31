@@ -1,8 +1,7 @@
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::binance::spot::RestResult;
+use crate::binance::spot::{RestResult, public_client::RestClient};
 
 const TICKER_BOOK_ENDPOINT: &str = "/api/v3/ticker/bookTicker";
 

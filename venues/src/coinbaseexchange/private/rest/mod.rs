@@ -1,15 +1,13 @@
 mod cancel_orders;
-mod client;
 mod create_order;
-mod credentials;
-mod get_account_balances;
+pub mod credentials;
+pub mod get_account_balances;
 mod get_fills;
 mod get_orders;
 
 pub use cancel_orders::{
     CancelAllOrdersRequest, CancelAllOrdersResponse, CancelOrderRequest, CancelOrderResponse,
 };
-pub use client::RestClient;
 pub use create_order::{CreateOrderRequest, CreateOrderResponse};
 pub use credentials::Credentials;
 pub use get_account_balances::{

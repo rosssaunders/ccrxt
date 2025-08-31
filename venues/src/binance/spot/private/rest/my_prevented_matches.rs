@@ -1,8 +1,7 @@
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::binance::spot::{RestResult, SelfTradePreventionMode};
+use crate::binance::spot::{RestResult, SelfTradePreventionMode, private_client::RestClient};
 
 const GET_MY_PREVENTED_MATCHES_ENDPOINT: &str = "/api/v3/myPreventedMatches";
 

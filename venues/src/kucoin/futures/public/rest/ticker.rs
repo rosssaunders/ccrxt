@@ -1,6 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-use crate::kucoin::spot::{OrderSide, ResponseHeaders, RestResponse, Result};
+use crate::kucoin::futures::{
+    OrderSide, ResponseHeaders, RestResponse, Result, public_client::RestClient,
+};
 
 // API endpoints
 const TICKER_ENDPOINT: &str = "/api/v1/ticker";
@@ -134,7 +136,7 @@ pub struct Stats24Hr {
     pub open_interest: f64,
 }
 
-impl super::RestClient {
+impl RestClient {
     /// Get ticker information for a specific symbol
     ///
     /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/market-data/get-ticker)
@@ -142,7 +144,7 @@ impl super::RestClient {
         &self,
         request: GetTickerRequest,
     ) -> Result<(RestResponse<TickerInfo>, ResponseHeaders)> {
-        self.send_request(TICKER_ENDPOINT, Some(&request)).await
+        self.get_with_request(TICKER_ENDPOINT, &request).await
     }
 
     /// Get all ticker information
@@ -152,8 +154,7 @@ impl super::RestClient {
         &self,
         _request: GetAllTickersRequest,
     ) -> Result<(RestResponse<GetAllTickersResponse>, ResponseHeaders)> {
-        self.send_request(ALL_TICKERS_ENDPOINT, None::<&GetAllTickersRequest>)
-            .await
+        self.get(ALL_TICKERS_ENDPOINT, None).await
     }
 
     /// Get 24hr stats for a specific symbol
@@ -163,7 +164,7 @@ impl super::RestClient {
         &self,
         request: Get24HrStatsRequest,
     ) -> Result<(RestResponse<Stats24Hr>, ResponseHeaders)> {
-        self.send_request(STATS_24HR_ENDPOINT, Some(&request)).await
+        self.get_with_request(STATS_24HR_ENDPOINT, &request).await
     }
 }
 

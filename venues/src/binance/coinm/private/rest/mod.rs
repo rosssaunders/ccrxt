@@ -10,7 +10,6 @@ pub mod cancel_order;
 pub mod change_initial_leverage;
 pub mod change_margin_type;
 pub mod change_position_mode;
-pub mod client;
 pub mod create_listen_key;
 pub mod delete_listen_key;
 pub mod extend_listen_key;
@@ -33,8 +32,6 @@ pub mod position_risk;
 pub mod query_current_open_order;
 pub mod query_order;
 pub mod user_commission_rate;
-
-pub use client::RestClient;
 
 #[allow(unused_imports)]
 pub use crate::binance::shared::credentials::Credentials;

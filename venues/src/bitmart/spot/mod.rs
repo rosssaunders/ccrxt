@@ -1,5 +1,7 @@
 pub mod enums;
 mod errors;
+pub mod private_client;
+pub mod public_client;
 
 pub mod rate_limit;
 pub mod rate_limiter_trait;
@@ -11,9 +13,10 @@ pub mod public {
         GetLatestKlineResponse, GetRecentTradesRequest, GetRecentTradesResponse,
         GetTickerAllPairsRequest, GetTickerAllPairsResponse, GetTickerRequest, GetTickerResponse,
         GetTradingPairDetailsRequest, GetTradingPairDetailsResponse, GetTradingPairsListRequest,
-        GetTradingPairsListResponse, HistoryKlineData, LatestKlineData, OrderBookEntry, RestClient,
+        GetTradingPairsListResponse, HistoryKlineData, LatestKlineData, OrderBookEntry,
         TickerArrayData, TickerData, TradeData, TradingPairDetail,
     };
+    pub use super::public_client::RestClient;
 }
 pub mod private {
     mod rest;
@@ -32,11 +35,12 @@ pub mod private {
         MarginAssetBase, MarginAssetQuote, MarginAssetTransferRequest, MarginAssetTransferResponse,
         MarginIsolatedSymbol, OrderDetails, QueryOrderRequest, QueryOrderResponse,
         QueryOrderTradesRequest, QueryOrderTradesResponse, QueryOrdersRequest, QueryOrdersResponse,
-        QueryTradesRequest, QueryTradesResponse, RestClient, SpotWalletBalance,
-        SubmitBatchOrderRequest, SubmitBatchOrderResponse, SubmitMarginOrderRequest,
-        SubmitMarginOrderResponse, SubmitOrderRequest, SubmitOrderResponse, TradeInfo,
-        WalletBalance, WithdrawAddress, WithdrawRequest, WithdrawResponse,
+        QueryTradesRequest, QueryTradesResponse, SpotWalletBalance, SubmitBatchOrderRequest,
+        SubmitBatchOrderResponse, SubmitMarginOrderRequest, SubmitMarginOrderResponse,
+        SubmitOrderRequest, SubmitOrderResponse, TradeInfo, WalletBalance, WithdrawAddress,
+        WithdrawRequest, WithdrawResponse,
     };
+    pub use super::private_client::RestClient;
 }
 
 pub mod error;

@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use super::{client::RestClient, create_order::CreateOrderRequest};
-use crate::bybit::{EndpointType, RestResult, enums::*};
+use super::create_order::CreateOrderRequest;
+use crate::bybit::{EndpointType, RestResult, enums::*, private_client::RestClient};
 
 /// Endpoint URL for batch creating orders
 const BATCH_CREATE_ORDERS_ENDPOINT: &str = "/v5/order/create-batch";

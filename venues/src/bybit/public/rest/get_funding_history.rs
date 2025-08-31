@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::bybit::{EndpointType, RestResult, enums::*};
+use crate::bybit::{EndpointType, PublicRestClient, RestResult, enums::*};
 
 const FUNDING_HISTORY_ENDPOINT: &str = "/v5/market/funding/history";
 
@@ -74,7 +73,7 @@ pub struct GetFundingHistoryResponse {
     pub time: u64,
 }
 
-impl RestClient {
+impl PublicRestClient {
     /// Get funding rate history
     ///
     /// Query for historical funding rates. This endpoint is only available for USDT/USDC perpetual

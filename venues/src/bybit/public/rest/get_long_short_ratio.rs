@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::bybit::{EndpointType, RestResult, enums::*};
+use crate::bybit::{EndpointType, PublicRestClient, RestResult, enums::*};
 
 const LONG_SHORT_RATIO_ENDPOINT: &str = "/v5/market/account-ratio";
 
@@ -72,7 +71,7 @@ pub struct GetLongShortRatioResponse {
     pub time: u64,
 }
 
-impl RestClient {
+impl PublicRestClient {
     /// Get long/short ratio
     ///
     /// Query for account long/short ratio. This endpoint is only available for USDT perpetual

@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 use crate::binance::coinm::{
     RestResult,
     enums::{ContractTypeFilter, Period},
-    public::rest::RestClient,
+    public_client::RestClient,
 };
 
 /// Endpoint path for Open Interest Statistics.

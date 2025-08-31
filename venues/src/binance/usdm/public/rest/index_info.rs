@@ -2,8 +2,7 @@ use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
 
-use super::RestClient;
-use crate::binance::usdm::RestResult;
+use crate::binance::usdm::{RestResult, public_client::RestClient};
 
 const INDEX_INFO_ENDPOINT: &str = "/fapi/v1/indexInfo";
 

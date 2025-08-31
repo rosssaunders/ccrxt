@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::bybit::{EndpointType, RestResult};
+use crate::bybit::{EndpointType, PublicRestClient, RestResult};
 
 const BORROWABLE_COINS_ENDPOINT: &str = "/v5/crypto-loan/loanable-data";
 
@@ -60,7 +59,7 @@ pub struct GetBorrowableCoinsResponse {
     pub time: u64,
 }
 
-impl RestClient {
+impl PublicRestClient {
     /// Get borrowable coins
     ///
     /// Query the list of coins that are available for crypto loans including their

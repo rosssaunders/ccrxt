@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::bybit::{EndpointType, RestResult};
+use crate::bybit::{EndpointType, PublicRestClient, RestResult};
 
 const INSURANCE_ENDPOINT: &str = "/v5/market/insurance";
 
@@ -59,7 +58,7 @@ pub struct GetInsuranceResponse {
     pub time: u64,
 }
 
-impl RestClient {
+impl PublicRestClient {
     /// Get insurance pool data
     ///
     /// Query for Bybit insurance pool data. The insurance pool is used to cover losses from

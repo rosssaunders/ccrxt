@@ -2,8 +2,7 @@
 
 use serde::{Deserialize, Deserializer, Serialize, de::Error as DeError};
 
-use super::client::RestClient;
-use crate::bullish::{EndpointType, RestResult};
+use crate::bullish::{EndpointType, PublicRestClient, RestResult};
 
 /// Endpoint URL path for markets
 const MARKETS_ENDPOINT: &str = "/trading-api/v1/markets";
@@ -264,7 +263,7 @@ where
     }
 }
 
-impl RestClient {
+impl PublicRestClient {
     /// Get all markets
     ///
     /// Retrieve information for all available markets on the exchange.

@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::bybit::{EndpointType, RestResult, enums::*};
+use crate::bybit::{EndpointType, PublicRestClient, RestResult, enums::*};
 
 const RISK_LIMIT_ENDPOINT: &str = "/v5/market/risk-limit";
 
@@ -78,7 +77,7 @@ pub struct GetRiskLimitResponse {
     pub time: u64,
 }
 
-impl RestClient {
+impl PublicRestClient {
     /// Get risk limit
     ///
     /// Query for the risk limit table for Linear/Inverse perpetual and futures contracts.

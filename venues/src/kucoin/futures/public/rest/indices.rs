@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::kucoin::spot::{ResponseHeaders, RestResponse, Result};
+use crate::kucoin::futures::{ResponseHeaders, RestResponse, Result, public_client::RestClient};
 
 // API endpoints
 const INTEREST_RATE_INDEX_ENDPOINT: &str = "/api/v1/interest/query";
@@ -124,7 +124,7 @@ pub struct PremiumIndexResponse {
     pub has_more: bool,
 }
 
-impl super::RestClient {
+impl RestClient {
     /// Get interest rate index data
     ///
     /// [docs](https://www.kucoin.com/docs-new/rest/futures-trading/market-data/get-interest-rate-index)
@@ -132,7 +132,7 @@ impl super::RestClient {
         &self,
         request: GetInterestRateIndexRequest,
     ) -> Result<(RestResponse<InterestRateIndexResponse>, ResponseHeaders)> {
-        self.send_request(INTEREST_RATE_INDEX_ENDPOINT, Some(&request))
+        self.get_with_request(INTEREST_RATE_INDEX_ENDPOINT, &request)
             .await
     }
 
@@ -143,7 +143,7 @@ impl super::RestClient {
         &self,
         request: GetPremiumIndexRequest,
     ) -> Result<(RestResponse<PremiumIndexResponse>, ResponseHeaders)> {
-        self.send_request(PREMIUM_INDEX_ENDPOINT, Some(&request))
+        self.get_with_request(PREMIUM_INDEX_ENDPOINT, &request)
             .await
     }
 }

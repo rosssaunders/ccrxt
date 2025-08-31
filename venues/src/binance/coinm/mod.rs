@@ -4,6 +4,10 @@ mod enums;
 mod errors;
 mod rate_limit;
 
+// Root level clients
+pub mod private_client;
+pub mod public_client;
+
 // Re-export modules for new structure
 pub mod public {
     pub mod rest;
@@ -12,16 +16,16 @@ pub mod public {
 
 mod private {
     mod rest;
-    // Re-export RestClient so it can be re-exported by the parent
+    // Re-export endpoint modules
     pub use self::rest::{
-        RestClient as PrivateRestClient, account::*, account_trades::*, all_orders::*,
-        auto_cancel_all_open_orders::*, batch_order::*, cancel_all_open_orders::*, cancel_order::*,
-        change_initial_leverage::*, change_margin_type::*, change_position_mode::*,
-        create_listen_key::*, delete_listen_key::*, extend_listen_key::*, force_orders::*,
-        futures_account_balance::*, get_current_position_mode::*,
-        get_transaction_history_download_id::*, get_transaction_history_download_link::*,
-        income_history::*, modify_isolated_position_margin::*, modify_multiple_orders::*,
-        modify_order::*, notional_brackets::*, open_orders::*, order::*, order_modify_history::*,
+        account::*, account_trades::*, all_orders::*, auto_cancel_all_open_orders::*,
+        batch_order::*, cancel_all_open_orders::*, cancel_order::*, change_initial_leverage::*,
+        change_margin_type::*, change_position_mode::*, create_listen_key::*, delete_listen_key::*,
+        extend_listen_key::*, force_orders::*, futures_account_balance::*,
+        get_current_position_mode::*, get_transaction_history_download_id::*,
+        get_transaction_history_download_link::*, income_history::*,
+        modify_isolated_position_margin::*, modify_multiple_orders::*, modify_order::*,
+        notional_brackets::*, open_orders::*, order::*, order_modify_history::*,
         position_adl_quantile::*, position_margin_change_history::*, position_risk::*,
         query_current_open_order::*, query_order::*, user_commission_rate::*,
     };
@@ -31,7 +35,10 @@ mod private {
 pub use enums::*;
 pub use errors::{ApiError, Errors};
 pub use private::*;
+// Re-export root level clients
+pub use private_client::RestClient as PrivateRestClient;
 pub use public::*;
+pub use public_client::RestClient as PublicRestClient;
 pub use rate_limit::{RateLimitHeader, RateLimiter};
 
 pub use crate::binance::coinm::errors::ErrorResponse;

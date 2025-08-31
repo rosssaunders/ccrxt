@@ -1,6 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-use crate::kucoin::spot::{MarginMode, ResponseHeaders, RestResponse, Result};
+use crate::kucoin::futures::{
+    MarginMode, ResponseHeaders, RestResponse, Result, private_client::RestClient,
+};
 
 /// Endpoint URL for change margin mode
 const CHANGE_MARGIN_MODE_ENDPOINT: &str = "/api/v2/position/changeMarginMode";
@@ -23,7 +25,7 @@ pub struct ChangeMarginModeResponse {
     pub result: bool,
 }
 
-impl super::RestClient {
+impl RestClient {
     /// Switch Margin Mode
     ///
     /// Switch the margin mode of a symbol between cross margin and isolated margin.

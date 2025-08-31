@@ -1,7 +1,6 @@
 mod all_currencies;
 mod all_symbols;
 mod all_tickers;
-mod client;
 mod currency;
 mod klines;
 mod partial_orderbook;
@@ -15,7 +14,6 @@ pub use all_symbols::{GetAllSymbolsRequest, SymbolInfo as AllSymbolsInfo};
 pub use all_tickers::{
     AllTickersResponse, GetAllTickersRequest, TickerStatistics as AllTickersStatistics,
 };
-pub use client::RestClient;
 pub use currency::{Currency, GetCurrencyRequest};
 pub use klines::*;
 pub use partial_orderbook::{GetPartOrderBookRequest, OrderBookLevel, PartOrderBookResponse};

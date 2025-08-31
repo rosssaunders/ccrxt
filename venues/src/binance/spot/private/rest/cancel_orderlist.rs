@@ -1,7 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::binance::spot::{ContingencyType, OrderListOrderStatus, OrderListStatus, RestResult};
+use crate::binance::spot::{
+    ContingencyType, OrderListOrderStatus, OrderListStatus, RestResult, private_client::RestClient,
+};
 
 const CANCEL_ORDERLIST_ENDPOINT: &str = "/api/v3/orderList";
 

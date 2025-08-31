@@ -981,7 +981,7 @@ async fn test_get_book_summary_by_currency_various() {
     for (currency, kind) in test_cases {
         let request = GetBookSummaryByCurrencyRequest {
             currency: currency.clone(),
-            kind: Some(kind),
+            kind: Some(kind.clone()),
         };
 
         let result = client.get_book_summary_by_currency(request).await;
@@ -2446,7 +2446,7 @@ async fn test_get_volatility_index_data() {
         currency: Currency::BTC.to_string().into(),
         start_timestamp: chrono::Utc::now().timestamp_millis() as u64 - 3600000, // 1 hour ago
         end_timestamp: chrono::Utc::now().timestamp_millis() as u64,             // now
-        resolution: Resolution::OneHour,
+        resolution: Resolution::Hour1,
     };
 
     let result = client.get_volatility_index_data(request).await;

@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::binance::coinm::{RestResult, enums::DownloadStatus, private::rest::client::RestClient};
+use crate::binance::coinm::{RestResult, enums::DownloadStatus, private_client::RestClient};
 
 const INCOME_ASYN_ID_ENDPOINT: &str = "/dapi/v1/income/asyn/id";
 

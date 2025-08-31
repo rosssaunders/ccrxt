@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::kucoin::spot::{ResponseHeaders, RestResponse, Result};
+use crate::kucoin::futures::{ResponseHeaders, RestResponse, Result, private_client::RestClient};
 
 /// Endpoint URL for getting maximum withdrawable margin
 const GET_MAX_WITHDRAW_MARGIN_ENDPOINT: &str = "/api/v1/margin/maxWithdrawMargin";
@@ -15,7 +15,7 @@ pub struct GetMaxWithdrawMarginRequest {
 /// Response containing the maximum withdrawable margin amount.
 pub type GetMaxWithdrawMarginResponse = String;
 
-impl super::RestClient {
+impl RestClient {
     /// Get Maximum Withdrawable Margin
     ///
     /// Get the maximum withdrawable margin amount for a given symbol.

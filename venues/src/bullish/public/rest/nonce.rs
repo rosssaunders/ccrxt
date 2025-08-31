@@ -2,8 +2,7 @@
 
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::bullish::{EndpointType, RestResult};
+use crate::bullish::{EndpointType, PublicRestClient, RestResult};
 
 /// Endpoint URL path for nonce
 const NONCE_ENDPOINT: &str = "/trading-api/v1/nonce";
@@ -19,7 +18,7 @@ pub struct Nonce {
     pub upper_bound: u64,
 }
 
-impl RestClient {
+impl PublicRestClient {
     /// Get the current nonce range
     ///
     /// The lower bound of nonce range is EPOCH start of day in microseconds,
@@ -35,8 +34,8 @@ impl RestClient {
     ///
     /// # Example
     /// ```no_run
-    /// # use venues::bullish::public::rest::RestClient;
-    /// # async fn example(client: RestClient) -> Result<(), Box<dyn std::error::Error>> {
+    /// # use venues::bullish::PublicRestClient;
+    /// # async fn example(client: PublicRestClient) -> Result<(), Box<dyn std::error::Error>> {
     /// let nonce = client.get_nonce().await?;
     /// println!("Nonce range: {} - {}", nonce.lower_bound, nonce.upper_bound);
     /// # Ok(())

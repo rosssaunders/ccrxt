@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::bybit::{EndpointType, RestResult, enums::*};
+use crate::bybit::{EndpointType, PublicRestClient, RestResult, enums::*};
 
 const RECENT_TRADES_ENDPOINT: &str = "/v5/market/recent-trade";
 
@@ -106,7 +105,7 @@ pub struct GetRecentTradesResponse {
     pub time: u64,
 }
 
-impl RestClient {
+impl PublicRestClient {
     /// Get recent public trades
     ///
     /// Query recent public trading history in Bybit.

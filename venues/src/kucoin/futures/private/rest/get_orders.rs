@@ -1,7 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-use crate::kucoin::spot::{
+use crate::kucoin::futures::{
     OrderSide, OrderStatus, OrderType, ResponseHeaders, RestResponse, Result,
+    private_client::RestClient,
 };
 
 /// Endpoint URL for getting orders list
@@ -64,7 +65,7 @@ pub struct PaginatedOrdersResponse {
     pub items: Vec<super::OrderDetails>,
 }
 
-impl super::RestClient {
+impl RestClient {
     /// Get Orders List
     ///
     /// Retrieve a paginated list of orders with optional filtering.

@@ -4,8 +4,9 @@
 
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::bitmart::{OrderSide, OrderType, RestResult, rate_limit::EndpointType};
+use crate::bitmart::{
+    OrderSide, OrderType, RestResult, rate_limit::EndpointType, spot::private_client::RestClient,
+};
 
 const SUBMIT_MARGIN_ORDER_ENDPOINT: &str = "/spot/v1/margin/submit_order";
 

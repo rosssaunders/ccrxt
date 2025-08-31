@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::binance::coinm::{RestResult, enums::KlineInterval, public::rest::RestClient};
+use crate::binance::coinm::{RestResult, enums::KlineInterval, public_client::RestClient};
 
 /// Endpoint path for mark price kline/candlestick data.
 const MARK_PRICE_KLINES_ENDPOINT: &str = "/dapi/v1/markPriceKlines";

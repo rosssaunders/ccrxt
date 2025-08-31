@@ -2,8 +2,7 @@
 
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::bullish::{EndpointType, RestResult, enums::OrderSide};
+use crate::bullish::{EndpointType, PublicRestClient, RestResult, enums::OrderSide};
 
 /// Endpoint URL path for public trades
 const PUBLIC_TRADES_ENDPOINT: &str = "/trading-api/v1/markets/{}/trades";
@@ -57,7 +56,7 @@ pub struct PublicTradesRequest {
     pub limit: Option<u32>,
 }
 
-impl RestClient {
+impl PublicRestClient {
     /// Get recent public trades for a market
     ///
     /// Retrieve a list of recent public trades for a specific market.

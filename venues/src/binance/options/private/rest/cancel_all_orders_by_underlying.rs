@@ -1,7 +1,8 @@
 use serde::Serialize;
 
-use super::{batch_cancel_orders::CancelResponse, client::RestClient};
-use crate::binance::options::RestResult;
+use crate::binance::options::{
+    RestResult, private::rest::batch_cancel_orders::CancelResponse, private_client::RestClient,
+};
 
 const CANCEL_ALL_BY_UNDERLYING_ENDPOINT: &str = "/eapi/v1/allOpenOrdersByUnderlying";
 

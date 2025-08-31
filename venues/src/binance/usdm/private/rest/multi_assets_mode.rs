@@ -2,8 +2,7 @@ use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
 
-use super::UsdmClient;
-use crate::binance::usdm::{BooleanStatus, RestResult};
+use crate::binance::usdm::{BooleanStatus, RestResult, private_client::UsdmClient};
 
 /// Endpoint path for changing multi-assets margin mode.
 const CHANGE_MULTI_ASSETS_MODE_ENDPOINT: &str = "/fapi/v1/multiAssetsMargin";

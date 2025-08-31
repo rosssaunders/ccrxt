@@ -2,8 +2,7 @@
 
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::bullish::{EndpointType, RestResult};
+use crate::bullish::{EndpointType, PublicRestClient, RestResult};
 
 /// Endpoint URL path for assets
 const ASSETS_ENDPOINT: &str = "/trading-api/v1/assets";
@@ -165,7 +164,7 @@ pub struct SingleAssetResponse {
     pub data: Asset,
 }
 
-impl RestClient {
+impl PublicRestClient {
     /// Get all assets
     ///
     /// Retrieve information for all assets available on the exchange.

@@ -4,8 +4,7 @@
 
 use serde::{Deserialize, Serialize};
 
-use super::RestClient;
-use crate::coinbaseexchange::{EndpointType, RestResult};
+use crate::coinbaseexchange::{EndpointType, RestResult, private_client::RestClient};
 
 const ORDERS_ENDPOINT: &str = "orders";
 

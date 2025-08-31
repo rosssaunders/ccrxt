@@ -2,8 +2,7 @@
 
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::bullish::{EndpointType, RestResult};
+use crate::bullish::{EndpointType, PublicRestClient, RestResult};
 
 /// Endpoint URL path for ticker
 const TICKER_ENDPOINT: &str = "/trading-api/v1/markets/{}/tick";
@@ -68,7 +67,7 @@ pub struct Ticker {
     pub timestamp: u64,
 }
 
-impl RestClient {
+impl PublicRestClient {
     /// Get 24-hour ticker statistics for a market
     ///
     /// Retrieve 24-hour price and volume statistics for a specific market.

@@ -1,10 +1,10 @@
 use rust_decimal::Decimal;
 use serde::Serialize;
 
-use super::client::RestClient;
 use crate::binance::spot::{
     CancelReplaceMode, CancelRestrictions, OrderRateLimitExceededMode, OrderResponseType,
     OrderSide, OrderType, RestResult, SelfTradePreventionMode, TimeInForce,
+    private_client::RestClient,
 };
 
 const CANCEL_REPLACE_ORDER_ENDPOINT: &str = "/api/v3/order/cancelReplace";

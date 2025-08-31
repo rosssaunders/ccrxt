@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::binance::options::RestResult;
+use crate::binance::options::{RestResult, private_client::RestClient};
 
 const INCOME_DOWNLOAD_INITIATE_ENDPOINT: &str = "/eapi/v1/income/asyn";
 

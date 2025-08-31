@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::binance::coinm::{RestResult, enums::KlineInterval, public::rest::RestClient};
+use crate::binance::coinm::{RestResult, enums::KlineInterval, public_client::RestClient};
 
 /// Endpoint path for premium index kline data.
 const PREMIUM_INDEX_KLINES_ENDPOINT: &str = "/dapi/v1/premiumIndexKlines";
