@@ -47,52 +47,43 @@ pub mod public_client;
 
 pub mod public {
     pub mod rest;
-    pub mod websocket;
 
-    pub use self::{
-        rest::{
-            AprHistoryData, BookSummary, BookSummaryByInstrument, DeliveryPriceRecord,
-            FundingChartDataPoint, FundingRateHistoryData, GetAprHistoryRequest,
-            GetAprHistoryResponse, GetAprHistoryResult, GetBookSummaryByCurrencyRequest,
-            GetBookSummaryByCurrencyResponse, GetBookSummaryByInstrumentRequest,
-            GetBookSummaryByInstrumentResponse, GetComboDetailsRequest, GetComboDetailsResponse,
-            GetComboIdsRequest, GetComboIdsResponse, GetCombosRequest, GetCombosResponse,
-            GetContractSizeRequest, GetContractSizeResponse, GetContractSizeResult,
-            GetDeliveryPricesRequest, GetDeliveryPricesResponse, GetDeliveryPricesResult,
-            GetExpirationsRequest, GetExpirationsResponse, GetExpirationsResult,
-            GetFundingChartDataRequest, GetFundingChartDataResponse, GetFundingChartDataResult,
-            GetFundingRateHistoryRequest, GetFundingRateHistoryResponse,
-            GetFundingRateHistoryResult, GetFundingRateValueRequest,
-            GetHistoricalVolatilityRequest, GetHistoricalVolatilityResponse,
-            GetHistoricalVolatilityResult, GetIndexPriceNamesRequest, GetIndexPriceNamesResponse,
-            GetIndexPriceNamesResult, GetIndexPriceRequest, GetIndexPriceResponse,
-            GetIndexPriceResult, GetIndexRequest, GetIndexResponse, GetIndexResult,
-            GetInstrumentRequest, GetInstrumentResponse, GetInstrumentsRequest,
-            GetInstrumentsResponse, GetLastSettlementsByCurrencyRequest,
-            GetLastSettlementsByCurrencyResponse, GetLastSettlementsByCurrencyResult,
-            GetLastSettlementsByInstrumentRequest, GetLastSettlementsByInstrumentResponse,
-            GetLastSettlementsByInstrumentResult, GetLastTradesByCurrencyAndTimeRequest,
-            GetLastTradesByCurrencyAndTimeResponse, GetLastTradesByCurrencyAndTimeResult,
-            GetLastTradesByCurrencyRequest, GetLastTradesByCurrencyResponse,
-            GetLastTradesByCurrencyResult, GetLastTradesByInstrumentAndTimeRequest,
-            GetLastTradesByInstrumentAndTimeResponse, GetLastTradesByInstrumentAndTimeResult,
-            GetLastTradesByInstrumentRequest, GetLastTradesByInstrumentResponse,
-            GetLastTradesByInstrumentResult, GetMarkPriceHistoryRequest,
-            GetMarkPriceHistoryResponse, GetOrderBookByInstrumentIdRequest,
-            GetOrderBookByInstrumentIdResponse, GetOrderBookByInstrumentIdResult,
-            GetOrderBookRequest, GetOrderBookResponse, GetOrderBookResult, GetRfqsRequest,
-            GetRfqsResponse, GetStatusResponse, GetStatusResult, GetTimeResponse,
-            GetTradeVolumesRequest, GetTradeVolumesResponse, GetTradingviewChartDataRequest,
-            GetTradingviewChartDataResponse, GetTradingviewChartDataResult,
-            GetVolatilityIndexDataRequest, GetVolatilityIndexDataResponse,
-            GetVolatilityIndexDataResult, InstrumentData, MarkPriceEntry, RfqEntry,
-            SettlementEntry, TradeEntry, TradeVolumeEntry,
-        },
-        websocket::{
-            HelloRequest, HelloResponse, HelloResult, PrivateWebSocketClient, SubscribeRequest,
-            SubscribeResponse, client::DeribitWebSocketError,
-        },
+    pub use self::rest::{
+        AprHistoryData, BookSummary, BookSummaryByInstrument, DeliveryPriceRecord,
+        FundingChartDataPoint, FundingRateHistoryData, GetAprHistoryRequest, GetAprHistoryResponse,
+        GetAprHistoryResult, GetBookSummaryByCurrencyRequest, GetBookSummaryByCurrencyResponse,
+        GetBookSummaryByInstrumentRequest, GetBookSummaryByInstrumentResponse,
+        GetComboDetailsRequest, GetComboDetailsResponse, GetComboIdsRequest, GetComboIdsResponse,
+        GetCombosRequest, GetCombosResponse, GetContractSizeRequest, GetContractSizeResponse,
+        GetContractSizeResult, GetDeliveryPricesRequest, GetDeliveryPricesResponse,
+        GetDeliveryPricesResult, GetExpirationsRequest, GetExpirationsResponse,
+        GetExpirationsResult, GetFundingChartDataRequest, GetFundingChartDataResponse,
+        GetFundingChartDataResult, GetFundingRateHistoryRequest, GetFundingRateHistoryResponse,
+        GetFundingRateHistoryResult, GetFundingRateValueRequest, GetHistoricalVolatilityRequest,
+        GetHistoricalVolatilityResponse, GetHistoricalVolatilityResult, GetIndexPriceNamesRequest,
+        GetIndexPriceNamesResponse, GetIndexPriceNamesResult, GetIndexPriceRequest,
+        GetIndexPriceResponse, GetIndexPriceResult, GetIndexRequest, GetIndexResponse,
+        GetIndexResult, GetInstrumentRequest, GetInstrumentResponse, GetInstrumentsRequest,
+        GetInstrumentsResponse, GetLastSettlementsByCurrencyRequest,
+        GetLastSettlementsByCurrencyResponse, GetLastSettlementsByCurrencyResult,
+        GetLastSettlementsByInstrumentRequest, GetLastSettlementsByInstrumentResponse,
+        GetLastSettlementsByInstrumentResult, GetLastTradesByCurrencyAndTimeRequest,
+        GetLastTradesByCurrencyAndTimeResponse, GetLastTradesByCurrencyAndTimeResult,
+        GetLastTradesByCurrencyRequest, GetLastTradesByCurrencyResponse,
+        GetLastTradesByCurrencyResult, GetLastTradesByInstrumentAndTimeRequest,
+        GetLastTradesByInstrumentAndTimeResponse, GetLastTradesByInstrumentAndTimeResult,
+        GetLastTradesByInstrumentRequest, GetLastTradesByInstrumentResponse,
+        GetLastTradesByInstrumentResult, GetMarkPriceHistoryRequest, GetMarkPriceHistoryResponse,
+        GetOrderBookByInstrumentIdRequest, GetOrderBookByInstrumentIdResponse,
+        GetOrderBookByInstrumentIdResult, GetOrderBookRequest, GetOrderBookResponse,
+        GetOrderBookResult, GetRfqsRequest, GetRfqsResponse, GetStatusResponse, GetStatusResult,
+        GetTimeResponse, GetTradeVolumesRequest, GetTradeVolumesResponse,
+        GetTradingviewChartDataRequest, GetTradingviewChartDataResponse,
+        GetTradingviewChartDataResult, GetVolatilityIndexDataRequest,
+        GetVolatilityIndexDataResponse, GetVolatilityIndexDataResult, InstrumentData,
+        MarkPriceEntry, RfqEntry, SettlementEntry, TradeEntry, TradeVolumeEntry,
     };
+
 }
 
 pub mod private {
@@ -199,10 +190,9 @@ pub use public::{
     GetStatusResult, GetTimeResponse, GetTradeVolumesRequest, GetTradeVolumesResponse,
     GetTradingviewChartDataRequest, GetTradingviewChartDataResponse, GetTradingviewChartDataResult,
     GetVolatilityIndexDataRequest, GetVolatilityIndexDataResponse, GetVolatilityIndexDataResult,
-    HelloRequest, HelloResponse, HelloResult, InstrumentData, MarkPriceEntry,
-    PrivateWebSocketClient, RfqEntry, SettlementEntry, SubscribeRequest, SubscribeResponse,
-    TradeEntry, TradeVolumeEntry, websocket::client::DeribitWebSocketError,
+    InstrumentData, MarkPriceEntry, RfqEntry, SettlementEntry, TradeEntry, TradeVolumeEntry,
 };
+
 pub use public_client::RestClient as PublicRestClient;
 pub use rate_limit::*;
 pub use rate_limiter_trait::DeribitRateLimiter;
