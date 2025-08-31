@@ -232,13 +232,14 @@ impl RateLimiter {
         }
 
         // Order-specific limits (UID-based)
-        if is_order
-            && let Some(order_limit) = order_limit_per_second
-            && usage.order_timestamps_1s.len() >= order_limit as usize
-        {
-            return Err(Errors::ApiError(ApiError::TooManyRequests {
-                msg: format!("Order rate limit ({order_limit}/1s) exceeded"),
-            }));
+        if is_order {
+            if let Some(order_limit) = order_limit_per_second {
+                if usage.order_timestamps_1s.len() >= order_limit as usize {
+                    return Err(Errors::ApiError(ApiError::TooManyRequests {
+                        msg: format!("Order rate limit ({order_limit}/1s) exceeded"),
+                    }));
+                }
+            }
         }
 
         Ok(())
