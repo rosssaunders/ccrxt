@@ -4,10 +4,8 @@ pub mod amm_types;
 pub mod cancel_all_orders;
 pub mod cancel_all_orders_by_market;
 pub mod cancel_order;
-pub mod client;
 pub mod create_amm_instruction;
 pub mod create_order;
-pub mod credentials;
 pub mod custody_deposit_instructions_crypto;
 pub mod custody_deposit_instructions_fiat;
 pub mod custody_history;
@@ -43,12 +41,10 @@ pub use cancel_all_orders_by_market::{
     CancelAllOrdersByMarketRequest, CancelAllOrdersByMarketResponse,
 };
 pub use cancel_order::{CancelOrderRequest, CancelOrderResponse};
-pub use client::RestClient;
 pub use create_amm_instruction::{
     CreateAmmCommandType, CreateAmmInstructionRequest, CreateAmmInstructionResponseV3,
 };
 pub use create_order::{CreateOrderRequest, CreateOrderResponse};
-pub use credentials::Credentials;
 // Custody re-exports
 pub use custody_deposit_instructions_crypto::CustodyCryptoDepositInstructions;
 pub use custody_deposit_instructions_fiat::{CustodyFiatDepositInstructions, CustodyFiatNetwork};
@@ -90,3 +86,6 @@ pub use wallet_transactions::{
     GetWalletTransactionsParams, TransactionStatus, TransactionType, WalletTransaction,
     WalletTransactionsResponse,
 };
+
+// Re-export canonical top-level private client
+pub use crate::bullish::private_client::RestClient;

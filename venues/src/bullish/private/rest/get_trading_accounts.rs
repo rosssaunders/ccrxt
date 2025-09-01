@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::bullish::{EndpointType, RestResult};
+use crate::bullish::{EndpointType, PrivateRestClient as RestClient, RestResult};
 
 /// Endpoint URL path for trading accounts
 const TRADING_ACCOUNTS_ENDPOINT: &str = "/v1/accounts/trading-accounts";

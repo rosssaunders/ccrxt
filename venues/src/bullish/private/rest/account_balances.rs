@@ -2,8 +2,7 @@
 
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::bullish::{EndpointType, RestResult};
+use crate::bullish::{EndpointType, PrivateRestClient as RestClient, RestResult};
 
 /// Endpoint URL path for asset accounts
 const ASSET_ACCOUNTS_ENDPOINT: &str = "/v1/accounts/asset";

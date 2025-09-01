@@ -1,24 +1,23 @@
 //! Bullish Private REST API client
 
-use std::borrow::Cow;
+use std::{borrow::Cow, sync::Arc};
 
 use base64::{Engine as _, engine::general_purpose};
 use hmac::{Hmac, Mac};
-use reqwest::Client;
+use rest::{HttpClient, Method as HttpMethod, RequestBuilder};
 use secrecy::ExposeSecret;
 use serde::{Serialize, de::DeserializeOwned};
 use sha2::Sha256;
 
-use super::private::rest::Credentials;
-use crate::bullish::{EndpointType, Errors, RateLimiter, RestResult};
+use crate::bullish::{Credentials, EndpointType, Errors, RateLimiter, RestResult};
 
 /// Private REST client for Bullish exchange
 ///
 /// This client handles all private API endpoints that require authentication.
 /// It provides automatic rate limiting, error handling, and JWT token management.
 pub struct RestClient {
-    /// The underlying HTTP client used for making requests
-    pub(crate) client: Client,
+    /// The underlying abstract HTTP client used for making requests (WASM-safe)
+    pub(crate) http_client: Arc<dyn HttpClient>,
 
     /// Venue credentials (API key and secret)
     pub(crate) credentials: Credentials,
@@ -47,11 +46,11 @@ impl RestClient {
     pub fn new(
         credentials: Credentials,
         base_url: impl Into<Cow<'static, str>>,
-        client: Client,
+        http_client: Arc<dyn HttpClient>,
         rate_limiter: RateLimiter,
     ) -> Self {
         Self {
-            client,
+            http_client,
             credentials,
             base_url: base_url.into(),
             rate_limiter,
@@ -82,25 +81,27 @@ impl RestClient {
             Errors::AuthenticationError("JWT token missing after login attempt".to_owned())
         })?;
 
-        let response = self
-            .client
-            .get(&url)
+        let request = RequestBuilder::new(HttpMethod::Get, url)
             .header("Authorization", format!("Bearer {token}"))
             .header("Content-Type", "application/json")
-            .send()
-            .await?;
+            .build();
+
+        let response = self
+            .http_client
+            .execute(request)
+            .await
+            .map_err(Errors::from)?;
 
         self.rate_limiter.increment_request(endpoint_type).await;
 
         // Handle 401 Unauthorized - token might be expired
-        if response.status() == reqwest::StatusCode::UNAUTHORIZED {
+        if response.status == 401 {
             self.jwt_token = None;
             return Err(Errors::AuthenticationError(
                 "JWT token expired or unauthorized. Please refresh token via hmac_login or login."
                     .to_string(),
             ));
         }
-
         Self::map_json_or_error(response).await
     }
 
@@ -152,32 +153,34 @@ impl RestClient {
         mac.update(signature_data.as_bytes());
         let signature = general_purpose::STANDARD.encode(mac.finalize().into_bytes());
 
-        let mut request = self
-            .client
-            .post(&url)
+        let mut builder = RequestBuilder::new(HttpMethod::Post, url)
             .header("Authorization", format!("Bearer {token}"))
             .header("Content-Type", "application/json")
             .header("BX-TIMESTAMP", timestamp.to_string())
             .header("BX-NONCE", nonce.to_string())
             .header("BX-SIGNATURE", signature);
-
         if !body_str.is_empty() {
-            request = request.body(body_str.clone());
+            builder = builder
+                .header("Content-Length", body_str.len().to_string())
+                .body(body_str.into_bytes());
         }
-
-        let response = request.send().await?;
+        let request = builder.build();
+        let response = self
+            .http_client
+            .execute(request)
+            .await
+            .map_err(Errors::from)?;
 
         self.rate_limiter.increment_request(endpoint_type).await;
 
         // Handle 401 Unauthorized - token might be expired
-        if response.status() == reqwest::StatusCode::UNAUTHORIZED {
+        if response.status == 401 {
             self.jwt_token = None;
             return Err(Errors::AuthenticationError(
                 "JWT token expired or unauthorized. Please refresh token via hmac_login or login."
                     .to_string(),
             ));
         }
-
         Self::map_json_or_error(response).await
     }
 
@@ -223,27 +226,27 @@ impl RestClient {
         mac.update(signature_data.as_bytes());
         let signature = general_purpose::STANDARD.encode(mac.finalize().into_bytes());
 
-        let request = self
-            .client
-            .put(&url)
+        let request = RequestBuilder::new(HttpMethod::Put, url)
             .header("Authorization", format!("Bearer {token}"))
             .header("Content-Type", "application/json")
             .header("BX-TIMESTAMP", timestamp.to_string())
             .header("BX-NONCE", nonce.to_string())
             .header("BX-SIGNATURE", signature)
-            .body(body_str.clone());
-
-        let response = request.send().await?;
+            .body(body_str.into_bytes())
+            .build();
+        let response = self
+            .http_client
+            .execute(request)
+            .await
+            .map_err(Errors::from)?;
         self.rate_limiter.increment_request(endpoint_type).await;
-
-        if response.status() == reqwest::StatusCode::UNAUTHORIZED {
+        if response.status == 401 {
             self.jwt_token = None;
             return Err(Errors::AuthenticationError(
                 "JWT token expired or unauthorized. Please refresh token via hmac_login or login."
                     .to_string(),
             ));
         }
-
         Self::map_json_or_error(response).await
     }
 
@@ -285,70 +288,60 @@ impl RestClient {
         mac.update(signature_data.as_bytes());
         let signature = general_purpose::STANDARD.encode(mac.finalize().into_bytes());
 
-        let response = self
-            .client
-            .delete(&url)
+        let request = RequestBuilder::new(HttpMethod::Delete, url)
             .header("Authorization", format!("Bearer {token}"))
             .header("Content-Type", "application/json")
             .header("BX-TIMESTAMP", timestamp.to_string())
             .header("BX-NONCE", nonce.to_string())
             .header("BX-SIGNATURE", signature)
-            .send()
-            .await?;
+            .build();
+        let response = self
+            .http_client
+            .execute(request)
+            .await
+            .map_err(Errors::from)?;
 
         self.rate_limiter.increment_request(endpoint_type).await;
 
-        if response.status() == reqwest::StatusCode::UNAUTHORIZED {
+        if response.status == 401 {
             self.jwt_token = None;
             return Err(Errors::AuthenticationError(
                 "JWT token expired or unauthorized. Please refresh token via hmac_login or login."
                     .to_string(),
             ));
         }
-
         Self::map_json_or_error(response).await
     }
 
     /// Helper: map non-success responses to venue errors, parse body when possible
-    async fn map_json_or_error<T>(response: reqwest::Response) -> RestResult<T>
+    async fn map_json_or_error<T>(response: rest::Response) -> RestResult<T>
     where
         T: DeserializeOwned,
     {
-        if response.status().is_success() {
-            let result: T = response.json().await?;
+        if response.is_success() {
+            let result: T = serde_json::from_slice(&response.body)?;
             return Ok(result);
         }
 
-        let status = response.status();
-        let text = response.text().await.unwrap_or_default();
+        let status = response.status;
+        let text = response.text().unwrap_or_default();
         if let Ok(err_resp) = serde_json::from_str::<crate::bullish::ErrorResponse>(&text) {
             let api_err = err_resp.error;
             return match status {
-                reqwest::StatusCode::UNAUTHORIZED => {
-                    Err(crate::bullish::Errors::AuthenticationError(api_err.message))
-                }
-                reqwest::StatusCode::FORBIDDEN => Err(crate::bullish::Errors::ApiError(api_err)),
-                reqwest::StatusCode::TOO_MANY_REQUESTS => Err(
-                    crate::bullish::Errors::RateLimitError("Too Many Requests".to_string()),
-                ),
+                401 => Err(crate::bullish::Errors::AuthenticationError(api_err.message)),
+                403 => Err(crate::bullish::Errors::ApiError(api_err)),
+                429 => Err(crate::bullish::Errors::RateLimitError(
+                    "Too Many Requests".to_string(),
+                )),
                 _ => Err(crate::bullish::Errors::ApiError(api_err)),
             };
         }
-
         let err = match status {
-            reqwest::StatusCode::UNAUTHORIZED => {
-                crate::bullish::Errors::AuthenticationError("Unauthorized".to_string())
-            }
-            reqwest::StatusCode::FORBIDDEN => {
-                crate::bullish::Errors::Error("Forbidden".to_string())
-            }
-            reqwest::StatusCode::TOO_MANY_REQUESTS => {
-                crate::bullish::Errors::RateLimitError("Too Many Requests".to_string())
-            }
-            reqwest::StatusCode::INTERNAL_SERVER_ERROR => {
-                crate::bullish::Errors::Error("Internal Server Error".to_string())
-            }
-            _ => crate::bullish::Errors::Error(format!("HTTP {}: {}", status.as_u16(), text)),
+            401 => crate::bullish::Errors::AuthenticationError("Unauthorized".to_string()),
+            403 => crate::bullish::Errors::Error("Forbidden".to_string()),
+            429 => crate::bullish::Errors::RateLimitError("Too Many Requests".to_string()),
+            500 => crate::bullish::Errors::Error("Internal Server Error".to_string()),
+            _ => crate::bullish::Errors::Error(format!("HTTP {}: {}", status, text)),
         };
         Err(err)
     }
@@ -488,7 +481,7 @@ mod tests {
     fn test_private_client_creation() {
         let api_key = SecretString::new("test_key".to_string().into_boxed_str());
         let api_secret = SecretString::new("test_secret".to_string().into_boxed_str());
-        let client = Client::new();
+        let client = Arc::new(rest::native::NativeHttpClient::default());
         let rate_limiter = RateLimiter::new();
 
         let creds = Credentials {
@@ -518,7 +511,7 @@ mod tests {
     async fn test_rate_limiting_integration() {
         let api_key = SecretString::new("test_key".to_string().into_boxed_str());
         let api_secret = SecretString::new("test_secret".to_string().into_boxed_str());
-        let client = Client::new();
+        let client = Arc::new(rest::native::NativeHttpClient::default());
         let rate_limiter = RateLimiter::new();
 
         let creds = Credentials {

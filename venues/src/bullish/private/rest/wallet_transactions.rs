@@ -2,8 +2,7 @@
 
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::bullish::{EndpointType, PaginatedResult, RestResult};
+use crate::bullish::{EndpointType, PaginatedResult, PrivateRestClient as RestClient, RestResult};
 
 /// Endpoint URL path for wallet transactions
 const WALLET_TRANSACTIONS_ENDPOINT: &str = "/v1/wallets/transactions";

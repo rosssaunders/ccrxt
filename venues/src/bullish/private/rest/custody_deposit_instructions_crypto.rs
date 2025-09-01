@@ -2,9 +2,9 @@
 
 use serde::Deserialize;
 
-use super::client::RestClient;
 use crate::bullish::{
-    DataOrPaginated, EndpointType, PaginatedResult, PaginationParams, RestResult,
+    DataOrPaginated, EndpointType, PaginatedResult, PaginationParams,
+    PrivateRestClient as RestClient, RestResult,
 };
 
 /// Endpoint URL path for crypto deposit instructions

@@ -1,9 +1,8 @@
 use serde::{Deserialize, Serialize};
 
 use crate::bullish::{
-    EndpointType, RestResult,
+    EndpointType, PrivateRestClient as RestClient, RestResult,
     enums::{OrderSide, OrderType, TimeInForce},
-    private::rest::client::RestClient,
 };
 
 /// Endpoint URL for orders operations

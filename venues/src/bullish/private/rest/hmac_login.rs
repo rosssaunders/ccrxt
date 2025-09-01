@@ -2,12 +2,13 @@
 
 use base64::{Engine as _, engine::general_purpose};
 use hmac::{Hmac, Mac};
+use rest::{Method as HttpMethod, RequestBuilder};
 use secrecy::ExposeSecret;
 use serde::Deserialize;
 use serde_json::Value;
 use sha2::Sha256;
 
-use crate::bullish::{EndpointType, Errors, RestResult, private::rest::RestClient};
+use crate::bullish::{EndpointType, Errors, PrivateRestClient as RestClient, RestResult};
 
 /// Endpoint constant for HMAC login
 const HMAC_LOGIN_ENDPOINT: &str = "/v1/users/hmac/login";
@@ -55,27 +56,28 @@ impl RestClient {
 
         let url = format!("{}/trading-api{}", self.base_url, HMAC_LOGIN_ENDPOINT);
 
-        let response = self
-            .client
-            .get(&url)
+        let request = RequestBuilder::new(HttpMethod::Get, url)
             .header("BX-KEY", self.credentials.api_key.expose_secret())
             .header("BX-SIGNATURE", signature)
             .header("BX-NONCE", nonce.to_string())
-            .send()
-            .await?;
+            .build();
+        let response = self
+            .http_client
+            .execute(request)
+            .await
+            .map_err(Errors::from)?;
 
         self.rate_limiter
             .increment_request(EndpointType::PrivateLogin)
             .await;
 
-        if !response.status().is_success() {
-            let error_text = response.text().await?;
+        if !response.is_success() {
+            let error_text = response.text().unwrap_or_default();
             return Err(Errors::AuthenticationError(format!(
                 "HMAC login failed: {error_text}"
             )));
         }
-
-        let result: Value = response.json().await?;
+        let result: Value = serde_json::from_slice(&response.body)?;
 
         // Map to strongly typed response
         let authorizer = result

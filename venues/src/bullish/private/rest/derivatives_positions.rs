@@ -2,8 +2,7 @@
 
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::bullish::{EndpointType, RestResult, enums::OrderSide};
+use crate::bullish::{EndpointType, PrivateRestClient as RestClient, RestResult, enums::OrderSide};
 
 /// Endpoint URL path for derivatives positions
 const DERIVATIVES_POSITIONS_ENDPOINT: &str = "/v1/derivatives-positions";

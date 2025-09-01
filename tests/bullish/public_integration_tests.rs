@@ -3,9 +3,8 @@
 //! These tests verify the functionality of all public endpoints that don't require authentication.
 //! Tests run against the live Bullish API using real market data.
 
-use std::error::Error as StdError;
+use std::sync::Arc;
 
-use reqwest::Client;
 use tokio;
 use venues::bullish::{
     CandleInterval, Errors, PaginatedResult, PaginationParams, PublicRestClient, RateLimiter,
@@ -16,10 +15,8 @@ use venues::bullish::{
 
 /// Helper function to create a CCRXT Bullish public client
 fn create_public_test_client() -> PublicRestClient {
-    let client = Client::new();
+    let client: Arc<dyn rest::HttpClient> = Arc::new(rest::native::NativeHttpClient::default());
     let rate_limiter = RateLimiter::new();
-
-    // Use CCRXT's PublicRestClient constructor
     PublicRestClient::new("https://api.exchange.bullish.com", client, rate_limiter)
 }
 
@@ -64,15 +61,6 @@ macro_rules! handle_result {
 
                 // Try to surface more details depending on variant
                 match &err {
-                    Errors::HttpError(e) => {
-                        // reqwest::Error often has a source chain; print it
-                        if let Some(src) = e.source() {
-                            println!("  Caused by: {}", src);
-                        }
-                        println!("  Is status: {}", e.is_status());
-                        println!("  Is timeout: {}", e.is_timeout());
-                        println!("  Is connect: {}", e.is_connect());
-                    }
                     Errors::ApiError(api) => {
                         println!("  API code: {}", api.code);
                         println!("  API message: {}", api.message);
@@ -80,8 +68,17 @@ macro_rules! handle_result {
                             println!("  API details: {}", details);
                         }
                     }
+                    Errors::Transport(diag) => {
+                        println!("  Transport kind: {:?}", diag.kind);
+                        if let Some(status) = diag.status {
+                            println!("  HTTP status: {}", status);
+                        }
+                        if let Some(body) = &diag.body {
+                            println!("  Body: {}", body);
+                        }
+                        println!("  Message: {}", diag.message);
+                    }
                     Errors::Error(msg) => {
-                        // Often contains our formatted HTTP status/URL/body
                         println!("  Details: {}", msg);
                     }
                     _ => {}

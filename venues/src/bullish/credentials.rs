@@ -1,3 +1,8 @@
+//! Bullish API credentials structure (moved from `private/rest/credentials.rs`).
+//!
+//! Provides secure storage wrappers for API key/secret. Secrets must never be logged
+//! or serialized in plain text. Manual serde impl hides actual secret values.
+
 use std::fmt;
 
 use rest::secrets::SecretString;
@@ -9,20 +14,15 @@ use serde::{
 
 /// Credentials for Bullish private REST API authentication.
 ///
-/// These credentials must be provided as securely stored `SecretString` values.
-/// Never log or hard-code secrets. Provision via environment variables or a
-/// secure secrets manager.
+/// Provide securely (env vars / secret manager). Do NOT hard-code.
 #[derive(Debug, Clone)]
 pub struct Credentials {
     /// API key used to authenticate requests. Stored securely as `SecretString`.
     pub api_key: SecretString,
-
     /// API secret used for HMAC signing. Stored securely as `SecretString`.
     pub api_secret: SecretString,
 }
 
-// We intentionally implement Serialize/Deserialize manually to avoid exposing raw secrets
-// and because `SecretString` from `secrecy` does not implement serde traits.
 impl Serialize for Credentials {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -67,7 +67,6 @@ impl<'de> Deserialize<'de> for Credentials {
                             api_secret = Some(map.next_value()?);
                         }
                         _ => {
-                            // Skip unknown fields for forward compatibility
                             let _ignored: serde_json::Value = map.next_value()?;
                         }
                     }
@@ -81,7 +80,6 @@ impl<'de> Deserialize<'de> for Credentials {
                 })
             }
         }
-
         deserializer.deserialize_struct("Credentials", &["apiKey", "apiSecret"], CredsVisitor)
     }
 }

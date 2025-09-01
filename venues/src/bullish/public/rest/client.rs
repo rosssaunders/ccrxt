@@ -2,7 +2,9 @@
 
 use std::borrow::Cow;
 
-use reqwest::Client;
+use std::sync::Arc;
+
+use rest::{HttpClient, Method as HttpMethod, RequestBuilder};
 use serde::de::DeserializeOwned;
 
 use crate::bullish::{EndpointType, RateLimiter, RestResult};
@@ -12,8 +14,8 @@ use crate::bullish::{EndpointType, RateLimiter, RestResult};
 /// This client handles all public API endpoints that don't require authentication.
 /// It provides automatic rate limiting and error handling.
 pub struct RestClient {
-    /// The underlying HTTP client used for making requests
-    pub(crate) client: Client,
+    /// The underlying abstract HTTP client used for making requests
+    pub(crate) http_client: Arc<dyn HttpClient>,
     /// The base URL for the API
     pub(crate) base_url: Cow<'static, str>,
     /// Rate limiter for API requests
@@ -32,11 +34,11 @@ impl RestClient {
     /// A new RestClient instance
     pub fn new(
         base_url: impl Into<Cow<'static, str>>,
-        client: Client,
+        http_client: Arc<dyn HttpClient>,
         rate_limiter: RateLimiter,
     ) -> Self {
         Self {
-            client,
+            http_client,
             base_url: base_url.into(),
             rate_limiter,
         }
@@ -68,13 +70,20 @@ impl RestClient {
 
         let url = format!("{}{}", self.base_url, endpoint);
 
-        let response = self.client.get(&url).send().await?;
+        let request = RequestBuilder::new(HttpMethod::Get, url.clone())
+            .header("Content-Type", "application/json")
+            .build();
+        let response = self
+            .http_client
+            .execute(request)
+            .await
+            .map_err(|e| crate::bullish::Errors::Error(format!("HTTP request failed: {e}")))?;
 
         self.rate_limiter.increment_request(endpoint_type).await;
 
-        if !response.status().is_success() {
-            let status = response.status();
-            let error_text = response.text().await.unwrap_or_default();
+        if !response.is_success() {
+            let status = response.status;
+            let error_text = response.text().unwrap_or_default();
 
             // Try to parse a structured error from the body first
             let detailed = if let Ok(err_resp) =
@@ -106,7 +115,7 @@ impl RestClient {
             )));
         }
 
-        let result: T = response.json().await?;
+        let result: T = serde_json::from_slice(&response.body)?;
         Ok(result)
     }
 
@@ -139,19 +148,28 @@ impl RestClient {
 
         let url = format!("{}{}", self.base_url, endpoint);
 
-        let mut request = self.client.post(&url);
-
+        let mut builder = RequestBuilder::new(HttpMethod::Post, url.clone())
+            .header("Content-Type", "application/json");
         if let Some(body_data) = body {
-            request = request.json(body_data);
+            let serialized = serde_json::to_vec(body_data).map_err(|e| {
+                crate::bullish::Errors::Error(format!("Failed to serialize body: {e}"))
+            })?;
+            builder = builder
+                .header("Content-Length", serialized.len().to_string())
+                .body(serialized);
         }
-
-        let response = request.send().await?;
+        let request = builder.build();
+        let response = self
+            .http_client
+            .execute(request)
+            .await
+            .map_err(|e| crate::bullish::Errors::Error(format!("HTTP request failed: {e}")))?;
 
         self.rate_limiter.increment_request(endpoint_type).await;
 
-        if !response.status().is_success() {
-            let status = response.status();
-            let error_text = response.text().await.unwrap_or_default();
+        if !response.is_success() {
+            let status = response.status;
+            let error_text = response.text().unwrap_or_default();
 
             // Try to parse a structured error from the body first
             let detailed = if let Ok(err_resp) =
@@ -183,7 +201,7 @@ impl RestClient {
             )));
         }
 
-        let result: T = response.json().await?;
+        let result: T = serde_json::from_slice(&response.body)?;
         Ok(result)
     }
 }
@@ -194,7 +212,7 @@ mod tests {
 
     #[test]
     fn test_public_client_creation() {
-        let client = Client::new();
+        let client = Arc::new(rest::native::NativeHttpClient::default());
         let rate_limiter = RateLimiter::new();
 
         let rest_client = RestClient::new("https://api.exchange.bullish.com", client, rate_limiter);
@@ -204,7 +222,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_rate_limiting_integration() {
-        let client = Client::new();
+        let client = Arc::new(rest::native::NativeHttpClient::default());
         let rate_limiter = RateLimiter::new();
 
         let _rest_client =

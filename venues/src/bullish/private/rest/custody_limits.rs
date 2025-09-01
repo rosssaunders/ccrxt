@@ -2,8 +2,7 @@
 
 use serde::Deserialize;
 
-use super::client::RestClient;
-use crate::bullish::{EndpointType, RestResult};
+use crate::bullish::{EndpointType, PrivateRestClient as RestClient, RestResult};
 
 /// Endpoint URL path for custody withdrawal limits
 const CUSTODY_LIMITS_ENDPOINT: &str = "/v1/wallets/limits";

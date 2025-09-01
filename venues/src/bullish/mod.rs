@@ -4,19 +4,24 @@ pub mod pagination;
 mod rate_limit;
 pub mod rate_limiter_trait;
 
-// Client modules
-pub mod private_client;
-pub mod public_client;
+// Canonical top-level clients now live in `private_client.rs` and `public_client.rs`.
+// Nested `private::rest` / `public::rest` modules provide endpoint type definitions and
+// re-export these top-level clients for backwards compatibility of existing impl blocks.
 
 pub mod private {
     pub mod rest;
-    pub use self::rest::{Credentials, RestClient};
+    // Re-export canonical client so existing `impl RestClient` blocks under rest continue working.
+    pub use crate::bullish::private_client::RestClient;
 }
 
 pub mod public {
     pub mod rest;
-    pub use self::rest::RestClient;
+    // Re-export canonical public client
+    pub use crate::bullish::public_client::RestClient;
 }
+
+mod private_client;
+mod public_client;
 
 pub use enums::*;
 pub use errors::{ApiError, ErrorResponse, Errors};
@@ -25,7 +30,8 @@ pub use pagination::{
     PaginationParams,
 };
 // Re-export credentials at the top-level for convenience
-pub use private::Credentials;
+mod credentials;
+pub use credentials::Credentials;
 // Re-export balance types for convenience
 pub use private::rest::AssetAccount;
 // Re-export order types for convenience
@@ -55,7 +61,7 @@ pub use private::rest::{
     GetWalletTransactionsParams, TransactionStatus, TransactionType, WalletTransaction,
     WalletTransactionsResponse,
 };
-// Re-export clients (new locations take precedence)
+// Re-export private client type
 pub use private_client::RestClient as PrivateRestClient;
 // Re-export index price types for convenience
 pub use public::rest::IndexPrice;

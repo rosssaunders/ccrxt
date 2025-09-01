@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::bullish::{EndpointType, RestResult, private::rest::client::RestClient};
+use crate::bullish::{EndpointType, PrivateRestClient as RestClient, RestResult};
 
 const COMMAND_ENDPOINT: &str = "/v2/command";
 

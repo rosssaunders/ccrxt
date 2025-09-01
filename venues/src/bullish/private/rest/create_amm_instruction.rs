@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::bullish::{EndpointType, RestResult};
+use crate::bullish::{EndpointType, PrivateRestClient as RestClient, RestResult};
 
 /// Endpoint URL for AMM instructions
 const AMM_INSTRUCTIONS_ENDPOINT: &str = "/v2/amm-instructions";

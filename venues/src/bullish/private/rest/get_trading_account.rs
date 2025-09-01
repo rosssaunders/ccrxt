@@ -1,7 +1,6 @@
 use serde::Serialize;
 
-use super::{client::RestClient, get_trading_accounts::TradingAccount};
-use crate::bullish::{EndpointType, RestResult};
+use crate::bullish::{EndpointType, PrivateRestClient as RestClient, RestResult, TradingAccount};
 
 const SINGLE_TRADING_ACCOUNT_ENDPOINT: &str = "/v1/accounts/trading-accounts";
 

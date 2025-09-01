@@ -9,12 +9,8 @@ pub enum Errors {
     /// Invalid API key or signature
     InvalidApiKey(),
 
-    /// Http error occurred while making a request
-    /// This variant is used to represent errors that are not specific to the OKX API,
-    /// such as network issues or HTTP errors.
-    /// It can be used to wrap any error that occurs during the request process.
-    /// This variant is not used for errors returned by the OKX API itself.
-    HttpError(reqwest::Error),
+    /// Network / HTTP level error (abstracted, no direct reqwest dependency)
+    HttpError(String),
 
     /// An error returned by the OKX API
     ApiError(ApiError),
@@ -36,9 +32,19 @@ impl fmt::Display for Errors {
 
 impl std::error::Error for Errors {}
 
-impl From<reqwest::Error> for Errors {
-    fn from(err: reqwest::Error) -> Self {
-        Errors::HttpError(err)
+impl From<rest::HttpError> for Errors {
+    fn from(err: rest::HttpError) -> Self {
+        let msg = match err {
+            rest::HttpError::Network(e) => format!("network: {e}"),
+            rest::HttpError::Timeout => "timeout".to_string(),
+            rest::HttpError::InvalidUrl(u) => format!("invalid url: {u}"),
+            rest::HttpError::Decode(e) => format!("decode: {e}"),
+            rest::HttpError::Http { status, body } => format!("status {status}: {body}"),
+            rest::HttpError::Unknown(e) => format!("unknown: {e}"),
+            #[allow(unreachable_patterns)]
+            _ => "unclassified http error".to_string(),
+        };
+        Errors::HttpError(msg)
     }
 }
 

@@ -1,6 +1,7 @@
+use rest::{Method as HttpMethod, RequestBuilder};
 use serde::{Deserialize, Serialize};
 
-use crate::bullish::{EndpointType, Errors, RestResult, private::rest::RestClient};
+use crate::bullish::{EndpointType, Errors, PrivateRestClient as RestClient, RestResult};
 
 /// Endpoint constant for login
 const LOGIN_ENDPOINT: &str = "/v2/users/login";
@@ -90,27 +91,30 @@ impl RestClient {
 
         let url = format!("{}/trading-api{}", self.base_url, LOGIN_ENDPOINT);
 
-        let response = self
-            .client
-            .post(&url)
+        let body_vec = serde_json::to_vec(&request)?;
+        let request = RequestBuilder::new(HttpMethod::Post, url)
             .header("Content-Type", "application/json")
             .header("Accept", "application/json")
-            .json(&request)
-            .send()
-            .await?;
+            .header("Content-Length", body_vec.len().to_string())
+            .body(body_vec)
+            .build();
+        let response = self
+            .http_client
+            .execute(request)
+            .await
+            .map_err(Errors::from)?;
 
         self.rate_limiter
             .increment_request(EndpointType::PrivateLogin)
             .await;
 
-        if !response.status().is_success() {
-            let error_text = response.text().await?;
+        if !response.is_success() {
+            let error_text = response.text().unwrap_or_default();
             return Err(Errors::AuthenticationError(format!(
                 "Login failed: {error_text}"
             )));
         }
-
-        let login_response: LoginResponse = response.json().await?;
+        let login_response: LoginResponse = serde_json::from_slice(&response.body)?;
         self.jwt_token = Some(login_response.token.clone());
         Ok(login_response)
     }

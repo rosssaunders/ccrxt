@@ -1,57 +1,44 @@
-//! Bullish Public REST API client
+//! Bullish Public REST API client (canonical)
+//!
+//! This top-level client replaces the former nested `public::rest::client` implementation.
+//! It uses the shared `HttpClient` abstraction for WASM compatibility and centralizes
+//! rate limiting + error handling.
 
-use std::borrow::Cow;
+use std::{borrow::Cow, sync::Arc};
 
-use reqwest::Client;
+use rest::{HttpClient, Method as HttpMethod, RequestBuilder};
 use serde::de::DeserializeOwned;
 
 use crate::bullish::{EndpointType, RateLimiter, RestResult};
 
 /// Public REST client for Bullish exchange
 ///
-/// This client handles all public API endpoints that don't require authentication.
-/// It provides automatic rate limiting and error handling.
+/// Handles all public API endpoints that don't require authentication.
+/// Applies rate limiting and structured error mapping.
 pub struct RestClient {
-    /// The underlying HTTP client used for making requests
-    pub(crate) client: Client,
-    /// The base URL for the API
+    /// Abstract HTTP client (reqwest-free API surface)
+    pub(crate) http_client: Arc<dyn HttpClient>,
+    /// Base URL for API
     pub(crate) base_url: Cow<'static, str>,
-    /// Rate limiter for API requests
+    /// Rate limiter
     pub(crate) rate_limiter: RateLimiter,
 }
 
 impl RestClient {
-    /// Creates a new public RestClient
-    ///
-    /// # Arguments
-    /// * `base_url` - The base URL for the API
-    /// * `client` - The HTTP client to use
-    /// * `rate_limiter` - Rate limiter for requests
-    ///
-    /// # Returns
-    /// A new RestClient instance
+    /// Create a new public REST client
     pub fn new(
         base_url: impl Into<Cow<'static, str>>,
-        client: Client,
+        http_client: Arc<dyn HttpClient>,
         rate_limiter: RateLimiter,
     ) -> Self {
         Self {
-            client,
+            http_client,
             base_url: base_url.into(),
             rate_limiter,
         }
     }
 
-    /// Send a GET request to the Bullish API
-    ///
-    /// This method handles rate limiting and error handling for public GET endpoints.
-    ///
-    /// # Arguments
-    /// * `endpoint` - The API endpoint path
-    /// * `endpoint_type` - The endpoint type for rate limiting
-    ///
-    /// # Returns
-    /// The deserialized response or an error
+    /// Perform a GET request against a public endpoint
     pub async fn send_get_request<T>(
         &self,
         endpoint: &str,
@@ -60,67 +47,32 @@ impl RestClient {
     where
         T: DeserializeOwned,
     {
-        // Check rate limits
         self.rate_limiter
             .check_limits(endpoint_type)
             .await
             .map_err(|e| crate::bullish::Errors::RateLimitError(e.to_string()))?;
 
         let url = format!("{}{}", self.base_url, endpoint);
-
-        let response = self.client.get(&url).send().await?;
+        let request = RequestBuilder::new(HttpMethod::Get, url.clone())
+            .header("Content-Type", "application/json")
+            .build();
+        let response = self
+            .http_client
+            .execute(request)
+            .await
+            .map_err(crate::bullish::Errors::from)?;
 
         self.rate_limiter.increment_request(endpoint_type).await;
 
-        if !response.status().is_success() {
-            let status = response.status();
-            let error_text = response.text().await.unwrap_or_default();
-
-            // Try to parse a structured error from the body first
-            let detailed = if let Ok(err_resp) =
-                serde_json::from_str::<crate::bullish::ErrorResponse>(&error_text)
-            {
-                format!(
-                    "HTTP {} from {} - {}: {}{}",
-                    status,
-                    url,
-                    err_resp.error.code,
-                    err_resp.error.message,
-                    err_resp
-                        .error
-                        .details
-                        .as_ref()
-                        .map(|d| format!(" (details: {})", d))
-                        .unwrap_or_default()
-                )
-            } else if error_text.trim().is_empty() {
-                // No body; at least report status and URL
-                format!("HTTP {} from {} (empty body)", status, url)
-            } else {
-                // Unstructured body; include it verbatim
-                format!("HTTP {} from {} - body: {}", status, url, error_text)
-            };
-
-            return Err(crate::bullish::Errors::Error(format!(
-                "Request failed: {detailed}"
-            )));
+        if !response.is_success() {
+            return Err(Self::error_from_response(url, response));
         }
 
-        let result: T = response.json().await?;
+        let result: T = serde_json::from_slice(&response.body)?;
         Ok(result)
     }
 
-    /// Send a POST request to the Bullish API
-    ///
-    /// This method handles rate limiting and error handling for public POST endpoints.
-    ///
-    /// # Arguments
-    /// * `endpoint` - The API endpoint path
-    /// * `body` - Optional request body
-    /// * `endpoint_type` - The endpoint type for rate limiting
-    ///
-    /// # Returns
-    /// The deserialized response or an error
+    /// Perform a POST request against a public endpoint
     pub async fn send_post_request<T, B>(
         &self,
         endpoint: &str,
@@ -131,60 +83,64 @@ impl RestClient {
         T: DeserializeOwned,
         B: serde::Serialize,
     {
-        // Check rate limits
         self.rate_limiter
             .check_limits(endpoint_type)
             .await
             .map_err(|e| crate::bullish::Errors::RateLimitError(e.to_string()))?;
 
         let url = format!("{}{}", self.base_url, endpoint);
-
-        let mut request = self.client.post(&url);
-
-        if let Some(body_data) = body {
-            request = request.json(body_data);
+        let mut builder = RequestBuilder::new(HttpMethod::Post, url.clone())
+            .header("Content-Type", "application/json");
+        if let Some(b) = body {
+            let serialized = serde_json::to_vec(b).map_err(|e| {
+                crate::bullish::Errors::Error(format!("Failed to serialize body: {e}"))
+            })?;
+            builder = builder
+                .header("Content-Length", serialized.len().to_string())
+                .body(serialized);
         }
-
-        let response = request.send().await?;
+        let request = builder.build();
+        let response = self
+            .http_client
+            .execute(request)
+            .await
+            .map_err(crate::bullish::Errors::from)?;
 
         self.rate_limiter.increment_request(endpoint_type).await;
 
-        if !response.status().is_success() {
-            let status = response.status();
-            let error_text = response.text().await.unwrap_or_default();
-
-            // Try to parse a structured error from the body first
-            let detailed = if let Ok(err_resp) =
-                serde_json::from_str::<crate::bullish::ErrorResponse>(&error_text)
-            {
-                format!(
-                    "HTTP {} from {} - {}: {}{}",
-                    status,
-                    url,
-                    err_resp.error.code,
-                    err_resp.error.message,
-                    err_resp
-                        .error
-                        .details
-                        .as_ref()
-                        .map(|d| format!(" (details: {})", d))
-                        .unwrap_or_default()
-                )
-            } else if error_text.trim().is_empty() {
-                // No body; at least report status and URL
-                format!("HTTP {} from {} (empty body)", status, url)
-            } else {
-                // Unstructured body; include it verbatim
-                format!("HTTP {} from {} - body: {}", status, url, error_text)
-            };
-
-            return Err(crate::bullish::Errors::Error(format!(
-                "Request failed: {detailed}"
-            )));
+        if !response.is_success() {
+            return Err(Self::error_from_response(url, response));
         }
 
-        let result: T = response.json().await?;
+        let result: T = serde_json::from_slice(&response.body)?;
         Ok(result)
+    }
+
+    fn error_from_response(url: String, response: rest::Response) -> crate::bullish::Errors {
+        let status = response.status;
+        let error_text = response.text().unwrap_or_default();
+        let detailed = if let Ok(err_resp) =
+            serde_json::from_str::<crate::bullish::ErrorResponse>(&error_text)
+        {
+            format!(
+                "HTTP {} from {} - {}: {}{}",
+                status,
+                url,
+                err_resp.error.code,
+                err_resp.error.message,
+                err_resp
+                    .error
+                    .details
+                    .as_ref()
+                    .map(|d| format!(" (details: {})", d))
+                    .unwrap_or_default()
+            )
+        } else if error_text.trim().is_empty() {
+            format!("HTTP {} from {} (empty body)", status, url)
+        } else {
+            format!("HTTP {} from {} - body: {}", status, url, error_text)
+        };
+        crate::bullish::Errors::Error(format!("Request failed: {detailed}"))
     }
 }
 
@@ -194,23 +150,9 @@ mod tests {
 
     #[test]
     fn test_public_client_creation() {
-        let client = Client::new();
+        let client = Arc::new(rest::native::NativeHttpClient::default());
         let rate_limiter = RateLimiter::new();
-
         let rest_client = RestClient::new("https://api.exchange.bullish.com", client, rate_limiter);
-
         assert_eq!(rest_client.base_url, "https://api.exchange.bullish.com");
-    }
-
-    #[tokio::test]
-    async fn test_rate_limiting_integration() {
-        let client = Client::new();
-        let rate_limiter = RateLimiter::new();
-
-        let _rest_client =
-            RestClient::new("https://api.exchange.bullish.com", client, rate_limiter);
-
-        // Test that rate limiter integration works
-        // This is a basic structure test since we can't make real API calls in unit tests
     }
 }

@@ -1,4 +1,6 @@
-use crate::bullish::{EndpointType, Errors, RestResult, private::rest::RestClient};
+use rest::{Method as HttpMethod, RequestBuilder};
+
+use crate::bullish::{EndpointType, Errors, PrivateRestClient as RestClient, RestResult};
 
 /// Endpoint constant for logout
 const LOGOUT_ENDPOINT: &str = "/v1/users/logout";
@@ -33,23 +35,25 @@ impl RestClient {
 
         let url = format!("{}/trading-api{}", self.base_url, LOGOUT_ENDPOINT);
 
-        let response = self
-            .client
-            .get(&url)
+        let request = RequestBuilder::new(HttpMethod::Get, url)
             .header("Authorization", format!("Bearer {}", token))
-            .send()
-            .await?;
+            .build();
+        let response = self
+            .http_client
+            .execute(request)
+            .await
+            .map_err(Errors::from)?;
 
         self.rate_limiter
             .increment_request(EndpointType::PrivateLogin)
             .await;
 
-        if response.status().is_success() {
+        if response.is_success() {
             // Clear the JWT token on successful logout
             self.jwt_token = None;
             Ok(())
         } else {
-            let error_text = response.text().await?;
+            let error_text = response.text().unwrap_or_default();
             Err(Errors::AuthenticationError(format!(
                 "Logout failed: {error_text}"
             )))

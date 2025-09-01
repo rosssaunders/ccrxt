@@ -2,7 +2,7 @@ use std::borrow::Cow;
 
 use serde::{Deserialize, Serialize};
 
-use crate::bullish::{EndpointType, RestResult, private::rest::client::RestClient};
+use crate::bullish::{EndpointType, PrivateRestClient as RestClient, RestResult};
 
 const SIMULATE_PORTFOLIO_MARGIN_ENDPOINT: &str = "/trading-api/v1/simulate-portfolio-margin";
 

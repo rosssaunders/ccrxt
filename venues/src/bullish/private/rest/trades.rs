@@ -2,8 +2,7 @@
 
 use serde::{Deserialize, Serialize};
 
-use super::client::RestClient;
-use crate::bullish::{EndpointType, RestResult, enums::*};
+use crate::bullish::{EndpointType, PrivateRestClient as RestClient, RestResult, enums::*};
 
 /// Endpoint URL path for trades
 const TRADES_ENDPOINT: &str = "/v1/trades";

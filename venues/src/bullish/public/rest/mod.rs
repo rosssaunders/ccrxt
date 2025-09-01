@@ -1,6 +1,5 @@
 pub mod assets;
 pub mod candles;
-pub mod client;
 pub mod index_prices;
 pub mod markets;
 pub mod nonce;
@@ -13,7 +12,6 @@ pub use assets::{
     Asset, AssetNetwork, AssetStatus, AssetsResponse, GetAssetRequest, SingleAssetResponse,
 };
 pub use candles::{Candle, GetCandlesRequest};
-pub use client::RestClient;
 pub use index_prices::{GetIndexPriceRequest, IndexPrice};
 pub use markets::{Market, MarketStatus, MarketType, MarketsResponse, SingleMarketResponse};
 pub use nonce::Nonce;
@@ -21,3 +19,6 @@ pub use orderbook::{HybridOrderbook, OrderbookEntry, OrderbookRequest};
 pub use public_trades::{PublicTrade, PublicTradesRequest};
 pub use ticker::{GetTickerRequest, Ticker};
 pub use time::ServerTime;
+
+// Re-export canonical top-level public client
+pub use crate::bullish::public_client::RestClient;
