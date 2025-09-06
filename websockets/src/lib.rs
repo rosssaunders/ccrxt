@@ -1,33 +1,19 @@
-use std::{error::Error, pin::Pin};
+//! Platform-agnostic WebSocket abstraction.
+//!
+//! This crate provides a unified `WebSocketClient` trait with a native
+//! implementation and utilities for connection and request/response
+//! correlation. Host code controls connection lifecycle and reconnection.
 
-use async_trait::async_trait;
-use futures::Stream;
+// Re-export commonly used items
+pub use crate::client::{IncomingMessage, WebSocketClient, WebSocketError, WebSocketResult};
+pub use crate::connection::{ConnectionState, WebSocketEvent};
+pub use crate::message::{RequestId, RequestIdGenerator, RequestManager};
 
-/// Type alias for boxed errors
-pub type BoxError = Box<dyn Error + Send + Sync>;
+// Legacy types removed.
 
-/// Type alias for boxed error results
-pub type BoxResult<T> = std::result::Result<T, BoxError>;
+pub mod client;
+pub mod connection;
+pub mod message;
 
-/// Common trait for venue-specific message types
-pub trait VenueMessage: Send + Sync + std::fmt::Debug {}
-
-/// Common trait for all WebSocket connections
-#[async_trait]
-pub trait WebSocketConnection<T>: Send + Sync
-where
-    T: VenueMessage,
-{
-    /// Connect to the WebSocket stream
-    async fn connect(&mut self) -> BoxResult<()>;
-
-    /// Disconnect from the WebSocket stream
-    async fn disconnect(&mut self) -> BoxResult<()>;
-
-    /// Check if the connection is alive
-    fn is_connected(&self) -> bool;
-
-    /// Get a stream of messages from the WebSocket
-    /// Returns a Stream that yields venue-specific messages
-    fn message_stream(&mut self) -> Pin<Box<dyn Stream<Item = BoxResult<T>> + Send>>;
-}
+#[cfg(not(target_arch = "wasm32"))]
+pub mod native;
