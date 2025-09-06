@@ -3,6 +3,7 @@
 //! These tests verify that the Bitmart spot public REST API client can successfully
 //! communicate with the live API and receive valid responses.
 
+use rest::native::NativeHttpClient;
 use venues::bitmart::spot::{
     public::rest::{
         GetCurrencyListRequest, GetDepthRequest, GetHistoryKlineRequest, GetLatestKlineRequest,
@@ -18,7 +19,8 @@ fn create_spot_test_client() -> RestClient {
 
     use venues::bitmart::rate_limit::RateLimiter;
 
-    let http_client = Arc::new(rest::native::NativeHttpClient::default());
+    let native_client = NativeHttpClient::default();
+    let http_client = Arc::new(native_client);
     let rate_limiter = RateLimiter::default();
 
     RestClient::new("https://api-cloud.bitmart.com", http_client, rate_limiter)

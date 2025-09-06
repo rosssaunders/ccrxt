@@ -381,7 +381,7 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use rest::NativeHttpClient;
+    use rest::native::NativeHttpClient;
     use secrets::SecretString;
 
     use super::*;

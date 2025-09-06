@@ -5,6 +5,7 @@
 
 use std::sync::Arc;
 
+use rest::native::NativeHttpClient;
 use tokio;
 use venues::bullish::{
     CandleInterval, Errors, PaginatedResult, PaginationParams, PublicRestClient, RateLimiter,
@@ -15,7 +16,8 @@ use venues::bullish::{
 
 /// Helper function to create a CCRXT Bullish public client
 fn create_public_test_client() -> PublicRestClient {
-    let client: Arc<dyn rest::HttpClient> = Arc::new(rest::native::NativeHttpClient::default());
+    let native_client = NativeHttpClient::default();
+    let client: Arc<dyn rest::HttpClient> = Arc::new(native_client);
     let rate_limiter = RateLimiter::new();
     PublicRestClient::new("https://api.exchange.bullish.com", client, rate_limiter)
 }

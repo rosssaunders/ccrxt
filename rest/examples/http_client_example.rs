@@ -1,8 +1,8 @@
 //! Example demonstrating how to use the HTTP client abstraction
 
-use rest::{HttpClient, Method, NativeHttpClient, RequestBuilder};
+use rest::{HttpClient, Method, RequestBuilder, native::NativeHttpClient};
 
-#[tokio::main]
+#[tokio::main(flavor = "current_thread")]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Create HTTP client
     let http_client = NativeHttpClient::new()?;

@@ -37,6 +37,7 @@
 
 use std::sync::Arc;
 
+use rest::native::NativeHttpClient;
 use tokio;
 use venues::cryptocom::{
     AnnouncementCategory, GetAnnouncementsRequest, GetBookRequest, GetCandlestickRequest,
@@ -47,7 +48,8 @@ use venues::cryptocom::{
 
 /// Helper function to create a test client for public endpoints
 fn create_public_test_client() -> PublicRestClient {
-    let http_client = Arc::new(rest::native::NativeHttpClient::default());
+    let native_client = NativeHttpClient::default();
+    let http_client = Arc::new(native_client);
     let rate_limiter = RateLimiter::new();
 
     PublicRestClient::new("https://api.crypto.com", http_client, rate_limiter)
@@ -531,7 +533,8 @@ async fn test_get_risk_parameters() {
 #[tokio::test]
 #[ignore = "Endpoint returns HTTP 404 Not Found"]
 async fn test_get_announcements() {
-    let http_client = Arc::new(rest::native::NativeHttpClient::default());
+    let native_client = NativeHttpClient::default();
+    let http_client = Arc::new(native_client);
     let rate_limiter = RateLimiter::new();
 
     let client = PublicRestClient::new("https://api.crypto.com", http_client, rate_limiter);

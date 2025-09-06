@@ -9,6 +9,7 @@
 
 use std::{sync::Arc, time::Duration};
 
+use rest::native::NativeHttpClient;
 use tokio;
 use venues::binance::{
     coinm::{
@@ -25,7 +26,8 @@ use venues::binance::{
 
 /// Helper function to create a test client for public endpoints
 fn create_public_test_client() -> PublicRestClient {
-    let http_client = std::sync::Arc::new(rest::native::NativeHttpClient::default());
+    let native_client = NativeHttpClient::default();
+    let http_client = Arc::new(native_client);
     let rate_limits = RateLimits {
         request_weight_limit: 6000,
         request_weight_window: Duration::from_secs(60),

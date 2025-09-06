@@ -6,6 +6,7 @@
 use std::sync::Arc;
 
 use chrono;
+use rest::native::NativeHttpClient;
 use tokio;
 use venues::deribit::{
     AccountTier, Currency, CurrencyPair, ExpirationsCurrency, ExpirationsInstrumentKind,
@@ -25,7 +26,8 @@ use venues::deribit::{
 
 /// Helper function to create a test client for public endpoints
 fn create_public_test_client() -> PublicRestClient {
-    let http_client = Arc::new(rest::native::NativeHttpClient::default());
+    let native_client = NativeHttpClient::default();
+    let http_client = Arc::new(native_client);
     let rate_limiter = RateLimiter::new(AccountTier::Tier1);
 
     PublicRestClient::new("https://www.deribit.com", http_client, rate_limiter)

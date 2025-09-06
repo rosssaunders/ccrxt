@@ -3,6 +3,7 @@
 //! These tests verify that the Bitmart contract public REST API client can successfully
 //! communicate with the live API and receive valid responses.
 
+use rest::native::NativeHttpClient;
 use venues::bitmart::contract::{
     public::rest::GetContractDetailsRequest, public_client::RestClient,
 };
@@ -10,7 +11,8 @@ use venues::bitmart::contract::{
 /// Helper function to create a test client
 fn create_contract_test_client() -> RestClient {
     use std::sync::Arc;
-    let http_client = Arc::new(rest::native::NativeHttpClient::default());
+    let native_client = NativeHttpClient::default();
+    let http_client = Arc::new(native_client);
     RestClient::new(http_client)
 }
 

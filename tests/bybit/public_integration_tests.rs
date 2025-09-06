@@ -3,6 +3,7 @@
 //! These tests verify that the Bybit public REST API client can successfully
 //! communicate with the live API and receive valid responses.
 
+use rest::native::NativeHttpClient;
 use venues::bybit::{
     Category,
     // Risk management endpoints
@@ -36,7 +37,8 @@ use venues::bybit::{
 fn create_public_test_client() -> PublicRestClient {
     use std::sync::Arc;
     let rate_limiter = RateLimiter::new();
-    let http_client = Arc::new(rest::native::NativeHttpClient::default());
+    let native_client = NativeHttpClient::default();
+    let http_client = Arc::new(native_client);
     PublicRestClient::new("https://api.bybit.com", rate_limiter, http_client)
 }
 
