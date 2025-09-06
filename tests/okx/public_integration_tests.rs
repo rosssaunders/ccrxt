@@ -82,8 +82,7 @@ impl HttpClient for TestHttpClient {
         let body = response
             .bytes()
             .await
-            .map_err(|e| HttpError::Network(e.to_string()))?
-            .to_vec();
+            .map_err(|e| HttpError::Network(e.to_string()))?;
 
         Ok(Response {
             status,

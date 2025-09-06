@@ -77,7 +77,7 @@ impl RestClient {
                 "HMAC login failed: {error_text}"
             )));
         }
-        let result: Value = serde_json::from_slice(&response.body)?;
+        let result: Value = response.json().map_err(Errors::from)?;
 
         // Map to strongly typed response
         let authorizer = result

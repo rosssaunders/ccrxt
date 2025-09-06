@@ -1,6 +1,7 @@
 use std::{collections::HashMap, time::Duration};
 
 use async_trait::async_trait;
+use bytes::Bytes;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone)]
@@ -27,17 +28,18 @@ pub enum Method {
 pub struct Response {
     pub status: u16,
     pub headers: HashMap<String, String>,
-    pub body: Vec<u8>,
+    pub body: Bytes,
 }
 
 impl Response {
     pub fn text(&self) -> Result<String, HttpError> {
-        String::from_utf8(self.body.clone())
+        std::str::from_utf8(self.body.as_ref())
+            .map(|s| s.to_owned())
             .map_err(|e| HttpError::Decode(format!("Failed to decode as UTF-8: {}", e)))
     }
 
     pub fn json<T: for<'de> Deserialize<'de>>(&self) -> Result<T, HttpError> {
-        serde_json::from_slice(&self.body)
+        serde_json::from_slice(self.body.as_ref())
             .map_err(|e| HttpError::Decode(format!("Failed to decode JSON: {}", e)))
     }
 

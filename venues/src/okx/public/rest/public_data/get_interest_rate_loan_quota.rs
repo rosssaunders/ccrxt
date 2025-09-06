@@ -286,7 +286,7 @@ mod tests {
                 Ok(Response {
                     status: 200,
                     headers: HashMap::new(),
-                    body: br#"{"code":"0","msg":"","data":[]}"#.to_vec(),
+                    body: br#"{"code":"0","msg":"","data":[]}"#.to_vec().into(),
                 })
             }
         }

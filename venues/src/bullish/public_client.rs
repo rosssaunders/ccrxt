@@ -68,7 +68,7 @@ impl RestClient {
             return Err(Self::error_from_response(url, response));
         }
 
-        let result: T = serde_json::from_slice(&response.body)?;
+        let result: T = response.json().map_err(crate::bullish::Errors::from)?;
         Ok(result)
     }
 
@@ -112,7 +112,7 @@ impl RestClient {
             return Err(Self::error_from_response(url, response));
         }
 
-        let result: T = serde_json::from_slice(&response.body)?;
+        let result: T = response.json().map_err(crate::bullish::Errors::from)?;
         Ok(result)
     }
 

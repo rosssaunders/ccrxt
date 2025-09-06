@@ -319,7 +319,7 @@ impl RestClient {
         T: DeserializeOwned,
     {
         if response.is_success() {
-            let result: T = serde_json::from_slice(&response.body)?;
+            let result: T = response.json().map_err(Errors::from)?;
             return Ok(result);
         }
 

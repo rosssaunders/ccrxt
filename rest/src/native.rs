@@ -1,4 +1,4 @@
-use std::time::Duration;
+use std::{net::SocketAddr, time::Duration};
 
 use async_trait::async_trait;
 use reqwest;
@@ -12,15 +12,27 @@ pub struct NativeHttpClient {
 
 impl NativeHttpClient {
     pub fn new() -> Result<Self, HttpError> {
-        let client = reqwest::Client::builder()
-            .build()
-            .map_err(|e| HttpError::Unknown(format!("Failed to create client: {}", e)))?;
-
-        Ok(Self { client })
+        // Use the tuned builder defaults for low-latency HTTP.
+        NativeHttpClientBuilder::new().build()
     }
 
     pub fn builder() -> NativeHttpClientBuilder {
         NativeHttpClientBuilder::new()
+    }
+
+    /// Best-effort connection warm-up for the given URLs.
+    /// Sends a quick HEAD request to establish TCP/TLS sessions and pool connections.
+    /// Returns Ok(()) regardless of individual failures to avoid impacting startup.
+    pub async fn warm_up(&self, urls: &[&str]) -> Result<(), HttpError> {
+        for &url in urls {
+            let _ = self
+                .client
+                .request(reqwest::Method::HEAD, url)
+                .timeout(Duration::from_millis(750))
+                .send()
+                .await;
+        }
+        Ok(())
     }
 }
 
@@ -56,9 +68,20 @@ impl HttpClient for NativeHttpClient {
 
         let mut builder = self.client.request(method, &request.url);
 
+        // Prefer no compression unless the caller explicitly asked for it.
+        let has_accept_encoding = request
+            .headers
+            .keys()
+            .any(|k| k.eq_ignore_ascii_case("accept-encoding"));
+        if !has_accept_encoding {
+            builder = builder.header(reqwest::header::ACCEPT_ENCODING, "identity");
+        }
+
         for (key, value) in request.headers {
             builder = builder.header(&key, &value);
         }
+
+        // Caller headers applied above; no further header adjustments needed here.
 
         if let Some(body) = request.body {
             builder = builder.body(body);
@@ -88,8 +111,7 @@ impl HttpClient for NativeHttpClient {
         let body = response
             .bytes()
             .await
-            .map_err(|e| HttpError::Network(format!("Failed to read response body: {}", e)))?
-            .to_vec();
+            .map_err(|e| HttpError::Network(format!("Failed to read response body: {}", e)))?;
 
         Ok(Response {
             status,
@@ -103,6 +125,8 @@ pub struct NativeHttpClientBuilder {
     timeout: Option<Duration>,
     connect_timeout: Option<Duration>,
     user_agent: Option<String>,
+    prefer_http2: bool,
+    resolves: Vec<(String, SocketAddr)>,
 }
 
 impl NativeHttpClientBuilder {
@@ -111,6 +135,8 @@ impl NativeHttpClientBuilder {
             timeout: None,
             connect_timeout: None,
             user_agent: None,
+            prefer_http2: false,
+            resolves: Vec::new(),
         }
     }
 
@@ -129,6 +155,18 @@ impl NativeHttpClientBuilder {
         self
     }
 
+    /// Prefer HTTP/2 via ALPN (don’t force http/1.1); defaults to false.
+    pub fn prefer_http2(mut self, enabled: bool) -> Self {
+        self.prefer_http2 = enabled;
+        self
+    }
+
+    /// Pre-resolve a hostname to a specific socket address to avoid DNS on hot path.
+    pub fn resolve(mut self, host: impl Into<String>, addr: SocketAddr) -> Self {
+        self.resolves.push((host.into(), addr));
+        self
+    }
+
     pub fn build(self) -> Result<NativeHttpClient, HttpError> {
         let mut builder = reqwest::Client::builder();
 
@@ -142,6 +180,27 @@ impl NativeHttpClientBuilder {
 
         if let Some(user_agent) = self.user_agent {
             builder = builder.user_agent(user_agent);
+        }
+
+        // Low-latency defaults: avoid extra work and keep sockets hot.
+        builder = builder
+            // Disable automatic redirects to avoid hidden extra roundtrips.
+            .redirect(reqwest::redirect::Policy::none())
+            // Socket-level tuning.
+            .tcp_nodelay(true)
+            .tcp_keepalive(Some(Duration::from_secs(30)))
+            // Connection pool tuning: many warm idles and a sensible idle timeout.
+            .pool_max_idle_per_host(256)
+            .pool_idle_timeout(Some(Duration::from_secs(120)));
+
+        // Protocol preference: default to HTTP/1.1 for minimal latency; allow opting into HTTP/2.
+        if !self.prefer_http2 {
+            builder = builder.http1_only();
+        }
+
+        // Inject static DNS resolutions if provided.
+        for (host, addr) in &self.resolves {
+            builder = builder.resolve(host, *addr);
         }
 
         let client = builder

@@ -114,7 +114,7 @@ impl RestClient {
                 "Login failed: {error_text}"
             )));
         }
-        let login_response: LoginResponse = serde_json::from_slice(&response.body)?;
+        let login_response: LoginResponse = response.json().map_err(Errors::from)?;
         self.jwt_token = Some(login_response.token.clone());
         Ok(login_response)
     }

@@ -137,7 +137,8 @@ impl RestClient {
 
         // Get response status and body in one go to avoid multiple awaits
         let status = response.status;
-        let response_text = String::from_utf8(response.body)
+        let response_text = response
+            .text()
             .map_err(|e| Errors::Error(format!("Failed to decode response body: {e}")))?;
 
         // Check status after getting text to avoid branching on success path
@@ -169,7 +170,7 @@ mod tests {
             Ok(Response {
                 status: 200,
                 headers: HashMap::new(),
-                body: br#"{"code":"0","msg":"","data":[]}"#.to_vec(),
+                body: br#"{"code":"0","msg":"","data":[]}"#.to_vec().into(),
             })
         }
     }
