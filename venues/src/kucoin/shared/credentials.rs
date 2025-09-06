@@ -1,6 +1,6 @@
 //! KuCoin API credentials
 
-use rest::secrets::SecretString;
+use secrets::SecretString;
 
 /// Credentials for authenticating with KuCoin private REST API.
 ///

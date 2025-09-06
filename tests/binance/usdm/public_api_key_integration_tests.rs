@@ -48,7 +48,7 @@ fn get_api_key() -> Option<String> {
 /// Test the historical trades endpoint with API key authentication
 #[tokio::test]
 async fn test_get_historical_trades() {
-    use rest::secrets::{SecretString, SecretValue};
+    use secrets::{SecretString, SecretValue};
     use venues::binance::usdm::public::rest::historical_trades::HistoricalTradesRequest;
 
     let Some(api_key) = get_api_key() else {

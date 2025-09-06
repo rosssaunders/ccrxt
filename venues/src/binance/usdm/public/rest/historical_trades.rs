@@ -1,5 +1,6 @@
 use std::borrow::Cow;
 
+use secrets::ExposableSecret;
 use serde::{Deserialize, Serialize};
 
 use crate::binance::usdm::{RestResult, public_client::RestClient};
@@ -65,7 +66,7 @@ impl RestClient {
     /// Vector of historical trades
     pub async fn get_historical_trades(
         &self,
-        api_key: &dyn rest::secrets::ExposableSecret,
+        api_key: &dyn ExposableSecret,
         params: HistoricalTradesRequest,
     ) -> RestResult<Vec<HistoricalTrade>> {
         self.send_api_key_get_request::<Vec<HistoricalTrade>, _>(

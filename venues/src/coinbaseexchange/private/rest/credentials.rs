@@ -1,6 +1,6 @@
 //! Coinbase Exchange API credentials
 
-use rest::secrets::SecretString;
+use secrets::SecretString;
 
 /// Credentials for authenticating with Coinbase Exchange private REST API.
 ///

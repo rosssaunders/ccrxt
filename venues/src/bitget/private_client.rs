@@ -28,8 +28,8 @@ use hmac::{Hmac, Mac};
 use rest::{
     HttpClient,
     http_client::{Method as HttpMethod, RequestBuilder},
-    secrets::ExposableSecret,
 };
+use secrets::ExposableSecret;
 use serde::Serialize;
 use sha2::Sha256;
 

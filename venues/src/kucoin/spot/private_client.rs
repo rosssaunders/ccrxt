@@ -3,7 +3,8 @@ use std::{collections::HashMap, sync::Arc};
 use base64::{Engine as _, engine::general_purpose};
 use chrono::Utc;
 use hmac::{Hmac, Mac};
-use rest::{HttpClient, HttpError, Method, RequestBuilder, secrets::ExposableSecret};
+use rest::{HttpClient, HttpError, Method, RequestBuilder};
+use secrets::ExposableSecret;
 use serde::{Serialize, de::DeserializeOwned};
 use sha2::Sha256;
 
@@ -380,9 +381,11 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use rest::{NativeHttpClient, secrets::SecretString};
+    use rest::NativeHttpClient;
+    use secrets::SecretString;
 
     use super::*;
+
     fn creds() -> Credentials {
         Credentials {
             api_key: SecretString::new("test_key".into()),

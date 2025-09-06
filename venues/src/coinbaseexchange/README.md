@@ -14,7 +14,7 @@ This module provides a comprehensive implementation of the Coinbase Exchange pri
 
 ```rust
 use venues::coinbase::{PrivateRestClient, RateLimiter, GetAccountBalancesRequest};
-use rest::secrets::SecretValue;
+use secrets::SecretValue;
 use secrecy::SecretString;
 
 // Create the client
@@ -35,12 +35,14 @@ let balances = client.get_account_balances(&request).await?;
 ## Authentication
 
 The Coinbase Exchange API requires:
+
 - **CB-ACCESS-KEY**: Your API key
 - **CB-ACCESS-SIGN**: HMAC SHA256 signature (base64 encoded)
 - **CB-ACCESS-TIMESTAMP**: Unix timestamp
 - **CB-ACCESS-PASSPHRASE**: Your API passphrase
 
 The signature is created by:
+
 1. Concatenating: timestamp + method + requestPath + body
 2. Signing with HMAC SHA256 using your base64-decoded secret
 3. Base64 encoding the result
@@ -48,6 +50,7 @@ The signature is created by:
 ## Rate Limits
 
 The implementation follows Coinbase's rate limits:
+
 - **Public endpoints**: 10 requests/second (burst: 15)
 - **Private endpoints**: 15 requests/second (burst: 30)
 - **Private /fills**: 10 requests/second (burst: 20)
@@ -56,6 +59,7 @@ The implementation follows Coinbase's rate limits:
 ## Error Handling
 
 The API provides detailed error mapping for common Coinbase errors:
+
 - Invalid price
 - Insufficient funds
 - Invalid order size
@@ -65,6 +69,7 @@ The API provides detailed error mapping for common Coinbase errors:
 ## Testing
 
 Run the Coinbase tests with:
+
 ```bash
 cargo test coinbase
 ```
@@ -97,6 +102,7 @@ cargo test coinbase
 ## Sandbox Testing
 
 For testing, use the sandbox URLs:
+
 - **REST API**: `https://api-public.sandbox.exchange.coinbase.com`
 - **WebSocket**: `wss://ws-feed-public.sandbox.exchange.coinbase.com`
 

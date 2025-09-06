@@ -7,7 +7,8 @@ use std::{borrow::Cow, sync::Arc};
 use base64::{Engine as _, engine::general_purpose};
 use chrono::Utc;
 use hmac::{Hmac, Mac};
-use rest::{HttpClient, Method, Request, secrets::ExposableSecret};
+use rest::{HttpClient, Method, Request};
+use secrets::ExposableSecret;
 use serde::{Serialize, de::DeserializeOwned};
 use sha2::Sha256;
 
@@ -298,7 +299,8 @@ mod tests {
     use std::{collections::HashMap, sync::Arc};
 
     use async_trait::async_trait;
-    use rest::{HttpClient, HttpError, Response, secrets::SecretString};
+    use rest::{HttpClient, HttpError, Response};
+    use secrets::SecretString;
 
     use super::*;
 

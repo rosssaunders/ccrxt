@@ -65,7 +65,7 @@ impl PrivateRestClient {
 mod tests {
     use std::sync::Arc;
 
-    use rest::secrets::SecretString;
+    use secrets::SecretString;
     use serde_json::{Value, json};
 
     use super::*;

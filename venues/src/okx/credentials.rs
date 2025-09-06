@@ -1,6 +1,6 @@
 //! OKX API credentials
 
-use rest::secrets::SecretString;
+use secrets::SecretString;
 
 /// Credentials for authenticating with OKX private REST API.
 ///

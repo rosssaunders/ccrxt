@@ -26,6 +26,7 @@ Bullish uses **JWT Bearer Token + HMAC Signature** authentication for private en
 ## Rate Limiting
 
 The API enforces rate limits across different endpoint categories:
+
 - **Public endpoints**: 50 requests/second
 - **Private endpoints**: 50 requests/second (with higher limits available via rate limit tokens)
 - **Login endpoints**: 10 requests/second
@@ -35,57 +36,57 @@ The API enforces rate limits across different endpoint categories:
 
 ### Public REST API Endpoints
 
-| Endpoint | Method | Description | Status |
-|----------|--------|-------------|--------|
-| `/trading-api/v1/markets` | GET | Get all markets | ✅ |
-| `/trading-api/v1/markets/{symbol}` | GET | Get specific market | ✅ |
-| `/trading-api/v1/markets/{symbol}/orderbook/hybrid` | GET | Get orderbook | ✅ |
-| `/trading-api/v1/markets/{symbol}/trades` | GET | Get public trades | ✅ |
-| `/trading-api/v1/markets/{symbol}/tick` | GET | Get 24h ticker | ✅ |
-| `/trading-api/v1/markets/{symbol}/candle` | GET | Get candlestick data | ✅ |
-| `/trading-api/v1/assets` | GET | Get all assets | ✅ |
-| `/trading-api/v1/assets/{symbol}` | GET | Get specific asset | ✅ |
-| `/trading-api/v1/index-prices` | GET | Get all index prices | ✅ |
-| `/trading-api/v1/index-prices/{assetSymbol}` | GET | Get index price by symbol | ✅ |
-| `/trading-api/v1/nonce` | GET | Get current nonce range | ✅ |
-| `/trading-api/v1/time` | GET | Get server time | ✅ |
+| Endpoint                                            | Method | Description               | Status |
+| --------------------------------------------------- | ------ | ------------------------- | ------ |
+| `/trading-api/v1/markets`                           | GET    | Get all markets           | ✅     |
+| `/trading-api/v1/markets/{symbol}`                  | GET    | Get specific market       | ✅     |
+| `/trading-api/v1/markets/{symbol}/orderbook/hybrid` | GET    | Get orderbook             | ✅     |
+| `/trading-api/v1/markets/{symbol}/trades`           | GET    | Get public trades         | ✅     |
+| `/trading-api/v1/markets/{symbol}/tick`             | GET    | Get 24h ticker            | ✅     |
+| `/trading-api/v1/markets/{symbol}/candle`           | GET    | Get candlestick data      | ✅     |
+| `/trading-api/v1/assets`                            | GET    | Get all assets            | ✅     |
+| `/trading-api/v1/assets/{symbol}`                   | GET    | Get specific asset        | ✅     |
+| `/trading-api/v1/index-prices`                      | GET    | Get all index prices      | ✅     |
+| `/trading-api/v1/index-prices/{assetSymbol}`        | GET    | Get index price by symbol | ✅     |
+| `/trading-api/v1/nonce`                             | GET    | Get current nonce range   | ✅     |
+| `/trading-api/v1/time`                              | GET    | Get server time           | ✅     |
 
 ### Private REST API Endpoints
 
-| Endpoint | Method | Description | Status |
-|----------|--------|-------------|--------|
-| `/trading-api/v1/accounts/trading-accounts` | GET | Get trading accounts | ✅ |
-| `/trading-api/v1/accounts/trading-accounts/{id}` | GET | Get specific trading account | ✅ |
-| `/trading-api/v1/accounts/asset` | GET | Get asset balances | ✅ |
-| `/trading-api/v1/accounts/asset/{symbol}` | GET | Get specific asset balance | ✅ |
-| `/trading-api/v2/orders` | GET | Get orders | ✅ |
-| `/trading-api/v2/orders` | POST | Create order | ✅ |
-| `/trading-api/v2/orders/{orderId}` | GET | Get specific order | ✅ |
-| `/trading-api/v1/trades` | GET | Get trades | ✅ |
-| `/trading-api/v1/trades/{tradeId}` | GET | Get specific trade | ✅ |
-| `/trading-api/v2/history/orders` | GET | Get historical orders | ✅ |
-| `/trading-api/v1/history/trades` | GET | Get historical trades | ✅ |
-| `/trading-api/v1/history/derivatives-settlement` | GET | Get historical derivatives settlement | ✅ |
-| `/trading-api/v1/wallets/transactions` | GET | Get wallet transactions (token pagination) | ✅ |
-| `/trading-api/v1/wallets/limits` | GET | Get custody withdrawal limits | ✅ |
-| `/trading-api/v1/wallets/deposit-instructions/crypto` | GET | Get crypto deposit instructions | ✅ |
-| `/trading-api/v1/wallets/deposit-instructions/fiat` | GET | Get fiat deposit instructions | ✅ |
-| `/trading-api/v1/wallets/withdrawal-instructions/crypto` | GET | Get crypto withdrawal instructions | ✅ |
-| `/trading-api/v1/derivatives-positions` | GET | Get derivatives positions | ✅ |
-| `/trading-api/v2/amm-instructions` | POST | Create AMM instruction | ✅ |
-| `/trading-api/v2/amm-instructions` | GET | Get AMM instructions | ✅ |
-| `/trading-api/v2/amm-instructions/{instructionId}` | GET | Get specific AMM instruction | ✅ |
-| `/trading-api/v2/command` | POST | Amend order | ✅ |
-| `/trading-api/v2/command` | POST | Cancel order | ✅ |
-| `/trading-api/v2/command` | POST | Cancel all orders | ✅ |
-| `/trading-api/v2/command` | POST | Cancel all orders by market | ✅ |
-| `/trading-api/v2/command` | POST | Delayed cancel all orders | ✅ |
-| `/trading-api/v2/command` | POST | Unset delayed cancel all orders | ✅ |
-| `/trading-api/v1/simulate-portfolio-margin` | POST | Portfolio margin simulator | ✅ |
-| `/trading-api/v1/users/hmac/login` | GET | HMAC login (get JWT) | ✅ |
-| `/trading-api/v2/users/login` | POST | Session login (get JWT) | ✅ |
-| `/trading-api/v1/users/logout` | POST | Logout | ✅ |
-| `/trading-api/v1/command?commandType=V1TransferAsset` | POST | Transfer asset between trading accounts | ✅ |
+| Endpoint                                                 | Method | Description                                | Status |
+| -------------------------------------------------------- | ------ | ------------------------------------------ | ------ |
+| `/trading-api/v1/accounts/trading-accounts`              | GET    | Get trading accounts                       | ✅     |
+| `/trading-api/v1/accounts/trading-accounts/{id}`         | GET    | Get specific trading account               | ✅     |
+| `/trading-api/v1/accounts/asset`                         | GET    | Get asset balances                         | ✅     |
+| `/trading-api/v1/accounts/asset/{symbol}`                | GET    | Get specific asset balance                 | ✅     |
+| `/trading-api/v2/orders`                                 | GET    | Get orders                                 | ✅     |
+| `/trading-api/v2/orders`                                 | POST   | Create order                               | ✅     |
+| `/trading-api/v2/orders/{orderId}`                       | GET    | Get specific order                         | ✅     |
+| `/trading-api/v1/trades`                                 | GET    | Get trades                                 | ✅     |
+| `/trading-api/v1/trades/{tradeId}`                       | GET    | Get specific trade                         | ✅     |
+| `/trading-api/v2/history/orders`                         | GET    | Get historical orders                      | ✅     |
+| `/trading-api/v1/history/trades`                         | GET    | Get historical trades                      | ✅     |
+| `/trading-api/v1/history/derivatives-settlement`         | GET    | Get historical derivatives settlement      | ✅     |
+| `/trading-api/v1/wallets/transactions`                   | GET    | Get wallet transactions (token pagination) | ✅     |
+| `/trading-api/v1/wallets/limits`                         | GET    | Get custody withdrawal limits              | ✅     |
+| `/trading-api/v1/wallets/deposit-instructions/crypto`    | GET    | Get crypto deposit instructions            | ✅     |
+| `/trading-api/v1/wallets/deposit-instructions/fiat`      | GET    | Get fiat deposit instructions              | ✅     |
+| `/trading-api/v1/wallets/withdrawal-instructions/crypto` | GET    | Get crypto withdrawal instructions         | ✅     |
+| `/trading-api/v1/derivatives-positions`                  | GET    | Get derivatives positions                  | ✅     |
+| `/trading-api/v2/amm-instructions`                       | POST   | Create AMM instruction                     | ✅     |
+| `/trading-api/v2/amm-instructions`                       | GET    | Get AMM instructions                       | ✅     |
+| `/trading-api/v2/amm-instructions/{instructionId}`       | GET    | Get specific AMM instruction               | ✅     |
+| `/trading-api/v2/command`                                | POST   | Amend order                                | ✅     |
+| `/trading-api/v2/command`                                | POST   | Cancel order                               | ✅     |
+| `/trading-api/v2/command`                                | POST   | Cancel all orders                          | ✅     |
+| `/trading-api/v2/command`                                | POST   | Cancel all orders by market                | ✅     |
+| `/trading-api/v2/command`                                | POST   | Delayed cancel all orders                  | ✅     |
+| `/trading-api/v2/command`                                | POST   | Unset delayed cancel all orders            | ✅     |
+| `/trading-api/v1/simulate-portfolio-margin`              | POST   | Portfolio margin simulator                 | ✅     |
+| `/trading-api/v1/users/hmac/login`                       | GET    | HMAC login (get JWT)                       | ✅     |
+| `/trading-api/v2/users/login`                            | POST   | Session login (get JWT)                    | ✅     |
+| `/trading-api/v1/users/logout`                           | POST   | Logout                                     | ✅     |
+| `/trading-api/v1/command?commandType=V1TransferAsset`    | POST   | Transfer asset between trading accounts    | ✅     |
 
 ### Planned Endpoints (Future Implementation)
 
@@ -139,7 +140,7 @@ use venues::bullish::{PrivateRestClient, Credentials, RateLimiter};
 use venues::bullish::{CreateOrderRequest};
 use venues::bullish::enums::{OrderSide, OrderType, TimeInForce};
 use venues::bullish::private::rest::create_order::CommandType;
-use rest::secrets::SecretString;
+use secrets::SecretString;
 
 let creds = Credentials {
     api_key: SecretString::new("your_api_key".to_string().into_boxed_str()),

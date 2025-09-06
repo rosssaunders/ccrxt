@@ -3,8 +3,8 @@ use std::{borrow::Cow, collections::HashMap, sync::Arc, time::Duration};
 use rest::{
     HttpClient,
     http_client::{Method as HttpMethod, RequestBuilder},
-    secrets::ExposableSecret,
 };
+use secrets::ExposableSecret;
 use serde::{Deserialize, Serialize};
 use tokio::time::sleep;
 

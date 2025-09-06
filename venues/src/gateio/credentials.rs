@@ -1,6 +1,6 @@
 //! GateIO API credentials - shared across all GateIO products
 
-use rest::secrets::SecretString;
+use secrets::SecretString;
 
 /// Credentials for authenticating with GateIO private REST API.
 ///

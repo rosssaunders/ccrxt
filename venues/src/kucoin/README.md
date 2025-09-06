@@ -52,11 +52,11 @@ use venues::kucoin::public::{RestClient, GetServerTimeRequest};
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let client = RestClient::new_default();
-    
+
     // Get server time
     let (response, _) = client.get_server_time(GetServerTimeRequest::default()).await?;
     println!("Server time: {}", response.timestamp);
-    
+
     Ok(())
 }
 ```
@@ -66,7 +66,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 ```rust
 use venues::kucoin::private::{RestClient, PlaceOrderRequest};
 use venues::kucoin::{OrderSide, OrderType};
-use rest::secrets::SecretValue;
+use secrets::SecretValue;
 use secrecy::SecretString;
 
 #[tokio::main]
@@ -74,9 +74,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let api_key = SecretValue::new(SecretString::new("your_api_key".to_string()));
     let api_secret = SecretValue::new(SecretString::new("your_api_secret".to_string()));
     let passphrase = SecretValue::new(SecretString::new("your_passphrase".to_string()));
-    
+
     let client = RestClient::new_with_credentials(api_key, api_secret, passphrase);
-    
+
     let request = PlaceOrderRequest {
         side: OrderSide::Buy,
         symbol: "BTC-USDT".to_string(),
@@ -85,10 +85,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         size: Some("0.001".to_string()),
         ..Default::default()
     };
-    
+
     let (response, _) = client.place_order(request).await?;
     println!("Order placed: {}", response.order_id);
-    
+
     Ok(())
 }
 ```
@@ -143,21 +143,21 @@ KuCoin uses a sophisticated rate limiting system with different resource pools b
 
 ## Resource Pools and Limits
 
-| VIP Level | Spot (incl. Margin) | Futures | Management | Earn | CopyTrading | Public |
-|-----------|--------------------:|--------:|-----------:|-----:|------------:|-------:|
-| VIP0      | 4,000/30s          | 2,000/30s | 2,000/30s | 2,000/30s | 2,000/30s | 2,000/30s |
-| VIP1      | 6,000/30s          | 2,000/30s | 2,000/30s | 2,000/30s | 2,000/30s | 2,000/30s |
-| VIP2      | 8,000/30s          | 4,000/30s | 4,000/30s | 2,000/30s | 2,000/30s | 2,000/30s |
-| VIP3      | 10,000/30s         | 5,000/30s | 5,000/30s | 2,000/30s | 2,000/30s | 2,000/30s |
-| VIP4      | 13,000/30s         | 6,000/30s | 6,000/30s | 2,000/30s | 2,000/30s | 2,000/30s |
-| VIP5      | 16,000/30s         | 7,000/30s | 7,000/30s | 2,000/30s | 2,000/30s | 2,000/30s |
-| VIP6      | 20,000/30s         | 8,000/30s | 8,000/30s | 2,000/30s | 2,000/30s | 2,000/30s |
-| VIP7      | 23,000/30s         | 10,000/30s | 10,000/30s | 2,000/30s | 2,000/30s | 2,000/30s |
-| VIP8      | 26,000/30s         | 12,000/30s | 12,000/30s | 2,000/30s | 2,000/30s | 2,000/30s |
-| VIP9      | 30,000/30s         | 14,000/30s | 14,000/30s | 2,000/30s | 2,000/30s | 2,000/30s |
-| VIP10     | 33,000/30s         | 16,000/30s | 16,000/30s | 2,000/30s | 2,000/30s | 2,000/30s |
-| VIP11     | 36,000/30s         | 18,000/30s | 18,000/30s | 2,000/30s | 2,000/30s | 2,000/30s |
-| VIP12     | 40,000/30s         | 20,000/30s | 20,000/30s | 2,000/30s | 2,000/30s | 2,000/30s |
+| VIP Level | Spot (incl. Margin) |    Futures | Management |      Earn | CopyTrading |    Public |
+| --------- | ------------------: | ---------: | ---------: | --------: | ----------: | --------: |
+| VIP0      |           4,000/30s |  2,000/30s |  2,000/30s | 2,000/30s |   2,000/30s | 2,000/30s |
+| VIP1      |           6,000/30s |  2,000/30s |  2,000/30s | 2,000/30s |   2,000/30s | 2,000/30s |
+| VIP2      |           8,000/30s |  4,000/30s |  4,000/30s | 2,000/30s |   2,000/30s | 2,000/30s |
+| VIP3      |          10,000/30s |  5,000/30s |  5,000/30s | 2,000/30s |   2,000/30s | 2,000/30s |
+| VIP4      |          13,000/30s |  6,000/30s |  6,000/30s | 2,000/30s |   2,000/30s | 2,000/30s |
+| VIP5      |          16,000/30s |  7,000/30s |  7,000/30s | 2,000/30s |   2,000/30s | 2,000/30s |
+| VIP6      |          20,000/30s |  8,000/30s |  8,000/30s | 2,000/30s |   2,000/30s | 2,000/30s |
+| VIP7      |          23,000/30s | 10,000/30s | 10,000/30s | 2,000/30s |   2,000/30s | 2,000/30s |
+| VIP8      |          26,000/30s | 12,000/30s | 12,000/30s | 2,000/30s |   2,000/30s | 2,000/30s |
+| VIP9      |          30,000/30s | 14,000/30s | 14,000/30s | 2,000/30s |   2,000/30s | 2,000/30s |
+| VIP10     |          33,000/30s | 16,000/30s | 16,000/30s | 2,000/30s |   2,000/30s | 2,000/30s |
+| VIP11     |          36,000/30s | 18,000/30s | 18,000/30s | 2,000/30s |   2,000/30s | 2,000/30s |
+| VIP12     |          40,000/30s | 20,000/30s | 20,000/30s | 2,000/30s |   2,000/30s | 2,000/30s |
 
 ## Usage
 
@@ -263,19 +263,19 @@ async fn make_kucoin_request(
 ) -> Result<reqwest::Response, Box<dyn std::error::Error>> {
     // Determine resource pool from endpoint
     let pool = ResourcePool::from_endpoint_path(endpoint);
-    
+
     // Check rate limits before making request
     rate_limiter.check_limits(pool, weight).await?;
-    
+
     // Make the HTTP request
     let response = client.get(&format!("https://api.kucoin.com{}", endpoint))
         .send()
         .await?;
-    
+
     // Parse rate limit headers for monitoring
     let rate_limit_info = RateLimitHeader::from_headers(response.headers());
     println!("Rate limit remaining: {:?}", rate_limit_info.remaining);
-    
+
     Ok(response)
 }
 ```
@@ -309,6 +309,7 @@ The rate limiter automatically classifies endpoints into resource pools:
 ## Compliance
 
 This implementation follows KuCoin's official rate limiting documentation:
+
 - [KuCoin Rate Limit Documentation](https://www.kucoin.com/docs-new/rate-limit)
 - Resource pool based quotas
 - 30-second sliding windows

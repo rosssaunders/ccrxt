@@ -473,7 +473,7 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use rest::secrets::SecretString;
+    use secrets::SecretString;
 
     use super::*;
 

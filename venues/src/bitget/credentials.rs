@@ -1,6 +1,6 @@
 //! Bitget Spot API credentials
 
-use rest::secrets::SecretString;
+use secrets::SecretString;
 
 /// Credentials for authenticating with Bitget Spot private REST API.
 ///

@@ -5,6 +5,8 @@
 
 use std::sync::Arc;
 
+use secrets::ExposableSecret;
+
 use crate::binance::{
     shared::{
         Errors as SharedErrors, RestResponse, client::PublicBinanceClient,
@@ -146,7 +148,7 @@ impl UsdmPublicRestClient {
     pub async fn send_api_key_get_request<T, R>(
         &self,
         endpoint: &str,
-        api_key: &dyn rest::secrets::ExposableSecret,
+        api_key: &dyn ExposableSecret,
         params: Option<R>,
         weight: u32,
     ) -> Result<RestResponse<T>, Errors>

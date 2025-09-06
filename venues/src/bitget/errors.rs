@@ -34,27 +34,6 @@ impl fmt::Display for Errors {
     }
 }
 
-impl std::error::Error for Errors {}
-
-impl From<rest::error::RestError> for Errors {
-    fn from(error: rest::error::RestError) -> Self {
-        match error {
-            rest::error::RestError::HttpError(e) => Errors::Error(format!("HTTP error: {}", e)),
-            rest::error::RestError::RateLimitExceeded => {
-                Errors::Error("Rate limit exceeded".to_string())
-            }
-            rest::error::RestError::AuthenticationError(msg) => {
-                Errors::Error(format!("Authentication error: {}", msg))
-            }
-            rest::error::RestError::ValidationError(msg) => {
-                Errors::Error(format!("Validation error: {}", msg))
-            }
-            rest::error::RestError::Unknown(msg) => Errors::Error(msg),
-            _ => Errors::Error("Unhandled REST error".to_string()),
-        }
-    }
-}
-
 /// Represents an error response from the Bitget API.
 ///
 /// This is public as it is used by Batch responses.

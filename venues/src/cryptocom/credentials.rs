@@ -1,6 +1,6 @@
 //! Crypto.com API credentials
 
-use rest::secrets::SecretString;
+use secrets::SecretString;
 
 /// Credentials for authenticating with Crypto.com private REST API.
 ///

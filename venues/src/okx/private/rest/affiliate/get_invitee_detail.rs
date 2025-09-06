@@ -209,7 +209,7 @@ mod tests {
     #[tokio::test]
     async fn test_get_invitee_detail_method_compilation() {
         // This test ensures the method compiles and is accessible
-        use rest::secrets::SecretString;
+        use secrets::SecretString;
 
         use crate::okx::{Credentials, RateLimiter};
 

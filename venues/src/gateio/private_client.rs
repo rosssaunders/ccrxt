@@ -12,8 +12,8 @@ type HmacSha512 = Hmac<Sha512>;
 use rest::{
     HttpClient,
     http_client::{Method as HttpMethod, RequestBuilder},
-    secrets::ExposableSecret,
 };
+use secrets::ExposableSecret;
 
 use crate::gateio::{Credentials, ErrorResponse, GateIoError, GateIoRateLimiter, RestResult};
 

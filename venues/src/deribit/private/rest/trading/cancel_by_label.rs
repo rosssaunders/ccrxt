@@ -54,7 +54,7 @@ impl PrivateRestClient {
 mod tests {
     use std::sync::Arc;
 
-    use rest::secrets::SecretString;
+    use secrets::SecretString;
     /// REST API endpoint constant
     use serde_json::{Value, json};
 

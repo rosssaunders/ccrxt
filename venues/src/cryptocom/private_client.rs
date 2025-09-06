@@ -5,8 +5,8 @@ use hmac::{Hmac, Mac};
 use rest::{
     HttpClient,
     http_client::{Method as HttpMethod, RequestBuilder},
-    secrets::ExposableSecret,
 };
+use secrets::ExposableSecret;
 use serde_json::{Value, json};
 use sha2::Sha256;
 
@@ -394,8 +394,8 @@ mod tests {
     #[test]
     fn test_client_creation() {
         let credentials = Credentials {
-            api_key: rest::secrets::SecretString::from("test_key".to_string()),
-            api_secret: rest::secrets::SecretString::from("test_secret".to_string()),
+            api_key: secrets::SecretString::from("test_key".to_string()),
+            api_secret: secrets::SecretString::from("test_secret".to_string()),
         };
         let http_client = Arc::new(rest::native::NativeHttpClient::default());
 
@@ -407,8 +407,8 @@ mod tests {
     #[test]
     fn test_client_sign_request() {
         let credentials = Credentials {
-            api_key: rest::secrets::SecretString::from("test_api_key".to_string()),
-            api_secret: rest::secrets::SecretString::from("test_secret".to_string()),
+            api_key: secrets::SecretString::from("test_api_key".to_string()),
+            api_secret: secrets::SecretString::from("test_secret".to_string()),
         };
         let http_client = Arc::new(rest::native::NativeHttpClient::default());
 

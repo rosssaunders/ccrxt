@@ -79,7 +79,7 @@ impl PrivateRestClient {
 
 #[cfg(test)]
 mod tests {
-    use rest::secrets::SecretString;
+    use secrets::SecretString;
     use serde_json::{Value, json};
 
     use super::*;

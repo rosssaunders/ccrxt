@@ -4,8 +4,8 @@ use std::sync::Arc;
 use rest::{
     HttpClient,
     http_client::{Method as HttpMethod, RequestBuilder},
-    secrets::ExposableSecret,
 };
+use secrets::ExposableSecret;
 
 use crate::bitmart::{Errors, RestResult, shared::Credentials};
 

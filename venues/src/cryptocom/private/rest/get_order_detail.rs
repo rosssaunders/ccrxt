@@ -120,7 +120,7 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use rest::secrets::ExposableSecret;
+    use secrets::ExposableSecret;
     use serde_json::json;
 
     use super::*;

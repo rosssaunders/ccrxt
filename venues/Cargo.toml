@@ -8,6 +8,7 @@ license.workspace = true
 # Internal dependencies
 websockets = { path = "../websockets" }
 rest = { path = "../rest", default-features = false }
+secrets = { path = "../secrets" }
 
 # External dependencies
 anyhow = "1.0"
@@ -51,11 +52,17 @@ secrecy = "0.10.3"
 urlencoding = "2.1"
 strum = "0.27.2"
 strum_macros = "0.27.2"
-getrandom = "0.2"
+getrandom = "0.3.3"
 
 [features]
 default = ["native"]
-native = ["tokio/rt-multi-thread", "tokio/sync", "rest/native", "ratatui", "crossterm"]
+native = [
+    "tokio/rt-multi-thread",
+    "tokio/sync",
+    "rest/native",
+    "ratatui",
+    "crossterm",
+]
 
 [lints]
 workspace = true

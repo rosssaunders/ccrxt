@@ -1,6 +1,6 @@
 //! Deribit API credentials
 
-use rest::secrets::SecretString;
+use secrets::SecretString;
 
 /// Credentials for authenticating with Deribit private REST API.
 ///

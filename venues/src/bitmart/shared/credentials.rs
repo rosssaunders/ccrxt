@@ -2,7 +2,7 @@
 //!
 //! This module provides a unified credentials structure for both Spot and Contract products.
 
-use rest::secrets::SecretString;
+use secrets::SecretString;
 
 /// BitMart API credentials
 ///

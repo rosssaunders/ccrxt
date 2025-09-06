@@ -11,8 +11,8 @@ use hmac::{Hmac, Mac};
 use rest::{
     HttpClient,
     http_client::{Method as HttpMethod, RequestBuilder},
-    secrets::ExposableSecret,
 };
+use secrets::ExposableSecret;
 use serde::{Serialize, de::DeserializeOwned};
 use sha2::Sha256;
 
@@ -545,7 +545,7 @@ impl RestClient {
 
 #[cfg(test)]
 mod tests {
-    use rest::secrets::SecretString;
+    use secrets::SecretString;
 
     use super::*;
 

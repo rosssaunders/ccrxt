@@ -1,7 +1,5 @@
-pub mod request;
-pub mod rate_limiter;
 pub mod error;
+pub mod rate_limiter;
+pub mod request;
 
 pub use request::*;
-pub use rate_limiter::*;
-pub use error::*; 

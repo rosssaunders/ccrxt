@@ -1,6 +1,6 @@
 //! Binance API credentials - shared across all Binance products
 
-use rest::secrets::SecretString;
+use secrets::SecretString;
 
 /// Credentials for authenticating with Binance private REST API.
 ///

@@ -5,7 +5,7 @@
 
 use std::fmt;
 
-use rest::secrets::SecretString;
+use secrets::SecretString;
 use serde::{
     Deserialize, Deserializer, Serialize, Serializer,
     de::{MapAccess, Visitor},

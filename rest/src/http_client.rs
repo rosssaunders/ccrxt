@@ -74,12 +74,6 @@ pub trait HttpClient: Send + Sync {
     async fn execute(&self, request: Request) -> Result<Response, HttpError>;
 }
 
-#[cfg(target_arch = "wasm32")]
-#[async_trait(?Send)]
-pub trait HttpClient {
-    async fn execute(&self, request: Request) -> Result<Response, HttpError>;
-}
-
 pub struct RequestBuilder {
     method: Method,
     url: String,

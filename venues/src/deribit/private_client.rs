@@ -5,8 +5,8 @@ use hmac::{Hmac, Mac};
 use rest::{
     HttpClient,
     http_client::{Method as HttpMethod, RequestBuilder},
-    secrets::ExposableSecret,
 };
+use secrets::ExposableSecret;
 use serde::{Serialize, de::DeserializeOwned};
 use serde_json::json;
 use sha2::Sha256;
@@ -171,7 +171,7 @@ impl RestClient {
 mod tests {
     use std::sync::Arc;
 
-    use rest::secrets::SecretString;
+    use secrets::SecretString;
 
     use super::*;
     use crate::deribit::AccountTier;
