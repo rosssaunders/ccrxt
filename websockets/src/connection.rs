@@ -1,5 +1,6 @@
-use crate::client::{IncomingMessage, WebSocketClient, WebSocketResult};
 use std::fmt;
+
+use crate::client::{IncomingMessage, WebSocketClient, WebSocketResult};
 
 /// Connection lifecycle states. Host code decides reconnection policy.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -104,10 +105,11 @@ impl<C: WebSocketClient> ConnectionController<C> {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use crate::client::{IncomingMessage, WebSocketError};
     use bytes::Bytes;
     use parking_lot::Mutex;
+
+    use super::*;
+    use crate::client::{IncomingMessage, WebSocketError};
 
     #[derive(Default)]
     struct MockClient {

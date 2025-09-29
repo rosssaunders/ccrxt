@@ -3,10 +3,8 @@
 use std::time::Duration;
 
 use futures::{SinkExt, StreamExt};
-use tokio::net::TcpStream;
-use tokio::time::timeout;
-use tokio_tungstenite::connect_async;
-use tokio_tungstenite::tungstenite::protocol::Message as WsMessage;
+use tokio::{net::TcpStream, time::timeout};
+use tokio_tungstenite::{connect_async, tungstenite::protocol::Message as WsMessage};
 
 use crate::client::{IncomingMessage, WebSocketClient, WebSocketError, WebSocketResult};
 

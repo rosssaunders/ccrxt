@@ -22,10 +22,9 @@
 //! - Replace the URL with a public WS endpoint of your choice.
 
 use bytes::Bytes;
-use websockets::{WebSocketEvent, connection::ConnectionController};
-
 #[cfg(not(target_arch = "wasm32"))]
 use websockets::native::NativeWebSocketClient;
+use websockets::{WebSocketEvent, connection::ConnectionController};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {

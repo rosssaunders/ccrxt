@@ -5,9 +5,11 @@
 //! correlation. Host code controls connection lifecycle and reconnection.
 
 // Re-export commonly used items
-pub use crate::client::{IncomingMessage, WebSocketClient, WebSocketError, WebSocketResult};
-pub use crate::connection::{ConnectionState, WebSocketEvent};
-pub use crate::message::{RequestId, RequestIdGenerator, RequestManager};
+pub use crate::{
+    client::{IncomingMessage, WebSocketClient, WebSocketError, WebSocketResult},
+    connection::{ConnectionState, WebSocketEvent},
+    message::{RequestId, RequestIdGenerator, RequestManager},
+};
 
 // Legacy types removed.
 

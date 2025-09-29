@@ -482,10 +482,7 @@ mod tests {
                     if let ApiError::NoPosition = api_error {
                         // Expected
                     } else {
-                        panic!(
-                            "Expected NoPosition for code 201, got {:?}",
-                            api_error
-                        );
+                        panic!("Expected NoPosition for code 201, got {:?}", api_error);
                     }
                 }
                 202 => {
@@ -657,10 +654,7 @@ mod tests {
 
             // Ensure we don't get UnmappedApiError for known codes
             if let ApiError::UnmappedApiError { .. } = api_error {
-                panic!(
-                    "Code {} should be mapped but got UnmappedApiError",
-                    code
-                );
+                panic!("Code {} should be mapped but got UnmappedApiError", code);
             }
 
             // Ensure error message is not empty

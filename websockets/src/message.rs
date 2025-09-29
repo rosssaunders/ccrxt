@@ -1,6 +1,10 @@
-use std::collections::HashMap;
-use std::sync::Arc;
-use std::sync::atomic::{AtomicU64, Ordering};
+use std::{
+    collections::HashMap,
+    sync::{
+        Arc,
+        atomic::{AtomicU64, Ordering},
+    },
+};
 
 use parking_lot::Mutex;
 use tokio::sync::oneshot;
@@ -68,8 +72,9 @@ impl RequestManager {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use proptest::prelude::*;
+
+    use super::*;
 
     #[tokio::test]
     async fn request_manager_roundtrip() {
