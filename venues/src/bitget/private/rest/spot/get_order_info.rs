@@ -85,6 +85,7 @@ pub enum EntryPointSource {
 }
 
 /// Fee details for an order
+#[allow(dead_code)]
 #[derive(Debug, Clone, Deserialize)]
 pub struct FeeDetails {
     /// Fee coin
@@ -98,6 +99,7 @@ pub struct FeeDetails {
 }
 
 /// Cancel reason
+#[allow(dead_code)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "lowercase")]
 pub enum CancelReason {

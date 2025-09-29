@@ -9,6 +9,7 @@ use serde::Deserialize;
 
 use crate::binance::spot::{Errors, ResponseHeaders, errors::ApiError};
 
+#[allow(dead_code)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 #[non_exhaustive]
@@ -18,6 +19,7 @@ pub enum RateLimitType {
     RawRequests,
 }
 
+#[allow(dead_code)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 #[non_exhaustive]

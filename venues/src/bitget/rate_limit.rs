@@ -14,6 +14,7 @@ use crate::bitget::{
     rate_limiter_trait::{BitGetRateLimiter, BitGetUsageStats},
 };
 
+#[allow(dead_code)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum RateLimitType {
@@ -21,6 +22,7 @@ pub enum RateLimitType {
     Orders,
 }
 
+#[allow(dead_code)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum RateLimitInterval {

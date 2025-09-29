@@ -19,6 +19,7 @@ allow = [
     "Zlib",
     "Apache-2.0 WITH LLVM-exception",
     "CDLA-Permissive-2.0",
+    "OpenSSL",
 ]
 confidence-threshold = 0.8
 

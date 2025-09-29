@@ -38,7 +38,8 @@ impl OptionsPrivateRestClient {
     /// # Example
     /// ```no_run
     /// use std::sync::Arc;
-    /// use rest::{secrets::SecretString, HttpClient};
+    /// use rest::HttpClient;
+    /// use secrets::SecretString;
     /// use venues::binance::shared::{credentials::Credentials, rate_limiter::RateLimiter, venue_trait::VenueConfig};
     /// use venues::binance::options::{private_client::RestClient, OptionsConfig};
     ///

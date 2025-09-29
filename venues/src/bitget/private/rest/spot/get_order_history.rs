@@ -49,6 +49,7 @@ pub struct GetOrderHistoryRequest {
 }
 
 /// Fee details for historical orders
+#[allow(dead_code)]
 #[derive(Debug, Clone, Deserialize)]
 pub struct HistoricalFeeDetails {
     /// New fees structure
@@ -63,6 +64,7 @@ pub struct HistoricalFeeDetails {
 }
 
 /// New fee structure details
+#[allow(dead_code)]
 #[derive(Debug, Clone, Deserialize)]
 pub struct NewFeeDetails {
     /// Fee component C

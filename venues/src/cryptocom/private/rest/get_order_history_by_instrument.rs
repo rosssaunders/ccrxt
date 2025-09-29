@@ -175,6 +175,7 @@ pub struct GetOrderHistoryByInstrumentResponse {
 }
 
 /// Response for get order history by instrument endpoint (with continuation)
+#[allow(dead_code)]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GetOrderHistoryByInstrumentWithContinuationResponse {
     /// Array of order history data  

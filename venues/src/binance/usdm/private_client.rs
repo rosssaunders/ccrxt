@@ -39,7 +39,8 @@ impl UsdmPrivateRestClient {
     /// # Example
     /// ```no_run
     /// use std::sync::Arc;
-    /// use rest::{secrets::SecretString, HttpClient};
+    /// use rest::HttpClient;
+    /// use secrets::SecretString;
     /// use venues::binance::shared::{credentials::Credentials, rate_limiter::RateLimiter, venue_trait::VenueConfig};
     /// use venues::binance::usdm::{PrivateRestClient as UsdmClient, UsdmConfig};
     ///

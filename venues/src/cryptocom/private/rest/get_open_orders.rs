@@ -5,6 +5,7 @@ use crate::cryptocom::{ApiResult, PrivateRestClient as RestClient, RestResult};
 const OPEN_ORDERS_ENDPOINT: &str = "exchange/v1/private/get-open-orders";
 
 /// Enum representing the status of an order
+#[allow(dead_code)]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum OrderStatus {
