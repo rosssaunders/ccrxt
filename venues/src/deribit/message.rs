@@ -1,5 +1,4 @@
 use serde::{Deserialize, Serialize};
-use websockets::VenueMessage;
 
 /// Generic JSON-RPC 2.0 result structure for Deribit REST API responses
 #[derive(Debug, Clone, Deserialize)]
@@ -26,8 +25,6 @@ pub enum DeribitMessage {
     /// JSON-RPC response
     Response(JsonRpcResponse),
 }
-
-impl VenueMessage for DeribitMessage {}
 
 /// JSON-RPC 2.0 request structure for Deribit API
 #[derive(Debug, Clone, Serialize, Deserialize)]

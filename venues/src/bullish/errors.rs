@@ -256,7 +256,7 @@ mod tests {
                 assert_eq!(diag.status, Some(503));
                 assert_eq!(diag.body.as_deref(), Some("Service Unavailable"));
             }
-            None => assert!(false, "expected transport diagnostics"),
+            None => panic!("expected transport diagnostics"),
         }
     }
 }

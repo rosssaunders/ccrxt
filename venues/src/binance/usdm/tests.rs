@@ -1,17 +1,15 @@
-#[cfg(test)]
-mod tests {
-    use std::collections::HashMap;
+use std::collections::HashMap;
 
-    use crate::binance::{
-        shared::client::ResponseHeaders as SharedResponseHeaders,
-        usdm::{
-            RateLimitHeader, ResponseHeaders,
-            rate_limit::{IntervalUnit, RateLimitHeaderKind},
-        },
-    };
+use crate::binance::{
+    shared::client::ResponseHeaders as SharedResponseHeaders,
+    usdm::{
+        RateLimitHeader, ResponseHeaders,
+        rate_limit::{IntervalUnit, RateLimitHeaderKind},
+    },
+};
 
-    #[test]
-    fn test_response_headers_from_shared() {
+#[test]
+fn test_response_headers_from_shared() {
         // Create a shared ResponseHeaders with sample rate limit headers
         let mut shared_headers = HashMap::new();
         shared_headers.insert("x-mbx-used-weight-1m".to_string(), "123".to_string());
@@ -107,4 +105,3 @@ mod tests {
         // Should be empty
         assert!(usdm_headers.values.is_empty());
     }
-}
