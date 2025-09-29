@@ -26,7 +26,7 @@ struct JsonRpcResponse<T> {
     result: T,
 }
 
-fn main() {
+fn main() -> Result<(), Box<dyn std::error::Error>> {
     let ids = RequestIdGenerator::new();
     let mgr = RequestManager::new();
 
@@ -40,21 +40,23 @@ fn main() {
         id,
         result: "ok".to_string(),
     };
-    let wire = json::to_string(&simulated).expect("serialize");
+    let wire = json::to_string(&simulated)?;
 
     // Parse the wire message, extract ID, and fulfill the pending waiter
-    let parsed: JsonRpcResponse<String> = json::from_str(&wire).expect("parse");
+    let parsed: JsonRpcResponse<String> = json::from_str(&wire)?;
     let payload = wire.into_bytes();
     let fulfilled = mgr.fulfill(parsed.id, payload);
     assert!(fulfilled, "expected pending waiter to exist");
 
     // Await the response via the oneshot receiver
-    let body = futures::executor::block_on(async move { rx.await.expect("receive") });
+    let body = futures::executor::block_on(rx)?;
     println!(
         "received {} bytes: {}",
         body.len(),
         truncate(std::str::from_utf8(&body).unwrap_or("<invalid>"), 120)
     );
+
+    Ok(())
 }
 
 fn truncate(s: &str, max: usize) -> String {
